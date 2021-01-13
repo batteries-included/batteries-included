@@ -1,6 +1,5 @@
 #![allow(clippy::default_trait_access)]
 #![allow(clippy::field_reassign_with_default)]
-#![allow(clippy::module_name_repetitions)]
 
 use kube::CustomResource;
 use serde::{Serialize, Deserialize};

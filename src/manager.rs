@@ -1,5 +1,5 @@
 #![allow(clippy::needless_pass_by_value)]
-// #![allow(clippy::missing_const_for_fn)]
+#![allow(clippy::missing_const_for_fn)]
 
 use crate::cluster_spec::BatteryCluster;
 use crate::error::BatteryError;
@@ -52,18 +52,15 @@ fn error_policy(_error: &BatteryError, _ctx: Context<State>) -> ReconcilerAction
 pub async fn check_crd(client: Client) -> Result<(), BatteryError> {
     let crds: Api<CustomResourceDefinition> = Api::all(client.clone());
     let crd_name = "batteryclusters.batteriesincluded.company";
-    crds.get(crd_name).await?;
-    Ok(())
+    Ok(crds.get(crd_name).await.map(|_| ())?)
 }
 pub struct Manager {
     pub state: State,
     pub drainer: BoxFuture<'static, ()>,
 }
 impl Manager {
-    pub async fn new(client: Client) -> Self {
-        check_crd(client.clone())
-            .await
-            .expect("Unable to verify CRD installed. Check Failed");
+    pub async fn new(client: Client) -> Result<Self, BatteryError> {
+        check_crd(client.clone()).await?;
         let state = State {
             client: client.clone(),
             metrics: Metrics::new(),
@@ -76,6 +73,6 @@ impl Manager {
             .filter_map(|x| async move { std::result::Result::ok(x) })
             .for_each(|_x| futures::future::ready(()))
             .boxed();
-        Self { state, drainer }
+        Ok(Self { state, drainer })
     }
 }
