@@ -1,14 +1,16 @@
 #![allow(clippy::needless_pass_by_value)]
 #![allow(clippy::missing_const_for_fn)]
 
-use crate::cluster_spec::BatteryCluster;
-use crate::error::BatteryError;
+use crate::{
+    cluster_spec::{install_crd, BatteryCluster},
+    error::BatteryError,
+};
 
 use futures::{future::BoxFuture, FutureExt, StreamExt};
-use k8s_openapi::apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition;
 use kube_runtime::controller::{Context, Controller, ReconcilerAction};
 use prometheus::{register_int_counter, IntCounter};
 use std::time::Duration;
+use tracing::info;
 
 use kube::{
     api::{Api, ListParams},
@@ -22,8 +24,7 @@ pub struct Metrics {
 impl Metrics {
     pub fn new() -> Self {
         Self {
-            reconcile_called: register_int_counter!("reconcile_called", "Reconcile Called")
-                .unwrap(),
+            reconcile_called: register_int_counter!("reconcile_called", "Reconcile Called").unwrap(),
         }
     }
 }
@@ -34,10 +35,13 @@ pub struct State {
     metrics: Metrics,
 }
 
-async fn reconcile(
-    _cluster: BatteryCluster,
-    _ctx: Context<State>,
-) -> Result<ReconcilerAction, BatteryError> {
+async fn reconcile(cluster: BatteryCluster, ctx: Context<State>) -> Result<ReconcilerAction, BatteryError> {
+    // Extract the metrics we'll need these while running.
+    let met = &ctx.get_ref().metrics;
+    // We got called once.
+    met.reconcile_called.inc();
+
+    info!("Got new cluster to reconcile {:?}", cluster);
     Ok(ReconcilerAction {
         requeue_after: Some(Duration::from_secs(30)),
     })
@@ -49,18 +53,13 @@ fn error_policy(_error: &BatteryError, _ctx: Context<State>) -> ReconcilerAction
     }
 }
 
-pub async fn check_crd(client: Client) -> Result<(), BatteryError> {
-    let crds: Api<CustomResourceDefinition> = Api::all(client.clone());
-    let crd_name = "batteryclusters.batteriesincluded.company";
-    Ok(crds.get(crd_name).await.map(|_| ())?)
-}
 pub struct Manager {
     pub state: State,
     pub drainer: BoxFuture<'static, ()>,
 }
 impl Manager {
     pub async fn new(client: Client) -> Result<Self, BatteryError> {
-        check_crd(client.clone()).await?;
+        install_crd(client.clone()).await?;
         let state = State {
             client: client.clone(),
             metrics: Metrics::new(),

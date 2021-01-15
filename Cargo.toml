@@ -4,11 +4,21 @@ edition = "2018"
 name = "batteries-operator"
 version = "0.1.0"
 license = "Private"
+default-run = "controller"
+
+
+[[bin]]
+name = "controller"
+path = "src/controller.rs"
+
+[[bin]]
+name = "install"
+path = "src/install.rs"
 
 [dependencies]
 
-futures = "0.3.9"
-tokio = { version = "1.0.1", features = ["full"] }
+futures = "0.3.11"
+tokio = { version = "1.0.2", features = ["full"] }
 
 # pinning the version to 1.17.x since
 # GKE is there it makes for a good stable target.
@@ -24,5 +34,13 @@ serde_yaml = "0.8.15"
 # Error handling
 thiserror = "1.0.23"
 tracing = "0.1.22"
+tracing-subscriber = "0.2.15"
 
 prometheus = "0.11.0"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+debug = 2
+lto = true

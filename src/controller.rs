@@ -9,16 +9,17 @@ mod manager;
 
 use kube::client::Client;
 
-use tracing::info;
+use tracing::{debug, info};
 
-use crate::error::BatteryError;
-use crate::manager::Manager;
+use crate::{error::BatteryError, manager::Manager};
 
 #[tokio::main]
 async fn main() -> Result<(), BatteryError> {
+    tracing_subscriber::fmt::init();
     // Connect to kubernetes
     let client = Client::try_default().await?;
-    // Create a new manager and the future that will wait on all reconcilers.
+
+    debug!("kube client created starting manager.");
     let manager = Manager::new(client).await?;
 
     tokio::select! {

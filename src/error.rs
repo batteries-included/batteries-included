@@ -8,4 +8,10 @@ pub enum BatteryError {
         #[from]
         source: KubeError,
     },
+
+    #[error("Error while serializing/de-serializing to yaml")]
+    SerdeError {
+        #[from]
+        source: serde_yaml::Error,
+    },
 }
