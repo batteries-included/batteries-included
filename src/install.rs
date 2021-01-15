@@ -17,6 +17,9 @@ use crate::{
     error::BatteryError,
 };
 
+const DEFAULT_CLUSTER_NAME: &str = "default-cluster";
+const DEFAULT_ACCOUNT_NAME: &str = "test-account";
+
 #[tokio::main]
 async fn main() -> Result<(), BatteryError> {
     tracing_subscriber::fmt::init();
@@ -28,12 +31,13 @@ async fn main() -> Result<(), BatteryError> {
     info!("CRD present creating default cluster");
     let clusters: Api<BatteryCluster> = Api::all(client);
     let new_cluster = BatteryCluster::new(
-        "default-cluster",
+        DEFAULT_CLUSTER_NAME,
         BatteryClusterSpec {
-            account: "test-account".to_string(),
+            account: DEFAULT_ACCOUNT_NAME.to_string(),
         },
     );
     let pp = PostParams::default();
     clusters.create(&pp, &new_cluster).await?;
+    info!("Install completed. Exiting.");
     Ok(())
 }
