@@ -1,6 +1,19 @@
 /* This file is for your main application css. */
-@import "./phoenix.css";
 @import "../node_modules/nprogress/nprogress.css";
+
+$pink: #fc408a;
+$teal: #22a4b6;
+$green: #af9e15;
+$orange: #ec7d18;
+$indigo: #7164f8;
+$blue: #377af7;
+
+$primary: $pink;
+$secondary: $teal;
+
+$font-size-base: 1.1rem;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
