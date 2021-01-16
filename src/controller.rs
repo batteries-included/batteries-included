@@ -13,6 +13,13 @@ use tracing::{debug, info};
 
 use crate::{error::BatteryError, manager::Manager};
 
+#[cfg(not(target_env = "msvc"))]
+use jemallocator::Jemalloc;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+
 #[tokio::main]
 async fn main() -> Result<(), BatteryError> {
     tracing_subscriber::fmt::init();
