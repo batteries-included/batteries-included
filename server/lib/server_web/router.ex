@@ -20,10 +20,10 @@ defmodule ServerWeb.Router do
     live "/", PageLive, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ServerWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", ServerWeb do
+    pipe_through :api
+    resources "/kube_clusters", KubeClusterController, except: [:new, :edit]
+  end
 
   # Enables LiveDashboard only for development
   #
