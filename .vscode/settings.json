@@ -1,0 +1,10 @@
+{
+    "elixirLS.projectDir": "server",
+    "[elixir]": {
+        "editor.wordBasedSuggestions": false,
+        "editor.acceptSuggestionOnEnter": "on"
+    },
+    "emmet.includeLanguages": {
+        "HTML (Eex)": "html"
+    }
+}
