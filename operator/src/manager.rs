@@ -32,6 +32,7 @@ impl Metrics {
 #[derive(Clone)]
 pub struct State {
     client: Client,
+    server_url: String,
     metrics: Metrics,
 }
 
@@ -58,10 +59,11 @@ pub struct Manager {
     pub drainer: BoxFuture<'static, ()>,
 }
 impl Manager {
-    pub async fn new(client: Client) -> Result<Self, BatteryError> {
+    pub async fn new(client: Client, server_url: String) -> Result<Self, BatteryError> {
         install_crd(client.clone()).await?;
         let state = State {
             client: client.clone(),
+            server_url,
             metrics: Metrics::new(),
         };
         let clusters: Api<BatteryCluster> = Api::all(client);

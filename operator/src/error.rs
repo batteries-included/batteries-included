@@ -1,5 +1,8 @@
+use std::error::Error;
+
 use kube::Error as KubeError;
 use thiserror::Error;
+use tracing_subscriber::filter::{FromEnvError, ParseError};
 
 #[derive(Error, Debug)]
 pub enum BatteryError {
@@ -13,5 +16,23 @@ pub enum BatteryError {
     SerdeError {
         #[from]
         source: serde_yaml::Error,
+    },
+
+    #[error("Error while creating default logger.")]
+    EnvLoggingError {
+        #[from]
+        source: FromEnvError,
+    },
+
+    #[error("Error while creating default logger.")]
+    ParseLoggingError {
+        #[from]
+        source: ParseError,
+    },
+
+    #[error("Generic boxed error")]
+    GenericError {
+        #[from]
+        source: Box<(dyn Error + Sync + Send + 'static)>,
     },
 }
