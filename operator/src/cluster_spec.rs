@@ -1,21 +1,23 @@
 #![allow(clippy::default_trait_access)]
 #![allow(clippy::field_reassign_with_default)]
 
-use crate::error::BatteryError;
-use k8s_openapi::apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition;
-
-use kube::{
-    api::{Api, PatchParams},
-    client::Client,
+use k8s_openapi::{
+    api::core::v1::Namespace,
+    apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition,
 };
-
-use tracing::debug;
-
-use kube::CustomResource;
+use kube::{
+    api::{Api, ObjectMeta, PatchParams},
+    client::Client,
+    CustomResource,
+};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use tracing::debug;
 
-const DEFAULT_CRD_NAME: &str = "batteryclusters.batteriesincluded.company";
+use crate::error::BatteryError;
+
+pub const DEFAULT_CRD_NAME: &str = "batteryclusters.batteriesincluded.company";
+pub const DEFAULT_NAMESPACE: &str = "battery";
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 pub enum GeneralStatus {
@@ -26,10 +28,18 @@ pub enum GeneralStatus {
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 pub struct BatteryClusterStatus {
     current_status: GeneralStatus,
+    registered_cluster_id: String,
 }
 
 #[derive(CustomResource, Serialize, Deserialize, JsonSchema, Default, Debug, Clone)]
-#[kube(kind = "BatteryCluster", group = "batteriesincluded.company", version = "v1")]
+#[kube(
+    kind = "BatteryCluster",
+    group = "batteriesincluded.company",
+    shortname = "bc",
+    version = "v1",
+    status = "BatteryClusterStatus",
+    namespaced
+)]
 pub struct BatteryClusterSpec {
     pub account: String,
 }
@@ -37,16 +47,37 @@ pub struct BatteryClusterSpec {
 pub async fn is_crd_installed(client: Client) -> bool {
     let crds: Api<CustomResourceDefinition> = Api::all(client);
     debug!("Trying to get the crd. If it's there we'll continue on");
-    match crds.get(DEFAULT_CRD_NAME).await {
-        Ok(_) => true,
-        Err(e) => {
-            debug!("Got {:?} while trying to check if crd is installed", e);
-            false
-        }
+    crds.get(DEFAULT_CRD_NAME).await.is_ok()
+}
+
+pub async fn is_namespace_installed(client: Client) -> bool {
+    let ns: Api<Namespace> = Api::all(client);
+    ns.get(DEFAULT_NAMESPACE).await.is_ok()
+}
+
+pub async fn ensure_namespace(client: Client) -> Result<(), BatteryError> {
+    if is_namespace_installed(client.clone()).await {
+        Ok(())
+    } else {
+        let crds: Api<Namespace> = Api::all(client);
+        let params = PatchParams::apply("battery_operator").force();
+        let new_ns = Namespace {
+            metadata: ObjectMeta {
+                name: Some(DEFAULT_NAMESPACE.to_string()),
+                ..ObjectMeta::default()
+            },
+            ..Namespace::default()
+        };
+        Ok(crds
+            .patch(DEFAULT_NAMESPACE, &params, serde_yaml::to_vec(&new_ns)?)
+            .await
+            .map(|created_ns| {
+                debug!(created =?created_ns);
+            })?)
     }
 }
 
-pub async fn install_crd(client: Client) -> Result<(), BatteryError> {
+pub async fn ensure_crd(client: Client) -> Result<(), BatteryError> {
     if is_crd_installed(client.clone()).await {
         Ok(())
     } else {

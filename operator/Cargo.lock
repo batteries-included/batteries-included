@@ -102,6 +102,7 @@ dependencies = [
  "kube",
  "kube-runtime",
  "prometheus",
+ "reqwest",
  "schemars",
  "serde",
  "serde_json",

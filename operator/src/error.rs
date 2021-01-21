@@ -7,31 +7,31 @@ use tracing_subscriber::filter::{FromEnvError, ParseError};
 #[derive(Error, Debug)]
 pub enum BatteryError {
     #[error("Error during RPC to kube")]
-    GeneralKubeClientError {
+    GeneralKubeClient {
         #[from]
         source: KubeError,
     },
 
     #[error("Error while serializing/de-serializing to yaml")]
-    SerdeError {
+    Serde {
         #[from]
         source: serde_yaml::Error,
     },
 
     #[error("Error while creating default logger.")]
-    EnvLoggingError {
+    EnvLogging {
         #[from]
         source: FromEnvError,
     },
 
     #[error("Error while creating default logger.")]
-    ParseLoggingError {
+    ParseLogging {
         #[from]
         source: ParseError,
     },
 
     #[error("Generic boxed error")]
-    GenericError {
+    Generic {
         #[from]
         source: Box<(dyn Error + Sync + Send + 'static)>,
     },
