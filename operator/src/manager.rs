@@ -10,7 +10,7 @@ use kube::{
 };
 use kube_runtime::controller::{Context, Controller, ReconcilerAction};
 use prometheus::{register_int_counter, IntCounter};
-use tracing::{event, warn, Level};
+use tracing::{debug, warn};
 
 use crate::{
     cluster_spec::{ensure_crd, ensure_namespace, BatteryCluster, DEFAULT_NAMESPACE},
@@ -49,7 +49,7 @@ async fn reconcile(
 
     let namespace = cluster.metadata.namespace.as_ref();
 
-    event!(Level::DEBUG,cluster = ?cluster, namespace=?namespace);
+    debug!(cluster = ?cluster, namespace=?namespace);
     Ok(ReconcilerAction {
         requeue_after: Some(Duration::from_secs(30)),
     })
