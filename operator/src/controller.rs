@@ -54,7 +54,7 @@ async fn main() -> Result<(), BatteryError> {
     let manager = Manager::new(kube_client, ctrl_client).await?;
 
     manager.drainer.await;
-    
+
     // Let the world know. Bye.
     info!("Manager drained. Shutting down.");
     Ok(())

@@ -18,6 +18,12 @@ pub enum BatteryError {
         source: serde_yaml::Error,
     },
 
+    #[error("Error while serializing/de-serializing to json")]
+    SerdeJSON {
+        #[from]
+        source: serde_json::Error,
+    },
+
     #[error("Error while creating default logger.")]
     EnvLogging {
         #[from]
@@ -36,3 +42,5 @@ pub enum BatteryError {
         source: Box<(dyn Error + Sync + Send + 'static)>,
     },
 }
+
+pub type Result<T> = std::result::Result<T, BatteryError>;

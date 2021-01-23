@@ -14,21 +14,29 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tracing::debug;
 
-use crate::error::BatteryError;
+use crate::error::Result;
 
 pub const DEFAULT_CRD_NAME: &str = "batteryclusters.batteriesincluded.company";
 pub const DEFAULT_NAMESPACE: &str = "battery";
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
-pub enum GeneralStatus {
-    RUNNING,
-    STARTING,
+pub enum ClusterState {
+    Unregistered,
+    AwaitingAdoption,
+    Starting,
+    Running,
 }
 
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+impl Default for ClusterState {
+    fn default() -> Self {
+        Self::Unregistered
+    }
+}
+
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
 pub struct BatteryClusterStatus {
-    current_status: GeneralStatus,
-    registered_cluster_id: String,
+    current_state: ClusterState,
+    registered_cluster_id: Option<String>,
 }
 
 #[derive(CustomResource, Serialize, Deserialize, JsonSchema, Default, Debug, Clone)]
@@ -55,7 +63,7 @@ pub async fn is_namespace_installed(client: Client) -> bool {
     ns.get(DEFAULT_NAMESPACE).await.is_ok()
 }
 
-pub async fn ensure_namespace(client: Client) -> Result<(), BatteryError> {
+pub async fn ensure_namespace(client: Client) -> Result<()> {
     if is_namespace_installed(client.clone()).await {
         Ok(())
     } else {
@@ -77,7 +85,7 @@ pub async fn ensure_namespace(client: Client) -> Result<(), BatteryError> {
     }
 }
 
-pub async fn ensure_crd(client: Client) -> Result<(), BatteryError> {
+pub async fn ensure_crd(client: Client) -> Result<()> {
     if is_crd_installed(client.clone()).await {
         Ok(())
     } else {

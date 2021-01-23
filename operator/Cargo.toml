@@ -19,7 +19,7 @@ path = "src/install.rs"
 
 # Concurrency
 futures = "0.3.12"
-tokio = { version = "1.0.2", features = ["full"] }
+tokio = { version = "1.1.0", features = ["full"] }
 
 # pinning the version to 1.17.x since
 # GKE is there it makes for a good stable target.
@@ -54,9 +54,6 @@ jemallocator = "0.3.2"
 
 # Command line parsing.
 clap = "2.33.3"
-
-[profile.dev]
-opt-level = 1
 
 [profile.release]
 debug = 2

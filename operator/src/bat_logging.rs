@@ -1,8 +1,8 @@
 use tracing_subscriber::EnvFilter;
 
-use crate::error::BatteryError;
+use crate::error::Result;
 
-pub fn try_init_logging() -> Result<(), BatteryError> {
+pub fn try_init_logging() -> Result<()> {
     let filter = EnvFilter::try_from_default_env().or_else(|_| EnvFilter::try_new("info"))?;
 
     // TODO(elliott): Make this take some args for local development. I assume json
