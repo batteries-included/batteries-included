@@ -24,8 +24,8 @@ struct JsonKubeClusterBody {
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
-struct JsonKubeClusterResponse {
-    data: JsonKubeCluster,
+struct ControlServerResponse<T> {
+    data: T,
 }
 
 impl ControlServerClient {
@@ -34,6 +34,16 @@ impl ControlServerClient {
             http_client: Client::new(),
             base_url,
         }
+    }
+
+    pub async fn get_cluster(&self, id: &str) -> Result<JsonKubeCluster> {
+        let url = self.base_url.clone() + "/api/kube_clusters/" + id;
+        let request = self.http_client.get(&url);
+        let response = request.send().await?;
+        let payload = response
+            .json::<ControlServerResponse<JsonKubeCluster>>()
+            .await?;
+        Ok(payload.data)
     }
 
     pub async fn register(&self, external_uid: Option<String>) -> Result<JsonKubeCluster> {
@@ -48,7 +58,9 @@ impl ControlServerClient {
         // Prepare the request.
         let request = self.http_client.post(&url).json(&body);
         let response = request.send().await?;
-        let payload = response.json::<JsonKubeClusterResponse>().await?;
+        let payload = response
+            .json::<ControlServerResponse<JsonKubeCluster>>()
+            .await?;
 
         debug!("Registration completed. payload = {:?}", payload);
         Ok(payload.data)

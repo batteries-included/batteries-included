@@ -49,8 +49,22 @@ pub enum BatteryError {
         source: ReqwestError,
     },
 
+    #[error("Error unwrapping None")]
+    UnexpectedNone,
+
     #[error("Bad control server registration.")]
     BadRegistration,
 }
 
 pub type Result<T> = std::result::Result<T, BatteryError>;
+
+#[cfg(test)]
+mod test_error {
+    use super::*;
+
+    #[test]
+    fn test_bad_registration() {
+        let e = BatteryError::BadRegistration;
+        assert_eq!("Bad control server registration.", e.to_string());
+    }
+}

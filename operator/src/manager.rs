@@ -18,7 +18,7 @@ use crate::{
         DEFAULT_NAMESPACE,
     },
     cs_client::ControlServerClient,
-    error::{BatteryError, Result},
+    error::{BatteryError, BatteryError::BadRegistration, Result},
 };
 
 #[derive(Clone)]
@@ -62,6 +62,40 @@ impl State {
         Ok(())
     }
 
+    async fn check_adopt(&self, cluster: &BatteryCluster) -> Result<bool> {
+        let status = cluster
+            .status
+            .as_ref()
+            .ok_or(BatteryError::UnexpectedNone)?;
+
+        let cluster_id = &status
+            .registered_cluster_id
+            .as_ref()
+            .ok_or(BatteryError::UnexpectedNone)?;
+        debug!(
+            cluster=?cluster,
+            "Checking if cluster is adoped in the control server",
+        );
+        let control_state = self.ctrl_client.get_cluster(cluster_id).await?;
+
+        let is_adopted = control_state.adopted.unwrap_or(false);
+
+        if is_adopted {
+            let new_status = BatteryClusterStatus {
+                current_state: ClusterState::Starting,
+                ..status.clone()
+            };
+            info!(
+                cluster=? cluster,
+                old_status=? status,
+                new_status=? new_status,
+                "Detected change in adoption state. Changing status"
+            );
+            self.set_status(cluster, new_status).await?;
+        }
+        Ok(is_adopted)
+    }
+
     async fn register(&self, cluster: &BatteryCluster) -> Result<String> {
         // Send the request to the control server over rest http.
         let reg_response = self
@@ -69,7 +103,7 @@ impl State {
             .register(cluster.metadata.uid.clone())
             .await?;
         // Extract the new id or return a bad reg error.
-        let new_id = reg_response.id.ok_or(BatteryError::BadRegistration)?;
+        let new_id = reg_response.id.ok_or(BadRegistration)?;
         self.set_status(
             cluster,
             BatteryClusterStatus {
@@ -102,7 +136,9 @@ async fn reconcile(cluster: BatteryCluster, ctx: Context<State>) -> Result<Recon
             ClusterState::Unregistered => {
                 state.register(&cluster).await?;
             }
-
+            ClusterState::AwaitingAdoption => {
+                state.check_adopt(&cluster).await?;
+            }
             _ => {
                 info!("Unhandled status. Assuming this is ok");
             }
