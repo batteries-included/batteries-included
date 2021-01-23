@@ -35,8 +35,8 @@ impl Default for ClusterState {
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
 pub struct BatteryClusterStatus {
-    current_state: ClusterState,
-    registered_cluster_id: Option<String>,
+    pub current_state: ClusterState,
+    pub registered_cluster_id: Option<String>,
 }
 
 #[derive(CustomResource, Serialize, Deserialize, JsonSchema, Default, Debug, Clone)]

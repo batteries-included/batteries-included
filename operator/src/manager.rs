@@ -10,11 +10,12 @@ use kube::{
 };
 use kube_runtime::controller::{Context, Controller, ReconcilerAction};
 use prometheus::{register_int_counter, IntCounter};
-use tracing::{debug, warn};
+use tracing::{debug, info, warn};
 
 use crate::{
     cluster_spec::{
-        ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterStatus, DEFAULT_NAMESPACE,
+        ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterStatus, ClusterState,
+        DEFAULT_NAMESPACE,
     },
     cs_client::ControlServerClient,
     error::{BatteryError, Result},
@@ -50,13 +51,35 @@ impl State {
 
         if let Some(name) = cluster.metadata.name.as_ref() {
             let pp = PostParams::default();
-            let mut mut_cluster = cluster.clone();
-            mut_cluster.status = Some(status);
+            let new_cluster = BatteryCluster {
+                status: Some(status),
+                ..cluster.clone()
+            };
             clusters
-                .replace_status(name, &pp, serde_json::to_vec(&mut_cluster)?)
+                .replace_status(name, &pp, serde_json::to_vec(&new_cluster)?)
                 .await?;
         }
         Ok(())
+    }
+
+    async fn register(&self, cluster: &BatteryCluster) -> Result<String> {
+        // Send the request to the control server over rest http.
+        let reg_response = self
+            .ctrl_client
+            .register(cluster.metadata.uid.clone())
+            .await?;
+        // Extract the new id or return a bad reg error.
+        let new_id = reg_response.id.ok_or(BatteryError::BadRegistration)?;
+        self.set_status(
+            cluster,
+            BatteryClusterStatus {
+                current_state: ClusterState::AwaitingAdoption,
+                registered_cluster_id: Some(new_id.to_string()),
+            },
+        )
+        .await?;
+
+        Ok(new_id)
     }
 }
 
@@ -67,17 +90,23 @@ async fn reconcile(cluster: BatteryCluster, ctx: Context<State>) -> Result<Recon
     // We got called once.
     met.reconcile_called.inc();
 
-    debug!(cluster = ?cluster);
+    debug!(cluster=?cluster);
 
-    match cluster.status {
+    match &cluster.status {
         None => {
             state
                 .set_status(&cluster, BatteryClusterStatus::default())
                 .await?;
         }
-        Some(status) => {
-            debug!("XXXXXXXXXXXXXX Got a staus {:?}", status);
-        }
+        Some(status) => match status.current_state {
+            ClusterState::Unregistered => {
+                state.register(&cluster).await?;
+            }
+
+            _ => {
+                info!("Unhandled status. Assuming this is ok");
+            }
+        },
     };
 
     Ok(ReconcilerAction {
