@@ -9,6 +9,5 @@ defmodule Server.Repo.Migrations.CreateKubeClusters do
 
       timestamps()
     end
-
   end
 end

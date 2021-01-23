@@ -11,8 +11,6 @@ defmodule ServerWeb.KubeClusterView do
   end
 
   def render("kube_cluster.json", %{kube_cluster: kube_cluster}) do
-    %{id: kube_cluster.id,
-      external_uid: kube_cluster.external_uid,
-      adopted: kube_cluster.adopted}
+    %{id: kube_cluster.id, external_uid: kube_cluster.external_uid, adopted: kube_cluster.adopted}
   end
 end

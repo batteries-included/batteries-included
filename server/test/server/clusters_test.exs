@@ -31,7 +31,7 @@ defmodule Server.ClustersTest do
 
     test "create_kube_cluster/1 with valid data creates a kube_cluster" do
       assert {:ok, %KubeCluster{} = kube_cluster} = Clusters.create_kube_cluster(@valid_attrs)
-      assert kube_cluster.adopted == true
+      assert kube_cluster.adopted == false
       assert kube_cluster.external_uid == "some external_uid"
     end
 
@@ -41,14 +41,20 @@ defmodule Server.ClustersTest do
 
     test "update_kube_cluster/2 with valid data updates the kube_cluster" do
       kube_cluster = kube_cluster_fixture()
-      assert {:ok, %KubeCluster{} = kube_cluster} = Clusters.update_kube_cluster(kube_cluster, @update_attrs)
+
+      assert {:ok, %KubeCluster{} = kube_cluster} =
+               Clusters.update_kube_cluster(kube_cluster, @update_attrs)
+
       assert kube_cluster.adopted == false
       assert kube_cluster.external_uid == "some updated external_uid"
     end
 
     test "update_kube_cluster/2 with invalid data returns error changeset" do
       kube_cluster = kube_cluster_fixture()
-      assert {:error, %Ecto.Changeset{}} = Clusters.update_kube_cluster(kube_cluster, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Clusters.update_kube_cluster(kube_cluster, @invalid_attrs)
+
       assert kube_cluster == Clusters.get_kube_cluster!(kube_cluster.id)
     end
 

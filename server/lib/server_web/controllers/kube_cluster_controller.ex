@@ -28,7 +28,8 @@ defmodule ServerWeb.KubeClusterController do
   def update(conn, %{"id" => id, "kube_cluster" => kube_cluster_params}) do
     kube_cluster = Clusters.get_kube_cluster!(id)
 
-    with {:ok, %KubeCluster{} = kube_cluster} <- Clusters.update_kube_cluster(kube_cluster, kube_cluster_params) do
+    with {:ok, %KubeCluster{} = kube_cluster} <-
+           Clusters.update_kube_cluster(kube_cluster, kube_cluster_params) do
       render(conn, "show.json", kube_cluster: kube_cluster)
     end
   end
