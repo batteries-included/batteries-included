@@ -6,6 +6,8 @@ defmodule ServerWeb.KubeClusterLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    Clusters.subscribe()
+
     {:ok, assign(socket, :kube_clusters, list_kube_clusters())}
   end
 
@@ -37,6 +39,10 @@ defmodule ServerWeb.KubeClusterLive.Index do
     kube_cluster = Clusters.get_kube_cluster!(id)
     {:ok, _} = Clusters.delete_kube_cluster(kube_cluster)
 
+    {:noreply, assign(socket, :kube_clusters, list_kube_clusters())}
+  end
+
+  def handle_info({Clusters, _, _}, socket) do
     {:noreply, assign(socket, :kube_clusters, list_kube_clusters())}
   end
 

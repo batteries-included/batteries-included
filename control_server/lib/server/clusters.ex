@@ -53,6 +53,7 @@ defmodule Server.Clusters do
     %KubeCluster{}
     |> KubeCluster.changeset(attrs, allowed)
     |> Repo.insert()
+    |> broadcast_change([:kube_cluster, :created])
   end
 
   @doc """
@@ -75,6 +76,7 @@ defmodule Server.Clusters do
     kube_cluster
     |> KubeCluster.changeset(attrs, allowed)
     |> Repo.update()
+    |> broadcast_change([:kube_cluster, :updated])
   end
 
   @doc """
@@ -91,6 +93,7 @@ defmodule Server.Clusters do
   """
   def delete_kube_cluster(%KubeCluster{} = kube_cluster) do
     Repo.delete(kube_cluster)
+    |> broadcast_change([:kube_cluster, :deleted])
   end
 
   @doc """
@@ -108,5 +111,20 @@ defmodule Server.Clusters do
         allowed \\ [:adopted, :external_uid]
       ) do
     KubeCluster.changeset(kube_cluster, attrs, allowed)
+  end
+
+  @topic inspect(__MODULE__)
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(Server.PubSub, @topic)
+  end
+
+  defp broadcast_change({:ok, result}, event) do
+    Phoenix.PubSub.broadcast(Server.PubSub, @topic, {__MODULE__, event, result})
+    {:ok, result}
+  end
+
+  defp broadcast_change(change, event) do
+    change
   end
 end
