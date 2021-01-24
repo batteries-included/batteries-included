@@ -5,11 +5,11 @@ defmodule ServerWeb.KubeClusterControllerTest do
   alias Server.Clusters.KubeCluster
 
   @create_attrs %{
-    adopted: true,
+    adopted: false,
     external_uid: "some external_uid"
   }
   @update_attrs %{
-    adopted: false,
+    adopted: true,
     external_uid: "some updated external_uid"
   }
   @invalid_attrs %{adopted: nil, external_uid: nil}

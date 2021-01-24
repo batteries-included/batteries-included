@@ -12,9 +12,15 @@ defmodule Server.Clusters.KubeCluster do
   end
 
   @doc false
-  def changeset(kube_cluster, attrs) do
+  def api_changeset(kube_cluster, attrs) do
     kube_cluster
     |> cast(attrs, [:external_uid])
-    |> validate_required([:external_uid])
+    |> validate_required([:external_uid, :adopted])
+  end
+
+  def changeset(kube_cluster, attrs) do
+    kube_cluster
+    |> cast(attrs, [:external_uid, :adopted])
+    |> validate_required([:external_uid, :adopted])
   end
 end

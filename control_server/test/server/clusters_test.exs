@@ -31,7 +31,7 @@ defmodule Server.ClustersTest do
 
     test "create_kube_cluster/1 with valid data creates a kube_cluster" do
       assert {:ok, %KubeCluster{} = kube_cluster} = Clusters.create_kube_cluster(@valid_attrs)
-      assert kube_cluster.adopted == false
+      assert kube_cluster.adopted == true
       assert kube_cluster.external_uid == "some external_uid"
     end
 

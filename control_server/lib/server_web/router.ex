@@ -18,6 +18,7 @@ defmodule ServerWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+
   end
 
   scope "/api", ServerWeb do
