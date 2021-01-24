@@ -49,9 +49,9 @@ defmodule Server.Clusters do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_kube_cluster(attrs \\ %{}) do
+  def create_kube_cluster(attrs \\ %{}, allowed \\ [:adopted, :external_uid]) do
     %KubeCluster{}
-    |> KubeCluster.changeset(attrs)
+    |> KubeCluster.changeset(attrs, allowed)
     |> Repo.insert()
   end
 
@@ -67,9 +67,13 @@ defmodule Server.Clusters do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_kube_cluster(%KubeCluster{} = kube_cluster, attrs) do
+  def update_kube_cluster(
+        %KubeCluster{} = kube_cluster,
+        attrs,
+        allowed \\ [:adopted, :external_uid]
+      ) do
     kube_cluster
-    |> KubeCluster.changeset(attrs)
+    |> KubeCluster.changeset(attrs, allowed)
     |> Repo.update()
   end
 
@@ -98,7 +102,11 @@ defmodule Server.Clusters do
       %Ecto.Changeset{data: %KubeCluster{}}
 
   """
-  def change_kube_cluster(%KubeCluster{} = kube_cluster, attrs \\ %{}) do
-    KubeCluster.changeset(kube_cluster, attrs)
+  def change_kube_cluster(
+        %KubeCluster{} = kube_cluster,
+        attrs \\ %{},
+        allowed \\ [:adopted, :external_uid]
+      ) do
+    KubeCluster.changeset(kube_cluster, attrs, allowed)
   end
 end

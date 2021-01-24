@@ -2,7 +2,6 @@ defmodule ServerWeb.KubeClusterController do
   use ServerWeb, :controller
 
   alias Server.Clusters
-  alias Server.ApiClusters
   alias Server.Clusters.KubeCluster
 
   action_fallback ServerWeb.FallbackController
@@ -14,7 +13,7 @@ defmodule ServerWeb.KubeClusterController do
 
   def create(conn, %{"kube_cluster" => kube_cluster_params}) do
     with {:ok, %KubeCluster{} = kube_cluster} <-
-           ApiClusters.create_kube_cluster(kube_cluster_params) do
+           Clusters.create_kube_cluster(kube_cluster_params, [:external_uid]) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.kube_cluster_path(conn, :show, kube_cluster))
@@ -31,7 +30,7 @@ defmodule ServerWeb.KubeClusterController do
     kube_cluster = Clusters.get_kube_cluster!(id)
 
     with {:ok, %KubeCluster{} = kube_cluster} <-
-           ApiClusters.update_kube_cluster(kube_cluster, kube_cluster_params) do
+           Clusters.update_kube_cluster(kube_cluster, kube_cluster_params, [:external_uid]) do
       render(conn, "show.json", kube_cluster: kube_cluster)
     end
   end
@@ -39,7 +38,7 @@ defmodule ServerWeb.KubeClusterController do
   def delete(conn, %{"id" => id}) do
     kube_cluster = Clusters.get_kube_cluster!(id)
 
-    with {:ok, %KubeCluster{}} <- ApiClusters.delete_kube_cluster(kube_cluster) do
+    with {:ok, %KubeCluster{}} <- Clusters.delete_kube_cluster(kube_cluster) do
       send_resp(conn, :no_content, "")
     end
   end

@@ -11,16 +11,9 @@ defmodule Server.Clusters.KubeCluster do
     timestamps()
   end
 
-  @doc false
-  def api_changeset(kube_cluster, attrs) do
+  def changeset(kube_cluster, attrs, allowed) do
     kube_cluster
-    |> cast(attrs, [:external_uid])
-    |> validate_required([:external_uid])
-  end
-
-  def changeset(kube_cluster, attrs) do
-    kube_cluster
-    |> cast(attrs, [:external_uid, :adopted])
-    |> validate_required([:external_uid, :adopted])
+    |> cast(attrs, allowed)
+    |> validate_required(allowed)
   end
 end
