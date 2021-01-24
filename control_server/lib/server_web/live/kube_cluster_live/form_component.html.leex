@@ -1,0 +1,18 @@
+<h2><%= @title %></h2>
+
+<%= f = form_for @changeset, "#",
+  id: "kube_cluster-form",
+  phx_target: @myself,
+  phx_change: "validate",
+  phx_submit: "save" %>
+
+  <%= label f, :adopted %>
+  <%= checkbox f, :adopted %>
+  <%= error_tag f, :adopted %> %>
+
+  <%= label f, :external_uid %>
+  <%= text_input f, :external_uid %>
+  <%= error_tag f, :external_uid %>
+
+  <%= submit "Save", phx_disable_with: "Saving..." %>
+</form>

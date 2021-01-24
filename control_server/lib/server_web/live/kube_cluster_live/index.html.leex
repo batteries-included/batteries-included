@@ -1,0 +1,37 @@
+<h1>Listing Kube clusters</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal @socket, ServerWeb.KubeClusterLive.FormComponent,
+    id: @kube_cluster.id || :new,
+    title: @page_title,
+    action: @live_action,
+    kube_cluster: @kube_cluster,
+    return_to: Routes.kube_cluster_index_path(@socket, :index) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Adopted</th>
+      <th>External uid</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="kube_clusters">
+    <%= for kube_cluster <- @kube_clusters do %>
+      <tr id="kube_cluster-<%= kube_cluster.id %>">
+        <td><%= kube_cluster.adopted %></td>
+        <td><%= kube_cluster.external_uid %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.kube_cluster_show_path(@socket, :show, kube_cluster) %></span>
+          <span><%= live_patch "Edit", to: Routes.kube_cluster_index_path(@socket, :edit, kube_cluster) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: kube_cluster.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Kube cluster", to: Routes.kube_cluster_index_path(@socket, :new) %></span>

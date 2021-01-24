@@ -1,0 +1,27 @@
+<h1>Show Kube cluster</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, ServerWeb.KubeClusterLive.FormComponent,
+    id: @kube_cluster.id,
+    title: @page_title,
+    action: @live_action,
+    kube_cluster: @kube_cluster,
+    return_to: Routes.kube_cluster_show_path(@socket, :show, @kube_cluster) %>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Adopted:</strong>
+    <%= @kube_cluster.adopted %>
+  </li>
+
+  <li>
+    <strong>External uid:</strong>
+    <%= @kube_cluster.external_uid %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.kube_cluster_show_path(@socket, :edit, @kube_cluster), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.kube_cluster_index_path(@socket, :index) %></span>
