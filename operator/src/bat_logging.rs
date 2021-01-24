@@ -9,6 +9,6 @@ pub fn try_init_logging() -> Result<()> {
     // won't be that readable
     Ok(tracing_subscriber::fmt()
         .with_env_filter(filter)
-        .json()
+        .compact()
         .try_init()?)
 }

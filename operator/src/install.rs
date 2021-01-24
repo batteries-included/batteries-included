@@ -3,6 +3,7 @@
 #![deny(clippy::nursery)]
 #![allow(clippy::module_name_repetitions)]
 
+mod bat_logging;
 mod cluster_spec;
 mod error;
 
@@ -16,6 +17,7 @@ use tokio::time::sleep;
 use tracing::{debug, info};
 
 use crate::{
+    bat_logging::try_init_logging,
     cluster_spec::{
         ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterSpec, DEFAULT_NAMESPACE,
     },
@@ -27,7 +29,7 @@ const DEFAULT_ACCOUNT_NAME: &str = "test-account";
 
 #[tokio::main]
 async fn main() -> Result<(), BatteryError> {
-    tracing_subscriber::fmt::init();
+    try_init_logging()?;
     // Connect to kubernetes
     debug!("Connecting to kubernetes.");
     let client = Client::try_default().await?;
