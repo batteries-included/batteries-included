@@ -42,6 +42,7 @@ defmodule ServerWeb.KubeClusterLive.Index do
     {:noreply, assign(socket, :kube_clusters, list_kube_clusters())}
   end
 
+  @impl true
   def handle_info({Clusters, _, _}, socket) do
     {:noreply, assign(socket, :kube_clusters, list_kube_clusters())}
   end

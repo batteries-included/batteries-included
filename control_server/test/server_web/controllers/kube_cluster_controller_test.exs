@@ -38,7 +38,7 @@ defmodule ServerWeb.KubeClusterControllerTest do
       conn = get(conn, Routes.kube_cluster_path(conn, :show, id))
 
       assert %{
-               "id" => id,
+               "id" => ^id,
                "adopted" => false,
                "external_uid" => "some external_uid"
              } = json_response(conn, 200)["data"]
@@ -67,7 +67,7 @@ defmodule ServerWeb.KubeClusterControllerTest do
       conn = get(conn, Routes.kube_cluster_path(conn, :show, id))
 
       assert %{
-               "id" => id,
+               "id" => ^id,
                "adopted" => false,
                "external_uid" => "some updated external_uid"
              } = json_response(conn, 200)["data"]

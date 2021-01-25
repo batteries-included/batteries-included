@@ -5,7 +5,7 @@ defmodule Server.Configs.RawConfig do
   schema "raw_configs" do
     field :content, :map, default: %{}, null: false
     field :path, :string
-    field :kube_cluster_id, :id
+    belongs_to :kube_cluster, KubeCluster
 
     timestamps()
   end
