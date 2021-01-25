@@ -52,7 +52,8 @@ defmodule Server.Configs do
   def create_raw_config(attrs \\ %{}) do
     %RawConfig{}
     |> RawConfig.changeset(attrs)
-    |> Repo.insert()
+    |> PaperTrail.insert()
+    |> unwrap_papertrail()
   end
 
   @doc """
@@ -70,7 +71,8 @@ defmodule Server.Configs do
   def update_raw_config(%RawConfig{} = raw_config, attrs) do
     raw_config
     |> RawConfig.changeset(attrs)
-    |> Repo.update()
+    |> PaperTrail.update()
+    |> unwrap_papertrail()
   end
 
   @doc """
@@ -86,7 +88,8 @@ defmodule Server.Configs do
 
   """
   def delete_raw_config(%RawConfig{} = raw_config) do
-    Repo.delete(raw_config)
+    PaperTrail.delete(raw_config)
+    |> unwrap_papertrail()
   end
 
   @doc """
@@ -100,5 +103,13 @@ defmodule Server.Configs do
   """
   def change_raw_config(%RawConfig{} = raw_config, attrs \\ %{}) do
     RawConfig.changeset(raw_config, attrs)
+  end
+
+  defp unwrap_papertrail({:ok, %{model: model, version: _version}}) do
+    {:ok, model}
+  end
+
+  defp unwrap_papertrail({:error, result}) do
+    {:error, result}
   end
 end
