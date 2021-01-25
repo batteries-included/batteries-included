@@ -2,8 +2,7 @@ defmodule Repo.Migrations.AddVersions do
   use Ecto.Migration
 
   def change do
-    create table(:versions, primary_key: false) do
-      add :id, :binary_id, primary_key: true
+    create table(:versions) do
       add :event, :string, null: false, size: 10
       add :item_type, :string, null: false
       add :item_id, :binary_id

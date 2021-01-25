@@ -49,9 +49,9 @@ defmodule Server.Clusters do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_kube_cluster(attrs \\ %{}, allowed \\ [:adopted, :external_uid]) do
+  def create_kube_cluster(attrs \\ %{}, source \\ :default) do
     %KubeCluster{}
-    |> KubeCluster.changeset(attrs, allowed)
+    |> KubeCluster.changeset(attrs, source)
     |> PaperTrail.insert()
     |> unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :created])
@@ -72,10 +72,10 @@ defmodule Server.Clusters do
   def update_kube_cluster(
         %KubeCluster{} = kube_cluster,
         attrs,
-        allowed \\ [:adopted, :external_uid]
+        source \\ :default
       ) do
     kube_cluster
-    |> KubeCluster.changeset(attrs, allowed)
+    |> KubeCluster.changeset(attrs, source)
     |> PaperTrail.update()
     |> unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :updated])
@@ -111,9 +111,9 @@ defmodule Server.Clusters do
   def change_kube_cluster(
         %KubeCluster{} = kube_cluster,
         attrs \\ %{},
-        allowed \\ [:adopted, :external_uid]
+        source \\ :default
       ) do
-    KubeCluster.changeset(kube_cluster, attrs, allowed)
+    KubeCluster.changeset(kube_cluster, attrs, source)
   end
 
   defp unwrap_papertrail({:ok, %{model: model, version: _version}}) do
