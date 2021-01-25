@@ -10,6 +10,12 @@ use Mix.Config
 config :server,
   ecto_repos: [Server.Repo]
 
+# configure paper trail for model history
+config :paper_trail,
+  repo: Server.Repo,
+  item_type: Ecto.UUID,
+  originator_type: Ecto.UUID
+
 # Configures the endpoint
 config :server, ServerWeb.Endpoint,
   url: [host: "localhost"],

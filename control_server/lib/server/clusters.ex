@@ -52,7 +52,8 @@ defmodule Server.Clusters do
   def create_kube_cluster(attrs \\ %{}, allowed \\ [:adopted, :external_uid]) do
     %KubeCluster{}
     |> KubeCluster.changeset(attrs, allowed)
-    |> Repo.insert()
+    |> PaperTrail.insert()
+    |> unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :created])
   end
 
@@ -75,7 +76,8 @@ defmodule Server.Clusters do
       ) do
     kube_cluster
     |> KubeCluster.changeset(attrs, allowed)
-    |> Repo.update()
+    |> PaperTrail.update()
+    |> unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :updated])
   end
 
@@ -92,7 +94,8 @@ defmodule Server.Clusters do
 
   """
   def delete_kube_cluster(%KubeCluster{} = kube_cluster) do
-    Repo.delete(kube_cluster)
+    PaperTrail.delete(kube_cluster)
+    |> unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :deleted])
   end
 
@@ -113,6 +116,14 @@ defmodule Server.Clusters do
     KubeCluster.changeset(kube_cluster, attrs, allowed)
   end
 
+  defp unwrap_papertrail({:ok, %{model: model, version: _version}}) do
+    {:ok, model}
+  end
+
+  defp unwrap_papertrail({:error, result}) do
+    {:error, result}
+  end
+
   @topic inspect(__MODULE__)
 
   def subscribe do
@@ -120,11 +131,13 @@ defmodule Server.Clusters do
   end
 
   defp broadcast_change({:ok, result}, event) do
+    # Broadcast the change to everyon
     Phoenix.PubSub.broadcast(Server.PubSub, @topic, {__MODULE__, event, result})
+    # Propogate the ok, result so that this can be piped to lots and lots.
     {:ok, result}
   end
 
-  defp broadcast_change(change, event) do
+  defp broadcast_change(change, _event) do
     change
   end
 end

@@ -49,7 +49,10 @@ defmodule Server.MixProject do
       {:plug_cowboy, "~> 2.0"},
 
       # Auth
-      {:phx_gen_auth, "~> 0.6", only: [:dev], runtime: false}
+      {:phx_gen_auth, "~> 0.6", only: [:dev], runtime: false},
+
+      # Versioning.
+      {:paper_trail, "~> 0.9.0"}
     ]
   end
 
