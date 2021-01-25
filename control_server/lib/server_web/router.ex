@@ -19,12 +19,21 @@ defmodule ServerWeb.Router do
 
     live "/", PageLive, :index
 
+    ## KubeCluster ##
     live "/kube_clusters", KubeClusterLive.Index, :index
     live "/kube_clusters/new", KubeClusterLive.Index, :new
     live "/kube_clusters/:id/edit", KubeClusterLive.Index, :edit
 
     live "/kube_clusters/:id", KubeClusterLive.Show, :show
     live "/kube_clusters/:id/show/edit", KubeClusterLive.Show, :edit
+
+    ## RawConfig ##
+    live "/raw_configs", RawConfigLive.Index, :index
+    live "/raw_configs/new", RawConfigLive.Index, :new
+    live "/raw_configs/:id/edit", RawConfigLive.Index, :edit
+
+    live "/raw_configs/:id", RawConfigLive.Show, :show
+    live "/raw_configs/:id/show/edit", RawConfigLive.Show, :edit
   end
 
   scope "/api", ServerWeb do
