@@ -3,11 +3,16 @@ defmodule ServerWeb.RawConfigController do
 
   alias Server.Configs
   alias Server.Configs.RawConfig
+  alias Server.Repo
 
   action_fallback ServerWeb.FallbackController
 
-  def index(conn, _params) do
-    raw_configs = Configs.list_raw_configs()
+  def index(conn, params) do
+    {:ok, filter} =
+      Server.FilterConfig.raw_configs()
+      |> Filtrex.parse_params(params)
+
+    raw_configs = RawConfig |> Filtrex.query(filter) |> Repo.all()
     render(conn, "index.json", raw_configs: raw_configs)
   end
 

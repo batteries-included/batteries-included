@@ -52,8 +52,11 @@ defmodule Server.MixProject do
       {:phx_gen_auth, "~> 0.6", only: [:dev], runtime: false},
 
       # Versioning.
-      {:paper_trail, "~> 0.9.0"},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
+      {:paper_trail, "~> 0.12.0"},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+
+      # Filtering
+      {:filtrex, "~> 0.4.3"}
     ]
   end
 

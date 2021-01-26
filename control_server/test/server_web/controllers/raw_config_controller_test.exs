@@ -6,11 +6,11 @@ defmodule ServerWeb.RawConfigControllerTest do
 
   @create_attrs %{
     content: %{},
-    path: "some path"
+    path: "some/path"
   }
   @update_attrs %{
     content: %{},
-    path: "some updated path"
+    path: "some/updated/path"
   }
   @invalid_attrs %{content: nil, path: nil}
 
@@ -30,6 +30,20 @@ defmodule ServerWeb.RawConfigControllerTest do
     end
   end
 
+
+  describe "index with data" do
+    setup [:create_raw_config]
+    test "lists no raw_configs with filter", %{conn: conn} do
+      conn = get(conn, Routes.raw_config_path(conn, :index), path: "not/our/path")
+      assert json_response(conn, 200)["data"] == []
+    end
+
+        test "lists one raw_configs with good filter", %{conn: conn} do
+      conn = get(conn, Routes.raw_config_path(conn, :index), path: "some/path")
+      assert  [%{"content" => content, "id" => id, "path" => "some/path"}] = json_response(conn, 200)["data"]
+    end
+  end
+
   describe "create raw_config" do
     test "renders raw_config when data is valid", %{conn: conn} do
       conn = post(conn, Routes.raw_config_path(conn, :create), raw_config: @create_attrs)
@@ -40,7 +54,7 @@ defmodule ServerWeb.RawConfigControllerTest do
       assert %{
                "id" => ^id,
                "content" => %{},
-               "path" => "some path"
+               "path" => "some/path"
              } = json_response(conn, 200)["data"]
     end
 
@@ -67,7 +81,7 @@ defmodule ServerWeb.RawConfigControllerTest do
       assert %{
                "id" => ^id,
                "content" => %{},
-               "path" => "some updated path"
+               "path" => "some/updated/path"
              } = json_response(conn, 200)["data"]
     end
 
