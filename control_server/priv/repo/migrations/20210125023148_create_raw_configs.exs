@@ -6,7 +6,9 @@ defmodule Server.Repo.Migrations.CreateRawConfigs do
       add :id, :binary_id, primary_key: true
       add :path, :string
       add :content, :map
-      add :kube_cluster_id, references(:kube_clusters, on_delete: :delete_all, type: :binary_id), null: true
+
+      add :kube_cluster_id, references(:kube_clusters, on_delete: :delete_all, type: :binary_id),
+        null: true
 
       timestamps()
     end

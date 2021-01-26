@@ -13,7 +13,8 @@ defmodule Server.Clusters.KubeCluster do
 
   def changeset(kube_cluster, attrs, :api), do: do_changeset(kube_cluster, attrs, [:external_uid])
 
-  def changeset(kube_cluster, attrs, _), do: do_changeset(kube_cluster, attrs, [:adopted, :external_uid])
+  def changeset(kube_cluster, attrs, _),
+    do: do_changeset(kube_cluster, attrs, [:adopted, :external_uid])
 
   def do_changeset(kube_cluster, attrs, allowed) do
     kube_cluster
