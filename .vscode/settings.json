@@ -1,5 +1,5 @@
 {
-    "elixirLS.projectDir": "server",
+    "elixirLS.projectDir": "control_server",
     "[elixir]": {
         "editor.wordBasedSuggestions": false,
         "editor.acceptSuggestionOnEnter": "on"
