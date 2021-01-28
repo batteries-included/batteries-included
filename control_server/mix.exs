@@ -34,11 +34,7 @@ defmodule Server.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.5.7"},
-      {:phoenix_ecto, "~> 4.1"},
-      {:ecto_sql, "~> 3.4"},
-      {:postgrex, ">= 0.0.0"},
       {:phoenix_live_view, "~> 0.15.0"},
-      {:floki, ">= 0.27.0", only: :test},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_dashboard, "~> 0.4"},
@@ -48,6 +44,11 @@ defmodule Server.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
 
+      # SQL
+      {:phoenix_ecto, "~> 4.1"},
+      {:ecto_sql, "~> 3.4"},
+      {:postgrex, ">= 0.0.0"},
+
       # Auth
       {:phx_gen_auth, "~> 0.6", only: [:dev], runtime: false},
 
@@ -56,7 +57,11 @@ defmodule Server.MixProject do
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
 
       # Filtering
-      {:filtrex, "~> 0.4.3"}
+      {:filtrex, "~> 0.4.3"},
+
+      # Testing.
+      {:ex_machina, "~> 2.4", only: :test},
+      {:floki, ">= 0.27.0", only: :test}
     ]
   end
 

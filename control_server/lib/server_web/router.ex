@@ -38,8 +38,10 @@ defmodule ServerWeb.Router do
 
   scope "/api", ServerWeb do
     pipe_through :api
-    resources "/kube_clusters", KubeClusterController, except: [:new, :edit]
-    resources "/raw_configs", RawConfigController, except: [:new, :edit]
+
+    resources "/kube_clusters", KubeClusterController, except: [:new, :edit] do
+      resources "/raw_configs", RawConfigController, except: [:new, :edit]
+    end
   end
 
   # Enables LiveDashboard only for development

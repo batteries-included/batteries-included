@@ -15,7 +15,7 @@ defmodule Server.Configs.RawConfig do
   @doc false
   def changeset(raw_config, attrs) do
     raw_config
-    |> cast(attrs, [:path, :content])
+    |> cast(attrs, [:path, :content, :kube_cluster_id])
     |> validate_required([:path, :content])
   end
 end
