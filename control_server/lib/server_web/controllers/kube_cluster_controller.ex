@@ -3,6 +3,7 @@ defmodule ServerWeb.KubeClusterController do
 
   alias Server.Clusters
   alias Server.Clusters.KubeCluster
+  alias Server.Configs
 
   action_fallback ServerWeb.FallbackController
 
@@ -12,8 +13,11 @@ defmodule ServerWeb.KubeClusterController do
   end
 
   def create(conn, %{"kube_cluster" => kube_cluster_params}) do
-    with {:ok, %KubeCluster{} = kube_cluster} <-
+    with {:ok, kube_cluster} <-
            Clusters.create_kube_cluster(kube_cluster_params, :api) do
+      {:ok, _adoption_config} = Configs.Defaults.create_adoption(kube_cluster)
+      {:ok, _running_set} = Configs.Defaults.create_running_set(kube_cluster)
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.kube_cluster_path(conn, :show, kube_cluster))

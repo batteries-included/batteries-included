@@ -1,4 +1,4 @@
-defmodule Server.DefaultConfigs do
+defmodule Server.Configs.Defaults do
   import Ecto.Query, warn: false
   alias Server.Configs
 
@@ -9,7 +9,7 @@ defmodule Server.DefaultConfigs do
   def create_running_set(cluster) do
     Configs.create_raw_config(%{
       kube_cluster_id: cluster.id,
-      path: "/running_services",
+      path: "/running_set",
       content: %{}
     })
   end
