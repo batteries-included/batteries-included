@@ -7,6 +7,7 @@ defmodule Server.Clusters do
   alias Server.Repo
 
   alias Server.Clusters.KubeCluster
+  alias Server.PaperTrailUtils
 
   @doc """
   Returns the list of kube_clusters.
@@ -53,7 +54,7 @@ defmodule Server.Clusters do
     %KubeCluster{}
     |> KubeCluster.changeset(attrs, source)
     |> PaperTrail.insert()
-    |> unwrap_papertrail()
+    |> PaperTrailUtils.unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :created])
   end
 
@@ -77,7 +78,7 @@ defmodule Server.Clusters do
     kube_cluster
     |> KubeCluster.changeset(attrs, source)
     |> PaperTrail.update()
-    |> unwrap_papertrail()
+    |> PaperTrailUtils.unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :updated])
   end
 
@@ -95,7 +96,7 @@ defmodule Server.Clusters do
   """
   def delete_kube_cluster(%KubeCluster{} = kube_cluster) do
     PaperTrail.delete(kube_cluster)
-    |> unwrap_papertrail()
+    |> PaperTrailUtils.unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :deleted])
   end
 
@@ -114,14 +115,6 @@ defmodule Server.Clusters do
         source \\ :default
       ) do
     KubeCluster.changeset(kube_cluster, attrs, source)
-  end
-
-  defp unwrap_papertrail({:ok, %{model: model, version: _version}}) do
-    {:ok, model}
-  end
-
-  defp unwrap_papertrail({:error, result}) do
-    {:error, result}
   end
 
   @topic inspect(__MODULE__)

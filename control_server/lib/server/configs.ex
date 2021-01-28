@@ -7,6 +7,7 @@ defmodule Server.Configs do
   alias Server.Repo
 
   alias Server.Configs.RawConfig
+  alias Server.PaperTrailUtils
 
   @doc """
   Returns the list of raw_configs.
@@ -53,7 +54,7 @@ defmodule Server.Configs do
     %RawConfig{}
     |> RawConfig.changeset(attrs)
     |> PaperTrail.insert()
-    |> unwrap_papertrail()
+    |> PaperTrailUtils.unwrap_papertrail()
   end
 
   @doc """
@@ -72,7 +73,7 @@ defmodule Server.Configs do
     raw_config
     |> RawConfig.changeset(attrs)
     |> PaperTrail.update()
-    |> unwrap_papertrail()
+    |> PaperTrailUtils.unwrap_papertrail()
   end
 
   @doc """
@@ -89,7 +90,7 @@ defmodule Server.Configs do
   """
   def delete_raw_config(%RawConfig{} = raw_config) do
     PaperTrail.delete(raw_config)
-    |> unwrap_papertrail()
+    |> PaperTrailUtils.unwrap_papertrail()
   end
 
   @doc """
@@ -103,13 +104,5 @@ defmodule Server.Configs do
   """
   def change_raw_config(%RawConfig{} = raw_config, attrs \\ %{}) do
     RawConfig.changeset(raw_config, attrs)
-  end
-
-  defp unwrap_papertrail({:ok, %{model: model, version: _version}}) do
-    {:ok, model}
-  end
-
-  defp unwrap_papertrail({:error, result}) do
-    {:error, result}
   end
 end

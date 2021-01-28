@@ -9,7 +9,7 @@ defmodule ServerWeb.RawConfigController do
 
   action_fallback ServerWeb.FallbackController
 
-  def index(conn, params = %{"kube_cluster_id" => kube_cluster_id}) do
+  def index(conn, %{"kube_cluster_id" => kube_cluster_id} = params) do
     {:ok, filter} =
       Server.FilterConfig.raw_configs()
       |> Filtrex.parse_params(Map.delete(params, "kube_cluster_id"))

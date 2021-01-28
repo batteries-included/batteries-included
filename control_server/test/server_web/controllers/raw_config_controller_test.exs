@@ -87,8 +87,10 @@ defmodule ServerWeb.RawConfigControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn} do
       raw_config = insert(:raw_config)
+
       update_path =
         Routes.kube_cluster_raw_config_path(conn, :update, raw_config.kube_cluster, raw_config)
+
       conn = put(conn, update_path, raw_config: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
@@ -100,13 +102,15 @@ defmodule ServerWeb.RawConfigControllerTest do
 
       delete_path =
         Routes.kube_cluster_raw_config_path(conn, :delete, raw_config.kube_cluster_id, raw_config)
+
       show_path =
         Routes.kube_cluster_raw_config_path(conn, :show, raw_config.kube_cluster_id, raw_config)
 
       conn = delete(conn, delete_path)
       assert response(conn, 204)
+
       assert_error_sent 404, fn ->
-        get(conn,show_path)
+        get(conn, show_path)
       end
     end
   end
