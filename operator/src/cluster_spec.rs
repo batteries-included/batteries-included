@@ -6,12 +6,13 @@ use k8s_openapi::{
     apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition,
 };
 use kube::{
-    api::{Api, ObjectMeta, PatchParams},
+    api::{Api, ObjectMeta, Patch, PatchParams},
     client::Client,
     CustomResource,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use tracing::debug;
 
 use crate::error::Result;
@@ -76,8 +77,9 @@ pub async fn ensure_namespace(client: Client) -> Result<()> {
             },
             ..Namespace::default()
         };
+        let patch = Patch::Apply(json!(&new_ns));
         Ok(crds
-            .patch(DEFAULT_NAMESPACE, &params, serde_yaml::to_vec(&new_ns)?)
+            .patch(DEFAULT_NAMESPACE, &params, &patch)
             .await
             .map(|created_ns| {
                 debug!(created =?created_ns);
@@ -92,12 +94,9 @@ pub async fn ensure_crd(client: Client) -> Result<()> {
         let crds: Api<CustomResourceDefinition> = Api::all(client);
         let params = PatchParams::apply("battery_operator").force();
         debug!("Installing CRD.");
+        let patch = Patch::Apply(serde_json::json!(&BatteryCluster::crd()));
         Ok(crds
-            .patch(
-                DEFAULT_CRD_NAME,
-                &params,
-                serde_yaml::to_vec(&BatteryCluster::crd())?,
-            )
+            .patch(DEFAULT_CRD_NAME, &params, &patch)
             .await
             .map(|_| {
                 debug!("Successfully installed CRD.");

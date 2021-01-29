@@ -154,12 +154,6 @@ checksum = "ae44d1a3d5a19df61dd0c8beb138458ac2a53a7ac09eba97d55592540004306b"
 
 [[package]]
 name = "bytes"
-version = "0.5.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e4cec68f03f32e44924783795810fa50a7035d8c8ebe78580ad7e6c703fba38"
-
-[[package]]
-name = "bytes"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b700ce4376041dcd0a327fd0097c41095743c4c8af8887265942faf1100bd040"
@@ -497,7 +491,7 @@ version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6b67e66362108efccd8ac053abafc8b7a8d86a37e6e48fc4f6f7485eb5e9e6a5"
 dependencies = [
- "bytes 1.0.1",
+ "bytes",
  "fnv",
  "futures-core",
  "futures-sink",
@@ -532,7 +526,7 @@ version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7245cd7449cc792608c3c8a9eaf69bd4eabbabf802713748fd739c98b82f0747"
 dependencies = [
- "bytes 1.0.1",
+ "bytes",
  "fnv",
  "itoa",
 ]
@@ -543,7 +537,7 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2861bd27ee074e5ee891e8b539837a9430012e249d7f0ca2d795650f579c1994"
 dependencies = [
- "bytes 1.0.1",
+ "bytes",
  "http",
 ]
 
@@ -574,7 +568,7 @@ version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12219dc884514cb4a6a03737f4413c0e01c23a1b059b0156004b23f1e19dccbe"
 dependencies = [
- "bytes 1.0.1",
+ "bytes",
  "futures-channel",
  "futures-core",
  "futures-util",
@@ -598,7 +592,7 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6183ddfa99b85da61a140bea0efc93fdf56ceaa041b37d553518030827f9905"
 dependencies = [
- "bytes 1.0.1",
+ "bytes",
  "hyper",
  "native-tls",
  "tokio",
@@ -692,12 +686,12 @@ dependencies = [
 
 [[package]]
 name = "k8s-openapi"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcaa8ea719de24e21fe6fddb2ea996ca4e312d467c119f827551c4768d97dc5c"
+checksum = "bcc1f973542059e6d5a6d63de6a9539d0ec784f82b2327f3c1915d33200bc6a4"
 dependencies = [
  "base64",
- "bytes 0.5.6",
+ "bytes",
  "chrono",
  "serde",
  "serde-value",
@@ -706,13 +700,13 @@ dependencies = [
 
 [[package]]
 name = "kube"
-version = "0.47.0"
+version = "0.48.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25bb7bdbc1449790093a734b06a0bca7493395694f6e6e6f21e8006108085b3e"
+checksum = "65b653297fc54118e32fd198c3afea77481550ada03267c68e658714c716d72a"
 dependencies = [
  "Inflector",
  "base64",
- "bytes 1.0.1",
+ "bytes",
  "chrono",
  "dirs-next",
  "either",
@@ -738,9 +732,9 @@ dependencies = [
 
 [[package]]
 name = "kube-derive"
-version = "0.47.0"
+version = "0.48.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a23354cc3bce95db82eb0ad4da98fa528d0322703c61af30d8c32304e9bb5a89"
+checksum = "318bae2e5cae369e00852398961f8cc7967679c6fa06a7ee7ff10d05091bd6f2"
 dependencies = [
  "Inflector",
  "proc-macro2",
@@ -751,9 +745,9 @@ dependencies = [
 
 [[package]]
 name = "kube-runtime"
-version = "0.47.0"
+version = "0.48.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9115e708e2d40a43730dff1f9ceec331c3fa858cd77ebb3d4c41149c4698c8f5"
+checksum = "4eff8e169f7ce8b9d76edcf7dc546403c09391ea74081a9ebc4388597fc8f333"
 dependencies = [
  "dashmap",
  "derivative",
@@ -1241,7 +1235,7 @@ checksum = "fd281b1030aa675fb90aa994d07187645bb3c8fc756ca766e7c3070b439de9de"
 dependencies = [
  "async-compression",
  "base64",
- "bytes 1.0.1",
+ "bytes",
  "encoding_rs",
  "futures-core",
  "futures-util",
@@ -1723,7 +1717,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8efab2086f17abcddb8f756117665c958feee6b2e39974c2f1600592ab3a4195"
 dependencies = [
  "autocfg",
- "bytes 1.0.1",
+ "bytes",
  "libc",
  "memchr",
  "mio",
@@ -1775,7 +1769,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "feb971a26599ffd28066d387f109746df178eff14d5ea1e235015c5601967a4b"
 dependencies = [
  "async-stream",
- "bytes 1.0.1",
+ "bytes",
  "futures-core",
  "futures-sink",
  "log",
