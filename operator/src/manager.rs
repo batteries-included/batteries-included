@@ -76,11 +76,9 @@ impl State {
             cluster=?cluster,
             "Checking if cluster is adoped in the control server",
         );
-        let control_state = self.ctrl_client.get_cluster(cluster_id).await?;
+        let adopted_config = self.ctrl_client.adoption_config(cluster_id).await?;
 
-        let is_adopted = control_state.adopted.unwrap_or(false);
-
-        if is_adopted {
+        if adopted_config.is_adopted {
             let new_status = BatteryClusterStatus {
                 current_state: ClusterState::Starting,
                 ..status.clone()
@@ -93,7 +91,7 @@ impl State {
             );
             self.set_status(cluster, new_status).await?;
         }
-        Ok(is_adopted)
+        Ok(adopted_config.is_adopted)
     }
 
     async fn register(&self, cluster: &BatteryCluster) -> Result<String> {

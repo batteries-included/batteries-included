@@ -3,7 +3,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tracing::debug;
 
-use crate::error::Result;
+use crate::error::{BatteryError, Result};
 
 #[derive(Debug, Clone)]
 pub struct ControlServerClient {
@@ -29,6 +29,17 @@ struct JsonKubeClusterBody {
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
 struct ControlServerResponse<T> {
     data: T,
+}
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
+struct ConfigWrapper<T> {
+    id: String,
+    path: String,
+    content: T,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
+pub struct AdoptionConfig {
+    pub is_adopted: bool,
 }
 
 impl ControlServerClient {
@@ -67,5 +78,16 @@ impl ControlServerClient {
 
         debug!("Registration completed. payload = {:?}", payload);
         Ok(payload.data)
+    }
+
+    pub async fn adoption_config(&self, cluster_id: &str) -> Result<AdoptionConfig> {
+        let url = self.base_url.clone() + "/api/kube_clusters/" + cluster_id + "/raw_configs";
+        let request = self.http_client.get(&url).query(&[("path", "/adoption")]);
+        let response = request.send().await?;
+        let payload = response
+            .json::<ControlServerResponse<Vec<ConfigWrapper<AdoptionConfig>>>>()
+            .await?;
+        let config = payload.data.first().ok_or(BatteryError::UnexpectedNone)?;
+        Ok(config.content.clone())
     }
 }
