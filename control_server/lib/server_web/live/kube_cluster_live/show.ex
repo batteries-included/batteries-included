@@ -2,6 +2,8 @@ defmodule ServerWeb.KubeClusterLive.Show do
   use ServerWeb, :live_view
 
   alias Server.Clusters
+  alias Server.Configs
+  alias Server.Configs.Adoption
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,7 +15,8 @@ defmodule ServerWeb.KubeClusterLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:kube_cluster, Clusters.get_kube_cluster!(id))}
+     |> assign(:kube_cluster, Clusters.get_kube_cluster!(id))
+     |> assign(:adoption_config, Adoption.for_kube_cluster!(id))}
   end
 
   defp page_title(:show), do: "Show Kube cluster"

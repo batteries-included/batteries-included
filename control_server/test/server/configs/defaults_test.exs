@@ -1,4 +1,4 @@
-defmodule Server.DefaultConfigsTest do
+defmodule Server.Configs.DefaultsTest do
   use Server.DataCase
 
   import Server.Factory
@@ -9,8 +9,8 @@ defmodule Server.DefaultConfigsTest do
     cluster = insert(:kube_cluster)
     cluster_id = cluster.id
 
-    {:ok, %RawConfig{} = raw_config} = Defaults.create_adoption(cluster)
-    assert raw_config.content == %{}
+    {:ok, %RawConfig{} = raw_config} = Defaults.create_adoption(cluster.id)
+    assert raw_config.content == %{is_adopted: false}
     assert raw_config.path == "/adoption"
     assert raw_config.kube_cluster_id == cluster_id
   end
@@ -19,7 +19,7 @@ defmodule Server.DefaultConfigsTest do
     cluster = insert(:kube_cluster)
     cluster_id = cluster.id
 
-    {:ok, %RawConfig{} = raw_config} = Defaults.create_running_set(cluster)
+    {:ok, %RawConfig{} = raw_config} = Defaults.create_running_set(cluster.id)
     assert raw_config.content == %{}
     assert raw_config.path == "/running_set"
     assert raw_config.kube_cluster_id == cluster_id

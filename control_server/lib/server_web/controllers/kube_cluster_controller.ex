@@ -15,8 +15,7 @@ defmodule ServerWeb.KubeClusterController do
   def create(conn, %{"kube_cluster" => kube_cluster_params}) do
     with {:ok, kube_cluster} <-
            Clusters.create_kube_cluster(kube_cluster_params, :api) do
-      {:ok, _adoption_config} = Configs.Defaults.create_adoption(kube_cluster)
-      {:ok, _running_set} = Configs.Defaults.create_running_set(kube_cluster)
+      {:ok, _adoption_config} = Configs.Defaults.create_all(kube_cluster.id)
 
       conn
       |> put_status(:created)

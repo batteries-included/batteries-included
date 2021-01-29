@@ -5,24 +5,13 @@ defmodule ServerWeb.KubeClusterLiveTest do
 
   alias Server.Clusters
 
-  @create_attrs %{adopted: true, external_uid: "some external_uid"}
-  @update_attrs %{adopted: false, external_uid: "some updated external_uid"}
+  @create_attrs %{external_uid: "some external_uid"}
+  @update_attrs %{external_uid: "some updated external_uid"}
   @invalid_attrs %{external_uid: nil}
 
-  defp fixture(:kube_cluster) do
-    {:ok, kube_cluster} = Clusters.create_kube_cluster(@create_attrs)
-    kube_cluster
-  end
-
-  defp create_kube_cluster(_) do
-    kube_cluster = fixture(:kube_cluster)
-    %{kube_cluster: kube_cluster}
-  end
-
   describe "Index" do
-    setup [:create_kube_cluster]
-
-    test "lists all kube_clusters", %{conn: conn, kube_cluster: kube_cluster} do
+    test "lists all kube_clusters", %{conn: conn} do
+      kube_cluster = insert(:kube_cluster)
       {:ok, _index_live, html} = live(conn, Routes.kube_cluster_index_path(conn, :index))
 
       assert html =~ "Listing Kube clusters"

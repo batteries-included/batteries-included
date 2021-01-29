@@ -38,6 +38,9 @@ defmodule Server.Configs do
   """
   def get_raw_config!(id), do: Repo.get!(RawConfig, id)
 
+  def get_cluster_path!(kube_cluster_id, path),
+    do: Repo.get_by!(RawConfig, %{kube_cluster_id: kube_cluster_id, path: path})
+
   @doc """
   Creates a raw_config.
 
