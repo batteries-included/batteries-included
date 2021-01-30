@@ -1,5 +1,6 @@
 defmodule ServerWeb.KubeClusterLive.Show do
   use ServerWeb, :live_view
+  require Logger
 
   alias Server.Clusters
   alias Server.Configs
@@ -17,6 +18,14 @@ defmodule ServerWeb.KubeClusterLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:kube_cluster, Clusters.get_kube_cluster!(id))
      |> assign(:adoption_config, Adoption.for_kube_cluster!(id))}
+  end
+
+  @impl true
+  def handle_event("adopt_cluster", _value, socket) do
+    {:ok, new_config} = Adoption.adopt(socket.assigns.adoption_config)
+
+    # Updating json content seems to return
+    {:noreply, assign(socket, :adoption_config, new_config)}
   end
 
   defp page_title(:show), do: "Show Kube cluster"

@@ -4,6 +4,7 @@ defmodule ServerWeb.KubeClusterLiveTest do
   import Phoenix.LiveViewTest
 
   alias Server.Clusters
+  import Server.Factory
 
   @create_attrs %{external_uid: "some external_uid"}
   @update_attrs %{external_uid: "some updated external_uid"}
@@ -40,7 +41,8 @@ defmodule ServerWeb.KubeClusterLiveTest do
       assert html =~ "some external_uid"
     end
 
-    test "updates kube_cluster in listing", %{conn: conn, kube_cluster: kube_cluster} do
+    test "updates kube_cluster in listing", %{conn: conn} do
+      kube_cluster = insert(:kube_cluster)
       {:ok, index_live, _html} = live(conn, Routes.kube_cluster_index_path(conn, :index))
 
       assert index_live |> element("#kube_cluster-#{kube_cluster.id} a", "Edit") |> render_click() =~
@@ -62,7 +64,8 @@ defmodule ServerWeb.KubeClusterLiveTest do
       assert html =~ "some updated external_uid"
     end
 
-    test "deletes kube_cluster in listing", %{conn: conn, kube_cluster: kube_cluster} do
+    test "deletes kube_cluster in listing", %{conn: conn} do
+      kube_cluster = insert(:kube_cluster)
       {:ok, index_live, _html} = live(conn, Routes.kube_cluster_index_path(conn, :index))
 
       assert index_live
@@ -74,9 +77,10 @@ defmodule ServerWeb.KubeClusterLiveTest do
   end
 
   describe "Show" do
-    setup [:create_kube_cluster]
+    test "displays kube_cluster", %{conn: conn} do
+      kube_cluster = insert(:kube_cluster)
+      {:ok, _} = Server.Configs.Defaults.create_all(kube_cluster.id)
 
-    test "displays kube_cluster", %{conn: conn, kube_cluster: kube_cluster} do
       {:ok, _show_live, html} =
         live(conn, Routes.kube_cluster_show_path(conn, :show, kube_cluster))
 
@@ -84,7 +88,10 @@ defmodule ServerWeb.KubeClusterLiveTest do
       assert html =~ kube_cluster.external_uid
     end
 
-    test "updates kube_cluster within modal", %{conn: conn, kube_cluster: kube_cluster} do
+    test "updates kube_cluster within modal", %{conn: conn} do
+      kube_cluster = insert(:kube_cluster)
+      {:ok, _} = Server.Configs.Defaults.create_all(kube_cluster.id)
+
       {:ok, show_live, _html} =
         live(conn, Routes.kube_cluster_show_path(conn, :show, kube_cluster))
 

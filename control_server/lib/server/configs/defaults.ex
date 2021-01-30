@@ -3,9 +3,9 @@ defmodule Server.Configs.Defaults do
   alias Server.Configs
 
   def create_all(kube_cluster_id) do
-      {:ok, adoption_config} = Configs.Defaults.create_adoption(kube_cluster_id)
-      {:ok, running_set} = Configs.Defaults.create_running_set(kube_cluster_id)
-      {:ok, running_set: running_set, adoption_config: adoption_config}
+    {:ok, adoption_config} = Configs.Defaults.create_adoption(kube_cluster_id)
+    {:ok, running_set} = Configs.Defaults.create_running_set(kube_cluster_id)
+    {:ok, running_set: running_set, adoption_config: adoption_config}
   end
 
   def create_adoption(kube_cluster_id) do

@@ -18,8 +18,19 @@
 
 <h3>Main Configs</h3>
 <h5>Adoption</h5>
+
+<ul>
+  <li>
+    <strong>Is Adopted</strong>
+    <%= @adoption_config.content["is_adopted"] %>
+  </li>
+</ul>
 <h5>Running Set</h5>
 
 <h3>Actions</h3>
 <span><%= live_patch "Edit", to: Routes.kube_cluster_show_path(@socket, :edit, @kube_cluster), class: "button" %></span>
+<%= if ! @adoption_config.content["is_adopted"] do %>
+<span><%= link "Adopt", to: "#", "phx-click": "adopt_cluster" %></span>
+<% end %>
+
 <span><%= live_redirect "Back", to: Routes.kube_cluster_index_path(@socket, :index) %></span>

@@ -5,7 +5,7 @@ defmodule Server.Factory do
   def kube_cluster_factory do
     %Server.Clusters.KubeCluster{
       adopted: true,
-      external_uid: sequence("external_uid-"),
+      external_uid: sequence("external_uid-")
     }
   end
 
