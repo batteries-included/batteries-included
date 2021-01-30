@@ -3,7 +3,6 @@ defmodule ServerWeb.KubeClusterLiveTest do
 
   import Phoenix.LiveViewTest
 
-  alias Server.Clusters
   import Server.Factory
 
   @create_attrs %{external_uid: "some external_uid"}

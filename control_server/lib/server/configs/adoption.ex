@@ -10,4 +10,12 @@ defmodule Server.Configs.Adoption do
   def for_kube_cluster!(kube_cluster_id) do
     Configs.get_cluster_path!(kube_cluster_id, "/adoption")
   end
+
+  def create_for_cluster(kube_cluster_id) do
+    Configs.create_raw_config(%{
+      kube_cluster_id: kube_cluster_id,
+      path: "/adoption",
+      content: %{is_adopted: false}
+    })
+  end
 end

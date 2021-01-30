@@ -50,9 +50,9 @@ defmodule Server.Clusters do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_kube_cluster(attrs \\ %{}, source \\ :default) do
+  def create_kube_cluster(attrs \\ %{}) do
     %KubeCluster{}
-    |> KubeCluster.changeset(attrs, source)
+    |> KubeCluster.changeset(attrs)
     |> PaperTrail.insert()
     |> PaperTrailUtils.unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :created])
@@ -72,11 +72,10 @@ defmodule Server.Clusters do
   """
   def update_kube_cluster(
         %KubeCluster{} = kube_cluster,
-        attrs,
-        source \\ :default
+        attrs
       ) do
     kube_cluster
-    |> KubeCluster.changeset(attrs, source)
+    |> KubeCluster.changeset(attrs)
     |> PaperTrail.update()
     |> PaperTrailUtils.unwrap_papertrail()
     |> broadcast_change([:kube_cluster, :updated])
@@ -109,12 +108,8 @@ defmodule Server.Clusters do
       %Ecto.Changeset{data: %KubeCluster{}}
 
   """
-  def change_kube_cluster(
-        %KubeCluster{} = kube_cluster,
-        attrs \\ %{},
-        source \\ :default
-      ) do
-    KubeCluster.changeset(kube_cluster, attrs, source)
+  def change_kube_cluster(%KubeCluster{} = kube_cluster, attrs \\ %{}) do
+    KubeCluster.changeset(kube_cluster, attrs)
   end
 
   @topic inspect(__MODULE__)

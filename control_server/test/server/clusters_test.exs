@@ -6,9 +6,9 @@ defmodule Server.ClustersTest do
   describe "kube_clusters" do
     alias Server.Clusters.KubeCluster
 
-    @valid_attrs %{adopted: true, external_uid: "some external_uid"}
-    @update_attrs %{adopted: false, external_uid: "some updated external_uid"}
-    @invalid_attrs %{adopted: nil, external_uid: nil}
+    @valid_attrs %{external_uid: "some external_uid"}
+    @update_attrs %{external_uid: "some updated external_uid"}
+    @invalid_attrs %{external_uid: nil}
 
     def kube_cluster_fixture(attrs \\ %{}) do
       {:ok, kube_cluster} =
@@ -31,7 +31,6 @@ defmodule Server.ClustersTest do
 
     test "create_kube_cluster/1 with valid data creates a kube_cluster" do
       assert {:ok, %KubeCluster{} = kube_cluster} = Clusters.create_kube_cluster(@valid_attrs)
-      assert kube_cluster.adopted == true
       assert kube_cluster.external_uid == "some external_uid"
     end
 
@@ -45,7 +44,6 @@ defmodule Server.ClustersTest do
       assert {:ok, %KubeCluster{} = kube_cluster} =
                Clusters.update_kube_cluster(kube_cluster, @update_attrs)
 
-      assert kube_cluster.adopted == false
       assert kube_cluster.external_uid == "some updated external_uid"
     end
 

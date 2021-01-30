@@ -14,7 +14,7 @@ defmodule ServerWeb.KubeClusterController do
 
   def create(conn, %{"kube_cluster" => kube_cluster_params}) do
     with {:ok, kube_cluster} <-
-           Clusters.create_kube_cluster(kube_cluster_params, :api) do
+           Clusters.create_kube_cluster(kube_cluster_params) do
       {:ok, _adoption_config} = Configs.Defaults.create_all(kube_cluster.id)
 
       conn
@@ -33,7 +33,7 @@ defmodule ServerWeb.KubeClusterController do
     kube_cluster = Clusters.get_kube_cluster!(id)
 
     with {:ok, %KubeCluster{} = kube_cluster} <-
-           Clusters.update_kube_cluster(kube_cluster, kube_cluster_params, :api) do
+           Clusters.update_kube_cluster(kube_cluster, kube_cluster_params) do
       render(conn, "show.json", kube_cluster: kube_cluster)
     end
   end

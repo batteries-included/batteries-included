@@ -5,14 +5,12 @@ defmodule ServerWeb.KubeClusterControllerTest do
   alias Server.Clusters.KubeCluster
 
   @create_attrs %{
-    adopted: false,
     external_uid: "some external_uid"
   }
   @update_attrs %{
-    adopted: true,
     external_uid: "some updated external_uid"
   }
-  @invalid_attrs %{adopted: nil, external_uid: nil}
+  @invalid_attrs %{external_uid: nil}
 
   def fixture(:kube_cluster) do
     {:ok, kube_cluster} = Clusters.create_kube_cluster(@create_attrs)
@@ -39,7 +37,6 @@ defmodule ServerWeb.KubeClusterControllerTest do
 
       assert %{
                "id" => ^id,
-               "adopted" => false,
                "external_uid" => "some external_uid"
              } = json_response(conn, 200)["data"]
     end
@@ -68,7 +65,6 @@ defmodule ServerWeb.KubeClusterControllerTest do
 
       assert %{
                "id" => ^id,
-               "adopted" => false,
                "external_uid" => "some updated external_uid"
              } = json_response(conn, 200)["data"]
     end
