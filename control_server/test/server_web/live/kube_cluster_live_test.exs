@@ -85,6 +85,10 @@ defmodule ServerWeb.KubeClusterLiveTest do
 
       assert html =~ "Show Kube cluster"
       assert html =~ kube_cluster.external_uid
+
+      # assert that the monitoring service
+      # is there in the config listing
+      assert html =~ "monitoring"
     end
 
     test "updates kube_cluster within modal", %{conn: conn} do

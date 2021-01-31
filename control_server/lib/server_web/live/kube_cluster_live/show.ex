@@ -3,8 +3,8 @@ defmodule ServerWeb.KubeClusterLive.Show do
   require Logger
 
   alias Server.Clusters
-  alias Server.Configs
   alias Server.Configs.Adoption
+  alias Server.Configs.RunningSet
 
   @impl true
   def mount(_params, _session, socket) do
@@ -17,15 +17,32 @@ defmodule ServerWeb.KubeClusterLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:kube_cluster, Clusters.get_kube_cluster!(id))
-     |> assign(:adoption_config, Adoption.for_kube_cluster!(id))}
+     |> assign(:adoption_config, Adoption.for_kube_cluster!(id))
+     |> assign(:running_config, RunningSet.for_kube_cluster!(id))}
   end
 
   @impl true
   def handle_event("adopt_cluster", _value, socket) do
     {:ok, new_config} = Adoption.adopt(socket.assigns.adoption_config)
-
-    # Updating json content seems to return
     {:noreply, assign(socket, :adoption_config, new_config)}
+  end
+
+  @impl true
+  def handle_event("start_service", %{"service" => service_name}, socket) do
+    {:ok, new_config} =
+      socket.assigns.running_config
+      |> RunningSet.set_running(service_name)
+
+    {:noreply, assign(socket, :running_config, new_config)}
+  end
+
+  @impl true
+  def handle_event("stop_service", %{"service" => service_name}, socket) do
+    {:ok, new_config} =
+      socket.assigns.running_config
+      |> RunningSet.set_running(service_name, false)
+
+    {:noreply, assign(socket, :running_config, new_config)}
   end
 
   defp page_title(:show), do: "Show Kube cluster"
