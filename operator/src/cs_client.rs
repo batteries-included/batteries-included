@@ -1,6 +1,7 @@
 use reqwest::Client;
 use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use std::collections::HashMap;
 use tracing::debug;
 
 use crate::error::{BatteryError, Result};
@@ -80,14 +81,26 @@ impl ControlServerClient {
         Ok(payload.data)
     }
 
-    pub async fn adoption_config(&self, cluster_id: &str) -> Result<AdoptionConfig> {
+    async fn get_config<T: Clone + DeserializeOwned>(
+        &self,
+        cluster_id: &str,
+        path: &str,
+    ) -> Result<T> {
         let url = self.base_url.clone() + "/api/kube_clusters/" + cluster_id + "/raw_configs";
-        let request = self.http_client.get(&url).query(&[("path", "/adoption")]);
+        let request = self.http_client.get(&url).query(&[("path", path)]);
         let response = request.send().await?;
         let payload = response
-            .json::<ControlServerResponse<Vec<ConfigWrapper<AdoptionConfig>>>>()
+            .json::<ControlServerResponse<Vec<ConfigWrapper<T>>>>()
             .await?;
         let config = payload.data.first().ok_or(BatteryError::UnexpectedNone)?;
         Ok(config.content.clone())
+    }
+
+    pub async fn adoption_config(&self, cluster_id: &str) -> Result<AdoptionConfig> {
+        self.get_config(cluster_id, "/adoption").await
+    }
+
+    pub async fn running_set_config(&self, cluster_id: &str) -> Result<HashMap<String, bool>> {
+        self.get_config(cluster_id, "/running_set").await
     }
 }
