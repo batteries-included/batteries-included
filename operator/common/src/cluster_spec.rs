@@ -24,7 +24,6 @@ pub const DEFAULT_NAMESPACE: &str = "battery";
 pub enum ClusterState {
     Unregistered,
     AwaitingAdoption,
-    Starting,
     Running,
 }
 

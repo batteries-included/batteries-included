@@ -7,4 +7,6 @@
     "emmet.includeLanguages": {
         "html-eex": "html"
     },
+    "rust-analyzer.cargo.loadOutDirsFromCheck": true,
+    "rust-analyzer.procMacro.enable": true,
 }

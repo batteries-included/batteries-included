@@ -3,41 +3,28 @@
 
 use std::time::Duration;
 
+use crate::{
+    cluster_spec::{
+        ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterStatus, ClusterState,
+        DEFAULT_NAMESPACE,
+    },
+    cs_client::{AdoptionConfig, ControlServerClient},
+    error::{BatteryError, Result},
+};
 use futures::{future::BoxFuture, FutureExt, StreamExt};
 use kube::{
     api::{Api, ListParams, PostParams},
     client::Client as KubeClient,
 };
 use kube_runtime::controller::{Context, Controller, ReconcilerAction};
-use prometheus::{register_int_counter, IntCounter};
 use tracing::{debug, info, warn};
 
-use crate::{
-    cluster_spec::{
-        ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterStatus, ClusterState,
-        DEFAULT_NAMESPACE,
-    },
-    cs_client::ControlServerClient,
-    error::{BatteryError, BatteryError::BadRegistration, Result},
-};
-
-#[derive(Clone)]
-pub struct Metrics {
-    pub reconcile_called: IntCounter,
-}
-impl Metrics {
-    pub fn new() -> Self {
-        Self {
-            reconcile_called: register_int_counter!("reconcile_called", "Reconcile Called")
-                .unwrap(),
-        }
-    }
-}
+use crate::metrics::ControllerMetrics;
 
 pub struct State {
     pub kube_client: KubeClient,
     pub ctrl_client: ControlServerClient,
-    pub metrics: Metrics,
+    pub metrics: ControllerMetrics,
 }
 
 impl State {
@@ -76,11 +63,11 @@ impl State {
             cluster=?cluster,
             "Checking if cluster is adoped in the control server",
         );
-        let adopted_config = self.ctrl_client.adoption_config(cluster_id).await?;
+        let adopted_config: AdoptionConfig = self.ctrl_client.adoption_config(cluster_id).await?;
 
         if adopted_config.is_adopted {
             let new_status = BatteryClusterStatus {
-                current_state: ClusterState::Starting,
+                current_state: ClusterState::Running,
                 ..status.clone()
             };
             info!(
@@ -101,7 +88,7 @@ impl State {
             .register(cluster.metadata.uid.clone())
             .await?;
         // Extract the new id or return a bad reg error.
-        let new_id = reg_response.id.ok_or(BadRegistration)?;
+        let new_id = reg_response.id.ok_or(BatteryError::BadRegistration)?;
         self.set_status(
             cluster,
             BatteryClusterStatus {
@@ -166,7 +153,7 @@ impl Manager {
         let state = State {
             kube_client: kube_client.clone(),
             ctrl_client: ctrl_server,
-            metrics: Metrics::new(),
+            metrics: ControllerMetrics::new(),
         };
 
         // Context is mostly ARC. So use it for our keeping singular state.

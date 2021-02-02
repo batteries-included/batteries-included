@@ -1,30 +1,24 @@
 #![deny(clippy::all)]
-#![deny(clippy::pedantic)]
 #![deny(clippy::nursery)]
-#![allow(clippy::module_name_repetitions)]
 
-mod bat_logging;
-mod cluster_spec;
-mod cs_client;
-mod error;
-mod manager;
-
-use bat_logging::try_init_logging;
-use clap::{App, Arg};
-use cs_client::ControlServerClient;
-#[cfg(not(target_env = "msvc"))]
-use jemallocator::Jemalloc;
 use kube::client::Client;
 use tracing::{debug, info};
 
-use crate::{error::BatteryError, manager::Manager};
+use clap::{App, Arg};
+
+use common::{
+    cs_client::ControlServerClient, error::Result, logging::try_init_logging, manager::Manager,
+};
+
+#[cfg(not(target_env = "msvc"))]
+use jemallocator::Jemalloc;
 
 #[cfg(not(target_env = "msvc"))]
 #[global_allocator]
 static GLOBAL: Jemalloc = Jemalloc;
 
 #[tokio::main]
-async fn main() -> Result<(), BatteryError> {
+async fn main() -> Result<()> {
     let matches = App::new("Batteries Included")
         .author("Elliott Clark <elliott.neil.clark@gmail.com>")
         .arg(

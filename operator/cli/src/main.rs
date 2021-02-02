@@ -3,12 +3,15 @@
 #![deny(clippy::nursery)]
 #![allow(clippy::module_name_repetitions)]
 
-mod bat_logging;
-mod cluster_spec;
-mod error;
-
 use std::time::Duration;
 
+use common::{
+    cluster_spec::{
+        ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterSpec, DEFAULT_NAMESPACE,
+    },
+    error::Result,
+    logging::try_init_logging,
+};
 use kube::{
     api::{Api, PostParams},
     client::Client,
@@ -16,19 +19,11 @@ use kube::{
 use tokio::time::sleep;
 use tracing::{debug, info};
 
-use crate::{
-    bat_logging::try_init_logging,
-    cluster_spec::{
-        ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterSpec, DEFAULT_NAMESPACE,
-    },
-    error::BatteryError,
-};
-
 const DEFAULT_CLUSTER_NAME: &str = "default-cluster";
 const DEFAULT_ACCOUNT_NAME: &str = "test-account";
 
 #[tokio::main]
-async fn main() -> Result<(), BatteryError> {
+async fn main() -> Result<()> {
     try_init_logging()?;
     // Connect to kubernetes
     debug!("Connecting to kubernetes.");

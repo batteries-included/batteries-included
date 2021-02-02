@@ -44,6 +44,7 @@ pub struct AdoptionConfig {
 }
 
 impl ControlServerClient {
+    #[must_use]
     pub fn new(base_url: String) -> Self {
         Self {
             http_client: Client::new(),
