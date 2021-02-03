@@ -5,10 +5,8 @@ use kube::client::Client;
 use tracing::{debug, info};
 
 use clap::{App, Arg};
-
-use common::{
-    cs_client::ControlServerClient, error::Result, logging::try_init_logging, manager::Manager,
-};
+use common::{error::Result, logging::try_init_logging};
+use controller_core::{cs_client::ControlServerClient, manager::Manager};
 
 #[cfg(not(target_env = "msvc"))]
 use jemallocator::Jemalloc;

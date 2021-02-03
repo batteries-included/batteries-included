@@ -176,12 +176,10 @@ dependencies = [
  "k8s-openapi",
  "kube",
  "kube-runtime",
- "prometheus",
  "reqwest",
  "schemars",
  "serde",
  "serde_json",
- "serde_yaml",
  "thiserror",
  "tracing",
  "tracing-subscriber",
@@ -199,6 +197,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "common",
+ "controller_core",
  "futures",
  "jemallocator",
  "k8s-openapi",
@@ -207,6 +206,23 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "controller_core"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "futures",
+ "k8s-openapi",
+ "kube",
+ "kube-runtime",
+ "prometheus",
+ "reqwest",
+ "schemars",
+ "serde",
+ "serde_json",
+ "tracing",
 ]
 
 [[package]]

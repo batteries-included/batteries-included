@@ -4,7 +4,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::collections::HashMap;
 use tracing::debug;
 
-use crate::error::{BatteryError, Result};
+use common::error::{BatteryError, Result};
 
 #[derive(Debug, Clone)]
 pub struct ControlServerClient {

@@ -3,12 +3,12 @@
 
 use std::time::Duration;
 
-use crate::{
+use crate::cs_client::{AdoptionConfig, ControlServerClient};
+use common::{
     cluster_spec::{
         ensure_crd, ensure_namespace, BatteryCluster, BatteryClusterStatus, ClusterState,
         DEFAULT_NAMESPACE,
     },
-    cs_client::{AdoptionConfig, ControlServerClient},
     error::{BatteryError, Result},
 };
 use futures::{future::BoxFuture, FutureExt, StreamExt};
