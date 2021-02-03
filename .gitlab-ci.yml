@@ -1,0 +1,7 @@
+stages:
+  - build
+  - test 
+  - lint 
+
+include:
+  - local: "/ci/control-server.yml"

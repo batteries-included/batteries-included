@@ -1,4 +1,8 @@
 defmodule Server.Clusters.KubeCluster do
+  @moduledoc """
+  This is the root object that an operator will
+  create and then use owned resources for daily operation.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

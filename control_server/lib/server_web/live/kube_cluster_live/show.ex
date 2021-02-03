@@ -1,4 +1,8 @@
 defmodule ServerWeb.KubeClusterLive.Show do
+  @moduledoc """
+  Show a KubeCluster.
+  This is the cluter home page essentially.
+  """
   use ServerWeb, :live_view
   require Logger
 

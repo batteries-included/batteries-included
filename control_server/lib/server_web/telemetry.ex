@@ -1,4 +1,7 @@
 defmodule ServerWeb.Telemetry do
+  @moduledoc """
+  Metrics are cool.
+  """
   use Supervisor
   import Telemetry.Metrics
 

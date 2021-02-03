@@ -1,4 +1,7 @@
 defmodule ServerWeb.RawConfigLive.FormComponent do
+  @moduledoc """
+  Edit these things? Will the editing of these really ever make sense?
+  """
   use ServerWeb, :live_component
 
   alias Server.Configs

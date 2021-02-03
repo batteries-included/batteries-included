@@ -1,4 +1,7 @@
 defmodule ServerWeb.RawConfigLive.Show do
+  @moduledoc """
+  Module for the show action of RawConfig live view.
+  """
   use ServerWeb, :live_view
 
   alias Server.Configs
