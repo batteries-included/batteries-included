@@ -74,6 +74,14 @@ impl ControllerState {
         Ok(new_id)
     }
 
+    pub async fn sync_services(&self, cluster: &BatteryCluster) -> Result<()> {
+        debug!(
+            cluster=?cluster,
+            "Preparing to sync all services.",
+        );
+        Ok(())
+    }
+
     async fn set_status(
         &self,
         cluster: &BatteryCluster,

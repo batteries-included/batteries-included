@@ -31,6 +31,7 @@ pub async fn reconcile(cluster: BatteryCluster, ctx: Context<ControllerState>) -
             }
             _ => {
                 info!("Unhandled status. Assuming this is ok");
+                state.sync_services(&cluster).await?;
             }
         },
     };
