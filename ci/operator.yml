@@ -1,0 +1,49 @@
+.rust-template: &rust-template
+  image: rust:latest
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+    CARGO_HOME: $CI_PROJECT_DIR/.cargo
+  before_script:
+    - rustc --version
+    - cargo --version
+  cache:
+    paths:
+    - operator/target/
+    - $CARGO_HOME
+
+build-operator:
+  <<: *rust-template
+  stage: build
+  script:
+    - cd operator
+    - cargo build --all-features --tests
+
+test-operator:
+  <<: *rust-template
+  stage: test
+  script:
+    - cd operator
+    - cargo test --all --verbose
+
+test-nightly-operator:
+  <<: *rust-template
+  image: rustlang/rust:nightly
+  stage: test
+  script:
+    - cd operator
+    - cargo test --all --verbose
+  allow_failure: true
+
+lint-operator:
+  <<: *rust-template
+  stage: lint
+  before_script:
+    - rustup component add rustfmt
+    - rustup component add clippy
+    - cargo install cargo-audit
+  script:
+    - cd operator
+    - cargo fmt -- --check
+    - find {common,controller,controller_core,cli} -name "*.rs" | grep -ve target | xargs touch
+    - cargo clippy --tests --all --verbose -- -D warnings
+    - cargo audit

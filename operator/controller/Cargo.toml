@@ -12,7 +12,7 @@ common = {path = "../common"}
 controller_core = {path = "../controller_core"}
 # Concurrency
 futures = "0.3.12"
-tokio = { version = "1.1.1", features = ["full"] }
+tokio = { version = "1.2.0", features = ["full"] }
 
 # pinning the version to 1.17.x since
 # GKE is there it makes for a good stable target.
@@ -21,7 +21,7 @@ kube = { version = "0.48.0", features = ["derive"] }
 kube-runtime = "0.48.0"
 
 # Logging/Tracing
-tracing = "0.1.22"
+tracing = "0.1.23"
 # Print logging to stdout. Send it places
 tracing-subscriber = "0.2.15"
 # Jemalloc has so many tools and it's faster.

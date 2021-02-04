@@ -9,7 +9,10 @@ use tracing::{debug, info};
 
 use crate::state::ControllerState;
 
-pub async fn reconcile(cluster: BatteryCluster, ctx: Context<ControllerState>) -> Result<ReconcilerAction> {
+pub async fn reconcile(
+    cluster: BatteryCluster,
+    ctx: Context<ControllerState>,
+) -> Result<ReconcilerAction> {
     // Extract the metrics we'll need these while running.
     let state = ctx.get_ref();
     let met = &state.metrics;
