@@ -1,4 +1,7 @@
 defmodule Server.Configs.RawConfig do
+  @moduledoc """
+  The main module for db stored configs.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,7 @@
 defmodule ServerWeb.RawConfigLive.Index do
+  @moduledoc """
+  Live web app for database stored json configs.
+  """
   use ServerWeb, :live_view
 
   alias Server.Configs

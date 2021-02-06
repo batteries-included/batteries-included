@@ -1,0 +1,19 @@
+{
+  "skip_files": [
+    "test",
+    "lib/server.ex",
+    "lib/server_web.ex",
+    "lib/server/application.ex",
+    "lib/server/repo.ex",
+    "lib/server_web/endpoint.ex",
+    "lib/server_web/gettext.ex",
+    "lib/server_web/router.ex",
+    "lib/server_web/channels/user_socket.ex",
+    "lib/server_web/views/error_helpers.ex",
+    "lib/server_web/views/layout_view.ex"
+  ],
+
+  "coverage_options": {
+    "minimum_coverage": 85
+  }
+}

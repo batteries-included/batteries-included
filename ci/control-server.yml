@@ -1,0 +1,56 @@
+build:contol:
+  stage: build
+  image: elixir:1.11
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - control_server/_build
+      - control_server/deps
+  script:
+    - cd control_server
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get
+    - mix compile --warnings-as-errors
+
+
+test:control:
+  stage: test
+  image: elixir:1.11
+  services:
+    - postgres:12.5-alpine
+  variables:
+    POSTGRES_DB: batteryinc_test
+    POSTGRES_HOST: postgres
+    POSTGRES_USER: batterydbuser
+    POSTGRES_PASSWORD: "batterypasswd"
+    MIX_ENV: "test"
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - control_server/_build
+      - control_server/deps
+  script:
+    - cd control_server
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix ecto.reset
+    - mix coveralls
+
+
+lint:control:
+  stage: lint
+  image: elixir:1.11
+  variables:
+    MIX_ENV: "test"
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - control_server/_build
+      - control_server/deps
+  script:
+    - cd control_server
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix format --check-formatted
+    - mix credo --strict

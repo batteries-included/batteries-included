@@ -1,4 +1,7 @@
 defmodule ServerWeb.KubeClusterLive.Index do
+  @moduledoc """
+  Look at all these clusters here.
+  """
   use ServerWeb, :live_view
 
   alias Server.Clusters

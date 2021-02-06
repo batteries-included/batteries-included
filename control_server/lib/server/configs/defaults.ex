@@ -1,4 +1,7 @@
 defmodule Server.Configs.Defaults do
+  @moduledoc """
+  Module for creating the default configs for a new KubeCluster
+  """
   import Ecto.Query, warn: false
 
   alias Server.Configs.Adoption

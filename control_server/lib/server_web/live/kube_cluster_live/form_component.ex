@@ -1,4 +1,7 @@
 defmodule ServerWeb.KubeClusterLive.FormComponent do
+  @moduledoc """
+  Form for seeing and editing the kubecluster model.
+  """
   use ServerWeb, :live_component
 
   alias Server.Clusters

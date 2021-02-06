@@ -1,4 +1,7 @@
 defmodule ServerWeb.ModalComponent do
+  @moduledoc """
+  Modal component usually used in the edit commands.
+  """
   use ServerWeb, :live_component
 
   @impl true

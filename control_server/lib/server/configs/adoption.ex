@@ -1,4 +1,7 @@
 defmodule Server.Configs.Adoption do
+  @moduledoc """
+  This module provides access to show that a cluster is actually owned by this control server and not malicious.sstring, boo
+  """
   import Ecto.Query, warn: false
   alias Server.Configs
 

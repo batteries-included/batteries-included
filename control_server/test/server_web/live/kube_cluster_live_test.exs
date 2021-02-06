@@ -5,6 +5,8 @@ defmodule ServerWeb.KubeClusterLiveTest do
 
   import Server.Factory
 
+  alias Server.Configs.Defaults
+
   @create_attrs %{external_uid: "some external_uid"}
   @update_attrs %{external_uid: "some updated external_uid"}
   @invalid_attrs %{external_uid: nil}
@@ -78,7 +80,7 @@ defmodule ServerWeb.KubeClusterLiveTest do
   describe "Show" do
     test "displays kube_cluster", %{conn: conn} do
       kube_cluster = insert(:kube_cluster)
-      {:ok, _} = Server.Configs.Defaults.create_all(kube_cluster.id)
+      {:ok, _} = Defaults.create_all(kube_cluster.id)
 
       {:ok, _show_live, html} =
         live(conn, Routes.kube_cluster_show_path(conn, :show, kube_cluster))
@@ -93,7 +95,7 @@ defmodule ServerWeb.KubeClusterLiveTest do
 
     test "updates kube_cluster within modal", %{conn: conn} do
       kube_cluster = insert(:kube_cluster)
-      {:ok, _} = Server.Configs.Defaults.create_all(kube_cluster.id)
+      {:ok, _} = Defaults.create_all(kube_cluster.id)
 
       {:ok, show_live, _html} =
         live(conn, Routes.kube_cluster_show_path(conn, :show, kube_cluster))

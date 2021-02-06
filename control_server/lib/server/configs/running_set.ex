@@ -1,4 +1,9 @@
 defmodule Server.Configs.RunningSet do
+  @moduledoc """
+  Module for working with the running set config. The running set
+  config is a mapping of what should be running/installed in a cluster.
+  Map[string, bool]
+  """
   import Ecto.Query, warn: false
   alias Server.Configs
 
