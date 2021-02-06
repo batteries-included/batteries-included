@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+use common::error::Result;
 use k8s_openapi::{
     api::{
         apps::v1::{Deployment, DeploymentSpec},
@@ -11,6 +12,7 @@ use k8s_openapi::{
     apimachinery::pkg::{apis::meta::v1::LabelSelector, util::intstr::IntOrString},
 };
 use kube::api::ObjectMeta;
+use serde_json::json;
 
 pub struct PrometheusInstaller {
     pub base_labels: BTreeMap<String, String>,
@@ -37,69 +39,56 @@ impl PrometheusInstaller {
             prometheus_labels,
         }
     }
-    pub fn build_prometheus_deployment(&self, replicas: i32) -> Deployment {
-        Deployment {
-            metadata: ObjectMeta {
-                name: Some("prometheus-deployment".to_string()),
-                labels: Some(self.prometheus_labels.clone()),
-                ..ObjectMeta::default()
+    pub fn build_prometheus_deployment(&self, replicas: i32) -> Result<Deployment> {
+        Ok(serde_json::from_value(json!({
+            "metadata":{
+                "name":"prometheus-deployment",
+                "labels": self.prometheus_labels.clone()
             },
-            spec: Some(DeploymentSpec {
-                replicas: Some(replicas),
-                selector: LabelSelector {
-                    match_labels: Some(self.prometheus_labels.clone()),
-                    ..LabelSelector::default()
+            "spec": {
+                "replicas": replicas,
+                "selector": {
+                    "matchLabels": self.prometheus_labels.clone(),
                 },
-                template: PodTemplateSpec {
-                    metadata: Some(ObjectMeta {
-                        labels: Some(self.prometheus_labels.clone()),
-                        ..ObjectMeta::default()
-                    }),
-                    spec: Some(PodSpec {
-                        containers: vec![Container {
-                            image: Some("prom/prometheus".to_string()),
-                            volume_mounts: Some(vec![VolumeMount {
-                                name: "config-volume".to_string(),
-                                mount_path: "/etc/prometheus/prometheus.yml".to_string(),
-                                sub_path: Some("prometheus.yml".to_string()),
-                                ..VolumeMount::default()
-                            }]),
-                            ports: Some(vec![ContainerPort {
-                                container_port: 9090,
-                                ..ContainerPort::default()
-                            }]),
-                            ..Container::default()
+                "template": {
+                    "metadata":{
+                        "name":"prometheus-deployment",
+                        "labels": self.prometheus_labels.clone()
+                    },
+                    "spec":{
+                        "containers": [{
+                            "image": "prom/prometheus",
+                            "volumeMounts": [{
+                                "name":"config-volume",
+                                "mountPath":"/etc/prometheus/prometheus.yml",
+                                "subPath":"prometheus.yml"
+                            }],
+                            "ports": [{"containerPort": 9090}]
                         }],
-                        volumes: Some(vec![Volume {
-                            name: "config-volume".to_string(),
-                            ..Volume::default()
-                        }]),
-                        ..PodSpec::default()
-                    }),
-                },
-                ..DeploymentSpec::default()
-            }),
-            ..Deployment::default()
-        }
+                        "volumes": [{
+                            "name":"config-volume",
+                            "configMap": "prometheus-cm"
+                        }]
+                    }
+                }
+            }
+        }))?)
     }
 
-    pub fn build_prometheus_service(&self) -> Service {
-        Service {
-            metadata: ObjectMeta {
-                name: Some("prometheus".to_string()),
-                ..ObjectMeta::default()
+    pub fn build_prometheus_service(&self) -> Result<Service> {
+        Ok(serde_json::from_value(json!({
+            "metadata":{
+                "name":"prometheus",
+                "labels": self.prometheus_labels.clone()
             },
-            spec: Some(ServiceSpec {
-                selector: Some(self.prometheus_labels.clone()),
-                ports: Some(vec![ServicePort {
-                    name: Some("main".to_string()),
-                    port: 9090,
-                    target_port: Some(IntOrString::Int(9090)),
-                    ..ServicePort::default()
-                }]),
-                ..ServiceSpec::default()
-            }),
-            ..Service::default()
-        }
+            "spec": {
+                "selector": self.prometheus_labels.clone()
+            },
+            "ports":[{
+                "name": 9090,
+                "targetPort": 9090,
+                "protocol": "TCP"
+            }]
+        }))?)
     }
 }

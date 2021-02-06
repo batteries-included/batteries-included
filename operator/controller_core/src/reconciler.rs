@@ -33,7 +33,6 @@ pub async fn reconcile(
                 state.check_adopt(&cluster).await?;
             }
             _ => {
-                info!("Unhandled status. Assuming this is ok");
                 state.sync_services(&cluster).await?;
             }
         },
