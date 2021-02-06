@@ -1,4 +1,4 @@
-compile-contol:
+build:contol:
   stage: build
   image: elixir:1.11
   cache:
@@ -14,7 +14,7 @@ compile-contol:
     - mix compile --warnings-as-errors
 
 
-test-control:
+test:control:
   stage: test
   image: elixir:1.11
   services:
@@ -38,7 +38,7 @@ test-control:
     - mix coveralls
 
 
-lint-control:
+lint:control:
   stage: lint
   image: elixir:1.11
   variables:

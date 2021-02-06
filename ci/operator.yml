@@ -6,26 +6,38 @@
   before_script:
     - rustc --version
     - cargo --version
-  cache:
-    paths:
-    - operator/target/
-    - $CARGO_HOME
 
-build-operator:
+build:operator:
   <<: *rust-template
   stage: build
   script:
     - cd operator
     - cargo build --all-features --tests
+  cache:
+    paths:
+    - operator/target/
+    - $CARGO_HOME
 
-test-operator:
+build:operator:nightly:
+  <<: *rust-template
+  image: rustlang/rust:nightly
+  stage: build
+  script:
+    - cd operator
+    - cargo build --all-features --tests
+  cache:
+    paths:
+    - operator/target/
+    - $CARGO_HOME
+
+test:operator:
   <<: *rust-template
   stage: test
   script:
     - cd operator
     - cargo test --all --verbose
 
-test-nightly-operator:
+test:operator:nightly:
   <<: *rust-template
   image: rustlang/rust:nightly
   stage: test
@@ -34,7 +46,7 @@ test-nightly-operator:
     - cargo test --all --verbose
   allow_failure: true
 
-lint-operator:
+lint:operator:
   <<: *rust-template
   stage: lint
   before_script:
