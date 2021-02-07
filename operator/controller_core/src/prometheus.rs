@@ -1,17 +1,7 @@
 use std::collections::BTreeMap;
 
 use common::error::Result;
-use k8s_openapi::{
-    api::{
-        apps::v1::{Deployment, DeploymentSpec},
-        core::v1::{
-            Container, ContainerPort, PodSpec, PodTemplateSpec, Service, ServicePort, ServiceSpec,
-            Volume, VolumeMount,
-        },
-    },
-    apimachinery::pkg::{apis::meta::v1::LabelSelector, util::intstr::IntOrString},
-};
-use kube::api::ObjectMeta;
+use k8s_openapi::api::{apps::v1::Deployment, core::v1::Service};
 use serde_json::json;
 
 pub struct PrometheusInstaller {
@@ -57,6 +47,7 @@ impl PrometheusInstaller {
                     },
                     "spec":{
                         "containers": [{
+                            "name": "prometheus",
                             "image": "prom/prometheus",
                             "volumeMounts": [{
                                 "name":"config-volume",
@@ -67,7 +58,10 @@ impl PrometheusInstaller {
                         }],
                         "volumes": [{
                             "name":"config-volume",
-                            "configMap": "prometheus-cm"
+                            "configMap": {
+                                "name": "prometheus-cm",
+                                "optional": true,
+                            }
                         }]
                     }
                 }
@@ -90,5 +84,24 @@ impl PrometheusInstaller {
                 "protocol": "TCP"
             }]
         }))?)
+    }
+}
+
+#[cfg(test)]
+mod test_prometheus {
+    use super::*;
+
+    #[test]
+    fn test_build_service() {
+        let pi = PrometheusInstaller::new();
+        let res = pi.build_prometheus_service();
+        assert_eq!(true, res.is_ok());
+    }
+
+    #[test]
+    fn test_build_deployment() {
+        let pi = PrometheusInstaller::new();
+        let res = pi.build_prometheus_deployment(3);
+        assert_eq!(true, res.is_ok());
     }
 }

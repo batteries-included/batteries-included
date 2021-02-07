@@ -5,7 +5,7 @@ use common::{
     error::Result,
 };
 use kube_runtime::controller::{Context, ReconcilerAction};
-use tracing::{debug, info};
+use tracing::debug;
 
 use crate::state::ControllerState;
 
