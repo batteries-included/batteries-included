@@ -1,13 +1,14 @@
 use crate::{
     cs_client::{AdoptionConfig, ControlServerClient},
     metrics::ControllerMetrics,
+    prometheus::PrometheusInstaller,
 };
 use common::{
     cluster_spec::{BatteryCluster, BatteryClusterStatus, ClusterState, DEFAULT_NAMESPACE},
     error::{BatteryError, Result},
 };
 use kube::{api::PostParams, client::Client as KubeClient, Api};
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 pub struct ControllerState {
     pub kube_client: KubeClient,
@@ -28,10 +29,11 @@ impl ControllerState {
             .as_ref()
             .ok_or(BatteryError::UnexpectedNone)?;
 
-        let cluster_id = &status
+        let cluster_id = status
             .registered_cluster_id
             .as_ref()
             .ok_or(BatteryError::UnexpectedNone)?;
+
         debug!(
             cluster=?cluster,
             "Checking if cluster is adoped in the control server",
@@ -79,6 +81,29 @@ impl ControllerState {
             cluster=?cluster,
             "Preparing to sync all services.",
         );
+        let status = cluster
+            .status
+            .as_ref()
+            .ok_or(BatteryError::UnexpectedNone)?;
+        let cluster_id = status
+            .registered_cluster_id
+            .as_ref()
+            .ok_or(BatteryError::UnexpectedNone)?;
+        let running_set = self.ctrl_client.running_set_config(cluster_id).await?;
+
+        debug!(running_set=?running_set, "Got running set");
+
+        for (svc_name, &running) in running_set.iter() {
+            match svc_name.as_str() {
+                "monitoring" => {
+                    let pi = PrometheusInstaller::new();
+                    pi.sync(self.kube_client.clone(), running).await?;
+                }
+                _ => {
+                    warn!("Got unexpected service name. {:?}", svc_name)
+                }
+            }
+        }
         Ok(())
     }
 

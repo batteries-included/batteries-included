@@ -5,7 +5,7 @@ use common::{
     error::Result,
 };
 use kube_runtime::controller::{Context, ReconcilerAction};
-use tracing::{debug, info};
+use tracing::debug;
 
 use crate::state::ControllerState;
 
@@ -33,7 +33,6 @@ pub async fn reconcile(
                 state.check_adopt(&cluster).await?;
             }
             _ => {
-                info!("Unhandled status. Assuming this is ok");
                 state.sync_services(&cluster).await?;
             }
         },
