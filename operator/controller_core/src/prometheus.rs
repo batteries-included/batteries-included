@@ -13,20 +13,20 @@ use kube::{
     Api,
 };
 
-pub struct PrometheusInstaller {
+pub struct PrometheusManager {
     pub base_labels: BTreeMap<String, String>,
     deployment_name: String,
     service_name: String,
     config_map_name: String,
 }
 
-impl Default for PrometheusInstaller {
+impl Default for PrometheusManager {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl PrometheusInstaller {
+impl PrometheusManager {
     #[must_use]
     pub fn new() -> Self {
         let base_labels: BTreeMap<String, String> = vec![
@@ -148,14 +148,14 @@ mod test_prometheus {
 
     #[test]
     fn test_build_service() {
-        let pi = PrometheusInstaller::new();
+        let pi = PrometheusManager::new();
         let res = pi.build_prometheus_service();
         assert_eq!(true, res.is_ok());
     }
 
     #[test]
     fn test_build_deployment() {
-        let pi = PrometheusInstaller::new();
+        let pi = PrometheusManager::new();
         let res = pi.build_prometheus_deployment(3);
         assert_eq!(true, res.is_ok());
     }

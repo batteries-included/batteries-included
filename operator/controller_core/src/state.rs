@@ -1,7 +1,7 @@
 use crate::{
     cs_client::{AdoptionConfig, ControlServerClient},
     metrics::ControllerMetrics,
-    prometheus::PrometheusInstaller,
+    prometheus::PrometheusManager,
 };
 use common::{
     cluster_spec::{BatteryCluster, BatteryClusterStatus, ClusterState, DEFAULT_NAMESPACE},
@@ -93,11 +93,13 @@ impl ControllerState {
 
         debug!(running_set=?running_set, "Got running set");
 
+        // This is the main reconcile loop of a running controller.
+        // TODO: generlize this into events sent to running processes ala erlang.
         for (svc_name, &running) in running_set.iter() {
             match svc_name.as_str() {
                 "monitoring" => {
-                    let pi = PrometheusInstaller::new();
-                    pi.sync(self.kube_client.clone(), running).await?;
+                    let pom_manager = PrometheusManager::new();
+                    pom_manager.sync(self.kube_client.clone(), running).await?;
                 }
                 _ => {
                     warn!("Got unexpected service name. {:?}", svc_name)

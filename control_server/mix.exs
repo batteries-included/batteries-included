@@ -53,7 +53,7 @@ defmodule Server.MixProject do
 
       # SQL
       {:phoenix_ecto, "~> 4.1"},
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_sql, "~> 3.5"},
       {:postgrex, ">= 0.0.0"},
 
       # Auth
@@ -67,8 +67,8 @@ defmodule Server.MixProject do
       {:filtrex, "~> 0.4.3"},
 
       # Testing.
-      {:ex_machina, "~> 2.4", only: :test},
-      {:floki, ">= 0.27.0", only: :test},
+      {:ex_machina, "~> 2.6", only: :test},
+      {:floki, "~> 0.30", only: :test},
       {:excoveralls, "~> 0.10", only: :test}
     ]
   end
