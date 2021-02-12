@@ -2,8 +2,8 @@ defmodule Server.Configs.PrometheusTest do
   use Server.DataCase
 
   import Server.Factory
-  alias Server.Configs.RawConfig
   alias Server.Configs.Prometheus
+  alias Server.Configs.RawConfig
 
   test "create_for_cluster" do
     cluster = insert(:kube_cluster)
