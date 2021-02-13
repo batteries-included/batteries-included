@@ -6,6 +6,7 @@ use k8s_openapi::api::{
     core::v1::{ConfigMap, Service},
 };
 use serde_json::json;
+use serde_yaml;
 
 use kube::{
     api::{Patch, PatchParams},
@@ -13,22 +14,19 @@ use kube::{
     Api,
 };
 
+use crate::cs_client::ControlServerClient;
+
 pub struct PrometheusManager {
     pub base_labels: BTreeMap<String, String>,
     deployment_name: String,
     service_name: String,
     config_map_name: String,
-}
-
-impl Default for PrometheusManager {
-    fn default() -> Self {
-        Self::new()
-    }
+    cluster_id: String,
 }
 
 impl PrometheusManager {
     #[must_use]
-    pub fn new() -> Self {
+    pub fn new(cluster_id: String) -> Self {
         let base_labels: BTreeMap<String, String> = vec![
             ("purpose".to_string(), "general".to_string()),
             ("app".to_string(), "prometheus".to_string()),
@@ -39,6 +37,7 @@ impl PrometheusManager {
         let service_name = "prometheus-service".to_string();
         let config_map_name = "prometheus-config".to_string();
         Self {
+            cluster_id,
             base_labels,
             deployment_name,
             service_name,
@@ -46,7 +45,12 @@ impl PrometheusManager {
         }
     }
 
-    pub async fn sync(&self, kube_client: KubeClient, running: bool) -> Result<()> {
+    pub async fn sync(
+        &self,
+        kube_client: KubeClient,
+        ctrl_client: ControlServerClient,
+        running: bool,
+    ) -> Result<()> {
         let deployments: Api<Deployment> = Api::namespaced(kube_client.clone(), DEFAULT_NAMESPACE);
         let config_maps: Api<ConfigMap> = Api::namespaced(kube_client.clone(), DEFAULT_NAMESPACE);
         let services: Api<Service> = Api::namespaced(kube_client, DEFAULT_NAMESPACE);
@@ -58,7 +62,7 @@ impl PrometheusManager {
                 .patch(&self.deployment_name, &params, &dep_patch)
                 .await?;
 
-            let cfg_patch = Patch::Apply(self.build_prometheus_configmap()?);
+            let cfg_patch = Patch::Apply(self.build_prometheus_configmap(ctrl_client).await?);
             config_maps
                 .patch(&self.config_map_name, &params, &cfg_patch)
                 .await?;
@@ -110,9 +114,12 @@ impl PrometheusManager {
         }))?)
     }
 
-    pub fn build_prometheus_configmap(&self) -> Result<ConfigMap> {
-        let yml_conents = "rule_files:
-        - '/etc/prometheus-rules/*.rules'";
+    pub async fn build_prometheus_configmap(
+        &self,
+        ctrl_client: ControlServerClient,
+    ) -> Result<ConfigMap> {
+        let config = ctrl_client.prometheus_main_config(&self.cluster_id).await?;
+        let yml_conents = serde_yaml::to_string(&config)?;
         Ok(serde_json::from_value(json!({
             "metadata": {
                 "name": self.config_map_name,
@@ -148,14 +155,14 @@ mod test_prometheus {
 
     #[test]
     fn test_build_service() {
-        let pi = PrometheusManager::new();
+        let pi = PrometheusManager::new("test".to_string());
         let res = pi.build_prometheus_service();
         assert_eq!(true, res.is_ok());
     }
 
     #[test]
     fn test_build_deployment() {
-        let pi = PrometheusManager::new();
+        let pi = PrometheusManager::new("test".to_string());
         let res = pi.build_prometheus_deployment(3);
         assert_eq!(true, res.is_ok());
     }

@@ -98,8 +98,10 @@ impl ControllerState {
         for (svc_name, &running) in running_set.iter() {
             match svc_name.as_str() {
                 "monitoring" => {
-                    let pom_manager = PrometheusManager::new();
-                    pom_manager.sync(self.kube_client.clone(), running).await?;
+                    let pom_manager = PrometheusManager::new(cluster_id.clone());
+                    pom_manager
+                        .sync(self.kube_client.clone(), self.ctrl_client.clone(), running)
+                        .await?;
                 }
                 _ => {
                     warn!("Got unexpected service name. {:?}", svc_name)

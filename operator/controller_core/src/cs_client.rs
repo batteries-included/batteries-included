@@ -89,7 +89,10 @@ impl ControlServerClient {
         let url = self.base_url.clone() + "/api/kube_clusters/" + cluster_id + "/configs" + path;
         let request = self.http_client.get(&url);
         let response = request.send().await?;
-        debug!("Got config {:?}", response);
+        debug!(
+            url=?url, response=?response,
+            "Fetching config complete"
+        );
         let payload = response
             .json::<ControlServerResponse<ConfigWrapper<T>>>()
             .await?;
@@ -103,5 +106,9 @@ impl ControlServerClient {
 
     pub async fn running_set_config(&self, cluster_id: &str) -> Result<HashMap<String, bool>> {
         self.get_config(cluster_id, "/running_set").await
+    }
+
+    pub async fn prometheus_main_config(&self, cluster_id: &str) -> Result<serde_json::Value> {
+        self.get_config(cluster_id, "/prometheus/main").await
     }
 }
