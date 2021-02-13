@@ -41,6 +41,7 @@ defmodule ServerWeb.Router do
 
     resources "/kube_clusters", KubeClusterController, except: [:new, :edit] do
       resources "/raw_configs", RawConfigController, except: [:new, :edit]
+      get "/configs/*path", ComputedConfigController, :show
     end
   end
 

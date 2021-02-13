@@ -8,7 +8,7 @@ defmodule Server.ComputedConfigs do
 
   def get(kube_cluster_id, "/prometheus/main" = path) do
     %RawConfig{} = base_config = Configs.get_cluster_path!(kube_cluster_id, "/prometheus/base")
-    {:ok, %{path: path, contents: base_config.content}}
+    {:ok, %{path: path, content: base_config.content}}
   end
 
   def get(kube_cluster_id, path) do
