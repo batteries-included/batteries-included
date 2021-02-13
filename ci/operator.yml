@@ -2,7 +2,9 @@
   image: rust:latest
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-    CARGO_HOME: $CI_PROJECT_DIR/.cargo
+    CARGO_HOME: /cache/cargo
+    CARGO_TARGET_DIR: /cache/cargo_target
+
   before_script:
     - rustc --version
     - cargo --version
@@ -13,10 +15,6 @@ build:operator:
   script:
     - cd operator
     - cargo build --all-features --tests
-  cache:
-    paths:
-    - operator/target/
-    - $CARGO_HOME
 
 build:operator:nightly:
   <<: *rust-template
@@ -25,10 +23,6 @@ build:operator:nightly:
   script:
     - cd operator
     - cargo build --all-features --tests
-  cache:
-    paths:
-    - operator/target/
-    - $CARGO_HOME
 
 test:operator:
   <<: *rust-template
