@@ -4,7 +4,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::collections::HashMap;
 use tracing::debug;
 
-use common::error::{BatteryError, Result};
+use common::error::Result;
 
 #[derive(Debug, Clone)]
 pub struct ControlServerClient {
@@ -33,7 +33,6 @@ struct ControlServerResponse<T> {
 }
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
 struct ConfigWrapper<T> {
-    id: String,
     path: String,
     content: T,
 }
@@ -87,14 +86,15 @@ impl ControlServerClient {
         cluster_id: &str,
         path: &str,
     ) -> Result<T> {
-        let url = self.base_url.clone() + "/api/kube_clusters/" + cluster_id + "/raw_configs";
-        let request = self.http_client.get(&url).query(&[("path", path)]);
+        let url = self.base_url.clone() + "/api/kube_clusters/" + cluster_id + "/configs" + path;
+        let request = self.http_client.get(&url);
         let response = request.send().await?;
+        debug!("Got config {:?}", response);
         let payload = response
-            .json::<ControlServerResponse<Vec<ConfigWrapper<T>>>>()
+            .json::<ControlServerResponse<ConfigWrapper<T>>>()
             .await?;
-        let config = payload.data.first().ok_or(BatteryError::UnexpectedNone)?;
-        Ok(config.content.clone())
+        let config = payload.data;
+        Ok(config.content)
     }
 
     pub async fn adoption_config(&self, cluster_id: &str) -> Result<AdoptionConfig> {
