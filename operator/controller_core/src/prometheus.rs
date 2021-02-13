@@ -6,7 +6,6 @@ use k8s_openapi::api::{
     core::v1::{ConfigMap, Service},
 };
 use serde_json::json;
-use serde_yaml;
 
 use kube::{
     api::{Patch, PatchParams},
