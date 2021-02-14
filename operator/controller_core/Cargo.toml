@@ -11,6 +11,7 @@ version = "0.1.0"
 common = {path = "../common"}
 
 futures = "0.3.12"
+async-trait = "0.1.42"
 
 # Metrics
 prometheus = "0.11.0"

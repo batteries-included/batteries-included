@@ -1,5 +1,5 @@
 use crate::{
-    cs_client::{AdoptionConfig, ControlServerClient},
+    cs_client::{AdoptionConfig, ClusterRegister, ConfigFetcher, ControlServerClient},
     metrics::ControllerMetrics,
     prometheus::PrometheusManager,
 };
@@ -100,7 +100,7 @@ impl ControllerState {
                 "monitoring" => {
                     let pom_manager = PrometheusManager::new(cluster_id.clone());
                     pom_manager
-                        .sync(self.kube_client.clone(), self.ctrl_client.clone(), running)
+                        .sync(running, self.kube_client.clone(), &self.ctrl_client)
                         .await?;
                 }
                 _ => {

@@ -13,7 +13,7 @@ use kube::{
     Api,
 };
 
-use crate::cs_client::ControlServerClient;
+use crate::cs_client::ConfigFetcher;
 
 pub struct PrometheusManager {
     pub base_labels: BTreeMap<String, String>,
@@ -32,9 +32,9 @@ impl PrometheusManager {
         ]
         .into_iter()
         .collect();
-        let deployment_name = "prometheus-deployment".to_string();
-        let service_name = "prometheus-service".to_string();
-        let config_map_name = "prometheus-config".to_string();
+        let deployment_name = "prometheus-dep".to_string();
+        let service_name = "prometheus-svc".to_string();
+        let config_map_name = "prometheus-cfg".to_string();
         Self {
             cluster_id,
             base_labels,
@@ -44,11 +44,11 @@ impl PrometheusManager {
         }
     }
 
-    pub async fn sync(
+    pub async fn sync<Fetcher: ConfigFetcher>(
         &self,
-        kube_client: KubeClient,
-        ctrl_client: ControlServerClient,
         running: bool,
+        kube_client: KubeClient,
+        ctrl_client: &Fetcher,
     ) -> Result<()> {
         let deployments: Api<Deployment> = Api::namespaced(kube_client.clone(), DEFAULT_NAMESPACE);
         let config_maps: Api<ConfigMap> = Api::namespaced(kube_client.clone(), DEFAULT_NAMESPACE);
@@ -113,11 +113,11 @@ impl PrometheusManager {
         }))?)
     }
 
-    pub async fn build_prometheus_configmap(
+    pub async fn build_prometheus_configmap<Fetcher: ConfigFetcher>(
         &self,
-        ctrl_client: ControlServerClient,
+        cfg_fetch: &Fetcher,
     ) -> Result<ConfigMap> {
-        let config = ctrl_client.prometheus_main_config(&self.cluster_id).await?;
+        let config = cfg_fetch.prometheus_main_config(&self.cluster_id).await?;
         let yml_conents = serde_yaml::to_string(&config)?;
         Ok(serde_json::from_value(json!({
             "metadata": {
@@ -151,6 +151,30 @@ impl PrometheusManager {
 #[cfg(test)]
 mod test_prometheus {
     use super::*;
+    use async_trait::async_trait;
+
+    struct MockPomFetcher;
+
+    #[async_trait]
+    impl ConfigFetcher for MockPomFetcher {
+        async fn adoption_config(
+            &self,
+            _cluster_id: &str,
+        ) -> Result<crate::cs_client::AdoptionConfig> {
+            todo!()
+        }
+
+        async fn running_set_config(
+            &self,
+            _cluster_id: &str,
+        ) -> Result<std::collections::HashMap<String, bool>> {
+            todo!()
+        }
+
+        async fn prometheus_main_config(&self, _cluster_id: &str) -> Result<serde_json::Value> {
+            todo!()
+        }
+    }
 
     #[test]
     fn test_build_service() {
