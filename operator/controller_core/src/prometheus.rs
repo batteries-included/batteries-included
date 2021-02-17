@@ -13,32 +13,30 @@ use kube::{
     Api,
 };
 
-pub struct PrometheusInstaller {
+use crate::cs_client::ConfigFetcher;
+
+pub struct PrometheusManager {
     pub base_labels: BTreeMap<String, String>,
     deployment_name: String,
     service_name: String,
     config_map_name: String,
+    cluster_id: String,
 }
 
-impl Default for PrometheusInstaller {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl PrometheusInstaller {
+impl PrometheusManager {
     #[must_use]
-    pub fn new() -> Self {
+    pub fn new(cluster_id: String) -> Self {
         let base_labels: BTreeMap<String, String> = vec![
             ("purpose".to_string(), "general".to_string()),
             ("app".to_string(), "prometheus".to_string()),
         ]
         .into_iter()
         .collect();
-        let deployment_name = "prometheus-deployment".to_string();
-        let service_name = "prometheus-service".to_string();
-        let config_map_name = "prometheus-config".to_string();
+        let deployment_name = "prometheus-dep".to_string();
+        let service_name = "prometheus-svc".to_string();
+        let config_map_name = "prometheus-cfg".to_string();
         Self {
+            cluster_id,
             base_labels,
             deployment_name,
             service_name,
@@ -46,7 +44,12 @@ impl PrometheusInstaller {
         }
     }
 
-    pub async fn sync(&self, kube_client: KubeClient, running: bool) -> Result<()> {
+    pub async fn sync<Fetcher: ConfigFetcher>(
+        &self,
+        running: bool,
+        kube_client: KubeClient,
+        ctrl_client: &Fetcher,
+    ) -> Result<()> {
         let deployments: Api<Deployment> = Api::namespaced(kube_client.clone(), DEFAULT_NAMESPACE);
         let config_maps: Api<ConfigMap> = Api::namespaced(kube_client.clone(), DEFAULT_NAMESPACE);
         let services: Api<Service> = Api::namespaced(kube_client, DEFAULT_NAMESPACE);
@@ -58,7 +61,7 @@ impl PrometheusInstaller {
                 .patch(&self.deployment_name, &params, &dep_patch)
                 .await?;
 
-            let cfg_patch = Patch::Apply(self.build_prometheus_configmap()?);
+            let cfg_patch = Patch::Apply(self.build_prometheus_configmap(ctrl_client).await?);
             config_maps
                 .patch(&self.config_map_name, &params, &cfg_patch)
                 .await?;
@@ -110,9 +113,12 @@ impl PrometheusInstaller {
         }))?)
     }
 
-    pub fn build_prometheus_configmap(&self) -> Result<ConfigMap> {
-        let yml_conents = "rule_files:
-        - '/etc/prometheus-rules/*.rules'";
+    pub async fn build_prometheus_configmap<Fetcher: ConfigFetcher>(
+        &self,
+        cfg_fetch: &Fetcher,
+    ) -> Result<ConfigMap> {
+        let config = cfg_fetch.prometheus_main_config(&self.cluster_id).await?;
+        let yml_conents = serde_yaml::to_string(&config)?;
         Ok(serde_json::from_value(json!({
             "metadata": {
                 "name": self.config_map_name,
@@ -145,17 +151,41 @@ impl PrometheusInstaller {
 #[cfg(test)]
 mod test_prometheus {
     use super::*;
+    use async_trait::async_trait;
+
+    struct MockPomFetcher;
+
+    #[async_trait]
+    impl ConfigFetcher for MockPomFetcher {
+        async fn adoption_config(
+            &self,
+            _cluster_id: &str,
+        ) -> Result<crate::cs_client::AdoptionConfig> {
+            todo!()
+        }
+
+        async fn running_set_config(
+            &self,
+            _cluster_id: &str,
+        ) -> Result<std::collections::HashMap<String, bool>> {
+            todo!()
+        }
+
+        async fn prometheus_main_config(&self, _cluster_id: &str) -> Result<serde_json::Value> {
+            todo!()
+        }
+    }
 
     #[test]
     fn test_build_service() {
-        let pi = PrometheusInstaller::new();
+        let pi = PrometheusManager::new("test".to_string());
         let res = pi.build_prometheus_service();
         assert_eq!(true, res.is_ok());
     }
 
     #[test]
     fn test_build_deployment() {
-        let pi = PrometheusInstaller::new();
+        let pi = PrometheusManager::new("test".to_string());
         let res = pi.build_prometheus_deployment(3);
         assert_eq!(true, res.is_ok());
     }

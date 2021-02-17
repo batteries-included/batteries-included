@@ -19,6 +19,12 @@ pub enum BatteryError {
         source: serde_json::Error,
     },
 
+    #[error("Error while serializing/de-serializing to yaml")]
+    SerdeYAML {
+        #[from]
+        source: serde_yaml::Error,
+    },
+
     #[error("Error while creating default logger.")]
     EnvLogging {
         #[from]
