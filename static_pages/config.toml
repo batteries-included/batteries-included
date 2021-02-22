@@ -1,0 +1,4 @@
+baseURL = "http://www.batteriesincluded.com/"
+languageCode = "en-us"
+title = "Batteries Included"
+theme = "batteriesincluded"
