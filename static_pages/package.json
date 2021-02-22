@@ -1,0 +1,14 @@
+{
+  "name": "batteriesincluded",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "true"
+  },
+  "author": "Elliott Clark",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bootstrap": "^5.0.0-beta2"
+  }
+}

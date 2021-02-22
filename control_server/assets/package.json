@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.6.0",
-    "bootstrap": "^5.0.0-beta1",
+    "bootstrap": "^5.0.0-beta2",
     "nprogress": "^0.2.0",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
