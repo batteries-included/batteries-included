@@ -16,14 +16,7 @@ $font-size-base: 1.1rem;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    text-align: center;
-    vertical-align: middle;
-    position: relative;
-    h1 {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        margin: auto;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
