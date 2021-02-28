@@ -1,4 +1,4 @@
-use common::actors::messages::ActorMessage;
+use common::{actors::messages::ActorMessage, error::Result};
 use tokio::sync::mpsc;
 
 struct RootActor {
@@ -16,7 +16,7 @@ impl RootActor {
     }
     fn handle_message(&mut self, msg: ActorMessage) {
         match msg {
-            ActorMessage::Shutdown => (),
+            ActorMessage::Ping => (),
         }
     }
 }
@@ -31,6 +31,9 @@ impl RootActorHandle {
         let mut actor = RootActor::new(receiver);
         tokio::spawn(async move { actor.run().await });
         Self { sender }
+    }
+    pub async fn ping(&self) -> Result<()> {
+        Ok(self.sender.send(ActorMessage::Ping).await?)
     }
 }
 impl Default for RootActorHandle {
@@ -47,5 +50,11 @@ mod test_root_actor {
     async fn test_start() {
         let _handle = RootActorHandle::new();
         assert!(true);
+    }
+
+    #[tokio::test]
+    async fn test_ping() {
+        let handle = RootActorHandle::new();
+        handle.ping().await.unwrap();
     }
 }
