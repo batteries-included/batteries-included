@@ -1,3 +1,4 @@
+pub mod actors;
 pub mod cs_client;
 pub mod manager;
 pub mod metrics;
