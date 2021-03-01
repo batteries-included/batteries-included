@@ -1,6 +1,5 @@
 use std::error::Error;
 
-use crate::actors::messages::ActorMessage;
 use kube::Error as KubeError;
 use reqwest::Error as ReqwestError;
 use thiserror::Error;
@@ -48,12 +47,6 @@ pub enum BatteryError {
     Reqwest {
         #[from]
         source: ReqwestError,
-    },
-
-    #[error("Error sending ActorMessage to tokio mpsc")]
-    TokioSend {
-        #[from]
-        source: tokio::sync::mpsc::error::SendError<ActorMessage>,
     },
 
     #[error("Error unwrapping None")]

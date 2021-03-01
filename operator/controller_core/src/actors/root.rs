@@ -1,60 +1,84 @@
-use common::{actors::messages::ActorMessage, error::Result};
-use tokio::sync::mpsc;
+use common::error::Result;
+use kube::client::Client as KubeClient;
 
-struct RootActor {
-    receiver: mpsc::Receiver<ActorMessage>,
+use crate::cs_client::ControlServerClient;
+use actix::prelude::*;
+
+use common::cluster_spec::{ensure_crd, ensure_namespace};
+
+#[derive(Debug, Clone, Copy)]
+pub enum RootClusterStatus {
+    Uninitialized,
+    NamespacePresent,
+    Initialized
 }
 
-impl RootActor {
-    fn new(receiver: mpsc::Receiver<ActorMessage>) -> Self {
-        Self { receiver }
-    }
-    async fn run(&mut self) {
-        while let Some(msg) = self.receiver.recv().await {
-            self.handle_message(msg);
+struct TryStart;
+
+impl Message for TryStart {
+    type Result = RootClusterStatus;
+}
+
+struct RootClusterActor {
+    status: RootClusterStatus,
+    kube_client: KubeClient,
+    ctrl_server: ControlServerClient,
+}
+
+impl RootClusterActor {
+    pub fn new(kube_client: KubeClient, ctrl_server: ControlServerClient) -> Self {
+        Self {
+            status: RootClusterStatus::Uninitialized,
+            kube_client,
+            ctrl_server,
         }
     }
-    fn handle_message(&mut self, msg: ActorMessage) {
-        match msg {
-            ActorMessage::Ping => (),
+}
+
+impl Actor for RootClusterActor {
+    type Context = Context<Self>;
+}
+
+impl Handler<TryStart> for RootClusterActor {
+    type Result = AtomicResponse<Self, RootClusterStatus>;
+
+    fn handle(&mut self, _msg: TryStart, _ctx: &mut Self::Context) -> Self::Result {
+        match self.status {
+            RootClusterStatus::Uninitialized => {
+                let kc = self.kube_client.clone();
+                AtomicResponse::new(Box::pin(
+                    async {
+                        ensure_namespace(kc).await?;
+                        Ok(())
+                    }
+                    .into_actor(self)
+                    .map(|res: Result<()>, this, _| {
+                        if res.is_ok() {
+                            this.status = RootClusterStatus::NamespacePresent
+                        }
+                        this.status
+                    }),
+                ))
+            }
+            RootClusterStatus::NamespacePresent => {
+                let kc = self.kube_client.clone();
+                AtomicResponse::new(Box::pin(
+                    async {
+                        ensure_crd(kc).await?;
+                        Ok(())
+                    }
+                    .into_actor(self)
+                    .map(|res: Result<()>, this, _| {
+                        if res.is_ok() {
+                            this.status = RootClusterStatus::Initialized
+                        }
+                        this.status
+                    }),
+                ))
+            }
+            RootClusterStatus::Initialized => AtomicResponse::new(Box::pin(
+                async {}.into_actor(self).map(|_, this, _| this.status),
+            )),
         }
-    }
-}
-
-#[derive(Clone)]
-pub struct RootActorHandle {
-    sender: mpsc::Sender<ActorMessage>,
-}
-impl RootActorHandle {
-    pub fn new() -> Self {
-        let (sender, receiver) = mpsc::channel(8);
-        let mut actor = RootActor::new(receiver);
-        tokio::spawn(async move { actor.run().await });
-        Self { sender }
-    }
-    pub async fn ping(&self) -> Result<()> {
-        Ok(self.sender.send(ActorMessage::Ping).await?)
-    }
-}
-impl Default for RootActorHandle {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-#[cfg(test)]
-mod test_root_actor {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_start() {
-        let _handle = RootActorHandle::new();
-        assert!(true);
-    }
-
-    #[tokio::test]
-    async fn test_ping() {
-        let handle = RootActorHandle::new();
-        handle.ping().await.unwrap();
     }
 }
