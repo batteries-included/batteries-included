@@ -16,6 +16,7 @@ tokio = { version = "1.2.0", features = ["full"] }
 
 # Actors
 actix = "0.10.0"
+actix-broker = "0.3.1"
 actix-rt = "2.1.0"
 
 # Metrics
