@@ -52,8 +52,7 @@ impl Handler<TryStart> for NamespaceDependencyActor {
         let kc = self.kube_client.clone();
         ctx.wait(
             async {
-                let res = ensure_namespace(kc).await;
-                res.is_ok()
+                ensure_namespace(kc).await.is_ok()
             }
             .into_actor(self)
             .map(|install_success, this, en_ctx| {

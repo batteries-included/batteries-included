@@ -51,8 +51,7 @@ impl Handler<TryStart> for CrdDependencyActor {
         let kc = self.kube_client.clone();
         ctx.wait(
             async {
-                let res = ensure_crd(kc).await;
-                res.is_ok()
+                ensure_crd(kc).await.is_ok()
             }
             .into_actor(self)
             .map(|install_success, this, en_ctx| {
