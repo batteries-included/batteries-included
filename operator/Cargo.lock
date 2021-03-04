@@ -326,6 +326,8 @@ dependencies = [
 name = "controller"
 version = "0.1.0"
 dependencies = [
+ "actix",
+ "actix-rt 2.1.0",
  "clap",
  "common",
  "controller_core",

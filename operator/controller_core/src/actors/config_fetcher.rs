@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use actix::prelude::*;
 
-use crate::cs_client::{AdoptionConfig, ConfigFetcher, ControlServerClient};
-use common::error::Result;
+use crate::cs_client::{ConfigFetcher, ControlServerClient};
+use common::{cs_types::AdoptionConfig, error::Result};
 
 struct GetAdoptionConfigMessage;
 impl Message for GetAdoptionConfigMessage {
@@ -42,11 +42,14 @@ impl Handler<GetAdoptionConfigMessage> for ConfigFetcherActor {
     }
 }
 
-
 impl Handler<GetRunningSetConfigMessage> for ConfigFetcherActor {
     type Result = ResponseFuture<Result<HashMap<String, bool>>>;
 
-    fn handle(&mut self, _msg: GetRunningSetConfigMessage, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self,
+        _msg: GetRunningSetConfigMessage,
+        _ctx: &mut Self::Context,
+    ) -> Self::Result {
         let client = self.cs_client.clone();
         let cluster_id = self.cluster_id.clone();
         Box::pin(async move { client.running_set_config(&cluster_id).await })

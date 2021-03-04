@@ -41,22 +41,23 @@ impl Handler<NamespacePresentMessage> for CrdDependencyActor {
     type Result = ();
     fn handle(&mut self, _msg: NamespacePresentMessage, ctx: &mut Self::Context) -> Self::Result {
         // Once we hear that the controller should start
+        debug!("Got namespace present message trying to start for CRD.");
         ctx.address().do_send(TryStart);
     }
 }
 
 impl Handler<TryStart> for CrdDependencyActor {
-    type Result = ();
-    fn handle(&mut self, _msg: TryStart, ctx: &mut Self::Context) -> Self::Result {
+    type Result = ResponseActFuture<Self, ()>;
+    fn handle(&mut self, _msg: TryStart, _ctx: &mut Self::Context) -> Self::Result {
         let kc = self.kube_client.clone();
-        ctx.wait(
-            async {
-                ensure_crd(kc).await.is_ok()
+        Box::pin(async move {
+              ensure_crd(kc).await.is_ok()
             }
             .into_actor(self)
             .map(|install_success, this, en_ctx| {
                 this.installed |= install_success;
 
+                debug!("CRD install success = {}", install_success);
                 if install_success {
                     this.issue_sync::<SystemBroker, _>(CrdPresentMessage, en_ctx);
                 }
@@ -71,7 +72,7 @@ impl Handler<TryStart> for CrdDependencyActor {
                         }
                     });
                 }
-            }),
-        );
+                ()
+            }))
     }
 }

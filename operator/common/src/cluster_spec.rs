@@ -22,21 +22,19 @@ pub const DEFAULT_NAMESPACE: &str = "battery";
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 pub enum ClusterState {
-    Unregistered,
     AwaitingAdoption,
     Running,
 }
 
 impl Default for ClusterState {
     fn default() -> Self {
-        Self::Unregistered
+        Self::AwaitingAdoption
     }
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
 pub struct BatteryClusterStatus {
     pub current_state: ClusterState,
-    pub registered_cluster_id: Option<String>,
 }
 
 #[derive(CustomResource, Serialize, Deserialize, JsonSchema, Default, Debug, Clone)]
@@ -50,6 +48,7 @@ pub struct BatteryClusterStatus {
 )]
 pub struct BatteryClusterSpec {
     pub account: String,
+    pub registered_cluster_id: String,
 }
 
 pub async fn is_crd_installed(client: Client) -> bool {
@@ -60,7 +59,10 @@ pub async fn is_crd_installed(client: Client) -> bool {
 
 pub async fn is_namespace_installed(client: Client) -> bool {
     let ns: Api<Namespace> = Api::all(client);
-    ns.get(DEFAULT_NAMESPACE).await.is_ok()
+    debug!("Trying to get the namespace");
+    let res = ns.get(DEFAULT_NAMESPACE).await;
+    debug!("Got a result.");
+    res.is_ok()
 }
 
 pub async fn ensure_namespace(client: Client) -> Result<()> {

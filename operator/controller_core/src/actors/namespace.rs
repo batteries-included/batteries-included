@@ -41,21 +41,26 @@ impl Actor for NamespaceDependencyActor {
 impl Handler<StartMessage> for NamespaceDependencyActor {
     type Result = ();
     fn handle(&mut self, _msg: StartMessage, ctx: &mut Self::Context) -> Self::Result {
+        debug!("Got StartMessage since namespace is one of the first things needed try starting the install.");
         // Once we hear that the controller should start
         ctx.address().do_send(TryStart);
     }
 }
 
 impl Handler<TryStart> for NamespaceDependencyActor {
-    type Result = ();
-    fn handle(&mut self, _msg: TryStart, ctx: &mut Self::Context) -> Self::Result {
+    type Result = ResponseActFuture<Self, ()>;
+
+    fn handle(&mut self, _msg: TryStart, _ctx: &mut Self::Context) -> Self::Result {
         let kc = self.kube_client.clone();
-        ctx.wait(
-            async {
+        Box::pin(
+            async move {
+                debug!("Ensuring the namespace");
                 ensure_namespace(kc).await.is_ok()
             }
             .into_actor(self)
             .map(|install_success, this, en_ctx| {
+                
+                debug!("Namespace install success = {}", install_success);
                 this.installed |= install_success;
 
                 if install_success {
@@ -72,6 +77,6 @@ impl Handler<TryStart> for NamespaceDependencyActor {
                     });
                 }
             }),
-        );
+        )
     }
 }
