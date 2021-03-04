@@ -1,12 +1,14 @@
 #![deny(clippy::all)]
 #![deny(clippy::nursery)]
 
+use actix::{Actor, System};
+
 use kube::client::Client;
 use tracing::{debug, info};
 
 use clap::{App, Arg};
-use common::{error::Result, logging::try_init_logging};
-use controller_core::{cs_client::ControlServerClient, manager::Manager};
+use common::logging::try_init_logging;
+use controller_core::{actors::root::RootClusterActor, cs_client::ControlServerClient};
 
 #[cfg(not(target_env = "msvc"))]
 use jemallocator::Jemalloc;
@@ -16,7 +18,7 @@ use jemallocator::Jemalloc;
 static GLOBAL: Jemalloc = Jemalloc;
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() {
     let matches = App::new("Batteries Included")
         .author("Elliott Clark <elliott.neil.clark@gmail.com>")
         .arg(
@@ -29,25 +31,26 @@ async fn main() -> Result<()> {
         )
         .get_matches();
 
-    try_init_logging()?;
+    try_init_logging().unwrap();
 
     let server_url = matches
         .value_of("server_url")
-        .unwrap_or("http://localhost:4000");
+        .unwrap_or("http://localhost:4000")
+        .to_string();
 
     info!("Server url = {server_url} ", server_url = server_url);
 
-    // Connect to kubernetes
-    let kube_client = Client::try_default().await?;
+    let mut sys = System::new("root_system");
 
-    debug!("kube client created. Creating the control server client");
-    let ctrl_client = ControlServerClient::new(server_url.to_string());
+    let _addr = sys.block_on(async move {
+        // Connect to kubernetes
+        let kube_client = Client::try_default().await.unwrap();
 
-    let manager = Manager::new(kube_client, ctrl_client).await?;
+        debug!("kube client created. Creating the control server client");
+        let cs_client = ControlServerClient::new(server_url.to_string());
 
-    manager.drainer.await;
+        RootClusterActor::new(kube_client, cs_client).start()
+    });
 
-    // Let the world know. Bye.
-    info!("Manager drained. Shutting down.");
-    Ok(())
+    sys.run().unwrap();
 }
