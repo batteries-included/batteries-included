@@ -51,7 +51,7 @@ impl Actor for ClusterControllerActor {
                 |cluster, _| async {
                     Broker::<SystemBroker>::issue_async(KubeClusterStatusMessage(cluster));
                     Ok(ReconcilerAction {
-                        requeue_after: Some(Duration::from_secs(5)),
+                        requeue_after: Some(Duration::from_secs(90)),
                     })
                 },
                 |_: &std::io::Error, _| ReconcilerAction {
