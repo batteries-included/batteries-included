@@ -19,8 +19,7 @@ defmodule Server.ConfigsTest do
     test "get_raw_config!/1 returns the raw_config with given id" do
       raw_config = insert(:raw_config)
 
-      assert Map.delete(raw_config, :kube_cluster) ==
-               Map.delete(Configs.get_raw_config!(raw_config.id), :kube_cluster)
+      assert raw_config == Configs.get_raw_config!(raw_config.id)
     end
 
     test "update_raw_config/2 with valid data updates the raw_config" do
@@ -37,8 +36,7 @@ defmodule Server.ConfigsTest do
       raw_config = insert(:raw_config)
       assert {:error, %Ecto.Changeset{}} = Configs.update_raw_config(raw_config, @invalid_attrs)
 
-      assert Map.delete(raw_config, :kube_cluster) ==
-               Map.delete(Configs.get_raw_config!(raw_config.id), :kube_cluster)
+      assert raw_config == Configs.get_raw_config!(raw_config.id)
     end
 
     test "delete_raw_config/1 deletes the raw_config" do

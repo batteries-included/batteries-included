@@ -7,10 +7,9 @@ defmodule Server.Configs.ComputedConfigsTest do
   alias Server.Configs.Defaults
 
   test "get" do
-    cluster = insert(:kube_cluster)
-    {:ok, _} = Defaults.create_all(cluster.id)
+    {:ok, _} = Defaults.create_all()
 
-    {:ok, config} = ComputedConfigs.get(cluster.id, "/prometheus/main")
+    {:ok, config} = ComputedConfigs.get("/prometheus/main")
     assert config.path == "/prometheus/main"
   end
 end

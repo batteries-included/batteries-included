@@ -11,10 +11,9 @@ defmodule ServerWeb.ComputedConfigControllerTest do
 
   describe "show" do
     test "get a good path", %{conn: conn} do
-      cluster = insert(:kube_cluster)
-      {:ok, _} = Defaults.create_all(cluster.id)
+      {:ok, _} = Defaults.create_all()
 
-      route = Routes.kube_cluster_computed_config_path(conn, :show, cluster.id, ["running_set"])
+      route = Routes.computed_config_path(conn, :show, ["running_set"])
 
       conn = get(conn, route)
 

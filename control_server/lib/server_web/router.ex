@@ -19,14 +19,6 @@ defmodule ServerWeb.Router do
 
     live "/", PageLive, :index
 
-    ## KubeCluster ##
-    live "/kube_clusters", KubeClusterLive.Index, :index
-    live "/kube_clusters/new", KubeClusterLive.Index, :new
-    live "/kube_clusters/:id/edit", KubeClusterLive.Index, :edit
-
-    live "/kube_clusters/:id", KubeClusterLive.Show, :show
-    live "/kube_clusters/:id/show/edit", KubeClusterLive.Show, :edit
-
     ## RawConfig ##
     live "/raw_configs", RawConfigLive.Index, :index
     live "/raw_configs/new", RawConfigLive.Index, :new
@@ -39,10 +31,8 @@ defmodule ServerWeb.Router do
   scope "/api", ServerWeb do
     pipe_through :api
 
-    resources "/kube_clusters", KubeClusterController, except: [:new, :edit] do
-      resources "/raw_configs", RawConfigController, except: [:new, :edit]
-      get "/configs/*path", ComputedConfigController, :show
-    end
+    resources "/raw_configs", RawConfigController, except: [:new, :edit]
+    get "/configs/*path", ComputedConfigController, :show
   end
 
   # Enables LiveDashboard only for development
