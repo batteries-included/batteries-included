@@ -1,8 +1,6 @@
 defmodule Server.Configs.ComputedConfigsTest do
   use Server.DataCase
 
-  import Server.Factory
-
   alias Server.ComputedConfigs
   alias Server.Configs.Defaults
 

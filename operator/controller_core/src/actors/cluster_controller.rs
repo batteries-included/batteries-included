@@ -3,7 +3,7 @@ use std::time::Duration;
 use actix::prelude::*;
 use actix_broker::{Broker, SystemBroker};
 use common::cluster_spec::{BatteryCluster, DEFAULT_NAMESPACE};
-use futures::{future::BoxFuture, FutureExt, StreamExt};
+use futures::{FutureExt, StreamExt};
 use kube::{
     api::{Api, ListParams},
     client::Client as KubeClient,

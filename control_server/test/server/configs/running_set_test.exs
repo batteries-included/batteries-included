@@ -1,7 +1,6 @@
 defmodule Server.Configs.DefaultsTest do
   use Server.DataCase
 
-  import Server.Factory
   alias Server.Configs.RawConfig
   alias Server.Configs.RunningSet
 

@@ -5,7 +5,6 @@ defmodule ServerWeb.RawConfigLiveTest do
 
   import Server.Factory
 
-  # @create_attrs %{content: %{}, path: "some/path"}
   @update_attrs %{path: "some/updated/path"}
   @invalid_attrs %{path: nil}
 
@@ -26,9 +25,9 @@ defmodule ServerWeb.RawConfigLiveTest do
 
       assert_patch(index_live, Routes.raw_config_index_path(conn, :new))
 
-      # assert index_live
-      #        |> form("#raw_config-form", raw_config: @invalid_attrs)
-      #        |> render_change() =~ "can&apos;t be blank"
+      assert index_live
+             |> form("#raw_config-form", raw_config: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         index_live
@@ -49,9 +48,9 @@ defmodule ServerWeb.RawConfigLiveTest do
 
       assert_patch(index_live, Routes.raw_config_index_path(conn, :edit, raw_config))
 
-      # assert index_live
-      #        |> form("#raw_config-form", raw_config: @invalid_attrs)
-      #        |> render_change() =~ "can&apos;t be blank"
+      assert index_live
+             |> form("#raw_config-form", raw_config: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         index_live
@@ -73,8 +72,6 @@ defmodule ServerWeb.RawConfigLiveTest do
   end
 
   describe "Show" do
-    #   setup [:create_raw_config]
-
     test "displays raw_config", %{conn: conn} do
       raw_config = insert(:raw_config)
       {:ok, _show_live, html} = live(conn, Routes.raw_config_show_path(conn, :show, raw_config))
@@ -92,9 +89,9 @@ defmodule ServerWeb.RawConfigLiveTest do
 
       assert_patch(show_live, Routes.raw_config_show_path(conn, :edit, raw_config))
 
-      # assert show_live
-      #        |> form("#raw_config-form", raw_config: @invalid_attrs)
-      #        |> render_change() =~ "can&apos;t be blank"
+      assert show_live
+             |> form("#raw_config-form", raw_config: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         show_live

@@ -1,7 +1,6 @@
 defmodule Server.Configs.PrometheusTest do
   use Server.DataCase
 
-  import Server.Factory
   alias Server.Configs.Prometheus
   alias Server.Configs.RawConfig
 
