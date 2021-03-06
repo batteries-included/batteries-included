@@ -5,7 +5,6 @@ defmodule Server.Configs.Defaults do
   import Ecto.Query, warn: false
   alias Ecto.Multi
 
-  alias Server.Configs.Adoption
   alias Server.Configs.Prometheus
   alias Server.Configs.RunningSet
   alias Server.Repo
