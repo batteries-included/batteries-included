@@ -1,8 +1,6 @@
 defmodule ServerWeb.ComputedConfigControllerTest do
   use ServerWeb.ConnCase
 
-  import Server.Factory
-
   alias Server.Configs.Defaults
 
   setup %{conn: conn} do
