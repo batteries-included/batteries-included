@@ -9,7 +9,7 @@ defmodule Server.Configs.Defaults do
   alias Server.Configs.RunningSet
   alias Server.Repo
 
-  def create_all() do
+  def create_all do
     Multi.new()
     |> Multi.run(:running_set_config, fn _repo, _ ->
       RunningSet.create()

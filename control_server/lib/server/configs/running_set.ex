@@ -7,11 +7,11 @@ defmodule Server.Configs.RunningSet do
   import Ecto.Query, warn: false
   alias Server.Configs
 
-  def get!() do
+  def get! do
     Configs.get_by_path!("/running_set")
   end
 
-  def create() do
+  def create do
     Configs.create_raw_config(%{
       path: "/running_set",
       content: %{"monitoring" => false}

@@ -5,11 +5,11 @@ defmodule Server.Configs.Prometheus do
   import Ecto.Query, warn: false
   alias Server.Configs
 
-  def base_config!() do
+  def base_config! do
     Configs.get_by_path!("/prometheus/base")
   end
 
-  def create() do
+  def create do
     Configs.create_raw_config(%{
       path: "/prometheus/base",
       content: %{
