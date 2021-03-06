@@ -2,8 +2,6 @@
 members = [
   "common",
   "cli",
-  "controller_core",
-  "controller",
 ]
 
 [profile.release]

@@ -5,3 +5,4 @@ stages:
 
 include:
   - local: "/ci/control-server.yml"
+  - local: "/ci/rust_utils.yml"
