@@ -52,4 +52,3 @@ lint:rust_utils:
     - cargo fmt -- --check
     - find {common,cli} -name "*.rs" | grep -ve target | xargs touch
     - cargo clippy --tests --all --verbose -- -D warnings
-    - cargo audit
