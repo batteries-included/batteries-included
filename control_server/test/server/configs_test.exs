@@ -13,7 +13,7 @@ defmodule Server.ConfigsTest do
     test "list_raw_configs/0 returns all raw_configs" do
       raw_config = insert(:raw_config)
       %RawConfig{id: id} = raw_config
-      assert [%RawConfig{id: ^id}] = Configs.list_raw_configs()
+      assert Enum.any?(Configs.list_raw_configs(), fn x -> x.id == id end)
     end
 
     test "get_raw_config!/1 returns the raw_config with given id" do

@@ -3,12 +3,11 @@ defmodule ServerWeb.RawConfigController do
 
   alias Server.Configs
   alias Server.Configs.RawConfig
-  alias Server.Repo
 
   action_fallback ServerWeb.FallbackController
 
   def index(conn, %{} = _params) do
-    raw_configs = RawConfig |> Repo.all()
+    raw_configs = Configs.list_raw_configs()
     render(conn, "index.json", raw_configs: raw_configs)
   end
 
