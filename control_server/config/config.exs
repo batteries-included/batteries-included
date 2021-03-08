@@ -32,6 +32,27 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :bonny,
+  controllers: [
+    Server.Controller.V1.BatteryCluster,
+  ],
+  cluster_name: :default,
+  # Also configurable via environment variable `BONNY_POD_NAMESPACE`
+  namespace: "battery",
+  group: "k8s.batteries-included.com",
+  operator_name: "battery-control-server",
+  service_account_name: "battery-account",
+  labels: %{
+    "battery-controlled": "true"
+  },
+
+  # Operator deployment resources. These are the defaults.
+  resources: %{
+    limits: %{cpu: "200m", memory: "200Mi"},
+    requests: %{cpu: "200m", memory: "200Mi"}
+  }
+
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

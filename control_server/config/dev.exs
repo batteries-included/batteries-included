@@ -74,3 +74,10 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :k8s,
+  clusters: %{
+    default: %{ # `default` here must match `cluster_name` below
+      conn: "~/.kube/config"
+    }
+  }

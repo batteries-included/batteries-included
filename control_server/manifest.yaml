@@ -1,0 +1,97 @@
+---
+{
+  "apiVersion": "apiextensions.k8s.io/v1beta1",
+  "kind": "CustomResourceDefinition",
+  "metadata": {
+    "labels": {
+      "battery-controlled": "true",
+      "k8s-app": "battery-control-server"
+    },
+    "name": "batteryclusters.k8s.batteries-included.com"
+  },
+  "spec": {
+    "additionalPrinterColumns": [],
+    "group": "k8s.batteries-included.com",
+    "names": {
+      "kind": "BatteryCluster",
+      "plural": "batteryclusters",
+      "shortNames": [],
+      "singular": "batterycluster"
+    },
+    "scope": "Cluster",
+    "version": "v1"
+  }
+}
+---
+{
+  "apiVersion": "rbac.authorization.k8s.io/v1",
+  "kind": "ClusterRole",
+  "metadata": {
+    "labels": {
+      "battery-controlled": "true",
+      "k8s-app": "battery-control-server"
+    },
+    "name": "battery-account"
+  },
+  "rules": [
+    {
+      "apiGroups": [
+        "apiextensions.k8s.io"
+      ],
+      "resources": [
+        "customresourcedefinitions"
+      ],
+      "verbs": [
+        "*"
+      ]
+    },
+    {
+      "apiGroups": [
+        "k8s.batteries-included.com"
+      ],
+      "resources": [
+        "batteryclusters"
+      ],
+      "verbs": [
+        "*"
+      ]
+    }
+  ]
+}
+---
+{
+  "apiVersion": "v1",
+  "kind": "ServiceAccount",
+  "metadata": {
+    "labels": {
+      "battery-controlled": "true",
+      "k8s-app": "battery-control-server"
+    },
+    "name": "battery-account",
+    "namespace": "default"
+  }
+}
+---
+{
+  "apiVersion": "rbac.authorization.k8s.io/v1",
+  "kind": "ClusterRoleBinding",
+  "metadata": {
+    "labels": {
+      "battery-controlled": "true",
+      "k8s-app": "battery-control-server"
+    },
+    "name": "battery-account"
+  },
+  "roleRef": {
+    "apiGroup": "rbac.authorization.k8s.io",
+    "kind": "ClusterRole",
+    "name": "battery-account"
+  },
+  "subjects": [
+    {
+      "kind": "ServiceAccount",
+      "name": "battery-account",
+      "namespace": "default"
+    }
+  ]
+}
