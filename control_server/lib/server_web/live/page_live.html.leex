@@ -1,1 +1,35 @@
 <h1>Hello Batteries</h1>
+
+<h5>Running Set</h5>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Running</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for {service, running} <- @running_set.content do %>
+      <tr>
+        <td>
+          <%= service %>
+        </td>
+        <td>
+          <%= running %>
+        </td>
+        <td>
+          <%= if ! running do %>
+            <button type="button" class="btn btn-outline-primary shadow-md" phx-click="start_service" phx-value-service="<%= service %>" phx-disable-with="Starting...">
+            Start
+            </button>
+          <% else %>
+            <button type="button" class="btn btn-outline-secondary shadow-md" phx-click="stop_service" phx-value-service="<%= service %>" phx-disable-with="Stopping...">
+            Stop
+            </button>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
