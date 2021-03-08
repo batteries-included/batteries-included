@@ -9,14 +9,14 @@
     - rustc --version
     - cargo --version
 
-build:operator:
+build:rust_utils:
   <<: *rust-template
   stage: build
   script:
     - cd rust_utils
     - cargo build --all-features --tests
 
-build:operator:nightly:
+build:rust_utils:nightly:
   <<: *rust-template
   image: rustlang/rust:nightly
   stage: build
@@ -24,14 +24,14 @@ build:operator:nightly:
     - cd rust_utils
     - cargo build --all-features --tests
 
-test:operator:
+test:rust_utils:
   <<: *rust-template
   stage: test
   script:
     - cd rust_utils
     - cargo test --all --verbose
 
-test:operator:nightly:
+test:rust_utils:nightly:
   <<: *rust-template
   image: rustlang/rust:nightly
   stage: test
@@ -40,7 +40,7 @@ test:operator:nightly:
     - cargo test --all --verbose
   allow_failure: true
 
-lint:operator:
+lint:rust_utils:
   <<: *rust-template
   stage: lint
   before_script:
