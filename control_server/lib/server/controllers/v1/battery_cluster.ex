@@ -14,6 +14,9 @@ defmodule Server.Controller.V1.BatteryCluster do
   # @rule {"", ["pods", "configmap"], ["create"]}
   # @rule {"", ["secrets"], ["create"]}
 
+  require Logger
+  alias Server.Services.Prometheus
+
   @doc """
   Handles an `ADDED` event
   """
@@ -33,8 +36,7 @@ defmodule Server.Controller.V1.BatteryCluster do
   """
   @spec delete(map()) :: :ok | :error
   @impl Bonny.Controller
-  def delete(%{} = batterycluster) do
-    IO.inspect(batterycluster)
+  def delete(%{} = _batterycluster) do
     :ok
   end
 
@@ -44,14 +46,13 @@ defmodule Server.Controller.V1.BatteryCluster do
   """
   @impl Bonny.Controller
   def reconcile(%{"metadata" => %{"name" => name}} = batterycluster) do
-    IO.inspect(batterycluster)
-    IO.inspect(name)
+    Logger.debug("Starting a reconcile for cluster #{name}")
+    Prometheus.sync(batterycluster, client())
     :ok
   end
 
   @impl Bonny.Controller
-  def reconcile(%{} = batterycluster) do
-    IO.inspect(batterycluster)
+  def reconcile(%{} = _batterycluster) do
     :ok
   end
 end
