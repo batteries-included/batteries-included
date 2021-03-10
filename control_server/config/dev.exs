@@ -77,7 +77,8 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :k8s,
   clusters: %{
-    default: %{ # `default` here must match `cluster_name` below
+    # `default` here must match `cluster_name` below
+    default: %{
       conn: "~/.kube/config"
     }
   }
