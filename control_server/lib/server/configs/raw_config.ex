@@ -9,7 +9,7 @@ defmodule Server.Configs.RawConfig do
   @foreign_key_type :binary_id
   schema "raw_configs" do
     field :content, :map, default: %{}, null: false
-    field :path, :string
+    field :path, :string, null: false
 
     timestamps()
   end

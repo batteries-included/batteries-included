@@ -72,7 +72,7 @@ defmodule Server.MixProject do
       {:poison, "~> 4.0"},
 
       # Testing.
-      {:ex_machina, "~> 2.6", only: :test},
+      {:ex_machina, "~> 2.7", only: :test},
       {:floki, "~> 0.30", only: :test},
       {:excoveralls, "~> 0.14", only: :test}
     ]
