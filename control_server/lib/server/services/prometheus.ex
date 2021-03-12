@@ -15,12 +15,12 @@ defmodule Server.Services.Prometheus do
   end
 
   @impl true
-  def handle_cast({:sync, _cluster, _client}, state) do
+  def handle_cast({:sync, _cluster}, state) do
     Logger.debug("Starting prometheus sync")
     {:noreply, state}
   end
 
-  def sync(%{} = cluster, client) do
-    GenServer.cast(__MODULE__, {:sync, cluster, client})
+  def sync(%{} = cluster) do
+    GenServer.cast(__MODULE__, {:sync, cluster})
   end
 end

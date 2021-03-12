@@ -47,7 +47,7 @@ defmodule Server.Controller.V1.BatteryCluster do
   @impl Bonny.Controller
   def reconcile(%{"metadata" => %{"name" => name}} = batterycluster) do
     Logger.debug("Starting a reconcile for cluster #{name}")
-    Prometheus.sync(batterycluster, client())
+    Prometheus.sync(batterycluster)
     :ok
   end
 
