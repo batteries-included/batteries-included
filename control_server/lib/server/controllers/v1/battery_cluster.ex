@@ -8,7 +8,7 @@ defmodule Server.Controller.V1.BatteryCluster do
     plural: "batteryclusters",
     singular: "batterycluster",
     kind: "BatteryCluster",
-    shortNames: []
+    shortNames: nil
   }
 
   # @rule {"", ["pods", "configmap"], ["create"]}
@@ -16,6 +16,7 @@ defmodule Server.Controller.V1.BatteryCluster do
 
   require Logger
   alias Server.Services.Prometheus
+
 
   @doc """
   Handles an `ADDED` event
