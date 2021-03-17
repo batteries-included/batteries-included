@@ -5,6 +5,7 @@ defmodule Server.Configs.RunningSet do
   Map[string, bool]
   """
   import Ecto.Query, warn: false
+  require Logger
   alias Server.Configs
 
   def get! do
@@ -21,7 +22,13 @@ defmodule Server.Configs.RunningSet do
   def set_running(config, service_name, is_running \\ true) do
     new_content = %{config.content | service_name => is_running}
 
-    config
-    |> Configs.update_raw_config(%{content: new_content})
+    with {:ok, result} <-
+           Ecto.Multi.new()
+           |> Ecto.Multi.run(:config, fn _repo, _changes ->
+             Configs.update_raw_config(config, %{content: new_content})
+           end)
+           |> Server.Repo.transaction() do
+      result[:config]
+    end
   end
 end

@@ -17,7 +17,6 @@ defmodule Server.Controller.V1.BatteryCluster do
   require Logger
   alias Server.Services.Prometheus
 
-
   @doc """
   Handles an `ADDED` event
   """

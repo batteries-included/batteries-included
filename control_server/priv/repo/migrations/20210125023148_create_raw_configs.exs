@@ -9,5 +9,7 @@ defmodule Server.Repo.Migrations.CreateRawConfigs do
 
       timestamps()
     end
+
+    create unique_index(:raw_configs, [:path])
   end
 end

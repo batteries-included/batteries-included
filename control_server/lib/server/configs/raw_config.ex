@@ -19,5 +19,6 @@ defmodule Server.Configs.RawConfig do
     raw_config
     |> cast(attrs, [:path, :content])
     |> validate_required([:path, :content])
+    |> unique_constraint(:path)
   end
 end

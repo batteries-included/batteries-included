@@ -41,6 +41,23 @@ defmodule Server.Configs do
   def get_by_path!(path),
     do: Repo.get_by!(RawConfig, %{path: path})
 
+  def find_by_prefix(prefix) do
+    like_match = "#{prefix}%"
+
+    query =
+      from rc in RawConfig,
+        where: like(rc.path, ^like_match)
+
+    Repo.all(query)
+  end
+
+  def upsert(attrs \\ %{}) do
+    %RawConfig{}
+    |> RawConfig.changeset(attrs)
+    |> PaperTrail.insert(ecto_options: [on_conflict: :nothing])
+    |> PaperTrailUtils.unwrap_papertrail()
+  end
+
   @doc """
   Creates a raw_config.
 

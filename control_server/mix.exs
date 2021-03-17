@@ -71,6 +71,9 @@ defmodule Server.MixProject do
       {:httpoison, "~> 1.4"},
       {:poison, "~> 4.0"},
 
+      # Yaml
+      {:yaml_elixir, "~> 2.6"},
+
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},
       {:floki, "~> 0.30", only: :test},

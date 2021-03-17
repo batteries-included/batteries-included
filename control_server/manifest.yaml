@@ -95,3 +95,27 @@
     }
   ]
 }
+---
+{
+  "apiVersion": "rbac.authorization.k8s.io/v1",
+  "kind": "ClusterRoleBinding",
+  "metadata": {
+    "labels": {
+      "battery-controlled": "true",
+      "k8s-app": "battery-control-server"
+    },
+    "name": "battery-account-cluster-admin"
+  },
+  "roleRef": {
+    "apiGroup": "rbac.authorization.k8s.io",
+    "kind": "ClusterRole",
+    "name": "cluster-admin"
+  },
+  "subjects": [
+    {
+      "kind": "ServiceAccount",
+      "name": "battery-account",
+      "namespace": "default"
+    }
+  ]
+}
