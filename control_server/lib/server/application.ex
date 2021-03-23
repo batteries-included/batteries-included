@@ -14,7 +14,8 @@ defmodule Server.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Server.PubSub},
       # Start the Endpoint (http/https)
-      ServerWeb.Endpoint
+      ServerWeb.Endpoint,
+      Server.Services.Prometheus
       # Start a worker by calling: Server.Worker.start_link(arg)
       # {Server.Worker, arg}
     ]

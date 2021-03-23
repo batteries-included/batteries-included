@@ -13,51 +13,29 @@ defmodule ServerWeb.RawConfigControllerTest do
   end
 
   describe "index" do
-    test "lists all raw_configs", %{conn: conn} do
-      cluster = insert(:kube_cluster)
-      index_path = Routes.kube_cluster_raw_config_path(conn, :index, cluster.id)
-      conn = get(conn, index_path)
-      assert json_response(conn, 200)["data"] == []
-    end
-
-    test "lists no raw_configs with filter", %{conn: conn} do
-      config = insert(:raw_config)
-      index_path = Routes.kube_cluster_raw_config_path(conn, :index, config.kube_cluster_id)
-      conn = get(conn, index_path, path: "not/our/path")
-      assert json_response(conn, 200)["data"] == []
-    end
-
     test "lists one raw_configs with good filter", %{conn: conn} do
       raw_config = insert(:raw_config)
-      index_path = Routes.kube_cluster_raw_config_path(conn, :index, raw_config.kube_cluster_id)
+      index_path = Routes.raw_config_path(conn, :index)
       config_path = raw_config.path
       conn = get(conn, index_path, path: raw_config.path)
 
-      assert [%{"content" => %{}, "id" => _id, "path" => ^config_path}] =
-               json_response(conn, 200)["data"]
+      assert Enum.any?(json_response(conn, 200)["data"], fn x -> x["path"] == config_path end)
     end
   end
 
   describe "create raw_config" do
     test "renders raw_config when data is valid", %{conn: conn} do
-      kube_cluster = insert(:kube_cluster)
-      create_path = Routes.kube_cluster_raw_config_path(conn, :create, kube_cluster.id)
+      create_path = Routes.raw_config_path(conn, :create)
       conn = post(conn, create_path, raw_config: params_for(:raw_config))
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, Routes.kube_cluster_raw_config_path(conn, :show, kube_cluster.id, id))
-
-      assert %{
-               "id" => ^id,
-               "content" => %{},
-               "path" => _path
-             } = json_response(conn, 200)["data"]
+      conn = get(conn, Routes.raw_config_path(conn, :show, id))
+      assert json_response(conn, 200)["data"] != %{}
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      kube_cluster = insert(:kube_cluster)
-      create_path = Routes.kube_cluster_raw_config_path(conn, :create, kube_cluster.id)
+      create_path = Routes.raw_config_path(conn, :create)
       conn = post(conn, create_path, raw_config: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
@@ -68,11 +46,9 @@ defmodule ServerWeb.RawConfigControllerTest do
       raw_config = insert(:raw_config)
       id = raw_config.id
 
-      update_path =
-        Routes.kube_cluster_raw_config_path(conn, :update, raw_config.kube_cluster, raw_config)
+      update_path = Routes.raw_config_path(conn, :update, raw_config)
 
-      show_path =
-        Routes.kube_cluster_raw_config_path(conn, :show, raw_config.kube_cluster, raw_config)
+      show_path = Routes.raw_config_path(conn, :show, raw_config)
 
       conn = put(conn, update_path, raw_config: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
@@ -88,8 +64,7 @@ defmodule ServerWeb.RawConfigControllerTest do
     test "renders errors when data is invalid", %{conn: conn} do
       raw_config = insert(:raw_config)
 
-      update_path =
-        Routes.kube_cluster_raw_config_path(conn, :update, raw_config.kube_cluster, raw_config)
+      update_path = Routes.raw_config_path(conn, :update, raw_config)
 
       conn = put(conn, update_path, raw_config: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
@@ -100,11 +75,9 @@ defmodule ServerWeb.RawConfigControllerTest do
     test "deletes chosen raw_config", %{conn: conn} do
       raw_config = insert(:raw_config)
 
-      delete_path =
-        Routes.kube_cluster_raw_config_path(conn, :delete, raw_config.kube_cluster_id, raw_config)
+      delete_path = Routes.raw_config_path(conn, :delete, raw_config)
 
-      show_path =
-        Routes.kube_cluster_raw_config_path(conn, :show, raw_config.kube_cluster_id, raw_config)
+      show_path = Routes.raw_config_path(conn, :show, raw_config)
 
       conn = delete(conn, delete_path)
       assert response(conn, 204)

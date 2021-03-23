@@ -40,7 +40,7 @@ defmodule Server.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.7"},
+      {:phoenix, "~> 1.5.8"},
       {:phoenix_live_view, "~> 0.15.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -66,10 +66,18 @@ defmodule Server.MixProject do
       # Filtering
       {:filtrex, "~> 0.4.3"},
 
+      # Kubernetes
+      {:bonny, "~> 0.4"},
+      {:httpoison, "~> 1.4"},
+      {:poison, "~> 4.0"},
+
+      # Yaml
+      {:yaml_elixir, "~> 2.6"},
+
       # Testing.
-      {:ex_machina, "~> 2.6", only: :test},
+      {:ex_machina, "~> 2.7", only: :test},
       {:floki, "~> 0.30", only: :test},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.14", only: :test}
     ]
   end
 

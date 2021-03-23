@@ -7,12 +7,9 @@ defmodule Server.Repo.Migrations.CreateRawConfigs do
       add :path, :string
       add :content, :map
 
-      add :kube_cluster_id, references(:kube_clusters, on_delete: :delete_all, type: :binary_id),
-        null: false
-
       timestamps()
     end
 
-    create index(:raw_configs, [:kube_cluster_id])
+    create unique_index(:raw_configs, [:path])
   end
 end

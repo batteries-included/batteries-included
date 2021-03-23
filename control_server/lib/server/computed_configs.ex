@@ -6,12 +6,12 @@ defmodule Server.ComputedConfigs do
   alias Server.Configs
   alias Server.Configs.RawConfig
 
-  def get(kube_cluster_id, "/prometheus/main" = path) do
-    %RawConfig{} = base_config = Configs.get_cluster_path!(kube_cluster_id, "/prometheus/base")
+  def get("/prometheus/main" = path) do
+    %RawConfig{} = base_config = Configs.get_by_path!("/prometheus/base")
     {:ok, %{path: path, content: base_config.content}}
   end
 
-  def get(kube_cluster_id, path) do
-    {:ok, Configs.get_cluster_path!(kube_cluster_id, path)}
+  def get(path) do
+    {:ok, Configs.get_by_path!(path)}
   end
 end

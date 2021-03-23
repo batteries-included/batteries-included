@@ -5,21 +5,17 @@ defmodule Server.Configs.Defaults do
   import Ecto.Query, warn: false
   alias Ecto.Multi
 
-  alias Server.Configs.Adoption
   alias Server.Configs.Prometheus
   alias Server.Configs.RunningSet
   alias Server.Repo
 
-  def create_all(kube_cluster_id) do
+  def create_all do
     Multi.new()
-    |> Multi.run(:adoption_config, fn _repo, _ ->
-      Adoption.create_for_cluster(kube_cluster_id)
-    end)
     |> Multi.run(:running_set_config, fn _repo, _ ->
-      RunningSet.create_for_cluster(kube_cluster_id)
+      RunningSet.create()
     end)
     |> Multi.run(:prometheus_config, fn _repo, _ ->
-      Prometheus.create_for_cluster(kube_cluster_id)
+      Prometheus.create()
     end)
     |> Repo.transaction()
   end

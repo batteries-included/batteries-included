@@ -5,15 +5,15 @@ defmodule Server.Configs.RunningSet do
   Map[string, bool]
   """
   import Ecto.Query, warn: false
+  require Logger
   alias Server.Configs
 
-  def for_kube_cluster!(kube_cluster_id) do
-    Configs.get_cluster_path!(kube_cluster_id, "/running_set")
+  def get! do
+    Configs.get_by_path!("/running_set")
   end
 
-  def create_for_cluster(kube_cluster_id) do
+  def create do
     Configs.create_raw_config(%{
-      kube_cluster_id: kube_cluster_id,
       path: "/running_set",
       content: %{"monitoring" => false}
     })
@@ -22,7 +22,13 @@ defmodule Server.Configs.RunningSet do
   def set_running(config, service_name, is_running \\ true) do
     new_content = %{config.content | service_name => is_running}
 
-    config
-    |> Configs.update_raw_config(%{content: new_content})
+    with {:ok, result} <-
+           Ecto.Multi.new()
+           |> Ecto.Multi.run(:config, fn _repo, _changes ->
+             Configs.update_raw_config(config, %{content: new_content})
+           end)
+           |> Server.Repo.transaction() do
+      result[:config]
+    end
   end
 end

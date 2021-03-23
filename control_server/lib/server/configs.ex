@@ -38,8 +38,25 @@ defmodule Server.Configs do
   """
   def get_raw_config!(id), do: Repo.get!(RawConfig, id)
 
-  def get_cluster_path!(kube_cluster_id, path),
-    do: Repo.get_by!(RawConfig, %{kube_cluster_id: kube_cluster_id, path: path})
+  def get_by_path!(path),
+    do: Repo.get_by!(RawConfig, %{path: path})
+
+  def find_by_prefix(prefix) do
+    like_match = "#{prefix}%"
+
+    query =
+      from rc in RawConfig,
+        where: like(rc.path, ^like_match)
+
+    Repo.all(query)
+  end
+
+  def upsert(attrs \\ %{}) do
+    %RawConfig{}
+    |> RawConfig.changeset(attrs)
+    |> PaperTrail.insert(ecto_options: [on_conflict: :nothing])
+    |> PaperTrailUtils.unwrap_papertrail()
+  end
 
   @doc """
   Creates a raw_config.
