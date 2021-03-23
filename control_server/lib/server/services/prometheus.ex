@@ -14,8 +14,11 @@ defmodule Server.Services.Prometheus do
   end
 
   def start_link(state \\ %{status: :starting, client: K8s.Client}, opts \\ []) do
+    # Get the name so that we can start this with different names.
     name = Keyword.get(opts, :name, __MODULE__)
 
+    # If there's no default then use :starting and K8s.Client as the default state.
+    # Start up the GenServer
     case state == [] do
       true ->
         GenServer.start_link(__MODULE__, %{status: :starting, client: K8s.Client}, name: name)
@@ -40,27 +43,31 @@ defmodule Server.Services.Prometheus do
 
   @impl true
   def handle_cast({:sync, cluster}, %{status: current_status} = state) do
+    # Try and sync the operator. This should start up prometheus cluster
     with {:ok, new_status} <- sync_operator(current_status, cluster, state) do
-      Logger.info("Sync complete #{inspect(new_status)}")
+      Logger.info("Prometheus Sync complete status: #{current_status} -> #{inspect(new_status)}")
       {:noreply, %{state | status: new_status}}
     end
   end
 
   def sync_operator(:starting, _cluster, _state) do
-    refresh_db_configs()
+    # If we don't know for sure the prometheus operator has
+    # been synced. Then refresh the configs from priv into the
+    # database.
+    _refreshed = refresh_db_configs() |> Enum.map(fn {_status, path} -> path end)
     {:ok, :not_running}
   end
 
   def sync_operator(:not_running = status, _cluster, state) do
-    rs = RunningSet.get!()
-
-    with %{"monitoring" => is_running} <- rs.content do
+    # Everything should be in the db. So check the configs to see
+    # should this be running at all?
+    with %{"monitoring" => is_running} <- RunningSet.get!().content do
       case is_running do
         true ->
           Logger.info("is_running true. Needing to install")
           install(state)
 
-        false ->
+        _ ->
           Logger.info("is_running false")
           {:ok, status}
       end
@@ -68,14 +75,14 @@ defmodule Server.Services.Prometheus do
   end
 
   def sync_operator(:running, _cluster, _state) do
-    rs = RunningSet.get!()
-
-    with %{"monitoring" => is_running} <- rs.content do
+    with %{"monitoring" => is_running} <- RunningSet.get!().content do
       case is_running do
         true ->
+          # TODO: Check status here.
           {:ok, :running}
 
-        false ->
+        _ ->
+          # TODO: Uninstall monitoring.
           Logger.info("is_running false. This should uninstall")
           {:ok, :not_running}
       end
@@ -89,16 +96,20 @@ defmodule Server.Services.Prometheus do
   def refresh_db_configs do
     base_path = Application.app_dir(:server, ["priv", "kube-prometheus", "manifests"])
 
-    file_list =
-      base_path
-      |> FileExt.ls_r()
-
-    file_list
+    # All the kube-prometheus operator files are in priv
+    # recursively list all the them. Then try and upsert them
+    base_path
+    |> FileExt.ls_r()
     |> Enum.map(fn p ->
+      # the path in config db should be usable regardless
+      # of where in priv this is all located.
       db_config_path = p |> String.replace_prefix(base_path, "/prometheus/manifests")
 
+      # Read yaml and shove that into the contents field use the
+      # computed path above and then upsert
       with {:ok, yaml_content} <- YamlElixir.read_from_file(p),
            {:ok, _} <- Configs.upsert(%{path: db_config_path, content: yaml_content}) do
+        # Return the path that's for sure present now. We don't know the contents.
         {:ok, db_config_path}
       end
     end)
@@ -110,7 +121,6 @@ defmodule Server.Services.Prometheus do
     install_in_path(kube_client, "/prometheus/manifests/setup")
     Logger.info("Sync'd the setup files successfully.")
     install_in_path(kube_client, "/prometheus/manifests/")
-    Logger.info("Yes!!!")
 
     {:ok, :running}
   end

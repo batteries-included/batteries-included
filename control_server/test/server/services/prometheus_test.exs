@@ -33,5 +33,9 @@ defmodule Server.Services.PrometheusTest do
 
       assert files == files_2
     end
+
+    test "ignores already configured and running" do
+      Prometheus.sync_operator(:running, %{}, %{})
+    end
   end
 end
