@@ -17,6 +17,6 @@ kubectl apply -f "${DIR}/k8s"
 # I'm sure there's a better kubectl way but this is a hack while we can't self host.
 sleep 30
 
-kubectl port-forward svc/postgres 5432:5432 &
-kubectl port-forward svc/prometheus-service 9090:9090 -n battery &
+kubectl port-forward svc/postgres 5432:5432 --address 0.0.0.0 &
+kubectl port-forward svc/grafana 3000:3000 -n monitoring --address 0.0.0.0 &
 wait
