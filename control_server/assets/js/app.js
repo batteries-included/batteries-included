@@ -3,6 +3,7 @@
 // its own CSS file.
 import "../css/app.scss"
 
+import "@popperjs/core"
 import "bootstrap"
 
 // webpack automatically bundles all modules in your

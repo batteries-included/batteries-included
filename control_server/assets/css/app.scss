@@ -3,7 +3,7 @@ $pink: #fc408a;
 $teal: #22a4b6;
 $green: #af9e15;
 $orange: #ec7d18;
-$indigo: #7164f8;
+$indigo: #06293f;
 $blue: #377af7;
 
 $primary: $pink;
@@ -11,14 +11,28 @@ $secondary: $teal;
 
 $font-size-base: 1.1rem;
 
+$dark: $indigo;
 
+$sidebar-size: 300px;
 
 @import "bootstrap/scss/bootstrap";
+
 @import "nprogress/nprogress";
 
-main {
-  margin-top: 1rem;
+body {
+  min-height: 100vh;
 }
+
 .alert:empty {
   display: none;
+}
+
+.sidebar {
+  width: $sidebar-size;
+  height: 100vh;
+  position: fixed;
+}
+
+main {
+  margin-left: $sidebar-size;
 }
