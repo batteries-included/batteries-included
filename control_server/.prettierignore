@@ -3,3 +3,4 @@ _build/
 .elixir_ls
 assets
 priv
+node_modules

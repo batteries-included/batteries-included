@@ -1,11 +1,17 @@
+cache: &global_cache
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - control_server/_build/
+    - control_server/deps/
+    - control_server/assets/node_modules/
+    - control_server/assets/npm/
+
+
 build:contol:
   stage: build
   image: elixir:1.11
   cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - control_server/_build
-      - control_server/deps
+    <<: *global_cache
   script:
     - cd control_server
     - mix local.hex --force
@@ -26,10 +32,7 @@ test:control:
     POSTGRES_PASSWORD: "batterypasswd"
     MIX_ENV: "test"
   cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - control_server/_build
-      - control_server/deps
+    <<: *global_cache
   script:
     - cd control_server
     - mix local.hex --force
@@ -44,13 +47,21 @@ lint:control:
   variables:
     MIX_ENV: "test"
   cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - control_server/_build
-      - control_server/deps
+    <<: *global_cache
   script:
     - cd control_server
     - mix local.hex --force
     - mix local.rebar --force
     - mix format --check-formatted
     - mix credo --strict
+
+lint:control:prettier:
+  image: node:14
+  stage: lint
+  cache:
+    <<: *global_cache
+  script:
+    - cd control_server/assets
+    - npm ci --cache npm --prefer-offline
+    - cd ..
+    - ./assets/node_modules/.bin/prettier --color --check .
