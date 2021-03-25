@@ -1,6 +1,6 @@
 <div class="container-xxl">
   <h2>Services Home</h2>
-  <hr>
+  <hr />
   <div class="row">
     <h3>Status</h3>
     <div class="col">
@@ -8,16 +8,12 @@
     </div>
   </div>
 
-
-
   <div class="row">
     <h3>Misc</h3>
     <div class="col">
       <div class="card shadow-lg">
         <div class="card-body">
-          <h5 class="card-title">
-            Install/Uninstall Services
-          </h5>
+          <h5 class="card-title">Install/Uninstall Services</h5>
         </div>
         <%= render(ServerWeb.ServicesView, "start_stop.html", running_set: @running_set, socket: @socket) %>
       </div>

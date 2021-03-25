@@ -1,12 +1,13 @@
 <h1>Listing Raw configs</h1>
 
 <%= if @live_action in [:new, :edit] do %>
-  <%= live_modal @socket, ServerWeb.RawConfigLive.FormComponent,
-    id: @raw_config.id || :new,
-    title: @page_title,
-    action: @live_action,
-    raw_config: @raw_config,
-    return_to: Routes.raw_config_index_path(@socket, :index) %>
+  <%= live_modal(@socket, ServerWeb.RawConfigLive.FormComponent,
+        id: @raw_config.id || :new,
+        title: @page_title,
+        action: @live_action,
+        raw_config: @raw_config,
+        return_to: Routes.raw_config_index_path(@socket, :index)
+      ) %>
 <% end %>
 
 <table>

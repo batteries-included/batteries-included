@@ -17,12 +17,24 @@
         </td>
         <td>
           <%= if ! running do %>
-            <button type="button" class="btn btn-primary shadow" phx-click="start_service" phx-value-service="<%= service %>" phx-disable-with="Starting...">
-            Install
+            <button
+              type="button"
+              class="btn btn-primary shadow"
+              phx-click="start_service"
+              phx-value-service="<%= service %>"
+              phx-disable-with="Starting..."
+            >
+              Install
             </button>
           <% else %>
-            <button type="button" class="btn btn-danger shadow" phx-click="stop_service" phx-value-service="<%= service %>" phx-disable-with="Stopping...">
-            Stop
+            <button
+              type="button"
+              class="btn btn-danger shadow"
+              phx-click="stop_service"
+              phx-value-service="<%= service %>"
+              phx-disable-with="Stopping..."
+            >
+              Stop
             </button>
           <% end %>
         </td>
