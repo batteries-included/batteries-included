@@ -16,7 +16,6 @@ $dark: $indigo;
 $sidebar-size: 300px;
 
 @import "bootstrap/scss/bootstrap";
-
 @import "nprogress/nprogress";
 
 body {
@@ -35,4 +34,24 @@ body {
 
 main {
   margin-left: $sidebar-size;
+}
+
+#services-install {
+  .running-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .running-icon.running {
+    color: $teal;
+  }
+
+  .running-icon.not-running {
+    color: $gray-700;
+  }
+}
+
+.icon.small {
+  width: 1rem;
+  height: 1rem;
 }

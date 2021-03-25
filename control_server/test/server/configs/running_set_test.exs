@@ -13,6 +13,6 @@ defmodule Server.Configs.DefaultsTest do
 
   test "set running" do
     rc = Configs.get_by_path!("/running_set")
-    %RawConfig{} = RunningSet.set_running(rc, "monitoring")
+    assert {:ok, %RawConfig{}} = RunningSet.set_running(rc, "monitoring", true)
   end
 end

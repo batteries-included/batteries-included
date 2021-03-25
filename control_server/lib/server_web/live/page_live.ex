@@ -13,19 +13,17 @@ defmodule ServerWeb.PageLive do
 
   @impl true
   def handle_event("start_service", %{"service" => service_name}, socket) do
-    {:ok, new_config} =
-      socket.assigns.running_set
-      |> RunningSet.set_running(service_name)
-
-    {:noreply, assign(socket, :running_set, new_config)}
+    with {:ok, new_config} <-
+           RunningSet.set_running(socket.assigns.running_set, service_name, true) do
+      {:noreply, assign(socket, :running_set, new_config)}
+    end
   end
 
   @impl true
   def handle_event("stop_service", %{"service" => service_name}, socket) do
-    {:ok, new_config} =
-      socket.assigns.running_set
-      |> RunningSet.set_running(service_name, false)
-
-    {:noreply, assign(socket, :running_set, new_config)}
+    with {:ok, new_config} <-
+           RunningSet.set_running(socket.assigns.running_set, service_name, false) do
+      {:noreply, assign(socket, :running_set, new_config)}
+    end
   end
 end
