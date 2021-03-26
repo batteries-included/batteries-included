@@ -22,10 +22,6 @@ body {
   min-height: 100vh;
 }
 
-.alert:empty {
-  display: none;
-}
-
 .sidebar {
   width: $sidebar-size;
   height: 100vh;
