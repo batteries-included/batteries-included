@@ -15,6 +15,9 @@ $dark: $indigo;
 
 $sidebar-size: 300px;
 
+$enable-shadows: true;
+$enable-gradients: true;
+
 @import "bootstrap/scss/bootstrap";
 @import "nprogress/nprogress";
 
@@ -26,6 +29,22 @@ body {
   width: $sidebar-size;
   height: 100vh;
   position: fixed;
+
+  nav nav {
+    background-color: darken($indigo, 5%);
+    margin-left: 1.5rem;
+
+    .nav-item {
+      background-color: darken($indigo, 5%);
+    }
+  }
+
+  .nav-link[data-bs-toggle].collapsed:after {
+    content: " ▾";
+  }
+  .nav-link[data-bs-toggle]:not(.collapsed):after {
+    content: " ▴";
+  }
 }
 
 main {

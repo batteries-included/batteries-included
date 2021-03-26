@@ -1,6 +1,7 @@
 deps/
 _build/
 .elixir_ls
-assets
+assets/node_modules
+package-lock.json
 priv
 node_modules
