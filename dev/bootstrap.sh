@@ -33,5 +33,5 @@ kubectl apply -f "${DIR}/k8s"
 # so what.
 # I'm sure there's a better kubectl way but this is a hack while we can't self host.
 ( retry kubectl port-forward svc/postgres 5432:5432 --address 0.0.0.0 ) &
-( retry kubectl port-forward svc/grafana 3000:3000 -n monitoring --address 0.0.0.0 ) &
+# ( retry kubectl port-forward svc/grafana 3000:3000 -n monitoring --address 0.0.0.0 ) &
 wait
