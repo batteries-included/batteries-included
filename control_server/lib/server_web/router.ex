@@ -26,6 +26,8 @@ defmodule ServerWeb.Router do
 
     live "/raw_configs/:id", RawConfigLive.Show, :show
     live "/raw_configs/:id/show/edit", RawConfigLive.Show, :edit
+
+    live "/services/monitoring", ServicesLive.Monitoring, :index
   end
 
   scope "/api", ServerWeb do
