@@ -60,7 +60,6 @@ export default {
   updated() {
     if (this.chart && this.chart.data && this.chart.data.datasets) {
       const newData = this.getData();
-      console.log("newData ", newData, " old data", this.chart.data.datasets[0].data);
       this.chart.data.datasets[0].data = newData;
 
       if (newData.length != (this.chart.data.labels || []).length) {
