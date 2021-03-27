@@ -8,7 +8,7 @@ cache: &global_cache
 
 build:contol:
   stage: build
-  image: elixir:1.11
+  image: bitwalker/alpine-elixir-phoenix:1.11.3
   cache:
     <<: *global_cache
   script:
@@ -21,7 +21,7 @@ build:contol:
 
 test:control:
   stage: test
-  image: elixir:1.11
+  image: bitwalker/alpine-elixir-phoenix:1.11.3
   services:
     - postgres:12.5-alpine
   variables:
@@ -42,7 +42,7 @@ test:control:
 
 lint:control:
   stage: lint
-  image: elixir:1.11
+  image: bitwalker/alpine-elixir-phoenix:1.11.3
   variables:
     MIX_ENV: "test"
   cache:
@@ -55,7 +55,7 @@ lint:control:
     - mix credo --strict
 
 lint:control:prettier:
-  image: node:14
+  image: bitwalker/alpine-elixir-phoenix:1.11.3
   stage: lint
   cache:
     <<: *global_cache
