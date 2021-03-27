@@ -14,41 +14,17 @@ $font-size-base: 1.1rem;
 $dark: $indigo;
 
 $enable-shadows: true;
-$enable-gradients: true;
 $border-radius: 0.4em;
 
 @import "bootstrap/scss/bootstrap";
 @import "nprogress/nprogress";
+@import "sidebar";
 
 body {
   min-height: 100vh;
 }
 
-$sidebar-size: 300px;
-.sidebar {
-  $sidebar-dark-background: mix(black, $indigo, 20%);
-
-  width: $sidebar-size;
-  height: 100vh;
-  position: fixed;
-
-  nav nav {
-    background-color: $sidebar-dark-background;
-    margin-left: 1.5rem;
-
-    .nav-item {
-      background-color: $sidebar-dark-background;
-    }
-  }
-
-  .nav-link[data-bs-toggle].collapsed:after {
-    content: " ▾";
-  }
-  .nav-link[data-bs-toggle]:not(.collapsed):after {
-    content: " ▴";
-  }
-}
-
+// Have to move the main over
 main {
   margin-left: $sidebar-size;
 }
@@ -79,5 +55,6 @@ main {
 
 .sparkline {
   height: 32px;
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
 }

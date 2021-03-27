@@ -1,50 +1,50 @@
-<nav class="sidebar d-flex flex-column p-3 text-white bg-dark shadow-lg">
-  <a
-    href="/"
-    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
-  >
+<div class="sidebar d-flex flex-column p-0 text-secondary bg-dark shadow-lg" id="main-side-nav">
+  <a href="/" class="d-flex align-items-center mb-5 text-white text-decoration-none">
     <img src="images/bad-slice.png" alt="" width="48px" class="m-2" />
     <span class="fs-5">Batteries Included</span>
   </a>
-  <hr />
-  <nav class="nav d-flex flex-column mb-auto">
+  <nav class="nav flex-column mb-auto">
     <a
-      class="nav-item nav-link text-white"
-      aria-controls="servicesNav"
+      class="nav-item nav-link"
+      aria-controls="#services-nav"
       aria-expanded="true"
       data-bs-toggle="collapse"
-      href="#servicesNav"
+      href="#services-nav"
       >Services
+
+      <%= icon_tag(@socket, "caret-down-fill", class: "small down") %>
+      <%= icon_tag(@socket, "caret-up-fill", class: "small up") %>
     </a>
-    <nav class="collapse show nav-pills" id="servicesNav">
-      <a href="/" class="nav-link text-white active">Home</a>
-      <a href="/services/monitoring" class="nav-link text-white">Monitoring</a>
+    <nav class="collapse show" id="services-nav">
+      <a href="/" class="nav-link active">Home</a>
+      <a href="/services/monitoring" class="nav-link">Monitoring</a>
     </nav>
-    <a href="#" class="nav-item nav-link text-white">Dashboards</a>
+    <a href="#" class="nav-item nav-link">Dashboards</a>
     <a
-      class="nav-item nav-link text-white collapsed"
-      aria-controls="mlNav"
+      class="nav-item nav-link"
+      aria-controls="#ml-nav"
       aria-expanded="false"
       data-bs-toggle="collapse"
-      href="#mlNav"
+      href="#ml-nav"
     >
       ML Platform
+      <%= icon_tag(@socket, "caret-down-fill", class: "small down") %>
+      <%= icon_tag(@socket, "caret-up-fill", class: "small up") %>
     </a>
-    <nav class="collapse nav-pills" id="mlNav">
-      <a href="/ml/pipelines" class="nav-link text-white">Data pipelines</a>
-      <a href="/ml/experimentation" class="nav-link text-white">Experimentation</a>
-      <a href="/ml/training" class="nav-link text-white">Training</a>
-      <a href="/ml/inference" class="nav-link text-white">Inferencing</a>
-      <a href="/ml/inference" class="nav-link text-white">Monitoring</a>
+    <nav class="collapse" id="ml-nav">
+      <a href="/ml/pipelines" class="nav-link">Data pipelines</a>
+      <a href="/ml/experimentation" class="nav-link">Experimentation</a>
+      <a href="/ml/training" class="nav-link">Training</a>
+      <a href="/ml/inference" class="nav-link">Inferencing</a>
+      <a href="/ml/inference" class="nav-link">Monitoring</a>
     </nav>
-    <a href="#" class="nav-item nav-link text-white">System Stability</a>
-    <a href="#" class="nav-item nav-link text-white">Audit Logs</a>
+    <a href="#" class="nav-item nav-link">System Stability</a>
+    <a href="#" class="nav-item nav-link">Audit Logs</a>
   </nav>
-  <hr />
   <div class="dropdown">
     <a
       href="#"
-      class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+      class="d-flex align-items-center text-decoration-none dropdown-toggle pb-4 ps-3"
       id="dropdownUser1"
       data-bs-toggle="dropdown"
       aria-expanded="false"
@@ -65,4 +65,4 @@
       <li><a class="dropdown-item" href="#">Sign out</a></li>
     </ul>
   </div>
-</nav>
+</div>

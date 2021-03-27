@@ -10,7 +10,7 @@
   <tbody>
     <tr>
       <td>Monitoring</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-mon" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-mon" %></td>
       <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Scale</a>
@@ -19,7 +19,7 @@
     </tr>
     <tr>
       <td>ML Experimentation</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-el-exp" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-el-exp" %></td>
       <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Backup</a>
@@ -28,7 +28,7 @@
     </tr>
     <tr>
       <td>ML Continuous Training</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-training" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-training" %></td>
       <td><%= icon_tag(@socket, "exclamation-triangle", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Revert model</a>
@@ -37,7 +37,7 @@
     </tr>
     <tr>
       <td>Feature Storage</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-feature" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-feature" %></td>
       <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Test Variance</a>
@@ -46,7 +46,7 @@
     </tr>
     <tr>
       <td>Database</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-database" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-database" %></td>
       <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Scale</a>
@@ -55,7 +55,7 @@
     </tr>
     <tr>
       <td>Object Storage</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-obj" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-obj" %></td>
       <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Scale</a>
@@ -64,7 +64,7 @@
     </tr>
     <tr>
       <td>Networking</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-net" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-net" %></td>
       <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Routing</a>
@@ -73,7 +73,7 @@
     </tr>
     <tr>
       <td>Authentication</td>
-      <td><%= live_render @socket, ServerWeb.Sparkline, id: "sparkline-auth" %></td>
+      <td><%= live_render @socket, ServerWeb.SparklineLive, id: "sparkline-auth" %></td>
       <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
       <td>
         <a href="#" class="link-secondary">Add User</a>

@@ -1,4 +1,4 @@
-<%= render("sidebar.html") %>
+<%= render("sidebar.html", socket: @socket) %>
 
 <main class="p-4 sidebar-content text-dark">
   <%= if info = live_flash(@flash, :info) do %>

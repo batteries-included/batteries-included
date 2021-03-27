@@ -1,4 +1,4 @@
-defmodule ServerWeb.Sparkline do
+defmodule ServerWeb.SparklineLive do
   @moduledoc """
   Live view that will generate random data for sparklines.
   """
@@ -23,7 +23,6 @@ defmodule ServerWeb.Sparkline do
             phx-hook="Sparkline"
             phx-update="ignore"
             id="#canvas_<%= @id %>"
-            width="300px"
             height="32px"
             data-data="<%= @data |> Jason.encode!() %>">
     </canvas>
