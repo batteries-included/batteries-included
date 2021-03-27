@@ -1,4 +1,7 @@
 defmodule ServerWeb.Sparkline do
+  @moduledoc """
+  Live view that will generate random data for sparklines.
+  """
   use ServerWeb, :live_view
   require Logger
 
