@@ -14,13 +14,13 @@ pub enum BatteryError {
     },
 
     #[error("Error while serializing/de-serializing to json")]
-    SerdeJSON {
+    SerdeJson {
         #[from]
         source: serde_json::Error,
     },
 
     #[error("Error while serializing/de-serializing to yaml")]
-    SerdeYAML {
+    SerdeYaml {
         #[from]
         source: serde_yaml::Error,
     },
