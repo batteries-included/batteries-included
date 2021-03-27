@@ -15,6 +15,7 @@ $dark: $indigo;
 
 $enable-shadows: true;
 $enable-gradients: true;
+$border-radius: 0.4em;
 
 @import "bootstrap/scss/bootstrap";
 @import "nprogress/nprogress";
@@ -25,7 +26,7 @@ body {
 
 $sidebar-size: 300px;
 .sidebar {
-  $sidebar-dark-background: darken($indigo, 3%);
+  $sidebar-dark-background: mix(black, $indigo, 20%);
 
   width: $sidebar-size;
   height: 100vh;
