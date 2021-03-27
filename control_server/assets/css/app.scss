@@ -13,8 +13,6 @@ $font-size-base: 1.1rem;
 
 $dark: $indigo;
 
-$sidebar-size: 300px;
-
 $enable-shadows: true;
 $enable-gradients: true;
 
@@ -25,17 +23,20 @@ body {
   min-height: 100vh;
 }
 
+$sidebar-size: 300px;
 .sidebar {
+  $sidebar-dark-background: darken($indigo, 3%);
+
   width: $sidebar-size;
   height: 100vh;
   position: fixed;
 
   nav nav {
-    background-color: darken($indigo, 5%);
+    background-color: $sidebar-dark-background;
     margin-left: 1.5rem;
 
     .nav-item {
-      background-color: darken($indigo, 5%);
+      background-color: $sidebar-dark-background;
     }
   }
 
@@ -66,7 +67,16 @@ main {
   }
 }
 
+#services-install .serviceName {
+  text-transform: capitalize;
+}
+
 .icon.small {
   width: 1rem;
   height: 1rem;
+}
+
+.sparkline {
+  height: 32px;
+  width: 300px;
 }

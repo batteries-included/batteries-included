@@ -1,5 +1,5 @@
 <main role="main" class="container">
-  <% if info = get_flash(@flash, :info) do %>
+  <%= if info = get_flash(@flash, :info) do %>
     <p class="alert alert-info" role="alert"><%= info %></p>
   <% end %>
   <%= if error = get_flash(@flash, :error) do %>

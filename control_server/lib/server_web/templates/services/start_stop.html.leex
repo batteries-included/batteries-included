@@ -9,7 +9,7 @@
   <tbody>
     <%= for {service, running} <- @running_set.content do %>
       <tr>
-        <td>
+        <td class="serviceName">
           <%= service %>
         </td>
         <td>
