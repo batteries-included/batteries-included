@@ -5,7 +5,6 @@ cache: &global_cache
     - control_server/deps/
     - control_server/assets/npm/
 
-
 build:contol:
   stage: build
   image: bitwalker/alpine-elixir-phoenix:1.11.3
@@ -17,7 +16,6 @@ build:contol:
     - mix local.rebar --force
     - mix deps.get
     - mix compile --warnings-as-errors
-
 
 test:control:
   stage: test
@@ -38,7 +36,6 @@ test:control:
     - mix local.rebar --force
     - mix ecto.reset
     - mix coveralls
-
 
 lint:control:
   stage: lint
