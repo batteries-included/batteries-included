@@ -13,7 +13,7 @@ defmodule Server.Services.Prometheus do
     {:ok, state}
   end
 
-  def start_link(state \\ %{status: :starting, client: K8s.Client}, opts \\ []) do
+  def start_link(state \\ %{status: :starting}, opts \\ []) do
     # Get the name so that we can start this with different names.
     name = Keyword.get(opts, :name, __MODULE__)
 
@@ -21,7 +21,7 @@ defmodule Server.Services.Prometheus do
     # Start up the GenServer
     case state == [] do
       true ->
-        GenServer.start_link(__MODULE__, %{status: :starting, client: K8s.Client}, name: name)
+        GenServer.start_link(__MODULE__, %{status: :starting}, name: name)
 
       false ->
         GenServer.start_link(__MODULE__, state, name: name)
@@ -58,14 +58,14 @@ defmodule Server.Services.Prometheus do
     {:ok, :not_running}
   end
 
-  def sync_operator(:not_running = status, _cluster, state) do
+  def sync_operator(:not_running = status, _cluster, _state) do
     # Everything should be in the db. So check the configs to see
     # should this be running at all?
     with %{"monitoring" => is_running} <- RunningSet.get!().content do
       case is_running do
         true ->
           Logger.info("is_running true. Needing to install")
-          install(state)
+          install()
 
         _ ->
           Logger.info("is_running false")
@@ -115,17 +115,17 @@ defmodule Server.Services.Prometheus do
     end)
   end
 
-  def install(%{client: kube_client}) do
+  def install do
     Logger.info("Syncing the setup files")
 
-    install_in_path(kube_client, "/prometheus/manifests/setup")
+    install_in_path("/prometheus/manifests/setup")
     Logger.info("Sync'd the setup files successfully.")
-    install_in_path(kube_client, "/prometheus/manifests/")
+    install_in_path("/prometheus/manifests/")
 
     {:ok, :running}
   end
 
-  defp install_in_path(kube_client, path) do
+  defp install_in_path(path) do
     # For each config get it or create it. Then we'll need to
     # check equality and apply. TODO
     #
@@ -136,7 +136,7 @@ defmodule Server.Services.Prometheus do
     |> Enum.sort(fn one, two -> one.path < two.path end)
     |> Enum.map(fn rc ->
       Logger.info("Sending get or create for #{rc.path}")
-      Server.KubeExt.get_or_create(rc.content, kube_client)
+      Server.KubeExt.get_or_create(rc.content)
     end)
   end
 end
