@@ -12,8 +12,8 @@ error() {
     fi
     exit "${code}"
 }
-trap 'error ${LINENO}' ERR
-trap "killall background" EXIT
+trap 'error ${LINENO} Trap:' ERR
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 retry() {
     local n=1
