@@ -5,6 +5,8 @@ defmodule ServerWeb.ServicesLive.Monitoring do
   use ServerWeb, :live_view
   use Timex
 
+  alias Server.Services.MonitoringPods
+
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, 5000)
@@ -12,20 +14,20 @@ defmodule ServerWeb.ServicesLive.Monitoring do
   end
 
   def summarize_pod(pod) do
-    restartCount =
+    restart_count =
       pod["status"]["containerStatuses"]
       |> Enum.map(fn cs -> cs["restartCount"] end)
       |> Enum.sum()
 
-    {:ok, startTime} = pod["status"]["startTime"] |> Timex.parse("{ISO:Extended}")
+    {:ok, start_time} = pod["status"]["startTime"] |> Timex.parse("{ISO:Extended}")
 
-    fromStart = Timex.from_now(startTime)
+    from_start = Timex.from_now(start_time)
 
-    pod |> Map.put("summary", %{"restartCount" => restartCount, "fromStart" => fromStart})
+    pod |> Map.put("summary", %{"restartCount" => restart_count, "fromStart" => from_start})
   end
 
   defp get_pods do
-    pods = Server.Services.MonitoringPods.get()
+    pods = MonitoringPods.get()
     pods |> Enum.map(&summarize_pod/1)
   end
 
