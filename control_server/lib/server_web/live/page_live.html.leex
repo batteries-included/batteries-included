@@ -11,7 +11,7 @@
   <div class="row mt-5">
     <h3>Install/Uninstall Services</h3>
     <div class="col">
-      <%= render(ServerWeb.ServicesView, "start_stop.html", running_set: @running_set, socket: @socket) %>
+      <%= render(ServerWeb.ServicesView, "start_stop_table.html", running_set: @running_set, socket: @socket) %>
     </div>
     <div class="col">
       <div class="card shadow-lg">

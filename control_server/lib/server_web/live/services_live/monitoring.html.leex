@@ -1,44 +1,59 @@
 <div class="container-xxl">
   <h2>Monitoring</h2>
   <hr class="mt-4" />
-  <div class="row mt-4">
-    <div class="col-lg-8">
-      <table class="table">
-        <thead>
-          <tr>
-            <th class="col">Name</th>
-            <th class="col">Status</th>
-            <th class="col">Restarts</th>
-            <th class="col">Age</th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= for pod <- @pods do %>
+
+  <%= if @running do %>
+    <div class="row mt-4">
+      <div class="col-lg-8">
+        <table class="table">
+          <thead>
             <tr>
-              <td>
-                <%= pod["metadata"]["name"] %>
-              </td>
-              <td>
-                <%= pod["status"]["phase"] %>
-              </td>
-              <td>
-                <%= pod["summary"]["restartCount"] %>
-              </td>
-              <td>
-                <%= pod["summary"]["fromStart"] %>
-              </td>
+              <th class="col">Name</th>
+              <th class="col">Status</th>
+              <th class="col">Restarts</th>
+              <th class="col">Age</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-    <div class="col-lg-4">
-      <div class="card text-center bg-success">
-        <div class="card-body">
-          <div class="card-title">Prometheus API Status</div>
-          <h2>99.973%</h2>
+          </thead>
+          <tbody>
+            <%= for pod <- @pods do %>
+              <tr>
+                <td>
+                  <%= pod["metadata"]["name"] %>
+                </td>
+                <td>
+                  <%= pod["status"]["phase"] %>
+                </td>
+                <td>
+                  <%= pod["summary"]["restartCount"] %>
+                </td>
+                <td>
+                  <%= pod["summary"]["fromStart"] %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-lg-4">
+        <div class="card text-center bg-success">
+          <div class="card-body">
+            <div class="card-title">Prometheus API Status</div>
+            <h2>99.973%</h2>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  <% else %>
+    <div class="row mt-4">
+      <div class="col align-self-center">
+        Monitoring is not currently enabled on this Batteries included cluster. To start installing
+        please press the button.
+      </div>
+    </div>
+    <div class="row">
+      <div class="col align-self-center text-center m-5">
+        <button class="btn btn-primary shadow" phx-click="start_service">Install</button>
+      </div>
+    </div>
+  <% end %>
 </div>

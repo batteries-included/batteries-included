@@ -5,12 +5,17 @@ defmodule ServerWeb.ServicesLive.Monitoring do
   use ServerWeb, :live_view
   use Timex
 
+  require Logger
+
   alias Server.Services.MonitoringPods
+  alias Server.Configs.RunningSet
+
+  @pod_update_time 5000
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, 5000)
-    {:ok, socket |> assign(:pods, get_pods())}
+    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
+    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, get_running())}
   end
 
   def summarize_pod(pod) do
@@ -27,13 +32,16 @@ defmodule ServerWeb.ServicesLive.Monitoring do
   end
 
   defp get_pods do
-    pods = MonitoringPods.get()
-    pods |> Enum.map(&summarize_pod/1)
+    MonitoringPods.get() |> Enum.map(&summarize_pod/1)
+  end
+
+  defp get_running do
+    RunningSet.get!().content |> Map.get("monitoring")
   end
 
   @impl true
   def handle_info(:update, socket) do
-    Process.send_after(self(), :update, 5000)
+    Process.send_after(self(), :update, @pod_update_time)
     {:noreply, socket |> assign(:pods, get_pods())}
   end
 
@@ -44,5 +52,13 @@ defmodule ServerWeb.ServicesLive.Monitoring do
 
   defp apply_action(socket, :index, _params) do
     socket
+  end
+
+  @impl true
+  def handle_event("start_service", %{}, socket) do
+    with {:ok, new_config} <- RunningSet.set_running(RunningSet.get!(), "monitoring", true) do
+      new_config.content |> inspect() |> Logger.info()
+      {:noreply, assign(socket, :running, true)}
+    end
   end
 end
