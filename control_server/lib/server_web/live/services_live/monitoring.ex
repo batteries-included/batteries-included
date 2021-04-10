@@ -7,8 +7,8 @@ defmodule ServerWeb.ServicesLive.Monitoring do
 
   require Logger
 
-  alias Server.Services.MonitoringPods
   alias Server.Configs.RunningSet
+  alias Server.Services.MonitoringPods
 
   @pod_update_time 5000
 
