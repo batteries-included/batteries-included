@@ -19,7 +19,7 @@
           <%= if ! running do %>
             <button
               type="button"
-              class="btn btn-primary shadow"
+              class="btn btn-primary shadow-sm"
               phx-click="start_service"
               phx-value-service="<%= service %>"
               phx-disable-with="Starting..."
@@ -29,7 +29,7 @@
           <% else %>
             <button
               type="button"
-              class="btn btn-danger shadow"
+              class="btn btn-danger shadow-sm"
               phx-click="stop_service"
               phx-value-service="<%= service %>"
               phx-disable-with="Stopping..."

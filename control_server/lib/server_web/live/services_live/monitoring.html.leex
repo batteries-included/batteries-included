@@ -4,7 +4,8 @@
 
   <%= if @running do %>
     <div class="row mt-4">
-      <div class="col-lg-8">
+      <div class="col-lg-7">
+        <h3>Pods</h3>
         <table class="table">
           <thead>
             <tr>
@@ -34,11 +35,19 @@
           </tbody>
         </table>
       </div>
-      <div class="col-lg-4">
-        <div class="card text-center bg-success">
-          <div class="card-body">
-            <div class="card-title">Prometheus API Status</div>
-            <h2>99.973%</h2>
+      <div class="col-lg-5 d-flex flex-column">
+        <div>
+          <h4>Prometheus Adapter</h4>
+          <div class="btn-group btn-group-lg">
+            <button class="btn btn-primary disabled">Disabled</button>
+            <button class="btn btn-outline-primary">Enable</button>
+          </div>
+        </div>
+        <div>
+          <h4>Alert Manager</h4>
+          <div class="btn-group btn-group-lg">
+            <button class="btn btn-outline-primary">Disable</button>
+            <button class="btn btn-primary disabled">Enabled</button>
           </div>
         </div>
       </div>

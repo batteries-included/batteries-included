@@ -17,8 +17,8 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 retry() {
     local n=1
-    local max=5
-    local delay=15
+    local max=20
+    local delay=30
 
     while true; do
         "$@" && break || {
@@ -59,6 +59,10 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 k3d cluster create -v /dev/mapper:/dev/mapper || true
 # Start the services.
 kubectl apply -f "${DIR}/k8s"
+# Add the CRD definition
+kubectl apply -f "${DIR}/../control_server/manifest.yaml"
+# Create the cluster
+kubectl apply -f "${DIR}/../control_server/default_cluster.yaml"
 
 # sleep some amount of time while waiting. This is horrible.
 # Yeah

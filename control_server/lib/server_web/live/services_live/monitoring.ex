@@ -21,6 +21,7 @@ defmodule ServerWeb.ServicesLive.Monitoring do
   def summarize_pod(pod) do
     restart_count =
       pod["status"]["containerStatuses"]
+      |> Enum.filter(fn cs -> cs != nil end)
       |> Enum.map(fn cs -> cs["restartCount"] end)
       |> Enum.sum()
 
