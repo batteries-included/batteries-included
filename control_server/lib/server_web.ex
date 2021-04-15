@@ -91,6 +91,8 @@ defmodule ServerWeb do
       import ServerWeb.ErrorHelpers
       import ServerWeb.Gettext
       alias ServerWeb.Router.Helpers, as: Routes
+
+      import ServerWeb.IconHelper
     end
   end
 

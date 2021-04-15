@@ -5,7 +5,6 @@ defmodule Server.Configs.Defaults do
   import Ecto.Query, warn: false
   alias Ecto.Multi
 
-  alias Server.Configs.Prometheus
   alias Server.Configs.RunningSet
   alias Server.Repo
 
@@ -13,9 +12,6 @@ defmodule Server.Configs.Defaults do
     Multi.new()
     |> Multi.run(:running_set_config, fn _repo, _ ->
       RunningSet.create()
-    end)
-    |> Multi.run(:prometheus_config, fn _repo, _ ->
-      Prometheus.create()
     end)
     |> Repo.transaction()
   end

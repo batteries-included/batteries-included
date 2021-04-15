@@ -1,9 +1,16 @@
 /* This file is for your main application css. */
-$pink: #fc408a;
-$teal: #22a4b6;
-$green: #af9e15;
+
+$french-rose: hsla(336, 97%, 62%, 1);
+$pacific-blue: hsla(187, 69%, 42%, 1);
+$prussian-blue: hsla(203, 83%, 14%, 1);
+$lavender-blush: hsla(333, 21%, 92%, 1);
+$green-yellow: hsla(80, 100%, 70%, 1);
+
+$pink: $french-rose;
+$teal: $pacific-blue;
+$green: $green-yellow;
 $orange: #ec7d18;
-$indigo: #7164f8;
+$indigo: $prussian-blue;
 $blue: #377af7;
 
 $primary: $pink;
@@ -11,14 +18,51 @@ $secondary: $teal;
 
 $font-size-base: 1.1rem;
 
+$dark: $indigo;
+$light: #eee5e9;
 
+$enable-shadows: true;
+$border-radius: 0.4em;
 
 @import "bootstrap/scss/bootstrap";
 @import "nprogress/nprogress";
+@import "sidebar";
 
-main {
-  margin-top: 1rem;
+body {
+  min-height: 100vh;
 }
-.alert:empty {
-  display: none;
+
+// Have to move the main over
+main {
+  margin-left: $sidebar-size;
+}
+
+#services-install {
+  .running-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .running-icon.running {
+    color: $teal;
+  }
+
+  .running-icon.not-running {
+    color: $gray-700;
+  }
+}
+
+#services-install .serviceName {
+  text-transform: capitalize;
+}
+
+.icon.small {
+  width: 1rem;
+  height: 1rem;
+}
+
+.sparkline {
+  height: 32px;
+  width: 100%;
+  max-width: 300px;
 }

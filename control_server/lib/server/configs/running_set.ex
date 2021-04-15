@@ -19,7 +19,7 @@ defmodule Server.Configs.RunningSet do
     })
   end
 
-  def set_running(config, service_name, is_running \\ true) do
+  def set_running(%Configs.RawConfig{} = config, service_name, is_running \\ true) do
     new_content = %{config.content | service_name => is_running}
 
     with {:ok, result} <-
@@ -28,7 +28,7 @@ defmodule Server.Configs.RunningSet do
              Configs.update_raw_config(config, %{content: new_content})
            end)
            |> Server.Repo.transaction() do
-      result[:config]
+      {:ok, result[:config]}
     end
   end
 end

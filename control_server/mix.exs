@@ -57,7 +57,7 @@ defmodule Server.MixProject do
       {:postgrex, ">= 0.0.0"},
 
       # Auth
-      {:phx_gen_auth, "~> 0.6", only: [:dev], runtime: false},
+      {:phx_gen_auth, "~> 0.7", only: [:dev], runtime: false},
 
       # Versioning.
       {:paper_trail, "~> 0.12.0"},
@@ -73,6 +73,9 @@ defmodule Server.MixProject do
 
       # Yaml
       {:yaml_elixir, "~> 2.6"},
+
+      # Time
+      {:timex, "~> 3.7"},
 
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},
@@ -92,7 +95,10 @@ defmodule Server.MixProject do
       setup: ["deps.get", "ecto.setup", "cmd npm install --prefix assets"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "prettier.check": "cmd ./assets/node_modules/.bin/prettier --check . --color",
+      prettier: "cmd ./assets/node_modules/.bin/prettier -w . --color",
+      fmt: ["format", "prettier"]
     ]
   end
 end

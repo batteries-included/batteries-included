@@ -4,7 +4,11 @@
     GIT_SUBMODULE_STRATEGY: recursive
     CARGO_HOME: /cache/cargo
     CARGO_TARGET_DIR: /cache/cargo_target
-
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - /cache/cargo
+      - /cache/cargo_target
   before_script:
     - rustc --version
     - cargo --version
@@ -16,29 +20,12 @@ build:rust_utils:
     - cd rust_utils
     - cargo build --all-features --tests
 
-build:rust_utils:nightly:
-  <<: *rust-template
-  image: rustlang/rust:nightly
-  stage: build
-  script:
-    - cd rust_utils
-    - cargo build --all-features --tests
-
 test:rust_utils:
   <<: *rust-template
   stage: test
   script:
     - cd rust_utils
     - cargo test --all --verbose
-
-test:rust_utils:nightly:
-  <<: *rust-template
-  image: rustlang/rust:nightly
-  stage: test
-  script:
-    - cd rust_utils
-    - cargo test --all --verbose
-  allow_failure: true
 
 lint:rust_utils:
   <<: *rust-template

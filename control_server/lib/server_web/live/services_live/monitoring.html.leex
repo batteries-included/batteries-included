@@ -1,0 +1,76 @@
+<div class="container-xxl">
+  <h2>Monitoring</h2>
+  <hr class="mt-4" />
+
+  <%= if @running do %>
+    <div class="row mt-4">
+      <div class="col-lg-7">
+        <h3>Pods</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="col">Name</th>
+              <th class="col">Status</th>
+              <th class="col">Restarts</th>
+              <th class="col">Age</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= for pod <- @pods do %>
+              <tr>
+                <td>
+                  <%= pod["metadata"]["name"] %>
+                </td>
+                <td>
+                  <%= pod["status"]["phase"] %>
+                </td>
+                <td>
+                  <%= pod["summary"]["restartCount"] %>
+                </td>
+                <td>
+                  <%= pod["summary"]["fromStart"] %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-lg-5 d-flex flex-column">
+        <div>
+          <h4>Prometheus Adapter</h4>
+          <div class="btn-group btn-group-lg">
+            <button class="btn btn-primary disabled">Disabled</button>
+            <button class="btn btn-outline-primary">Enable</button>
+          </div>
+        </div>
+        <div>
+          <h4>Alert Manager</h4>
+          <div class="btn-group btn-group-lg">
+            <button class="btn btn-outline-primary">Disable</button>
+            <button class="btn btn-primary disabled">Enabled</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="http://192.168.1.95:3000">Grafana</a></li>
+        </ul>
+      </div>
+    </div>
+  <% else %>
+    <div class="row mt-4">
+      <div class="col align-self-center">
+        Monitoring is not currently enabled on this Batteries included cluster. To start installing
+        please press the button.
+      </div>
+    </div>
+    <div class="row">
+      <div class="col align-self-center text-center m-5">
+        <button class="btn btn-primary shadow" phx-click="start_service">Install</button>
+      </div>
+    </div>
+  <% end %>
+</div>
