@@ -12,4 +12,4 @@ Batteries Included provides a platform and services that scale all the way up an
 
 ## Great Technical Base
 
-It's better to pick software that's already on good solid technical footing with fewer features rather than try and shore up a rotten but featureful alternative.
+It's better to pick software that's already on good solid technical footing with fewer features rather than try and shore up a rotten but feature full alternative.
