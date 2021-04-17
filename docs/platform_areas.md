@@ -79,7 +79,7 @@ These are areas/services that might be present on cloud based clusters and we wo
 
 ### 1.2.1. Storage
 
-We want to provide an all inclusive platform it's kind of hard to train ML without somewhere to get training data and somewhere to place the result. So lets provide durable storage for all the needs and all the automated  tools to keep that working.
+We want to provide an all inclusive platform it's kind of hard to train ML without somewhere to get training data and somewhere to place the result. So lets provide durable storage for all the needs and all the automated tools to keep that working.
 
 - Rook
 - Rook's S3 api
