@@ -2,7 +2,6 @@
 
 We have to provide value to customers that show we are more than just a single piece of software being installed once. We need to provide value in an on ongoing way. Something that's tangible and core our customers' the business interests are best; though providing that value to developers in a way that makes them more efficient can be good too. Continued stability and ease of operations would be a tertiary benefit that we can provide.
 
-
 ## Business Value
 
 If our tools make it possible to do something that customers couldn't before, then it's easy to show the value we drive.

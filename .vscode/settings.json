@@ -32,5 +32,12 @@
   },
   "prettier.requireConfig": true,
   "prettier.prettierPath": "./control_server/assets/node_modules/prettier",
+  "cSpell.words": [
+    "Alertmanager",
+    "Grafana",
+    "Juypter",
+    "Logstash",
+    "Pytorch"
+  ],
   // "prettier.prettierPath": "./control_server/assets/node_modules/.bin/prettier"
 }
