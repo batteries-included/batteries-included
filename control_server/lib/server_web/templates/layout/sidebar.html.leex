@@ -19,7 +19,22 @@
       <a href="/" class="nav-link active">Home</a>
       <a href="/services/monitoring" class="nav-link">Monitoring</a>
     </nav>
-    <a href="#" class="nav-item nav-link">Dashboards</a>
+
+    <a
+      class="nav-item nav-link"
+      href="#quick-nav"
+      aria-controls="#quick-nav"
+      aria-expanded="false"
+      data-bs-toggle="collapse"
+    >
+      Quick Links
+      <%= icon_tag(@socket, "caret-down-fill", class: "small down") %>
+      <%= icon_tag(@socket, "caret-up-fill", class: "small up") %>
+    </a>
+    <nav class="collapse" id="quick-nav">
+      <a href="http://192.168.1.95:3000" class="nav-link">Grafana</a>
+    </nav>
+
     <a
       class="nav-item nav-link"
       aria-controls="#ml-nav"
@@ -38,6 +53,7 @@
       <a href="/ml/feature_storage" class="nav-link">Feature Storage</a>
       <a href="/ml/inference" class="nav-link">Inferencing</a>
     </nav>
+
     <a href="#" class="nav-item nav-link">System Stability</a>
     <a href="#" class="nav-item nav-link">Audit Logs</a>
   </nav>

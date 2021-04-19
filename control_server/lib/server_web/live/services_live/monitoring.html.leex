@@ -4,7 +4,7 @@
 
   <%= if @running do %>
     <div class="row mt-4">
-      <div class="col-lg-7">
+      <div class="col-lg-9">
         <h3>Pods</h3>
         <table class="table">
           <thead>
@@ -35,29 +35,21 @@
           </tbody>
         </table>
       </div>
-      <div class="col-lg-5 d-flex flex-column">
+      <div class="col-lg-3 d-flex flex-column">
         <div>
           <h4>Prometheus Adapter</h4>
-          <div class="btn-group btn-group-lg">
+          <div class="btn-group btn-group-lg d-flex">
             <button class="btn btn-primary disabled">Disabled</button>
             <button class="btn btn-outline-primary">Enable</button>
           </div>
         </div>
         <div>
           <h4>Alert Manager</h4>
-          <div class="btn-group btn-group-lg">
+          <div class="btn-group btn-group-lg d-flex">
             <button class="btn btn-outline-primary">Disable</button>
             <button class="btn btn-primary disabled">Enabled</button>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="http://192.168.1.95:3000">Grafana</a></li>
-        </ul>
       </div>
     </div>
   <% else %>
