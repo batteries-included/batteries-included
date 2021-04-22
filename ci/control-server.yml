@@ -15,6 +15,7 @@ build:contol:
     - mix local.hex --force
     - mix local.rebar --force
     - mix deps.get
+    - mix deps.get --only test
     - mix compile --warnings-as-errors
 
 test:control:
@@ -33,9 +34,9 @@ test:control:
     - cd control_server
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get
+    - mix deps.get --only test
     - MIX_ENV=test mix ecto.reset
-    - MIX_ENV=test mix coveralls
+    - mix coveralls
 
 lint:control:
   stage: lint
@@ -46,7 +47,7 @@ lint:control:
     - cd control_server
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get
+    - mix deps.get --only test
     - mix format --check-formatted
     - mix credo --strict
 
