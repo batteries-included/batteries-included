@@ -27,7 +27,6 @@ test:control:
     POSTGRES_HOST: postgres
     POSTGRES_USER: batterydbuser
     POSTGRES_PASSWORD: "batterypasswd"
-    MIX_ENV: "test"
   cache:
     <<: *global_cache
   script:
@@ -35,14 +34,12 @@ test:control:
     - mix local.hex --force
     - mix local.rebar --force
     - mix deps.get
-    - mix ecto.reset
-    - mix coveralls
+    - MIX_ENV=test mix ecto.reset
+    - MIX_ENV=test mix coveralls
 
 lint:control:
   stage: lint
   image: bitwalker/alpine-elixir-phoenix:1.11.3
-  variables:
-    MIX_ENV: "test"
   cache:
     <<: *global_cache
   script:
