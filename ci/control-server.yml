@@ -34,6 +34,7 @@ test:control:
     - cd control_server
     - mix local.hex --force
     - mix local.rebar --force
+    - mix deps.get
     - mix ecto.reset
     - mix coveralls
 
@@ -48,6 +49,7 @@ lint:control:
     - cd control_server
     - mix local.hex --force
     - mix local.rebar --force
+    - mix deps.get
     - mix format --check-formatted
     - mix credo --strict
 
