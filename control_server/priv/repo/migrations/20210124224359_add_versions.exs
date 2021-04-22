@@ -1,4 +1,4 @@
-defmodule Repo.Migrations.AddVersions do
+defmodule ControlServer.Repo.Migrations.AddVersions do
   use Ecto.Migration
 
   def change do

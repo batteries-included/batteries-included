@@ -7,21 +7,21 @@
 # General application configuration
 use Mix.Config
 
-config :server,
-  ecto_repos: [Server.Repo]
+config :control_server,
+  ecto_repos: [ControlServer.Repo]
 
 # configure paper trail for model history
 config :paper_trail,
-  repo: Server.Repo,
+  repo: ControlServer.Repo,
   item_type: Ecto.UUID,
   originator_type: Ecto.UUID
 
 # Configures the endpoint
-config :server, ServerWeb.Endpoint,
+config :control_server, ControlServerWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "s3EZzlHQ8TGyfQYw+LgNkYEHKaKjtmLnc3aQh2+eUyfRa0UuE1Yf44hI1jWk0ii3",
-  render_errors: [view: ServerWeb.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: Server.PubSub,
+  render_errors: [view: ControlServerWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: ControlServer.PubSub,
   live_view: [signing_salt: "YG8AIjsI"]
 
 # Configures Elixir's Logger
@@ -34,7 +34,7 @@ config :phoenix, :json_library, Jason
 
 config :bonny,
   controllers: [
-    Server.Controller.V1.BatteryCluster
+    ControlServer.Controller.V1.BatteryCluster
   ],
   cluster_name: :default,
   # Also configurable via environment variable `BONNY_POD_NAMESPACE`

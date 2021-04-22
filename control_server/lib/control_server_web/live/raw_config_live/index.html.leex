@@ -1,0 +1,34 @@
+<h1>Listing Raw configs</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal(@socket, ControlServerWeb.RawConfigLive.FormComponent,
+        id: @raw_config.id || :new,
+        title: @page_title,
+        action: @live_action,
+        raw_config: @raw_config,
+        return_to: Routes.raw_config_index_path(@socket, :index)
+      ) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="raw_configs">
+    <%= for raw_config <- @raw_configs do %>
+      <tr id="raw_config-<%= raw_config.id %>">
+        <td><%= raw_config.path %></td>
+        <td>
+          <span><%= live_redirect "Show", to: Routes.raw_config_show_path(@socket, :show, raw_config) %></span>
+          <span><%= live_patch "Edit", to: Routes.raw_config_index_path(@socket, :edit, raw_config) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: raw_config.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Raw config", to: Routes.raw_config_index_path(@socket, :new) %></span>

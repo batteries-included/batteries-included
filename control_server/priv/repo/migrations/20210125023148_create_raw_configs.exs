@@ -1,4 +1,4 @@
-defmodule Server.Repo.Migrations.CreateRawConfigs do
+defmodule ControlServer.Repo.Migrations.CreateRawConfigs do
   use Ecto.Migration
 
   def change do

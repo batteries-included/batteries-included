@@ -1,9 +1,9 @@
-defmodule Server.Factory do
+defmodule ControlServer.Factory do
   # with Ecto
-  use ExMachina.Ecto, repo: Server.Repo
+  use ExMachina.Ecto, repo: ControlServer.Repo
 
   def raw_config_factory do
-    %Server.Configs.RawConfig{
+    %ControlServer.Configs.RawConfig{
       path: sequence("/config/path-"),
       content: %{}
     }

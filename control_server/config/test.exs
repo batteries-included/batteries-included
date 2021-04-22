@@ -5,7 +5,7 @@ use Mix.Config
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
-config :server, Server.Repo,
+config :control_server, ControlServer.Repo,
   username: System.get_env("POSTGRES_USER") || "batterydbuser",
   password: System.get_env("POSTGRES_PASSWORD") || "batterypasswd",
   database: System.get_env("POSTGRES_DB") || "server_test",
@@ -14,7 +14,7 @@ config :server, Server.Repo,
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :server, ServerWeb.Endpoint,
+config :control_server, ControlServerWeb.Endpoint,
   http: [port: 4002],
   server: false
 
