@@ -7,7 +7,6 @@ defmodule ControlServer.Configs do
   alias ControlServer.Repo
 
   alias ControlServer.Configs.RawConfig
-  alias ControlServer.PaperTrailUtils
 
   @doc """
   Returns the list of raw_configs.
@@ -54,8 +53,7 @@ defmodule ControlServer.Configs do
   def upsert(attrs \\ %{}) do
     %RawConfig{}
     |> RawConfig.changeset(attrs)
-    |> PaperTrail.insert(ecto_options: [on_conflict: :nothing])
-    |> PaperTrailUtils.unwrap_papertrail()
+    |> Repo.insert(ecto_options: [on_conflict: :nothing])
   end
 
   @doc """
@@ -73,8 +71,7 @@ defmodule ControlServer.Configs do
   def create_raw_config(attrs \\ %{}) do
     %RawConfig{}
     |> RawConfig.changeset(attrs)
-    |> PaperTrail.insert()
-    |> PaperTrailUtils.unwrap_papertrail()
+    |> Repo.insert()
   end
 
   @doc """
@@ -92,8 +89,7 @@ defmodule ControlServer.Configs do
   def update_raw_config(%RawConfig{} = raw_config, attrs) do
     raw_config
     |> RawConfig.changeset(attrs)
-    |> PaperTrail.update()
-    |> PaperTrailUtils.unwrap_papertrail()
+    |> Repo.update()
   end
 
   @doc """
@@ -109,8 +105,7 @@ defmodule ControlServer.Configs do
 
   """
   def delete_raw_config(%RawConfig{} = raw_config) do
-    PaperTrail.delete(raw_config)
-    |> PaperTrailUtils.unwrap_papertrail()
+    Repo.delete(raw_config)
   end
 
   @doc """

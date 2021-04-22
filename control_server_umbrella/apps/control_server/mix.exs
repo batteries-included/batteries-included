@@ -47,9 +47,6 @@ defmodule ControlServer.MixProject do
       # Filtering
       {:filtrex, "~> 0.4.3"},
 
-      # Versioning.
-      {:paper_trail, "~> 0.12"},
-
       # Kubernetes
       {:bonny, "~> 0.4"},
       {:httpoison, "~> 1.4"},

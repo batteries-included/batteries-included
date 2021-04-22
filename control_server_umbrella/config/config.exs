@@ -38,9 +38,6 @@ config :phoenix, :json_library, Jason
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# configure paper trail for model history
-config :paper_trail, repo: ControlServer.Repo, item_type: Ecto.UUID, originator_type: Ecto.UUID
-
 config :bonny,
   controllers: [
     ControlServer.Controller.V1.BatteryCluster

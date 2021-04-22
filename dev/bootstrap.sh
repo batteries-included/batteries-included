@@ -60,9 +60,9 @@ k3d cluster create -v /dev/mapper:/dev/mapper || true
 # Start the services.
 kubectl apply -f "${DIR}/k8s"
 # Add the CRD definition
-kubectl apply -f "${DIR}/../control_server/manifest.yaml"
+kubectl apply -f "${DIR}/../control_server_umbrella/manifest.yaml"
 # Create the cluster
-kubectl apply -f "${DIR}/../control_server/default_cluster.yaml"
+kubectl apply -f "${DIR}/../control_server_umbrella/default_cluster.yaml"
 
 # sleep some amount of time while waiting. This is horrible.
 # Yeah

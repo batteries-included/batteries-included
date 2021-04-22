@@ -1,5 +1,6 @@
 defmodule ControlServer.ConfigsTest do
   use ControlServer.DataCase
+  require Logger
 
   alias ControlServer.Configs
   import ControlServer.Factory
@@ -12,7 +13,6 @@ defmodule ControlServer.ConfigsTest do
 
     test "list_raw_configs/0 returns all raw_configs" do
       raw_config = insert(:raw_config)
-      # %RawConfig{id: id} = raw_config
       assert Enum.any?(Configs.list_raw_configs(), fn x -> x == raw_config end)
     end
 
@@ -50,20 +50,17 @@ defmodule ControlServer.ConfigsTest do
       assert %Ecto.Changeset{} = Configs.change_raw_config(raw_config)
     end
 
-    test "upsert doesn't insert new" do
-      raw_config = insert(:raw_config)
-
-      {:ok, not_inserted} = Configs.upsert(%{path: raw_config.path, contents: %{test: false}})
-
-      assert not_inserted != Configs.get_by_path!(raw_config.path)
-      assert raw_config == Configs.get_by_path!(raw_config.path)
-    end
-
     test "Can list with prefix" do
       raw_config = insert(:raw_config)
-      assert {:ok, _} = Configs.upsert(%{path: "/off/in/never", contents: %{test: false}})
+      # running set is part of seeding and the just inserted one
+      assert length(Configs.find_by_prefix("/")) == 2
+      # Try annd upsert something new
+      assert {:ok, _} =
+               Configs.create_raw_config(%{path: "/off/in/never", contents: %{test: false}})
+
       assert length(Configs.find_by_prefix("/off/in/")) == 1
       assert length(Configs.find_by_prefix(raw_config.path)) == 1
+      assert length(Configs.find_by_prefix("/")) == 3
     end
   end
 end
