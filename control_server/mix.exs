@@ -42,8 +42,7 @@ defmodule Server.MixProject do
     [
       {:phoenix, "~> 1.5.8"},
       {:phoenix_live_view, "~> 0.15.0"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_html, "~> 2.14"},
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
@@ -53,12 +52,8 @@ defmodule Server.MixProject do
 
       # SQL
       {:phoenix_ecto, "~> 4.1"},
-      {:ecto_sql, "~> 3.5"},
+      {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
-
-      # Auth
-      {:phx_gen_auth, "~> 0.7", only: [:dev], runtime: false},
-
       # Versioning.
       {:paper_trail, "~> 0.12.0"},
 
@@ -76,11 +71,20 @@ defmodule Server.MixProject do
       # Time
       {:timex, "~> 3.7"},
 
+      ## Dev/Test only deps
+
+      # Auth
+      {:phx_gen_auth, "~> 0.7", only: [:dev], runtime: false},
+
+      # Dev reload for phoenix
+      {:phoenix_live_reload, "~> 1.3", only: :dev},
+
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},
       {:floki, "~> 0.30", only: :test},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.14", only: :test}
+      {:excoveralls, "~> 0.14", only: :test},
+      {:licensir, "~> 0.6", only: :dev, runtime: false}
     ]
   end
 
