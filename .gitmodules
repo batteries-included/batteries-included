@@ -1,4 +1,4 @@
-[submodule "control_server/priv/kube-prometheus"]
+[submodule "control_server_umbrella/lib/control_server/priv/kube-prometheus"]
 	path = control_server/priv/kube-prometheus
 	url = https://github.com/prometheus-operator/kube-prometheus.git
 	branch = release-0.7
