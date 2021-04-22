@@ -61,7 +61,6 @@ defmodule Server.MixProject do
 
       # Versioning.
       {:paper_trail, "~> 0.12.0"},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
 
       # Filtering
       {:filtrex, "~> 0.4.3"},
@@ -80,6 +79,7 @@ defmodule Server.MixProject do
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},
       {:floki, "~> 0.30", only: :test},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.14", only: :test}
     ]
   end
