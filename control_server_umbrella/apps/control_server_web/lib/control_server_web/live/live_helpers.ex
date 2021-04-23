@@ -18,9 +18,9 @@ defmodule ControlServerWeb.LiveHelpers do
         kube_cluster: @kube_cluster,
         return_to: Routes.kube_cluster_index_path(@socket, :index) %>
   """
-  def live_modal(_socket, component, opts) do
+  def live_modal(socket, component, opts) do
     path = Keyword.fetch!(opts, :return_to)
     modal_opts = [id: :modal, return_to: path, component: component, opts: opts]
-    live_component(_socket, ControlServerWeb.ModalComponent, modal_opts)
+    live_component(socket, ControlServerWeb.ModalComponent, modal_opts)
   end
 end

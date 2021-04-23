@@ -19,22 +19,12 @@ defmodule ControlServerWeb.Router do
 
     live "/", PageLive, :index
 
-    ## RawConfig ##
-    live "/raw_configs", RawConfigLive.Index, :index
-    live "/raw_configs/new", RawConfigLive.Index, :new
-    live "/raw_configs/:id/edit", RawConfigLive.Index, :edit
-
-    live "/raw_configs/:id", RawConfigLive.Show, :show
-    live "/raw_configs/:id/show/edit", RawConfigLive.Show, :edit
-
     live "/services/monitoring", ServicesLive.Monitoring, :index
   end
 
   scope "/api", ControlServerWeb do
     pipe_through :api
 
-    resources "/raw_configs", RawConfigController, except: [:new, :edit]
-    get "/configs/*path", ComputedConfigController, :show
   end
 
   # Enables LiveDashboard only for development

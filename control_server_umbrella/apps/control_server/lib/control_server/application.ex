@@ -10,8 +10,7 @@ defmodule ControlServer.Application do
       # Start the Ecto repository
       ControlServer.Repo,
       # Start the PubSub system
-      {Phoenix.PubSub, name: ControlServer.PubSub},
-      ControlServer.Services.Prometheus
+      {Phoenix.PubSub, name: ControlServer.PubSub}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -124,7 +124,7 @@
           </tr>
         </thead>
         <tbody>
-          <%= for {service, running} <- @running_set.content do %>
+          <%= for {service, running} <- @running_set do %>
             <tr>
               <td class="serviceName">
                 <%= service %>

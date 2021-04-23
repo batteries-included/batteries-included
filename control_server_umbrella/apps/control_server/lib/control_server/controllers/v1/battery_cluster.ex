@@ -15,7 +15,6 @@ defmodule ControlServer.Controller.V1.BatteryCluster do
   # @rule {"", ["secrets"], ["create"]}
 
   require Logger
-  alias ControlServer.Services.Prometheus
 
   @doc """
   Handles an `ADDED` event
@@ -45,9 +44,8 @@ defmodule ControlServer.Controller.V1.BatteryCluster do
   Called periodically for each existing CustomResource to allow for reconciliation.
   """
   @impl Bonny.Controller
-  def reconcile(%{"metadata" => %{"name" => name}} = batterycluster) do
+  def reconcile(%{"metadata" => %{"name" => name}} = _batterycluster) do
     Logger.debug("Starting a reconcile for cluster #{name}")
-    Prometheus.sync(batterycluster)
   end
 
   @impl Bonny.Controller
