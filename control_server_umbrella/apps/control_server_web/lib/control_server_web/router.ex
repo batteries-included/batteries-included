@@ -24,7 +24,7 @@ defmodule ControlServerWeb.Router do
 
   scope "/api", ControlServerWeb do
     pipe_through :api
-
+    resources "/base_services", BaseServiceController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development

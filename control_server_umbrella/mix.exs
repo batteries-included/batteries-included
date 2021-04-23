@@ -50,6 +50,7 @@ defmodule ControlServer.Umbrella.MixProject do
     [
       # run `mix setup` in all child apps
       setup: ["cmd mix setup"],
+      "ecto.reset": ["cmd mix ecto.reset"],
       fmt: ["format", "prettier"],
       prettier:
         "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier -w . --color"
