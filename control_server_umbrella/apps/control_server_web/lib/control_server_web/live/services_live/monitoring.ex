@@ -16,8 +16,7 @@ defmodule ControlServerWeb.ServicesLive.Monitoring do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
 
-    {:ok,
-     socket |> assign(:pods, get_pods()) |> assign(:running, Services.Monitoring.active?())}
+    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, Services.Monitoring.active?())}
   end
 
   def summarize_pod(pod) do

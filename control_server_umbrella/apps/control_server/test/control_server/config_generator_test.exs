@@ -9,7 +9,8 @@ defmodule ControlServer.Services.ConfigGeneratorTest do
     test "materialize all the configs" do
       Monitoring.activate()
 
-      Services.list_base_services() |> Enum.each(fn service ->
+      Services.list_base_services()
+      |> Enum.each(fn service ->
         configs = ConfigGenerator.materialize(service)
 
         assert map_size(configs) > 20
@@ -21,10 +22,11 @@ defmodule ControlServer.Services.ConfigGeneratorTest do
     Monitoring.activate()
     Monitoring.deactivate()
 
-    Services.list_base_services() |> Enum.each(fn service ->
-        configs = ConfigGenerator.materialize(service)
+    Services.list_base_services()
+    |> Enum.each(fn service ->
+      configs = ConfigGenerator.materialize(service)
 
-        assert map_size(configs) == 0
-      end)
+      assert map_size(configs) == 0
+    end)
   end
 end

@@ -60,4 +60,5 @@ lint:control:prettier:
     - pushd control_server_umbrella/apps/control_server_web/assets
     - npm ci --cache npm --prefer-offline
     - popd
+    - cd control_server_umbrella
     - ./apps/control_server_web/assets/node_modules/.bin/prettier --color --check .

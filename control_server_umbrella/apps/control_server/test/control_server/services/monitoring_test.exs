@@ -16,7 +16,6 @@ defmodule ControlServer.Services.MonitoringTest do
     end
   end
 
-
   test "Activate and Deactivate" do
     assert Monitoring.active?() == false
 
