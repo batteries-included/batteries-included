@@ -13,7 +13,7 @@ defmodule ControlServer.ConfigGenerator do
 
       true ->
         materialize(base_service.service_type, base_service.config)
-        |> Enum.map(fn {key, value} -> {base_service.root_path <> "/" <> key, value} end)
+        |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
         |> Map.new()
     end
   end
