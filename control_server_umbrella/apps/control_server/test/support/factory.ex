@@ -9,9 +9,9 @@ defmodule ControlServer.Factory do
 
   def base_service_factory do
     %ControlServer.Services.BaseService{
-      root_path: sequence(:root_path, &"/prometheus-#{&1}"),
+      root_path: sequence(:root_path, &"/service-#{&1}"),
       is_active: true,
-      service_type: sequence(:service_type, [:prometheus, :postgres])
+      service_type: sequence(:service_type, [:monitoring, :postgres])
     }
   end
 end

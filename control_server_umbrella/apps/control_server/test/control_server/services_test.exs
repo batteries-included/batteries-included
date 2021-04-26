@@ -10,13 +10,13 @@ defmodule ControlServer.ServicesTest do
       is_active: true,
       root_path: "some root_path",
       config: %{},
-      service_type: :prometheus
+      service_type: :monitoring
     }
     @update_attrs %{
       is_active: false,
       root_path: "some updated root_path",
       config: %{},
-      service_type: :prometheus
+      service_type: :monitoring
     }
     @invalid_attrs %{is_active: nil, root_path: nil, config: nil, service_type: nil}
 

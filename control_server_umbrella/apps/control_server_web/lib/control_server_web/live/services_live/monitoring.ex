@@ -7,6 +7,7 @@ defmodule ControlServerWeb.ServicesLive.Monitoring do
 
   require Logger
 
+  alias ControlServer.Services
   alias ControlServer.Services.MonitoringPods
 
   @pod_update_time 5000
@@ -14,7 +15,9 @@ defmodule ControlServerWeb.ServicesLive.Monitoring do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
-    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, false)}
+
+    {:ok,
+     socket |> assign(:pods, get_pods()) |> assign(:running, Services.Monitoring.active?())}
   end
 
   def summarize_pod(pod) do
@@ -52,6 +55,8 @@ defmodule ControlServerWeb.ServicesLive.Monitoring do
 
   @impl true
   def handle_event("start_service", _, socket) do
+    {:ok, _service} = Services.Monitoring.activate()
+
     {:noreply, assign(socket, :running, true)}
   end
 end
