@@ -4,38 +4,30 @@ defmodule ControlServer.Services.PrometheusOperator do
 
   This can generate a config and will also add on alerting/monitoring.
   """
-  @operator_name "battery-prometheus-operator"
-  @operator_account_name "prometheus-operator-battery-account"
-  @operator_role_name "prometheus-operator-battery-role"
-  @operator_version "v0.44.1"
+  alias ControlServer.Services.MonitoringSettings
 
-  def service_account(namespace_name) do
+  def service_account(config) do
+    namespace = MonitoringSettings.namespace(config)
+    account = MonitoringSettings.prometheus_operator_name(config)
+
     %{
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "labels" => %{
-          "app.kubernetes.io/component": "controller",
-          "app.kubernetes.io/name": @operator_name,
-          "app.kubernetes.io/version": @operator_version
-        },
-        "name" => @operator_account_name,
-        "namespace" => namespace_name
+        "name" => account,
+        "namespace" => namespace
       }
     }
   end
 
-  def cluster_role do
+  def cluster_role(config) do
+    name = MonitoringSettings.prometheus_operator_name(config)
+
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
       "metadata" => %{
-        "labels" => %{
-          "app.kubernetes.io/component": "controller",
-          "app.kubernetes.io/name": @operator_name,
-          "app.kubernetes.io/version": @operator_version
-        },
-        "name" => @operator_role_name
+        "name" => name
       },
       "rules" => [
         %{
@@ -104,60 +96,57 @@ defmodule ControlServer.Services.PrometheusOperator do
     }
   end
 
-  def cluster_role_binding(namespace_name) do
+  def cluster_role_binding(config) do
+    name = MonitoringSettings.prometheus_operator_name(config)
+    namespace = MonitoringSettings.namespace(config)
+
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
-        "labels" => %{
-          "app.kubernetes.io/component": "controller",
-          "app.kubernetes.io/name": @operator_name,
-          "app.kubernetes.io/version": @operator_version
-        },
-        "name" => @operator_name
+        "name" => name
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
         "kind" => "ClusterRole",
-        "name" => @operator_role_name
+        "name" => name
       },
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => @operator_account_name,
-          "namespace" => namespace_name
+          "name" => name,
+          "namespace" => namespace
         }
       ]
     }
   end
 
-  def deployment(namespace_name) do
+  def deployment(config) do
+    name = MonitoringSettings.prometheus_operator_name(config)
+    namespace = MonitoringSettings.namespace(config)
+    image = MonitoringSettings.prometheus_operator_image(config)
+    version = MonitoringSettings.prometheus_operator_version(config)
+
     %{
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "labels" => %{
-          "app.kubernetes.io/component": "controller",
-          "app.kubernetes.io/name": @operator_name,
-          "app.kubernetes.io/version": @operator_version
-        },
-        "name" => @operator_name,
-        "namespace" => namespace_name
+        "name" => name,
+        "namespace" => namespace
       },
       "spec" => %{
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
             "app.kubernetes.io/component": "controller",
-            "app.kubernetes.io/name": @operator_name
+            "app.kubernetes.io/name": name
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
               "app.kubernetes.io/component": "controller",
-              "app.kubernetes.io/name": @operator_name,
-              "app.kubernetes.io/version": @operator_version
+              "app.kubernetes.io/name": name
             }
           },
           "spec" => %{
@@ -166,11 +155,11 @@ defmodule ControlServer.Services.PrometheusOperator do
                 "args" => [
                   "--kubelet-service=kube-system/kubelet",
                   "--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:#{
-                    @operator_version
+                    version
                   }"
                 ],
-                "image" => "quay.io/prometheus-operator/prometheus-operator:#{@operator_version}",
-                "name" => "prometheus-operator",
+                "image" => "#{image}:#{version}",
+                "name" => name,
                 "ports" => [%{"containerPort" => 8080, "name" => "http"}],
                 "resources" => %{
                   "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
@@ -208,25 +197,23 @@ defmodule ControlServer.Services.PrometheusOperator do
               "runAsNonRoot" => true,
               "runAsUser" => 65_534
             },
-            "serviceAccountName" => @operator_account_name
+            "serviceAccountName" => name
           }
         }
       }
     }
   end
 
-  def service(namespace_name) do
+  def service(config) do
+    name = MonitoringSettings.prometheus_operator_name(config)
+    namespace = MonitoringSettings.namespace(config)
+
     %{
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "labels" => %{
-          "app.kubernetes.io/component": "controller",
-          "app.kubernetes.io/name": @operator_name,
-          "app.kubernetes.io/version": @operator_version
-        },
-        "name" => @operator_name,
-        "namespace" => namespace_name
+        "name" => name,
+        "namespace" => namespace
       },
       "spec" => %{
         "clusterIP" => "None",
@@ -239,7 +226,7 @@ defmodule ControlServer.Services.PrometheusOperator do
         ],
         "selector" => %{
           "app.kubernetes.io/component": "controller",
-          "app.kubernetes.io/name": @operator_name
+          "app.kubernetes.io/name": name
         }
       }
     }

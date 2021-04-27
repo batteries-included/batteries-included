@@ -4,38 +4,41 @@ defmodule ControlServer.Services.Prometheus do
 
   Currently this is around config generation via Monitoring.materialize/1
   """
-  @prometheus_version "v2.22.1"
-  @prometheus_name "prometheus-main"
-  @prometheus_account "prometheus-battery-account"
-  @prometheus_main_role "prometheus-battery-main-role"
-  @prometheus_cluster_role "prometheus-battery-cluster-role"
-  @prometheus_config_role "prometheus-battery-config-role"
 
-  @requested_memory "400Mi"
-  @replicas 1
+  alias ControlServer.Services.MonitoringSettings
 
-  def prometheus(prometheus_ns) do
+  def prometheus(config) do
+    name = MonitoringSettings.prometheus_name(config)
+    namespace = MonitoringSettings.namespace(config)
+    account = MonitoringSettings.prometheus_account(config)
+
+    image = MonitoringSettings.prometheus_image(config)
+    version = MonitoringSettings.prometheus_version(config)
+
+    memory = MonitoringSettings.prometheus_memory(config)
+    replicas = MonitoringSettings.prometheus_replicas(config)
+
     %{
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "Prometheus",
       "metadata" => %{
         "labels" => %{
-          "prometheus" => @prometheus_name
+          "prometheus" => name
         },
-        "name" => @prometheus_name,
-        "namespace" => prometheus_ns
+        "name" => name,
+        "namespace" => namespace
       },
       "spec" => %{
         # "alerting" => %{
         #   "alertmanagers" => [
         #     %{
         #       "name" => "alertmanager-main",
-        #       "namespace" => prometheus_ns,
+        #       "namespace" => monitoring_ns,
         #       "port" => "web"
         #     }
         #   ]
         # },
-        "image" => "quay.io/prometheus/prometheus:#{@prometheus_version}",
+        "image" => "#{image}:#{version}",
         "nodeSelector" => %{
           "kubernetes.io/os": "linux"
         },
@@ -45,15 +48,15 @@ defmodule ControlServer.Services.Prometheus do
         "podMonitorSelector" => %{},
         "probeNamespaceSelector" => %{},
         "probeSelector" => %{},
-        "replicas" => @replicas,
+        "replicas" => replicas,
         "resources" => %{
           "requests" => %{
-            "memory" => @requested_memory
+            "memory" => memory
           }
         },
         "ruleSelector" => %{
           "matchLabels" => %{
-            "prometheus" => @prometheus_name,
+            "prometheus" => name,
             "role" => "alert-rules"
           }
         },
@@ -62,24 +65,24 @@ defmodule ControlServer.Services.Prometheus do
           "runAsNonRoot" => true,
           "runAsUser" => 1000
         },
-        "serviceAccountName" => @prometheus_account,
+        "serviceAccountName" => account,
         "serviceMonitorNamespaceSelector" => %{},
         "serviceMonitorSelector" => %{},
-        "version" => @prometheus_version
+        "version" => version
       }
     }
   end
 
-  def service(prometheus_ns) do
+  def service(config) do
+    name = MonitoringSettings.prometheus_name(config)
+    namespace = MonitoringSettings.namespace(config)
+
     %{
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "labels" => %{
-          "prometheus" => @prometheus_name
-        },
-        "name" => @prometheus_name,
-        "namespace" => prometheus_ns
+        "name" => name,
+        "namespace" => namespace
       },
       "spec" => %{
         "ports" => [
@@ -90,30 +93,34 @@ defmodule ControlServer.Services.Prometheus do
           }
         ],
         "selector" => %{
-          "app" => "prometheus",
-          "prometheus" => @prometheus_name
+          "prometheus" => name
         },
         "sessionAffinity" => "ClientIP"
       }
     }
   end
 
-  def service_account(prometheus_ns) do
+  def service_account(config) do
+    namespace = MonitoringSettings.namespace(config)
+    account = MonitoringSettings.prometheus_account(config)
+
     %{
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => @prometheus_account,
-        "namespace" => prometheus_ns
+        "name" => account,
+        "namespace" => namespace
       }
     }
   end
 
-  def role(:cluster) do
+  def role(:cluster, config) do
+    role = MonitoringSettings.prometheus_cluster_role(config)
+
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
-      "metadata" => %{"name" => @prometheus_cluster_role},
+      "metadata" => %{"name" => role},
       "rules" => [
         %{
           "apiGroups" => [""],
@@ -128,11 +135,14 @@ defmodule ControlServer.Services.Prometheus do
     }
   end
 
-  def role(:config, prometheus_ns) do
+  def role(:config, config) do
+    role = MonitoringSettings.prometheus_config_role(config)
+    namespace = MonitoringSettings.namespace(config)
+
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "Role",
-      "metadata" => %{"name" => @prometheus_config_role, "namespace" => prometheus_ns},
+      "metadata" => %{"name" => role, "namespace" => namespace},
       "rules" => [
         %{
           "apiGroups" => [""],
@@ -143,11 +153,13 @@ defmodule ControlServer.Services.Prometheus do
     }
   end
 
-  def role(:main, namespace) do
+  def role(:main, namespace, config) do
+    role = MonitoringSettings.prometheus_config_role(config)
+
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "Role",
-      "metadata" => %{"name" => @prometheus_main_role, "namespace" => namespace},
+      "metadata" => %{"name" => role, "namespace" => namespace},
       "rules" => [
         %{
           "apiGroups" => [""],
@@ -163,33 +175,45 @@ defmodule ControlServer.Services.Prometheus do
     }
   end
 
-  def role_binding(:config, prometheus_ns) do
+  def role_binding(:config, config) do
+    namespace = MonitoringSettings.namespace(config)
+    role = MonitoringSettings.prometheus_config_role(config)
+    account = MonitoringSettings.prometheus_account(config)
+
     metadata = %{
-      "name" => @prometheus_config_role,
-      "namespace" => prometheus_ns
-    }
-
-    gen_role_binding(@prometheus_config_role, prometheus_ns, metadata)
-  end
-
-  def role_binding(:cluster, prometheus_ns) do
-    metadata = %{
-      "name" => @prometheus_cluster_role
-    }
-
-    gen_role_binding(@prometheus_cluster_role, prometheus_ns, metadata, "ClusterRole")
-  end
-
-  def role_binding(:main, namespace, prometheus_ns) do
-    metadata = %{
-      "name" => @prometheus_main_role,
+      "name" => role,
       "namespace" => namespace
     }
 
-    gen_role_binding(@prometheus_main_role, prometheus_ns, metadata)
+    gen_role_binding(role, namespace, metadata, account)
   end
 
-  defp gen_role_binding(role_name, prometheus_ns, %{} = metadata, role_type \\ "Role") do
+  def role_binding(:cluster, config) do
+    role = MonitoringSettings.prometheus_cluster_role(config)
+    namespace = MonitoringSettings.namespace(config)
+    account = MonitoringSettings.prometheus_account(config)
+
+    metadata = %{
+      "name" => role
+    }
+
+    gen_role_binding(role, namespace, metadata, account, "ClusterRole")
+  end
+
+  def role_binding(:main, namespace, config) do
+    role = MonitoringSettings.prometheus_cluster_role(config)
+    monitoring_namespace = MonitoringSettings.namespace(config)
+    account = MonitoringSettings.prometheus_account(config)
+
+    metadata = %{
+      "name" => role,
+      "namespace" => namespace
+    }
+
+    gen_role_binding(role, monitoring_namespace, metadata, account)
+  end
+
+  defp gen_role_binding(role_name, monitoring_ns, %{} = metadata, account, role_type \\ "Role") do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => role_type <> "Binding",
@@ -202,8 +226,8 @@ defmodule ControlServer.Services.Prometheus do
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => @prometheus_account,
-          "namespace" => prometheus_ns
+          "name" => account,
+          "namespace" => monitoring_ns
         }
       ]
     }

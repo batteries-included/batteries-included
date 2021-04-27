@@ -6,14 +6,13 @@ defmodule ControlServer.Services.Monitoring do
   k8s configs.
   """
 
-  @namespace_name "battery-monitoring"
-  @namespace_api_version "v1"
-  @main_role_namespaces ["default", @namespace_name, "kube-system"]
   @monitoring_default_path "/monitoring/base"
   @default_config %{}
 
   alias ControlServer.Repo
   alias ControlServer.Services.BaseService
+  alias ControlServer.Services.Grafana
+  alias ControlServer.Services.MonitoringSettings
   alias ControlServer.Services.Prometheus
   alias ControlServer.Services.PrometheusOperator
 
@@ -29,8 +28,9 @@ defmodule ControlServer.Services.Monitoring do
 
   defp set_or_update_active(active, path) do
     query =
-      from bs in BaseService,
+      from(bs in BaseService,
         where: bs.root_path == ^path
+      )
 
     changes = %{is_active: active}
 
@@ -54,16 +54,17 @@ defmodule ControlServer.Services.Monitoring do
   def active? do
     true ==
       Repo.one(
-        from bs in BaseService,
+        from(bs in BaseService,
           where: bs.root_path == ^@monitoring_default_path,
           select: bs.is_active
+        )
       )
   end
 
-  def materialize(%{} = _config) do
+  def materialize(%{} = config) do
     setup_defs = %{
       # The namespace Really really has to be first.
-      "/00setup/namespace" => namespace(),
+      "/00setup/namespace" => namespace(config),
 
       # Then the CRDS since they are needed for cluster roles.
       "/11setup/prometheus_crd" =>
@@ -86,39 +87,44 @@ defmodule ControlServer.Services.Monitoring do
 
     operator_defs = %{
       # for the prometheus operator account stuff
-      "/22setup/operator_service_account" => PrometheusOperator.service_account(@namespace_name),
-      "/22setup/operator_cluster_role" => PrometheusOperator.cluster_role(),
+      "/22setup/operator_service_account" => PrometheusOperator.service_account(config),
+      "/22setup/operator_cluster_role" => PrometheusOperator.cluster_role(config),
       # Bind them
-      "/33setup/operator_cluster_role_binding" =>
-        PrometheusOperator.cluster_role_binding(@namespace_name),
+      "/33setup/operator_cluster_role_binding" => PrometheusOperator.cluster_role_binding(config),
       # Run Something.
-      "/44setup/operator_deployment" => PrometheusOperator.deployment(@namespace_name),
+      "/44setup/operator_deployment" => PrometheusOperator.deployment(config),
       # Make it available.
-      "/44setup/operator_service" => PrometheusOperator.service(@namespace_name)
+      "/44setup/operator_service" => PrometheusOperator.service(config)
     }
 
     account_defs = %{
-      "/55prometheus/prometheus_account" => Prometheus.service_account(@namespace_name),
-      "/66prometheus/prometheus_cluster_role" => Prometheus.role(:cluster),
-      "/66prometheus/prometheus_config_role" => Prometheus.role(:config, @namespace_name),
-      "/77prometheus/prometheus_cluster_role_bind" =>
-        Prometheus.role_binding(:cluster, @namespace_name),
-      "/77prometheus/prometheus_config_role_bind" =>
-        Prometheus.role_binding(:config, @namespace_name)
+      "/55prometheus/prometheus_account" => Prometheus.service_account(config),
+      "/66prometheus/prometheus_cluster_role" => Prometheus.role(:cluster, config),
+      "/66prometheus/prometheus_config_role" => Prometheus.role(:config, config),
+      "/77prometheus/prometheus_cluster_role_bind" => Prometheus.role_binding(:cluster, config),
+      "/77prometheus/prometheus_config_role_bind" => Prometheus.role_binding(:config, config)
     }
 
+    monitored_namespaces = MonitoringSettings.prometheus_main_namespaces(config)
+
     main_role_defs =
-      Enum.flat_map(@main_role_namespaces, fn target_ns ->
+      Enum.flat_map(monitored_namespaces, fn target_ns ->
         [
-          {"/88prometheus/prometheus_main_role_#{target_ns}", Prometheus.role(:main, target_ns)},
+          {"/88prometheus/prometheus_main_role_#{target_ns}",
+           Prometheus.role(:main, target_ns, config)},
           {"/88prometheus/prometheus_main_role_#{target_ns}_bind",
-           Prometheus.role_binding(:main, target_ns, @namespace_name)}
+           Prometheus.role_binding(:main, target_ns, config)}
         ]
       end)
       |> Map.new()
 
     main_defs = %{
-      "/99prometheus/prometheus_prometheus" => Prometheus.prometheus(@namespace_name)
+      "/99prometheus/prometheus_prometheus" => Prometheus.prometheus(config),
+      "/99grafana/0/service_account" => Grafana.service_account(config),
+      "/99grafana/0/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
+      "/99grafana/0/prometheus_dashboard_datasource" => Grafana.dashboard_sources_config(config),
+      "/99grafana/1/grafana_deployment" => Grafana.deployment(config),
+      "/99grafana/1/grafana_service" => Grafana.service(config)
     }
 
     %{}
@@ -133,12 +139,14 @@ defmodule ControlServer.Services.Monitoring do
     @default_config
   end
 
-  defp namespace do
+  defp namespace(config) do
+    ns = MonitoringSettings.namespace(config)
+
     %{
-      "apiVersion" => @namespace_api_version,
+      "apiVersion" => "v1",
       "kind" => "Namespace",
       "metadata" => %{
-        "name" => @namespace_name
+        "name" => ns
       }
     }
   end
