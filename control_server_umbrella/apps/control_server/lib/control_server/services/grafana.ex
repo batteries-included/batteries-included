@@ -25,6 +25,7 @@ defmodule ControlServer.Services.Grafana do
   def prometheus_datasource_config(config) do
     prometheus_name = MonitoringSettings.prometheus_name(config)
     namespace = MonitoringSettings.namespace(config)
+
     {:ok, file_contents} =
       Jason.encode(%{
         "apiVersion" => 1,
@@ -53,6 +54,7 @@ defmodule ControlServer.Services.Grafana do
 
   def dashboard_sources_config(config) do
     namespace = MonitoringSettings.namespace(config)
+
     {:ok, file_contents} =
       Jason.encode(%{
         "apiVersion" => 1,

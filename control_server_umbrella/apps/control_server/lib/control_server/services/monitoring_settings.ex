@@ -25,6 +25,18 @@ defmodule ControlServer.Services.MonitoringSettings do
   @grafana_image "grafana/grafana"
   @grafana_version "7.3.4"
 
+  @node_name "battery-node-exporter"
+  @node_image "quay.io/prometheus/node-exporter"
+  @node_version "v1.0.1"
+
+  @kube_name "battery-kube-state-metrics"
+  @kube_version "v1.9.7"
+  @kube_image "quay.io/coreos/kube-state-metrics"
+
+  @alertmanager_name "battery-alertmanager"
+  @alertmanager_image "quay.io/prometheus/alertmanager"
+  @alertmanager_version "v0.21.0"
+
   def namespace(config) do
     Map.get(config, "namespace", @namespace)
   end
@@ -91,5 +103,41 @@ defmodule ControlServer.Services.MonitoringSettings do
 
   def grafana_version(config) do
     Map.get(config, "grafana.version", @grafana_version)
+  end
+
+  def node_name(config) do
+    Map.get(config, "node.name", @node_name)
+  end
+
+  def node_image(config) do
+    Map.get(config, "node.image", @node_image)
+  end
+
+  def node_version(config) do
+    Map.get(config, "node.version", @node_version)
+  end
+
+  def kube_name(config) do
+    Map.get(config, "kube.name", @kube_name)
+  end
+
+  def kube_image(config) do
+    Map.get(config, "kube.image", @kube_image)
+  end
+
+  def kube_version(config) do
+    Map.get(config, "kube.version", @kube_version)
+  end
+
+  def alertmanager_name(config) do
+    Map.get(config, "alertmanager.name", @alertmanager_name)
+  end
+
+  def alertmanager_image(config) do
+    Map.get(config, "alertmanager.image", @alertmanager_image)
+  end
+
+  def alertmanager_version(config) do
+    Map.get(config, "alertmanager.version", @alertmanager_version)
   end
 end

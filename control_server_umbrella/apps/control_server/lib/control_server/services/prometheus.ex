@@ -18,6 +18,8 @@ defmodule ControlServer.Services.Prometheus do
     memory = MonitoringSettings.prometheus_memory(config)
     replicas = MonitoringSettings.prometheus_replicas(config)
 
+    alert_manager = MonitoringSettings.alertmanager_name(config)
+
     %{
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "Prometheus",
@@ -29,15 +31,15 @@ defmodule ControlServer.Services.Prometheus do
         "namespace" => namespace
       },
       "spec" => %{
-        # "alerting" => %{
-        #   "alertmanagers" => [
-        #     %{
-        #       "name" => "alertmanager-main",
-        #       "namespace" => monitoring_ns,
-        #       "port" => "web"
-        #     }
-        #   ]
-        # },
+        "alerting" => %{
+          "alertmanagers" => [
+            %{
+              "name" => alert_manager,
+              "namespace" => namespace,
+              "port" => "web"
+            }
+          ]
+        },
         "image" => "#{image}:#{version}",
         "nodeSelector" => %{
           "kubernetes.io/os": "linux"
@@ -154,7 +156,7 @@ defmodule ControlServer.Services.Prometheus do
   end
 
   def role(:main, namespace, config) do
-    role = MonitoringSettings.prometheus_config_role(config)
+    role = MonitoringSettings.prometheus_main_role(config)
 
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
@@ -176,8 +178,8 @@ defmodule ControlServer.Services.Prometheus do
   end
 
   def role_binding(:config, config) do
-    namespace = MonitoringSettings.namespace(config)
     role = MonitoringSettings.prometheus_config_role(config)
+    namespace = MonitoringSettings.namespace(config)
     account = MonitoringSettings.prometheus_account(config)
 
     metadata = %{
@@ -201,7 +203,7 @@ defmodule ControlServer.Services.Prometheus do
   end
 
   def role_binding(:main, namespace, config) do
-    role = MonitoringSettings.prometheus_cluster_role(config)
+    role = MonitoringSettings.prometheus_main_role(config)
     monitoring_namespace = MonitoringSettings.namespace(config)
     account = MonitoringSettings.prometheus_account(config)
 

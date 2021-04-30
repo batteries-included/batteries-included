@@ -54,6 +54,7 @@ defmodule ControlServer.MixProject do
 
       # Yaml
       {:yaml_elixir, "~> 2.6"},
+      {:ymlr, "~> 2.0"},
 
       # Time
       {:timex, "~> 3.7"},

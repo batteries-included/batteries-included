@@ -10,9 +10,12 @@ defmodule ControlServer.Services.Monitoring do
   @default_config %{}
 
   alias ControlServer.Repo
+  alias ControlServer.Services.AlertManager
   alias ControlServer.Services.BaseService
   alias ControlServer.Services.Grafana
+  alias ControlServer.Services.KubeState
   alias ControlServer.Services.MonitoringSettings
+  alias ControlServer.Services.NodeExporter
   alias ControlServer.Services.Prometheus
   alias ControlServer.Services.PrometheusOperator
 
@@ -64,45 +67,45 @@ defmodule ControlServer.Services.Monitoring do
   def materialize(%{} = config) do
     setup_defs = %{
       # The namespace Really really has to be first.
-      "/00setup/namespace" => namespace(config),
+      "/0/setup/namespace" => namespace(config),
 
       # Then the CRDS since they are needed for cluster roles.
-      "/11setup/prometheus_crd" =>
+      "/1/setup/prometheus_crd" =>
         read_yaml("setup/prometheus-operator-0prometheusCustomResourceDefinition.yaml"),
-      "/11setup/prometheus_rule_crd" =>
+      "/1/setup/prometheus_rule_crd" =>
         read_yaml("setup/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml"),
-      "/11setup/service_monitor_crd" =>
+      "/1/setup/service_monitor_crd" =>
         read_yaml("setup/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml"),
-      "/11setup/podmonitor_crd" =>
+      "/1/setup/podmonitor_crd" =>
         read_yaml("setup/prometheus-operator-0podmonitorCustomResourceDefinition.yaml"),
-      "/11setup/probe_crd" =>
-        read_yaml("setup/prometheus-operator-0probeCustomResourceDefinition.yaml")
-      # "11setup/thanos_ruler_crd" =>
-      #   read_yaml("setup/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml"),
-      # "11setup/am_config_crd" =>
-      #   read_yaml("setup/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml"),
-      # "11setup/am_crd" =>
-      #   read_yaml("setup/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml"),
+      "/1/setup/probe_crd" =>
+        read_yaml("setup/prometheus-operator-0probeCustomResourceDefinition.yaml"),
+      "/1/setup/am_config_crd" =>
+        read_yaml("setup/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml"),
+      "/1/setup/am_crd" =>
+        read_yaml("setup/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml"),
+      "/1/setup/thanos_ruler_crd" =>
+        read_yaml("setup/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml")
     }
 
     operator_defs = %{
       # for the prometheus operator account stuff
-      "/22setup/operator_service_account" => PrometheusOperator.service_account(config),
-      "/22setup/operator_cluster_role" => PrometheusOperator.cluster_role(config),
+      "/2/setup/operator_service_account" => PrometheusOperator.service_account(config),
+      "/2/setup/operator_cluster_role" => PrometheusOperator.cluster_role(config),
       # Bind them
-      "/33setup/operator_cluster_role_binding" => PrometheusOperator.cluster_role_binding(config),
+      "/3/setup/operator_cluster_role_binding" => PrometheusOperator.cluster_role_binding(config),
       # Run Something.
-      "/44setup/operator_deployment" => PrometheusOperator.deployment(config),
+      "/3/setup/operator_deployment" => PrometheusOperator.deployment(config),
       # Make it available.
-      "/44setup/operator_service" => PrometheusOperator.service(config)
+      "/3/setup/operator_service" => PrometheusOperator.service(config)
     }
 
     account_defs = %{
-      "/55prometheus/prometheus_account" => Prometheus.service_account(config),
-      "/66prometheus/prometheus_cluster_role" => Prometheus.role(:cluster, config),
-      "/66prometheus/prometheus_config_role" => Prometheus.role(:config, config),
-      "/77prometheus/prometheus_cluster_role_bind" => Prometheus.role_binding(:cluster, config),
-      "/77prometheus/prometheus_config_role_bind" => Prometheus.role_binding(:config, config)
+      "/4/prometheus/prometheus_account" => Prometheus.service_account(config),
+      "/4/prometheus/prometheus_cluster_role" => Prometheus.role(:cluster, config),
+      "/4/prometheus/prometheus_config_role" => Prometheus.role(:config, config),
+      "/4/prometheus/prometheus_cluster_role_bind" => Prometheus.role_binding(:cluster, config),
+      "/4/prometheus/prometheus_config_role_bind" => Prometheus.role_binding(:config, config)
     }
 
     monitored_namespaces = MonitoringSettings.prometheus_main_namespaces(config)
@@ -110,21 +113,35 @@ defmodule ControlServer.Services.Monitoring do
     main_role_defs =
       Enum.flat_map(monitored_namespaces, fn target_ns ->
         [
-          {"/88prometheus/prometheus_main_role_#{target_ns}",
+          {"/5/prometheus/prometheus_main_role_#{target_ns}",
            Prometheus.role(:main, target_ns, config)},
-          {"/88prometheus/prometheus_main_role_#{target_ns}_bind",
+          {"/5/prometheus/prometheus_main_role_#{target_ns}_bind",
            Prometheus.role_binding(:main, target_ns, config)}
         ]
       end)
       |> Map.new()
 
     main_defs = %{
-      "/99prometheus/prometheus_prometheus" => Prometheus.prometheus(config),
-      "/99grafana/0/service_account" => Grafana.service_account(config),
-      "/99grafana/0/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
-      "/99grafana/0/prometheus_dashboard_datasource" => Grafana.dashboard_sources_config(config),
-      "/99grafana/1/grafana_deployment" => Grafana.deployment(config),
-      "/99grafana/1/grafana_service" => Grafana.service(config)
+      "/9/prometheus/prometheus_prometheus" => Prometheus.prometheus(config),
+      "/9/grafana/0/service_account" => Grafana.service_account(config),
+      "/9/grafana/0/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
+      "/9/grafana/0/prometheus_dashboard_datasource" => Grafana.dashboard_sources_config(config),
+      "/9/grafana/1/grafana_deployment" => Grafana.deployment(config),
+      "/9/grafana/1/grafana_service" => Grafana.service(config),
+      "/9/node/0/service_account" => NodeExporter.service_account(config),
+      "/9/node/0/cluster_role" => NodeExporter.cluster_role(config),
+      "/9/node/1/bind" => NodeExporter.cluster_binding(config),
+      "/9/node/1/daemon" => NodeExporter.daemonset(config),
+      "/9/node/2/service" => NodeExporter.service(config),
+      "/9/kube/0/service_account" => KubeState.service_account(config),
+      "/9/kube/0/cluster_role" => KubeState.cluster_role(config),
+      "/9/kube/1/bind" => KubeState.cluster_binding(config),
+      "/9/kube/1/daemon" => KubeState.deployment(config),
+      "/9/kube/2/service" => KubeState.service(config),
+      "/9/alertmanager/0/service_account" => AlertManager.service_account(config),
+      "/9/alertmanager/1/config" => AlertManager.config(config),
+      "/9/alertmanager/2/alertmanager" => AlertManager.alertmanager(config),
+      "/9/alertmanager/2/service" => AlertManager.service(config)
     }
 
     %{}
