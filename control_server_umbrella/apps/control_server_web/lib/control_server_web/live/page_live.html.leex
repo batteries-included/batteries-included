@@ -1,0 +1,189 @@
+<div class="container-xxl">
+  <h2>Services Home</h2>
+  <hr class="mt-4" />
+  <div class="row mt-4">
+    <h3>Status</h3>
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th></th>
+            <th></th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Monitoring</td>
+            <td><%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-mon" %></td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Scale</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Database</td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-database" %>
+            </td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Scale</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Object Storage</td>
+            <td><%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-obj" %></td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Scale</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Networking</td>
+            <td><%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-net" %></td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Routing</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Authentication</td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-auth" %>
+            </td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Add User</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>ML Experimentation</td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-el-exp" %>
+            </td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Backup</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>ML Continuous Training</td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-training" %>
+            </td>
+            <td><%= icon_tag(@socket, "exclamation-triangle", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Revert model</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>ML Feature Storage</td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-feature" %>
+            </td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Test Variance</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+          <tr>
+            <td>ML Inferencing</td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-inferencing" %>
+            </td>
+            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <a href="#" class="link-secondary">Scale</a>
+              <a href="#" class="link-secondary">Configure</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <h3>Install/Uninstall Services</h3>
+    <div class="col">
+      <table class="table table-borderless" id="services-install">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for {service, running} <- @running_set do %>
+            <tr>
+              <td class="serviceName">
+                <%= service %>
+              </td>
+              <td>
+                <%= if running, do: icon_tag(@socket, "check-all", class: "running-icon running"), else: icon_tag(@socket, "x-octagon-fill", class: "running-icon not-running") %>
+              </td>
+              <td>
+                <%= if ! running do %>
+                  <button
+                    type="button"
+                    class="btn btn-primary shadow-sm"
+                    phx-click="start_service"
+                    phx-value-service="<%= service %>"
+                    phx-disable-with="Starting..."
+                  >
+                    Install
+                  </button>
+                <% else %>
+                  <button
+                    type="button"
+                    class="btn btn-danger shadow-sm"
+                    phx-click="stop_service"
+                    phx-value-service="<%= service %>"
+                    phx-disable-with="Stopping..."
+                  >
+                    Stop
+                  </button>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Service Usage</h5>
+        </div>
+        <table class="table table-borderless" id="services-usage">
+          <thead>
+            <tr>
+              <td>Metric</td>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Nodes In Use</th>
+              <td>473</td>
+            </tr>
+            <tr>
+              <th>Usage Tier</th>
+              <td>Gold</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
