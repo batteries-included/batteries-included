@@ -18,22 +18,19 @@ defmodule ControlServer.KubeExt do
   end
 
   def apply(resource) do
-    {:ok, found} = get_or_create(resource)
+    with {:ok, found} <- get_or_create(resource) do
+      # Add the hash here means that we don't need
+      # to recompute it if the hashes don't match.
+      found = found |> decorate_content_hash()
+      resource = resource |> decorate_content_hash()
 
-    # Add the hash here means that we don't need
-    # to recompute it if the hashes don't match.
-    found = found |> decorate_content_hash()
-    resource = resource |> decorate_content_hash()
+      case get_hash(found) == get_hash(resource) do
+        true ->
+          {:ok, resource}
 
-    found_hash = get_hash(found)
-    resource_hash = get_hash(resource)
-
-    case found_hash == resource_hash do
-      true ->
-        {:ok, resource}
-
-      false ->
-        do_update(resource)
+        false ->
+          do_update(resource)
+      end
     end
   end
 

@@ -2,7 +2,7 @@ defmodule ControlServer.Services.NodeExporter do
   @moduledoc """
   Module for controlling the node exporter pods that will be needed to send metrics to prometheus.
   """
-  alias ControlServer.Services.MonitoringSettings
+  alias ControlServer.Settings.MonitoringSettings
 
   def cluster_role(config) do
     name = MonitoringSettings.node_name(config)

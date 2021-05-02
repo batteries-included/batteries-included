@@ -14,10 +14,12 @@ defmodule ControlServer.Services.Monitoring do
   alias ControlServer.Services.BaseService
   alias ControlServer.Services.Grafana
   alias ControlServer.Services.KubeState
-  alias ControlServer.Services.MonitoringSettings
   alias ControlServer.Services.NodeExporter
   alias ControlServer.Services.Prometheus
   alias ControlServer.Services.PrometheusOperator
+  alias ControlServer.Settings.MonitoringSettings
+
+  import ControlServer.FileExt
 
   import Ecto.Query, only: [from: 2]
 
@@ -71,21 +73,42 @@ defmodule ControlServer.Services.Monitoring do
 
       # Then the CRDS since they are needed for cluster roles.
       "/1/setup/prometheus_crd" =>
-        read_yaml("setup/prometheus-operator-0prometheusCustomResourceDefinition.yaml"),
+        read_yaml(
+          "setup/prometheus-operator-0prometheusCustomResourceDefinition.yaml",
+          :prometheus
+        ),
       "/1/setup/prometheus_rule_crd" =>
-        read_yaml("setup/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml"),
+        read_yaml(
+          "setup/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml",
+          :prometheus
+        ),
       "/1/setup/service_monitor_crd" =>
-        read_yaml("setup/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml"),
+        read_yaml(
+          "setup/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml",
+          :prometheus
+        ),
       "/1/setup/podmonitor_crd" =>
-        read_yaml("setup/prometheus-operator-0podmonitorCustomResourceDefinition.yaml"),
+        read_yaml(
+          "setup/prometheus-operator-0podmonitorCustomResourceDefinition.yaml",
+          :prometheus
+        ),
       "/1/setup/probe_crd" =>
-        read_yaml("setup/prometheus-operator-0probeCustomResourceDefinition.yaml"),
+        read_yaml("setup/prometheus-operator-0probeCustomResourceDefinition.yaml", :prometheus),
       "/1/setup/am_config_crd" =>
-        read_yaml("setup/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml"),
+        read_yaml(
+          "setup/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml",
+          :prometheus
+        ),
       "/1/setup/am_crd" =>
-        read_yaml("setup/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml"),
+        read_yaml(
+          "setup/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml",
+          :prometheus
+        ),
       "/1/setup/thanos_ruler_crd" =>
-        read_yaml("setup/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml")
+        read_yaml(
+          "setup/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml",
+          :prometheus
+        )
     }
 
     operator_defs = %{
@@ -166,13 +189,5 @@ defmodule ControlServer.Services.Monitoring do
         "name" => ns
       }
     }
-  end
-
-  defp read_yaml(path) do
-    base_path = Application.app_dir(:control_server, ["priv", "kube-prometheus", "manifests"])
-
-    with {:ok, yaml_content} <- YamlElixir.read_from_file(base_path <> "/" <> path) do
-      yaml_content
-    end
   end
 end

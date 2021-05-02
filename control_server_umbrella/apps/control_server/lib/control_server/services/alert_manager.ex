@@ -2,7 +2,7 @@ defmodule ControlServer.Services.AlertManager do
   @moduledoc """
   Add on alert manager.
   """
-  alias ControlServer.Services.MonitoringSettings
+  alias ControlServer.Settings.MonitoringSettings
 
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)

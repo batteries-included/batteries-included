@@ -2,7 +2,7 @@ defmodule ControlServer.Services.KubeState do
   @moduledoc """
   Module to keep the KubeState deployment up and configured.
   """
-  alias ControlServer.Services.MonitoringSettings
+  alias ControlServer.Settings.MonitoringSettings
 
   def cluster_role(config) do
     name = MonitoringSettings.kube_name(config)

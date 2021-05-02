@@ -1,0 +1,36 @@
+<h1>Show Cluster</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal(@socket, ControlServerWeb.ClusterLive.FormComponent,
+        id: @cluster.id,
+        title: @page_title,
+        action: @live_action,
+        cluster: @cluster,
+        return_to: Routes.cluster_show_path(@socket, :show, @cluster)
+      ) %>
+<% end %>
+
+<ul>
+  <li>
+    <strong>Name:</strong>
+    <%= @cluster.name %>
+  </li>
+
+  <li>
+    <strong>Postgres version:</strong>
+    <%= @cluster.postgres_version %>
+  </li>
+
+  <li>
+    <strong>Size:</strong>
+    <%= @cluster.size %>
+  </li>
+
+  <li>
+    <strong>Num instances:</strong>
+    <%= @cluster.num_instances %>
+  </li>
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.cluster_show_path(@socket, :edit, @cluster), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.cluster_index_path(@socket, :index) %></span>

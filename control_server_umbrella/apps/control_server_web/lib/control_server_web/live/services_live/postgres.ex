@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServicesLive.Monitoring do
+defmodule ControlServerWeb.ServicesLive.Postgres do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -7,8 +7,9 @@ defmodule ControlServerWeb.ServicesLive.Monitoring do
 
   require Logger
 
+  alias ControlServer.KubeServices
   alias ControlServer.Services
-  alias ControlServer.Services.MonitoringPods
+  alias ControlServer.Services.Pods
 
   @pod_update_time 5000
 
@@ -16,28 +17,16 @@ defmodule ControlServerWeb.ServicesLive.Monitoring do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
 
-    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, Services.Monitoring.active?())}
-  end
-
-  def summarize_pod(pod) do
-    restart_count =
-      pod["status"]["containerStatuses"]
-      |> Enum.filter(fn cs -> cs != nil end)
-      |> Enum.map(fn cs -> cs["restartCount"] end)
-      |> Enum.sum()
-
-    {:ok, start_time} = pod["status"]["startTime"] |> Timex.parse("{ISO:Extended}")
-
-    from_start = Timex.from_now(start_time)
-
-    pod |> Map.put("summary", %{"restartCount" => restart_count, "fromStart" => from_start})
+    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, Services.Database.active?())}
   end
 
   defp get_pods do
-    MonitoringPods.get() |> Enum.map(&summarize_pod/1)
+    Pods.get(:postgres) |> Enum.map(&Pods.summarize/1)
   end
 
   @impl true
+  @spec handle_info(:update, Phoenix.LiveView.Socket.t()) ::
+          {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, @pod_update_time)
     {:noreply, socket |> assign(:pods, get_pods())}
@@ -54,7 +43,8 @@ defmodule ControlServerWeb.ServicesLive.Monitoring do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    {:ok, _service} = Services.Monitoring.activate()
+    {:ok, _service} = Services.Database.activate()
+    KubeServices.start_apply()
 
     {:noreply, assign(socket, :running, true)}
   end

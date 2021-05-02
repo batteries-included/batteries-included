@@ -4,7 +4,7 @@ defmodule ControlServer.Services.MonitoringTest do
   alias ControlServer.Services.Monitoring
   alias K8s.Client
 
-  describe "ControlServer.Services.Monitoring should generate good configs" do
+  describe "Services.Monitoring should generate good configs" do
     test "Materializing the default config" do
       config_map = Monitoring.materialize(Monitoring.default_config())
 
