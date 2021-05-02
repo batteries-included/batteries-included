@@ -4,7 +4,7 @@ defmodule ControlServer.Services.PrometheusOperator do
 
   This can generate a config and will also add on alerting/monitoring.
   """
-  alias ControlServer.Services.MonitoringSettings
+  alias ControlServer.Settings.MonitoringSettings
 
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)

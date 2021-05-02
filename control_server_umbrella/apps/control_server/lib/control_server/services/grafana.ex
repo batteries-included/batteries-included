@@ -3,7 +3,7 @@ defmodule ControlServer.Services.Grafana do
   Add on context for Grafana configuration.
   """
 
-  alias ControlServer.Services.MonitoringSettings
+  alias ControlServer.Settings.MonitoringSettings
 
   @datasources_configmap "battery-grafana-datasources"
   @dashboards_configmap "battery-grafana-dashboards"

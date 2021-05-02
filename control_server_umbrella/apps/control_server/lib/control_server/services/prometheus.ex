@@ -5,7 +5,7 @@ defmodule ControlServer.Services.Prometheus do
   Currently this is around config generation via Monitoring.materialize/1
   """
 
-  alias ControlServer.Services.MonitoringSettings
+  alias ControlServer.Settings.MonitoringSettings
 
   def prometheus(config) do
     name = MonitoringSettings.prometheus_name(config)

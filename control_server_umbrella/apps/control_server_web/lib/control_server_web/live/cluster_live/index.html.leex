@@ -1,0 +1,42 @@
+<h1>Listing Clusters</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal(@socket, ControlServerWeb.ClusterLive.FormComponent,
+        id: @cluster.id || :new,
+        title: @page_title,
+        action: @live_action,
+        cluster: @cluster,
+        return_to: Routes.cluster_index_path(@socket, :index)
+      ) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Postgres version</th>
+      <th>Size</th>
+      <th>Num instances</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="clusters">
+    <%= for cluster <- @clusters do %>
+      <tr id="cluster-<%= cluster.id %>">
+        <td><%= cluster.name %></td>
+        <td><%= cluster.postgres_version %></td>
+        <td><%= cluster.size %></td>
+        <td><%= cluster.num_instances %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.cluster_show_path(@socket, :show, cluster) %></span>
+          <span><%= live_patch "Edit", to: Routes.cluster_index_path(@socket, :edit, cluster) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: cluster.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Cluster", to: Routes.cluster_index_path(@socket, :new) %></span>

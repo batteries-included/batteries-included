@@ -1,4 +1,4 @@
-defmodule ControlServer.Services.MonitoringSettings do
+defmodule ControlServer.Settings.MonitoringSettings do
   @moduledoc """
   The first most crude pass at putting in configurable
   settings with defaults. This is awful. There has to be

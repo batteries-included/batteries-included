@@ -19,7 +19,15 @@ defmodule ControlServerWeb.Router do
 
     live "/", PageLive, :index
 
-    live "/services/monitoring", ServicesLive.Monitoring, :index
+    live "/services/monitoring", ServicesLive.Prometheus, :index
+    live "/services/database", ServicesLive.Postgres, :index
+
+    live "/services/database/clusters", ClusterLive.Index, :index
+    live "/services/database/clusters/new", ClusterLive.Index, :new
+    live "/services/database/clusters/:id/edit", ClusterLive.Index, :edit
+
+    live "/services/database/clusters/:id", ClusterLive.Show, :show
+    live "/services/database/clusters/:id/show/edit", ClusterLive.Show, :edit
   end
 
   scope "/api", ControlServerWeb do
