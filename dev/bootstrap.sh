@@ -12,6 +12,7 @@ error() {
     fi
     exit "${code}"
 }
+
 trap 'error ${LINENO} Trap:' ERR
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 

@@ -8,6 +8,7 @@ config :control_server, ControlServer.Repo,
   password: System.get_env("POSTGRES_PASSWORD") || "batterypasswd",
   database: System.get_env("POSTGRES_DB") || "server_test",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
+  port: System.get_env("POSTGRES_PORT") || 5432,
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,

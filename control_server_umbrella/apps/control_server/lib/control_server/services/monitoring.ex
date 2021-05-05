@@ -6,12 +6,11 @@ defmodule ControlServer.Services.Monitoring do
   k8s configs.
   """
 
-  @monitoring_default_path "/monitoring/base"
+  @default_path "/monitoring/base"
   @default_config %{}
 
-  alias ControlServer.Repo
+  alias ControlServer.Services
   alias ControlServer.Services.AlertManager
-  alias ControlServer.Services.BaseService
   alias ControlServer.Services.Grafana
   alias ControlServer.Services.KubeState
   alias ControlServer.Services.NodeExporter
@@ -21,50 +20,15 @@ defmodule ControlServer.Services.Monitoring do
 
   import ControlServer.FileExt
 
-  import Ecto.Query, only: [from: 2]
+  def default_config, do: @default_config
 
-  def activate do
-    set_or_update_active(true, @monitoring_default_path)
-  end
+  def activate(path \\ @default_path),
+    do: Services.update_active!(true, path, :monitoring, @default_config)
 
-  def deactivate do
-    set_or_update_active(false, @monitoring_default_path)
-  end
+  def deactivate(path \\ @default_path),
+    do: Services.update_active!(false, path, :monitoring, @default_config)
 
-  defp set_or_update_active(active, path) do
-    query =
-      from(bs in BaseService,
-        where: bs.root_path == ^path
-      )
-
-    changes = %{is_active: active}
-
-    case(Repo.one(query)) do
-      # Not found create a new one
-      nil ->
-        %BaseService{
-          is_active: active,
-          root_path: path,
-          service_type: :monitoring,
-          config: @default_config
-        }
-
-      base_service ->
-        base_service
-    end
-    |> BaseService.changeset(changes)
-    |> Repo.insert_or_update()
-  end
-
-  def active? do
-    true ==
-      Repo.one(
-        from(bs in BaseService,
-          where: bs.root_path == ^@monitoring_default_path,
-          select: bs.is_active
-        )
-      )
-  end
+  def active?(path \\ @default_path), do: Services.active?(path)
 
   def materialize(%{} = config) do
     setup_defs = %{
@@ -173,10 +137,6 @@ defmodule ControlServer.Services.Monitoring do
     |> Map.merge(account_defs)
     |> Map.merge(main_role_defs)
     |> Map.merge(main_defs)
-  end
-
-  def default_config do
-    @default_config
   end
 
   defp namespace(config) do

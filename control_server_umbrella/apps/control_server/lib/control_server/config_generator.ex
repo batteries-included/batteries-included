@@ -5,7 +5,9 @@ defmodule ControlServer.ConfigGenerator do
 
   alias ControlServer.Services.BaseService
   alias ControlServer.Services.Database
+  alias ControlServer.Services.Devtools
   alias ControlServer.Services.Monitoring
+  alias ControlServer.Services.Security
 
   def materialize(%BaseService{} = base_service) do
     case base_service.is_active do
@@ -21,4 +23,6 @@ defmodule ControlServer.ConfigGenerator do
 
   defp materialize(:monitoring, %{} = config), do: Monitoring.materialize(config)
   defp materialize(:database, %{} = config), do: Database.materialize(config)
+  defp materialize(:security, %{} = config), do: Security.materialize(config)
+  defp materialize(:devtools, %{} = config), do: Devtools.materialize(config)
 end

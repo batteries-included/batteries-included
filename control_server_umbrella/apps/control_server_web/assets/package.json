@@ -7,7 +7,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "@popperjs/core": "^2.9.1",
+    "@popperjs/core": "^2.9.2",
     "bootstrap": "^5.0.0-beta3",
     "chart.js": "^2.9.4",
     "nprogress": "^0.2.0",
@@ -16,20 +16,20 @@
     "phoenix_live_view": "file:../../../deps/phoenix_live_view"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@babel/preset-env": "^7.13.12",
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
     "babel-loader": "^8.0.0",
-    "copy-webpack-plugin": "^5.1.1",
-    "css-loader": "^3.4.2",
+    "copy-webpack-plugin": "^6.4.0",
+    "css-loader": "^5.2.4",
+    "sass-loader": "^10.0.0",
     "hard-source-webpack-plugin": "^0.13.1",
-    "mini-css-extract-plugin": "^0.9.0",
-    "node-sass": "^4.13.1",
+    "mini-css-extract-plugin": "^1.6.0",
+    "node-sass": "^5.0.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "prettier": "^2.2.1",
-    "prettier-plugin-eex": "^0.4.0",
-    "sass-loader": "^8.0.2",
-    "terser-webpack-plugin": "^2.3.2",
-    "webpack": "4.41.5",
-    "webpack-cli": "^3.3.2"
+    "prettier-plugin-eex": "^0.5.0",
+    "terser-webpack-plugin": "^4.0.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.12"
   }
 }

@@ -101,4 +101,39 @@ defmodule ControlServer.Services do
   def change_base_service(%BaseService{} = base_service, attrs \\ %{}) do
     BaseService.changeset(base_service, attrs)
   end
+
+  def active?(path) do
+    true ==
+      Repo.one(
+        from(bs in BaseService,
+          where: bs.root_path == ^path,
+          select: bs.is_active
+        )
+      )
+  end
+
+  def update_active!(active, path, service_type, config) do
+    query =
+      from(bs in BaseService,
+        where: bs.root_path == ^path
+      )
+
+    changes = %{is_active: active}
+
+    case(Repo.one(query)) do
+      # Not found create a new one
+      nil ->
+        %BaseService{
+          is_active: active,
+          root_path: path,
+          service_type: service_type,
+          config: config
+        }
+
+      base_service ->
+        base_service
+    end
+    |> BaseService.changeset(changes)
+    |> Repo.insert_or_update()
+  end
 end

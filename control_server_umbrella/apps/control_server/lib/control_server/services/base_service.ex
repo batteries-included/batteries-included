@@ -17,7 +17,7 @@ defmodule ControlServer.Services.BaseService do
     field :root_path, :string
 
     field :service_type, Ecto.Enum,
-      values: [:monitoring, :log_aggregation, :storage, :database, :ingress]
+      values: [:monitoring, :security, :devtools, :database, :log_aggregation, :storage, :ingress]
 
     field :config, :map
 

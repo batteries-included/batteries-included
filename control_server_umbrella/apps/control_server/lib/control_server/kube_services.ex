@@ -53,6 +53,6 @@ defmodule ControlServer.KubeServices do
   end
 
   def apply do
-    GenServer.call(__MODULE__, :apply_now)
+    GenServer.call(__MODULE__, :apply_now, 10_000)
   end
 end

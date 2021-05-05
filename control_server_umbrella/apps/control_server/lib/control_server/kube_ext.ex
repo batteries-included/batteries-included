@@ -17,7 +17,10 @@ defmodule ControlServer.KubeExt do
     get_or_create_single(resource)
   end
 
-  def apply(resource) do
+  def apply(many) when is_list(many), do: many |> Enum.map(&apply_single/1)
+  def apply(single), do: apply_single(single)
+
+  def apply_single(resource) do
     with {:ok, found} <- get_or_create(resource) do
       # Add the hash here means that we don't need
       # to recompute it if the hashes don't match.
@@ -32,6 +35,12 @@ defmodule ControlServer.KubeExt do
           do_update(resource)
       end
     end
+  end
+
+  def get_hash(resource) do
+    resource
+    |> decorate_content_hash()
+    |> get_in(["metadata", "annotations", @hash_annotation_key])
   end
 
   defp get_or_create_single(resource) do
@@ -55,16 +64,8 @@ defmodule ControlServer.KubeExt do
     end
   end
 
-  defp get_hash(resource) do
-    resource
-    |> decorate_content_hash()
-    |> Map.get("metadata", %{})
-    |> Map.get("annotations", %{})
-    |> Map.get(@hash_annotation_key)
-  end
-
   defp do_update(resource) do
-    metadata = Map.get(resource, "metadata")
+    metadata = resource |> Map.get("metadata")
     Logger.debug("Going to send update for #{inspect(metadata)}")
     cluster_name = Bonny.Config.cluster_name()
     resource |> K8s.Client.patch() |> K8s.Client.run(cluster_name)

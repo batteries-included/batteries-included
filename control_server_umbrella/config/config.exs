@@ -35,9 +35,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
-
 config :bonny,
   controllers: [
     ControlServer.Controller.V1.BatteryCluster
@@ -47,9 +44,9 @@ config :bonny,
   namespace: "battery",
   group: "k8s.batteries-included.com",
   operator_name: "battery-control-server",
-  service_account_name: "battery-account",
+  service_account_name: "battery-control-server-account",
   labels: %{
-    "battery-controlled": "true"
+    "battery-managed": "true"
   },
 
   # Operator deployment resources. These are the defaults.
