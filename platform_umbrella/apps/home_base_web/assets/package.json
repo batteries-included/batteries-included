@@ -1,0 +1,31 @@
+{
+  "repository": {},
+  "description": " ",
+  "license": "MIT",
+  "scripts": {
+    "deploy": "webpack --mode production",
+    "watch": "webpack --mode development --watch"
+  },
+  "dependencies": {
+    "phoenix": "file:../../../deps/phoenix",
+    "phoenix_html": "file:../../../deps/phoenix_html",
+    "phoenix_live_view": "file:../../../deps/phoenix_live_view",
+    "topbar": "^0.1.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.14.1",
+    "babel-loader": "^8.0.0",
+    "copy-webpack-plugin": "^6.4.0",
+    "css-loader": "^5.2.4",
+    "sass-loader": "^10.0.0",
+    "node-sass": "^5.0.0",
+    "mini-css-extract-plugin": "^1.6.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "prettier": "^2.2.1",
+    "prettier-plugin-eex": "^0.5.0",
+    "terser-webpack-plugin": "^4.0.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.12"
+  }
+}

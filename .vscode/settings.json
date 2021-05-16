@@ -1,5 +1,5 @@
 {
-  "elixirLS.projectDir": "control_server_umbrella",
+  "elixirLS.projectDir": "platform_umbrella",
   "[elixir]": {
     "editor.wordBasedSuggestions": false,
     "editor.acceptSuggestionOnEnter": "on"
@@ -31,7 +31,7 @@
     "files.trimFinalNewlines": true
   },
   "prettier.requireConfig": true,
-  "prettier.prettierPath": "./control_server_umbrella/apps/control_server_web/assets/node_modules/prettier",
+  "prettier.prettierPath": "./platform_umbrella/apps/control_server_web/assets/node_modules/prettier",
   "cSpell.words": [
     "Alertmanager",
     "Grafana",

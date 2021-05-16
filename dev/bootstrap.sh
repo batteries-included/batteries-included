@@ -1,6 +1,10 @@
 #!/bin/bash
 set -xuo pipefail
 
+# Grab the location we'll use it for yaml locations soon
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+
 error() {
     local parent_lineno="$1"
     local message="$2"
@@ -36,7 +40,7 @@ retry() {
 }
 
 portForward() {
-    local service=$1
+    local target=$1
     local portMap=$2
     local namespace=$3
 
@@ -46,29 +50,86 @@ portForward() {
         #
         # So since this is likely something to always run. We assume the exiting is bad.
         # it's a hack for until most of this is self hosted in k8s.
-        kubectl port-forward "${service}" ${portMap} -n "$namespace" --address 0.0.0.0 && false
+        kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0 && false
         return $?
     else
         return 0
     fi
 }
 
-set -x
-# Grab the location we'll use it for yaml locations soon
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# Create the cluster
-k3d cluster create -v /dev/mapper:/dev/mapper || true
+postgresForward() {
+    local cluster=$1
+    local port=$2
+    local ns=${3:-"battery-db"}
+    local pod=$(kubectl get pods -o jsonpath={.items..metadata.name} -n ${ns} -l application=spilo -l battery-cluster-name=${cluster} -l spilo-role=master)
+    portForward "pods/${pod}" "${port}:5432" ${ns}
+}
+
+resetPasswordEnv() {
+    local cluster=$1
+    local user=${2:-postgres}
+    local password=$(kubectl get secrets -n battery-db ${user}.${cluster}.credentials.postgresql.acid.zalan.do -o 'jsonpath={.data.password}' | base64 -d)
+    echo "export POSTGRES_PASSWORD='${password}'" > ${DIR}/../platform_umbrella/.envrc
+}
+
+CREATE_CLUSTER=${CREATE_CLUSTER:-false}
+FORWARD_EXTERNAL_POSTGRES=${FORWARD_EXTERNAL_POSTGRES:-false}
+FORWARD_HOME_POSTGRES=${FORWARD_HOME_POSTGRES:-false}
+
+PARAMS=""
+while (( "$#" )); do
+  case "$1" in
+    -c|--create-cluster)
+      CREATE_CLUSTER=true
+      shift
+      ;;
+
+    -e|--forward-external)
+      FORWARD_EXTERNAL_POSTGRES=true
+      shift
+      ;;
+
+    -b|--forward-home-base)
+      FORWARD_HOME_POSTGRES=true
+      shift
+      ;;
+    -*|--*=) # unsupported flags
+      echo "Error: Unsupported flag $1" >&2
+      exit 1
+      ;;
+    *) # preserve positional arguments
+      PARAMS="$PARAMS $1"
+      shift
+      ;;
+  esac
+done
+# set positional arguments in their proper place
+eval set -- "$PARAMS"
+
+
+
+if [[ $CREATE_CLUSTER == 'true' ]];
+then
+    # Create the cluster
+    k3d cluster create -v /dev/mapper:/dev/mapper || true
+fi
+
 # Start the services.
 kubectl apply -f "${DIR}/k8s"
 # Add the CRD definition
-kubectl apply -f "${DIR}/../control_server_umbrella/manifest.yaml"
+kubectl apply -f "${DIR}/../platform_umbrella/manifest.yaml" || true
 # Create the cluster
-kubectl apply -f "${DIR}/../control_server_umbrella/default_cluster.yaml"
+kubectl apply -f "${DIR}/../platform_umbrella/default_cluster.yaml" || true
 
-# sleep some amount of time while waiting. This is horrible.
-# Yeah
-# so what.
-# I'm sure there's a better kubectl way but this is a hack while we can't self host.
-(retry portForward "svc/postgres" "5432:5432" "default") &
-(retry portForward "svc/grafana" "3000:3000" "monitoring") &
+if [ $FORWARD_EXTERNAL_POSTGRES == "true" ];
+then
+    (retry portForward "svc/postgres" "5432:5432" "default") &
+fi
+
+if [[ $FORWARD_HOME_POSTGRES == "true" ]];
+then
+    (retry postgresForward "default-home-base" "5433") &
+    resetPasswordEnv "default-home-base"
+fi
+
 wait

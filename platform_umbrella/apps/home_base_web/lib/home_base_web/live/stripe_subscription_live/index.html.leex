@@ -1,0 +1,38 @@
+<h1>Listing Stripe subscriptions</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal(@socket, HomeBaseWeb.StripeSubscriptionLive.FormComponent,
+        id: @stripe_subscription.id || :new,
+        title: @page_title,
+        action: @live_action,
+        stripe_subscription: @stripe_subscription,
+        return_to: Routes.stripe_subscription_index_path(@socket, :index)
+      ) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Stripe subscription</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="stripe_subscriptions">
+    <%= for stripe_subscription <- @stripe_subscriptions do %>
+      <tr id="stripe_subscription-<%= stripe_subscription.id %>">
+        <td><%= stripe_subscription.company %></td>
+        <td><%= stripe_subscription.stripe_subscription_id %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.stripe_subscription_show_path(@socket, :show, stripe_subscription) %></span>
+          <span><%= live_patch "Edit", to: Routes.stripe_subscription_index_path(@socket, :edit, stripe_subscription) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: stripe_subscription.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Stripe subscription", to: Routes.stripe_subscription_index_path(@socket, :new) %></span>

@@ -1,0 +1,161 @@
+name: Platform
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  mix_test:
+    name: mix test (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
+
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.11.4
+            otp: 24.0
+            lint: lint
+
+    runs-on: ubuntu-latest
+    # runs-on: [self-hosted, linux]
+
+    defaults:
+      run:
+        working-directory: ./platform_umbrella
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: batterydbuser
+          POSTGRES_PASSWORD: "batterypasswd"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432/tcp
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_USER: batterydbuser
+      POSTGRES_PASSWORD: "batterypasswd"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Set up Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Install dependencies
+        run: mix deps.get --only test
+
+      - name: Install dependencies non test
+        run: mix deps.get
+
+      - name: Check source code format
+        run: mix format --check-formatted
+        if: ${{ matrix.lint }}
+
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
+        if: ${{ matrix.lint }}
+
+      - name: Remove compiled application files
+        run: mix clean
+
+      - name: Compile
+        run: mix compile
+        if: ${{ !matrix.lint }}
+        env:
+          MIX_ENV: test
+
+      - name: Compile & lint
+        run: mix compile --warnings-as-errors
+        if: ${{ matrix.lint }}
+        env:
+          MIX_ENV: test
+
+      - name: Credo
+        run: mix credo --strict
+        if: ${{ matrix.lint }}
+        env:
+          MIX_ENV: test
+
+      - name: Run tests
+        run: mix test
+        env:
+          MIX_ENV: test
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+
+  npm_test_control:
+    name: npm test control
+    runs-on: ubuntu-latest
+    # runs-on: [self-hosted, linux]
+    defaults:
+      run:
+        working-directory: ./platform_umbrella
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Set up Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: 1.11.4
+          otp-version: 23.3.1
+
+      - name: Install dependencies
+        run: mix deps.get --only test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.x
+
+      - name: npm install and test
+        run: |
+          cd apps/control_server_web/assets
+          npm install
+          npm test
+  npm_test_home:
+    name: npm test home
+    runs-on: ubuntu-latest
+    # runs-on: [self-hosted, linux]
+    defaults:
+      run:
+        working-directory: ./platform_umbrella
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Set up Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: 1.11.4
+          otp-version: 24.0
+
+      - name: Install dependencies
+        run: mix deps.get --only test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.x
+
+      - name: npm install and test
+        run: |
+          cd apps/home_base_web/assets
+          npm install
+          npm test
