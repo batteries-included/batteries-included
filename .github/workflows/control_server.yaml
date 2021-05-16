@@ -121,7 +121,7 @@ jobs:
         run: mix deps.get --only test
 
       - name: Set up Node.js 12.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.1.5
         with:
           node-version: 12.x
 
