@@ -296,7 +296,7 @@ defmodule ControlServer.Services.PostgresOperator do
 
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "RoleBinding",
+      "kind" => "ClusterRoleBinding",
       "metadata" => %{
         "name" => "postgres-pod"
       },
