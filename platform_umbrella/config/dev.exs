@@ -40,9 +40,9 @@ config :control_server_web, ControlServerWeb.Endpoint,
   watchers: [
     node: [
       "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch-stdin",
+      "--mode=development",
+      "--watch",
+      "--watch-options-stdin",
       cd: Path.expand("../apps/control_server_web/assets", __DIR__)
     ]
   ]
@@ -55,9 +55,9 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   watchers: [
     node: [
       "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch-stdin",
+      "--mode=development",
+      "--watch",
+      "--watch-options-stdin",
       cd: Path.expand("../apps/home_base_web/assets", __DIR__)
     ]
   ]
