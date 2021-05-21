@@ -154,9 +154,7 @@ defmodule ControlServer.Services.PrometheusOperator do
               %{
                 "args" => [
                   "--kubelet-service=kube-system/kubelet",
-                  "--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:#{
-                    version
-                  }"
+                  "--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:#{version}"
                 ],
                 "image" => "#{image}:#{version}",
                 "name" => name,

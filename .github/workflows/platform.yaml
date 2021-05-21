@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.11.4
+          - elixir: 1.12.0
             otp: 24.0
             lint: lint
 
@@ -78,7 +78,7 @@ jobs:
           MIX_ENV: test
 
       - name: Compile & lint
-        run: mix compile --warnings-as-errors
+        run: mix compile
         if: ${{ matrix.lint }}
         env:
           MIX_ENV: test
