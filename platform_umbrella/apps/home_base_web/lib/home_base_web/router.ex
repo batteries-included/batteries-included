@@ -25,6 +25,13 @@ defmodule HomeBaseWeb.Router do
 
     live "/stripe_subscriptions/:id", StripeSubscriptionLive.Show, :show
     live "/stripe_subscriptions/:id/show/edit", StripeSubscriptionLive.Show, :edit
+
+    live "/usage_reports", UsageReportLive.Index, :index
+    live "/usage_reports/new", UsageReportLive.Index, :new
+    live "/usage_reports/:id/edit", UsageReportLive.Index, :edit
+
+    live "/usage_reports/:id", UsageReportLive.Show, :show
+    live "/usage_reports/:id/show/edit", UsageReportLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

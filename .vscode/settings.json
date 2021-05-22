@@ -13,6 +13,13 @@
     "*.eex": "html-eex",
     "*.leex": "html-eex"
   },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -30,7 +37,7 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true
   },
-  "prettier.requireConfig": true,
+  "prettier.requireConfig": false,
   "prettier.prettierPath": "./platform_umbrella/apps/control_server_web/assets/node_modules/prettier",
   "cSpell.words": [
     "Alertmanager",

@@ -1,0 +1,12 @@
+<h1>Show Usage report</h1>
+
+<ul>
+  <li>Id: <%= @usage_report.id %></li>
+  <li>External Id: <%= @usage_report.external_id %></li>
+  <li>Reported Nodes: <%= @usage_report.reported_nodes %></li>
+  <li>Generated At: <%= @usage_report.generated_at %></li>
+  <li>Inserted At: <%= @usage_report.inserted_at %></li>
+  <li>Updated At: <%= @usage_report.updated_at %></li>
+</ul>
+
+<span><%= live_redirect "Back", to: Routes.usage_report_index_path(@socket, :index) %></span>

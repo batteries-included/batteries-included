@@ -1,11 +1,177 @@
-<main role="main" class="container">
+<%= if info = live_flash(@flash, :info) do %>
   <p class="alert alert-info" role="alert" phx-click="lv:clear-flash" phx-value-key="info">
-    <%= live_flash(@flash, :info) %>
+    <%= info %>
   </p>
+<% end %>
 
+<%= if error = live_flash(@flash, :error) do %>
   <p class="alert alert-danger" role="alert" phx-click="lv:clear-flash" phx-value-key="error">
-    <%= live_flash(@flash, :error) %>
+    <%= error %>
   </p>
+<% end %>
 
-  <%= @inner_content %>
-</main>
+<div class="h-screen bg-gray-50 flex overflow-hidden" x-data="{menuOpen: false}">
+  <!-- Narrow sidebar -->
+  <div class="hidden w-28 overflow-y-auto md:block bg-astral-800">
+    <div class="w-full py-6 flex flex-col items-center">
+      <div class="flex-shrink-0 flex items-center">
+        <img class="h-8 w-auto" src="/images/logo.png" alt="Batteries Included" />
+      </div>
+      <div class="flex-1 mt-6 w-full px-2 space-y-1 bg-astral-800">
+        <a
+          href="/usage_reports"
+          class="bg-astral-900 text-violet-red-500 hover:bg-astral-900 hover:text-white group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+          <span class="mt-2">Usage</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    Mobile menu
+
+    Off-canvas menu for mobile, show/hide based on off-canvas menu state.
+  -->
+  <div
+    class="fixed inset-0 z-40 flex md:hidden"
+    role="dialog"
+    aria-modal="true"
+    x-show.transition="menuOpen"
+  >
+    <!--
+      Off-canvas menu overlay, show/hide based on off-canvas menu state.
+    -->
+    <div
+      class="fixed inset-0 bg-violet-red-500 bg-opacity-50"
+      aria-hidden="true"
+      x-on:click="menuOpen = false"
+    ></div>
+
+    <!--
+      Off-canvas menu, show/hide based on off-canvas menu state.
+    -->
+    <div class="relative max-w-xs w-full bg-astral-800 pt-5 pb-4 flex-1 flex flex-col">
+      <!--
+        Close button, show/hide based on off-canvas menu state.
+      -->
+      <div class="absolute top-1 right-0 -mr-14 p-1">
+        <button
+          type="button"
+          class="h-12 w-12 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white"
+          x-on:click="menuOpen = false"
+        >
+          <!-- Heroicon name: outline/x -->
+          <svg
+            class="h-6 w-6 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+          <span class="sr-only">Close sidebar</span>
+        </button>
+      </div>
+      <!-- Logo -->
+      <div class="flex-shrink-0 px-4 flex items-center">
+        <img class="h-8 w-auto" src="/images/logo.png" alt="Batteries Included" />
+      </div>
+
+      <div class="mt-5 flex-1 h-0 px-2 overflow-y-auto">
+        <nav class="h-full flex flex-col">
+          <div class="space-y-1">
+            <!-- Menu Items for mobile menu -->
+            <a
+              href="/usage_reports"
+              class="text-violet-red-500 bg-astral-900 hover:bg-astral-900 hover:text-white group py-2 px-3 rounded-md flex items-center text-sm font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="text-white mr-3 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+
+              <span>Usage</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="flex-shrink-0 w-14" aria-hidden="true">
+      <!-- Dummy element to force sidebar to shrink to fit close icon -->
+    </div>
+  </div>
+
+  <!--
+    Main content pane
+   -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="w-full">
+      <div class="relative z-10 flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm flex">
+        <button
+          type="button"
+          class="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-violet-red-500 md:hidden"
+          x-on:click="menuOpen = true"
+        >
+          <span class="sr-only">Open sidebar</span>
+          <!-- Heroicon name: outline/menu-alt-2 -->
+          <svg
+            class="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h7"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 flex items-stretch overflow-hidden">
+      <main class="flex-1 overflow-y-auto">
+        <div class="pt-8 px-4 sm:px-6 lg:px-8">
+          <%= @inner_content %>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

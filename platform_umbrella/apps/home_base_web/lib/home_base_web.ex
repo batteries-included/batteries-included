@@ -42,10 +42,10 @@ defmodule HomeBaseWeb do
     end
   end
 
-  def live_view do
+  def live_view(layout_path \\ "live.html") do
     quote do
       use Phoenix.LiveView,
-        layout: {HomeBaseWeb.LayoutView, "live.html"}
+        layout: {HomeBaseWeb.LayoutView, unquote(layout_path)}
 
       unquote(view_helpers())
     end
@@ -76,7 +76,7 @@ defmodule HomeBaseWeb do
     end
   end
 
-  defp view_helpers do
+  def view_helpers do
     quote do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
@@ -99,5 +99,9 @@ defmodule HomeBaseWeb do
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
+  end
+
+  defmacro __using__({:live_view, path}) do
+    apply(__MODULE__, :live_view, [path])
   end
 end
