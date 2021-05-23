@@ -13,7 +13,7 @@ defmodule HomeBase.Usage.UsageReport do
   @foreign_key_type :binary_id
   schema "usage_reports" do
     field(:external_id, Ecto.UUID)
-    field(:generated_at, :utc_datetime)
+    field(:generated_at, :utc_datetime_usec)
     field(:namespace_report, :map)
     field(:node_report, :map)
     field(:reported_nodes, :integer)

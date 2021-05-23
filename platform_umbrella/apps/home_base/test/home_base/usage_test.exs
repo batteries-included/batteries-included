@@ -8,14 +8,14 @@ defmodule HomeBase.UsageTest do
 
     @valid_attrs %{
       external_id: "7488a646-e31f-11e4-aace-600308960662",
-      generated_at: "2010-04-17T14:00:00Z",
+      generated_at: "2010-04-17T14:00:00.000000Z",
       namespace_report: %{},
       node_report: %{},
       reported_nodes: 42
     }
     @update_attrs %{
       external_id: "7488a646-e31f-11e4-aace-600308960668",
-      generated_at: "2011-05-18T15:01:01Z",
+      generated_at: "2011-05-18T15:01:01.000000Z",
       namespace_report: %{},
       node_report: %{},
       reported_nodes: 43
@@ -52,7 +52,7 @@ defmodule HomeBase.UsageTest do
       assert usage_report.external_id == "7488a646-e31f-11e4-aace-600308960662"
 
       assert usage_report.generated_at ==
-               DateTime.from_naive!(~N[2010-04-17T14:00:00Z], "Etc/UTC")
+               DateTime.from_naive!(~N[2010-04-17T14:00:00.000000Z], "Etc/UTC")
 
       assert usage_report.namespace_report == %{}
       assert usage_report.node_report == %{}
@@ -72,7 +72,7 @@ defmodule HomeBase.UsageTest do
       assert usage_report.external_id == "7488a646-e31f-11e4-aace-600308960668"
 
       assert usage_report.generated_at ==
-               DateTime.from_naive!(~N[2011-05-18T15:01:01Z], "Etc/UTC")
+               DateTime.from_naive!(~N[2011-05-18T15:01:01.000000Z], "Etc/UTC")
 
       assert usage_report.namespace_report == %{}
       assert usage_report.node_report == %{}

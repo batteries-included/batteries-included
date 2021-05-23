@@ -8,7 +8,7 @@ defmodule HomeBase.Repo.Migrations.CreateUsageReports do
       add :node_report, :map
       add :reported_nodes, :integer
       add :external_id, :uuid
-      add :generated_at, :utc_datetime
+      add :generated_at, :utc_datetime_usec
 
       timestamps(type: :utc_datetime_usec)
     end

@@ -9,9 +9,10 @@ defmodule ControlServer.Usage.UsagePoller do
   alias ControlServer.Usage
   alias HomeBaseClient.EventCenter
 
-  @period 5 * 60 * 1000
+  @period 7 * 60 * 1000
 
   def start_link(opts) do
+    Logger.info("Start link for UsagePoller")
     GenServer.start_link(__MODULE__, nil, opts)
   end
 
@@ -21,12 +22,19 @@ defmodule ControlServer.Usage.UsagePoller do
   end
 
   def handle_info(:poll, state) do
+    Process.send_after(self(), :poll, @period)
+
+    with :ok <- run_report() do
+      {:noreply, state}
+    end
+  end
+
+  def run_report do
     with {:ok, report} <- Usage.create_usage_report() do
       Logger.info("Polling current usage found #{report.reported_nodes} report id = #{report.id}")
 
       with :ok <- EventCenter.broadcast(:usage_report, report |> prepare_usage()) do
-        Process.send_after(self(), :poll, @period)
-        {:noreply, state}
+        :ok
       end
     end
   end

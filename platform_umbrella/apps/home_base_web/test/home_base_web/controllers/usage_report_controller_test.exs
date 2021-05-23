@@ -52,7 +52,7 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
       assert %{
                "id" => ^id,
                "external_id" => "7488a646-e31f-11e4-aace-600308960662",
-               "generated_at" => "2010-04-17T14:00:00Z",
+               "generated_at" => "2010-04-17T14:00:00.000000Z",
                "namespace_report" => %{},
                "node_report" => %{},
                "reported_nodes" => 42
@@ -84,7 +84,7 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
       assert %{
                "id" => ^id,
                "external_id" => "7488a646-e31f-11e4-aace-600308960668",
-               "generated_at" => "2011-05-18T15:01:01Z",
+               "generated_at" => "2011-05-18T15:01:01.000000Z",
                "namespace_report" => %{},
                "node_report" => %{},
                "reported_nodes" => 43

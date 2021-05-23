@@ -32,6 +32,13 @@ defmodule HomeBaseWeb.Router do
 
     live "/usage_reports/:id", UsageReportLive.Show, :show
     live "/usage_reports/:id/show/edit", UsageReportLive.Show, :edit
+
+    live "/billing_reports", BillingReportLive.Index, :index
+    live "/billing_reports/new", BillingReportLive.Index, :new
+    live "/billing_reports/:id/edit", BillingReportLive.Index, :edit
+
+    live "/billing_reports/:id", BillingReportLive.Show, :show
+    live "/billing_reports/:id/show/edit", BillingReportLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

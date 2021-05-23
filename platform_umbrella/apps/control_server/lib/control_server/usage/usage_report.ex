@@ -64,6 +64,6 @@ defmodule ControlServer.Usage.UsageReport do
   end
 
   defp get_reported_nodes(changeset) do
-    map_size(Map.get(changeset.changes, :namespaces, %{}))
+    map_size(Map.get(changeset.changes, :namespace_report, %{}))
   end
 end

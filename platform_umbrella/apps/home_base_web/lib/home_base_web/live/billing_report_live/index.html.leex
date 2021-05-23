@@ -1,0 +1,25 @@
+<h1>Listing Billing reports</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Start</th>
+      <th>End</th>
+      <th>Total node hours</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="billing_reports">
+    <%= for billing_report <- @billing_reports do %>
+      <tr id="billing_report-<%= billing_report.id %>">
+        <td><%= billing_report.start %></td>
+        <td><%= billing_report.end %></td>
+        <td><%= billing_report.total_node_hours %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.billing_report_show_path(@socket, :show, billing_report) %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

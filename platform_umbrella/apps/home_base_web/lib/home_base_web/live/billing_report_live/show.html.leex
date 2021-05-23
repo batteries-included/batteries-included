@@ -1,0 +1,19 @@
+<h1>Show Billing report</h1>
+<ul>
+  <li>
+    <strong>Start:</strong>
+    <%= @billing_report.start %>
+  </li>
+
+  <li>
+    <strong>End:</strong>
+    <%= @billing_report.end %>
+  </li>
+
+  <li>
+    <strong>Total node hours:</strong>
+    <%= @billing_report.total_node_hours %>
+  </li>
+</ul>
+
+<span><%= live_redirect "Back", to: Routes.billing_report_index_path(@socket, :index) %></span>
