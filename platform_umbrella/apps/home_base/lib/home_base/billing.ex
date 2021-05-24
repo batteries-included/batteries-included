@@ -90,20 +90,6 @@ defmodule HomeBase.Billing do
     Repo.delete(billing_report)
   end
 
-  def last_billing_report(repo \\ Repo) do
-    repo.one(from BillingReport, order_by: [desc: :end], limit: 1)
-  end
-
-  def last_billing_end(repo \\ Repo, _) do
-    case last_billing_report(repo) do
-      nil ->
-        DateTime.from_unix(0)
-
-      br ->
-        {:ok, br.end}
-    end
-  end
-
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking billing_report changes.
 
@@ -118,7 +104,7 @@ defmodule HomeBase.Billing do
   end
 
   def generate_billing_report(end_report_time) do
-    end_report_time = end_report_time |> truncate_hour()
+    end_report_time = end_report_time |> HomeBase.Time.truncate(:hour)
 
     Ecto.Multi.new()
     |> Ecto.Multi.run(:last_end, &last_billing_end/2)
@@ -148,8 +134,18 @@ defmodule HomeBase.Billing do
     |> Repo.transaction()
   end
 
-  defp truncate_hour(%DateTime{} = dt) do
-    %DateTime{dt | minute: 0, second: 0, microsecond: {0, 0}}
+  defp last_billing_report(repo) do
+    repo.one(from BillingReport, order_by: [desc: :end], limit: 1)
+  end
+
+  defp last_billing_end(repo, _) do
+    case last_billing_report(repo) do
+      nil ->
+        DateTime.from_unix(0)
+
+      br ->
+        {:ok, br.end}
+    end
   end
 
   defp select_by_hour(begin_report_time, end_report_time) do
@@ -157,7 +153,7 @@ defmodule HomeBase.Billing do
       where: ur.generated_at > ^begin_report_time and ur.generated_at <= ^end_report_time,
       select: %{
         reported_nodes: max(ur.reported_nodes),
-        generated_at:
+        generated_hour:
           fragment(
             "date_trunc(?, ?) as generated_hour",
             "hour",
@@ -172,7 +168,7 @@ defmodule HomeBase.Billing do
     {:ok, results |> Enum.map(&to_tuple/1) |> Map.new()}
   end
 
-  defp to_tuple(%{generated_at: ga} = m) do
-    {ga, m}
+  defp to_tuple(%{generated_hour: gh} = m) do
+    {gh, m}
   end
 end
