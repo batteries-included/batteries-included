@@ -104,7 +104,7 @@ dependencies = [
  "common",
  "futures",
  "k8s-openapi",
- "kube 0.55.0",
+ "kube",
  "tokio",
  "tracing",
 ]
@@ -115,7 +115,7 @@ version = "0.1.0"
 dependencies = [
  "futures",
  "k8s-openapi",
- "kube 0.55.0",
+ "kube",
  "kube-runtime",
  "reqwest",
  "schemars",
@@ -615,42 +615,6 @@ dependencies = [
 
 [[package]]
 name = "kube"
-version = "0.53.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38a92e9c744815d199c09b9a4799efb3efc1f2528a6a3c35fb38115b0d691f17"
-dependencies = [
- "base64",
- "bytes",
- "chrono",
- "dirs-next",
- "either",
- "futures",
- "http",
- "hyper",
- "hyper-timeout",
- "hyper-tls",
- "jsonpath_lib",
- "k8s-openapi",
- "log",
- "once_cell",
- "openssl",
- "pem",
- "pin-project 1.0.6",
- "serde",
- "serde_json",
- "serde_yaml",
- "static_assertions",
- "thiserror",
- "tokio",
- "tokio-native-tls",
- "tokio-util",
- "tower",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "kube"
 version = "0.55.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "43a7370e62dacd8f672231c59001ddf00b090648c81b3cde2600bfbfab7518fe"
@@ -715,15 +679,15 @@ dependencies = [
 
 [[package]]
 name = "kube-runtime"
-version = "0.53.0"
+version = "0.55.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49a005e33a497a96ab203f4aa567262df420e494023712d85339469e93e8135e"
+checksum = "975f4b3d7742d74ae5c15d3b460b68dea35ee622219e6ea1bc95f71e344ac061"
 dependencies = [
  "dashmap",
  "derivative",
  "futures",
  "k8s-openapi",
- "kube 0.53.0",
+ "kube",
  "pin-project 1.0.6",
  "serde",
  "smallvec",
