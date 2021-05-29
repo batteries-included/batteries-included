@@ -28,7 +28,7 @@
     "prettier-plugin-eex": "^0.5.0",
     "sass-loader": "^11.1.1",
     "terser-webpack-plugin": "^5.1.2",
-    "webpack": "^5.37.1",
+    "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0"
   }
 }
