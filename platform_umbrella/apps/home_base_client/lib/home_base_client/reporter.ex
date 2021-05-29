@@ -21,7 +21,7 @@ defmodule HomeBaseClient.Reporter do
 
   @impl true
   def handle_info({:usage_report, usage_report}, state) do
-    state.client |> HomeBaseClient.RestClient.report_usage(usage_report)
+    HomeBaseClient.RestClient.report_usage(state.client, usage_report)
     {:noreply, state}
   end
 

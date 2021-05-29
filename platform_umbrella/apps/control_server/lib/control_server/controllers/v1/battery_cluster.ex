@@ -6,6 +6,8 @@ defmodule ControlServer.Controller.V1.BatteryCluster do
 
   alias ControlServer.KubeServices
 
+  require Logger
+
   @scope :cluster
   @names %{
     plural: "batteryclusters",
@@ -15,8 +17,6 @@ defmodule ControlServer.Controller.V1.BatteryCluster do
 
   # @rule {"", ["pods", "configmap"], ["create"]}
   # @rule {"", ["secrets"], ["create"]}
-
-  require Logger
 
   @doc """
   Handles an `ADDED` event

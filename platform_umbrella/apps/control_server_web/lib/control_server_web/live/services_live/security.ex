@@ -5,11 +5,11 @@ defmodule ControlServerWeb.ServicesLive.Security do
   use ControlServerWeb, :live_view
   use Timex
 
-  require Logger
-
   alias ControlServer.KubeServices
   alias ControlServer.Services
   alias ControlServer.Services.Pods
+
+  require Logger
 
   @pod_update_time 5000
 
@@ -17,11 +17,14 @@ defmodule ControlServerWeb.ServicesLive.Security do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
 
-    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, Services.Security.active?())}
+    {:ok,
+     socket
+     |> assign(:pods, get_pods())
+     |> assign(:running, Services.Security.active?())}
   end
 
   defp get_pods do
-    Pods.get(:security) |> Enum.map(&Pods.summarize/1)
+    :security |> Pods.get() |> Enum.map(&Pods.summarize/1)
   end
 
   @impl true
@@ -29,7 +32,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
           {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, @pod_update_time)
-    {:noreply, socket |> assign(:pods, get_pods())}
+    {:noreply, assign(socket, :pods, get_pods())}
   end
 
   @impl true

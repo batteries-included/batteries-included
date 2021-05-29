@@ -5,11 +5,11 @@ defmodule ControlServerWeb.ServicesLive.Devtools do
   use ControlServerWeb, :live_view
   use Timex
 
-  require Logger
-
   alias ControlServer.KubeServices
   alias ControlServer.Services
   alias ControlServer.Services.Pods
+
+  require Logger
 
   @pod_update_time 5000
 
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.ServicesLive.Devtools do
   end
 
   defp get_pods do
-    Pods.get(:devtools) |> Enum.map(&Pods.summarize/1)
+    :devtools |> Pods.get() |> Enum.map(&Pods.summarize/1)
   end
 
   @impl true
@@ -29,7 +29,7 @@ defmodule ControlServerWeb.ServicesLive.Devtools do
           {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, @pod_update_time)
-    {:noreply, socket |> assign(:pods, get_pods())}
+    {:noreply, assign(socket, :pods, get_pods())}
   end
 
   @impl true

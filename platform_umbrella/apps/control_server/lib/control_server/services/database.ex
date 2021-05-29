@@ -3,13 +3,13 @@ defmodule ControlServer.Services.Database do
   Module for dealing with all the databases for batteries included.
   """
 
+  import ControlServer.FileExt
+
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
   alias ControlServer.Services
   alias ControlServer.Services.PostgresOperator
   alias ControlServer.Settings.DatabaseSettings
-
-  import ControlServer.FileExt
 
   @default_path "/database/base"
   @default_config %{}
@@ -31,7 +31,8 @@ defmodule ControlServer.Services.Database do
     }
 
     body =
-      PostgresOperator.materialize(config)
+      config
+      |> PostgresOperator.materialize()
       |> Enum.map(fn {key, value} -> {"/1/body" <> key, value} end)
       |> Map.new()
 

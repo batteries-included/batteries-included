@@ -3,12 +3,12 @@ defmodule ControlServer.Services.Devtools do
   Module for dealing with all the Devtools related services
   """
 
+  import ControlServer.FileExt
+
   alias ControlServer.Services
   alias ControlServer.Services.GithubActionsRunner
   alias ControlServer.Services.Security
   alias ControlServer.Settings.DevtoolsSettings
-
-  import ControlServer.FileExt
 
   @default_path "/Devtools/base"
   @default_config %{}
@@ -34,7 +34,8 @@ defmodule ControlServer.Services.Devtools do
     body =
       case DevtoolsSettings.gh_enabled(config) do
         true ->
-          GithubActionsRunner.materialize(config)
+          config
+          |> GithubActionsRunner.materialize()
           |> Enum.map(fn {key, value} -> {"/1/body" <> key, value} end)
           |> Map.new()
 

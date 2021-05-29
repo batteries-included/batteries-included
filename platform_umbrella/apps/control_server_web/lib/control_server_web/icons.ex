@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.IconHelper do
+defmodule ControlServerWeb.Icons do
   @moduledoc """
   Module to make svg icons available.
   """

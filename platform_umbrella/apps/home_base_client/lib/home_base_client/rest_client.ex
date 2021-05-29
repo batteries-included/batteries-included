@@ -10,7 +10,7 @@ defmodule HomeBaseClient.RestClient do
   ]
 
   def report_usage(client, usage_report) do
-    client |> Tesla.post("/usage_reports/", %{"usage_report" => usage_report})
+    Tesla.post(client, "/usage_reports/", %{"usage_report" => usage_report})
   end
 
   @doc """

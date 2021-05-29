@@ -2,20 +2,22 @@ defmodule ControlServer.Usage.KubeUsage do
   @moduledoc """
   Module to get and compute the node usage of the platform.
   """
+  alias K8s.Client
+
   require Logger
 
   def report_namespaces do
     with {:ok, %{"items" => namespaces}} <- list_all_namespace() do
-      battery_namespaces =
+      pods =
         namespaces
         |> Enum.filter(&battery_namespace?/1)
+        |> Enum.flat_map(&list_namespace_pods/1)
 
-      pods = battery_namespaces |> Enum.flat_map(&list_namespace_pods/1)
-
-      node_names = pods |> Enum.map(fn pod -> get_in(pod, ["spec", "nodeName"]) end)
+      node_names = Enum.map(pods, fn pod -> get_in(pod, ["spec", "nodeName"]) end)
 
       {:ok,
-       Enum.zip(pods, node_names)
+       pods
+       |> Enum.zip(node_names)
        |> Enum.group_by(fn {_, nn} -> nn end, fn {pod, _} -> sanitize_pod(pod) end)}
     end
   end
@@ -37,17 +39,17 @@ defmodule ControlServer.Usage.KubeUsage do
   end
 
   defp battery_namespace?(%{"metadata" => %{"name" => name}} = _ns) do
-    name |> String.starts_with?("battery")
+    String.starts_with?(name, "battery")
   end
 
   defp battery_namespace?(_), do: false
 
-  def list_all_namespace, do: K8s.Client.list("v1", "Namespace") |> K8s.Client.run(:default)
-  def list_all_nodes, do: K8s.Client.list("v1", "Node") |> K8s.Client.run(:default)
+  def list_all_namespace, do: "v1" |> Client.list("Namespace") |> Client.run(:default)
+  def list_all_nodes, do: "v1" |> Client.list("Node") |> Client.run(:default)
 
   def list_namespace_pods(%{"metadata" => %{"name" => ns_name}} = _ns) do
     with {:ok, %{"items" => items}} <-
-           K8s.Client.list("v1", "Pod", namespace: ns_name) |> K8s.Client.run(:default) do
+           "v1" |> Client.list("Pod", namespace: ns_name) |> Client.run(:default) do
       items
     end
   end
@@ -55,16 +57,15 @@ defmodule ControlServer.Usage.KubeUsage do
   def list_namespace_pods(_), do: []
 
   def sanitize_pod(%{} = pod) do
-    pod
-    |> Map.drop(["status"])
+    Map.drop(pod, ["status"])
   end
 
   def sanitize_pod([] = _arg), do: %{}
 
   def sanitize_node(%{} = node) do
     node
-    |> update_in(["status"], fn status -> status |> Map.drop(["images"]) end)
-    |> update_in(["metadata"], fn metadata -> metadata |> Map.delete("managedFields") end)
+    |> update_in(["status"], fn status -> Map.drop(status, ["images"]) end)
+    |> update_in(["metadata"], fn metadata -> Map.delete(metadata, "managedFields") end)
   end
 
   def sanitize_node([] = _arg), do: %{}

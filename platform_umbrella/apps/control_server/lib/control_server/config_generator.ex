@@ -10,19 +10,18 @@ defmodule ControlServer.ConfigGenerator do
   alias ControlServer.Services.Security
 
   def materialize(%BaseService{} = base_service) do
-    case base_service.is_active do
-      false ->
-        %{}
-
-      true ->
-        materialize(base_service.service_type, base_service.config)
-        |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
-        |> Map.new()
+    if base_service.is_active do
+      base_service.config
+      |> materialize(base_service.service_type)
+      |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
+      |> Map.new()
+    else
+      %{}
     end
   end
 
-  defp materialize(:monitoring, %{} = config), do: Monitoring.materialize(config)
-  defp materialize(:database, %{} = config), do: Database.materialize(config)
-  defp materialize(:security, %{} = config), do: Security.materialize(config)
-  defp materialize(:devtools, %{} = config), do: Devtools.materialize(config)
+  defp materialize(%{} = config, :monitoring), do: Monitoring.materialize(config)
+  defp materialize(%{} = config, :database), do: Database.materialize(config)
+  defp materialize(%{} = config, :security), do: Security.materialize(config)
+  defp materialize(%{} = config, :devtools), do: Devtools.materialize(config)
 end

@@ -4,9 +4,10 @@ defmodule HomeBase.Billing do
   """
 
   import Ecto.Query, warn: false
-  alias HomeBase.Repo
 
+  alias Ecto.Multi
   alias HomeBase.Billing.BillingReport
+  alias HomeBase.Repo
   alias HomeBase.Usage.UsageReport
 
   @doc """
@@ -104,27 +105,24 @@ defmodule HomeBase.Billing do
   end
 
   def generate_billing_report(end_report_time) do
-    end_report_time = end_report_time |> HomeBase.Time.truncate(:hour)
+    end_report_time = HomeBase.Time.truncate(end_report_time, :hour)
 
-    Ecto.Multi.new()
-    |> Ecto.Multi.run(:last_end, &last_billing_end/2)
-    |> Ecto.Multi.run(:count_map, fn repo, %{last_end: begin_report_time} ->
-      case begin_report_time >= end_report_time do
-        true ->
-          {:error, :begin_before_end}
-
-        false ->
-          repo.all(select_by_hour(begin_report_time, end_report_time)) |> to_hour_map()
+    Multi.new()
+    |> Multi.run(:last_end, &last_billing_end/2)
+    |> Multi.run(:count_map, fn repo, %{last_end: begin_report_time} ->
+      if begin_report_time >= end_report_time do
+        {:error, :begin_before_end}
+      else
+        {begin_report_time, end_report_time} |> select_by_hour() |> repo.all() |> to_hour_map()
       end
     end)
-    |> Ecto.Multi.insert(:billing_report, fn %{last_end: begin_report_time, count_map: count_map} ->
+    |> Multi.insert(:billing_report, fn %{last_end: begin_report_time, count_map: count_map} ->
       total =
         count_map
         |> Map.to_list()
         |> Enum.reduce(0, fn {_hr, m}, acc -> acc + Map.get(m, :reported_nodes, 0) end)
 
-      %BillingReport{}
-      |> BillingReport.changeset(%{
+      BillingReport.changeset(%BillingReport{}, %{
         start: begin_report_time,
         end: end_report_time,
         node_by_hour: count_map,
@@ -148,7 +146,7 @@ defmodule HomeBase.Billing do
     end
   end
 
-  defp select_by_hour(begin_report_time, end_report_time) do
+  defp select_by_hour({begin_report_time, end_report_time}) do
     from ur in UsageReport,
       where: ur.generated_at > ^begin_report_time and ur.generated_at <= ^end_report_time,
       select: %{

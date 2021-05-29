@@ -2,12 +2,11 @@ defmodule ControlServer.Services.Security do
   @moduledoc """
   Module for dealing with all the security related services
   """
+  import ControlServer.FileExt
 
   alias ControlServer.Services
   alias ControlServer.Services.CertManager
   alias ControlServer.Settings.SecuritySettings
-
-  import ControlServer.FileExt
 
   @default_path "/security/base"
   @default_config %{}
@@ -29,7 +28,8 @@ defmodule ControlServer.Services.Security do
     }
 
     body =
-      CertManager.materialize(config)
+      config
+      |> CertManager.materialize()
       |> Enum.map(fn {key, value} -> {"/1/body" <> key, value} end)
       |> Map.new()
 

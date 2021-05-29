@@ -120,19 +120,22 @@ defmodule ControlServer.Services do
 
     changes = %{is_active: active}
 
-    case(Repo.one(query)) do
-      # Not found create a new one
-      nil ->
-        %BaseService{
-          is_active: active,
-          root_path: path,
-          service_type: service_type,
-          config: config
-        }
+    base_service =
+      case(Repo.one(query)) do
+        # Not found create a new one
+        nil ->
+          %BaseService{
+            is_active: active,
+            root_path: path,
+            service_type: service_type,
+            config: config
+          }
 
-      base_service ->
-        base_service
-    end
+        base_service ->
+          base_service
+      end
+
+    base_service
     |> BaseService.changeset(changes)
     |> Repo.insert_or_update()
   end

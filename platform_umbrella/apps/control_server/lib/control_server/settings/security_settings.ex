@@ -4,5 +4,5 @@ defmodule ControlServer.Settings.SecuritySettings do
   """
   @namespace "battery-security"
 
-  def namespace(config), do: config |> Map.get("namespace", @namespace)
+  def namespace(config), do: Map.get(config, "namespace", @namespace)
 end

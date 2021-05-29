@@ -12,7 +12,7 @@ defmodule ControlServerWeb.SparklineLive do
 
     {:ok,
      socket
-     |> assign(:data, 0..30 |> Enum.map(fn _ -> Enum.random(0..3000) end))
+     |> assign(:data, Enum.map(0..30, fn _ -> Enum.random(0..3000) end))
      |> assign(:id, socket.id)}
   end
 
@@ -37,7 +37,6 @@ defmodule ControlServerWeb.SparklineLive do
   def handle_tick(socket) do
     data = Enum.take(socket.assigns.data ++ [Enum.random(0..3000)], -30)
 
-    socket
-    |> assign(:data, data)
+    assign(socket, :data, data)
   end
 end

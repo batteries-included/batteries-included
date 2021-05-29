@@ -4,10 +4,10 @@ defmodule ControlServer.Usage.UsagePoller do
   """
   use GenServer
 
-  require Logger
-
   alias ControlServer.Usage
   alias HomeBaseClient.EventCenter
+
+  require Logger
 
   @period 7 * 60 * 1000
 
@@ -33,7 +33,7 @@ defmodule ControlServer.Usage.UsagePoller do
     with {:ok, report} <- Usage.create_usage_report() do
       Logger.info("Polling current usage found #{report.reported_nodes} report id = #{report.id}")
 
-      with :ok <- EventCenter.broadcast(:usage_report, report |> prepare_usage()) do
+      with :ok <- EventCenter.broadcast(:usage_report, prepare_usage(report)) do
         :ok
       end
     end

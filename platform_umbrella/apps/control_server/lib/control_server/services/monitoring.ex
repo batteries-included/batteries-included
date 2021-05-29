@@ -5,9 +5,7 @@ defmodule ControlServer.Services.Monitoring do
   be in charge of the db side and generate all the needed
   k8s configs.
   """
-
-  @default_path "/monitoring/base"
-  @default_config %{}
+  import ControlServer.FileExt
 
   alias ControlServer.Services
   alias ControlServer.Services.AlertManager
@@ -18,7 +16,8 @@ defmodule ControlServer.Services.Monitoring do
   alias ControlServer.Services.PrometheusOperator
   alias ControlServer.Settings.MonitoringSettings
 
-  import ControlServer.FileExt
+  @default_path "/monitoring/base"
+  @default_config %{}
 
   def default_config, do: @default_config
 
@@ -31,7 +30,16 @@ defmodule ControlServer.Services.Monitoring do
   def active?(path \\ @default_path), do: Services.active?(path)
 
   def materialize(%{} = config) do
-    setup_defs = %{
+    %{}
+    |> Map.merge(setup_defs(config))
+    |> Map.merge(operator_defs(config))
+    |> Map.merge(account_defs(config))
+    |> Map.merge(main_role_defs(config))
+    |> Map.merge(main_defs(config))
+  end
+
+  defp setup_defs(config) do
+    %{
       # The namespace Really really has to be first.
       "/0/setup/namespace" => namespace(config),
 
@@ -74,8 +82,10 @@ defmodule ControlServer.Services.Monitoring do
           :prometheus
         )
     }
+  end
 
-    operator_defs = %{
+  defp operator_defs(config) do
+    %{
       # for the prometheus operator account stuff
       "/2/setup/operator_service_account" => PrometheusOperator.service_account(config),
       "/2/setup/operator_cluster_role" => PrometheusOperator.cluster_role(config),
@@ -86,29 +96,34 @@ defmodule ControlServer.Services.Monitoring do
       # Make it available.
       "/3/setup/operator_service" => PrometheusOperator.service(config)
     }
+  end
 
-    account_defs = %{
+  defp account_defs(config) do
+    %{
       "/4/prometheus/prometheus_account" => Prometheus.service_account(config),
       "/4/prometheus/prometheus_cluster_role" => Prometheus.role(:cluster, config),
       "/4/prometheus/prometheus_config_role" => Prometheus.role(:config, config),
       "/4/prometheus/prometheus_cluster_role_bind" => Prometheus.role_binding(:cluster, config),
       "/4/prometheus/prometheus_config_role_bind" => Prometheus.role_binding(:config, config)
     }
+  end
 
-    monitored_namespaces = MonitoringSettings.prometheus_main_namespaces(config)
+  defp main_role_defs(config) do
+    config
+    |> MonitoringSettings.prometheus_main_namespaces()
+    |> Enum.flat_map(fn target_ns ->
+      [
+        {"/5/prometheus/prometheus_main_role_#{target_ns}",
+         Prometheus.role(:main, target_ns, config)},
+        {"/5/prometheus/prometheus_main_role_#{target_ns}_bind",
+         Prometheus.role_binding(:main, target_ns, config)}
+      ]
+    end)
+    |> Map.new()
+  end
 
-    main_role_defs =
-      Enum.flat_map(monitored_namespaces, fn target_ns ->
-        [
-          {"/5/prometheus/prometheus_main_role_#{target_ns}",
-           Prometheus.role(:main, target_ns, config)},
-          {"/5/prometheus/prometheus_main_role_#{target_ns}_bind",
-           Prometheus.role_binding(:main, target_ns, config)}
-        ]
-      end)
-      |> Map.new()
-
-    main_defs = %{
+  defp main_defs(config) do
+    %{
       "/9/prometheus/prometheus_prometheus" => Prometheus.prometheus(config),
       "/9/grafana/0/service_account" => Grafana.service_account(config),
       "/9/grafana/0/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
@@ -130,13 +145,6 @@ defmodule ControlServer.Services.Monitoring do
       "/9/alertmanager/2/alertmanager" => AlertManager.alertmanager(config),
       "/9/alertmanager/2/service" => AlertManager.service(config)
     }
-
-    %{}
-    |> Map.merge(setup_defs)
-    |> Map.merge(operator_defs)
-    |> Map.merge(account_defs)
-    |> Map.merge(main_role_defs)
-    |> Map.merge(main_defs)
   end
 
   defp namespace(config) do

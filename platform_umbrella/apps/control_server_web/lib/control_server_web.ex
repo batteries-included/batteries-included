@@ -92,7 +92,7 @@ defmodule ControlServerWeb do
       import ControlServerWeb.Gettext
       alias ControlServerWeb.Router.Helpers, as: Routes
 
-      import ControlServerWeb.IconHelper
+      import ControlServerWeb.Icons
     end
   end
 

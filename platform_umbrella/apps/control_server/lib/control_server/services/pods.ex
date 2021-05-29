@@ -15,7 +15,8 @@ defmodule ControlServer.Services.Pods do
 
   def get(namespace) do
     with {:ok, res} <-
-           K8s.Client.list("v1", :pods, namespace: namespace)
+           "v1"
+           |> K8s.Client.list(:pods, namespace: namespace)
            |> K8s.Client.run(Bonny.Config.cluster_name()) do
       Map.get(res, "items", [])
     end
@@ -25,8 +26,7 @@ defmodule ControlServer.Services.Pods do
   end
 
   def summarize(pod) do
-    pod
-    |> Map.put("summary", %{
+    Map.put(pod, "summary", %{
       "restartCount" => get_restart_count(pod),
       "fromStart" => get_from_start(pod)
     })

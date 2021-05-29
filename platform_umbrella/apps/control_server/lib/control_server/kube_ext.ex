@@ -4,6 +4,8 @@ defmodule ControlServer.KubeExt do
 
   get_or_create/2 is the most useful.
   """
+  alias K8s.Client
+
   require Logger
   require Jason
 
@@ -17,22 +19,20 @@ defmodule ControlServer.KubeExt do
     get_or_create_single(resource)
   end
 
-  def apply(many) when is_list(many), do: many |> Enum.map(&apply_single/1)
+  def apply(many) when is_list(many), do: Enum.map(many, &apply_single/1)
   def apply(single), do: apply_single(single)
 
   def apply_single(resource) do
     with {:ok, found} <- get_or_create(resource) do
       # Add the hash here means that we don't need
       # to recompute it if the hashes don't match.
-      found = found |> decorate_content_hash()
-      resource = resource |> decorate_content_hash()
+      found = decorate_content_hash(found)
+      resource = decorate_content_hash(resource)
 
-      case get_hash(found) == get_hash(resource) do
-        true ->
-          {:ok, found}
-
-        false ->
-          do_update(resource)
+      if get_hash(found) == get_hash(resource) do
+        {:ok, found}
+      else
+        do_update(resource)
       end
     end
   end
@@ -49,8 +49,8 @@ defmodule ControlServer.KubeExt do
     cluster_name = Bonny.Config.cluster_name()
 
     case resource
-         |> K8s.Client.get()
-         |> K8s.Client.run(cluster_name) do
+         |> Client.get()
+         |> Client.run(cluster_name) do
       {:ok, _} = result ->
         result
 
@@ -60,8 +60,8 @@ defmodule ControlServer.KubeExt do
         res =
           resource
           |> decorate_content_hash()
-          |> K8s.Client.create()
-          |> K8s.Client.run(cluster_name)
+          |> Client.create()
+          |> Client.run(cluster_name)
 
         Logger.debug("Result = #{inspect(res)}")
 
@@ -77,10 +77,10 @@ defmodule ControlServer.KubeExt do
   end
 
   defp do_update(resource) do
-    metadata = resource |> Map.get("metadata")
+    metadata = Map.get(resource, "metadata")
     Logger.debug("Going to send update for #{inspect(metadata)}")
     cluster_name = Bonny.Config.cluster_name()
-    resource |> K8s.Client.patch() |> K8s.Client.run(cluster_name)
+    resource |> Client.patch() |> Client.run(cluster_name)
   end
 
   defp decorate_content_hash(
@@ -98,7 +98,7 @@ defmodule ControlServer.KubeExt do
         # This will then give us something that we can compute the hash of.
         {:ok, json_cont} = Jason.encode(resource)
 
-        hash = :crypto.hash(:sha, json_cont) |> Base.encode64()
+        hash = :sha |> :crypto.hash(json_cont) |> Base.encode64()
 
         # Put the has into the annotations of metadata. Assuming json encoding stays
         # stable this provides a pretty cheap and easy way to

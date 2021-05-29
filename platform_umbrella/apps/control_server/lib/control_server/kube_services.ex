@@ -4,11 +4,11 @@ defmodule ControlServer.KubeServices do
   """
   use GenServer
 
-  require Logger
-
   alias ControlServer.ConfigGenerator
   alias ControlServer.KubeExt
   alias ControlServer.Services
+
+  require Logger
 
   def start_link(_default) do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
