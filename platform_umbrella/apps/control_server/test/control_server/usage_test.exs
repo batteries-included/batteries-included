@@ -6,8 +6,8 @@ defmodule ControlServer.UsageTest do
   describe "usage_reports" do
     alias ControlServer.Usage.UsageReport
 
-    @valid_attrs %{namespace_report: %{}, node_report: %{}, reported_nodes: 42}
-    @update_attrs %{namespace_report: %{}, node_report: %{}, reported_nodes: 43}
+    @valid_attrs %{namespace_report: %{}, node_report: %{}, num_nodes: 42, num_pods: 65}
+    @update_attrs %{namespace_report: %{}, node_report: %{}, num_nodes: 43, num_pods: 69}
 
     def usage_report_fixture(attrs \\ %{}) do
       {:ok, usage_report} =
@@ -32,7 +32,8 @@ defmodule ControlServer.UsageTest do
       assert {:ok, %UsageReport{} = usage_report} = Usage.create_usage_report(@valid_attrs)
       assert usage_report.namespace_report == %{}
       assert usage_report.node_report == %{}
-      assert usage_report.reported_nodes == 42
+      assert usage_report.num_nodes == 42
+      assert usage_report.num_pods == 65
     end
 
     test "update_usage_report/2 with valid data updates the usage_report" do
@@ -43,7 +44,8 @@ defmodule ControlServer.UsageTest do
 
       assert usage_report.namespace_report == %{}
       assert usage_report.node_report == %{}
-      assert usage_report.reported_nodes == 43
+      assert usage_report.num_nodes == 43
+      assert usage_report.num_pods == 69
     end
 
     test "delete_usage_report/1 deletes the usage_report" do

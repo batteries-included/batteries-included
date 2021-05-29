@@ -25,4 +25,11 @@ defmodule HomeBaseWeb.BillingReportLive.Index do
   defp list_billing_reports do
     Billing.list_billing_reports()
   end
+
+  @impl true
+  def handle_event("start_billing", _value, socket) do
+    with {:ok, _report} <- HomeBase.Billing.generate_billing_report(DateTime.utc_now()) do
+      {:noreply, assign(socket, :billing_reports, list_billing_reports())}
+    end
+  end
 end

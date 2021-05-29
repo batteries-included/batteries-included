@@ -7,9 +7,10 @@ defmodule HomeBaseWeb.BillingReportLiveTest do
 
   @create_attrs %{
     end: "2010-04-17T14:00:00Z",
-    node_by_hour: %{},
+    by_hour: %{},
     start: "2010-04-17T14:00:00Z",
-    total_node_hours: 42
+    node_hours: 42,
+    pod_hours: 42
   }
 
   defp fixture(:billing_report) do

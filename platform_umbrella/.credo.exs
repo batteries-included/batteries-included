@@ -5,7 +5,7 @@ common_checks = [
   {Credo.Check.Consistency.SpaceInParentheses},
   {Credo.Check.Consistency.TabsOrSpaces},
   {Credo.Check.Design.AliasUsage, if_called_more_often_than: 2, if_nested_deeper_than: 1},
-  {Credo.Check.Design.TagTODO},
+  {Credo.Check.Design.TagTODO, false},
   {Credo.Check.Design.TagFIXME},
   {Credo.Check.Readability.AliasOrder},
   {Credo.Check.Readability.FunctionNames},

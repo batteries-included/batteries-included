@@ -7,12 +7,14 @@ defmodule ControlServerWeb.UsageReportControllerTest do
   @create_attrs %{
     namespace_report: %{},
     node_report: %{},
-    reported_nodes: 42
+    num_nodes: 42,
+    num_pods: 44
   }
   @update_attrs %{
     namespace_report: %{},
     node_report: %{},
-    reported_nodes: 43
+    num_nodes: 43,
+    num_pods: 69
   }
 
   def fixture(:usage_report) do
@@ -42,7 +44,8 @@ defmodule ControlServerWeb.UsageReportControllerTest do
                "id" => ^id,
                "namespace_report" => %{},
                "node_report" => %{},
-               "reported_nodes" => 42
+               "num_nodes" => 42,
+               "num_pods" => 44
              } = json_response(conn, 200)["data"]
     end
   end
@@ -67,7 +70,8 @@ defmodule ControlServerWeb.UsageReportControllerTest do
                "id" => ^id,
                "namespace_report" => %{},
                "node_report" => %{},
-               "reported_nodes" => 43
+               "num_nodes" => 43,
+               "num_pods" => 69
              } = json_response(conn, 200)["data"]
     end
   end

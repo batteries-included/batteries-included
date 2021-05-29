@@ -13,10 +13,14 @@ defmodule HomeBase.Billing.BillingReport do
     field :end, :utc_datetime_usec
     field :start, :utc_datetime_usec
 
-    field :node_by_hour, :map
+    field :by_hour, :map
 
-    field :total_node_hours, :integer
+    field :node_hours, :integer
+    field :pod_hours, :integer
+
     field :stripe_subscription_id, :binary_id
+
+    has_many :usage_reports, HomeBase.Usage.UsageReport
 
     timestamps()
   end
@@ -24,7 +28,7 @@ defmodule HomeBase.Billing.BillingReport do
   @doc false
   def changeset(billing_report, attrs) do
     billing_report
-    |> cast(attrs, [:start, :end, :total_node_hours, :node_by_hour])
-    |> validate_required([:start, :end, :total_node_hours, :node_by_hour])
+    |> cast(attrs, [:start, :end, :node_hours, :pod_hours, :by_hour])
+    |> validate_required([:start, :end, :by_hour, :pod_hours])
   end
 end

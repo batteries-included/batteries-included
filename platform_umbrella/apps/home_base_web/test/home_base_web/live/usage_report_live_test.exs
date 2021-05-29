@@ -10,7 +10,8 @@ defmodule HomeBaseWeb.UsageReportLiveTest do
     generated_at: "2010-04-17T14:00:00Z",
     namespace_report: %{},
     node_report: %{},
-    reported_nodes: 42
+    num_nodes: 42,
+    num_pods: 44
   }
 
   defp fixture(:usage_report) do
@@ -30,16 +31,6 @@ defmodule HomeBaseWeb.UsageReportLiveTest do
       {:ok, _index_live, html} = live(conn, Routes.usage_report_index_path(conn, :index))
 
       assert html =~ "Listing Usage reports"
-    end
-
-    test "deletes usage_report in listing", %{conn: conn, usage_report: usage_report} do
-      {:ok, index_live, _html} = live(conn, Routes.usage_report_index_path(conn, :index))
-
-      assert index_live
-             |> element("#usage_report-#{usage_report.id} a", "Delete")
-             |> render_click()
-
-      refute has_element?(index_live, "#usage_report-#{usage_report.id}")
     end
   end
 

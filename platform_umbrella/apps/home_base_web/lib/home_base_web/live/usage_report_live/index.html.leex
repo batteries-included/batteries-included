@@ -11,6 +11,9 @@
           Reported Nodes
         </th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Reported Pods
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Inserted At
         </th>
         <th></th>
@@ -23,14 +26,17 @@
             <%= usage_report.id %>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            <%= usage_report.reported_nodes %>
+            <%= usage_report.num_nodes %>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <%= usage_report.num_pods %>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             <%= usage_report.inserted_at %>
           </td>
+          :
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             <span><%= live_redirect "Show", to: Routes.usage_report_show_path(@socket, :show, usage_report) %></span>
-            <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: usage_report.id, data: [confirm: "Are you sure?"] %></span>
           </td>
         </tr>
       <% end %>

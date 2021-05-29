@@ -15,7 +15,8 @@ defmodule HomeBaseWeb.UsageReportView do
       id: usage_report.id,
       namespace_report: usage_report.namespace_report,
       node_report: usage_report.node_report,
-      reported_nodes: usage_report.reported_nodes,
+      num_nodes: usage_report.num_nodes,
+      num_pods: usage_report.num_pods,
       external_id: usage_report.external_id,
       generated_at: usage_report.generated_at
     }

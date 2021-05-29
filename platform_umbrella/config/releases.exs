@@ -73,3 +73,4 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
 config :control_server_web, ControlServerWeb.Endpoint, server: true
+config :home_base_web, HomeBaseWeb.Endpoint, server: true

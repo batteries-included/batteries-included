@@ -3,10 +3,15 @@
 <ul>
   <li>Id: <%= @usage_report.id %></li>
   <li>External Id: <%= @usage_report.external_id %></li>
-  <li>Reported Nodes: <%= @usage_report.reported_nodes %></li>
+  <li>Number of Nodes: <%= @usage_report.num_nodes %></li>
+  <li>Number of Pods: <%= @usage_report.num_pods %></li>
   <li>Generated At: <%= @usage_report.generated_at %></li>
   <li>Inserted At: <%= @usage_report.inserted_at %></li>
   <li>Updated At: <%= @usage_report.updated_at %></li>
 </ul>
+
+<pre>
+  <%= @usage_report.namespace_report |> Jason.encode!(pretty: true) %>
+</pre>
 
 <span><%= live_redirect "Back", to: Routes.usage_report_index_path(@socket, :index) %></span>

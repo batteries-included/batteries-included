@@ -37,6 +37,10 @@ defmodule HomeBase.Usage do
   """
   def get_usage_report!(id), do: Repo.get!(UsageReport, id)
 
+  def generated_within(query \\ UsageReport, {begin_time, end_time}) do
+    where(query, [ur], ur.generated_at > ^begin_time and ur.generated_at <= ^end_time)
+  end
+
   @doc """
   Creates a usage_report.
 

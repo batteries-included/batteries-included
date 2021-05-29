@@ -31,7 +31,9 @@ defmodule ControlServer.Usage.UsagePoller do
 
   def run_report do
     with {:ok, report} <- Usage.create_usage_report() do
-      Logger.info("Polling current usage found #{report.reported_nodes} report id = #{report.id}")
+      Logger.info(
+        "Polling current usage found nodes = #{report.num_nodes} pods = #{report.num_pods} report id = #{report.id}"
+      )
 
       with :ok <- EventCenter.broadcast(:usage_report, prepare_usage(report)) do
         :ok

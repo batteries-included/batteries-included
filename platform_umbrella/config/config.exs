@@ -13,12 +13,24 @@ import Config
 config :control_server,
   ecto_repos: [ControlServer.Repo]
 
-config :control_server, ControlServer.Repo, migration_primary_key: [type: :uuid]
-config :home_base, HomeBase.Repo, migration_primary_key: [type: :uuid]
+config :home_base,
+  ecto_repos: [HomeBase.Repo]
+
+config :control_server, ControlServer.Repo,
+  migration_primary_key: [type: :uuid],
+  migration_timestamps: [type: :utc_datetime_usec]
+
+config :home_base, HomeBase.Repo,
+  migration_primary_key: [type: :uuid],
+  migration_timestamps: [type: :utc_datetime_usec]
 
 config :control_server_web,
   ecto_repos: [ControlServer.Repo],
   generators: [context_app: :control_server, binary_id: true]
+
+config :home_base_web,
+  ecto_repos: [HomeBase.Repo],
+  generators: [context_app: :home_base, binary_id: true]
 
 # Configures the endpoint
 config :control_server_web, ControlServerWeb.Endpoint,
@@ -27,13 +39,6 @@ config :control_server_web, ControlServerWeb.Endpoint,
   render_errors: [view: ControlServerWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: ControlServer.PubSub,
   live_view: [signing_salt: "IprBitsK"]
-
-config :home_base,
-  ecto_repos: [HomeBase.Repo]
-
-config :home_base_web,
-  ecto_repos: [HomeBase.Repo],
-  generators: [context_app: :home_base]
 
 # Configures the endpoint
 config :home_base_web, HomeBaseWeb.Endpoint,

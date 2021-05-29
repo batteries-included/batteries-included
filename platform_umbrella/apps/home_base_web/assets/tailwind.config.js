@@ -1,5 +1,7 @@
 const colors = require("tailwindcss/colors");
 
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 const fuscous_gray = {
   50: "#f6f6f6",
   100: "#eeeeed",
@@ -69,7 +71,11 @@ module.exports = {
         900: "#123c4e",
       },
     },
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+      },
+    },
   },
   variants: {
     extend: {},

@@ -16,7 +16,7 @@ defmodule HomeBaseWeb.BillingReportLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:billing_report, Billing.get_billing_report!(id))}
+     |> assign(:billing_report, Billing.get_billing_report_pre(id))}
   end
 
   defp page_title(:show), do: "Show Billing report"

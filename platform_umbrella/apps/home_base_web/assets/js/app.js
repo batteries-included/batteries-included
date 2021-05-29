@@ -8,6 +8,7 @@ import { Socket } from "phoenix";
 import topbar from "topbar";
 import { LiveSocket } from "phoenix_live_view";
 import Alpinejs from "alpinejs";
+import BillingChart from "./billing_chart";
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
@@ -19,6 +20,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
       }
     },
   },
+  hooks: { BillingChart },
 });
 
 // Show progress bar on live navigation and form submits

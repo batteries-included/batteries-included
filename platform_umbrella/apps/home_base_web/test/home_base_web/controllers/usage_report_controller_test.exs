@@ -9,21 +9,24 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
     generated_at: "2010-04-17T14:00:00Z",
     namespace_report: %{},
     node_report: %{},
-    reported_nodes: 42
+    num_nodes: 42,
+    num_pods: 43
   }
   @update_attrs %{
     external_id: "7488a646-e31f-11e4-aace-600308960668",
     generated_at: "2011-05-18T15:01:01Z",
     namespace_report: %{},
     node_report: %{},
-    reported_nodes: 43
+    num_nodes: 44,
+    num_pods: 45
   }
   @invalid_attrs %{
     external_id: nil,
     generated_at: nil,
     namespace_report: nil,
     node_report: nil,
-    reported_nodes: nil
+    num_nodes: nil,
+    num_pods: nil
   }
 
   def fixture(:usage_report) do
@@ -55,7 +58,8 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
                "generated_at" => "2010-04-17T14:00:00.000000Z",
                "namespace_report" => %{},
                "node_report" => %{},
-               "reported_nodes" => 42
+               "num_nodes" => 42,
+               "num_pods" => 43
              } = json_response(conn, 200)["data"]
     end
 
@@ -87,7 +91,8 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
                "generated_at" => "2011-05-18T15:01:01.000000Z",
                "namespace_report" => %{},
                "node_report" => %{},
-               "reported_nodes" => 43
+               "num_nodes" => 44,
+               "num_pods" => 45
              } = json_response(conn, 200)["data"]
     end
 

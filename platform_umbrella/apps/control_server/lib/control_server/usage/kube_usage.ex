@@ -8,17 +8,14 @@ defmodule ControlServer.Usage.KubeUsage do
 
   def report_namespaces do
     with {:ok, %{"items" => namespaces}} <- list_all_namespace() do
+      battery_namespaces = Enum.filter(namespaces, &battery_namespace?/1)
+
       pods =
-        namespaces
-        |> Enum.filter(&battery_namespace?/1)
-        |> Enum.flat_map(&list_namespace_pods/1)
+        Enum.map(battery_namespaces, fn %{"metadata" => %{"name" => ns_name}} = _ns ->
+          {ns_name, ns_name |> list_namespace_pods() |> Enum.map(&sanitize_pod/1)}
+        end)
 
-      node_names = Enum.map(pods, fn pod -> get_in(pod, ["spec", "nodeName"]) end)
-
-      {:ok,
-       pods
-       |> Enum.zip(node_names)
-       |> Enum.group_by(fn {_, nn} -> nn end, fn {pod, _} -> sanitize_pod(pod) end)}
+      {:ok, Map.new(pods)}
     end
   end
 
@@ -47,7 +44,10 @@ defmodule ControlServer.Usage.KubeUsage do
   def list_all_namespace, do: "v1" |> Client.list("Namespace") |> Client.run(:default)
   def list_all_nodes, do: "v1" |> Client.list("Node") |> Client.run(:default)
 
-  def list_namespace_pods(%{"metadata" => %{"name" => ns_name}} = _ns) do
+  def list_namespace_pods(%{"metadata" => %{"name" => ns_name}} = _ns),
+    do: list_namespace_pods(ns_name)
+
+  def list_namespace_pods(ns_name) when is_binary(ns_name) do
     with {:ok, %{"items" => items}} <-
            "v1" |> Client.list("Pod", namespace: ns_name) |> Client.run(:default) do
       items
@@ -57,7 +57,7 @@ defmodule ControlServer.Usage.KubeUsage do
   def list_namespace_pods(_), do: []
 
   def sanitize_pod(%{} = pod) do
-    Map.drop(pod, ["status"])
+    update_in(pod, ["metadata"], fn metadata -> Map.drop(metadata, ["managedFields"]) end)
   end
 
   def sanitize_pod([] = _arg), do: %{}

@@ -11,21 +11,24 @@ defmodule HomeBase.UsageTest do
       generated_at: "2010-04-17T14:00:00.000000Z",
       namespace_report: %{},
       node_report: %{},
-      reported_nodes: 42
+      num_nodes: 42,
+      num_pods: 44
     }
     @update_attrs %{
       external_id: "7488a646-e31f-11e4-aace-600308960668",
       generated_at: "2011-05-18T15:01:01.000000Z",
       namespace_report: %{},
       node_report: %{},
-      reported_nodes: 43
+      num_nodes: 45,
+      num_pods: 46
     }
     @invalid_attrs %{
       external_id: nil,
       generated_at: nil,
       namespace_report: nil,
       node_report: nil,
-      reported_nodes: nil
+      num_nodes: nil,
+      num_pods: nil
     }
 
     def usage_report_fixture(attrs \\ %{}) do
@@ -56,7 +59,8 @@ defmodule HomeBase.UsageTest do
 
       assert usage_report.namespace_report == %{}
       assert usage_report.node_report == %{}
-      assert usage_report.reported_nodes == 42
+      assert usage_report.num_nodes == 42
+      assert usage_report.num_pods == 44
     end
 
     test "create_usage_report/1 with invalid data returns error changeset" do
@@ -76,7 +80,8 @@ defmodule HomeBase.UsageTest do
 
       assert usage_report.namespace_report == %{}
       assert usage_report.node_report == %{}
-      assert usage_report.reported_nodes == 43
+      assert usage_report.num_nodes == 45
+      assert usage_report.num_pods == 46
     end
 
     test "update_usage_report/2 with invalid data returns error changeset" do

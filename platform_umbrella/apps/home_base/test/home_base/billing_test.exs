@@ -8,17 +8,19 @@ defmodule HomeBase.BillingTest do
 
     @valid_attrs %{
       end: "2010-04-17T14:00:00.000000Z",
-      node_by_hour: %{},
+      by_hour: %{},
       start: "2010-04-17T14:00:00.000000Z",
-      total_node_hours: 42
+      node_hours: 42,
+      pod_hours: 42
     }
     @update_attrs %{
       end: "2011-05-18T15:01:01.000000Z",
-      node_by_hour: %{},
+      by_hour: %{},
       start: "2011-05-18T15:01:01.000000Z",
-      total_node_hours: 43
+      node_hours: 44,
+      pod_hours: 45
     }
-    @invalid_attrs %{end: nil, node_by_hour: nil, start: nil, total_node_hours: nil}
+    @invalid_attrs %{end: nil, by_hour: nil, start: nil, node_hours: nil, pod_hours: nil}
 
     def billing_report_fixture(attrs \\ %{}) do
       {:ok, billing_report} =
@@ -46,12 +48,13 @@ defmodule HomeBase.BillingTest do
       assert billing_report.end ==
                DateTime.from_naive!(~N[2010-04-17T14:00:00.000000Z], "Etc/UTC")
 
-      assert billing_report.node_by_hour == %{}
+      assert billing_report.by_hour == %{}
 
       assert billing_report.start ==
                DateTime.from_naive!(~N[2010-04-17T14:00:00.000000Z], "Etc/UTC")
 
-      assert billing_report.total_node_hours == 42
+      assert billing_report.node_hours == 42
+      assert billing_report.pod_hours == 42
     end
 
     test "create_billing_report/1 with invalid data returns error changeset" do
@@ -67,12 +70,13 @@ defmodule HomeBase.BillingTest do
       assert billing_report.end ==
                DateTime.from_naive!(~N[2011-05-18T15:01:01.000000Z], "Etc/UTC")
 
-      assert billing_report.node_by_hour == %{}
+      assert billing_report.by_hour == %{}
 
       assert billing_report.start ==
                DateTime.from_naive!(~N[2011-05-18T15:01:01.000000Z], "Etc/UTC")
 
-      assert billing_report.total_node_hours == 43
+      assert billing_report.node_hours == 44
+      assert billing_report.pod_hours == 45
     end
 
     test "update_billing_report/2 with invalid data returns error changeset" do
@@ -93,6 +97,9 @@ defmodule HomeBase.BillingTest do
     test "change_billing_report/1 returns a billing_report changeset" do
       billing_report = billing_report_fixture()
       assert %Ecto.Changeset{} = Billing.change_billing_report(billing_report)
+    end
+
+    test "generated_a_good_billing_report" do
     end
   end
 end

@@ -6,8 +6,11 @@ defmodule HomeBase.Repo.Migrations.CreateBillingReports do
       add :id, :binary_id, primary_key: true
       add :start, :utc_datetime_usec
       add :end, :utc_datetime_usec
-      add :total_node_hours, :integer
-      add :node_by_hour, :map
+
+      add :node_hours, :integer
+      add :pod_hours, :integer
+
+      add :by_hour, :map
 
       add :stripe_subscription_id,
           references(:stripe_subscriptions, on_delete: :nothing, type: :binary_id)
