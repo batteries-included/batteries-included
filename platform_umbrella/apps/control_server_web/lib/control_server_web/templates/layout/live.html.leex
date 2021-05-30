@@ -1,17 +1,322 @@
-<%= render("sidebar.html", socket: @socket) %>
+<div
+  class="h-screen bg-gray-50 flex overflow-hidden"
+  x-data="{menuOpen: false}"
+>
+  <!-- Narrow sidebar -->
+  <div class="hidden w-28 overflow-y-auto md:block bg-astral-400">
+    <div class="w-full py-6 flex flex-col items-center">
+      <div class="flex-shrink-0 flex items-center">
+        <img
+          class="h-8 w-auto"
+          src="/images/logo.2.clip.png"
+          alt="Batteries Included"
+        />
+      </div>
+      <div class="flex-1 mt-6 w-full px-2 space-y-1 bg-astral-400">
+        <a
+          href="/services/database"
+          class="bg-astral-500 text-gray-800 hover:bg-astral-600 hover:text-white group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-pink-500 group-hover:text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+            />
+          </svg>
+          <span class="mt-2">Databases</span>
+        </a>
 
-<main class="p-4 sidebar-content text-dark">
-  <%= if info = live_flash(@flash, :info) do %>
-    <p class="alert alert-info" role="alert" phx-click="lv:clear-flash" phx-value-key="info">
-      <%= info %>
-    </p>
-  <% end %>
+        <a
+          href="/services/monitoring"
+          class="text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <span class="mt-2">Monitoring</span>
+        </a>
 
-  <%= if error = live_flash(@flash, :error) do %>
-    <p class="alert alert-danger" role="alert" phx-click="lv:clear-flash" phx-value-key="error">
-      <%= error %>
-    </p>
-  <% end %>
+        <a
+          href="/services/devtools"
+          class="text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="h-6 w-6 text-white"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.356 3.356a1 1 0 0 0 1.414 0l1.586-1.586a1 1 0 0 0 0-1.414l-3.356-3.356a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3c0-.269-.035-.53-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814L1 0zm9.646 10.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708zM3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026L3 11z"
+            />
+          </svg>
+          <span class="mt-2">Devtools</span>
+        </a>
 
-  <%= @inner_content %>
-</main>
+        <a
+          href="/services/security"
+          class="text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            />
+          </svg>
+          <span class="mt-2">Security</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    Mobile menu
+
+    Off-canvas menu for mobile, show/hide based on off-canvas menu state.
+  -->
+  <div
+    class="fixed inset-0 z-40 flex md:hidden"
+    role="dialog"
+    aria-modal="true"
+    x-show.transition="menuOpen"
+  >
+    <!--
+      Off-canvas menu overlay, show/hide based on off-canvas menu state.
+    -->
+    <div
+      class="fixed inset-0 bg-pink-500 bg-opacity-50"
+      aria-hidden="true"
+      x-on:click="menuOpen = false"
+    ></div>
+
+    <!--
+      Off-canvas menu, show/hide based on off-canvas menu state.
+    -->
+    <div
+      class="relative max-w-xs w-full bg-astral-600 pt-5 pb-4 flex-1 flex flex-col"
+    >
+      <!--
+        Close button, show/hide based on off-canvas menu state.
+      -->
+      <div class="absolute top-1 right-0 -mr-14 p-1">
+        <button
+          type="button"
+          class="h-12 w-12 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white"
+          x-on:click="menuOpen = false"
+        >
+          <!-- Heroicon name: outline/x -->
+          <svg
+            class="h-6 w-6 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+          <span class="sr-only">Close sidebar</span>
+        </button>
+      </div>
+      <!-- Logo -->
+      <div class="flex-shrink-0 px-4 flex items-center">
+        <img
+          class="h-8 w-auto"
+          src="/images/logo.png"
+          alt="Batteries Included"
+        />
+      </div>
+
+      <div class="mt-5 flex-1 h-0 px-2 overflow-y-auto">
+        <nav class="h-full flex flex-col">
+          <div class="space-y-1">
+            <!-- Menu Items for mobile menu -->
+            <a
+              href="/services/database"
+              class="text-pink-500 bg-astral-700 hover:bg-astral-900 hover:text-white group py-2 px-3 rounded-md flex items-center text-sm font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 mr-3 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+                />
+              </svg>
+              <span class="mt-2">Databases</span>
+            </a>
+
+            <a
+              href="/services/monitoring"
+              class="text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 mr-3 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span class="mt-2">Monitoring</span>
+            </a>
+
+            <a
+              href="/services/devtools"
+              class="text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 mr-3 text-white"
+                fill="none"
+                viewBox="0 0 16 16"
+                stroke="currentColor"
+              >
+                <path
+                  d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.356 3.356a1 1 0 0 0 1.414 0l1.586-1.586a1 1 0 0 0 0-1.414l-3.356-3.356a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3c0-.269-.035-.53-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814L1 0zm9.646 10.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708zM3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026L3 11z"
+                />
+              </svg>
+              <span class="mt-2">Devtools</span>
+            </a>
+
+            <a
+              href="/services/security"
+              class="text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 mr-3 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+              <span class="mt-2">Security</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="flex-shrink-0 w-14" aria-hidden="true">
+      <!-- Dummy element to force sidebar to shrink to fit close icon -->
+    </div>
+  </div>
+
+  <!--
+    Main content pane
+   -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="w-full">
+      <div
+        class="relative z-10 flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm flex"
+      >
+        <button
+          type="button"
+          class="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500 md:hidden"
+          x-on:click="menuOpen = true"
+        >
+          <span class="sr-only">Open sidebar</span>
+          <!-- Heroicon name: outline/menu-alt-2 -->
+          <svg
+            class="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h7"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 flex items-stretch overflow-hidden">
+      <main class="flex-1 overflow-y-auto">
+        <div class="pt-8 px-4 sm:px-6 lg:px-8">
+          <%= if info = live_flash(@flash, :info) do %>
+            <p
+              class="alert alert-info"
+              role="alert"
+              phx-click="lv:clear-flash"
+              phx-value-key="info"
+            >
+              <%= info %>
+            </p>
+          <% end %>
+
+          <%= if error = live_flash(@flash, :error) do %>
+            <p
+              class="alert alert-danger"
+              role="alert"
+              phx-click="lv:clear-flash"
+              phx-value-key="error"
+            >
+              <%= error %>
+            </p>
+          <% end %>
+
+          <%= @inner_content %>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

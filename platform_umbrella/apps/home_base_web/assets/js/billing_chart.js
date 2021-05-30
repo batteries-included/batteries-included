@@ -1,35 +1,35 @@
-import Chart from "chart.js/auto";
+import Chart from 'chart.js/auto';
 
 export default {
   getData() {
-    return JSON.parse(this.el.dataset["data"]);
+    return JSON.parse(this.el.dataset.data);
   },
   mounted() {
-    const ctx = this.el.getContext("2d");
-    let initData = this.getData();
+    const ctx = this.el.getContext('2d');
+    const initData = this.getData();
 
-    const labels = Object.keys(initData).map((l) => l.replace(".000000", ""));
-    const values = Object.values(initData).map((x) => x["reported_pods"]);
+    const labels = Object.keys(initData).map((l) => l.replace('.000000', ''));
+    const values = Object.values(initData).map((x) => x.reported_pods);
     const data = {
-      labels: labels,
+      labels,
       datasets: [
         {
-          label: "Reported Pods",
+          label: 'Reported Pods',
           data: values,
-          borderColor: "#fc408b",
-          backgroundColor: "#fc408b",
+          borderColor: '#fc408b',
+          backgroundColor: '#fc408b',
         },
       ],
     };
 
     const config = {
-      type: "line",
-      data: data,
+      type: 'line',
+      data,
       options: {
         responsive: true,
         plugins: {
           legend: {
-            position: "top",
+            position: 'top',
           },
         },
       },

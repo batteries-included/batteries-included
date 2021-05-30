@@ -4,16 +4,24 @@
   <table class="min-w-full divide-y divide-gray-300">
     <thead class="bg-gray-200">
       <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
           id
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
           Reported Nodes
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
           Reported Pods
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
           Inserted At
         </th>
         <th></th>
@@ -22,7 +30,9 @@
     <tbody id="usage_reports">
       <%= for usage_report <- @usage_reports do %>
         <tr id="usage_report-<%= usage_report.id %>">
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          <td
+            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+          >
             <%= usage_report.id %>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

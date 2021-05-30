@@ -1,4 +1,4 @@
 apiVersion: k8s.batteries-included.com/v1
-kind: "BatteryCluster"
+kind: 'BatteryCluster'
 metadata:
   name: default-cluster

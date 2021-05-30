@@ -1,14 +1,14 @@
-import Chart from "chart.js";
+import Chart from 'chart.js/auto';
 
 export default {
   getData() {
-    return JSON.parse(this.el.dataset["data"]);
+    return JSON.parse(this.el.dataset.data);
   },
   mounted() {
-    const ctx = this.el.getContext("2d");
-    let initData = this.getData();
+    const ctx = this.el.getContext('2d');
+    const initData = this.getData();
     this.chart = new Chart(ctx, {
-      type: "line",
+      type: 'line',
       data: {
         datasets: [
           {
@@ -31,7 +31,7 @@ export default {
         },
         elements: {
           line: {
-            borderColor: "#fc408a",
+            borderColor: '#fc408a',
             borderWidth: 2,
           },
           point: {
@@ -62,7 +62,7 @@ export default {
       const newData = this.getData();
       this.chart.data.datasets[0].data = newData;
 
-      if (newData.length != (this.chart.data.labels || []).length) {
+      if (newData.length !== (this.chart.data.labels || []).length) {
         this.chart.data.labels = Array(newData.length)
           .fill()
           .map((_, i) => i);

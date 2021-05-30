@@ -132,7 +132,8 @@ jobs:
       - name: npm test
         run: |
           pushd apps/control_server_web/assets
-          npm test
+          npx eslint js/
+          popd
 
   npm_test_home:
     name: npm test home
@@ -163,6 +164,7 @@ jobs:
 
       - name: npm install and test
         run: |
-          cd apps/home_base_web/assets
+          pushd apps/home_base_web/assets
           npm install
-          npm test
+          npx eslint js/
+          popd

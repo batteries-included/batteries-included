@@ -16,8 +16,10 @@
         <tbody>
           <tr>
             <td>Monitoring</td>
-            <td><%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-mon" %></td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-mon" %>
+            </td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Scale</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -28,7 +30,7 @@
             <td>
               <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-database" %>
             </td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Scale</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -36,8 +38,10 @@
           </tr>
           <tr>
             <td>Object Storage</td>
-            <td><%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-obj" %></td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-obj" %>
+            </td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Scale</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -45,8 +49,10 @@
           </tr>
           <tr>
             <td>Networking</td>
-            <td><%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-net" %></td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td>
+              <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-net" %>
+            </td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Routing</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -57,7 +63,7 @@
             <td>
               <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-auth" %>
             </td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Add User</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -68,7 +74,7 @@
             <td>
               <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-el-exp" %>
             </td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Backup</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -79,7 +85,7 @@
             <td>
               <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-training" %>
             </td>
-            <td><%= icon_tag(@socket, "exclamation-triangle", class: "small") %></td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Revert model</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -90,7 +96,7 @@
             <td>
               <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-feature" %>
             </td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Test Variance</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -101,7 +107,7 @@
             <td>
               <%= live_render @socket, ControlServerWeb.SparklineLive, id: "sparkline-inferencing" %>
             </td>
-            <td><%= icon_tag(@socket, "check-circle-fill", class: "small") %></td>
+            <td></td>
             <td>
               <a href="#" class="link-secondary">Scale</a>
               <a href="#" class="link-secondary">Configure</a>
@@ -129,9 +135,7 @@
               <td class="serviceName">
                 <%= service %>
               </td>
-              <td>
-                <%= if running, do: icon_tag(@socket, "check-all", class: "running-icon running"), else: icon_tag(@socket, "x-octagon-fill", class: "running-icon not-running") %>
-              </td>
+              <td></td>
               <td>
                 <%= if ! running do %>
                   <button

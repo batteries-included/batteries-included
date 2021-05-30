@@ -1,26 +1,43 @@
 <%= if info = live_flash(@flash, :info) do %>
-  <p class="alert alert-info" role="alert" phx-click="lv:clear-flash" phx-value-key="info">
+  <p
+    class="alert alert-info"
+    role="alert"
+    phx-click="lv:clear-flash"
+    phx-value-key="info"
+  >
     <%= info %>
   </p>
 <% end %>
 
 <%= if error = live_flash(@flash, :error) do %>
-  <p class="alert alert-danger" role="alert" phx-click="lv:clear-flash" phx-value-key="error">
+  <p
+    class="alert alert-danger"
+    role="alert"
+    phx-click="lv:clear-flash"
+    phx-value-key="error"
+  >
     <%= error %>
   </p>
 <% end %>
 
-<div class="h-screen bg-gray-50 flex overflow-hidden" x-data="{menuOpen: false}">
+<div
+  class="h-screen bg-gray-50 flex overflow-hidden"
+  x-data="{menuOpen: false}"
+>
   <!-- Narrow sidebar -->
   <div class="hidden w-28 overflow-y-auto md:block bg-astral-800">
     <div class="w-full py-6 flex flex-col items-center">
       <div class="flex-shrink-0 flex items-center">
-        <img class="h-8 w-auto" src="/images/logo.png" alt="Batteries Included" />
+        <img
+          class="h-8 w-auto"
+          src="/images/logo.2.clip.png"
+          alt="Batteries Included"
+        />
       </div>
       <div class="flex-1 mt-6 w-full px-2 space-y-1 bg-astral-800">
         <a
           href="/usage_reports"
-          class="bg-astral-900 text-violet-red-500 hover:bg-astral-900 hover:text-white group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium"
+          class="bg-astral-900 text-pink-500 hover:bg-astral-900 hover:text-white group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +74,7 @@
       Off-canvas menu overlay, show/hide based on off-canvas menu state.
     -->
     <div
-      class="fixed inset-0 bg-violet-red-500 bg-opacity-50"
+      class="fixed inset-0 bg-pink-500 bg-opacity-50"
       aria-hidden="true"
       x-on:click="menuOpen = false"
     ></div>
@@ -65,7 +82,9 @@
     <!--
       Off-canvas menu, show/hide based on off-canvas menu state.
     -->
-    <div class="relative max-w-xs w-full bg-astral-800 pt-5 pb-4 flex-1 flex flex-col">
+    <div
+      class="relative max-w-xs w-full bg-astral-800 pt-5 pb-4 flex-1 flex flex-col"
+    >
       <!--
         Close button, show/hide based on off-canvas menu state.
       -->
@@ -96,7 +115,11 @@
       </div>
       <!-- Logo -->
       <div class="flex-shrink-0 px-4 flex items-center">
-        <img class="h-8 w-auto" src="/images/logo.png" alt="Batteries Included" />
+        <img
+          class="h-8 w-auto"
+          src="/images/logo.png"
+          alt="Batteries Included"
+        />
       </div>
 
       <div class="mt-5 flex-1 h-0 px-2 overflow-y-auto">
@@ -105,7 +128,7 @@
             <!-- Menu Items for mobile menu -->
             <a
               href="/usage_reports"
-              class="text-violet-red-500 bg-astral-900 hover:bg-astral-900 hover:text-white group py-2 px-3 rounded-md flex items-center text-sm font-medium"
+              class="text-pink-500 bg-astral-900 hover:bg-astral-900 hover:text-white group py-2 px-3 rounded-md flex items-center text-sm font-medium"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -139,10 +162,12 @@
    -->
   <div class="flex-1 flex flex-col overflow-hidden">
     <header class="w-full">
-      <div class="relative z-10 flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm flex">
+      <div
+        class="relative z-10 flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm flex"
+      >
         <button
           type="button"
-          class="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-violet-red-500 md:hidden"
+          class="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500 md:hidden"
           x-on:click="menuOpen = true"
         >
           <span class="sr-only">Open sidebar</span>
@@ -169,6 +194,28 @@
     <div class="flex-1 flex items-stretch overflow-hidden">
       <main class="flex-1 overflow-y-auto">
         <div class="pt-8 px-4 sm:px-6 lg:px-8">
+          <%= if info = live_flash(@flash, :info) do %>
+            <p
+              class="alert alert-info"
+              role="alert"
+              phx-click="lv:clear-flash"
+              phx-value-key="info"
+            >
+              <%= info %>
+            </p>
+          <% end %>
+
+          <%= if error = live_flash(@flash, :error) do %>
+            <p
+              class="alert alert-danger"
+              role="alert"
+              phx-click="lv:clear-flash"
+              phx-value-key="error"
+            >
+              <%= error %>
+            </p>
+          <% end %>
+
           <%= @inner_content %>
         </div>
       </main>

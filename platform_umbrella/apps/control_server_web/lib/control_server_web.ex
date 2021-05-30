@@ -91,8 +91,6 @@ defmodule ControlServerWeb do
       import ControlServerWeb.ErrorHelpers
       import ControlServerWeb.Gettext
       alias ControlServerWeb.Router.Helpers, as: Routes
-
-      import ControlServerWeb.Icons
     end
   end
 
