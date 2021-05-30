@@ -68,8 +68,11 @@ defmodule ControlServer.Umbrella.MixProject do
       setup: ["cmd mix setup"],
       "ecto.reset": ["cmd mix ecto.reset"],
       fmt: ["format", "prettier"],
+      "fmt.check": ["format --check-formatted", "prettier_check"],
       prettier:
-        "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier -w . --color"
+        "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier -w . --color",
+      prettier_check:
+        "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier --check . --color"
     ]
   end
 end

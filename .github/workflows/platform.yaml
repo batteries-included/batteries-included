@@ -60,9 +60,7 @@ jobs:
       - name: Install dependencies non test
         run: mix deps.get
 
-      - name: Check source code format
-        run: mix format --check-formatted
-        if: ${{ matrix.lint }}
+
 
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused
@@ -111,8 +109,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: 1.11.4
-          otp-version: 23.3.1
+          elixir-version: 1.12.0
+          otp-version: 24.0
 
       - name: Install dependencies
         run: mix deps.get --only test
@@ -122,11 +120,20 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: npm install and test
+      - name: npm install
         run: |
-          cd apps/control_server_web/assets
+          pushd apps/control_server_web/assets
           npm install
+          popd
+
+      - name: Check source code format
+        run: mix fmt.check
+
+      - name: npm test
+        run: |
+          pushd apps/control_server_web/assets
           npm test
+
   npm_test_home:
     name: npm test home
     runs-on: ubuntu-latest
@@ -143,7 +150,7 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: 1.11.4
+          elixir-version: 1.12.0
           otp-version: 24.0
 
       - name: Install dependencies
