@@ -18,7 +18,7 @@ defmodule HomeBase.Usage do
 
   """
   def list_usage_reports do
-    Repo.all(UsageReport)
+    Repo.all(from ur in UsageReport, order_by: [desc: :generated_at], limit: 20)
   end
 
   @doc """

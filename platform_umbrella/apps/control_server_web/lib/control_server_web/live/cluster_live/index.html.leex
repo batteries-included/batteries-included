@@ -1,7 +1,7 @@
 <h1>Listing Clusters</h1>
 
 <%= if @live_action in [:new, :edit] do %>
-  <%= live_modal(@socket, ControlServerWeb.ClusterLive.FormComponent,
+  <%= live_modal(ControlServerWeb.ClusterLive.FormComponent,
         id: @cluster.id || :new,
         title: @page_title,
         action: @live_action,

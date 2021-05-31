@@ -42,10 +42,10 @@ defmodule ControlServerWeb do
     end
   end
 
-  def live_view do
+  def live_view(layout_path \\ "live.html") do
     quote do
       use Phoenix.LiveView,
-        layout: {ControlServerWeb.LayoutView, "live.html"}
+        layout: {ControlServerWeb.LayoutView, unquote(layout_path)}
 
       unquote(view_helpers())
     end
@@ -99,5 +99,9 @@ defmodule ControlServerWeb do
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
+  end
+
+  defmacro __using__({:live_view, path}) do
+    apply(__MODULE__, :live_view, [path])
   end
 end

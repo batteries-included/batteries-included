@@ -9,7 +9,7 @@ export default {
     const initData = this.getData();
 
     const labels = Object.keys(initData).map((l) => l.replace('.000000', ''));
-    const values = Object.values(initData).map((x) => x.reported_pods);
+    const values = Object.values(initData).map((x) => x.num_pods);
     const data = {
       labels,
       datasets: [

@@ -1,7 +1,7 @@
 <h1>Listing Stripe subscriptions</h1>
 
 <%= if @live_action in [:new, :edit] do %>
-  <%= live_modal(@socket, HomeBaseWeb.StripeSubscriptionLive.FormComponent,
+  <%= live_modal(HomeBaseWeb.StripeSubscriptionLive.FormComponent,
         id: @stripe_subscription.id || :new,
         title: @page_title,
         action: @live_action,

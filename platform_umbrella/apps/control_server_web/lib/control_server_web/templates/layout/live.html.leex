@@ -13,10 +13,9 @@
         />
       </div>
       <div class="flex-1 mt-6 w-full px-2 space-y-1 bg-astral-400">
-        <a
-          href="/services/database"
-          class="bg-astral-500 text-gray-800 hover:bg-astral-600 hover:text-white group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
-        >
+        <%= live_patch to: "/services/database",
+                       class:
+                         "bg-astral-500 text-gray-800 hover:bg-astral-600 hover:text-white group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium" do %>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 text-pink-500 group-hover:text-white"
@@ -32,12 +31,11 @@
             />
           </svg>
           <span class="mt-2">Databases</span>
-        </a>
+        <% end %>
 
-        <a
-          href="/services/monitoring"
-          class="text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
-        >
+        <%= live_patch to: "/services/monitoring",
+                       class:
+                         "text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium" do %>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 text-white"
@@ -53,12 +51,11 @@
             />
           </svg>
           <span class="mt-2">Monitoring</span>
-        </a>
+        <% end %>
 
-        <a
-          href="/services/devtools"
-          class="text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
-        >
+        <%= live_patch to: "/services/devtools",
+                       class:
+                         "text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium" do %>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -72,12 +69,11 @@
             />
           </svg>
           <span class="mt-2">Devtools</span>
-        </a>
+        <% end %>
 
-        <a
-          href="/services/security"
-          class="text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium"
-        >
+        <%= live_patch to: "/services/security",
+                       class:
+                         "text-white hover:bg-astral-500 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-sm font-medium" do %>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 text-white"
@@ -93,7 +89,7 @@
             />
           </svg>
           <span class="mt-2">Security</span>
-        </a>
+        <% end %>
       </div>
     </div>
   </div>
@@ -165,10 +161,9 @@
         <nav class="h-full flex flex-col">
           <div class="space-y-1">
             <!-- Menu Items for mobile menu -->
-            <a
-              href="/services/database"
-              class="text-pink-500 bg-astral-700 hover:bg-astral-900 hover:text-white group py-2 px-3 rounded-md flex items-center text-sm font-medium"
-            >
+            <%= live_patch to: "/services/database",
+                           class:
+                             "text-pink-500 bg-astral-700 hover:bg-astral-900 hover:text-white group py-2 px-3 rounded-md flex items-center text-sm font-medium" do %>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 mr-3 text-white"
@@ -184,12 +179,11 @@
                 />
               </svg>
               <span class="mt-2">Databases</span>
-            </a>
+            <% end %>
 
-            <a
-              href="/services/monitoring"
-              class="text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium"
-            >
+            <%= live_patch to: "/services/monitoring",
+                           class:
+                             "text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium" do %>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 mr-3 text-white"
@@ -205,12 +199,12 @@
                 />
               </svg>
               <span class="mt-2">Monitoring</span>
-            </a>
+            <% end %>
 
-            <a
-              href="/services/devtools"
-              class="text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium"
-            >
+            <%= live_patch to: "/services/devtools",
+                           class:
+                             "text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium" do %>
+              class:
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 mr-3 text-white"
@@ -223,12 +217,12 @@
                 />
               </svg>
               <span class="mt-2">Devtools</span>
-            </a>
+            <% end %>
 
-            <a
-              href="/services/security"
-              class="text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium"
-            >
+            <%= live_patch to: "/services/security",
+                           class:
+                             "text-white  hover:bg-astral-500 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium" do %>
+              class:
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 mr-3 text-white"
@@ -244,7 +238,7 @@
                 />
               </svg>
               <span class="mt-2">Security</span>
-            </a>
+            <% end %>
           </div>
         </nav>
       </div>

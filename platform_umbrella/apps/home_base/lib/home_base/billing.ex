@@ -117,8 +117,6 @@ defmodule HomeBase.Billing do
       {:ok, %{}}
   """
   def generate_billing_report(end_report_time) do
-    end_report_time = HomeBase.Time.truncate(end_report_time, :hour)
-
     # since this is all about billing all of this is in a giant transaction. This all
     # works or nothing works.
     #
@@ -126,63 +124,36 @@ defmodule HomeBase.Billing do
     # Get  when the last time there was a
     # billing report generated. We need that billing report's
     # end time. It will become the start time of this new billing report
-    |> Multi.run(:last_end, &last_billing_end/2)
+    |> Multi.run(:begin_report_time, &last_billing_end/2)
+    # Get the computed end time. This ties to make sure to not go
+    # over months to make billing easier. It will error out if the times don't work.
+    |> Multi.run(:end_report_time, fn _repo, %{begin_report_time: begin_time} ->
+      compute_end_time(begin_time, end_report_time)
+    end)
     # Get a mapping of some hour time span with value of
     # the maximum number of reported nodes. This map will
     # be the basis of the billing report.
     #
     # It powers the charts and the final billed node value
     # is the sum of all values in this map.
-    |> Multi.run(:by_hour, fn repo, %{last_end: begin_report_time} ->
-      # Before doing any of that make sure that the time range isn't invalid.
-      #
-      # TODO this should be a function above choosing a valid range if possible. That also
-      # solves monthly. We'll change the end to be the last of the month. However that's
-      # fun math with times. so punt for now.
-      if begin_report_time >= end_report_time do
-        {:error, :begin_before_end}
-      else
-        # The range of time
-        {begin_report_time, end_report_time}
-        # Add on the same filter used everywhere to ensure everything is done consistently
-        |> Usage.generated_within()
-        # Add on the group by and summation
-        |> reported_usaged_by_hour()
-        # Run the query
-        |> repo.all()
-        # Then map it into a format that's useful in json and elixir.
-        |> to_hour_map()
-      end
-    end)
+    |> Multi.run(:by_hour, &hour_usage_map/2)
     |> Multi.insert(:billing_report, fn %{
-                                          last_end: begin_report_time,
+                                          begin_report_time: begin_time,
+                                          end_report_time: end_time,
                                           by_hour: by_hour
                                         } ->
       # Finally compute the total billing count.
-      total_nodes = total_report_field(by_hour, :num_nodes)
-      total_pods = total_report_field(by_hour, :num_pods)
-
       BillingReport.changeset(%BillingReport{}, %{
-        start: begin_report_time,
-        end: end_report_time,
+        start: begin_time,
+        end: end_time,
         by_hour: by_hour,
-        node_hours: total_nodes,
-        pod_hours: total_pods
+        node_hours: total_report_field(by_hour, :num_nodes),
+        pod_hours: total_report_field(by_hour, :num_pods)
       })
     end)
-    |> Multi.update_all(
-      :update_all,
-      fn %{billing_report: billing_report} ->
-        # Now all usage reports that we used to generated this are
-        # owned by the new billing report as proof of what went into it. We should be
-        # able to walk backwards from this is what your cluster saw in your datatabase to
-        # here's what we saw per minute, to here's why we billed you this many hours.
-        {billing_report.start, billing_report.end}
-        |> Usage.generated_within()
-        |> update(set: [billing_report_id: ^billing_report.id])
-      end,
-      []
-    )
+    # Update the usage reports to have the new billing report reference
+    |> Multi.update_all(:update_all, &assign_billing_report/1, [])
+    # DO IIIIIIIIIIIIIIIIIT
     |> Repo.transaction()
   end
 
@@ -199,10 +170,25 @@ defmodule HomeBase.Billing do
   defp last_billing_end(repo, _) do
     case last_billing_report(repo) do
       nil ->
-        DateTime.from_unix(0)
+        {:ok, HomeBase.Time.truncate(DateTime.utc_now(), :month)}
 
       br ->
         {:ok, br.end}
+    end
+  end
+
+  defp compute_end_time(begin_time, end_time) do
+    end_time = HomeBase.Time.truncate(end_time, :hour)
+
+    case {begin_time >= end_time, end_time.month != begin_time.month} do
+      {true, _} ->
+        {:error, :begin_before_end}
+
+      {false, true} ->
+        {:ok, HomeBase.Time.truncate(end_time, :month)}
+
+      {false, false} ->
+        {:ok, end_time}
     end
   end
 
@@ -222,6 +208,22 @@ defmodule HomeBase.Billing do
     |> order_by([fragment("generated_hour")])
   end
 
+  def hour_usage_map(repo, %{
+        begin_report_time: begin_time,
+        end_report_time: end_time
+      }) do
+    # The range of time
+    {begin_time, end_time}
+    # Add on the same filter used everywhere to ensure everything is done consistently
+    |> Usage.generated_within()
+    # Add on the group by and summation
+    |> reported_usaged_by_hour()
+    # Run the query
+    |> repo.all()
+    # Then map it into a format that's useful in json and elixir.
+    |> to_hour_map()
+  end
+
   defp to_hour_map(results) do
     {:ok, results |> Enum.map(&generated_hour_to_key/1) |> Map.new()}
   end
@@ -229,5 +231,15 @@ defmodule HomeBase.Billing do
   def generated_hour_to_key(m) do
     forced_map = Map.new(m)
     {Map.get(forced_map, :generated_hour), forced_map}
+  end
+
+  def assign_billing_report(%{billing_report: billing_report}) do
+    # Now all usage reports that we used to generated this are
+    # owned by the new billing report as proof of what went into it. We should be
+    # able to walk backwards from this is what your cluster saw in your datatabase to
+    # here's what we saw per minute, to here's why we billed you this many hours.
+    {billing_report.start, billing_report.end}
+    |> Usage.generated_within()
+    |> update(set: [billing_report_id: ^billing_report.id])
   end
 end
