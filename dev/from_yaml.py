@@ -6,12 +6,17 @@ from collections import Counter
 kind_count = Counter()
 kind_pattern = re.compile(r"(?<!^)(?=[A-Z])")
 colon_pattern = re.compile(r"\"\s*\: ")
+
+# We don't want helm and our things getting into a fight. So don't include any of these
 bad_labels = {
     "app.kubernetes.io/managed-by",
     "helm.sh/chart",
+    "chart",
+    "release",
+    "heritage"
 }
 
-bad_annotations = {"helm.sh/hook", "helm.sh/chart", "checksum/config"}
+bad_annotations = {"helm.sh/hook", "helm.sh/chart", "checksum/config", "checksum/configmap", "checksum/secrets"}
 
 
 def eprint(*args, **kwargs):
@@ -134,10 +139,10 @@ def main(module_name, settings_module_name):
     # CRD's are huge and don't need params.
     # Better to import these from an external yaml usually
     no_crds = [
-        o for o in sanitized_annotations if o and o["kind"] != "CustomResourceDefinition"
+        o for o in sanitized_annotations if o and "kind" not in o or o["kind"] != "CustomResourceDefinition"
     ]
     only_crds = [
-        o for o in sanitized_annotations if o and o["kind"] == "CustomResourceDefinition"
+        o for o in sanitized_annotations if "kind" in o and o["kind"] == "CustomResourceDefinition"
     ]
 
     # While we are working with the object representation extract

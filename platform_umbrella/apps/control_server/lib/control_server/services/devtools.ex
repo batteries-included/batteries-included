@@ -15,8 +15,8 @@ defmodule ControlServer.Services.Devtools do
 
   def default_config, do: @default_config
 
-  def activate(path \\ @default_path) do
-    Security.activate()
+  def activate!(path \\ @default_path) do
+    Security.activate!()
     Services.update_active!(true, path, :devtools, @default_config)
   end
 
@@ -31,28 +31,7 @@ defmodule ControlServer.Services.Devtools do
       "/0/namespace" => namespace(config)
     }
 
-    body =
-      case DevtoolsSettings.gh_enabled(config) do
-        true ->
-          config
-          |> GithubActionsRunner.materialize()
-          |> Enum.map(fn {key, value} -> {"/1/body" <> key, value} end)
-          |> Map.new()
-
-        _ ->
-          %{}
-      end
-
-    runners =
-      case DevtoolsSettings.gh_enabled(config) do
-        true ->
-          %{"/2/runner" => runner(config)}
-
-        _ ->
-          %{}
-      end
-
-    %{} |> Map.merge(static) |> Map.merge(body) |> Map.merge(runners)
+    %{} |> Map.merge(static) |> Map.merge(body(config)) |> Map.merge(runner(config))
   end
 
   defp namespace(config) do
@@ -70,21 +49,42 @@ defmodule ControlServer.Services.Devtools do
   defp runner(config) do
     ns = DevtoolsSettings.namespace(config)
 
-    %{
-      "apiVersion" => "actions.summerwind.dev/v1alpha1",
-      "kind" => "RunnerDeployment",
-      "metadata" => %{
-        "name" => "default-runner",
-        "namespace" => ns
-      },
-      "spec" => %{
-        "replicas" => 1,
-        "template" => %{
-          "spec" => %{
-            "organization" => "batteries-included"
+    case DevtoolsSettings.gh_enabled(config) do
+      true ->
+        %{
+          "/2/runner" => %{
+            "apiVersion" => "actions.summerwind.dev/v1alpha1",
+            "kind" => "RunnerDeployment",
+            "metadata" => %{
+              "name" => "default-runner",
+              "namespace" => ns
+            },
+            "spec" => %{
+              "replicas" => 1,
+              "template" => %{
+                "spec" => %{
+                  "organization" => "batteries-included"
+                }
+              }
+            }
           }
         }
-      }
-    }
+
+      _ ->
+        %{}
+    end
+  end
+
+  defp body(config) do
+    case DevtoolsSettings.gh_enabled(config) do
+      true ->
+        config
+        |> GithubActionsRunner.materialize()
+        |> Enum.map(fn {key, value} -> {"/1/body" <> key, value} end)
+        |> Map.new()
+
+      _ ->
+        %{}
+    end
   end
 end

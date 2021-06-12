@@ -2,12 +2,14 @@ defmodule ControlServerWeb.ServicesLive.Prometheus do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, :live_view
+  use Surface.LiveView
   use Timex
 
+  alias CommonUI.Button
   alias ControlServer.KubeServices
   alias ControlServer.Services
   alias ControlServer.Services.Pods
+  alias ControlServerWeb.Live.Layout
 
   require Logger
 

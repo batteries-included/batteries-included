@@ -30,10 +30,13 @@ const violetRed = {
 };
 module.exports = {
   purge: [
+    './js/**/*.js',
     '../lib/**/*.ex',
     '../lib/**/*.leex',
     '../lib/**/*.eex',
-    './js/**/*.js',
+    '../lib/**/*.sface',
+    '../../common_ui/lib/**/*.sface',
+    '../../common_ui/lib/**/*.ex',
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {

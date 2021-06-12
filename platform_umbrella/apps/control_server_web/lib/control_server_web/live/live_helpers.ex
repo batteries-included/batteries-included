@@ -23,4 +23,14 @@ defmodule ControlServerWeb.LiveHelpers do
     modal_opts = [id: :modal, return_to: path, component: component, opts: opts]
     live_component(ControlServerWeb.ModalComponent, modal_opts)
   end
+
+  def even_odd(idx, even_class, odd_class) do
+    case rem(idx, 2) do
+      1 ->
+        odd_class
+
+      _ ->
+        even_class
+    end
+  end
 end

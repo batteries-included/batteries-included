@@ -13,10 +13,10 @@ defmodule ControlServer.Services.Security do
 
   def default_config, do: @default_config
 
-  def activate(path \\ @default_path),
+  def activate!(path \\ @default_path),
     do: Services.update_active!(true, path, :security, @default_config)
 
-  def deactivate(path \\ @default_path),
+  def deactivate!(path \\ @default_path),
     do: Services.update_active!(false, path, :security, @default_config)
 
   def active?(path \\ @default_path), do: Services.active?(path)

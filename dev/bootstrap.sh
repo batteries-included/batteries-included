@@ -27,13 +27,14 @@ retry() {
 
     while true; do
         "$@" && break || {
+            local code=$?
             if [[ $n -lt $max ]]; then
                 ((n++))
                 echo "Failed. $n/$max"
                 sleep $delay
             else
                 error ${LINENO} "The command has failed after $n attempts."
-                return 1
+                return ${code}
             fi
         }
     done
@@ -50,8 +51,12 @@ portForward() {
         #
         # So since this is likely something to always run. We assume the exiting is bad.
         # it's a hack for until most of this is self hosted in k8s.
-        kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0 && false
-        return $?
+        set +e
+        kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0
+        local code=$?
+        set -e
+        echo "Exited with error code ${code}"
+        return ${code}
     else
         return 0
     fi

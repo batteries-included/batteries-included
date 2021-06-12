@@ -2,12 +2,14 @@ defmodule ControlServerWeb.ServicesLive.Security do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, :live_view
+  use Surface.LiveView
   use Timex
 
+  alias CommonUI.Button
   alias ControlServer.KubeServices
   alias ControlServer.Services
   alias ControlServer.Services.Pods
+  alias ControlServerWeb.Live.Layout
 
   require Logger
 
@@ -46,7 +48,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    {:ok, _service} = Services.Security.activate()
+    {:ok, _service} = Services.Security.activate!()
     KubeServices.start_apply()
 
     {:noreply, assign(socket, :running, true)}

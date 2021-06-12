@@ -19,18 +19,6 @@ defmodule ControlServer.Umbrella.MixProject do
     ]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options.
-  #
-  # Dependencies listed here are available only for this project
-  # and cannot be accessed from applications inside the apps/ folder.
   defp deps do
     [
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
@@ -38,6 +26,12 @@ defmodule ControlServer.Umbrella.MixProject do
       {:credo_naming, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:surface_formatter,
+       github: "surface-ui/surface_formatter",
+       branch: "support-new-surface-syntax",
+       only: :dev,
+       runtime: false},
+      {:surface, github: "surface-ui/surface", override: true},
       {:excoveralls, "~> 0.14", only: :test}
     ]
   end
@@ -67,7 +61,7 @@ defmodule ControlServer.Umbrella.MixProject do
       # run `mix setup` in all child apps
       setup: ["cmd mix setup"],
       "ecto.reset": ["cmd mix ecto.reset"],
-      fmt: ["format", "prettier"],
+      fmt: ["format", "surface.format", "prettier"],
       "fmt.check": ["format --check-formatted", "prettier_check"],
       prettier:
         "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier -w . --color",

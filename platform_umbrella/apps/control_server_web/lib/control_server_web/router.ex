@@ -21,7 +21,6 @@ defmodule ControlServerWeb.Router do
 
     live "/services/monitoring", ServicesLive.Prometheus, :index
     live "/services/database", ServicesLive.Postgres, :index
-    live "/services/devtools", ServicesLive.Devtools, :index
     live "/services/security", ServicesLive.Security, :index
 
     live "/services/database/clusters", ClusterLive.Index, :index
@@ -30,6 +29,9 @@ defmodule ControlServerWeb.Router do
 
     live "/services/database/clusters/:id", ClusterLive.Show, :show
     live "/services/database/clusters/:id/show/edit", ClusterLive.Show, :edit
+
+    live "/services/devtools", ServicesLive.DevtoolsHome, :index
+    live "/services/devtools/install", ServicesLive.DevtoolsInstall, :index
   end
 
   scope "/api", ControlServerWeb do
