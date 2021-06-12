@@ -49,6 +49,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
     {:noreply, assign(socket, :running, true)}
   end
 
+  @impl true
   def render(assigns) do
     ~F"""
     <Layout>
