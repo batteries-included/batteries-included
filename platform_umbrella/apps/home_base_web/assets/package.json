@@ -32,7 +32,7 @@
     "node-sass": "^6.0.0",
     "postcss": "^8.3.2",
     "postcss-import": "^14.0.2",
-    "postcss-loader": "^5.3.0",
+    "postcss-loader": "^6.1.0",
     "prettier": "2.2.1",
     "prettier-plugin-eex": "^0.5.0",
     "sass-loader": "^12.0.0",
