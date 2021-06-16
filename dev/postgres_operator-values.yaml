@@ -8,7 +8,7 @@ image:
 # Secrets must be manually created in the namespace.
 # ref: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
 # imagePullSecrets:
-  # - name: myRegistryKeySecretName
+# - name: myRegistryKeySecretName
 
 Release:
   Name: "battery"
@@ -58,7 +58,7 @@ configUsers:
   # postgres username used for replication between instances
   replication_username: standby
   # postgres superuser name to be created by initdb
-  super_username: battery_super 
+  super_username: battery_super
 
 configMajorVersionUpgrade:
   # "off": no upgrade, "manual": manifest triggers action, "full": minimal version violation triggers too
@@ -79,7 +79,7 @@ configKubernetes:
   cluster_labels:
     application: spilo
   # label assigned to Kubernetes objects created by the operator
-  cluster_name_label: 'battery-cluster-name'
+  cluster_name_label: "battery-cluster-name"
   # additional annotations to add to every database pod
   # custom_pod_annotations:
   #   keya: valuea
@@ -163,7 +163,7 @@ configKubernetes:
   # storage resize strategy, available options are: ebs, pvc, off
   storage_resize_mode: pvc
   # operator watches for postgres objects in the given namespace
-  watched_namespace: "battery-db"  # listen to all namespaces
+  watched_namespace: "battery-db" # listen to all namespaces
 
 # configure resource requests for the Postgres pods
 configPostgresPodResources:
@@ -313,7 +313,7 @@ configTeamsApi:
 
   # List of roles that cannot be overwritten by an application, team or infrastructure role
   protected_role_names:
-  - admin
+    - admin
   # role name to grant to team members created from the Teams API
   team_admin_role: admin
   # postgres config parameters to apply to each team member role

@@ -4,6 +4,7 @@ defmodule ControlServer.ConfigGenerator do
   """
 
   alias ControlServer.Services.BaseService
+  alias ControlServer.Services.Battery
   alias ControlServer.Services.Database
   alias ControlServer.Services.Devtools
   alias ControlServer.Services.Monitoring
@@ -24,4 +25,5 @@ defmodule ControlServer.ConfigGenerator do
   defp materialize(%{} = config, :database), do: Database.materialize(config)
   defp materialize(%{} = config, :security), do: Security.materialize(config)
   defp materialize(%{} = config, :devtools), do: Devtools.materialize(config)
+  defp materialize(%{} = config, :battery), do: Battery.materialize(config)
 end

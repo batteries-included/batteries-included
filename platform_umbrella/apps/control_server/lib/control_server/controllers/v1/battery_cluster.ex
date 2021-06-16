@@ -15,8 +15,28 @@ defmodule ControlServer.Controller.V1.BatteryCluster do
     kind: "BatteryCluster"
   }
 
-  # @rule {"", ["pods", "configmap"], ["create"]}
-  # @rule {"", ["secrets"], ["create"]}
+  @rule {"",
+         ["secrets", "pods", "configmap", "deployment", "serviceaccounts", "service", "events"],
+         ["*"]}
+  @rule {"apiextensions.k8s.io", ["customresourcedefinitions"], ["*"]}
+  @rule {"apps", ["deployment", "statefulsets"], ["*"]}
+  @rule {"batch", ["job"], ["*"]}
+  @rule {"rbac.authorization.k8s.io", ["clusterroles", "clusterrolebindings"], ["*"]}
+
+  @additional_printer_columns [
+    %{
+      name: "subscription",
+      type: "string",
+      description: "subscription",
+      JSONPath: ".spec.subscription"
+    },
+    %{
+      name: "clustertype",
+      type: "string",
+      description: "cluster type",
+      JSONPath: ".spec.clustertype"
+    }
+  ]
 
   @doc """
   Handles an `ADDED` event

@@ -4,14 +4,33 @@
   'kind': 'CustomResourceDefinition',
   'metadata':
     {
-      'labels':
-        { 'battery-managed': 'true', 'k8s-app': 'battery-control-server' },
-      'name': 'batteryclusters.k8s.batteries-included.com',
+      'labels': { 'battery-managed': 'True', 'k8s-app': 'control-server' },
+      'name': 'batteryclusters.k8s.batteriesincl.com',
     },
   'spec':
     {
-      'additionalPrinterColumns': [],
-      'group': 'k8s.batteries-included.com',
+      'additionalPrinterColumns':
+        [
+          {
+            'JSONPath': '.spec.subscription',
+            'description': 'subscription',
+            'name': 'subscription',
+            'type': 'string',
+          },
+          {
+            'JSONPath': '.spec.clustertype',
+            'description': 'cluster type',
+            'name': 'clustertype',
+            'type': 'string',
+          },
+          {
+            'JSONPath': '.metadata.creationTimestamp',
+            'description': "CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.\n\n      Populated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
+            'name': 'Age',
+            'type': 'date',
+          },
+        ],
+      'group': 'k8s.batteriesincl.com',
       'names':
         {
           'kind': 'BatteryCluster',
@@ -22,65 +41,4 @@
       'scope': 'Cluster',
       'version': 'v1',
     },
-}
----
-{
-  'apiVersion': 'rbac.authorization.k8s.io/v1',
-  'kind': 'ClusterRole',
-  'metadata':
-    {
-      'labels':
-        { 'battery-managed': 'true', 'k8s-app': 'battery-control-server' },
-      'name': 'battery-control-server-account',
-    },
-  'rules':
-    [
-      {
-        'apiGroups': ['apiextensions.k8s.io'],
-        'resources': ['customresourcedefinitions'],
-        'verbs': ['*'],
-      },
-      {
-        'apiGroups': ['k8s.batteries-included.com'],
-        'resources': ['batteryclusters'],
-        'verbs': ['*'],
-      },
-    ],
-}
----
-{
-  'apiVersion': 'v1',
-  'kind': 'ServiceAccount',
-  'metadata':
-    {
-      'labels':
-        { 'battery-managed': 'true', 'k8s-app': 'battery-control-server' },
-      'name': 'battery-control-server-account',
-      'namespace': 'default',
-    },
-}
----
-{
-  'apiVersion': 'rbac.authorization.k8s.io/v1',
-  'kind': 'ClusterRoleBinding',
-  'metadata':
-    {
-      'labels':
-        { 'battery-managed': 'true', 'k8s-app': 'battery-control-server' },
-      'name': 'battery-control-server-account',
-    },
-  'roleRef':
-    {
-      'apiGroup': 'rbac.authorization.k8s.io',
-      'kind': 'ClusterRole',
-      'name': 'battery-control-server-account',
-    },
-  'subjects':
-    [
-      {
-        'kind': 'ServiceAccount',
-        'name': 'battery-control-server-account',
-        'namespace': 'default',
-      },
-    ],
 }

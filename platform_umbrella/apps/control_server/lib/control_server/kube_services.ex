@@ -30,12 +30,20 @@ defmodule ControlServer.KubeServices do
     {:reply, apply_all(), state}
   end
 
-  def apply_all do
+  def apply_all(include_battery \\ true) do
     Logger.info("Applying")
 
     resources =
       Services.list_base_services()
       |> Enum.flat_map(fn service -> ConfigGenerator.materialize(service) end)
+      |> Enum.concat(
+        ConfigGenerator.materialize(%Services.BaseService{
+          config: %{},
+          is_active: include_battery,
+          root_path: "/battery",
+          service_type: :battery
+        })
+      )
       |> Enum.sort(fn {a, _av}, {b, _bv} -> a <= b end)
       |> Enum.map(fn {path, r} ->
         Logger.debug("Applying new config to #{path}")

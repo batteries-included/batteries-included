@@ -63,11 +63,11 @@ config :bonny,
   cluster_name: :default,
   # Also configurable via environment variable `BONNY_POD_NAMESPACE`
   namespace: "battery",
-  group: "k8s.batteries-included.com",
-  operator_name: "battery-control-server",
-  service_account_name: "battery-control-server-account",
+  group: "k8s.batteriesincl.com",
+  operator_name: "control-server",
+  service_account_name: "control-server-account",
   labels: %{
-    "battery-managed": "true"
+    "battery-managed": "True"
   },
 
   # Operator deployment resources. These are the defaults.

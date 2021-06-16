@@ -4,7 +4,7 @@ defmodule ControlServer.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "0.1.0",
+      version: "0.2.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -40,6 +40,9 @@ defmodule ControlServer.Umbrella.MixProject do
     [
       control_server: [
         applications: [control_server: :permanent, control_server_web: :permanent]
+      ],
+      home_base: [
+        applications: [home_base: :permanent, home_base_web: :permanent]
       ],
       bootstrap: [
         applications: [control_server: :permanent]

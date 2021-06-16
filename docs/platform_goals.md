@@ -7,7 +7,7 @@ We have to provide value to customers that show we are more than just a single p
 If our tools make it possible to do something that customers couldn't before, then it's easy to show the value we drive.
 
 - Enable something to scale past a hard limit. For example we could build a storage platform that will allow us to automatically shard and distribute data, enabling datasets of larger than one machine.
--Enabling customers who can't be in the public cloud to use the S3, scalable load balancers, or other important features of public clouds for the first time.
+  -Enabling customers who can't be in the public cloud to use the S3, scalable load balancers, or other important features of public clouds for the first time.
 - Make something faster. Our response times are X% faster on average because of automated tuning, automated configuration, or operational knowledge built into our system.
 
 ## Developer Efficiency
