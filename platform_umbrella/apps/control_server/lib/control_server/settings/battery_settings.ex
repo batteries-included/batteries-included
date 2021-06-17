@@ -2,7 +2,7 @@ defmodule ControlServer.Settings.BatterySettings do
   @namespace "battery-core"
 
   @control_image "k3d-k3s-default-registry:5000/battery/control"
-  @control_version "bd46c0a-dirty"
+  @control_version "b319bb4"
   @control_name "control-server"
 
   def namespace(config), do: Map.get(config, "namespace", @namespace)

@@ -113,11 +113,6 @@ defmodule ControlServer.Services.Battery do
           "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
           "requests" => %{"cpu" => "200m", "memory" => "200Mi"}
         }
-        # "securityContext" => %{
-        #   "runAsNonRoot" => true,
-        #   "readOnlyRootFilesystem" => false,
-        #   "runAsUser" => 65_534
-        # }
       }
     )
   end

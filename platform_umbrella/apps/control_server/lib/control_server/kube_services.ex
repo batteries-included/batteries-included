@@ -30,7 +30,7 @@ defmodule ControlServer.KubeServices do
     {:reply, apply_all(), state}
   end
 
-  def apply_all(include_battery \\ true) do
+  def apply_all(include_battery \\ false) do
     Logger.info("Applying")
 
     resources =
