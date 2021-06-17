@@ -1249,7 +1249,7 @@ spec:
                         type: object
                       type: array
                     labels:
-                      battery-managed: 'True'
+                      battery/managed: 'True'
                       items:
                         type: string
                       type: array
@@ -3852,7 +3852,7 @@ spec:
                         type: object
                       type: array
                     labels:
-                      battery-managed: 'True'
+                      battery/managed: 'True'
                       items:
                         type: string
                       type: array
@@ -6325,7 +6325,7 @@ spec:
                 type: object
               type: array
             labels:
-              battery-managed: 'True'
+              battery/managed: 'True'
               items:
                 type: string
               type: array
@@ -7794,7 +7794,7 @@ spec:
                   format: date-time
                   type: string
                 labels:
-                  battery-managed: 'True'
+                  battery/managed: 'True'
                   items:
                     type: string
                   type: array

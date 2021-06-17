@@ -4,4 +4,12 @@ set -exuo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
+
+ls -al /
+ls -al /run
+ls -al /run/batteries_included/
+
+
+env
+
 ${DIR}/control_server eval 'ControlServer.Release.migrate()'

@@ -127,7 +127,7 @@ def export_crds_stderr(crds):
 def main(module_name, settings_module_name):
     parsed = yaml.load_all(sys.stdin, Loader=yaml.FullLoader)
     sanitized_labels = [
-        recursive_remove(o, "labels", bad_labels, {"battery-managed": "True"})
+        recursive_remove(o, "labels", bad_labels, {"battery/managed": "True"})
         for o in parsed
         if o
     ]

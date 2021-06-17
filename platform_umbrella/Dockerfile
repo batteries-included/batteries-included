@@ -216,7 +216,8 @@ RUN --mount=type=cache,id=apk,target=/var/cache/apk,sharing=locked \
   && apk add --no-cache bash \
   && apk add --no-cache tini \
   && apk add --no-cache bind-tools \
-  && apk add --no-cache openssl ncurses-libs
+  && apk add --no-cache openssl ncurses-libs \
+  && apk cache clean
 
 # Create user and group to run under with specific uid
 RUN addgroup -g 10001 -S "$APP_GROUP" \
@@ -224,8 +225,7 @@ RUN addgroup -g 10001 -S "$APP_GROUP" \
 
 # Create app dirs
 RUN mkdir -p "/run/$APP_NAME" \
-  && chown -R "$APP_USER:$APP_GROUP" \
-    "/run/$APP_NAME"
+  && chown -R "$APP_USER:$APP_GROUP" "/run/$APP_NAME/"
 
 USER $APP_USER
 

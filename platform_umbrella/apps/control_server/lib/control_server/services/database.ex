@@ -55,7 +55,7 @@ defmodule ControlServer.Services.Database do
       "apiVersion" => "acid.zalan.do/v1",
       "metadata" => %{
         "namespace" => namespace,
-        "battery-managed" => "True",
+        "battery/managed" => "True",
         "name" => team <> "-" <> cluster.name
       },
       "spec" => %{

@@ -7,7 +7,7 @@ metadata:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
     app.kubernetes.io/name: cert-manager
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: certificaterequests.cert-manager.io
 spec:
   conversion:
@@ -951,7 +951,7 @@ metadata:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
     app.kubernetes.io/name: cert-manager
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: certificates.cert-manager.io
 spec:
   conversion:
@@ -2724,7 +2724,7 @@ metadata:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
     app.kubernetes.io/name: cert-manager
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: challenges.acme.cert-manager.io
 spec:
   conversion:
@@ -3228,7 +3228,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver ingress.
                                     type: object
@@ -3262,7 +3262,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver pods.
                                     type: object
@@ -4727,7 +4727,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver ingress.
                                     type: object
@@ -4761,7 +4761,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver pods.
                                     type: object
@@ -6226,7 +6226,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver ingress.
                                     type: object
@@ -6260,7 +6260,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver pods.
                                     type: object
@@ -7725,7 +7725,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver ingress.
                                     type: object
@@ -7759,7 +7759,7 @@ spec:
                                   labels:
                                     additionalProperties:
                                       type: string
-                                    battery-managed: 'True'
+                                    battery/managed: 'True'
                                     description: Labels that should be added to the
                                       created ACME HTTP01 solver pods.
                                     type: object
@@ -8761,7 +8761,7 @@ metadata:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
     app.kubernetes.io/name: cert-manager
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: clusterissuers.cert-manager.io
 spec:
   conversion:
@@ -9371,7 +9371,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -9409,7 +9409,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -11369,7 +11369,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -11407,7 +11407,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -13367,7 +13367,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -13405,7 +13405,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -15367,7 +15367,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -15405,7 +15405,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -16797,7 +16797,7 @@ metadata:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
     app.kubernetes.io/name: cert-manager
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: issuers.cert-manager.io
 spec:
   conversion:
@@ -17406,7 +17406,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -17444,7 +17444,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -19403,7 +19403,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -19441,7 +19441,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -21400,7 +21400,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -21438,7 +21438,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -23399,7 +23399,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver ingress.
                                           type: object
@@ -23437,7 +23437,7 @@ spec:
                                         labels:
                                           additionalProperties:
                                             type: string
-                                          battery-managed: 'True'
+                                          battery/managed: 'True'
                                           description: Labels that should be added
                                             to the created ACME HTTP01 solver pods.
                                           type: object
@@ -24829,7 +24829,7 @@ metadata:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
     app.kubernetes.io/name: cert-manager
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: orders.acme.cert-manager.io
 spec:
   conversion:

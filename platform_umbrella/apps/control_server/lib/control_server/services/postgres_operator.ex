@@ -15,7 +15,7 @@ defmodule ControlServer.Services.PostgresOperator do
         "labels" => %{
           "app.kubernetes.io/name" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       }
     }
@@ -30,7 +30,7 @@ defmodule ControlServer.Services.PostgresOperator do
         "labels" => %{
           "app.kubernetes.io/name" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       },
       "rules" => [
@@ -67,7 +67,7 @@ defmodule ControlServer.Services.PostgresOperator do
         "labels" => %{
           "app.kubernetes.io/name" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       },
       "rules" => [
@@ -175,7 +175,7 @@ defmodule ControlServer.Services.PostgresOperator do
         "labels" => %{
           "app.kubernetes.io/name" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       },
       "roleRef" => %{
@@ -203,7 +203,7 @@ defmodule ControlServer.Services.PostgresOperator do
         "labels" => %{
           "app.kubernetes.io/name" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         },
         "namespace" => namespace,
         "name" => "battery-postgres-operator"
@@ -229,7 +229,7 @@ defmodule ControlServer.Services.PostgresOperator do
         "labels" => %{
           "app.kubernetes.io/name" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         },
         "namespace" => namespace,
         "name" => "battery-postgres-operator"
@@ -248,7 +248,7 @@ defmodule ControlServer.Services.PostgresOperator do
             "labels" => %{
               "app.kubernetes.io/name" => "postgres-operator",
               "app.kubernetes.io/instance" => "battery",
-              "battery-managed" => "True"
+              "battery/managed" => "True"
             }
           },
           "spec" => %{
@@ -329,7 +329,7 @@ defmodule ControlServer.Services.PostgresOperator do
         "labels" => %{
           "app.kubernetes.io/name" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       },
       "configuration" => %{

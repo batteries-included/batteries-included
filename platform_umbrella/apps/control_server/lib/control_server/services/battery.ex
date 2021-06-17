@@ -23,18 +23,18 @@ defmodule ControlServer.Services.Battery do
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "labels" => %{"battery-managed" => "True", "k8s-app" => name},
+        "labels" => %{"battery/managed" => "True", "battery/app" => name},
         "name" => name,
         "namespace" => namespace
       },
       "spec" => %{
         "replicas" => 1,
         "selector" => %{
-          "matchLabels" => %{"k8s-app" => name}
+          "matchLabels" => %{"battery/app" => name}
         },
         "template" => %{
           "metadata" => %{
-            "labels" => %{"battery-managed" => "True", "k8s-app" => name}
+            "labels" => %{"battery/managed" => "True", "battery/app" => name}
           },
           "spec" => %{
             "initContainers" => [
@@ -47,7 +47,7 @@ defmodule ControlServer.Services.Battery do
               control_container(config,
                 name: name,
                 base: %{
-                  "command" => ["bin/control_server"],
+                  "command" => ["bin/control_server", "start"],
                   "ports" => [%{"containerPort" => 4000}]
                 }
               )
@@ -65,58 +65,59 @@ defmodule ControlServer.Services.Battery do
     version = Keyword.get(options, :version, BatterySettings.control_server_version(config))
     image = Keyword.get(options, :image, BatterySettings.control_server_image(config))
 
-    env = [
-      %{
-        "name" => "POSTGRES_HOST",
-        "value" => "postgres.default.svc.cluster.local"
-      },
-      %{
-        "name" => "POSTGRES_DB",
-        "value" => "control-dev"
-      },
-      %{
-        "name" => "SECRET_KEY_BASE",
-        "value" => "TEST_ING"
-      },
-      %{
-        "name" => "POSTGRES_USER",
-        "value" => "batterydbuser"
-      },
-      %{"name" => "MIX_ENV", "value" => "prod"},
-      %{
-        "name" => "BONNY_POD_NAME",
-        "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
-      },
-      %{
-        "name" => "BONNY_POD_NAMESPACE",
-        "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
-      },
-      %{
-        "name" => "BONNY_POD_IP",
-        "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.podIP"}}
-      },
-      %{
-        "name" => "BONNY_POD_SERVICE_ACCOUNT",
-        "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.serviceAccountName"}}
-      }
-    ]
-
     Map.merge(
       base,
       %{
         "name" => name,
-        "env" => env,
+        "env" => [
+          %{
+            "name" => "POSTGRES_HOST",
+            "value" => "postgres.default.svc.cluster.local"
+          },
+          %{
+            "name" => "POSTGRES_DB",
+            "value" => "control-dev"
+          },
+          %{
+            "name" => "SECRET_KEY_BASE",
+            "value" => "TEST_ING"
+          },
+          %{
+            "name" => "POSTGRES_USER",
+            "value" => "batterydbuser"
+          },
+          %{
+            "name" => "POSTGRES_PASSWORD",
+            "value" => "batterypasswd"
+          },
+          %{"name" => "MIX_ENV", "value" => "prod"},
+          %{
+            "name" => "BONNY_POD_NAME",
+            "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
+          },
+          %{
+            "name" => "BONNY_POD_NAMESPACE",
+            "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+          },
+          %{
+            "name" => "BONNY_POD_IP",
+            "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.podIP"}}
+          },
+          %{
+            "name" => "BONNY_POD_SERVICE_ACCOUNT",
+            "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.serviceAccountName"}}
+          }
+        ],
         "image" => "#{image}:#{version}",
         "resources" => %{
           "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
           "requests" => %{"cpu" => "200m", "memory" => "200Mi"}
-        },
-        "securityContext" => %{
-          "allowPrivilegeEscalation" => false,
-          "readOnlyRootFilesystem" => true,
-          "runAsNonRoot" => true,
-          "runAsUser" => 65_534
         }
+        # "securityContext" => %{
+        #   "runAsNonRoot" => true,
+        #   "readOnlyRootFilesystem" => false,
+        #   "runAsUser" => 65_534
+        # }
       }
     )
   end
@@ -126,7 +127,7 @@ defmodule ControlServer.Services.Battery do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
       "metadata" => %{
-        "labels" => %{"battery-managed" => "True", "k8s-app" => "control-server"},
+        "labels" => %{"battery/managed" => "True", "battery/app" => "control-server"},
         "name" => "control-server-account"
       },
       "rules" => [
@@ -141,14 +142,19 @@ defmodule ControlServer.Services.Battery do
           "verbs" => ["*"]
         },
         %{
+          "apiGroups" => ["policy"],
+          "resources" => ["poddisruptionbudgets"],
+          "verbs" => ["*"]
+        },
+        %{
           "apiGroups" => [""],
           "resources" => [
             "secrets",
             "pods",
-            "configmap",
-            "deployment",
+            "configmaps",
             "serviceaccounts",
-            "service",
+            "services",
+            "namespaces",
             "events"
           ],
           "verbs" => ["*"]
@@ -160,10 +166,10 @@ defmodule ControlServer.Services.Battery do
         },
         %{
           "apiGroups" => ["apps"],
-          "resources" => ["deployment", "statefulsets"],
+          "resources" => ["deployments", "statefulsets"],
           "verbs" => ["*"]
         },
-        %{"apiGroups" => ["batch"], "resources" => ["job"], "verbs" => ["*"]},
+        %{"apiGroups" => ["batch"], "resources" => ["jobs", "cronjobs"], "verbs" => ["*"]},
         %{
           "apiGroups" => ["rbac.authorization.k8s.io"],
           "resources" => ["clusterroles", "clusterrolebindings"],
@@ -180,7 +186,7 @@ defmodule ControlServer.Services.Battery do
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "labels" => %{"battery-managed" => "True", "k8s-app" => "control-server"},
+        "labels" => %{"battery/managed" => "True", "battery/app" => "control-server"},
         "name" => "control-server-account",
         "namespace" => namespace
       }
@@ -194,7 +200,7 @@ defmodule ControlServer.Services.Battery do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
-        "labels" => %{"battery-managed" => "True", "k8s-app" => "control-server"},
+        "labels" => %{"battery/managed" => "True", "battery/app" => "control-server"},
         "name" => "control-server-account"
       },
       "roleRef" => %{

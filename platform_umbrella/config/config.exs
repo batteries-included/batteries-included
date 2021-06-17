@@ -67,7 +67,7 @@ config :bonny,
   operator_name: "control-server",
   service_account_name: "control-server-account",
   labels: %{
-    "battery-managed": "True"
+    "battery/managed": "True"
   },
 
   # Operator deployment resources. These are the defaults.

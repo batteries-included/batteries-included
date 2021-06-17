@@ -4,7 +4,7 @@ metadata:
   annotations: {}
   labels:
     app.kubernetes.io/name: postgres-operator
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: operatorconfigurations.acid.zalan.do
 spec:
   group: acid.zalan.do
@@ -568,7 +568,7 @@ metadata:
   annotations: {}
   labels:
     app.kubernetes.io/name: postgres-operator
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: postgresqls.acid.zalan.do
 spec:
   group: acid.zalan.do
@@ -1122,7 +1122,7 @@ metadata:
   annotations: {}
   labels:
     app.kubernetes.io/name: postgres-operator
-    battery-managed: 'True'
+    battery/managed: 'True'
   name: postgresteams.acid.zalan.do
 spec:
   group: acid.zalan.do

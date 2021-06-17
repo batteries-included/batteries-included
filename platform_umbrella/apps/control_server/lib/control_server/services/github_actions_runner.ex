@@ -16,7 +16,7 @@ defmodule ControlServer.Services.GithubActionsRunner do
           "app.kubernetes.io/name" => "actions-runner-controller",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.18.2",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       }
     }
@@ -35,7 +35,7 @@ defmodule ControlServer.Services.GithubActionsRunner do
           "app.kubernetes.io/name" => "actions-runner-controller",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.18.2",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       },
       "type" => "generic",
@@ -294,7 +294,7 @@ defmodule ControlServer.Services.GithubActionsRunner do
           "app.kubernetes.io/name" => "actions-runner-controller",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.18.2",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         },
         "name" => "battery-actions-runner-controller-metrics-service",
         "namespace" => namespace
@@ -322,7 +322,7 @@ defmodule ControlServer.Services.GithubActionsRunner do
           "app.kubernetes.io/name" => "actions-runner-controller",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.18.2",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       },
       "spec" => %{
@@ -351,7 +351,7 @@ defmodule ControlServer.Services.GithubActionsRunner do
           "app.kubernetes.io/name" => "actions-runner-controller",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.18.2",
-          "battery-managed" => "True"
+          "battery/managed" => "True"
         }
       },
       "spec" => %{
@@ -367,7 +367,7 @@ defmodule ControlServer.Services.GithubActionsRunner do
             "labels" => %{
               "app.kubernetes.io/name" => "actions-runner-controller",
               "app.kubernetes.io/instance" => "battery",
-              "battery-managed" => "True"
+              "battery/managed" => "True"
             }
           },
           "spec" => %{

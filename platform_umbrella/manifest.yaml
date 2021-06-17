@@ -4,7 +4,7 @@
   'kind': 'CustomResourceDefinition',
   'metadata':
     {
-      'labels': { 'battery-managed': 'True', 'k8s-app': 'control-server' },
+      'labels': { 'battery/managed': 'True', 'battery/app': 'control-server' },
       'name': 'batteryclusters.k8s.batteriesincl.com',
     },
   'spec':

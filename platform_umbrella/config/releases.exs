@@ -24,6 +24,13 @@ postgres_database =
     Need the database name env variable POSTGRES_DB
     """
 
+secret_key_base =
+  System.get_env("SECRET_KEY_BASE") ||
+    raise """
+    environment variable SECRET_KEY_BASE is missing.
+    You can generate one by calling: mix phx.gen.secret
+    """
+
 config :control_server, ControlServer.Repo,
   ssl: false,
   username: postgres_username,
@@ -42,27 +49,6 @@ config :home_base, HomeBase.Repo,
   port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
-secret_key_base =
-  System.get_env("SECRET_KEY_BASE") ||
-    raise """
-    environment variable SECRET_KEY_BASE is missing.
-    You can generate one by calling: mix phx.gen.secret
-    """
-
-config :control_server_web, ControlServerWeb.Endpoint,
-  http: [
-    port: String.to_integer(System.get_env("PORT") || "4000"),
-    transport_options: [socket_opts: [:inet6]]
-  ],
-  secret_key_base: secret_key_base
-
-config :home_base_web, HomeBaseWeb.Endpoint,
-  http: [
-    port: String.to_integer(System.get_env("PORT") || "4000"),
-    transport_options: [socket_opts: [:inet6]]
-  ],
-  secret_key_base: secret_key_base
-
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix
@@ -72,5 +58,18 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
-config :control_server_web, ControlServerWeb.Endpoint, server: true
-config :home_base_web, HomeBaseWeb.Endpoint, server: true
+config :control_server_web, ControlServerWeb.Endpoint,
+  http: [
+    port: String.to_integer(System.get_env("PORT") || "4000"),
+    transport_options: [socket_opts: [:inet6]]
+  ],
+  secret_key_base: secret_key_base,
+  server: true
+
+config :home_base_web, HomeBaseWeb.Endpoint,
+  http: [
+    port: String.to_integer(System.get_env("PORT") || "4000"),
+    transport_options: [socket_opts: [:inet6]]
+  ],
+  secret_key_base: secret_key_base,
+  server: true

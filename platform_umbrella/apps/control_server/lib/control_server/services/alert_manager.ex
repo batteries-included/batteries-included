@@ -13,7 +13,10 @@ defmodule ControlServer.Services.AlertManager do
       "kind" => "ServiceAccount",
       "metadata" => %{
         "name" => name,
-        "namespace" => namespace
+        "namespace" => namespace,
+        "labels" => %{
+          "battery/managed" => "True"
+        }
       }
     }
   end
@@ -29,7 +32,8 @@ defmodule ControlServer.Services.AlertManager do
         "name" => name,
         "namespace" => namespace,
         "labels" => %{
-          "alertmanager" => name
+          "alertmanager" => name,
+          "battery/managed" => "True"
         }
       },
       "spec" => %{
@@ -65,7 +69,10 @@ defmodule ControlServer.Services.AlertManager do
       "kind" => "Alertmanager",
       "metadata" => %{
         "name" => name,
-        "namespace" => namespace
+        "namespace" => namespace,
+        "labels" => %{
+          "battery/managed" => "True"
+        }
       },
       "spec" => %{
         "image" => "#{image}:#{version}",
@@ -96,7 +103,10 @@ defmodule ControlServer.Services.AlertManager do
       "kind" => "Service",
       "metadata" => %{
         "name" => name,
-        "namespace" => namespace
+        "namespace" => namespace,
+        "labels" => %{
+          "battery/managed" => "True"
+        }
       },
       "spec" => %{
         "ports" => [
