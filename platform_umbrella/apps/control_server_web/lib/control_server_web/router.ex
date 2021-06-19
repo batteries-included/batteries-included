@@ -20,9 +20,9 @@ defmodule ControlServerWeb.Router do
     live "/", PageLive, :index
 
     live "/services/monitoring", ServicesLive.Prometheus, :index
-    live "/services/database", ServicesLive.Postgres, :index
     live "/services/security", ServicesLive.Security, :index
 
+    live "/services/database", ServicesLive.PostgresHome, :index
     live "/services/database/clusters", ClusterLive.Index, :index
     live "/services/database/clusters/new", ClusterLive.Index, :new
     live "/services/database/clusters/:id/edit", ClusterLive.Index, :edit
@@ -49,10 +49,12 @@ defmodule ControlServerWeb.Router do
   # as long as you are also using SSL (which you should anyway).
   if Mix.env() in [:dev, :test] do
     import Phoenix.LiveDashboard.Router
+    import Surface.Catalogue.Router
 
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
+      surface_catalogue("/storybook")
     end
   end
 end

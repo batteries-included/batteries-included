@@ -7,7 +7,7 @@ defmodule CommonUI.Layout do
   slot(default, required: true)
   slot(main_menu)
   slot(mobile_menu)
-  prop(bg_class, :string, default: "bg-astral-400")
+  prop(bg_class, :string, default: "bg-white")
 
   def render(assigns) do
     ~F"""
@@ -56,7 +56,8 @@ defmodule CommonUI.Layout do
           </div>
           <!-- Logo -->
           <div class="flex items-center flex-shrink-0 px-4">
-            <img class="w-auto h-8" src="/images/logo.png" alt="Batteries Included">
+            <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included">
+            <h1 class="ml-4 text-right">Batteries Included</h1>
           </div>
 
           <div class="flex-1 h-0 px-2 mt-5 overflow-y-auto">
@@ -79,8 +80,9 @@ defmodule CommonUI.Layout do
       -->
       <div class="flex flex-col flex-1 overflow-hidden">
         <header class="w-full">
-          <div class="relative z-10 flex flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm">
+          <div class="relative z-10 flex items-center flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm">
             <OpenSidebarButton />
+            <h1 class="flex-grow px-5 text-2xl text-right text-gray-500 md:container">Batteries Included</h1>
           </div>
         </header>
 

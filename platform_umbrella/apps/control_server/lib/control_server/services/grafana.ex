@@ -95,7 +95,7 @@ defmodule ControlServer.Services.Grafana do
       "kind" => "Deployment",
       "metadata" => %{
         "labels" => %{
-          "app" => name
+          "battery/app" => name
         },
         "name" => name,
         "namespace" => namespace
@@ -104,13 +104,13 @@ defmodule ControlServer.Services.Grafana do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app" => name
+            "battery/app" => name
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app" => name
+              "battery/app" => name
             }
           },
           "spec" => %{
@@ -465,7 +465,7 @@ defmodule ControlServer.Services.Grafana do
           }
         ],
         "selector" => %{
-          "app" => name
+          "battery/app" => name
         }
       }
     }

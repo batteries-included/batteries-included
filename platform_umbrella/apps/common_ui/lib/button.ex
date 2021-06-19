@@ -1,4 +1,7 @@
 defmodule CommonUI.Button do
+  @moduledoc """
+  Hello
+  """
   use Surface.Component
 
   @doc "The content of the button"
@@ -7,6 +10,7 @@ defmodule CommonUI.Button do
   @doc "Triggered on click"
   prop(click, :event)
 
+  @doc "additional classes that can be added to the default"
   prop(class, :css_class, default: [])
 
   prop(phx_payload, :string, default: nil)

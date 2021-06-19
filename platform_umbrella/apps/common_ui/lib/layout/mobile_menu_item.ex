@@ -13,8 +13,8 @@ defmodule CommonUI.Layout.MobileMenuItem do
     <LivePatch
       to={"#{@to}"}
       class={[
-        "text-white",
         "group",
+        "w-full",
         "py-2",
         "px-3",
         "rounded-md",
@@ -25,7 +25,7 @@ defmodule CommonUI.Layout.MobileMenuItem do
       ] ++ @class}
     >
       <#slot />
-      <span class="ml-3 mt-2">{@name}</span>
+      <span class="mt-2 ml-3">{@name}</span>
     </LivePatch>
     """
   end

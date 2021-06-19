@@ -21,8 +21,7 @@ defmodule CommonUI.Layout.MenuItem do
         "flex-col",
         "items-center",
         "text-sm",
-        "font-medium",
-        "text-white"
+        "font-medium"
       ] ++ @class}
     >
       <#slot />

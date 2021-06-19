@@ -49,7 +49,7 @@ defmodule HomeBaseWeb.MixProject do
       {:gettext, "~> 0.11"},
       {:home_base, in_umbrella: true},
       # Components
-      {:surface, github: "surface-ui/surface"},
+      {:surface, "~> 0.5.0"},
       {:common_ui, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"}

@@ -14,7 +14,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-cainjector",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "cainjector",
+          "battery/app" => "cainjector",
           "app.kubernetes.io/name" => "cainjector",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cainjector",
@@ -35,7 +35,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -56,7 +56,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-webhook",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -73,7 +73,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-cainjector",
         "labels" => %{
-          "app" => "cainjector",
+          "battery/app" => "cainjector",
           "app.kubernetes.io/name" => "cainjector",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cainjector",
@@ -123,7 +123,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-issuers",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -158,7 +158,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-clusterissuers",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -193,7 +193,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-certificates",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -243,7 +243,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-orders",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -289,7 +289,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-challenges",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -346,7 +346,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-ingress-shim",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -386,7 +386,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-view",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -418,7 +418,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-edit",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -449,7 +449,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-approve:cert-manager-io",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cert-manager",
@@ -474,7 +474,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-webhook:subjectaccessreviews",
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -500,7 +500,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-cainjector",
         "labels" => %{
-          "app" => "cainjector",
+          "battery/app" => "cainjector",
           "app.kubernetes.io/name" => "cainjector",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cainjector",
@@ -531,7 +531,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-issuers",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -558,7 +558,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-clusterissuers",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -585,7 +585,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-certificates",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -612,7 +612,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-orders",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -639,7 +639,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-challenges",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -666,7 +666,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-ingress-shim",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -693,7 +693,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-controller-approve:cert-manager-io",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cert-manager",
@@ -720,7 +720,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-webhook:subjectaccessreviews",
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -751,7 +751,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-cainjector:leaderelection",
         "namespace" => "kube-system",
         "labels" => %{
-          "app" => "cainjector",
+          "battery/app" => "cainjector",
           "app.kubernetes.io/name" => "cainjector",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cainjector",
@@ -781,7 +781,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager:leaderelection",
         "namespace" => "kube-system",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -810,7 +810,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-webhook:dynamic-serving",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -839,7 +839,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-cainjector:leaderelection",
         "namespace" => "kube-system",
         "labels" => %{
-          "app" => "cainjector",
+          "battery/app" => "cainjector",
           "app.kubernetes.io/name" => "cainjector",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cainjector",
@@ -871,7 +871,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager:leaderelection",
         "namespace" => "kube-system",
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -904,7 +904,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-webhook:dynamic-serving",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -937,7 +937,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -966,7 +966,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-webhook",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -995,7 +995,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-cainjector",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "cainjector",
+          "battery/app" => "cainjector",
           "app.kubernetes.io/name" => "cainjector",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "cainjector",
@@ -1014,7 +1014,7 @@ defmodule ControlServer.Services.CertManager do
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app" => "cainjector",
+              "battery/app" => "cainjector",
               "app.kubernetes.io/name" => "cainjector",
               "app.kubernetes.io/instance" => "battery-cert-manager",
               "app.kubernetes.io/component" => "cainjector",
@@ -1054,7 +1054,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "cert-manager",
+          "battery/app" => "cert-manager",
           "app.kubernetes.io/name" => "cert-manager",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "controller",
@@ -1073,7 +1073,7 @@ defmodule ControlServer.Services.CertManager do
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app" => "cert-manager",
+              "battery/app" => "cert-manager",
               "app.kubernetes.io/name" => "cert-manager",
               "app.kubernetes.io/instance" => "battery-cert-manager",
               "app.kubernetes.io/component" => "controller",
@@ -1123,7 +1123,7 @@ defmodule ControlServer.Services.CertManager do
         "name" => "battery-cert-manager-webhook",
         "namespace" => namespace,
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -1142,7 +1142,7 @@ defmodule ControlServer.Services.CertManager do
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app" => "webhook",
+              "battery/app" => "webhook",
               "app.kubernetes.io/name" => "webhook",
               "app.kubernetes.io/instance" => "battery-cert-manager",
               "app.kubernetes.io/component" => "webhook",
@@ -1204,7 +1204,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-webhook",
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",
@@ -1251,7 +1251,7 @@ defmodule ControlServer.Services.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-webhook",
         "labels" => %{
-          "app" => "webhook",
+          "battery/app" => "webhook",
           "app.kubernetes.io/name" => "webhook",
           "app.kubernetes.io/instance" => "battery-cert-manager",
           "app.kubernetes.io/component" => "webhook",

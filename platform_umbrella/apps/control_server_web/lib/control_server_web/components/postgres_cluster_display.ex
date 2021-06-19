@@ -11,7 +11,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
   @impl true
   def render(assigns) do
     ~F"""
-    <h3 class="mt-2 text-lg leading-7 sm:text-3xl sm:truncate">
+    <h3 class="my-2 text-lg leading-7 sm:text-3xl sm:truncate">
       Postgres Clusters
     </h3>
 
@@ -53,9 +53,9 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
       </table>
     </ShadowContainer>
 
-    <LivePatch to="/services/database/clusters" class="mt-10">
+    <LivePatch to="/services/database/clusters/new" class="ml-8 mt-15">
       <Button>
-        Edit Clusters
+        New Cluster
       </Button>
     </LivePatch>
     """
@@ -80,7 +80,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
             to={Routes.cluster_index_path(@socket, :edit, cluster)}
             class="mt-8 text-lg font-medium text-left"
           >
-            Edit Clusters
+            Edit Cluster
           </LivePatch>
         </span>
       </td>

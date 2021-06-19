@@ -27,7 +27,7 @@ defmodule CommonUI.MixProject do
   defp deps do
     [
       {:phoenix_live_view, "~> 0.15.0"},
-      {:surface, github: "surface-ui/surface"}
+      {:surface, "~> 0.5.0"}
     ]
   end
 

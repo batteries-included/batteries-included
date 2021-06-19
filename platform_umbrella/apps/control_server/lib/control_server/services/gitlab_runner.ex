@@ -11,7 +11,7 @@ defmodule ControlServer.Services.GitlabRunner do
       "kind" => "ServiceAccount",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
         "namespace" => namespace
       }
     }
@@ -25,7 +25,7 @@ defmodule ControlServer.Services.GitlabRunner do
       "kind" => "ConfigMap",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
         "namespace" => namespace
       },
       "data" => %{
@@ -53,7 +53,7 @@ defmodule ControlServer.Services.GitlabRunner do
       "kind" => "Role",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
         "namespace" => namespace
       },
       "rules" => [%{"apiGroups" => [""], "resources" => ["*"], "verbs" => ["*"]}]
@@ -68,7 +68,7 @@ defmodule ControlServer.Services.GitlabRunner do
       "kind" => "RoleBinding",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
         "namespace" => namespace
       },
       "roleRef" => %{
@@ -94,15 +94,15 @@ defmodule ControlServer.Services.GitlabRunner do
       "kind" => "Deployment",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
         "namespace" => namespace
       },
       "spec" => %{
         "replicas" => 1,
-        "selector" => %{"matchLabels" => %{"app" => "battery-gitlab-runner"}},
+        "selector" => %{"matchLabels" => %{"battery/app" => "battery-gitlab-runner"}},
         "template" => %{
           "metadata" => %{
-            "labels" => %{"app" => "battery-gitlab-runner", "battery/managed" => "True"},
+            "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
             "annotations" => %{"prometheus.io/scrape" => "true", "prometheus.io/port" => "9252"}
           },
           "spec" => %{

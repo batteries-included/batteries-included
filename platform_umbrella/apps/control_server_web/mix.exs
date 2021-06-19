@@ -29,7 +29,8 @@ defmodule ControlServerWeb.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"] ++ catalogues()
+  defp elixirc_paths(:dev), do: ["lib"] ++ catalogues()
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -48,7 +49,8 @@ defmodule ControlServerWeb.MixProject do
       {:gettext, "~> 0.11"},
       {:control_server, in_umbrella: true},
       # Components
-      {:surface, github: "surface-ui/surface"},
+      {:surface, "~> 0.5.0"},
+      {:surface_catalogue, "~> 0.1.0", only: [:dev, :test]},
       {:common_ui, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"}
@@ -63,6 +65,14 @@ defmodule ControlServerWeb.MixProject do
       setup: ["deps.get", "cmd npm install --prefix assets"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "ecto.reset": []
+    ]
+  end
+
+  def catalogues do
+    [
+      # Local catalogue
+      "priv/catalogue",
+      Path.expand("../common_ui/priv/catalogue")
     ]
   end
 end
