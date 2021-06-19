@@ -78,7 +78,7 @@ dependencies = [
  "common",
  "futures",
  "k8s-openapi 0.12.0",
- "kube",
+ "kube 0.56.0",
  "tokio",
  "tracing",
 ]
@@ -89,7 +89,7 @@ version = "0.1.0"
 dependencies = [
  "futures",
  "k8s-openapi 0.12.0",
- "kube",
+ "kube 0.56.0",
  "kube-runtime",
  "reqwest",
  "schemars",
@@ -596,7 +596,7 @@ dependencies = [
  "hyper-tls",
  "jsonpath_lib",
  "k8s-openapi 0.11.0",
- "kube-core",
+ "kube-core 0.56.0",
  "kube-derive",
  "openssl",
  "pem",
@@ -607,6 +607,38 @@ dependencies = [
  "thiserror",
  "tokio",
  "tokio-native-tls",
+ "tokio-util",
+ "tower",
+ "tower-http",
+ "tracing",
+]
+
+[[package]]
+name = "kube"
+version = "0.57.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8152fba26129a09bf30179092753b399760a305a218b8bc558f9a2087b5c1d70"
+dependencies = [
+ "base64",
+ "bytes",
+ "chrono",
+ "dirs-next",
+ "either",
+ "futures",
+ "http",
+ "http-body",
+ "hyper",
+ "hyper-timeout",
+ "jsonpath_lib",
+ "k8s-openapi 0.12.0",
+ "kube-core 0.57.0",
+ "pem",
+ "pin-project 1.0.6",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror",
+ "tokio",
  "tokio-util",
  "tower",
  "tower-http",
@@ -629,6 +661,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "kube-core"
+version = "0.57.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "36b767df01404bb99fb75ac2ceded28ce34c30fdcffbb4346e2c44d30756bfba"
+dependencies = [
+ "form_urlencoded",
+ "http",
+ "k8s-openapi 0.12.0",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "kube-derive"
 version = "0.56.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -643,15 +689,15 @@ dependencies = [
 
 [[package]]
 name = "kube-runtime"
-version = "0.56.0"
+version = "0.57.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "74cc67ec0d3715fc3527c5149a17b46ddadc326c12cb605368c6b19f34a40b03"
+checksum = "f8358421de932e06d0521700fc8ecfc7058c95509e0770d2da88be78cd737c07"
 dependencies = [
  "dashmap",
  "derivative",
  "futures",
- "k8s-openapi 0.11.0",
- "kube",
+ "k8s-openapi 0.12.0",
+ "kube 0.57.0",
  "pin-project 1.0.6",
  "serde",
  "smallvec",
