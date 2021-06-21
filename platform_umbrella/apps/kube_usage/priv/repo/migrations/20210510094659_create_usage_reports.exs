@@ -1,4 +1,4 @@
-defmodule ControlServer.Repo.Migrations.CreateUsageReports do
+defmodule KubeUsage.Repo.Migrations.CreateUsageReports do
   use Ecto.Migration
 
   def change do

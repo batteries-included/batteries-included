@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.UsageReportController do
   use ControlServerWeb, :controller
 
-  alias ControlServer.Usage
-  alias ControlServer.Usage.UsageReport
+  alias KubeUsage.Usage
+  alias KubeUsage.Usage.UsageReport
 
   action_fallback ControlServerWeb.FallbackController
 

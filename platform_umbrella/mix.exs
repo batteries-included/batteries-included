@@ -28,6 +28,7 @@ defmodule ControlServer.Umbrella.MixProject do
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:surface_formatter, github: "surface-ui/surface_formatter", only: :dev, runtime: false},
       {:surface_catalogue, "~> 0.1.0", only: [:dev, :test]},
+      {:sobelow, "~> 0.8", only: :dev},
       {:excoveralls, "~> 0.14", only: :test}
     ]
   end
@@ -35,7 +36,11 @@ defmodule ControlServer.Umbrella.MixProject do
   defp releases do
     [
       control_server: [
-        applications: [control_server: :permanent, control_server_web: :permanent]
+        applications: [
+          control_server: :permanent,
+          control_server_web: :permanent,
+          usage_poller: :permanent
+        ]
       ],
       home_base: [
         applications: [home_base: :permanent, home_base_web: :permanent]

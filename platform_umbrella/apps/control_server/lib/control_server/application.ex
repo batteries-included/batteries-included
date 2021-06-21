@@ -9,10 +9,9 @@ defmodule ControlServer.Application do
     children = [
       # Start the Ecto repository
       ControlServer.Repo,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: ControlServer.PubSub},
       ControlServer.KubeServices,
-      {ControlServer.Usage.UsagePoller, name: ControlServer.Usage.UsagePoller}
+      # Start the PubSub system
+      {Phoenix.PubSub, name: ControlServer.PubSub}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -1,12 +1,9 @@
-defmodule HomeBaseClient.EventCenter do
-  @moduledoc """
-  Module to help sending PubSub messages that need to make it back to the HomeBase.
-  """
+defmodule EventCenter.Usage do
   use GenServer
 
   alias Phoenix.PubSub
 
-  @pubsub HomeBaseClient.EventCenter.PubSub
+  @pubsub EventCenter.Usage.PubSub
 
   @impl true
   def init(_) do

@@ -10,11 +10,18 @@
 import Config
 
 # Configure Mix tasks and generators
+config :kube_usage,
+  ecto_repos: [KubeUsage.Repo]
+
 config :control_server,
   ecto_repos: [ControlServer.Repo]
 
 config :home_base,
   ecto_repos: [HomeBase.Repo]
+
+config :kube_usage, KubeUsage.Repo,
+  migration_primary_key: [type: :uuid],
+  migration_timestamps: [type: :utc_datetime_usec]
 
 config :control_server, ControlServer.Repo,
   migration_primary_key: [type: :uuid],
@@ -25,7 +32,7 @@ config :home_base, HomeBase.Repo,
   migration_timestamps: [type: :utc_datetime_usec]
 
 config :control_server_web,
-  ecto_repos: [ControlServer.Repo],
+  ecto_repos: [ControlServer.Repo, KubeUsage.Repo],
   generators: [context_app: :control_server, binary_id: true]
 
 config :home_base_web,

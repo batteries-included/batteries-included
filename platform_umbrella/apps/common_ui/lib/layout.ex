@@ -33,7 +33,8 @@ defmodule CommonUI.Layout do
         class="fixed inset-0 z-40 flex md:hidden"
         role="dialog"
         aria-modal="true"
-        x-show.transition="menuOpen"
+        x-show="menuOpen"
+        x-transition
       >
         <!--
           Off-canvas menu overlay, show/hide based on off-canvas menu state.

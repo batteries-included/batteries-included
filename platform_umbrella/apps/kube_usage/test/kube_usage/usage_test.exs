@@ -1,10 +1,10 @@
-defmodule ControlServer.UsageTest do
-  use ControlServer.DataCase
+defmodule KubeUsage.UsageTest do
+  use KubeUsage.DataCase
 
-  alias ControlServer.Usage
+  alias KubeUsage.Usage
 
   describe "usage_reports" do
-    alias ControlServer.Usage.UsageReport
+    alias KubeUsage.Usage.UsageReport
 
     @valid_attrs %{namespace_report: %{}, node_report: %{}, num_nodes: 42, num_pods: 65}
     @update_attrs %{namespace_report: %{}, node_report: %{}, num_nodes: 43, num_pods: 69}
@@ -54,9 +54,9 @@ defmodule ControlServer.UsageTest do
       assert_raise Ecto.NoResultsError, fn -> Usage.get_usage_report!(usage_report.id) end
     end
 
-    test "change_usage_report/1 returns a usage_report changeset" do
-      usage_report = usage_report_fixture()
-      assert %Ecto.Changeset{} = Usage.change_usage_report(usage_report)
-    end
+    # test "change_usage_report/1 returns a usage_report changeset" do
+    #   usage_report = usage_report_fixture()
+    #   assert %Ecto.Changeset{} = Usage.change_usage_report(usage_report)
+    # end
   end
 end

@@ -40,7 +40,7 @@ defmodule ControlServer.MixProject do
       {:jason, "~> 1.0"},
 
       # SQL
-      {:phoenix_ecto, "~> 4.1"},
+      {:phoenix_ecto, "~> 4.3"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
 
@@ -58,14 +58,12 @@ defmodule ControlServer.MixProject do
       # Time
       {:timex, "~> 3.7"},
       {:home_base_client, in_umbrella: true},
+      {:event_center, in_umbrella: true},
 
       ## Dev/Test only deps
 
       # Auth
       {:phx_gen_auth, "~> 0.7", only: [:dev], runtime: false},
-
-      # Dev reload for phoenix
-      {:phoenix_live_reload, "~> 1.3", only: :dev},
 
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},

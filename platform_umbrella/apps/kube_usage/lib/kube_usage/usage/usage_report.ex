@@ -1,11 +1,12 @@
-defmodule ControlServer.Usage.UsageReport do
+defmodule KubeUsage.Usage.UsageReport do
   @moduledoc """
   Database backing for usage reports used to determine what's
   running how it's configured and what should be billed.
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias ControlServer.Usage.KubeUsage
+
+  require Logger
 
   @timestamps_opts [type: :utc_datetime_usec]
 
@@ -33,8 +34,10 @@ defmodule ControlServer.Usage.UsageReport do
   end
 
   defp maybe_add_lazy(changeset, field, compute_fun) do
-    case get_change(changeset, field) do
+    case get_field(changeset, field) do
       nil ->
+        Logger.warn("XX empty")
+
         put_change(
           changeset,
           field,

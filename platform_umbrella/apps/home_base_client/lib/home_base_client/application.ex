@@ -8,8 +8,6 @@ defmodule HomeBaseClient.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Phoenix.PubSub, name: HomeBaseClient.EventCenter.PubSub},
-      # Starts a worker by calling: HomeBaseClient.Worker.start_link(arg)
       {HomeBaseClient.Reporter, name: HomeBaseClient.Reporter}
     ]
 

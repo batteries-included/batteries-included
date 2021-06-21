@@ -1,22 +1,22 @@
 <div
-  class="h-screen bg-gray-50 flex overflow-hidden"
+  class="flex h-screen overflow-hidden bg-gray-50"
   x-data="{menuOpen: false}"
 >
   <!-- Narrow sidebar -->
-  <div class="hidden w-28 overflow-y-auto md:block bg-astral-700">
-    <div class="w-full py-6 flex flex-col items-center">
-      <div class="flex-shrink-0 flex items-center">
+  <div class="hidden overflow-y-auto w-28 md:block bg-astral-700">
+    <div class="flex flex-col items-center w-full py-6">
+      <div class="flex items-center flex-shrink-0">
         <img
-          class="h-8 w-auto"
+          class="w-auto h-8"
           src="/images/logo.2.clip.png"
           alt="Batteries Included"
         />
       </div>
-      <div class="flex-1 mt-6 w-full px-2 space-y-1 bg-astral-700">
+      <div class="flex-1 w-full px-2 mt-6 space-y-1 bg-astral-700">
         <%= live_patch to: "/usage_reports", class: "bg-astral-800 text-pink-500 hover:bg-astral-900 hover:text-white group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium" do %>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-white"
+            class="w-6 h-6 text-white"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -36,7 +36,7 @@
                          "text-white hover:bg-astral-900 hover:text-pink-500 group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium" do %>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-white"
+            class="w-6 h-6 text-white"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -63,7 +63,8 @@
     class="fixed inset-0 z-40 flex md:hidden"
     role="dialog"
     aria-modal="true"
-    x-show.transition="menuOpen"
+    x-show="menuOpen"
+    x-transition
   >
     <!--
       Off-canvas menu overlay, show/hide based on off-canvas menu state.
@@ -78,20 +79,20 @@
       Off-canvas menu, show/hide based on off-canvas menu state.
     -->
     <div
-      class="relative max-w-xs w-full bg-astral-700 pt-5 pb-4 flex-1 flex flex-col"
+      class="relative flex flex-col flex-1 w-full max-w-xs pt-5 pb-4 bg-astral-700"
     >
       <!--
         Close button, show/hide based on off-canvas menu state.
       -->
-      <div class="absolute top-1 right-0 -mr-14 p-1">
+      <div class="absolute right-0 p-1 top-1 -mr-14">
         <button
           type="button"
-          class="h-12 w-12 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white"
+          class="flex items-center justify-center w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-white"
           x-on:click="menuOpen = false"
         >
           <!-- Heroicon name: outline/x -->
           <svg
-            class="h-6 w-6 text-white"
+            class="w-6 h-6 text-white"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -109,16 +110,16 @@
         </button>
       </div>
       <!-- Logo -->
-      <div class="flex-shrink-0 px-4 flex items-center">
+      <div class="flex items-center flex-shrink-0 px-4">
         <img
-          class="h-8 w-auto"
+          class="w-auto h-8"
           src="/images/logo.png"
           alt="Batteries Included"
         />
       </div>
 
-      <div class="mt-5 flex-1 h-0 px-2 overflow-y-auto">
-        <nav class="h-full flex flex-col">
+      <div class="flex-1 h-0 px-2 mt-5 overflow-y-auto">
+        <nav class="flex flex-col h-full">
           <div class="space-y-1">
             <!-- Menu Items for mobile menu -->
 
@@ -127,7 +128,7 @@
                              "text-pink-500 bg-astral-800 hover:bg-astral-900 hover:text-white group py-2 px-3 rounded-md flex items-center text-sm font-medium" do %>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="text-white mr-3 h-6 w-6"
+                class="w-6 h-6 mr-3 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -148,7 +149,7 @@
                              "text-hwite hover:bg-astral-800 hover:text-pink-500 group py-2 px-3 rounded-md flex items-center text-sm font-medium" do %>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 text-white mr-3"
+                class="w-6 h-6 mr-3 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -176,20 +177,20 @@
   <!--
     Main content pane
    -->
-  <div class="flex-1 flex flex-col overflow-hidden">
+  <div class="flex flex-col flex-1 overflow-hidden">
     <header class="w-full">
       <div
-        class="relative z-10 flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm flex"
+        class="relative z-10 flex flex-shrink-0 h-16 bg-white border-gray-200 shadow-sm"
       >
         <button
           type="button"
-          class="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500 md:hidden"
+          class="px-4 text-gray-500 border-r border-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500 md:hidden"
           x-on:click="menuOpen = true"
         >
           <span class="sr-only">Open sidebar</span>
           <!-- Heroicon name: outline/menu-alt-2 -->
           <svg
-            class="h-6 w-6"
+            class="w-6 h-6"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -207,9 +208,9 @@
       </div>
     </header>
 
-    <div class="flex-1 flex items-stretch overflow-hidden">
+    <div class="flex items-stretch flex-1 overflow-hidden">
       <main class="flex-1 overflow-y-auto">
-        <div class="pt-8 px-4 sm:px-6 lg:px-8">
+        <div class="px-4 pt-8 sm:px-6 lg:px-8">
           <%= if info = live_flash(@flash, :info) do %>
             <p
               class="alert alert-info"

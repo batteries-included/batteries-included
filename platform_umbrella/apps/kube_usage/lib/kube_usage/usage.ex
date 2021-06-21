@@ -1,12 +1,12 @@
-defmodule ControlServer.Usage do
+defmodule KubeUsage.Usage do
   @moduledoc """
   The Usage context.
   """
 
   import Ecto.Query, warn: false
 
-  alias ControlServer.Repo
-  alias ControlServer.Usage.UsageReport
+  alias KubeUsage.Repo
+  alias KubeUsage.Usage.UsageReport
 
   @doc """
   Returns the list of usage_reports.

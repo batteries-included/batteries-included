@@ -24,6 +24,12 @@ postgres_database =
     Need the database name env variable POSTGRES_DB
     """
 
+postgres_host =
+  System.get_env("POSTGRES_HOST") ||
+    raise """
+    Need the database host in env variable POSTGRES_HOST
+    """
+
 secret_key_base =
   System.get_env("SECRET_KEY_BASE") ||
     raise """
@@ -31,12 +37,21 @@ secret_key_base =
     You can generate one by calling: mix phx.gen.secret
     """
 
+config :kube_usage, KubeUsage.Repo,
+  ssl: false,
+  username: postgres_username,
+  password: postgres_password,
+  database: postgres_database,
+  hostname: postgres_host,
+  port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "3")
+
 config :control_server, ControlServer.Repo,
   ssl: false,
   username: postgres_username,
   password: postgres_password,
   database: postgres_database,
-  hostname: System.get_env("POSTGRES_HOST") || "localhost",
+  hostname: postgres_host,
   port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
@@ -45,7 +60,7 @@ config :home_base, HomeBase.Repo,
   username: postgres_username,
   password: postgres_password,
   database: postgres_database,
-  hostname: System.get_env("POSTGRES_HOST") || "localhost",
+  hostname: postgres_host,
   port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 

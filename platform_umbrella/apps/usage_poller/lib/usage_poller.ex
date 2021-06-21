@@ -1,11 +1,10 @@
-defmodule ControlServer.Usage.UsagePoller do
+defmodule UsagePoller do
   @moduledoc """
-  Everyonce in a while poll and report current usage
+  Every once in a while poll and report current usage
   """
   use GenServer
 
-  alias ControlServer.Usage
-  alias HomeBaseClient.EventCenter
+  alias KubeUsage.Usage
 
   require Logger
 
@@ -35,7 +34,7 @@ defmodule ControlServer.Usage.UsagePoller do
         "Polling current usage found nodes = #{report.num_nodes} pods = #{report.num_pods} report id = #{report.id}"
       )
 
-      with :ok <- EventCenter.broadcast(:usage_report, prepare_usage(report)) do
+      with :ok <- EventCenter.Usage.broadcast(:usage_report, prepare_usage(report)) do
         :ok
       end
     end

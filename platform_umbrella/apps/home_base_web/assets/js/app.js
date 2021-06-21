@@ -5,7 +5,7 @@ import 'phoenix_html';
 import { Socket } from 'phoenix';
 import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
-import Alpinejs from 'alpinejs';
+import Alpine from 'alpinejs';
 import BillingChart from './billing_chart';
 
 const csrfToken = document
@@ -14,8 +14,10 @@ const csrfToken = document
 const liveSocket = new LiveSocket('/live', Socket, {
   dom: {
     onBeforeElUpdated(from, to) {
-      if (from.__x) {
-        Alpinejs.clone(from.__x, to);
+      if (from) {
+        if (from._x_dataStack) {
+          window.Alpine.clone(from, to);
+        }
       }
     },
   },
@@ -39,3 +41,6 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+
+window.Alpine = Alpine;
+Alpine.start();

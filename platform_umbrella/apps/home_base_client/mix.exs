@@ -30,9 +30,7 @@ defmodule HomeBaseClient.MixProject do
       # Http client
       {:tesla, "~> 1.4.0"},
       {:jason, "~> 1.2"},
-
-      # listen for when there's stuff to report to homebase.
-      {:phoenix_pubsub, "~> 2.0"}
+      {:event_center, in_umbrella: true}
     ]
   end
 
