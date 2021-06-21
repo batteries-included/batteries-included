@@ -9,7 +9,7 @@ version = "0.1.0"
 [dependencies]
 
 futures = "0.3.15"
-tokio = { version = "1.7.0", features = ["full"] }
+tokio = { version = "1.7.1", features = ["full"] }
 
 # Error handling
 thiserror = "1.0.25"
