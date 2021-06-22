@@ -1,0 +1,6 @@
+tailwind.config.js
+.prettier.js
+postcss.config.js
+out/
+node_modules/
+.next/

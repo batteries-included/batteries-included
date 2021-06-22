@@ -38,7 +38,11 @@
     "files.trimFinalNewlines": true
   },
   "prettier.requireConfig": false,
-  "prettier.prettierPath": "./platform_umbrella/apps/control_server_web/assets/node_modules/prettier",
+  "prettier.prettierPath": "./static_pages/node_modules/prettier",
+   "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+
   "cSpell.words": [
     "Alertmanager",
     "Grafana",
@@ -49,4 +53,6 @@
     "csrf",
     "topbar"
   ],
+
+
 }
