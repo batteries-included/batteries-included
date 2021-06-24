@@ -2,8 +2,21 @@
 import '../styles/globals.css';
 
 import type { AppProps } from 'next/app';
+import { FunctionComponent, useEffect } from 'react';
+import TagManager from 'react-gtm-module';
 
-function BatteriesIncluded({ Component, pageProps }: AppProps) {
+const tagManagerArgs = {
+  gtmId: 'G-Q2NSHQYFR7',
+};
+
+const BatteriesIncluded: FunctionComponent<AppProps> = ({
+  Component,
+  pageProps,
+}) => {
+  useEffect(() => {
+    TagManager.initialize(tagManagerArgs);
+  }, []);
+
   return <Component {...pageProps} />;
-}
+};
 export default BatteriesIncluded;

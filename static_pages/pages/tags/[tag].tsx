@@ -50,9 +50,7 @@ type StaticParams = {
   params: InnerStaticParams;
 };
 const getStaticProps = async ({ params }: StaticParams) => {
-  const posts = await (
-    await getAllPosts()
-  ).filter(
+  const posts = (await getAllPosts()).filter(
     (post: Post) =>
       post.draft !== true &&
       post.tags.map((t: string) => kebabCase(t)).includes(params.tag)
