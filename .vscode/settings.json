@@ -29,6 +29,14 @@
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[markdown]": {
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 80
+  },
+  "[mdx]": {
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 80
+  },
   "[html-eex]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "breadcrumbs.showEvents": true,

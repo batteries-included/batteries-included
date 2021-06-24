@@ -1,18 +1,27 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['simple-import-sort', '@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'import', 'simple-import-sort', 'prettier'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ['./tsconfig.json'],
   },
+  env: {
+    node: true,
+    browser: false,
+  },
   extends: [
-    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
     'next',
     'next/core-web-vitals',
     'airbnb-typescript',
     'airbnb-typescript-prettier',
   ],
+  settings: {
+    'import/resolver': {
+      typescript: {},
+    },
+  },
   rules: {
     'prettier/prettier': ['error'],
     'react/react-in-jsx-scope': 'off',
@@ -45,5 +54,5 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     '@next/next/no-img-element': 'off',
   },
-  ignorePatterns: ['.eslintrc.js', 'next.config.js', ],
+  ignorePatterns: ['.eslintrc.js', 'next.config.js', 'out/'],
 };

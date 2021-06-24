@@ -31,8 +31,6 @@ const violetRed = {
   900: '#7b1f44',
 };
 module.exports = {
-
-  
   mode: 'jit',
   purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
