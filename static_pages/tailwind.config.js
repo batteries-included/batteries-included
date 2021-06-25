@@ -58,6 +58,26 @@ module.exports = {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            a: {
+              color: theme('colors.pink.500'),
+              '&:hover': {
+                color: theme('colors.pink.600'),
+              },
+              code: { color: theme('colors.blue.400') },
+            },
+            pre: false,
+            code: false,
+            'code::before': false,
+            'code::after': false,
+            'pre code': false,
+            'pre code::before': false,
+            'pre code::after': false,
+          },
+        },
+      }),
     },
   },
   variants: {

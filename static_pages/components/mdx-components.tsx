@@ -1,7 +1,7 @@
-import CustomLink from './link';
+import Link from './link';
 
 const MDXComponents = {
-  a: CustomLink,
+  a: Link,
 };
 
 export default MDXComponents;

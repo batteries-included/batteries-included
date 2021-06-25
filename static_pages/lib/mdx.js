@@ -1,6 +1,6 @@
-import rehypePrism from '@mapbox/rehype-prism';
 import fs from 'fs';
 import matter from 'gray-matter';
+import rehypePrism from 'mdx-prism';
 import { serialize } from 'next-mdx-remote/serialize';
 import path from 'path';
 import readingTime from 'reading-time';
@@ -10,24 +10,9 @@ import remarkCode from 'remark-code-titles';
 import remarkMath from 'remark-math';
 import remarkSlug from 'remark-slug';
 
-// import visit from 'unist-util-visit';
 import getAllFilesRecursively from '@/lib/utils/files';
 
 const root = process.cwd();
-
-// const tokenClassNames = {
-//   tag: 'text-code-red',
-//   'attr-name': 'text-code-yellow',
-//   'attr-value': 'text-code-green',
-//   deleted: 'text-code-red',
-//   inserted: 'text-code-green',
-//   punctuation: 'text-code-white',
-//   keyword: 'text-code-purple',
-//   string: 'text-code-green',
-//   function: 'text-code-blue',
-//   boolean: 'text-code-red',
-//   comment: 'text-gray-400 italic',
-// };
 
 export function getFiles(type) {
   const prefixPaths = path.join(root, type);
@@ -48,9 +33,9 @@ export function dateSortDesc(a, b) {
   return 0;
 }
 
-export async function getFileBySlug(type, slug) {
-  const mdxPath = path.join(root, type, `${slug}.mdx`);
-  const mdPath = path.join(root, type, `${slug}.md`);
+export async function getFileBySlug(markdownFolder, slug) {
+  const mdxPath = path.join(root, markdownFolder, `${slug}.mdx`);
+  const mdPath = path.join(root, markdownFolder, `${slug}.md`);
   const source = fs.existsSync(mdxPath)
     ? fs.readFileSync(mdxPath, 'utf8')
     : fs.readFileSync(mdPath, 'utf8');
@@ -59,20 +44,7 @@ export async function getFileBySlug(type, slug) {
   const mdxSource = await serialize(content, {
     mdxOptions: {
       remarkPlugins: [remarkSlug, remarkAutolink, remarkCode, remarkMath],
-      rehypePlugins: [
-        rehypeKatex,
-        rehypePrism,
-        // () => {
-        //   return (tree) => {
-        //     visit(tree, 'element', (node, _index, _parent) => {
-        //       const [token, type] = node.properties.className || [];
-        //       if (token === 'token') {
-        //         node.properties.className = [tokenClassNames[type]];
-        //       }
-        //     });
-        //   };
-        // },
-      ],
+      rehypePlugins: [rehypeKatex, rehypePrism],
     },
   });
 
