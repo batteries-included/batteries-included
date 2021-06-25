@@ -5,9 +5,7 @@ import type { AppProps } from 'next/app';
 import { FunctionComponent, useEffect } from 'react';
 import TagManager from 'react-gtm-module';
 
-const tagManagerArgs = {
-  gtmId: 'G-Q2NSHQYFR7',
-};
+const tagManagerArgs = { gtmId: 'GTM-W9W5RW2' };
 
 const BatteriesIncluded: FunctionComponent<AppProps> = ({
   Component,
