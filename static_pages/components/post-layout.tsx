@@ -13,7 +13,7 @@ import siteMetadata from '@/lib/site-metadata';
 import MainLayout from './main-layout';
 
 const discussUrl = (slug: string) =>
-  `https://mobile.twitter.com/search?q=${encodeURIComponent(
+  `https://twitter.com/intent/tweet?url=${encodeURIComponent(
     `${siteMetadata.siteUrl}/posts/${slug}`
   )}`;
 
