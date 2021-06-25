@@ -6,8 +6,6 @@ const Logo = () => {
       <img
         src="/logo.2.clip.png"
         alt="Batteries Included"
-        width="40"
-        height="40"
         className="m-1 w-7 h-7"
       />
     </Link>
