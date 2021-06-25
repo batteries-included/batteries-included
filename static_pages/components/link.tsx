@@ -24,7 +24,12 @@ const CustomLink: FunctionComponent<Props> = ({ href, children, ...rest }) => {
   }
 
   return (
-    <a target="_blank" rel="noopener noreferrer" href={`${href}`} {...rest}>
+    <a
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      href={`${href}`}
+      {...rest}
+    >
       {children}
     </a>
   );
