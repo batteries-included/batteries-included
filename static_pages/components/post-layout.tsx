@@ -13,7 +13,7 @@ import siteMetadata from '@/lib/site-metadata';
 import MainLayout from './main-layout';
 
 const discussUrl = (slug: string) =>
-  `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+  `https://twitter.com/intent/tweet?via=batteriesincl&url=${encodeURIComponent(
     `${siteMetadata.siteUrl}/posts/${slug}`
   )}`;
 
