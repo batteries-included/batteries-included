@@ -6,7 +6,7 @@ const Logo = () => {
       <img
         src="/logo.2.clip.png"
         alt="Batteries Included"
-        className="m-1 w-7 h-7"
+        className="w-auto h-8 m-1"
       />
     </Link>
   );
