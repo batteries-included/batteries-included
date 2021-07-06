@@ -78,7 +78,7 @@ dependencies = [
  "common",
  "futures",
  "k8s-openapi",
- "kube",
+ "kube 0.58.0",
  "tokio",
  "tracing",
 ]
@@ -89,7 +89,7 @@ version = "0.1.0"
 dependencies = [
  "futures",
  "k8s-openapi",
- "kube",
+ "kube 0.58.0",
  "kube-runtime",
  "reqwest",
  "schemars",
@@ -579,10 +579,42 @@ dependencies = [
  "http-body",
  "hyper",
  "hyper-timeout",
+ "jsonpath_lib",
+ "k8s-openapi",
+ "kube-core 0.57.0",
+ "pem",
+ "pin-project 1.0.6",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror",
+ "tokio",
+ "tokio-util",
+ "tower",
+ "tower-http",
+ "tracing",
+]
+
+[[package]]
+name = "kube"
+version = "0.58.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "161c4d92deb2f83f0086367e60c1ef3d5309d833769714e3bd0ec4c906e86a48"
+dependencies = [
+ "base64",
+ "bytes",
+ "chrono",
+ "dirs-next",
+ "either",
+ "futures",
+ "http",
+ "http-body",
+ "hyper",
+ "hyper-timeout",
  "hyper-tls",
  "jsonpath_lib",
  "k8s-openapi",
- "kube-core",
+ "kube-core 0.58.0",
  "kube-derive",
  "openssl",
  "pem",
@@ -614,10 +646,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "kube-derive"
-version = "0.57.0"
+name = "kube-core"
+version = "0.58.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6d0e5489859d9430689f64e69cacc9bf8cb68556f436c73a6a308d4e256b7a0"
+checksum = "72518b03d712bdcd58c9d42a12dc58b274b55a4a41d629b2de9f7edac55ad454"
+dependencies = [
+ "form_urlencoded",
+ "http",
+ "k8s-openapi",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "kube-derive"
+version = "0.58.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f8012695d47add0f4ba3dca3e2b298b1349693e8e0453170e0e7c4b0915b643"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -636,7 +682,7 @@ dependencies = [
  "derivative",
  "futures",
  "k8s-openapi",
- "kube",
+ "kube 0.57.0",
  "pin-project 1.0.6",
  "serde",
  "smallvec",
@@ -1477,10 +1523,11 @@ dependencies = [
 
 [[package]]
 name = "tower-http"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c58e177fa381489c0eb101ed27fb4233ba5cbe548226f439dd22853f9383bc26"
+checksum = "0b7b56efe69aa0ad2b5da6b942e57ea9f6fe683b7a314d4ff48662e2c8838de1"
 dependencies = [
+ "base64",
  "bytes",
  "futures-core",
  "futures-util",
