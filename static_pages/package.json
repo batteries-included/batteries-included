@@ -43,7 +43,7 @@
     "@typescript-eslint/parser": "^4.28.2",
     "autoprefixer": "^10.2.6",
     "babel-plugin-module-resolver": "^4.1.0",
-    "eslint": "^7.29.0",
+    "eslint": "^7.30.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-airbnb-typescript-prettier": "^4.2.0",
