@@ -26,7 +26,7 @@ defmodule ControlServer.Umbrella.MixProject do
       {:credo_naming, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:surface_formatter, github: "surface-ui/surface_formatter", only: :dev, runtime: false},
+      {:surface_formatter, "~> 0.5.1", only: :dev, runtime: false},
       {:surface_catalogue, "~> 0.1.0", only: [:dev, :test]},
       {:sobelow, "~> 0.8", only: :dev},
       {:excoveralls, "~> 0.14", only: :test}
