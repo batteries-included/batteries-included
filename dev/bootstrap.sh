@@ -23,25 +23,23 @@ retry() {
   local n=1
   local max=10
   local delay=30
-  local start=`date +%s`
 
   while true; do
-    start=`date +%s`
     "$@" && break || {
       local code=$?
-      local end=`date +%s`
-      local runtime=$((end-start))
       if [[ $n -lt $max ]]; then
 
-        if [[ $runtime -gt 300 ]]; then
+        # timeout replaces the exit code with 124 according to the man page
+        # Lets exploit that.
+        # Explicitly treat timeouts as not failures.
+        # Then in portForward() we timeout just before the idle time. (5 min/300s)
+        if [[ $code -eq 124 ]]; then
           echo "Looks command timed out. Not counting it"
-          sleep 1
         else
           ((n++))
           echo "Failed. $n/$max"
-        fi
-
         sleep $delay
+        fi
       else
         error ${LINENO} "The command has failed after $n attempts."
       fi
@@ -55,16 +53,12 @@ portForward() {
   local namespace=$3
 
   if kubectl get ns "${namespace}"; then
-    # So this is fun. It seems like
-    # `portforward.go:233] lost connection to pod` error messages procede a 0 exit code...
-    #
-    # So since this is likely something to always run. We assume the exiting is bad.
-    # it's a hack for until most of this is self hosted in k8s.
+
     set +e
-    kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0
+    timeout 280s kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0
     local code=$?
     set -e
-    echo "Exited with error code ${code}"
+    echo "Exited"
     return ${code}
   else
     return 0
@@ -75,14 +69,22 @@ postgresForward() {
   local cluster=$1
   local port=$2
   local ns=${3:-"battery-db"}
-  local pod=$(kubectl get pods -o jsonpath={.items..metadata.name} -n ${ns} -l application=spilo -l battery-cluster-name=${cluster} -l spilo-role=master)
+  local pod=$(kubectl \
+            get pods \
+            -o jsonpath={.items..metadata.name} \
+            -n ${ns} -l application=spilo \
+            -l battery-cluster-name=${cluster} \
+            -l spilo-role=master)
   portForward "pods/${pod}" "${port}:5432" ${ns}
 }
 
 resetPasswordEnv() {
   local cluster=$1
   local user=${2:-postgres}
-  local password=$(kubectl get secrets -n battery-db ${user}.${cluster}.credentials.postgresql.acid.zalan.do -o 'jsonpath={.data.password}' | base64 -d)
+  local password=$(kubectl 
+        get secrets \
+        -n battery-db ${user}.${cluster}.credentials.postgresql.acid.zalan.do \
+        -o 'jsonpath={.data.password}' | base64 -d)
   echo "export POSTGRES_PASSWORD='${password}'" >${DIR}/../platform_umbrella/.envrc
 }
 
