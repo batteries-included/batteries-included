@@ -21,19 +21,29 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 retry() {
   local n=1
-  local max=20
+  local max=10
   local delay=30
+  local start=`date +%s`
 
   while true; do
+    start=`date +%s`
     "$@" && break || {
       local code=$?
+      local end=`date +%s`
+      local runtime=$((end-start))
       if [[ $n -lt $max ]]; then
-        ((n++))
-        echo "Failed. $n/$max"
+
+        if [[ $runtime -gt 300 ]]; then
+          echo "Looks command timed out. Not counting it"
+          sleep 1
+        else
+          ((n++))
+          echo "Failed. $n/$max"
+        fi
+
         sleep $delay
       else
         error ${LINENO} "The command has failed after $n attempts."
-        return ${code}
       fi
     }
   done
