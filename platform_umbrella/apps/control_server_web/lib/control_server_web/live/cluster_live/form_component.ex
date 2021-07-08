@@ -4,7 +4,6 @@ defmodule ControlServerWeb.ClusterLive.FormComponent do
   """
   use ControlServerWeb, :live_component
 
-  alias ControlServer.KubeServices
   alias ControlServer.Postgres
 
   @impl true
@@ -34,8 +33,6 @@ defmodule ControlServerWeb.ClusterLive.FormComponent do
   defp save_cluster(socket, :edit, cluster_params) do
     case Postgres.update_cluster(socket.assigns.cluster, cluster_params) do
       {:ok, _cluster} ->
-        KubeServices.start_apply()
-
         {:noreply,
          socket
          |> put_flash(:info, "Cluster updated successfully")
@@ -49,8 +46,6 @@ defmodule ControlServerWeb.ClusterLive.FormComponent do
   defp save_cluster(socket, :new, cluster_params) do
     case Postgres.create_cluster(cluster_params) do
       {:ok, _cluster} ->
-        KubeServices.start_apply()
-
         {:noreply,
          socket
          |> put_flash(:info, "Cluster created successfully")

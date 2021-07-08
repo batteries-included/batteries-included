@@ -10,7 +10,7 @@ common_checks = [
   {Credo.Check.Readability.AliasOrder},
   {Credo.Check.Readability.FunctionNames},
   {Credo.Check.Readability.LargeNumbers},
-  {Credo.Check.Readability.MaxLineLength, max_length: 200},
+  {Credo.Check.Readability.MaxLineLength, max_length: 150},
   {Credo.Check.Readability.ModuleAttributeNames},
   {Credo.Check.Readability.ModuleDoc, false},
   {Credo.Check.Readability.ModuleNames},

@@ -1,7 +1,7 @@
-defmodule ControlServer.Controller.V1.BatteryClusterTest do
+defmodule KubeController.V1.BatteryClusterTest do
   @moduledoc false
   use ExUnit.Case, async: false
-  alias ControlServer.Controller.V1.BatteryCluster
+  alias KubeController.V1.BatteryCluster
 
   describe "add/1" do
     test "returns :ok" do

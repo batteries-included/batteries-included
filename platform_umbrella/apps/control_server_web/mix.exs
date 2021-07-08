@@ -51,7 +51,7 @@ defmodule ControlServerWeb.MixProject do
       {:kube_usage, in_umbrella: true},
       # Components
       {:surface, "~> 0.5.0"},
-      {:surface_catalogue, "~> 0.1.0", only: [:dev, :test]},
+      {:surface_catalogue, "~> 0.1.0"},
       {:common_ui, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"}

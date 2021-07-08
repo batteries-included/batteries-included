@@ -1,10 +1,8 @@
-defmodule ControlServer.Controller.V1.BatteryCluster do
+defmodule KubeController.V1.BatteryCluster do
   @moduledoc """
   ControlServer: BatteryCluster CRD.
   """
   use Bonny.Controller
-
-  alias ControlServer.KubeServices
 
   require Logger
 

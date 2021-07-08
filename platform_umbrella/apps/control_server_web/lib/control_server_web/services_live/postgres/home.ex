@@ -6,7 +6,6 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   use Timex
 
   alias CommonUI.Button
-  alias ControlServer.KubeServices
   alias ControlServer.Postgres
   alias ControlServer.Services
   alias ControlServer.Services.Pods
@@ -54,7 +53,6 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   @impl true
   def handle_event("start_service", _, socket) do
     {:ok, _service} = Services.Database.activate()
-    KubeServices.start_apply()
 
     {:noreply, assign(socket, :running, true)}
   end

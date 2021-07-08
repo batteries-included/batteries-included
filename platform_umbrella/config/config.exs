@@ -65,7 +65,7 @@ config :phoenix, :json_library, Jason
 
 config :bonny,
   controllers: [
-    ControlServer.Controller.V1.BatteryCluster
+    KubeController.V1.BatteryCluster
   ],
   cluster_name: :default,
   # Also configurable via environment variable `BONNY_POD_NAMESPACE`
@@ -85,4 +85,4 @@ config :bonny,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"

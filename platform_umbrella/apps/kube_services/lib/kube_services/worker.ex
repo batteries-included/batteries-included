@@ -1,11 +1,10 @@
-defmodule ControlServer.KubeServices do
+defmodule KubeServices.Worker do
   @moduledoc """
   Module to interact with BaseService and Kubernetes resources.
   """
   use GenServer
 
   alias ControlServer.ConfigGenerator
-  alias ControlServer.KubeExt
   alias ControlServer.Services
 
   require Logger
@@ -54,13 +53,5 @@ defmodule ControlServer.KubeServices do
       end)
 
     Logger.debug("Completed apply_all with #{length(resources)} resources")
-  end
-
-  def start_apply do
-    GenServer.cast(__MODULE__, :apply)
-  end
-
-  def apply do
-    GenServer.call(__MODULE__, :apply_now, 10_000)
   end
 end

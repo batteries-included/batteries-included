@@ -55,6 +55,7 @@
     "Alertmanager",
     "Grafana",
     "Juypter",
+    "Kube",
     "Logstash",
     "Pytorch",
     "alpinejs",
