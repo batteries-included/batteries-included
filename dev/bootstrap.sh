@@ -23,22 +23,22 @@ retry() {
   local n=1
   local max=10
   local delay=30
+  local start=`date +%s`
 
   while true; do
+    start=`date +%s`
     "$@" && break || {
       local code=$?
+      local end=`date +%s`
+      local runtime=$((end-start))
       if [[ $n -lt $max ]]; then
-
-        # timeout replaces the exit code with 124 according to the man page
-        # Lets exploit that.
         # Explicitly treat timeouts as not failures.
-        # Then in portForward() we timeout just before the idle time. (5 min/300s)
-        if [[ $code -eq 124 ]]; then
+        if [[ $runtime -gt 200 ]]; then
           echo "Looks command timed out. Not counting it"
         else
           ((n++))
           echo "Failed. $n/$max"
-        sleep $delay
+          sleep $delay
         fi
       else
         error ${LINENO} "The command has failed after $n attempts."
@@ -55,7 +55,7 @@ portForward() {
   if kubectl get ns "${namespace}"; then
 
     set +e
-    timeout 280s kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0
+    kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0
     local code=$?
     set -e
     echo "Exited"
