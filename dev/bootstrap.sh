@@ -59,7 +59,7 @@ portForward() {
     local code=$?
     set -e
     echo "Exited"
-    return ${code}
+    return 1
   else
     return 0
   fi
