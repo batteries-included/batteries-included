@@ -50,7 +50,7 @@ defmodule ControlServer.MixProject do
       # Kubernetes
       {:bonny, "~> 0.4"},
       {:httpoison, "~> 1.4"},
-      {:poison, "~> 4.0"},
+      {:poison, "~> 5.0"},
 
       # Yaml
       {:yaml_elixir, "~> 2.6"},
