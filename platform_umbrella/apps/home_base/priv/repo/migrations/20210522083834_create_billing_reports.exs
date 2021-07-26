@@ -18,6 +18,6 @@ defmodule HomeBase.Repo.Migrations.CreateBillingReports do
       timestamps(type: :utc_datetime_usec)
     end
 
-    create index(:billing_reports, [:stripe_subscription_id])
+    create index(:billing_reports, [:stripe_subscription_id], unique: true)
   end
 end

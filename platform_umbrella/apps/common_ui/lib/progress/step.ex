@@ -8,7 +8,7 @@ defmodule CommonUI.Progress.Step do
 
   prop(change, :event, required: false)
 
-  @base_border ~W(flex flex-col py-2 pl-4 "border-l-4 md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-4)
+  @base_border ~W(flex flex-col py-2 pl-4 border-l-4 md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-4)
   @done_border ~W(border-pink-600 group hover:border-pink-800)
   @todo_border ~W( border-gray-200 group hover:border-gray-300)
 

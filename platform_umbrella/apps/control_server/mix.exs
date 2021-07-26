@@ -9,7 +9,7 @@ defmodule ControlServer.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.7",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -48,7 +48,7 @@ defmodule ControlServer.MixProject do
       {:filtrex, "~> 0.4.3"},
 
       # Kubernetes
-      {:bonny, "~> 0.4"},
+      {:k8s, "~> 0.4.0"},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
 

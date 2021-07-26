@@ -3,11 +3,14 @@ defmodule CommonUI.Layout do
 
   alias CommonUI.Layout.CloseSidebarButton
   alias CommonUI.Layout.OpenSidebarButton
+  alias Surface.Components.Link
 
-  slot(default, required: true)
-  slot(main_menu)
-  slot(mobile_menu)
-  prop(bg_class, :string, default: "bg-white")
+  slot default, required: true
+  slot main_menu
+  slot mobile_menu
+  prop bg_class, :string, default: "bg-white"
+
+  prop logo_path, :string, default: "/"
 
   def render(assigns) do
     ~F"""
@@ -16,7 +19,9 @@ defmodule CommonUI.Layout do
       <div class={"hidden w-28 overflow-y-auto md:block #{@bg_class}"}>
         <div class="flex flex-col items-center w-full py-6">
           <div class="flex items-center flex-shrink-0">
-            <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included">
+            <Link to={@logo_path}>
+              <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included">
+            </Link>
           </div>
           <div class={"flex-1 mt-6 w-full px-2 space-y-1 #{@bg_class}"}>
             <#slot name="main_menu" />

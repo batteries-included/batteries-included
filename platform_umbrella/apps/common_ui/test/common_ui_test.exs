@@ -1,4 +1,4 @@
-defmodule CommonUITest do
+defmodule CommonUI.Test do
   use ExUnit.Case
   doctest CommonUI
 end

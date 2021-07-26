@@ -8,7 +8,7 @@ defmodule ControlServerWeb.ServicesLive.Prometheus do
   alias CommonUI.Button
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.Live.Layout
+  alias ControlServerWeb.Layout
 
   require Logger
 

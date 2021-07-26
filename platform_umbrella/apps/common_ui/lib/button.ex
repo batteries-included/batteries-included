@@ -4,43 +4,34 @@ defmodule CommonUI.Button do
   """
   use Surface.Component
 
+  alias CommonUI.Theme, as: T
+
   @doc "The content of the button"
-  slot(default)
-
+  slot default
   @doc "Triggered on click"
-  prop(click, :event)
-
+  prop click, :event
+  @doc "The base classes that all buttons normally contain"
+  prop base_class, :css_class, default: "items-center inline-flex"
   @doc "additional classes that can be added to the default"
-  prop(class, :css_class, default: [])
+  prop class, :css_class, default: ""
+  prop theme, :string, default: "default", values: ~w(default primary)
 
-  prop(phx_payload, :string, default: nil)
+  @doc "Add arbitrary attrs like multiple phx-value-* fields"
+  prop opts, :keyword, default: []
+
+  @doc """
+  The button type, defaults to "button", mainly used for instances like modal X to close style buttons
+  where you don't want to set a type at all. Setting to nil makes button have no type.
+  """
+  prop type, :string, default: "button"
 
   def render(assigns) do
     ~F"""
     <button
-      type="button"
+      type={@type}
       :on-click={@click}
-      phx-value-payload={@phx_payload}
-      class={[
-        "inline-flex",
-        "items-center",
-        "px-4",
-        "py-2",
-        "border",
-        "border-gray-300",
-        "rounded-md",
-        "shadow-sm",
-        "text-base",
-        "font-medium",
-        "text-gray-700",
-        "bg-white",
-        "hover:bg-gray-50",
-        "hover:border-pink-500",
-        "focus:outline-none",
-        "focus:ring-3",
-        "focus:ring-opacity-80",
-        "focus:ring-pink-500"
-      ] ++ @class}
+      class={[T.value(:button, @theme), @base_class, @class]}
+      {...@opts}
     >
       <#slot />
     </button>

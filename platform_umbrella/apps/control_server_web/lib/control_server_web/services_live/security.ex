@@ -8,7 +8,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
   alias CommonUI.Button
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.Live.Layout
+  alias ControlServerWeb.Layout
 
   require Logger
 
@@ -50,5 +50,40 @@ defmodule ControlServerWeb.ServicesLive.Security do
     {:ok, _service} = Services.Security.activate!()
 
     {:noreply, assign(socket, :running, true)}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~F"""
+    <Layout>
+      <div class="container">
+        <h2 class="mt-2 text-2xl font-bold leading-7 text-pink-500 sm:text-3xl sm:truncate">
+          Security
+        </h2>
+        <hr class="mt-4">
+        {#if @running}
+          <div class="mt-4 row">
+            <div class="col">
+              <ControlServerWeb.PodDisplay {=@pods} />
+            </div>
+          </div>
+        {#else}
+          <div class="mt-4 row">
+            <div class="col align-self-center">
+              The security service is not currently enabled on this Batteries included
+              cluster. To start installing please press the button.
+            </div>
+          </div>
+          <div class="row">
+            <div class="m-5 text-center col align-self-center">
+              <Button click="start_service">
+                Install
+              </Button>
+            </div>
+          </div>
+        {/if}
+      </div>
+    </Layout>
+    """
   end
 end

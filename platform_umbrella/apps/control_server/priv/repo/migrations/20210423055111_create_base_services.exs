@@ -11,5 +11,7 @@ defmodule ControlServer.Repo.Migrations.CreateBaseServices do
 
       timestamps(type: :utc_datetime_usec)
     end
+
+    create index(:base_services, [:root_path], unique: true)
   end
 end

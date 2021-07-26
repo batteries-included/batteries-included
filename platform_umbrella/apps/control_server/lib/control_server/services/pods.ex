@@ -17,7 +17,7 @@ defmodule ControlServer.Services.Pods do
     with {:ok, res} <-
            "v1"
            |> K8s.Client.list(:pods, namespace: namespace)
-           |> K8s.Client.run(Bonny.Config.cluster_name()) do
+           |> K8s.Client.run(:default) do
       Map.get(res, "items", [])
     end
   end

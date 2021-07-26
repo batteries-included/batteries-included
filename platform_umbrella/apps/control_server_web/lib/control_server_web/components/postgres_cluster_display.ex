@@ -54,7 +54,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
     </ShadowContainer>
 
     <LivePatch to="/services/database/clusters/new" class="ml-8 mt-15">
-      <Button>
+      <Button type="primary">
         New Cluster
       </Button>
     </LivePatch>
@@ -76,10 +76,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
 
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
         <span>
-          <LivePatch
-            to={Routes.cluster_index_path(@socket, :edit, cluster)}
-            class="mt-8 text-lg font-medium text-left"
-          >
+          <LivePatch to="/" class="mt-8 text-lg font-medium text-left">
             Edit Cluster
           </LivePatch>
         </span>

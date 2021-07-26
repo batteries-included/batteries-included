@@ -2,14 +2,14 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use Surface.LiveView
+  use ControlServerWeb, :surface_view
   use Timex
 
   alias CommonUI.Button
   alias ControlServer.Postgres
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.Live.Layout
+  alias ControlServerWeb.Layout
   alias ControlServerWeb.PostgresClusterDisplay
 
   require Logger
@@ -82,7 +82,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
           </div>
           <div class="row">
             <div class="m-5 text-center col align-self-center">
-              <Button click="start_service">
+              <Button opts={"phx-click": "start_service"} theme="primary">
                 Install
               </Button>
             </div>

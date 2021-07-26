@@ -11,7 +11,9 @@
 
   "files.associations": {
     "*.eex": "html-eex",
-    "*.leex": "html-eex"
+    "*.leex": "html-eex",
+    "*.ex": "elixir",
+    "*.sface": "elixir"
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
@@ -47,9 +49,9 @@
   },
   "prettier.requireConfig": false,
   "prettier.prettierPath": "./static_pages/node_modules/prettier",
-   "editor.codeActionsOnSave": {
-        "source.fixAll": true
-    },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
 
   "cSpell.words": [
     "Alertmanager",
@@ -59,9 +61,10 @@
     "Logstash",
     "Pytorch",
     "alpinejs",
+    "autogenerate",
     "csrf",
+    "datetime",
+    "noreply",
     "topbar"
-  ],
-
-
+  ]
 }

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.Layout do
+defmodule ControlServerWeb.Layout do
   use Surface.Component
 
   alias CommonUI.Layout.MenuItem

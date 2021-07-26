@@ -11,5 +11,7 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
 
       timestamps(type: :utc_datetime_usec)
     end
+
+    create index(:clusters, [:name], unique: true)
   end
 end

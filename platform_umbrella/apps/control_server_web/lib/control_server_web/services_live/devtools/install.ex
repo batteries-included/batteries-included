@@ -3,7 +3,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsInstall do
 
   alias CommonUI.Progress
   alias CommonUI.Progress.Step
-  alias ControlServerWeb.Live.Layout
+  alias ControlServerWeb.Layout
   alias ControlServerWeb.ServicesLive.DevtoolsStepZero
 
   require Logger

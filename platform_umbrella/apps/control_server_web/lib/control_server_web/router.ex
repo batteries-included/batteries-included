@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Router do
 
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
-        "script-src 'self' 'unsafe-eval';default-src 'self' https://rsms.me"
+        "script-src 'self' 'unsafe-eval' 'unsafe-inline';default-src 'self' https://rsms.me"
     }
   end
 
@@ -24,18 +24,13 @@ defmodule ControlServerWeb.Router do
   scope "/", ControlServerWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", Live.Home, :index
 
     live "/services/monitoring", ServicesLive.Prometheus, :index
     live "/services/security", ServicesLive.Security, :index
 
     live "/services/database", ServicesLive.PostgresHome, :index
-    live "/services/database/clusters", ClusterLive.Index, :index
-    live "/services/database/clusters/new", ClusterLive.Index, :new
-    live "/services/database/clusters/:id/edit", ClusterLive.Index, :edit
-
-    live "/services/database/clusters/:id", ClusterLive.Show, :show
-    live "/services/database/clusters/:id/show/edit", ClusterLive.Show, :edit
+    live "/services/database/clusters/new", ServicesLive.PostgresNew, :new
 
     live "/services/devtools", ServicesLive.DevtoolsHome, :index
     live "/services/devtools/install", ServicesLive.DevtoolsInstall, :index
