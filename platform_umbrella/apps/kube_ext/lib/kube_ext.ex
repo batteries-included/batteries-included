@@ -33,11 +33,10 @@ defmodule KubeExt do
   defp get_or_create_single(resource) do
     metadata = Map.get(resource, "metadata")
     Logger.debug("Creating or getting #{inspect(metadata)}")
-    cluster_name = Bonny.Config.cluster_name()
 
     case resource
          |> Client.get()
-         |> Client.run(cluster_name) do
+         |> Client.run(:default) do
       {:ok, _} = result ->
         result
 
@@ -48,7 +47,7 @@ defmodule KubeExt do
           resource
           |> Hashing.decorate_content_hash()
           |> Client.create()
-          |> Client.run(cluster_name)
+          |> Client.run(:default)
 
         Logger.debug("Result = #{inspect(res)}")
 
@@ -66,7 +65,6 @@ defmodule KubeExt do
   defp update_single(resource) do
     metadata = Map.get(resource, "metadata")
     Logger.debug("Going to send update for #{inspect(metadata)}")
-    cluster_name = Bonny.Config.cluster_name()
-    resource |> Client.patch() |> Client.run(cluster_name)
+    resource |> Client.patch() |> Client.run(:default)
   end
 end

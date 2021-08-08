@@ -42,7 +42,7 @@ defmodule ControlServerWeb.ServicesLive.Prometheus do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    {:ok, _service} = Services.Monitoring.activate()
+    Services.Monitoring.activate!()
 
     {:noreply, assign(socket, :running, true)}
   end

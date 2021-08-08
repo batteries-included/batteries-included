@@ -55,6 +55,12 @@ defmodule ControlServer.Services do
     |> Repo.insert()
   end
 
+  def create_base_service!(attrs \\ %{}) do
+    %BaseService{}
+    |> BaseService.changeset(attrs)
+    |> Repo.insert!()
+  end
+
   @doc """
   Updates a base_service.
 

@@ -92,8 +92,8 @@ buildLocalControl() {
   ${DIR}/build_local.sh
 }
 
-CREATE_CLUSTER=${CREATE_CLUSTER:-false}
-FORWARD_EXTERNAL_POSTGRES=${FORWARD_EXTERNAL_POSTGRES:-false}
+CREATE_CLUSTER=${CREATE_CLUSTER:-true}
+FORWARD_EXTERNAL_POSTGRES=${FORWARD_EXTERNAL_POSTGRES:-true}
 FORWARD_HOME_POSTGRES=${FORWARD_HOME_POSTGRES:-false}
 BUILD_CONTROL_SERVER=${BUILD_CONTROL_SERVER:-false}
 
@@ -133,7 +133,7 @@ eval set -- "$PARAMS"
 
 if [[ $CREATE_CLUSTER == 'true' ]]; then
   # Create the cluster
-  k3d cluster create -v /dev/mapper:/dev/mapper --registry-create || true
+  k3d cluster create -v /dev/mapper:/dev/mapper --registry-create --wait || true
 fi
 
 # Start the services.

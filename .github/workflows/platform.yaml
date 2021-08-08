@@ -60,8 +60,6 @@ jobs:
       - name: Install dependencies non test
         run: mix deps.get
 
-
-
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused
         if: ${{ matrix.lint }}
@@ -86,6 +84,12 @@ jobs:
         if: ${{ matrix.lint }}
         env:
           MIX_ENV: test
+
+      - name: Setup DB
+        run: mix ecto.reset
+        env:
+          MIX_ENV: test
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
       - name: Run tests
         run: mix test

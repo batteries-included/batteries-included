@@ -8,12 +8,11 @@ defmodule KubeServices.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: KubeServices.Worker.start_link(arg)
-      {KubeServices.Worker, []}
+      {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
+      KubeServices.BaseServicesSupervisor,
+      KubeServices.BaseServicesHydrator
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: KubeServices.Supervisor]
     Supervisor.start_link(children, opts)
   end

@@ -47,7 +47,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    {:ok, _service} = Services.Security.activate!()
+    Services.Security.activate!()
 
     {:noreply, assign(socket, :running, true)}
   end

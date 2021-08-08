@@ -3,12 +3,8 @@ defmodule ControlServer.Services.Devtools do
   Module for dealing with all the Devtools related services
   """
 
-  import ControlServer.FileExt
-
   alias ControlServer.Services
-  alias ControlServer.Services.GithubActionsRunner
   alias ControlServer.Services.Security
-  alias ControlServer.Settings.DevtoolsSettings
 
   @default_path "/Devtools/base"
   @default_config %{}
@@ -18,73 +14,14 @@ defmodule ControlServer.Services.Devtools do
   def activate!(path \\ @default_path) do
     Security.activate!()
     Services.update_active!(true, path, :devtools, @default_config)
-  end
 
-  def deactivate(path \\ @default_path),
-    do: Services.update_active!(false, path, :devtools, @default_config)
+    Services.create_base_service!(%{
+      is_active: true,
+      root_path: path,
+      service_type: :devtools,
+      config: @default_config
+    })
+  end
 
   def active?(path \\ @default_path), do: Services.active?(path)
-
-  def materialize(%{} = config) do
-    static = %{
-      "/0/crd" => read_yaml("github_actions_runner-crds.yaml", :exported),
-      "/0/namespace" => namespace(config)
-    }
-
-    %{} |> Map.merge(static) |> Map.merge(body(config)) |> Map.merge(runner(config))
-  end
-
-  defp namespace(config) do
-    ns = DevtoolsSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Namespace",
-      "metadata" => %{
-        "name" => ns
-      }
-    }
-  end
-
-  defp runner(config) do
-    ns = DevtoolsSettings.namespace(config)
-
-    case DevtoolsSettings.gh_enabled(config) do
-      true ->
-        %{
-          "/2/runner" => %{
-            "apiVersion" => "actions.summerwind.dev/v1alpha1",
-            "kind" => "RunnerDeployment",
-            "metadata" => %{
-              "name" => "default-runner",
-              "namespace" => ns
-            },
-            "spec" => %{
-              "replicas" => 1,
-              "template" => %{
-                "spec" => %{
-                  "organization" => "batteries-included"
-                }
-              }
-            }
-          }
-        }
-
-      _ ->
-        %{}
-    end
-  end
-
-  defp body(config) do
-    case DevtoolsSettings.gh_enabled(config) do
-      true ->
-        config
-        |> GithubActionsRunner.materialize()
-        |> Enum.map(fn {key, value} -> {"/1/body" <> key, value} end)
-        |> Map.new()
-
-      _ ->
-        %{}
-    end
-  end
 end

@@ -25,7 +25,6 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
-      {:bonny, "~> 0.4"},
       {:k8s, "~> 0.4.0"}
     ]
   end

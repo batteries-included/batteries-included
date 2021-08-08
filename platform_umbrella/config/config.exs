@@ -13,19 +13,19 @@ import Config
 config :kube_usage,
   ecto_repos: [KubeUsage.Repo]
 
-config :control_server,
-  ecto_repos: [ControlServer.Repo]
-
-config :home_base,
-  ecto_repos: [HomeBase.Repo]
-
 config :kube_usage, KubeUsage.Repo,
   migration_primary_key: [type: :uuid],
   migration_timestamps: [type: :utc_datetime_usec]
 
+config :control_server,
+  ecto_repos: [ControlServer.Repo]
+
 config :control_server, ControlServer.Repo,
   migration_primary_key: [type: :uuid],
   migration_timestamps: [type: :utc_datetime_usec]
+
+config :home_base,
+  ecto_repos: [HomeBase.Repo]
 
 config :home_base, HomeBase.Repo,
   migration_primary_key: [type: :uuid],
@@ -38,6 +38,14 @@ config :control_server_web,
 config :home_base_web,
   ecto_repos: [HomeBase.Repo],
   generators: [context_app: :home_base, binary_id: true]
+
+config :kube_resources,
+  ecto_repos: [ControlServer.Repo],
+  generators: [context_app: :control_server, binary_id: true]
+
+config :kube_services,
+  ecto_repos: [ControlServer.Repo],
+  generators: [context_app: :control_server, binary_id: true]
 
 # Configures the endpoint
 config :control_server_web, ControlServerWeb.Endpoint,

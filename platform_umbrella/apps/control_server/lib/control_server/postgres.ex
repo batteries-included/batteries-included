@@ -55,7 +55,6 @@ defmodule ControlServer.Postgres do
     %Cluster{}
     |> Cluster.changeset(attrs)
     |> Repo.insert()
-    |> report_cluster(:create_cluster)
   end
 
   @doc """
@@ -74,7 +73,6 @@ defmodule ControlServer.Postgres do
     cluster
     |> Cluster.changeset(attrs)
     |> Repo.update()
-    |> report_cluster(:create_cluster)
   end
 
   @doc """
@@ -90,9 +88,7 @@ defmodule ControlServer.Postgres do
 
   """
   def delete_cluster(%Cluster{} = cluster) do
-    cluster
-    |> Repo.delete()
-    |> report_cluster(:delete_cluster)
+    Repo.delete(cluster)
   end
 
   @doc """
@@ -106,15 +102,5 @@ defmodule ControlServer.Postgres do
   """
   def change_cluster(%Cluster{} = cluster, attrs \\ %{}) do
     Cluster.changeset(cluster, attrs)
-  end
-
-  defp report_cluster({:ok, cluster} = result, action) do
-    EventCenter.Postgres.broadcast(action, cluster)
-    result
-  end
-
-  defp report_cluster({:error, _changeset} = result, action) do
-    Logger.debug("Not going to broadcast #{action} there was an error persisting to database.")
-    result
   end
 end

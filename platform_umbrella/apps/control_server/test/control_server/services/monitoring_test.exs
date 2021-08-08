@@ -3,17 +3,10 @@ defmodule ControlServer.Services.MonitoringTest do
 
   alias ControlServer.Services.Monitoring
 
-  describe "Services.Monitoring should generate good configs" do
-    test "Materializing the default config" do
-      config_map = Monitoring.materialize(Monitoring.default_config())
-      assert_config_map_good(config_map)
-    end
-  end
-
-  test "Activate and Deactivate" do
+  test "Activate" do
     assert Monitoring.active?() == false
 
-    Monitoring.activate()
+    Monitoring.activate!()
 
     assert Monitoring.active?()
   end
