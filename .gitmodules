@@ -1,7 +1,0 @@
-[submodule "platform_umbrella/apps/control_server/priv/kube-prometheus"]
-	path = platform_umbrella/apps/control_server/priv/kube-prometheus
-	url = https://github.com/prometheus-operator/kube-prometheus.git
-	branch = release-0.7
-[submodule "platform_umbrella/apps/control_server/priv/postgres-operator"]
-	path = platform_umbrella/apps/control_server/priv/postgres-operator
-	url = https://github.com/zalando/postgres-operator.git
