@@ -12,8 +12,8 @@
   "dependencies": {
     "@headlessui/react": "1.4.0",
     "@heroicons/react": "1.0.3",
-    "@mdx-js/react": "^1.6.22",
-    "@mdx-js/runtime": "^1.6.22",
+    "@mdx-js/react": "1.6.22",
+    "@mdx-js/runtime": "1.6.22",
     "@tailwindcss/forms": "0.3.3",
     "gray-matter": "4.0.3",
     "mdx-prism": "0.3.4",
