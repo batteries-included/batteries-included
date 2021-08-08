@@ -1,0 +1,21 @@
+name: Test Renovate config
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+env:
+  LOG_LEVEL: debug
+
+jobs:
+  preset:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: testing renovate.json
+        run: npx -p renovate renovate-config-validator
