@@ -1,12 +1,12 @@
 defmodule KubeResources.Devtools do
-  import KubeResources.FileExt
-
   alias KubeResources.DevtoolsSettings
   alias KubeResources.GithubActionsRunner
 
+  @github_crd_path "priv/manifests/github/github_actions_runner-crds.yaml"
+
   def materialize(%{} = config) do
     static = %{
-      "/0/crd" => read_yaml("github/github_actions_runner-crds.yaml", :base),
+      "/0/crd" => yaml(github_crd_content()),
       "/0/namespace" => namespace(config)
     }
 
@@ -65,5 +65,13 @@ defmodule KubeResources.Devtools do
       _ ->
         %{}
     end
+  end
+
+  defp github_crd_content, do: unquote(File.read!(@github_crd_path))
+
+  defp yaml(content) do
+    content
+    |> YamlElixir.read_all_from_string!()
+    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
   end
 end

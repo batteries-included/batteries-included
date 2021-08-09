@@ -2,13 +2,12 @@
   "elixirLS.projectDir": "platform_umbrella",
   "[elixir]": {
     "editor.wordBasedSuggestions": false,
-    "editor.acceptSuggestionOnEnter": "on"
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "emmet.includeLanguages": {
     "html-eex": "html"
   },
-  "rust-analyzer.procMacro.enable": true,
-
   "files.associations": {
     "*.eex": "html-eex",
     "*.leex": "html-eex",
@@ -40,7 +39,6 @@
     "editor.wordWrapColumn": 80
   },
   "[html-eex]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "breadcrumbs.showEvents": true,
     "editor.trimAutoWhitespace": false,
     "files.trimTrailingWhitespace": true,
@@ -52,7 +50,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
-
   "cSpell.words": [
     "Alertmanager",
     "Grafana",

@@ -1,6 +1,4 @@
 defmodule KubeResources.Monitoring do
-  import KubeResources.FileExt
-
   alias KubeResources.AlertManager
   alias KubeResources.Grafana
   alias KubeResources.KubeState
@@ -18,49 +16,32 @@ defmodule KubeResources.Monitoring do
     |> Map.merge(main_defs(config))
   end
 
+  @prometheus_crd_path "priv/manifests/prometheus/prometheus-operator-0prometheusCustomResourceDefinition.yaml"
+  @prometheus_rule_crd_path "priv/manifests/prometheus/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml"
+
+  @probe_crd_path "priv/manifests/prometheus/prometheus-operator-0probeCustomResourceDefinition.yaml"
+  @service_mon_crd_path "priv/manifests/prometheus/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml"
+  @pod_mon_crd_path "priv/manifests/prometheus/prometheus-operator-0podmonitorCustomResourceDefinition.yaml"
+
+  @am_config_crd_path "priv/manifests/prometheus/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml"
+  @am_crd_path "priv/manifests/prometheus/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml"
+
+  @thanos_rule_crd_path "priv/manifests/prometheus/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml"
+
   defp setup_defs(config) do
     %{
       # The namespace Really really has to be first.
       "/0/setup/namespace" => namespace(config),
 
       # Then the CRDS since they are needed for cluster roles.
-      "/1/setup/prometheus_crd" =>
-        read_yaml(
-          "prometheus/prometheus-operator-0prometheusCustomResourceDefinition.yaml",
-          :base
-        ),
-      "/1/setup/prometheus_rule_crd" =>
-        read_yaml(
-          "prometheus/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml",
-          :base
-        ),
-      "/1/setup/service_monitor_crd" =>
-        read_yaml(
-          "prometheus/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml",
-          :base
-        ),
-      "/1/setup/podmonitor_crd" =>
-        read_yaml(
-          "prometheus/prometheus-operator-0podmonitorCustomResourceDefinition.yaml",
-          :base
-        ),
-      "/1/setup/probe_crd" =>
-        read_yaml("prometheus/prometheus-operator-0probeCustomResourceDefinition.yaml", :base),
-      "/1/setup/am_config_crd" =>
-        read_yaml(
-          "prometheus/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml",
-          :base
-        ),
-      "/1/setup/am_crd" =>
-        read_yaml(
-          "prometheus/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml",
-          :base
-        ),
-      "/1/setup/thanos_ruler_crd" =>
-        read_yaml(
-          "prometheus/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml",
-          :base
-        )
+      "/1/setup/prometheus_crd" => yaml(prometheus_crd_content()),
+      "/1/setup/prometheus_rule_crd" => yaml(prometheus_rule_crd_content()),
+      "/1/setup/service_monitor_crd" => yaml(service_mon_crd_content()),
+      "/1/setup/podmonitor_crd" => yaml(pod_mon_crd_content()),
+      "/1/setup/probe_crd" => yaml(probe_crd_content()),
+      "/1/setup/am_config_crd" => yaml(am_config_crd_content()),
+      "/1/setup/am_crd" => yaml(am_crd_content()),
+      "/1/setup/thanos_ruler_crd" => yaml(thanos_rule_crd_content())
     }
   end
 
@@ -137,5 +118,23 @@ defmodule KubeResources.Monitoring do
         "name" => ns
       }
     }
+  end
+
+  defp prometheus_crd_content, do: unquote(File.read!(@prometheus_crd_path))
+  defp prometheus_rule_crd_content, do: unquote(File.read!(@prometheus_rule_crd_path))
+
+  defp probe_crd_content, do: unquote(File.read!(@probe_crd_path))
+  defp service_mon_crd_content, do: unquote(File.read!(@service_mon_crd_path))
+  defp pod_mon_crd_content, do: unquote(File.read!(@pod_mon_crd_path))
+
+  defp am_crd_content, do: unquote(File.read!(@am_crd_path))
+  defp am_config_crd_content, do: unquote(File.read!(@am_config_crd_path))
+
+  defp thanos_rule_crd_content, do: unquote(File.read!(@thanos_rule_crd_path))
+
+  defp yaml(content) do
+    content
+    |> YamlElixir.read_all_from_string!()
+    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
   end
 end

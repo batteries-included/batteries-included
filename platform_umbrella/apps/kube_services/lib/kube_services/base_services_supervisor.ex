@@ -9,8 +9,7 @@ defmodule KubeServices.BaseServicesSupervisor do
   end
 
   def start_child(%BaseService{} = base_service) do
-    child_spec = %{id: Worker, start: {Worker, :start_link, [base_service]}}
-    DynamicSupervisor.start_child(__MODULE__, child_spec)
+    DynamicSupervisor.start_child(__MODULE__, Worker.child_spec(base_service))
   end
 
   def init(_init_args) do

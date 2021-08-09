@@ -5,6 +5,7 @@ defmodule ControlServer.Services do
 
   import Ecto.Query, warn: false
   alias ControlServer.Repo
+  alias Ecto.Multi
 
   alias ControlServer.Services.BaseService
 
@@ -50,15 +51,20 @@ defmodule ControlServer.Services do
 
   """
   def create_base_service(attrs \\ %{}) do
-    %BaseService{}
-    |> BaseService.changeset(attrs)
-    |> Repo.insert()
+    Multi.new()
+    |> Multi.insert(:base_service, change_base_service(%BaseService{}, attrs))
+    |> Multi.run(:event_center, fn _repo, %{base_service: base_service} ->
+      {broadcast(:insert, base_service), nil}
+    end)
+    |> Repo.transaction()
+    |> unwrap_event()
   end
 
   def create_base_service!(attrs \\ %{}) do
-    %BaseService{}
-    |> BaseService.changeset(attrs)
-    |> Repo.insert!()
+    case create_base_service(attrs) do
+      {:ok, base_service} -> base_service
+      {:error, error} -> raise error
+    end
   end
 
   @doc """
@@ -74,9 +80,13 @@ defmodule ControlServer.Services do
 
   """
   def update_base_service(%BaseService{} = base_service, attrs) do
-    base_service
-    |> BaseService.changeset(attrs)
-    |> Repo.update()
+    Multi.new()
+    |> Multi.update(:base_service, change_base_service(base_service, attrs))
+    |> Multi.run(:event_center, fn _repo, %{base_service: up_bs} ->
+      {broadcast(:update, up_bs), nil}
+    end)
+    |> Repo.transaction()
+    |> unwrap_event()
   end
 
   @doc """
@@ -92,7 +102,25 @@ defmodule ControlServer.Services do
 
   """
   def delete_base_service(%BaseService{} = base_service) do
-    Repo.delete(base_service)
+    Multi.new()
+    |> Multi.delete(:base_service, base_service)
+    |> Multi.run(:event_center, fn _repo, %{base_service: del_bs} ->
+      {broadcast(:delete, del_bs), nil}
+    end)
+    |> Repo.transaction()
+    |> unwrap_event()
+  end
+
+  defp broadcast(event, base_service) do
+    EventCenter.BaseService.broadcast(event, base_service)
+  end
+
+  defp unwrap_event({:ok, %{base_service: base_service}}) do
+    {:ok, base_service}
+  end
+
+  defp unwrap_event({:error, :base_service, changeset, _}) do
+    {:error, changeset}
   end
 
   @doc """
@@ -116,33 +144,5 @@ defmodule ControlServer.Services do
           select: bs.is_active
         )
       )
-  end
-
-  def update_active!(active, path, service_type, config) do
-    query =
-      from(bs in BaseService,
-        where: bs.root_path == ^path
-      )
-
-    changes = %{is_active: active}
-
-    base_service =
-      case(Repo.one(query)) do
-        # Not found create a new one
-        nil ->
-          %BaseService{
-            is_active: active,
-            root_path: path,
-            service_type: service_type,
-            config: config
-          }
-
-        base_service ->
-          base_service
-      end
-
-    base_service
-    |> BaseService.changeset(changes)
-    |> Repo.insert_or_update()
   end
 end

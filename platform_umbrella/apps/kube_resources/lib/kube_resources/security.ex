@@ -1,12 +1,12 @@
 defmodule KubeResources.Security do
-  import KubeResources.FileExt
-
   alias KubeResources.CertManager
   alias KubeResources.SecuritySettings
 
+  @certmanager_crd_path "priv/manifests/cert_manager/cert_manager-crds.yaml"
+
   def materialize(%{} = config) do
     static = %{
-      "/0/crd" => read_yaml("cert_manager/cert_manager-crds.yaml", :base),
+      "/0/crd" => yaml(certmanager_crd_content()),
       "/0/namespace" => namespace(config)
     }
 
@@ -29,5 +29,13 @@ defmodule KubeResources.Security do
         "name" => ns
       }
     }
+  end
+
+  defp certmanager_crd_content, do: unquote(File.read!(@certmanager_crd_path))
+
+  defp yaml(content) do
+    content
+    |> YamlElixir.read_all_from_string!()
+    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
   end
 end

@@ -1,14 +1,14 @@
 defmodule KubeResources.Database do
-  import KubeResources.FileExt
-
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
   alias KubeResources.DatabaseSettings
   alias KubeResources.PostgresOperator
 
+  @postgres_crd_path "priv/manifests/postgres/postgres_operator-crds.yaml"
+
   def materialize(%{} = config) do
     static = %{
-      "/0/postgres_crd" => read_yaml("postgres/postgres_operator-crds.yaml", :base),
+      "/0/postgres_crd" => yaml(postgres_crd_content()),
       "/0/namespace" => namespace(config)
     }
 
@@ -63,5 +63,13 @@ defmodule KubeResources.Database do
         "name" => ns
       }
     }
+  end
+
+  defp postgres_crd_content, do: unquote(File.read!(@postgres_crd_path))
+
+  defp yaml(content) do
+    content
+    |> YamlElixir.read_all_from_string!()
+    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
   end
 end

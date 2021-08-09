@@ -52,7 +52,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    {:ok, _service} = Services.Database.activate!()
+    Services.Database.activate!()
 
     {:noreply, assign(socket, :running, true)}
   end

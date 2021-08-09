@@ -8,7 +8,14 @@ defmodule EventCenter.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Phoenix.PubSub, name: EventCenter.Usage.PubSub}
+      Supervisor.child_spec(
+        {Phoenix.PubSub, name: EventCenter.BaseService.PubSub},
+        id: EventCenter.BaseService.PubSub
+      ),
+      Supervisor.child_spec(
+        {Phoenix.PubSub, name: EventCenter.Usage.PubSub},
+        id: EventCenter.Usage.PubSub
+      )
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

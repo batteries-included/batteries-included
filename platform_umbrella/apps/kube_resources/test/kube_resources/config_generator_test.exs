@@ -1,5 +1,5 @@
 defmodule KubeServices.ConfigGeneratorTest do
-  use ControlServer.DataCase
+  use ExUnit.Case
 
   alias KubeResources.ConfigGenerator
   alias ControlServer.Services
@@ -8,11 +8,17 @@ defmodule KubeServices.ConfigGeneratorTest do
   alias ControlServer.Services.Security
 
   describe "ConfigGenerator" do
-    test "materialize all the configs" do
-      Monitoring.activate!()
-      Database.activate!()
-      Security.activate!()
+    setup do
+      # Explicitly get a connection before each test
+      :ok = Ecto.Adapters.SQL.Sandbox.checkout(ControlServer.Repo)
 
+      {:ok,
+       monitoring: Monitoring.activate!(),
+       database: Database.activate!(),
+       security: Security.activate!()}
+    end
+
+    test "materialize all the configs" do
       Services.list_base_services()
       |> Enum.each(fn service ->
         configs = ConfigGenerator.materialize(service)

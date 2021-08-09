@@ -13,7 +13,6 @@ defmodule ControlServer.Services.Devtools do
 
   def activate!(path \\ @default_path) do
     Security.activate!()
-    Services.update_active!(true, path, :devtools, @default_config)
 
     Services.create_base_service!(%{
       is_active: true,

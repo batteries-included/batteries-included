@@ -22,27 +22,28 @@ defmodule KubeServices.Worker do
     def needs_apply(%ApplyState{} = ap, resource) do
       # If the last try was an error then we always try and sync.
       # otherwise if there's been something that changed in the database.
-      !was_ok(ap) || different(ap, resource)
+      !ok?(ap) || different?(ap, resource)
     end
 
-    def do_apply(resource) do
+    def apply(resource) do
       %ApplyState{last_result: KubeExt.apply(resource), resource: resource}
     end
 
     def from_path(%{} = path_state_map, path), do: Map.get(path_state_map, path, nil)
 
-    defp was_ok(%ApplyState{last_result: last_result}) do
-      case last_result do
-        {:ok, _} -> true
-        [:ok, _] -> true
-        _ -> false
-      end
+    def ok?(%ApplyState{last_result: last_result}), do: result_ok?(last_result)
+
+    defp result_ok?(:ok), do: true
+    defp result_ok?({:ok, _}), do: true
+
+    defp result_ok?(result) when is_list(result) do
+      Enum.all?(result, &result_ok?/1)
     end
 
-    defp different(%ApplyState{resource: applied_resource}, new_resource) do
-      # Compare the hashes. It's important that by now all the resources have
-      # their hashes computed and attached since we don't have access to memoize the hash
-      Hashing.get_hash(applied_resource) != Hashing.get_hash(new_resource)
+    defp result_ok?(_), do: false
+
+    def different?(%ApplyState{resource: applied_resource}, new_resource) do
+      Hashing.different?(applied_resource, new_resource)
     end
   end
 
@@ -110,7 +111,7 @@ defmodule KubeServices.Worker do
              {:prev_state, ApplyState.from_path(path_state_map, path)},
            {:needs_apply, false} <-
              {:needs_apply, ApplyState.needs_apply(prev_state, resource)} do
-        Logger.debug("Everything looks the same. Not going to push")
+        Logger.debug("Path => #{path} everything looks the same. Not going to push")
         {path, prev_state}
       else
         {:prev_state, _} ->
@@ -118,11 +119,11 @@ defmodule KubeServices.Worker do
             "Appears like we don't know the apply status of #{path} pushing to kubernetes"
           )
 
-          {path, ApplyState.do_apply(resource)}
+          {path, ApplyState.apply(resource)}
 
         {:needs_apply, _} ->
           Logger.debug("Last apply state doesn't match for #{path}")
-          {path, ApplyState.do_apply(resource)}
+          {path, ApplyState.apply(resource)}
       end
     end
   end
@@ -137,6 +138,10 @@ defmodule KubeServices.Worker do
       start: {__MODULE__, :start_link, [base_service]},
       restart: :temporary
     }
+  end
+
+  def finish(base_service) do
+    GenServer.cast(via_tuple(base_service), :finish)
   end
 
   @impl true
@@ -162,8 +167,13 @@ defmodule KubeServices.Worker do
   end
 
   @impl true
+  def handle_cast(:finish, %State{} = state) do
+    {:stop, :normal, state}
+  end
+
+  @impl true
   def handle_info(:tick, %State{} = state) do
     Process.send_after(self(), :tick, @tick_time)
-    {:noreply, State.apply_resources(state)}
+    {:noreply, state |> State.refresh() |> State.apply_resources()}
   end
 end
