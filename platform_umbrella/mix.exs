@@ -27,7 +27,7 @@ defmodule ControlServer.Umbrella.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:surface_formatter, "~> 0.5.1", only: :dev, runtime: false},
-      {:sobelow, "~> 0.8", only: :dev},
+      {:sobelow, "~> 0.11", only: :dev},
       {:excoveralls, "~> 0.14", only: :test}
     ]
   end
