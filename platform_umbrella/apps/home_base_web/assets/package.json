@@ -28,7 +28,7 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.0",
     "eslint-plugin-prettier": "3.4.0",
-    "mini-css-extract-plugin": "2.1.0",
+    "mini-css-extract-plugin": "2.2.0",
     "postcss": "8.3.6",
     "postcss-import": "14.0.2",
     "postcss-loader": "6.1.1",
