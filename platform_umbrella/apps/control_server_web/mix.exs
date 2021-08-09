@@ -46,7 +46,7 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
+      {:gettext, "~> 0.18"},
       {:control_server, in_umbrella: true},
       {:kube_usage, in_umbrella: true},
       # Components
