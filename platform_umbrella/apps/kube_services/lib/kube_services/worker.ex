@@ -128,6 +128,10 @@ defmodule KubeServices.Worker do
     end
   end
 
+  def finish(base_service) do
+    GenServer.cast(via_tuple(base_service), :finish)
+  end
+
   def start_link(base_service) do
     GenServer.start_link(__MODULE__, base_service, name: via_tuple(base_service))
   end
@@ -138,10 +142,6 @@ defmodule KubeServices.Worker do
       start: {__MODULE__, :start_link, [base_service]},
       restart: :temporary
     }
-  end
-
-  def finish(base_service) do
-    GenServer.cast(via_tuple(base_service), :finish)
   end
 
   @impl true

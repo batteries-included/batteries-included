@@ -24,9 +24,8 @@ defmodule ControlServer.Services.BaseService do
         :security,
         :devtools,
         :database,
-        :log_aggregation,
         :storage,
-        :ingress,
+        :network,
         :battery
       ]
 

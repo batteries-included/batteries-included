@@ -34,6 +34,8 @@ defmodule ControlServerWeb.Router do
 
     live "/services/devtools", ServicesLive.DevtoolsHome, :index
     live "/services/devtools/install", ServicesLive.DevtoolsInstall, :index
+
+    live "/services/network", ServicesLive.NetworkHome, :index
   end
 
   scope "/api", ControlServerWeb do

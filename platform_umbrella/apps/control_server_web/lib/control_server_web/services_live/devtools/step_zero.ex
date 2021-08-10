@@ -20,7 +20,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsStepZero do
       </div>
 
       <div class="flex flex-row-reverse">
-        <Button class="w-32" click="progress:change" phx_payload={1}>
+        <Button class="w-32" click="progress:change" opts={%{phx_payload: {1}}}>
           Next
         </Button>
       </div>

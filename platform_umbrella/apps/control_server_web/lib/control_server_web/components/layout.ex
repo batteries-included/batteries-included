@@ -34,6 +34,9 @@ defmodule ControlServerWeb.Layout do
         <MenuItem to="/services/security" name="Security" class={mic}>
           <CommonUI.Icons.Security class={ic} />
         </MenuItem>
+        <MenuItem to="/services/network" name="Network" class={mic}>
+          <CommonUI.Icons.Network class={ic} />
+        </MenuItem>
       </:main_menu>
 
       <:mobile_menu>

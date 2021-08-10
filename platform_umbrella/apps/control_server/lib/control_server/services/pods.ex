@@ -7,11 +7,13 @@ defmodule ControlServer.Services.Pods do
   @database_ns "battery-db"
   @security_ns "battery-security"
   @devtools_ns "battery-devtools"
+  @network_ns "battery-network"
 
   def get(:monitoring), do: get(@monitoring_ns)
   def get(:postgres), do: get(@database_ns)
   def get(:security), do: get(@security_ns)
   def get(:devtools), do: get(@devtools_ns)
+  def get(:network), do: get(@network_ns)
 
   def get(namespace) do
     with {:ok, res} <-

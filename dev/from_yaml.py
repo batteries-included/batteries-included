@@ -11,12 +11,20 @@ colon_pattern = re.compile(r"\"\s*\: ")
 bad_labels = {
     "app.kubernetes.io/managed-by",
     "helm.sh/chart",
+    "helm.sh/hook-delete-policy",
     "chart",
     "release",
-    "heritage"
+    "heritage",
 }
 
-bad_annotations = {"helm.sh/hook", "helm.sh/chart", "checksum/config", "checksum/configmap", "checksum/secrets"}
+bad_annotations = {
+    "helm.sh/hook",
+    "helm.sh/chart",
+    "helm.sh/hook-delete-policy",
+    "checksum/config",
+    "checksum/configmap",
+    "checksum/secrets",
+}
 
 
 def eprint(*args, **kwargs):
@@ -31,7 +39,8 @@ def get_name(obj):
 
     current_count = kind_count[name]
     kind_count[name] += 1
-    name = f"{name}_{current_count}"
+    if current_count > 0:
+        name = f"{name}_{current_count}"
     return name
 
 
@@ -88,10 +97,10 @@ def print_method(name, contents, settings_module_name="TotallyNewSettings"):
 def print_header(
     module_name="TotallyNewServer", settings_module_name="TotallyNewSettings"
 ):
-    print(f"defmodule ControlServer.Services.{module_name} do")
+    print(f"defmodule KubeResources.{module_name} do")
     print("@moduledoc false")
     print()
-    print(f"alias ControlServer.Settings.{settings_module_name}")
+    print(f"alias KubeResources.{settings_module_name}")
     print()
 
 
@@ -139,10 +148,14 @@ def main(module_name, settings_module_name):
     # CRD's are huge and don't need params.
     # Better to import these from an external yaml usually
     no_crds = [
-        o for o in sanitized_annotations if o and "kind" not in o or o["kind"] != "CustomResourceDefinition"
+        o
+        for o in sanitized_annotations
+        if o and "kind" not in o or o["kind"] != "CustomResourceDefinition"
     ]
     only_crds = [
-        o for o in sanitized_annotations if "kind" in o and o["kind"] == "CustomResourceDefinition"
+        o
+        for o in sanitized_annotations
+        if "kind" in o and o["kind"] == "CustomResourceDefinition"
     ]
 
     # While we are working with the object representation extract

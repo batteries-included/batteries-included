@@ -3,7 +3,6 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
 
   alias CommonUI.Button
   alias CommonUI.ShadowContainer
-  alias ControlServerWeb.Router.Helpers, as: Routes
   alias Surface.Components.LivePatch
 
   prop clusters, :list, default: []
