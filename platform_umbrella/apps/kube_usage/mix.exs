@@ -41,7 +41,7 @@ defmodule KubeUsage.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       # Kubernetes
-      {:k8s, "~> 0.4.0"},
+      {:k8s, "~> 0.5.0"},
       # Testing.
       {:ex_machina, "~> 2.7", only: :test}
     ]

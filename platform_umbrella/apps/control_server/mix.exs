@@ -48,7 +48,7 @@ defmodule ControlServer.MixProject do
       {:filtrex, "~> 0.4.3"},
 
       # Kubernetes
-      {:k8s, "~> 0.4.0"},
+      {:k8s, "~> 0.5.0"},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
 
