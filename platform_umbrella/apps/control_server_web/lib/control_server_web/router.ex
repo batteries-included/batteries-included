@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Router do
   use ControlServerWeb, :router
 
   import Phoenix.LiveDashboard.Router
-  import Surface.Catalogue.Router
+  # import Surface.Catalogue.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -55,7 +55,7 @@ defmodule ControlServerWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
-      surface_catalogue("/storybook")
+      # surface_catalogue("/storybook")
     end
   end
 end

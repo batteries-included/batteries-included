@@ -40,10 +40,10 @@ defmodule ControlServerWeb.MixProject do
     [
       {:phoenix, "~> 1.5.7"},
       {:phoenix_ecto, "~> 4.3"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_view, "~> 0.15.0"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_view, "~> 0.16.0"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.4"},
+      {:phoenix_live_dashboard, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 0.5"},
       {:gettext, "~> 0.18"},
@@ -51,7 +51,7 @@ defmodule ControlServerWeb.MixProject do
       {:kube_usage, in_umbrella: true},
       # Components
       {:surface, "~> 0.5.0"},
-      {:surface_catalogue, "~> 0.1.0"},
+      # {:surface_catalogue, "~> 0.1.0"},
       {:common_ui, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"}

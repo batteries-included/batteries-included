@@ -25,7 +25,7 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
-      {:k8s, "~> 0.5.0"}
+      {:k8s, "~> 0.4.0"}
     ]
   end
 
