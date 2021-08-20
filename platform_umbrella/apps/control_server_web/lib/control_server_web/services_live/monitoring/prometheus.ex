@@ -2,8 +2,7 @@ defmodule ControlServerWeb.ServicesLive.Prometheus do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use Surface.LiveView
-  use Timex
+  use ControlServerWeb, :surface_view
 
   alias CommonUI.Button
   alias ControlServer.Services
@@ -22,7 +21,7 @@ defmodule ControlServerWeb.ServicesLive.Prometheus do
   end
 
   defp get_pods do
-    :monitoring |> Pods.get() |> Enum.map(&Pods.summarize/1)
+    Enum.map(Pods.get(), &Pods.summarize/1)
   end
 
   @impl true
@@ -45,5 +44,40 @@ defmodule ControlServerWeb.ServicesLive.Prometheus do
     Services.Monitoring.activate!()
 
     {:noreply, assign(socket, :running, true)}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~F"""
+    <Layout>
+    <div class="container-xxl">
+    <h2 class="mt-2 text-2xl font-bold leading-7 text-pink-500 sm:text-3xl sm:truncate">
+      Monitoring
+    </h2>
+    <hr class="mt-4">
+    {#if @running}
+      <div class="mt-4 row">
+        <div class="col">
+          <ControlServerWeb.PodDisplay {=@pods} />
+        </div>
+      </div>
+    {#else}
+      <div class="mt-4 row">
+        <div class="col align-self-center">
+          The monitoring service is not currently enabled on this Batteries included
+          cluster. To start installing please press the button.
+        </div>
+      </div>
+      <div class="row">
+        <div class="m-5 text-center col align-self-center">
+          <Button click="start_service">
+            Install
+          </Button>
+        </div>
+      </div>
+    {/if}
+    </div>
+    </Layout>
+    """
   end
 end

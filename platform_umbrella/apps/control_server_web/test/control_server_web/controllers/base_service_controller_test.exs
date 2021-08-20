@@ -23,13 +23,6 @@ defmodule ControlServerWeb.BaseServiceControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
-  describe "index" do
-    test "lists all base_services", %{conn: conn} do
-      conn = get(conn, Routes.base_service_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
-    end
-  end
-
   describe "create base_service" do
     test "renders base_service when data is valid", %{conn: conn} do
       conn = post(conn, Routes.base_service_path(conn, :create), base_service: @create_attrs)

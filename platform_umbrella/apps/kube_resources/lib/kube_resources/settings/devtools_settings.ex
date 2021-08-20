@@ -2,7 +2,7 @@ defmodule KubeResources.DevtoolsSettings do
   @moduledoc """
   Module around turning BaseService json config into usable settings.
   """
-  @namespace "battery-devtools"
+  @namespace "battery-core"
 
   def namespace(config), do: Map.get(config, "namespace", @namespace)
   def gh_enabled(config), do: Map.get(config, "runner.enabled", true)

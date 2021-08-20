@@ -6,23 +6,10 @@ defmodule KubeResources.Devtools do
 
   def materialize(%{} = config) do
     static = %{
-      "/0/crd" => yaml(github_crd_content()),
-      "/0/namespace" => namespace(config)
+      "/0/crd" => yaml(github_crd_content())
     }
 
     %{} |> Map.merge(static) |> Map.merge(body(config)) |> Map.merge(runner(config))
-  end
-
-  defp namespace(config) do
-    ns = DevtoolsSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Namespace",
-      "metadata" => %{
-        "name" => ns
-      }
-    }
   end
 
   defp runner(config) do

@@ -25,7 +25,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
   end
 
   defp get_pods do
-    :security |> Pods.get() |> Enum.map(&Pods.summarize/1)
+    Enum.map(Pods.get(), &Pods.summarize/1)
   end
 
   @impl true

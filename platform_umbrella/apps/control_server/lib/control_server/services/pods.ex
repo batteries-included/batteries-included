@@ -3,22 +3,12 @@ defmodule ControlServer.Services.Pods do
   Get all the pods running for the services.
   """
 
-  @monitoring_ns "battery-monitoring"
-  @database_ns "battery-db"
-  @security_ns "battery-security"
-  @devtools_ns "battery-devtools"
-  @network_ns "battery-network"
+  @namespace "battery-core"
 
-  def get(:monitoring), do: get(@monitoring_ns)
-  def get(:postgres), do: get(@database_ns)
-  def get(:security), do: get(@security_ns)
-  def get(:devtools), do: get(@devtools_ns)
-  def get(:network), do: get(@network_ns)
-
-  def get(namespace) do
+  def get do
     with {:ok, res} <-
            "v1"
-           |> K8s.Client.list(:pods, namespace: namespace)
+           |> K8s.Client.list(:pods, namespace: @namespace)
            |> K8s.Client.run(:default) do
       Map.get(res, "items", [])
     end

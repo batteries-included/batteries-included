@@ -28,7 +28,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   end
 
   defp get_pods do
-    :postgres |> Pods.get() |> Enum.map(&Pods.summarize/1)
+    Enum.map(Pods.get(), &Pods.summarize/1)
   end
 
   defp list_clusters do

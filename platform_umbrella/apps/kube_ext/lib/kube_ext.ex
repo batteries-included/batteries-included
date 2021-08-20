@@ -49,7 +49,7 @@ defmodule KubeExt do
           |> Client.create()
           |> Client.run(:default)
 
-        Logger.debug("Result = #{inspect(res)}")
+        Logger.warning("Result = #{inspect(res)}")
 
         res
 

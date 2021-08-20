@@ -9,6 +9,8 @@ defmodule ControlServer.Services do
 
   alias ControlServer.Services.BaseService
 
+  require Logger
+
   @doc """
   Returns the list of base_services.
 
@@ -57,7 +59,7 @@ defmodule ControlServer.Services do
       {broadcast(:insert, base_service), nil}
     end)
     |> Repo.transaction()
-    |> unwrap_event()
+    |> unwrap_transaction_return()
   end
 
   def create_base_service!(attrs \\ %{}) do
@@ -65,6 +67,44 @@ defmodule ControlServer.Services do
       {:ok, base_service} -> base_service
       {:error, error} -> raise error
     end
+  end
+
+  def find_or_create!(attrs) do
+    case find_or_create(attrs) do
+      {:ok, base_service} -> base_service
+      {:error, error} -> raise error
+    end
+  end
+
+  def find_or_create(attrs) do
+    Multi.new()
+    |> Multi.run(:selected, fn repo, _ ->
+      {:ok, repo.one(from(bs in BaseService, where: bs.root_path == ^attrs.root_path))}
+    end)
+    |> Multi.run(:created, fn repo, %{selected: sel} ->
+      maybe_insert(sel, repo, attrs)
+    end)
+    |> Multi.run(:base_service, &insert_event/2)
+    |> Repo.transaction()
+    |> unwrap_transaction_return()
+  end
+
+  def maybe_insert(nil = _selected, repo, attrs) do
+    repo.insert(BaseService.changeset(%BaseService{}, attrs))
+  end
+
+  def maybe_insert(%BaseService{} = _selected, _repo, _attrs) do
+    {:ok, nil}
+  end
+
+  def insert_event(_repo, %{selected: nil, created: created}) do
+    Logger.debug("Insert Event Inserted -> #{inspect(created)}")
+    {broadcast(:insert, created), created}
+  end
+
+  def insert_event(_repo, %{selected: selected, created: nil}) do
+    Logger.debug("Insert Event Selected -> #{inspect(selected)}")
+    {:ok, selected}
   end
 
   @doc """
@@ -86,7 +126,7 @@ defmodule ControlServer.Services do
       {broadcast(:update, up_bs), nil}
     end)
     |> Repo.transaction()
-    |> unwrap_event()
+    |> unwrap_transaction_return()
   end
 
   @doc """
@@ -108,18 +148,18 @@ defmodule ControlServer.Services do
       {broadcast(:delete, del_bs), nil}
     end)
     |> Repo.transaction()
-    |> unwrap_event()
+    |> unwrap_transaction_return()
   end
 
   defp broadcast(event, base_service) do
     EventCenter.BaseService.broadcast(event, base_service)
   end
 
-  defp unwrap_event({:ok, %{base_service: base_service}}) do
+  defp unwrap_transaction_return({:ok, %{base_service: base_service}}) do
     {:ok, base_service}
   end
 
-  defp unwrap_event({:error, :base_service, changeset, _}) do
+  defp unwrap_transaction_return({:error, :base_service, changeset, _}) do
     {:error, changeset}
   end
 

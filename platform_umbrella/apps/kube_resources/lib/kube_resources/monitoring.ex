@@ -28,11 +28,8 @@ defmodule KubeResources.Monitoring do
 
   @thanos_rule_crd_path "priv/manifests/prometheus/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml"
 
-  defp setup_defs(config) do
+  defp setup_defs(_config) do
     %{
-      # The namespace Really really has to be first.
-      "/0/setup/namespace" => namespace(config),
-
       # Then the CRDS since they are needed for cluster roles.
       "/1/setup/prometheus_crd" => yaml(prometheus_crd_content()),
       "/1/setup/prometheus_rule_crd" => yaml(prometheus_rule_crd_content()),
@@ -86,11 +83,12 @@ defmodule KubeResources.Monitoring do
   defp main_defs(config) do
     %{
       "/9/prometheus/prometheus_prometheus" => Prometheus.prometheus(config),
-      "/9/grafana/0/service_account" => Grafana.service_account(config),
-      "/9/grafana/0/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
-      "/9/grafana/0/prometheus_dashboard_datasource" => Grafana.dashboard_sources_config(config),
-      "/9/grafana/1/grafana_deployment" => Grafana.deployment(config),
-      "/9/grafana/1/grafana_service" => Grafana.service(config),
+      "/9/grafana/service_account" => Grafana.service_account(config),
+      "/9/grafana/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
+      "/9/grafana/prometheus_dashboard_datasource" => Grafana.dashboard_sources_config(config),
+      "/9/grafana/main_config" => Grafana.main_config(config),
+      "/9/grafana/grafana_deployment" => Grafana.deployment(config),
+      "/9/grafana/grafana_service" => Grafana.service(config),
       "/9/node/0/service_account" => NodeExporter.service_account(config),
       "/9/node/0/cluster_role" => NodeExporter.cluster_role(config),
       "/9/node/1/bind" => NodeExporter.cluster_binding(config),
@@ -101,22 +99,10 @@ defmodule KubeResources.Monitoring do
       "/9/kube/1/bind" => KubeState.cluster_binding(config),
       "/9/kube/1/daemon" => KubeState.deployment(config),
       "/9/kube/2/service" => KubeState.service(config),
-      "/9/alertmanager/0/service_account" => AlertManager.service_account(config),
-      "/9/alertmanager/1/config" => AlertManager.config(config),
-      "/9/alertmanager/2/alertmanager" => AlertManager.alertmanager(config),
-      "/9/alertmanager/2/service" => AlertManager.service(config)
-    }
-  end
-
-  defp namespace(config) do
-    ns = MonitoringSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Namespace",
-      "metadata" => %{
-        "name" => ns
-      }
+      "/9/alertmanager/service_account" => AlertManager.service_account(config),
+      "/9/alertmanager/config" => AlertManager.config(config),
+      "/9/alertmanager/alertmanager" => AlertManager.alertmanager(config),
+      "/9/alertmanager/service" => AlertManager.service(config)
     }
   end
 

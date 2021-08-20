@@ -4,13 +4,13 @@ defmodule KubeResources.MonitoringSettings do
   settings with defaults. This is awful. There has to be
   a better way with defstruct and defaults.. Dunno.
   """
-  @namespace "battery-monitoring"
+  @namespace "battery-core"
 
-  @prometheus_operator_name "battery-prometheus-operator"
+  @prometheus_operator_name "prometheus-operator"
   @prometheus_operator_image "quay.io/prometheus-operator/prometheus-operator"
   @prometheus_operator_version "v0.44.1"
 
-  @prometheus_name "battery-prometheus"
+  @prometheus_name "prometheus"
   @prometheus_image "quay.io/prometheus/prometheus"
   @prometheus_version "v2.22.1"
   @prometheus_main_namespaces ["default", @namespace, "kube-system"]
@@ -21,19 +21,19 @@ defmodule KubeResources.MonitoringSettings do
   @prometheus_cluster_role "battery-prometheus-cluster"
   @prometheus_config_role "battery-prometheus-config"
 
-  @grafana_name "battery-grafana"
+  @grafana_name "grafana"
   @grafana_image "grafana/grafana"
   @grafana_version "7.3.4"
 
-  @node_name "battery-node-exporter"
+  @node_name "node-exporter"
   @node_image "quay.io/prometheus/node-exporter"
   @node_version "v1.0.1"
 
-  @kube_name "battery-kube-state-metrics"
+  @kube_name "kube-state-metrics"
   @kube_version "v1.9.7"
   @kube_image "quay.io/coreos/kube-state-metrics"
 
-  @alertmanager_name "battery-alertmanager"
+  @alertmanager_name "alertmanager"
   @alertmanager_image "quay.io/prometheus/alertmanager"
   @alertmanager_version "v0.21.0"
 

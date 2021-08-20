@@ -11,10 +11,7 @@ defmodule ControlServerWeb.Router do
     plug :put_root_layout, {ControlServerWeb.LayoutView, :root}
     plug :protect_from_forgery
 
-    plug :put_secure_browser_headers, %{
-      "content-security-policy" =>
-        "script-src 'self' 'unsafe-eval' 'unsafe-inline';default-src 'self' https://rsms.me"
-    }
+    plug :put_secure_browser_headers, ControlServerWeb.CSP.new()
   end
 
   pipeline :api do
@@ -27,6 +24,7 @@ defmodule ControlServerWeb.Router do
     live "/", Live.Home, :index
 
     live "/services/monitoring", ServicesLive.Prometheus, :index
+    live "/services/monitoring/grafana", ServicesLive.Grafana, :index
     live "/services/security", ServicesLive.Security, :index
 
     live "/services/database", ServicesLive.PostgresHome, :index
@@ -55,7 +53,6 @@ defmodule ControlServerWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
-      # surface_catalogue("/storybook")
     end
   end
 end

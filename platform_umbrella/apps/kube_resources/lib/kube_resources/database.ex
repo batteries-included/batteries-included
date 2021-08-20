@@ -8,8 +8,7 @@ defmodule KubeResources.Database do
 
   def materialize(%{} = config) do
     static = %{
-      "/0/postgres_crd" => yaml(postgres_crd_content()),
-      "/0/namespace" => namespace(config)
+      "/0/postgres_crd" => yaml(postgres_crd_content())
     }
 
     body =
@@ -49,18 +48,6 @@ defmodule KubeResources.Database do
         "volume" => %{
           "size" => cluster.size
         }
-      }
-    }
-  end
-
-  defp namespace(config) do
-    ns = DatabaseSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Namespace",
-      "metadata" => %{
-        "name" => ns
       }
     }
   end

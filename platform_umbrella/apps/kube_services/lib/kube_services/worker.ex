@@ -146,6 +146,10 @@ defmodule KubeServices.Worker do
 
   @impl true
   def init(base_service) do
+    Logger.debug(
+      "KubeServices start worker service_type => #{inspect(base_service.service_type)}"
+    )
+
     state = State.new(base_service)
     Process.send_after(self(), :tick, @tick_time)
 

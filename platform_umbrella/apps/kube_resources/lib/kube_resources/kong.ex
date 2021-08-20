@@ -351,7 +351,7 @@ defmodule KubeResources.Kong do
                   %{"name" => "CONTROLLER_KONG_ADMIN_URL", "value" => "https://localhost:8444"},
                   %{
                     "name" => "CONTROLLER_PUBLISH_SERVICE",
-                    "value" => "battery-network/battery-kong-proxy"
+                    "value" => "#{namespace}/battery-kong-proxy"
                   }
                 ],
                 "image" => "kong/kubernetes-ingress-controller:1.3",
@@ -470,7 +470,7 @@ defmodule KubeResources.Kong do
             "image" => "curlimages/curl",
             "command" => [
               "curl",
-              "http://battery-kong-proxy.battery-network.svc.cluster.local/httpbin"
+              base_path(namespace) <> "/httpbin"
             ]
           }
         ]
@@ -497,13 +497,15 @@ defmodule KubeResources.Kong do
             "image" => "curlimages/curl",
             "command" => [
               "curl",
-              "http://battery-kong-proxy.battery-network.svc.cluster.local/httpbin-v1beta1"
+              base_path(namespace) <> "/httpbin-v1beta1"
             ]
           }
         ]
       }
     }
   end
+
+  def base_path(namespace), do: "http://battery-kong-proxy.#{namespace}.svc.cluster.local"
 
   defp crd_content, do: unquote(File.read!(@crd_path))
 

@@ -1,5 +1,5 @@
 defmodule KubeResources.NetworkSettings do
-  @namespace "battery-network"
+  @namespace "battery-core"
 
   def namespace(config), do: Map.get(config, "namespace", @namespace)
 end

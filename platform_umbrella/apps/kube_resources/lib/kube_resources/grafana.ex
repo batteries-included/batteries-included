@@ -3,10 +3,12 @@ defmodule KubeResources.Grafana do
   Add on context for Grafana configuration.
   """
 
+  alias KubeExt.IniConfig
   alias KubeResources.MonitoringSettings
 
-  @datasources_configmap "battery-grafana-datasources"
-  @dashboards_configmap "battery-grafana-dashboards"
+  @datasources_configmap "grafana-datasources"
+  @dashboards_configmap "grafana-dashboards"
+  @main_configmap "grafana-config"
 
   def service_account(config) do
     account = MonitoringSettings.grafana_name(config)
@@ -26,8 +28,8 @@ defmodule KubeResources.Grafana do
     prometheus_name = MonitoringSettings.prometheus_name(config)
     namespace = MonitoringSettings.namespace(config)
 
-    {:ok, file_contents} =
-      Jason.encode(%{
+    file_contents =
+      Ymlr.Encoder.to_s!(%{
         "apiVersion" => 1,
         "datasources" => [
           %{
@@ -47,7 +49,7 @@ defmodule KubeResources.Grafana do
       "kind" => "ConfigMap",
       "metadata" => %{"name" => @datasources_configmap, "namespace" => namespace},
       "data" => %{
-        "datasources.json" => file_contents
+        "prometheus.json" => file_contents
       }
     }
   end
@@ -55,8 +57,8 @@ defmodule KubeResources.Grafana do
   def dashboard_sources_config(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    {:ok, file_contents} =
-      Jason.encode(%{
+    file_contents =
+      Ymlr.Encoder.to_s!(%{
         "apiVersion" => 1,
         "providers" => [
           %{
@@ -80,6 +82,40 @@ defmodule KubeResources.Grafana do
       "metadata" => %{
         "name" => @dashboards_configmap,
         "namespace" => namespace
+      }
+    }
+  end
+
+  def main_config(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    config = %{
+      "server" => %{
+        root_url: "/x/grafana",
+        serve_from_sub_path: true
+      },
+      "auth.anonymous" => %{
+        enabled: true
+      },
+      "security" => %{
+        allow_embedding: true
+      },
+      "users" => %{default_theme: "light"},
+      "analytics" => %{reporting_enabled: false},
+      "log" => %{
+        "mode" => "console",
+        "info" => "debug"
+      }
+    }
+
+    file_contents = IniConfig.to_ini(config)
+
+    %{
+      "apiVersion" => "v1",
+      "kind" => "ConfigMap",
+      "metadata" => %{"name" => @main_configmap, "namespace" => namespace},
+      "data" => %{
+        "grafana.ini" => file_contents
       }
     }
   end
@@ -148,6 +184,12 @@ defmodule KubeResources.Grafana do
                     "readOnly" => false
                   },
                   %{
+                    "mountPath" => "/etc/grafana/grafana.ini",
+                    "subPath" => "grafana.ini",
+                    "name" => @main_configmap,
+                    "readOnly" => true
+                  },
+                  %{
                     "mountPath" => "/etc/grafana/provisioning/datasources",
                     "name" => @datasources_configmap,
                     "readOnly" => false
@@ -157,121 +199,6 @@ defmodule KubeResources.Grafana do
                     "name" => @dashboards_configmap,
                     "readOnly" => false
                   }
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/apiserver",
-                  #     "name" => "grafana-dashboard-apiserver",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/cluster-total",
-                  #     "name" => "grafana-dashboard-cluster-total",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/controller-manager",
-                  #     "name" => "grafana-dashboard-controller-manager",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/k8s-resources-cluster",
-                  #     "name" => "grafana-dashboard-k8s-resources-cluster",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/k8s-resources-namespace",
-                  #     "name" => "grafana-dashboard-k8s-resources-namespace",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/k8s-resources-node",
-                  #     "name" => "grafana-dashboard-k8s-resources-node",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/k8s-resources-pod",
-                  #     "name" => "grafana-dashboard-k8s-resources-pod",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/k8s-resources-workload",
-                  #     "name" => "grafana-dashboard-k8s-resources-workload",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/k8s-resources-workloads-namespace",
-                  #     "name" => "grafana-dashboard-k8s-resources-workloads-namespace",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/kubelet",
-                  #     "name" => "grafana-dashboard-kubelet",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/namespace-by-pod",
-                  #     "name" => "grafana-dashboard-namespace-by-pod",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/namespace-by-workload",
-                  #     "name" => "grafana-dashboard-namespace-by-workload",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/node-cluster-rsrc-use",
-                  #     "name" => "grafana-dashboard-node-cluster-rsrc-use",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/node-rsrc-use",
-                  #     "name" => "grafana-dashboard-node-rsrc-use",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/nodes",
-                  #     "name" => "grafana-dashboard-nodes",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/persistentvolumesusage",
-                  #     "name" => "grafana-dashboard-persistentvolumesusage",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/pod-total",
-                  #     "name" => "grafana-dashboard-pod-total",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/prometheus-remote-write",
-                  #     "name" => "grafana-dashboard-prometheus-remote-write",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/prometheus",
-                  #     "name" => "grafana-dashboard-prometheus",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/proxy",
-                  #     "name" => "grafana-dashboard-proxy",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/scheduler",
-                  #     "name" => "grafana-dashboard-scheduler",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/statefulset",
-                  #     "name" => "grafana-dashboard-statefulset",
-                  #     "readOnly" => false
-                  # },
-                  # %{
-                  #     "mountPath" => "/grafana-dashboard-definitions/0/workload-total",
-                  #     "name" => "grafana-dashboard-workload-total",
-                  #     "readOnly" => false
-                  # }
                 ]
               }
             ],
@@ -295,149 +222,17 @@ defmodule KubeResources.Grafana do
                 }
               },
               %{
+                "name" => @main_configmap,
+                "configMap" => %{
+                  "name" => @main_configmap
+                }
+              },
+              %{
                 "configMap" => %{
                   "name" => @dashboards_configmap
                 },
                 "name" => @dashboards_configmap
               }
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-apiserver"
-              #     },
-              #     "name" => "grafana-dashboard-apiserver"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-cluster-total"
-              #     },
-              #     "name" => "grafana-dashboard-cluster-total"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-controller-manager"
-              #     },
-              #     "name" => "grafana-dashboard-controller-manager"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-k8s-resources-cluster"
-              #     },
-              #     "name" => "grafana-dashboard-k8s-resources-cluster"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-k8s-resources-namespace"
-              #     },
-              #     "name" => "grafana-dashboard-k8s-resources-namespace"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-k8s-resources-node"
-              #     },
-              #     "name" => "grafana-dashboard-k8s-resources-node"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-k8s-resources-pod"
-              #     },
-              #     "name" => "grafana-dashboard-k8s-resources-pod"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-k8s-resources-workload"
-              #     },
-              #     "name" => "grafana-dashboard-k8s-resources-workload"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-k8s-resources-workloads-namespace"
-              #     },
-              #     "name" => "grafana-dashboard-k8s-resources-workloads-namespace"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-kubelet"
-              #     },
-              #     "name" => "grafana-dashboard-kubelet"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-namespace-by-pod"
-              #     },
-              #     "name" => "grafana-dashboard-namespace-by-pod"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-namespace-by-workload"
-              #     },
-              #     "name" => "grafana-dashboard-namespace-by-workload"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-node-cluster-rsrc-use"
-              #     },
-              #     "name" => "grafana-dashboard-node-cluster-rsrc-use"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-node-rsrc-use"
-              #     },
-              #     "name" => "grafana-dashboard-node-rsrc-use"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-nodes"
-              #     },
-              #     "name" => "grafana-dashboard-nodes"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-persistentvolumesusage"
-              #     },
-              #     "name" => "grafana-dashboard-persistentvolumesusage"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-pod-total"
-              #     },
-              #     "name" => "grafana-dashboard-pod-total"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-prometheus-remote-write"
-              #     },
-              #     "name" => "grafana-dashboard-prometheus-remote-write"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-prometheus"
-              #     },
-              #     "name" => "grafana-dashboard-prometheus"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-proxy"
-              #     },
-              #     "name" => "grafana-dashboard-proxy"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-scheduler"
-              #     },
-              #     "name" => "grafana-dashboard-scheduler"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-statefulset"
-              #     },
-              #     "name" => "grafana-dashboard-statefulset"
-              # },
-              # %{
-              #     "configMap" => %{
-              #         "name" => "grafana-dashboard-workload-total"
-              #     },
-              #     "name" => "grafana-dashboard-workload-total"
-              # }
             ]
           }
         }

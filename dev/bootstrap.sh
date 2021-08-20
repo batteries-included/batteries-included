@@ -133,7 +133,10 @@ eval set -- "$PARAMS"
 
 if [[ $CREATE_CLUSTER == 'true' ]]; then
   # Create the cluster
-  k3d cluster create -v /dev/mapper:/dev/mapper --registry-create --wait || true
+  k3d cluster create -v /dev/mapper:/dev/mapper \
+    --k3s-server-arg '--no-deploy=traefik' \
+    --registry-create --wait \
+    -p "8081:80@loadbalancer" || true
 fi
 
 # Start the services.

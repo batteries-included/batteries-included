@@ -41,3 +41,5 @@ config :k8s,
   clusters: %{
     default: %{}
   }
+
+config :control_server, ControlServer.Services, run_battery: true

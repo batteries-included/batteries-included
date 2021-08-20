@@ -1,5 +1,5 @@
 defmodule KubeResources.SecurityTest do
-  use ExUnit.Case
+  use ControlServer.DataCase, async: true
 
   alias KubeResources.Security
 

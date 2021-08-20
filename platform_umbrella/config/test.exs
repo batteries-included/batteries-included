@@ -58,3 +58,5 @@ config :logger, level: :warn
 # They have to be mocked out way too fucking much.
 config :bonny,
   controllers: []
+
+config :control_server, ControlServer.Services, run_battery: true

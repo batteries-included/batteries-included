@@ -1,13 +1,11 @@
 defmodule KubeResources.Security do
   alias KubeResources.CertManager
-  alias KubeResources.SecuritySettings
 
   @certmanager_crd_path "priv/manifests/cert_manager/cert_manager-crds.yaml"
 
   def materialize(%{} = config) do
     static = %{
-      "/0/crd" => yaml(certmanager_crd_content()),
-      "/0/namespace" => namespace(config)
+      "/0/crd" => yaml(certmanager_crd_content())
     }
 
     body =
@@ -17,18 +15,6 @@ defmodule KubeResources.Security do
       |> Map.new()
 
     %{} |> Map.merge(static) |> Map.merge(body)
-  end
-
-  defp namespace(config) do
-    ns = SecuritySettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Namespace",
-      "metadata" => %{
-        "name" => ns
-      }
-    }
   end
 
   defp certmanager_crd_content, do: unquote(File.read!(@certmanager_crd_path))

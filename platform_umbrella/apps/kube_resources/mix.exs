@@ -26,6 +26,7 @@ defmodule KubeResources.MixProject do
     [
       # Yaml
       {:yaml_elixir, "~> 2.6"},
+      {:ymlr, "~> 1.0"},
       {:kube_ext, in_umbrella: true},
       {:control_server, in_umbrella: true}
     ]

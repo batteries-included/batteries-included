@@ -1,5 +1,5 @@
 defmodule KubeResources.DatabaseTest do
-  use ControlServer.DataCase
+  use ControlServer.DataCase, async: true
 
   alias KubeResources.Database
 

@@ -2,7 +2,7 @@ defmodule KubeResources.DatabaseSettings do
   @moduledoc """
   Module for extracting the setting from a map usually a json map from the BaseService ecto
   """
-  @namepace "battery-db"
+  @namepace "battery-core"
 
   @pg_operator_name "battery-pg-operator"
   @pg_operator_pod_account_name "battery-pg-pod"

@@ -31,7 +31,7 @@ defmodule ControlServer.ServicesTest do
 
     test "list_base_services/0 returns all base_services" do
       base_service = base_service_fixture()
-      assert Services.list_base_services() == [base_service]
+      assert Enum.member?(Services.list_base_services(), base_service)
     end
 
     test "get_base_service!/1 returns the base_service with given id" do

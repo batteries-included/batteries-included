@@ -1,27 +1,11 @@
 defmodule KubeResources.Network do
   alias KubeResources.Kong
-  alias KubeResources.NetworkSettings
   alias KubeResources.Nginx
 
   def materialize(%{} = config) do
     %{}
-    |> Map.merge(namespace(config))
     |> Map.merge(nginx(config))
     |> Map.merge(kong(config))
-  end
-
-  def namespace(config) do
-    ns = NetworkSettings.namespace(config)
-
-    %{
-      "/0/namespace" => %{
-        "apiVersion" => "v1",
-        "kind" => "Namespace",
-        "metadata" => %{
-          "name" => ns
-        }
-      }
-    }
   end
 
   def kong(%{"kong.install" => false}), do: %{}

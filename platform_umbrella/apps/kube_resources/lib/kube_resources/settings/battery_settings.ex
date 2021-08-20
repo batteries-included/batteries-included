@@ -5,6 +5,7 @@ defmodule KubeResources.BatterySettings do
   @control_version "b319bb4"
   @control_name "control-server"
 
+  @spec namespace(map) :: String.t()
   def namespace(config), do: Map.get(config, "namespace", @namespace)
   def control_server_image(config), do: Map.get(config, "control:image", @control_image)
   def control_server_version(config), do: Map.get(config, "control:version", @control_version)

@@ -1,5 +1,5 @@
 defmodule KubeServices.ConfigGeneratorTest do
-  use ExUnit.Case
+  use ControlServer.DataCase, async: true
 
   alias KubeResources.ConfigGenerator
   alias ControlServer.Services
@@ -9,9 +9,6 @@ defmodule KubeServices.ConfigGeneratorTest do
 
   describe "ConfigGenerator" do
     setup do
-      # Explicitly get a connection before each test
-      :ok = Ecto.Adapters.SQL.Sandbox.checkout(ControlServer.Repo)
-
       {:ok,
        monitoring: Monitoring.activate!(),
        database: Database.activate!(),
@@ -23,7 +20,7 @@ defmodule KubeServices.ConfigGeneratorTest do
       |> Enum.each(fn service ->
         configs = ConfigGenerator.materialize(service)
 
-        assert map_size(configs) >= 10
+        assert map_size(configs) >= 6
       end)
     end
   end

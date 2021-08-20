@@ -22,7 +22,7 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
   end
 
   defp get_pods do
-    :network |> Pods.get() |> Enum.map(&Pods.summarize/1)
+    Enum.map(Pods.get(), &Pods.summarize/1)
   end
 
   @impl true

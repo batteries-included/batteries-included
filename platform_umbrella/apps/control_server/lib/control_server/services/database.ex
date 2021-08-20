@@ -11,7 +11,7 @@ defmodule ControlServer.Services.Database do
   def default_config, do: @default_config
 
   def activate!(path \\ @default_path) do
-    Services.create_base_service!(%{
+    Services.find_or_create!(%{
       is_active: true,
       root_path: path,
       service_type: :database,

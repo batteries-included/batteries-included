@@ -10,12 +10,16 @@ defmodule ControlServer.Application do
       # Start the Ecto repository
       ControlServer.Repo,
       # Start the PubSub system
-      {Phoenix.PubSub, name: ControlServer.PubSub}
+      {Phoenix.PubSub, name: ControlServer.PubSub},
+      {Task.Supervisor, name: ControlServer.TaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: ControlServer.Supervisor]
-    Supervisor.start_link(children, opts)
+    sup = Supervisor.start_link(children, opts)
+
+    ControlServer.Services.Defaults.start()
+    sup
   end
 end

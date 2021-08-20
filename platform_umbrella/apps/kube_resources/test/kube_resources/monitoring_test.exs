@@ -1,5 +1,5 @@
 defmodule KubeResources.MonitoringTest do
-  use ExUnit.Case
+  use ControlServer.DataCase
 
   alias KubeResources.Monitoring
 

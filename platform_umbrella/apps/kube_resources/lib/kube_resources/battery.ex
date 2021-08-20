@@ -2,6 +2,8 @@ defmodule KubeResources.Battery do
   @moduledoc false
 
   alias KubeResources.BatterySettings
+  alias KubeResources.EchoServer
+  alias KubeResources.Ingress
 
   defp namespace(config) do
     ns = BatterySettings.namespace(config)
@@ -15,7 +17,7 @@ defmodule KubeResources.Battery do
     }
   end
 
-  def deployment_0(config) do
+  def deployment(%{"control.run" => true} = config) do
     namespace = BatterySettings.namespace(config)
     name = BatterySettings.control_server_name(config)
 
@@ -57,6 +59,10 @@ defmodule KubeResources.Battery do
         }
       }
     }
+  end
+
+  def deployment(_) do
+    []
   end
 
   defp control_container(config, options) do
@@ -117,7 +123,7 @@ defmodule KubeResources.Battery do
     )
   end
 
-  def cluster_role_0(_config) do
+  def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
@@ -174,7 +180,7 @@ defmodule KubeResources.Battery do
     }
   end
 
-  def service_account_0(config) do
+  def service_account(config) do
     namespace = BatterySettings.namespace(config)
 
     %{
@@ -188,7 +194,7 @@ defmodule KubeResources.Battery do
     }
   end
 
-  def cluster_role_binding_0(config) do
+  def cluster_role_binding(config) do
     namespace = BatterySettings.namespace(config)
 
     %{
@@ -216,10 +222,13 @@ defmodule KubeResources.Battery do
   def materialize(config) do
     %{
       "/0/namespace" => namespace(config),
-      "/1/cluster_role_0" => cluster_role_0(config),
-      "/2/service_account_0" => service_account_0(config),
-      "/3/cluster_role_binding_0" => cluster_role_binding_0(config),
-      "/4/deployment_0" => deployment_0(config)
+      "/1/cluster_role" => cluster_role(config),
+      "/1/service_account" => service_account(config),
+      "/1/cluster_role_binding" => cluster_role_binding(config),
+      "/1/deployment" => deployment(config),
+      "/2/ingress" => Ingress.battery_ingress(config),
+      "/3/echo/service" => EchoServer.service(config),
+      "/3/echo/deployment" => EchoServer.deployment(config)
     }
   end
 end
