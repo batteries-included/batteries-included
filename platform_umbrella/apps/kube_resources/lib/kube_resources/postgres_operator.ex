@@ -13,7 +13,7 @@ defmodule KubeResources.PostgresOperator do
         "name" => "battery-postgres-operator",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "postgres-operator",
+          "battery/app" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -28,7 +28,7 @@ defmodule KubeResources.PostgresOperator do
       "metadata" => %{
         "name" => "postgres-pod",
         "labels" => %{
-          "app.kubernetes.io/name" => "postgres-operator",
+          "battery/app" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -65,7 +65,7 @@ defmodule KubeResources.PostgresOperator do
       "metadata" => %{
         "name" => "battery-postgres-operator",
         "labels" => %{
-          "app.kubernetes.io/name" => "postgres-operator",
+          "battery/app" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -173,7 +173,7 @@ defmodule KubeResources.PostgresOperator do
       "metadata" => %{
         "name" => "battery-postgres-operator",
         "labels" => %{
-          "app.kubernetes.io/name" => "postgres-operator",
+          "battery/app" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -201,7 +201,7 @@ defmodule KubeResources.PostgresOperator do
       "kind" => "Service",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "postgres-operator",
+          "battery/app" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         },
@@ -213,7 +213,7 @@ defmodule KubeResources.PostgresOperator do
         "ports" => [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
         "selector" => %{
           "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/name" => "postgres-operator"
+          "battery/app" => "postgres-operator"
         }
       }
     }
@@ -227,7 +227,7 @@ defmodule KubeResources.PostgresOperator do
       "kind" => "Deployment",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "postgres-operator",
+          "battery/app" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         },
@@ -238,7 +238,7 @@ defmodule KubeResources.PostgresOperator do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name" => "postgres-operator",
+            "battery/app" => "postgres-operator",
             "app.kubernetes.io/instance" => "battery"
           }
         },
@@ -246,7 +246,7 @@ defmodule KubeResources.PostgresOperator do
           "metadata" => %{
             "annotations" => %{},
             "labels" => %{
-              "app.kubernetes.io/name" => "postgres-operator",
+              "battery/app" => "postgres-operator",
               "app.kubernetes.io/instance" => "battery",
               "battery/managed" => "True"
             }
@@ -327,7 +327,7 @@ defmodule KubeResources.PostgresOperator do
         "name" => "battery-postgres-operator",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "postgres-operator",
+          "battery/app" => "postgres-operator",
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -343,7 +343,7 @@ defmodule KubeResources.PostgresOperator do
         "kubernetes" => %{
           "oauth_token_secret_name" => "battery-postgres-operator",
           "cluster_name_label" => "battery-cluster-name",
-          "watched_namespace" => "battery-db"
+          "watched_namespace" => namespace
         },
         "debug" => %{"debug_logging" => true, "enable_database_access" => true}
       }

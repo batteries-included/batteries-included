@@ -3,7 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations: {}
   labels:
-    app.kubernetes.io/name: postgres-operator
+    battery/app: postgres-operator
     battery/managed: 'True'
   name: operatorconfigurations.acid.zalan.do
 spec:
@@ -568,7 +568,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations: {}
   labels:
-    app.kubernetes.io/name: postgres-operator
+    battery/app: postgres-operator
     battery/managed: 'True'
   name: postgresqls.acid.zalan.do
 spec:
@@ -1124,7 +1124,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations: {}
   labels:
-    app.kubernetes.io/name: postgres-operator
+    battery/app: postgres-operator
     battery/managed: 'True'
   name: postgresteams.acid.zalan.do
 spec:

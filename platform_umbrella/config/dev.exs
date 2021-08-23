@@ -28,14 +28,6 @@ config :home_base, HomeBase.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :k8s,
-  clusters: %{
-    # `default` here must match `cluster_name` below
-    default: %{
-      conn: "~/.kube/config"
-    }
-  }
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -109,3 +101,5 @@ config :phoenix, :plug_init_mode, :runtime
 config :phoenix, :stacktrace_depth, 20
 
 config :control_server, ControlServer.Services, run_battery: false
+
+config :kube_ext, cluster_type: :dev

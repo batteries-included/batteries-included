@@ -4,13 +4,11 @@ defmodule KubeResources.NodeExporter do
   """
   alias KubeResources.MonitoringSettings
 
-  def cluster_role(config) do
-    name = MonitoringSettings.node_name(config)
-
+  def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
-      "metadata" => %{"name" => name},
+      "metadata" => %{"name" => "battery-node-exporter"},
       "rules" => [
         %{
           "apiGroups" => ["authentication.k8s.io"],
@@ -28,37 +26,35 @@ defmodule KubeResources.NodeExporter do
 
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
-    name = MonitoringSettings.node_name(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => name,
+        "name" => "battery-node-exporter",
         "namespace" => namespace
       }
     }
   end
 
   def cluster_binding(config) do
-    name = MonitoringSettings.node_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
-        "name" => name
+        "name" => "battery-node-exporter"
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
         "kind" => "ClusterRole",
-        "name" => name
+        "name" => "battery-node-exporter"
       },
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => name,
+          "name" => "battery-node-exporter",
           "namespace" => namespace
         }
       ]
@@ -66,7 +62,6 @@ defmodule KubeResources.NodeExporter do
   end
 
   def daemonset(config) do
-    name = MonitoringSettings.node_name(config)
     namespace = MonitoringSettings.namespace(config)
     version = MonitoringSettings.node_version(config)
     image = MonitoringSettings.node_image(config)
@@ -76,21 +71,21 @@ defmodule KubeResources.NodeExporter do
       "kind" => "DaemonSet",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name": name
+          "battery/app" => "node-exporter"
         },
-        "name" => name,
+        "name" => "node-exporter",
         "namespace" => namespace
       },
       "spec" => %{
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name": name
+            "battery/app": "node-exporter"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app.kubernetes.io/name": name
+              "battery/app" => "node-exporter"
             }
           },
           "spec" => %{
@@ -106,7 +101,7 @@ defmodule KubeResources.NodeExporter do
                   "--collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)"
                 ],
                 "image" => "#{image}:#{version}",
-                "name" => name,
+                "name" => "node-exporter",
                 "resources" => %{
                   "limits" => %{
                     "cpu" => "250m",
@@ -190,7 +185,7 @@ defmodule KubeResources.NodeExporter do
               "runAsNonRoot" => true,
               "runAsUser" => 65_534
             },
-            "serviceAccountName" => name,
+            "serviceAccountName" => "battery-node-exporter",
             "tolerations" => [
               %{
                 "operator" => "Exists"
@@ -229,14 +224,13 @@ defmodule KubeResources.NodeExporter do
   end
 
   def service(config) do
-    name = MonitoringSettings.node_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => name,
+        "name" => "node-exporter",
         "namespace" => namespace
       },
       "spec" => %{
@@ -249,7 +243,7 @@ defmodule KubeResources.NodeExporter do
           }
         ],
         "selector" => %{
-          "app.kubernetes.io/name": name
+          "battery/app" => "node-exporter"
         }
       }
     }

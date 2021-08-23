@@ -11,13 +11,10 @@ defmodule KubeResources.CertManager do
       "kind" => "ServiceAccount",
       "automountServiceAccountToken" => true,
       "metadata" => %{
-        "name" => "battery-cert-manager-cainjector",
+        "name" => "cert-manager-cainjector",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cainjector",
-          "app.kubernetes.io/name" => "cainjector",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cainjector",
           "battery/managed" => "True"
         }
       }
@@ -36,9 +33,6 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       }
@@ -57,9 +51,6 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         }
       }
@@ -74,9 +65,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-cainjector",
         "labels" => %{
           "battery/app" => "cainjector",
-          "app.kubernetes.io/name" => "cainjector",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cainjector",
           "battery/managed" => "True"
         }
       },
@@ -124,9 +112,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-issuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -159,9 +144,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-clusterissuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -194,9 +176,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-certificates",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -244,9 +223,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-orders",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -290,9 +266,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-challenges",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -347,9 +320,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-ingress-shim",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -386,13 +356,10 @@ defmodule KubeResources.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-view",
         "labels" => %{
-          "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "rbac.authorization.k8s.io/aggregate-to-view" => "true",
           "rbac.authorization.k8s.io/aggregate-to-edit" => "true",
           "rbac.authorization.k8s.io/aggregate-to-admin" => "true",
+          "battery/app" => "cert-manager",
           "battery/managed" => "True"
         }
       },
@@ -418,12 +385,9 @@ defmodule KubeResources.CertManager do
       "metadata" => %{
         "name" => "battery-cert-manager-edit",
         "labels" => %{
-          "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "rbac.authorization.k8s.io/aggregate-to-edit" => "true",
           "rbac.authorization.k8s.io/aggregate-to-admin" => "true",
+          "battery/app" => "cert-manager",
           "battery/managed" => "True"
         }
       },
@@ -450,9 +414,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-approve:cert-manager-io",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cert-manager",
           "battery/managed" => "True"
         }
       },
@@ -475,9 +436,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook:subjectaccessreviews",
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         }
       },
@@ -501,9 +459,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-cainjector",
         "labels" => %{
           "battery/app" => "cainjector",
-          "app.kubernetes.io/name" => "cainjector",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cainjector",
           "battery/managed" => "True"
         }
       },
@@ -532,9 +487,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-issuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -559,9 +511,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-clusterissuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -586,9 +535,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-certificates",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -613,9 +559,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-orders",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -640,9 +583,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-challenges",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -667,9 +607,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-ingress-shim",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -694,9 +631,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-approve:cert-manager-io",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cert-manager",
           "battery/managed" => "True"
         }
       },
@@ -721,9 +655,6 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook:subjectaccessreviews",
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         }
       },
@@ -752,9 +683,6 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cainjector",
-          "app.kubernetes.io/name" => "cainjector",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cainjector",
           "battery/managed" => "True"
         }
       },
@@ -782,9 +710,6 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -811,9 +736,6 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         }
       },
@@ -821,7 +743,7 @@ defmodule KubeResources.CertManager do
         %{
           "apiGroups" => [""],
           "resources" => ["secrets"],
-          "resourceNames" => ["battery-cert-manager-webhook-ca"],
+          "resourceNames" => ["cert-manager-webhook-ca"],
           "verbs" => ["get", "list", "watch", "update"]
         },
         %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["create"]}
@@ -840,9 +762,6 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cainjector",
-          "app.kubernetes.io/name" => "cainjector",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cainjector",
           "battery/managed" => "True"
         }
       },
@@ -872,9 +791,6 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -905,9 +821,6 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         }
       },
@@ -934,13 +847,10 @@ defmodule KubeResources.CertManager do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => "battery-cert-manager",
+        "name" => "cert-manager",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -948,9 +858,7 @@ defmodule KubeResources.CertManager do
         "type" => "ClusterIP",
         "ports" => [%{"protocol" => "TCP", "port" => 9402, "targetPort" => 9402}],
         "selector" => %{
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller"
+          "battery/app" => "cert-manager"
         }
       }
     }
@@ -963,13 +871,10 @@ defmodule KubeResources.CertManager do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => "battery-cert-manager-webhook",
+        "name" => "cert-manager-webhook",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         }
       },
@@ -977,9 +882,7 @@ defmodule KubeResources.CertManager do
         "type" => "ClusterIP",
         "ports" => [%{"name" => "https", "port" => 443, "targetPort" => 10_250}],
         "selector" => %{
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook"
+          "battery/app" => "webhook"
         }
       }
     }
@@ -992,13 +895,10 @@ defmodule KubeResources.CertManager do
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "name" => "battery-cert-manager-cainjector",
+        "name" => "cert-manager-cainjector",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cainjector",
-          "app.kubernetes.io/name" => "cainjector",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "cainjector",
           "battery/managed" => "True"
         }
       },
@@ -1006,18 +906,13 @@ defmodule KubeResources.CertManager do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name" => "cainjector",
-            "app.kubernetes.io/instance" => "battery-cert-manager",
-            "app.kubernetes.io/component" => "cainjector"
+            "battery/app" => "cainjector"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
               "battery/app" => "cainjector",
-              "app.kubernetes.io/name" => "cainjector",
-              "app.kubernetes.io/instance" => "battery-cert-manager",
-              "app.kubernetes.io/component" => "cainjector",
               "battery/managed" => "True"
             }
           },
@@ -1028,14 +923,13 @@ defmodule KubeResources.CertManager do
                 "name" => "cert-manager",
                 "image" => "quay.io/jetstack/cert-manager-cainjector:v1.3.1",
                 "imagePullPolicy" => "IfNotPresent",
-                "args" => ["--v=2", "--leader-election-namespace=kube-system"],
+                "args" => ["--v=2", "--leader-election-namespace=$(POD_NAMESPACE"],
                 "env" => [
                   %{
                     "name" => "POD_NAMESPACE",
                     "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
                   }
-                ],
-                "resources" => %{}
+                ]
               }
             ]
           }
@@ -1051,13 +945,10 @@ defmodule KubeResources.CertManager do
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "name" => "battery-cert-manager",
+        "name" => "cert-manager",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cert-manager",
-          "app.kubernetes.io/name" => "cert-manager",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "controller",
           "battery/managed" => "True"
         }
       },
@@ -1065,18 +956,13 @@ defmodule KubeResources.CertManager do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name" => "cert-manager",
-            "app.kubernetes.io/instance" => "battery-cert-manager",
-            "app.kubernetes.io/component" => "controller"
+            "battery/app" => "cert-manager"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
               "battery/app" => "cert-manager",
-              "app.kubernetes.io/name" => "cert-manager",
-              "app.kubernetes.io/instance" => "battery-cert-manager",
-              "app.kubernetes.io/component" => "controller",
               "battery/managed" => "True"
             },
             "annotations" => %{
@@ -1095,7 +981,7 @@ defmodule KubeResources.CertManager do
                 "args" => [
                   "--v=2",
                   "--cluster-resource-namespace=$(POD_NAMESPACE)",
-                  "--leader-election-namespace=kube-system"
+                  "--leader-election-namespace=$(POD_NAMESPACE)"
                 ],
                 "ports" => [%{"containerPort" => 9402, "protocol" => "TCP"}],
                 "env" => [
@@ -1103,8 +989,7 @@ defmodule KubeResources.CertManager do
                     "name" => "POD_NAMESPACE",
                     "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
                   }
-                ],
-                "resources" => %{}
+                ]
               }
             ]
           }
@@ -1120,13 +1005,10 @@ defmodule KubeResources.CertManager do
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "name" => "battery-cert-manager-webhook",
+        "name" => "cert-manager-webhook",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         }
       },
@@ -1134,18 +1016,13 @@ defmodule KubeResources.CertManager do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name" => "webhook",
-            "app.kubernetes.io/instance" => "battery-cert-manager",
-            "app.kubernetes.io/component" => "webhook"
+            "battery/app" => "webhook"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
               "battery/app" => "webhook",
-              "app.kubernetes.io/name" => "webhook",
-              "app.kubernetes.io/instance" => "battery-cert-manager",
-              "app.kubernetes.io/component" => "webhook",
               "battery/managed" => "True"
             }
           },
@@ -1160,8 +1037,8 @@ defmodule KubeResources.CertManager do
                   "--v=2",
                   "--secure-port=10250",
                   "--dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)",
-                  "--dynamic-serving-ca-secret-name=battery-cert-manager-webhook-ca",
-                  "--dynamic-serving-dns-names=battery-cert-manager-webhook,battery-cert-manager-webhook.battery-security,battery-cert-manager-webhook.battery-security.svc"
+                  "--dynamic-serving-ca-secret-name=cert-manager-webhook-ca",
+                  "--dynamic-serving-dns-names=cert-manager-webhook,cert-manager-webhook.battery-core,cert-manager-webhook.battery-core.svc"
                 ],
                 "ports" => [%{"name" => "https", "containerPort" => 10_250}],
                 "livenessProbe" => %{
@@ -1205,14 +1082,10 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook",
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         },
         "annotations" => %{
-          "cert-manager.io/inject-ca-from-secret" =>
-            "battery-security/battery-cert-manager-webhook-ca"
+          "cert-manager.io/inject-ca-from-secret" => "battery-core/cert-manager-webhook-ca"
         }
       },
       "webhooks" => [
@@ -1232,7 +1105,7 @@ defmodule KubeResources.CertManager do
           "sideEffects" => "None",
           "clientConfig" => %{
             "service" => %{
-              "name" => "battery-cert-manager-webhook",
+              "name" => "cert-manager-webhook",
               "namespace" => namespace,
               "path" => "/mutate"
             }
@@ -1252,14 +1125,10 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook",
         "labels" => %{
           "battery/app" => "webhook",
-          "app.kubernetes.io/name" => "webhook",
-          "app.kubernetes.io/instance" => "battery-cert-manager",
-          "app.kubernetes.io/component" => "webhook",
           "battery/managed" => "True"
         },
         "annotations" => %{
-          "cert-manager.io/inject-ca-from-secret" =>
-            "battery-security/battery-cert-manager-webhook-ca"
+          "cert-manager.io/inject-ca-from-secret" => "battery-core/cert-manager-webhook-ca"
         }
       },
       "webhooks" => [
@@ -1272,7 +1141,7 @@ defmodule KubeResources.CertManager do
                 "operator" => "NotIn",
                 "values" => ["true"]
               },
-              %{"key" => "name", "operator" => "NotIn", "values" => ["battery-security"]}
+              %{"key" => "name", "operator" => "NotIn", "values" => ["battery-core"]}
             ]
           },
           "rules" => [
@@ -1289,7 +1158,7 @@ defmodule KubeResources.CertManager do
           "sideEffects" => "None",
           "clientConfig" => %{
             "service" => %{
-              "name" => "battery-cert-manager-webhook",
+              "name" => "cert-manager-webhook",
               "namespace" => namespace,
               "path" => "/validate"
             }

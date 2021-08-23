@@ -11,7 +11,7 @@ defmodule KubeResources.Nginx do
       "kind" => "ServiceAccount",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "app.kubernetes.io/component" => "controller",
@@ -32,7 +32,7 @@ defmodule KubeResources.Nginx do
       "kind" => "ConfigMap",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "app.kubernetes.io/component" => "controller",
@@ -50,7 +50,7 @@ defmodule KubeResources.Nginx do
       "kind" => "ClusterRole",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "battery/managed" => "True"
@@ -93,7 +93,7 @@ defmodule KubeResources.Nginx do
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "battery/managed" => "True"
@@ -119,7 +119,7 @@ defmodule KubeResources.Nginx do
       "kind" => "Role",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "app.kubernetes.io/component" => "controller",
@@ -171,7 +171,7 @@ defmodule KubeResources.Nginx do
       "kind" => "RoleBinding",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "app.kubernetes.io/component" => "controller",
@@ -199,7 +199,7 @@ defmodule KubeResources.Nginx do
       "kind" => "Service",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "app.kubernetes.io/component" => "controller",
@@ -215,7 +215,7 @@ defmodule KubeResources.Nginx do
           %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => "https"}
         ],
         "selector" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/component" => "controller"
         }
@@ -231,7 +231,7 @@ defmodule KubeResources.Nginx do
       "kind" => "Deployment",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "ingress-nginx",
+          "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
           "app.kubernetes.io/component" => "controller",
@@ -243,7 +243,7 @@ defmodule KubeResources.Nginx do
       "spec" => %{
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name" => "ingress-nginx",
+            "battery/app" => "ingress-nginx",
             "app.kubernetes.io/instance" => "battery",
             "app.kubernetes.io/component" => "controller"
           }
@@ -254,7 +254,7 @@ defmodule KubeResources.Nginx do
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app.kubernetes.io/name" => "ingress-nginx",
+              "battery/app" => "ingress-nginx",
               "app.kubernetes.io/instance" => "battery",
               "app.kubernetes.io/component" => "controller",
               "battery/managed" => "True"

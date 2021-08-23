@@ -8,26 +8,23 @@ defmodule KubeResources.PrometheusOperator do
 
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
-    account = MonitoringSettings.prometheus_operator_name(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => account,
+        "name" => "battery-prometheus-operator",
         "namespace" => namespace
       }
     }
   end
 
-  def cluster_role(config) do
-    name = MonitoringSettings.prometheus_operator_name(config)
-
+  def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
       "metadata" => %{
-        "name" => name
+        "name" => "battery-prometheus-operator"
       },
       "rules" => [
         %{
@@ -97,24 +94,27 @@ defmodule KubeResources.PrometheusOperator do
   end
 
   def cluster_role_binding(config) do
-    name = MonitoringSettings.prometheus_operator_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
-        "name" => name
+        "labels" => %{
+          "battery/app" => "prometheus-operator",
+          "battery/managed" => "True"
+        },
+        "name" => "battery-prometheus-operator"
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
         "kind" => "ClusterRole",
-        "name" => name
+        "name" => "battery-prometheus-operator"
       },
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => name,
+          "name" => "battery-prometheus-operator",
           "namespace" => namespace
         }
       ]
@@ -122,7 +122,6 @@ defmodule KubeResources.PrometheusOperator do
   end
 
   def deployment(config) do
-    name = MonitoringSettings.prometheus_operator_name(config)
     namespace = MonitoringSettings.namespace(config)
     image = MonitoringSettings.prometheus_operator_image(config)
     version = MonitoringSettings.prometheus_operator_version(config)
@@ -131,22 +130,26 @@ defmodule KubeResources.PrometheusOperator do
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "name" => name,
-        "namespace" => namespace
+        "labels" => %{
+          "battery/app" => "prometheus-operator",
+          "battery/managed" => "True"
+        },
+        "namespace" => namespace,
+        "name" => "battery-prometheus-operator"
       },
       "spec" => %{
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/component": "controller",
-            "app.kubernetes.io/name": name
+            "battery/app" => "prometheus-operator",
+            "battery/managed" => "True"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app.kubernetes.io/component": "controller",
-              "app.kubernetes.io/name": name
+              "battery/app" => "prometheus-operator",
+              "battery/managed" => "True"
             }
           },
           "spec" => %{
@@ -157,7 +160,7 @@ defmodule KubeResources.PrometheusOperator do
                   "--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:#{version}"
                 ],
                 "image" => "#{image}:#{version}",
-                "name" => name,
+                "name" => "prometheus-operator",
                 "ports" => [%{"containerPort" => 8080, "name" => "http"}],
                 "resources" => %{
                   "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
@@ -195,7 +198,7 @@ defmodule KubeResources.PrometheusOperator do
               "runAsNonRoot" => true,
               "runAsUser" => 65_534
             },
-            "serviceAccountName" => name
+            "serviceAccountName" => "battery-prometheus-operator"
           }
         }
       }
@@ -203,14 +206,17 @@ defmodule KubeResources.PrometheusOperator do
   end
 
   def service(config) do
-    name = MonitoringSettings.prometheus_operator_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => name,
+        "labels" => %{
+          "battery/app" => "prometheus-operator",
+          "battery/managed" => "True"
+        },
+        "name" => "prometheus-operator",
         "namespace" => namespace
       },
       "spec" => %{
@@ -223,8 +229,8 @@ defmodule KubeResources.PrometheusOperator do
           }
         ],
         "selector" => %{
-          "app.kubernetes.io/component": "controller",
-          "app.kubernetes.io/name": name
+          "battery/app" => "prometheus-operator",
+          "battery/managed" => "True"
         }
       }
     }

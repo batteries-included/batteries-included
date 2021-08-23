@@ -19,13 +19,14 @@ defmodule KubeExt.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {KubeExt.Application, []},
       extra_applications: [:logger]
     ]
   end
 
   defp deps do
     [
-      {:k8s, "~> 0.4.0"}
+      {:k8s, "~> 1.0.0"}
     ]
   end
 

@@ -11,21 +11,19 @@ defmodule KubeResources.Grafana do
   @main_configmap "grafana-config"
 
   def service_account(config) do
-    account = MonitoringSettings.grafana_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => account,
+        "name" => "battery-grafana",
         "namespace" => namespace
       }
     }
   end
 
   def prometheus_datasource_config(config) do
-    prometheus_name = MonitoringSettings.prometheus_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     file_contents =
@@ -35,10 +33,10 @@ defmodule KubeResources.Grafana do
           %{
             "access" => "proxy",
             "editable" => false,
-            "name" => prometheus_name,
+            "name" => "battery-prometheus",
             "orgId" => 1,
             "type" => "prometheus",
-            "url" => "http://#{prometheus_name}.#{namespace}.svc:9090",
+            "url" => "http://prometheus.#{namespace}.svc:9090",
             "version" => 1
           }
         ]
@@ -122,7 +120,6 @@ defmodule KubeResources.Grafana do
 
   def deployment(config) do
     namespace = MonitoringSettings.namespace(config)
-    name = MonitoringSettings.grafana_name(config)
     image = MonitoringSettings.grafana_image(config)
     version = MonitoringSettings.grafana_version(config)
 
@@ -131,22 +128,22 @@ defmodule KubeResources.Grafana do
       "kind" => "Deployment",
       "metadata" => %{
         "labels" => %{
-          "battery/app" => name
+          "battery/app" => "grafana"
         },
-        "name" => name,
+        "name" => "grafana",
         "namespace" => namespace
       },
       "spec" => %{
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "battery/app" => name
+            "battery/app" => "grafana"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "battery/app" => name
+              "battery/app" => "grafana"
             }
           },
           "spec" => %{
@@ -154,7 +151,7 @@ defmodule KubeResources.Grafana do
               %{
                 "env" => [],
                 "image" => "#{image}:#{version}",
-                "name" => name,
+                "name" => "grafana",
                 "ports" => [
                   %{
                     "containerPort" => 3000,
@@ -209,7 +206,7 @@ defmodule KubeResources.Grafana do
               "runAsNonRoot" => true,
               "runAsUser" => 65_534
             },
-            "serviceAccountName" => name,
+            "serviceAccountName" => "battery-grafana",
             "volumes" => [
               %{
                 "emptyDir" => %{},
@@ -241,14 +238,13 @@ defmodule KubeResources.Grafana do
   end
 
   def service(config) do
-    name = MonitoringSettings.grafana_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => name,
+        "name" => "grafana",
         "namespace" => namespace
       },
       "spec" => %{
@@ -260,7 +256,7 @@ defmodule KubeResources.Grafana do
           }
         ],
         "selector" => %{
-          "battery/app" => name
+          "battery/app" => "grafana"
         }
       }
     }

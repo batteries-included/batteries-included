@@ -37,9 +37,6 @@ import Config
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :k8s,
-  clusters: %{
-    default: %{}
-  }
-
 config :control_server, ControlServer.Services, run_battery: true
+
+config :kube_ext, cluster_type: :service_account

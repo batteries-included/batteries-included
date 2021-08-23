@@ -6,17 +6,22 @@ defmodule KubeExt do
   require Logger
   require Jason
 
-  def get_or_create(%{"items" => item_list}) do
-    {:ok, Enum.map(item_list, fn i -> get_or_create_single(i) end)}
+  def get_or_create(connection, %{"items" => item_list}) do
+    {:ok, Enum.map(item_list, fn i -> get_or_create_single(connection, i) end)}
   end
 
-  def get_or_create(resource), do: get_or_create_single(resource)
+  def get_or_create(connection, resource), do: get_or_create_single(connection, resource)
 
-  def apply(many) when is_list(many), do: Enum.map(many, &apply_single/1)
-  def apply(single), do: apply_single(single)
+  def maybe_apply(resource) when is_list(resource),
+    do: apply(KubeExt.ConnectionPool.get(), resource)
 
-  defp apply_single(resource) do
-    with {:ok, found} <- get_or_create(resource) do
+  def maybe_apply(connection, many) when is_list(many),
+    do: Enum.map(many, fn resource -> apply_single(connection, resource) end)
+
+  def maybe_apply(connection, single), do: apply_single(connection, single)
+
+  defp apply_single(connection, resource) do
+    with {:ok, found} <- get_or_create(connection, resource) do
       # Add the hash here means that we don't need
       # to recompute it if the hashes don't match.
       found = Hashing.decorate_content_hash(found)
@@ -25,29 +30,30 @@ defmodule KubeExt do
       if Hashing.get_hash(found) == Hashing.get_hash(resource) do
         {:ok, found}
       else
-        update_single(resource)
+        update_single(connection, resource)
       end
     end
   end
 
-  defp get_or_create_single(resource) do
+  defp get_or_create_single(connection, resource) do
     metadata = Map.get(resource, "metadata")
     Logger.debug("Creating or getting #{inspect(metadata)}")
 
-    case resource
-         |> Client.get()
-         |> Client.run(:default) do
+    get_operation = Client.get(resource)
+
+    case Client.run(connection, get_operation) do
       {:ok, _} = result ->
         result
 
-      {:error, :not_found} ->
+      {:error, %Client.APIError{reason: "NotFound"}} ->
         Logger.debug("Create it is")
 
-        res =
+        create_operation =
           resource
           |> Hashing.decorate_content_hash()
           |> Client.create()
-          |> Client.run(:default)
+
+        res = Client.run(connection, create_operation)
 
         Logger.warning("Result = #{inspect(res)}")
 
@@ -62,9 +68,11 @@ defmodule KubeExt do
     end
   end
 
-  defp update_single(resource) do
+  defp update_single(connection, resource) do
     metadata = Map.get(resource, "metadata")
     Logger.debug("Going to send update for #{inspect(metadata)}")
-    resource |> Client.patch() |> Client.run(:default)
+
+    patch_operation = Client.patch(resource)
+    Client.run(connection, patch_operation)
   end
 end

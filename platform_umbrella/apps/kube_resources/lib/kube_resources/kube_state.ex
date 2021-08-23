@@ -4,17 +4,16 @@ defmodule KubeResources.KubeState do
   """
   alias KubeResources.MonitoringSettings
 
-  def cluster_role(config) do
-    name = MonitoringSettings.kube_name(config)
-
+  def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name": name
+          "battery/app" => "kube-state-metrics",
+          "battery/managed" => "True"
         },
-        "name" => name
+        "name" => "battery-kube-state-metrics"
       },
       "rules" => [
         %{
@@ -184,7 +183,6 @@ defmodule KubeResources.KubeState do
   end
 
   def service_account(config) do
-    name = MonitoringSettings.kube_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
@@ -192,16 +190,16 @@ defmodule KubeResources.KubeState do
       "kind" => "ServiceAccount",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name": name
+          "battery/app" => "kube-state-metrics",
+          "battery/managed" => "True"
         },
-        "name" => name,
+        "name" => "kube-state-metrics",
         "namespace" => namespace
       }
     }
   end
 
   def cluster_binding(config) do
-    name = MonitoringSettings.kube_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
@@ -209,19 +207,20 @@ defmodule KubeResources.KubeState do
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name": name
+          "battery/app" => "kube-state-metrics",
+          "battery/managed" => "True"
         },
-        "name" => name
+        "name" => "battery-kube-state-metrics"
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
         "kind" => "ClusterRole",
-        "name" => name
+        "name" => "battery-kube-state-metrics"
       },
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => name,
+          "name" => "battery-kube-state-metrics",
           "namespace" => namespace
         }
       ]
@@ -229,7 +228,6 @@ defmodule KubeResources.KubeState do
   end
 
   def deployment(config) do
-    name = MonitoringSettings.kube_name(config)
     namespace = MonitoringSettings.namespace(config)
     image = MonitoringSettings.kube_image(config)
     version = MonitoringSettings.kube_version(config)
@@ -239,22 +237,25 @@ defmodule KubeResources.KubeState do
       "kind" => "Deployment",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name": name
+          "battery/app" => "kube-state-metrics",
+          "battery/managed" => "True"
         },
-        "name" => name,
+        "name" => "kube-state-metrics",
         "namespace" => namespace
       },
       "spec" => %{
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name": name
+            "battery/app" => "kube-state-metrics",
+            "battery/managed" => "True"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app.kubernetes.io/name": name
+              "battery/app" => "kube-state-metrics",
+              "battery/managed" => "True"
             }
           },
           "spec" => %{
@@ -267,7 +268,7 @@ defmodule KubeResources.KubeState do
                   "--telemetry-port=8082"
                 ],
                 "image" => "#{image}:#{version}",
-                "name" => name
+                "name" => "kube-state-metrics"
               },
               %{
                 "args" => [
@@ -315,7 +316,7 @@ defmodule KubeResources.KubeState do
             "nodeSelector" => %{
               "kubernetes.io/os": "linux"
             },
-            "serviceAccountName" => name
+            "serviceAccountName" => "battery-kube-state-metrics"
           }
         }
       }
@@ -323,14 +324,13 @@ defmodule KubeResources.KubeState do
   end
 
   def service(config) do
-    name = MonitoringSettings.kube_name(config)
     namespace = MonitoringSettings.namespace(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => name,
+        "name" => "kube-state-metrics",
         "namespace" => namespace
       },
       "spec" => %{
@@ -348,7 +348,8 @@ defmodule KubeResources.KubeState do
           }
         ],
         "selector" => %{
-          "app.kubernetes.io/name": name
+          "battery/app" => "kube-state-metrics",
+          "battery/managed" => "True"
         }
       }
     }

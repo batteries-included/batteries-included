@@ -9,11 +9,8 @@ defmodule KubeUsage.Application do
   def start(_type, _args) do
     children = [
       KubeUsage.Repo
-      # {KubeUsage.UsagePoller, name: KubeUsage.UsagePoller}
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: KubeUsage.Supervisor]
     Supervisor.start_link(children, opts)
   end

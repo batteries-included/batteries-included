@@ -98,19 +98,19 @@ defmodule KubeResources.Battery do
           },
           %{"name" => "MIX_ENV", "value" => "prod"},
           %{
-            "name" => "BONNY_POD_NAME",
+            "name" => "BELLA_POD_NAME",
             "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
           },
           %{
-            "name" => "BONNY_POD_NAMESPACE",
+            "name" => "BELLA_POD_NAMESPACE",
             "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
           },
           %{
-            "name" => "BONNY_POD_IP",
+            "name" => "BELLA_POD_IP",
             "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.podIP"}}
           },
           %{
-            "name" => "BONNY_POD_SERVICE_ACCOUNT",
+            "name" => "BELLA_POD_SERVICE_ACCOUNT",
             "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.serviceAccountName"}}
           }
         ],

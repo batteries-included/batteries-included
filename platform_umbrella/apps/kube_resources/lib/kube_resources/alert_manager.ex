@@ -6,15 +6,15 @@ defmodule KubeResources.AlertManager do
 
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
-    name = MonitoringSettings.alertmanager_name(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => name,
+        "name" => "battery-alertmanager",
         "namespace" => namespace,
         "labels" => %{
+          "battery/app" => "alertmanager",
           "battery/managed" => "True"
         }
       }
@@ -23,16 +23,16 @@ defmodule KubeResources.AlertManager do
 
   def config(config) do
     namespace = MonitoringSettings.namespace(config)
-    name = MonitoringSettings.alertmanager_name(config)
 
     %{
       "apiVersion" => "monitoring.coreos.com/v1alpha1",
       "kind" => "AlertmanagerConfig",
       "metadata" => %{
-        "name" => name,
+        "name" => "alertmanager",
         "namespace" => namespace,
         "labels" => %{
-          "alertmanager" => name,
+          "alertmanager" => "alertmanager",
+          "battery/app" => "alertmanager",
           "battery/managed" => "True"
         }
       },
@@ -60,7 +60,6 @@ defmodule KubeResources.AlertManager do
 
   def alertmanager(config) do
     namespace = MonitoringSettings.namespace(config)
-    name = MonitoringSettings.alertmanager_name(config)
     image = MonitoringSettings.alertmanager_image(config)
     version = MonitoringSettings.alertmanager_version(config)
 
@@ -68,9 +67,10 @@ defmodule KubeResources.AlertManager do
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "Alertmanager",
       "metadata" => %{
-        "name" => name,
+        "name" => "alertmanager",
         "namespace" => namespace,
         "labels" => %{
+          "battery/app" => "alertmanager",
           "battery/managed" => "True"
         }
       },
@@ -80,7 +80,7 @@ defmodule KubeResources.AlertManager do
           "kubernetes.io/os": "linux"
         },
         "alertmanagerConfigSelector" => %{
-          "matchLables" => %{"alertmanager" => name}
+          "matchLables" => %{"alertmanager" => "alertmanager"}
         },
         "replicas" => 1,
         "securityContext" => %{
@@ -88,7 +88,7 @@ defmodule KubeResources.AlertManager do
           "runAsNonRoot" => true,
           "runAsUser" => 1000
         },
-        "serviceAccountName" => name,
+        "serviceAccountName" => "battery-alertmanager",
         "version" => version
       }
     }
@@ -96,15 +96,15 @@ defmodule KubeResources.AlertManager do
 
   def service(config) do
     namespace = MonitoringSettings.namespace(config)
-    name = MonitoringSettings.alertmanager_name(config)
 
     %{
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => name,
+        "name" => "alertmanager",
         "namespace" => namespace,
         "labels" => %{
+          "battery/app" => "alertmanager",
           "battery/managed" => "True"
         }
       },
@@ -117,7 +117,8 @@ defmodule KubeResources.AlertManager do
           }
         ],
         "selector" => %{
-          "alertmanager" => name
+          "battery/app" => "alertmanager",
+          "alertmanager" => "alertmanager"
         },
         "sessionAffinity" => "ClientIP"
       }

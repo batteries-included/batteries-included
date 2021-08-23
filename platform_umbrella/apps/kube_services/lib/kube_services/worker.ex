@@ -25,8 +25,8 @@ defmodule KubeServices.Worker do
       !ok?(ap) || different?(ap, resource)
     end
 
-    def apply(resource) do
-      %ApplyState{last_result: KubeExt.apply(resource), resource: resource}
+    def apply(connection, resource) do
+      %ApplyState{last_result: KubeExt.maybe_apply(connection, resource), resource: resource}
     end
 
     def from_path(%{} = path_state_map, path), do: Map.get(path_state_map, path, nil)
@@ -56,7 +56,7 @@ defmodule KubeServices.Worker do
     - Taking the desired state and applying it to kubernetes recording the result.
     """
 
-    defstruct [:base_service, :requested_resources, path_state_map: %{}]
+    defstruct [:base_service, :requested_resources, :connection, path_state_map: %{}]
 
     def new(base_service) do
       %__MODULE__{
@@ -77,6 +77,9 @@ defmodule KubeServices.Worker do
           requested_resources: ConfigGenerator.materialize(base_service)
       }
     end
+
+    def connection(%State{}),
+      do: KubeExt.ConnectionPool.get(KubeServices.ConnectionPool, :default)
 
     def apply_resources(%State{} = state) do
       new_path_state_map =
@@ -99,7 +102,11 @@ defmodule KubeServices.Worker do
       end)
     end
 
-    defp maybe_apply_path(%State{path_state_map: path_state_map}, path, resource) do
+    defp maybe_apply_path(
+           %State{path_state_map: path_state_map} = state,
+           path,
+           resource
+         ) do
       # Wild complex with statement.
       #
       # Essentially it assumes that that is no need to push the resource specs.
@@ -119,11 +126,11 @@ defmodule KubeServices.Worker do
             "Appears like we don't know the apply status of #{path} pushing to kubernetes"
           )
 
-          {path, ApplyState.apply(resource)}
+          {path, ApplyState.apply(State.connection(state), resource)}
 
         {:needs_apply, _} ->
           Logger.debug("Last apply state doesn't match for #{path}")
-          {path, ApplyState.apply(resource)}
+          {path, ApplyState.apply(State.connection(state), resource)}
       end
     end
   end

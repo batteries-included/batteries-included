@@ -1,0 +1,74 @@
+defmodule KubeExt.ConnectionPool do
+  use Supervisor
+  require Logger
+
+  @me __MODULE__
+  @default_cluster :default
+
+  def start_link(opts \\ []) do
+    name = name(opts)
+    {:ok, pid} = result = Supervisor.start_link(__MODULE__, opts, name: name)
+    Logger.debug("#{@me} Supervisor started with# #{inspect(pid)} name #{name}.")
+    result
+  end
+
+  def init(opts) do
+    name = name(opts)
+
+    children = [
+      {Registry, keys: :unique, name: registry_name(name)},
+      {Task.Supervisor, name: task_supervisor_name(name)}
+    ]
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
+
+  def get, do: get(@me, @default_cluster)
+  def get(cluster_name), do: get(@me, cluster_name)
+
+  def get(pool_name, cluster_name) do
+    connection = pool_name |> registry_name() |> Registry.lookup(cluster_name) |> List.first(nil)
+
+    case connection do
+      {_pid, connection} ->
+        connection
+
+      _ ->
+        register_new(pool_name, cluster_name)
+    end
+  end
+
+  defp register_new(pool_name, cluster_name) do
+    with task_sup <- task_supervisor_name(pool_name),
+         conn_task <-
+           Task.Supervisor.async(task_sup, fn -> connection_from_name(cluster_name) end),
+         {:ok, connection} <- Task.await(conn_task),
+         registry = registry_name(pool_name),
+         {:ok, _} <- Registry.register(registry, cluster_name, connection) do
+      connection
+    end
+  end
+
+  defp connection_from_name(cluster_name) do
+    Application.get_env(:kube_ext, :clusters, [])
+    |> Keyword.get(cluster_name, {:file, "~/.kube/config"})
+    |> new_connection()
+  end
+
+  defp new_connection({:file, path}), do: K8s.Conn.from_file(path)
+
+  defp name(opts), do: Keyword.get(opts, :name, @me)
+
+  defp registry_name(cluster_name) when is_atom(cluster_name) do
+    registry_name(Atom.to_string(cluster_name))
+  end
+
+  defp registry_name(cluster_name), do: String.to_atom("#{cluster_name}.Registry")
+
+  defp task_supervisor_name(cluster_name) when is_atom(cluster_name) do
+    task_supervisor_name(Atom.to_string(cluster_name))
+  end
+
+  defp task_supervisor_name(cluster_name),
+    do: String.to_atom("#{cluster_name}.TaskSupervisor")
+end

@@ -2,11 +2,9 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from-secret: battery-security/battery-cert-manager-webhook-ca
+    cert-manager.io/inject-ca-from-secret: battery-core/cert-manager-webhook-ca
   labels:
     app: cert-manager
-    app.kubernetes.io/instance: battery-cert-manager
-    app.kubernetes.io/name: cert-manager
     battery/managed: 'True'
   name: certificaterequests.cert-manager.io
 spec:
@@ -15,8 +13,8 @@ spec:
     webhook:
       clientConfig:
         service:
-          name: battery-cert-manager-webhook
-          namespace: battery-security
+          name: cert-manager-webhook
+          namespace: battery-core
           path: /convert
       conversionReviewVersions:
         - v1
@@ -1046,11 +1044,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from-secret: battery-security/battery-cert-manager-webhook-ca
+    cert-manager.io/inject-ca-from-secret: battery-core/battery-cert-manager-webhook-ca
   labels:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
-    app.kubernetes.io/name: cert-manager
+    battery/app: cert-manager
     battery/managed: 'True'
   name: certificates.cert-manager.io
 spec:
@@ -1060,7 +1058,7 @@ spec:
       clientConfig:
         service:
           name: battery-cert-manager-webhook
-          namespace: battery-security
+          namespace: battery-core
           path: /convert
       conversionReviewVersions:
         - v1
@@ -3008,11 +3006,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from-secret: battery-security/battery-cert-manager-webhook-ca
+    cert-manager.io/inject-ca-from-secret: battery-core/battery-cert-manager-webhook-ca
   labels:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
-    app.kubernetes.io/name: cert-manager
+    battery/app: cert-manager
     battery/managed: 'True'
   name: challenges.acme.cert-manager.io
 spec:
@@ -3022,7 +3020,7 @@ spec:
       clientConfig:
         service:
           name: battery-cert-manager-webhook
-          namespace: battery-security
+          namespace: battery-core
           path: /convert
       conversionReviewVersions:
         - v1
@@ -3652,8 +3650,8 @@ spec:
                                             Describes node affinity scheduling
                                             rules for the pod.
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -3805,8 +3803,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -3949,8 +3947,8 @@ spec:
                                             rules (e.g. co-locate this pod in the same
                                             node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -4042,8 +4040,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -4099,8 +4097,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -4234,8 +4232,8 @@ spec:
                                             rules (e.g. avoid putting this pod in the
                                             same node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the anti-affinity expressions specified
@@ -4327,8 +4325,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -4384,8 +4382,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the anti-affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -5329,8 +5327,8 @@ spec:
                                             Describes node affinity scheduling
                                             rules for the pod.
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -5482,8 +5480,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -5626,8 +5624,8 @@ spec:
                                             rules (e.g. co-locate this pod in the same
                                             node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -5719,8 +5717,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -5776,8 +5774,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -5911,8 +5909,8 @@ spec:
                                             rules (e.g. avoid putting this pod in the
                                             same node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the anti-affinity expressions specified
@@ -6004,8 +6002,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -6061,8 +6059,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the anti-affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -7006,8 +7004,8 @@ spec:
                                             Describes node affinity scheduling
                                             rules for the pod.
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -7159,8 +7157,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -7303,8 +7301,8 @@ spec:
                                             rules (e.g. co-locate this pod in the same
                                             node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -7396,8 +7394,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -7453,8 +7451,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -7588,8 +7586,8 @@ spec:
                                             rules (e.g. avoid putting this pod in the
                                             same node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the anti-affinity expressions specified
@@ -7681,8 +7679,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -7738,8 +7736,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the anti-affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -8683,8 +8681,8 @@ spec:
                                             Describes node affinity scheduling
                                             rules for the pod.
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -8836,8 +8834,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -8980,8 +8978,8 @@ spec:
                                             rules (e.g. co-locate this pod in the same
                                             node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the affinity expressions specified by
@@ -9073,8 +9071,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -9130,8 +9128,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -9265,8 +9263,8 @@ spec:
                                             rules (e.g. avoid putting this pod in the
                                             same node, zone, etc. as some other pod(s)).
                                           properties:
-                                            ? preferredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            preferredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 The scheduler will prefer
                                                 to schedule pods to nodes that satisfy
                                                 the anti-affinity expressions specified
@@ -9358,8 +9356,8 @@ spec:
                                                               type: object
                                                             type: array
                                                           matchLabels:
-                                                            ? additionalProperties
-                                                            : type: string
+                                                            additionalProperties:
+                                                              type: string
                                                             description:
                                                               matchLabels
                                                               is a map of {key,value}
@@ -9415,8 +9413,8 @@ spec:
                                                   - weight
                                                 type: object
                                               type: array
-                                            ? requiredDuringSchedulingIgnoredDuringExecution
-                                            : description:
+                                            requiredDuringSchedulingIgnoredDuringExecution:
+                                              description:
                                                 If the anti-affinity requirements
                                                 specified by this field are not met
                                                 at scheduling time, the pod will not
@@ -9757,11 +9755,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from-secret: battery-security/battery-cert-manager-webhook-ca
+    cert-manager.io/inject-ca-from-secret: battery-core/battery-cert-manager-webhook-ca
   labels:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
-    app.kubernetes.io/name: cert-manager
+    battery/app: cert-manager
     battery/managed: 'True'
   name: clusterissuers.cert-manager.io
 spec:
@@ -9771,7 +9769,7 @@ spec:
       clientConfig:
         service:
           name: battery-cert-manager-webhook
-          namespace: battery-security
+          namespace: battery-core
           path: /convert
       conversionReviewVersions:
         - v1
@@ -10525,8 +10523,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -10703,8 +10701,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -10872,8 +10870,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -10912,8 +10910,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -10931,16 +10929,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -10951,8 +10949,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -10980,8 +10978,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -11045,8 +11043,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -11143,8 +11141,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -11198,8 +11196,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -11239,8 +11237,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -11258,16 +11256,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -11278,8 +11276,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -11307,8 +11305,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -11372,8 +11370,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -11470,8 +11468,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -12757,8 +12755,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -12935,8 +12933,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -13104,8 +13102,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -13144,8 +13142,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -13163,16 +13161,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -13183,8 +13181,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -13212,8 +13210,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -13277,8 +13275,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -13375,8 +13373,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -13430,8 +13428,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -13471,8 +13469,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -13490,16 +13488,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -13510,8 +13508,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -13539,8 +13537,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -13604,8 +13602,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -13702,8 +13700,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -14989,8 +14987,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -15167,8 +15165,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -15336,8 +15334,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -15376,8 +15374,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -15395,16 +15393,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -15415,8 +15413,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -15444,8 +15442,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -15509,8 +15507,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -15607,8 +15605,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -15662,8 +15660,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -15703,8 +15701,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -15722,16 +15720,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -15742,8 +15740,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -15771,8 +15769,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -15836,8 +15834,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -15934,8 +15932,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -17223,8 +17221,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -17401,8 +17399,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -17570,8 +17568,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -17610,8 +17608,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -17629,16 +17627,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -17649,8 +17647,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -17678,8 +17676,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -17743,8 +17741,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -17841,8 +17839,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -17896,8 +17894,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -17937,8 +17935,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -17956,16 +17954,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -17976,8 +17974,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -18005,8 +18003,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -18070,8 +18068,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -18168,8 +18166,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -18729,11 +18727,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from-secret: battery-security/battery-cert-manager-webhook-ca
+    cert-manager.io/inject-ca-from-secret: battery-core/battery-cert-manager-webhook-ca
   labels:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
-    app.kubernetes.io/name: cert-manager
+    battery/app: cert-manager
     battery/managed: 'True'
   name: issuers.cert-manager.io
 spec:
@@ -18743,7 +18741,7 @@ spec:
       clientConfig:
         service:
           name: battery-cert-manager-webhook
-          namespace: battery-security
+          namespace: battery-core
           path: /convert
       conversionReviewVersions:
         - v1
@@ -19496,8 +19494,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -19674,8 +19672,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -19843,8 +19841,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -19883,8 +19881,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -19902,16 +19900,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -19922,8 +19920,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -19951,8 +19949,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -20016,8 +20014,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -20114,8 +20112,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -20169,8 +20167,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -20210,8 +20208,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -20229,16 +20227,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -20249,8 +20247,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -20278,8 +20276,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -20343,8 +20341,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -20441,8 +20439,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -21727,8 +21725,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -21905,8 +21903,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -22074,8 +22072,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -22114,8 +22112,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -22133,16 +22131,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -22153,8 +22151,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -22182,8 +22180,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -22247,8 +22245,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -22345,8 +22343,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -22400,8 +22398,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -22441,8 +22439,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -22460,16 +22458,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -22480,8 +22478,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -22509,8 +22507,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -22574,8 +22572,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -22672,8 +22670,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -23958,8 +23956,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -24136,8 +24134,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -24305,8 +24303,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -24345,8 +24343,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -24364,16 +24362,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -24384,8 +24382,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -24413,8 +24411,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -24478,8 +24476,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -24576,8 +24574,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -24631,8 +24629,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -24672,8 +24670,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -24691,16 +24689,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -24711,8 +24709,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -24740,8 +24738,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -24805,8 +24803,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -24903,8 +24901,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -26191,8 +26189,8 @@ spec:
                                                   Describes node affinity
                                                   scheduling rules for the pod.
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -26369,8 +26367,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -26538,8 +26536,8 @@ spec:
                                                   pod in the same node, zone, etc. as
                                                   some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the affinity expressions
@@ -26578,8 +26576,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -26597,16 +26595,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -26617,8 +26615,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -26646,8 +26644,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -26711,8 +26709,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the affinity requirements
                                                       specified by this field are not
                                                       met at scheduling time, the pod
@@ -26809,8 +26807,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -26864,8 +26862,8 @@ spec:
                                                   this pod in the same node, zone, etc.
                                                   as some other pod(s)).
                                                 properties:
-                                                  ? preferredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       The scheduler will
                                                       prefer to schedule pods to nodes
                                                       that satisfy the anti-affinity
@@ -26905,8 +26903,8 @@ spec:
                                                                 over a set of resources,
                                                                 in this case pods.
                                                               properties:
-                                                                ? matchExpressions
-                                                                : description:
+                                                                matchExpressions:
+                                                                  description:
                                                                     matchExpressions
                                                                     is a list of label
                                                                     selector requirements.
@@ -26924,16 +26922,16 @@ spec:
                                                                       key and values.
                                                                     properties:
                                                                       key:
-                                                                        ? description
-                                                                        : key
+                                                                        description:
+                                                                          key
                                                                           is the label
                                                                           key that the
                                                                           selector applies
                                                                           to.
                                                                         type: string
                                                                       operator:
-                                                                        ? description
-                                                                        : operator
+                                                                        description:
+                                                                          operator
                                                                           represents
                                                                           a key's relationship
                                                                           to a set of
@@ -26944,8 +26942,8 @@ spec:
                                                                           DoesNotExist.
                                                                         type: string
                                                                       values:
-                                                                        ? description
-                                                                        : values
+                                                                        description:
+                                                                          values
                                                                           is an array
                                                                           of string
                                                                           values. If
@@ -26973,8 +26971,8 @@ spec:
                                                                     type: object
                                                                   type: array
                                                                 matchLabels:
-                                                                  ? additionalProperties
-                                                                  : type: string
+                                                                  additionalProperties:
+                                                                    type: string
                                                                   description:
                                                                     matchLabels
                                                                     is a map of {key,value}
@@ -27038,8 +27036,8 @@ spec:
                                                         - weight
                                                       type: object
                                                     type: array
-                                                  ? requiredDuringSchedulingIgnoredDuringExecution
-                                                  : description:
+                                                  requiredDuringSchedulingIgnoredDuringExecution:
+                                                    description:
                                                       If the anti-affinity
                                                       requirements specified by this
                                                       field are not met at scheduling
@@ -27136,8 +27134,8 @@ spec:
                                                                 type: object
                                                               type: array
                                                             matchLabels:
-                                                              ? additionalProperties
-                                                              : type: string
+                                                              additionalProperties:
+                                                                type: string
                                                               description:
                                                                 matchLabels
                                                                 is a map of {key,value}
@@ -27697,11 +27695,11 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from-secret: battery-security/battery-cert-manager-webhook-ca
+    cert-manager.io/inject-ca-from-secret: battery-core/battery-cert-manager-webhook-ca
   labels:
     app: cert-manager
     app.kubernetes.io/instance: battery-cert-manager
-    app.kubernetes.io/name: cert-manager
+    battery/app: cert-manager
     battery/managed: 'True'
   name: orders.acme.cert-manager.io
 spec:
@@ -27711,7 +27709,7 @@ spec:
       clientConfig:
         service:
           name: battery-cert-manager-webhook
-          namespace: battery-security
+          namespace: battery-core
           path: /convert
       conversionReviewVersions:
         - v1

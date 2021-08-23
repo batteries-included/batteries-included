@@ -1,16 +1,12 @@
 defmodule KubeResources.MonitoringIngress do
-  alias KubeResources.MonitoringSettings
-
-  def paths(config) do
-    name = MonitoringSettings.grafana_name(config)
-
+  def paths(_config) do
     [
       %{
         "path" => "/x/grafana",
         "pathType" => "Prefix",
         "backend" => %{
           "service" => %{
-            "name" => name,
+            "name" => "grafana",
             "port" => %{"number" => 3000}
           }
         }

@@ -5,42 +5,42 @@ defmodule UsagePoller do
   use GenServer
 
   alias KubeUsage.Usage
+  alias UsagePoller.Report
 
   require Logger
 
-  @period 7 * 60 * 1000
+  @period 1 * 60 * 1000
 
   def start_link(opts) do
     Logger.info("Start link for UsagePoller")
     GenServer.start_link(__MODULE__, nil, opts)
   end
 
-  def init(_args \\ []) do
+  def init(args \\ []) do
     Process.send_after(self(), :poll, @period)
-    {:ok, []}
+    {:ok, args}
   end
 
   def handle_info(:poll, state) do
     Process.send_after(self(), :poll, @period)
 
-    with :ok <- run_report() do
+    with {:ok, report} <- Report.new(),
+         {:ok, db_report} <- to_db(report),
+         broadcast_report <- to_broadcast_report(db_report),
+         :ok <- EventCenter.Usage.broadcast(:usage_report, broadcast_report) do
+      Logger.info(
+        "UsagePoller nodes = #{report.num_nodes} pods = #{report.num_pods} report id = #{db_report.id}"
+      )
+
       {:noreply, state}
     end
   end
 
-  def run_report do
-    with {:ok, report} <- Usage.create_usage_report() do
-      Logger.info(
-        "Polling current usage found nodes = #{report.num_nodes} pods = #{report.num_pods} report id = #{report.id}"
-      )
-
-      with :ok <- EventCenter.Usage.broadcast(:usage_report, prepare_usage(report)) do
-        :ok
-      end
-    end
+  def to_db(report) do
+    report |> Map.from_struct() |> Usage.create_usage_report()
   end
 
-  def prepare_usage(%Usage.UsageReport{} = usage_report) do
+  def to_broadcast_report(%Usage.UsageReport{} = usage_report) do
     usage_report
     |> Map.from_struct()
     |> Map.drop([:updated_at, :__meta__])

@@ -2,7 +2,6 @@ defmodule KubeResources.Monitoring do
   alias KubeResources.AlertManager
   alias KubeResources.Grafana
   alias KubeResources.KubeState
-  alias KubeResources.MonitoringSettings
   alias KubeResources.NodeExporter
   alias KubeResources.Prometheus
   alias KubeResources.PrometheusOperator
@@ -12,7 +11,6 @@ defmodule KubeResources.Monitoring do
     |> Map.merge(setup_defs(config))
     |> Map.merge(operator_defs(config))
     |> Map.merge(account_defs(config))
-    |> Map.merge(main_role_defs(config))
     |> Map.merge(main_defs(config))
   end
 
@@ -59,25 +57,13 @@ defmodule KubeResources.Monitoring do
   defp account_defs(config) do
     %{
       "/4/prometheus/prometheus_account" => Prometheus.service_account(config),
-      "/4/prometheus/prometheus_cluster_role" => Prometheus.role(:cluster, config),
-      "/4/prometheus/prometheus_config_role" => Prometheus.role(:config, config),
-      "/4/prometheus/prometheus_cluster_role_bind" => Prometheus.role_binding(:cluster, config),
-      "/4/prometheus/prometheus_config_role_bind" => Prometheus.role_binding(:config, config)
+      "/4/prometheus/prometheus_cluster_role" => Prometheus.cluster_role(config),
+      "/4/prometheus/prometheus_cluster_role_bind" => Prometheus.cluster_role_binding(config),
+      "/4/prometheus/prometheus_main_roles" => Prometheus.main_roles(config),
+      "/4/prometheus/prometheus_role_binds" => Prometheus.main_role_bindings(config),
+      "/4/prometheus/prometheus_config_role" => Prometheus.config_role(config),
+      "/4/prometheus/prometheus_config_role_bind" => Prometheus.config_role_binding(config)
     }
-  end
-
-  defp main_role_defs(config) do
-    config
-    |> MonitoringSettings.prometheus_main_namespaces()
-    |> Enum.flat_map(fn target_ns ->
-      [
-        {"/5/prometheus/prometheus_main_role_#{target_ns}",
-         Prometheus.role(:main, target_ns, config)},
-        {"/5/prometheus/prometheus_main_role_#{target_ns}_bind",
-         Prometheus.role_binding(:main, target_ns, config)}
-      ]
-    end)
-    |> Map.new()
   end
 
   defp main_defs(config) do

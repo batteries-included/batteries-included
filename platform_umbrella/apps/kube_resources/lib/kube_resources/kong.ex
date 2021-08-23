@@ -17,7 +17,7 @@ defmodule KubeResources.Kong do
         "name" => "battery-kong",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "kong",
+          "battery/app" => "kong",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "2.5",
           "battery/managed" => "True"
@@ -32,9 +32,7 @@ defmodule KubeResources.Kong do
       "kind" => "ClusterRole",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "kong",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "2.5",
+          "battery/app" => "kong",
           "battery/managed" => "True"
         },
         "name" => "battery-kong"
@@ -164,9 +162,7 @@ defmodule KubeResources.Kong do
       "metadata" => %{
         "name" => "battery-kong",
         "labels" => %{
-          "app.kubernetes.io/name" => "kong",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "2.5",
+          "battery/app" => "kong",
           "battery/managed" => "True"
         }
       },
@@ -188,12 +184,10 @@ defmodule KubeResources.Kong do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "Role",
       "metadata" => %{
-        "name" => "battery-kong",
+        "name" => "kong",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "kong",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "2.5",
+          "battery/app" => "kong",
           "battery/managed" => "True"
         }
       },
@@ -232,9 +226,7 @@ defmodule KubeResources.Kong do
         "name" => "battery-kong",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "kong",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "2.5",
+          "battery/app" => "kong",
           "battery/managed" => "True"
         }
       },
@@ -256,13 +248,10 @@ defmodule KubeResources.Kong do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => "battery-kong-proxy",
+        "name" => "kong-proxy",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "kong",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "2.5",
-          "enable-metrics" => "true",
+          "battery/app" => "kong",
           "battery/managed" => "True"
         }
       },
@@ -273,9 +262,8 @@ defmodule KubeResources.Kong do
           %{"name" => "kong-proxy-tls", "port" => 443, "targetPort" => 8443, "protocol" => "TCP"}
         ],
         "selector" => %{
-          "app.kubernetes.io/name" => "kong",
-          "app.kubernetes.io/component" => "app",
-          "app.kubernetes.io/instance" => "battery"
+          "battery/app" => "kong",
+          "battery/managed" => "True"
         }
       }
     }
@@ -288,13 +276,10 @@ defmodule KubeResources.Kong do
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "name" => "battery-kong",
+        "name" => "kong",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "kong",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "2.5",
-          "app.kubernetes.io/component" => "app",
+          "battery/app" => "kong",
           "battery/managed" => "True"
         },
         "annotations" => %{
@@ -306,18 +291,14 @@ defmodule KubeResources.Kong do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name" => "kong",
-            "app.kubernetes.io/component" => "app",
-            "app.kubernetes.io/instance" => "battery"
+            "battery/app" => "kong",
+            "battery/managed" => "True"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app.kubernetes.io/name" => "kong",
-              "app.kubernetes.io/instance" => "battery",
-              "app.kubernetes.io/version" => "2.5",
-              "app.kubernetes.io/component" => "app",
+              "battery/app" => "kong",
               "battery/managed" => "True"
             }
           },
@@ -351,7 +332,7 @@ defmodule KubeResources.Kong do
                   %{"name" => "CONTROLLER_KONG_ADMIN_URL", "value" => "https://localhost:8444"},
                   %{
                     "name" => "CONTROLLER_PUBLISH_SERVICE",
-                    "value" => "#{namespace}/battery-kong-proxy"
+                    "value" => "#{namespace}/kong-proxy"
                   }
                 ],
                 "image" => "kong/kubernetes-ingress-controller:1.3",
@@ -458,7 +439,7 @@ defmodule KubeResources.Kong do
       "apiVersion" => "v1",
       "kind" => "Pod",
       "metadata" => %{
-        "name" => "battery-test-ingress",
+        "name" => "test-ingress",
         "annotations" => %{},
         "namespace" => namespace
       },
@@ -466,7 +447,7 @@ defmodule KubeResources.Kong do
         "restartPolicy" => "OnFailure",
         "containers" => [
           %{
-            "name" => "battery-curl",
+            "name" => "curl",
             "image" => "curlimages/curl",
             "command" => [
               "curl",
@@ -485,7 +466,7 @@ defmodule KubeResources.Kong do
       "apiVersion" => "v1",
       "kind" => "Pod",
       "metadata" => %{
-        "name" => "battery-test-ingress-v1beta1",
+        "name" => "test-ingress-v1beta1",
         "annotations" => %{},
         "namespace" => namespace
       },
@@ -493,7 +474,7 @@ defmodule KubeResources.Kong do
         "restartPolicy" => "OnFailure",
         "containers" => [
           %{
-            "name" => "battery-curl",
+            "name" => "curl",
             "image" => "curlimages/curl",
             "command" => [
               "curl",
@@ -505,7 +486,7 @@ defmodule KubeResources.Kong do
     }
   end
 
-  def base_path(namespace), do: "http://battery-kong-proxy.#{namespace}.svc.cluster.local"
+  def base_path(namespace), do: "http://kong-proxy.#{namespace}.svc.cluster.local"
 
   defp crd_content, do: unquote(File.read!(@crd_path))
 

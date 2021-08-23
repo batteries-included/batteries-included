@@ -48,7 +48,7 @@ defmodule ControlServer.MixProject do
       {:filtrex, "~> 0.4.3"},
 
       # Kubernetes
-      {:k8s, "~> 0.4.0"},
+      {:k8s, "~> 1.0.0"},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
 
@@ -59,6 +59,7 @@ defmodule ControlServer.MixProject do
       {:timex, "~> 3.7"},
       {:home_base_client, in_umbrella: true},
       {:event_center, in_umbrella: true},
+      {:kube_ext, in_umbrella: true},
 
       ## Dev/Test only deps
 

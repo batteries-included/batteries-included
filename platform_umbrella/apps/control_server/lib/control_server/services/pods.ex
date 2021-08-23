@@ -4,13 +4,13 @@ defmodule ControlServer.Services.Pods do
   """
 
   @namespace "battery-core"
+  @client K8s.Client
 
   def get do
-    with {:ok, res} <-
-           "v1"
-           |> K8s.Client.list(:pods, namespace: @namespace)
-           |> K8s.Client.run(:default) do
-      Map.get(res, "items", [])
+    operation = @client.list("v1", :pods, namespace: @namespace)
+
+    with {:ok, res} <- @client.run(KubeExt.ConnectionPool.get(:default), operation) do
+      KubeExt.Resource.items(res)
     end
   end
 

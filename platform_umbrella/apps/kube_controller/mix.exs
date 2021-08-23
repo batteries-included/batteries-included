@@ -26,8 +26,8 @@ defmodule KubeController.MixProject do
   defp deps do
     [
       {:kube_services, in_umbrella: true},
-      {:bonny, "~> 0.4"},
-      {:k8s, "~> 0.4.0"}
+      {:bella, "~> 0.0.1"},
+      {:k8s, "~> 1.0.0"}
     ]
   end
 

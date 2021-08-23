@@ -13,9 +13,7 @@ defmodule KubeResources.GithubActionsRunner do
         "name" => "battery-actions-runner-controller",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "actions-runner-controller",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "0.18.2",
+          "battery/app" => "actions-runner-controller",
           "battery/managed" => "True"
         }
       }
@@ -32,9 +30,7 @@ defmodule KubeResources.GithubActionsRunner do
         "name" => "controller-manager",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "actions-runner-controller",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "0.18.2",
+          "battery/app" => "actions-runner-controller",
           "battery/managed" => "True"
         }
       },
@@ -291,19 +287,16 @@ defmodule KubeResources.GithubActionsRunner do
       "kind" => "Service",
       "metadata" => %{
         "labels" => %{
-          "app.kubernetes.io/name" => "actions-runner-controller",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "0.18.2",
+          "battery/app" => "actions-runner-controller",
           "battery/managed" => "True"
         },
-        "name" => "battery-actions-runner-controller-metrics-service",
+        "name" => "actions-runner-controller-metrics-service",
         "namespace" => namespace
       },
       "spec" => %{
         "ports" => [%{"name" => "https", "port" => 8443, "targetPort" => "https"}],
         "selector" => %{
-          "app.kubernetes.io/name" => "actions-runner-controller",
-          "app.kubernetes.io/instance" => "battery"
+          "battery/app" => "actions-runner-controller"
         }
       }
     }
@@ -316,12 +309,10 @@ defmodule KubeResources.GithubActionsRunner do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => "battery-actions-runner-controller-webhook",
+        "name" => "actions-runner-controller-webhook",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "actions-runner-controller",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "0.18.2",
+          "battery/app" => "actions-runner-controller",
           "battery/managed" => "True"
         }
       },
@@ -331,8 +322,7 @@ defmodule KubeResources.GithubActionsRunner do
           %{"port" => 443, "targetPort" => 9443, "protocol" => "TCP", "name" => "https"}
         ],
         "selector" => %{
-          "app.kubernetes.io/name" => "actions-runner-controller",
-          "app.kubernetes.io/instance" => "battery"
+          "battery/app" => "actions-runner-controller"
         }
       }
     }
@@ -345,12 +335,10 @@ defmodule KubeResources.GithubActionsRunner do
       "apiVersion" => "apps/v1",
       "kind" => "Deployment",
       "metadata" => %{
-        "name" => "battery-actions-runner-controller",
+        "name" => "actions-runner-controller",
         "namespace" => namespace,
         "labels" => %{
-          "app.kubernetes.io/name" => "actions-runner-controller",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "0.18.2",
+          "battery/app" => "actions-runner-controller",
           "battery/managed" => "True"
         }
       },
@@ -358,15 +346,13 @@ defmodule KubeResources.GithubActionsRunner do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "app.kubernetes.io/name" => "actions-runner-controller",
-            "app.kubernetes.io/instance" => "battery"
+            "battery/app" => "actions-runner-controller"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "app.kubernetes.io/name" => "actions-runner-controller",
-              "app.kubernetes.io/instance" => "battery",
+              "battery/app" => "actions-runner-controller",
               "battery/managed" => "True"
             }
           },
@@ -477,17 +463,17 @@ defmodule KubeResources.GithubActionsRunner do
       "apiVersion" => "cert-manager.io/v1",
       "kind" => "Certificate",
       "metadata" => %{
-        "name" => "battery-actions-runner-controller-serving-cert",
+        "name" => "actions-runner-controller-serving-cert",
         "namespace" => namespace
       },
       "spec" => %{
         "dnsNames" => [
-          "battery-actions-runner-controller-webhook.battery-devtools.svc",
-          "battery-actions-runner-controller-webhook.battery-devtools.svc.cluster.local"
+          "actions-runner-controller-webhook.battery-core.svc",
+          "actions-runner-controller-webhook.battery-core.svc.cluster.local"
         ],
         "issuerRef" => %{
           "kind" => "Issuer",
-          "name" => "battery-actions-runner-controller-selfsigned-issuer"
+          "name" => "actions-runner-controller-selfsigned-issuer"
         },
         "secretName" => "webhook-server-cert"
       }
@@ -501,7 +487,7 @@ defmodule KubeResources.GithubActionsRunner do
       "apiVersion" => "cert-manager.io/v1",
       "kind" => "Issuer",
       "metadata" => %{
-        "name" => "battery-actions-runner-controller-selfsigned-issuer",
+        "name" => "actions-runner-controller-selfsigned-issuer",
         "namespace" => namespace
       },
       "spec" => %{"selfSigned" => %{}}
@@ -518,7 +504,7 @@ defmodule KubeResources.GithubActionsRunner do
         "name" => "battery-actions-runner-controller-mutating-webhook-configuration",
         "annotations" => %{
           "cert-manager.io/inject-ca-from" =>
-            "battery-devtools/battery-actions-runner-controller-serving-cert"
+            "battery-core/actions-runner-controller-serving-cert"
         }
       },
       "webhooks" => [
@@ -526,7 +512,7 @@ defmodule KubeResources.GithubActionsRunner do
           "clientConfig" => %{
             "caBundle" => "Cg==",
             "service" => %{
-              "name" => "battery-actions-runner-controller-webhook",
+              "name" => "actions-runner-controller-webhook",
               "namespace" => namespace,
               "path" => "/mutate-actions-summerwind-dev-v1alpha1-runner"
             }
@@ -546,7 +532,7 @@ defmodule KubeResources.GithubActionsRunner do
           "clientConfig" => %{
             "caBundle" => "Cg==",
             "service" => %{
-              "name" => "battery-actions-runner-controller-webhook",
+              "name" => "actions-runner-controller-webhook",
               "namespace" => namespace,
               "path" => "/mutate-actions-summerwind-dev-v1alpha1-runnerdeployment"
             }
@@ -566,7 +552,7 @@ defmodule KubeResources.GithubActionsRunner do
           "clientConfig" => %{
             "caBundle" => "Cg==",
             "service" => %{
-              "name" => "battery-actions-runner-controller-webhook",
+              "name" => "actions-runner-controller-webhook",
               "namespace" => namespace,
               "path" => "/mutate-actions-summerwind-dev-v1alpha1-runnerreplicaset"
             }
@@ -596,7 +582,7 @@ defmodule KubeResources.GithubActionsRunner do
         "name" => "battery-actions-runner-controller-validating-webhook-configuration",
         "annotations" => %{
           "cert-manager.io/inject-ca-from" =>
-            "battery-devtools/battery-actions-runner-controller-serving-cert"
+            "battery-core/actions-runner-controller-serving-cert"
         }
       },
       "webhooks" => [
@@ -604,7 +590,7 @@ defmodule KubeResources.GithubActionsRunner do
           "clientConfig" => %{
             "caBundle" => "Cg==",
             "service" => %{
-              "name" => "battery-actions-runner-controller-webhook",
+              "name" => "actions-runner-controller-webhook",
               "namespace" => namespace,
               "path" => "/validate-actions-summerwind-dev-v1alpha1-runner"
             }
@@ -624,7 +610,7 @@ defmodule KubeResources.GithubActionsRunner do
           "clientConfig" => %{
             "caBundle" => "Cg==",
             "service" => %{
-              "name" => "battery-actions-runner-controller-webhook",
+              "name" => "actions-runner-controller-webhook",
               "namespace" => namespace,
               "path" => "/validate-actions-summerwind-dev-v1alpha1-runnerdeployment"
             }
@@ -644,7 +630,7 @@ defmodule KubeResources.GithubActionsRunner do
           "clientConfig" => %{
             "caBundle" => "Cg==",
             "service" => %{
-              "name" => "battery-actions-runner-controller-webhook",
+              "name" => "actions-runner-controller-webhook",
               "namespace" => namespace,
               "path" => "/validate-actions-summerwind-dev-v1alpha1-runnerreplicaset"
             }
