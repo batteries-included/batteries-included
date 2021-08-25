@@ -29,7 +29,7 @@
     "rehype-katex": "6.0.1",
     "remark-autolink-headings": "7.0.1",
     "remark-code-titles": "0.1.2",
-    "remark-math": "5.0.0",
+    "remark-math": "5.1.0",
     "remark-slug": "7.0.0"
   },
   "devDependencies": {
