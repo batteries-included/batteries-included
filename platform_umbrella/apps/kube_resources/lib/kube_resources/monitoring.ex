@@ -5,6 +5,7 @@ defmodule KubeResources.Monitoring do
   alias KubeResources.NodeExporter
   alias KubeResources.Prometheus
   alias KubeResources.PrometheusOperator
+  alias KubeResources.ServiceMonitors
 
   def materialize(%{} = config) do
     %{}
@@ -62,33 +63,35 @@ defmodule KubeResources.Monitoring do
       "/4/prometheus/prometheus_main_roles" => Prometheus.main_roles(config),
       "/4/prometheus/prometheus_role_binds" => Prometheus.main_role_bindings(config),
       "/4/prometheus/prometheus_config_role" => Prometheus.config_role(config),
-      "/4/prometheus/prometheus_config_role_bind" => Prometheus.config_role_binding(config)
+      "/4/prometheus/prometheus_config_role_bind" => Prometheus.config_role_binding(config),
+      "/4/grafana/service_account" => Grafana.service_account(config),
+      "/4/node/service_account" => NodeExporter.service_account(config),
+      "/4/node/cluster_role" => NodeExporter.cluster_role(config),
+      "/4/node/bind" => NodeExporter.cluster_binding(config),
+      "/4/kube/service_account" => KubeState.service_account(config),
+      "/4/kube/cluster_role" => KubeState.cluster_role(config),
+      "/4/kube/bind" => KubeState.cluster_binding(config),
+      "/4/alertmanager/service_account" => AlertManager.service_account(config)
     }
   end
 
   defp main_defs(config) do
     %{
-      "/9/prometheus/prometheus_prometheus" => Prometheus.prometheus(config),
-      "/9/grafana/service_account" => Grafana.service_account(config),
-      "/9/grafana/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
-      "/9/grafana/prometheus_dashboard_datasource" => Grafana.dashboard_sources_config(config),
-      "/9/grafana/main_config" => Grafana.main_config(config),
-      "/9/grafana/grafana_deployment" => Grafana.deployment(config),
-      "/9/grafana/grafana_service" => Grafana.service(config),
-      "/9/node/0/service_account" => NodeExporter.service_account(config),
-      "/9/node/0/cluster_role" => NodeExporter.cluster_role(config),
-      "/9/node/1/bind" => NodeExporter.cluster_binding(config),
-      "/9/node/1/daemon" => NodeExporter.daemonset(config),
-      "/9/node/2/service" => NodeExporter.service(config),
-      "/9/kube/0/service_account" => KubeState.service_account(config),
-      "/9/kube/0/cluster_role" => KubeState.cluster_role(config),
-      "/9/kube/1/bind" => KubeState.cluster_binding(config),
-      "/9/kube/1/daemon" => KubeState.deployment(config),
-      "/9/kube/2/service" => KubeState.service(config),
-      "/9/alertmanager/service_account" => AlertManager.service_account(config),
-      "/9/alertmanager/config" => AlertManager.config(config),
-      "/9/alertmanager/alertmanager" => AlertManager.alertmanager(config),
-      "/9/alertmanager/service" => AlertManager.service(config)
+      "/5/prometheus/prometheus_main" => Prometheus.prometheus(config),
+      "/5/prometheus/service" => Prometheus.service(config),
+      "/5/grafana/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
+      "/5/grafana/prometheus_dashboard" => Grafana.dashboard_sources_config(config),
+      "/5/grafana/main_config" => Grafana.main_config(config),
+      "/5/grafana/grafana_deployment" => Grafana.deployment(config),
+      "/5/grafana/grafana_service" => Grafana.service(config),
+      "/5/node/daemon" => NodeExporter.daemonset(config),
+      "/5/node/service" => NodeExporter.service(config),
+      "/5/kube/daemon" => KubeState.deployment(config),
+      "/5/kube/service" => KubeState.service(config),
+      # "/5/alertmanager/config" => AlertManager.config(config),
+      # "/5/alertmanager/alertmanager" => AlertManager.alertmanager(config),
+      # "/5/alertmanager/service" => AlertManager.service(config),
+      "/6/service_monitors" => ServiceMonitors.monitors()
     }
   end
 

@@ -3,12 +3,19 @@ defmodule KubeResources.NodeExporter do
   Module for controlling the node exporter pods that will be needed to send metrics to prometheus.
   """
   alias KubeResources.MonitoringSettings
+  alias KubeResources.RBAC
 
   def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
-      "metadata" => %{"name" => "battery-node-exporter"},
+      "metadata" => %{
+        "name" => "battery-node-exporter",
+        "labels" => %{
+          "battery/app" => "node-exporter",
+          "battery/managed" => "True"
+        }
+      },
       "rules" => [
         %{
           "apiGroups" => ["authentication.k8s.io"],
@@ -31,6 +38,10 @@ defmodule KubeResources.NodeExporter do
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
+        "labels" => %{
+          "battery/app" => "node-exporter",
+          "battery/managed" => "True"
+        },
         "name" => "battery-node-exporter",
         "namespace" => namespace
       }
@@ -44,6 +55,10 @@ defmodule KubeResources.NodeExporter do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
+        "labels" => %{
+          "battery/app" => "node-exporter",
+          "battery/managed" => "True"
+        },
         "name" => "battery-node-exporter"
       },
       "roleRef" => %{
@@ -71,7 +86,8 @@ defmodule KubeResources.NodeExporter do
       "kind" => "DaemonSet",
       "metadata" => %{
         "labels" => %{
-          "battery/app" => "node-exporter"
+          "battery/app" => "node-exporter",
+          "battery/managed" => "True"
         },
         "name" => "node-exporter",
         "namespace" => namespace
@@ -79,13 +95,14 @@ defmodule KubeResources.NodeExporter do
       "spec" => %{
         "selector" => %{
           "matchLabels" => %{
-            "battery/app": "node-exporter"
+            "battery/app" => "node-exporter"
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "battery/app" => "node-exporter"
+              "battery/app" => "node-exporter",
+              "battery/managed" => "True"
             }
           },
           "spec" => %{
@@ -133,48 +150,7 @@ defmodule KubeResources.NodeExporter do
                   }
                 ]
               },
-              %{
-                "args" => [
-                  "--logtostderr",
-                  "--secure-listen-address=[$(IP)]:9100",
-                  "--tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",
-                  "--upstream=http://127.0.0.1:9100/"
-                ],
-                "env" => [
-                  %{
-                    "name" => "IP",
-                    "valueFrom" => %{
-                      "fieldRef" => %{
-                        "fieldPath" => "status.podIP"
-                      }
-                    }
-                  }
-                ],
-                "image" => "quay.io/brancz/kube-rbac-proxy:v0.8.0",
-                "name" => "kube-rbac-proxy",
-                "ports" => [
-                  %{
-                    "containerPort" => 9100,
-                    "hostPort" => 9100,
-                    "name" => "https"
-                  }
-                ],
-                "resources" => %{
-                  "limits" => %{
-                    "cpu" => "20m",
-                    "memory" => "40Mi"
-                  },
-                  "requests" => %{
-                    "cpu" => "10m",
-                    "memory" => "20Mi"
-                  }
-                },
-                "securityContext" => %{
-                  "runAsGroup" => 65_532,
-                  "runAsNonRoot" => true,
-                  "runAsUser" => 65_532
-                }
-              }
+              RBAC.host_proxy_container("http://127.0.0.1:9100/", 9100, "https")
             ],
             "hostNetwork" => true,
             "hostPID" => true,
@@ -230,6 +206,10 @@ defmodule KubeResources.NodeExporter do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
+        "labels" => %{
+          "battery/app" => "node-exporter",
+          "battery/managed" => "True"
+        },
         "name" => "node-exporter",
         "namespace" => namespace
       },
@@ -247,5 +227,50 @@ defmodule KubeResources.NodeExporter do
         }
       }
     }
+  end
+
+  def monitors(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    [
+      %{
+        "apiVersion" => "monitoring.coreos.com/v1",
+        "kind" => "ServiceMonitor",
+        "metadata" => %{
+          "labels" => %{
+            "battery/app" => "node-exporter",
+            "battery/managed" => "True"
+          },
+          "name" => "node-exporter",
+          "namespace" => namespace
+        },
+        "spec" => %{
+          "endpoints" => [
+            %{
+              "bearerTokenFile" => "/var/run/secrets/kubernetes.io/serviceaccount/token",
+              "interval" => "15s",
+              "port" => "https",
+              "relabelings" => [
+                %{
+                  "action" => "replace",
+                  "regex" => "(.*)",
+                  "replacement" => "$1",
+                  "sourceLabels" => ["__meta_kubernetes_pod_node_name"],
+                  "targetLabel" => "instance"
+                }
+              ],
+              "scheme" => "https",
+              "tlsConfig" => %{"insecureSkipVerify" => true}
+            }
+          ],
+          "jobLabel" => "battery/app",
+          "selector" => %{
+            "matchLabels" => %{
+              "battery/app" => "node-exporter"
+            }
+          }
+        }
+      }
+    ]
   end
 end

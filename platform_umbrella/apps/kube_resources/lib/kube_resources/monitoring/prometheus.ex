@@ -7,6 +7,9 @@ defmodule KubeResources.Prometheus do
 
   alias KubeResources.MonitoringSettings
 
+  @port 80
+  @port_name "http"
+
   def prometheus(config) do
     namespace = MonitoringSettings.namespace(config)
 
@@ -28,20 +31,20 @@ defmodule KubeResources.Prometheus do
         "namespace" => namespace
       },
       "spec" => %{
-        "alerting" => %{
-          "alertmanagers" => [
-            %{
-              "name" => "alertmanager",
-              "namespace" => namespace,
-              "port" => "web"
-            }
-          ]
-        },
+        # "alerting" => %{
+        #   "alertmanagers" => [
+        #     %{
+        #       "name" => "alertmanager",
+        #       "namespace" => namespace,
+        #       "port" => "web"
+        #     }
+        #   ]
+        # },
         "image" => "#{image}:#{version}",
         "nodeSelector" => %{
           "kubernetes.io/os": "linux"
         },
-
+        "externalUrl" => "/x/prometheus",
         # select everything.
         "podMonitorNamespaceSelector" => %{},
         "podMonitorSelector" => %{},
@@ -53,12 +56,12 @@ defmodule KubeResources.Prometheus do
             "memory" => memory
           }
         },
-        "ruleSelector" => %{
-          "matchLabels" => %{
-            "prometheus" => "prometheus",
-            "role" => "alert-rules"
-          }
-        },
+        # "ruleSelector" => %{
+        #   "matchLabels" => %{
+        #     "prometheus" => "prometheus",
+        #     "role" => "alert-rules"
+        #   }
+        # },
         "securityContext" => %{
           "fsGroup" => 2000,
           "runAsNonRoot" => true,
@@ -79,14 +82,19 @@ defmodule KubeResources.Prometheus do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => "prometheus",
+        "labels" => %{
+          "battery/app" => "prometheus",
+          "battery/managed" => "True"
+        },
+        "name" => "prometheus-main",
         "namespace" => namespace
       },
       "spec" => %{
         "ports" => [
           %{
-            "name" => "web",
-            "port" => 9090,
+            "name" => @port_name,
+            "port" => @port,
+            # this is the name that prometheus-operator uses.
             "targetPort" => "web"
           }
         ],
@@ -96,6 +104,29 @@ defmodule KubeResources.Prometheus do
         "sessionAffinity" => "ClientIP"
       }
     }
+  end
+
+  def monitors(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    [
+      %{
+        "apiVersion" => "monitoring.coreos.com/v1",
+        "kind" => "ServiceMonitor",
+        "metadata" => %{
+          "labels" => %{
+            "battery/app" => "prometheus",
+            "battery/managed" => "True"
+          },
+          "name" => "prometheus",
+          "namespace" => namespace
+        },
+        "spec" => %{
+          "endpoints" => [%{"interval" => "15s", "port" => @port_name}],
+          "selector" => %{"matchLabels" => %{"battery/app" => "prometheus"}}
+        }
+      }
+    ]
   end
 
   def service_account(config) do

@@ -426,20 +426,7 @@ defmodule KubeResources.GithubActionsRunner do
                   }
                 ]
               },
-              %{
-                "args" => [
-                  "--secure-listen-address=0.0.0.0:8443",
-                  "--upstream=http://127.0.0.1:8080/",
-                  "--logtostderr=true",
-                  "--v=10"
-                ],
-                "image" => "quay.io/brancz/kube-rbac-proxy:v0.8.0",
-                "name" => "kube-rbac-proxy",
-                "imagePullPolicy" => "IfNotPresent",
-                "ports" => [%{"containerPort" => 8443, "name" => "https"}],
-                "resources" => %{},
-                "securityContext" => %{}
-              }
+              KubeResources.RBAC.proxy_container("http://127.0.0.1:8080/", 8443, "https")
             ],
             "terminationGracePeriodSeconds" => 10,
             "volumes" => [

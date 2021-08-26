@@ -158,7 +158,7 @@ defmodule KubeServices.Worker do
     )
 
     state = State.new(base_service)
-    Process.send_after(self(), :tick, @tick_time)
+    Process.send_after(self(), :tick, 1000)
 
     {:ok, state}
   end

@@ -8,10 +8,10 @@ defmodule KubeResources.MonitoringSettings do
   @monitored_namespaces ["default", @namespace, "kube-system"]
 
   @prometheus_operator_image "quay.io/prometheus-operator/prometheus-operator"
-  @prometheus_operator_version "v0.44.1"
+  @prometheus_operator_version "v0.49.0"
 
   @prometheus_image "quay.io/prometheus/prometheus"
-  @prometheus_version "v2.22.1"
+  @prometheus_version "v2.29.1"
   @prometheus_replicas 1
   @prometheus_memory "450Mi"
 
@@ -19,13 +19,13 @@ defmodule KubeResources.MonitoringSettings do
   @grafana_version "7.3.4"
 
   @node_image "quay.io/prometheus/node-exporter"
-  @node_version "v1.0.1"
+  @node_version "v1.2.2"
 
-  @kube_version "v1.9.7"
-  @kube_image "quay.io/coreos/kube-state-metrics"
+  @kube_version "v2.2.0"
+  @kube_image "k8s.gcr.io/kube-state-metrics/kube-state-metrics"
 
   @alertmanager_image "quay.io/prometheus/alertmanager"
-  @alertmanager_version "v0.21.0"
+  @alertmanager_version "v0.23.0"
 
   def namespace(config) do
     Map.get(config, "namespace", @namespace)

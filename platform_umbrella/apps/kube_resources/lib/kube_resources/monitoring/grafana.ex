@@ -10,6 +10,9 @@ defmodule KubeResources.Grafana do
   @dashboards_configmap "grafana-dashboards"
   @main_configmap "grafana-config"
 
+  @port 3000
+  @port_name "http"
+
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
 
@@ -36,7 +39,7 @@ defmodule KubeResources.Grafana do
             "name" => "battery-prometheus",
             "orgId" => 1,
             "type" => "prometheus",
-            "url" => "http://prometheus.#{namespace}.svc:9090",
+            "url" => "http://prometheus-operated.#{namespace}.svc:9090",
             "version" => 1
           }
         ]
@@ -47,7 +50,7 @@ defmodule KubeResources.Grafana do
       "kind" => "ConfigMap",
       "metadata" => %{"name" => @datasources_configmap, "namespace" => namespace},
       "data" => %{
-        "prometheus.json" => file_contents
+        "prometheus.yaml" => file_contents
       }
     }
   end
@@ -128,6 +131,7 @@ defmodule KubeResources.Grafana do
       "kind" => "Deployment",
       "metadata" => %{
         "labels" => %{
+          "battery/managed" => "True",
           "battery/app" => "grafana"
         },
         "name" => "grafana",
@@ -143,7 +147,8 @@ defmodule KubeResources.Grafana do
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "battery/app" => "grafana"
+              "battery/app" => "grafana",
+              "battery/managed" => "True"
             }
           },
           "spec" => %{
@@ -154,14 +159,14 @@ defmodule KubeResources.Grafana do
                 "name" => "grafana",
                 "ports" => [
                   %{
-                    "containerPort" => 3000,
-                    "name" => "http"
+                    "containerPort" => @port,
+                    "name" => @port_name
                   }
                 ],
                 "readinessProbe" => %{
                   "httpGet" => %{
                     "path" => "/api/health",
-                    "port" => "http"
+                    "port" => @port_name
                   }
                 },
                 "resources" => %{
@@ -244,15 +249,19 @@ defmodule KubeResources.Grafana do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
+        "labels" => %{
+          "battery/managed" => "True",
+          "battery/app" => "grafana"
+        },
         "name" => "grafana",
         "namespace" => namespace
       },
       "spec" => %{
         "ports" => [
           %{
-            "name" => "http",
-            "port" => 3000,
-            "targetPort" => "http"
+            "name" => @port_name,
+            "port" => @port,
+            "targetPort" => @port_name
           }
         ],
         "selector" => %{
@@ -260,5 +269,28 @@ defmodule KubeResources.Grafana do
         }
       }
     }
+  end
+
+  def monitors(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    [
+      %{
+        "apiVersion" => "monitoring.coreos.com/v1",
+        "kind" => "ServiceMonitor",
+        "metadata" => %{
+          "labels" => %{
+            "battery/app" => "grafana",
+            "battery/managed" => "True"
+          },
+          "name" => "grafana",
+          "namespace" => namespace
+        },
+        "spec" => %{
+          "endpoints" => [%{"interval" => "15s", "port" => @port_name}],
+          "selector" => %{"matchLabels" => %{"battery/app" => "grafana"}}
+        }
+      }
+    ]
   end
 end

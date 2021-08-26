@@ -43,7 +43,10 @@ defmodule KubeResources.Ingress do
       "metadata" => %{
         "name" => "main-ingress",
         "namespace" => ns,
-        "annotations" => %{"kubernetes.io/ingress.class" => "kong"}
+        "annotations" => %{
+          "kubernetes.io/ingress.class" => "kong",
+          "konghq.com/strip-path" => "true"
+        }
       },
       "spec" => %{
         "rules" => [%{"http" => %{"paths" => paths}}]

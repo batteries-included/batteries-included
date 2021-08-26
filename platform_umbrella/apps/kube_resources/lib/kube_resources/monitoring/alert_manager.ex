@@ -31,7 +31,6 @@ defmodule KubeResources.AlertManager do
         "name" => "alertmanager",
         "namespace" => namespace,
         "labels" => %{
-          "alertmanager" => "alertmanager",
           "battery/app" => "alertmanager",
           "battery/managed" => "True"
         }
@@ -79,6 +78,9 @@ defmodule KubeResources.AlertManager do
         "nodeSelector" => %{
           "kubernetes.io/os": "linux"
         },
+        # TODO: This doesn't work for alertmanger...
+        #
+        # "externalUrl" => "/x/alertmanager/",
         "alertmanagerConfigSelector" => %{
           "matchLables" => %{"alertmanager" => "alertmanager"}
         },
@@ -101,7 +103,7 @@ defmodule KubeResources.AlertManager do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
-        "name" => "alertmanager",
+        "name" => "alertmanager-main",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "alertmanager",
@@ -112,12 +114,11 @@ defmodule KubeResources.AlertManager do
         "ports" => [
           %{
             "name" => "web",
-            "port" => 9093,
+            "port" => 80,
             "targetPort" => "web"
           }
         ],
         "selector" => %{
-          "battery/app" => "alertmanager",
           "alertmanager" => "alertmanager"
         },
         "sessionAffinity" => "ClientIP"

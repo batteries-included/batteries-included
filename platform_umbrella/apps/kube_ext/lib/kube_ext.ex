@@ -28,6 +28,7 @@ defmodule KubeExt do
       resource = Hashing.decorate_content_hash(resource)
 
       if Hashing.get_hash(found) == Hashing.get_hash(resource) do
+        Logger.debug("Looks like they are the same")
         {:ok, found}
       else
         update_single(connection, resource)

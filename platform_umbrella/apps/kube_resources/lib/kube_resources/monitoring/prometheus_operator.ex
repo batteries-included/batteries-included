@@ -6,6 +6,12 @@ defmodule KubeResources.PrometheusOperator do
   """
   alias KubeResources.MonitoringSettings
 
+  @port 8443
+  @internal_port 8080
+
+  @internal_port_name "http-internal"
+  @port_name "https"
+
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
 
@@ -24,6 +30,10 @@ defmodule KubeResources.PrometheusOperator do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
       "metadata" => %{
+        "labels" => %{
+          "battery/app" => "prometheus-operator",
+          "battery/managed" => "True"
+        },
         "name" => "battery-prometheus-operator"
       },
       "rules" => [
@@ -141,8 +151,7 @@ defmodule KubeResources.PrometheusOperator do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "battery/app" => "prometheus-operator",
-            "battery/managed" => "True"
+            "battery/app" => "prometheus-operator"
           }
         },
         "template" => %{
@@ -161,7 +170,9 @@ defmodule KubeResources.PrometheusOperator do
                 ],
                 "image" => "#{image}:#{version}",
                 "name" => "prometheus-operator",
-                "ports" => [%{"containerPort" => 8080, "name" => "http"}],
+                "ports" => [
+                  %{"containerPort" => @internal_port, "name" => @internal_port_name}
+                ],
                 "resources" => %{
                   "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
                   "requests" => %{"cpu" => "100m", "memory" => "100Mi"}
@@ -170,26 +181,11 @@ defmodule KubeResources.PrometheusOperator do
                   "allowPrivilegeEscalation" => false
                 }
               },
-              %{
-                "args" => [
-                  "--logtostderr",
-                  "--secure-listen-address=:8443",
-                  "--tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",
-                  "--upstream=http://127.0.0.1:8080/"
-                ],
-                "image" => "quay.io/brancz/kube-rbac-proxy:v0.8.0",
-                "name" => "kube-rbac-proxy",
-                "ports" => [%{"containerPort" => 8443, "name" => "https"}],
-                "resources" => %{
-                  "limits" => %{"cpu" => "20m", "memory" => "40Mi"},
-                  "requests" => %{"cpu" => "10m", "memory" => "20Mi"}
-                },
-                "securityContext" => %{
-                  "runAsGroup" => 65_532,
-                  "runAsNonRoot" => true,
-                  "runAsUser" => 65_532
-                }
-              }
+              KubeResources.RBAC.proxy_container(
+                "http://127.0.0.1:#{@internal_port}/",
+                @port,
+                @port_name
+              )
             ],
             "nodeSelector" => %{
               "kubernetes.io/os": "linux"
@@ -223,16 +219,50 @@ defmodule KubeResources.PrometheusOperator do
         "clusterIP" => "None",
         "ports" => [
           %{
-            "name" => "https",
-            "port" => 8443,
-            "targetPort" => "https"
+            "name" => @port_name,
+            "port" => @port,
+            "targetPort" => @port_name
           }
         ],
         "selector" => %{
-          "battery/app" => "prometheus-operator",
-          "battery/managed" => "True"
+          "battery/app" => "prometheus-operator"
         }
       }
     }
+  end
+
+  def monitors(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    [
+      %{
+        "apiVersion" => "monitoring.coreos.com/v1",
+        "kind" => "ServiceMonitor",
+        "metadata" => %{
+          "labels" => %{
+            "battery/app" => "prometheus-operator",
+            "battery/managed" => "True"
+          },
+          "name" => "prometheus-operator",
+          "namespace" => namespace
+        },
+        "spec" => %{
+          "endpoints" => [
+            %{
+              "bearerTokenFile" => "/var/run/secrets/kubernetes.io/serviceaccount/token",
+              "honorLabels" => true,
+              "port" => @port_name,
+              "scheme" => "https",
+              "tlsConfig" => %{"insecureSkipVerify" => true}
+            }
+          ],
+          "selector" => %{
+            "matchLabels" => %{
+              "battery/app" => "prometheus-operator"
+            }
+          }
+        }
+      }
+    ]
   end
 end
