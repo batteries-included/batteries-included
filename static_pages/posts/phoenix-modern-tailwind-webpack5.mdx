@@ -1,17 +1,15 @@
 ---
 title: Phoenix with latest tailwind and webpack
 date: '2021-06-24'
-tags: ['phoenix', 'js', 'javascript','elixir','tailwind','css']
+tags: ['phoenix', 'js', 'javascript', 'elixir', 'tailwind', 'css']
 draft: false
 summary: Update phoenix's default webpack install to work with modern tailwind css and webpack 5.
 images: []
 ---
 
-Phoenix is an amazing framework that we use and love at Batteries Included. We also really love tailwind CSS. So using both with the latest up to date software is important to us. Below is a quick write up on how we've modified  the default phoenix install to use webpack 5 and [TailwindCSS](https://tailwindcss.com/).
-
+Phoenix is an amazing framework that we use and love at Batteries Included. We also really love tailwind CSS. So using both with the latest up to date software is important to us. Below is a quick write up on how we've modified the default phoenix install to use webpack 5 and [TailwindCSS](https://tailwindcss.com/).
 
 # Starting Point
-
 
 ```bash
 mix archive.install hex phx_new 1.5.9
@@ -31,7 +29,6 @@ npm remove sass-loader node-sass \
     hard-source-webpack-plugin \
     optimize-css-assets-webpack-plugin
 ```
-
 
 Next I want to upgrade all the webpack things. Webpack 5 was a breaking change that will require some elixir code changes. First let's upgrade. Here I'm going to use a utility and upgrade all the dependencies to know latest versions. You can upgrade however you want.
 
@@ -56,9 +53,7 @@ npm i tailwindcss @tailwindcss/typography \
 
 # Change Webpack Config
 
-
 `webpack.config.js` needs to be changed since we're drastically chaning build versions and tools. First terser became part of the build and other css/js optimization plugins haven't been needed or updated for this version so lets make the needed changes.
-
 
 For example the setting `devtool` needs to be updated in webpack 5. That line becomes:
 
@@ -67,7 +62,6 @@ devtool: devMode ? 'source-map' : undefined,
 ```
 
 Terser became part of the main webpack build. Since there's no longer a need to configure that and sourcemaps we can greatly simplify the optimization setting.
-
 
 ```js:webpack.config.js
     optimization: {
@@ -100,7 +94,6 @@ For me the css loader was configured like this previously:
       ]
     },
 ```
-
 
 We're not going to use sass and we do want svg and post sass. The end result for me is that the modules rules become:
 
@@ -155,7 +148,6 @@ The plugins section and mode section need small tweaks becoming:
 
 # Finalize Changes
 
-
 `app.scss` needs to be `app.css` and we need to include tailwind. We'll also need to clean up sass leftovers and renames.
 
 ```bash
@@ -183,7 +175,7 @@ Also add the `NODE_VERSION` environment variable when building the producttion v
   },
 ```
 
-# PostCSS and Tailwind 
+# PostCSS and Tailwind
 
 Tailwind and postcss both need some configs. Lets create those. For postcss I am going to add `assets/postcss.config.js` that looks like this:
 
@@ -219,7 +211,6 @@ module.exports = {
 
 For the most part that just sets the defaults. You can add your own colors or add other tailwind plugins as you see fit. This config does use the tailwind jit which we've found to be faster but a little prone to missing a new class being added.
 
-
 # Building
 
 That should be good enough to get everything build check that by running the production build.
@@ -234,7 +225,7 @@ If that works then we're all good to go for the next steps.
 
 Webpack changed the command line arguments for it's watch and compile mode. That feature is used during development, and we're going to need to make changes to the Phoenix endpoint in dev.
 
-Currently there should be a config in `config/dev.exs` inside there is a key for configuring the static watchers. 
+Currently there should be a config in `config/dev.exs` inside there is a key for configuring the static watchers.
 
 ## Before:
 
