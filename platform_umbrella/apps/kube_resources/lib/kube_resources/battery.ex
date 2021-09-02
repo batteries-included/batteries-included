@@ -5,16 +5,17 @@ defmodule KubeResources.Battery do
   alias KubeResources.EchoServer
   alias KubeResources.Ingress
 
+  alias KubeExt.Builder, as: B
+
+  @app_name "battery-control"
+  @service_account "battery-control-account"
+
   defp namespace(config) do
     ns = BatterySettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Namespace",
-      "metadata" => %{
-        "name" => ns
-      }
-    }
+    :namespace
+    |> B.build_resource()
+    |> B.name(ns)
   end
 
   def deployment(%{"control.run" => true} = config) do
@@ -54,7 +55,7 @@ defmodule KubeResources.Battery do
                 }
               )
             ],
-            "serviceAccountName" => "control-server-account"
+            "serviceAccountName" => @service_account
           }
         }
       }
@@ -183,15 +184,10 @@ defmodule KubeResources.Battery do
   def service_account(config) do
     namespace = BatterySettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ServiceAccount",
-      "metadata" => %{
-        "labels" => %{"battery/managed" => "True", "battery/app" => "control-server"},
-        "name" => "control-server-account",
-        "namespace" => namespace
-      }
-    }
+    B.build_resource(:service_account)
+    |> B.name(@service_account)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
   end
 
   def cluster_role_binding(config) do

@@ -40,8 +40,8 @@ defmodule ControlServer.MixProject do
       {:jason, "~> 1.0"},
 
       # SQL
-      {:phoenix_ecto, "~> 4.3"},
-      {:ecto_sql, "~> 3.6"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:ecto_sql, "~> 3.7"},
       {:postgrex, ">= 0.0.0"},
 
       # Filtering
@@ -51,15 +51,18 @@ defmodule ControlServer.MixProject do
       {:k8s, "~> 1.0.0"},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
+      {:kube_ext, in_umbrella: true},
 
       # Yaml
       {:yaml_elixir, "~> 2.6"},
 
       # Time
       {:timex, "~> 3.7"},
+
+      # Naming
+      {:mnemonic_slugs, "~> 0.0.3"},
       {:home_base_client, in_umbrella: true},
       {:event_center, in_umbrella: true},
-      {:kube_ext, in_umbrella: true},
 
       ## Dev/Test only deps
 

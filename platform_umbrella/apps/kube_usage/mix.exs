@@ -37,7 +37,7 @@ defmodule KubeUsage.MixProject do
   defp deps do
     [
       {:phoenix_pubsub, "~> 2.0"},
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_sql, "~> 3.7"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       # Testing.

@@ -1,9 +1,12 @@
 defmodule KubeResources.Kong do
   @moduledoc false
 
+  alias KubeExt.Builder, as: B
   alias KubeResources.NetworkSettings
 
   @crd_path "priv/manifests/kong/crd.yaml"
+
+  @app_name "kong"
 
   def crd(_), do: yaml(crd_content())
 
@@ -17,9 +20,7 @@ defmodule KubeResources.Kong do
         "name" => "battery-kong",
         "namespace" => namespace,
         "labels" => %{
-          "battery/app" => "kong",
-          "app.kubernetes.io/instance" => "battery",
-          "app.kubernetes.io/version" => "2.5",
+          "battery/app" => @app_name,
           "battery/managed" => "True"
         }
       }
@@ -32,7 +33,7 @@ defmodule KubeResources.Kong do
       "kind" => "ClusterRole",
       "metadata" => %{
         "labels" => %{
-          "battery/app" => "kong",
+          "battery/app" => @app_name,
           "battery/managed" => "True"
         },
         "name" => "battery-kong"
@@ -162,7 +163,7 @@ defmodule KubeResources.Kong do
       "metadata" => %{
         "name" => "battery-kong",
         "labels" => %{
-          "battery/app" => "kong",
+          "battery/app" => @app_name,
           "battery/managed" => "True"
         }
       },
@@ -184,10 +185,10 @@ defmodule KubeResources.Kong do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "Role",
       "metadata" => %{
-        "name" => "kong",
+        "name" => "battery-kong",
         "namespace" => namespace,
         "labels" => %{
-          "battery/app" => "kong",
+          "battery/app" => @app_name,
           "battery/managed" => "True"
         }
       },
@@ -200,7 +201,7 @@ defmodule KubeResources.Kong do
         %{
           "apiGroups" => [""],
           "resources" => ["configmaps"],
-          "resourceNames" => ["kong-ingress-controller-leader-kong-kong"],
+          "resourceNames" => ["kong-ingress-controller-leader"],
           "verbs" => ["get", "update"]
         },
         %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["create"]},
@@ -226,7 +227,7 @@ defmodule KubeResources.Kong do
         "name" => "battery-kong",
         "namespace" => namespace,
         "labels" => %{
-          "battery/app" => "kong",
+          "battery/app" => @app_name,
           "battery/managed" => "True"
         }
       },
@@ -248,10 +249,36 @@ defmodule KubeResources.Kong do
       "apiVersion" => "v1",
       "kind" => "Service",
       "metadata" => %{
+        "name" => "kong-admin",
+        "namespace" => namespace,
+        "labels" => %{
+          "battery/app" => @app_name,
+          "battery/managed" => "True"
+        }
+      },
+      "spec" => %{
+        "type" => "NodePort",
+        "ports" => [
+          %{"name" => "kong-admin-tls", "port" => 8444, "targetPort" => 8444, "protocol" => "TCP"}
+        ],
+        "selector" => %{
+          "battery/app" => @app_name
+        }
+      }
+    }
+  end
+
+  def service_1(config) do
+    namespace = NetworkSettings.namespace(config)
+
+    %{
+      "apiVersion" => "v1",
+      "kind" => "Service",
+      "metadata" => %{
         "name" => "kong-proxy",
         "namespace" => namespace,
         "labels" => %{
-          "battery/app" => "kong",
+          "battery/app" => @app_name,
           "battery/managed" => "True"
         }
       },
@@ -262,8 +289,7 @@ defmodule KubeResources.Kong do
           %{"name" => "kong-proxy-tls", "port" => 443, "targetPort" => 8443, "protocol" => "TCP"}
         ],
         "selector" => %{
-          "battery/app" => "kong",
-          "battery/managed" => "True"
+          "battery/app" => @app_name
         }
       }
     }
@@ -279,26 +305,22 @@ defmodule KubeResources.Kong do
         "name" => "kong",
         "namespace" => namespace,
         "labels" => %{
-          "battery/app" => "kong",
-          "battery/managed" => "True"
-        },
-        "annotations" => %{
-          "kuma.io/gateway" => "enabled",
-          "traffic.sidecar.istio.io/includeInboundPorts" => ""
+          "battery/app" => @app_name,
+          "battery/managed" => "True",
+          "enable-metrics" => "true"
         }
       },
       "spec" => %{
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "battery/app" => "kong",
-            "battery/managed" => "True"
+            "battery/app" => @app_name
           }
         },
         "template" => %{
           "metadata" => %{
             "labels" => %{
-              "battery/app" => "kong",
+              "battery/app" => @app_name,
               "battery/managed" => "True"
             }
           },
@@ -325,7 +347,7 @@ defmodule KubeResources.Kong do
                   },
                   %{
                     "name" => "CONTROLLER_ELECTION_ID",
-                    "value" => "kong-ingress-controller-leader-kong"
+                    "value" => "kong-ingress-controller-leader"
                   },
                   %{"name" => "CONTROLLER_INGRESS_CLASS", "value" => "kong"},
                   %{"name" => "CONTROLLER_KONG_ADMIN_TLS_SKIP_VERIFY", "value" => "true"},
@@ -365,7 +387,7 @@ defmodule KubeResources.Kong do
                   %{"name" => "KONG_ADMIN_ERROR_LOG", "value" => "/dev/stderr"},
                   %{"name" => "KONG_ADMIN_GUI_ACCESS_LOG", "value" => "/dev/stdout"},
                   %{"name" => "KONG_ADMIN_GUI_ERROR_LOG", "value" => "/dev/stderr"},
-                  %{"name" => "KONG_ADMIN_LISTEN", "value" => "127.0.0.1:8444 http2 ssl"},
+                  %{"name" => "KONG_ADMIN_LISTEN", "value" => "0.0.0.0:8444 http2 ssl"},
                   %{"name" => "KONG_CLUSTER_LISTEN", "value" => "off"},
                   %{"name" => "KONG_DATABASE", "value" => "off"},
                   %{"name" => "KONG_KIC", "value" => "on"},
@@ -392,13 +414,14 @@ defmodule KubeResources.Kong do
                   }
                 },
                 "ports" => [
+                  %{"name" => "admin-tls", "containerPort" => 8444, "protocol" => "TCP"},
                   %{"name" => "proxy", "containerPort" => 8000, "protocol" => "TCP"},
                   %{"name" => "proxy-tls", "containerPort" => 8443, "protocol" => "TCP"},
                   %{"name" => "status", "containerPort" => 8100, "protocol" => "TCP"}
                 ],
                 "volumeMounts" => [
-                  %{"name" => "battery-kong-prefix-dir", "mountPath" => "/kong_prefix/"},
-                  %{"name" => "battery-kong-tmp", "mountPath" => "/tmp"}
+                  %{"name" => "kong-prefix-dir", "mountPath" => "/kong_prefix/"},
+                  %{"name" => "kong-tmp", "mountPath" => "/tmp"}
                 ],
                 "readinessProbe" => %{
                   "failureThreshold" => 3,
@@ -423,13 +446,41 @@ defmodule KubeResources.Kong do
             "terminationGracePeriodSeconds" => 30,
             "tolerations" => [],
             "volumes" => [
-              %{"name" => "battery-kong-prefix-dir", "emptyDir" => %{}},
-              %{"name" => "battery-kong-tmp", "emptyDir" => %{}}
+              %{"name" => "kong-prefix-dir", "emptyDir" => %{}},
+              %{"name" => "kong-tmp", "emptyDir" => %{}}
             ]
           }
         }
       }
     }
+  end
+
+  def monitors(config) do
+    namespace = NetworkSettings.namespace(config)
+
+    [
+      %{
+        "apiVersion" => "monitoring.coreos.com/v1",
+        "kind" => "ServiceMonitor",
+        "metadata" => %{
+          "name" => "kong",
+          "namespace" => namespace,
+          "labels" => %{
+            "battery/app" => @app_name,
+            "battery/managed" => "True"
+          }
+        },
+        "spec" => %{
+          "endpoints" => [%{"targetPort" => "status", "scheme" => "http"}],
+          "jobLabel" => "kong",
+          "selector" => %{
+            "matchLabels" => %{
+              "battery/app" => @app_name
+            }
+          }
+        }
+      }
+    ]
   end
 
   def pod(config) do
@@ -440,8 +491,11 @@ defmodule KubeResources.Kong do
       "kind" => "Pod",
       "metadata" => %{
         "name" => "test-ingress",
-        "annotations" => %{},
-        "namespace" => namespace
+        "namespace" => namespace,
+        "labels" => %{
+          "battery/app" => @app_name,
+          "battery/managed" => "True"
+        }
       },
       "spec" => %{
         "restartPolicy" => "OnFailure",
@@ -449,10 +503,7 @@ defmodule KubeResources.Kong do
           %{
             "name" => "curl",
             "image" => "curlimages/curl",
-            "command" => [
-              "curl",
-              base_path(namespace) <> "/httpbin"
-            ]
+            "command" => ["curl", base_path(namespace) <> "/httpbin"]
           }
         ]
       }
@@ -467,14 +518,17 @@ defmodule KubeResources.Kong do
       "kind" => "Pod",
       "metadata" => %{
         "name" => "test-ingress-v1beta1",
-        "annotations" => %{},
-        "namespace" => namespace
+        "namespace" => namespace,
+        "labels" => %{
+          "battery/app" => @app_name,
+          "battery/managed" => "True"
+        }
       },
       "spec" => %{
         "restartPolicy" => "OnFailure",
         "containers" => [
           %{
-            "name" => "curl",
+            "name" => "kong-curl",
             "image" => "curlimages/curl",
             "command" => [
               "curl",
@@ -484,6 +538,15 @@ defmodule KubeResources.Kong do
         ]
       }
     }
+  end
+
+  def prometheus_plugin(_config) do
+    B.build_resource("configuration.konghq.com/v1", "KongClusterPlugin")
+    |> B.app_labels(@app_name)
+    |> B.name("global-prometheus")
+    |> B.annotation("kubernetes.io/ingress.class", "kong")
+    |> B.label("global", "true")
+    |> Map.put("plugin", "prometheus")
   end
 
   def base_path(namespace), do: "http://kong-proxy.#{namespace}.svc.cluster.local"

@@ -26,6 +26,7 @@ defmodule ControlServer.Services.BaseService do
         :database,
         :storage,
         :network,
+        :ml,
         :battery
       ]
 

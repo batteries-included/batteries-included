@@ -27,11 +27,10 @@ defmodule KubeExt do
       found = Hashing.decorate_content_hash(found)
       resource = Hashing.decorate_content_hash(resource)
 
-      if Hashing.get_hash(found) == Hashing.get_hash(resource) do
-        Logger.debug("Looks like they are the same")
-        {:ok, found}
-      else
+      if Hashing.different?(found, resource) do
         update_single(connection, resource)
+      else
+        {:ok, found}
       end
     end
   end
@@ -46,19 +45,11 @@ defmodule KubeExt do
       {:ok, _} = result ->
         result
 
+      {:error, %HTTPoison.Response{status_code: 404}} ->
+        create(connection, resource)
+
       {:error, %Client.APIError{reason: "NotFound"}} ->
-        Logger.debug("Create it is")
-
-        create_operation =
-          resource
-          |> Hashing.decorate_content_hash()
-          |> Client.create()
-
-        res = Client.run(connection, create_operation)
-
-        Logger.warning("Result = #{inspect(res)}")
-
-        res
+        create(connection, resource)
 
       unknown ->
         Logger.warning(
@@ -69,9 +60,19 @@ defmodule KubeExt do
     end
   end
 
+  defp create(connection, resource) do
+    Logger.debug("Create it is")
+
+    create_operation =
+      resource
+      |> Hashing.decorate_content_hash()
+      |> Client.create()
+
+    Client.run(connection, create_operation)
+  end
+
   defp update_single(connection, resource) do
-    metadata = Map.get(resource, "metadata")
-    Logger.debug("Going to send update for #{inspect(metadata)}")
+    Logger.debug("Going to send update for #{inspect(resource)}")
 
     patch_operation = Client.patch(resource)
     Client.run(connection, patch_operation)

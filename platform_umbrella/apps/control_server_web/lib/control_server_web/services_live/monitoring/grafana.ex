@@ -7,7 +7,7 @@ defmodule ControlServerWeb.ServicesLive.Grafana do
   def render(assigns) do
     ~F"""
     <Layout>
-      <iframe src="http://localhost:8081/x/grafana" class="w-full iframe-container"/>
+      <iframe src="http://localhost:8081/x/grafana" class="w-full iframe-container" />
     </Layout>
     """
   end

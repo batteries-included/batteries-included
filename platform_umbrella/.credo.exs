@@ -50,7 +50,6 @@ common_checks = [
   {CredoNaming.Check.Warning.AvoidSpecificTermsInModuleNames,
    terms: [
      "Fetcher",
-     "Builder",
      "Persister",
      "Serializer",
      ~r/^Helpers?$/i,

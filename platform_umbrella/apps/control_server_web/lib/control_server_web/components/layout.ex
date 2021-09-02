@@ -19,10 +19,10 @@ defmodule ControlServerWeb.Layout do
         <MenuItem to="/services/database" name="Databases" class={mic}>
           <CommonUI.Icons.Database class={ic} />
         </MenuItem>
-        <MenuItem to="/services/training" name="Training" class={mic}>
+        <MenuItem to="/services/ml/training" name="Training" class={mic}>
           <CommonUI.Icons.Training class={ic} />
         </MenuItem>
-        <MenuItem to="/services/notebooks" name="Notebooks" class={mic}>
+        <MenuItem to="/services/ml/notebooks" name="Notebooks" class={mic}>
           <CommonUI.Icons.Notebook class={ic} />
         </MenuItem>
         <MenuItem to="/services/monitoring" name="Monitoring" class={mic}>

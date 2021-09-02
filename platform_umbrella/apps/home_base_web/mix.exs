@@ -37,8 +37,8 @@ defmodule HomeBaseWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.8"},
-      {:phoenix_ecto, "~> 4.3"},
+      {:phoenix, "~> 1.5.12"},
+      {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_view, "~> 0.16.0"},
       {:floki, ">= 0.27.0", only: :test},
       {:phoenix_html, "~> 3.0"},

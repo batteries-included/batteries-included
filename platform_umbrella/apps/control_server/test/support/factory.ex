@@ -14,4 +14,8 @@ defmodule ControlServer.Factory do
       service_type: sequence(:service_type, [:monitoring, :database])
     }
   end
+
+  def kube_notebook do
+    %ControlServer.Notebooks.JupyterLabNotebook{}
+  end
 end

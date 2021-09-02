@@ -1,0 +1,92 @@
+defmodule KubeResources.Notebooks do
+  alias ControlServer.Notebooks
+  alias ControlServer.Notebooks.JupyterLabNotebook
+  alias KubeExt.Builder, as: B
+  alias KubeResources.MLIngress
+  alias KubeResources.MLSettings
+
+  require Logger
+
+  @app_name "notebooks"
+
+  def notebooks(config) do
+    Notebooks.list_jupyter_lab_notebooks()
+    |> Enum.flat_map(fn notebook ->
+      Logger.debug("Notebook => #{inspect(notebook)}")
+
+      [
+        {"/notebooks/#{notebook.id}/stateful", stateful_set(config, notebook)},
+        {"/notebooks/#{notebook.id}/service", service(config, notebook)}
+      ]
+    end)
+    |> Map.new()
+    |> Map.put("/notebooks/service_account", service_account(config))
+  end
+
+  defp service_account(config) do
+    namespace = MLSettings.namespace(config)
+
+    B.build_resource(:service_account)
+    |> B.name("battery-notebooks")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
+
+  defp stateful_set(config, %JupyterLabNotebook{} = notebook) do
+    namespace = MLSettings.namespace(config)
+
+    template =
+      %{}
+      |> B.app_labels(@app_name)
+      |> B.label("battery/notebook", notebook.name)
+      |> B.spec(%{
+        "containers" => [
+          %{
+            "name" => "notebook",
+            "image" => notebook.image,
+            "env" => [
+              %{"name" => "JUPYTER_ENABLE_LAB", "value" => "yes"}
+            ],
+            "command" => ["start-notebook.sh"],
+            "args" => [
+              "--NotebookApp.base_url='#{MLIngress.url(notebook.name)}'",
+              "--NotebookApp.token=''",
+              "--NotebookApp.allow_password_change=False",
+              "--NotebookApp.password=''"
+            ],
+            "ports" => [
+              %{"containerPort" => 8888, "name" => "http"}
+            ]
+          }
+        ]
+      })
+
+    spec =
+      %{}
+      |> B.match_labels_selector(@app_name)
+      |> B.template(template)
+
+    B.build_resource(:stateful_set)
+    |> B.name("notebook-#{notebook.name}")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.label("battery/notebook", notebook.name)
+    |> B.spec(spec)
+  end
+
+  defp service(config, notebook) do
+    namespace = MLSettings.namespace(config)
+
+    spec =
+      %{}
+      |> B.short_selector("battery/notebook", notebook.name)
+      |> B.ports([%{name: "http", port: 8888, targetPort: 8888}])
+
+    B.build_resource(:service)
+    |> B.name("notebook-#{notebook.name}")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.annotation("konghq.com/path", MLIngress.url(notebook.name))
+    |> B.spec(spec)
+  end
+end

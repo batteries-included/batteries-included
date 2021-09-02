@@ -7,6 +7,8 @@ defmodule KubeServices.ConfigGeneratorTest do
   alias ControlServer.Services.Database
   alias ControlServer.Services.Security
 
+  require Logger
+
   describe "ConfigGenerator" do
     setup do
       {:ok,
@@ -18,9 +20,10 @@ defmodule KubeServices.ConfigGeneratorTest do
     test "materialize all the configs" do
       Services.list_base_services()
       |> Enum.each(fn service ->
+        Logger.warning("Materialize #{inspect(service)}")
         configs = ConfigGenerator.materialize(service)
 
-        assert map_size(configs) >= 6
+        assert map_size(configs) >= 1
       end)
     end
   end

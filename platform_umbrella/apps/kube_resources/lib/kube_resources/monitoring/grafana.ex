@@ -3,6 +3,7 @@ defmodule KubeResources.Grafana do
   Add on context for Grafana configuration.
   """
 
+  alias KubeExt.Builder, as: B
   alias KubeExt.IniConfig
   alias KubeResources.MonitoringSettings
 
@@ -13,17 +14,15 @@ defmodule KubeResources.Grafana do
   @port 3000
   @port_name "http"
 
+  @app_name "grafana"
+
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ServiceAccount",
-      "metadata" => %{
-        "name" => "battery-grafana",
-        "namespace" => namespace
-      }
-    }
+    B.build_resource(:service_account)
+    |> B.name("battery-grafana")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
   end
 
   def prometheus_datasource_config(config) do
@@ -45,14 +44,11 @@ defmodule KubeResources.Grafana do
         ]
       })
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ConfigMap",
-      "metadata" => %{"name" => @datasources_configmap, "namespace" => namespace},
-      "data" => %{
-        "prometheus.yaml" => file_contents
-      }
-    }
+    B.build_resource(:config_map)
+    |> B.app_labels(@app_name)
+    |> B.name(@datasources_configmap)
+    |> B.namespace(namespace)
+    |> Map.put("data", %{"prometheus.yaml" => file_contents})
   end
 
   def dashboard_sources_config(config) do
@@ -74,17 +70,11 @@ defmodule KubeResources.Grafana do
         ]
       })
 
-    %{
-      "apiVersion" => "v1",
-      "data" => %{
-        "dashboards.json": file_contents
-      },
-      "kind" => "ConfigMap",
-      "metadata" => %{
-        "name" => @dashboards_configmap,
-        "namespace" => namespace
-      }
-    }
+    B.build_resource(:config_map)
+    |> B.app_labels(@app_name)
+    |> B.name(@dashboards_configmap)
+    |> B.namespace(namespace)
+    |> Map.put("data", %{"dashboards.yaml" => file_contents})
   end
 
   def main_config(config) do
@@ -111,186 +101,155 @@ defmodule KubeResources.Grafana do
 
     file_contents = IniConfig.to_ini(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ConfigMap",
-      "metadata" => %{"name" => @main_configmap, "namespace" => namespace},
-      "data" => %{
-        "grafana.ini" => file_contents
-      }
-    }
+    B.build_resource(:config_map)
+    |> B.app_labels(@app_name)
+    |> B.name(@main_configmap)
+    |> B.namespace(namespace)
+    |> Map.put("data", %{"grafana.ini" => file_contents})
   end
 
   def deployment(config) do
     namespace = MonitoringSettings.namespace(config)
-    image = MonitoringSettings.grafana_image(config)
-    version = MonitoringSettings.grafana_version(config)
 
-    %{
-      "apiVersion" => "apps/v1",
-      "kind" => "Deployment",
-      "metadata" => %{
-        "labels" => %{
-          "battery/managed" => "True",
-          "battery/app" => "grafana"
-        },
-        "name" => "grafana",
-        "namespace" => namespace
-      },
-      "spec" => %{
-        "replicas" => 1,
-        "selector" => %{
-          "matchLabels" => %{
-            "battery/app" => "grafana"
-          }
-        },
-        "template" => %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => "grafana",
-              "battery/managed" => "True"
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "env" => [],
-                "image" => "#{image}:#{version}",
-                "name" => "grafana",
-                "ports" => [
-                  %{
-                    "containerPort" => @port,
-                    "name" => @port_name
-                  }
-                ],
-                "readinessProbe" => %{
-                  "httpGet" => %{
-                    "path" => "/api/health",
-                    "port" => @port_name
-                  }
-                },
-                "resources" => %{
-                  "limits" => %{
-                    "cpu" => "200m",
-                    "memory" => "200Mi"
-                  },
-                  "requests" => %{
-                    "cpu" => "100m",
-                    "memory" => "100Mi"
-                  }
-                },
-                "volumeMounts" => [
-                  %{
-                    "mountPath" => "/var/lib/grafana",
-                    "name" => "grafana-storage",
-                    "readOnly" => false
-                  },
-                  %{
-                    "mountPath" => "/etc/grafana/grafana.ini",
-                    "subPath" => "grafana.ini",
-                    "name" => @main_configmap,
-                    "readOnly" => true
-                  },
-                  %{
-                    "mountPath" => "/etc/grafana/provisioning/datasources",
-                    "name" => @datasources_configmap,
-                    "readOnly" => false
-                  },
-                  %{
-                    "mountPath" => "/etc/grafana/provisioning/dashboards",
-                    "name" => @dashboards_configmap,
-                    "readOnly" => false
-                  }
-                ]
-              }
-            ],
-            "nodeSelector" => %{
-              "beta.kubernetes.io/os": "linux"
-            },
-            "securityContext" => %{
-              "runAsNonRoot" => true,
-              "runAsUser" => 65_534
-            },
-            "serviceAccountName" => "battery-grafana",
-            "volumes" => [
-              %{
-                "emptyDir" => %{},
-                "name" => "grafana-storage"
-              },
-              %{
-                "name" => @datasources_configmap,
-                "configMap" => %{
-                  "name" => @datasources_configmap
-                }
-              },
-              %{
-                "name" => @main_configmap,
-                "configMap" => %{
-                  "name" => @main_configmap
-                }
-              },
-              %{
-                "configMap" => %{
-                  "name" => @dashboards_configmap
-                },
-                "name" => @dashboards_configmap
-              }
-            ]
-          }
-        }
-      }
-    }
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("template", deployment_template(config))
+      |> B.match_labels_selector(@app_name)
+
+    B.build_resource(:deployment)
+    |> B.app_labels(@app_name)
+    |> B.name("grafana")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
   end
 
   def service(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Service",
-      "metadata" => %{
-        "labels" => %{
-          "battery/managed" => "True",
-          "battery/app" => "grafana"
-        },
-        "name" => "grafana",
-        "namespace" => namespace
-      },
-      "spec" => %{
-        "ports" => [
-          %{
-            "name" => @port_name,
-            "port" => @port,
-            "targetPort" => @port_name
-          }
-        ],
-        "selector" => %{
-          "battery/app" => "grafana"
-        }
-      }
-    }
+    spec =
+      %{}
+      |> Map.put("ports", [%{"name" => @port_name, "port" => @port, "targetPort" => @port_name}])
+      |> B.short_selector(@app_name)
+
+    B.build_resource(:service)
+    |> B.namespace(namespace)
+    |> B.name("grafana")
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
   end
 
   def monitors(config) do
     namespace = MonitoringSettings.namespace(config)
 
+    spec =
+      %{}
+      |> Map.put("endpoints", [%{"interval" => "15s", "port" => @port_name}])
+      |> B.match_labels_selector(@app_name)
+
+    [
+      B.build_resource(:service_monitor)
+      |> B.app_labels(@app_name)
+      |> B.name("grafana")
+      |> B.namespace(namespace)
+      |> B.spec(spec)
+    ]
+  end
+
+  defp container(config) do
+    image = MonitoringSettings.grafana_image(config)
+    version = MonitoringSettings.grafana_version(config)
+
+    %{}
+    |> Map.put("image", "#{image}:#{version}")
+    |> Map.put("name", "grafana")
+    |> Map.put("env", [])
+    |> Map.put("resources", %{
+      "limits" => %{
+        "cpu" => "200m",
+        "memory" => "200Mi"
+      },
+      "requests" => %{
+        "cpu" => "100m",
+        "memory" => "100Mi"
+      }
+    })
+    |> Map.put("ports", [%{"containerPort" => @port, "name" => @port_name}])
+    |> Map.put("readinessProbe", %{
+      "httpGet" => %{
+        "path" => "/api/health",
+        "port" => @port_name
+      }
+    })
+    |> Map.put("volumeMounts", [
+      %{
+        "mountPath" => "/var/lib/grafana",
+        "name" => "grafana-storage",
+        "readOnly" => false
+      },
+      %{
+        "mountPath" => "/etc/grafana/grafana.ini",
+        "subPath" => "grafana.ini",
+        "name" => @main_configmap,
+        "readOnly" => true
+      },
+      %{
+        "mountPath" => "/etc/grafana/provisioning/datasources",
+        "name" => @datasources_configmap,
+        "readOnly" => false
+      },
+      %{
+        "mountPath" => "/etc/grafana/provisioning/dashboards",
+        "name" => @dashboards_configmap,
+        "readOnly" => false
+      }
+    ])
+  end
+
+  defp volumes(_config) do
     [
       %{
-        "apiVersion" => "monitoring.coreos.com/v1",
-        "kind" => "ServiceMonitor",
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => "grafana",
-            "battery/managed" => "True"
-          },
-          "name" => "grafana",
-          "namespace" => namespace
-        },
-        "spec" => %{
-          "endpoints" => [%{"interval" => "15s", "port" => @port_name}],
-          "selector" => %{"matchLabels" => %{"battery/app" => "grafana"}}
+        "emptyDir" => %{},
+        "name" => "grafana-storage"
+      },
+      %{
+        "name" => @datasources_configmap,
+        "configMap" => %{
+          "name" => @datasources_configmap
         }
+      },
+      %{
+        "name" => @main_configmap,
+        "configMap" => %{
+          "name" => @main_configmap
+        }
+      },
+      %{
+        "configMap" => %{
+          "name" => @dashboards_configmap
+        },
+        "name" => @dashboards_configmap
       }
     ]
+  end
+
+  defp deployment_template(config) do
+    %{}
+    |> B.app_labels(@app_name)
+    |> Map.put(
+      "spec",
+      %{
+        "containers" => [container(config)],
+        "nodeSelector" => %{
+          "beta.kubernetes.io/os": "linux"
+        },
+        "securityContext" => %{
+          "runAsNonRoot" => true,
+          "runAsUser" => 65_534
+        },
+        "serviceAccountName" => "battery-grafana",
+        "volumes" => volumes(config)
+      }
+    )
   end
 end

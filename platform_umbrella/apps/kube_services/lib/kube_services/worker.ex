@@ -26,7 +26,8 @@ defmodule KubeServices.Worker do
     end
 
     def apply(connection, resource) do
-      %ApplyState{last_result: KubeExt.maybe_apply(connection, resource), resource: resource}
+      apply_result = KubeExt.maybe_apply(connection, resource)
+      %ApplyState{last_result: apply_result, resource: resource}
     end
 
     def from_path(%{} = path_state_map, path), do: Map.get(path_state_map, path, nil)
@@ -69,6 +70,8 @@ defmodule KubeServices.Worker do
     def refresh(%State{base_service: old_bs} = state) do
       # Get the most up to date base service from the db.
       base_service = Services.get_base_service!(old_bs.id)
+
+      Logger.debug("Refresh base_service id=#{base_service.id} type=#{base_service.service_type}")
 
       %__MODULE__{
         state
@@ -157,6 +160,8 @@ defmodule KubeServices.Worker do
       "KubeServices start worker service_type => #{inspect(base_service.service_type)}"
     )
 
+    # Process.flag(:trap_exit, true)
+
     state = State.new(base_service)
     Process.send_after(self(), :tick, 1000)
 
@@ -186,5 +191,10 @@ defmodule KubeServices.Worker do
   def handle_info(:tick, %State{} = state) do
     Process.send_after(self(), :tick, @tick_time)
     {:noreply, state |> State.refresh() |> State.apply_resources()}
+  end
+
+  @impl true
+  def terminate(reason, %State{} = _state) do
+    Logger.warning("Terminating Worker Reason = #{inspect(reason)}")
   end
 end

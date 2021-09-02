@@ -7,6 +7,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Battery
   alias KubeResources.Database
   alias KubeResources.Devtools
+  alias KubeResources.ML
   alias KubeResources.Monitoring
   alias KubeResources.Network
   alias KubeResources.Security
@@ -28,4 +29,5 @@ defmodule KubeResources.ConfigGenerator do
   defp materialize(%{} = config, :devtools), do: Devtools.materialize(config)
   defp materialize(%{} = config, :network), do: Network.materialize(config)
   defp materialize(%{} = config, :battery), do: Battery.materialize(config)
+  defp materialize(%{} = config, :ml), do: ML.materialize(config)
 end

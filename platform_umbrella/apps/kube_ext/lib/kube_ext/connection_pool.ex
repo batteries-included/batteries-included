@@ -39,12 +39,24 @@ defmodule KubeExt.ConnectionPool do
   end
 
   defp register_new(pool_name, cluster_name) do
-    with task_sup <- task_supervisor_name(pool_name),
-         conn_task <-
+    registry = registry_name(pool_name)
+    task_sup = task_supervisor_name(pool_name)
+
+    with conn_task <-
            Task.Supervisor.async(task_sup, fn -> connection_from_name(cluster_name) end),
          {:ok, connection} <- Task.await(conn_task),
-         registry = registry_name(pool_name),
          {:ok, _} <- Registry.register(registry, cluster_name, connection) do
+      Logger.debug("Registered new Connection pool #{inspect(connection)}")
+      connection
+    else
+      {:error, {:already_registered, _pid}} -> get_no_register(pool_name, cluster_name)
+    end
+  end
+
+  defp get_no_register(pool_name, cluster_name) do
+    registry = registry_name(pool_name)
+
+    with {_pid, connection} <- registry |> Registry.lookup(cluster_name) |> List.first(nil) do
       connection
     end
   end

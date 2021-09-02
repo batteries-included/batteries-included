@@ -3,6 +3,7 @@ defmodule KubeResources.Ingress do
   alias ControlServer.Services.BaseService
   alias KubeResources.BatteryIngress
   alias KubeResources.BatterySettings
+  alias KubeResources.MLIngress
   alias KubeResources.MonitoringIngress
 
   require Logger
@@ -27,6 +28,10 @@ defmodule KubeResources.Ingress do
 
   def base_service_paths(%BaseService{service_type: :battery, config: config} = _base_service) do
     BatteryIngress.paths(config)
+  end
+
+  def base_service_paths(%BaseService{service_type: :ml, config: config} = _base_service) do
+    MLIngress.paths(config)
   end
 
   def base_service_paths(%BaseService{} = bs) do

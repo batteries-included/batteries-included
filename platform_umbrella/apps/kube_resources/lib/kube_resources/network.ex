@@ -19,9 +19,11 @@ defmodule KubeResources.Network do
       "/kong/1/role" => Kong.role(config),
       "/kong/1/role_binding" => Kong.role_binding(config),
       "/kong/1/service" => Kong.service(config),
+      "/kong/1/service_1" => Kong.service_1(config),
       "/kong/1/deployment" => Kong.deployment(config),
       "/kong/1/pod" => Kong.pod(config),
-      "/kong/1/pod_1" => Kong.pod_1(config)
+      "/kong/1/pod_1" => Kong.pod_1(config),
+      "/kong/1/pom_plugin" => Kong.prometheus_plugin(config)
     }
   end
 

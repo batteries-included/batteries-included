@@ -34,6 +34,8 @@ defmodule ControlServerWeb.Router do
     live "/services/devtools/install", ServicesLive.DevtoolsInstall, :index
 
     live "/services/network", ServicesLive.NetworkHome, :index
+    live "/services/ml/notebooks", ServicesLive.JupyterLabNotebook.Index, :index
+    live "/services/ml/notebooks/:id", ServicesLive.JupyterLabNotebook.Show, :index
   end
 
   scope "/api", ControlServerWeb do

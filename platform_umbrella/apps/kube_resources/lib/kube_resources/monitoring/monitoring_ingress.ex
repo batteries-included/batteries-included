@@ -17,20 +17,20 @@ defmodule KubeResources.MonitoringIngress do
         "backend" => %{
           "service" => %{
             "name" => "prometheus-main",
-            "port" => %{"name" => "web"}
-          }
-        }
-      },
-      %{
-        "path" => "/x/alertmanager",
-        "pathType" => "Prefix",
-        "backend" => %{
-          "service" => %{
-            "name" => "alertmanager-main",
-            "port" => %{"name" => "web"}
+            "port" => %{"name" => "http"}
           }
         }
       }
+      # %{
+      #   "path" => "/x/alertmanager",
+      #   "pathType" => "Prefix",
+      #   "backend" => %{
+      #     "service" => %{
+      #       "name" => "alertmanager-main",
+      #       "port" => %{"name" => "web"}
+      #     }
+      #   }
+      # }
     ]
   end
 end
