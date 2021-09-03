@@ -23,7 +23,8 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.Home, :index
 
-    live "/services/monitoring", ServicesLive.Prometheus, :index
+    live "/services/monitoring", ServicesLive.MonitoringHome, :index
+    live "/services/monitoring/prometheus", ServicesLive.Prometheus, :index
     live "/services/monitoring/grafana", ServicesLive.Grafana, :index
     live "/services/security", ServicesLive.Security, :index
 

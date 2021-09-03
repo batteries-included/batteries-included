@@ -1,4 +1,5 @@
 defmodule KubeResources.Network do
+  alias KubeResources.Ingress
   alias KubeResources.Kong
   alias KubeResources.Nginx
 
@@ -6,11 +7,10 @@ defmodule KubeResources.Network do
     %{}
     |> Map.merge(nginx(config))
     |> Map.merge(kong(config))
+    |> Map.merge(Ingress.materialize(config))
   end
 
-  def kong(%{"kong.install" => false}), do: %{}
-
-  def kong(config) do
+  def kong(%{"kong.install" => true} = config) do
     %{
       "/kong/0/crds" => Kong.crd(config),
       "/kong/1/service_account" => Kong.service_account(config),
@@ -27,8 +27,11 @@ defmodule KubeResources.Network do
     }
   end
 
-  # It looks like knog will be the defacto ingress. So unless there's some reason don't install nginx by default.
-  def nginx(%{"nginx.install" => true} = config) do
+  def kong(_), do: %{}
+
+  def nginx(%{"nginx.install" => false} = _config), do: %{}
+
+  def nginx(config) do
     %{
       "/nginx/0/service_account" => Nginx.service_account(config),
       "/nginx/0/config_map" => Nginx.config_map(config),
@@ -40,6 +43,4 @@ defmodule KubeResources.Network do
       "/nginx/0/deployment" => Nginx.deployment(config)
     }
   end
-
-  def nginx(_), do: %{}
 end

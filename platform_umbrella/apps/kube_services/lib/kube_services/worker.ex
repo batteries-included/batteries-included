@@ -19,10 +19,10 @@ defmodule KubeServices.Worker do
     """
     defstruct [:resource, :last_result]
 
-    def needs_apply(%ApplyState{} = ap, resource) do
+    def needs_apply(%ApplyState{} = apply_state, new_resource) do
       # If the last try was an error then we always try and sync.
       # otherwise if there's been something that changed in the database.
-      !ok?(ap) || different?(ap, resource)
+      !ok?(apply_state) || Hashing.different?(resource(apply_state), new_resource)
     end
 
     def apply(connection, resource) do
@@ -42,6 +42,8 @@ defmodule KubeServices.Worker do
     end
 
     defp result_ok?(_), do: false
+
+    defp resource(%ApplyState{resource: res}), do: res
 
     def different?(%ApplyState{resource: applied_resource}, new_resource) do
       Hashing.different?(applied_resource, new_resource)
@@ -121,7 +123,7 @@ defmodule KubeServices.Worker do
              {:prev_state, ApplyState.from_path(path_state_map, path)},
            {:needs_apply, false} <-
              {:needs_apply, ApplyState.needs_apply(prev_state, resource)} do
-        Logger.debug("Path => #{path} everything looks the same. Not going to push")
+        Logger.debug("Path => #{path} everything looks successfully pushed. Not going to push")
         {path, prev_state}
       else
         {:prev_state, _} ->

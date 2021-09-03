@@ -35,11 +35,10 @@ defmodule KubeExt.Hashing do
 
   def different?(applied_list, new_list)
       when is_list(applied_list) and is_list(new_list) do
-    applied_list
-    |> Enum.zip(new_list)
-    |> Enum.any?(fn {applied, new} ->
-      different?(applied, new)
-    end)
+    applied_set = applied_list |> Enum.map(&get_hash/1) |> MapSet.new()
+    wanted_set = new_list |> Enum.map(&get_hash/1) |> MapSet.new()
+
+    not MapSet.equal?(applied_set, wanted_set)
   end
 
   def different?(applied, new) when is_map(applied) and is_map(new) do

@@ -455,7 +455,7 @@ defmodule KubeResources.Kong do
     }
   end
 
-  def monitors(config) do
+  def monitors(%{"kong.install" => true} = config) do
     namespace = NetworkSettings.namespace(config)
 
     [
@@ -482,6 +482,8 @@ defmodule KubeResources.Kong do
       }
     ]
   end
+
+  def monitors(_config), do: []
 
   def pod(config) do
     namespace = NetworkSettings.namespace(config)

@@ -100,4 +100,10 @@ defmodule KubeExt.HashingTest do
 
     assert false == Hashing.different?(@service_two, striped)
   end
+
+  test "list and contents work" do
+    assert Hashing.different?([], [@service_two])
+    assert false == Hashing.different?([], [])
+    assert false == Hashing.different?([@service_two], [@service_two])
+  end
 end

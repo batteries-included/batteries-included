@@ -3,7 +3,6 @@ defmodule KubeResources.Battery do
 
   alias KubeResources.BatterySettings
   alias KubeResources.EchoServer
-  alias KubeResources.Ingress
 
   alias KubeExt.Builder, as: B
 
@@ -222,7 +221,6 @@ defmodule KubeResources.Battery do
       "/1/service_account" => service_account(config),
       "/1/cluster_role_binding" => cluster_role_binding(config),
       "/1/deployment" => deployment(config),
-      "/2/ingress" => Ingress.battery_ingress(config),
       "/3/echo/service" => EchoServer.service(config),
       "/3/echo/deployment" => EchoServer.deployment(config)
     }

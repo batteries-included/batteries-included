@@ -2,12 +2,25 @@ defmodule KubeResources.Notebooks do
   alias ControlServer.Notebooks
   alias ControlServer.Notebooks.JupyterLabNotebook
   alias KubeExt.Builder, as: B
-  alias KubeResources.MLIngress
   alias KubeResources.MLSettings
 
   require Logger
 
   @app_name "notebooks"
+
+  def ingress(config) do
+    Enum.map(Notebooks.list_jupyter_lab_notebooks(), fn jln -> notebook_ingress(jln, config) end)
+  end
+
+  defp notebook_ingress(%Notebooks.JupyterLabNotebook{} = notebook, config) do
+    Logger.debug("Creating ingress for #{inspect(notebook)}")
+    namespace = MLSettings.namespace(config)
+
+    B.build_resource(:ingress, url(notebook), "notebook-#{notebook.name}", "http")
+    |> B.name("notebook-#{notebook.name}")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
 
   def notebooks(config) do
     Notebooks.list_jupyter_lab_notebooks()
@@ -49,7 +62,7 @@ defmodule KubeResources.Notebooks do
             ],
             "command" => ["start-notebook.sh"],
             "args" => [
-              "--NotebookApp.base_url='#{MLIngress.url(notebook.name)}'",
+              "--NotebookApp.base_url='#{url(notebook)}'",
               "--NotebookApp.token=''",
               "--NotebookApp.allow_password_change=False",
               "--NotebookApp.password=''"
@@ -86,7 +99,10 @@ defmodule KubeResources.Notebooks do
     |> B.name("notebook-#{notebook.name}")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.annotation("konghq.com/path", MLIngress.url(notebook.name))
     |> B.spec(spec)
+  end
+
+  def url(%JupyterLabNotebook{} = notebook) do
+    "/x/notebooks/#{notebook.name}"
   end
 end

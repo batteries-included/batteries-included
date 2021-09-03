@@ -1,14 +1,28 @@
 defmodule KubeResources.Prometheus do
   @moduledoc """
-  This module contains all the code to interact with, including starting, prometheuses.any()
+  This module contains all the code to interact with, including starting, prometheuses.
 
   Currently this is around config generation via Monitoring.materialize/1
+  and Ingress generation via KubResources.Ingress
   """
 
+  alias KubeExt.Builder, as: B
   alias KubeResources.MonitoringSettings
 
   @port 80
   @port_name "http"
+
+  @app_name "prometheus"
+
+  def ingress(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    B.build_resource(:ingress, "/x/prometheus", "prometheus-main", "http")
+    |> B.rewriting_ingress()
+    |> B.name("prometheus")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
 
   def prometheus(config) do
     namespace = MonitoringSettings.namespace(config)

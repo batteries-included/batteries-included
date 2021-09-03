@@ -16,6 +16,15 @@ defmodule KubeResources.Grafana do
 
   @app_name "grafana"
 
+  def ingress(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    B.build_resource(:ingress, "/x/grafana", "grafana", "http")
+    |> B.name("grafana")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
+
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
 

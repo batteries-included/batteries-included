@@ -39,7 +39,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
            Notebooks.create_jupyter_lab_notebook(%{
              image: "jupyter/datascience-notebook:lab-3.1.9"
            }) do
-      {:noreply, socket}
+      {:noreply, assign(socket, :jupyter_lab_notebooks, list_jupyter_lab_notebooks())}
     end
   end
 

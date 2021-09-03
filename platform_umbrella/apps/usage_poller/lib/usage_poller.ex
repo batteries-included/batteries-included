@@ -9,7 +9,7 @@ defmodule UsagePoller do
 
   require Logger
 
-  @period 1 * 60 * 1000
+  @period 10 * 60 * 1000
 
   def start_link(opts) do
     Logger.info("Start link for UsagePoller")

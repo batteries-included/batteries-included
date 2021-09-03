@@ -90,8 +90,10 @@ config :home_base_web, HomeBaseWeb.Endpoint,
     ]
   ]
 
-# Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  level: :debug,
+  metadata: [:mfa]
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime

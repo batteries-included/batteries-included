@@ -23,8 +23,28 @@ defmodule KubeExt.Builder do
     build_resource("v1", "Service")
   end
 
+  def build_resource(:role_binding) do
+    build_resource("rbac.authorization.k8s.io/v1", "RoleBinding")
+  end
+
+  def build_resource(:role) do
+    build_resource("rbac.authorization.k8s.io/v1", "Role")
+  end
+
   def build_resource(:service_monitor) do
     build_resource("monitoring.coreos.com/v1", "ServiceMonitor")
+  end
+
+  def build_resource(:ingress) do
+    "networking.k8s.io/v1"
+    |> build_resource("Ingress")
+    |> annotation("kubernetes.io/ingress.class", "battery-nginx")
+  end
+
+  def build_resource(:ingress, path, service_name, port) do
+    build_resource("networking.k8s.io/v1", "Ingress")
+    |> annotation("kubernetes.io/ingress.class", "battery-nginx")
+    |> spec(%{"rules" => [build_rule(:http, [build_path(path, service_name, port)])]})
   end
 
   def build_resource(api_version, kind) do
@@ -76,7 +96,60 @@ defmodule KubeExt.Builder do
     |> put_in(["selector", key], value)
   end
 
+  def rewriting_ingress(resouce) do
+    resouce
+    |> annotation("nginx.ingress.kubernetes.io/rewrite-target", "/$2")
+    |> annotation("nginx.ingress.kubernetes.io/use-regex", "true")
+    |> update_in(~w(spec rules), fn rules ->
+      Enum.map(rules || [], &add_capture_to_rule/1)
+    end)
+  end
+
   def spec(resource, %{} = spec), do: Map.put(resource, "spec", spec)
   def template(resource, %{} = template), do: Map.put(resource, "template", template)
   def ports(resource, ports), do: Map.put(resource, "ports", ports)
+
+  defp build_rule(:http, paths) do
+    %{
+      "http" => %{
+        "paths" => paths
+      }
+    }
+  end
+
+  defp build_path(path, service_name, port_name) when is_binary(port_name) do
+    %{
+      "path" => path,
+      "pathType" => "Prefix",
+      "backend" => %{
+        "service" => %{
+          "name" => service_name,
+          "port" => %{"name" => port_name}
+        }
+      }
+    }
+  end
+
+  defp build_path(path, service_name, port_number) when is_number(port_number) do
+    %{
+      "path" => path,
+      "pathType" => "Prefix",
+      "backend" => %{
+        "service" => %{
+          "name" => service_name,
+          "port" => %{"number" => port_number}
+        }
+      }
+    }
+  end
+
+  def add_capture_to_rule(rule) do
+    update_in(rule, ~w(http paths), fn paths ->
+      Enum.map(paths || [], &add_capture_to_path/1)
+    end)
+  end
+
+  def add_capture_to_path(path) do
+    update_in(path, ~w(path), fn p -> p <> "(/|$)(.*)" end)
+  end
 end
