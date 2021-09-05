@@ -12,7 +12,7 @@ futures = "0.3.17"
 tokio = { version = "1.11.0", features = ["full"] }
 
 # Error handling
-thiserror = "1.0.28"
+thiserror = "1.0.29"
 
 # pinning the version to 1.17.x since
 # GKE is there it makes for a good stable target.
