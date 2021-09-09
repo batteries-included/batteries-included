@@ -61,7 +61,7 @@
     "postcss": "8.3.6",
     "postcss-import": "14.0.2",
     "postcss-preset-env": "6.7.0",
-    "prettier": "2.3.2",
+    "prettier": "2.4.0",
     "tailwindcss": "2.2.14",
     "typescript": "4.4.2",
     "undefined": "0.1.0"
