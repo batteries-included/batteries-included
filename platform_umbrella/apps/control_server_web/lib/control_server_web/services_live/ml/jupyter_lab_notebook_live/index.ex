@@ -2,6 +2,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   use ControlServerWeb, :surface_view
 
   alias CommonUI.Button
+  alias CommonUI.Layout.Title
   alias ControlServer.Notebooks
   alias ControlServerWeb.Layout
 
@@ -51,7 +52,9 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   def render(assigns) do
     ~F"""
     <Layout>
-      <h1>Listing Jupyter lab notebooks</h1>
+      <:title>
+        <Title>Jupyter Notebooks</Title>
+      </:title>
 
       <table>
         <thead>

@@ -1,6 +1,7 @@
 defmodule ControlServerWeb.ServicesLive.PostgresNew do
   use ControlServerWeb, :surface_view
 
+  alias CommonUI.Layout.Title
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
   alias ControlServerWeb.Layout
@@ -42,6 +43,9 @@ defmodule ControlServerWeb.ServicesLive.PostgresNew do
   def render(assigns) do
     ~F"""
     <Layout>
+      <:title>
+        <Title>New Cluster</Title>
+      </:title>
       <h1>New Postgres Cluster</h1>
       <div>
         <FormComponent

@@ -27,6 +27,8 @@ defmodule ControlServerWeb.ConnCase do
 
       alias ControlServerWeb.Router.Helpers, as: Routes
 
+      use Surface.LiveViewTest
+
       # The default endpoint for testing
       @endpoint ControlServerWeb.Endpoint
     end

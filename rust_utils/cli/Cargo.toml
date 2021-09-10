@@ -1,10 +1,8 @@
 [package]
-authors = ["Elliott Clark <elliott.neil.clark@gmail.com>"]
+authors = ["Elliott Clark <elliott@batteriesincl.com>"]
 edition = "2018"
 name = "cli"
 version = "0.1.0"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 
@@ -20,3 +18,9 @@ kube = { version = "0.60.0", features = ["derive"] }
 
 # Logging/Tracing
 tracing = "0.1.26"
+clap = "~2.27.0"
+
+# Yaml
+serde = "1.0.130"
+serde_json = "1.0.67"
+serde_yaml = "0.8.20"

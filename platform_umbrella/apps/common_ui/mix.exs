@@ -12,6 +12,7 @@ defmodule CommonUI.MixProject do
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      compilers: [:phoenix] ++ Mix.compilers() ++ [:surface],
       deps: deps(),
       aliases: aliases()
     ]

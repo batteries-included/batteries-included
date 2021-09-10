@@ -1,10 +1,8 @@
 import Config
 
-web_host = System.get_env("WEB_HOST") || "caxode.com"
-
-config :control_server_web, ControlServerWeb.Endpoint,
-  url: [host: web_host, port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+web_host = System.get_env("WEB_HOST", "anton2")
+web_port = System.get_env("WEB_PORT", "8081")
+port = System.get_env("PORT", "4000")
 
 postgres_username =
   System.get_env("POSTGRES_USER") ||
@@ -75,16 +73,20 @@ config :home_base, HomeBase.Repo,
 # See `mix help release` for more information.
 config :control_server_web, ControlServerWeb.Endpoint,
   http: [
-    port: String.to_integer(System.get_env("PORT") || "4000"),
+    port: String.to_integer(port),
+    # url: [host: web_host, port: String.to_integer(web_port)],
     transport_options: [socket_opts: [:inet6]]
   ],
+  check_origin: false,
   secret_key_base: secret_key_base,
   server: true
 
 config :home_base_web, HomeBaseWeb.Endpoint,
   http: [
-    port: String.to_integer(System.get_env("PORT") || "4000"),
+    port: String.to_integer(port),
+    # url: [host: web_host, port: String.to_integer(web_port)],
     transport_options: [socket_opts: [:inet6]]
   ],
+  check_origin: false,
   secret_key_base: secret_key_base,
   server: true

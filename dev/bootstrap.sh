@@ -92,6 +92,12 @@ buildLocalControl() {
   ${DIR}/build_local.sh
 }
 
+cargoBootstrap() {
+  pushd ${DIR}/../rust_utils
+  cargo run -- bootstrap || true
+  popd
+}
+
 CREATE_CLUSTER=${CREATE_CLUSTER:-true}
 FORWARD_EXTERNAL_POSTGRES=${FORWARD_EXTERNAL_POSTGRES:-true}
 FORWARD_HOME_POSTGRES=${FORWARD_HOME_POSTGRES:-false}
@@ -141,10 +147,8 @@ fi
 
 # Start the services.
 kubectl apply -f "${DIR}/k8s"
-# Add the CRD definition
-kubectl apply -f "${DIR}/../platform_umbrella/manifest.yaml" || true
-# Create the cluster
-kubectl apply -f "${DIR}/../platform_umbrella/default_cluster.yaml" || true
+
+cargoBootstrap
 
 if [ $BUILD_CONTROL_SERVER == "true" ]; then
   buildLocalControl

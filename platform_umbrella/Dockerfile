@@ -9,9 +9,9 @@
 # https://docs.docker.com/develop/develop-images/build_enhancements/
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md
 
-ARG ELIXIR_VERSION=1.12.0
-ARG ERLANG_VERSION=24.0.2
-ARG ALPINE_VERSION=3.13.3
+ARG ELIXIR_VERSION=1.12.3
+ARG ERLANG_VERSION=24.0.6
+ARG ALPINE_VERSION=3.14.0
 
 ARG BUILD_IMAGE_NAME=hexpm/elixir
 ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}
@@ -75,19 +75,30 @@ WORKDIR /app
 # Get Elixir app deps
 COPY mix.exs .
 COPY mix.lock .
-COPY apps/home_base/mix.exs apps/home_base/mix.exs
-COPY apps/home_base_web/mix.exs apps/home_base_web/mix.exs
+COPY apps/common_ui/mix.exs apps/common_ui/mix.exs
 COPY apps/control_server/mix.exs apps/control_server/mix.exs
 COPY apps/control_server_web/mix.exs apps/control_server_web/mix.exs
-COPY apps/common_ui/mix.exs apps/common_ui/mix.exs
+COPY apps/event_center/mix.exs apps/event_center/mix.exs
+COPY apps/home_base/mix.exs apps/home_base/mix.exs
+COPY apps/home_base_client/mix.exs apps/home_base_client/mix.exs
+COPY apps/home_base_web/mix.exs apps/home_base_web/mix.exs
+COPY apps/kube_controller/mix.exs apps/kube_controller/mix.exs
+COPY apps/kube_ext/mix.exs apps/kube_ext/mix.exs
+COPY apps/kube_resources/mix.exs apps/kube_resources/mix.exs
+COPY apps/kube_services/mix.exs apps/kube_services/mix.exs
+COPY apps/kube_usage/mix.exs apps/kube_usage/mix.exs
+COPY apps/usage_poller/mix.exs apps/usage_poller/mix.exs
 
 RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
   --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  mix do local.rebar --force, local.hex --force, deps.get, deps.compile
+  mix do local.rebar --force, \
+  local.hex --force, \
+  deps.get, \
+  deps.compile --force --skip-umbrella-children
 
-##########################################################################
-# Build HomeBase assets
-
+#########################
+## Download and Build the dependencies
+## for the control server docker
 FROM deps AS control-deps
 
 ARG http_proxy
@@ -215,6 +226,8 @@ RUN --mount=type=cache,id=apk,target=/var/cache/apk,sharing=locked \
   && apk update \
   && apk add --no-cache bash \
   && apk add --no-cache tini \
+  && apk add --no-cache libstdc++ \
+  && apk add --no-cache libgcc \
   && apk add --no-cache bind-tools \
   && apk add --no-cache openssl ncurses-libs \
   && apk cache clean

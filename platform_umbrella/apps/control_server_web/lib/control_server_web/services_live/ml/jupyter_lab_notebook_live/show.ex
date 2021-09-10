@@ -2,9 +2,8 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Show do
   use ControlServerWeb, :surface_view
 
   alias ControlServer.Notebooks
+  alias ControlServerWeb.IFrame
   alias ControlServerWeb.Layout
-
-  alias Surface.Components.LiveRedirect
 
   @impl true
   def mount(_params, _session, socket) do
@@ -19,32 +18,13 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Show do
      |> assign(:jupyter_lab_notebook, Notebooks.get_jupyter_lab_notebook!(id))}
   end
 
-  defp page_title(_), do: "Show Jupyter lab notebook"
+  defp page_title(_), do: "Jupyter lab notebook"
 
   @impl true
   def render(assigns) do
     ~F"""
-    <Layout>
-      <h1>Show Jupyter lab notebook</h1>
-
-      <ul>
-        <li>
-          <strong>Name:</strong>
-          {@jupyter_lab_notebook.name}
-        </li>
-
-        <li>
-          <strong>Image:</strong>
-          {@jupyter_lab_notebook.image}
-        </li>
-      </ul>
-
-      <span>
-        <LiveRedirect
-          label="Back"
-          to={Routes.services_jupyter_lab_notebook_index_path(@socket, :index)}
-        />
-      </span>
+    <Layout container_type={:iframe}>
+      <IFrame src={"/x/notebooks/#{@jupyter_lab_notebook.name}/lab"} />
     </Layout>
     """
   end

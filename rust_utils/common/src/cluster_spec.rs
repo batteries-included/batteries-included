@@ -1,14 +1,11 @@
 #![allow(clippy::default_trait_access)]
 #![allow(clippy::field_reassign_with_default)]
 
-use k8s_openapi::{
-    api::core::v1::Namespace,
-    apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition,
-};
+use k8s_openapi::apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition;
 use kube::{
-    api::{Api, ObjectMeta, Patch, PatchParams},
+    api::{Api, Patch, PatchParams},
     client::Client,
-    CustomResource,
+    CustomResource, CustomResourceExt,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -17,8 +14,7 @@ use tracing::debug;
 
 use crate::error::Result;
 
-pub const DEFAULT_CRD_NAME: &str = "batteryclusters.batteriesincluded.company";
-pub const DEFAULT_NAMESPACE: &str = "battery";
+pub const DEFAULT_CRD_NAME: &str = "batteryclusters.batteriesincl.com";
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 pub enum ClusterState {
@@ -40,15 +36,13 @@ pub struct BatteryClusterStatus {
 #[derive(CustomResource, Serialize, Deserialize, JsonSchema, Default, Debug, Clone)]
 #[kube(
     kind = "BatteryCluster",
-    group = "batteriesincluded.company",
+    group = "batteriesincl.com",
     shortname = "bc",
     version = "v1",
-    status = "BatteryClusterStatus",
-    namespaced
+    status = "BatteryClusterStatus"
 )]
 pub struct BatteryClusterSpec {
     pub account: String,
-    pub registered_cluster_id: String,
 }
 
 pub async fn is_crd_installed(client: Client) -> bool {
@@ -57,35 +51,11 @@ pub async fn is_crd_installed(client: Client) -> bool {
     crds.get(DEFAULT_CRD_NAME).await.is_ok()
 }
 
-pub async fn is_namespace_installed(client: Client) -> bool {
-    let ns: Api<Namespace> = Api::all(client);
-    debug!("Trying to get the namespace");
-    let res = ns.get(DEFAULT_NAMESPACE).await;
-    debug!("Got a result.");
-    res.is_ok()
-}
-
-pub async fn ensure_namespace(client: Client) -> Result<()> {
-    if is_namespace_installed(client.clone()).await {
-        Ok(())
-    } else {
-        let crds: Api<Namespace> = Api::all(client);
-        let params = PatchParams::apply("battery_operator").force();
-        let new_ns = Namespace {
-            metadata: ObjectMeta {
-                name: Some(DEFAULT_NAMESPACE.to_string()),
-                ..ObjectMeta::default()
-            },
-            ..Namespace::default()
-        };
-        let patch = Patch::Apply(json!(&new_ns));
-        Ok(crds
-            .patch(DEFAULT_NAMESPACE, &params, &patch)
-            .await
-            .map(|created_ns| {
-                debug!(created =?created_ns);
-            })?)
-    }
+pub async fn is_cluster_installed(client: Client) -> bool {
+    Api::<BatteryCluster>::all(client)
+        .get(DEFAULT_CLUSTER_NAME)
+        .await
+        .is_ok()
 }
 
 pub async fn ensure_crd(client: Client) -> Result<()> {
@@ -102,5 +72,31 @@ pub async fn ensure_crd(client: Client) -> Result<()> {
             .map(|_| {
                 debug!("Successfully installed CRD.");
             })?)
+    }
+}
+
+const DEFAULT_CLUSTER_NAME: &str = "default-cluster";
+const DEFAULT_ACCOUNT_NAME: &str = "test-account";
+
+pub fn default_cluster() -> BatteryCluster {
+    BatteryCluster::new(
+        DEFAULT_CLUSTER_NAME,
+        BatteryClusterSpec {
+            account: DEFAULT_ACCOUNT_NAME.into(),
+        },
+    )
+}
+
+pub async fn ensure_default_cluster(client: Client) -> Result<()> {
+    if is_cluster_installed(client.clone()).await {
+        Ok(())
+    } else {
+        let sa: Api<BatteryCluster> = Api::all(client);
+        let params = PatchParams::apply("battery_operator").force();
+        let patch = Patch::Apply(json!(&default_cluster()));
+        Ok(sa
+            .patch(DEFAULT_CLUSTER_NAME, &params, &patch)
+            .await
+            .map(|_| ())?)
     }
 }

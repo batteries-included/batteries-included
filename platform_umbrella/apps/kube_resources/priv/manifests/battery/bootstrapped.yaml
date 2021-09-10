@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    battery/app: batteries-included
+    battery/managed: "True"
+  name: battery-core
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: batteryclusters.batteriesincl.com
+spec:
+  group: batteriesincl.com
+  names:
+    categories: []
+    kind: BatteryCluster
+    plural: batteryclusters
+    shortNames:
+      - bc
+    singular: batterycluster
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns: []
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: "Auto-generated derived type for BatteryClusterSpec via `CustomResource`"
+          properties:
+            spec:
+              properties:
+                account:
+                  type: string
+              required:
+                - account
+              type: object
+            status:
+              nullable: true
+              properties:
+                current_state:
+                  enum:
+                    - AwaitingAdoption
+                    - Running
+                  type: string
+              required:
+                - current_state
+              type: object
+          required:
+            - spec
+          title: BatteryCluster
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    battery/app: batteries-included
+    battery/managed: "True"
+  name: battery-admin
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    battery/app: batteries-included
+    battery/managed: "True"
+  name: battery-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+  - kind: ServiceAccount
+    name: battery-admin
+    namespace: battery-core

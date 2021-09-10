@@ -39,13 +39,13 @@ defmodule HomeBaseWeb.MixProject do
     [
       {:phoenix, "~> 1.5.12"},
       {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_live_view, "~> 0.16.0"},
+      {:phoenix_live_view, "~> 0.16.3"},
       {:floki, ">= 0.27.0", only: :test},
-      {:phoenix_html, "~> 3.0"},
+      {:phoenix_html, "~> 3.0.3"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_dashboard, "~> 0.5"},
-      {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 0.5"},
+      {:telemetry_metrics, "~> 0.6.1"},
+      {:telemetry_poller, "~> 0.5.1"},
       {:gettext, "~> 0.18"},
       {:home_base, in_umbrella: true},
       # Components

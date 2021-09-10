@@ -4,7 +4,13 @@ defmodule ControlServerWeb.CSP do
     "default-src" => ["self", {:url, "https://rsms.me"}, "unsafe-inline"],
     "img-src" => ["self", {:url, "data:"}],
     "font-src" => ["self", {:url, "data:"}, {:url, "https://rsms.me"}],
-    "frame-src" => ["self", {:url, "localhost:8081"}]
+    "frame-src" => [
+      "self",
+      {:url, "localhost:8081"},
+      {:url, "localhost:4000"},
+      {:url, "anton2:8081"},
+      {:url, "anton2:4000"}
+    ]
   }
 
   def new(allowed \\ @default_allowed) do

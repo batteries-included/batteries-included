@@ -1,5 +1,8 @@
 defmodule KubeExt.ConnectionPool do
   use Supervisor
+
+  alias K8s.Conn
+
   require Logger
 
   @me __MODULE__
@@ -67,7 +70,9 @@ defmodule KubeExt.ConnectionPool do
     |> new_connection()
   end
 
-  defp new_connection({:file, path}), do: K8s.Conn.from_file(path)
+  defp new_connection({:file, path}), do: Conn.from_file(path)
+  defp new_connection({:service_account, path}), do: Conn.from_service_account(path)
+  defp new_connection(:service_account), do: Conn.from_service_account()
 
   defp name(opts), do: Keyword.get(opts, :name, @me)
 

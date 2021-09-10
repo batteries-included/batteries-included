@@ -24,3 +24,5 @@ common_ui-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+/assets/js/_hooks/

@@ -92,5 +92,7 @@
 }
 
 .iframe-container {
-  height: 90vh;
+  width: 1px;
+  min-width: 100%;
+  min-height: 100%;
 }

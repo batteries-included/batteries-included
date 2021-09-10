@@ -34,9 +34,11 @@ import Config
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
 
-# Do not print debug messages in production
-config :logger, level: :info
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  level: :debug,
+  metadata: [:mfa, :request_id]
 
 config :control_server, ControlServer.Services, run_battery: true
 
-config :kube_ext, cluster_type: :service_account
+config :kube_ext, :clusters, default: :service_account

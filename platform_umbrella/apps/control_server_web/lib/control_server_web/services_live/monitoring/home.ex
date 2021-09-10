@@ -5,6 +5,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
   use ControlServerWeb, :surface_view
 
   alias CommonUI.Button
+  alias CommonUI.Layout.Title
   alias ControlServer.Services
   alias ControlServer.Services.Pods
   alias ControlServerWeb.Layout
@@ -51,11 +52,8 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
   def render(assigns) do
     ~F"""
     <Layout>
+      <Title>Monitoring</Title>
       <div class="container-xxl">
-        <h2 class="mt-2 text-2xl font-bold leading-7 text-pink-500 sm:text-3xl sm:truncate">
-          Monitoring
-        </h2>
-        <hr class="mt-4">
         {#if @running}
           <div class="mt-4 row">
             <div class="col">
