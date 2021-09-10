@@ -36,7 +36,7 @@
     "prettier-plugin-sh": "0.7.1",
     "tailwindcss": "2.2.15",
     "terser-webpack-plugin": "5.2.4",
-    "webpack": "5.52.0",
+    "webpack": "5.52.1",
     "webpack-cli": "4.8.0"
   }
 }
