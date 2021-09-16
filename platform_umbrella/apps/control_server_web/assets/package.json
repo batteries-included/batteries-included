@@ -34,7 +34,7 @@
     "postcss": "8.3.6",
     "postcss-import": "14.0.2",
     "postcss-loader": "6.1.1",
-    "prettier": "2.4.0",
+    "prettier": "2.4.1",
     "prettier-plugin-sh": "0.7.1",
     "tailwindcss": "2.2.15",
     "terser-webpack-plugin": "5.2.4",
