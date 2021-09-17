@@ -17,7 +17,7 @@ k8s-openapi = { version = "0.13.0", features = ["v1_17"], default-features = fal
 kube = { version = "0.60.0", features = ["derive"] }
 
 # Logging/Tracing
-tracing = "0.1.27"
+tracing = "0.1.28"
 clap = "~2.33.3"
 
 # Yaml

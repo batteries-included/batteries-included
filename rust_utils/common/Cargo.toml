@@ -21,7 +21,7 @@ kube = { version = "0.60.0", features = ["derive"] }
 kube-runtime = "0.60.0"
 
 # Logging/Tracing
-tracing = "0.1.27"
+tracing = "0.1.28"
 # Print logging to stdout. Send it places
 tracing-subscriber = "0.2.23"
 
