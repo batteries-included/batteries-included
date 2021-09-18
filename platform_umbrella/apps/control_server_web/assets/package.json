@@ -7,7 +7,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "alpinejs": "3.3.4",
+    "alpinejs": "3.3.5",
     "chart.js": "3.5.1",
     "lodash": "4.17.21",
     "phoenix": "file:../../../deps/phoenix",
