@@ -17,9 +17,6 @@ defmodule ControlServer.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: ControlServer.Supervisor]
-    sup = Supervisor.start_link(children, opts)
-
-    ControlServer.Services.Defaults.start()
-    sup
+    Supervisor.start_link(children, opts)
   end
 end

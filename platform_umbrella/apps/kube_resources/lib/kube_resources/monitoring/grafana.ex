@@ -5,6 +5,7 @@ defmodule KubeResources.Grafana do
 
   alias KubeExt.Builder, as: B
   alias KubeExt.IniConfig
+  alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
 
   @datasources_configmap "grafana-datasources"
@@ -23,6 +24,16 @@ defmodule KubeResources.Grafana do
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+  end
+
+  def virtual_service(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("grafana")
+    |> B.spec(VirtualService.prefix("/x/grafana", "grafana"))
   end
 
   def service_account(config) do

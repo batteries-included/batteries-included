@@ -1,16 +1,18 @@
 defmodule KubeResources.Network do
   alias KubeResources.Ingress
+  alias KubeResources.Istio
   alias KubeResources.Kong
   alias KubeResources.Nginx
+  alias KubeResources.VirtualService
 
   def materialize(%{} = config) do
     %{}
     |> Map.merge(nginx(config))
     |> Map.merge(kong(config))
-    |> Map.merge(Ingress.materialize(config))
+    |> Map.merge(istio(config))
   end
 
-  def kong(%{"kong.install" => true} = config) do
+  def kong(%{"kong.run" => true} = config) do
     %{
       "/kong/0/crds" => Kong.crd(config),
       "/kong/1/service_account" => Kong.service_account(config),
@@ -29,18 +31,33 @@ defmodule KubeResources.Network do
 
   def kong(_), do: %{}
 
-  def nginx(%{"nginx.install" => false} = _config), do: %{}
-
-  def nginx(config) do
-    %{
-      "/nginx/0/service_account" => Nginx.service_account(config),
-      "/nginx/0/config_map" => Nginx.config_map(config),
-      "/nginx/0/cluster_role" => Nginx.cluster_role(config),
-      "/nginx/0/cluster_role_binding" => Nginx.cluster_role_binding(config),
-      "/nginx/0/role" => Nginx.role(config),
-      "/nginx/0/role_binding" => Nginx.role_binding(config),
-      "/nginx/0/service" => Nginx.service(config),
-      "/nginx/0/deployment" => Nginx.deployment(config)
-    }
+  def nginx(%{"nginx.run" => true} = config) do
+    %{}
+    |> Map.put("/nginx/0/service_account", Nginx.service_account(config))
+    |> Map.put("/nginx/0/config_map", Nginx.config_map(config))
+    |> Map.put("/nginx/0/cluster_role", Nginx.cluster_role(config))
+    |> Map.put("/nginx/0/cluster_role_binding", Nginx.cluster_role_binding(config))
+    |> Map.put("/nginx/0/role", Nginx.role(config))
+    |> Map.put("/nginx/0/role_binding", Nginx.role_binding(config))
+    |> Map.put("/nginx/0/service", Nginx.service(config))
+    |> Map.put("/nginx/0/deployment", Nginx.deployment(config))
+    |> Map.merge(Ingress.materialize(config))
   end
+
+  def nginx(_config), do: %{}
+
+  def istio(%{"istio.run" => true} = config) do
+    %{}
+    |> Map.put("/istio/0/crd", Istio.crd(config))
+    |> Map.put("/istio/0/cluster_role", Istio.cluster_role(config))
+    |> Map.put("/istio/0/cluster_role_binding", Istio.cluster_role_binding(config))
+    |> Map.put("/istio/0/service_account", Istio.service_account(config))
+    |> Map.put("/istio/1/deployment", Istio.deployment(config))
+    |> Map.put("/istio/2/service", Istio.service(config))
+    |> Map.put("/istio/2/istio", Istio.istio(config))
+    |> Map.put("/istio/3/gateway", Istio.gateway(config))
+    |> Map.merge(VirtualService.materialize(config))
+  end
+
+  def istio(_config), do: %{}
 end

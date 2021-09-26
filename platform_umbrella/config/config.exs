@@ -71,6 +71,14 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :control_server, ControlServer.Services,
+  control_run: false,
+  istio_run: true,
+  nginx_run: false,
+  kong_run: false
+
+config :kube_services, start_services: true
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

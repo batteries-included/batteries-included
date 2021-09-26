@@ -3,6 +3,7 @@ defmodule KubeResources.EchoServer do
 
   alias KubeExt.Builder, as: B
   alias KubeResources.BatterySettings
+  alias KubeResources.IstioConfig.VirtualService
 
   @app_name "echo"
 
@@ -23,7 +24,7 @@ defmodule KubeResources.EchoServer do
       %{}
       |> B.short_selector(@app_name)
       |> B.ports([
-        %{"port" => 80, "name" => "http", "protocol" => "TCP", "targetPort" => 8080}
+        %{"name" => "http", "protocol" => "TCP", "targetPort" => 8080, "port" => 8080}
       ])
 
     B.build_resource(:service)
@@ -78,5 +79,15 @@ defmodule KubeResources.EchoServer do
         }
       ]
     }
+  end
+
+  def virtual_service(config) do
+    namespace = BatterySettings.namespace(config)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("echo")
+    |> B.spec(VirtualService.prefix("/x/echo", "echo"))
   end
 end

@@ -7,8 +7,8 @@ defmodule KubeResources.ControlServer do
   @service_account "battery-admin"
   @server_port 4000
 
-  # def deployment(%{"control.run" => true} = config) do
   def deployment(config) do
+    # def deployment(config) do
     namespace = BatterySettings.namespace(config)
     name = BatterySettings.control_server_name(config)
 
@@ -45,10 +45,6 @@ defmodule KubeResources.ControlServer do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
-  end
-
-  def deployment(_) do
-    []
   end
 
   defp control_container(config, options) do
@@ -93,7 +89,7 @@ defmodule KubeResources.ControlServer do
     ])
   end
 
-  def service(config) do
+  def service(%{"control.run" => true} = config) do
     namespace = BatterySettings.namespace(config)
 
     spec =
@@ -123,5 +119,27 @@ defmodule KubeResources.ControlServer do
     |> B.annotation("nginx.org/websocket-services", "control-server")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+  end
+
+  def virtual_service(config) do
+    namespace = BatterySettings.namespace(config)
+
+    spec = %{
+      gateways: ["battery-gateway"],
+      hosts: ["*"],
+      http: [
+        %{
+          route: [
+            %{destination: %{port: %{number: 8080}, host: "control-server"}}
+          ]
+        }
+      ]
+    }
+
+    B.build_resource(:virtual_service)
+    |> B.name("control-server")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
   end
 end

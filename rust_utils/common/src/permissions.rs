@@ -15,6 +15,7 @@ pub fn service_account() -> ServiceAccount {
     ServiceAccount {
         metadata: ObjectMeta {
             name: Some(SERVICE_ACCOUNT_NAME.to_owned()),
+            namespace: Some(DEFAULT_NAMESPACE.to_owned()),
             labels: Some(default_labels("batteries-included")),
             ..ObjectMeta::default()
         },

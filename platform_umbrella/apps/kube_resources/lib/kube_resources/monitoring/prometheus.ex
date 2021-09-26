@@ -7,6 +7,7 @@ defmodule KubeResources.Prometheus do
   """
 
   alias KubeExt.Builder, as: B
+  alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
 
   @port 80
@@ -22,6 +23,16 @@ defmodule KubeResources.Prometheus do
     |> B.name("prometheus")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+  end
+
+  def virtual_service(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("prometheus")
+    |> B.spec(VirtualService.rewriting("/x/prometheus", "prometheus"))
   end
 
   def prometheus(config) do

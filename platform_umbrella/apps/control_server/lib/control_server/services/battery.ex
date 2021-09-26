@@ -16,10 +16,13 @@ defmodule ControlServer.Services.Battery do
 
   defp default_config do
     %{
-      "control.run" =>
-        :control_server
-        |> Application.get_env(ControlServer.Services)
-        |> Keyword.get(:run_battery, false)
+      "control.run" => control_run?()
     }
+  end
+
+  defp control_run? do
+    :control_server
+    |> Application.get_env(ControlServer.Services)
+    |> Keyword.get(:control_run, false)
   end
 end

@@ -28,6 +28,7 @@ defmodule KubeResources.MixProject do
 
   defp deps do
     [
+      {:jason, "~> 1.2"},
       # Yaml
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 2.0"},

@@ -12,17 +12,29 @@ defmodule KubeServices.BaseServicesHydrator do
     GenServer.start_link(__MODULE__, [], name: __MODULE__, timeout: 10_000)
   end
 
-  def init(args \\ []) do
+  def init(_args \\ []) do
     Logger.debug("Starting all base services")
 
-    # Subscribe to all events.
-    :ok = EventCenter.BaseService.subscribe()
+    if start_services?() do
+      start_base_services()
+    else
+      {:ok, []}
+    end
+  end
 
-    # Now get the service. Any base service shold
-    # either be in the pubsub for insert or in this list.
-    services = Services.list_base_services() ++ args
-    Enum.each(services, &BaseServicesSupervisor.start_child/1)
-    {:ok, services}
+  defp start_services?, do: Application.get_env(:kube_services, :start_services)
+
+  defp starting_services, do: Services.list_base_services()
+
+  defp start_base_services do
+    # Subscribe to all events.
+    with :ok <- EventCenter.BaseService.subscribe() do
+      # Now get the service. Any base service shold
+      # either be in the pubsub for insert or in this list.
+      services = starting_services()
+      Enum.each(services, &BaseServicesSupervisor.start_child/1)
+      {:ok, services}
+    end
   end
 
   def handle_info({:insert, %BaseService{} = bs}, services) do

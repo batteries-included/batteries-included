@@ -1,4 +1,12 @@
 defmodule KubeExt.Builder do
+  def build_resource(:virtual_service) do
+    build_resource("networking.istio.io/v1alpha3", "VirtualService")
+  end
+
+  def build_resource(:gateway) do
+    build_resource("networking.istio.io/v1alpha3", "Gateway")
+  end
+
   def build_resource(:namespace) do
     build_resource("v1", "Namespace")
   end
@@ -105,7 +113,7 @@ defmodule KubeExt.Builder do
     end)
   end
 
-  def spec(resource, %{} = spec), do: Map.put(resource, "spec", spec)
+  def spec(resource, spec), do: Map.put(resource, "spec", spec)
   def template(resource, %{} = template), do: Map.put(resource, "template", template)
   def ports(resource, ports), do: Map.put(resource, "ports", ports)
 

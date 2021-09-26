@@ -12,9 +12,7 @@ defmodule KubeResources.MLTest do
     end
 
     test "can materialize with a notebook" do
-      notebook = insert(:notebook)
-
-      Logger.warning("Notebook => #{inspect(notebook)}")
+      _notebook = insert(:notebook)
 
       # Should include the service
       # account, the statefulsets, and the service.

@@ -54,6 +54,10 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :control_server, ControlServer.Services, run_battery: true
+config :control_server, ControlServer.Services,
+  control_run: true,
+  istio_run: true
 
 config :kube_ext, cluster_type: :dev
+
+config :kube_services, start_services: false

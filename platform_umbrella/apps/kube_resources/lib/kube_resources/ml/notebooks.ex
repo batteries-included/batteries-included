@@ -2,6 +2,8 @@ defmodule KubeResources.Notebooks do
   alias ControlServer.Notebooks
   alias ControlServer.Notebooks.JupyterLabNotebook
   alias KubeExt.Builder, as: B
+  alias KubeResources.IstioConfig.HttpRoute
+  alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MLSettings
 
   require Logger
@@ -20,6 +22,22 @@ defmodule KubeResources.Notebooks do
     |> B.name("notebook-#{notebook.name}")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+  end
+
+  def virtual_service(config) do
+    namespace = MLSettings.namespace(config)
+
+    routes = Enum.map(Notebooks.list_jupyter_lab_notebooks(), &notebook_http_route/1)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("notebooks")
+    |> B.spec(VirtualService.new(routes: routes))
+  end
+
+  def notebook_http_route(%Notebooks.JupyterLabNotebook{} = notebook) do
+    HttpRoute.new(url(notebook), service_name(notebook))
   end
 
   def notebooks(config) do
@@ -96,7 +114,7 @@ defmodule KubeResources.Notebooks do
       |> B.ports([%{name: "http", port: 8888, targetPort: 8888}])
 
     B.build_resource(:service)
-    |> B.name("notebook-#{notebook.name}")
+    |> B.name(service_name(notebook))
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
@@ -105,4 +123,6 @@ defmodule KubeResources.Notebooks do
   def url(%JupyterLabNotebook{} = notebook) do
     "/x/notebooks/#{notebook.name}"
   end
+
+  def service_name(notebook), do: "notebook-#{notebook.name}"
 end

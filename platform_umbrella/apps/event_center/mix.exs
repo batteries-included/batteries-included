@@ -35,8 +35,7 @@ defmodule EventCenter.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      "ecto.reset": [],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      "ecto.reset": []
     ]
   end
 end

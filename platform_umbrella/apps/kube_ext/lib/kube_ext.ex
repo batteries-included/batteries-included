@@ -1,6 +1,6 @@
 defmodule KubeExt do
   alias K8s.Client
-
+  alias K8s.Resource
   alias KubeExt.Hashing
 
   require Logger
@@ -13,12 +13,36 @@ defmodule KubeExt do
   def get_or_create(connection, resource), do: get_or_create_single(connection, resource)
 
   def maybe_apply(resource) when is_list(resource),
-    do: apply(KubeExt.ConnectionPool.get(), resource)
+    do: maybe_apply(KubeExt.ConnectionPool.get(), resource)
 
-  def maybe_apply(connection, many) when is_list(many),
-    do: Enum.map(many, fn resource -> apply_single(connection, resource) end)
+  def maybe_apply(single), do: apply_single(KubeExt.ConnectionPool.get(), single)
+
+  def maybe_apply(connection, many) when is_list(many) do
+    many
+    |> Enum.map(fn resource -> maybe_apply(connection, resource) end)
+    |> Enum.flat_map(&List.wrap/1)
+    |> Enum.reduce(
+      {:ok, 0},
+      fn result, acc ->
+        case result do
+          {:ok, _} ->
+            increment_ok(acc)
+
+          :ok ->
+            increment_ok(acc)
+
+          _ ->
+            result
+        end
+      end
+    )
+  end
 
   def maybe_apply(connection, single), do: apply_single(connection, single)
+
+  defp apply_single(_connection, nil = _resouce), do: {:ok, nil}
+
+  defp apply_single(_connection, [] = _resource), do: {:ok, []}
 
   defp apply_single(connection, resource) do
     with {:ok, found} <- get_or_create(connection, resource) do
@@ -40,10 +64,11 @@ defmodule KubeExt do
     Logger.debug("Creating or getting #{inspect(metadata)}")
 
     get_operation = Client.get(resource)
+    client_result = Client.run(connection, get_operation)
 
-    case Client.run(connection, get_operation) do
-      {:ok, _} = result ->
-        result
+    case client_result do
+      {:ok, _} ->
+        client_result
 
       {:error, %HTTPoison.Response{status_code: 404}} ->
         create(connection, resource)
@@ -61,20 +86,33 @@ defmodule KubeExt do
   end
 
   defp create(connection, resource) do
-    Logger.debug("Create it is")
+    Logger.info(
+      "Going to create Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)}"
+    )
 
     create_operation =
       resource
       |> Hashing.decorate_content_hash()
       |> Client.create()
 
-    Client.run(connection, create_operation)
+    create_result = Client.run(connection, create_operation)
+
+    Logger.debug("Create Result: #{inspect(create_result)}")
+
+    create_result
   end
 
   defp update_single(connection, resource) do
-    Logger.debug("Going to send update for #{inspect(resource)}")
+    Logger.info(
+      "Going to patch Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)}"
+    )
 
     patch_operation = Client.patch(resource)
-    Client.run(connection, patch_operation)
+    patch_result = Client.run(connection, patch_operation)
+    Logger.debug("patch_result: #{inspect(patch_result)}")
+    patch_result
   end
+
+  defp increment_ok({:ok, cnt}), do: {:ok, cnt + 1}
+  defp increment_ok(err), do: err
 end

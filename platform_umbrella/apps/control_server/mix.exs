@@ -48,7 +48,7 @@ defmodule ControlServer.MixProject do
       {:filtrex, "~> 0.4.3"},
 
       # Kubernetes
-      {:k8s, "~> 1.0.0"},
+      {:k8s, github: "batteries-included/k8s", branch: "generic_failure", override: true},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},
