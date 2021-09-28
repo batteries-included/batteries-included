@@ -28,7 +28,7 @@ defmodule HomeBaseClient.MixProject do
   defp deps do
     [
       # Http client
-      {:tesla, "~> 1.4.0"},
+      {:tesla, "~> 1.4.3"},
       {:jason, "~> 1.2"},
       {:event_center, in_umbrella: true}
     ]
