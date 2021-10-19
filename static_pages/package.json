@@ -14,7 +14,7 @@
     "@heroicons/react": "1.0.4",
     "@mdx-js/react": "1.6.22",
     "@mdx-js/runtime": "1.6.22",
-    "@tailwindcss/forms": "0.3.3",
+    "@tailwindcss/forms": "0.3.4",
     "gray-matter": "4.0.3",
     "mdx-prism": "0.3.4",
     "next": "11.1.2",
