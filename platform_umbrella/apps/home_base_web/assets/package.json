@@ -15,8 +15,8 @@
     "topbar": "1.0.1"
   },
   "devDependencies": {
-    "@babel/core": "7.15.5",
-    "@babel/preset-env": "7.15.6",
+    "@babel/core": "7.15.8",
+    "@babel/preset-env": "7.15.8",
     "@tailwindcss/typography": "0.4.1",
     "autoprefixer": "10.3.4",
     "babel-loader": "8.2.2",
