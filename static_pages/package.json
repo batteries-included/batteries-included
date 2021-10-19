@@ -41,7 +41,7 @@
     "@types/react-gtm-module": "2.0.1",
     "@typescript-eslint/eslint-plugin": "4.31.2",
     "@typescript-eslint/parser": "4.31.2",
-    "autoprefixer": "10.3.4",
+    "autoprefixer": "10.3.7",
     "babel-plugin-module-resolver": "4.1.0",
     "eslint": "7.32.0",
     "eslint-config-airbnb": "18.2.1",
