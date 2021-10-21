@@ -26,7 +26,7 @@ defmodule ControlServer.Umbrella.MixProject do
       {:credo_naming, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:surface_formatter, "~> 0.5.1", only: :dev, runtime: false},
+      {:surface_formatter, "~> 0.6.0", only: :dev, runtime: false},
       {:sobelow, "~> 0.11", only: :dev},
       {:excoveralls, "~> 0.14", only: :test}
     ]
