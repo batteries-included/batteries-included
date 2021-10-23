@@ -40,7 +40,7 @@ defmodule ControlServerWeb.MixProject do
     [
       {:phoenix, "~> 1.5.12"},
       {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_html, "~> 3.0.4"},
+      {:phoenix_html, "~> 3.1.0"},
       {:phoenix_live_view, "~> 0.16.3"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_dashboard, "~> 0.5"},
