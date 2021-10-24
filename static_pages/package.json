@@ -37,7 +37,7 @@
     "@types/mdx-js__react": "1.5.4",
     "@types/node": "16.6.1",
     "@types/prismjs": "1.16.6",
-    "@types/react": "17.0.31",
+    "@types/react": "17.0.32",
     "@types/react-gtm-module": "2.0.1",
     "@typescript-eslint/eslint-plugin": "5.1.0",
     "@typescript-eslint/parser": "5.1.0",
