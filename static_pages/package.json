@@ -30,7 +30,7 @@
     "remark-autolink-headings": "7.0.1",
     "remark-code-titles": "0.1.2",
     "remark-math": "5.1.0",
-    "remark-slug": "7.0.0"
+    "remark-slug": "7.0.1"
   },
   "devDependencies": {
     "@tailwindcss/typography": "0.4.1",
