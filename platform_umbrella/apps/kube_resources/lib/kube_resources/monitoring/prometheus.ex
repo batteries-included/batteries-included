@@ -10,7 +10,7 @@ defmodule KubeResources.Prometheus do
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
 
-  @port 80
+  @port 8080
   @port_name "http"
 
   @app_name "prometheus"
@@ -32,7 +32,7 @@ defmodule KubeResources.Prometheus do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("prometheus")
-    |> B.spec(VirtualService.rewriting("/x/prometheus", "prometheus"))
+    |> B.spec(VirtualService.rewriting("/x/prometheus", "prometheus-main"))
   end
 
   def prometheus(config) do
@@ -56,19 +56,11 @@ defmodule KubeResources.Prometheus do
         "namespace" => namespace
       },
       "spec" => %{
-        # "alerting" => %{
-        #   "alertmanagers" => [
-        #     %{
-        #       "name" => "alertmanager",
-        #       "namespace" => namespace,
-        #       "port" => "web"
-        #     }
-        #   ]
-        # },
         "image" => "#{image}:#{version}",
         "nodeSelector" => %{
           "kubernetes.io/os": "linux"
         },
+        "logLevel" => "debug",
         "externalUrl" => "/x/prometheus",
         # select everything.
         "podMonitorNamespaceSelector" => %{},
@@ -81,12 +73,6 @@ defmodule KubeResources.Prometheus do
             "memory" => memory
           }
         },
-        # "ruleSelector" => %{
-        #   "matchLabels" => %{
-        #     "prometheus" => "prometheus",
-        #     "role" => "alert-rules"
-        #   }
-        # },
         "securityContext" => %{
           "fsGroup" => 2000,
           "runAsNonRoot" => true,

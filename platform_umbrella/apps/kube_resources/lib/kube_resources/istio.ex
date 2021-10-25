@@ -4,6 +4,7 @@ defmodule KubeResources.IstioConfig do
     defstruct [:exact, :prefix, :regex]
 
     def prefix(p), do: %__MODULE__{prefix: p}
+    def exact(p), do: %__MODULE__{exact: p}
 
     def value(%__MODULE__{} = sm), do: sm.exact || sm.prefix
   end
@@ -43,7 +44,7 @@ defmodule KubeResources.IstioConfig do
     @derive Jason.Encoder
     defstruct [:rewrite, :name, match: [], route: []]
 
-    def new(prefix, service_host, opts \\ []) do
+    def prefix(prefix, service_host, opts \\ []) do
       do_rewrite = Keyword.get(opts, :rewrite, False)
 
       maybe_rewite(
@@ -54,6 +55,15 @@ defmodule KubeResources.IstioConfig do
         },
         do_rewrite
       )
+    end
+
+    def fallback(service_host, opts \\ []) do
+      name = Keyword.get(opts, :name, "name")
+
+      %__MODULE__{
+        name: name,
+        route: [HttpRouteDestination.new(service_host)]
+      }
     end
 
     defp maybe_rewite(%__MODULE__{} = route, True), do: add_rewrite(route)
@@ -67,9 +77,9 @@ defmodule KubeResources.IstioConfig do
       # This seems like something that istio doesn't like to do.
       # So we do this dance to match the more specific first
       route
-      |> update_in(:rewrite, fn _ -> %HttpRewrite{uri: "/"} end)
-      |> update_in(:match, fn l ->
-        [%HttpMatchRequest{uri: StringMatch.exact(prefix <> "/")} | l]
+      |> Map.put(:rewrite, %HttpRewrite{uri: "/"})
+      |> Map.update(:match, [], fn l ->
+        [%HttpMatchRequest{uri: StringMatch.prefix(prefix <> "/")} | l]
       end)
     end
 
@@ -92,11 +102,15 @@ defmodule KubeResources.IstioConfig do
     end
 
     def prefix(prefix, service_host) do
-      new(routes: [HttpRoute.new(prefix, service_host)])
+      new(routes: [HttpRoute.prefix(prefix, service_host)])
     end
 
     def rewriting(prefix, service_host) do
-      new(routes: [HttpRoute.new(prefix, service_host, reweite: True)])
+      new(routes: [HttpRoute.prefix(prefix, service_host, rewrite: True)])
+    end
+
+    def fallback(service_host) do
+      new(routes: [HttpRoute.fallback(service_host)])
     end
   end
 end

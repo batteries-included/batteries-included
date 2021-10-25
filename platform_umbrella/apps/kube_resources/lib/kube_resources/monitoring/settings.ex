@@ -11,7 +11,7 @@ defmodule KubeResources.MonitoringSettings do
   @prometheus_operator_version "v0.49.0"
 
   @prometheus_image "quay.io/prometheus/prometheus"
-  @prometheus_version "v2.29.1"
+  @prometheus_version "v2.30.3"
   @prometheus_replicas 1
   @prometheus_memory "450Mi"
 

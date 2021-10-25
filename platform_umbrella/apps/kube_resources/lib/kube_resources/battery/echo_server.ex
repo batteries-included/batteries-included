@@ -88,6 +88,6 @@ defmodule KubeResources.EchoServer do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("echo")
-    |> B.spec(VirtualService.prefix("/x/echo", "echo"))
+    |> B.spec(VirtualService.rewriting("/x/echo", "echo"))
   end
 end

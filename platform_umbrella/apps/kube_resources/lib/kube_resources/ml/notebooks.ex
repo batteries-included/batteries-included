@@ -26,8 +26,16 @@ defmodule KubeResources.Notebooks do
 
   def virtual_service(config) do
     namespace = MLSettings.namespace(config)
+    notebooks = Notebooks.list_jupyter_lab_notebooks()
+    build_virtual_service(namespace, notebooks)
+  end
 
-    routes = Enum.map(Notebooks.list_jupyter_lab_notebooks(), &notebook_http_route/1)
+  defp build_virtual_service(_namespace, [] = _notebooks) do
+    nil
+  end
+
+  defp build_virtual_service(namespace, [_ | _] = notebooks) do
+    routes = Enum.map(notebooks, &notebook_http_route/1)
 
     B.build_resource(:virtual_service)
     |> B.namespace(namespace)
@@ -37,7 +45,7 @@ defmodule KubeResources.Notebooks do
   end
 
   def notebook_http_route(%Notebooks.JupyterLabNotebook{} = notebook) do
-    HttpRoute.new(url(notebook), service_name(notebook))
+    HttpRoute.prefix(url(notebook), service_name(notebook))
   end
 
   def notebooks(config) do

@@ -1,5 +1,6 @@
 defmodule KubeResources.ControlServer do
   alias KubeResources.BatterySettings
+  alias KubeResources.IstioConfig.VirtualService
 
   alias KubeExt.Builder, as: B
 
@@ -124,22 +125,10 @@ defmodule KubeResources.ControlServer do
   def virtual_service(config) do
     namespace = BatterySettings.namespace(config)
 
-    spec = %{
-      gateways: ["battery-gateway"],
-      hosts: ["*"],
-      http: [
-        %{
-          route: [
-            %{destination: %{port: %{number: 8080}, host: "control-server"}}
-          ]
-        }
-      ]
-    }
-
     B.build_resource(:virtual_service)
-    |> B.name("control-server")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.spec(spec)
+    |> B.name("control-server")
+    |> B.spec(VirtualService.fallback("control-server"))
   end
 end
