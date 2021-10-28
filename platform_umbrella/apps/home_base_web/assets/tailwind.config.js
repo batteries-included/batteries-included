@@ -29,14 +29,18 @@ const violetRed = {
   900: '#7b1f44',
 };
 module.exports = {
+  mode: 'jit',
   purge: [
     './js/**/*.js',
     '../lib/**/*.ex',
     '../lib/**/*.leex',
+    '../lib/**/*.heex',
     '../lib/**/*.eex',
     '../lib/**/*.sface',
     '../../common_ui/lib/**/*.sface',
     '../../common_ui/lib/**/*.ex',
+    '../../common_ui/lib/**/*.leex',
+    '../../common_ui/lib/**/*.heex',
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {

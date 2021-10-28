@@ -21,6 +21,7 @@ defmodule ControlServer.Umbrella.MixProject do
 
   defp deps do
     [
+      {:telemetry, "~> 1.0", override: true},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 1.0", only: [:dev, :test], runtime: false},

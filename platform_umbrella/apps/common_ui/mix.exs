@@ -43,7 +43,7 @@ defmodule CommonUI.MixProject do
     [
       {:phoenix_live_view, "~> 0.16.0"},
       # Surface components
-      {:surface, "~> 0.5.0"}
+      {:surface, "~> 0.6.0"}
       # The story book like catalogue.
       # {:surface_catalogue, "~> 0.1.0", only: [:dev, :test]}
     ]

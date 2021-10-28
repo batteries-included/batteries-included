@@ -34,10 +34,13 @@ module.exports = {
     './js/**/*.js',
     '../lib/**/*.ex',
     '../lib/**/*.leex',
+    '../lib/**/*.heex',
     '../lib/**/*.eex',
     '../lib/**/*.sface',
     '../../common_ui/lib/**/*.sface',
     '../../common_ui/lib/**/*.ex',
+    '../../common_ui/lib/**/*.leex',
+    '../../common_ui/lib/**/*.heex',
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {

@@ -26,7 +26,8 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
-      {:k8s, github: "batteries-included/k8s", branch: "generic_failure", override: true}
+      {:telemetry, "~> 1.0", override: true},
+      {:k8s, github: "batteries-included/k8s", branch: "battery_incl", override: true}
     ]
   end
 

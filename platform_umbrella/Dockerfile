@@ -43,9 +43,6 @@ ARG APP_DIR=/app
 
 ARG LANG=C.UTF-8
 
-ARG http_proxy
-ARG https_proxy=$http_proxy
-
 ##########################################################################
 # Fetch OS build dependencies
 
@@ -65,8 +62,6 @@ RUN ln -s /var/cache/apk /etc/apk/cache \
 
 FROM os-deps AS deps
 
-ARG http_proxy
-ARG https_proxy
 ARG LANG
 ARG MIX_ENV
 
@@ -101,8 +96,6 @@ RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
 ## for the control server docker
 FROM deps AS control-deps
 
-ARG http_proxy
-ARG https_proxy
 ARG LANG
 ARG MIX_ENV
 
@@ -120,8 +113,6 @@ RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
 
 FROM control-deps AS control-assets
 
-ARG http_proxy
-ARG https_proxy
 ARG LANG
 ARG MIX_ENV
 
@@ -131,21 +122,20 @@ WORKDIR /app
 # from known used css classes. That requires that the source code is
 # in place for webpack to build css and js.... yeah.
 # So while it would be great to make this more cache friendly. We likely can't.
-COPY apps ./apps
+COPY apps /app/apps
+COPY config /app/config
 
-WORKDIR /app/apps/control_server_web/assets
+WORKDIR /app/apps/control_server_web
 
 RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
   --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  npm run deploy
+  mix assets.deploy
 
 ##########################################################################
 # Build HomeBase assets
 
 FROM deps AS home-base-deps
 
-ARG http_proxy
-ARG https_proxy
 ARG LANG
 ARG MIX_ENV
 
@@ -163,18 +153,17 @@ RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
 
 FROM home-base-deps AS home-base-assets
 
-ARG http_proxy
-ARG https_proxy
 ARG LANG
 ARG MIX_ENV
 
 COPY apps /app/apps
+COPY config /app/config
 
-WORKDIR /app/apps/home_base_web/assets
+WORKDIR /app/apps/home_base_web
 
 RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
   --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  npm run deploy
+  mix assets.deploy
 
 ##########################################################################
 # Create release

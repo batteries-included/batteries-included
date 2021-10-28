@@ -1,5 +1,4 @@
 /* eslint no-underscore-dangle: 0 */
-import '../css/app.css';
 
 import 'phoenix_html';
 import { Socket } from 'phoenix';

@@ -48,7 +48,8 @@ defmodule ControlServer.MixProject do
       {:filtrex, "~> 0.4.3"},
 
       # Kubernetes
-      {:k8s, github: "batteries-included/k8s", branch: "generic_failure", override: true},
+      {:telemetry, "~> 1.0", override: true},
+      {:k8s, github: "batteries-included/k8s", branch: "battery_incl", override: true},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},
@@ -65,9 +66,6 @@ defmodule ControlServer.MixProject do
       {:event_center, in_umbrella: true},
 
       ## Dev/Test only deps
-
-      # Auth
-      {:phx_gen_auth, "~> 0.7", only: [:dev], runtime: false},
 
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},

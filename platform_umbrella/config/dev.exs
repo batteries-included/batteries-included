@@ -41,11 +41,12 @@ config :control_server_web, ControlServerWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode=development",
+    esbuild: {Esbuild, :install_and_run, [:control_server_web, ~w(--sourcemap=inline --watch)]},
+    npx: [
+      "tailwindcss",
+      "--input=css/app.css",
+      "--output=../priv/static/assets/app.css",
       "--watch",
-      "--watch-options-stdin",
       cd: Path.expand("../apps/control_server_web/assets", __DIR__)
     ]
   ]
@@ -56,11 +57,12 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode=development",
+    esbuild: {Esbuild, :install_and_run, [:home_base_web, ~w(--sourcemap=inline --watch)]},
+    npx: [
+      "tailwindcss",
+      "--input=css/app.css",
+      "--output=../priv/static/assets/app.css",
       "--watch",
-      "--watch-options-stdin",
       cd: Path.expand("../apps/home_base_web/assets", __DIR__)
     ]
   ]
