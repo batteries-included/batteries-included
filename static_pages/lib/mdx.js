@@ -75,9 +75,7 @@ export async function getAllFilesFrontMatter(folder) {
     }
     const source = fs.readFileSync(file, 'utf8');
     const { data } = matter(source);
-    if (data.draft !== true) {
-      allFrontMatter.push({ ...data, slug: formatSlug(fileName) });
-    }
+    allFrontMatter.push({ ...data, slug: formatSlug(fileName) });
   });
 
   return allFrontMatter.sort((a, b) => dateSortDesc(a.date, b.date));

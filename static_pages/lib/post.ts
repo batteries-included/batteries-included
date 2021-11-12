@@ -20,10 +20,16 @@ const getAllPosts = async (): Promise<Post[]> => {
   return getAllFilesFrontMatter('posts');
 };
 
+const getAllPublisedPosts = async (): Promise<Post[]> => {
+  return (await getAllPosts()).filter((post: Post) => {
+    return post.draft !== true;
+  });
+};
+
 const getAllTags = async (): Promise<string[]> => {
   return (await getAllFilesFrontMatter('posts')).flatMap(
     (post: Post) => post.tags || []
   );
 };
 
-export { getAllPosts, getAllTags };
+export { getAllPosts, getAllTags, getAllPublisedPosts };

@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import MainLayout from '@/components/main-layout';
 import PostItem from '@/components/post-item';
 import SectionContainer from '@/components/section-container';
-import { getAllPosts, Post } from '@/lib/post';
+import { getAllPublisedPosts, Post } from '@/lib/post';
 
 const MAX_DISPLAY = 10;
 
@@ -26,7 +26,7 @@ const Index: FunctionComponent<IndexProps> = ({ posts }) => {
 };
 
 const getStaticProps = async () => {
-  const posts = await getAllPosts();
+  const posts = await getAllPublisedPosts();
   return { props: { posts } };
 };
 

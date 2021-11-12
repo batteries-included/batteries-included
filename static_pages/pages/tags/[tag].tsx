@@ -4,7 +4,7 @@ import MainLayout from '@/components/main-layout';
 import PageTitle from '@/components/page-title';
 import PostItem from '@/components/post-item';
 import SectionContainer from '@/components/section-container';
-import { getAllPosts, getAllTags, Post } from '@/lib/post';
+import { getAllPublisedPosts, getAllTags, Post } from '@/lib/post';
 import kebabCase from '@/lib/utils/kebab-case';
 
 const MAX_DISPLAY = 10;
@@ -50,10 +50,8 @@ type StaticParams = {
   params: InnerStaticParams;
 };
 const getStaticProps = async ({ params }: StaticParams) => {
-  const posts = (await getAllPosts()).filter(
-    (post: Post) =>
-      post.draft !== true &&
-      post.tags.map((t: string) => kebabCase(t)).includes(params.tag)
+  const posts = (await getAllPublisedPosts()).filter((post: Post) =>
+    post.tags.map((t: string) => kebabCase(t)).includes(params.tag)
   );
   return { props: { posts, tag: params.tag } };
 };

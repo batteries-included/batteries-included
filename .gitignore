@@ -1,3 +1,6 @@
 /target
 .venv
 .envrc
+
+# Local Netlify folder
+.netlify
