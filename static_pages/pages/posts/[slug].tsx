@@ -3,7 +3,6 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { FunctionComponent } from 'react';
 
 import MDXComponents from '@/components/mdx-components';
-import PageTitle from '@/components/page-title';
 import PostLayout from '@/components/post-layout';
 import { FrontMatter } from '@/lib/front';
 import { formatSlug, getFileBySlug } from '@/lib/mdx';

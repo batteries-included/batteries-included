@@ -34,11 +34,13 @@ const getStaticPaths = async () => {
   const tags = await getAllTags();
 
   return {
-    paths: tags.map((tag) => ({
-      params: {
-        tag,
-      },
-    })),
+    paths: tags
+      .map((tag) => kebabCase(tag))
+      .map((tag) => ({
+        params: {
+          tag,
+        },
+      })),
     fallback: false,
   };
 };
