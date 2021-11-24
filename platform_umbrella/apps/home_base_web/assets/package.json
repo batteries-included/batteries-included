@@ -21,7 +21,7 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.25.3",
     "eslint-plugin-prettier": "4.0.0",
-    "postcss": "8.3.11",
+    "postcss": "8.4.0",
     "postcss-import": "14.0.2",
     "postcss-loader": "6.2.0",
     "prettier": "2.4.1",
