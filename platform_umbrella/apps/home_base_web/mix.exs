@@ -46,7 +46,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix_live_dashboard, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6.1"},
       {:telemetry_poller, "~> 1.0"},
-      {:esbuild, "~> 0.3", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:gettext, "~> 0.18"},
       {:home_base, in_umbrella: true},
       # Components
