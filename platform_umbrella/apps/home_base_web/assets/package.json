@@ -24,7 +24,7 @@
     "postcss": "8.4.4",
     "postcss-import": "14.0.2",
     "postcss-loader": "6.2.1",
-    "prettier": "2.5.0",
+    "prettier": "2.5.1",
     "prettier-plugin-sh": "0.8.1",
     "tailwindcss": "2.2.19"
   }
