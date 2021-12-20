@@ -47,7 +47,7 @@ defmodule HomeBaseWeb.MixProject do
       {:telemetry_metrics, "~> 0.6.1"},
       {:telemetry_poller, "~> 1.0"},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
-      {:gettext, "~> 0.18"},
+      {:gettext, "~> 0.19"},
       {:home_base, in_umbrella: true},
       # Components
       {:surface, "~> 0.6.0"},

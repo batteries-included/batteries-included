@@ -47,7 +47,7 @@ defmodule ControlServerWeb.MixProject do
       {:telemetry_metrics, "~> 0.6.1"},
       {:telemetry_poller, "~> 1.0"},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
-      {:gettext, "~> 0.18"},
+      {:gettext, "~> 0.19"},
       {:telemetry, "~> 1.0", override: true},
       {:control_server, in_umbrella: true},
       {:kube_usage, in_umbrella: true},
