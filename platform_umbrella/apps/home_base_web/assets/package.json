@@ -19,7 +19,7 @@
     "eslint": "8.6.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "8.3.0",
-    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-import": "2.25.4",
     "eslint-plugin-prettier": "4.0.0",
     "postcss": "8.4.5",
     "postcss-import": "14.0.2",
