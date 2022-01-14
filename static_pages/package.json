@@ -10,7 +10,7 @@
     "lint": "eslint --ext js,jsx,ts,tsx --fix"
   },
   "dependencies": {
-    "@headlessui/react": "1.4.2",
+    "@headlessui/react": "1.4.3",
     "@heroicons/react": "1.0.5",
     "@mdx-js/react": "1.6.22",
     "@mdx-js/runtime": "1.6.22",
