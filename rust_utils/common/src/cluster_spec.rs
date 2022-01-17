@@ -5,14 +5,14 @@ use k8s_openapi::apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomRe
 use kube::{
     api::{Api, Patch, PatchParams},
     client::Client,
-    CustomResource, CustomResourceExt,
+    CustomResource, CustomResourceExt, Resource,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tracing::debug;
 
-use crate::error::Result;
+use crate::labels::default_labels;
 
 pub const DEFAULT_CRD_NAME: &str = "batteryclusters.batteriesincl.com";
 
@@ -58,7 +58,7 @@ pub async fn is_cluster_installed(client: Client) -> bool {
         .is_ok()
 }
 
-pub async fn ensure_crd(client: Client) -> Result<()> {
+pub async fn ensure_crd(client: Client) -> crate::error::Result<()> {
     if is_crd_installed(client.clone()).await {
         Ok(())
     } else {
@@ -79,15 +79,18 @@ const DEFAULT_CLUSTER_NAME: &str = "default-cluster";
 const DEFAULT_ACCOUNT_NAME: &str = "test-account";
 
 pub fn default_cluster() -> BatteryCluster {
-    BatteryCluster::new(
+    let mut res = BatteryCluster::new(
         DEFAULT_CLUSTER_NAME,
         BatteryClusterSpec {
             account: DEFAULT_ACCOUNT_NAME.into(),
         },
-    )
+    );
+
+    res.meta_mut().labels = Some(default_labels("batteries-included"));
+    res
 }
 
-pub async fn ensure_default_cluster(client: Client) -> Result<()> {
+pub async fn ensure_default_cluster(client: Client) -> crate::error::Result<()> {
     if is_cluster_installed(client.clone()).await {
         Ok(())
     } else {

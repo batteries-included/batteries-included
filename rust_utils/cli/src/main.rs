@@ -19,7 +19,6 @@ async fn main() -> Result<()> {
         .version("1.0")
         .author("Elliott Clark <elliott@batteriesincl.com>")
         .about("Control the world/cluster")
-        .setting(AppSettings::ColoredHelp)
         .setting(AppSettings::SubcommandRequiredElseHelp)
         .subcommand(App::new("bootstrap").about("Bootstrap a new cluster"))
         .subcommand(
@@ -28,8 +27,8 @@ async fn main() -> Result<()> {
         .get_matches();
 
     match matches.subcommand() {
-        ("bootstrap", _) => bootstrap::run().await?,
-        ("print_yaml", _) => print_yaml::run()?,
+        Some(("bootstrap", _)) => bootstrap::run().await?,
+        Some(("print_yaml", _)) => print_yaml::run()?,
         _ => debug!("Unknown command"),
     }
 

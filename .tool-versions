@@ -1,7 +1,7 @@
 erlang 24.0
 elixir 1.12.3-otp-24
 nodejs 14.16.1
-rust 1.56.0
+rust 1.57.0
 python 3.8.5
 k3d 4.4.7
 kubectl 1.22.0
