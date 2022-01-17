@@ -1,5 +1,4 @@
 defmodule HomeBaseWeb.StripeSubscriptionLive.FormComponent do
-  @moduledoc false
   use HomeBaseWeb, :live_component
 
   alias HomeBase.License

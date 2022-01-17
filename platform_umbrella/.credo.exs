@@ -22,6 +22,13 @@ common_checks = [
   {Credo.Check.Readability.TrailingWhiteSpace},
   {Credo.Check.Readability.VariableNames},
   {Credo.Check.Refactor.ABCSize, max_size: 40},
+  {Credo.Check.Refactor.Apply,
+   files: %{
+     excluded: [
+       "apps/home_base_web/lib/home_base_web.ex",
+       "apps/control_server_web/lib/control_server_web.ex"
+     ]
+   }},
   {Credo.Check.Refactor.CaseTrivialMatches},
   {Credo.Check.Refactor.CondStatements},
   {Credo.Check.Refactor.FunctionArity},
@@ -81,7 +88,12 @@ common_checks = [
           [
             {Credo.Check.Design.DuplicatedCode,
              excluded_macros: [],
-             files: %{excluded: ["apps/control_server/lib/control_server/services/*.ex"]}}
+             files: %{
+               excluded: [
+                 "apps/control_server/lib/control_server/services/*.ex",
+                 "apps/*/lib/*/live/live_helpers.ex"
+               ]
+             }}
           ]
     },
     %{

@@ -1,5 +1,4 @@
 defmodule HomeBaseWeb.StripeSubscriptionLive.Index do
-  @moduledoc false
   use HomeBaseWeb, :live_view
 
   alias HomeBase.License

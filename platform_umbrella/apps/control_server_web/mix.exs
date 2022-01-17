@@ -41,9 +41,9 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix, "~> 1.6.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.16.0"},
+      {:phoenix_live_view, "~> 0.17.5"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.5"},
+      {:phoenix_live_dashboard, "~> 0.6"},
       {:telemetry_metrics, "~> 0.6.1"},
       {:telemetry_poller, "~> 1.0"},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
@@ -52,7 +52,7 @@ defmodule ControlServerWeb.MixProject do
       {:control_server, in_umbrella: true},
       {:kube_usage, in_umbrella: true},
       # Components
-      {:surface, "~> 0.6.0"},
+      {:surface, "~> 0.7.0"},
       {:common_ui, in_umbrella: true},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}

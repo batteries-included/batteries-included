@@ -41,11 +41,11 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix_live_view, "~> 0.16.0"},
+      {:phoenix_live_view, "~> 0.17.5"},
       # Surface components
-      {:surface, "~> 0.6.0"}
+      {:surface, "~> 0.7.0"}
       # The story book like catalogue.
-      # {:surface_catalogue, "~> 0.1.0", only: [:dev, :test]}
+      # {:surface_catalogue, "~> 0.3.0", only: [:dev, :test]}
     ]
   end
 

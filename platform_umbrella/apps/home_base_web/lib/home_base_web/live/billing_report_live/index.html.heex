@@ -31,7 +31,7 @@
     </thead>
     <tbody id="billing_reports">
       <%= for billing_report <- @billing_reports do %>
-        <tr id="billing_report-<%= billing_report.id %>">
+        <tr id={"billing_report-#{billing_report.id}"}>
           <td><%= billing_report.start %></td>
           <td><%= billing_report.end %></td>
           <td><%= billing_report.node_hours %></td>

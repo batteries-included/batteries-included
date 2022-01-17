@@ -1,8 +1,4 @@
 defmodule HomeBase.License.StripeSubscription do
-  @moduledoc """
-  In DB representation of a stripe subscription. Keep here for ussage
-  reporting and other billing related checks.
-  """
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -15,12 +15,12 @@ defmodule ControlServerWeb.CSP do
 
   def new(allowed \\ @default_allowed) do
     %{
-      "content-security-policy" => allowed |> Enum.map(&format/1) |> Enum.join(";")
+      "content-security-policy" => Enum.map_join(allowed, ";", &format/1)
     }
   end
 
   defp format({perm, sources}) do
-    src_str = sources |> Enum.map(&format_source/1) |> Enum.join(" ")
+    src_str = Enum.map_join(sources, " ", &format_source/1)
 
     Enum.join([perm, src_str], " ")
   end

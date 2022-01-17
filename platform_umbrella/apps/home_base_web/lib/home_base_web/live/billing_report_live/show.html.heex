@@ -73,7 +73,7 @@
     </thead>
     <tbody id="usage_reports">
       <%= for usage_report <- @billing_report.usage_reports do %>
-        <tr id="usage_report-<%= usage_report.id %>">
+        <tr id={"usage_report-#{usage_report.id}"}>
           <td
             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
           >

@@ -2,8 +2,7 @@ defmodule HomeBaseWeb.StripeSubscriptionLiveTest do
   use HomeBaseWeb.ConnCase
 
   import Phoenix.LiveViewTest
-
-  alias HomeBase.License
+  import HomeBase.LicenseFixtures
 
   @create_attrs %{company: "some company", stripe_subscription_id: "some stripe_subscription_id"}
   @update_attrs %{
@@ -12,13 +11,8 @@ defmodule HomeBaseWeb.StripeSubscriptionLiveTest do
   }
   @invalid_attrs %{company: nil, stripe_subscription_id: nil}
 
-  defp fixture(:stripe_subscription) do
-    {:ok, stripe_subscription} = License.create_stripe_subscription(@create_attrs)
-    stripe_subscription
-  end
-
   defp create_stripe_subscription(_) do
-    stripe_subscription = fixture(:stripe_subscription)
+    stripe_subscription = stripe_subscription_fixture()
     %{stripe_subscription: stripe_subscription}
   end
 
