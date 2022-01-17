@@ -18,7 +18,7 @@ kube = { version = "0.66.0", features = ["derive"] }
 
 # Logging/Tracing
 tracing = "0.1.29"
-clap = "~2.34.0"
+clap = "~3.0.8"
 
 # Yaml
 serde = "1.0.133"
