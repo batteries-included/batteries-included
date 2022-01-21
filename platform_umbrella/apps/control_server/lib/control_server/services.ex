@@ -185,4 +185,17 @@ defmodule ControlServer.Services do
         )
       )
   end
+
+  def activate_defaults do
+    Enum.each(
+      [
+        ControlServer.Services.Battery,
+        ControlServer.Services.Network,
+        ControlServer.Services.Database
+      ],
+      fn def_mod ->
+        def_mod.activate!()
+      end
+    )
+  end
 end

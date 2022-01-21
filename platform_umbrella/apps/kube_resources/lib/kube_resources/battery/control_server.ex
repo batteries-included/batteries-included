@@ -20,8 +20,8 @@ defmodule KubeResources.ControlServer do
         "serviceAccount" => @service_account,
         "initContainers" => [
           control_container(config,
-            name: "migrate",
-            base: %{"command" => ["bin/control_server_migrate"]}
+            name: "init",
+            base: %{"command" => ["bin/control_server_init"]}
           )
         ],
         "containers" => [
@@ -51,8 +51,13 @@ defmodule KubeResources.ControlServer do
   defp control_container(config, options) do
     base = Keyword.get(options, :base, %{})
     name = Keyword.get(options, :name, "control-server")
+
     version = Keyword.get(options, :version, BatterySettings.control_server_version(config))
     image = Keyword.get(options, :image, BatterySettings.control_server_image(config))
+
+    host = BatterySettings.postgres_host(config)
+    db = BatterySettings.postgres_db(config)
+    credential_secret = BatterySettings.postgres_credential_secret(config)
 
     base
     |> Map.put_new("name", name)
@@ -68,11 +73,11 @@ defmodule KubeResources.ControlServer do
       },
       %{
         "name" => "POSTGRES_HOST",
-        "value" => "postgres.default.svc.cluster.local"
+        "value" => host
       },
       %{
         "name" => "POSTGRES_DB",
-        "value" => "control-dev"
+        "value" => db
       },
       %{
         "name" => "SECRET_KEY_BASE",
@@ -80,11 +85,11 @@ defmodule KubeResources.ControlServer do
       },
       %{
         "name" => "POSTGRES_USER",
-        "value" => "batterydbuser"
+        "valueFrom" => B.secret_key_ref(credential_secret, "username")
       },
       %{
         "name" => "POSTGRES_PASSWORD",
-        "value" => "batterypasswd"
+        "valueFrom" => B.secret_key_ref(credential_secret, "password")
       },
       %{"name" => "MIX_ENV", "value" => "prod"}
     ])

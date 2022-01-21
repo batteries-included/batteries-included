@@ -4,7 +4,7 @@ defmodule ControlServer.MixProject do
   def project do
     [
       app: :control_server,
-      version: "0.1.0",
+      version: "0.3.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -53,6 +53,7 @@ defmodule ControlServer.MixProject do
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},
+      {:bootstrap, in_umbrella: true},
 
       # Yaml
       {:yaml_elixir, "~> 2.6"},
@@ -80,7 +81,7 @@ defmodule ControlServer.MixProject do
     [
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "ecto.reset": ["ecto.drop", "ecto.create", "ecto.migrate"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end

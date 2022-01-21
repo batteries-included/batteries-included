@@ -15,8 +15,6 @@ defmodule KubeServices.Application do
     ]
 
     opts = [strategy: :one_for_one, name: KubeServices.Supervisor]
-    sup = Supervisor.start_link(children, opts)
-    ControlServer.Services.Defaults.start()
-    sup
+    Supervisor.start_link(children, opts)
   end
 end

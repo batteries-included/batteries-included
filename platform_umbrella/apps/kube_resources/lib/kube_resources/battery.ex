@@ -4,19 +4,14 @@ defmodule KubeResources.Battery do
   alias KubeResources.ControlServer
   alias KubeResources.EchoServer
 
-  @bootstrapped_path "priv/manifests/battery/bootstrapped.yaml"
+  alias KubeRawResources.Battery, as: BatteryRaw
 
   def materialize(config) do
-    %{
-      "/0/bootstrapped" => crd(config)
-    }
+    config
+    |> BatteryRaw.materialize()
     |> Map.merge(echo_server(config))
     |> Map.merge(control_server(config))
   end
-
-  def crd(_), do: yaml(bootstrapped_content())
-
-  defp bootstrapped_content, do: unquote(File.read!(@bootstrapped_path))
 
   defp echo_server(config) do
     %{
@@ -33,10 +28,4 @@ defmodule KubeResources.Battery do
   end
 
   defp control_server(_config), do: %{}
-
-  defp yaml(content) do
-    content
-    |> YamlElixir.read_all_from_string!()
-    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
-  end
 end

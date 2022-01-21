@@ -4,9 +4,11 @@ defmodule ControlServer.Postgres do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
   alias ControlServer.Postgres.Cluster
+  alias ControlServer.Repo
+
+  alias Ecto.Multi
 
   require Logger
 
@@ -51,10 +53,10 @@ defmodule ControlServer.Postgres do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_cluster(attrs \\ %{}) do
+  def create_cluster(attrs \\ %{}, repo \\ Repo) do
     %Cluster{}
     |> Cluster.changeset(attrs)
-    |> Repo.insert()
+    |> repo.insert()
   end
 
   @doc """
@@ -102,5 +104,23 @@ defmodule ControlServer.Postgres do
   """
   def change_cluster(%Cluster{} = cluster, attrs \\ %{}) do
     Cluster.changeset(cluster, attrs)
+  end
+
+  def insert_default_clusters do
+    Multi.new()
+    |> Multi.run(:count_clusters, fn repo, %{} = _ ->
+      {:ok, repo.aggregate(Cluster, :count)}
+    end)
+    |> Multi.run(:maybe_insert, &maybe_insert_default_clusters/2)
+    |> Repo.transaction()
+  end
+
+  defp maybe_insert_default_clusters(repo, %{count_clusters: 0}) do
+    create_cluster(Bootstrap.Database.control_cluster(), repo)
+  end
+
+  defp maybe_insert_default_clusters(_repo, %{count_clusters: cluster_count} = _data) do
+    Logger.debug("Not inserting new postgres clusters there's already #{cluster_count}")
+    {:ok, nil}
   end
 end

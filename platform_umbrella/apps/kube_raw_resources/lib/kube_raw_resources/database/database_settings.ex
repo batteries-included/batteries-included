@@ -1,4 +1,4 @@
-defmodule KubeResources.DatabaseSettings do
+defmodule KubeRawResources.DatabaseSettings do
   @moduledoc """
   Module for extracting the setting from a map usually a json map from the BaseService ecto
   """
@@ -7,9 +7,11 @@ defmodule KubeResources.DatabaseSettings do
   @pg_operator_name "battery-pg-operator"
   @pg_operator_pod_account_name "battery-pg-pod"
   @pg_operator_image "registry.opensource.zalan.do/acid/postgres-operator"
-  @pg_operator_version "v1.6.3"
+  @pg_operator_version "v1.7.1"
 
   def namespace(config), do: Map.get(config, "namespace", @namepace)
+  def bootstrap_clusters(config), do: Map.get(config, "bootstrap.clusters", [])
+
   def pg_operator_name(config), do: Map.get(config, "pg_operator.name", @pg_operator_name)
 
   def pg_operator_pod_account_name(config),

@@ -1,4 +1,6 @@
 defmodule KubeResources.Devtools do
+  import KubeExt.Yaml
+
   alias KubeResources.DevtoolsSettings
   alias KubeResources.GithubActionsRunner
 
@@ -55,10 +57,4 @@ defmodule KubeResources.Devtools do
   end
 
   defp github_crd_content, do: unquote(File.read!(@github_crd_path))
-
-  defp yaml(content) do
-    content
-    |> YamlElixir.read_all_from_string!()
-    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
-  end
 end

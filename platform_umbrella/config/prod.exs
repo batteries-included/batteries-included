@@ -39,6 +39,13 @@ config :logger, :console,
   level: :debug,
   metadata: [:mfa, :request_id]
 
-config :control_server, ControlServer.Services, run_battery: true
+config :control_server, ControlServer.Services, control_run: true
 
 config :kube_ext, :clusters, default: :service_account
+
+# Important!! Setting this to false will filter
+# out all materialization of infra users that
+# are needed for development. These infra users
+# should never be included in a production
+# deploy.
+config :kube_raw_resources, include_dev_infrausers: false

@@ -68,7 +68,7 @@ portForward() {
 postgresForward() {
   local cluster=$1
   local port=$2
-  local ns=${3:-"battery-db"}
+  local ns=${3:-"battery-core"}
   local pod=$(kubectl \
             get pods \
             -o jsonpath={.items..metadata.name} \
@@ -76,16 +76,6 @@ postgresForward() {
             -l battery-cluster-name=${cluster} \
             -l spilo-role=master)
   portForward "pods/${pod}" "${port}:5432" ${ns}
-}
-
-resetPasswordEnv() {
-  local cluster=$1
-  local user=${2:-postgres}
-  local password=$(kubectl 
-        get secrets \
-        -n battery-db ${user}.${cluster}.credentials.postgresql.acid.zalan.do \
-        -o 'jsonpath={.data.password}' | base64 -d)
-  echo "export POSTGRES_PASSWORD='${password}'" >${DIR}/../platform_umbrella/.envrc
 }
 
 buildLocalControl() {
@@ -98,8 +88,14 @@ cargoBootstrap() {
   popd
 }
 
+mixBootstrap() {
+  pushd ${DIR}/../platform_umbrella/apps/bootstrap
+  mix run -e "Bootstrap.InitialSync.run()"
+  popd
+}
+
 CREATE_CLUSTER=${CREATE_CLUSTER:-true}
-FORWARD_EXTERNAL_POSTGRES=${FORWARD_EXTERNAL_POSTGRES:-true}
+FORWARD_CONTROL_POSTGRES=${FORWARD_CONTROL_POSTGRES:-true}
 FORWARD_HOME_POSTGRES=${FORWARD_HOME_POSTGRES:-false}
 BUILD_CONTROL_SERVER=${BUILD_CONTROL_SERVER:-false}
 
@@ -145,22 +141,19 @@ if [[ $CREATE_CLUSTER == 'true' ]]; then
     -p "8081:80@loadbalancer" || true
 fi
 
-# Start the services.
-kubectl apply -f "${DIR}/k8s"
-
 cargoBootstrap
+mixBootstrap
 
 if [ $BUILD_CONTROL_SERVER == "true" ]; then
   buildLocalControl
 fi
 
-if [ $FORWARD_EXTERNAL_POSTGRES == "true" ]; then
-  (retry portForward "svc/postgres" "5432:5432" "default") &
+if [ $FORWARD_CONTROL_POSTGRES == "true" ]; then
+  (retry postgresForward "default-control" "5432") &
 fi
 
 if [[ $FORWARD_HOME_POSTGRES == "true" ]]; then
   (retry postgresForward "default-home-base" "5433") &
-  resetPasswordEnv "default-home-base"
 fi
 
 wait

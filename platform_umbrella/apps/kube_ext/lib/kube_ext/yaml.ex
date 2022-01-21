@@ -1,0 +1,7 @@
+defmodule KubeExt.Yaml do
+  def yaml(yaml_string_content) do
+    yaml_string_content
+    |> YamlElixir.read_all_from_string!()
+    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
+  end
+end

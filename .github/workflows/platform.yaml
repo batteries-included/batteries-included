@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.12.0
+          - elixir: 1.13.1
             otp: 24.0
             lint: lint
 
@@ -67,15 +67,6 @@ jobs:
 
       - name: Compile
         run: mix compile
-        if: ${{ !matrix.lint }}
-        env:
-          MIX_ENV: test
-
-      - name: Compile & lint
-        run: mix compile
-        if: ${{ matrix.lint }}
-        env:
-          MIX_ENV: test
 
       - name: Credo
         run: mix credo --strict
@@ -92,7 +83,6 @@ jobs:
       - name: Run tests
         run: mix test
         env:
-          MIX_ENV: test
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
   npm_test_control:
@@ -111,7 +101,7 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: 1.12.0
+          elixir-version: 1.13.1
           otp-version: 24.0
 
       - name: Install dependencies
@@ -153,7 +143,7 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: 1.12.0
+          elixir-version: 1.13.1
           otp-version: 24.0
 
       - name: Install dependencies

@@ -1,7 +1,8 @@
-defmodule KubeResources.PostgresOperator do
+defmodule KubeRawResources.PostgresOperator do
   @moduledoc false
 
-  alias KubeResources.DatabaseSettings
+  alias KubeExt.Builder, as: B
+  alias KubeRawResources.DatabaseSettings
 
   def service_account_0(config) do
     namespace = DatabaseSettings.namespace(config)
@@ -315,7 +316,7 @@ defmodule KubeResources.PostgresOperator do
     }
   end
 
-  def operator_configuration_0(config) do
+  def operator_configuration(config) do
     namespace = DatabaseSettings.namespace(config)
 
     # Zalando's postgres operator creates the
@@ -340,26 +341,84 @@ defmodule KubeResources.PostgresOperator do
           "minimal_major_version" => "9.5",
           "target_major_version" => "13"
         },
-        "kubernetes" => %{
-          "oauth_token_secret_name" => "battery-postgres-operator",
-          "cluster_name_label" => "battery-cluster-name",
-          "watched_namespace" => namespace
-        },
+        "kubernetes" => operator_configuration_kubernets(config, include_dev_infrausers()),
         "debug" => %{"debug_logging" => true, "enable_database_access" => true}
       }
     }
   end
 
-  def materialize(config) do
+  defp operator_configuration_kubernets(config, false = _include_dev_infrausers) do
+    namespace = DatabaseSettings.namespace(config)
+
     %{
-      "/0/service_account_0" => service_account_0(config),
-      "/1/cluster_role_0" => cluster_role_0(config),
-      "/2/cluster_role_1" => cluster_role_1(config),
-      "/3/cluster_role_binding_0" => cluster_role_binding_0(config),
-      "/3/cluster_role_binding_1" => pod_service_role_binding(config),
-      "/4/service_0" => service_0(config),
-      "/5/deployment_0" => deployment_0(config),
-      "/6/operator_configuration_0" => operator_configuration_0(config)
+      "oauth_token_secret_name" => "battery-postgres-operator",
+      "cluster_name_label" => "battery-cluster-name",
+      "watched_namespace" => namespace
     }
+  end
+
+  defp operator_configuration_kubernets(config, true = _include_dev_infrausers),
+    do:
+      Map.put(
+        operator_configuration_kubernets(config, false),
+        "infrastructure_roles_secret_name",
+        "postgres-infrauser-config"
+      )
+
+  defp include_dev_infrausers,
+    do: Application.get_env(:kube_raw_resources, :include_dev_infrausers, false)
+
+  defp infra_users(config), do: infra_users(config, include_dev_infrausers())
+
+  defp infra_users(_config, false = _include_dev_infrausers), do: %{}
+
+  defp infra_users(config, true = _include_dev_infrausers) do
+    %{
+      "/8/infra_configmap" => infra_configmap(config),
+      "/9/infra_secret" => infra_secret(config)
+    }
+  end
+
+  defp infra_configmap(config) do
+    namespace = DatabaseSettings.namespace(config)
+
+    B.build_resource(:config_map)
+    |> B.app_labels("postgres-operator")
+    |> B.namespace(namespace)
+    |> B.name("postgres-infrauser-config")
+    |> Map.put(
+      "data",
+      %{
+        "batterydbuser" => Ymlr.Encoder.to_s!(%{user_flags: ["createdb"]})
+      }
+    )
+  end
+
+  defp infra_secret(config) do
+    namespace = DatabaseSettings.namespace(config)
+
+    B.build_resource(:secret)
+    |> B.app_labels("postgres-operator")
+    |> B.namespace(namespace)
+    |> B.name("postgres-infrauser-config")
+    |> Map.put("data", %{
+      "batterydbuser" => Base.encode64("not-real")
+    })
+  end
+
+  def materialize(config) do
+    Map.merge(
+      %{
+        "/0/service_account_0" => service_account_0(config),
+        "/1/cluster_role_0" => cluster_role_0(config),
+        "/2/cluster_role_1" => cluster_role_1(config),
+        "/3/cluster_role_binding_0" => cluster_role_binding_0(config),
+        "/3/cluster_role_binding_1" => pod_service_role_binding(config),
+        "/4/service_0" => service_0(config),
+        "/5/deployment_0" => deployment_0(config),
+        "/6/operator_crd_instance" => operator_configuration(config)
+      },
+      infra_users(config)
+    )
   end
 end

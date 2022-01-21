@@ -44,4 +44,11 @@ defmodule KubeController.V1.BatteryCluster do
   def reconcile(%{} = _batterycluster) do
     :ok
   end
+
+  @impl Bella.Controller
+  def operation do
+    K8s.Operation.build(:list, "v1", "batteryclusters.batteriesincl.com",
+      namespace: "battery-core"
+    )
+  end
 end

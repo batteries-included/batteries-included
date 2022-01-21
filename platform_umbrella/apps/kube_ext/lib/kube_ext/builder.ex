@@ -43,6 +43,10 @@ defmodule KubeExt.Builder do
     build_resource("monitoring.coreos.com/v1", "ServiceMonitor")
   end
 
+  def build_resource(:secret) do
+    Map.put(build_resource("v1", "Secret"), "type", "Opaque")
+  end
+
   def build_resource(:ingress) do
     "networking.k8s.io/v1"
     |> build_resource("Ingress")
@@ -159,5 +163,14 @@ defmodule KubeExt.Builder do
 
   def add_capture_to_path(path) do
     update_in(path, ~w(path), fn p -> p <> "(/|$)(.*)" end)
+  end
+
+  def secret_key_ref(name, key) do
+    %{
+      secretKeyRef: %{
+        name: name,
+        key: key
+      }
+    }
   end
 end

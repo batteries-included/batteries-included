@@ -4,7 +4,7 @@ defmodule ControlServer.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "0.2.0",
+      version: "0.3.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -48,23 +48,47 @@ defmodule ControlServer.Umbrella.MixProject do
         applications: [home_base: :permanent, home_base_web: :permanent]
       ],
       bootstrap: [
-        applications: [control_server: :permanent]
+        applications: [bootstrap: :permanent, kube_ext: :permanent],
+        runtime_config_path: "apps/bootstrap/config/releases.exs",
+        config_providers: config_providers_for_apps([:bootstrap]),
+        steps: [:assemble, &copy_configs/1]
       ]
     ]
   end
 
-  # Aliases are shortcuts or tasks specific to the current project.
-  # For example, to install project dependencies and perform other setup tasks, run:
-  #
-  #     $ mix setup
-  #
-  # See the documentation for `Mix` for more info on aliases.
-  #
-  # Aliases listed here are available only for this project
-  # and cannot be accessed from applications inside the apps/ folder.
+  defp config_providers_for_apps(apps) do
+    for app <- apps do
+      {Config.Reader,
+       path: {:system, "RELEASE_ROOT", "/apps/#{app}/config/releases.exs"}, env: Mix.env()}
+    end
+  end
+
+  # When assembling the release, we copy all the releases.exs files defined
+  # in `config_providers` to it, keeping the
+  # relative app path to avoid collisions.
+  defp copy_configs(
+         %Mix.Release{path: release_directory_path, config_providers: config_providers} = release
+       ) do
+    for {_module, path: {_context, _root, config_file_path}, env: _} <- config_providers do
+      config_directory = Path.join(release_directory_path, Path.dirname(config_file_path))
+
+      # Clean the config directory to make sure we
+      # are only including the files defined in
+      # the config_providers
+      File.rm_rf!(config_directory)
+      File.mkdir_p!(config_directory)
+
+      File.cp!(
+        Path.relative(config_file_path),
+        Path.join(config_directory, Path.basename(config_file_path))
+      )
+    end
+
+    release
+  end
+
   defp aliases do
     [
-      # run `mix setup` in all child apps
       setup: ["cmd mix setup"],
       "ecto.reset": ["cmd mix ecto.reset"],
       fmt: ["format", "surface.format", "prettier"],

@@ -18,10 +18,20 @@ docker build \
   .
 pushImage "battery/control" "${TAG}"
 
-# docker build --build-arg RELEASE=home_base \
-#   -t battery/home:${TAG} \
-#   -t localhost:${REGISTRY_PORT}/battery/home:${TAG} \
-#   .
+docker build --build-arg RELEASE=home_base \
+  --build-arg BINARY=bin/home_base \
+  -t battery/home:${TAG} \
+  -t localhost:${REGISTRY_PORT}/battery/home:${TAG} \
+  .
 
-# pushImage "battery/home" "${TAG}"
+pushImage "battery/home" "${TAG}"
+
+docker build --build-arg RELEASE=bootstrap \
+  --build-arg BINARY=bin/bootstrap_run \
+  -t battery/bootstrap:${TAG} \
+  -t localhost:${REGISTRY_PORT}/battery/bootstrap:${TAG} \
+  .
+
+pushImage "battery/bootstrap" "${TAG}"
+
 popd

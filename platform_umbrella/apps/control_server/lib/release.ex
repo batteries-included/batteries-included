@@ -11,6 +11,13 @@ defmodule ControlServer.Release do
     end
   end
 
+  def seed do
+    load_app()
+
+    ControlServer.Services.activate_defaults()
+    ControlServer.Postgres.insert_default_clusters()
+  end
+
   def rollback(repo, version) do
     load_app()
     {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :down, to: version))
@@ -21,6 +28,6 @@ defmodule ControlServer.Release do
   end
 
   defp load_app do
-    Application.load(@app)
+    Application.ensure_all_started(@app, :permanent)
   end
 end

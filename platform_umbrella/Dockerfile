@@ -9,9 +9,9 @@
 # https://docs.docker.com/develop/develop-images/build_enhancements/
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md
 
-ARG ELIXIR_VERSION=1.12.3
-ARG ERLANG_VERSION=24.1.2
-ARG ALPINE_VERSION=3.14.2
+ARG ELIXIR_VERSION=1.13.1
+ARG ERLANG_VERSION=24.2
+ARG ALPINE_VERSION=3.15.0
 
 ARG BUILD_IMAGE_NAME=hexpm/elixir
 ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}
@@ -43,6 +43,8 @@ ARG APP_DIR=/app
 
 ARG LANG=C.UTF-8
 
+ARG BINARY=bin/control_server
+
 ##########################################################################
 # Fetch OS build dependencies
 
@@ -70,15 +72,18 @@ WORKDIR /app
 # Get Elixir app deps
 COPY mix.exs .
 COPY mix.lock .
+
+COPY apps/bootstrap/mix.exs apps/bootstrap/mix.exs
 COPY apps/common_ui/mix.exs apps/common_ui/mix.exs
 COPY apps/control_server/mix.exs apps/control_server/mix.exs
 COPY apps/control_server_web/mix.exs apps/control_server_web/mix.exs
 COPY apps/event_center/mix.exs apps/event_center/mix.exs
-COPY apps/home_base/mix.exs apps/home_base/mix.exs
 COPY apps/home_base_client/mix.exs apps/home_base_client/mix.exs
+COPY apps/home_base/mix.exs apps/home_base/mix.exs
 COPY apps/home_base_web/mix.exs apps/home_base_web/mix.exs
 COPY apps/kube_controller/mix.exs apps/kube_controller/mix.exs
 COPY apps/kube_ext/mix.exs apps/kube_ext/mix.exs
+COPY apps/kube_raw_resources/mix.exs apps/kube_raw_resources/mix.exs
 COPY apps/kube_resources/mix.exs apps/kube_resources/mix.exs
 COPY apps/kube_services/mix.exs apps/kube_services/mix.exs
 COPY apps/kube_usage/mix.exs apps/kube_usage/mix.exs
@@ -199,12 +204,14 @@ ARG APP_DIR
 
 ARG MIX_ENV
 ARG RELEASE
+ARG BINARY
 
 # Set environment vars used by the app
 ENV LANG=$LANG \
   HOME=$APP_DIR \
   RELEASE_TMP="/run/$APP_NAME" \
   RELEASE=${RELEASE} \
+  BINARY=${BINARY} \
   PORT=4000
 
 # Install Alpine libraries needed at runtime
@@ -215,10 +222,8 @@ RUN --mount=type=cache,id=apk,target=/var/cache/apk,sharing=locked \
   && apk update \
   && apk add --no-cache bash \
   && apk add --no-cache tini \
-  && apk add --no-cache libstdc++ \
-  && apk add --no-cache libgcc \
-  && apk add --no-cache bind-tools \
-  && apk add --no-cache openssl ncurses-libs \
+  && apk add --no-cache libstdc++ libgcc \
+  && apk add --no-cache bind-tools openssl ncurses-libs \
   && apk cache clean
 
 # Create user and group to run under with specific uid
@@ -239,4 +244,4 @@ EXPOSE $PORT
 
 ENTRYPOINT ["/sbin/tini", "--" ]
 
-CMD ["bin/control_server", "start"]
+CMD ["${BINARY}", "start"]

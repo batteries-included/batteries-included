@@ -4,7 +4,7 @@ defmodule KubeResources.MixProject do
   def project do
     [
       app: :kube_resources,
-      version: "0.1.0",
+      version: "0.3.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -33,6 +33,7 @@ defmodule KubeResources.MixProject do
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 2.0"},
       {:kube_ext, in_umbrella: true},
+      {:kube_raw_resources, in_umbrella: true},
       {:control_server, in_umbrella: true}
     ]
   end

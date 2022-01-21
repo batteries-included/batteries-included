@@ -5,50 +5,13 @@ defmodule KubeServices.Worker do
   use GenServer
 
   alias ControlServer.Services
-  alias KubeExt.Hashing
+  alias KubeRawResources.Resource
+  alias KubeRawResources.Resource.ResourceState
   alias KubeResources.ConfigGenerator
 
   require Logger
 
   @tick_time 30_000
-
-  defmodule ApplyState do
-    @moduledoc """
-    Simple struct to hold information about the last time we
-    tried to apply this resource spec to kubernetes.
-    """
-    defstruct [:resource, :last_result]
-
-    def needs_apply(%ApplyState{} = apply_state, new_resource) do
-      # If the last try was an error then we always try and sync.
-      # otherwise if there's been something that changed in the database.
-      !ok?(apply_state) || Hashing.different?(resource(apply_state), new_resource)
-    end
-
-    def apply(connection, resource) do
-      apply_result = KubeExt.maybe_apply(connection, resource)
-      %ApplyState{last_result: apply_result, resource: resource}
-    end
-
-    def from_path(%{} = path_state_map, path), do: Map.get(path_state_map, path, nil)
-
-    def ok?(%ApplyState{last_result: last_result}), do: result_ok?(last_result)
-
-    defp result_ok?(:ok), do: true
-    defp result_ok?({:ok, _}), do: true
-
-    defp result_ok?(result) when is_list(result) do
-      Enum.all?(result, &result_ok?/1)
-    end
-
-    defp result_ok?(_), do: false
-
-    defp resource(%ApplyState{resource: res}), do: res
-
-    def different?(%ApplyState{resource: applied_resource}, new_resource) do
-      Hashing.different?(applied_resource, new_resource)
-    end
-  end
 
   defmodule State do
     @doc """
@@ -107,11 +70,10 @@ defmodule KubeServices.Worker do
       end)
     end
 
-    defp maybe_apply_path(
-           %State{path_state_map: path_state_map} = state,
-           path,
-           resource
-         ) do
+    defp apply_state_from_path(%State{path_state_map: path_state_map} = _state, path),
+      do: Map.get(path_state_map, path, nil)
+
+    defp maybe_apply_path(%State{} = state, path, resource) do
       # Wild complex with statement.
       #
       # Essentially it assumes that that is no need to push the resource specs.
@@ -119,10 +81,10 @@ defmodule KubeServices.Worker do
       # Or the last sync was a failure
       # or the content hashes that we think are there and
       # want to push have diverged because of changes to the database.
-      with {:prev_state, %ApplyState{} = prev_state} <-
-             {:prev_state, ApplyState.from_path(path_state_map, path)},
+      with {:prev_state, %ResourceState{} = prev_state} <-
+             {:prev_state, apply_state_from_path(state, path)},
            {:needs_apply, false} <-
-             {:needs_apply, ApplyState.needs_apply(prev_state, resource)} do
+             {:needs_apply, Resource.needs_apply(prev_state, resource)} do
         Logger.debug("Path => #{path} everything looks successfully pushed. Not going to push")
         {path, prev_state}
       else
@@ -131,11 +93,11 @@ defmodule KubeServices.Worker do
             "Appears like we don't know the apply status of #{path} pushing to kubernetes"
           )
 
-          {path, ApplyState.apply(State.connection(state), resource)}
+          {path, state |> State.connection() |> Resource.apply(resource)}
 
         {:needs_apply, _} ->
           Logger.debug("Last apply state doesn't match for #{path}")
-          {path, ApplyState.apply(State.connection(state), resource)}
+          {path, state |> State.connection() |> Resource.apply(resource)}
       end
     end
   end

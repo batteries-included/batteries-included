@@ -36,7 +36,7 @@ secret_key_base =
     """
 
 config :kube_usage, KubeUsage.Repo,
-  ssl: false,
+  ssl: true,
   username: postgres_username,
   password: postgres_password,
   database: postgres_database,
@@ -45,7 +45,7 @@ config :kube_usage, KubeUsage.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "3")
 
 config :control_server, ControlServer.Repo,
-  ssl: false,
+  ssl: true,
   username: postgres_username,
   password: postgres_password,
   database: postgres_database,
@@ -54,7 +54,7 @@ config :control_server, ControlServer.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
 config :home_base, HomeBase.Repo,
-  ssl: false,
+  ssl: true,
   username: postgres_username,
   password: postgres_password,
   database: postgres_database,
