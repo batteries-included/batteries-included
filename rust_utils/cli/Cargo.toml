@@ -15,7 +15,7 @@ k8s-openapi = { version = "0.13.1", default-features = false, features = [
 ] }
 # Logging/Tracing
 tracing = "0.1.29"
-clap = "~3.0.11"
+clap = "~3.0.12"
 # Yaml
 serde = "1.0.135"
 serde_json = "1.0.78"
