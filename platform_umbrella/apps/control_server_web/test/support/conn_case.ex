@@ -24,10 +24,10 @@ defmodule ControlServerWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import ControlServerWeb.ConnCase
+      import Phoenix.LiveViewTest
+      import Phoenix.LiveView.Helpers
 
       alias ControlServerWeb.Router.Helpers, as: Routes
-
-      use Surface.LiveViewTest
 
       # The default endpoint for testing
       @endpoint ControlServerWeb.Endpoint

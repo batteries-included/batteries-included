@@ -1,15 +1,18 @@
 defmodule ControlServerWeb.ServicesLive.Grafana do
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
 
-  alias ControlServerWeb.IFrame
-  alias ControlServerWeb.Layout
+  import ControlServerWeb.IFrame
+  import ControlServerWeb.Layout
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout container_type={:iframe}>
-      <IFrame src="/x/grafana" />
-    </Layout>
+    ~H"""
+    <.layout container_type={:iframe}>
+      <:title>
+        <.title>Grafana</.title>
+      </:title>
+      <.iframe src="/x/grafana" />
+    </.layout>
     """
   end
 end

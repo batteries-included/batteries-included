@@ -1,15 +1,15 @@
 defmodule ControlServerWeb.ServicesLive.Prometheus do
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
 
-  alias ControlServerWeb.IFrame
-  alias ControlServerWeb.Layout
+  import ControlServerWeb.IFrame
+  import ControlServerWeb.Layout
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout container_type={:iframe}>
-      <IFrame src="/x/prometheus" />
-    </Layout>
+    ~H"""
+    <.layout container_type={:iframe}>
+      <.iframe src="/x/prometheus" />
+    </.layout>
     """
   end
 end

@@ -9,12 +9,13 @@ defmodule HomeBaseWeb.BillingReportLive.ChartComponent do
 
     ~H"""
     <div class="chart-container mx-auto" style="position: relative; height:50vh; width:75vw">
-      <canvas class="billing_chart"
-              phx-hook="BillingChart"
-              phx-update="ignore"
-              id={"billing_chart_#{@id}"}
-              data-data={encoded_data}>
-      </canvas>
+      <canvas
+        class="billing_chart"
+        phx-hook="BillingChart"
+        phx-update="ignore"
+        id={"billing_chart_#{@id}"}
+        data-data={encoded_data}
+      ></canvas>
     </div>
     """
   end

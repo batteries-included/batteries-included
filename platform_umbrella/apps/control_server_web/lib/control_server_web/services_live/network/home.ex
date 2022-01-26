@@ -1,11 +1,12 @@
 defmodule ControlServerWeb.ServicesLive.NetworkHome do
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
   use Timex
 
-  alias CommonUI.Button
+  import ControlServerWeb.PodDisplay
+  import ControlServerWeb.Layout
+
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.Layout
 
   require Logger
 
@@ -49,36 +50,34 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout>
+    ~H"""
+    <.layout>
       <div class="container">
         <h2 class="mt-2 text-2xl font-bold leading-7 text-pink-500 sm:text-3xl sm:truncate">
           Network Services
         </h2>
-
         <hr class="mt-4">
-
-        {#if @running}
-          <div class="mt-4">
-            <ControlServerWeb.PodDisplay {=@pods} />
-          </div>
-        {#else}
-          <div class="mt-4 row">
-            <div class="col align-self-center">
-              The network service is not currently enabled on this Batteries included
+          <%= if @running do %>
+            <div class="mt-4">
+              <.pods_display pods={@pods} />
+            </div>
+          <% else %>
+            <div class="mt-4 row">
+              <div class="col align-self-center">
+                The network service is not currently enabled on this Batteries included
               cluster. To start installing please press the button.
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="m-5 text-center col align-self-center">
-              <Button opts={"phx-click": "start_service"} theme="primary">
-                Install
-              </Button>
+            <div class="row">
+              <div class="m-5 text-center col align-self-center">
+                <.button phx-click="start_service">
+                  Install
+                </.button>
+              </div>
             </div>
-          </div>
-        {/if}
-      </div>
-    </Layout>
+          <% end %>
+        </div>
+      </.layout>
     """
   end
 end

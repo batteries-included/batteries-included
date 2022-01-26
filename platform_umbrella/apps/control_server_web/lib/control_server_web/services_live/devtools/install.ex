@@ -1,15 +1,12 @@
 defmodule ControlServerWeb.ServicesLive.DevtoolsInstall do
-  use Surface.LiveView
+  use ControlServerWeb, :live_view
+
+  import ControlServerWeb.Layout
+  import ControlServerWeb.ServicesLive.DevtoolsStepZero
 
   alias CommonUI.Progress
-  alias CommonUI.Progress.Step
-  alias ControlServerWeb.Layout
-  alias ControlServerWeb.ServicesLive.DevtoolsStepZero
 
   require Logger
-
-  data step, :integer, default: 0
-  data scm_provider, :atom, default: :github
 
   def handle_event("progress:change" = e_name, %{"payload" => index} = e, socket) do
     {int_val, ""} = Integer.parse(index)
@@ -19,21 +16,21 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsInstall do
   end
 
   def render(assigns) do
-    ~F"""
-    <Layout>
+    ~H"""
+    <.layout>
       <div class="max-w-4xl mx-auto">
         <div class="flex flex-col overflow-hidden bg-white divide-y divide-gray-200 rounded-lg shadow">
-          <DevtoolsStepZero />
+          <.step_zero />
           <div class="px-4 py-5 sm:p-6">
-            <Progress>
-              <Step name="Github/Gitlab" index={0} is_done={@step >= 0} change="progress:change" />
-              <Step name="Details" index={1} is_done={@step >= 1} change="progress:change" />
-              <Step name="Preview" index={2} is_done={@step >= 2} change="progress:change" />
-            </Progress>
+            <Progress.progress_holder>
+              <Progress.step name="Github/Gitlab" index={0} is_done={@step >= 0} change="progress:change" />
+              <Progress.step name="Details" index={1} is_done={@step >= 1} change="progress:change" />
+              <Progress.step name="Preview" index={2} is_done={@step >= 2} change="progress:change" />
+            </Progress.progress_holder>
           </div>
         </div>
       </div>
-    </Layout>
+    </.layout>
     """
   end
 end

@@ -1,20 +1,15 @@
 defmodule ControlServerWeb.PostgresClusterDisplay do
-  use Surface.Component
+  use Phoenix.Component
+  use PetalComponents
 
-  alias CommonUI.Button
-  alias CommonUI.ShadowContainer
-  alias Surface.Components.LivePatch
+  import CommonUI.ShadowContainer
 
-  prop clusters, :list, default: []
-
-  @impl true
-  def render(assigns) do
-    ~F"""
+  def pg_cluster_display(assigns) do
+    ~H"""
     <h3 class="my-2 text-lg leading-7 sm:text-3xl sm:truncate">
       Postgres Clusters
     </h3>
-
-    <ShadowContainer>
+    <.shadow_container>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-100">
           <tr>
@@ -45,42 +40,44 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
           </tr>
         </thead>
         <tbody>
-          {#for {cluster, idx} <- Enum.with_index(@clusters)}
-            {cluster_row(cluster, idx, assigns)}
-          {/for}
+          <%= for {cluster, idx} <- Enum.with_index(@clusters) do %>
+            <.cluster_row cluster={cluster} idx={idx} />
+          <% end %>
         </tbody>
       </table>
-    </ShadowContainer>
-
-    <LivePatch to="/services/database/clusters/new" class="ml-8 mt-15">
-      <Button type="primary">
+    </.shadow_container>
+    <.link to="/services/database/clusters/new" class="ml-8 mt-15">
+      <.button type="primary">
         New Cluster
-      </Button>
-    </LivePatch>
+      </.button>
+    </.link>
     """
   end
 
-  defp cluster_row(cluster, idx, assigns) do
-    ~F"""
-    <tr class={"bg-white": rem(idx, 2) == 0, "bg-gray-100": rem(idx, 2) == 1}>
+  defp cluster_row(assigns) do
+    ~H"""
+    <tr class={row_class(@idx)}>
       <td scope="row" class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-        {cluster.name}
+        <%= @cluster.name %>
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-        {cluster.postgres_version}
+        <%= @cluster.postgres_version %>
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-        {cluster.num_instances}
+        <%= @cluster.num_instances %>
       </td>
-
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
         <span>
-          <LivePatch to="/" class="mt-8 text-lg font-medium text-left">
+          <.link to="/" class="mt-8 text-lg font-medium text-left">
             Edit Cluster
-          </LivePatch>
+          </.link>
         </span>
       </td>
     </tr>
     """
   end
+
+  defp row_class(idx), do: do_row_class(rem(idx, 2))
+  defp do_row_class(1 = _remainder), do: []
+  defp do_row_class(_remainder), do: []
 end

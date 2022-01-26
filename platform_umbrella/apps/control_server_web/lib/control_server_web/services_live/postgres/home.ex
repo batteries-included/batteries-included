@@ -2,16 +2,16 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
   use Timex
 
-  alias CommonUI.Button
-  alias CommonUI.Layout.Title
+  import ControlServerWeb.Layout
+  import ControlServerWeb.PostgresClusterDisplay
+  import ControlServerWeb.PodDisplay
+
   alias ControlServer.Postgres
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.Layout
-  alias ControlServerWeb.PostgresClusterDisplay
 
   require Logger
 
@@ -60,15 +60,15 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout>
-      <Title>Databases</Title>
-      {#if @running}
+    ~H"""
+    <.layout>
+      <.title>Databases</.title>
+      <%= if @running do %>
         <div class="mt-4">
-          <PostgresClusterDisplay {=@clusters} />
-          <ControlServerWeb.PodDisplay {=@pods} />
+          <.pg_cluster_display clusters={@clusters} />
+          <.pods_display pods={@pods} />
         </div>
-      {#else}
+      <% else %>
         <div class="mt-4 row">
           <div class="col align-self-center">
             The database service is not currently enabled on this Batteries included
@@ -77,13 +77,13 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
         </div>
         <div class="row">
           <div class="m-5 text-center col align-self-center">
-            <Button opts={"phx-click": "start_service"} theme="primary">
+            <.button phx-click="start_service">
               Install
-            </Button>
+            </.button>
           </div>
         </div>
-      {/if}
-    </Layout>
+      <% end %>
+    </.layout>
     """
   end
 end

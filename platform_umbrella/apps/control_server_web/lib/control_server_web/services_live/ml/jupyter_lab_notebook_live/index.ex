@@ -1,19 +1,13 @@
 defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
 
-  alias CommonUI.Button
-  alias CommonUI.Layout.Title
+  import ControlServerWeb.Layout
+
   alias ControlServer.Notebooks
-  alias ControlServerWeb.Layout
-
-  alias Surface.Components.{Link, LiveRedirect}
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> Surface.init()
-     |> assign(:jupyter_lab_notebooks, list_jupyter_lab_notebooks())}
+    {:ok, assign(socket, :jupyter_lab_notebooks, list_jupyter_lab_notebooks())}
   end
 
   @impl true
@@ -50,54 +44,61 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout>
+    ~H"""
+    <.layout>
       <:title>
-        <Title>Jupyter Notebooks</Title>
+        <.title>Jupyter Notebooks</.title>
       </:title>
-
       <table>
         <thead>
           <tr>
             <th>Name</th>
             <th>Image</th>
-
             <th />
           </tr>
         </thead>
         <tbody id="jupyter_lab_notebooks">
-          {#for notebook <- @jupyter_lab_notebooks}
+          <%= for notebook <- @jupyter_lab_notebooks do %>
             <tr id="jupyter_lab_notebook-{jupyter_lab_notebook.id}">
-              <td>{notebook.name}</td>
-              <td>{notebook.image}</td>
-
+              <td>
+                <%= notebook.name %>
+              </td>
+              <td>
+                <%= notebook.image %>
+              </td>
               <td>
                 <span>
-                  <LiveRedirect to={Routes.services_jupyter_lab_notebook_show_path(@socket, :index, notebook)}>
+                  <.link
+                    link_type="live_redirect"
+                    to={Routes.services_jupyter_lab_notebook_show_path(@socket, :index, notebook)}
+                  >
                     Show
-                  </LiveRedirect>
+                  </.link>
                 </span>
-
                 <span>
-                  <a href={"http://anton2:8081/x/notebooks/#{notebook.name}"}>Open</a>
+                  <a href={"http://anton2:8081/x/notebooks/#{notebook.name}"}>
+                    Open
+                  </a>
                 </span>
                 |
                 <span>
-                  <Link
+                  <.link
                     label="Delete"
                     to="#"
-                    click="delete"
-                    opts={"phx-value-id": notebook.id, data: [confirm: "Are you sure?"]}
+                    phx-click="delete"
+                    phx-value-id={notebook.id}
+                    data={[confirm: "Are you sure?"]}
                   />
                 </span>
               </td>
             </tr>
-          {/for}
+          <% end %>
         </tbody>
       </table>
-
-      <Button opts={"phx-click": "start_notebook"} theme="primary">Start Notebook</Button>
-    </Layout>
+      <.button phx-click="start_notebook">
+        Start Notebook
+      </.button>
+    </.layout>
     """
   end
 end

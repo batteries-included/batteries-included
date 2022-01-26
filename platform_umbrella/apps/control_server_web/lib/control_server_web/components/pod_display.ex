@@ -1,16 +1,14 @@
 defmodule ControlServerWeb.PodDisplay do
-  use Surface.Component
+  use Phoenix.Component
 
-  alias CommonUI.ShadowContainer
+  import CommonUI.ShadowContainer
 
-  prop pods, :list, default: []
-
-  def render(assigns) do
-    ~F"""
+  def pods_display(assigns) do
+    ~H"""
     <h3 class="mt-2 text-lg leading-7 sm:text-3xl sm:truncate">
       Pods
     </h3>
-    <ShadowContainer>
+    <.shadow_container>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-100">
           <tr>
@@ -41,29 +39,29 @@ defmodule ControlServerWeb.PodDisplay do
           </tr>
         </thead>
         <tbody>
-          {#for {pod, _idx} <- Enum.with_index(@pods)}
-            {pod_row(pod, assigns)}
-          {/for}
+          <%= for {pod, _idx} <- Enum.with_index(@pods) do %>
+            <.pod_row pod={pod} />
+          <% end %>
         </tbody>
       </table>
-    </ShadowContainer>
+    </.shadow_container>
     """
   end
 
-  defp pod_row(pod, assigns) do
-    ~F"""
+  defp pod_row(assigns) do
+    ~H"""
     <tr class={["bg-white", "bg-gray-100"]}>
       <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-        {pod["metadata"]["name"]}
+        <%= @pod["metadata"]["name"] %>
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-        {pod["status"]["phase"]}
+        <%= @pod["status"]["phase"] %>
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-        {pod["summary"]["restartCount"]}
+        <%= @pod["summary"]["restartCount"] %>
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-        {pod["summary"]["fromStart"]}
+        <%= @pod["summary"]["fromStart"] %>
       </td>
     </tr>
     """

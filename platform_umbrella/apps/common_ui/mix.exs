@@ -12,7 +12,7 @@ defmodule CommonUI.MixProject do
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      compilers: [:phoenix] ++ Mix.compilers() ++ [:surface],
+      compilers: [:phoenix] ++ Mix.compilers(),
       deps: deps(),
       aliases: aliases()
     ]
@@ -26,26 +26,15 @@ defmodule CommonUI.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"] ++ catalogues()
-  defp elixirc_paths(:dev), do: ["lib"] ++ catalogues()
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib"]
   defp elixirc_paths(_), do: ["lib"]
-
-  def catalogues do
-    [
-      # Local catalogue
-      "priv/catalogue",
-      Path.expand("../common_ui/priv/catalogue")
-    ]
-  end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:phoenix_live_view, "~> 0.17.5"},
-      # Surface components
-      {:surface, "~> 0.7.0"}
-      # The story book like catalogue.
-      # {:surface_catalogue, "~> 0.3.0", only: [:dev, :test]}
+      {:petal_components, "~> 0.9.2"}
     ]
   end
 

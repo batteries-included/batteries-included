@@ -11,7 +11,7 @@ defmodule ControlServerWeb.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers() ++ [:surface],
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -29,8 +29,8 @@ defmodule ControlServerWeb.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"] ++ catalogues()
-  defp elixirc_paths(:dev), do: ["lib"] ++ catalogues()
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -52,8 +52,8 @@ defmodule ControlServerWeb.MixProject do
       {:control_server, in_umbrella: true},
       {:kube_usage, in_umbrella: true},
       # Components
-      {:surface, "~> 0.7.0"},
       {:common_ui, in_umbrella: true},
+      {:petal_components, "~> 0.9.2"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}
     ]

@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.ServicesLive.PostgresNew do
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
 
-  alias CommonUI.Layout.Title
+  import ControlServerWeb.Layout
+
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
-  alias ControlServerWeb.Layout
   alias ControlServerWeb.ServicesLive.Postgres.FormComponent
 
   require Logger
@@ -16,7 +16,6 @@ defmodule ControlServerWeb.ServicesLive.PostgresNew do
 
     {:ok,
      socket
-     |> Surface.init()
      |> assign(:cluster, cluster)
      |> assign(:changeset, changeset)}
   end
@@ -41,21 +40,22 @@ defmodule ControlServerWeb.ServicesLive.PostgresNew do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout>
+    ~H"""
+    <.layout>
       <:title>
-        <Title>New Cluster</Title>
+        <.title>New Cluster</.title>
       </:title>
       <h1>New Postgres Cluster</h1>
       <div>
-        <FormComponent
+        <.live_component
+          module={FormComponent}
           cluster={@cluster}
           id={@cluster.id || "new-cluster-form"}
           action={:new}
           save_target={self()}
         />
       </div>
-    </Layout>
+    </.layout>
     """
   end
 end

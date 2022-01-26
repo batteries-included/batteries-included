@@ -1,5 +1,6 @@
 [
-  import_deps: [:phoenix, :surface],
-  inputs: ["*.{ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{ex,exs}"],
-  surface_inputs: ["{lib,test}/**/*.{ex,sface}"]
+  import_deps: [:phoenix],
+  inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}"],
+  subdirectories: ["priv/*/migrations"],
+  plugins: [HeexFormatter]
 ]

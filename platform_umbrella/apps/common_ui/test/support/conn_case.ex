@@ -3,8 +3,8 @@ defmodule CommonUI.ConnCase do
 
   using do
     quote do
-      # These are live view test of surface compontnets
-      use Surface.LiveViewTest
+      # These are live view test of compontnets
+      import Phoenix.LiveViewTest
 
       # Use the Endpoint.
       @endpoint Endpoint

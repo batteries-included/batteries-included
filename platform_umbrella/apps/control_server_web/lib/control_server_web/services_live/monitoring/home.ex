@@ -2,14 +2,13 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
 
-  alias CommonUI.Button
-  alias CommonUI.Layout.Title
+  import ControlServerWeb.Layout
+  import ControlServerWeb.PodDisplay
+
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.Layout
-  alias Surface.Components.Link
 
   require Logger
 
@@ -50,33 +49,35 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout>
-      <Title>Monitoring</Title>
+    ~H"""
+    <.layout>
+      <:title>
+        <.title>Monitoring</.title>
+      </:title>
       <div class="container-xxl">
-        {#if @running}
+        <%= if @running do %>
           <div class="mt-4 row">
             <div class="col">
               <ul>
                 <li>
-                  <Link to={Routes.services_grafana_path(@socket, :index)}>
+                  <.link to={Routes.services_grafana_path(@socket, :index)}>
                     Grafana
-                  </Link>
+                  </.link>
                 </li>
                 <li>
-                  <Link to={Routes.services_prometheus_path(@socket, :index)}>
+                  <.link to={Routes.services_prometheus_path(@socket, :index)}>
                     Prometheus
-                  </Link>
+                  </.link>
                 </li>
               </ul>
             </div>
           </div>
           <div class="mt-2 row">
             <div class="col">
-              <ControlServerWeb.PodDisplay {=@pods} />
+              <.pods_display pods={@pods} />
             </div>
           </div>
-        {#else}
+        <% else %>
           <div class="mt-4 row">
             <div class="col align-self-center">
               The monitoring service is not currently enabled on this Batteries included
@@ -85,14 +86,14 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
           </div>
           <div class="row">
             <div class="m-5 text-center col align-self-center">
-              <Button click="start_service">
+              <.button phx-click="start_service">
                 Install
-              </Button>
+              </.button>
             </div>
           </div>
-        {/if}
+        <% end %>
       </div>
-    </Layout>
+    </.layout>
     """
   end
 end

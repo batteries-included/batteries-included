@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Router do
   use ControlServerWeb, :router
 
   import Phoenix.LiveDashboard.Router
-  # import Surface.Catalogue.Router
 
   pipeline :browser do
     plug :accepts, ["html"]

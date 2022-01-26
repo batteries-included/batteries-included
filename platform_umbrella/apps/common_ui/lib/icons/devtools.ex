@@ -1,10 +1,8 @@
 defmodule CommonUI.Icons.Devtools do
-  use Surface.Component
-
-  prop(class, :css_class, default: [])
+  use Phoenix.Component
 
   def render(assigns) do
-    ~F"""
+    ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"

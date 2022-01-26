@@ -50,7 +50,6 @@ defmodule HomeBaseWeb.MixProject do
       {:gettext, "~> 0.19"},
       {:home_base, in_umbrella: true},
       # Components
-      {:surface, "~> 0.7.0"},
       {:common_ui, in_umbrella: true},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}

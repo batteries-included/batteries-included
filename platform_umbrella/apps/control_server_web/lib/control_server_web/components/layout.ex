@@ -1,54 +1,54 @@
 defmodule ControlServerWeb.Layout do
-  use Surface.Component
+  use Phoenix.Component
 
-  alias CommonUI.Layout.MenuItem
+  alias CommonUI.Layout, as: BaseLayout
 
-  slot default, required: true
-  slot title
+  @default_menu_item_class ["hover:bg-astral-100", "hover:text-pink-500", "text-gray-500"]
+  @default_icon_class ["text-astral-500", "group-hover:text-pink-500"]
 
-  @menu_item_class ["hover:bg-astral-100", "hover:text-pink-500", "text-gray-500"]
-  @icon_class ["text-astral-500", "group-hover:text-pink-500"]
+  defp assign_defaults(assigns) do
+    assigns
+    |> assign_new(:menu_item_class, fn -> @default_menu_item_class end)
+    |> assign_new(:icon_class, fn -> @default_icon_class end)
+    |> assign_new(:container_type, fn -> :default end)
+    |> assign_new(:title, fn -> [] end)
+  end
 
-  prop container_type, :atom, default: :default
+  defdelegate title(assigns), to: BaseLayout
 
-  def render(assigns) do
-    mic = @menu_item_class
-    ic = @icon_class
+  def layout(assigns) do
+    assigns = assign_defaults(assigns)
 
-    ~F"""
-    <CommonUI.Layout bg_class="bg-white" container_type={@container_type}>
+    ~H"""
+    <BaseLayout.layout bg_class="bg-white" container_type={@container_type}>
       <:title>
-        <#slot name="title">
-        </#slot>
+        <%= render_slot(@title) %>
       </:title>
       <:main_menu>
-        <MenuItem to="/services/database" name="Databases" class={mic}>
-          <CommonUI.Icons.Database class={ic} />
-        </MenuItem>
-        <MenuItem to="/services/ml/training" name="Training" class={mic}>
-          <CommonUI.Icons.Training class={ic} />
-        </MenuItem>
-        <MenuItem to="/services/ml/notebooks" name="Notebooks" class={mic}>
-          <CommonUI.Icons.Notebook class={ic} />
-        </MenuItem>
-        <MenuItem to="/services/monitoring" name="Monitoring" class={mic}>
-          <CommonUI.Icons.Monitoring class={ic} />
-        </MenuItem>
-        <MenuItem to="/services/devtools" name="Devtools" class={mic}>
-          <CommonUI.Icons.Devtools class={ic} />
-        </MenuItem>
-        <MenuItem to="/services/security" name="Security" class={mic}>
-          <CommonUI.Icons.Security class={ic} />
-        </MenuItem>
-        <MenuItem to="/services/network" name="Network" class={mic}>
-          <CommonUI.Icons.Network class={ic} />
-        </MenuItem>
+        <BaseLayout.menu_item to="/services/database" name="Databases" class={@menu_item_class}>
+          <CommonUI.Icons.Database.render class={@icon_class} />
+        </BaseLayout.menu_item>
+        <BaseLayout.menu_item to="/services/ml/training" name="Training" class={@menu_item_class}>
+          <CommonUI.Icons.Training.render class={@icon_class} />
+        </BaseLayout.menu_item>
+        <BaseLayout.menu_item to="/services/ml/notebooks" name="Notebooks" class={@menu_item_class}>
+          <CommonUI.Icons.Notebook.render class={@icon_class} />
+        </BaseLayout.menu_item>
+        <BaseLayout.menu_item to="/services/monitoring" name="Monitoring" class={@menu_item_class}>
+          <CommonUI.Icons.Monitoring.render class={@icon_class} />
+        </BaseLayout.menu_item>
+        <BaseLayout.menu_item to="/services/devtools" name="Devtools" class={@menu_item_class}>
+          <CommonUI.Icons.Devtools.render class={@icon_class} />
+        </BaseLayout.menu_item>
+        <BaseLayout.menu_item to="/services/security" name="Security" class={@menu_item_class}>
+          <CommonUI.Icons.Security.render class={@icon_class} />
+        </BaseLayout.menu_item>
+        <BaseLayout.menu_item to="/services/network" name="Network" class={@menu_item_class}>
+          <CommonUI.Icons.Network.render class={@icon_class} />
+        </BaseLayout.menu_item>
       </:main_menu>
-
-      <:default>
-        <#slot name="default" />
-      </:default>
-    </CommonUI.Layout>
+      <%= render_slot(@inner_block) %>
+    </BaseLayout.layout>
     """
   end
 end

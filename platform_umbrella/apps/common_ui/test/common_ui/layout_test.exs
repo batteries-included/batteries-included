@@ -1,19 +1,26 @@
 defmodule CommonUI.LayoutTest do
-  use CommonUI.ConnCase
+  use ExUnit.Case
 
-  alias CommonUI.Layout
+  import Phoenix.LiveViewTest
+  import Phoenix.LiveView.Helpers
 
-  @endpoint Endpoint
+  import CommonUI.Layout
 
   test "Layout can render iframe" do
+    assigns = %{}
+
     html =
-      render_surface do
-        ~F"""
-        <Layout container_type={:iframe}>Hello</Layout>
-        """
-      end
+      rendered_to_string(~H"""
+      <.layout container_type={:iframe}>
+        <:title>Test Title</:title>
+        <:main_menu>Empty Menu</:main_menu>
+        Hello World
+      </.layout>
+      """)
 
     assert html =~ "flex-1 py-0 px-0 w-full"
-    assert html =~ "Hello"
+    assert html =~ "Hello World"
+    assert html =~ "Test Title"
+    assert html =~ "Empty Menu"
   end
 end

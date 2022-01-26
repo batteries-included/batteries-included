@@ -1,24 +1,23 @@
 <div>
-  <h2><%= @title %></h2>
-
+  <h2>
+    <%= @title %>
+  </h2>
   <.form
     let={f}
     for={@changeset}
     id="stripe_subscription-form"
     phx-target={@myself}
     phx-change="validate"
-    phx-submit="save">
-  
-    <%= label f, :company %>
-    <%= text_input f, :company %>
-    <%= error_tag f, :company %>
-  
-    <%= label f, :stripe_subscription_id %>
-    <%= text_input f, :stripe_subscription_id %>
-    <%= error_tag f, :stripe_subscription_id %>
-  
+    phx-submit="save"
+  >
+    <%= label(f, :company) %>
+    <%= text_input(f, :company) %>
+    <%= error_tag(f, :company) %>
+    <%= label(f, :stripe_subscription_id) %>
+    <%= text_input(f, :stripe_subscription_id) %>
+    <%= error_tag(f, :stripe_subscription_id) %>
     <div>
-      <%= submit "Save", phx_disable_with: "Saving..." %>
+      <%= submit("Save", phx_disable_with: "Saving...") %>
     </div>
   </.form>
 </div>

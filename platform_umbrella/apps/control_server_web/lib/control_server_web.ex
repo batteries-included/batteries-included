@@ -37,8 +37,6 @@ defmodule ControlServerWeb do
       import Phoenix.Controller,
         only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
 
-      import Surface
-
       # Include shared imports and aliases for views
       unquote(view_helpers())
     end
@@ -78,22 +76,6 @@ defmodule ControlServerWeb do
     end
   end
 
-  def surface_component do
-    quote do
-      use Surface.LiveComponent
-      unquote(view_helpers())
-    end
-  end
-
-  def surface_view(layout_path \\ "live.html") do
-    quote do
-      use Surface.LiveView,
-        layout: {ControlServerWeb.LayoutView, unquote(layout_path)}
-
-      unquote(view_helpers())
-    end
-  end
-
   defp view_helpers do
     quote do
       # Use all HTML functionality (forms, tags, etc)
@@ -102,6 +84,7 @@ defmodule ControlServerWeb do
       # Import LiveView helpers (live_render, live_component, live_patch, etc)
       import Phoenix.LiveView.Helpers
       import ControlServerWeb.LiveHelpers
+      use PetalComponents
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View

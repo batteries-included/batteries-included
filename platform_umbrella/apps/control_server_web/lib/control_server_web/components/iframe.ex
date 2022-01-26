@@ -1,12 +1,14 @@
 defmodule ControlServerWeb.IFrame do
-  use Surface.Component
+  use Phoenix.Component
 
-  prop src, :string, required: true
-  prop id, :string, default: "Main_IFrame"
+  def iframe(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:src, fn -> nil end)
+      |> assign_new(:id, fn -> "main_IFrame" end)
 
-  def render(assigns) do
-    ~F"""
-    <iframe {=@src} class="iframe-container" phx-hook="IFrame" {=@id} />
+    ~H"""
+    <iframe src={@src} class="iframe-container" phx-hook="IFrame" id={@id} />
     """
   end
 end

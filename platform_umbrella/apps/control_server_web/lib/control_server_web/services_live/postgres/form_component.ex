@@ -1,28 +1,18 @@
 defmodule ControlServerWeb.ServicesLive.Postgres.FormComponent do
-  use ControlServerWeb, :surface_component
-
-  alias CommonUI.Button
-  alias CommonUI.Form.ErrorTag
-  alias CommonUI.Form.NumberInput
-  alias CommonUI.Form.TextInput
+  use ControlServerWeb, :live_component
 
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
 
-  alias Surface.Components.Form
-  alias Surface.Components.Form.Field
-  alias Surface.Components.Form.Label
-
   require Logger
 
-  @doc "The instance of Postgres Cluster being edited/created"
-  prop cluster, :map, required: true
-
-  @doc "The action (:new / :edit) for the form"
-  prop action, :atom, values: [:new, :edit], required: true
-
-  prop save_info, :string, default: "cluster:save"
-  prop save_target, :pid, required: false
+  @impl true
+  def mount(socket) do
+    {:ok,
+     socket
+     |> assign_new(:save_info, fn -> "cluster:save" end)
+     |> assign_new(:save_target, fn -> nil end)}
+  end
 
   @impl true
   def update(%{cluster: cluster} = assigns, socket) do
@@ -79,44 +69,51 @@ defmodule ControlServerWeb.ServicesLive.Postgres.FormComponent do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Form
-      for={assigns.changeset}
-      change="validate"
-      submit="save"
-      opts={id: "cluster-form"}
-      class="space-y-10"
-    >
-      <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-6">
-        <Field name={:name} class="sm:col-span-6">
-          <Label>Name</Label>
-          <TextInput />
-          <ErrorTag />
-        </Field>
-
-        <Field name={:num_instances} class="sm:col-span-3">
-          <Label>Number of Pods</Label>
-          <NumberInput opts={step: "any"} />
-          <ErrorTag />
-        </Field>
-
-        <Field name={:postgres_version} class="sm:col-span-3">
-          <Label>Postgres Version</Label>
-          <TextInput />
-          <ErrorTag />
-        </Field>
-
-        <Field name={:size} class="sm:col-span-6">
-          <Label>Storage Size</Label>
-          <TextInput />
-          <ErrorTag />
-        </Field>
-
-        <div>
-          <Button type="submit" theme="primary" opts={phx_disable_with: "Saving…"}>Save</Button>
+    ~H"""
+    <div class="space-y-10">
+      <.form
+        let={f}
+        for={@changeset}
+        id="cluster-form"
+        phx-change="validate"
+        phx-submit="save"
+        phx-target={@myself}
+      >
+        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <.form_field
+            type="text_input"
+            form={f}
+            field={:name}
+            placeholder="Name"
+            wrapper_class="sm:col-span-3"
+          />
+          <.form_field
+            type="number_input"
+            form={f}
+            field={:num_instances}
+            placeholder="Number of Instances"
+            wrapper_class="sm:col-span-3"
+          />
+          <.form_field
+            type="text_input"
+            form={f}
+            field={:postgres_version}
+            placeholder="Postgres Version"
+            wrapper_class="sm:col-span-3"
+          />
+          <.form_field
+            type="text_input"
+            form={f}
+            field={:size}
+            placeholder="Size"
+            wrapper_class="sm:col-span-3"
+          />
+          <.button type="submit" phx_disable_with="Saving…">
+            Save
+          </.button>
         </div>
-      </div>
-    </Form>
+      </.form>
+    </div>
     """
   end
 end

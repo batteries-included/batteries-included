@@ -2,13 +2,13 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use Surface.LiveView
+  use ControlServerWeb, :live_view
   use Timex
 
-  alias CommonUI.Button
+  import ControlServerWeb.Layout
+
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.Layout
 
   require Logger
 
@@ -49,16 +49,16 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout>
+    ~H"""
+    <.layout>
       <div class="container-xxl">
         <h2>Devtools</h2>
         <hr class="mt-4">
-        <Button click="start_service">
-          Install
-        </Button>
-      </div>
-    </Layout>
+          <.button phx-click="start_service">
+            Install
+          </.button>
+        </div>
+      </.layout>
     """
   end
 end

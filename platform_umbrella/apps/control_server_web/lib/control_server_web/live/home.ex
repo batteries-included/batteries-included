@@ -1,13 +1,11 @@
 defmodule ControlServerWeb.Live.Home do
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
 
-  alias ControlServerWeb.Layout
+  import ControlServerWeb.Layout
 
   def render(assigns) do
-    ~F"""
-    <Layout>
-      Coming Soon
-    </Layout>
+    ~H"""
+    <.layout>Coming Soon</.layout>
     """
   end
 end

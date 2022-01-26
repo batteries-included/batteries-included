@@ -1,5 +1,6 @@
 # Used by "mix format"
 [
-  import_deps: [:phoenix, :surface],
-  inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs,sface}"]
+  import_deps: [:phoenix],
+  inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}"],
+  plugins: [HeexFormatter]
 ]

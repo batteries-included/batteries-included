@@ -81,6 +81,10 @@ defmodule ControlServer.MixProject do
     [
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+
+      # We want to be able to test seeding the data so mix ecto.reset no
+      # longer seeds the database. This allows tests to
+      # MIX_ENV=test mix ecto.reset && mix test
       "ecto.reset": ["ecto.drop", "ecto.create", "ecto.migrate"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]

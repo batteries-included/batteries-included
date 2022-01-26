@@ -27,8 +27,8 @@ defmodule ControlServer.Umbrella.MixProject do
       {:credo_naming, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:surface_formatter, "~> 0.7.0", only: :dev, runtime: false},
       {:sobelow, "~> 0.11", only: :dev},
+      {:heex_formatter, github: "feliperenan/heex_formatter", only: [:dev], runtime: false},
       {:excoveralls, "~> 0.14", only: :test}
     ]
   end
@@ -91,7 +91,7 @@ defmodule ControlServer.Umbrella.MixProject do
     [
       setup: ["cmd mix setup"],
       "ecto.reset": ["cmd mix ecto.reset"],
-      fmt: ["format", "surface.format", "prettier"],
+      fmt: ["format", "prettier"],
       "fmt.check": ["format --check-formatted", "prettier_check"],
       prettier:
         "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier -w . --color",

@@ -3,6 +3,7 @@ const colors = require('tailwindcss/colors');
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 const typography = require('@tailwindcss/typography');
+const forms = require('@tailwindcss/forms');
 
 const fuscousGray = {
   50: '#f6f6f6',
@@ -28,19 +29,25 @@ const violetRed = {
   800: '#972653',
   900: '#7b1f44',
 };
+const astral = {
+  50: '#f4f8fa',
+  100: '#e9f2f6',
+  200: '#c8dee7',
+  300: '#a7cad9',
+  400: '#66a3bd',
+  500: '#247BA0',
+  600: '#206f90',
+  700: '#1b5c78',
+  800: '#164a60',
+  900: '#123c4e',
+};
 module.exports = {
   mode: 'jit',
   purge: [
     './js/**/*.js',
-    '../lib/**/*.ex',
-    '../lib/**/*.leex',
-    '../lib/**/*.heex',
-    '../lib/**/*.eex',
-    '../lib/**/*.sface',
-    '../../common_ui/lib/**/*.sface',
-    '../../common_ui/lib/**/*.ex',
-    '../../common_ui/lib/**/*.leex',
-    '../../common_ui/lib/**/*.heex',
+    '../lib/**/*.*ex',
+    '../../common_ui/lib/**/*.*ex',
+    '../../../deps/petal_components/**/*.*ex',
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
@@ -50,18 +57,9 @@ module.exports = {
       gray: fuscousGray,
       'violet-red': violetRed,
       pink: violetRed,
-      astral: {
-        50: '#f4f8fa',
-        100: '#e9f2f6',
-        200: '#c8dee7',
-        300: '#a7cad9',
-        400: '#66a3bd',
-        500: '#247BA0',
-        600: '#206f90',
-        700: '#1b5c78',
-        800: '#164a60',
-        900: '#123c4e',
-      },
+      astral,
+      primary: astral,
+      secondary: violetRed,
     },
     extend: {
       fontFamily: {
@@ -72,5 +70,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [typography],
+  plugins: [typography, forms],
 };

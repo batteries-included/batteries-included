@@ -1,9 +1,10 @@
 defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Show do
-  use ControlServerWeb, :surface_view
+  use ControlServerWeb, :live_view
+
+  import ControlServerWeb.IFrame
+  import ControlServerWeb.Layout
 
   alias ControlServer.Notebooks
-  alias ControlServerWeb.IFrame
-  alias ControlServerWeb.Layout
 
   @impl true
   def mount(_params, _session, socket) do
@@ -22,10 +23,10 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Show do
 
   @impl true
   def render(assigns) do
-    ~F"""
-    <Layout container_type={:iframe}>
-      <IFrame src={"/x/notebooks/#{@jupyter_lab_notebook.name}/lab"} />
-    </Layout>
+    ~H"""
+    <.layout container_type={:iframe}>
+      <.iframe src={"/x/notebooks/#{@jupyter_lab_notebook.name}/lab"} />
+    </.layout>
     """
   end
 end
