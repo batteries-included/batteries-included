@@ -3,5 +3,5 @@ elixir 1.13.1-otp-24
 nodejs 14.16.1
 rust 1.58.1
 python 3.8.5
-k3d 4.4.7
+k3d 5.2.2
 kubectl 1.22.0
