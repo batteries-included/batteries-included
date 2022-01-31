@@ -8,6 +8,7 @@ defmodule KubeRawResources.DatabaseSettings do
   @pg_operator_pod_account_name "battery-pg-pod"
   @pg_operator_image "registry.opensource.zalan.do/acid/postgres-operator"
   @pg_operator_version "v1.7.1"
+  @pg_operator_cluster_label "battery-pg-cluster"
 
   def namespace(config), do: Map.get(config, "namespace", @namepace)
   def bootstrap_clusters(config), do: Map.get(config, "bootstrap.clusters", [])
@@ -21,4 +22,7 @@ defmodule KubeRawResources.DatabaseSettings do
 
   def pg_operator_version(config),
     do: Map.get(config, "pg_operator.version", @pg_operator_version)
+
+  def cluster_name_label(config),
+    do: Map.get(config, "pg_operator.cluster_label", @pg_operator_cluster_label)
 end

@@ -4,7 +4,7 @@ defmodule KubeRawResources.PostgresOperator do
   alias KubeExt.Builder, as: B
   alias KubeRawResources.DatabaseSettings
 
-  def service_account_0(config) do
+  def service_account(config) do
     namespace = DatabaseSettings.namespace(config)
 
     %{
@@ -165,7 +165,7 @@ defmodule KubeRawResources.PostgresOperator do
     }
   end
 
-  def cluster_role_binding_0(config) do
+  def cluster_role_binding(config) do
     namespace = DatabaseSettings.namespace(config)
 
     %{
@@ -194,7 +194,7 @@ defmodule KubeRawResources.PostgresOperator do
     }
   end
 
-  def service_0(config) do
+  def service(config) do
     namespace = DatabaseSettings.namespace(config)
 
     %{
@@ -220,7 +220,7 @@ defmodule KubeRawResources.PostgresOperator do
     }
   end
 
-  def deployment_0(config) do
+  def deployment(config) do
     namespace = DatabaseSettings.namespace(config)
 
     %{
@@ -349,10 +349,11 @@ defmodule KubeRawResources.PostgresOperator do
 
   defp operator_configuration_kubernets(config, false = _include_dev_infrausers) do
     namespace = DatabaseSettings.namespace(config)
+    label_name = DatabaseSettings.cluster_name_label(config)
 
     %{
       "oauth_token_secret_name" => "battery-postgres-operator",
-      "cluster_name_label" => "battery-cluster-name",
+      "cluster_name_label" => label_name,
       "watched_namespace" => namespace
     }
   end
@@ -409,13 +410,13 @@ defmodule KubeRawResources.PostgresOperator do
   def materialize(config) do
     Map.merge(
       %{
-        "/0/service_account_0" => service_account_0(config),
-        "/1/cluster_role_0" => cluster_role_0(config),
-        "/2/cluster_role_1" => cluster_role_1(config),
-        "/3/cluster_role_binding_0" => cluster_role_binding_0(config),
-        "/3/cluster_role_binding_1" => pod_service_role_binding(config),
-        "/4/service_0" => service_0(config),
-        "/5/deployment_0" => deployment_0(config),
+        "/0/service_account" => service_account(config),
+        "/1/cluster_role/0" => cluster_role_0(config),
+        "/2/cluster_role/1" => cluster_role_1(config),
+        "/3/cluster_role_binding" => cluster_role_binding(config),
+        "/3/pod_service_role_binding" => pod_service_role_binding(config),
+        "/4/service" => service(config),
+        "/5/deployment_0" => deployment(config),
         "/6/operator_crd_instance" => operator_configuration(config)
       },
       infra_users(config)

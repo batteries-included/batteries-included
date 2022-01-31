@@ -1,18 +1,24 @@
-defmodule KubeResources.ServiceMonitors do
-  alias ControlServer.Services
-  alias ControlServer.Services.BaseService
-  alias KubeResources.MonitoringServiceMonitors
-  alias KubeResources.NetworkServiceMonitors
+defmodule KubeResources.MonitoringServiceMonitors do
+  @moduledoc """
+  This module contains the total of all the ServiceMonitors
+   that the monitoring base service will need.
 
-  def monitors do
-    Enum.flat_map(Services.list_base_services(), &monitors/1)
+   This keeps KubeResources.ServiceMonitors from depening upon
+   KubeServices.Monitoring which would create a loop. Most other BaseServices'
+   will have the monitors method.
+  """
+
+  alias KubeResources.Grafana
+  alias KubeResources.KubeState
+  alias KubeResources.NodeExporter
+  alias KubeResources.Prometheus
+  alias KubeResources.PrometheusOperator
+
+  def monitors(config) do
+    PrometheusOperator.monitors(config) ++
+      Prometheus.monitors(config) ++
+      Grafana.monitors(config) ++
+      NodeExporter.monitors(config) ++
+      KubeState.monitors(config)
   end
-
-  def monitors(%BaseService{service_type: service_type, config: config}),
-    do: monitors(service_type, config)
-
-  def monitors(:monitoring, config), do: MonitoringServiceMonitors.monitors(config)
-  def monitors(:network, config), do: NetworkServiceMonitors.monitors(config)
-
-  def monitors(_, _), do: []
 end

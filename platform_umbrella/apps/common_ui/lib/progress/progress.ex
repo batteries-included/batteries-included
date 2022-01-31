@@ -34,7 +34,7 @@ defmodule CommonUI.Progress do
           Step <%= @index + 1 %>
         </span>
         <span class="text-sm font-medium">
-        <%= @name %>
+          <%= @name %>
         </span>
       </a>
     </li>

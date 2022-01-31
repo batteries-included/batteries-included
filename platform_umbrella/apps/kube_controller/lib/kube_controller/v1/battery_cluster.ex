@@ -36,7 +36,6 @@ defmodule KubeController.V1.BatteryCluster do
   @impl Bella.Controller
   def reconcile(%{"metadata" => %{"name" => name}} = _batterycluster) do
     Logger.debug("Starting a reconcile for cluster #{name}")
-    KubeServices.apply()
     :ok
   end
 

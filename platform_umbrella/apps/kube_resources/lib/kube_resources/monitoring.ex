@@ -13,6 +13,7 @@ defmodule KubeResources.Monitoring do
     |> Map.merge(operator_defs(config))
     |> Map.merge(account_defs(config))
     |> Map.merge(main_defs(config))
+    |> Map.merge(service_monitors(config))
   end
 
   @prometheus_crd_path "priv/manifests/prometheus/prometheus-operator-0prometheusCustomResourceDefinition.yaml"
@@ -87,13 +88,14 @@ defmodule KubeResources.Monitoring do
       "/5/node/daemon" => NodeExporter.daemonset(config),
       "/5/node/service" => NodeExporter.service(config),
       "/5/kube/daemon" => KubeState.deployment(config),
-      "/5/kube/service" => KubeState.service(config),
+      "/5/kube/service" => KubeState.service(config)
       # "/5/alertmanager/config" => AlertManager.config(config),
       # "/5/alertmanager/alertmanager" => AlertManager.alertmanager(config),
       # "/5/alertmanager/service" => AlertManager.service(config),
-      "/6/service_monitors" => ServiceMonitors.monitors()
     }
   end
+
+  defp service_monitors(config), do: ServiceMonitors.monitors(config)
 
   defp prometheus_crd_content, do: unquote(File.read!(@prometheus_crd_path))
   defp prometheus_rule_crd_content, do: unquote(File.read!(@prometheus_rule_crd_path))
