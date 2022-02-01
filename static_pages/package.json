@@ -58,7 +58,7 @@
     "eslint-plugin-react-hooks": "4.3.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
     "next-images": "1.8.4",
-    "postcss": "8.4.5",
+    "postcss": "8.4.6",
     "postcss-import": "14.0.2",
     "postcss-preset-env": "7.3.0",
     "prettier": "2.5.1",
