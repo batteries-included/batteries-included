@@ -11,7 +11,7 @@ defmodule KubeRawResources.PostgresOperator do
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => "battery-postgres-operator",
+        "name" => "postgres-operator",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "postgres-operator",
@@ -187,7 +187,7 @@ defmodule KubeRawResources.PostgresOperator do
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => "battery-postgres-operator",
+          "name" => "postgres-operator",
           "namespace" => namespace
         }
       ]
@@ -207,7 +207,7 @@ defmodule KubeRawResources.PostgresOperator do
           "battery/managed" => "True"
         },
         "namespace" => namespace,
-        "name" => "battery-postgres-operator"
+        "name" => "postgres-operator"
       },
       "spec" => %{
         "type" => "ClusterIP",
@@ -222,6 +222,8 @@ defmodule KubeRawResources.PostgresOperator do
 
   def deployment(config) do
     namespace = DatabaseSettings.namespace(config)
+    operator_image = DatabaseSettings.pg_operator_image(config)
+    operator_version = DatabaseSettings.pg_operator_version(config)
 
     %{
       "apiVersion" => "apps/v1",
@@ -233,7 +235,7 @@ defmodule KubeRawResources.PostgresOperator do
           "battery/managed" => "True"
         },
         "namespace" => namespace,
-        "name" => "battery-postgres-operator"
+        "name" => "postgres-operator"
       },
       "spec" => %{
         "replicas" => 1,
@@ -253,16 +255,16 @@ defmodule KubeRawResources.PostgresOperator do
             }
           },
           "spec" => %{
-            "serviceAccountName" => "battery-postgres-operator",
+            "serviceAccountName" => "postgres-operator",
             "containers" => [
               %{
                 "name" => "postgres-operator",
-                "image" => "registry.opensource.zalan.do/acid/postgres-operator:v1.6.2",
+                "image" => "#{operator_image}:#{operator_version}",
                 "imagePullPolicy" => "IfNotPresent",
                 "env" => [
                   %{
                     "name" => "POSTGRES_OPERATOR_CONFIGURATION_OBJECT",
-                    "value" => "battery-postgres-operator"
+                    "value" => "postgres-operator"
                   }
                 ],
                 "resources" => %{
@@ -325,7 +327,7 @@ defmodule KubeRawResources.PostgresOperator do
       "apiVersion" => "acid.zalan.do/v1",
       "kind" => "OperatorConfiguration",
       "metadata" => %{
-        "name" => "battery-postgres-operator",
+        "name" => "postgres-operator",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "postgres-operator",
