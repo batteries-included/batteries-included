@@ -47,6 +47,10 @@ defmodule KubeExt.Builder do
     Map.put(build_resource("v1", "Secret"), "type", "Opaque")
   end
 
+  def build_resource(:knative_serving) do
+    build_resource("operator.knative.dev/v1alpha1", "KnativeServing")
+  end
+
   def build_resource(:ingress) do
     "networking.k8s.io/v1"
     |> build_resource("Ingress")

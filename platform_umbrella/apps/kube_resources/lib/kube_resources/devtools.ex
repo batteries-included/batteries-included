@@ -3,15 +3,22 @@ defmodule KubeResources.Devtools do
 
   alias KubeResources.DevtoolsSettings
   alias KubeResources.GithubActionsRunner
+  alias KubeResources.KnativeOperator
 
   @github_crd_path "priv/manifests/github/github_actions_runner-crds.yaml"
+  @knative_crd_path "priv/manifests/knative/operator-crds.yaml"
 
   def materialize(%{} = config) do
     static = %{
-      "/0/crd" => yaml(github_crd_content())
+      "/0/github_crd" => yaml(github_crd_content()),
+      "/0/knative_crd" => yaml(knative_crd_content())
     }
 
-    %{} |> Map.merge(static) |> Map.merge(body(config)) |> Map.merge(runner(config))
+    %{}
+    |> Map.merge(static)
+    |> Map.merge(body(config))
+    |> Map.merge(runner(config))
+    |> Map.merge(knative(config))
   end
 
   defp runner(config) do
@@ -56,5 +63,13 @@ defmodule KubeResources.Devtools do
     end
   end
 
+  def knative(config) do
+    config
+    |> KnativeOperator.materialize()
+    |> Enum.map(fn {key, value} -> {"/3/knative" <> key, value} end)
+    |> Enum.into(%{})
+  end
+
   defp github_crd_content, do: unquote(File.read!(@github_crd_path))
+  defp knative_crd_content, do: unquote(File.read!(@knative_crd_path))
 end

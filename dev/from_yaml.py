@@ -15,12 +15,14 @@ BAD_LABELS = {
     "app.kubernetes.io/version",
     "app.kubernetes.io/name",
     "install.operator.istio.io/owning-resource",
+    "operator.knative.dev/release",
     "chart",
     "release",
     "heritage",
 }
 RENAME_LABELS = {
-    "app" : "battery/app"
+    "app" : "battery/app",
+    "app.kubernetes.io/part-of": "battery/app"
 }
 
 BAD_ANNOTATIONS = {

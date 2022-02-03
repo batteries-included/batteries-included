@@ -6,6 +6,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
   use Timex
 
   import ControlServerWeb.Layout
+  import ControlServerWeb.PodDisplay
 
   alias ControlServer.Services
   alias ControlServer.Services.Pods
@@ -43,7 +44,6 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
   @impl true
   def handle_event("start_service", _, socket) do
     Services.Devtools.activate!()
-
     {:noreply, assign(socket, :running, true)}
   end
 
@@ -51,13 +51,20 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
   def render(assigns) do
     ~H"""
     <.layout>
-      <div class="container-xxl">
-        <h2>Devtools</h2>
-        <hr class="mt-4">
+      <:title>
+        <.title>Devtools</.title>
+      </:title>
+        <%= if @running do %>
+          <div class="mt-4">
+            <.pods_display pods={@pods} />
+          </div>
+        <% else %>
+        <div class="mt-4 row">
           <.button phx-click="start_service">
             Install
           </.button>
         </div>
+        <%end%>
       </.layout>
     """
   end
