@@ -2,12 +2,25 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.Layout
+  import ControlServerWeb.PodDisplay
 
   alias ControlServer.Notebooks
+  alias ControlServer.Services.Pods
+
+  @pod_update_time 5000
+
+  defp get_pods do
+    Enum.map(Pods.get(), &Pods.summarize/1)
+  end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :jupyter_lab_notebooks, list_jupyter_lab_notebooks())}
+    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
+
+    {:ok,
+     socket
+     |> assign(:jupyter_lab_notebooks, list_jupyter_lab_notebooks())
+     |> assign(:pods, get_pods())}
   end
 
   @impl true
@@ -19,6 +32,13 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
     socket
     |> assign(:page_title, "Listing Jupyter lab notebooks")
     |> assign(:jupyter_lab_notebook, nil)
+  end
+
+  @impl true
+  def handle_info(:update, socket) do
+    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
+
+    {:noreply, assign(socket, :pods, get_pods())}
   end
 
   @impl true
@@ -98,6 +118,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
       <.button phx-click="start_notebook">
         Start Notebook
       </.button>
+      <.pods_display pods={@pods} />
     </.layout>
     """
   end
