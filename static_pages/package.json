@@ -60,7 +60,7 @@
     "next-images": "1.8.4",
     "postcss": "8.4.6",
     "postcss-import": "14.0.2",
-    "postcss-preset-env": "7.3.0",
+    "postcss-preset-env": "7.3.1",
     "prettier": "2.5.1",
     "prettier-plugin-toml": "0.3.1",
     "tailwindcss": "3.0.18",
