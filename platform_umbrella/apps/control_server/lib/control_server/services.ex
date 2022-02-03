@@ -191,6 +191,7 @@ defmodule ControlServer.Services do
       [
         ControlServer.Services.Battery,
         ControlServer.Services.Network,
+        ControlServer.Services.ML,
         ControlServer.Services.Database
       ],
       fn def_mod ->
