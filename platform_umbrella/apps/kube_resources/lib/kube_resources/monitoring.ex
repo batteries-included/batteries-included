@@ -77,14 +77,11 @@ defmodule KubeResources.Monitoring do
   end
 
   defp main_defs(config) do
-    %{
+    %{}
+    |> Map.merge(Grafana.materialize(config))
+    |> Map.merge(%{
       "/5/prometheus/prometheus_main" => Prometheus.prometheus(config),
       "/5/prometheus/service" => Prometheus.service(config),
-      "/5/grafana/prometheus_datasource" => Grafana.prometheus_datasource_config(config),
-      "/5/grafana/prometheus_dashboard" => Grafana.dashboard_sources_config(config),
-      "/5/grafana/main_config" => Grafana.main_config(config),
-      "/5/grafana/grafana_deployment" => Grafana.deployment(config),
-      "/5/grafana/grafana_service" => Grafana.service(config),
       "/5/node/daemon" => NodeExporter.daemonset(config),
       "/5/node/service" => NodeExporter.service(config),
       "/5/kube/daemon" => KubeState.deployment(config),
@@ -92,7 +89,7 @@ defmodule KubeResources.Monitoring do
       # "/5/alertmanager/config" => AlertManager.config(config),
       # "/5/alertmanager/alertmanager" => AlertManager.alertmanager(config),
       # "/5/alertmanager/service" => AlertManager.service(config),
-    }
+    })
   end
 
   defp service_monitors(config), do: ServiceMonitors.monitors(config)

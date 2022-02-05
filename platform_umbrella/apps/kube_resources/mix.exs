@@ -19,6 +19,7 @@ defmodule KubeResources.MixProject do
 
   def application do
     [
+      mod: {KubeResources.Application, []},
       extra_applications: [:logger]
     ]
   end
@@ -32,6 +33,9 @@ defmodule KubeResources.MixProject do
       # Yaml
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 2.0"},
+      # Caching for http requests
+      {:cachex, "~> 3.4"},
+      {:finch, "~> 0.10.2"},
       {:kube_ext, in_umbrella: true},
       {:kube_raw_resources, in_umbrella: true},
       {:control_server, in_umbrella: true}

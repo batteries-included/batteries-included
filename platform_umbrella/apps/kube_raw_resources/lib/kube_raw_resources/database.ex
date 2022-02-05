@@ -10,6 +10,22 @@ defmodule KubeRawResources.Database do
   @exporter_port 9187
   @exporter_port_name "exporter"
 
+  @pg_hba [
+    ["local", "all", "all", "trust"],
+    ["hostssl", "all", "+zalandos", "127.0.0.1/32", "pam"],
+    ["host", "all", "all", "127.0.0.1/32", "md5"],
+    ["hostssl", "all", "+zalandos", "::1/128", "pam"],
+    ["host", "all", "all", "::1/128", "md5"],
+    ["hostssl", "replication", "standby", "all", "md5"],
+
+    # This line is added to allow postgres_exporter to attach since it can't use ssl yet.
+    # Certs aren't correct.
+    ["hostnossl", "all", "postgres", "0.0.0.0/0", "md5"],
+    ["hostnossl", "all", "all", "all", "reject"],
+    ["hostssl", "all", "+zalandos", "all", "pam"],
+    ["hostssl", "all", "all", "all", "md5"]
+  ]
+
   defp postgres_crd_content, do: unquote(File.read!(@postgres_crd_path))
 
   def postgres_crd do
@@ -25,33 +41,36 @@ defmodule KubeRawResources.Database do
       "metadata" => %{
         "namespace" => namespace,
         "battery/managed" => "True",
-        "name" => name(cluster)
+        "name" => full_name(cluster)
       },
       "spec" => %{
-        "teamId" => "default",
+        "teamId" => team_name(cluster),
         "numberOfInstances" => cluster.num_instances,
         "postgresql" => %{
           "version" => cluster.postgres_version
         },
+        "patroni" => %{"pg_hba" => pg_hba()},
         "volume" => %{
           "size" => cluster.size
         },
         "sidecars" => [
-          exporter_sidecar()
+          exporter_sidecar(cluster)
         ]
       }
     }
   end
 
-  defp name(%{} = cluster) do
-    team_name = "default"
+  defp full_name(%{} = cluster) do
+    team_name = team_name(cluster)
     "#{team_name}-#{cluster.name}"
   end
+
+  defp team_name(%{} = _cluster), do: "default"
 
   def metrics_service(%{} = cluster, config, role) do
     namespace = DatabaseSettings.namespace(config)
     label_name = DatabaseSettings.cluster_name_label(config)
-    cluster_name = name(cluster)
+    cluster_name = full_name(cluster)
 
     selector = cluster |> cluster_label_selector(config, role) |> Map.put("application", "spilo")
 
@@ -78,7 +97,7 @@ defmodule KubeRawResources.Database do
   end
 
   defp cluster_label_selector(%{} = cluster, config, role) do
-    cluster_name = name(cluster)
+    cluster_name = full_name(cluster)
     label_name = DatabaseSettings.cluster_name_label(config)
 
     %{
@@ -89,7 +108,7 @@ defmodule KubeRawResources.Database do
 
   def service_monitor(%{} = cluster, config, role) do
     namespace = DatabaseSettings.namespace(config)
-    cluster_name = name(cluster)
+    cluster_name = full_name(cluster)
     label_name = DatabaseSettings.cluster_name_label(config)
 
     monitor_name = "postgres-#{cluster_name}-#{role}"
@@ -116,7 +135,9 @@ defmodule KubeRawResources.Database do
     |> B.spec(spec)
   end
 
-  defp exporter_sidecar do
+  defp exporter_sidecar(cluster) do
+    cluster_name = full_name(cluster)
+
     %{
       "name" => "metrics-exporter",
       "image" => "quay.io/prometheuscommunity/postgres-exporter",
@@ -132,11 +153,31 @@ defmodule KubeRawResources.Database do
         "requests" => %{"cpu" => "100m", "memory" => "256M"}
       },
       "env" => [
-        %{"name" => "DATA_SOURCE_URI", "value" => "$(POD_NAME)/postgres?sslmode=disable"},
-        %{"name" => "DATA_SOURCE_USER", "value" => "$(POSTGRES_USER)"},
-        %{"name" => "DATA_SOURCE_PASS", "value" => "$(POSTGRES_PASSWORD)"}
+        %{"name" => "DATA_SOURCE_URI", "value" => "#{cluster_name}?sslmode=disable"},
+        %{
+          "name" => "DATA_SOURCE_USER",
+          "valueFrom" => %{
+            "secretKeyRef" => %{
+              "name" => "postgres.#{cluster_name}.credentials.postgresql.acid.zalan.do",
+              "key" => "username"
+            }
+          }
+        },
+        %{
+          "name" => "DATA_SOURCE_PASS",
+          "valueFrom" => %{
+            "secretKeyRef" => %{
+              "name" => "postgres.#{cluster_name}.credentials.postgresql.acid.zalan.do",
+              "key" => "password"
+            }
+          }
+        }
       ]
     }
+  end
+
+  defp pg_hba do
+    Enum.map(@pg_hba, fn spec -> Enum.join(spec, "\t") end)
   end
 
   defp bootstrap_clusters(config) do

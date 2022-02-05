@@ -4,18 +4,32 @@ defmodule KubeResources.Grafana do
   """
 
   alias KubeExt.Builder, as: B
+
   alias KubeExt.IniConfig
+  alias KubeResources.GrafanaDashboards
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
 
   @datasources_configmap "grafana-datasources"
-  @dashboards_configmap "grafana-dashboards"
   @main_configmap "grafana-config"
 
   @port 3000
   @port_name "http"
 
   @app_name "grafana"
+
+  def materialize(config) do
+    {depl, dashboards} = config |> deployment() |> GrafanaDashboards.add_dashboards(config)
+
+    %{
+      "/grafana/service_account" => service_account(config),
+      "/grafana/prometheus_datasource" => prometheus_datasource_config(config),
+      "/grafana/main_config" => main_config(config),
+      "/grafana/grafana_deployment" => depl,
+      "/grafana/dashboards" => dashboards,
+      "/grafana/grafana_service" => service(config)
+    }
+  end
 
   def ingress(config) do
     namespace = MonitoringSettings.namespace(config)
@@ -69,32 +83,6 @@ defmodule KubeResources.Grafana do
     |> B.name(@datasources_configmap)
     |> B.namespace(namespace)
     |> Map.put("data", %{"prometheus.yaml" => file_contents})
-  end
-
-  def dashboard_sources_config(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    file_contents =
-      Ymlr.Encoder.to_s!(%{
-        "apiVersion" => 1,
-        "providers" => [
-          %{
-            "folder" => "Default",
-            "name" => "0",
-            "options" => %{
-              "path" => "/grafana-dashboard-definitions/0"
-            },
-            "orgId" => 1,
-            "type" => "file"
-          }
-        ]
-      })
-
-    B.build_resource(:config_map)
-    |> B.app_labels(@app_name)
-    |> B.name(@dashboards_configmap)
-    |> B.namespace(namespace)
-    |> Map.put("data", %{"dashboards.yaml" => file_contents})
   end
 
   def main_config(config) do
@@ -217,11 +205,6 @@ defmodule KubeResources.Grafana do
         "mountPath" => "/etc/grafana/provisioning/datasources",
         "name" => @datasources_configmap,
         "readOnly" => false
-      },
-      %{
-        "mountPath" => "/etc/grafana/provisioning/dashboards",
-        "name" => @dashboards_configmap,
-        "readOnly" => false
       }
     ])
   end
@@ -243,12 +226,6 @@ defmodule KubeResources.Grafana do
         "configMap" => %{
           "name" => @main_configmap
         }
-      },
-      %{
-        "configMap" => %{
-          "name" => @dashboards_configmap
-        },
-        "name" => @dashboards_configmap
       }
     ]
   end

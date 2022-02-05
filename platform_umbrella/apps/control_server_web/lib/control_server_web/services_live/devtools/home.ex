@@ -54,18 +54,18 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
       <:title>
         <.title>Devtools</.title>
       </:title>
-        <%= if @running do %>
-          <div class="mt-4">
-            <.pods_display pods={@pods} />
-          </div>
-        <% else %>
+      <%= if @running do %>
+        <div class="mt-4">
+          <.pods_display pods={@pods} />
+        </div>
+      <% else %>
         <div class="mt-4 row">
           <.button phx-click="start_service">
             Install
           </.button>
         </div>
-        <%end%>
-      </.layout>
+      <% end %>
+    </.layout>
     """
   end
 end
