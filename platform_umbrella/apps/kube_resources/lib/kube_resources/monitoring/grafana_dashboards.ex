@@ -77,34 +77,108 @@ defmodule KubeResources.GrafanaDashboards do
   def dashboards(config, :database) do
     %{
       "/grafana-dashboard-definitions/1/#{grafana_dashboard_name(9628)}" =>
-        dashboard_configmap_from_grafana_id(config, 9628)
+        dashboard_configmap_from_grafana_id(config, 9628),
+      "/grafana-dashboard-definitions/1/#{grafana_dashboard_name(12_273)}" =>
+        dashboard_configmap_from_grafana_id(config, 12_273)
     }
   end
 
   def dashboards(_config, _service_type), do: %{}
 
+  def grafana_dashboard_name(id), do: "grafana-dashboard-#{id}"
+
   def dashboard_configmap_from_grafana_id(config, id) do
     namespace = MonitoringSettings.namespace(config)
 
-    raw_dash =
-      id
-      |> GrafanaDashboardClient.dashboard()
-      |> Map.put_new("templating", %{"list" => []})
-      |> update_in(~w(templating list), fn list ->
-        list = list || []
-        Enum.map(list, &set_template_datasource/1)
-      end)
+    dash = get_updated_dashboard(id)
 
     B.build_resource(:config_map)
     |> B.name(grafana_dashboard_name(id))
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> Map.put("data", %{
-      "dashboard.json" => Jason.encode!(raw_dash)
+      "dashboard.json" => Jason.encode!(dash)
     })
   end
 
-  def grafana_dashboard_name(id), do: "grafana-dashboard-#{id}"
+  def get_updated_dashboard(id) do
+    id
+    |> GrafanaDashboardClient.dashboard()
+    |> set_all_templated_prom()
+    |> extract_prometheus_templated_names()
+    |> extract_prometheus_input_names()
+    |> set_unset_inputs()
+  end
+
+  def set_all_templated_prom(dashboard) do
+    dashboard
+    |> Map.put_new("templating", %{"list" => []})
+    |> update_in(~w(templating list), fn list ->
+      list = list || []
+      Enum.map(list, &set_template_datasource/1)
+    end)
+  end
+
+  def extract_prometheus_templated_names(dash) do
+    %{
+      dash: dash,
+      # These are the templated variable names that
+      # don't need to be set even if they are in
+      # the __input list.
+      templated_names:
+        dash
+        |> get_in(~w(templating list))
+        |> Enum.filter(fn t -> Map.get(t, "type", nil) == "query" end)
+        |> Enum.map(fn t -> Map.get(t, "name") end)
+        |> Enum.into([])
+    }
+  end
+
+  def extract_prometheus_input_names(%{dash: dash, templated_names: templated_names}) do
+    %{
+      dash: dash,
+      prometheus_input_names:
+        dash
+        |> Map.get("__inputs", [])
+        |> Enum.filter(fn input -> Map.get(input, "pluginId", nil) == "prometheus" end)
+        |> Enum.map(fn input -> Map.get(input, "name") end)
+        |> Enum.reject(fn name -> Enum.member?(templated_names, name) end)
+    }
+  end
+
+  def set_unset_inputs(%{dash: dash, prometheus_input_names: prometheus_input_names}) do
+    prometheus_input_names
+    |> Enum.reduce(dash, fn potential_input_name, acc ->
+      recursive_update_datasources(acc, potential_input_name, "battery-prometheus")
+    end)
+    |> Map.drop(["__inputs"])
+    |> Map.drop(["__requires"])
+  end
+
+  def recursive_update_datasources(%{} = dash_object, input_name, new_value) do
+    dash_object
+    |> Map.map(fn {key, value} ->
+      case key do
+        "datasource" -> maybe_update(value, input_name, new_value)
+        _ -> recursive_update_datasources(value, input_name, new_value)
+      end
+    end)
+    |> Enum.into(%{})
+  end
+
+  def recursive_update_datasources(obj_list, input_name, new_value) when is_list(obj_list) do
+    Enum.map(obj_list, fn o -> recursive_update_datasources(o, input_name, new_value) end)
+  end
+
+  def recursive_update_datasources(value, _, _), do: value
+
+  def maybe_update(nil = _current_value, _, _), do: nil
+
+  def maybe_update(current_value, input_name, new_value) do
+    p_name = "${#{input_name}}"
+    name = "$#{input_name}"
+    current_value |> String.replace(p_name, new_value) |> String.replace(name, new_value)
+  end
 
   def set_template_datasource(%{"query" => "prometheus"} = template) do
     Map.put(template, "current", %{
