@@ -171,6 +171,10 @@ defmodule KubeRawResources.Database do
               "key" => "password"
             }
           }
+        },
+        %{
+          "name" => "PG_EXPORTER_AUTO_DISCOVER_DATABASES",
+          "value" => "true"
         }
       ]
     }
