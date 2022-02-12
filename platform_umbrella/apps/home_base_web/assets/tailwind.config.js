@@ -49,7 +49,6 @@ module.exports = {
     '../../common_ui/lib/**/*.*ex',
     '../../../deps/petal_components/**/*.*ex',
   ],
-  darkMode: false, // or 'media' or 'class'
   theme: {
     colors: {
       ...colors,
