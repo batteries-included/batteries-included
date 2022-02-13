@@ -1,12 +1,11 @@
 defmodule KubeRawResources.Database do
   import KubeExt.Yaml
+  import KubeRawResource.RawCluster
 
   alias KubeExt.Builder, as: B
 
   alias KubeRawResources.DatabaseSettings
   alias KubeRawResources.PostgresOperator
-
-  import KubeRawResource.RawCluster
 
   @postgres_crd_path "priv/manifests/postgres/postgres_operator-crds.yaml"
   @exporter_port 9187

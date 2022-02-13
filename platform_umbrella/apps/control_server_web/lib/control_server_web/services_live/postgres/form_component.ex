@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.ServicesLive.Postgres.FormComponent do
   use ControlServerWeb, :live_component
 
+  import CommonUI
+
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
-
-  import CommonUI
 
   require Logger
 

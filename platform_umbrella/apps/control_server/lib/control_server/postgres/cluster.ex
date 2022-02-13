@@ -3,10 +3,10 @@ defmodule ControlServer.Postgres.Cluster do
   The postgres cluster module
   """
   use Ecto.Schema
+  import Ecto.Changeset
 
   alias KubeRawResource.RawCluster
 
-  import Ecto.Changeset
   @timestamps_opts [type: :utc_datetime_usec]
 
   @primary_key {:id, :binary_id, autogenerate: true}
