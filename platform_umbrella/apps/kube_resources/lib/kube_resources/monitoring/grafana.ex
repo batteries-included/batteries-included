@@ -13,6 +13,8 @@ defmodule KubeResources.Grafana do
   @datasources_configmap "grafana-datasources"
   @main_configmap "grafana-config"
 
+  @prometheus_datasource_name "battery-prometheus"
+
   @port 3000
   @port_name "http"
 
@@ -69,7 +71,7 @@ defmodule KubeResources.Grafana do
           %{
             "access" => "proxy",
             "editable" => false,
-            "name" => "battery-prometheus",
+            "name" => @prometheus_datasource_name,
             "orgId" => 1,
             "type" => "prometheus",
             "url" => "http://prometheus-operated.#{namespace}.svc:9090",

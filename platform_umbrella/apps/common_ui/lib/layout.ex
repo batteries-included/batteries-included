@@ -3,7 +3,7 @@ defmodule CommonUI.Layout do
 
   use PetalComponents
 
-  @default_container_class "flex-1 max-w-7xl sm:px-6 lg:px-8 py-10"
+  @default_container_class "flex-1 max-w-7xl sm:px-6 lg:px-8 pt-10 pb-20"
   @iframe_container_class "flex-1 py-0 px-0 w-full h-full"
 
   defp container_class(:iframe), do: @iframe_container_class

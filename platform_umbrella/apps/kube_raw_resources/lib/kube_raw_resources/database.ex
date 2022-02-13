@@ -6,6 +6,8 @@ defmodule KubeRawResources.Database do
   alias KubeRawResources.DatabaseSettings
   alias KubeRawResources.PostgresOperator
 
+  import KubeRawResource.RawCluster
+
   @postgres_crd_path "priv/manifests/postgres/postgres_operator-crds.yaml"
   @exporter_port 9187
   @exporter_port_name "exporter"
@@ -51,7 +53,7 @@ defmodule KubeRawResources.Database do
         },
         "patroni" => %{"pg_hba" => pg_hba()},
         "volume" => %{
-          "size" => cluster.size
+          "size" => cluster.storage_size
         },
         "sidecars" => [
           exporter_sidecar(cluster)
@@ -59,13 +61,6 @@ defmodule KubeRawResources.Database do
       }
     }
   end
-
-  defp full_name(%{} = cluster) do
-    team_name = team_name(cluster)
-    "#{team_name}-#{cluster.name}"
-  end
-
-  defp team_name(%{} = _cluster), do: "default"
 
   def metrics_service(%{} = cluster, config, role) do
     namespace = DatabaseSettings.namespace(config)
