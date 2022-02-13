@@ -29,6 +29,7 @@ defmodule ControlServerWeb.Router do
 
     live "/services/database", ServicesLive.PostgresHome, :index
     live "/services/database/clusters/new", ServicesLive.PostgresNew, :new
+    live "/services/database/clusters/:id/edit", ServicesLive.PostgresEdit, :edit
 
     live "/services/devtools", ServicesLive.DevtoolsHome, :index
     live "/services/devtools/install", ServicesLive.DevtoolsInstall, :index

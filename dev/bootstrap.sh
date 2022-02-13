@@ -150,7 +150,7 @@ if [ $BUILD_CONTROL_SERVER == "true" ]; then
 fi
 
 if [ $FORWARD_CONTROL_POSTGRES == "true" ]; then
-  (retry postgresForward "default-control" "5432") &
+  (retry postgresForward "pg-control" "5432") &
 fi
 
 if [[ $FORWARD_HOME_POSTGRES == "true" ]]; then

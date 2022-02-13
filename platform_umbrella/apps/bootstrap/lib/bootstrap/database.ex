@@ -3,7 +3,9 @@ defmodule Bootstrap.Database do
     :name => "control",
     :postgres_version => "13",
     :num_instances => 1,
-    :size => "1G"
+    :storage_size => "500M",
+    :type => :internal,
+    :team_name => "pg"
   }
 
   def control_cluster do

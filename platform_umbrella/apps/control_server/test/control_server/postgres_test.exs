@@ -8,15 +8,15 @@ defmodule ControlServer.PostgresTest do
 
     @valid_attrs %{
       name: "some name",
-      num_instances: 42,
-      postgres_version: "some postgres_version",
-      size: "some size"
+      num_instances: 2,
+      postgres_version: "12.1",
+      storage_size: "500Mi"
     }
     @update_attrs %{
       name: "some updated name",
-      num_instances: 43,
-      postgres_version: "some updated postgres_version",
-      size: "some updated size"
+      num_instances: 3,
+      postgres_version: "13",
+      storage_size: "250Mi"
     }
     @invalid_attrs %{name: nil, num_instances: nil, postgres_version: nil, size: nil}
 
@@ -42,9 +42,9 @@ defmodule ControlServer.PostgresTest do
     test "create_cluster/1 with valid data creates a cluster" do
       assert {:ok, %Cluster{} = cluster} = Postgres.create_cluster(@valid_attrs)
       assert cluster.name == "some name"
-      assert cluster.num_instances == 42
-      assert cluster.postgres_version == "some postgres_version"
-      assert cluster.size == "some size"
+      assert cluster.num_instances == 2
+      assert cluster.postgres_version == "12.1"
+      assert cluster.storage_size == "500Mi"
     end
 
     test "create_cluster/1 with invalid data returns error changeset" do
@@ -55,9 +55,9 @@ defmodule ControlServer.PostgresTest do
       cluster = cluster_fixture()
       assert {:ok, %Cluster{} = cluster} = Postgres.update_cluster(cluster, @update_attrs)
       assert cluster.name == "some updated name"
-      assert cluster.num_instances == 43
-      assert cluster.postgres_version == "some updated postgres_version"
-      assert cluster.size == "some updated size"
+      assert cluster.num_instances == 3
+      assert cluster.postgres_version == "13"
+      assert cluster.storage_size == "250Mi"
     end
 
     test "update_cluster/2 with invalid data returns error changeset" do

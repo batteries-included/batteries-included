@@ -62,7 +62,9 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   def render(assigns) do
     ~H"""
     <.layout>
-      <.title>Databases</.title>
+      <:title>
+        <.title>Databases</.title>
+      </:title>
       <%= if @running do %>
         <div class="mt-4">
           <.pg_cluster_display clusters={@clusters} />

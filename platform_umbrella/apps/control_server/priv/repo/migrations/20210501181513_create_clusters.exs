@@ -6,12 +6,14 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :postgres_version, :string
-      add :size, :string
+      add :storage_size, :string
       add :num_instances, :integer
+      add :type, :string
+      add :team_name, :string
 
       timestamps(type: :utc_datetime_usec)
     end
 
-    create index(:clusters, [:name], unique: true)
+    create unique_index(:clusters, [:type, :team_name, :name])
   end
 end

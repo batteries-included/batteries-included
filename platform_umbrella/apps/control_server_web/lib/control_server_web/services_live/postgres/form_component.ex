@@ -1,6 +1,8 @@
 defmodule ControlServerWeb.ServicesLive.Postgres.FormComponent do
   use ControlServerWeb, :live_component
 
+  import CommonUI
+
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
 
@@ -21,13 +23,20 @@ defmodule ControlServerWeb.ServicesLive.Postgres.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:changeset, changeset)
+     |> assign(:full_name, Cluster.full_name(cluster))
+     |> assign(:num_instances, cluster.num_instances)}
   end
 
   @impl true
   def handle_event("validate", %{"cluster" => params}, socket) do
     {changeset, data} = Cluster.validate(params)
-    {:noreply, assign(socket, changeset: changeset, data: data)}
+
+    {:noreply,
+     socket
+     |> assign(:changeset, changeset)
+     |> assign(:full_name, Cluster.full_name(data))
+     |> assign(:num_instances, data.num_instances)}
   end
 
   def handle_event("save", %{"cluster" => cluster_params}, socket) do
@@ -79,36 +88,38 @@ defmodule ControlServerWeb.ServicesLive.Postgres.FormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-6">
+        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
           <.form_field
             type="text_input"
             form={f}
             field={:name}
             placeholder="Name"
-            wrapper_class="sm:col-span-3"
+            wrapper_class="sm:col-span-1"
           />
+          <div class="sm:col-span-1">
+            <.labeled_definition title={"Service Name"} contents={@full_name} />
+          </div>
           <.form_field
-            type="number_input"
+            type="range_input"
+            input_opts={%{min: 1, max: 5}}
             form={f}
             field={:num_instances}
             placeholder="Number of Instances"
-            wrapper_class="sm:col-span-3"
+            wrapper_class="sm:col-span-1"
           />
+          <div class="sm:col-span-1">
+            <.labeled_definition title={"Number of Instances"} contents={@num_instances} />
+          </div>
           <.form_field
             type="text_input"
             form={f}
-            field={:postgres_version}
-            placeholder="Postgres Version"
-            wrapper_class="sm:col-span-3"
+            field={:storage_size}
+            placeholder="Storage Size"
+            wrapper_class="sm:col-span-1"
           />
-          <.form_field
-            type="text_input"
-            form={f}
-            field={:size}
-            placeholder="Size"
-            wrapper_class="sm:col-span-3"
-          />
-          <.button type="submit" phx_disable_with="Saving…">
+        </div>
+        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
+          <.button type="submit" phx_disable_with="Saving…" class="sm:col-span-2">
             Save
           </.button>
         </div>

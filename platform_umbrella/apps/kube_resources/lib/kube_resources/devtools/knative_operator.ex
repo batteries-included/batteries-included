@@ -210,27 +210,20 @@ defmodule KubeResources.KnativeOperator do
     }
   end
 
-  def cluster_role(config) do
-    namespace = DevtoolsSettings.namespace(config)
-
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "ClusterRole",
-      "metadata" => %{
-        "name" => "knative-serving-operator-aggregated",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
-      },
-      "aggregationRule" => %{
-        "clusterRoleSelectors" => [
-          %{
-            "matchExpressions" => [
-              %{"key" => "serving.knative.dev/release", "operator" => "Exists"}
-            ]
-          }
-        ]
-      },
-      "rules" => []
-    }
+  def cluster_role(_config) do
+    B.build_resource(:cluster_role)
+    |> B.app_labels(@app_name)
+    |> B.name("knative-serving-operator-aggregated")
+    |> Map.put("rules", [])
+    |> Map.put("aggregationRule", %{
+      "clusterRoleSelectors" => [
+        %{
+          "matchExpressions" => [
+            %{"key" => "serving.knative.dev/release", "operator" => "Exists"}
+          ]
+        }
+      ]
+    })
   end
 
   def cluster_role_1(_config) do

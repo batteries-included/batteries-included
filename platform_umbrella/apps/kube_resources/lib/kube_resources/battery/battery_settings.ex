@@ -5,7 +5,7 @@ defmodule KubeResources.BatterySettings do
   @control_version "ddaa3d8-dirty"
   @control_name "control-server"
 
-  @default_pg_cluster_name "default-control"
+  @default_pg_cluster_name "pg-control"
   @default_pg_username "postgres"
 
   @spec namespace(map) :: String.t()
