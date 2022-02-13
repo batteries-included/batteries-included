@@ -4,6 +4,8 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
 
   import CommonUI.ShadowContainer
 
+  alias ControlServerWeb.Router.Helpers, as: Routes
+
   def pg_cluster_display(assigns) do
     ~H"""
     <h3 class="my-2 text-lg leading-7 sm:text-3xl sm:truncate">
@@ -68,7 +70,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
         <span>
-          <.link to="/" class="mt-8 text-lg font-medium text-left">
+          <.link to={cluster_edit_url(@cluster)} class="mt-8 text-lg font-medium text-left">
             Edit Cluster
           </.link>
         </span>
@@ -80,4 +82,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
   defp row_class(idx), do: do_row_class(rem(idx, 2))
   defp do_row_class(1 = _remainder), do: []
   defp do_row_class(_remainder), do: []
+
+  defp cluster_edit_url(cluster),
+    do: Routes.services_postgres_edit_path(ControlServerWeb.Endpoint, :edit, cluster.id)
 end

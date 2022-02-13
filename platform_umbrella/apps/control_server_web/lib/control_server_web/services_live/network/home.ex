@@ -57,27 +57,27 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
           Network Services
         </h2>
         <hr class="mt-4">
-          <%= if @running do %>
-            <div class="mt-4">
-              <.pods_display pods={@pods} />
-            </div>
-          <% else %>
-            <div class="mt-4 row">
-              <div class="col align-self-center">
-                The network service is not currently enabled on this Batteries included
+        <%= if @running do %>
+          <div class="mt-4">
+            <.pods_display pods={@pods} />
+          </div>
+        <% else %>
+          <div class="mt-4 row">
+            <div class="col align-self-center">
+              The network service is not currently enabled on this Batteries included
               cluster. To start installing please press the button.
-              </div>
             </div>
-            <div class="row">
-              <div class="m-5 text-center col align-self-center">
-                <.button phx-click="start_service">
-                  Install
-                </.button>
-              </div>
+          </div>
+          <div class="row">
+            <div class="m-5 text-center col align-self-center">
+              <.button phx-click="start_service">
+                Install
+              </.button>
             </div>
-          <% end %>
-        </div>
-      </.layout>
+          </div>
+        <% end %>
+      </div>
+    </.layout>
     """
   end
 end
