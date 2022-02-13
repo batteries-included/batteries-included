@@ -4,6 +4,8 @@ defmodule KubeRawResources.PostgresOperator do
   alias KubeExt.Builder, as: B
   alias KubeRawResources.DatabaseSettings
 
+  @app_name "postgres-operator"
+
   def service_account(config) do
     namespace = DatabaseSettings.namespace(config)
 
@@ -11,10 +13,10 @@ defmodule KubeRawResources.PostgresOperator do
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => "postgres-operator",
+        "name" => @app_name,
         "namespace" => namespace,
         "labels" => %{
-          "battery/app" => "postgres-operator",
+          "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -29,7 +31,7 @@ defmodule KubeRawResources.PostgresOperator do
       "metadata" => %{
         "name" => "postgres-pod",
         "labels" => %{
-          "battery/app" => "postgres-operator",
+          "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -66,7 +68,7 @@ defmodule KubeRawResources.PostgresOperator do
       "metadata" => %{
         "name" => "battery-postgres-operator",
         "labels" => %{
-          "battery/app" => "postgres-operator",
+          "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -174,7 +176,7 @@ defmodule KubeRawResources.PostgresOperator do
       "metadata" => %{
         "name" => "battery-postgres-operator",
         "labels" => %{
-          "battery/app" => "postgres-operator",
+          "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -197,27 +199,19 @@ defmodule KubeRawResources.PostgresOperator do
   def service(config) do
     namespace = DatabaseSettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Service",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => "postgres-operator",
-          "app.kubernetes.io/instance" => "battery",
-          "battery/managed" => "True"
-        },
-        "namespace" => namespace,
-        "name" => "postgres-operator"
-      },
-      "spec" => %{
-        "type" => "ClusterIP",
-        "ports" => [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
-        "selector" => %{
-          "app.kubernetes.io/instance" => "battery",
-          "battery/app" => "postgres-operator"
-        }
+    spec = %{
+      "type" => "ClusterIP",
+      "ports" => [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
+      "selector" => %{
+        "app.kubernetes.io/instance" => "battery",
+        "battery/app" => @app_name
       }
     }
+
+    B.build_resource(:service)
+    |> B.name("postgres-operator")
+    |> B.namespace(namespace)
+    |> Map.put("spec", spec)
   end
 
   def deployment(config) do
@@ -230,7 +224,7 @@ defmodule KubeRawResources.PostgresOperator do
       "kind" => "Deployment",
       "metadata" => %{
         "labels" => %{
-          "battery/app" => "postgres-operator",
+          "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         },
@@ -241,7 +235,7 @@ defmodule KubeRawResources.PostgresOperator do
         "replicas" => 1,
         "selector" => %{
           "matchLabels" => %{
-            "battery/app" => "postgres-operator",
+            "battery/app" => @app_name,
             "app.kubernetes.io/instance" => "battery"
           }
         },
@@ -249,7 +243,7 @@ defmodule KubeRawResources.PostgresOperator do
           "metadata" => %{
             "annotations" => %{},
             "labels" => %{
-              "battery/app" => "postgres-operator",
+              "battery/app" => @app_name,
               "app.kubernetes.io/instance" => "battery",
               "battery/managed" => "True"
             }
@@ -297,25 +291,21 @@ defmodule KubeRawResources.PostgresOperator do
     # the service account in the default namespace rather than the correct one.
     namespace = DatabaseSettings.namespace(config)
 
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "ClusterRoleBinding",
-      "metadata" => %{
-        "name" => "postgres-pod"
-      },
-      "roleRef" => %{
-        "apiGroup" => "rbac.authorization.k8s.io",
-        "kind" => "ClusterRole",
-        "name" => "postgres-pod"
-      },
-      "subjects" => [
-        %{
-          "kind" => "ServiceAccount",
-          "name" => "postgres-pod",
-          "namespace" => namespace
-        }
-      ]
-    }
+    B.build_resource(:cluster_role_binding)
+    |> B.name("postgres-pod")
+    |> B.app_labels(@app_name)
+    |> Map.put("roleRef", %{
+      "apiGroup" => "rbac.authorization.k8s.io",
+      "kind" => "ClusterRole",
+      "name" => "postgres-pod"
+    })
+    |> Map.put("subjects", [
+      %{
+        "kind" => "ServiceAccount",
+        "name" => "postgres-pod",
+        "namespace" => namespace
+      }
+    ])
   end
 
   def operator_configuration(config) do
@@ -330,7 +320,7 @@ defmodule KubeRawResources.PostgresOperator do
         "name" => "postgres-operator",
         "namespace" => namespace,
         "labels" => %{
-          "battery/app" => "postgres-operator",
+          "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
           "battery/managed" => "True"
         }
@@ -410,18 +400,17 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   def materialize(config) do
-    Map.merge(
-      %{
-        "/0/service_account" => service_account(config),
-        "/1/cluster_role/0" => cluster_role_0(config),
-        "/2/cluster_role/1" => cluster_role_1(config),
-        "/3/cluster_role_binding" => cluster_role_binding(config),
-        "/3/pod_service_role_binding" => pod_service_role_binding(config),
-        "/4/service" => service(config),
-        "/5/deployment_0" => deployment(config),
-        "/6/operator_crd_instance" => operator_configuration(config)
-      },
-      infra_users(config)
-    )
+    %{}
+    |> Map.merge(%{
+      "/0/service_account" => service_account(config),
+      "/1/cluster_role/0" => cluster_role_0(config),
+      "/2/cluster_role/1" => cluster_role_1(config),
+      "/3/cluster_role_binding" => cluster_role_binding(config),
+      "/3/pod_service_role_binding" => pod_service_role_binding(config),
+      "/4/service" => service(config),
+      "/5/deployment_0" => deployment(config),
+      "/6/operator_crd_instance" => operator_configuration(config)
+    })
+    |> Map.merge(infra_users(config))
   end
 end

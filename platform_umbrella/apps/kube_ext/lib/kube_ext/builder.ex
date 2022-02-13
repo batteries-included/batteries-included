@@ -39,6 +39,14 @@ defmodule KubeExt.Builder do
     build_resource("rbac.authorization.k8s.io/v1", "Role")
   end
 
+  def build_resource(:cluster_role) do
+    build_resource("rbac.authorization.k8s.io/v1", "ClusterRole")
+  end
+
+  def build_resource(:cluster_role_binding) do
+    build_resource("rbac.authorization.k8s.io/v1", "ClusterRoleBinding")
+  end
+
   def build_resource(:service_monitor) do
     build_resource("monitoring.coreos.com/v1", "ServiceMonitor")
   end
