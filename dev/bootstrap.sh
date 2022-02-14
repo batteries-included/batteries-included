@@ -139,7 +139,8 @@ if [[ $CREATE_CLUSTER == 'true' ]]; then
      --k3s-arg '--disable=traefik@server:*' \
      --registry-create battery-registr \
      --wait \
-    -p "8081:80@loadbalancer" || true
+     -s 3 \
+     -p "8081:80@loadbalancer" || true
 fi
 
 cargoBootstrap
