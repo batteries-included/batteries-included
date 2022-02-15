@@ -19,7 +19,6 @@ defmodule KubeResources.VirtualService do
 
   def virtual_service(:prometheus, config), do: Prometheus.virtual_service(config)
   def virtual_service(:grafana, config), do: Grafana.virtual_service(config)
-
   def virtual_service(:notebooks, config), do: Notebooks.virtual_service(config)
 
   def virtual_service(_, _config), do: []

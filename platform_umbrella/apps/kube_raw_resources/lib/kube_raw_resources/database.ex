@@ -38,13 +38,13 @@ defmodule KubeRawResources.Database do
       },
       "spec" => %{
         "teamId" => team_name(cluster),
-        "numberOfInstances" => cluster.num_instances,
+        "numberOfInstances" => num_instances(cluster),
         "postgresql" => %{
-          "version" => cluster.postgres_version
+          "version" => postgres_version(cluster)
         },
         "patroni" => %{"pg_hba" => pg_hba()},
         "volume" => %{
-          "size" => cluster.storage_size
+          "size" => storage_size(cluster)
         },
         "sidecars" => [
           exporter_sidecar(cluster)

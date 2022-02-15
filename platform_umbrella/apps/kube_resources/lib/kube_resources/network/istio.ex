@@ -1,41 +1,34 @@
 defmodule KubeResources.Istio do
   @moduledoc false
+  import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeResources.NetworkSettings
-  alias KubeResources.VirtualService
 
   @app_name "istio-operator"
   @crd_path "priv/manifests/istio/crd.yaml"
 
   def materialize(config) do
     %{}
-    |> Map.put("/istio/0/crd", crd(config))
-    |> Map.put("/istio/0/cluster_role", cluster_role(config))
-    |> Map.put("/istio/0/cluster_role_binding", cluster_role_binding(config))
-    |> Map.put("/istio/0/service_account", service_account(config))
-    |> Map.put("/istio/1/deployment", deployment(config))
-    |> Map.put("/istio/2/service", service(config))
-    |> Map.put("/istio/2/istio", istio(config))
-    |> Map.put("/istio/3/gateway", gateway(config))
-    |> Map.merge(VirtualService.materialize(config))
+    |> Map.put("/crd", crd(config))
+    |> Map.put("/cluster_role", cluster_role(config))
+    |> Map.put("/cluster_role_binding", cluster_role_binding(config))
+    |> Map.put("/service_account", service_account(config))
+    |> Map.put("/deployment", deployment(config))
+    |> Map.put("/service", service(config))
+    |> Map.put("/istio", istio(config))
+    |> Map.put("/gateway", gateway(config))
   end
 
   def crd(_), do: yaml(crd_content())
 
   defp crd_content, do: unquote(File.read!(@crd_path))
 
-  defp yaml(content) do
-    content
-    |> YamlElixir.read_all_from_string!()
-    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
-  end
-
   def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
-      "metadata" => %{"name" => "istio-operator"},
+      "metadata" => %{"name" => "battery-istio-operator"},
       "rules" => [
         %{"apiGroups" => ["authentication.istio.io"], "resources" => ["*"], "verbs" => ["*"]},
         %{"apiGroups" => ["config.istio.io"], "resources" => ["*"], "verbs" => ["*"]},
@@ -107,13 +100,13 @@ defmodule KubeResources.Istio do
     %{
       "kind" => "ClusterRoleBinding",
       "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "metadata" => %{"name" => "istio-operator"},
+      "metadata" => %{"name" => "battery-istio-operator"},
       "subjects" => [
         %{"kind" => "ServiceAccount", "name" => "istio-operator", "namespace" => namespace}
       ],
       "roleRef" => %{
         "kind" => "ClusterRole",
-        "name" => "istio-operator",
+        "name" => "battery-istio-operator",
         "apiGroup" => "rbac.authorization.k8s.io"
       }
     }
@@ -138,7 +131,7 @@ defmodule KubeResources.Istio do
             "containers" => [
               %{
                 "name" => "istio-operator",
-                "image" => "docker.io/istio/operator:1.11.2",
+                "image" => "docker.io/istio/operator:1.13.0",
                 "command" => ["operator", "server"],
                 "securityContext" => %{
                   "allowPrivilegeEscalation" => false,
@@ -156,12 +149,12 @@ defmodule KubeResources.Istio do
                 },
                 "env" => [
                   %{"name" => "WATCH_NAMESPACE"},
-                  %{"name" => "LEADER_ELECTION_NAMESPACE", "value" => "battery-core"},
+                  %{"name" => "LEADER_ELECTION_NAMESPACE", "value" => namespace},
                   %{
                     "name" => "POD_NAME",
                     "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
                   },
-                  %{"name" => "OPERATOR_NAME", "value" => "battery-core"},
+                  %{"name" => "OPERATOR_NAME", "value" => namespace},
                   %{"name" => "WAIT_FOR_RESOURCES_TIMEOUT", "value" => "300s"},
                   %{"name" => "REVISION", "value" => ""}
                 ]
