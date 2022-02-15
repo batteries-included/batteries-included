@@ -1,4 +1,4 @@
-defmodule KubeResources.ControlServer do
+defmodule KubeResources.ControlServerResources do
   alias KubeResources.BatterySettings
   alias KubeResources.IstioConfig.VirtualService
 
@@ -7,6 +7,23 @@ defmodule KubeResources.ControlServer do
   @app_name "control-server"
   @service_account "battery-admin"
   @server_port 4000
+
+  def materialize(config) do
+    %{
+      "/deployment" => deployment(config),
+      "/service" => service(config)
+    }
+  end
+
+  def virtual_service(config) do
+    namespace = BatterySettings.namespace(config)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("control-server")
+    |> B.spec(VirtualService.fallback("control-server"))
+  end
 
   def deployment(config) do
     # def deployment(config) do
@@ -95,7 +112,7 @@ defmodule KubeResources.ControlServer do
     ])
   end
 
-  def service(%{"control.run" => true} = config) do
+  def service(config) do
     namespace = BatterySettings.namespace(config)
 
     spec =
@@ -125,15 +142,5 @@ defmodule KubeResources.ControlServer do
     |> B.annotation("nginx.org/websocket-services", "control-server")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-  end
-
-  def virtual_service(config) do
-    namespace = BatterySettings.namespace(config)
-
-    B.build_resource(:virtual_service)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.name("control-server")
-    |> B.spec(VirtualService.fallback("control-server"))
   end
 end

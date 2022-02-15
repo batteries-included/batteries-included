@@ -1,13 +1,15 @@
 defmodule ControlServer.Services.MonitoringTest do
   use ControlServer.DataCase
 
-  alias ControlServer.Services.Monitoring
+  alias ControlServer.Services
 
   test "Activate" do
-    assert Monitoring.active?() == false
+    assert Services.PrometheusOperator.active?() == false
+    assert Services.Prometheus.active?() == false
 
-    Monitoring.activate!()
+    Services.PrometheusOperator.activate!()
+    Services.Prometheus.activate!()
 
-    assert Monitoring.active?()
+    assert Services.Prometheus.active?()
   end
 end

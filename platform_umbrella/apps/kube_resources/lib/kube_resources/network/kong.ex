@@ -8,6 +8,23 @@ defmodule KubeResources.Kong do
 
   @app_name "kong"
 
+  def materialize(config) do
+    %{
+      "/kong/0/crds" => crd(config),
+      "/kong/1/service_account" => service_account(config),
+      "/kong/1/cluster_role" => cluster_role(config),
+      "/kong/1/cluster_role_binding" => cluster_role_binding(config),
+      "/kong/1/role" => role(config),
+      "/kong/1/role_binding" => role_binding(config),
+      "/kong/1/service" => service(config),
+      "/kong/1/service_1" => service_1(config),
+      "/kong/1/deployment" => deployment(config),
+      "/kong/1/pod" => pod(config),
+      "/kong/1/pod_1" => pod_1(config),
+      "/kong/1/pom_plugin" => prometheus_plugin(config)
+    }
+  end
+
   def crd(_), do: yaml(crd_content())
 
   def service_account(config) do

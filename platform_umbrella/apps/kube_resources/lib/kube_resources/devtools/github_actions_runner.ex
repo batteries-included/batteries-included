@@ -1,7 +1,33 @@
 defmodule KubeResources.GithubActionsRunner do
   @moduledoc false
 
+  import KubeExt.Yaml
   alias KubeResources.DevtoolsSettings
+
+  @github_crd_path "priv/manifests/github/github_actions_runner-crds.yaml"
+
+  def materialize(config) do
+    %{
+      "/crd" => yaml(github_crd_content()),
+      "/service_account_0" => service_account_0(config),
+      "/secret_0" => secret_0(config),
+      "/cluster_role_0" => cluster_role_0(config),
+      "/cluster_role_1" => cluster_role_1(config),
+      "/cluster_role_2" => cluster_role_2(config),
+      "/cluster_role_3" => cluster_role_3(config),
+      "/cluster_role_binding_0" => cluster_role_binding_0(config),
+      "/cluster_role_binding_1" => cluster_role_binding_1(config),
+      "/role_0" => role_0(config),
+      "/role_binding_0" => role_binding_0(config),
+      "/service_0" => service_0(config),
+      "/service_1" => service_1(config),
+      "/deployment_0" => deployment_0(config),
+      "/certificate_0" => certificate_0(config),
+      "/issuer_0" => issuer_0(config),
+      "/mutating_webhook_configuration_0" => mutating_webhook_configuration_0(config),
+      "/validating_webhook_configuration_0" => validating_webhook_configuration_0(config)
+    }
+  end
 
   def service_account_0(config) do
     namespace = DevtoolsSettings.namespace(config)
@@ -637,25 +663,26 @@ defmodule KubeResources.GithubActionsRunner do
     }
   end
 
-  def materialize(config) do
+  def runner(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
     %{
-      "/0/service_account_0" => service_account_0(config),
-      "/1/secret_0" => secret_0(config),
-      "/2/cluster_role_0" => cluster_role_0(config),
-      "/3/cluster_role_1" => cluster_role_1(config),
-      "/4/cluster_role_2" => cluster_role_2(config),
-      "/5/cluster_role_3" => cluster_role_3(config),
-      "/6/cluster_role_binding_0" => cluster_role_binding_0(config),
-      "/7/cluster_role_binding_1" => cluster_role_binding_1(config),
-      "/8/role_0" => role_0(config),
-      "/9/role_binding_0" => role_binding_0(config),
-      "/10/service_0" => service_0(config),
-      "/11/service_1" => service_1(config),
-      "/12/deployment_0" => deployment_0(config),
-      "/13/certificate_0" => certificate_0(config),
-      "/14/issuer_0" => issuer_0(config),
-      "/15/mutating_webhook_configuration_0" => mutating_webhook_configuration_0(config),
-      "/16/validating_webhook_configuration_0" => validating_webhook_configuration_0(config)
+      "apiVersion" => "actions.summerwind.dev/v1alpha1",
+      "kind" => "RunnerDeployment",
+      "metadata" => %{
+        "name" => "default-runner",
+        "namespace" => namespace
+      },
+      "spec" => %{
+        "replicas" => 1,
+        "template" => %{
+          "spec" => %{
+            "organization" => "batteries-included"
+          }
+        }
+      }
     }
   end
+
+  defp github_crd_content, do: unquote(File.read!(@github_crd_path))
 end

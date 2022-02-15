@@ -3,9 +3,23 @@ defmodule KubeResources.Istio do
 
   alias KubeExt.Builder, as: B
   alias KubeResources.NetworkSettings
+  alias KubeResources.VirtualService
 
   @app_name "istio-operator"
   @crd_path "priv/manifests/istio/crd.yaml"
+
+  def materialize(config) do
+    %{}
+    |> Map.put("/istio/0/crd", crd(config))
+    |> Map.put("/istio/0/cluster_role", cluster_role(config))
+    |> Map.put("/istio/0/cluster_role_binding", cluster_role_binding(config))
+    |> Map.put("/istio/0/service_account", service_account(config))
+    |> Map.put("/istio/1/deployment", deployment(config))
+    |> Map.put("/istio/2/service", service(config))
+    |> Map.put("/istio/2/istio", istio(config))
+    |> Map.put("/istio/3/gateway", gateway(config))
+    |> Map.merge(VirtualService.materialize(config))
+  end
 
   def crd(_), do: yaml(crd_content())
 

@@ -3,20 +3,19 @@ defmodule KubeServices.ConfigGeneratorTest do
 
   alias KubeResources.ConfigGenerator
   alias ControlServer.Services
-  alias ControlServer.Services.Monitoring
-  alias ControlServer.Services.ML
-  alias ControlServer.Services.Database
-  alias ControlServer.Services.Security
 
   require Logger
 
   describe "ConfigGenerator" do
     setup do
       {:ok,
-       monitoring: Monitoring.activate!(),
-       ml: ML.activate!(),
-       database: Database.activate!(),
-       security: Security.activate!()}
+       prometheus_operator: Services.PrometheusOperator.activate!(),
+       prometheus: Services.Prometheus.activate!(),
+       grafana: Services.Grafana.activate!(),
+       knative: Services.Knative.activate!(),
+       database: Services.Database.activate!(),
+       database_internal: Services.InternalDatabase.activate!(),
+       cert_manager: Services.CertManager.activate!()}
     end
 
     test "materialize all the configs" do

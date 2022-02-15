@@ -1,13 +1,11 @@
 defmodule KubeRawResources.Database do
-  import KubeExt.Yaml
-  import KubeRawResource.RawCluster
+  import KubeRawResources.RawCluster
 
   alias KubeExt.Builder, as: B
 
   alias KubeRawResources.DatabaseSettings
   alias KubeRawResources.PostgresOperator
 
-  @postgres_crd_path "priv/manifests/postgres/postgres_operator-crds.yaml"
   @exporter_port 9187
   @exporter_port_name "exporter"
 
@@ -27,14 +25,8 @@ defmodule KubeRawResources.Database do
     ["hostssl", "all", "all", "all", "md5"]
   ]
 
-  defp postgres_crd_content, do: unquote(File.read!(@postgres_crd_path))
-
-  def postgres_crd do
-    yaml(postgres_crd_content())
-  end
-
   def postgres(%{} = cluster, config) do
-    namespace = DatabaseSettings.namespace(config)
+    namespace = namespace(cluster, config)
 
     %{
       "kind" => "postgresql",
@@ -62,7 +54,7 @@ defmodule KubeRawResources.Database do
   end
 
   def metrics_service(%{} = cluster, config, role) do
-    namespace = DatabaseSettings.namespace(config)
+    namespace = namespace(cluster, config)
     label_name = DatabaseSettings.cluster_name_label(config)
     cluster_name = full_name(cluster)
 
@@ -79,7 +71,7 @@ defmodule KubeRawResources.Database do
         }
       ])
 
-    service_name = "postgres-#{cluster_name}-#{role}-mon"
+    service_name = "#{cluster_name}-#{role}-mon"
 
     B.build_resource(:service)
     |> B.app_labels("postgres-operator")
@@ -101,11 +93,11 @@ defmodule KubeRawResources.Database do
   end
 
   def service_monitor(%{} = cluster, config, role) do
-    namespace = DatabaseSettings.namespace(config)
+    namespace = namespace(cluster, config)
     cluster_name = full_name(cluster)
     label_name = DatabaseSettings.cluster_name_label(config)
 
-    monitor_name = "postgres-#{cluster_name}-#{role}"
+    monitor_name = "#{cluster_name}-#{role}"
 
     spec =
       %{}
@@ -185,16 +177,9 @@ defmodule KubeRawResources.Database do
   end
 
   def materialize(%{} = config) do
-    body =
-      config
-      |> PostgresOperator.materialize()
-      |> Enum.map(fn {key, value} -> {"/1/body" <> key, value} end)
-      |> Map.new()
-
-    %{
-      "/0/postgres_crd" => postgres_crd()
-    }
-    |> Map.merge(body)
+    %{}
+    |> Map.merge(PostgresOperator.materialize_common(config))
+    |> Map.merge(PostgresOperator.materialize_internal(config))
     |> Map.merge(%{"/9/boostrap_clusters" => bootstrap_clusters(config)})
   end
 end

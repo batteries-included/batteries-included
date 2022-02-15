@@ -20,14 +20,22 @@ defmodule ControlServer.Services.BaseService do
 
     field :service_type, Ecto.Enum,
       values: [
-        :monitoring,
-        :security,
+        :prometheus_operator,
+        :prometheus,
+        :grafana,
+        :kube_monitoring,
+        :cert_manager,
         :devtools,
+        :knative,
+        :github_runner,
         :database,
-        :storage,
-        :network,
-        :ml,
-        :battery
+        :database_public,
+        :database_internal,
+        :istio,
+        :kong,
+        :nginx,
+        :notebooks,
+        :control_server
       ]
 
     field :config, :map

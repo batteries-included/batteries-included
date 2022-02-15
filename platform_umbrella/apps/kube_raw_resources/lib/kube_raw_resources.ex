@@ -15,8 +15,4 @@ defmodule KubeRawResources do
   def hello do
     :world
   end
-
-  def world do
-    KubeRawResources.Database.postgres_crd()
-  end
 end

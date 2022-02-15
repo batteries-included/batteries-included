@@ -4,30 +4,60 @@ defmodule KubeResources.ConfigGenerator do
   """
 
   alias ControlServer.Services.BaseService
-  alias KubeResources.Battery
+  alias KubeResources.CertManager
+  alias KubeResources.ControlServerResources
   alias KubeResources.Database
-  alias KubeResources.Devtools
-  alias KubeResources.ML
-  alias KubeResources.Monitoring
-  alias KubeResources.Network
-  alias KubeResources.Security
+  alias KubeResources.EchoServer
+  alias KubeResources.Grafana
+  alias KubeResources.Istio
+  alias KubeResources.KnativeOperator
+  alias KubeResources.Kong
+  alias KubeResources.KubeMonitoring
+  alias KubeResources.Nginx
+  alias KubeResources.Notebooks
+  alias KubeResources.Prometheus
+  alias KubeResources.PrometheusOperator
+  alias KubeResources.ServiceMonitors
+  alias KubeResources.VirtualService
 
   def materialize(%BaseService{} = base_service) do
     if base_service.is_active do
       base_service.config
       |> materialize(base_service.service_type)
       |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
-      |> Map.new()
+      |> Enum.into(%{})
     else
       %{}
     end
   end
 
-  defp materialize(%{} = config, :monitoring), do: Monitoring.materialize(config)
-  defp materialize(%{} = config, :database), do: Database.materialize(config)
-  defp materialize(%{} = config, :security), do: Security.materialize(config)
-  defp materialize(%{} = config, :devtools), do: Devtools.materialize(config)
-  defp materialize(%{} = config, :network), do: Network.materialize(config)
-  defp materialize(%{} = config, :battery), do: Battery.materialize(config)
-  defp materialize(%{} = config, :ml), do: ML.materialize(config)
+  defp materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
+  defp materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
+
+  defp materialize(%{} = config, :prometheus) do
+    config |> Prometheus.materialize() |> Map.merge(ServiceMonitors.materialize(config))
+  end
+
+  defp materialize(%{} = config, :istio) do
+    config |> Istio.materialize() |> Map.merge(VirtualService.materialize(config))
+  end
+
+  defp materialize(%{} = config, :grafana), do: Grafana.materialize(config)
+
+  defp materialize(%{} = config, :database), do: Database.materialize_common(config)
+  defp materialize(%{} = config, :database_public), do: Database.materialize_public(config)
+  defp materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
+
+  defp materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
+
+  defp materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
+  defp materialize(%{} = config, :github_runner), do: KnativeOperator.materialize(config)
+
+  defp materialize(%{} = config, :kong), do: Kong.materialize(config)
+  defp materialize(%{} = config, :nginx), do: Nginx.materialize(config)
+
+  defp materialize(%{} = config, :battery), do: ControlServerResources.materialize(config)
+  defp materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
+
+  defp materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
 end

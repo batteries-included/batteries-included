@@ -1,7 +1,9 @@
 defmodule KubeResources.MonitoringTest do
   use ControlServer.DataCase
 
-  alias KubeResources.Monitoring
+  alias KubeResources.PrometheusOperator
+  alias KubeResources.Prometheus
+  alias KubeResources.Grafana
   alias K8s.Resource
 
   defp contains_grafana(resources) when is_list(resources),
@@ -12,12 +14,20 @@ defmodule KubeResources.MonitoringTest do
   end
 
   describe "Materializing" do
-    test "Materialize a simple config works." do
-      assert map_size(Monitoring.materialize(%{})) >= 10
+    test "Materialize Prometheus Operator." do
+      assert map_size(PrometheusOperator.materialize(%{})) >= 9
+    end
+
+    test "Materialize Prometheus" do
+      assert map_size(Prometheus.materialize(%{})) >= 6
+    end
+
+    test "Materialize Grafana" do
+      assert map_size(Grafana.materialize(%{})) >= 6
     end
 
     test "contains some grafana deplpyment" do
-      assert Enum.any?(Monitoring.materialize(%{}), fn {_k, resources} ->
+      assert Enum.any?(Grafana.materialize(%{}), fn {_k, resources} ->
                contains_grafana(resources)
              end)
     end

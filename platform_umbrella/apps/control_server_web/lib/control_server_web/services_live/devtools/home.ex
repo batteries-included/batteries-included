@@ -19,7 +19,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
 
-    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, Services.Devtools.active?())}
+    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, running?())}
   end
 
   defp get_pods do
@@ -43,8 +43,12 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    Services.Devtools.activate!()
-    {:noreply, assign(socket, :running, true)}
+    Services.Knative.activate!()
+    {:noreply, assign(socket, :running, running?())}
+  end
+
+  def running? do
+    Services.Knative.active?()
   end
 
   @impl true

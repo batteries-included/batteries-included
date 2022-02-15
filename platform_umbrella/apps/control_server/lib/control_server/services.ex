@@ -4,12 +4,90 @@ defmodule ControlServer.Services do
   """
 
   import Ecto.Query, warn: false
+
   alias ControlServer.Repo
+  alias ControlServer.ServiceConfigs
+  alias ControlServer.Services.BaseService
+  alias ControlServer.Services.RunnableService
   alias Ecto.Multi
 
-  alias ControlServer.Services.BaseService
-
   require Logger
+
+  defmodule ControlServer do
+    use RunnableService,
+      path: "/battery/control_server",
+      service_type: :control_server
+  end
+
+  defmodule EchoServer do
+    use RunnableService,
+      path: "/battery/echo_server",
+      service_type: :echo_server
+  end
+
+  defmodule Knative do
+    use RunnableService, path: "/devtools/knative", service_type: :knative
+  end
+
+  defmodule DatabaseCommon do
+    use RunnableService, path: "/database/common", service_type: :database
+  end
+
+  defmodule Database do
+    use RunnableService, path: "/database/public", service_type: :database_public
+  end
+
+  defmodule InternalDatabase do
+    use RunnableService,
+      path: "/battery/database_internal",
+      service_type: :database_internal
+  end
+
+  defmodule Notebooks do
+    use RunnableService, path: "/ml/notebooks", service_type: :notebooks
+  end
+
+  defmodule PrometheusOperator do
+    use RunnableService,
+      path: "/monitoring/prometheus_operator",
+      service_type: :prometheus_operator
+  end
+
+  defmodule Prometheus do
+    use RunnableService,
+      path: "/monitoring/prometheus",
+      service_type: :prometheus
+  end
+
+  defmodule Grafana do
+    use RunnableService,
+      path: "/monitoring/grafana",
+      service_type: :grafana
+  end
+
+  defmodule KubeMonitoring do
+    use RunnableService,
+      path: "/monitoring/kube_monitoring",
+      service_type: :kube_monitoring
+  end
+
+  defmodule Kong do
+    use RunnableService, path: "/network/kong", service_type: :kong
+  end
+
+  defmodule Nginx do
+    use RunnableService, path: "/network/nginx", service_type: :nginx
+  end
+
+  defmodule Istio do
+    use RunnableService, path: "/network/istio", service_type: :istio
+  end
+
+  defmodule CertManager do
+    use RunnableService,
+      path: "/security/certmanager",
+      service_type: :cert_manager
+  end
 
   @doc """
   Returns the list of base_services.
@@ -187,16 +265,8 @@ defmodule ControlServer.Services do
   end
 
   def activate_defaults do
-    Enum.each(
-      [
-        ControlServer.Services.Battery,
-        ControlServer.Services.Network,
-        ControlServer.Services.ML,
-        ControlServer.Services.Database
-      ],
-      fn def_mod ->
-        def_mod.activate!()
-      end
-    )
+    Enum.each(ServiceConfigs.default_services(), fn service_module ->
+      service_module.activate!()
+    end)
   end
 end

@@ -5,7 +5,7 @@ defmodule KubeResources.MonitoringSettings do
   a better way with defstruct and defaults.. Dunno.
   """
   @namespace "battery-core"
-  @monitored_namespaces ["default", @namespace, "kube-system"]
+  @monitored_namespaces ["default", @namespace, "kube-system", "battery-data", "battery-knative"]
 
   @prometheus_operator_image "quay.io/prometheus-operator/prometheus-operator"
   @prometheus_operator_version "v0.49.0"

@@ -15,6 +15,20 @@ defmodule KubeResources.Prometheus do
 
   @app_name "prometheus"
 
+  def materialize(config) do
+    %{
+      "/account" => service_account(config),
+      "/cluster_role" => cluster_role(config),
+      "/cluster_role_bind" => cluster_role_binding(config),
+      "/main_roles" => main_roles(config),
+      "/role_binds" => main_role_bindings(config),
+      "/config_role" => config_role(config),
+      "/config_role_bind" => config_role_binding(config),
+      "/prometheus_main" => prometheus(config),
+      "/service" => service(config)
+    }
+  end
+
   def ingress(config) do
     namespace = MonitoringSettings.namespace(config)
 

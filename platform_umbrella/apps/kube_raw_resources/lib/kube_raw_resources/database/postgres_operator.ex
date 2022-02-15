@@ -1,19 +1,19 @@
 defmodule KubeRawResources.PostgresOperator do
   @moduledoc false
+  import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeRawResources.DatabaseSettings
 
   @app_name "postgres-operator"
+  @postgres_crd_path "priv/manifests/postgres/postgres_operator-crds.yaml"
 
-  def service_account(config) do
-    namespace = DatabaseSettings.namespace(config)
-
+  def service_account(_config, namespace) do
     %{
       "apiVersion" => "v1",
       "kind" => "ServiceAccount",
       "metadata" => %{
-        "name" => @app_name,
+        "name" => "battery-postgres-operator",
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
@@ -29,7 +29,7 @@ defmodule KubeRawResources.PostgresOperator do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
       "metadata" => %{
-        "name" => "postgres-pod",
+        "name" => "battery-postgres-pod",
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
@@ -167,14 +167,12 @@ defmodule KubeRawResources.PostgresOperator do
     }
   end
 
-  def cluster_role_binding(config) do
-    namespace = DatabaseSettings.namespace(config)
-
+  def cluster_role_binding(_config, namespace) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
-        "name" => "battery-postgres-operator",
+        "name" => "battery-postgres-operator-#{namespace}",
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
@@ -189,16 +187,14 @@ defmodule KubeRawResources.PostgresOperator do
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => "postgres-operator",
+          "name" => "battery-postgres-operator",
           "namespace" => namespace
         }
       ]
     }
   end
 
-  def service(config) do
-    namespace = DatabaseSettings.namespace(config)
-
+  def service(_config, namespace) do
     spec = %{
       "type" => "ClusterIP",
       "ports" => [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
@@ -214,8 +210,7 @@ defmodule KubeRawResources.PostgresOperator do
     |> Map.put("spec", spec)
   end
 
-  def deployment(config) do
-    namespace = DatabaseSettings.namespace(config)
+  def deployment(config, namespace) do
     operator_image = DatabaseSettings.pg_operator_image(config)
     operator_version = DatabaseSettings.pg_operator_version(config)
 
@@ -249,7 +244,7 @@ defmodule KubeRawResources.PostgresOperator do
             }
           },
           "spec" => %{
-            "serviceAccountName" => "postgres-operator",
+            "serviceAccountName" => "battery-postgres-operator",
             "containers" => [
               %{
                 "name" => "postgres-operator",
@@ -282,35 +277,32 @@ defmodule KubeRawResources.PostgresOperator do
     }
   end
 
-  def pod_service_role_binding(config) do
+  def pod_service_role_binding(_config, namespace) do
     # This whole thing should be un-needed. However it is.
     #
     # The operator creates the service account in each namespace.  (reasonable)
     # We create the single ClusterRole.
     # The operator then creates a RoleBinding pointing to a subject of
     # the service account in the default namespace rather than the correct one.
-    namespace = DatabaseSettings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
-    |> B.name("postgres-pod")
+    |> B.name("battery-postgres-pod-#{namespace}")
     |> B.app_labels(@app_name)
     |> Map.put("roleRef", %{
       "apiGroup" => "rbac.authorization.k8s.io",
       "kind" => "ClusterRole",
-      "name" => "postgres-pod"
+      "name" => "battery-postgres-pod"
     })
     |> Map.put("subjects", [
       %{
         "kind" => "ServiceAccount",
-        "name" => "postgres-pod",
+        "name" => "battery-postgres-pod",
         "namespace" => namespace
       }
     ])
   end
 
-  def operator_configuration(config) do
-    namespace = DatabaseSettings.namespace(config)
-
+  def operator_configuration(config, namespace, include_dev_infrausers \\ false) do
     # Zalando's postgres operator creates the
 
     %{
@@ -327,26 +319,25 @@ defmodule KubeRawResources.PostgresOperator do
       },
       "configuration" => %{
         "enable_crd_validation" => true,
-        "workers" => 8,
+        "workers" => 4,
         "major_version_upgrade" => %{
           "major_version_upgrade_mode" => "manual",
           "minimal_major_version" => "9.5",
           "target_major_version" => "13"
         },
-        "kubernetes" => operator_configuration_kubernets(config, include_dev_infrausers()),
+        "kubernetes" => operator_configuration_kubernets(config, include_dev_infrausers),
         "debug" => %{"debug_logging" => true, "enable_database_access" => true}
       }
     }
   end
 
   defp operator_configuration_kubernets(config, false = _include_dev_infrausers) do
-    namespace = DatabaseSettings.namespace(config)
     label_name = DatabaseSettings.cluster_name_label(config)
 
     %{
       "oauth_token_secret_name" => "battery-postgres-operator",
-      "cluster_name_label" => label_name,
-      "watched_namespace" => namespace
+      "pod_service_account_name" => "battery-postgres-pod",
+      "cluster_name_label" => label_name
     }
   end
 
@@ -361,15 +352,15 @@ defmodule KubeRawResources.PostgresOperator do
   defp include_dev_infrausers,
     do: Application.get_env(:kube_raw_resources, :include_dev_infrausers, false)
 
-  defp infra_users(config), do: infra_users(config, include_dev_infrausers())
-
-  defp infra_users(_config, false = _include_dev_infrausers), do: %{}
-
   defp infra_users(config, true = _include_dev_infrausers) do
     %{
-      "/8/infra_configmap" => infra_configmap(config),
-      "/9/infra_secret" => infra_secret(config)
+      "/infra_configmap" => infra_configmap(config),
+      "/infra_secret" => infra_secret(config)
     }
+  end
+
+  defp infra_users(_config, _include_dev_infrausers) do
+    %{}
   end
 
   defp infra_configmap(config) do
@@ -399,18 +390,49 @@ defmodule KubeRawResources.PostgresOperator do
     })
   end
 
-  def materialize(config) do
+  defp postgres_crd_content, do: unquote(File.read!(@postgres_crd_path))
+
+  defp postgres_crd do
+    yaml(postgres_crd_content())
+  end
+
+  def materialize_internal(config) do
+    namespace = DatabaseSettings.namespace(config)
+    infrausers = include_dev_infrausers()
+
     %{}
+    |> Map.merge(materialize_in_namespace(config, namespace))
     |> Map.merge(%{
-      "/0/service_account" => service_account(config),
-      "/1/cluster_role/0" => cluster_role_0(config),
-      "/2/cluster_role/1" => cluster_role_1(config),
-      "/3/cluster_role_binding" => cluster_role_binding(config),
-      "/3/pod_service_role_binding" => pod_service_role_binding(config),
-      "/4/service" => service(config),
-      "/5/deployment_0" => deployment(config),
-      "/6/operator_crd_instance" => operator_configuration(config)
+      "/operator_crd_instance" => operator_configuration(config, namespace, infrausers)
     })
-    |> Map.merge(infra_users(config))
+    |> Map.merge(infra_users(config, infrausers))
+  end
+
+  def materialize_public(config) do
+    namespace = DatabaseSettings.public_namespace(config)
+
+    %{}
+    |> Map.merge(materialize_in_namespace(config, namespace))
+    |> Map.merge(%{
+      "/operator_crd_instance" => operator_configuration(config, namespace, false)
+    })
+  end
+
+  def materialize_common(config) do
+    %{
+      "/crd" => postgres_crd(),
+      "/cluster_role/0" => cluster_role_0(config),
+      "/cluster_role/1" => cluster_role_1(config)
+    }
+  end
+
+  def materialize_in_namespace(config, namespace) do
+    %{
+      "/service_account" => service_account(config, namespace),
+      "/cluster_role_binding" => cluster_role_binding(config, namespace),
+      "/pod_service_role_binding" => pod_service_role_binding(config, namespace),
+      "/service" => service(config, namespace),
+      "/deployment_0" => deployment(config, namespace)
+    }
   end
 end

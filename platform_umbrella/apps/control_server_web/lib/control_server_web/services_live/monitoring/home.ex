@@ -18,7 +18,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
 
-    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, Services.Monitoring.active?())}
+    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, running?())}
   end
 
   defp get_pods do
@@ -42,9 +42,17 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    Services.Monitoring.activate!()
+    Services.PrometheusOperator.activate!()
+    Services.Prometheus.activate!()
+    Services.Grafana.activate!()
+    Services.KubeMonitoring.activate!()
 
-    {:noreply, assign(socket, :running, true)}
+    {:noreply, assign(socket, :running, running?())}
+  end
+
+  defp running? do
+    Services.PrometheusOperator.active?() && Services.Prometheus.active?() &&
+      Services.Grafana.active?()
   end
 
   @impl true

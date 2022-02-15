@@ -4,7 +4,15 @@ defmodule KubeResources.DatabaseServiceMonitors do
   alias KubeRawResources.Database, as: RawDatabase
 
   def monitors(config) do
-    Enum.flat_map(Postgres.list_clusters(), fn cluster ->
+    services_and_montitors(Postgres.normal_clusters(), config)
+  end
+
+  def internal_monitors(config) do
+    services_and_montitors(Postgres.internal_clusters(), config)
+  end
+
+  def services_and_montitors(clusters, config) do
+    Enum.flat_map(clusters, fn cluster ->
       services(cluster, config) ++ postgres_monitors(cluster, config)
     end)
   end

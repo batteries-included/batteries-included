@@ -5,7 +5,7 @@ defmodule ControlServer.Postgres.Cluster do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias KubeRawResource.RawCluster
+  alias KubeRawResources.RawCluster
 
   @timestamps_opts [type: :utc_datetime_usec]
 

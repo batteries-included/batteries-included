@@ -1,25 +1,26 @@
 defmodule KubeResources.VirtualService do
   alias ControlServer.Services
-  alias ControlServer.Services.BaseService
 
-  alias KubeResources.Battery
-  alias KubeResources.ML
-  alias KubeResources.Monitoring
+  alias KubeResources.ControlServerResources
+  alias KubeResources.Grafana
+  alias KubeResources.Notebooks
+  alias KubeResources.Prometheus
 
-  def materialize(_config) do
+  def materialize(config) do
     Services.list_base_services()
-    |> Enum.map(fn bs -> {"/istio/vitrual_services/#{bs.id}", virtual_services(bs)} end)
+    |> Enum.map(fn bs ->
+      {"/svcs/#{bs.id}", virtual_service(bs.service_type, config)}
+    end)
     |> Map.new()
   end
 
-  def virtual_services(%BaseService{service_type: :battery, config: config}),
-    do: Battery.VirtualServices.vitrual_services(config)
+  def virtual_service(:control_server, config),
+    do: ControlServerResources.virtual_service(config)
 
-  def virtual_services(%BaseService{service_type: :monitoring, config: config}),
-    do: Monitoring.VirtualServices.virtual_services(config)
+  def virtual_service(:prometheus, config), do: Prometheus.virtual_service(config)
+  def virtual_service(:grafana, config), do: Grafana.virtual_service(config)
 
-  def virtual_services(%BaseService{service_type: :ml, config: config}),
-    do: ML.VirtualServices.virtual_services(config)
+  def virtual_service(:notebooks, config), do: Notebooks.virtual_service(config)
 
-  def virtual_services(_), do: []
+  def virtual_service(_, _config), do: []
 end
