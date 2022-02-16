@@ -19,7 +19,7 @@ defmodule KubeResources.MonitoringTest do
     end
 
     test "Materialize Prometheus" do
-      assert map_size(Prometheus.materialize(%{})) >= 6
+      assert map_size(Prometheus.materialize(%{})) >= 5
     end
 
     test "Materialize Grafana" do
