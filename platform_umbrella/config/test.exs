@@ -55,8 +55,12 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 config :logger, level: :warn
 
 config :control_server, ControlServer.Services,
-  control_run: true,
-  istio_run: true
+  default_services: [
+    ControlServer.Services.ControlServer,
+    ControlServer.Services.InternalDatabase,
+    ControlServer.Services.DatabaseCommon,
+    ControlServer.Services.Istio
+  ]
 
 config :kube_ext, cluster_type: :dev
 

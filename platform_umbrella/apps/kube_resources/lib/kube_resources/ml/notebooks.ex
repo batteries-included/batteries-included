@@ -48,18 +48,18 @@ defmodule KubeResources.Notebooks do
     HttpRoute.prefix(url(notebook), service_name(notebook))
   end
 
-  def notebooks(config) do
+  def materialize(config) do
     Notebooks.list_jupyter_lab_notebooks()
     |> Enum.flat_map(fn notebook ->
       Logger.debug("Notebook => #{inspect(notebook)}")
 
       [
-        {"/notebooks/#{notebook.id}/stateful", stateful_set(config, notebook)},
-        {"/notebooks/#{notebook.id}/service", service(config, notebook)}
+        {"/#{notebook.id}/stateful", stateful_set(config, notebook)},
+        {"/#{notebook.id}/service", service(config, notebook)}
       ]
     end)
     |> Map.new()
-    |> Map.put("/notebooks/service_account", service_account(config))
+    |> Map.put("/service_account", service_account(config))
   end
 
   defp service_account(config) do

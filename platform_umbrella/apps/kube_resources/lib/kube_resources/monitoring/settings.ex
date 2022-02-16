@@ -11,17 +11,17 @@ defmodule KubeResources.MonitoringSettings do
   @prometheus_operator_version "v0.49.0"
 
   @prometheus_image "quay.io/prometheus/prometheus"
-  @prometheus_version "v2.30.3"
+  @prometheus_version "v2.33.3"
   @prometheus_replicas 1
   @prometheus_memory "450Mi"
 
   @grafana_image "grafana/grafana"
-  @grafana_version "7.3.4"
+  @grafana_version "8.2.6"
 
   @node_image "quay.io/prometheus/node-exporter"
   @node_version "v1.2.2"
 
-  @kube_version "v2.2.0"
+  @kube_version "v2.2.4"
   @kube_image "k8s.gcr.io/kube-state-metrics/kube-state-metrics"
 
   @alertmanager_image "quay.io/prometheus/alertmanager"

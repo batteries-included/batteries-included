@@ -3,6 +3,7 @@ defmodule KubeRawResources.DatabaseSettings do
   Module for extracting the setting from a map usually a json map from the BaseService ecto
   """
   @namepace "battery-core"
+  @public_namepace "battery-data"
 
   @pg_operator_name "battery-pg-operator"
   @pg_operator_pod_account_name "battery-pg-pod"
@@ -11,6 +12,7 @@ defmodule KubeRawResources.DatabaseSettings do
   @pg_operator_cluster_label "battery-pg-cluster"
 
   def namespace(config), do: Map.get(config, "namespace", @namepace)
+  def public_namespace(config), do: Map.get(config, "namespace.public", @public_namepace)
   def bootstrap_clusters(config), do: Map.get(config, "bootstrap.clusters", [])
 
   def pg_operator_name(config), do: Map.get(config, "pg_operator.name", @pg_operator_name)

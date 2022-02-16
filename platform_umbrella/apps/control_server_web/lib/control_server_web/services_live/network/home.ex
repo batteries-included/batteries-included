@@ -19,7 +19,7 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
     {:ok,
      socket
      |> assign(:pods, get_pods())
-     |> assign(:running, Services.Network.active?())}
+     |> assign(:running, running?())}
   end
 
   defp get_pods do
@@ -43,9 +43,13 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
 
   @impl true
   def handle_event("start_service", _, socket) do
-    Services.Network.activate!()
+    Services.Istio.activate!()
 
-    {:noreply, assign(socket, :running, true)}
+    {:noreply, assign(socket, :running, running?())}
+  end
+
+  def running? do
+    Services.Istio.active?()
   end
 
   @impl true

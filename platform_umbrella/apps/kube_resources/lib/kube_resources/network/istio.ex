@@ -1,5 +1,6 @@
 defmodule KubeResources.Istio do
   @moduledoc false
+  import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeResources.NetworkSettings
@@ -7,21 +8,109 @@ defmodule KubeResources.Istio do
   @app_name "istio-operator"
   @crd_path "priv/manifests/istio/crd.yaml"
 
+  def materialize(config) do
+    %{}
+    |> Map.put("/crd", crd(config))
+    |> Map.put("/cluster_role", cluster_role(config))
+    |> Map.put("/cluster_role_binding", cluster_role_binding(config))
+    |> Map.put("/service_account", service_account(config))
+    |> Map.put("/deployment", deployment(config))
+    |> Map.put("/service", service(config))
+    |> Map.put("/istio", istio(config))
+    |> Map.put("/gateway", gateway(config))
+  end
+
   def crd(_), do: yaml(crd_content())
 
   defp crd_content, do: unquote(File.read!(@crd_path))
 
-  defp yaml(content) do
-    content
-    |> YamlElixir.read_all_from_string!()
-    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
+  def monitors(config) do
+    [pod_monitor(config), service_monitor(config)]
+  end
+
+  def pod_monitor(config) do
+    namespace = NetworkSettings.namespace(config)
+
+    spec = %{
+      "selector" => %{
+        "matchExpressions" => [
+          %{"key" => "istio-prometheus-ignore", "operator" => "DoesNotExist"}
+        ]
+      },
+      "namespaceSelector" => %{"any" => true},
+      "jobLabel" => "envoy-stats",
+      "podMetricsEndpoints" => [
+        %{
+          "path" => "/stats/prometheus",
+          "interval" => "15s",
+          "relabelings" => [
+            %{
+              "action" => "keep",
+              "sourceLabels" => ["__meta_kubernetes_pod_container_name"],
+              "regex" => "istio-proxy"
+            },
+            %{
+              "action" => "keep",
+              "sourceLabels" => ["__meta_kubernetes_pod_annotationpresent_prometheus_io_scrape"]
+            },
+            %{
+              "sourceLabels" => [
+                "__address__",
+                "__meta_kubernetes_pod_annotation_prometheus_io_port"
+              ],
+              "action" => "replace",
+              "regex" => "([^:]+)(?::\\d+)?;(\\d+)",
+              "replacement" => "$1:$2",
+              "targetLabel" => "__address__"
+            },
+            %{"action" => "labeldrop", "regex" => "__meta_kubernetes_pod_label_(.+)"},
+            %{
+              "sourceLabels" => ["__meta_kubernetes_namespace"],
+              "action" => "replace",
+              "targetLabel" => "namespace"
+            },
+            %{
+              "sourceLabels" => ["__meta_kubernetes_pod_name"],
+              "action" => "replace",
+              "targetLabel" => "pod_name"
+            }
+          ]
+        }
+      ]
+    }
+
+    B.build_resource(:pod_monitor)
+    |> B.name("envoy-stats-monitor")
+    |> B.spec(spec)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
+
+  def service_monitor(config) do
+    namespace = NetworkSettings.namespace(config)
+
+    spec = %{
+      "jobLabel" => "istio",
+      "targetLabels" => ["app"],
+      "selector" => %{
+        "matchExpressions" => [%{"key" => "istio", "operator" => "In", "values" => ["pilot"]}]
+      },
+      "namespaceSelector" => %{"any" => true},
+      "endpoints" => [%{"port" => "http-monitoring", "interval" => "15s"}]
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.name("istio-component-monitor")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> B.app_labels(@app_name)
   end
 
   def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "ClusterRole",
-      "metadata" => %{"name" => "istio-operator"},
+      "metadata" => %{"name" => "battery-istio-operator"},
       "rules" => [
         %{"apiGroups" => ["authentication.istio.io"], "resources" => ["*"], "verbs" => ["*"]},
         %{"apiGroups" => ["config.istio.io"], "resources" => ["*"], "verbs" => ["*"]},
@@ -93,13 +182,13 @@ defmodule KubeResources.Istio do
     %{
       "kind" => "ClusterRoleBinding",
       "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "metadata" => %{"name" => "istio-operator"},
+      "metadata" => %{"name" => "battery-istio-operator"},
       "subjects" => [
         %{"kind" => "ServiceAccount", "name" => "istio-operator", "namespace" => namespace}
       ],
       "roleRef" => %{
         "kind" => "ClusterRole",
-        "name" => "istio-operator",
+        "name" => "battery-istio-operator",
         "apiGroup" => "rbac.authorization.k8s.io"
       }
     }
@@ -124,7 +213,7 @@ defmodule KubeResources.Istio do
             "containers" => [
               %{
                 "name" => "istio-operator",
-                "image" => "docker.io/istio/operator:1.11.2",
+                "image" => "docker.io/istio/operator:1.13.0",
                 "command" => ["operator", "server"],
                 "securityContext" => %{
                   "allowPrivilegeEscalation" => false,
@@ -142,12 +231,12 @@ defmodule KubeResources.Istio do
                 },
                 "env" => [
                   %{"name" => "WATCH_NAMESPACE"},
-                  %{"name" => "LEADER_ELECTION_NAMESPACE", "value" => "battery-core"},
+                  %{"name" => "LEADER_ELECTION_NAMESPACE", "value" => namespace},
                   %{
                     "name" => "POD_NAME",
                     "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
                   },
-                  %{"name" => "OPERATOR_NAME", "value" => "battery-core"},
+                  %{"name" => "OPERATOR_NAME", "value" => namespace},
                   %{"name" => "WAIT_FOR_RESOURCES_TIMEOUT", "value" => "300s"},
                   %{"name" => "REVISION", "value" => ""}
                 ]

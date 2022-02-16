@@ -87,10 +87,11 @@ config :esbuild,
   ]
 
 config :control_server, ControlServer.Services,
-  control_run: false,
-  istio_run: true,
-  nginx_run: false,
-  kong_run: false
+  default_services: [
+    ControlServer.Services.Istio,
+    ControlServer.Services.InternalDatabase,
+    ControlServer.Services.DatabaseCommon
+  ]
 
 config :kube_services, start_services: true
 

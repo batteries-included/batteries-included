@@ -24,12 +24,12 @@ defmodule KubeResources.Grafana do
     {depl, dashboards} = config |> deployment() |> GrafanaDashboards.add_dashboards(config)
 
     %{
-      "/grafana/service_account" => service_account(config),
-      "/grafana/prometheus_datasource" => prometheus_datasource_config(config),
-      "/grafana/main_config" => main_config(config),
-      "/grafana/grafana_deployment" => depl,
-      "/grafana/dashboards" => dashboards,
-      "/grafana/grafana_service" => service(config)
+      "/service_account" => service_account(config),
+      "/prometheus_datasource" => prometheus_datasource_config(config),
+      "/main_config" => main_config(config),
+      "/grafana_deployment" => depl,
+      "/dashboards" => dashboards,
+      "/grafana_service" => service(config)
     }
   end
 

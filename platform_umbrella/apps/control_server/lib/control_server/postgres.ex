@@ -25,6 +25,14 @@ defmodule ControlServer.Postgres do
     Repo.all(Cluster)
   end
 
+  def internal_clusters do
+    Repo.all(from c in Cluster, where: c.type == :internal)
+  end
+
+  def normal_clusters do
+    Repo.all(from c in Cluster, where: c.type != :internal)
+  end
+
   @doc """
   Gets a single cluster.
 

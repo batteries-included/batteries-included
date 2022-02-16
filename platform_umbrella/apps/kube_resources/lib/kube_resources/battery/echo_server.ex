@@ -7,6 +7,13 @@ defmodule KubeResources.EchoServer do
 
   @app_name "echo"
 
+  def materialize(config) do
+    %{
+      "/1/echo/service" => service(config),
+      "/1/echo/deployment" => deployment(config)
+    }
+  end
+
   def ingress(config) do
     namespace = BatterySettings.namespace(config)
 

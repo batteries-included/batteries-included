@@ -56,22 +56,22 @@ defmodule CommonUI.Layout do
         <div class="flex max-w-7xl h-full">
           <.link to={@logo_path} class="my-auto mx-4">
             <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included">
-            </.link>
-            <%= render_slot(@title) %>
-            <h1 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">
-              Batteries Included
-            </h1>
-          </div>
-        </header>
-        <div class={container_class(@container_type)}>
-          <%= render_slot(@inner_block) %>
+          </.link>
+          <%= render_slot(@title) %>
+          <h1 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">
+            Batteries Included
+          </h1>
         </div>
+      </header>
+      <div class={container_class(@container_type)}>
+        <%= render_slot(@inner_block) %>
       </div>
-      <footer class="h-16 bg-white bottom-0 fixed inset-x-0 z-40">
-        <div class="flex w-full">
-          <%= render_slot(@main_menu) %>
-        </div>
-      </footer>
+    </div>
+    <footer class="h-16 bg-white bottom-0 fixed inset-x-0 z-40">
+      <div class="flex w-full">
+        <%= render_slot(@main_menu) %>
+      </div>
+    </footer>
     """
   end
 

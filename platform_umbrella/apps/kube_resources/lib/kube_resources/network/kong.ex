@@ -1,5 +1,6 @@
 defmodule KubeResources.Kong do
   @moduledoc false
+  import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeResources.NetworkSettings
@@ -7,6 +8,23 @@ defmodule KubeResources.Kong do
   @crd_path "priv/manifests/kong/crd.yaml"
 
   @app_name "kong"
+
+  def materialize(config) do
+    %{
+      "/kong/0/crds" => crd(config),
+      "/kong/1/service_account" => service_account(config),
+      "/kong/1/cluster_role" => cluster_role(config),
+      "/kong/1/cluster_role_binding" => cluster_role_binding(config),
+      "/kong/1/role" => role(config),
+      "/kong/1/role_binding" => role_binding(config),
+      "/kong/1/service" => service(config),
+      "/kong/1/service_1" => service_1(config),
+      "/kong/1/deployment" => deployment(config),
+      "/kong/1/pod" => pod(config),
+      "/kong/1/pod_1" => pod_1(config),
+      "/kong/1/pom_plugin" => prometheus_plugin(config)
+    }
+  end
 
   def crd(_), do: yaml(crd_content())
 
@@ -455,7 +473,7 @@ defmodule KubeResources.Kong do
     }
   end
 
-  def monitors(%{"kong.install" => true} = config) do
+  def monitors(%{} = config) do
     namespace = NetworkSettings.namespace(config)
 
     [
@@ -482,8 +500,6 @@ defmodule KubeResources.Kong do
       }
     ]
   end
-
-  def monitors(_config), do: []
 
   def pod(config) do
     namespace = NetworkSettings.namespace(config)
@@ -554,10 +570,4 @@ defmodule KubeResources.Kong do
   def base_path(namespace), do: "http://kong-proxy.#{namespace}.svc.cluster.local"
 
   defp crd_content, do: unquote(File.read!(@crd_path))
-
-  defp yaml(content) do
-    content
-    |> YamlElixir.read_all_from_string!()
-    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
-  end
 end

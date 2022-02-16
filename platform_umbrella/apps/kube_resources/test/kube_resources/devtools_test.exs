@@ -1,9 +1,9 @@
 defmodule KubeResources.DevtoolsTest do
   use ControlServer.DataCase
 
-  alias KubeResources.Devtools
+  alias KubeResources.KnativeOperator
 
-  test "Can materialize" do
-    assert map_size(Devtools.materialize(%{})) >= 5
+  test "Can materialize knative operator" do
+    assert map_size(KnativeOperator.materialize(%{})) >= 5
   end
 end

@@ -12,9 +12,9 @@ defmodule KubeResources.GrafanaDashboards do
   @possible_providers [
     %{
       "folder" => "Default",
-      "name" => "0",
+      "name" => "default",
       "options" => %{
-        "path" => "/grafana-dashboard-definitions/0"
+        "path" => "/grafana-dashboard-definitions/default"
       },
       "disableDeletion" => false,
       "allowUiUpdates" => false,
@@ -23,9 +23,9 @@ defmodule KubeResources.GrafanaDashboards do
     },
     %{
       "folder" => "Databases",
-      "name" => "1",
+      "name" => "database",
       "options" => %{
-        "path" => "/grafana-dashboard-definitions/1"
+        "path" => "/grafana-dashboard-definitions/database"
       },
       "disableDeletion" => false,
       "allowUiUpdates" => false,
@@ -34,9 +34,20 @@ defmodule KubeResources.GrafanaDashboards do
     },
     %{
       "folder" => "Kubernetes",
-      "name" => "2",
+      "name" => "kube",
       "options" => %{
-        "path" => "/grafana-dashboard-definitions/2"
+        "path" => "/grafana-dashboard-definitions/kube"
+      },
+      "disableDeletion" => false,
+      "allowUiUpdates" => false,
+      "orgId" => 1,
+      "type" => "file"
+    },
+    %{
+      "folder" => "Network",
+      "name" => "network",
+      "options" => %{
+        "path" => "/grafana-dashboard-definitions/network"
       },
       "disableDeletion" => false,
       "allowUiUpdates" => false,
@@ -69,17 +80,30 @@ defmodule KubeResources.GrafanaDashboards do
 
   def dashboards(config, :monitoring) do
     %{
-      "/grafana-dashboard-definitions/2/#{grafana_dashboard_name(11_455)}" =>
-        dashboard_configmap_from_grafana_id(config, 11_455)
+      "/grafana-dashboard-definitions/kube/#{grafana_dashboard_name(7249)}" =>
+        dashboard_configmap_from_grafana_id(config, 7249),
+      "/grafana-dashboard-definitions/kube/#{grafana_dashboard_name(6417)}" =>
+        dashboard_configmap_from_grafana_id(config, 6417),
+      "/grafana-dashboard-definitions/kube/#{grafana_dashboard_name(1860)}" =>
+        dashboard_configmap_from_grafana_id(config, 1860)
     }
   end
 
   def dashboards(config, :database) do
     %{
-      "/grafana-dashboard-definitions/1/#{grafana_dashboard_name(9628)}" =>
-        dashboard_configmap_from_grafana_id(config, 9628),
-      "/grafana-dashboard-definitions/1/#{grafana_dashboard_name(12_273)}" =>
-        dashboard_configmap_from_grafana_id(config, 12_273)
+      "/grafana-dashboard-definitions/database/#{grafana_dashboard_name(9628)}" =>
+        dashboard_configmap_from_grafana_id(config, 9628)
+    }
+  end
+
+  def dashboards(config, :istio) do
+    %{
+      "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7645)}" =>
+        dashboard_configmap_from_grafana_id(config, 7645),
+      "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7630)}" =>
+        dashboard_configmap_from_grafana_id(config, 7630),
+      "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7636)}" =>
+        dashboard_configmap_from_grafana_id(config, 7636)
     }
   end
 
@@ -149,36 +173,33 @@ defmodule KubeResources.GrafanaDashboards do
   def set_unset_inputs(%{dash: dash, prometheus_input_names: prometheus_input_names}) do
     prometheus_input_names
     |> Enum.reduce(dash, fn potential_input_name, acc ->
-      recursive_update_datasources(acc, potential_input_name, "battery-prometheus")
+      recursive_update(acc, potential_input_name, "battery-prometheus")
     end)
     |> Map.drop(["__inputs"])
     |> Map.drop(["__requires"])
   end
 
-  def recursive_update_datasources(%{} = dash_object, input_name, new_value) do
+  def recursive_update(%{} = dash_object, input_name, new_value) do
     dash_object
-    |> Map.map(fn {key, value} ->
-      case key do
-        "datasource" -> maybe_update(value, input_name, new_value)
-        _ -> recursive_update_datasources(value, input_name, new_value)
-      end
+    |> Map.map(fn {_key, value} ->
+      value |> maybe_update(input_name, new_value) |> recursive_update(input_name, new_value)
     end)
     |> Enum.into(%{})
   end
 
-  def recursive_update_datasources(obj_list, input_name, new_value) when is_list(obj_list) do
-    Enum.map(obj_list, fn o -> recursive_update_datasources(o, input_name, new_value) end)
+  def recursive_update(obj_list, input_name, new_value) when is_list(obj_list) do
+    Enum.map(obj_list, fn o -> recursive_update(o, input_name, new_value) end)
   end
 
-  def recursive_update_datasources(value, _, _), do: value
+  def recursive_update(value, _, _), do: value
 
-  def maybe_update(nil = _current_value, _, _), do: nil
-
-  def maybe_update(current_value, input_name, new_value) do
+  def maybe_update(current_value, input_name, new_value) when is_binary(current_value) do
     p_name = "${#{input_name}}"
     name = "$#{input_name}"
     current_value |> String.replace(p_name, new_value) |> String.replace(name, new_value)
   end
+
+  def maybe_update(current_value, _, _), do: current_value
 
   def set_template_datasource(%{"query" => "prometheus"} = template) do
     Map.put(template, "current", %{

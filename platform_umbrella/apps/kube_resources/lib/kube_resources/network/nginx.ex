@@ -2,9 +2,24 @@ defmodule KubeResources.Nginx do
   @moduledoc false
 
   alias KubeExt.Builder, as: B
+
+  alias KubeResources.Ingress
   alias KubeResources.NetworkSettings
 
   @app_name "ingress-nginx"
+
+  def materialize(config) do
+    %{}
+    |> Map.put("/nginx/0/service_account", service_account(config))
+    |> Map.put("/nginx/0/config_map", config_map(config))
+    |> Map.put("/nginx/0/cluster_role", cluster_role(config))
+    |> Map.put("/nginx/0/cluster_role_binding", cluster_role_binding(config))
+    |> Map.put("/nginx/0/role", role(config))
+    |> Map.put("/nginx/0/role_binding", role_binding(config))
+    |> Map.put("/nginx/0/service", service(config))
+    |> Map.put("/nginx/0/deployment", deployment(config))
+    |> Map.merge(Ingress.materialize(config))
+  end
 
   def service_account(config) do
     namespace = NetworkSettings.namespace(config)

@@ -26,6 +26,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresEdit do
     {:noreply, push_redirect(socket, to: new_path)}
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <.layout>

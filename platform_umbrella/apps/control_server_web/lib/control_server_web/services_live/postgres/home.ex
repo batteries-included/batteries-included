@@ -29,7 +29,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   end
 
   defp get_pods do
-    Enum.map(Pods.get(), &Pods.summarize/1)
+    Enum.map(Pods.get("battery-data"), &Pods.summarize/1)
   end
 
   defp list_clusters do
