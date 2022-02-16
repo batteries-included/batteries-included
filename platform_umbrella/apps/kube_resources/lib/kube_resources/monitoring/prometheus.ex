@@ -20,10 +20,6 @@ defmodule KubeResources.Prometheus do
       "/account" => service_account(config),
       "/cluster_role" => cluster_role(config),
       "/cluster_role_bind" => cluster_role_binding(config),
-      "/main_roles" => main_roles(config),
-      "/role_binds" => main_role_bindings(config),
-      "/config_role" => config_role(config),
-      "/config_role_bind" => config_role_binding(config),
       "/prometheus_main" => prometheus(config),
       "/service" => service(config)
     }
@@ -63,7 +59,7 @@ defmodule KubeResources.Prometheus do
       "kind" => "Prometheus",
       "metadata" => %{
         "labels" => %{
-          "battery/app" => "prometheus",
+          "battery/app" => @app_name,
           "battery/managed" => "True"
         },
         "name" => "prometheus",
@@ -157,14 +153,10 @@ defmodule KubeResources.Prometheus do
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ServiceAccount",
-      "metadata" => %{
-        "name" => "battery-prometheus",
-        "namespace" => namespace
-      }
-    }
+    B.build_resource(:service_account)
+    |> B.name("battery-prometheus")
+    |> B.app_labels(@app_name)
+    |> B.namespace(namespace)
   end
 
   def cluster_role(_config) do
@@ -186,6 +178,26 @@ defmodule KubeResources.Prometheus do
         },
         %{
           "nonResourceURLs" => ["/metrics"],
+          "verbs" => ["get"]
+        },
+        %{
+          "apiGroups" => [""],
+          "resources" => ["services", "endpoints", "pods"],
+          "verbs" => ["get", "list", "watch"]
+        },
+        %{
+          "apiGroups" => ["extensions"],
+          "resources" => ["ingresses"],
+          "verbs" => ["get", "list", "watch"]
+        },
+        %{
+          "apiGroups" => ["networking.k8s.io"],
+          "resources" => ["ingresses"],
+          "verbs" => ["get", "list", "watch"]
+        },
+        %{
+          "apiGroups" => [""],
+          "resources" => ["configmaps"],
           "verbs" => ["get"]
         }
       ]
@@ -218,122 +230,5 @@ defmodule KubeResources.Prometheus do
         }
       ]
     }
-  end
-
-  def config_role(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "Role",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => "prometheus",
-          "battery/managed" => "True"
-        },
-        "name" => "prometheus-config",
-        "namespace" => namespace
-      },
-      "rules" => [
-        %{
-          "apiGroups" => [""],
-          "resources" => ["configmaps"],
-          "verbs" => ["get"]
-        }
-      ]
-    }
-  end
-
-  def config_role_binding(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "RoleBinding",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => "prometheus",
-          "battery/managed" => "True"
-        },
-        "name" => "prometheus",
-        "namespace" => namespace
-      },
-      "roleRef" => %{
-        "apiGroup" => "rbac.authorization.k8s.io",
-        "kind" => "Role",
-        "name" => "prometheus"
-      },
-      "subjects" => [
-        %{
-          "kind" => "ServiceAccount",
-          "name" => "battery-prometheus",
-          "namespace" => namespace
-        }
-      ]
-    }
-  end
-
-  def main_roles(config) do
-    config
-    |> MonitoringSettings.monitored_namespaces()
-    |> Enum.map(fn mon_namespace ->
-      %{
-        "apiVersion" => "rbac.authorization.k8s.io/v1",
-        "kind" => "Role",
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => "prometheus",
-            "battery/managed" => "True"
-          },
-          "name" => "battery-prometheus",
-          "namespace" => mon_namespace
-        },
-        "rules" => [
-          %{
-            "apiGroups" => [""],
-            "resources" => ["services", "endpoints", "pods"],
-            "verbs" => ["get", "list", "watch"]
-          },
-          %{
-            "apiGroups" => ["extensions"],
-            "resources" => ["ingresses"],
-            "verbs" => ["get", "list", "watch"]
-          }
-        ]
-      }
-    end)
-  end
-
-  def main_role_bindings(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    config
-    |> MonitoringSettings.monitored_namespaces()
-    |> Enum.map(fn mon_namespace ->
-      %{
-        "apiVersion" => "rbac.authorization.k8s.io/v1",
-        "kind" => "RoleBinding",
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => "prometheus",
-            "battery/managed" => "True"
-          },
-          "name" => "battery-prometheus",
-          "namespace" => mon_namespace
-        },
-        "roleRef" => %{
-          "apiGroup" => "rbac.authorization.k8s.io",
-          "kind" => "Role",
-          "name" => "battery-prometheus"
-        },
-        "subjects" => [
-          %{
-            "kind" => "ServiceAccount",
-            "name" => "battery-prometheus",
-            "namespace" => namespace
-          }
-        ]
-      }
-    end)
   end
 end

@@ -24,6 +24,88 @@ defmodule KubeResources.Istio do
 
   defp crd_content, do: unquote(File.read!(@crd_path))
 
+  def monitors(config) do
+    [pod_monitor(config), service_monitor(config)]
+  end
+
+  def pod_monitor(config) do
+    namespace = NetworkSettings.namespace(config)
+
+    spec = %{
+      "selector" => %{
+        "matchExpressions" => [
+          %{"key" => "istio-prometheus-ignore", "operator" => "DoesNotExist"}
+        ]
+      },
+      "namespaceSelector" => %{"any" => true},
+      "jobLabel" => "envoy-stats",
+      "podMetricsEndpoints" => [
+        %{
+          "path" => "/stats/prometheus",
+          "interval" => "15s",
+          "relabelings" => [
+            %{
+              "action" => "keep",
+              "sourceLabels" => ["__meta_kubernetes_pod_container_name"],
+              "regex" => "istio-proxy"
+            },
+            %{
+              "action" => "keep",
+              "sourceLabels" => ["__meta_kubernetes_pod_annotationpresent_prometheus_io_scrape"]
+            },
+            %{
+              "sourceLabels" => [
+                "__address__",
+                "__meta_kubernetes_pod_annotation_prometheus_io_port"
+              ],
+              "action" => "replace",
+              "regex" => "([^:]+)(?::\\d+)?;(\\d+)",
+              "replacement" => "$1:$2",
+              "targetLabel" => "__address__"
+            },
+            %{"action" => "labeldrop", "regex" => "__meta_kubernetes_pod_label_(.+)"},
+            %{
+              "sourceLabels" => ["__meta_kubernetes_namespace"],
+              "action" => "replace",
+              "targetLabel" => "namespace"
+            },
+            %{
+              "sourceLabels" => ["__meta_kubernetes_pod_name"],
+              "action" => "replace",
+              "targetLabel" => "pod_name"
+            }
+          ]
+        }
+      ]
+    }
+
+    B.build_resource(:pod_monitor)
+    |> B.name("envoy-stats-monitor")
+    |> B.spec(spec)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
+
+  def service_monitor(config) do
+    namespace = NetworkSettings.namespace(config)
+
+    spec = %{
+      "jobLabel" => "istio",
+      "targetLabels" => ["app"],
+      "selector" => %{
+        "matchExpressions" => [%{"key" => "istio", "operator" => "In", "values" => ["pilot"]}]
+      },
+      "namespaceSelector" => %{"any" => true},
+      "endpoints" => [%{"port" => "http-monitoring", "interval" => "15s"}]
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.name("istio-component-monitor")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> B.app_labels(@app_name)
+  end
+
   def cluster_role(_config) do
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",

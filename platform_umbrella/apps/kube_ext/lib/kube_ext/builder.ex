@@ -51,6 +51,10 @@ defmodule KubeExt.Builder do
     build_resource("monitoring.coreos.com/v1", "ServiceMonitor")
   end
 
+  def build_resource(:pod_monitor) do
+    build_resource("monitoring.coreos.com/v1", "PodMonitor")
+  end
+
   def build_resource(:secret) do
     Map.put(build_resource("v1", "Secret"), "type", "Opaque")
   end

@@ -96,10 +96,14 @@ defmodule KubeResources.GrafanaDashboards do
     }
   end
 
-  def dashboards(config, :network) do
+  def dashboards(config, :istio) do
     %{
       "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7645)}" =>
-        dashboard_configmap_from_grafana_id(config, 7645)
+        dashboard_configmap_from_grafana_id(config, 7645),
+      "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7630)}" =>
+        dashboard_configmap_from_grafana_id(config, 7630),
+      "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7636)}" =>
+        dashboard_configmap_from_grafana_id(config, 7636)
     }
   end
 

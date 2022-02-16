@@ -1,5 +1,6 @@
 defmodule KubeResources.Kong do
   @moduledoc false
+  import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeResources.NetworkSettings
@@ -472,7 +473,7 @@ defmodule KubeResources.Kong do
     }
   end
 
-  def monitors(%{"kong.install" => true} = config) do
+  def monitors(%{} = config) do
     namespace = NetworkSettings.namespace(config)
 
     [
@@ -499,8 +500,6 @@ defmodule KubeResources.Kong do
       }
     ]
   end
-
-  def monitors(_config), do: []
 
   def pod(config) do
     namespace = NetworkSettings.namespace(config)
@@ -571,10 +570,4 @@ defmodule KubeResources.Kong do
   def base_path(namespace), do: "http://kong-proxy.#{namespace}.svc.cluster.local"
 
   defp crd_content, do: unquote(File.read!(@crd_path))
-
-  defp yaml(content) do
-    content
-    |> YamlElixir.read_all_from_string!()
-    |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
-  end
 end

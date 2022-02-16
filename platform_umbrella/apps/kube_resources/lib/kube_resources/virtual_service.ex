@@ -9,7 +9,7 @@ defmodule KubeResources.VirtualService do
   def materialize(config) do
     Services.list_base_services()
     |> Enum.map(fn bs ->
-      {"/svcs/#{bs.id}", virtual_service(bs.service_type, config)}
+      {"/svcs/#{bs.id}/#{bs.service_type}", virtual_service(bs.service_type, config)}
     end)
     |> Map.new()
   end
