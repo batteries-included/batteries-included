@@ -65,8 +65,8 @@ defmodule ControlServerWeb.RunnableServiceList do
             </tr>
           </thead>
           <tbody>
-            <%= for {_path, service_info} <- @services do %>
-              <.table_row service_info={service_info} target={@myself} />
+            <%= for {service_info, idx} <- @services |> Map.values() |> Enum.with_index() do %>
+              <.table_row service_info={service_info} idx={idx} target={@myself} />
             <% end %>
           </tbody>
         </table>
@@ -77,7 +77,7 @@ defmodule ControlServerWeb.RunnableServiceList do
 
   def table_row(assigns) do
     ~H"""
-    <tr class={["bg-white"]}>
+    <tr class={row_class(@idx)}>
       <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
         <%= @service_info.module.service_type() %>
       </td>
@@ -97,4 +97,8 @@ defmodule ControlServerWeb.RunnableServiceList do
     </tr>
     """
   end
+
+  defp row_class(idx), do: do_row_class(rem(idx, 2))
+  defp do_row_class(0 = _remainder), do: ["bg-white"]
+  defp do_row_class(_remainder), do: []
 end
