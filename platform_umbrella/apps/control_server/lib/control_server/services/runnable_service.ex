@@ -5,6 +5,7 @@ defmodule ControlServer.Services.RunnableService do
   @callback activate!() :: ControlServer.Services.BaseService
   @callback active?() :: boolean()
   @callback service_type() :: atom()
+  @callback path() :: String.t()
 
   defmacro __using__(opts) do
     quote location: :keep, bind_quoted: [opts: opts] do
@@ -34,9 +35,10 @@ defmodule ControlServer.Services.RunnableService do
       end
 
       @impl ControlServer.Services.RunnableService
-      def service_type do
-        unquote(service_type)
-      end
+      def service_type, do: unquote(service_type)
+
+      @impl ControlServer.Services.RunnableService
+      def path, do: unquote(path)
 
       defoverridable ControlServer.Services.RunnableService
     end

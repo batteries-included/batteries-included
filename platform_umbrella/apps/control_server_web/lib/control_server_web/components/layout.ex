@@ -28,9 +28,6 @@ defmodule ControlServerWeb.Layout do
         <BaseLayout.menu_item to="/services/database" name="Databases" class={@menu_item_class}>
           <CommonUI.Icons.Database.render class={@icon_class} />
         </BaseLayout.menu_item>
-        <BaseLayout.menu_item to="/services/ml/training" name="Training" class={@menu_item_class}>
-          <CommonUI.Icons.Training.render class={@icon_class} />
-        </BaseLayout.menu_item>
         <BaseLayout.menu_item to="/services/ml/notebooks" name="Notebooks" class={@menu_item_class}>
           <CommonUI.Icons.Notebook.render class={@icon_class} />
         </BaseLayout.menu_item>

@@ -80,7 +80,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
   end
 
   defp row_class(idx), do: do_row_class(rem(idx, 2))
-  defp do_row_class(1 = _remainder), do: []
+  defp do_row_class(0 = _remainder), do: ["bg-white"]
   defp do_row_class(_remainder), do: []
 
   defp cluster_edit_url(cluster),

@@ -78,7 +78,7 @@ defmodule KubeResources.GrafanaDashboards do
     |> Enum.reduce(%{}, fn element, acc -> Map.merge(acc, element) end)
   end
 
-  def dashboards(config, :monitoring) do
+  def dashboards(config, :kube_monitoring) do
     %{
       "/grafana-dashboard-definitions/kube/#{grafana_dashboard_name(7249)}" =>
         dashboard_configmap_from_grafana_id(config, 7249),

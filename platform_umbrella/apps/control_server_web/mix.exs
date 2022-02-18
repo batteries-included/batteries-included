@@ -53,7 +53,8 @@ defmodule ControlServerWeb.MixProject do
       {:kube_usage, in_umbrella: true},
       # Components
       {:common_ui, in_umbrella: true},
-      {:petal_components, "~> 0.11.0"},
+      {:petal_components, "~> 0.11.3"},
+      {:heex_formatter, github: "feliperenan/heex_formatter", only: [:dev], runtime: false},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}
     ]

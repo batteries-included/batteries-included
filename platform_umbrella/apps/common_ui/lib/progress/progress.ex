@@ -31,7 +31,7 @@ defmodule CommonUI.Progress do
         phx-value-payload={@index}
       >
         <span class={text_classes(@is_done)}>
-          Step <%= @index + 1 %>
+          Step&nbsp;<%= @index + 1 %>
         </span>
         <span class="text-sm font-medium">
           <%= @name %>

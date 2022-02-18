@@ -37,7 +37,9 @@
           </td>
           <td>
             <span>
-              <%= live_redirect("Show", to: Routes.billing_report_show_path(@socket, :show, billing_report)) %>
+              <%= live_redirect("Show",
+                to: Routes.billing_report_show_path(@socket, :show, billing_report)
+              ) %>
             </span>
           </td>
         </tr>

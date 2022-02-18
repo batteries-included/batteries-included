@@ -35,7 +35,9 @@
             ) %>
           </span>
           <span>
-            <%= live_patch("Edit", to: Routes.stripe_subscription_index_path(@socket, :edit, stripe_subscription)) %>
+            <%= live_patch("Edit",
+              to: Routes.stripe_subscription_index_path(@socket, :edit, stripe_subscription)
+            ) %>
           </span>
           <span>
             <%= link("Delete",
@@ -51,5 +53,7 @@
   </tbody>
 </table>
 <span>
-  <%= live_patch("New Stripe subscription", to: Routes.stripe_subscription_index_path(@socket, :new)) %>
+  <%= live_patch("New Stripe subscription",
+    to: Routes.stripe_subscription_index_path(@socket, :new)
+  ) %>
 </span>
