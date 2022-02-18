@@ -9,6 +9,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
 
   alias ControlServer.Services
   alias ControlServer.Services.Pods
+  alias ControlServerWeb.BaseServiceStatusList
 
   require Logger
 
@@ -21,7 +22,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
     {:ok,
      socket
      |> assign(:pods, get_pods())
-     |> assign(:running, Services.Security.active?())}
+     |> assign(:services, [Services.CertManager])}
   end
 
   defp get_pods do
@@ -32,7 +33,8 @@ defmodule ControlServerWeb.ServicesLive.Security do
   @spec handle_info(:update, Phoenix.LiveView.Socket.t()) ::
           {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info(:update, socket) do
-    Process.send_after(self(), :update, @pod_update_time)
+    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
+
     {:noreply, assign(socket, :pods, get_pods())}
   end
 
@@ -46,42 +48,25 @@ defmodule ControlServerWeb.ServicesLive.Security do
   end
 
   @impl true
-  def handle_event("start_service", _, socket) do
-    Services.Security.activate!()
-
-    {:noreply, assign(socket, :running, true)}
-  end
-
-  @impl true
   def render(assigns) do
     ~H"""
     <.layout>
-      <div class="container">
-        <h2 class="mt-2 text-2xl font-bold leading-7 text-pink-500 sm:text-3xl sm:truncate">
+      <:title>
+        <.title>
           Security
-        </h2>
-        <hr class="mt-4">
-        <%= if @running do %>
-          <div class="mt-4 row">
-            <div class="col">
-              <ControlServerWeb.PodDisplay.pods_display pods={@pods} />
-            </div>
-          </div>
-        <% else %>
-          <div class="mt-4 row">
-            <div class="col align-self-center">
-              The security service is not currently enabled on this Batteries included
-              cluster. To start installing please press the button.
-            </div>
-          </div>
-          <div class="row">
-            <div class="m-5 text-center col align-self-center">
-              <.button phx-click="start_service">
-                Install
-              </.button>
-            </div>
-          </div>
-        <% end %>
+        </.title>
+      </:title>
+      <div class="container-xxl">
+        <div class="mt-4 row">
+          <.live_component
+            module={BaseServiceStatusList}
+            services={@services}
+            id={"security_base_services"}
+          />
+        </div>
+        <div class="mt-2 row">
+          <ControlServerWeb.PodDisplay.pods_display pods={@pods} />
+        </div>
       </div>
     </.layout>
     """

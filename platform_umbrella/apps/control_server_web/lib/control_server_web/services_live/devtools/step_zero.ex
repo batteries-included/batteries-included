@@ -11,7 +11,9 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsStepZero do
       </h1>
       <div class="m-4 text-lg row">
         Our source code is located in
-        <select class="inline py-2 pl-3 pr-10 mt-2 border-gray-300 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+        <select
+          class="inline py-2 pl-3 pr-10 mt-2 border-gray-300 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+        >
           <option>Github</option>
           <option selected>
             Gitlab

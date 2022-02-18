@@ -15,7 +15,8 @@ defmodule HomeBaseWeb.BillingReportLive.ChartComponent do
         phx-update="ignore"
         id={"billing_chart_#{@id}"}
         data-data={encoded_data}
-      ></canvas>
+      >
+      </canvas>
     </div>
     """
   end

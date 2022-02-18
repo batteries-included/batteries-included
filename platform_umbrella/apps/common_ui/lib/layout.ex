@@ -24,17 +24,19 @@ defmodule CommonUI.Layout do
     ~H"""
     <.link
       to={"#{@to}"}
-      class={[
-        "group",
-        "w-full",
-        "p-3",
-        "rounded-md",
-        "flex",
-        "flex-col",
-        "items-center",
-        "text-sm",
-        "font-medium"
-      ] ++ @class}
+      class={
+        [
+          "group",
+          "w-full",
+          "p-3",
+          "rounded-md",
+          "flex",
+          "flex-col",
+          "items-center",
+          "text-sm",
+          "font-medium"
+        ] ++ @class
+      }
     >
       <%= render_slot(@inner_block) %>
       <span class="mt-2">
@@ -55,7 +57,7 @@ defmodule CommonUI.Layout do
       <header class="w-full bg-white h-16">
         <div class="flex max-w-7xl h-full">
           <.link to={@logo_path} class="my-auto mx-4">
-            <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included">
+            <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included" />
           </.link>
           <%= render_slot(@title) %>
           <h1 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">

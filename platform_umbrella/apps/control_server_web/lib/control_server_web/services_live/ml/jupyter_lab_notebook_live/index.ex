@@ -5,7 +5,9 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   import ControlServerWeb.PodDisplay
 
   alias ControlServer.Notebooks
+  alias ControlServer.Services
   alias ControlServer.Services.Pods
+  alias ControlServerWeb.BaseServiceStatusList
 
   @pod_update_time 5000
 
@@ -20,7 +22,10 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
     {:ok,
      socket
      |> assign(:jupyter_lab_notebooks, list_jupyter_lab_notebooks())
-     |> assign(:pods, get_pods())}
+     |> assign(:pods, get_pods())
+     |> assign(:services, [
+       Services.Notebooks
+     ])}
   end
 
   @impl true
@@ -69,56 +74,71 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
       <:title>
         <.title>Jupyter Notebooks</.title>
       </:title>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Image</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody id="jupyter_lab_notebooks">
-          <%= for notebook <- @jupyter_lab_notebooks do %>
-            <tr id="jupyter_lab_notebook-{jupyter_lab_notebook.id}">
-              <td>
-                <%= notebook.name %>
-              </td>
-              <td>
-                <%= notebook.image %>
-              </td>
-              <td>
-                <span>
-                  <.link
-                    link_type="live_redirect"
-                    to={Routes.services_jupyter_lab_notebook_show_path(@socket, :index, notebook)}
-                  >
-                    Show
-                  </.link>
-                </span>
-                <span>
-                  <a href={"http://anton2:8081/x/notebooks/#{notebook.name}"}>
-                    Open
-                  </a>
-                </span>
-                |
-                <span>
-                  <.link
-                    label="Delete"
-                    to="#"
-                    phx-click="delete"
-                    phx-value-id={notebook.id}
-                    data={[confirm: "Are you sure?"]}
-                  />
-                </span>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <.button phx-click="start_notebook">
-        Start Notebook
-      </.button>
-      <.pods_display pods={@pods} />
+      <div class="container-xxl">
+        <div class="mt-4 row">
+          <.live_component
+            module={BaseServiceStatusList}
+            services={@services}
+            id={"ml_base_services"}
+          />
+        </div>
+        <div class="mt-2 row">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Image</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody id="jupyter_lab_notebooks">
+              <%= for notebook <- @jupyter_lab_notebooks do %>
+                <tr id="jupyter_lab_notebook-{jupyter_lab_notebook.id}">
+                  <td>
+                    <%= notebook.name %>
+                  </td>
+                  <td>
+                    <%= notebook.image %>
+                  </td>
+                  <td>
+                    <span>
+                      <.link
+                        link_type="live_redirect"
+                        to={Routes.services_jupyter_lab_notebook_show_path(@socket, :index, notebook)}
+                      >
+                        Show
+                      </.link>
+                    </span>
+                    <span>
+                      <a href={"http://anton2:8081/x/notebooks/#{notebook.name}"}>
+                        Open
+                      </a>
+                    </span>
+                    |
+                    <span>
+                      <.link
+                        label="Delete"
+                        to="#"
+                        phx-click="delete"
+                        phx-value-id={notebook.id}
+                        data={[confirm: "Are you sure?"]}
+                      />
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-2 row">
+          <.button phx-click="start_notebook">
+            Start Notebook
+          </.button>
+        </div>
+        <div class="mt-2 row">
+          <.pods_display pods={@pods} />
+        </div>
+      </div>
     </.layout>
     """
   end

@@ -10,6 +10,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
 
   alias ControlServer.Services
   alias ControlServer.Services.Pods
+  alias ControlServerWeb.BaseServiceStatusList
 
   require Logger
 
@@ -19,7 +20,10 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
 
-    {:ok, socket |> assign(:pods, get_pods()) |> assign(:running, running?())}
+    {:ok,
+     socket
+     |> assign(:pods, get_pods())
+     |> assign(:services, [Services.Knative])}
   end
 
   defp get_pods do
@@ -28,7 +32,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
 
   @impl true
   def handle_info(:update, socket) do
-    Process.send_after(self(), :update, @pod_update_time)
+    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
     {:noreply, assign(socket, :pods, get_pods())}
   end
 
@@ -42,33 +46,24 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
   end
 
   @impl true
-  def handle_event("start_service", _, socket) do
-    Services.Knative.activate!()
-    {:noreply, assign(socket, :running, running?())}
-  end
-
-  def running? do
-    Services.Knative.active?()
-  end
-
-  @impl true
   def render(assigns) do
     ~H"""
     <.layout>
       <:title>
         <.title>Devtools</.title>
       </:title>
-      <%= if @running do %>
-        <div class="mt-4">
+      <div class="container-xxl">
+        <div class="mt-4 row">
+          <.live_component
+            module={BaseServiceStatusList}
+            services={@services}
+            id={"devtools_base_services"}
+          />
+        </div>
+        <div class="mt-2 row">
           <.pods_display pods={@pods} />
         </div>
-      <% else %>
-        <div class="mt-4 row">
-          <.button phx-click="start_service">
-            Install
-          </.button>
-        </div>
-      <% end %>
+      </div>
     </.layout>
     """
   end

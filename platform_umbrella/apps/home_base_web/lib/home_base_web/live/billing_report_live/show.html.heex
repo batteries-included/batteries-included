@@ -91,7 +91,9 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             <span>
-              <%= live_redirect("Show", to: Routes.usage_report_show_path(@socket, :show, usage_report)) %>
+              <%= live_redirect("Show",
+                to: Routes.usage_report_show_path(@socket, :show, usage_report)
+              ) %>
             </span>
           </td>
         </tr>

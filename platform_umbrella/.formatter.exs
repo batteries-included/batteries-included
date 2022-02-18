@@ -1,4 +1,5 @@
 [
   inputs: ["mix.exs", "config/*.exs"],
-  subdirectories: ["apps/*"]
+  subdirectories: ["apps/*"],
+  plugins: [HeexFormatter]
 ]
