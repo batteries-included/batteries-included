@@ -4,6 +4,7 @@ defmodule KubeResources.ConfigGenerator do
   """
 
   alias ControlServer.Services.BaseService
+  alias KubeResources.AlertManager
   alias KubeResources.CertManager
   alias KubeResources.ControlServerResources
   alias KubeResources.Database
@@ -31,9 +32,6 @@ defmodule KubeResources.ConfigGenerator do
     end
   end
 
-  defp materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
-  defp materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
-
   defp materialize(%{} = config, :prometheus) do
     config |> Prometheus.materialize() |> Map.merge(ServiceMonitors.materialize(config))
   end
@@ -42,7 +40,10 @@ defmodule KubeResources.ConfigGenerator do
     config |> Istio.materialize() |> Map.merge(VirtualService.materialize(config))
   end
 
+  defp materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
   defp materialize(%{} = config, :grafana), do: Grafana.materialize(config)
+  defp materialize(%{} = config, :alert_manager), do: AlertManager.materialize(config)
+  defp materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
 
   defp materialize(%{} = config, :database), do: Database.materialize_common(config)
   defp materialize(%{} = config, :database_public), do: Database.materialize_public(config)

@@ -26,6 +26,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
        Services.PrometheusOperator,
        Services.Prometheus,
        Services.Grafana,
+       Services.AlertManager,
        Services.KubeMonitoring
      ])}
   end
