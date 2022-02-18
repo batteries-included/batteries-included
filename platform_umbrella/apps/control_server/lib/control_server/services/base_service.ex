@@ -15,10 +15,10 @@ defmodule ControlServer.Services.BaseService do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "base_services" do
-    field(:is_active, :boolean, default: false)
-    field(:root_path, :string)
+    field :is_active, :boolean, default: false
+    field :root_path, :string
 
-    field(:service_type, Ecto.Enum,
+    field :service_type, Ecto.Enum,
       values: [
         :prometheus_operator,
         :prometheus,
@@ -38,9 +38,8 @@ defmodule ControlServer.Services.BaseService do
         :notebooks,
         :control_server
       ]
-    )
 
-    field(:config, :map)
+    field :config, :map
 
     timestamps()
   end
