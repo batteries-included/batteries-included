@@ -48,12 +48,6 @@ defmodule KubeResources.Prometheus do
   def prometheus(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    image = MonitoringSettings.prometheus_image(config)
-    version = MonitoringSettings.prometheus_version(config)
-
-    memory = MonitoringSettings.prometheus_memory(config)
-    replicas = MonitoringSettings.prometheus_replicas(config)
-
     %{
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "Prometheus",
@@ -65,33 +59,77 @@ defmodule KubeResources.Prometheus do
         "name" => "prometheus",
         "namespace" => namespace
       },
-      "spec" => %{
-        "image" => "#{image}:#{version}",
-        "nodeSelector" => %{
-          "kubernetes.io/os": "linux"
-        },
-        "logLevel" => "debug",
-        "externalUrl" => "/x/prometheus",
-        # select everything.
-        "podMonitorNamespaceSelector" => %{},
-        "podMonitorSelector" => %{},
-        "probeNamespaceSelector" => %{},
-        "probeSelector" => %{},
-        "replicas" => replicas,
-        "resources" => %{
-          "requests" => %{
-            "memory" => memory
+      "spec" => prometheus_spec(config)
+    }
+  end
+
+  def prometheus_spec(config) do
+    image = MonitoringSettings.prometheus_image(config)
+    version = MonitoringSettings.prometheus_version(config)
+
+    %{
+      "image" => "#{image}:#{version}",
+      "logLevel" => "debug",
+      "externalUrl" => "/x/prometheus",
+      "serviceAccountName" => "battery-prometheus",
+      "version" => version
+    }
+    |> Map.merge(selectors(config))
+    |> Map.merge(limits(config))
+    |> Map.merge(alerting(config))
+  end
+
+  defp alerting(config), do: alerting(config, ControlServer.Services.AlertManager.active?())
+
+  defp alerting(config, true = _is_active) do
+    namespace = MonitoringSettings.namespace(config)
+
+    %{
+      "alerting" => %{
+        "alertmanagers" => [
+          %{
+            "apiVersion" => "v2",
+            "name" => "alertmanager-main",
+            "namespace" => namespace,
+            "port" => "main"
           }
-        },
-        "securityContext" => %{
-          "fsGroup" => 2000,
-          "runAsNonRoot" => true,
-          "runAsUser" => 1000
-        },
-        "serviceAccountName" => "battery-prometheus",
-        "serviceMonitorNamespaceSelector" => %{},
-        "serviceMonitorSelector" => %{},
-        "version" => version
+        ]
+      }
+    }
+  end
+
+  defp alerting(config, _is_active), do: %{}
+
+  defp selectors(config) do
+    %{
+      # select everything.
+      "podMonitorNamespaceSelector" => %{},
+      "podMonitorSelector" => %{},
+      "probeNamespaceSelector" => %{},
+      "probeSelector" => %{},
+      "serviceMonitorNamespaceSelector" => %{},
+      "serviceMonitorSelector" => %{},
+      "nodeSelector" => %{
+        "kubernetes.io/os": "linux"
+      }
+    }
+  end
+
+  def limits(config) do
+    memory = MonitoringSettings.prometheus_memory(config)
+    replicas = MonitoringSettings.prometheus_replicas(config)
+
+    %{
+      "replicas" => replicas,
+      "resources" => %{
+        "requests" => %{
+          "memory" => memory
+        }
+      },
+      "securityContext" => %{
+        "fsGroup" => 2000,
+        "runAsNonRoot" => true,
+        "runAsUser" => 1000
       }
     }
   end
