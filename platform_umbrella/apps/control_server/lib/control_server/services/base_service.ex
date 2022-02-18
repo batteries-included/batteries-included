@@ -23,6 +23,7 @@ defmodule ControlServer.Services.BaseService do
         :prometheus_operator,
         :prometheus,
         :grafana,
+        :alert_manager,
         :kube_monitoring,
         :cert_manager,
         :devtools,

@@ -76,11 +76,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
       </:title>
       <div class="container-xxl">
         <div class="mt-4 row">
-          <.live_component
-            module={RunnableServiceList}
-            services={@services}
-            id={"ml_base_services"}
-          />
+          <.live_component module={RunnableServiceList} services={@services} id={"ml_base_services"} />
         </div>
         <div class="mt-2 row">
           <table>

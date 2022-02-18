@@ -2,7 +2,30 @@ defmodule KubeResources.AlertManager do
   @moduledoc """
   Add on alert manager.
   """
+  alias KubeExt.Builder, as: B
+  alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
+
+  @app_name "alertmanager"
+
+  def materialize(config) do
+    %{
+      "/account" => service_account(config),
+      "/config" => alertmanager_config(config),
+      "/alertmanager" => alertmanager(config),
+      "/service" => service(config)
+    }
+  end
+
+  def virtual_service(config) do
+    namespace = MonitoringSettings.namespace(config)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("alertmanager")
+    |> B.spec(VirtualService.rewriting("/x/alertmanager", "alertmanager-main"))
+  end
 
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
@@ -21,7 +44,7 @@ defmodule KubeResources.AlertManager do
     }
   end
 
-  def config(config) do
+  def alertmanager_config(config) do
     namespace = MonitoringSettings.namespace(config)
 
     %{
@@ -78,9 +101,6 @@ defmodule KubeResources.AlertManager do
         "nodeSelector" => %{
           "kubernetes.io/os": "linux"
         },
-        # TODO: This doesn't work for alertmanger...
-        #
-        # "externalUrl" => "/x/alertmanager/",
         "alertmanagerConfigSelector" => %{
           "matchLables" => %{"alertmanager" => "alertmanager"}
         },

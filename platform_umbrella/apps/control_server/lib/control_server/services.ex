@@ -65,6 +65,12 @@ defmodule ControlServer.Services do
       service_type: :grafana
   end
 
+  defmodule AlertManager do
+    use RunnableService,
+      path: "/monitoring/alert_manager",
+      service_type: :alert_manager
+  end
+
   defmodule KubeMonitoring do
     use RunnableService,
       path: "/monitoring/kube_monitoring",
