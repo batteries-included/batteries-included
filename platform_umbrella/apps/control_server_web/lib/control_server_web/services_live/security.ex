@@ -9,7 +9,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
 
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.BaseServiceStatusList
+  alias ControlServerWeb.RunnableServiceList
 
   require Logger
 
@@ -59,7 +59,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
       <div class="container-xxl">
         <div class="mt-4 row">
           <.live_component
-            module={BaseServiceStatusList}
+            module={RunnableServiceList}
             services={@services}
             id={"security_base_services"}
           />

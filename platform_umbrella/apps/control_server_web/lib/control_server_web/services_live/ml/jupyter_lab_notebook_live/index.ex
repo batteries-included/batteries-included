@@ -7,7 +7,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   alias ControlServer.Notebooks
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.BaseServiceStatusList
+  alias ControlServerWeb.RunnableServiceList
 
   @pod_update_time 5000
 
@@ -77,7 +77,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
       <div class="container-xxl">
         <div class="mt-4 row">
           <.live_component
-            module={BaseServiceStatusList}
+            module={RunnableServiceList}
             services={@services}
             id={"ml_base_services"}
           />

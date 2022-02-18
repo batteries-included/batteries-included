@@ -12,7 +12,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   alias ControlServer.Postgres
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.BaseServiceStatusList
+  alias ControlServerWeb.RunnableServiceList
 
   require Logger
 
@@ -70,7 +70,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
       <div class="container-xxl">
         <div class="mt-4 row">
           <.live_component
-            module={BaseServiceStatusList}
+            module={RunnableServiceList}
             services={@services}
             id={"database_base_services"}
           />

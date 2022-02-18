@@ -10,7 +10,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
 
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.BaseServiceStatusList
+  alias ControlServerWeb.RunnableServiceList
 
   require Logger
 
@@ -55,7 +55,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsHome do
       <div class="container-xxl">
         <div class="mt-4 row">
           <.live_component
-            module={BaseServiceStatusList}
+            module={RunnableServiceList}
             services={@services}
             id={"devtools_base_services"}
           />

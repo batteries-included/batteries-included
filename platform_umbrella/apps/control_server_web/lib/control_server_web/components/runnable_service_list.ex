@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BaseServiceStatusList do
+defmodule ControlServerWeb.RunnableServiceList do
   use ControlServerWeb, :live_component
   import CommonUI.ShadowContainer
 
@@ -77,7 +77,7 @@ defmodule ControlServerWeb.BaseServiceStatusList do
 
   def table_row(assigns) do
     ~H"""
-    <tr class={["bg-white", "bg-gray-100"]}>
+    <tr class={["bg-white"]}>
       <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
         <%= @service_info.module.service_type() %>
       </td>

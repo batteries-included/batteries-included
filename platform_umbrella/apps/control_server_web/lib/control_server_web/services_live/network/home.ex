@@ -7,7 +7,7 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
 
   alias ControlServer.Services
   alias ControlServer.Services.Pods
-  alias ControlServerWeb.BaseServiceStatusList
+  alias ControlServerWeb.RunnableServiceList
 
   require Logger
 
@@ -54,7 +54,7 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
       <div class="container-xxl">
         <div class="mt-4 row">
           <.live_component
-            module={BaseServiceStatusList}
+            module={RunnableServiceList}
             services={@services}
             id={"network_base_services"}
           />
