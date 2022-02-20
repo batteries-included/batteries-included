@@ -1,4 +1,4 @@
-defmodule KubeResources.BatterySettings do
+defmodule KubeRawResources.BatterySettings do
   @namespace "battery-core"
 
   @control_image "k3d-k3s-default-registry:5000/battery/control"

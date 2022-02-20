@@ -98,7 +98,7 @@ defmodule KubeResources.Prometheus do
     }
   end
 
-  defp alerting(config, _is_active), do: %{}
+  defp alerting(_config, _is_active), do: %{}
 
   defp selectors(config) do
     %{

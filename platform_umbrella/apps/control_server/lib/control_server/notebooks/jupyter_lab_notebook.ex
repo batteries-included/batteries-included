@@ -7,8 +7,8 @@ defmodule ControlServer.Notebooks.JupyterLabNotebook do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "jupyter_lab_notebooks" do
-    field :image, :string
-    field :name, :string
+    field(:image, :string, default: "jupyter/datascience-notebook:lab-3.2.9")
+    field(:name, :string)
 
     timestamps()
   end
@@ -26,6 +26,9 @@ defmodule ControlServer.Notebooks.JupyterLabNotebook do
   defp add_name(%Ecto.Changeset{data: %{name: nil}} = changeset) do
     put_change(changeset, :name, MnemonicSlugs.generate_slug())
   end
+
+  defp add_name(%Ecto.Changeset{data: %{name: name}} = changeset) when is_bitstring(name),
+    do: changeset
 
   defp add_name(changeset) do
     put_change(changeset, :name, MnemonicSlugs.generate_slug())

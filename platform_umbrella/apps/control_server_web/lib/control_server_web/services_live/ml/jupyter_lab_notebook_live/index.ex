@@ -56,9 +56,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
 
   def handle_event("start_notebook", _, socket) do
     with {:ok, _} <-
-           Notebooks.create_jupyter_lab_notebook(%{
-             image: "jupyter/datascience-notebook:lab-3.1.9"
-           }) do
+           Notebooks.create_jupyter_lab_notebook(%{}) do
       {:noreply, assign(socket, :jupyter_lab_notebooks, list_jupyter_lab_notebooks())}
     end
   end
