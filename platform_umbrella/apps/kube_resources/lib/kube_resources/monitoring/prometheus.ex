@@ -6,10 +6,10 @@ defmodule KubeResources.Prometheus do
   and Ingress generation via KubResources.Ingress
   """
 
+  alias ControlServer.Services.RunnableService
   alias KubeExt.Builder, as: B
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
-  alias ControlServer.Services.RunnableService
 
   @port 8080
   @port_name "http"

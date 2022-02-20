@@ -14,7 +14,6 @@ defmodule ControlServerWeb.BaseServiceView do
     %{
       id: base_service.id,
       root_path: base_service.root_path,
-      is_active: base_service.is_active,
       service_type: base_service.service_type,
       config: base_service.config
     }

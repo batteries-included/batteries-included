@@ -9,8 +9,11 @@ defmodule KubeServices.ConfigGeneratorTest do
 
   describe "ConfigGenerator" do
     setup do
-
-      { :ok, services_activate_map: RunnableService.services() |> Enum.map(fn s -> {s.service_type, RunnableService.activate!(s)} end) |> Enum.into(%{}) }
+      {:ok,
+       services_activate_map:
+         RunnableService.services()
+         |> Enum.map(fn s -> {s.service_type, RunnableService.activate!(s)} end)
+         |> Enum.into(%{})}
     end
 
     test "materialize all the configs" do

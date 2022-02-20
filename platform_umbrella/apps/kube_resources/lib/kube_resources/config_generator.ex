@@ -4,6 +4,7 @@ defmodule KubeResources.ConfigGenerator do
   """
 
   alias ControlServer.Services.BaseService
+  alias KubeRawResources.Battery
   alias KubeResources.AlertManager
   alias KubeResources.CertManager
   alias KubeResources.ControlServerResources
@@ -20,17 +21,12 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.PrometheusOperator
   alias KubeResources.ServiceMonitors
   alias KubeResources.VirtualService
-  alias KubeRawResources.Battery
 
   def materialize(%BaseService{} = base_service) do
-    if base_service.is_active do
-      base_service.config
-      |> materialize(base_service.service_type)
-      |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
-      |> Enum.into(%{})
-    else
-      %{}
-    end
+    base_service.config
+    |> materialize(base_service.service_type)
+    |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
+    |> Enum.into(%{})
   end
 
   defp materialize(%{} = config, :prometheus) do

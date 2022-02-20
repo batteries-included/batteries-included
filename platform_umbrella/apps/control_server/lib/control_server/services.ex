@@ -100,12 +100,12 @@ defmodule ControlServer.Services do
   end
 
   def insert_event(_repo, %{selected: nil, created: created}) do
-    Logger.debug("Insert Event Inserted -> #{inspect(created)}")
+    Logger.debug("Inserted -> #{inspect(created)}")
     {broadcast(:insert, created), created}
   end
 
   def insert_event(_repo, %{selected: selected, created: nil}) do
-    Logger.debug("Insert Event Selected -> #{inspect(selected)}")
+    Logger.debug("Selected -> #{inspect(selected)}")
     {:ok, selected}
   end
 
@@ -179,13 +179,7 @@ defmodule ControlServer.Services do
   end
 
   def active?(path) do
-    true ==
-      Repo.one(
-        from(bs in BaseService,
-          where: bs.root_path == ^path,
-          select: bs.is_active
-        )
-      )
+    Repo.exists?(from(bs in BaseService, where: bs.root_path == ^path))
   end
 
   def activate_defaults do

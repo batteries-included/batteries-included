@@ -5,8 +5,8 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   import ControlServerWeb.PodDisplay
 
   alias ControlServer.Notebooks
-  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
+  alias ControlServer.Services.RunnableService
   alias ControlServerWeb.RunnableServiceList
 
   @pod_update_time 5000
@@ -27,8 +27,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   end
 
   defp services do
-    RunnableService.services()
-    |> Enum.filter(fn s -> String.starts_with?(s.path, "/ml") end)
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/ml") end)
   end
 
   @impl true

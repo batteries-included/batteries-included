@@ -7,8 +7,8 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
   import ControlServerWeb.Layout
   import ControlServerWeb.PodDisplay
 
-  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
+  alias ControlServer.Services.RunnableService
   alias ControlServerWeb.RunnableServiceList
 
   require Logger
@@ -30,8 +30,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
   end
 
   defp services do
-    RunnableService.services()
-    |> Enum.filter(fn s -> String.starts_with?(s.path, "/monitoring") end)
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/monitoring") end)
   end
 
   @impl true

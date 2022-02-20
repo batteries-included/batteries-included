@@ -6,18 +6,16 @@ defmodule ControlServerWeb.BaseServiceControllerTest do
   import ControlServer.Factory
 
   @create_attrs %{
-    is_active: true,
     root_path: "/some/root/path",
     config: %{},
     service_type: :prometheus
   }
   @update_attrs %{
-    is_active: false,
     root_path: "some updated root_path",
     config: %{},
     service_type: "prometheus"
   }
-  @invalid_attrs %{is_active: nil, root_path: nil, config: nil, service_type: nil}
+  @invalid_attrs %{root_path: nil, config: nil, service_type: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -32,7 +30,6 @@ defmodule ControlServerWeb.BaseServiceControllerTest do
 
       assert %{
                "id" => _id,
-               "is_active" => true,
                "service_type" => "prometheus",
                "root_path" => "/some/root/path",
                "config" => %{}
@@ -63,7 +60,6 @@ defmodule ControlServerWeb.BaseServiceControllerTest do
 
       assert %{
                "id" => _id,
-               "is_active" => false,
                "root_path" => "some updated root_path",
                "config" => %{}
              } = json_response(conn, 200)["data"]

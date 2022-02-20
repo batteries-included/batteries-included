@@ -10,8 +10,8 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   import ControlServerWeb.PodDisplay
 
   alias ControlServer.Postgres
-  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
+  alias ControlServer.Services.RunnableService
   alias ControlServerWeb.RunnableServiceList
 
   require Logger
@@ -34,8 +34,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   end
 
   defp services do
-    RunnableService.services()
-    |> Enum.filter(fn s -> String.starts_with?(s.path, "/database") end)
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/database") end)
   end
 
   defp list_clusters do

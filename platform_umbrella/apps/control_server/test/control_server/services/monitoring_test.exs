@@ -7,7 +7,6 @@ defmodule ControlServer.Services.MonitoringTest do
     assert RunnableService.active?(:prometheus_operator) == false
     assert RunnableService.active?(:prometheus) == false
 
-    RunnableService.activate!(:prometheus_operator)
     RunnableService.activate!(:prometheus)
 
     assert RunnableService.active?(:prometheus_operator)

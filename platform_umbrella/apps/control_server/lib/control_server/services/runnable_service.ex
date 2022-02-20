@@ -1,31 +1,61 @@
 defmodule ControlServer.Services.RunnableService do
+  alias ControlServer.Repo
   alias ControlServer.Services
+  alias Ecto.Multi
 
   @enforce_keys [:service_type, :path]
-  defstruct service_type: nil, path: nil, config: %{}
+  defstruct service_type: nil, path: nil, config: %{}, dependencies: []
 
   def services,
     do: [
       # Battery
       %__MODULE__{path: "/battery/core", service_type: :battery},
-      %__MODULE__{path: "/battery/control_server", service_type: :control_server},
-      %__MODULE__{path: "/battery/echo", service_type: :echo_server},
+      %__MODULE__{
+        path: "/battery/control_server",
+        service_type: :control_server,
+        dependencies: [:battery]
+      },
+      %__MODULE__{path: "/battery/echo", service_type: :echo_server, dependencies: [:battery]},
 
       # Devtools
-      %__MODULE__{path: "/devtools/knative", service_type: :knative},
+      %__MODULE__{path: "/devtools/knative", service_type: :knative, dependencies: [:istio]},
 
       # Database
       %__MODULE__{path: "/database/common", service_type: :database},
-      %__MODULE__{path: "/database/public", service_type: :database_public},
-      %__MODULE__{path: "/battery/database", service_type: :database_internal},
+      %__MODULE__{
+        path: "/database/public",
+        service_type: :database_public,
+        dependencies: [:database, :database_internal]
+      },
+      %__MODULE__{
+        path: "/battery/database",
+        service_type: :database_internal,
+        dependencies: [:database]
+      },
       %__MODULE__{path: "/ml/notebooks", service_type: :notebooks},
 
       # Monitoring
       %__MODULE__{path: "/monitoring/prometheus_operator", service_type: :prometheus_operator},
-      %__MODULE__{path: "/monitoring/prometheus", service_type: :prometheus},
-      %__MODULE__{path: "/monitoring/grafana", service_type: :grafana},
-      %__MODULE__{path: "/monitoring/alert_manager", service_type: :alert_manager},
-      %__MODULE__{path: "/monitoring/kube_monitoring", service_type: :kube_monitoring},
+      %__MODULE__{
+        path: "/monitoring/prometheus",
+        service_type: :prometheus,
+        dependencies: [:prometheus_operator]
+      },
+      %__MODULE__{
+        path: "/monitoring/grafana",
+        service_type: :grafana,
+        dependencies: [:prometheus]
+      },
+      %__MODULE__{
+        path: "/monitoring/alert_manager",
+        service_type: :alert_manager,
+        dependencies: [:prometheus]
+      },
+      %__MODULE__{
+        path: "/monitoring/kube_monitoring",
+        service_type: :kube_monitoring,
+        dependencies: [:prometheus]
+      },
 
       # Network
       %__MODULE__{path: "/network/kong", service_type: :kong},
@@ -41,13 +71,24 @@ defmodule ControlServer.Services.RunnableService do
   def activate!(service_type) when is_atom(service_type),
     do: services_map() |> Map.get(service_type) |> activate!()
 
-  def activate!(%__MODULE__{path: path, service_type: service_type, config: config} = _service) do
-    Services.find_or_create!(%{
-      is_active: true,
-      root_path: path,
-      service_type: service_type,
-      config: config
-    })
+  def activate!(
+        %__MODULE__{path: path, service_type: service_type, config: config, dependencies: deps} =
+          _service
+      ) do
+    Multi.new()
+    |> Multi.run(:dependencies, fn _repo, _state ->
+      Enum.each(deps, fn s -> activate!(s) end)
+
+      {:ok, deps}
+    end)
+    |> Multi.run(:main_service, fn _repo, _state ->
+      Services.find_or_create(%{
+        root_path: path,
+        service_type: service_type,
+        config: config
+      })
+    end)
+    |> Repo.transaction()
   end
 
   def active?(path) when is_bitstring(path), do: Services.active?(path)

@@ -7,8 +7,8 @@ defmodule ControlServerWeb.ServicesLive.Security do
 
   import ControlServerWeb.Layout
 
-  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
+  alias ControlServer.Services.RunnableService
   alias ControlServerWeb.RunnableServiceList
 
   require Logger
@@ -30,8 +30,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
   end
 
   defp services do
-    RunnableService.services()
-    |> Enum.filter(fn s -> String.starts_with?(s.path, "/security") end)
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/security") end)
   end
 
   @impl true
