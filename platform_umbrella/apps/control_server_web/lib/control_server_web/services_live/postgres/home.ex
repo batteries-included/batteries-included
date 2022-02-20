@@ -10,7 +10,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
   import ControlServerWeb.PodDisplay
 
   alias ControlServer.Postgres
-  alias ControlServer.Services
+  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
   alias ControlServerWeb.RunnableServiceList
 
@@ -26,11 +26,16 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
      socket
      |> assign(:pods, get_pods())
      |> assign(:clusters, list_clusters())
-     |> assign(:services, [Services.DatabaseCommon, Services.Database, Services.InternalDatabase])}
+     |> assign(:services, services())}
   end
 
   defp get_pods do
     Enum.map(Pods.get("battery-data"), &Pods.summarize/1)
+  end
+
+  defp services do
+    RunnableService.services()
+    |> Enum.filter(fn s -> String.starts_with?(s.path, "/database") end)
   end
 
   defp list_clusters do
@@ -51,13 +56,6 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
 
   defp apply_action(socket, :index, _params) do
     socket
-  end
-
-  @impl true
-  def handle_event("start_service", _, socket) do
-    Services.Database.activate!()
-
-    {:noreply, assign(socket, :running, true)}
   end
 
   @impl true

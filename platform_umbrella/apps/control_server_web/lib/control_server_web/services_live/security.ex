@@ -7,7 +7,7 @@ defmodule ControlServerWeb.ServicesLive.Security do
 
   import ControlServerWeb.Layout
 
-  alias ControlServer.Services
+  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
   alias ControlServerWeb.RunnableServiceList
 
@@ -22,11 +22,16 @@ defmodule ControlServerWeb.ServicesLive.Security do
     {:ok,
      socket
      |> assign(:pods, get_pods())
-     |> assign(:services, [Services.CertManager])}
+     |> assign(:services, services())}
   end
 
   defp get_pods do
     Enum.map(Pods.get(), &Pods.summarize/1)
+  end
+
+  defp services do
+    RunnableService.services()
+    |> Enum.filter(fn s -> String.starts_with?(s.path, "/security") end)
   end
 
   @impl true

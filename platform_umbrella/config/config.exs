@@ -88,9 +88,10 @@ config :esbuild,
 
 config :control_server, ControlServer.Services,
   default_services: [
-    ControlServer.Services.Istio,
-    ControlServer.Services.InternalDatabase,
-    ControlServer.Services.DatabaseCommon
+    :battery,
+    :istio,
+    :database,
+    :database_internal
   ]
 
 config :kube_services, start_services: true

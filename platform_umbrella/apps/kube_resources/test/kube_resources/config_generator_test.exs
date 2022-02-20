@@ -2,20 +2,15 @@ defmodule KubeServices.ConfigGeneratorTest do
   use ControlServer.DataCase
 
   alias KubeResources.ConfigGenerator
+  alias ControlServer.Services.RunnableService
   alias ControlServer.Services
 
   require Logger
 
   describe "ConfigGenerator" do
     setup do
-      {:ok,
-       prometheus_operator: Services.PrometheusOperator.activate!(),
-       prometheus: Services.Prometheus.activate!(),
-       grafana: Services.Grafana.activate!(),
-       knative: Services.Knative.activate!(),
-       database: Services.Database.activate!(),
-       database_internal: Services.InternalDatabase.activate!(),
-       cert_manager: Services.CertManager.activate!()}
+
+      { :ok, services_activate_map: RunnableService.services() |> Enum.map(fn s -> {s.service_type, RunnableService.activate!(s)} end) |> Enum.into(%{}) }
     end
 
     test "materialize all the configs" do

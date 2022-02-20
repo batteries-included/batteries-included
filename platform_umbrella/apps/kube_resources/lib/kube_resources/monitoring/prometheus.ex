@@ -9,6 +9,7 @@ defmodule KubeResources.Prometheus do
   alias KubeExt.Builder, as: B
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
+  alias ControlServer.Services.RunnableService
 
   @port 8080
   @port_name "http"
@@ -79,7 +80,7 @@ defmodule KubeResources.Prometheus do
     |> Map.merge(alerting(config))
   end
 
-  defp alerting(config), do: alerting(config, ControlServer.Services.AlertManager.active?())
+  defp alerting(config), do: alerting(config, RunnableService.active?(:alert_manager))
 
   defp alerting(config, true = _is_active) do
     namespace = MonitoringSettings.namespace(config)
@@ -100,7 +101,7 @@ defmodule KubeResources.Prometheus do
 
   defp alerting(_config, _is_active), do: %{}
 
-  defp selectors(config) do
+  defp selectors(_config) do
     %{
       # select everything.
       "podMonitorNamespaceSelector" => %{},

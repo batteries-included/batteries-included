@@ -2,6 +2,8 @@ defmodule ControlServerWeb.RunnableServiceList do
   use ControlServerWeb, :live_component
   import CommonUI.ShadowContainer
 
+  alias ControlServer.Services.RunnableService
+
   @impl true
   def mount(socket) do
     {:ok, assign_new(socket, :services, fn -> [] end)}
@@ -20,18 +22,17 @@ defmodule ControlServerWeb.RunnableServiceList do
     |> Enum.into(%{})
   end
 
-  def update_single_service(%{module: mod} = _s) do
+  def update_single_service(%{service: mod} = _s) do
     update_single_service(mod)
   end
 
-  def update_single_service(module) do
-    {"#{module.path()}", %{module: module, active: module.active?()}}
+  def update_single_service(service) do
+    {"#{service.path}", %{service: service, active: RunnableService.active?(service)}}
   end
 
   @impl true
   def handle_event("start", %{"path" => path} = _payload, socket) do
-    service_module = socket.assigns.services |> Map.get(path) |> Map.get(:module)
-    service_module.activate!()
+    socket.assigns.services |> Map.get(path) |> Map.get(:service) |> RunnableService.activate!()
 
     {:noreply, assign(socket, :services, update_services(socket.assigns.services))}
   end
@@ -49,12 +50,6 @@ defmodule ControlServerWeb.RunnableServiceList do
                 class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
               >
                 Service Type
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Service Handler
               </th>
               <th
                 scope="col"
@@ -79,17 +74,14 @@ defmodule ControlServerWeb.RunnableServiceList do
     ~H"""
     <tr class={row_class(@idx)}>
       <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-        <%= @service_info.module.service_type() %>
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-        <%= @service_info.module %>
+        <%= @service_info.service.service_type %>
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
         <%= if not @service_info.active do %>
           <.button
             label={"Start Service"}
             phx-click={:start}
-            phx-value-path={@service_info.module.path()}
+            phx-value-path={@service_info.service.path}
             phx-target={@target}
           />
         <% end %>

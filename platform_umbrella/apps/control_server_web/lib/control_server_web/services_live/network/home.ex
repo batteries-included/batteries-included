@@ -5,7 +5,7 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
   import ControlServerWeb.PodDisplay
   import ControlServerWeb.Layout
 
-  alias ControlServer.Services
+  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
   alias ControlServerWeb.RunnableServiceList
 
@@ -20,11 +20,16 @@ defmodule ControlServerWeb.ServicesLive.NetworkHome do
     {:ok,
      socket
      |> assign(:pods, get_pods())
-     |> assign(:services, [Services.Istio, Services.Kong, Services.Nginx])}
+     |> assign(:services, services())}
   end
 
   defp get_pods do
     Enum.map(Pods.get(), &Pods.summarize/1)
+  end
+
+  defp services do
+    RunnableService.services()
+    |> Enum.filter(fn s -> String.starts_with?(s.path, "/network") end)
   end
 
   @impl true

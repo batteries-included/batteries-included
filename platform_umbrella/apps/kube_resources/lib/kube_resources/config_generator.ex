@@ -20,6 +20,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.PrometheusOperator
   alias KubeResources.ServiceMonitors
   alias KubeResources.VirtualService
+  alias KubeRawResources.Battery
 
   def materialize(%BaseService{} = base_service) do
     if base_service.is_active do
@@ -57,7 +58,8 @@ defmodule KubeResources.ConfigGenerator do
   defp materialize(%{} = config, :kong), do: Kong.materialize(config)
   defp materialize(%{} = config, :nginx), do: Nginx.materialize(config)
 
-  defp materialize(%{} = config, :battery), do: ControlServerResources.materialize(config)
+  defp materialize(%{} = config, :battery), do: Battery.materialize(config)
+  defp materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
   defp materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
 
   defp materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)

@@ -36,6 +36,8 @@ defmodule ControlServer.Services.BaseService do
         :kong,
         :nginx,
         :notebooks,
+        :battery,
+        :echo_server,
         :control_server
       ]
 

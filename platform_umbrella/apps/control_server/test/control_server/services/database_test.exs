@@ -1,18 +1,19 @@
 defmodule ControlServer.Services.DatabaseTest do
   use ControlServer.DataCase
 
-  alias ControlServer.Services.Database
-  alias ControlServer.Services.InternalDatabase
+  alias ControlServer.Services.RunnableService
   alias ControlServer.Release
 
   describe "Database" do
     test "InternalDatabase is a default enabled service." do
-      assert Database.active?() == false
-      assert InternalDatabase.active?() == false
+      assert RunnableService.active?(:database) == false
+      assert RunnableService.active?(:database_internal) == false
+      assert RunnableService.active?(:database_public) == false
       Release.seed()
 
-      assert Database.active?() == false
-      assert InternalDatabase.active?() == true
+      assert RunnableService.active?(:database_public) == false
+      assert RunnableService.active?(:database_internal)
+      assert RunnableService.active?(:database)
     end
   end
 end

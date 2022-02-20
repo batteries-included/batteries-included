@@ -7,7 +7,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
   import ControlServerWeb.Layout
   import ControlServerWeb.PodDisplay
 
-  alias ControlServer.Services
+  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
   alias ControlServerWeb.RunnableServiceList
 
@@ -22,17 +22,16 @@ defmodule ControlServerWeb.ServicesLive.MonitoringHome do
     {:ok,
      socket
      |> assign(:pods, get_pods())
-     |> assign(:services, [
-       Services.PrometheusOperator,
-       Services.Prometheus,
-       Services.Grafana,
-       Services.AlertManager,
-       Services.KubeMonitoring
-     ])}
+     |> assign(:services, services())}
   end
 
   defp get_pods do
     Enum.map(Pods.get(), &Pods.summarize/1)
+  end
+
+  defp services do
+    RunnableService.services()
+    |> Enum.filter(fn s -> String.starts_with?(s.path, "/monitoring") end)
   end
 
   @impl true

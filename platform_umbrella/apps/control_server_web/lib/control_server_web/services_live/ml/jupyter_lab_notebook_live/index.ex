@@ -5,15 +5,11 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   import ControlServerWeb.PodDisplay
 
   alias ControlServer.Notebooks
-  alias ControlServer.Services
+  alias ControlServer.Services.RunnableService
   alias ControlServer.Services.Pods
   alias ControlServerWeb.RunnableServiceList
 
   @pod_update_time 5000
-
-  defp get_pods do
-    Enum.map(Pods.get(), &Pods.summarize/1)
-  end
 
   @impl true
   def mount(_params, _session, socket) do
@@ -23,9 +19,16 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
      socket
      |> assign(:jupyter_lab_notebooks, list_jupyter_lab_notebooks())
      |> assign(:pods, get_pods())
-     |> assign(:services, [
-       Services.Notebooks
-     ])}
+     |> assign(:services, services())}
+  end
+
+  defp get_pods do
+    Enum.map(Pods.get(), &Pods.summarize/1)
+  end
+
+  defp services do
+    RunnableService.services()
+    |> Enum.filter(fn s -> String.starts_with?(s.path, "/ml") end)
   end
 
   @impl true

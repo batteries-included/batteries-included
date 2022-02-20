@@ -56,10 +56,11 @@ config :logger, level: :warn
 
 config :control_server, ControlServer.Services,
   default_services: [
-    ControlServer.Services.ControlServer,
-    ControlServer.Services.InternalDatabase,
-    ControlServer.Services.DatabaseCommon,
-    ControlServer.Services.Istio
+    :battery,
+    :istio,
+    :database,
+    :database_internal,
+    :control_server
   ]
 
 config :kube_ext, cluster_type: :dev

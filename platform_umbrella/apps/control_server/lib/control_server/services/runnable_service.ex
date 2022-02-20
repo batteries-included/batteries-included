@@ -1,50 +1,47 @@
 defmodule ControlServer.Services.RunnableService do
   alias ControlServer.Services
 
-  @callback default_config() :: map()
-  @callback activate!() :: ControlServer.Services.BaseService
-  @callback active?() :: boolean()
-  @callback service_type() :: atom()
-  @callback path() :: String.t()
+  @enforce_keys [:service_type, :path]
+  defstruct service_type: nil, path: nil, config: %{}
 
-  defmacro __using__(opts) do
-    quote location: :keep, bind_quoted: [opts: opts] do
-      path = Keyword.get(opts, :path)
-      service_type = Keyword.get(opts, :service_type)
+  def services,
+    do: [
+      # Battery
+      %__MODULE__{path: "/battery/core", service_type: :battery},
+      %__MODULE__{path: "/battery/control_server", service_type: :control_server},
+      %__MODULE__{path: "/battery/echo", service_type: :echo_server},
 
-      @behaviour ControlServer.Services.RunnableService
+      # Devtools
+      %__MODULE__{path: "/devtools/knative", service_type: :knative},
 
-      @impl ControlServer.Services.RunnableService
-      def default_config do
-        %{}
-      end
+      # Database
+      %__MODULE__{path: "/database/common", service_type: :database},
+      %__MODULE__{path: "/database/public", service_type: :database_public},
+      %__MODULE__{path: "/battery/database", service_type: :database_internal},
+      %__MODULE__{path: "/ml/notebooks", service_type: :notebooks},
 
-      @impl ControlServer.Services.RunnableService
-      def activate! do
-        ControlServer.Services.RunnableService.activate!(
-          unquote(path),
-          unquote(service_type),
-          default_config()
-        )
-      end
+      # Monitoring
+      %__MODULE__{path: "/monitoring/prometheus_operator", service_type: :prometheus_operator},
+      %__MODULE__{path: "/monitoring/prometheus", service_type: :prometheus},
+      %__MODULE__{path: "/monitoring/grafana", service_type: :grafana},
+      %__MODULE__{path: "/monitoring/alert_manager", service_type: :alert_manager},
+      %__MODULE__{path: "/monitoring/kube_monitoring", service_type: :kube_monitoring},
 
-      @impl ControlServer.Services.RunnableService
-      def active? do
-        p = unquote(path)
-        ControlServer.Services.RunnableService.active?(p)
-      end
+      # Network
+      %__MODULE__{path: "/network/kong", service_type: :kong},
+      %__MODULE__{path: "/network/nginx", service_type: :nginx},
+      %__MODULE__{path: "/network/istio", service_type: :istio},
 
-      @impl ControlServer.Services.RunnableService
-      def service_type, do: unquote(service_type)
+      # Security
+      %__MODULE__{path: "/security/cert_manager", service_type: :cert_manager}
+    ]
 
-      @impl ControlServer.Services.RunnableService
-      def path, do: unquote(path)
+  def services_map, do: services() |> Enum.map(fn s -> {s.service_type, s} end) |> Enum.into(%{})
 
-      defoverridable ControlServer.Services.RunnableService
-    end
-  end
+  def activate!(service_type) when is_atom(service_type),
+    do: services_map() |> Map.get(service_type) |> activate!()
 
-  def activate!(path, service_type, config) do
+  def activate!(%__MODULE__{path: path, service_type: service_type, config: config} = _service) do
     Services.find_or_create!(%{
       is_active: true,
       root_path: path,
@@ -53,5 +50,10 @@ defmodule ControlServer.Services.RunnableService do
     })
   end
 
-  def active?(path), do: Services.active?(path)
+  def active?(path) when is_bitstring(path), do: Services.active?(path)
+
+  def active?(service_type) when is_atom(service_type),
+    do: services_map() |> Map.get(service_type) |> active?()
+
+  def active?(%__MODULE__{path: path} = _service), do: Services.active?(path)
 end
