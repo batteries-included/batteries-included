@@ -30,6 +30,12 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
           >
             Replicas
           </th>
+                    <th
+            scope="col"
+            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+          >
+            Cluster Type
+          </th>
           <th
             scope="col"
             class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
@@ -64,6 +70,9 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
         <%= @cluster.num_instances %>
+      </td>
+      <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+        <%= @cluster.type %>
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
         <span>
