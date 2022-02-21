@@ -28,7 +28,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresClusters do
       <:left_menu>
         <.left_menu_item to="/services/database" name="Home" icon="home" />
         <.left_menu_item
-          to="/services/database/postgres_clusters"
+          to="/services/database/clusters"
           name="Postgres Clusters"
           icon="database"
           is_active={true}

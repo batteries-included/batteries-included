@@ -20,11 +20,7 @@ defmodule ControlServerWeb.ServicesLive.DatabaseHome do
       </:title>
       <:left_menu>
         <.left_menu_item to="/services/database" name="Home" icon="home" is_active={true} />
-        <.left_menu_item
-          to="/services/database/postgres_clusters"
-          name="Postgres Clusters"
-          icon="database"
-        />
+        <.left_menu_item to="/services/database/clusters" name="Postgres Clusters" icon="database" />
         <.left_menu_item
           to="/services/database/settings"
           name="Service Settings"

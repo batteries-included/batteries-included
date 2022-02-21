@@ -2,6 +2,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   use Phoenix.Component
   use PetalComponents
 
+  alias CommonUI.Icons.Notebook
   alias ControlServerWeb.Layout
 
   @default_icon_class "group-hover:text-gray-500 flex-shrink-0 flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
@@ -37,6 +38,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <%= case @type do %>
+      <% "notebooks" -> %>
+        <Notebook.render class={@class} />
       <% "home" -> %>
         <Heroicons.Solid.home class={@class} />
       <% "database" -> %>

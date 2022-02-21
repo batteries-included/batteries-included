@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServicesLive.DatabaseStatus do
+defmodule ControlServerWeb.ServicesLive.MLStatus do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -8,8 +8,6 @@ defmodule ControlServerWeb.ServicesLive.DatabaseStatus do
   import ControlServerWeb.PodDisplay
 
   alias ControlServer.Services.Pods
-
-  require Logger
 
   @pod_update_time 5000
 
@@ -28,7 +26,7 @@ defmodule ControlServerWeb.ServicesLive.DatabaseStatus do
   end
 
   defp pods do
-    Enum.map(Pods.get("battery-data"), &Pods.summarize/1)
+    Enum.map(Pods.get("battery-core"), &Pods.summarize/1)
   end
 
   @impl true
@@ -36,22 +34,14 @@ defmodule ControlServerWeb.ServicesLive.DatabaseStatus do
     ~H"""
     <.layout>
       <:title>
-        <.title>Database Pods</.title>
+        <.title>ML Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" />
-        <.left_menu_item to="/services/database/clusters" name="Postgres Clusters" icon="database" />
-        <.left_menu_item
-          to="/services/database/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item
-          to="/services/database/status"
-          name="Status"
-          icon="status_online"
-          is_active={true}
-        />
+        <.left_menu_item to="/services/ml" name="Home" icon="home" />
+        <.left_menu_item to="/services/ml/notebooks" name="Notebooks" icon="notebooks" />
+
+        <.left_menu_item to="/services/ml/settings" name="Service Settings" icon="lightning_bolt" />
+        <.left_menu_item to="/services/ml/status" name="Status" icon="status_online" is_active={true} />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

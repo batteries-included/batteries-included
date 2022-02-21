@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServicesLive.DatabaseServiceSettings do
+defmodule ControlServerWeb.ServicesLive.MLServiceSettings do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -17,7 +17,7 @@ defmodule ControlServerWeb.ServicesLive.DatabaseServiceSettings do
   end
 
   defp services do
-    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/database") end)
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/ml") end)
   end
 
   @impl true
@@ -28,15 +28,16 @@ defmodule ControlServerWeb.ServicesLive.DatabaseServiceSettings do
         <.title>Service Settings</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" />
-        <.left_menu_item to="/services/database/clusters" name="Postgres Clusters" icon="database" />
+        <.left_menu_item to="/services/ml" name="Home" icon="home" />
+        <.left_menu_item to="/services/ml/notebooks" name="Notebooks" icon="notebooks" />
+
         <.left_menu_item
-          to="/services/database/settings"
+          to="/services/ml/settings"
           name="Service Settings"
           icon="lightning_bolt"
           is_active={true}
         />
-        <.left_menu_item to="/services/database/status" name="Status" icon="status_online" />
+        <.left_menu_item to="/services/ml/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>
         <.live_component

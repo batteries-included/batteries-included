@@ -65,10 +65,10 @@ defmodule ControlServerWeb.Layout do
       <:main_menu>
         <.menu_item to="/services/database" name="Database" icon="database" />
         <.menu_item to="/services/ml" name="Machine Learning" icon="beaker" />
-        <.menu_item to="/services/monitoring" name="Monitoring" icon="chart_bar" />
-        <.menu_item to="/services/devtools" name="Devtools" icon="devtools" />
-        <.menu_item to="/services/security" name="Security" icon="lock_closed" />
-        <.menu_item to="/services/network" name="Network" icon="globe_alt" />
+        <.menu_item to="/services/monitoring/settings" name="Monitoring" icon="chart_bar" />
+        <.menu_item to="/services/devtools/settings" name="Devtools" icon="devtools" />
+        <.menu_item to="/services/security/settings" name="Security" icon="lock_closed" />
+        <.menu_item to="/services/network/settings" name="Network" icon="globe_alt" />
       </:main_menu>
       <%= render_slot(@inner_block) %>
     </BaseLayout.layout>
