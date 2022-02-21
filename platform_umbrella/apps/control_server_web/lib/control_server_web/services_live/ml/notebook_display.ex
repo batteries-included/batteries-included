@@ -67,14 +67,10 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Display do
       </td>
       <td>
         <span>
-          <.link link_type="live_redirect" to={notebook_show_path(@notebook)}>
-            Show
-          </.link>
-        </span>
-        <span>
-          <a href={notebook_path(@notebook)}>
-            Open
-          </a>
+          <.button to={notebook_path(@notebook)} variant="shadow" link_type="a">
+            Open Notebook
+            <Heroicons.Solid.external_link class={"w-5 h-5"} />
+          </.button>
         </span>
         |
         <span>
