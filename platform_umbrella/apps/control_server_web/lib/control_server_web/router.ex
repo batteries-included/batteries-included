@@ -24,8 +24,9 @@ defmodule ControlServerWeb.Router do
 
     live "/services/monitoring/settings", ServicesLive.MonitoringServiceSettings, :index
     live "/services/monitoring/status", ServicesLive.MonitoringStatus, :index
+    live "/services/monitoring/tools", ServicesLive.MonitoringTools, :index
     live "/services/monitoring/prometheus", ServicesLive.Prometheus, :index
-    live "/services/monitoring/alertmanager", ServicesLive.Alertmanager, :index
+    live "/services/monitoring/alert_manager", ServicesLive.Alertmanager, :index
     live "/services/monitoring/grafana", ServicesLive.Grafana, :index
 
     live "/services/database", ServicesLive.DatabaseHome, :index

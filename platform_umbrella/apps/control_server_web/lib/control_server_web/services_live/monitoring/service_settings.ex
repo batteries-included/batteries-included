@@ -28,6 +28,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringServiceSettings do
         <.title>Monitoring Settings</.title>
       </:title>
       <:left_menu>
+        <.left_menu_item to="/services/monitoring/tools" name="Tools" icon="external_link" />
         <.left_menu_item
           to="/services/monitoring/settings"
           name="Service Settings"

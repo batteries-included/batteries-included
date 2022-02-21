@@ -42,6 +42,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringStatus do
         <.title>Monitoring Pods</.title>
       </:title>
       <:left_menu>
+        <.left_menu_item to="/services/monitoring/tools" name="Tools" icon="external_link" />
         <.left_menu_item
           to="/services/monitoring/settings"
           name="Service Settings"
