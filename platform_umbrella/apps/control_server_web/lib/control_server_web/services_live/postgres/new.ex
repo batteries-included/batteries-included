@@ -6,6 +6,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresNew do
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
   alias ControlServerWeb.ServicesLive.Postgres.FormComponent
+  alias ControlServer.Services.RunnableService
 
   require Logger
 
@@ -39,6 +40,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresNew do
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
     new_path = Routes.services_postgres_clusters_path(socket, :index)
     Logger.debug("new_cluster = #{inspect(cluster)} new_path = #{new_path}")
+    RunnableService.activate!(:database_public)
 
     {:noreply, push_redirect(socket, to: new_path)}
   end

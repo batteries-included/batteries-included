@@ -8,6 +8,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   import ControlServerWeb.ServicesLive.JupyterLabNotebook.Display
 
   alias ControlServer.Notebooks
+  alias ControlServer.Services.RunnableService
 
   @impl true
   def mount(_params, _session, socket) do
@@ -30,6 +31,7 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   def handle_event("start_notebook", _, socket) do
     with {:ok, _} <-
            Notebooks.create_jupyter_lab_notebook(%{}) do
+      RunnableService.activate!(:notebooks)
       {:noreply, assign(socket, :notebooks, notebooks())}
     end
   end
