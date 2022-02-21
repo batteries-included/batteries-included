@@ -23,6 +23,7 @@ defmodule CommonUI.Layout do
   def menu_item(assigns) do
     ~H"""
     <.link
+      link_type="live_patch"
       to={"#{@to}"}
       class={
         [
@@ -56,7 +57,7 @@ defmodule CommonUI.Layout do
     >
       <header class="w-full bg-white h-16">
         <div class="flex max-w-7xl h-full">
-          <.link to={@logo_path} class="my-auto mx-4">
+          <.link to={@logo_path} class="my-auto mx-4" link_type="live_redirect">
             <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included" />
           </.link>
           <%= render_slot(@title) %>

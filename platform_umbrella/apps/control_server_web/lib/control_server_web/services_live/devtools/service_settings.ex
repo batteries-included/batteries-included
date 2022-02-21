@@ -16,6 +16,11 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsServiceSettings do
     {:ok, assign(socket, :services, services())}
   end
 
+  @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
   defp services do
     Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/devtools") end)
   end
@@ -25,7 +30,7 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsServiceSettings do
     ~H"""
     <.layout>
       <:title>
-        <.title>Service Settings</.title>
+        <.title>Devtools Settings</.title>
       </:title>
       <:left_menu>
         <.left_menu_item

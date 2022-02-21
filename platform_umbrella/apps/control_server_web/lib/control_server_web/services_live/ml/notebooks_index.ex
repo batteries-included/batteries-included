@@ -15,6 +15,11 @@ defmodule ControlServerWeb.ServicesLive.JupyterLabNotebook.Index do
   end
 
   @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("delete_notebook", %{"id" => id}, socket) do
     jupyter_lab_notebook = Notebooks.get_jupyter_lab_notebook!(id)
     {:ok, _} = Notebooks.delete_jupyter_lab_notebook(jupyter_lab_notebook)

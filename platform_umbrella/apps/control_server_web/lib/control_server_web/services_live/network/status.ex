@@ -19,6 +19,11 @@ defmodule ControlServerWeb.ServicesLive.NetworkStatus do
   end
 
   @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info(:update, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
 

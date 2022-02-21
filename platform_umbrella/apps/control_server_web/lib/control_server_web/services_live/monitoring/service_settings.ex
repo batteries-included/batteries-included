@@ -25,7 +25,7 @@ defmodule ControlServerWeb.ServicesLive.MonitoringServiceSettings do
     ~H"""
     <.layout>
       <:title>
-        <.title>Service Settings</.title>
+        <.title>Monitoring Settings</.title>
       </:title>
       <:left_menu>
         <.left_menu_item

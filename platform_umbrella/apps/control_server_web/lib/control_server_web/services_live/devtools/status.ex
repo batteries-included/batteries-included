@@ -25,6 +25,11 @@ defmodule ControlServerWeb.ServicesLive.DevtoolsStatus do
     {:noreply, assign(socket, :pods, pods())}
   end
 
+  @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
   defp pods do
     Enum.map(Pods.get("battery-knative"), &Pods.summarize/1)
   end

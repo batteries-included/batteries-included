@@ -12,11 +12,16 @@ defmodule ControlServerWeb.ServicesLive.MLHome do
   end
 
   @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <.layout>
       <:title>
-        <.title>Database Home</.title>
+        <.title>ML Home</.title>
       </:title>
       <:left_menu>
         <.left_menu_item to="/services/ml" name="Home" icon="home" is_active={true} />

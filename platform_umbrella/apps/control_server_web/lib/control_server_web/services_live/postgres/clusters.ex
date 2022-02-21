@@ -14,6 +14,11 @@ defmodule ControlServerWeb.ServicesLive.PostgresClusters do
     {:ok, assign(socket, :clusters, list_clusters())}
   end
 
+  @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
   defp list_clusters do
     Postgres.list_clusters()
   end

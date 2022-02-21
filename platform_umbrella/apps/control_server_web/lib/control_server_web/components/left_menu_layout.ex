@@ -24,7 +24,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_defaults(assigns)
 
     ~H"""
-    <.link to={@to} class={menu_link_class(@is_active)}>
+    <.link link_type="live_patch" to={@to} class={menu_link_class(@is_active)}>
       <.left_icon type={@icon} />
       <span class="truncate">
         <%= @name %>

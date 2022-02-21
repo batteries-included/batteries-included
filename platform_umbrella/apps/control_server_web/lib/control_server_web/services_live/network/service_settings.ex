@@ -16,6 +16,11 @@ defmodule ControlServerWeb.ServicesLive.NetworkServiceSettings do
     {:ok, assign(socket, :services, services())}
   end
 
+  @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
   defp services do
     Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/network") end)
   end
@@ -25,7 +30,7 @@ defmodule ControlServerWeb.ServicesLive.NetworkServiceSettings do
     ~H"""
     <.layout>
       <:title>
-        <.title>Service Settings</.title>
+        <.title>Network Settings</.title>
       </:title>
       <:left_menu>
         <.left_menu_item
@@ -37,11 +42,7 @@ defmodule ControlServerWeb.ServicesLive.NetworkServiceSettings do
         <.left_menu_item to="/services/network/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>
-        <.live_component
-          module={RunnableServiceList}
-          services={@services}
-          id={"network_services"}
-        />
+        <.live_component module={RunnableServiceList} services={@services} id={"network_services"} />
       </.body_section>
     </.layout>
     """
