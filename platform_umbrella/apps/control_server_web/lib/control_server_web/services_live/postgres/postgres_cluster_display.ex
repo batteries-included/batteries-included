@@ -30,7 +30,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
           >
             Replicas
           </th>
-                    <th
+          <th
             scope="col"
             class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
           >
@@ -51,11 +51,16 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
       </tbody>
     </table>
 
-    <.link to="/services/database/clusters/new" class="ml-8 mt-15">
-      <.button type="primary">
+    <div class="ml-8 mt-15">
+      <.button
+        type="primary"
+        variant="shadow"
+        to="/services/database/clusters/new"
+        link_type="live_patch"
+      >
         New Cluster
       </.button>
-    </.link>
+    </div>
     """
   end
 
@@ -76,7 +81,11 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
       </td>
       <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
         <span>
-          <.link to={cluster_edit_url(@cluster)} class="mt-8 text-lg font-medium text-left">
+          <.link
+            to={cluster_edit_url(@cluster)}
+            class="mt-8 text-lg font-medium text-left"
+            link_type="live_patch"
+          >
             Edit Cluster
           </.link>
         </span>

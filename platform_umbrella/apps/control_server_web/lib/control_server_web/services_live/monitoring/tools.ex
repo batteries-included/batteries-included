@@ -44,20 +44,20 @@ defmodule ControlServerWeb.ServicesLive.MonitoringTools do
       </:left_menu>
       <.body_section>
         <.h4>Grafana</.h4>
-        <.button link_type="live_redirect" to="/services/monitoring/grafana">
+        <.button link_type="live_redirect" to="/services/monitoring/grafana" variant="shadow">
           Open Grafana
           <Heroicons.Solid.external_link class={"w-5 h-5"} />
         </.button>
       </.body_section>
       <.body_section>
         <.h4>Prometheus</.h4>
-        <.button link_type="live_redirect" to="/services/monitoring/prometheus">
+        <.button link_type="live_redirect" to="/services/monitoring/prometheus" variant="shadow">
           Open Prometheus
           <Heroicons.Solid.external_link class={"w-5 h-5"} />
         </.button>
       </.body_section>
       <.body_section>
-        <.button link_type="live_redirect" to="/services/monitoring/alert_manager">
+        <.button link_type="live_redirect" to="/services/monitoring/alert_manager" variant="shadow">
           Open Alert Manger
           <Heroicons.Solid.external_link class={"w-5 h-5"} />
         </.button>
