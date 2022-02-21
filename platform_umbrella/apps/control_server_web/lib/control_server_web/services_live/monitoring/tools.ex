@@ -5,11 +5,6 @@ defmodule ControlServerWeb.ServicesLive.MonitoringTools do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import ControlServerWeb.PodDisplay
-
-  alias ControlServer.Services.Pods
-
-  @pod_update_time 5000
 
   @impl true
   def mount(_params, _session, socket) do
@@ -44,20 +39,20 @@ defmodule ControlServerWeb.ServicesLive.MonitoringTools do
       </:left_menu>
       <.body_section>
         <.h4>Grafana</.h4>
-        <.button link_type="live_redirect" to="/services/monitoring/grafana" variant="shadow">
+        <.button to="//anton2:8081/x/grafana" variant="shadow" link_type="a">
           Open Grafana
           <Heroicons.Solid.external_link class={"w-5 h-5"} />
         </.button>
       </.body_section>
       <.body_section>
         <.h4>Prometheus</.h4>
-        <.button link_type="live_redirect" to="/services/monitoring/prometheus" variant="shadow">
+        <.button to="//anton2:8081/x/prometheus" variant="shadow" link_type="a">
           Open Prometheus
           <Heroicons.Solid.external_link class={"w-5 h-5"} />
         </.button>
       </.body_section>
       <.body_section>
-        <.button link_type="live_redirect" to="/services/monitoring/alert_manager" variant="shadow">
+        <.button to="//anton2:8081/x/alert_manager" variant="shadow" link_type="a">
           Open Alert Manger
           <Heroicons.Solid.external_link class={"w-5 h-5"} />
         </.button>
