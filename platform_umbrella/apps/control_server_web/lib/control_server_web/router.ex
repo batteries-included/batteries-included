@@ -28,7 +28,10 @@ defmodule ControlServerWeb.Router do
     live "/services/monitoring/grafana", ServicesLive.Grafana, :index
     live "/services/security", ServicesLive.Security, :index
 
-    live "/services/database", ServicesLive.PostgresHome, :index
+    live "/services/database", ServicesLive.DatabaseHome, :index
+    live "/services/database/postgres_clusters", ServicesLive.PostgresClusters, :index
+    live "/services/database/settings", ServicesLive.DatabaseServiceSettings, :index
+    live "/services/database/status", ServicesLive.DatabaseStatus, :index
     live "/services/database/clusters/new", ServicesLive.PostgresNew, :new
     live "/services/database/clusters/:id/edit", ServicesLive.PostgresEdit, :edit
 

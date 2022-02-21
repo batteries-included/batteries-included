@@ -1,14 +1,21 @@
-defmodule ControlServerWeb.ServicesLive.DatabaseHome do
+defmodule ControlServerWeb.ServicesLive.PostgresClusters do
   @moduledoc """
   Live web app for database stored json configs.
   """
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.PostgresClusterDisplay
+
+  alias ControlServer.Postgres
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :clusters, list_clusters())}
+  end
+
+  defp list_clusters do
+    Postgres.list_clusters()
   end
 
   @impl true
@@ -16,14 +23,15 @@ defmodule ControlServerWeb.ServicesLive.DatabaseHome do
     ~H"""
     <.layout>
       <:title>
-        <.title>Database Home</.title>
+        <.title>Postgres Clusters</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" is_active={true} />
+        <.left_menu_item to="/services/database" name="Home" icon="home" />
         <.left_menu_item
           to="/services/database/postgres_clusters"
           name="Postgres Clusters"
           icon="database"
+          is_active={true}
         />
         <.left_menu_item
           to="/services/database/settings"
@@ -32,7 +40,9 @@ defmodule ControlServerWeb.ServicesLive.DatabaseHome do
         />
         <.left_menu_item to="/services/database/status" name="Status" icon="status_online" />
       </:left_menu>
-      <.body_section></.body_section>
+      <.body_section>
+        <.pg_cluster_display clusters={@clusters} />
+      </.body_section>
     </.layout>
     """
   end

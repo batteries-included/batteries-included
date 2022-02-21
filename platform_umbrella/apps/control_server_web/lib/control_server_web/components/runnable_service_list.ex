@@ -1,6 +1,5 @@
 defmodule ControlServerWeb.RunnableServiceList do
   use ControlServerWeb, :live_component
-  import CommonUI.ShadowContainer
 
   alias ControlServer.Services.RunnableService
 
@@ -41,38 +40,37 @@ defmodule ControlServerWeb.RunnableServiceList do
   def render(assigns) do
     ~H"""
     <div>
-      <.shadow_container>
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-100">
-            <tr>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Service Type
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Start
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= for {service_info, idx} <- @services |> Map.values() |> Enum.with_index() do %>
-              <.table_row service_info={service_info} idx={idx} target={@myself} />
-            <% end %>
-          </tbody>
-        </table>
-      </.shadow_container>
+      <.h4>Runnable Services</.h4>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th
+              scope="col"
+              class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+            >
+              Service Type
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+            >
+              Start
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for {service_info, idx} <- @services |> Map.values() |> Enum.with_index() do %>
+            <.table_row service_info={service_info} idx={idx} target={@myself} />
+          <% end %>
+        </tbody>
+      </table>
     </div>
     """
   end
 
   def table_row(assigns) do
     ~H"""
-    <tr class={row_class(@idx)}>
+    <tr>
       <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
         <%= @service_info.service.service_type %>
       </td>
@@ -89,8 +87,4 @@ defmodule ControlServerWeb.RunnableServiceList do
     </tr>
     """
   end
-
-  defp row_class(idx), do: do_row_class(rem(idx, 2))
-  defp do_row_class(0 = _remainder), do: ["bg-white"]
-  defp do_row_class(_remainder), do: []
 end

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServicesLive.DatabaseHome do
+defmodule ControlServerWeb.ServicesLive.DatabaseServiceSettings do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -6,9 +6,18 @@ defmodule ControlServerWeb.ServicesLive.DatabaseHome do
 
   import ControlServerWeb.LeftMenuLayout
 
+  alias ControlServer.Services.RunnableService
+  alias ControlServerWeb.RunnableServiceList
+
+  require Logger
+
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :services, services())}
+  end
+
+  defp services do
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/database") end)
   end
 
   @impl true
@@ -16,10 +25,10 @@ defmodule ControlServerWeb.ServicesLive.DatabaseHome do
     ~H"""
     <.layout>
       <:title>
-        <.title>Database Home</.title>
+        <.title>Service Settings</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" is_active={true} />
+        <.left_menu_item to="/services/database" name="Home" icon="home" />
         <.left_menu_item
           to="/services/database/postgres_clusters"
           name="Postgres Clusters"
@@ -29,10 +38,17 @@ defmodule ControlServerWeb.ServicesLive.DatabaseHome do
           to="/services/database/settings"
           name="Service Settings"
           icon="lightning_bolt"
+          is_active={true}
         />
         <.left_menu_item to="/services/database/status" name="Status" icon="status_online" />
       </:left_menu>
-      <.body_section></.body_section>
+      <.body_section>
+        <.live_component
+          module={RunnableServiceList}
+          services={@services}
+          id={"database_base_services"}
+        />
+      </.body_section>
     </.layout>
     """
   end
