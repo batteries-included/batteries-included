@@ -183,7 +183,10 @@ defmodule ControlServer.Services do
   end
 
   def activate_defaults do
-    Enum.each(ServiceConfigs.default_services(), fn service ->
+    services = ServiceConfigs.default_services()
+
+    Enum.each(services, fn service ->
+      IO.puts("Activating default service #{IO.inspect(service)}")
       RunnableService.activate!(service)
     end)
   end
