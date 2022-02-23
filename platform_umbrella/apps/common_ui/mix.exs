@@ -35,7 +35,7 @@ defmodule CommonUI.MixProject do
     [
       {:phoenix_live_view, "~> 0.17.5"},
       {:heex_formatter, github: "feliperenan/heex_formatter", only: [:dev], runtime: false},
-      {:petal_components, "~> 0.11.3"}
+      {:petal_components, "~> 0.12.0"}
     ]
   end
 
