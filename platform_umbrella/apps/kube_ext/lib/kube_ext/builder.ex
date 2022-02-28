@@ -31,6 +31,10 @@ defmodule KubeExt.Builder do
     build_resource("v1", "Service")
   end
 
+  def build_resource(:job) do
+    build_resource("batch/v1", "Job")
+  end
+
   def build_resource(:role_binding) do
     build_resource("rbac.authorization.k8s.io/v1", "RoleBinding")
   end
