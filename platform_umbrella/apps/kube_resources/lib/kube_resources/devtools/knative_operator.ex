@@ -10,19 +10,19 @@ defmodule KubeResources.KnativeOperator do
 
   def materialize(config) do
     %{
-      "/0/crd" => yaml(knative_crd_content()),
-      "/2/deployment" => deployment(config),
-      "/3/cluster_role" => cluster_role(config),
-      "/4/cluster_role_1" => cluster_role_1(config),
-      "/5/cluster_role_2" => cluster_role_2(config),
-      "/6/cluster_role_3" => cluster_role_3(config),
-      "/7/cluster_role_binding" => cluster_role_binding(config),
-      "/8/cluster_role_binding_1" => cluster_role_binding_1(config),
-      "/9/cluster_role_binding_2" => cluster_role_binding_2(config),
-      "/10/cluster_role_binding_3" => cluster_role_binding_3(config),
-      "/11/service_account" => service_account(config),
-      "/12/destination_namespace" => dest_namespace(config),
-      "/13/knative_serving" => knative_serving(config)
+      "/crd" => yaml(knative_crd_content()),
+      "/deployment" => deployment(config),
+      "/cluster_role" => cluster_role(config),
+      "/cluster_role_1" => cluster_role_1(config),
+      "/cluster_role_2" => cluster_role_2(config),
+      "/cluster_role_3" => cluster_role_3(config),
+      "/cluster_role_binding" => cluster_role_binding(config),
+      "/cluster_role_binding_1" => cluster_role_binding_1(config),
+      "/cluster_role_binding_2" => cluster_role_binding_2(config),
+      "/cluster_role_binding_3" => cluster_role_binding_3(config),
+      "/service_account" => service_account(config),
+      "/destination_namespace" => dest_namespace(config),
+      "/knative_serving" => knative_serving(config)
     }
   end
 
