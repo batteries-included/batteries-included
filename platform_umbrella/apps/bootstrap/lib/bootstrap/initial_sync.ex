@@ -34,17 +34,18 @@ defmodule Bootstrap.InitialSync do
 
     # Iterate over every resource in the map.
     # Trying to make sure that everone is really fully successful and the results are expected.
-    was_success = resource_map
-    |> Enum.map(fn {path, resource} ->
-      Logger.debug("Pushing #{inspect(path)}")
-      {Resource.apply(connection, resource), path}
-    end)
-    |> Enum.map(fn {result, path} ->
-      apply_result = Resource.ResourceState.ok?(result)
-      Logger.info("Initial sync result for #{path} = #{apply_result}")
-      {apply_result, path}
-    end)
-    |> Enum.reduce(true, fn {res, _path}, acc -> acc && res end)
+    was_success =
+      resource_map
+      |> Enum.map(fn {path, resource} ->
+        Logger.debug("Pushing #{inspect(path)}")
+        {Resource.apply(connection, resource), path}
+      end)
+      |> Enum.map(fn {result, path} ->
+        apply_result = Resource.ResourceState.ok?(result)
+        Logger.info("Initial sync result for #{path} = #{apply_result}")
+        {apply_result, path}
+      end)
+      |> Enum.reduce(true, fn {res, _path}, acc -> acc && res end)
 
     # Now retry if this isn't fully successful.
     do_apply(
