@@ -2,27 +2,10 @@ import Config
 
 # Configure your database
 #
-# The MIX_TEST_PARTITION environment variable can be used
-# to provide built-in test partitioning in CI environment.
-# Run `mix help test` for more information.
-config :kube_usage, KubeUsage.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "kube_usage_test#{System.get_env("MIX_TEST_PARTITION")}",
-  hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
 
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
-config :kube_usage, KubeUsage.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
-  password: System.get_env("POSTGRES_PASSWORD") || "not-real",
-  database: System.get_env("POSTGRES_DB") || "kube_usage_test",
-  hostname: System.get_env("POSTGRES_HOST") || "localhost",
-  port: System.get_env("POSTGRES_PORT") || 5432,
-  pool: Ecto.Adapters.SQL.Sandbox
-
 config :control_server, ControlServer.Repo,
   username: System.get_env("POSTGRES_USER") || "batterydbuser",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
@@ -54,13 +37,13 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :control_server, ControlServer.Services,
+config :control_server,
   default_services: [
     :battery,
+    :control_server,
     :istio,
     :database,
-    :database_internal,
-    :control_server
+    :database_internal
   ]
 
 config :kube_ext, cluster_type: :dev

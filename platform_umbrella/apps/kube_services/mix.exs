@@ -36,7 +36,7 @@ defmodule KubeServices.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      test: [],
       "ecto.reset": []
     ]
   end

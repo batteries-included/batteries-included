@@ -39,12 +39,13 @@ config :logger, :console,
   level: :debug,
   metadata: [:mfa, :request_id]
 
-config :control_server, ControlServer.Services,
+config :control_server,
   default_services: [
-    ControlServer.Services.ControlServer,
-    ControlServer.Services.InternalDatabase,
-    ControlServer.Services.DatabaseCommon,
-    ControlServer.Services.Istio
+    :battery,
+    :control_server,
+    :istio,
+    :database,
+    :database_internal
   ]
 
 config :kube_ext, :clusters, default: :service_account

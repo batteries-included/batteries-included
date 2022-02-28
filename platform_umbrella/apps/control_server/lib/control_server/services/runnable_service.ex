@@ -3,6 +3,8 @@ defmodule ControlServer.Services.RunnableService do
   alias ControlServer.Services
   alias Ecto.Multi
 
+  require Logger
+
   @enforce_keys [:service_type, :path]
   defstruct service_type: nil, path: nil, config: %{}, dependencies: []
 
@@ -68,8 +70,13 @@ defmodule ControlServer.Services.RunnableService do
 
   def services_map, do: services() |> Enum.map(fn s -> {s.service_type, s} end) |> Enum.into(%{})
 
-  def activate!(service_type) when is_atom(service_type),
-    do: services_map() |> Map.get(service_type) |> activate!()
+  def activate!(service_type) when is_atom(service_type) do
+    Logger.debug("activating #{service_type}")
+    runnable = Map.get(services_map(), service_type)
+
+    Logger.debug("Runnable -> #{inspect(runnable)}")
+    services_map() |> Map.get(service_type) |> activate!()
+  end
 
   def activate!(
         %__MODULE__{path: path, service_type: service_type, config: config, dependencies: deps} =

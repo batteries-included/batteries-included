@@ -90,7 +90,7 @@ cargoBootstrap() {
 
 mixBootstrap() {
   pushd ${DIR}/../platform_umbrella/apps/bootstrap
-  mix run -e "Bootstrap.InitialSync.run()"
+  mix run -e "Bootstrap.run()"
   popd
 }
 
@@ -106,14 +106,12 @@ while (("$#")); do
     CREATE_CLUSTER=true
     shift
     ;;
-
-  -e | --forward-external)
-    FORWARD_EXTERNAL_POSTGRES=true
-    shift
-    ;;
-
   -b | --forward-home-base)
     FORWARD_HOME_POSTGRES=true
+    shift
+    ;;
+  -D | --dont-forward-control)
+    FORWARD_CONTROL_POSTGRES=false
     shift
     ;;
   -B | --build-local)

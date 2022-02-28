@@ -38,6 +38,7 @@ defmodule ControlServer.Umbrella.MixProject do
       control_server: [
         applications: [
           control_server: :permanent,
+          kube_ext: :permanent,
           kube_services: :permanent,
           kube_controller: :permanent,
           control_server_web: :permanent,

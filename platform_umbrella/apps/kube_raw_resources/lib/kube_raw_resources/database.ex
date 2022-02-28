@@ -9,17 +9,21 @@ defmodule KubeRawResources.Database do
   @exporter_port 9187
   @exporter_port_name "exporter"
 
+  @pam_group_name "batterpamyusers"
+
   @pg_hba [
     ["local", "all", "all", "trust"],
-    ["hostssl", "all", "+zalandos", "127.0.0.1/32", "pam"],
+    ["hostssl", "all", "+#{@pam_group_name}", "127.0.0.1/32", "pam"],
     ["host", "all", "all", "127.0.0.1/32", "md5"],
-    ["hostssl", "all", "+zalandos", "::1/128", "pam"],
+    ["hostssl", "all", "+#{@pam_group_name}", "::1/128", "pam"],
     ["host", "all", "all", "::1/128", "md5"],
     ["hostssl", "replication", "standby", "all", "md5"],
 
     # This line is added to allow postgres_exporter to attach since it can't use ssl yet.
     # Certs aren't correct.
     ["hostnossl", "all", "postgres", "0.0.0.0/0", "md5"],
+    ["hostssl", "all", "postgres", "0.0.0.0/0", "md5"],
+    ["hostssl", "all", "batterydbuser", "0.0.0.0/0", "md5"],
     ["hostnossl", "all", "all", "all", "reject"],
     ["hostssl", "all", "+zalandos", "all", "pam"],
     ["hostssl", "all", "all", "all", "md5"]
@@ -46,6 +50,9 @@ defmodule KubeRawResources.Database do
         "volume" => %{
           "size" => storage_size(cluster)
         },
+        "pam_role_name" => "batteryusers",
+        "users" => %{"controlserver" => ["superuser", "createrole", "createdb", "login"]},
+        "databases" => %{"control" => "controlserver", "usage" => "controlserver"},
         "sidecars" => [
           exporter_sidecar(cluster)
         ]
@@ -176,9 +183,12 @@ defmodule KubeRawResources.Database do
     |> Enum.map(fn cluster -> postgres(cluster, config) end)
   end
 
+  def materialize_common(%{} = config) do
+    PostgresOperator.materialize_common(config)
+  end
+
   def materialize(%{} = config) do
     %{}
-    |> Map.merge(PostgresOperator.materialize_common(config))
     |> Map.merge(PostgresOperator.materialize_internal(config))
     |> Map.merge(%{"/9/boostrap_clusters" => bootstrap_clusters(config)})
   end

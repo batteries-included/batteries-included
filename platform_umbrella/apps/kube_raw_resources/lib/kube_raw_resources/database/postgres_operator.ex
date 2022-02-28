@@ -373,7 +373,7 @@ defmodule KubeRawResources.PostgresOperator do
     |> Map.put(
       "data",
       %{
-        "batterydbuser" => Ymlr.Encoder.to_s!(%{user_flags: ["createdb"]})
+        "batterydbuser" => Ymlr.Encoder.to_s!(%{user_flags: ["createdb", "superuser"]})
       }
     )
   end

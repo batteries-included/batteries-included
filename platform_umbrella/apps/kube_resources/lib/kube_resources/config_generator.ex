@@ -5,13 +5,13 @@ defmodule KubeResources.ConfigGenerator do
 
   alias ControlServer.Services.BaseService
   alias KubeRawResources.Battery
+  alias KubeRawResources.Istio
   alias KubeResources.AlertManager
   alias KubeResources.CertManager
   alias KubeResources.ControlServerResources
   alias KubeResources.Database
   alias KubeResources.EchoServer
   alias KubeResources.Grafana
-  alias KubeResources.Istio
   alias KubeResources.KnativeOperator
   alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
@@ -25,7 +25,7 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%BaseService{} = base_service) do
     base_service.config
     |> materialize(base_service.service_type)
-    |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
+    |> Enum.map(fn {key, value} -> {Path.join(base_service.root_path, key), value} end)
     |> Enum.into(%{})
   end
 

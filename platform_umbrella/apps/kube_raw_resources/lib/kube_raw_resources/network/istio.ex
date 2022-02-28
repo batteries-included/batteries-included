@@ -1,9 +1,9 @@
-defmodule KubeResources.Istio do
+defmodule KubeRawResources.Istio do
   @moduledoc false
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.NetworkSettings
+  alias KubeRawResources.NetworkSettings
 
   @app_name "istio-operator"
   @crd_path "priv/manifests/istio/crd.yaml"
@@ -165,6 +165,7 @@ defmodule KubeResources.Istio do
             "namespaces",
             "pods",
             "pods/proxy",
+            "pods/portforward",
             "persistentvolumeclaims",
             "secrets",
             "services",
@@ -213,7 +214,7 @@ defmodule KubeResources.Istio do
             "containers" => [
               %{
                 "name" => "istio-operator",
-                "image" => "docker.io/istio/operator:1.13.0",
+                "image" => "docker.io/istio/operator:1.13.1",
                 "command" => ["operator", "server"],
                 "securityContext" => %{
                   "allowPrivilegeEscalation" => false,
@@ -230,14 +231,20 @@ defmodule KubeResources.Istio do
                   "requests" => %{"cpu" => "50m", "memory" => "128Mi"}
                 },
                 "env" => [
-                  %{"name" => "WATCH_NAMESPACE"},
-                  %{"name" => "LEADER_ELECTION_NAMESPACE", "value" => namespace},
+                  %{
+                    "name" => "WATCH_NAMESPACE",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+                  },
+                  %{
+                    "name" => "LEADER_ELECTION_NAMESPACE",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+                  },
                   %{
                     "name" => "POD_NAME",
                     "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
                   },
-                  %{"name" => "OPERATOR_NAME", "value" => namespace},
-                  %{"name" => "WAIT_FOR_RESOURCES_TIMEOUT", "value" => "300s"},
+                  %{"name" => "OPERATOR_NAME", "value" => "istio-operator"},
+                  %{"name" => "WAIT_FOR_RESOURCES_TIMEOUT", "value" => "600s"},
                   %{"name" => "REVISION", "value" => ""}
                 ]
               }

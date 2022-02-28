@@ -5,8 +5,8 @@ defmodule ControlServerWeb.ServicesLive.PostgresNew do
 
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
-  alias ControlServerWeb.ServicesLive.Postgres.FormComponent
   alias ControlServer.Services.RunnableService
+  alias ControlServerWeb.ServicesLive.Postgres.FormComponent
 
   require Logger
 

@@ -31,11 +31,9 @@ defmodule ControlServerWeb.ChannelCase do
 
   setup tags do
     :ok = Sandbox.checkout(ControlServer.Repo)
-    :ok = Sandbox.checkout(KubeUsage.Repo)
 
     unless tags[:async] do
       Sandbox.mode(ControlServer.Repo, {:shared, self()})
-      Sandbox.mode(KubeUsage.Repo, {:shared, self()})
     end
 
     :ok

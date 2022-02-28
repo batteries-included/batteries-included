@@ -124,7 +124,7 @@ defmodule ControlServer.Postgres do
   end
 
   defp maybe_insert_default_clusters(repo, %{count_clusters: 0}) do
-    create_cluster(Bootstrap.Database.control_cluster(), repo)
+    create_cluster(KubeRawResources.Battery.control_cluster(), repo)
   end
 
   defp maybe_insert_default_clusters(_repo, %{count_clusters: cluster_count} = _data) do

@@ -1,12 +1,12 @@
 defmodule KubeRawResources.BatterySettings do
   @namespace "battery-core"
 
-  @control_image "k3d-k3s-default-registry:5000/battery/control"
-  @control_version "ddaa3d8-dirty"
+  @control_image "battery-registry:5000/battery/control"
+  @control_version "c6f4bd1-dirty"
   @control_name "control-server"
 
   @default_pg_cluster_name "pg-control"
-  @default_pg_username "postgres"
+  @default_pg_username "controlserver"
 
   @spec namespace(map) :: String.t()
   def namespace(config), do: Map.get(config, "namespace", @namespace)
@@ -25,7 +25,7 @@ defmodule KubeRawResources.BatterySettings do
   end
 
   def postgres_db(config) do
-    Map.get(config, "postgres.db", System.get_env("POSTGRES_DB") || "control-dev")
+    Map.get(config, "postgres.db", System.get_env("POSTGRES_DB") || "control")
   end
 
   def postgres_credential_secret(_config) do

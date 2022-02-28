@@ -10,6 +10,8 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       add :num_instances, :integer
       add :type, :string
       add :team_name, :string
+      add :users, :map
+      add :databases, :map
 
       timestamps(type: :utc_datetime_usec)
     end

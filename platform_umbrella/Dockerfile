@@ -86,7 +86,6 @@ COPY apps/kube_ext/mix.exs apps/kube_ext/mix.exs
 COPY apps/kube_raw_resources/mix.exs apps/kube_raw_resources/mix.exs
 COPY apps/kube_resources/mix.exs apps/kube_resources/mix.exs
 COPY apps/kube_services/mix.exs apps/kube_services/mix.exs
-COPY apps/kube_usage/mix.exs apps/kube_usage/mix.exs
 COPY apps/usage_poller/mix.exs apps/usage_poller/mix.exs
 
 RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \

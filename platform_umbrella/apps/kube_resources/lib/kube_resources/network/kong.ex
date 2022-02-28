@@ -3,7 +3,7 @@ defmodule KubeResources.Kong do
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.NetworkSettings
+  alias KubeRawResources.NetworkSettings
 
   @crd_path "priv/manifests/kong/crd.yaml"
 

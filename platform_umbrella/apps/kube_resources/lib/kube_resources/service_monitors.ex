@@ -1,8 +1,8 @@
 defmodule KubeResources.ServiceMonitors do
   alias ControlServer.Services
+  alias KubeRawResources.Istio
   alias KubeResources.DatabaseServiceMonitors
   alias KubeResources.Grafana
-  alias KubeResources.Istio
   alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
   alias KubeResources.Prometheus

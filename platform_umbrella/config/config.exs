@@ -10,13 +10,6 @@
 import Config
 
 # Configure Mix tasks and generators
-config :kube_usage,
-  ecto_repos: [KubeUsage.Repo]
-
-config :kube_usage, KubeUsage.Repo,
-  migration_primary_key: [type: :uuid],
-  migration_timestamps: [type: :utc_datetime_usec]
-
 config :control_server,
   ecto_repos: [ControlServer.Repo]
 
@@ -32,7 +25,7 @@ config :home_base, HomeBase.Repo,
   migration_timestamps: [type: :utc_datetime_usec]
 
 config :control_server_web,
-  ecto_repos: [ControlServer.Repo, KubeUsage.Repo],
+  ecto_repos: [ControlServer.Repo],
   generators: [context_app: :control_server, binary_id: true]
 
 config :home_base_web,
@@ -75,18 +68,18 @@ config :esbuild,
   version: "0.13.9",
   control_server_web: [
     args:
-      ~w(js/app.js --bundle --target=chrome58,firefox57,safari11,edge18 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js --bundle --target=chrome58,firefox57,safari11,edge18 --sourcemap --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../apps/control_server_web/assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ],
   home_base_web: [
     args:
-      ~w(js/app.js --bundle --target=chrome58,firefox57,safari11,edge18 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js --bundle --target=chrome58,firefox57,safari11,edge18 --sourcemap --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../apps/home_base_web/assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
-config :control_server, ControlServer.Services,
+config :control_server,
   default_services: [
     :battery,
     :istio,

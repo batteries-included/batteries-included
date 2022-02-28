@@ -3,8 +3,8 @@ defmodule KubeResources.Nginx do
 
   alias KubeExt.Builder, as: B
 
+  alias KubeRawResources.NetworkSettings
   alias KubeResources.Ingress
-  alias KubeResources.NetworkSettings
 
   @app_name "ingress-nginx"
 

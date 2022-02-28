@@ -1,4 +1,4 @@
-defmodule KubeUsage.Usage.UsageReport do
+defmodule ControlServer.Usage.UsageReport do
   @moduledoc """
   Database backing for usage reports used to determine what's
   running how it's configured and what should be billed.
@@ -13,11 +13,11 @@ defmodule KubeUsage.Usage.UsageReport do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "usage_reports" do
-    field(:namespace_report, :map)
-    field(:node_report, :map)
+    field :namespace_report, :map
+    field :node_report, :map
 
-    field(:num_nodes, :integer)
-    field(:num_pods, :integer)
+    field :num_nodes, :integer
+    field :num_pods, :integer
 
     timestamps()
   end

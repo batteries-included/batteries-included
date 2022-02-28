@@ -25,7 +25,6 @@ defmodule KubeController.MixProject do
 
   defp deps do
     [
-      {:kube_services, in_umbrella: true},
       {:bella, "~> 0.0.1"},
       {:telemetry, "~> 1.0", override: true},
       {:k8s, github: "batteries-included/k8s", branch: "battery_incl", override: true}
