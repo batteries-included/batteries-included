@@ -12,7 +12,7 @@ defmodule KubeResources.KnativeDomain do
     B.build_resource(:job)
     |> B.namespace(namespace)
     |> B.name("default-domain")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec(config))
   end
 
