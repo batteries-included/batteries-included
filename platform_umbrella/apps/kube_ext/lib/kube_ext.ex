@@ -104,7 +104,7 @@ defmodule KubeExt do
 
   defp update_single(connection, resource) do
     Logger.info(
-      "Going to patch Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)} Namespace: #{Resource.namespace(resources)}"
+      "Going to patch Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)} Namespace: #{Resource.namespace(resource)}"
     )
 
     operation = Client.patch(resource)
