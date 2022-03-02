@@ -11,9 +11,9 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.ControlServerResources
   alias KubeResources.Database
   alias KubeResources.EchoServer
+  alias KubeResources.GithubActionsRunner
   alias KubeResources.Grafana
   alias KubeResources.KnativeOperator
-  alias KubeResources.GithubActionsRunner
   alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
   alias KubeResources.Nginx
