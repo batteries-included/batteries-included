@@ -78,13 +78,14 @@ COPY apps/common_ui/mix.exs apps/common_ui/mix.exs
 COPY apps/control_server/mix.exs apps/control_server/mix.exs
 COPY apps/control_server_web/mix.exs apps/control_server_web/mix.exs
 COPY apps/event_center/mix.exs apps/event_center/mix.exs
-COPY apps/home_base_client/mix.exs apps/home_base_client/mix.exs
 COPY apps/home_base/mix.exs apps/home_base/mix.exs
+COPY apps/home_base_client/mix.exs apps/home_base_client/mix.exs
 COPY apps/home_base_web/mix.exs apps/home_base_web/mix.exs
 COPY apps/kube_ext/mix.exs apps/kube_ext/mix.exs
 COPY apps/kube_raw_resources/mix.exs apps/kube_raw_resources/mix.exs
 COPY apps/kube_resources/mix.exs apps/kube_resources/mix.exs
 COPY apps/kube_services/mix.exs apps/kube_services/mix.exs
+COPY apps/kube_state/mix.exs apps/kube_state/mix.exs
 COPY apps/usage_poller/mix.exs apps/usage_poller/mix.exs
 
 RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
