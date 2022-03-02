@@ -9,6 +9,7 @@ defmodule KubeState.Application do
   def start(_type, _args) do
     Bella.Sys.Logger.attach()
     conn = KubeExt.ConnectionPool.get()
+
     children = [
       # Starts a worker by calling: KubeState.Worker.start_link(arg)
       # {KubeState.Worker, arg}
