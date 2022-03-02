@@ -81,7 +81,6 @@ COPY apps/event_center/mix.exs apps/event_center/mix.exs
 COPY apps/home_base_client/mix.exs apps/home_base_client/mix.exs
 COPY apps/home_base/mix.exs apps/home_base/mix.exs
 COPY apps/home_base_web/mix.exs apps/home_base_web/mix.exs
-COPY apps/kube_controller/mix.exs apps/kube_controller/mix.exs
 COPY apps/kube_ext/mix.exs apps/kube_ext/mix.exs
 COPY apps/kube_raw_resources/mix.exs apps/kube_raw_resources/mix.exs
 COPY apps/kube_resources/mix.exs apps/kube_resources/mix.exs

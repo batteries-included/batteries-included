@@ -5,7 +5,7 @@ defmodule KubeResources.DevtoolsSettings do
   @namespace "battery-core"
   @knative_namespace "battery-knative"
   @knative_operator_image "gcr.io/knative-releases/knative.dev/operator/cmd/operator"
-  @knative_operator_version "sha256:8105b8c19e15bfcdd254702766a6a935f8c645ccc9c05d622ede2d4d1d6c9806"
+  @knative_operator_version "v1.2.1"
 
   def namespace(config), do: Map.get(config, "namespace", @namespace)
   def gh_enabled(config), do: Map.get(config, "runner.enabled", false)

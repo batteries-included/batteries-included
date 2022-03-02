@@ -13,6 +13,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.EchoServer
   alias KubeResources.Grafana
   alias KubeResources.KnativeOperator
+  alias KubeResources.GithubActionsRunner
   alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
   alias KubeResources.Nginx
@@ -49,7 +50,7 @@ defmodule KubeResources.ConfigGenerator do
   defp materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
 
   defp materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
-  defp materialize(%{} = config, :github_runner), do: KnativeOperator.materialize(config)
+  defp materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
 
   defp materialize(%{} = config, :kong), do: Kong.materialize(config)
   defp materialize(%{} = config, :nginx), do: Nginx.materialize(config)
