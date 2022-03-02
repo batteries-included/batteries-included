@@ -49,7 +49,7 @@ defmodule ControlServer.MixProject do
 
       # Kubernetes
       {:telemetry, "~> 1.0", override: true},
-      {:k8s, github: "batteries-included/k8s", branch: "battery_incl", override: true},
+      {:k8s, "~> 1.1"},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},

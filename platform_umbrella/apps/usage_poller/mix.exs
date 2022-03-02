@@ -29,6 +29,7 @@ defmodule UsagePoller.MixProject do
     [
       {:control_server, in_umbrella: true},
       {:kube_ext, in_umbrella: true},
+      {:k8s, "~> 1.1"},
       {:event_center, in_umbrella: true}
     ]
   end
