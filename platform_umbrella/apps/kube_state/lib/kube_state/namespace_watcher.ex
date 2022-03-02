@@ -3,15 +3,15 @@ defmodule KubeState.NamespaceWatcher do
 
   require Logger
 
-  def add(map) do
+  def add(_map) do
     :ok
   end
 
-  def delete(map) do
+  def delete(_map) do
     :ok
   end
 
-  def modify(map) do
+  def modify(_map) do
     :ok
   end
 
