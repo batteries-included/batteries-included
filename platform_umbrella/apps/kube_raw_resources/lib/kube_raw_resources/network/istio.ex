@@ -233,7 +233,7 @@ defmodule KubeRawResources.Istio do
                 "env" => [
                   %{
                     "name" => "WATCH_NAMESPACE",
-                    "value" => "battery-core",
+                    "value" => "battery-core"
                   },
                   %{
                     "name" => "LEADER_ELECTION_NAMESPACE",

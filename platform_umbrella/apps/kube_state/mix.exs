@@ -1,15 +1,15 @@
-defmodule KubeExt.MixProject do
+defmodule KubeState.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :kube_ext,
-      version: "0.3.0",
+      app: :kube_state,
+      version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.12",
+      elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()
@@ -18,15 +18,16 @@ defmodule KubeExt.MixProject do
 
   def application do
     [
-      mod: {KubeExt.Application, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {KubeState.Application, []}
     ]
   end
 
   defp deps do
     [
-      {:telemetry, "~> 1.0", override: true},
-      {:k8s, "~> 1.1"}
+      {:kube_ext, in_umbrella: true},
+      {:k8s, "~> 1.1"},
+      {:bella, "~> 0.0.9"}
     ]
   end
 
