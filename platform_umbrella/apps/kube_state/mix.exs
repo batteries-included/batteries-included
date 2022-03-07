@@ -27,7 +27,7 @@ defmodule KubeState.MixProject do
     [
       {:kube_ext, in_umbrella: true},
       {:k8s, "~> 1.1"},
-      {:bella, "~> 0.1.0"}
+      {:bella, "~> 0.1.1"}
     ]
   end
 

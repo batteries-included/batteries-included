@@ -9,7 +9,6 @@ defmodule KubeServices.Application do
   def start(_type, _args) do
     children = [
       {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
-      {KubeExt.ConnectionPool, name: KubeServices.ConnectionPool},
       KubeServices.BaseServicesSupervisor,
       KubeServices.BaseServicesHydrator
     ]
