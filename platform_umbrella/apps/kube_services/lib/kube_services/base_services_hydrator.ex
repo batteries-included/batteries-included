@@ -14,15 +14,8 @@ defmodule KubeServices.BaseServicesHydrator do
 
   def init(_args \\ []) do
     Logger.debug("Starting all base services")
-
-    if start_services?() do
-      start_base_services()
-    else
-      {:ok, []}
-    end
+    start_base_services()
   end
-
-  defp start_services?, do: Application.get_env(:kube_services, :start_services)
 
   defp starting_services, do: Services.list_base_services()
 
