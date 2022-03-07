@@ -3,19 +3,19 @@ defmodule KubeState.NamespaceWatcher do
 
   require Logger
 
-  def add(_map) do
+  def add(_map, _state) do
     :ok
   end
 
-  def delete(_map) do
+  def delete(_map, _state) do
     :ok
   end
 
-  def modify(_map) do
+  def modify(_map, _state) do
     :ok
   end
 
-  def operation do
+  def operation(_state) do
     K8s.Client.list("v1", "Namespace")
   end
 end
