@@ -51,7 +51,7 @@ defmodule HomeBaseWeb.MixProject do
       {:home_base, in_umbrella: true},
       # Components
       {:common_ui, in_umbrella: true},
-      {:petal_components, "~> 0.13.0"},
+      {:petal_components, "~> 0.13.5"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}
     ]

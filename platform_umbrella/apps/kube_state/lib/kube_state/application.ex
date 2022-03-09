@@ -7,13 +7,10 @@ defmodule KubeState.Application do
 
   @impl true
   def start(_type, _args) do
-    Bella.Sys.Logger.attach()
-    conn = KubeExt.ConnectionPool.get()
-
     children = [
       # Starts a worker by calling: KubeState.Worker.start_link(arg)
       # {KubeState.Worker, arg}
-      {Bella.Watcher.Worker, [watcher: KubeState.NamespaceWatcher, connection: conn]}
+      {KubeState.Runner, name: KubeState.default_state_table()}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

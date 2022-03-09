@@ -5,6 +5,9 @@ defmodule KubeServices.Application do
 
   use Application
 
+  alias KubeExt.ConnectionPool
+  alias KubeState.ResourceWatcher
+
   @impl true
   def start(_type, _args) do
     children = children(start_services?())
@@ -16,10 +19,53 @@ defmodule KubeServices.Application do
   defp start_services?, do: Application.get_env(:kube_services, :start_services)
 
   def children(true = _run) do
-    conn = KubeExt.ConnectionPool.get()
     [
       {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
-      {Bella.Watcher.Worker, [watcher: KubeState.NamespaceWatcher, connection: conn]},
+      Supervisor.child_spec(
+        {Bella.Watcher.Worker,
+         [
+           watcher: ResourceWatcher,
+           connection_func: &ConnectionPool.get/0,
+           extra: %{resource_type: :namespaces, table_name: KubeState.default_state_table()}
+         ]},
+        id: ResourceWatcher.Namespaces
+      ),
+      Supervisor.child_spec(
+        {Bella.Watcher.Worker,
+         [
+           watcher: ResourceWatcher,
+           connection_func: &ConnectionPool.get/0,
+           extra: %{resource_type: :pods, table_name: KubeState.default_state_table()}
+         ]},
+        id: ResourceWatcher.Pods
+      ),
+      Supervisor.child_spec(
+        {Bella.Watcher.Worker,
+         [
+           watcher: ResourceWatcher,
+           connection_func: &ConnectionPool.get/0,
+           extra: %{resource_type: :services, table_name: KubeState.default_state_table()}
+         ]},
+        id: ResourceWatcher.Services
+      ),
+      Supervisor.child_spec(
+        {Bella.Watcher.Worker,
+         [
+           watcher: ResourceWatcher,
+           connection_func: &ConnectionPool.get/0,
+           extra: %{resource_type: :deployments, table_name: KubeState.default_state_table()}
+         ]},
+        id: ResourceWatcher.Deployments
+      ),
+      Supervisor.child_spec(
+        {Bella.Watcher.Worker,
+         [
+           watcher: ResourceWatcher,
+           connection_func: &ConnectionPool.get/0,
+           extra: %{resource_type: :stateful_sets, table_name: KubeState.default_state_table()}
+         ]},
+        id: ResourceWatcher.StatefulSets
+      ),
       KubeServices.BaseServicesSupervisor,
       KubeServices.BaseServicesHydrator
     ]

@@ -13,6 +13,10 @@ defmodule EventCenter.Application do
         id: EventCenter.BaseService.PubSub
       ),
       Supervisor.child_spec(
+        {Phoenix.PubSub, name: EventCenter.KubeState.PubSub},
+        id: EventCenter.KubeState.PubSub
+      ),
+      Supervisor.child_spec(
         {Phoenix.PubSub, name: EventCenter.Usage.PubSub},
         id: EventCenter.Usage.PubSub
       )
