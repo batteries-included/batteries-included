@@ -461,17 +461,16 @@ defmodule KubeResources.KnativeOperator do
   end
 
   defp ingress_address_from_services(services) when is_list(services) do
-    services|>
-      Enum.find(fn s ->
-        K8s.Resource.name(s) == "istio-ingressgateway" and
-          K8s.Resource.namespace(s) == "battery-core"
-      end)
-      |>
-      get_in(["status", "loadBalancer", "ingress"])
-      |> Enum.map(fn pos -> Map.get(pos, "ip")  end)
-      |> Enum.sort(:desc)
-      |> List.first()
-      || "127.0.0.1"
+    services
+    |> Enum.find(fn s ->
+      K8s.Resource.name(s) == "istio-ingressgateway" and
+        K8s.Resource.namespace(s) == "battery-core"
+    end)
+    |> get_in(["status", "loadBalancer", "ingress"])
+    |> Enum.map(fn pos -> Map.get(pos, "ip") end)
+    |> Enum.sort(:desc)
+    |> List.first() ||
+      "127.0.0.1"
   end
 
   defp knative_crd_content, do: unquote(File.read!(@knative_crd_path))
