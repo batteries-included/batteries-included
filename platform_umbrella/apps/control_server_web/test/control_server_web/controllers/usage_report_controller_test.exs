@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.UsageReportControllerTest do
   use ControlServerWeb.ConnCase
 
-  alias KubeUsage.Usage
-  alias KubeUsage.Usage.UsageReport
+  alias ControlServer.Usage
+  alias ControlServer.Usage.UsageReport
 
   @create_attrs %{
     namespace_report: %{},

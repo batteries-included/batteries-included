@@ -6,6 +6,7 @@ defmodule KubeResources.Prometheus do
   and Ingress generation via KubResources.Ingress
   """
 
+  alias ControlServer.Services.RunnableService
   alias KubeExt.Builder, as: B
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings
@@ -79,7 +80,7 @@ defmodule KubeResources.Prometheus do
     |> Map.merge(alerting(config))
   end
 
-  defp alerting(config), do: alerting(config, ControlServer.Services.AlertManager.active?())
+  defp alerting(config), do: alerting(config, RunnableService.active?(:alert_manager))
 
   defp alerting(config, true = _is_active) do
     namespace = MonitoringSettings.namespace(config)
@@ -98,9 +99,9 @@ defmodule KubeResources.Prometheus do
     }
   end
 
-  defp alerting(config, _is_active), do: %{}
+  defp alerting(_config, _is_active), do: %{}
 
-  defp selectors(config) do
+  defp selectors(_config) do
     %{
       # select everything.
       "podMonitorNamespaceSelector" => %{},

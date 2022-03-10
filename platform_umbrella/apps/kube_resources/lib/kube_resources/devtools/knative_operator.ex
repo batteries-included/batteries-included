@@ -10,169 +10,20 @@ defmodule KubeResources.KnativeOperator do
 
   def materialize(config) do
     %{
-      "/0/crd" => yaml(knative_crd_content()),
-      "/2/deployment" => deployment(config),
-      "/3/cluster_role" => cluster_role(config),
-      "/4/cluster_role_1" => cluster_role_1(config),
-      "/5/cluster_role_2" => cluster_role_2(config),
-      "/6/cluster_role_3" => cluster_role_3(config),
-      "/7/cluster_role_binding" => cluster_role_binding(config),
-      "/8/cluster_role_binding_1" => cluster_role_binding_1(config),
-      "/9/cluster_role_binding_2" => cluster_role_binding_2(config),
-      "/10/cluster_role_binding_3" => cluster_role_binding_3(config),
-      "/11/service_account" => service_account(config),
-      "/12/destination_namespace" => dest_namespace(config),
-      "/13/knative_serving" => knative_serving(config)
-    }
-  end
-
-  def config_map(config) do
-    namespace = DevtoolsSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ConfigMap",
-      "metadata" => %{
-        "name" => "config-logging",
-        "namespace" => namespace,
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
-      },
-      "data" => %{
-        "_example" => """
-        ################################
-        #                              #
-        #    EXAMPLE CONFIGURATION     #
-        #                              #
-        ################################
-
-        # This block is not actually functional configuration,
-        # but serves to illustrate the available configuration
-        # options and document them in a way that is accessible
-        # to users that `kubectl edit` this config map.
-        #
-        # These sample configuration options may be copied out of
-        # this example block and unindented to be in the data block
-        # to actually change the configuration.
-
-        # Common configuration for all Knative codebase
-        zap-logger-config: |
-          %{
-            \"level\" => \"info\",
-            \"development\" => false,
-            \"outputPaths\" => [\"stdout\"],
-            \"errorOutputPaths\" => [\"stderr\"],
-            \"encoding\" => \"json\",
-            \"encoderConfig\" => %{
-              \"timeKey\" => \"ts\",
-              \"levelKey\" => \"level\",
-              \"nameKey\" => \"logger\",
-              \"callerKey\" => \"caller\",
-              \"messageKey\" => \"msg\",
-              \"stacktraceKey\" => \"stacktrace\",
-              \"lineEnding\" => \"\",
-              \"levelEncoder\" => \"\",
-              \"timeEncoder\" => \"iso8601\",
-              \"durationEncoder\" => \"\",
-              \"callerEncoder\" => \"\"
-            }
-          }
-        """
-      }
-    }
-  end
-
-  def config_map_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ConfigMap",
-      "metadata" => %{
-        "name" => "config-observability",
-        "namespace" => namespace,
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
-      },
-      "data" => %{
-        "_example" => """
-        ################################
-        #                              #
-        #    EXAMPLE CONFIGURATION     #
-        #                              #
-        ################################
-
-        # This block is not actually functional configuration,
-        # but serves to illustrate the available configuration
-        # options and document them in a way that is accessible
-        # to users that `kubectl edit` this config map.
-        #
-        # These sample configuration options may be copied out of
-        # this example block and unindented to be in the data block
-        # to actually change the configuration.
-
-        # logging.enable-var-log-collection defaults to false.
-        # The fluentd daemon set will be set up to collect /var/log if
-        # this flag is true.
-        logging.enable-var-log-collection: false
-
-        # logging.revision-url-template provides a template to use for producing the
-        # logging URL that is injected into the status of each Revision.
-        # This value is what you might use the the Knative monitoring bundle, and provides
-        # access to Kibana after setting up kubectl proxy.
-        logging.revision-url-template: |
-          http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.serving-knative-dev%2FrevisionUID:(query:'$%{REVISION_UID}',type:phrase))))
-
-        # If non-empty, this enables queue proxy writing request logs to stdout.
-        # The value determines the shape of the request logs and it must be a valid go text/template.
-        # It is important to keep this as a single line. Multiple lines are parsed as separate entities
-        # by most collection agents and will split the request logs into multiple records.
-        #
-        # The following fields and functions are available to the template:
-        #
-        # Request: An http.Request (see https://golang.org/pkg/net/http/#Request)
-        # representing an HTTP request received by the server.
-        #
-        # Response:
-        # struct %{
-        #   Code    int       // HTTP status code (see https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)
-        #   Size    int       // An int representing the size of the response.
-        #   Latency float64   // A float64 representing the latency of the response in seconds.
-        # }
-        #
-        # Revision:
-        # struct %{
-        #   Name          string  // Knative revision name
-        #   Namespace     string  // Knative revision namespace
-        #   Service       string  // Knative service name
-        #   Configuration string  // Knative configuration name
-        #   PodName       string  // Name of the pod hosting the revision
-        #   PodIP         string  // IP of the pod hosting the revision
-        # }
-        #
-        logging.request-log-template: '%{\"httpRequest\" => %{\"requestMethod\" => \"%{%{.Request.Method}}\", \"requestUrl\" => \"%{%{js .Request.RequestURI}}\", \"requestSize\" => \"%{%{.Request.ContentLength}}\", \"status\" => %{%{.Response.Code}}, \"responseSize\" => \"%{%{.Response.Size}}\", \"userAgent\" => \"%{%{js .Request.UserAgent}}\", \"remoteIp\" => \"%{%{js .Request.RemoteAddr}}\", \"serverIp\" => \"%{%{.Revision.PodIP}}\", \"referer\" => \"%{%{js .Request.Referer}}\", \"latency\" => \"%{%{.Response.Latency}}s\", \"protocol\" => \"%{%{.Request.Proto}}\"}, \"traceId\" => \"%{%{index .Request.Header \"X-B3-Traceid\"}}\"}'
-
-        # metrics.backend-destination field specifies the system metrics destination.
-        # It supports either prometheus (the default) or stackdriver.
-        # Note: Using stackdriver will incur additional charges
-        metrics.backend-destination: prometheus
-
-        # metrics.request-metrics-backend-destination specifies the request metrics
-        # destination. If non-empty, it enables queue proxy to send request metrics.
-        # Currently supported values: prometheus, stackdriver.
-        metrics.request-metrics-backend-destination: prometheus
-
-        # metrics.stackdriver-project-id field specifies the stackdriver project ID. This
-        # field is optional. When running on GCE, application default credentials will be
-        # used if this field is not provided.
-        metrics.stackdriver-project-id: \"<your stackdriver project id>\"
-
-        # metrics.allow-stackdriver-custom-metrics indicates whether it is allowed to send metrics to
-        # Stackdriver using \"global\" resource type and custom metric type if the
-        # metrics are not supported by \"knative_revision\" resource type. Setting this
-        # flag to \"true\" could cause extra Stackdriver charge.
-        # If metrics.backend-destination is not Stackdriver, this is ignored.
-        metrics.allow-stackdriver-custom-metrics: \"false\"
-        """
-      }
+      "/crd" => yaml(knative_crd_content()),
+      "/deployment" => deployment(config),
+      "/cluster_role" => cluster_role(config),
+      "/cluster_role_1" => cluster_role_1(config),
+      "/cluster_role_2" => cluster_role_2(config),
+      "/cluster_role_3" => cluster_role_3(config),
+      "/cluster_role_binding" => cluster_role_binding(config),
+      "/cluster_role_binding_1" => cluster_role_binding_1(config),
+      "/cluster_role_binding_2" => cluster_role_binding_2(config),
+      "/cluster_role_binding_3" => cluster_role_binding_3(config),
+      "/service_account" => service_account(config),
+      "/destination_namespace" => dest_namespace(config),
+      "/knative_serving/main" => knative_serving(config),
+      "/knative_serving/domain_config" => domain_config(config)
     }
   end
 
@@ -208,7 +59,7 @@ defmodule KubeResources.KnativeOperator do
             "containers" => [
               %{
                 "name" => "knative-operator",
-                "image" => "#{knative_operator_image}@#{knative_operator_version}",
+                "image" => "#{knative_operator_image}:#{knative_operator_version}",
                 "imagePullPolicy" => "IfNotPresent",
                 "env" => [
                   %{
@@ -552,15 +403,10 @@ defmodule KubeResources.KnativeOperator do
   def service_account(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ServiceAccount",
-      "metadata" => %{
-        "name" => "knative-operator",
-        "namespace" => namespace,
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
-      }
-    }
+    B.build_resource(:service_account)
+    |> B.namespace(namespace)
+    |> B.name("knative-operator")
+    |> B.app_labels(@app_name)
   end
 
   def dest_namespace(config) do
@@ -568,7 +414,7 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:namespace)
     |> B.name(knative_dest_namespace)
-    |> B.app_labels("knative-operator")
+    |> B.app_labels(@app_name)
   end
 
   def knative_serving(config) do
@@ -576,7 +422,7 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:knative_serving)
     |> B.namespace(knative_dest_namespace)
-    |> B.app_labels("knative-operator")
+    |> B.app_labels(@app_name)
     |> B.name("knative-serving")
     |> B.spec(serving_spec(config))
   end
@@ -586,10 +432,45 @@ defmodule KubeResources.KnativeOperator do
     |> Map.put("config", %{
       "istio" => %{
         "gateway.battery-knative.knative-ingress-gateway" =>
-          "istio-ingressgateway.battery-core.svc.cluster.local"
+          "istio-ingressgateway.battery-core.svc.cluster.local",
+        "local-gateway.battery-knative.knative-local-gateway" =>
+          "knative-local-gateway.battery-core.svc.cluster.local"
       }
     })
     |> Map.put("ingress", %{"istio" => %{"enabled" => true}})
+  end
+
+  defp domain_config(config) do
+    namespace = DevtoolsSettings.knative_destination_namespace(config)
+
+    data = Map.put(%{}, default_domain_name(), "")
+
+    B.build_resource(:config_map)
+    |> B.name("config-domain")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> Map.put("data", data)
+  end
+
+  defp default_domain_name, do: "knative.#{ingress_address()}.sslip.io"
+
+  defp ingress_address, do: ingress_address_from_services(KubeState.services())
+
+  defp ingress_address_from_services(services) when services == [] do
+    "127.0.0.1"
+  end
+
+  defp ingress_address_from_services(services) when is_list(services) do
+    services
+    |> Enum.find(fn s ->
+      K8s.Resource.name(s) == "istio-ingressgateway" and
+        K8s.Resource.namespace(s) == "battery-core"
+    end)
+    |> get_in(["status", "loadBalancer", "ingress"])
+    |> Enum.map(fn pos -> Map.get(pos, "ip") end)
+    |> Enum.sort(:desc)
+    |> List.first() ||
+      "127.0.0.1"
   end
 
   defp knative_crd_content, do: unquote(File.read!(@knative_crd_path))

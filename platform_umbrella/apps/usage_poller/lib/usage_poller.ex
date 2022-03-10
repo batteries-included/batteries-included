@@ -4,7 +4,7 @@ defmodule UsagePoller do
   """
   use GenServer
 
-  alias KubeUsage.Usage
+  alias ControlServer.Usage
   alias UsagePoller.Report
 
   require Logger

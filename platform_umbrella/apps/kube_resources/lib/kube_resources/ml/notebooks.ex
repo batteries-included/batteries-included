@@ -16,7 +16,7 @@ defmodule KubeResources.Notebooks do
 
   defp notebook_ingress(%Notebooks.JupyterLabNotebook{} = notebook, config) do
     Logger.debug("Creating ingress for #{inspect(notebook)}")
-    namespace = MLSettings.namespace(config)
+    namespace = MLSettings.public_namespace(config)
 
     B.build_resource(:ingress, url(notebook), "notebook-#{notebook.name}", "http")
     |> B.name("notebook-#{notebook.name}")
@@ -25,7 +25,7 @@ defmodule KubeResources.Notebooks do
   end
 
   def virtual_service(config) do
-    namespace = MLSettings.namespace(config)
+    namespace = MLSettings.public_namespace(config)
     notebooks = Notebooks.list_jupyter_lab_notebooks()
     build_virtual_service(namespace, notebooks)
   end
@@ -63,7 +63,7 @@ defmodule KubeResources.Notebooks do
   end
 
   defp service_account(config) do
-    namespace = MLSettings.namespace(config)
+    namespace = MLSettings.public_namespace(config)
 
     B.build_resource(:service_account)
     |> B.name("battery-notebooks")
@@ -72,7 +72,7 @@ defmodule KubeResources.Notebooks do
   end
 
   defp stateful_set(config, %JupyterLabNotebook{} = notebook) do
-    namespace = MLSettings.namespace(config)
+    namespace = MLSettings.public_namespace(config)
 
     template =
       %{}
@@ -114,7 +114,7 @@ defmodule KubeResources.Notebooks do
   end
 
   defp service(config, notebook) do
-    namespace = MLSettings.namespace(config)
+    namespace = MLSettings.public_namespace(config)
 
     spec =
       %{}

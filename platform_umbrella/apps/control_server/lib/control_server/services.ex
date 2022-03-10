@@ -13,88 +13,6 @@ defmodule ControlServer.Services do
 
   require Logger
 
-  defmodule ControlServer do
-    use RunnableService,
-      path: "/battery/control_server",
-      service_type: :control_server
-  end
-
-  defmodule EchoServer do
-    use RunnableService,
-      path: "/battery/echo_server",
-      service_type: :echo_server
-  end
-
-  defmodule Knative do
-    use RunnableService, path: "/devtools/knative", service_type: :knative
-  end
-
-  defmodule DatabaseCommon do
-    use RunnableService, path: "/database/common", service_type: :database
-  end
-
-  defmodule Database do
-    use RunnableService, path: "/database/public", service_type: :database_public
-  end
-
-  defmodule InternalDatabase do
-    use RunnableService,
-      path: "/battery/database_internal",
-      service_type: :database_internal
-  end
-
-  defmodule Notebooks do
-    use RunnableService, path: "/ml/notebooks", service_type: :notebooks
-  end
-
-  defmodule PrometheusOperator do
-    use RunnableService,
-      path: "/monitoring/prometheus_operator",
-      service_type: :prometheus_operator
-  end
-
-  defmodule Prometheus do
-    use RunnableService,
-      path: "/monitoring/prometheus",
-      service_type: :prometheus
-  end
-
-  defmodule Grafana do
-    use RunnableService,
-      path: "/monitoring/grafana",
-      service_type: :grafana
-  end
-
-  defmodule AlertManager do
-    use RunnableService,
-      path: "/monitoring/alert_manager",
-      service_type: :alert_manager
-  end
-
-  defmodule KubeMonitoring do
-    use RunnableService,
-      path: "/monitoring/kube_monitoring",
-      service_type: :kube_monitoring
-  end
-
-  defmodule Kong do
-    use RunnableService, path: "/network/kong", service_type: :kong
-  end
-
-  defmodule Nginx do
-    use RunnableService, path: "/network/nginx", service_type: :nginx
-  end
-
-  defmodule Istio do
-    use RunnableService, path: "/network/istio", service_type: :istio
-  end
-
-  defmodule CertManager do
-    use RunnableService,
-      path: "/security/certmanager",
-      service_type: :cert_manager
-  end
-
   @doc """
   Returns the list of base_services.
 
@@ -182,12 +100,12 @@ defmodule ControlServer.Services do
   end
 
   def insert_event(_repo, %{selected: nil, created: created}) do
-    Logger.debug("Insert Event Inserted -> #{inspect(created)}")
+    Logger.debug("Inserted -> #{inspect(created)}")
     {broadcast(:insert, created), created}
   end
 
   def insert_event(_repo, %{selected: selected, created: nil}) do
-    Logger.debug("Insert Event Selected -> #{inspect(selected)}")
+    Logger.debug("Selected -> #{inspect(selected)}")
     {:ok, selected}
   end
 
@@ -261,18 +179,16 @@ defmodule ControlServer.Services do
   end
 
   def active?(path) do
-    true ==
-      Repo.one(
-        from(bs in BaseService,
-          where: bs.root_path == ^path,
-          select: bs.is_active
-        )
-      )
+    Repo.exists?(from(bs in BaseService, where: bs.root_path == ^path))
   end
 
   def activate_defaults do
-    Enum.each(ServiceConfigs.default_services(), fn service_module ->
-      service_module.activate!()
+    services = ServiceConfigs.default_services()
+    IO.puts("Services = #{inspect(services)}")
+
+    Enum.each(services, fn service ->
+      IO.puts("Activating default service #{inspect(service)}")
+      RunnableService.activate!(service)
     end)
   end
 end

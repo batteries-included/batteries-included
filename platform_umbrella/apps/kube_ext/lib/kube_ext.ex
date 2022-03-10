@@ -104,13 +104,13 @@ defmodule KubeExt do
 
   defp update_single(connection, resource) do
     Logger.info(
-      "Going to patch Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)}"
+      "Going to patch Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)} Namespace: #{Resource.namespace(resource)}"
     )
 
-    patch_operation = Client.patch(resource)
-    patch_result = Client.run(connection, patch_operation)
-    Logger.debug("patch_result: #{inspect(patch_result)}")
-    patch_result
+    operation = Client.patch(resource)
+    result = Client.run(connection, operation)
+    Logger.debug("Update result: #{inspect(result)}")
+    result
   end
 
   defp increment_ok({:ok, cnt}), do: {:ok, cnt + 1}

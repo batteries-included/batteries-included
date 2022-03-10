@@ -10,6 +10,7 @@ use crate::namespace::DEFAULT_NAMESPACE;
 use k8s_openapi::api::core::v1::ServiceAccount;
 
 pub const SERVICE_ACCOUNT_NAME: &str = "battery-admin";
+pub const CLUSTER_ROLE_BINDING_NAME: &str = "battery-admin-cluster-admin";
 
 pub fn service_account() -> ServiceAccount {
     ServiceAccount {
@@ -26,7 +27,7 @@ pub fn service_account() -> ServiceAccount {
 pub fn cluster_binding() -> ClusterRoleBinding {
     ClusterRoleBinding {
         metadata: ObjectMeta {
-            name: Some(SERVICE_ACCOUNT_NAME.to_string()),
+            name: Some(CLUSTER_ROLE_BINDING_NAME.to_string()),
             labels: Some(default_labels("batteries-included")),
             ..ObjectMeta::default()
         },
@@ -54,7 +55,7 @@ pub async fn is_service_account_installed(client: Client) -> bool {
 pub async fn is_cluster_role_binding_installed(client: Client) -> bool {
     let cluster_roles: Api<ClusterRoleBinding> = Api::all(client);
     debug!("Trying to get cluster role binding");
-    let res = cluster_roles.get(SERVICE_ACCOUNT_NAME).await;
+    let res = cluster_roles.get(CLUSTER_ROLE_BINDING_NAME).await;
     res.is_ok()
 }
 pub async fn ensure_service_account(client: Client) -> Result<()> {
@@ -79,7 +80,7 @@ pub async fn ensure_admin(client: Client) -> Result<()> {
         let params = PatchParams::apply("battery_operator").force();
         let patch = Patch::Apply(json!(&cluster_binding()));
         Ok(sa
-            .patch(SERVICE_ACCOUNT_NAME, &params, &patch)
+            .patch(CLUSTER_ROLE_BINDING_NAME, &params, &patch)
             .await
             .map(|_| ())?)
     }

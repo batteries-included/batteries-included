@@ -4,16 +4,19 @@ defmodule KubeResources.ConfigGenerator do
   """
 
   alias ControlServer.Services.BaseService
+  alias KubeRawResources.Battery
+  alias KubeRawResources.Istio
   alias KubeResources.AlertManager
   alias KubeResources.CertManager
   alias KubeResources.ControlServerResources
   alias KubeResources.Database
   alias KubeResources.EchoServer
+  alias KubeResources.GithubActionsRunner
   alias KubeResources.Grafana
-  alias KubeResources.Istio
   alias KubeResources.KnativeOperator
   alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
+  alias KubeResources.ML
   alias KubeResources.Nginx
   alias KubeResources.Notebooks
   alias KubeResources.Prometheus
@@ -22,14 +25,10 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.VirtualService
 
   def materialize(%BaseService{} = base_service) do
-    if base_service.is_active do
-      base_service.config
-      |> materialize(base_service.service_type)
-      |> Enum.map(fn {key, value} -> {base_service.root_path <> key, value} end)
-      |> Enum.into(%{})
-    else
-      %{}
-    end
+    base_service.config
+    |> materialize(base_service.service_type)
+    |> Enum.map(fn {key, value} -> {Path.join(base_service.root_path, key), value} end)
+    |> Enum.into(%{})
   end
 
   defp materialize(%{} = config, :prometheus) do
@@ -52,13 +51,15 @@ defmodule KubeResources.ConfigGenerator do
   defp materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
 
   defp materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
-  defp materialize(%{} = config, :github_runner), do: KnativeOperator.materialize(config)
+  defp materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
 
   defp materialize(%{} = config, :kong), do: Kong.materialize(config)
   defp materialize(%{} = config, :nginx), do: Nginx.materialize(config)
 
-  defp materialize(%{} = config, :battery), do: ControlServerResources.materialize(config)
+  defp materialize(%{} = config, :battery), do: Battery.materialize(config)
+  defp materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
   defp materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
 
+  defp materialize(%{} = config, :ml), do: ML.Base.materialize(config)
   defp materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
 end

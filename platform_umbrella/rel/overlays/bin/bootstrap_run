@@ -4,4 +4,4 @@ set -exuo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-${DIR}/bootstrap eval 'Bootstrap.InitialSync.run'
+${DIR}/bootstrap eval 'Bootstrap.run()'

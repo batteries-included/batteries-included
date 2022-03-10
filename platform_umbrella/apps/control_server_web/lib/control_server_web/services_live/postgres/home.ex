@@ -1,63 +1,19 @@
-defmodule ControlServerWeb.ServicesLive.PostgresHome do
+defmodule ControlServerWeb.ServicesLive.DatabaseHome do
   @moduledoc """
   Live web app for database stored json configs.
   """
   use ControlServerWeb, :live_view
-  use Timex
 
-  import ControlServerWeb.Layout
-  import ControlServerWeb.PostgresClusterDisplay
-  import ControlServerWeb.PodDisplay
-
-  alias ControlServer.Postgres
-  alias ControlServer.Services
-  alias ControlServer.Services.Pods
-  alias ControlServerWeb.RunnableServiceList
-
-  require Logger
-
-  @pod_update_time 5000
+  import ControlServerWeb.LeftMenuLayout
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
-
-    {:ok,
-     socket
-     |> assign(:pods, get_pods())
-     |> assign(:clusters, list_clusters())
-     |> assign(:services, [Services.DatabaseCommon, Services.Database, Services.InternalDatabase])}
-  end
-
-  defp get_pods do
-    Enum.map(Pods.get("battery-data"), &Pods.summarize/1)
-  end
-
-  defp list_clusters do
-    Postgres.list_clusters()
+    {:ok, socket}
   end
 
   @impl true
-  def handle_info(:update, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
-
-    {:noreply, assign(socket, :pods, get_pods())}
-  end
-
-  @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-  end
-
-  @impl true
-  def handle_event("start_service", _, socket) do
-    Services.Database.activate!()
-
-    {:noreply, assign(socket, :running, true)}
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
   end
 
   @impl true
@@ -65,23 +21,43 @@ defmodule ControlServerWeb.ServicesLive.PostgresHome do
     ~H"""
     <.layout>
       <:title>
-        <.title>Databases</.title>
+        <.title>Database Home</.title>
       </:title>
-      <div class="container-xxl">
-        <div class="mt-4 row">
-          <.live_component
-            module={RunnableServiceList}
-            services={@services}
-            id={"database_base_services"}
-          />
-        </div>
-        <div class="mt-2 row">
-          <.pg_cluster_display clusters={@clusters} />
-        </div>
-        <div class="mt-2 row">
-          <.pods_display pods={@pods} />
-        </div>
-      </div>
+      <:left_menu>
+        <.left_menu_item to="/services/database" name="Home" icon="home" is_active={true} />
+        <.left_menu_item to="/services/database/clusters" name="Postgres Clusters" icon="database" />
+        <.left_menu_item
+          to="/services/database/settings"
+          name="Service Settings"
+          icon="lightning_bolt"
+        />
+        <.left_menu_item to="/services/database/status" name="Status" icon="status_online" />
+      </:left_menu>
+      <.body_section>
+        <.link to="/services/database/clusters/new" link_type="live_patch">
+          <button
+            type="button"
+            class="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <svg
+              class="mx-auto h-12 w-12 text-gray-400"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="currentColor"
+              fill="none"
+              viewBox="0 0 48 48"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 14v20c0 4.418 7.163 8 16 8 1.381 0 2.721-.087 4-.252M8 14c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8m0 0v14m0-4c0 4.418-7.163 8-16 8S8 28.418 8 24m32 10v6m0 0v6m0-6h6m-6 0h-6"
+              />
+            </svg>
+            <span class="mt-2 block text-sm font-medium text-gray-900">Create a new database</span>
+          </button>
+        </.link>
+      </.body_section>
     </.layout>
     """
   end

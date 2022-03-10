@@ -47,7 +47,7 @@ defmodule KubeServices.Worker do
     end
 
     def connection(%State{}),
-      do: KubeExt.ConnectionPool.get(KubeServices.ConnectionPool, :default)
+      do: KubeExt.ConnectionPool.get()
 
     def apply_resources(%State{} = state) do
       new_path_state_map =

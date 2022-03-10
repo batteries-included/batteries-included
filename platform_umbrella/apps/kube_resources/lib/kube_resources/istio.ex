@@ -95,7 +95,7 @@ defmodule KubeResources.IstioConfig do
     defstruct hosts: [], gateways: [], http: []
 
     def new(opts \\ []) do
-      gateways = Keyword.get(opts, :gateways, ["battery-gateway"])
+      gateways = Keyword.get(opts, :gateways, ["battery-core/battery-gateway"])
       hosts = Keyword.get(opts, :hosts, ["*"])
       routes = Keyword.get(opts, :routes, [])
       %__MODULE__{gateways: gateways, hosts: hosts, http: routes}

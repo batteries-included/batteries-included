@@ -12,12 +12,12 @@ defmodule HomeBase.Usage.UsageReport do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "usage_reports" do
-    field(:external_id, Ecto.UUID)
-    field(:generated_at, :utc_datetime_usec)
-    field(:namespace_report, :map)
-    field(:node_report, :map)
-    field(:num_nodes, :integer)
-    field(:num_pods, :integer)
+    field :external_id, Ecto.UUID
+    field :generated_at, :utc_datetime_usec
+    field :namespace_report, :map
+    field :node_report, :map
+    field :num_nodes, :integer
+    field :num_pods, :integer
 
     belongs_to :billing_report, HomeBase.Billing.BillingReport
 

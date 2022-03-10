@@ -2,15 +2,15 @@ defmodule KubeResources.EchoServer do
   @moduledoc false
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.BatterySettings
+  alias KubeRawResources.BatterySettings
   alias KubeResources.IstioConfig.VirtualService
 
   @app_name "echo"
 
   def materialize(config) do
     %{
-      "/1/echo/service" => service(config),
-      "/1/echo/deployment" => deployment(config)
+      "/service" => service(config),
+      "/deployment" => deployment(config)
     }
   end
 

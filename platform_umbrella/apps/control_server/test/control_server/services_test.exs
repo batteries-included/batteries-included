@@ -7,18 +7,16 @@ defmodule ControlServer.ServicesTest do
     alias ControlServer.Services.BaseService
 
     @valid_attrs %{
-      is_active: true,
       root_path: "some root_path",
       config: %{},
       service_type: :prometheus
     }
     @update_attrs %{
-      is_active: false,
       root_path: "some updated root_path",
       config: %{},
       service_type: :prometheus
     }
-    @invalid_attrs %{is_active: nil, root_path: nil, config: nil, service_type: nil}
+    @invalid_attrs %{root_path: nil, config: nil, service_type: nil}
 
     def base_service_fixture(attrs \\ %{}) do
       {:ok, base_service} =
@@ -41,7 +39,6 @@ defmodule ControlServer.ServicesTest do
 
     test "create_base_service/1 with valid data creates a base_service" do
       assert {:ok, %BaseService{} = base_service} = Services.create_base_service(@valid_attrs)
-      assert base_service.is_active == true
       assert base_service.root_path == "some root_path"
       assert base_service.config == %{}
     end
@@ -56,7 +53,6 @@ defmodule ControlServer.ServicesTest do
       assert {:ok, %BaseService{} = base_service} =
                Services.update_base_service(base_service, @update_attrs)
 
-      assert base_service.is_active == false
       assert base_service.root_path == "some updated root_path"
       assert base_service.config == %{}
     end

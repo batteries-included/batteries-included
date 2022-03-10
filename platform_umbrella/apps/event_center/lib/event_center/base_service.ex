@@ -1,14 +1,7 @@
 defmodule EventCenter.BaseService do
-  use GenServer
-
   alias Phoenix.PubSub
 
   @pubsub EventCenter.BaseService.PubSub
-
-  @impl true
-  def init(_) do
-    {:ok, nil}
-  end
 
   def broadcast(action, object) when action in [:insert, :update, :delete] do
     PubSub.broadcast(@pubsub, topic(), {action, object})

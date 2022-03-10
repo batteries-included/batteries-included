@@ -10,13 +10,6 @@
 import Config
 
 # Configure Mix tasks and generators
-config :kube_usage,
-  ecto_repos: [KubeUsage.Repo]
-
-config :kube_usage, KubeUsage.Repo,
-  migration_primary_key: [type: :uuid],
-  migration_timestamps: [type: :utc_datetime_usec]
-
 config :control_server,
   ecto_repos: [ControlServer.Repo]
 
@@ -32,7 +25,7 @@ config :home_base, HomeBase.Repo,
   migration_timestamps: [type: :utc_datetime_usec]
 
 config :control_server_web,
-  ecto_repos: [ControlServer.Repo, KubeUsage.Repo],
+  ecto_repos: [ControlServer.Repo],
   generators: [context_app: :control_server, binary_id: true]
 
 config :home_base_web,
@@ -86,11 +79,12 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
-config :control_server, ControlServer.Services,
+config :control_server,
   default_services: [
-    ControlServer.Services.Istio,
-    ControlServer.Services.InternalDatabase,
-    ControlServer.Services.DatabaseCommon
+    :battery,
+    :istio,
+    :database,
+    :database_internal
   ]
 
 config :kube_services, start_services: true

@@ -90,7 +90,7 @@ cargoBootstrap() {
 
 mixBootstrap() {
   pushd ${DIR}/../platform_umbrella/apps/bootstrap
-  mix run -e "Bootstrap.InitialSync.run()"
+  mix run -e "Bootstrap.run()"
   popd
 }
 
@@ -106,14 +106,12 @@ while (("$#")); do
     CREATE_CLUSTER=true
     shift
     ;;
-
-  -e | --forward-external)
-    FORWARD_EXTERNAL_POSTGRES=true
-    shift
-    ;;
-
   -b | --forward-home-base)
     FORWARD_HOME_POSTGRES=true
+    shift
+    ;;
+  -D | --dont-forward-control)
+    FORWARD_CONTROL_POSTGRES=false
     shift
     ;;
   -B | --build-local)
@@ -137,18 +135,19 @@ if [[ $CREATE_CLUSTER == 'true' ]]; then
   # Create the cluster
   k3d cluster create -v /dev/mapper:/dev/mapper \
      --k3s-arg '--disable=traefik@server:*' \
-     --registry-create battery-registr \
+     --registry-create battery-registry \
      --wait \
      -s 3 \
      -p "8081:80@loadbalancer" || true
 fi
 
-cargoBootstrap
-mixBootstrap
 
 if [ $BUILD_CONTROL_SERVER == "true" ]; then
   buildLocalControl
 fi
+
+cargoBootstrap
+mixBootstrap
 
 if [ $FORWARD_CONTROL_POSTGRES == "true" ]; then
   (retry postgresForward "pg-control" "5432") &
@@ -157,5 +156,6 @@ fi
 if [[ $FORWARD_HOME_POSTGRES == "true" ]]; then
   (retry postgresForward "default-home-base" "5433") &
 fi
+
 
 wait

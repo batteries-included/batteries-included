@@ -1,19 +1,10 @@
 import Config
 
 # Configure your database
-config :kube_usage, KubeUsage.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
-  password: System.get_env("POSTGRES_PASSWORD") || "not-real",
-  database: System.get_env("POSTGRES_DB") || "usage-dev",
-  hostname: System.get_env("POSTGRES_HOST") || "localhost",
-  port: System.get_env("POSTGRES_PORT") || 5432,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 3
-
 config :control_server, ControlServer.Repo,
   username: System.get_env("POSTGRES_USER") || "batterydbuser",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
-  database: System.get_env("POSTGRES_DB") || "control-dev",
+  database: System.get_env("POSTGRES_DB") || "control",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   port: System.get_env("POSTGRES_PORT") || 5432,
   show_sensitive_data_on_connection_error: true,
@@ -22,7 +13,7 @@ config :control_server, ControlServer.Repo,
 config :home_base, HomeBase.Repo,
   username: System.get_env("POSTGRES_USER") || "batterydbuser",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
-  database: System.get_env("POSTGRES_DB") || "home-dev",
+  database: System.get_env("POSTGRES_DB") || "home",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   port: System.get_env("POSTGRES_PORT") || 5432,
   show_sensitive_data_on_connection_error: true,

@@ -35,15 +35,6 @@ secret_key_base =
     You can generate one by calling: mix phx.gen.secret
     """
 
-config :kube_usage, KubeUsage.Repo,
-  ssl: true,
-  username: postgres_username,
-  password: postgres_password,
-  database: postgres_database,
-  hostname: postgres_host,
-  port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "3")
-
 config :control_server, ControlServer.Repo,
   ssl: true,
   username: postgres_username,

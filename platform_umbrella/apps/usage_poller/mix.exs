@@ -27,8 +27,9 @@ defmodule UsagePoller.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:kube_usage, in_umbrella: true},
+      {:control_server, in_umbrella: true},
       {:kube_ext, in_umbrella: true},
+      {:k8s, "~> 1.1"},
       {:event_center, in_umbrella: true}
     ]
   end

@@ -15,7 +15,6 @@ defmodule ControlServer.Services.BaseService do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "base_services" do
-    field :is_active, :boolean, default: false
     field :root_path, :string
 
     field :service_type, Ecto.Enum,
@@ -35,7 +34,10 @@ defmodule ControlServer.Services.BaseService do
         :istio,
         :kong,
         :nginx,
+        :ml,
         :notebooks,
+        :battery,
+        :echo_server,
         :control_server
       ]
 
@@ -47,7 +49,7 @@ defmodule ControlServer.Services.BaseService do
   @doc false
   def changeset(base_service, attrs) do
     base_service
-    |> cast(attrs, [:root_path, :is_active, :config, :service_type])
-    |> validate_required([:root_path, :is_active, :config, :service_type])
+    |> cast(attrs, [:root_path, :config, :service_type])
+    |> validate_required([:root_path, :config, :service_type])
   end
 end

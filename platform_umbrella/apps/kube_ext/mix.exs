@@ -16,7 +16,6 @@ defmodule KubeExt.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       mod: {KubeExt.Application, []},
@@ -27,7 +26,7 @@ defmodule KubeExt.MixProject do
   defp deps do
     [
       {:telemetry, "~> 1.0", override: true},
-      {:k8s, github: "batteries-included/k8s", branch: "battery_incl", override: true}
+      {:k8s, "~> 1.1"}
     ]
   end
 

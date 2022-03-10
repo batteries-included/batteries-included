@@ -6,7 +6,6 @@ defmodule ControlServer.Repo.Migrations.CreateBaseServices do
       add :id, :binary_id, primary_key: true
       add :root_path, :string, null: false
       add :service_type, :string, null: false
-      add :is_active, :boolean, default: false, null: false
       add :config, :map
 
       timestamps(type: :utc_datetime_usec)

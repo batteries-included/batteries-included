@@ -27,6 +27,7 @@ defmodule KubeServices.MixProject do
   defp deps do
     [
       {:kube_ext, in_umbrella: true},
+      {:kube_state, in_umbrella: true},
       {:kube_resources, in_umbrella: true},
       {:kube_raw_resources, in_umbrella: true},
       {:control_server, in_umbrella: true}
@@ -36,7 +37,7 @@ defmodule KubeServices.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      test: [],
       "ecto.reset": []
     ]
   end

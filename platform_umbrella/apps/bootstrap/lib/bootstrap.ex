@@ -3,16 +3,21 @@ defmodule Bootstrap do
   Documentation for `Bootstrap`.
   """
 
-  @doc """
-  Hello world.
+  alias Bootstrap.InitialSync
 
-  ## Examples
+  require Logger
 
-      iex> Bootstrap.hello()
-      :world
+  @app :bootstrap
 
-  """
-  def hello do
-    :world
+  defp load_app do
+    Logger.debug("Loading application #{@app}")
+    Application.ensure_all_started(@app, :permanent)
+  end
+
+  def run do
+    Logger.debug("Running")
+    load_app()
+    Logger.debug("Done starting application")
+    InitialSync.sync()
   end
 end

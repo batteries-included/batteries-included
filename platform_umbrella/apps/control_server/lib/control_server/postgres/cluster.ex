@@ -12,12 +12,14 @@ defmodule ControlServer.Postgres.Cluster do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "clusters" do
-    field(:name, :string)
-    field(:num_instances, :integer, default: 1)
-    field(:postgres_version, :string, default: "13")
-    field(:team_name, :string, default: "pg")
-    field(:type, Ecto.Enum, values: [:standard, :internal], default: :standard)
-    field(:storage_size, :string)
+    field :name, :string
+    field :num_instances, :integer, default: 1
+    field :postgres_version, :string, default: "13"
+    field :team_name, :string, default: "pg"
+    field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
+    field :storage_size, :string
+    field :users, {:map, {:array, :string}}
+    field :databases, {:map, :string}
     timestamps()
   end
 

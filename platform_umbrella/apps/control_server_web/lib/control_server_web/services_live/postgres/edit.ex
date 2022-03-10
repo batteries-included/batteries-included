@@ -20,7 +20,7 @@ defmodule ControlServerWeb.ServicesLive.PostgresEdit do
 
   @impl true
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
-    new_path = Routes.services_postgres_home_path(socket, :index)
+    new_path = Routes.services_postgres_clusters_path(socket, :index)
     Logger.debug("updated cluster = #{inspect(cluster)} new_path = #{new_path}")
 
     {:noreply, push_redirect(socket, to: new_path)}

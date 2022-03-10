@@ -50,7 +50,6 @@ defmodule ControlServerWeb.MixProject do
       {:gettext, "~> 0.19"},
       {:telemetry, "~> 1.0", override: true},
       {:control_server, in_umbrella: true},
-      {:kube_usage, in_umbrella: true},
       # Components
       {:common_ui, in_umbrella: true},
       {:petal_components, "~> 0.13.0"},
