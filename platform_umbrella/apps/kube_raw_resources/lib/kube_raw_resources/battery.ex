@@ -16,6 +16,8 @@ defmodule KubeRawResources.Battery do
     :num_instances => 1,
     :storage_size => "500M",
     :type => :internal,
+    :users => %{"controlserver" => ["superuser", "createrole", "createdb", "login"]},
+    :databases => %{"control" => "controlserver"},
     :team_name => "pg"
   }
 

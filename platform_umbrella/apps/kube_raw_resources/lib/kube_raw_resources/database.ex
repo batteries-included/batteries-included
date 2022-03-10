@@ -9,7 +9,9 @@ defmodule KubeRawResources.Database do
   @exporter_port 9187
   @exporter_port_name "exporter"
 
-  @pam_group_name "batterpamyusers"
+  @pam_group_name "batterpamusers"
+
+  @app "postgres-operator"
 
   @pg_hba [
     ["local", "all", "all", "trust"],
@@ -32,15 +34,17 @@ defmodule KubeRawResources.Database do
   def postgres(%{} = cluster, config) do
     namespace = namespace(cluster, config)
 
+    spec = postgres_spec(cluster)
+
+    B.build_resource(:postgresql)
+    |> B.namespace(namespace)
+    |> B.name(full_name(cluster))
+    |> B.app_labels(@app)
+    |> B.spec(spec)
+  end
+
+  defp postgres_spec(cluster) do
     %{
-      "kind" => "postgresql",
-      "apiVersion" => "acid.zalan.do/v1",
-      "metadata" => %{
-        "namespace" => namespace,
-        "battery/managed" => "True",
-        "name" => full_name(cluster)
-      },
-      "spec" => %{
         "teamId" => team_name(cluster),
         "numberOfInstances" => num_instances(cluster),
         "postgresql" => %{
@@ -51,13 +55,12 @@ defmodule KubeRawResources.Database do
           "size" => storage_size(cluster)
         },
         "pam_role_name" => "batteryusers",
-        "users" => %{"controlserver" => ["superuser", "createrole", "createdb", "login"]},
-        "databases" => %{"control" => "controlserver", "usage" => "controlserver"},
+        "users" => users(cluster),
+        "databases" => databases(cluster),
         "sidecars" => [
           exporter_sidecar(cluster)
         ]
       }
-    }
   end
 
   def metrics_service(%{} = cluster, config, role) do
@@ -81,7 +84,7 @@ defmodule KubeRawResources.Database do
     service_name = "#{cluster_name}-#{role}-mon"
 
     B.build_resource(:service)
-    |> B.app_labels("postgres-operator")
+    |> B.app_labels(@app)
     |> B.label(label_name, cluster_name)
     |> B.label("spilo-role", role)
     |> B.namespace(namespace)
