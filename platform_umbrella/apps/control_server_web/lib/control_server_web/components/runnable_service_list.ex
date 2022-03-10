@@ -21,6 +21,12 @@ defmodule ControlServerWeb.RunnableServiceList do
     |> Enum.into(%{})
   end
 
+  defp update_services(%{} = services) do
+    services
+    |> Enum.map(fn {_path, service} -> update_single_service(service) end)
+    |> Enum.into(%{})
+  end
+
   def update_single_service(%{service: mod} = _s) do
     update_single_service(mod)
   end
@@ -31,7 +37,10 @@ defmodule ControlServerWeb.RunnableServiceList do
 
   @impl true
   def handle_event("start", %{"path" => path} = _payload, socket) do
-    socket.assigns.services |> Map.get(path) |> Map.get(:service) |> RunnableService.activate!()
+    socket.assigns.services
+    |> Map.get(path)
+    |> Map.get(:service)
+    |> RunnableService.activate!()
 
     {:noreply, assign(socket, :services, update_services(socket.assigns.services))}
   end

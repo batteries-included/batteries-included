@@ -22,7 +22,8 @@ defmodule KubeResources.KnativeOperator do
       "/cluster_role_binding_3" => cluster_role_binding_3(config),
       "/service_account" => service_account(config),
       "/destination_namespace" => dest_namespace(config),
-      "/knative_serving" => knative_serving(config)
+      "/knative_serving/main" => knative_serving(config),
+      "/knative_serving/domain_config" => domain_config(config)
     }
   end
 
@@ -402,15 +403,10 @@ defmodule KubeResources.KnativeOperator do
   def service_account(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ServiceAccount",
-      "metadata" => %{
-        "name" => "knative-operator",
-        "namespace" => namespace,
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
-      }
-    }
+    B.build_resource(:service_account)
+    |> B.namespace(namespace)
+    |> B.name("knative-operator")
+    |> B.app_labels(@app_name)
   end
 
   def dest_namespace(config) do
@@ -418,7 +414,7 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:namespace)
     |> B.name(knative_dest_namespace)
-    |> B.app_labels("knative-operator")
+    |> B.app_labels(@app_name)
   end
 
   def knative_serving(config) do
@@ -426,7 +422,7 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:knative_serving)
     |> B.namespace(knative_dest_namespace)
-    |> B.app_labels("knative-operator")
+    |> B.app_labels(@app_name)
     |> B.name("knative-serving")
     |> B.spec(serving_spec(config))
   end
@@ -442,6 +438,40 @@ defmodule KubeResources.KnativeOperator do
       }
     })
     |> Map.put("ingress", %{"istio" => %{"enabled" => true}})
+  end
+
+  defp domain_config(config) do
+    namespace = DevtoolsSettings.knative_destination_namespace(config)
+
+    data = Map.put(%{}, default_domain_name(), "")
+
+    B.build_resource(:config_map)
+    |> B.name("config-domain")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> Map.put("data", data)
+  end
+
+  defp default_domain_name, do: "knative.#{ingress_address()}.sslip.io"
+
+  defp ingress_address, do: ingress_address_from_services(KubeState.services())
+
+  defp ingress_address_from_services(services) when services == [] do
+    "127.0.0.1"
+  end
+
+  defp ingress_address_from_services(services) when is_list(services) do
+    services|>
+      Enum.find(fn s ->
+        K8s.Resource.name(s) == "istio-ingressgateway" and
+          K8s.Resource.namespace(s) == "battery-core"
+      end)
+      |>
+      get_in(["status", "loadBalancer", "ingress"])
+      |> Enum.map(fn pos -> Map.get(pos, "ip")  end)
+      |> Enum.sort(:desc)
+      |> List.first()
+      || "127.0.0.1"
   end
 
   defp knative_crd_content, do: unquote(File.read!(@knative_crd_path))
