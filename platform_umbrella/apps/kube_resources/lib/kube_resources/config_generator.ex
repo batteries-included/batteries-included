@@ -16,6 +16,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.KnativeOperator
   alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
+  alias KubeResources.ML
   alias KubeResources.Nginx
   alias KubeResources.Notebooks
   alias KubeResources.Prometheus
@@ -59,5 +60,6 @@ defmodule KubeResources.ConfigGenerator do
   defp materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
   defp materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
 
+  defp materialize(%{} = config, :ml), do: ML.Base.materialize(config)
   defp materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
 end

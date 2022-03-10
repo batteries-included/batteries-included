@@ -34,6 +34,7 @@ defmodule ControlServer.Services.BaseService do
         :istio,
         :kong,
         :nginx,
+        :ml,
         :notebooks,
         :battery,
         :echo_server,

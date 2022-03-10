@@ -233,7 +233,7 @@ defmodule KubeRawResources.Istio do
                 "env" => [
                   %{
                     "name" => "WATCH_NAMESPACE",
-                    "value" => "battery-core"
+                    "value" => Enum.join(watched_namespaces(), ",")
                   },
                   %{
                     "name" => "LEADER_ELECTION_NAMESPACE",
@@ -314,5 +314,15 @@ defmodule KubeRawResources.Istio do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+  end
+
+  defp watched_namespaces, do: watched_namespaces(KubeState.namespaces())
+
+  defp watched_namespaces([] = all_namespaces) when all_namespaces == [], do: ["battery-core"]
+  defp watched_namespaces(all_namespaces) do
+    all_namespaces
+    |> Enum.filter(fn namespace -> namespace |> K8s.Resource.name() |> String.starts_with?("battery-") end)
+    |> Enum.map(fn namespace -> K8s.Resource.name(namespace) end)
+    |> Enum.to_list()
   end
 end

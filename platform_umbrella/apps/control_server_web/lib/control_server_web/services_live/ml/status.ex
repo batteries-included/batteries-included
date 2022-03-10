@@ -26,7 +26,7 @@ defmodule ControlServerWeb.ServicesLive.MLStatus do
   end
 
   defp pods do
-    Enum.map(Pods.get("battery-core"), &Pods.summarize/1)
+    Enum.map(Pods.get("battery-ml"), &Pods.summarize/1)
   end
 
   @impl true

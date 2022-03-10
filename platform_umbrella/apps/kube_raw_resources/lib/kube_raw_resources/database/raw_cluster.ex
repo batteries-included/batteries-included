@@ -11,7 +11,6 @@ defmodule KubeRawResources.RawCluster do
   def users(%{} = cluster), do: Map.get(cluster, :users, %{}) || %{}
   def databases(%{} = cluster), do: Map.get(cluster, :databases, %{}) || %{}
 
-
   def full_name(%{} = cluster) do
     team_name = team_name(cluster)
     cluster_name = cluster_name(cluster)

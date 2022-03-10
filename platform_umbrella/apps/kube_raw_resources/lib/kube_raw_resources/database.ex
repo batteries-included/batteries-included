@@ -45,22 +45,22 @@ defmodule KubeRawResources.Database do
 
   defp postgres_spec(cluster) do
     %{
-        "teamId" => team_name(cluster),
-        "numberOfInstances" => num_instances(cluster),
-        "postgresql" => %{
-          "version" => postgres_version(cluster)
-        },
-        "patroni" => %{"pg_hba" => pg_hba()},
-        "volume" => %{
-          "size" => storage_size(cluster)
-        },
-        "pam_role_name" => "batteryusers",
-        "users" => users(cluster),
-        "databases" => databases(cluster),
-        "sidecars" => [
-          exporter_sidecar(cluster)
-        ]
-      }
+      "teamId" => team_name(cluster),
+      "numberOfInstances" => num_instances(cluster),
+      "postgresql" => %{
+        "version" => postgres_version(cluster)
+      },
+      "patroni" => %{"pg_hba" => pg_hba()},
+      "volume" => %{
+        "size" => storage_size(cluster)
+      },
+      "pam_role_name" => "batteryusers",
+      "users" => users(cluster),
+      "databases" => databases(cluster),
+      "sidecars" => [
+        exporter_sidecar(cluster)
+      ]
+    }
   end
 
   def metrics_service(%{} = cluster, config, role) do

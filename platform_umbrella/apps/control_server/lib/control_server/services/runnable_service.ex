@@ -34,7 +34,10 @@ defmodule ControlServer.Services.RunnableService do
         service_type: :database_internal,
         dependencies: [:database]
       },
-      %__MODULE__{path: "/ml/notebooks", service_type: :notebooks},
+
+      # ML
+      %__MODULE__{path: "/ml/core", service_type: :ml},
+      %__MODULE__{path: "/ml/notebooks", service_type: :notebooks, dependencies: [:ml]},
 
       # Monitoring
       %__MODULE__{path: "/monitoring/prometheus_operator", service_type: :prometheus_operator},
