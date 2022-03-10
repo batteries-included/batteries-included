@@ -7,18 +7,18 @@ on:
   pull_request:
 
 jobs:
-  mix_test:
-    name: mix test (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
+  platform:
+    name: Platform Build/Test (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
 
     strategy:
       matrix:
         include:
-          - elixir: 1.13.1
-            otp: 24.0
+          - elixir: 1.13.3
+            otp: 24.2.2
+            node: 16.4.0
             lint: lint
 
     runs-on: ubuntu-latest
-    # runs-on: [self-hosted, linux]
 
     defaults:
       run:
@@ -52,24 +52,39 @@ jobs:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
 
-      - name: Install dependencies
+      - name: Set up Node.js
+        uses: actions/setup-node@v3.0.0
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install test dependencies
         run: mix deps.get --only test
 
       - name: Install dependencies non test
         run: mix deps.get
 
+      - name: Compile deps
+        run: mix deps.compile --force --skip-umbrella-children
+
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused
         if: ${{ matrix.lint }}
 
-      - name: Remove compiled application files
-        run: mix clean
+      - name: Prettier on everything
+        run: npx prettier --check . --color
+        if: ${{ matrix.lint }}
 
       - name: Compile
-        run: mix compile
+        run: mix compile --force --warnings-as-errors
 
       - name: Credo
         run: mix credo --strict
+        if: ${{ matrix.lint }}
+        env:
+          MIX_ENV: test
+
+      - name: Format Check
+        run: mix format --check-formatted
         if: ${{ matrix.lint }}
         env:
           MIX_ENV: test
@@ -85,10 +100,23 @@ jobs:
         env:
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
-  npm_test_control:
-    name: npm test control
+  npm_test:
+    name: NPM test PATH [ ${{ matrix.asset_path }} ]
+
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.13.3
+            otp: 24.2.2
+            node: 16.4.0
+            asset_path: apps/control_server_web/assets
+
+          - elixir: 1.13.3
+            otp: 24.2.2
+            node: 16.4.0
+            asset_path: apps/home_base_web/assets
+
     runs-on: ubuntu-latest
-    # runs-on: [self-hosted, linux]
     defaults:
       run:
         working-directory: ./platform_umbrella
@@ -101,62 +129,31 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: 1.13.1
-          otp-version: 24.0
-
-      - name: Install dependencies
-        run: mix deps.get --only test
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3.0.0
         with:
-          node-version: 14.x
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies non test
+        run: mix deps.get
 
       - name: npm install
         run: |
-          pushd apps/control_server_web/assets
+          pushd ${{ matrix.asset_path }}
           npm install
           popd
 
-      - name: Check source code format
-        run: mix fmt.check
-
-      - name: npm test
+      - name: npx eslint
         run: |
-          pushd apps/control_server_web/assets
-          npx eslint js/
+          pushd ${{ matrix.asset_path }}
+          npx eslint --debug --exit-on-fatal-error js/
           popd
 
-  npm_test_home:
-    name: npm test home
-    runs-on: ubuntu-latest
-    # runs-on: [self-hosted, linux]
-    defaults:
-      run:
-        working-directory: ./platform_umbrella
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
-      - name: Set up Elixir
-        uses: erlef/setup-elixir@v1
-        with:
-          elixir-version: 1.13.1
-          otp-version: 24.0
-
-      - name: Install dependencies
-        run: mix deps.get --only test
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3.0.0
-        with:
-          node-version: 14.x
-
-      - name: npm install and test
+      - name: npm run deploy
         run: |
-          pushd apps/home_base_web/assets
-          npm install
-          npx eslint js/
+          pushd ${{ matrix.asset_path }}
+          npm run deploy
           popd
