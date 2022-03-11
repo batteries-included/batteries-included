@@ -7,6 +7,69 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    name: Lint Platform Build/Test (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
+
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.13.3
+            otp: 24.2.2
+            node: 16.4.0
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./platform_umbrella
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Set up Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3.0.0
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Get deps cache
+        uses: actions/cache@v2
+        with:
+          path: deps/
+          key: deps-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+
+      - name: Install test dependencies
+        run: mix deps.get --only test
+
+      - name: Install dependencies non test
+        run: mix deps.get
+
+      - name: Compile deps
+        run: mix deps.compile --force --skip-umbrella-children
+
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
+
+      - name: Prettier on everything
+        run: npx prettier --check . --color
+
+      - name: Credo
+        run: mix credo --strict
+        env:
+          MIX_ENV: test
+
+      - name: Format Check
+        run: mix format --check-formatted
+        env:
+          MIX_ENV: test
+
   platform:
     name: Platform Build/Test (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
 
@@ -16,7 +79,6 @@ jobs:
           - elixir: 1.13.3
             otp: 24.2.2
             node: 16.4.0
-            lint: lint
 
     runs-on: ubuntu-latest
 
@@ -66,28 +128,8 @@ jobs:
       - name: Compile deps
         run: mix deps.compile --force --skip-umbrella-children
 
-      - name: Check unused dependencies
-        run: mix deps.unlock --check-unused
-        if: ${{ matrix.lint }}
-
-      - name: Prettier on everything
-        run: npx prettier --check . --color
-        if: ${{ matrix.lint }}
-
       - name: Compile
         run: mix compile --force --warnings-as-errors
-
-      - name: Credo
-        run: mix credo --strict
-        if: ${{ matrix.lint }}
-        env:
-          MIX_ENV: test
-
-      - name: Format Check
-        run: mix format --check-formatted
-        if: ${{ matrix.lint }}
-        env:
-          MIX_ENV: test
 
       - name: Setup DB
         run: mix ecto.reset
