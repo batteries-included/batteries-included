@@ -131,11 +131,17 @@ jobs:
           MIX_ENV: test
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
+      - name: Clean
+        run: mix clean
+
+      - name: Clean
+        run: mix compile --force --warnings-as-errors
+
       - name: Protocols
         run: mix compile.protocols --force
 
       - name: Protocols (Test)
-        run: mix compile.protocols --force
+        run: mix compile.protocols --force --only test
         env:
           MIX_ENV: test
 
