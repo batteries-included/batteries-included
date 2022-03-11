@@ -181,8 +181,11 @@ defmodule KubeResources.GrafanaDashboards do
 
   def recursive_update(%{} = dash_object, input_name, new_value) do
     dash_object
-    |> Map.map(fn {_key, value} ->
-      value |> maybe_update(input_name, new_value) |> recursive_update(input_name, new_value)
+    |> Enum.map(fn {key, value} ->
+      {key,
+       value
+       |> maybe_update(input_name, new_value)
+       |> recursive_update(input_name, new_value)}
     end)
     |> Enum.into(%{})
   end
