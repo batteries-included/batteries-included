@@ -6,6 +6,12 @@ defmodule KubeExt do
   require Logger
   require Jason
 
+  # Get or create single matches on lots of things that could mean 404.
+  # These matches are more comprehensive than the typespec on K8s.
+  # Could be that old versions had different types, or it could be
+  # K8s' typespec is wrong, or it could be both.
+  @dialyzer {:nowarn_function, get_or_create_single: 2}
+
   def get_or_create(connection, %{"items" => item_list}) do
     {:ok, Enum.map(item_list, fn i -> get_or_create_single(connection, i) end)}
   end
@@ -64,16 +70,23 @@ defmodule KubeExt do
     Logger.debug("Creating or getting #{inspect(metadata)}")
 
     get_operation = Client.get(resource)
+
     client_result = Client.run(connection, get_operation)
 
     case client_result do
       {:ok, _} ->
         client_result
 
+      {_, :not_found} ->
+        create(connection, resource)
+
       {:error, %HTTPoison.Response{status_code: 404}} ->
         create(connection, resource)
 
       {:error, %Client.APIError{reason: "NotFound"}} ->
+        create(connection, resource)
+
+      {:error, %K8s.Operation.Error{message: "NotFound"}} ->
         create(connection, resource)
 
       unknown ->
