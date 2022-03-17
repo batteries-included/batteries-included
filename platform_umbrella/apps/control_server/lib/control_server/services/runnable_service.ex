@@ -77,15 +77,6 @@ defmodule ControlServer.Services.RunnableService do
 
   def services_map, do: services() |> Enum.map(fn s -> {s.service_type, s} end) |> Enum.into(%{})
 
-  @spec activate!(
-          atom
-          | %ControlServer.Services.RunnableService{
-              :config => any,
-              :dependencies => any,
-              :path => any,
-              :service_type => any
-            }
-        ) :: any
   def activate!(service_type) when is_atom(service_type) do
     Logger.debug("activating #{service_type}")
     runnable = Map.get(services_map(), service_type)

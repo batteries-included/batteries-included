@@ -3,6 +3,7 @@ defmodule KubeResources.Keycloak do
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
+  alias KubeRawResources.Keycloak, as: RawKeycloak
   alias KubeResources.SecuritySettings
 
   @app "keycloak"
@@ -189,11 +190,16 @@ defmodule KubeResources.Keycloak do
 
   def keycloak(config) do
     namespace = SecuritySettings.namespace(config)
+    db_name = RawKeycloak.db_name()
+    db_team = RawKeycloak.db_team()
+    db_service_name = "#{db_team}-#{db_name}.#{namespace}.svc.cluster.local"
+
+    metrics_version = SecuritySettings.keycloak_metrics_version(config)
 
     spec = %{
       "instances" => 1,
       "extensions" => [
-        "https://github.com/aerogear/keycloak-metrics-spi/releases/download/2.5.3/keycloak-metrics-spi-2.5.3.jar"
+        "https://github.com/aerogear/keycloak-metrics-spi/releases/download/#{metrics_version}/keycloak-metrics-spi-#{metrics_version}.jar"
       ],
       "externalAccess" => %{"enabled" => false},
       "podDisruptionBudget" => %{"enabled" => true},
@@ -205,11 +211,11 @@ defmodule KubeResources.Keycloak do
           "env" => [
             %{
               "name" => "KEYCLOAK_POSTGRESQL_SERVICE_HOST",
-              "value" => "pg-keycloak.battery-core.svc.cluster.local"
+              "value" => db_service_name
             },
             %{
               "name" => "DB_ADDR",
-              "value" => "pg-keycloak.battery-core.svc.cluster.local"
+              "value" => db_service_name
             },
             %{
               "name" => "DB_USER",
