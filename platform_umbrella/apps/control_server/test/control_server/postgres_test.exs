@@ -10,13 +10,17 @@ defmodule ControlServer.PostgresTest do
       name: "some name",
       num_instances: 2,
       postgres_version: "12.1",
-      storage_size: "500Mi"
+      storage_size: "500Mi",
+      users: %{"userone" => ["superuser"]},
+      databases: %{"maindata" => "userone"}
     }
     @update_attrs %{
       name: "some updated name",
       num_instances: 3,
       postgres_version: "13",
-      storage_size: "250Mi"
+      storage_size: "250Mi",
+      users: %{"userone" => ["superuser"], "usertwo" => ["nologin"]},
+      databases: %{"maindata" => "userone", "testdata" => "usertwo"}
     }
     @invalid_attrs %{name: nil, num_instances: nil, postgres_version: nil, size: nil}
 
@@ -45,6 +49,7 @@ defmodule ControlServer.PostgresTest do
       assert cluster.num_instances == 2
       assert cluster.postgres_version == "12.1"
       assert cluster.storage_size == "500Mi"
+      assert cluster.users == %{"userone" => ["superuser"]}
     end
 
     test "create_cluster/1 with invalid data returns error changeset" do
@@ -75,6 +80,18 @@ defmodule ControlServer.PostgresTest do
     test "change_cluster/1 returns a cluster changeset" do
       cluster = cluster_fixture()
       assert %Ecto.Changeset{} = Postgres.change_cluster(cluster)
+    end
+
+    test "find_or_create with reasonable defaults" do
+      cluster = KubeRawResources.Keycloak.keycloak_cluster()
+      assert {result, _db_res} = Postgres.find_or_create(cluster)
+      assert :ok == result
+    end
+
+    test "find_or_create with reasonable Battery defaults" do
+      cluster = KubeRawResources.Battery.control_cluster()
+      assert {result, _db_res} = Postgres.find_or_create(cluster)
+      assert :ok == result
     end
   end
 end
