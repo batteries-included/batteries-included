@@ -114,21 +114,30 @@ defmodule ControlServer.Postgres do
     Cluster.changeset(cluster, attrs)
   end
 
-  def insert_default_clusters do
+  def find_or_create(attrs, transaction_repo \\ Repo) do
     Multi.new()
-    |> Multi.run(:count_clusters, fn repo, %{} = _ ->
-      {:ok, repo.aggregate(Cluster, :count)}
+    |> Multi.run(:selected, fn repo, _ ->
+      {:ok,
+       repo.one(
+         from(cluster in Cluster,
+           where:
+             cluster.type == ^attrs.type and
+               cluster.team_name == ^attrs.team_name and
+               cluster.name == ^attrs.name
+         )
+       )}
     end)
-    |> Multi.run(:maybe_insert, &maybe_insert_default_clusters/2)
-    |> Repo.transaction()
+    |> Multi.run(:created, fn repo, %{selected: sel} ->
+      maybe_insert(sel, repo, attrs)
+    end)
+    |> transaction_repo.transaction()
   end
 
-  defp maybe_insert_default_clusters(repo, %{count_clusters: 0}) do
-    create_cluster(KubeRawResources.Battery.control_cluster(), repo)
+  def maybe_insert(nil = _selected, repo, attrs) do
+    repo.insert(Cluster.changeset(%Cluster{}, attrs))
   end
 
-  defp maybe_insert_default_clusters(_repo, %{count_clusters: cluster_count} = _data) do
-    Logger.debug("Not inserting new postgres clusters there's already #{cluster_count}")
+  def maybe_insert(%Cluster{} = _selected, _repo, _attrs) do
     {:ok, nil}
   end
 end

@@ -21,7 +21,6 @@ defmodule ControlServer.Release do
     IO.puts("Starting Seed")
 
     ControlServer.Services.activate_defaults()
-    ControlServer.Postgres.insert_default_clusters()
   end
 
   def rollback(repo, version) do

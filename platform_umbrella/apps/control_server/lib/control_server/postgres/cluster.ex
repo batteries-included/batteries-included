@@ -26,7 +26,16 @@ defmodule ControlServer.Postgres.Cluster do
   @doc false
   def changeset(cluster, attrs) do
     cluster
-    |> cast(attrs, [:name, :postgres_version, :storage_size, :num_instances, :type, :team_name])
+    |> cast(attrs, [
+      :name,
+      :num_instances,
+      :postgres_version,
+      :team_name,
+      :type,
+      :storage_size,
+      :users,
+      :databases
+    ])
     |> validate_required([
       :name,
       :postgres_version,

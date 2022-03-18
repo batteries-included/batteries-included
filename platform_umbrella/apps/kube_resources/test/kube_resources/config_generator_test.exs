@@ -25,6 +25,11 @@ defmodule KubeServices.ConfigGeneratorTest do
       end)
     end
 
+    test "Activate database_internal" do
+      RunnableService.activate!(:database_internal)
+      RunnableService.activate!(:database_internal)
+    end
+
     test "everything can turn into json" do
       Services.list_base_services()
       |> Enum.each(fn base_service ->

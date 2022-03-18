@@ -33,6 +33,7 @@ defmodule ControlServer.Services.BaseService do
         :database_internal,
         :istio,
         :kong,
+        :keycloak,
         :nginx,
         :ml,
         :notebooks,

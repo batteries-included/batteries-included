@@ -10,6 +10,18 @@ defmodule ControlServer.Services.RunnableService do
 
   def services,
     do: [
+      # Database
+      %__MODULE__{path: "/database/common", service_type: :database},
+      %__MODULE__{
+        path: "/database/public",
+        service_type: :database_public,
+        dependencies: [:database]
+      },
+      %__MODULE__{
+        path: "/battery/database",
+        service_type: :database_internal,
+        dependencies: [:database]
+      },
       # Battery
       %__MODULE__{path: "/battery/core", service_type: :battery},
       %__MODULE__{
@@ -21,19 +33,6 @@ defmodule ControlServer.Services.RunnableService do
 
       # Devtools
       %__MODULE__{path: "/devtools/knative", service_type: :knative, dependencies: [:istio]},
-
-      # Database
-      %__MODULE__{path: "/database/common", service_type: :database},
-      %__MODULE__{
-        path: "/database/public",
-        service_type: :database_public,
-        dependencies: [:database, :database_internal]
-      },
-      %__MODULE__{
-        path: "/battery/database",
-        service_type: :database_internal,
-        dependencies: [:database]
-      },
 
       # ML
       %__MODULE__{path: "/ml/core", service_type: :ml},
@@ -68,7 +67,12 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{path: "/network/istio", service_type: :istio},
 
       # Security
-      %__MODULE__{path: "/security/cert_manager", service_type: :cert_manager}
+      %__MODULE__{path: "/security/cert_manager", service_type: :cert_manager},
+      %__MODULE__{
+        path: "/security/keycloak",
+        service_type: :keycloak,
+        dependencies: [:database_internal]
+      }
     ]
 
   def services_map, do: services() |> Enum.map(fn s -> {s.service_type, s} end) |> Enum.into(%{})
@@ -82,21 +86,27 @@ defmodule ControlServer.Services.RunnableService do
   end
 
   def activate!(
-        %__MODULE__{path: path, service_type: service_type, config: config, dependencies: deps} =
-          _service
+        %__MODULE__{
+          path: path,
+          service_type: service_type,
+          config: config,
+          dependencies: deps
+        } = service
       ) do
     Multi.new()
     |> Multi.run(:dependencies, fn _repo, _state ->
       Enum.each(deps, fn s -> activate!(s) end)
-
       {:ok, deps}
     end)
-    |> Multi.run(:main_service, fn _repo, _state ->
+    |> Multi.run(service_type, fn _repo, _state ->
       Services.find_or_create(%{
         root_path: path,
         service_type: service_type,
         config: config
       })
+    end)
+    |> Multi.run(:post, fn repo, _state ->
+      run_post(service, repo)
     end)
     |> Repo.transaction()
   end
@@ -107,4 +117,14 @@ defmodule ControlServer.Services.RunnableService do
     do: services_map() |> Map.get(service_type) |> active?()
 
   def active?(%__MODULE__{path: path} = _service), do: Services.active?(path)
+
+  defp run_post(%__MODULE__{service_type: :database_internal} = _service, repo) do
+    ControlServer.Postgres.find_or_create(KubeRawResources.Battery.control_cluster(), repo)
+  end
+
+  defp run_post(%__MODULE__{service_type: :keycloak} = _service, repo) do
+    ControlServer.Postgres.find_or_create(KubeRawResources.Keycloak.keycloak_cluster(), repo)
+  end
+
+  defp run_post(%__MODULE__{} = _service, _repo), do: {:ok, []}
 end
