@@ -171,7 +171,7 @@ defmodule KubeResources.Keycloak do
                 },
                 %{"name" => "OPERATOR_NAME", "value" => "keycloak-operator"}
               ],
-              "image" => "quay.io/keycloak/keycloak-operator:main",
+              "image" => "quay.io/keycloak/keycloak-operator:17.0.0",
               "imagePullPolicy" => "Always",
               "name" => "keycloak-operator"
             }
