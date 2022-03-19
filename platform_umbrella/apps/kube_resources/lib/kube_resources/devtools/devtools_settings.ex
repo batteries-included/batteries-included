@@ -2,10 +2,16 @@ defmodule KubeResources.DevtoolsSettings do
   @moduledoc """
   Module around turning BaseService json config into usable settings.
   """
+
+  alias KubeRawResources.Gitea, as: GiteaRaw
+
   @namespace "battery-core"
   @knative_namespace "battery-knative"
   @knative_operator_image "gcr.io/knative-releases/knative.dev/operator/cmd/operator"
   @knative_operator_version "v1.2.1"
+
+  @gitea_image "gitea/gitea"
+  @gitea_version "1.16.4"
 
   def namespace(config), do: Map.get(config, "namespace", @namespace)
   def gh_enabled(config), do: Map.get(config, "runner.enabled", false)
@@ -29,4 +35,11 @@ defmodule KubeResources.DevtoolsSettings do
         "runner.priv_key",
         ""
       )
+
+  def gitea_image(config), do: Map.get(config, "gitea.image", @gitea_image)
+  def gitea_version(config), do: Map.get(config, "gitea.version", @gitea_version)
+
+  def gitea_user_secret_name(config),
+    do:
+      "#{GiteaRaw.db_username()}.#{GiteaRaw.db_team()}-#{GiteaRaw.db_name()}.credentials.postgresql.acid.zalan.do"
 end

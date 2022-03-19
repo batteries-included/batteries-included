@@ -11,6 +11,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.ControlServerResources
   alias KubeResources.Database
   alias KubeResources.EchoServer
+  alias KubeResources.Gitea
   alias KubeResources.GithubActionsRunner
   alias KubeResources.Grafana
   alias KubeResources.Keycloak
@@ -53,6 +54,7 @@ defmodule KubeResources.ConfigGenerator do
   defp materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)
 
   defp materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
+  defp materialize(%{} = config, :gitea), do: Gitea.materialize(config)
   defp materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
 
   defp materialize(%{} = config, :kong), do: Kong.materialize(config)

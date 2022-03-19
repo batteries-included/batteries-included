@@ -33,6 +33,11 @@ defmodule ControlServer.Services.RunnableService do
 
       # Devtools
       %__MODULE__{path: "/devtools/knative", service_type: :knative, dependencies: [:istio]},
+      %__MODULE__{
+        path: "/devtools/gitea",
+        service_type: :gitea,
+        dependencies: [:keycloak, :database_internal]
+      },
 
       # ML
       %__MODULE__{path: "/ml/core", service_type: :ml},
@@ -124,6 +129,10 @@ defmodule ControlServer.Services.RunnableService do
 
   defp run_post(%__MODULE__{service_type: :keycloak} = _service, repo) do
     ControlServer.Postgres.find_or_create(KubeRawResources.Keycloak.keycloak_cluster(), repo)
+  end
+
+  defp run_post(%__MODULE__{service_type: :gitea} = _service, repo) do
+    ControlServer.Postgres.find_or_create(KubeRawResources.Gitea.gitea_cluster(), repo)
   end
 
   defp run_post(%__MODULE__{} = _service, _repo), do: {:ok, []}

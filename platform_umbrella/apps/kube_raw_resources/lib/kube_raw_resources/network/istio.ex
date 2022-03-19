@@ -306,7 +306,10 @@ defmodule KubeRawResources.Istio do
 
     spec = %{
       selector: %{istio: "ingressgateway"},
-      servers: [%{port: %{number: 80, name: "http", protocol: "HTTP"}, hosts: ["*"]}]
+      servers: [
+        %{port: %{number: 80, name: "http", protocol: "HTTP"}, hosts: ["*"]},
+        %{port: %{number: 22, name: "ssh", protocol: "TCP"}, hosts: ["*"]}
+      ]
     }
 
     B.build_resource(:gateway)

@@ -1,6 +1,6 @@
-defmodule KubeRawResources.Keycloak do
-  @username "keycloakuser"
-  @cluster_name "keycloak"
+defmodule KubeRawResources.Gitea do
+  @username "gitea"
+  @cluster_name "gitea"
   @team "pg"
   @default_pg_cluster %{
     :name => @cluster_name,
@@ -9,11 +9,11 @@ defmodule KubeRawResources.Keycloak do
     :storage_size => "200M",
     :type => :internal,
     :users => %{@username => ["superuser", "createrole", "createdb", "login"]},
-    :databases => %{"root" => @username},
+    :databases => %{"gitea" => @username},
     :team_name => @team
   }
 
-  def keycloak_cluster do
+  def gitea_cluster do
     @default_pg_cluster
   end
 

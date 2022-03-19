@@ -28,6 +28,7 @@ defmodule ControlServer.Services.BaseService do
         :devtools,
         :knative,
         :github_runner,
+        :gitea,
         :database,
         :database_public,
         :database_internal,

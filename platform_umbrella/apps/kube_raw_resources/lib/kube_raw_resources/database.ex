@@ -20,15 +20,20 @@ defmodule KubeRawResources.Database do
     ["hostssl", "all", "+#{@pam_group_name}", "::1/128", "pam"],
     ["host", "all", "all", "::1/128", "md5"],
     ["hostssl", "replication", "standby", "all", "md5"],
+    ["hostssl", "replication", "standby", "all", "scram-sha-256"],
 
     # This line is added to allow postgres_exporter to attach since it can't use ssl yet.
     # Certs aren't correct.
     ["hostnossl", "all", "postgres", "0.0.0.0/0", "md5"],
     ["hostssl", "all", "postgres", "0.0.0.0/0", "md5"],
+    ["hostssl", "all", "postgres", "0.0.0.0/0", "scram-sha-256"],
+
     ["hostssl", "all", "batterydbuser", "0.0.0.0/0", "md5"],
+    ["hostssl", "all", "batterydbuser", "0.0.0.0/0", "scram-sha-256"],
+
     ["hostnossl", "all", "all", "all", "reject"],
-    ["hostssl", "all", "+zalandos", "all", "pam"],
-    ["hostssl", "all", "all", "all", "md5"]
+    ["hostssl", "all", "all", "all", "md5"],
+    ["hostssl", "all", "all", "all", "scram-sha-256"]
   ]
 
   def postgres(%{} = cluster, config) do
