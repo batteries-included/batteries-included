@@ -15,7 +15,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cainjector",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       }
     }
@@ -33,7 +33,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       }
     }
@@ -51,7 +51,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       }
     }
@@ -65,7 +65,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-cainjector",
         "labels" => %{
           "battery/app" => "cainjector",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -112,7 +112,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-issuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -144,7 +144,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-clusterissuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -176,7 +176,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-certificates",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -223,7 +223,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-orders",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -266,7 +266,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-challenges",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -320,7 +320,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-ingress-shim",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -360,7 +360,7 @@ defmodule KubeResources.CertManager do
           "rbac.authorization.k8s.io/aggregate-to-edit" => "true",
           "rbac.authorization.k8s.io/aggregate-to-admin" => "true",
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -388,7 +388,7 @@ defmodule KubeResources.CertManager do
           "rbac.authorization.k8s.io/aggregate-to-edit" => "true",
           "rbac.authorization.k8s.io/aggregate-to-admin" => "true",
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -414,7 +414,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-approve:cert-manager-io",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -436,7 +436,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook:subjectaccessreviews",
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -459,7 +459,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-cainjector",
         "labels" => %{
           "battery/app" => "cainjector",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -487,7 +487,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-issuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -511,7 +511,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-clusterissuers",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -535,7 +535,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-certificates",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -559,7 +559,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-orders",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -583,7 +583,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-challenges",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -607,7 +607,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-ingress-shim",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -631,7 +631,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-controller-approve:cert-manager-io",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -655,7 +655,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook:subjectaccessreviews",
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -683,7 +683,7 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cainjector",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -710,7 +710,7 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -736,7 +736,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -762,7 +762,7 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cainjector",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -791,7 +791,7 @@ defmodule KubeResources.CertManager do
         "namespace" => "kube-system",
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -821,7 +821,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -851,7 +851,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -875,7 +875,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -899,7 +899,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cainjector",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -913,7 +913,7 @@ defmodule KubeResources.CertManager do
           "metadata" => %{
             "labels" => %{
               "battery/app" => "cainjector",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -949,7 +949,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "cert-manager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -963,7 +963,7 @@ defmodule KubeResources.CertManager do
           "metadata" => %{
             "labels" => %{
               "battery/app" => "cert-manager",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             },
             "annotations" => %{
               "prometheus.io/path" => "/metrics",
@@ -1009,7 +1009,7 @@ defmodule KubeResources.CertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -1023,7 +1023,7 @@ defmodule KubeResources.CertManager do
           "metadata" => %{
             "labels" => %{
               "battery/app" => "webhook",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -1082,7 +1082,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook",
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "annotations" => %{
           "cert-manager.io/inject-ca-from-secret" => "battery-core/cert-manager-webhook-ca"
@@ -1125,7 +1125,7 @@ defmodule KubeResources.CertManager do
         "name" => "battery-cert-manager-webhook",
         "labels" => %{
           "battery/app" => "webhook",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "annotations" => %{
           "cert-manager.io/inject-ca-from-secret" => "battery-core/cert-manager-webhook-ca"

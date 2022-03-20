@@ -21,7 +21,13 @@ common_checks = [
   {Credo.Check.Readability.TrailingBlankLine},
   {Credo.Check.Readability.TrailingWhiteSpace},
   {Credo.Check.Readability.VariableNames},
-  {Credo.Check.Refactor.ABCSize, max_size: 40},
+  {Credo.Check.Refactor.ABCSize,
+   max_size: 40,
+   files: %{
+     excluded: [
+       "apps/control_server/lib/control_server/services/runnable_service.ex"
+     ]
+   }},
   {Credo.Check.Refactor.Apply,
    files: %{
      excluded: [

@@ -38,7 +38,7 @@ defmodule KubeResources.AlertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "alertmanager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       }
     }
@@ -55,7 +55,7 @@ defmodule KubeResources.AlertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "alertmanager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -93,7 +93,7 @@ defmodule KubeResources.AlertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "alertmanager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -127,7 +127,7 @@ defmodule KubeResources.AlertManager do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "alertmanager",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{

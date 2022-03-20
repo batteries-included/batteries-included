@@ -1,8 +1,9 @@
 defmodule KubeResources.Gitea do
   @moduledoc false
 
-  alias KubeResources.DevtoolsSettings
   alias KubeExt.Builder, as: B
+  alias KubeResources.DevtoolsSettings
+  alias KubeResources.IstioConfig.VirtualService
 
   @app "gitea"
 
@@ -10,8 +11,38 @@ defmodule KubeResources.Gitea do
   @init_path "/usr/sbin"
   @tmp_path "/tmp"
 
+  @http_prefix "/x/gitea"
+
+  @ssh_port 2200
+
+  defp http_domain, do: "control.#{KubeState.IstioIngress.single_address()}.sslip.io"
+  defp ssh_domain, do: "gitea.#{KubeState.IstioIngress.single_address()}.sslip.io"
+
+  def virtual_service(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.name("gitea-http")
+    |> B.spec(VirtualService.rewriting(@http_prefix, "gitea-http"))
+  end
+
+  def ssh_virtual_service(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    B.build_resource(:virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.name("gitea-ssh")
+    |> B.spec(VirtualService.tcp_port(@ssh_port, "gitea-ssh", hosts: [ssh_domain()]))
+  end
+
   def secret(config) do
     namespace = DevtoolsSettings.namespace(config)
+
+    http_domain = http_domain()
+    ssh_domain = ssh_domain()
 
     data = %{
       "_generals_" => "",
@@ -33,14 +64,14 @@ defmodule KubeResources.Gitea do
       "security" => "INSTALL_LOCK=true",
       "server" => """
       APP_DATA_PATH=#{@data_path}
-      DOMAIN=git.example.com
+      DOMAIN=#{http_domain}
       ENABLE_PPROF=false
       HTTP_PORT=3000
       PROTOCOL=http
-      ROOT_URL=http://git.example.com
-      SSH_DOMAIN=git.example.com
-      SSH_LISTEN_PORT=22
-      SSH_PORT=22
+      ROOT_URL=http://#{http_domain}#{@http_prefix}
+      SSH_DOMAIN=#{ssh_domain}
+      SSH_LISTEN_PORT=@ssh_port
+      SSH_PORT=@ssh_port
       """
     }
 
@@ -234,7 +265,6 @@ defmodule KubeResources.Gitea do
       echo '==== BEGIN GITEA CONFIGURATION ===='
 
       { # try
-      cat /et
         gitea migrate
       } || { # catch
         echo "Gitea migrate might fail due to database connection...This init-container will try again in a few seconds"
@@ -270,14 +300,12 @@ defmodule KubeResources.Gitea do
   def service(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    spec = %{
-      "type" => "ClusterIP",
-      "clusterIP" => "None",
-      "ports" => [%{"name" => "http", "port" => 3000, "targetPort" => 3000}],
-      "selector" => %{
-        "battery/app" => @app
-      }
-    }
+    spec =
+      %{}
+      |> B.short_selector(@app)
+      |> B.ports([
+        %{"targetPort" => 3000, "port" => 3000, "name" => "http"}
+      ])
 
     B.build_resource(:service)
     |> B.app_labels(@app)
@@ -289,14 +317,17 @@ defmodule KubeResources.Gitea do
   def service_1(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    spec = %{
-      "type" => "ClusterIP",
-      "clusterIP" => "None",
-      "ports" => [%{"name" => "ssh", "port" => 22, "targetPort" => 22, "protocol" => "TCP"}],
-      "selector" => %{
-        "battery/app" => @app
-      }
-    }
+    spec =
+      %{}
+      |> B.short_selector(@app)
+      |> B.ports([
+        %{
+          "targetPort" => @ssh_port,
+          "port" => @ssh_port,
+          "protocol" => "TCP",
+          "name" => "ssh"
+        }
+      ])
 
     B.build_resource(:service)
     |> B.app_labels(@app)
@@ -323,8 +354,8 @@ defmodule KubeResources.Gitea do
       %{"name" => "GITEA_CUSTOM", "value" => Path.join(@data_path, "/gitea")},
       %{"name" => "GITEA_APP_INI", "value" => Path.join(@data_path, "/gitea/conf/app.ini")},
       %{"name" => "GITEA_WORK_DIR", "value" => @data_path},
-      %{"name" => "SSH_LISTEN_PORT", "value" => "22"},
-      %{"name" => "SSH_PORT", "value" => "22"},
+      %{"name" => "SSH_LISTEN_PORT", "value" => "@ssh_port"},
+      %{"name" => "SSH_PORT", "value" => "@ssh_port"},
       %{"name" => "GITEA_TEMP", "value" => Path.join(@tmp_path, "/gitea")},
       %{"name" => "TMPDIR", "value" => Path.join(@tmp_path, "/gitea")},
       %{
@@ -390,13 +421,12 @@ defmodule KubeResources.Gitea do
         "metadata" => %{
           "labels" => %{
             "battery/app" => "gitea",
-            "battery/managed" => "True"
+            "battery/managed" => "true"
           }
         },
         "spec" => %{
           "securityContext" => %{"fsGroup" => 1000},
           "initContainers" => [
-
             # This one creates and chowns all the dirs needed
             base_container(
               config,
@@ -408,7 +438,8 @@ defmodule KubeResources.Gitea do
 
             # This migrates the database
             # It fails if run as root.
-            base_container(config, "configure-gitea", "/usr/sbin/configure_gitea.sh")
+            config
+            |> base_container("configure-gitea", "/usr/sbin/configure_gitea.sh")
             |> Map.put("securityContext", %{"runAsUser" => 1000})
           ],
           "terminationGracePeriodSeconds" => 60,

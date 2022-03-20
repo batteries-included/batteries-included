@@ -69,7 +69,7 @@ defmodule KubeResources.PrometheusOperator do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "prometheus-operator",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-prometheus-operator"
       },
@@ -149,7 +149,7 @@ defmodule KubeResources.PrometheusOperator do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "prometheus-operator",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-prometheus-operator"
       },
@@ -179,7 +179,7 @@ defmodule KubeResources.PrometheusOperator do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "prometheus-operator",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "namespace" => namespace,
         "name" => "battery-prometheus-operator"
@@ -195,7 +195,7 @@ defmodule KubeResources.PrometheusOperator do
           "metadata" => %{
             "labels" => %{
               "battery/app" => "prometheus-operator",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -247,7 +247,7 @@ defmodule KubeResources.PrometheusOperator do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "prometheus-operator",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "prometheus-operator",
         "namespace" => namespace
@@ -278,7 +278,7 @@ defmodule KubeResources.PrometheusOperator do
         "metadata" => %{
           "labels" => %{
             "battery/app" => "prometheus-operator",
-            "battery/managed" => "True"
+            "battery/managed" => "true"
           },
           "name" => "prometheus-operator",
           "namespace" => namespace

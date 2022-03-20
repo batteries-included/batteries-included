@@ -4,8 +4,11 @@ defmodule KubeResources.ConfigGenerator do
   """
 
   alias ControlServer.Services.BaseService
+
   alias KubeRawResources.Battery
-  alias KubeRawResources.Istio
+  alias KubeRawResources.IstioBase
+  alias KubeRawResources.IstioIstiod
+
   alias KubeResources.AlertManager
   alias KubeResources.CertManager
   alias KubeResources.ControlServerResources
@@ -14,6 +17,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Gitea
   alias KubeResources.GithubActionsRunner
   alias KubeResources.Grafana
+  alias KubeResources.IstioGateway
   alias KubeResources.Keycloak
   alias KubeResources.KnativeOperator
   alias KubeResources.Kong
@@ -37,8 +41,8 @@ defmodule KubeResources.ConfigGenerator do
     config |> Prometheus.materialize() |> Map.merge(ServiceMonitors.materialize(config))
   end
 
-  defp materialize(%{} = config, :istio) do
-    config |> Istio.materialize() |> Map.merge(VirtualService.materialize(config))
+  defp materialize(%{} = config, :istio_gateway) do
+    config |> IstioGateway.materialize() |> Map.merge(VirtualService.materialize(config))
   end
 
   defp materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
@@ -59,6 +63,8 @@ defmodule KubeResources.ConfigGenerator do
 
   defp materialize(%{} = config, :kong), do: Kong.materialize(config)
   defp materialize(%{} = config, :nginx), do: Nginx.materialize(config)
+  defp materialize(%{} = config, :istio), do: IstioBase.materialize(config)
+  defp materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
 
   defp materialize(%{} = config, :battery), do: Battery.materialize(config)
   defp materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)

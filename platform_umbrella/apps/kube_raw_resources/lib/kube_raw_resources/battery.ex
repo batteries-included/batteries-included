@@ -31,6 +31,7 @@ defmodule KubeRawResources.Battery do
     B.build_resource(:namespace)
     |> B.app_labels(@app_name)
     |> B.name(name)
+    |> B.label("istio-injection", "disabled")
   end
 
   def service_account(config) do
@@ -46,7 +47,7 @@ defmodule KubeRawResources.Battery do
     namespace = BatterySettings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
-    |> B.name("")
+    |> B.name("battery-cluster-admin")
     |> B.app_labels(@app_name)
     |> Map.put("roleRef", %{
       "apiGroup" => "rbac.authorixation.k8s.io",

@@ -38,12 +38,12 @@ defmodule KubeResources.KnativeOperator do
       "metadata" => %{
         "name" => "knative-operator",
         "namespace" => namespace,
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "spec" => %{
         "replicas" => 1,
         "selector" => %{
-          "matchLabels" => %{"name" => "knative-operator", "battery/managed" => "True"}
+          "matchLabels" => %{"name" => "knative-operator", "battery/managed" => "true"}
         },
         "template" => %{
           "metadata" => %{
@@ -51,7 +51,7 @@ defmodule KubeResources.KnativeOperator do
             "labels" => %{
               "name" => "knative-operator",
               "battery/app" => @app_name,
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -103,7 +103,7 @@ defmodule KubeResources.KnativeOperator do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "metadata" => %{
         "name" => "knative-serving-operator",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "rules" => [
         %{"apiGroups" => ["operator.knative.dev"], "resources" => ["*"], "verbs" => ["*"]},
@@ -215,7 +215,7 @@ defmodule KubeResources.KnativeOperator do
       "kind" => "ClusterRole",
       "metadata" => %{
         "name" => "knative-eventing-operator-aggregated",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "aggregationRule" => %{
         "clusterRoleSelectors" => [
@@ -236,7 +236,7 @@ defmodule KubeResources.KnativeOperator do
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "metadata" => %{
         "name" => "knative-eventing-operator",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "rules" => [
         %{"apiGroups" => ["operator.knative.dev"], "resources" => ["*"], "verbs" => ["*"]},
@@ -324,7 +324,7 @@ defmodule KubeResources.KnativeOperator do
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
         "name" => "knative-serving-operator",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
@@ -345,7 +345,7 @@ defmodule KubeResources.KnativeOperator do
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
         "name" => "knative-serving-operator-aggregated",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
@@ -366,7 +366,7 @@ defmodule KubeResources.KnativeOperator do
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
         "name" => "knative-eventing-operator",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
@@ -387,7 +387,7 @@ defmodule KubeResources.KnativeOperator do
       "kind" => "ClusterRoleBinding",
       "metadata" => %{
         "name" => "knative-eventing-operator-aggregated",
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
@@ -432,9 +432,9 @@ defmodule KubeResources.KnativeOperator do
     |> Map.put("config", %{
       "istio" => %{
         "gateway.battery-knative.knative-ingress-gateway" =>
-          "istio-ingressgateway.battery-core.svc.cluster.local",
+          "istio-ingressgateway.battery-ingress.svc.cluster.local",
         "local-gateway.battery-knative.knative-local-gateway" =>
-          "knative-local-gateway.battery-core.svc.cluster.local"
+          "knative-local-gateway.battery-ingress.svc.cluster.local"
       }
     })
     |> Map.put("ingress", %{"istio" => %{"enabled" => true}})
@@ -452,26 +452,6 @@ defmodule KubeResources.KnativeOperator do
     |> Map.put("data", data)
   end
 
-  defp default_domain_name, do: "knative.#{ingress_address()}.sslip.io"
-
-  defp ingress_address, do: ingress_address_from_services(KubeState.services())
-
-  defp ingress_address_from_services(services) when services == [] do
-    "127.0.0.1"
-  end
-
-  defp ingress_address_from_services(services) when is_list(services) do
-    services
-    |> Enum.find(fn s ->
-      K8s.Resource.name(s) == "istio-ingressgateway" and
-        K8s.Resource.namespace(s) == "battery-core"
-    end)
-    |> get_in(["status", "loadBalancer", "ingress"])
-    |> Enum.map(fn pos -> Map.get(pos, "ip") end)
-    |> Enum.sort(:desc)
-    |> List.first() ||
-      "127.0.0.1"
-  end
-
+  defp default_domain_name, do: "knative.#{KubeState.IstioIngress.single_address()}.sslip.io"
   defp knative_crd_content, do: unquote(File.read!(@knative_crd_path))
 end

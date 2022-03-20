@@ -82,9 +82,10 @@ config :esbuild,
 config :control_server,
   default_services: [
     :battery,
-    :istio,
     :database,
-    :database_internal
+    :database_internal,
+    :istio,
+    :istio_istiod
   ]
 
 config :kube_services, start_services: true

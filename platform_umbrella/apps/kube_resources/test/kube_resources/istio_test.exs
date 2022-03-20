@@ -7,6 +7,7 @@ defmodule KubeResources.IstioTest do
     vc = IstioConfig.VirtualService.rewriting("/x/prefix", "main-host")
     matches = vc |> Map.get(:http) |> hd |> Map.get(:match)
     rewrite = vc |> Map.get(:http) |> hd |> Map.get(:rewrite)
+
     assert map_size(vc) > 2
     assert length(matches) == 2
     assert rewrite.uri == "/"

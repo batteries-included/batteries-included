@@ -44,6 +44,7 @@ config :control_server,
     :battery,
     :control_server,
     :istio,
+    :istio_istiod,
     :database,
     :database_internal
   ]

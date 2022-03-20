@@ -23,7 +23,7 @@ defmodule KubeResources.KnativeDomain do
           "annotations" => %{"sidecar.istio.io/inject" => "false"},
           "labels" => %{
             "battery/app" => @app_name,
-            "battery/managed" => "True"
+            "battery/managed" => "true"
           }
         },
         "spec" => %{

@@ -39,7 +39,11 @@ defmodule KubeResources.DevtoolsSettings do
   def gitea_image(config), do: Map.get(config, "gitea.image", @gitea_image)
   def gitea_version(config), do: Map.get(config, "gitea.version", @gitea_version)
 
-  def gitea_user_secret_name(config),
-    do:
-      "#{GiteaRaw.db_username()}.#{GiteaRaw.db_team()}-#{GiteaRaw.db_name()}.credentials.postgresql.acid.zalan.do"
+  def gitea_user_secret_name(_config) do
+    user = GiteaRaw.db_username()
+    team = GiteaRaw.db_team()
+    cluster_name = GiteaRaw.db_name()
+
+    "#{user}.#{team}-#{cluster_name}.credentials.postgresql.acid.zalan.do"
+  end
 end

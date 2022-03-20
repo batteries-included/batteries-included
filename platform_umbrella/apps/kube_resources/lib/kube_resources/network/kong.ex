@@ -39,7 +39,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       }
     }
@@ -52,7 +52,7 @@ defmodule KubeResources.Kong do
       "metadata" => %{
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-kong"
       },
@@ -182,7 +182,7 @@ defmodule KubeResources.Kong do
         "name" => "battery-kong",
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -207,7 +207,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -246,7 +246,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -271,7 +271,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -297,7 +297,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -324,7 +324,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True",
+          "battery/managed" => "true",
           "enable-metrics" => "true"
         }
       },
@@ -339,7 +339,7 @@ defmodule KubeResources.Kong do
           "metadata" => %{
             "labels" => %{
               "battery/app" => @app_name,
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -485,7 +485,7 @@ defmodule KubeResources.Kong do
           "namespace" => namespace,
           "labels" => %{
             "battery/app" => @app_name,
-            "battery/managed" => "True"
+            "battery/managed" => "true"
           }
         },
         "spec" => %{
@@ -512,7 +512,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -539,7 +539,7 @@ defmodule KubeResources.Kong do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{

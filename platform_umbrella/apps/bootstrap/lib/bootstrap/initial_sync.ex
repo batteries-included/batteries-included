@@ -63,7 +63,6 @@ defmodule Bootstrap.InitialSync do
     |> Enum.map(&gen_for_service_type/1)
     |> Enum.reduce(%{}, fn r_map, acc -> Map.merge(acc, r_map) end)
     |> Map.delete("/battery/cluster_role_binding")
-    |> Map.delete("/istio/gateway")
     |> do_apply(false, 5, ConnectionPool.get(Bootstrap.ConnectionPool))
 
     Logger.debug("done sync")

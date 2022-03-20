@@ -27,10 +27,8 @@ defmodule KubeRawResources.Database do
     ["hostnossl", "all", "postgres", "0.0.0.0/0", "md5"],
     ["hostssl", "all", "postgres", "0.0.0.0/0", "md5"],
     ["hostssl", "all", "postgres", "0.0.0.0/0", "scram-sha-256"],
-
     ["hostssl", "all", "batterydbuser", "0.0.0.0/0", "md5"],
     ["hostssl", "all", "batterydbuser", "0.0.0.0/0", "scram-sha-256"],
-
     ["hostnossl", "all", "all", "all", "reject"],
     ["hostssl", "all", "all", "all", "md5"],
     ["hostssl", "all", "all", "all", "scram-sha-256"]
