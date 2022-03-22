@@ -40,6 +40,8 @@ defmodule ControlServerWeb.Layout do
         <Heroicons.Outline.globe_alt class={@class} />
       <% "lock_closed" -> %>
         <Heroicons.Outline.lock_closed class={@class} />
+      <% "sparkles" -> %>
+        <Heroicons.Outline.sparkles class={@class} />
     <% end %>
     """
   end
@@ -64,11 +66,12 @@ defmodule ControlServerWeb.Layout do
       </:title>
       <:main_menu>
         <.menu_item to="/services/database" name="Database" icon="database" />
-        <.menu_item to="/services/ml" name="Machine Learning" icon="beaker" />
+        <.menu_item to="/services/ml" name="ML" icon="beaker" />
         <.menu_item to="/services/monitoring/settings" name="Monitoring" icon="chart_bar" />
         <.menu_item to="/services/devtools/settings" name="Devtools" icon="devtools" />
         <.menu_item to="/services/security/settings" name="Security" icon="lock_closed" />
         <.menu_item to="/services/network/settings" name="Network" icon="globe_alt" />
+        <.menu_item to="/internal" name="Magic" icon="sparkles" />
       </:main_menu>
       <%= render_slot(@inner_block) %>
     </BaseLayout.layout>

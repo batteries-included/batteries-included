@@ -20,7 +20,6 @@ defmodule KubeServices.Application do
 
   def children(true = _run) do
     [
-      {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
       Supervisor.child_spec(
         {Bella.Watcher.Worker,
          [
@@ -66,6 +65,7 @@ defmodule KubeServices.Application do
          ]},
         id: ResourceWatcher.StatefulSets
       ),
+      {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
       KubeServices.BaseServicesSupervisor,
       KubeServices.BaseServicesHydrator
     ]

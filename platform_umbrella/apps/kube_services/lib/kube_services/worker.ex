@@ -106,6 +106,10 @@ defmodule KubeServices.Worker do
     GenServer.cast(via_tuple(base_service), :finish)
   end
 
+  def get_state(base_service) do
+    GenServer.call(via_tuple(base_service), :state)
+  end
+
   def start_link(base_service) do
     GenServer.start_link(__MODULE__, base_service, name: via_tuple(base_service))
   end
@@ -120,11 +124,7 @@ defmodule KubeServices.Worker do
 
   @impl true
   def init(base_service) do
-    Logger.debug(
-      "KubeServices start worker service_type => #{inspect(base_service.service_type)}"
-    )
-
-    # Process.flag(:trap_exit, true)
+    Logger.debug("start worker service_type => #{inspect(base_service.service_type)}")
 
     state = State.new(base_service)
     Process.send_after(self(), :tick, 1000)
@@ -155,6 +155,11 @@ defmodule KubeServices.Worker do
   def handle_info(:tick, %State{} = state) do
     Process.send_after(self(), :tick, @tick_time)
     {:noreply, state |> State.refresh() |> State.apply_resources()}
+  end
+
+  @impl true
+  def handle_call(:state, _from, %State{} = state) do
+    {:reply, state, state}
   end
 
   @impl true

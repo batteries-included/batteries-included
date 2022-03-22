@@ -22,34 +22,36 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.Home, :index
 
-    live "/services/monitoring/settings", ServicesLive.MonitoringServiceSettings, :index
-    live "/services/monitoring/status", ServicesLive.MonitoringStatus, :index
-    live "/services/monitoring/tools", ServicesLive.MonitoringTools, :index
-    live "/services/monitoring/prometheus", ServicesLive.Prometheus, :index
-    live "/services/monitoring/alert_manager", ServicesLive.Alertmanager, :index
-    live "/services/monitoring/grafana", ServicesLive.Grafana, :index
+    live "/services/monitoring/settings", Live.MonitoringServiceSettings, :index
+    live "/services/monitoring/status", Live.MonitoringStatus, :index
+    live "/services/monitoring/tools", Live.MonitoringTools, :index
+    live "/services/monitoring/prometheus", Live.Prometheus, :index
+    live "/services/monitoring/alert_manager", Live.Alertmanager, :index
+    live "/services/monitoring/grafana", Live.Grafana, :index
 
-    live "/services/database", ServicesLive.DatabaseHome, :index
-    live "/services/database/settings", ServicesLive.DatabaseServiceSettings, :index
-    live "/services/database/status", ServicesLive.DatabaseStatus, :index
-    live "/services/database/clusters", ServicesLive.PostgresClusters, :index
-    live "/services/database/clusters/new", ServicesLive.PostgresNew, :new
-    live "/services/database/clusters/:id/edit", ServicesLive.PostgresEdit, :edit
+    live "/services/database", Live.DatabaseHome, :index
+    live "/services/database/settings", Live.DatabaseServiceSettings, :index
+    live "/services/database/status", Live.DatabaseStatus, :index
+    live "/services/database/clusters", Live.PostgresClusters, :index
+    live "/services/database/clusters/new", Live.PostgresNew, :new
+    live "/services/database/clusters/:id/edit", Live.PostgresEdit, :edit
 
-    live "/services/devtools/settings", ServicesLive.DevtoolsServiceSettings, :index
-    live "/services/devtools/status", ServicesLive.DevtoolsStatus, :index
+    live "/services/devtools/settings", Live.DevtoolsServiceSettings, :index
+    live "/services/devtools/status", Live.DevtoolsStatus, :index
 
-    live "/services/network/settings", ServicesLive.NetworkServiceSettings, :index
-    live "/services/network/status", ServicesLive.NetworkStatus, :index
+    live "/services/network/settings", Live.NetworkServiceSettings, :index
+    live "/services/network/status", Live.NetworkStatus, :index
 
-    live "/services/security/settings", ServicesLive.SecurityServiceSettings, :index
-    live "/services/security/status", ServicesLive.SecurityStatus, :index
+    live "/services/security/settings", Live.SecurityServiceSettings, :index
+    live "/services/security/status", Live.SecurityStatus, :index
 
-    live "/services/ml", ServicesLive.MLHome, :index
-    live "/services/ml/settings", ServicesLive.MLServiceSettings, :index
-    live "/services/ml/status", ServicesLive.MLStatus, :index
-    live "/services/ml/notebooks", ServicesLive.JupyterLabNotebook.Index, :index
-    live "/services/ml/notebooks/:id", ServicesLive.JupyterLabNotebook.Show, :index
+    live "/services/ml", Live.MLHome, :index
+    live "/services/ml/settings", Live.MLServiceSettings, :index
+    live "/services/ml/status", Live.MLStatus, :index
+    live "/services/ml/notebooks", Live.JupyterLabNotebook.Index, :index
+    live "/services/ml/notebooks/:id", Live.JupyterLabNotebook.Show, :index
+
+    live "/internal", Live.WorkerList, :index
   end
 
   scope "/api", ControlServerWeb do
