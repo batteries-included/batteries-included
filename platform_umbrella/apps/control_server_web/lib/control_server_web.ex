@@ -84,7 +84,27 @@ defmodule ControlServerWeb do
       # Import LiveView helpers (live_render, live_component, live_patch, etc)
       import Phoenix.LiveView.Helpers
       import ControlServerWeb.LiveHelpers
-      use PetalComponents
+
+      alias PetalComponents.Heroicons
+
+      import PetalComponents.{
+        Alert,
+        Badge,
+        Button,
+        Container,
+        Dropdown,
+        Form,
+        Loading,
+        Typography,
+        Avatar,
+        Progress,
+        Breadcrumbs,
+        Pagination,
+        Link,
+        Modal,
+        Tabs,
+        Card
+      }
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View

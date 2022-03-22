@@ -23,7 +23,7 @@ defmodule CommonUI.Layout do
   def menu_item(assigns) do
     ~H"""
     <.link
-      link_type="live_patch"
+      link_type="live_redirect"
       to={"#{@to}"}
       class={
         [

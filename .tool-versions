@@ -5,3 +5,4 @@ rust 1.59.0
 python 3.8.5
 k3d 5.3.0
 kubectl 1.23.4
+k9s 0.25.18
