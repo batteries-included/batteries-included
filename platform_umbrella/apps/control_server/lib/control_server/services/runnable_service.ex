@@ -161,5 +161,9 @@ defmodule ControlServer.Services.RunnableService do
     Postgres.find_or_create(KubeRawResources.Gitea.gitea_cluster(), repo)
   end
 
+  defp run_post(%__MODULE__{service_type: :knative} = _service, repo) do
+    ControlServer.Knative.create_service(%{name: "hello-batteries"}, repo)
+  end
+
   defp run_post(%__MODULE__{} = _service, _repo), do: {:ok, []}
 end

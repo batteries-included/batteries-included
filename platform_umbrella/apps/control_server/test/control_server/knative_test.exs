@@ -1,0 +1,59 @@
+defmodule ControlServer.KnativeTest do
+  use ControlServer.DataCase
+
+  alias ControlServer.Knative
+
+  describe "services" do
+    alias ControlServer.Knative.Service
+
+    import ControlServer.KnativeFixtures
+
+    @invalid_attrs %{name: nil}
+
+    test "list_services/0 returns all services" do
+      service = service_fixture()
+      assert Knative.list_services() == [service]
+    end
+
+    test "get_service!/1 returns the service with given id" do
+      service = service_fixture()
+      assert Knative.get_service!(service.id) == service
+    end
+
+    test "create_service/1 with valid data creates a service" do
+      valid_attrs = %{name: "some name"}
+
+      assert {:ok, %Service{} = service} = Knative.create_service(valid_attrs)
+      assert service.name == "some name"
+    end
+
+    test "create_service/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Knative.create_service(@invalid_attrs)
+    end
+
+    test "update_service/2 with valid data updates the service" do
+      service = service_fixture()
+      update_attrs = %{name: "some updated name"}
+
+      assert {:ok, %Service{} = service} = Knative.update_service(service, update_attrs)
+      assert service.name == "some updated name"
+    end
+
+    test "update_service/2 with invalid data returns error changeset" do
+      service = service_fixture()
+      assert {:error, %Ecto.Changeset{}} = Knative.update_service(service, @invalid_attrs)
+      assert service == Knative.get_service!(service.id)
+    end
+
+    test "delete_service/1 deletes the service" do
+      service = service_fixture()
+      assert {:ok, %Service{}} = Knative.delete_service(service)
+      assert_raise Ecto.NoResultsError, fn -> Knative.get_service!(service.id) end
+    end
+
+    test "change_service/1 returns a service changeset" do
+      service = service_fixture()
+      assert %Ecto.Changeset{} = Knative.change_service(service)
+    end
+  end
+end

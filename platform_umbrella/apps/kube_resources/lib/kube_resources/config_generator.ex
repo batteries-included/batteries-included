@@ -20,6 +20,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.IstioGateway
   alias KubeResources.Keycloak
   alias KubeResources.KnativeOperator
+  alias KubeResources.KnativeServices
   alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
   alias KubeResources.ML
@@ -37,39 +38,46 @@ defmodule KubeResources.ConfigGenerator do
     |> Enum.into(%{})
   end
 
-  defp materialize(%{} = config, :prometheus) do
+  @spec materialize(map, atom) :: map
+  def materialize(%{} = config, :prometheus) do
     config |> Prometheus.materialize() |> Map.merge(ServiceMonitors.materialize(config))
   end
 
-  defp materialize(%{} = config, :istio_gateway) do
+  def materialize(%{} = config, :istio_gateway) do
     config |> IstioGateway.materialize() |> Map.merge(VirtualService.materialize(config))
   end
 
-  defp materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
-  defp materialize(%{} = config, :grafana), do: Grafana.materialize(config)
-  defp materialize(%{} = config, :alert_manager), do: AlertManager.materialize(config)
-  defp materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
+  def materialize(%{} = config, :knative) do
+    config
+    |> KnativeOperator.materialize()
+    |> Map.merge(KnativeServices.materialize(config))
+  end
 
-  defp materialize(%{} = config, :database), do: Database.materialize_common(config)
-  defp materialize(%{} = config, :database_public), do: Database.materialize_public(config)
-  defp materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
+  def materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
+  def materialize(%{} = config, :grafana), do: Grafana.materialize(config)
+  def materialize(%{} = config, :alert_manager), do: AlertManager.materialize(config)
+  def materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
 
-  defp materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
-  defp materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)
+  def materialize(%{} = config, :database), do: Database.materialize_common(config)
+  def materialize(%{} = config, :database_public), do: Database.materialize_public(config)
+  def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
 
-  defp materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
-  defp materialize(%{} = config, :gitea), do: Gitea.materialize(config)
-  defp materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
+  def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
+  def materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)
 
-  defp materialize(%{} = config, :kong), do: Kong.materialize(config)
-  defp materialize(%{} = config, :nginx), do: Nginx.materialize(config)
-  defp materialize(%{} = config, :istio), do: IstioBase.materialize(config)
-  defp materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
+  def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
+  def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
 
-  defp materialize(%{} = config, :battery), do: Battery.materialize(config)
-  defp materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
-  defp materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
+  def materialize(%{} = config, :kong), do: Kong.materialize(config)
+  def materialize(%{} = config, :nginx), do: Nginx.materialize(config)
+  def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
+  def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
 
-  defp materialize(%{} = config, :ml), do: ML.Base.materialize(config)
-  defp materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
+
+  def materialize(%{} = config, :battery), do: Battery.materialize(config)
+  def materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
+  def materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
+
+  def materialize(%{} = config, :ml), do: ML.Base.materialize(config)
+  def materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
 end
