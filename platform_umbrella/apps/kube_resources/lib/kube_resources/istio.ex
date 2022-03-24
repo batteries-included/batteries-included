@@ -43,7 +43,7 @@ defmodule KubeResources.IstioConfig do
     defstruct [:destination, :weight]
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
-    def new(port, host), do: %__MODULE__{destination: %Destination{host: host, port: port}}
+    def new(port, host), do: %__MODULE__{destination: %Destination{host: host, port: %{number: port}}}
   end
 
   defmodule HttpRouteDestination do
