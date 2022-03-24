@@ -54,7 +54,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
     """
   end
 
-  defp notebook_path(notebook), do: "http://anton2:8081/x/notebooks/#{notebook.name}"
+  defp notebook_path(notebook), do: "//control.172.30.0.4.sslip.io/x/notebooks/#{notebook.name}"
 
   defp notebook_row(assigns) do
     ~H"""

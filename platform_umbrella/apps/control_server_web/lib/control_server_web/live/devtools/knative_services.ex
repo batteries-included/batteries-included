@@ -38,7 +38,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     ~H"""
     <.layout>
       <:title>
-        <.title>KNative Services</.title>
+        <.title>Knative Services</.title>
       </:title>
       <:left_menu>
         <.left_menu_item to="/services/devtools/tools" name="Tools" icon="external_link" />
@@ -47,7 +47,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
           name="Service Settings"
           icon="lightning_bolt"
         />
-        <.left_menu_item to="/services/devtools/knative_services" name="Services" icon="collection" />
+        <.left_menu_item to="/services/devtools/knative_services" name="Knative Services" icon="collection" is_active={true} />
         <.left_menu_item to="/services/devtools/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>
@@ -55,6 +55,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
           <thead>
             <tr>
               <th>Name</th>
+              <th>Link</th>
               <th></th>
             </tr>
           </thead>
@@ -62,6 +63,9 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
             <%= for service <- @services do %>
               <tr id={"service-#{service.id}"}>
                 <td><%= service.name %></td>
+                <td>
+                  <.link to={"//#{service.name}.battery-knative.knative.172.30.0.4.sslip.io"}>Open</.link>
+                </td>
                 <td>
                   <span>
                     <%= link("Delete",

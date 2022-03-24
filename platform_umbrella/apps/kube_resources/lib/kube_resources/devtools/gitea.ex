@@ -14,6 +14,7 @@ defmodule KubeResources.Gitea do
   @http_prefix "/x/gitea"
 
   @ssh_port 22
+  @ssh_listen_port 2022
 
   defp http_domain, do: "control.#{KubeState.IstioIngress.single_address()}.sslip.io"
   defp ssh_domain, do: "gitea.#{KubeState.IstioIngress.single_address()}.sslip.io"
@@ -35,7 +36,9 @@ defmodule KubeResources.Gitea do
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.name("gitea-ssh")
-    |> B.spec(VirtualService.tcp_port(@ssh_port, "gitea-ssh", hosts: [ssh_domain()]))
+    |> B.spec(
+      VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh", hosts: [ssh_domain()])
+    )
   end
 
   def secret(config) do
@@ -322,8 +325,8 @@ defmodule KubeResources.Gitea do
       |> B.short_selector(@app)
       |> B.ports([
         %{
-          "targetPort" => @ssh_port,
-          "port" => @ssh_port,
+          "targetPort" => @ssh_listen_port,
+          "port" => @ssh_listen_port,
           "protocol" => "TCP",
           "name" => "ssh"
         }
@@ -354,8 +357,8 @@ defmodule KubeResources.Gitea do
       %{"name" => "GITEA_CUSTOM", "value" => Path.join(@data_path, "/gitea")},
       %{"name" => "GITEA_APP_INI", "value" => Path.join(@data_path, "/gitea/conf/app.ini")},
       %{"name" => "GITEA_WORK_DIR", "value" => @data_path},
-      %{"name" => "SSH_LISTEN_PORT", "value" => "@ssh_port"},
-      %{"name" => "SSH_PORT", "value" => "@ssh_port"},
+      %{"name" => "SSH_LISTEN_PORT", "value" => "#{@ssh_listen_port}"},
+      %{"name" => "SSH_PORT", "value" => "#{@ssh_port}"},
       %{"name" => "GITEA_TEMP", "value" => Path.join(@tmp_path, "/gitea")},
       %{"name" => "TMPDIR", "value" => Path.join(@tmp_path, "/gitea")},
       %{

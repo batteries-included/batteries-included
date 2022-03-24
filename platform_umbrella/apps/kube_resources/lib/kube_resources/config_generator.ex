@@ -73,7 +73,6 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
   def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
 
-
   def materialize(%{} = config, :battery), do: Battery.materialize(config)
   def materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
   def materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)

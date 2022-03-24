@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.DevtoolsTools do
     ~H"""
     <.layout>
       <:title>
-        <.title>DevOps Tools</.title>
+        <.title>Dev Tools</.title>
       </:title>
       <:left_menu>
         <.left_menu_item
@@ -35,12 +35,8 @@ defmodule ControlServerWeb.Live.DevtoolsTools do
           name="Service Settings"
           icon="lightning_bolt"
         />
-        <.left_menu_item to="/services/devtools/knative_services" name="Services" icon="collection" />
-        <.left_menu_item
-          to="/services/devtools/status"
-          name="Status"
-          icon="status_online"
-        />
+        <.left_menu_item to="/services/devtools/knative_services" name="Knative Services" icon="collection" />
+        <.left_menu_item to="/services/devtools/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>
         <.h4>Gitea</.h4>
