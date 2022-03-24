@@ -23,15 +23,14 @@ defmodule KubeState.IstioIngress do
       end)
 
     case matching do
-      nil ->
-        ["127.0.0.1"]
-
-      value ->
+      %{status: %{loadBalancer: %{ingress: value}}} ->
         value
-        |> get_in(["status", "loadBalancer", "ingress"])
         |> Enum.filter(fn pos -> pos != nil end)
         |> Enum.map(fn pos -> Map.get(pos, "ip") end)
         |> Enum.sort(:desc)
+
+      _ ->
+        ["127.0.0.1"]
     end
   end
 end

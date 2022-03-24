@@ -43,7 +43,7 @@ defmodule KubeResources.IstioConfig do
     defstruct [:destination, :weight]
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
-    def new(host, port), do: %__MODULE__{destination: %Destination{host: host, port: port}}
+    def new(port, host), do: %__MODULE__{destination: %Destination{host: host, port: port}}
   end
 
   defmodule HttpRouteDestination do
@@ -119,7 +119,7 @@ defmodule KubeResources.IstioConfig do
     def port(port, service_host) do
       %__MODULE__{
         match: [L4MatchAttributes.port(port)],
-        route: [RouteDestination.new(service_host, port)]
+        route: [RouteDestination.new( port, service_host)]
       }
     end
   end
@@ -144,7 +144,7 @@ defmodule KubeResources.IstioConfig do
 
     def tcp_port(port, service_host, opts \\ []) do
       opts
-      |> Keyword.merge(tcp: [TCPRoute.port(port, service_host)])
+      |> Keyword.merge(tcp: [TCPRoute.port(service_host, port)])
       |> new()
     end
 
