@@ -19,7 +19,7 @@ defmodule KubeState.IstioIngress do
     matching =
       Enum.find(services, fn s ->
         K8s.Resource.name(s) == "istio-ingressgateway" and
-          K8s.Resource.namespace(s) == "battery-core"
+          K8s.Resource.namespace(s) == "battery-ingress"
       end)
 
     case matching do

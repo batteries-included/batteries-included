@@ -13,7 +13,7 @@ defmodule KubeResources.Gitea do
 
   @http_prefix "/x/gitea"
 
-  @ssh_port 2200
+  @ssh_port 22
 
   defp http_domain, do: "control.#{KubeState.IstioIngress.single_address()}.sslip.io"
   defp ssh_domain, do: "gitea.#{KubeState.IstioIngress.single_address()}.sslip.io"
@@ -70,8 +70,8 @@ defmodule KubeResources.Gitea do
       PROTOCOL=http
       ROOT_URL=http://#{http_domain}#{@http_prefix}
       SSH_DOMAIN=#{ssh_domain}
-      SSH_LISTEN_PORT=@ssh_port
-      SSH_PORT=@ssh_port
+      SSH_LISTEN_PORT=#{@ssh_port}
+      SSH_PORT=#{@ssh_port}
       """
     }
 

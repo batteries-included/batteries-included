@@ -98,6 +98,12 @@ defmodule KubeResources.IstioGateway do
           "targetPort" => 15_021
         },
         %{
+          "name" => "ssh",
+          "port" => 22,
+          "protocol" => "TCP",
+          "targetPort" => 22
+        },
+        %{
           "name" => "http2",
           "port" => 80,
           "protocol" => "TCP",
@@ -253,7 +259,13 @@ defmodule KubeResources.IstioGateway do
 
     spec = %{
       selector: %{istio: "ingressgateway"},
-      servers: [%{port: %{number: 80, name: "http", protocol: "HTTP"}, hosts: ["*"]}]
+      servers: [
+        %{port: %{number: 80, name: "http", protocol: "HTTP"}, hosts: ["*"]},
+        %{
+          port: %{number: 22, name: "ssh", protocol: "TCP"},
+          hosts: ["gitea.172.30.0.4.sslip.io"]
+        }
+      ]
     }
 
     B.build_resource(:gateway)
