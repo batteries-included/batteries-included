@@ -1,4 +1,4 @@
-defmodule KubeResources.KubeState do
+defmodule KubeResources.KubeStateMonitoring do
   @moduledoc """
   Module to keep the KubeState deployment up and configured.
   """
@@ -21,7 +21,7 @@ defmodule KubeResources.KubeState do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "kube-state-metrics",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-kube-state-metrics"
       },
@@ -112,7 +112,7 @@ defmodule KubeResources.KubeState do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "kube-state-metrics",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-kube-state-metrics",
         "namespace" => namespace
@@ -129,7 +129,7 @@ defmodule KubeResources.KubeState do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "kube-state-metrics",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-kube-state-metrics"
       },
@@ -159,7 +159,7 @@ defmodule KubeResources.KubeState do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "kube-state-metrics",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "kube-state-metrics",
         "namespace" => namespace
@@ -175,7 +175,7 @@ defmodule KubeResources.KubeState do
           "metadata" => %{
             "labels" => %{
               "battery/app" => "kube-state-metrics",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -222,7 +222,7 @@ defmodule KubeResources.KubeState do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "kube-state-metrics",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "kube-state-metrics",
         "namespace" => namespace
@@ -258,7 +258,7 @@ defmodule KubeResources.KubeState do
         "metadata" => %{
           "labels" => %{
             "battery/app" => "kube-state-metrics",
-            "battery/managed" => "True"
+            "battery/managed" => "true"
           },
           "name" => "kube-state-metrics",
           "namespace" => namespace

@@ -11,7 +11,7 @@ defmodule KubeResources.GitlabRunner do
       "kind" => "ServiceAccount",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "true"},
         "namespace" => namespace
       }
     }
@@ -25,7 +25,7 @@ defmodule KubeResources.GitlabRunner do
       "kind" => "ConfigMap",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "true"},
         "namespace" => namespace
       },
       "data" => %{
@@ -53,7 +53,7 @@ defmodule KubeResources.GitlabRunner do
       "kind" => "Role",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "true"},
         "namespace" => namespace
       },
       "rules" => [%{"apiGroups" => [""], "resources" => ["*"], "verbs" => ["*"]}]
@@ -68,7 +68,7 @@ defmodule KubeResources.GitlabRunner do
       "kind" => "RoleBinding",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "true"},
         "namespace" => namespace
       },
       "roleRef" => %{
@@ -94,7 +94,7 @@ defmodule KubeResources.GitlabRunner do
       "kind" => "Deployment",
       "metadata" => %{
         "name" => "battery-gitlab-runner",
-        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "true"},
         "namespace" => namespace
       },
       "spec" => %{
@@ -102,7 +102,7 @@ defmodule KubeResources.GitlabRunner do
         "selector" => %{"matchLabels" => %{"battery/app" => "battery-gitlab-runner"}},
         "template" => %{
           "metadata" => %{
-            "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "True"},
+            "labels" => %{"battery/app" => "battery-gitlab-runner", "battery/managed" => "true"},
             "annotations" => %{"prometheus.io/scrape" => "true", "prometheus.io/port" => "9252"}
           },
           "spec" => %{

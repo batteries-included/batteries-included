@@ -77,6 +77,10 @@ defmodule KubeExt.Builder do
     |> annotation("kubernetes.io/ingress.class", "battery-nginx")
   end
 
+  def build_resource(:pod_disruption_budget) do
+    build_resource("policy/v1beta1", "PodDisruptionBudget")
+  end
+
   def build_resource(:ingress, path, service_name, port) do
     build_resource("networking.k8s.io/v1", "Ingress")
     |> annotation("kubernetes.io/ingress.class", "battery-nginx")
@@ -107,7 +111,7 @@ defmodule KubeExt.Builder do
   def app_labels(resource, app_name) do
     resource
     |> label("battery/app", app_name)
-    |> label("battery/managed", "True")
+    |> label("battery/managed", "true")
   end
 
   def name(%{} = resource, name) do

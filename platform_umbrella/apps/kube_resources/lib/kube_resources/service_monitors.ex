@@ -1,6 +1,6 @@
 defmodule KubeResources.ServiceMonitors do
   alias ControlServer.Services
-  alias KubeRawResources.Istio
+  # alias KubeRawResources.Istio
   alias KubeResources.DatabaseServiceMonitors
   alias KubeResources.Grafana
   alias KubeResources.Kong
@@ -23,7 +23,7 @@ defmodule KubeResources.ServiceMonitors do
   defp monitors(:database_internal, config), do: DatabaseServiceMonitors.internal_monitors(config)
   defp monitors(:database, config), do: DatabaseServiceMonitors.monitors(config)
   defp monitors(:kong, config), do: Kong.monitors(config)
-  defp monitors(:istio, config), do: Istio.monitors(config)
+  # defp monitors(:istio, config), do: Istio.monitors(config)
 
   defp monitors(_, _), do: []
 end

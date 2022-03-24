@@ -150,11 +150,11 @@ defmodule KubeResources.Keycloak do
     spec = %{
       "replicas" => 1,
       "selector" => %{
-        "matchLabels" => %{"name" => "keycloak-operator", "battery/managed" => "True"}
+        "matchLabels" => %{"name" => "keycloak-operator", "battery/managed" => "true"}
       },
       "template" => %{
         "metadata" => %{
-          "labels" => %{"name" => "keycloak-operator", "battery/managed" => "True"}
+          "labels" => %{"name" => "keycloak-operator", "battery/managed" => "true"}
         },
         "spec" => %{
           "containers" => [
@@ -246,7 +246,7 @@ defmodule KubeResources.Keycloak do
       "metadata" => %{
         "name" => "battery-keycloak",
         "namespace" => namespace,
-        "labels" => %{"battery/app" => @app, "battery/managed" => "True"}
+        "labels" => %{"battery/app" => @app, "battery/managed" => "true"}
       },
       "spec" => spec
     }

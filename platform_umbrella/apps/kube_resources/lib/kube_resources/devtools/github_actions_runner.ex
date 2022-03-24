@@ -40,7 +40,7 @@ defmodule KubeResources.GithubActionsRunner do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "actions-runner-controller",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       }
     }
@@ -57,7 +57,7 @@ defmodule KubeResources.GithubActionsRunner do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "actions-runner-controller",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "type" => "generic",
@@ -314,7 +314,7 @@ defmodule KubeResources.GithubActionsRunner do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "actions-runner-controller",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "actions-runner-controller-metrics-service",
         "namespace" => namespace
@@ -339,7 +339,7 @@ defmodule KubeResources.GithubActionsRunner do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "actions-runner-controller",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -365,7 +365,7 @@ defmodule KubeResources.GithubActionsRunner do
         "namespace" => namespace,
         "labels" => %{
           "battery/app" => "actions-runner-controller",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "spec" => %{
@@ -379,7 +379,7 @@ defmodule KubeResources.GithubActionsRunner do
           "metadata" => %{
             "labels" => %{
               "battery/app" => "actions-runner-controller",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{

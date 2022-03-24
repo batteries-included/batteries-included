@@ -1,5 +1,5 @@
 defmodule KubeResources.KubeMonitoring do
-  alias KubeResources.KubeState
+  alias KubeResources.KubeStateMonitoring
   alias KubeResources.MonitoringSettings
   alias KubeResources.NodeExporter
 
@@ -8,19 +8,19 @@ defmodule KubeResources.KubeMonitoring do
       "/node/service_account" => NodeExporter.service_account(config),
       "/node/cluster_role" => NodeExporter.cluster_role(config),
       "/node/bind" => NodeExporter.cluster_binding(config),
-      "/kube/service_account" => KubeState.service_account(config),
-      "/kube/cluster_role" => KubeState.cluster_role(config),
-      "/kube/bind" => KubeState.cluster_binding(config),
+      "/kube/service_account" => KubeStateMonitoring.service_account(config),
+      "/kube/cluster_role" => KubeStateMonitoring.cluster_role(config),
+      "/kube/bind" => KubeStateMonitoring.cluster_binding(config),
       "/node/daemon" => NodeExporter.daemonset(config),
       "/node/service" => NodeExporter.service(config),
-      "/kube/daemon" => KubeState.deployment(config),
-      "/kube/service" => KubeState.service(config)
+      "/kube/daemon" => KubeStateMonitoring.deployment(config),
+      "/kube/service" => KubeStateMonitoring.service(config)
     }
   end
 
   def monitors(config) do
     NodeExporter.monitors(config) ++
-      KubeState.monitors(config) ++
+      KubeStateMonitoring.monitors(config) ++
       [
         apiserver_monitor(config),
         coredns_monitor(config),
@@ -130,7 +130,7 @@ defmodule KubeResources.KubeMonitoring do
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "ServiceMonitor",
       "metadata" => %{
-        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "true"},
         "name" => "kube-apiserver",
         "namespace" => namespace
       },
@@ -145,7 +145,7 @@ defmodule KubeResources.KubeMonitoring do
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "ServiceMonitor",
       "metadata" => %{
-        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "true"},
         "name" => "coredns",
         "namespace" => namespace
       },
@@ -178,7 +178,7 @@ defmodule KubeResources.KubeMonitoring do
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "ServiceMonitor",
       "metadata" => %{
-        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "true"},
         "name" => "kube-controller-manager",
         "namespace" => namespace
       },
@@ -261,7 +261,7 @@ defmodule KubeResources.KubeMonitoring do
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "ServiceMonitor",
       "metadata" => %{
-        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "true"},
         "name" => "kube-scheduler",
         "namespace" => namespace
       },
@@ -289,7 +289,7 @@ defmodule KubeResources.KubeMonitoring do
       "apiVersion" => "monitoring.coreos.com/v1",
       "kind" => "ServiceMonitor",
       "metadata" => %{
-        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "True"},
+        "labels" => %{"battery/app" => "kube-prometheus", "battery/managed" => "true"},
         "name" => "kubelet",
         "namespace" => namespace
       },

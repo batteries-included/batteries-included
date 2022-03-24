@@ -18,7 +18,7 @@ defmodule KubeRawResources.PostgresOperator do
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       }
     }
@@ -33,7 +33,7 @@ defmodule KubeRawResources.PostgresOperator do
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -70,7 +70,7 @@ defmodule KubeRawResources.PostgresOperator do
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -176,7 +176,7 @@ defmodule KubeRawResources.PostgresOperator do
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "roleRef" => %{
@@ -221,7 +221,7 @@ defmodule KubeRawResources.PostgresOperator do
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "namespace" => namespace,
         "name" => "postgres-operator"
@@ -240,7 +240,7 @@ defmodule KubeRawResources.PostgresOperator do
             "labels" => %{
               "battery/app" => @app_name,
               "app.kubernetes.io/instance" => "battery",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -314,7 +314,7 @@ defmodule KubeRawResources.PostgresOperator do
         "labels" => %{
           "battery/app" => @app_name,
           "app.kubernetes.io/instance" => "battery",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "configuration" => %{

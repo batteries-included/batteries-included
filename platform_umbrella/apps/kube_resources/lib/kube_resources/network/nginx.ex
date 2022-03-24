@@ -2,7 +2,6 @@ defmodule KubeResources.Nginx do
   @moduledoc false
 
   alias KubeExt.Builder, as: B
-
   alias KubeRawResources.NetworkSettings
   alias KubeResources.Ingress
 
@@ -49,7 +48,7 @@ defmodule KubeResources.Nginx do
           "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-ingress-nginx"
       },
@@ -92,7 +91,7 @@ defmodule KubeResources.Nginx do
           "battery/app" => "ingress-nginx",
           "app.kubernetes.io/instance" => "battery",
           "app.kubernetes.io/version" => "0.48.1",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-ingress-nginx"
       },

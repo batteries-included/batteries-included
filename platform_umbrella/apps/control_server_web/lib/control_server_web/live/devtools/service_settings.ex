@@ -33,6 +33,7 @@ defmodule ControlServerWeb.Live.DevtoolsServiceSettings do
         <.title>Devtools Settings</.title>
       </:title>
       <:left_menu>
+        <.left_menu_item to="/services/devtools/tools" name="Tools" icon="external_link" />
         <.left_menu_item
           to="/services/devtools/settings"
           name="Service Settings"

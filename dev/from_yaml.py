@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys, yaml, json
+from textwrap import indent
 import re
 from collections import Counter
 
@@ -110,6 +111,7 @@ def print_header(
     print(f"defmodule KubeResources.{module_name} do")
     print("@moduledoc false")
     print()
+    print(f"alias KubeExt.Builder, as: B")
     print(f"alias KubeResources.{settings_module_name}")
     print()
 
@@ -146,7 +148,7 @@ def export_crds_stderr(crds):
 def main(module_name, settings_module_name):
     parsed = yaml.load_all(sys.stdin, Loader=yaml.FullLoader)
     sanitized_labels = [
-        recursive_clean(o, "labels", BAD_LABELS, {"battery/managed": "True"}, RENAME_LABELS)
+        recursive_clean(o, "labels", BAD_LABELS, {"battery/managed": "true"}, RENAME_LABELS)
         for o in parsed
         if o
     ]
@@ -156,7 +158,7 @@ def main(module_name, settings_module_name):
         if o
     ]
     sanitized_labels = [
-        recursive_clean(o, "matchLabels", BAD_LABELS, {"battery/managed": "True"}, RENAME_LABELS)
+        recursive_clean(o, "matchLabels", BAD_LABELS, {"battery/managed": "true"}, RENAME_LABELS)
         for o in sanitized_labels
         if o
     ]
@@ -180,16 +182,15 @@ def main(module_name, settings_module_name):
 
     # While we are working with the object representation extract
     # the name and the json representation
-    named = [(get_name(o), json.dumps(o)) for o in no_crds if o]
+    named = [(get_name(o), json.dumps(o, separators=(",", " => "), sort_keys=True, indent=4)) for o in no_crds if o]
 
     # Don't want json so convert colon seperator to an arrow. In order to try
     # and not get anything other than colons after a field name we accept
     # only directly after double quote.
-    to_e_arrow = [(name, colon_pattern.sub('" => ', s)) for (name, s) in named]
 
     # Open curly brackets are a little less common so be loose and free
     # with how we hack the crap out of this.
-    to_e_map = [(name, s.replace("{", "%{")) for (name, s) in to_e_arrow]
+    to_e_map = [(name, s.replace("{", "%{")) for (name, s) in named]
     print_header(module_name=module_name, settings_module_name=settings_module_name)
     print_all_methods(to_e_map, settings_module_name=settings_module_name)
     print_materialize(to_e_map)

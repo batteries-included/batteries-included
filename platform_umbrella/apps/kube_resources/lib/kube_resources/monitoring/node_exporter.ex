@@ -13,7 +13,7 @@ defmodule KubeResources.NodeExporter do
         "name" => "battery-node-exporter",
         "labels" => %{
           "battery/app" => "node-exporter",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         }
       },
       "rules" => [
@@ -40,7 +40,7 @@ defmodule KubeResources.NodeExporter do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "node-exporter",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-node-exporter",
         "namespace" => namespace
@@ -57,7 +57,7 @@ defmodule KubeResources.NodeExporter do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "node-exporter",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-node-exporter"
       },
@@ -87,7 +87,7 @@ defmodule KubeResources.NodeExporter do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "node-exporter",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "node-exporter",
         "namespace" => namespace
@@ -102,7 +102,7 @@ defmodule KubeResources.NodeExporter do
           "metadata" => %{
             "labels" => %{
               "battery/app" => "node-exporter",
-              "battery/managed" => "True"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -208,7 +208,7 @@ defmodule KubeResources.NodeExporter do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "node-exporter",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "node-exporter",
         "namespace" => namespace
@@ -239,7 +239,7 @@ defmodule KubeResources.NodeExporter do
         "metadata" => %{
           "labels" => %{
             "battery/app" => "node-exporter",
-            "battery/managed" => "True"
+            "battery/managed" => "true"
           },
           "name" => "node-exporter",
           "namespace" => namespace

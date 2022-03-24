@@ -1,4 +1,5 @@
 defmodule ControlServer.Services.RunnableService do
+  alias ControlServer.Postgres
   alias ControlServer.Repo
   alias ControlServer.Services
   alias Ecto.Multi
@@ -27,33 +28,50 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/battery/control_server",
         service_type: :control_server,
-        dependencies: [:battery]
+        dependencies: [:battery, :istio_gateway]
       },
-      %__MODULE__{path: "/battery/echo", service_type: :echo_server, dependencies: [:battery]},
+      %__MODULE__{
+        path: "/battery/echo",
+        service_type: :echo_server,
+        dependencies: [:battery, :istio_gateway]
+      },
 
       # Devtools
-      %__MODULE__{path: "/devtools/knative", service_type: :knative, dependencies: [:istio]},
+      %__MODULE__{
+        path: "/devtools/knative",
+        service_type: :knative,
+        dependencies: [:istio_gateway]
+      },
+      %__MODULE__{
+        path: "/devtools/gitea",
+        service_type: :gitea,
+        dependencies: [:keycloak, :database_internal, :istio_gateway]
+      },
 
       # ML
       %__MODULE__{path: "/ml/core", service_type: :ml},
-      %__MODULE__{path: "/ml/notebooks", service_type: :notebooks, dependencies: [:ml]},
+      %__MODULE__{
+        path: "/ml/notebooks",
+        service_type: :notebooks,
+        dependencies: [:ml, :istio_gateway]
+      },
 
       # Monitoring
       %__MODULE__{path: "/monitoring/prometheus_operator", service_type: :prometheus_operator},
       %__MODULE__{
         path: "/monitoring/prometheus",
         service_type: :prometheus,
-        dependencies: [:prometheus_operator]
+        dependencies: [:prometheus_operator, :istio_gateway]
       },
       %__MODULE__{
         path: "/monitoring/grafana",
         service_type: :grafana,
-        dependencies: [:prometheus]
+        dependencies: [:prometheus, :istio_gateway]
       },
       %__MODULE__{
         path: "/monitoring/alert_manager",
         service_type: :alert_manager,
-        dependencies: [:prometheus]
+        dependencies: [:prometheus, :istio_gateway]
       },
       %__MODULE__{
         path: "/monitoring/kube_monitoring",
@@ -64,14 +82,24 @@ defmodule ControlServer.Services.RunnableService do
       # Network
       %__MODULE__{path: "/network/kong", service_type: :kong},
       %__MODULE__{path: "/network/nginx", service_type: :nginx},
-      %__MODULE__{path: "/network/istio", service_type: :istio},
+      %__MODULE__{path: "/network/istio/base", service_type: :istio},
+      %__MODULE__{
+        path: "/network/istio/istiod",
+        service_type: :istio_istiod,
+        dependencies: [:istio]
+      },
+      %__MODULE__{
+        path: "/network/istio/gateway",
+        service_type: :istio_gateway,
+        dependencies: [:istio_istiod, :istio]
+      },
 
       # Security
       %__MODULE__{path: "/security/cert_manager", service_type: :cert_manager},
       %__MODULE__{
         path: "/security/keycloak",
         service_type: :keycloak,
-        dependencies: [:database_internal]
+        dependencies: [:database_internal, :istio_gateway]
       }
     ]
 
@@ -119,11 +147,15 @@ defmodule ControlServer.Services.RunnableService do
   def active?(%__MODULE__{path: path} = _service), do: Services.active?(path)
 
   defp run_post(%__MODULE__{service_type: :database_internal} = _service, repo) do
-    ControlServer.Postgres.find_or_create(KubeRawResources.Battery.control_cluster(), repo)
+    Postgres.find_or_create(KubeRawResources.Battery.control_cluster(), repo)
   end
 
   defp run_post(%__MODULE__{service_type: :keycloak} = _service, repo) do
-    ControlServer.Postgres.find_or_create(KubeRawResources.Keycloak.keycloak_cluster(), repo)
+    Postgres.find_or_create(KubeRawResources.Keycloak.keycloak_cluster(), repo)
+  end
+
+  defp run_post(%__MODULE__{service_type: :gitea} = _service, repo) do
+    Postgres.find_or_create(KubeRawResources.Gitea.gitea_cluster(), repo)
   end
 
   defp run_post(%__MODULE__{} = _service, _repo), do: {:ok, []}

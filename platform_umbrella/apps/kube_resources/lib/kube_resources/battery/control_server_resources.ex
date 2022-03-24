@@ -8,6 +8,8 @@ defmodule KubeResources.ControlServerResources do
 
   defdelegate materialize(config), to: RawControlServerResources
 
+  def domain, do: "control.#{KubeState.IstioIngress.single_address()}.sslip.io"
+
   def virtual_service(config) do
     namespace = BatterySettings.namespace(config)
 

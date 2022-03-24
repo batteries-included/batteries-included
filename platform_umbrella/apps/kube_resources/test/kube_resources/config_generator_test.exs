@@ -8,6 +8,20 @@ defmodule KubeServices.ConfigGeneratorTest do
   require Logger
 
   describe "ConfigGenerator" do
+    def assert_named(%{} = resource) when is_map(resource) do
+      if nil == K8s.Resource.name(resource) do
+        IO.inspect(resource)
+      end
+
+      assert nil != K8s.Resource.name(resource)
+    end
+
+    def assert_named(resources) when is_list(resources) do
+      Enum.each(resources, fn res -> assert_named(res) end)
+    end
+
+    def assert_named(nil = _resource), do: nil
+
     setup do
       {:ok,
        services_activate_map:
@@ -25,6 +39,13 @@ defmodule KubeServices.ConfigGeneratorTest do
       end)
     end
 
+    test "all are named" do
+      Services.list_base_services()
+      |> Enum.map(&ConfigGenerator.materialize/1)
+      |> Enum.flat_map(&Map.values/1)
+      |> Enum.each(&assert_named/1)
+    end
+
     test "Activate database_internal" do
       RunnableService.activate!(:database_internal)
       RunnableService.activate!(:database_internal)
@@ -35,9 +56,7 @@ defmodule KubeServices.ConfigGeneratorTest do
       |> Enum.each(fn base_service ->
         configs = ConfigGenerator.materialize(base_service)
 
-        {res, _value} = Jason.encode(configs)
-
-        assert :ok == res
+        assert match?({:ok, _value}, Jason.encode(configs))
       end)
     end
   end

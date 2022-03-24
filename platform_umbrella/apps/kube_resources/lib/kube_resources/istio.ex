@@ -9,6 +9,11 @@ defmodule KubeResources.IstioConfig do
     def value(%__MODULE__{} = sm), do: sm.exact || sm.prefix
   end
 
+  defmodule Destination do
+    @derive Jason.Encoder
+    defstruct [:host, :subset, :port]
+  end
+
   defmodule HttpRewrite do
     @derive Jason.Encoder
     defstruct [:uri, :authority]
@@ -33,11 +38,19 @@ defmodule KubeResources.IstioConfig do
     ]
   end
 
+  defmodule RouteDestination do
+    @derive Jason.Encoder
+    defstruct [:destination, :weight]
+
+    def new(host), do: %__MODULE__{destination: %Destination{host: host}}
+    def new(port, host), do: %__MODULE__{destination: %Destination{host: host, port: port}}
+  end
+
   defmodule HttpRouteDestination do
     @derive Jason.Encoder
     defstruct [:destination, :weight, :headers]
 
-    def new(host), do: %__MODULE__{destination: %{host: host}}
+    def new(host), do: %__MODULE__{destination: %Destination{host: host}}
   end
 
   defmodule HttpRoute do
@@ -90,27 +103,61 @@ defmodule KubeResources.IstioConfig do
     end
   end
 
+  defmodule L4MatchAttributes do
+    @derive Jason.Encoder
+    defstruct port: nil, gateways: nil
+
+    def port(port) do
+      %__MODULE__{port: port}
+    end
+  end
+
+  defmodule TCPRoute do
+    @derive Jason.Encoder
+    defstruct match: [], route: []
+
+    def port(port, service_host) do
+      %__MODULE__{
+        match: [L4MatchAttributes.port(port)],
+        route: [RouteDestination.new( port, service_host)]
+      }
+    end
+  end
+
   defmodule VirtualService do
     @derive Jason.Encoder
-    defstruct hosts: [], gateways: [], http: []
+    defstruct hosts: [], gateways: [], http: [], tcp: []
 
     def new(opts \\ []) do
-      gateways = Keyword.get(opts, :gateways, ["battery-core/battery-gateway"])
+      gateways = Keyword.get(opts, :gateways, ["battery-ingress/battery-gateway"])
       hosts = Keyword.get(opts, :hosts, ["*"])
-      routes = Keyword.get(opts, :routes, [])
-      %__MODULE__{gateways: gateways, hosts: hosts, http: routes}
+      routes = Keyword.get(opts, :http, [])
+      tcp = Keyword.get(opts, :tcp, [])
+      %__MODULE__{gateways: gateways, hosts: hosts, http: routes, tcp: tcp}
     end
 
-    def prefix(prefix, service_host) do
-      new(routes: [HttpRoute.prefix(prefix, service_host)])
+    def prefix(prefix, service_host, opts \\ []) do
+      opts
+      |> Keyword.merge(http: [HttpRoute.prefix(prefix, service_host)])
+      |> new()
     end
 
-    def rewriting(prefix, service_host) do
-      new(routes: [HttpRoute.prefix(prefix, service_host, rewrite: True)])
+    def tcp_port(port, service_host, opts \\ []) do
+      opts
+      |> Keyword.merge(tcp: [TCPRoute.port(service_host, port)])
+      |> new()
     end
 
-    def fallback(service_host) do
-      new(routes: [HttpRoute.fallback(service_host)])
+    def rewriting(prefix, service_host, opts \\ []) do
+      opts
+      |> Keyword.merge(http: [HttpRoute.prefix(prefix, service_host, rewrite: True)])
+      |> new()
+    end
+
+    def fallback(service_host, opts \\ []) do
+      opts
+      |> Keyword.merge(http: [HttpRoute.fallback(service_host)])
+      |> new()
     end
   end
 end

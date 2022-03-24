@@ -55,7 +55,7 @@ defmodule KubeResources.Prometheus do
       "metadata" => %{
         "labels" => %{
           "battery/app" => @app_name,
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "prometheus",
         "namespace" => namespace
@@ -144,7 +144,7 @@ defmodule KubeResources.Prometheus do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "prometheus",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "prometheus-main",
         "namespace" => namespace
@@ -176,7 +176,7 @@ defmodule KubeResources.Prometheus do
         "metadata" => %{
           "labels" => %{
             "battery/app" => "prometheus",
-            "battery/managed" => "True"
+            "battery/managed" => "true"
           },
           "name" => "prometheus",
           "namespace" => namespace
@@ -205,7 +205,7 @@ defmodule KubeResources.Prometheus do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "prometheus",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-prometheus"
       },
@@ -252,7 +252,7 @@ defmodule KubeResources.Prometheus do
       "metadata" => %{
         "labels" => %{
           "battery/app" => "prometheus",
-          "battery/managed" => "True"
+          "battery/managed" => "true"
         },
         "name" => "battery-prometheus"
       },

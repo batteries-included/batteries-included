@@ -72,9 +72,8 @@ postgresForward() {
   local pod=$(kubectl \
             get pods \
             -o jsonpath={.items..metadata.name} \
-            -n ${ns} -l application=spilo \
-            -l battery-cluster-name=${cluster} \
-            -l spilo-role=master)
+            -n ${ns} \
+            -l application=spilo,battery-pg-cluster=${cluster},spilo-role=master)
   portForward "pods/${pod}" "${port}:5432" ${ns}
 }
 
