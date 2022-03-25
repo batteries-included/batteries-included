@@ -1,8 +1,14 @@
 defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
   use Phoenix.Component
-  use PetalComponents
+
+  import PetalComponents.Typography
+  import PetalComponents.Button
+  import PetalComponents.Link
+
+  import CommonUI.Table
 
   alias ControlServerWeb.Router.Helpers, as: Routes
+  alias PetalComponents.Heroicons
 
   defp assign_defaults(assigns) do
     assigns
@@ -18,35 +24,26 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
     <.h3>
       Jupyter Notebooks
     </.h3>
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead>
-        <tr>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+    <.table>
+      <.thead>
+        <.tr>
+          <.th>
             Name
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+          </.th>
+          <.th>
             Version
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+          </.th>
+          <.th>
             Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
+          </.th>
+        </.tr>
+      </.thead>
+      <.tbody>
         <%= for notebook <- @notebooks do %>
           <.notebook_row notebook={notebook} delete_event={@delete_event} />
         <% end %>
-      </tbody>
-    </table>
+      </.tbody>
+    </.table>
 
     <.button type="primary" phx-click={@start_event}>
       Start New Notebook
@@ -58,14 +55,14 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
 
   defp notebook_row(assigns) do
     ~H"""
-    <tr id="row-notebook-{@notebook.id}">
-      <td>
+    <.tr id="row-notebook-{@notebook.id}">
+      <.td>
         <%= @notebook.name %>
-      </td>
-      <td>
+      </.td>
+      <.td>
         <%= @notebook.image %>
-      </td>
-      <td>
+      </.td>
+      <.td>
         <span>
           <.button to={notebook_path(@notebook)} variant="shadow" link_type="a">
             Open Notebook
@@ -82,8 +79,8 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
             data={[confirm: "Are you sure?"]}
           />
         </span>
-      </td>
-    </tr>
+      </.td>
+    </.tr>
     """
   end
 

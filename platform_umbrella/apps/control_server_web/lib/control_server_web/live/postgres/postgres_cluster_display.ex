@@ -1,6 +1,9 @@
 defmodule ControlServerWeb.PostgresClusterDisplay do
   use Phoenix.Component
-  use PetalComponents
+  import CommonUI.Table
+  import PetalComponents.Typography
+  import PetalComponents.Button
+  import PetalComponents.Link
 
   alias ControlServerWeb.Router.Helpers, as: Routes
 
@@ -9,47 +12,32 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
     <.h3>
       Postgres Clusters
     </.h3>
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead>
-        <tr>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+    <.table>
+      <.thead>
+        <.tr>
+          <.th>
             Name
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+          </.th>
+          <.th>
             Version
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+          </.th>
+          <.th>
             Replicas
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+          </.th>
+          <.th>
             Cluster Type
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-          >
+          </.th>
+          <.th>
             Actions
-          </th>
-        </tr>
-      </thead>
+          </.th>
+        </.tr>
+      </.thead>
       <tbody>
         <%= for {cluster, idx} <- Enum.with_index(@clusters) do %>
           <.cluster_row cluster={cluster} idx={idx} />
         <% end %>
       </tbody>
-    </table>
+    </.table>
 
     <div class="ml-8 mt-15">
       <.button
@@ -66,20 +54,20 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
 
   defp cluster_row(assigns) do
     ~H"""
-    <tr class="bg-white">
-      <td scope="row" class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+    <.tr>
+      <.td>
         <%= @cluster.name %>
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+      </.td>
+      <.td>
         <%= @cluster.postgres_version %>
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+      </.td>
+      <.td>
         <%= @cluster.num_instances %>
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+      </.td>
+      <.td>
         <%= @cluster.type %>
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+      </.td>
+      <.td>
         <span>
           <.link
             to={cluster_edit_url(@cluster)}
@@ -89,8 +77,8 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
             Edit Cluster
           </.link>
         </span>
-      </td>
-    </tr>
+      </.td>
+    </.tr>
     """
   end
 

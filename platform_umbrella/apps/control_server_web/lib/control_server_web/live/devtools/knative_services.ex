@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
+  import CommonUI.Table
 
   alias ControlServer.Knative
 
@@ -47,26 +48,36 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
           name="Service Settings"
           icon="lightning_bolt"
         />
-        <.left_menu_item to="/services/devtools/knative_services" name="Knative Services" icon="collection" is_active={true} />
+        <.left_menu_item
+          to="/services/devtools/knative_services"
+          name="Knative Services"
+          icon="collection"
+          is_active={true}
+        />
         <.left_menu_item to="/services/devtools/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Link</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="services">
+        <.table>
+          <.thead>
+            <.tr>
+              <.th>Name</.th>
+              <.th>Link</.th>
+              <.th>Action</.th>
+            </.tr>
+          </.thead>
+          <.tbody id="services">
             <%= for service <- @services do %>
-              <tr id={"service-#{service.id}"}>
-                <td><%= service.name %></td>
-                <td>
-                  <.link to={"//#{service.name}.battery-knative.knative.172.30.0.4.sslip.io"}>Open</.link>
-                </td>
-                <td>
+              <.tr id={"service-#{service.id}"}>
+                <.td><%= service.name %></.td>
+                <.td>
+                  <.link
+                    to={"//#{service.name}.battery-knative.knative.172.30.0.4.sslip.io"}
+                    link_type="a"
+                  >
+                    Open
+                  </.link>
+                </.td>
+                <.td>
                   <span>
                     <%= link("Delete",
                       to: "#",
@@ -75,11 +86,11 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
                       data: [confirm: "Are you sure?"]
                     ) %>
                   </span>
-                </td>
-              </tr>
+                </.td>
+              </.tr>
             <% end %>
-          </tbody>
-        </table>
+          </.tbody>
+        </.table>
       </.body_section>
     </.layout>
     """

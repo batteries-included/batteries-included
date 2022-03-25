@@ -54,7 +54,6 @@ defmodule ControlServerWeb.Live.DevtoolsStatus do
           to="/services/devtools/knative_services"
           name="Knative Services"
           icon="collection"
-          is_active={true}
         />
         <.left_menu_item
           to="/services/devtools/status"
