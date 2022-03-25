@@ -119,7 +119,7 @@ defmodule KubeResources.IstioConfig do
     def port(port, service_host) do
       %__MODULE__{
         match: [L4MatchAttributes.port(port)],
-        route: [RouteDestination.new( port, service_host)]
+        route: [RouteDestination.new(port, service_host)]
       }
     end
   end

@@ -79,6 +79,13 @@ defmodule ControlServer.Services do
   end
 
   def find_or_create(attrs) do
+    attrs
+    |> find_or_create_multi()
+    |> Repo.transaction()
+    |> unwrap_transaction_return()
+  end
+
+  def find_or_create_multi(attrs) do
     Multi.new()
     |> Multi.run(:selected, fn repo, _ ->
       {:ok, repo.one(from(bs in BaseService, where: bs.root_path == ^attrs.root_path))}
@@ -87,8 +94,6 @@ defmodule ControlServer.Services do
       maybe_insert(sel, repo, attrs)
     end)
     |> Multi.run(:base_service, &insert_event/2)
-    |> Repo.transaction()
-    |> unwrap_transaction_return()
   end
 
   def maybe_insert(nil = _selected, repo, attrs) do

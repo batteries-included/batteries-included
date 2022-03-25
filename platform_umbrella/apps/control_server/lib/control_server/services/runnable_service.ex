@@ -126,15 +126,15 @@ defmodule ControlServer.Services.RunnableService do
       Enum.each(deps, fn s -> activate!(s) end)
       {:ok, deps}
     end)
-    |> Multi.run(service_type, fn _repo, _state ->
-      Services.find_or_create(%{
+    |> Multi.merge(fn _ ->
+      Services.find_or_create_multi(%{
         root_path: path,
         service_type: service_type,
         config: config
       })
     end)
-    |> Multi.run(:post, fn repo, _state ->
-      run_post(service, repo)
+    |> Multi.run(:post, fn repo, %{selected: existing} = _state ->
+      maybe_run_post(existing, service, repo)
     end)
     |> Repo.transaction()
   end
@@ -145,6 +145,9 @@ defmodule ControlServer.Services.RunnableService do
     do: services_map() |> Map.get(service_type) |> active?()
 
   def active?(%__MODULE__{path: path} = _service), do: Services.active?(path)
+
+  def maybe_run_post(nil, service, repo), do: run_post(service, repo)
+  def maybe_run_post(_it_existed, _service, _repo), do: {:ok, []}
 
   defp run_post(%__MODULE__{service_type: :database_internal} = _service, repo) do
     Postgres.find_or_create(KubeRawResources.Battery.control_cluster(), repo)
