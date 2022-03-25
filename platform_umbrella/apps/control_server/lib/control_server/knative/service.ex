@@ -16,4 +16,15 @@ defmodule ControlServer.Knative.Service do
     |> cast(attrs, [:name])
     |> validate_required([:name])
   end
+
+  def validate(params) do
+    changeset =
+      %__MODULE__{}
+      |> changeset(params)
+      |> Map.put(:action, :validate)
+
+    data = Ecto.Changeset.apply_changes(changeset)
+
+    {changeset, data}
+  end
 end

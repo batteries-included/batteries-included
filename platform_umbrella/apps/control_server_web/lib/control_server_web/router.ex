@@ -37,9 +37,11 @@ defmodule ControlServerWeb.Router do
     live "/services/database/clusters/:id/edit", Live.PostgresEdit, :edit
 
     live "/services/devtools/settings", Live.DevtoolsServiceSettings, :index
-    live "/services/devtools/knative_services", Live.KnativeServicesIndex, :index
     live "/services/devtools/status", Live.DevtoolsStatus, :index
     live "/services/devtools/tools", Live.DevtoolsTools, :index
+    live "/services/devtools/knative_services", Live.KnativeServicesIndex, :index
+    live "/services/devtools/knative_services/new", Live.KnativeNew, :index
+    live "/services/devtools/knative_services/:id/edit", Live.KnativeEdit, :index
 
     live "/services/network/settings", Live.NetworkServiceSettings, :index
     live "/services/network/status", Live.NetworkStatus, :index

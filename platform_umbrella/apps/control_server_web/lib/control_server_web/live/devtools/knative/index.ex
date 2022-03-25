@@ -86,13 +86,30 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
                       data: [confirm: "Are you sure?"]
                     ) %>
                   </span>
+
+                  <span>
+                    <.link to={service_edit_url(service)}>Edit</.link>
+                  </span>
                 </.td>
               </.tr>
             <% end %>
           </.tbody>
         </.table>
+
+        <div class="ml-8 mt-15">
+          <.button type="primary" variant="shadow" to={service_new_url()} link_type="live_patch">
+            New Knative Service
+          </.button>
+        </div>
       </.body_section>
     </.layout>
     """
+  end
+
+  defp service_edit_url(service),
+    do: Routes.knative_edit_path(ControlServerWeb.Endpoint, :index, service.id)
+
+  defp service_new_url do
+    Routes.knative_new_path(ControlServerWeb.Endpoint, :index)
   end
 end

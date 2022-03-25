@@ -49,7 +49,7 @@ defmodule ControlServer.Postgres.Cluster do
 
   def validate(params) do
     changeset =
-      %ControlServer.Postgres.Cluster{}
+      %__MODULE__{}
       |> changeset(params)
       |> Map.put(:action, :validate)
 
