@@ -67,6 +67,10 @@ defmodule KubeExt.Builder do
     build_resource("operator.knative.dev/v1alpha1", "KnativeServing")
   end
 
+  def build_resource(:knative_service) do
+    build_resource("serving.knative.dev/v1", "Service")
+  end
+
   def build_resource(:postgresql) do
     build_resource("acid.zalan.do/v1", "postgresql")
   end

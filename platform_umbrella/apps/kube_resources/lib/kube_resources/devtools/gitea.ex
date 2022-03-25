@@ -8,12 +8,13 @@ defmodule KubeResources.Gitea do
   @app "gitea"
 
   @data_path "/data"
-  @init_path "/usr/sbin"
+  @init_path "/opt/sbin"
   @tmp_path "/tmp"
 
   @http_prefix "/x/gitea"
 
   @ssh_port 22
+  @ssh_listen_port 2022
 
   defp http_domain, do: "control.#{KubeState.IstioIngress.single_address()}.sslip.io"
   defp ssh_domain, do: "gitea.#{KubeState.IstioIngress.single_address()}.sslip.io"
@@ -35,7 +36,9 @@ defmodule KubeResources.Gitea do
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.name("gitea-ssh")
-    |> B.spec(VirtualService.tcp_port(@ssh_port, "gitea-ssh", hosts: [ssh_domain()]))
+    |> B.spec(
+      VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh", hosts: [ssh_domain()])
+    )
   end
 
   def secret(config) do
@@ -198,7 +201,7 @@ defmodule KubeResources.Gitea do
           env2ini::process_config_file "${configFile}"
         done < <(find "${path}" -type l -not -name '..data' -print0)
 
-        env2ini::log "\\n"
+        env2ini::log "\n"
       }
 
       function env2ini::generate_initial_secrets() {
@@ -211,7 +214,7 @@ defmodule KubeResources.Gitea do
         export ENV_TO_INI__SECURITY__SECRET_KEY=$(gitea generate secret SECRET_KEY)
         export ENV_TO_INI__OAUTH2__JWT_SECRET=$(gitea generate secret JWT_SECRET)
 
-        env2ini::log "...Initial secrets generated\\n"
+        env2ini::log "...Initial secrets generated\n"
       }
 
       env | (grep ENV_TO_INI || [[ $? == 1 ]]) > /tmp/existing-envs
@@ -225,7 +228,7 @@ defmodule KubeResources.Gitea do
       # load existing envs to override auto generated envs
       env2ini::reload_preset_envs
 
-      env2ini::log "=== All configuration sources loaded ===\\n"
+      env2ini::log "=== All configuration sources loaded ===\n"
 
       # safety to prevent rewrite of secret keys if an app.ini already exists
       if [ -f ${GITEA_APP_INI} ]; then
@@ -260,7 +263,7 @@ defmodule KubeResources.Gitea do
       "configure_gitea.sh" => """
       #!/usr/bin/env bash
 
-      set -euo pipefail
+      set -exuo pipefail
 
       echo '==== BEGIN GITEA CONFIGURATION ===='
 
@@ -272,7 +275,9 @@ defmodule KubeResources.Gitea do
       }
 
       function configure_admin_user() {
-        local ACCOUNT_ID=$(gitea admin user list --admin | grep -e "\\s+${GITEA_ADMIN_USERNAME}\\s+" | awk -F " " "{printf \\$1}")
+        local USER_LIST=$(gitea admin user list --admin)
+        echo "Admins: ${USER_LIST}"
+        local ACCOUNT_ID=$(gitea admin user list --admin | grep -e "\\s*${GITEA_ADMIN_USERNAME}\\s*" | awk -F " " "{printf \\$1}")
         if [[ -z "${ACCOUNT_ID}" ]]; then
           echo "No admin user '${GITEA_ADMIN_USERNAME}' found. Creating now..."
           gitea admin user create --admin --username "${GITEA_ADMIN_USERNAME}" --password "${GITEA_ADMIN_PASSWORD}" --email "gitea@batteriesincl.com" --must-change-password=false
@@ -284,7 +289,9 @@ defmodule KubeResources.Gitea do
         fi
       }
 
+      echo '==== BEGIN ADMIN CONFIGURATION ===='
       configure_admin_user
+      echo '==== END ADMIN CONFIGURATION ===='
 
       echo '==== END GITEA CONFIGURATION ===='
       """
@@ -322,8 +329,8 @@ defmodule KubeResources.Gitea do
       |> B.short_selector(@app)
       |> B.ports([
         %{
-          "targetPort" => @ssh_port,
-          "port" => @ssh_port,
+          "targetPort" => @ssh_listen_port,
+          "port" => @ssh_listen_port,
           "protocol" => "TCP",
           "name" => "ssh"
         }
@@ -354,8 +361,8 @@ defmodule KubeResources.Gitea do
       %{"name" => "GITEA_CUSTOM", "value" => Path.join(@data_path, "/gitea")},
       %{"name" => "GITEA_APP_INI", "value" => Path.join(@data_path, "/gitea/conf/app.ini")},
       %{"name" => "GITEA_WORK_DIR", "value" => @data_path},
-      %{"name" => "SSH_LISTEN_PORT", "value" => "@ssh_port"},
-      %{"name" => "SSH_PORT", "value" => "@ssh_port"},
+      %{"name" => "SSH_LISTEN_PORT", "value" => "#{@ssh_listen_port}"},
+      %{"name" => "SSH_PORT", "value" => "#{@ssh_port}"},
       %{"name" => "GITEA_TEMP", "value" => Path.join(@tmp_path, "/gitea")},
       %{"name" => "TMPDIR", "value" => Path.join(@tmp_path, "/gitea")},
       %{
@@ -387,7 +394,7 @@ defmodule KubeResources.Gitea do
     config
     |> base_container("gitea")
     |> Map.put("ports", [
-      %{"name" => "ssh", "containerPort" => 22},
+      %{"name" => "ssh", "containerPort" => @ssh_listen_port},
       %{"name" => "http", "containerPort" => 3000}
     ])
     |> Map.put("livenessProbe", %{
@@ -431,15 +438,15 @@ defmodule KubeResources.Gitea do
             base_container(
               config,
               "init-directories",
-              "/usr/sbin/init_directory_structure.sh"
+              "/opt/sbin/init_directory_structure.sh"
             ),
             # This one creates the ini
-            base_container(config, "init-app-ini", "/usr/sbin/app_ini.sh"),
+            base_container(config, "init-app-ini", "/opt/sbin/app_ini.sh"),
 
             # This migrates the database
             # It fails if run as root.
             config
-            |> base_container("configure-gitea", "/usr/sbin/configure_gitea.sh")
+            |> base_container("configure-gitea", "/opt/sbin/configure_gitea.sh")
             |> Map.put("securityContext", %{"runAsUser" => 1000})
           ],
           "terminationGracePeriodSeconds" => 60,

@@ -1,21 +1,25 @@
 defmodule ControlServerWeb.RunnableServiceList do
   use ControlServerWeb, :live_component
 
+  import CommonUI.Table
+
   alias ControlServer.Services.RunnableService
 
   @impl true
+
   def mount(socket) do
     {:ok, assign_new(socket, :services, fn -> [] end)}
   end
 
   @impl true
+
   def update(assigns, socket) do
     {:ok, assign(socket, :services, update_services(assigns.services))}
   end
 
   defp update_services(services) when is_list(services) do
     ##
-    # From a list of services we recheck if they are running and recreate the map of string service
+    # From a list of services we recheck if they are running and recreate the map of s.tring service
     services
     |> Enum.map(&update_single_service/1)
     |> Enum.into(%{})
@@ -36,6 +40,7 @@ defmodule ControlServerWeb.RunnableServiceList do
   end
 
   @impl true
+
   def handle_event("start", %{"path" => path} = _payload, socket) do
     socket.assigns.services
     |> Map.get(path)
@@ -46,44 +51,39 @@ defmodule ControlServerWeb.RunnableServiceList do
   end
 
   @impl true
+
   def render(assigns) do
     ~H"""
     <div>
       <.h4>Runnable Services</.h4>
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-            >
+      <.table>
+        <.thead>
+          <.tr>
+            <.th>
               Service Type
-            </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-            >
+            </.th>
+            <.th>
               Start
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </.th>
+          </.tr>
+        </.thead>
+        <.tbody>
           <%= for {service_info, idx} <- @services |> Map.values() |> Enum.with_index() do %>
             <.table_row service_info={service_info} idx={idx} target={@myself} />
           <% end %>
-        </tbody>
-      </table>
+        </.tbody>
+      </.table>
     </div>
     """
   end
 
   def table_row(assigns) do
     ~H"""
-    <tr>
-      <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+    <.tr>
+      <.td>
         <%= @service_info.service.service_type %>
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+      </.td>
+      <.td>
         <%= if not @service_info.active do %>
           <.button
             label={"Start Service"}
@@ -93,8 +93,8 @@ defmodule ControlServerWeb.RunnableServiceList do
             phx-target={@target}
           />
         <% end %>
-      </td>
-    </tr>
+      </.td>
+    </.tr>
     """
   end
 end

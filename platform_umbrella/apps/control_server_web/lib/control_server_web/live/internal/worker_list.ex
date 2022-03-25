@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.WorkerList do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
+  import CommonUI.Table
 
   alias ControlServer.Services
   alias KubeRawResources.Resource.ResourceState
@@ -26,17 +27,17 @@ defmodule ControlServerWeb.Live.WorkerList do
     ~H"""
     <.layout>
       <.body_section>
-        <.table states={@service_states} />
+        <.services_table states={@service_states} />
       </.body_section>
     </.layout>
     """
   end
 
-  defp table(assigns) do
+  defp services_table(assigns) do
     ~H"""
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead>
-        <tr>
+    <.table>
+      <.thead>
+        <.tr>
           <.th>
             Service ID
           </.th>
@@ -49,38 +50,27 @@ defmodule ControlServerWeb.Live.WorkerList do
           <.th>
             Num UnSync'd
           </.th>
-        </tr>
-      </thead>
-      <tbody>
+        </.tr>
+      </.thead>
+      <.tbody>
         <%= for entry <- @states do %>
           <.row state={entry} />
         <% end %>
-      </tbody>
-    </table>
-    """
-  end
-
-  defp th(assigns) do
-    ~H"""
-    <th
-      scope="col"
-      class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-    >
-      <%= render_slot(@inner_block) %>
-    </th>
+      </.tbody>
+    </.table>
     """
   end
 
   defp row(assigns) do
     ~H"""
-    <tr>
-      <.id_td>
+    <.tr>
+      <.td class="font-medium">
         <%= @state.base_service.id %>
-      </.id_td>
-      <.standard_td><%= @state.base_service.service_type %></.standard_td>
-      <.standard_td><%= map_size(@state.requested_resources) %></.standard_td>
-      <.standard_td><%= count_not_ok(@state.path_state_map) %></.standard_td>
-    </tr>
+      </.td>
+      <.td><%= @state.base_service.service_type %></.td>
+      <.td><%= map_size(@state.requested_resources) %></.td>
+      <.td><%= count_not_ok(@state.path_state_map) %></.td>
+    </.tr>
     """
   end
 
@@ -88,21 +78,5 @@ defmodule ControlServerWeb.Live.WorkerList do
     path_state_map
     |> Enum.filter(fn {_path, value} -> !ResourceState.ok?(value) end)
     |> Enum.count()
-  end
-
-  defp id_td(assigns) do
-    ~H"""
-    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-      <%= render_slot(@inner_block) %>
-    </td>
-    """
-  end
-
-  defp standard_td(assigns) do
-    ~H"""
-    <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-      <%= render_slot(@inner_block) %>
-    </td>
-    """
   end
 end

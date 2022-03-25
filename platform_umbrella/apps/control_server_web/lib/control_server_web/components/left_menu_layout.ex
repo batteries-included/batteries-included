@@ -50,6 +50,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
         <Heroicons.Solid.status_online class={@class} />
       <% "external_link" -> %>
         <Heroicons.Solid.external_link class={@class} />
+      <% "collection" -> %>
+        <Heroicons.Solid.collection class={@class} />
     <% end %>
     """
   end

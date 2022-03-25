@@ -1,8 +1,9 @@
 defmodule KubeState.IstioIngress do
+  @default "172.30.0.4"
   def single_address do
     KubeState.services()
     |> ingress_ips_from_services()
-    |> List.first() || "127.0.0.1"
+    |> List.first() || @default
   end
 
   def all_addresses do
@@ -10,10 +11,8 @@ defmodule KubeState.IstioIngress do
   end
 
   defp ingress_ips_from_services(services) when services == [] do
-    ["127.0.0.1"]
+    [@default]
   end
-
-  defp ingress_ips_from_services(nil = _services), do: ["127.0.0.1"]
 
   defp ingress_ips_from_services(services) when is_list(services) do
     matching =
@@ -23,14 +22,14 @@ defmodule KubeState.IstioIngress do
       end)
 
     case matching do
-      %{status: %{loadBalancer: %{ingress: value}}} ->
+      %{"status" => %{"loadBalancer" => %{"ingress" => value}}} ->
         value
         |> Enum.filter(fn pos -> pos != nil end)
         |> Enum.map(fn pos -> Map.get(pos, "ip") end)
         |> Enum.sort(:desc)
 
       _ ->
-        ["127.0.0.1"]
+        [@default]
     end
   end
 end

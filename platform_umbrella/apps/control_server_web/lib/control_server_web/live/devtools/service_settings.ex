@@ -40,6 +40,11 @@ defmodule ControlServerWeb.Live.DevtoolsServiceSettings do
           icon="lightning_bolt"
           is_active={true}
         />
+        <.left_menu_item
+          to="/services/devtools/knative_services"
+          name="Knative Services"
+          icon="collection"
+        />
         <.left_menu_item to="/services/devtools/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>

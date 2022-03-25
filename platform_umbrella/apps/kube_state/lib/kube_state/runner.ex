@@ -19,6 +19,9 @@ defmodule KubeState.Runner do
 
   def get(table_name, resource_type) do
     case :ets.lookup(table_name, resource_type) do
+      [] ->
+        :missing
+
       resource_tuples ->
         {:ok, Enum.map(resource_tuples, fn {^resource_type, resource} -> resource end)}
     end

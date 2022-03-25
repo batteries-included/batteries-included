@@ -43,7 +43,9 @@ defmodule KubeResources.IstioConfig do
     defstruct [:destination, :weight]
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
-    def new(port, host), do: %__MODULE__{destination: %Destination{host: host, port: port}}
+
+    def new(port, host),
+      do: %__MODULE__{destination: %Destination{host: host, port: %{number: port}}}
   end
 
   defmodule HttpRouteDestination do
@@ -105,7 +107,7 @@ defmodule KubeResources.IstioConfig do
 
   defmodule L4MatchAttributes do
     @derive Jason.Encoder
-    defstruct port: nil, gateways: nil
+    defstruct [:port, :gateways]
 
     def port(port) do
       %__MODULE__{port: port}
@@ -116,10 +118,10 @@ defmodule KubeResources.IstioConfig do
     @derive Jason.Encoder
     defstruct match: [], route: []
 
-    def port(port, service_host) do
+    def port(port, service_port, service_host) do
       %__MODULE__{
         match: [L4MatchAttributes.port(port)],
-        route: [RouteDestination.new(port, service_host)]
+        route: [RouteDestination.new(service_port, service_host)]
       }
     end
   end
@@ -142,9 +144,9 @@ defmodule KubeResources.IstioConfig do
       |> new()
     end
 
-    def tcp_port(port, service_host, opts \\ []) do
+    def tcp_port(port, service_port, service_host, opts \\ []) do
       opts
-      |> Keyword.merge(tcp: [TCPRoute.port(service_host, port)])
+      |> Keyword.merge(tcp: [TCPRoute.port(port, service_port, service_host)])
       |> new()
     end
 
