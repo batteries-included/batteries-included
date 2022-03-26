@@ -40,12 +40,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
     </.table>
 
     <div class="ml-8 mt-15">
-      <.button
-        type="primary"
-        variant="shadow"
-        to="/services/database/clusters/new"
-        link_type="live_patch"
-      >
+      <.button type="primary" variant="shadow" to="/services/data/clusters/new" link_type="live_patch">
         New Cluster
       </.button>
     </div>

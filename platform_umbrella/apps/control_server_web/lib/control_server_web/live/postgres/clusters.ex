@@ -31,19 +31,15 @@ defmodule ControlServerWeb.Live.PostgresClusters do
         <.title>Postgres Clusters</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" />
+        <.left_menu_item to="/services/data" name="Home" icon="home" />
         <.left_menu_item
-          to="/services/database/clusters"
+          to="/services/data/clusters"
           name="Postgres Clusters"
           icon="database"
           is_active={true}
         />
-        <.left_menu_item
-          to="/services/database/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item to="/services/database/status" name="Status" icon="status_online" />
+        <.left_menu_item to="/services/data/settings" name="Service Settings" icon="lightning_bolt" />
+        <.left_menu_item to="/services/data/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>
         <.pg_cluster_display clusters={@clusters} />

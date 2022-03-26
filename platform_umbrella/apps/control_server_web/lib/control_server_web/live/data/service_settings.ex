@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.DatabaseServiceSettings do
+defmodule ControlServerWeb.Live.DataServiceSettings do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -30,25 +30,25 @@ defmodule ControlServerWeb.Live.DatabaseServiceSettings do
     ~H"""
     <.layout>
       <:title>
-        <.title>Database Settings</.title>
+        <.title>Data Settings</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" />
-        <.left_menu_item to="/services/database/clusters" name="Postgres Clusters" icon="database" />
+        <.left_menu_item to="/services/data" name="Home" icon="home" />
         <.left_menu_item
-          to="/services/database/settings"
+          to="/services/data/postgres_clusters"
+          name="Postgres Clusters"
+          icon="database"
+        />
+        <.left_menu_item
+          to="/services/data/settings"
           name="Service Settings"
           icon="lightning_bolt"
           is_active={true}
         />
-        <.left_menu_item to="/services/database/status" name="Status" icon="status_online" />
+        <.left_menu_item to="/services/data/status" name="Status" icon="status_online" />
       </:left_menu>
       <.body_section>
-        <.live_component
-          module={RunnableServiceList}
-          services={@services}
-          id={"database_base_services"}
-        />
+        <.live_component module={RunnableServiceList} services={@services} id={"data_base_services"} />
       </.body_section>
     </.layout>
     """

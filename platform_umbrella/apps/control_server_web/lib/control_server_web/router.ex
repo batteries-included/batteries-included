@@ -29,12 +29,16 @@ defmodule ControlServerWeb.Router do
     live "/services/monitoring/alert_manager", Live.Alertmanager, :index
     live "/services/monitoring/grafana", Live.Grafana, :index
 
-    live "/services/database", Live.DatabaseHome, :index
-    live "/services/database/settings", Live.DatabaseServiceSettings, :index
-    live "/services/database/status", Live.DatabaseStatus, :index
-    live "/services/database/clusters", Live.PostgresClusters, :index
-    live "/services/database/clusters/new", Live.PostgresNew, :new
-    live "/services/database/clusters/:id/edit", Live.PostgresEdit, :edit
+    live "/services/data", Live.DataHome, :index
+    live "/services/data/settings", Live.DataServiceSettings, :index
+    live "/services/data/status", Live.DataStatus, :index
+    live "/services/data/postgres_clusters", Live.PostgresClusters, :index
+    live "/services/data/postgres_clusters/new", Live.PostgresNew, :new
+    live "/services/data/postgres_clusters/:id/edit", Live.PostgresEdit, :edit
+
+    live "/services/data/failover_clusters", Live.Redis, :index
+    live "/services/data/failover_clusters/new", Live.RedisNew, :new
+    live "/services/data/failover_clusters/:id/edit", Live.RedisEdit, :edit
 
     live "/services/devtools/settings", Live.DevtoolsServiceSettings, :index
     live "/services/devtools/status", Live.DevtoolsStatus, :index
