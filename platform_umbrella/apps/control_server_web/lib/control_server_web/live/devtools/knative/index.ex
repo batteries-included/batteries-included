@@ -42,19 +42,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
         <.title>Knative Services</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/devtools/tools" name="Tools" icon="external_link" />
-        <.left_menu_item
-          to="/services/devtools/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item
-          to="/services/devtools/knative_services"
-          name="Knative Services"
-          icon="collection"
-          is_active={true}
-        />
-        <.left_menu_item to="/services/devtools/status" name="Status" icon="status_online" />
+        <.devtools_menu active="knative" />
       </:left_menu>
       <.body_section>
         <.table>
@@ -107,9 +95,9 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   end
 
   defp service_edit_url(service),
-    do: Routes.knative_edit_path(ControlServerWeb.Endpoint, :index, service.id)
+    do: Routes.knative_edit_path(ControlServerWeb.Endpoint, :edit, service.id)
 
   defp service_new_url do
-    Routes.knative_new_path(ControlServerWeb.Endpoint, :index)
+    Routes.knative_new_path(ControlServerWeb.Endpoint, :new)
   end
 end

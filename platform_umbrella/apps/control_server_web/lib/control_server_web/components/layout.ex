@@ -65,7 +65,7 @@ defmodule ControlServerWeb.Layout do
         <%= render_slot(@title) %>
       </:title>
       <:main_menu>
-        <.menu_item to="/services/database" name="Database" icon="database" />
+        <.menu_item to="/services/data" name="Data" icon="database" />
         <.menu_item to="/services/ml" name="ML" icon="beaker" />
         <.menu_item to="/services/monitoring/settings" name="Monitoring" icon="chart_bar" />
         <.menu_item to="/services/devtools/settings" name="Devtools" icon="devtools" />

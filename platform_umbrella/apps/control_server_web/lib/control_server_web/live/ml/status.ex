@@ -37,11 +37,7 @@ defmodule ControlServerWeb.Live.MLStatus do
         <.title>ML Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/ml" name="Home" icon="home" />
-        <.left_menu_item to="/services/ml/notebooks" name="Notebooks" icon="notebooks" />
-
-        <.left_menu_item to="/services/ml/settings" name="Service Settings" icon="lightning_bolt" />
-        <.left_menu_item to="/services/ml/status" name="Status" icon="status_online" is_active={true} />
+        <.ml_menu active="status" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

@@ -81,6 +81,10 @@ defmodule KubeExt.Builder do
     |> annotation("kubernetes.io/ingress.class", "battery-nginx")
   end
 
+  def build_resource(:redis_failover) do
+    build_resource("databases.spotahome.com/v1", "RedisFailover")
+  end
+
   def build_resource(:pod_disruption_budget) do
     build_resource("policy/v1beta1", "PodDisruptionBudget")
   end

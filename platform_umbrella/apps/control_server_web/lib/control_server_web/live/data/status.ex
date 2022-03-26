@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.DatabaseStatus do
+defmodule ControlServerWeb.Live.DataStatus do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -44,19 +44,7 @@ defmodule ControlServerWeb.Live.DatabaseStatus do
         <.title>Database Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" />
-        <.left_menu_item to="/services/database/clusters" name="Postgres Clusters" icon="database" />
-        <.left_menu_item
-          to="/services/database/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item
-          to="/services/database/status"
-          name="Status"
-          icon="status_online"
-          is_active={true}
-        />
+        <.data_menu active="status" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

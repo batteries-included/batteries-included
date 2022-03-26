@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.NetworkServiceSettings do
+defmodule ControlServerWeb.Live.DataServiceSettings do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -22,7 +22,7 @@ defmodule ControlServerWeb.Live.NetworkServiceSettings do
   end
 
   defp services do
-    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/network") end)
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/data") end)
   end
 
   @impl true
@@ -30,13 +30,13 @@ defmodule ControlServerWeb.Live.NetworkServiceSettings do
     ~H"""
     <.layout>
       <:title>
-        <.title>Network Settings</.title>
+        <.title>Data Settings</.title>
       </:title>
       <:left_menu>
-        <.network_menu active="settings" />
+        <.data_menu active="settings" />
       </:left_menu>
       <.body_section>
-        <.live_component module={RunnableServiceList} services={@services} id={"network_services"} />
+        <.live_component module={RunnableServiceList} services={@services} id={"data_base_services"} />
       </.body_section>
     </.layout>
     """

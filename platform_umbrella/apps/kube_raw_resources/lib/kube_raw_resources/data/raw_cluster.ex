@@ -1,5 +1,5 @@
 defmodule KubeRawResources.RawCluster do
-  alias KubeRawResources.DatabaseSettings
+  alias KubeRawResources.DataSettings
 
   def team_name(%{} = cluster), do: Map.get(cluster, :team_name, "pg")
   def cluster_name(%{} = cluster), do: Map.get(cluster, :name, "")
@@ -19,8 +19,8 @@ defmodule KubeRawResources.RawCluster do
 
   def namespace(%{} = cluster, config \\ %{}) do
     case cluster_type(cluster) do
-      :internal -> DatabaseSettings.namespace(config)
-      _ -> DatabaseSettings.public_namespace(config)
+      :internal -> DataSettings.namespace(config)
+      _ -> DataSettings.public_namespace(config)
     end
   end
 end

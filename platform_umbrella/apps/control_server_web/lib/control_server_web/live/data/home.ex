@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.DatabaseHome do
+defmodule ControlServerWeb.Live.DataHome do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -21,20 +21,13 @@ defmodule ControlServerWeb.Live.DatabaseHome do
     ~H"""
     <.layout>
       <:title>
-        <.title>Database Home</.title>
+        <.title>Data Home</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/database" name="Home" icon="home" is_active={true} />
-        <.left_menu_item to="/services/database/clusters" name="Postgres Clusters" icon="database" />
-        <.left_menu_item
-          to="/services/database/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item to="/services/database/status" name="Status" icon="status_online" />
+        <.data_menu active="home" />
       </:left_menu>
       <.body_section>
-        <.link to="/services/database/clusters/new" link_type="live_patch">
+        <.link to="/services/data/postgres_clusters/new" link_type="live_patch">
           <button
             type="button"
             class="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

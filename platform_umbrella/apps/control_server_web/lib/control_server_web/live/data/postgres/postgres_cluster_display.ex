@@ -40,12 +40,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
     </.table>
 
     <div class="ml-8 mt-15">
-      <.button
-        type="primary"
-        variant="shadow"
-        to="/services/database/clusters/new"
-        link_type="live_patch"
-      >
+      <.button type="primary" variant="shadow" to={new_url()} link_type="live_patch">
         New Cluster
       </.button>
     </div>
@@ -70,7 +65,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
       <.td>
         <span>
           <.link
-            to={cluster_edit_url(@cluster)}
+            to={edit_url(@cluster)}
             class="mt-8 text-lg font-medium text-left"
             link_type="live_patch"
           >
@@ -82,6 +77,8 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
     """
   end
 
-  defp cluster_edit_url(cluster),
+  defp edit_url(cluster),
     do: Routes.postgres_edit_path(ControlServerWeb.Endpoint, :edit, cluster.id)
+
+  defp new_url, do: Routes.postgres_new_path(ControlServerWeb.Endpoint, :new)
 end

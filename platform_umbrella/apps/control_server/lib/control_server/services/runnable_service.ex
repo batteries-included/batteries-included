@@ -11,15 +11,17 @@ defmodule ControlServer.Services.RunnableService do
 
   def services,
     do: [
-      # Database
-      %__MODULE__{path: "/database/common", service_type: :database},
+      # Data
+      %__MODULE__{path: "/data/common", service_type: :data},
+      %__MODULE__{path: "/data/redis", service_type: :redis, dependencies: [:data]},
+      %__MODULE__{path: "/data/database/common", service_type: :database},
       %__MODULE__{
-        path: "/database/public",
+        path: "/data/database/public",
         service_type: :database_public,
-        dependencies: [:database]
+        dependencies: [:database, :data]
       },
       %__MODULE__{
-        path: "/battery/database",
+        path: "/data/database/battery",
         service_type: :database_internal,
         dependencies: [:database]
       },

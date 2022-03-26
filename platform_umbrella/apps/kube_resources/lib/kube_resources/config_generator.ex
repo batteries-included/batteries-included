@@ -12,6 +12,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.AlertManager
   alias KubeResources.CertManager
   alias KubeResources.ControlServerResources
+  alias KubeResources.Data
   alias KubeResources.Database
   alias KubeResources.EchoServer
   alias KubeResources.Gitea
@@ -28,6 +29,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Notebooks
   alias KubeResources.Prometheus
   alias KubeResources.PrometheusOperator
+  alias KubeResources.Redis
   alias KubeResources.ServiceMonitors
   alias KubeResources.VirtualService
 
@@ -53,11 +55,16 @@ defmodule KubeResources.ConfigGenerator do
     |> Map.merge(KnativeServices.materialize(config))
   end
 
+  def materialize(%{} = config, :redis) do
+    Redis.materialize(config)
+  end
+
   def materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
   def materialize(%{} = config, :grafana), do: Grafana.materialize(config)
   def materialize(%{} = config, :alert_manager), do: AlertManager.materialize(config)
   def materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
 
+  def materialize(%{} = config, :data), do: Data.materialize(config)
   def materialize(%{} = config, :database), do: Database.materialize_common(config)
   def materialize(%{} = config, :database_public), do: Database.materialize_public(config)
   def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
