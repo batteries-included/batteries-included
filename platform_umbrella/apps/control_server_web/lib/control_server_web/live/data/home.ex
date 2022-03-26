@@ -24,14 +24,7 @@ defmodule ControlServerWeb.Live.DataHome do
         <.title>Data Home</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/data" name="Home" icon="home" is_active={true} />
-        <.left_menu_item
-          to="/services/data/postgres_clusters"
-          name="Postgres Clusters"
-          icon="database"
-        />
-        <.left_menu_item to="/services/data/settings" name="Service Settings" icon="lightning_bolt" />
-        <.left_menu_item to="/services/data/status" name="Status" icon="status_online" />
+        <.data_menu active="home" />
       </:left_menu>
       <.body_section>
         <.link to="/services/data/postgres_clusters/new" link_type="live_patch">

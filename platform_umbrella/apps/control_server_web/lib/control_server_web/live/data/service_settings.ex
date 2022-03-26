@@ -33,19 +33,7 @@ defmodule ControlServerWeb.Live.DataServiceSettings do
         <.title>Data Settings</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/data" name="Home" icon="home" />
-        <.left_menu_item
-          to="/services/data/postgres_clusters"
-          name="Postgres Clusters"
-          icon="database"
-        />
-        <.left_menu_item
-          to="/services/data/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-          is_active={true}
-        />
-        <.left_menu_item to="/services/data/status" name="Status" icon="status_online" />
+        <.data_menu active="settings" />
       </:left_menu>
       <.body_section>
         <.live_component module={RunnableServiceList} services={@services} id={"data_base_services"} />

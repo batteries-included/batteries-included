@@ -33,13 +33,7 @@ defmodule ControlServerWeb.Live.NetworkServiceSettings do
         <.title>Network Settings</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item
-          to="/services/network/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-          is_active={true}
-        />
-        <.left_menu_item to="/services/network/status" name="Status" icon="status_online" />
+        <.network_menu active="settings" />
       </:left_menu>
       <.body_section>
         <.live_component module={RunnableServiceList} services={@services} id={"network_services"} />

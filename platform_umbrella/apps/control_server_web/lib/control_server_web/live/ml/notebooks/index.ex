@@ -48,16 +48,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
         <.title>Notebooks</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/ml" name="Home" icon="home" />
-        <.left_menu_item
-          to="/services/ml/notebooks"
-          name="Notebooks"
-          icon="notebooks"
-          is_active={true}
-        />
-
-        <.left_menu_item to="/services/ml/settings" name="Service Settings" icon="lightning_bolt" />
-        <.left_menu_item to="/services/ml/status" name="Status" icon="status_online" />
+        <.ml_menu active="notebooks" />
       </:left_menu>
       <.body_section>
         <.notebook_display notebooks={@notebooks} />

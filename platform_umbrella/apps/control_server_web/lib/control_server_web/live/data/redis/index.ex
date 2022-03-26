@@ -46,7 +46,13 @@ defmodule ControlServerWeb.Live.Redis do
       <:title>
         <.title>Redis Clusters</.title>
       </:title>
+      <:left_menu>
+        <.data_menu active="redis" />
+      </:left_menu>
       <.body_section>
+        <.h3>
+          Redis Clusters
+        </.h3>
         <.table>
           <.thead>
             <.tr>
@@ -54,7 +60,6 @@ defmodule ControlServerWeb.Live.Redis do
               <.th>Num sentinel instances</.th>
               <.th>Num redis instances</.th>
               <.th>Memory request</.th>
-
               <.th></.th>
             </.tr>
           </.thead>
@@ -86,9 +91,11 @@ defmodule ControlServerWeb.Live.Redis do
           </.tbody>
         </.table>
 
-        <span>
-          <.link to={new_url()} link_type="live_patch">New Cluster</.link>
-        </span>
+        <div class="ml-8 mt-15">
+          <.button type="primary" variant="shadow" to={new_url()} link_type="live_patch">
+            New Cluster
+          </.button>
+        </div>
       </.body_section>
     </.layout>
     """

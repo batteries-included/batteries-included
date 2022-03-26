@@ -44,15 +44,7 @@ defmodule ControlServerWeb.Live.DataStatus do
         <.title>Database Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/data" name="Home" icon="home" />
-        <.left_menu_item to="/services/data/clusters" name="Postgres Clusters" icon="database" />
-        <.left_menu_item to="/services/data/settings" name="Service Settings" icon="lightning_bolt" />
-        <.left_menu_item
-          to="/services/data/status"
-          name="Status"
-          icon="status_online"
-          is_active={true}
-        />
+        <.data_menu active="status" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

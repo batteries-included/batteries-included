@@ -33,16 +33,7 @@ defmodule ControlServerWeb.Live.MLServiceSettings do
         <.title>ML Settings</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/ml" name="Home" icon="home" />
-        <.left_menu_item to="/services/ml/notebooks" name="Notebooks" icon="notebooks" />
-
-        <.left_menu_item
-          to="/services/ml/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-          is_active={true}
-        />
-        <.left_menu_item to="/services/ml/status" name="Status" icon="status_online" />
+        <.ml_menu active="home" />
       </:left_menu>
       <.body_section>
         <.live_component

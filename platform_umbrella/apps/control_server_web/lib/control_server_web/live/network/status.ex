@@ -42,17 +42,7 @@ defmodule ControlServerWeb.Live.NetworkStatus do
         <.title>Network Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item
-          to="/services/network/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item
-          to="/services/network/status"
-          name="Status"
-          icon="status_online"
-          is_active={true}
-        />
+        <.network_menu active="status" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

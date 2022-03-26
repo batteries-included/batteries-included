@@ -42,25 +42,7 @@ defmodule ControlServerWeb.Live.DevtoolsStatus do
         <.title>Knative Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/devtools/tools" name="Tools" icon="external_link" />
-
-        <.left_menu_item
-          to="/services/devtools/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-
-        <.left_menu_item
-          to="/services/devtools/knative_services"
-          name="Knative Services"
-          icon="collection"
-        />
-        <.left_menu_item
-          to="/services/devtools/status"
-          name="Status"
-          icon="status_online"
-          is_active={true}
-        />
+        <.devtools_menu active="status" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

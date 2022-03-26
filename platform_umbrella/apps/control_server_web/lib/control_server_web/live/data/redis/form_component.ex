@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
     end
   end
 
-    defp send_info(socket, nil, _failover_cluster), do: {:noreply, socket}
+  defp send_info(socket, nil, _failover_cluster), do: {:noreply, socket}
 
   defp send_info(socket, target, failover_cluster) do
     send(target, {socket.assigns.save_info, %{"failover_cluster" => failover_cluster}})

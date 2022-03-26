@@ -37,17 +37,7 @@ defmodule ControlServerWeb.Live.SecurityStatus do
         <.title>Security Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item
-          to="/services/security/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item
-          to="/services/security/status"
-          name="Status"
-          icon="status_online"
-          is_active={true}
-        />
+        <.security_menu active="status" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

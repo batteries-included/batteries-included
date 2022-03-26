@@ -24,18 +24,7 @@ defmodule ControlServerWeb.Live.MonitoringTools do
         <.title>Monitoring Tools</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item
-          to="/services/monitoring/tools"
-          name="Tools"
-          icon="external_link"
-          is_active={true}
-        />
-        <.left_menu_item
-          to="/services/monitoring/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item to="/services/monitoring/status" name="Status" icon="status_online" />
+        <.monitoring_menu active="tools" />
       </:left_menu>
       <.body_section>
         <.h4>Grafana</.h4>

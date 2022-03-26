@@ -24,23 +24,7 @@ defmodule ControlServerWeb.Live.DevtoolsTools do
         <.title>Dev Tools</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item
-          to="/services/devtools/tools"
-          name="Tools"
-          icon="external_link"
-          is_active={true}
-        />
-        <.left_menu_item
-          to="/services/devtools/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item
-          to="/services/devtools/knative_services"
-          name="Knative Services"
-          icon="collection"
-        />
-        <.left_menu_item to="/services/devtools/status" name="Status" icon="status_online" />
+        <.devtools_menu active="tools" />
       </:left_menu>
       <.body_section>
         <.h4>Gitea</.h4>

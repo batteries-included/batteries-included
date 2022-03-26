@@ -42,18 +42,7 @@ defmodule ControlServerWeb.Live.MonitoringStatus do
         <.title>Monitoring Pods</.title>
       </:title>
       <:left_menu>
-        <.left_menu_item to="/services/monitoring/tools" name="Tools" icon="external_link" />
-        <.left_menu_item
-          to="/services/monitoring/settings"
-          name="Service Settings"
-          icon="lightning_bolt"
-        />
-        <.left_menu_item
-          to="/services/monitoring/status"
-          name="Status"
-          icon="status_online"
-          is_active={true}
-        />
+        <.monitoring_menu active="settings" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />
