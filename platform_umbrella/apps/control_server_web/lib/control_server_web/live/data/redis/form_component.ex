@@ -1,6 +1,8 @@
 defmodule ControlServerWeb.Live.Redis.FormComponent do
   use ControlServerWeb, :live_component
 
+  import CommonUI
+
   alias ControlServer.Redis
   alias ControlServer.Redis.FailoverCluster
 
@@ -19,14 +21,22 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:sentinel_name, "rfs-#{failover_cluster.name}")
+     |> assign(:num_instances, failover_cluster.num_redis_instances)
+     |> assign(:num_sentinel_instances, failover_cluster.num_sentinel_instances)
      |> assign(:changeset, changeset)}
   end
 
   @impl true
   def handle_event("validate", %{"failover_cluster" => failover_cluster_params}, socket) do
-    {changeset, _data} = FailoverCluster.validate(failover_cluster_params)
+    {changeset, data} = FailoverCluster.validate(failover_cluster_params)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply,
+     socket
+     |> assign(:changeset, changeset)
+     |> assign(:num_instances, data.num_redis_instances)
+     |> assign(:num_sentinel_instances, data.num_sentinel_instances)
+     |> assign(:sentinel_name, "rfs-#{data.name}")}
   end
 
   def handle_event("save", %{"failover_cluster" => failover_cluster_params}, socket) do
@@ -69,7 +79,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="space-y-10">
       <.form
         let={f}
         for={@changeset}
@@ -78,20 +88,48 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <%= label(f, :name) %>
-        <%= text_input(f, :name) %>
-        <%= error_tag(f, :name) %>
+        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
+          <.form_field
+            type="text_input"
+            form={f}
+            field={:name}
+            placeholder="Name"
+            wrapper_class="sm:col-span-1"
+          />
+          <div class="sm:col-span-1">
+            <.labeled_definition title={"Service Name"} contents={@sentinel_name} />
+          </div>
+          <.form_field
+            type="range_input"
+            input_opts={%{min: 1, max: 5}}
+            form={f}
+            field={:num_redis_instances}
+            placeholder="Number of Instances"
+            wrapper_class="sm:col-span-1"
+          />
+          <div class="sm:col-span-1">
+            <.labeled_definition title={"Number of Instances"} contents={@num_instances} />
+          </div>
 
-        <%= label(f, :num_sentinel_instances) %>
-        <%= number_input(f, :num_sentinel_instances) %>
-        <%= error_tag(f, :num_sentinel_instances) %>
-
-        <%= label(f, :num_redis_instances) %>
-        <%= number_input(f, :num_redis_instances) %>
-        <%= error_tag(f, :num_redis_instances) %>
-
-        <div>
-          <%= submit("Save", phx_disable_with: "Saving...") %>
+          <.form_field
+            type="range_input"
+            input_opts={%{min: 0, max: 5}}
+            form={f}
+            field={:num_sentinel_instances}
+            placeholder="Number of Instances"
+            wrapper_class="sm:col-span-1"
+          />
+          <div class="sm:col-span-1">
+            <.labeled_definition
+              title={"Number of Sentinel Instances"}
+              contents={@num_sentinel_instances}
+            />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
+          <.button type="submit" phx_disable_with="Saving…" class="sm:col-span-2">
+            Save
+          </.button>
         </div>
       </.form>
     </div>

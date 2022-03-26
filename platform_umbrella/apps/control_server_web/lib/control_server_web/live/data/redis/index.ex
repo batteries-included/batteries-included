@@ -57,8 +57,8 @@ defmodule ControlServerWeb.Live.Redis do
           <.thead>
             <.tr>
               <.th>Name</.th>
-              <.th>Num sentinel instances</.th>
               <.th>Num redis instances</.th>
+              <.th>Num sentinel instances</.th>
               <.th></.th>
             </.tr>
           </.thead>
@@ -66,8 +66,8 @@ defmodule ControlServerWeb.Live.Redis do
             <%= for failover_cluster <- @failover_clusters do %>
               <.tr id={"failover_cluster-#{failover_cluster.id}"}>
                 <.td><%= failover_cluster.name %></.td>
-                <.td><%= failover_cluster.num_sentinel_instances %></.td>
                 <.td><%= failover_cluster.num_redis_instances %></.td>
+                <.td><%= failover_cluster.num_sentinel_instances %></.td>
 
                 <.td>
                   <span>
