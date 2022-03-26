@@ -42,7 +42,7 @@ defmodule ControlServerWeb.Live.MonitoringStatus do
         <.title>Monitoring Pods</.title>
       </:title>
       <:left_menu>
-        <.monitoring_menu active="settings" />
+        <.monitoring_menu active="status" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

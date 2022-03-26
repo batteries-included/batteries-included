@@ -7,7 +7,6 @@ defmodule ControlServer.Repo.Migrations.CreateFailoverClusters do
       add :name, :string
       add :num_sentinel_instances, :integer
       add :num_redis_instances, :integer
-      add :memory_request, :string
 
       timestamps()
     end

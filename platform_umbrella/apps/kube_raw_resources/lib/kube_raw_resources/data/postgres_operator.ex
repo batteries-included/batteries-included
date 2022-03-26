@@ -3,7 +3,7 @@ defmodule KubeRawResources.PostgresOperator do
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
-  alias KubeRawResources.DatabaseSettings
+  alias KubeRawResources.DataSettings
 
   @app_name "postgres-operator"
   @postgres_crd_path "priv/manifests/postgres/postgres_operator-crds.yaml"
@@ -211,8 +211,8 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   def deployment(config, namespace) do
-    operator_image = DatabaseSettings.pg_operator_image(config)
-    operator_version = DatabaseSettings.pg_operator_version(config)
+    operator_image = DataSettings.pg_operator_image(config)
+    operator_version = DataSettings.pg_operator_version(config)
 
     %{
       "apiVersion" => "apps/v1",
@@ -332,7 +332,7 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   defp operator_configuration_kubernets(config, false = _include_dev_infrausers) do
-    label_name = DatabaseSettings.cluster_name_label(config)
+    label_name = DataSettings.cluster_name_label(config)
 
     %{
       "oauth_token_secret_name" => "battery-postgres-operator",
@@ -364,7 +364,7 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   defp infra_configmap(config) do
-    namespace = DatabaseSettings.namespace(config)
+    namespace = DataSettings.namespace(config)
 
     B.build_resource(:config_map)
     |> B.app_labels("postgres-operator")
@@ -379,7 +379,7 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   defp infra_secret(config) do
-    namespace = DatabaseSettings.namespace(config)
+    namespace = DataSettings.namespace(config)
 
     B.build_resource(:secret)
     |> B.app_labels("postgres-operator")
@@ -397,7 +397,7 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   def materialize_internal(config) do
-    namespace = DatabaseSettings.namespace(config)
+    namespace = DataSettings.namespace(config)
     infrausers = include_dev_infrausers()
 
     %{}
@@ -409,7 +409,7 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   def materialize_public(config) do
-    namespace = DatabaseSettings.public_namespace(config)
+    namespace = DataSettings.public_namespace(config)
 
     %{}
     |> Map.merge(materialize_in_namespace(config, namespace))

@@ -1,4 +1,4 @@
-defmodule KubeRawResources.DatabaseSettings do
+defmodule KubeRawResources.DataSettings do
   @moduledoc """
   Module for extracting the setting from a map usually a json map from the BaseService ecto
   """
@@ -10,6 +10,9 @@ defmodule KubeRawResources.DatabaseSettings do
   @pg_operator_image "registry.opensource.zalan.do/acid/postgres-operator"
   @pg_operator_version "v1.7.1"
   @pg_operator_cluster_label "battery-pg-cluster"
+
+  @redis_operator_image "quay.io/spotahome/redis-operator"
+  @redis_operator_version "v1.1.1"
 
   def namespace(config), do: Map.get(config, "namespace", @namepace)
   def public_namespace(config), do: Map.get(config, "namespace.public", @public_namepace)
@@ -27,4 +30,10 @@ defmodule KubeRawResources.DatabaseSettings do
 
   def cluster_name_label(config),
     do: Map.get(config, "pg_operator.cluster_label", @pg_operator_cluster_label)
+
+  def redis_operator_image(config),
+    do: Map.get(config, "redis.operator_image", @redis_operator_image)
+
+  def redis_operator_version(config),
+    do: Map.get(config, "redis.operator_version", @redis_operator_version)
 end

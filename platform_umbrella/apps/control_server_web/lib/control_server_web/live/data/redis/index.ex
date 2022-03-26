@@ -59,7 +59,6 @@ defmodule ControlServerWeb.Live.Redis do
               <.th>Name</.th>
               <.th>Num sentinel instances</.th>
               <.th>Num redis instances</.th>
-              <.th>Memory request</.th>
               <.th></.th>
             </.tr>
           </.thead>
@@ -69,7 +68,6 @@ defmodule ControlServerWeb.Live.Redis do
                 <.td><%= failover_cluster.name %></.td>
                 <.td><%= failover_cluster.num_sentinel_instances %></.td>
                 <.td><%= failover_cluster.num_redis_instances %></.td>
-                <.td><%= failover_cluster.memory_request %></.td>
 
                 <.td>
                   <span>

@@ -25,10 +25,10 @@ defmodule ControlServerWeb.Live.SecurityServiceSettings do
     ~H"""
     <.layout>
       <:title>
-        <.title>Service Settings</.title>
+        <.title>Security Settings</.title>
       </:title>
       <:left_menu>
-        <.security_menu active="status" />
+        <.security_menu active="settings" />
       </:left_menu>
       <.body_section>
         <.live_component

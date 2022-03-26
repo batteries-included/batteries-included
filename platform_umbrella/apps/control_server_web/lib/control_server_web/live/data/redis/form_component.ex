@@ -90,10 +90,6 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
         <%= number_input(f, :num_redis_instances) %>
         <%= error_tag(f, :num_redis_instances) %>
 
-        <%= label(f, :memory_request) %>
-        <%= text_input(f, :memory_request) %>
-        <%= error_tag(f, :memory_request) %>
-
         <div>
           <%= submit("Save", phx_disable_with: "Saving...") %>
         </div>

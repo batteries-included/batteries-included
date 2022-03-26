@@ -16,7 +16,7 @@ defmodule ControlServerWeb.FailoverClusterLiveTest do
       {:ok, _index_live, html} = live(conn, Routes.redis_path(conn, :index))
 
       assert html =~ "Listing Failover clusters"
-      assert html =~ failover_cluster.memory_request
+      assert html =~ failover_cluster.name
     end
 
     test "links to new cluster form", %{conn: conn} do

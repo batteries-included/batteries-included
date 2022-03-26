@@ -22,7 +22,7 @@ defmodule ControlServerWeb.Live.DataServiceSettings do
   end
 
   defp services do
-    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/database") end)
+    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/data") end)
   end
 
   @impl true
