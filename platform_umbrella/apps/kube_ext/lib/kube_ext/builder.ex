@@ -191,6 +191,22 @@ defmodule KubeExt.Builder do
     }
   end
 
+  def build_cluster_role_ref(cluster_role_name) do
+    %{
+      "apiGroup" => "rbac.authorization.k8s.io",
+      "kind" => "ClusterRole",
+      "name" => cluster_role_name
+    }
+  end
+
+  def build_service_account(account_name, namespace) do
+    %{
+      "kind" => "ServiceAccount",
+      "name" => account_name,
+      "namespace" => namespace
+    }
+  end
+
   def add_capture_to_rule(rule) do
     update_in(rule, ~w(http paths), fn paths ->
       Enum.map(paths || [], &add_capture_to_path/1)
