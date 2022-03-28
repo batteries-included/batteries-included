@@ -46,7 +46,7 @@ defmodule KubeResources.MinioOperator do
     |> yaml()
     |> Enum.at(0)
     |> update_in(["spec", "conversion", "webhook", "clientConfig", "service"], fn v ->
-      Map.merge(v , %{
+      Map.merge(v, %{
         "name" => @operator_service,
         "namespace" => namespace,
         "port" => @operator_port
