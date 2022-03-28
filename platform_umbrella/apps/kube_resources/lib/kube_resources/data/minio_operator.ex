@@ -67,7 +67,7 @@ defmodule KubeResources.MinioOperator do
     namespace = DataSettings.namespace(config)
 
     B.build_resource(:service_account)
-    |> B.name(@console_service_account)
+    |> B.name(@operator_service_account)
     |> B.namespace(namespace)
     |> B.app_labels(@app)
   end
@@ -76,8 +76,8 @@ defmodule KubeResources.MinioOperator do
     namespace = DataSettings.namespace(config)
 
     port_values = %{
-      "CONSOLE_PORT" => @console_port,
-      "CONSOLE_TLS_PORT" => @console_tls_port
+      "CONSOLE_PORT" => "#{@console_port}",
+      "CONSOLE_TLS_PORT" => "#{@console_tls_port}"
     }
 
     B.build_resource(:config_map)
