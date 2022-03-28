@@ -1185,6 +1185,7 @@ defmodule KubeRawResources.IstioIstiod do
     B.build_resource(:config_map)
     |> B.namespace(namespace)
     |> B.name("istio")
+    |> B.app_labels(@istiod_app)
     |> Map.put("data", data)
   end
 

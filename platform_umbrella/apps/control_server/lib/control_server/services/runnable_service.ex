@@ -25,6 +25,10 @@ defmodule ControlServer.Services.RunnableService do
         service_type: :database_internal,
         dependencies: [:database]
       },
+      %__MODULE__{
+        path: "/data/minio/operator",
+        service_type: :minio_operator
+      },
       # Battery
       %__MODULE__{path: "/battery/core", service_type: :battery},
       %__MODULE__{
