@@ -5,13 +5,13 @@ defmodule ControlServerWeb.UsageReportControllerTest do
   alias ControlServer.Usage.UsageReport
 
   @create_attrs %{
-    namespace_report: %{},
+    pod_report: %{},
     node_report: %{},
     num_nodes: 42,
     num_pods: 44
   }
   @update_attrs %{
-    namespace_report: %{},
+    pod_report: %{},
     node_report: %{},
     num_nodes: 43,
     num_pods: 69
@@ -42,7 +42,7 @@ defmodule ControlServerWeb.UsageReportControllerTest do
 
       assert %{
                "id" => ^id,
-               "namespace_report" => %{},
+               "pod_report" => %{},
                "node_report" => %{},
                "num_nodes" => 42,
                "num_pods" => 44
@@ -68,7 +68,7 @@ defmodule ControlServerWeb.UsageReportControllerTest do
 
       assert %{
                "id" => ^id,
-               "namespace_report" => %{},
+               "pod_report" => %{},
                "node_report" => %{},
                "num_nodes" => 43,
                "num_pods" => 69

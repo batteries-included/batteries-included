@@ -23,6 +23,9 @@ defmodule KubeState do
   @spec stateful_sets(atom | :ets.tid()) :: list
   def stateful_sets(t \\ @default_table), do: get_all(t, :stateful_sets, [])
 
+  @spec nodes(atom | :ets.tid()) :: list
+  def nodes(t \\ @default_table), do: get_all(t, :nodes, [])
+
   def get_all(table, res_type) do
     case KubeState.Runner.get(table, res_type) do
       {:ok, result} ->

@@ -14,7 +14,7 @@ defmodule HomeBase.Usage.UsageReport do
   schema "usage_reports" do
     field :external_id, Ecto.UUID
     field :generated_at, :utc_datetime_usec
-    field :namespace_report, :map
+    field :pod_report, :map
     field :node_report, :map
     field :num_nodes, :integer
     field :num_pods, :integer
@@ -28,7 +28,7 @@ defmodule HomeBase.Usage.UsageReport do
   def changeset(usage_report, attrs) do
     usage_report
     |> cast(attrs, [
-      :namespace_report,
+      :pod_report,
       :node_report,
       :num_nodes,
       :num_pods,
@@ -36,8 +36,6 @@ defmodule HomeBase.Usage.UsageReport do
       :generated_at
     ])
     |> validate_required([
-      :namespace_report,
-      :external_id,
       :generated_at
     ])
   end
