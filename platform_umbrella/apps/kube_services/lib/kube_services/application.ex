@@ -65,7 +65,17 @@ defmodule KubeServices.Application do
          ]},
         id: ResourceWatcher.StatefulSets
       ),
+      Supervisor.child_spec(
+        {Bella.Watcher.Worker,
+         [
+           watcher: ResourceWatcher,
+           connection_func: &ConnectionPool.get/0,
+           extra: %{resource_type: :nodes, table_name: KubeState.default_state_table()}
+         ]},
+        id: ResourceWatcher.Nodes
+      ),
       {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
+      KubeServices.Usage.Poller,
       KubeServices.BaseServicesSupervisor,
       KubeServices.BaseServicesHydrator
     ]

@@ -13,7 +13,7 @@ defmodule HomeBaseWeb.UsageReportView do
   def render("usage_report.json", %{usage_report: usage_report}) do
     %{
       id: usage_report.id,
-      namespace_report: usage_report.namespace_report,
+      pod_report: usage_report.pod_report,
       node_report: usage_report.node_report,
       num_nodes: usage_report.num_nodes,
       num_pods: usage_report.num_pods,

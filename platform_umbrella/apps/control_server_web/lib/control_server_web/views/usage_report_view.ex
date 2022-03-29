@@ -14,7 +14,7 @@ defmodule ControlServerWeb.UsageReportView do
     %{
       id: usage_report.id,
       inserted_ad: usage_report.inserted_at,
-      namespace_report: usage_report.namespace_report,
+      pod_report: usage_report.pod_report,
       node_report: usage_report.node_report,
       num_nodes: usage_report.num_nodes,
       num_pods: usage_report.num_pods

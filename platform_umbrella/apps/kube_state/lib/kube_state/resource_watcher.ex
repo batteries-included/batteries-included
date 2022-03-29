@@ -1,7 +1,7 @@
 defmodule KubeState.ResourceWatcher do
   @behaviour Bella.Watcher
 
-  import KubeState.Runner
+  alias KubeState.Runner
   alias Bella.Watcher.State
 
   require Logger
@@ -12,14 +12,14 @@ defmodule KubeState.ResourceWatcher do
     state_table = state_table(watcher_state)
     resource_type = resource_type(watcher_state)
     Logger.debug("Add event for #{resource_type}", resource: resource, state_table: state_table)
-    add(state_table, resource_type, resource)
+    Runner.add(state_table, resource_type, resource)
   end
 
   def delete(resource, %State{} = watcher_state) do
     state_table = state_table(watcher_state)
     resource_type = resource_type(watcher_state)
     Logger.debug("Delete event for #{resource_type} removing from #{state_table}")
-    delete(state_table, resource_type, resource)
+    Runner.delete(state_table, resource_type, resource)
   end
 
   def modify(resource, %State{} = watcher_state) do
@@ -28,7 +28,7 @@ defmodule KubeState.ResourceWatcher do
 
     Logger.debug("Update event for #{resource_type}", resource: resource, state_table: state_table)
 
-    update(state_table, resource_type, resource)
+    Runner.update(state_table, resource_type, resource)
   end
 
   def operation(%State{} = watcher_state) do
@@ -47,6 +47,9 @@ defmodule KubeState.ResourceWatcher do
 
       :stateful_sets ->
         @client.list("apps/v1", "StatefulSets")
+
+      :nodes ->
+        @client.list("v1", "Node")
     end
   end
 

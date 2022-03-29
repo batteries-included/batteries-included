@@ -8,7 +8,7 @@ defmodule HomeBaseWeb.UsageReportLiveTest do
   @create_attrs %{
     external_id: "7488a646-e31f-11e4-aace-600308960662",
     generated_at: "2010-04-17T14:00:00Z",
-    namespace_report: %{},
+    pod_report: %{},
     node_report: %{},
     num_nodes: 42,
     num_pods: 44

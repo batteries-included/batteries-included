@@ -106,9 +106,7 @@ defmodule KubeState.Runner do
   end
 
   defp is_same(r_one, r_two) do
-    api_version(r_one) == api_version(r_two) &&
-      kind(r_one) == kind(r_two) &&
-      namespace(r_one) == namespace(r_two) &&
+    namespace(r_one) == namespace(r_two) &&
       name(r_one) == name(r_two)
   end
 end

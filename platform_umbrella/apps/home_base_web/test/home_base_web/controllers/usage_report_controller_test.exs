@@ -7,7 +7,7 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
   @create_attrs %{
     external_id: "7488a646-e31f-11e4-aace-600308960662",
     generated_at: "2010-04-17T14:00:00Z",
-    namespace_report: %{},
+    pod_report: %{},
     node_report: %{},
     num_nodes: 42,
     num_pods: 43
@@ -15,7 +15,7 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
   @update_attrs %{
     external_id: "7488a646-e31f-11e4-aace-600308960668",
     generated_at: "2011-05-18T15:01:01Z",
-    namespace_report: %{},
+    pod_report: %{},
     node_report: %{},
     num_nodes: 44,
     num_pods: 45
@@ -23,7 +23,7 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
   @invalid_attrs %{
     external_id: nil,
     generated_at: nil,
-    namespace_report: nil,
+    pod_report: nil,
     node_report: nil,
     num_nodes: nil,
     num_pods: nil
@@ -56,7 +56,7 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
                "id" => ^id,
                "external_id" => "7488a646-e31f-11e4-aace-600308960662",
                "generated_at" => "2010-04-17T14:00:00.000000Z",
-               "namespace_report" => %{},
+               "pod_report" => %{},
                "node_report" => %{},
                "num_nodes" => 42,
                "num_pods" => 43
@@ -89,7 +89,7 @@ defmodule HomeBaseWeb.UsageReportControllerTest do
                "id" => ^id,
                "external_id" => "7488a646-e31f-11e4-aace-600308960668",
                "generated_at" => "2011-05-18T15:01:01.000000Z",
-               "namespace_report" => %{},
+               "pod_report" => %{},
                "node_report" => %{},
                "num_nodes" => 44,
                "num_pods" => 45

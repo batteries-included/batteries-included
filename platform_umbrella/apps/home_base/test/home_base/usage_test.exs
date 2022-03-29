@@ -9,7 +9,7 @@ defmodule HomeBase.UsageTest do
     @valid_attrs %{
       external_id: "7488a646-e31f-11e4-aace-600308960662",
       generated_at: "2010-04-17T14:00:00.000000Z",
-      namespace_report: %{},
+      pod_report: %{},
       node_report: %{},
       num_nodes: 42,
       num_pods: 44
@@ -17,7 +17,7 @@ defmodule HomeBase.UsageTest do
     @update_attrs %{
       external_id: "7488a646-e31f-11e4-aace-600308960668",
       generated_at: "2011-05-18T15:01:01.000000Z",
-      namespace_report: %{},
+      pod_report: %{},
       node_report: %{},
       num_nodes: 45,
       num_pods: 46
@@ -25,7 +25,7 @@ defmodule HomeBase.UsageTest do
     @invalid_attrs %{
       external_id: nil,
       generated_at: nil,
-      namespace_report: nil,
+      pod_report: nil,
       node_report: nil,
       num_nodes: nil,
       num_pods: nil
@@ -57,7 +57,7 @@ defmodule HomeBase.UsageTest do
       assert usage_report.generated_at ==
                DateTime.from_naive!(~N[2010-04-17T14:00:00.000000Z], "Etc/UTC")
 
-      assert usage_report.namespace_report == %{}
+      assert usage_report.pod_report == %{}
       assert usage_report.node_report == %{}
       assert usage_report.num_nodes == 42
       assert usage_report.num_pods == 44
@@ -78,7 +78,7 @@ defmodule HomeBase.UsageTest do
       assert usage_report.generated_at ==
                DateTime.from_naive!(~N[2011-05-18T15:01:01.000000Z], "Etc/UTC")
 
-      assert usage_report.namespace_report == %{}
+      assert usage_report.pod_report == %{}
       assert usage_report.node_report == %{}
       assert usage_report.num_nodes == 45
       assert usage_report.num_pods == 46

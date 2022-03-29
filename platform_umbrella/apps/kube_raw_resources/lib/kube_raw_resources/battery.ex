@@ -46,15 +46,14 @@ defmodule KubeRawResources.Battery do
     namespace = BatterySettings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
-    |> B.name("battery-cluster-admin")
+    |> B.name("battery-admin-cluster-admin")
     |> B.app_labels(@app_name)
-    |> Map.put("roleRef", %{
-      "apiGroup" => "rbac.authorixation.k8s.io",
-      "kind" => "ClusterRole",
-      "name" => "cluster-admin"
-    })
+    |> Map.put(
+      "roleRef",
+      B.build_cluster_role_ref("cluster-admin")
+    )
     |> Map.put("subjects", [
-      %{"kind" => "ServiceAccount", "name" => "battery-admin", "namespace" => namespace}
+      B.build_service_account("battery-admin", namespace)
     ])
   end
 

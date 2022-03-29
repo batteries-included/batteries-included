@@ -41,7 +41,7 @@ defmodule ControlServer.Umbrella.MixProject do
           kube_ext: :permanent,
           kube_services: :permanent,
           control_server_web: :permanent,
-          usage_poller: :permanent
+          home_base_client: :permanent
         ]
       ],
       home_base: [

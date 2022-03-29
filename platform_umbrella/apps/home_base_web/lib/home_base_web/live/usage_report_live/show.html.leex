@@ -11,7 +11,12 @@
 </ul>
 
 <pre>
-  <%= @usage_report.namespace_report |> Jason.encode!(pretty: true) %>
+  <%= @usage_report.pod_report |> Jason.encode!(pretty: true) %>
 </pre>
+
+<pre>
+  <%= @usage_report.node_report |> Jason.encode!(pretty: true) %>
+</pre>
+
 
 <span><%= live_redirect "Back", to: Routes.usage_report_index_path(@socket, :index) %></span>
