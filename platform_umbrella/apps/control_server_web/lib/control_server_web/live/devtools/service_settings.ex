@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Live.DevtoolsServiceSettings do
         <.live_component
           module={RunnableServiceList}
           services={@services}
-          id={"devtools_base_services"}
+          id="devtools_base_services"
         />
       </.body_section>
     </.layout>

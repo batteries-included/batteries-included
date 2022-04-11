@@ -97,7 +97,7 @@ defmodule ControlServerWeb.Live.Postgres.FormComponent do
             wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
-            <.labeled_definition title={"Service Name"} contents={@full_name} />
+            <.labeled_definition title="Service Name" contents={@full_name} />
           </div>
           <.form_field
             type="range_input"
@@ -108,7 +108,7 @@ defmodule ControlServerWeb.Live.Postgres.FormComponent do
             wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
-            <.labeled_definition title={"Number of Instances"} contents={@num_instances} />
+            <.labeled_definition title="Number of Instances" contents={@num_instances} />
           </div>
           <.form_field
             type="text_input"

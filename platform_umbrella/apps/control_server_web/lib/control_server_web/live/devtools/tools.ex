@@ -30,7 +30,7 @@ defmodule ControlServerWeb.Live.DevtoolsTools do
         <.h4>Gitea</.h4>
         <.button to="//control.172.30.0.4.sslip.io/x/gitea" variant="shadow" link_type="a">
           Open Gitea
-          <Heroicons.Solid.external_link class={"w-5 h-5"} />
+          <Heroicons.Solid.external_link class="w-5 h-5" />
         </.button>
       </.body_section>
     </.layout>

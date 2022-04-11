@@ -86,7 +86,7 @@ defmodule ControlServerWeb.RunnableServiceList do
       <.td>
         <%= if not @service_info.active do %>
           <.button
-            label={"Start Service"}
+            label="Start Service"
             variant="shadow"
             phx-click={:start}
             phx-value-path={@service_info.service.path}

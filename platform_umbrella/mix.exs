@@ -7,29 +7,22 @@ defmodule ControlServer.Umbrella.MixProject do
       version: "0.3.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test
-      ],
       releases: releases(),
-      aliases: aliases()
+      aliases: aliases(),
+      test_coverage: [
+        summary: [threshold: 35]
+      ]
     ]
   end
 
   defp deps do
     [
-      {:telemetry, "~> 1.0", override: true},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:sobelow, "~> 0.11", only: :dev},
-      {:heex_formatter, github: "feliperenan/heex_formatter", only: [:dev], runtime: false},
-      {:excoveralls, "~> 0.14", only: :test}
+      {:sobelow, "~> 0.11", only: :dev}
     ]
   end
 

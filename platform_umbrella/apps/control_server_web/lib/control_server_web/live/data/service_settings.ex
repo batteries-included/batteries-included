@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.DataServiceSettings do
         <.data_menu active="settings" />
       </:left_menu>
       <.body_section>
-        <.live_component module={RunnableServiceList} services={@services} id={"data_base_services"} />
+        <.live_component module={RunnableServiceList} services={@services} id="data_base_services" />
       </.body_section>
     </.layout>
     """

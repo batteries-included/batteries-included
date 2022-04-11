@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Live.MLServiceSettings do
         <.live_component
           module={RunnableServiceList}
           services={@services}
-          id={"database_base_services"}
+          id="database_base_services"
         />
       </.body_section>
     </.layout>

@@ -86,6 +86,5 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :ml), do: ML.Base.materialize(config)
   def materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
 
-
   def materialize(nil, _), do: %{}
 end

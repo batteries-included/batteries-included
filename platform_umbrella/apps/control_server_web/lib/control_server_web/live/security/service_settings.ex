@@ -34,7 +34,7 @@ defmodule ControlServerWeb.Live.SecurityServiceSettings do
         <.live_component
           module={RunnableServiceList}
           services={@services}
-          id={"security_base_services"}
+          id="security_base_services"
         />
       </.body_section>
     </.layout>

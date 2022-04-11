@@ -96,7 +96,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
-            <.labeled_definition title={"URL"} contents={@url} />
+            <.labeled_definition title="URL" contents={@url} />
           </div>
         </div>
         <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">

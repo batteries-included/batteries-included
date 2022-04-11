@@ -22,15 +22,14 @@ defmodule ControlServer.Services do
       [%BaseService{}, ...]
 
   """
-  def all do
-    base_query()
+  def all(query \\ nil) do
+    (query || base_query())
     |> select([:id, :root_path, :service_type, :updated_at, :inserted_at])
     |> Repo.all()
   end
 
   def all_including_config do
-    base_query()
-    |> Repo.all()
+    Repo.all(base_query())
   end
 
   @doc """
@@ -204,11 +203,11 @@ defmodule ControlServer.Services do
     end)
   end
 
-  defp base_query do
+  def base_query do
     from(bs in BaseService)
   end
 
   def with_service_type_in(query \\ BaseService, service_types) do
-    query |> where([bs], bs.service_type in ^service_types)
+    where(query, [bs], bs.service_type in ^service_types)
   end
 end

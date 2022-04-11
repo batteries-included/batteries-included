@@ -1,18 +1,23 @@
-.PHONY: test lint analyze docs i
+.PHONY: compile test lint analyze format
 
-all: test lint  format docs analyze
+all: compile test lint format analyze
+
+compile:
+	mix compile --force --warnings-as-errors
 
 lint:
 	mix credo
 
 test:
-	mix test --cover
+	mix test --cover --export-coverage default
+	mix test.coverage
 
 analyze:
 	mix dialyzer
 
-docs:
-	mix docs
+deps.get:
+	mix deps.get
+	mix deps.compile
 
-format:
-	mix format 
+format: deps.get
+	mix fmt

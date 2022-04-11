@@ -30,20 +30,20 @@ defmodule ControlServerWeb.Live.MonitoringTools do
         <.h4>Grafana</.h4>
         <.button to="//anton2:8081/x/grafana" variant="shadow" link_type="a">
           Open Grafana
-          <Heroicons.Solid.external_link class={"w-5 h-5"} />
+          <Heroicons.Solid.external_link class="w-5 h-5" />
         </.button>
       </.body_section>
       <.body_section>
         <.h4>Prometheus</.h4>
         <.button to="//anton2:8081/x/prometheus" variant="shadow" link_type="a">
           Open Prometheus
-          <Heroicons.Solid.external_link class={"w-5 h-5"} />
+          <Heroicons.Solid.external_link class="w-5 h-5" />
         </.button>
       </.body_section>
       <.body_section>
         <.button to="//anton2:8081/x/alert_manager" variant="shadow" link_type="a">
           Open Alert Manger
-          <Heroicons.Solid.external_link class={"w-5 h-5"} />
+          <Heroicons.Solid.external_link class="w-5 h-5" />
         </.button>
       </.body_section>
     </.layout>

@@ -14,17 +14,22 @@ defmodule ControlServerWeb.Live.MonitoringServiceSettings do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :services, services())}
+    {:ok,
+     socket
+     |> assign(:runnable_services, runnable_services())
+     |> assign(:base_services, base_services())}
   end
 
-  defp services do
+  defp runnable_services do
     Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/monitoring") end)
   end
 
-  def running_services do
-    services()
-    |> Enum.map(fn possible -> possible.service_type end)
-    |> Services.from_service_types()
+  defp base_services do
+    service_types = Enum.map(runnable_services(), fn rs -> rs.service_type end)
+
+    Services.base_query()
+    |> Services.with_service_type_in(service_types)
+    |> Services.all()
   end
 
   @impl true
@@ -41,7 +46,7 @@ defmodule ControlServerWeb.Live.MonitoringServiceSettings do
         <.live_component
           module={RunnableServiceList}
           services={@services}
-          id={"monitoring_base_services"}
+          id="monitoring_base_services"
         />
       </.body_section>
     </.layout>
