@@ -8,10 +8,10 @@ defmodule KubeResources.VirtualService do
   alias KubeResources.Notebooks
   alias KubeResources.Prometheus
 
-  def materialize(config) do
-    Services.list_base_services()
+  def materialize(_config) do
+    Services.all_including_config()
     |> Enum.map(fn bs ->
-      {"/svcs/#{bs.id}/#{bs.service_type}", virtual_service(bs.service_type, config)}
+      {"/svcs/#{bs.id}/#{bs.service_type}", virtual_service(bs.service_type, bs.config)}
     end)
     |> Map.new()
   end

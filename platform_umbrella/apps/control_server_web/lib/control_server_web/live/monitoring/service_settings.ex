@@ -7,6 +7,7 @@ defmodule ControlServerWeb.Live.MonitoringServiceSettings do
   import ControlServerWeb.LeftMenuLayout
 
   alias ControlServer.Services.RunnableService
+  alias ControlServer.Services
   alias ControlServerWeb.RunnableServiceList
 
   require Logger
@@ -18,6 +19,12 @@ defmodule ControlServerWeb.Live.MonitoringServiceSettings do
 
   defp services do
     Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/monitoring") end)
+  end
+
+  def running_services do
+    services()
+    |> Enum.map(fn possible -> possible.service_type end)
+    |> Services.from_service_types()
   end
 
   @impl true

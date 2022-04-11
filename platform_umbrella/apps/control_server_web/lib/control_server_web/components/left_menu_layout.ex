@@ -20,8 +20,10 @@ defmodule ControlServerWeb.LeftMenuLayout do
     |> assign_new(:icon, fn -> "database" end)
   end
 
-  defp assigm_menu_defaults(assigns) do
-    assign_new(assigns, :active, fn -> "" end)
+  defp assign_menu_defaults(assigns) do
+    assigns
+    |> assign_new(:active, fn -> "" end)
+    |> assign_new(:running_services, fn -> [] end)
   end
 
   defp left_menu_item(assigns) do
@@ -73,7 +75,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   defdelegate title(assigns), to: Layout
 
   def data_menu(assigns) do
-    assigns = assigm_menu_defaults(assigns)
+    assigns = assign_menu_defaults(assigns)
 
     ~H"""
     <.left_menu_item to="/services/data" name="Home" icon="home" is_active={@active == "home"} />
@@ -105,7 +107,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   end
 
   def devtools_menu(assigns) do
-    assigns = assigm_menu_defaults(assigns)
+    assigns = assign_menu_defaults(assigns)
 
     ~H"""
     <.left_menu_item
@@ -136,7 +138,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   end
 
   def ml_menu(assigns) do
-    assigns = assigm_menu_defaults(assigns)
+    assigns = assign_menu_defaults(assigns)
 
     ~H"""
     <.left_menu_item to="/services/ml" name="Home" icon="home" is_active={@active == "home"} />
@@ -162,7 +164,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   end
 
   def monitoring_menu(assigns) do
-    assigns = assigm_menu_defaults(assigns)
+    assigns = assign_menu_defaults(assigns)
 
     ~H"""
     <.left_menu_item
@@ -187,7 +189,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   end
 
   def security_menu(assigns) do
-    assigns = assigm_menu_defaults(assigns)
+    assigns = assign_menu_defaults(assigns)
 
     ~H"""
     <.left_menu_item
@@ -206,7 +208,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   end
 
   def network_menu(assigns) do
-    assigns = assigm_menu_defaults(assigns)
+    assigns = assign_menu_defaults(assigns)
 
     ~H"""
     <.left_menu_item
