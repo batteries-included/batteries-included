@@ -2,10 +2,12 @@ defmodule ControlServerWeb.Layout do
   use Phoenix.Component
   use PetalComponents
 
+  import CommonUI.Icons.Devtools
+
   alias CommonUI.Layout, as: BaseLayout
 
-  @default_menu_item_class ["hover:bg-astral-100", "hover:text-pink-500", "text-gray-500"]
-  @default_icon_class ["h-6", "w-6", "text-astral-500", "group-hover:text-pink-500"]
+  @default_menu_item_class "hover:bg-astral-100 hover:text-pink-500 text-gray-500"
+  @default_icon_class "h-6 w-6 text-astral-500 group-hover:text-pink-500"
 
   defp assign_defaults(assigns) do
     assigns
@@ -34,14 +36,14 @@ defmodule ControlServerWeb.Layout do
         <Heroicons.Outline.beaker class={@class} />
       <% "chart_bar" -> %>
         <Heroicons.Outline.chart_bar class={@class} />
-      <% "devtools" -> %>
-        <CommonUI.Icons.Devtools.render class={@class} />
       <% "globe_alt" -> %>
         <Heroicons.Outline.globe_alt class={@class} />
       <% "lock_closed" -> %>
         <Heroicons.Outline.lock_closed class={@class} />
       <% "sparkles" -> %>
         <Heroicons.Outline.sparkles class={@class} />
+      <% "devtools" -> %>
+        <.devtools_icon class={@class} />
     <% end %>
     """
   end

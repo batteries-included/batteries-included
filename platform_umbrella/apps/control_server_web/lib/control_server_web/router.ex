@@ -24,7 +24,6 @@ defmodule ControlServerWeb.Router do
 
     live "/services/monitoring/settings", Live.MonitoringServiceSettings, :index
     live "/services/monitoring/status", Live.MonitoringStatus, :index
-    live "/services/monitoring/tools", Live.MonitoringTools, :index
     live "/services/monitoring/prometheus", Live.Prometheus, :index
     live "/services/monitoring/alert_manager", Live.Alertmanager, :index
     live "/services/monitoring/grafana", Live.Grafana, :index
@@ -42,7 +41,6 @@ defmodule ControlServerWeb.Router do
 
     live "/services/devtools/settings", Live.DevtoolsServiceSettings, :index
     live "/services/devtools/status", Live.DevtoolsStatus, :index
-    live "/services/devtools/tools", Live.DevtoolsTools, :index
     live "/services/devtools/knative_services", Live.KnativeServicesIndex, :index
     live "/services/devtools/knative_services/new", Live.KnativeNew, :new
     live "/services/devtools/knative_services/:id/edit", Live.KnativeEdit, :edit

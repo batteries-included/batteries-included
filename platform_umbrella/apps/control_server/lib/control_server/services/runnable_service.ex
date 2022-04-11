@@ -111,6 +111,16 @@ defmodule ControlServer.Services.RunnableService do
 
   def services_map, do: services() |> Enum.map(fn s -> {s.service_type, s} end) |> Enum.into(%{})
 
+  def prefix(prefix) do
+    Enum.filter(services(), fn s -> String.starts_with?(s.path, prefix) end)
+  end
+
+  def activate!(service_type) when is_binary(service_type) do
+    service_type
+    |> String.to_atom()
+    |> activate!()
+  end
+
   def activate!(service_type) when is_atom(service_type) do
     Logger.debug("activating #{service_type}")
     runnable = Map.get(services_map(), service_type)

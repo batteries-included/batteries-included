@@ -5,31 +5,40 @@ defmodule ControlServerWeb.Live.MonitoringServiceSettings do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.RunnableServiceList
 
   alias ControlServer.Services.RunnableService
   alias ControlServer.Services
-  alias ControlServerWeb.RunnableServiceList
 
   require Logger
 
   @impl true
   def mount(_params, _session, socket) do
+    EventCenter.BaseService.subscribe()
+
     {:ok,
      socket
      |> assign(:runnable_services, runnable_services())
      |> assign(:base_services, base_services())}
   end
 
-  defp runnable_services do
-    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/monitoring") end)
-  end
+  defp runnable_services, do: RunnableService.prefix("/monitoring")
+
+  defp runnable_service_types, do: Enum.map(runnable_services(), fn rs -> rs.service_type end)
 
   defp base_services do
-    service_types = Enum.map(runnable_services(), fn rs -> rs.service_type end)
+    Services.from_service_types(runnable_service_types())
+  end
 
-    Services.base_query()
-    |> Services.with_service_type_in(service_types)
-    |> Services.all()
+  @impl true
+  def handle_info({_event_type, %Services.BaseService{} = _bs}, socket) do
+    {:noreply, assign(socket, :base_services, base_services())}
+  end
+
+  @impl true
+  def handle_event("start", %{"service-type" => service_type, "value" => _}, socket) do
+    RunnableService.activate!(service_type)
+    {:noreply, socket}
   end
 
   @impl true
@@ -40,14 +49,10 @@ defmodule ControlServerWeb.Live.MonitoringServiceSettings do
         <.title>Monitoring Settings</.title>
       </:title>
       <:left_menu>
-        <.monitoring_menu active="settings" />
+        <.monitoring_menu active="settings" base_services={@base_services} />
       </:left_menu>
       <.body_section>
-        <.live_component
-          module={RunnableServiceList}
-          services={@services}
-          id="monitoring_base_services"
-        />
+        <.services_table runnable_services={@runnable_services} base_services={@base_services} />
       </.body_section>
     </.layout>
     """
