@@ -25,8 +25,10 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
-      {:telemetry, "~> 1.0", override: true},
-      {:k8s, "~> 1.1"}
+      {:telemetry, "~> 1.1"},
+      {:k8s, "~> 1.1"},
+      # Time
+      {:timex, "~> 3.7"}
     ]
   end
 

@@ -73,7 +73,7 @@ defmodule ControlServerWeb.Layout do
         <.menu_item to="/services/devtools/settings" name="Devtools" icon="devtools" />
         <.menu_item to="/services/security/settings" name="Security" icon="lock_closed" />
         <.menu_item to="/services/network/settings" name="Network" icon="globe_alt" />
-        <.menu_item to="/internal" name="Magic" icon="sparkles" />
+        <.menu_item to="/internal/pods" name="Magic" icon="sparkles" />
       </:main_menu>
       <%= render_slot(@inner_block) %>
     </BaseLayout.layout>

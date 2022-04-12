@@ -1,19 +1,7 @@
-defmodule ControlServer.Services.Pods do
+defmodule KubeExt.Pods do
   @moduledoc """
   Get all the pods running for the services.
   """
-
-  @namespace "battery-core"
-  @client K8s.Client
-
-  def get(namespace \\ @namespace) do
-    operation = @client.list("v1", :pods, namespace: namespace)
-
-    with {:ok, res} <- @client.run(KubeExt.ConnectionPool.get(:default), operation) do
-      KubeExt.Resource.items(res)
-    end
-  end
-
   def summarize(nil) do
   end
 

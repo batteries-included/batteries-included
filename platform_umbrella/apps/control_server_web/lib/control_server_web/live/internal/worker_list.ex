@@ -26,6 +26,12 @@ defmodule ControlServerWeb.Live.WorkerList do
   def render(assigns) do
     ~H"""
     <.layout>
+      <:title>
+        <.title>Worker Status</.title>
+      </:title>
+      <:left_menu>
+        <.magic_menu active="workers" />
+      </:left_menu>
       <.body_section>
         <.services_table states={@service_states} />
       </.body_section>

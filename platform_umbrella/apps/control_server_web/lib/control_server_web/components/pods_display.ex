@@ -1,17 +1,16 @@
-defmodule ControlServerWeb.PodDisplay do
+defmodule ControlServerWeb.PodsDisplay do
   use Phoenix.Component
 
   import CommonUI.Table
-  import PetalComponents.Typography
 
   def pods_display(assigns) do
     ~H"""
-    <.h3>
-      Pods
-    </.h3>
     <.table>
       <.thead>
         <.tr>
+          <.th>
+            Namespace
+          </.th>
           <.th>
             Name
           </.th>
@@ -36,6 +35,9 @@ defmodule ControlServerWeb.PodDisplay do
   defp pod_row(assigns) do
     ~H"""
     <.tr>
+      <.td>
+        <%= @pod["metadata"]["namespace"] %>
+      </.td>
       <.td>
         <%= @pod["metadata"]["name"] %>
       </.td>

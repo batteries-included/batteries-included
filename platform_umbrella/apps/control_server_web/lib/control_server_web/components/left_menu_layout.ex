@@ -108,12 +108,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
-    <.left_menu_item
-      to="/services/data/status"
-      name="Status"
-      icon="status_online"
-      is_active={@active == "status"}
-    />
     """
   end
 
@@ -132,12 +126,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
       name="Knative Services"
       icon="collection"
       is_active={@active == "knative"}
-    />
-    <.left_menu_item
-      to="/services/devtools/status"
-      name="Status"
-      icon="status_online"
-      is_active={@active == "status"}
     />
 
     <%= for base_service <- @base_services do %>
@@ -163,12 +151,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
-    <.left_menu_item
-      to="/services/ml/status"
-      name="Status"
-      icon="status_online"
-      is_active={@active == "status"}
-    />
     """
   end
 
@@ -181,12 +163,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
       name="Service Settings"
       icon="lightning_bolt"
       is_active={@active == "settings"}
-    />
-    <.left_menu_item
-      to="/services/monitoring/status"
-      name="Status"
-      icon="status_online"
-      is_active={@active == "status"}
     />
 
     <%= for base_service <- @base_services do %>
@@ -225,12 +201,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
-    <.left_menu_item
-      to="/services/security/status"
-      name="Status"
-      icon="status_online"
-      is_active={@active == "status"}
-    />
     """
   end
 
@@ -244,11 +214,30 @@ defmodule ControlServerWeb.LeftMenuLayout do
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
+    """
+  end
+
+  def magic_menu(assigns) do
+    assigns = assign_menu_defaults(assigns)
+
+    ~H"""
     <.left_menu_item
-      to="/services/network/status"
-      name="Status"
-      icon="status_online"
-      is_active={@active == "status"}
+      to="/internal/workers"
+      name="Worker Status"
+      icon="lightning_bolt"
+      is_active={@active == "workers"}
+    />
+    <.left_menu_item
+      to="/internal/pods"
+      name="Pods"
+      icon="lightning_bolt"
+      is_active={@active == "pods"}
+    />
+    <.left_menu_item
+      to="/internal/deployments"
+      name="Deployments"
+      icon="lightning_bolt"
+      is_active={@active == "deployments"}
     />
     """
   end
