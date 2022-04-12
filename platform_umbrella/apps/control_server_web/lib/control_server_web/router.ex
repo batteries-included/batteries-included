@@ -23,15 +23,12 @@ defmodule ControlServerWeb.Router do
     live "/", Live.Home, :index
 
     live "/services/monitoring/settings", Live.MonitoringServiceSettings, :index
-    live "/services/monitoring/status", Live.MonitoringStatus, :index
-    live "/services/monitoring/tools", Live.MonitoringTools, :index
     live "/services/monitoring/prometheus", Live.Prometheus, :index
     live "/services/monitoring/alert_manager", Live.Alertmanager, :index
     live "/services/monitoring/grafana", Live.Grafana, :index
 
     live "/services/data", Live.DataHome, :index
     live "/services/data/settings", Live.DataServiceSettings, :index
-    live "/services/data/status", Live.DataStatus, :index
     live "/services/data/postgres_clusters", Live.PostgresClusters, :index
     live "/services/data/postgres_clusters/new", Live.PostgresNew, :new
     live "/services/data/postgres_clusters/:id/edit", Live.PostgresEdit, :edit
@@ -41,8 +38,7 @@ defmodule ControlServerWeb.Router do
     live "/services/data/failover_clusters/:id/edit", Live.RedisEdit, :edit
 
     live "/services/devtools/settings", Live.DevtoolsServiceSettings, :index
-    live "/services/devtools/status", Live.DevtoolsStatus, :index
-    live "/services/devtools/tools", Live.DevtoolsTools, :index
+    live "/services/devtools/gitea", Live.Gitea, :index
     live "/services/devtools/knative_services", Live.KnativeServicesIndex, :index
     live "/services/devtools/knative_services/new", Live.KnativeNew, :new
     live "/services/devtools/knative_services/:id/edit", Live.KnativeEdit, :edit
@@ -51,15 +47,15 @@ defmodule ControlServerWeb.Router do
     live "/services/network/status", Live.NetworkStatus, :index
 
     live "/services/security/settings", Live.SecurityServiceSettings, :index
-    live "/services/security/status", Live.SecurityStatus, :index
 
     live "/services/ml", Live.MLHome, :index
     live "/services/ml/settings", Live.MLServiceSettings, :index
-    live "/services/ml/status", Live.MLStatus, :index
     live "/services/ml/notebooks", Live.JupyterLabNotebook.Index, :index
     live "/services/ml/notebooks/:id", Live.JupyterLabNotebook.Show, :index
 
-    live "/internal", Live.WorkerList, :index
+    live "/internal/workers", Live.WorkerList, :index
+    live "/internal/deployments", Live.Deployments, :index
+    live "/internal/pods", Live.Pods, :index
   end
 
   scope "/api", ControlServerWeb do

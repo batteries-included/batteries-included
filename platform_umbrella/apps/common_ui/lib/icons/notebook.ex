@@ -1,7 +1,7 @@
 defmodule CommonUI.Icons.Notebook do
   use Phoenix.Component
 
-  def render(assigns) do
+  def notebook_icon(assigns) do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"

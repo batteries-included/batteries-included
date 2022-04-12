@@ -1,37 +1,40 @@
-defmodule ControlServerWeb.Live.DevtoolsStatus do
+defmodule ControlServerWeb.Live.Pods do
   @moduledoc """
   Live web app for database stored json configs.
   """
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import ControlServerWeb.PodDisplay
-
-  alias ControlServer.Services.Pods
-
-  @pod_update_time 5000
+  import ControlServerWeb.PodsDisplay
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
+    EventCenter.KubeState.subscribe(:pods)
 
     {:ok, assign(socket, :pods, pods())}
   end
 
   @impl true
-  def handle_info(:update, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, @pod_update_time)
-
+  def handle_info(_, socket) do
     {:noreply, assign(socket, :pods, pods())}
   end
 
   @impl true
   def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+    {:noreply, assign(socket, :pods, pods())}
   end
 
   defp pods do
-    Enum.map(Pods.get("battery-knative"), &Pods.summarize/1)
+    KubeState.pods()
+    |> Enum.map(&KubeExt.Pods.summarize/1)
+    |> Enum.sort_by(
+      fn pod ->
+        pod
+        |> Map.get("status", %{})
+        |> Map.get("startTime", "")
+      end,
+      :desc
+    )
   end
 
   @impl true
@@ -39,10 +42,10 @@ defmodule ControlServerWeb.Live.DevtoolsStatus do
     ~H"""
     <.layout>
       <:title>
-        <.title>Knative Pods</.title>
+        <.title>Pods</.title>
       </:title>
       <:left_menu>
-        <.devtools_menu active="status" />
+        <.magic_menu active="pods" />
       </:left_menu>
       <.body_section>
         <.pods_display pods={@pods} />

@@ -1,58 +1,23 @@
 defmodule ControlServerWeb.RunnableServiceList do
-  use ControlServerWeb, :live_component
+  use ControlServerWeb, :component
 
   import CommonUI.Table
 
-  alias ControlServer.Services.RunnableService
+  alias Phoenix.Naming
 
-  @impl true
-
-  def mount(socket) do
-    {:ok, assign_new(socket, :services, fn -> [] end)}
+  defp assign_defaults(assigns) do
+    assigns
+    |> assign_new(:base_services, fn -> [] end)
+    |> assign_new(:runnable_services, fn -> [] end)
   end
 
-  @impl true
-
-  def update(assigns, socket) do
-    {:ok, assign(socket, :services, update_services(assigns.services))}
+  defp is_active(runnable_service, base_services) do
+    Enum.any?(base_services, fn bs -> bs.service_type == runnable_service.service_type end)
   end
 
-  defp update_services(services) when is_list(services) do
-    ##
-    # From a list of services we recheck if they are running and recreate the map of s.tring service
-    services
-    |> Enum.map(&update_single_service/1)
-    |> Enum.into(%{})
-  end
+  def services_table(assigns) do
+    assigns = assign_defaults(assigns)
 
-  defp update_services(%{} = services) do
-    services
-    |> Enum.map(fn {_path, service} -> update_single_service(service) end)
-    |> Enum.into(%{})
-  end
-
-  def update_single_service(%{service: mod} = _s) do
-    update_single_service(mod)
-  end
-
-  def update_single_service(service) do
-    {"#{service.path}", %{service: service, active: RunnableService.active?(service)}}
-  end
-
-  @impl true
-
-  def handle_event("start", %{"path" => path} = _payload, socket) do
-    socket.assigns.services
-    |> Map.get(path)
-    |> Map.get(:service)
-    |> RunnableService.activate!()
-
-    {:noreply, assign(socket, :services, update_services(socket.assigns.services))}
-  end
-
-  @impl true
-
-  def render(assigns) do
     ~H"""
     <div>
       <.h4>Runnable Services</.h4>
@@ -68,8 +33,8 @@ defmodule ControlServerWeb.RunnableServiceList do
           </.tr>
         </.thead>
         <.tbody>
-          <%= for {service_info, idx} <- @services |> Map.values() |> Enum.with_index() do %>
-            <.table_row service_info={service_info} idx={idx} target={@myself} />
+          <%= for runnable_service <- @runnable_services do %>
+            <.table_row runnable_service={runnable_service} base_services={@base_services} />
           <% end %>
         </.tbody>
       </.table>
@@ -81,16 +46,15 @@ defmodule ControlServerWeb.RunnableServiceList do
     ~H"""
     <.tr>
       <.td>
-        <%= @service_info.service.service_type %>
+        <%= Naming.humanize(@runnable_service.service_type) %>
       </.td>
       <.td>
-        <%= if not @service_info.active do %>
+        <%= if not is_active(@runnable_service, @base_services) do %>
           <.button
-            label={"Start Service"}
+            label="Start Service"
             variant="shadow"
             phx-click={:start}
-            phx-value-path={@service_info.service.path}
-            phx-target={@target}
+            phx-value-service-type={@runnable_service.service_type}
           />
         <% end %>
       </.td>

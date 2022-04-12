@@ -17,7 +17,7 @@ defmodule KubeServices.BaseServicesHydrator do
     start_base_services()
   end
 
-  defp starting_services, do: Services.list_base_services()
+  defp starting_services, do: Services.all()
 
   defp start_base_services do
     # Subscribe to all events.

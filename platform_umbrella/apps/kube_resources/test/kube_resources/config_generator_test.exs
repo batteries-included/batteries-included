@@ -31,7 +31,7 @@ defmodule KubeServices.ConfigGeneratorTest do
     end
 
     test "materialize all the configs" do
-      Services.list_base_services()
+      Services.all_including_config()
       |> Enum.each(fn service ->
         configs = ConfigGenerator.materialize(service)
 
@@ -40,7 +40,7 @@ defmodule KubeServices.ConfigGeneratorTest do
     end
 
     test "all are named" do
-      Services.list_base_services()
+      Services.all()
       |> Enum.map(&ConfigGenerator.materialize/1)
       |> Enum.flat_map(&Map.values/1)
       |> Enum.each(&assert_named/1)
@@ -52,7 +52,7 @@ defmodule KubeServices.ConfigGeneratorTest do
     end
 
     test "everything can turn into json" do
-      Services.list_base_services()
+      Services.all()
       |> Enum.each(fn base_service ->
         configs = ConfigGenerator.materialize(base_service)
 

@@ -18,12 +18,25 @@ defmodule ControlServer.Services do
 
   ## Examples
 
-      iex> list_base_services()
+      iex> all()
       [%BaseService{}, ...]
 
   """
-  def list_base_services do
-    Repo.all(BaseService)
+  def all do
+    base_query()
+    |> select_limited()
+    |> Repo.all()
+  end
+
+  def all_including_config do
+    Repo.all(base_query())
+  end
+
+  def from_service_types(service_types) do
+    base_query()
+    |> with_service_type_in(service_types)
+    |> select_limited()
+    |> Repo.all()
   end
 
   @doc """
@@ -195,5 +208,17 @@ defmodule ControlServer.Services do
       IO.puts("Activating default service #{inspect(service)}")
       RunnableService.activate!(service)
     end)
+  end
+
+  def base_query do
+    from(bs in BaseService)
+  end
+
+  def with_service_type_in(query \\ BaseService, service_types) do
+    where(query, [bs], bs.service_type in ^service_types)
+  end
+
+  def select_limited(query \\ BaseService) do
+    select(query, [:id, :root_path, :service_type, :updated_at, :inserted_at])
   end
 end

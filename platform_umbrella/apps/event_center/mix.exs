@@ -28,7 +28,7 @@ defmodule EventCenter.MixProject do
   defp deps do
     [
       # Braodcast to thos who need events
-      {:phoenix_pubsub, "~> 2.0"}
+      {:phoenix_pubsub, "~> 2.1"}
     ]
   end
 

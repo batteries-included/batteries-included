@@ -9,7 +9,7 @@ defmodule KubeResources.ServiceMonitors do
   alias KubeResources.PrometheusOperator
 
   def materialize(_config) do
-    Services.list_base_services()
+    Services.all_including_config()
     |> Enum.map(fn bs ->
       {"/monitors/#{bs.id}/#{bs.service_type}", monitors(bs.service_type, bs.config)}
     end)

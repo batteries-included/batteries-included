@@ -97,7 +97,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
             wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
-            <.labeled_definition title={"Service Name"} contents={@sentinel_name} />
+            <.labeled_definition title="Service Name" contents={@sentinel_name} />
           </div>
           <.form_field
             type="range_input"
@@ -108,7 +108,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
             wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
-            <.labeled_definition title={"Number of Instances"} contents={@num_instances} />
+            <.labeled_definition title="Number of Instances" contents={@num_instances} />
           </div>
 
           <.form_field
@@ -121,7 +121,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
           />
           <div class="sm:col-span-1">
             <.labeled_definition
-              title={"Number of Sentinel Instances"}
+              title="Number of Sentinel Instances"
               contents={@num_sentinel_instances}
             />
           </div>

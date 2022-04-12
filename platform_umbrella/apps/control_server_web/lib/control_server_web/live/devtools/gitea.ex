@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.Prometheus do
+defmodule ControlServerWeb.Live.Gitea do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.IFrame
@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Live.Prometheus do
   def render(assigns) do
     ~H"""
     <.layout container_type={:iframe}>
-      <.iframe src={KubeResources.Prometheus.url()} />
+      <.iframe src={KubeResources.Gitea.url()} />
     </.layout>
     """
   end

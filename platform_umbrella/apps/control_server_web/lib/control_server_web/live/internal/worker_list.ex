@@ -14,7 +14,7 @@ defmodule ControlServerWeb.Live.WorkerList do
   end
 
   def servce_states do
-    Services.list_base_services()
+    Services.all()
     |> Enum.map(&get_state/1)
     |> Enum.to_list()
   end
@@ -26,6 +26,12 @@ defmodule ControlServerWeb.Live.WorkerList do
   def render(assigns) do
     ~H"""
     <.layout>
+      <:title>
+        <.title>Worker Status</.title>
+      </:title>
+      <:left_menu>
+        <.magic_menu active="workers" />
+      </:left_menu>
       <.body_section>
         <.services_table states={@service_states} />
       </.body_section>

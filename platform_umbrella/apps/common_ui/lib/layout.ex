@@ -5,6 +5,7 @@ defmodule CommonUI.Layout do
 
   @default_container_class "flex-1 max-w-7xl sm:px-6 lg:px-8 pt-10 pb-20"
   @iframe_container_class "flex-1 py-0 px-0 w-full h-full"
+  @menu_item_class "group w-full p-3 rouned-md flex flex-col items-center text-sm font-medium"
 
   defp container_class(:iframe), do: @iframe_container_class
 
@@ -21,24 +22,10 @@ defmodule CommonUI.Layout do
   end
 
   def menu_item(assigns) do
+    assigns = assign_new(assigns, :base_class, fn -> @menu_item_class end)
+
     ~H"""
-    <.link
-      link_type="live_redirect"
-      to={"#{@to}"}
-      class={
-        [
-          "group",
-          "w-full",
-          "p-3",
-          "rounded-md",
-          "flex",
-          "flex-col",
-          "items-center",
-          "text-sm",
-          "font-medium"
-        ] ++ @class
-      }
-    >
+    <.link link_type="live_redirect" to={@to} class={@base_class <> @class}>
       <%= render_slot(@inner_block) %>
       <span class="mt-2">
         <%= @name %>

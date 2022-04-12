@@ -11,7 +11,7 @@ defmodule ControlServerWeb.Live.Alertmanager do
       <:title>
         <.title>AlertManager</.title>
       </:title>
-      <.iframe src="/x/alertmanager" />
+      <.iframe src={KubeResources.AlertManager.url()} />
     </.layout>
     """
   end

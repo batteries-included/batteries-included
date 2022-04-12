@@ -33,8 +33,7 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix_live_view, "~> 0.17.5"},
-      {:heex_formatter, github: "feliperenan/heex_formatter", only: [:dev], runtime: false},
+      {:phoenix_live_view, "~> 0.17.9"},
       {:petal_components, "~> 0.13.7"}
     ]
   end

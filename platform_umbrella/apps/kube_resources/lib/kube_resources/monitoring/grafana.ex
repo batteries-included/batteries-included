@@ -20,6 +20,8 @@ defmodule KubeResources.Grafana do
 
   @app_name "grafana"
 
+  @url_base "/x/grafana"
+
   def materialize(config) do
     {depl, dashboards} = config |> deployment() |> GrafanaDashboards.add_dashboards(config)
 
@@ -36,11 +38,19 @@ defmodule KubeResources.Grafana do
   def ingress(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    B.build_resource(:ingress, "/x/grafana", "grafana", "http")
+    B.build_resource(:ingress, @url_base, "grafana", "http")
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
   end
+
+  def view_url, do: view_url(KubeExt.cluster_type())
+
+  def view_url(:dev), do: url()
+
+  def view_url(_), do: "/services/monitoring/grafana"
+
+  def url, do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{@url_base}"
 
   def virtual_service(config) do
     namespace = MonitoringSettings.namespace(config)

@@ -7,7 +7,7 @@ defmodule ControlServerWeb.BaseServiceController do
   action_fallback ControlServerWeb.FallbackController
 
   def index(conn, _params) do
-    base_services = Services.list_base_services()
+    base_services = Services.all()
     render(conn, "index.json", base_services: base_services)
   end
 

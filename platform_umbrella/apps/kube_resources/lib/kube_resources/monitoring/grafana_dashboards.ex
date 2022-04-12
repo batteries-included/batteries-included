@@ -72,7 +72,7 @@ defmodule KubeResources.GrafanaDashboards do
   end
 
   def dashboards(config) do
-    Services.list_base_services()
+    Services.all_including_config()
     |> Enum.map(fn %BaseService{} = bs -> bs.service_type end)
     |> Enum.map(fn service_type -> dashboards(config, service_type) end)
     |> Enum.reduce(%{}, fn element, acc -> Map.merge(acc, element) end)

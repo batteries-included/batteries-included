@@ -6,9 +6,9 @@ defmodule KubeResources.Ingress do
 
   require Logger
 
-  def materialize(config) do
-    Services.list_base_services()
-    |> Enum.map(fn bs -> {"/ingress/#{bs.id}", ingress(bs.service_type, config)} end)
+  def materialize(_config) do
+    Services.all_including_config()
+    |> Enum.map(fn bs -> {"/ingress/#{bs.id}", ingress(bs.service_type, bs.config)} end)
     |> Enum.into(%{})
   end
 

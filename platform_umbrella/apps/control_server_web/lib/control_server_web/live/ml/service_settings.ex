@@ -2,27 +2,36 @@ defmodule ControlServerWeb.Live.MLServiceSettings do
   @moduledoc """
   Live web app for database stored json configs.
   """
+
   use ControlServerWeb, :live_view
 
+  import ControlServerWeb.Apply
   import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.RunnableServiceList
 
   alias ControlServer.Services.RunnableService
-  alias ControlServerWeb.RunnableServiceList
+  alias ControlServer.Services
 
   require Logger
 
+  @prefix "/ml"
+
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :services, services())}
+    EventCenter.BaseService.subscribe()
+
+    {:ok, apply_services(socket, @prefix)}
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+  def handle_info({_event_type, %Services.BaseService{} = _bs}, socket) do
+    {:noreply, apply_services(socket, @prefix)}
   end
 
-  defp services do
-    Enum.filter(RunnableService.services(), fn s -> String.starts_with?(s.path, "/ml") end)
+  @impl true
+  def handle_event("start", %{"service-type" => service_type, "value" => _}, socket) do
+    RunnableService.activate!(service_type)
+    {:noreply, socket}
   end
 
   @impl true
@@ -36,11 +45,7 @@ defmodule ControlServerWeb.Live.MLServiceSettings do
         <.ml_menu active="home" />
       </:left_menu>
       <.body_section>
-        <.live_component
-          module={RunnableServiceList}
-          services={@services}
-          id={"database_base_services"}
-        />
+        <.services_table runnable_services={@runnable_services} base_services={@base_services} />
       </.body_section>
     </.layout>
     """
