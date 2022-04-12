@@ -1,6 +1,7 @@
 defmodule ControlServerWeb.Live.KnativeServicesIndex do
   use ControlServerWeb, :live_view
 
+  import ControlServerWeb.Apply
   import ControlServerWeb.LeftMenuLayout
   import CommonUI.Table
 
@@ -13,7 +14,8 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    {:noreply,
+     socket |> apply_action(socket.assigns.live_action, params) |> apply_services("/devtools")}
   end
 
   defp apply_action(socket, :index, _params) do
@@ -42,7 +44,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
         <.title>Knative Services</.title>
       </:title>
       <:left_menu>
-        <.devtools_menu active="knative" />
+        <.devtools_menu active="knative" base_services={@base_services} />
       </:left_menu>
       <.body_section>
         <.table>

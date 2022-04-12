@@ -16,6 +16,8 @@ defmodule KubeResources.Prometheus do
 
   @app_name "prometheus"
 
+  @url_base "/x/prometheus"
+
   def materialize(config) do
     %{
       "/account" => service_account(config),
@@ -29,12 +31,20 @@ defmodule KubeResources.Prometheus do
   def ingress(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    B.build_resource(:ingress, "/x/prometheus", "prometheus-main", "http")
+    B.build_resource(:ingress, @url_base, "prometheus-main", "http")
     |> B.rewriting_ingress()
     |> B.name("prometheus")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
   end
+
+  def view_url, do: view_url(KubeExt.cluster_type())
+
+  def view_url(:dev), do: url()
+
+  def view_url(_), do: "/services/monitoring/prometheus"
+
+  def url, do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{@url_base}"
 
   def virtual_service(config) do
     namespace = MonitoringSettings.namespace(config)

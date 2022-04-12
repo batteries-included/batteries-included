@@ -199,13 +199,17 @@ defmodule ControlServerWeb.LeftMenuLayout do
     ~H"""
     <%= case @service_type do %>
       <% :grafana -> %>
-        <.left_menu_item to="/test" name="Grafana" icon="grafana" />
+        <.left_menu_item to={KubeResources.Grafana.view_url()} name="Grafana" icon="grafana" />
       <% :prometheus -> %>
-        <.left_menu_item to="/test" name="Prometheus" icon="prometheus" />
+        <.left_menu_item to={KubeResources.Prometheus.view_url()} name="Prometheus" icon="prometheus" />
       <% :alert_manager -> %>
-        <.left_menu_item to="/test" name="Alert Manager" icon="alert_manager" />
+        <.left_menu_item
+          to={KubeResources.AlertManager.view_url()}
+          name="Alert Manager"
+          icon="alert_manager"
+        />
       <% :gitea -> %>
-        <.left_menu_item to="/test" name="Gitea" icon="gitea" />
+        <.left_menu_item to={KubeResources.Gitea.view_url()} name="Gitea" icon="gitea" />
       <% _ -> %>
     <% end %>
     """

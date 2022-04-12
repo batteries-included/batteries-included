@@ -11,7 +11,7 @@ defmodule ControlServerWeb.Live.Grafana do
       <:title>
         <.title>Grafana</.title>
       </:title>
-      <.iframe src="/x/grafana" />
+      <.iframe src={KubeResources.Grafana.url()} />
     </.layout>
     """
   end

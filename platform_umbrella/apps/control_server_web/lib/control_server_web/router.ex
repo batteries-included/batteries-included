@@ -41,6 +41,7 @@ defmodule ControlServerWeb.Router do
 
     live "/services/devtools/settings", Live.DevtoolsServiceSettings, :index
     live "/services/devtools/status", Live.DevtoolsStatus, :index
+    live "/services/devtools/gitea", Live.Gitea, :index
     live "/services/devtools/knative_services", Live.KnativeServicesIndex, :index
     live "/services/devtools/knative_services/new", Live.KnativeNew, :new
     live "/services/devtools/knative_services/:id/edit", Live.KnativeEdit, :edit

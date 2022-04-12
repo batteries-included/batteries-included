@@ -128,4 +128,6 @@ defmodule KubeExt do
 
   defp increment_ok({:ok, cnt}), do: {:ok, cnt + 1}
   defp increment_ok(err), do: err
+
+  def cluster_type, do: Application.get_env(:kube_ext, :cluster_type, :dev)
 end

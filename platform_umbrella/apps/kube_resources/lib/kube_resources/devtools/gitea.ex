@@ -11,7 +11,8 @@ defmodule KubeResources.Gitea do
   @init_path "/opt/sbin"
   @tmp_path "/tmp"
 
-  @http_prefix "/x/gitea"
+  @url_base "/x/gitea"
+  @iframe_base_url "/services/devtools/gitea"
 
   @ssh_port 22
   @ssh_listen_port 2022
@@ -26,7 +27,7 @@ defmodule KubeResources.Gitea do
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.name("gitea-http")
-    |> B.spec(VirtualService.rewriting(@http_prefix, "gitea-http"))
+    |> B.spec(VirtualService.rewriting(@url_base, "gitea-http"))
   end
 
   def ssh_virtual_service(config) do
@@ -40,6 +41,16 @@ defmodule KubeResources.Gitea do
       VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh", hosts: [ssh_domain()])
     )
   end
+
+  def view_url, do: view_url(KubeExt.cluster_type())
+
+  def view_url(:dev), do: url()
+
+  def view_url(_), do: iframe_url()
+
+  def url, do: "//#{http_domain()}#{@url_base}"
+
+  def iframe_url, do: @iframe_base_url
 
   def secret(config) do
     namespace = DevtoolsSettings.namespace(config)
@@ -71,7 +82,7 @@ defmodule KubeResources.Gitea do
       ENABLE_PPROF=false
       HTTP_PORT=3000
       PROTOCOL=http
-      ROOT_URL=http://#{http_domain}#{@http_prefix}
+      ROOT_URL=http://#{http_domain}#{@url_base}
       SSH_DOMAIN=#{ssh_domain}
       SSH_LISTEN_PORT=#{@ssh_port}
       SSH_PORT=#{@ssh_port}

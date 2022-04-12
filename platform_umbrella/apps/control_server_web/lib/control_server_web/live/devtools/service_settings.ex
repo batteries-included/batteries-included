@@ -5,6 +5,7 @@ defmodule ControlServerWeb.Live.DevtoolsServiceSettings do
 
   use ControlServerWeb, :live_view
 
+  import ControlServerWeb.Apply
   import ControlServerWeb.LeftMenuLayout
   import ControlServerWeb.RunnableServiceList
 
@@ -13,33 +14,24 @@ defmodule ControlServerWeb.Live.DevtoolsServiceSettings do
 
   require Logger
 
+  @prefix "/devtools"
+
   @impl true
   def mount(_params, _session, socket) do
     EventCenter.BaseService.subscribe()
 
-    {:ok,
-     socket
-     |> assign(:runnable_services, runnable_services())
-     |> assign(:base_services, base_services())}
+    {:ok, apply_services(socket, @prefix)}
   end
 
-  defp runnable_services, do: RunnableService.prefix("/devtools")
-
-  defp runnable_service_types, do: Enum.map(runnable_services(), fn rs -> rs.service_type end)
-
-  defp base_services do
-    Services.from_service_types(runnable_service_types())
+  @impl true
+  def handle_info({_event_type, %Services.BaseService{} = _bs}, socket) do
+    {:noreply, apply_services(socket, @prefix)}
   end
 
   @impl true
   def handle_event("start", %{"service-type" => service_type, "value" => _}, socket) do
     RunnableService.activate!(service_type)
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info({_event_type, %Services.BaseService{} = _bs}, socket) do
-    {:noreply, assign(socket, :base_services, base_services())}
   end
 
   @impl true

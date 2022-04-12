@@ -8,6 +8,8 @@ defmodule KubeResources.AlertManager do
 
   @app_name "alertmanager"
 
+  @url_base "/x/alertmanager"
+
   def materialize(config) do
     %{
       "/account" => service_account(config),
@@ -24,8 +26,16 @@ defmodule KubeResources.AlertManager do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("alertmanager")
-    |> B.spec(VirtualService.rewriting("/x/alertmanager", "alertmanager-main"))
+    |> B.spec(VirtualService.rewriting(@url_base, "alertmanager-main"))
   end
+
+  def view_url, do: view_url(KubeExt.cluster_type())
+
+  def view_url(:dev), do: url()
+
+  def view_url(_), do: "/services/monitoring/alert_manager"
+
+  def url, do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{@url_base}"
 
   def service_account(config) do
     namespace = MonitoringSettings.namespace(config)
