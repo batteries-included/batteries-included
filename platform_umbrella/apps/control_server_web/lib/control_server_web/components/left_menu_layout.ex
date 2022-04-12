@@ -21,6 +21,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns
     |> assign_new(:is_active, fn -> false end)
     |> assign_new(:icon, fn -> "database" end)
+    |> assign_new(:link_type, fn -> "live_patch" end)
   end
 
   defp assign_menu_defaults(assigns) do
@@ -33,7 +34,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_item_defaults(assigns)
 
     ~H"""
-    <.link link_type="live_patch" to={@to} class={menu_link_class(@is_active)}>
+    <.link link_type={@link_type} to={@to} class={menu_link_class(@is_active)}>
       <.left_icon type={@icon} />
       <span class="truncate">
         <%= @name %>
@@ -175,17 +176,28 @@ defmodule ControlServerWeb.LeftMenuLayout do
     ~H"""
     <%= case @service_type do %>
       <% :grafana -> %>
-        <.left_menu_item to={KubeResources.Grafana.view_url()} name="Grafana" icon="grafana" />
+        <.left_menu_item
+          to={KubeResources.Grafana.view_url()}
+          name="Grafana"
+          icon="grafana"
+          link_type="a"
+        />
       <% :prometheus -> %>
-        <.left_menu_item to={KubeResources.Prometheus.view_url()} name="Prometheus" icon="prometheus" />
+        <.left_menu_item
+          to={KubeResources.Prometheus.view_url()}
+          name="Prometheus"
+          icon="prometheus"
+          link_type="a"
+        />
       <% :alert_manager -> %>
         <.left_menu_item
           to={KubeResources.AlertManager.view_url()}
           name="Alert Manager"
           icon="alert_manager"
+          link_type="a"
         />
       <% :gitea -> %>
-        <.left_menu_item to={KubeResources.Gitea.view_url()} name="Gitea" icon="gitea" />
+        <.left_menu_item to={KubeResources.Gitea.view_url()} name="Gitea" icon="gitea" link_type="a" />
       <% _ -> %>
     <% end %>
     """
