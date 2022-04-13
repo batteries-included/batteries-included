@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Show do
       <:title>
         <.title><%= @page_title %></.title>
       </:title>
-      <.iframe src={KubeResources.Notebooks.url(@notebook)} />
+      <.iframe src={KubeResources.Notebooks.url(@jupyter_lab_notebook)} />
     </.layout>
     """
   end
