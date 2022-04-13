@@ -139,7 +139,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_defaults(assigns)
 
     ~H"""
-    <.left_menu_item to="/services/ml" name="Home" icon="home" is_active={@active == "home"} />
     <.left_menu_item
       to="/services/ml/notebooks"
       name="Notebooks"
