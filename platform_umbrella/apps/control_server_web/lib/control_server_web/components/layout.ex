@@ -68,7 +68,7 @@ defmodule ControlServerWeb.Layout do
       </:title>
       <:main_menu>
         <.menu_item to="/services/data" name="Data" icon="database" />
-        <.menu_item to="/services/ml" name="ML" icon="beaker" />
+        <.menu_item to="/services/ml/notebooks" name="ML" icon="beaker" />
         <.menu_item to="/services/monitoring/settings" name="Monitoring" icon="chart_bar" />
         <.menu_item to="/services/devtools/settings" name="Devtools" icon="devtools" />
         <.menu_item to="/services/security/settings" name="Security" icon="lock_closed" />
