@@ -50,6 +50,7 @@ config :control_server,
   ]
 
 config :kube_ext, :clusters, default: :service_account
+config :kube_ext, cluster_type: :prod
 
 # Important!! Setting this to false will filter
 # out all materialization of infra users that
