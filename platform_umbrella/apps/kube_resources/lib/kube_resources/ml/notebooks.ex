@@ -9,6 +9,7 @@ defmodule KubeResources.Notebooks do
   require Logger
 
   @app_name "notebooks"
+  @url_base "/x/notebooks/"
 
   def ingress(config) do
     Enum.map(Notebooks.list_jupyter_lab_notebooks(), fn jln -> notebook_ingress(jln, config) end)
@@ -30,6 +31,17 @@ defmodule KubeResources.Notebooks do
     build_virtual_service(namespace, notebooks)
   end
 
+  def view_url(%JupyterLabNotebook{} = notebook), do: view_url(KubeExt.cluster_type(), notebook)
+
+  def view_url(:dev, %JupyterLabNotebook{} = notebook), do: url(notebook)
+
+  def view_url(_, %JupyterLabNotebook{} = notebook), do: "/services/ml/notebooks/#{notebook.id}"
+
+  def url(%JupyterLabNotebook{} = notebook),
+    do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{base_url(notebook)}"
+
+  def base_url(%JupyterLabNotebook{} = notebook), do: "#{@url_base}#{notebook.name}"
+
   defp build_virtual_service(namespace, [_ | _] = notebooks) do
     routes = Enum.map(notebooks, &notebook_http_route/1)
 
@@ -45,7 +57,7 @@ defmodule KubeResources.Notebooks do
   end
 
   def notebook_http_route(%Notebooks.JupyterLabNotebook{} = notebook) do
-    HttpRoute.prefix(url(notebook), service_name(notebook))
+    HttpRoute.prefix(base_url(notebook), service_name(notebook))
   end
 
   def materialize(config) do
@@ -88,7 +100,7 @@ defmodule KubeResources.Notebooks do
             ],
             "command" => ["start-notebook.sh"],
             "args" => [
-              "--NotebookApp.base_url='#{url(notebook)}'",
+              "--NotebookApp.base_url='#{base_url(notebook)}'",
               "--NotebookApp.token=''",
               "--NotebookApp.allow_password_change=False",
               "--NotebookApp.password=''"
@@ -126,10 +138,6 @@ defmodule KubeResources.Notebooks do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
-  end
-
-  def url(%JupyterLabNotebook{} = notebook) do
-    "/x/notebooks/#{notebook.name}"
   end
 
   def service_name(notebook), do: "notebook-#{notebook.name}"

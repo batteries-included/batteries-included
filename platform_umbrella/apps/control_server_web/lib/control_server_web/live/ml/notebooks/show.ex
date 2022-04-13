@@ -25,7 +25,10 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Show do
   def render(assigns) do
     ~H"""
     <.layout container_type={:iframe}>
-      <.iframe src={"/x/notebooks/#{@jupyter_lab_notebook.name}/lab"} />
+      <:title>
+        <.title><%= @page_title %></.title>
+      </:title>
+      <.iframe src={KubeResources.Notebooks.url(@notebook)} />
     </.layout>
     """
   end

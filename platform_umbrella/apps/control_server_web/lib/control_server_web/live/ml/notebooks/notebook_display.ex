@@ -51,7 +51,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
     """
   end
 
-  defp notebook_path(notebook), do: "//control.172.30.0.4.sslip.io/x/notebooks/#{notebook.name}"
+  defp notebook_path(notebook), do: KubeResources.Notebooks.view_url(notebook)
 
   defp notebook_row(assigns) do
     ~H"""
