@@ -9,8 +9,8 @@
 # https://docs.docker.com/develop/develop-images/build_enhancements/
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md
 
-ARG ELIXIR_VERSION=1.13.3
-ARG ERLANG_VERSION=24.2.2
+ARG ELIXIR_VERSION=1.13.4
+ARG ERLANG_VERSION=24.3.2
 ARG ALPINE_VERSION=3.15.0
 
 ARG BUILD_IMAGE_NAME=hexpm/elixir
