@@ -48,7 +48,6 @@ defmodule ControlServerWeb.Router do
 
     live "/services/security/settings", Live.SecurityServiceSettings, :index
 
-    live "/services/ml", Live.MLHome, :index
     live "/services/ml/settings", Live.MLServiceSettings, :index
     live "/services/ml/notebooks", Live.JupyterLabNotebook.Index, :index
     live "/services/ml/notebooks/:id", Live.JupyterLabNotebook.Show, :index
