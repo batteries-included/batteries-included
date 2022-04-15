@@ -26,12 +26,22 @@ const liveSocket = new LiveSocket('/live', Socket, {
 });
 
 // Show progress bar on live navigation and form submits
+const showBarDelay = 100;
 topbar.config({
   barColors: { 0: '#fc408b' },
   shadowColor: 'rgba(0, 0, 0, .3)',
 });
-window.addEventListener('phx:page-loading-start', () => topbar.show());
-window.addEventListener('phx:page-loading-stop', () => topbar.hide());
+
+let topBarScheduled;
+window.addEventListener('phx:page-loading-start', () => {
+  topBarScheduled =
+    topBarScheduled || setTimeout(() => topbar.show(), showBarDelay);
+});
+window.addEventListener('phx:page-loading-stop', () => {
+  clearTimeout(topBarScheduled);
+  topBarScheduled = undefined;
+  topbar.hide();
+});
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();
