@@ -5,7 +5,7 @@ defmodule CommonUI.Icons.Devtools do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
+      fill="none"
       stroke="currentColor"
       class={"h-6 w-6" <> @class}
       viewBox="0 0 16 16"
