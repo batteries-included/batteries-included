@@ -14,11 +14,14 @@ When developing one of the easiest ways to run a kubernetes cluster with all the
 
 ```bash
 sudo apt-get remove docker docker-engine docker.io containerd runc
+
+# Install docker and other dependencies that we'll need later
 sudo apt-get install \
     ca-certificates \
     curl \
     gnupg \
     unzip \
+    build-essential \
     lsb-release
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo \
@@ -26,6 +29,8 @@ echo \
   https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \ 
   | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update -y && sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+sudo usermod -aG docker $USER
 ```
 
 ### Install ASDF
@@ -41,6 +46,9 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.9.0
 echo ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
 echo ". $HOME/.asdf/completions/asdf.bash" >> ~/.bashrc
 ```
+
+
+Now log out and back in. This will have everything re-read the groups that were changed during docker install and source the files via bash.
 
 
 ### Install Languages, Etc.
