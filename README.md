@@ -199,3 +199,8 @@ Ater a while you should come back to control server running in your kubernetes c
 
 
 Assuming there haven't been any networking changes recently the server will be available at `http://control.172.30.0.4.sslip.io/`
+
+
+### Smaller Machines
+
+If you want to conserve resources then the `dev/bootstrap.sh` script takes in a `-S` flag with a number of servers. You can set this to 1 which should lower the resource usage.
