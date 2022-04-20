@@ -44,6 +44,9 @@ defmodule ControlServer.Postgres.Cluster do
       :type,
       :team_name
     ])
+    |> validate_format(:storage_size, ~r/^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$/,
+      message: "Must be in the format [Number](EPTGMK)"
+    )
     |> unique_constraint([:type, :team_name, :name])
   end
 
