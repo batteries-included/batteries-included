@@ -69,5 +69,8 @@
     "kubernetes",
     "noreply",
     "topbar"
-  ]
+  ],
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  }
 }
