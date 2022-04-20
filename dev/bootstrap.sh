@@ -42,7 +42,7 @@ retry() {
     "$@" && break || {
       code=$?
       end=$(date +%s)
-      runtime=$((end-start))
+      runtime=$((end - start))
       if [[ $n -lt $max ]]; then
         # Explicitly treat timeouts as not failures.
         if [[ $runtime -gt 200 ]]; then
@@ -93,10 +93,10 @@ postgresForward() {
   port=$2
   ns=${3:-"battery-core"}
   pod=$(kubectl \
-            get pods \
-            -o jsonpath={.items..metadata.name} \
-            -n "${ns}" \
-            -l "application=spilo,battery-pg-cluster=${cluster},spilo-role=master")
+    get pods \
+    -o jsonpath={.items..metadata.name} \
+    -n "${ns}" \
+    -l "application=spilo,battery-pg-cluster=${cluster},spilo-role=master")
   portForward "pods/${pod}" "${port}:5432" "${ns}"
 }
 
@@ -162,13 +162,12 @@ eval set -- "$PARAMS"
 if [[ $CREATE_CLUSTER == 'true' ]]; then
   # Create the cluster
   k3d cluster create -v /dev/mapper:/dev/mapper \
-     --k3s-arg '--disable=traefik@server:*' \
-     --registry-create battery-registry \
-     --wait \
-     -s "${NUM_SERVERS}" \
-     -p "8081:80@loadbalancer" || true
+    --k3s-arg '--disable=traefik@server:*' \
+    --registry-create battery-registry \
+    --wait \
+    -s "${NUM_SERVERS}" \
+    -p "8081:80@loadbalancer" || true
 fi
-
 
 if [ "${BUILD_CONTROL_SERVER}" == "true" ]; then
   buildLocalControl
@@ -184,6 +183,5 @@ fi
 if [[ "${FORWARD_HOME_POSTGRES}" == "true" ]]; then
   (retry postgresForward "default-home-base" "5433") &
 fi
-
 
 wait
