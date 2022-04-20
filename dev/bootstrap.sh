@@ -17,19 +17,19 @@ error() {
 }
 
 trap 'error ${LINENO} Trap:' ERR
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+trap 'trap - SIGTERM && kill -- -$$' SIGINT SIGTERM EXIT
 
 retry() {
   local n=1
   local max=10
   local delay=30
-  local start=`date +%s`
+  local start=$(date +%s)
 
   while true; do
-    start=`date +%s`
+    start=$(date +%s)
     "$@" && break || {
       local code=$?
-      local end=`date +%s`
+      local end=$(date +%s)
       local runtime=$((end-start))
       if [[ $n -lt $max ]]; then
         # Explicitly treat timeouts as not failures.
@@ -55,7 +55,7 @@ portForward() {
   if kubectl get ns "${namespace}"; then
 
     set +e
-    kubectl port-forward "${target}" ${portMap} -n "$namespace" --address 0.0.0.0
+    kubectl port-forward "${target}" "${portMap}" -n "${namespace}" --address 0.0.0.0
     local code=$?
     set -e
     echo "Exited"
@@ -72,23 +72,23 @@ postgresForward() {
   local pod=$(kubectl \
             get pods \
             -o jsonpath={.items..metadata.name} \
-            -n ${ns} \
-            -l application=spilo,battery-pg-cluster=${cluster},spilo-role=master)
-  portForward "pods/${pod}" "${port}:5432" ${ns}
+            -n "${ns}" \
+            -l "application=spilo,battery-pg-cluster=${cluster},spilo-role=master")
+  portForward "pods/${pod}" "${port}:5432" "${ns}"
 }
 
 buildLocalControl() {
-  ${DIR}/build_local.sh
+  bash "${DIR}/build_local.sh"
 }
 
 cargoBootstrap() {
-  pushd ${DIR}/../rust_utils
+  pushd "${DIR}/../rust_utils"
   cargo run -- bootstrap || true
   popd
 }
 
 mixBootstrap() {
-  pushd ${DIR}/../platform_umbrella/apps/bootstrap
+  pushd "${DIR}/../platform_umbrella/apps/bootstrap"
   mix run -e "Bootstrap.run()"
   popd
 }
@@ -97,6 +97,7 @@ CREATE_CLUSTER=${CREATE_CLUSTER:-true}
 FORWARD_CONTROL_POSTGRES=${FORWARD_CONTROL_POSTGRES:-true}
 FORWARD_HOME_POSTGRES=${FORWARD_HOME_POSTGRES:-false}
 BUILD_CONTROL_SERVER=${BUILD_CONTROL_SERVER:-false}
+NUM_SERVERS=${NUM_SERVERS:-3}
 
 PARAMS=""
 while (("$#")); do
@@ -115,6 +116,11 @@ while (("$#")); do
     ;;
   -B | --build-local)
     BUILD_CONTROL_SERVER=true
+    shift
+    ;;
+  -S | --num-servers)
+    shift
+    NUM_SERVERS=${1}
     shift
     ;;
   -* | --*=) # unsupported flags
@@ -136,23 +142,23 @@ if [[ $CREATE_CLUSTER == 'true' ]]; then
      --k3s-arg '--disable=traefik@server:*' \
      --registry-create battery-registry \
      --wait \
-     -s 3 \
+     -s "${NUM_SERVERS}" \
      -p "8081:80@loadbalancer" || true
 fi
 
 
-if [ $BUILD_CONTROL_SERVER == "true" ]; then
+if [ "${BUILD_CONTROL_SERVER}" == "true" ]; then
   buildLocalControl
 fi
 
 cargoBootstrap
 mixBootstrap
 
-if [ $FORWARD_CONTROL_POSTGRES == "true" ]; then
+if [ "${FORWARD_CONTROL_POSTGRES}" == "true" ]; then
   (retry postgresForward "pg-control" "5432") &
 fi
 
-if [[ $FORWARD_HOME_POSTGRES == "true" ]]; then
+if [[ "${FORWARD_HOME_POSTGRES}" == "true" ]]; then
   (retry postgresForward "default-home-base" "5433") &
 fi
 
