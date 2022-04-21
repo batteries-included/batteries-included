@@ -2,6 +2,7 @@ defmodule ControlServerWeb.RunnableServiceList do
   use ControlServerWeb, :component
 
   import CommonUI.Table
+  import CommonUI.Icons.Misc
 
   alias Phoenix.Naming
 
@@ -50,15 +51,30 @@ defmodule ControlServerWeb.RunnableServiceList do
       </.td>
       <.td>
         <%= if not is_active(@runnable_service, @base_services) do %>
-          <.button
-            label="Start Service"
-            variant="shadow"
-            phx-click={:start}
-            phx-value-service-type={@runnable_service.service_type}
-          />
+          <.start_button runnable_service={@runnable_service} />
+        <% else %>
+          <.running />
         <% end %>
       </.td>
     </.tr>
+    """
+  end
+
+  def start_button(assigns) do
+    ~H"""
+    <.button
+      label="Start Service"
+      variant="shadow"
+      phx-click={:start}
+      phx-value-service-type={@runnable_service.service_type}
+    />
+    """
+  end
+
+  defp running(assigns) do
+    ~H"""
+    Running
+    <.check_mark />
     """
   end
 end
