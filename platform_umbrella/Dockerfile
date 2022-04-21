@@ -55,7 +55,7 @@ ARG LANG
 RUN ln -s /var/cache/apk /etc/apk/cache \
   && apk update \
   && apk add alpine-sdk \
-  && apk add --no-progress git build-base \
+  && apk add git build-base \
   && apk add curl \
   && apk add nodejs npm
 
@@ -218,9 +218,7 @@ ENV LANG=$LANG \
 RUN --mount=type=cache,id=apk,target=/var/cache/apk,sharing=locked \
   ln -s /var/cache/apk /etc/apk/cache \
   && apk update \
-  && apk add --no-cache bash \
-  && apk add --no-cache tini \
-  && apk add --no-cache libstdc++ libgcc \
+  && apk add --no-cache bash tini libstdc++ libgcc \
   && apk add --no-cache bind-tools openssl ncurses-libs \
   && apk cache clean
 
