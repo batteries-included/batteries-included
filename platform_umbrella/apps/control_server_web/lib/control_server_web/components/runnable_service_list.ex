@@ -73,8 +73,14 @@ defmodule ControlServerWeb.RunnableServiceList do
 
   defp running(assigns) do
     ~H"""
-    Running
-    <.check_mark />
+    <div class="flex">
+      <div class="flex-initial">
+        Started
+      </div>
+      <div class="flex-none ml-5">
+        <.check_mark class="text-emerald-600" />
+      </div>
+    </div>
     """
   end
 end

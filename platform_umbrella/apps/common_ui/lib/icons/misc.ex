@@ -2,7 +2,6 @@ defmodule CommonUI.Icons.Misc do
   use Phoenix.Component
 
   def check_mark(assigns) do
-
     assigns = assign_new(assigns, :class, fn -> "" end)
 
     ~H"""
@@ -14,7 +13,8 @@ defmodule CommonUI.Icons.Misc do
       style="enable-background:new 0 0 512 512;"
       xml:space="preserve"
       stroke="currentColor"
-      class={"h-6 w-6" <> @class}
+      fill="currentColor"
+      class={"h-6 w-6 " <> @class}
     >
       <g>
         <g>
