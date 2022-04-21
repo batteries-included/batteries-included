@@ -38,7 +38,7 @@ defmodule ControlServerWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.0"},
+      {:phoenix, "~> 1.6.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_view, "~> 0.17.9"},
@@ -53,7 +53,7 @@ defmodule ControlServerWeb.MixProject do
       {:kube_services, in_umbrella: true},
       # Components
       {:common_ui, in_umbrella: true},
-      {:petal_components, "~> 0.13.7"},
+      {:petal_components, "~> 0.15.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}
     ]
