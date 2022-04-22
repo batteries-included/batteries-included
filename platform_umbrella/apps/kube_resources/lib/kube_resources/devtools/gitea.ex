@@ -48,7 +48,7 @@ defmodule KubeResources.Gitea do
 
   def view_url(_), do: iframe_url()
 
-  def url, do: "//#{http_domain()}#{@url_base}"
+  def url, do: "//#{http_domain()}#{@url_base}" <> "/explore/repos"
 
   def iframe_url, do: @iframe_base_url
 
