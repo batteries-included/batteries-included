@@ -53,6 +53,10 @@ defmodule KubeResources.IstioConfig do
     defstruct [:destination, :weight, :headers]
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
+    def new(host, nil = _port), do: %__MODULE__{destination: %Destination{host: host}}
+
+    def new(host, port),
+      do: %__MODULE__{destination: %Destination{host: host, port: %{number: port}}}
   end
 
   defmodule HttpRoute do
@@ -61,12 +65,13 @@ defmodule KubeResources.IstioConfig do
 
     def prefix(prefix, service_host, opts \\ []) do
       do_rewrite = Keyword.get(opts, :rewrite, False)
+      port = Keyword.get(opts, :port, nil)
 
       maybe_rewite(
         %__MODULE__{
           name: name_from_prefix(prefix),
           match: [%HttpMatchRequest{uri: StringMatch.prefix(prefix)}],
-          route: [HttpRouteDestination.new(service_host)]
+          route: [HttpRouteDestination.new(service_host, port)]
         },
         do_rewrite
       )
@@ -138,9 +143,9 @@ defmodule KubeResources.IstioConfig do
       %__MODULE__{gateways: gateways, hosts: hosts, http: routes, tcp: tcp}
     end
 
-    def prefix(prefix, service_host, opts \\ []) do
+    def prefix(prefix, service_host, service_port, opts \\ []) do
       opts
-      |> Keyword.merge(http: [HttpRoute.prefix(prefix, service_host)])
+      |> Keyword.merge(http: [HttpRoute.prefix(prefix, service_host, service_port)])
       |> new()
     end
 

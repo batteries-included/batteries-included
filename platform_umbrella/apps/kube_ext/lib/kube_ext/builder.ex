@@ -89,6 +89,10 @@ defmodule KubeExt.Builder do
     build_resource("policy/v1beta1", "PodDisruptionBudget")
   end
 
+  def build_resource(:telemetry) do
+    build_resource("telemetry.istio.io/v1alpha1", "Telemetry")
+  end
+
   def build_resource(:ingress, path, service_name, port) do
     build_resource("networking.k8s.io/v1", "Ingress")
     |> annotation("kubernetes.io/ingress.class", "battery-nginx")
@@ -119,6 +123,7 @@ defmodule KubeExt.Builder do
   def app_labels(resource, app_name) do
     resource
     |> label("battery/app", app_name)
+    |> label("app", app_name)
     |> label("battery/managed", "true")
   end
 
@@ -196,6 +201,14 @@ defmodule KubeExt.Builder do
       "apiGroup" => "rbac.authorization.k8s.io",
       "kind" => "ClusterRole",
       "name" => cluster_role_name
+    }
+  end
+
+  def build_role_ref(role_name) do
+    %{
+      "apiGroup" => "rbac.authorization.k8s.io",
+      "kind" => "Role",
+      "name" => role_name
     }
   end
 

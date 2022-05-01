@@ -34,6 +34,16 @@ defmodule KubeResources.IstioGateway do
     }
   end
 
+  def telemetry(config) do
+    namespace = NetworkSettings.ingress_namespace(config)
+
+    B.build_resource(:telemetry)
+    |> B.name("mesh-default")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.spec(%{"accessLogging" => [%{"providers" => [%{"name" => "envoy"}]}]})
+  end
+
   def role(config) do
     namespace = NetworkSettings.ingress_namespace(config)
 
@@ -284,6 +294,7 @@ defmodule KubeResources.IstioGateway do
       "/service" => service(config),
       "/deployment" => deployment(config),
       "/horizontal_pod_autoscaler" => horizontal_pod_autoscaler(config),
+      "/telemetry" => telemetry(config),
       "/gateway" => gateway(config)
     }
   end
