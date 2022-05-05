@@ -22,7 +22,7 @@ jobs:
         with:
           images: battery/control
       - name: Build ControlServer
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: platform_umbrella
           push: false
@@ -46,7 +46,7 @@ jobs:
         with:
           images: battery/home
       - name: Build HomeBase
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: platform_umbrella
           push: false
