@@ -45,6 +45,7 @@ defmodule ControlServerWeb.Router do
 
     live "/services/network/settings", Live.NetworkServiceSettings, :index
     live "/services/network/status", Live.NetworkStatus, :index
+    live "/services/network/kiali", Live.Kiali, :index
 
     live "/services/security/settings", Live.SecurityServiceSettings, :index
 

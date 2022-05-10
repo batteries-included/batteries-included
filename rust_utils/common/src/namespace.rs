@@ -10,10 +10,13 @@ use tracing::debug;
 pub const DEFAULT_NAMESPACE: &str = "battery-core";
 
 pub fn default_namespace() -> Namespace {
+    let mut labels = default_labels("batteries-included");
+    labels.insert("istio-injection".to_string(), "enabled".to_string());
+
     Namespace {
         metadata: ObjectMeta {
             name: Some(DEFAULT_NAMESPACE.to_string()),
-            labels: Some(default_labels("batteries-included")),
+            labels: Some(labels),
             ..ObjectMeta::default()
         },
         ..Namespace::default()

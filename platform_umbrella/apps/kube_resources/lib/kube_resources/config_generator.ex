@@ -20,6 +20,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Grafana
   alias KubeResources.IstioGateway
   alias KubeResources.Keycloak
+  alias KubeResources.KialiServer
   alias KubeResources.KnativeOperator
   alias KubeResources.KnativeServices
   alias KubeResources.Kong
@@ -78,6 +79,7 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :nginx), do: Nginx.materialize(config)
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
   def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
+  def materialize(%{} = config, :kiali), do: KialiServer.materialize(config)
 
   def materialize(%{} = config, :battery), do: Battery.materialize(config)
   def materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)

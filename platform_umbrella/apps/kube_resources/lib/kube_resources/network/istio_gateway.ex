@@ -7,41 +7,34 @@ defmodule KubeResources.IstioGateway do
   @app "istio-ingressgateway"
   @istio_name "ingressgateway"
 
-  def namespace(config) do
-    namespace_name = NetworkSettings.ingress_namespace(config)
+  def service_account(config) do
+    namespace = NetworkSettings.istio_namespace(config)
 
-    B.build_resource(:namespace)
-    |> B.name(namespace_name)
+    B.build_resource(:service_account)
+    |> B.name(@istio_name)
     |> B.app_labels(@app)
-    |> B.label("istio-injection", "enabled")
+    |> B.label("istio", @istio_name)
+    |> B.namespace(namespace)
   end
 
-  def service_account(config) do
-    namespace = NetworkSettings.ingress_namespace(config)
+  def telemetry(config) do
+    namespace = NetworkSettings.istio_namespace(config)
 
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ServiceAccount",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => @app,
-          "battery/managed" => "true",
-          "istio" => @istio_name
-        },
-        "name" => "istio-ingressgateway",
-        "namespace" => namespace
-      }
-    }
+    B.build_resource(:telemetry)
+    |> B.name("mesh-default")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.spec(%{"accessLogging" => [%{"providers" => [%{"name" => "envoy"}]}]})
   end
 
   def role(config) do
-    namespace = NetworkSettings.ingress_namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "Role",
       "metadata" => %{
-        "name" => "istio-ingressgateway",
+        "name" => @istio_name,
         "namespace" => namespace
       },
       "rules" => [
@@ -63,31 +56,31 @@ defmodule KubeResources.IstioGateway do
   end
 
   def role_binding(config) do
-    namespace = NetworkSettings.ingress_namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "rbac.authorization.k8s.io/v1",
       "kind" => "RoleBinding",
       "metadata" => %{
-        "name" => "istio-ingressgateway",
+        "name" => @istio_name,
         "namespace" => namespace
       },
       "roleRef" => %{
         "apiGroup" => "rbac.authorization.k8s.io",
         "kind" => "Role",
-        "name" => "istio-ingressgateway"
+        "name" => @istio_name
       },
       "subjects" => [
         %{
           "kind" => "ServiceAccount",
-          "name" => "istio-ingressgateway"
+          "name" => @istio_name
         }
       ]
     }
   end
 
   def service(config) do
-    namespace = NetworkSettings.ingress_namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     spec = %{
       "ports" => [
@@ -124,98 +117,94 @@ defmodule KubeResources.IstioGateway do
 
     B.build_resource(:service)
     |> B.app_labels(@app)
+    |> B.label("istio", @istio_name)
     |> B.namespace(namespace)
-    |> B.name("istio-ingressgateway")
+    |> B.name(@istio_name)
     |> B.spec(spec)
   end
 
   def deployment(config) do
-    namespace = NetworkSettings.ingress_namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
-    %{
-      "apiVersion" => "apps/v1",
-      "kind" => "Deployment",
-      "metadata" => %{
-        "labels" => %{
+    spec = %{
+      "selector" => %{
+        "matchLabels" => %{
           "battery/app" => @app,
-          "battery/managed" => "true",
           "istio" => @istio_name
-        },
-        "name" => "istio-ingressgateway",
-        "namespace" => namespace
+        }
       },
-      "spec" => %{
-        "selector" => %{
-          "matchLabels" => %{
+      "template" => %{
+        "metadata" => %{
+          "annotations" => %{
+            "inject.istio.io/templates" => "gateway",
+            "prometheus.io/path" => "/stats/prometheus",
+            "prometheus.io/port" => "15020",
+            "prometheus.io/scrape" => "true",
+            "sidecar.istio.io/inject" => "true"
+          },
+          "labels" => %{
             "battery/app" => @app,
+            "app" => @app,
             "battery/managed" => "true",
-            "istio" => @istio_name
+            "istio" => @istio_name,
+            "sidecar.istio.io/inject" => "true"
           }
         },
-        "template" => %{
-          "metadata" => %{
-            "annotations" => %{
-              "inject.istio.io/templates" => "gateway",
-              "prometheus.io/path" => "/stats/prometheus",
-              "prometheus.io/port" => "15020",
-              "prometheus.io/scrape" => "true",
-              "sidecar.istio.io/inject" => "true"
-            },
-            "labels" => %{
-              "battery/app" => @app,
-              "battery/managed" => "true",
-              "istio" => @istio_name,
-              "sidecar.istio.io/inject" => "true"
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "image" => "auto",
-                "name" => "istio-proxy",
-                "ports" => [
-                  %{
-                    "containerPort" => 15_090,
-                    "name" => "http-envoy-prom",
-                    "protocol" => "TCP"
-                  }
-                ],
-                "resources" => %{
-                  "limits" => %{
-                    "cpu" => "2000m",
-                    "memory" => "1024Mi"
-                  },
-                  "requests" => %{
-                    "cpu" => "100m",
-                    "memory" => "128Mi"
-                  }
-                },
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => true,
-                  "capabilities" => %{
-                    "add" => [
-                      "NET_BIND_SERVICE"
-                    ],
-                    "drop" => [
-                      "ALL"
-                    ]
-                  },
-                  "readOnlyRootFilesystem" => true,
-                  "runAsGroup" => 1337,
-                  "runAsNonRoot" => false,
-                  "runAsUser" => 0
+        "spec" => %{
+          "containers" => [
+            %{
+              "image" => "auto",
+              "name" => "istio-proxy",
+              "ports" => [
+                %{
+                  "containerPort" => 15_090,
+                  "name" => "http-envoy-prom",
+                  "protocol" => "TCP"
                 }
+              ],
+              "resources" => %{
+                "limits" => %{
+                  "cpu" => "2000m",
+                  "memory" => "1024Mi"
+                },
+                "requests" => %{
+                  "cpu" => "100m",
+                  "memory" => "128Mi"
+                }
+              },
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => true,
+                "capabilities" => %{
+                  "add" => [
+                    "NET_BIND_SERVICE"
+                  ],
+                  "drop" => [
+                    "ALL"
+                  ]
+                },
+                "readOnlyRootFilesystem" => true,
+                "runAsGroup" => 1337,
+                "runAsNonRoot" => false,
+                "runAsUser" => 0
               }
-            ],
-            "serviceAccountName" => "istio-ingressgateway"
-          }
+            }
+          ],
+          "serviceAccountName" => @istio_name
         }
       }
     }
+
+    B.build_resource(:deployment)
+    |> B.name(@istio_name)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.label("istio", @istio_name)
+    |> B.label("istio-injection", "enabled")
+    |> B.spec(spec)
   end
 
   def horizontal_pod_autoscaler(config) do
-    namespace = NetworkSettings.ingress_namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "autoscaling/v2beta2",
@@ -227,7 +216,7 @@ defmodule KubeResources.IstioGateway do
           "battery/managed" => "true",
           "istio" => @istio_name
         },
-        "name" => "istio-ingressgateway",
+        "name" => @istio_name,
         "namespace" => namespace
       },
       "spec" => %{
@@ -248,17 +237,17 @@ defmodule KubeResources.IstioGateway do
         "scaleTargetRef" => %{
           "apiVersion" => "apps/v1",
           "kind" => "Deployment",
-          "name" => "istio-ingressgateway"
+          "name" => @istio_name
         }
       }
     }
   end
 
   def gateway(config) do
-    namespace = NetworkSettings.ingress_namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     spec = %{
-      selector: %{istio: "ingressgateway"},
+      selector: %{istio: @istio_name},
       servers: [
         %{port: %{number: 80, name: "http", protocol: "HTTP"}, hosts: ["*"]},
         %{
@@ -269,21 +258,22 @@ defmodule KubeResources.IstioGateway do
     }
 
     B.build_resource(:gateway)
-    |> B.name("battery-gateway")
+    |> B.name(@istio_name)
     |> B.namespace(namespace)
     |> B.app_labels(@app)
+    |> B.label("istio", @istio_name)
     |> B.spec(spec)
   end
 
   def materialize(config) do
     %{
-      "/namespace" => namespace(config),
       "/service_account" => service_account(config),
       "/role" => role(config),
       "/role_binding" => role_binding(config),
       "/service" => service(config),
       "/deployment" => deployment(config),
       "/horizontal_pod_autoscaler" => horizontal_pod_autoscaler(config),
+      "/telemetry" => telemetry(config),
       "/gateway" => gateway(config)
     }
   end

@@ -1010,139 +1010,98 @@ defmodule KubeRawResources.IstioIstiod do
     "      {{ end }}"
   ]
 
-  @insert_values [
-    "{",
-    "  \"global\": {",
-    "    \"caAddress\": \"\",",
-    "    \"caName\": \"\",",
-    "    \"configCluster\": false,",
-    "    \"defaultPodDisruptionBudget\": {",
-    "      \"enabled\": true",
-    "    },",
-    "    \"defaultResources\": {",
-    "      \"requests\": {",
-    "        \"cpu\": \"10m\"",
-    "      }",
-    "    },",
-    "    \"externalIstiod\": false,",
-    "    \"hub\": \"docker.io/istio\",",
-    "    \"imagePullPolicy\": \"\",",
-    "    \"imagePullSecrets\": [],",
-    "    \"istioNamespace\": \"battery-core\",",
-    "    \"istiod\": {",
-    "      \"enableAnalysis\": false",
-    "    },",
-    "    \"jwtPolicy\": \"third-party-jwt\",",
-    "    \"logAsJson\": false,",
-    "    \"logging\": {",
-    "      \"level\": \"default:info\"",
-    "    },",
-    "    \"meshID\": \"\",",
-    "    \"meshNetworks\": {},",
-    "    \"mountMtlsCerts\": false,",
-    "    \"multiCluster\": {",
-    "      \"clusterName\": \"\",",
-    "      \"enabled\": false",
-    "    },",
-    "    \"network\": \"\",",
-    "    \"omitSidecarInjectorConfigMap\": false,",
-    "    \"oneNamespace\": false,",
-    "    \"operatorManageWebhooks\": false,",
-    "    \"pilotCertProvider\": \"istiod\",",
-    "    \"priorityClassName\": \"\",",
-    "    \"proxy\": {",
-    "      \"autoInject\": \"enabled\",",
-    "      \"clusterDomain\": \"cluster.local\",",
-    "      \"componentLogLevel\": \"misc:error\",",
-    "      \"enableCoreDump\": false,",
-    "      \"excludeIPRanges\": \"\",",
-    "      \"excludeInboundPorts\": \"\",",
-    "      \"excludeOutboundPorts\": \"\",",
-    "      \"holdApplicationUntilProxyStarts\": false,",
-    "      \"image\": \"proxyv2\",",
-    "      \"includeIPRanges\": \"*\",",
-    "      \"includeInboundPorts\": \"*\",",
-    "      \"includeOutboundPorts\": \"\",",
-    "      \"logLevel\": \"warning\",",
-    "      \"privileged\": false,",
-    "      \"readinessFailureThreshold\": 30,",
-    "      \"readinessInitialDelaySeconds\": 1,",
-    "      \"readinessPeriodSeconds\": 2,",
-    "      \"resources\": {",
-    "        \"limits\": {",
-    "          \"cpu\": \"2000m\",",
-    "          \"memory\": \"1024Mi\"",
-    "        },",
-    "        \"requests\": {",
-    "          \"cpu\": \"100m\",",
-    "          \"memory\": \"128Mi\"",
-    "        }",
-    "      },",
-    "      \"statusPort\": 15020,",
-    "      \"tracer\": \"zipkin\"",
-    "    },",
-    "    \"proxy_init\": {",
-    "      \"image\": \"proxyv2\",",
-    "      \"resources\": {",
-    "        \"limits\": {",
-    "          \"cpu\": \"2000m\",",
-    "          \"memory\": \"1024Mi\"",
-    "        },",
-    "        \"requests\": {",
-    "          \"cpu\": \"10m\",",
-    "          \"memory\": \"10Mi\"",
-    "        }",
-    "      }",
-    "    },",
-    "    \"remotePilotAddress\": \"\",",
-    "    \"sds\": {",
-    "      \"token\": {",
-    "        \"aud\": \"istio-ca\"",
-    "      }",
-    "    },",
-    "    \"sts\": {",
-    "      \"servicePort\": 0",
-    "    },",
-    "    \"tag\": \"1.13.2\",",
-    "    \"tracer\": {",
-    "      \"datadog\": {",
-    "        \"address\": \"$(HOST_IP):8126\"",
-    "      },",
-    "      \"lightstep\": {",
-    "        \"accessToken\": \"\",",
-    "        \"address\": \"\"",
-    "      },",
-    "      \"stackdriver\": {",
-    "        \"debug\": false,",
-    "        \"maxNumberOfAnnotations\": 200,",
-    "        \"maxNumberOfAttributes\": 200,",
-    "        \"maxNumberOfMessageEvents\": 200",
-    "      },",
-    "      \"zipkin\": {",
-    "        \"address\": \"\"",
-    "      }",
-    "    },",
-    "    \"useMCP\": false",
-    "  },",
-    "  \"revision\": \"\",",
-    "  \"sidecarInjectorWebhook\": {",
-    "    \"alwaysInjectSelector\": [],",
-    "    \"defaultTemplates\": [],",
-    "    \"enableNamespacesByDefault\": false,",
-    "    \"injectedAnnotations\": {},",
-    "    \"neverInjectSelector\": [],",
-    "    \"objectSelector\": {",
-    "      \"autoInject\": true,",
-    "      \"enabled\": true",
-    "    },",
-    "    \"rewriteAppHTTPProbe\": true,",
-    "    \"templates\": {}",
-    "  }",
-    "}"
-  ]
+  @insert_values %{
+    "global" => %{
+      "caAddress" => "",
+      "caName" => "",
+      "configCluster" => false,
+      "defaultPodDisruptionBudget" => %{"enabled" => true},
+      "defaultResources" => %{"requests" => %{"cpu" => "10m"}},
+      "externalIstiod" => false,
+      "hub" => "docker.io/istio",
+      "imagePullPolicy" => "",
+      "imagePullSecrets" => [],
+      "istioNamespace" => "battery-istio",
+      "istiod" => %{"enableAnalysis" => false},
+      "jwtPolicy" => "third-party-jwt",
+      "logAsJson" => true,
+      "logging" => %{"level" => "default:info"},
+      "meshID" => "",
+      "meshNetworks" => %{},
+      "mountMtlsCerts" => false,
+      "multiCluster" => %{"clusterName" => "", "enabled" => false},
+      "network" => "",
+      "omitSidecarInjectorConfigMap" => false,
+      "oneNamespace" => false,
+      "operatorManageWebhooks" => false,
+      "pilotCertProvider" => "istiod",
+      "priorityClassName" => "",
+      "proxy" => %{
+        "autoInject" => "enabled",
+        "clusterDomain" => "cluster.local",
+        "componentLogLevel" => "misc:error",
+        "enableCoreDump" => false,
+        "excludeIPRanges" => "",
+        "excludeInboundPorts" => "",
+        "excludeOutboundPorts" => "",
+        "holdApplicationUntilProxyStarts" => false,
+        "image" => "proxyv2",
+        "includeIPRanges" => "*",
+        "includeInboundPorts" => "*",
+        "includeOutboundPorts" => "",
+        "logLevel" => "warning",
+        "privileged" => false,
+        "readinessFailureThreshold" => 30,
+        "readinessInitialDelaySeconds" => 1,
+        "readinessPeriodSeconds" => 2,
+        "resources" => %{
+          "limits" => %{"cpu" => "2000m", "memory" => "1024Mi"},
+          "requests" => %{"cpu" => "100m", "memory" => "128Mi"}
+        },
+        "statusPort" => 15_020,
+        "tracer" => "zipkin"
+      },
+      "proxy_init" => %{
+        "image" => "proxyv2",
+        "resources" => %{
+          "limits" => %{"cpu" => "2000m", "memory" => "1024Mi"},
+          "requests" => %{"cpu" => "10m", "memory" => "10Mi"}
+        }
+      },
+      "remotePilotAddress" => "",
+      "sds" => %{"token" => %{"aud" => "istio-ca"}},
+      "sts" => %{"servicePort" => 0},
+      "tag" => "1.13.2",
+      "tracer" => %{
+        "datadog" => %{"address" => "$(HOST_IP):8126"},
+        "lightstep" => %{"accessToken" => "", "address" => ""},
+        "stackdriver" => %{
+          "debug" => false,
+          "maxNumberOfAnnotations" => 200,
+          "maxNumberOfAttributes" => 200,
+          "maxNumberOfMessageEvents" => 200
+        },
+        "zipkin" => %{"address" => ""}
+      },
+      "useMCP" => false
+    },
+    "revision" => "",
+    "sidecarInjectorWebhook" => %{
+      "alwaysInjectSelector" => [],
+      "defaultTemplates" => [],
+      "enableNamespacesByDefault" => false,
+      "injectedAnnotations" => %{},
+      "neverInjectSelector" => [],
+      "objectSelector" => %{"autoInject" => true, "enabled" => true},
+      "rewriteAppHTTPProbe" => true,
+      "templates" => %{}
+    }
+  }
+
+  def values, do: Enum.join(@insert_values, "\n")
 
   def pod_disruption_budget(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     spec = %{
       "minAvailable" => 1,
@@ -1166,12 +1125,12 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def config_map(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     data = %{
       "mesh" => """
       defaultConfig:
-        discoveryAddress: istiod.battery-core.svc:15012
+        discoveryAddress: istiod.battery-istio.svc:15012
         tracing:
           zipkin:
             address: zipkin.battery-core:9411
@@ -1190,11 +1149,11 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def config_map_1(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     data = %{
       "config" => Enum.join(@insert_config, "\n"),
-      "values" => Enum.join(@insert_values, "\n")
+      "values" => Jason.encode!(@insert_values)
     }
 
     B.build_resource(:config_map)
@@ -1207,7 +1166,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def service(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "v1",
@@ -1217,6 +1176,7 @@ defmodule KubeRawResources.IstioIstiod do
           "battery/app" => "istiod",
           "battery/managed" => "true",
           "istio" => "pilot",
+          "app" => "istiod",
           "istio.io/rev" => "default",
           "operator.istio.io/component" => "Pilot"
         },
@@ -1256,7 +1216,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def deployment(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "apps/v1",
@@ -1266,6 +1226,7 @@ defmodule KubeRawResources.IstioIstiod do
           "battery/app" => "istiod",
           "battery/managed" => "true",
           "istio" => "pilot",
+          "app" => "istiod",
           "istio.io/rev" => "default",
           "operator.istio.io/component" => "Pilot"
         },
@@ -1275,7 +1236,6 @@ defmodule KubeRawResources.IstioIstiod do
       "spec" => %{
         "selector" => %{
           "matchLabels" => %{
-            "battery/managed" => "true",
             "istio" => "pilot"
           }
         },
@@ -1295,6 +1255,7 @@ defmodule KubeRawResources.IstioIstiod do
             "labels" => %{
               "battery/app" => "istiod",
               "battery/managed" => "true",
+              "app" => "istiod",
               "istio" => "pilot",
               "istio.io/rev" => "default",
               "operator.istio.io/component" => "Pilot",
@@ -1371,18 +1332,18 @@ defmodule KubeRawResources.IstioIstiod do
                   },
                   %{
                     "name" => "ISTIOD_ADDR",
-                    "value" => "istiod.battery-core.svc:15012"
+                    "value" => "istiod.battery-istio.svc:15012"
                   },
                   %{
                     "name" => "PILOT_ENABLE_ANALYSIS",
-                    "value" => "false"
+                    "value" => "true"
                   },
                   %{
                     "name" => "CLUSTER_ID",
                     "value" => "Kubernetes"
                   }
                 ],
-                "image" => "docker.io/istio/pilot:1.13.2",
+                "image" => "docker.io/istio/pilot:1.13.3",
                 "name" => "discovery",
                 "ports" => [
                   %{
@@ -1495,7 +1456,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def horizontal_pod_autoscaler(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "autoscaling/v2beta1",
@@ -1532,7 +1493,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def envoy_filter(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "networking.istio.io/v1alpha3",
@@ -1696,7 +1657,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def envoy_filter_1(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "networking.istio.io/v1alpha3",
@@ -1853,7 +1814,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def envoy_filter_2(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "networking.istio.io/v1alpha3",
@@ -2017,7 +1978,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def envoy_filter_3(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "networking.istio.io/v1alpha3",
@@ -2174,7 +2135,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def envoy_filter_4(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "networking.istio.io/v1alpha3",
@@ -2338,7 +2299,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def envoy_filter_5(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "networking.istio.io/v1alpha3",
@@ -2495,7 +2456,7 @@ defmodule KubeRawResources.IstioIstiod do
   end
 
   def mutating_webhook_configuration(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "admissionregistration.k8s.io/v1",
@@ -2753,6 +2714,133 @@ defmodule KubeRawResources.IstioIstiod do
         }
       ]
     }
+  end
+
+  def pod_monitor(config) do
+    namespace = NetworkSettings.istio_namespace(config)
+
+    %{
+      "apiVersion" => "monitoring.coreos.com/v1",
+      "kind" => "PodMonitor",
+      "metadata" => %{
+        "labels" => %{
+          "battery/managed" => "true",
+          "monitoring" => "istio-proxies"
+        },
+        "name" => "envoy-stats-monitor",
+        "namespace" => namespace
+      },
+      "spec" => %{
+        "jobLabel" => "envoy-stats",
+        "namespaceSelector" => %{
+          "any" => true
+        },
+        "podMetricsEndpoints" => [
+          %{
+            "interval" => "15s",
+            "path" => "/stats/prometheus",
+            "relabelings" => [
+              %{
+                "action" => "keep",
+                "regex" => "istio-proxy",
+                "sourceLabels" => [
+                  "__meta_kubernetes_pod_container_name"
+                ]
+              },
+              %{
+                "action" => "keep",
+                "sourceLabels" => [
+                  "__meta_kubernetes_pod_annotationpresent_prometheus_io_scrape"
+                ]
+              },
+              %{
+                "action" => "replace",
+                "regex" => "([^:]+)(?::\\d+)?;(\\d+)",
+                "replacement" => "$1:$2",
+                "sourceLabels" => [
+                  "__address__",
+                  "__meta_kubernetes_pod_annotation_prometheus_io_port"
+                ],
+                "targetLabel" => "__address__"
+              },
+              %{
+                "action" => "labeldrop",
+                "regex" => "__meta_kubernetes_pod_label_(.+)"
+              },
+              %{
+                "action" => "replace",
+                "sourceLabels" => [
+                  "__meta_kubernetes_namespace"
+                ],
+                "targetLabel" => "namespace"
+              },
+              %{
+                "action" => "replace",
+                "sourceLabels" => [
+                  "__meta_kubernetes_pod_name"
+                ],
+                "targetLabel" => "pod_name"
+              }
+            ]
+          }
+        ],
+        "selector" => %{
+          "matchExpressions" => [
+            %{
+              "key" => "istio-prometheus-ignore",
+              "operator" => "DoesNotExist"
+            }
+          ]
+        }
+      }
+    }
+  end
+
+  def service_monitor(config) do
+    namespace = NetworkSettings.istio_namespace(config)
+
+    %{
+      "apiVersion" => "monitoring.coreos.com/v1",
+      "kind" => "ServiceMonitor",
+      "metadata" => %{
+        "labels" => %{
+          "battery/managed" => "true",
+          "monitoring" => "istio-components"
+        },
+        "name" => "istio-component-monitor",
+        "namespace" => namespace
+      },
+      "spec" => %{
+        "endpoints" => [
+          %{
+            "interval" => "15s",
+            "port" => "http-monitoring"
+          }
+        ],
+        "jobLabel" => "istio",
+        "namespaceSelector" => %{
+          "any" => true
+        },
+        "selector" => %{
+          "matchExpressions" => [
+            %{
+              "key" => "istio",
+              "operator" => "In",
+              "values" => [
+                "pilot"
+              ]
+            }
+          ]
+        },
+        "targetLabels" => [
+          "app"
+        ]
+      }
+    }
+  end
+
+  def monitors(config) do
+    [service_monitor(config), pod_monitor(config)]
   end
 
   def materialize(config) do

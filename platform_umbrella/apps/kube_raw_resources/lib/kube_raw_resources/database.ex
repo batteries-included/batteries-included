@@ -43,6 +43,7 @@ defmodule KubeRawResources.Database do
     |> B.namespace(namespace)
     |> B.name(full_name(cluster))
     |> B.app_labels(@app)
+    |> B.label("sidecar.istio.io/inject", "disabled")
     |> B.spec(spec)
   end
 

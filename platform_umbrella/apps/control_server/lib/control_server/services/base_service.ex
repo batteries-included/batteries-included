@@ -38,6 +38,7 @@ defmodule ControlServer.Services.BaseService do
         :istio,
         :istio_istiod,
         :istio_gateway,
+        :kiali,
         :kong,
         :keycloak,
         :nginx,

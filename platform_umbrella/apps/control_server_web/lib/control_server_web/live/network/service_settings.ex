@@ -42,7 +42,7 @@ defmodule ControlServerWeb.Live.NetworkServiceSettings do
         <.title>Network Settings</.title>
       </:title>
       <:left_menu>
-        <.network_menu active="settings" />
+        <.network_menu active="settings" base_services={@base_services} />
       </:left_menu>
       <.body_section>
         <.services_table runnable_services={@runnable_services} base_services={@base_services} />

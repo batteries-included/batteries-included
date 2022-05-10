@@ -5,6 +5,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   import CommonUI.Icons.Devtools
   import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Notebook
+  import CommonUI.Icons.Network
 
   alias ControlServerWeb.Layout
 
@@ -72,6 +73,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
         <.alert_manager_icon class={@class} />
       <% "gitea" -> %>
         <.gitea_icon class={@class} />
+      <% "kiali" -> %>
+        <.kiali_icon class={@class} />
     <% end %>
     """
   end
@@ -197,6 +200,13 @@ defmodule ControlServerWeb.LeftMenuLayout do
         />
       <% :gitea -> %>
         <.left_menu_item to={KubeResources.Gitea.view_url()} name="Gitea" icon="gitea" link_type="a" />
+      <% :kiali -> %>
+        <.left_menu_item
+          to={KubeResources.KialiServer.view_url()}
+          name="Kiali"
+          icon="kiali"
+          link_type="a"
+        />
       <% _ -> %>
     <% end %>
     """
@@ -225,6 +235,10 @@ defmodule ControlServerWeb.LeftMenuLayout do
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
+
+    <%= for base_service <- @base_services do %>
+      <.base_service_menu_item service_type={base_service.service_type} />
+    <% end %>
     """
   end
 
