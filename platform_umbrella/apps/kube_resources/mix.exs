@@ -35,7 +35,7 @@ defmodule KubeResources.MixProject do
       {:ymlr, "~> 2.0"},
       # Caching for http requests
       {:cachex, "~> 3.4"},
-      {:finch, "~> 0.11.0"},
+      {:finch, "~> 0.12.0"},
       {:kube_ext, in_umbrella: true},
       {:kube_state, in_umbrella: true},
       {:kube_raw_resources, in_umbrella: true},
