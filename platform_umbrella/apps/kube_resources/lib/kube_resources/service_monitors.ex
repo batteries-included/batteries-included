@@ -7,6 +7,8 @@ defmodule KubeResources.ServiceMonitors do
   alias KubeResources.KubeMonitoring
   alias KubeResources.Prometheus
   alias KubeResources.PrometheusOperator
+  alias KubeRawResources.IstioIstiod
+  alias KubeResources.KnativeOperator
 
   def materialize(_config) do
     Services.all_including_config()
@@ -23,7 +25,8 @@ defmodule KubeResources.ServiceMonitors do
   defp monitors(:database_internal, config), do: DatabaseServiceMonitors.internal_monitors(config)
   defp monitors(:database, config), do: DatabaseServiceMonitors.monitors(config)
   defp monitors(:kong, config), do: Kong.monitors(config)
-  # defp monitors(:istio, config), do: Istio.monitors(config)
+  defp monitors(:istio, config), do: IstioIstiod.monitors(config)
+  defp monitors(:knative, config), do: KnativeOperator.monitors(config)
 
   defp monitors(_, _), do: []
 end

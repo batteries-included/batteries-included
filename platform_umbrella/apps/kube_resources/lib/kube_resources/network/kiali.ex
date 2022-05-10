@@ -10,7 +10,7 @@ defmodule KubeResources.KialiServer do
   @url_base "/x/kiali"
 
   def service_account(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     B.build_resource(:service_account)
     |> B.name("kiali")
@@ -27,7 +27,7 @@ defmodule KubeResources.KialiServer do
   def url, do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{@url_base}"
 
   def virtual_service(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     B.build_resource(:virtual_service)
     |> B.namespace(namespace)
@@ -37,7 +37,8 @@ defmodule KubeResources.KialiServer do
   end
 
   def config_map(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
+    istio_namespace = NetworkSettings.istio_namespace(config)
 
     config = %{
       "auth" => %{
@@ -58,15 +59,11 @@ defmodule KubeResources.KialiServer do
         "image_pull_policy" => "Always",
         "image_pull_secrets" => [],
         "image_version" => "v1.50.0",
-        "ingress" => %{
-          "additional_labels" => %{},
-          "class_name" => "nginx",
-          "override_yaml" => %{"metadata" => %{}}
-        },
+        "ingress" => %{},
         "instance_name" => "kiali",
         "logger" => %{
           "log_format" => "text",
-          "log_level" => "debug",
+          "log_level" => "TRACE",
           "sampler_rate" => "1",
           "time_field_format" => "2006-01-02T15:04:05Z07:00"
         },
@@ -89,19 +86,25 @@ defmodule KubeResources.KialiServer do
       },
       "external_services" => %{
         "custom_dashboards" => %{"enabled" => true},
-        "prometheus"=> %{"url"=> "http://prometheus-main.battery-core.svc.cluster.local:8080"},
+        "prometheus" => %{
+          "url" => "http://prometheus-operated.battery-core.svc.cluster.local:9090/"
+        },
+        "grafana" => %{
+          "in_cluster_url" => "http://grafana.battery-core.svc.cluster.local:3000/x/grafana",
+          "url" => "http:#{KubeResources.Grafana.url()}"
+        },
         "istio" => %{"root_namespace" => namespace}
       },
       "identity" => %{"cert_file" => "", "private_key_file" => ""},
-      "istio_namespace" => namespace,
+      "istio_namespace" => istio_namespace,
       "kiali_feature_flags" => %{
         "certificates_information_indicators" => %{
           "enabled" => true,
           "secrets" => ["cacerts", "istio-ca-secret"]
         },
-        "clustering" => %{"enabled" => true},
+        "clustering" => %{"enabled" => false},
         "disabled_features" => [],
-        "validations" => %{"ignore" => ["KIA1201"]}
+        "validations" => %{"ignore" => ["KIA1201", "KIA1106"]}
       },
       "login_token" => %{"signing_key" => "7qkkuRw1MT2Fvyn1"},
       "server" => %{
@@ -415,7 +418,7 @@ defmodule KubeResources.KialiServer do
   end
 
   def cluster_role_binding(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     B.build_resource(:cluster_role_binding)
     |> B.app_labels(@app)
@@ -425,7 +428,7 @@ defmodule KubeResources.KialiServer do
   end
 
   def role(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     rules = [
       %{
@@ -455,7 +458,8 @@ defmodule KubeResources.KialiServer do
           "list",
           "watch"
         ]
-      }
+      },
+      %{"apiGroups" => [""], "resources" => ["namespaces"], "verbs" => ["get", "list", "watch"]}
     ]
 
     B.build_resource(:role)
@@ -466,7 +470,7 @@ defmodule KubeResources.KialiServer do
   end
 
   def role_binding(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     B.build_resource(:role_binding)
     |> B.namespace(namespace)
@@ -476,7 +480,7 @@ defmodule KubeResources.KialiServer do
   end
 
   def service(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "v1",
@@ -512,7 +516,7 @@ defmodule KubeResources.KialiServer do
   end
 
   def deployment(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "apps/v1",

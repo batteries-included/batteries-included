@@ -102,7 +102,7 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/network/kiali",
         service_type: :kiali,
-        dependencies: [:istio_istiod, :istio_gateway, :prometheus]
+        dependencies: [:istio_istiod, :istio_gateway, :prometheus, :grafana]
       },
       # Security
       %__MODULE__{path: "/security/cert_manager", service_type: :cert_manager},

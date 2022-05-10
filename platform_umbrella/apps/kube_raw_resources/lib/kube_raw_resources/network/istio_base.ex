@@ -13,6 +13,7 @@ defmodule KubeRawResources.IstioBase do
 
   def materialize(config) do
     %{
+      "/namespace" => namespace(config),
       "/crd" => crd(config),
       "/istiod/service_account" => service_account_istiod(config),
       "/istiod/cluster_role" => cluster_role_istiod(config),
@@ -30,8 +31,16 @@ defmodule KubeRawResources.IstioBase do
 
   def crd(_), do: yaml(crd_content())
 
+  defp namespace(config) do
+    namespace = NetworkSettings.istio_namespace(config)
+
+    B.build_resource(:namespace)
+    |> B.name(namespace)
+    |> B.app_labels(@istiod_app)
+  end
+
   def service_account_reader(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     B.build_resource(:service_account)
     |> B.name("istio-reader-service-account")
@@ -40,7 +49,7 @@ defmodule KubeRawResources.IstioBase do
   end
 
   def service_account_istiod(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     B.build_resource(:service_account)
     |> B.name("istiod")
@@ -48,7 +57,7 @@ defmodule KubeRawResources.IstioBase do
     |> B.app_labels(@istiod_app)
   end
 
-  def cluster_role_istiod(_config) do
+  def cluster_role_istiod(config) do
     rules = [
       %{
         "apiGroups" => ["admissionregistration.k8s.io"],
@@ -161,13 +170,16 @@ defmodule KubeRawResources.IstioBase do
       }
     ]
 
+    namespace = NetworkSettings.istio_namespace(config)
+    name = "istiod-#{namespace}"
+
     B.build_resource(:cluster_role)
-    |> B.name("istiod-battery-core")
+    |> B.name(name)
     |> B.app_labels(@istiod_app)
     |> Map.put("rules", rules)
   end
 
-  def cluster_role_istiod_gateway(_config) do
+  def cluster_role_istiod_gateway(config) do
     rules = [
       %{
         "apiGroups" => [
@@ -205,13 +217,16 @@ defmodule KubeRawResources.IstioBase do
       }
     ]
 
+    namespace = NetworkSettings.istio_namespace(config)
+    name = "istiod-gateway-controller-#{namespace}"
+
     B.build_resource(:cluster_role)
-    |> B.name("istiod-gateway-controller-battery-core")
+    |> B.name(name)
     |> B.app_labels(@istiod_app)
     |> Map.put("rules", rules)
   end
 
-  def cluster_role_reader(_config) do
+  def cluster_role_reader(config) do
     rules = [
       %{
         "apiGroups" => [
@@ -279,22 +294,26 @@ defmodule KubeRawResources.IstioBase do
       }
     ]
 
+    namespace = NetworkSettings.istio_namespace(config)
+    name = "istio-reader-#{namespace}"
+
     B.build_resource(:cluster_role)
-    |> B.name("istio-reader-battery-core")
+    |> B.name(name)
     |> B.app_labels(@reader_app)
     |> Map.put("rules", rules)
   end
 
   def cluster_role_binding_reader(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
+    name = "istio-reader-#{namespace}"
 
     B.build_resource(:cluster_role_binding)
-    |> B.name("istio-reader-battery-core")
+    |> B.name(name)
     |> B.app_labels(@reader_app)
     |> Map.put("roleRef", %{
       "apiGroup" => "rbac.authorization.k8s.io",
       "kind" => "ClusterRole",
-      "name" => "istio-reader-battery-core"
+      "name" => name
     })
     |> Map.put("subjects", [
       %{
@@ -306,15 +325,16 @@ defmodule KubeRawResources.IstioBase do
   end
 
   def cluster_role_binding_istiod(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
+    name = "istiod-#{namespace}"
 
     B.build_resource(:cluster_role_binding)
-    |> B.name("istiod-battery-core")
+    |> B.name(name)
     |> B.app_labels(@istiod_app)
     |> Map.put("roleRef", %{
       "apiGroup" => "rbac.authorization.k8s.io",
       "kind" => "ClusterRole",
-      "name" => "istiod-battery-core"
+      "name" => name
     })
     |> Map.put("subjects", [
       %{
@@ -326,15 +346,17 @@ defmodule KubeRawResources.IstioBase do
   end
 
   def cluster_role_binding_istiod_gateway(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
+
+    name = "istiod-gateway-controller-#{namespace}"
 
     B.build_resource(:cluster_role_binding)
-    |> B.name("istiod-gateway-controller-battery-core")
+    |> B.name(name)
     |> B.app_labels(@istiod_app)
     |> Map.put("roleRef", %{
       "apiGroup" => "rbac.authorization.k8s.io",
       "kind" => "ClusterRole",
-      "name" => "istiod-gateway-controller-battery-core"
+      "name" => name
     })
     |> Map.put("subjects", [
       %{
@@ -346,7 +368,8 @@ defmodule KubeRawResources.IstioBase do
   end
 
   def role_istiod(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
+    name = "istiod-#{namespace}"
 
     rules = [
       %{
@@ -362,22 +385,23 @@ defmodule KubeRawResources.IstioBase do
     ]
 
     B.build_resource(:role)
-    |> B.name("istiod-battery-core")
+    |> B.name(name)
     |> B.namespace(namespace)
     |> Map.put("rules", rules)
   end
 
   def role_binding_istiod(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
+    name = "istiod-#{namespace}"
 
     B.build_resource(:role_binding)
-    |> B.name("istiod-battery-core")
+    |> B.name(name)
     |> B.namespace(namespace)
     |> B.app_labels(@istiod_app)
     |> Map.put("roleRef", %{
       "apiGroup" => "rbac.authorization.k8s.io",
       "kind" => "Role",
-      "name" => "istiod-battery-core"
+      "name" => name
     })
     |> Map.put("subjects", [
       %{
@@ -389,7 +413,7 @@ defmodule KubeRawResources.IstioBase do
   end
 
   def validating_webhook_configuration(config) do
-    namespace = NetworkSettings.namespace(config)
+    namespace = NetworkSettings.istio_namespace(config)
 
     %{
       "apiVersion" => "admissionregistration.k8s.io/v1",

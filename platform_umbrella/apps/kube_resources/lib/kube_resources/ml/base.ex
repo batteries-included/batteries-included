@@ -16,5 +16,6 @@ defmodule KubeResources.ML.Base do
     B.build_resource(:namespace)
     |> B.name(namespace)
     |> B.app_labels(@app)
+    |> B.label("istio-injection", "enabled")
   end
 end

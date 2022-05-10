@@ -136,16 +136,18 @@ defmodule KubeResources.IstioConfig do
     defstruct hosts: [], gateways: [], http: [], tcp: []
 
     def new(opts \\ []) do
-      gateways = Keyword.get(opts, :gateways, ["battery-ingress/battery-gateway"])
+      gateways = Keyword.get(opts, :gateways, ["battery-istio/ingressgateway"])
       hosts = Keyword.get(opts, :hosts, ["*"])
       routes = Keyword.get(opts, :http, [])
       tcp = Keyword.get(opts, :tcp, [])
       %__MODULE__{gateways: gateways, hosts: hosts, http: routes, tcp: tcp}
     end
 
-    def prefix(prefix, service_host, service_port, opts \\ []) do
-      opts
-      |> Keyword.merge(http: [HttpRoute.prefix(prefix, service_host, service_port)])
+    def prefix(prefix, service_host, opts \\ []) do
+      {route_keywords, rest} = Keyword.split(opts, [:port])
+
+      rest
+      |> Keyword.merge(http: [HttpRoute.prefix(prefix, service_host, route_keywords)])
       |> new()
     end
 

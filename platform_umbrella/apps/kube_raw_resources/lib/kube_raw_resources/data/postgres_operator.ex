@@ -337,6 +337,7 @@ defmodule KubeRawResources.PostgresOperator do
     %{
       "oauth_token_secret_name" => "battery-postgres-operator",
       "pod_service_account_name" => "battery-postgres-pod",
+      "inherited_labels" => ["sidecar.istio.io/inject", "app"],
       "cluster_name_label" => label_name
     }
   end

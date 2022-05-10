@@ -27,6 +27,311 @@ defmodule KubeResources.KnativeOperator do
     }
   end
 
+  def monitors(config) do
+    [
+      service_monitor_autoscaler(config),
+      service_monitor_activator(config),
+      service_monitor_controller(config),
+      service_monitor_filter(config),
+      service_monitor_webhook(config),
+      service_monitor_broker_ingress(config),
+      pod_monitor_eventing_controller(config),
+      pod_monitor_imc_controller(config),
+      pod_monitor_api_source(config),
+      pod_monitor_ping_source(config)
+    ]
+  end
+
+  def service_monitor_autoscaler(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "endpoints" => [
+        %{
+          "interval" => "30s",
+          "port" => "http-metrics"
+        }
+      ],
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-serving",
+          namespace
+        ]
+      },
+      "selector" => %{
+        "matchLabels" => %{
+          "app" => "autoscaler"
+        }
+      }
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.app_labels(@app_name)
+    |> B.name("knative-autoscaler")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+  end
+
+  def service_monitor_activator(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "endpoints" => [
+        %{
+          "interval" => "30s",
+          "port" => "http-metrics"
+        }
+      ],
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-serving",
+          namespace
+        ]
+      },
+      "selector" => %{
+        "matchLabels" => %{
+          "app" => "activator"
+        }
+      }
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.app_labels(@app_name)
+    |> B.name("knative-activator")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+  end
+
+  def service_monitor_controller(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "endpoints" => [
+        %{
+          "interval" => "30s",
+          "port" => "http-metrics"
+        }
+      ],
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-serving"
+        ]
+      },
+      "selector" => %{
+        "matchLabels" => %{
+          "app" => "controller"
+        }
+      }
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.app_labels(@app_name)
+    |> B.name("knative-controller")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+  end
+
+  def service_monitor_filter(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "endpoints" => [
+        %{
+          "interval" => "30s",
+          "port" => "http-metrics"
+        }
+      ],
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-eventing",
+          namespace
+        ]
+      },
+      "selector" => %{
+        "matchLabels" => %{
+          "eventing.knative.dev/brokerRole" => "filter"
+        }
+      }
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.app_labels(@app_name)
+    |> B.name("knative-filter")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+  end
+
+  def service_monitor_webhook(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "endpoints" => [
+        %{
+          "interval" => "30s",
+          "port" => "http-metrics"
+        }
+      ],
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-serving"
+        ]
+      },
+      "selector" => %{
+        "matchLabels" => %{
+          "app" => "activator"
+        }
+      }
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.app_labels(@app_name)
+    |> B.name("knative-webhook")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+  end
+
+  def service_monitor_broker_ingress(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "endpoints" => [
+        %{
+          "interval" => "30s",
+          "port" => "http-metrics"
+        }
+      ],
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-eventing"
+        ]
+      },
+      "selector" => %{
+        "matchLabels" => %{
+          "eventing.knative.dev/brokerRole" => "ingress"
+        }
+      }
+    }
+
+    B.build_resource(:service_monitor)
+    |> B.app_labels(@app_name)
+    |> B.name("knative-broker-ingress")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+  end
+
+  def pod_monitor_eventing_controller(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-eventing",
+          namespace
+        ]
+      },
+      "podMetricsEndpoints" => [
+        %{
+          "port" => "metrics"
+        }
+      ],
+      "selector" => %{
+        "matchLabels" => %{
+          "app" => "eventing-controller"
+        }
+      }
+    }
+
+    B.build_resource(:pod_monitor)
+    |> B.name("knative-eventing-contoller")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
+  def pod_monitor_imc_controller(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-eventing",
+          namespace
+        ]
+      },
+      "podMetricsEndpoints" => [
+        %{
+          "port" => "metrics"
+        }
+      ],
+      "selector" => %{
+        "matchLabels" => %{
+          "messaging.knative.dev/role" => "controller"
+        }
+      }
+    }
+
+    B.build_resource(:pod_monitor)
+    |> B.name("knative-imc-contoller")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
+  def pod_monitor_ping_source(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "namespaceSelector" => %{
+        "matchNames" => [
+          "knative-eventing",
+          namespace
+        ]
+      },
+      "podMetricsEndpoints" => [
+        %{
+          "port" => "metrics"
+        }
+      ],
+      "selector" => %{
+        "matchLabels" => %{
+          "eventing.knative.dev/source" => "ping-source-controller"
+        }
+      }
+    }
+
+    B.build_resource(:pod_monitor)
+    |> B.name("knative-ping-source")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
+  def pod_monitor_api_source(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    spec = %{
+      "namespaceSelector" => %{
+        "any" => true
+      },
+      "podMetricsEndpoints" => [
+        %{
+          "port" => "metrics"
+        }
+      ],
+      "selector" => %{
+        "matchLabels" => %{
+          "eventing.knative.dev/source" => "apiserver-source-controller"
+        }
+      }
+    }
+
+    B.build_resource(:pod_monitor)
+    |> B.name("knative-ping-source")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
   def deployment(config) do
     namespace = DevtoolsSettings.namespace(config)
     knative_operator_image = DevtoolsSettings.knative_operator_image(config)
@@ -415,6 +720,7 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:namespace)
     |> B.name(knative_dest_namespace)
     |> B.app_labels(@app_name)
+    |> B.label("istio-injection", "enabled")
   end
 
   def knative_serving(config) do
