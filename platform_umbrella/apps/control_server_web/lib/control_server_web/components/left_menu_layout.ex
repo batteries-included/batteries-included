@@ -276,6 +276,12 @@ defmodule ControlServerWeb.LeftMenuLayout do
       icon="lightning_bolt"
       is_active={@active == "nodes"}
     />
+    <.left_menu_item
+      to="/internal/services"
+      name="Services"
+      icon="lightning_bolt"
+      is_active={@active == "services"}
+    />
     """
   end
 

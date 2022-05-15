@@ -53,10 +53,11 @@ defmodule ControlServerWeb.Router do
     live "/services/ml/notebooks", Live.JupyterLabNotebook.Index, :index
     live "/services/ml/notebooks/:id", Live.JupyterLabNotebook.Show, :index
 
-    live "/internal/deployments", Live.Deployments, :index
-    live "/internal/nodes", Live.Nodes, :index
-    live "/internal/pods", Live.Pods, :index
-    live "/internal/stateful_sets", Live.StatefulSets, :index
+    live "/internal/deployments", Live.ResourceList, :deployments
+    live "/internal/stateful_sets", Live.ResourceList, :stateful_sets
+    live "/internal/nodes", Live.ResourceList, :nodes
+    live "/internal/pods", Live.ResourceList, :pods
+    live "/internal/services", Live.ResourceList, :services
     live "/internal/workers", Live.WorkerList, :index
   end
 
