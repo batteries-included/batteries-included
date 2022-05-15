@@ -17,8 +17,8 @@ defmodule KubeState.IstioIngress do
   defp ingress_ips_from_services(services) when is_list(services) do
     matching =
       Enum.find(services, fn s ->
-        K8s.Resource.name(s) == "istio-ingressgateway" and
-          K8s.Resource.namespace(s) == "battery-ingress"
+        K8s.Resource.name(s) == "ingressgateway" and
+          K8s.Resource.namespace(s) == "battery-istio"
       end)
 
     case matching do
@@ -26,7 +26,7 @@ defmodule KubeState.IstioIngress do
         value
         |> Enum.filter(fn pos -> pos != nil end)
         |> Enum.map(fn pos -> Map.get(pos, "ip") end)
-        |> Enum.sort(:desc)
+        |> Enum.sort(:asc)
 
       _ ->
         [@default]
