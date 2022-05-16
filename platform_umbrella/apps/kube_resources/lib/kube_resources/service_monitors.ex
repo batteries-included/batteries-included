@@ -3,7 +3,6 @@ defmodule KubeResources.ServiceMonitors do
   # alias KubeRawResources.Istio
   alias KubeResources.DatabaseServiceMonitors
   alias KubeResources.Grafana
-  alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
   alias KubeResources.Prometheus
   alias KubeResources.PrometheusOperator
@@ -24,7 +23,6 @@ defmodule KubeResources.ServiceMonitors do
   defp monitors(:kube_monitoring, config), do: KubeMonitoring.monitors(config)
   defp monitors(:database_internal, config), do: DatabaseServiceMonitors.internal_monitors(config)
   defp monitors(:database, config), do: DatabaseServiceMonitors.monitors(config)
-  defp monitors(:kong, config), do: Kong.monitors(config)
   defp monitors(:istio, config), do: IstioIstiod.monitors(config)
   defp monitors(:knative, config), do: KnativeOperator.monitors(config)
 

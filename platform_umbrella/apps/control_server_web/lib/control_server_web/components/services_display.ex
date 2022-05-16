@@ -54,7 +54,6 @@ defmodule ControlServerWeb.ServicesDisplay do
     service
     |> Map.get("spec", %{})
     |> Map.get("ports", [])
-    |> Enum.map(fn p -> Map.get(p, "port", 0) end)
-    |> Enum.join(", ")
+    |> Enum.map_join(", ", fn p -> Map.get(p, "port", 0) end)
   end
 end

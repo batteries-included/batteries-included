@@ -23,7 +23,6 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.KialiServer
   alias KubeResources.KnativeOperator
   alias KubeResources.KnativeServices
-  alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
   alias KubeResources.ML
   alias KubeResources.MinioOperator
@@ -75,7 +74,6 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
   def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
 
-  def materialize(%{} = config, :kong), do: Kong.materialize(config)
   def materialize(%{} = config, :nginx), do: Nginx.materialize(config)
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
   def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)

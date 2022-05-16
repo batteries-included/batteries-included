@@ -17,6 +17,7 @@ defmodule KubeResources do
   end
 
   defp extract(obj) when is_map(obj), do: [extract_single(obj)]
+  defp extract(nil), do: []
 
   defp extract_single(obj), do: {api_version(obj), kind(obj)}
 end

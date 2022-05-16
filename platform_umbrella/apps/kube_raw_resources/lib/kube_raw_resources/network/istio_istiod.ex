@@ -1459,7 +1459,7 @@ defmodule KubeRawResources.IstioIstiod do
     namespace = NetworkSettings.istio_namespace(config)
 
     %{
-      "apiVersion" => "autoscaling/v2beta1",
+      "apiVersion" => "autoscaling/v2beta2",
       "kind" => "HorizontalPodAutoscaler",
       "metadata" => %{
         "labels" => %{
