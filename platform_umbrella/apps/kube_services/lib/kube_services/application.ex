@@ -43,7 +43,7 @@ defmodule KubeServices.Application do
        [
          watcher: ResourceWatcher,
          connection_func: &ConnectionPool.get/0,
-         retry_watch: true,
+         should_retry_watch: true,
          extra: %{
            resource_type: resource_type,
            table_name: KubeState.default_state_table()

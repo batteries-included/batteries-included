@@ -210,7 +210,6 @@ defmodule KubeResources.IstioGateway do
       "apiVersion" => "autoscaling/v2beta2",
       "kind" => "HorizontalPodAutoscaler",
       "metadata" => %{
-        "annotations" => %{},
         "labels" => %{
           "battery/app" => @app,
           "battery/managed" => "true",
