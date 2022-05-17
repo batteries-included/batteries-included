@@ -21,7 +21,7 @@ defmodule KubeExt.Hashing do
       fn annotations ->
         # Encode the content into strings.
         # This will then give us something that we can compute the hash of.
-        {:ok, json_cont} = Jason.encode(resource)
+        {:ok, json_cont} = clean_json_resource(resource)
 
         hash = :sha |> :crypto.hash(json_cont) |> Base.encode64()
 
@@ -31,6 +31,15 @@ defmodule KubeExt.Hashing do
         Map.put(annotations || %{}, @hash_annotation_key, hash)
       end
     )
+  end
+
+  defp clean_json_resource(resource) do
+    resource
+    |> update_in(~w(metadata), fn meta ->
+      Map.drop(meta || %{}, ["annotations", "resourceVersion", "generation", "creationTimestamp", "uid"])
+    end)
+    |> Map.drop(["status"])
+    |> Jason.encode()
   end
 
   def different?(applied_list, new_list)
