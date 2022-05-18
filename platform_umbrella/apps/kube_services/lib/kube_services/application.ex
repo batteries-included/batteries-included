@@ -24,7 +24,7 @@ defmodule KubeServices.Application do
       KubeServices.SnapshotApply.Supervisor,
       KubeServices.SnapshotApply.Launcher,
       KubeServices.SnapshotApply.TimedLauncher,
-      KubeServices.SnapshotApply.EventLauncher,
+      KubeServices.SnapshotApply.EventLauncher
     ] ++ resource_watchers()
   end
 

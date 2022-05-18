@@ -21,5 +21,4 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
     Launcher.launch()
     {:noreply, state}
   end
-
 end
