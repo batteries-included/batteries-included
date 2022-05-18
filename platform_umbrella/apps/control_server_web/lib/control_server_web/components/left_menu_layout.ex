@@ -247,12 +247,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/internal/workers"
-      name="Worker Status"
-      icon="lightning_bolt"
-      is_active={@active == "workers"}
-    />
-    <.left_menu_item
       to="/internal/pods"
       name="Pods"
       icon="lightning_bolt"

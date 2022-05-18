@@ -1,4 +1,4 @@
-defmodule KubeServices.SnapshotApply.SnapshotWorker do
+defmodule KubeServices.SnapshotApply.Worker do
   use GenServer, restart: :temporary
 
   alias KubeServices.SnapshotApply.State

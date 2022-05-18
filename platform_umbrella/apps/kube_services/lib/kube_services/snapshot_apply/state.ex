@@ -6,8 +6,11 @@ defmodule KubeServices.SnapshotApply.State do
 
   require Logger
 
-  def start_link([snapshot]) do
-    GenServer.start_link(__MODULE__, %{kube_snapshot: snapshot, outstanding_paths: 0})
+  def start_link([snapshot, notify_targets]) do
+    GenServer.start_link(__MODULE__, %{
+      kube_snapshot: snapshot,
+      notify_targets: notify_targets
+    })
   end
 
   @impl true
@@ -78,14 +81,20 @@ defmodule KubeServices.SnapshotApply.State do
   end
 
   @impl true
-  def handle_cast(:success, %{kube_snapshot: snapshot} = state) do
+  def handle_cast(:success, %{kube_snapshot: snapshot, notify_targets: notify_targets} = state) do
     updated_snap = update_status(snapshot, :ok)
+
+    notify_targets(notify_targets, updated_snap)
+
     {:noreply, %{state | kube_snapshot: updated_snap}}
   end
 
   @impl true
-  def handle_cast(:failure, %{kube_snapshot: snapshot} = state) do
+  def handle_cast(:failure, %{kube_snapshot: snapshot, notify_targets: notify_targets} = state) do
     updated_snap = update_status(snapshot, :error)
+
+    notify_targets(notify_targets, updated_snap)
+
     {:noreply, %{state | kube_snapshot: updated_snap}}
   end
 
@@ -143,5 +152,13 @@ defmodule KubeServices.SnapshotApply.State do
     |> ControlSnapshotApply.resource_paths_for_snapshot()
     |> ControlSnapshotApply.resource_paths_failed()
     |> ControlSnapshotApply.count_paths() || 0
+  end
+
+  def notify_targets(nil = _targets, _snapshot), do: nil
+
+  def notify_targets(targets, snapshot) do
+    Enum.each(targets, fn target ->
+      send(target, {:complete, snapshot})
+    end)
   end
 end

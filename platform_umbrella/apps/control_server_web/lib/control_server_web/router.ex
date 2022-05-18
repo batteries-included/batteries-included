@@ -58,7 +58,6 @@ defmodule ControlServerWeb.Router do
     live "/internal/nodes", Live.ResourceList, :nodes
     live "/internal/pods", Live.ResourceList, :pods
     live "/internal/services", Live.ResourceList, :services
-    live "/internal/workers", Live.WorkerList, :index
   end
 
   scope "/api", ControlServerWeb do

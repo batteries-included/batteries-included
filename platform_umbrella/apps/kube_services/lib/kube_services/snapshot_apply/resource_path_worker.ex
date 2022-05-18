@@ -1,7 +1,7 @@
 defmodule KubeServices.SnapshotApply.ResourcePathWorker do
   use GenServer, restart: :temporary
 
-  alias KubeServices.SnapshotApply.SnapshotWorker
+  alias KubeServices.SnapshotApply.Worker
 
   require Logger
 
@@ -46,7 +46,7 @@ defmodule KubeServices.SnapshotApply.ResourcePathWorker do
         {:success, reason},
         %{snapshot_worker_pid: worker_pid, resource_path: rp} = state
       ) do
-    SnapshotWorker.path_success(worker_pid, rp, reason)
+    Worker.path_success(worker_pid, rp, reason)
     {:stop, :done, state}
   end
 
@@ -57,7 +57,7 @@ defmodule KubeServices.SnapshotApply.ResourcePathWorker do
         :ok
 
       _ ->
-        SnapshotWorker.path_failure(worker_pid, rp, reason)
+        Worker.path_failure(worker_pid, rp, reason)
         :ok
     end
   end

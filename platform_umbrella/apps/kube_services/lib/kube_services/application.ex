@@ -20,11 +20,11 @@ defmodule KubeServices.Application do
 
   def children(true = _run) do
     [
-      {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
       KubeServices.Usage.Poller,
-      KubeServices.SnapshotApply.SnapshotSupervisor
-      # KubeServices.BaseServicesSupervisor,
-      # KubeServices.BaseServicesHydrator
+      KubeServices.SnapshotApply.Supervisor,
+      KubeServices.SnapshotApply.Launcher,
+      KubeServices.SnapshotApply.TimedLauncher,
+      KubeServices.SnapshotApply.EventLauncher,
     ] ++ resource_watchers()
   end
 
@@ -38,7 +38,7 @@ defmodule KubeServices.Application do
     |> Enum.map(&resource_worker_child_spec/1)
   end
 
-  defp resource_worker_child_spec({resource_type, id} = _tuple) do
+  defp resource_worker_child_spec({resource_type, id}) do
     Supervisor.child_spec(
       {Bella.Watcher.Worker,
        [

@@ -11,7 +11,7 @@ defmodule KubeServices.SnapshotApply.Steps do
 
   alias KubeResources.ConfigGenerator
 
-  alias KubeServices.SnapshotApply.SnapshotSupervisor
+  alias KubeServices.SnapshotApply.Supervisor
 
   require Logger
 
@@ -68,6 +68,6 @@ defmodule KubeServices.SnapshotApply.Steps do
   end
 
   defp apply_resource_path(%ResourcePath{} = rp, worker_pid) do
-    SnapshotSupervisor.start_resource_path(rp, worker_pid)
+    Supervisor.start_resource_path(rp, worker_pid)
   end
 end
