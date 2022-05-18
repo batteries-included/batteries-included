@@ -1,4 +1,6 @@
 defmodule KubeState.ApiVersionKind do
+  import K8s.Resource
+
   @known [
     namespaces: {"v1", "Namespace"},
     pods: {"v1", "Pod"},
@@ -40,6 +42,15 @@ defmodule KubeState.ApiVersionKind do
   def from_resource_type(resource_type), do: Keyword.get(@known, resource_type, nil)
 
   def all_known, do: Keyword.keys(@known)
+
+  def resource_type(resource) do
+    {key, _} =
+      Enum.find(@known, {nil, nil}, fn {_key, {api_version, kind}} ->
+        api_version == api_version(resource) && kind == kind(resource)
+      end)
+
+    key
+  end
 
   def is_watchable({api_version, kind}), do: is_watchable(api_version, kind)
 

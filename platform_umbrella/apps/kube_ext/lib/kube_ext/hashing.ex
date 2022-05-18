@@ -1,6 +1,8 @@
 defmodule KubeExt.Hashing do
   @hash_annotation_key "battery/hash"
 
+  def get_hash(nil), do: "DEADBEEF"
+
   def get_hash(resource) do
     resource
     |> decorate_content_hash()
@@ -36,7 +38,13 @@ defmodule KubeExt.Hashing do
   defp clean_json_resource(resource) do
     resource
     |> update_in(~w(metadata), fn meta ->
-      Map.drop(meta || %{}, ["annotations", "resourceVersion", "generation", "creationTimestamp", "uid"])
+      Map.drop(meta || %{}, [
+        "annotations",
+        "resourceVersion",
+        "generation",
+        "creationTimestamp",
+        "uid"
+      ])
     end)
     |> Map.drop(["status"])
     |> Jason.encode()

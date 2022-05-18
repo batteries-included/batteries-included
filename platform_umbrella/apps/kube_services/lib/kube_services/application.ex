@@ -22,8 +22,9 @@ defmodule KubeServices.Application do
     [
       {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
       KubeServices.Usage.Poller,
-      KubeServices.BaseServicesSupervisor,
-      KubeServices.BaseServicesHydrator
+      KubeServices.SnapshotApply.SnapshotSupervisor
+      # KubeServices.BaseServicesSupervisor,
+      # KubeServices.BaseServicesHydrator
     ] ++ resource_watchers()
   end
 

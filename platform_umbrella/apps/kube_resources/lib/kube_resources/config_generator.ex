@@ -34,12 +34,25 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.ServiceMonitors
   alias KubeResources.VirtualService
 
+  require Logger
+
   def materialize(%BaseService{} = base_service) do
     base_service.config
     |> materialize(base_service.service_type)
     |> Enum.map(fn {key, value} -> {Path.join(base_service.root_path, key), value} end)
+    |> Enum.flat_map(&flatten/1)
     |> Enum.into(%{})
   end
+
+  defp flatten({key, values} = _input) when is_list(values) do
+    values
+    |> Enum.with_index()
+    |> Enum.map(fn {v, idx} ->
+      {Path.join(key, Integer.to_string(idx)), v}
+    end)
+  end
+
+  defp flatten({key, value}), do: [{key, value}]
 
   @spec materialize(map, atom) :: map
   def materialize(%{} = config, :prometheus) do

@@ -22,14 +22,14 @@ defmodule ControlServer.Services do
       [%BaseService{}, ...]
 
   """
-  def all do
+  def all(repo \\ Repo) do
     base_query()
     |> select_limited()
-    |> Repo.all()
+    |> repo.all()
   end
 
-  def all_including_config do
-    Repo.all(base_query())
+  def all_including_config(repo \\ Repo) do
+    repo.all(base_query())
   end
 
   def from_service_types(service_types) do

@@ -65,6 +65,8 @@ defmodule ControlServerWeb.Router do
     pipe_through :api
     resources "/base_services", BaseServiceController, except: [:new, :edit]
     resources "/usage_reports", UsageReportController, except: [:new, :edit]
+    resources "/kube_snapshots", KubeSnapshotController, except: [:new, :edit]
+    resources "/resource_paths", ResourcePathController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development

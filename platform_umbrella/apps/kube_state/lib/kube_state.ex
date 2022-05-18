@@ -3,6 +3,8 @@ defmodule KubeState do
   Documentation for `KubeState`.
   """
 
+  alias K8s.Resource
+
   @default_table :default_state_table
 
   @spec default_state_table :: :default_state_table
@@ -64,6 +66,18 @@ defmodule KubeState do
 
   @spec knative_services(atom | :ets.tid()) :: list
   def knative_services(t \\ @default_table), do: get_all(t, :knative_services, [])
+
+  def get_resource(t \\ @default_table, resource) do
+    resource_type = KubeState.ApiVersionKind.resource_type(resource)
+    name = Resource.name(resource)
+    namespace = Resource.namespace(resource)
+
+    t
+    |> get_all(resource_type, [])
+    |> Enum.find(nil, fn pos ->
+      Resource.name(pos) == name && Resource.namespace(pos) == namespace
+    end)
+  end
 
   def get_all(table, res_type) do
     case KubeState.Runner.get(table, res_type) do
