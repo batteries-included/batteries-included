@@ -2,7 +2,6 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
   use GenServer
 
   alias KubeServices.SnapshotApply.Launcher
-  alias EventCenter.BaseService
 
   require Logger
 
@@ -11,14 +10,13 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
   end
 
   def init(state) do
-    BaseService.subscribe()
-
+    Enum.each(EventCenter.Database.allowed_sources(), &EventCenter.Database.subscribe/1)
     {:ok, state}
   end
 
-  def handle_info(_msg, state) do
-    Logger.debug("Got a pubsub message")
-    Launcher.launch()
+  def handle_info(msg, state) do
+    pid = Launcher.launch()
+    Logger.debug("Got pubsub message #{msg} Result pid = #{pid}")
     {:noreply, state}
   end
 end

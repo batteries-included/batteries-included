@@ -10,6 +10,7 @@ defmodule ControlServer.Services do
   alias ControlServer.Services.BaseService
   alias ControlServer.Services.RunnableService
   alias Ecto.Multi
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   require Logger
 
@@ -67,14 +68,11 @@ defmodule ControlServer.Services do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_base_service(attrs \\ %{}) do
-    Multi.new()
-    |> Multi.insert(:base_service, change_base_service(%BaseService{}, attrs))
-    |> Multi.run(:event_center, fn _repo, %{base_service: base_service} ->
-      {broadcast(:insert, base_service), nil}
-    end)
-    |> Repo.transaction()
-    |> unwrap_transaction_return()
+  def create_base_service(attrs \\ %{}, repo \\ Repo) do
+    %BaseService{}
+    |> BaseService.changeset(attrs)
+    |> repo.insert()
+    |> broadcast(:insert)
   end
 
   def create_base_service!(attrs \\ %{}) do
@@ -106,25 +104,17 @@ defmodule ControlServer.Services do
     |> Multi.run(:created, fn repo, %{selected: sel} ->
       maybe_insert(sel, repo, attrs)
     end)
-    |> Multi.run(:base_service, &insert_event/2)
   end
 
   def maybe_insert(nil = _selected, repo, attrs) do
-    repo.insert(BaseService.changeset(%BaseService{}, attrs))
+    %BaseService{}
+    |> BaseService.changeset(attrs)
+    |> repo.insert()
+    |> broadcast(:insert)
   end
 
   def maybe_insert(%BaseService{} = _selected, _repo, _attrs) do
     {:ok, nil}
-  end
-
-  def insert_event(_repo, %{selected: nil, created: created}) do
-    Logger.debug("Inserted -> #{inspect(created)}")
-    {broadcast(:insert, created), created}
-  end
-
-  def insert_event(_repo, %{selected: selected, created: nil}) do
-    Logger.debug("Selected -> #{inspect(selected)}")
-    {:ok, selected}
   end
 
   @doc """
@@ -140,13 +130,10 @@ defmodule ControlServer.Services do
 
   """
   def update_base_service(%BaseService{} = base_service, attrs) do
-    Multi.new()
-    |> Multi.update(:base_service, change_base_service(base_service, attrs))
-    |> Multi.run(:event_center, fn _repo, %{base_service: up_bs} ->
-      {broadcast(:update, up_bs), nil}
-    end)
-    |> Repo.transaction()
-    |> unwrap_transaction_return()
+    base_service
+    |> BaseService.changeset(attrs)
+    |> Repo.update()
+    |> broadcast(:update)
   end
 
   @doc """
@@ -162,18 +149,17 @@ defmodule ControlServer.Services do
 
   """
   def delete_base_service(%BaseService{} = base_service) do
-    Multi.new()
-    |> Multi.delete(:base_service, base_service)
-    |> Multi.run(:event_center, fn _repo, %{base_service: del_bs} ->
-      {broadcast(:delete, del_bs), nil}
-    end)
-    |> Repo.transaction()
-    |> unwrap_transaction_return()
+    base_service
+    |> Repo.delete()
+    |> broadcast(:delete)
   end
 
-  defp broadcast(event, base_service) do
-    EventCenter.BaseService.broadcast(event, base_service)
+  defp broadcast({:ok, cluster} = result, action) do
+    :ok = DatabaseEventCenter.broadcast(:base_service, action, cluster)
+    result
   end
+
+  defp broadcast(result, _action), do: result
 
   defp unwrap_transaction_return({:ok, %{base_service: base_service}}) do
     {:ok, base_service}
@@ -181,19 +167,6 @@ defmodule ControlServer.Services do
 
   defp unwrap_transaction_return({:error, :base_service, changeset, _}) do
     {:error, changeset}
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking base_service changes.
-
-  ## Examples
-
-      iex> change_base_service(base_service)
-      %Ecto.Changeset{data: %BaseService{}}
-
-  """
-  def change_base_service(%BaseService{} = base_service, attrs \\ %{}) do
-    BaseService.changeset(base_service, attrs)
   end
 
   def active?(path) do

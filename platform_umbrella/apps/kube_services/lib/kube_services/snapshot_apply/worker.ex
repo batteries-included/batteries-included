@@ -12,6 +12,7 @@ defmodule KubeServices.SnapshotApply.Worker do
 
   @impl true
   def init(state) do
+    Process.flag(:trap_exit, true)
     send(self(), :next_step)
     {:ok, state}
   end
@@ -79,6 +80,11 @@ defmodule KubeServices.SnapshotApply.Worker do
   def handle_cast({:path_failure, resource_path, reason}, %{state_pid: state_pid} = state) do
     state_path_failure(state_pid, resource_path, reason)
     {:noreply, decrease_outstanding(state)}
+  end
+
+  @impl true
+  def terminate(_reason, %{state_pid: state_pid} = _state) do
+    State.failure(state_pid)
   end
 
   defp perform_next_step(:creation, kube_snapshot), do: Steps.creation(kube_snapshot)

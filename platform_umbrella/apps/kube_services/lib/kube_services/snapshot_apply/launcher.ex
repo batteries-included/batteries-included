@@ -21,12 +21,19 @@ defmodule KubeServices.SnapshotApply.Launcher do
       {pid, new_state} = do_launch(snapshot, state)
       {:reply, pid, new_state}
     else
+      Logger.debug("Not launching still running #{inspect(running)}")
       {:reply, nil, state}
     end
   end
 
   def handle_info({:complete, snapshot}, state) do
     Logger.info("Snapshot apply complete result => #{inspect(snapshot)}")
+    {_pid, new_state} = maybe_launch(%{state | running: nil})
+    {:noreply, new_state}
+  end
+
+  def handle_info({:DOWN, pid, _, _object, reason}, state) do
+    Logger.info("Agent #{inspect(pid)} crashed with reason #{reason}")
     {_pid, new_state} = maybe_launch(%{state | running: nil})
     {:noreply, new_state}
   end
@@ -40,6 +47,7 @@ defmodule KubeServices.SnapshotApply.Launcher do
 
   defp do_launch(snapshot, state) do
     with {:ok, pid} <- KubeServices.SnapshotApply.Supervisor.start(snapshot, [self()]) do
+      Process.monitor(pid)
       {pid, %{state | running: pid, started: DateTime.utc_now()}}
     end
   end

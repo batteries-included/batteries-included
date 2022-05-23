@@ -39,6 +39,8 @@ defmodule KubeServices.SnapshotApply.State do
 
   def failure(pid), do: GenServer.cast(pid, :failure)
 
+  def add_notify(pid, target), do: GenServer.cast(pid, {:add_notify, target})
+
   @impl true
   def handle_call(:get_snapshot, _from, %{kube_snapshot: kube_snapshot} = state),
     do: {:reply, kube_snapshot, state}
@@ -66,7 +68,8 @@ defmodule KubeServices.SnapshotApply.State do
   end
 
   @impl true
-  def handle_call(_, _from, state), do: {:reply, :error, state}
+  def handle_call({:add_notify, target}, _from, %{notify_targets: notify_targets} = state),
+    do: {:reply, :ok, %{state | notify_targets: [target | notify_targets]}}
 
   @impl true
   def handle_cast({:path_success, resource_path, reason}, state) do
@@ -110,7 +113,7 @@ defmodule KubeServices.SnapshotApply.State do
     with {:ok, new_rp} <-
            ControlSnapshotApply.update_resource_path(resource_path, %{
              is_success: true,
-             apply_result: inspect(reason)
+             apply_result: String.slice(inspect(reason), 0, 200)
            }) do
       Logger.debug("Reporting success for path #{resource_path.path}")
       new_rp
@@ -123,7 +126,7 @@ defmodule KubeServices.SnapshotApply.State do
     with {:ok, new_rp} <-
            ControlSnapshotApply.update_resource_path(resource_path, %{
              is_success: false,
-             apply_result: inspect(reason)
+             apply_result: String.slice(inspect(reason), 0, 200)
            }) do
       new_rp
     end
