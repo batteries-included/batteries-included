@@ -109,24 +109,21 @@ defmodule KubeServices.SnapshotApply.State do
     end
   end
 
-  defp update_path_success(resource_path, reason) do
-    with {:ok, new_rp} <-
-           ControlSnapshotApply.update_resource_path(resource_path, %{
-             is_success: true,
-             apply_result: String.slice(inspect(reason), 0, 200)
-           }) do
-      Logger.debug("Reporting success for path #{resource_path.path}")
-      new_rp
-    end
+  defp update_path_success(resource_path, r) do
+    Logger.debug("Reporting success for path #{resource_path.path}")
+    update_path(resource_path, r, true)
   end
 
-  defp update_path_failure(resource_path, reason) do
+  defp update_path_failure(resource_path, r) do
     Logger.debug("Reporting failure for path #{resource_path.path}")
+    update_path(resource_path, r, false)
+  end
 
+  defp update_path(resource_path, r, is_success) do
     with {:ok, new_rp} <-
            ControlSnapshotApply.update_resource_path(resource_path, %{
-             is_success: false,
-             apply_result: String.slice(inspect(reason), 0, 200)
+             is_success: is_success,
+             apply_result: r |> reason() |> String.slice(0, 200)
            }) do
       new_rp
     end
@@ -164,4 +161,8 @@ defmodule KubeServices.SnapshotApply.State do
       send(target, {:complete, snapshot})
     end)
   end
+
+  def reason(reason_atom) when is_atom(reason_atom), do: Atom.to_string(reason_atom)
+  def reason(reason_string) when is_binary(reason_string), do: reason_string
+  def reason(obj), do: inspect(obj)
 end
