@@ -32,10 +32,14 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
         <%= @snapshot.status %>
       </.td>
       <.td>
-        View
+        <.link to={snapshot_path(@snapshot)}>View</.link>
       </.td>
     </.tr>
     """
+  end
+
+  defp snapshot_path(snapshot) do
+    Routes.kube_snapshot_show_path(ControlServerWeb.Endpoint, :index, snapshot.id)
   end
 
   @impl true
@@ -43,10 +47,10 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
     ~H"""
     <.layout>
       <:title>
-        <.title>Snapshots</.title>
+        <.title>Kube Deploys</.title>
       </:title>
       <:left_menu>
-        <.magic_menu active={"#{@live_action}"} />
+        <.magic_menu active="snapshots" />
       </:left_menu>
       <.body_section>
         <.table>

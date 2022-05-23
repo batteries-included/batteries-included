@@ -59,6 +59,7 @@ defmodule ControlServerWeb.Router do
     live "/internal/pods", Live.ResourceList, :pods
     live "/internal/services", Live.ResourceList, :services
     live "/internal/kube_snapshots", Live.KubeSnapshotList, :index
+    live "/internal/kube_snapshots/:id", Live.KubeSnapshotShow, :index
   end
 
   scope "/api", ControlServerWeb do

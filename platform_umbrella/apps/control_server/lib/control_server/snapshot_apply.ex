@@ -68,6 +68,10 @@ defmodule ControlServer.SnapshotApply do
   """
   def get_kube_snapshot!(id), do: Repo.get!(KubeSnapshot, id)
 
+  def get_preloaded_kube_snapshot!(id) do
+    KubeSnapshot |> preload(:resource_paths) |> Repo.get!(id)
+  end
+
   @doc """
   Creates a kube_snapshot.
 

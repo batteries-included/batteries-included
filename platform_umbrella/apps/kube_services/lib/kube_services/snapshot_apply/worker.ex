@@ -83,6 +83,11 @@ defmodule KubeServices.SnapshotApply.Worker do
   end
 
   @impl true
+  def terminate(:done = _reason, _state) do
+    Logger.debug("Terminating worker normally")
+  end
+
+  @impl true
   def terminate(_reason, %{state_pid: state_pid} = _state) do
     State.failure(state_pid)
   end
