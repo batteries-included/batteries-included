@@ -57,28 +57,28 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
             <:label>
               ID
             </:label>
-            <%=  @snapshot.id %>
+            <%= @snapshot.id %>
           </.definition_row>
 
           <.definition_row>
             <:label>
               Started
             </:label>
-            <%= Timex.format!(@snapshot.inserted_at, "{RFC822z}")  %>
+            <%= Timex.format!(@snapshot.inserted_at, "{RFC822z}") %>
           </.definition_row>
 
           <.definition_row>
             <:label>
               Last Update
             </:label>
-            <%= Timex.format!(@snapshot.updated_at, "{RFC822z}")  %>
+            <%= Timex.format!(@snapshot.updated_at, "{RFC822z}") %>
           </.definition_row>
 
           <.definition_row>
             <:label>
               Elapsed
             </:label>
-            <%= display_duration(@snapshot)  %>
+            <%= display_duration(@snapshot) %>
           </.definition_row>
 
           <.definition_row>
@@ -91,20 +91,20 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
       </.body_section>
       <.h3>Path Results</.h3>
       <.body_section>
-      <.table>
-        <%= for resource_path <- @snapshot.resource_paths do %>
-        <.tr>
-        <.td>
-          <%= resource_path.path %>
-        </.td>
-        <.td>
-          <%= resource_path.is_success %>
-        </.td>
-        <.td>
-          <%= resource_path.apply_result %>
-        </.td>
-        </.tr>
-        <% end %>
+        <.table>
+          <%= for resource_path <- @snapshot.resource_paths do %>
+            <.tr>
+              <.td>
+                <%= resource_path.path %>
+              </.td>
+              <.td>
+                <%= resource_path.is_success %>
+              </.td>
+              <.td>
+                <%= resource_path.apply_result %>
+              </.td>
+            </.tr>
+          <% end %>
         </.table>
       </.body_section>
     </.layout>
