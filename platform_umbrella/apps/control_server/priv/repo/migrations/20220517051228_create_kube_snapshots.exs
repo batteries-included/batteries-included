@@ -6,7 +6,7 @@ defmodule ControlServer.Repo.Migrations.CreateKubeSnapshots do
       add :id, :binary_id, primary_key: true
       add :status, :string
 
-      timestamps()
+      timestamps(type: :utc_datetime_usec)
     end
   end
 end

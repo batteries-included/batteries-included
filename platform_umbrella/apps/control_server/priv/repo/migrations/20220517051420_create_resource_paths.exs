@@ -11,9 +11,9 @@ defmodule ControlServer.Repo.Migrations.CreateResourcePaths do
       add :apply_result, :string
 
       add :kube_snapshot_id,
-          references(:kube_snapshots, on_delete: :nothing, type: :binary_id)
+          references(:kube_snapshots, on_delete: :delete_all, type: :binary_id)
 
-      timestamps()
+      timestamps(type: :utc_datetime_usec)
     end
 
     create index(:resource_paths, [:kube_snapshot_id])
