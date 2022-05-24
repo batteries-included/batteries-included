@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.PostgresClusterDisplay do
   use Phoenix.Component
   import CommonUI.Table
-  import PetalComponents.Typography
   import PetalComponents.Button
   import PetalComponents.Link
 
