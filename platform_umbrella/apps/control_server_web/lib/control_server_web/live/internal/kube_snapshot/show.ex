@@ -50,7 +50,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
       <:left_menu>
         <.magic_menu active="snapshots" />
       </:left_menu>
-      <.h3>Deploy Results</.h3>
+      <.section_title>Deploy Results</.section_title>
       <.body_section>
         <dl class="">
           <.definition_row wrapper_class="pb-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -89,7 +89,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
           </.definition_row>
         </dl>
       </.body_section>
-      <.h3>Path Results</.h3>
+      <.section_title>Path Results</.section_title>
       <.body_section>
         <.table>
           <%= for resource_path <- @snapshot.resource_paths do %>

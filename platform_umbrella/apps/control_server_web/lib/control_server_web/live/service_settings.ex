@@ -113,6 +113,7 @@ defmodule ControlServerWeb.Live.ServiceSettings do
       <:left_menu>
         <.action_menu live_action={@live_action} base_services={@base_services} />
       </:left_menu>
+      <.section_title>Runnable Services</.section_title>
       <.body_section>
         <.services_table runnable_services={@runnable_services} base_services={@base_services} />
       </.body_section>

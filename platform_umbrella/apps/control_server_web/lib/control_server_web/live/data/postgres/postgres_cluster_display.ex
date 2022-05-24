@@ -9,9 +9,6 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
 
   def pg_cluster_display(assigns) do
     ~H"""
-    <.h3>
-      Postgres Clusters
-    </.h3>
     <.table>
       <.thead>
         <.tr>

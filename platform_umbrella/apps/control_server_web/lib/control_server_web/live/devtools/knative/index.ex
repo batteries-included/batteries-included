@@ -54,6 +54,9 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
       <:left_menu>
         <.devtools_menu active="knative" base_services={@base_services} />
       </:left_menu>
+      <.section_title>
+        Knative Services
+      </.section_title>
       <.body_section>
         <.table>
           <.thead>

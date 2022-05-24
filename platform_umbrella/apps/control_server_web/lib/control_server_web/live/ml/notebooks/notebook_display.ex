@@ -21,9 +21,6 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
     assigns = assign_defaults(assigns)
 
     ~H"""
-    <.h3>
-      Jupyter Notebooks
-    </.h3>
     <.table>
       <.thead>
         <.tr>

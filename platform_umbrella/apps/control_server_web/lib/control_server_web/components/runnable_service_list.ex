@@ -21,7 +21,6 @@ defmodule ControlServerWeb.RunnableServiceList do
 
     ~H"""
     <div>
-      <.h4>Runnable Services</.h4>
       <.table>
         <.thead>
           <.tr>

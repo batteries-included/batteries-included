@@ -33,6 +33,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
       <:left_menu>
         <.data_menu active="postgres" />
       </:left_menu>
+      <.h3>Postgres Clusters</.h3>
       <.body_section>
         <.pg_cluster_display clusters={@clusters} />
       </.body_section>

@@ -49,10 +49,10 @@ defmodule ControlServerWeb.Live.Redis do
       <:left_menu>
         <.data_menu active="redis" />
       </:left_menu>
+      <.section_title>
+        Redis Clusters
+      </.section_title>
       <.body_section>
-        <.h3>
-          Redis Clusters
-        </.h3>
         <.table>
           <.thead>
             <.tr>

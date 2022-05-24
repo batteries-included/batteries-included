@@ -295,6 +295,14 @@ defmodule ControlServerWeb.LeftMenuLayout do
     """
   end
 
+  def section_title(assigns) do
+    ~H"""
+    <.h3 class="text-right">
+      <%= render_slot(@inner_block) %>
+    </.h3>
+    """
+  end
+
   def layout(assigns) do
     assigns = assign_defaults(assigns)
 
@@ -303,13 +311,13 @@ defmodule ControlServerWeb.LeftMenuLayout do
       <:title>
         <%= render_slot(@title) %>
       </:title>
-      <div class="lg:grid lg:grid-cols-12 lg:gap-x-5">
+      <div class="lg:grid lg:grid-cols-9 lg:gap-x-5">
         <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-2">
           <nav class="space-y-1">
             <%= render_slot(@left_menu) %>
           </nav>
         </aside>
-        <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-10">
+        <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-7">
           <%= render_slot(@inner_block) %>
         </div>
       </div>
