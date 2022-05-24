@@ -52,6 +52,10 @@ defmodule ControlServer.SnapshotApply do
     )
   end
 
+  def trim_kube_snapshots(keep_time) do
+    Repo.delete_all(from(ks in KubeSnapshot, where: ks.updated_at > ^keep_time))
+  end
+
   @doc """
   Gets a single kube_snapshot.
 
