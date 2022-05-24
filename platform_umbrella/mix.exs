@@ -11,7 +11,8 @@ defmodule ControlServer.Umbrella.MixProject do
       aliases: aliases(),
       test_coverage: [
         summary: [threshold: 35]
-      ]
+      ],
+      dialyzer: [flags: [:error_handling, :no_opaque], plt_add_deps: :app_tree]
     ]
   end
 

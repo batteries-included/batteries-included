@@ -3,13 +3,13 @@ defmodule KubeServices.SnapshotApply.State do
 
   alias ControlServer.SnapshotApply, as: ControlSnapshotApply
   alias ControlServer.SnapshotApply.KubeSnapshot
+  alias EventCenter.KubeSnapshot, as: SnapshotEventCenter
 
   require Logger
 
-  def start_link([snapshot, notify_targets]) do
+  def start_link([snapshot]) do
     GenServer.start_link(__MODULE__, %{
-      kube_snapshot: snapshot,
-      notify_targets: notify_targets
+      kube_snapshot: snapshot
     })
   end
 
@@ -68,10 +68,6 @@ defmodule KubeServices.SnapshotApply.State do
   end
 
   @impl true
-  def handle_call({:add_notify, target}, _from, %{notify_targets: notify_targets} = state),
-    do: {:reply, :ok, %{state | notify_targets: [target | notify_targets]}}
-
-  @impl true
   def handle_cast({:path_success, resource_path, reason}, state) do
     update_path_success(resource_path, reason)
     {:noreply, state}
@@ -84,19 +80,19 @@ defmodule KubeServices.SnapshotApply.State do
   end
 
   @impl true
-  def handle_cast(:success, %{kube_snapshot: snapshot, notify_targets: notify_targets} = state) do
+  def handle_cast(:success, %{kube_snapshot: snapshot} = state) do
     updated_snap = update_status(snapshot, :ok)
 
-    notify_targets(notify_targets, updated_snap)
+    broadcast(updated_snap)
 
     {:noreply, %{state | kube_snapshot: updated_snap}}
   end
 
   @impl true
-  def handle_cast(:failure, %{kube_snapshot: snapshot, notify_targets: notify_targets} = state) do
+  def handle_cast(:failure, %{kube_snapshot: snapshot} = state) do
     updated_snap = update_status(snapshot, :error)
 
-    notify_targets(notify_targets, updated_snap)
+    broadcast(updated_snap)
 
     {:noreply, %{state | kube_snapshot: updated_snap}}
   end
@@ -154,12 +150,8 @@ defmodule KubeServices.SnapshotApply.State do
     |> ControlSnapshotApply.count_paths() || 0
   end
 
-  def notify_targets(nil = _targets, _snapshot), do: nil
-
-  def notify_targets(targets, snapshot) do
-    Enum.each(targets, fn target ->
-      send(target, {:complete, snapshot})
-    end)
+  def broadcast(snapshot) do
+    SnapshotEventCenter.broadcast(snapshot)
   end
 
   def reason(reason_atom) when is_atom(reason_atom), do: Atom.to_string(reason_atom)

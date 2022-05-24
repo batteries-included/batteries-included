@@ -13,8 +13,8 @@ defmodule KubeServices.SnapshotApply.Supervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def start(snapshot \\ nil, notify_target) do
-    {:ok, state_pid} = supervise_state_server(snapshot, notify_target)
+  def start(snapshot \\ nil) do
+    {:ok, state_pid} = supervise_state_server(snapshot)
     {:ok, _} = supervise_worker_server(state_pid)
     {:ok, state_pid}
   end
@@ -26,8 +26,8 @@ defmodule KubeServices.SnapshotApply.Supervisor do
     )
   end
 
-  defp supervise_state_server(snapshot, notify_target) do
-    DynamicSupervisor.start_child(__MODULE__, State.child_spec([snapshot, notify_target]))
+  defp supervise_state_server(snapshot) do
+    DynamicSupervisor.start_child(__MODULE__, State.child_spec([snapshot]))
   end
 
   defp supervise_worker_server(state_pid) do
