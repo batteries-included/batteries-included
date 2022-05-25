@@ -15,7 +15,7 @@ defmodule ControlServerWeb.Live.ServiceSettings do
 
   @impl true
   def mount(_params, _session, socket) do
-    EventCenter.Database.subscribe(:base_service)
+    :ok = EventCenter.Database.subscribe(:base_service)
 
     {:ok, socket |> assign_prefix() |> assign_services()}
   end

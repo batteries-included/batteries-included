@@ -18,7 +18,7 @@ defmodule HomeBaseClient.Reporter do
   @impl true
   def init(_args) do
     client = HomeBaseClient.RestClient.client()
-    EventCenter.Usage.subscribe()
+    :ok = EventCenter.Usage.subscribe()
     {:ok, %State{client: client}}
   end
 

@@ -54,7 +54,7 @@ defmodule KubeResources.ConfigGenerator do
 
   defp flatten({key, value}), do: [{key, value}]
 
-  @spec materialize(map, atom) :: map
+  @spec materialize(map() | nil, atom()) :: map()
   def materialize(%{} = config, :prometheus) do
     config |> Prometheus.materialize() |> Map.merge(ServiceMonitors.materialize(config))
   end

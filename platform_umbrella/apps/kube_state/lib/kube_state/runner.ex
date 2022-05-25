@@ -17,6 +17,7 @@ defmodule KubeState.Runner do
     {:ok, {ets_table}}
   end
 
+  @spec get(atom() | :ets.tid(), atom()) :: {:ok, list()} | :missing | :error
   def get(table_name, resource_type) do
     case :ets.lookup(table_name, resource_type) do
       [] ->
@@ -45,56 +46,55 @@ defmodule KubeState.Runner do
 
     result_list = :ets.lookup(ets_table, resource_type)
 
-    broadcast(resource_type, %Payload{
-      resource: resource,
-      new_resource_list: result_list,
-      action: :add
-    })
+    :ok =
+      broadcast(resource_type, %Payload{
+        resource: resource,
+        new_resource_list: result_list,
+        action: :add
+      })
 
     {:reply, :ok, {ets_table}}
   end
 
   def handle_call({:delete, resource_type, resource}, _from, {ets_table}) do
-    case get(ets_table, resource_type) do
-      {:ok, existing_resources} ->
-        kept =
-          existing_resources
-          |> Enum.reject(fn r -> is_same(r, resource) end)
-          |> Enum.map(fn r -> {resource_type, r} end)
-          |> Enum.to_list()
+    with {:ok, existing_resources} <- get(ets_table, resource_type) do
+      kept =
+        existing_resources
+        |> Enum.reject(fn r -> is_same(r, resource) end)
+        |> Enum.map(fn r -> {resource_type, r} end)
+        |> Enum.to_list()
 
-        :ets.delete(ets_table, resource_type)
-        :ets.insert(ets_table, kept)
+      :ets.delete(ets_table, resource_type)
+      :ets.insert(ets_table, kept)
 
-        broadcast(resource_type, %Payload{
-          resource: resource,
-          new_resource_list: kept,
-          action: :delete
-        })
+      broadcast(resource_type, %Payload{
+        resource: resource,
+        new_resource_list: kept,
+        action: :delete
+      })
     end
 
     {:reply, :ok, {ets_table}}
   end
 
   def handle_call({:update, resource_type, resource}, _from, {ets_table}) do
-    case get(ets_table, resource_type) do
-      {:ok, existing_resources} ->
-        kept =
-          existing_resources
-          |> Enum.reject(fn r -> is_same(r, resource) end)
-          |> Enum.map(fn r -> {resource_type, r} end)
-          |> Enum.to_list()
+    with {:ok, existing_resources} <- get(ets_table, resource_type) do
+      kept =
+        existing_resources
+        |> Enum.reject(fn r -> is_same(r, resource) end)
+        |> Enum.map(fn r -> {resource_type, r} end)
+        |> Enum.to_list()
 
-        result_list = [{resource_type, resource} | kept]
+      result_list = [{resource_type, resource} | kept]
 
-        :ets.delete(ets_table, resource_type)
-        :ets.insert(ets_table, result_list)
+      :ets.delete(ets_table, resource_type)
+      :ets.insert(ets_table, result_list)
 
-        broadcast(resource_type, %Payload{
-          resource: resource,
-          new_resource_list: result_list,
-          action: :update
-        })
+      broadcast(resource_type, %Payload{
+        resource: resource,
+        new_resource_list: result_list,
+        action: :update
+      })
     end
 
     {:reply, :ok, {ets_table}}

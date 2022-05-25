@@ -151,7 +151,7 @@ defmodule KubeServices.SnapshotApply.State do
   end
 
   def broadcast(snapshot) do
-    SnapshotEventCenter.broadcast(snapshot)
+    :ok = SnapshotEventCenter.broadcast(snapshot)
   end
 
   def reason(reason_atom) when is_atom(reason_atom), do: Atom.to_string(reason_atom)

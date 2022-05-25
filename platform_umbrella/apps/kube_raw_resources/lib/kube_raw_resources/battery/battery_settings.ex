@@ -8,22 +8,24 @@ defmodule KubeRawResources.BatterySettings do
   @default_pg_cluster_name "pg-control"
   @default_pg_username "controlserver"
 
-  @spec namespace(map) :: String.t()
+  @spec namespace(map) :: binary()
   def namespace(config), do: Map.get(config, "namespace", @namespace)
 
-  @spec control_server_image(map) :: String.t()
+  @spec control_server_image(map) :: binary()
   def control_server_image(config), do: Map.get(config, "control.image", @control_image)
 
-  @spec control_server_version(map) :: String.t()
+  @spec control_server_version(map) :: binary()
   def control_server_version(config), do: Map.get(config, "control.version", @control_version)
   def control_server_name(config), do: Map.get(config, "control.name", @control_name)
 
+  @spec postgres_host(map) :: binary()
   def postgres_host(config) do
     namespace = namespace(config)
     default = "#{@default_pg_cluster_name}.#{namespace}.svc.cluster.local"
     Map.get(config, "postgres.host", default)
   end
 
+  @spec postgres_db(map) :: binary()
   def postgres_db(config) do
     Map.get(config, "postgres.db", System.get_env("POSTGRES_DB") || "control")
   end

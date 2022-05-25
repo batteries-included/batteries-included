@@ -11,12 +11,15 @@ defmodule Bootstrap do
 
   defp load_app do
     Logger.debug("Loading application #{@app}")
-    Application.ensure_all_started(@app, :permanent)
+
+    with {:ok, _apps} <- Application.ensure_all_started(@app, :permanent) do
+      :ok
+    end
   end
 
   def run do
     Logger.debug("Running")
-    load_app()
+    :ok = load_app()
     Logger.debug("Done starting application")
     InitialSync.sync()
   end

@@ -24,23 +24,23 @@ defmodule ControlServerWeb.Live.ResourceList do
   end
 
   defp subscribe(:deployments) do
-    KubeEventCenter.subscribe(:deployments)
+    :ok = KubeEventCenter.subscribe(:deployments)
   end
 
   defp subscribe(:stateful_sets) do
-    KubeEventCenter.subscribe(:stateful_sets)
+    :ok = KubeEventCenter.subscribe(:stateful_sets)
   end
 
   defp subscribe(:nodes) do
-    KubeEventCenter.subscribe(:nodes)
+    :ok = KubeEventCenter.subscribe(:nodes)
   end
 
   defp subscribe(:pods) do
-    KubeEventCenter.subscribe(:pods)
+    :ok = KubeEventCenter.subscribe(:pods)
   end
 
   defp subscribe(:services) do
-    KubeEventCenter.subscribe(:services)
+    :ok = KubeEventCenter.subscribe(:services)
   end
 
   defp subscribe(_), do: nil

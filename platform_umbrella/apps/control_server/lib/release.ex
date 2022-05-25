@@ -35,9 +35,11 @@ defmodule ControlServer.Release do
   defp load_app do
     IO.puts("Ensuring app is starte")
 
-    Enum.map(@start_apps, fn app ->
-      Application.ensure_all_started(app, :permanent)
+    Enum.each(@start_apps, fn app ->
+      {:ok, _apps} = Application.ensure_all_started(app, :permanent)
     end)
+
+    :ok
   end
 
   def createdb do

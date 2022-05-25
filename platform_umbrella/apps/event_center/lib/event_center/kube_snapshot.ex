@@ -8,7 +8,7 @@ defmodule EventCenter.KubeSnapshot do
     defstruct snapshot: nil
   end
 
-  @spec broadcast(struct()) :: :ok | {:error, any()}
+  @spec broadcast(any()) :: :ok | {:error, any()}
   def broadcast(snapshot) do
     PubSub.broadcast(@pubsub, @topic, %Payload{snapshot: snapshot})
   end

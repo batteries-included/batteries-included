@@ -5,7 +5,6 @@ import { Socket } from 'phoenix';
 import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
 import Alpine from 'alpinejs';
-import Sparkline from './sparkline';
 import IFrame from './iframe';
 
 const csrfToken = document
@@ -21,7 +20,7 @@ const liveSocket = new LiveSocket('/live', Socket, {
       }
     },
   },
-  hooks: { Sparkline, IFrame },
+  hooks: { IFrame },
   params: { _csrf_token: csrfToken },
 });
 
