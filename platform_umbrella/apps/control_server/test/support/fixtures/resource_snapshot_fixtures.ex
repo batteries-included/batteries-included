@@ -13,7 +13,11 @@ defmodule ControlServer.SnapshotApplyFixtures do
       |> Enum.into(%{
         hash: "some hash",
         path: "/test",
-        resource_value: %{}
+        name: "test_obj",
+        namespace: "default",
+        api_version: "testing/v1",
+        kind: "fixture",
+        resource_value: %{"apiVersion" => "testing/v1", "kind" => "fixture"}
       })
       |> ControlServer.SnapshotApply.create_resource_path()
 

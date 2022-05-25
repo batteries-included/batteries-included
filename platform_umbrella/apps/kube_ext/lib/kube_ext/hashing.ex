@@ -1,6 +1,8 @@
 defmodule KubeExt.Hashing do
   @hash_annotation_key "battery/hash"
 
+  def key, do: @hash_annotation_key
+
   def get_hash(nil), do: "DEADBEEF"
 
   def get_hash(resource) do

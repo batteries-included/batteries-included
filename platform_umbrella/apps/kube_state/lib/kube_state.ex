@@ -67,6 +67,9 @@ defmodule KubeState do
   @spec knative_services(atom | :ets.tid()) :: list
   def knative_services(t \\ @default_table), do: get_all(t, :knative_services, [])
 
+  @spec table_to_list(atom | :ets.tid()) :: list
+  def table_to_list(t \\ @default_table), do: :ets.tab2list(t)
+
   def get_resource(t \\ @default_table, resource) do
     resource_type = KubeState.ApiVersionKind.resource_type(resource)
     name = Resource.name(resource)

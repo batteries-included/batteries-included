@@ -17,14 +17,14 @@ defmodule KubeServices.SnapshotApply.TimedTrimer do
     {:ok, schedule(state)}
   end
 
-  def handle_info(:launch, state) do
-    Logger.debug("Time since last snapshot elapsed, launching")
+  def handle_info(:trim, state) do
+    Logger.debug("Time since last snapshot elapsed, Trimming")
     {:ok, _} = Trimer.trim()
     {:noreply, schedule(state)}
   end
 
   defp schedule(%{delay: delay} = state) do
-    Process.send_after(self(), :launch, delay)
+    Process.send_after(self(), :trim, delay)
     state
   end
 end

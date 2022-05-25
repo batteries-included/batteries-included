@@ -8,7 +8,14 @@ defmodule ControlServer.SnapshotApplyTest do
 
     import ControlServer.SnapshotApplyFixtures
 
-    @invalid_attrs %{hash: nil, path: nil, resource_value: nil}
+    @invalid_attrs %{
+      hash: nil,
+      path: nil,
+      resource_value: nil,
+      name: nil,
+      kind: nil,
+      api_version: nil
+    }
 
     test "list_resource_paths/0 returns all resource_paths" do
       resource_path = resource_path_fixture()
@@ -24,6 +31,9 @@ defmodule ControlServer.SnapshotApplyTest do
       valid_attrs = %{
         hash: "some hash",
         path: "some path",
+        name: "some name",
+        api_version: "some api_version",
+        kind: "some kind",
         resource_value: %{test_value: 42, other: []}
       }
 

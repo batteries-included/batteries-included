@@ -49,7 +49,7 @@ defmodule ControlServer.Services.BaseService do
         :control_server
       ]
 
-    field :config, :map
+    field :config, :map, redact: true
 
     timestamps()
   end

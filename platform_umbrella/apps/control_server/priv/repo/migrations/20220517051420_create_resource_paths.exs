@@ -4,9 +4,17 @@ defmodule ControlServer.Repo.Migrations.CreateResourcePaths do
   def change do
     create table(:resource_paths, primary_key: false) do
       add :id, :binary_id, primary_key: true
+
       add :path, :string
-      add :resource_value, :map
+
       add :hash, :string
+      add :name, :string
+      add :namespace, :string
+      add :api_version, :string
+      add :kind, :string
+
+      add :resource_value, :map
+
       add :is_success, :boolean
       add :apply_result, :string
 

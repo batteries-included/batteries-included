@@ -8,6 +8,7 @@ defmodule ControlServer.SnapshotApply do
 
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.SnapshotApply.KubeSnapshot
+  alias K8s.Resource.FieldAccessors
 
   @doc """
   Returns the list of resource_paths.
@@ -101,8 +102,8 @@ defmodule ControlServer.SnapshotApply do
     |> Repo.insert()
   end
 
-  def resource_paths_for_snapshot(kube_snapshot) do
-    from rp in ResourcePath, where: rp.kube_snapshot_id == ^kube_snapshot.id
+  def resource_paths_for_snapshot(query \\ ResourcePath, kube_snapshot) do
+    from rp in query, where: rp.kube_snapshot_id == ^kube_snapshot.id
   end
 
   def resource_paths_outstanding(query \\ ResourcePath) do
@@ -111,6 +112,25 @@ defmodule ControlServer.SnapshotApply do
 
   def resource_paths_failed(query \\ ResourcePath) do
     from rp in query, where: rp.is_success == false
+  end
+
+  def resource_paths_for_resource(query \\ ResourcePath, resource) do
+    name = FieldAccessors.name(resource)
+    namespace = FieldAccessors.namespace(resource)
+    api_version = FieldAccessors.api_version(resource)
+    kind = FieldAccessors.kind(resource)
+
+    from rp in query,
+      where:
+        rp.name == ^name and
+          rp.namespace == ^namespace and
+          rp.api_version == ^api_version and
+          rp.kind == ^kind
+  end
+
+  def resource_paths_recently(query \\ ResourcePath) do
+    from rp in query,
+      where: rp.inserted_at >= ^Timex.shift(Timex.now(), hours: -1)
   end
 
   def count_paths(query \\ ResourcePath),

@@ -1,4 +1,6 @@
 defmodule KubeServices.SnapshotApply.Steps do
+  import K8s.Resource.FieldAccessors
+
   alias ControlServer.Repo
   alias ControlServer.Services
   alias ControlServer.SnapshotApply, as: ControlSnapshotApply
@@ -8,9 +10,7 @@ defmodule KubeServices.SnapshotApply.Steps do
   alias Ecto.Multi
 
   alias KubeExt.Hashing
-
   alias KubeResources.ConfigGenerator
-
   alias KubeServices.SnapshotApply.Supervisor
 
   require Logger
@@ -53,10 +53,16 @@ defmodule KubeServices.SnapshotApply.Steps do
       |> Enum.map(&ConfigGenerator.materialize/1)
       |> Enum.reduce(&Map.merge/2)
       |> Enum.map(fn {path, resource} ->
+        filled_resource = Hashing.decorate_content_hash(resource)
+
         ResourcePath.changeset(%ResourcePath{}, %{
           path: path,
-          hash: Hashing.get_hash(resource),
-          resource_value: resource,
+          hash: Hashing.get_hash(filled_resource),
+          name: name(filled_resource),
+          namespace: namespace(filled_resource),
+          api_version: api_version(filled_resource),
+          kind: kind(filled_resource),
+          resource_value: filled_resource,
           kube_snapshot_id: kube_snapshot.id
         })
       end)
