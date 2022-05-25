@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
   use Phoenix.Component
 
-  import PetalComponents.Typography
   import PetalComponents.Button
   import PetalComponents.Link
 
@@ -21,9 +20,6 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
     assigns = assign_defaults(assigns)
 
     ~H"""
-    <.h3>
-      Jupyter Notebooks
-    </.h3>
     <.table>
       <.thead>
         <.tr>

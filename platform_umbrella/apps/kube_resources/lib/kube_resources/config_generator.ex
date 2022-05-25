@@ -23,7 +23,6 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.KialiServer
   alias KubeResources.KnativeOperator
   alias KubeResources.KnativeServices
-  alias KubeResources.Kong
   alias KubeResources.KubeMonitoring
   alias KubeResources.ML
   alias KubeResources.MinioOperator
@@ -35,14 +34,27 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.ServiceMonitors
   alias KubeResources.VirtualService
 
+  require Logger
+
   def materialize(%BaseService{} = base_service) do
     base_service.config
     |> materialize(base_service.service_type)
     |> Enum.map(fn {key, value} -> {Path.join(base_service.root_path, key), value} end)
+    |> Enum.flat_map(&flatten/1)
     |> Enum.into(%{})
   end
 
-  @spec materialize(map, atom) :: map
+  defp flatten({key, values} = _input) when is_list(values) do
+    values
+    |> Enum.with_index()
+    |> Enum.map(fn {v, idx} ->
+      {Path.join(key, Integer.to_string(idx)), v}
+    end)
+  end
+
+  defp flatten({key, value}), do: [{key, value}]
+
+  @spec materialize(map() | nil, atom()) :: map()
   def materialize(%{} = config, :prometheus) do
     config |> Prometheus.materialize() |> Map.merge(ServiceMonitors.materialize(config))
   end
@@ -75,7 +87,6 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
   def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
 
-  def materialize(%{} = config, :kong), do: Kong.materialize(config)
   def materialize(%{} = config, :nginx), do: Nginx.materialize(config)
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
   def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)

@@ -2,6 +2,7 @@ defmodule KubeState.ResourceWatcher do
   @behaviour Bella.Watcher
 
   alias KubeState.Runner
+  alias KubeState.ApiVersionKind
   alias Bella.Watcher.State
 
   require Logger
@@ -11,46 +12,45 @@ defmodule KubeState.ResourceWatcher do
   def add(resource, %State{} = watcher_state) do
     state_table = state_table(watcher_state)
     resource_type = resource_type(watcher_state)
-    Logger.debug("Add event for #{resource_type}", resource: resource, state_table: state_table)
-    Runner.add(state_table, resource_type, resource)
+    clean_resource = clean(resource, watcher_state)
+
+    Logger.debug("Add event for #{resource_type}",
+      resource: clean_resource,
+      state_table: state_table
+    )
+
+    Runner.add(state_table, resource_type, clean_resource)
   end
 
   def delete(resource, %State{} = watcher_state) do
     state_table = state_table(watcher_state)
     resource_type = resource_type(watcher_state)
+    clean_resource = clean(resource, watcher_state)
     Logger.debug("Delete event for #{resource_type} removing from #{state_table}")
-    Runner.delete(state_table, resource_type, resource)
+    Runner.delete(state_table, resource_type, clean_resource)
   end
 
   def modify(resource, %State{} = watcher_state) do
     state_table = state_table(watcher_state)
     resource_type = resource_type(watcher_state)
+    clean_resource = clean(resource, watcher_state)
 
-    Logger.debug("Update event for #{resource_type}", resource: resource, state_table: state_table)
+    Runner.update(state_table, resource_type, clean_resource)
+  end
 
-    Runner.update(state_table, resource_type, resource)
+  defp clean(resource, %State{} = watcher_state) do
+    {api_version, kind} = watcher_state |> resource_type() |> ApiVersionKind.from_resource_type()
+
+    resource
+    |> Map.put_new("apiVersion", api_version)
+    |> Map.put_new("kind", kind)
+    |> update_in(["metadata"], fn m -> Map.drop(m || %{}, ["managedFields"]) end)
+    |> Map.drop(["data"])
   end
 
   def operation(%State{} = watcher_state) do
-    case resource_type(watcher_state) do
-      :namespaces ->
-        @client.list("v1", "Namespace")
-
-      :pods ->
-        @client.list("v1", "Pod")
-
-      :services ->
-        @client.list("v1", "Service")
-
-      :deployments ->
-        @client.list("apps/v1", "Deployment")
-
-      :stateful_sets ->
-        @client.list("apps/v1", "StatefulSets")
-
-      :nodes ->
-        @client.list("v1", "Node")
-    end
+    {api_version, kind} = watcher_state |> resource_type() |> ApiVersionKind.from_resource_type()
+    @client.list(api_version, kind)
   end
 
   defp state_table(watcher_state) do

@@ -21,6 +21,7 @@
     unused_parens,
     while_true
 )]
+#![allow(clippy::use_self)]
 
 pub mod cluster_spec;
 pub mod error;

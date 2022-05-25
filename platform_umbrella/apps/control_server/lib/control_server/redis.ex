@@ -7,6 +7,7 @@ defmodule ControlServer.Redis do
   alias ControlServer.Repo
 
   alias ControlServer.Redis.FailoverCluster
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
   Returns the list of failover_clusters.
@@ -53,6 +54,7 @@ defmodule ControlServer.Redis do
     %FailoverCluster{}
     |> FailoverCluster.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:insert)
   end
 
   @doc """
@@ -71,6 +73,7 @@ defmodule ControlServer.Redis do
     failover_cluster
     |> FailoverCluster.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:update)
   end
 
   @doc """
@@ -86,7 +89,9 @@ defmodule ControlServer.Redis do
 
   """
   def delete_failover_cluster(%FailoverCluster{} = failover_cluster) do
-    Repo.delete(failover_cluster)
+    failover_cluster
+    |> Repo.delete()
+    |> broadcast(:delete)
   end
 
   @doc """
@@ -101,4 +106,11 @@ defmodule ControlServer.Redis do
   def change_failover_cluster(%FailoverCluster{} = failover_cluster, attrs \\ %{}) do
     FailoverCluster.changeset(failover_cluster, attrs)
   end
+
+  defp broadcast({:ok, fc} = result, action) do
+    :ok = DatabaseEventCenter.broadcast(:redis_cluster, action, fc)
+    result
+  end
+
+  defp broadcast(result, _action), do: result
 end

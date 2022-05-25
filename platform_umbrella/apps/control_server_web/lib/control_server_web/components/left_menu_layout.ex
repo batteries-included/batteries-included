@@ -247,12 +247,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/internal/workers"
-      name="Worker Status"
-      icon="lightning_bolt"
-      is_active={@active == "workers"}
-    />
-    <.left_menu_item
       to="/internal/pods"
       name="Pods"
       icon="lightning_bolt"
@@ -276,6 +270,18 @@ defmodule ControlServerWeb.LeftMenuLayout do
       icon="lightning_bolt"
       is_active={@active == "nodes"}
     />
+    <.left_menu_item
+      to="/internal/services"
+      name="Services"
+      icon="lightning_bolt"
+      is_active={@active == "services"}
+    />
+    <.left_menu_item
+      to="/internal/kube_snapshots"
+      name="Kube Deploys"
+      icon="lightning_bolt"
+      is_active={@active == "snapshots"}
+    />
     """
   end
 
@@ -289,6 +295,14 @@ defmodule ControlServerWeb.LeftMenuLayout do
     """
   end
 
+  def section_title(assigns) do
+    ~H"""
+    <.h3 class="text-right">
+      <%= render_slot(@inner_block) %>
+    </.h3>
+    """
+  end
+
   def layout(assigns) do
     assigns = assign_defaults(assigns)
 
@@ -297,13 +311,13 @@ defmodule ControlServerWeb.LeftMenuLayout do
       <:title>
         <%= render_slot(@title) %>
       </:title>
-      <div class="lg:grid lg:grid-cols-12 lg:gap-x-5">
-        <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
+      <div class="lg:grid lg:grid-cols-9 lg:gap-x-5">
+        <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-2">
           <nav class="space-y-1">
             <%= render_slot(@left_menu) %>
           </nav>
         </aside>
-        <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
+        <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-7">
           <%= render_slot(@inner_block) %>
         </div>
       </div>

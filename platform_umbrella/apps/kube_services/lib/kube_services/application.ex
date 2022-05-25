@@ -20,66 +20,40 @@ defmodule KubeServices.Application do
 
   def children(true = _run) do
     [
-      Supervisor.child_spec(
-        {Bella.Watcher.Worker,
-         [
-           watcher: ResourceWatcher,
-           connection_func: &ConnectionPool.get/0,
-           extra: %{resource_type: :namespaces, table_name: KubeState.default_state_table()}
-         ]},
-        id: ResourceWatcher.Namespaces
-      ),
-      Supervisor.child_spec(
-        {Bella.Watcher.Worker,
-         [
-           watcher: ResourceWatcher,
-           connection_func: &ConnectionPool.get/0,
-           extra: %{resource_type: :pods, table_name: KubeState.default_state_table()}
-         ]},
-        id: ResourceWatcher.Pods
-      ),
-      Supervisor.child_spec(
-        {Bella.Watcher.Worker,
-         [
-           watcher: ResourceWatcher,
-           connection_func: &ConnectionPool.get/0,
-           extra: %{resource_type: :services, table_name: KubeState.default_state_table()}
-         ]},
-        id: ResourceWatcher.Services
-      ),
-      Supervisor.child_spec(
-        {Bella.Watcher.Worker,
-         [
-           watcher: ResourceWatcher,
-           connection_func: &ConnectionPool.get/0,
-           extra: %{resource_type: :deployments, table_name: KubeState.default_state_table()}
-         ]},
-        id: ResourceWatcher.Deployments
-      ),
-      Supervisor.child_spec(
-        {Bella.Watcher.Worker,
-         [
-           watcher: ResourceWatcher,
-           connection_func: &ConnectionPool.get/0,
-           extra: %{resource_type: :stateful_sets, table_name: KubeState.default_state_table()}
-         ]},
-        id: ResourceWatcher.StatefulSets
-      ),
-      Supervisor.child_spec(
-        {Bella.Watcher.Worker,
-         [
-           watcher: ResourceWatcher,
-           connection_func: &ConnectionPool.get/0,
-           extra: %{resource_type: :nodes, table_name: KubeState.default_state_table()}
-         ]},
-        id: ResourceWatcher.Nodes
-      ),
-      {Registry, [keys: :unique, name: KubeServices.Registry.Worker]},
+      KubeServices.ResourceDeleter,
       KubeServices.Usage.Poller,
-      KubeServices.BaseServicesSupervisor,
-      KubeServices.BaseServicesHydrator
-    ]
+      KubeServices.SnapshotApply.Supervisor,
+      KubeServices.SnapshotApply.Launcher,
+      KubeServices.SnapshotApply.TimedLauncher,
+      KubeServices.SnapshotApply.EventLauncher,
+      KubeServices.SnapshotApply.Trimer,
+      KubeServices.SnapshotApply.TimedTrimer
+    ] ++ resource_watchers()
   end
 
   def children(_run), do: []
+
+  def resource_watchers do
+    KubeState.ApiVersionKind.all_known()
+    |> Enum.map(fn known ->
+      {known, "ResourceWatcher.#{Macro.camelize(Atom.to_string(known))}"}
+    end)
+    |> Enum.map(&resource_worker_child_spec/1)
+  end
+
+  defp resource_worker_child_spec({resource_type, id}) do
+    Supervisor.child_spec(
+      {Bella.Watcher.Worker,
+       [
+         watcher: ResourceWatcher,
+         connection_func: &ConnectionPool.get/0,
+         should_retry_watch: true,
+         extra: %{
+           resource_type: resource_type,
+           table_name: KubeState.default_state_table()
+         }
+       ]},
+      id: id
+    )
+  end
 end

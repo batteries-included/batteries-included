@@ -114,7 +114,8 @@ defmodule KubeResources.KnativeOperator do
       ],
       "namespaceSelector" => %{
         "matchNames" => [
-          "knative-serving"
+          "knative-serving",
+          namespace
         ]
       },
       "selector" => %{
@@ -173,7 +174,8 @@ defmodule KubeResources.KnativeOperator do
       ],
       "namespaceSelector" => %{
         "matchNames" => [
-          "knative-serving"
+          "knative-serving",
+          namespace
         ]
       },
       "selector" => %{
@@ -202,7 +204,8 @@ defmodule KubeResources.KnativeOperator do
       ],
       "namespaceSelector" => %{
         "matchNames" => [
-          "knative-eventing"
+          "knative-eventing",
+          namespace
         ]
       },
       "selector" => %{
@@ -738,9 +741,9 @@ defmodule KubeResources.KnativeOperator do
     |> Map.put("config", %{
       "istio" => %{
         "gateway.battery-knative.knative-ingress-gateway" =>
-          "istio-ingressgateway.battery-ingress.svc.cluster.local",
+          "ingressgateway.battery-istio.svc.cluster.local",
         "local-gateway.battery-knative.knative-local-gateway" =>
-          "knative-local-gateway.battery-ingress.svc.cluster.local"
+          "knative-local-gateway.battery-istio.svc.cluster.local"
       }
     })
     |> Map.put("ingress", %{"istio" => %{"enabled" => true}})

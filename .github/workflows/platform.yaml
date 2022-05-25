@@ -13,9 +13,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.13.3
-            otp: 24.2.2
-            node: 16.4.0
+          - elixir: 1.13.4
+            otp: 25.0
+            node: 16.15.0
     runs-on: ubuntu-latest
 
     defaults:
@@ -76,9 +76,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.13.3
-            otp: 24.2.2
-            node: 16.4.0
+          - elixir: 1.13.4
+            otp: 25.0
+            node: 16.15.0
 
     runs-on: ubuntu-latest
 
@@ -151,14 +151,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.13.3
-            otp: 24.2.2
-            node: 16.4.0
+          - elixir: 1.13.4
+            otp: 25.0
+            node: 16.15.0
             asset_path: apps/control_server_web/assets
 
-          - elixir: 1.13.3
-            otp: 24.2.2
-            node: 16.4.0
+          - elixir: 1.13.4
+            otp: 25.0
+            node: 16.15.0
             asset_path: apps/home_base_web/assets
 
     runs-on: ubuntu-latest

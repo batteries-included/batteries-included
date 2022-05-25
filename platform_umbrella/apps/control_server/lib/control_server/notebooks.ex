@@ -7,6 +7,7 @@ defmodule ControlServer.Notebooks do
   alias ControlServer.Repo
 
   alias ControlServer.Notebooks.JupyterLabNotebook
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
   Returns the list of jupyter_lab_notebooks.
@@ -53,6 +54,7 @@ defmodule ControlServer.Notebooks do
     %JupyterLabNotebook{}
     |> JupyterLabNotebook.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:insert)
   end
 
   @doc """
@@ -71,6 +73,7 @@ defmodule ControlServer.Notebooks do
     jupyter_lab_notebook
     |> JupyterLabNotebook.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:update)
   end
 
   @doc """
@@ -86,7 +89,9 @@ defmodule ControlServer.Notebooks do
 
   """
   def delete_jupyter_lab_notebook(%JupyterLabNotebook{} = jupyter_lab_notebook) do
-    Repo.delete(jupyter_lab_notebook)
+    jupyter_lab_notebook
+    |> Repo.delete()
+    |> broadcast(:delete)
   end
 
   @doc """
@@ -101,4 +106,11 @@ defmodule ControlServer.Notebooks do
   def change_jupyter_lab_notebook(%JupyterLabNotebook{} = jupyter_lab_notebook, attrs \\ %{}) do
     JupyterLabNotebook.changeset(jupyter_lab_notebook, attrs)
   end
+
+  defp broadcast({:ok, fc} = result, action) do
+    :ok = DatabaseEventCenter.broadcast(:jupyter_notebook, action, fc)
+    result
+  end
+
+  defp broadcast(result, _action), do: result
 end

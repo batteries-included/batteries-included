@@ -71,10 +71,5 @@ defmodule ControlServer.ServicesTest do
       assert {:ok, %BaseService{}} = Services.delete_base_service(base_service)
       assert_raise Ecto.NoResultsError, fn -> Services.get_base_service!(base_service.id) end
     end
-
-    test "change_base_service/1 returns a base_service changeset" do
-      base_service = base_service_fixture()
-      assert %Ecto.Changeset{} = Services.change_base_service(base_service)
-    end
   end
 end

@@ -9,12 +9,16 @@ defmodule EventCenter.Application do
   def start(_type, _args) do
     children = [
       Supervisor.child_spec(
-        {Phoenix.PubSub, name: EventCenter.BaseService.PubSub},
-        id: EventCenter.BaseService.PubSub
+        {Phoenix.PubSub, name: EventCenter.Database.PubSub},
+        id: EventCenter.Database.PubSub
       ),
       Supervisor.child_spec(
         {Phoenix.PubSub, name: EventCenter.KubeState.PubSub},
         id: EventCenter.KubeState.PubSub
+      ),
+      Supervisor.child_spec(
+        {Phoenix.PubSub, name: EventCenter.KubeSnapshot.PubSub},
+        id: EventCenter.KubeSnapshot.PubSub
       ),
       Supervisor.child_spec(
         {Phoenix.PubSub, name: EventCenter.Usage.PubSub},

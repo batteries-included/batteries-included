@@ -52,7 +52,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
       <:title>
         <.title>New Cluster</.title>
       </:title>
-      <h1>New Postgres Cluster</h1>
+      <.h3>New Postgres Cluster</.h3>
       <div>
         <.live_component
           module={FormComponent}

@@ -50,6 +50,9 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
       <:left_menu>
         <.ml_menu active="notebooks" />
       </:left_menu>
+      <.section_title>
+        Jupyter Notebooks
+      </.section_title>
       <.body_section>
         <.notebook_display notebooks={@notebooks} />
       </.body_section>

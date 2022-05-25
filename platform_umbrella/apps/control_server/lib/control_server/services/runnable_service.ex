@@ -86,7 +86,6 @@ defmodule ControlServer.Services.RunnableService do
       },
 
       # Network
-      %__MODULE__{path: "/network/kong", service_type: :kong},
       %__MODULE__{path: "/network/nginx", service_type: :nginx},
       %__MODULE__{path: "/network/istio/base", service_type: :istio},
       %__MODULE__{

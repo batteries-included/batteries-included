@@ -46,11 +46,11 @@ defmodule KubeExt do
 
   def maybe_apply(connection, single), do: apply_single(connection, single)
 
-  defp apply_single(_connection, nil = _resouce), do: {:ok, nil}
+  def apply_single(_connection, nil = _resouce), do: {:ok, nil}
 
-  defp apply_single(_connection, [] = _resource), do: {:ok, []}
+  def apply_single(_connection, [] = _resource), do: {:ok, []}
 
-  defp apply_single(connection, resource) do
+  def apply_single(connection, resource) do
     with {:ok, found} <- get_or_create(connection, resource) do
       # Add the hash here means that we don't need
       # to recompute it if the hashes don't match.

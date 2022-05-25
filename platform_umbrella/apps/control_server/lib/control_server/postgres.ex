@@ -7,6 +7,7 @@ defmodule ControlServer.Postgres do
 
   alias ControlServer.Postgres.Cluster
   alias ControlServer.Repo
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   alias Ecto.Multi
 
@@ -65,6 +66,7 @@ defmodule ControlServer.Postgres do
     %Cluster{}
     |> Cluster.changeset(attrs)
     |> repo.insert()
+    |> broadcast(:insert)
   end
 
   @doc """
@@ -83,6 +85,7 @@ defmodule ControlServer.Postgres do
     cluster
     |> Cluster.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:update)
   end
 
   @doc """
@@ -98,7 +101,7 @@ defmodule ControlServer.Postgres do
 
   """
   def delete_cluster(%Cluster{} = cluster) do
-    Repo.delete(cluster)
+    cluster |> Repo.delete() |> broadcast(:delete)
   end
 
   @doc """
@@ -134,10 +137,20 @@ defmodule ControlServer.Postgres do
   end
 
   def maybe_insert(nil = _selected, repo, attrs) do
-    repo.insert(Cluster.changeset(%Cluster{}, attrs))
+    %Cluster{}
+    |> Cluster.changeset(attrs)
+    |> repo.insert()
+    |> broadcast(:insert)
   end
 
   def maybe_insert(%Cluster{} = _selected, _repo, _attrs) do
     {:ok, nil}
   end
+
+  defp broadcast({:ok, fc} = result, action) do
+    :ok = DatabaseEventCenter.broadcast(:postgres_cluster, action, fc)
+    result
+  end
+
+  defp broadcast(result, _action), do: result
 end
