@@ -73,7 +73,14 @@ defmodule ControlServer.SnapshotApply do
   def get_kube_snapshot!(id), do: Repo.get!(KubeSnapshot, id)
 
   def get_preloaded_kube_snapshot!(id) do
-    KubeSnapshot |> preload(:resource_paths) |> Repo.get!(id)
+    query = from(ks in KubeSnapshot,
+      select: ks,
+      where: ks.id == ^id,
+      preload: [resource_paths: ^from(rp in ResourcePath, order_by: rp.path)]
+    )
+
+    Repo.one!(query)
+
   end
 
   @doc """
