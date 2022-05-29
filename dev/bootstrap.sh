@@ -2,7 +2,7 @@
 set -xuo pipefail
 
 # Grab the location we'll use it for yaml locations soon
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)"
 
 error() {
   local parent_lineno
@@ -125,35 +125,35 @@ NUM_SERVERS=${NUM_SERVERS:-3}
 PARAMS=""
 while (("$#")); do
   case "$1" in
-  -c | --create-cluster)
-    CREATE_CLUSTER=true
-    shift
-    ;;
-  -b | --forward-home-base)
-    FORWARD_HOME_POSTGRES=true
-    shift
-    ;;
-  -D | --dont-forward-control)
-    FORWARD_CONTROL_POSTGRES=false
-    shift
-    ;;
-  -B | --build-local)
-    BUILD_CONTROL_SERVER=true
-    shift
-    ;;
-  -S | --num-servers)
-    shift
-    NUM_SERVERS=${1}
-    shift
-    ;;
-  -* | --*=) # unsupported flags
-    echo "Error: Unsupported flag $1" >&2
-    exit 1
-    ;;
-  *) # preserve positional arguments
-    PARAMS="$PARAMS $1"
-    shift
-    ;;
+    -c | --create-cluster)
+      CREATE_CLUSTER=true
+      shift
+      ;;
+    -b | --forward-home-base)
+      FORWARD_HOME_POSTGRES=true
+      shift
+      ;;
+    -D | --dont-forward-control)
+      FORWARD_CONTROL_POSTGRES=false
+      shift
+      ;;
+    -B | --build-local)
+      BUILD_CONTROL_SERVER=true
+      shift
+      ;;
+    -S | --num-servers)
+      shift
+      NUM_SERVERS=${1}
+      shift
+      ;;
+    -* | --*=) # unsupported flags
+      echo "Error: Unsupported flag $1" >&2
+      exit 1
+      ;;
+    *) # preserve positional arguments
+      PARAMS="$PARAMS $1"
+      shift
+      ;;
   esac
 done
 # set positional arguments in their proper place

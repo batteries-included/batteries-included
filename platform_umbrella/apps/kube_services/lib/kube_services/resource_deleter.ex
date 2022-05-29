@@ -25,9 +25,11 @@ defmodule KubeServices.ResourceDeleter do
   end
 
   @impl true
-  def handle_call({:delete, resource}, _fromt, state) do
+  def handle_call({:delete, resource}, _fromt, %{conn: conn} = state) do
     Logger.debug("Delete of resource #{inspect(summarize(resource))}")
-    {:reply, K8s.Client.delete(resource), state}
+    operation = K8s.Client.delete(resource)
+
+    {:reply, K8s.Client.run(conn, operation), state}
   end
 
   defp summarize(resource) do

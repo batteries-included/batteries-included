@@ -23,9 +23,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
     ~H"""
     <.tr>
       <.td>
-        <%= @snapshot.id %>
-      </.td>
-      <.td>
         <%= @snapshot.inserted_at %>
       </.td>
       <.td>
@@ -57,10 +54,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
           <.thead>
             <.tr>
               <.th>
-                Id
-              </.th>
-              <.th>
-                Inserted At
+                Started
               </.th>
               <.th>
                 Status

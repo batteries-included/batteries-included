@@ -23,6 +23,7 @@ defmodule KubeServices.Application do
       KubeServices.ResourceDeleter,
       KubeServices.Usage.Poller,
       KubeServices.SnapshotApply.Supervisor,
+      KubeServices.SnapshotApply.StaleFinder,
       KubeServices.SnapshotApply.Launcher,
       KubeServices.SnapshotApply.TimedLauncher,
       KubeServices.SnapshotApply.EventLauncher,
