@@ -59,7 +59,7 @@ defmodule KubeServices.SnapshotApply.Steps do
           path: path,
           hash: Hashing.get_hash(filled_resource),
           name: name(filled_resource),
-          namespace: namespace(filled_resource) || "default",
+          namespace: namespace(filled_resource),
           api_version: api_version(filled_resource),
           kind: kind(filled_resource),
           resource_value: filled_resource,

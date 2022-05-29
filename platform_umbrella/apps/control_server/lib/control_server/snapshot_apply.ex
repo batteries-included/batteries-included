@@ -8,7 +8,6 @@ defmodule ControlServer.SnapshotApply do
 
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.SnapshotApply.KubeSnapshot
-  alias K8s.Resource.FieldAccessors
 
   @doc """
   Returns the list of resource_paths.
@@ -114,18 +113,27 @@ defmodule ControlServer.SnapshotApply do
     from rp in query, where: rp.is_success == false
   end
 
-  def resource_paths_for_resource(query \\ ResourcePath, resource) do
-    name = FieldAccessors.name(resource)
-    namespace = FieldAccessors.namespace(resource) || "default"
-    api_version = FieldAccessors.api_version(resource)
-    kind = FieldAccessors.kind(resource)
+  def resource_paths_by_api_version(query \\ ResourcePath, api_version) do
+    from rp in query, where: rp.api_version == ^api_version
+  end
 
-    from rp in query,
-      where:
-        rp.name == ^name and
-          rp.namespace == ^namespace and
-          rp.api_version == ^api_version and
-          rp.kind == ^kind
+  def resource_paths_by_kind(query \\ ResourcePath, kind) do
+    from rp in query, where: rp.kind == ^kind
+  end
+
+  def resource_paths_by_name(query \\ ResourcePath, name) do
+    from rp in query, where: rp.name == ^name
+  end
+
+  def resource_paths_by_namespace(query \\ ResourcePath, namespace),
+    do: by_namespace(query, namespace)
+
+  defp by_namespace(query, namespace) when is_nil(namespace) do
+    from rp in query, where: is_nil(rp.namespace)
+  end
+
+  defp by_namespace(query, namespace) do
+    from rp in query, where: rp.namespace == ^namespace
   end
 
   def resource_paths_recently(query \\ ResourcePath) do

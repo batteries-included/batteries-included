@@ -1,5 +1,8 @@
 defmodule KubeServices.SnapshotApply.Stale do
+  import K8s.Resource.FieldAccessors
+
   alias ControlServer.SnapshotApply, as: ControlSnapshot
+  alias ControlServer.Repo
 
   require Logger
 
@@ -17,8 +20,11 @@ defmodule KubeServices.SnapshotApply.Stale do
   def in_some_kube_snapshot(resource) do
     ControlSnapshot.ResourcePath
     |> ControlSnapshot.resource_paths_recently()
-    |> ControlSnapshot.resource_paths_for_resource(resource)
-    |> ControlServer.Repo.exists?()
+    |> ControlSnapshot.resource_paths_by_api_version(api_version(resource))
+    |> ControlSnapshot.resource_paths_by_kind(kind(resource))
+    |> ControlSnapshot.resource_paths_by_name(name(resource))
+    |> ControlSnapshot.resource_paths_by_namespace(namespace(resource))
+    |> Repo.exists?()
   end
 
   defp log_scan_results(results) do
