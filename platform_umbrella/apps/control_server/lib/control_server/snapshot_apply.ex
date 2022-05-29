@@ -116,7 +116,7 @@ defmodule ControlServer.SnapshotApply do
 
   def resource_paths_for_resource(query \\ ResourcePath, resource) do
     name = FieldAccessors.name(resource)
-    namespace = FieldAccessors.namespace(resource)
+    namespace = FieldAccessors.namespace(resource) || "default"
     api_version = FieldAccessors.api_version(resource)
     kind = FieldAccessors.kind(resource)
 

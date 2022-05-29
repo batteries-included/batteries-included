@@ -32,15 +32,7 @@ defmodule KubeServices.SnapshotApply.StaleFinder do
   end
 
   defp scan(state) do
-    KubeState.table_to_list()
-    |> Enum.filter(&Stale.is_stale/1)
-    |> log_scan_results()
-    |> Enum.each(&KubeServices.ResourceDeleter.delete/1)
-
+    Enum.each(Stale.find_stale(), &KubeServices.ResourceDeleter.delete/1)
     state
-  end
-
-  defp log_scan_results(results) do
-    Logger.info("Found #{length(results)} stale resources that can be deleted.")
   end
 end
