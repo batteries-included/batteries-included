@@ -33,7 +33,7 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix_live_view, "~> 0.17.9"},
+      {:phoenix_live_view, "~> 0.17.10"},
       {:petal_components, "~> 0.16.0"}
     ]
   end
