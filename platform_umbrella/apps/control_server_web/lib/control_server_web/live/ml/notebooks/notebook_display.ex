@@ -61,8 +61,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
       <.td>
         <span>
           <.button to={notebook_path(@notebook)} variant="shadow" link_type="a">
-            Open Notebook
-            <Heroicons.Solid.external_link class="w-5 h-5" />
+            Open Notebook <Heroicons.Solid.external_link class="w-5 h-5" />
           </.button>
         </span>
         |
