@@ -25,6 +25,8 @@ defmodule KubeResources.KnativeServices do
     |> B.spec(spec)
   end
 
+  def url(%Knative.Service{} = service), do: "//#{service.name}.battery-knative.knative.#{KubeState.IstioIngress.single_address()}.sslip.io"
+
   @spec materialize(map()) :: map()
   def materialize(config) do
     Knative.list_services()
