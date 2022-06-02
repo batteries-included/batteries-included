@@ -72,10 +72,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
               <.tr id={"service-#{service.id}"}>
                 <.td><%= service.name %></.td>
                 <.td>
-                  <.link
-                    to={url(service)}
-                    link_type="a"
-                  >
+                  <.link to={url(service)} link_type="a">
                     Open
                   </.link>
                 </.td>
