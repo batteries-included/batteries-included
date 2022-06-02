@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   import ControlServerWeb.LeftMenuLayout
   import CommonUI.Table
+  import KubeResources.KnativeServices, only: [url: 1]
 
   alias ControlServer.Knative
   alias ControlServer.Services.RunnableService
@@ -71,10 +72,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
               <.tr id={"service-#{service.id}"}>
                 <.td><%= service.name %></.td>
                 <.td>
-                  <.link
-                    to={"//#{service.name}.battery-knative.knative.172.30.0.4.sslip.io"}
-                    link_type="a"
-                  >
+                  <.link to={url(service)} link_type="a">
                     Open
                   </.link>
                 </.td>
