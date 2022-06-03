@@ -49,9 +49,7 @@ retry() {
           echo "Looks command timed out. Not counting it"
         else
           ((n++))
-          echo "Failed. ${n}/${max}local code
-  local end
-  local runtime"
+          echo "Failed. ${n}/${max}"
           sleep $delay
         fi
       else
