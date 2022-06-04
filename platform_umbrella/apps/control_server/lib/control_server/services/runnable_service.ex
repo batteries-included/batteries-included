@@ -56,7 +56,12 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/devtools/tekton",
         service_type: :tekton,
-        dependencies: [:battery, :istio_gateway]
+        dependencies: [:battery]
+      },
+      %__MODULE__{
+        path: "/devtools/tekton_dashboard",
+        service_type: :tekton_dashboard,
+        dependencies: [:battery, :tekton, :istio_gateway]
       },
       # ML
       %__MODULE__{path: "/ml/core", service_type: :ml},

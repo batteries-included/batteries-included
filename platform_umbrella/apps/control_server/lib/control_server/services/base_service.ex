@@ -28,6 +28,7 @@ defmodule ControlServer.Services.BaseService do
         :devtools,
         :knative,
         :tekton,
+        :tekton_dashboard,
         :github_runner,
         :gitea,
         :data,

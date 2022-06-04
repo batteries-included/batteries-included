@@ -8,6 +8,7 @@ defmodule KubeResources.VirtualService do
   alias KubeResources.Notebooks
   alias KubeResources.Prometheus
   alias KubeResources.KialiServer
+  alias KubeResources.TektonDashboard
 
   def materialize(_config) do
     Services.all_including_config()
@@ -25,6 +26,7 @@ defmodule KubeResources.VirtualService do
   def virtual_service(:alert_manager, config), do: AlertManager.virtual_service(config)
   def virtual_service(:notebooks, config), do: Notebooks.virtual_service(config)
   def virtual_service(:kiali, config), do: KialiServer.virtual_service(config)
+  def virtual_service(:tekton_dashboard, config), do: TektonDashboard.virtual_service(config)
 
   def virtual_service(:gitea, config) do
     [Gitea.virtual_service(config), Gitea.ssh_virtual_service(config)]
