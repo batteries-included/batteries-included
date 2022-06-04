@@ -11,7 +11,7 @@ defmodule KubeResources.KnativeServices do
         "spec" => %{
           "containers" => [
             %{
-              "image" => "gcr.io/knative-samples/helloworld-go",
+              "image" => service.image,
               "env" => [%{"name" => "TARGET", "value" => "Batteries Included"}]
             }
           ]
