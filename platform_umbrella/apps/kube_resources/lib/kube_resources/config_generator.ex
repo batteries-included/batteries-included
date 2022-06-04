@@ -33,6 +33,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Redis
   alias KubeResources.ServiceMonitors
   alias KubeResources.VirtualService
+  alias KubeResources.Tekton
 
   require Logger
 
@@ -86,6 +87,7 @@ defmodule KubeResources.ConfigGenerator do
 
   def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
   def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
+  def materialize(%{} = config, :tekton), do: Tekton.materialize(config)
 
   def materialize(%{} = config, :nginx), do: Nginx.materialize(config)
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)

@@ -27,6 +27,7 @@ defmodule ControlServer.Services.BaseService do
         :cert_manager,
         :devtools,
         :knative,
+        :tekton,
         :github_runner,
         :gitea,
         :data,

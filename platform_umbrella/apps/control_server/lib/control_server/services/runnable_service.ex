@@ -53,7 +53,11 @@ defmodule ControlServer.Services.RunnableService do
         service_type: :gitea,
         dependencies: [:keycloak, :database_internal, :istio_gateway]
       },
-
+      %__MODULE__{
+        path: "/devtools/tekton",
+        service_type: :tekton,
+        dependencies: [:battery, :istio_gateway]
+      },
       # ML
       %__MODULE__{path: "/ml/core", service_type: :ml},
       %__MODULE__{
