@@ -6,6 +6,7 @@ defmodule ControlServer.Knative.Service do
   @foreign_key_type :binary_id
   schema "services" do
     field :name, :string
+    field :image, :string
 
     timestamps()
   end
@@ -13,8 +14,8 @@ defmodule ControlServer.Knative.Service do
   @doc false
   def changeset(service, attrs) do
     service
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :image])
+    |> validate_required([:name, :image])
   end
 
   def validate(params) do
@@ -27,4 +28,7 @@ defmodule ControlServer.Knative.Service do
 
     {changeset, data}
   end
+
+  # TODO: validate that we can reach whatever registry/image/version is set
+  #       in :image; at least warn if we can't
 end

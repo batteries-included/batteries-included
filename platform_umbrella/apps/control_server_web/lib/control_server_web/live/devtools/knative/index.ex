@@ -63,6 +63,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
           <.thead>
             <.tr>
               <.th>Name</.th>
+              <.th>Image</.th>
               <.th>Link</.th>
               <.th>Action</.th>
             </.tr>
@@ -71,6 +72,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
             <%= for service <- @services do %>
               <.tr id={"service-#{service.id}"}>
                 <.td><%= service.name %></.td>
+                <.td><%= service.image %></.td>
                 <.td>
                   <.link to={url(service)} link_type="a">
                     Open

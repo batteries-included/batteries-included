@@ -95,7 +95,14 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             placeholder="Name"
             wrapper_class="sm:col-span-1"
           />
-          <div class="sm:col-span-1">
+          <.form_field
+            type="text_input"
+            form={f}
+            field={:image}
+            placeholder="Docker Image"
+            wrapper_class="sm:col-span-1"
+          />
+          <div class="sm:col-span-2">
             <.labeled_definition title="URL" contents={@url} />
           </div>
         </div>

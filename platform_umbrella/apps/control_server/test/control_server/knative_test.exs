@@ -9,6 +9,9 @@ defmodule ControlServer.KnativeTest do
     import ControlServer.KnativeFixtures
 
     @invalid_attrs %{name: nil}
+    @invalid_image %{name: "invalid-image-test", image: nil}
+
+    # TODO: Add string validity tests for names and images, not just presence
 
     test "list_services/0 returns all services" do
       service = service_fixture()
@@ -21,14 +24,16 @@ defmodule ControlServer.KnativeTest do
     end
 
     test "create_service/1 with valid data creates a service" do
-      valid_attrs = %{name: "some name"}
+      valid_attrs = %{name: "some name", image: "some-image"}
 
       assert {:ok, %Service{} = service} = Knative.create_service(valid_attrs)
-      assert service.name == "some name"
+      assert service.name == valid_attrs.name
+      assert service.image == valid_attrs.image
     end
 
     test "create_service/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Knative.create_service(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Knative.create_service(@invalid_image)
     end
 
     test "update_service/2 with valid data updates the service" do
@@ -42,6 +47,7 @@ defmodule ControlServer.KnativeTest do
     test "update_service/2 with invalid data returns error changeset" do
       service = service_fixture()
       assert {:error, %Ecto.Changeset{}} = Knative.update_service(service, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Knative.update_service(service, @invalid_image)
       assert service == Knative.get_service!(service.id)
     end
 

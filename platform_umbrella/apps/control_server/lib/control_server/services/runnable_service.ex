@@ -190,7 +190,10 @@ defmodule ControlServer.Services.RunnableService do
   end
 
   defp run_post(%__MODULE__{service_type: :knative} = _service, repo) do
-    ControlServer.Knative.create_service(%{name: "hello-batteries"}, repo)
+    ControlServer.Knative.create_service(
+      %{name: "hello-batteries", image: "gcr.io/knative-samples/helloworld-go"},
+      repo
+    )
   end
 
   defp run_post(%__MODULE__{} = _service, _repo), do: {:ok, []}
