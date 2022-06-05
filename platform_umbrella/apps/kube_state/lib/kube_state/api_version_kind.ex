@@ -22,6 +22,7 @@ defmodule KubeState.ApiVersionKind do
     mutating_webhook_configs: {"admissionregistration.k8s.io/v1", "MutatingWebhookConfiguration"},
     ingresses: {"networking.k8s.io/v1", "Ingress"},
     pod_disruption_budgets: {"policy/v1beta1", "PodDisruptionBudget"},
+    pod_security_policy: {"policy/v1beta1", "PodSecurityPolicy"},
     horizontal_pod_autoscalers: {"autoscaling/v2beta2", "HorizontalPodAutoscaler"},
     istio_gateway: {"networking.istio.io/v1alpha3", "Gateway"},
     istio_virtual_services: {"networking.istio.io/v1alpha3", "VirtualService"},
@@ -36,7 +37,8 @@ defmodule KubeState.ApiVersionKind do
     knative_services: {"serving.knative.dev/v1", "Service"},
     postgresqls: {"acid.zalan.do/v1", "postgresql"},
     postgresql_operator_configs: {"acid.zalan.do/v1", "OperatorConfiguration"},
-    keycloaks: {"keycloak.org/v1alpha1", "Keycloak"}
+    keycloaks: {"keycloak.org/v1alpha1", "Keycloak"},
+    tekton_task: {"tekton.dev/v1beta1", "Task"}
   ]
 
   def from_resource_type(resource_type), do: Keyword.get(@known, resource_type, nil)

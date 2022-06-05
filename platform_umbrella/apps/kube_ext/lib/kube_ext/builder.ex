@@ -89,6 +89,10 @@ defmodule KubeExt.Builder do
     build_resource("policy/v1beta1", "PodDisruptionBudget")
   end
 
+  def build_resource(:pod_security_policy) do
+    build_resource("policy/v1beta1", "PodSecurityPolicy")
+  end
+
   def build_resource(:telemetry) do
     build_resource("telemetry.istio.io/v1alpha1", "Telemetry")
   end
@@ -108,6 +112,12 @@ defmodule KubeExt.Builder do
     |> Map.put_new("metadata", %{})
     |> update_in(~w(metadata annotations), fn anno -> anno || %{} end)
     |> put_in(["metadata", "annotations", key], value)
+  end
+
+  def annotations(resouce, %{} = anno_map) do
+    resouce
+    |> Map.put_new("metadata", %{})
+    |> update_in(~w(metadata annotations), fn anno -> Map.merge(anno || %{}, anno_map) end)
   end
 
   def label(resource, key, value) do
@@ -159,8 +169,17 @@ defmodule KubeExt.Builder do
   end
 
   def spec(resource, spec), do: Map.put(resource, "spec", spec)
+  def data(resource, data), do: Map.put(resource, "data", data)
   def template(resource, %{} = template), do: Map.put(resource, "template", template)
   def ports(resource, ports), do: Map.put(resource, "ports", ports)
+  def rules(resource, rules), do: Map.put(resource, "rules", rules)
+  def role_ref(resource, role_ref), do: Map.put(resource, "roleRef", role_ref)
+
+  def subject(resource, subject) do
+    resource
+    |> Map.put_new("subjects", [])
+    |> update_in(~w(subjects), fn subjects -> [subject | subjects] end)
+  end
 
   defp build_rule(:http, paths) do
     %{
