@@ -24,10 +24,11 @@ defmodule ControlServer.KnativeTest do
     end
 
     test "create_service/1 with valid data creates a service" do
-      valid_attrs = %{name: "some name"}
+      valid_attrs = %{name: "some name", image: "some-image"}
 
       assert {:ok, %Service{} = service} = Knative.create_service(valid_attrs)
-      assert service.name == "some name"
+      assert service.name == valid_attrs.name
+      assert service.image == valid_attrs.image
     end
 
     test "create_service/1 with invalid data returns error changeset" do

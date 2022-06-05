@@ -11,7 +11,8 @@ defmodule ControlServer.KnativeFixtures do
     {:ok, service} =
       attrs
       |> Enum.into(%{
-        name: "some name"
+        name: "some name",
+        image: "batteries_included/test-image"
       })
       |> ControlServer.Knative.create_service()
 
