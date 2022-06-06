@@ -29,3 +29,5 @@ pub mod labels;
 pub mod logging;
 pub mod namespace;
 pub mod permissions;
+
+pub use k8s_openapi;
