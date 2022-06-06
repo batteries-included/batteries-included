@@ -37,7 +37,7 @@ defmodule HomeBase.MixProject do
   defp deps do
     [
       {:phoenix_pubsub, "~> 2.1"},
-      {:ecto_sql, "~> 3.7"},
+      {:ecto_sql, "~> 3.8"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"}
     ]

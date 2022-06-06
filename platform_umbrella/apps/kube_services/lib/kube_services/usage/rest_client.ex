@@ -1,4 +1,4 @@
-defmodule HomeBaseClient.RestClient do
+defmodule KubeServices.Usage.RestClient do
   @moduledoc """
   The HTTP rest client to report to HomeBase. It doesn't depend on HomeBase or on ControlServer.
   """
