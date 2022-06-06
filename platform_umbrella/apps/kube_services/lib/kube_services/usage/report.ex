@@ -1,6 +1,7 @@
 defmodule KubeServices.Usage.Report do
+  import K8s.Resource.FieldAccessors
+
   alias ControlServer.Usage
-  alias K8s.Resource
 
   require Logger
 
@@ -29,9 +30,10 @@ defmodule KubeServices.Usage.Report do
   def report_pods do
     {:ok,
      KubeState.pods()
-     |> Enum.filter(fn p -> p |> Resource.namespace() |> String.starts_with?("battery") end)
-     |> Enum.map(&sanitize_pod/1)
-     |> Enum.group_by(&Resource.namespace/1)}
+     |> Enum.filter(fn p -> p |> namespace() |> String.starts_with?("battery") end)
+     |> Enum.group_by(&namespace/1)
+     |> Enum.map(fn {namespace, pods} -> {namespace, length(pods)} end)
+     |> Enum.into(%{})}
   end
 
   def report_nodes do
@@ -40,25 +42,15 @@ defmodule KubeServices.Usage.Report do
      |> Enum.map(&sanitize_node/1)
      |> Enum.with_index()
      |> Enum.map(fn {node, index} ->
-       name = Resource.name(node) || "unknown-node-#{index}"
+       name = name(node) || "unknown-node-#{index}"
        {name, node}
      end)
      |> Map.new()}
   end
 
   def battery_namespace?(ns) do
-    String.starts_with?(Resource.name(ns), "battery")
+    String.starts_with?(name(ns), "battery")
   end
-
-  def sanitize_pod(%{} = pod) do
-    pod
-    |> update_in(["metadata"], fn metadata ->
-      Map.drop(metadata, ["managedFields", "ownerReferences", "annotations", "finalizers"])
-    end)
-    |> Map.drop(["spec"])
-  end
-
-  def sanitize_pod([] = _arg), do: %{}
 
   def sanitize_node(%{} = node) do
     node
@@ -77,7 +69,6 @@ defmodule KubeServices.Usage.Report do
   def num_pods(pod_report) do
     pod_report
     |> Map.values()
-    |> Enum.map(&length/1)
     |> Enum.reduce(0, fn x, acc -> x + acc end)
   end
 end
