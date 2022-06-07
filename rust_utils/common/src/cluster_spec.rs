@@ -78,16 +78,17 @@ pub async fn ensure_crd(client: Client) -> crate::error::Result<()> {
 const DEFAULT_CLUSTER_NAME: &str = "default-cluster";
 const DEFAULT_ACCOUNT_NAME: &str = "test-account";
 
-pub fn default_cluster() -> BatteryCluster {
-    let mut res = BatteryCluster::new(
-        DEFAULT_CLUSTER_NAME,
-        BatteryClusterSpec {
-            account: DEFAULT_ACCOUNT_NAME.into(),
-        },
-    );
-
-    res.meta_mut().labels = Some(default_labels("batteries-included"));
-    res
+impl Default for BatteryCluster {
+    fn default() -> Self {
+        let mut res = BatteryCluster::new(
+            DEFAULT_CLUSTER_NAME,
+            BatteryClusterSpec {
+                account: DEFAULT_ACCOUNT_NAME.into(),
+            },
+        );
+        res.meta_mut().labels = Some(default_labels("batteries-included"));
+        res
+    }
 }
 
 pub async fn ensure_default_cluster(client: Client) -> crate::error::Result<()> {
@@ -96,7 +97,7 @@ pub async fn ensure_default_cluster(client: Client) -> crate::error::Result<()> 
     } else {
         let sa: Api<BatteryCluster> = Api::all(client);
         let params = PatchParams::apply("battery_operator").force();
-        let patch = Patch::Apply(json!(&default_cluster()));
+        let patch = Patch::Apply(json!(&BatteryCluster::default()));
         Ok(sa
             .patch(DEFAULT_CLUSTER_NAME, &params, &patch)
             .await
