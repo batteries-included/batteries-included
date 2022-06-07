@@ -29,3 +29,6 @@ pub mod labels;
 pub mod logging;
 pub mod namespace;
 pub mod permissions;
+
+#[cfg(feature = "k8s-openapi")]
+pub use k8s_openapi;

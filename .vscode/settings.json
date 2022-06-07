@@ -7,7 +7,7 @@
   },
   "rust-analyzer.updates.askBeforeDownload": false,
   "[rust]": {
-    "editor.defaultFormatter": "matklad.rust-analyzer",
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
     "editor.formatOnSave": true
   },
   "emmet.includeLanguages": {
