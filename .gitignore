@@ -20,4 +20,4 @@ Cargo.lock
 *.pdb
 
 # vim backups
-*~
+**~
