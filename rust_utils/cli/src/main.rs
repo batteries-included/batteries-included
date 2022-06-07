@@ -14,7 +14,7 @@ mod print_yaml;
 
 /// Entry point to all things command-line
 #[derive(clap::Parser)]
-#[clap(name="bi-cli", author)]
+#[clap(name = "bi-cli", author)]
 pub enum Cli {
     /// Bootstrap a new cluster
     Bootstrap,
