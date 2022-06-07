@@ -2,11 +2,10 @@ use std::{fmt::Debug, time::Duration};
 
 use async_trait::async_trait;
 use common::{
-    cluster_spec::{BatteryCluster, DEFAULT_CRD_NAME},
+    cluster_spec::BatteryCluster,
+    defaults::{self, cluster_binding, service_account},
     error::{BatteryError, Result},
     k8s_openapi::{api::core::v1::Namespace, Metadata},
-    namespace::DEFAULT_NAMESPACE,
-    permissions::{cluster_binding, service_account},
 };
 use futures::TryFutureExt;
 use kube::{
@@ -69,7 +68,7 @@ pub async fn run() -> Result<()> {
     // build the namespace we expect to use
     let mut data = Namespace::default();
     let m = data.metadata_mut();
-    m.name = Some(DEFAULT_NAMESPACE.to_string());
+    m.name = Some(defaults::NAMESPACE.to_string());
 
     // ensure its existence
     let api = Api::all(client.clone());
@@ -97,7 +96,7 @@ pub async fn run() -> Result<()> {
 
     // oh what fun, there's CRDs too
     let mut crd_data = BatteryCluster::crd();
-    crd_data.meta_mut().name = Some(DEFAULT_CRD_NAME.to_string());
+    crd_data.meta_mut().name = Some(defaults::CRD_NAME.to_string());
     let api = Api::all(client.clone());
     let _crd = crd_data.ensure(&api).await?;
 

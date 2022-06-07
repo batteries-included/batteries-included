@@ -1,20 +1,11 @@
 #![allow(clippy::default_trait_access)]
 #![allow(clippy::field_reassign_with_default)]
 
-use k8s_openapi::apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition;
-use kube::{
-    api::{Api, Patch, PatchParams},
-    client::Client,
-    CustomResource, CustomResourceExt, Resource,
-};
+use kube::CustomResource;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
-use tracing::debug;
 
-use crate::labels::default_labels;
-
-pub const DEFAULT_CRD_NAME: &str = "batteryclusters.batteriesincl.com";
+use crate::defaults::{self, Labels, APP_NAME};
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 pub enum ClusterState {
@@ -45,62 +36,15 @@ pub struct BatteryClusterSpec {
     pub account: String,
 }
 
-pub async fn is_crd_installed(client: Client) -> bool {
-    let crds: Api<CustomResourceDefinition> = Api::all(client);
-    debug!("Trying to get the crd. If it's there we'll continue on");
-    crds.get(DEFAULT_CRD_NAME).await.is_ok()
-}
-
-pub async fn is_cluster_installed(client: Client) -> bool {
-    Api::<BatteryCluster>::all(client)
-        .get(DEFAULT_CLUSTER_NAME)
-        .await
-        .is_ok()
-}
-
-pub async fn ensure_crd(client: Client) -> crate::error::Result<()> {
-    if is_crd_installed(client.clone()).await {
-        Ok(())
-    } else {
-        let crds: Api<CustomResourceDefinition> = Api::all(client);
-        let params = PatchParams::apply("battery_operator").force();
-        debug!("Installing CRD.");
-        let patch = Patch::Apply(serde_json::json!(&BatteryCluster::crd()));
-        Ok(crds
-            .patch(DEFAULT_CRD_NAME, &params, &patch)
-            .await
-            .map(|_| {
-                debug!("Successfully installed CRD.");
-            })?)
-    }
-}
-
-const DEFAULT_CLUSTER_NAME: &str = "default-cluster";
-const DEFAULT_ACCOUNT_NAME: &str = "test-account";
-
 impl Default for BatteryCluster {
     fn default() -> Self {
         let mut res = BatteryCluster::new(
-            DEFAULT_CLUSTER_NAME,
+            defaults::CLUSTER_NAME,
             BatteryClusterSpec {
-                account: DEFAULT_ACCOUNT_NAME.into(),
+                account: defaults::ACCOUNT_NAME.into(),
             },
         );
-        res.meta_mut().labels = Some(default_labels("batteries-included"));
+        res.apply_default_labels(APP_NAME);
         res
-    }
-}
-
-pub async fn ensure_default_cluster(client: Client) -> crate::error::Result<()> {
-    if is_cluster_installed(client.clone()).await {
-        Ok(())
-    } else {
-        let sa: Api<BatteryCluster> = Api::all(client);
-        let params = PatchParams::apply("battery_operator").force();
-        let patch = Patch::Apply(json!(&BatteryCluster::default()));
-        Ok(sa
-            .patch(DEFAULT_CLUSTER_NAME, &params, &patch)
-            .await
-            .map(|_| ())?)
     }
 }
