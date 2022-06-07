@@ -53,4 +53,4 @@ pub enum BatteryError {
     UnexpectedNone,
 }
 
-pub type Result<T> = std::result::Result<T, BatteryError>;
+pub type Result<T, E = BatteryError> = std::result::Result<T, E>;
