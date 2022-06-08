@@ -5,7 +5,7 @@ use kube::CustomResource;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::defaults::{self, Labels, APP_NAME};
+use crate::defaults::{self, BatteryDefaults, APP_NAME};
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 pub enum ClusterState {

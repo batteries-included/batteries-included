@@ -22,11 +22,12 @@ pub fn default_namespace() -> Namespace {
     ns
 }
 
-pub trait Labels {
+pub trait BatteryDefaults {
+    /// Helper to apply the default labels for a Batteries Included cluster
     fn apply_default_labels(&mut self, app_name: &str);
 }
 
-impl<T> Labels for T
+impl<T> BatteryDefaults for T
 where
     T: Resource,
 {
@@ -44,6 +45,19 @@ where
     }
 }
 
+/// Return the "default" `Namespace` for a Batteries Included cluster
+pub fn namespace() -> Namespace {
+    Namespace {
+        metadata: ObjectMeta {
+            name: Some(NAMESPACE.to_string()),
+            namespace: None,
+            ..Default::default()
+        },
+        ..Default::default()
+    }
+}
+
+/// Return the "default" `ServiceAccount` for a Batteries Included cluster
 pub fn service_account() -> ServiceAccount {
     let mut sa = ServiceAccount {
         metadata: ObjectMeta {
@@ -57,6 +71,7 @@ pub fn service_account() -> ServiceAccount {
     sa
 }
 
+/// Return the "default" `ClusterRoleBinding` for a Batteries Included cluster
 pub fn cluster_binding() -> ClusterRoleBinding {
     let mut crb = ClusterRoleBinding {
         metadata: ObjectMeta {
