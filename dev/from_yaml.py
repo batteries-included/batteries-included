@@ -131,9 +131,16 @@ def print_trailer():
     print("end")
 
 
+def object_contents(obj):
+    contents = json.dumps(obj, separators=(",", " => "), sort_keys=True, indent=4)
+    contents = contents.replace("{", "%{")
+    return contents
+
 def print_all_methods(name_json_list, settings_module_name="TotallyNewSettings"):
     for idx, value in enumerate(name_json_list):
-        (name, contents) = value
+        (name, obj) = value
+
+        contents = object_contents(obj)
         if idx >= 1:
             print()
         print_method(name, contents, settings_module_name=settings_module_name)
@@ -182,18 +189,11 @@ def main(module_name, settings_module_name):
 
     # While we are working with the object representation extract
     # the name and the json representation
-    named = [(get_name(o), json.dumps(o, separators=(",", " => "), sort_keys=True, indent=4)) for o in no_crds if o]
+    named = [(get_name(o),o) for o in no_crds if o ]
 
-    # Don't want json so convert colon seperator to an arrow. In order to try
-    # and not get anything other than colons after a field name we accept
-    # only directly after double quote.
-
-    # Open curly brackets are a little less common so be loose and free
-    # with how we hack the crap out of this.
-    to_e_map = [(name, s.replace("{", "%{")) for (name, s) in named]
     print_header(module_name=module_name, settings_module_name=settings_module_name)
-    print_all_methods(to_e_map, settings_module_name=settings_module_name)
-    print_materialize(to_e_map)
+    print_all_methods(named, settings_module_name=settings_module_name)
+    print_materialize(named)
     print_trailer()
 
     export_crds_stderr(crds=only_crds)

@@ -2,6 +2,7 @@ defmodule KubeServices.Usage.Report do
   import K8s.Resource.FieldAccessors
 
   alias ControlServer.Usage
+  alias KubeExt.KubeState
 
   require Logger
 

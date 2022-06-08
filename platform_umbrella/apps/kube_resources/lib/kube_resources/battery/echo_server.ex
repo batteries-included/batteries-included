@@ -91,7 +91,7 @@ defmodule KubeResources.EchoServer do
   def virtual_service(config) do
     namespace = BatterySettings.namespace(config)
 
-    B.build_resource(:virtual_service)
+    B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("echo")

@@ -35,6 +35,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.VirtualService
   alias KubeResources.Tekton
   alias KubeResources.TektonDashboard
+  alias KubeResources.Harbor
 
   require Logger
 
@@ -90,6 +91,7 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
   def materialize(%{} = config, :tekton), do: Tekton.materialize(config)
   def materialize(%{} = config, :tekton_dashboard), do: TektonDashboard.materialize(config)
+  def materialize(%{} = config, :harbor), do: Harbor.materialize(config)
 
   def materialize(%{} = config, :nginx), do: Nginx.materialize(config)
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)

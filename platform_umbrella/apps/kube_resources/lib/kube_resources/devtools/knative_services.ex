@@ -1,6 +1,7 @@
 defmodule KubeResources.KnativeServices do
   alias ControlServer.Knative
   alias KubeExt.Builder, as: B
+  alias KubeExt.KubeState.Hosts
   alias KubeResources.DevtoolsSettings
 
   def serving_service(%Knative.Service{} = service, config) do
@@ -25,9 +26,11 @@ defmodule KubeResources.KnativeServices do
     |> B.spec(spec)
   end
 
-  def url(%Knative.Service{} = service),
-    do:
-      "//#{service.name}.battery-knative.knative.#{KubeState.IstioIngress.single_address()}.sslip.io"
+  def url(%Knative.Service{} = service) do
+    # assume the default config for now /shrug
+    namespace = DevtoolsSettings.knative_destination_namespace(%{})
+    "//#{service.name}.#{namespace}.#{Hosts.knative()}"
+  end
 
   @spec materialize(map()) :: map()
   def materialize(config) do

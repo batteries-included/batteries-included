@@ -4,6 +4,7 @@ defmodule KubeResources.TektonDashboard do
   alias KubeExt.Builder, as: B
   alias KubeResources.DevtoolsSettings
   alias KubeResources.IstioConfig.VirtualService
+  alias KubeExt.KubeState.Hosts
 
   @app "tekton-dashboard"
 
@@ -21,7 +22,7 @@ defmodule KubeResources.TektonDashboard do
   def virtual_service(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    B.build_resource(:virtual_service)
+    B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.name("tekton-dashboard-http")
@@ -34,7 +35,7 @@ defmodule KubeResources.TektonDashboard do
 
   def view_url(_), do: iframe_url()
 
-  def url, do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{@url_base}"
+  def url, do: "//#{Hosts.control_host()}#{@url_base}"
 
   def iframe_url, do: @iframe_base_url
 

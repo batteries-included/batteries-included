@@ -37,7 +37,6 @@ defmodule KubeResources.MixProject do
       {:cachex, "~> 3.4"},
       {:finch, "~> 0.12.0"},
       {:kube_ext, in_umbrella: true},
-      {:kube_state, in_umbrella: true},
       {:kube_raw_resources, in_umbrella: true},
       {:control_server, in_umbrella: true}
     ]

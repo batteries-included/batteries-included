@@ -20,7 +20,7 @@ defmodule KubeResources.IstioGateway do
   def telemetry(config) do
     namespace = NetworkSettings.istio_namespace(config)
 
-    B.build_resource(:telemetry)
+    B.build_resource(:istio_telemetry)
     |> B.name("mesh-default")
     |> B.namespace(namespace)
     |> B.app_labels(@app)
@@ -256,7 +256,7 @@ defmodule KubeResources.IstioGateway do
       ]
     }
 
-    B.build_resource(:gateway)
+    B.build_resource(:istio_gateway)
     |> B.name(@istio_name)
     |> B.namespace(namespace)
     |> B.app_labels(@app)

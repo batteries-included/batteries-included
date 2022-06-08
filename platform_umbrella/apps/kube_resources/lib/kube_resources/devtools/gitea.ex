@@ -4,6 +4,7 @@ defmodule KubeResources.Gitea do
   alias KubeExt.Builder, as: B
   alias KubeResources.DevtoolsSettings
   alias KubeResources.IstioConfig.VirtualService
+  alias KubeExt.KubeState.Hosts
 
   @app "gitea"
 
@@ -17,13 +18,10 @@ defmodule KubeResources.Gitea do
   @ssh_port 22
   @ssh_listen_port 2022
 
-  defp http_domain, do: "control.#{KubeState.IstioIngress.single_address()}.sslip.io"
-  defp ssh_domain, do: "gitea.#{KubeState.IstioIngress.single_address()}.sslip.io"
-
   def virtual_service(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    B.build_resource(:virtual_service)
+    B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.name("gitea-http")
@@ -33,12 +31,14 @@ defmodule KubeResources.Gitea do
   def ssh_virtual_service(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    B.build_resource(:virtual_service)
+    B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.name("gitea-ssh")
     |> B.spec(
-      VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh", hosts: [ssh_domain()])
+      VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh",
+        hosts: [Hosts.gitea_host()]
+      )
     )
   end
 
@@ -48,15 +48,15 @@ defmodule KubeResources.Gitea do
 
   def view_url(_), do: iframe_url()
 
-  def url, do: "//#{http_domain()}#{@url_base}" <> "/explore/repos"
+  def url, do: "//#{Hosts.control_host()}#{@url_base}" <> "/explore/repos"
 
   def iframe_url, do: @iframe_base_url
 
   def secret(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    http_domain = http_domain()
-    ssh_domain = ssh_domain()
+    http_domain = Hosts.control_host()
+    ssh_domain = Hosts.gitea_host()
 
     data = %{
       "_generals_" => "",

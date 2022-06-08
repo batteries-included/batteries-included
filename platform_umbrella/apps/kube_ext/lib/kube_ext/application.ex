@@ -4,7 +4,8 @@ defmodule KubeExt.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      KubeExt.ConnectionPool
+      KubeExt.ConnectionPool,
+      {KubeExt.KubeState.Runner, name: KubeExt.KubeState.default_state_table()}
     ]
 
     opts = [strategy: :one_for_one, name: KubeExt.Supervisor]

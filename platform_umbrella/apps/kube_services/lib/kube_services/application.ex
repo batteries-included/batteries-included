@@ -6,7 +6,8 @@ defmodule KubeServices.Application do
   use Application
 
   alias KubeExt.ConnectionPool
-  alias KubeState.ResourceWatcher
+  alias KubeExt.KubeState
+  alias KubeExt.KubeState.ResourceWatcher
 
   @impl true
   def start(_type, _args) do
@@ -35,7 +36,7 @@ defmodule KubeServices.Application do
   def children(_run), do: []
 
   def resource_watchers do
-    KubeState.ApiVersionKind.all_known()
+    KubeExt.ApiVersionKind.all_known()
     |> Enum.map(fn known ->
       {known, "ResourceWatcher.#{Macro.camelize(Atom.to_string(known))}"}
     end)

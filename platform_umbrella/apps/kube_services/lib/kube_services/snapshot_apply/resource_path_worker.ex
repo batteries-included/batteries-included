@@ -2,6 +2,7 @@ defmodule KubeServices.SnapshotApply.ResourcePathWorker do
   use GenServer, restart: :temporary
 
   alias KubeServices.SnapshotApply.Worker
+  alias KubeExt.KubeState
 
   require Logger
 

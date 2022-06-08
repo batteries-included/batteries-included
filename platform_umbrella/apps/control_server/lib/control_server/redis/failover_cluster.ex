@@ -8,6 +8,7 @@ defmodule ControlServer.Redis.FailoverCluster do
     field :name, :string
     field :num_redis_instances, :integer
     field :num_sentinel_instances, :integer
+    field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
 
     timestamps()
   end
@@ -18,7 +19,7 @@ defmodule ControlServer.Redis.FailoverCluster do
   @doc false
   def changeset(failover_cluster, attrs) do
     failover_cluster
-    |> cast(attrs, [:name, :num_sentinel_instances, :num_redis_instances])
+    |> cast(attrs, [:name, :num_sentinel_instances, :num_redis_instances, :type])
     |> validate_required([:name, :num_redis_instances])
   end
 

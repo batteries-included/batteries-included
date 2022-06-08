@@ -9,29 +9,21 @@ defmodule KubeRawResources.Database do
   @exporter_port 9187
   @exporter_port_name "exporter"
 
-  @pam_group_name "batterpamusers"
-
   @app "postgres-operator"
 
   @pg_hba [
     ["local", "all", "all", "trust"],
-    ["hostssl", "all", "+#{@pam_group_name}", "127.0.0.1/32", "pam"],
-    ["host", "all", "all", "127.0.0.1/32", "md5"],
-    ["hostssl", "all", "+#{@pam_group_name}", "::1/128", "pam"],
-    ["host", "all", "all", "::1/128", "md5"],
-    ["hostssl", "replication", "standby", "all", "md5"],
+    ["host", "all", "all", "127.0.0.1/32", "scram-sha-256"],
+    ["host", "all", "all", "::1/128", "scram-sha-256"],
     ["hostssl", "replication", "standby", "all", "scram-sha-256"],
 
     # This line is added to allow postgres_exporter to attach since it can't use ssl yet.
     # Certs aren't correct.
-    ["hostnossl", "all", "postgres", "0.0.0.0/0", "md5"],
-    ["hostssl", "all", "postgres", "0.0.0.0/0", "md5"],
+    ["hostnossl", "all", "postgres", "0.0.0.0/0", "scram-sha-256"],
     ["hostssl", "all", "postgres", "0.0.0.0/0", "scram-sha-256"],
-    ["hostssl", "all", "batterydbuser", "0.0.0.0/0", "md5"],
-    ["hostssl", "all", "batterydbuser", "0.0.0.0/0", "scram-sha-256"],
-    ["hostnossl", "all", "all", "all", "reject"],
-    ["hostssl", "all", "all", "all", "md5"],
-    ["hostssl", "all", "all", "all", "scram-sha-256"]
+    ["hostssl", "all", "all", "all", "scram-sha-256"],
+    ["hostnossl", "all", "all", "all", "scram-sha-256"],
+    ["hostnossl", "all", "all", "all", "reject"]
   ]
 
   def postgres(%{} = cluster, config) do
@@ -52,7 +44,12 @@ defmodule KubeRawResources.Database do
       "teamId" => team_name(cluster),
       "numberOfInstances" => num_instances(cluster),
       "postgresql" => %{
-        "version" => postgres_version(cluster)
+        "version" => postgres_version(cluster),
+        "parameters" => %{
+          "log_destination" => "stderr",
+          "logging_collector" => "false",
+          "password_encryption" => "scram-sha-256"
+        }
       },
       "patroni" => %{"pg_hba" => pg_hba()},
       "volume" => %{

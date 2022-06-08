@@ -1647,32 +1647,34 @@ defmodule KubeResources.Tekton do
   end
 
   def crd(config) do
-    namespace = DevtoolsSettings.namespace(config)
-
     crd_content()
     |> yaml()
     |> Enum.map(fn crd ->
-      # crd
-      change_conversion(crd, namespace)
+      change_conversion(crd, config)
     end)
   end
 
-  def change_conversion(%{"spec" => %{"conversion" => conversion}} = crd, namespace),
-    do: do_chang_conversion(crd, conversion, namespace)
+  def change_conversion(%{"spec" => %{"conversion" => conversion}} = crd, config),
+    do: do_chang_conversion(crd, conversion, new_service(config))
 
-  def change_conversion(%{spec: %{conversion: conversion}} = crd, namespace),
-    do: do_chang_conversion(crd, conversion, namespace)
+  def change_conversion(%{spec: %{conversion: conversion}} = crd, config),
+    do: do_chang_conversion(crd, conversion, new_service(config))
 
   def change_conversion(crd, _), do: crd
 
-  defp do_chang_conversion(crd, conversion, namespace) do
-    new_conversion =
-      put_in(conversion, ~w(webhook clientConfig service), %{
-        "name" => @webhook_service_name,
-        "namespace" => namespace
-      })
+  defp do_chang_conversion(crd, conversion, new_service) do
+    new_conversion = put_in(conversion, ~w(webhook clientConfig service), new_service)
 
     put_in(crd, ~w(spec conversion), new_conversion)
+  end
+
+  defp new_service(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    %{
+      "name" => @webhook_service_name,
+      "namespace" => namespace
+    }
   end
 
   defp crd_content, do: unquote(File.read!(@crd_path))

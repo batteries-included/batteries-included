@@ -7,6 +7,7 @@ defmodule KubeResources.DevtoolsSettings do
 
   @namespace "battery-core"
   @knative_namespace "battery-knative"
+  @harbor_namespace "battery-harbor"
   @knative_operator_image "gcr.io/knative-releases/knative.dev/operator/cmd/operator"
   @knative_operator_version "v1.2.1"
 
@@ -27,6 +28,9 @@ defmodule KubeResources.DevtoolsSettings do
 
   def knative_destination_namespace(config),
     do: Map.get(config, "knative.desination_namespace", @knative_namespace)
+
+  def harbor_destination_namespace(config),
+    do: Map.get(config, "harbor.desination_namespace", @harbor_namespace)
 
   def gh_private_key(config),
     do:

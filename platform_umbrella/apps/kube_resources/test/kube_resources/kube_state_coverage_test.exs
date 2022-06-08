@@ -4,6 +4,7 @@ defmodule KubeServices.KubeStateCoverageTest do
   alias KubeResources.ConfigGenerator
   alias ControlServer.Services.RunnableService
   alias ControlServer.Services
+  alias KubeExt.ApiVersionKind
 
   require Logger
 
@@ -19,13 +20,13 @@ defmodule KubeServices.KubeStateCoverageTest do
     :keycloak
   ]
 
-  def assert_all_services_watchable do
+  def assert_all_resources_watchable do
     Services.all_including_config()
     |> Enum.map(&ConfigGenerator.materialize/1)
     |> Enum.map(&KubeResources.unique_kinds/1)
     |> List.flatten()
     |> Enum.each(fn {api_version, kind} ->
-      assert KubeState.ApiVersionKind.is_watchable(api_version, kind)
+      assert ApiVersionKind.is_watchable(api_version, kind)
     end)
   end
 
@@ -35,7 +36,7 @@ defmodule KubeServices.KubeStateCoverageTest do
     end
 
     test "Produces watchable types for kube state" do
-      assert_all_services_watchable()
+      assert_all_resources_watchable()
     end
   end
 
@@ -46,7 +47,7 @@ defmodule KubeServices.KubeStateCoverageTest do
         fn service ->
           RunnableService.activate!(service)
 
-          assert_all_services_watchable()
+          assert_all_resources_watchable()
         end
       )
     end

@@ -4,6 +4,7 @@ defmodule KubeResources.Grafana do
   """
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.KubeState.Hosts
 
   alias KubeResources.IniConfig
   alias KubeResources.GrafanaDashboards
@@ -50,12 +51,12 @@ defmodule KubeResources.Grafana do
 
   def view_url(_), do: "/services/monitoring/grafana"
 
-  def url, do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{@url_base}"
+  def url, do: "//#{Hosts.control_host()}#{@url_base}"
 
   def virtual_service(config) do
     namespace = MonitoringSettings.namespace(config)
 
-    B.build_resource(:virtual_service)
+    B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("grafana")

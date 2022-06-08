@@ -36,9 +36,14 @@ defmodule KubeResources.Redis do
     |> Enum.into(%{})
   end
 
-  def redis_failover_cluster(%FailoverCluster{} = cluster, config) do
-    namespace = DataSettings.public_namespace(config)
+  defp cluster_namespace(%FailoverCluster{type: :internal} = _cluster, config),
+    do: DataSettings.namespace(config)
 
+  defp cluster_namespace(%FailoverCluster{type: _} = _cluster, config),
+    do: DataSettings.public_namespace(config)
+
+  def redis_failover_cluster(%FailoverCluster{} = cluster, config) do
+    namespace = cluster_namespace(cluster, config)
     spec = failover_spec(cluster)
 
     B.build_resource(:redis_failover)

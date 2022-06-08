@@ -1,13 +1,16 @@
-defmodule KubeState.IstioIngress do
+defmodule KubeExt.KubeState.IstioIngress do
+  import K8s.Resource.FieldAccessors
+
   @default "172.30.0.4"
+
   def single_address do
-    KubeState.services()
+    get_services()
     |> ingress_ips_from_services()
     |> List.first() || @default
   end
 
   def all_addresses do
-    ingress_ips_from_services(KubeState.services())
+    ingress_ips_from_services(get_services())
   end
 
   defp ingress_ips_from_services(services) when services == [] do
@@ -17,8 +20,8 @@ defmodule KubeState.IstioIngress do
   defp ingress_ips_from_services(services) when is_list(services) do
     matching =
       Enum.find(services, fn s ->
-        K8s.Resource.name(s) == "ingressgateway" and
-          K8s.Resource.namespace(s) == "battery-istio"
+        name(s) == "ingressgateway" and
+          namespace(s) == "battery-istio"
       end)
 
     case matching do
@@ -32,4 +35,6 @@ defmodule KubeState.IstioIngress do
         [@default]
     end
   end
+
+  defp get_services, do: KubeExt.KubeState.services()
 end

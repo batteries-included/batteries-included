@@ -12,6 +12,7 @@ defmodule ControlServerWeb.Live.ResourceList do
   import ControlServerWeb.PodsDisplay
 
   alias EventCenter.KubeState, as: KubeEventCenter
+  alias KubeExt.KubeState
 
   require Logger
 
@@ -24,23 +25,23 @@ defmodule ControlServerWeb.Live.ResourceList do
   end
 
   defp subscribe(:deployments) do
-    :ok = KubeEventCenter.subscribe(:deployments)
+    :ok = KubeEventCenter.subscribe(:deployment)
   end
 
   defp subscribe(:stateful_sets) do
-    :ok = KubeEventCenter.subscribe(:stateful_sets)
+    :ok = KubeEventCenter.subscribe(:stateful_set)
   end
 
   defp subscribe(:nodes) do
-    :ok = KubeEventCenter.subscribe(:nodes)
+    :ok = KubeEventCenter.subscribe(:node)
   end
 
   defp subscribe(:pods) do
-    :ok = KubeEventCenter.subscribe(:pods)
+    :ok = KubeEventCenter.subscribe(:pod)
   end
 
   defp subscribe(:services) do
-    :ok = KubeEventCenter.subscribe(:services)
+    :ok = KubeEventCenter.subscribe(:service)
   end
 
   defp subscribe(_), do: nil

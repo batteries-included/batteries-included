@@ -2,6 +2,7 @@ defmodule KubeResources.Notebooks do
   alias ControlServer.Notebooks
   alias ControlServer.Notebooks.JupyterLabNotebook
   alias KubeExt.Builder, as: B
+  alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MLSettings
@@ -38,14 +39,14 @@ defmodule KubeResources.Notebooks do
   def view_url(_, %JupyterLabNotebook{} = notebook), do: "/services/ml/notebooks/#{notebook.id}"
 
   def url(%JupyterLabNotebook{} = notebook),
-    do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{base_url(notebook)}"
+    do: "//#{Hosts.control_host()}#{base_url(notebook)}"
 
   def base_url(%JupyterLabNotebook{} = notebook), do: "#{@url_base}#{notebook.name}"
 
   defp build_virtual_service(namespace, [_ | _] = notebooks) do
     routes = Enum.map(notebooks, &notebook_http_route/1)
 
-    B.build_resource(:virtual_service)
+    B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("notebooks")

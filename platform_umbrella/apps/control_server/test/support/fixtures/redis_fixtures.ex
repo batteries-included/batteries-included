@@ -12,8 +12,9 @@ defmodule ControlServer.RedisFixtures do
       attrs
       |> Enum.into(%{
         name: "some name",
+        type: :standard,
         num_redis_instances: 42,
-        num_sentinel_instances: 42
+        num_sentinel_instances: 43
       })
       |> ControlServer.Redis.create_failover_cluster()
 

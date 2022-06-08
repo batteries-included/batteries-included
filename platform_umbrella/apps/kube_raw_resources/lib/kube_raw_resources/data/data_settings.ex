@@ -8,7 +8,7 @@ defmodule KubeRawResources.DataSettings do
   @pg_operator_name "battery-pg-operator"
   @pg_operator_pod_account_name "battery-pg-pod"
   @pg_operator_image "registry.opensource.zalan.do/acid/postgres-operator"
-  @pg_operator_version "v1.7.1"
+  @pg_operator_version "v1.8.1"
   @pg_operator_cluster_label "battery-pg-cluster"
 
   @redis_operator_image "quay.io/spotahome/redis-operator"

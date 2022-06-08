@@ -1,5 +1,7 @@
 defmodule ControlServer.Services.RunnableService do
   alias ControlServer.Postgres
+  alias ControlServer.Redis
+  alias ControlServer.Knative
   alias ControlServer.Repo
   alias ControlServer.Services
   alias Ecto.Multi
@@ -62,6 +64,11 @@ defmodule ControlServer.Services.RunnableService do
         path: "/devtools/tekton_dashboard",
         service_type: :tekton_dashboard,
         dependencies: [:battery, :tekton, :istio_gateway]
+      },
+      %__MODULE__{
+        path: "/devtools/harbor",
+        service_type: :harbor,
+        dependencies: [:battery, :redis, :istio_gateway, :database_internal]
       },
       # ML
       %__MODULE__{path: "/ml/core", service_type: :ml},
@@ -190,10 +197,19 @@ defmodule ControlServer.Services.RunnableService do
   end
 
   defp run_post(%__MODULE__{service_type: :knative} = _service, repo) do
-    ControlServer.Knative.create_service(
+    Knative.create_service(
       %{name: "hello-batteries", image: "gcr.io/knative-samples/helloworld-go"},
       repo
     )
+  end
+
+  defp run_post(%__MODULE__{service_type: :harbor} = _service, repo) do
+    with {:ok, postgres_db} <-
+           Postgres.find_or_create(KubeRawResources.Harbor.harbor_pg_cluster(), repo),
+         {:ok, redis} <-
+           Redis.create_failover_cluster(KubeRawResources.Harbor.harbor_redis_cluster(), repo) do
+      {:ok, postgres: postgres_db, redis: redis}
+    end
   end
 
   defp run_post(%__MODULE__{} = _service, _repo), do: {:ok, []}

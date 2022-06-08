@@ -25,7 +25,8 @@ common_checks = [
    max_size: 40,
    files: %{
      excluded: [
-       "apps/control_server/lib/control_server/services/runnable_service.ex"
+       "apps/control_server/lib/control_server/services/runnable_service.ex",
+       "apps/kube_resources/lib/kube_resources/security/cert_manager.ex"
      ]
    }},
   {Credo.Check.Refactor.Apply,

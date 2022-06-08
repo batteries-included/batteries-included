@@ -1,4 +1,4 @@
-defmodule KubeState.Runner do
+defmodule KubeExt.KubeState.Runner do
   use GenServer
 
   import K8s.Resource

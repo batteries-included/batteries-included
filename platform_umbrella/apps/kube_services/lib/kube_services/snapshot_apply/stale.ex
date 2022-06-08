@@ -3,6 +3,7 @@ defmodule KubeServices.SnapshotApply.Stale do
 
   alias ControlServer.SnapshotApply, as: ControlSnapshot
   alias ControlServer.Repo
+  alias KubeExt.KubeState
 
   require Logger
 

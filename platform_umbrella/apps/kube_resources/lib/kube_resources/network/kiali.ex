@@ -2,6 +2,7 @@ defmodule KubeResources.KialiServer do
   @moduledoc false
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.KubeState.Hosts
   alias KubeRawResources.NetworkSettings
   alias KubeResources.IstioConfig.VirtualService
 
@@ -24,12 +25,12 @@ defmodule KubeResources.KialiServer do
 
   def view_url(_), do: "/services/network/kiali"
 
-  def url, do: "//control.#{KubeState.IstioIngress.single_address()}.sslip.io#{@url_base}"
+  def url, do: "//#{Hosts.control_host()}#{@url_base}"
 
   def virtual_service(config) do
     namespace = NetworkSettings.istio_namespace(config)
 
-    B.build_resource(:virtual_service)
+    B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.name("kiali")

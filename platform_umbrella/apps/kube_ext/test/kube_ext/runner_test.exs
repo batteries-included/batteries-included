@@ -1,7 +1,8 @@
-defmodule KubeState.RunnerTest do
+defmodule KubeExt.KubeState.RunnerTest do
   use ExUnit.Case
 
-  alias KubeState.Runner
+  alias KubeExt.KubeState
+  alias KubeExt.KubeState.Runner
 
   @table_name :runner_test_state_table
 
@@ -26,8 +27,8 @@ defmodule KubeState.RunnerTest do
         "metadata" => %{"name" => "Two", "namespace" => "battery-core"}
       }
 
-      Runner.add(@table_name, :pods, pod_one)
-      Runner.add(@table_name, :pods, pod_two)
+      Runner.add(@table_name, :pod, pod_one)
+      Runner.add(@table_name, :pod, pod_two)
 
       result = KubeState.pods(@table_name)
 

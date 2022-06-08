@@ -16,7 +16,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
 
   def handle_info(msg, state) do
     pid = Launcher.launch()
-    Logger.debug("Got pubsub message #{msg} Result pid = #{pid}")
+    Logger.debug("Got pubsub message #{inspect(msg)} Result pid = #{inspect(pid)}")
     {:noreply, state}
   end
 end

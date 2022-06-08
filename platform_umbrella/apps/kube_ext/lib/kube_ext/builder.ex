@@ -1,100 +1,13 @@
 defmodule KubeExt.Builder do
-  def build_resource(:virtual_service) do
-    build_resource("networking.istio.io/v1alpha3", "VirtualService")
-  end
-
-  def build_resource(:gateway) do
-    build_resource("networking.istio.io/v1alpha3", "Gateway")
-  end
-
-  def build_resource(:namespace) do
-    build_resource("v1", "Namespace")
-  end
-
-  def build_resource(:service_account) do
-    build_resource("v1", "ServiceAccount")
-  end
-
-  def build_resource(:stateful_set) do
-    build_resource("apps/v1", "StatefulSet")
-  end
-
-  def build_resource(:deployment) do
-    build_resource("apps/v1", "Deployment")
-  end
-
-  def build_resource(:config_map) do
-    build_resource("v1", "ConfigMap")
-  end
-
-  def build_resource(:service) do
-    build_resource("v1", "Service")
-  end
-
-  def build_resource(:job) do
-    build_resource("batch/v1", "Job")
-  end
-
-  def build_resource(:role_binding) do
-    build_resource("rbac.authorization.k8s.io/v1", "RoleBinding")
-  end
-
-  def build_resource(:role) do
-    build_resource("rbac.authorization.k8s.io/v1", "Role")
-  end
-
-  def build_resource(:cluster_role) do
-    build_resource("rbac.authorization.k8s.io/v1", "ClusterRole")
-  end
-
-  def build_resource(:cluster_role_binding) do
-    build_resource("rbac.authorization.k8s.io/v1", "ClusterRoleBinding")
-  end
-
-  def build_resource(:service_monitor) do
-    build_resource("monitoring.coreos.com/v1", "ServiceMonitor")
-  end
-
-  def build_resource(:pod_monitor) do
-    build_resource("monitoring.coreos.com/v1", "PodMonitor")
-  end
+  alias KubeExt.ApiVersionKind
 
   def build_resource(:secret) do
     Map.put(build_resource("v1", "Secret"), "type", "Opaque")
   end
 
-  def build_resource(:knative_serving) do
-    build_resource("operator.knative.dev/v1alpha1", "KnativeServing")
-  end
-
-  def build_resource(:knative_service) do
-    build_resource("serving.knative.dev/v1", "Service")
-  end
-
-  def build_resource(:postgresql) do
-    build_resource("acid.zalan.do/v1", "postgresql")
-  end
-
-  def build_resource(:ingress) do
-    "networking.k8s.io/v1"
-    |> build_resource("Ingress")
-    |> annotation("kubernetes.io/ingress.class", "battery-nginx")
-  end
-
-  def build_resource(:redis_failover) do
-    build_resource("databases.spotahome.com/v1", "RedisFailover")
-  end
-
-  def build_resource(:pod_disruption_budget) do
-    build_resource("policy/v1beta1", "PodDisruptionBudget")
-  end
-
-  def build_resource(:pod_security_policy) do
-    build_resource("policy/v1beta1", "PodSecurityPolicy")
-  end
-
-  def build_resource(:telemetry) do
-    build_resource("telemetry.istio.io/v1alpha1", "Telemetry")
+  def build_resource(resource_type) when is_atom(resource_type) do
+    {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
+    build_resource(api_version, kind)
   end
 
   def build_resource(:ingress, path, service_name, port) do

@@ -3,6 +3,7 @@ defmodule KubeResources.KnativeOperator do
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.KubeState.Hosts
   alias KubeResources.DevtoolsSettings
 
   @app_name "knative-operator"
@@ -752,7 +753,7 @@ defmodule KubeResources.KnativeOperator do
   defp domain_config(config) do
     namespace = DevtoolsSettings.knative_destination_namespace(config)
 
-    data = Map.put(%{}, default_domain_name(), "")
+    data = Map.put(%{}, Hosts.knative(), "")
 
     B.build_resource(:config_map)
     |> B.name("config-domain")
@@ -761,6 +762,5 @@ defmodule KubeResources.KnativeOperator do
     |> Map.put("data", data)
   end
 
-  defp default_domain_name, do: "knative.#{KubeState.IstioIngress.single_address()}.sslip.io"
   defp knative_crd_content, do: unquote(File.read!(@knative_crd_path))
 end
