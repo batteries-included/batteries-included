@@ -1,13 +1,13 @@
-use std::{fmt::Debug, time::Duration};
+use std::{any::type_name, fmt::Debug, time::Duration};
 
 use async_trait::async_trait;
 use common::{
     cluster_spec::BatteryCluster,
-    defaults::{self, cluster_binding, service_account},
+    defaults,
     error::{BatteryError, Result},
-    k8s_openapi::{api::core::v1::Namespace, Metadata},
+    k8s_openapi::api::core::v1::Namespace,
 };
-use futures::TryFutureExt;
+use futures::{FutureExt, TryFutureExt};
 use kube::{
     api::{Patch, PatchParams},
     client::Client,
@@ -15,7 +15,7 @@ use kube::{
 };
 use serde::{de::DeserializeOwned, Serialize};
 use tokio::time::sleep;
-use tracing::{debug, info};
+use tracing::{debug, info, trace};
 
 pub trait ToPatch: Serialize + Sized {
     fn to_patch(&self) -> Patch<Self>;
@@ -41,10 +41,18 @@ pub trait Ensure:
 
         let result = api
             .get(&name)
+            .inspect(|result| {
+                trace!(?result, "Inspecting result of initial get");
+                if let Ok(thing) = result {
+                    let ns = thing.meta().namespace.as_deref().unwrap_or("default");
+                    let kind = type_name::<Self>().rsplit_once(':').unwrap().1;
+                    info!(kind, %name, %ns, "Found!");
+                }
+            })
             .or_else(|e| {
                 let name = name.clone();
-                debug!(%e, "Received error during get");
-                info!(?name, "Not found, creating");
+                trace!(%e, "Error from get");
+                info!(%name, "Not found, creating");
                 let pp = PatchParams::apply("battery-operated");
                 let patch = Patch::Apply(&self);
                 async move { api.patch(&name, &pp, &patch).await }
@@ -65,14 +73,9 @@ pub async fn run() -> Result<()> {
     debug!("Connecting to kubernetes.");
     let client = Client::try_default().await?;
 
-    // build the namespace we expect to use
-    let mut data = Namespace::default();
-    let m = data.metadata_mut();
-    m.name = Some(defaults::NAMESPACE.to_string());
-
     // ensure its existence
     let api = Api::all(client.clone());
-    let ns = data.ensure(&api).await?;
+    let ns = defaults::namespace().ensure(&api).await?;
 
     // go ahead and save this bad boy for later
     let ns_name = ns
@@ -82,17 +85,12 @@ pub async fn run() -> Result<()> {
         .ok_or(BatteryError::UnexpectedNone)?;
 
     // now, samesies for the service account
-    let mut data = service_account();
-    data.meta_mut().namespace = Some(ns_name.to_string());
-
     let api = Api::namespaced(client.clone(), ns_name);
-    let _sa = data.ensure(&api).await?;
+    let _sa = defaults::service_account().ensure(&api).await?;
 
     // once more, for the CRBs in the back!
-    let mut data = cluster_binding();
-    data.meta_mut().namespace = Some(ns_name.to_string());
     let api = Api::all(client.clone());
-    let _crb = data.ensure(&api).await?;
+    let _crb = defaults::cluster_binding().ensure(&api).await?;
 
     // oh what fun, there's CRDs too
     let mut crd_data = BatteryCluster::crd();
