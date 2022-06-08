@@ -10,6 +10,7 @@ use common::error::Result;
 use common::logging::try_init_logging;
 
 mod bootstrap;
+mod mount;
 mod print_yaml;
 
 /// Entry point to all things command-line
@@ -20,6 +21,8 @@ pub enum Cli {
     Bootstrap,
     /// Print the shared yaml for bootstrap and control servers
     PrintYaml,
+    /// Mount kubernetes
+    Mount,
 }
 
 #[tokio::main]
@@ -30,5 +33,6 @@ async fn main() -> Result<()> {
     match app {
         Cli::Bootstrap => bootstrap::run().await,
         Cli::PrintYaml => print_yaml::run(),
+        Cli::Mount => mount::run(),
     }
 }
