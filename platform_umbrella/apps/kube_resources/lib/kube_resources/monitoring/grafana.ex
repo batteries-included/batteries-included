@@ -5,7 +5,7 @@ defmodule KubeResources.Grafana do
 
   alias KubeExt.Builder, as: B
 
-  alias KubeExt.IniConfig
+  alias KubeResources.IniConfig
   alias KubeResources.GrafanaDashboards
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MonitoringSettings

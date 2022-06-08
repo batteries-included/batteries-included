@@ -1,4 +1,4 @@
-defmodule KubeExt.IniConfig do
+defmodule KubeResources.IniConfig do
   def to_ini(content) do
     Enum.map_join(content, "\n", &to_section/1)
   end
