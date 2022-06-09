@@ -1,53 +1,43 @@
 use std::error::Error;
 
+use kube::config::InferConfigError;
 use kube::Error as KubeError;
 use reqwest::Error as ReqwestError;
 use thiserror::Error;
+use tokio::task::JoinError;
 use tracing_subscriber::filter::{FromEnvError, ParseError};
 
 #[derive(Error, Debug)]
 pub enum BatteryError {
+    #[error("Kubernetes config error")]
+    KubeConfigError(#[from] InferConfigError),
+
     #[error("Error during RPC to kube")]
-    GeneralKubeClient {
-        #[from]
-        source: KubeError,
-    },
+    GeneralKubeClient(#[from] KubeError),
 
     #[error("Error while serializing/de-serializing to json")]
-    SerdeJson {
-        #[from]
-        source: serde_json::Error,
-    },
+    SerdeJson(#[from] serde_json::Error),
 
     #[error("Error while serializing/de-serializing to yaml")]
-    SerdeYaml {
-        #[from]
-        source: serde_yaml::Error,
-    },
+    SerdeYaml(#[from] serde_yaml::Error),
 
     #[error("Error while creating default logger.")]
-    EnvLogging {
-        #[from]
-        source: FromEnvError,
-    },
+    EnvLogging(#[from] FromEnvError),
 
     #[error("Error while creating default logger.")]
-    ParseLogging {
-        #[from]
-        source: ParseError,
-    },
+    ParseLogging(#[from] ParseError),
 
     #[error("Generic boxed error")]
-    Generic {
-        #[from]
-        source: Box<(dyn Error + Sync + Send + 'static)>,
-    },
+    Generic(#[from] Box<(dyn Error + Sync + Send + 'static)>),
 
     #[error("Reqwest http error.")]
-    Reqwest {
-        #[from]
-        source: ReqwestError,
-    },
+    Reqwest(#[from] ReqwestError),
+
+    #[error("I/O error")]
+    IO(#[from] std::io::Error),
+
+    #[error("Tokio join error")]
+    JoinError(#[from] JoinError),
 
     #[error("Error unwrapping None")]
     UnexpectedNone,
