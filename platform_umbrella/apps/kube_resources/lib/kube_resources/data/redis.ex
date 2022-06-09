@@ -51,6 +51,7 @@ defmodule KubeResources.Redis do
     |> B.name(cluster.name)
     |> B.app_labels(@app)
     |> B.spec(spec)
+    |> B.owner_label(cluster.id)
   end
 
   defp failover_spec(%FailoverCluster{} = cluster) do

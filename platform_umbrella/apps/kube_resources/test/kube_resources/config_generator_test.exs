@@ -35,7 +35,8 @@ defmodule KubeServices.ConfigGeneratorTest do
       |> Enum.each(fn service ->
         configs = ConfigGenerator.materialize(service)
 
-        assert map_size(configs) >= 1
+        assert map_size(configs) >= 1,
+               "Expect service of type #{inspect(service.service_type)} to have some k8 resources."
       end)
     end
 

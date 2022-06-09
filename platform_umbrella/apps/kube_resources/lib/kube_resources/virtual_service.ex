@@ -1,4 +1,6 @@
 defmodule KubeResources.VirtualService do
+  alias KubeExt.Builder, as: B
+
   alias ControlServer.Services
 
   alias KubeResources.AlertManager
@@ -13,10 +15,26 @@ defmodule KubeResources.VirtualService do
   def materialize(_config) do
     Services.all_including_config()
     |> Enum.map(fn bs ->
-      {"/svcs/#{bs.id}/#{bs.service_type}", virtual_service(bs.service_type, bs.config)}
+      {"/svcs/#{bs.id}/#{bs.service_type}",
+       bs.service_type
+       |> virtual_service(bs.config)
+       |> add_owner(bs)}
     end)
-    |> Map.new()
+    |> Enum.reject(fn {_path, virtual_services} ->
+      virtual_services == nil || Enum.empty?(virtual_services)
+    end)
+    |> Enum.into(%{})
   end
+
+  def add_owner(resources, base_service) when is_list(resources) do
+    Enum.map(resources, fn r -> add_owner(r, base_service) end)
+  end
+
+  def add_owner(resource, base_service) when is_map(resource) do
+    B.owner_label(resource, base_service.id)
+  end
+
+  def add_owner(resource, _), do: resource
 
   def virtual_service(:control_server, config),
     do: ControlServerResources.virtual_service(config)

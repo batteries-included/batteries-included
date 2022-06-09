@@ -1,6 +1,8 @@
 defmodule KubeResources.ServiceMonitors do
+  alias KubeExt.Builder, as: B
+
   alias ControlServer.Services
-  # alias KubeRawResources.Istio
+
   alias KubeResources.DatabaseServiceMonitors
   alias KubeResources.Grafana
   alias KubeResources.KubeMonitoring
@@ -12,10 +14,24 @@ defmodule KubeResources.ServiceMonitors do
   def materialize(_config) do
     Services.all_including_config()
     |> Enum.map(fn bs ->
-      {"/monitors/#{bs.id}/#{bs.service_type}", monitors(bs.service_type, bs.config)}
+      {"/monitors/#{bs.id}/#{bs.service_type}",
+       bs.service_type
+       |> monitors(bs.config)
+       |> add_owner(bs)}
     end)
+    |> Enum.reject(fn {_path, monitors} -> Enum.empty?(monitors) end)
     |> Enum.into(%{})
   end
+
+  def add_owner(resources, base_service) when is_list(resources) do
+    Enum.map(resources, fn r -> add_owner(r, base_service) end)
+  end
+
+  def add_owner(resource, base_service) when is_map(resource) do
+    B.owner_label(resource, base_service.id)
+  end
+
+  def add_owner(resource, _), do: resource
 
   defp monitors(:prometheus, config), do: Prometheus.monitors(config)
   defp monitors(:promethues_operator, config), do: PrometheusOperator.monitors(config)

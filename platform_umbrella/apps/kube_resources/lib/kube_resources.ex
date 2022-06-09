@@ -5,6 +5,8 @@ defmodule KubeResources do
 
   import K8s.Resource.FieldAccessors
 
+  require Logger
+
   def unique_kinds(materialized_service_map) do
     materialized_service_map
     |> Map.values()

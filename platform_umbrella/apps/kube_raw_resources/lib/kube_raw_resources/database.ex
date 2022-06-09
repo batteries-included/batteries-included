@@ -37,6 +37,7 @@ defmodule KubeRawResources.Database do
     |> B.app_labels(@app)
     |> B.label("sidecar.istio.io/inject", "disabled")
     |> B.spec(spec)
+    |> B.owner_label(Map.get(cluster, :id, "bootstrapped"))
   end
 
   defp postgres_spec(cluster) do
@@ -91,6 +92,7 @@ defmodule KubeRawResources.Database do
     |> B.namespace(namespace)
     |> B.name(service_name)
     |> B.spec(spec)
+    |> B.owner_label(cluster.id)
   end
 
   defp cluster_label_selector(%{} = cluster, config, role) do
@@ -130,6 +132,7 @@ defmodule KubeRawResources.Database do
     |> B.namespace(namespace)
     |> B.name(monitor_name)
     |> B.spec(spec)
+    |> B.owner_label(cluster.id)
   end
 
   defp exporter_sidecar(cluster) do

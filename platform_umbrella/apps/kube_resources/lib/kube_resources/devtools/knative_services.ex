@@ -24,6 +24,7 @@ defmodule KubeResources.KnativeServices do
     |> B.name(service.name)
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> B.owner_label(service.id)
   end
 
   def url(%Knative.Service{} = service) do

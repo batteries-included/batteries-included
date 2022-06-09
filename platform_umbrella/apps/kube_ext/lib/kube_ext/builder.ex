@@ -50,6 +50,14 @@ defmodule KubeExt.Builder do
     |> label("battery/managed", "true")
   end
 
+  def owner_label(resource, owner_id) do
+    resource
+    |> update_in(~w(metadata), fn meta -> Map.put_new(meta || %{}, "labels", %{}) end)
+    |> update_in(~w(metadata labels), fn labels ->
+      Map.put_new(labels, "battery/owner", owner_id)
+    end)
+  end
+
   def name(%{} = resource, name) do
     put_in(resource, ~w[metadata name], name)
   end

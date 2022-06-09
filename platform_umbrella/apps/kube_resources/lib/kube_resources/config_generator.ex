@@ -2,6 +2,7 @@ defmodule KubeResources.ConfigGenerator do
   @moduledoc """
   Given any BaseService this will extract the kubernetes configs for application to the cluster.
   """
+  alias KubeExt.Builder, as: B
 
   alias ControlServer.Services.BaseService
 
@@ -44,12 +45,14 @@ defmodule KubeResources.ConfigGenerator do
     |> materialize(base_service.service_type)
     |> Enum.map(fn {key, value} -> {Path.join(base_service.root_path, key), value} end)
     |> Enum.flat_map(&flatten/1)
+    |> Enum.map(fn {key, resource} -> {key, B.owner_label(resource, base_service.id)} end)
     |> Enum.into(%{})
   end
 
   defp flatten({key, values} = _input) when is_list(values) do
     values
     |> Enum.with_index()
+    |> Enum.reject(fn {_key, resource} -> resource == nil end)
     |> Enum.map(fn {v, idx} ->
       {Path.join(key, Integer.to_string(idx)), v}
     end)
