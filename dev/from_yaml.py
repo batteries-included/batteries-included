@@ -43,6 +43,13 @@ def eprint(*args, **kwargs):
 def get_name(obj):
     if "kind" in obj:
         name = kind_pattern.sub("_", obj["kind"]).lower()
+
+        if "metadata" in obj and "name" in obj["metadata"]:
+            obj_name = obj["metadata"]["name"]
+            obj_name = obj_name.replace("-", "_").replace(" ", "_")
+            obj_name = kind_pattern.sub("_", obj_name).lower()
+            if obj_name:
+                name = name + "_" + obj_name
     else:
         name = "unknown"
 
