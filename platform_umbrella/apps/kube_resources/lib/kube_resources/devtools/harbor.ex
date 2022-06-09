@@ -393,8 +393,7 @@ defmodule KubeResources.Harbor do
       ],
       "selector" => %{
         "battery/app" => "harbor",
-        "component" => "core",
-        "release" => "harbor"
+        "component" => "core"
       }
     }
 
@@ -468,8 +467,7 @@ defmodule KubeResources.Harbor do
       ],
       "selector" => %{
         "battery/app" => "harbor",
-        "component" => "registry",
-        "release" => "harbor"
+        "component" => "registry"
       }
     }
 
