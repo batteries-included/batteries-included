@@ -1,4 +1,4 @@
-use std::{any::type_name, fmt::Debug, time::Duration};
+use std::{any::type_name, borrow::Cow, fmt::Debug};
 
 use async_trait::async_trait;
 use common::{
@@ -7,15 +7,14 @@ use common::{
     error::{BatteryError, Result},
     k8s_openapi::api::core::v1::Namespace,
 };
-use futures::{FutureExt, TryFutureExt};
+use futures::{FutureExt, StreamExt, TryFutureExt, TryStreamExt};
 use kube::{
-    api::{Patch, PatchParams},
+    api::{ListParams, Patch, PatchParams},
     client::Client,
     Api, CustomResourceExt, Resource,
 };
 use serde::{de::DeserializeOwned, Serialize};
-use tokio::time::sleep;
-use tracing::{debug, info, trace};
+use tracing::{debug, info, info_span, trace, trace_span, Instrument};
 
 pub trait ToPatch: Serialize + Sized {
     fn to_patch(&self) -> Patch<Self>;
@@ -29,15 +28,29 @@ impl ToPatch for Namespace {
 
 #[async_trait]
 pub trait Ensure:
-    Resource + Sync + Send + Sized + Clone + DeserializeOwned + Serialize + Debug
+    Resource + Unpin + Sync + Send + Sized + Clone + DeserializeOwned + Serialize + Debug + 'static
 {
-    /// Get or create `Self` with the given `Api`
+    /// Using the given `Api`, "get or create"
     async fn ensure(self, api: &Api<Self>) -> Result<Self> {
         let name = self
             .meta()
             .name
             .clone()
+            .map(Cow::from)
             .ok_or(BatteryError::UnexpectedNone)?;
+
+        let kind = type_name::<Self>().rsplit_once(':').unwrap().1;
+        let span = info_span!("ensure", %name, %kind);
+        let _entered = span.enter();
+        // Set up the watch params and let it rip, next thing out of that stream should be the requisite add
+        let lp = ListParams::default()
+            .timeout(10)
+            .fields(&format!("metadata.name={}", name));
+        let mut stream = api
+            .watch(&lp, "0")
+            .instrument(trace_span!("api watcher"))
+            .await?
+            .boxed();
 
         let result = api
             .get(&name)
@@ -45,7 +58,6 @@ pub trait Ensure:
                 trace!(?result, "Inspecting result of initial get");
                 if let Ok(thing) = result {
                     let ns = thing.meta().namespace.as_deref().unwrap_or("default");
-                    let kind = type_name::<Self>().rsplit_once(':').unwrap().1;
                     info!(kind, %name, %ns, "Found!");
                 }
             })
@@ -55,7 +67,11 @@ pub trait Ensure:
                 info!(%name, "Not found, creating");
                 let pp = PatchParams::apply("battery-operated");
                 let patch = Patch::Apply(&self);
-                async move { api.patch(&name, &pp, &patch).await }
+                async move {
+                    let patch_result = api.patch(&name, &pp, &patch).await?;
+                    let _wait_for_it = stream.try_next().await?;
+                    Ok::<_, BatteryError>(patch_result)
+                }
             })
             .await?;
         // dbg!(&result);
@@ -64,7 +80,16 @@ pub trait Ensure:
 }
 
 impl<T> Ensure for T where
-    T: Resource + Sync + Send + Sized + Clone + DeserializeOwned + Serialize + Debug
+    T: Resource
+        + Unpin
+        + Sync
+        + Send
+        + Sized
+        + Clone
+        + DeserializeOwned
+        + Serialize
+        + Debug
+        + 'static
 {
 }
 
@@ -97,11 +122,6 @@ pub async fn run() -> Result<()> {
     crd_data.meta_mut().name = Some(defaults::CRD_NAME.to_string());
     let api = Api::all(client.clone());
     let _crd = crd_data.ensure(&api).await?;
-
-    // Hack alert. It seems like there's some delay between registering a crd and
-    // being able to use it. so sleep for a while. This should be better handled
-    // with retries.... Lame.
-    sleep(Duration::from_millis(2000)).await;
 
     info!("CRD present creating cluster");
     // TODO: these definitely need configurables...
