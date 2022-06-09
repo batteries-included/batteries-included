@@ -57,14 +57,13 @@ pub trait Ensure:
             .inspect(|result| {
                 trace!(?result, "Inspecting result of initial get");
                 if let Ok(thing) = result {
-                    let ns = thing.meta().namespace.as_deref().unwrap_or("default");
-                    info!(kind, %name, %ns, "Found!");
+                    let uid = thing.meta().uid.as_ref().expect("missing a UID");
+                    info!(?uid, "Found");
                 }
             })
             .or_else(|e| {
                 let name = name.clone();
-                trace!(%e, "Error from get");
-                info!(%name, "Not found, creating");
+                info!("Not found, creating");
                 let pp = PatchParams::apply("battery-operated");
                 let patch = Patch::Apply(&self);
                 async move {
