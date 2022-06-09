@@ -61,7 +61,7 @@ pub trait Ensure:
                     info!(?uid, "Found");
                 }
             })
-            .or_else(|e| {
+            .or_else(|_e| {
                 let name = name.clone();
                 info!("Not found, creating");
                 let pp = PatchParams::apply("battery-operated");
