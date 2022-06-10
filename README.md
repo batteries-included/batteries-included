@@ -8,33 +8,38 @@ This is all confidential and proprietary code.
 
 This code works best on a linux machine. However it should work on anything with a docker daemon and a unix like shell.
 
+## Set up operating system
 ### Install Docker
+[Follow the Docker Engine install instructions](https://docs.docker.com/engine/install/)
+Mac nerds, you'll be getting Docker Desktop and living life on your own terms. At least you can use brew?
 
-When developing one of the easiest ways to run a kubernetes cluster with all the things is k3d. For that we need a running and working docker
+If the `docker` group is present, then Docker Engine will create its socket with that group, otherwise it's owned by root.
+To fix this, just add a `docker` group and add yourself to it:
 
-```bash
-sudo apt-get remove docker docker-engine docker.io containerd runc
-
-# Install docker and other dependencies that we'll need later
-sudo apt-get install \
-    ca-certificates \
-    curl \
-    gnupg \
-    unzip \
-    build-essential \
-    chromium-chromedriver \
-    lsb-release
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
-  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \ 
-  | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update -y && sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-
+```sh
+sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-### Install ASDF
+**NB** you'll need to either `newgrp docker` docker or log out and back in for the group changes to be visible.
+
+## Install Toolchains
+
+There's a bunch of stuff (ostensibly) needed for development and we use common community tools to do the management of them.
+
+[Homebrew](https://brew.sh) and [ASDF](http://asdf-vm.com/) both have been fiddled with. Install one or the other. Or both, but you're on your own
+
+### (option 1) Homebrew
+
+[Go install homebrew](https://docs.brew.sh/Installation)
+
+Following that, you should be able to run the following to install the necessary dependencies
+
+```sh
+brew install k3d k9s erlang elixir nodejs kubectl rustup
+```
+
+### (option 2) ASDF
 I don't want to have to remember how to install all the dependencies. So install asdf and it will do that for us.
 
 ```
@@ -46,13 +51,8 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.9.0
 #
 echo ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
 echo ". $HOME/.asdf/completions/asdf.bash" >> ~/.bashrc
+exec bash
 ```
-
-
-Now log out and back in. This will have everything re-read the groups that were changed during docker install and source the files via bash.
-
-
-### Install Languages, Etc.
 
 Go to the main directory and run
 
