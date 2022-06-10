@@ -9,6 +9,10 @@ This is all confidential and proprietary code.
 This code works best on a linux machine. However it should work on anything with a docker daemon and a unix like shell.
 
 ## Set up operating system
+### The Basics
+
+Read and run the helper script in `./dev/ubuntu.sh`, it will install the commonly used packages and other first-time stuff you might need.
+
 ### Install Docker
 [Follow the Docker Engine install instructions](https://docs.docker.com/engine/install/)
 Mac nerds, you'll be getting Docker Desktop and living life on your own terms. At least you can use brew?
