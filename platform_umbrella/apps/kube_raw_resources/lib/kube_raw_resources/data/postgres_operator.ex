@@ -1,13 +1,13 @@
 defmodule KubeRawResources.PostgresOperator do
   @moduledoc false
+  use KubeExt.IncludeResource, crd: "priv/manifests/postgres/postgres_operator-crds.yaml"
+
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeRawResources.DataSettings
 
   @app_name "postgres-operator"
-  @postgres_crd_path "priv/manifests/postgres/postgres_operator-crds.yaml"
-
   def service_account(_config, namespace) do
     %{
       "apiVersion" => "v1",
@@ -391,10 +391,8 @@ defmodule KubeRawResources.PostgresOperator do
     })
   end
 
-  defp postgres_crd_content, do: unquote(File.read!(@postgres_crd_path))
-
   defp postgres_crd do
-    yaml(postgres_crd_content())
+    yaml(get_resource(:crd))
   end
 
   def materialize_internal(config) do

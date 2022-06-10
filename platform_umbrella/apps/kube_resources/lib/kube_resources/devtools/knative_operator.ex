@@ -1,5 +1,7 @@
 defmodule KubeResources.KnativeOperator do
   @moduledoc false
+  use KubeExt.IncludeResource, crd: "priv/manifests/knative/operator-crds.yaml"
+
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
@@ -7,11 +9,10 @@ defmodule KubeResources.KnativeOperator do
   alias KubeResources.DevtoolsSettings
 
   @app_name "knative-operator"
-  @knative_crd_path "priv/manifests/knative/operator-crds.yaml"
 
   def materialize(config) do
     %{
-      "/crd" => yaml(knative_crd_content()),
+      "/crd" => yaml(get_resource(:crd)),
       "/deployment" => deployment(config),
       "/cluster_role" => cluster_role(config),
       "/cluster_role_1" => cluster_role_1(config),
@@ -761,6 +762,4 @@ defmodule KubeResources.KnativeOperator do
     |> B.app_labels(@app_name)
     |> Map.put("data", data)
   end
-
-  defp knative_crd_content, do: unquote(File.read!(@knative_crd_path))
 end

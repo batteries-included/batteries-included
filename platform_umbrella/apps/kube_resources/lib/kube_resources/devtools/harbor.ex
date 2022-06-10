@@ -1,5 +1,6 @@
 defmodule KubeResources.Harbor do
   @moduledoc false
+  use KubeExt.IncludeResource, nginx_conf: "priv/raw_files/harbor/nginx.conf"
 
   alias KubeExt.Builder, as: B
   alias KubeResources.DevtoolsSettings
@@ -213,40 +214,7 @@ defmodule KubeResources.Harbor do
   def config_map_3(config) do
     namespace = DevtoolsSettings.namespace(config)
 
-    data = %{
-      "nginx.conf" => """
-        worker_processes auto;
-        pid /tmp/nginx.pid;
-        events {
-          worker_connections  1024;
-        }
-        http {
-          client_body_temp_path /tmp/client_body_temp;
-          proxy_temp_path /tmp/proxy_temp;
-          fastcgi_temp_path /tmp/fastcgi_temp;
-          uwsgi_temp_path /tmp/uwsgi_temp;
-          scgi_temp_path /tmp/scgi_temp;
-          server {
-            listen 8080;
-            listen [::]:8080;
-            server_name  localhost;
-            root   /usr/share/nginx/html;
-            index  index.html index.htm;
-            include /etc/nginx/mime.types;
-            gzip on;
-            gzip_min_length 1000;
-            gzip_proxied expired no-cache no-store private auth;
-            gzip_types text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-            location / {
-              try_files $uri $uri/ /index.html;
-            }
-            location = /index.html {
-              add_header Cache-Control "no-store, no-cache, must-revalidate";
-            }
-        }
-      }
-      """
-    }
+    data = %{"nginx.conf" => get_resource(:nginx_conf)}
 
     B.build_resource(:config_map)
     |> B.name("harbor-portal")

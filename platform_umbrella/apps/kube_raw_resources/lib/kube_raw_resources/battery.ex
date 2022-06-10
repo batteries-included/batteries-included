@@ -1,14 +1,14 @@
 defmodule KubeRawResources.Battery do
+  use KubeExt.IncludeResource, crd: "priv/manifests/battery/bootstrapped.yaml"
+
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeRawResources.BatterySettings
 
-  @bootstrapped_path "priv/manifests/battery/bootstrapped.yaml"
   @app_name "batteries-included"
 
-  def crd(_), do: yaml(bootstrapped_content())
-  defp bootstrapped_content, do: unquote(File.read!(@bootstrapped_path))
+  def crd(_), do: yaml(get_resource(:crd))
 
   @default_pg_cluster %{
     :name => "control",

@@ -1,14 +1,14 @@
 defmodule KubeResources.Tekton do
   @moduledoc false
 
+  use KubeExt.IncludeResource, crd: "priv/manifests/tekton/crds.yaml"
+
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeResources.DevtoolsSettings
 
   @app "tekton-pipelines"
-
-  @crd_path "priv/manifests/tekton/crds.yaml"
 
   @controller_service_account_name "tekton-controller"
   @webhook_service_account_name "tekton-webhook"
@@ -1647,7 +1647,8 @@ defmodule KubeResources.Tekton do
   end
 
   def crd(config) do
-    crd_content()
+    :crd
+    |> get_resource()
     |> yaml()
     |> Enum.map(fn crd ->
       change_conversion(crd, config)
@@ -1676,8 +1677,6 @@ defmodule KubeResources.Tekton do
       "namespace" => namespace
     }
   end
-
-  defp crd_content, do: unquote(File.read!(@crd_path))
 
   def materialize(config) do
     %{

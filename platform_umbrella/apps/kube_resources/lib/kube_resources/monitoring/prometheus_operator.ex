@@ -4,21 +4,27 @@ defmodule KubeResources.PrometheusOperator do
 
   This can generate a config and will also add on alerting/monitoring.
   """
+  use KubeExt.IncludeResource,
+    prometheus_crd:
+      "priv/manifests/prometheus/prometheus-operator-0prometheusCustomResourceDefinition.yaml",
+    prometheus_rule_crd:
+      "priv/manifests/prometheus/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml",
+    probe_crd:
+      "priv/manifests/prometheus/prometheus-operator-0probeCustomResourceDefinition.yaml",
+    service_mon_crd:
+      "priv/manifests/prometheus/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml",
+    pod_mon_crd:
+      "priv/manifests/prometheus/prometheus-operator-0podmonitorCustomResourceDefinition.yaml",
+    am_config_crd:
+      "priv/manifests/prometheus/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml",
+    am_crd:
+      "priv/manifests/prometheus/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml",
+    thanos_rule_crd:
+      "priv/manifests/prometheus/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml"
+
   import KubeExt.Yaml
 
   alias KubeResources.MonitoringSettings
-
-  @prometheus_crd_path "priv/manifests/prometheus/prometheus-operator-0prometheusCustomResourceDefinition.yaml"
-  @prometheus_rule_crd_path "priv/manifests/prometheus/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml"
-
-  @probe_crd_path "priv/manifests/prometheus/prometheus-operator-0probeCustomResourceDefinition.yaml"
-  @service_mon_crd_path "priv/manifests/prometheus/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml"
-  @pod_mon_crd_path "priv/manifests/prometheus/prometheus-operator-0podmonitorCustomResourceDefinition.yaml"
-
-  @am_config_crd_path "priv/manifests/prometheus/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml"
-  @am_crd_path "priv/manifests/prometheus/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml"
-
-  @thanos_rule_crd_path "priv/manifests/prometheus/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml"
 
   @port 8443
   @internal_port 8080
@@ -29,14 +35,14 @@ defmodule KubeResources.PrometheusOperator do
   def materialize(config) do
     %{
       # Then the CRDS since they are needed for cluster roles.
-      "/1/setup/prometheus_crd" => yaml(prometheus_crd_content()),
-      "/1/setup/prometheus_rule_crd" => yaml(prometheus_rule_crd_content()),
-      "/1/setup/service_monitor_crd" => yaml(service_mon_crd_content()),
-      "/1/setup/podmonitor_crd" => yaml(pod_mon_crd_content()),
-      "/1/setup/probe_crd" => yaml(probe_crd_content()),
-      "/1/setup/am_config_crd" => yaml(am_config_crd_content()),
-      "/1/setup/am_crd" => yaml(am_crd_content()),
-      "/1/setup/thanos_ruler_crd" => yaml(thanos_rule_crd_content()),
+      "/1/setup/prometheus_crd" => yaml(get_resource(:prometheus_crd)),
+      "/1/setup/prometheus_rule_crd" => yaml(get_resource(:prometheus_rule_crd)),
+      "/1/setup/service_monitor_crd" => yaml(get_resource(:service_mon_crd)),
+      "/1/setup/podmonitor_crd" => yaml(get_resource(:pod_mon_crd)),
+      "/1/setup/probe_crd" => yaml(get_resource(:probe_crd)),
+      "/1/setup/am_config_crd" => yaml(get_resource(:am_config_crd)),
+      "/1/setup/am_crd" => yaml(get_resource(:am_crd)),
+      "/1/setup/thanos_ruler_crd" => yaml(get_resource(:thanos_rule_crd)),
       # for the prometheus operator account stuff
       "/2/setup/operator_service_account" => service_account(config),
       "/2/setup/operator_cluster_role" => cluster_role(config),
@@ -302,16 +308,4 @@ defmodule KubeResources.PrometheusOperator do
       }
     ]
   end
-
-  defp prometheus_crd_content, do: unquote(File.read!(@prometheus_crd_path))
-  defp prometheus_rule_crd_content, do: unquote(File.read!(@prometheus_rule_crd_path))
-
-  defp probe_crd_content, do: unquote(File.read!(@probe_crd_path))
-  defp service_mon_crd_content, do: unquote(File.read!(@service_mon_crd_path))
-  defp pod_mon_crd_content, do: unquote(File.read!(@pod_mon_crd_path))
-
-  defp am_crd_content, do: unquote(File.read!(@am_crd_path))
-  defp am_config_crd_content, do: unquote(File.read!(@am_config_crd_path))
-
-  defp thanos_rule_crd_content, do: unquote(File.read!(@thanos_rule_crd_path))
 end

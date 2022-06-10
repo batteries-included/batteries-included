@@ -1,5 +1,6 @@
 defmodule KubeResources.MinioOperator do
   @moduledoc false
+  use KubeExt.IncludeResource, crd: "priv/manifests/minio/minio.crds.yaml"
 
   import KubeExt.Yaml
 
@@ -19,8 +20,6 @@ defmodule KubeResources.MinioOperator do
   @console_cluster_role "battery-minio-operator"
 
   @operator_service "minio-operator"
-
-  @crd_path "priv/manifests/minio/minio.crds.yaml"
 
   def materialize(config) do
     %{
@@ -42,7 +41,8 @@ defmodule KubeResources.MinioOperator do
   def crd(config) do
     namespace = DataSettings.namespace(config)
 
-    crd_content()
+    :crd
+    |> get_resource()
     |> yaml()
     |> Enum.at(0)
     |> update_in(["spec", "conversion", "webhook", "clientConfig", "service"], fn v ->
@@ -843,6 +843,4 @@ defmodule KubeResources.MinioOperator do
     |> B.app_labels(@app)
     |> B.spec(spec)
   end
-
-  defp crd_content, do: unquote(File.read!(@crd_path))
 end

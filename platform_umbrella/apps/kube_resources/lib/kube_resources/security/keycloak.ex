@@ -1,5 +1,7 @@
 defmodule KubeResources.Keycloak do
   @moduledoc false
+  use KubeExt.IncludeResource, crd: "priv/manifests/keycloak/keycloak.crds.yaml"
+
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
@@ -9,8 +11,6 @@ defmodule KubeResources.Keycloak do
   @app "keycloak"
 
   @service_account_name "keycloak-operator"
-
-  @crd_path "priv/manifests/keycloak/keycloak.crds.yaml"
 
   def materialize(config) do
     %{
@@ -23,7 +23,7 @@ defmodule KubeResources.Keycloak do
     }
   end
 
-  def crd(_), do: yaml(crd_content())
+  def crd(_), do: yaml(get_resource(:crd))
 
   def service_account(config) do
     namespace = SecuritySettings.namespace(config)
@@ -251,6 +251,4 @@ defmodule KubeResources.Keycloak do
       "spec" => spec
     }
   end
-
-  defp crd_content, do: unquote(File.read!(@crd_path))
 end

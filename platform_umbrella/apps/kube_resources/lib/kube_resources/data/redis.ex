@@ -1,5 +1,7 @@
 defmodule KubeResources.Redis do
   @moduledoc false
+  use KubeExt.IncludeResource,
+    crd: "priv/manifests/redis/databases.spotahome.com_redisfailovers.yaml"
 
   import KubeExt.Yaml
 
@@ -9,7 +11,6 @@ defmodule KubeResources.Redis do
   alias KubeRawResources.DataSettings
 
   @app "redisoperator"
-  @crd_path "priv/manifests/redis/databases.spotahome.com_redisfailovers.yaml"
   @service_account_name "redisoperator"
 
   def materialize(config) do
@@ -65,7 +66,7 @@ defmodule KubeResources.Redis do
     }
   end
 
-  def crd(_), do: yaml(crd_content())
+  def crd(_), do: yaml(get_resource(:crd))
 
   def deployment(config) do
     namespace = DataSettings.public_namespace(config)
@@ -246,6 +247,4 @@ defmodule KubeResources.Redis do
     |> B.namespace(namespace)
     |> B.app_labels(@app)
   end
-
-  defp crd_content, do: unquote(File.read!(@crd_path))
 end

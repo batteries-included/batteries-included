@@ -1,14 +1,13 @@
 defmodule KubeResources.GithubActionsRunner do
   @moduledoc false
+  use KubeExt.IncludeResource, crd: "priv/manifests/github/github_actions_runner-crds.yaml"
 
   import KubeExt.Yaml
   alias KubeResources.DevtoolsSettings
 
-  @github_crd_path "priv/manifests/github/github_actions_runner-crds.yaml"
-
   def materialize(config) do
     %{
-      "/crd" => yaml(github_crd_content()),
+      "/crd" => yaml(get_resource(:crd)),
       "/service_account_0" => service_account_0(config),
       "/secret_0" => secret_0(config),
       "/cluster_role_0" => cluster_role_0(config),
@@ -683,6 +682,4 @@ defmodule KubeResources.GithubActionsRunner do
       }
     }
   end
-
-  defp github_crd_content, do: unquote(File.read!(@github_crd_path))
 end

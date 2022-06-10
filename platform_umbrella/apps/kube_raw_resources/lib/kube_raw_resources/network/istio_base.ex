@@ -1,5 +1,6 @@
 defmodule KubeRawResources.IstioBase do
   @moduledoc false
+  use KubeExt.IncludeResource, crd: "priv/manifests/istio/base.crd.yaml"
 
   import KubeExt.Yaml
 
@@ -8,8 +9,6 @@ defmodule KubeRawResources.IstioBase do
 
   @reader_app "istio-reader"
   @istiod_app "istiod"
-
-  @crd_path "priv/manifests/istio/base.crd.yaml"
 
   def materialize(config) do
     %{
@@ -29,7 +28,7 @@ defmodule KubeRawResources.IstioBase do
     }
   end
 
-  def crd(_), do: yaml(crd_content())
+  def crd(_), do: yaml(get_resource(:crd))
 
   defp namespace(config) do
     namespace = NetworkSettings.istio_namespace(config)
@@ -452,6 +451,4 @@ defmodule KubeRawResources.IstioBase do
       ]
     }
   end
-
-  defp crd_content, do: unquote(File.read!(@crd_path))
 end
