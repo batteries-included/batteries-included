@@ -32,3 +32,5 @@ npm-debug.log
 /priv/static/cache_manifest.json
 
 /assets/js/_hooks/
+
+/screenshots/

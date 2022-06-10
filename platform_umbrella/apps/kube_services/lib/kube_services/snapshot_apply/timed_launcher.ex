@@ -9,8 +9,8 @@ defmodule KubeServices.SnapshotApply.TimedLauncher do
   @me __MODULE__
 
   def start_link(opts \\ []) do
-    delay = Keyword.get(opts, :delay, 900 * 1000)
-    failing_delay = Keyword.get(opts, :failing_delay, 10 * 1000)
+    delay = Keyword.get(opts, :delay, default_delay())
+    failing_delay = Keyword.get(opts, :failing_delay, default_failing_delay())
     name = Keyword.get(opts, :name, @me)
 
     {:ok, pid} =
@@ -30,6 +30,11 @@ defmodule KubeServices.SnapshotApply.TimedLauncher do
     result
   end
 
+  defp default_config, do: Application.get_env(:kube_services, __MODULE__)
+
+  defp default_delay, do: Keyword.get(default_config(), :delay, 900_000)
+  defp default_failing_delay, do: Keyword.get(default_config(), :failing_delay, 10_000)
+
   @impl true
   def init(state) do
     :ok = SnapshotEventCenter.subscribe()
@@ -40,8 +45,8 @@ defmodule KubeServices.SnapshotApply.TimedLauncher do
   def handle_info(:launch, state) do
     Logger.debug("Time since last snapshot elapsed, launching")
 
-    # Start the
-    Launcher.launch(listeners: [self()])
+    # Send the message to the singleton actor.
+    Launcher.launch()
     {:noreply, schedule(state)}
   end
 

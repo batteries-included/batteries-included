@@ -15,12 +15,12 @@ defmodule ControlServer.SeedTest do
 
       Release.seed()
 
-      assert 7 == baseservice_count()
+      assert 8 == baseservice_count()
       assert 1 == postgres_count()
 
       Release.seed()
 
-      assert 7 == baseservice_count()
+      assert 8 == baseservice_count()
       assert 1 == postgres_count()
     end
   end

@@ -88,7 +88,11 @@ config :control_server,
     :istio_istiod
   ]
 
-config :kube_services, start_services: true
+config :kube_services, start_services: true, stale_finder_enabled: true
+
+config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
+  delay: 900_000,
+  failing_delay: 10_000
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

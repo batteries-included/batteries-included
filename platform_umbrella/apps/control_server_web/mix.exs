@@ -11,6 +11,7 @@ defmodule ControlServerWeb.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -30,8 +31,12 @@ defmodule ControlServerWeb.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(:dev), do: ["lib"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:integration), do: ["test/integration"]
+  defp test_paths(_), do: ["test/unit"]
 
   # Specifies your project dependencies.
   #
@@ -47,6 +52,8 @@ defmodule ControlServerWeb.MixProject do
       {:telemetry_metrics, "~> 0.6.1"},
       {:telemetry_poller, "~> 1.0"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
+      {:ex_machina, "~> 2.7", only: :test},
+      {:wallaby, "~> 0.29.0", runtime: false, only: [:test, :integration]},
       {:gettext, "~> 0.19"},
       {:telemetry, "~> 1.0", override: true},
       {:control_server, in_umbrella: true},

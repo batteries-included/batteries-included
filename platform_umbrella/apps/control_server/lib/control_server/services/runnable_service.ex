@@ -1,7 +1,6 @@
 defmodule ControlServer.Services.RunnableService do
   alias ControlServer.Postgres
   alias ControlServer.Redis
-  alias ControlServer.Knative
   alias ControlServer.Repo
   alias ControlServer.Services
   alias Ecto.Multi
@@ -14,22 +13,27 @@ defmodule ControlServer.Services.RunnableService do
   def services,
     do: [
       # Data
-      %__MODULE__{path: "/data/common", service_type: :data},
-      %__MODULE__{path: "/data/redis", service_type: :redis, dependencies: [:data]},
-      %__MODULE__{path: "/data/database/common", service_type: :database},
+      %__MODULE__{path: "/data/common", service_type: :data, dependencies: [:battery]},
+      %__MODULE__{path: "/data/redis", service_type: :redis, dependencies: [:data, :battery]},
       %__MODULE__{
-        path: "/data/database/public",
+        path: "/data/database/common",
+        service_type: :database,
+        dependencies: [:data, :battery]
+      },
+      %__MODULE__{
+        path: "/data/postgres/public",
         service_type: :database_public,
+        dependencies: [:database, :data, :battery]
+      },
+      %__MODULE__{
+        path: "/data/postgres/battery",
+        service_type: :database_internal,
         dependencies: [:database, :data]
       },
       %__MODULE__{
-        path: "/data/database/battery",
-        service_type: :database_internal,
-        dependencies: [:database]
-      },
-      %__MODULE__{
         path: "/data/minio/operator",
-        service_type: :minio_operator
+        service_type: :minio_operator,
+        dependencies: [:data]
       },
       # Battery
       %__MODULE__{path: "/battery/core", service_type: :battery},
@@ -53,7 +57,7 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/devtools/gitea",
         service_type: :gitea,
-        dependencies: [:keycloak, :database_internal, :istio_gateway]
+        dependencies: [:keycloak, :database_internal, :istio_gateway, :battery]
       },
       %__MODULE__{
         path: "/devtools/tekton",
@@ -79,21 +83,25 @@ defmodule ControlServer.Services.RunnableService do
       },
 
       # Monitoring
-      %__MODULE__{path: "/monitoring/prometheus_operator", service_type: :prometheus_operator},
+      %__MODULE__{
+        path: "/monitoring/prometheus_operator",
+        service_type: :prometheus_operator,
+        dependencies: [:battery]
+      },
       %__MODULE__{
         path: "/monitoring/prometheus",
         service_type: :prometheus,
-        dependencies: [:prometheus_operator, :istio_gateway]
+        dependencies: [:prometheus_operator, :istio_gateway, :battery]
       },
       %__MODULE__{
         path: "/monitoring/grafana",
         service_type: :grafana,
-        dependencies: [:prometheus, :istio_gateway]
+        dependencies: [:prometheus, :istio_gateway, :battery]
       },
       %__MODULE__{
         path: "/monitoring/alert_manager",
         service_type: :alert_manager,
-        dependencies: [:prometheus, :istio_gateway]
+        dependencies: [:prometheus, :istio_gateway, :battery]
       },
       %__MODULE__{
         path: "/monitoring/kube_monitoring",
@@ -194,13 +202,6 @@ defmodule ControlServer.Services.RunnableService do
 
   defp run_post(%__MODULE__{service_type: :gitea} = _service, repo) do
     Postgres.find_or_create(KubeRawResources.Gitea.gitea_cluster(), repo)
-  end
-
-  defp run_post(%__MODULE__{service_type: :knative} = _service, repo) do
-    Knative.create_service(
-      %{name: "hello-batteries", image: "gcr.io/knative-samples/helloworld-go"},
-      repo
-    )
   end
 
   defp run_post(%__MODULE__{service_type: :harbor} = _service, repo) do

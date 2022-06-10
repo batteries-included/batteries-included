@@ -51,7 +51,7 @@ defmodule KubeServices.SnapshotApply.Steps do
     {_count, multi} =
       base_services
       |> Enum.map(&ConfigGenerator.materialize/1)
-      |> Enum.reduce(&Map.merge/2)
+      |> Enum.reduce(%{}, &Map.merge/2)
       |> Enum.map(fn {path, resource} ->
         filled_resource = Hashing.decorate_content_hash(resource)
 

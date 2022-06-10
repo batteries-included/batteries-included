@@ -22,14 +22,10 @@ config :home_base, HomeBase.Repo,
   port: System.get_env("POSTGRES_PORT") || 5432,
   pool: Ecto.Adapters.SQL.Sandbox
 
-# We don't run a server during test. If one is required,
-# you can enable the server option below.
 config :control_server_web, ControlServerWeb.Endpoint,
   http: [port: 4002],
   server: false
 
-# We don't run a server during test. If one is required,
-# you can enable the server option below.
 config :home_base_web, HomeBaseWeb.Endpoint,
   http: [port: 4004],
   server: false

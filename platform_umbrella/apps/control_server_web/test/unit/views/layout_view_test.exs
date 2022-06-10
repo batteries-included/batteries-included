@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.LayoutViewTest do
-  use ControlServerWeb.ConnCase, async: true
+  use ControlServerWeb.ConnCase
 
   # When testing helpers, you may want to import Phoenix.HTML and
   # use functions such as safe_to_string() to convert the helper

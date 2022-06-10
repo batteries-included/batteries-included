@@ -8,9 +8,17 @@ compile:
 lint:
 	mix credo
 
-test:
-	mix test --cover --export-coverage default
+test: compile test.unit test.integration
 	mix test.coverage
+
+test.unit: compile
+	MIX_ENV=test mix ecto.reset
+	mix test --cover --export-coverage default
+
+test.integration:
+	MIX_ENV=integration mix ecto.reset
+	MIX_ENV=integration mix cmd --app control_server_web mix test  --cover --export-coverage integration
+
 
 analyze:
 	mix dialyzer

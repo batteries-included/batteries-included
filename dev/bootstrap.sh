@@ -163,8 +163,7 @@ if [[ $CREATE_CLUSTER == 'true' ]]; then
     --k3s-arg '--disable=traefik@server:*' \
     --registry-create battery-registry \
     --wait \
-    -s "${NUM_SERVERS}" \
-    -p "8081:80@loadbalancer" || true
+    -s "${NUM_SERVERS}" || true
 fi
 
 if [ "${BUILD_CONTROL_SERVER}" == "true" ]; then

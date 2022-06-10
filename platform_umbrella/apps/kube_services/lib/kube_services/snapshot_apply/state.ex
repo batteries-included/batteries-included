@@ -75,6 +75,7 @@ defmodule KubeServices.SnapshotApply.State do
 
   @impl true
   def handle_cast({:path_failure, resource_path, reason}, state) do
+    Logger.info("Resource path failed #{resource_path.path} Reason => #{inspect(reason)}")
     update_path_failure(resource_path, reason)
     {:noreply, state}
   end

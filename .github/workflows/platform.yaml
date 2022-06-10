@@ -21,7 +21,7 @@ jobs:
     defaults:
       run:
         working-directory: ./platform_umbrella
-        
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3

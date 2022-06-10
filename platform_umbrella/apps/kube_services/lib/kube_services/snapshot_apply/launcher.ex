@@ -33,7 +33,7 @@ defmodule KubeServices.SnapshotApply.Launcher do
   end
 
   def handle_info({:DOWN, pid, _, _object, reason}, state) do
-    Logger.info("State agent down #{inspect(pid)} down with reason #{reason}")
+    Logger.info("State agent down #{inspect(pid)} down with reason #{inspect(reason)}")
     {:noreply, maybe_launch(%{state | running: nil})}
   end
 

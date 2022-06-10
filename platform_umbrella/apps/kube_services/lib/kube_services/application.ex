@@ -19,12 +19,14 @@ defmodule KubeServices.Application do
 
   defp start_services?, do: Application.get_env(:kube_services, :start_services)
 
+  defp stale_finder_enabled?, do: Application.get_env(:kube_services, :stale_finder_enabled)
+
   def children(true = _run) do
     [
       KubeServices.ResourceDeleter,
       KubeServices.Usage.Poller,
       KubeServices.SnapshotApply.Supervisor,
-      KubeServices.SnapshotApply.StaleFinder,
+      {KubeServices.SnapshotApply.StaleFinder, [enabled: stale_finder_enabled?()]},
       KubeServices.SnapshotApply.Launcher,
       KubeServices.SnapshotApply.TimedLauncher,
       KubeServices.SnapshotApply.EventLauncher,

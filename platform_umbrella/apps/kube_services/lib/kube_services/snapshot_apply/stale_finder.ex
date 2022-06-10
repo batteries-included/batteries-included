@@ -9,8 +9,9 @@ defmodule KubeServices.SnapshotApply.StaleFinder do
 
   def start_link(opts \\ []) do
     delay = Keyword.get(opts, :delay, 3 * 60 * 1000)
+    enabled = Keyword.get(opts, :enabled, true)
 
-    {:ok, pid} = result = GenServer.start_link(@me, %{delay: delay}, name: @me)
+    {:ok, pid} = result = GenServer.start_link(@me, %{delay: delay, enabled: enabled}, name: @me)
 
     Logger.debug("#{@me} GenServer started with# #{inspect(pid)}.")
     result
@@ -23,7 +24,8 @@ defmodule KubeServices.SnapshotApply.StaleFinder do
 
   @impl true
   def handle_info(:scan, state) do
-    {:noreply, state |> scan() |> schedule()}
+    _res = state |> scan() |> delete(state)
+    {:noreply, schedule(state)}
   end
 
   defp schedule(%{delay: delay} = state) do
@@ -31,8 +33,21 @@ defmodule KubeServices.SnapshotApply.StaleFinder do
     state
   end
 
-  defp scan(state) do
-    Enum.each(Stale.find_stale(), &KubeServices.ResourceDeleter.delete/1)
+  defp scan(_state) do
+    Stale.find_stale()
+  end
+
+  defp delete(resources, %{} = state) do
+    if is_enabled(state) do
+      Enum.each(resources, &KubeServices.ResourceDeleter.delete/1)
+    else
+      Logger.info("Skipping delete of #{length(resources)}")
+    end
+
     state
+  end
+
+  defp is_enabled(%{enabled: enabled} = _state) do
+    enabled
   end
 end

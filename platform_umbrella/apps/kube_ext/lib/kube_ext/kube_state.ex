@@ -69,6 +69,9 @@ defmodule KubeExt.KubeState do
   @spec knative_services(atom | :ets.tid()) :: list
   def knative_services(t \\ @default_table), do: get_all(t, :knative_service, [])
 
+  @spec postgresqls(atom | :ets.tid()) :: list
+  def postgresqls(t \\ @default_table), do: get_all(t, :postgresql, [])
+
   @spec table_to_list(atom | :ets.tid()) :: list
   def table_to_list(t \\ @default_table), do: :ets.tab2list(t)
 
