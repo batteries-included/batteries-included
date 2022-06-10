@@ -24,11 +24,9 @@
 #![allow(clippy::use_self)]
 
 pub mod cluster_spec;
+pub mod defaults;
 pub mod error;
-pub mod labels;
 pub mod logging;
-pub mod namespace;
-pub mod permissions;
 
 #[cfg(feature = "k8s-openapi")]
 pub use k8s_openapi;
