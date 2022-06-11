@@ -111,11 +111,11 @@ defmodule ControlServer.Services.RunnableService do
 
       # Network
       %__MODULE__{path: "/network/nginx", service_type: :nginx},
-      %__MODULE__{path: "/network/istio/base", service_type: :istio},
+      %__MODULE__{path: "/network/istio/base", service_type: :istio, dependencies: [:battery]},
       %__MODULE__{
         path: "/network/istio/istiod",
         service_type: :istio_istiod,
-        dependencies: [:istio]
+        dependencies: [:istio, :battery]
       },
       %__MODULE__{
         path: "/network/istio/gateway",
@@ -128,7 +128,11 @@ defmodule ControlServer.Services.RunnableService do
         dependencies: [:istio_istiod, :istio_gateway, :prometheus, :grafana]
       },
       # Security
-      %__MODULE__{path: "/security/cert_manager", service_type: :cert_manager},
+      %__MODULE__{
+        path: "/security/cert_manager",
+        service_type: :cert_manager,
+        dependencies: [:battery]
+      },
       %__MODULE__{
         path: "/security/keycloak",
         service_type: :keycloak,
