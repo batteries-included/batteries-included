@@ -4,8 +4,11 @@ defmodule KubeResources.Harbor do
 
   alias KubeExt.Builder, as: B
   alias KubeResources.DevtoolsSettings
+  alias KubeResources.IstioConfig.VirtualService
+  alias KubeResources.IstioConfig.HttpRoute
   alias KubeExt.Secret
   alias Ymlr.Encoder, as: YamlEncoder
+  alias KubeExt.KubeState.Hosts
 
   @app "harbor"
 
@@ -19,6 +22,36 @@ defmodule KubeResources.Harbor do
   @core_config "harbor-core"
 
   @postgres_credentials "harbor.pg-harbor.credentials.postgresql.acid.zalan.do"
+
+  def view_url, do: view_url(KubeExt.cluster_type())
+
+  # TODO: Figure out if we can mount the virtual service a few times.
+  def view_url(:dev), do: url()
+
+  def view_url(_), do: url()
+
+  def url, do: "//#{Hosts.harbor_host()}"
+
+  def virtual_service(config) do
+    namespace = DevtoolsSettings.namespace(config)
+
+    B.build_resource(:istio_virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.name("harbor-host-vs")
+    |> B.spec(
+      VirtualService.new(
+        http: [
+          HttpRoute.prefix("/api/", "harbor-core"),
+          HttpRoute.prefix("/service/", "harbor-core"),
+          HttpRoute.prefix("/v2", "harbor-core"),
+          HttpRoute.prefix("/c/", "harbor-core"),
+          HttpRoute.fallback("harbor-portal")
+        ],
+        hosts: [Hosts.harbor_host()]
+      )
+    )
+  end
 
   defp build_secret(name, namespace, data) do
     B.build_resource(:secret)
@@ -1291,111 +1324,6 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  # def ingress(config) do
-  #   namespace = DevtoolsSettings.namespace(config)
-
-  #   %{
-  #     "apiVersion" => "networking.k8s.io/v1",
-  #     "kind" => "Ingress",
-  #     "metadata" => %{
-  #       "annotations" => %{
-  #         "ingress.kubernetes.io/proxy-body-size" => "0",
-  #         "ingress.kubernetes.io/ssl-redirect" => "true",
-  #         "nginx.ingress.kubernetes.io/proxy-body-size" => "0",
-  #         "nginx.ingress.kubernetes.io/ssl-redirect" => "true"
-  #       },
-  #       "labels" => %{
-  #         "battery/app" => "harbor",
-  #         "battery/managed" => "true"
-  #       },
-  #       "name" => "harbor-ingress"
-  #     },
-  #     "spec" => %{
-  #       "rules" => [
-  #         %{
-  #           "host" => "core.harbor.domain",
-  #           "http" => %{
-  #             "paths" => [
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{
-  #                     "name" => "harbor-core",
-  #                     "port" => %{
-  #                       "number" => 80
-  #                     }
-  #                   }
-  #                 },
-  #                 "path" => "/api/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{
-  #                     "name" => "harbor-core",
-  #                     "port" => %{
-  #                       "number" => 80
-  #                     }
-  #                   }
-  #                 },
-  #                 "path" => "/service/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{
-  #                     "name" => "harbor-core",
-  #                     "port" => %{
-  #                       "number" => 80
-  #                     }
-  #                   }
-  #                 },
-  #                 "path" => "/v2",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{
-  #                     "name" => "harbor-core",
-  #                     "port" => %{
-  #                       "number" => 80
-  #                     }
-  #                   }
-  #                 },
-  #                 "path" => "/chartrepo/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{
-  #                     "name" => "harbor-core",
-  #                     "port" => %{
-  #                       "number" => 80
-  #                     }
-  #                   }
-  #                 },
-  #                 "path" => "/c/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{
-  #                     "name" => "harbor-portal",
-  #                     "port" => %{
-  #                       "number" => 80
-  #                     }
-  #                   }
-  #                 },
-  #                 "path" => "/",
-  #                 "pathType" => "Prefix"
-  #               }
-  #             ]
-  #           }
-  #         }
-  #       ]
-  #     }
-  #   }
-  # end
-
   def materialize(config) do
     %{
       "/0/secret" => secret(config),
@@ -1422,7 +1350,6 @@ defmodule KubeResources.Harbor do
       "/21/deployment_2" => deployment_2(config),
       "/22/deployment_3" => deployment_3(config),
       "/23/stateful_set" => stateful_set(config)
-      # "/24/ingress" => ingress(config)
     }
   end
 end

@@ -9,6 +9,10 @@ defmodule KubeExt.KubeState.Hosts do
     host("gitea")
   end
 
+  def harbor_host do
+    host("harbor")
+  end
+
   def knative, do: host("knative")
 
   defp host(name) do

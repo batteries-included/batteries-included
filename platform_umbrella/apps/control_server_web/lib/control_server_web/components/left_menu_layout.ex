@@ -77,6 +77,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
         <.kiali_icon class={@class} />
       <% "tekton" -> %>
         <.tekton_icon class={@class} />
+      <% "harbor" -> %>
+        <.harbor_icon class={@class} />
     <% end %>
     """
   end
@@ -214,6 +216,13 @@ defmodule ControlServerWeb.LeftMenuLayout do
           to={KubeResources.TektonDashboard.view_url()}
           name="Tekton Dashboard"
           icon="tekton"
+          link_type="a"
+        />
+      <% :harbor -> %>
+        <.left_menu_item
+          to={KubeResources.Harbor.view_url()}
+          name="Harbor"
+          icon="harbor"
           link_type="a"
         />
       <% _ -> %>

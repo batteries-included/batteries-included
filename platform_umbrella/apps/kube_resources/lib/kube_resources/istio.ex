@@ -61,7 +61,7 @@ defmodule KubeResources.IstioConfig do
 
   defmodule HttpRoute do
     @derive Jason.Encoder
-    defstruct [:rewrite, :name, match: [], route: []]
+    defstruct [:rewrite, :name, :fault, match: [], route: []]
 
     def prefix(prefix, service_host, opts \\ []) do
       do_rewrite = Keyword.get(opts, :rewrite, False)
@@ -78,11 +78,20 @@ defmodule KubeResources.IstioConfig do
     end
 
     def fallback(service_host, opts \\ []) do
-      name = Keyword.get(opts, :name, "name")
+      name = Keyword.get(opts, :name, "fallback")
 
       %__MODULE__{
         name: name,
         route: [HttpRouteDestination.new(service_host)]
+      }
+    end
+
+    def fault(opts \\ []) do
+      name = Keyword.get(opts, :name, "fault")
+
+      %__MODULE__{
+        name: name,
+        fault: %{abort: %{httpStatus: 404}}
       }
     end
 
