@@ -23,7 +23,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Keycloak
   alias KubeResources.KialiServer
   alias KubeResources.KnativeOperator
-  alias KubeResources.KnativeServices
+  alias KubeResources.KnativeServing
   alias KubeResources.KubeMonitoring
   alias KubeResources.ML
   alias KubeResources.MinioOperator
@@ -69,12 +69,6 @@ defmodule KubeResources.ConfigGenerator do
     config |> IstioGateway.materialize() |> Map.merge(VirtualService.materialize(config))
   end
 
-  def materialize(%{} = config, :knative) do
-    config
-    |> KnativeOperator.materialize()
-    |> Map.merge(KnativeServices.materialize(config))
-  end
-
   def materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
   def materialize(%{} = config, :grafana), do: Grafana.materialize(config)
   def materialize(%{} = config, :alert_manager), do: AlertManager.materialize(config)
@@ -94,6 +88,8 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
   def materialize(%{} = config, :tekton), do: Tekton.materialize(config)
   def materialize(%{} = config, :tekton_dashboard), do: TektonDashboard.materialize(config)
+  def materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
+  def materialize(%{} = config, :knative_serving), do: KnativeServing.materialize(config)
   def materialize(%{} = config, :harbor), do: Harbor.materialize(config)
 
   def materialize(%{} = config, :nginx), do: Nginx.materialize(config)

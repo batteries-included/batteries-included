@@ -27,6 +27,7 @@ defmodule ControlServer.Services.BaseService do
         :cert_manager,
         :devtools,
         :knative,
+        :knative_serving,
         :tekton,
         :tekton_dashboard,
         :harbor,

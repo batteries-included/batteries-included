@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   import ControlServerWeb.LeftMenuLayout
   import CommonUI.Table
-  import KubeResources.KnativeServices, only: [url: 1]
+  import KubeResources.KnativeServing, only: [url: 1]
 
   alias ControlServer.Knative
   alias ControlServer.Services.RunnableService

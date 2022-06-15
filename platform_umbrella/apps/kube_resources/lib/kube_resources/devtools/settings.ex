@@ -9,7 +9,7 @@ defmodule KubeResources.DevtoolsSettings do
   @knative_namespace "battery-knative"
   @harbor_namespace "battery-harbor"
   @knative_operator_image "gcr.io/knative-releases/knative.dev/operator/cmd/operator"
-  @knative_operator_version "v1.2.1"
+  @knative_operator_version "v1.5.0"
 
   @gitea_image "gitea/gitea"
   @gitea_version "1.16.4"

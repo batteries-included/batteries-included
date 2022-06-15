@@ -50,9 +50,14 @@ defmodule ControlServer.Services.RunnableService do
 
       # Devtools
       %__MODULE__{
-        path: "/devtools/knative",
+        path: "/devtools/knative/operator",
         service_type: :knative,
-        dependencies: [:istio_gateway]
+        dependencies: [:battery]
+      },
+      %__MODULE__{
+        path: "/devtools/knative/serving",
+        service_type: :knative_serving,
+        dependencies: [:knative, :istio_gateway]
       },
       %__MODULE__{
         path: "/devtools/gitea",

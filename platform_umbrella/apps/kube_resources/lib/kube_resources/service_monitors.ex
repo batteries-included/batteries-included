@@ -1,15 +1,13 @@
 defmodule KubeResources.ServiceMonitors do
-  alias KubeExt.Builder, as: B
-
   alias ControlServer.Services
-
+  alias KubeExt.Builder, as: B
+  alias KubeRawResources.IstioIstiod
   alias KubeResources.DatabaseServiceMonitors
   alias KubeResources.Grafana
+  alias KubeResources.KnativeOperator
   alias KubeResources.KubeMonitoring
   alias KubeResources.Prometheus
   alias KubeResources.PrometheusOperator
-  alias KubeRawResources.IstioIstiod
-  alias KubeResources.KnativeOperator
 
   def materialize(_config) do
     Services.all_including_config()

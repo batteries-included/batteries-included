@@ -26,7 +26,8 @@ defmodule KubeServices.KubeStateCoverageTest do
     |> Enum.map(&KubeResources.unique_kinds/1)
     |> List.flatten()
     |> Enum.each(fn {api_version, kind} ->
-      assert ApiVersionKind.is_watchable(api_version, kind)
+      assert ApiVersionKind.is_watchable(api_version, kind),
+             "Expected #{api_version} and #{kind} to be know types that can be watched by KubeState"
     end)
   end
 

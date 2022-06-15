@@ -35,7 +35,7 @@ defmodule KubeExt.ApiVersionKind do
     prometheus: {"monitoring.coreos.com/v1", "Prometheus"},
     alertmanager: {"monitoring.coreos.com/v1", "Alertmanager"},
     alertmanager_config: {"monitoring.coreos.com/v1alpha1", "AlertmanagerConfig"},
-    knative_serving: {"operator.knative.dev/v1alpha1", "KnativeServing"},
+    knative_serving: {"operator.knative.dev/v1beta1", "KnativeServing"},
     knative_service: {"serving.knative.dev/v1", "Service"},
     postgresql: {"acid.zalan.do/v1", "postgresql"},
     postgresql_operator_config: {"acid.zalan.do/v1", "OperatorConfiguration"},
