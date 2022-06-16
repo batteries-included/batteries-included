@@ -1,10 +1,9 @@
 defmodule ControlServerWeb.Live.Knative.FormComponent do
   use ControlServerWeb, :live_component
 
-  import CommonUI
-
   alias ControlServer.Knative
   alias ControlServer.Knative.Service
+  alias CommonUI.Form
 
   require Logger
 
@@ -88,20 +87,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         phx-target={@myself}
       >
         <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <.form_field
-            type="text_input"
-            form={f}
-            field={:name}
-            placeholder="Name"
-            wrapper_class="sm:col-span-1"
-          />
-          <.form_field
-            type="text_input"
-            form={f}
-            field={:image}
-            placeholder="Docker Image"
-            wrapper_class="sm:col-span-1"
-          />
+          <Form.text_input form={f} field={:name} placeholder="Name" />
+          <Form.text_input form={f} field={:image} placeholder="Docker Image" />
           <div class="sm:col-span-2">
             <.labeled_definition title="URL" contents={@url} />
           </div>

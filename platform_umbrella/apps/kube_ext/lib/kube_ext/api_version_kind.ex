@@ -37,6 +37,8 @@ defmodule KubeExt.ApiVersionKind do
     alertmanager_config: {"monitoring.coreos.com/v1alpha1", "AlertmanagerConfig"},
     knative_serving: {"operator.knative.dev/v1beta1", "KnativeServing"},
     knative_service: {"serving.knative.dev/v1", "Service"},
+    knative_configuration: {"serving.knative.dev/v1", "Configuration"},
+    knative_revision: {"serving.knative.dev/v1", "Revision"},
     postgresql: {"acid.zalan.do/v1", "postgresql"},
     postgresql_operator_config: {"acid.zalan.do/v1", "OperatorConfiguration"},
     keycloak: {"keycloak.org/v1alpha1", "Keycloak"},

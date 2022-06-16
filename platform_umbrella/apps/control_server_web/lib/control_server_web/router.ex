@@ -26,14 +26,17 @@ defmodule ControlServerWeb.Router do
     live "/services/data/postgres_clusters", Live.PostgresClusters, :index
     live "/services/data/postgres_clusters/new", Live.PostgresNew, :new
     live "/services/data/postgres_clusters/:id/edit", Live.PostgresEdit, :edit
+    live "/services/data/postgres_clusters/:id/show", Live.PostgresShow, :show
 
     live "/services/data/failover_clusters", Live.Redis, :index
     live "/services/data/failover_clusters/new", Live.RedisNew, :new
     live "/services/data/failover_clusters/:id/edit", Live.RedisEdit, :edit
+    live "/services/data/failover_clusters/:id/show", Live.RedisShow, :show
 
     live "/services/devtools/knative_services", Live.KnativeServicesIndex, :index
     live "/services/devtools/knative_services/new", Live.KnativeNew, :new
     live "/services/devtools/knative_services/:id/edit", Live.KnativeEdit, :edit
+    live "/services/devtools/knative_services/:id/show", Live.KnativeShow, :show
 
     live "/services/network/status", Live.NetworkStatus, :index
 

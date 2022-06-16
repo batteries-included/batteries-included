@@ -77,7 +77,7 @@ defmodule ControlServerWeb.RunnableServiceList do
         Started
       </div>
       <div class="flex-none ml-5">
-        <.check_mark class="text-emerald-600" />
+        <.check_mark class="text-shamrock-500" />
       </div>
     </div>
     """

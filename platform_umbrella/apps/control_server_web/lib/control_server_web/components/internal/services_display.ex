@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.ServicesDisplay do
-  use Phoenix.Component
+  use ControlServerWeb, :component
 
   import CommonUI.Table
 

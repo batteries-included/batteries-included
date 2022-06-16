@@ -23,6 +23,8 @@ defmodule ControlServerWeb.Live.PostgresClusters do
     Postgres.list_clusters()
   end
 
+  defp new_url, do: Routes.postgres_new_path(ControlServerWeb.Endpoint, :new)
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -36,6 +38,15 @@ defmodule ControlServerWeb.Live.PostgresClusters do
       <.h3>Postgres Clusters</.h3>
       <.body_section>
         <.pg_cluster_display clusters={@clusters} />
+      </.body_section>
+
+      <.h3>Actions</.h3>
+      <.body_section>
+        <.link to={new_url()}>
+          <.button>
+            New Cluster
+          </.button>
+        </.link>
       </.body_section>
     </.layout>
     """

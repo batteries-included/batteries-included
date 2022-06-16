@@ -6,6 +6,10 @@ defmodule KubeExt do
   require Logger
   require Jason
 
+  def uid(resource) do
+    get_in(resource, ~w(metadata uid))
+  end
+
   # Get or create single matches on lots of things that could mean 404.
   # These matches are more comprehensive than the typespec on K8s.
   # Could be that old versions had different types, or it could be

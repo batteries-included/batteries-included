@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.StatefulSetsDisplay do
-  use Phoenix.Component
+  use ControlServerWeb, :component
 
   import CommonUI.Table
 

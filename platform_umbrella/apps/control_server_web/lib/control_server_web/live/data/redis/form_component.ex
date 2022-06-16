@@ -1,10 +1,12 @@
 defmodule ControlServerWeb.Live.Redis.FormComponent do
   use ControlServerWeb, :live_component
 
-  import CommonUI
+  use CommonUI
 
   alias ControlServer.Redis
   alias ControlServer.Redis.FailoverCluster
+
+  alias CommonUI.Form
 
   @impl true
   def mount(socket) do
@@ -89,35 +91,26 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
         phx-submit="save"
       >
         <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <.form_field
-            type="text_input"
-            form={f}
-            field={:name}
-            placeholder="Name"
-            wrapper_class="sm:col-span-1"
-          />
+          <Form.text_input form={f} field={:name} placeholder="Name" />
           <div class="sm:col-span-1">
             <.labeled_definition title="Service Name" contents={@sentinel_name} />
           </div>
-          <.form_field
-            type="range_input"
-            input_opts={%{min: 1, max: 5}}
+          <Form.range_input
+            min={1}
+            max={5}
             form={f}
             field={:num_redis_instances}
             placeholder="Number of Instances"
-            wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
             <.labeled_definition title="Number of Instances" contents={@num_instances} />
           </div>
-
-          <.form_field
-            type="range_input"
-            input_opts={%{min: 0, max: 5}}
+          <Form.range_input
+            min={1}
+            max={5}
             form={f}
             field={:num_sentinel_instances}
             placeholder="Number of Instances"
-            wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
             <.labeled_definition

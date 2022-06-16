@@ -1,9 +1,9 @@
-defmodule ControlServerWeb.PodsDisplay do
-  use Phoenix.Component
+defmodule ControlServerWeb.DeploymentsDisplay do
+  use ControlServerWeb, :component
 
   import CommonUI.Table
 
-  def pods_display(assigns) do
+  def deployments_display(assigns) do
     ~H"""
     <.table>
       <.thead>
@@ -15,40 +15,36 @@ defmodule ControlServerWeb.PodsDisplay do
             Name
           </.th>
           <.th>
-            Status
+            Replicas
           </.th>
-          <.th>Restarts</.th>
           <.th>
-            Age
+            Available
           </.th>
         </.tr>
       </.thead>
       <.tbody>
-        <%= for pod <- @pods do %>
-          <.pod_row pod={pod} />
+        <%= for deployment <- @deployments do %>
+          <.deployment_row deployment={deployment} />
         <% end %>
       </.tbody>
     </.table>
     """
   end
 
-  defp pod_row(assigns) do
+  defp deployment_row(assigns) do
     ~H"""
     <.tr>
       <.td>
-        <%= @pod["metadata"]["namespace"] %>
+        <%= @deployment["metadata"]["namespace"] %>
       </.td>
       <.td>
-        <%= @pod["metadata"]["name"] %>
+        <%= @deployment["metadata"]["name"] %>
       </.td>
       <.td>
-        <%= @pod["status"]["phase"] %>
+        <%= @deployment["spec"]["replicas"] %>
       </.td>
       <.td>
-        <%= @pod["summary"]["restartCount"] %>
-      </.td>
-      <.td>
-        <%= @pod["summary"]["fromStart"] %>
+        <%= @deployment["status"]["availableReplicas"] %>
       </.td>
     </.tr>
     """

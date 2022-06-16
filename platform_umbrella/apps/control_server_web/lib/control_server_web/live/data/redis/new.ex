@@ -12,7 +12,7 @@ defmodule ControlServerWeb.Live.RedisNew do
 
   @impl true
   def mount(_params, _session, socket) do
-    failover_cluster = %FailoverCluster{num_redis_instances: 1, num_sentinel_instances: 0}
+    failover_cluster = %FailoverCluster{num_redis_instances: 1, num_sentinel_instances: 1}
     changeset = Redis.change_failover_cluster(failover_cluster)
 
     {:ok,
@@ -38,7 +38,7 @@ defmodule ControlServerWeb.Live.RedisNew do
 
   @impl true
   def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
-    new_path = Routes.redis_path(socket, :index)
+    new_path = Routes.redis_show_path(socket, :show, failover_cluster.id)
     Logger.debug("new_cluster = #{inspect(failover_cluster)} new_path = #{new_path}")
     RunnableService.activate!(:redis)
 

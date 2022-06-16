@@ -1,0 +1,65 @@
+apiVersion: serving.knative.dev/v1
+kind: Revision
+metadata:
+  annotations:
+    serving.knative.dev/creator: system:admin
+    serving.knative.dev/routes: echo
+    serving.knative.dev/routingStateModified: '2022-06-14T21:37:57Z'
+  creationTimestamp: '2022-06-14T21:37:57Z'
+  generation: 1
+  labels:
+    serving.knative.dev/configuration: echo
+    serving.knative.dev/configurationGeneration: '1'
+    serving.knative.dev/configurationUID: 8f92fa99-ea9c-493f-b16d-79ee42770571
+    serving.knative.dev/routingState: active
+    serving.knative.dev/service: echo
+    serving.knative.dev/serviceUID: 95a40cb1-4037-47e2-a81c-e64aea5f36ae
+  name: echo-00001
+  namespace: battery-knative
+  ownerReferences:
+    - apiVersion: serving.knative.dev/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Configuration
+      name: echo
+      uid: 8f92fa99-ea9c-493f-b16d-79ee42770571
+  resourceVersion: '212062'
+  uid: ebb9861e-b5a0-45ef-9d91-453569c636ae
+spec:
+  containerConcurrency: 0
+  containers:
+    - env:
+        - name: TARGET
+          value: Batteries Included
+      image: gcr.io/kubernetes-e2e-test-images/echoserver:2.2
+      name: user-container
+      readinessProbe:
+        successThreshold: 1
+        tcpSocket:
+          port: 0
+      resources: {}
+  enableServiceLinks: false
+  timeoutSeconds: 300
+status:
+  actualReplicas: 0
+  conditions:
+    - lastTransitionTime: '2022-06-15T05:30:35Z'
+      message: The target is not receiving traffic.
+      reason: NoTraffic
+      severity: Info
+      status: 'False'
+      type: Active
+    - lastTransitionTime: '2022-06-14T21:38:09Z'
+      status: 'True'
+      type: ContainerHealthy
+    - lastTransitionTime: '2022-06-14T21:38:09Z'
+      status: 'True'
+      type: Ready
+    - lastTransitionTime: '2022-06-14T21:38:09Z'
+      status: 'True'
+      type: ResourcesAvailable
+  containerStatuses:
+    - imageDigest: gcr.io/kubernetes-e2e-test-images/echoserver@sha256:e9ba514b896cdf559eef8788b66c2c3ee55f3572df617647b4b0d8b6bf81cf19
+      name: user-container
+  desiredReplicas: 0
+  observedGeneration: 1

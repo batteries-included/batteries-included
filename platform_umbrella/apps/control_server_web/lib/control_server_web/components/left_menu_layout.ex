@@ -124,16 +124,16 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/services/devtools/settings"
-      name="Service Settings"
-      icon="lightning_bolt"
-      is_active={@active == "settings"}
-    />
-    <.left_menu_item
       to="/services/devtools/knative_services"
       name="Knative Services"
       icon="collection"
       is_active={@active == "knative"}
+    />
+    <.left_menu_item
+      to="/services/devtools/settings"
+      name="Service Settings"
+      icon="lightning_bolt"
+      is_active={@active == "settings"}
     />
 
     <%= for base_service <- @base_services do %>

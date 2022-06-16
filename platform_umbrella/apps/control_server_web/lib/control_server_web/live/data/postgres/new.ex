@@ -38,12 +38,15 @@ defmodule ControlServerWeb.Live.PostgresNew do
 
   @impl true
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
-    new_path = Routes.postgres_clusters_path(socket, :index)
+    new_path = show_url(cluster)
     Logger.debug("new_cluster = #{inspect(cluster)} new_path = #{new_path}")
     RunnableService.activate!(:database_public)
 
     {:noreply, push_redirect(socket, to: new_path)}
   end
+
+  defp show_url(cluster),
+    do: Routes.postgres_show_path(ControlServerWeb.Endpoint, :show, cluster.id)
 
   @impl true
   def render(assigns) do

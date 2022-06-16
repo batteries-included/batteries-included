@@ -20,7 +20,7 @@ defmodule ControlServerWeb.Live.KnativeEdit do
 
   @impl true
   def handle_info({"service:save", %{"service" => service}}, socket) do
-    new_path = Routes.knative_services_index_path(socket, :index)
+    new_path = Routes.knative_show_path(socket, :show, service.id)
     Logger.debug("updated cluster = #{inspect(service)} new_path = #{new_path}")
 
     {:noreply, push_redirect(socket, to: new_path)}

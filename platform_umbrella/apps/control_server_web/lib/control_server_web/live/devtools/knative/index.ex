@@ -63,7 +63,6 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
           <.thead>
             <.tr>
               <.th>Name</.th>
-              <.th>Image</.th>
               <.th>Link</.th>
               <.th>Action</.th>
             </.tr>
@@ -72,25 +71,13 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
             <%= for service <- @services do %>
               <.tr id={"service-#{service.id}"}>
                 <.td><%= service.name %></.td>
-                <.td><%= service.image %></.td>
                 <.td>
                   <.link to={url(service)} link_type="a">
                     Open
                   </.link>
                 </.td>
                 <.td>
-                  <span>
-                    <%= link("Delete",
-                      to: "#",
-                      phx_click: "delete",
-                      phx_value_id: service.id,
-                      data: [confirm: "Are you sure?"]
-                    ) %>
-                  </span>
-
-                  <span>
-                    <.link to={service_edit_url(service)}>Edit</.link>
-                  </span>
+                  <.link to={show_url(service)}>Show Service</.link>
                 </.td>
               </.tr>
             <% end %>
@@ -107,8 +94,8 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     """
   end
 
-  defp service_edit_url(service),
-    do: Routes.knative_edit_path(ControlServerWeb.Endpoint, :edit, service.id)
+  defp show_url(%Knative.Service{} = service),
+    do: Routes.knative_show_path(ControlServerWeb.Endpoint, :show, service.id)
 
   defp service_new_url do
     Routes.knative_new_path(ControlServerWeb.Endpoint, :new)

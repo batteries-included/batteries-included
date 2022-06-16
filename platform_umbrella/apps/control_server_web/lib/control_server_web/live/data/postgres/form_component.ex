@@ -1,10 +1,11 @@
 defmodule ControlServerWeb.Live.Postgres.FormComponent do
   use ControlServerWeb, :live_component
 
-  import CommonUI
+  use CommonUI
 
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
+  alias CommonUI.Form
 
   require Logger
 
@@ -89,34 +90,21 @@ defmodule ControlServerWeb.Live.Postgres.FormComponent do
         phx-target={@myself}
       >
         <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <.form_field
-            type="text_input"
-            form={f}
-            field={:name}
-            placeholder="Name"
-            wrapper_class="sm:col-span-1"
-          />
+          <Form.text_input form={f} field={:name} placeholder="Name" />
           <div class="sm:col-span-1">
             <.labeled_definition title="Service Name" contents={@full_name} />
           </div>
-          <.form_field
-            type="range_input"
-            input_opts={%{min: 1, max: 5}}
+          <Form.range_input
+            min={1}
+            max={5}
             form={f}
             field={:num_instances}
             placeholder="Number of Instances"
-            wrapper_class="sm:col-span-1"
           />
           <div class="sm:col-span-1">
             <.labeled_definition title="Number of Instances" contents={@num_instances} />
           </div>
-          <.form_field
-            type="text_input"
-            form={f}
-            field={:storage_size}
-            placeholder="Storage Size"
-            wrapper_class="sm:col-span-1"
-          />
+          <Form.text_input form={f} field={:storage_size} placeholder="Storage Size" />
         </div>
         <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
           <.button type="submit" phx_disable_with="Saving…" class="sm:col-span-2">

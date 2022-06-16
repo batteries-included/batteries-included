@@ -34,8 +34,8 @@ defmodule ControlServerWeb.Live.Redis do
     Redis.list_failover_clusters()
   end
 
-  def edit_url(failover_cluster),
-    do: Routes.redis_edit_path(ControlServerWeb.Endpoint, :edit, failover_cluster)
+  def show_url(failover_cluster),
+    do: Routes.redis_show_path(ControlServerWeb.Endpoint, :show, failover_cluster)
 
   def new_url, do: Routes.redis_new_path(ControlServerWeb.Endpoint, :new)
 
@@ -57,43 +57,31 @@ defmodule ControlServerWeb.Live.Redis do
           <.thead>
             <.tr>
               <.th>Name</.th>
-              <.th>Num redis instances</.th>
-              <.th>Num sentinel instances</.th>
-              <.th></.th>
+              <.th>Action</.th>
             </.tr>
           </.thead>
           <.tbody id="failover_clusters">
             <%= for failover_cluster <- @failover_clusters do %>
               <.tr id={"failover_cluster-#{failover_cluster.id}"}>
                 <.td><%= failover_cluster.name %></.td>
-                <.td><%= failover_cluster.num_redis_instances %></.td>
-                <.td><%= failover_cluster.num_sentinel_instances %></.td>
-
                 <.td>
-                  <span>
-                    <.link to={edit_url(failover_cluster)}>Edit Cluster</.link>
-                  </span>
-                  <span>
-                    <.link
-                      to="#"
-                      phx-click="delete"
-                      phx-value-id={failover_cluster.id}
-                      data={[confirm: "Are you sure?"]}
-                    >
-                      Delete
-                    </.link>
-                  </span>
+                  <.link to={show_url(failover_cluster)} class="mt-8 text-lg font-medium text-left">
+                    Show Cluster
+                  </.link>
                 </.td>
               </.tr>
             <% end %>
           </.tbody>
         </.table>
+      </.body_section>
 
-        <div class="ml-8 mt-15">
-          <.button type="primary" variant="shadow" to={new_url()} link_type="live_patch">
+      <.h3>Actions</.h3>
+      <.body_section>
+        <.link to={new_url()}>
+          <.button>
             New Cluster
           </.button>
-        </div>
+        </.link>
       </.body_section>
     </.layout>
     """

@@ -38,7 +38,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
 
   @impl true
   def handle_info({"service:save", %{"service" => service}}, socket) do
-    new_path = Routes.knative_services_index_path(socket, :index)
+    new_path = Routes.knative_show_path(socket, :show, service.id)
     Logger.debug("new_service = #{inspect(service)} new_path = #{new_path}")
     RunnableService.activate!(:knative)
 

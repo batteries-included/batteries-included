@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
   use Phoenix.Component
+  use CommonUI
 
-  import PetalComponents.Button
   import PetalComponents.Link
 
   import CommonUI.Table
@@ -60,9 +60,11 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
       </.td>
       <.td>
         <span>
-          <.button to={notebook_path(@notebook)} variant="shadow" link_type="a">
-            Open Notebook <Heroicons.Solid.external_link class="w-5 h-5" />
-          </.button>
+          <.link to={notebook_path(@notebook)}>
+            <.button>
+              Open Notebook <Heroicons.Solid.external_link class="w-5 h-5" />
+            </.button>
+          </.link>
         </span>
         |
         <span>

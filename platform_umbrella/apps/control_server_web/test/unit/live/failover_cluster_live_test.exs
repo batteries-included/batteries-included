@@ -22,20 +22,10 @@ defmodule ControlServerWeb.FailoverClusterLiveTest do
     test "links to new cluster form", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, Routes.redis_path(conn, :index))
 
-      assert index_live |> element("a", "New Cluster") |> render_click() =~
-               "New Cluster"
-
-      assert_patch(index_live, Routes.redis_new_path(conn, :new))
-    end
-
-    test "deletes failover_cluster in listing", %{conn: conn, failover_cluster: failover_cluster} do
-      {:ok, index_live, _html} = live(conn, Routes.redis_path(conn, :index))
-
-      assert index_live
-             |> element("#failover_cluster-#{failover_cluster.id} a", "Delete")
-             |> render_click()
-
-      refute has_element?(index_live, "#failover_cluster-#{failover_cluster.id}")
+      index_live
+      |> element("a", "New Cluster")
+      |> render_click()
+      |> follow_redirect(conn, Routes.redis_new_path(conn, :new))
     end
   end
 end

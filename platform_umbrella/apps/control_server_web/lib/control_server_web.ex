@@ -97,7 +97,6 @@ defmodule ControlServerWeb do
       import PetalComponents.{
         Alert,
         Badge,
-        Button,
         Container,
         Dropdown,
         Form,
@@ -112,6 +111,9 @@ defmodule ControlServerWeb do
         Tabs,
         Card
       }
+
+      # Our common UI
+      use CommonUI
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View

@@ -70,15 +70,6 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   defp objects(:pods) do
     KubeState.pods()
-    |> Enum.map(&KubeExt.Pods.summarize/1)
-    |> Enum.sort_by(
-      fn pod ->
-        pod
-        |> Map.get("status", %{})
-        |> Map.get("startTime", "")
-      end,
-      :desc
-    )
   end
 
   defp objects(:services) do
