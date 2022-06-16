@@ -23,7 +23,6 @@ defmodule KubeServices.Application do
 
   def children(true = _run) do
     [
-      KubeServices.ResourceDeleter,
       KubeServices.Usage.Poller,
       KubeServices.SnapshotApply.Supervisor,
       {KubeServices.SnapshotApply.StaleFinder, [enabled: stale_finder_enabled?()]},
