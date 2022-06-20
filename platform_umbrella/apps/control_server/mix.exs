@@ -38,6 +38,7 @@ defmodule ControlServer.MixProject do
     [
       {:phoenix_pubsub, "~> 2.1"},
       {:jason, "~> 1.0"},
+      {:oban, "~> 2.12"},
 
       # SQL
       {:phoenix_ecto, "~> 4.4"},

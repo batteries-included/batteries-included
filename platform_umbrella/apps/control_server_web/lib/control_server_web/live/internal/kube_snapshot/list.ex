@@ -5,18 +5,32 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
   import CommonUI.Table
 
   alias ControlServer.SnapshotApply
+  alias EventCenter.KubeSnapshot, as: SnapshotEventCenter
 
   require Logger
 
   @impl true
-  def mount(params, _session, socket) do
-    Logger.debug("Params => #{inspect(params)}")
-
+  def mount(_params, _session, socket) do
+    :ok = SnapshotEventCenter.subscribe()
     {:ok, assign(socket, :snapshots, snapshots([]))}
   end
 
-  def snapshots(_params) do
-    SnapshotApply.paginated_kube_snapshots()
+  def snapshots(params) do
+    SnapshotApply.paginated_kube_snapshots(params)
+  end
+
+  @impl true
+  def handle_info(_unused, socket) do
+    {:noreply, assign(socket, :snapshots, snapshots([]))}
+  end
+
+  @impl true
+  def handle_event("start", _, socket) do
+    job = KubeServices.SnapshotApply.CreationWorker.start!()
+
+    Logger.debug("Started oban Job #{job.id}")
+
+    {:noreply, socket}
   end
 
   defp row(assigns) do
@@ -65,6 +79,13 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
             <.row snapshot={snapshot} />
           <% end %>
         </.table>
+      </.body_section>
+
+      <.h3>Actions</.h3>
+      <.body_section>
+        <.button phx_click="start">
+          Start Deploy
+        </.button>
       </.body_section>
     </.layout>
     """

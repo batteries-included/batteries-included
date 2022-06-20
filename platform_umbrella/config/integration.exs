@@ -21,7 +21,7 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 
 config :kube_ext, cluster_type: :dev
 
-config :kube_services, start_services: true, stale_finder_enabled: false
+config :kube_services, start_services: true
 
 config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
   delay: 20_000,

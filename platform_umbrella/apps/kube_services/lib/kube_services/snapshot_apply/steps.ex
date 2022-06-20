@@ -6,23 +6,114 @@ defmodule KubeServices.SnapshotApply.Steps do
   alias ControlServer.SnapshotApply, as: ControlSnapshotApply
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-
   alias Ecto.Multi
 
   alias KubeExt.Hashing
+  alias KubeExt.KubeState
   alias KubeResources.ConfigGenerator
-  alias KubeServices.SnapshotApply.Supervisor
 
   require Logger
 
-  def creation(%KubeSnapshot{} = kube_snapshot) do
-    # Remove all resource path data.
-    kube_snapshot
-    |> ControlSnapshotApply.resource_paths_for_snapshot()
-    |> ControlServer.Repo.delete_all()
+  def creation! do
+    with {:ok, snapshot} <- ControlSnapshotApply.create_kube_snapshot() do
+      snapshot
+    end
   end
 
-  def generation(%KubeSnapshot{} = kube_snapshot) do
+  def generation!(%KubeSnapshot{} = kube_snapshot) do
+    with {:ok, resource_map} <- run_resource_paths_transaction(kube_snapshot) do
+      resource_map
+      |> Map.values()
+      |> List.flatten()
+      |> Enum.filter(fn
+        %ResourcePath{} -> true
+        _ -> false
+      end)
+    end
+  end
+
+  def launch_resource_path_jobs(resource_paths) do
+    resource_paths
+    |> Enum.map(fn rp -> KubeServices.SnapshotApply.ResourcePathWorker.new(%{id: rp.id}) end)
+    |> Oban.insert_all()
+  end
+
+  def apply_resource_path(%ResourcePath{} = rp) do
+    if does_hash_match(rp) do
+      {:ok, :state_hash_match}
+    else
+      do_apply(rp)
+    end
+  end
+
+  def update_resource_path(%ResourcePath{} = rp, {result, reason}) do
+    is_success = resource_path_result_is_success?(result)
+
+    ControlSnapshotApply.update_resource_path(rp, %{
+      is_success: is_success,
+      apply_result: reason |> reason() |> String.slice(0, 200)
+    })
+  end
+
+  def update_applying!(%KubeSnapshot{} = snap) do
+    with {:ok, new_snap} <- ControlSnapshotApply.update_kube_snapshot(snap, %{status: :applying}) do
+      new_snap
+    end
+  end
+
+  def summarize!(%KubeSnapshot{} = snap) do
+    with {:ok, new_snap} <-
+           ControlSnapshotApply.update_kube_snapshot(snap, %{
+             status: snap_status(get_result_count(snap))
+           }) do
+      new_snap
+    end
+  end
+
+  defp snap_status(%{nil: nil_count} = _counts) when nil_count > 0 do
+    :applying
+  end
+
+  defp snap_status(%{false: error_count} = _counts) when error_count > 0 do
+    :error
+  end
+
+  defp snap_status(%{true: ok_count} = _counts) when ok_count > 0 do
+    :ok
+  end
+
+  defp get_result_count(snap) do
+    snap.resource_paths
+    |> Enum.group_by(fn rp -> rp.is_success end)
+    |> Enum.map(fn {key, list} -> {key, length(list)} end)
+    |> Enum.into(%{})
+  end
+
+  defp resource_path_result_is_success?(:ok), do: true
+  defp resource_path_result_is_success?(_result), do: false
+
+  defp reason(reason_atom) when is_atom(reason_atom), do: Atom.to_string(reason_atom)
+  defp reason(reason_string) when is_binary(reason_string), do: reason_string
+  defp reason(obj), do: inspect(obj)
+
+  defp does_hash_match(%ResourcePath{} = rp) do
+    current_hash =
+      rp.resource_value
+      |> KubeState.get_resource()
+      |> Hashing.get_hash()
+
+    current_hash == rp.hash
+  end
+
+  defp do_apply(%ResourcePath{} = rp) do
+    case KubeExt.apply_single(KubeExt.ConnectionPool.get(), rp.resource_value) do
+      {:ok, _result} -> {:ok, :applied}
+      {:error, %{error: error_reason}} -> {:error, error_reason}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp run_resource_paths_transaction(%KubeSnapshot{} = kube_snapshot) do
     Multi.new()
     |> Multi.run(:base_services, fn repo, _ ->
       # Get the list of base services inside of the transaction
@@ -34,17 +125,6 @@ defmodule KubeServices.SnapshotApply.Steps do
     end)
     # Finally run the transaction.
     |> Repo.transaction()
-  end
-
-  def application(%KubeSnapshot{} = kube_snapshot, worker_pid) do
-    kube_snapshot
-    |> ControlSnapshotApply.resource_paths_for_snapshot()
-    |> Repo.all()
-    |> Enum.map(fn rp -> apply_resource_path(rp, worker_pid) end)
-  end
-
-  def apply do
-    Logger.debug("Waiting on applying to complete.")
   end
 
   defp resource_paths_multi(base_services, kube_snapshot) do
@@ -71,9 +151,5 @@ defmodule KubeServices.SnapshotApply.Steps do
       end)
 
     multi
-  end
-
-  defp apply_resource_path(%ResourcePath{} = rp, worker_pid) do
-    Supervisor.start_resource_path(rp, worker_pid)
   end
 end

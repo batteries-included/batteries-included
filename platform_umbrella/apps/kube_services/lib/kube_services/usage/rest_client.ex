@@ -9,6 +9,7 @@ defmodule KubeServices.Usage.RestClient do
     Tesla.Middleware.Logger
   ]
 
+  @spec report_usage(binary | Tesla.Client.t(), any) :: {:error, any} | {:ok, Tesla.Env.t()}
   def report_usage(client, usage_report) do
     Tesla.post(client, "/usage_reports/", %{"usage_report" => usage_report})
   end

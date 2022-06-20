@@ -54,6 +54,10 @@ defmodule KubeResources.KnativeServing do
 
     spec = %{
       "template" => %{
+        "metadata" => %{
+          "creationTimestamp" => nil,
+          "annotations" => %{"battery/hash" => KubeExt.Hashing.ignored_value()}
+        },
         "spec" => %{
           "containers" => [
             %{

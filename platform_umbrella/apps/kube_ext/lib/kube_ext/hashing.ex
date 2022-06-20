@@ -1,7 +1,11 @@
 defmodule KubeExt.Hashing do
   @hash_annotation_key "battery/hash"
 
+  @ignored_value "_IGNORED_VALUE_"
+
   def key, do: @hash_annotation_key
+
+  def ignored_value, do: @ignored_value
 
   def get_hash(nil), do: "DEADBEEF"
 

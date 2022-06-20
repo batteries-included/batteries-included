@@ -46,3 +46,5 @@ config :control_server,
 config :kube_ext, cluster_type: :dev
 
 config :kube_services, start_services: false
+
+config :kube_services, Oban, testing: :inline, plugins: []

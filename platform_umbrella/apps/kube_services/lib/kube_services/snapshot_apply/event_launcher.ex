@@ -1,7 +1,7 @@
 defmodule KubeServices.SnapshotApply.EventLauncher do
   use GenServer
 
-  alias KubeServices.SnapshotApply.Launcher
+  alias KubeServices.SnapshotApply.CreationWorker
 
   require Logger
 
@@ -15,8 +15,8 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
   end
 
   def handle_info(msg, state) do
-    pid = Launcher.launch()
-    Logger.debug("Got pubsub message #{inspect(msg)} Result pid = #{inspect(pid)}")
+    job = CreationWorker.start!(schedule_in: 1)
+    Logger.debug("Got pubsub message #{inspect(msg)} Starting job #{job.id}")
     {:noreply, state}
   end
 end

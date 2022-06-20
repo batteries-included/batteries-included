@@ -20,6 +20,7 @@ defmodule KubeServices.ResourceDeleter do
     {:ok, %{conn: conn}}
   end
 
+  @spec delete(map) :: {:ok, map() | reference()} | {:error, any()}
   def delete(resource) do
     GenServer.call(@me, {:delete, resource})
   end

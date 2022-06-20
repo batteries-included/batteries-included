@@ -8,6 +8,7 @@ defmodule ControlServer.SnapshotApply do
 
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.SnapshotApply.KubeSnapshot
+  alias EventCenter.KubeSnapshot, as: SnapshotEventCenter
 
   @doc """
   Returns the list of resource_paths.
@@ -77,7 +78,24 @@ defmodule ControlServer.SnapshotApply do
       from(ks in KubeSnapshot,
         select: ks,
         where: ks.id == ^id,
-        preload: [resource_paths: ^from(rp in ResourcePath, order_by: rp.path)]
+        preload: [
+          resource_paths:
+            ^from(rp in ResourcePath,
+              order_by: rp.path,
+              select: [
+                :api_version,
+                :apply_result,
+                :hash,
+                :id,
+                :inserted_at,
+                :is_success,
+                :kind,
+                :namespace,
+                :path,
+                :updated_at
+              ]
+            )
+        ]
       )
 
     Repo.one!(query)
@@ -99,6 +117,16 @@ defmodule ControlServer.SnapshotApply do
     %KubeSnapshot{}
     |> KubeSnapshot.changeset(attrs)
     |> Repo.insert()
+    |> broadcast_snap()
+  end
+
+  def snapshot_success(query \\ KubeSnapshot) do
+    from ks in query, where: ks.status == :ok
+  end
+
+  def snapshot_recently(query \\ KubeSnapshot) do
+    from ks in query,
+      where: ks.inserted_at >= ^Timex.shift(Timex.now(), hours: -1)
   end
 
   def resource_paths_for_snapshot(query \\ ResourcePath, kube_snapshot) do
@@ -111,6 +139,10 @@ defmodule ControlServer.SnapshotApply do
 
   def resource_paths_failed(query \\ ResourcePath) do
     from rp in query, where: rp.is_success == false
+  end
+
+  def resource_paths_success(query \\ ResourcePath) do
+    from rp in query, where: rp.is_success == true
   end
 
   def resource_paths_by_api_version(query \\ ResourcePath, api_version) do
@@ -160,6 +192,7 @@ defmodule ControlServer.SnapshotApply do
     kube_snapshot
     |> KubeSnapshot.changeset(attrs)
     |> Repo.update()
+    |> broadcast_snap()
   end
 
   @doc """
@@ -175,7 +208,9 @@ defmodule ControlServer.SnapshotApply do
 
   """
   def delete_kube_snapshot(%KubeSnapshot{} = kube_snapshot) do
-    Repo.delete(kube_snapshot)
+    kube_snapshot
+    |> Repo.delete()
+    |> broadcast_snap()
   end
 
   @doc """
@@ -271,4 +306,11 @@ defmodule ControlServer.SnapshotApply do
   def change_resource_path(%ResourcePath{} = resource_path, attrs \\ %{}) do
     ResourcePath.changeset(resource_path, attrs)
   end
+
+  defp broadcast_snap({:ok, %KubeSnapshot{} = snap} = result) do
+    :ok = SnapshotEventCenter.broadcast(snap)
+    result
+  end
+
+  defp broadcast_snap(result), do: result
 end

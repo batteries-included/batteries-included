@@ -28,6 +28,7 @@ defmodule KubeServices.MixProject do
     [
       {:tesla, "~> 1.4.3"},
       {:jason, "~> 1.2"},
+      {:oban, "~> 2.12"},
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},
       {:kube_ext, in_umbrella: true},

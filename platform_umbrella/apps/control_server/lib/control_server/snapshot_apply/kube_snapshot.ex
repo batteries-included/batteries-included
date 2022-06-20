@@ -6,7 +6,7 @@ defmodule ControlServer.SnapshotApply.KubeSnapshot do
   @foreign_key_type :binary_id
   schema "kube_snapshots" do
     field :status, Ecto.Enum,
-      values: [:creation, :generation, :application, :applying, :ok, :error],
+      values: [:creation, :generation, :applying, :ok, :error],
       default: :creation
 
     has_many :resource_paths, ControlServer.SnapshotApply.ResourcePath
