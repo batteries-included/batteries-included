@@ -10,8 +10,8 @@
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md
 
 ARG ELIXIR_VERSION=1.13.4
-ARG ERLANG_VERSION=25.0
-ARG ALPINE_VERSION=3.15.4
+ARG ERLANG_VERSION=25.0.2
+ARG ALPINE_VERSION=3.16.0
 
 ARG BUILD_IMAGE_NAME=hexpm/elixir
 ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}
