@@ -1,6 +1,8 @@
 defmodule ControlServerWeb.Router do
   use ControlServerWeb, :router
 
+  import ControlServerWeb.UserAuth
+
   import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
@@ -9,12 +11,16 @@ defmodule ControlServerWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, {ControlServerWeb.LayoutView, :root}
     plug :protect_from_forgery
-
     plug :put_secure_browser_headers, ControlServerWeb.CSP.new()
+    plug :fetch_current_user
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  pipeline :full_layout do
+    plug :put_layout, {ControlServerWeb.LayoutView, "full.html"}
   end
 
   scope "/", ControlServerWeb do
@@ -85,5 +91,40 @@ defmodule ControlServerWeb.Router do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
     end
+  end
+
+  ## Authentication routes
+
+  scope "/", ControlServerWeb do
+    pipe_through [:full_layout, :browser, :redirect_if_user_is_authenticated]
+
+    get "/users/log_in", UserSessionController, :new
+    post "/users/log_in", UserSessionController, :create
+    get "/users/reset_password", UserResetPasswordController, :new
+    post "/users/reset_password", UserResetPasswordController, :create
+    get "/users/reset_password/:token", UserResetPasswordController, :edit
+    put "/users/reset_password/:token", UserResetPasswordController, :update
+  end
+
+  scope "/", ControlServerWeb do
+    # pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser]
+
+    live "/users", Live.UserIndex, :index
+    live "/users/new", Live.UserNew, :index
+    live "/users/:id/show", Live.UserShow, :index
+    get "/users/settings", UserSettingsController, :edit
+    put "/users/settings", UserSettingsController, :update
+    get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+  end
+
+  scope "/", ControlServerWeb do
+    pipe_through [:browser]
+
+    delete "/users/log_out", UserSessionController, :delete
+    get "/users/confirm", UserConfirmationController, :new
+    post "/users/confirm", UserConfirmationController, :create
+    get "/users/confirm/:token", UserConfirmationController, :edit
+    post "/users/confirm/:token", UserConfirmationController, :update
   end
 end

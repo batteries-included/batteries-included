@@ -36,9 +36,13 @@ defmodule ControlServer.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Auth
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix_pubsub, "~> 2.1"},
       {:jason, "~> 1.0"},
       {:oban, "~> 2.12"},
+      {:phoenix_swoosh, "~> 1.0"},
+      {:phoenix_swoosh, "~> 1.0"},
 
       # SQL
       {:phoenix_ecto, "~> 4.4"},

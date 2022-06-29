@@ -79,6 +79,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
         <.tekton_icon class={@class} />
       <% "harbor" -> %>
         <.harbor_icon class={@class} />
+      <% "user_group" -> %>
+        <Heroicons.Solid.user_group class={@class} />
     <% end %>
     """
   end
@@ -234,6 +236,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_defaults(assigns)
 
     ~H"""
+    <.left_menu_item to="/users" name="Users" icon="user_group" is_active={@active == "users"} />
     <.left_menu_item
       to="/services/security/settings"
       name="Service Settings"

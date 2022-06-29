@@ -2,7 +2,7 @@ defmodule ControlServerWeb.CSP do
   @default_allowed %{
     "script-src" => ["self", "unsafe-eval", "unsafe-inline"],
     "default-src" => ["self", {:url, "https://rsms.me"}, "unsafe-inline"],
-    "img-src" => ["self", {:url, "data:"}],
+    "img-src" => ["self", {:url, "data:"}, {:url, "https://images.unsplash.com"}],
     "font-src" => ["self", {:url, "data:"}, {:url, "https://rsms.me"}],
     "frame-src" => [
       "self",
