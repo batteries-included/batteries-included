@@ -1,12 +1,12 @@
 defmodule ControlServer.Notebooks.JupyterLabNotebook do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   require Logger
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "jupyter_lab_notebooks" do
+  typed_schema "jupyter_lab_notebooks" do
     field :image, :string, default: "jupyter/datascience-notebook:lab-3.2.9"
     field :name, :string
 

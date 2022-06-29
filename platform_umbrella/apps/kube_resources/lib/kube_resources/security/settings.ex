@@ -5,6 +5,7 @@ defmodule KubeResources.SecuritySettings do
   @namespace "battery-core"
   @metrics_spi_version "2.5.3"
 
+  @spec namespace(map()) :: binary()
   def namespace(config), do: Map.get(config, "namespace", @namespace)
 
   @spec keycloak_metrics_version(map) :: binary()

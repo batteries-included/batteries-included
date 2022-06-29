@@ -3,16 +3,19 @@ defmodule KubeExt.Hashing do
 
   @ignored_value "_IGNORED_VALUE_"
 
+  @spec key :: binary()
   def key, do: @hash_annotation_key
 
+  @spec ignored_value :: binary()
   def ignored_value, do: @ignored_value
 
+  @spec get_hash(any) :: binary()
   def get_hash(nil), do: "DEADBEEF"
 
   def get_hash(resource) do
     resource
     |> decorate_content_hash()
-    |> get_in(["metadata", "annotations", @hash_annotation_key])
+    |> get_in(["metadata", "annotations", @hash_annotation_key]) || "DEADBEEF"
   end
 
   def decorate_content_hash(

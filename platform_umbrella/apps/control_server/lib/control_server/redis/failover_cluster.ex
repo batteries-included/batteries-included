@@ -1,10 +1,10 @@
 defmodule ControlServer.Redis.FailoverCluster do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "failover_clusters" do
+  typed_schema "failover_clusters" do
     field :name, :string
     field :num_redis_instances, :integer
     field :num_sentinel_instances, :integer

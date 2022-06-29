@@ -1,10 +1,10 @@
 defmodule ControlServer.SnapshotApply.ResourcePath do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "resource_paths" do
+  typed_schema "resource_paths" do
     field :path, :string
     field :resource_value, :map, redact: true
 

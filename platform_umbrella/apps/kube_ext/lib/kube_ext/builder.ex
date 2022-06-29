@@ -1,6 +1,7 @@
 defmodule KubeExt.Builder do
   alias KubeExt.ApiVersionKind
 
+  @spec build_resource(atom) :: map()
   def build_resource(:secret) do
     Map.put(build_resource("v1", "Secret"), "type", "Opaque")
   end
@@ -10,16 +11,19 @@ defmodule KubeExt.Builder do
     build_resource(api_version, kind)
   end
 
+  @spec build_resource(:ingress, any, any, binary | number) :: map
   def build_resource(:ingress, path, service_name, port) do
     build_resource("networking.k8s.io/v1", "Ingress")
     |> annotation("kubernetes.io/ingress.class", "battery-nginx")
     |> spec(%{"rules" => [build_rule(:http, [build_path(path, service_name, port)])]})
   end
 
+  @spec build_resource(binary(), binary()) :: map()
   def build_resource(api_version, kind) do
     %{"apiVersion" => api_version, "kind" => kind, "metadata" => %{}}
   end
 
+  @spec annotation(map(), binary(), any()) :: map()
   def annotation(resouce, key, value) do
     resouce
     |> Map.put_new("metadata", %{})
@@ -27,12 +31,14 @@ defmodule KubeExt.Builder do
     |> put_in(["metadata", "annotations", key], value)
   end
 
+  @spec annotations(map(), map()) :: map()
   def annotations(resouce, %{} = anno_map) do
     resouce
     |> Map.put_new("metadata", %{})
     |> update_in(~w(metadata annotations), fn anno -> Map.merge(anno || %{}, anno_map) end)
   end
 
+  @spec label(map, binary(), binary()) :: map()
   def label(resource, key, value) do
     resource
     |> Map.put_new("metadata", %{})
@@ -43,6 +49,7 @@ defmodule KubeExt.Builder do
     )
   end
 
+  @spec app_labels(map(), binary()) :: map()
   def app_labels(resource, app_name) do
     resource
     |> label("battery/app", app_name)
@@ -50,6 +57,7 @@ defmodule KubeExt.Builder do
     |> label("battery/managed", "true")
   end
 
+  @spec owner_label(map(), binary()) :: map()
   def owner_label(resource, owner_id) do
     resource
     |> update_in(~w(metadata), fn meta -> Map.put_new(meta || %{}, "labels", %{}) end)
@@ -58,28 +66,34 @@ defmodule KubeExt.Builder do
     end)
   end
 
+  @spec name(map(), binary()) :: map()
   def name(%{} = resource, name) do
     put_in(resource, ~w[metadata name], name)
   end
 
+  @spec namespace(map(), binary()) :: map()
   def namespace(resource, namespace) do
     put_in(resource, ~w[metadata namespace], namespace)
   end
 
+  @spec match_labels_selector(map(), binary()) :: map()
   def match_labels_selector(resource, app_name) do
     resource
     |> Map.put_new("selector", %{})
     |> put_in(~w[selector matchLabels], %{"battery/app" => app_name})
   end
 
+  @spec short_selector(map(), binary()) :: map()
   def short_selector(resource, app_name), do: short_selector(resource, "battery/app", app_name)
 
+  @spec short_selector(map(), binary(), binary()) :: map()
   def short_selector(resource, key, value) do
     resource
     |> Map.put_new("selector", %{})
     |> put_in(["selector", key], value)
   end
 
+  @spec rewriting_ingress(map()) :: map()
   def rewriting_ingress(resouce) do
     resouce
     |> annotation("nginx.ingress.kubernetes.io/rewrite-target", "/$2")

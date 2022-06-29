@@ -40,7 +40,7 @@ defmodule KubeResources.ConfigGenerator do
 
   require Logger
 
-  @spec materialize(map()) :: map
+  @spec materialize(BaseService.t()) :: map()
   def materialize(%BaseService{} = base_service) do
     base_service.config
     |> materialize(base_service.service_type)

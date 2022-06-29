@@ -7,14 +7,14 @@ defmodule ControlServer.Services.BaseService do
 
   %BaseService{} |> ConfigGenerator.materialize
   """
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   @timestamps_opts [type: :utc_datetime_usec]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "base_services" do
+  typed_schema "base_services" do
     field :root_path, :string
 
     field :service_type, Ecto.Enum,

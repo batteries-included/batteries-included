@@ -2,7 +2,7 @@ defmodule ControlServer.Postgres.Cluster do
   @moduledoc """
   The postgres cluster module
   """
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   alias KubeRawResources.RawCluster
@@ -11,7 +11,7 @@ defmodule ControlServer.Postgres.Cluster do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "clusters" do
+  typed_schema "clusters" do
     field :name, :string
     field :num_instances, :integer, default: 1
     field :postgres_version, :string, default: "13"

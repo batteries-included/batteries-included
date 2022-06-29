@@ -3,7 +3,7 @@ defmodule ControlServer.Usage.UsageReport do
   Database backing for usage reports used to determine what's
   running how it's configured and what should be billed.
   """
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   require Logger
@@ -12,7 +12,7 @@ defmodule ControlServer.Usage.UsageReport do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "usage_reports" do
+  typed_schema "usage_reports" do
     field :pod_report, :map
     field :node_report, :map
 

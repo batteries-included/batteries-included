@@ -1,10 +1,10 @@
 defmodule ControlServer.SnapshotApply.KubeSnapshot do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "kube_snapshots" do
+  typed_schema "kube_snapshots" do
     field :status, Ecto.Enum,
       values: [:creation, :generation, :applying, :ok, :error],
       default: :creation

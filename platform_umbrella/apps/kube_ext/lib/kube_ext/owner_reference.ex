@@ -1,4 +1,5 @@
 defmodule KubeExt.OwnerRefernce do
+  @spec get_owner(map()) :: binary() | nil
   def get_owner(resource) do
     resource
     |> get_in(~w(metadata ownerReferences))

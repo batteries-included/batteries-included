@@ -20,6 +20,7 @@ defmodule KubeServices.SnapshotApply.Steps do
     end
   end
 
+  @spec generation!(KubeSnapshot.t()) :: [ResourcePath.t()]
   def generation!(%KubeSnapshot{} = kube_snapshot) do
     with {:ok, resource_map} <- run_resource_paths_transaction(kube_snapshot) do
       resource_map
@@ -32,12 +33,15 @@ defmodule KubeServices.SnapshotApply.Steps do
     end
   end
 
+  @spec launch_resource_path_jobs([ResourcePath.t()]) :: [Oban.Job.t()]
   def launch_resource_path_jobs(resource_paths) do
     resource_paths
     |> Enum.map(fn rp -> KubeServices.SnapshotApply.ResourcePathWorker.new(%{id: rp.id}) end)
     |> Oban.insert_all()
   end
 
+  @spec apply_resource_path(ResourcePath.t()) ::
+          {:error, any} | {:ok, :applied | :state_hash_match}
   def apply_resource_path(%ResourcePath{} = rp) do
     if does_hash_match(rp) do
       {:ok, :state_hash_match}
@@ -55,12 +59,14 @@ defmodule KubeServices.SnapshotApply.Steps do
     })
   end
 
+  @spec update_applying!(KubeSnapshot.t()) :: KubeSnapshot.t()
   def update_applying!(%KubeSnapshot{} = snap) do
     with {:ok, new_snap} <- ControlSnapshotApply.update_kube_snapshot(snap, %{status: :applying}) do
       new_snap
     end
   end
 
+  @spec summarize!(KubeSnapshot.t()) :: KubeSnapshot.t()
   def summarize!(%KubeSnapshot{} = snap) do
     with {:ok, new_snap} <-
            ControlSnapshotApply.update_kube_snapshot(snap, %{

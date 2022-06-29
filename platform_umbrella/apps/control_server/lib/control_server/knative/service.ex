@@ -1,11 +1,11 @@
 defmodule ControlServer.Knative.Service do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "services" do
-    field :name, :string
+  typed_schema "services" do
+    field :name, :string, null: false
     field :image, :string
 
     timestamps()

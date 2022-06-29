@@ -2,8 +2,9 @@ defmodule KubeExt.Pods do
   @moduledoc """
   Get all the pods running for the services.
   """
-  def summarize(nil) do
-  end
+
+  @spec summarize(map() | nil) :: map()
+  def summarize(nil), do: %{}
 
   def summarize(pod) do
     Map.put(pod, "summary", %{

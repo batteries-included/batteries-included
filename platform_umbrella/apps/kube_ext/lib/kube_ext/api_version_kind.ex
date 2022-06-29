@@ -48,10 +48,13 @@ defmodule KubeExt.ApiVersionKind do
     certmanger_issuer: {"cert-manager.io/v1", "Issuer"}
   ]
 
+  @spec from_resource_type(atom) :: {binary(), binary()} | nil
   def from_resource_type(resource_type), do: Keyword.get(@known, resource_type, nil)
 
+  @spec all_known :: [atom()]
   def all_known, do: Keyword.keys(@known)
 
+  @spec resource_type(map()) :: atom()
   def resource_type(resource) do
     {key, _} =
       Enum.find(@known, {nil, nil}, fn {_key, {api_version, kind}} ->
@@ -61,8 +64,10 @@ defmodule KubeExt.ApiVersionKind do
     key
   end
 
+  @spec is_watchable({binary(), binary()}) :: boolean
   def is_watchable({api_version, kind}), do: is_watchable(api_version, kind)
 
+  @spec is_watchable(binary(), binary()) :: boolean
   def is_watchable(api_version, kind) do
     Enum.any?(@known, fn {_key, {known_api, known_kind}} ->
       api_version == known_api && kind == known_kind
