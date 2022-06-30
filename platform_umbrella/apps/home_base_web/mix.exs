@@ -40,7 +40,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix, "~> 1.6.10"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_view, "~> 0.17.10"},
-      {:floki, "~> 0.32", only: :test},
+      {:floki, "~> 0.33", only: :test},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_dashboard, "~> 0.6"},

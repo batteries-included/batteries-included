@@ -75,7 +75,7 @@ defmodule ControlServer.MixProject do
 
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},
-      {:floki, "~> 0.32", only: :test}
+      {:floki, "~> 0.33", only: :test}
     ]
   end
 
