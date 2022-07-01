@@ -1,15 +1,16 @@
 defmodule ControlServerWeb.LeftMenuLayout do
-  use Phoenix.Component
+  use ControlServerWeb, :component
   use PetalComponents
 
   import CommonUI.Icons.Devtools
   import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Notebook
   import CommonUI.Icons.Network
+  alias ControlServerWeb.Endpoint
 
   alias ControlServerWeb.Layout
 
-  @default_icon_class "group-hover:text-gray-500 flex-shrink-0 flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
+  @default_icon_class "group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
 
   defp assign_defaults(assigns) do
     assigns
@@ -99,22 +100,27 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_defaults(assigns)
 
     ~H"""
-    <.left_menu_item to="/services/data" name="Home" icon="home" is_active={@active == "home"} />
     <.left_menu_item
-      to="/services/data/postgres_clusters"
+      to={Routes.data_home_path(Endpoint, :index)}
+      name="Home"
+      icon="home"
+      is_active={@active == "home"}
+    />
+    <.left_menu_item
+      to={Routes.postgres_clusters_path(Endpoint, :index)}
       name="Postgres Clusters"
       icon="database"
       is_active={@active == "postgres"}
     />
     <.left_menu_item
-      to="/services/data/failover_clusters"
+      to={Routes.redis_path(Endpoint, :index)}
       name="Redis Clusters"
       icon="table"
       is_active={@active == "redis"}
     />
     <.left_menu_item
-      to="/services/data/settings"
-      name="Service Settings"
+      to={Routes.service_settings_path(Endpoint, :data)}
+      name="Settings"
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
@@ -126,13 +132,13 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/services/devtools/knative_services"
+      to={Routes.knative_services_index_path(Endpoint, :index)}
       name="Knative Services"
       icon="collection"
       is_active={@active == "knative"}
     />
     <.left_menu_item
-      to="/services/devtools/settings"
+      to={Routes.service_settings_path(Endpoint, :devtools)}
       name="Service Settings"
       icon="lightning_bolt"
       is_active={@active == "settings"}
@@ -149,14 +155,14 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/services/ml/notebooks"
+      to={Routes.jupyter_lab_notebook_index_path(Endpoint, :index)}
       name="Notebooks"
       icon="notebooks"
       is_active={@active == "notebooks"}
     />
     <.left_menu_item
-      to="/services/ml/settings"
-      name="Service Settings"
+      to={Routes.service_settings_path(Endpoint, :ml)}
+      name="Settings"
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
@@ -168,8 +174,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/services/monitoring/settings"
-      name="Service Settings"
+      to={Routes.service_settings_path(Endpoint, :monitoring)}
+      name="Settings"
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
@@ -236,10 +242,15 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_defaults(assigns)
 
     ~H"""
-    <.left_menu_item to="/users" name="Users" icon="user_group" is_active={@active == "users"} />
     <.left_menu_item
-      to="/services/security/settings"
-      name="Service Settings"
+      to={Routes.user_index_path(Endpoint, :index)}
+      name="Users"
+      icon="user_group"
+      is_active={@active == "users"}
+    />
+    <.left_menu_item
+      to={Routes.service_settings_path(Endpoint, :security)}
+      name="Settings"
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
@@ -251,8 +262,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/services/network/settings"
-      name="Service Settings"
+      to={Routes.service_settings_path(Endpoint, :network)}
+      name="Settings"
       icon="lightning_bolt"
       is_active={@active == "settings"}
     />
@@ -268,37 +279,37 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to="/internal/pods"
+      to={Routes.resource_list_path(Endpoint, :pods)}
       name="Pods"
       icon="lightning_bolt"
       is_active={@active == "pods"}
     />
     <.left_menu_item
-      to="/internal/deployments"
+      to={Routes.resource_list_path(Endpoint, :deployments)}
       name="Deployments"
       icon="lightning_bolt"
       is_active={@active == "deployments"}
     />
     <.left_menu_item
-      to="/internal/stateful_sets"
+      to={Routes.resource_list_path(Endpoint, :stateful_sets)}
       name="Stateful Sets"
       icon="lightning_bolt"
       is_active={@active == "stateful_sets"}
     />
     <.left_menu_item
-      to="/internal/nodes"
+      to={Routes.resource_list_path(Endpoint, :nodes)}
       name="Nodes"
       icon="lightning_bolt"
       is_active={@active == "nodes"}
     />
     <.left_menu_item
-      to="/internal/services"
+      to={Routes.resource_list_path(Endpoint, :services)}
       name="Services"
       icon="lightning_bolt"
       is_active={@active == "services"}
     />
     <.left_menu_item
-      to="/internal/kube_snapshots"
+      to={Routes.kube_snapshot_list_path(Endpoint, :index)}
       name="Kube Deploys"
       icon="lightning_bolt"
       is_active={@active == "snapshots"}

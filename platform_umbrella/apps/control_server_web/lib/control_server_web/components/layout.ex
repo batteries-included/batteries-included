@@ -1,10 +1,11 @@
 defmodule ControlServerWeb.Layout do
-  use Phoenix.Component
+  use ControlServerWeb, :component
   use PetalComponents
 
   import CommonUI.Icons.Devtools
 
   alias CommonUI.Layout, as: BaseLayout
+  alias ControlServerWeb.Endpoint
 
   @default_menu_item_class "hover:bg-astral-100 hover:text-pink-500 text-gray-500"
   @default_icon_class "h-6 w-6 text-astral-500 group-hover:text-pink-500"
@@ -67,13 +68,33 @@ defmodule ControlServerWeb.Layout do
         <%= render_slot(@title) %>
       </:title>
       <:main_menu>
-        <.menu_item to="/services/data" name="Data" icon="database" />
-        <.menu_item to="/services/ml/notebooks" name="ML" icon="beaker" />
-        <.menu_item to="/services/monitoring/settings" name="Monitoring" icon="chart_bar" />
-        <.menu_item to="/services/devtools/settings" name="Devtools" icon="devtools" />
-        <.menu_item to="/services/security/settings" name="Security" icon="lock_closed" />
-        <.menu_item to="/services/network/settings" name="Network" icon="globe_alt" />
-        <.menu_item to="/internal/pods" name="Magic" icon="sparkles" />
+        <.menu_item to={Routes.data_home_path(Endpoint, :index)} name="Data" icon="database" />
+        <.menu_item
+          to={Routes.jupyter_lab_notebook_index_path(Endpoint, :index)}
+          name="ML"
+          icon="beaker"
+        />
+        <.menu_item
+          to={Routes.service_settings_path(Endpoint, :monitoring)}
+          name="Monitoring"
+          icon="chart_bar"
+        />
+        <.menu_item
+          to={Routes.service_settings_path(Endpoint, :devtools)}
+          name="Devtools"
+          icon="devtools"
+        />
+        <.menu_item
+          to={Routes.service_settings_path(Endpoint, :security)}
+          name="Security"
+          icon="lock_closed"
+        />
+        <.menu_item
+          to={Routes.service_settings_path(Endpoint, :network)}
+          name="Network"
+          icon="globe_alt"
+        />
+        <.menu_item to={Routes.resource_list_path(Endpoint, :pods)} name="Magic" icon="sparkles" />
       </:main_menu>
       <%= render_slot(@inner_block) %>
     </BaseLayout.layout>

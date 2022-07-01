@@ -28,47 +28,47 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.Home, :index
 
-    live "/services/data", Live.DataHome, :index
-    live "/services/data/postgres_clusters", Live.PostgresClusters, :index
-    live "/services/data/postgres_clusters/new", Live.PostgresNew, :new
-    live "/services/data/postgres_clusters/:id/edit", Live.PostgresEdit, :edit
-    live "/services/data/postgres_clusters/:id/show", Live.PostgresShow, :show
+    live "/data", Live.DataHome, :index
+    live "/postgres_clusters", Live.PostgresClusters, :index
+    live "/postgres_clusters/new", Live.PostgresNew, :new
+    live "/postgres_clusters/:id/edit", Live.PostgresEdit, :edit
+    live "/postgres_clusters/:id/show", Live.PostgresShow, :show
 
-    live "/services/data/failover_clusters", Live.Redis, :index
-    live "/services/data/failover_clusters/new", Live.RedisNew, :new
-    live "/services/data/failover_clusters/:id/edit", Live.RedisEdit, :edit
-    live "/services/data/failover_clusters/:id/show", Live.RedisShow, :show
+    live "/failover_clusters", Live.Redis, :index
+    live "/failover_clusters/new", Live.RedisNew, :new
+    live "/failover_clusters/:id/edit", Live.RedisEdit, :edit
+    live "/failover_clusters/:id/show", Live.RedisShow, :show
 
-    live "/services/devtools/knative_services", Live.KnativeServicesIndex, :index
-    live "/services/devtools/knative_services/new", Live.KnativeNew, :new
-    live "/services/devtools/knative_services/:id/edit", Live.KnativeEdit, :edit
-    live "/services/devtools/knative_services/:id/show", Live.KnativeShow, :show
+    live "/knative_services", Live.KnativeServicesIndex, :index
+    live "/knative_services/new", Live.KnativeNew, :new
+    live "/knative_services/:id/edit", Live.KnativeEdit, :edit
+    live "/knative_services/:id/show", Live.KnativeShow, :show
 
-    live "/services/network/status", Live.NetworkStatus, :index
+    live "/network/status", Live.NetworkStatus, :index
 
-    live "/services/ml/notebooks", Live.JupyterLabNotebook.Index, :index
-    live "/services/ml/notebooks/:id", Live.JupyterLabNotebook.Show, :index
+    live "/notebooks", Live.JupyterLabNotebook.Index, :index
+    live "/notebooks/:id", Live.JupyterLabNotebook.Show, :index
 
-    live "/services/network/kiali", Live.Iframe, :kiali
-    live "/services/monitoring/grafana", Live.Iframe, :grafana
-    live "/services/monitoring/alert_manager", Live.Iframe, :alert_manager
-    live "/services/monitoring/prometheus", Live.Iframe, :prometheus
-    live "/services/devtools/gitea", Live.Iframe, :gitea
+    live "/kiali", Live.Iframe, :kiali
+    live "/grafana", Live.Iframe, :grafana
+    live "/alert_manager", Live.Iframe, :alert_manager
+    live "/prometheus", Live.Iframe, :prometheus
+    live "/gitea", Live.Iframe, :gitea
 
-    live "/services/monitoring/settings", Live.ServiceSettings, :monitoring
-    live "/services/data/settings", Live.ServiceSettings, :data
-    live "/services/devtools/settings", Live.ServiceSettings, :devtools
-    live "/services/network/settings", Live.ServiceSettings, :network
-    live "/services/security/settings", Live.ServiceSettings, :security
-    live "/services/ml/settings", Live.ServiceSettings, :ml
+    live "/monitoring/settings", Live.ServiceSettings, :monitoring
+    live "/data/settings", Live.ServiceSettings, :data
+    live "/devtools/settings", Live.ServiceSettings, :devtools
+    live "/network/settings", Live.ServiceSettings, :network
+    live "/security/settings", Live.ServiceSettings, :security
+    live "/ml/settings", Live.ServiceSettings, :ml
 
-    live "/internal/deployments", Live.ResourceList, :deployments
-    live "/internal/stateful_sets", Live.ResourceList, :stateful_sets
-    live "/internal/nodes", Live.ResourceList, :nodes
-    live "/internal/pods", Live.ResourceList, :pods
-    live "/internal/services", Live.ResourceList, :services
-    live "/internal/kube_snapshots", Live.KubeSnapshotList, :index
-    live "/internal/kube_snapshots/:id", Live.KubeSnapshotShow, :index
+    live "/deployments", Live.ResourceList, :deployments
+    live "/stateful_sets", Live.ResourceList, :stateful_sets
+    live "/nodes", Live.ResourceList, :nodes
+    live "/pods", Live.ResourceList, :pods
+    live "/services", Live.ResourceList, :services
+    live "/kube_snapshots", Live.KubeSnapshotList, :index
+    live "/kube_snapshots/:id", Live.KubeSnapshotShow, :index
   end
 
   scope "/api", ControlServerWeb do
