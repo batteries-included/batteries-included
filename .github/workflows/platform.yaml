@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+      - gh-readonly-queue/master/**
+      - gh-readonly-queue/main/**
   pull_request:
 
 jobs:
