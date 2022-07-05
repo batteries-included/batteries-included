@@ -2,6 +2,7 @@
 #![deny(clippy::pedantic)]
 #![deny(clippy::nursery)]
 #![allow(clippy::module_name_repetitions)]
+#![allow(clippy::type_repetition_in_bounds)]
 
 //! CLI for Batteries Included
 
