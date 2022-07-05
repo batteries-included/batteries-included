@@ -66,6 +66,14 @@ defmodule KubeExt.Builder do
     end)
   end
 
+  @spec component_label(map(), binary()) :: map()
+  def component_label(resource, component_name) do
+    resource
+    |> label("battery/component", component_name)
+    |> label("component", component_name)
+    |> label("app.kubernetes.io/component", component_name)
+  end
+
   @spec name(map(), binary()) :: map()
   def name(%{} = resource, name) do
     put_in(resource, ~w[metadata name], name)
