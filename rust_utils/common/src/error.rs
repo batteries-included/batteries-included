@@ -9,6 +9,9 @@ use tracing_subscriber::filter::{FromEnvError, ParseError};
 
 #[derive(Error, Debug)]
 pub enum BatteryError {
+    #[error("Operation timed out")]
+    Timeout,
+
     #[error("Kubernetes config error")]
     KubeConfigError(#[from] InferConfigError),
 

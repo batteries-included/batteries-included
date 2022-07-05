@@ -1,4 +1,5 @@
-use tracing_subscriber::EnvFilter;
+use subscriber::EnvFilter;
+pub use tracing_subscriber as subscriber;
 
 use crate::error::Result;
 

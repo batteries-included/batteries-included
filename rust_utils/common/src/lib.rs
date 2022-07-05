@@ -26,7 +26,13 @@
 pub mod cluster_spec;
 pub mod defaults;
 pub mod error;
+
+// TODO: need to be more specific
+#[cfg(feature = "tracing-subscriber")]
 pub mod logging;
 
 #[cfg(feature = "k8s-openapi")]
 pub use k8s_openapi;
+
+#[cfg(feature = "kube")]
+pub use kube;
