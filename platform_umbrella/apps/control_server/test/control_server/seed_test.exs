@@ -5,23 +5,27 @@ defmodule ControlServer.SeedTest do
   alias ControlServer.Postgres
   alias ControlServer.Services
 
+  import ExUnit.CaptureIO
+
   describe "ControlServer.Seed" do
     def baseservice_count, do: Repo.aggregate(Services.BaseService, :count)
     def postgres_count, do: Repo.aggregate(Postgres.Cluster, :count)
 
     test "its idempotent" do
-      assert 0 == baseservice_count()
-      assert 0 == postgres_count()
+      capture_io(fn ->
+        assert 0 == baseservice_count()
+        assert 0 == postgres_count()
 
-      Release.seed()
+        Release.seed()
 
-      assert 8 == baseservice_count()
-      assert 1 == postgres_count()
+        assert 8 == baseservice_count()
+        assert 1 == postgres_count()
 
-      Release.seed()
+        Release.seed()
 
-      assert 8 == baseservice_count()
-      assert 1 == postgres_count()
+        assert 8 == baseservice_count()
+        assert 1 == postgres_count()
+      end)
     end
   end
 end
