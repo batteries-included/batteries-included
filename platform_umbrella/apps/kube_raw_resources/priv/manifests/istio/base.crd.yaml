@@ -71,7 +71,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               sha256:
@@ -152,7 +151,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       type: object
                     name:
                       description: Name of the subset.
@@ -1320,7 +1318,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       type: object
                     name:
                       description: Name of the subset.
@@ -2677,7 +2674,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -2997,7 +2993,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -3077,7 +3072,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       description: One or more labels associated with the endpoint.
                       type: object
                     locality:
@@ -3147,7 +3141,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -3203,7 +3196,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       description: One or more labels associated with the endpoint.
                       type: object
                     locality:
@@ -3273,7 +3265,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -3468,7 +3459,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -3641,7 +3631,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -5225,7 +5214,6 @@ spec:
               labels:
                 additionalProperties:
                   type: string
-                battery/managed: 'True'
                 description: One or more labels associated with the endpoint.
                 type: object
               locality:
@@ -5278,7 +5266,6 @@ spec:
               labels:
                 additionalProperties:
                   type: string
-                battery/managed: 'True'
                 description: One or more labels associated with the endpoint.
                 type: object
               locality:
@@ -5354,7 +5341,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               probe:
@@ -5452,7 +5438,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     description: One or more labels associated with the endpoint.
                     type: object
                   locality:
@@ -5505,7 +5490,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               probe:
@@ -5603,7 +5587,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     description: One or more labels associated with the endpoint.
                     type: object
                   locality:
@@ -5825,7 +5808,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -5916,7 +5898,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -6013,7 +5994,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -6184,7 +6164,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               tracing:
@@ -6395,7 +6374,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               sha256:
@@ -6476,7 +6454,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       type: object
                     name:
                       description: Name of the subset.
@@ -7644,7 +7621,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       type: object
                     name:
                       description: Name of the subset.
@@ -9001,7 +8977,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -9321,7 +9296,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -9401,7 +9375,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       description: One or more labels associated with the endpoint.
                       type: object
                     locality:
@@ -9471,7 +9444,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -9527,7 +9499,6 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      battery/managed: 'True'
                       description: One or more labels associated with the endpoint.
                       type: object
                     locality:
@@ -9597,7 +9568,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -9792,7 +9762,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -9965,7 +9934,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -11549,7 +11517,6 @@ spec:
               labels:
                 additionalProperties:
                   type: string
-                battery/managed: 'True'
                 description: One or more labels associated with the endpoint.
                 type: object
               locality:
@@ -11602,7 +11569,6 @@ spec:
               labels:
                 additionalProperties:
                   type: string
-                battery/managed: 'True'
                 description: One or more labels associated with the endpoint.
                 type: object
               locality:
@@ -11678,7 +11644,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               probe:
@@ -11776,7 +11741,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     description: One or more labels associated with the endpoint.
                     type: object
                   locality:
@@ -11829,7 +11793,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               probe:
@@ -11927,7 +11890,6 @@ spec:
                   labels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     description: One or more labels associated with the endpoint.
                     type: object
                   locality:
@@ -12149,7 +12111,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -12240,7 +12201,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -12337,7 +12297,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
             type: object
@@ -12508,7 +12467,6 @@ spec:
                   matchLabels:
                     additionalProperties:
                       type: string
-                    battery/managed: 'True'
                     type: object
                 type: object
               tracing:
