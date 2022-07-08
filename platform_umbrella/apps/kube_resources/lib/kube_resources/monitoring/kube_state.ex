@@ -150,8 +150,7 @@ defmodule KubeResources.KubeStateMonitoring do
 
   def deployment(config) do
     namespace = MonitoringSettings.namespace(config)
-    image = MonitoringSettings.kube_image(config)
-    version = MonitoringSettings.kube_version(config)
+    image = MonitoringSettings.kube_state_image(config)
 
     %{
       "apiVersion" => "apps/v1",
@@ -187,7 +186,7 @@ defmodule KubeResources.KubeStateMonitoring do
                   "--telemetry-host=127.0.0.1",
                   "--telemetry-port=#{@internal_telemetry_port}"
                 ],
-                "image" => "#{image}:#{version}",
+                "image" => image,
                 "name" => "kube-state-metrics"
               },
               RBAC.proxy_container(

@@ -58,16 +58,15 @@ defmodule KubeRawResources.ControlServerResources do
     base = Keyword.get(options, :base, %{})
     name = Keyword.get(options, :name, "control-server")
 
-    version = Keyword.get(options, :version, BatterySettings.control_server_version(config))
     image = Keyword.get(options, :image, BatterySettings.control_server_image(config))
 
-    host = BatterySettings.postgres_host(config)
-    db = BatterySettings.postgres_db(config)
-    credential_secret = BatterySettings.postgres_credential_secret(config)
+    host = BatterySettings.control_server_pg_host(config)
+    db = BatterySettings.control_server_pg_db(config)
+    credential_secret = BatterySettings.control_server_pg_secret(config)
 
     base
     |> Map.put_new("name", name)
-    |> Map.put_new("image", "#{image}:#{version}")
+    |> Map.put_new("image", image)
     |> Map.put_new("resources", %{
       "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
       "requests" => %{"cpu" => "200m", "memory" => "200Mi"}

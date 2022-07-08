@@ -3,47 +3,43 @@ defmodule KubeResources.DevtoolsSettings do
   Module around turning BaseService json config into usable settings.
   """
 
+  import KubeExt.MapSettings
   alias KubeRawResources.Gitea, as: GiteaRaw
 
   @namespace "battery-core"
   @knative_namespace "battery-knative"
   @harbor_namespace "battery-harbor"
-  @knative_operator_image "gcr.io/knative-releases/knative.dev/operator/cmd/operator"
-  @knative_operator_version "v1.5.0"
+  @knative_operator_image "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.5.1"
 
-  @gitea_image "gitea/gitea"
-  @gitea_version "1.16.4"
+  @gitea_image "gitea/gitea:1.16.8"
 
-  def namespace(config), do: Map.get(config, "namespace", @namespace)
-  def gh_enabled(config), do: Map.get(config, "runner.enabled", false)
+  @core_image "goharbor/harbor-core:v2.5.2"
+  @portal_image "goharbor/harbor-portal:v2.5.2"
+  @jobservice_image "goharbor/harbor-jobservice:v2.5.2"
+  @registry_photon_image "goharbor/registry-photon:v2.5.2"
+  @registry_ctl_image "goharbor/harbor-registryctl:v2.5.2"
+  @trivy_adapter_image "goharbor/trivy-adapter-photon:dev"
 
-  def gh_app_id(config), do: Map.get(config, "runner.appid", "113520")
-  def gh_install_id(config), do: Map.get(config, "runner.install_id", "16687509")
+  setting(:namespace, :namespace, @namespace)
 
-  def knative_operator_image(config),
-    do: Map.get(config, "knative.operator_image", @knative_operator_image)
+  setting(:gh_app_id, :app_id, "113520")
+  setting(:gh_install_id, :install_id, "16687509")
+  setting(:gh_private_key, :private_key, "")
 
-  def knative_operator_version(config),
-    do: Map.get(config, "knative.operator_version", @knative_operator_version)
+  setting(:knative_operator_image, :image, @knative_operator_image)
+  setting(:knative_namespace, :namespace, @knative_namespace)
 
-  def knative_destination_namespace(config),
-    do: Map.get(config, "knative.desination_namespace", @knative_namespace)
+  setting(:harbor_namespace, :namespace, @harbor_namespace)
+  setting(:harbor_core_image, :image, @core_image)
+  setting(:harbor_portal_image, :portal_image, @portal_image)
+  setting(:harbor_jobservice_image, :jobservice_image, @jobservice_image)
+  setting(:harbor_registry_photon_image, :registry_photon_image, @registry_photon_image)
+  setting(:harbor_registry_ctl_image, :registry_ctl_image, @registry_ctl_image)
+  setting(:harbor_trivy_adapter_image, :trivy_adapter_image, @trivy_adapter_image)
 
-  def harbor_destination_namespace(config),
-    do: Map.get(config, "harbor.desination_namespace", @harbor_namespace)
+  setting(:gitea_image, :image, @gitea_image)
 
-  def gh_private_key(config),
-    do:
-      Map.get(
-        config,
-        "runner.priv_key",
-        ""
-      )
-
-  def gitea_image(config), do: Map.get(config, "gitea.image", @gitea_image)
-  def gitea_version(config), do: Map.get(config, "gitea.version", @gitea_version)
-
-  def gitea_user_secret_name(_config) do
+  def gitea_pg_secret_name(_config) do
     user = GiteaRaw.db_username()
     team = GiteaRaw.db_team()
     cluster_name = GiteaRaw.db_name()

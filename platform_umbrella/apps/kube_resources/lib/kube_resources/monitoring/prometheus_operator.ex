@@ -177,7 +177,7 @@ defmodule KubeResources.PrometheusOperator do
   def deployment(config) do
     namespace = MonitoringSettings.namespace(config)
     image = MonitoringSettings.prometheus_operator_image(config)
-    version = MonitoringSettings.prometheus_operator_version(config)
+    reloader_image = MonitoringSettings.prometheus_reloader_image(config)
 
     %{
       "apiVersion" => "apps/v1",
@@ -209,9 +209,9 @@ defmodule KubeResources.PrometheusOperator do
               %{
                 "args" => [
                   "--kubelet-service=kube-system/kubelet",
-                  "--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:#{version}"
+                  "--prometheus-config-reloader=#{reloader_image}"
                 ],
-                "image" => "#{image}:#{version}",
+                "image" => image,
                 "name" => "prometheus-operator",
                 "ports" => [
                   %{"containerPort" => @internal_port, "name" => @internal_port_name}

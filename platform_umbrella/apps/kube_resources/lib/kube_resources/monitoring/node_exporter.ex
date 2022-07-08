@@ -78,8 +78,7 @@ defmodule KubeResources.NodeExporter do
 
   def daemonset(config) do
     namespace = MonitoringSettings.namespace(config)
-    version = MonitoringSettings.node_version(config)
-    image = MonitoringSettings.node_image(config)
+    image = MonitoringSettings.node_exporter_image(config)
 
     %{
       "apiVersion" => "apps/v1",
@@ -117,7 +116,7 @@ defmodule KubeResources.NodeExporter do
                   "--no-collector.hwmon",
                   "--collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)"
                 ],
-                "image" => "#{image}:#{version}",
+                "image" => image,
                 "name" => "node-exporter",
                 "resources" => %{
                   "limits" => %{

@@ -7,7 +7,7 @@ defmodule KubeResources.KnativeServing do
   @app_name "knative-serving"
 
   def namespace_dest(config) do
-    knative_dest_namespace = DevtoolsSettings.knative_destination_namespace(config)
+    knative_dest_namespace = DevtoolsSettings.knative_namespace(config)
 
     B.build_resource(:namespace)
     |> B.name(knative_dest_namespace)
@@ -16,7 +16,7 @@ defmodule KubeResources.KnativeServing do
   end
 
   def knative_serving(config) do
-    knative_dest_namespace = DevtoolsSettings.knative_destination_namespace(config)
+    knative_dest_namespace = DevtoolsSettings.knative_namespace(config)
 
     spec = %{
       "config" => %{
@@ -38,7 +38,7 @@ defmodule KubeResources.KnativeServing do
   end
 
   def domain_config(config) do
-    namespace = DevtoolsSettings.knative_destination_namespace(config)
+    namespace = DevtoolsSettings.knative_namespace(config)
 
     data = Map.put(%{}, Hosts.knative(), "")
 
@@ -50,7 +50,7 @@ defmodule KubeResources.KnativeServing do
   end
 
   def serving_service(%Knative.Service{} = service, config) do
-    namespace = DevtoolsSettings.knative_destination_namespace(config)
+    namespace = DevtoolsSettings.knative_namespace(config)
 
     spec = %{
       "template" => %{
@@ -78,7 +78,7 @@ defmodule KubeResources.KnativeServing do
 
   def url(%Knative.Service{} = service) do
     # assume the default config for now /shrug
-    namespace = DevtoolsSettings.knative_destination_namespace(%{})
+    namespace = DevtoolsSettings.knative_namespace(%{})
     "//#{service.name}.#{namespace}.#{Hosts.knative()}"
   end
 

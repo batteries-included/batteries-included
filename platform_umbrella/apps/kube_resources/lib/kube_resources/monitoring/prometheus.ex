@@ -77,14 +77,12 @@ defmodule KubeResources.Prometheus do
 
   def prometheus_spec(config) do
     image = MonitoringSettings.prometheus_image(config)
-    version = MonitoringSettings.prometheus_version(config)
 
     %{
-      "image" => "#{image}:#{version}",
+      "image" => image,
       "logLevel" => "debug",
       "externalUrl" => "/x/prometheus",
-      "serviceAccountName" => "battery-prometheus",
-      "version" => version
+      "serviceAccountName" => "battery-prometheus"
     }
     |> Map.merge(selectors(config))
     |> Map.merge(limits(config))

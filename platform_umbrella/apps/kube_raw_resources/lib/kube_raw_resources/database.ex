@@ -67,7 +67,7 @@ defmodule KubeRawResources.Database do
 
   def metrics_service(%{} = cluster, config, role) do
     namespace = namespace(cluster, config)
-    label_name = DataSettings.cluster_name_label(config)
+    label_name = DataSettings.pg_cluster_label(config)
     cluster_name = full_name(cluster)
 
     selector = cluster |> cluster_label_selector(config, role) |> Map.put("application", "spilo")
@@ -97,7 +97,7 @@ defmodule KubeRawResources.Database do
 
   defp cluster_label_selector(%{} = cluster, config, role) do
     cluster_name = full_name(cluster)
-    label_name = DataSettings.cluster_name_label(config)
+    label_name = DataSettings.pg_cluster_label(config)
 
     %{
       label_name => cluster_name,
@@ -108,7 +108,7 @@ defmodule KubeRawResources.Database do
   def service_monitor(%{} = cluster, config, role) do
     namespace = namespace(cluster, config)
     cluster_name = full_name(cluster)
-    label_name = DataSettings.cluster_name_label(config)
+    label_name = DataSettings.pg_cluster_label(config)
 
     monitor_name = "#{cluster_name}-#{role}"
 

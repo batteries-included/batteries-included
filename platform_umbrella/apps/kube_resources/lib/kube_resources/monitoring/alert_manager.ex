@@ -94,7 +94,6 @@ defmodule KubeResources.AlertManager do
   def alertmanager(config) do
     namespace = MonitoringSettings.namespace(config)
     image = MonitoringSettings.alertmanager_image(config)
-    version = MonitoringSettings.alertmanager_version(config)
 
     %{
       "apiVersion" => "monitoring.coreos.com/v1",
@@ -108,7 +107,7 @@ defmodule KubeResources.AlertManager do
         }
       },
       "spec" => %{
-        "image" => "#{image}:#{version}",
+        "image" => image,
         "nodeSelector" => %{
           "kubernetes.io/os": "linux"
         },
@@ -121,8 +120,7 @@ defmodule KubeResources.AlertManager do
           "runAsNonRoot" => true,
           "runAsUser" => 1000
         },
-        "serviceAccountName" => "battery-alertmanager",
-        "version" => version
+        "serviceAccountName" => "battery-alertmanager"
       }
     }
   end

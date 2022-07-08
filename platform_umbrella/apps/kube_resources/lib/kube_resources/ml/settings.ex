@@ -1,8 +1,9 @@
 defmodule KubeResources.MLSettings do
+  import KubeExt.MapSettings
+
   @namespace "battery-core"
   @public_namespace "battery-ml"
 
-  def namespace(config), do: Map.get(config, "namespace", @namespace)
-
-  def public_namespace(config), do: Map.get(config, "namespace.public", @public_namespace)
+  setting(:namespace, :namespace, @namespace)
+  setting(:public_namespace, :namespace, @public_namespace)
 end

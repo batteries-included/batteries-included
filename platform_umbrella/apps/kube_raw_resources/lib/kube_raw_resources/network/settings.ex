@@ -1,11 +1,9 @@
 defmodule KubeRawResources.NetworkSettings do
+  import KubeExt.MapSettings
+
   @namespace "battery-core"
   @istio_namespace "battery-istio"
-  @istio_ingress_namespace "battery-ingress"
 
-  def namespace(config), do: Map.get(config, "namespace", @namespace)
-  def istio_namespace(config), do: Map.get(config, "istio.namespace", @istio_namespace)
-
-  def ingress_namespace(config),
-    do: Map.get(config, "istio.ingress.namespace", @istio_ingress_namespace)
+  setting(:namespace, :namespace, @namespace)
+  setting(:istio_namespace, :namespace, @istio_namespace)
 end

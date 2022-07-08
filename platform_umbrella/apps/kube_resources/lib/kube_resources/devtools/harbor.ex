@@ -505,6 +505,7 @@ defmodule KubeResources.Harbor do
 
   def deployment(config) do
     namespace = DevtoolsSettings.namespace(config)
+    core_image = DevtoolsSettings.harbor_core_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -568,7 +569,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => "goharbor/harbor-core:dev",
+              "image" => core_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 2,
@@ -682,6 +683,7 @@ defmodule KubeResources.Harbor do
 
   def deployment_1(config) do
     namespace = DevtoolsSettings.namespace(config)
+    jobservice_image = DevtoolsSettings.harbor_jobservice_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -739,7 +741,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => "goharbor/harbor-jobservice:dev",
+              "image" => jobservice_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -811,6 +813,7 @@ defmodule KubeResources.Harbor do
 
   def deployment_2(config) do
     namespace = DevtoolsSettings.namespace(config)
+    image = DevtoolsSettings.harbor_portal_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -833,7 +836,7 @@ defmodule KubeResources.Harbor do
           "automountServiceAccountToken" => false,
           "containers" => [
             %{
-              "image" => "goharbor/harbor-portal:dev",
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -894,6 +897,8 @@ defmodule KubeResources.Harbor do
 
   def deployment_3(config) do
     namespace = DevtoolsSettings.namespace(config)
+    registry_image = DevtoolsSettings.harbor_registry_photon_image(config)
+    ctl_image = DevtoolsSettings.harbor_registry_ctl_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -930,7 +935,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => "goharbor/registry-photon:dev",
+              "image" => registry_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -1022,7 +1027,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => "goharbor/harbor-registryctl:dev",
+              "image" => ctl_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -1111,6 +1116,7 @@ defmodule KubeResources.Harbor do
 
   def stateful_set(config) do
     namespace = DevtoolsSettings.namespace(config)
+    trivy_adapter_image = DevtoolsSettings.harbor_trivy_adapter_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -1232,7 +1238,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => "goharbor/trivy-adapter-photon:dev",
+              "image" => trivy_adapter_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 10,

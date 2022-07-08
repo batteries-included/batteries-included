@@ -179,10 +179,9 @@ defmodule KubeResources.Grafana do
 
   defp container(config) do
     image = MonitoringSettings.grafana_image(config)
-    version = MonitoringSettings.grafana_version(config)
 
     %{}
-    |> Map.put("image", "#{image}:#{version}")
+    |> Map.put("image", image)
     |> Map.put("name", "grafana")
     |> Map.put("env", [])
     |> Map.put("resources", %{

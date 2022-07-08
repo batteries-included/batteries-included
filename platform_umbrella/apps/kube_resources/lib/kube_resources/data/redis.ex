@@ -72,9 +72,6 @@ defmodule KubeResources.Redis do
     namespace = DataSettings.public_namespace(config)
 
     image = DataSettings.redis_operator_image(config)
-    ver = DataSettings.redis_operator_version(config)
-
-    full_image = "#{image}:#{ver}"
 
     spec = %{
       "replicas" => 1,
@@ -96,7 +93,7 @@ defmodule KubeResources.Redis do
         "spec" => %{
           "containers" => [
             %{
-              "image" => full_image,
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "app",
               "resources" => %{

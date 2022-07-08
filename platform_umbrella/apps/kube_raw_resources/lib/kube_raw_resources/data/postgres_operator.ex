@@ -211,8 +211,7 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   def deployment(config, namespace) do
-    operator_image = DataSettings.pg_operator_image(config)
-    operator_version = DataSettings.pg_operator_version(config)
+    image = DataSettings.pg_operator_image(config)
 
     %{
       "apiVersion" => "apps/v1",
@@ -248,7 +247,7 @@ defmodule KubeRawResources.PostgresOperator do
             "containers" => [
               %{
                 "name" => "postgres-operator",
-                "image" => "#{operator_image}:#{operator_version}",
+                "image" => image,
                 "imagePullPolicy" => "IfNotPresent",
                 "env" => [
                   %{
@@ -332,7 +331,7 @@ defmodule KubeRawResources.PostgresOperator do
   end
 
   defp operator_configuration_kubernets(config, false = _include_dev_infrausers) do
-    label_name = DataSettings.cluster_name_label(config)
+    label_name = DataSettings.pg_cluster_label(config)
 
     %{
       "oauth_token_secret_name" => "battery-postgres-operator",

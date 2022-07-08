@@ -146,6 +146,7 @@ defmodule KubeResources.Keycloak do
 
   def deployment(config) do
     namespace = SecuritySettings.namespace(config)
+    image = SecuritySettings.keycloak_operator_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -171,7 +172,7 @@ defmodule KubeResources.Keycloak do
                 },
                 %{"name" => "OPERATOR_NAME", "value" => "keycloak-operator"}
               ],
-              "image" => "quay.io/keycloak/keycloak-operator:17.0.0",
+              "image" => image,
               "imagePullPolicy" => "Always",
               "name" => "keycloak-operator"
             }
@@ -194,7 +195,7 @@ defmodule KubeResources.Keycloak do
     db_team = RawKeycloak.db_team()
     db_service_name = "#{db_team}-#{db_name}.#{namespace}.svc.cluster.local"
 
-    metrics_version = SecuritySettings.keycloak_metrics_version(config)
+    metrics_version = SecuritySettings.keycloak_metrics_spi_version(config)
 
     spec = %{
       "instances" => 1,

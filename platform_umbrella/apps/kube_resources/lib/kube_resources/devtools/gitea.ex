@@ -161,15 +161,12 @@ defmodule KubeResources.Gitea do
 
   defp base_container(config, name, command \\ nil) do
     gitea_image = DevtoolsSettings.gitea_image(config)
-    gitea_version = DevtoolsSettings.gitea_version(config)
 
-    image_with_version = "#{gitea_image}:#{gitea_version}"
-
-    pg_secret = DevtoolsSettings.gitea_user_secret_name(config)
+    pg_secret = DevtoolsSettings.gitea_pg_secret_name(config)
 
     %{}
     |> Map.put("name", name)
-    |> Map.put("image", image_with_version)
+    |> Map.put("image", gitea_image)
     |> Map.put("env", [
       %{"name" => "GITEA_CUSTOM", "value" => Path.join(@data_path, "/gitea")},
       %{"name" => "GITEA_APP_INI", "value" => Path.join(@data_path, "/gitea/conf/app.ini")},

@@ -1,36 +1,33 @@
 defmodule KubeRawResources.BatterySettings do
+  import KubeExt.MapSettings
+
   @namespace "battery-core"
 
-  @control_image "battery-registry:5000/battery/control"
-  @control_version "c6f4bd1-dirty"
+  @control_image "battery-registry:5000/battery/control:c6f4bd1-dirty1"
   @control_name "control-server"
 
   @default_pg_cluster_name "pg-control"
   @default_pg_username "controlserver"
+  @default_pg_db "control"
 
-  @spec namespace(map) :: binary()
-  def namespace(config), do: Map.get(config, "namespace", @namespace)
+  setting(:namespace, :namespace, @namespace)
 
-  @spec control_server_image(map) :: binary()
-  def control_server_image(config), do: Map.get(config, "control.image", @control_image)
+  setting(:control_server_image, :image, @control_image)
+  setting(:control_server_name, :name, @control_name)
 
-  @spec control_server_version(map) :: binary()
-  def control_server_version(config), do: Map.get(config, "control.version", @control_version)
-  def control_server_name(config), do: Map.get(config, "control.name", @control_name)
+  setting(
+    :control_server_pg_host,
+    :pg_host,
+    "#{@default_pg_cluster_name}.#{@namespace}.svc.cluster.local"
+  )
 
-  @spec postgres_host(map) :: binary()
-  def postgres_host(config) do
-    namespace = namespace(config)
-    default = "#{@default_pg_cluster_name}.#{namespace}.svc.cluster.local"
-    Map.get(config, "postgres.host", default)
-  end
+  def default_pg_db, do: fn -> System.get_env("POSTGRES_DB") || @default_pg_db end
 
-  @spec postgres_db(map) :: binary()
-  def postgres_db(config) do
-    Map.get(config, "postgres.db", System.get_env("POSTGRES_DB") || "control")
-  end
+  setting_fn(:control_server_pg_db, :pg_db, &default_pg_db/0)
 
-  def postgres_credential_secret(_config) do
+  setting(
+    :control_server_pg_secret,
+    :pg_secret,
     "#{@default_pg_username}.#{@default_pg_cluster_name}.credentials.postgresql.acid.zalan.do"
-  end
+  )
 end
