@@ -23,8 +23,6 @@
 )]
 #![allow(clippy::use_self)]
 
-pub mod cluster_spec;
-pub mod defaults;
 pub mod error;
 
 // TODO: need to be more specific

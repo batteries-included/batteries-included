@@ -8,7 +8,8 @@ name = "cli"
 version = "0.1.0"
 
 [dependencies]
-common = { path = "../common", features = ["kube-api", "app"] }
+anyhow = "1.0.58"
+common = { path = "../common", features = ["app", "kube-api"] }
 # Concurrency
 futures = "0.3.21"
 tokio = { version = "1.19.2", features = ["full"] }
@@ -22,3 +23,4 @@ serde_yaml = "0.8.23"
 thiserror = "1.0"
 async-trait = "0.1.56"
 # fuser = "0.11.0"
+rust-embed = { version  = "6.4", features = ["interpolate-folder-path", "include-exclude"] }

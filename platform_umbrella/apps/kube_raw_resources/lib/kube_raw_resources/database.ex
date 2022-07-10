@@ -56,7 +56,6 @@ defmodule KubeRawResources.Database do
       "volume" => %{
         "size" => storage_size(cluster)
       },
-      "pam_role_name" => "batteryusers",
       "users" => users(cluster),
       "databases" => databases(cluster),
       "sidecars" => [

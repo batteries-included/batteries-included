@@ -7,19 +7,19 @@
 //! CLI for Batteries Included
 
 use clap::Parser;
-use common::error::Result;
-use common::logging::subscriber::{self, EnvFilter};
-use tracing::{info_span, Instrument};
+use common::logging::try_init_logging;
 
 mod bootstrap;
-mod print_yaml;
+mod dev;
 
 /// Entry point to all things command-line
 #[derive(Debug, clap::Parser)]
 pub enum Cli {
-    Bootstrap(bootstrap::BootstrapArgs),
-    /// Print the shared yaml for bootstrap and control servers
-    PrintYaml,
+    /// Dump the contents of the embeddedb bootstrap yamls into the default kubernetes cluster
+    Bootstrap,
+    /// Developer tools
+    #[clap(subcommand)]
+    Dev(dev::DevCommands),
 }
 
 #[derive(Debug, clap::Parser)]
@@ -32,21 +32,12 @@ pub struct CliArgs {
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    let app = CliArgs::parse();
+async fn main() -> anyhow::Result<()> {
+    try_init_logging()?;
+    let app = Cli::parse();
 
-    let filter = EnvFilter::try_from_default_env()
-        .or_else(|_| EnvFilter::try_new("cli=info"))
-        .unwrap();
-
-    subscriber::fmt()
-        .with_env_filter(filter)
-        .with_max_level(app.log_level)
-        .try_init()
-        .unwrap();
-
-    match app.command {
-        Cli::Bootstrap(args) => args.run().instrument(info_span!("bootstrap")).await,
-        Cli::PrintYaml => print_yaml::run(),
+    match app {
+        Cli::Bootstrap => bootstrap::run().await,
+        Cli::Dev(dev_args) => Ok(dev_args.run()?),
     }
 }

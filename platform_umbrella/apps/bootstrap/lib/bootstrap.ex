@@ -17,6 +17,20 @@ defmodule Bootstrap do
     end
   end
 
+  def dump do
+    Logger.debug("Running")
+    :ok = load_app()
+    Logger.debug("Done starting application")
+
+    outdir =
+      case Enum.fetch(System.argv(), 0) do
+        :error -> raise "Usage: Bootstrap.dump <output-dir>"
+        {:ok, outdir} -> outdir
+      end
+
+    InitialSync.dump(outdir)
+  end
+
   def run do
     Logger.debug("Running")
     :ok = load_app()
