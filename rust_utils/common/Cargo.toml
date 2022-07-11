@@ -6,6 +6,9 @@ version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
+async-trait = "0.1"
+eyre = "0.6"
+color-eyre = "0.6"
 futures = "0.3.21"
 tokio = { version = "1.19.2", features = ["full"] }
 # Error handling

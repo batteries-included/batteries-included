@@ -6,8 +6,12 @@
 
 //! CLI for Batteries Included
 
+pub use color_eyre::Result;
+
 use clap::Parser;
-use common::logging::try_init_logging;
+use common::logging::subscriber::{self, prelude::*, EnvFilter};
+use tracing::{info_span, Instrument};
+use tracing_error::ErrorLayer;
 
 mod bootstrap;
 mod dev;
@@ -25,19 +29,28 @@ pub enum Cli {
 #[derive(Debug, clap::Parser)]
 #[clap(name = "bi-cli", author, rename_all = "kebab-case")]
 pub struct CliArgs {
-    #[clap(short)]
-    pub log_level: tracing::Level,
     #[clap(subcommand)]
     pub command: Cli,
 }
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    try_init_logging()?;
-    let app = Cli::parse();
+async fn main() -> Result<()> {
+    color_eyre::install()?;
+    let app = CliArgs::parse();
 
-    match app {
-        Cli::Bootstrap => bootstrap::run().await,
-        Cli::Dev(dev_args) => Ok(dev_args.run()?),
-    }
+    let filter = EnvFilter::try_from_default_env()
+        .or_else(|_| EnvFilter::try_new("cli=info"))
+        .unwrap();
+
+    subscriber::fmt()
+        .with_env_filter(filter)
+        .finish()
+        .with(ErrorLayer::default())
+        .try_init()?;
+
+    match app.command {
+        Cli::Bootstrap => bootstrap::run().instrument(info_span!("bootstrap")).await?,
+        Cli::Dev(dev) => dev.run().instrument(info_span!("dev")).await?,
+    };
+    Ok(())
 }

@@ -14,3 +14,7 @@ lto = true
 
 # 1 gives the best optimization but turns off the parallelism.
 codegen-units = 1
+
+# makes backtrace captures spunky in dev mode
+[profile.dev.package.backtrace]
+opt-level = 3

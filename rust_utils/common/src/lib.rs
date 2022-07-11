@@ -34,3 +34,5 @@ pub use k8s_openapi;
 
 #[cfg(feature = "kube")]
 pub use kube;
+
+pub mod command;

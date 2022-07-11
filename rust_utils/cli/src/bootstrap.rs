@@ -1,8 +1,7 @@
 use std::convert::TryFrom;
 use std::time::Duration;
 
-use anyhow::{Context, Result};
-
+use color_eyre::{eyre::eyre, eyre::WrapErr, Result};
 use common::kube::api::{ApiResource, DynamicObject, GroupVersionKind, Patch, PatchParams};
 use common::kube::discovery::{oneshot, ApiCapabilities, Scope};
 use common::kube::{Api, Client, ResourceExt};
@@ -51,12 +50,12 @@ async fn api_for_object(client: &Client, obj: &DynamicObject) -> Result<Api<Dyna
     let tm = obj
         .types
         .as_ref()
-        .with_context(|| format!("{} has no types", &obj.name()))?;
+        .ok_or_else(|| eyre!("{} has no types", &obj.name()))?;
     let gvk = GroupVersionKind::try_from(tm)?;
     let (ar, caps) = oneshot::pinned_kind(client, &gvk)
         .in_current_span()
         .await
-        .with_context(|| format!("failed to resolve gvk: {:?}", gvk))?;
+        .wrap_err_with(|| eyre!("failed to resolve gvk: {:?}", gvk))?;
     Ok(dynamic_api(&ar, &caps, client, &obj.namespace()))
 }
 

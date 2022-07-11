@@ -8,13 +8,16 @@ name = "cli"
 version = "0.1.0"
 
 [dependencies]
-anyhow = "1.0.58"
-common = { path = "../common", features = ["app", "kube-api"] }
+anyhow = "1.0"
+color-eyre = "0.6"
+common = { path = "../common", features = ["kube-api", "app"] }
+dirs = "4.0"
 # Concurrency
 futures = "0.3.21"
 tokio = { version = "1.19.2", features = ["full"] }
 # Logging/Tracing
 tracing = "0.1.31"
+tracing-error = "0.2"
 clap = { version = "3.1", features = ["derive"] }
 # Yaml
 serde = "1.0.136"
