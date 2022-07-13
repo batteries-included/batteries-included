@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "build-and-serve": "npm run build && npm run serve",
+    "build:preview": "hugo --cleanDestinationDir -DFE --minify --baseURL \"${DEPLOY_PRIME_URL:-/}\"",
+    "build:production": "hugo --cleanDestinationDir --minify --gc",
+    "build": "hugo --cleanDestinationDir -e dev -DFE --gc",
+    "hugo:version": "hugo version",
+    "serve": "hugo serve --disableFastRender -DFE "
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^4.1.3",
+    "@tailwindcss/forms": "^0.5.2",
+    "@tailwindcss/typography": "^0.5.3",
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.14",
+    "postcss-cli": "^10.0.0",
+    "tailwindcss": "^3.1.5"
+  }
+}

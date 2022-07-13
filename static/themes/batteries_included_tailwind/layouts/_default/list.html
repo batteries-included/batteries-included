@@ -1,0 +1,20 @@
+{{ define "main"}}
+<div class="relative overflow-hidden bg-white">
+  <div class="relative pt-6 pb-8 sm:pb-16 lg:pb-24">
+    <!-- <Header navigation={navigation} /> -->
+  </div>
+
+  <div class="max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
+    <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+      {{ range .Pages }}
+
+      <li class="py-12">
+        <a href="{{.Permalink}}" class="text-gray-900 dark:text-gray-100">
+          {{.Title}}
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+</div>
+{{ end }}

@@ -6,3 +6,4 @@ python 3.8.5
 k3d 5.4.1
 kubectl 1.23.5
 k9s 0.25.18
+hugo extended_0.101.0

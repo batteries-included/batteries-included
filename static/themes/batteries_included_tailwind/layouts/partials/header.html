@@ -1,0 +1,27 @@
+<nav
+  class="relative flex items-center justify-between px-4 mx-auto max-w-7xl sm:px-6 mt-8"
+>
+  <div class="flex items-center flex-1">
+    <div class="flex items-center justify-between w-full md:w-auto">
+      <a href="/">
+        {{ $image := resources.Get "images/logo.2.clip.png" }}
+        <img
+          src="{{ $image.RelPermalink }}"
+          alt="Batteries Included"
+          class="w-auto h-8 m-1"
+        />
+      </a>
+    </div>
+    <div class="block ml-10 space-x-10">
+      <a href="/" class="font-medium text-gray-500 hover:text-gray-900"
+        >Product</a
+      >
+      <a href="/#features" class="font-medium text-gray-500 hover:text-gray-900"
+        >Features</a
+      >
+      <a href="/posts" class="font-medium text-gray-500 hover:text-gray-900"
+        >Posts</a
+      >
+    </div>
+  </div>
+</nav>

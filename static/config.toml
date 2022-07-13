@@ -1,0 +1,21 @@
+baseURL = 'http://www.batteriesincl.com/'
+languageCode = 'en-us'
+title = 'Batteries Included'
+theme = 'batteries_included_tailwind'
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNoStart = 1
+    lineNos = true
+    lineNumbersInTable = true
+    style = 'dracula'
+
+
+[build]
+# Used by PurgeCSS
+  writeStats = true
+  
+[security.exec]
+  osEnv = ['.*']

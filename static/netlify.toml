@@ -1,0 +1,15 @@
+[build]
+  publish = "public"
+  command = "npm run build:production"
+
+[context.deploy-preview]
+  command = "npm run build:preview"
+
+[context.branch-deploy]
+  command = "npm run build:preview"
+
+[build.environment]
+  HUGO_VERSION = "0.101.0"
+
+[context.production.environment]
+  HUGO_VERSION = "0.101.0"
