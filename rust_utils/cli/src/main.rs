@@ -1,8 +1,4 @@
-#![deny(clippy::all)]
 #![deny(clippy::pedantic)]
-#![deny(clippy::nursery)]
-#![allow(clippy::module_name_repetitions)]
-#![allow(clippy::type_repetition_in_bounds)]
 
 //! CLI for Batteries Included
 
@@ -14,16 +10,17 @@ use tracing::{info_span, Instrument};
 use tracing_error::ErrorLayer;
 
 mod bootstrap;
+mod config;
 mod dev;
 
 /// Entry point to all things command-line
 #[derive(Debug, clap::Parser)]
 pub enum Cli {
-    /// Dump the contents of the embeddedb bootstrap yamls into the default kubernetes cluster
+    /// Apply the bootstrap YAMLs to the default kubernetes cluster
     Bootstrap,
     /// Developer tools
-    #[clap(subcommand)]
-    Dev(dev::DevCommands),
+    #[clap(flatten)]
+    Dev(dev::Commands),
 }
 
 #[derive(Debug, clap::Parser)]

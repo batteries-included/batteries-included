@@ -9,6 +9,7 @@ version = "0.1.0"
 
 [dependencies]
 anyhow = "1.0"
+clap = { version = "3.2", features = ["derive"] }
 color-eyre = "0.6"
 common = { path = "../common", features = ["kube-api", "app"] }
 dirs = "4.0"
@@ -18,11 +19,11 @@ tokio = { version = "1.19.2", features = ["full"] }
 # Logging/Tracing
 tracing = "0.1.31"
 tracing-error = "0.2"
-clap = { version = "3.1", features = ["derive"] }
 # Yaml
 serde = "1.0.136"
 serde_json = "1.0.79"
 serde_yaml = "0.8.23"
+serde_with = "1.14"
 thiserror = "1.0"
 async-trait = "0.1.56"
 # fuser = "0.11.0"

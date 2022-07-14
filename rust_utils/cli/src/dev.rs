@@ -2,18 +2,29 @@
 //! Primarily just shortcuts and helpers
 
 use common::command::{RunHelper, ToCommand};
+use futures::stream::FuturesUnordered;
+use futures::TryStreamExt;
+use serde::{Deserialize, Serialize};
+use serde_with::{DeserializeFromStr, SerializeDisplay};
 use std::fmt::Display;
-use std::process::ExitStatus;
+use std::hash::Hash;
 use std::str::FromStr;
-use tokio::process::Command;
+
+use crate::config::Config;
 
 use super::Result;
-use tracing::{instrument, Instrument};
+use tracing::{info, instrument, Instrument};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq, SerializeDisplay, DeserializeFromStr)]
 pub struct PortSpec {
     from: u16,
     to: u16,
+}
+
+impl Hash for PortSpec {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.from.hash(state);
+    }
 }
 
 impl PartialEq for PortSpec {
@@ -46,7 +57,7 @@ impl FromStr for PortSpec {
 }
 
 //fn make_args(ns: &str, dst: &str, p: &[PortSpec]) -> Vec<String> {
-impl ToCommand for ForwardArgs {
+impl ToCommand for ForwardSpec {
     fn cmd_name(&self) -> &str {
         "kubectl"
     }
@@ -93,14 +104,8 @@ impl ToCommand for ClusterArgs {
     }
 }
 
-#[instrument]
-async fn forward_ports(args: &ForwardArgs) -> Result<ExitStatus> {
-    let args = args.to_args();
-    Command::new("kubectl").args(&args).run().await
-}
-
 #[derive(Debug, clap::Parser)]
-pub enum DevCommands {
+pub enum Commands {
     Cluster(ClusterArgs),
     Forward(ForwardArgs),
 }
@@ -113,14 +118,21 @@ pub struct ClusterArgs {
     name: Option<String>,
 }
 
+fn default_namespace() -> String {
+    "battery-core".to_string()
+}
+
 /// Port forwarding tools
-#[derive(clap::Parser, Debug)]
-pub struct ForwardArgs {
-    /// Namespace of destination service (default: battery-core)
-    #[clap(short, long, default_value = "battery-core")]
+#[derive(clap::Args, Debug, Serialize, Deserialize, Hash, PartialEq, Eq)]
+pub struct ForwardSpec {
+    /// Namespace containing destination pod
+    #[clap(short, long, default_value = "battery-core", group("spec"))]
+    #[serde(default = "default_namespace")]
     namespace: String,
 
     /// Destination thing (type/name) to forward to
+    /// e.g. `deployment/battery-core-api` or `pods/pg-control-0`
+    /// the special resource "all"
     resource: String,
 
     /// [LOCAL:]PORT pairs to forward
@@ -128,12 +140,70 @@ pub struct ForwardArgs {
     ports: Vec<PortSpec>,
 }
 
-impl DevCommands {
+impl Display for ForwardSpec {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let portstr = self
+            .ports
+            .iter()
+            .map(ToString::to_string)
+            .collect::<Vec<_>>()
+            .join(", ");
+        write!(f, "{}/{} <- {portstr}", self.namespace, self.resource,)
+    }
+}
+
+/// Port forwarding tools
+#[derive(Debug, clap::Parser, Serialize, Deserialize)]
+pub struct ForwardArgs {
+    #[clap(subcommand)]
+    cmd: Option<ForwardCmd>,
+}
+
+#[derive(Debug, clap::Subcommand, Serialize, Deserialize)]
+pub enum ForwardCmd {
+    Add(ForwardSpec),
+    List,
+}
+
+impl Commands {
     #[instrument(level = "debug")]
-    pub async fn run(&self) -> Result<()> {
+    pub async fn run(self) -> Result<()> {
         match self {
-            DevCommands::Cluster(args) => args.to_command().run().in_current_span().await?,
-            DevCommands::Forward(args) => args.to_command().run().in_current_span().await?,
+            Commands::Cluster(args) => {
+                args.to_command().run().in_current_span().await?;
+            }
+            Commands::Forward(args) => {
+                match args.cmd {
+                    Some(ForwardCmd::List) => {
+                        let mut out = Vec::new();
+                        for spec in Config::load()?.port_forwards {
+                            out.push(format!("{}", spec));
+                        }
+                        println!("{}", out.join("\n"));
+                    }
+                    Some(ForwardCmd::Add(spec)) => {
+                        let mut cfg = Config::load().unwrap_or_default();
+                        cfg.port_forwards.insert(spec);
+                        cfg.save()?;
+                    }
+                    None => {
+                        let config = Config::load()?;
+                        // load all the forwards from the config then launch
+                        // the worlds biggest future to run them all
+                        let futs = config
+                            .port_forwards
+                            .into_iter()
+                            .map(|f| f.to_command())
+                            .map(|mut c| async move {
+                                info!("Running {:?}", c);
+                                c.run().in_current_span().await
+                            })
+                            .collect::<FuturesUnordered<_>>();
+
+                        futs.try_collect::<Vec<_>>().in_current_span().await?;
+                    }
+                }
+            }
         };
         Ok(())
     }
