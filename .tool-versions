@@ -7,3 +7,5 @@ k3d 5.4.1
 kubectl 1.23.5
 k9s 0.25.18
 hugo extended_0.101.0
+awscli 2.7.15
+eksctl 0.105.0

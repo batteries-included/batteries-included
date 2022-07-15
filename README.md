@@ -69,6 +69,8 @@ asdf plugin add nodejs
 asdf plugin add rust
 asdf plugin add python
 asdf plugin add kubectl
+asdf plugin add awscli
+asdf plugin-add eksctl
 
 asdf install 
 ```
