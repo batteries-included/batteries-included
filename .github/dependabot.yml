@@ -16,6 +16,10 @@ updates:
     directory: "/plattform_umbrella/apps/home_base_web/assets"
     schedule:
       interval: daily
+  - package-ecosystem: npm
+    directory: "/static"
+    schedule:
+      interval: daily
   - package-ecosystem: cargo
     directory: "/rust_utils"
     schedule:
