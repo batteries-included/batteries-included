@@ -2,7 +2,7 @@
 title: Software Evaluation
 date: '2021-11-11'
 tags: ['planning']
-draft: true
+draft: false
 summary: How to think about what we use to build the platform
 images: []
 ---

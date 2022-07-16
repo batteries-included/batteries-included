@@ -2,7 +2,7 @@
 title: Don't boil the ocean
 date: '2021-06-22'
 tags: ['company', 'open-source', 'sell']
-draft: true
+draft: false
 summary: We're not going to build too much, just enough to sell.
 images: []
 ---

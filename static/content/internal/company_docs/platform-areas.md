@@ -2,7 +2,7 @@
 title: Platform Areas
 date: '2021-11-11'
 tags: ['planning']
-draft: true
+draft: false
 summary: Platform area plans.
 images: []
 ---
@@ -12,14 +12,14 @@ images: []
 This document should be a place to describe the services that we provide to users.
 
 - [1. Platform Areas](#1-platform-areas)
-  - [1.1. Machine Learning Exploration](#11-machine-learning-exploration)
-  - [1.2. Machine Learning Training](#12-machine-learning-training)
-  - [1.3. Monitoring/Observability](#13-monitoringobservability)
-  - [1.4. Database](#14-database)
-  - [1.5. Automated Operations](#15-automated-operations)
-  - [1.6. Developer Tools](#16-developer-tools)
-  - [1.7. Storage](#17-storage)
-  - [1.8. Communications](#18-communications)
+    - [1.1. Machine Learning Exploration](#11-machine-learning-exploration)
+    - [1.2. Machine Learning Training](#12-machine-learning-training)
+    - [1.3. Monitoring/Observability](#13-monitoringobservability)
+    - [1.4. Database](#14-database)
+    - [1.5. Automated Operations](#15-automated-operations)
+    - [1.6. Developer Tools](#16-developer-tools)
+    - [1.7. Storage](#17-storage)
+    - [1.8. Communications](#18-communications)
 
 ### 1.1. Machine Learning Exploration
 

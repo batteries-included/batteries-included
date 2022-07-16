@@ -2,7 +2,7 @@
 title: Platform Goals
 date: '2021-11-11'
 tags: ['planning']
-draft: true
+draft: false
 summary: What the platform should provide.
 images: []
 ---

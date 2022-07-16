@@ -2,7 +2,7 @@
 title: Who Wants this
 date: '2021-06-23'
 tags: ['company']
-draft: true
+draft: false
 summary: Companies on and off the cloud want a more refined single solution for their compute needs.
 images: []
 ---

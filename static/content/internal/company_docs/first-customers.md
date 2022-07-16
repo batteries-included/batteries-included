@@ -2,7 +2,7 @@
 title: First Customer Profile
 date: '2021-06-22'
 tags: ['company', 'segmentation', 'market', 'first customer']
-draft: true
+draft: false
 summary:
 images: []
 ---
