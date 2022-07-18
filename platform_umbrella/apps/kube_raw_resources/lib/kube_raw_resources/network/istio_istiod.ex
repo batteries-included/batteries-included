@@ -1534,12 +1534,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -1581,12 +1581,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"disable_host_header_fallback\": true,\n  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\": \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\": \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
                       },
@@ -1629,12 +1629,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"disable_host_header_fallback\": true\n}\n"
                       },
@@ -1695,13 +1695,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\": \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\": \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
                       },
@@ -1741,13 +1741,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -1786,13 +1786,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -1855,12 +1855,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -1902,12 +1902,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"disable_host_header_fallback\": true,\n  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\": \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\": \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
                       },
@@ -1950,12 +1950,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"disable_host_header_fallback\": true\n}\n"
                       },
@@ -2016,13 +2016,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\": \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\": \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
                       },
@@ -2062,13 +2062,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -2107,13 +2107,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -2176,12 +2176,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -2223,12 +2223,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"disable_host_header_fallback\": true,\n  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\": \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\": \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
                       },
@@ -2271,12 +2271,12 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" => "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"disable_host_header_fallback\": true\n}\n"
                       },
@@ -2337,13 +2337,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" =>
                           "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\": \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\": \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
                       },
@@ -2383,13 +2383,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
@@ -2428,13 +2428,13 @@ defmodule KubeRawResources.IstioIstiod do
               "value" => %{
                 "name" => "istio.stats",
                 "typed_config" => %{
-                  "\"@type\"" => "type.googleapis.com/udpa.type.v1.TypedStruct",
+                  "@type" => "type.googleapis.com/udpa.type.v1.TypedStruct",
                   "type_url" =>
                     "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
                   "value" => %{
                     "config" => %{
                       "configuration" => %{
-                        "\"@type\"" => "type.googleapis.com/google.protobuf.StringValue",
+                        "@type" => "type.googleapis.com/google.protobuf.StringValue",
                         "value" => "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
                       },
                       "root_id" => "stats_outbound",
