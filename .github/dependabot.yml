@@ -5,15 +5,15 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: mix
-    directory: "/plattform_umbrella"
+    directory: "/platform_umbrella"
     schedule:
       interval: daily
   - package-ecosystem: npm
-    directory: "/plattform_umbrella/apps/control_server_web/assets"
+    directory: "/platform_umbrella/apps/control_server_web/assets"
     schedule:
       interval: daily
   - package-ecosystem: npm
-    directory: "/plattform_umbrella/apps/home_base_web/assets"
+    directory: "/platform_umbrella/apps/home_base_web/assets"
     schedule:
       interval: daily
   - package-ecosystem: npm
