@@ -53,7 +53,7 @@ defmodule ControlServerWeb.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:ex_machina, "~> 2.7", only: :test},
-      {:wallaby, "~> 0.29.0", runtime: false, only: [:test, :integration]},
+      {:wallaby, "~> 0.30.1", runtime: false, only: [:test, :integration]},
       {:gettext, "~> 0.19"},
       {:telemetry, "~> 1.0", override: true},
       {:control_server, in_umbrella: true},
