@@ -42,7 +42,6 @@ defmodule ControlServer.MixProject do
       {:jason, "~> 1.0"},
       {:oban, "~> 2.12"},
       {:phoenix_swoosh, "~> 1.0"},
-      {:phoenix_swoosh, "~> 1.0"},
 
       # SQL
       {:phoenix_ecto, "~> 4.4"},
@@ -66,6 +65,9 @@ defmodule ControlServer.MixProject do
 
       # Time
       {:timex, "~> 3.7"},
+
+      # Http
+      {:finch, "~> 0.12.0"},
 
       # Naming
       {:mnemonic_slugs, "~> 0.0.3"},

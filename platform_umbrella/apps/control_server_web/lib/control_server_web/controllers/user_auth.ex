@@ -4,6 +4,7 @@ defmodule ControlServerWeb.UserAuth do
 
   alias ControlServer.Accounts
   alias ControlServerWeb.Router.Helpers, as: Routes
+  alias ControlServer.OryHydraClient
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -26,15 +27,25 @@ defmodule ControlServerWeb.UserAuth do
   """
   def log_in_user(conn, user, params \\ %{}) do
     token = Accounts.generate_user_session_token(user)
-    user_return_to = get_session(conn, :user_return_to)
 
     conn
     |> renew_session()
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")
     |> maybe_write_remember_me_cookie(token, params)
-    |> redirect(to: user_return_to || signed_in_path(conn))
   end
+
+  def oauth_login(conn, user, params \\ %{}) do
+    conn
+    |> maybe_assign_login_request(params)
+    |> maybe_approve_ory_login(user, params)
+  end
+
+  def check_logged_in(%{assigns: %{current_user: user}} = conn, params) when not is_nil(user) do
+    {true, maybe_approve_ory_login(conn, user, params)}
+  end
+
+  def check_logged_in(conn, _params), do: {false, conn}
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
     put_resp_cookie(conn, @remember_me_cookie, token, @remember_me_options)
@@ -42,6 +53,27 @@ defmodule ControlServerWeb.UserAuth do
 
   defp maybe_write_remember_me_cookie(conn, _token, _params) do
     conn
+  end
+
+  defp maybe_assign_login_request(conn, %{"login_challenge" => login_challenge}) do
+    with {:ok, login_request} <- OryHydraClient.get_login_request(login_challenge) do
+      assign(conn, :oauth_login_request, login_request)
+    end
+  end
+
+  defp maybe_assign_login_request(conn, _params) do
+    conn
+  end
+
+  defp maybe_approve_ory_login(conn, user, %{"login_challenge" => login_challenge}) do
+    with {:ok, response} <- OryHydraClient.approve_login(login_challenge, user.id) do
+      redirect(conn, to: Map.get(response, "redirect_to", signed_in_path(conn)))
+    end
+  end
+
+  defp maybe_approve_ory_login(conn, _user, _params) do
+    user_return_to = get_session(conn, :user_return_to)
+    redirect(conn, to: user_return_to || signed_in_path(conn))
   end
 
   # This function renews the session ID and erases the whole
@@ -91,8 +123,15 @@ defmodule ControlServerWeb.UserAuth do
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+
+    conn
+    |> assign(:current_user, user)
+    |> put_session(:user_id, extract_user_id(user))
   end
+
+  defp extract_user_id(nil), do: nil
+  defp extract_user_id(%{id: id}), do: id
+  defp extract_user_id(_), do: nil
 
   defp ensure_user_token(conn) do
     if user_token = get_session(conn, :user_token) do

@@ -8,7 +8,12 @@ defmodule ControlServer.Services.RunnableService do
   require Logger
 
   @enforce_keys [:service_type, :path]
-  defstruct service_type: nil, path: nil, config: %{}, dependencies: []
+  defstruct service_type: nil,
+            path: nil,
+            config: %{},
+            dependencies: [],
+            config_gen: nil,
+            post: nil
 
   def services,
     do: [
@@ -28,7 +33,10 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/data/postgres/battery",
         service_type: :database_internal,
-        dependencies: [:database, :data]
+        dependencies: [:database, :data],
+        post: fn repo ->
+          Postgres.find_or_create(KubeRawResources.Battery.control_cluster(), repo)
+        end
       },
       %__MODULE__{
         path: "/data/minio/operator",
@@ -62,7 +70,10 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/devtools/gitea",
         service_type: :gitea,
-        dependencies: [:keycloak, :database_internal, :istio_gateway, :battery]
+        dependencies: [:keycloak, :database_internal, :istio_gateway, :battery],
+        post: fn repo ->
+          Postgres.find_or_create(KubeRawResources.Gitea.gitea_cluster(), repo)
+        end
       },
       %__MODULE__{
         path: "/devtools/tekton",
@@ -77,7 +88,18 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/devtools/harbor",
         service_type: :harbor,
-        dependencies: [:battery, :redis, :istio_gateway, :database_internal]
+        dependencies: [:battery, :redis, :istio_gateway, :database_internal],
+        post: fn repo ->
+          with {:ok, postgres_db} <-
+                 Postgres.find_or_create(KubeRawResources.Harbor.harbor_pg_cluster(), repo),
+               {:ok, redis} <-
+                 Redis.create_failover_cluster(
+                   KubeRawResources.Harbor.harbor_redis_cluster(),
+                   repo
+                 ) do
+            {:ok, postgres: postgres_db, redis: redis}
+          end
+        end
       },
       # ML
       %__MODULE__{path: "/ml/core", service_type: :ml},
@@ -141,7 +163,18 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{
         path: "/security/keycloak",
         service_type: :keycloak,
-        dependencies: [:database_internal, :istio_gateway]
+        dependencies: [:database_internal, :istio_gateway],
+        post: fn repo ->
+          Postgres.find_or_create(KubeRawResources.Keycloak.keycloak_cluster(), repo)
+        end
+      },
+      %__MODULE__{
+        path: "/security/ory_hydra",
+        service_type: :ory_hydra,
+        dependencies: [:database_internal],
+        post: fn repo ->
+          Postgres.find_or_create(KubeRawResources.OryHydra.hydra_cluster(), repo)
+        end
       }
     ]
 
@@ -165,28 +198,30 @@ defmodule ControlServer.Services.RunnableService do
     services_map() |> Map.get(service_type) |> activate!()
   end
 
-  def activate!(
-        %__MODULE__{
-          path: path,
-          service_type: service_type,
-          config: config,
-          dependencies: deps
-        } = service
-      ) do
+  def activate!(%__MODULE__{
+        path: path,
+        service_type: service_type,
+        config: config,
+        config_gen: config_gen,
+        post: post,
+        dependencies: deps
+      }) do
     Multi.new()
     |> Multi.run(:dependencies, fn _repo, _state ->
       Enum.each(deps, fn s -> activate!(s) end)
       {:ok, deps}
     end)
     |> Multi.merge(fn _ ->
+      final_config = maybe_gen_config(config, config_gen)
+
       Services.find_or_create_multi(%{
         root_path: path,
         service_type: service_type,
-        config: config
+        config: final_config
       })
     end)
     |> Multi.run(:post, fn repo, %{selected: existing} = _state ->
-      maybe_run_post(existing, service, repo)
+      maybe_run_post(existing, post, repo)
     end)
     |> Repo.transaction()
   end
@@ -198,29 +233,16 @@ defmodule ControlServer.Services.RunnableService do
 
   def active?(%__MODULE__{path: path} = _service), do: Services.active?(path)
 
-  def maybe_run_post(nil, service, repo), do: run_post(service, repo)
+  # If this service wasn't selected, but there's no post method
+  # just bail out
+  def maybe_run_post(nil, nil = _post, _repo), do: {:ok, []}
+  # If there was no service selected and there is a post method
+  # then call that method
+  def maybe_run_post(nil, post, repo), do: post.(repo)
+  # If there's something other than nil that was selected
+  # then just bail out.
   def maybe_run_post(_it_existed, _service, _repo), do: {:ok, []}
 
-  defp run_post(%__MODULE__{service_type: :database_internal} = _service, repo) do
-    Postgres.find_or_create(KubeRawResources.Battery.control_cluster(), repo)
-  end
-
-  defp run_post(%__MODULE__{service_type: :keycloak} = _service, repo) do
-    Postgres.find_or_create(KubeRawResources.Keycloak.keycloak_cluster(), repo)
-  end
-
-  defp run_post(%__MODULE__{service_type: :gitea} = _service, repo) do
-    Postgres.find_or_create(KubeRawResources.Gitea.gitea_cluster(), repo)
-  end
-
-  defp run_post(%__MODULE__{service_type: :harbor} = _service, repo) do
-    with {:ok, postgres_db} <-
-           Postgres.find_or_create(KubeRawResources.Harbor.harbor_pg_cluster(), repo),
-         {:ok, redis} <-
-           Redis.create_failover_cluster(KubeRawResources.Harbor.harbor_redis_cluster(), repo) do
-      {:ok, postgres: postgres_db, redis: redis}
-    end
-  end
-
-  defp run_post(%__MODULE__{} = _service, _repo), do: {:ok, []}
+  def maybe_gen_config(config, nil = _gen_config), do: config
+  def maybe_gen_config(config, config_gen), do: config_gen.(config)
 end

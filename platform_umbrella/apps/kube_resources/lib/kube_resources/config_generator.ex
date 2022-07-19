@@ -36,6 +36,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.VirtualService
   alias KubeResources.Tekton
   alias KubeResources.TektonDashboard
+  alias KubeResources.OryHydra
   alias KubeResources.Harbor
 
   require Logger
@@ -84,6 +85,7 @@ defmodule KubeResources.ConfigGenerator do
 
   def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
   def materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)
+  def materialize(%{} = config, :ory_hydra), do: OryHydra.materialize(config)
 
   def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
   def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)

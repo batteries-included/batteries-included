@@ -34,7 +34,7 @@ defmodule CommonUI.MixProject do
   defp deps do
     [
       {:phoenix_live_view, "~> 0.17.10"},
-      {:petal_components, "~> 0.16.0"}
+      {:petal_components, "~> 0.17.0"}
     ]
   end
 

@@ -1,7 +1,7 @@
 defmodule CommonUI.Form do
   use Phoenix.Component
 
-  import PetalComponents.Class
+  import PetalComponents.Helpers
   alias Phoenix.HTML.Form, as: PhoenixForm
 
   def field_label(assigns) do

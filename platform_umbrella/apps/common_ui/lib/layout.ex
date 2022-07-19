@@ -47,19 +47,28 @@ defmodule CommonUI.Layout do
           <.link to={@logo_path} class="my-auto mx-4" link_type="live_redirect">
             <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included" />
           </.link>
-          <%= render_slot(@title) %>
+          <%= if @title do %>
+            <%= render_slot(@title) %>
+          <% end %>
           <h1 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">
             Batteries Included
           </h1>
+          <%= if @user_menu do %>
+            <%= render_slot(@user_menu) %>
+          <% end %>
         </div>
       </header>
       <div class={container_class(@container_type)}>
-        <%= render_slot(@inner_block) %>
+        <%= if @inner_block do %>
+          <%= render_slot(@inner_block) %>
+        <% end %>
       </div>
     </div>
     <footer class="h-16 bg-white bottom-0 fixed inset-x-0 z-40">
       <div class="flex w-full">
-        <%= render_slot(@main_menu) %>
+        <%= if @main_menu do %>
+          <%= render_slot(@main_menu) %>
+        <% end %>
       </div>
     </footer>
     """
@@ -70,5 +79,9 @@ defmodule CommonUI.Layout do
     |> assign_new(:bg_class, fn -> "bg-white" end)
     |> assign_new(:logo_path, fn -> "/" end)
     |> assign_new(:container_type, fn -> :default end)
+    |> assign_new(:inner_block, fn -> nil end)
+    |> assign_new(:title, fn -> nil end)
+    |> assign_new(:user_menu, fn -> nil end)
+    |> assign_new(:main_menu, fn -> nil end)
   end
 end

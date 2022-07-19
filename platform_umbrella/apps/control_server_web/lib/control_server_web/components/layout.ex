@@ -15,7 +15,8 @@ defmodule ControlServerWeb.Layout do
     |> assign_new(:menu_item_class, fn -> @default_menu_item_class end)
     |> assign_new(:icon_class, fn -> @default_icon_class end)
     |> assign_new(:container_type, fn -> :default end)
-    |> assign_new(:title, fn -> [] end)
+    |> assign_new(:title, fn -> nil end)
+    |> assign_new(:user_id, fn -> nil end)
   end
 
   defdelegate title(assigns), to: BaseLayout
@@ -63,10 +64,31 @@ defmodule ControlServerWeb.Layout do
     assigns = assign_defaults(assigns)
 
     ~H"""
-    <BaseLayout.layout bg_class="bg-white" container_type={@container_type}>
-      <:title>
-        <%= render_slot(@title) %>
-      </:title>
+    <BaseLayout.layout bg_class="bg-white" container_type={@container_type} title={@title}>
+      <:user_menu>
+        <%= if @user_id do %>
+          <div class="dropdown dropdown-end mt-2">
+            <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+              <div class="w-10 rounded-full">
+                <img src={"https://robohash.org/#{@user_id}?size=80x80"} />
+              </div>
+            </label>
+            <ul
+              tabindex="0"
+              class="mt-4 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <.link to={Routes.user_settings_path(Endpoint, :edit)}>Settings</.link>
+              </li>
+              <li>
+                <.link to={Routes.user_session_path(Endpoint, :delete)} method={:delete}>
+                  Logout
+                </.link>
+              </li>
+            </ul>
+          </div>
+        <% end %>
+      </:user_menu>
       <:main_menu>
         <.menu_item to={Routes.data_home_path(Endpoint, :index)} name="Data" icon="database" />
         <.menu_item

@@ -14,9 +14,10 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
   defp assign_defaults(assigns) do
     assigns
-    |> assign_new(:title, fn -> [] end)
-    |> assign_new(:inner_block, fn -> [] end)
-    |> assign_new(:left_menu, fn -> [] end)
+    |> assign_new(:title, fn -> nil end)
+    |> assign_new(:inner_block, fn -> nil end)
+    |> assign_new(:left_menu, fn -> nil end)
+    |> assign_new(:current_user, fn -> nil end)
   end
 
   defp assign_menu_item_defaults(assigns) do
@@ -339,10 +340,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_defaults(assigns)
 
     ~H"""
-    <Layout.layout>
-      <:title>
-        <%= render_slot(@title) %>
-      </:title>
+    <Layout.layout title={@title}>
       <div class="lg:grid lg:grid-cols-9 lg:gap-x-5">
         <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-2">
           <nav class="space-y-1">

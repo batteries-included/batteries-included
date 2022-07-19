@@ -6,13 +6,7 @@
 
   <div class="mt-8">
     <div class="mt-6">
-      <.form
-        let={f}
-        for={@conn}
-        action={Routes.user_session_path(@conn, :create)}
-        as={:user}
-        class="space-y-6"
-      >
+      <.form let={f} for={@conn} action={@create_path} as={:user} class="space-y-6">
         <%= if @error_message do %>
           <div class="alert alert-danger">
             <p><%= @error_message %></p>

@@ -58,4 +58,8 @@ defmodule ControlServerWeb.LiveHelpers do
     |> JS.hide(to: "#modal", transition: "fade-out")
     |> JS.hide(to: "#modal-content", transition: "fade-out-scale")
   end
+
+  def assign_user_id(conn, session) do
+    assign(conn, :user_id, Map.get(session, "user_id", nil))
+  end
 end

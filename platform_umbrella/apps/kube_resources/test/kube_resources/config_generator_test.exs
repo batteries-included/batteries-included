@@ -13,7 +13,8 @@ defmodule KubeServices.ConfigGeneratorTest do
         IO.inspect(resource)
       end
 
-      assert nil != K8s.Resource.name(resource)
+      real_name = K8s.Resource.name(resource)
+      assert nil != real_name, "The resource should always be named"
     end
 
     def assert_named(resources) when is_list(resources) do
@@ -41,9 +42,10 @@ defmodule KubeServices.ConfigGeneratorTest do
     end
 
     test "all are named" do
-      Services.all()
+      Services.all_including_config()
       |> Enum.map(&ConfigGenerator.materialize/1)
-      |> Enum.flat_map(&Map.values/1)
+      |> Enum.reduce(%{}, &Map.merge/2)
+      |> then(&Map.values/1)
       |> Enum.each(&assert_named/1)
     end
 

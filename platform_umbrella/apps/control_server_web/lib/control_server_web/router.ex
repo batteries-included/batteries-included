@@ -94,12 +94,16 @@ defmodule ControlServerWeb.Router do
   end
 
   ## Authentication routes
+  scope "/", ControlServerWeb do
+    pipe_through [:full_layout, :browser]
+
+    get "/users/log_in", UserSessionController, :new
+    post "/users/log_in", UserSessionController, :create
+  end
 
   scope "/", ControlServerWeb do
     pipe_through [:full_layout, :browser, :redirect_if_user_is_authenticated]
 
-    get "/users/log_in", UserSessionController, :new
-    post "/users/log_in", UserSessionController, :create
     get "/users/reset_password", UserResetPasswordController, :new
     post "/users/reset_password", UserResetPasswordController, :create
     get "/users/reset_password/:token", UserResetPasswordController, :edit
@@ -107,7 +111,6 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/", ControlServerWeb do
-    # pipe_through [:browser, :require_authenticated_user]
     pipe_through [:browser]
 
     live "/users", Live.UserIndex, :index

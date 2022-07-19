@@ -45,6 +45,7 @@ defmodule ControlServer.Services.BaseService do
         :kiali,
         :kong,
         :keycloak,
+        :ory_hydra,
         :nginx,
         :ml,
         :notebooks,

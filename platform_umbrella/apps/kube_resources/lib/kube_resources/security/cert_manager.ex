@@ -1705,13 +1705,14 @@ defmodule KubeResources.CertManager do
     namespace = SecuritySettings.namespace(config)
 
     spec = %{
-      "backoffLimit" => 4,
+      "backoffLimit" => 10,
+      "ttlSecondsAfterFinished" => 100,
       "template" => %{
         "metadata" => %{
           "labels" => %{
             "app.kubernetes.io/component" => "startupapicheck",
             "app.kubernetes.io/instance" => "cert-manager",
-            "battery/app" => "cert-manager",
+            "battery/app" => @app,
             "battery/managed" => "true"
           },
           "annotations" => %{

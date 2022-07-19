@@ -45,7 +45,6 @@ defmodule KubeExt.KubeState.ResourceWatcher do
     |> Map.put_new("apiVersion", api_version)
     |> Map.put_new("kind", kind)
     |> update_in(["metadata"], fn m -> Map.drop(m || %{}, ["managedFields"]) end)
-    |> Map.drop(["data"])
   end
 
   def operation(%State{} = watcher_state) do
