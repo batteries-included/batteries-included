@@ -16,7 +16,12 @@ common_checks = [
   {Credo.Check.Readability.ModuleNames},
   {Credo.Check.Readability.ParenthesesInCondition},
   {Credo.Check.Readability.PredicateFunctionNames},
-  {Credo.Check.Readability.SinglePipe},
+  {Credo.Check.Readability.SinglePipe,
+   files: %{
+     excluded: [
+       "apps/kube_ext/lib/mix/tasks/gen_resource.ex"
+     ]
+   }},
   {Credo.Check.Readability.StrictModuleLayout},
   {Credo.Check.Readability.TrailingBlankLine},
   {Credo.Check.Readability.TrailingWhiteSpace},
