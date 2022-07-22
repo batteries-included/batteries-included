@@ -21,11 +21,14 @@ defmodule Mix.Tasks.GenResource do
     File.write!(resource_path, Macro.to_string(module))
   end
 
-  def process_resource(resource) do
-    {resource_type, rest} = split_resource_type(resource)
+  def process_resource(resource),
+    do: process_resource(resource, KubeExt.ApiVersionKind.resource_type(resource))
+
+  def process_resource(resource, resource_type) do
     method_name = resource_method_name(resource_type, resource)
 
-    rest
+    resource
+    |> Map.drop(["apiVersion", "kind"])
     |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
       handle_field(key, value, acc_code)
     end)
@@ -103,12 +106,6 @@ defmodule Mix.Tasks.GenResource do
         B.namespace(namespace)
       end
     )
-  end
-
-  def split_resource_type(resource) do
-    resource_type = KubeExt.ApiVersionKind.resource_type(resource)
-
-    {resource_type, Map.drop(resource, ["apiVersion", "kind"])}
   end
 
   def starting_code(resource_type) do
