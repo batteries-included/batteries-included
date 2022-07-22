@@ -92,7 +92,8 @@ common_checks = [
           "rel/",
           "config",
           "apps/*/lib/"
-        ]
+        ],
+        excluded: ["apps/kube_ext/lib/mix/tasks/gen_resource.ex"]
       },
       checks:
         common_checks ++

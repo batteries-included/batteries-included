@@ -2,17 +2,19 @@ defmodule Mix.Tasks.GenResource do
   @moduledoc "The mix task to generate a resource code module from yaml"
   use Mix.Task
   import KubeExt.Yaml
+  import KubeExt.ApiVersionKind, only: [resource_type: 1]
 
   @requirements ["app.config"]
 
   defmodule ResourceResult do
-    defstruct methods: %{}, manifests: %{}, raw_files: %{}
+    defstruct methods: %{}, manifests: %{}, raw_files: %{}, include_paths: %{}
 
     def merge(rr_one, rr_two) do
       %__MODULE__{
         methods: Map.merge(rr_one.methods, rr_two.methods),
         manifests: Map.merge(rr_one.manifests, rr_two.manifests),
-        raw_files: Map.merge(rr_one.raw_files, rr_two.raw_files)
+        raw_files: Map.merge(rr_one.raw_files, rr_two.raw_files),
+        include_paths: Map.merge(rr_one.include_paths, rr_two.include_paths)
       }
     end
   end
@@ -24,15 +26,15 @@ defmodule Mix.Tasks.GenResource do
       file_path
       |> YamlElixir.read_all_from_file!()
       |> Enum.reject(&Enum.empty?/1)
-      |> Enum.map(fn resource -> process_resource(resource) end)
+      |> Enum.map(fn resource -> process_resource(resource, app_name) end)
       |> Enum.reduce(%ResourceResult{}, &ResourceResult.merge/2)
 
     write_manifests(result, app_name)
     write_resouce_elixir(result, app_name)
   end
 
-  def write_resouce_elixir(%ResourceResult{} = result, app_name) do
-    module = full_module(app_name, Map.values(result.methods))
+  defp write_resouce_elixir(%ResourceResult{} = result, app_name) do
+    module = module(app_name, result.methods, result.include_paths)
 
     resource_path =
       Path.join(File.cwd!(), "apps/kube_resources/lib/kube_resources/#{app_name}.ex")
@@ -40,48 +42,69 @@ defmodule Mix.Tasks.GenResource do
     File.write!(resource_path, Macro.to_string(module))
   end
 
-  def write_manifests(%ResourceResult{} = result, app_name) do
+  defp write_manifests(%ResourceResult{} = result, app_name) do
     File.mkdir_p!("apps/kube_resources/priv/manifests/#{app_name}/")
 
     for {name, contents} <- result.manifests do
-      path = "apps/kube_resources/priv/manifests/#{app_name}/#{name}"
+      path = crd_path(app_name, name)
       File.write!(path, contents)
     end
   end
 
-  def process_resource(resource),
-    do: process_resource(resource, KubeExt.ApiVersionKind.resource_type(resource))
+  defp crd_path(app_name, crd_filename),
+    do: "apps/kube_resources/priv/manifests/#{app_name}/#{crd_filename}"
 
-  def process_resource(resource, :crd) do
+  defp relative_crd_path(app_name, crd_filename), do: "priv/manifests/#{app_name}/#{crd_filename}"
+
+  def process_resource(resource, app_name),
+    do: process_resource(resource, resource_type(resource), app_name)
+
+  def process_resource(resource, :crd = _resource_type, app_name) do
     file_name = crd_file_name(resource)
+    include_name = crd_include_name(resource)
+    method_name = resource_method_name(resource, app_name)
 
-    content =
-      resource
-      |> update_in(["metadata"], fn meta ->
-        Map.drop(meta || %{}, ["annotations", "creationTimestamp"])
-      end)
-      |> to_yaml()
-
-    manifests = Map.put(%{}, file_name, content)
-    %ResourceResult{manifests: manifests}
+    manifests = Map.put(%{}, file_name, to_yaml_contents(resource))
+    includes = Map.put(%{}, include_name, relative_crd_path(app_name, file_name))
+    methods = Map.put(%{}, method_name, yaml_resource_method(method_name, include_name))
+    %ResourceResult{manifests: manifests, include_paths: includes, methods: methods}
   end
 
-  def process_resource(resource, resource_type) do
-    method_name = resource_method_name(resource_type, resource)
+  def process_resource(resource, resource_type, app_name) do
+    method_name = resource_method_name(resource, app_name)
 
-    method_def =
-      resource
-      |> Map.drop(["apiVersion", "kind"])
-      |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
-        handle_field(key, value, acc_code)
-      end)
-      |> then(fn rp ->
-        resource_method_from_pipeline(rp, method_name)
-      end)
-
+    method_def = default_method(resource, method_name, resource_type)
     methods = Map.put(%{}, method_name, method_def)
-
     %ResourceResult{methods: methods}
+  end
+
+  defp to_yaml_contents(resource) do
+    resource
+    |> update_in(["metadata"], fn meta ->
+      Map.drop(meta || %{}, ["annotations", "creationTimestamp"])
+    end)
+    |> Map.drop(["state"])
+    |> to_yaml()
+  end
+
+  defp default_method(resource, method_name, resource_type) do
+    resource
+    |> Map.drop(["apiVersion", "kind", "type"])
+    |> Enum.reject(fn {_key, value} -> value == nil end)
+    |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
+      handle_field(key, value, acc_code)
+    end)
+    |> then(fn rp ->
+      resource_method_from_pipeline(rp, method_name)
+    end)
+  end
+
+  defp yaml_resource_method(method_name, include_name) do
+    quote do
+      def unquote(method_name)(_config) do
+        yaml(get_resource(unquote(include_name)))
+      end
+    end
   end
 
   defp handle_field("metadata" = _field_name, field_value, acc_code) do
@@ -161,14 +184,30 @@ defmodule Mix.Tasks.GenResource do
     end
   end
 
-  def resource_method_name(resource_type, resource) do
-    name =
+  def resource_method_name(resource, app_name) do
+    resource_type = resource_type(resource)
+    string_resource_type = Atom.to_string(resource_type)
+
+    sanitized_resource_name =
       resource
       |> K8s.Resource.name()
-      |> Macro.underscore()
-      |> String.replace(~r/[^a-zA-Z\d]/, "_")
+      |> String.downcase()
+      |> String.split(~r/[^\w\d]/, trim: true)
+      |> Enum.reject(fn v -> v == app_name || String.contains?(string_resource_type, v) end)
+      |> Enum.join("_")
+      |> then(fn v ->
+        case v do
+          "" ->
+            "main"
 
-    :"#{Atom.to_string(resource_type)}_#{name}"
+          _ ->
+            v
+        end
+      end)
+
+    name = "#{string_resource_type}_#{sanitized_resource_name}"
+
+    String.to_atom(name)
   end
 
   defp resource_method_from_pipeline(pipeline, method_name) do
@@ -180,21 +219,49 @@ defmodule Mix.Tasks.GenResource do
     end
   end
 
-  defp full_module(app_name, methods) do
+  defp module(app_name, %{} = methods, includes) when map_size(includes) == 0 do
     quote do
-      defmodule KubeResources.Resource do
+      defmodule KubeResources.ExampleServiceResource do
         alias KubeExt.Builder, as: B
+
+        import KubeExt.Yaml
+
         @app unquote(app_name)
 
-        unquote_splicing(methods)
+        unquote_splicing(Map.values(methods))
+      end
+    end
+  end
+
+  defp module(app_name, %{} = methods, %{} = includes) do
+    include_keywords = Keyword.new(includes)
+
+    quote do
+      defmodule KubeResources.ExampleServiceResource do
+        use KubeExt.IncludeResource, unquote(include_keywords)
+        alias KubeExt.Builder, as: B
+
+        import KubeExt.Yaml
+
+        @app unquote(app_name)
+
+        unquote_splicing(Map.values(methods))
       end
     end
   end
 
   defp crd_file_name(resource) do
     sanitized_name =
-      resource |> K8s.Resource.name() |> String.downcase() |> String.replace(~r/[^\w]/, "_")
+      resource |> K8s.Resource.name() |> String.downcase() |> String.replace(~r/[^\w\d]/, "_")
 
     "#{sanitized_name}.yaml"
   end
+
+  defp crd_include_name(resource),
+    do:
+      resource
+      |> K8s.Resource.name()
+      |> String.downcase()
+      |> String.replace(~r/[^\w\d]/, "_")
+      |> String.to_atom()
 end
