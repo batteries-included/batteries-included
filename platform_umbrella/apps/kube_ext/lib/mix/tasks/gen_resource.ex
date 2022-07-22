@@ -100,6 +100,8 @@ defmodule Mix.Tasks.GenResource do
   def process_resource(resource, :config_map = _resource_type, app_name) do
     data = Map.get(resource, "data", %{})
 
+    # We're going to split the config map into values that are in raw_files and
+    # values that are embedded.
     # These are the items that will be include
     large_data =
       data
@@ -108,6 +110,8 @@ defmodule Mix.Tasks.GenResource do
       end)
       |> Enum.into(%{})
 
+    # Keep track of where we are writing these things out. This is used
+    # to create the KubeExt.IncludeResource line.
     mappings =
       large_data
       |> Enum.map(fn {file_name, _} ->
@@ -120,11 +124,22 @@ defmodule Mix.Tasks.GenResource do
 
     method_name = resource_method_name(resource, app_name)
 
-    method_def = config_map_method(resource, method_name, app_name, small_data, large_data)
-
-    methods = Map.put(%{}, method_name, method_def)
+    methods =
+      Map.put(
+        %{},
+        method_name,
+        config_map_method(resource, method_name, app_name, small_data, large_data)
+      )
 
     %ResourceResult{raw_files: large_data, include_paths: mappings, methods: methods}
+  end
+
+  def process_resource(resource, :cluster_role = resource_type, app_name) do
+    method_name = resource_method_name(resource, app_name)
+
+    method_def = cluster_scope_method(resource, method_name, resource_type, app_name)
+    methods = Map.put(%{}, method_name, method_def)
+    %ResourceResult{methods: methods}
   end
 
   def process_resource(resource, resource_type, app_name) do
@@ -148,6 +163,12 @@ defmodule Mix.Tasks.GenResource do
     resource
     |> resource_pipeline(resource_type, app_name)
     |> resource_method_from_pipeline(method_name)
+  end
+
+  defp cluster_scope_method(resource, method_name, resource_type, app_name) do
+    resource
+    |> resource_pipeline(resource_type, app_name)
+    |> resource_method_from_pipeline_cluster_level(method_name)
   end
 
   defp config_map_method(resource, method_name, app_name, small_data, large_data) do
@@ -460,6 +481,14 @@ defmodule Mix.Tasks.GenResource do
     quote do
       def unquote(method_name)(config) do
         namespace = ExampleSettings.namespace(config)
+        unquote(pipeline)
+      end
+    end
+  end
+
+  defp resource_method_from_pipeline_cluster_level(pipeline, method_name) do
+    quote do
+      def unquote(method_name)(_config) do
         unquote(pipeline)
       end
     end
