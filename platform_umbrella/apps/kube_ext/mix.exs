@@ -28,6 +28,8 @@ defmodule KubeExt.MixProject do
     [
       {:telemetry, "~> 1.1"},
       {:k8s, "~> 1.1"},
+      # Yaml encode
+      {:ymlr, "~> 2.0"},
       {:bella, "~> 0.2.2"},
       {:event_center, in_umbrella: true},
       # Time

@@ -4,4 +4,8 @@ defmodule KubeExt.Yaml do
     |> YamlElixir.read_all_from_string!()
     |> Enum.map(&KubeExt.Hashing.decorate_content_hash/1)
   end
+
+  def to_yaml(resource) do
+    Ymlr.Encoder.to_s!(resource)
+  end
 end

@@ -1,16 +1,18 @@
 defmodule Mix.Tasks.GenResource do
   @moduledoc "The mix task to generate a resource code module from yaml"
   use Mix.Task
+  import KubeExt.Yaml
 
   @requirements ["app.config"]
 
   defmodule ResourceResult do
-    defstruct method_defs: [], resource_map: %{}
+    defstruct methods: %{}, manifests: %{}, raw_files: %{}
 
     def merge(rr_one, rr_two) do
       %__MODULE__{
-        method_defs: rr_one.method_defs ++ rr_two.method_defs,
-        resource_map: Map.merge(rr_one.resource_map, rr_two.resource_map)
+        methods: Map.merge(rr_one.methods, rr_two.methods),
+        manifests: Map.merge(rr_one.manifests, rr_two.manifests),
+        raw_files: Map.merge(rr_one.raw_files, rr_two.raw_files)
       }
     end
   end
@@ -25,11 +27,12 @@ defmodule Mix.Tasks.GenResource do
       |> Enum.map(fn resource -> process_resource(resource) end)
       |> Enum.reduce(%ResourceResult{}, &ResourceResult.merge/2)
 
+    write_manifests(result, app_name)
     write_resouce_elixir(result, app_name)
   end
 
   def write_resouce_elixir(%ResourceResult{} = result, app_name) do
-    module = full_module(app_name, result.method_defs)
+    module = full_module(app_name, Map.values(result.methods))
 
     resource_path =
       Path.join(File.cwd!(), "apps/kube_resources/lib/kube_resources/#{app_name}.ex")
@@ -37,24 +40,48 @@ defmodule Mix.Tasks.GenResource do
     File.write!(resource_path, Macro.to_string(module))
   end
 
+  def write_manifests(%ResourceResult{} = result, app_name) do
+    File.mkdir_p!("apps/kube_resources/priv/manifests/#{app_name}/")
+
+    for {name, contents} <- result.manifests do
+      path = "apps/kube_resources/priv/manifests/#{app_name}/#{name}"
+      File.write!(path, contents)
+    end
+  end
+
   def process_resource(resource),
     do: process_resource(resource, KubeExt.ApiVersionKind.resource_type(resource))
+
+  def process_resource(resource, :crd) do
+    file_name = crd_file_name(resource)
+
+    content =
+      resource
+      |> update_in(["metadata"], fn meta ->
+        Map.drop(meta || %{}, ["annotations", "creationTimestamp"])
+      end)
+      |> to_yaml()
+
+    manifests = Map.put(%{}, file_name, content)
+    %ResourceResult{manifests: manifests}
+  end
 
   def process_resource(resource, resource_type) do
     method_name = resource_method_name(resource_type, resource)
 
-    %ResourceResult{
-      method_defs: [
-        resource
-        |> Map.drop(["apiVersion", "kind"])
-        |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
-          handle_field(key, value, acc_code)
-        end)
-        |> then(fn rp ->
-          resource_method_from_pipeline(rp, method_name)
-        end)
-      ]
-    }
+    method_def =
+      resource
+      |> Map.drop(["apiVersion", "kind"])
+      |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
+        handle_field(key, value, acc_code)
+      end)
+      |> then(fn rp ->
+        resource_method_from_pipeline(rp, method_name)
+      end)
+
+    methods = Map.put(%{}, method_name, method_def)
+
+    %ResourceResult{methods: methods}
   end
 
   defp handle_field("metadata" = _field_name, field_value, acc_code) do
@@ -144,7 +171,7 @@ defmodule Mix.Tasks.GenResource do
     :"#{Atom.to_string(resource_type)}_#{name}"
   end
 
-  def resource_method_from_pipeline(pipeline, method_name) do
+  defp resource_method_from_pipeline(pipeline, method_name) do
     quote do
       def unquote(method_name)(config) do
         namespace = Settings.namespace(config)
@@ -153,7 +180,7 @@ defmodule Mix.Tasks.GenResource do
     end
   end
 
-  def full_module(app_name, methods) do
+  defp full_module(app_name, methods) do
     quote do
       defmodule KubeResources.Resource do
         alias KubeExt.Builder, as: B
@@ -162,5 +189,12 @@ defmodule Mix.Tasks.GenResource do
         unquote_splicing(methods)
       end
     end
+  end
+
+  defp crd_file_name(resource) do
+    sanitized_name =
+      resource |> K8s.Resource.name() |> String.downcase() |> String.replace(~r/[^\w]/, "_")
+
+    "#{sanitized_name}.yaml"
   end
 end
