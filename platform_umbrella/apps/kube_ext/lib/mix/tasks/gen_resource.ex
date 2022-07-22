@@ -17,6 +17,8 @@ defmodule Mix.Tasks.GenResource do
     "heritage"
   ]
 
+  @max_config_string_size 256
+
   defmodule ResourceResult do
     defstruct methods: %{}, manifests: %{}, raw_files: %{}, include_paths: %{}
 
@@ -41,6 +43,7 @@ defmodule Mix.Tasks.GenResource do
       |> Enum.reduce(%ResourceResult{}, &ResourceResult.merge/2)
 
     write_manifests(result, app_name)
+    write_raw_files(result, app_name)
     write_resouce_elixir(result, app_name)
   end
 
@@ -62,10 +65,23 @@ defmodule Mix.Tasks.GenResource do
     end
   end
 
+  defp write_raw_files(%ResourceResult{} = result, app_name) do
+    File.mkdir_p!("apps/kube_resources/priv/raw_files/#{app_name}/")
+
+    for {name, contents} <- result.raw_files do
+      path = raw_file_path(app_name, name)
+      File.write!(path, contents)
+    end
+  end
+
   defp crd_path(app_name, crd_filename),
     do: "apps/kube_resources/priv/manifests/#{app_name}/#{crd_filename}"
 
+  defp raw_file_path(app_name, filename),
+    do: "apps/kube_resources/priv/raw_files/#{app_name}/#{filename}"
+
   defp relative_crd_path(app_name, crd_filename), do: "priv/manifests/#{app_name}/#{crd_filename}"
+  defp relative_raw_file_path(app_name, filename), do: "priv/raw_files/#{app_name}/#{filename}"
 
   def process_resource(resource, app_name),
     do: process_resource(resource, resource_type(resource), app_name)
@@ -79,6 +95,36 @@ defmodule Mix.Tasks.GenResource do
     includes = Map.put(%{}, include_name, relative_crd_path(app_name, file_name))
     methods = Map.put(%{}, method_name, yaml_resource_method(method_name, include_name))
     %ResourceResult{manifests: manifests, include_paths: includes, methods: methods}
+  end
+
+  def process_resource(resource, :config_map = _resource_type, app_name) do
+    data = Map.get(resource, "data", %{})
+
+    # These are the items that will be include
+    large_data =
+      data
+      |> Enum.filter(fn {_key, value} ->
+        is_binary(value) && String.length(value) >= @max_config_string_size
+      end)
+      |> Enum.into(%{})
+
+    mappings =
+      large_data
+      |> Enum.map(fn {file_name, _} ->
+        {to_include_name(file_name), relative_raw_file_path(app_name, file_name)}
+      end)
+      |> Enum.into(%{})
+
+    # these are the values that we'll add ourself
+    small_data = Map.drop(data, Map.keys(large_data))
+
+    method_name = resource_method_name(resource, app_name)
+
+    method_def = config_map_method(resource, method_name, app_name, small_data, large_data)
+
+    methods = Map.put(%{}, method_name, method_def)
+
+    %ResourceResult{raw_files: large_data, include_paths: mappings, methods: methods}
   end
 
   def process_resource(resource, resource_type, app_name) do
@@ -100,13 +146,39 @@ defmodule Mix.Tasks.GenResource do
 
   defp default_method(resource, method_name, resource_type, app_name) do
     resource
+    |> resource_pipeline(resource_type, app_name)
+    |> resource_method_from_pipeline(method_name)
+  end
+
+  defp config_map_method(resource, method_name, app_name, small_data, large_data) do
+    data_pipeline = data_pipeline(small_data, large_data)
+
+    normal_pipeline =
+      resource
+      |> Map.drop(["data"])
+      |> resource_pipeline(:config_map, app_name)
+      |> add_data_from_var()
+
+    resource_method_from_pipeline_and_data(data_pipeline, normal_pipeline, method_name)
+  end
+
+  defp resource_pipeline(resource, resource_type, app_name) do
+    resource
     |> Map.drop(["apiVersion", "kind", "type"])
     |> Enum.reject(fn {_key, value} -> value == nil end)
     |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
       handle_field(key, value, acc_code, app_name)
     end)
-    |> then(fn rp ->
-      resource_method_from_pipeline(rp, method_name)
+  end
+
+  defp data_pipeline(small_data, large_data) do
+    Enum.reduce(small_data, starting_data(), fn {key, value}, code ->
+      add_map_put_key(code, key, value)
+    end)
+    |> then(fn code_with_small ->
+      Enum.reduce(large_data, code_with_small, fn {key, _value}, code ->
+        add_map_put_get_resource(code, key, to_include_name(key))
+      end)
     end)
   end
 
@@ -230,6 +302,15 @@ defmodule Mix.Tasks.GenResource do
     )
   end
 
+  defp add_map_put_get_resource(pipeline, key, resource_key) do
+    pipe(
+      pipeline,
+      quote do
+        Map.put(unquote(key), get_resource(unquote(resource_key)))
+      end
+    )
+  end
+
   defp add_spec(pipeline, value) do
     pipe(
       pipeline,
@@ -328,9 +409,24 @@ defmodule Mix.Tasks.GenResource do
     )
   end
 
+  defp add_data_from_var(pipeline) do
+    pipe(
+      pipeline,
+      quote do
+        B.data(data)
+      end
+    )
+  end
+
   def starting_code(resource_type) do
     quote do
       B.build_resource(unquote(resource_type))
+    end
+  end
+
+  defp starting_data do
+    quote do
+      %{}
     end
   end
 
@@ -365,6 +461,16 @@ defmodule Mix.Tasks.GenResource do
       def unquote(method_name)(config) do
         namespace = ExampleSettings.namespace(config)
         unquote(pipeline)
+      end
+    end
+  end
+
+  defp resource_method_from_pipeline_and_data(data_pipeline, main_pipeline, method_name) do
+    quote do
+      def unquote(method_name)(config) do
+        namespace = ExampleSettings.namespace(config)
+        data = unquote(data_pipeline)
+        unquote(main_pipeline)
       end
     end
   end
@@ -414,6 +520,11 @@ defmodule Mix.Tasks.GenResource do
     do:
       resource
       |> K8s.Resource.name()
+      |> to_include_name()
+
+  defp to_include_name(name),
+    do:
+      name
       |> String.downcase()
       |> String.replace(~r/[^\w\d]/, "_")
       |> String.to_atom()
