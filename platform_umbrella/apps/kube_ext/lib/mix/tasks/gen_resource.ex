@@ -133,6 +133,20 @@ defmodule Mix.Tasks.GenResource do
     add_spec(acc_code, clean_spec(field_value, app_name))
   end
 
+  defp handle_field("rules" = _field_name, field_value, acc_code, _app_name) do
+    add_rules(acc_code, field_value)
+  end
+
+  defp handle_field("roleRef" = _field_name, field_value, acc_code, _app_name) do
+    add_role_ref(acc_code, Map.get(field_value, "name"))
+  end
+
+  defp handle_field("subjects" = _field_name, subjects, acc_code, _app_name) do
+    Enum.reduce(subjects, acc_code, fn subject, code ->
+      add_subject(code, Map.get(subject, "name"))
+    end)
+  end
+
   defp handle_field(field_name, field_value, acc_code, _app_name) do
     add_map_put_key(acc_code, field_name, field_value)
   end
@@ -234,6 +248,33 @@ defmodule Mix.Tasks.GenResource do
     )
   end
 
+  defp add_role_ref(pipeline, name) do
+    pipe(
+      pipeline,
+      quote do
+        B.role_ref(B.build_role_ref(unquote(name)))
+      end
+    )
+  end
+
+  defp add_subject(pipeline, name) do
+    pipe(
+      pipeline,
+      quote do
+        B.subject(B.build_service_account(unquote(name), namespace))
+      end
+    )
+  end
+
+  defp add_rules(pipeline, rules) do
+    pipe(
+      pipeline,
+      quote do
+        B.rules(unquote(rules))
+      end
+    )
+  end
+
   defp add_other_labels(acc_code, metadata, app_name) do
     metadata
     |> Map.get("labels", %{})
@@ -322,7 +363,7 @@ defmodule Mix.Tasks.GenResource do
   defp resource_method_from_pipeline(pipeline, method_name) do
     quote do
       def unquote(method_name)(config) do
-        namespace = Settings.namespace(config)
+        namespace = ExampleSettings.namespace(config)
         unquote(pipeline)
       end
     end
@@ -332,6 +373,7 @@ defmodule Mix.Tasks.GenResource do
     quote do
       defmodule KubeResources.ExampleServiceResource do
         alias KubeExt.Builder, as: B
+        alias KubeResources.ExampleSettings
 
         import KubeExt.Yaml
 
@@ -348,7 +390,9 @@ defmodule Mix.Tasks.GenResource do
     quote do
       defmodule KubeResources.ExampleServiceResource do
         use KubeExt.IncludeResource, unquote(include_keywords)
+
         alias KubeExt.Builder, as: B
+        alias KubeResources.ExampleSettings
 
         import KubeExt.Yaml
 
