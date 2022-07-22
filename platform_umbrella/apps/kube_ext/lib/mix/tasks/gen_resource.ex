@@ -6,6 +6,17 @@ defmodule Mix.Tasks.GenResource do
 
   @requirements ["app.config"]
 
+  @bad_labels [
+    "app.kubernetes.io/managed-by",
+    "app.kubernetes.io/version",
+    "helm.sh/chart",
+    "helm.sh/hook-delete-policy",
+    "install.operator.istio.io/owning-resource",
+    "chart",
+    "release",
+    "heritage"
+  ]
+
   defmodule ResourceResult do
     defstruct methods: %{}, manifests: %{}, raw_files: %{}, include_paths: %{}
 
@@ -73,7 +84,7 @@ defmodule Mix.Tasks.GenResource do
   def process_resource(resource, resource_type, app_name) do
     method_name = resource_method_name(resource, app_name)
 
-    method_def = default_method(resource, method_name, resource_type)
+    method_def = default_method(resource, method_name, resource_type, app_name)
     methods = Map.put(%{}, method_name, method_def)
     %ResourceResult{methods: methods}
   end
@@ -87,12 +98,12 @@ defmodule Mix.Tasks.GenResource do
     |> to_yaml()
   end
 
-  defp default_method(resource, method_name, resource_type) do
+  defp default_method(resource, method_name, resource_type, app_name) do
     resource
     |> Map.drop(["apiVersion", "kind", "type"])
     |> Enum.reject(fn {_key, value} -> value == nil end)
     |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
-      handle_field(key, value, acc_code)
+      handle_field(key, value, acc_code, app_name)
     end)
     |> then(fn rp ->
       resource_method_from_pipeline(rp, method_name)
@@ -107,7 +118,7 @@ defmodule Mix.Tasks.GenResource do
     end
   end
 
-  defp handle_field("metadata" = _field_name, field_value, acc_code) do
+  defp handle_field("metadata" = _field_name, field_value, acc_code, app_name) do
     name = Map.get(field_value, "name", nil)
     namespace = Map.get(field_value, "namespace", nil)
 
@@ -115,14 +126,79 @@ defmodule Mix.Tasks.GenResource do
     |> add_name(name)
     |> add_namespace(namespace)
     |> add_app_labels()
+    |> add_other_labels(field_value, app_name)
   end
 
-  defp handle_field("spec" = _field_name, field_value, acc_code) do
-    add_spec(acc_code, field_value)
+  defp handle_field("spec" = _field_name, field_value, acc_code, app_name) do
+    add_spec(acc_code, clean_spec(field_value, app_name))
   end
 
-  defp handle_field(field_name, field_value, acc_code) do
+  defp handle_field(field_name, field_value, acc_code, _app_name) do
     add_map_put_key(acc_code, field_name, field_value)
+  end
+
+  defp clean_spec(spec, app_name) do
+    spec
+    |> Enum.map(fn {key, value} -> clean_spec_field(key, value, app_name) end)
+    |> Enum.into(%{})
+  end
+
+  defp clean_spec_field("selector", %{"matchLabels" => label_map}, app_name) do
+    {"selector", %{"matchLabels" => clean_labels(label_map, app_name)}}
+  end
+
+  defp clean_spec_field("selector", %{} = label_map, app_name) do
+    {"selector", clean_labels(label_map, app_name)}
+  end
+
+  defp clean_spec_field("template", template, app_name) do
+    clean_template =
+      template
+      |> Enum.map(fn {key, value} ->
+        case {key, value} do
+          {"metadata", _} -> {"metadata", clean_template_metadata(value, app_name)}
+          {_, _} -> {key, value}
+        end
+      end)
+      |> Enum.into(%{})
+
+    {"template", clean_template}
+  end
+
+  defp clean_spec_field(key, value, _app_name) do
+    {key, value}
+  end
+
+  defp clean_labels(label_map, app_name) do
+    label_map
+    |> Map.drop(@bad_labels)
+    |> Enum.map(fn {key, value} ->
+      case {key, value} do
+        {"app.kubernetes.io/instance", _} ->
+          {"battery/app", app_name}
+
+        {"app.kubernetes.io/component", _} ->
+          {"battery/component", value}
+
+        {"app.kubernetes.io/name", _} ->
+          {"battery/component", value}
+
+        {_, _} ->
+          {key, value}
+      end
+    end)
+    |> Enum.into(%{})
+  end
+
+  defp clean_template_metadata(metadata, app_name) do
+    metadata
+    |> Map.drop(["annotations"])
+    |> update_in(["labels"], fn labels ->
+      (labels || %{})
+      |> clean_labels(app_name)
+      |> Map.put("battery/app", app_name)
+      |> Map.put("battery/managed", "true")
+    end)
   end
 
   defp pipe(left, right) do
@@ -158,11 +234,44 @@ defmodule Mix.Tasks.GenResource do
     )
   end
 
+  defp add_other_labels(acc_code, metadata, app_name) do
+    metadata
+    |> Map.get("labels", %{})
+    |> Map.drop(@bad_labels)
+    |> Enum.reduce(acc_code, fn {key, value}, code ->
+      case {key, value} do
+        {"app.kubernetes.io/instance", _} -> code
+        {"app.kubernetes.io/component", _} -> add_component_label(code, value)
+        {_, ^app_name} -> code
+        {"app.kubernetes.io/name", _} -> add_component_label(code, value)
+        {_, _} -> add_label(code, key, value)
+      end
+    end)
+  end
+
   defp add_app_labels(pipeline) do
     pipe(
       pipeline,
       quote do
         B.app_labels(@app)
+      end
+    )
+  end
+
+  defp add_component_label(pipeline, label) do
+    pipe(
+      pipeline,
+      quote do
+        B.component_label(unquote(label))
+      end
+    )
+  end
+
+  defp add_label(pipeline, label, value) do
+    pipe(
+      pipeline,
+      quote do
+        B.label(unquote(label), unquote(value))
       end
     )
   end
