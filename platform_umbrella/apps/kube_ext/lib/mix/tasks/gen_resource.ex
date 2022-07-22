@@ -4,16 +4,32 @@ defmodule Mix.Tasks.GenResource do
 
   @requirements ["app.config"]
 
+  defmodule ResourceResult do
+    defstruct method_defs: [], resource_map: %{}
+
+    def merge(rr_one, rr_two) do
+      %__MODULE__{
+        method_defs: rr_one.method_defs ++ rr_two.method_defs,
+        resource_map: Map.merge(rr_one.resource_map, rr_two.resource_map)
+      }
+    end
+  end
+
   def run(args) do
     [file_path, app_name] = args
 
-    methods =
+    result =
       file_path
       |> YamlElixir.read_all_from_file!()
       |> Enum.reject(&Enum.empty?/1)
       |> Enum.map(fn resource -> process_resource(resource) end)
+      |> Enum.reduce(%ResourceResult{}, &ResourceResult.merge/2)
 
-    module = full_module(app_name, methods)
+    write_resouce_elixir(result, app_name)
+  end
+
+  def write_resouce_elixir(%ResourceResult{} = result, app_name) do
+    module = full_module(app_name, result.method_defs)
 
     resource_path =
       Path.join(File.cwd!(), "apps/kube_resources/lib/kube_resources/#{app_name}.ex")
@@ -27,14 +43,18 @@ defmodule Mix.Tasks.GenResource do
   def process_resource(resource, resource_type) do
     method_name = resource_method_name(resource_type, resource)
 
-    resource
-    |> Map.drop(["apiVersion", "kind"])
-    |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
-      handle_field(key, value, acc_code)
-    end)
-    |> then(fn rp ->
-      resource_method_from_pipeline(rp, method_name)
-    end)
+    %ResourceResult{
+      method_defs: [
+        resource
+        |> Map.drop(["apiVersion", "kind"])
+        |> Enum.reduce(starting_code(resource_type), fn {key, value}, acc_code ->
+          handle_field(key, value, acc_code)
+        end)
+        |> then(fn rp ->
+          resource_method_from_pipeline(rp, method_name)
+        end)
+      ]
+    }
   end
 
   defp handle_field("metadata" = _field_name, field_value, acc_code) do
