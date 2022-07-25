@@ -67,7 +67,6 @@ asdf plugin add erlang
 asdf plugin add elixir
 asdf plugin add nodejs
 asdf plugin add rust
-asdf plugin add python
 asdf plugin add kubectl
 asdf plugin add awscli
 asdf plugin-add eksctl
@@ -75,7 +74,7 @@ asdf plugin-add eksctl
 asdf install 
 ```
 
-That should install elixir, erlang, k3d, k9s, kubectl, nodejs, python, rust, and tmux. There might be system dependencies that are needed.
+That should install elixir, erlang, k3d, k9s, kubectl, nodejs, rust, and tmux. There might be system dependencies that are needed.
 
 
 ### Elixir Dependencies
