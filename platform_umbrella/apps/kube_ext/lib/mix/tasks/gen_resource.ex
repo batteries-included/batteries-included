@@ -38,7 +38,7 @@ defmodule Mix.Tasks.GenResource do
   end
 
   def run(args) do
-    [file_path, app_name] = args
+    [file_path, app_name, settings_module] = args
 
     result =
       file_path
@@ -49,17 +49,33 @@ defmodule Mix.Tasks.GenResource do
 
     write_manifests(result, app_name)
     write_raw_files(result, app_name)
-    write_resouce_elixir(result, app_name)
+    write_resouce_elixir(result, app_name, settings_module)
   end
 
-  defp write_resouce_elixir(%ResourceResult{} = result, app_name) do
+  defp write_resouce_elixir(%ResourceResult{} = result, app_name, settings_module) do
     materialize = materialize_method(result.materialize_mappings)
     module = module(app_name, result.include_paths, materialize, result.methods)
 
     resource_path =
       Path.join(File.cwd!(), "apps/kube_resources/lib/kube_resources/#{app_name}.ex")
 
-    File.write!(resource_path, Macro.to_string(module))
+    module_name =
+      app_name
+      |> String.downcase()
+      |> String.split(~r/[^\w]/, trim: true)
+      |> Enum.join("_")
+      |> Macro.camelize()
+
+    string_contents =
+      module
+      |> Macro.to_string()
+      |> String.replace("alias KubeResources.ExampleSettings", "alias #{settings_module}")
+      |> String.replace(
+        "defmodule KubeResources.ExampleServiceResource",
+        "defmodule KubeResources.#{module_name}"
+      )
+
+    File.write!(resource_path, string_contents)
   end
 
   defp write_manifests(%ResourceResult{} = result, app_name) do
@@ -538,7 +554,7 @@ defmodule Mix.Tasks.GenResource do
   defp resource_method_from_pipeline(pipeline, method_name) do
     quote do
       def unquote(method_name)(config) do
-        namespace = ExampleSettings.namespace(config)
+        namespace = Settings.namespace(config)
         unquote(pipeline)
       end
     end
@@ -555,7 +571,7 @@ defmodule Mix.Tasks.GenResource do
   defp resource_method_from_pipeline_and_data(data_pipeline, main_pipeline, method_name) do
     quote do
       def unquote(method_name)(config) do
-        namespace = ExampleSettings.namespace(config)
+        namespace = Settings.namespace(config)
         data = unquote(data_pipeline)
         unquote(main_pipeline)
       end
@@ -566,7 +582,7 @@ defmodule Mix.Tasks.GenResource do
     quote do
       defmodule KubeResources.ExampleServiceResource do
         alias KubeExt.Builder, as: B
-        alias KubeResources.ExampleSettings
+        alias KubeResources.ExampleSettings, as: Settings
 
         import KubeExt.Yaml
 
@@ -587,7 +603,7 @@ defmodule Mix.Tasks.GenResource do
         use KubeExt.IncludeResource, unquote(include_keywords)
 
         alias KubeExt.Builder, as: B
-        alias KubeResources.ExampleSettings
+        alias KubeResources.ExampleSettings, as: Settings
 
         import KubeExt.Yaml
 
