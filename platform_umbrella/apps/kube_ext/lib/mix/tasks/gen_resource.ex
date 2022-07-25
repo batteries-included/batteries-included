@@ -20,14 +20,19 @@ defmodule Mix.Tasks.GenResource do
   @max_config_string_size 256
 
   defmodule ResourceResult do
-    defstruct methods: %{}, manifests: %{}, raw_files: %{}, include_paths: %{}
+    defstruct methods: %{},
+              manifests: %{},
+              raw_files: %{},
+              include_paths: %{},
+              materialize_mappings: %{}
 
     def merge(rr_one, rr_two) do
       %__MODULE__{
         methods: Map.merge(rr_one.methods, rr_two.methods),
         manifests: Map.merge(rr_one.manifests, rr_two.manifests),
         raw_files: Map.merge(rr_one.raw_files, rr_two.raw_files),
-        include_paths: Map.merge(rr_one.include_paths, rr_two.include_paths)
+        include_paths: Map.merge(rr_one.include_paths, rr_two.include_paths),
+        materialize_mappings: Map.merge(rr_one.materialize_mappings, rr_two.materialize_mappings)
       }
     end
   end
@@ -48,7 +53,8 @@ defmodule Mix.Tasks.GenResource do
   end
 
   defp write_resouce_elixir(%ResourceResult{} = result, app_name) do
-    module = module(app_name, result.methods, result.include_paths)
+    materialize = materialize_method(result.materialize_mappings)
+    module = module(app_name, result.include_paths, materialize, result.methods)
 
     resource_path =
       Path.join(File.cwd!(), "apps/kube_resources/lib/kube_resources/#{app_name}.ex")
@@ -83,10 +89,10 @@ defmodule Mix.Tasks.GenResource do
   defp relative_crd_path(app_name, crd_filename), do: "priv/manifests/#{app_name}/#{crd_filename}"
   defp relative_raw_file_path(app_name, filename), do: "priv/raw_files/#{app_name}/#{filename}"
 
-  def process_resource(resource, app_name),
+  defp process_resource(resource, app_name),
     do: process_resource(resource, resource_type(resource), app_name)
 
-  def process_resource(resource, :crd = _resource_type, app_name) do
+  defp process_resource(resource, :crd = _resource_type, app_name) do
     file_name = crd_file_name(resource)
     include_name = crd_include_name(resource)
     method_name = resource_method_name(resource, app_name)
@@ -94,10 +100,17 @@ defmodule Mix.Tasks.GenResource do
     manifests = Map.put(%{}, file_name, to_yaml_contents(resource))
     includes = Map.put(%{}, include_name, relative_crd_path(app_name, file_name))
     methods = Map.put(%{}, method_name, yaml_resource_method(method_name, include_name))
-    %ResourceResult{manifests: manifests, include_paths: includes, methods: methods}
+    materialize = Map.put(%{}, materialize_path(resource, app_name), method_name)
+
+    %ResourceResult{
+      manifests: manifests,
+      include_paths: includes,
+      methods: methods,
+      materialize_mappings: materialize
+    }
   end
 
-  def process_resource(resource, :config_map = _resource_type, app_name) do
+  defp process_resource(resource, :config_map = _resource_type, app_name) do
     data = Map.get(resource, "data", %{})
 
     # We're going to split the config map into values that are in raw_files and
@@ -131,23 +144,32 @@ defmodule Mix.Tasks.GenResource do
         config_map_method(resource, method_name, app_name, small_data, large_data)
       )
 
-    %ResourceResult{raw_files: large_data, include_paths: mappings, methods: methods}
+    materialize = Map.put(%{}, materialize_path(resource, app_name), method_name)
+
+    %ResourceResult{
+      raw_files: large_data,
+      include_paths: mappings,
+      methods: methods,
+      materialize_mappings: materialize
+    }
   end
 
-  def process_resource(resource, :cluster_role = resource_type, app_name) do
+  defp process_resource(resource, :cluster_role = resource_type, app_name) do
     method_name = resource_method_name(resource, app_name)
 
     method_def = cluster_scope_method(resource, method_name, resource_type, app_name)
     methods = Map.put(%{}, method_name, method_def)
-    %ResourceResult{methods: methods}
+    materialize = Map.put(%{}, materialize_path(resource, app_name), method_name)
+    %ResourceResult{methods: methods, materialize_mappings: materialize}
   end
 
-  def process_resource(resource, resource_type, app_name) do
+  defp process_resource(resource, resource_type, app_name) do
     method_name = resource_method_name(resource, app_name)
 
     method_def = default_method(resource, method_name, resource_type, app_name)
     methods = Map.put(%{}, method_name, method_def)
-    %ResourceResult{methods: methods}
+    materialize = Map.put(%{}, materialize_path(resource, app_name), method_name)
+    %ResourceResult{methods: methods, materialize_mappings: materialize}
   end
 
   defp to_yaml_contents(resource) do
@@ -207,6 +229,19 @@ defmodule Mix.Tasks.GenResource do
     quote do
       def unquote(method_name)(_config) do
         yaml(get_resource(unquote(include_name)))
+      end
+    end
+  end
+
+  defp materialize_method(mappings) do
+    map_pipeline =
+      Enum.reduce(mappings, starting_data(), fn {path, method_name}, pipeline ->
+        add_map_put_call_with_config(pipeline, "/" <> path, method_name)
+      end)
+
+    quote do
+      def materialize(config) do
+        unquote(map_pipeline)
       end
     end
   end
@@ -328,6 +363,15 @@ defmodule Mix.Tasks.GenResource do
       pipeline,
       quote do
         Map.put(unquote(key), get_resource(unquote(resource_key)))
+      end
+    )
+  end
+
+  defp add_map_put_call_with_config(pipeline, key, method_name) do
+    pipe(
+      pipeline,
+      quote do
+        Map.put(unquote(key), unquote(method_name)(config))
       end
     )
   end
@@ -455,26 +499,40 @@ defmodule Mix.Tasks.GenResource do
     resource_type = resource_type(resource)
     string_resource_type = Atom.to_string(resource_type)
 
-    sanitized_resource_name =
-      resource
-      |> K8s.Resource.name()
-      |> String.downcase()
-      |> String.split(~r/[^\w\d]/, trim: true)
-      |> Enum.reject(fn v -> v == app_name || String.contains?(string_resource_type, v) end)
-      |> Enum.join("_")
-      |> then(fn v ->
-        case v do
-          "" ->
-            "main"
-
-          _ ->
-            v
-        end
-      end)
+    sanitized_resource_name = sanitized_resource_name(resource, app_name)
 
     name = "#{string_resource_type}_#{sanitized_resource_name}"
 
     String.to_atom(name)
+  end
+
+  defp sanitized_resource_name(resource, app_name) do
+    resource_type = resource_type(resource)
+    string_resource_type = Atom.to_string(resource_type)
+
+    resource
+    |> K8s.Resource.name()
+    |> String.downcase()
+    |> String.split(~r/[^\w\d]/, trim: true)
+    |> Enum.reject(fn v -> v == app_name || String.contains?(string_resource_type, v) end)
+    |> Enum.join("_")
+    |> then(fn v ->
+      case v do
+        "" ->
+          "main"
+
+        _ ->
+          v
+      end
+    end)
+  end
+
+  defp materialize_path(resource, app_name) do
+    resource_type = resource_type(resource)
+    string_resource_type = Atom.to_string(resource_type)
+    sanitized_resource_name = sanitized_resource_name(resource, app_name)
+
+    Path.join([string_resource_type, sanitized_resource_name])
   end
 
   defp resource_method_from_pipeline(pipeline, method_name) do
@@ -504,7 +562,7 @@ defmodule Mix.Tasks.GenResource do
     end
   end
 
-  defp module(app_name, %{} = methods, includes) when map_size(includes) == 0 do
+  defp module(app_name, includes, materialize, methods) when map_size(includes) == 0 do
     quote do
       defmodule KubeResources.ExampleServiceResource do
         alias KubeExt.Builder, as: B
@@ -514,12 +572,14 @@ defmodule Mix.Tasks.GenResource do
 
         @app unquote(app_name)
 
+        unquote(materialize)
+
         unquote_splicing(Map.values(methods))
       end
     end
   end
 
-  defp module(app_name, %{} = methods, %{} = includes) do
+  defp module(app_name, %{} = includes, materialize, methods) do
     include_keywords = Keyword.new(includes)
 
     quote do
@@ -532,6 +592,8 @@ defmodule Mix.Tasks.GenResource do
         import KubeExt.Yaml
 
         @app unquote(app_name)
+
+        unquote(materialize)
 
         unquote_splicing(Map.values(methods))
       end
