@@ -1,0 +1,14 @@
+# -*- conf -*-
+# Paste the below in https://play.netlify.com/headers to test
+# Set max-age to 1 year for stuff not expected to update any time soon.
+/css/*
+  Cache-Control: public, max-age=31536000
+
+/js/*
+  Cache-Control: public, max-age=31536000
+
+/fonts/*
+  Cache-Control: public, max-age=31536000
+
+/images/*
+  Cache-Control: public, max-age=31536000
