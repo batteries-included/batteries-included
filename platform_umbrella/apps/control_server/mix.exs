@@ -67,7 +67,7 @@ defmodule ControlServer.MixProject do
       {:timex, "~> 3.7"},
 
       # Http
-      {:finch, "~> 0.12.0"},
+      {:finch, "~> 0.13.0"},
 
       # Naming
       {:mnemonic_slugs, "~> 0.0.3"},
