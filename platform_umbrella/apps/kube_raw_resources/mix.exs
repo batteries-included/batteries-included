@@ -24,7 +24,7 @@ defmodule KubeRawResources.MixProject do
 
   defp deps do
     [
-      {:ymlr, "~> 2.0"},
+      {:ymlr, "~> 3.0"},
       {:kube_ext, in_umbrella: true}
     ]
   end
