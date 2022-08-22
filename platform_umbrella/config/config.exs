@@ -82,7 +82,7 @@ config :esbuild,
 config :control_server,
   default_services: [
     :battery,
-    :database,
+    :postgres_operator,
     :database_internal,
     :istio,
     :istio_istiod

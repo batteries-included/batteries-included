@@ -37,6 +37,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Tekton
   alias KubeResources.TektonDashboard
   alias KubeResources.OryHydra
+  alias KubeRawResources.PostgresOperator
   alias KubeResources.Harbor
 
   require Logger
@@ -77,7 +78,7 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
 
   def materialize(%{} = config, :data), do: Data.materialize(config)
-  def materialize(%{} = config, :database), do: Database.materialize_common(config)
+  def materialize(%{} = config, :postgres_operator), do: PostgresOperator.materialize(config)
   def materialize(%{} = config, :database_public), do: Database.materialize_public(config)
   def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
   def materialize(%{} = config, :redis), do: Redis.materialize(config)

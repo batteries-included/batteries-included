@@ -581,10 +581,10 @@ defmodule Mix.Tasks.GenResource do
   defp module(app_name, includes, materialize, methods) when map_size(includes) == 0 do
     quote do
       defmodule KubeResources.ExampleServiceResource do
+        import KubeExt.Yaml
+
         alias KubeExt.Builder, as: B
         alias KubeResources.ExampleSettings, as: Settings
-
-        import KubeExt.Yaml
 
         @app unquote(app_name)
 
@@ -602,10 +602,10 @@ defmodule Mix.Tasks.GenResource do
       defmodule KubeResources.ExampleServiceResource do
         use KubeExt.IncludeResource, unquote(include_keywords)
 
+        import KubeExt.Yaml
+
         alias KubeExt.Builder, as: B
         alias KubeResources.ExampleSettings, as: Settings
-
-        import KubeExt.Yaml
 
         @app unquote(app_name)
 

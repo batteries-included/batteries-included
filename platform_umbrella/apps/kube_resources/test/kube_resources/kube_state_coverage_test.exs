@@ -10,7 +10,7 @@ defmodule KubeServices.KubeStateCoverageTest do
 
   @services [
     :data,
-    :database,
+    :postgres_operator,
     :database_internal,
     :battery,
     :control_server,

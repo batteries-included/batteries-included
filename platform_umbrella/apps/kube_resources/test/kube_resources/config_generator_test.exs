@@ -7,6 +7,8 @@ defmodule KubeServices.ConfigGeneratorTest do
 
   require Logger
 
+  import KubeResources.ControlServerFactory
+
   describe "ConfigGenerator" do
     def assert_named(%{} = resource) when is_map(resource) do
       if nil == K8s.Resource.name(resource) do
@@ -24,11 +26,17 @@ defmodule KubeServices.ConfigGeneratorTest do
     def assert_named(nil = _resource), do: nil
 
     setup do
+      service_map =
+        RunnableService.services()
+        |> Enum.map(fn s -> {s.service_type, RunnableService.activate!(s)} end)
+        |> Enum.into(%{})
+
+      postgres = insert(:postgres)
+      redis = insert(:redis)
+      notebook = insert(:notebook)
+
       {:ok,
-       services_activate_map:
-         RunnableService.services()
-         |> Enum.map(fn s -> {s.service_type, RunnableService.activate!(s)} end)
-         |> Enum.into(%{})}
+       services_activate_map: service_map, postgres: postgres, redis: redis, notebook: notebook}
     end
 
     test "materialize all the configs" do

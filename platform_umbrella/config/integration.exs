@@ -30,7 +30,7 @@ config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
 config :control_server,
   default_services: [
     :battery,
-    :database,
+    :postges_operator,
     :istio,
     :istio_istiod
   ]

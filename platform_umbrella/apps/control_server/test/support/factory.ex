@@ -10,7 +10,7 @@ defmodule ControlServer.Factory do
   def base_service_factory do
     %ControlServer.Services.BaseService{
       root_path: sequence(:root_path, &"/service-#{&1}"),
-      service_type: sequence(:service_type, [:prometheus, :database, :cert_manager, :knative])
+      service_type: sequence(:service_type, [:prometheus, :cert_manager, :gitea])
     }
   end
 

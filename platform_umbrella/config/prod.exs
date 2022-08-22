@@ -45,7 +45,7 @@ config :control_server,
     :control_server,
     :istio,
     :istio_istiod,
-    :database,
+    :postgres_operator,
     :database_internal
   ]
 

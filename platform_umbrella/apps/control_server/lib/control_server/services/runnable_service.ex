@@ -21,19 +21,19 @@ defmodule ControlServer.Services.RunnableService do
       %__MODULE__{path: "/data/common", service_type: :data, dependencies: [:battery]},
       %__MODULE__{path: "/data/redis", service_type: :redis, dependencies: [:data, :battery]},
       %__MODULE__{
-        path: "/data/database/common",
-        service_type: :database,
+        path: "/data/postgres/operator",
+        service_type: :postgres_operator,
         dependencies: [:data, :battery]
       },
       %__MODULE__{
         path: "/data/postgres/public",
         service_type: :database_public,
-        dependencies: [:database, :data, :battery]
+        dependencies: [:postgres_operator, :data, :battery]
       },
       %__MODULE__{
-        path: "/data/postgres/battery",
+        path: "/data/postgres/internal",
         service_type: :database_internal,
-        dependencies: [:database, :data],
+        dependencies: [:postgres_operator, :data],
         post: fn repo ->
           Postgres.find_or_create(KubeRawResources.Battery.control_cluster(), repo)
         end
@@ -185,6 +185,8 @@ defmodule ControlServer.Services.RunnableService do
   end
 
   def activate!(service_type) when is_binary(service_type) do
+    Logger.debug("activating string #{service_type}")
+
     service_type
     |> String.to_atom()
     |> activate!()

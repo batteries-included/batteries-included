@@ -34,7 +34,7 @@ defmodule ControlServer.Services.BaseService do
         :github_runner,
         :gitea,
         :data,
-        :database,
+        :postgres_operator,
         :database_public,
         :database_internal,
         :redis,

@@ -4,11 +4,12 @@ defmodule KubeRawResources.ConfigGenerator do
   alias KubeRawResources.Database
   alias KubeRawResources.IstioBase
   alias KubeRawResources.IstioIstiod
+  alias KubeRawResources.PostgresOperator
 
-  def materialize(:database), do: Database.materialize_common(%{})
+  def materialize(:postgres_operator), do: PostgresOperator.materialize(%{})
 
   def materialize(:database_internal),
-    do: Database.materialize(%{"bootstrap.clusters" => [Battery.control_cluster()]})
+    do: Database.materialize(%{"bootstrap_clusters" => [Battery.control_cluster()]})
 
   def materialize(:battery), do: Battery.materialize(%{})
   def materialize(:control_server), do: ControlServerResources.materialize(%{})

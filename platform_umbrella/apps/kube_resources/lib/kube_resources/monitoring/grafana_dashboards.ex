@@ -93,7 +93,7 @@ defmodule KubeResources.GrafanaDashboards do
     }
   end
 
-  def dashboards(config, :database) do
+  def dashboards(config, :postgres_operator) do
     %{
       "/grafana-dashboard-definitions/database/#{grafana_dashboard_name(9628)}" =>
         dashboard_configmap_from_grafana_id(config, 9628)
