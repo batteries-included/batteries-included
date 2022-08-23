@@ -26,12 +26,12 @@ spec:
         value:
           name: istio.stats
           typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            '@type': type.googleapis.com/udpa.type.v1.TypedStruct
             type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
             value:
               config:
                 configuration:
-                  "@type": type.googleapis.com/google.protobuf.StringValue
+                  '@type': type.googleapis.com/google.protobuf.StringValue
                   value: |
                     {
                       "debug": "false",
@@ -60,12 +60,12 @@ spec:
         value:
           name: istio.stats
           typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            '@type': type.googleapis.com/udpa.type.v1.TypedStruct
             type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
             value:
               config:
                 configuration:
-                  "@type": type.googleapis.com/google.protobuf.StringValue
+                  '@type': type.googleapis.com/google.protobuf.StringValue
                   value: |
                     {
                       "debug": "false",
@@ -103,12 +103,12 @@ spec:
         value:
           name: istio.stats
           typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            '@type': type.googleapis.com/udpa.type.v1.TypedStruct
             type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
             value:
               config:
                 configuration:
-                  "@type": type.googleapis.com/google.protobuf.StringValue
+                  '@type': type.googleapis.com/google.protobuf.StringValue
                   value: |
                     {
                       "debug": "false",

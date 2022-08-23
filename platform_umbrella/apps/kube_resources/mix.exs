@@ -32,7 +32,7 @@ defmodule KubeResources.MixProject do
       {:jason, "~> 1.2"},
       # Yaml
       {:yaml_elixir, "~> 2.6"},
-      {:ymlr, "~> 3.0"},
+      {:ymlr, git: "https://github.com/ufirstgroup/ymlr.git"},
       # Caching for http requests
       {:cachex, "~> 3.4"},
       {:finch, "~> 0.13.0"},

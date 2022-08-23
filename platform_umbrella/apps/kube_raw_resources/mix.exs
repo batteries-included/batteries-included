@@ -24,7 +24,7 @@ defmodule KubeRawResources.MixProject do
 
   defp deps do
     [
-      {:ymlr, "~> 3.0"},
+      {:ymlr, git: "https://github.com/ufirstgroup/ymlr.git"},
       {:kube_ext, in_umbrella: true}
     ]
   end

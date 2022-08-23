@@ -17,15 +17,15 @@ spec:
   numberOfInstances: 1
   patroni:
     pg_hba:
-      - local	all	all	trust
-      - host	all	all	127.0.0.1/32	scram-sha-256
-      - host	all	all	::1/128	scram-sha-256
-      - hostssl	replication	standby	all	scram-sha-256
-      - hostnossl	all	postgres	0.0.0.0/0	scram-sha-256
-      - hostssl	all	postgres	0.0.0.0/0	scram-sha-256
-      - hostssl	all	all	all	scram-sha-256
-      - hostnossl	all	all	all	scram-sha-256
-      - hostnossl	all	all	all	reject
+      - "local	all	all	trust"
+      - "host	all	all	127.0.0.1/32	scram-sha-256"
+      - "host	all	all	::1/128	scram-sha-256"
+      - "hostssl	replication	standby	all	scram-sha-256"
+      - "hostnossl	all	postgres	0.0.0.0/0	scram-sha-256"
+      - "hostssl	all	postgres	0.0.0.0/0	scram-sha-256"
+      - "hostssl	all	all	all	scram-sha-256"
+      - "hostnossl	all	all	all	scram-sha-256"
+      - "hostnossl	all	all	all	reject"
   postgresql:
     parameters:
       log_destination: stderr
