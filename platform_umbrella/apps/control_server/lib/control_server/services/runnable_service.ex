@@ -43,6 +43,11 @@ defmodule ControlServer.Services.RunnableService do
         service_type: :minio_operator,
         dependencies: [:data]
       },
+      %__MODULE__{
+        path: "/data/rook",
+        service_type: :rook,
+        dependencies: [:data]
+      },
       # Battery
       %__MODULE__{path: "/battery/core", service_type: :battery},
       %__MODULE__{

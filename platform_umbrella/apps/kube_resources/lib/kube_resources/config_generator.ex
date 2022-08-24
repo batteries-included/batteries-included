@@ -39,6 +39,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.OryHydra
   alias KubeRawResources.PostgresOperator
   alias KubeResources.Harbor
+  alias KubeResources.Rook
 
   require Logger
 
@@ -83,6 +84,7 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
   def materialize(%{} = config, :redis), do: Redis.materialize(config)
   def materialize(%{} = config, :minio_operator), do: MinioOperator.materialize(config)
+  def materialize(%{} = config, :rook), do: Rook.materialize(config)
 
   def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
   def materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)

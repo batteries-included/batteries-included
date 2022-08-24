@@ -9,8 +9,10 @@ defmodule Mix.Tasks.GenResource do
   @bad_labels [
     "app.kubernetes.io/managed-by",
     "app.kubernetes.io/version",
+    "app.kubernetes.io/created-by",
     "helm.sh/chart",
     "helm.sh/hook-delete-policy",
+    "app.kubernetes.io/part-of",
     "install.operator.istio.io/owning-resource",
     "chart",
     "release",
@@ -81,19 +83,19 @@ defmodule Mix.Tasks.GenResource do
   defp write_manifests(%ResourceResult{} = result, app_name) do
     File.mkdir_p!("apps/kube_resources/priv/manifests/#{app_name}/")
 
-    for {name, contents} <- result.manifests do
-      path = crd_path(app_name, name)
-      File.write!(path, contents)
-    end
+    result.manifests
+    |> Enum.sort_by(fn {name, _} -> name end)
+    |> Enum.map(fn {name, contents} -> {crd_path(app_name, name), contents} end)
+    |> Enum.each(fn {path, contents} -> File.write!(path, contents) end)
   end
 
   defp write_raw_files(%ResourceResult{} = result, app_name) do
     File.mkdir_p!("apps/kube_resources/priv/raw_files/#{app_name}/")
 
-    for {name, contents} <- result.raw_files do
-      path = raw_file_path(app_name, name)
-      File.write!(path, contents)
-    end
+    result.raw_files
+    |> Enum.sort_by(fn {name, _} -> name end)
+    |> Enum.map(fn {name, contents} -> {raw_file_path(app_name, name), contents} end)
+    |> Enum.each(fn {path, contents} -> File.write!(path, contents) end)
   end
 
   defp crd_path(app_name, crd_filename),
@@ -170,19 +172,25 @@ defmodule Mix.Tasks.GenResource do
     }
   end
 
-  defp process_resource(resource, :cluster_role = resource_type, app_name) do
-    method_name = resource_method_name(resource, app_name)
+  defp process_resource(resource, :cluster_role = resource_type, app_name),
+    do: cluster_resource(resource, resource_type, app_name)
 
-    method_def = cluster_scope_method(resource, method_name, resource_type, app_name)
-    methods = Map.put(%{}, method_name, method_def)
-    materialize = Map.put(%{}, materialize_path(resource, app_name), method_name)
-    %ResourceResult{methods: methods, materialize_mappings: materialize}
-  end
+  defp process_resource(resource, :pod_security_policy = resource_type, app_name),
+    do: cluster_resource(resource, resource_type, app_name)
 
   defp process_resource(resource, resource_type, app_name) do
     method_name = resource_method_name(resource, app_name)
 
     method_def = default_method(resource, method_name, resource_type, app_name)
+    methods = Map.put(%{}, method_name, method_def)
+    materialize = Map.put(%{}, materialize_path(resource, app_name), method_name)
+    %ResourceResult{methods: methods, materialize_mappings: materialize}
+  end
+
+  defp cluster_resource(resource, resource_type, app_name) do
+    method_name = resource_method_name(resource, app_name)
+
+    method_def = cluster_scope_method(resource, method_name, resource_type, app_name)
     methods = Map.put(%{}, method_name, method_def)
     materialize = Map.put(%{}, materialize_path(resource, app_name), method_name)
     %ResourceResult{methods: methods, materialize_mappings: materialize}
@@ -251,7 +259,9 @@ defmodule Mix.Tasks.GenResource do
 
   defp materialize_method(mappings) do
     map_pipeline =
-      Enum.reduce(mappings, starting_data(), fn {path, method_name}, pipeline ->
+      mappings
+      |> Enum.sort_by(fn {path, _} -> path end)
+      |> Enum.reduce(starting_data(), fn {path, method_name}, pipeline ->
         add_map_put_call_with_config(pipeline, "/" <> path, method_name)
       end)
 
@@ -281,8 +291,22 @@ defmodule Mix.Tasks.GenResource do
     add_rules(acc_code, field_value)
   end
 
-  defp handle_field("roleRef" = _field_name, field_value, acc_code, _app_name) do
+  defp handle_field(
+         "roleRef" = _field_name,
+         %{"kind" => "Role"} = field_value,
+         acc_code,
+         _app_name
+       ) do
     add_role_ref(acc_code, Map.get(field_value, "name"))
+  end
+
+  defp handle_field(
+         "roleRef" = _field_name,
+         %{"kind" => "ClusterRole"} = field_value,
+         acc_code,
+         _app_name
+       ) do
+    add_cluster_role_ref(acc_code, Map.get(field_value, "name"))
   end
 
   defp handle_field("subjects" = _field_name, subjects, acc_code, _app_name) do
@@ -415,6 +439,15 @@ defmodule Mix.Tasks.GenResource do
       pipeline,
       quote do
         B.role_ref(B.build_role_ref(unquote(name)))
+      end
+    )
+  end
+
+  defp add_cluster_role_ref(pipeline, name) do
+    pipe(
+      pipeline,
+      quote do
+        B.role_ref(B.build_cluster_role_ref(unquote(name)))
       end
     )
   end
@@ -596,7 +629,12 @@ defmodule Mix.Tasks.GenResource do
   end
 
   defp module(app_name, %{} = includes, materialize, methods) do
-    include_keywords = Keyword.new(includes)
+    include_keywords = Keyword.new(includes) |> Enum.sort_by(fn {_, path} -> path end)
+
+    sorted_methods =
+      methods
+      |> Enum.sort_by(fn {name, _contents} -> name end)
+      |> Enum.map(fn {_name, contents} -> contents end)
 
     quote do
       defmodule KubeResources.ExampleServiceResource do
@@ -611,7 +649,7 @@ defmodule Mix.Tasks.GenResource do
 
         unquote(materialize)
 
-        unquote_splicing(Map.values(methods))
+        unquote_splicing(sorted_methods)
       end
     end
   end

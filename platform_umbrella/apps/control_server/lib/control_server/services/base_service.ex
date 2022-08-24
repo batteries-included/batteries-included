@@ -39,6 +39,7 @@ defmodule ControlServer.Services.BaseService do
         :database_internal,
         :redis,
         :minio_operator,
+        :rook,
         :istio,
         :istio_istiod,
         :istio_gateway,
