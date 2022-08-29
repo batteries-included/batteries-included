@@ -6,7 +6,10 @@ defmodule KubeExt.MapsettingsTest do
     import KubeExt.MapSettings
 
     setting(:my_image, :image, "test_image:v0.1.1")
-    setting_fn(:id, :id, &System.unique_integer/0)
+
+    setting(:id, :id) do
+      System.unique_integer([:monotonic])
+    end
   end
 
   describe "KubeExt.Mapsettings" do

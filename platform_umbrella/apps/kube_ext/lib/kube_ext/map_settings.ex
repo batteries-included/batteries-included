@@ -1,6 +1,6 @@
 defmodule KubeExt.MapSettings do
   @moduledoc """
-  This is module provices the `setting` and `setting_fn` macros. These
+  This is module provides the `setting` macros. These
   macros make it easier to use a hashmap from
   `ControlServer.Services.BaseService#config`
 
@@ -12,9 +12,11 @@ defmodule KubeExt.MapSettings do
     import KubeExt.MapSettings
 
     setting(:namespace, :namespace, "battery-core")
-    def default_func, do: "computed"
 
-    setting_fn(:test_image, :image, &default_func/0)
+    def computation_func, do: "computed"
+    setting(:test_image, :image) do
+      computation_func()
+    end
   end
   ```
 
@@ -31,39 +33,33 @@ defmodule KubeExt.MapSettings do
 
     iex> KubeExt.ExampleSettings.namespace(%{})
     "battery-core"
-
-    iex> KubeExt.ExampleSettings.namespace()
-    "battery-core"
   """
 
-  defmacro setting_fn(name, key, default_fn) when is_binary(key) do
+  defmacro setting(name, key, do: default_fn) when is_binary(key) do
     quote do
-      def unquote(name)(config \\ %{}) do
-        default_value = apply(unquote(default_fn), [])
-        Map.get(config, unquote(key), default_value)
+      def unquote(name)(config) do
+        Map.get_lazy(config, unquote(key), fn -> unquote(default_fn) end)
       end
     end
   end
 
   defmacro setting(name, key, default) when is_binary(key) do
     quote do
-      def unquote(name)(config \\ %{}) do
+      def unquote(name)(config) do
         Map.get(config, unquote(key), unquote(default))
       end
     end
   end
 
-  defmacro setting_fn(name, key, default_fn) when is_atom(key) do
+  defmacro setting(name, key, do: default_fn) when is_atom(key) do
     string_key = Atom.to_string(key)
 
     quote do
-      def unquote(name)(config \\ %{}) do
-        default_value = apply(unquote(default_fn), [])
-
+      def unquote(name)(config) do
         Map.get(
           config,
           unquote(key),
-          Map.get(config, unquote(string_key), default_value)
+          Map.get_lazy(config, unquote(string_key), fn -> unquote(default_fn) end)
         )
       end
     end
@@ -73,7 +69,7 @@ defmodule KubeExt.MapSettings do
     string_key = Atom.to_string(key)
 
     quote do
-      def unquote(name)(config \\ %{}) do
+      def unquote(name)(config) do
         Map.get(
           config,
           unquote(key),

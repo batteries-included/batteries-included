@@ -65,7 +65,10 @@ common_checks = [
   {Credo.Check.Warning.UnusedStringOperation},
   {Credo.Check.Warning.UnusedTupleOperation},
   {Credo.Check.Warning.OperationWithConstantResult},
-  {CredoEnvvar.Check.Warning.EnvironmentVariablesAtCompileTime},
+  {CredoEnvvar.Check.Warning.EnvironmentVariablesAtCompileTime,
+   files: %{
+     excluded: ["apps/kube_raw_resources/lib/kube_raw_resources/battery/battery_settings.ex"]
+   }},
   {CredoNaming.Check.Warning.AvoidSpecificTermsInModuleNames,
    terms: [
      "Fetcher",

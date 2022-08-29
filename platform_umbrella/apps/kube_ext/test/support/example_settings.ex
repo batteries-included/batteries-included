@@ -3,8 +3,14 @@ defmodule KubeExt.ExampleSettings do
 
   setting(:namespace, :namespace, "battery-core")
   setting(:string_key, "string_key", "key-value")
-  def default_func, do: "computed"
 
-  setting_fn(:test_image, :image, &default_func/0)
-  setting_fn(:id, :id, &System.unique_integer/0)
+  def computation_func, do: "computed"
+
+  setting(:test_image, :image) do
+    computation_func()
+  end
+
+  setting(:id, :id) do
+    System.unique_integer()
+  end
 end
