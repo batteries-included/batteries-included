@@ -133,7 +133,7 @@ defmodule KubeRawResources.Database do
 
     %{
       "name" => "metrics-exporter",
-      "image" => "quay.io/prometheuscommunity/postgres-exporter:v0.11.1 ",
+      "image" => "quay.io/prometheuscommunity/postgres-exporter:v0.11.1",
       "ports" => [
         %{
           "name" => @exporter_port_name,
