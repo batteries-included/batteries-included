@@ -79,13 +79,21 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
-config :control_server,
-  default_services: [
+config :kube_raw_resources,
+  dev_services: [
     :battery,
     :postgres_operator,
     :database_internal,
     :istio,
     :istio_istiod
+  ],
+  prod_services: [
+    :battery,
+    :control_server,
+    :istio,
+    :istio_istiod,
+    :postgres_operator,
+    :database_internal
   ]
 
 config :kube_services, start_services: true
@@ -110,6 +118,15 @@ config :kube_services, Oban,
   ]
 
 config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
+
+config :cli, should_halt: false
+
+config :cli, CLI.Commands,
+  sync: CLI.Commands.Sync,
+  sync_dev: CLI.Commands.SyncDev,
+  dump: CLI.Commands.DumpBootstrap,
+  dump_dev: CLI.Commands.DumpBootstrapDev,
+  cluster_k3d: CLI.Commands.K3DCluster
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -40,7 +40,7 @@ There's a bunch of stuff (ostensibly) needed for development and we use common c
 Following that, you should be able to run the following to install the necessary dependencies
 
 ```sh
-brew install k3d k9s erlang elixir nodejs kubectl rustup
+brew install k3d k9s erlang elixir nodejs kubectl
 ```
 
 ### (option 2) ASDF
@@ -66,7 +66,6 @@ asdf plugin add k9s
 asdf plugin add erlang
 asdf plugin add elixir
 asdf plugin add nodejs
-asdf plugin add rust
 asdf plugin add kubectl
 asdf plugin add awscli
 asdf plugin-add eksctl
@@ -112,13 +111,9 @@ Starting up Batteries Included should be a simple process without many dependenc
 This is the main directory. It contains two different [Phoenix Framework](https://phoenixframework.org/) There are different elixir `Application`'s in `platform_umbrella/apps` while the configuration is in `platform_ubrella/config`
 
 
-#### Bootstrap
-
-This folder is the binary that will run to set up postgres. It can't depend on ecto.sql since it will run as a onetime `Job` on the postgres cluster. It's there to install things needed to run the `control_server`
-
 #### Kube Raw Resources
 
-These are the elixir files that contain kubernetes resources needed before the ecto.sql connection is there. This application is shared between `bootstrap` and `kube_resources`.
+These are the elixir files that contain kubernetes resources needed before the ecto.sql connection is there. This application is shared between `cli` and `kube_resources`.
 
 #### Kube Resources
 

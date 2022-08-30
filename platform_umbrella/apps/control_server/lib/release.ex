@@ -1,13 +1,14 @@
 defmodule ControlServer.Release do
   alias Ecto.Migrator
 
+  require Logger
+
   @start_apps [:postgrex, :ecto, :ecto_sql, :control_server]
   @apps [:control_server]
 
   def migrate do
     load_app()
-
-    IO.puts("Starting Migrate")
+    Logger.debug("Starting Migrate")
 
     for app <- @apps do
       for repo <- repos(app) do
@@ -16,11 +17,18 @@ defmodule ControlServer.Release do
     end
   end
 
-  def seed do
+  def seed_prod do
     load_app()
-    IO.puts("Starting Seed")
+    Logger.info("Starting Seed")
 
-    ControlServer.Services.activate_defaults()
+    ControlServer.Services.activate_prod()
+  end
+
+  def seed_dev do
+    load_app()
+    Logger.info("Starting Seed for DEVELOPMENT env")
+
+    ControlServer.Services.activate_dev()
   end
 
   def rollback(repo, version) do

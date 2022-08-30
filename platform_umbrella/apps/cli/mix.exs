@@ -1,9 +1,9 @@
-defmodule KubeRawResources.MixProject do
+defmodule Cli.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :kube_raw_resources,
+      app: :cli,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -20,21 +20,23 @@ defmodule KubeRawResources.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {KubeRawResources.Application, []}
+      mod: {CLI.Application, []}
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ymlr, git: "https://github.com/ufirstgroup/ymlr.git"},
-      {:kube_ext, in_umbrella: true}
+      {:burrito, github: "burrito-elixir/burrito"},
+      {:kube_raw_resources, in_umbrella: true},
+      {:optimus, "~> 0.2"}
     ]
   end
 
   defp aliases do
     [
       setup: ["deps.get"],
+      test: [],
       "ecto.reset": []
     ]
   end

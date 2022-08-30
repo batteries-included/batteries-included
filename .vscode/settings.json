@@ -5,11 +5,6 @@
     "editor.acceptSuggestionOnEnter": "on",
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
-  "rust-analyzer.updates.askBeforeDownload": false,
-  "[rust]": {
-    "editor.defaultFormatter": "rust-lang.rust-analyzer",
-    "editor.formatOnSave": true
-  },
   "emmet.includeLanguages": {
     "html-eex": "html"
   },

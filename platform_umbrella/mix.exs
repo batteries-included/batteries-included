@@ -4,7 +4,7 @@ defmodule ControlServer.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "0.3.0",
+      version: "0.4.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       releases: releases(),
@@ -21,6 +21,7 @@ defmodule ControlServer.Umbrella.MixProject do
 
   defp deps do
     [
+      {:burrito, github: "burrito-elixir/burrito"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 2.0", only: [:dev, :test], runtime: false},
@@ -42,11 +43,16 @@ defmodule ControlServer.Umbrella.MixProject do
       home_base: [
         applications: [home_base: :permanent, home_base_web: :permanent]
       ],
-      bootstrap: [
-        applications: [bootstrap: :permanent, kube_ext: :permanent],
-        runtime_config_path: "apps/bootstrap/config/releases.exs",
-        config_providers: config_providers_for_apps([:bootstrap]),
-        steps: [:assemble, &copy_configs/1]
+      cli: [
+        applications: [cli: :permanent, kube_raw_resources: :permanent, kube_ext: :permanent],
+        runtime_config_path: "apps/cli/config/releases.exs",
+        config_providers: config_providers_for_apps([:cli]),
+        steps: [:assemble, &copy_configs/1, &Burrito.wrap/1],
+        burrito: [
+          targets: [
+            linux: [os: :linux, cpu: :x86_64]
+          ]
+        ]
       ]
     ]
   end

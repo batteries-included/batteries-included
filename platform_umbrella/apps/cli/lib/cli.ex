@@ -1,6 +1,6 @@
-defmodule KubeRawResources do
+defmodule CLI do
   @moduledoc """
-  Documentation for `KubeRawResources`.
+  Documentation for `CLI`.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule KubeRawResources do
 
   ## Examples
 
-      iex> KubeRawResources.hello()
+      iex> Cli.hello()
       :world
 
   """

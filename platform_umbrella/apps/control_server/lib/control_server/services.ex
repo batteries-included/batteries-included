@@ -6,11 +6,11 @@ defmodule ControlServer.Services do
   import Ecto.Query, warn: false
 
   alias ControlServer.Repo
-  alias ControlServer.ServiceConfigs
   alias ControlServer.Services.BaseService
   alias ControlServer.Services.RunnableService
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
+  alias KubeRawResources.ServiceConfigs
 
   require Logger
 
@@ -173,12 +173,22 @@ defmodule ControlServer.Services do
     Repo.exists?(from(bs in BaseService, where: bs.root_path == ^path))
   end
 
-  def activate_defaults do
-    services = ServiceConfigs.default_services()
-    IO.puts("Services = #{inspect(services)}")
+  def activate_dev do
+    services = ServiceConfigs.dev_services()
+    Logger.debug("DEVELOPMENT Services = #{inspect(services)}")
 
     Enum.each(services, fn service ->
-      IO.puts("Activating default service #{inspect(service)}")
+      Logger.info("Activating default service #{inspect(service)}")
+      RunnableService.activate!(service)
+    end)
+  end
+
+  def activate_prod do
+    services = ServiceConfigs.prod_services()
+    Logger.debug("Services = #{inspect(services)}")
+
+    Enum.each(services, fn service ->
+      Logger.debug("Activating service #{inspect(service)}")
       RunnableService.activate!(service)
     end)
   end

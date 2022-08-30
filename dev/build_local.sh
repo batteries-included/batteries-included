@@ -26,12 +26,4 @@ docker build --build-arg RELEASE=home_base \
 
 pushImage "battery/home" "${TAG}"
 
-docker build --build-arg RELEASE=bootstrap \
-  --build-arg BINARY=bin/bootstrap_run \
-  -t battery/bootstrap:${TAG} \
-  -t localhost:${REGISTRY_PORT}/battery/bootstrap:${TAG} \
-  .
-
-pushImage "battery/bootstrap" "${TAG}"
-
 popd

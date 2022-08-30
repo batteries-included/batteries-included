@@ -73,7 +73,7 @@ WORKDIR /app
 COPY mix.exs .
 COPY mix.lock .
 
-COPY apps/bootstrap/mix.exs apps/bootstrap/mix.exs
+COPY apps/cli/mix.exs apps/cli/mix.exs
 COPY apps/common_ui/mix.exs apps/common_ui/mix.exs
 COPY apps/control_server/mix.exs apps/control_server/mix.exs
 COPY apps/control_server_web/mix.exs apps/control_server_web/mix.exs

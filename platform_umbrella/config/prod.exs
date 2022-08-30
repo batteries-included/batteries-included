@@ -39,16 +39,6 @@ config :logger, :console,
   level: :debug,
   metadata: [:mfa, :request_id]
 
-config :control_server,
-  default_services: [
-    :battery,
-    :control_server,
-    :istio,
-    :istio_istiod,
-    :postgres_operator,
-    :database_internal
-  ]
-
 config :kube_ext, :clusters, default: :service_account
 config :kube_ext, cluster_type: :prod
 

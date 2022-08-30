@@ -20,7 +20,3 @@ updates:
     directory: "/static"
     schedule:
       interval: daily
-  - package-ecosystem: cargo
-    directory: "/rust_utils"
-    schedule:
-      interval: daily

@@ -27,14 +27,6 @@ config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
   delay: 20_000,
   failing_delay: 20_000
 
-config :control_server,
-  default_services: [
-    :battery,
-    :postges_operator,
-    :istio,
-    :istio_istiod
-  ]
-
 config :logger, level: :warn
 
 config :control_server, ControlServer.Repo,

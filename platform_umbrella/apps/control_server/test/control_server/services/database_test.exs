@@ -12,7 +12,7 @@ defmodule ControlServer.Services.DatabaseTest do
       assert RunnableService.active?(:database_public) == false
 
       capture_io(fn ->
-        Release.seed()
+        Release.seed_dev()
       end)
 
       assert RunnableService.active?(:database_public) == false

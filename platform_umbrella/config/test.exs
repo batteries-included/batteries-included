@@ -36,16 +36,6 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :control_server,
-  default_services: [
-    :battery,
-    :control_server,
-    :istio,
-    :istio_istiod,
-    :postgres_operator,
-    :database_internal
-  ]
-
 config :kube_ext, cluster_type: :dev
 
 config :kube_services, start_services: false
