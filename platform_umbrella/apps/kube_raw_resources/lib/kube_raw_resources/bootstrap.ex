@@ -21,6 +21,6 @@ defmodule KubeRawResources.Bootstrap do
     Logger.debug("Running")
     :ok = load_app()
     Logger.debug("Done starting application")
-    InitialSync.sync(sync_method: :sync_dev)
+    InitialSync.sync(sync_method: :dev_sync)
   end
 end
