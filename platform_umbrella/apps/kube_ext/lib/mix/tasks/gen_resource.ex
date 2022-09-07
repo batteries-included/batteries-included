@@ -1,6 +1,8 @@
 defmodule Mix.Tasks.GenResource do
   @moduledoc "The mix task to generate a resource code module from yaml"
+
   use Mix.Task
+
   import KubeExt.Yaml
   import KubeExt.ApiVersionKind, only: [resource_type: 1]
 

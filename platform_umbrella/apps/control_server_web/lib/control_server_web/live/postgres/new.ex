@@ -6,7 +6,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
   alias ControlServer.Services.RunnableService
-  alias ControlServerWeb.Live.Postgres.FormComponent
+  alias ControlServerWeb.Live.PostgresFormComponent
 
   require Logger
 
@@ -58,7 +58,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
       <.h3>New Postgres Cluster</.h3>
       <div>
         <.live_component
-          module={FormComponent}
+          module={PostgresFormComponent}
           cluster={@cluster}
           id={@cluster.id || "new-cluster-form"}
           action={:new}

@@ -7,6 +7,7 @@ defmodule CLI.Command do
     Application.get_env(:cli, CLI.Commands)
   end
 
+  @spec new! :: Optimus.t()
   def new! do
     Optimus.new!(
       name: "bicli",

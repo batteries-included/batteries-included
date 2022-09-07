@@ -8,7 +8,7 @@ defmodule ControlServer.Repo.Migrations.CreateFailoverClusters do
       add :num_sentinel_instances, :integer
       add :num_redis_instances, :integer
 
-      timestamps()
+      timestamps(type: :utc_datetime_usec)
     end
   end
 end

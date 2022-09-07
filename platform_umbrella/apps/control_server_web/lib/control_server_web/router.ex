@@ -39,6 +39,14 @@ defmodule ControlServerWeb.Router do
     live "/failover_clusters/:id/edit", Live.RedisEdit, :edit
     live "/failover_clusters/:id/show", Live.RedisShow, :show
 
+    live "/ceph", Live.CephIndex, :index
+    live "/ceph/cluster/new", Live.CephClusterNew, :new
+    live "/ceph/cluster/:id/edit", Live.CephClusterEdit, :edit
+    live "/ceph/cluster/:id/show", Live.CephClusterShow, :show
+    live "/ceph/filesystem/new", Live.CephFilesystemNew, :new
+    live "/ceph/filesystem/:id/edit", Live.CephFilesystemEdit, :edit
+    live "/ceph/filesystem/:id/show", Live.CephFilesystemShow, :show
+
     live "/knative_services", Live.KnativeServicesIndex, :index
     live "/knative_services/new", Live.KnativeNew, :new
     live "/knative_services/:id/edit", Live.KnativeEdit, :edit

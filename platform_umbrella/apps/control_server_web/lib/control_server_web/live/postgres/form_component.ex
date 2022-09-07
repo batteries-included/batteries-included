@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.Postgres.FormComponent do
+defmodule ControlServerWeb.Live.PostgresFormComponent do
   use ControlServerWeb, :live_component
 
   use CommonUI

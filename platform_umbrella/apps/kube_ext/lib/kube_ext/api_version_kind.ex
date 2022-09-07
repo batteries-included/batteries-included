@@ -45,7 +45,9 @@ defmodule KubeExt.ApiVersionKind do
     tekton_task: {"tekton.dev/v1beta1", "Task"},
     redis_failover: {"databases.spotahome.com/v1", "RedisFailover"},
     certmanger_certificate: {"cert-manager.io/v1", "Certificate"},
-    certmanger_issuer: {"cert-manager.io/v1", "Issuer"}
+    certmanger_issuer: {"cert-manager.io/v1", "Issuer"},
+    ceph_cluster: {"ceph.rook.io/v1", "CephCluster"},
+    ceph_filesystem: {"ceph.rook.io/v1", "CephFilesystem"}
   ]
 
   @spec from_resource_type(atom) :: {binary(), binary()} | nil

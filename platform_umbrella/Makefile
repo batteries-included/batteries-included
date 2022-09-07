@@ -4,11 +4,14 @@ all: compile test lint format analyze
 
 compile:
 	mix compile --force --warnings-as-errors
+	MIX_ENV=test mix compile --force --warnings-as-errors
+	mix compile.protocols 
+	MIX_ENV=test mix compile.protocols 
 
 lint:
 	mix credo
 
-test: compile test.unit test.integration
+test: compile test.unit
 	mix test.coverage
 
 test.unit: compile
@@ -18,7 +21,6 @@ test.unit: compile
 test.integration:
 	MIX_ENV=integration mix ecto.reset
 	MIX_ENV=integration mix cmd --app control_server_web mix test  --cover --export-coverage integration
-
 
 analyze:
 	mix dialyzer

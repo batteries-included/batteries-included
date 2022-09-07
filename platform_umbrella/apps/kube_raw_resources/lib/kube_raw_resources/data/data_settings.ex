@@ -12,6 +12,8 @@ defmodule KubeRawResources.DataSettings do
 
   @redis_operator_image "quay.io/spotahome/redis-operator:v1.1.1"
 
+  @ceph_image "quay.io/ceph/ceph:v17.2.3"
+
   setting(:namespace, :namespace, @namepace)
 
   setting(:public_namespace, :namespace, @public_namepace)
@@ -21,4 +23,6 @@ defmodule KubeRawResources.DataSettings do
   setting(:pg_operator_image, :image, @pg_operator_image)
 
   setting(:redis_operator_image, :image, @redis_operator_image)
+
+  setting(:ceph_image, :ceph_image, @ceph_image)
 end

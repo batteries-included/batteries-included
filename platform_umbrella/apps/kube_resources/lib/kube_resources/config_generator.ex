@@ -40,6 +40,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeRawResources.PostgresOperator
   alias KubeResources.Harbor
   alias KubeResources.Rook
+  alias KubeResources.Ceph
 
   require Logger
 
@@ -73,6 +74,10 @@ defmodule KubeResources.ConfigGenerator do
     config |> IstioGateway.materialize() |> Map.merge(VirtualService.materialize(config))
   end
 
+  def materialize(%{} = config, :rook) do
+    config |> Rook.materialize() |> Map.merge(Ceph.materialize(config))
+  end
+
   def materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
   def materialize(%{} = config, :grafana), do: Grafana.materialize(config)
   def materialize(%{} = config, :alert_manager), do: AlertManager.materialize(config)
@@ -84,7 +89,6 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
   def materialize(%{} = config, :redis), do: Redis.materialize(config)
   def materialize(%{} = config, :minio_operator), do: MinioOperator.materialize(config)
-  def materialize(%{} = config, :rook), do: Rook.materialize(config)
 
   def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
   def materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)

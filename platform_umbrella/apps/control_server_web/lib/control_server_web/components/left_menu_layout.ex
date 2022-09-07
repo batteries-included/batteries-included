@@ -2,10 +2,13 @@ defmodule ControlServerWeb.LeftMenuLayout do
   use ControlServerWeb, :component
   use PetalComponents
 
+  import CommonUI.Icons.Database
   import CommonUI.Icons.Devtools
   import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Notebook
   import CommonUI.Icons.Network
+  import CommonUI.Icons.Rook
+
   alias ControlServerWeb.Endpoint
 
   alias ControlServerWeb.Layout
@@ -83,6 +86,10 @@ defmodule ControlServerWeb.LeftMenuLayout do
         <.harbor_icon class={@class} />
       <% "user_group" -> %>
         <Heroicons.Solid.user_group class={@class} />
+      <% "redis" -> %>
+        <.redis_icon class={@class} />
+      <% "ceph" -> %>
+        <.ceph_icon class={@class} />
     <% end %>
     """
   end
@@ -116,8 +123,14 @@ defmodule ControlServerWeb.LeftMenuLayout do
     <.left_menu_item
       to={Routes.redis_path(Endpoint, :index)}
       name="Redis Clusters"
-      icon="table"
+      icon="redis"
       is_active={@active == "redis"}
+    />
+    <.left_menu_item
+      to={Routes.ceph_index_path(Endpoint, :index)}
+      name="Ceph Clusters"
+      icon="ceph"
+      is_active={@active == "ceph_cluster"}
     />
     <.left_menu_item
       to={Routes.service_settings_path(Endpoint, :data)}

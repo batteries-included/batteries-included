@@ -4,7 +4,7 @@ defmodule ControlServer.Knative.Service do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  typed_schema "services" do
+  typed_schema "knative_services" do
     field :name, :string, null: false
     field :image, :string
 

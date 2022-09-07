@@ -4,6 +4,8 @@ defmodule CommonUI.Form do
   import PetalComponents.Helpers
   alias Phoenix.HTML.Form, as: PhoenixForm
 
+  @wrapper_class "form-control w-full"
+
   def field_label(assigns) do
     base_classes = label_classes()
 
@@ -27,7 +29,7 @@ defmodule CommonUI.Form do
   end
 
   def form_control(assigns) do
-    assigns = assign_new(assigns, :class, fn -> "form-control w-full" end)
+    assigns = assign_new(assigns, :class, fn -> @wrapper_class end)
 
     ~H"""
     <div class={@class}>
@@ -44,7 +46,7 @@ defmodule CommonUI.Form do
     assigns = assigns |> assign_defaults(base_classes) |> add_error(error_classes)
 
     ~H"""
-    <.form_control>
+    <.form_control class={@wrapper_class}>
       <.field_label form={@form} field={@field} />
       <%= PhoenixForm.text_input(
         @form,
@@ -77,9 +79,29 @@ defmodule CommonUI.Form do
     assigns = assign_defaults(assigns, base_classes)
 
     ~H"""
-    <.form_control>
+    <.form_control class={@wrapper_class}>
       <.field_label form={@form} field={@field} />
       <%= PhoenixForm.range_input(
+        @form,
+        @field,
+        [class: @classes, phx_feedback_for: PhoenixForm.input_name(@form, @field)] ++ @extra_assigns
+      ) %>
+
+      <%= if @has_errors do %>
+        <.error_labels form={@form} field={@field} />
+      <% end %>
+    </.form_control>
+    """
+  end
+
+  def switch_input(assigns) do
+    base_classes = switch_classes()
+    assigns = assign_defaults(assigns, base_classes)
+
+    ~H"""
+    <.form_control class={@wrapper_class}>
+      <.field_label form={@form} field={@field} />
+      <%= PhoenixForm.checkbox(
         @form,
         @field,
         [class: @classes, phx_feedback_for: PhoenixForm.input_name(@form, @field)] ++ @extra_assigns
@@ -112,6 +134,7 @@ defmodule CommonUI.Form do
       ])
     end)
     |> assign_new(:has_errors, fn -> has_errors?(assigns) end)
+    |> assign_new(:wrapper_class, fn -> @wrapper_class end)
   end
 
   defp add_error(%{has_errors: true, classes: classes} = assigns, error_class) do
@@ -134,6 +157,10 @@ defmodule CommonUI.Form do
 
   defp range_classes do
     "range range-secondary"
+  end
+
+  defp switch_classes do
+    "toggle toggle-secondary toggle-lg"
   end
 
   defp has_errors?(%{form: form, field: field}) do

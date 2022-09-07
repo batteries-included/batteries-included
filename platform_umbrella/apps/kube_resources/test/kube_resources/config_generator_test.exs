@@ -34,9 +34,16 @@ defmodule KubeServices.ConfigGeneratorTest do
       postgres = insert(:postgres)
       redis = insert(:redis)
       notebook = insert(:notebook)
+      ceph_cluster = insert(:ceph_cluster)
+      ceph_filesystem = insert(:ceph_filesystem)
 
       {:ok,
-       services_activate_map: service_map, postgres: postgres, redis: redis, notebook: notebook}
+       services_activate_map: service_map,
+       postgres: postgres,
+       redis: redis,
+       notebook: notebook,
+       ceph_cluster: ceph_cluster,
+       ceph_filesystem: ceph_filesystem}
     end
 
     test "materialize all the configs" do

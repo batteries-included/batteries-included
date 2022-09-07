@@ -2,7 +2,7 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
   use Ecto.Migration
 
   def change do
-    create table(:clusters, primary_key: false) do
+    create table(:pg_clusters, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :postgres_version, :string
@@ -16,6 +16,6 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       timestamps(type: :utc_datetime_usec)
     end
 
-    create unique_index(:clusters, [:type, :team_name, :name])
+    create unique_index(:pg_clusters, [:type, :team_name, :name])
   end
 end

@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Live.PostgresEdit do
   import ControlServerWeb.Layout
 
   alias ControlServer.Postgres
-  alias ControlServerWeb.Live.Postgres.FormComponent
+  alias ControlServerWeb.Live.PostgresFormComponent
 
   require Logger
 
@@ -38,7 +38,7 @@ defmodule ControlServerWeb.Live.PostgresEdit do
       </:title>
       <div>
         <.live_component
-          module={FormComponent}
+          module={PostgresFormComponent}
           cluster={@cluster}
           id={@cluster.id || "edit-cluster-form"}
           action={:edit}

@@ -1,9 +1,10 @@
 defmodule ControlServer.Accounts.User do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "users" do
+  typed_schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true

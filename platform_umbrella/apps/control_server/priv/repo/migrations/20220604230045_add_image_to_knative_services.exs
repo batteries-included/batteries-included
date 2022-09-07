@@ -2,7 +2,7 @@ defmodule ControlServer.Repo.Migrations.AddImageToServices do
   use Ecto.Migration
 
   def change do
-    alter table(:services) do
+    alter table(:knative_services) do
       add :image, :string
     end
   end

@@ -11,7 +11,7 @@ defmodule ControlServer.Postgres.Cluster do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  typed_schema "clusters" do
+  typed_schema "pg_clusters" do
     field :name, :string
     field :num_instances, :integer, default: 1
     field :postgres_version, :string, default: "13"

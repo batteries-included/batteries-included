@@ -1,0 +1,17 @@
+defmodule ControlServer.Rook.CephFilesystem do
+  use TypedEctoSchema
+  import Ecto.Changeset
+
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+  typed_schema "ceph_filesystems" do
+    field :name, :string
+    field :include_erasure_encoded, :boolean, default: true
+
+    timestamps()
+  end
+
+  def changeset(ceph_filesystem, attrs) do
+    cast(ceph_filesystem, attrs, [:name, :include_erasure_encoded])
+  end
+end

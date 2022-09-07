@@ -107,7 +107,6 @@ defmodule ControlServerWeb do
         Breadcrumbs,
         Pagination,
         Link,
-        Modal,
         Tabs,
         Card
       }
