@@ -12,6 +12,8 @@ defmodule ControlServer.Rook.CephFilesystem do
   end
 
   def changeset(ceph_filesystem, attrs) do
-    cast(ceph_filesystem, attrs, [:name, :include_erasure_encoded])
+    ceph_filesystem
+    |> cast(attrs, [:name, :include_erasure_encoded])
+    |> validate_required([:name])
   end
 end
