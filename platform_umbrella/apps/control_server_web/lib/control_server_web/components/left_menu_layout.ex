@@ -24,7 +24,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns
     |> assign_new(:is_active, fn -> false end)
     |> assign_new(:icon, fn -> "database" end)
-    |> assign_new(:link_type, fn -> "live_patch" end)
+    |> assign_new(:link_type, fn -> "live_redirect" end)
   end
 
   defp assign_menu_defaults(assigns) do
