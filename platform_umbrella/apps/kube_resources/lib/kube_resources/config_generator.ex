@@ -17,7 +17,6 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeResources.Database
   alias KubeResources.EchoServer
   alias KubeResources.Gitea
-  alias KubeResources.GithubActionsRunner
   alias KubeResources.Grafana
   alias KubeResources.IstioGateway
   alias KubeResources.Keycloak
@@ -95,7 +94,6 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :ory_hydra), do: OryHydra.materialize(config)
 
   def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
-  def materialize(%{} = config, :github_runner), do: GithubActionsRunner.materialize(config)
   def materialize(%{} = config, :tekton), do: Tekton.materialize(config)
   def materialize(%{} = config, :tekton_dashboard), do: TektonDashboard.materialize(config)
   def materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)

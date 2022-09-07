@@ -31,7 +31,6 @@ defmodule ControlServer.Services.BaseService do
         :tekton,
         :tekton_dashboard,
         :harbor,
-        :github_runner,
         :gitea,
         :data,
         :postgres_operator,
