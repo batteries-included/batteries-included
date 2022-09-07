@@ -53,9 +53,6 @@ jobs:
       - name: Install dependencies non test
         run: mix deps.get
 
-      - name: Compile deps
-        run: mix deps.compile --force --skip-umbrella-children
-
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused
 
@@ -121,26 +118,23 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install test dependencies
-        run: mix deps.get --only test
+      -  name: Force clean
+         run: rm -rf _build
 
-      - name: Install dependencies non test
+
+      - name: Install dependencies
         run: mix deps.get
+
+      - name: Compile
+        run: mix compile --force --warnings-as-errors
+        env:
+          MIX_ENV: test
 
       - name: Setup DB
         run: mix ecto.reset
         env:
           MIX_ENV: test
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
-
-      - name: Clean
-        run: mix clean
-
-      - name: Force clean
-        run: rm -rf _build
-
-      - name: Compile
-        run: mix compile --force --warnings-as-errors
 
       - name: Run tests
         run: mix test
