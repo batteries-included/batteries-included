@@ -28,21 +28,21 @@ defmodule ControlServerWeb.UserAuth do
   def log_in_user(conn, user, params \\ %{}) do
     token = Accounts.generate_user_session_token(user)
 
+    return_path = get_session(conn, :user_return_to) || signed_in_path(conn)
+
     conn
     |> renew_session()
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")
     |> maybe_write_remember_me_cookie(token, params)
-  end
-
-  def oauth_login(conn, user, params \\ %{}) do
-    conn
     |> maybe_assign_login_request(params)
-    |> maybe_approve_ory_login(user, params)
+    |> maybe_approve_ory_login(user, params, return_path)
   end
 
   def check_logged_in(%{assigns: %{current_user: user}} = conn, params) when not is_nil(user) do
-    {true, maybe_approve_ory_login(conn, user, params)}
+    return_path = get_session(conn, :user_return_to) || signed_in_path(conn)
+
+    {true, maybe_approve_ory_login(conn, user, params, return_path)}
   end
 
   def check_logged_in(conn, _params), do: {false, conn}
@@ -65,15 +65,14 @@ defmodule ControlServerWeb.UserAuth do
     conn
   end
 
-  defp maybe_approve_ory_login(conn, user, %{"login_challenge" => login_challenge}) do
+  defp maybe_approve_ory_login(conn, user, %{"login_challenge" => login_challenge}, return_path) do
     with {:ok, response} <- OryHydraClient.approve_login(login_challenge, user.id) do
-      redirect(conn, to: Map.get(response, "redirect_to", signed_in_path(conn)))
+      redirect(conn, to: Map.get(response, "redirect_to", return_path))
     end
   end
 
-  defp maybe_approve_ory_login(conn, _user, _params) do
-    user_return_to = get_session(conn, :user_return_to)
-    redirect(conn, to: user_return_to || signed_in_path(conn))
+  defp maybe_approve_ory_login(conn, _user, _params, return_path) do
+    redirect(conn, to: return_path)
   end
 
   # This function renews the session ID and erases the whole

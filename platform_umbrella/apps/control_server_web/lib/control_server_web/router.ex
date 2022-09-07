@@ -115,19 +115,21 @@ defmodule ControlServerWeb.Router do
 
     live "/users", Live.UserIndex, :index
     live "/users/new", Live.UserNew, :index
-    live "/users/:id/show", Live.UserShow, :index
-    get "/users/settings", UserSettingsController, :edit
-    put "/users/settings", UserSettingsController, :update
-    get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
-  end
-
-  scope "/", ControlServerWeb do
-    pipe_through [:browser]
 
     delete "/users/log_out", UserSessionController, :delete
+
     get "/users/confirm", UserConfirmationController, :new
     post "/users/confirm", UserConfirmationController, :create
     get "/users/confirm/:token", UserConfirmationController, :edit
     post "/users/confirm/:token", UserConfirmationController, :update
+  end
+
+  scope "/", ControlServerWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/users/:id/show", Live.UserShow, :index
+    get "/users/settings", UserSettingsController, :edit
+    put "/users/settings", UserSettingsController, :update
+    get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
   end
 end
