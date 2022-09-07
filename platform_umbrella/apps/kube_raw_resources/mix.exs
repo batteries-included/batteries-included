@@ -27,7 +27,7 @@ defmodule KubeRawResources.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ymlr, git: "https://github.com/ufirstgroup/ymlr.git"},
+      {:ymlr, "~> 3.0.1"},
       {:kube_ext, in_umbrella: true}
     ]
   end
