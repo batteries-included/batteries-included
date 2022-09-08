@@ -59,6 +59,20 @@ retry() {
   done
 }
 
+k3dCluster() {
+  # Create the cluster
+  k3d cluster create -v /dev/mapper:/dev/mapper \
+    -v /tmp/k3d/kubelet/pods:/var/lib/kubelet/pods:shared@all \
+    --k3s-arg '--disable=traefik@server:*' \
+    --registry-create battery-registry \
+    --wait \
+    -s "${NUM_SERVERS}" || true
+}
+
+kindCluster() {
+  kind create cluster --name battery || true
+}
+
 portForward() {
   local target
   local portMap
@@ -115,6 +129,7 @@ mixBootstrap() {
 }
 
 CREATE_CLUSTER=${CREATE_CLUSTER:-true}
+USE_KIND=${USE_KIND:-true}
 FORWARD_CONTROL_POSTGRES=${FORWARD_CONTROL_POSTGRES:-true}
 FORWARD_HOME_POSTGRES=${FORWARD_HOME_POSTGRES:-false}
 BUILD_CONTROL_SERVER=${BUILD_CONTROL_SERVER:-false}
@@ -125,6 +140,14 @@ while (("$#")); do
   case "$1" in
     -c | --create-cluster)
       CREATE_CLUSTER=true
+      shift
+      ;;
+    -k | --use-kind)
+      USE_KIND=true
+      shift
+      ;;
+    -3 | --use-k3d)
+      USE_KIND=false
       shift
       ;;
     -b | --forward-home-base)
@@ -158,12 +181,11 @@ done
 eval set -- "$PARAMS"
 
 if [[ $CREATE_CLUSTER == 'true' ]]; then
-  # Create the cluster
-  k3d cluster create -v /dev/mapper:/dev/mapper \
-    --k3s-arg '--disable=traefik@server:*' \
-    --registry-create battery-registry \
-    --wait \
-    -s "${NUM_SERVERS}" || true
+  if [[ $USE_KIND == 'true' ]]; then
+    kindCluster
+  else
+    k3dCluster
+  fi
 fi
 
 if [ "${BUILD_CONTROL_SERVER}" == "true" ]; then
