@@ -32,11 +32,11 @@ defmodule CLI.Command do
     |> then(fn module -> module.run(command_key, parse_result) end)
   end
 
-  def run(_) do
+  def run(argv) do
     Logger.debug("Fallback run used")
 
     new!()
-    |> Optimus.help()
+    |> Optimus.parse!(argv)
     |> IO.puts()
   end
 end
