@@ -14,12 +14,15 @@ defmodule KubeRawResources.PostgresOperator do
   @app "postgres-operator"
 
   @pod_cluster_role "battery-postres-pod"
+  @pod_role "postres-pod"
+
   @operator_cluster_role "battery-postgres-operator"
 
   def materialize(config) do
     %{}
     |> Map.put("/cluster_role/postgres_operator", cluster_role_postgres_operator(config))
     |> Map.put("/cluster_role/postgres_pod", cluster_role_postgres_pod(config))
+    |> Map.put("/role/postgres_pod", role_postgres_pod(config))
     |> Map.put(
       "/cluster_role_binding/postgres_operator",
       cluster_role_binding_postgres_operator(config)
@@ -27,6 +30,10 @@ defmodule KubeRawResources.PostgresOperator do
     |> Map.put(
       "/cluster_role_binding/postgres_pod",
       cluster_role_binding_postgres_pod(config)
+    )
+    |> Map.put(
+      "/role_binding/postgres_pod",
+      role_binding_postgres_pod(config)
     )
     |> Map.put(
       "/crd/operatorconfigurations_acid_zalan_do",
@@ -158,9 +165,51 @@ defmodule KubeRawResources.PostgresOperator do
     |> B.subject(B.build_service_account("postgres-pod", namespace))
   end
 
+  def role_binding_postgres_pod(config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:role_binding)
+    |> B.name("postgres-pod")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.role_ref(B.build_role_ref(@pod_role))
+    |> B.subject(B.build_service_account("postgres-pod", namespace))
+  end
+
   def cluster_role_postgres_pod(_config) do
     B.build_resource(:cluster_role)
     |> B.name(@pod_cluster_role)
+    |> B.app_labels(@app)
+    |> B.rules([
+      %{
+        "apiGroups" => [""],
+        "resources" => ["endpoints"],
+        "verbs" => [
+          "create",
+          "delete",
+          "deletecollection",
+          "get",
+          "list",
+          "patch",
+          "update",
+          "watch"
+        ]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["pods"],
+        "verbs" => ["get", "list", "patch", "update", "watch"]
+      },
+      %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["create"]}
+    ])
+  end
+
+  def role_postgres_pod(config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:role)
+    |> B.name(@pod_role)
+    |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.rules([
       %{

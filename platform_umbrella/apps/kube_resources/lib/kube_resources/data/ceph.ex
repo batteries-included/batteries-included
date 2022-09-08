@@ -65,8 +65,9 @@ defmodule KubeResources.Ceph do
     ceph_image = Settings.ceph_image(config)
 
     %{
-      storage: %{useAllNodes: false, useAllDevices: false, nodes: cluster.nodes},
+      # storage: %{useAllNodes: false, useAllDevices: false, nodes: cluster.nodes},
       network: %{connections: %{encryption: %{enabled: false}, compression: %{enabled: false}}},
+      dataDirHostPath: cluster.data_dir_host_path,
       mon: %{count: cluster.num_mon},
       mgr: %{count: cluster.num_mgr},
       cephVersion: %{image: ceph_image}
