@@ -62,6 +62,7 @@ Go to the main directory and run
 
 ```
 asdf plugin add k3d
+asdf plugin add kind
 asdf plugin add k9s
 asdf plugin add erlang
 asdf plugin add elixir
