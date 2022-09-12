@@ -6,8 +6,8 @@ defmodule KubeResources.Gitea do
     init_directory_structure_sh: "priv/raw_files/gitea/init_directory_structure.sh",
     configure_gitea_sh: "priv/raw_files/gitea/configure_gitea.sh"
 
-  alias KubeExt.Builder, as: B
-  alias KubeResources.DevtoolsSettings
+  use KubeExt.ResourceGenerator
+  alias KubeResources.DevtoolsSettings, as: Settings
   alias KubeResources.IstioConfig.VirtualService
   alias KubeExt.KubeState.Hosts
 
@@ -23,8 +23,8 @@ defmodule KubeResources.Gitea do
   @ssh_port 22
   @ssh_listen_port 2022
 
-  def virtual_service(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:virtual_service, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -33,8 +33,8 @@ defmodule KubeResources.Gitea do
     |> B.spec(VirtualService.rewriting(@url_base, "gitea-http"))
   end
 
-  def ssh_virtual_service(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:ssh_virtual_service, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -57,8 +57,8 @@ defmodule KubeResources.Gitea do
 
   def iframe_url, do: @iframe_base_url
 
-  def secret(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret, config) do
+    namespace = Settings.namespace(config)
 
     http_domain = Hosts.control_host()
     ssh_domain = Hosts.gitea_host()
@@ -101,8 +101,8 @@ defmodule KubeResources.Gitea do
     |> Map.put("stringData", data)
   end
 
-  def secret_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret_init, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "app_ini.sh" => get_resource(:app_ini_sh),
@@ -117,8 +117,8 @@ defmodule KubeResources.Gitea do
     |> Map.put("stringData", data)
   end
 
-  def service(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service_http, config) do
+    namespace = Settings.namespace(config)
 
     spec =
       %{}
@@ -134,8 +134,8 @@ defmodule KubeResources.Gitea do
     |> B.spec(spec)
   end
 
-  def service_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service_ssh, config) do
+    namespace = Settings.namespace(config)
 
     spec =
       %{}
@@ -160,9 +160,9 @@ defmodule KubeResources.Gitea do
   defp add_command(container, command), do: Map.put(container, "command", [command])
 
   defp base_container(config, name, command \\ nil) do
-    gitea_image = DevtoolsSettings.gitea_image(config)
+    gitea_image = Settings.gitea_image(config)
 
-    pg_secret = DevtoolsSettings.gitea_pg_secret_name(config)
+    pg_secret = Settings.gitea_pg_secret_name(config)
 
     %{}
     |> Map.put("name", name)
@@ -225,8 +225,8 @@ defmodule KubeResources.Gitea do
     })
   end
 
-  def stateful_set(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:stateful_set, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "replicas" => 1,
@@ -293,15 +293,5 @@ defmodule KubeResources.Gitea do
     |> B.app_labels(@app)
     |> B.name("gitea")
     |> B.spec(spec)
-  end
-
-  def materialize(config) do
-    %{
-      "/0/secret" => secret(config),
-      "/1/secret_1" => secret_1(config),
-      "/3/service" => service(config),
-      "/4/service_1" => service_1(config),
-      "/5/stateful_set" => stateful_set(config)
-    }
   end
 end

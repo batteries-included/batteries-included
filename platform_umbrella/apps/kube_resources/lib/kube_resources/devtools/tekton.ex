@@ -2,6 +2,7 @@ defmodule KubeResources.Tekton do
   @moduledoc false
 
   use KubeExt.IncludeResource, crd: "priv/manifests/tekton/crds.yaml"
+  use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
 
@@ -41,7 +42,7 @@ defmodule KubeResources.Tekton do
   @webhook_service_name "tekton-pipelines-webhook"
   @controller_service_name "tekton-controller"
 
-  def pod_security_policy(_config) do
+  resource(:pod_security_policy) do
     spec = %{
       "allowPrivilegeEscalation" => false,
       "fsGroup" => %{
@@ -106,7 +107,7 @@ defmodule KubeResources.Tekton do
     |> B.annotations(annotations)
   end
 
-  def cluster_role(_config) do
+  resource(:cluster_role) do
     rules = [
       %{
         "apiGroups" => [
@@ -194,7 +195,7 @@ defmodule KubeResources.Tekton do
     |> B.rules(rules)
   end
 
-  def cluster_role_1(_config) do
+  resource(:cluster_role_1) do
     rules = [
       %{
         "apiGroups" => [
@@ -283,7 +284,7 @@ defmodule KubeResources.Tekton do
     |> B.rules(rules)
   end
 
-  def cluster_role_2(config) do
+  resource(:cluster_role_2, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     rules = [
@@ -419,7 +420,7 @@ defmodule KubeResources.Tekton do
     |> B.rules(rules)
   end
 
-  def cluster_role_3(_config) do
+  resource(:cluster_role_3) do
     rules = [
       %{
         "apiGroups" => [
@@ -454,7 +455,7 @@ defmodule KubeResources.Tekton do
     |> B.label("rbac.authorization.k8s.io/aggregate-to-edit", "true")
   end
 
-  def cluster_role_4(_config) do
+  resource(:cluster_role_4) do
     rules = [
       %{
         "apiGroups" => [
@@ -483,7 +484,7 @@ defmodule KubeResources.Tekton do
     |> B.label("rbac.authorization.k8s.io/aggregate-to-view", "true")
   end
 
-  def role(config) do
+  resource(:role, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     rules = [
@@ -542,7 +543,7 @@ defmodule KubeResources.Tekton do
     |> B.rules(rules)
   end
 
-  def role_1(config) do
+  resource(:role_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     rules = [
@@ -625,7 +626,7 @@ defmodule KubeResources.Tekton do
     |> B.rules(rules)
   end
 
-  def role_2(config) do
+  resource(:role_2, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     rules = [
@@ -655,7 +656,7 @@ defmodule KubeResources.Tekton do
     |> B.rules(rules)
   end
 
-  def role_3(config) do
+  resource(:role_3, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     rules = [
@@ -682,7 +683,7 @@ defmodule KubeResources.Tekton do
     |> B.rules(rules)
   end
 
-  def service_account(config) do
+  resource(:service_account, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:service_account)
@@ -691,7 +692,7 @@ defmodule KubeResources.Tekton do
     |> B.app_labels(@app)
   end
 
-  def service_account_1(config) do
+  resource(:service_account_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:service_account)
@@ -700,7 +701,7 @@ defmodule KubeResources.Tekton do
     |> B.app_labels(@app)
   end
 
-  def cluster_role_binding(config) do
+  resource(:cluster_role_binding, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -710,7 +711,7 @@ defmodule KubeResources.Tekton do
     |> B.subject(B.build_service_account(@controller_service_account_name, namespace))
   end
 
-  def cluster_role_binding_1(config) do
+  resource(:cluster_role_binding_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -720,7 +721,7 @@ defmodule KubeResources.Tekton do
     |> B.subject(B.build_service_account(@controller_service_account_name, namespace))
   end
 
-  def cluster_role_binding_2(config) do
+  resource(:cluster_role_binding_2, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -730,7 +731,7 @@ defmodule KubeResources.Tekton do
     |> B.subject(B.build_service_account(@webhook_service_account_name, namespace))
   end
 
-  def role_binding(config) do
+  resource(:role_binding, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:role_binding)
@@ -741,7 +742,7 @@ defmodule KubeResources.Tekton do
     |> B.subject(B.build_service_account(@controller_service_account_name, namespace))
   end
 
-  def role_binding_1(config) do
+  resource(:role_binding_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:role_binding)
@@ -752,7 +753,7 @@ defmodule KubeResources.Tekton do
     |> B.subject(B.build_service_account(@webhook_service_account_name, namespace))
   end
 
-  def role_binding_2(config) do
+  resource(:role_binding_2, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:role_binding)
@@ -763,7 +764,7 @@ defmodule KubeResources.Tekton do
     |> B.subject(B.build_service_account(@controller_service_account_name, namespace))
   end
 
-  def role_binding_3(config) do
+  resource(:role_binding_3, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:role_binding)
@@ -774,7 +775,7 @@ defmodule KubeResources.Tekton do
     |> B.subject(B.build_service_account(@webhook_service_account_name, namespace))
   end
 
-  def role_binding_4(config) do
+  resource(:role_binding_4, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:role_binding)
@@ -789,7 +790,7 @@ defmodule KubeResources.Tekton do
     })
   end
 
-  def secret(config) do
+  resource(:secret, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:secret)
@@ -798,7 +799,7 @@ defmodule KubeResources.Tekton do
     |> B.app_labels(@app)
   end
 
-  def validating_webhook_configuration(config) do
+  resource(:validating_webhook_configuration, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -833,7 +834,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def mutating_webhook_configuration(config) do
+  resource(:mutating_webhook_configuration, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -868,7 +869,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def validating_webhook_configuration_1(config) do
+  resource(:validating_webhook_configuration_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -909,7 +910,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def config_map(config) do
+  resource(:config_map, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:config_map)
@@ -918,7 +919,7 @@ defmodule KubeResources.Tekton do
     |> B.app_labels(@app)
   end
 
-  def config_map_1(config) do
+  resource(:config_map_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:config_map)
@@ -927,7 +928,7 @@ defmodule KubeResources.Tekton do
     |> B.app_labels(@app)
   end
 
-  def config_map_2(config) do
+  resource(:config_map_2, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:config_map)
@@ -937,7 +938,7 @@ defmodule KubeResources.Tekton do
     |> B.data(%{})
   end
 
-  def config_map_3(config) do
+  resource(:config_map_3, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     data = %{
@@ -958,7 +959,7 @@ defmodule KubeResources.Tekton do
     |> B.data(data)
   end
 
-  def config_map_4(config) do
+  resource(:config_map_4, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     data = %{
@@ -972,7 +973,7 @@ defmodule KubeResources.Tekton do
     |> B.data(data)
   end
 
-  def config_map_5(config) do
+  resource(:config_map_5, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     data = %{
@@ -988,7 +989,7 @@ defmodule KubeResources.Tekton do
     |> B.data(data)
   end
 
-  def config_map_6(config) do
+  resource(:config_map_6, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     data = %{
@@ -1029,7 +1030,7 @@ defmodule KubeResources.Tekton do
     |> B.data(data)
   end
 
-  def config_map_7(config) do
+  resource(:config_map_7, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:config_map)
@@ -1039,7 +1040,7 @@ defmodule KubeResources.Tekton do
     |> B.data(%{})
   end
 
-  def config_map_8(config) do
+  resource(:config_map_8, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     B.build_resource(:config_map)
@@ -1101,7 +1102,7 @@ defmodule KubeResources.Tekton do
     ]
   end
 
-  def deployment(config) do
+  resource(:deployment, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -1263,7 +1264,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def service(config) do
+  resource(:service, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -1307,7 +1308,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def horizontal_pod_autoscaler(config) do
+  resource(:horizontal_pod_autoscaler, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -1349,7 +1350,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def deployment_1(config) do
+  resource(:deployment_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -1497,7 +1498,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def service_1(config) do
+  resource(:service_1, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -1545,7 +1546,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def task(config) do
+  resource(:task, config) do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
@@ -1646,7 +1647,7 @@ defmodule KubeResources.Tekton do
     }
   end
 
-  def crd(config) do
+  resource(:crd, config) do
     :crd
     |> get_resource()
     |> yaml()
@@ -1655,13 +1656,13 @@ defmodule KubeResources.Tekton do
     end)
   end
 
-  def change_conversion(%{"spec" => %{"conversion" => conversion}} = crd, config),
+  defp change_conversion(%{"spec" => %{"conversion" => conversion}} = crd, config),
     do: do_chang_conversion(crd, conversion, new_service(config))
 
-  def change_conversion(%{spec: %{conversion: conversion}} = crd, config),
+  defp change_conversion(%{spec: %{conversion: conversion}} = crd, config),
     do: do_chang_conversion(crd, conversion, new_service(config))
 
-  def change_conversion(crd, _), do: crd
+  defp change_conversion(crd, _), do: crd
 
   defp do_chang_conversion(crd, conversion, new_service) do
     new_conversion = put_in(conversion, ~w(webhook clientConfig service), new_service)
@@ -1675,51 +1676,6 @@ defmodule KubeResources.Tekton do
     %{
       "name" => @webhook_service_name,
       "namespace" => namespace
-    }
-  end
-
-  def materialize(config) do
-    %{
-      "/crd" => crd(config),
-      "/pod_security_policy" => pod_security_policy(config),
-      "/cluster_role" => cluster_role(config),
-      "/cluster_role_1" => cluster_role_1(config),
-      "/cluster_role_2" => cluster_role_2(config),
-      "/cluster_role_3" => cluster_role_3(config),
-      "/cluster_role_4" => cluster_role_4(config),
-      "/role" => role(config),
-      "/role_1" => role_1(config),
-      "/role_2" => role_2(config),
-      "/role_3" => role_3(config),
-      "/9/service_account" => service_account(config),
-      "/10/service_account_1" => service_account_1(config),
-      "/11/cluster_role_binding" => cluster_role_binding(config),
-      "/12/cluster_role_binding_1" => cluster_role_binding_1(config),
-      "/13/cluster_role_binding_2" => cluster_role_binding_2(config),
-      "/14/role_binding" => role_binding(config),
-      "/15/role_binding_1" => role_binding_1(config),
-      "/16/role_binding_2" => role_binding_2(config),
-      "/17/role_binding_3" => role_binding_3(config),
-      "/18/role_binding_4" => role_binding_4(config),
-      "/19/secret" => secret(config),
-      "/20/validating_webhook_configuration" => validating_webhook_configuration(config),
-      "/21/mutating_webhook_configuration" => mutating_webhook_configuration(config),
-      "/22/validating_webhook_configuration_1" => validating_webhook_configuration_1(config),
-      "/25/config_map" => config_map(config),
-      "/26/config_map_1" => config_map_1(config),
-      "/27/config_map_2" => config_map_2(config),
-      "/28/config_map_3" => config_map_3(config),
-      "/29/config_map_4" => config_map_4(config),
-      "/30/config_map_5" => config_map_5(config),
-      "/31/config_map_6" => config_map_6(config),
-      "/32/config_map_7" => config_map_7(config),
-      "/33/config_map_8" => config_map_8(config),
-      "/34/deployment" => deployment(config),
-      "/35/service" => service(config),
-      "/36/horizontal_pod_autoscaler" => horizontal_pod_autoscaler(config),
-      "/37/deployment_1" => deployment_1(config),
-      "/38/service_1" => service_1(config),
-      "/39/task" => task(config)
     }
   end
 end

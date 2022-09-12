@@ -1,9 +1,9 @@
 defmodule KubeResources.Harbor do
   @moduledoc false
   use KubeExt.IncludeResource, nginx_conf: "priv/raw_files/harbor/nginx.conf"
+  use KubeExt.ResourceGenerator
 
-  alias KubeExt.Builder, as: B
-  alias KubeResources.DevtoolsSettings
+  alias KubeResources.DevtoolsSettings, as: Settings
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeExt.Secret
@@ -32,8 +32,8 @@ defmodule KubeResources.Harbor do
 
   def url, do: "//#{Hosts.harbor_host()}"
 
-  def virtual_service(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:virtual_service, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -61,8 +61,8 @@ defmodule KubeResources.Harbor do
     |> B.data(Secret.encode(data))
   end
 
-  def secret(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "CSRF_KEY" => "nSwN8m7nun4jCiMjwesQtp3hhWxfYdPW",
@@ -77,8 +77,8 @@ defmodule KubeResources.Harbor do
     build_secret(@core_secret, namespace, data)
   end
 
-  def secret_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret_1, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "JOBSERVICE_SECRET" => "dzWy6TktiYJ3BKu2",
@@ -88,15 +88,15 @@ defmodule KubeResources.Harbor do
     build_secret(@jobservice_secret, namespace, data)
   end
 
-  def secret_2(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret_2, config) do
+    namespace = Settings.namespace(config)
     data = %{"REGISTRY_HTTP_SECRET" => "Jjk0Ig28EsLo6w6V", "REGISTRY_REDIS_PASSWORD" => ""}
 
     build_secret(@registry_secret, namespace, data)
   end
 
-  def secret_3(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret_3, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "REGISTRY_HTPASSWD" =>
@@ -106,8 +106,8 @@ defmodule KubeResources.Harbor do
     build_secret(@registry_htpasswd_secret, namespace, data)
   end
 
-  def secret_4(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret_4, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:secret)
     |> B.name(@registryctl_secret)
@@ -115,8 +115,8 @@ defmodule KubeResources.Harbor do
     |> B.namespace(namespace)
   end
 
-  def secret_5(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:secret_5, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "gitHubToken" => "",
@@ -126,8 +126,8 @@ defmodule KubeResources.Harbor do
     build_secret(@trivy_secret, namespace, data)
   end
 
-  def config_map(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:config_map, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "CHART_CACHE_DRIVER" => "redis",
@@ -177,8 +177,8 @@ defmodule KubeResources.Harbor do
     |> B.data(data)
   end
 
-  def config_map_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:config_map_1, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "CORE_URL" => "http://harbor-core:80",
@@ -199,8 +199,8 @@ defmodule KubeResources.Harbor do
     |> B.data(data)
   end
 
-  def config_map_2(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:config_map_2, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "config.yml" => jobservice_config_yml()
@@ -244,8 +244,8 @@ defmodule KubeResources.Harbor do
     YamlEncoder.to_s!(config)
   end
 
-  def config_map_3(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:config_map_3, config) do
+    namespace = Settings.namespace(config)
 
     data = %{"nginx.conf" => get_resource(:nginx_conf)}
 
@@ -256,8 +256,8 @@ defmodule KubeResources.Harbor do
     |> B.data(data)
   end
 
-  def config_map_4(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:config_map_4, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "config.yml" => registry_config_yml(),
@@ -328,8 +328,8 @@ defmodule KubeResources.Harbor do
     YamlEncoder.to_s!(config)
   end
 
-  def config_map_5(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:config_map_5, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:config_map)
     |> B.name("harbor-registryctl")
@@ -337,8 +337,8 @@ defmodule KubeResources.Harbor do
     |> B.namespace(namespace)
   end
 
-  def persistent_volume_claim(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:persistent_volume_claim, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "accessModes" => [
@@ -359,8 +359,8 @@ defmodule KubeResources.Harbor do
     |> B.label("component", "jobservice")
   end
 
-  def persistent_volume_claim_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:persistent_volume_claim_1, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "accessModes" => [
@@ -381,8 +381,8 @@ defmodule KubeResources.Harbor do
     |> B.label("component", "registry")
   end
 
-  def service(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "ports" => [
@@ -405,8 +405,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app)
   end
 
-  def service_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service_1, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "ports" => [
@@ -429,8 +429,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app)
   end
 
-  def service_2(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service_2, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "ports" => [
@@ -452,8 +452,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app)
   end
 
-  def service_3(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service_3, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "ports" => [
@@ -479,8 +479,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app)
   end
 
-  def service_4(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service_4, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "ports" => [
@@ -503,9 +503,9 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app)
   end
 
-  def deployment(config) do
-    namespace = DevtoolsSettings.namespace(config)
-    core_image = DevtoolsSettings.harbor_core_image(config)
+  resource(:deployment, config) do
+    namespace = Settings.namespace(config)
+    core_image = Settings.harbor_core_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -681,9 +681,9 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  def deployment_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
-    jobservice_image = DevtoolsSettings.harbor_jobservice_image(config)
+  resource(:deployment_1, config) do
+    namespace = Settings.namespace(config)
+    jobservice_image = Settings.harbor_jobservice_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -811,9 +811,9 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  def deployment_2(config) do
-    namespace = DevtoolsSettings.namespace(config)
-    image = DevtoolsSettings.harbor_portal_image(config)
+  resource(:deployment_2, config) do
+    namespace = Settings.namespace(config)
+    image = Settings.harbor_portal_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -895,10 +895,10 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  def deployment_3(config) do
-    namespace = DevtoolsSettings.namespace(config)
-    registry_image = DevtoolsSettings.harbor_registry_photon_image(config)
-    ctl_image = DevtoolsSettings.harbor_registry_ctl_image(config)
+  resource(:deployment_3, config) do
+    namespace = Settings.namespace(config)
+    registry_image = Settings.harbor_registry_photon_image(config)
+    ctl_image = Settings.harbor_registry_ctl_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -1114,9 +1114,9 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  def stateful_set(config) do
-    namespace = DevtoolsSettings.namespace(config)
-    trivy_adapter_image = DevtoolsSettings.harbor_trivy_adapter_image(config)
+  resource(:stateful_set, config) do
+    namespace = Settings.namespace(config)
+    trivy_adapter_image = Settings.harbor_trivy_adapter_image(config)
 
     spec = %{
       "replicas" => 1,
@@ -1328,34 +1328,5 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app)
     |> B.label("component", "trivy")
     |> B.spec(spec)
-  end
-
-  def materialize(config) do
-    %{
-      "/0/secret" => secret(config),
-      "/1/secret_1" => secret_1(config),
-      "/2/secret_2" => secret_2(config),
-      "/3/secret_3" => secret_3(config),
-      "/4/secret_4" => secret_4(config),
-      "/5/secret_5" => secret_5(config),
-      "/6/config_map" => config_map(config),
-      "/7/config_map_1" => config_map_1(config),
-      "/8/config_map_2" => config_map_2(config),
-      "/9/config_map_3" => config_map_3(config),
-      "/10/config_map_4" => config_map_4(config),
-      "/11/config_map_5" => config_map_5(config),
-      "/12/persistent_volume_claim" => persistent_volume_claim(config),
-      "/13/persistent_volume_claim_1" => persistent_volume_claim_1(config),
-      "/14/service" => service(config),
-      "/15/service_1" => service_1(config),
-      "/16/service_2" => service_2(config),
-      "/17/service_3" => service_3(config),
-      "/18/service_4" => service_4(config),
-      "/19/deployment" => deployment(config),
-      "/20/deployment_1" => deployment_1(config),
-      "/21/deployment_2" => deployment_2(config),
-      "/22/deployment_3" => deployment_3(config),
-      "/23/stateful_set" => stateful_set(config)
-    }
   end
 end

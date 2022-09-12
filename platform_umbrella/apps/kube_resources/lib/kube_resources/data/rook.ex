@@ -32,6 +32,8 @@ defmodule KubeResources.Rook do
     csi_rbd_plugin_resource: "priv/raw_files/rook/CSI_RBD_PLUGIN_RESOURCE",
     csi_rbd_provisioner_resource: "priv/raw_files/rook/CSI_RBD_PROVISIONER_RESOURCE"
 
+  use KubeExt.ResourceGenerator
+
   import KubeExt.Yaml
 
   alias KubeExt.Builder, as: B
@@ -39,158 +41,7 @@ defmodule KubeResources.Rook do
 
   @app "rook"
 
-  def materialize(config) do
-    %{}
-    |> Map.put("/cluster_role/ceph_global", cluster_role_ceph_global(config))
-    |> Map.put("/cluster_role/ceph_mgmt", cluster_role_ceph_mgmt(config))
-    |> Map.put("/cluster_role/ceph_mgr", cluster_role_ceph_mgr(config))
-    |> Map.put("/cluster_role/ceph_mgr_system", cluster_role_ceph_mgr_system(config))
-    |> Map.put("/cluster_role/ceph_object_bucket", cluster_role_ceph_object_bucket(config))
-    |> Map.put("/cluster_role/ceph_osd", cluster_role_ceph_osd(config))
-    |> Map.put("/cluster_role/ceph_system", cluster_role_ceph_system(config))
-    |> Map.put("/cluster_role/cephfs_csi_nodeplugin", cluster_role_cephfs_csi_nodeplugin(config))
-    |> Map.put(
-      "/cluster_role/cephfs_external_provisioner_runner",
-      cluster_role_cephfs_external_provisioner_runner(config)
-    )
-    |> Map.put("/cluster_role/psp", cluster_role_psp(config))
-    |> Map.put("/cluster_role/rbd_csi_nodeplugin", cluster_role_rbd_csi_nodeplugin(config))
-    |> Map.put(
-      "/cluster_role/rbd_external_provisioner_runner",
-      cluster_role_rbd_external_provisioner_runner(config)
-    )
-    |> Map.put("/cluster_role_binding/ceph_global", cluster_role_binding_ceph_global(config))
-    |> Map.put("/cluster_role_binding/ceph_mgr", cluster_role_binding_ceph_mgr(config))
-    |> Map.put(
-      "/cluster_role_binding/ceph_object_bucket",
-      cluster_role_binding_ceph_object_bucket(config)
-    )
-    |> Map.put("/cluster_role_binding/ceph_osd", cluster_role_binding_ceph_osd(config))
-    |> Map.put("/cluster_role_binding/ceph_system", cluster_role_binding_ceph_system(config))
-    |> Map.put(
-      "/cluster_role_binding/ceph_system_psp",
-      cluster_role_binding_ceph_system_psp(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/cephfs_csi_nodeplugin",
-      cluster_role_binding_cephfs_csi_nodeplugin(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/cephfs_csi_provisioner",
-      cluster_role_binding_cephfs_csi_provisioner(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/csi_cephfs_plugin_sa_psp",
-      cluster_role_binding_csi_cephfs_plugin_sa_psp(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/csi_cephfs_provisioner_sa_psp",
-      cluster_role_binding_csi_cephfs_provisioner_sa_psp(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/csi_rbd_plugin_sa_psp",
-      cluster_role_binding_csi_rbd_plugin_sa_psp(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/csi_rbd_provisioner_sa_psp",
-      cluster_role_binding_csi_rbd_provisioner_sa_psp(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/rbd_csi_nodeplugin",
-      cluster_role_binding_rbd_csi_nodeplugin(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/rbd_csi_provisioner",
-      cluster_role_binding_rbd_csi_provisioner(config)
-    )
-    |> Map.put("/config_map/ceph_operator", config_map_ceph_operator(config))
-    |> Map.put(
-      "/crd/cephblockpoolradosnamespaces_ceph_io",
-      crd_cephblockpoolradosnamespaces_ceph_io(config)
-    )
-    |> Map.put("/crd/cephblockpools_ceph_io", crd_cephblockpools_ceph_io(config))
-    |> Map.put(
-      "/crd/cephbucketnotifications_ceph_io",
-      crd_cephbucketnotifications_ceph_io(config)
-    )
-    |> Map.put("/crd/cephbuckettopics_ceph_io", crd_cephbuckettopics_ceph_io(config))
-    |> Map.put("/crd/cephclients_ceph_io", crd_cephclients_ceph_io(config))
-    |> Map.put("/crd/cephclusters_ceph_io", crd_cephclusters_ceph_io(config))
-    |> Map.put("/crd/cephfilesystemmirrors_ceph_io", crd_cephfilesystemmirrors_ceph_io(config))
-    |> Map.put("/crd/cephfilesystems_ceph_io", crd_cephfilesystems_ceph_io(config))
-    |> Map.put(
-      "/crd/cephfilesystemsubvolumegroups_ceph_io",
-      crd_cephfilesystemsubvolumegroups_ceph_io(config)
-    )
-    |> Map.put("/crd/cephnfses_ceph_io", crd_cephnfses_ceph_io(config))
-    |> Map.put("/crd/cephobjectrealms_ceph_io", crd_cephobjectrealms_ceph_io(config))
-    |> Map.put("/crd/cephobjectstores_ceph_io", crd_cephobjectstores_ceph_io(config))
-    |> Map.put("/crd/cephobjectstoreusers_ceph_io", crd_cephobjectstoreusers_ceph_io(config))
-    |> Map.put("/crd/cephobjectzonegroups_ceph_io", crd_cephobjectzonegroups_ceph_io(config))
-    |> Map.put("/crd/cephobjectzones_ceph_io", crd_cephobjectzones_ceph_io(config))
-    |> Map.put("/crd/cephrbdmirrors_ceph_io", crd_cephrbdmirrors_ceph_io(config))
-    |> Map.put(
-      "/crd/objectbucketclaims_objectbucket_io",
-      crd_objectbucketclaims_objectbucket_io(config)
-    )
-    |> Map.put("/crd/objectbuckets_objectbucket_io", crd_objectbuckets_objectbucket_io(config))
-    |> Map.put("/deployment/ceph_operator", deployment_ceph_operator(config))
-    |> Map.put("/pod_security_policy/00_privileged", pod_security_policy_00_privileged(config))
-    |> Map.put("/role/ceph_cmd_reporter", role_ceph_cmd_reporter(config))
-    |> Map.put("/role/ceph_mgr", role_ceph_mgr(config))
-    |> Map.put("/role/ceph_osd", role_ceph_osd(config))
-    |> Map.put("/role/ceph_purge_osd", role_ceph_purge_osd(config))
-    |> Map.put("/role/ceph_rgw", role_ceph_rgw(config))
-    |> Map.put("/role/ceph_system", role_ceph_system(config))
-    |> Map.put(
-      "/role/cephfs_external_provisioner_cfg",
-      role_cephfs_external_provisioner_cfg(config)
-    )
-    |> Map.put("/role/rbd_external_provisioner_cfg", role_rbd_external_provisioner_cfg(config))
-    |> Map.put("/role_binding/ceph_cluster_mgmt", role_binding_ceph_cluster_mgmt(config))
-    |> Map.put("/role_binding/ceph_cmd_reporter", role_binding_ceph_cmd_reporter(config))
-    |> Map.put("/role_binding/ceph_cmd_reporter_psp", role_binding_ceph_cmd_reporter_psp(config))
-    |> Map.put("/role_binding/ceph_default_psp", role_binding_ceph_default_psp(config))
-    |> Map.put("/role_binding/ceph_mgr", role_binding_ceph_mgr(config))
-    |> Map.put("/role_binding/ceph_mgr_psp", role_binding_ceph_mgr_psp(config))
-    |> Map.put("/role_binding/ceph_mgr_system", role_binding_ceph_mgr_system(config))
-    |> Map.put("/role_binding/ceph_osd", role_binding_ceph_osd(config))
-    |> Map.put("/role_binding/ceph_osd_psp", role_binding_ceph_osd_psp(config))
-    |> Map.put("/role_binding/ceph_purge_osd", role_binding_ceph_purge_osd(config))
-    |> Map.put("/role_binding/ceph_purge_osd_psp", role_binding_ceph_purge_osd_psp(config))
-    |> Map.put("/role_binding/ceph_rgw", role_binding_ceph_rgw(config))
-    |> Map.put("/role_binding/ceph_rgw_psp", role_binding_ceph_rgw_psp(config))
-    |> Map.put("/role_binding/ceph_system", role_binding_ceph_system(config))
-    |> Map.put(
-      "/role_binding/cephfs_csi_provisioner_cfg",
-      role_binding_cephfs_csi_provisioner_cfg(config)
-    )
-    |> Map.put(
-      "/role_binding/rbd_csi_provisioner_cfg",
-      role_binding_rbd_csi_provisioner_cfg(config)
-    )
-    |> Map.put("/service_account/ceph_cmd_reporter", service_account_ceph_cmd_reporter(config))
-    |> Map.put("/service_account/ceph_mgr", service_account_ceph_mgr(config))
-    |> Map.put("/service_account/ceph_osd", service_account_ceph_osd(config))
-    |> Map.put("/service_account/ceph_purge_osd", service_account_ceph_purge_osd(config))
-    |> Map.put("/service_account/ceph_rgw", service_account_ceph_rgw(config))
-    |> Map.put("/service_account/ceph_system", service_account_ceph_system(config))
-    |> Map.put(
-      "/service_account/csi_cephfs_plugin_sa",
-      service_account_csi_cephfs_plugin_sa(config)
-    )
-    |> Map.put(
-      "/service_account/csi_cephfs_provisioner_sa",
-      service_account_csi_cephfs_provisioner_sa(config)
-    )
-    |> Map.put("/service_account/csi_rbd_plugin_sa", service_account_csi_rbd_plugin_sa(config))
-    |> Map.put(
-      "/service_account/csi_rbd_provisioner_sa",
-      service_account_csi_rbd_provisioner_sa(config)
-    )
-  end
-
-  def cluster_role_binding_ceph_global(config) do
+  resource(:cluster_role_binding_ceph_global, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -201,7 +52,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  def cluster_role_binding_ceph_mgr(config) do
+  resource(:cluster_role_binding_ceph_mgr, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -211,7 +62,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  def cluster_role_binding_ceph_object_bucket(config) do
+  resource(:cluster_role_binding_ceph_object_bucket, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -221,7 +72,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  def cluster_role_binding_ceph_osd(config) do
+  resource(:cluster_role_binding_ceph_osd, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -231,7 +82,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
 
-  def cluster_role_binding_ceph_system(config) do
+  resource(:cluster_role_binding_ceph_system, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -242,7 +93,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  def cluster_role_binding_ceph_system_psp(config) do
+  resource(:cluster_role_binding_ceph_system_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -253,7 +104,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  def cluster_role_binding_cephfs_csi_nodeplugin(config) do
+  resource(:cluster_role_binding_cephfs_csi_nodeplugin, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -263,7 +114,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-plugin-sa", namespace))
   end
 
-  def cluster_role_binding_cephfs_csi_provisioner(config) do
+  resource(:cluster_role_binding_cephfs_csi_provisioner, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -273,7 +124,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
 
-  def cluster_role_binding_csi_cephfs_plugin_sa_psp(config) do
+  resource(:cluster_role_binding_csi_cephfs_plugin_sa_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -283,7 +134,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-plugin-sa", namespace))
   end
 
-  def cluster_role_binding_csi_cephfs_provisioner_sa_psp(config) do
+  resource(:cluster_role_binding_csi_cephfs_provisioner_sa_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -293,7 +144,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
 
-  def cluster_role_binding_csi_rbd_plugin_sa_psp(config) do
+  resource(:cluster_role_binding_csi_rbd_plugin_sa_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -303,7 +154,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
   end
 
-  def cluster_role_binding_csi_rbd_provisioner_sa_psp(config) do
+  resource(:cluster_role_binding_csi_rbd_provisioner_sa_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -313,7 +164,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
 
-  def cluster_role_binding_rbd_csi_nodeplugin(config) do
+  resource(:cluster_role_binding_rbd_csi_nodeplugin, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -323,7 +174,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
   end
 
-  def cluster_role_binding_rbd_csi_provisioner(config) do
+  resource(:cluster_role_binding_rbd_csi_provisioner, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:cluster_role_binding)
@@ -333,7 +184,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
 
-  def cluster_role_ceph_global(_config) do
+  resource(:cluster_role_ceph_global) do
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-global")
     |> B.app_labels(@app)
@@ -453,7 +304,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_ceph_mgmt(_config) do
+  resource(:cluster_role_ceph_mgmt) do
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-cluster-mgmt")
     |> B.app_labels(@app)
@@ -475,7 +326,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_ceph_mgr(_config) do
+  resource(:cluster_role_ceph_mgr) do
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-mgr-cluster")
     |> B.app_labels(@app)
@@ -499,7 +350,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_ceph_mgr_system(_config) do
+  resource(:cluster_role_ceph_mgr_system) do
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-mgr-system")
     |> B.app_labels(@app)
@@ -508,7 +359,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_ceph_object_bucket(_config) do
+  resource(:cluster_role_ceph_object_bucket) do
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-object-bucket")
     |> B.app_labels(@app)
@@ -543,14 +394,14 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_ceph_osd(_config) do
+  resource(:cluster_role_ceph_osd) do
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-osd")
     |> B.app_labels(@app)
     |> B.rules([%{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list"]}])
   end
 
-  def cluster_role_ceph_system(_config) do
+  resource(:cluster_role_ceph_system) do
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-system")
     |> B.app_labels(@app)
@@ -566,7 +417,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_cephfs_csi_nodeplugin(_config) do
+  resource(:cluster_role_cephfs_csi_nodeplugin) do
     B.build_resource(:cluster_role)
     |> B.name("cephfs-csi-nodeplugin")
     |> B.app_labels(@app)
@@ -587,7 +438,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_cephfs_external_provisioner_runner(_config) do
+  resource(:cluster_role_cephfs_external_provisioner_runner) do
     B.build_resource(:cluster_role)
     |> B.name("cephfs-external-provisioner-runner")
     |> B.app_labels(@app)
@@ -657,7 +508,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_psp(_config) do
+  resource(:cluster_role_psp) do
     B.build_resource(:cluster_role)
     |> B.name("psp:rook")
     |> B.app_labels(@app)
@@ -672,7 +523,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_rbd_csi_nodeplugin(_config) do
+  resource(:cluster_role_rbd_csi_nodeplugin) do
     B.build_resource(:cluster_role)
     |> B.name("rbd-csi-nodeplugin")
     |> B.app_labels(@app)
@@ -697,7 +548,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def cluster_role_rbd_external_provisioner_runner(_config) do
+  resource(:cluster_role_rbd_external_provisioner_runner) do
     B.build_resource(:cluster_role)
     |> B.name("rbd-external-provisioner-runner")
     |> B.app_labels(@app)
@@ -790,7 +641,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def config_map_ceph_operator(config) do
+  resource(:config_map_ceph_operator, config) do
     namespace = Settings.public_namespace(config)
 
     data =
@@ -835,79 +686,79 @@ defmodule KubeResources.Rook do
     |> B.data(data)
   end
 
-  def crd_cephblockpoolradosnamespaces_ceph_io(_config) do
+  resource(:crd_cephblockpoolradosnamespaces_ceph_io) do
     yaml(get_resource(:cephblockpoolradosnamespaces_ceph_rook_io))
   end
 
-  def crd_cephblockpools_ceph_io(_config) do
+  resource(:crd_cephblockpools_ceph_io) do
     yaml(get_resource(:cephblockpools_ceph_rook_io))
   end
 
-  def crd_cephbucketnotifications_ceph_io(_config) do
+  resource(:crd_cephbucketnotifications_ceph_io) do
     yaml(get_resource(:cephbucketnotifications_ceph_rook_io))
   end
 
-  def crd_cephbuckettopics_ceph_io(_config) do
+  resource(:crd_cephbuckettopics_ceph_io) do
     yaml(get_resource(:cephbuckettopics_ceph_rook_io))
   end
 
-  def crd_cephclients_ceph_io(_config) do
+  resource(:crd_cephclients_ceph_io) do
     yaml(get_resource(:cephclients_ceph_rook_io))
   end
 
-  def crd_cephclusters_ceph_io(_config) do
+  resource(:crd_cephclusters_ceph_io) do
     yaml(get_resource(:cephclusters_ceph_rook_io))
   end
 
-  def crd_cephfilesystemmirrors_ceph_io(_config) do
+  resource(:crd_cephfilesystemmirrors_ceph_io) do
     yaml(get_resource(:cephfilesystemmirrors_ceph_rook_io))
   end
 
-  def crd_cephfilesystems_ceph_io(_config) do
+  resource(:crd_cephfilesystems_ceph_io) do
     yaml(get_resource(:cephfilesystems_ceph_rook_io))
   end
 
-  def crd_cephfilesystemsubvolumegroups_ceph_io(_config) do
+  resource(:crd_cephfilesystemsubvolumegroups_ceph_io) do
     yaml(get_resource(:cephfilesystemsubvolumegroups_ceph_rook_io))
   end
 
-  def crd_cephnfses_ceph_io(_config) do
+  resource(:crd_cephnfses_ceph_io) do
     yaml(get_resource(:cephnfses_ceph_rook_io))
   end
 
-  def crd_cephobjectrealms_ceph_io(_config) do
+  resource(:crd_cephobjectrealms_ceph_io) do
     yaml(get_resource(:cephobjectrealms_ceph_rook_io))
   end
 
-  def crd_cephobjectstores_ceph_io(_config) do
+  resource(:crd_cephobjectstores_ceph_io) do
     yaml(get_resource(:cephobjectstores_ceph_rook_io))
   end
 
-  def crd_cephobjectstoreusers_ceph_io(_config) do
+  resource(:crd_cephobjectstoreusers_ceph_io) do
     yaml(get_resource(:cephobjectstoreusers_ceph_rook_io))
   end
 
-  def crd_cephobjectzonegroups_ceph_io(_config) do
+  resource(:crd_cephobjectzonegroups_ceph_io) do
     yaml(get_resource(:cephobjectzonegroups_ceph_rook_io))
   end
 
-  def crd_cephobjectzones_ceph_io(_config) do
+  resource(:crd_cephobjectzones_ceph_io) do
     yaml(get_resource(:cephobjectzones_ceph_rook_io))
   end
 
-  def crd_cephrbdmirrors_ceph_io(_config) do
+  resource(:crd_cephrbdmirrors_ceph_io) do
     yaml(get_resource(:cephrbdmirrors_ceph_rook_io))
   end
 
-  def crd_objectbucketclaims_objectbucket_io(_config) do
+  resource(:crd_objectbucketclaims_objectbucket_io) do
     yaml(get_resource(:objectbucketclaims_objectbucket_io))
   end
 
-  def crd_objectbuckets_objectbucket_io(_config) do
+  resource(:crd_objectbuckets_objectbucket_io) do
     yaml(get_resource(:objectbuckets_objectbucket_io))
   end
 
-  def deployment_ceph_operator(config) do
+  resource(:deployment_ceph_operator, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:deployment)
@@ -984,7 +835,7 @@ defmodule KubeResources.Rook do
     })
   end
 
-  def pod_security_policy_00_privileged(_config) do
+  resource(:pod_security_policy_00_privileged) do
     B.build_resource(:pod_security_policy)
     |> B.name("00-rook-privileged")
     |> B.app_labels(@app)
@@ -1018,7 +869,7 @@ defmodule KubeResources.Rook do
     })
   end
 
-  def role_binding_ceph_cluster_mgmt(config) do
+  resource(:role_binding_ceph_cluster_mgmt, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1029,7 +880,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  def role_binding_ceph_cmd_reporter(config) do
+  resource(:role_binding_ceph_cmd_reporter, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1040,7 +891,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-cmd-reporter", namespace))
   end
 
-  def role_binding_ceph_cmd_reporter_psp(config) do
+  resource(:role_binding_ceph_cmd_reporter_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1051,7 +902,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-cmd-reporter", namespace))
   end
 
-  def role_binding_ceph_default_psp(config) do
+  resource(:role_binding_ceph_default_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1063,7 +914,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("default", namespace))
   end
 
-  def role_binding_ceph_mgr(config) do
+  resource(:role_binding_ceph_mgr, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1074,7 +925,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  def role_binding_ceph_mgr_psp(config) do
+  resource(:role_binding_ceph_mgr_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1085,7 +936,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  def role_binding_ceph_mgr_system(config) do
+  resource(:role_binding_ceph_mgr_system, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1096,7 +947,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  def role_binding_ceph_osd(config) do
+  resource(:role_binding_ceph_osd, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1107,7 +958,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
 
-  def role_binding_ceph_osd_psp(config) do
+  resource(:role_binding_ceph_osd_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1118,7 +969,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
 
-  def role_binding_ceph_purge_osd(config) do
+  resource(:role_binding_ceph_purge_osd, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1129,7 +980,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-purge-osd", namespace))
   end
 
-  def role_binding_ceph_purge_osd_psp(config) do
+  resource(:role_binding_ceph_purge_osd_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1140,7 +991,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-purge-osd", namespace))
   end
 
-  def role_binding_ceph_rgw(config) do
+  resource(:role_binding_ceph_rgw, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1151,7 +1002,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-rgw", namespace))
   end
 
-  def role_binding_ceph_rgw_psp(config) do
+  resource(:role_binding_ceph_rgw_psp, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1162,7 +1013,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-rgw", namespace))
   end
 
-  def role_binding_ceph_system(config) do
+  resource(:role_binding_ceph_system, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1174,7 +1025,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  def role_binding_cephfs_csi_provisioner_cfg(config) do
+  resource(:role_binding_cephfs_csi_provisioner_cfg, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1185,7 +1036,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
 
-  def role_binding_rbd_csi_provisioner_cfg(config) do
+  resource(:role_binding_rbd_csi_provisioner_cfg, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role_binding)
@@ -1196,7 +1047,7 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
 
-  def role_ceph_cmd_reporter(config) do
+  resource(:role_ceph_cmd_reporter, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1212,7 +1063,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def role_ceph_mgr(config) do
+  resource(:role_ceph_mgr, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1240,7 +1091,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def role_ceph_osd(config) do
+  resource(:role_ceph_osd, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1262,7 +1113,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def role_ceph_purge_osd(config) do
+  resource(:role_ceph_purge_osd, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1281,7 +1132,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def role_ceph_rgw(config) do
+  resource(:role_ceph_rgw, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1291,7 +1142,7 @@ defmodule KubeResources.Rook do
     |> B.rules([%{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]}])
   end
 
-  def role_ceph_system(config) do
+  resource(:role_ceph_system, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1319,7 +1170,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def role_cephfs_external_provisioner_cfg(config) do
+  resource(:role_cephfs_external_provisioner_cfg, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1345,7 +1196,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def role_rbd_external_provisioner_cfg(config) do
+  resource(:role_rbd_external_provisioner_cfg, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:role)
@@ -1371,7 +1222,7 @@ defmodule KubeResources.Rook do
     ])
   end
 
-  def service_account_ceph_cmd_reporter(config) do
+  resource(:service_account_ceph_cmd_reporter, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1381,7 +1232,7 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  def service_account_ceph_mgr(config) do
+  resource(:service_account_ceph_mgr, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1391,7 +1242,7 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  def service_account_ceph_osd(config) do
+  resource(:service_account_ceph_osd, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1401,7 +1252,7 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  def service_account_ceph_purge_osd(config) do
+  resource(:service_account_ceph_purge_osd, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1410,7 +1261,7 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app)
   end
 
-  def service_account_ceph_rgw(config) do
+  resource(:service_account_ceph_rgw, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1420,7 +1271,7 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  def service_account_ceph_system(config) do
+  resource(:service_account_ceph_system, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1430,7 +1281,7 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  def service_account_csi_cephfs_plugin_sa(config) do
+  resource(:service_account_csi_cephfs_plugin_sa, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1439,7 +1290,7 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app)
   end
 
-  def service_account_csi_cephfs_provisioner_sa(config) do
+  resource(:service_account_csi_cephfs_provisioner_sa, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1448,7 +1299,7 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app)
   end
 
-  def service_account_csi_rbd_plugin_sa(config) do
+  resource(:service_account_csi_rbd_plugin_sa, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)
@@ -1457,7 +1308,7 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app)
   end
 
-  def service_account_csi_rbd_provisioner_sa(config) do
+  resource(:service_account_csi_rbd_provisioner_sa, config) do
     namespace = Settings.public_namespace(config)
 
     B.build_resource(:service_account)

@@ -1,8 +1,9 @@
 defmodule KubeResources.TektonDashboard do
   @moduledoc false
+  use KubeExt.ResourceGenerator
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.DevtoolsSettings
+  alias KubeResources.DevtoolsSettings, as: Settings
   alias KubeResources.IstioConfig.VirtualService
   alias KubeExt.KubeState.Hosts
 
@@ -19,8 +20,8 @@ defmodule KubeResources.TektonDashboard do
   @url_base "/x/tekton_dashboard/"
   @iframe_base_url "/services/devtools/tekton_dashboard"
 
-  def virtual_service(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:virtual_service, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -39,8 +40,8 @@ defmodule KubeResources.TektonDashboard do
 
   def iframe_url, do: @iframe_base_url
 
-  def service_account(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service_account, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:service_account)
     |> B.name(@service_account)
@@ -48,8 +49,8 @@ defmodule KubeResources.TektonDashboard do
     |> B.app_labels(@app)
   end
 
-  def role(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:role, config) do
+    namespace = Settings.namespace(config)
 
     rules = [
       %{
@@ -75,7 +76,7 @@ defmodule KubeResources.TektonDashboard do
     |> B.rules(rules)
   end
 
-  def cluster_role(_config) do
+  resource(:cluster_role) do
     rules = [
       %{
         "apiGroups" => [
@@ -193,7 +194,7 @@ defmodule KubeResources.TektonDashboard do
     |> B.rules(rules)
   end
 
-  def cluster_role_1(_config) do
+  resource(:cluster_role_1) do
     rules = [
       %{
         "apiGroups" => [
@@ -314,8 +315,8 @@ defmodule KubeResources.TektonDashboard do
     |> B.rules(rules)
   end
 
-  def role_binding(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:role_binding, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:role_binding)
     |> B.name(@info_role)
@@ -329,8 +330,8 @@ defmodule KubeResources.TektonDashboard do
     })
   end
 
-  def cluster_role_binding(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:cluster_role_binding, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name(@backend_cluster_role)
@@ -339,8 +340,8 @@ defmodule KubeResources.TektonDashboard do
     |> B.subject(B.build_service_account(@service_account, namespace))
   end
 
-  def cluster_role_binding_1(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:cluster_role_binding_1, config) do
+    namespace = Settings.namespace(config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name(@tenant_cluster_role)
@@ -349,8 +350,8 @@ defmodule KubeResources.TektonDashboard do
     |> B.subject(B.build_service_account(@service_account, namespace))
   end
 
-  def config_map(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:config_map, config) do
+    namespace = Settings.namespace(config)
 
     data = %{
       "version" => "v0.26.0"
@@ -363,8 +364,8 @@ defmodule KubeResources.TektonDashboard do
     |> B.data(data)
   end
 
-  def service(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:service, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "ports" => [
@@ -387,8 +388,8 @@ defmodule KubeResources.TektonDashboard do
     |> B.spec(spec)
   end
 
-  def deployment(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  resource(:deployment, config) do
+    namespace = Settings.namespace(config)
 
     spec = %{
       "replicas" => 1,
@@ -470,20 +471,5 @@ defmodule KubeResources.TektonDashboard do
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.spec(spec)
-  end
-
-  def materialize(config) do
-    %{
-      "/0/service_account" => service_account(config),
-      "/1/role" => role(config),
-      "/2/cluster_role" => cluster_role(config),
-      "/3/cluster_role_1" => cluster_role_1(config),
-      "/4/role_binding" => role_binding(config),
-      "/5/cluster_role_binding" => cluster_role_binding(config),
-      "/6/config_map" => config_map(config),
-      "/7/service" => service(config),
-      "/8/deployment" => deployment(config),
-      "/9/cluster_role_binding_1" => cluster_role_binding_1(config)
-    }
   end
 end
