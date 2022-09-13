@@ -34,7 +34,7 @@ defmodule ControlServerWeb.Live.Iframe do
 
   def iframe_url(:gitea), do: KubeResources.Gitea.url()
 
-  def iframe_url(:kiali), do: KubeResources.KialiServer.url()
+  def iframe_url(:kiali), do: KubeResources.Kiali.url()
 
   @impl true
   def render(assigns) do

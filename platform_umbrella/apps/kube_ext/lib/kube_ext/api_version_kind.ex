@@ -30,6 +30,7 @@ defmodule KubeExt.ApiVersionKind do
     istio_virtual_service: {"networking.istio.io/v1alpha3", "VirtualService"},
     istio_envoy_filter: {"networking.istio.io/v1alpha3", "EnvoyFilter"},
     istio_telemetry: {"telemetry.istio.io/v1alpha1", "Telemetry"},
+    kiali: {"kiali.io/v1alpha1", "Kiali"},
     service_monitor: {"monitoring.coreos.com/v1", "ServiceMonitor"},
     pod_monitor: {"monitoring.coreos.com/v1", "PodMonitor"},
     prometheus: {"monitoring.coreos.com/v1", "Prometheus"},

@@ -25,7 +25,13 @@ defmodule KubeRawResources.Battery do
     B.build_resource(:namespace)
     |> B.app_labels(@app_name)
     |> B.name(name)
-    |> B.label("istio-injection", "enabled")
+    |> B.label("istio-injection", "true")
+  end
+
+  def istio_namespace(_config) do
+    B.build_resource(:namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("battery-istio")
   end
 
   def service_account(config) do
@@ -55,6 +61,7 @@ defmodule KubeRawResources.Battery do
   def materialize(config) do
     %{
       "/namespace" => namespace(config),
+      "/istio_namespace" => istio_namespace(config),
       "/service_account" => service_account(config),
       "/cluster_role_binding" => cluster_role_binding(config)
     }

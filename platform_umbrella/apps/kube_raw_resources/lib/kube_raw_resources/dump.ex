@@ -46,11 +46,9 @@ defmodule KubeRawResources.Dump do
     |> Enum.flat_map(fn service_type ->
       service_type
       |> ConfigGenerator.materialize()
-      |> Enum.map(fn {key, value} ->
-        {Path.join("/#{Atom.to_string(service_type)}", key), value}
-      end)
+      |> Enum.map(fn {key, value} -> {Path.join(Atom.to_string(service_type), key), value} end)
     end)
-    |> Enum.reduce(%{}, fn r_map, acc -> Map.merge(acc, r_map) end)
+    |> Enum.into(%{})
     |> Enum.each(fn
       {fname, configs} when is_list(configs) ->
         Enum.map(configs, &write_to(&1, outdir, fname))

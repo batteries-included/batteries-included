@@ -57,8 +57,7 @@ defmodule Mix.Tasks.GenResource do
   end
 
   defp write_resouce_elixir(%ResourceResult{} = result, app_name, settings_module) do
-    materialize = materialize_method(result.materialize_mappings)
-    module = module(app_name, result.include_paths, materialize, result.methods)
+    module = module(app_name, result.include_paths, result.methods)
 
     resource_path =
       Path.join(File.cwd!(), "apps/kube_resources/lib/kube_resources/#{app_name}.ex")
@@ -131,15 +130,19 @@ defmodule Mix.Tasks.GenResource do
   end
 
   defp process_resource(resource, :config_map = _resource_type, app_name) do
-    data = Map.get(resource, "data", %{})
+    data = Map.get(resource, "data", %{}) || %{}
 
     # We're going to split the config map into values that are in raw_files and
     # values that are embedded.
     # These are the items that will be include
     large_data =
       data
-      |> Enum.filter(fn {_key, value} ->
-        is_binary(value) && String.length(value) >= @max_config_string_size
+      |> Enum.filter(fn
+        {_key, value} when is_binary(value) ->
+          String.length(value) >= @max_config_string_size
+
+        {_key, _value} ->
+          false
       end)
       |> Enum.into(%{})
 
@@ -253,23 +256,8 @@ defmodule Mix.Tasks.GenResource do
 
   defp yaml_resource_method(method_name, include_name) do
     quote do
-      def unquote(method_name)(_config) do
+      resource(unquote(method_name)) do
         yaml(get_resource(unquote(include_name)))
-      end
-    end
-  end
-
-  defp materialize_method(mappings) do
-    map_pipeline =
-      mappings
-      |> Enum.sort_by(fn {path, _} -> path end)
-      |> Enum.reduce(starting_data(), fn {path, method_name}, pipeline ->
-        add_map_put_call_with_config(pipeline, "/" <> path, method_name)
-      end)
-
-    quote do
-      def materialize(config) do
-        unquote(map_pipeline)
       end
     end
   end
@@ -588,7 +576,7 @@ defmodule Mix.Tasks.GenResource do
 
   defp resource_method_from_pipeline(pipeline, method_name) do
     quote do
-      def unquote(method_name)(config) do
+      resource(unquote(method_name), config) do
         namespace = Settings.namespace(config)
         unquote(pipeline)
       end
@@ -597,7 +585,7 @@ defmodule Mix.Tasks.GenResource do
 
   defp resource_method_from_pipeline_cluster_level(pipeline, method_name) do
     quote do
-      def unquote(method_name)(_config) do
+      resource(unquote(method_name)) do
         unquote(pipeline)
       end
     end
@@ -605,7 +593,7 @@ defmodule Mix.Tasks.GenResource do
 
   defp resource_method_from_pipeline_and_data(data_pipeline, main_pipeline, method_name) do
     quote do
-      def unquote(method_name)(config) do
+      resource(unquote(method_name), config) do
         namespace = Settings.namespace(config)
         data = unquote(data_pipeline)
         unquote(main_pipeline)
@@ -613,24 +601,22 @@ defmodule Mix.Tasks.GenResource do
     end
   end
 
-  defp module(app_name, includes, materialize, methods) when map_size(includes) == 0 do
+  defp module(app_name, includes, methods) when map_size(includes) == 0 do
     quote do
       defmodule KubeResources.ExampleServiceResource do
+        use KubeExt.ResourceGenerator
         import KubeExt.Yaml
 
-        alias KubeExt.Builder, as: B
         alias KubeResources.ExampleSettings, as: Settings
 
         @app unquote(app_name)
-
-        unquote(materialize)
 
         unquote_splicing(Map.values(methods))
       end
     end
   end
 
-  defp module(app_name, %{} = includes, materialize, methods) do
+  defp module(app_name, %{} = includes, methods) do
     include_keywords = Keyword.new(includes) |> Enum.sort_by(fn {_, path} -> path end)
 
     sorted_methods =
@@ -641,15 +627,13 @@ defmodule Mix.Tasks.GenResource do
     quote do
       defmodule KubeResources.ExampleServiceResource do
         use KubeExt.IncludeResource, unquote(include_keywords)
+        use KubeExt.ResourceGenerator
 
         import KubeExt.Yaml
 
-        alias KubeExt.Builder, as: B
         alias KubeResources.ExampleSettings, as: Settings
 
         @app unquote(app_name)
-
-        unquote(materialize)
 
         unquote_splicing(sorted_methods)
       end

@@ -1,63 +1,142 @@
 defmodule KubeRawResources.IstioBase do
-  @moduledoc false
-  use KubeExt.IncludeResource, crd: "priv/manifests/istio/base.crd.yaml"
+  use KubeExt.IncludeResource,
+    authorizationpolicies_security_istio_io:
+      "priv/manifests/istio_base/authorizationpolicies_security_istio_io.yaml",
+    destinationrules_networking_istio_io:
+      "priv/manifests/istio_base/destinationrules_networking_istio_io.yaml",
+    envoyfilters_networking_istio_io:
+      "priv/manifests/istio_base/envoyfilters_networking_istio_io.yaml",
+    gateways_networking_istio_io: "priv/manifests/istio_base/gateways_networking_istio_io.yaml",
+    istiooperators_install_istio_io:
+      "priv/manifests/istio_base/istiooperators_install_istio_io.yaml",
+    peerauthentications_security_istio_io:
+      "priv/manifests/istio_base/peerauthentications_security_istio_io.yaml",
+    proxyconfigs_networking_istio_io:
+      "priv/manifests/istio_base/proxyconfigs_networking_istio_io.yaml",
+    requestauthentications_security_istio_io:
+      "priv/manifests/istio_base/requestauthentications_security_istio_io.yaml",
+    serviceentries_networking_istio_io:
+      "priv/manifests/istio_base/serviceentries_networking_istio_io.yaml",
+    sidecars_networking_istio_io: "priv/manifests/istio_base/sidecars_networking_istio_io.yaml",
+    telemetries_telemetry_istio_io:
+      "priv/manifests/istio_base/telemetries_telemetry_istio_io.yaml",
+    virtualservices_networking_istio_io:
+      "priv/manifests/istio_base/virtualservices_networking_istio_io.yaml",
+    wasmplugins_extensions_istio_io:
+      "priv/manifests/istio_base/wasmplugins_extensions_istio_io.yaml",
+    workloadentries_networking_istio_io:
+      "priv/manifests/istio_base/workloadentries_networking_istio_io.yaml",
+    workloadgroups_networking_istio_io:
+      "priv/manifests/istio_base/workloadgroups_networking_istio_io.yaml"
+
+  use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
 
+  alias KubeRawResources.NetworkSettings, as: Settings
   alias KubeExt.Builder, as: B
-  alias KubeRawResources.NetworkSettings
+  @app "istio_base"
+  resource(:cluster_role_binding_istio_reader_battery_istio, config) do
+    namespace = Settings.istio_namespace(config)
 
-  @reader_app "istio-reader"
-  @istiod_app "istiod"
-
-  def materialize(config) do
-    %{
-      "/namespace" => namespace(config),
-      "/crd" => crd(config),
-      "/istiod/service_account" => service_account_istiod(config),
-      "/istiod/cluster_role" => cluster_role_istiod(config),
-      "/istiod/cluster_role_binding" => cluster_role_binding_istiod(config),
-      "/istiod/gateway/cluster_role" => cluster_role_istiod_gateway(config),
-      "/istiod/gateway/cluster_role_binding" => cluster_role_binding_istiod_gateway(config),
-      "/istiod/role" => role_istiod(config),
-      "/istiod/role_binding" => role_binding_istiod(config),
-      "/reader/service_account" => service_account_reader(config),
-      "/reader/cluster_role" => cluster_role_reader(config),
-      "/reader/cluster_role_binding" => cluster_role_binding_reader(config),
-      "/validating_webhook_configuration" => validating_webhook_configuration(config)
-    }
+    B.build_resource(:cluster_role_binding)
+    |> B.name("istio-reader-battery-istio")
+    |> B.app_labels(@app)
+    |> B.component_label("istio-reader")
+    |> B.role_ref(B.build_cluster_role_ref("istio-reader-battery-istio"))
+    |> B.subject(B.build_service_account("istio-reader-service-account", namespace))
   end
 
-  def crd(_), do: yaml(get_resource(:crd))
+  resource(:cluster_role_binding_istiod_battery_istio, config) do
+    namespace = Settings.istio_namespace(config)
 
-  defp namespace(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-
-    B.build_resource(:namespace)
-    |> B.name(namespace)
-    |> B.app_labels(@istiod_app)
+    B.build_resource(:cluster_role_binding)
+    |> B.name("istiod-battery-istio")
+    |> B.app_labels(@app)
+    |> B.component_label("istiod")
+    |> B.role_ref(B.build_cluster_role_ref("istiod-battery-istio"))
+    |> B.subject(B.build_service_account("istiod-service-account", namespace))
   end
 
-  def service_account_reader(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-
-    B.build_resource(:service_account)
-    |> B.name("istio-reader-service-account")
-    |> B.namespace(namespace)
-    |> B.app_labels(@reader_app)
+  resource(:cluster_role_istio_reader_battery_istio) do
+    B.build_resource(:cluster_role)
+    |> B.name("istio-reader-battery-istio")
+    |> B.app_labels(@app)
+    |> B.component_label("istio-reader")
+    |> B.rules([
+      %{
+        "apiGroups" => [
+          "config.istio.io",
+          "security.istio.io",
+          "networking.istio.io",
+          "authentication.istio.io",
+          "rbac.istio.io"
+        ],
+        "resources" => ["*"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => [
+          "endpoints",
+          "pods",
+          "services",
+          "nodes",
+          "replicationcontrollers",
+          "namespaces",
+          "secrets"
+        ],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["networking.istio.io"],
+        "resources" => ["workloadentries"],
+        "verbs" => ["get", "watch", "list"]
+      },
+      %{
+        "apiGroups" => ["apiextensions.k8s.io"],
+        "resources" => ["customresourcedefinitions"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["discovery.k8s.io"],
+        "resources" => ["endpointslices"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["replicasets"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["authentication.k8s.io"],
+        "resources" => ["tokenreviews"],
+        "verbs" => ["create"]
+      },
+      %{
+        "apiGroups" => ["authorization.k8s.io"],
+        "resources" => ["subjectaccessreviews"],
+        "verbs" => ["create"]
+      },
+      %{
+        "apiGroups" => ["multicluster.x-k8s.io"],
+        "resources" => ["serviceexports"],
+        "verbs" => ["get", "watch", "list"]
+      },
+      %{
+        "apiGroups" => ["multicluster.x-k8s.io"],
+        "resources" => ["serviceimports"],
+        "verbs" => ["get", "watch", "list"]
+      }
+    ])
   end
 
-  def service_account_istiod(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-
-    B.build_resource(:service_account)
-    |> B.name("istiod")
-    |> B.namespace(namespace)
-    |> B.app_labels(@istiod_app)
-  end
-
-  def cluster_role_istiod(config) do
-    rules = [
+  resource(:cluster_role_istiod_battery_istio) do
+    B.build_resource(:cluster_role)
+    |> B.name("istiod-battery-istio")
+    |> B.app_labels(@app)
+    |> B.component_label("istiod")
+    |> B.rules([
       %{
         "apiGroups" => ["admissionregistration.k8s.io"],
         "resources" => ["mutatingwebhookconfigurations"],
@@ -75,21 +154,20 @@ defmodule KubeRawResources.IstioBase do
           "networking.istio.io",
           "authentication.istio.io",
           "rbac.istio.io",
-          "telemetry.istio.io",
-          "extensions.istio.io"
+          "telemetry.istio.io"
         ],
-        "verbs" => ["get", "watch", "list"],
-        "resources" => ["*"]
+        "resources" => ["*"],
+        "verbs" => ["get", "watch", "list"]
       },
       %{
         "apiGroups" => ["networking.istio.io"],
-        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"],
-        "resources" => ["workloadentries"]
+        "resources" => ["workloadentries"],
+        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
       },
       %{
         "apiGroups" => ["networking.istio.io"],
-        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"],
-        "resources" => ["workloadentries/status"]
+        "resources" => ["workloadentries/status"],
+        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
       },
       %{
         "apiGroups" => ["apiextensions.k8s.io"],
@@ -132,8 +210,8 @@ defmodule KubeRawResources.IstioBase do
       },
       %{
         "apiGroups" => ["certificates.k8s.io"],
-        "resources" => ["signers"],
         "resourceNames" => ["kubernetes.io/legacy-unknown"],
+        "resources" => ["signers"],
         "verbs" => ["approve"]
       },
       %{
@@ -156,6 +234,11 @@ defmodule KubeRawResources.IstioBase do
         "resources" => ["*"],
         "verbs" => ["update"]
       },
+      %{
+        "apiGroups" => ["gateway.networking.k8s.io"],
+        "resources" => ["gatewayclasses"],
+        "verbs" => ["create", "update", "patch", "delete"]
+      },
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "watch", "list"]},
       %{
         "apiGroups" => ["multicluster.x-k8s.io"],
@@ -167,288 +250,150 @@ defmodule KubeRawResources.IstioBase do
         "resources" => ["serviceimports"],
         "verbs" => ["get", "watch", "list"]
       }
-    ]
-
-    namespace = NetworkSettings.istio_namespace(config)
-    name = "istiod-#{namespace}"
-
-    B.build_resource(:cluster_role)
-    |> B.name(name)
-    |> B.app_labels(@istiod_app)
-    |> Map.put("rules", rules)
+    ])
   end
 
-  def cluster_role_istiod_gateway(config) do
-    rules = [
-      %{
-        "apiGroups" => [
-          "apps"
-        ],
-        "resources" => [
-          "deployments"
-        ],
-        "verbs" => [
-          "get",
-          "watch",
-          "list",
-          "update",
-          "patch",
-          "create",
-          "delete"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "services"
-        ],
-        "verbs" => [
-          "get",
-          "watch",
-          "list",
-          "update",
-          "patch",
-          "create",
-          "delete"
-        ]
-      }
-    ]
-
-    namespace = NetworkSettings.istio_namespace(config)
-    name = "istiod-gateway-controller-#{namespace}"
-
-    B.build_resource(:cluster_role)
-    |> B.name(name)
-    |> B.app_labels(@istiod_app)
-    |> Map.put("rules", rules)
+  resource(:crd_authorizationpolicies_security_istio_io) do
+    yaml(get_resource(:authorizationpolicies_security_istio_io))
   end
 
-  def cluster_role_reader(config) do
-    rules = [
-      %{
-        "apiGroups" => [
-          "config.istio.io",
-          "security.istio.io",
-          "networking.istio.io",
-          "authentication.istio.io",
-          "rbac.istio.io"
-        ],
-        "resources" => ["*"],
-        "verbs" => ["get", "list", "watch"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => [
-          "endpoints",
-          "pods",
-          "services",
-          "nodes",
-          "replicationcontrollers",
-          "namespaces",
-          "secrets"
-        ],
-        "verbs" => ["get", "list", "watch"]
-      },
+  resource(:crd_destinationrules_networking_istio_io) do
+    yaml(get_resource(:destinationrules_networking_istio_io))
+  end
+
+  resource(:crd_envoyfilters_networking_istio_io) do
+    yaml(get_resource(:envoyfilters_networking_istio_io))
+  end
+
+  resource(:crd_gateways_networking_istio_io) do
+    yaml(get_resource(:gateways_networking_istio_io))
+  end
+
+  resource(:crd_istiooperators_install_istio_io) do
+    yaml(get_resource(:istiooperators_install_istio_io))
+  end
+
+  resource(:crd_peerauthentications_security_istio_io) do
+    yaml(get_resource(:peerauthentications_security_istio_io))
+  end
+
+  resource(:crd_proxyconfigs_networking_istio_io) do
+    yaml(get_resource(:proxyconfigs_networking_istio_io))
+  end
+
+  resource(:crd_requestauthentications_security_istio_io) do
+    yaml(get_resource(:requestauthentications_security_istio_io))
+  end
+
+  resource(:crd_serviceentries_networking_istio_io) do
+    yaml(get_resource(:serviceentries_networking_istio_io))
+  end
+
+  resource(:crd_sidecars_networking_istio_io) do
+    yaml(get_resource(:sidecars_networking_istio_io))
+  end
+
+  resource(:crd_telemetries_telemetry_istio_io) do
+    yaml(get_resource(:telemetries_telemetry_istio_io))
+  end
+
+  resource(:crd_virtualservices_networking_istio_io) do
+    yaml(get_resource(:virtualservices_networking_istio_io))
+  end
+
+  resource(:crd_wasmplugins_extensions_istio_io) do
+    yaml(get_resource(:wasmplugins_extensions_istio_io))
+  end
+
+  resource(:crd_workloadentries_networking_istio_io) do
+    yaml(get_resource(:workloadentries_networking_istio_io))
+  end
+
+  resource(:crd_workloadgroups_networking_istio_io) do
+    yaml(get_resource(:workloadgroups_networking_istio_io))
+  end
+
+  resource(:role_binding_istiod_battery_istio, config) do
+    namespace = Settings.istio_namespace(config)
+
+    B.build_resource(:role_binding)
+    |> B.name("istiod-battery-istio")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.component_label("istiod")
+    |> B.role_ref(B.build_role_ref("istiod-battery-istio"))
+    |> B.subject(B.build_service_account("istiod-service-account", namespace))
+  end
+
+  resource(:role_istiod_battery_istio, config) do
+    namespace = Settings.istio_namespace(config)
+
+    B.build_resource(:role)
+    |> B.name("istiod-battery-istio")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.component_label("istiod")
+    |> B.rules([
       %{
         "apiGroups" => ["networking.istio.io"],
-        "verbs" => ["get", "watch", "list"],
-        "resources" => ["workloadentries"]
-      },
-      %{
-        "apiGroups" => ["apiextensions.k8s.io"],
-        "resources" => ["customresourcedefinitions"],
-        "verbs" => ["get", "list", "watch"]
-      },
-      %{
-        "apiGroups" => ["discovery.k8s.io"],
-        "resources" => ["endpointslices"],
-        "verbs" => ["get", "list", "watch"]
-      },
-      %{
-        "apiGroups" => ["apps"],
-        "resources" => ["replicasets"],
-        "verbs" => ["get", "list", "watch"]
-      },
-      %{
-        "apiGroups" => ["authentication.k8s.io"],
-        "resources" => ["tokenreviews"],
+        "resources" => ["gateways"],
         "verbs" => ["create"]
-      },
-      %{
-        "apiGroups" => ["authorization.k8s.io"],
-        "resources" => ["subjectaccessreviews"],
-        "verbs" => ["create"]
-      },
-      %{
-        "apiGroups" => ["multicluster.x-k8s.io"],
-        "resources" => ["serviceexports"],
-        "verbs" => ["get", "watch", "list"]
-      },
-      %{
-        "apiGroups" => ["multicluster.x-k8s.io"],
-        "resources" => ["serviceimports"],
-        "verbs" => ["get", "watch", "list"]
-      }
-    ]
-
-    namespace = NetworkSettings.istio_namespace(config)
-    name = "istio-reader-#{namespace}"
-
-    B.build_resource(:cluster_role)
-    |> B.name(name)
-    |> B.app_labels(@reader_app)
-    |> Map.put("rules", rules)
-  end
-
-  def cluster_role_binding_reader(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-    name = "istio-reader-#{namespace}"
-
-    B.build_resource(:cluster_role_binding)
-    |> B.name(name)
-    |> B.app_labels(@reader_app)
-    |> Map.put("roleRef", %{
-      "apiGroup" => "rbac.authorization.k8s.io",
-      "kind" => "ClusterRole",
-      "name" => name
-    })
-    |> Map.put("subjects", [
-      %{
-        "kind" => "ServiceAccount",
-        "name" => "istio-reader-service-account",
-        "namespace" => namespace
-      }
-    ])
-  end
-
-  def cluster_role_binding_istiod(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-    name = "istiod-#{namespace}"
-
-    B.build_resource(:cluster_role_binding)
-    |> B.name(name)
-    |> B.app_labels(@istiod_app)
-    |> Map.put("roleRef", %{
-      "apiGroup" => "rbac.authorization.k8s.io",
-      "kind" => "ClusterRole",
-      "name" => name
-    })
-    |> Map.put("subjects", [
-      %{
-        "kind" => "ServiceAccount",
-        "name" => "istiod",
-        "namespace" => namespace
-      }
-    ])
-  end
-
-  def cluster_role_binding_istiod_gateway(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-
-    name = "istiod-gateway-controller-#{namespace}"
-
-    B.build_resource(:cluster_role_binding)
-    |> B.name(name)
-    |> B.app_labels(@istiod_app)
-    |> Map.put("roleRef", %{
-      "apiGroup" => "rbac.authorization.k8s.io",
-      "kind" => "ClusterRole",
-      "name" => name
-    })
-    |> Map.put("subjects", [
-      %{
-        "kind" => "ServiceAccount",
-        "name" => "istiod",
-        "namespace" => namespace
-      }
-    ])
-  end
-
-  def role_istiod(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-    name = "istiod-#{namespace}"
-
-    rules = [
-      %{
-        "apiGroups" => ["networking.istio.io"],
-        "verbs" => ["create"],
-        "resources" => ["gateways"]
       },
       %{
         "apiGroups" => [""],
         "resources" => ["secrets"],
         "verbs" => ["create", "get", "watch", "list", "update", "delete"]
       }
-    ]
-
-    B.build_resource(:role)
-    |> B.name(name)
-    |> B.namespace(namespace)
-    |> Map.put("rules", rules)
-  end
-
-  def role_binding_istiod(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-    name = "istiod-#{namespace}"
-
-    B.build_resource(:role_binding)
-    |> B.name(name)
-    |> B.namespace(namespace)
-    |> B.app_labels(@istiod_app)
-    |> Map.put("roleRef", %{
-      "apiGroup" => "rbac.authorization.k8s.io",
-      "kind" => "Role",
-      "name" => name
-    })
-    |> Map.put("subjects", [
-      %{
-        "kind" => "ServiceAccount",
-        "name" => "istiod",
-        "namespace" => namespace
-      }
     ])
   end
 
-  def validating_webhook_configuration(config) do
-    namespace = NetworkSettings.istio_namespace(config)
+  resource(:service_account_istio_reader, config) do
+    namespace = Settings.istio_namespace(config)
 
-    %{
-      "apiVersion" => "admissionregistration.k8s.io/v1",
-      "kind" => "ValidatingWebhookConfiguration",
-      "metadata" => %{
-        "name" => "istiod-default-validator",
-        "labels" => %{
-          "battery/app" => @istiod_app,
-          "istio" => "istiod",
-          "istio.io/rev" => "default",
-          "battery/managed" => "true"
-        }
-      },
-      "webhooks" => [
-        %{
-          "name" => "validation.istio.io",
-          "clientConfig" => %{
-            "service" => %{
-              "name" => "istiod",
-              "namespace" => namespace,
-              "path" => "/validate"
-            }
-          },
-          "rules" => [
-            %{
-              "operations" => ["CREATE", "UPDATE"],
-              "apiGroups" => ["security.istio.io", "networking.istio.io"],
-              "apiVersions" => ["*"],
-              "resources" => ["*"]
-            }
-          ],
-          "failurePolicy" => "Ignore",
-          "sideEffects" => "None",
-          "admissionReviewVersions" => ["v1beta1", "v1"]
-        }
-      ]
-    }
+    B.build_resource(:service_account)
+    |> B.name("istio-reader-service-account")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.component_label("istio-reader")
+  end
+
+  resource(:service_account_istiod, config) do
+    namespace = Settings.istio_namespace(config)
+
+    B.build_resource(:service_account)
+    |> B.name("istiod-service-account")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.component_label("istiod")
+  end
+
+  resource(:validating_webhook_config_istiod_default_validator, config) do
+    namespace = Settings.istio_namespace(config)
+
+    B.build_resource(:validating_webhook_config)
+    |> B.name("istiod-default-validator")
+    |> B.app_labels(@app)
+    |> B.component_label("istiod")
+    |> B.label("istio", "istiod")
+    |> B.label("istio.io/rev", "default")
+    |> Map.put("webhooks", [
+      %{
+        "admissionReviewVersions" => ["v1beta1", "v1"],
+        "clientConfig" => %{
+          "service" => %{"name" => "istiod", "namespace" => namespace, "path" => "/validate"}
+        },
+        "failurePolicy" => "Ignore",
+        "name" => "validation.istio.io",
+        "rules" => [
+          %{
+            "apiGroups" => ["security.istio.io", "networking.istio.io"],
+            "apiVersions" => ["*"],
+            "operations" => ["CREATE", "UPDATE"],
+            "resources" => ["*"]
+          }
+        ],
+        "sideEffects" => "None"
+      }
+    ])
   end
 end

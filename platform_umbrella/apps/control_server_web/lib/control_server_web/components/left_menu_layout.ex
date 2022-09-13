@@ -227,12 +227,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
       <% :gitea -> %>
         <.left_menu_item to={KubeResources.Gitea.view_url()} name="Gitea" icon="gitea" link_type="a" />
       <% :kiali -> %>
-        <.left_menu_item
-          to={KubeResources.KialiServer.view_url()}
-          name="Kiali"
-          icon="kiali"
-          link_type="a"
-        />
+        <.left_menu_item to={KubeResources.Kiali.view_url()} name="Kiali" icon="kiali" link_type="a" />
       <% :tekton_dashboard -> %>
         <.left_menu_item
           to={KubeResources.TektonDashboard.view_url()}

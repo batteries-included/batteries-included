@@ -34,7 +34,7 @@ defmodule KubeRawResources.Database do
     |> B.namespace(namespace)
     |> B.name(full_name(cluster))
     |> B.app_labels(@app)
-    |> B.label("sidecar.istio.io/inject", "disabled")
+    |> B.label("sidecar.istio.io/inject", "false")
     |> B.spec(spec)
     |> B.owner_label(Map.get(cluster, :id, "bootstrapped"))
   end

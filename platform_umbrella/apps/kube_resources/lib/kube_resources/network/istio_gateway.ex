@@ -1,24 +1,48 @@
 defmodule KubeResources.IstioGateway do
   @moduledoc false
+  use KubeExt.ResourceGenerator
 
   alias KubeExt.Builder, as: B
-  alias KubeRawResources.NetworkSettings
+  alias KubeRawResources.NetworkSettings, as: Settings
 
   @app "istio-ingressgateway"
   @istio_name "ingressgateway"
 
-  def service_account(config) do
-    namespace = NetworkSettings.istio_namespace(config)
+  resource(:service_account_istio_ingressgateway, config) do
+    namespace = Settings.istio_namespace(config)
 
     B.build_resource(:service_account)
-    |> B.name(@istio_name)
+    |> B.name("istio-ingressgateway")
+    |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.label("istio", @istio_name)
-    |> B.namespace(namespace)
   end
 
-  def telemetry(config) do
-    namespace = NetworkSettings.istio_namespace(config)
+  resource(:role_binding_istio_ingressgateway, config) do
+    namespace = Settings.istio_namespace(config)
+
+    B.build_resource(:role_binding)
+    |> B.name("istio-ingressgateway")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.role_ref(B.build_role_ref("istio-ingressgateway"))
+    |> B.subject(B.build_service_account("istio-ingressgateway", namespace))
+  end
+
+  resource(:role_istio_ingressgateway, config) do
+    namespace = Settings.istio_namespace(config)
+
+    B.build_resource(:role)
+    |> B.name("istio-ingressgateway")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules([
+      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "watch", "list"]}
+    ])
+  end
+
+  resource(:telemetry, config) do
+    namespace = Settings.istio_namespace(config)
 
     B.build_resource(:istio_telemetry)
     |> B.name("mesh-default")
@@ -27,60 +51,36 @@ defmodule KubeResources.IstioGateway do
     |> B.spec(%{"accessLogging" => [%{"providers" => [%{"name" => "envoy"}]}]})
   end
 
-  def role(config) do
-    namespace = NetworkSettings.istio_namespace(config)
+  resource(:horizontal_pod_autoscaler_istio_ingressgateway, config) do
+    namespace = Settings.istio_namespace(config)
 
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "Role",
-      "metadata" => %{
-        "name" => @istio_name,
-        "namespace" => namespace
-      },
-      "rules" => [
+    B.build_resource(:horizontal_pod_autoscaler)
+    |> B.name("istio-ingressgateway")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.label("istio", @istio_name)
+    |> B.spec(%{
+      "maxReplicas" => 5,
+      "metrics" => [
         %{
-          "apiGroups" => [
-            ""
-          ],
-          "resources" => [
-            "secrets"
-          ],
-          "verbs" => [
-            "get",
-            "watch",
-            "list"
-          ]
+          "resource" => %{
+            "name" => "cpu",
+            "target" => %{"averageUtilization" => 80, "type" => "Utilization"}
+          },
+          "type" => "Resource"
         }
-      ]
-    }
+      ],
+      "minReplicas" => 1,
+      "scaleTargetRef" => %{
+        "apiVersion" => "apps/v1",
+        "kind" => "Deployment",
+        "name" => "istio-ingressgateway"
+      }
+    })
   end
 
-  def role_binding(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "RoleBinding",
-      "metadata" => %{
-        "name" => @istio_name,
-        "namespace" => namespace
-      },
-      "roleRef" => %{
-        "apiGroup" => "rbac.authorization.k8s.io",
-        "kind" => "Role",
-        "name" => @istio_name
-      },
-      "subjects" => [
-        %{
-          "kind" => "ServiceAccount",
-          "name" => @istio_name
-        }
-      ]
-    }
-  end
-
-  def service(config) do
-    namespace = NetworkSettings.istio_namespace(config)
+  resource(:service, config) do
+    namespace = Settings.istio_namespace(config)
 
     spec = %{
       "ports" => [
@@ -110,6 +110,7 @@ defmodule KubeResources.IstioGateway do
         }
       ],
       "selector" => %{
+        "battery/app" => @app,
         "istio" => @istio_name
       },
       "type" => "LoadBalancer"
@@ -123,8 +124,8 @@ defmodule KubeResources.IstioGateway do
     |> B.spec(spec)
   end
 
-  def deployment(config) do
-    namespace = NetworkSettings.istio_namespace(config)
+  resource(:deployment, config) do
+    namespace = Settings.istio_namespace(config)
 
     spec = %{
       "selector" => %{
@@ -189,13 +190,13 @@ defmodule KubeResources.IstioGateway do
               }
             }
           ],
-          "serviceAccountName" => @istio_name
+          "serviceAccountName" => "istio-ingressgateway"
         }
       }
     }
 
     B.build_resource(:deployment)
-    |> B.name(@istio_name)
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.label("istio", @istio_name)
@@ -203,56 +204,15 @@ defmodule KubeResources.IstioGateway do
     |> B.spec(spec)
   end
 
-  def horizontal_pod_autoscaler(config) do
-    namespace = NetworkSettings.istio_namespace(config)
-
-    %{
-      "apiVersion" => "autoscaling/v2beta2",
-      "kind" => "HorizontalPodAutoscaler",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => @app,
-          "battery/managed" => "true",
-          "istio" => @istio_name
-        },
-        "name" => @istio_name,
-        "namespace" => namespace
-      },
-      "spec" => %{
-        "maxReplicas" => 5,
-        "metrics" => [
-          %{
-            "resource" => %{
-              "name" => "cpu",
-              "target" => %{
-                "averageUtilization" => 80,
-                "type" => "Utilization"
-              }
-            },
-            "type" => "Resource"
-          }
-        ],
-        "minReplicas" => 1,
-        "scaleTargetRef" => %{
-          "apiVersion" => "apps/v1",
-          "kind" => "Deployment",
-          "name" => @istio_name
-        }
-      }
-    }
-  end
-
-  def gateway(config) do
-    namespace = NetworkSettings.istio_namespace(config)
+  resource(:gateway, config) do
+    namespace = Settings.istio_namespace(config)
 
     spec = %{
       selector: %{istio: @istio_name},
       servers: [
-        %{port: %{number: 80, name: "http", protocol: "HTTP"}, hosts: ["*"]},
-        %{
-          port: %{number: 22, name: "ssh", protocol: "TCP"},
-          hosts: ["gitea.172.30.0.4.sslip.io"]
-        }
+        %{port: %{number: 80, name: "http2", protocol: "HTTP"}, hosts: ["*"]},
+        %{port: %{number: 443, name: "https", protocol: "HTTPS"}, hosts: ["*"]},
+        %{port: %{number: 22, name: "ssh", protocol: "TCP"}, hosts: ["*"]}
       ]
     }
 
@@ -262,18 +222,5 @@ defmodule KubeResources.IstioGateway do
     |> B.app_labels(@app)
     |> B.label("istio", @istio_name)
     |> B.spec(spec)
-  end
-
-  def materialize(config) do
-    %{
-      "/service_account" => service_account(config),
-      "/role" => role(config),
-      "/role_binding" => role_binding(config),
-      "/service" => service(config),
-      "/deployment" => deployment(config),
-      "/horizontal_pod_autoscaler" => horizontal_pod_autoscaler(config),
-      "/telemetry" => telemetry(config),
-      "/gateway" => gateway(config)
-    }
   end
 end
