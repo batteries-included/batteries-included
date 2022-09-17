@@ -86,11 +86,13 @@ defmodule KubeResources.Notebooks do
 
   defp stateful_set(config, %JupyterLabNotebook{} = notebook) do
     namespace = MLSettings.public_namespace(config)
+    owner_id = Map.get(notebook, :id, "bootstrapped")
 
     template =
       %{}
       |> B.app_labels(@app_name)
       |> B.label("battery/notebook", notebook.name)
+      |> B.owner_label(owner_id)
       |> B.spec(%{
         "containers" => [
           %{
@@ -124,10 +126,12 @@ defmodule KubeResources.Notebooks do
     |> B.app_labels(@app_name)
     |> B.label("battery/notebook", notebook.name)
     |> B.spec(spec)
+    |> B.owner_label(owner_id)
   end
 
   defp service(config, notebook) do
     namespace = MLSettings.public_namespace(config)
+    owner_id = Map.get(notebook, :id, "bootstrapped")
 
     spec =
       %{}
@@ -138,6 +142,7 @@ defmodule KubeResources.Notebooks do
     |> B.name(service_name(notebook))
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+    |> B.owner_label(owner_id)
     |> B.spec(spec)
   end
 
