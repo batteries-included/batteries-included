@@ -211,7 +211,7 @@ defmodule KubeResources.IstioGateway do
       selector: %{istio: @istio_name},
       servers: [
         %{port: %{number: 80, name: "http2", protocol: "HTTP"}, hosts: ["*"]},
-        %{port: %{number: 443, name: "https", protocol: "HTTPS"}, hosts: ["*"]},
+        # %{port: %{number: 443, name: "https", protocol: "HTTPS"}, hosts: ["*"]},
         %{port: %{number: 22, name: "ssh", protocol: "TCP"}, hosts: ["*"]}
       ]
     }
