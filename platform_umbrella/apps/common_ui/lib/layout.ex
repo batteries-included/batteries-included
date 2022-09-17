@@ -3,9 +3,9 @@ defmodule CommonUI.Layout do
 
   use PetalComponents
 
-  @default_container_class "flex-1 max-w-7xl sm:px-6 lg:px-8 pt-10 pb-20"
-  @iframe_container_class "flex-1 py-0 px-0 w-full h-full"
-  @menu_item_class "group w-full p-3 rouned-md flex flex-col items-center text-sm font-medium"
+  @default_container_class "flex-1 max-w-7xl sm:px-6 lg:px-8 pt-10 pb-20 "
+  @iframe_container_class "flex-1 py-0 px-0 w-full h-full "
+  @menu_item_class "pt-1 text-sm font-medium "
 
   defp container_class(:iframe), do: @iframe_container_class
 
@@ -22,12 +22,15 @@ defmodule CommonUI.Layout do
   end
 
   def menu_item(assigns) do
-    assigns = assign_new(assigns, :base_class, fn -> @menu_item_class end)
+    assigns =
+      assigns
+      |> assign_new(:base_class, fn -> @menu_item_class end)
+      |> assign_new(:class, fn -> "" end)
 
     ~H"""
-    <.link link_type="live_redirect" to={@to} class={@base_class <> @class}>
+    <.link link_type="live_redirect" to={@to} class={@base_class <> " " <> @class}>
       <%= render_slot(@inner_block) %>
-      <span class="mt-2">
+      <span class="mt-1">
         <%= @name %>
       </span>
     </.link>
@@ -64,12 +67,10 @@ defmodule CommonUI.Layout do
         <% end %>
       </div>
     </div>
-    <footer class="h-16 bg-white bottom-0 fixed inset-x-0 z-40">
-      <div class="flex w-full">
-        <%= if @main_menu do %>
-          <%= render_slot(@main_menu) %>
-        <% end %>
-      </div>
+    <footer class="btm-nav">
+      <%= if @main_menu do %>
+        <%= render_slot(@main_menu) %>
+      <% end %>
     </footer>
     """
   end

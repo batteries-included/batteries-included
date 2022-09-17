@@ -288,31 +288,31 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
     ~H"""
     <.left_menu_item
-      to={Routes.resource_list_path(Endpoint, :pods)}
+      to={Routes.resource_list_path(Endpoint, :pod)}
       name="Pods"
       icon="lightning_bolt"
       is_active={@active == "pods"}
     />
     <.left_menu_item
-      to={Routes.resource_list_path(Endpoint, :deployments)}
+      to={Routes.resource_list_path(Endpoint, :deployment)}
       name="Deployments"
       icon="lightning_bolt"
       is_active={@active == "deployments"}
     />
     <.left_menu_item
-      to={Routes.resource_list_path(Endpoint, :stateful_sets)}
+      to={Routes.resource_list_path(Endpoint, :stateful_set)}
       name="Stateful Sets"
       icon="lightning_bolt"
       is_active={@active == "stateful_sets"}
     />
     <.left_menu_item
-      to={Routes.resource_list_path(Endpoint, :nodes)}
+      to={Routes.resource_list_path(Endpoint, :node)}
       name="Nodes"
       icon="lightning_bolt"
       is_active={@active == "nodes"}
     />
     <.left_menu_item
-      to={Routes.resource_list_path(Endpoint, :services)}
+      to={Routes.resource_list_path(Endpoint, :service)}
       name="Services"
       icon="lightning_bolt"
       is_active={@active == "services"}

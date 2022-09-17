@@ -70,11 +70,14 @@ defmodule ControlServerWeb.Router do
     live "/security/settings", Live.ServiceSettings, :security
     live "/ml/settings", Live.ServiceSettings, :ml
 
-    live "/deployments", Live.ResourceList, :deployments
-    live "/stateful_sets", Live.ResourceList, :stateful_sets
-    live "/nodes", Live.ResourceList, :nodes
-    live "/pods", Live.ResourceList, :pods
-    live "/services", Live.ResourceList, :services
+    live "/deployments", Live.ResourceList, :deployment
+    live "/stateful_sets", Live.ResourceList, :stateful_set
+    live "/nodes", Live.ResourceList, :node
+    live "/pods", Live.ResourceList, :pod
+    live "/services", Live.ResourceList, :service
+
+    live "/resource_status/:resource_type/:namespace/:name", Live.ResourceInfo, :index
+
     live "/kube_snapshots", Live.KubeSnapshotList, :index
     live "/kube_snapshots/:id", Live.KubeSnapshotShow, :index
   end

@@ -24,27 +24,9 @@ defmodule ControlServerWeb.Live.ResourceList do
     {:ok, assign(socket, :objects, objects(live_action))}
   end
 
-  defp subscribe(:deployments) do
-    :ok = KubeEventCenter.subscribe(:deployment)
+  defp subscribe(resource_type) do
+    :ok = KubeEventCenter.subscribe(resource_type)
   end
-
-  defp subscribe(:stateful_sets) do
-    :ok = KubeEventCenter.subscribe(:stateful_set)
-  end
-
-  defp subscribe(:nodes) do
-    :ok = KubeEventCenter.subscribe(:node)
-  end
-
-  defp subscribe(:pods) do
-    :ok = KubeEventCenter.subscribe(:pod)
-  end
-
-  defp subscribe(:services) do
-    :ok = KubeEventCenter.subscribe(:service)
-  end
-
-  defp subscribe(_), do: nil
 
   @impl true
   def handle_info(_unused, socket) do
@@ -56,43 +38,43 @@ defmodule ControlServerWeb.Live.ResourceList do
     {:noreply, assign(socket, :objects, objects(socket.assigns.live_action))}
   end
 
-  defp objects(:deployments) do
+  defp objects(:deployment) do
     KubeState.deployments()
   end
 
-  defp objects(:stateful_sets) do
+  defp objects(:stateful_set) do
     KubeState.stateful_sets()
   end
 
-  defp objects(:nodes) do
+  defp objects(:node) do
     KubeState.nodes()
   end
 
-  defp objects(:pods) do
+  defp objects(:pod) do
     KubeState.pods()
   end
 
-  defp objects(:services) do
+  defp objects(:service) do
     KubeState.services()
   end
 
-  defp title_text(:deployments) do
+  defp title_text(:deployment) do
     "Deployments"
   end
 
-  defp title_text(:stateful_sets) do
+  defp title_text(:stateful_set) do
     "Stateful Sets"
   end
 
-  defp title_text(:nodes) do
+  defp title_text(:node) do
     "Nodes"
   end
 
-  defp title_text(:pods) do
+  defp title_text(:pod) do
     "Pods"
   end
 
-  defp title_text(:services) do
+  defp title_text(:service) do
     "Services"
   end
 
@@ -108,15 +90,15 @@ defmodule ControlServerWeb.Live.ResourceList do
       </:left_menu>
       <.body_section>
         <%= case @live_action do %>
-          <% :deployments -> %>
+          <% :deployment -> %>
             <.deployments_display deployments={@objects} />
-          <% :stateful_sets -> %>
+          <% :stateful_set -> %>
             <.stateful_sets_display stateful_sets={@objects} />
-          <% :nodes -> %>
+          <% :node -> %>
             <.nodes_display nodes={@objects} />
-          <% :pods -> %>
+          <% :pod -> %>
             <.pods_display pods={@objects} />
-          <% :services -> %>
+          <% :service -> %>
             <.services_display services={@objects} />
         <% end %>
       </.body_section>

@@ -2,6 +2,7 @@ defmodule ControlServerWeb.DeploymentsDisplay do
   use ControlServerWeb, :component
 
   import CommonUI.Table
+  import ControlServerWeb.ResourceURL
 
   def deployments_display(assigns) do
     ~H"""
@@ -38,7 +39,9 @@ defmodule ControlServerWeb.DeploymentsDisplay do
         <%= @deployment["metadata"]["namespace"] %>
       </.td>
       <.td>
-        <%= @deployment["metadata"]["name"] %>
+        <.link to={resource_show_url(@deployment)}>
+          <%= @deployment["metadata"]["name"] %>
+        </.link>
       </.td>
       <.td>
         <%= @deployment["spec"]["replicas"] %>

@@ -116,7 +116,7 @@ defmodule ControlServerWeb.Layout do
           name="Network"
           icon="globe_alt"
         />
-        <.menu_item to={Routes.resource_list_path(Endpoint, :pods)} name="Magic" icon="sparkles" />
+        <.menu_item to={Routes.resource_list_path(Endpoint, :pod)} name="Magic" icon="sparkles" />
       </:main_menu>
       <%= render_slot(@inner_block) %>
     </BaseLayout.layout>

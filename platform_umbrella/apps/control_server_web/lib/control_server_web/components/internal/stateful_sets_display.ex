@@ -2,6 +2,7 @@ defmodule ControlServerWeb.StatefulSetsDisplay do
   use ControlServerWeb, :component
 
   import CommonUI.Table
+  import ControlServerWeb.ResourceURL
 
   def stateful_sets_display(assigns) do
     ~H"""
@@ -38,7 +39,9 @@ defmodule ControlServerWeb.StatefulSetsDisplay do
         <%= @stateful_set["metadata"]["namespace"] %>
       </.td>
       <.td>
-        <%= @stateful_set["metadata"]["name"] %>
+        <.link to={resource_show_url(@stateful_set)}>
+          <%= @stateful_set["metadata"]["name"] %>
+        </.link>
       </.td>
       <.td>
         <%= @stateful_set["spec"]["replicas"] %>

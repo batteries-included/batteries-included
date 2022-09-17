@@ -84,11 +84,18 @@ defmodule KubeExt.KubeState do
   @spec table_to_list(atom | :ets.tid()) :: list
   def table_to_list(t \\ @default_table), do: :ets.tab2list(t)
 
-  def get_resource(t \\ @default_table, resource) do
-    resource_type = ApiVersionKind.resource_type(resource)
-    name = Resource.name(resource)
-    namespace = Resource.namespace(resource)
+  @spec get_resource(atom | :ets.tid(), map) :: nil | map()
+  def get_resource(t \\ @default_table, resource),
+    do:
+      get_resource(
+        t,
+        ApiVersionKind.resource_type(resource),
+        Resource.namespace(resource),
+        Resource.name(resource)
+      )
 
+  @spec get_resource(atom | :ets.tid(), atom, binary(), binary()) :: nil | map()
+  def get_resource(t \\ @default_table, resource_type, namespace, name) do
     t
     |> get_all(resource_type, [])
     |> Enum.find(nil, fn pos ->

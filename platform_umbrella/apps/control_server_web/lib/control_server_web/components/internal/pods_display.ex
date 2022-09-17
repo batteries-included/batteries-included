@@ -2,6 +2,7 @@ defmodule ControlServerWeb.PodsDisplay do
   use ControlServerWeb, :component
 
   import CommonUI.Table
+  import ControlServerWeb.ResourceURL
 
   def inflate_pods(%{pods: pods} = _assigns) do
     pods
@@ -55,7 +56,9 @@ defmodule ControlServerWeb.PodsDisplay do
         <%= @pod["metadata"]["namespace"] %>
       </.td>
       <.td>
-        <%= @pod["metadata"]["name"] %>
+        <.link to={resource_show_url(@pod)}>
+          <%= @pod["metadata"]["name"] %>
+        </.link>
       </.td>
       <.td>
         <%= @pod["status"]["phase"] %>

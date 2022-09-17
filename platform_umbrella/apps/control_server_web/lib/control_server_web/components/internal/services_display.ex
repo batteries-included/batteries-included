@@ -2,6 +2,7 @@ defmodule ControlServerWeb.ServicesDisplay do
   use ControlServerWeb, :component
 
   import CommonUI.Table
+  import ControlServerWeb.ResourceURL
 
   def services_display(assigns) do
     ~H"""
@@ -38,7 +39,9 @@ defmodule ControlServerWeb.ServicesDisplay do
         <%= @service["metadata"]["namespace"] %>
       </.td>
       <.td>
-        <%= @service["metadata"]["name"] %>
+        <.link to={resource_show_url(@service)}>
+          <%= @service["metadata"]["name"] %>
+        </.link>
       </.td>
       <.td>
         <%= @service["spec"]["clusterIP"] %>
