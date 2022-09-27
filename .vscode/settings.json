@@ -99,5 +99,9 @@
     "shellscript",
     "yaml",
     "elixir"
+  ],
+  "githubIssues.ignoreUserCompletionTrigger": [
+    "python",
+    "elixir"
   ]
 }
