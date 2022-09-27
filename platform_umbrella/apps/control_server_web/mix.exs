@@ -64,6 +64,7 @@ defmodule ControlServerWeb.MixProject do
       {:common_ui, in_umbrella: true},
       {:petal_components, "~> 0.17.0"},
       {:jason, "~> 1.2"},
+      {:logger_json, "~> 5.1"},
       {:plug_cowboy, "~> 2.5"}
     ]
   end

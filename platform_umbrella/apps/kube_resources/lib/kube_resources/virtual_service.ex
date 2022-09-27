@@ -3,15 +3,15 @@ defmodule KubeResources.VirtualService do
 
   alias ControlServer.Services
 
-  alias KubeResources.AlertManager
   alias KubeResources.ControlServerResources
   alias KubeResources.Gitea
-  alias KubeResources.Grafana
   alias KubeResources.Notebooks
-  alias KubeResources.Prometheus
   alias KubeResources.Kiali
   alias KubeResources.TektonDashboard
   alias KubeResources.Harbor
+  alias KubeResources.Prometheus
+  alias KubeResources.Grafana
+  alias KubeResources.Alertmanager
 
   def materialize(_config) do
     Services.all_including_config()
@@ -42,7 +42,7 @@ defmodule KubeResources.VirtualService do
 
   def virtual_service(:prometheus, config), do: Prometheus.virtual_service(config)
   def virtual_service(:grafana, config), do: Grafana.virtual_service(config)
-  def virtual_service(:alert_manager, config), do: AlertManager.virtual_service(config)
+  def virtual_service(:alert_manager, config), do: Alertmanager.virtual_service(config)
   def virtual_service(:notebooks, config), do: Notebooks.virtual_service(config)
   def virtual_service(:kiali, config), do: Kiali.virtual_service(config)
   def virtual_service(:tekton_dashboard, config), do: TektonDashboard.virtual_service(config)

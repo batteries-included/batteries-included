@@ -36,6 +36,8 @@ defmodule KubeResources.MixProject do
       # Caching for http requests
       {:cachex, "~> 3.4"},
       {:finch, "~> 0.13.0"},
+      # logging
+      {:logger_json, "~> 5.1"},
       {:kube_ext, in_umbrella: true},
       {:kube_raw_resources, in_umbrella: true},
       {:control_server, in_umbrella: true}

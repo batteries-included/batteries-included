@@ -34,8 +34,12 @@ defmodule KubeExt.ApiVersionKind do
     service_monitor: {"monitoring.coreos.com/v1", "ServiceMonitor"},
     pod_monitor: {"monitoring.coreos.com/v1", "PodMonitor"},
     prometheus: {"monitoring.coreos.com/v1", "Prometheus"},
+    prometheus_rule: {"monitoring.coreos.com/v1", "PrometheusRule"},
     alertmanager: {"monitoring.coreos.com/v1", "Alertmanager"},
-    alertmanager_config: {"monitoring.coreos.com/v1alpha1", "AlertmanagerConfig"},
+    grafana_agent: {"monitoring.grafana.com/v1alpha1", "GrafanaAgent"},
+    logs_instance: {"monitoring.grafana.com/v1alpha1", "LogsInstance"},
+    metrics_instance: {"monitoring.grafana.com/v1alpha1", "MetricsInstance"},
+    pod_logs: {"monitoring.grafana.com/v1alpha1", "PodLogs"},
     knative_serving: {"operator.knative.dev/v1beta1", "KnativeServing"},
     knative_service: {"serving.knative.dev/v1", "Service"},
     knative_configuration: {"serving.knative.dev/v1", "Configuration"},
@@ -48,7 +52,9 @@ defmodule KubeExt.ApiVersionKind do
     certmanger_certificate: {"cert-manager.io/v1", "Certificate"},
     certmanger_issuer: {"cert-manager.io/v1", "Issuer"},
     ceph_cluster: {"ceph.rook.io/v1", "CephCluster"},
-    ceph_filesystem: {"ceph.rook.io/v1", "CephFilesystem"}
+    ceph_filesystem: {"ceph.rook.io/v1", "CephFilesystem"},
+    ip_address_pool: {"metallb.io/v1beta1", "IPAddressPool"},
+    l2_advertisement: {"metallb.io/v1beta1", "L2Advertisement"}
   ]
 
   @spec from_resource_type(atom) :: {binary(), binary()} | nil
@@ -57,10 +63,19 @@ defmodule KubeExt.ApiVersionKind do
   @spec all_known :: [atom()]
   def all_known, do: Keyword.keys(@known)
 
-  @spec resource_type(map()) :: atom()
+  @spec resource_type(map()) :: atom() | nil
   def resource_type(resource) do
     {key, _} =
       Enum.find(@known, {nil, nil}, fn {_key, {api_version, kind}} ->
+        api_version == api_version(resource) && kind == kind(resource)
+      end)
+
+    key
+  end
+
+  def resource_type!(resource) do
+    {key, _} =
+      Enum.find(@known, fn {_key, {api_version, kind}} ->
         api_version == api_version(resource) && kind == kind(resource)
       end)
 

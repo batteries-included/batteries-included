@@ -8,6 +8,7 @@ defmodule KubeResources.Kiali do
   alias KubeExt.KubeState.Hosts
   alias KubeRawResources.NetworkSettings, as: Settings
   alias KubeResources.IstioConfig.VirtualService
+  alias KubeResources.Grafana
 
   @app "kiali"
   @url_base "/x/kiali"
@@ -192,7 +193,6 @@ defmodule KubeResources.Kiali do
     B.build_resource(:cluster_role)
     |> B.name("kiali-kiali-operator")
     |> B.app_labels(@app)
-    |> B.label("app", "kiali-operator")
     |> B.component_label("kiali-operator")
     |> B.rules(rules)
   end
@@ -284,11 +284,12 @@ defmodule KubeResources.Kiali do
       },
       "external_services" => %{
         "prometheus" => %{
-          "url" => "http://prometheus-operated.battery-core.svc.cluster.local:9090/"
+          "url" => "http://battery-prometheus-prometheus.battery-core.svc.cluster.local:9090/"
         },
         "grafana" => %{
-          "in_cluster_url" => "http://grafana.battery-core.svc.cluster.local:3000/x/grafana",
-          "url" => "http:#{KubeResources.Grafana.url()}"
+          "in_cluster_url" =>
+            "http://battery-grafana.battery-core.svc.cluster.local:3000/x/grafana/",
+          "url" => Grafana.url()
         }
       },
       "istio_namespace" => namespace,
@@ -299,8 +300,6 @@ defmodule KubeResources.Kiali do
     |> B.name("kiali")
     |> B.namespace(namespace)
     |> B.app_labels(@app)
-    |> B.label("app", "kiali-operator")
-    |> B.component_label("kiali-operator")
     |> B.spec(spec)
   end
 
@@ -311,7 +310,6 @@ defmodule KubeResources.Kiali do
     |> B.name("kiali-kiali-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app)
-    |> B.label("app", "kiali-operator")
     |> B.component_label("kiali-operator")
   end
 end

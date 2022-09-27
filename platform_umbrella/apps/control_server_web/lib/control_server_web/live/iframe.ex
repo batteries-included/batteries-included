@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.Iframe do
     """
   end
 
-  def iframe_url(:alert_manager), do: KubeResources.AlertManager.url()
+  def iframe_url(:alert_manager), do: KubeResources.Alertmanager.url()
   def iframe_url(:grafana), do: KubeResources.Grafana.url()
   def iframe_url(:prometheus), do: KubeResources.Prometheus.url()
 

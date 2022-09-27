@@ -2,11 +2,7 @@ defmodule KubeResources.ServiceMonitors do
   alias ControlServer.Services
   alias KubeExt.Builder, as: B
   alias KubeResources.DatabaseServiceMonitors
-  alias KubeResources.Grafana
   alias KubeResources.KnativeOperator
-  alias KubeResources.KubeMonitoring
-  alias KubeResources.Prometheus
-  alias KubeResources.PrometheusOperator
 
   @spec materialize(map()) :: map()
   def materialize(%{} = _config) do
@@ -31,10 +27,6 @@ defmodule KubeResources.ServiceMonitors do
 
   def add_owner(resource, _), do: resource
 
-  defp monitors(:prometheus, config), do: Prometheus.monitors(config)
-  defp monitors(:promethues_operator, config), do: PrometheusOperator.monitors(config)
-  defp monitors(:grafana, config), do: Grafana.monitors(config)
-  defp monitors(:kube_monitoring, config), do: KubeMonitoring.monitors(config)
   defp monitors(:database_internal, config), do: DatabaseServiceMonitors.internal_monitors(config)
   defp monitors(:database, config), do: DatabaseServiceMonitors.monitors(config)
   defp monitors(:knative, config), do: KnativeOperator.monitors(config)

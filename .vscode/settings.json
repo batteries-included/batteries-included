@@ -67,5 +67,37 @@
   ],
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
-  }
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "platform_umbrella/deps": true
+  },
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/_build/**": true,
+    "platform_umbrella/deps/**": true
+  },
+  "githubIssues.ignoreCompletionTrigger": [
+    "coffeescript",
+    "diff",
+    "dockerfile",
+    "dockercompose",
+    "ignore",
+    "ini",
+    "julia",
+    "makefile",
+    "perl",
+    "powershell",
+    "python",
+    "r",
+    "ruby",
+    "shellscript",
+    "yaml",
+    "elixir"
+  ]
 }

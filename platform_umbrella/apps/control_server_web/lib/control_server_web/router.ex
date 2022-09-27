@@ -13,10 +13,12 @@ defmodule ControlServerWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers, ControlServerWeb.CSP.new()
     plug :fetch_current_user
+    plug LoggerJSON.Plug
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug LoggerJSON.Plug
   end
 
   pipeline :full_layout do

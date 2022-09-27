@@ -25,7 +25,7 @@ defmodule KubeRawResources.Battery do
     B.build_resource(:namespace)
     |> B.app_labels(@app_name)
     |> B.name(name)
-    |> B.label("istio-injection", "true")
+    |> B.label("istio-injection", "enabled")
   end
 
   def istio_namespace(_config) do

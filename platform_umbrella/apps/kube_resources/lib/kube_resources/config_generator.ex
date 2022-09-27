@@ -6,40 +6,49 @@ defmodule KubeResources.ConfigGenerator do
 
   alias ControlServer.Services.BaseService
 
-  alias KubeRawResources.Battery
-  alias KubeRawResources.IstioBase
-  alias KubeRawResources.IstioIstiod
+  alias KubeRawResources.{Battery, IstioBase, IstioIstiod, PostgresOperator}
 
-  alias KubeResources.AlertManager
-  alias KubeResources.CertManager
-  alias KubeResources.ControlServerResources
-  alias KubeResources.Data
-  alias KubeResources.Database
-  alias KubeResources.EchoServer
-  alias KubeResources.Gitea
-  alias KubeResources.Grafana
-  alias KubeResources.IstioGateway
-  alias KubeResources.Keycloak
-  alias KubeResources.Kiali
-  alias KubeResources.KnativeOperator
-  alias KubeResources.KnativeServing
-  alias KubeResources.KubeMonitoring
-  alias KubeResources.ML
-  alias KubeResources.MinioOperator
-  alias KubeResources.Nginx
-  alias KubeResources.Notebooks
-  alias KubeResources.Prometheus
-  alias KubeResources.PrometheusOperator
-  alias KubeResources.Redis
-  alias KubeResources.ServiceMonitors
-  alias KubeResources.VirtualService
-  alias KubeResources.Tekton
-  alias KubeResources.TektonDashboard
-  alias KubeResources.OryHydra
-  alias KubeRawResources.PostgresOperator
-  alias KubeResources.Harbor
-  alias KubeResources.Rook
-  alias KubeResources.Ceph
+  alias KubeResources.{
+    CertManager,
+    ControlServerResources,
+    Data,
+    Database,
+    EchoServer,
+    Gitea,
+    IstioGateway,
+    Keycloak,
+    Kiali,
+    KnativeOperator,
+    KnativeServing,
+    ML,
+    Notebooks,
+    Redis,
+    VirtualService,
+    Tekton,
+    TektonDashboard,
+    OryHydra,
+    Harbor,
+    Rook,
+    Ceph,
+    PrometheusOperator,
+    Prometheus,
+    Grafana,
+    Alertmanager,
+    NodeExporter,
+    KubeStateMetrics,
+    Loki,
+    Promtail,
+    MonitoringApiServer,
+    MonitoringControllerManager,
+    MonitoringCoredns,
+    MonitoringEtcd,
+    MonitoringKubeProxy,
+    MonitoringKubelet,
+    MonitoringScheduler,
+    PrometheusStack,
+    MetalLB,
+    DevMetalLB
+  }
 
   require Logger
 
@@ -64,11 +73,6 @@ defmodule KubeResources.ConfigGenerator do
 
   defp flatten({key, value}), do: [{key, value}]
 
-  @spec materialize(map() | nil, atom()) :: map()
-  def materialize(%{} = config, :prometheus) do
-    config |> Prometheus.materialize() |> Map.merge(ServiceMonitors.materialize(config))
-  end
-
   def materialize(%{} = config, :istio_gateway) do
     config |> IstioGateway.materialize() |> Map.merge(VirtualService.materialize(config))
   end
@@ -78,16 +82,38 @@ defmodule KubeResources.ConfigGenerator do
   end
 
   def materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
+  def materialize(%{} = config, :prometheus), do: Prometheus.materialize(config)
   def materialize(%{} = config, :grafana), do: Grafana.materialize(config)
-  def materialize(%{} = config, :alert_manager), do: AlertManager.materialize(config)
-  def materialize(%{} = config, :kube_monitoring), do: KubeMonitoring.materialize(config)
+  def materialize(%{} = config, :alert_manager), do: Alertmanager.materialize(config)
+  def materialize(%{} = config, :node_exporter), do: NodeExporter.materialize(config)
+  def materialize(%{} = config, :kube_state_metrics), do: KubeStateMetrics.materialize(config)
+  def materialize(%{} = config, :prometheus_stack), do: PrometheusStack.materialize(config)
+
+  def materialize(%{} = config, :monitoring_api_server),
+    do: MonitoringApiServer.materialize(config)
+
+  def materialize(%{} = config, :monitoring_controller_manager),
+    do: MonitoringControllerManager.materialize(config)
+
+  def materialize(%{} = config, :monitoring_coredns), do: MonitoringCoredns.materialize(config)
+  def materialize(%{} = config, :monitoring_etcd), do: MonitoringEtcd.materialize(config)
+
+  def materialize(%{} = config, :monitoring_kube_proxy),
+    do: MonitoringKubeProxy.materialize(config)
+
+  def materialize(%{} = config, :monitoring_kubelet), do: MonitoringKubelet.materialize(config)
+
+  def materialize(%{} = config, :monitoring_scheduler),
+    do: MonitoringScheduler.materialize(config)
+
+  def materialize(%{} = config, :loki), do: Loki.materialize(config)
+  def materialize(%{} = config, :promtail), do: Promtail.materialize(config)
 
   def materialize(%{} = config, :data), do: Data.materialize(config)
   def materialize(%{} = config, :postgres_operator), do: PostgresOperator.materialize(config)
   def materialize(%{} = config, :database_public), do: Database.materialize_public(config)
   def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
   def materialize(%{} = config, :redis), do: Redis.materialize(config)
-  def materialize(%{} = config, :minio_operator), do: MinioOperator.materialize(config)
 
   def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
   def materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)
@@ -100,10 +126,11 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :knative_serving), do: KnativeServing.materialize(config)
   def materialize(%{} = config, :harbor), do: Harbor.materialize(config)
 
-  def materialize(%{} = config, :nginx), do: Nginx.materialize(config)
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
   def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
   def materialize(%{} = config, :kiali), do: Kiali.materialize(config)
+  def materialize(%{} = config, :metallb), do: MetalLB.materialize(config)
+  def materialize(%{} = config, :dev_metallb), do: DevMetalLB.materialize(config)
 
   def materialize(%{} = config, :battery), do: Battery.materialize(config)
   def materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)

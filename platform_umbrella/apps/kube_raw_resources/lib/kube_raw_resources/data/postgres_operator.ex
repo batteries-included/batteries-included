@@ -278,6 +278,10 @@ defmodule KubeRawResources.PostgresOperator do
                 %{
                   "name" => "POSTGRES_OPERATOR_CONFIGURATION_OBJECT",
                   "value" => "postgres-operator"
+                },
+                %{
+                  "name" => "ENABLE_JSON_LOGGING",
+                  "value" => "true"
                 }
               ],
               "image" => "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2",

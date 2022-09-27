@@ -1,0 +1,36 @@
+auth_enabled: false
+common:
+  path_prefix: /var/loki
+  replication_factor: 1
+  storage:
+    filesystem:
+      chunks_directory: /var/loki/chunks
+      rules_directory: /var/loki/rules
+limits_config:
+  enforce_metric_name: false
+  max_cache_freshness_per_query: 10m
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  split_queries_by_interval: 15m
+memberlist:
+  join_members:
+  - loki-memberlist
+query_range:
+  align_queries_with_step: true
+schema_config:
+  configs:
+  - from: "2022-01-11"
+    index:
+      period: 24h
+      prefix: loki_index_
+    object_store: filesystem
+    schema: v12
+    store: boltdb-shipper
+server:
+  grpc_listen_port: 9095
+  http_listen_port: 3100
+storage_config:
+  hedging:
+    at: 250ms
+    max_per_second: 20
+    up_to: 3

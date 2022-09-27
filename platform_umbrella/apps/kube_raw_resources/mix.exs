@@ -28,6 +28,8 @@ defmodule KubeRawResources.MixProject do
   defp deps do
     [
       {:ymlr, "~> 3.0.1"},
+      # logging
+      {:logger_json, "~> 5.1"},
       {:kube_ext, in_umbrella: true}
     ]
   end

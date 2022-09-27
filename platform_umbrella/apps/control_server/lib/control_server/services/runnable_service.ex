@@ -39,11 +39,6 @@ defmodule ControlServer.Services.RunnableService do
         end
       },
       %__MODULE__{
-        path: "/data/minio/operator",
-        service_type: :minio_operator,
-        dependencies: [:data]
-      },
-      %__MODULE__{
         path: "/data/rook",
         service_type: :rook,
         dependencies: [:data]
@@ -121,28 +116,96 @@ defmodule ControlServer.Services.RunnableService do
         dependencies: [:battery]
       },
       %__MODULE__{
-        path: "/monitoring/prometheus",
-        service_type: :prometheus,
-        dependencies: [:prometheus_operator, :istio_gateway, :battery]
-      },
-      %__MODULE__{
         path: "/monitoring/grafana",
         service_type: :grafana,
-        dependencies: [:prometheus, :istio_gateway, :battery]
+        dependencies: [:prometheus_operator, :istio_gateway]
       },
       %__MODULE__{
         path: "/monitoring/alert_manager",
         service_type: :alert_manager,
-        dependencies: [:prometheus, :istio_gateway, :battery]
+        dependencies: [:prometheus_operator, :istio_gateway]
       },
       %__MODULE__{
-        path: "/monitoring/kube_monitoring",
-        service_type: :kube_monitoring,
+        path: "/monitoring/prometheus",
+        service_type: :prometheus,
+        dependencies: [:prometheus_operator, :istio_gateway]
+      },
+      %__MODULE__{
+        path: "/monitoring/kube_state_metrics",
+        service_type: :kube_state_metrics,
         dependencies: [:prometheus]
       },
-
+      %__MODULE__{
+        path: "/monitoring/node_exporter",
+        service_type: :node_exporter,
+        dependencies: [:prometheus]
+      },
+      %__MODULE__{
+        path: "/monitoring/api_server",
+        service_type: :monitoring_api_server,
+        dependencies: [:prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/monitoring/controller_manager",
+        service_type: :monitoring_controller_manager,
+        dependencies: [:prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/monitoring/coredns",
+        service_type: :monitoring_coredns,
+        dependencies: [:prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/monitoring/etcd",
+        service_type: :monitoring_etcd,
+        dependencies: [:prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/monitoring/kube_proxy",
+        service_type: :monitoring_kube_proxy,
+        dependencies: [:prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/monitoring/kubelet",
+        service_type: :monitoring_kubelet,
+        dependencies: [:prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/monitoring/scheduler",
+        service_type: :monitoring_scheduler,
+        dependencies: [:prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/monitoring/prometheus_stack",
+        service_type: :prometheus_stack,
+        dependencies: [
+          :battery,
+          :prometheus_operator,
+          :grafana,
+          :alert_manager,
+          :prometheus,
+          :node_exporter,
+          :kube_state_metrics,
+          :monitoring_api_server,
+          :monitoring_controller_manager,
+          :monitoring_coredns,
+          :monitoring_etcd,
+          :monitoring_kube_proxy,
+          :monitoring_kubelet,
+          :monitoring_scheduler
+        ]
+      },
+      %__MODULE__{
+        path: "/monitoring/loki",
+        service_type: :loki,
+        dependencies: [:battery, :prometheus, :grafana, :istio_gateway]
+      },
+      %__MODULE__{
+        path: "/monitoring/promtail",
+        service_type: :promtail,
+        dependencies: [:loki]
+      },
       # Network
-      %__MODULE__{path: "/network/nginx", service_type: :nginx},
       %__MODULE__{path: "/network/istio/base", service_type: :istio, dependencies: [:battery]},
       %__MODULE__{
         path: "/network/istio/istiod",
@@ -158,6 +221,16 @@ defmodule ControlServer.Services.RunnableService do
         path: "/network/kiali",
         service_type: :kiali,
         dependencies: [:istio_istiod, :istio_gateway, :prometheus, :grafana]
+      },
+      %__MODULE__{
+        path: "/network/metallb",
+        service_type: :metallb,
+        dependencies: [:istio_istiod, :istio_gateway]
+      },
+      %__MODULE__{
+        path: "/network/dev_metallb",
+        service_type: :dev_metallb,
+        dependencies: [:metallb]
       },
       # Security
       %__MODULE__{

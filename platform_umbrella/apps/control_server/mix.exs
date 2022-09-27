@@ -42,6 +42,7 @@ defmodule ControlServer.MixProject do
       {:jason, "~> 1.0"},
       {:oban, "~> 2.12"},
       {:phoenix_swoosh, "~> 1.0"},
+      {:logger_json, "~> 5.1"},
 
       # SQL
       {:phoenix_ecto, "~> 4.4"},

@@ -9,67 +9,6 @@ defmodule KubeResources.GrafanaDashboards do
 
   @dashboards_configmap "grafana-dashboards"
   @app_name "grafana"
-  @possible_providers [
-    %{
-      "folder" => "Default",
-      "name" => "default",
-      "options" => %{
-        "path" => "/grafana-dashboard-definitions/default"
-      },
-      "disableDeletion" => false,
-      "allowUiUpdates" => false,
-      "orgId" => 1,
-      "type" => "file"
-    },
-    %{
-      "folder" => "Databases",
-      "name" => "database",
-      "options" => %{
-        "path" => "/grafana-dashboard-definitions/database"
-      },
-      "disableDeletion" => false,
-      "allowUiUpdates" => false,
-      "orgId" => 1,
-      "type" => "file"
-    },
-    %{
-      "folder" => "Kubernetes",
-      "name" => "kube",
-      "options" => %{
-        "path" => "/grafana-dashboard-definitions/kube"
-      },
-      "disableDeletion" => false,
-      "allowUiUpdates" => false,
-      "orgId" => 1,
-      "type" => "file"
-    },
-    %{
-      "folder" => "Network",
-      "name" => "network",
-      "options" => %{
-        "path" => "/grafana-dashboard-definitions/network"
-      },
-      "disableDeletion" => false,
-      "allowUiUpdates" => false,
-      "orgId" => 1,
-      "type" => "file"
-    }
-  ]
-
-  def add_dashboards(deployment, config) do
-    dashboards = dashboards(config)
-
-    deployment =
-      deployment
-      |> update_in(~w(spec template spec volumes ), fn volumes ->
-        add_volumes(volumes, dashboards)
-      end)
-      |> update_in(~w(spec template spec containers ), fn containers ->
-        add_volume_mounts(containers, dashboards)
-      end)
-
-    {deployment, [dashboard_sources_config(config)] ++ Map.values(dashboards)}
-  end
 
   def dashboards(config) do
     Services.all_including_config()
@@ -210,8 +149,8 @@ defmodule KubeResources.GrafanaDashboards do
 
   def set_template_datasource(%{"query" => "prometheus"} = template) do
     Map.put(template, "current", %{
-      "text" => "battery-prometheus",
-      "value" => "battery-prometheus"
+      "text" => "prometheus",
+      "value" => "prometheus"
     })
   end
 
@@ -235,51 +174,5 @@ defmodule KubeResources.GrafanaDashboards do
       }
       | volumes
     ] ++ dash_volumes
-  end
-
-  def add_volume_mounts(containers, dashboards) when is_list(containers) do
-    Enum.map(containers, fn container -> add_volume_mounts(container, dashboards) end)
-  end
-
-  def add_volume_mounts(%{"volumeMounts" => volume_mounts} = container, dashboards) do
-    dash_volume_mounts =
-      Enum.map(dashboards, fn {path, config} ->
-        %{
-          "mountPath" => path,
-          "name" => Resource.name(config),
-          "readOnly" => true
-        }
-      end)
-
-    volume_mounts =
-      [
-        # Add the config to list locations
-        %{
-          "mountPath" => "/etc/grafana/provisioning/dashboards",
-          "name" => @dashboards_configmap,
-          "readOnly" => false
-        }
-
-        # The rest of the existing volume mounts
-        | volume_mounts
-      ] ++ dash_volume_mounts
-
-    %{container | "volumeMounts" => volume_mounts}
-  end
-
-  def dashboard_sources_config(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    file_contents =
-      Ymlr.Encoder.to_s!(%{
-        "apiVersion" => 1,
-        "providers" => @possible_providers
-      })
-
-    B.build_resource(:config_map)
-    |> B.app_labels(@app_name)
-    |> B.name(@dashboards_configmap)
-    |> B.namespace(namespace)
-    |> Map.put("data", %{"dashboards.yaml" => file_contents})
   end
 end

@@ -219,7 +219,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
         />
       <% :alert_manager -> %>
         <.left_menu_item
-          to={KubeResources.AlertManager.view_url()}
+          to={KubeResources.Alertmanager.view_url()}
           name="Alert Manager"
           icon="alert_manager"
           link_type="a"

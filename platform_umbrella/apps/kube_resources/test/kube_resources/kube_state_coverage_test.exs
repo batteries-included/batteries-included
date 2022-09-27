@@ -16,7 +16,7 @@ defmodule KubeServices.KubeStateCoverageTest do
     :control_server,
     :knative,
     :grafana,
-    :kube_monitoring,
+    :kube_state_metrics,
     :keycloak
   ]
 

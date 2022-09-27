@@ -7,17 +7,14 @@ defmodule KubeExt.IncludeResource do
     string_defs =
       Enum.map(contents, fn {id, contents} ->
         quote do
-          @doc """
-          The raw string contents of the file
-          """
-          def __file_contents__(unquote(id), :string), do: unquote(contents)
+          defp __file_contents__(unquote(id), :string), do: unquote(contents)
         end
       end)
 
     quote do
       @behaviour KubeExt.IncludeResource
 
-      unquote(string_defs)
+      unquote_splicing(string_defs)
 
       @doc """
       The string contents of the resource file.

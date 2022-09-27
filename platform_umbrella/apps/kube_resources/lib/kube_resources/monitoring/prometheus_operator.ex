@@ -1,311 +1,446 @@
 defmodule KubeResources.PrometheusOperator do
-  @moduledoc """
-  This module is responsible for getting the prometheues operator all set up and running.
-
-  This can generate a config and will also add on alerting/monitoring.
-  """
   use KubeExt.IncludeResource,
-    prometheus_crd:
-      "priv/manifests/prometheus/prometheus-operator-0prometheusCustomResourceDefinition.yaml",
-    prometheus_rule_crd:
-      "priv/manifests/prometheus/prometheus-operator-0prometheusruleCustomResourceDefinition.yaml",
-    probe_crd:
-      "priv/manifests/prometheus/prometheus-operator-0probeCustomResourceDefinition.yaml",
-    service_mon_crd:
-      "priv/manifests/prometheus/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml",
-    pod_mon_crd:
-      "priv/manifests/prometheus/prometheus-operator-0podmonitorCustomResourceDefinition.yaml",
-    am_config_crd:
-      "priv/manifests/prometheus/prometheus-operator-0alertmanagerConfigCustomResourceDefinition.yaml",
-    am_crd:
-      "priv/manifests/prometheus/prometheus-operator-0alertmanagerCustomResourceDefinition.yaml",
-    thanos_rule_crd:
-      "priv/manifests/prometheus/prometheus-operator-0thanosrulerCustomResourceDefinition.yaml"
+    alertmanagerconfigs_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/alertmanagerconfigs_monitoring_coreos_com.yaml",
+    alertmanagers_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/alertmanagers_monitoring_coreos_com.yaml",
+    podmonitors_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/podmonitors_monitoring_coreos_com.yaml",
+    probes_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/probes_monitoring_coreos_com.yaml",
+    prometheuses_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/prometheuses_monitoring_coreos_com.yaml",
+    prometheusrules_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/prometheusrules_monitoring_coreos_com.yaml",
+    servicemonitors_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/servicemonitors_monitoring_coreos_com.yaml",
+    thanosrulers_monitoring_coreos_com:
+      "priv/manifests/prometheus_stack/thanosrulers_monitoring_coreos_com.yaml"
+
+  use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
 
-  alias KubeResources.MonitoringSettings
+  alias KubeResources.MonitoringSettings, as: Settings
 
-  @port 8443
-  @internal_port 8080
+  @app "prometheus-operator"
 
-  @internal_port_name "http-internal"
-  @port_name "https"
-
-  def materialize(config) do
-    %{
-      # Then the CRDS since they are needed for cluster roles.
-      "/1/setup/prometheus_crd" => yaml(get_resource(:prometheus_crd)),
-      "/1/setup/prometheus_rule_crd" => yaml(get_resource(:prometheus_rule_crd)),
-      "/1/setup/service_monitor_crd" => yaml(get_resource(:service_mon_crd)),
-      "/1/setup/podmonitor_crd" => yaml(get_resource(:pod_mon_crd)),
-      "/1/setup/probe_crd" => yaml(get_resource(:probe_crd)),
-      "/1/setup/am_config_crd" => yaml(get_resource(:am_config_crd)),
-      "/1/setup/am_crd" => yaml(get_resource(:am_crd)),
-      "/1/setup/thanos_ruler_crd" => yaml(get_resource(:thanos_rule_crd)),
-      # for the prometheus operator account stuff
-      "/2/setup/operator_service_account" => service_account(config),
-      "/2/setup/operator_cluster_role" => cluster_role(config),
-      # Bind them
-      "/3/setup/operator_cluster_role_binding" => cluster_role_binding(config),
-      # Run Something.
-      "/3/setup/operator_deployment" => deployment(config),
-      # Make it available.
-      "/3/setup/operator_service" => service(config)
-    }
+  resource(:crd_alertmanagerconfigs_monitoring_coreos_com) do
+    yaml(get_resource(:alertmanagerconfigs_monitoring_coreos_com))
   end
 
-  def service_account(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "ServiceAccount",
-      "metadata" => %{
-        "name" => "battery-prometheus-operator",
-        "namespace" => namespace
-      }
-    }
+  resource(:crd_alertmanagers_monitoring_coreos_com) do
+    yaml(get_resource(:alertmanagers_monitoring_coreos_com))
   end
 
-  def cluster_role(_config) do
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "ClusterRole",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => "prometheus-operator",
-          "battery/managed" => "true"
-        },
-        "name" => "battery-prometheus-operator"
-      },
-      "rules" => [
-        %{
-          "apiGroups" => ["monitoring.coreos.com"],
-          "resources" => [
-            "alertmanagers",
-            "alertmanagers/finalizers",
-            "alertmanagerconfigs",
-            "prometheuses",
-            "prometheuses/finalizers",
-            "thanosrulers",
-            "thanosrulers/finalizers",
-            "servicemonitors",
-            "podmonitors",
-            "probes",
-            "prometheusrules"
-          ],
-          "verbs" => ["*"]
-        },
-        %{
-          "apiGroups" => ["apps"],
-          "resources" => ["statefulsets"],
-          "verbs" => ["*"]
-        },
-        %{
-          "apiGroups" => [""],
-          "resources" => ["configmaps", "secrets"],
-          "verbs" => ["*"]
-        },
-        %{
-          "apiGroups" => [""],
-          "resources" => ["pods"],
-          "verbs" => ["list", "delete"]
-        },
-        %{
-          "apiGroups" => [""],
-          "resources" => ["services", "services/finalizers", "endpoints"],
-          "verbs" => ["get", "create", "update", "delete"]
-        },
-        %{
-          "apiGroups" => [""],
-          "resources" => ["nodes"],
-          "verbs" => ["list", "watch"]
-        },
-        %{
-          "apiGroups" => [""],
-          "resources" => ["namespaces"],
-          "verbs" => ["get", "list", "watch"]
-        },
-        %{
-          "apiGroups" => ["networking.k8s.io"],
-          "resources" => ["ingresses"],
-          "verbs" => ["get", "list", "watch"]
-        },
-        %{
-          "apiGroups" => ["authentication.k8s.io"],
-          "resources" => ["tokenreviews"],
-          "verbs" => ["create"]
-        },
-        %{
-          "apiGroups" => ["authorization.k8s.io"],
-          "resources" => ["subjectaccessreviews"],
-          "verbs" => ["create"]
-        }
-      ]
-    }
+  resource(:crd_podmonitors_monitoring_coreos_com) do
+    yaml(get_resource(:podmonitors_monitoring_coreos_com))
   end
 
-  def cluster_role_binding(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    %{
-      "apiVersion" => "rbac.authorization.k8s.io/v1",
-      "kind" => "ClusterRoleBinding",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => "prometheus-operator",
-          "battery/managed" => "true"
-        },
-        "name" => "battery-prometheus-operator"
-      },
-      "roleRef" => %{
-        "apiGroup" => "rbac.authorization.k8s.io",
-        "kind" => "ClusterRole",
-        "name" => "battery-prometheus-operator"
-      },
-      "subjects" => [
-        %{
-          "kind" => "ServiceAccount",
-          "name" => "battery-prometheus-operator",
-          "namespace" => namespace
-        }
-      ]
-    }
+  resource(:crd_probes_monitoring_coreos_com) do
+    yaml(get_resource(:probes_monitoring_coreos_com))
   end
 
-  def deployment(config) do
-    namespace = MonitoringSettings.namespace(config)
-    image = MonitoringSettings.prometheus_operator_image(config)
-    reloader_image = MonitoringSettings.prometheus_reloader_image(config)
-
-    %{
-      "apiVersion" => "apps/v1",
-      "kind" => "Deployment",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => "prometheus-operator",
-          "battery/managed" => "true"
-        },
-        "namespace" => namespace,
-        "name" => "battery-prometheus-operator"
-      },
-      "spec" => %{
-        "replicas" => 1,
-        "selector" => %{
-          "matchLabels" => %{
-            "battery/app" => "prometheus-operator"
-          }
-        },
-        "template" => %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => "prometheus-operator",
-              "battery/managed" => "true"
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => [
-                  "--kubelet-service=kube-system/kubelet",
-                  "--prometheus-config-reloader=#{reloader_image}"
-                ],
-                "image" => image,
-                "name" => "prometheus-operator",
-                "ports" => [
-                  %{"containerPort" => @internal_port, "name" => @internal_port_name}
-                ],
-                "resources" => %{
-                  "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
-                  "requests" => %{"cpu" => "100m", "memory" => "100Mi"}
-                },
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false
-                }
-              },
-              KubeResources.RBAC.proxy_container(
-                "http://127.0.0.1:#{@internal_port}/",
-                @port,
-                @port_name
-              )
-            ],
-            "nodeSelector" => %{
-              "kubernetes.io/os": "linux"
-            },
-            "securityContext" => %{
-              "runAsNonRoot" => true,
-              "runAsUser" => 65_534
-            },
-            "serviceAccountName" => "battery-prometheus-operator"
-          }
-        }
-      }
-    }
+  resource(:crd_prometheuses_monitoring_coreos_com) do
+    yaml(get_resource(:prometheuses_monitoring_coreos_com))
   end
 
-  def service(config) do
-    namespace = MonitoringSettings.namespace(config)
-
-    %{
-      "apiVersion" => "v1",
-      "kind" => "Service",
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => "prometheus-operator",
-          "battery/managed" => "true"
-        },
-        "name" => "prometheus-operator",
-        "namespace" => namespace
-      },
-      "spec" => %{
-        "clusterIP" => "None",
-        "ports" => [
-          %{
-            "name" => @port_name,
-            "port" => @port,
-            "targetPort" => @port_name
-          }
-        ],
-        "selector" => %{
-          "battery/app" => "prometheus-operator"
-        }
-      }
-    }
+  resource(:crd_prometheusrules_monitoring_coreos_com) do
+    yaml(get_resource(:prometheusrules_monitoring_coreos_com))
   end
 
-  def monitors(config) do
-    namespace = MonitoringSettings.namespace(config)
+  resource(:crd_servicemonitors_monitoring_coreos_com) do
+    yaml(get_resource(:servicemonitors_monitoring_coreos_com))
+  end
 
-    [
+  resource(:crd_thanosrulers_monitoring_coreos_com) do
+    yaml(get_resource(:thanosrulers_monitoring_coreos_com))
+  end
+
+  resource(:cluster_role_battery_kube_prometheus_admission) do
+    B.build_resource(:cluster_role)
+    |> B.name("battery-prometheus-admission")
+    |> B.app_labels(@app)
+    |> B.rules([
       %{
-        "apiVersion" => "monitoring.coreos.com/v1",
-        "kind" => "ServiceMonitor",
+        "apiGroups" => ["admissionregistration.k8s.io"],
+        "resources" => ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"],
+        "verbs" => ["get", "update"]
+      }
+    ])
+  end
+
+  resource(:cluster_role_battery_kube_prometheus_operator) do
+    B.build_resource(:cluster_role)
+    |> B.name("battery-prometheus-operator")
+    |> B.app_labels(@app)
+    |> B.rules([
+      %{
+        "apiGroups" => ["monitoring.coreos.com"],
+        "resources" => [
+          "alertmanagers",
+          "alertmanagers/finalizers",
+          "alertmanagerconfigs",
+          "prometheuses",
+          "prometheuses/status",
+          "prometheuses/finalizers",
+          "thanosrulers",
+          "thanosrulers/finalizers",
+          "servicemonitors",
+          "podmonitors",
+          "probes",
+          "prometheusrules"
+        ],
+        "verbs" => ["*"]
+      },
+      %{"apiGroups" => ["apps"], "resources" => ["statefulsets"], "verbs" => ["*"]},
+      %{"apiGroups" => [""], "resources" => ["configmaps", "secrets"], "verbs" => ["*"]},
+      %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["list", "delete"]},
+      %{
+        "apiGroups" => [""],
+        "resources" => ["services", "services/finalizers", "endpoints"],
+        "verbs" => ["get", "create", "update", "delete"]
+      },
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["list", "watch"]},
+      %{"apiGroups" => [""], "resources" => ["namespaces"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["networking.k8s.io"],
+        "resources" => ["ingresses"],
+        "verbs" => ["get", "list", "watch"]
+      }
+    ])
+  end
+
+  resource(:cluster_role_binding_battery_kube_prometheus_admission, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("battery-prometheus-admission")
+    |> B.app_labels(@app)
+    |> B.role_ref(B.build_cluster_role_ref("battery-prometheus-admission"))
+    |> B.subject(B.build_service_account("battery-prometheus-admission", namespace))
+  end
+
+  resource(:cluster_role_binding_battery_kube_prometheus_operator, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("battery-prometheus-operator")
+    |> B.app_labels(@app)
+    |> B.role_ref(B.build_cluster_role_ref("battery-prometheus-operator"))
+    |> B.subject(B.build_service_account("battery-prometheus-operator", namespace))
+  end
+
+  resource(:role_admission, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:role)
+    |> B.name("battery-prometheus-admission")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules([%{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "create"]}])
+  end
+
+  resource(:role_binding_admission, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:role_binding)
+    |> B.name("battery-prometheus-admission")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.role_ref(B.build_role_ref("battery-prometheus-admission"))
+    |> B.subject(B.build_service_account("battery-prometheus-admission", namespace))
+  end
+
+  resource(:service_account_admission, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:service_account)
+    |> B.name("battery-prometheus-admission")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+  end
+
+  resource(:service_account_operator, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:service_account)
+    |> B.name("battery-prometheus-operator")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.component_label("prometheus-operator")
+  end
+
+  resource(:deployment_operator, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:deployment)
+    |> B.name("battery-prometheus-operator")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.spec(%{
+      "replicas" => 1,
+      "selector" => %{"matchLabels" => %{"app" => "kube-prometheus-stack-operator"}},
+      "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "prometheus-operator",
+            "app" => "kube-prometheus-stack-operator",
+            "battery/app" => @app,
             "battery/managed" => "true"
-          },
-          "name" => "prometheus-operator",
-          "namespace" => namespace
+          }
         },
         "spec" => %{
-          "endpoints" => [
+          "containers" => [
             %{
-              "bearerTokenFile" => "/var/run/secrets/kubernetes.io/serviceaccount/token",
-              "honorLabels" => true,
-              "port" => @port_name,
-              "scheme" => "https",
-              "tlsConfig" => %{"insecureSkipVerify" => true}
+              "args" => [
+                "--kubelet-service=kube-system/battery-prometheus-kubelet",
+                "--localhost=127.0.0.1",
+                "--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.59.1",
+                "--config-reloader-cpu-request=200m",
+                "--config-reloader-cpu-limit=200m",
+                "--config-reloader-memory-request=50Mi",
+                "--config-reloader-memory-limit=50Mi",
+                "--thanos-default-base-image=quay.io/thanos/thanos:v0.28.0",
+                "--web.enable-tls=true",
+                "--web.cert-file=/cert/cert",
+                "--web.key-file=/cert/key",
+                "--web.listen-address=:10250",
+                "--web.tls-min-version=VersionTLS13"
+              ],
+              "image" => "quay.io/prometheus-operator/prometheus-operator:v0.59.1",
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "kube-prometheus-stack",
+              "ports" => [%{"containerPort" => 10_250, "name" => "https"}],
+              "resources" => %{},
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "readOnlyRootFilesystem" => true
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/cert", "name" => "tls-secret", "readOnly" => true}
+              ]
             }
           ],
-          "selector" => %{
-            "matchLabels" => %{
-              "battery/app" => "prometheus-operator"
+          "securityContext" => %{
+            "fsGroup" => 65_534,
+            "runAsGroup" => 65_534,
+            "runAsNonRoot" => true,
+            "runAsUser" => 65_534
+          },
+          "serviceAccountName" => "battery-prometheus-operator",
+          "volumes" => [
+            %{
+              "name" => "tls-secret",
+              "secret" => %{
+                "defaultMode" => 420,
+                "secretName" => "battery-prometheus-admission"
+              }
             }
-          }
+          ]
         }
       }
-    ]
+    })
+  end
+
+  resource(:job_admission_create, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:job)
+    |> B.name("battery-prometheus-admission-create")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.annotation("sidecar.istio.io/inject", "false")
+    |> B.spec(%{
+      "template" => %{
+        "metadata" => %{
+          "labels" => %{
+            "app" => "kube-prometheus-stack-admission-create",
+            "sidecar.istio.io/inject" => "false",
+            "battery/app" => "prometheus_stack",
+            "battery/managed" => "true"
+          },
+          "name" => "battery-prometheus-admission-create"
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => [
+                "create",
+                "--host=battery-prometheus-operator,battery-prometheus-operator.battery-core.svc",
+                "--namespace=battery-core",
+                "--secret-name=battery-prometheus-admission"
+              ],
+              "image" => "k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.3.0",
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "create",
+              "resources" => %{},
+              "securityContext" => %{}
+            }
+          ],
+          "restartPolicy" => "OnFailure",
+          "securityContext" => %{
+            "runAsGroup" => 2000,
+            "runAsNonRoot" => true,
+            "runAsUser" => 2000
+          },
+          "serviceAccountName" => "battery-prometheus-admission"
+        }
+      }
+    })
+  end
+
+  resource(:job_admission_patch, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:job)
+    |> B.name("battery-prometheus-admission-patch")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.annotation("sidecar.istio.io/inject", "false")
+    |> B.spec(%{
+      "template" => %{
+        "metadata" => %{
+          "labels" => %{
+            "app" => "kube-prometheus-stack-admission-patch",
+            "battery/app" => @app,
+            "sidecar.istio.io/inject" => "false",
+            "battery/managed" => "true"
+          },
+          "name" => "battery-prometheus-admission-patch"
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => [
+                "patch",
+                "--webhook-name=battery-prometheus-admission",
+                "--namespace=battery-core",
+                "--secret-name=battery-prometheus-admission",
+                "--patch-failure-policy=Fail"
+              ],
+              "image" => "k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.3.0",
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "patch",
+              "resources" => %{},
+              "securityContext" => %{}
+            }
+          ],
+          "restartPolicy" => "OnFailure",
+          "securityContext" => %{
+            "runAsGroup" => 2000,
+            "runAsNonRoot" => true,
+            "runAsUser" => 2000
+          },
+          "serviceAccountName" => "battery-prometheus-admission"
+        }
+      }
+    })
+  end
+
+  resource(:mutating_webhook_config_admission, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:mutating_webhook_config)
+    |> B.name("battery-prometheus-admission")
+    |> B.app_labels(@app)
+    |> Map.put("webhooks", [
+      %{
+        "admissionReviewVersions" => ["v1", "v1beta1"],
+        "clientConfig" => %{
+          "service" => %{
+            "name" => "battery-prometheus-operator",
+            "namespace" => namespace,
+            "path" => "/admission-prometheusrules/mutate"
+          }
+        },
+        "failurePolicy" => "Ignore",
+        "name" => "prometheusrulemutate.monitoring.coreos.com",
+        "rules" => [
+          %{
+            "apiGroups" => ["monitoring.coreos.com"],
+            "apiVersions" => ["*"],
+            "operations" => ["CREATE", "UPDATE"],
+            "resources" => ["prometheusrules"]
+          }
+        ],
+        "sideEffects" => "None",
+        "timeoutSeconds" => 10
+      }
+    ])
+  end
+
+  resource(:validating_webhook_config_admission, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:validating_webhook_config)
+    |> B.name("battery-prometheus-admission")
+    |> B.app_labels(@app)
+    |> Map.put("webhooks", [
+      %{
+        "admissionReviewVersions" => ["v1", "v1beta1"],
+        "clientConfig" => %{
+          "service" => %{
+            "name" => "battery-prometheus-operator",
+            "namespace" => namespace,
+            "path" => "/admission-prometheusrules/validate"
+          }
+        },
+        "failurePolicy" => "Ignore",
+        "name" => "prometheusrulemutate.monitoring.coreos.com",
+        "rules" => [
+          %{
+            "apiGroups" => ["monitoring.coreos.com"],
+            "apiVersions" => ["*"],
+            "operations" => ["CREATE", "UPDATE"],
+            "resources" => ["prometheusrules"]
+          }
+        ],
+        "sideEffects" => "None"
+      }
+    ])
+  end
+
+  resource(:service_operator, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:service)
+    |> B.name("battery-prometheus-operator")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.spec(%{
+      "ports" => [%{"name" => "https", "port" => 443, "targetPort" => "https"}],
+      "selector" => %{"battery/app" => @app},
+      "type" => "ClusterIP"
+    })
+  end
+
+  resource(:service_monitor_operator, config) do
+    namespace = Settings.namespace(config)
+
+    B.build_resource(:service_monitor)
+    |> B.name("battery-prometheus-operator")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.spec(%{
+      "endpoints" => [
+        %{
+          "honorLabels" => true,
+          "port" => "https",
+          "scheme" => "https",
+          "tlsConfig" => %{
+            "ca" => %{
+              "secret" => %{
+                "key" => "ca",
+                "name" => "battery-prometheus-admission",
+                "optional" => false
+              }
+            },
+            "serverName" => "battery-prometheus-operator"
+          }
+        }
+      ],
+      "namespaceSelector" => %{"matchNames" => [namespace]},
+      "selector" => %{"matchLabels" => %{"battery/app" => @app}}
+    })
   end
 end

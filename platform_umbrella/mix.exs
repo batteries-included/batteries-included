@@ -26,7 +26,8 @@ defmodule ControlServer.Umbrella.MixProject do
       {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 2.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.11", only: :dev}
+      {:sobelow, "~> 0.11", only: :dev},
+      {:logger_json, "~> 5.1"}
     ]
   end
 

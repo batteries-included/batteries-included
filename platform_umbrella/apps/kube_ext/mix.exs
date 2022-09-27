@@ -33,7 +33,9 @@ defmodule KubeExt.MixProject do
       {:bella, "~> 0.2.2"},
       {:event_center, in_umbrella: true},
       # Time
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      # logging
+      {:logger_json, "~> 5.1"}
     ]
   end
 
