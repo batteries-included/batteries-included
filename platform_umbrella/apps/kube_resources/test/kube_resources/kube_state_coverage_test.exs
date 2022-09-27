@@ -47,10 +47,10 @@ defmodule KubeServices.KubeStateCoverageTest do
         RunnableService.services(),
         fn service ->
           RunnableService.activate!(service)
-
-          assert_all_resources_watchable()
         end
       )
+
+      assert_all_resources_watchable()
     end
   end
 end

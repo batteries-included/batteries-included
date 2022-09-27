@@ -25,6 +25,20 @@ defmodule KubeServices.ConfigGeneratorTest do
 
     def assert_named(nil = _resource), do: nil
 
+    def assert_valid_json(resources) do
+      assert match?({:ok, _value}, Jason.encode(resources))
+    end
+
+    def assert_contains_resources(resource_map, service) do
+      assert map_size(resource_map) >= 1,
+             "Expect service of type #{inspect(service.service_type)} to have some k8 resources."
+    end
+
+    def assert_valid(resources) do
+      assert_named(resources)
+      assert_valid_json(resources)
+    end
+
     setup do
       service_map =
         RunnableService.services()
@@ -46,36 +60,16 @@ defmodule KubeServices.ConfigGeneratorTest do
        ceph_filesystem: ceph_filesystem}
     end
 
-    test "materialize all the configs" do
+    test "all service resources are valid" do
       Services.all_including_config()
-      |> Enum.each(fn service ->
-        configs = ConfigGenerator.materialize(service)
-
-        assert map_size(configs) >= 1,
-               "Expect service of type #{inspect(service.service_type)} to have some k8 resources."
+      |> Enum.map(fn service -> {service, ConfigGenerator.materialize(service)} end)
+      |> Enum.map(fn {service, rm} ->
+        assert_contains_resources(rm, service)
+        rm
       end)
-    end
-
-    test "all are named" do
-      Services.all_including_config()
-      |> Enum.map(&ConfigGenerator.materialize/1)
       |> Enum.reduce(%{}, &Map.merge/2)
       |> then(&Map.values/1)
-      |> Enum.each(&assert_named/1)
-    end
-
-    test "Activate database_internal" do
-      RunnableService.activate!(:database_internal)
-      RunnableService.activate!(:database_internal)
-    end
-
-    test "everything can turn into json" do
-      Services.all()
-      |> Enum.each(fn base_service ->
-        configs = ConfigGenerator.materialize(base_service)
-
-        assert match?({:ok, _value}, Jason.encode(configs))
-      end)
+      |> Enum.each(&assert_valid/1)
     end
   end
 end
