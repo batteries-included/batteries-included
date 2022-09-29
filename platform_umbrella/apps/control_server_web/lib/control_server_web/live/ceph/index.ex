@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.CephIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import CommonUI.Table
 
   alias ControlServer.Rook
 
@@ -44,62 +43,30 @@ defmodule ControlServerWeb.Live.CephIndex do
 
   defp clusters_section(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>Name</.th>
-          <.th>Num mon</.th>
-          <.th>Num mgr</.th>
-          <.th>Data dir host path</.th>
-
-          <.th>Action</.th>
-        </.tr>
-      </.thead>
-      <.tbody id="ceph_cluster">
-        <%= for ceph_cluster <- @ceph_clusters do %>
-          <.tr id={"ceph_cluster-#{ceph_cluster.id}"}>
-            <.td><%= ceph_cluster.name %></.td>
-            <.td><%= ceph_cluster.num_mon %></.td>
-            <.td><%= ceph_cluster.num_mgr %></.td>
-            <.td><%= ceph_cluster.data_dir_host_path %></.td>
-
-            <.td>
-              <.link to={show_cluster_url(ceph_cluster)} class="mt-8 text-lg font-medium text-left">
-                Show Cluster
-              </.link>
-            </.td>
-          </.tr>
-        <% end %>
-      </.tbody>
+    <.table rows={@ceph_clusters} id="clusters-table">
+      <:col :let={ceph} label="Name"><%= ceph.name %></:col>
+      <:col :let={ceph} label="Monitors"><%= ceph.num_mon %></:col>
+      <:col :let={ceph} label="Managers"><%= ceph.num_mgr %></:col>
+      <:col :let={ceph} label="Data dir"><%= ceph.data_dir_host_path %></:col>
+      <:action :let={ceph}>
+        <.link navigate={show_cluster_url(ceph)} type="styled">
+          Show Cluster
+        </.link>
+      </:action>
     </.table>
     """
   end
 
   defp filesystems_section(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>Name</.th>
-          <.th>Include EC</.th>
-
-          <.th>Action</.th>
-        </.tr>
-      </.thead>
-      <.tbody id="ceph_filesystems">
-        <%= for fs <- @ceph_filesystems do %>
-          <.tr id={"ceph_fs-#{fs.id}"}>
-            <.td><%= fs.name %></.td>
-            <.td><%= fs.include_erasure_encoded %></.td>
-
-            <.td>
-              <.link to={show_filesystem_url(fs)} class="mt-8 text-lg font-medium text-left">
-                Show FileSystem
-              </.link>
-            </.td>
-          </.tr>
-        <% end %>
-      </.tbody>
+    <.table rows={@ceph_filesystems} id="filesystems-table">
+      <:col :let={ceph} label="Name"><%= ceph.name %></:col>
+      <:col :let={ceph} label="Include EC?"><%= ceph.include_erasure_encoded %></:col>
+      <:action :let={ceph}>
+        <.link navigate={show_filesystem_url(ceph)} type="styled">
+          Show FileSystem
+        </.link>
+      </:action>
     </.table>
     """
   end
@@ -116,24 +83,20 @@ defmodule ControlServerWeb.Live.CephIndex do
       </:left_menu>
       <.section_title>Ceph Clusters</.section_title>
 
-      <.body_section>
-        <.clusters_section ceph_clusters={@ceph_clusters} />
-      </.body_section>
+      <.clusters_section ceph_clusters={@ceph_clusters} />
 
       <.section_title>Ceph FileSystem</.section_title>
-      <.body_section>
-        <.filesystems_section ceph_filesystems={@ceph_filesystems} />
-      </.body_section>
+      <.filesystems_section ceph_filesystems={@ceph_filesystems} />
 
-      <.h3>Actions</.h3>
+      <.h2>Actions</.h2>
       <.body_section>
-        <.link to={new_cluster_url()}>
+        <.link navigate={new_cluster_url()}>
           <.button>
             New Cluster
           </.button>
         </.link>
 
-        <.link to={new_filesystem_url()}>
+        <.link navigate={new_filesystem_url()}>
           <.button>
             New FileSystem
           </.button>

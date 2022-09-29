@@ -1,16 +1,4 @@
 <h1>Listing Stripe subscriptions</h1>
-<%= if @live_action in [:new, :edit] do %>
-  <.modal return_to={Routes.stripe_subscription_index_path(@socket, :index)}>
-    <.live_component
-      module={HomeBaseWeb.StripeSubscriptionLive.FormComponent}
-      id={@stripe_subscription.id || :new}
-      title={@page_title}
-      action={@live_action}
-      stripe_subscription={@stripe_subscription}
-      return_to={Routes.stripe_subscription_index_path(@socket, :index)}
-    />
-  </.modal>
-<% end %>
 <table>
   <thead>
     <tr>
@@ -40,12 +28,13 @@
             ) %>
           </span>
           <span>
-            <%= link("Delete",
-              to: "#",
-              phx_click: "delete",
-              phx_value_id: stripe_subscription.id,
-              data: [confirm: "Are you sure?"]
-            ) %>
+            <.link
+              phx-click="delete"
+              phx-value-id={stripe_subscription.id}
+              data-confirm="Are you sure?"
+            >
+              Delete
+            </.link>
           </span>
         </td>
       </tr>

@@ -1312,7 +1312,7 @@ defmodule KubeResources.Tekton do
     namespace = DevtoolsSettings.namespace(config)
 
     %{
-      "apiVersion" => "autoscaling/v2beta2",
+      "apiVersion" => "autoscaling/v2",
       "kind" => "HorizontalPodAutoscaler",
       "metadata" => %{
         "labels" => %{

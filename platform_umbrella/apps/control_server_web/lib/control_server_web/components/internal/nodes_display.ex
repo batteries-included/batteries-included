@@ -1,58 +1,17 @@
 defmodule ControlServerWeb.NodesDisplay do
   use ControlServerWeb, :component
 
-  import CommonUI.Table
+  import K8s.Resource.FieldAccessors, only: [name: 1]
 
   def nodes_display(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>
-            Name
-          </.th>
-          <.th>
-            CPU
-          </.th>
-          <.th>
-            Memory
-          </.th>
-          <.th>
-            Kernel Version
-          </.th>
-          <.th>
-            Kube Version
-          </.th>
-        </.tr>
-      </.thead>
-      <.tbody>
-        <%= for node <- @nodes do %>
-          <.node_row node={node} />
-        <% end %>
-      </.tbody>
+    <.table id="node-display-table" rows={@nodes}>
+      <:col :let={node} label="Name"><%= name(node) %></:col>
+      <:col :let={node} label="CPU"><%= get_in(node, ~w(status capacity cpu)) %></:col>
+      <:col :let={node} label="Memory"><%= get_in(node, ~w(status capacity memory)) %></:col>
+      <:col :let={node} label="Kernel"><%= get_in(node, ~w(status nodeInfo kernelVersion)) %></:col>
+      <:col :let={node} label="Kube"><%= get_in(node, ~w(status nodeInfo kubeletVersion)) %></:col>
     </.table>
-    """
-  end
-
-  defp node_row(assigns) do
-    ~H"""
-    <.tr>
-      <.td>
-        <%= @node["metadata"]["name"] %>
-      </.td>
-      <.td>
-        <%= @node["status"]["capacity"]["cpu"] %>
-      </.td>
-      <.td>
-        <%= @node["status"]["capacity"]["memory"] %>
-      </.td>
-      <.td>
-        <%= @node["status"]["nodeInfo"]["kernelVersion"] %>
-      </.td>
-      <.td>
-        <%= @node["status"]["nodeInfo"]["kubeletVersion"] %>
-      </.td>
-    </.tr>
     """
   end
 end

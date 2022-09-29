@@ -1,8 +1,9 @@
 defmodule ControlServerWeb.Live.CephClusterFormComponent do
   use ControlServerWeb, :live_component
 
+  import Phoenix.HTML.Form, only: [inputs_for: 2]
+
   alias ControlServer.Rook
-  alias CommonUI.Form
 
   @impl true
   def update(%{ceph_cluster: ceph_cluster} = assigns, socket) do
@@ -86,62 +87,43 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10">
-      <.form
-        let={f}
+    <div>
+      <.simple_form
+        :let={f}
         for={@changeset}
         id="ceph_cluster-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <Form.text_input
-            form={f}
-            field={:name}
-            placeholder="Name"
-            wrapper_class="form-control w-full col-span-2"
-          />
+        <.input field={{f, :name}} placeholder="Name" wrapper_class="form-control w-full col-span-2" />
 
-          <Form.range_input
-            min={1}
-            max={5}
-            form={f}
-            field={:num_mon}
-            placeholder="Number of Monitors"
-          />
-          <div class="sm:col-span-1">
-            <.labeled_definition title="Number of Monitors" contents={@num_mon} />
-          </div>
+        <.input min={1} max={5} type="range" field={{f, :num_mon}} placeholder="Number of Monitors" />
+        <.labeled_definition title="Number of Monitors" contents={@num_mon} />
 
-          <Form.range_input min={1} max={5} form={f} field={:num_mgr} placeholder="Number of MGR's" />
-          <div class="sm:col-span-1">
-            <.labeled_definition title="Number of MGR daemons" contents={@num_mgr} />
-          </div>
+        <.input min={1} max={5} type="range" field={{f, :num_mgr}} placeholder="Number of MGR's" />
+        <.labeled_definition title="Number of MGR daemons" contents={@num_mgr} />
+        <.input
+          field={{f, :data_dir_host_path}}
+          placeholder="Data Dir Path (on Host)"
+          wrapper_class="form-control w-full col-span-2"
+        />
 
-          <Form.text_input
-            form={f}
-            field={:data_dir_host_path}
-            placeholder="Data Dir Path (on Host)"
-            wrapper_class="form-control w-full col-span-2"
-          />
+        <%= for node_form <- inputs_for(f, :nodes) do %>
+          <.input field={{node_form, :name}} placeholder="Name" />
+          <.input field={{node_form, :device_filter}} placeholder="Device Filter" />
+        <% end %>
 
-          <%= for node_form <- inputs_for(f, :nodes) do %>
-            <Form.text_input form={node_form} field={:name} placeholder="Name" />
-            <Form.text_input form={node_form} field={:device_filter} placeholder="Device Filter" />
-          <% end %>
-
-          <div class="sm:col-span-1">
-            <.link to="#" phx-click="add_node" phx-target={@myself}>Add Node</.link>
-          </div>
-
-          <div class="mt-6 col-span-2">
-            <.button type="submit" phx_disable_with="Saving…" class="w-full">
-              Save
-            </.button>
-          </div>
+        <div class="sm:col-span-1">
+          <.link phx-click="add_node" phx-target={@myself}>Add Node</.link>
         </div>
-      </.form>
+
+        <:actions>
+          <.button type="submit" phx-disable-with="Saving…" class="w-full">
+            Save
+          </.button>
+        </:actions>
+      </.simple_form>
     </div>
     """
   end

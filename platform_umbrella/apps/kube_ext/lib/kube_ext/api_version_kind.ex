@@ -25,7 +25,7 @@ defmodule KubeExt.ApiVersionKind do
     ingress: {"networking.k8s.io/v1", "Ingress"},
     pod_disruption_budget: {"policy/v1beta1", "PodDisruptionBudget"},
     pod_security_policy: {"policy/v1beta1", "PodSecurityPolicy"},
-    horizontal_pod_autoscaler: {"autoscaling/v2beta2", "HorizontalPodAutoscaler"},
+    horizontal_pod_autoscaler: {"autoscaling/v2", "HorizontalPodAutoscaler"},
     istio_gateway: {"networking.istio.io/v1alpha3", "Gateway"},
     istio_virtual_service: {"networking.istio.io/v1alpha3", "VirtualService"},
     istio_envoy_filter: {"networking.istio.io/v1alpha3", "EnvoyFilter"},

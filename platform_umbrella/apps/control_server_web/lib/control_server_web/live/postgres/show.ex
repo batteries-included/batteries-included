@@ -81,7 +81,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
       <:left_menu>
         <.data_menu active="postgres" />
       </:left_menu>
-      <.h3>Cluster Summary</.h3>
       <.stats>
         <.stat>
           <.stat_title>Name</.stat_title>
@@ -103,25 +102,21 @@ defmodule ControlServerWeb.Live.PostgresShow do
         </.stat>
       </.stats>
 
-      <.h3>Pods</.h3>
-      <.body_section>
-        <.pods_display pods={@k8_pods} />
-      </.body_section>
+      <.section_title>Pods</.section_title>
+      <.pods_display pods={@k8_pods} />
 
-      <.h3>Services</.h3>
-      <.body_section>
-        <.services_display services={@k8_services} />
-      </.body_section>
+      <.section_title>Services</.section_title>
+      <.services_display services={@k8_services} />
 
-      <.h3>Actions</.h3>
+      <.h2>Actions</.h2>
       <.body_section>
-        <.link to={edit_url(@cluster)}>
+        <.link navigate={edit_url(@cluster)}>
           <.button>
             Edit Cluster
           </.button>
         </.link>
 
-        <.button phx_click="delete" color={:warning} data={[confirm: "Are you sure?"]}>
+        <.button phx-click="delete" data-confirm="Are you sure?">
           Delete Cluster
         </.button>
       </.body_section>

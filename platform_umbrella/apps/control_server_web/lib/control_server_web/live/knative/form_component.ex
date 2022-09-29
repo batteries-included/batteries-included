@@ -3,7 +3,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   alias ControlServer.Knative
   alias ControlServer.Knative.Service
-  alias CommonUI.Form
 
   require Logger
 
@@ -38,7 +37,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   end
 
   def url(service) do
-    "#{service.name}.battery-knative.knative.172.30.0.4.sslip.io"
+    KubeResources.KnativeServing.url(service)
   end
 
   defp save_service(socket, :new, service_params) do
@@ -77,28 +76,27 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10">
-      <.form
-        let={f}
+    <div>
+      <.simple_form
+        :let={f}
         for={@changeset}
         id="service-form"
         phx-change="validate"
         phx-submit="save"
         phx-target={@myself}
       >
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <Form.text_input form={f} field={:name} placeholder="Name" />
-          <Form.text_input form={f} field={:image} placeholder="Docker Image" />
-          <div class="sm:col-span-2">
-            <.labeled_definition title="URL" contents={@url} />
-          </div>
+        <.input field={{f, :name}} placeholder="Name" />
+        <.input field={{f, :image}} placeholder="Docker Image" />
+        <div class="sm:col-span-2">
+          <.labeled_definition title="URL" contents={@url} />
         </div>
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <.button type="submit" phx_disable_with="Saving…" class="sm:col-span-2">
+
+        <:actions>
+          <.button type="submit" phx-disable-with="Saving…" class="sm:col-span-2">
             Save
           </.button>
-        </div>
-      </.form>
+        </:actions>
+      </.simple_form>
     </div>
     """
   end

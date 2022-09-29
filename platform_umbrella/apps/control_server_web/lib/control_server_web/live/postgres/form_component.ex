@@ -1,11 +1,8 @@
 defmodule ControlServerWeb.Live.PostgresFormComponent do
   use ControlServerWeb, :live_component
 
-  use CommonUI
-
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
-  alias CommonUI.Form
 
   require Logger
 
@@ -80,38 +77,36 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10">
-      <.form
-        let={f}
+    <div>
+      <.simple_form
+        :let={f}
         for={@changeset}
         id="cluster-form"
         phx-change="validate"
         phx-submit="save"
         phx-target={@myself}
       >
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <Form.text_input form={f} field={:name} placeholder="Name" />
-          <div class="sm:col-span-1">
-            <.labeled_definition title="Service Name" contents={@full_name} />
-          </div>
-          <Form.range_input
-            min={1}
-            max={5}
-            form={f}
-            field={:num_instances}
-            placeholder="Number of Instances"
-          />
-          <div class="sm:col-span-1">
-            <.labeled_definition title="Number of Instances" contents={@num_instances} />
-          </div>
-          <Form.text_input form={f} field={:storage_size} placeholder="Storage Size" />
+        <.input field={{f, :name}} placeholder="Name" />
+        <div class="sm:col-span-1">
+          <.labeled_definition title="Service Name" contents={@full_name} />
         </div>
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <.button type="submit" phx_disable_with="Saving…" class="sm:col-span-2">
+        <.input
+          min={1}
+          max={5}
+          type="range"
+          field={{f, :num_instances}}
+          placeholder="Number of Instances"
+        />
+        <div class="sm:col-span-1">
+          <.labeled_definition title="Number of Instances" contents={@num_instances} />
+        </div>
+        <.input field={{f, :storage_size}} placeholder="Storage Size" />
+        <:actions>
+          <.button type="submit" phx-disable-with="Saving…">
             Save
           </.button>
-        </div>
-      </.form>
+        </:actions>
+      </.simple_form>
     </div>
     """
   end

@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.CephFilesystemFormComponent do
   use ControlServerWeb, :live_component
 
   alias ControlServer.Rook
-  alias CommonUI.Form
 
   @impl true
   def update(%{ceph_filesystem: ceph_filesystem} = assigns, socket) do
@@ -65,26 +64,24 @@ defmodule ControlServerWeb.Live.CephFilesystemFormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10">
-      <.form
-        let={f}
+    <div>
+      <.simple_form
+        :let={f}
         for={@changeset}
         id="ceph_filesystem-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <Form.text_input form={f} field={:name} placeholder="Name" />
-          <Form.switch_input form={f} field={:include_erasure_encoded} />
+        <.input field={{f, :name}} placeholder="Name" />
+        <.input field={{f, :include_erasure_encoded}} />
 
-          <div class="mt-6 col-span-2">
-            <.button type="submit" phx_disable_with="Saving…" class="w-full">
-              Save
-            </.button>
-          </div>
-        </div>
-      </.form>
+        <:actions>
+          <.button type="submit" phx-disable-with="Saving…" class="w-full">
+            Save
+          </.button>
+        </:actions>
+      </.simple_form>
     </div>
     """
   end

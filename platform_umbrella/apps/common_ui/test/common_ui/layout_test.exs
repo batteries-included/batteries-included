@@ -1,9 +1,8 @@
 defmodule CommonUI.LayoutTest do
   use ExUnit.Case
 
+  import Phoenix.Component, except: [link: 1]
   import Phoenix.LiveViewTest
-  import Phoenix.LiveView.Helpers
-
   import CommonUI.Layout
 
   test "Layout can render iframe" do

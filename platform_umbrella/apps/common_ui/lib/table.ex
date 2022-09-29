@@ -1,118 +1,71 @@
 defmodule CommonUI.Table do
   use Phoenix.Component
 
-  @table_class "min-w-full overflow-hidden divide-y divide-gray-200 rounded-sm table-auto"
-  @thead_class ""
-  @tbody_class ""
-  @th_class "px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-  @tr_class "bg-white"
-  @td_class "px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
+  @doc ~S"""
+  Renders a table with generic styling.
+
+  ## Examples
+
+      <.table rows={@users}>
+        <:col :let={user} label="id"><%= user.id %></:col>
+        <:col :let={user} label="username"><%= user.username %></:col>
+      </.table>
+  """
+  attr :id, :string, required: true
+  attr :row_click, JS, default: nil
+  attr :rows, :list, required: true
+
+  slot :col, required: true do
+    attr :label, :string
+  end
+
+  slot(:action, doc: "the slot for showing user actions in the last table column")
 
   def table(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:class, fn -> "" end)
-      |> assign_new(:extra, fn ->
-        assigns_to_attributes(assigns, [:class])
-      end)
-
-    default_class = @table_class
-
     ~H"""
-    <table class={Enum.join([default_class, @class], " ")} {@extra}>
-      <%= render_slot(@inner_block) %>
-    </table>
-    """
-  end
-
-  def thead(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:class, fn -> "" end)
-      |> assign_new(:extra, fn ->
-        assigns_to_attributes(assigns, [:class])
-      end)
-
-    default_class = @thead_class
-
-    ~H"""
-    <thead class={Enum.join([default_class, @class], " ")} {@extra}>
-      <%= render_slot(@inner_block) %>
-    </thead>
-    """
-  end
-
-  def tbody(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:class, fn -> "" end)
-      |> assign_new(:extra, fn ->
-        assigns_to_attributes(assigns, [:class])
-      end)
-
-    default_class = @tbody_class
-
-    ~H"""
-    <tbody class={Enum.join([default_class, @class], " ")} {@extra}>
-      <%= render_slot(@inner_block) %>
-    </tbody>
-    """
-  end
-
-  def th(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:class, fn -> "" end)
-      |> assign_new(:extra, fn ->
-        assigns_to_attributes(assigns, [:class])
-      end)
-
-    default_class = @th_class
-
-    ~H"""
-    <th class={Enum.join([default_class, @class], " ")} {@extra}>
-      <%= if @inner_block do %>
-        <%= render_slot(@inner_block) %>
-      <% end %>
-    </th>
-    """
-  end
-
-  def tr(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:class, fn -> "" end)
-      |> assign_new(:extra, fn ->
-        assigns_to_attributes(assigns, [:class])
-      end)
-
-    default_class = @tr_class
-
-    ~H"""
-    <tr class={Enum.join([default_class, @class], " ")} {@extra}>
-      <%= if @inner_block do %>
-        <%= render_slot(@inner_block) %>
-      <% end %>
-    </tr>
-    """
-  end
-
-  def td(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:class, fn -> "" end)
-      |> assign_new(:extra, fn ->
-        assigns_to_attributes(assigns, [:class])
-      end)
-
-    default_class = @td_class
-
-    ~H"""
-    <td class={Enum.join([default_class, @class], " ")} {@extra}>
-      <%= if @inner_block do %>
-        <%= render_slot(@inner_block) %>
-      <% end %>
-    </td>
+    <div id={@id} class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+      <table class="mt-2 w-[40rem] sm:w-full">
+        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
+          <tr>
+            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :if={@action != []} class="relative p-0 pb-4">
+              <span class="sr-only">Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700">
+          <tr
+            :for={{row, idx} <- Enum.with_index(@rows)}
+            id={"#{@id}-#{idx}"}
+            class="group hover:bg-zinc-50"
+          >
+            <td
+              :for={{col, i} <- Enum.with_index(@col)}
+              phx-click={@row_click && @row_click.(row)}
+              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
+            >
+              <div class="block py-4 pr-6">
+                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                  <%= render_slot(col, row) %>
+                </span>
+              </div>
+            </td>
+            <td :if={@action != []} class="relative p-0 w-14">
+              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
+                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+                <span
+                  :for={action <- @action}
+                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                >
+                  <%= render_slot(action, row) %>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     """
   end
 end

@@ -1,16 +1,4 @@
 <h1>Show Stripe subscription</h1>
-<%= if @live_action in [:edit] do %>
-  <.modal return_to={Routes.stripe_subscription_show_path(@socket, :show, @stripe_subscription)}>
-    <.live_component
-      module={HomeBaseWeb.StripeSubscriptionLive.FormComponent}
-      id={@stripe_subscription.id}
-      title={@page_title}
-      action={@live_action}
-      stripe_subscription={@stripe_subscription}
-      return_to={Routes.stripe_subscription_show_path(@socket, :show, @stripe_subscription)}
-    />
-  </.modal>
-<% end %>
 <ul>
   <li>
     <strong>Company:</strong>

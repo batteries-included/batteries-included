@@ -1,6 +1,5 @@
 defmodule ControlServerWeb.LeftMenuLayout do
   use ControlServerWeb, :component
-  use PetalComponents
 
   import CommonUI.Icons.Database
   import CommonUI.Icons.Devtools
@@ -27,7 +26,6 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns
     |> assign_new(:is_active, fn -> false end)
     |> assign_new(:icon, fn -> "database" end)
-    |> assign_new(:link_type, fn -> "live_redirect" end)
   end
 
   defp assign_menu_defaults(assigns) do
@@ -40,7 +38,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_item_defaults(assigns)
 
     ~H"""
-    <.link link_type={@link_type} to={@to} class={menu_link_class(@is_active)}>
+    <.link navigate={@to} class={menu_link_class(@is_active)}>
       <.left_icon type={@icon} />
       <span class="truncate">
         <%= @name %>
@@ -57,19 +55,19 @@ defmodule ControlServerWeb.LeftMenuLayout do
       <% "notebooks" -> %>
         <.notebook_icon class={@class} />
       <% "home" -> %>
-        <Heroicons.Solid.home class={@class} />
+        <Heroicons.home solid class={@class} />
       <% "database" -> %>
-        <Heroicons.Solid.database class={@class} />
+        <Heroicons.circle_stack solid class={@class} />
       <% "lightning_bolt" -> %>
-        <Heroicons.Solid.lightning_bolt class={@class} />
+        <Heroicons.bolt solid class={@class} />
       <% "status_online" -> %>
-        <Heroicons.Solid.status_online class={@class} />
+        <Heroicons.wifi solid class={@class} />
       <% "external_link" -> %>
-        <Heroicons.Solid.external_link class={@class} />
+        <Heroicons.arrow_top_right_on_square solid class={@class} />
       <% "collection" -> %>
-        <Heroicons.Solid.collection class={@class} />
+        <Heroicons.square_3_stack_3d solid class={@class} />
       <% "table" -> %>
-        <Heroicons.Solid.table class={@class} />
+        <Heroicons.table_cells solid class={@class} />
       <% "grafana" -> %>
         <.grafana_icon class={@class} />
       <% "prometheus" -> %>
@@ -85,7 +83,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
       <% "harbor" -> %>
         <.harbor_icon class={@class} />
       <% "user_group" -> %>
-        <Heroicons.Solid.user_group class={@class} />
+        <Heroicons.user_group solid class={@class} />
       <% "redis" -> %>
         <.redis_icon class={@class} />
       <% "ceph" -> %>
@@ -251,12 +249,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     assigns = assign_menu_defaults(assigns)
 
     ~H"""
-    <.left_menu_item
-      to={Routes.user_index_path(Endpoint, :index)}
-      name="Users"
-      icon="user_group"
-      is_active={@active == "users"}
-    />
+    <.left_menu_item to="/" name="Users" icon="user_group" is_active={@active == "users"} />
     <.left_menu_item
       to={Routes.service_settings_path(Endpoint, :security)}
       name="Settings"
@@ -338,9 +331,9 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
   def section_title(assigns) do
     ~H"""
-    <.h3 class="text-right">
+    <.h2 class="text-right">
       <%= render_slot(@inner_block) %>
-    </.h3>
+    </.h2>
     """
   end
 

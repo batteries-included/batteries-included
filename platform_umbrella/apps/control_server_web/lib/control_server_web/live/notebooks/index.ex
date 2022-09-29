@@ -50,11 +50,17 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
       <:left_menu>
         <.ml_menu active="notebooks" />
       </:left_menu>
-      <.section_title>
-        Jupyter Notebooks
-      </.section_title>
+
       <.body_section>
         <.notebook_display notebooks={@notebooks} />
+      </.body_section>
+      <.section_title>
+        Actions
+      </.section_title>
+      <.body_section>
+        <.button type="primary" phx-click="start_notebook">
+          Start New Notebook
+        </.button>
       </.body_section>
     </.layout>
     """

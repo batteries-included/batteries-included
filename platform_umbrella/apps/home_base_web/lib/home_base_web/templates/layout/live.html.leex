@@ -211,28 +211,6 @@
     <div class="flex items-stretch flex-1 overflow-hidden">
       <main class="flex-1 overflow-y-auto">
         <div class="px-4 pt-8 sm:px-6 lg:px-8">
-          <%= if info = live_flash(@flash, :info) do %>
-            <p
-              class="alert alert-info"
-              role="alert"
-              phx-click="lv:clear-flash"
-              phx-value-key="info"
-            >
-              <%= info %>
-            </p>
-          <% end %>
-
-          <%= if error = live_flash(@flash, :error) do %>
-            <p
-              class="alert alert-danger"
-              role="alert"
-              phx-click="lv:clear-flash"
-              phx-value-key="error"
-            >
-              <%= error %>
-            </p>
-          <% end %>
-
           <%= @inner_content %>
         </div>
       </main>

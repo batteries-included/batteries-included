@@ -5,7 +5,10 @@ defmodule HomeBaseWeb.BillingReportLive.ChartComponent do
   use HomeBaseWeb, :live_component
 
   def render(assigns) do
-    {:ok, encoded_data} = Jason.encode(assigns.data)
+    assigns =
+      assign_new(assigns, :encoded_data, fn ->
+        Jason.encode!(assigns.data)
+      end)
 
     ~H"""
     <div class="chart-container mx-auto" style="position: relative; height:50vh; width:75vw">
@@ -14,7 +17,7 @@ defmodule HomeBaseWeb.BillingReportLive.ChartComponent do
         phx-hook="BillingChart"
         phx-update="ignore"
         id={"billing_chart_#{@id}"}
-        data-data={encoded_data}
+        data-data={@encoded_data}
       >
       </canvas>
     </div>

@@ -1,12 +1,8 @@
 defmodule ControlServerWeb.Live.Redis.FormComponent do
   use ControlServerWeb, :live_component
 
-  use CommonUI
-
   alias ControlServer.Redis
   alias ControlServer.Redis.FailoverCluster
-
-  alias CommonUI.Form
 
   @impl true
   def mount(socket) do
@@ -81,50 +77,39 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10">
-      <.form
-        let={f}
+    <div>
+      <.simple_form
+        :let={f}
         for={@changeset}
         id="failover_cluster-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <Form.text_input form={f} field={:name} placeholder="Name" />
-          <div class="sm:col-span-1">
-            <.labeled_definition title="Service Name" contents={@sentinel_name} />
-          </div>
-          <Form.range_input
-            min={1}
-            max={5}
-            form={f}
-            field={:num_redis_instances}
-            placeholder="Number of Instances"
-          />
-          <div class="sm:col-span-1">
-            <.labeled_definition title="Number of Instances" contents={@num_instances} />
-          </div>
-          <Form.range_input
-            min={1}
-            max={5}
-            form={f}
-            field={:num_sentinel_instances}
-            placeholder="Number of Instances"
-          />
-          <div class="sm:col-span-1">
-            <.labeled_definition
-              title="Number of Sentinel Instances"
-              contents={@num_sentinel_instances}
-            />
-          </div>
-        </div>
-        <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-2">
-          <.button type="submit" phx_disable_with="Saving…" class="sm:col-span-2">
+        <.input field={{f, :name}} placeholder="Name" />
+        <.labeled_definition title="Service Name" contents={@sentinel_name} />
+        <.input
+          min={1}
+          max={5}
+          type="range"
+          field={{f, :num_redis_instances}}
+          placeholder="Number of Instances"
+        />
+        <.labeled_definition title="Number of Instances" contents={@num_instances} />
+        <.input
+          min={1}
+          max={5}
+          type="range"
+          field={{f, :num_sentinel_instances}}
+          placeholder="Number of Instances"
+        />
+        <.labeled_definition title="Number of Sentinel Instances" contents={@num_sentinel_instances} />
+        <:actions>
+          <.button type="submit" phx-disable-with="Saving…">
             Save
           </.button>
-        </div>
-      </.form>
+        </:actions>
+      </.simple_form>
     </div>
     """
   end

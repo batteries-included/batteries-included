@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.Redis do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import CommonUI.Table
 
   alias ControlServer.Redis
 
@@ -49,35 +48,22 @@ defmodule ControlServerWeb.Live.Redis do
       <:left_menu>
         <.data_menu active="redis" />
       </:left_menu>
-      <.section_title>
-        Redis Clusters
-      </.section_title>
       <.body_section>
-        <.table>
-          <.thead>
-            <.tr>
-              <.th>Name</.th>
-              <.th>Action</.th>
-            </.tr>
-          </.thead>
-          <.tbody id="failover_clusters">
-            <%= for failover_cluster <- @failover_clusters do %>
-              <.tr id={"failover_cluster-#{failover_cluster.id}"}>
-                <.td><%= failover_cluster.name %></.td>
-                <.td>
-                  <.link to={show_url(failover_cluster)} class="mt-8 text-lg font-medium text-left">
-                    Show Cluster
-                  </.link>
-                </.td>
-              </.tr>
-            <% end %>
-          </.tbody>
+        <.table id="redis-display-table" rows={@failover_clusters}>
+          <:col :let={redis} label="Name"><%= redis.name %></:col>
+          <:col :let={redis} label="Instances"><%= redis.num_redis_instances %></:col>
+          <:col :let={redis} label="Sentinel Instances"><%= redis.num_sentinel_instances %></:col>
+          <:action :let={redis}>
+            <.link navigate={show_url(redis)} type="styled">
+              Show Redis Cluster
+            </.link>
+          </:action>
         </.table>
       </.body_section>
 
-      <.h3>Actions</.h3>
+      <.h2>Actions</.h2>
       <.body_section>
-        <.link to={new_url()}>
+        <.link navigate={new_url()}>
           <.button>
             New Cluster
           </.button>

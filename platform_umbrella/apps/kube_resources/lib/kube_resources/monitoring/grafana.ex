@@ -20,7 +20,7 @@ defmodule KubeResources.Grafana do
 
   def view_url(_), do: "/services/monitoring/grafana"
 
-  def url, do: "//#{Hosts.control_host()}#{@url_base}"
+  def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
   def virtual_service(config) do
     namespace = Settings.namespace(config)

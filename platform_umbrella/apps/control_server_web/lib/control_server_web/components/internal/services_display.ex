@@ -1,55 +1,25 @@
 defmodule ControlServerWeb.ServicesDisplay do
   use ControlServerWeb, :component
 
-  import CommonUI.Table
   import ControlServerWeb.ResourceURL
+  import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]
+
+  attr :services, :list, required: true
 
   def services_display(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>
-            Namespace
-          </.th>
-          <.th>
-            Name
-          </.th>
-          <.th>
-            Cluster IP
-          </.th>
-          <.th>
-            Ports
-          </.th>
-        </.tr>
-      </.thead>
-      <.tbody>
-        <%= for service <- @services do %>
-          <.service_row service={service} />
-        <% end %>
-      </.tbody>
-    </.table>
-    """
-  end
+    <.table id="service-display-table" rows={@services}>
+      <:col :let={service} label="Namespace"><%= namespace(service) %></:col>
+      <:col :let={service} label="Name"><%= name(service) %></:col>
+      <:col :let={service} label="Cluster IP"><%= get_in(service, ~w(spec clusterIP)) %></:col>
+      <:col :let={service} label="Ports"><%= ports(service) %></:col>
 
-  defp service_row(assigns) do
-    ~H"""
-    <.tr>
-      <.td>
-        <%= @service["metadata"]["namespace"] %>
-      </.td>
-      <.td>
-        <.link to={resource_show_url(@service)}>
-          <%= @service["metadata"]["name"] %>
+      <:action :let={service}>
+        <.link navigate={resource_show_url(service)} type="styled">
+          Show service
         </.link>
-      </.td>
-      <.td>
-        <%= @service["spec"]["clusterIP"] %>
-      </.td>
-      <.td>
-        <%= ports(@service) %>
-      </.td>
-    </.tr>
+      </:action>
+    </.table>
     """
   end
 

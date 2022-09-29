@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import CommonUI.Table
   import KubeResources.KnativeServing, only: [url: 1]
 
   alias ControlServer.Knative
@@ -59,35 +58,24 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
         Knative Services
       </.section_title>
       <.body_section>
-        <.table>
-          <.thead>
-            <.tr>
-              <.th>Name</.th>
-              <.th>Link</.th>
-              <.th>Action</.th>
-            </.tr>
-          </.thead>
-          <.tbody id="services">
-            <%= for service <- @services do %>
-              <.tr id={"service-#{service.id}"}>
-                <.td><%= service.name %></.td>
-                <.td>
-                  <.link to={url(service)} link_type="a">
-                    Open
-                  </.link>
-                </.td>
-                <.td>
-                  <.link to={show_url(service)}>Show Service</.link>
-                </.td>
-              </.tr>
-            <% end %>
-          </.tbody>
+        <.table id="knative-display-table" rows={@services}>
+          <:col :let={service} label="Name"><%= service.name %></:col>
+          <:col :let={service} label="Link">
+            <.link href={url(service)} type="external">
+              <%= url(service) %>
+            </.link>
+          </:col>
+          <:action :let={service}>
+            <.link navigate={show_url(service)}>Show Service</.link>
+          </:action>
         </.table>
 
         <div class="ml-8 mt-15">
-          <.button type="primary" variant="shadow" to={service_new_url()} link_type="live_patch">
-            New Knative Service
-          </.button>
+          <.link navigate={service_new_url()}>
+            <.button type="primary">
+              New Knative Service
+            </.button>
+          </.link>
         </div>
       </.body_section>
     </.layout>

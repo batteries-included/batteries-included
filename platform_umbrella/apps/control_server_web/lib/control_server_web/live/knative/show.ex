@@ -76,15 +76,15 @@ defmodule ControlServerWeb.Live.KnativeShow do
       </:left_menu>
       <.service_display service={@k8_service} />
       <.revisions_display revisions={@k8_revisions} />
-      <.h3>Actions</.h3>
+      <.h2>Actions</.h2>
       <.body_section>
-        <.link to={edit_url(@service)}>
+        <.link navigate={edit_url(@service)}>
           <.button>
             Edit Service
           </.button>
         </.link>
 
-        <.button phx_click="delete" color={:warning} data={[confirm: "Are you sure?"]}>
+        <.button phx-click="delete" data-confirm="Are you sure?">
           Delete Service
         </.button>
       </.body_section>

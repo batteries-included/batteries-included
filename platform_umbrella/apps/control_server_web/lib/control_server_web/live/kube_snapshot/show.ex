@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import CommonUI.Table
 
   alias ControlServer.SnapshotApply
   alias Timex
@@ -50,7 +49,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
       <:left_menu>
         <.magic_menu active="snapshots" />
       </:left_menu>
-      <.section_title>Deploy Results</.section_title>
       <.body_section>
         <dl class="">
           <.definition_row wrapper_class="pb-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -90,23 +88,11 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
         </dl>
       </.body_section>
       <.section_title>Path Results</.section_title>
-      <.body_section>
-        <.table>
-          <%= for resource_path <- @snapshot.resource_paths do %>
-            <.tr>
-              <.td>
-                <%= resource_path.path %>
-              </.td>
-              <.td>
-                <%= resource_path.is_success %>
-              </.td>
-              <.td>
-                <%= resource_path.apply_result %>
-              </.td>
-            </.tr>
-          <% end %>
-        </.table>
-      </.body_section>
+      <.table id="resource-paths" rows={@snapshot.resource_paths}>
+        <:col :let={rp} label="Path"><%= rp.path %></:col>
+        <:col :let={rp} label="Successful"><%= rp.is_success %></:col>
+        <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
+      </.table>
     </.layout>
     """
   end

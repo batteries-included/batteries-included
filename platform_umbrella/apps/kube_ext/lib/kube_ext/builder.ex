@@ -101,16 +101,6 @@ defmodule KubeExt.Builder do
     |> put_in(["selector", key], value)
   end
 
-  @spec rewriting_ingress(map()) :: map()
-  def rewriting_ingress(resouce) do
-    resouce
-    |> annotation("nginx.ingress.kubernetes.io/rewrite-target", "/$2")
-    |> annotation("nginx.ingress.kubernetes.io/use-regex", "true")
-    |> update_in(~w(spec rules), fn rules ->
-      Enum.map(rules || [], &add_capture_to_rule/1)
-    end)
-  end
-
   def spec(resource, spec), do: Map.put(resource, "spec", spec)
   def data(resource, data), do: Map.put(resource, "data", data)
   def template(resource, %{} = template), do: Map.put(resource, "template", template)

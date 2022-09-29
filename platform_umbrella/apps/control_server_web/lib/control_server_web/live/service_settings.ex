@@ -32,17 +32,16 @@ defmodule ControlServerWeb.Live.ServiceSettings do
   end
 
   def assign_prefix(socket),
-    do: Phoenix.LiveView.assign(socket, prefix: prefix(socket.assigns.live_action))
+    do: assign(socket, :prefix, prefix(socket.assigns.live_action))
 
   def assign_services(socket) do
     runnable_services = RunnableService.prefix(socket.assigns.prefix)
     service_types = Enum.map(runnable_services, fn rs -> rs.service_type end)
     base_services = Services.from_service_types(service_types)
 
-    Phoenix.LiveView.assign(socket,
-      runnable_services: runnable_services,
-      base_services: base_services
-    )
+    socket
+    |> assign(runnable_services: runnable_services)
+    |> assign(:base_services, base_services)
   end
 
   def prefix(live_action), do: "/#{Atom.to_string(live_action)}"
@@ -113,7 +112,6 @@ defmodule ControlServerWeb.Live.ServiceSettings do
       <:left_menu>
         <.action_menu live_action={@live_action} base_services={@base_services} />
       </:left_menu>
-      <.section_title>Runnable Services</.section_title>
       <.body_section>
         <.services_table runnable_services={@runnable_services} base_services={@base_services} />
       </.body_section>

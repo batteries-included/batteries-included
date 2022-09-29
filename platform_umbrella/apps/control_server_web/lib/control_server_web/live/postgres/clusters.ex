@@ -35,14 +35,13 @@ defmodule ControlServerWeb.Live.PostgresClusters do
       <:left_menu>
         <.data_menu active="postgres" />
       </:left_menu>
-      <.h3>Postgres Clusters</.h3>
       <.body_section>
         <.pg_cluster_display clusters={@clusters} />
       </.body_section>
 
-      <.h3>Actions</.h3>
+      <.h2>Actions</.h2>
       <.body_section>
-        <.link to={new_url()}>
+        <.link navigate={new_url()}>
           <.button>
             New Cluster
           </.button>

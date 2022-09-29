@@ -12,7 +12,6 @@ defmodule CommonUI.MixProject do
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      compilers: [:phoenix] ++ Mix.compilers(),
       deps: deps(),
       aliases: aliases()
     ]
@@ -33,8 +32,10 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix_live_view, "~> 0.17.10"},
-      {:petal_components, "~> 0.17.0"}
+      {:logger_json, "~> 5.1"},
+      {:phoenix_live_view, "~> 0.18.1"},
+      {:heroicons, "~> 0.5"},
+      {:gettext, "~> 0.19"}
     ]
   end
 

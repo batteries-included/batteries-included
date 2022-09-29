@@ -1,11 +1,11 @@
 defmodule CommonUI.Layout do
   use Phoenix.Component
-
-  use PetalComponents
+  import Phoenix.Component, except: [link: 1]
+  import CommonUI.Link
+  import CommonUI.Typogoraphy
 
   @default_container_class "flex-1 max-w-7xl sm:px-6 lg:px-8 pt-10 pb-20 "
   @iframe_container_class "flex-1 py-0 px-0 w-full h-full "
-  @menu_item_class "pt-1 text-sm font-medium "
 
   defp container_class(:iframe), do: @iframe_container_class
 
@@ -13,22 +13,24 @@ defmodule CommonUI.Layout do
     @default_container_class
   end
 
+  slot(:inner_block, required: true)
+
   def title(assigns) do
     ~H"""
-    <h2 class="my-auto ml-3 text-2xl font-bold leading-7 text-pink-500 sm:text-3xl sm:truncate">
+    <.h1 class="my-auto ml-3">
       <%= render_slot(@inner_block) %>
-    </h2>
+    </.h1>
     """
   end
 
-  def menu_item(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:base_class, fn -> @menu_item_class end)
-      |> assign_new(:class, fn -> "" end)
+  attr :to, :string, required: true
+  attr :name, :string, default: ""
+  attr :rest, :global, default: %{class: "pt-1 text-sm font-medium"}
+  slot(:inner_block, required: true)
 
+  def menu_item(assigns) do
     ~H"""
-    <.link link_type="live_redirect" to={@to} class={@base_class <> " " <> @class}>
+    <.link navigate={@to} {@rest}>
       <%= render_slot(@inner_block) %>
       <span class="mt-1">
         <%= @name %>
@@ -47,15 +49,15 @@ defmodule CommonUI.Layout do
     >
       <header class="w-full bg-white h-16">
         <div class="flex max-w-7xl h-full">
-          <.link to={@logo_path} class="my-auto mx-4" link_type="live_redirect">
+          <.link navigate={@logo_path} class="my-auto mx-4">
             <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included" />
           </.link>
           <%= if @title do %>
             <%= render_slot(@title) %>
           <% end %>
-          <h1 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">
+          <h2 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">
             Batteries Included
-          </h1>
+          </h2>
           <%= if @user_menu do %>
             <%= render_slot(@user_menu) %>
           <% end %>

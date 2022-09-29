@@ -1,6 +1,8 @@
 defmodule HomeBaseWeb.StripeSubscriptionLive.FormComponent do
   use HomeBaseWeb, :live_component
 
+  import Phoenix.HTML.Form
+
   alias HomeBase.License
 
   @impl true

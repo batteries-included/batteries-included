@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.IFrame do
-  use Phoenix.Component
+  use ControlServerWeb, :component
 
   def iframe(assigns) do
     assigns =

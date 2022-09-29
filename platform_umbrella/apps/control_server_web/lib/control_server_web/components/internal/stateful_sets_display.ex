@@ -1,55 +1,25 @@
 defmodule ControlServerWeb.StatefulSetsDisplay do
   use ControlServerWeb, :component
 
-  import CommonUI.Table
   import ControlServerWeb.ResourceURL
+  import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]
 
   def stateful_sets_display(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>
-            Namespace
-          </.th>
-          <.th>
-            Name
-          </.th>
-          <.th>
-            Replicas
-          </.th>
-          <.th>
-            Available
-          </.th>
-        </.tr>
-      </.thead>
-      <.tbody>
-        <%= for stateful_set <- @stateful_sets do %>
-          <.stateful_set_row stateful_set={stateful_set} />
-        <% end %>
-      </.tbody>
-    </.table>
-    """
-  end
+    <.table id="stateful_set-display-table" rows={@stateful_sets}>
+      <:col :let={stateful_set} label="Namespace"><%= namespace(stateful_set) %></:col>
+      <:col :let={stateful_set} label="Name"><%= name(stateful_set) %></:col>
+      <:col :let={stateful_set} label="Replicas"><%= get_in(stateful_set, ~w(spec replics)) %></:col>
+      <:col :let={stateful_set} label="Available">
+        <%= get_in(stateful_set, ~w(spec availableReplicas)) %>
+      </:col>
 
-  defp stateful_set_row(assigns) do
-    ~H"""
-    <.tr>
-      <.td>
-        <%= @stateful_set["metadata"]["namespace"] %>
-      </.td>
-      <.td>
-        <.link to={resource_show_url(@stateful_set)}>
-          <%= @stateful_set["metadata"]["name"] %>
+      <:action :let={stateful_set}>
+        <.link navigate={resource_show_url(stateful_set)} type="styled">
+          Show Stateful Set
         </.link>
-      </.td>
-      <.td>
-        <%= @stateful_set["spec"]["replicas"] %>
-      </.td>
-      <.td>
-        <%= @stateful_set["status"]["availableReplicas"] %>
-      </.td>
-    </.tr>
+      </:action>
+    </.table>
     """
   end
 end

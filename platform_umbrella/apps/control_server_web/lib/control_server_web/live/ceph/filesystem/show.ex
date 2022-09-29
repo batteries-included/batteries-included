@@ -30,7 +30,6 @@ defmodule ControlServerWeb.Live.CephFilesystemShow do
       <:left_menu>
         <.data_menu active="ceph_filesystem" />
       </:left_menu>
-      <.h3>FileSystem Summary</.h3>
       <.body_section>
         <ul>
           <li>

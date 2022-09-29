@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import CommonUI.Table
 
   alias ControlServer.SnapshotApply
   alias EventCenter.KubeSnapshot, as: SnapshotEventCenter
@@ -33,22 +32,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
     {:noreply, socket}
   end
 
-  defp row(assigns) do
-    ~H"""
-    <.tr>
-      <.td>
-        <%= @snapshot.inserted_at %>
-      </.td>
-      <.td>
-        <%= @snapshot.status %>
-      </.td>
-      <.td>
-        <.link to={snapshot_path(@snapshot)}>View</.link>
-      </.td>
-    </.tr>
-    """
-  end
-
   defp snapshot_path(snapshot) do
     Routes.kube_snapshot_show_path(ControlServerWeb.Endpoint, :index, snapshot.id)
   end
@@ -63,27 +46,17 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
       <:left_menu>
         <.magic_menu active="snapshots" />
       </:left_menu>
-      <.body_section>
-        <.table>
-          <.thead>
-            <.tr>
-              <.th>
-                Started
-              </.th>
-              <.th>
-                Status
-              </.th>
-            </.tr>
-          </.thead>
-          <%= for snapshot <- @snapshots.entries do %>
-            <.row snapshot={snapshot} />
-          <% end %>
-        </.table>
-      </.body_section>
+      <.table id="kube-snapshot-table" rows={@snapshots.entries}>
+        <:col :let={snapshot} label="Started"><%= snapshot.inserted_at %></:col>
+        <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>
+        <:action :let={snapshot}>
+          <.link navigate={snapshot_path(snapshot)} type="styled">Show Snapshot</.link>
+        </:action>
+      </.table>
 
-      <.h3>Actions</.h3>
+      <.h2>Actions</.h2>
       <.body_section>
-        <.button phx_click="start">
+        <.button phx-click="start">
           Start Deploy
         </.button>
       </.body_section>

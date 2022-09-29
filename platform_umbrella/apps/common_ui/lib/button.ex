@@ -1,66 +1,38 @@
 defmodule CommonUI.Button do
   use Phoenix.Component
-
-  import Phoenix.LiveView.Helpers
-
-  alias PetalComponents.Button
-
-  def button(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:inner_block, fn -> nil end)
-      |> assign_new(:label, fn -> "" end)
-      |> assign_new(:color, fn -> :primary end)
-      |> assign_new(:size, fn -> :responsive end)
-
-    assigns =
-      assigns
-      |> assign(:class, button_classes(assigns))
-      |> assign_new(:extra_assigns, fn ->
-        assigns_to_attributes(assigns, ~w(label color size class inner_block)a)
-      end)
-
-    ~H"""
-    <Button.button classes={@class} {@extra_assigns}>
-      <%= if @inner_block do %>
-        <%= render_slot(@inner_block) %>
-      <% else %>
-        <%= @label %>
-      <% end %>
-    </Button.button>
-    """
-  end
-
-  def button_classes(assigns) do
-    size_class = size_classes(assigns)
-    color_class = color_classes(assigns)
-    user_class = Map.get(assigns, :class, "")
-    "btn #{size_class} #{color_class} #{user_class}"
-  end
-
-  def size_classes(%{size: size}) do
-    case size do
-      :responsive -> "btn-xs sm:btn-sm md:btn-md"
-      :lg -> "btn-lg"
-      :md -> "btn-md"
-      :sm -> "btn-sm"
-      :xs -> "btn-xs"
-    end
-  end
+  import Phoenix.Component, except: [link: 1]
 
   @doc """
-  Get the color for any known variant.
-  These are explicitly enumerated to get css minification to no remove the class names.
+  Renders a button.
+  ## Examples
+
+      <.button>Send!</.button>
+      <.button phx-click="go" class="ml-2">Send!</.button>
   """
-  def color_classes(%{color: color}) do
-    case color do
-      :primary -> "btn-primary"
-      :secondary -> "btn-secondary"
-      :accent -> "btn-accent"
-      :warning -> "btn-warning"
-      :error -> "btn-error"
-      :link -> "btn-link"
-      :ghost -> "btn-ghost"
-    end
+  attr :type, :string, default: nil
+  attr :class, :string, default: nil
+  attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag"
+
+  slot(:inner_block, required: true)
+
+  def button(assigns) do
+    ~H"""
+    <button
+      type={@type}
+      class={[
+        "btn",
+        "border-none",
+        "bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 outline-none",
+        "hover:bg-gradient-to-br",
+        "focus:ring-4 focus:outline-none focus:ring-pink-300",
+        "text-white text-center",
+        "px-7",
+        @class
+      ]}
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </button>
+    """
   end
 end

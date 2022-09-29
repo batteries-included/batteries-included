@@ -1,8 +1,6 @@
 defmodule ControlServerWeb.Router do
   use ControlServerWeb, :router
 
-  import ControlServerWeb.UserAuth
-
   import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
@@ -12,7 +10,6 @@ defmodule ControlServerWeb.Router do
     plug :put_root_layout, {ControlServerWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers, ControlServerWeb.CSP.new()
-    plug :fetch_current_user
     plug LoggerJSON.Plug
   end
 
@@ -104,45 +101,5 @@ defmodule ControlServerWeb.Router do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
     end
-  end
-
-  ## Authentication routes
-  scope "/", ControlServerWeb do
-    pipe_through [:full_layout, :browser]
-
-    get "/users/log_in", UserSessionController, :new
-    post "/users/log_in", UserSessionController, :create
-  end
-
-  scope "/", ControlServerWeb do
-    pipe_through [:full_layout, :browser, :redirect_if_user_is_authenticated]
-
-    get "/users/reset_password", UserResetPasswordController, :new
-    post "/users/reset_password", UserResetPasswordController, :create
-    get "/users/reset_password/:token", UserResetPasswordController, :edit
-    put "/users/reset_password/:token", UserResetPasswordController, :update
-  end
-
-  scope "/", ControlServerWeb do
-    pipe_through [:browser]
-
-    live "/users", Live.UserIndex, :index
-    live "/users/new", Live.UserNew, :index
-
-    delete "/users/log_out", UserSessionController, :delete
-
-    get "/users/confirm", UserConfirmationController, :new
-    post "/users/confirm", UserConfirmationController, :create
-    get "/users/confirm/:token", UserConfirmationController, :edit
-    post "/users/confirm/:token", UserConfirmationController, :update
-  end
-
-  scope "/", ControlServerWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live "/users/:id/show", Live.UserShow, :index
-    get "/users/settings", UserSettingsController, :edit
-    put "/users/settings", UserSettingsController, :update
-    get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
   end
 end

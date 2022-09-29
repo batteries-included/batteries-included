@@ -1,13 +1,12 @@
 defmodule ControlServerWeb.Layout do
   use ControlServerWeb, :component
-  use PetalComponents
 
   import CommonUI.Icons.Devtools
 
   alias CommonUI.Layout, as: BaseLayout
   alias ControlServerWeb.Endpoint
 
-  @default_menu_item_class "hover:bg-astral-100 hover:text-pink-500 text-gray-500"
+  @default_menu_item_class "pt-1 text-sm font-medium hover:bg-astral-100 hover:text-pink-500 text-gray-500"
   @default_icon_class "h-6 w-6 text-astral-500 group-hover:text-pink-500"
 
   defp assign_defaults(assigns) do
@@ -17,6 +16,7 @@ defmodule ControlServerWeb.Layout do
     |> assign_new(:container_type, fn -> :default end)
     |> assign_new(:title, fn -> nil end)
     |> assign_new(:user_id, fn -> nil end)
+    |> assign_new(:name, fn -> nil end)
   end
 
   defdelegate title(assigns), to: BaseLayout
@@ -33,17 +33,17 @@ defmodule ControlServerWeb.Layout do
     ~H"""
     <%= case @type do %>
       <% "database" -> %>
-        <Heroicons.Outline.database class={@class} />
+        <Heroicons.circle_stack class={@class} />
       <% "beaker" -> %>
-        <Heroicons.Outline.beaker class={@class} />
+        <Heroicons.beaker class={@class} />
       <% "chart_bar" -> %>
-        <Heroicons.Outline.chart_bar class={@class} />
+        <Heroicons.chart_bar class={@class} />
       <% "globe_alt" -> %>
-        <Heroicons.Outline.globe_alt class={@class} />
+        <Heroicons.globe_alt class={@class} />
       <% "lock_closed" -> %>
-        <Heroicons.Outline.lock_closed class={@class} />
+        <Heroicons.lock_closed class={@class} />
       <% "sparkles" -> %>
-        <Heroicons.Outline.sparkles class={@class} />
+        <Heroicons.sparkles class={@class} />
       <% "devtools" -> %>
         <.devtools_icon class={@class} />
     <% end %>
@@ -65,30 +65,7 @@ defmodule ControlServerWeb.Layout do
 
     ~H"""
     <BaseLayout.layout bg_class="bg-white" container_type={@container_type} title={@title}>
-      <:user_menu>
-        <%= if @user_id do %>
-          <div class="dropdown dropdown-end mt-2">
-            <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-              <div class="w-10 rounded-full">
-                <img src={"https://robohash.org/#{@user_id}?size=80x80"} />
-              </div>
-            </label>
-            <ul
-              tabindex="0"
-              class="mt-4 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
-            >
-              <li>
-                <.link to={Routes.user_settings_path(Endpoint, :edit)}>Settings</.link>
-              </li>
-              <li>
-                <.link to={Routes.user_session_path(Endpoint, :delete)} method={:delete}>
-                  Logout
-                </.link>
-              </li>
-            </ul>
-          </div>
-        <% end %>
-      </:user_menu>
+      <:user_menu></:user_menu>
       <:main_menu>
         <.menu_item to={Routes.data_home_path(Endpoint, :index)} name="Data" icon="database" />
         <.menu_item

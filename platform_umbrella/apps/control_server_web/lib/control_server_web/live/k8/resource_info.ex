@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   import ControlServerWeb.LeftMenuLayout
   import CommonUI.Stats
-  import CommonUI.Table
+  import ControlServerWeb.ConditionsDisplay
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeExt.KubeState
@@ -50,25 +50,9 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     ~H"""
     <.section_title>Labels</.section_title>
     <.body_section>
-      <.table>
-        <.thead>
-          <.tr>
-            <.th>Label</.th>
-            <.th>Value</.th>
-          </.tr>
-        </.thead>
-        <.tbody>
-          <%= for {key, value} <- Resource.labels(@resource) do %>
-            <.tr>
-              <.td>
-                <%= key %>
-              </.td>
-              <.td>
-                <%= value %>
-              </.td>
-            </.tr>
-          <% end %>
-        </.tbody>
+      <.table id="labels-table" rows={Resource.labels(@resource)}>
+        <:col :let={{key, _value}} label="Key"><%= key %></:col>
+        <:col :let={{_key, value}} label="Value"><%= value %></:col>
       </.table>
     </.body_section>
     """
@@ -81,7 +65,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     ~H"""
     <.body_section>
       <%= for cs <- @container_statuses do %>
-        <.h4><%= Map.get(cs, "name", "") %></.h4>
+        <h4><%= Map.get(cs, "name", "") %></h4>
         <div class="grid grid-cols-2 gap-4">
           <div>Image</div>
           <div><%= Map.get(cs, "image", "") %></div>
@@ -99,41 +83,13 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     """
   end
 
-  defp get_condition_time(condition),
-    do: Map.get(condition, "lastTransitionTime", Map.get(condition, "lastUpdateTime", ""))
-
   defp conditions(assigns) do
-    conds = assigns.status |> Map.get("conditions", []) |> Enum.sort_by(&get_condition_time/1)
+    conds = Map.get(assigns.status, "conditions", [])
     assigns = assign(assigns, :conditions, conds)
 
     ~H"""
     <.body_section>
-      <.table>
-        <.thead>
-          <.tr>
-            <.th>Time</.th>
-            <.th>Message</.th>
-            <.th>Type</.th>
-          </.tr>
-        </.thead>
-        <.tbody>
-          <%= for condition <- @conditions do %>
-            <.tr>
-              <.td>
-                <%= get_condition_time(condition) %>
-              </.td>
-
-              <.td>
-                <%= Map.get(condition, "message", "") %>
-              </.td>
-
-              <.td>
-                <%= Map.get(condition, "type", "") %>
-              </.td>
-            </.tr>
-          <% end %>
-        </.tbody>
-      </.table>
+      <.conditions_display conditions={@conditions} />
     </.body_section>
     """
   end
@@ -146,7 +102,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
     ~H"""
     <.body_section>
-      <.h4>Selector</.h4>
+      <h4>Selector</h4>
       <div class="grid grid-cols-4 gap-4">
         <%= for {key, value} <- @selector do %>
           <div class="font-mono font-semibold"><%= key %></div>
@@ -154,37 +110,12 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <% end %>
       </div>
 
-      <.h4>Ports</.h4>
-      <.table>
-        <.thead>
-          <.tr>
-            <.th>Name</.th>
-            <.th>Port</.th>
-            <.th>Target Port</.th>
-            <.th>Protocol</.th>
-          </.tr>
-        </.thead>
-        <.tbody>
-          <%= for port <- @ports do %>
-            <.tr>
-              <.td>
-                <%= Map.get(port, "name", "") %>
-              </.td>
-
-              <.td>
-                <%= Map.get(port, "port", "") %>
-              </.td>
-
-              <.td>
-                <%= Map.get(port, "targetPort", "") %>
-              </.td>
-
-              <.td>
-                <%= Map.get(port, "protocol", "") %>
-              </.td>
-            </.tr>
-          <% end %>
-        </.tbody>
+      <h4>Ports</h4>
+      <.table id="ports-table" rows={@ports}>
+        <:col :let={port} label="Name"><%= Map.get(port, "name", "") %></:col>
+        <:col :let={port} label="Port"><%= Map.get(port, "port", "") %></:col>
+        <:col :let={port} label="Target Port"><%= Map.get(port, "targetPort", "") %></:col>
+        <:col :let={port} label="Protocol"><%= Map.get(port, "protocol", "") %></:col>
       </.table>
     </.body_section>
     """
@@ -259,7 +190,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     <.section_title>Messages</.section_title>
     <.conditions status={@status} />
     <.section_title>Status</.section_title>
-    <.deployment_status status={status} />
+    <.deployment_status status={@status} />
     """
   end
 
@@ -269,7 +200,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
     ~H"""
     <.section_title>Status</.section_title>
-    <.stateful_set_status status={status} />
+    <.stateful_set_status status={@status} />
     """
   end
 

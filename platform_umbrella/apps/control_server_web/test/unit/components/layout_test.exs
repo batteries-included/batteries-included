@@ -1,6 +1,8 @@
 defmodule ControlServerWeb.LayoutTest do
   use ControlServerWeb.ConnCase
 
+  import Phoenix.Component, except: [link: 1]
+  import Phoenix.LiveViewTest
   import ControlServerWeb.Layout
 
   test "Layout can render iframe" do

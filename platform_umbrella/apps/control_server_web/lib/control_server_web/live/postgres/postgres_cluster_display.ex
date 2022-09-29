@@ -1,53 +1,19 @@
 defmodule ControlServerWeb.PostgresClusterDisplay do
-  use Phoenix.Component
-  use CommonUI
-  import CommonUI.Table
-  import PetalComponents.Link
+  use ControlServerWeb, :component
 
   alias ControlServerWeb.Router.Helpers, as: Routes
 
   def pg_cluster_display(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>
-            Name
-          </.th>
-          <.th>
-            Cluster Type
-          </.th>
-          <.th>
-            Actions
-          </.th>
-        </.tr>
-      </.thead>
-      <tbody>
-        <%= for {cluster, idx} <- Enum.with_index(@clusters) do %>
-          <.cluster_row cluster={cluster} idx={idx} />
-        <% end %>
-      </tbody>
+    <.table id="pg-cluster-table" rows={@clusters}>
+      <:col :let={pg} label="Name"><%= pg.name %></:col>
+      <:col :let={pg} label="Type"><%= pg.type %></:col>
+      <:action :let={pg}>
+        <.link navigate={show_url(pg)} type="styled">
+          Show Postgres
+        </.link>
+      </:action>
     </.table>
-    """
-  end
-
-  defp cluster_row(assigns) do
-    ~H"""
-    <.tr>
-      <.td>
-        <%= @cluster.name %>
-      </.td>
-      <.td>
-        <%= @cluster.type %>
-      </.td>
-      <.td>
-        <span>
-          <.link to={show_url(@cluster)} class="mt-8 text-lg font-medium text-left">
-            Show Cluster
-          </.link>
-        </span>
-      </.td>
-    </.tr>
     """
   end
 

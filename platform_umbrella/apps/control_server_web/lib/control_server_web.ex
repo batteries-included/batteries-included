@@ -35,7 +35,7 @@ defmodule ControlServerWeb do
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
-        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
 
       # Include shared imports and aliases for views
       unquote(view_helpers())
@@ -62,6 +62,7 @@ defmodule ControlServerWeb do
   def component do
     quote do
       use Phoenix.Component
+
       unquote(view_helpers())
     end
   end
@@ -86,38 +87,22 @@ defmodule ControlServerWeb do
   defp view_helpers do
     quote do
       # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
+      import Phoenix.HTML
 
       # Import LiveView helpers (live_render, live_component, live_patch, etc)
       import Phoenix.LiveView.Helpers
-      import ControlServerWeb.LiveHelpers
 
-      alias PetalComponents.Heroicons
-
-      import PetalComponents.{
-        Alert,
-        Badge,
-        Container,
-        Dropdown,
-        Form,
-        Loading,
-        Typography,
-        Avatar,
-        Progress,
-        Breadcrumbs,
-        Pagination,
-        Link,
-        Tabs,
-        Card
-      }
-
-      # Our common UI
-      use CommonUI
+      alias Phoenix.LiveView.JS
 
       # Import basic rendering functionality (render, render_layout, etc)
+
+      # Our common UI
+      import Phoenix.Component, except: [link: 1]
       import Phoenix.View
 
-      import ControlServerWeb.ErrorHelpers
+      use CommonUI
+      alias Heroicons
+
       import ControlServerWeb.Gettext
       alias ControlServerWeb.Router.Helpers, as: Routes
     end

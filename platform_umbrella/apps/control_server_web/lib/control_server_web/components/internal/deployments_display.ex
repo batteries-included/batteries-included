@@ -1,55 +1,25 @@
 defmodule ControlServerWeb.DeploymentsDisplay do
   use ControlServerWeb, :component
 
-  import CommonUI.Table
   import ControlServerWeb.ResourceURL
+  import K8s.Resource.FieldAccessors
 
   def deployments_display(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>
-            Namespace
-          </.th>
-          <.th>
-            Name
-          </.th>
-          <.th>
-            Replicas
-          </.th>
-          <.th>
-            Available
-          </.th>
-        </.tr>
-      </.thead>
-      <.tbody>
-        <%= for deployment <- @deployments do %>
-          <.deployment_row deployment={deployment} />
-        <% end %>
-      </.tbody>
-    </.table>
-    """
-  end
+    <.table id="deployment-display-table" rows={@deployments}>
+      <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>
+      <:col :let={deployment} label="Name"><%= name(deployment) %></:col>
+      <:col :let={deployment} label="Replicas"><%= get_in(deployment, ~w(spec replicas)) %></:col>
+      <:col :let={deployment} label="Available">
+        <%= get_in(deployment, ~w(spec availableReplics)) %>
+      </:col>
 
-  defp deployment_row(assigns) do
-    ~H"""
-    <.tr>
-      <.td>
-        <%= @deployment["metadata"]["namespace"] %>
-      </.td>
-      <.td>
-        <.link to={resource_show_url(@deployment)}>
-          <%= @deployment["metadata"]["name"] %>
+      <:action :let={deployment}>
+        <.link navigate={resource_show_url(deployment)} type="styled">
+          Show Deployment
         </.link>
-      </.td>
-      <.td>
-        <%= @deployment["spec"]["replicas"] %>
-      </.td>
-      <.td>
-        <%= @deployment["status"]["availableReplicas"] %>
-      </.td>
-    </.tr>
+      </:action>
+    </.table>
     """
   end
 end

@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.CephClusterShow do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import CommonUI.Table
 
   alias ControlServer.Rook
 
@@ -23,29 +22,9 @@ defmodule ControlServerWeb.Live.CephClusterShow do
 
   defp nodes_list(assigns) do
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>
-            Name
-          </.th>
-          <.th>
-            Device Filter
-          </.th>
-        </.tr>
-      </.thead>
-      <.tbody>
-        <%= for node <- @nodes do %>
-          <.tr>
-            <.td>
-              <%= node.name %>
-            </.td>
-            <.td>
-              <%= node.device_filter %>
-            </.td>
-          </.tr>
-        <% end %>
-      </.tbody>
+    <.table id="assigned-nodes-table" rows={@nodes}>
+      <:col :let={node} label="Name"><%= node.name %></:col>
+      <:col :let={node} label="Device Filter"><%= node.device_filter %></:col>
     </.table>
     """
   end
@@ -60,7 +39,6 @@ defmodule ControlServerWeb.Live.CephClusterShow do
       <:left_menu>
         <.data_menu active="ceph_cluster" />
       </:left_menu>
-      <.h3>Cluster Summary</.h3>
       <.body_section>
         <ul>
           <li>
@@ -85,7 +63,7 @@ defmodule ControlServerWeb.Live.CephClusterShow do
         </ul>
       </.body_section>
 
-      <.h3>Nodes</.h3>
+      <.section_title>Nodes</.section_title>
       <.body_section>
         <.nodes_list nodes={@ceph_cluster.nodes} />
       </.body_section>

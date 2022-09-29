@@ -39,7 +39,7 @@ defmodule KubeResources.Notebooks do
   def view_url(_, %JupyterLabNotebook{} = notebook), do: "/services/ml/notebooks/#{notebook.id}"
 
   def url(%JupyterLabNotebook{} = notebook),
-    do: "//#{Hosts.control_host()}#{base_url(notebook)}"
+    do: "http://#{Hosts.control_host()}#{base_url(notebook)}"
 
   def base_url(%JupyterLabNotebook{} = notebook), do: "#{@url_base}#{notebook.name}"
 

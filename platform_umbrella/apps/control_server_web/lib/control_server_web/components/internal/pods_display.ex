@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.PodsDisplay do
   use ControlServerWeb, :component
 
-  import CommonUI.Table
   import ControlServerWeb.ResourceURL
+  import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]
 
-  def inflate_pods(%{pods: pods} = _assigns) do
+  defp inflate_pods(%{pods: pods} = _assigns) do
     pods
     |> Enum.map(&KubeExt.Pods.summarize/1)
     |> Enum.sort_by(
@@ -22,54 +22,19 @@ defmodule ControlServerWeb.PodsDisplay do
     assigns = assign_new(assigns, :inflated_pods, fn -> inflate_pods(assigns) end)
 
     ~H"""
-    <.table>
-      <.thead>
-        <.tr>
-          <.th>
-            Namespace
-          </.th>
-          <.th>
-            Name
-          </.th>
-          <.th>
-            Status
-          </.th>
-          <.th>Restarts</.th>
-          <.th>
-            Age
-          </.th>
-        </.tr>
-      </.thead>
-      <.tbody>
-        <%= for pod <- @inflated_pods do %>
-          <.pod_row pod={pod} />
-        <% end %>
-      </.tbody>
-    </.table>
-    """
-  end
+    <.table id="pod-display-table" rows={@inflated_pods}>
+      <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
+      <:col :let={pod} label="Name"><%= name(pod) %></:col>
+      <:col :let={pod} label="Status"><%= get_in(pod, ~w(status phase)) %></:col>
+      <:col :let={pod} label="Restarts"><%= get_in(pod, ~w(summary restartCount)) %></:col>
+      <:col :let={pod} label="Age"><%= get_in(pod, ~w(summary fromStart)) %></:col>
 
-  defp pod_row(assigns) do
-    ~H"""
-    <.tr>
-      <.td>
-        <%= @pod["metadata"]["namespace"] %>
-      </.td>
-      <.td>
-        <.link to={resource_show_url(@pod)}>
-          <%= @pod["metadata"]["name"] %>
+      <:action :let={pod}>
+        <.link navigate={resource_show_url(pod)} type="styled">
+          Show Pod
         </.link>
-      </.td>
-      <.td>
-        <%= @pod["status"]["phase"] %>
-      </.td>
-      <.td>
-        <%= @pod["summary"]["restartCount"] %>
-      </.td>
-      <.td>
-        <%= @pod["summary"]["fromStart"] %>
-      </.td>
-    </.tr>
+      </:action>
+    </.table>
     """
   end
 end

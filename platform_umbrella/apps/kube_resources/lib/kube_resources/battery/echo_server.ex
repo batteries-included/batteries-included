@@ -14,16 +14,6 @@ defmodule KubeResources.EchoServer do
     }
   end
 
-  def ingress(config) do
-    namespace = BatterySettings.namespace(config)
-
-    B.build_resource(:ingress, "/x/echo", "echo", "http")
-    |> B.name("echo")
-    |> B.namespace(namespace)
-    |> B.rewriting_ingress()
-    |> B.app_labels(@app_name)
-  end
-
   def service(config) do
     namespace = BatterySettings.namespace(config)
 

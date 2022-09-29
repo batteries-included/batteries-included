@@ -39,11 +39,11 @@ defmodule HomeBaseWeb.MixProject do
     [
       {:phoenix, "~> 1.6.10"},
       {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_live_view, "~> 0.17.10"},
+      {:phoenix_live_view, "~> 0.18.1"},
       {:floki, "~> 0.33", only: :test},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.6"},
+      {:phoenix_live_dashboard, "~> 0.7"},
       {:telemetry_metrics, "~> 0.6.1"},
       {:telemetry_poller, "~> 1.0"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
@@ -51,7 +51,6 @@ defmodule HomeBaseWeb.MixProject do
       {:home_base, in_umbrella: true},
       # Components
       {:common_ui, in_umbrella: true},
-      {:petal_components, "~> 0.17.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}
     ]

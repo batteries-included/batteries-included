@@ -5,8 +5,7 @@ defmodule CommonUI do
 
   defmacro __using__(_) do
     quote do
-      import CommonUI.Button
-      import CommonUI.LabeledDefiniton
+      import CommonUI.{Button, LabeledDefiniton, Table, Form, Link, Typogoraphy}
     end
   end
 end

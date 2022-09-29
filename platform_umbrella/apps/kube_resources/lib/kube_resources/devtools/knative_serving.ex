@@ -55,8 +55,11 @@ defmodule KubeResources.KnativeServing do
     spec = %{
       "template" => %{
         "metadata" => %{
-          "creationTimestamp" => nil,
-          "annotations" => %{"battery/hash" => KubeExt.Hashing.ignored_value()}
+          "labels" => %{
+            "battery/owner" => service.id,
+            "battery/app" => @app_name,
+            "battery/managed" => "true"
+          }
         },
         "spec" => %{
           "containers" => [
@@ -72,14 +75,15 @@ defmodule KubeResources.KnativeServing do
     B.build_resource(:knative_service)
     |> B.name(service.name)
     |> B.namespace(namespace)
-    |> B.spec(spec)
     |> B.owner_label(service.id)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
   end
 
   def url(%Knative.Service{} = service) do
     # assume the default config for now /shrug
     namespace = DevtoolsSettings.knative_namespace(%{})
-    "//#{service.name}.#{namespace}.#{Hosts.knative()}"
+    "http://#{service.name}.#{namespace}.#{Hosts.knative()}"
   end
 
   @spec materialize(map()) :: map()
