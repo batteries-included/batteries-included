@@ -21,14 +21,20 @@ defmodule ControlServer.Release do
     load_app()
     Logger.info("Starting Seed")
 
-    ControlServer.Services.activate_prod()
+    Enum.each(
+      KubeRawResources.BatteryConfigs.prod_batteries(),
+      &ControlServer.Batteries.Installer.install!/1
+    )
   end
 
   def seed_dev do
     load_app()
     Logger.info("Starting Seed for DEVELOPMENT env")
 
-    ControlServer.Services.activate_dev()
+    Enum.each(
+      KubeRawResources.BatteryConfigs.dev_batteries(),
+      &ControlServer.Batteries.Installer.install!/1
+    )
   end
 
   def rollback(repo, version) do

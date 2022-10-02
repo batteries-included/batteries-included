@@ -1,8 +1,8 @@
 defmodule KubeResources.GrafanaDashboards do
   alias KubeExt.Builder, as: B
 
-  alias ControlServer.Services
-  alias ControlServer.Services.BaseService
+  alias ControlServer.Batteries
+  alias ControlServer.Batteries.SystemBattery
   alias K8s.Resource
   alias KubeResources.GrafanaDashboardClient
   alias KubeResources.MonitoringSettings
@@ -11,11 +11,11 @@ defmodule KubeResources.GrafanaDashboards do
   @app_name "grafana"
 
   def dashboards(config) do
-    Services.all_including_config()
-    |> Enum.map(fn %BaseService{} = bs ->
+    Batteries.list_system_batteries()
+    |> Enum.map(fn %SystemBattery{} = battery ->
       config
-      |> dashboards(bs.service_type)
-      |> Enum.map(fn {path, r} -> {path, B.owner_label(r, bs.id)} end)
+      |> dashboards(battery.type)
+      |> Enum.map(fn {path, r} -> {path, B.owner_label(r, battery.id)} end)
       |> Enum.into(%{})
     end)
     |> Enum.reduce(%{}, &Map.merge/2)

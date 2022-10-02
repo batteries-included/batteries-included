@@ -7,13 +7,6 @@ defmodule ControlServer.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: ControlServer.Repo
 
-  def base_service_factory do
-    %ControlServer.Services.BaseService{
-      root_path: sequence(:root_path, &"/service-#{&1}"),
-      service_type: sequence(:service_type, [:prometheus, :cert_manager, :gitea])
-    }
-  end
-
   def kube_notebook_factory do
     %ControlServer.Notebooks.JupyterLabNotebook{}
   end

@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.CephClusterNew do
 
   alias ControlServer.Rook
   alias ControlServer.Rook.CephCluster
-  alias ControlServer.Services.RunnableService
+  alias ControlServer.Batteries.Installer
   alias ControlServerWeb.Live.CephClusterFormComponent
 
   require Logger
@@ -46,7 +46,7 @@ defmodule ControlServerWeb.Live.CephClusterNew do
   def handle_info({"ceph_cluster:save", %{"ceph_cluster" => ceph_cluster}}, socket) do
     new_path = Routes.ceph_cluster_show_path(socket, :show, ceph_cluster.id)
     Logger.debug("new_cluster = #{inspect(ceph_cluster)} new_path = #{new_path}")
-    RunnableService.activate!(:rook)
+    Installer.install!(:rook)
 
     {:noreply, push_redirect(socket, to: new_path)}
   end

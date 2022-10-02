@@ -11,7 +11,7 @@ defmodule KubeRawResources.ConfigGenerator do
   def materialize(:database_internal),
     do: Database.materialize(%{"bootstrap_clusters" => [Battery.control_cluster()]})
 
-  def materialize(:battery), do: Battery.materialize(%{})
+  def materialize(:battery_core), do: Battery.materialize(%{})
   def materialize(:control_server), do: ControlServerResources.materialize(%{})
   def materialize(:istio), do: IstioBase.materialize(%{})
   def materialize(:istio_istiod), do: IstioIstiod.materialize(%{})

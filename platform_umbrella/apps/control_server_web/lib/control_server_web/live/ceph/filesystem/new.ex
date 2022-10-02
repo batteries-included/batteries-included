@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
 
   alias ControlServer.Rook
   alias ControlServer.Rook.CephFilesystem
-  alias ControlServer.Services.RunnableService
+  alias ControlServer.Batteries.Installer
   alias ControlServerWeb.Live.CephFilesystemFormComponent
 
   require Logger
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
   def handle_info({"ceph_filesystem:save", %{"ceph_filesystem" => ceph_filesystem}}, socket) do
     new_path = Routes.ceph_filesystem_show_path(socket, :show, ceph_filesystem.id)
     Logger.debug("new filesystem = #{inspect(ceph_filesystem)} new_path = #{new_path}")
-    RunnableService.activate!(:rook)
+    Installer.install!(:rook)
 
     {:noreply, push_redirect(socket, to: new_path)}
   end

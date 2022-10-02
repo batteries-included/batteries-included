@@ -12,7 +12,6 @@ defmodule ControlServerWeb.MixProject do
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       test_paths: test_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -43,7 +42,7 @@ defmodule ControlServerWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.10"},
+      {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_view, "~> 0.18.1"},

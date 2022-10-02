@@ -1,6 +1,6 @@
 defmodule KubeResources.DevtoolsSettings do
   @moduledoc """
-  Module around turning BaseService json config into usable settings.
+  Module around turning json config into usable settings.
   """
 
   import KubeExt.MapSettings

@@ -2,7 +2,6 @@ defmodule KubeServices.SnapshotApply.Steps do
   import K8s.Resource.FieldAccessors
 
   alias ControlServer.Repo
-  alias ControlServer.Services
   alias ControlServer.SnapshotApply, as: ControlSnapshotApply
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
@@ -121,21 +120,18 @@ defmodule KubeServices.SnapshotApply.Steps do
 
   defp run_resource_paths_transaction(%KubeSnapshot{} = kube_snapshot) do
     Multi.new()
-    |> Multi.run(:base_services, fn repo, _ ->
-      # Get the list of base services inside of the transaction
-      {:ok, Services.all_including_config(repo)}
-    end)
-    |> Multi.merge(fn %{base_services: base_services} ->
+    |> Multi.all(:batteries, ControlServer.Batteries.SystemBattery)
+    |> Multi.merge(fn %{batteries: batteries} ->
       # Then create a huge multi with each insert.
-      resource_paths_multi(base_services, kube_snapshot)
+      resource_paths_multi(batteries, kube_snapshot)
     end)
     # Finally run the transaction.
     |> Repo.transaction()
   end
 
-  defp resource_paths_multi(base_services, kube_snapshot) do
+  defp resource_paths_multi(batteries, kube_snapshot) do
     {_count, multi} =
-      base_services
+      batteries
       |> Enum.map(&ConfigGenerator.materialize/1)
       |> Enum.reduce(%{}, &Map.merge/2)
       |> Enum.map(fn {path, resource} ->

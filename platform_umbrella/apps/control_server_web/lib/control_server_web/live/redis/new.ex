@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.RedisNew do
 
   alias ControlServer.Redis
   alias ControlServer.Redis.FailoverCluster
-  alias ControlServer.Services.RunnableService
+  alias ControlServer.Batteries.Installer
   alias ControlServerWeb.Live.Redis.FormComponent
 
   require Logger
@@ -40,7 +40,7 @@ defmodule ControlServerWeb.Live.RedisNew do
   def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
     new_path = Routes.redis_show_path(socket, :show, failover_cluster.id)
     Logger.debug("new_cluster = #{inspect(failover_cluster)} new_path = #{new_path}")
-    RunnableService.activate!(:redis)
+    Installer.install!(:redis)
 
     {:noreply, push_redirect(socket, to: new_path)}
   end

@@ -41,25 +41,20 @@ defmodule ControlServerWeb.Live.Redis do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:data} active={:redis}>
       <:title>
         <.title>Redis Clusters</.title>
       </:title>
-      <:left_menu>
-        <.data_menu active="redis" />
-      </:left_menu>
-      <.body_section>
-        <.table id="redis-display-table" rows={@failover_clusters}>
-          <:col :let={redis} label="Name"><%= redis.name %></:col>
-          <:col :let={redis} label="Instances"><%= redis.num_redis_instances %></:col>
-          <:col :let={redis} label="Sentinel Instances"><%= redis.num_sentinel_instances %></:col>
-          <:action :let={redis}>
-            <.link navigate={show_url(redis)} type="styled">
-              Show Redis Cluster
-            </.link>
-          </:action>
-        </.table>
-      </.body_section>
+      <.table id="redis-display-table" rows={@failover_clusters}>
+        <:col :let={redis} label="Name"><%= redis.name %></:col>
+        <:col :let={redis} label="Instances"><%= redis.num_redis_instances %></:col>
+        <:col :let={redis} label="Sentinel Instances"><%= redis.num_sentinel_instances %></:col>
+        <:action :let={redis}>
+          <.link navigate={show_url(redis)} type="styled">
+            Show Redis Cluster
+          </.link>
+        </:action>
+      </.table>
 
       <.h2>Actions</.h2>
       <.body_section>

@@ -86,15 +86,15 @@ config :esbuild,
   ]
 
 config :kube_raw_resources,
-  dev_services: [
-    :battery,
+  dev_batteries: [
+    :battery_core,
     :postgres_operator,
     :database_internal,
     :istio,
     :istio_istiod
   ],
-  prod_services: [
-    :battery,
+  prod_batteries: [
+    :battery_core,
     :control_server,
     :istio,
     :istio_istiod,

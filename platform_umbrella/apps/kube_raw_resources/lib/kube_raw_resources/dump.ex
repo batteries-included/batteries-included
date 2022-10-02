@@ -1,5 +1,5 @@
 defmodule KubeRawResources.Dump do
-  alias KubeRawResources.ServiceConfigs
+  alias KubeRawResources.BatteryConfigs
   alias KubeRawResources.ConfigGenerator
 
   require Logger
@@ -41,12 +41,12 @@ defmodule KubeRawResources.Dump do
     |> IO.puts(doc)
   end
 
-  defp dump_services(services, outdir) do
-    services
-    |> Enum.flat_map(fn service_type ->
-      service_type
+  defp dump_batteries(batteries, outdir) do
+    batteries
+    |> Enum.flat_map(fn battery_type ->
+      battery_type
       |> ConfigGenerator.materialize()
-      |> Enum.map(fn {key, value} -> {Path.join(Atom.to_string(service_type), key), value} end)
+      |> Enum.map(fn {key, value} -> {Path.join(Atom.to_string(battery_type), key), value} end)
     end)
     |> Enum.into(%{})
     |> Enum.each(fn
@@ -59,10 +59,10 @@ defmodule KubeRawResources.Dump do
   end
 
   def dump_dev(outdir) do
-    dump_services(ServiceConfigs.dev_services(), outdir)
+    dump_batteries(BatteryConfigs.dev_batteries(), outdir)
   end
 
   def dump_prod(outdir) do
-    dump_services(ServiceConfigs.prod_services(), outdir)
+    dump_batteries(BatteryConfigs.prod_batteries(), outdir)
   end
 end

@@ -1,6 +1,6 @@
 defmodule KubeRawResources.DataSettings do
   @moduledoc """
-  Module for extracting the setting from a map usually a json map from the BaseService ecto
+  Module for extracting the setting from a map usually a json map from the  battery ecto
   """
 
   import KubeExt.MapSettings
@@ -10,7 +10,7 @@ defmodule KubeRawResources.DataSettings do
 
   @pg_operator_image "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2"
 
-  @redis_operator_image "quay.io/spotahome/redis-operator:v1.1.1"
+  @redis_operator_image "quay.io/spotahome/redis-operator:v1.2.1"
 
   @ceph_image "quay.io/ceph/ceph:v17.2.3"
 

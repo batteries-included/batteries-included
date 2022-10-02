@@ -2,98 +2,59 @@ defmodule ControlServerWeb.Layout do
   use ControlServerWeb, :component
 
   import CommonUI.Icons.Devtools
+  import CommonUI.Icons.Network
 
   alias CommonUI.Layout, as: BaseLayout
   alias ControlServerWeb.Endpoint
 
-  @default_menu_item_class "pt-1 text-sm font-medium hover:bg-astral-100 hover:text-pink-500 text-gray-500"
-  @default_icon_class "h-6 w-6 text-astral-500 group-hover:text-pink-500"
-
-  defp assign_defaults(assigns) do
-    assigns
-    |> assign_new(:menu_item_class, fn -> @default_menu_item_class end)
-    |> assign_new(:icon_class, fn -> @default_icon_class end)
-    |> assign_new(:container_type, fn -> :default end)
-    |> assign_new(:title, fn -> nil end)
-    |> assign_new(:user_id, fn -> nil end)
-    |> assign_new(:name, fn -> nil end)
-  end
-
   defdelegate title(assigns), to: BaseLayout
 
-  defp assign_icon_defaults(assigns) do
-    assigns
-    |> assign_new(:class, fn -> @default_icon_class end)
-    |> assign_new(:type, fn -> "database" end)
-  end
+  attr :class, :string,
+    default: "pt-1 text-sm font-medium hover:bg-astral-100 hover:text-pink-500 text-gray-500"
 
-  defp icon(assigns) do
-    assigns = assign_icon_defaults(assigns)
+  attr :navigate, :string, required: true
+  attr :name, :string, required: true
 
-    ~H"""
-    <%= case @type do %>
-      <% "database" -> %>
-        <Heroicons.circle_stack class={@class} />
-      <% "beaker" -> %>
-        <Heroicons.beaker class={@class} />
-      <% "chart_bar" -> %>
-        <Heroicons.chart_bar class={@class} />
-      <% "globe_alt" -> %>
-        <Heroicons.globe_alt class={@class} />
-      <% "lock_closed" -> %>
-        <Heroicons.lock_closed class={@class} />
-      <% "sparkles" -> %>
-        <Heroicons.sparkles class={@class} />
-      <% "devtools" -> %>
-        <.devtools_icon class={@class} />
-    <% end %>
-    """
-  end
+  slot :inner_block
 
   def menu_item(assigns) do
-    assigns = assign_defaults(assigns)
-
     ~H"""
-    <BaseLayout.menu_item to={@to} name={@name} class={@menu_item_class}>
-      <.icon class={@icon_class} type={@icon} />
+    <BaseLayout.menu_item navigate={@navigate} name={@name} class={@class}>
+      <%= render_slot(@inner_block) %>
     </BaseLayout.menu_item>
     """
   end
 
-  def layout(assigns) do
-    assigns = assign_defaults(assigns)
+  attr :icon_class, :string, default: "h-6 w-6 text-astral-500 group-hover:text-pink-500"
+  attr :container_type, :any, default: :default
+  attr :group, :any, default: :magic
 
+  slot :inner_block
+  slot :title
+
+  def layout(assigns) do
     ~H"""
-    <BaseLayout.layout bg_class="bg-white" container_type={@container_type} title={@title}>
-      <:user_menu></:user_menu>
+    <BaseLayout.layout bg_class="bg-white" container_type={@container_type}>
+      <:title :if={@title != nil && @title != []}><%= render_slot(@title) %></:title>
       <:main_menu>
-        <.menu_item to={Routes.data_home_path(Endpoint, :index)} name="Data" icon="database" />
-        <.menu_item
-          to={Routes.jupyter_lab_notebook_index_path(Endpoint, :index)}
-          name="ML"
-          icon="beaker"
-        />
-        <.menu_item
-          to={Routes.service_settings_path(Endpoint, :monitoring)}
-          name="Monitoring"
-          icon="chart_bar"
-        />
-        <.menu_item
-          to={Routes.service_settings_path(Endpoint, :devtools)}
-          name="Devtools"
-          icon="devtools"
-        />
-        <.menu_item
-          to={Routes.service_settings_path(Endpoint, :security)}
-          name="Security"
-          icon="lock_closed"
-        />
-        <.menu_item
-          to={Routes.service_settings_path(Endpoint, :network)}
-          name="Network"
-          icon="globe_alt"
-        />
-        <.menu_item to={Routes.resource_list_path(Endpoint, :pod)} name="Magic" icon="sparkles" />
+        <.menu_item navigate={Routes.group_batteries_path(Endpoint, :data)} name="Data">
+          <Heroicons.circle_stack class={@icon_class} />
+        </.menu_item>
+        <.menu_item navigate={Routes.group_batteries_path(Endpoint, :ml)} name="ML">
+          <Heroicons.beaker class={@icon_class} />
+        </.menu_item>
+        <.menu_item navigate={Routes.group_batteries_path(Endpoint, :monitoring)} name="Monitoring">
+          <Heroicons.chart_bar class={@icon_class} />
+        </.menu_item>
+        <.menu_item navigate={Routes.group_batteries_path(Endpoint, :devtools)} name="Devtools">
+          <.devtools_icon class={@icon_class} />
+        </.menu_item>
+        <.menu_item navigate={Routes.group_batteries_path(Endpoint, :net_sec)} name="Net/Security">
+          <.net_sec_icon class={@icon_class} />
+        </.menu_item>
+        <.menu_item navigate={Routes.resource_list_path(Endpoint, :pod)} name="Magic">
+          <Heroicons.sparkles class={@icon_class} />
+        </.menu_item>
       </:main_menu>
       <%= render_slot(@inner_block) %>
     </BaseLayout.layout>

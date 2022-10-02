@@ -7,7 +7,7 @@ defmodule CommonUI.Icons.Monitoring do
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       viewBox="0 0 24 24"
-      class={"h-6 w-6 " <> @class}
+      class={["h-6 w-6 ", @class]}
       stroke="currentColor"
       fill="currentColor"
     >
@@ -22,7 +22,7 @@ defmodule CommonUI.Icons.Monitoring do
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       viewBox="-4.98 -1.48 441.22 435.47"
-      class={"h-6 w-6 " <> @class}
+      class={["h-6 w-6 ", @class]}
       stroke="currentColor"
       fill="currentColor"
     >
@@ -39,7 +39,7 @@ defmodule CommonUI.Icons.Monitoring do
       viewBox="0 0 24 24"
       stroke="currentColor"
       stroke-width="2"
-      class={"h-6 w-6 " <> @class}
+      class={["h-6 w-6 ", @class]}
     >
       <path
         stroke-linecap="round"

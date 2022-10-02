@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
   import ControlServerWeb.Live.JupyterLabNotebook.Display
 
   alias ControlServer.Notebooks
-  alias ControlServer.Services.RunnableService
+  alias ControlServer.Batteries.Installer
 
   @impl true
   def mount(_params, _session, socket) do
@@ -31,7 +31,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
   def handle_event("start_notebook", _, socket) do
     with {:ok, _} <-
            Notebooks.create_jupyter_lab_notebook(%{}) do
-      RunnableService.activate!(:notebooks)
+      Installer.install!(:notebooks)
       {:noreply, assign(socket, :notebooks, notebooks())}
     end
   end
@@ -43,20 +43,14 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:ml} active={:notebooks}>
       <:title>
         <.title>Notebooks</.title>
       </:title>
-      <:left_menu>
-        <.ml_menu active="notebooks" />
-      </:left_menu>
-
-      <.body_section>
-        <.notebook_display notebooks={@notebooks} />
-      </.body_section>
-      <.section_title>
+      <.notebook_display notebooks={@notebooks} />
+      <.h2>
         Actions
-      </.section_title>
+      </.h2>
       <.body_section>
         <.button type="primary" phx-click="start_notebook">
           Start New Notebook

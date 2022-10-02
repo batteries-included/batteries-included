@@ -74,13 +74,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:data} active={:postgres_operator}>
       <:title>
         <.title><%= @page_title %></.title>
       </:title>
-      <:left_menu>
-        <.data_menu active="postgres" />
-      </:left_menu>
       <.stats>
         <.stat>
           <.stat_title>Name</.stat_title>

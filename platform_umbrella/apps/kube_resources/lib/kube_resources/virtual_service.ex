@@ -1,7 +1,8 @@
 defmodule KubeResources.VirtualService do
   alias KubeExt.Builder, as: B
 
-  alias ControlServer.Services
+  alias ControlServer.Batteries
+  alias ControlServer.Batteries.SystemBattery
 
   alias KubeResources.ControlServerResources
   alias KubeResources.Gitea
@@ -14,12 +15,12 @@ defmodule KubeResources.VirtualService do
   alias KubeResources.Alertmanager
 
   def materialize(_config) do
-    Services.all_including_config()
-    |> Enum.map(fn bs ->
-      {"/svcs/#{bs.id}/#{bs.service_type}",
-       bs.service_type
-       |> virtual_service(bs.config)
-       |> add_owner(bs)}
+    Batteries.list_system_batteries()
+    |> Enum.map(fn battery ->
+      {"/svcs/#{battery.id}/#{battery.type}",
+       battery.type
+       |> virtual_service(battery.config)
+       |> add_owner(battery)}
     end)
     |> Enum.reject(fn {_path, virtual_services} ->
       virtual_services == nil || Enum.empty?(virtual_services)
@@ -27,12 +28,12 @@ defmodule KubeResources.VirtualService do
     |> Enum.into(%{})
   end
 
-  def add_owner(resources, base_service) when is_list(resources) do
-    Enum.map(resources, fn r -> add_owner(r, base_service) end)
+  def add_owner(resources, %SystemBattery{} = battery) when is_list(resources) do
+    Enum.map(resources, fn r -> add_owner(r, battery) end)
   end
 
-  def add_owner(resource, base_service) when is_map(resource) do
-    B.owner_label(resource, base_service.id)
+  def add_owner(resource, %SystemBattery{} = battery) when is_map(resource) do
+    B.owner_label(resource, battery.id)
   end
 
   def add_owner(resource, _), do: resource

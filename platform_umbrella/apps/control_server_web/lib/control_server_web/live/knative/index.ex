@@ -5,8 +5,6 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   import KubeResources.KnativeServing, only: [url: 1]
 
   alias ControlServer.Knative
-  alias ControlServer.Services.RunnableService
-  alias ControlServer.Services, as: ControlServices
 
   @impl true
   def mount(_params, _session, socket) do
@@ -15,21 +13,11 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, socket |> apply_action(socket.assigns.live_action, params) |> assign_services()}
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Services")
-    |> assign(:service, nil)
-  end
-
-  def assign_services(socket) do
-    runnable_services = RunnableService.prefix("/devtools")
-    service_types = Enum.map(runnable_services, fn rs -> rs.service_type end)
-    base_services = ControlServices.from_service_types(service_types)
-
-    assign(socket, :base_services, base_services)
+    assign(socket, :page_title, "Listing Services")
   end
 
   @impl true
@@ -47,36 +35,32 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:devtools} active={:knative_serving}>
       <:title>
         <.title>Knative Services</.title>
       </:title>
-      <:left_menu>
-        <.devtools_menu active="knative" base_services={@base_services} />
-      </:left_menu>
       <.section_title>
         Knative Services
       </.section_title>
-      <.body_section>
-        <.table id="knative-display-table" rows={@services}>
-          <:col :let={service} label="Name"><%= service.name %></:col>
-          <:col :let={service} label="Link">
-            <.link href={url(service)} type="external">
-              <%= url(service) %>
-            </.link>
-          </:col>
-          <:action :let={service}>
-            <.link navigate={show_url(service)}>Show Service</.link>
-          </:action>
-        </.table>
-
-        <div class="ml-8 mt-15">
-          <.link navigate={service_new_url()}>
-            <.button type="primary">
-              New Knative Service
-            </.button>
+      <.table id="knative-display-table" rows={@services}>
+        <:col :let={service} label="Name"><%= service.name %></:col>
+        <:col :let={service} label="Link">
+          <.link href={url(service)} type="external">
+            <%= url(service) %>
           </.link>
-        </div>
+        </:col>
+        <:action :let={service}>
+          <.link navigate={show_url(service)}>Show Service</.link>
+        </:action>
+      </.table>
+
+      <.h2>Actions</.h2>
+      <.body_section>
+        <.link navigate={service_new_url()}>
+          <.button>
+            New Knative Service
+          </.button>
+        </.link>
       </.body_section>
     </.layout>
     """

@@ -23,14 +23,14 @@ defmodule CommonUI.Layout do
     """
   end
 
-  attr :to, :string, required: true
+  attr :navigate, :string, required: true
   attr :name, :string, default: ""
   attr :rest, :global, default: %{class: "pt-1 text-sm font-medium"}
   slot(:inner_block, required: true)
 
   def menu_item(assigns) do
     ~H"""
-    <.link navigate={@to} {@rest}>
+    <.link navigate={@navigate} {@rest}>
       <%= render_slot(@inner_block) %>
       <span class="mt-1">
         <%= @name %>

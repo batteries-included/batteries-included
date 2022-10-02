@@ -67,13 +67,10 @@ defmodule ControlServerWeb.Live.KnativeShow do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:devtools} active={:knative_serving}>
       <:title>
         <.title><%= @page_title %></.title>
       </:title>
-      <:left_menu>
-        <.devtools_menu active="knative" />
-      </:left_menu>
       <.service_display service={@k8_service} />
       <.revisions_display revisions={@k8_revisions} />
       <.h2>Actions</.h2>

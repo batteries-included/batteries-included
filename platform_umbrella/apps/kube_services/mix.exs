@@ -30,6 +30,7 @@ defmodule KubeServices.MixProject do
       {:jason, "~> 1.2"},
       {:oban, "~> 2.12"},
       # logging
+      {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:logger_json, "~> 5.1"},
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},

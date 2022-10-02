@@ -74,13 +74,10 @@ defmodule ControlServerWeb.Live.CephIndex do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:data} active={:rook}>
       <:title>
         <.title><%= @page_title %></.title>
       </:title>
-      <:left_menu>
-        <.data_menu active="ceph_cluster" />
-      </:left_menu>
       <.section_title>Ceph Clusters</.section_title>
 
       <.clusters_section ceph_clusters={@ceph_clusters} />

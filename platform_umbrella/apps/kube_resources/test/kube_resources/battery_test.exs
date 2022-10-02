@@ -4,7 +4,7 @@ defmodule KubeResources.BatteryTest do
   alias KubeResources.EchoServer
   alias KubeResources.ControlServerResources
 
-  describe "Battery core services works from the BaseService" do
+  describe "Battery core services works" do
     test "Can materialize echo server" do
       assert map_size(EchoServer.materialize(%{})) >= 2
     end

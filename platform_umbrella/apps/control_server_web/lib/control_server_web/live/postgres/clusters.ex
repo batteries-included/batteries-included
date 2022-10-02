@@ -28,17 +28,12 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:data} active={:postgres_operator}>
       <:title>
         <.title>Postgres Clusters</.title>
       </:title>
-      <:left_menu>
-        <.data_menu active="postgres" />
-      </:left_menu>
-      <.body_section>
-        <.pg_cluster_display clusters={@clusters} />
-      </.body_section>
 
+      <.pg_cluster_display clusters={@clusters} />
       <.h2>Actions</.h2>
       <.body_section>
         <.link navigate={new_url()}>

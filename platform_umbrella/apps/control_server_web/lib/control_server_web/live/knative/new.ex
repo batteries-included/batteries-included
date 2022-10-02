@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
 
   alias ControlServer.Knative
   alias ControlServer.Knative.Service
-  alias ControlServer.Services.RunnableService
+  alias ControlServer.Batteries.Installer
   alias ControlServerWeb.Live.Knative.FormComponent
 
   require Logger
@@ -40,7 +40,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
   def handle_info({"service:save", %{"service" => service}}, socket) do
     new_path = Routes.knative_show_path(socket, :show, service.id)
     Logger.debug("new_service = #{inspect(service)} new_path = #{new_path}")
-    RunnableService.activate!(:knative)
+    Installer.install!(:knative)
 
     {:noreply, push_redirect(socket, to: new_path)}
   end

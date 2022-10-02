@@ -42,13 +42,10 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:magic} active={:kube_snapshots}>
       <:title>
         <.title>Kube Snapshot Deploy</.title>
       </:title>
-      <:left_menu>
-        <.magic_menu active="snapshots" />
-      </:left_menu>
       <.body_section>
         <dl class="">
           <.definition_row wrapper_class="pb-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">

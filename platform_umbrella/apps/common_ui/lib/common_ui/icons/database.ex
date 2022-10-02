@@ -4,7 +4,7 @@ defmodule CommonUI.Icons.Database do
   def redis_icon(assigns) do
     ~H"""
     <svg
-      class={"h-6 w-6 " <> @class}
+      class={["h-6 w-6 ", @class]}
       fill="currentColor"
       viewBox="0 0 1024 1024"
       version="1.1"

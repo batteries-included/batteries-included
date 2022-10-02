@@ -39,13 +39,10 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:magic} active={:kube_snapshots}>
       <:title>
         <.title>Kube Deploys</.title>
       </:title>
-      <:left_menu>
-        <.magic_menu active="snapshots" />
-      </:left_menu>
       <.table id="kube-snapshot-table" rows={@snapshots.entries}>
         <:col :let={snapshot} label="Started"><%= snapshot.inserted_at %></:col>
         <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>

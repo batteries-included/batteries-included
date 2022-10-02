@@ -45,6 +45,7 @@ defmodule ControlServer.MixProject do
       {:logger_json, "~> 5.1"},
 
       # SQL
+      {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:ecto_sql, "~> 3.8"},

@@ -27,7 +27,6 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.Home, :index
 
-    live "/data", Live.DataHome, :index
     live "/postgres_clusters", Live.PostgresClusters, :index
     live "/postgres_clusters/new", Live.PostgresNew, :new
     live "/postgres_clusters/:id/edit", Live.PostgresEdit, :edit
@@ -51,8 +50,6 @@ defmodule ControlServerWeb.Router do
     live "/knative_services/:id/edit", Live.KnativeEdit, :edit
     live "/knative_services/:id/show", Live.KnativeShow, :show
 
-    live "/network/status", Live.NetworkStatus, :index
-
     live "/notebooks", Live.JupyterLabNotebook.Index, :index
     live "/notebooks/:id", Live.JupyterLabNotebook.Show, :index
 
@@ -62,13 +59,6 @@ defmodule ControlServerWeb.Router do
     live "/prometheus", Live.Iframe, :prometheus
     live "/gitea", Live.Iframe, :gitea
 
-    live "/monitoring/settings", Live.ServiceSettings, :monitoring
-    live "/data/settings", Live.ServiceSettings, :data
-    live "/devtools/settings", Live.ServiceSettings, :devtools
-    live "/network/settings", Live.ServiceSettings, :network
-    live "/security/settings", Live.ServiceSettings, :security
-    live "/ml/settings", Live.ServiceSettings, :ml
-
     live "/deployments", Live.ResourceList, :deployment
     live "/stateful_sets", Live.ResourceList, :stateful_set
     live "/nodes", Live.ResourceList, :node
@@ -77,13 +67,21 @@ defmodule ControlServerWeb.Router do
 
     live "/resource_status/:resource_type/:namespace/:name", Live.ResourceInfo, :index
 
+    live "/data/batteries", GroupBatteriesLive, :data
+    live "/devtools/batteries", GroupBatteriesLive, :devtools
+    live "/ml/batteries", GroupBatteriesLive, :ml
+    live "/monitoring/batteries", GroupBatteriesLive, :monitoring
+    live "/net_sec/batteries", GroupBatteriesLive, :net_sec
+
+    live "/magic/batteries", GroupBatteriesLive, :magic
+    live "/system_batteries", SystemBatteryLive.Index, :index
+    live "/system_batteries/:id", SystemBatteryLive.Show, :show
     live "/kube_snapshots", Live.KubeSnapshotList, :index
     live "/kube_snapshots/:id", Live.KubeSnapshotShow, :index
   end
 
   scope "/api", ControlServerWeb do
     pipe_through :api
-    resources "/base_services", BaseServiceController, except: [:new, :edit]
     resources "/usage_reports", UsageReportController, except: [:new, :edit]
     resources "/kube_snapshots", KubeSnapshotController, except: [:new, :edit]
     resources "/resource_paths", ResourcePathController, except: [:new, :edit]

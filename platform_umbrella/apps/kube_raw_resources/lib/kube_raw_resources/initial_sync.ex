@@ -1,5 +1,5 @@
 defmodule KubeRawResources.InitialSync do
-  alias KubeRawResources.ServiceConfigs
+  alias KubeRawResources.BatteryConfigs
   alias KubeExt.ConnectionPool
   alias KubeRawResources.ConfigGenerator
   alias KubeRawResources.Resource
@@ -9,10 +9,10 @@ defmodule KubeRawResources.InitialSync do
   @default_timeout 90 * 1000
   @task_sup KubeRawResources.TaskSupervisor
 
-  defp gen_for_service_type(service_type) do
-    service_type
+  defp gen_for_battery_type(battery_type) do
+    battery_type
     |> ConfigGenerator.materialize()
-    |> Enum.map(fn {key, value} -> {Path.join("/#{Atom.to_string(service_type)}", key), value} end)
+    |> Enum.map(fn {key, value} -> {Path.join("/#{Atom.to_string(battery_type)}", key), value} end)
     |> Enum.into(%{})
   end
 
@@ -57,23 +57,23 @@ defmodule KubeRawResources.InitialSync do
     )
   end
 
-  def run_sync_on_services(services) do
-    services
-    |> Enum.map(&gen_for_service_type/1)
+  def run_sync_on_batteries(batteries) do
+    batteries
+    |> Enum.map(&gen_for_battery_type/1)
     |> Enum.reduce(%{}, fn r_map, acc -> Map.merge(acc, r_map) end)
     |> do_apply(false, 5, ConnectionPool.get(KubeRawResources.ConnectionPool))
   end
 
   def dev_sync do
     Logger.debug("Starting sync")
-    run_sync_on_services(ServiceConfigs.dev_services())
+    run_sync_on_batteries(BatteryConfigs.dev_batteries())
     Logger.debug("done sync")
     :ok
   end
 
   def prod_sync do
     Logger.debug("Starting sync")
-    run_sync_on_services(ServiceConfigs.prod_services())
+    run_sync_on_batteries(BatteryConfigs.prod_batteries())
     Logger.debug("done sync")
     :ok
   end

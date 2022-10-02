@@ -2,7 +2,7 @@ defmodule KubeExt.MapSettings do
   @moduledoc """
   This is module provides the `setting` macros. These
   macros make it easier to use a hashmap from
-  `ControlServer.Services.BaseService#config`
+  `ControlServer.Battery.SystemBattery#config`
 
 
   You can use it something like this:

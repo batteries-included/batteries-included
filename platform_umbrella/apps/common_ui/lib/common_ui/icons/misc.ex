@@ -14,7 +14,7 @@ defmodule CommonUI.Icons.Misc do
       xml:space="preserve"
       stroke="currentColor"
       fill="currentColor"
-      class={"h-6 w-6 " <> @class}
+      class={["h-6 w-6 ", @class]}
     >
       <g>
         <g>

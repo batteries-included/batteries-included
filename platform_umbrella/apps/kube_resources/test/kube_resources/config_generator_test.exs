@@ -2,8 +2,9 @@ defmodule KubeServices.ConfigGeneratorTest do
   use ControlServer.DataCase
 
   alias KubeResources.ConfigGenerator
-  alias ControlServer.Services.RunnableService
-  alias ControlServer.Services
+  alias ControlServer.Batteries.Catalog
+  alias ControlServer.Batteries.Installer
+  alias ControlServer.Batteries
 
   require Logger
 
@@ -29,9 +30,9 @@ defmodule KubeServices.ConfigGeneratorTest do
       assert match?({:ok, _value}, Jason.encode(resources))
     end
 
-    def assert_contains_resources(resource_map, service) do
+    def assert_contains_resources(resource_map, battery) do
       assert map_size(resource_map) >= 1,
-             "Expect service of type #{inspect(service.service_type)} to have some k8 resources."
+             "Expect battery of type #{inspect(battery.type)} to have some k8 resources."
     end
 
     def assert_valid(resources) do
@@ -40,31 +41,23 @@ defmodule KubeServices.ConfigGeneratorTest do
     end
 
     setup do
-      service_map =
-        RunnableService.services()
-        |> Enum.map(fn s -> {s.service_type, RunnableService.activate!(s)} end)
-        |> Enum.into(%{})
-
-      postgres = insert(:postgres)
-      redis = insert(:redis)
-      notebook = insert(:notebook)
-      ceph_cluster = insert(:ceph_cluster)
-      ceph_filesystem = insert(:ceph_filesystem)
-
       {:ok,
-       services_activate_map: service_map,
-       postgres: postgres,
-       redis: redis,
-       notebook: notebook,
-       ceph_cluster: ceph_cluster,
-       ceph_filesystem: ceph_filesystem}
+       battery_map:
+         Catalog.all()
+         |> Enum.map(fn battery -> {battery.type, Installer.install!(battery.type)} end)
+         |> Enum.into(%{}),
+       postgres: insert(:postgres),
+       redis: insert(:redis),
+       notebook: insert(:notebook),
+       ceph_cluster: insert(:ceph_cluster),
+       ceph_filesystem: insert(:ceph_filesystem)}
     end
 
-    test "all service resources are valid" do
-      Services.all_including_config()
-      |> Enum.map(fn service -> {service, ConfigGenerator.materialize(service)} end)
-      |> Enum.map(fn {service, rm} ->
-        assert_contains_resources(rm, service)
+    test "all battery resources are valid" do
+      Batteries.list_system_batteries()
+      |> Enum.map(fn battery -> {battery, ConfigGenerator.materialize(battery)} end)
+      |> Enum.map(fn {battery, rm} ->
+        assert_contains_resources(rm, battery)
         rm
       end)
       |> Enum.reduce(%{}, &Map.merge/2)

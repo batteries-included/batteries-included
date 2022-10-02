@@ -1,10 +1,10 @@
 defmodule KubeResources.ConfigGenerator do
   @moduledoc """
-  Given any BaseService this will extract the kubernetes configs for application to the cluster.
+  Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
   alias KubeExt.Builder, as: B
 
-  alias ControlServer.Services.BaseService
+  alias ControlServer.Batteries.SystemBattery
 
   alias KubeRawResources.{Battery, IstioBase, IstioIstiod, PostgresOperator}
 
@@ -16,7 +16,6 @@ defmodule KubeResources.ConfigGenerator do
     EchoServer,
     Gitea,
     IstioGateway,
-    Keycloak,
     Kiali,
     KnativeOperator,
     KnativeServing,
@@ -52,13 +51,15 @@ defmodule KubeResources.ConfigGenerator do
 
   require Logger
 
-  @spec materialize(BaseService.t()) :: map()
-  def materialize(%BaseService{} = base_service) do
-    base_service.config
-    |> materialize(base_service.service_type)
-    |> Enum.map(fn {key, value} -> {Path.join(base_service.root_path, key), value} end)
+  @spec materialize(SystemBattery.t()) :: map()
+  def materialize(%SystemBattery{} = system_battery) do
+    system_battery.config
+    |> materialize(system_battery.type)
+    |> Enum.map(fn {key, value} ->
+      {Path.join(Atom.to_string(system_battery.type), key), value}
+    end)
     |> Enum.flat_map(&flatten/1)
-    |> Enum.map(fn {key, resource} -> {key, B.owner_label(resource, base_service.id)} end)
+    |> Enum.map(fn {key, resource} -> {key, B.owner_label(resource, system_battery.id)} end)
     |> Enum.into(%{})
   end
 
@@ -115,10 +116,6 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
   def materialize(%{} = config, :redis), do: Redis.materialize(config)
 
-  def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
-  def materialize(%{} = config, :keycloak), do: Keycloak.materialize(config)
-  def materialize(%{} = config, :ory_hydra), do: OryHydra.materialize(config)
-
   def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
   def materialize(%{} = config, :tekton), do: Tekton.materialize(config)
   def materialize(%{} = config, :tekton_dashboard), do: TektonDashboard.materialize(config)
@@ -126,17 +123,20 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :knative_serving), do: KnativeServing.materialize(config)
   def materialize(%{} = config, :harbor), do: Harbor.materialize(config)
 
+  def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
+  def materialize(%{} = config, :ory_hydra), do: OryHydra.materialize(config)
+
   def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
   def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
   def materialize(%{} = config, :kiali), do: Kiali.materialize(config)
   def materialize(%{} = config, :metallb), do: MetalLB.materialize(config)
   def materialize(%{} = config, :dev_metallb), do: DevMetalLB.materialize(config)
 
-  def materialize(%{} = config, :battery), do: Battery.materialize(config)
+  def materialize(%{} = config, :battery_core), do: Battery.materialize(config)
   def materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
   def materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
 
-  def materialize(%{} = config, :ml), do: ML.Base.materialize(config)
+  def materialize(%{} = config, :ml_core), do: ML.Base.materialize(config)
   def materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
 
   def materialize(nil, _), do: %{}

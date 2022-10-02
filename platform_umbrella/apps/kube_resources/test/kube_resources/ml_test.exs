@@ -6,7 +6,7 @@ defmodule KubeResources.MLTest do
 
   require Logger
 
-  describe "ML BaseService" do
+  describe "ML" do
     test "Can materialize notebooks" do
       assert map_size(Notebooks.materialize(%{})) >= 1
     end

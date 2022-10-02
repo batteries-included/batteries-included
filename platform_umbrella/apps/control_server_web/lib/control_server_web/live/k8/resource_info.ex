@@ -240,13 +240,10 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:magic} active={@resource_type}>
       <:title>
         <.title>Kube Status</.title>
       </:title>
-      <:left_menu>
-        <.magic_menu />
-      </:left_menu>
       <.banner_section name={@name} namespace={@namespace} />
       <.label_section resource={@resource} />
       <.info_section resource_type={@resource_type} resource={@resource} />

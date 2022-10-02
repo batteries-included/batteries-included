@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.CephFilesystemEdit do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:devtools}>
       <:title>
         <.title>Edit Cluster</.title>
       </:title>

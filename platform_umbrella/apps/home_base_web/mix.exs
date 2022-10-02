@@ -11,7 +11,6 @@ defmodule HomeBaseWeb.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -37,7 +36,7 @@ defmodule HomeBaseWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.10"},
+      {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_view, "~> 0.18.1"},
       {:floki, "~> 0.33", only: :test},

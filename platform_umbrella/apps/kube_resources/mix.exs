@@ -37,6 +37,7 @@ defmodule KubeResources.MixProject do
       {:cachex, "~> 3.4"},
       {:finch, "~> 0.13.0"},
       # logging
+      {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:logger_json, "~> 5.1"},
       {:kube_ext, in_umbrella: true},
       {:kube_raw_resources, in_umbrella: true},

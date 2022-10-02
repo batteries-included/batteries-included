@@ -32,13 +32,10 @@ defmodule ControlServerWeb.Live.CephClusterShow do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:data} active={:rook}>
       <:title>
         <.title><%= @page_title %></.title>
       </:title>
-      <:left_menu>
-        <.data_menu active="ceph_cluster" />
-      </:left_menu>
       <.body_section>
         <ul>
           <li>

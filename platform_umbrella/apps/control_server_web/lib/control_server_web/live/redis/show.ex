@@ -66,13 +66,10 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:data} active={:redis}>
       <:title>
         <.title><%= @page_title %></.title>
       </:title>
-      <:left_menu>
-        <.data_menu active="redis" />
-      </:left_menu>
 
       <.section_title>Pods</.section_title>
       <.pods_display pods={@k8_pods} />

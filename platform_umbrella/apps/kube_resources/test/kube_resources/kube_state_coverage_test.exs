@@ -2,26 +2,13 @@ defmodule KubeServices.KubeStateCoverageTest do
   use ControlServer.DataCase
 
   alias KubeResources.ConfigGenerator
-  alias ControlServer.Services.RunnableService
-  alias ControlServer.Services
+  alias ControlServer.Batteries.Installer
+  alias ControlServer.Batteries.Catalog
+  alias ControlServer.Batteries
   alias KubeExt.ApiVersionKind
 
-  require Logger
-
-  @services [
-    :data,
-    :postgres_operator,
-    :database_internal,
-    :battery,
-    :control_server,
-    :knative,
-    :grafana,
-    :kube_state_metrics,
-    :keycloak
-  ]
-
   def assert_all_resources_watchable do
-    Services.all_including_config()
+    Batteries.list_system_batteries()
     |> Enum.map(&ConfigGenerator.materialize/1)
     |> Enum.map(&KubeResources.unique_kinds/1)
     |> List.flatten()
@@ -31,22 +18,12 @@ defmodule KubeServices.KubeStateCoverageTest do
     end)
   end
 
-  describe "KubeState can watch generated resources for the all inclusive setup" do
-    setup do
-      {:ok, runnable_service: Enum.map(@services, fn s -> RunnableService.activate!(s) end)}
-    end
-
-    test "Produces watchable types for kube state" do
-      assert_all_resources_watchable()
-    end
-  end
-
   describe "KubeState can watch for every service" do
     test "All watchable" do
       Enum.each(
-        RunnableService.services(),
-        fn service ->
-          RunnableService.activate!(service)
+        Catalog.all(),
+        fn catalog_battery ->
+          Installer.install!(catalog_battery.type)
         end
       )
 

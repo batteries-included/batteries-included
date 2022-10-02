@@ -81,13 +81,10 @@ defmodule ControlServerWeb.Live.ResourceList do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:magic} active={@live_action}>
       <:title>
         <.title><%= title_text(@live_action) %></.title>
       </:title>
-      <:left_menu>
-        <.magic_menu active={"#{@live_action}"} />
-      </:left_menu>
       <.body_section>
         <%= case @live_action do %>
           <% :deployment -> %>

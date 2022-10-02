@@ -3,13 +3,13 @@ defmodule EventCenter.Database do
 
   @pubsub EventCenter.Database.PubSub
 
-  @allowed_actions [:insert, :update, :delete]
+  @allowed_actions [:insert, :update, :delete, :multi]
   @allowed_sources [
     :knative_service,
-    :jupyter_notebooks,
+    :jupyter_notebook,
     :postgres_cluster,
     :redis_cluster,
-    :base_service
+    :system_battery
   ]
 
   def allowed_actions, do: @allowed_actions

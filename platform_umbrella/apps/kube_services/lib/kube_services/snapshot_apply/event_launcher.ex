@@ -16,7 +16,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
 
   def handle_info(msg, state) do
     job = CreationWorker.start!(schedule_in: 1)
-    Logger.debug("Got pubsub message #{inspect(msg)} Starting job #{job.id}")
+    Logger.info("Got pubsub message Starting job #{job.id}", msg: msg, id: job.id)
     {:noreply, state}
   end
 end
