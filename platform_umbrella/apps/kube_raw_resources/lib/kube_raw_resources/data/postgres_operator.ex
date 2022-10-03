@@ -10,30 +10,19 @@ defmodule KubeRawResources.PostgresOperator do
 
   alias KubeExt.Builder, as: B
   alias KubeRawResources.DataSettings, as: Settings
+  alias KubeRawResources.PostgresPod
 
   @app "postgres-operator"
-
-  @pod_cluster_role "battery-postres-pod"
-  @pod_role "postres-pod"
-
   @operator_cluster_role "battery-postgres-operator"
 
   def materialize(config) do
+    namespace = Settings.namespace(config)
+
     %{}
     |> Map.put("/cluster_role/postgres_operator", cluster_role_postgres_operator(config))
-    |> Map.put("/cluster_role/postgres_pod", cluster_role_postgres_pod(config))
-    |> Map.put("/role/postgres_pod", role_postgres_pod(config))
     |> Map.put(
       "/cluster_role_binding/postgres_operator",
       cluster_role_binding_postgres_operator(config)
-    )
-    |> Map.put(
-      "/cluster_role_binding/postgres_pod",
-      cluster_role_binding_postgres_pod(config)
-    )
-    |> Map.put(
-      "/role_binding/postgres_pod",
-      role_binding_postgres_pod(config)
     )
     |> Map.put(
       "/crd/operatorconfigurations_acid_zalan_do",
@@ -45,6 +34,8 @@ defmodule KubeRawResources.PostgresOperator do
     |> Map.put("/postgresql_operator_config/main", postgresql_operator_config_main(config))
     |> Map.put("/service/postgres_operator", service_postgres_operator(config))
     |> Map.put("/service_account/postgres_operator", service_account_postgres_operator(config))
+    |> Map.merge(PostgresPod.common(config))
+    |> Map.merge(PostgresPod.per_namespace(namespace))
     |> Map.merge(infra_users(config, should_include_dev_infrausers()))
   end
 
@@ -155,86 +146,6 @@ defmodule KubeRawResources.PostgresOperator do
     ])
   end
 
-  def cluster_role_binding_postgres_pod(config) do
-    namespace = Settings.namespace(config)
-
-    B.build_resource(:cluster_role_binding)
-    |> B.name("battery-postgres-pod")
-    |> B.app_labels(@app)
-    |> B.role_ref(B.build_cluster_role_ref(@pod_cluster_role))
-    |> B.subject(B.build_service_account("postgres-pod", namespace))
-  end
-
-  def role_binding_postgres_pod(config) do
-    namespace = Settings.namespace(config)
-
-    B.build_resource(:role_binding)
-    |> B.name("postgres-pod")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.role_ref(B.build_role_ref(@pod_role))
-    |> B.subject(B.build_service_account("postgres-pod", namespace))
-  end
-
-  def cluster_role_postgres_pod(_config) do
-    B.build_resource(:cluster_role)
-    |> B.name(@pod_cluster_role)
-    |> B.app_labels(@app)
-    |> B.rules([
-      %{
-        "apiGroups" => [""],
-        "resources" => ["endpoints"],
-        "verbs" => [
-          "create",
-          "delete",
-          "deletecollection",
-          "get",
-          "list",
-          "patch",
-          "update",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["pods"],
-        "verbs" => ["get", "list", "patch", "update", "watch"]
-      },
-      %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["create"]}
-    ])
-  end
-
-  def role_postgres_pod(config) do
-    namespace = Settings.namespace(config)
-
-    B.build_resource(:role)
-    |> B.name(@pod_role)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.rules([
-      %{
-        "apiGroups" => [""],
-        "resources" => ["endpoints"],
-        "verbs" => [
-          "create",
-          "delete",
-          "deletecollection",
-          "get",
-          "list",
-          "patch",
-          "update",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["pods"],
-        "verbs" => ["get", "list", "patch", "update", "watch"]
-      },
-      %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["create"]}
-    ])
-  end
-
   def crd_operatorconfigurations_acid_zalan_do(_config) do
     yaml(get_resource(:operatorconfigurations_acid_zalan_do))
   end
@@ -249,6 +160,7 @@ defmodule KubeRawResources.PostgresOperator do
 
   def deployment_postgres_operator(config) do
     namespace = Settings.namespace(config)
+    operator_image = Settings.pg_operator_image(config)
 
     B.build_resource(:deployment)
     |> B.name("postgres-operator")
@@ -258,14 +170,14 @@ defmodule KubeRawResources.PostgresOperator do
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "postgres-operator",
+          "battery/app" => @app,
           "battery/component" => "postgres-operator"
         }
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "postgres-operator",
+            "battery/app" => @app,
             "battery/component" => "postgres-operator",
             "battery/managed" => "true"
           }
@@ -284,7 +196,7 @@ defmodule KubeRawResources.PostgresOperator do
                   "value" => "true"
                 }
               ],
-              "image" => "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2",
+              "image" => operator_image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "postgres-operator",
               "resources" => %{
@@ -356,6 +268,10 @@ defmodule KubeRawResources.PostgresOperator do
   def postgresql_operator_config_main(config) do
     namespace = Settings.namespace(config)
 
+    pg_image = Settings.pg_image(config)
+    backup_image = Settings.pg_backup_image(config)
+    bouncer_image = Settings.pg_bouncer_image(config)
+
     config = %{
       "aws_or_gcp" => %{"aws_region" => "eu-central-1", "enable_ebs_gp3_migration" => false},
       "connection_pooler" => %{
@@ -363,7 +279,7 @@ defmodule KubeRawResources.PostgresOperator do
         "connection_pooler_default_cpu_request" => "500m",
         "connection_pooler_default_memory_limit" => "100Mi",
         "connection_pooler_default_memory_request" => "100Mi",
-        "connection_pooler_image" => "registry.opensource.zalan.do/acid/pgbouncer:master-22",
+        "connection_pooler_image" => bouncer_image,
         "connection_pooler_max_db_connections" => 60,
         "connection_pooler_mode" => "transaction",
         "connection_pooler_number_of_instances" => 2,
@@ -372,7 +288,7 @@ defmodule KubeRawResources.PostgresOperator do
       },
       "crd_categories" => ["all"],
       "debug" => %{"debug_logging" => true, "enable_database_access" => true},
-      "docker_image" => "registry.opensource.zalan.do/acid/spilo-14:2.1-p6",
+      "docker_image" => pg_image,
       "enable_crd_registration" => false,
       "enable_lazy_spilo_upgrade" => false,
       "enable_pgversion_env_var" => true,
@@ -392,7 +308,7 @@ defmodule KubeRawResources.PostgresOperator do
         "pod_antiaffinity_topology_key" => "kubernetes.io/hostname",
         "pod_management_policy" => "ordered_ready",
         "pod_role_label" => "spilo-role",
-        "pod_service_account_name" => "postgres-pod",
+        "pod_service_account_name" => PostgresPod.service_account_name(),
         "inherited_labels" => ["sidecar.istio.io/inject", "battery/app", "battery/owner"],
         "pod_terminate_grace_period" => "5m",
         "secret_name_template" => "{username}.{cluster}.credentials.{tprkind}.{tprgroup}",
@@ -412,8 +328,7 @@ defmodule KubeRawResources.PostgresOperator do
         "replica_dns_name_format" => "{cluster}-repl.{team}.{hostedzone}"
       },
       "logical_backup" => %{
-        "logical_backup_docker_image" =>
-          "registry.opensource.zalan.do/acid/logical-backup:v1.8.0",
+        "logical_backup_docker_image" => backup_image,
         "logical_backup_job_prefix" => "logical-backup-",
         "logical_backup_provider" => "s3",
         "logical_backup_s3_access_key_id" => "",
@@ -468,7 +383,7 @@ defmodule KubeRawResources.PostgresOperator do
         "replication_username" => "standby",
         "super_username" => "postgres"
       },
-      "workers" => 8
+      "workers" => 6
     }
 
     B.build_resource(:postgresql_operator_config)

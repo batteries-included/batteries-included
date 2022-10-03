@@ -13,7 +13,7 @@ defmodule ControlServerWeb.GroupBatteriesLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    DatabaseEventCenter.subscribe(:system_battery)
+    :ok = DatabaseEventCenter.subscribe(:system_battery)
     {:ok, socket}
   end
 

@@ -4,6 +4,8 @@ defmodule ControlServer.Notebooks.JupyterLabNotebook do
 
   require Logger
 
+  @timestamps_opts [type: :utc_datetime_usec]
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "jupyter_lab_notebooks" do
