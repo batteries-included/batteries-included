@@ -40,12 +40,7 @@ defmodule ControlServer.Batteries.Catalog do
       type: :gitea,
       dependencies: [:database_internal, :istio_gateway, :battery_core]
     },
-    %CatalogBattery{group: :devtools, type: :tekton, dependencies: [:battery_core]},
-    %CatalogBattery{
-      group: :devtools,
-      type: :tekton_dashboard,
-      dependencies: [:battery_core, :tekton, :istio_gateway]
-    },
+    %CatalogBattery{group: :devtools, type: :tekton_operator, dependencies: [:battery_core]},
     %CatalogBattery{
       group: :devtools,
       type: :harbor,

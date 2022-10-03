@@ -8,7 +8,6 @@ defmodule KubeResources.VirtualService do
   alias KubeResources.Gitea
   alias KubeResources.Notebooks
   alias KubeResources.Kiali
-  alias KubeResources.TektonDashboard
   alias KubeResources.Harbor
   alias KubeResources.Prometheus
   alias KubeResources.Grafana
@@ -46,7 +45,6 @@ defmodule KubeResources.VirtualService do
   def virtual_service(:alert_manager, config), do: Alertmanager.virtual_service(config)
   def virtual_service(:notebooks, config), do: Notebooks.virtual_service(config)
   def virtual_service(:kiali, config), do: Kiali.virtual_service(config)
-  def virtual_service(:tekton_dashboard, config), do: TektonDashboard.virtual_service(config)
 
   def virtual_service(:harbor, config) do
     [Harbor.virtual_service(config)]

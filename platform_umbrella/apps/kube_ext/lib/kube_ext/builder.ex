@@ -164,6 +164,23 @@ defmodule KubeExt.Builder do
     }
   end
 
+  def build_group(group_name) do
+    %{
+      "apiGroup" => "rbac.authorization.k8s.io",
+      "kind" => "Group",
+      "name" => group_name
+    }
+  end
+
+  def build_group(group_name, namespace) do
+    %{
+      "apiGroup" => "rbac.authorization.k8s.io",
+      "kind" => "Group",
+      "name" => group_name,
+      "namespace" => namespace
+    }
+  end
+
   def build_service_account(account_name, namespace) do
     %{
       "kind" => "ServiceAccount",

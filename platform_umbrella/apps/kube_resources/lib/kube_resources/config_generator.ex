@@ -23,8 +23,7 @@ defmodule KubeResources.ConfigGenerator do
     Notebooks,
     Redis,
     VirtualService,
-    Tekton,
-    TektonDashboard,
+    TektonOperator,
     OryHydra,
     Harbor,
     Rook,
@@ -117,8 +116,7 @@ defmodule KubeResources.ConfigGenerator do
   def materialize(%{} = config, :redis), do: Redis.materialize(config)
 
   def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
-  def materialize(%{} = config, :tekton), do: Tekton.materialize(config)
-  def materialize(%{} = config, :tekton_dashboard), do: TektonDashboard.materialize(config)
+  def materialize(%{} = config, :tekton_operator), do: TektonOperator.materialize(config)
   def materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
   def materialize(%{} = config, :knative_serving), do: KnativeServing.materialize(config)
   def materialize(%{} = config, :harbor), do: Harbor.materialize(config)

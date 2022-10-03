@@ -195,18 +195,6 @@ defmodule ControlServerWeb.Components.LeftMenu do
     """
   end
 
-  defp battery_menu_item(%{battery: %{type: :tekton_dashboard}} = assigns) do
-    ~H"""
-    <.menu_item
-      href={KubeResources.TektonDashboard.view_url()}
-      name="Tekton Dashboard"
-      is_active={@active == :tekton_dashboard}
-    >
-      <.tekton_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
   defp battery_menu_item(%{battery: %{type: :kiali}} = assigns) do
     ~H"""
     <.menu_item href={KubeResources.Kiali.view_url()} name="Kiali" is_active={@active == :kiali}>

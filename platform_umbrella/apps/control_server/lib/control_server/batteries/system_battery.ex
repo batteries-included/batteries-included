@@ -58,8 +58,7 @@ defmodule ControlServer.Batteries.SystemBattery do
         :promtail,
         :redis,
         :rook,
-        :tekton,
-        :tekton_dashboard
+        :tekton_operator
       ]
 
     timestamps()

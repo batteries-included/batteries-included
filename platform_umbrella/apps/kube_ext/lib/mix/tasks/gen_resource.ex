@@ -18,6 +18,7 @@ defmodule Mix.Tasks.GenResource do
     "helm.sh/hook-delete-policy",
     "app.kubernetes.io/part-of",
     "install.operator.istio.io/owning-resource",
+    "operator.tekton.dev/release",
     "chart",
     "release",
     "heritage"
@@ -175,9 +176,6 @@ defmodule Mix.Tasks.GenResource do
     }
   end
 
-  defp process_resource(resource, :cluster_role = resource_type, app_name),
-    do: cluster_resource(resource, resource_type, app_name)
-
   defp process_resource(resource, :pod_security_policy = resource_type, app_name),
     do: cluster_resource(resource, resource_type, app_name)
 
@@ -186,6 +184,51 @@ defmodule Mix.Tasks.GenResource do
 
   defp process_resource(resource, :mutating_webhook_config = resource_type, app_name),
     do: cluster_resource(resource, resource_type, app_name)
+
+  defp process_resource(%{"spec" => spec} = resource, resource_type, app_name) do
+    method_name = resource_method_name(resource, app_name)
+
+    methods =
+      Map.put(
+        %{},
+        method_name,
+        spec_method(Map.drop(resource, ~w(spec)), method_name, resource_type, app_name, spec)
+      )
+
+    %ResourceResult{
+      methods: methods
+    }
+  end
+
+  defp process_resource(%{"rules" => rules} = resource, :cluster_role = resource_type, app_name) do
+    method_name = resource_method_name(resource, app_name)
+
+    methods =
+      Map.put(
+        %{},
+        method_name,
+        cluster_rules_method(resource, method_name, resource_type, app_name, rules)
+      )
+
+    %ResourceResult{
+      methods: methods
+    }
+  end
+
+  defp process_resource(%{"rules" => rules} = resource, resource_type, app_name) do
+    method_name = resource_method_name(resource, app_name)
+
+    methods =
+      Map.put(
+        %{},
+        method_name,
+        rules_method(resource, method_name, resource_type, app_name, rules)
+      )
+
+    %ResourceResult{
+      methods: methods
+    }
+  end
 
   defp process_resource(resource, resource_type, app_name) do
     method_name = resource_method_name(resource, app_name)
@@ -278,6 +321,38 @@ defmodule Mix.Tasks.GenResource do
     resource_method_from_pipeline_and_data(data_pipeline, normal_pipeline, method_name)
   end
 
+  defp spec_method(resource, method_name, resource_type, app_name, spec) do
+    spec_pipeline = spec |> clean_spec(app_name) |> spec_pipeline()
+
+    normal_pipeline =
+      resource
+      |> Map.drop(["spec"])
+      |> resource_pipeline(resource_type, app_name)
+      |> add_spec_from_var()
+
+    resource_method_from_pipeline_and_spec(spec_pipeline, normal_pipeline, method_name)
+  end
+
+  defp rules_method(resource, method_name, resource_type, app_name, rules) do
+    normal_pipeline =
+      resource
+      |> Map.drop(["rules"])
+      |> resource_pipeline(resource_type, app_name)
+      |> add_rules_from_var()
+
+    resource_method_from_pipeline_and_rules(rules, normal_pipeline, method_name)
+  end
+
+  defp cluster_rules_method(resource, method_name, resource_type, app_name, rules) do
+    normal_pipeline =
+      resource
+      |> Map.drop(["rules"])
+      |> resource_pipeline(resource_type, app_name)
+      |> add_rules_from_var()
+
+    cluster_resource_method_from_pipeline_and_rules(rules, normal_pipeline, method_name)
+  end
+
   defp resource_pipeline(resource, resource_type, app_name) do
     resource
     |> Map.drop(["apiVersion", "kind", "type"])
@@ -295,6 +370,12 @@ defmodule Mix.Tasks.GenResource do
       Enum.reduce(large_data, code_with_small, fn {key, _value}, code ->
         add_map_put_get_resource(code, key, to_include_name(key))
       end)
+    end)
+  end
+
+  defp spec_pipeline(spec) do
+    Enum.reduce(spec, starting_data(), fn {key, value}, code ->
+      add_map_put_key(code, key, value)
     end)
   end
 
@@ -317,9 +398,9 @@ defmodule Mix.Tasks.GenResource do
     |> add_other_labels(field_value, app_name)
   end
 
-  defp handle_field("spec" = _field_name, field_value, acc_code, app_name) do
-    add_spec(acc_code, clean_spec(field_value, app_name))
-  end
+  # defp handle_field("spec" = _field_name, field_value, acc_code, app_name) do
+  #   add_spec(acc_code, clean_spec(field_value, app_name))
+  # end
 
   defp handle_field("rules" = _field_name, field_value, acc_code, _app_name) do
     add_rules(acc_code, field_value)
@@ -345,7 +426,7 @@ defmodule Mix.Tasks.GenResource do
 
   defp handle_field("subjects" = _field_name, subjects, acc_code, _app_name) do
     Enum.reduce(subjects, acc_code, fn subject, code ->
-      add_subject(code, Map.get(subject, "name"))
+      add_subject(code, Map.get(subject, "name"), Map.get(subject, "kind"))
     end)
   end
 
@@ -390,6 +471,9 @@ defmodule Mix.Tasks.GenResource do
     |> Map.drop(@bad_labels)
     |> Enum.map(fn {key, value} ->
       case {key, value} do
+        {"app", _} ->
+          {"battery/app", app_name}
+
         {"app.kubernetes.io/instance", _} ->
           {"battery/app", app_name}
 
@@ -486,11 +570,20 @@ defmodule Mix.Tasks.GenResource do
     )
   end
 
-  defp add_subject(pipeline, name) do
+  defp add_subject(pipeline, name, "ServiceAccount" = _kind) do
     pipe(
       pipeline,
       quote do
         B.subject(B.build_service_account(unquote(name), namespace))
+      end
+    )
+  end
+
+  defp add_subject(pipeline, name, "Group" = _kind) do
+    pipe(
+      pipeline,
+      quote do
+        B.subject(B.build_group(unquote(name), namespace))
       end
     )
   end
@@ -562,6 +655,24 @@ defmodule Mix.Tasks.GenResource do
       pipeline,
       quote do
         B.data(data)
+      end
+    )
+  end
+
+  defp add_spec_from_var(pipeline) do
+    pipe(
+      pipeline,
+      quote do
+        B.spec(spec)
+      end
+    )
+  end
+
+  defp add_rules_from_var(pipeline) do
+    pipe(
+      pipeline,
+      quote do
+        B.rules(rules)
       end
     )
   end
@@ -642,6 +753,36 @@ defmodule Mix.Tasks.GenResource do
       resource(unquote(method_name), config) do
         namespace = Settings.namespace(config)
         data = unquote(data_pipeline)
+        unquote(main_pipeline)
+      end
+    end
+  end
+
+  defp resource_method_from_pipeline_and_spec(spec_pipeline, main_pipeline, method_name) do
+    quote do
+      resource(unquote(method_name), config) do
+        namespace = Settings.namespace(config)
+        spec = unquote(spec_pipeline)
+        unquote(main_pipeline)
+      end
+    end
+  end
+
+  defp resource_method_from_pipeline_and_rules(rules, main_pipeline, method_name) do
+    quote do
+      resource(unquote(method_name), config) do
+        namespace = Settings.namespace(config)
+        rules = unquote(rules)
+        unquote(main_pipeline)
+      end
+    end
+  end
+
+  defp cluster_resource_method_from_pipeline_and_rules(rules, main_pipeline, method_name) do
+    quote do
+      resource(unquote(method_name)) do
+        rules = unquote(rules)
+
         unquote(main_pipeline)
       end
     end
