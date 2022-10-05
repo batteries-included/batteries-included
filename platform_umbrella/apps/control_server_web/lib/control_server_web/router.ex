@@ -18,10 +18,6 @@ defmodule ControlServerWeb.Router do
     plug LoggerJSON.Plug
   end
 
-  pipeline :full_layout do
-    plug :put_layout, {ControlServerWeb.LayoutView, "full.html"}
-  end
-
   scope "/", ControlServerWeb do
     pipe_through :browser
 
