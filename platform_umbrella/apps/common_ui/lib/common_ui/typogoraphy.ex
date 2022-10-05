@@ -7,7 +7,7 @@ defmodule CommonUI.Typogoraphy do
   attr :base_class, :string,
     default: "text-4xl font-extrabold leading-7 text-pink-500 sm:text-3xl sm:truncate"
 
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def h1(assigns) do
     ~H"""
@@ -17,7 +17,7 @@ defmodule CommonUI.Typogoraphy do
 
   attr :class, :string, default: ""
   attr :base_class, :string, default: "text-2xl sm:text-3xl font-bold leading-10 text-astral-500"
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def h2(assigns) do
     ~H"""
@@ -27,7 +27,7 @@ defmodule CommonUI.Typogoraphy do
 
   attr :class, :string, default: ""
   attr :base_class, :string, default: "text-xl sm:text-2xl font-bold leading-6"
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def h3(assigns) do
     ~H"""

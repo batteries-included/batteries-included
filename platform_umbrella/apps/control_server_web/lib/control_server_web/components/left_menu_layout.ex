@@ -10,7 +10,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
   def body_section(assigns) do
     ~H"""
     <div class="shadow sm:rounded-md sm:overflow-hidden">
-      <div class="bg-white py-6 px-4 space-y-6 sm:p-6">
+      <div class="bg-white py-6 px-4 sm:p-6">
         <%= render_slot(@inner_block) %>
       </div>
     </div>

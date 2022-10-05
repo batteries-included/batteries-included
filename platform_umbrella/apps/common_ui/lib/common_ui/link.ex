@@ -10,7 +10,7 @@ defmodule CommonUI.Link do
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(download hreflang referrerpolicy rel target type)
 
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def link(%{type: "styled"} = assigns) do
     ~H"""

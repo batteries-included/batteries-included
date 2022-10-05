@@ -74,7 +74,7 @@ defmodule ControlServerWeb.Live.CephFilesystemFormComponent do
         phx-submit="save"
       >
         <.input field={{f, :name}} placeholder="Name" />
-        <.input field={{f, :include_erasure_encoded}} />
+        <.input field={{f, :include_erasure_encoded}} type="checkbox" />
 
         <:actions>
           <.button type="submit" phx-disable-with="Saving…" class="w-full">

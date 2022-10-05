@@ -13,7 +13,7 @@ defmodule CommonUI.Button do
   attr :class, :string, default: nil
   attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag"
 
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def button(assigns) do
     ~H"""

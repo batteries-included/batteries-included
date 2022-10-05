@@ -60,7 +60,7 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 config :logger,
   backends: [LoggerJSON],
   handle_otp_reports: true,
-  handle_sasl_reports: true
+  handle_sasl_reports: false
 
 config :logger_json, :backend,
   metadata: :all,

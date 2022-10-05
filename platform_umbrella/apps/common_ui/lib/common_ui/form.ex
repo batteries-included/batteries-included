@@ -21,8 +21,8 @@ defmodule CommonUI.Form do
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
   attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the form tag"
 
-  slot(:inner_block, required: true)
-  slot(:actions, doc: "the slot for form actions, such as a submit button")
+  slot :inner_block, required: true
+  slot :actions, doc: "the slot for form actions, such as a submit button"
 
   def simple_form(assigns) do
     ~H"""
@@ -70,8 +70,13 @@ defmodule CommonUI.Form do
     include:
       ~w(autocomplete checked disabled form max maxlength min minlength multiple pattern placeholder readonly required size step)
 
-  slot(:inner_block)
-  slot(:option, doc: "the slot for select input options")
+  slot :inner_block
+
+  slot :option, doc: "the slot for select input options" do
+    attr :value, :any
+    attr :selected, :boolean
+    attr :hidden, :boolean
+  end
 
   def input(%{field: {f, field}} = assigns) do
     assigns
@@ -86,8 +91,16 @@ defmodule CommonUI.Form do
 
   def input(%{type: "checkbox"} = assigns) do
     ~H"""
-    <label phx-feedback-for={@name} class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
-      <input type="checkbox" id={@id || @name} name={@name} class="checkbox checkbox-secondary" />
+    <label phx-feedback-for={@name} class="flex items-center gap-4 text-sm leading-6 pt-10">
+      <input type="hidden" id={@id || @name} name={@name} value="false" />
+      <input
+        type="checkbox"
+        id={@id || @name}
+        name={@name}
+        class="checkbox checkbox-secondary"
+        value="true"
+        checked={input_checked(@rest, @value)}
+      />
       <%= @label %>
     </label>
     """
@@ -98,7 +111,13 @@ defmodule CommonUI.Form do
     <div phx-feedback-for={@name} class={@wrapper_class}>
       <.label for={@id}><%= @label %></.label>
       <select id={@id} name={@name} autocomplete={@name} class="select w-full max-w-xs" {@rest}>
-        <option :for={opt <- @option} {assigns_to_attributes(opt)}><%= render_slot(opt) %></option>
+        <option
+          :for={opt <- @option}
+          {assigns_to_attributes(opt, [:selected])}
+          selected={option_selected(opt, @value)}
+        >
+          <%= render_slot(opt) %>
+        </option>
       </select>
       <.error :for={msg <- @errors} message={msg} />
     </div>
@@ -163,6 +182,13 @@ defmodule CommonUI.Form do
     """
   end
 
+  defp input_checked(%{checked: checked}, _value) when not is_nil(checked), do: checked
+  defp input_checked(_rest, value) when is_boolean(value), do: value
+  defp input_checked(_rest, value), do: to_string(value) == "true"
+
+  defp option_selected(%{selected: selected}, _value), do: selected
+  defp option_selected(%{value: option_value}, value), do: to_string(option_value) == value
+
   defp input_border([] = _errors),
     do: "border-blizzard-blue-300 focus:border-blizzard-blue-400 focus:ring-blizzard-blue-800/5"
 
@@ -174,7 +200,7 @@ defmodule CommonUI.Form do
   Renders a label.
   """
   attr :for, :string, default: nil
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def label(assigns) do
     ~H"""

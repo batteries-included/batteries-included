@@ -13,7 +13,7 @@ defmodule CommonUI.Layout do
     @default_container_class
   end
 
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def title(assigns) do
     ~H"""
@@ -26,7 +26,7 @@ defmodule CommonUI.Layout do
   attr :navigate, :string, required: true
   attr :name, :string, default: ""
   attr :rest, :global, default: %{class: "pt-1 text-sm font-medium"}
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def menu_item(assigns) do
     ~H"""
@@ -44,7 +44,7 @@ defmodule CommonUI.Layout do
 
     ~H"""
     <div
-      class="flex flex-col min-h-screen justify-between bg-gray-50 pb-18 overflow-auto"
+      class="flex flex-col min-h-screen justify-between bg-fuscous-gray-50 pb-18 overflow-auto"
       x-data="{menuOpen: false}"
     >
       <header class="w-full bg-white h-16">

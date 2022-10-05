@@ -2,8 +2,17 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
   use ControlServerWeb, :live_component
 
   import Phoenix.HTML.Form, only: [inputs_for: 2]
+  import K8s.Resource.FieldAccessors, only: [name: 1]
 
   alias ControlServer.Rook
+  alias KubeExt.KubeState
+
+  @impl true
+  def mount(socket) do
+    {:ok, assign(socket, :nodes, node_names())}
+  end
+
+  defp node_names, do: Enum.map(KubeState.nodes(), &name/1)
 
   @impl true
   def update(%{ceph_cluster: ceph_cluster} = assigns, socket) do
@@ -110,7 +119,12 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
         />
 
         <%= for node_form <- inputs_for(f, :nodes) do %>
-          <.input field={{node_form, :name}} placeholder="Name" />
+          <.input field={{node_form, :name}} type="select">
+            <:option value="" hidden={true}>Select a host</:option>
+            <:option :for={node <- @nodes} value={node}>
+              <%= node %>
+            </:option>
+          </.input>
           <.input field={{node_form, :device_filter}} placeholder="Device Filter" />
         <% end %>
 

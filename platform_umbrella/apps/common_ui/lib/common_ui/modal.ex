@@ -32,16 +32,20 @@ defmodule CommonUI.Modal do
   attr :on_cancel, JS, default: %JS{}
   attr :on_confirm, JS, default: %JS{}
 
-  slot(:inner_block, required: true)
-  slot(:title)
-  slot(:subtitle)
-  slot(:confirm)
-  slot(:cancel)
+  slot :inner_block, required: true
+  slot :title
+  slot :subtitle
+  slot :confirm
+  slot :cancel
 
   def modal(assigns) do
     ~H"""
     <div id={@id} phx-mounted={@show && show_modal(@id)} class="relative z-50 hidden">
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-fuscous-gray-50/90 transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -58,7 +62,7 @@ defmodule CommonUI.Modal do
               phx-window-keydown={hide_modal(@on_cancel, @id)}
               phx-key="escape"
               phx-click-away={hide_modal(@on_cancel, @id)}
-              class="hidden relative rounded-2xl bg-white p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
+              class="hidden relative rounded-2xl bg-white p-14 shadow-lg shadow-fuscous-gray-700/10 ring-1 ring-fuscous-gray-700/10 transition"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -72,10 +76,13 @@ defmodule CommonUI.Modal do
               </div>
               <div id={"#{@id}-content"}>
                 <header :if={@title != []}>
-                  <h1 id={"#{@id}-title"} class="text-lg font-semibold leading-8 text-zinc-800">
+                  <h1
+                    id={"#{@id}-title"}
+                    class="text-lg font-semibold leading-8 text-fuscous-gray-800"
+                  >
                     <%= render_slot(@title) %>
                   </h1>
-                  <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+                  <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-fuscous-gray-600">
                     <%= render_slot(@subtitle) %>
                   </p>
                 </header>
@@ -93,7 +100,7 @@ defmodule CommonUI.Modal do
                   <.link
                     :for={cancel <- @cancel}
                     phx-click={hide_modal(@on_cancel, @id)}
-                    class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                    class="text-sm font-semibold leading-6 text-fuscous-gray-900 hover:text-fuscous-gray-700"
                   >
                     <%= render_slot(cancel) %>
                   </.link>
