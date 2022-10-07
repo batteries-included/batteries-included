@@ -40,7 +40,7 @@ defmodule ControlServer.SnapshotApply do
     default_opts = [
       include_total_count: true,
       cursor_fields: [{:inserted_at, :desc}, {:id, :desc}],
-      limit: 25
+      limit: 15
     ]
 
     total_opts = Keyword.merge(default_opts, opts)

@@ -39,6 +39,32 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
     |> Timex.Format.Duration.Formatters.Humanized.format()
   end
 
+  defp status_icon(%{is_success: is_success} = assigns) when is_success in ["true", true, :ok] do
+    ~H"""
+    <div class="flex text-shamrock-500 font-semi-bold">
+      <div class="flex-initial">
+        Success
+      </div>
+      <div class="flex-none ml-2">
+        <Heroicons.check_badge class="h-6 w-6" />
+      </div>
+    </div>
+    """
+  end
+
+  defp status_icon(%{is_success: _is_success} = assigns) do
+    ~H"""
+    <div class="flex text-heath-300 font-semi-bold">
+      <div class="flex-initial">
+        Failed
+      </div>
+      <div class="flex-none ml-2">
+        <Heroicons.exclamation_circle class="h-6 w-6" />
+      </div>
+    </div>
+    """
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -80,14 +106,14 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
             <:label>
               Status
             </:label>
-            <%= Phoenix.Naming.humanize(@snapshot.status) %>
+            <.status_icon is_success={@snapshot.status} />
           </.definition_row>
         </dl>
       </.body_section>
       <.section_title>Path Results</.section_title>
       <.table id="resource-paths" rows={@snapshot.resource_paths}>
         <:col :let={rp} label="Path"><%= rp.path %></:col>
-        <:col :let={rp} label="Successful"><%= rp.is_success %></:col>
+        <:col :let={rp} label="Successful"><.status_icon is_success={rp.is_success} /></:col>
         <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
       </.table>
     </.layout>

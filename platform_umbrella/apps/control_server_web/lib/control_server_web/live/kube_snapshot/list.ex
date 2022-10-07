@@ -44,7 +44,9 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
         <.title>Kube Deploys</.title>
       </:title>
       <.table id="kube-snapshot-table" rows={@snapshots.entries}>
-        <:col :let={snapshot} label="Started"><%= snapshot.inserted_at %></:col>
+        <:col :let={snapshot} label="Started">
+          <%= Timex.format!(snapshot.inserted_at, "{RFC822z}") %>
+        </:col>
         <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>
         <:action :let={snapshot}>
           <.link navigate={snapshot_path(snapshot)} type="styled">Show Snapshot</.link>

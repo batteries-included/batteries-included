@@ -11,7 +11,7 @@ defmodule ControlServerWeb.DeploymentsDisplay do
       <:col :let={deployment} label="Name"><%= name(deployment) %></:col>
       <:col :let={deployment} label="Replicas"><%= get_in(deployment, ~w(spec replicas)) %></:col>
       <:col :let={deployment} label="Available">
-        <%= get_in(deployment, ~w(spec availableReplics)) %>
+        <%= get_in(deployment, ~w(status availableReplicas)) %>
       </:col>
 
       <:action :let={deployment}>

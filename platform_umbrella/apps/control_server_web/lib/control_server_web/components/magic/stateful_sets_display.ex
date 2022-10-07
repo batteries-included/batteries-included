@@ -9,9 +9,9 @@ defmodule ControlServerWeb.StatefulSetsDisplay do
     <.table id="stateful_set-display-table" rows={@stateful_sets}>
       <:col :let={stateful_set} label="Namespace"><%= namespace(stateful_set) %></:col>
       <:col :let={stateful_set} label="Name"><%= name(stateful_set) %></:col>
-      <:col :let={stateful_set} label="Replicas"><%= get_in(stateful_set, ~w(spec replics)) %></:col>
+      <:col :let={stateful_set} label="Replicas"><%= get_in(stateful_set, ~w(spec replicas)) %></:col>
       <:col :let={stateful_set} label="Available">
-        <%= get_in(stateful_set, ~w(spec availableReplicas)) %>
+        <%= get_in(stateful_set, ~w(status availableReplicas)) %>
       </:col>
 
       <:action :let={stateful_set}>

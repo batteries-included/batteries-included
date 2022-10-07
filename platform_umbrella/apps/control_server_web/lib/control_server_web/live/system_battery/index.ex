@@ -35,7 +35,7 @@ defmodule ControlServerWeb.SystemBatteryLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.layout group={:magic} active={:installed_batteries}>
       <.table
         id="system_batteries"
         rows={@system_batteries}

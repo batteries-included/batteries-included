@@ -2,7 +2,6 @@ defmodule ControlServerWeb.GroupBatteriesLive do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import CommonUI.Icons.Misc
 
   alias ControlServer.Batteries.Catalog
   alias ControlServer.Batteries.Installer
@@ -80,12 +79,12 @@ defmodule ControlServerWeb.GroupBatteriesLive do
 
   defp active_check(assigns) do
     ~H"""
-    <div class="flex">
+    <div class="flex text-shamrock-500 font-semi-bold">
       <div class="flex-initial">
         Active
       </div>
       <div class="flex-none ml-2">
-        <.check_mark class="text-shamrock-500" />
+        <Heroicons.check class="h-6 w-6" />
       </div>
     </div>
     """

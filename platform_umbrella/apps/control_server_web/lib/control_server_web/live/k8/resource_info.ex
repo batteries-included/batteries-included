@@ -58,24 +58,50 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     """
   end
 
+  defp status_icon(%{status: status} = assigns) when status in ["true", true, :ok] do
+    ~H"""
+    <div class="flex text-shamrock-500 font-semi-bold">
+      <div class="flex-initial">
+        True
+      </div>
+      <div class="flex-none ml-2">
+        <Heroicons.check class="h-6 w-6" />
+      </div>
+    </div>
+    """
+  end
+
+  defp status_icon(assigns) do
+    ~H"""
+    <div class="flex text-heath-300 font-semi-bold">
+      <div class="flex-initial">
+        False
+      </div>
+      <div class="flex-none ml-2">
+        <Heroicons.x_mark class="h-6 w-6" />
+      </div>
+    </div>
+    """
+  end
+
   defp pod_containers(assigns) do
     container_statuses = Map.get(assigns.status, "containerStatuses", [])
     assigns = assign(assigns, :container_statuses, container_statuses)
 
     ~H"""
     <.body_section>
-      <%= for cs <- @container_statuses do %>
-        <h4><%= Map.get(cs, "name", "") %></h4>
-        <div class="grid grid-cols-2 gap-4">
-          <div>Image</div>
-          <div><%= Map.get(cs, "image", "") %></div>
+      <%= for {cs, idx} <- Enum.with_index(@container_statuses) do %>
+        <.h3 class={[idx != 0 && "mt-10"]}><%= Map.get(cs, "name", "") %></.h3>
+        <div class="grid grid-cols-4 gap-1">
+          <div class="col-span-1 font-mono font-semibold">Image</div>
+          <div class="col-span-3"><%= Map.get(cs, "image", "") %></div>
         </div>
-        <div class="grid grid-cols-4 gap-4">
-          <div>Started</div>
-          <div><%= Map.get(cs, "started", false) %></div>
-          <div>Ready</div>
-          <div><%= Map.get(cs, "ready", false) %></div>
-          <div>Restart Count</div>
+        <div class="grid grid-cols-6 gap-1">
+          <div class="font-mono font-semibold">Started</div>
+          <div><.status_icon status={Map.get(cs, "started", false)} /></div>
+          <div class="font-mono font-semibold">Ready</div>
+          <div><.status_icon status={Map.get(cs, "ready", false)} /></div>
+          <div class="font-mono font-semibold">Restart Count</div>
           <div><%= Map.get(cs, "restartCount", 0) %></div>
         </div>
       <% end %>
@@ -102,15 +128,15 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
     ~H"""
     <.body_section>
-      <h4>Selector</h4>
-      <div class="grid grid-cols-4 gap-4">
+      <.h3>Selector</.h3>
+      <div class="grid grid-cols-2 gap-1">
         <%= for {key, value} <- @selector do %>
           <div class="font-mono font-semibold"><%= key %></div>
           <div><%= value %></div>
         <% end %>
       </div>
 
-      <h4>Ports</h4>
+      <.h3 class="mt-10">Ports</.h3>
       <.table id="ports-table" rows={@ports}>
         <:col :let={port} label="Name"><%= Map.get(port, "name", "") %></:col>
         <:col :let={port} label="Port"><%= Map.get(port, "port", "") %></:col>
@@ -141,11 +167,11 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   defp stateful_set_status(assigns) do
     ~H"""
     <.body_section>
-      <div class="grid grid-cols-4 gap-4">
-        <div>Current Revision</div>
-        <div><%= Map.get(@status, "currentRevision", 0) %></div>
-        <div>Update Revision</div>
-        <div><%= Map.get(@status, "currentRevision", 0) %></div>
+      <div class="grid grid-cols-6 gap-1">
+        <div class="col-span-2">Current Revision</div>
+        <div class="col-span-4"><%= Map.get(@status, "currentRevision", 0) %></div>
+        <div class="col-span-2">Update Revision</div>
+        <div class="col-span-4"><%= Map.get(@status, "currentRevision", 0) %></div>
         <div>Total Replicas</div>
         <div><%= Map.get(@status, "replicas", 0) %></div>
         <div>Available Replicas</div>
@@ -187,10 +213,10 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     assigns = assign(assigns, :status, status)
 
     ~H"""
-    <.section_title>Messages</.section_title>
-    <.conditions status={@status} />
     <.section_title>Status</.section_title>
     <.deployment_status status={@status} />
+    <.section_title>Messages</.section_title>
+    <.conditions status={@status} />
     """
   end
 
@@ -245,8 +271,8 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <.title>Kube Status</.title>
       </:title>
       <.banner_section name={@name} namespace={@namespace} />
-      <.label_section resource={@resource} />
       <.info_section resource_type={@resource_type} resource={@resource} />
+      <.label_section resource={@resource} />
     </.layout>
     """
   end

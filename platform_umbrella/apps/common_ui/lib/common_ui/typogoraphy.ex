@@ -2,7 +2,7 @@ defmodule CommonUI.Typogoraphy do
   use Phoenix.Component
   import Phoenix.Component, except: [link: 1]
 
-  attr :class, :string, default: ""
+  attr :class, :any, default: ""
 
   attr :base_class, :string,
     default: "text-4xl font-extrabold leading-7 text-pink-500 sm:text-3xl sm:truncate"
@@ -15,7 +15,7 @@ defmodule CommonUI.Typogoraphy do
     """
   end
 
-  attr :class, :string, default: ""
+  attr :class, :any, default: ""
   attr :base_class, :string, default: "text-2xl sm:text-3xl font-bold leading-10 text-astral-500"
   slot :inner_block, required: true
 
@@ -25,7 +25,7 @@ defmodule CommonUI.Typogoraphy do
     """
   end
 
-  attr :class, :string, default: ""
+  attr :class, :any, default: ""
   attr :base_class, :string, default: "text-xl sm:text-2xl font-bold leading-6"
   slot :inner_block, required: true
 

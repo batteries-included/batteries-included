@@ -225,42 +225,42 @@ defmodule ControlServerWeb.Components.LeftMenu do
       name="Pods"
       is_active={@active == :pod}
     >
-      <Heroicons.bolt solid class={@icon_class} />
+      <Heroicons.server class={@icon_class} />
     </.menu_item>
     <.menu_item
       navigate={Routes.resource_list_path(Endpoint, :deployment)}
       name="Deployments"
       is_active={@active == :deployment}
     >
-      <Heroicons.bolt solid class={@icon_class} />
+      <Heroicons.server_stack class={@icon_class} />
     </.menu_item>
     <.menu_item
       navigate={Routes.resource_list_path(Endpoint, :stateful_set)}
       name="Stateful Sets"
       is_active={@active == :stateful_set}
     >
-      <Heroicons.bolt solid class={@icon_class} />
+      <Heroicons.circle_stack class={@icon_class} />
     </.menu_item>
     <.menu_item
       navigate={Routes.resource_list_path(Endpoint, :node)}
       name="Nodes"
       is_active={@active == :node}
     >
-      <Heroicons.bolt solid class={@icon_class} />
+      <Heroicons.computer_desktop solid class={@icon_class} />
     </.menu_item>
     <.menu_item
       navigate={Routes.resource_list_path(Endpoint, :service)}
       name="Services"
       is_active={@active == :service}
     >
-      <Heroicons.bolt solid class={@icon_class} />
+      <Heroicons.wifi class={@icon_class} />
     </.menu_item>
     <.menu_item
       navigate={Routes.kube_snapshot_list_path(Endpoint, :index)}
       name="Kube Deploys"
       is_active={@active == :kube_snapshot}
     >
-      <Heroicons.bolt solid class={@icon_class} />
+      <Heroicons.rocket_launch class={@icon_class} />
     </.menu_item>
 
     <.menu_item
