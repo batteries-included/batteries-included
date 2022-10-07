@@ -96,7 +96,7 @@ defmodule ControlServerWeb.GroupBatteriesLive do
   def start_button(assigns) do
     ~H"""
     <.button phx-click={:start} phx-value-type={@battery.type}>
-      Start Service
+      Install Battery
     </.button>
     """
   end
