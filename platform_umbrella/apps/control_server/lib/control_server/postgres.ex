@@ -136,14 +136,14 @@ defmodule ControlServer.Postgres do
     |> transaction_repo.transaction()
   end
 
-  def maybe_insert(nil = _selected, repo, attrs) do
+  defp maybe_insert(nil = _selected, repo, attrs) do
     %Cluster{}
     |> Cluster.changeset(attrs)
     |> repo.insert()
     |> broadcast(:insert)
   end
 
-  def maybe_insert(%Cluster{} = _selected, _repo, _attrs) do
+  defp maybe_insert(%Cluster{} = _selected, _repo, _attrs) do
     {:ok, nil}
   end
 

@@ -7,6 +7,7 @@ defmodule ControlServer.Batteries.Installer do
   alias ControlServer.Repo
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
+  alias ControlServer.Timeline
 
   require Logger
 
@@ -65,6 +66,7 @@ defmodule ControlServer.Batteries.Installer do
     selected_key = "#{battery_type}_selected"
     installed_key = "#{battery_type}_installed"
     post_key = "#{battery_type}_post"
+    event_key = "#{battery_type}_event"
 
     Multi.new()
     |> Multi.run(selected_key, fn repo, _ ->
@@ -92,6 +94,19 @@ defmodule ControlServer.Batteries.Installer do
         nil -> {:ok, nil}
         #
         installed -> post_install(installed, repo)
+      end
+    end)
+    |> Multi.run(event_key, fn repo, so_far ->
+      # If there was an install then run the post
+      case Map.get(so_far, installed_key, nil) do
+        nil ->
+          {:ok, nil}
+
+        #
+        installed ->
+          installed.type
+          |> Timeline.battery_install_event()
+          |> Timeline.create_timeline_event(repo)
       end
     end)
   end
@@ -154,7 +169,7 @@ defmodule ControlServer.Batteries.Installer do
        {result_type(key), cleaned_key, value}
      end)
      |> Enum.reduce(
-       %{installed: %{}, selected: %{}, post: %{}},
+       %{installed: %{}, selected: %{}, post: %{}, timeline_event: %{}},
        fn {result_type, key, value}, res ->
          put_in(res, [result_type, key], value)
        end
@@ -168,6 +183,7 @@ defmodule ControlServer.Batteries.Installer do
       String.ends_with?(key, "_installed") -> :installed
       String.ends_with?(key, "_selected") -> :selected
       String.ends_with?(key, "_post") -> :post
+      String.ends_with?(key, "_event") -> :timeline_event
       true -> :unknown
     end
   end
@@ -177,6 +193,7 @@ defmodule ControlServer.Batteries.Installer do
     |> String.replace("_installed", "")
     |> String.replace("_selected", "")
     |> String.replace("_post", "")
+    |> String.replace("_event", "")
     |> String.to_existing_atom()
   end
 

@@ -5,11 +5,12 @@ defmodule EventCenter.Database do
 
   @allowed_actions [:insert, :update, :delete, :multi]
   @allowed_sources [
-    :knative_service,
     :jupyter_notebook,
+    :knative_service,
     :postgres_cluster,
     :redis_cluster,
-    :system_battery
+    :system_battery,
+    :timeline_event
   ]
 
   def allowed_actions, do: @allowed_actions

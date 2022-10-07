@@ -74,6 +74,8 @@ defmodule ControlServerWeb.Router do
     live "/system_batteries/:id", SystemBatteryLive.Show, :show
     live "/kube_snapshots", Live.KubeSnapshotList, :index
     live "/kube_snapshots/:id", Live.KubeSnapshotShow, :index
+
+    live "/timeline", TimelineLive, :index
   end
 
   scope "/api", ControlServerWeb do

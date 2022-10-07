@@ -24,17 +24,49 @@ defmodule KubeServices.Application do
       KubeServices.Usage.RestClientGenserver,
       {Oban, Application.fetch_env!(:kube_services, Oban)},
       KubeServices.SnapshotApply.EventLauncher
-    ] ++ resource_watchers()
+    ] ++ kube_state_watchers() ++ timeline_watchers()
   end
 
   def children(_run), do: []
 
-  def resource_watchers do
-    KubeExt.ApiVersionKind.all_known()
-    |> Enum.map(fn known ->
-      {known, "ResourceWatcher.#{Macro.camelize(Atom.to_string(known))}"}
+  def kube_state_watchers,
+    do:
+      specs_for_types(
+        KubeExt.ApiVersionKind.all_known(),
+        "KubeState.Resource",
+        &resource_worker_child_spec/1
+      )
+
+  def timeline_watchers do
+    specs_for_types(
+      [
+        :namspace,
+        :pod,
+        :node,
+        :deployment,
+        :stateful_set
+      ],
+      "Timeline.Kube",
+      &kube_watcher_child_spec/1
+    ) ++
+      specs_for_types(
+        [
+          :jupyter_notebook,
+          :knative_service,
+          :postgres_cluster,
+          :redis_cluster
+        ],
+        "Timeline.Database",
+        &database_watcher_child_spec/1
+      )
+  end
+
+  defp specs_for_types(types, base_name, func) do
+    types
+    |> Enum.map(fn type ->
+      {type, "#{base_name}.#{Macro.camelize(Atom.to_string(type))}"}
     end)
-    |> Enum.map(&resource_worker_child_spec/1)
+    |> Enum.map(func)
   end
 
   defp resource_worker_child_spec({resource_type, id}) do
@@ -49,6 +81,20 @@ defmodule KubeServices.Application do
            table_name: KubeState.default_state_table()
          }
        ]},
+      id: id
+    )
+  end
+
+  defp kube_watcher_child_spec({resource_type, id}) do
+    Supervisor.child_spec(
+      {KubeServices.Timeline.KubeWatcher, [resource_type: resource_type]},
+      id: id
+    )
+  end
+
+  defp database_watcher_child_spec({database_source_type, id}) do
+    Supervisor.child_spec(
+      {KubeServices.Timeline.DatabaseWatcher, [source_type: database_source_type]},
       id: id
     )
   end

@@ -214,6 +214,13 @@ defmodule ControlServerWeb.Components.LeftMenu do
   defp group_menu_item(%{group: :magic} = assigns) do
     ~H"""
     <.menu_item
+      navigate={Routes.timeline_path(Endpoint, :index)}
+      name="Timeline"
+      is_active={@active == :timeline}
+    >
+      <Heroicons.clock class={@icon_class} />
+    </.menu_item>
+    <.menu_item
       navigate={Routes.resource_list_path(Endpoint, :pod)}
       name="Pods"
       is_active={@active == :pod}

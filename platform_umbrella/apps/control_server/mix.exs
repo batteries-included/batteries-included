@@ -48,6 +48,7 @@ defmodule ControlServer.MixProject do
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:typed_ecto_schema, "~> 0.4.1"},
+      {:polymorphic_embed, "~> 3.0.5"},
       {:ecto_sql, "~> 3.8"},
       {:postgrex, ">= 0.0.0"},
 

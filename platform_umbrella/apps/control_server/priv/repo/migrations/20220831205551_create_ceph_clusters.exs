@@ -8,7 +8,7 @@ defmodule ControlServer.Repo.Migrations.CreateCephCluster do
       add :namespace, :string, default: "battery-data"
       add :num_mon, :integer, default: 1, null: false
       add :num_mgr, :integer, default: 1, null: false
-      add :nodes, {:array, :map}
+      add :nodes, :map
       add :data_dir_host_path, :string
 
       timestamps(type: :utc_datetime_usec)

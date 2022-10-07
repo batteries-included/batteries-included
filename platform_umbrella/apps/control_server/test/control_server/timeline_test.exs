@@ -1,0 +1,104 @@
+defmodule ControlServer.TimelineTest do
+  use ControlServer.DataCase
+
+  alias ControlServer.Timeline
+
+  describe "timeline_events" do
+    alias ControlServer.Timeline.TimelineEvent
+
+    import ControlServer.TimelineFixtures
+    alias EventCenter.Database, as: DatabaseEventCenter
+
+    @invalid_attrs %{payload: nil}
+
+    test "Can create changeset for TimelineEvent with a poly embed" do
+      event = %TimelineEvent{
+        level: :info,
+        payload: %ControlServer.Timeline.BatteryInstall{type: :postgres_operator}
+      }
+
+      assert _ = TimelineEvent.changeset(event, %{})
+    end
+
+    test "Can create a batery_install event" do
+      event = Timeline.battery_install_event(:postgres_operator)
+      assert {:ok, _} = Timeline.create_timeline_event(event)
+    end
+
+    test "Can create a kube event" do
+      event = Timeline.kube_event(:add, :pod, "pg-control-0", "battery-core")
+      assert {:ok, inserted_event} = Timeline.create_timeline_event(event)
+      assert inserted_event.payload.type == :pod
+    end
+
+    test "Can create a database event" do
+      event = Timeline.named_database_event(:update, :postgres_operator, "pg-control")
+      assert {:ok, inserted_event} = Timeline.create_timeline_event(event)
+      assert inserted_event.payload.type == :postgres_operator
+    end
+
+    test "get database message for events" do
+      DatabaseEventCenter.subscribe(:timeline_event)
+
+      assert {:ok, _} =
+               Timeline.create_timeline_event(
+                 Timeline.kube_event(:add, :pod, "pg-control-0", "battery-core")
+               )
+
+      assert_receive {:insert, _}
+    end
+
+    test "list_timeline_events/0 returns all timeline_events" do
+      timeline_event = timeline_event_fixture()
+      assert Timeline.list_timeline_events() == [timeline_event]
+    end
+
+    test "get_timeline_event!/1 returns the timeline_event with given id" do
+      timeline_event = timeline_event_fixture()
+      assert Timeline.get_timeline_event!(timeline_event.id) == timeline_event
+    end
+
+    test "create_timeline_event/1 with valid data creates a timeline_event" do
+      valid_attrs = %{level: :info, payload: %{__type__: :battery_install, type: :grafana}}
+
+      assert {:ok, %TimelineEvent{} = timeline_event} =
+               Timeline.create_timeline_event(valid_attrs)
+
+      assert timeline_event.payload.type == :grafana
+    end
+
+    test "create_timeline_event/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Timeline.create_timeline_event(@invalid_attrs)
+    end
+
+    test "update_timeline_event/2 with valid data updates the timeline_event" do
+      timeline_event = timeline_event_fixture()
+      update_attrs = %{level: :error}
+
+      assert {:ok, %TimelineEvent{} = timeline_event} =
+               Timeline.update_timeline_event(timeline_event, update_attrs)
+
+      assert timeline_event.level == :error
+    end
+
+    test "update_timeline_event/2 with invalid data returns error changeset" do
+      timeline_event = timeline_event_fixture()
+
+      assert {:error, %Ecto.Changeset{}} =
+               Timeline.update_timeline_event(timeline_event, @invalid_attrs)
+
+      assert timeline_event == Timeline.get_timeline_event!(timeline_event.id)
+    end
+
+    test "delete_timeline_event/1 deletes the timeline_event" do
+      timeline_event = timeline_event_fixture()
+      assert {:ok, %TimelineEvent{}} = Timeline.delete_timeline_event(timeline_event)
+      assert_raise Ecto.NoResultsError, fn -> Timeline.get_timeline_event!(timeline_event.id) end
+    end
+
+    test "change_timeline_event/1 returns a timeline_event changeset" do
+      timeline_event = timeline_event_fixture()
+      assert %Ecto.Changeset{} = Timeline.change_timeline_event(timeline_event)
+    end
+  end
+end
