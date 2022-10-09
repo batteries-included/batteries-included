@@ -1,6 +1,6 @@
 .PHONY: compile test lint analyze format
 
-all: compile test lint format analyze
+all: deps.get compile test lint format analyze
 
 compile:
 	mix compile --force --warnings-as-errors

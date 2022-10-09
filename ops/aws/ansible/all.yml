@@ -1,0 +1,15 @@
+---
+- hosts: all
+  roles:
+    - common
+
+- hosts: gateways
+  roles:
+    - wireguard
+  vars_files:
+    - ../keys/ansible_vars.yaml
+
+- hosts: devservers
+  roles:
+    - users
+    - devserver

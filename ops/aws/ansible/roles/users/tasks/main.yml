@@ -1,0 +1,26 @@
+---
+- name: Install shell packages
+  apt:
+    state: present
+    pkg:
+      - zsh
+
+- name: Add the user 'elliott'
+  ansible.builtin.user:
+    name: elliott
+    comment: Elliott
+    group: admin
+    groups: admin,adm,sudo
+    shell: /usr/bin/zsh
+
+- name: Set authorized key for elliott
+  authorized_key:
+    user: elliott
+    state: present
+    key: "{{ lookup('file', '../pub_keys/elliott_ssh.pub') }}"
+
+- name: sudo without password for elliott
+  copy:
+    content: "elliott ALL=(ALL:ALL) NOPASSWD:ALL"
+    dest: /etc/sudoers.d/elliott_nopasswd
+    mode: 0440

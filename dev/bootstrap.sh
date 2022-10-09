@@ -113,7 +113,7 @@ postgresForward() {
 }
 
 buildLocalControl() {
-  bash "${DIR}/build_local.sh"
+  bash "${DIR}/build-local.sh"
 }
 
 cargoBootstrap() {
@@ -140,6 +140,10 @@ while (("$#")); do
   case "$1" in
     -c | --create-cluster)
       CREATE_CLUSTER=true
+      shift
+      ;;
+    -d | --dont-create-cluster)
+      CREATE_CLUSTER=false
       shift
       ;;
     -k | --use-kind)

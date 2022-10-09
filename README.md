@@ -70,11 +70,12 @@ asdf plugin add nodejs
 asdf plugin add kubectl
 asdf plugin add awscli
 asdf plugin-add eksctl
+asdf plugin add hugo
 
 asdf install 
 ```
 
-That should install elixir, erlang, k3d, k9s, kubectl, nodejs, rust, and tmux. There might be system dependencies that are needed.
+That should install elixir, erlang, k3d, k9s, kubectl, nodejs, and tmux. There might be system dependencies that are needed.
 
 
 ### Elixir Dependencies
@@ -102,12 +103,7 @@ The dev folder contains scripts to use in developing and running the platform. `
 `static_pages` contains the code that builds and deploys [Batteries Included](https://www.batteriesincl.com)
 
 There are other non-public pages in `static_pages/posts`
-
-### Rust Utils
-
-Starting up Batteries Included should be a simple process without many dependencies. So we'll need a small binary with no dependecies to do the initial install. That and other tools are in `rust_utils`
-
-### Platform Umbrella
+## Platform Umbrella
 
 This is the main directory. It contains two different [Phoenix Framework](https://phoenixframework.org/) There are different elixir `Application`'s in `platform_umbrella/apps` while the configuration is in `platform_ubrella/config`
 
@@ -163,7 +159,7 @@ In one tmux pane start the k3d cluster, compile the rust bootstrap binary, run i
 Then in another tmux pane start the daeamon
 ```bash
 cd platform_umbrella
-mix setup && mix phx.server
+mix do setup, phx.server
 ```
 
 

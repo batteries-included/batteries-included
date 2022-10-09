@@ -6,6 +6,8 @@ set -ueo pipefail
 PACKAGES=(
   # for everything
   build-essential procps curl file git
+  unzip libssl-dev automake autoconf
+  libncurses5-dev
   # for us
   chromium-chromedriver
   # for insurance, linux should have this stuff

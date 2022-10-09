@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Elliott Clark
+  description: Users role for Batteries Included
+  company: Batteries Included
+
+  license: Private
+
+  min_ansible_version: 2.1
+
+  galaxy_tags: []
+
+dependencies: []

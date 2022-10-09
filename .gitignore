@@ -3,3 +3,5 @@
 
 # Local Netlify folder
 .netlify
+
+ops/aws/keys/

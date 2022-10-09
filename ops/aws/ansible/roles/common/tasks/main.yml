@@ -1,0 +1,23 @@
+---
+- name: "Update apt cache"
+  become: true
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Upgrade apt packages"
+  become: true
+  apt:
+    upgrade: safe
+
+- name: Install basic packages
+  apt:
+    state: present
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - net-tools
+      - ufw
+      - fail2ban
