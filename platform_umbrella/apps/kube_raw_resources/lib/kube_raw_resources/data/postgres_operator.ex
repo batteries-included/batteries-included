@@ -200,7 +200,7 @@ defmodule KubeRawResources.PostgresOperator do
               "imagePullPolicy" => "IfNotPresent",
               "name" => "postgres-operator",
               "resources" => %{
-                "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
+                "limits" => %{"memory" => "500Mi"},
                 "requests" => %{"cpu" => "100m", "memory" => "250Mi"}
               },
               "securityContext" => %{

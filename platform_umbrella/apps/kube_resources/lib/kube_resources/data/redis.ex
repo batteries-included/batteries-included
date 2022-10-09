@@ -98,12 +98,11 @@ defmodule KubeResources.Redis do
               "name" => "app",
               "resources" => %{
                 "limits" => %{
-                  "cpu" => "100m",
-                  "memory" => "50Mi"
+                  "memory" => "500Mi"
                 },
                 "requests" => %{
-                  "cpu" => "10m",
-                  "memory" => "50Mi"
+                  "cpu" => "100m",
+                  "memory" => "150Mi"
                 }
               },
               "securityContext" => %{

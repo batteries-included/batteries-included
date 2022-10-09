@@ -809,7 +809,7 @@ defmodule KubeResources.Rook do
                 %{"containerPort" => 9443, "name" => "https-webhook", "protocol" => "TCP"}
               ],
               "resources" => %{
-                "limits" => %{"cpu" => "500m", "memory" => "512Mi"},
+                "limits" => %{"memory" => "512Mi"},
                 "requests" => %{"cpu" => "100m", "memory" => "128Mi"}
               },
               "securityContext" => %{

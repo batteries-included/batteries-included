@@ -165,7 +165,6 @@ defmodule KubeResources.IstioGateway do
               ],
               "resources" => %{
                 "limits" => %{
-                  "cpu" => "2000m",
                   "memory" => "1024Mi"
                 },
                 "requests" => %{

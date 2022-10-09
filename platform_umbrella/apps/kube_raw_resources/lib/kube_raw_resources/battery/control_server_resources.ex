@@ -68,7 +68,7 @@ defmodule KubeRawResources.ControlServerResources do
     |> Map.put_new("name", name)
     |> Map.put_new("image", image)
     |> Map.put_new("resources", %{
-      "limits" => %{"cpu" => "200m", "memory" => "200Mi"},
+      "limits" => %{"memory" => "200Mi"},
       "requests" => %{"cpu" => "200m", "memory" => "200Mi"}
     })
     |> Map.put_new("env", [

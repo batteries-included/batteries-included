@@ -1271,7 +1271,6 @@ defmodule KubeResources.Harbor do
               },
               "resources" => %{
                 "limits" => %{
-                  "cpu" => 1,
                   "memory" => "1Gi"
                 },
                 "requests" => %{

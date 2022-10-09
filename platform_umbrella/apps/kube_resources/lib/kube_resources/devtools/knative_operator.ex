@@ -1050,7 +1050,6 @@ defmodule KubeResources.KnativeOperator do
               },
               "resources" => %{
                 "limits" => %{
-                  "cpu" => "500m",
                   "memory" => "500Mi"
                 },
                 "requests" => %{

@@ -142,7 +142,7 @@ defmodule KubeRawResources.Database do
         }
       ],
       "resources" => %{
-        "limits" => %{"cpu" => "200m", "memory" => "256M"},
+        "limits" => %{"memory" => "256M"},
         "requests" => %{"cpu" => "100m", "memory" => "256M"}
       },
       "env" => [
