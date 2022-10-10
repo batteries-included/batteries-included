@@ -36,7 +36,7 @@ defmodule KubeServices.SnapshotApply.Steps do
   def launch_resource_path_jobs(resource_paths) do
     resource_paths
     |> Enum.map(fn rp -> KubeServices.SnapshotApply.ResourcePathWorker.new(%{id: rp.id}) end)
-    |> Oban.insert_all()
+    |> Oban.insert_all(timeout: 60_000)
   end
 
   @spec apply_resource_path(ResourcePath.t()) ::
@@ -126,7 +126,7 @@ defmodule KubeServices.SnapshotApply.Steps do
       resource_paths_multi(batteries, kube_snapshot)
     end)
     # Finally run the transaction.
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: 60_000)
   end
 
   defp resource_paths_multi(batteries, kube_snapshot) do

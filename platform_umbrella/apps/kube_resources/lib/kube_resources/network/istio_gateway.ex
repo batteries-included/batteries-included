@@ -90,12 +90,12 @@ defmodule KubeResources.IstioGateway do
           "protocol" => "TCP",
           "targetPort" => 15_021
         },
-        %{
-          "name" => "ssh",
-          "port" => 22,
-          "protocol" => "TCP",
-          "targetPort" => 22
-        },
+        # %{
+        #   "name" => "ssh",
+        #   "port" => 22,
+        #   "protocol" => "TCP",
+        #   "targetPort" => 22
+        # },
         %{
           "name" => "http2",
           "port" => 80,
@@ -209,9 +209,9 @@ defmodule KubeResources.IstioGateway do
     spec = %{
       selector: %{istio: @istio_name},
       servers: [
-        %{port: %{number: 80, name: "http2", protocol: "HTTP"}, hosts: ["*"]},
+        %{port: %{number: 80, name: "http2", protocol: "HTTP"}, hosts: ["*"]}
         # %{port: %{number: 443, name: "https", protocol: "HTTPS"}, hosts: ["*"]},
-        %{port: %{number: 22, name: "ssh", protocol: "TCP"}, hosts: ["*"]}
+        # %{port: %{number: 22, name: "ssh", protocol: "TCP"}, hosts: ["*"]}
       ]
     }
 

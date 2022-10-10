@@ -1,0 +1,8 @@
+---
+- hosts: devservers
+  roles:
+    - common
+    - users
+    - devserver
+  vars_files:
+    - ../keys/ansible_vars.yaml

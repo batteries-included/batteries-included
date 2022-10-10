@@ -7,16 +7,33 @@
   apt:
     state: present
     pkg:
-      - build-essential
-      - procps
-      - curl
-      - file
-      - git
-      - unzip
-      - libssl-dev
-      - automake
       - autoconf
+      - automake
+      - binutils
+      - bison
+      - build-essential
+      - curl
+      - dirmngr
+      - file
+      - fop
+      - g++
+      - gcc
+      - gettext
+      - git
+      - gpg
       - libncurses5-dev
+      - libreadline-dev
+      - libssl-dev
+      - libtool
+      - libxslt-dev
+      - libyaml-dev
+      - make
+      - patch
+      - pkg-config
+      - procps
+      - unzip
+      - xsltproc
+      - zlib1g-dev
 
 - name: Download k3s binary x64
   get_url:
@@ -61,6 +78,7 @@
     owner: root
     group: root
     mode: 0644
+  notify: Restart k3s service
 
 - name: Enable and check K3s service
   systemd:

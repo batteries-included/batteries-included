@@ -126,7 +126,7 @@ defmodule KubeExt do
 
     operation = Client.patch(resource)
     result = Client.run(connection, operation)
-    Logger.debug("Update result: #{inspect(result)}")
+    Logger.debug("Completed update on single resource", result)
     result
   end
 

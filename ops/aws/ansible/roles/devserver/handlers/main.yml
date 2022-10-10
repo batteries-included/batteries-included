@@ -1,2 +1,5 @@
 ---
-# handlers file for devserver
+- name: Restart k3s service
+  service:
+    name: k3s
+    state: restarted

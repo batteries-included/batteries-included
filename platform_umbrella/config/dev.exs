@@ -8,7 +8,8 @@ config :control_server, ControlServer.Repo,
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   port: System.get_env("POSTGRES_PORT") || 5432,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  log: false
 
 config :home_base, HomeBase.Repo,
   username: System.get_env("POSTGRES_USER") || "batterydbuser",
@@ -17,7 +18,8 @@ config :home_base, HomeBase.Repo,
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   port: System.get_env("POSTGRES_PORT") || 5432,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  log: false
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -43,7 +45,7 @@ config :control_server_web, ControlServerWeb.Endpoint,
   ]
 
 config :home_base_web, HomeBaseWeb.Endpoint,
-  http: [port: 5000],
+  http: [port: 4900],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,

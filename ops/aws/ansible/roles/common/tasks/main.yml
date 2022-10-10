@@ -16,7 +16,6 @@
     pkg:
       - apt-transport-https
       - ca-certificates
-      - curl
       - software-properties-common
       - net-tools
       - ufw
