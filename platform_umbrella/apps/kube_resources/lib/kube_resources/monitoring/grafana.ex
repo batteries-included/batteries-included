@@ -101,17 +101,6 @@ defmodule KubeResources.Grafana do
     |> B.data(data)
   end
 
-  resource(:config_map_battery_grafana_test, config) do
-    namespace = Settings.namespace(config)
-    data = %{"run.sh" => get_resource(:run_sh)}
-
-    B.build_resource(:config_map)
-    |> B.name("battery-grafana-test")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.data(data)
-  end
-
   resource(:config_map_battery_grafana_dashboards, config) do
     namespace = Settings.namespace(config)
     data = %{"provider.yaml" => get_resource(:provider_yaml)}
@@ -263,29 +252,6 @@ defmodule KubeResources.Grafana do
           ]
         }
       }
-    })
-  end
-
-  resource(:pod_battery_grafana_test, config) do
-    namespace = Settings.namespace(config)
-
-    B.build_resource(:pod)
-    |> B.name("battery-grafana-test")
-    |> B.namespace(namespace)
-    |> B.app_labels("grafana-test")
-    |> B.spec(%{
-      "containers" => [
-        %{
-          "command" => ["/opt/bats/bin/bats", "-t", "/tests/run.sh"],
-          "image" => "bats/bats:v1.4.1",
-          "imagePullPolicy" => "IfNotPresent",
-          "name" => "battery-test",
-          "volumeMounts" => [%{"mountPath" => "/tests", "name" => "tests", "readOnly" => true}]
-        }
-      ],
-      "restartPolicy" => "Never",
-      "serviceAccountName" => "battery-grafana-test",
-      "volumes" => [%{"configMap" => %{"name" => "battery-grafana-test"}, "name" => "tests"}]
     })
   end
 
