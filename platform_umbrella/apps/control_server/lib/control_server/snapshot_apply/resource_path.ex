@@ -8,18 +8,21 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
   @foreign_key_type :binary_id
   typed_schema "resource_paths" do
     field :path, :string
-    field :resource_value, :map, redact: true
 
     field :hash, :string
-    field :api_version, :string
-    field :kind, :string
-    field :name, :string
 
+    field :type, Ecto.Enum, values: KubeExt.ApiVersionKind.all_known()
+
+    field :name, :string
     field :namespace, :string
+
     field :is_success, :boolean
     field :apply_result, :string
 
     belongs_to :kube_snapshot, ControlServer.SnapshotApply.KubeSnapshot
+
+    belongs_to :content_addressable_resource,
+               ControlServer.SnapshotApply.ContentAddressableResource
 
     timestamps()
   end
@@ -29,16 +32,15 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
     resource_path
     |> cast(attrs, [
       :path,
-      :resource_value,
       :hash,
       :kube_snapshot_id,
+      :content_addressable_resource_id,
       :is_success,
       :apply_result,
-      :api_version,
-      :kind,
+      :type,
       :name,
       :namespace
     ])
-    |> validate_required([:path, :resource_value, :hash, :kind, :api_version, :name])
+    |> validate_required([:path, :hash, :type, :name])
   end
 end

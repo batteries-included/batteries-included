@@ -71,7 +71,7 @@ defmodule KubeServices.Application do
 
   defp resource_worker_child_spec({resource_type, id}) do
     Supervisor.child_spec(
-      {Bella.Watcher.Worker,
+      {KubeExt.Watcher.Worker,
        [
          watcher: ResourceWatcher,
          connection_func: &ConnectionPool.get/0,

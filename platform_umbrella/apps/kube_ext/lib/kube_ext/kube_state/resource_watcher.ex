@@ -1,9 +1,9 @@
 defmodule KubeExt.KubeState.ResourceWatcher do
-  @behaviour Bella.Watcher
+  @behaviour KubeExt.Watcher
 
   alias KubeExt.KubeState.Runner
   alias KubeExt.ApiVersionKind
-  alias Bella.Watcher.State
+  alias KubeExt.Watcher.State
 
   require Logger
 

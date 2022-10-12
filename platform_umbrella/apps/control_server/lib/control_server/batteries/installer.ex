@@ -31,6 +31,24 @@ defmodule ControlServer.Batteries.Installer do
     install(catalog_battery)
   end
 
+  def install(types) when is_list(types) do
+    total =
+      types
+      |> Enum.map(&Catalog.get/1)
+      |> Enum.flat_map(&get_recursive_deps/1)
+      |> Enum.concat(types)
+      |> Enum.uniq()
+
+    Logger.debug(
+      "Installing #{length(types)} batteries",
+      types: types
+    )
+
+    Logger.debug("#{length(total)} total batteries after dependencies", total: total)
+
+    do_install(total)
+  end
+
   def install(%CatalogBattery{type: type} = catalog_battery) do
     # Get every dep
     # Merge the find_or_create Ecto.Multi of every
@@ -39,21 +57,22 @@ defmodule ControlServer.Batteries.Installer do
 
     deps = get_recursive_deps(catalog_battery)
     Logger.debug("Found #{length(deps)} recursive dependencies", deps: deps)
+    do_install(deps ++ [type])
+  end
 
-    Multi.new()
-    |> then(fn emtpy ->
-      Enum.reduce(deps, emtpy, fn dt, multi ->
-        Multi.append(multi, find_or_create_multi(dt))
-      end)
+  defp do_install(types) do
+    types
+    |> Enum.map(&find_or_create_multi/1)
+    |> Enum.reduce(Multi.new(), fn battery_type_multi, multi ->
+      Multi.append(multi, battery_type_multi)
     end)
-    |> Multi.append(find_or_create_multi(type))
     |> Repo.transaction()
     |> summarize()
     |> broadcast()
   end
 
   defp get_recursive_deps(%CatalogBattery{dependencies: deps} = _catalog_battery) do
-    deps
+    (deps || [])
     |> Enum.concat(
       Enum.flat_map(deps, fn dep_type ->
         dep_type |> Catalog.get() |> get_recursive_deps()

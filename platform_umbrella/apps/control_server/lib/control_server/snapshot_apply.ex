@@ -83,14 +83,13 @@ defmodule ControlServer.SnapshotApply do
             ^from(rp in ResourcePath,
               order_by: rp.path,
               select: [
-                :api_version,
                 :apply_result,
                 :hash,
                 :id,
+                :name,
+                :namespace,
                 :inserted_at,
                 :is_success,
-                :kind,
-                :namespace,
                 :path,
                 :updated_at
               ]
@@ -145,12 +144,8 @@ defmodule ControlServer.SnapshotApply do
     from rp in query, where: rp.is_success == true
   end
 
-  def resource_paths_by_api_version(query \\ ResourcePath, api_version) do
-    from rp in query, where: rp.api_version == ^api_version
-  end
-
-  def resource_paths_by_kind(query \\ ResourcePath, kind) do
-    from rp in query, where: rp.kind == ^kind
+  def resource_paths_by_type(query \\ ResourcePath, type) do
+    from rp in query, where: rp.type == ^type
   end
 
   def resource_paths_by_name(query \\ ResourcePath, name) do
@@ -240,7 +235,9 @@ defmodule ControlServer.SnapshotApply do
       ** (Ecto.NoResultsError)
 
   """
-  def get_resource_path!(id), do: Repo.get!(ResourcePath, id)
+  def get_resource_path!(id) do
+    Repo.get!(ResourcePath, id)
+  end
 
   @doc """
   Creates a resource_path.

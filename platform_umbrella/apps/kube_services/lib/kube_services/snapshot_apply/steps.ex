@@ -1,11 +1,8 @@
 defmodule KubeServices.SnapshotApply.Steps do
-  import K8s.Resource.FieldAccessors
-
-  alias ControlServer.Repo
-  alias ControlServer.SnapshotApply, as: ControlSnapshotApply
+  alias ControlServer.SnapshotApply.EctoSteps
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-  alias Ecto.Multi
+  alias KubeServices.SnapshotApply.ResourcePathWorker
 
   alias KubeExt.Hashing
   alias KubeExt.KubeState
@@ -14,63 +11,60 @@ defmodule KubeServices.SnapshotApply.Steps do
   require Logger
 
   def creation! do
-    with {:ok, snapshot} <- ControlSnapshotApply.create_kube_snapshot() do
-      snapshot
-    end
+    {:ok, snap} = EctoSteps.create_snap()
+    snap
   end
 
   @spec generation!(KubeSnapshot.t()) :: [ResourcePath.t()]
-  def generation!(%KubeSnapshot{} = kube_snapshot) do
-    with {:ok, resource_map} <- run_resource_paths_transaction(kube_snapshot) do
-      resource_map
-      |> Map.values()
-      |> List.flatten()
-      |> Enum.filter(fn
-        %ResourcePath{} -> true
-        _ -> false
-      end)
-    end
+  def generation!(%KubeSnapshot{} = snap) do
+    {:ok, paths} =
+      EctoSteps.snap_generation_transaction(
+        snap,
+        &ConfigGenerator.materialize/1
+      )
+
+    paths
   end
 
-  @spec launch_resource_path_jobs([ResourcePath.t()]) :: [Oban.Job.t()]
-  def launch_resource_path_jobs(resource_paths) do
-    resource_paths
-    |> Enum.map(fn rp -> KubeServices.SnapshotApply.ResourcePathWorker.new(%{id: rp.id}) end)
+  @spec get_rp(binary()) :: ResourcePath.t()
+  def get_rp(id) do
+    EctoSteps.get_rp(id)
+  end
+
+  @spec launch_resource_path_jobs([]) :: [Oban.Job.t()]
+  def launch_resource_path_jobs(resource_path_ids) do
+    resource_path_ids
+    |> Enum.map(fn id -> ResourcePathWorker.new(%{id: id}) end)
     |> Oban.insert_all(timeout: 60_000)
   end
 
   @spec apply_resource_path(ResourcePath.t()) ::
           {:error, any} | {:ok, :applied | :state_hash_match}
   def apply_resource_path(%ResourcePath{} = rp) do
-    if does_hash_match(rp) do
-      {:ok, :state_hash_match}
-    else
+    if kube_state_different?(rp) do
       do_apply(rp)
+    else
+      {:ok, :state_hash_match}
     end
   end
 
   def update_resource_path(%ResourcePath{} = rp, {result, reason}) do
     is_success = resource_path_result_is_success?(result)
-
-    ControlSnapshotApply.update_resource_path(rp, %{
-      is_success: is_success,
-      apply_result: reason |> reason() |> String.slice(0, 200)
-    })
+    EctoSteps.update_rp(rp, is_success, reason(reason))
   end
 
   @spec update_applying!(KubeSnapshot.t()) :: KubeSnapshot.t()
   def update_applying!(%KubeSnapshot{} = snap) do
-    with {:ok, new_snap} <- ControlSnapshotApply.update_kube_snapshot(snap, %{status: :applying}) do
+    with {:ok, new_snap} <- EctoSteps.update_snap_status(snap, :applying) do
       new_snap
     end
   end
 
   @spec summarize!(KubeSnapshot.t()) :: KubeSnapshot.t()
   def summarize!(%KubeSnapshot{} = snap) do
-    with {:ok, new_snap} <-
-           ControlSnapshotApply.update_kube_snapshot(snap, %{
-             status: snap_status(get_result_count(snap))
-           }) do
+    status = snap_status(get_result_count(snap))
+
+    with {:ok, new_snap} <- EctoSteps.update_snap_status(snap, status) do
       new_snap
     end
   end
@@ -101,57 +95,19 @@ defmodule KubeServices.SnapshotApply.Steps do
   defp reason(reason_string) when is_binary(reason_string), do: reason_string
   defp reason(obj), do: inspect(obj)
 
-  defp does_hash_match(%ResourcePath{} = rp) do
-    current_hash =
-      rp.resource_value
-      |> KubeState.get_resource()
-      |> Hashing.get_hash()
+  defp kube_state_different?(%ResourcePath{} = rp) do
+    current_hash = Hashing.get_hash(KubeState.get_resource(rp.type, rp.namespace, rp.name))
 
-    current_hash == rp.hash
+    # Resource path doesn't have the whole annotated
+    # resource so just check the equality of the hashes here.
+    Hashing.different?(current_hash, rp.hash)
   end
 
   defp do_apply(%ResourcePath{} = rp) do
-    case KubeExt.apply_single(KubeExt.ConnectionPool.get(), rp.resource_value) do
+    case KubeExt.apply_single(KubeExt.ConnectionPool.get(), rp.content_addressable_resource.value) do
       {:ok, _result} -> {:ok, :applied}
       {:error, %{error: error_reason}} -> {:error, error_reason}
       {:error, reason} -> {:error, reason}
     end
-  end
-
-  defp run_resource_paths_transaction(%KubeSnapshot{} = kube_snapshot) do
-    Multi.new()
-    |> Multi.all(:batteries, ControlServer.Batteries.SystemBattery)
-    |> Multi.merge(fn %{batteries: batteries} ->
-      # Then create a huge multi with each insert.
-      resource_paths_multi(batteries, kube_snapshot)
-    end)
-    # Finally run the transaction.
-    |> Repo.transaction(timeout: 60_000)
-  end
-
-  defp resource_paths_multi(batteries, kube_snapshot) do
-    {_count, multi} =
-      batteries
-      |> Enum.map(&ConfigGenerator.materialize/1)
-      |> Enum.reduce(%{}, &Map.merge/2)
-      |> Enum.map(fn {path, resource} ->
-        filled_resource = Hashing.decorate_content_hash(resource)
-
-        ResourcePath.changeset(%ResourcePath{}, %{
-          path: path,
-          hash: Hashing.get_hash(filled_resource),
-          name: name(filled_resource),
-          namespace: namespace(filled_resource),
-          api_version: api_version(filled_resource),
-          kind: kind(filled_resource),
-          resource_value: filled_resource,
-          kube_snapshot_id: kube_snapshot.id
-        })
-      end)
-      |> Enum.reduce({0, Multi.new()}, fn changeset, {n, multi} ->
-        {n + 1, Multi.insert(multi, "resource_path_#{n}", changeset)}
-      end)
-
-    multi
   end
 end

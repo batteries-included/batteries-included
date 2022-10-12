@@ -11,7 +11,6 @@ defmodule ControlServer.SnapshotApplyTest do
     @invalid_attrs %{
       hash: nil,
       path: nil,
-      resource_value: nil,
       name: nil,
       kind: nil,
       api_version: nil
@@ -32,9 +31,7 @@ defmodule ControlServer.SnapshotApplyTest do
         hash: "some hash",
         path: "some path",
         name: "some name",
-        api_version: "some api_version",
-        kind: "some kind",
-        resource_value: %{test_value: 42, other: []}
+        type: :pod
       }
 
       assert {:ok, %ResourcePath{} = resource_path} =
@@ -42,7 +39,6 @@ defmodule ControlServer.SnapshotApplyTest do
 
       assert resource_path.hash == "some hash"
       assert resource_path.path == "some path"
-      assert resource_path.resource_value == %{test_value: 42, other: []}
     end
 
     test "create_resource_path/1 with invalid data returns error changeset" do
@@ -63,7 +59,6 @@ defmodule ControlServer.SnapshotApplyTest do
 
       assert resource_path.hash == "some updated hash"
       assert resource_path.path == "some updated path"
-      assert resource_path.resource_value == %{test_value: 100, other: [42]}
     end
 
     test "update_resource_path/2 with invalid data returns error changeset" do

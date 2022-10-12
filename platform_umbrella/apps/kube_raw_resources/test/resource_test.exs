@@ -5,7 +5,7 @@ defmodule KubeRawResources.ResourceTest do
   alias KubeExt.Hashing
 
   defp resource(%{} = content) do
-    content |> Map.put("metadata", %{"annotations" => %{}}) |> Hashing.decorate_content_hash()
+    content |> Map.put("metadata", %{"annotations" => %{}}) |> Hashing.decorate()
   end
 
   test "ResourceState.needs_apply" do

@@ -5,6 +5,7 @@ defmodule KubeServices.Stale do
   alias ControlServer.Repo
   alias KubeExt.KubeState
   alias KubeExt.Hashing
+  alias KubeExt.ApiVersionKind
 
   require Logger
 
@@ -13,12 +14,9 @@ defmodule KubeServices.Stale do
     KubeState.table_to_list()
     |> Enum.map(fn kv -> elem(kv, 1) end)
     |> Enum.filter(&has_annotation/1)
-    |> Enum.reject(fn r -> ignored(r) or in_some_kube_snapshot(r) end)
+    |> Enum.reject(fn r -> in_some_kube_snapshot(r) end)
     |> log_scan_results()
   end
-
-  @spec ignored(map) :: boolean
-  def ignored(resource), do: annotation(resource, Hashing.key()) == Hashing.ignored_value()
 
   @spec has_annotation(nil | map) :: boolean
   def has_annotation(%{} = resource),
@@ -30,8 +28,7 @@ defmodule KubeServices.Stale do
   def in_some_kube_snapshot(resource) do
     ControlSnapshot.ResourcePath
     |> ControlSnapshot.resource_paths_recently()
-    |> ControlSnapshot.resource_paths_by_api_version(api_version(resource))
-    |> ControlSnapshot.resource_paths_by_kind(kind(resource))
+    |> ControlSnapshot.resource_paths_by_type(ApiVersionKind.resource_type!(resource))
     |> ControlSnapshot.resource_paths_by_name(name(resource))
     |> ControlSnapshot.resource_paths_by_namespace(namespace(resource))
     |> Repo.exists?()

@@ -3,6 +3,7 @@ defmodule KubeResources.ConfigGenerator do
   Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
   alias KubeExt.Builder, as: B
+  alias KubeExt.Hashing
 
   alias ControlServer.Batteries.SystemBattery
 
@@ -50,16 +51,29 @@ defmodule KubeResources.ConfigGenerator do
 
   require Logger
 
+  @spec materialize([SystemBattery.t()]) :: map()
+  def materialize(list_battery) when is_list(list_battery) do
+    list_battery
+    |> Enum.flat_map(&materialize/1)
+    |> Map.new()
+  end
+
   @spec materialize(SystemBattery.t()) :: map()
   def materialize(%SystemBattery{} = system_battery) do
     system_battery.config
     |> materialize(system_battery.type)
     |> Enum.map(fn {key, value} ->
-      {Path.join(Atom.to_string(system_battery.type), key), value}
+      prefix = "/#{Atom.to_string(system_battery.type)}"
+      {Path.join(prefix, key), value}
     end)
     |> Enum.flat_map(&flatten/1)
-    |> Enum.map(fn {key, resource} -> {key, B.owner_label(resource, system_battery.id)} end)
-    |> Enum.into(%{})
+    |> Enum.map(fn {key, resource} ->
+      {
+        key,
+        resource |> B.owner_label(system_battery.id) |> Hashing.decorate()
+      }
+    end)
+    |> Map.new()
   end
 
   defp flatten({key, values} = _input) when is_list(values) do

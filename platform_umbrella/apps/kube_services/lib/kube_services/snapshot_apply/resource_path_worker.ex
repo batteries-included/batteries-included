@@ -4,11 +4,10 @@ defmodule KubeServices.SnapshotApply.ResourcePathWorker do
     max_attempts: 3
 
   alias KubeServices.SnapshotApply.Steps
-  alias ControlServer.SnapshotApply
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => id} = _args}) do
-    rp = SnapshotApply.get_resource_path!(id)
+    rp = Steps.get_rp(id)
     result = Steps.apply_resource_path(rp)
     {:ok, _} = Steps.update_resource_path(rp, result)
     KubeServices.SnapshotApply.SummarizeWorker.queue(rp.kube_snapshot_id)

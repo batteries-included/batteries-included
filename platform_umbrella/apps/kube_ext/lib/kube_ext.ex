@@ -58,8 +58,8 @@ defmodule KubeExt do
     with {:ok, found} <- get_or_create(connection, resource) do
       # Add the hash here means that we don't need
       # to recompute it if the hashes don't match.
-      found = Hashing.decorate_content_hash(found)
-      resource = Hashing.decorate_content_hash(resource)
+      found = Hashing.decorate(found)
+      resource = Hashing.decorate(resource)
 
       if Hashing.different?(found, resource) do
         update_single(connection, resource)
@@ -109,7 +109,7 @@ defmodule KubeExt do
 
     create_operation =
       resource
-      |> Hashing.decorate_content_hash()
+      |> Hashing.decorate()
       |> Client.create()
 
     create_result = Client.run(connection, create_operation)

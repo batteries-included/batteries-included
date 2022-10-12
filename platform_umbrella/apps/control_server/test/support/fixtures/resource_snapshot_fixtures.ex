@@ -15,9 +15,7 @@ defmodule ControlServer.SnapshotApplyFixtures do
         path: "/test",
         name: "test_obj",
         namespace: "default",
-        api_version: "testing/v1",
-        kind: "fixture",
-        resource_value: %{"apiVersion" => "testing/v1", "kind" => "fixture"}
+        type: :pod
       })
       |> ControlServer.SnapshotApply.create_resource_path()
 

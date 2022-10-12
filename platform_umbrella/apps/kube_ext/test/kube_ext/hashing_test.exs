@@ -55,7 +55,9 @@ defmodule KubeExt.HashingTest do
     "apiVersion" => "v1",
     "kind" => "Service",
     "metadata" => %{
-      "annotations" => %{"battery/hash" => "m3MeSXNJsAy3NO+dtLTYhyOFv20="},
+      "annotations" => %{
+        "battery/hash" => "AUR3TZXOZSZS2MOBXH2AGAKTRZGPEIJPGDWRJWR6H3OI47BGS45A===="
+      },
       "labels" => %{
         "battery/app" => "notebooks",
         "battery/managed" => "True",
@@ -99,11 +101,5 @@ defmodule KubeExt.HashingTest do
       |> update_in(~w(metadata), fn meta -> Map.drop(meta || %{}, ["annotations"]) end)
 
     assert false == Hashing.different?(@service_two, striped)
-  end
-
-  test "list and contents work" do
-    assert Hashing.different?([], [@service_two])
-    assert false == Hashing.different?([], [])
-    assert false == Hashing.different?([@service_two], [@service_two])
   end
 end

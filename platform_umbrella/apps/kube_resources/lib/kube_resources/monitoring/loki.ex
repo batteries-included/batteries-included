@@ -10,13 +10,6 @@ defmodule KubeResources.Loki do
     metricsinstances_monitoring_grafana_com:
       "priv/manifests/loki/metricsinstances_monitoring_grafana_com.yaml",
     podlogs_monitoring_grafana_com: "priv/manifests/loki/podlogs_monitoring_grafana_com.yaml",
-    podmonitors_monitoring_coreos_com:
-      "priv/manifests/loki/podmonitors_monitoring_coreos_com.yaml",
-    probes_monitoring_coreos_com: "priv/manifests/loki/probes_monitoring_coreos_com.yaml",
-    prometheusrules_monitoring_coreos_com:
-      "priv/manifests/loki/prometheusrules_monitoring_coreos_com.yaml",
-    servicemonitors_monitoring_coreos_com:
-      "priv/manifests/loki/servicemonitors_monitoring_coreos_com.yaml",
     dashboard_json: "priv/raw_files/loki/loki-dashboard_rev1.json",
     config_yaml: "priv/raw_files/loki/config.yaml"
 
@@ -165,22 +158,6 @@ defmodule KubeResources.Loki do
 
   resource(:crd_podlogs_monitoring_grafana_com) do
     yaml(get_resource(:podlogs_monitoring_grafana_com))
-  end
-
-  resource(:crd_podmonitors_monitoring_coreos_com) do
-    yaml(get_resource(:podmonitors_monitoring_coreos_com))
-  end
-
-  resource(:crd_probes_monitoring_coreos_com) do
-    yaml(get_resource(:probes_monitoring_coreos_com))
-  end
-
-  resource(:crd_prometheusrules_monitoring_coreos_com) do
-    yaml(get_resource(:prometheusrules_monitoring_coreos_com))
-  end
-
-  resource(:crd_servicemonitors_monitoring_coreos_com) do
-    yaml(get_resource(:servicemonitors_monitoring_coreos_com))
   end
 
   resource(:deployment_grafana_agent_operator, config) do

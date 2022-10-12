@@ -30,7 +30,6 @@ defmodule KubeExt.MixProject do
       {:k8s, "~> 1.1"},
       # Yaml encode
       {:ymlr, "~> 3.0.1"},
-      {:bella, "~> 0.2.2"},
       {:event_center, in_umbrella: true},
       # Time
       {:timex, "~> 3.7"},
