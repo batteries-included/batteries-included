@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import KubeResources.KnativeServing, only: [url: 1]
+  alias KubeResources.KnativeServing, as: KnativeResources
 
   alias ControlServer.Knative
 
@@ -45,18 +45,18 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
       <.table id="knative-display-table" rows={@services}>
         <:col :let={service} label="Name"><%= service.name %></:col>
         <:col :let={service} label="Link">
-          <.link href={url(service)} type="external">
-            <%= url(service) %>
+          <.link href={service_url(service)} type="external">
+            <%= service_url(service) %>
           </.link>
         </:col>
         <:action :let={service}>
-          <.link navigate={show_url(service)}>Show Service</.link>
+          <.link navigate={~p"/knative/services/#{service}/show"}>Show Service</.link>
         </:action>
       </.table>
 
       <.h2>Actions</.h2>
       <.body_section>
-        <.link navigate={service_new_url()}>
+        <.link navigate={~p"/knative/services/new"}>
           <.button>
             New Knative Service
           </.button>
@@ -66,10 +66,5 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     """
   end
 
-  defp show_url(%Knative.Service{} = service),
-    do: Routes.knative_show_path(ControlServerWeb.Endpoint, :show, service.id)
-
-  defp service_new_url do
-    Routes.knative_new_path(ControlServerWeb.Endpoint, :new)
-  end
+  defp service_url(%Knative.Service{} = service), do: KnativeResources.url(service)
 end

@@ -5,6 +5,7 @@ defmodule KubeExt.KubeState.Runner do
   import EventCenter.KubeState
 
   alias EventCenter.KubeState.Payload
+  alias KubeExt.ApiVersionKind
 
   def start_link(opts) do
     table_name = Keyword.fetch!(opts, :name)
@@ -13,91 +14,73 @@ defmodule KubeExt.KubeState.Runner do
 
   @impl true
   def init(table_name) do
-    ets_table = :ets.new(table_name, [:bag, :named_table, read_concurrency: true])
+    ets_table = :ets.new(table_name, [:set, :named_table, read_concurrency: true])
     {:ok, {ets_table}}
   end
 
-  @spec get(atom() | :ets.tid(), atom()) :: {:ok, list()} | :missing | :error
-  def get(table_name, resource_type) do
-    case :ets.lookup(table_name, resource_type) do
-      [] ->
-        :missing
-
-      resource_tuples ->
-        {:ok, Enum.map(resource_tuples, fn {^resource_type, resource} -> resource end)}
+  @spec get(atom() | :ets.tid(), atom(), String.t(), String.t()) :: {:ok, map()} | :missing
+  def get(table_name, resource_type, namespace, name) do
+    case :ets.lookup(table_name, {resource_type, namespace, name}) do
+      [{_key, resource}] -> {:ok, resource}
+      _ -> :missing
     end
   end
 
-  def add(table_name, resource_type, resource) do
-    GenServer.call(table_name, {:add, resource_type, resource})
+  @spec get_all(atom() | :ets.tid(), atom()) :: list(map)
+  def get_all(table_name, resource_type) do
+    table_name
+    |> :ets.match({{resource_type, :_, :_}, :"$1"})
+    |> Enum.map(fn [resource] -> resource end)
   end
 
-  def delete(table_name, resource_type, resource) do
-    GenServer.call(table_name, {:delete, resource_type, resource})
+  @spec get_all(atom() | :ets.tid(), atom()) :: map()
+  def snapshot(table_name) do
+    table_name
+    |> :ets.tab2list()
+    |> Enum.reduce(%{}, fn {{resource_type, _, _}, resource}, snap ->
+      update_in(snap, [resource_type], fn l -> [resource | l || []] end)
+    end)
   end
 
-  def update(table_name, resource_type, resource) do
-    GenServer.call(table_name, {:update, resource_type, resource})
+  def add(table_name, resource) do
+    GenServer.call(table_name, {:add, resource})
+  end
+
+  def delete(table_name, resource) do
+    GenServer.call(table_name, {:delete, resource})
+  end
+
+  def update(table_name, resource) do
+    GenServer.call(table_name, {:update, resource})
   end
 
   @impl true
-  def handle_call({:add, resource_type, resource}, _from, {ets_table}) do
-    :ets.insert(ets_table, {resource_type, resource})
+  def handle_call({:add, resource}, _from, {ets_table}) do
+    :ets.insert_new(ets_table, {key(resource), resource})
 
-    result_list = :ets.lookup(ets_table, resource_type)
-
-    :ok =
-      broadcast(resource_type, %Payload{
-        resource: resource,
-        new_resource_list: result_list,
-        action: :add
-      })
-
-    {:reply, :ok, {ets_table}}
-  end
-
-  def handle_call({:delete, resource_type, resource}, _from, {ets_table}) do
-    with {:ok, existing_resources} <- get(ets_table, resource_type) do
-      kept =
-        existing_resources
-        |> Enum.reject(fn r -> is_same(r, resource) end)
-        |> Enum.map(fn r -> {resource_type, r} end)
-        |> Enum.to_list()
-
-      :ets.delete(ets_table, resource_type)
-      :ets.insert(ets_table, kept)
-
-      broadcast(resource_type, %Payload{
-        resource: resource,
-        new_resource_list: kept,
-        action: :delete
-      })
+    with :ok <- do_broadcast(:add, resource) do
+      {:reply, :ok, {ets_table}}
     end
 
     {:reply, :ok, {ets_table}}
   end
 
-  def handle_call({:update, resource_type, resource}, _from, {ets_table}) do
-    with {:ok, existing_resources} <- get(ets_table, resource_type) do
-      kept =
-        existing_resources
-        |> Enum.reject(fn r -> is_same(r, resource) end)
-        |> Enum.map(fn r -> {resource_type, r} end)
-        |> Enum.to_list()
+  def handle_call({:delete, resource}, _from, {ets_table}) do
+    :ets.delete(ets_table, key(resource))
 
-      result_list = [{resource_type, resource} | kept]
-
-      :ets.delete(ets_table, resource_type)
-      :ets.insert(ets_table, result_list)
-
-      broadcast(resource_type, %Payload{
-        resource: resource,
-        new_resource_list: result_list,
-        action: :update
-      })
+    with :ok <- do_broadcast(:delete, resource) do
+      {:reply, :ok, {ets_table}}
     end
 
     {:reply, :ok, {ets_table}}
+  end
+
+  def handle_call({:update, resource}, _from, {ets_table}) do
+    :ets.insert(ets_table, {key(resource), resource})
+
+    with :ok <- do_broadcast(:update, resource) do
+      {:reply, :ok, {ets_table}}
+    end
   end
 
   @impl true
@@ -105,8 +88,17 @@ defmodule KubeExt.KubeState.Runner do
     {:noreply, state}
   end
 
-  defp is_same(r_one, r_two) do
-    namespace(r_one) == namespace(r_two) &&
-      name(r_one) == name(r_two)
+  def key(resource) do
+    {ApiVersionKind.resource_type(resource), namespace(resource), name(resource)}
+  end
+
+  defp do_broadcast(action, resource) do
+    broadcast(
+      ApiVersionKind.resource_type(resource),
+      %Payload{
+        resource: resource,
+        action: action
+      }
+    )
   end
 end

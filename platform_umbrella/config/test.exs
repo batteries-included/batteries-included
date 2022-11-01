@@ -34,7 +34,7 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :error
 
 config :kube_ext, cluster_type: :dev
 

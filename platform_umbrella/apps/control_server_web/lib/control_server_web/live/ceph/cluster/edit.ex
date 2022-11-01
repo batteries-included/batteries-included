@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.CephClusterEdit do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Rook
   alias ControlServerWeb.Live.CephClusterFormComponent
@@ -20,19 +20,13 @@ defmodule ControlServerWeb.Live.CephClusterEdit do
 
   @impl true
   def handle_info({"ceph_cluster:save", %{"ceph_cluster" => ceph_cluster}}, socket) do
-    new_path = show_url(ceph_cluster)
-    Logger.debug("updated ceph_cluster = #{inspect(ceph_cluster)} new_path = #{new_path}")
-
-    {:noreply, push_redirect(socket, to: new_path)}
+    {:noreply, push_redirect(socket, to: ~p"/ceph/clusters/#{ceph_cluster}/show")}
   end
-
-  defp show_url(ceph_cluster),
-    do: Routes.ceph_cluster_show_path(ControlServerWeb.Endpoint, :show, ceph_cluster.id)
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>Edit Cluster</.title>
       </:title>
@@ -45,7 +39,7 @@ defmodule ControlServerWeb.Live.CephClusterEdit do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

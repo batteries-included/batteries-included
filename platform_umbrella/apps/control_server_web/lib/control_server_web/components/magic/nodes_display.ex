@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.NodesDisplay do
-  use ControlServerWeb, :component
+  use ControlServerWeb, :html
 
   import K8s.Resource.FieldAccessors, only: [name: 1]
 

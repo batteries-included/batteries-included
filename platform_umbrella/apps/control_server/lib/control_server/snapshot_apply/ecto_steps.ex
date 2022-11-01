@@ -3,10 +3,10 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
   import K8s.Resource.FieldAccessors
 
   alias ControlServer.Repo
+  alias KubeExt.SnapshotApply.StateSnapshot
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.SnapshotApply.ContentAddressableResource
-  alias ControlServer.Batteries.SystemBattery
 
   alias KubeExt.Hashing
   alias KubeExt.ApiVersionKind
@@ -20,50 +20,12 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
     ControlServer.SnapshotApply.create_kube_snapshot()
   end
 
-  def snap_generation_transaction(%KubeSnapshot{} = snap, resource_gen_func) do
-    Multi.new()
-    |> Multi.all(:batteries, SystemBattery)
-    |> Multi.merge(fn %{batteries: batteries} ->
-      generation_multi(snap, batteries, resource_gen_func)
-    end)
-    # Finally run the transaction.
-    |> Repo.transaction(timeout: @generation_timeout)
-    # ContentAddressableResource info isn't needed. So
-    # keep the resource path ids only
-    |> then(fn {:ok, result} ->
-      {_count, paths} = Map.get(result, :resource_paths, {0, []})
-      {:ok, Enum.map(paths, & &1.id)}
-    end)
-  end
-
-  def update_snap_status(%KubeSnapshot{} = snap, status) do
-    ControlServer.SnapshotApply.update_kube_snapshot(snap, %{status: status})
-  end
-
-  def update_rp(%ResourcePath{} = rp, is_success, reason) do
-    ControlServer.SnapshotApply.update_resource_path(rp, %{
-      is_success: is_success,
-      apply_result: String.slice(reason, 0, @max_reason_length)
-    })
-  end
-
-  def get_rp(id) do
-    ResourcePath
-    |> Repo.get(id)
-    |> Repo.preload(:content_addressable_resource)
-  end
-
-  # This is the main method of a very complex multi.
-  #
-  # We're going to return a multi here that will be merged
-  # into the above. This method takes in the snapshot that
-  # this is for, a list of system batteries, and a function
-  # for generating a map of resources.
-  #
-  # We take the list of batteries here so that the snapshot
-  # is an atomic snapshot across the whole table.
-  defp generation_multi(snap, batteries, resource_gen_func) do
-    resource_map = resource_map(batteries, resource_gen_func)
+  def snap_generation(
+        %KubeSnapshot{} = snap,
+        %StateSnapshot{} = state,
+        resource_gen_func
+      ) do
+    resource_map = resource_gen_func.(state)
     addressables = addressables(resource_map)
 
     Multi.new()
@@ -102,6 +64,31 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
       end,
       returning: [:id]
     )
+    # Finally run the transaction.
+    |> Repo.transaction(timeout: @generation_timeout)
+    # ContentAddressableResource info isn't needed. So
+    # keep the resource path ids only
+    |> then(fn {:ok, result} ->
+      {_count, paths} = Map.get(result, :resource_paths, {0, []})
+      {:ok, Enum.map(paths, & &1.id)}
+    end)
+  end
+
+  def update_snap_status(%KubeSnapshot{} = snap, status) do
+    ControlServer.SnapshotApply.update_kube_snapshot(snap, %{status: status})
+  end
+
+  def update_rp(%ResourcePath{} = rp, is_success, reason) do
+    ControlServer.SnapshotApply.update_resource_path(rp, %{
+      is_success: is_success,
+      apply_result: String.slice(reason, 0, @max_reason_length)
+    })
+  end
+
+  def get_rp(id) do
+    ResourcePath
+    |> Repo.get(id)
+    |> Repo.preload(:content_addressable_resource)
   end
 
   def get_already_inserted_hashes(addressables) do
@@ -115,10 +102,6 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
 
   def get_hashes_set(ctx),
     do: ctx |> Map.get(:content_addressable_resources, []) |> List.flatten() |> MapSet.new()
-
-  defp resource_map(batteries, resource_gen_func) do
-    resource_gen_func.(batteries)
-  end
 
   defp addressables(resource_map) do
     # Grab now so that all addressables are created at the same time.

@@ -15,7 +15,7 @@ defmodule CommonUI.Link do
   def link(%{type: "styled"} = assigns) do
     ~H"""
     <Phoenix.Component.link
-      class={["font-semibold link link-secondary hover:no-underline", @class]}
+      class={["font-semibold link link-primary hover:no-underline", @class]}
       navigate={@navigate}
       {@rest}
     >

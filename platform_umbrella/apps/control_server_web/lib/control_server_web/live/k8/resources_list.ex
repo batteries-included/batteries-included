@@ -10,6 +10,7 @@ defmodule ControlServerWeb.Live.ResourceList do
   import ControlServerWeb.NodesDisplay
   import ControlServerWeb.ServicesDisplay
   import ControlServerWeb.PodsDisplay
+  import CommonUI.TabBar
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeExt.KubeState
@@ -38,24 +39,8 @@ defmodule ControlServerWeb.Live.ResourceList do
     {:noreply, assign(socket, :objects, objects(socket.assigns.live_action))}
   end
 
-  defp objects(:deployment) do
-    KubeState.deployments()
-  end
-
-  defp objects(:stateful_set) do
-    KubeState.stateful_sets()
-  end
-
-  defp objects(:node) do
-    KubeState.nodes()
-  end
-
-  defp objects(:pod) do
-    KubeState.pods()
-  end
-
-  defp objects(:service) do
-    KubeState.services()
+  defp objects(type) do
+    KubeState.get_all(type)
   end
 
   defp title_text(:deployment) do
@@ -78,27 +63,36 @@ defmodule ControlServerWeb.Live.ResourceList do
     "Services"
   end
 
+  defp tabs(selected) do
+    [
+      {"Pods", ~p"/kube/pods", :pod == selected},
+      {"Deployments", ~p"/kube/deployments", :deployment == selected},
+      {"Stateful Sets", ~p"/kube/stateful_sets", :stateful_set == selected},
+      {"Services", ~p"/kube/services", :service == selected},
+      {"Nodes", ~p"/kube/nodes", :node == selected}
+    ]
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={@live_action}>
+    <.layout group={:magic} active={:kube_resources}>
       <:title>
         <.title><%= title_text(@live_action) %></.title>
       </:title>
-      <.body_section>
-        <%= case @live_action do %>
-          <% :deployment -> %>
-            <.deployments_display deployments={@objects} />
-          <% :stateful_set -> %>
-            <.stateful_sets_display stateful_sets={@objects} />
-          <% :node -> %>
-            <.nodes_display nodes={@objects} />
-          <% :pod -> %>
-            <.pods_display pods={@objects} />
-          <% :service -> %>
-            <.services_display services={@objects} />
-        <% end %>
-      </.body_section>
+      <.tab_bar tabs={tabs(@live_action)} />
+      <%= case @live_action do %>
+        <% :deployment -> %>
+          <.deployments_display deployments={@objects} />
+        <% :stateful_set -> %>
+          <.stateful_sets_display stateful_sets={@objects} />
+        <% :node -> %>
+          <.nodes_display nodes={@objects} />
+        <% :pod -> %>
+          <.pods_display pods={@objects} />
+        <% :service -> %>
+          <.services_display services={@objects} />
+      <% end %>
     </.layout>
     """
   end

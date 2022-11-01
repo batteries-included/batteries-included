@@ -24,15 +24,6 @@ defmodule ControlServerWeb.Live.CephIndex do
     |> assign(:ceph_cluster, nil)
   end
 
-  def show_cluster_url(ceph_cluster),
-    do: Routes.ceph_cluster_show_path(ControlServerWeb.Endpoint, :show, ceph_cluster)
-
-  def show_filesystem_url(ceph_filesystem),
-    do: Routes.ceph_filesystem_show_path(ControlServerWeb.Endpoint, :show, ceph_filesystem)
-
-  def new_cluster_url, do: Routes.ceph_cluster_new_path(ControlServerWeb.Endpoint, :new)
-  def new_filesystem_url, do: Routes.ceph_filesystem_new_path(ControlServerWeb.Endpoint, :new)
-
   defp list_ceph_clusters do
     Rook.list_ceph_cluster()
   end
@@ -49,7 +40,7 @@ defmodule ControlServerWeb.Live.CephIndex do
       <:col :let={ceph} label="Managers"><%= ceph.num_mgr %></:col>
       <:col :let={ceph} label="Data dir"><%= ceph.data_dir_host_path %></:col>
       <:action :let={ceph}>
-        <.link navigate={show_cluster_url(ceph)} type="styled">
+        <.link navigate={~p"/ceph/clusters/#{ceph}/show"} type="styled">
           Show Cluster
         </.link>
       </:action>
@@ -63,7 +54,7 @@ defmodule ControlServerWeb.Live.CephIndex do
       <:col :let={ceph} label="Name"><%= ceph.name %></:col>
       <:col :let={ceph} label="Include EC?"><%= ceph.include_erasure_encoded %></:col>
       <:action :let={ceph}>
-        <.link navigate={show_filesystem_url(ceph)} type="styled">
+        <.link navigate={~p"/ceph/filesystems/#{ceph}/show"} type="styled">
           Show FileSystem
         </.link>
       </:action>
@@ -87,13 +78,13 @@ defmodule ControlServerWeb.Live.CephIndex do
 
       <.h2>Actions</.h2>
       <.body_section>
-        <.link navigate={new_cluster_url()}>
+        <.link navigate={~p"/ceph/clusters/new"}>
           <.button>
             New Cluster
           </.button>
         </.link>
 
-        <.link navigate={new_filesystem_url()}>
+        <.link navigate={~p"/ceph/filesystems/new"}>
           <.button>
             New FileSystem
           </.button>

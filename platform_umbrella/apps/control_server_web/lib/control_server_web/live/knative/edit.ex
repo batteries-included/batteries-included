@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.KnativeEdit do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Knative
   alias ControlServerWeb.Live.Knative.FormComponent
@@ -20,16 +20,13 @@ defmodule ControlServerWeb.Live.KnativeEdit do
 
   @impl true
   def handle_info({"service:save", %{"service" => service}}, socket) do
-    new_path = Routes.knative_show_path(socket, :show, service.id)
-    Logger.debug("updated cluster = #{inspect(service)} new_path = #{new_path}")
-
-    {:noreply, push_redirect(socket, to: new_path)}
+    {:noreply, push_redirect(socket, to: ~p"/knative/services/#{service}/show")}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>Edit Service</.title>
       </:title>
@@ -42,7 +39,7 @@ defmodule ControlServerWeb.Live.KnativeEdit do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

@@ -7,15 +7,13 @@ defmodule ControlServerWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {ControlServerWeb.LayoutView, :root}
+    plug :put_root_layout, {ControlServerWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers, ControlServerWeb.CSP.new()
-    plug LoggerJSON.Plug
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug LoggerJSON.Plug
   end
 
   scope "/", ControlServerWeb do
@@ -23,31 +21,31 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.Home, :index
 
-    live "/postgres_clusters", Live.PostgresClusters, :index
-    live "/postgres_clusters/new", Live.PostgresNew, :new
-    live "/postgres_clusters/:id/edit", Live.PostgresEdit, :edit
-    live "/postgres_clusters/:id/show", Live.PostgresShow, :show
+    live "/postgres/clusters", Live.PostgresClusters, :index
+    live "/postgres/clusters/new", Live.PostgresNew, :new
+    live "/postgres/clusters/:id/edit", Live.PostgresEdit, :edit
+    live "/postgres/clusters/:id/show", Live.PostgresShow, :show
 
-    live "/failover_clusters", Live.Redis, :index
-    live "/failover_clusters/new", Live.RedisNew, :new
-    live "/failover_clusters/:id/edit", Live.RedisEdit, :edit
-    live "/failover_clusters/:id/show", Live.RedisShow, :show
+    live "/redis/clusters", Live.Redis, :index
+    live "/redis/clusters/new", Live.RedisNew, :new
+    live "/redis/clusters/:id/edit", Live.RedisEdit, :edit
+    live "/redis/clusters/:id/show", Live.RedisShow, :show
 
     live "/ceph", Live.CephIndex, :index
-    live "/ceph/cluster/new", Live.CephClusterNew, :new
-    live "/ceph/cluster/:id/edit", Live.CephClusterEdit, :edit
-    live "/ceph/cluster/:id/show", Live.CephClusterShow, :show
-    live "/ceph/filesystem/new", Live.CephFilesystemNew, :new
-    live "/ceph/filesystem/:id/edit", Live.CephFilesystemEdit, :edit
-    live "/ceph/filesystem/:id/show", Live.CephFilesystemShow, :show
+    live "/ceph/clusters/new", Live.CephClusterNew, :new
+    live "/ceph/clusters/:id/edit", Live.CephClusterEdit, :edit
+    live "/ceph/clusters/:id/show", Live.CephClusterShow, :show
+    live "/ceph/filesystems/new", Live.CephFilesystemNew, :new
+    live "/ceph/filesystems/:id/edit", Live.CephFilesystemEdit, :edit
+    live "/ceph/filesystems/:id/show", Live.CephFilesystemShow, :show
 
-    live "/knative_services", Live.KnativeServicesIndex, :index
-    live "/knative_services/new", Live.KnativeNew, :new
-    live "/knative_services/:id/edit", Live.KnativeEdit, :edit
-    live "/knative_services/:id/show", Live.KnativeShow, :show
+    live "/knative/services", Live.KnativeServicesIndex, :index
+    live "/knative/services/new", Live.KnativeNew, :new
+    live "/knative/services/:id/edit", Live.KnativeEdit, :edit
+    live "/knative/services/:id/show", Live.KnativeShow, :show
 
     live "/notebooks", Live.JupyterLabNotebook.Index, :index
-    live "/notebooks/:id", Live.JupyterLabNotebook.Show, :index
+    live "/notebooks/:id/show", Live.JupyterLabNotebook.Show, :index
 
     live "/kiali", Live.Iframe, :kiali
     live "/grafana", Live.Iframe, :grafana
@@ -55,34 +53,31 @@ defmodule ControlServerWeb.Router do
     live "/prometheus", Live.Iframe, :prometheus
     live "/gitea", Live.Iframe, :gitea
 
-    live "/deployments", Live.ResourceList, :deployment
-    live "/stateful_sets", Live.ResourceList, :stateful_set
-    live "/nodes", Live.ResourceList, :node
-    live "/pods", Live.ResourceList, :pod
-    live "/services", Live.ResourceList, :service
+    live "/kube/deployments", Live.ResourceList, :deployment
+    live "/kube/stateful_sets", Live.ResourceList, :stateful_set
+    live "/kube/nodes", Live.ResourceList, :node
+    live "/kube/pods", Live.ResourceList, :pod
+    live "/kube/services", Live.ResourceList, :service
 
-    live "/resource_status/:resource_type/:namespace/:name", Live.ResourceInfo, :index
+    live "/kube/snapshots", Live.KubeSnapshotList, :index
+    live "/kube/snapshots/:id/show", Live.KubeSnapshotShow, :index
 
-    live "/data/batteries", GroupBatteriesLive, :data
-    live "/devtools/batteries", GroupBatteriesLive, :devtools
-    live "/ml/batteries", GroupBatteriesLive, :ml
-    live "/monitoring/batteries", GroupBatteriesLive, :monitoring
-    live "/net_sec/batteries", GroupBatteriesLive, :net_sec
+    live "/kube/:resource_type/:namespace/:name", Live.ResourceInfo, :index
 
-    live "/magic/batteries", GroupBatteriesLive, :magic
-    live "/system_batteries", SystemBatteryLive.Index, :index
-    live "/system_batteries/:id", SystemBatteryLive.Show, :show
-    live "/kube_snapshots", Live.KubeSnapshotList, :index
-    live "/kube_snapshots/:id", Live.KubeSnapshotShow, :index
+    live "/batteries/data", GroupBatteriesLive, :data
+    live "/batteries/devtools", GroupBatteriesLive, :devtools
+    live "/batteries/ml", GroupBatteriesLive, :ml
+    live "/batteries/monitoring", GroupBatteriesLive, :monitoring
+    live "/batteries/net_sec", GroupBatteriesLive, :net_sec
+    live "/batteries/magic", GroupBatteriesLive, :magic
+    live "/batteries", SystemBatteryLive.Index, :index
+    live "/batteries/:id", SystemBatteryLive.Show, :show
 
     live "/timeline", TimelineLive, :index
   end
 
   scope "/api", ControlServerWeb do
     pipe_through :api
-    resources "/usage_reports", UsageReportController, except: [:new, :edit]
-    resources "/kube_snapshots", KubeSnapshotController, except: [:new, :edit]
-    resources "/resource_paths", ResourcePathController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development

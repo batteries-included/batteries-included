@@ -11,8 +11,9 @@ defmodule KubeServices.Stale do
 
   @spec find_stale :: list
   def find_stale do
-    KubeState.table_to_list()
-    |> Enum.map(fn kv -> elem(kv, 1) end)
+    KubeState.snapshot()
+    |> Map.get(:kube_state)
+    |> Enum.flat_map(fn {_key, values} -> values end)
     |> Enum.filter(&has_annotation/1)
     |> Enum.reject(fn r -> in_some_kube_snapshot(r) end)
     |> log_scan_results()
@@ -52,7 +53,10 @@ defmodule KubeServices.Stale do
   end
 
   defp log_scan_results(results) do
-    Logger.info("Found #{length(results)} stale resources that can be deleted.")
+    Logger.info("Found #{length(results)} stale resources that can be deleted.",
+      result_count: length(results)
+    )
+
     results
   end
 end

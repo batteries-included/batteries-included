@@ -1,15 +1,18 @@
 /* eslint no-underscore-dangle: 0 */
 
+// Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import 'phoenix_html';
+
+// Establish Phoenix Socket and LiveView configuration.
 import { Socket } from 'phoenix';
 import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
 import Alpine from 'alpinejs';
-import BillingChart from './billing_chart';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
+
 const liveSocket = new LiveSocket('/live', Socket, {
   dom: {
     onBeforeElUpdated(from, to) {
@@ -20,17 +23,33 @@ const liveSocket = new LiveSocket('/live', Socket, {
       }
     },
   },
-  hooks: { BillingChart },
+  hooks: {},
   params: { _csrf_token: csrfToken },
 });
 
 // Show progress bar on live navigation and form submits
+const showBarDelay = 100;
 topbar.config({
-  barColors: { 0: '#fc408b' },
+  barThickness: 5,
+  barColors: {
+    0: '#fc408b',
+    '.3': '#247BA0',
+    '1.0': '#36D399',
+  },
+  shadowBlur: 5,
   shadowColor: 'rgba(0, 0, 0, .3)',
 });
-window.addEventListener('phx:page-loading-start', () => topbar.show());
-window.addEventListener('phx:page-loading-stop', () => topbar.hide());
+
+let topBarScheduled;
+window.addEventListener('phx:page-loading-start', () => {
+  topBarScheduled =
+    topBarScheduled || setTimeout(() => topbar.show(), showBarDelay);
+});
+window.addEventListener('phx:page-loading-stop', () => {
+  clearTimeout(topBarScheduled);
+  topBarScheduled = undefined;
+  topbar.hide();
+});
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();
@@ -40,6 +59,5 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
-
 window.Alpine = Alpine;
 Alpine.start();

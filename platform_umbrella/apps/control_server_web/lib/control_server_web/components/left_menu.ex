@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Components.LeftMenu do
+defmodule ControlServerWeb.LeftMenu do
   use ControlServerWeb, :live_component
 
   import CommonUI.Icons.Database
@@ -9,7 +9,6 @@ defmodule ControlServerWeb.Components.LeftMenu do
   import CommonUI.Icons.Rook
 
   alias ControlServer.Batteries
-  alias ControlServerWeb.Endpoint
 
   @impl true
   def update(assigns, socket) do
@@ -90,7 +89,7 @@ defmodule ControlServerWeb.Components.LeftMenu do
   defp battery_menu_item(%{battery: %{type: :postgres_operator}} = assigns) do
     ~H"""
     <.menu_item
-      navigate={Routes.postgres_clusters_path(Endpoint, :index)}
+      navigate={~p"/postgres/clusters"}
       name="Postgres"
       is_active={@active == :postgres_operator}
     >
@@ -101,11 +100,7 @@ defmodule ControlServerWeb.Components.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :redis}} = assigns) do
     ~H"""
-    <.menu_item
-      navigate={Routes.redis_path(Endpoint, :index)}
-      name="Redis"
-      is_active={@active == :redis}
-    >
+    <.menu_item navigate={~p"/redis/clusters"} name="Redis" is_active={@active == :redis}>
       <.redis_icon class={@icon_class} />
     </.menu_item>
     """
@@ -113,11 +108,7 @@ defmodule ControlServerWeb.Components.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :rook}} = assigns) do
     ~H"""
-    <.menu_item
-      navigate={Routes.ceph_index_path(Endpoint, :index)}
-      name="Ceph"
-      is_active={@active == :rook}
-    >
+    <.menu_item navigate={~p"/ceph"} name="Ceph" is_active={@active == :rook}>
       <.ceph_icon class={@icon_class} />
     </.menu_item>
     """
@@ -126,7 +117,7 @@ defmodule ControlServerWeb.Components.LeftMenu do
   defp battery_menu_item(%{battery: %{type: :knative_serving}} = assigns) do
     ~H"""
     <.menu_item
-      navigate={Routes.knative_services_index_path(Endpoint, :index)}
+      navigate={~p"/knative/services"}
       name="Knative Serving"
       is_active={@active == :knative_serving}
     >
@@ -137,11 +128,7 @@ defmodule ControlServerWeb.Components.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :notebooks}} = assigns) do
     ~H"""
-    <.menu_item
-      navigate={Routes.jupyter_lab_notebook_index_path(Endpoint, :index)}
-      name="Notebooks"
-      is_active={@active == :notebooks}
-    >
+    <.menu_item navigate={~p"/notebooks"} name="Notebooks" is_active={@active == :notebooks}>
       <.notebook_icon class={@icon_class} />
     </.menu_item>
     """
@@ -213,68 +200,28 @@ defmodule ControlServerWeb.Components.LeftMenu do
 
   defp group_menu_item(%{group: :magic} = assigns) do
     ~H"""
-    <.menu_item
-      navigate={Routes.timeline_path(Endpoint, :index)}
-      name="Timeline"
-      is_active={@active == :timeline}
-    >
+    <.menu_item navigate={~p"/timeline"} name="Timeline" is_active={@active == :timeline}>
       <Heroicons.clock class={@icon_class} />
     </.menu_item>
-    <.menu_item
-      navigate={Routes.resource_list_path(Endpoint, :pod)}
-      name="Pods"
-      is_active={@active == :pod}
-    >
-      <Heroicons.server class={@icon_class} />
+    <.menu_item navigate={~p"/kube/pods"} name="Kubernetes" is_active={@active == :kube_resources}>
+      <Heroicons.rectangle_group class={@icon_class} />
     </.menu_item>
     <.menu_item
-      navigate={Routes.resource_list_path(Endpoint, :deployment)}
-      name="Deployments"
-      is_active={@active == :deployment}
-    >
-      <Heroicons.server_stack class={@icon_class} />
-    </.menu_item>
-    <.menu_item
-      navigate={Routes.resource_list_path(Endpoint, :stateful_set)}
-      name="Stateful Sets"
-      is_active={@active == :stateful_set}
-    >
-      <Heroicons.circle_stack class={@icon_class} />
-    </.menu_item>
-    <.menu_item
-      navigate={Routes.resource_list_path(Endpoint, :node)}
-      name="Nodes"
-      is_active={@active == :node}
-    >
-      <Heroicons.computer_desktop solid class={@icon_class} />
-    </.menu_item>
-    <.menu_item
-      navigate={Routes.resource_list_path(Endpoint, :service)}
-      name="Services"
-      is_active={@active == :service}
-    >
-      <Heroicons.wifi class={@icon_class} />
-    </.menu_item>
-    <.menu_item
-      navigate={Routes.kube_snapshot_list_path(Endpoint, :index)}
-      name="Kube Deploys"
-      is_active={@active == :kube_snapshot}
+      navigate={~p"/kube/snapshots"}
+      name="Snapshot Deploys"
+      is_active={@active == :kube_snapshots}
     >
       <Heroicons.rocket_launch class={@icon_class} />
     </.menu_item>
 
     <.menu_item
-      navigate={Routes.system_battery_index_path(Endpoint, :index)}
+      navigate={~p"/batteries"}
       name="Installed Batteries"
       is_active={@active == :installed_batteries}
     >
       <Heroicons.battery_100 class={@icon_class} />
     </.menu_item>
-    <.menu_item
-      navigate={Routes.group_batteries_path(Endpoint, @group)}
-      name="Batteries"
-      is_active={@active == :batteries}
-    >
+    <.menu_item navigate={~p"/batteries/magic"} name="Batteries" is_active={@active == :batteries}>
       <Heroicons.battery_0 class={@icon_class} />
     </.menu_item>
     """
@@ -282,11 +229,7 @@ defmodule ControlServerWeb.Components.LeftMenu do
 
   defp group_menu_item(%{group: _} = assigns) do
     ~H"""
-    <.menu_item
-      navigate={Routes.group_batteries_path(Endpoint, @group)}
-      name="Batteries"
-      is_active={@active == :batteries}
-    >
+    <.menu_item navigate={~p"/batteries/#{@group}"} name="Batteries" is_active={@active == :batteries}>
       <Heroicons.battery_0 class={@icon_class} />
     </.menu_item>
     """

@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.CephClusterNew do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Rook
   alias ControlServer.Rook.CephCluster
@@ -44,17 +44,15 @@ defmodule ControlServerWeb.Live.CephClusterNew do
 
   @impl true
   def handle_info({"ceph_cluster:save", %{"ceph_cluster" => ceph_cluster}}, socket) do
-    new_path = Routes.ceph_cluster_show_path(socket, :show, ceph_cluster.id)
-    Logger.debug("new_cluster = #{inspect(ceph_cluster)} new_path = #{new_path}")
     Installer.install!(:rook)
 
-    {:noreply, push_redirect(socket, to: new_path)}
+    {:noreply, push_redirect(socket, to: ~p"/ceph/clusters/#{ceph_cluster}/show")}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>New Cluster</.title>
       </:title>
@@ -67,7 +65,7 @@ defmodule ControlServerWeb.Live.CephClusterNew do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

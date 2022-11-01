@@ -33,10 +33,10 @@ defmodule ControlServerWeb.Live.Redis do
     Redis.list_failover_clusters()
   end
 
-  def show_url(failover_cluster),
-    do: Routes.redis_show_path(ControlServerWeb.Endpoint, :show, failover_cluster)
+  def show_url(cluster),
+    do: ~p"/redis/clusters/#{cluster}/show"
 
-  def new_url, do: Routes.redis_new_path(ControlServerWeb.Endpoint, :new)
+  def new_url, do: ~p"/redis/clusters/new"
 
   @impl true
   def render(assigns) do

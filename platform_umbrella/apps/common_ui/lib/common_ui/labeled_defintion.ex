@@ -1,5 +1,6 @@
 defmodule CommonUI.LabeledDefiniton do
   use Phoenix.Component
+  import Phoenix.Component, except: [link: 1]
 
   def labeled_definition(assigns) do
     ~H"""

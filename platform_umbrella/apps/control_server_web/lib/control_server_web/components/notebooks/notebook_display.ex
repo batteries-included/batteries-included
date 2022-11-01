@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
-  use ControlServerWeb, :component
-
-  alias ControlServerWeb.Router.Helpers, as: Routes
+  use ControlServerWeb, :html
 
   attr :notebooks, :list, default: []
 
@@ -17,14 +15,6 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
       </:action>
     </.table>
     """
-  end
-
-  def notebook_show_path(notebook) do
-    Routes.jupyter_lab_notebook_show_path(
-      ControlServerWeb.Endpoint,
-      :index,
-      notebook.id
-    )
   end
 
   defp notebook_path(notebook), do: KubeResources.Notebooks.view_url(notebook)

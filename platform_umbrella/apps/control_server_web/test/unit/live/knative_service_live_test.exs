@@ -13,7 +13,7 @@ defmodule ControlServerWeb.ServiceLiveTest do
     setup [:create_service]
 
     test "lists all services", %{conn: conn, service: service} do
-      {:ok, _index_live, html} = live(conn, Routes.knative_services_index_path(conn, :index))
+      {:ok, _index_live, html} = live(conn, ~p"/knative/services")
 
       assert html =~ "Listing Services"
       assert html =~ service.name

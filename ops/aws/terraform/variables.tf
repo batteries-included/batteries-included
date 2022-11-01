@@ -58,5 +58,5 @@ variable "devserver_instance_type" {
 }
 
 variable "devserver_instance_disk_size" {
-  default = "32"
+  default = "256"
 }

@@ -11,31 +11,26 @@ defmodule KubeExt.KubeState.ResourceWatcher do
 
   def add(resource, %State{} = watcher_state) do
     state_table = state_table(watcher_state)
-    resource_type = resource_type(watcher_state)
     clean_resource = clean(resource, watcher_state)
 
-    Logger.debug("Add event for #{resource_type}",
-      resource: clean_resource,
-      state_table: state_table
-    )
-
-    Runner.add(state_table, resource_type, clean_resource)
+    # Logger.debug("Add event for #{resource_type(watcher_state)}")
+    Runner.add(state_table, clean_resource)
   end
 
   def delete(resource, %State{} = watcher_state) do
     state_table = state_table(watcher_state)
-    resource_type = resource_type(watcher_state)
     clean_resource = clean(resource, watcher_state)
-    Logger.debug("Delete event for #{resource_type} removing from #{state_table}")
-    Runner.delete(state_table, resource_type, clean_resource)
+
+    # Logger.debug("Delete event for #{resource_type(watcher_state)} removing from #{state_table}")
+    Runner.delete(state_table, clean_resource)
   end
 
   def modify(resource, %State{} = watcher_state) do
     state_table = state_table(watcher_state)
-    resource_type = resource_type(watcher_state)
     clean_resource = clean(resource, watcher_state)
 
-    Runner.update(state_table, resource_type, clean_resource)
+    # Logger.debug("Update event for #{resource_type(watcher_state)} changing in #{state_table}")
+    Runner.update(state_table, clean_resource)
   end
 
   defp clean(resource, %State{} = watcher_state) do
@@ -44,7 +39,6 @@ defmodule KubeExt.KubeState.ResourceWatcher do
     resource
     |> Map.put_new("apiVersion", api_version)
     |> Map.put_new("kind", kind)
-    |> update_in(["metadata"], fn m -> Map.drop(m || %{}, ["managedFields"]) end)
   end
 
   def operation(%State{} = watcher_state) do

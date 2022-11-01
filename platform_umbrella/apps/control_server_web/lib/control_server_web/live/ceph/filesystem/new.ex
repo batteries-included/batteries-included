@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.CephFilesystemNew do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Rook
   alias ControlServer.Rook.CephFilesystem
@@ -42,17 +42,15 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
 
   @impl true
   def handle_info({"ceph_filesystem:save", %{"ceph_filesystem" => ceph_filesystem}}, socket) do
-    new_path = Routes.ceph_filesystem_show_path(socket, :show, ceph_filesystem.id)
-    Logger.debug("new filesystem = #{inspect(ceph_filesystem)} new_path = #{new_path}")
     Installer.install!(:rook)
 
-    {:noreply, push_redirect(socket, to: new_path)}
+    {:noreply, push_redirect(socket, to: ~p"/ceph/filesystems/#{ceph_filesystem}/show")}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>New Cluster</.title>
       </:title>
@@ -65,7 +63,7 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

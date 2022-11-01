@@ -7,8 +7,6 @@ defmodule KubeResources.Notebooks do
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.MLSettings
 
-  require Logger
-
   @app_name "notebooks"
   @url_base "/x/notebooks/"
 
@@ -17,7 +15,6 @@ defmodule KubeResources.Notebooks do
   end
 
   defp notebook_ingress(%Notebooks.JupyterLabNotebook{} = notebook, config) do
-    Logger.debug("Creating ingress for #{inspect(notebook)}")
     namespace = MLSettings.public_namespace(config)
 
     B.build_resource(:ingress, url(notebook), "notebook-#{notebook.name}", "http")
@@ -64,8 +61,6 @@ defmodule KubeResources.Notebooks do
   def materialize(config) do
     Notebooks.list_jupyter_lab_notebooks()
     |> Enum.flat_map(fn notebook ->
-      Logger.debug("Notebook => #{inspect(notebook)}")
-
       [
         {"/#{notebook.id}/stateful", stateful_set(config, notebook)},
         {"/#{notebook.id}/service", service(config, notebook)}

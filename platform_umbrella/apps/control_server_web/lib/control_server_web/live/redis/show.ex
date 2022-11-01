@@ -43,24 +43,24 @@ defmodule ControlServerWeb.Live.RedisShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = Redis.delete_failover_cluster(socket.assigns.failover_cluster)
 
-    {:noreply, push_redirect(socket, to: Routes.redis_path(socket, :index))}
+    {:noreply, push_redirect(socket, to: ~p"/redis/clusters")}
   end
 
   defp page_title(:show), do: "Show Redis Failover Cluster"
 
-  defp edit_url(failover_cluster),
-    do: Routes.redis_edit_path(ControlServerWeb.Endpoint, :edit, failover_cluster.id)
+  defp edit_url(cluster),
+    do: ~p"/redis/clusters/#{cluster}/edit"
 
   defp k8_failover(id) do
-    Enum.find(KubeState.redis_failovers(), nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.find(KubeState.get_all(:redis_failover), nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
   defp k8_pods(id) do
-    Enum.filter(KubeState.pods(), fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.filter(KubeState.get_all(:pod), fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
   defp k8_services(id) do
-    Enum.filter(KubeState.services(), fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.filter(KubeState.get_all(:service), fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
   @impl true

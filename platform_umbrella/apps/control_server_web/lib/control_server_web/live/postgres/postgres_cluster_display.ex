@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.PostgresClusterDisplay do
-  use ControlServerWeb, :component
-
-  alias ControlServerWeb.Router.Helpers, as: Routes
+  use ControlServerWeb, :html
 
   def pg_cluster_display(assigns) do
     ~H"""
@@ -17,6 +15,5 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
     """
   end
 
-  defp show_url(cluster),
-    do: Routes.postgres_show_path(ControlServerWeb.Endpoint, :show, cluster.id)
+  defp show_url(cluster), do: ~p"/postgres/clusters/#{cluster}/show"
 end

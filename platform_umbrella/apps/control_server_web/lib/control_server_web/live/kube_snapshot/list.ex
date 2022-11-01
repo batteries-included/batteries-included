@@ -32,10 +32,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
     {:noreply, socket}
   end
 
-  defp snapshot_path(snapshot) do
-    Routes.kube_snapshot_show_path(ControlServerWeb.Endpoint, :index, snapshot.id)
-  end
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -49,7 +45,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
         </:col>
         <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>
         <:action :let={snapshot}>
-          <.link navigate={snapshot_path(snapshot)} type="styled">Show Snapshot</.link>
+          <.link navigate={~p"/kube/snapshots/#{snapshot}/show"} type="styled">Show Snapshot</.link>
         </:action>
       </.table>
 

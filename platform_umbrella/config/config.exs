@@ -44,7 +44,10 @@ config :kube_services,
 config :control_server_web, ControlServerWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "+BsWyvsUA0yzXCZIedcDcji/t0CVxE2kofuBpouA44103zsGXTg4w4rSszEXaEfh",
-  render_errors: [view: ControlServerWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: ControlServerWeb.ErrorHTML, json: ControlServerWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: ControlServer.PubSub,
   live_view: [signing_salt: "IprBitsK"]
 
@@ -52,7 +55,10 @@ config :control_server_web, ControlServerWeb.Endpoint,
 config :home_base_web, HomeBaseWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "7ixRcXBdidan5QEouVvFc1LJ4egRMapcBXaxfmd6EyFJAITgx7PjR/MK4IrkWmrW",
-  render_errors: [view: HomeBaseWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: HomeBaseWeb.ErrorHTML, json: HomeBaseWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: HomeBase.PubSub,
   live_view: [signing_salt: "zAzBezt3"]
 
@@ -71,7 +77,7 @@ config :logger_json, :backend,
 config :phoenix, :json_library, Jason
 
 config :esbuild,
-  version: "0.13.9",
+  version: "0.14.41",
   control_server_web: [
     args:
       ~w(js/app.js --bundle --target=chrome58,firefox57,safari11,edge18 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
@@ -133,6 +139,8 @@ config :cli, CLI.Commands,
   dump: CLI.Commands.DumpBootstrap,
   dump_dev: CLI.Commands.DumpBootstrapDev,
   cluster_k3d: CLI.Commands.K3DCluster
+
+config :kube_ext, KubeExt.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -15,13 +15,13 @@ pushd ${DIR}/../platform_umbrella
 docker build \
   -t battery/control:${TAG} \
   .
-pushImage "battery/control" "${TAG}"
 
 docker build --build-arg RELEASE=home_base \
   --build-arg BINARY=bin/home_base \
   -t battery/home:${TAG} \
   .
 
+pushImage "battery/control" "${TAG}"
 pushImage "battery/home" "${TAG}"
 
 popd

@@ -1,5 +1,6 @@
 defmodule KubeServices.SnapshotApply.Steps do
   alias ControlServer.SnapshotApply.EctoSteps
+  alias ControlServer.SnapshotApply.StateSnapshot
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
   alias KubeServices.SnapshotApply.ResourcePathWorker
@@ -15,11 +16,12 @@ defmodule KubeServices.SnapshotApply.Steps do
     snap
   end
 
-  @spec generation!(KubeSnapshot.t()) :: [ResourcePath.t()]
+  @spec generation!(KubeSnapshot.t()) :: [Ecto.UUID.t()]
   def generation!(%KubeSnapshot{} = snap) do
     {:ok, paths} =
-      EctoSteps.snap_generation_transaction(
+      EctoSteps.snap_generation(
         snap,
+        StateSnapshot.materialize!(),
         &ConfigGenerator.materialize/1
       )
 
@@ -96,11 +98,17 @@ defmodule KubeServices.SnapshotApply.Steps do
   defp reason(obj), do: inspect(obj)
 
   defp kube_state_different?(%ResourcePath{} = rp) do
-    current_hash = Hashing.get_hash(KubeState.get_resource(rp.type, rp.namespace, rp.name))
+    case KubeState.get(rp.type, rp.namespace, rp.name) do
+      # Resource path doesn't have the whole annotated
+      # resource so just check the equality of the hashes here.
+      {:ok, current_resource} ->
+        current_resource
+        |> Hashing.get_hash()
+        |> Hashing.different?(rp.hash)
 
-    # Resource path doesn't have the whole annotated
-    # resource so just check the equality of the hashes here.
-    Hashing.different?(current_hash, rp.hash)
+      _ ->
+        true
+    end
   end
 
   defp do_apply(%ResourcePath{} = rp) do

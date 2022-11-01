@@ -1,5 +1,6 @@
 defmodule CommonUI.Form do
   use Phoenix.Component
+  import Phoenix.Component, except: [link: 1]
 
   import CommonUI.Gettext, warn: false
   import Phoenix.HTML.Form, only: [input_name: 2, input_id: 2, input_value: 2, humanize: 1]

@@ -12,10 +12,8 @@ defmodule ControlServerWeb.CephFilesystemLiveTest do
     setup [:create_ceph_filesystem]
 
     test "displays ceph_filesystem", %{conn: conn, ceph_filesystem: ceph_filesystem} do
-      {:ok, _show_live, html} =
-        live(conn, Routes.ceph_filesystem_show_path(conn, :show, ceph_filesystem))
+      {:ok, _show_live, html} = live(conn, ~p"/ceph/filesystems/#{ceph_filesystem}/show")
 
-      assert html =~ "Show Ceph Filesystem"
       assert html =~ ceph_filesystem.name
     end
   end
@@ -34,14 +32,13 @@ defmodule ControlServerWeb.CephFilesystemLiveTest do
     }
 
     test "Can display an edit page for a filesystem", %{conn: conn, ceph_filesystem: fs} do
-      {:ok, _show_live, html} = live(conn, Routes.ceph_filesystem_edit_path(conn, :edit, fs))
+      {:ok, _show_live, html} = live(conn, ~p"/ceph/filesystems/#{fs}/edit")
 
       assert html =~ fs.name
     end
 
-    test "updates a filessystem", %{conn: conn, ceph_filesystem: ceph_filesystem} do
-      {:ok, edit_live, _html} =
-        live(conn, Routes.ceph_filesystem_edit_path(conn, :edit, ceph_filesystem))
+    test "updates a filessystem", %{conn: conn, ceph_filesystem: fs} do
+      {:ok, edit_live, _html} = live(conn, ~p"/ceph/filesystems/#{fs}/edit")
 
       assert edit_live
              |> form("#ceph_filesystem-form", ceph_filesystem: @invalid_attrs)
@@ -51,7 +48,7 @@ defmodule ControlServerWeb.CephFilesystemLiveTest do
       |> form("#ceph_filesystem-form", ceph_filesystem: @update_attrs)
       |> render_submit()
 
-      {:ok, _, html} = live(conn, Routes.ceph_filesystem_show_path(conn, :show, ceph_filesystem))
+      {:ok, _, html} = live(conn, ~p"/ceph/filesystems/#{fs}/show")
 
       assert html =~ "newfilesystemtest"
     end

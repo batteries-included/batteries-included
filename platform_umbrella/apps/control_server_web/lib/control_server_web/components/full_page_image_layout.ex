@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.FullPageImageLayout do
-  use ControlServerWeb, :component
-
-  alias ControlServerWeb.Endpoint
+  use ControlServerWeb, :html
 
   def full_page_layout(assigns) do
     ~H"""
@@ -21,8 +19,8 @@ defmodule ControlServerWeb.FullPageImageLayout do
   end
 
   def image_src(:rocket),
-    do: Routes.static_path(Endpoint, "/images/nasa-JkaKy_77wF8-unsplash.jpg")
+    do: ~p"/images/nasa-JkaKy_77wF8-unsplash.jpg"
 
   def image_src(:hand),
-    do: Routes.static_path(Endpoint, "/images/junior-ferreira-7esRPTt38nI-unsplash.jpg")
+    do: ~p"/images/junior-ferreira-7esRPTt38nI-unsplash.jpg"
 end

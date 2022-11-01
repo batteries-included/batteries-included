@@ -43,12 +43,12 @@ defmodule ControlServerWeb.Live.CephFilesystemShow do
       </.body_section>
 
       <span>
-        <%= live_patch("Edit",
-          to: Routes.ceph_filesystem_edit_path(@socket, :edit, @ceph_filesystem),
-          class: "button"
-        ) %>
+        <.link navigate={~p"/ceph/filesystems/#{@ceph_filesystem}/edit"}>Edit</.link>
       </span>
-      | <span><%= live_redirect("Back", to: Routes.ceph_index_path(@socket, :index)) %></span>
+      |
+      <span>
+        <.link navigate={~p"/ceph"}>Back</.link>
+      </span>
     </.layout>
     """
   end

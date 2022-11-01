@@ -5,7 +5,16 @@ defmodule CommonUI do
 
   defmacro __using__(_) do
     quote do
-      import CommonUI.{Button, LabeledDefiniton, Table, Form, Link, Typogoraphy, DataList}
+      import CommonUI.{
+        Button,
+        DataList,
+        Flash,
+        Form,
+        LabeledDefiniton,
+        Link,
+        Table,
+        Typogoraphy
+      }
     end
   end
 end

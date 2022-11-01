@@ -34,7 +34,7 @@ defmodule CommonUI.MixProject do
     [
       {:logger_json, "~> 5.1"},
       {:phoenix, github: "phoenixframework/phoenix", override: true},
-      {:phoenix_live_view, "~> 0.18.1"},
+      {:phoenix_live_view, "~> 0.18.3"},
       {:heroicons, "~> 0.5"},
       {:gettext, "~> 0.19"}
     ]

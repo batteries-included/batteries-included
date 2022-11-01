@@ -10,7 +10,7 @@ defmodule ControlServer.Umbrella.MixProject do
       releases: releases(),
       aliases: aliases(),
       test_coverage: [
-        summary: [threshold: 35]
+        summary: [threshold: 30]
       ],
       dialyzer: [
         flags: ~w[error_handling unmatched_returns unknown]a,

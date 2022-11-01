@@ -27,10 +27,10 @@ defmodule KubeExt.KubeState.RunnerTest do
         "metadata" => %{"name" => "Two", "namespace" => "battery-core"}
       }
 
-      Runner.add(@table_name, :pod, pod_one)
-      Runner.add(@table_name, :pod, pod_two)
+      Runner.add(@table_name, pod_one)
+      Runner.add(@table_name, pod_two)
 
-      result = KubeState.pods(@table_name)
+      result = KubeState.get_all(@table_name, :pod)
 
       assert Enum.any?(result, fn r -> Map.equal?(r, pod_one) end)
       assert Enum.any?(result, fn r -> Map.equal?(r, pod_two) end)

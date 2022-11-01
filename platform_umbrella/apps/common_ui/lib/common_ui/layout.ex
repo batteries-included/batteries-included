@@ -1,10 +1,11 @@
 defmodule CommonUI.Layout do
   use Phoenix.Component
   import Phoenix.Component, except: [link: 1]
+
   import CommonUI.Link
   import CommonUI.Typogoraphy
 
-  @default_container_class "flex-1 max-w-7xl sm:px-6 lg:px-8 pt-10 pb-20 "
+  @default_container_class "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-20 "
   @iframe_container_class "flex-1 py-0 px-0 w-full h-full "
 
   defp container_class(:iframe), do: @iframe_container_class
@@ -48,7 +49,7 @@ defmodule CommonUI.Layout do
       x-data="{menuOpen: false}"
     >
       <header class="w-full bg-white h-16">
-        <div class="flex max-w-7xl h-full">
+        <div class="flex max-w-full h-full">
           <.link navigate={@logo_path} class="my-auto mx-4">
             <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included" />
           </.link>

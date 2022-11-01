@@ -66,12 +66,9 @@ defmodule ControlServerWeb.Live.CephClusterShow do
       </.body_section>
 
       <span>
-        <%= live_patch("Edit",
-          to: Routes.ceph_cluster_edit_path(@socket, :edit, @ceph_cluster),
-          class: "button"
-        ) %>
+        <%= live_patch("Edit", to: ~p"/ceph/clusters/#{@ceph_cluster}/show", class: "button") %>
       </span>
-      | <span><%= live_redirect("Back", to: Routes.ceph_index_path(@socket, :index)) %></span>
+      | <span><%= live_redirect("Back", to: ~p"/ceph/clusters/#{@ceph_cluster}/show") %></span>
     </.layout>
     """
   end

@@ -66,9 +66,7 @@ config :control_server_web, ControlServerWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"priv/catalogue/.*(ex)$",
       ~r"lib/control_server_web/(live|views)/.*(ex)$",
-      ~r"lib/control_server_web/live/.*(sface)$",
       ~r"lib/control_server_web/templates/.*(eex)$"
     ]
   ]
@@ -78,9 +76,7 @@ config :home_base_web, HomeBaseWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"priv/catalogue/.*(ex)$",
       ~r"lib/home_base_web/(live|views)/.*(ex)$",
-      ~r"lib/home_base_web/live/.*(sface)$",
       ~r"lib/home_base_web/templates/.*(eex)$"
     ]
   ]

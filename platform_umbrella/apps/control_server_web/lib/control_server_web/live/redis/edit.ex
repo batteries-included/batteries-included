@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.RedisEdit do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Redis
   alias ControlServerWeb.Live.Redis.FormComponent
@@ -19,17 +19,14 @@ defmodule ControlServerWeb.Live.RedisEdit do
   end
 
   @impl true
-  def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
-    new_path = Routes.redis_path(socket, :index)
-    Logger.debug("updated failover_cluster = #{inspect(failover_cluster)} new_path = #{new_path}")
-
-    {:noreply, push_redirect(socket, to: new_path)}
+  def handle_info({"failover_cluster:save", %{"failover_cluster" => cluster}}, socket) do
+    {:noreply, push_redirect(socket, to: ~p"/redis/clusters/#{cluster}/show")}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>Edit Redis Cluster</.title>
       </:title>
@@ -42,7 +39,7 @@ defmodule ControlServerWeb.Live.RedisEdit do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.Iframe do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.IFrame
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   def iframe_title(%{live_action: :alert_manager} = assigns) do
     ~H"""
@@ -39,12 +39,12 @@ defmodule ControlServerWeb.Live.Iframe do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout container_type={:iframe}>
+    <.menu_layout container_type={:iframe}>
       <:title>
         <.iframe_title live_action={@live_action} />
       </:title>
       <.iframe src={iframe_url(@live_action)} />
-    </.layout>
+    </.menu_layout>
     """
   end
 end

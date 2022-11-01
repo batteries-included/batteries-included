@@ -3,16 +3,16 @@ defmodule ControlServerWeb.LayoutTest do
 
   import Phoenix.Component, except: [link: 1]
   import Phoenix.LiveViewTest
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   test "Layout can render iframe" do
     assigns = %{}
 
     html =
       rendered_to_string(~H"""
-      <.layout container_type={:iframe}>
+      <.menu_layout container_type={:iframe}>
         Hello
-      </.layout>
+      </.menu_layout>
       """)
 
     assert html =~ "flex-1 py-0 px-0 w-full"

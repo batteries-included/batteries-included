@@ -43,24 +43,24 @@ defmodule ControlServerWeb.Live.PostgresShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = Postgres.delete_cluster(socket.assigns.cluster)
 
-    {:noreply, push_redirect(socket, to: Routes.postgres_clusters_path(socket, :index))}
+    {:noreply, push_redirect(socket, to: ~p"/postgres/clusters")}
   end
 
   defp page_title(:show), do: "Show Postgres"
 
   defp edit_url(cluster),
-    do: Routes.postgres_edit_path(ControlServerWeb.Endpoint, :edit, cluster.id)
+    do: ~p"/postgres/clusters/#{cluster}/edit"
 
   defp k8_cluster(id) do
-    Enum.find(KubeState.postgresqls(), nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.find(KubeState.get_all(:postgresql), nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
   defp k8_pods(id) do
-    Enum.filter(KubeState.pods(), fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.filter(KubeState.get_all(:pod), fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
   defp k8_services(id) do
-    Enum.filter(KubeState.services(), fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.filter(KubeState.get_all(:service), fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
   defp k8_cluster_status(nil) do

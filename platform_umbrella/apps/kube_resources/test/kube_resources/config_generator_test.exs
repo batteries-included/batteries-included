@@ -4,17 +4,10 @@ defmodule KubeServices.ConfigGeneratorTest do
   alias KubeResources.ConfigGenerator
   alias ControlServer.Batteries.Catalog
   alias ControlServer.Batteries.Installer
-  alias ControlServer.Batteries
-
-  require Logger
 
   import KubeResources.ControlServerFactory
 
   def assert_named(%{} = resource) when is_map(resource) do
-    if nil == K8s.Resource.name(resource) do
-      IO.inspect(resource)
-    end
-
     real_name = K8s.Resource.name(resource)
     assert nil != real_name, "The resource should always be named"
   end
@@ -79,13 +72,8 @@ defmodule KubeServices.ConfigGeneratorTest do
     setup [:setup_every_battery, :setup_installed, :setup_create_one_of_everything]
 
     test "all battery resources are valid" do
-      Batteries.list_system_batteries()
-      |> Enum.map(fn battery -> {battery, ConfigGenerator.materialize(battery)} end)
-      |> Enum.map(fn {battery, rm} ->
-        assert_contains_resources(rm, battery)
-        rm
-      end)
-      |> Enum.reduce(%{}, &Map.merge/2)
+      ControlServer.SnapshotApply.StateSnapshot.materialize!()
+      |> ConfigGenerator.materialize()
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)
     end
@@ -95,9 +83,8 @@ defmodule KubeServices.ConfigGeneratorTest do
     setup [:setup_small, :setup_installed, :setup_create_postgres]
 
     test "all battery resources are valid" do
-      Batteries.list_system_batteries()
-      |> Enum.map(&ConfigGenerator.materialize/1)
-      |> Enum.reduce(%{}, &Map.merge/2)
+      ControlServer.SnapshotApply.StateSnapshot.materialize!()
+      |> ConfigGenerator.materialize()
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)
     end

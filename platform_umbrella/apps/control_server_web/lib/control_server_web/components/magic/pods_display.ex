@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.PodsDisplay do
-  use ControlServerWeb, :component
+  use ControlServerWeb, :html
 
   import ControlServerWeb.ResourceURL
   import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]

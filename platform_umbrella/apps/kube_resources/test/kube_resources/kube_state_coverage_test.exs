@@ -1,17 +1,17 @@
 defmodule KubeServices.KubeStateCoverageTest do
   use ControlServer.DataCase
 
+  import K8s.Resource.FieldAccessors
+
   alias KubeResources.ConfigGenerator
   alias ControlServer.Batteries.Installer
   alias ControlServer.Batteries.Catalog
-  alias ControlServer.Batteries
   alias KubeExt.ApiVersionKind
 
   def assert_all_resources_watchable do
-    Batteries.list_system_batteries()
-    |> Enum.map(&ConfigGenerator.materialize/1)
-    |> Enum.map(&KubeResources.unique_kinds/1)
-    |> List.flatten()
+    ControlServer.SnapshotApply.StateSnapshot.materialize!()
+    |> ConfigGenerator.materialize()
+    |> Enum.map(fn {_path, resource} -> {api_version(resource), kind(resource)} end)
     |> Enum.each(fn {api_version, kind} ->
       assert ApiVersionKind.is_watchable(api_version, kind),
              "Expected #{api_version} and #{kind} to be know types that can be watched by KubeState"

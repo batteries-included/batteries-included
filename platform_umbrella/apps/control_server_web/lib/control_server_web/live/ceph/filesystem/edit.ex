@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.CephFilesystemEdit do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Rook
   alias ControlServerWeb.Live.CephFilesystemFormComponent
@@ -20,19 +20,13 @@ defmodule ControlServerWeb.Live.CephFilesystemEdit do
 
   @impl true
   def handle_info({"ceph_filesystem:save", %{"ceph_filesystem" => ceph_filesystem}}, socket) do
-    new_path = show_url(ceph_filesystem)
-    Logger.debug("updated ceph_filesystem = #{inspect(ceph_filesystem)} new_path = #{new_path}")
-
-    {:noreply, push_redirect(socket, to: new_path)}
+    {:noreply, push_redirect(socket, to: ~p"/ceph/filesystems/#{ceph_filesystem}/show")}
   end
-
-  defp show_url(ceph_filesystem),
-    do: Routes.ceph_filesystem_show_path(ControlServerWeb.Endpoint, :show, ceph_filesystem.id)
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout group={:devtools}>
+    <.menu_layout group={:devtools}>
       <:title>
         <.title>Edit Cluster</.title>
       </:title>
@@ -45,7 +39,7 @@ defmodule ControlServerWeb.Live.CephFilesystemEdit do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

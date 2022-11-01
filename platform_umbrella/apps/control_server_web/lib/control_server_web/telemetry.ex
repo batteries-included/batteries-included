@@ -1,7 +1,4 @@
 defmodule ControlServerWeb.Telemetry do
-  @moduledoc """
-  Metrics are cool.
-  """
   use Supervisor
   import Telemetry.Metrics
 
@@ -34,11 +31,27 @@ defmodule ControlServerWeb.Telemetry do
       ),
 
       # Database Metrics
-      summary("control_server.repo.query.total_time", unit: {:native, :millisecond}),
-      summary("control_server.repo.query.decode_time", unit: {:native, :millisecond}),
-      summary("control_server.repo.query.query_time", unit: {:native, :millisecond}),
-      summary("control_server.repo.query.queue_time", unit: {:native, :millisecond}),
-      summary("control_server.repo.query.idle_time", unit: {:native, :millisecond}),
+      summary("control_server.repo.query.total_time",
+        unit: {:native, :millisecond},
+        description: "The sum of the other measurements"
+      ),
+      summary("control_server.repo.query.decode_time",
+        unit: {:native, :millisecond},
+        description: "The time spent decoding the data received from the database"
+      ),
+      summary("control_server.repo.query.query_time",
+        unit: {:native, :millisecond},
+        description: "The time spent executing the query"
+      ),
+      summary("control_server.repo.query.queue_time",
+        unit: {:native, :millisecond},
+        description: "The time spent waiting for a database connection"
+      ),
+      summary("control_server.repo.query.idle_time",
+        unit: {:native, :millisecond},
+        description:
+          "The time the connection spent waiting before being checked out for the query"
+      ),
 
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),

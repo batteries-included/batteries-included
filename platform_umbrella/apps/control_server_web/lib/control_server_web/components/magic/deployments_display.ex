@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.DeploymentsDisplay do
-  use ControlServerWeb, :component
+  use ControlServerWeb, :html
 
   import ControlServerWeb.ResourceURL
   import K8s.Resource.FieldAccessors

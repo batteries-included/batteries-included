@@ -1,3 +1,4 @@
+const plugin = require('tailwindcss/plugin');
 const colors = require('tailwindcss/colors');
 
 const defaultTheme = require('tailwindcss/defaultTheme');
@@ -108,13 +109,14 @@ const heath = {
 };
 
 module.exports = {
-  mode: 'jit',
-  purge: [
+  content: [
     './js/**/*.js',
+    '../lib/*.*ex',
     '../lib/**/*.*ex',
     '../../common_ui/lib/**/*.*ex',
     '../../../deps/petal_components/**/*.*ex',
   ],
+
   theme: {
     colors: {
       ...colors,
@@ -157,8 +159,31 @@ module.exports = {
       },
     ],
   },
-  variants: {
-    extend: {},
-  },
-  plugins: [typography, forms, daisy],
+
+  plugins: [
+    typography,
+    forms,
+    daisy,
+    plugin(({ addVariant }) =>
+      addVariant('phx-no-feedback', ['.phx-no-feedback&', '.phx-no-feedback &'])
+    ),
+    plugin(({ addVariant }) =>
+      addVariant('phx-click-loading', [
+        '.phx-click-loading&',
+        '.phx-click-loading &',
+      ])
+    ),
+    plugin(({ addVariant }) =>
+      addVariant('phx-submit-loading', [
+        '.phx-submit-loading&',
+        '.phx-submit-loading &',
+      ])
+    ),
+    plugin(({ addVariant }) =>
+      addVariant('phx-change-loading', [
+        '.phx-change-loading&',
+        '.phx-change-loading &',
+      ])
+    ),
+  ],
 };

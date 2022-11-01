@@ -22,7 +22,7 @@ defmodule KubeServices.Usage.RestClient do
     iex> HomeBaseClient.RestClient.client("https://home.batteryincl.com")
 
   """
-  def client(base_url \\ "http://localhost:5000/api/") do
+  def client(base_url \\ "http://localhost:4900/api/") do
     middleware =
       [
         {Tesla.Middleware.BaseUrl, base_url}

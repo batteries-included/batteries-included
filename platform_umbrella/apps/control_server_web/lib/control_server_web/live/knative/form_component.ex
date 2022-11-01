@@ -3,8 +3,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   alias ControlServer.Knative
   alias ControlServer.Knative.Service
-
-  require Logger
+  alias KubeResources.KnativeServing
 
   @impl true
   def mount(socket) do
@@ -21,7 +20,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:url, url(service))
+     |> assign(:url, KnativeServing.url(service))
      |> assign(:changeset, changeset)}
   end
 
@@ -29,15 +28,14 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   def handle_event("validate", %{"service" => params}, socket) do
     {changeset, new_service} = Service.validate(params)
 
-    {:noreply, socket |> assign(:changeset, changeset) |> assign(:url, url(new_service))}
+    {:noreply,
+     socket
+     |> assign(:changeset, changeset)
+     |> assign(:url, KnativeServing.url(new_service))}
   end
 
   def handle_event("save", %{"service" => service_params}, socket) do
     save_service(socket, socket.assigns.action, service_params)
-  end
-
-  def url(service) do
-    KubeResources.KnativeServing.url(service)
   end
 
   defp save_service(socket, :new, service_params) do

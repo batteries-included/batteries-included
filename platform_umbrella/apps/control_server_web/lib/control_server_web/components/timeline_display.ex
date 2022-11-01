@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.TimelineDisplay do
-  use ControlServerWeb, :component
+  use ControlServerWeb, :html
 
   alias ControlServer.Timeline.BatteryInstall
   alias ControlServer.Timeline.Kube

@@ -9,9 +9,9 @@
 # https://docs.docker.com/develop/develop-images/build_enhancements/
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md
 
-ARG ELIXIR_VERSION=1.14.0
-ARG ERLANG_VERSION=25.0.4
-ARG ALPINE_VERSION=3.16.1
+ARG ELIXIR_VERSION=1.14.1
+ARG ERLANG_VERSION=25.1.2
+ARG ALPINE_VERSION=3.16.2
 
 ARG BUILD_IMAGE_NAME=hexpm/elixir
 ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}
@@ -52,12 +52,22 @@ FROM ${REGISTRY}${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS os-deps
 
 ARG LANG
 
-RUN ln -s /var/cache/apk /etc/apk/cache \
-  && apk update \
-  && apk add alpine-sdk \
-  && apk add git build-base \
-  && apk add curl \
-  && apk add nodejs npm
+RUN apk update \
+  && apk add --no-cache --update \
+    alpine-sdk \
+    git \
+    ca-certificates \
+    build-base \
+    make \
+    g++ \
+    wget \
+    curl \
+    inotify-tools \
+    nodejs \
+    npm \
+  && npm install npm -g --no-progress \
+  && update-ca-certificates --fresh \
+  && rm -rf /var/cache/apk/*
 
 ##########################################################################
 # Fetch app library dependencies
@@ -85,12 +95,9 @@ COPY apps/kube_raw_resources/mix.exs apps/kube_raw_resources/mix.exs
 COPY apps/kube_resources/mix.exs apps/kube_resources/mix.exs
 COPY apps/kube_services/mix.exs apps/kube_services/mix.exs
 
-RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
-  --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  mix do local.rebar --force, \
-  local.hex --force, \
-  deps.get, \
-  deps.compile --force --skip-umbrella-children
+RUN mix do local.hex --force, local.rebar --force \
+  && mix deps.get \
+  && mix deps.compile --force --skip-umbrella-children
 
 #########################
 ## Download and Build the dependencies
@@ -105,9 +112,7 @@ COPY apps/control_server_web/assets/package-lock.json /app/apps/control_server_w
 
 WORKDIR /app/apps/control_server_web/assets
 
-RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
-  --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  npm --prefer-offline --no-audit --progress=false --loglevel=error ci
+RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 
 ##########################################################################
 # Build ControlServer assets
@@ -126,11 +131,12 @@ WORKDIR /app
 COPY apps /app/apps
 COPY config /app/config
 
-WORKDIR /app/apps/control_server_web
-
-RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
-  --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  mix assets.deploy
+RUN mix deps.get \
+  && mix esbuild.install \
+  && cd /app/apps/control_server_web \
+  && ls -al ../../deps/ \
+  && mix setup \
+  && mix assets.deploy
 
 ##########################################################################
 # Build HomeBase assets
@@ -145,9 +151,7 @@ COPY apps/home_base_web/assets/package-lock.json /app/apps/home_base_web/assets/
 
 WORKDIR /app/apps/home_base_web/assets
 
-RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
-  --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  npm --prefer-offline --no-audit --progress=false --loglevel=error ci
+RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 
 ##########################################################################
 # Build HomeBase assets
@@ -157,14 +161,17 @@ FROM home-base-deps AS home-base-assets
 ARG LANG
 ARG MIX_ENV
 
+WORKDIR /app
+
 COPY apps /app/apps
 COPY config /app/config
 
-WORKDIR /app/apps/home_base_web
-
-RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
-  --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  mix assets.deploy
+RUN mix deps.get \
+  && mix esbuild.install \
+  && cd /app/apps/home_base_web \
+  && ls -al ../../deps/ \
+  && mix setup \
+  && mix assets.deploy
 
 ##########################################################################
 # Create release
@@ -184,9 +191,7 @@ COPY rel ./rel
 COPY --from=home-base-assets /app/apps/home_base_web/priv ./apps/home_base_web/priv
 COPY --from=control-assets /app/apps/control_server_web/priv ./apps/control_server_web/priv
 
-RUN --mount=type=cache,target=~/.hex/packages/hexpm,sharing=locked \
-  --mount=type=cache,target=~/.cache/rebar3,sharing=locked \
-  mix do deps.get, phx.digest, compile, release "${RELEASE}"
+RUN mix do phx.digest, compile --force, release "${RELEASE}"
 
 ##########################################################################
 # Create final image that is deployed
@@ -210,15 +215,18 @@ ENV LANG=$LANG \
   BINARY=${BINARY} \
   PORT=4000
 
-# Install Alpine libraries needed at runtime
-# See https://wiki.alpinelinux.org/wiki/Local_APK_cache for details
-# on the local cache and need for the symlink
-RUN --mount=type=cache,id=apk,target=/var/cache/apk,sharing=locked \
-  ln -s /var/cache/apk /etc/apk/cache \
-  && apk update \
-  && apk add --no-cache bash tini libstdc++ libgcc \
-  && apk add --no-cache bind-tools openssl ncurses-libs \
-  && apk cache clean
+RUN apk update \
+  && apk add --no-cache --update \
+    bash \
+    ca-certificates \
+    tini \
+    libstdc++ \
+    libgcc \
+    bind-tools \
+    openssl \
+    ncurses-libs \
+  && update-ca-certificates --fresh \
+  && rm -rf /var/cache/apk/*
 
 # Create user and group to run under with specific uid
 RUN addgroup -g 10001 -S "$APP_GROUP" \

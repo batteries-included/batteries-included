@@ -88,14 +88,18 @@ defmodule KubeResources.KnativeServing do
 
   @spec materialize(map()) :: map()
   def materialize(config) do
-    Knative.list_services()
-    |> Enum.map(fn s ->
-      {"/service/#{s.id}", serving_service(s, config)}
-    end)
-    |> Enum.into(%{
-      "/namespace" => namespace_dest(config),
-      "/knative_serving" => knative_serving(config),
-      "/domain_config" => domain_config(config)
-    })
+    res =
+      Knative.list_services()
+      |> Enum.map(fn s ->
+        {"/service/#{s.id}", serving_service(s, config)}
+      end)
+      |> Map.new()
+      |> Map.merge(%{
+        "/namespace" => namespace_dest(config),
+        "/knative_serving" => knative_serving(config),
+        "/domain_config" => domain_config(config)
+      })
+
+    res
   end
 end

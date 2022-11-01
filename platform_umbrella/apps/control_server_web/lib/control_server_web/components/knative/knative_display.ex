@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.KnativeDisplay do
-  use ControlServerWeb, :component
+  use ControlServerWeb, :html
 
   import ControlServerWeb.LeftMenuLayout
   import ControlServerWeb.ConditionsDisplay

@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.ConditionsDisplay do
-  use ControlServerWeb, :component
+  use ControlServerWeb, :html
 
   attr :conditions, :list, required: true
 

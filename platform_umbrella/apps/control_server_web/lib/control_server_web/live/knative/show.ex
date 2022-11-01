@@ -41,26 +41,23 @@ defmodule ControlServerWeb.Live.KnativeShow do
   end
 
   def k8_service(service) do
-    KubeState.knative_services()
+    KubeState.get_all(:knative_service)
     |> Enum.filter(fn s -> service.id == OwnerLabel.get_owner(s) end)
     |> Enum.at(0, %{})
   end
 
   def k8_configuration(k8_service) do
-    KubeState.knative_configurations()
+    KubeState.get_all(:knative_configuration)
     |> Enum.filter(fn c -> KubeExt.uid(k8_service) == OwnerRefernce.get_owner(c) end)
     |> Enum.at(0, %{})
   end
 
   def k8_revisions(k8_configuration) do
     Enum.filter(
-      KubeState.knative_revisions(),
+      KubeState.get_all(:knative_revision),
       fn r -> KubeExt.uid(k8_configuration) == OwnerRefernce.get_owner(r) end
     )
   end
-
-  defp edit_url(service),
-    do: Routes.knative_edit_path(ControlServerWeb.Endpoint, :edit, service.id)
 
   defp page_title(:show), do: "Show Knative Service"
 
@@ -75,7 +72,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
       <.revisions_display revisions={@k8_revisions} />
       <.h2>Actions</.h2>
       <.body_section>
-        <.link navigate={edit_url(@service)}>
+        <.link navigate={~p"/knative/services/#{@service}/edit"}>
           <.button>
             Edit Service
           </.button>

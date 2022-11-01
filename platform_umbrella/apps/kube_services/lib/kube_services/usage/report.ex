@@ -30,7 +30,7 @@ defmodule KubeServices.Usage.Report do
 
   def report_pods do
     {:ok,
-     KubeState.pods()
+     KubeState.get_all(:pod)
      |> Enum.filter(fn p -> p |> namespace() |> String.starts_with?("battery") end)
      |> Enum.group_by(&namespace/1)
      |> Enum.map(fn {namespace, pods} -> {namespace, length(pods)} end)
@@ -39,7 +39,7 @@ defmodule KubeServices.Usage.Report do
 
   def report_nodes do
     {:ok,
-     KubeState.nodes()
+     KubeState.get_all(:node)
      |> Enum.map(&sanitize_node/1)
      |> Enum.with_index()
      |> Enum.map(fn {node, index} ->

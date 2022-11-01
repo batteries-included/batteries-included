@@ -1,9 +1,9 @@
 defmodule ControlServerWeb.LeftMenuLayout do
-  use ControlServerWeb, :component
+  use ControlServerWeb, :html
 
-  alias ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
-  defdelegate title(assigns), to: Layout
+  defdelegate title(assigns), to: CommonUI.Layout
 
   slot :inner_block, required: true
 
@@ -35,12 +35,12 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
   def layout(assigns) do
     ~H"""
-    <Layout.layout>
+    <.menu_layout>
       <:title :if={@title != nil && @title != []}><%= render_slot(@title) %></:title>
       <div class="lg:grid lg:grid-cols-9 lg:gap-x-5">
         <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-2">
           <.live_component
-            module={ControlServerWeb.Components.LeftMenu}
+            module={ControlServerWeb.LeftMenu}
             id="left"
             group={@group}
             active={@active}
@@ -50,7 +50,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
           <%= render_slot(@inner_block) %>
         </div>
       </div>
-    </Layout.layout>
+    </.menu_layout>
     """
   end
 end

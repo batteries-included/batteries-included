@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.KnativeNew do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Knative
   alias ControlServer.Knative.Service
@@ -38,8 +38,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
 
   @impl true
   def handle_info({"service:save", %{"service" => service}}, socket) do
-    new_path = Routes.knative_show_path(socket, :show, service.id)
-    Logger.debug("new_service = #{inspect(service)} new_path = #{new_path}")
+    new_path = ~p"/knative/services/#{service}/show"
     Installer.install!(:knative)
 
     {:noreply, push_redirect(socket, to: new_path)}
@@ -48,7 +47,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>New service</.title>
       </:title>
@@ -62,7 +61,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

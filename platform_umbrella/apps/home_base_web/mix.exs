@@ -9,7 +9,7 @@ defmodule HomeBaseWeb.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.12",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -38,19 +38,20 @@ defmodule HomeBaseWeb.MixProject do
     [
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_live_view, "~> 0.18.1"},
-      {:floki, "~> 0.33", only: :test},
       {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_view, "~> 0.18.3"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.7"},
-      {:telemetry_metrics, "~> 0.6.1"},
-      {:telemetry_poller, "~> 1.0"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.7.2"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
-      {:gettext, "~> 0.19"},
+      {:gettext, "~> 0.20"},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
       {:home_base, in_umbrella: true},
-      # Components
       {:common_ui, in_umbrella: true},
+      {:heroicons, "~> 0.5"},
       {:jason, "~> 1.2"},
+      {:logger_json, "~> 5.1"},
       {:plug_cowboy, "~> 2.5"}
     ]
   end
@@ -61,11 +62,11 @@ defmodule HomeBaseWeb.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "cmd npm install --prefix assets"],
-      "ecto.reset": [],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": ["esbuild.deploy", "css.deploy", "phx.digest"],
       "css.deploy": ["cmd npm run deploy --prefix assets"],
       "esbuild.deploy": ["esbuild home_base_web --minify --analyze"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      "ecto.reset": []
     ]
   end
 end

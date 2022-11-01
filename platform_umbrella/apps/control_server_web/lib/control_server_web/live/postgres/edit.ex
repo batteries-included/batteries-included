@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.PostgresEdit do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent
@@ -20,19 +20,13 @@ defmodule ControlServerWeb.Live.PostgresEdit do
 
   @impl true
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
-    new_path = show_url(cluster)
-    Logger.debug("updated cluster = #{inspect(cluster)} new_path = #{new_path}")
-
-    {:noreply, push_redirect(socket, to: new_path)}
+    {:noreply, push_redirect(socket, to: ~p"/postgres/clusters/#{cluster}/show")}
   end
-
-  defp show_url(cluster),
-    do: Routes.postgres_show_path(ControlServerWeb.Endpoint, :show, cluster.id)
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>Edit Cluster</.title>
       </:title>
@@ -45,7 +39,7 @@ defmodule ControlServerWeb.Live.PostgresEdit do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

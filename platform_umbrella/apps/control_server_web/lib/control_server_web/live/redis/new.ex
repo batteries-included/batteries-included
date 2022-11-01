@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.RedisNew do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Redis
   alias ControlServer.Redis.FailoverCluster
@@ -38,8 +38,7 @@ defmodule ControlServerWeb.Live.RedisNew do
 
   @impl true
   def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
-    new_path = Routes.redis_show_path(socket, :show, failover_cluster.id)
-    Logger.debug("new_cluster = #{inspect(failover_cluster)} new_path = #{new_path}")
+    new_path = ~p"/redis/clusters/#{failover_cluster}/show"
     Installer.install!(:redis)
 
     {:noreply, push_redirect(socket, to: new_path)}
@@ -48,7 +47,7 @@ defmodule ControlServerWeb.Live.RedisNew do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout>
+    <.menu_layout>
       <:title>
         <.title>New Cluster</.title>
       </:title>
@@ -61,7 +60,7 @@ defmodule ControlServerWeb.Live.RedisNew do
           save_target={self()}
         />
       </div>
-    </.layout>
+    </.menu_layout>
     """
   end
 end

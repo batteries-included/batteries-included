@@ -451,10 +451,13 @@ defmodule KubeResources.OryHydra do
     namespace = SecuritySettings.namespace(config)
     secret_name = pg_secret_name(config)
 
-    B.build_resource(:secret)
-    |> B.namespace(namespace)
-    |> B.name(secret_name)
-    |> KubeExt.KubeState.get_resource() || %{}
+    case KubeExt.KubeState.get(:secret, namespace, secret_name) do
+      {:ok, res} ->
+        res
+
+      _ ->
+        %{}
+    end
   end
 
   defp pg_secret_name(_config) do

@@ -36,8 +36,8 @@ defmodule KubeExt.Hashing.MapHMAC do
 
   defp key do
     :kube_ext
-    |> Application.get_env(KubeExt.Hashing, %{})
-    |> Map.get(:key, "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM=")
+    |> Application.get_env(KubeExt.Hashing, [])
+    |> Keyword.get(:key, "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM=")
     |> Base.decode64!()
   end
 end

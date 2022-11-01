@@ -17,20 +17,7 @@ defmodule CommonUI.Button do
 
   def button(assigns) do
     ~H"""
-    <button
-      type={@type}
-      class={[
-        "btn",
-        "border-none",
-        "bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 outline-none",
-        "hover:bg-gradient-to-br",
-        "focus:ring-4 focus:outline-none focus:ring-pink-300",
-        "text-white text-center",
-        "px-7",
-        @class
-      ]}
-      {@rest}
-    >
+    <button type={@type} class={["btn", "btn-outline", "btn-secondary", "glass", @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </button>
     """

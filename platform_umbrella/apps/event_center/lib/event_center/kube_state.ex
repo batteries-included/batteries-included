@@ -5,8 +5,7 @@ defmodule EventCenter.KubeState do
 
   defmodule Payload do
     defstruct action: nil,
-              resource: nil,
-              new_resource_list: []
+              resource: nil
   end
 
   def broadcast(resource_type, %Payload{} = payload) do

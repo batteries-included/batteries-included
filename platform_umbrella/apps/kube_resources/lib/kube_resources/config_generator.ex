@@ -5,7 +5,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeExt.Builder, as: B
   alias KubeExt.Hashing
 
-  alias ControlServer.Batteries.SystemBattery
+  alias KubeExt.SnapshotApply.StateSnapshot
 
   alias KubeRawResources.{Battery, IstioBase, IstioIstiod, PostgresOperator}
 
@@ -51,29 +51,75 @@ defmodule KubeResources.ConfigGenerator do
 
   require Logger
 
-  @spec materialize([SystemBattery.t()]) :: map()
-  def materialize(list_battery) when is_list(list_battery) do
-    list_battery
-    |> Enum.flat_map(&materialize/1)
-    |> Map.new()
+  @default_generator_mappings [
+    alert_manager: [&Alertmanager.materialize/1],
+    battery_core: [&Battery.materialize/1],
+    cert_manager: [&CertManager.materialize/1],
+    control_server: [&ControlServerResources.materialize/1],
+    data: [&Data.materialize/1],
+    database_internal: [&Database.materialize_internal/1],
+    database_public: [&Database.materialize_public/1],
+    dev_metallb: [&DevMetalLB.materialize/1],
+    echo_server: [&EchoServer.materialize/1],
+    gitea: [&Gitea.materialize/1],
+    grafana: [&Grafana.materialize/1],
+    harbor: [&Harbor.materialize/1],
+    istio: [&IstioBase.materialize/1],
+    istio_gateway: [&IstioGateway.materialize/1, &VirtualService.materialize/1],
+    istio_istiod: [&IstioIstiod.materialize/1],
+    kiali: [&Kiali.materialize/1],
+    knative: [&KnativeOperator.materialize/1],
+    knative_serving: [&KnativeServing.materialize/1],
+    kube_state_metrics: [&KubeStateMetrics.materialize/1],
+    loki: [&Loki.materialize/1],
+    metallb: [&MetalLB.materialize/1],
+    ml_core: [&ML.Base.materialize/1],
+    monitoring_api_server: [&MonitoringApiServer.materialize/1],
+    monitoring_controller_manager: [&MonitoringControllerManager.materialize/1],
+    monitoring_coredns: [&MonitoringCoredns.materialize/1],
+    monitoring_etcd: [&MonitoringEtcd.materialize/1],
+    monitoring_kube_proxy: [&MonitoringKubeProxy.materialize/1],
+    monitoring_kubelet: [&MonitoringKubelet.materialize/1],
+    monitoring_scheduler: [&MonitoringScheduler.materialize/1],
+    node_exporter: [&NodeExporter.materialize/1],
+    notebooks: [&Notebooks.materialize/1],
+    ory_hydra: [&OryHydra.materialize/1],
+    postgres_operator: [&PostgresOperator.materialize/1],
+    prometheus: [&Prometheus.materialize/1],
+    prometheus_operator: [&PrometheusOperator.materialize/1],
+    prometheus_stack: [&PrometheusStack.materialize/1],
+    promtail: [&Promtail.materialize/1],
+    redis: [&Redis.materialize/1],
+    rook: [&Rook.materialize/1, &Ceph.materialize/1],
+    tekton_operator: [&TektonOperator.materialize/1]
+  ]
+
+  @spec materialize(any()) :: map()
+  def materialize(%StateSnapshot{} = state, mappings \\ @default_generator_mappings) do
+    state.system_batteries
+    |> Enum.map(fn system_battery ->
+      generators = Keyword.fetch!(mappings, system_battery.type)
+      materialize_system_battery(system_battery, generators)
+    end)
+    |> Enum.map(&Map.new/1)
+    |> Enum.reduce(%{}, &Map.merge/2)
   end
 
-  @spec materialize(SystemBattery.t()) :: map()
-  def materialize(%SystemBattery{} = system_battery) do
-    system_battery.config
-    |> materialize(system_battery.type)
-    |> Enum.map(fn {key, value} ->
-      prefix = "/#{Atom.to_string(system_battery.type)}"
-      {Path.join(prefix, key), value}
+  def default_generators, do: @default_generator_mappings
+
+  def materialize_system_battery(system_battery, generators) do
+    generators
+    |> Enum.map(fn gen ->
+      gen.(system_battery.config)
     end)
+    |> Enum.reduce(%{}, &Map.merge/2)
     |> Enum.flat_map(&flatten/1)
     |> Enum.map(fn {key, resource} ->
       {
-        key,
+        Path.join("/#{Atom.to_string(system_battery.type)}", key),
         resource |> B.owner_label(system_battery.id) |> Hashing.decorate()
       }
     end)
-    |> Map.new()
   end
 
   defp flatten({key, values} = _input) when is_list(values) do
@@ -86,70 +132,4 @@ defmodule KubeResources.ConfigGenerator do
   end
 
   defp flatten({key, value}), do: [{key, value}]
-
-  def materialize(%{} = config, :istio_gateway) do
-    config |> IstioGateway.materialize() |> Map.merge(VirtualService.materialize(config))
-  end
-
-  def materialize(%{} = config, :rook) do
-    config |> Rook.materialize() |> Map.merge(Ceph.materialize(config))
-  end
-
-  def materialize(%{} = config, :prometheus_operator), do: PrometheusOperator.materialize(config)
-  def materialize(%{} = config, :prometheus), do: Prometheus.materialize(config)
-  def materialize(%{} = config, :grafana), do: Grafana.materialize(config)
-  def materialize(%{} = config, :alert_manager), do: Alertmanager.materialize(config)
-  def materialize(%{} = config, :node_exporter), do: NodeExporter.materialize(config)
-  def materialize(%{} = config, :kube_state_metrics), do: KubeStateMetrics.materialize(config)
-  def materialize(%{} = config, :prometheus_stack), do: PrometheusStack.materialize(config)
-
-  def materialize(%{} = config, :monitoring_api_server),
-    do: MonitoringApiServer.materialize(config)
-
-  def materialize(%{} = config, :monitoring_controller_manager),
-    do: MonitoringControllerManager.materialize(config)
-
-  def materialize(%{} = config, :monitoring_coredns), do: MonitoringCoredns.materialize(config)
-  def materialize(%{} = config, :monitoring_etcd), do: MonitoringEtcd.materialize(config)
-
-  def materialize(%{} = config, :monitoring_kube_proxy),
-    do: MonitoringKubeProxy.materialize(config)
-
-  def materialize(%{} = config, :monitoring_kubelet), do: MonitoringKubelet.materialize(config)
-
-  def materialize(%{} = config, :monitoring_scheduler),
-    do: MonitoringScheduler.materialize(config)
-
-  def materialize(%{} = config, :loki), do: Loki.materialize(config)
-  def materialize(%{} = config, :promtail), do: Promtail.materialize(config)
-
-  def materialize(%{} = config, :data), do: Data.materialize(config)
-  def materialize(%{} = config, :postgres_operator), do: PostgresOperator.materialize(config)
-  def materialize(%{} = config, :database_public), do: Database.materialize_public(config)
-  def materialize(%{} = config, :database_internal), do: Database.materialize_internal(config)
-  def materialize(%{} = config, :redis), do: Redis.materialize(config)
-
-  def materialize(%{} = config, :gitea), do: Gitea.materialize(config)
-  def materialize(%{} = config, :tekton_operator), do: TektonOperator.materialize(config)
-  def materialize(%{} = config, :knative), do: KnativeOperator.materialize(config)
-  def materialize(%{} = config, :knative_serving), do: KnativeServing.materialize(config)
-  def materialize(%{} = config, :harbor), do: Harbor.materialize(config)
-
-  def materialize(%{} = config, :cert_manager), do: CertManager.materialize(config)
-  def materialize(%{} = config, :ory_hydra), do: OryHydra.materialize(config)
-
-  def materialize(%{} = config, :istio), do: IstioBase.materialize(config)
-  def materialize(%{} = config, :istio_istiod), do: IstioIstiod.materialize(config)
-  def materialize(%{} = config, :kiali), do: Kiali.materialize(config)
-  def materialize(%{} = config, :metallb), do: MetalLB.materialize(config)
-  def materialize(%{} = config, :dev_metallb), do: DevMetalLB.materialize(config)
-
-  def materialize(%{} = config, :battery_core), do: Battery.materialize(config)
-  def materialize(%{} = config, :control_server), do: ControlServerResources.materialize(config)
-  def materialize(%{} = config, :echo_server), do: EchoServer.materialize(config)
-
-  def materialize(%{} = config, :ml_core), do: ML.Base.materialize(config)
-  def materialize(%{} = config, :notebooks), do: Notebooks.materialize(config)
-
-  def materialize(nil, _), do: %{}
 end

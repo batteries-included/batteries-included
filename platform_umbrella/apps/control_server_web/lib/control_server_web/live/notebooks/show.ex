@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Show do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.IFrame
-  import ControlServerWeb.Layout
+  import ControlServerWeb.MenuLayout
 
   alias ControlServer.Notebooks
 
@@ -24,12 +24,12 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layout container_type={:iframe}>
+    <.menu_layout container_type={:iframe}>
       <:title>
         <.title><%= @page_title %></.title>
       </:title>
       <.iframe src={KubeResources.Notebooks.url(@jupyter_lab_notebook)} />
-    </.layout>
+    </.menu_layout>
     """
   end
 end

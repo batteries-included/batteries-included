@@ -17,29 +17,22 @@ defmodule HomeBaseWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
-  alias Ecto.Adapters.SQL.Sandbox
-
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint HomeBaseWeb.Endpoint
+
+      use HomeBaseWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import HomeBaseWeb.ConnCase
-
-      alias HomeBaseWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint HomeBaseWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Sandbox.checkout(HomeBase.Repo)
-
-    unless tags[:async] do
-      Sandbox.mode(HomeBase.Repo, {:shared, self()})
-    end
-
+    HomeBase.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

@@ -43,18 +43,19 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   end
 
   defp resource(resource_type, namespace, name) do
-    KubeState.get_resource(resource_type, namespace, name)
+    case KubeState.get(resource_type, namespace, name) do
+      {:ok, %{} = res} -> res
+      _ -> nil
+    end
   end
 
   defp label_section(assigns) do
     ~H"""
     <.section_title>Labels</.section_title>
-    <.body_section>
-      <.table id="labels-table" rows={Resource.labels(@resource)}>
-        <:col :let={{key, _value}} label="Key"><%= key %></:col>
-        <:col :let={{_key, value}} label="Value"><%= value %></:col>
-      </.table>
-    </.body_section>
+    <.table id="labels-table" rows={Resource.labels(@resource)}>
+      <:col :let={{key, _value}} label="Key"><%= key %></:col>
+      <:col :let={{_key, value}} label="Value"><%= value %></:col>
+    </.table>
     """
   end
 
@@ -114,9 +115,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     assigns = assign(assigns, :conditions, conds)
 
     ~H"""
-    <.body_section>
-      <.conditions_display conditions={@conditions} />
-    </.body_section>
+    <.conditions_display conditions={@conditions} />
     """
   end
 
@@ -266,7 +265,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={@resource_type}>
+    <.layout group={:magic} active={:kube_resources}>
       <:title>
         <.title>Kube Status</.title>
       </:title>

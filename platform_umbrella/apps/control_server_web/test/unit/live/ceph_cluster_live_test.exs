@@ -12,8 +12,7 @@ defmodule ControlServerWeb.CephClusterLiveTest do
     setup [:create_ceph_cluster]
 
     test "displays ceph_cluster", %{conn: conn, ceph_cluster: ceph_cluster} do
-      {:ok, _show_live, html} =
-        live(conn, Routes.ceph_cluster_show_path(conn, :show, ceph_cluster))
+      {:ok, _show_live, html} = live(conn, ~p"/ceph/clusters/#{ceph_cluster}/show")
 
       assert html =~ "Show Ceph cluster"
       assert html =~ ceph_cluster.data_dir_host_path

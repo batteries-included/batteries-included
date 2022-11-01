@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
     Postgres.list_clusters()
   end
 
-  defp new_url, do: Routes.postgres_new_path(ControlServerWeb.Endpoint, :new)
+  defp new_url, do: ~p"/postgres/clusters/new"
 
   @impl true
   def render(assigns) do

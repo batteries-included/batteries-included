@@ -12,7 +12,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
     {:ok, assign(socket, :nodes, node_names())}
   end
 
-  defp node_names, do: Enum.map(KubeState.nodes(), &name/1)
+  defp node_names, do: Enum.map(KubeState.get_all(:node), &name/1)
 
   @impl true
   def update(%{ceph_cluster: ceph_cluster} = assigns, socket) do

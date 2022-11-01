@@ -1,9 +1,11 @@
+const plugin = require('tailwindcss/plugin');
 const colors = require('tailwindcss/colors');
 
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 const typography = require('@tailwindcss/typography');
 const forms = require('@tailwindcss/forms');
+const daisy = require('daisyui');
 
 // Grey for standard things
 const fuscousGray = {
@@ -105,10 +107,11 @@ const heath = {
   800: '#000000',
   900: '#000000',
 };
+
 module.exports = {
-  mode: 'jit',
-  purge: [
+  content: [
     './js/**/*.js',
+    '../lib/*_web.ex',
     '../lib/**/*.*ex',
     '../../common_ui/lib/**/*.*ex',
     '../../../deps/petal_components/**/*.*ex',
@@ -138,8 +141,48 @@ module.exports = {
       },
     },
   },
-  variants: {
-    extend: {},
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          primary: astral[500],
+          secondary: violetRed[500],
+          accent: blizardBlue[500],
+          neutral: fuscousGray[500],
+          'base-100': '#FFFFFF',
+          info: blizardBlue[500],
+          success: shamrock[500],
+          warning: seaBuckthorn[500],
+          error: heath[300],
+        },
+      },
+    ],
   },
-  plugins: [typography, forms],
+
+  plugins: [
+    typography,
+    forms,
+    daisy,
+    plugin(({ addVariant }) =>
+      addVariant('phx-no-feedback', ['.phx-no-feedback&', '.phx-no-feedback &'])
+    ),
+    plugin(({ addVariant }) =>
+      addVariant('phx-click-loading', [
+        '.phx-click-loading&',
+        '.phx-click-loading &',
+      ])
+    ),
+    plugin(({ addVariant }) =>
+      addVariant('phx-submit-loading', [
+        '.phx-submit-loading&',
+        '.phx-submit-loading &',
+      ])
+    ),
+    plugin(({ addVariant }) =>
+      addVariant('phx-change-loading', [
+        '.phx-change-loading&',
+        '.phx-change-loading &',
+      ])
+    ),
+  ],
 };

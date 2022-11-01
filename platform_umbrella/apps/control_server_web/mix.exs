@@ -31,7 +31,6 @@ defmodule ControlServerWeb.MixProject do
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(:integration), do: ["lib", "test/support"]
-  defp elixirc_paths(:dev), do: ["lib"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:integration), do: ["test/integration"]
@@ -45,16 +44,15 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.18.1"},
+      {:phoenix_live_view, "~> 0.18.3"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.7"},
-      {:telemetry_metrics, "~> 0.6.1"},
-      {:telemetry_poller, "~> 1.0"},
+      {:phoenix_live_dashboard, "~> 0.7.2"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:ex_machina, "~> 2.7", only: :test},
       {:wallaby, "~> 0.30.1", runtime: false, only: [:test, :integration]},
-      {:gettext, "~> 0.19"},
-      {:telemetry, "~> 1.0", override: true},
+      {:gettext, "~> 0.20"},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
       {:control_server, in_umbrella: true},
       {:kube_resources, in_umbrella: true},
       {:kube_services, in_umbrella: true},
@@ -79,14 +77,6 @@ defmodule ControlServerWeb.MixProject do
       "css.deploy": ["cmd npm run deploy --prefix assets"],
       "esbuild.deploy": ["esbuild control_server_web --minify --analyze"],
       "ecto.reset": []
-    ]
-  end
-
-  def catalogues do
-    [
-      # Local catalogue
-      "priv/catalogue",
-      Path.expand("../common_ui/priv/catalogue")
     ]
   end
 end

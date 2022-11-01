@@ -1,16 +1,13 @@
 defmodule ControlServerWeb.ResourceURL do
-  alias ControlServerWeb.Router.Helpers, as: Routes
-  alias ControlServerWeb.Endpoint
+  use ControlServerWeb, :verified_routes
+
   alias KubeExt.ApiVersionKind
   alias K8s.Resource
 
   def resource_show_url(%{} = resource) do
-    Routes.resource_info_path(
-      Endpoint,
-      :index,
-      ApiVersionKind.resource_type(resource),
-      Resource.namespace(resource),
-      Resource.name(resource)
-    )
+    resource_type = ApiVersionKind.resource_type(resource)
+    namespace = Resource.namespace(resource)
+    name = Resource.name(resource)
+    ~p"/kube/#{resource_type}/#{namespace}/#{name}"
   end
 end
