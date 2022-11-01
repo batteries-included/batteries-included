@@ -53,7 +53,7 @@ defmodule ControlServer.MixProject do
       {:postgrex, ">= 0.0.0"},
 
       # Filtering
-      {:paginator, "~> 1.1.0"},
+      {:paginator, "~> 1.2.0"},
 
       # Kubernetes
       {:telemetry, "~> 1.0", override: true},
