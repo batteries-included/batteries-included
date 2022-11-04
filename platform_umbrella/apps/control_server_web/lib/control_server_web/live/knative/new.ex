@@ -51,7 +51,6 @@ defmodule ControlServerWeb.Live.KnativeNew do
       <:title>
         <.title>New service</.title>
       </:title>
-      <h1>New Knative Service</h1>
       <div>
         <.live_component
           module={FormComponent}

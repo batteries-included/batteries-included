@@ -45,7 +45,7 @@ resource "aws_instance" "elliott" {
 
   root_block_device {
     volume_type = var.ebs_volume_type
-    volume_size = var.gateway_instance_disk_size
+    volume_size = var.devserver_instance_disk_size
   }
 
 

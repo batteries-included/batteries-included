@@ -15,7 +15,7 @@ defmodule CommonUI.Link do
   def link(%{type: "styled"} = assigns) do
     ~H"""
     <Phoenix.Component.link
-      class={["font-semibold link link-primary hover:no-underline", @class]}
+      class={["font-medium text-secondary-500 hover:text-secondary-600 hover:underline", @class]}
       navigate={@navigate}
       {@rest}
     >
@@ -27,7 +27,7 @@ defmodule CommonUI.Link do
   def link(%{type: "external"} = assigns) do
     ~H"""
     <Phoenix.Component.link
-      class={["font-semibold link link-secondary flex", @class]}
+      class={["font-medium text-pink-600 hover:underline flex", @class]}
       href={@href || @navigate}
       target="_blank"
       {@rest}

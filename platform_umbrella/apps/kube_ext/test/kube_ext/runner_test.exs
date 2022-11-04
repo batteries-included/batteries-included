@@ -6,10 +6,8 @@ defmodule KubeExt.KubeState.RunnerTest do
 
   @table_name :runner_test_state_table
 
-  setup context do
+  setup _context do
     {:ok, runner_pid} = Runner.start_link(name: @table_name)
-
-    IO.puts("Setting up: #{context[:test]}")
     %{runner_pid: runner_pid}
   end
 

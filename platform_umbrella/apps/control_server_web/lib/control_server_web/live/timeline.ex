@@ -26,6 +26,9 @@ defmodule ControlServerWeb.TimelineLive do
   def render(assigns) do
     ~H"""
     <.layout group={:magic} active={:timeline}>
+      <:title>
+        <.title>Timeline</.title>
+      </:title>
       <.feed_timeline>
         <.timeline_item
           :for={event <- @events}

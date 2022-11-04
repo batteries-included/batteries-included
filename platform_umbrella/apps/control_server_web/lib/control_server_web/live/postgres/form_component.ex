@@ -86,7 +86,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.input field={{f, :name}} placeholder="Name" />
+        <.input field={{f, :name}} />
         <div class="sm:col-span-1">
           <.labeled_definition title="Service Name" contents={@full_name} />
         </div>

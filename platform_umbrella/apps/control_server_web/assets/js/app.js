@@ -5,6 +5,8 @@ import { Socket } from 'phoenix';
 import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
 import Alpine from 'alpinejs';
+import 'flowbite';
+
 import IFrame from './iframe';
 
 const csrfToken = document

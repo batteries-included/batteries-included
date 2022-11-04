@@ -50,11 +50,11 @@ defmodule ControlServerWeb.LeftMenu do
 
   attr :active_class, :string,
     default:
-      "text-pink-600 hover:bg-white group rounded-md px-3 py-2 flex items-center text-sm font-medium"
+      "text-pink-500 hover:text-pink-600 hover:bg-primary-100 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
 
   attr :inactive_class, :string,
     default:
-      "text-gray-500 hover:text-gray-900 hover:bg-astral-100 group rounded-md px-3 py-2 flex items-center text-sm font-medium"
+      "text-gray-600 hover:text-gray-900 hover:bg-primary-100 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
 
   slot :inner_block
 
@@ -71,7 +71,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp menu_item(%{href: _} = assigns) do
     ~H"""
-    <.link href={@href} class={[@is_active && @active_class, !@is_active && @inactive_class]}>
+    <.link href={@href} class={menu_item_class(@is_active, @active_class, @inactive_class)}>
       <%= render_slot(@inner_block) %>
       <span class="truncate">
         <%= @name %>
@@ -80,11 +80,13 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
+  defp menu_item_class(true = _is_active, active_class, _), do: active_class
+  defp menu_item_class(false = _is_active, _, inactive_class), do: inactive_class
+
   attr :battery, :any, default: %{type: :unknown}
   attr :active, :string, default: nil
 
-  attr :icon_class, :any,
-    default: "group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
+  attr :icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
 
   defp battery_menu_item(%{battery: %{type: :postgres_operator}} = assigns) do
     ~H"""
@@ -195,8 +197,7 @@ defmodule ControlServerWeb.LeftMenu do
   attr :active, :string, default: nil
   attr :group, :any
 
-  attr :icon_class, :any,
-    default: "group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
+  attr :icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
 
   defp group_menu_item(%{group: :magic} = assigns) do
     ~H"""

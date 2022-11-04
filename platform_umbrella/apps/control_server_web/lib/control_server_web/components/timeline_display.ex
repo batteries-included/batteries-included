@@ -106,14 +106,14 @@ defmodule ControlServerWeb.TimelineDisplay do
           </div>
           <div class="min-w-0 flex-1">
             <div>
-              <div class="text-sm font-medium text-gray-900">
+              <div class="text-sm text-lg font-medium text-gray-900">
                 <%= @user_name %>
               </div>
               <p class="mt-0.5 text-sm text-gray-500">
                 <%= @action %> @ <%= @timestamp %>
               </p>
             </div>
-            <div :if={@inner_block != nil} class="mt-2 text-sm text-gray-700">
+            <div :if={@inner_block != nil} class="mt-2 text-sm">
               <%= render_slot(@inner_block) %>
             </div>
           </div>
@@ -127,11 +127,7 @@ defmodule ControlServerWeb.TimelineDisplay do
 
   defp timeline_image(assigns) do
     ~H"""
-    <img
-      class="flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white"
-      src={@src}
-      alt=""
-    />
+    <img class="flex h-10 w-10 items-center justify-center rounded-full" src={@src} alt="" />
     """
   end
 

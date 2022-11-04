@@ -154,7 +154,9 @@ defmodule CommonUI.Form do
         type="range"
         class={[
           input_border(@errors),
-          "range range-primary"
+          "border-gray-300 focus:border-primary-500",
+          "focus:ring-primary-500 dark:border-gray-600",
+          "dark:focus:border-primary-500 w-full"
         ]}
         {@rest}
       />
@@ -174,7 +176,11 @@ defmodule CommonUI.Form do
         value={@value}
         class={[
           input_border(@errors),
-          "input input-bordered w-full"
+          "block px-2.5 pb-2.5 pt-4",
+          "w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300",
+          "appearance-none",
+          "dark:text-white dark:border-gray-600 dark:focus:border-primary-500",
+          "focus:outline-none focus:ring-0 focus:border-primary-600 peer"
         ]}
         {@rest}
       />
@@ -195,7 +201,7 @@ defmodule CommonUI.Form do
 
   defp input_border([_ | _] = _errors),
     do:
-      "input-error border-sea-buckthorn-400 focus:border-sea-buckthorn-400 focus:ring-sea-buckthorn-400/10"
+      "border border-sea-buckthorn-400 focus:border-sea-buckthorn-500 focus:ring-sea-buckthorn-400/10"
 
   @doc """
   Renders a label.
@@ -205,7 +211,7 @@ defmodule CommonUI.Form do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="text-sm font-semibold leading-6 label">
+    <label for={@for} class="block mb-2 text-lg font-semibold text-gray-900 dark:text-gray-300">
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -218,7 +224,7 @@ defmodule CommonUI.Form do
 
   def error(assigns) do
     ~H"""
-    <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-sea-buckthorn-600">
+    <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-sea-buckthorn-600 input-error">
       <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-sea-buckthorn-500" />
       <%= @message %>
     </p>

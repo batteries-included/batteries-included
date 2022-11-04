@@ -36,7 +36,7 @@ defmodule ControlServerWeb.KnativeDisplay do
 
     ~H"""
     <div class={@class}>
-      <dt class="text-md font-medium text-astral-500"><%= @label %></dt>
+      <dt class="text-md font-medium text-primary-500"><%= @label %></dt>
       <dd class="mt-1 text-md text-gray-900">
         <%= if @value do %>
           <%= @value %>

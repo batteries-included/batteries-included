@@ -7,6 +7,7 @@ defmodule CommonUI do
     quote do
       import CommonUI.{
         Button,
+        Card,
         DataList,
         Flash,
         Form,

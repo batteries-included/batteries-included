@@ -16,7 +16,7 @@ defmodule CommonUI.Typogoraphy do
   end
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-2xl sm:text-3xl font-bold leading-10 text-astral-500"
+  attr :base_class, :string, default: "text-2xl sm:text-3xl font-bold leading-10 text-primary-500"
   slot :inner_block, required: true
 
   def h2(assigns) do

@@ -9,8 +9,8 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
       <:col :let={notebook} label="Name"><%= notebook.name %></:col>
       <:col :let={notebook} label="Image"><%= notebook.image %></:col>
       <:action :let={notebook}>
-        <.link navigate={notebook_path(notebook)}>
-          Open Notebook <Heroicons.arrow_top_right_on_square class="w-5 h-5" />
+        <.link type="external" href={notebook_path(notebook)}>
+          Open Notebook
         </.link>
       </:action>
     </.table>

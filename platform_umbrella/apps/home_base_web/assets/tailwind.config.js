@@ -1,11 +1,10 @@
 const plugin = require('tailwindcss/plugin');
-const colors = require('tailwindcss/colors');
 
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 const typography = require('@tailwindcss/typography');
 const forms = require('@tailwindcss/forms');
-const daisy = require('daisyui');
+const flowbite = require('flowbite/plugin');
 
 // Grey for standard things
 const fuscousGray = {
@@ -110,22 +109,25 @@ const heath = {
 
 module.exports = {
   content: [
+    // Include flowbite
+    './node_modules/flowbite/**/*.js',
+    // This project hooks and js
     './js/**/*.js',
-    '../lib/*_web.ex',
+
+    // All the templates in
+    // this umbrella project
+    '../lib/*.*ex',
     '../lib/**/*.*ex',
+    // Common UI
+    '../../common_ui/lib/*.*ex',
     '../../common_ui/lib/**/*.*ex',
-    '../../../deps/petal_components/**/*.*ex',
   ],
+
   theme: {
     colors: {
-      ...colors,
       'fuscous-gray': fuscousGray,
-      gray: fuscousGray,
       'violet-red': violetRed,
-      pink: violetRed,
       astral,
-      primary: astral,
-      secondary: violetRed,
       // Accent and INFO
       'blizzard-blue': blizardBlue,
       // Success
@@ -134,6 +136,18 @@ module.exports = {
       'sea-buckthorn': seaBuckthorn,
       // Error
       heath,
+
+      // Base Renames
+      pink: violetRed,
+      gray: fuscousGray,
+      blue: blizardBlue,
+
+      // Action renames
+      primary: astral,
+      secondary: violetRed,
+      success: shamrock,
+      warning: seaBuckthorn,
+      error: heath,
     },
     extend: {
       fontFamily: {
@@ -141,28 +155,11 @@ module.exports = {
       },
     },
   },
-  daisyui: {
-    themes: [
-      {
-        mytheme: {
-          primary: astral[500],
-          secondary: violetRed[500],
-          accent: blizardBlue[500],
-          neutral: fuscousGray[500],
-          'base-100': '#FFFFFF',
-          info: blizardBlue[500],
-          success: shamrock[500],
-          warning: seaBuckthorn[500],
-          error: heath[300],
-        },
-      },
-    ],
-  },
 
   plugins: [
     typography,
     forms,
-    daisy,
+    flowbite,
     plugin(({ addVariant }) =>
       addVariant('phx-no-feedback', ['.phx-no-feedback&', '.phx-no-feedback &'])
     ),

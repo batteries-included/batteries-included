@@ -18,4 +18,18 @@ defmodule ControlServerWeb.LayoutTest do
     assert html =~ "flex-1 py-0 px-0 w-full"
     assert html =~ "Hello"
   end
+
+  test "Layout can render default" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <.menu_layout container_type={:default}>
+        Hello
+      </.menu_layout>
+      """)
+
+    assert html =~ "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-20"
+    assert html =~ "Hello"
+  end
 end

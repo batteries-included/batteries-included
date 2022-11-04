@@ -1,15 +1,18 @@
 defmodule CommonUI.Stats do
   use Phoenix.Component
+  import Phoenix.Component, except: [link: 1]
+
+  import CommonUI.Card
 
   def stats(assigns) do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <div class="stats stats-vertical lg:stats-horizontal shadow container">
+    <.card class="flex flex-row justify-around">
       <%= if @inner_block do %>
         <%= render_slot(@inner_block) %>
       <% end %>
-    </div>
+    </.card>
     """
   end
 
@@ -17,7 +20,7 @@ defmodule CommonUI.Stats do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <div class="stat">
+    <div class="flex flex-col items-center">
       <%= if @inner_block do %>
         <%= render_slot(@inner_block) %>
       <% end %>
@@ -29,7 +32,7 @@ defmodule CommonUI.Stats do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <div class="stat-title">
+    <div class="text-2xl text-primary-500">
       <%= if @inner_block do %>
         <%= render_slot(@inner_block) %>
       <% end %>
@@ -41,7 +44,7 @@ defmodule CommonUI.Stats do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <div class="stat-value">
+    <div class="text-bas">
       <%= if @inner_block do %>
         <%= render_slot(@inner_block) %>
       <% end %>
@@ -53,7 +56,7 @@ defmodule CommonUI.Stats do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <div class="stat-desc">
+    <div class="text-xs">
       <%= if @inner_block do %>
         <%= render_slot(@inner_block) %>
       <% end %>

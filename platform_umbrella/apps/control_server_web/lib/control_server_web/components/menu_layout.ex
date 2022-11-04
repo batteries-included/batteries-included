@@ -4,27 +4,49 @@ defmodule ControlServerWeb.MenuLayout do
   import CommonUI.Icons.Devtools
   import CommonUI.Icons.Network
 
-  alias CommonUI.Layout, as: BaseLayout
+  @default_container_class "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-20 "
+  @iframe_container_class "flex-1 py-0 px-0 w-full h-full "
 
-  defdelegate title(assigns), to: BaseLayout
+  defp container_class(:iframe), do: @iframe_container_class
 
-  attr :class, :string,
-    default: "pt-1 text-sm font-medium hover:bg-astral-100 hover:text-pink-500 text-gray-500"
+  defp container_class(:default) do
+    @default_container_class
+  end
 
-  attr :navigate, :string, required: true
-  attr :name, :string, required: true
+  slot :inner_block, required: true
 
-  slot :inner_block
-
-  def menu_item(assigns) do
+  def title(assigns) do
     ~H"""
-    <BaseLayout.menu_item navigate={@navigate} name={@name} class={@class}>
+    <.h1 class="my-auto ml-3">
       <%= render_slot(@inner_block) %>
-    </BaseLayout.menu_item>
+    </.h1>
     """
   end
 
-  attr :icon_class, :string, default: "h-6 w-6 text-astral-500 group-hover:text-pink-500"
+  attr :navigate, :string, required: true
+  slot :label, required: true
+  slot :inner_block, required: true
+
+  def menu_item(assigns) do
+    ~H"""
+    <.link
+      navigate={@navigate}
+      class={[
+        "pt-1 text-sm font-medium text-gray-900",
+        "text-mono",
+        "hover:bg-primary-50 hover:text-secondary-500",
+        "flex h-full w-full items-center flex-col justify-center"
+      ]}
+    >
+      <%= render_slot(@inner_block) %>
+      <span class="mt-1">
+        <%= render_slot(@label) %>
+      </span>
+    </.link>
+    """
+  end
+
+  attr :icon_class, :string, default: "h-6 w-6 text-primary-500 group-hover:text-pink-500"
   attr :container_type, :any, default: :default
   attr :group, :any, default: :magic
 
@@ -33,30 +55,50 @@ defmodule ControlServerWeb.MenuLayout do
 
   def menu_layout(assigns) do
     ~H"""
-    <BaseLayout.layout bg_class="bg-white" container_type={@container_type}>
-      <:title :if={@title != nil && @title != []}><%= render_slot(@title) %></:title>
-      <:main_menu>
-        <.menu_item navigate={~p"/batteries/data"} name="Data">
-          <Heroicons.circle_stack class={@icon_class} />
-        </.menu_item>
-        <.menu_item navigate={~p"/batteries/ml"} name="ML">
-          <Heroicons.beaker class={@icon_class} />
-        </.menu_item>
-        <.menu_item navigate={~p"/batteries/monitoring"} name="Monitoring">
-          <Heroicons.chart_bar class={@icon_class} />
-        </.menu_item>
-        <.menu_item navigate={~p"/batteries/devtools"} name="Devtools">
-          <.devtools_icon class={@icon_class} />
-        </.menu_item>
-        <.menu_item navigate={~p"/batteries/net_sec"} name="Net/Security">
-          <.net_sec_icon class={@icon_class} />
-        </.menu_item>
-        <.menu_item navigate={~p"/kube/snapshots"} name="Magic">
-          <Heroicons.sparkles class={@icon_class} />
-        </.menu_item>
-      </:main_menu>
-      <%= render_slot(@inner_block) %>
-    </BaseLayout.layout>
+    <div class="flex flex-col min-h-screen justify-between bg-fuscous-gray-50 pb-18 overflow-auto">
+      <header class="w-full bg-white h-16">
+        <div class="flex max-w-full h-full">
+          <.link navigate={~p"/"} class="my-auto mx-4">
+            <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included" />
+          </.link>
+          <%= if @title do %>
+            <%= render_slot(@title) %>
+          <% end %>
+          <h2 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">
+            Batteries Included
+          </h2>
+        </div>
+      </header>
+      <div class={container_class(@container_type)}>
+        <%= render_slot(@inner_block) %>
+      </div>
+    </div>
+    <footer class="h-16 text-current fixed bottom-0 inset-x-0 flex justify-around items-center bg-white">
+      <.menu_item navigate={~p"/batteries/data"}>
+        <:label>Data</:label>
+        <Heroicons.circle_stack class={@icon_class} />
+      </.menu_item>
+      <.menu_item navigate={~p"/batteries/ml"}>
+        <:label>ML</:label>
+        <Heroicons.beaker class={@icon_class} />
+      </.menu_item>
+      <.menu_item navigate={~p"/batteries/monitoring"}>
+        <:label>Monitoring</:label>
+        <Heroicons.chart_bar class={@icon_class} />
+      </.menu_item>
+      <.menu_item navigate={~p"/batteries/devtools"}>
+        <:label>Devtools</:label>
+        <.devtools_icon class={@icon_class} />
+      </.menu_item>
+      <.menu_item navigate={~p"/batteries/net_sec"}>
+        <:label>Net/Security</:label>
+        <.net_sec_icon class={@icon_class} />
+      </.menu_item>
+      <.menu_item navigate={~p"/kube/snapshots"}>
+        <:label>Magic</:label>
+        <Heroicons.sparkles class={@icon_class} />
+      </.menu_item>
+    </footer>
     """
   end
 end
