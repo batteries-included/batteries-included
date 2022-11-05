@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { debounce } from 'lodash';
+import { debounce } from 'lodash/debounce';
 
 const maxHeight = (element) =>
   element
