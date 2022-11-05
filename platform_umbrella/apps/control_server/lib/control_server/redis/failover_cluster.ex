@@ -6,7 +6,7 @@ defmodule ControlServer.Redis.FailoverCluster do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  typed_schema "failover_clusters" do
+  typed_schema "redis_clusters" do
     field :name, :string
     field :num_redis_instances, :integer
     field :num_sentinel_instances, :integer

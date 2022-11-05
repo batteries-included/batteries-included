@@ -66,18 +66,15 @@ defmodule CommonUI.Form do
   attr :errors, :list
   attr :wrapper_class, :string, default: "form-control"
 
+  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
+  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+
   attr :rest, :global,
     doc: "the arbitrary HTML attributes for the input tag",
     include:
       ~w(autocomplete checked disabled form max maxlength min minlength multiple pattern placeholder readonly required size step)
 
   slot :inner_block
-
-  slot :option, doc: "the slot for select input options" do
-    attr :value, :any
-    attr :selected, :boolean
-    attr :hidden, :boolean
-  end
 
   def input(%{field: {f, field}} = assigns) do
     assigns
@@ -112,13 +109,7 @@ defmodule CommonUI.Form do
     <div phx-feedback-for={@name} class={@wrapper_class}>
       <.label for={@id}><%= @label %></.label>
       <select id={@id} name={@name} autocomplete={@name} class="select w-full max-w-xs" {@rest}>
-        <option
-          :for={opt <- @option}
-          {assigns_to_attributes(opt, [:selected])}
-          selected={option_selected(opt, @value)}
-        >
-          <%= render_slot(opt) %>
-        </option>
+        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
       <.error :for={msg <- @errors} message={msg} />
     </div>
@@ -192,9 +183,6 @@ defmodule CommonUI.Form do
   defp input_checked(%{checked: checked}, _value) when not is_nil(checked), do: checked
   defp input_checked(_rest, value) when is_boolean(value), do: value
   defp input_checked(_rest, value), do: to_string(value) == "true"
-
-  defp option_selected(%{selected: selected}, _value), do: selected
-  defp option_selected(%{value: option_value}, value), do: to_string(option_value) == value
 
   defp input_border([] = _errors),
     do: "border-blizzard-blue-300 focus:border-blizzard-blue-400 focus:ring-blizzard-blue-800/5"

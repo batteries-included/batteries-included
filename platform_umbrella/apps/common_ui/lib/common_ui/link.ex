@@ -1,6 +1,7 @@
 defmodule CommonUI.Link do
   use Phoenix.Component
   import Phoenix.Component, except: [link: 1]
+  import CommonUI.CSSHelpers
 
   attr :navigate, :any
 
@@ -15,7 +16,12 @@ defmodule CommonUI.Link do
   def link(%{type: "styled"} = assigns) do
     ~H"""
     <Phoenix.Component.link
-      class={["font-medium text-secondary-500 hover:text-secondary-600 hover:underline", @class]}
+      class={
+        build_class([
+          "font-medium text-secondary-500 hover:text-secondary-600 hover:underline",
+          @class
+        ])
+      }
       navigate={@navigate}
       {@rest}
     >
@@ -27,7 +33,7 @@ defmodule CommonUI.Link do
   def link(%{type: "external"} = assigns) do
     ~H"""
     <Phoenix.Component.link
-      class={["font-medium text-pink-600 hover:underline flex", @class]}
+      class={build_class(["font-medium text-pink-600 hover:underline flex", @class])}
       href={@href || @navigate}
       target="_blank"
       {@rest}
@@ -50,7 +56,7 @@ defmodule CommonUI.Link do
 
   def link(%{type: "unstyled", navigate: _} = assigns) do
     ~H"""
-    <Phoenix.Component.link navigate={@navigate} class={@class} {@rest}>
+    <Phoenix.Component.link navigate={@navigate} class={build_class(@class)} {@rest}>
       <%= render_slot(@inner_block) %>
     </Phoenix.Component.link>
     """

@@ -21,6 +21,11 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.Home, :index
 
+    live "/system_projects/", Live.SystemProjectIndex, :index
+    live "/system_projects/new", Live.SystemProjectNew, :index
+    live "/system_projects/:id/edit", Live.SystemProjectEdit, :edit
+    live "/system_projects/:id/show", Live.SystemProjectShow, :show
+
     live "/postgres/clusters", Live.PostgresClusters, :index
     live "/postgres/clusters/new", Live.PostgresNew, :new
     live "/postgres/clusters/:id/edit", Live.PostgresEdit, :edit

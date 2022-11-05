@@ -38,13 +38,17 @@ deleteJunk() {
   kubectl delete configmap istio-ca-root-cert || true
 }
 
-deleteAllTagged namespace
-deleteCrds
 deleteRBAC
 deleteJunk
 
+deleteAllNamespaced knativeservings 
 deleteAllNamespaced service
 deleteAllNamespaced configmap 
 deleteAllNamespaced secret
 deleteAllNamespaced deployment
-deleteAllNamespaced deployment
+deleteAllNamespaced pod
+
+sleep 10
+
+deleteAllTagged namespace
+deleteCrds

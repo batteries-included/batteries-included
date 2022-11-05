@@ -119,12 +119,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
         />
 
         <%= for node_form <- inputs_for(f, :nodes) do %>
-          <.input field={{node_form, :name}} type="select">
-            <:option value="" hidden={true}>Select a host</:option>
-            <:option :for={node <- @nodes} value={node}>
-              <%= node %>
-            </:option>
-          </.input>
+          <.input field={{node_form, :name}} type="select" prompt="Select a host" options={@nodes} />
           <.input field={{node_form, :device_filter}} placeholder="Device Filter" />
         <% end %>
 

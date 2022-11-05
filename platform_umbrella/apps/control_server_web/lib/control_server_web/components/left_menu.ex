@@ -19,6 +19,10 @@ defmodule ControlServerWeb.LeftMenu do
      |> assign_batteries(assigns.group)}
   end
 
+  defp assign_batteries(socket, :projects) do
+    assign(socket, :batteries, [])
+  end
+
   defp assign_batteries(socket, group) when is_binary(group) do
     assign_batteries(socket, String.to_existing_atom(group))
   end
@@ -201,12 +205,6 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp group_menu_item(%{group: :magic} = assigns) do
     ~H"""
-    <.menu_item navigate={~p"/timeline"} name="Timeline" is_active={@active == :timeline}>
-      <Heroicons.clock class={@icon_class} />
-    </.menu_item>
-    <.menu_item navigate={~p"/kube/pods"} name="Kubernetes" is_active={@active == :kube_resources}>
-      <Heroicons.rectangle_group class={@icon_class} />
-    </.menu_item>
     <.menu_item
       navigate={~p"/kube/snapshots"}
       name="Snapshot Deploys"
@@ -214,7 +212,12 @@ defmodule ControlServerWeb.LeftMenu do
     >
       <Heroicons.rocket_launch class={@icon_class} />
     </.menu_item>
-
+    <.menu_item navigate={~p"/timeline"} name="Timeline" is_active={@active == :timeline}>
+      <Heroicons.clock class={@icon_class} />
+    </.menu_item>
+    <.menu_item navigate={~p"/kube/pods"} name="Kubernetes" is_active={@active == :kube_resources}>
+      <Heroicons.rectangle_group class={@icon_class} />
+    </.menu_item>
     <.menu_item
       navigate={~p"/batteries"}
       name="Installed Batteries"
@@ -224,6 +227,17 @@ defmodule ControlServerWeb.LeftMenu do
     </.menu_item>
     <.menu_item navigate={~p"/batteries/magic"} name="Batteries" is_active={@active == :batteries}>
       <Heroicons.battery_0 class={@icon_class} />
+    </.menu_item>
+    """
+  end
+
+  defp group_menu_item(%{group: :projects} = assigns) do
+    ~H"""
+    <.menu_item navigate={~p"/system_projects/new"} name="New Project" is_active={@active == :new}>
+      <Heroicons.plus class={@icon_class} />
+    </.menu_item>
+    <.menu_item navigate={~p"/system_projects"} name="Projects" is_active={@active == :projects}>
+      <Heroicons.briefcase class={@icon_class} />
     </.menu_item>
     """
   end

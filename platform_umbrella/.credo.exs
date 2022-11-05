@@ -79,6 +79,7 @@ common_checks = [
    ],
    files: %{
      excluded: [
+       "apps/common_ui/lib/common_ui/css_helpers.ex",
        "apps/*/lib/*/live/live_helpers.ex",
        "apps/*/lib/*/views/error_helpers.ex"
      ]

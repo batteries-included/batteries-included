@@ -74,6 +74,10 @@ defmodule ControlServerWeb.MenuLayout do
       </div>
     </div>
     <footer class="h-16 text-current fixed bottom-0 inset-x-0 flex justify-around items-center bg-white">
+      <.menu_item navigate={~p"/system_projects"}>
+        <:label>Projects</:label>
+        <Heroicons.briefcase class={@icon_class} />
+      </.menu_item>
       <.menu_item navigate={~p"/batteries/data"}>
         <:label>Data</:label>
         <Heroicons.circle_stack class={@icon_class} />
