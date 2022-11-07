@@ -36,8 +36,8 @@ defmodule KubeResources.Rook do
 
   import KubeExt.Yaml
 
-  alias KubeExt.Builder, as: B
   alias KubeRawResources.DataSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
   @app "rook"
 
@@ -102,16 +102,6 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
-  end
-
-  resource(:cluster_role_binding_cephfs_csi_nodeplugin, config) do
-    namespace = Settings.public_namespace(config)
-
-    B.build_resource(:cluster_role_binding)
-    |> B.name("cephfs-csi-nodeplugin")
-    |> B.app_labels(@app)
-    |> B.role_ref(B.build_cluster_role_ref("cephfs-csi-nodeplugin"))
-    |> B.subject(B.build_service_account("rook-csi-cephfs-plugin-sa", namespace))
   end
 
   resource(:cluster_role_binding_cephfs_csi_provisioner, config) do
@@ -185,11 +175,7 @@ defmodule KubeResources.Rook do
   end
 
   resource(:cluster_role_ceph_global) do
-    B.build_resource(:cluster_role)
-    |> B.name("rook-ceph-global")
-    |> B.app_labels(@app)
-    |> B.label("storage-backend", "ceph")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => [""],
         "resources" => ["pods", "nodes", "nodes/proxy", "services", "secrets", "configmaps"],
@@ -301,15 +287,17 @@ defmodule KubeResources.Rook do
         "resources" => ["network-attachment-definitions"],
         "verbs" => ["get"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("rook-ceph-global")
+    |> B.app_labels(@app)
+    |> B.label("storage-backend", "ceph")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_ceph_mgmt) do
-    B.build_resource(:cluster_role)
-    |> B.name("rook-ceph-cluster-mgmt")
-    |> B.app_labels(@app)
-    |> B.label("storage-backend", "ceph")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => ["", "apps", "extensions"],
         "resources" => [
@@ -323,15 +311,17 @@ defmodule KubeResources.Rook do
         ],
         "verbs" => ["get", "list", "watch", "patch", "create", "update", "delete"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("rook-ceph-cluster-mgmt")
+    |> B.app_labels(@app)
+    |> B.label("storage-backend", "ceph")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_ceph_mgr) do
-    B.build_resource(:cluster_role)
-    |> B.name("rook-ceph-mgr-cluster")
-    |> B.app_labels(@app)
-    |> B.label("storage-backend", "ceph")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => [""],
         "resources" => ["configmaps", "nodes", "nodes/proxy", "persistentvolumes"],
@@ -347,24 +337,28 @@ defmodule KubeResources.Rook do
         "resources" => ["storageclasses"],
         "verbs" => ["get", "list", "watch"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("rook-ceph-mgr-cluster")
+    |> B.app_labels(@app)
+    |> B.label("storage-backend", "ceph")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_ceph_mgr_system) do
+    rules = [
+      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]}
+    ]
+
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-mgr-system")
     |> B.app_labels(@app)
-    |> B.rules([
-      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]}
-    ])
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_ceph_object_bucket) do
-    B.build_resource(:cluster_role)
-    |> B.name("rook-ceph-object-bucket")
-    |> B.app_labels(@app)
-    |> B.label("storage-backend", "ceph")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => [""],
         "resources" => ["secrets", "configmaps"],
@@ -391,22 +385,26 @@ defmodule KubeResources.Rook do
         "resources" => ["objectbucketclaims/finalizers", "objectbuckets/finalizers"],
         "verbs" => ["update"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("rook-ceph-object-bucket")
+    |> B.app_labels(@app)
+    |> B.label("storage-backend", "ceph")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_ceph_osd) do
+    rules = [%{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list"]}]
+
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-osd")
     |> B.app_labels(@app)
-    |> B.rules([%{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list"]}])
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_ceph_system) do
-    B.build_resource(:cluster_role)
-    |> B.name("rook-ceph-system")
-    |> B.app_labels(@app)
-    |> B.label("storage-backend", "ceph")
-    |> B.rules([
+    rules = [
       %{"apiGroups" => [""], "resources" => ["pods", "pods/log"], "verbs" => ["get", "list"]},
       %{"apiGroups" => [""], "resources" => ["pods/exec"], "verbs" => ["create"]},
       %{
@@ -414,45 +412,36 @@ defmodule KubeResources.Rook do
         "resources" => ["validatingwebhookconfigurations"],
         "verbs" => ["create", "get", "delete", "update"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("rook-ceph-system")
+    |> B.app_labels(@app)
+    |> B.label("storage-backend", "ceph")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_cephfs_csi_nodeplugin) do
+    rules = [%{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get"]}]
+
     B.build_resource(:cluster_role)
     |> B.name("cephfs-csi-nodeplugin")
     |> B.app_labels(@app)
-    |> B.rules([
-      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => [""], "resources" => ["namespaces"], "verbs" => ["get", "list"]},
-      %{
-        "apiGroups" => [""],
-        "resources" => ["persistentvolumes"],
-        "verbs" => ["get", "list", "watch", "update"]
-      },
-      %{
-        "apiGroups" => ["storage.k8s.io"],
-        "resources" => ["volumeattachments"],
-        "verbs" => ["get", "list", "watch", "update"]
-      },
-      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list"]}
-    ])
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_cephfs_external_provisioner_runner) do
-    B.build_resource(:cluster_role)
-    |> B.name("cephfs-external-provisioner-runner")
-    |> B.app_labels(@app)
-    |> B.rules([
+    rules = [
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list"]},
       %{
         "apiGroups" => [""],
         "resources" => ["persistentvolumes"],
-        "verbs" => ["get", "list", "watch", "create", "delete", "update", "patch"]
+        "verbs" => ["get", "list", "watch", "create", "delete", "patch"]
       },
       %{
         "apiGroups" => [""],
         "resources" => ["persistentvolumeclaims"],
-        "verbs" => ["get", "list", "watch", "update"]
+        "verbs" => ["get", "list", "watch", "patch"]
       },
       %{
         "apiGroups" => ["storage.k8s.io"],
@@ -467,28 +456,22 @@ defmodule KubeResources.Rook do
       %{
         "apiGroups" => ["storage.k8s.io"],
         "resources" => ["volumeattachments"],
-        "verbs" => ["get", "list", "watch", "update", "patch"]
+        "verbs" => ["get", "list", "watch", "patch"]
       },
       %{
         "apiGroups" => ["storage.k8s.io"],
         "resources" => ["volumeattachments/status"],
         "verbs" => ["patch"]
       },
-      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => [""],
         "resources" => ["persistentvolumeclaims/status"],
-        "verbs" => ["update", "patch"]
+        "verbs" => ["patch"]
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
         "resources" => ["volumesnapshots"],
-        "verbs" => ["get", "list", "watch", "update", "patch"]
-      },
-      %{
-        "apiGroups" => ["snapshot.storage.k8s.io"],
-        "resources" => ["volumesnapshotcontents"],
-        "verbs" => ["create", "get", "list", "watch", "update", "delete", "patch"]
+        "verbs" => ["get", "list"]
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
@@ -497,84 +480,74 @@ defmodule KubeResources.Rook do
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
-        "resources" => ["volumesnapshotcontents/status"],
-        "verbs" => ["update", "patch"]
+        "resources" => ["volumesnapshotcontents"],
+        "verbs" => ["get", "list", "watch", "patch", "update"]
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
-        "resources" => ["volumesnapshots/status"],
+        "resources" => ["volumesnapshotcontents/status"],
         "verbs" => ["update", "patch"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("cephfs-external-provisioner-runner")
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_psp) do
-    B.build_resource(:cluster_role)
-    |> B.name("psp:rook")
-    |> B.app_labels(@app)
-    |> B.label("storage-backend", "ceph")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => ["policy"],
         "resourceNames" => ["00-rook-privileged"],
         "resources" => ["podsecuritypolicies"],
         "verbs" => ["use"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("psp:rook")
+    |> B.app_labels(@app)
+    |> B.label("storage-backend", "ceph")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_rbd_csi_nodeplugin) do
+    rules = [
+      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list"]},
+      %{"apiGroups" => [""], "resources" => ["persistentvolumes"], "verbs" => ["get", "list"]},
+      %{
+        "apiGroups" => ["storage.k8s.io"],
+        "resources" => ["volumeattachments"],
+        "verbs" => ["get", "list"]
+      },
+      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]},
+      %{"apiGroups" => [""], "resources" => ["serviceaccounts"], "verbs" => ["get"]},
+      %{"apiGroups" => [""], "resources" => ["serviceaccounts/token"], "verbs" => ["create"]},
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get"]}
+    ]
+
     B.build_resource(:cluster_role)
     |> B.name("rbd-csi-nodeplugin")
     |> B.app_labels(@app)
     |> B.label("storage-backend", "ceph")
-    |> B.rules([
-      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list"]},
-      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => [""], "resources" => ["namespaces"], "verbs" => ["get", "list"]},
-      %{
-        "apiGroups" => [""],
-        "resources" => ["persistentvolumes"],
-        "verbs" => ["get", "list", "watch", "update"]
-      },
-      %{
-        "apiGroups" => ["storage.k8s.io"],
-        "resources" => ["volumeattachments"],
-        "verbs" => ["get", "list", "watch", "update"]
-      },
-      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list"]},
-      %{"apiGroups" => [""], "resources" => ["serviceaccounts"], "verbs" => ["get"]},
-      %{"apiGroups" => [""], "resources" => ["serviceaccounts/token"], "verbs" => ["create"]}
-    ])
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_rbd_external_provisioner_runner) do
-    B.build_resource(:cluster_role)
-    |> B.name("rbd-external-provisioner-runner")
-    |> B.app_labels(@app)
-    |> B.rules([
+    rules = [
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => [""],
         "resources" => ["persistentvolumes"],
-        "verbs" => ["get", "list", "watch", "create", "delete", "update", "patch"]
+        "verbs" => ["get", "list", "watch", "create", "delete", "patch"]
       },
       %{
         "apiGroups" => [""],
         "resources" => ["persistentvolumeclaims"],
         "verbs" => ["get", "list", "watch", "update"]
       },
-      %{
-        "apiGroups" => ["storage.k8s.io"],
-        "resources" => ["volumeattachments"],
-        "verbs" => ["get", "list", "watch", "update", "patch"]
-      },
-      %{
-        "apiGroups" => ["storage.k8s.io"],
-        "resources" => ["volumeattachments/status"],
-        "verbs" => ["patch"]
-      },
-      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => ["storage.k8s.io"],
         "resources" => ["storageclasses"],
@@ -586,14 +559,30 @@ defmodule KubeResources.Rook do
         "verbs" => ["list", "watch", "create", "update", "patch"]
       },
       %{
-        "apiGroups" => ["snapshot.storage.k8s.io"],
-        "resources" => ["volumesnapshots"],
-        "verbs" => ["get", "list", "watch", "update", "patch"]
+        "apiGroups" => ["storage.k8s.io"],
+        "resources" => ["volumeattachments"],
+        "verbs" => ["get", "list", "watch", "patch"]
+      },
+      %{
+        "apiGroups" => ["storage.k8s.io"],
+        "resources" => ["volumeattachments/status"],
+        "verbs" => ["patch"]
+      },
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["storage.k8s.io"],
+        "resources" => ["csinodes"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["persistentvolumeclaims/status"],
+        "verbs" => ["patch"]
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
-        "resources" => ["volumesnapshotcontents"],
-        "verbs" => ["create", "get", "list", "watch", "update", "delete", "patch"]
+        "resources" => ["volumesnapshots"],
+        "verbs" => ["get", "list", "watch"]
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
@@ -602,43 +591,29 @@ defmodule KubeResources.Rook do
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
-        "resources" => ["volumesnapshotcontents/status"],
-        "verbs" => ["update", "patch"]
+        "resources" => ["volumesnapshotcontents"],
+        "verbs" => ["get", "list", "watch", "patch", "update"]
       },
       %{
         "apiGroups" => ["snapshot.storage.k8s.io"],
-        "resources" => ["volumesnapshots/status"],
-        "verbs" => ["update", "patch"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["persistentvolumeclaims/status"],
+        "resources" => ["volumesnapshotcontents/status"],
         "verbs" => ["update", "patch"]
       },
       %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]},
-      %{
-        "apiGroups" => ["replication.storage.openshift.io"],
-        "resources" => ["volumereplications", "volumereplicationclasses"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["replication.storage.openshift.io"],
-        "resources" => ["volumereplications/finalizers"],
-        "verbs" => ["update"]
-      },
-      %{
-        "apiGroups" => ["replication.storage.openshift.io"],
-        "resources" => ["volumereplications/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["replication.storage.openshift.io"],
-        "resources" => ["volumereplicationclasses/status"],
-        "verbs" => ["get"]
-      },
       %{"apiGroups" => [""], "resources" => ["serviceaccounts"], "verbs" => ["get"]},
-      %{"apiGroups" => [""], "resources" => ["serviceaccounts/token"], "verbs" => ["create"]}
-    ])
+      %{"apiGroups" => [""], "resources" => ["serviceaccounts/token"], "verbs" => ["create"]},
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch\""]},
+      %{
+        "apiGroups" => ["storage.k8s.io"],
+        "resources" => ["csinodes"],
+        "verbs" => ["get", "list", "watch"]
+      }
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("rbd-external-provisioner-runner")
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:config_map_ceph_operator, config) do
@@ -646,22 +621,24 @@ defmodule KubeResources.Rook do
 
     data =
       %{}
-      |> Map.put("CSI_CEPHFS_FSGROUPPOLICY", "ReadWriteOnceWithFSType")
+      |> Map.put("CSI_CEPHFS_FSGROUPPOLICY", "File")
       |> Map.put("CSI_ENABLE_CEPHFS_SNAPSHOTTER", "true")
       |> Map.put("CSI_ENABLE_CSIADDONS", "false")
       |> Map.put("CSI_ENABLE_ENCRYPTION", "false")
       |> Map.put("CSI_ENABLE_HOST_NETWORK", "true")
+      |> Map.put("CSI_ENABLE_METADATA", "false")
+      |> Map.put("CSI_ENABLE_NFS_SNAPSHOTTER", "true")
       |> Map.put("CSI_ENABLE_OMAP_GENERATOR", "false")
       |> Map.put("CSI_ENABLE_RBD_SNAPSHOTTER", "true")
-      |> Map.put("CSI_ENABLE_VOLUME_REPLICATION", "false")
+      |> Map.put("CSI_ENABLE_TOPOLOGY", "false")
       |> Map.put("CSI_FORCE_CEPHFS_KERNEL_CLIENT", "true")
       |> Map.put("CSI_GRPC_TIMEOUT_SECONDS", "150")
-      |> Map.put("CSI_NFS_FSGROUPPOLICY", "ReadWriteOnceWithFSType")
+      |> Map.put("CSI_NFS_FSGROUPPOLICY", "File")
       |> Map.put("CSI_PLUGIN_ENABLE_SELINUX_HOST_MOUNT", "false")
       |> Map.put("CSI_PLUGIN_PRIORITY_CLASSNAME", "system-node-critical")
       |> Map.put("CSI_PROVISIONER_PRIORITY_CLASSNAME", "system-cluster-critical")
       |> Map.put("CSI_PROVISIONER_REPLICAS", "2")
-      |> Map.put("CSI_RBD_FSGROUPPOLICY", "ReadWriteOnceWithFSType")
+      |> Map.put("CSI_RBD_FSGROUPPOLICY", "File")
       |> Map.put("ROOK_CEPH_COMMANDS_TIMEOUT_SECONDS", "15")
       |> Map.put("ROOK_CSI_ENABLE_CEPHFS", "true")
       |> Map.put("ROOK_CSI_ENABLE_GRPC_METRICS", "false")
@@ -761,112 +738,113 @@ defmodule KubeResources.Rook do
   resource(:deployment_ceph_operator, config) do
     namespace = Settings.public_namespace(config)
 
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => "rook"}})
+      |> Map.put("strategy", %{"type" => "Recreate"})
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{"labels" => %{"battery/app" => "rook", "battery/managed" => "true"}},
+          "spec" => %{
+            "containers" => [
+              %{
+                "args" => ["ceph", "operator"],
+                "env" => [
+                  %{"name" => "ROOK_CURRENT_NAMESPACE_ONLY", "value" => "false"},
+                  %{"name" => "ROOK_HOSTPATH_REQUIRES_PRIVILEGED", "value" => "false"},
+                  %{"name" => "ROOK_DISABLE_DEVICE_HOTPLUG", "value" => "false"},
+                  %{"name" => "ROOK_ENABLE_DISCOVERY_DAEMON", "value" => "false"},
+                  %{"name" => "ROOK_DISABLE_ADMISSION_CONTROLLER", "value" => "false"},
+                  %{
+                    "name" => "NODE_NAME",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}
+                  },
+                  %{
+                    "name" => "POD_NAME",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
+                  },
+                  %{
+                    "name" => "POD_NAMESPACE",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+                  }
+                ],
+                "image" => "rook/ceph:v1.10.5",
+                "imagePullPolicy" => "IfNotPresent",
+                "name" => "rook-ceph-operator",
+                "ports" => [
+                  %{"containerPort" => 9443, "name" => "https-webhook", "protocol" => "TCP"}
+                ],
+                "resources" => %{
+                  "limits" => %{"cpu" => "500m", "memory" => "512Mi"},
+                  "requests" => %{"cpu" => "100m", "memory" => "128Mi"}
+                },
+                "securityContext" => %{
+                  "runAsGroup" => 2016,
+                  "runAsNonRoot" => true,
+                  "runAsUser" => 2016
+                },
+                "volumeMounts" => [
+                  %{"mountPath" => "/var/lib/rook", "name" => "rook-config"},
+                  %{"mountPath" => "/etc/ceph", "name" => "default-config-dir"},
+                  %{"mountPath" => "/etc/webhook", "name" => "webhook-cert"}
+                ]
+              }
+            ],
+            "serviceAccountName" => "rook-ceph-system",
+            "volumes" => [
+              %{"emptyDir" => %{}, "name" => "rook-config"},
+              %{"emptyDir" => %{}, "name" => "default-config-dir"},
+              %{"emptyDir" => %{}, "name" => "webhook-cert"}
+            ]
+          }
+        }
+      )
+
     B.build_resource(:deployment)
     |> B.name("rook-ceph-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.label("storage-backend", "ceph")
-    |> B.spec(%{
-      "replicas" => 1,
-      "selector" => %{"matchLabels" => %{"app" => "rook-ceph-operator"}},
-      "strategy" => %{"type" => "Recreate"},
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "app" => "rook-ceph-operator",
-            "battery/app" => "rook",
-            "battery/managed" => "true"
-          }
-        },
-        "spec" => %{
-          "containers" => [
-            %{
-              "args" => ["ceph", "operator"],
-              "env" => [
-                %{"name" => "ROOK_CURRENT_NAMESPACE_ONLY", "value" => "false"},
-                %{"name" => "ROOK_HOSTPATH_REQUIRES_PRIVILEGED", "value" => "false"},
-                %{"name" => "ROOK_ENABLE_SELINUX_RELABELING", "value" => "true"},
-                %{"name" => "ROOK_DISABLE_DEVICE_HOTPLUG", "value" => "false"},
-                %{"name" => "ROOK_ENABLE_DISCOVERY_DAEMON", "value" => "false"},
-                %{"name" => "ROOK_DISABLE_ADMISSION_CONTROLLER", "value" => "false"},
-                %{
-                  "name" => "NODE_NAME",
-                  "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}
-                },
-                %{
-                  "name" => "POD_NAME",
-                  "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
-                },
-                %{
-                  "name" => "POD_NAMESPACE",
-                  "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
-                }
-              ],
-              "image" => "rook/ceph:v1.9.9-6.g0d8fde8bd",
-              "imagePullPolicy" => "IfNotPresent",
-              "name" => "rook-ceph-operator",
-              "ports" => [
-                %{"containerPort" => 9443, "name" => "https-webhook", "protocol" => "TCP"}
-              ],
-              "resources" => %{
-                "limits" => %{"memory" => "512Mi"},
-                "requests" => %{"cpu" => "100m", "memory" => "128Mi"}
-              },
-              "securityContext" => %{
-                "runAsGroup" => 2016,
-                "runAsNonRoot" => true,
-                "runAsUser" => 2016
-              },
-              "volumeMounts" => [
-                %{"mountPath" => "/var/lib/rook", "name" => "rook-config"},
-                %{"mountPath" => "/etc/ceph", "name" => "default-config-dir"},
-                %{"mountPath" => "/etc/webhook", "name" => "webhook-cert"}
-              ]
-            }
-          ],
-          "serviceAccountName" => "rook-ceph-system",
-          "volumes" => [
-            %{"emptyDir" => %{}, "name" => "rook-config"},
-            %{"emptyDir" => %{}, "name" => "default-config-dir"},
-            %{"emptyDir" => %{}, "name" => "webhook-cert"}
-          ]
-        }
-      }
-    })
+    |> B.spec(spec)
   end
 
   resource(:pod_security_policy_00_privileged) do
     B.build_resource(:pod_security_policy)
     |> B.name("00-rook-privileged")
     |> B.app_labels(@app)
-    |> B.spec(%{
-      "allowedCapabilities" => ["SYS_ADMIN", "MKNOD"],
-      "fsGroup" => %{"rule" => "RunAsAny"},
-      "hostIPC" => true,
-      "hostNetwork" => true,
-      "hostPID" => true,
-      "hostPorts" => [
-        %{"max" => 6790, "min" => 6789},
-        %{"max" => 3300, "min" => 3300},
-        %{"max" => 7300, "min" => 6800},
-        %{"max" => 8443, "min" => 8443},
-        %{"max" => 9283, "min" => 9283},
-        %{"max" => 9070, "min" => 9070}
-      ],
-      "privileged" => true,
-      "runAsUser" => %{"rule" => "RunAsAny"},
-      "seLinux" => %{"rule" => "RunAsAny"},
-      "supplementalGroups" => %{"rule" => "RunAsAny"},
-      "volumes" => [
-        "configMap",
-        "downwardAPI",
-        "emptyDir",
-        "persistentVolumeClaim",
-        "secret",
-        "projected",
-        "hostPath"
-      ]
-    })
+    |> Map.put(
+      "spec",
+      %{
+        "allowedCapabilities" => ["SYS_ADMIN", "MKNOD"],
+        "fsGroup" => %{"rule" => "RunAsAny"},
+        "hostIPC" => true,
+        "hostNetwork" => true,
+        "hostPID" => true,
+        "hostPorts" => [
+          %{"max" => 6790, "min" => 6789},
+          %{"max" => 3300, "min" => 3300},
+          %{"max" => 7300, "min" => 6800},
+          %{"max" => 8443, "min" => 8443},
+          %{"max" => 9283, "min" => 9283},
+          %{"max" => 9070, "min" => 9070}
+        ],
+        "privileged" => true,
+        "runAsUser" => %{"rule" => "RunAsAny"},
+        "seLinux" => %{"rule" => "RunAsAny"},
+        "supplementalGroups" => %{"rule" => "RunAsAny"},
+        "volumes" => [
+          "configMap",
+          "downwardAPI",
+          "emptyDir",
+          "persistentVolumeClaim",
+          "secret",
+          "projected",
+          "hostPath"
+        ]
+      }
+    )
   end
 
   resource(:role_binding_ceph_cluster_mgmt, config) do
@@ -944,6 +922,28 @@ defmodule KubeResources.Rook do
     |> B.namespace(namespace)
     |> B.app_labels(@app)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-mgr-system"))
+    |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
+  end
+
+  resource(:role_binding_ceph_monitoring, config) do
+    namespace = Settings.public_namespace(config)
+
+    B.build_resource(:role_binding)
+    |> B.name("rook-ceph-monitoring")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.role_ref(B.build_role_ref("rook-ceph-monitoring"))
+    |> B.subject(B.build_service_account("rook-ceph-system", namespace))
+  end
+
+  resource(:role_binding_ceph_monitoring_mgr, config) do
+    namespace = Settings.public_namespace(config)
+
+    B.build_resource(:role_binding)
+    |> B.name("rook-ceph-monitoring-mgr")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.role_ref(B.build_role_ref("rook-ceph-monitoring-mgr"))
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
@@ -1050,27 +1050,25 @@ defmodule KubeResources.Rook do
   resource(:role_ceph_cmd_reporter, config) do
     namespace = Settings.public_namespace(config)
 
-    B.build_resource(:role)
-    |> B.name("rook-ceph-cmd-reporter")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => [""],
         "resources" => ["pods", "configmaps"],
         "verbs" => ["get", "list", "watch", "create", "update", "delete"]
       }
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rook-ceph-cmd-reporter")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:role_ceph_mgr, config) do
     namespace = Settings.public_namespace(config)
 
-    B.build_resource(:role)
-    |> B.name("rook-ceph-mgr")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => [""],
         "resources" => ["pods", "services", "pods/log"],
@@ -1081,24 +1079,83 @@ defmodule KubeResources.Rook do
         "resources" => ["jobs"],
         "verbs" => ["get", "list", "watch", "create", "update", "delete"]
       },
-      %{"apiGroups" => ["ceph.rook.io"], "resources" => ["*"], "verbs" => ["*"]},
+      %{
+        "apiGroups" => ["ceph.rook.io"],
+        "resources" => [
+          "cephclients",
+          "cephclusters",
+          "cephblockpools",
+          "cephfilesystems",
+          "cephnfses",
+          "cephobjectstores",
+          "cephobjectstoreusers",
+          "cephobjectrealms",
+          "cephobjectzonegroups",
+          "cephobjectzones",
+          "cephbuckettopics",
+          "cephbucketnotifications",
+          "cephrbdmirrors",
+          "cephfilesystemmirrors",
+          "cephfilesystemsubvolumegroups",
+          "cephblockpoolradosnamespaces"
+        ],
+        "verbs" => ["get", "list", "watch", "create", "update", "delete"]
+      },
       %{
         "apiGroups" => ["apps"],
         "resources" => ["deployments/scale", "deployments"],
         "verbs" => ["patch", "delete"]
       },
       %{"apiGroups" => [""], "resources" => ["persistentvolumeclaims"], "verbs" => ["delete"]}
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rook-ceph-mgr")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
+  end
+
+  resource(:role_ceph_monitoring, config) do
+    namespace = Settings.public_namespace(config)
+
+    rules = [
+      %{
+        "apiGroups" => ["monitoring.coreos.com"],
+        "resources" => ["servicemonitors"],
+        "verbs" => ["get", "list", "watch", "create", "update", "delete"]
+      }
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rook-ceph-monitoring")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
+  end
+
+  resource(:role_ceph_monitoring_mgr, config) do
+    namespace = Settings.public_namespace(config)
+
+    rules = [
+      %{
+        "apiGroups" => ["monitoring.coreos.com"],
+        "resources" => ["servicemonitors"],
+        "verbs" => ["get", "list", "create", "update"]
+      }
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rook-ceph-monitoring-mgr")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:role_ceph_osd, config) do
     namespace = Settings.public_namespace(config)
 
-    B.build_resource(:role)
-    |> B.name("rook-ceph-osd")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.rules([
+    rules = [
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get"]},
       %{
         "apiGroups" => [""],
@@ -1110,17 +1167,19 @@ defmodule KubeResources.Rook do
         "resources" => ["cephclusters", "cephclusters/finalizers"],
         "verbs" => ["get", "list", "create", "update", "delete"]
       }
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rook-ceph-osd")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:role_ceph_purge_osd, config) do
     namespace = Settings.public_namespace(config)
 
-    B.build_resource(:role)
-    |> B.name("rook-ceph-purge-osd")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.rules([
+    rules = [
       %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]},
       %{"apiGroups" => ["apps"], "resources" => ["deployments"], "verbs" => ["get", "delete"]},
       %{"apiGroups" => ["batch"], "resources" => ["jobs"], "verbs" => ["get", "list", "delete"]},
@@ -1129,28 +1188,30 @@ defmodule KubeResources.Rook do
         "resources" => ["persistentvolumeclaims"],
         "verbs" => ["get", "update", "delete", "list"]
       }
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rook-ceph-purge-osd")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:role_ceph_rgw, config) do
     namespace = Settings.public_namespace(config)
+    rules = [%{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]}]
 
     B.build_resource(:role)
     |> B.name("rook-ceph-rgw")
     |> B.namespace(namespace)
     |> B.app_labels(@app)
-    |> B.rules([%{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]}])
+    |> B.rules(rules)
   end
 
   resource(:role_ceph_system, config) do
     namespace = Settings.public_namespace(config)
 
-    B.build_resource(:role)
-    |> B.name("rook-ceph-system")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.label("storage-backend", "ceph")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => [""],
         "resources" => ["pods", "configmaps", "services"],
@@ -1167,59 +1228,50 @@ defmodule KubeResources.Rook do
         "resources" => ["certificates", "issuers"],
         "verbs" => ["get", "create", "delete"]
       }
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rook-ceph-system")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.label("storage-backend", "ceph")
+    |> B.rules(rules)
   end
 
   resource(:role_cephfs_external_provisioner_cfg, config) do
     namespace = Settings.public_namespace(config)
 
-    B.build_resource(:role)
-    |> B.name("cephfs-external-provisioner-cfg")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.rules([
-      %{
-        "apiGroups" => [""],
-        "resources" => ["endpoints"],
-        "verbs" => ["get", "watch", "list", "delete", "update", "create"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["configmaps"],
-        "verbs" => ["get", "list", "create", "delete"]
-      },
+    rules = [
       %{
         "apiGroups" => ["coordination.k8s.io"],
         "resources" => ["leases"],
         "verbs" => ["get", "watch", "list", "delete", "update", "create"]
       }
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("cephfs-external-provisioner-cfg")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:role_rbd_external_provisioner_cfg, config) do
     namespace = Settings.public_namespace(config)
 
-    B.build_resource(:role)
-    |> B.name("rbd-external-provisioner-cfg")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app)
-    |> B.rules([
-      %{
-        "apiGroups" => [""],
-        "resources" => ["endpoints"],
-        "verbs" => ["get", "watch", "list", "delete", "update", "create"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["configmaps"],
-        "verbs" => ["get", "list", "watch", "create", "delete", "update"]
-      },
+    rules = [
       %{
         "apiGroups" => ["coordination.k8s.io"],
         "resources" => ["leases"],
         "verbs" => ["get", "watch", "list", "delete", "update", "create"]
       }
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("rbd-external-provisioner-cfg")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app)
+    |> B.rules(rules)
   end
 
   resource(:service_account_ceph_cmd_reporter, config) do

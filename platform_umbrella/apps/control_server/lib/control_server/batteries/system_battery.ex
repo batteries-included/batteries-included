@@ -43,6 +43,7 @@ defmodule ControlServer.Batteries.SystemBattery do
     :redis_operator,
     :redis,
     :rook,
+    :ceph,
     :tekton_operator
   ]
 

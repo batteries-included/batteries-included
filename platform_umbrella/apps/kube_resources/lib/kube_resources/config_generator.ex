@@ -29,7 +29,8 @@ defmodule KubeResources.ConfigGenerator do
     OryHydra,
     Harbor,
     Rook,
-    Ceph,
+    CephFilesystems,
+    CephClusters,
     PrometheusOperator,
     Prometheus,
     Grafana,
@@ -90,9 +91,10 @@ defmodule KubeResources.ConfigGenerator do
     prometheus_operator: [&PrometheusOperator.materialize/1],
     prometheus_stack: [&PrometheusStack.materialize/1],
     promtail: [&Promtail.materialize/1],
-    redis: [&Redis.materialize/1],
     redis_operator: [&RedisOperator.materialize/1],
-    rook: [&Rook.materialize/1, &Ceph.materialize/1],
+    redis: [&Redis.materialize/1],
+    rook: [&Rook.materialize/1],
+    ceph: [&CephFilesystems.materialize/1, &CephClusters.materialize/1],
     tekton_operator: [&TektonOperator.materialize/1]
   ]
 

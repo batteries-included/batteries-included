@@ -22,6 +22,7 @@ defmodule ControlServer.Batteries.Catalog do
       dependencies: [:postgres_operator, :data]
     },
     %CatalogBattery{group: :data, type: :rook, dependencies: [:data]},
+    %CatalogBattery{group: :data, type: :ceph, dependencies: [:data, :rook]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core},
     %CatalogBattery{
