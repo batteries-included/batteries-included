@@ -68,18 +68,22 @@ defmodule CommonUI.Form do
 
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
   attr :rest, :global,
     doc: "the arbitrary HTML attributes for the input tag",
     include:
-      ~w(autocomplete checked disabled form max maxlength min minlength multiple pattern placeholder readonly required size step)
+      ~w(autocomplete checked disabled form max maxlength min minlength pattern placeholder readonly required size step)
 
   slot :inner_block
 
   def input(%{field: {f, field}} = assigns) do
     assigns
     |> assign(field: nil)
-    |> assign_new(:name, fn -> input_name(f, field) end)
+    |> assign_new(:name, fn ->
+      name = input_name(f, field)
+      if assigns.multiple, do: name <> "[]", else: name
+    end)
     |> assign_new(:id, fn -> input_id(f, field) end)
     |> assign_new(:value, fn -> input_value(f, field) end)
     |> assign_new(:errors, fn -> translate_errors(f.errors || [], field) end)
@@ -89,16 +93,17 @@ defmodule CommonUI.Form do
 
   def input(%{type: "checkbox"} = assigns) do
     ~H"""
-    <label phx-feedback-for={@name} class="flex items-center gap-4 text-sm leading-6 pt-10">
-      <input type="hidden" id={@id || @name} name={@name} value="false" />
+    <label phx-feedback-for={@name} class="flex items-center gap-4 text-base leading-6 pt-10">
+      <input type="hidden" id={@id} name={@name} value="false" />
       <input
         type="checkbox"
-        id={@id || @name}
+        id={@id}
         name={@name}
-        class="checkbox checkbox-secondary"
+        class="sr-only peer"
         value="true"
         checked={input_checked(@rest, @value)}
       />
+      <.peer_toggle />
       <%= @label %>
     </label>
     """
@@ -106,9 +111,19 @@ defmodule CommonUI.Form do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class={@wrapper_class}>
+    <div phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
-      <select id={@id} name={@name} autocomplete={@name} class="select w-full max-w-xs" {@rest}>
+      <select
+        id={@id}
+        name={@name}
+        class={[
+          input_border(@errors),
+          "mt-1 block w-full py-2 px-3 border bg-white rounded-lg shadow-sm text-base"
+        ]}
+        multiple={@multiple}
+        {@rest}
+      >
+        <option :if={@prompt}><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
       <.error :for={msg <- @errors} message={msg} />
@@ -125,7 +140,7 @@ defmodule CommonUI.Form do
         name={@name}
         class={[
           input_border(@errors),
-          "textarea textarea-bordered"
+          "block p-2.5 w-full text-base text-gray-900 bg-gray-50 rounded-lg"
         ]}
         {@rest}
       ><%= @value %></textarea>
@@ -168,7 +183,7 @@ defmodule CommonUI.Form do
         class={[
           input_border(@errors),
           "block px-2.5 pb-2.5 pt-4",
-          "w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300",
+          "w-full text-base text-gray-900 bg-white rounded-lg border-1 border-gray-300",
           "appearance-none",
           "dark:text-white dark:border-gray-600 dark:focus:border-primary-500",
           "focus:outline-none focus:ring-0 focus:border-primary-600 peer"
@@ -185,7 +200,8 @@ defmodule CommonUI.Form do
   defp input_checked(_rest, value), do: to_string(value) == "true"
 
   defp input_border([] = _errors),
-    do: "border-blizzard-blue-300 focus:border-blizzard-blue-400 focus:ring-blizzard-blue-800/5"
+    do:
+      "border-primary-400 focus:border-primary-600 focus:ring-primary-800 focus:ring-16 focus:ring-inset"
 
   defp input_border([_ | _] = _errors),
     do:
@@ -208,7 +224,7 @@ defmodule CommonUI.Form do
   @doc """
   Generates a generic error message.
   """
-  attr :message, :string, required: true
+  attr :message, :string, default: ""
 
   def error(assigns) do
     ~H"""
@@ -216,6 +232,15 @@ defmodule CommonUI.Form do
       <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-sea-buckthorn-500" />
       <%= @message %>
     </p>
+    """
+  end
+
+  def peer_toggle(assigns) do
+    ~H"""
+    <div class={[
+      "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-secondary-300 dark:peer-focus:ring-secondary-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-secondary-600"
+    ]}>
+    </div>
     """
   end
 

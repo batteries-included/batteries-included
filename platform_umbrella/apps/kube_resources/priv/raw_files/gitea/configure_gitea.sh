@@ -10,13 +10,8 @@ echo '==== BEGIN GITEA CONFIGURATION ===='
   echo "Gitea migrate might fail due to database connection...This init-container will try again in a few seconds"
   exit 1
 }
-
 function configure_admin_user() {
-  local USER_LIST
-  local ACCOUNT_ID
-  USER_LIST=$(gitea admin user list --admin)
-  echo "Admins: ${USER_LIST}"
-  ACCOUNT_ID=$(gitea admin user list --admin | grep -e "\\s*${GITEA_ADMIN_USERNAME}\\s*" | awk -F " " "{printf \\$1}")
+  local ACCOUNT_ID=$(gitea admin user list --admin | grep -e "\s\+${GITEA_ADMIN_USERNAME}\s\+" | awk -F " " "{printf \$1}")
   if [[ -z "${ACCOUNT_ID}" ]]; then
     echo "No admin user '${GITEA_ADMIN_USERNAME}' found. Creating now..."
     gitea admin user create --admin --username "${GITEA_ADMIN_USERNAME}" --password "${GITEA_ADMIN_PASSWORD}" --email "gitea@batteriesincl.com" --must-change-password=false
@@ -28,8 +23,18 @@ function configure_admin_user() {
   fi
 }
 
-echo '==== BEGIN ADMIN CONFIGURATION ===='
 configure_admin_user
-echo '==== END ADMIN CONFIGURATION ===='
+
+function configure_ldap() {
+    echo 'no ldap configuration... skipping.'
+}
+
+configure_ldap
+
+function configure_oauth() {
+    echo 'no oauth configuration... skipping.'
+}
+
+configure_oauth
 
 echo '==== END GITEA CONFIGURATION ===='

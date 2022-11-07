@@ -6,7 +6,7 @@ set -x
 chown 1000:1000 /data
 mkdir -p /data/git/.ssh
 chmod -R 700 /data/git/.ssh
-[ ! -d /data/gitea ] && mkdir -p /data/gitea/conf
+[ ! -d /data/gitea/conf ] && mkdir -p /data/gitea/conf
 
 # prepare temp directory structure
 mkdir -p "${GITEA_TEMP}"

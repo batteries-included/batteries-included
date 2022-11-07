@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -exuo pipefail
 
 function env2ini::log() {
-  printf "%s\\n" "${1}"
+  printf "${1}\n"
 }
 
 function env2ini::read_config_to_env() {
@@ -13,10 +13,9 @@ function env2ini::read_config_to_env() {
     # skip empty line
     return
   fi
-
+  
   # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new line
-  local setting
-  setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
+  local setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
 
   if [[ -z "${setting}" ]]; then
     env2ini::log '  ! invalid setting'
@@ -24,7 +23,7 @@ function env2ini::read_config_to_env() {
   fi
 
   local value=''
-  local regex="^${setting}(\\s*)=(\\s*)(.*)"
+  local regex="^${setting}(\s*)=(\s*)(.*)"
   if [[ $line =~ $regex ]]; then
     value="${BASH_REMATCH[3]}"
   else
@@ -35,15 +34,14 @@ function env2ini::read_config_to_env() {
   env2ini::log "    + '${setting}'"
 
   if [[ -z "${section}" ]]; then
-    export "ENV_TO_INI____${setting^^}=${value}"
-    # '^^' makes the variable content uppercase
+    export "ENV_TO_INI____${setting^^}=${value}"                           # '^^' makes the variable content uppercase
     return
   fi
 
-  local masked_section="${section//./_0X2E_}" # '//' instructs to replace all matches
+  local masked_section="${section//./_0X2E_}"                            # '//' instructs to replace all matches
   masked_section="${masked_section//-/_0X2D_}"
 
-  export "ENV_TO_INI__${masked_section^^}__${setting^^}=${value}" # '^^' makes the variable content uppercase
+  export "ENV_TO_INI__${masked_section^^}__${setting^^}=${value}"        # '^^' makes the variable content uppercase
 }
 
 function env2ini::reload_preset_envs() {
@@ -56,8 +54,7 @@ function env2ini::reload_preset_envs() {
     fi
 
     # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new line
-    local setting
-    setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
+    local setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
 
     if [[ -z "${setting}" ]]; then
       env2ini::log '  ! invalid setting'
@@ -65,7 +62,7 @@ function env2ini::reload_preset_envs() {
     fi
 
     local value=''
-    local regex="^${setting}(\\s*)=(\\s*)(.*)"
+    local regex="^${setting}(\s*)=(\s*)(.*)"
     if [[ $line =~ $regex ]]; then
       value="${BASH_REMATCH[3]}"
     else
@@ -75,18 +72,16 @@ function env2ini::reload_preset_envs() {
 
     env2ini::log "  + '${setting}'"
 
-    export "${setting^^}=${value}"
-    # '^^' makes the variable content uppercase
+    export "${setting^^}=${value}"                           # '^^' makes the variable content uppercase
   done < "/tmp/existing-envs"
 
   rm /tmp/existing-envs
 }
 
+
 function env2ini::process_config_file() {
-  local config_file
-  local section
-  config_file="${1}"
-  section="$(basename "${config_file}")"
+  local config_file="${1}"
+  local section="$(basename "${config_file}")"
 
   if [[ $section == '_generals_' ]]; then
     env2ini::log "  [ini root]"
@@ -95,23 +90,23 @@ function env2ini::process_config_file() {
     env2ini::log "  ${section}"
   fi
 
-  cat "${config_file}"
-
   while read -r line; do
     env2ini::read_config_to_env "${section}" "${line}"
-  done < <(awk 1 "${config_file}") # Helm .toYaml trims the trailing new line which breaks line processing; awk 1 ... adds it back while reading
+  done < <(awk 1 "${config_file}")                             # Helm .toYaml trims the trailing new line which breaks line processing; awk 1 ... adds it back while reading
 }
 
 function env2ini::load_config_sources() {
   local path="${1}"
 
-  env2ini::log "Processing $(basename "${path}")..."
+  if [[ -d "${path}" ]]; then
+    env2ini::log "Processing $(basename "${path}")..."
 
-  while read -r -d '' configFile; do
-    env2ini::process_config_file "${configFile}"
-  done < <(find "${path}" -type l -not -name '..data' -print0)
+    while read -d '' configFile; do
+      env2ini::process_config_file "${configFile}"
+    done < <(find "${path}" -type l -not -name '..data' -print0)
 
-  env2ini::log "\n"
+    env2ini::log "\n"
+  fi
 }
 
 function env2ini::generate_initial_secrets() {
@@ -120,12 +115,10 @@ function env2ini::generate_initial_secrets() {
   #   - initially used to set up Gitea
   # Anyway, they won't harm existing app.ini files
 
-  export ENV_TO_INI__SECURITY__INTERNAL_TOKEN
-  export ENV_TO_INI__SECURITY__SECRET_KEY
-  export ENV_TO_INI__OAUTH2__JWT_SECRET
-  ENV_TO_INI__SECURITY__INTERNAL_TOKEN=$(gitea generate secret INTERNAL_TOKEN)
-  ENV_TO_INI__SECURITY__SECRET_KEY=$(gitea generate secret SECRET_KEY)
-  ENV_TO_INI__OAUTH2__JWT_SECRET=$(gitea generate secret JWT_SECRET)
+  export ENV_TO_INI__SECURITY__INTERNAL_TOKEN=$(gitea generate secret INTERNAL_TOKEN)
+  export ENV_TO_INI__SECURITY__SECRET_KEY=$(gitea generate secret SECRET_KEY)
+  export ENV_TO_INI__OAUTH2__JWT_SECRET=$(gitea generate secret JWT_SECRET)
+  export ENV_TO_INI__SERVER__LFS_JWT_SECRET=$(gitea generate secret LFS_JWT_SECRET)
 
   env2ini::log "...Initial secrets generated\n"
 }
@@ -144,15 +137,17 @@ env2ini::reload_preset_envs
 env2ini::log "=== All configuration sources loaded ===\n"
 
 # safety to prevent rewrite of secret keys if an app.ini already exists
-if [ -f "${GITEA_APP_INI}" ]; then
+if [ -f ${GITEA_APP_INI} ]; then
   env2ini::log 'An app.ini file already exists. To prevent overwriting secret keys, these settings are dropped and remain unchanged:'
   env2ini::log '  - security.INTERNAL_TOKEN'
   env2ini::log '  - security.SECRET_KEY'
   env2ini::log '  - oauth2.JWT_SECRET'
+  env2ini::log '  - server.LFS_JWT_SECRET'
 
   unset ENV_TO_INI__SECURITY__INTERNAL_TOKEN
   unset ENV_TO_INI__SECURITY__SECRET_KEY
   unset ENV_TO_INI__OAUTH2__JWT_SECRET
+  unset ENV_TO_INI__SERVER__LFS_JWT_SECRET
 fi
 
-environment-to-ini -o "$GITEA_APP_INI" -p ENV_TO_INI
+environment-to-ini -o $GITEA_APP_INI -p ENV_TO_INI

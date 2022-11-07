@@ -1,5 +1,6 @@
-defmodule Mix.Tasks.GenResource do
+defmodule Mix.Tasks.Gen.Resource do
   @moduledoc "The mix task to generate a resource code module from yaml"
+  @shortdoc "Elixir resource skeletons from yaml"
 
   use Mix.Task
 
@@ -21,7 +22,8 @@ defmodule Mix.Tasks.GenResource do
     "operator.tekton.dev/release",
     "chart",
     "release",
-    "heritage"
+    "heritage",
+    "version"
   ]
 
   @max_config_string_size 128
@@ -795,6 +797,7 @@ defmodule Mix.Tasks.GenResource do
         import KubeExt.Yaml
 
         alias KubeResources.ExampleSettings, as: Settings
+        alias KubeExt.Builder, as: B
         alias KubeExt.Secret
 
         @app unquote(app_name)
@@ -820,6 +823,7 @@ defmodule Mix.Tasks.GenResource do
         import KubeExt.Yaml
 
         alias KubeResources.ExampleSettings, as: Settings
+        alias KubeExt.Builder, as: B
         alias KubeExt.Secret
 
         @app unquote(app_name)

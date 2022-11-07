@@ -3,7 +3,7 @@ defmodule CommonUI.Link do
   import Phoenix.Component, except: [link: 1]
   import CommonUI.CSSHelpers
 
-  attr :navigate, :any
+  attr :navigate, :any, default: nil
 
   attr :href, :any
 

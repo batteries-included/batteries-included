@@ -19,14 +19,14 @@ defmodule ControlServerWeb.SystemBatteryLiveTest do
       assert html =~ Atom.to_string(system_battery.group)
     end
 
-    test "deletes system_battery in listing", %{conn: conn, system_battery: _system_battery} do
+    test "deletes system_battery in listing", %{conn: conn, system_battery: system_battery} do
       {:ok, index_live, _html} = live(conn, ~p"/batteries")
 
       assert index_live
-             |> element("#system_batteries-0 a", "Delete")
+             |> element("#system_batteries-#{system_battery.id} a", "Delete")
              |> render_click()
 
-      refute has_element?(index_live, "#system_battery-0")
+      refute has_element?(index_live, "#system_battery-#{system_battery.id}")
     end
   end
 

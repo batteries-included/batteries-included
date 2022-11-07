@@ -11,9 +11,9 @@ defmodule KubeRawResources.DataSettings do
   @pg_operator_image "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2"
   @pg_image "registry.opensource.zalan.do/acid/spilo-14:2.1-p7"
   @pg_logical_backup_image "registry.opensource.zalan.do/acid/logical-backup:v1.8.2"
-  @pg_bouncer_image "registry.opensource.zalan.do/acid/pgbouncer:master-24"
+  @pg_bouncer_image "registry.opensource.zalan.do/acid/pgbouncer:master-25"
 
-  @redis_operator_image "quay.io/spotahome/redis-operator:v1.2.1"
+  @redis_operator_image "quay.io/spotahome/redis-operator:v1.2.2"
 
   @ceph_image "quay.io/ceph/ceph:v17.2.3"
 

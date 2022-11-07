@@ -7,6 +7,8 @@ defmodule ControlServer.Postgres.Cluster do
 
   alias KubeRawResources.RawCluster
 
+  require Logger
+
   @timestamps_opts [type: :utc_datetime_usec]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -14,12 +16,12 @@ defmodule ControlServer.Postgres.Cluster do
   typed_schema "pg_clusters" do
     field :name, :string
     field :num_instances, :integer, default: 1
-    field :postgres_version, :string, default: "13"
+    field :postgres_version, :string, default: "14"
     field :team_name, :string, default: "pg"
     field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
     field :storage_size, :string
-    field :users, {:map, {:array, :string}}
-    field :databases, {:map, :string}
+    embeds_many :users, ControlServer.Postgres.PGUser, on_replace: :delete
+    embeds_many :databases, ControlServer.Postgres.PGDatabase, on_replace: :delete
     timestamps()
   end
 
@@ -32,10 +34,10 @@ defmodule ControlServer.Postgres.Cluster do
       :postgres_version,
       :team_name,
       :type,
-      :storage_size,
-      :users,
-      :databases
+      :storage_size
     ])
+    |> cast_embed(:users)
+    |> cast_embed(:databases)
     |> validate_required([
       :name,
       :postgres_version,

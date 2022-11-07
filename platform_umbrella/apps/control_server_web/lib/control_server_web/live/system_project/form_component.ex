@@ -15,15 +15,17 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={{f, :name}} type="text" label="name" />
+        <.input field={{f, :name}} type="text" label="Name" />
         <.input
           field={{f, :type}}
           type="select"
-          label="type"
+          label="Type"
           prompt="Choose a value"
           options={Ecto.Enum.values(Projects.SystemProject, :type)}
         />
-        <.input field={{f, :description}} type="textarea" label="description" />
+        <div class="sm:col-span-2">
+          <.input field={{f, :description}} type="textarea" label="Description" />
+        </div>
         <:actions>
           <.button phx-disable-with="Saving...">Save System project</.button>
         </:actions>

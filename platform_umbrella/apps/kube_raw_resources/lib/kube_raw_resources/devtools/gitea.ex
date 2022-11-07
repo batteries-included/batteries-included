@@ -4,12 +4,12 @@ defmodule KubeRawResources.Gitea do
   @team "pg"
   @default_pg_cluster %{
     :name => @cluster_name,
-    :postgres_version => "13",
+    :postgres_version => "14",
     :num_instances => 1,
     :storage_size => "200M",
     :type => :internal,
-    :users => %{@username => ["superuser", "createrole", "createdb", "login"]},
-    :databases => %{"gitea" => @username},
+    :users => [%{username: @username, roles: ["superuser", "createrole", "createdb", "login"]}],
+    :databases => [%{name: "gitea", owner: @username}],
     :team_name => @team
   }
 

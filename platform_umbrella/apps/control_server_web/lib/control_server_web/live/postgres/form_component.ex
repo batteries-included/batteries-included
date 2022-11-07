@@ -1,10 +1,12 @@
 defmodule ControlServerWeb.Live.PostgresFormComponent do
   use ControlServerWeb, :live_component
 
+  import Phoenix.HTML.Form, only: [inputs_for: 2]
+
   alias ControlServer.Postgres
   alias ControlServer.Postgres.Cluster
-
-  require Logger
+  alias ControlServer.Postgres.PGUser
+  alias ControlServer.Postgres.PGDatabase
 
   @impl true
   def mount(socket) do
@@ -22,8 +24,44 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
+     |> assign(:possible_owners, possible_owners(changeset))
      |> assign(:full_name, Cluster.full_name(cluster))
      |> assign(:num_instances, cluster.num_instances)}
+  end
+
+  def handle_event("add_user", _, %{assigns: %{changeset: changeset, cluster: cluster}} = socket) do
+    users =
+      changeset
+      |> Map.get(:changes)
+      |> Map.get(:users, cluster.users || [])
+      |> Enum.concat([%PGUser{username: "user", roles: ["login"]}])
+
+    final_changeset = Ecto.Changeset.put_embed(changeset, :users, users)
+
+    {:noreply,
+     socket
+     |> assign(changeset: final_changeset)
+     |> assign(:possible_owners, possible_owners(final_changeset))}
+  end
+
+  def handle_event(
+        "add_database",
+        _,
+        %{assigns: %{changeset: changeset, cluster: cluster}} = socket
+      ) do
+    dbg(cluster)
+
+    databases =
+      changeset.changes
+      |> Map.get(:databases, cluster.databases || [])
+      |> Enum.concat([%PGDatabase{}])
+
+    final_changeset = Ecto.Changeset.put_embed(changeset, :databases, databases)
+
+    {:noreply,
+     socket
+     |> assign(changeset: final_changeset)
+     |> assign(:possible_owners, possible_owners(final_changeset))}
   end
 
   @impl true
@@ -32,7 +70,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
     {:noreply,
      socket
-     |> assign(:changeset, changeset)
+     |> assign(changeset: changeset)
+     |> assign(:possible_owners, possible_owners(changeset))
      |> assign(:full_name, Cluster.full_name(data))
      |> assign(:num_instances, data.num_instances)}
   end
@@ -74,6 +113,109 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     socket
   end
 
+  def users_form(assigns) do
+    ~H"""
+    <.h2 class="col-span-2 mt-16">Users</.h2>
+    <div class="sm:col-span-2">
+      <div class="grid grid-cols-12 gap-y-6 gap-x-4">
+        <%= for user_form <- inputs_for(@form, :users) do %>
+          <div class="col-span-4">
+            <.input field={{user_form, :username}} label="Username" />
+          </div>
+          <div class="col-span-7">
+            <.input
+              field={{user_form, :roles}}
+              label="Roles"
+              type="select"
+              multiple={true}
+              options={PGUser.possible_roles()}
+            />
+          </div>
+          <div class="col-span-1">
+            <.link phx-click="rm_user" phx-target={@target} class="text-sm" type="styled">
+              <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
+            </.link>
+          </div>
+        <% end %>
+
+        <.link
+          phx-click="add_user"
+          phx-target={@target}
+          class="pt-5 text-lg col-span-12"
+          type="styled"
+        >
+          Add User
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  def databases_form(assigns) do
+    ~H"""
+    <.h2 class="col-span-2 mt-16">Databases</.h2>
+    <div class="sm:col-span-2">
+      <div class="grid grid-cols-12 gap-y-6 gap-x-4">
+        <%= for database_form <- inputs_for(@form, :databases) do %>
+          <div class="col-span-4">
+            <.input field={{database_form, :name}} label="Name" />
+          </div>
+          <div class="col-span-7">
+            <.input
+              field={{database_form, :owner}}
+              label="Owner"
+              type="select"
+              options={@possible_owners}
+            />
+          </div>
+          <div class="col-span-1">
+            <.link phx-click="rm_user" phx-target={@target} class="text-sm" type="styled">
+              <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
+            </.link>
+          </div>
+        <% end %>
+
+        <.link
+          phx-click="add_database"
+          phx-target={@target}
+          class="pt-5 text-lg col-span-12"
+          type="styled"
+        >
+          Add Database
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  defp possible_owners(%{data: data} = changeset) do
+    # get any possible owners from changesets of adding users
+    changes_usernames =
+      changeset
+      |> Map.get(:changes, %{})
+      |> Map.get(:users, [])
+      |> Enum.map(& &1.data.username)
+
+    # Existing users are always possible
+    user_usernames =
+      data
+      |> Map.get(:users, [])
+      |> Enum.map(& &1.username)
+
+    # Finally assume that previous owners are ok
+    existing_owners =
+      data
+      |> Map.get(:databases, [])
+      |> Enum.map(& &1.owner)
+
+    user_usernames
+    |> Enum.concat(existing_owners)
+    |> Enum.concat(changes_usernames)
+    |> Enum.filter(&(&1 != nil))
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -101,6 +243,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           <.labeled_definition title="Number of Instances" contents={@num_instances} />
         </div>
         <.input field={{f, :storage_size}} placeholder="Storage Size" />
+        <.users_form form={f} target={@myself} />
+        <.databases_form form={f} target={@myself} possible_owners={@possible_owners} />
+
         <:actions>
           <.button type="submit" phx-disable-with="Saving…">
             Save

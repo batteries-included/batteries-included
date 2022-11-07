@@ -55,8 +55,8 @@ defmodule KubeRawResources.Database do
       "volume" => %{
         "size" => storage_size(cluster)
       },
-      "users" => users(cluster),
-      "databases" => databases(cluster),
+      "users" => spec_users(cluster),
+      "databases" => spec_databases(cluster),
       "sidecars" => [
         exporter_sidecar(cluster)
       ]

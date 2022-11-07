@@ -5,22 +5,26 @@ defmodule ControlServer.PostgresTest do
 
   describe "clusters" do
     alias ControlServer.Postgres.Cluster
+    alias ControlServer.Postgres.PGUser
 
     @valid_attrs %{
       name: "some name",
       num_instances: 2,
       postgres_version: "12.1",
       storage_size: "500Mi",
-      users: %{"userone" => ["superuser"]},
-      databases: %{"maindata" => "userone"}
+      users: [%{username: "userone", roles: ["superuser"]}],
+      databases: [%{name: "maindata", owner: "userone"}]
     }
     @update_attrs %{
       name: "some updated name",
       num_instances: 3,
       postgres_version: "13",
       storage_size: "250Mi",
-      users: %{"userone" => ["superuser"], "usertwo" => ["nologin"]},
-      databases: %{"maindata" => "userone", "testdata" => "usertwo"}
+      users: [
+        %{username: "userone", roles: ["superuser"]},
+        %{username: "usertwo", roles: ["nologin"]}
+      ],
+      databases: [%{name: "maindata", owner: "userone"}, %{name: "testdata", owner: "usertwo"}]
     }
     @invalid_attrs %{name: nil, num_instances: nil, postgres_version: nil, size: nil}
 
@@ -49,7 +53,7 @@ defmodule ControlServer.PostgresTest do
       assert cluster.num_instances == 2
       assert cluster.postgres_version == "12.1"
       assert cluster.storage_size == "500Mi"
-      assert cluster.users == %{"userone" => ["superuser"]}
+      assert cluster.users == [%PGUser{username: "userone", roles: ["superuser"]}]
     end
 
     test "create_cluster/1 with invalid data returns error changeset" do

@@ -4,16 +4,16 @@ defmodule KubeRawResources.Harbor do
   @team "pg"
   @default_pg_cluster %{
     :name => @cluster_name,
-    :postgres_version => "13",
+    :postgres_version => "14",
     :num_instances => 1,
     :storage_size => "200M",
     :type => :internal,
-    :users => %{@username => ["superuser", "createrole", "createdb", "login"]},
-    :databases => %{
-      "registry" => @username,
-      "harbor" => @username,
-      "notary_signer" => @username
-    },
+    :users => [%{username: @username, roles: ["superuser", "createrole", "createdb", "login"]}],
+    :databases => [
+      %{name: "registry", owner: @username},
+      %{name: "harbor", owner: @username},
+      %{name: "notary_signer", owner: @username}
+    ],
     :team_name => @team
   }
 

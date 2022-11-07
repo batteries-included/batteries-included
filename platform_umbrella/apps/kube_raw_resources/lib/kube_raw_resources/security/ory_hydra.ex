@@ -8,8 +8,8 @@ defmodule KubeRawResources.OryHydra do
     :num_instances => 1,
     :storage_size => "200M",
     :type => :internal,
-    :users => %{@username => ["superuser", "createrole", "createdb", "login"]},
-    :databases => %{"root" => @username, "hydra" => @username},
+    :users => [%{username: @username, roles: ["superuser", "createrole", "createdb", "login"]}],
+    :databases => [%{name: "root", owner: @username}, %{name: "hydra", owner: @username}],
     :team_name => @team
   }
 
