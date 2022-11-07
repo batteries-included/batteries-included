@@ -4,7 +4,8 @@ defmodule ControlServer.Batteries.Catalog do
   @all [
     # Data
     %CatalogBattery{group: :data, type: :data, dependencies: [:battery_core]},
-    %CatalogBattery{group: :data, type: :redis, dependencies: [:data, :battery_core]},
+    %CatalogBattery{group: :data, type: :redis_operator, dependencies: [:battery_core]},
+    %CatalogBattery{group: :data, type: :redis, dependencies: [:data, :redis_operator]},
     %CatalogBattery{
       group: :data,
       type: :postgres_operator,

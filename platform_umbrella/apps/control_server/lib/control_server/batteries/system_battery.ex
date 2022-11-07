@@ -40,6 +40,7 @@ defmodule ControlServer.Batteries.SystemBattery do
     :prometheus_operator,
     :prometheus_stack,
     :promtail,
+    :redis_operator,
     :redis,
     :rook,
     :tekton_operator
