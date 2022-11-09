@@ -2,8 +2,9 @@ defmodule KubeResources.NodeExporter do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "node-exporter"
+  @app_name "node-exporter"
 
   resource(:service_account_battery_prometheus_node_exporter, battery, _state) do
     namespace = Settings.namespace(battery.config)
@@ -12,7 +13,7 @@ defmodule KubeResources.NodeExporter do
     |> Map.put("imagePullSecrets", [])
     |> B.name("battery-prometheus-node-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_battery_prometheus_node_exporter, battery, _state) do
@@ -21,13 +22,13 @@ defmodule KubeResources.NodeExporter do
     B.build_resource(:service)
     |> B.name("battery-prometheus-node-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [
         %{"name" => "http-metrics", "port" => 9100, "protocol" => "TCP", "targetPort" => 9100}
       ],
       "selector" => %{
-        "battery/app" => @app,
+        "battery/app" => @app_name,
         "battery/component" => "prometheus-node-exporter"
       },
       "type" => "ClusterIP"
@@ -40,19 +41,19 @@ defmodule KubeResources.NodeExporter do
     B.build_resource(:daemon_set)
     |> B.name("battery-prometheus-node-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("prometheus-node-exporter")
     |> B.spec(%{
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app,
+          "battery/app" => @app_name,
           "battery/component" => "prometheus-node-exporter"
         }
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/component" => "prometheus-node-exporter",
             "battery/managed" => "true"
           }
@@ -145,7 +146,7 @@ defmodule KubeResources.NodeExporter do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -413,7 +414,7 @@ defmodule KubeResources.NodeExporter do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node-exporter.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [
@@ -486,7 +487,7 @@ defmodule KubeResources.NodeExporter do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node-network")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -518,13 +519,13 @@ defmodule KubeResources.NodeExporter do
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-node-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [%{"port" => "http-metrics", "scheme" => "http"}],
       "jobLabel" => "battery/app",
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app
+          "battery/app" => @app_name
         }
       }
     })

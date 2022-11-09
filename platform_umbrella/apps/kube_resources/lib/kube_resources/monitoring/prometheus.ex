@@ -5,10 +5,11 @@ defmodule KubeResources.Prometheus do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.VirtualService
 
-  @app "prometheus"
+  @app_name "prometheus"
   @url_base "/x/prometheus"
 
   def view_url, do: view_url(KubeExt.cluster_type())
@@ -24,7 +25,7 @@ defmodule KubeResources.Prometheus do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name("prometheus")
     |> B.spec(VirtualService.rewriting("/x/prometheus", "battery-prometheus-prometheus"))
   end
@@ -32,7 +33,7 @@ defmodule KubeResources.Prometheus do
   resource(:cluster_role_battery_kube_prometheus_prometheus) do
     B.build_resource(:cluster_role)
     |> B.name("battery-prometheus-prometheus")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => [""],
@@ -53,7 +54,7 @@ defmodule KubeResources.Prometheus do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-prometheus-prometheus")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack-prometheus")
     |> B.role_ref(B.build_cluster_role_ref("battery-prometheus-prometheus"))
     |> B.subject(B.build_service_account("battery-prometheus-prometheus", namespace))
@@ -65,7 +66,7 @@ defmodule KubeResources.Prometheus do
     B.build_resource(:prometheus)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "alerting" => %{
         "alertmanagers" => [
@@ -116,7 +117,7 @@ defmodule KubeResources.Prometheus do
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_prometheus, battery, _state) do
@@ -125,7 +126,7 @@ defmodule KubeResources.Prometheus do
     B.build_resource(:service)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("self-monitor", "true")
     |> B.spec(%{
       "ports" => [%{"name" => "http-web", "port" => 9090, "targetPort" => 9090}],
@@ -143,12 +144,12 @@ defmodule KubeResources.Prometheus do
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [%{"path" => "/metrics", "port" => "http-web"}],
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "selector" => %{
-        "matchLabels" => %{"battery/app" => @app, "self-monitor" => "true"}
+        "matchLabels" => %{"battery/app" => @app_name, "self-monitor" => "true"}
       }
     })
   end
@@ -159,7 +160,7 @@ defmodule KubeResources.Prometheus do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{

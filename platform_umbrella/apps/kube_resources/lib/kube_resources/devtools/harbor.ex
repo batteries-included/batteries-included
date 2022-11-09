@@ -3,14 +3,17 @@ defmodule KubeResources.Harbor do
   use KubeExt.IncludeResource, nginx_conf: "priv/raw_files/harbor/nginx.conf"
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.DevtoolsSettings, as: Settings
-  alias KubeResources.IstioConfig.VirtualService
-  alias KubeResources.IstioConfig.HttpRoute
-  alias KubeExt.Secret
-  alias Ymlr.Encoder, as: YamlEncoder
+  alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
+  alias KubeExt.Secret
 
-  @app "harbor"
+  alias KubeResources.DevtoolsSettings, as: Settings
+  alias KubeResources.IstioConfig.HttpRoute
+  alias KubeResources.IstioConfig.VirtualService
+
+  alias Ymlr.Encoder, as: YamlEncoder
+
+  @app_name "harbor"
 
   @core_secret "harbor-core"
   @jobservice_secret "harbor-jobservice"
@@ -37,7 +40,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name("harbor-host-vs")
     |> B.spec(
       VirtualService.new(
@@ -56,7 +59,7 @@ defmodule KubeResources.Harbor do
   defp build_secret(name, namespace, data) do
     B.build_resource(:secret)
     |> B.name(name)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.data(Secret.encode(data))
   end
@@ -111,7 +114,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:secret)
     |> B.name(@registryctl_secret)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
   end
 
@@ -172,7 +175,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:config_map)
     |> B.name(@core_config)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -194,7 +197,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:config_map)
     |> B.name("harbor-jobservice-env")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -208,7 +211,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:config_map)
     |> B.name("harbor-jobservice")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -251,7 +254,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:config_map)
     |> B.name("harbor-portal")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -266,7 +269,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:config_map)
     |> B.name("harbor-registry")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -333,7 +336,7 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:config_map)
     |> B.name("harbor-registryctl")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
   end
 
@@ -355,7 +358,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("component", "jobservice")
   end
 
@@ -377,7 +380,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("component", "registry")
   end
 
@@ -402,7 +405,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-core")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_1, battery, _state) do
@@ -426,7 +429,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_2, battery, _state) do
@@ -449,7 +452,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_3, battery, _state) do
@@ -476,7 +479,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_4, battery, _state) do
@@ -500,7 +503,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:deployment, battery, _state) do
@@ -676,7 +679,7 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-core")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("component", "core")
     |> B.spec(spec)
   end
@@ -806,7 +809,7 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("component", "jobservice")
     |> B.spec(spec)
   end
@@ -890,7 +893,7 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("component", "portal")
     |> B.spec(spec)
   end
@@ -1109,7 +1112,7 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("component", "registry")
     |> B.spec(spec)
   end
@@ -1324,7 +1327,7 @@ defmodule KubeResources.Harbor do
     B.build_resource(:stateful_set)
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("component", "trivy")
     |> B.spec(spec)
   end

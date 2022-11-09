@@ -12,7 +12,7 @@ defmodule KubeResources.PostgresOperator do
   alias KubeResources.DataSettings, as: Settings
   alias KubeResources.PostgresPod
 
-  @app "postgres-operator"
+  @app_name "postgres-operator"
   @operator_cluster_role "battery-postgres-operator"
 
   def materialize(battery, state) do
@@ -53,7 +53,7 @@ defmodule KubeResources.PostgresOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-postgres-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref(@operator_cluster_role))
     |> B.subject(B.build_service_account("postgres-operator", namespace))
   end
@@ -61,7 +61,7 @@ defmodule KubeResources.PostgresOperator do
   def cluster_role_postgres_operator(_battery, _state) do
     B.build_resource(:cluster_role)
     |> B.name(@operator_cluster_role)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => ["acid.zalan.do"],
@@ -174,19 +174,19 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:deployment)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app,
+          "battery/app" => @app_name,
           "battery/component" => "postgres-operator"
         }
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/component" => "postgres-operator",
             "battery/managed" => "true"
           }
@@ -254,7 +254,7 @@ defmodule KubeResources.PostgresOperator do
     namespace = Settings.namespace(battery.config)
 
     B.build_resource(:config_map)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.name("postgres-infrauser-config")
     |> B.data(%{
@@ -266,7 +266,7 @@ defmodule KubeResources.PostgresOperator do
     namespace = Settings.namespace(battery.config)
 
     B.build_resource(:secret)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.name("postgres-infrauser-config")
     |> B.data(%{
@@ -399,7 +399,7 @@ defmodule KubeResources.PostgresOperator do
     |> Map.put("configuration", maybe_add_infrausers(config, should_include_dev_infrausers()))
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   def service_account_postgres_operator(battery, _state) do
@@ -408,7 +408,7 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:service_account)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   def service_postgres_operator(battery, _state) do
@@ -417,7 +417,7 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:service)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
       "selector" => %{

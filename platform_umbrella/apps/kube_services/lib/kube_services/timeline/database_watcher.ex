@@ -17,7 +17,7 @@ defmodule KubeServices.Timeline.DatabaseWatcher do
 
   @impl true
   def init(%State{source_type: type} = state) do
-    DatabaseEventCenter.subscribe(type)
+    :ok = DatabaseEventCenter.subscribe(type)
     {:ok, state}
   end
 

@@ -131,12 +131,13 @@ defmodule ControlServerWeb.TimelineDisplay do
     """
   end
 
-  defp icon_url(nil), do: icon_url("system_user")
-
-  defp icon_url(user_id) do
+  @spec icon_url(any()) :: binary()
+  defp icon_url(user_id) when is_binary(user_id) do
     encoded_who = URI.encode(user_id)
     "https://robohash.org/#{encoded_who}.png?set=set1"
   end
+
+  defp icon_url(_), do: icon_url("system_user")
 
   defp display_when(nil), do: "Unknown Time"
   defp display_when(datetime), do: Timex.from_now(datetime)

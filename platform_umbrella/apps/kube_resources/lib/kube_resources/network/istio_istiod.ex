@@ -6,15 +6,16 @@ defmodule KubeResources.IstioIstiod do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.NetworkSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "istio_istiod"
+  @app_name "istio_istiod"
 
   resource(:cluster_role_binding_istio_reader_clusterrole_battery_istio, battery, _state) do
     namespace = Settings.istio_namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istio-reader-clusterrole-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istio-reader")
     |> B.role_ref(B.build_cluster_role_ref("istio-reader-clusterrole-battery-istio"))
     |> B.subject(B.build_service_account("istio-reader-service-account", namespace))
@@ -25,7 +26,7 @@ defmodule KubeResources.IstioIstiod do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istiod-clusterrole-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.role_ref(B.build_cluster_role_ref("istiod-clusterrole-battery-istio"))
     |> B.subject(B.build_service_account("istiod", namespace))
@@ -36,7 +37,7 @@ defmodule KubeResources.IstioIstiod do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istiod-gateway-controller-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.role_ref(B.build_cluster_role_ref("istiod-gateway-controller-battery-istio"))
     |> B.subject(B.build_service_account("istiod", namespace))
@@ -45,7 +46,7 @@ defmodule KubeResources.IstioIstiod do
   resource(:cluster_role_istio_reader_clusterrole_battery_istio) do
     B.build_resource(:cluster_role)
     |> B.name("istio-reader-clusterrole-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istio-reader")
     |> B.rules([
       %{
@@ -118,7 +119,7 @@ defmodule KubeResources.IstioIstiod do
   resource(:cluster_role_istiod_clusterrole_battery_istio) do
     B.build_resource(:cluster_role)
     |> B.name("istiod-clusterrole-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.rules([
       %{
@@ -241,7 +242,7 @@ defmodule KubeResources.IstioIstiod do
   resource(:cluster_role_istiod_gateway_controller_battery_istio) do
     B.build_resource(:cluster_role)
     |> B.name("istiod-gateway-controller-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.rules([
       %{
@@ -271,7 +272,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:config_map)
     |> B.name("istio")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.label("operator.istio.io/component", "Pilot")
     |> B.data(data)
@@ -286,7 +287,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:config_map)
     |> B.name("istio-sidecar-injector")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.label("operator.istio.io/component", "Pilot")
     |> B.data(data)
@@ -298,7 +299,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:deployment)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.label("istio", "pilot")
     |> B.label("istio.io/rev", "default")
@@ -436,7 +437,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:horizontal_pod_autoscaler)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.label("istio.io/rev", "default")
     |> B.label("operator.istio.io/component", "Pilot")
@@ -462,7 +463,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:istio_envoy_filter)
     |> B.name("stats-filter-1.13")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.spec(%{
       "configPatches" => [
@@ -596,7 +597,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:istio_envoy_filter)
     |> B.name("stats-filter-1.14")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.spec(%{
       "configPatches" => [
@@ -730,7 +731,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:istio_envoy_filter)
     |> B.name("stats-filter-1.15")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.spec(%{
       "configPatches" => [
@@ -864,7 +865,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:istio_envoy_filter)
     |> B.name("tcp-stats-filter-1.13")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.spec(%{
       "configPatches" => [
@@ -981,7 +982,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:istio_envoy_filter)
     |> B.name("tcp-stats-filter-1.14")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.spec(%{
       "configPatches" => [
@@ -1098,7 +1099,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:istio_envoy_filter)
     |> B.name("tcp-stats-filter-1.15")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio.io/rev", "default")
     |> B.spec(%{
       "configPatches" => [
@@ -1214,7 +1215,7 @@ defmodule KubeResources.IstioIstiod do
 
     B.build_resource(:mutating_webhook_config)
     |> B.name("istio-sidecar-injector-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("sidecar-injector")
     |> B.label("istio.io/rev", "default")
     |> B.label("operator.istio.io/component", "Pilot")
@@ -1361,7 +1362,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:pod_disruption_budget)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.label("istio", "pilot")
     |> B.label("istio.io/rev", "default")
@@ -1378,7 +1379,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:role_binding)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.role_ref(B.build_role_ref("istiod"))
     |> B.subject(B.build_service_account("istiod", namespace))
@@ -1390,7 +1391,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:role)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.rules([
       %{
@@ -1412,7 +1413,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:service_account)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
   end
 
@@ -1422,7 +1423,7 @@ defmodule KubeResources.IstioIstiod do
     B.build_resource(:service)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.label("istio", "pilot")
     |> B.label("istio.io/rev", "default")

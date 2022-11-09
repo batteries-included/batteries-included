@@ -39,14 +39,14 @@ defmodule KubeResources.Rook do
   alias KubeResources.DataSettings, as: Settings
   alias KubeExt.Builder, as: B
 
-  @app "rook"
+  @app_name "rook"
 
   resource(:cluster_role_binding_ceph_global, battery, _state) do
     namespace = Settings.public_namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-global")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-global"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
@@ -57,7 +57,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-mgr-cluster")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-mgr-cluster"))
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
@@ -67,7 +67,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-object-bucket")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-object-bucket"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
@@ -77,7 +77,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-osd")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-osd"))
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
@@ -87,7 +87,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-system")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-system"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
@@ -98,7 +98,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-system-psp")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
@@ -109,7 +109,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cephfs-csi-provisioner-role")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("cephfs-external-provisioner-runner"))
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
@@ -119,7 +119,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-cephfs-plugin-sa-psp")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-cephfs-plugin-sa", namespace))
   end
@@ -129,7 +129,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-cephfs-provisioner-sa-psp")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
@@ -139,7 +139,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-rbd-plugin-sa-psp")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
   end
@@ -149,7 +149,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-rbd-provisioner-sa-psp")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
@@ -159,7 +159,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rbd-csi-nodeplugin")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("rbd-csi-nodeplugin"))
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
   end
@@ -169,7 +169,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rbd-csi-provisioner-role")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("rbd-external-provisioner-runner"))
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
@@ -291,7 +291,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-global")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -315,7 +315,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-cluster-mgmt")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -341,7 +341,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-mgr-cluster")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -353,7 +353,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-mgr-system")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -389,7 +389,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-object-bucket")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -399,7 +399,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-osd")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -416,7 +416,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rook-ceph-system")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -426,7 +426,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("cephfs-csi-nodeplugin")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -492,7 +492,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("cephfs-external-provisioner-runner")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -508,7 +508,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("psp:rook")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -530,7 +530,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rbd-csi-nodeplugin")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -612,7 +612,7 @@ defmodule KubeResources.Rook do
 
     B.build_resource(:cluster_role)
     |> B.name("rbd-external-provisioner-runner")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -659,7 +659,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:config_map)
     |> B.name("rook-ceph-operator-config")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -805,7 +805,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:deployment)
     |> B.name("rook-ceph-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.spec(spec)
   end
@@ -813,7 +813,7 @@ defmodule KubeResources.Rook do
   resource(:pod_security_policy_00_privileged) do
     B.build_resource(:pod_security_policy)
     |> B.name("00-rook-privileged")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> Map.put(
       "spec",
       %{
@@ -853,7 +853,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-cluster-mgmt")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-cluster-mgmt"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
@@ -864,7 +864,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-cmd-reporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rook-ceph-cmd-reporter"))
     |> B.subject(B.build_service_account("rook-ceph-cmd-reporter", namespace))
   end
@@ -875,7 +875,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-cmd-reporter-psp")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-ceph-cmd-reporter", namespace))
   end
@@ -886,7 +886,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-default-psp")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("default", namespace))
@@ -898,7 +898,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-mgr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rook-ceph-mgr"))
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
@@ -909,7 +909,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-mgr-psp")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
@@ -920,7 +920,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-mgr-system")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-mgr-system"))
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
@@ -931,7 +931,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-monitoring")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rook-ceph-monitoring"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
@@ -942,7 +942,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-monitoring-mgr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rook-ceph-monitoring-mgr"))
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
@@ -953,7 +953,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-osd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rook-ceph-osd"))
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
@@ -964,7 +964,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-osd-psp")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
@@ -975,7 +975,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-purge-osd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rook-ceph-purge-osd"))
     |> B.subject(B.build_service_account("rook-ceph-purge-osd", namespace))
   end
@@ -986,7 +986,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-purge-osd-psp")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-ceph-purge-osd", namespace))
   end
@@ -997,7 +997,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-rgw")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rook-ceph-rgw"))
     |> B.subject(B.build_service_account("rook-ceph-rgw", namespace))
   end
@@ -1008,7 +1008,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-rgw-psp")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-ceph-rgw", namespace))
   end
@@ -1019,7 +1019,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-system")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_role_ref("rook-ceph-system"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
@@ -1031,7 +1031,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("cephfs-csi-provisioner-role-cfg")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("cephfs-external-provisioner-cfg"))
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
@@ -1042,7 +1042,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role_binding)
     |> B.name("rbd-csi-provisioner-role-cfg")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("rbd-external-provisioner-cfg"))
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
@@ -1061,7 +1061,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-cmd-reporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1112,7 +1112,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-mgr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1130,7 +1130,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-monitoring")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1148,7 +1148,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-monitoring-mgr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1172,7 +1172,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-osd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1193,7 +1193,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-purge-osd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1204,7 +1204,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-rgw")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1233,7 +1233,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rook-ceph-system")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
   end
@@ -1252,7 +1252,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("cephfs-external-provisioner-cfg")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1270,7 +1270,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:role)
     |> B.name("rbd-external-provisioner-cfg")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -1280,7 +1280,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-ceph-cmd-reporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
   end
 
@@ -1290,7 +1290,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-ceph-mgr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
   end
 
@@ -1300,7 +1300,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-ceph-osd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
   end
 
@@ -1310,7 +1310,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-ceph-purge-osd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_ceph_rgw, battery, _state) do
@@ -1319,7 +1319,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-ceph-rgw")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
   end
 
@@ -1329,7 +1329,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-ceph-system")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("storage-backend", "ceph")
   end
 
@@ -1339,7 +1339,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-csi-cephfs-plugin-sa")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_csi_cephfs_provisioner_sa, battery, _state) do
@@ -1348,7 +1348,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-csi-cephfs-provisioner-sa")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_csi_rbd_plugin_sa, battery, _state) do
@@ -1357,7 +1357,7 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-csi-rbd-plugin-sa")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_csi_rbd_provisioner_sa, battery, _state) do
@@ -1366,6 +1366,6 @@ defmodule KubeResources.Rook do
     B.build_resource(:service_account)
     |> B.name("rook-csi-rbd-provisioner-sa")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 end

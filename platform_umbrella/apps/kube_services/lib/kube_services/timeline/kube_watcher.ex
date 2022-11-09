@@ -21,7 +21,7 @@ defmodule KubeServices.Timeline.KubeWatcher do
 
   @impl true
   def init(%State{resource_type: type} = state) do
-    KubeState.subscribe(type)
+    :ok = KubeState.subscribe(type)
     {:ok, state}
   end
 

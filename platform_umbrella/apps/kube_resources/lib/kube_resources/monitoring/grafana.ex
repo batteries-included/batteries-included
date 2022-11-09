@@ -6,12 +6,14 @@ defmodule KubeResources.Grafana do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
+
   alias KubeResources.IniConfig
   alias KubeResources.IstioConfig.VirtualService
+  alias KubeResources.MonitoringSettings, as: Settings
 
-  @app "grafana"
+  @app_name "grafana"
   @url_base "/x/grafana"
 
   def view_url, do: view_url(KubeExt.cluster_type())
@@ -27,7 +29,7 @@ defmodule KubeResources.Grafana do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name("grafana")
     |> B.spec(VirtualService.prefix("/x/grafana", "battery-grafana"))
   end
@@ -35,7 +37,7 @@ defmodule KubeResources.Grafana do
   resource(:cluster_role_battery_grafana_clusterrole) do
     B.build_resource(:cluster_role)
     |> B.name("battery-grafana-clusterrole")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => [""],
@@ -50,7 +52,7 @@ defmodule KubeResources.Grafana do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-grafana-clusterrolebinding")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("battery-grafana-clusterrole"))
     |> B.subject(B.build_service_account("battery-grafana", namespace))
   end
@@ -85,7 +87,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:config_map)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -96,7 +98,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-grafana-datasource")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_datasource", "1")
     |> B.data(data)
   end
@@ -108,7 +110,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:config_map)
     |> B.name("battery-grafana-config-dashboards")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -118,18 +120,18 @@ defmodule KubeResources.Grafana do
     B.build_resource(:deployment)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "replicas" => 1,
       "revisionHistoryLimit" => 10,
       "selector" => %{
-        "matchLabels" => %{"battery/app" => @app}
+        "matchLabels" => %{"battery/app" => @app_name}
       },
       "strategy" => %{"type" => "RollingUpdate"},
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/managed" => "true"
           }
         },
@@ -261,7 +263,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:role)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([])
   end
 
@@ -271,7 +273,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:role_binding)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("battery-grafana"))
     |> B.subject(B.build_service_account("battery-grafana", namespace))
   end
@@ -286,7 +288,7 @@ defmodule KubeResources.Grafana do
     )
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_battery_grafana, battery, _state) do
@@ -295,7 +297,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:service_account)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_battery_grafana_test, battery, _state) do
@@ -304,7 +306,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:service_account)
     |> B.name("battery-grafana-test")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_battery_grafana, battery, _state) do
@@ -313,12 +315,12 @@ defmodule KubeResources.Grafana do
     B.build_resource(:service)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [
         %{"name" => "http-web", "port" => 80, "protocol" => "TCP", "targetPort" => 3000}
       ],
-      "selector" => %{"battery/app" => @app},
+      "selector" => %{"battery/app" => @app_name},
       "type" => "ClusterIP"
     })
   end
@@ -329,7 +331,7 @@ defmodule KubeResources.Grafana do
     B.build_resource(:service_monitor)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{
@@ -343,7 +345,7 @@ defmodule KubeResources.Grafana do
       "jobLabel" => "battery/app",
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "selector" => %{
-        "matchLabels" => %{"battery/app" => @app}
+        "matchLabels" => %{"battery/app" => @app_name}
       }
     })
   end

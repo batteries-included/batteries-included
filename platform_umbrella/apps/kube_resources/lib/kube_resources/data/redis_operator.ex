@@ -10,14 +10,14 @@ defmodule KubeResources.RedisOperator do
   alias KubeResources.DataSettings, as: Settings
   alias KubeExt.Builder, as: B
 
-  @app "redis-operator"
+  @app_name "redis-operator"
 
   resource(:cluster_role_binding_redis_operator, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("redis-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("redis-operator"))
     |> B.subject(B.build_service_account("redis-operator", namespace))
   end
@@ -67,7 +67,7 @@ defmodule KubeResources.RedisOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("redis-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.rules(rules)
   end
@@ -86,7 +86,7 @@ defmodule KubeResources.RedisOperator do
         "selector",
         %{
           "matchLabels" => %{
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/component" => "redis-operator"
           }
         }
@@ -97,7 +97,7 @@ defmodule KubeResources.RedisOperator do
         %{
           "metadata" => %{
             "labels" => %{
-              "battery/app" => @app,
+              "battery/app" => @app_name,
               "battery/component" => "redis-operator",
               "battery/managed" => "true"
             }
@@ -142,7 +142,7 @@ defmodule KubeResources.RedisOperator do
     B.build_resource(:deployment)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
   end
@@ -153,7 +153,7 @@ defmodule KubeResources.RedisOperator do
     B.build_resource(:service_account)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
   end
 
@@ -168,7 +168,7 @@ defmodule KubeResources.RedisOperator do
         "selector",
         %{
           "matchLabels" => %{
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/component" => "redis-operator"
           }
         }
@@ -177,7 +177,7 @@ defmodule KubeResources.RedisOperator do
     B.build_resource(:service_monitor)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
   end
@@ -190,14 +190,14 @@ defmodule KubeResources.RedisOperator do
       |> Map.put("ports", [%{"name" => "metrics", "port" => 9710, "protocol" => "TCP"}])
       |> Map.put(
         "selector",
-        %{"battery/app" => @app, "battery/component" => "redis-operator"}
+        %{"battery/app" => @app_name, "battery/component" => "redis-operator"}
       )
       |> Map.put("type", "ClusterIP")
 
     B.build_resource(:service)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
   end

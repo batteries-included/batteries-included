@@ -5,8 +5,9 @@ defmodule KubeResources.MonitoringScheduler do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "monitoring_scheduler"
+  @app_name "monitoring_scheduler"
 
   resource(:config_map, battery, _state) do
     namespace = Settings.namespace(battery.config)
@@ -15,7 +16,7 @@ defmodule KubeResources.MonitoringScheduler do
     B.build_resource(:config_map)
     |> B.name("battery-kube-system-scheduler")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -26,7 +27,7 @@ defmodule KubeResources.MonitoringScheduler do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-system-scheduler.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -104,7 +105,7 @@ defmodule KubeResources.MonitoringScheduler do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-system-scheduler")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -133,7 +134,7 @@ defmodule KubeResources.MonitoringScheduler do
     B.build_resource(:service)
     |> B.name("battery-kube-scheduler")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("jobLabel", "kube-scheduler")
     |> B.spec(%{
       "clusterIP" => "None",
@@ -151,7 +152,7 @@ defmodule KubeResources.MonitoringScheduler do
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-scheduler")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{
@@ -163,7 +164,7 @@ defmodule KubeResources.MonitoringScheduler do
       "namespaceSelector" => %{"matchNames" => ["kube-system"]},
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app
+          "battery/app" => @app_name
         }
       }
     })

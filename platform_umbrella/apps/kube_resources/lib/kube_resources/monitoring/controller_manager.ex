@@ -3,9 +3,11 @@ defmodule KubeResources.MonitoringControllerManager do
     controller_manager_json: "priv/raw_files/prometheus_stack/controller-manager.json"
 
   use KubeExt.ResourceGenerator
-  alias KubeResources.MonitoringSettings, as: Settings
 
-  @app "monitoring_controller_manager"
+  alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
+
+  @app_name "monitoring_controller_manager"
 
   resource(:config_map, battery, _state) do
     namespace = Settings.namespace(battery.config)
@@ -14,7 +16,7 @@ defmodule KubeResources.MonitoringControllerManager do
     B.build_resource(:config_map)
     |> B.name("battery-controller-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -25,7 +27,7 @@ defmodule KubeResources.MonitoringControllerManager do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kubernetes-system-controller-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -56,7 +58,7 @@ defmodule KubeResources.MonitoringControllerManager do
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-prometheus-st-kube-controller-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{
@@ -67,7 +69,7 @@ defmodule KubeResources.MonitoringControllerManager do
       "jobLabel" => "jobLabel",
       "namespaceSelector" => %{"matchNames" => ["kube-system"]},
       "selector" => %{
-        "matchLabels" => %{"app" => @app}
+        "matchLabels" => %{"app" => @app_name}
       }
     })
   end
@@ -76,7 +78,7 @@ defmodule KubeResources.MonitoringControllerManager do
     B.build_resource(:service)
     |> B.name("battery-controller-manager")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("jobLabel", "kube-controller-manager")
     |> B.spec(%{
       "ports" => [

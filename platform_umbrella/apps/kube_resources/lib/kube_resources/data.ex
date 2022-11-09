@@ -2,7 +2,7 @@ defmodule KubeResources.Data do
   alias KubeExt.Builder, as: B
   alias KubeResources.DataSettings
 
-  @app "data-common"
+  @app_name "data-common"
 
   def materialize(battery, state) do
     %{
@@ -15,6 +15,6 @@ defmodule KubeResources.Data do
 
     B.build_resource(:namespace)
     |> B.name(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 end

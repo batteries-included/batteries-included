@@ -1,7 +1,7 @@
 defmodule KubeResources.PostgresPod do
   alias KubeExt.Builder, as: B
 
-  @app "postgres-operator"
+  @app_name "postgres-operator"
 
   @service_account "postgres-pod"
   @pod_role "postres-pod"
@@ -31,7 +31,7 @@ defmodule KubeResources.PostgresPod do
   def cluster_role_binding(namespace) do
     B.build_resource(:cluster_role_binding)
     |> B.name("#{namespace}-postgres-pod")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref(@pod_cluster_role))
     |> B.subject(B.build_service_account("postgres-pod", namespace))
   end
@@ -41,7 +41,7 @@ defmodule KubeResources.PostgresPod do
     B.build_resource(:role_binding)
     |> B.name("postgres-pod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref(@pod_role))
     |> B.subject(B.build_service_account("postgres-pod", namespace))
   end
@@ -73,7 +73,7 @@ defmodule KubeResources.PostgresPod do
 
     B.build_resource(:cluster_role)
     |> B.name(@pod_cluster_role)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -105,7 +105,7 @@ defmodule KubeResources.PostgresPod do
     B.build_resource(:role)
     |> B.name(@pod_role)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -114,6 +114,6 @@ defmodule KubeResources.PostgresPod do
     B.build_resource(:service_account)
     |> B.name("postgres-pod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 end

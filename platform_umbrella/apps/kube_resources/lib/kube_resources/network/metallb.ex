@@ -13,15 +13,16 @@ defmodule KubeResources.MetalLB do
   import KubeExt.Yaml
 
   alias KubeResources.NetworkSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "metallb"
+  @app_name "metallb"
 
   resource(:namespace, battery, _state) do
     namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:namespace)
     |> B.name(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio-injection", "false")
   end
 
@@ -30,7 +31,7 @@ defmodule KubeResources.MetalLB do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("metallb:controller")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("metallb:controller"))
     |> B.subject(B.build_service_account("metallb-controller", namespace))
   end
@@ -40,7 +41,7 @@ defmodule KubeResources.MetalLB do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("metallb:speaker")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("metallb:speaker"))
     |> B.subject(B.build_service_account("metallb-speaker", namespace))
   end
@@ -48,7 +49,7 @@ defmodule KubeResources.MetalLB do
   resource(:cluster_role_controller) do
     B.build_resource(:cluster_role)
     |> B.name("metallb:controller")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["services/status"], "verbs" => ["update"]},
@@ -69,7 +70,7 @@ defmodule KubeResources.MetalLB do
   resource(:cluster_role_speaker) do
     B.build_resource(:cluster_role)
     |> B.name("metallb:speaker")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => [""],
@@ -119,7 +120,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:daemon_set)
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("speaker")
     |> B.spec(%{
       "selector" => %{
@@ -221,7 +222,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:deployment)
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.spec(%{
       "selector" => %{
@@ -309,7 +310,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:pod_monitor)
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.spec(%{
       "jobLabel" => "app.kubernetes.io/name",
@@ -327,7 +328,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:pod_monitor)
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("speaker")
     |> B.spec(%{
       "jobLabel" => "app.kubernetes.io/name",
@@ -345,7 +346,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:role_binding)
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("metallb-controller"))
     |> B.subject(B.build_service_account("metallb-controller", namespace))
   end
@@ -356,7 +357,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:role_binding)
     |> B.name("metallb-pod-lister")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("metallb-pod-lister"))
     |> B.subject(B.build_service_account("metallb-speaker", namespace))
   end
@@ -367,7 +368,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:role_binding)
     |> B.name("metallb-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("metallb-prometheus"))
     |> B.subject(B.build_service_account("battery-prometheus-prometheus", namespace))
   end
@@ -378,7 +379,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:role)
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => [""],
@@ -442,7 +443,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:role)
     |> B.name("metallb-pod-lister")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["list"]},
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]},
@@ -490,7 +491,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:role)
     |> B.name("metallb-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["get", "list", "watch"]}
     ])
@@ -503,7 +504,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:secret)
     |> B.name("webhook-server-cert")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -513,7 +514,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service_account)
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("controller")
   end
 
@@ -523,7 +524,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service_account)
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("speaker")
   end
 
@@ -533,7 +534,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service)
     |> B.name("metallb-controller-monitor-service")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.label("name", "metallb-controller-monitor-service")
     |> B.spec(%{
@@ -550,7 +551,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service_monitor)
     |> B.name("metallb-controller-monitor")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.spec(%{
       "endpoints" => [%{"honorLabels" => true, "port" => "metrics"}],
@@ -566,7 +567,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service_monitor)
     |> B.name("metallb-speaker-monitor")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("speaker")
     |> B.spec(%{
       "endpoints" => [%{"honorLabels" => true, "port" => "metrics"}],
@@ -582,7 +583,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service)
     |> B.name("metallb-speaker-monitor-service")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"name" => "metrics", "port" => 7472, "targetPort" => 7472}],
       "selector" => %{"battery/app" => "metallb", "battery/component" => "speaker"},
@@ -597,7 +598,7 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service)
     |> B.name("metallb-webhook-service")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"port" => 443, "targetPort" => 9443}],
       "selector" => %{"battery/app" => "metallb", "battery/component" => "controller"}
@@ -609,7 +610,7 @@ defmodule KubeResources.MetalLB do
 
     B.build_resource(:validating_webhook_config)
     |> B.name("metallb-webhook-configuration")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1"],

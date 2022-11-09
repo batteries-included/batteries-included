@@ -5,14 +5,15 @@ defmodule KubeResources.MonitoringKubeProxy do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "monitoring_kube_proxy"
+  @app_name "monitoring_kube_proxy"
 
   resource(:service_kube_proxy) do
     B.build_resource(:service)
     |> B.name("battery-kube-proxy")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("jobLabel", "kube-proxy")
     |> B.spec(%{
       "ports" => [
@@ -28,7 +29,7 @@ defmodule KubeResources.MonitoringKubeProxy do
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-proxy")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{
@@ -40,7 +41,7 @@ defmodule KubeResources.MonitoringKubeProxy do
       "namespaceSelector" => %{"matchNames" => ["kube-system"]},
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app
+          "battery/app" => @app_name
         }
       }
     })
@@ -52,7 +53,7 @@ defmodule KubeResources.MonitoringKubeProxy do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-proxy")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -83,7 +84,7 @@ defmodule KubeResources.MonitoringKubeProxy do
     B.build_resource(:config_map)
     |> B.name("battery-kube-proxy")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end

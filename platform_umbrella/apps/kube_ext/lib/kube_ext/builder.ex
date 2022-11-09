@@ -42,11 +42,7 @@ defmodule KubeExt.Builder do
   def label(resource, key, value) do
     resource
     |> Map.put_new("metadata", %{})
-    |> update_in(~w[metadata labels], fn l -> l || %{} end)
-    |> put_in(
-      ["metadata", "labels", key],
-      value
-    )
+    |> update_in(~w[metadata labels], fn l -> Map.put_new(l || %{}, key, value) end)
   end
 
   @spec app_labels(map(), binary()) :: map()
@@ -59,11 +55,7 @@ defmodule KubeExt.Builder do
 
   @spec owner_label(map(), binary()) :: map()
   def owner_label(resource, owner_id) do
-    resource
-    |> update_in(~w(metadata), fn meta -> Map.put_new(meta || %{}, "labels", %{}) end)
-    |> update_in(~w(metadata labels), fn labels ->
-      Map.put_new(labels, "battery/owner", owner_id)
-    end)
+    label(resource, "battery/owner", owner_id)
   end
 
   @spec component_label(map(), binary()) :: map()
@@ -115,11 +107,7 @@ defmodule KubeExt.Builder do
   end
 
   defp build_rule(:http, paths) do
-    %{
-      "http" => %{
-        "paths" => paths
-      }
-    }
+    %{"http" => %{"paths" => paths}}
   end
 
   defp build_path(path, service_name, port_name) when is_binary(port_name) do
@@ -187,16 +175,6 @@ defmodule KubeExt.Builder do
       "name" => account_name,
       "namespace" => namespace
     }
-  end
-
-  def add_capture_to_rule(rule) do
-    update_in(rule, ~w(http paths), fn paths ->
-      Enum.map(paths || [], &add_capture_to_path/1)
-    end)
-  end
-
-  def add_capture_to_path(path) do
-    update_in(path, ~w(path), fn p -> p <> "(/|$)(.*)" end)
   end
 
   def secret_key_ref(name, key) do

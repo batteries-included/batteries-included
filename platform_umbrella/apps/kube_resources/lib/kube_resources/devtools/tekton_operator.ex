@@ -23,13 +23,14 @@ defmodule KubeResources.TektonOperator do
   import KubeExt.Yaml
 
   alias KubeResources.DevtoolsSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "tekton_operator"
+  @app_name "tekton_operator"
 
   resource(:cluster_role_binding_tekton_config_read_rolebinding) do
     B.build_resource(:cluster_role_binding)
     |> B.name("tekton-config-read-rolebinding")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("tekton-config-read-role"))
     |> B.subject(B.build_group("system:authenticated", "default"))
   end
@@ -39,7 +40,7 @@ defmodule KubeResources.TektonOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("tekton-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("tekton-operator"))
     |> B.subject(B.build_service_account("tekton-operator", namespace))
   end
@@ -55,7 +56,7 @@ defmodule KubeResources.TektonOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("tekton-config-read-role")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -337,7 +338,7 @@ defmodule KubeResources.TektonOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("tekton-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -353,7 +354,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:config_map)
     |> B.name("config-logging")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -368,7 +369,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:config_map)
     |> B.name("tekton-config-defaults")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -379,7 +380,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:config_map)
     |> B.name("tekton-config-observability")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -390,7 +391,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:config_map)
     |> B.name("tekton-operator-info")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -537,7 +538,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:deployment)
     |> B.name("tekton-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("version", "v0.62.0")
     |> B.spec(spec)
   end
@@ -586,7 +587,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:deployment)
     |> B.name("tekton-operator-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("version", "v0.62.0")
     |> B.spec(spec)
   end
@@ -597,7 +598,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:role_binding)
     |> B.name("tekton-operator-info")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("tekton-operator-info"))
     |> B.subject(B.build_group("system:authenticated", "default"))
   end
@@ -617,7 +618,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:role)
     |> B.name("tekton-operator-info")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -628,7 +629,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:secret)
     |> B.name("tekton-operator-webhook-certs")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "tekton-operator")
     |> B.label("name", "tekton-operator-webhook")
     |> B.data(data)
@@ -640,7 +641,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:service_account)
     |> B.name("tekton-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_tekton_operator, battery, _state) do
@@ -656,7 +657,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:service)
     |> B.name("tekton-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "tekton-pipelines-controller")
     |> B.label("version", "v0.62.0")
     |> B.spec(spec)
@@ -676,7 +677,7 @@ defmodule KubeResources.TektonOperator do
     B.build_resource(:service)
     |> B.name("tekton-operator-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "tekton-operator")
     |> B.label("name", "tekton-operator-webhook")
     |> B.label("version", "devel")

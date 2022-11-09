@@ -5,7 +5,7 @@ defmodule KubeResources.IstioGateway do
   alias KubeExt.Builder, as: B
   alias KubeResources.NetworkSettings, as: Settings
 
-  @app "istio-ingressgateway"
+  @app_name "istio-ingressgateway"
   @istio_name "ingressgateway"
 
   resource(:service_account_istio_ingressgateway, battery, _state) do
@@ -14,7 +14,7 @@ defmodule KubeResources.IstioGateway do
     B.build_resource(:service_account)
     |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio", @istio_name)
   end
 
@@ -24,7 +24,7 @@ defmodule KubeResources.IstioGateway do
     B.build_resource(:role_binding)
     |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("istio-ingressgateway"))
     |> B.subject(B.build_service_account("istio-ingressgateway", namespace))
   end
@@ -35,7 +35,7 @@ defmodule KubeResources.IstioGateway do
     B.build_resource(:role)
     |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "watch", "list"]}
     ])
@@ -47,7 +47,7 @@ defmodule KubeResources.IstioGateway do
     B.build_resource(:istio_telemetry)
     |> B.name("mesh-default")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{"accessLogging" => [%{"providers" => [%{"name" => "envoy"}]}]})
   end
 
@@ -57,7 +57,7 @@ defmodule KubeResources.IstioGateway do
     B.build_resource(:horizontal_pod_autoscaler)
     |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio", @istio_name)
     |> B.spec(%{
       "maxReplicas" => 5,
@@ -110,14 +110,14 @@ defmodule KubeResources.IstioGateway do
         }
       ],
       "selector" => %{
-        "battery/app" => @app,
+        "battery/app" => @app_name,
         "istio" => @istio_name
       },
       "type" => "LoadBalancer"
     }
 
     B.build_resource(:service)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio", @istio_name)
     |> B.namespace(namespace)
     |> B.name(@istio_name)
@@ -130,7 +130,7 @@ defmodule KubeResources.IstioGateway do
     spec = %{
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app,
+          "battery/app" => @app_name,
           "istio" => @istio_name
         }
       },
@@ -144,8 +144,8 @@ defmodule KubeResources.IstioGateway do
             "sidecar.istio.io/inject" => "true"
           },
           "labels" => %{
-            "battery/app" => @app,
-            "app" => @app,
+            "battery/app" => @app_name,
+            "app" => @app_name,
             "battery/managed" => "true",
             "istio" => @istio_name,
             "sidecar.istio.io/inject" => "true"
@@ -197,7 +197,7 @@ defmodule KubeResources.IstioGateway do
     B.build_resource(:deployment)
     |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio", @istio_name)
     |> B.label("istio-injection", "enabled")
     |> B.spec(spec)
@@ -218,7 +218,7 @@ defmodule KubeResources.IstioGateway do
     B.build_resource(:istio_gateway)
     |> B.name(@istio_name)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio", @istio_name)
     |> B.spec(spec)
   end

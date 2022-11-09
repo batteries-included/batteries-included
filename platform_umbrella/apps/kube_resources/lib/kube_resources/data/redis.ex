@@ -6,7 +6,7 @@ defmodule KubeResources.Redis do
   alias KubeExt.Builder, as: B
   alias KubeResources.DataSettings
 
-  @app "redisoperator"
+  @app_name "redisoperator"
 
   def materialize(battery, state) do
     redis_failover_clusters(battery, state)
@@ -37,7 +37,7 @@ defmodule KubeResources.Redis do
     B.build_resource(:redis_failover)
     |> B.namespace(namespace)
     |> B.name(cluster.name)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> add_owner(cluster)
   end

@@ -2,7 +2,7 @@ defmodule KubeResources.ML.Base do
   alias KubeExt.Builder, as: B
   alias KubeResources.MLSettings
 
-  @app "battery-ml"
+  @app_name "battery-ml"
 
   def materialize(battery, state) do
     %{
@@ -15,7 +15,7 @@ defmodule KubeResources.ML.Base do
 
     B.build_resource(:namespace)
     |> B.name(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("istio-injection", "enabled")
   end
 end

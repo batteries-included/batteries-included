@@ -10,7 +10,7 @@ defmodule KubeResources.Kiali do
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.Grafana
 
-  @app "kiali"
+  @app_name "kiali"
   @url_base "/x/kiali"
 
   def view_url, do: view_url(KubeExt.cluster_type())
@@ -26,7 +26,7 @@ defmodule KubeResources.Kiali do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name("kiali")
     |> B.spec(VirtualService.prefix(@url_base, "kiali", port: 20_001))
   end
@@ -36,7 +36,7 @@ defmodule KubeResources.Kiali do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("kiali-kiali-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("kiali-operator")
     |> B.role_ref(B.build_cluster_role_ref("kiali-kiali-operator"))
     |> B.subject(B.build_service_account("kiali-kiali-operator", namespace))
@@ -192,7 +192,7 @@ defmodule KubeResources.Kiali do
 
     B.build_resource(:cluster_role)
     |> B.name("kiali-kiali-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("kiali-operator")
     |> B.rules(rules)
   end
@@ -207,7 +207,7 @@ defmodule KubeResources.Kiali do
     B.build_resource(:deployment)
     |> B.name("kiali-kiali-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("kiali-operator")
     |> B.spec(%{
       "replicas" => 1,
@@ -280,7 +280,7 @@ defmodule KubeResources.Kiali do
         "accessible_namespaces" => ["**"],
         "image_version" => "v1.56.1",
         "logger" => %{"log_level" => "TRACE"},
-        "pod_labels" => %{"battery/app" => @app}
+        "pod_labels" => %{"battery/app" => @app_name}
       },
       "external_services" => %{
         "prometheus" => %{
@@ -299,7 +299,7 @@ defmodule KubeResources.Kiali do
     B.build_resource(:kiali)
     |> B.name("kiali")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -309,7 +309,7 @@ defmodule KubeResources.Kiali do
     B.build_resource(:service_account)
     |> B.name("kiali-kiali-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("kiali-operator")
   end
 end

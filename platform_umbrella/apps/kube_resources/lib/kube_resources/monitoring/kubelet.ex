@@ -3,9 +3,11 @@ defmodule KubeResources.MonitoringKubelet do
     kubelet_json: "priv/raw_files/prometheus_stack/kubelet.json"
 
   use KubeExt.ResourceGenerator
-  alias KubeResources.MonitoringSettings, as: Settings
 
-  @app "monitoring_kubelet"
+  alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
+
+  @app_name "monitoring_kubelet"
 
   resource(:config_map, battery, _state) do
     namespace = Settings.namespace(battery.config)
@@ -14,7 +16,7 @@ defmodule KubeResources.MonitoringKubelet do
     B.build_resource(:config_map)
     |> B.name("battery-kube-prometheus-st-kubelet")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack-grafana")
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
@@ -26,7 +28,7 @@ defmodule KubeResources.MonitoringKubelet do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubelet.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -62,7 +64,7 @@ defmodule KubeResources.MonitoringKubelet do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-system-kubelet")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -250,7 +252,7 @@ defmodule KubeResources.MonitoringKubelet do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-k8s.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -359,7 +361,7 @@ defmodule KubeResources.MonitoringKubelet do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-storage")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -447,7 +449,7 @@ defmodule KubeResources.MonitoringKubelet do
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-kubelet")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{

@@ -5,8 +5,9 @@ defmodule KubeResources.MonitoringApiServer do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "monitoring_apiserver"
+  @app_name "monitoring_apiserver"
 
   resource(:config_map_battery_kube_prometheus_st_apiserver, battery, _state) do
     namespace = Settings.namespace(battery.config)
@@ -15,7 +16,7 @@ defmodule KubeResources.MonitoringApiServer do
     B.build_resource(:config_map)
     |> B.name("battery-kube-prometheus-st-apiserver")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -26,7 +27,7 @@ defmodule KubeResources.MonitoringApiServer do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-availability.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -136,7 +137,7 @@ defmodule KubeResources.MonitoringApiServer do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-burnrate.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [
@@ -239,7 +240,7 @@ defmodule KubeResources.MonitoringApiServer do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-histogram.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [
@@ -272,7 +273,7 @@ defmodule KubeResources.MonitoringApiServer do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-slos")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [
@@ -343,7 +344,7 @@ defmodule KubeResources.MonitoringApiServer do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kubernetes-system-apiserver")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [
@@ -442,7 +443,7 @@ defmodule KubeResources.MonitoringApiServer do
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-prometheus-st-apiserver")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{

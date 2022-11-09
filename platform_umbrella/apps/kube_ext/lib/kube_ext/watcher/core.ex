@@ -58,6 +58,9 @@ defmodule KubeExt.Watcher.Core do
       {:ok, new_rv} ->
         dispatch(%{"type" => type, "object" => raw_object}, state)
         {:ok, new_rv}
+
+      error ->
+        error
     end
   end
 

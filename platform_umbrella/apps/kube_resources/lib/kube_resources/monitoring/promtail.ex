@@ -2,17 +2,18 @@ defmodule KubeResources.Promtail do
   use KubeExt.IncludeResource, promtail_yaml: "priv/raw_files/promtail/promtail.yaml"
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
   alias KubeExt.Secret
+  alias KubeResources.MonitoringSettings, as: Settings
 
-  @app "promtail"
+  @app_name "promtail"
 
   resource(:cluster_role_binding_main, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("promtail")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("promtail"))
     |> B.subject(B.build_service_account("promtail", namespace))
   end
@@ -20,7 +21,7 @@ defmodule KubeResources.Promtail do
   resource(:cluster_role_main) do
     B.build_resource(:cluster_role)
     |> B.name("promtail")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => [""],
@@ -36,7 +37,7 @@ defmodule KubeResources.Promtail do
     B.build_resource(:daemon_set)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "selector" => %{
         "matchLabels" => %{"battery/app" => "promtail"}
@@ -122,7 +123,7 @@ defmodule KubeResources.Promtail do
     B.build_resource(:secret)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -132,7 +133,7 @@ defmodule KubeResources.Promtail do
     B.build_resource(:service_account)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_metrics, battery, _state) do
@@ -141,7 +142,7 @@ defmodule KubeResources.Promtail do
     B.build_resource(:service)
     |> B.name("promtail-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "clusterIP" => "None",
       "ports" => [
@@ -162,7 +163,7 @@ defmodule KubeResources.Promtail do
     B.build_resource(:service_monitor)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [%{"port" => "http-metrics"}],
       "selector" => %{

@@ -9,7 +9,7 @@ defmodule KubeResources.OryHydra do
   alias KubeExt.Secret
   alias KubeExt.RequiredDatabases
 
-  @app "ory-hyrda"
+  @app_name "ory-hyrda"
 
   @hydra_component "hydra"
   @maester_component "maester"
@@ -35,7 +35,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:service_account)
     |> B.namespace(namespace)
     |> B.name(@maester_service_account)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label(@maester_component)
   end
 
@@ -45,7 +45,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:service_account)
     |> B.namespace(namespace)
     |> B.name(@hyrda_service_account)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label(@hydra_component)
   end
 
@@ -66,7 +66,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:config_map)
     |> B.namespace(namespace)
     |> B.name(@hydra_config_map)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(%{"config.yaml" => Ymlr.Encoder.to_s!(config)})
   end
 
@@ -107,7 +107,7 @@ defmodule KubeResources.OryHydra do
 
     B.build_resource(:cluster_role)
     |> B.name(@maester_cluster_role)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -116,7 +116,7 @@ defmodule KubeResources.OryHydra do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("hydra-maester-role-binding")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref(@maester_cluster_role))
     |> B.subject(B.build_service_account(@maester_service_account, namespace))
   end
@@ -144,7 +144,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:role)
     |> B.name(@maester_role)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -154,7 +154,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:role_binding)
     |> B.name("hydra-maester-role-binding")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref(@maester_role))
     |> B.subject(B.build_service_account(@maester_service_account, namespace))
   end
@@ -172,7 +172,7 @@ defmodule KubeResources.OryHydra do
         }
       ],
       "selector" => %{
-        "battery/app" => @app,
+        "battery/app" => @app_name,
         "battery/component" => @hydra_component
       }
     }
@@ -180,7 +180,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:service)
     |> B.name(@admin_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label(@hydra_component)
     |> B.spec(spec)
   end
@@ -198,7 +198,7 @@ defmodule KubeResources.OryHydra do
         }
       ],
       "selector" => %{
-        "battery/app" => @app,
+        "battery/app" => @app_name,
         "battery/component" => @hydra_component
       }
     }
@@ -206,7 +206,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:service)
     |> B.name(@public_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label(@hydra_component)
     |> B.spec(spec)
   end
@@ -217,7 +217,7 @@ defmodule KubeResources.OryHydra do
 
     template =
       %{}
-      |> B.app_labels(@app)
+      |> B.app_labels(@app_name)
       |> B.component_label(@maester_component)
       |> B.spec(%{
         "automountServiceAccountToken" => true,
@@ -258,7 +258,7 @@ defmodule KubeResources.OryHydra do
       "revisionHistoryLimit" => 10,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app,
+          "battery/app" => @app_name,
           "battery/component" => @maester_component
         }
       },
@@ -266,7 +266,7 @@ defmodule KubeResources.OryHydra do
     }
 
     B.build_resource(:deployment)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label(@maester_component)
     |> B.name("hydra-maestra")
     |> B.namespace(namespace)
@@ -279,7 +279,7 @@ defmodule KubeResources.OryHydra do
 
     template =
       %{}
-      |> B.app_labels(@app)
+      |> B.app_labels(@app_name)
       |> B.component_label(@hydra_component)
       |> B.spec(%{
         "automountServiceAccountToken" => true,
@@ -399,7 +399,7 @@ defmodule KubeResources.OryHydra do
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app,
+          "battery/app" => @app_name,
           "battery/component" => @hydra_component
         }
       },
@@ -407,7 +407,7 @@ defmodule KubeResources.OryHydra do
     }
 
     B.build_resource(:deployment)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label(@hydra_component)
     |> B.name("hydra")
     |> B.namespace(namespace)
@@ -422,7 +422,7 @@ defmodule KubeResources.OryHydra do
     namespace = SecuritySettings.namespace(battery.config)
 
     B.build_resource(:secret)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name(@hydra_secret)
     |> B.namespace(namespace)
     |> B.data(Secret.encode(secret_data(battery, state)))
@@ -478,7 +478,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:service_account)
     |> B.name(@jobs_service_account)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label(@hydra_component)
   end
 
@@ -495,7 +495,7 @@ defmodule KubeResources.OryHydra do
 
     template =
       %{}
-      |> B.app_labels(@app)
+      |> B.app_labels(@app_name)
       |> B.annotation("sidecar.istio.io/inject", "false")
       |> B.spec(%{
         "automountServiceAccountToken" => true,
@@ -546,7 +546,7 @@ defmodule KubeResources.OryHydra do
     B.build_resource(:job)
     |> B.name("hydra-automigrate")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.annotation("sidecar.istio.io/inject", "false")
     |> B.spec(spec)
   end

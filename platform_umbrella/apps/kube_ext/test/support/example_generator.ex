@@ -1,6 +1,7 @@
 defmodule KubeExt.ExampleGenerator do
   use KubeExt.ResourceGenerator
   alias KubeExt.ExampleSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
   resource(:main, battery, _state) do
     namespace = Settings.namespace(battery.config)

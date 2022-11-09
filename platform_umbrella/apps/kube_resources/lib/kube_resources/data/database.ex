@@ -6,7 +6,7 @@ defmodule KubeResources.Database do
   @exporter_port 9187
   @exporter_port_name "exporter"
 
-  @app "postgres-operator"
+  @app_name "postgres-operator"
 
   @pg_hba [
     ["local", "all", "all", "trust"],
@@ -31,7 +31,7 @@ defmodule KubeResources.Database do
     B.build_resource(:postgresql)
     |> B.namespace(namespace)
     |> B.name(full_name(cluster))
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("sidecar.istio.io/inject", "false")
     |> B.spec(spec)
     |> B.owner_label(Map.get(cluster, :id, "bootstrapped"))
@@ -81,7 +81,7 @@ defmodule KubeResources.Database do
     service_name = "#{cluster_name}-#{role}-mon"
 
     B.build_resource(:service)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("spilo-role", role)
     |> B.namespace(namespace)
     |> B.name(service_name)

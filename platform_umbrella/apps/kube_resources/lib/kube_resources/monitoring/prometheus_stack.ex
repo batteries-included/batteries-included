@@ -27,8 +27,9 @@ defmodule KubeResources.PrometheusStack do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "prometheus_stack"
+  @app_name "prometheus_stack"
 
   resource(:config_map_alertmanager_overview, battery, _state) do
     namespace = Settings.namespace(battery.config)
@@ -37,7 +38,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-alertmanager-overview")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -49,7 +50,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-cluster-total")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -61,7 +62,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-grafana-overview")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -73,7 +74,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-k8s-coredns")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -85,7 +86,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-k8s-resources-cluster")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -98,7 +99,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-k8s-resources-namespace")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -110,7 +111,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-k8s-resources-node")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -122,7 +123,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-k8s-resources-pod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -135,7 +136,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-k8s-resources-workload")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -151,7 +152,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-k8s-resources-workloads-namespace")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -163,7 +164,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-namespace-by-pod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -175,7 +176,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-namespace-by-workload")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -187,7 +188,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-node-cluster-rsrc-use")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -199,7 +200,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-node-rsrc-use")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -211,7 +212,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-nodes")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -223,7 +224,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-nodes-darwin")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -236,7 +237,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-persistentvolumesusage")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -248,7 +249,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-pod-total")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -260,7 +261,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -272,7 +273,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-workload-total")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -283,7 +284,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-config-reloaders")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -315,7 +316,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-general.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -373,7 +374,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kube-prometheus-general.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -393,7 +394,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kube-prometheus-node-recording.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -439,7 +440,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-apps")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -665,7 +666,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-resources")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -795,7 +796,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-system")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -841,7 +842,7 @@ defmodule KubeResources.PrometheusStack do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-prometheus-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [

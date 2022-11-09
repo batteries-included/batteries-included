@@ -5,13 +5,15 @@ defmodule KubeResources.Gitea do
     init_directory_structure_sh: "priv/raw_files/gitea/init_directory_structure.sh"
 
   use KubeExt.ResourceGenerator
-  alias KubeResources.DevtoolsSettings, as: Settings
-  alias KubeResources.IstioConfig.VirtualService
-  alias KubeExt.KubeState.Hosts
+
   alias KubeExt.Builder, as: B
+  alias KubeExt.KubeState.Hosts
   alias KubeExt.Secret
 
-  @app "gitea"
+  alias KubeResources.DevtoolsSettings, as: Settings
+  alias KubeResources.IstioConfig.VirtualService
+
+  @app_name "gitea"
 
   @url_base "/x/gitea"
   @iframe_base_url "/services/devtools/gitea"
@@ -24,7 +26,7 @@ defmodule KubeResources.Gitea do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name("gitea-http")
     |> B.spec(VirtualService.rewriting(@url_base, "gitea-http"))
   end
@@ -34,7 +36,7 @@ defmodule KubeResources.Gitea do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name("gitea-ssh")
     |> B.spec(
       VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh",
@@ -66,7 +68,7 @@ defmodule KubeResources.Gitea do
 
     B.build_resource(:service_monitor)
     |> B.name("gitea")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -83,7 +85,7 @@ defmodule KubeResources.Gitea do
     B.build_resource(:secret)
     |> B.name("gitea-init")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -131,7 +133,7 @@ defmodule KubeResources.Gitea do
     B.build_resource(:secret)
     |> B.name("gitea-inline-config")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -146,7 +148,7 @@ defmodule KubeResources.Gitea do
     B.build_resource(:secret)
     |> B.name("gitea")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -163,7 +165,7 @@ defmodule KubeResources.Gitea do
     B.build_resource(:service)
     |> B.name("gitea-http")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -182,7 +184,7 @@ defmodule KubeResources.Gitea do
     B.build_resource(:service)
     |> B.name("gitea-ssh")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -353,7 +355,7 @@ defmodule KubeResources.Gitea do
     B.build_resource(:stateful_set)
     |> B.name("gitea")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 end

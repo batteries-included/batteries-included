@@ -4,12 +4,14 @@ defmodule KubeResources.Alertmanager do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
-  alias KubeResources.IstioConfig.VirtualService
   alias KubeExt.Secret
 
-  @app "alertmanager"
+  alias KubeResources.IstioConfig.VirtualService
+  alias KubeResources.MonitoringSettings, as: Settings
+
+  @app_name "alertmanager"
   @url_base "/x/alertmanager"
 
   def view_url, do: view_url(KubeExt.cluster_type())
@@ -25,7 +27,7 @@ defmodule KubeResources.Alertmanager do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.name("alertmanager")
     |> B.spec(VirtualService.rewriting(@url_base, "battery-prometheus-alertmanager"))
   end
@@ -36,7 +38,7 @@ defmodule KubeResources.Alertmanager do
     B.build_resource(:alertmanager)
     |> B.name("battery-prometheus-alertmanager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "alertmanagerConfigNamespaceSelector" => %{},
       "alertmanagerConfigSelector" => %{},
@@ -70,7 +72,7 @@ defmodule KubeResources.Alertmanager do
     B.build_resource(:secret)
     |> B.name("alertmanager-battery-prometheus-alertmanager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -80,7 +82,7 @@ defmodule KubeResources.Alertmanager do
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-alertmanager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_alertmanager, battery, _state) do
@@ -89,7 +91,7 @@ defmodule KubeResources.Alertmanager do
     B.build_resource(:service)
     |> B.name("battery-prometheus-alertmanager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("self-monitor", "true")
     |> B.spec(%{
       "ports" => [
@@ -108,13 +110,13 @@ defmodule KubeResources.Alertmanager do
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-alertmanager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [%{"path" => "/metrics", "port" => "http-web"}],
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app,
+          "battery/app" => @app_name,
           "self-monitor" => "true"
         }
       }
@@ -127,7 +129,7 @@ defmodule KubeResources.Alertmanager do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-alertmanager.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [

@@ -35,13 +35,13 @@ defmodule KubeResources.IstioBase do
 
   alias KubeResources.NetworkSettings, as: Settings
   alias KubeExt.Builder, as: B
-  @app "istio_base"
+  @app_name "istio_base"
   resource(:cluster_role_binding_istio_reader_battery_istio, battery, _state) do
     namespace = Settings.istio_namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istio-reader-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istio-reader")
     |> B.role_ref(B.build_cluster_role_ref("istio-reader-battery-istio"))
     |> B.subject(B.build_service_account("istio-reader-service-account", namespace))
@@ -52,7 +52,7 @@ defmodule KubeResources.IstioBase do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istiod-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.role_ref(B.build_cluster_role_ref("istiod-battery-istio"))
     |> B.subject(B.build_service_account("istiod-service-account", namespace))
@@ -61,7 +61,7 @@ defmodule KubeResources.IstioBase do
   resource(:cluster_role_istio_reader_battery_istio) do
     B.build_resource(:cluster_role)
     |> B.name("istio-reader-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istio-reader")
     |> B.rules([
       %{
@@ -134,7 +134,7 @@ defmodule KubeResources.IstioBase do
   resource(:cluster_role_istiod_battery_istio) do
     B.build_resource(:cluster_role)
     |> B.name("istiod-battery-istio")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.rules([
       %{
@@ -319,7 +319,7 @@ defmodule KubeResources.IstioBase do
     B.build_resource(:role_binding)
     |> B.name("istiod-battery-istio")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.role_ref(B.build_role_ref("istiod-battery-istio"))
     |> B.subject(B.build_service_account("istiod-service-account", namespace))
@@ -331,7 +331,7 @@ defmodule KubeResources.IstioBase do
     B.build_resource(:role)
     |> B.name("istiod-battery-istio")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.rules([
       %{
@@ -353,7 +353,7 @@ defmodule KubeResources.IstioBase do
     B.build_resource(:service_account)
     |> B.name("istio-reader-service-account")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istio-reader")
   end
 
@@ -363,7 +363,7 @@ defmodule KubeResources.IstioBase do
     B.build_resource(:service_account)
     |> B.name("istiod-service-account")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
   end
 
@@ -372,7 +372,7 @@ defmodule KubeResources.IstioBase do
 
     B.build_resource(:validating_webhook_config)
     |> B.name("istiod-default-validator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.label("istio", "istiod")
     |> B.label("istio.io/rev", "default")

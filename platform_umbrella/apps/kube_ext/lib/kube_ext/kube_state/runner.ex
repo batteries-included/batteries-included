@@ -26,14 +26,14 @@ defmodule KubeExt.KubeState.Runner do
     end
   end
 
-  @spec get_all(atom() | :ets.tid(), atom()) :: list(map)
+  @spec get_all(atom() | :ets.tid(), atom()) :: list()
   def get_all(table_name, resource_type) do
     table_name
     |> :ets.match({{resource_type, :_, :_}, :"$1"})
     |> Enum.map(fn [resource] -> resource end)
   end
 
-  @spec get_all(atom() | :ets.tid(), atom()) :: map()
+  @spec snapshot(atom() | :ets.tid()) :: map()
   def snapshot(table_name) do
     table_name
     |> :ets.tab2list()

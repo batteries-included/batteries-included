@@ -2,8 +2,9 @@ defmodule KubeResources.DevMetalLB do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.NetworkSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "dev_metallb"
+  @app_name "dev-metallb"
 
   resource(:ip_pool, battery, _state) do
     namespace = Settings.metallb_namespace(battery.config)
@@ -13,7 +14,7 @@ defmodule KubeResources.DevMetalLB do
     B.build_resource(:ip_address_pool)
     |> B.name("dev-ip-pool")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -24,7 +25,7 @@ defmodule KubeResources.DevMetalLB do
     B.build_resource(:l2_advertisement)
     |> B.name("empty")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 end

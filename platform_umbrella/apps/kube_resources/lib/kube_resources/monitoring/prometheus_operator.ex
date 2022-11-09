@@ -22,8 +22,9 @@ defmodule KubeResources.PrometheusOperator do
   import KubeExt.Yaml
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "prometheus-operator"
+  @app_name "prometheus-operator"
 
   resource(:crd_alertmanagerconfigs_monitoring_coreos_com) do
     yaml(get_resource(:alertmanagerconfigs_monitoring_coreos_com))
@@ -60,7 +61,7 @@ defmodule KubeResources.PrometheusOperator do
   resource(:cluster_role_battery_kube_prometheus_admission) do
     B.build_resource(:cluster_role)
     |> B.name("battery-prometheus-admission")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => ["admissionregistration.k8s.io"],
@@ -73,7 +74,7 @@ defmodule KubeResources.PrometheusOperator do
   resource(:cluster_role_battery_kube_prometheus_operator) do
     B.build_resource(:cluster_role)
     |> B.name("battery-prometheus-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => ["monitoring.coreos.com"],
@@ -116,7 +117,7 @@ defmodule KubeResources.PrometheusOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-prometheus-admission")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("battery-prometheus-admission"))
     |> B.subject(B.build_service_account("battery-prometheus-admission", namespace))
   end
@@ -126,7 +127,7 @@ defmodule KubeResources.PrometheusOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-prometheus-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("battery-prometheus-operator"))
     |> B.subject(B.build_service_account("battery-prometheus-operator", namespace))
   end
@@ -137,7 +138,7 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:role)
     |> B.name("battery-prometheus-admission")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([%{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "create"]}])
   end
 
@@ -147,7 +148,7 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:role_binding)
     |> B.name("battery-prometheus-admission")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("battery-prometheus-admission"))
     |> B.subject(B.build_service_account("battery-prometheus-admission", namespace))
   end
@@ -158,7 +159,7 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-admission")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_operator, battery, _state) do
@@ -167,7 +168,7 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("prometheus-operator")
   end
 
@@ -177,7 +178,7 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:deployment)
     |> B.name("battery-prometheus-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "replicas" => 1,
       "selector" => %{"matchLabels" => %{"app" => "kube-prometheus-stack-operator"}},
@@ -185,7 +186,7 @@ defmodule KubeResources.PrometheusOperator do
         "metadata" => %{
           "labels" => %{
             "app" => "kube-prometheus-stack-operator",
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/managed" => "true"
           }
         },
@@ -248,7 +249,7 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:job)
     |> B.name("battery-prometheus-admission-create")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.annotation("sidecar.istio.io/inject", "false")
     |> B.spec(%{
       "template" => %{
@@ -295,14 +296,14 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:job)
     |> B.name("battery-prometheus-admission-patch")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.annotation("sidecar.istio.io/inject", "false")
     |> B.spec(%{
       "template" => %{
         "metadata" => %{
           "labels" => %{
             "app" => "kube-prometheus-stack-admission-patch",
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "sidecar.istio.io/inject" => "false",
             "battery/managed" => "true"
           },
@@ -342,7 +343,7 @@ defmodule KubeResources.PrometheusOperator do
 
     B.build_resource(:mutating_webhook_config)
     |> B.name("battery-prometheus-admission")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1", "v1beta1"],
@@ -374,7 +375,7 @@ defmodule KubeResources.PrometheusOperator do
 
     B.build_resource(:validating_webhook_config)
     |> B.name("battery-prometheus-admission")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1", "v1beta1"],
@@ -406,10 +407,10 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:service)
     |> B.name("battery-prometheus-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"name" => "https", "port" => 443, "targetPort" => "https"}],
-      "selector" => %{"battery/app" => @app},
+      "selector" => %{"battery/app" => @app_name},
       "type" => "ClusterIP"
     })
   end
@@ -420,7 +421,7 @@ defmodule KubeResources.PrometheusOperator do
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{
@@ -440,7 +441,7 @@ defmodule KubeResources.PrometheusOperator do
         }
       ],
       "namespaceSelector" => %{"matchNames" => [namespace]},
-      "selector" => %{"matchLabels" => %{"battery/app" => @app}}
+      "selector" => %{"matchLabels" => %{"battery/app" => @app_name}}
     })
   end
 end

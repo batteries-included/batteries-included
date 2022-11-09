@@ -16,7 +16,7 @@ defmodule KubeExt.KubeState do
     Runner.snapshot(t)
   end
 
-  @spec get(atom | :ets.tid(), map) :: nil | map()
+  @spec get(atom() | :ets.tid(), map()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource),
     do:
       get(
@@ -26,7 +26,7 @@ defmodule KubeExt.KubeState do
         Resource.name(resource)
       )
 
-  @spec get(atom | :ets.tid(), atom, binary(), binary()) :: nil | map()
+  @spec get(atom() | :ets.tid(), atom(), binary(), binary()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource_type, namespace, name) do
     Runner.get(t, resource_type, namespace, name)
   end

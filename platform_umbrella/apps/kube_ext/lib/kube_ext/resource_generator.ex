@@ -4,7 +4,6 @@ defmodule KubeExt.ResourceGenerator do
   defmacro __using__(_opts) do
     quote do
       import unquote(__MODULE__)
-      alias KubeExt.Builder, as: B
 
       Module.register_attribute(__MODULE__, :resource_generator, accumulate: true, persist: false)
 
@@ -29,7 +28,7 @@ defmodule KubeExt.ResourceGenerator do
   end
 
   defp filter_exists(resources) do
-    Enum.filter(resources, fn {_path, r} -> r != nil end)
+    Enum.reject(resources, fn {_path, r} -> r == nil || Enum.empty?(r) end)
   end
 
   defp do_apply(generators, module, battery, state) do

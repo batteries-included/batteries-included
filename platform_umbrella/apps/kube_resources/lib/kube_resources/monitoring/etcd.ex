@@ -4,8 +4,9 @@ defmodule KubeResources.MonitoringEtcd do
 
   use KubeExt.ResourceGenerator
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "monitoring_etcd"
+  @app_name "monitoring_etcd"
 
   resource(:config_map_battery_kube_prometheus_st_etcd, battery, _state) do
     namespace = Settings.namespace(battery.config)
@@ -14,7 +15,7 @@ defmodule KubeResources.MonitoringEtcd do
     B.build_resource(:config_map)
     |> B.name("battery-etcd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
@@ -25,7 +26,7 @@ defmodule KubeResources.MonitoringEtcd do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-etcd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -222,7 +223,7 @@ defmodule KubeResources.MonitoringEtcd do
     B.build_resource(:service)
     |> B.name("battery-kube-etcd")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("jobLabel", "kube-etcd")
     |> B.spec(%{
       "clusterIP" => "None",
@@ -240,7 +241,7 @@ defmodule KubeResources.MonitoringEtcd do
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-etcd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [
         %{
@@ -250,7 +251,7 @@ defmodule KubeResources.MonitoringEtcd do
       ],
       "jobLabel" => "jobLabel",
       "namespaceSelector" => %{"matchNames" => ["kube-system"]},
-      "selector" => %{"matchLabels" => %{"app" => @app}}
+      "selector" => %{"matchLabels" => %{"app" => @app_name}}
     })
   end
 end

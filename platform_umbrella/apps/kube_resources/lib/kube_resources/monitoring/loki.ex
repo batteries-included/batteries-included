@@ -18,15 +18,16 @@ defmodule KubeResources.Loki do
   import KubeExt.Yaml
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "loki"
+  @app_name "loki"
 
   resource(:cluster_role_binding_grafana_agent, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("loki-grafana-agent")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("loki-grafana-agent"))
     |> B.subject(B.build_service_account("loki-grafana-agent", namespace))
   end
@@ -36,7 +37,7 @@ defmodule KubeResources.Loki do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("loki-grafana-agent-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("grafana-agent-operator")
     |> B.role_ref(B.build_cluster_role_ref("loki-grafana-agent-operator"))
     |> B.subject(B.build_service_account("loki-grafana-agent-operator", namespace))
@@ -45,7 +46,7 @@ defmodule KubeResources.Loki do
   resource(:cluster_role_grafana_agent) do
     B.build_resource(:cluster_role)
     |> B.name("loki-grafana-agent")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => [""],
@@ -72,7 +73,7 @@ defmodule KubeResources.Loki do
   resource(:cluster_role_grafana_agent_operator) do
     B.build_resource(:cluster_role)
     |> B.name("loki-grafana-agent-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("grafana-agent-operator")
     |> B.rules([
       %{
@@ -136,7 +137,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:config_map)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -165,7 +166,7 @@ defmodule KubeResources.Loki do
 
     B.build_resource(:deployment)
     |> B.name("loki-grafana-agent-operator")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.component_label("grafana-agent-operator")
     |> B.spec(%{
@@ -205,14 +206,14 @@ defmodule KubeResources.Loki do
     B.build_resource(:grafana_agent)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("loki")
     |> B.spec(%{
       "enableConfigReadAPI" => false,
       "logs" => %{
         "instanceSelector" => %{
           "matchLabels" => %{
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/component" => "loki"
           }
         }
@@ -227,7 +228,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:logs_instance)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("loki")
     |> B.spec(%{
       "clients" => [
@@ -246,7 +247,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:pod_logs)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("instance", "primary")
     |> B.spec(%{
       "namespaceSelector" => %{"matchNames" => [namespace]},
@@ -267,7 +268,9 @@ defmodule KubeResources.Loki do
         },
         %{"replacement" => "loki", "targetLabel" => "cluster"}
       ],
-      "selector" => %{"matchLabels" => %{"battery/app" => @app, "battery/component" => "loki"}}
+      "selector" => %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "loki"}
+      }
     })
   end
 
@@ -277,7 +280,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:prometheus_rule)
     |> B.name("loki-rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -425,7 +428,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service_account)
     |> B.name("loki-grafana-agent")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_grafana_agent_operator, battery, _state) do
@@ -434,7 +437,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service_account)
     |> B.name("loki-grafana-agent-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("grafana-agent-operator")
   end
 
@@ -444,7 +447,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service_account)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> Map.put("automountServiceAccountToken", true)
   end
 
@@ -454,7 +457,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service)
     |> B.name("loki-headless")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("variant", "headless")
     |> B.spec(%{
       "clusterIP" => "None",
@@ -476,7 +479,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [
         %{
@@ -498,7 +501,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service)
     |> B.name("loki-memberlist")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [
         %{"name" => "tcp", "port" => 7946, "protocol" => "TCP", "targetPort" => "http-memberlist"}
@@ -514,7 +517,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service_monitor)
     |> B.name("loki-read")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("read")
     |> B.spec(%{
       "endpoints" => [
@@ -541,7 +544,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:stateful_set)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.component_label("loki")
     |> B.spec(%{
       "podManagementPolicy" => "Parallel",
@@ -632,7 +635,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:config_map)
     |> B.name("battery-prometheus-grafana-loki-datasource")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_datasource", "1")
     |> B.data(data)
   end
@@ -644,7 +647,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:config_map)
     |> B.name("battery-loki-dashdoard")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end

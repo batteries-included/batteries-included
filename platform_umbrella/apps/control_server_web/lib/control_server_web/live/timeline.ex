@@ -9,7 +9,7 @@ defmodule ControlServerWeb.TimelineLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    DatabaseEventCenter.subscribe(:timeline_event)
+    :ok = DatabaseEventCenter.subscribe(:timeline_event)
     {:ok, assign(socket, :events, events())}
   end
 

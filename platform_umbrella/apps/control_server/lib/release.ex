@@ -27,7 +27,7 @@ defmodule ControlServer.Release do
   end
 
   def rollback(repo, version) do
-    load_app()
+    :ok = load_app()
     {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :down, to: version))
   end
 
@@ -50,10 +50,11 @@ defmodule ControlServer.Release do
     IO.puts("Starting dependencies...")
 
     # Start apps necessary for executing migrations
-    load_app()
+    :ok = load_app()
 
-    for app <- @apps do
-      for repo <- repos(app) do
+    for repo_app <- @apps do
+      # Create every repo for every app that's to be started.
+      for repo <- repos(repo_app) do
         :ok = ensure_repo_created(repo)
       end
     end

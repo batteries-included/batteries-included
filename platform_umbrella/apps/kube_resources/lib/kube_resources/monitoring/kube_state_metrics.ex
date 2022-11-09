@@ -2,13 +2,14 @@ defmodule KubeResources.KubeStateMetrics do
   use KubeExt.ResourceGenerator
 
   alias KubeResources.MonitoringSettings, as: Settings
+  alias KubeExt.Builder, as: B
 
-  @app "kube-state-metrics"
+  @app_name "kube-state-metrics"
 
   resource(:cluster_role_battery_kube_state_metrics) do
     B.build_resource(:cluster_role)
     |> B.name("battery-kube-state-metrics")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.rules([
       %{
         "apiGroups" => ["certificates.k8s.io"],
@@ -101,7 +102,7 @@ defmodule KubeResources.KubeStateMetrics do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-kube-state-metrics")
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("battery-kube-state-metrics"))
     |> B.subject(B.build_service_account("battery-kube-state-metrics", namespace))
   end
@@ -112,18 +113,18 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:deployment)
     |> B.name("battery-kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app
+          "battery/app" => @app_name
         }
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => @app,
+            "battery/app" => @app_name,
             "battery/managed" => "true"
           }
         },
@@ -168,11 +169,11 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:service)
     |> B.name("battery-kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"name" => "http", "port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
       "selector" => %{
-        "battery/app" => @app
+        "battery/app" => @app_name
       },
       "type" => "ClusterIP"
     })
@@ -185,7 +186,7 @@ defmodule KubeResources.KubeStateMetrics do
     |> Map.put("imagePullSecrets", [])
     |> B.name("battery-kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
   end
 
   resource(:prometheus_rule_battery_kube_st_kube_state_metrics, battery, _state) do
@@ -194,7 +195,7 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -268,7 +269,7 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node.rules")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "groups" => [
         %{
@@ -306,13 +307,13 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "endpoints" => [%{"honorLabels" => true, "port" => "http"}],
       "jobLabel" => "battery/app",
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app
+          "battery/app" => @app_name
         }
       }
     })
