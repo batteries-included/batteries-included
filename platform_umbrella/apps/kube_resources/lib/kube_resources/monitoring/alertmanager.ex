@@ -20,8 +20,8 @@ defmodule KubeResources.Alertmanager do
 
   def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
-  def virtual_service(config) do
-    namespace = Settings.namespace(config)
+  def virtual_service(battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -30,8 +30,8 @@ defmodule KubeResources.Alertmanager do
     |> B.spec(VirtualService.rewriting(@url_base, "battery-prometheus-alertmanager"))
   end
 
-  resource(:alertmanager, config) do
-    namespace = Settings.namespace(config)
+  resource(:alertmanager, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:alertmanager)
     |> B.name("battery-prometheus-alertmanager")
@@ -61,8 +61,8 @@ defmodule KubeResources.Alertmanager do
     })
   end
 
-  resource(:secret_alertmanager_alertmanager, config) do
-    namespace = Settings.namespace(config)
+  resource(:secret_alertmanager_alertmanager, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     data =
       %{} |> Map.put("alertmanager.yaml", get_resource(:alertmanager_yaml)) |> Secret.encode()
@@ -74,8 +74,8 @@ defmodule KubeResources.Alertmanager do
     |> B.data(data)
   end
 
-  resource(:service_account_alertmanager, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_alertmanager, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-alertmanager")
@@ -83,8 +83,8 @@ defmodule KubeResources.Alertmanager do
     |> B.app_labels(@app)
   end
 
-  resource(:service_alertmanager, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_alertmanager, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("battery-prometheus-alertmanager")
@@ -102,8 +102,8 @@ defmodule KubeResources.Alertmanager do
     })
   end
 
-  resource(:service_monitor_alertmanager, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor_alertmanager, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-alertmanager")
@@ -121,8 +121,8 @@ defmodule KubeResources.Alertmanager do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_alertmanager_rules, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_battery_kube_st_alertmanager_rules, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-alertmanager.rules")

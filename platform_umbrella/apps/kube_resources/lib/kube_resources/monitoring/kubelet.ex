@@ -7,8 +7,8 @@ defmodule KubeResources.MonitoringKubelet do
 
   @app "monitoring_kubelet"
 
-  resource(:config_map, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"kubelet.json" => get_resource(:kubelet_json)}
 
     B.build_resource(:config_map)
@@ -20,8 +20,8 @@ defmodule KubeResources.MonitoringKubelet do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule_kubelet_rules, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_kubelet_rules, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubelet.rules")
@@ -56,8 +56,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:prometheus_rule_kubernetes_system_kubelet, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_kubernetes_system_kubelet, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-system-kubelet")
@@ -244,8 +244,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:prometheus_rule_k8s_rules, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_k8s_rules, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-k8s.rules")
@@ -353,8 +353,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:prometheus_rule_kubernetes_storage, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_kubernetes_storage, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-storage")
@@ -441,8 +441,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:service_monitor, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-kubelet")

@@ -1,6 +1,4 @@
 defmodule KubeResources.Notebooks do
-  alias ControlServer.Notebooks
-  alias ControlServer.Notebooks.JupyterLabNotebook
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.HttpRoute
@@ -10,37 +8,23 @@ defmodule KubeResources.Notebooks do
   @app_name "notebooks"
   @url_base "/x/notebooks/"
 
-  def ingress(config) do
-    Enum.map(Notebooks.list_jupyter_lab_notebooks(), fn jln -> notebook_ingress(jln, config) end)
+  def virtual_service(battery, state) do
+    namespace = MLSettings.public_namespace(battery.config)
+    build_virtual_service(state.notebooks, namespace)
   end
 
-  defp notebook_ingress(%Notebooks.JupyterLabNotebook{} = notebook, config) do
-    namespace = MLSettings.public_namespace(config)
+  def view_url(%{} = notebook), do: view_url(KubeExt.cluster_type(), notebook)
 
-    B.build_resource(:ingress, url(notebook), "notebook-#{notebook.name}", "http")
-    |> B.name("notebook-#{notebook.name}")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-  end
+  def view_url(:dev, %{} = notebook), do: url(notebook)
 
-  def virtual_service(config) do
-    namespace = MLSettings.public_namespace(config)
-    notebooks = Notebooks.list_jupyter_lab_notebooks()
-    build_virtual_service(namespace, notebooks)
-  end
+  def view_url(_, %{} = notebook), do: "/services/ml/notebooks/#{notebook.id}"
 
-  def view_url(%JupyterLabNotebook{} = notebook), do: view_url(KubeExt.cluster_type(), notebook)
-
-  def view_url(:dev, %JupyterLabNotebook{} = notebook), do: url(notebook)
-
-  def view_url(_, %JupyterLabNotebook{} = notebook), do: "/services/ml/notebooks/#{notebook.id}"
-
-  def url(%JupyterLabNotebook{} = notebook),
+  def url(%{} = notebook),
     do: "http://#{Hosts.control_host()}#{base_url(notebook)}"
 
-  def base_url(%JupyterLabNotebook{} = notebook), do: "#{@url_base}#{notebook.name}"
+  def base_url(%{} = notebook), do: "#{@url_base}#{notebook.name}"
 
-  defp build_virtual_service(namespace, [_ | _] = notebooks) do
+  defp build_virtual_service([_ | _] = notebooks, namespace) do
     routes = Enum.map(notebooks, &notebook_http_route/1)
 
     B.build_resource(:istio_virtual_service)
@@ -50,28 +34,35 @@ defmodule KubeResources.Notebooks do
     |> B.spec(VirtualService.new(http: routes))
   end
 
-  defp build_virtual_service(_namespace, [] = _notebooks) do
+  defp build_virtual_service([] = _notebooks, _namespace) do
     nil
   end
 
-  def notebook_http_route(%Notebooks.JupyterLabNotebook{} = notebook) do
+  def notebook_http_route(%{} = notebook) do
     HttpRoute.prefix(base_url(notebook), service_name(notebook))
   end
 
-  def materialize(config) do
-    Notebooks.list_jupyter_lab_notebooks()
-    |> Enum.flat_map(fn notebook ->
+  def materialize(battery, state) do
+    state.notebooks
+    |> Enum.with_index()
+    |> Enum.flat_map(fn {notebook, idx} ->
       [
-        {"/#{notebook.id}/stateful", stateful_set(config, notebook)},
-        {"/#{notebook.id}/service", service(config, notebook)}
+        {stateful_set_path(notebook, idx), stateful_set(notebook, battery, state)},
+        {service_path(notebook, idx), service(notebook, battery, state)}
       ]
     end)
     |> Map.new()
-    |> Map.put("/service_account", service_account(config))
+    |> Map.put("/service_account", service_account(battery, state))
   end
 
-  defp service_account(config) do
-    namespace = MLSettings.public_namespace(config)
+  defp service_path(%{id: id}, _idx), do: "/notebooks/#{id}/service"
+  defp service_path(_, idx), do: "/notebooks/#{idx}/idx/service"
+
+  defp stateful_set_path(%{id: id}, _idx), do: "/notebooks/#{id}/stateful_set"
+  defp stateful_set_path(_, idx), do: "/notebooks/#{idx}/idx/stateful_set"
+
+  defp service_account(battery, _state) do
+    namespace = MLSettings.public_namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("battery-notebooks")
@@ -79,8 +70,8 @@ defmodule KubeResources.Notebooks do
     |> B.app_labels(@app_name)
   end
 
-  defp stateful_set(config, %JupyterLabNotebook{} = notebook) do
-    namespace = MLSettings.public_namespace(config)
+  defp stateful_set(%{} = notebook, battery, _state) do
+    namespace = MLSettings.public_namespace(battery.config)
     owner_id = Map.get(notebook, :id, "bootstrapped")
 
     template =
@@ -124,8 +115,8 @@ defmodule KubeResources.Notebooks do
     |> B.owner_label(owner_id)
   end
 
-  defp service(config, notebook) do
-    namespace = MLSettings.public_namespace(config)
+  defp service(notebook, battery, _state) do
+    namespace = MLSettings.public_namespace(battery.config)
     owner_id = Map.get(notebook, :id, "bootstrapped")
 
     spec =

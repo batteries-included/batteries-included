@@ -1,5 +1,5 @@
 defmodule KubeResources.MLTest do
-  use ControlServer.DataCase
+  use ExUnit.Case
 
   alias KubeResources.Notebooks
   import KubeResources.ControlServerFactory
@@ -7,16 +7,15 @@ defmodule KubeResources.MLTest do
   require Logger
 
   describe "ML" do
-    test "Can materialize notebooks" do
-      assert map_size(Notebooks.materialize(%{})) >= 1
+    test "Can materialize no notebooks" do
+      assert map_size(Notebooks.materialize(%{config: %{}}, %{notebooks: []})) >= 1
     end
 
     test "can materialize with a notebook" do
-      _notebook = insert(:notebook)
-
       # Should include the service
       # account, the statefulsets, and the service.
-      assert map_size(Notebooks.materialize(%{})) >= 3
+      assert map_size(Notebooks.materialize(%{config: %{}}, %{notebooks: [build(:notebook)]})) >=
+               3
     end
   end
 end

@@ -91,23 +91,6 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
-config :kube_raw_resources,
-  dev_batteries: [
-    :battery_core,
-    :postgres_operator,
-    :database_internal,
-    :istio,
-    :istio_istiod
-  ],
-  prod_batteries: [
-    :battery_core,
-    :control_server,
-    :istio,
-    :istio_istiod,
-    :postgres_operator,
-    :database_internal
-  ]
-
 config :kube_services, start_services: true
 
 config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
@@ -135,8 +118,7 @@ config :cli, should_halt: false
 
 config :cli, CLI.Commands,
   sync: CLI.Commands.Sync,
-  sync_dev: CLI.Commands.SyncDev,
-  dump: CLI.Commands.DumpBootstrap,
+  dump_prod: CLI.Commands.DumpBootstrapProd,
   dump_dev: CLI.Commands.DumpBootstrapDev,
   cluster_k3d: CLI.Commands.K3DCluster
 

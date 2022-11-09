@@ -2,20 +2,20 @@ defmodule KubeResources.EchoServer do
   @moduledoc false
 
   alias KubeExt.Builder, as: B
-  alias KubeRawResources.BatterySettings
+  alias KubeResources.BatterySettings
   alias KubeResources.IstioConfig.VirtualService
 
   @app_name "echo"
 
-  def materialize(config) do
+  def materialize(battery, state) do
     %{
-      "/service" => service(config),
-      "/deployment" => deployment(config)
+      "/service" => service(battery, state),
+      "/deployment" => deployment(battery, state)
     }
   end
 
-  def service(config) do
-    namespace = BatterySettings.namespace(config)
+  def service(battery, _state) do
+    namespace = BatterySettings.namespace(battery.config)
 
     spec =
       %{}
@@ -31,8 +31,8 @@ defmodule KubeResources.EchoServer do
     |> B.spec(spec)
   end
 
-  def deployment(config) do
-    namespace = BatterySettings.namespace(config)
+  def deployment(battery, _state) do
+    namespace = BatterySettings.namespace(battery.config)
 
     template =
       %{}
@@ -78,8 +78,8 @@ defmodule KubeResources.EchoServer do
     }
   end
 
-  def virtual_service(config) do
-    namespace = BatterySettings.namespace(config)
+  def virtual_service(battery, _state) do
+    namespace = BatterySettings.namespace(battery.config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)

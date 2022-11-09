@@ -1,13 +1,12 @@
 defmodule KubeResources.KnativeServing do
-  alias ControlServer.Knative
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
   alias KubeResources.DevtoolsSettings
 
   @app_name "knative-serving"
 
-  def namespace_dest(config) do
-    knative_dest_namespace = DevtoolsSettings.knative_namespace(config)
+  def namespace_dest(battery, _state) do
+    knative_dest_namespace = DevtoolsSettings.knative_namespace(battery.config)
 
     B.build_resource(:namespace)
     |> B.name(knative_dest_namespace)
@@ -15,8 +14,8 @@ defmodule KubeResources.KnativeServing do
     |> B.label("istio-injection", "enabled")
   end
 
-  def knative_serving(config) do
-    knative_dest_namespace = DevtoolsSettings.knative_namespace(config)
+  def knative_serving(battery, _state) do
+    knative_dest_namespace = DevtoolsSettings.knative_namespace(battery.config)
 
     spec = %{
       "config" => %{
@@ -37,8 +36,8 @@ defmodule KubeResources.KnativeServing do
     |> B.spec(spec)
   end
 
-  def domain_config(config) do
-    namespace = DevtoolsSettings.knative_namespace(config)
+  def domain_config(battery, _state) do
+    namespace = DevtoolsSettings.knative_namespace(battery.config)
 
     data = Map.put(%{}, Hosts.knative(), "")
 
@@ -49,8 +48,8 @@ defmodule KubeResources.KnativeServing do
     |> Map.put("data", data)
   end
 
-  def serving_service(%Knative.Service{} = service, config) do
-    namespace = DevtoolsSettings.knative_namespace(config)
+  def serving_service(%{} = service, battery, _state) do
+    namespace = DevtoolsSettings.knative_namespace(battery.config)
 
     spec = %{
       "template" => %{
@@ -80,24 +79,24 @@ defmodule KubeResources.KnativeServing do
     |> B.spec(spec)
   end
 
-  def url(%Knative.Service{} = service) do
+  def url(%{} = service) do
     # assume the default config for now /shrug
     namespace = DevtoolsSettings.knative_namespace(%{})
     "http://#{service.name}.#{namespace}.#{Hosts.knative()}"
   end
 
-  @spec materialize(map()) :: map()
-  def materialize(config) do
+  @spec materialize(map(), map()) :: map()
+  def materialize(battery, state) do
     res =
-      Knative.list_services()
+      []
       |> Enum.map(fn s ->
-        {"/service/#{s.id}", serving_service(s, config)}
+        {"/service/#{s.id}", serving_service(s, battery, state)}
       end)
       |> Map.new()
       |> Map.merge(%{
-        "/namespace" => namespace_dest(config),
-        "/knative_serving" => knative_serving(config),
-        "/domain_config" => domain_config(config)
+        "/namespace" => namespace_dest(battery, state),
+        "/knative_serving" => knative_serving(battery, state),
+        "/domain_config" => domain_config(battery, state)
       })
 
     res

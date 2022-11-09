@@ -4,7 +4,7 @@ common_checks = [
   {Credo.Check.Consistency.SpaceAroundOperators},
   {Credo.Check.Consistency.SpaceInParentheses},
   {Credo.Check.Consistency.TabsOrSpaces},
-  {Credo.Check.Design.AliasUsage, if_called_more_often_than: 4, if_nested_deeper_than: 1},
+  {Credo.Check.Design.AliasUsage, if_called_more_often_than: 8, if_nested_deeper_than: 1},
   {Credo.Check.Design.TagTODO, false},
   {Credo.Check.Design.TagFIXME},
   {Credo.Check.Readability.AliasOrder, false},
@@ -67,7 +67,7 @@ common_checks = [
   {Credo.Check.Warning.OperationWithConstantResult},
   {CredoEnvvar.Check.Warning.EnvironmentVariablesAtCompileTime,
    files: %{
-     excluded: ["apps/kube_raw_resources/lib/kube_raw_resources/battery/battery_settings.ex"]
+     excluded: ["apps/kube_resources/lib/kube_resources/battery/battery_settings.ex"]
    }},
   {CredoNaming.Check.Warning.AvoidSpecificTermsInModuleNames,
    terms: [

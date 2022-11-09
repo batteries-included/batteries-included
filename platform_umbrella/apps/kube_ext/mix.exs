@@ -28,6 +28,7 @@ defmodule KubeExt.MixProject do
     [
       {:telemetry, "~> 1.1"},
       {:k8s, "~> 1.1"},
+      {:jason, "~> 1.0"},
       # Yaml encode
       {:ymlr, "~> 3.0.1"},
       {:event_center, in_umbrella: true},

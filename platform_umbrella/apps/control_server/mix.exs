@@ -61,7 +61,6 @@ defmodule ControlServer.MixProject do
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},
-      {:kube_raw_resources, in_umbrella: true},
 
       # Yaml
       {:yaml_elixir, "~> 2.6"},

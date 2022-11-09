@@ -7,13 +7,13 @@ defmodule KubeResources.RedisOperator do
 
   import KubeExt.Yaml
 
-  alias KubeRawResources.DataSettings, as: Settings
+  alias KubeResources.DataSettings, as: Settings
   alias KubeExt.Builder, as: B
 
   @app "redis-operator"
 
-  resource(:cluster_role_binding_redis_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:cluster_role_binding_redis_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("redis-operator")
@@ -76,8 +76,8 @@ defmodule KubeResources.RedisOperator do
     yaml(get_resource(:redisfailovers_databases_spotahome_com))
   end
 
-  resource(:deployment_redis_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:deployment_redis_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -147,8 +147,8 @@ defmodule KubeResources.RedisOperator do
     |> B.spec(spec)
   end
 
-  resource(:service_account_redis_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_redis_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("redis-operator")
@@ -157,8 +157,8 @@ defmodule KubeResources.RedisOperator do
     |> B.component_label("redis-operator")
   end
 
-  resource(:service_monitor_redis_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor_redis_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -182,8 +182,8 @@ defmodule KubeResources.RedisOperator do
     |> B.spec(spec)
   end
 
-  resource(:service_redis_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_redis_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}

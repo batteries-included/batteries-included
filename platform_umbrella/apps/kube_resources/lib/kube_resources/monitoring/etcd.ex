@@ -7,8 +7,8 @@ defmodule KubeResources.MonitoringEtcd do
 
   @app "monitoring_etcd"
 
-  resource(:config_map_battery_kube_prometheus_st_etcd, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_battery_kube_prometheus_st_etcd, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"etcd.json" => get_resource(:etcd_json)}
 
     B.build_resource(:config_map)
@@ -19,8 +19,8 @@ defmodule KubeResources.MonitoringEtcd do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-etcd")
@@ -234,8 +234,8 @@ defmodule KubeResources.MonitoringEtcd do
     })
   end
 
-  resource(:service_monitor, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-etcd")

@@ -1,8 +1,6 @@
 defmodule KubeResources.GrafanaDashboards do
   alias KubeExt.Builder, as: B
 
-  alias ControlServer.Batteries
-  alias ControlServer.Batteries.SystemBattery
   alias K8s.Resource
   alias KubeResources.GrafanaDashboardClient
   alias KubeResources.MonitoringSettings
@@ -10,43 +8,43 @@ defmodule KubeResources.GrafanaDashboards do
   @dashboards_configmap "grafana-dashboards"
   @app_name "grafana"
 
-  def dashboards(config) do
-    Batteries.list_system_batteries()
-    |> Enum.map(fn %SystemBattery{} = battery ->
-      config
-      |> dashboards(battery.type)
-      |> Enum.map(fn {path, r} -> {path, B.owner_label(r, battery.id)} end)
+  def all_dashboards(_battery, state) do
+    state.system_batteries
+    |> Enum.map(fn %{} = sys_battery ->
+      sys_battery
+      |> dashboards(state)
+      |> Enum.map(fn {path, r} -> {path, B.owner_label(r, sys_battery.id)} end)
       |> Enum.into(%{})
     end)
     |> Enum.reduce(%{}, &Map.merge/2)
   end
 
-  def dashboards(config, :kube_monitoring) do
+  def dashboards(%{type: :kube_monitoring} = battery, state) do
     %{
       "/grafana-dashboard-definitions/kube/#{grafana_dashboard_name(7249)}" =>
-        dashboard_configmap_from_grafana_id(config, 7249),
+        dashboard_configmap_from_grafana_id(battery, state, 7249),
       "/grafana-dashboard-definitions/kube/#{grafana_dashboard_name(6417)}" =>
-        dashboard_configmap_from_grafana_id(config, 6417),
+        dashboard_configmap_from_grafana_id(battery, state, 6417),
       "/grafana-dashboard-definitions/kube/#{grafana_dashboard_name(1860)}" =>
-        dashboard_configmap_from_grafana_id(config, 1860)
+        dashboard_configmap_from_grafana_id(battery, state, 1860)
     }
   end
 
-  def dashboards(config, :postgres_operator) do
+  def dashboards(%{type: :postgres_operator} = battery, state) do
     %{
       "/grafana-dashboard-definitions/database/#{grafana_dashboard_name(9628)}" =>
-        dashboard_configmap_from_grafana_id(config, 9628)
+        dashboard_configmap_from_grafana_id(battery, state, 9628)
     }
   end
 
-  def dashboards(config, :istio) do
+  def dashboards(%{type: :istio} = battery, state) do
     %{
       "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7645)}" =>
-        dashboard_configmap_from_grafana_id(config, 7645),
+        dashboard_configmap_from_grafana_id(battery, state, 7645),
       "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7630)}" =>
-        dashboard_configmap_from_grafana_id(config, 7630),
+        dashboard_configmap_from_grafana_id(battery, state, 7630),
       "/grafana-dashboard-definitions/network/#{grafana_dashboard_name(7636)}" =>
-        dashboard_configmap_from_grafana_id(config, 7636)
+        dashboard_configmap_from_grafana_id(battery, state, 7636)
     }
   end
 
@@ -54,8 +52,8 @@ defmodule KubeResources.GrafanaDashboards do
 
   def grafana_dashboard_name(id), do: "grafana-dashboard-#{id}"
 
-  def dashboard_configmap_from_grafana_id(config, id) do
-    namespace = MonitoringSettings.namespace(config)
+  def dashboard_configmap_from_grafana_id(battery, _state, id) do
+    namespace = MonitoringSettings.namespace(battery.config)
 
     dash = get_updated_dashboard(id)
 

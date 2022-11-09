@@ -19,8 +19,8 @@ defmodule KubeResources.Gitea do
   @ssh_port 2202
   @ssh_listen_port 2022
 
-  resource(:virtual_service, config) do
-    namespace = Settings.namespace(config)
+  resource(:virtual_service, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -29,8 +29,8 @@ defmodule KubeResources.Gitea do
     |> B.spec(VirtualService.rewriting(@url_base, "gitea-http"))
   end
 
-  resource(:ssh_virtual_service, config) do
-    namespace = Settings.namespace(config)
+  resource(:ssh_virtual_service, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -53,8 +53,8 @@ defmodule KubeResources.Gitea do
 
   def url, do: "http://#{Hosts.control_host()}#{@url_base}" <> "/explore/repos"
 
-  resource(:service_monitor_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -71,8 +71,8 @@ defmodule KubeResources.Gitea do
     |> B.spec(spec)
   end
 
-  resource(:secret_init, config) do
-    namespace = Settings.namespace(config)
+  resource(:secret_init, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     data =
       %{}
@@ -87,8 +87,8 @@ defmodule KubeResources.Gitea do
     |> B.data(data)
   end
 
-  resource(:secret_inline_config, config) do
-    namespace = Settings.namespace(config)
+  resource(:secret_inline_config, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     http_domain = Hosts.control_host()
     ssh_domain = Hosts.gitea_host()
@@ -135,8 +135,8 @@ defmodule KubeResources.Gitea do
     |> B.data(data)
   end
 
-  resource(:secret_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:secret_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     data =
       %{}
@@ -150,8 +150,8 @@ defmodule KubeResources.Gitea do
     |> B.data(data)
   end
 
-  resource(:service_http, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_http, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -167,8 +167,8 @@ defmodule KubeResources.Gitea do
     |> B.spec(spec)
   end
 
-  resource(:service_ssh, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_ssh, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -186,10 +186,10 @@ defmodule KubeResources.Gitea do
     |> B.spec(spec)
   end
 
-  resource(:stateful_set_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:stateful_set_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
-    pg_secret = Settings.gitea_pg_secret_name(config)
+    pg_secret = Settings.gitea_pg_secret_name(battery.config)
 
     spec =
       %{}

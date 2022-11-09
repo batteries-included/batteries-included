@@ -47,4 +47,4 @@ config :kube_ext, cluster_type: :prod
 # are needed for development. These infra users
 # should never be included in a production
 # deploy.
-config :kube_raw_resources, include_dev_infrausers: false
+config :kube_resources, include_dev_infrausers: false

@@ -4,9 +4,12 @@ defmodule ControlServer.SnapshotApply.StateSnapshot do
   alias ControlServer.Redis
   alias ControlServer.Rook
   alias ControlServer.Batteries
+
+  alias KubeExt.SnapshotApply.StateSnapshot
+
   alias Ecto.Multi
 
-  @type t :: %KubeExt.SnapshotApply.StateSnapshot{
+  @type t :: %StateSnapshot{
           system_batteries: list(Batteries.SystemBattery.t()),
           postgres_clusters: list(Postgres.Cluster.t()),
           redis_clusters: list(Redis.FailoverCluster.t()),
@@ -19,7 +22,7 @@ defmodule ControlServer.SnapshotApply.StateSnapshot do
   @spec materialize! :: t()
   def materialize! do
     with {:ok, res} <- transaction() do
-      struct(KubeExt.SnapshotApply.StateSnapshot, res)
+      struct(StateSnapshot, res)
     end
   end
 

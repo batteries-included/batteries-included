@@ -28,7 +28,8 @@ defmodule Cli.MixProject do
   defp deps do
     [
       {:burrito, github: "burrito-elixir/burrito"},
-      {:kube_raw_resources, in_umbrella: true},
+      {:kube_ext, in_umbrella: true},
+      {:kube_resources, in_umbrella: true},
       {:optimus, "~> 0.2"}
     ]
   end

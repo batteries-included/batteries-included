@@ -7,8 +7,8 @@ defmodule KubeResources.Promtail do
 
   @app "promtail"
 
-  resource(:cluster_role_binding_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:cluster_role_binding_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("promtail")
@@ -30,8 +30,8 @@ defmodule KubeResources.Promtail do
     ])
   end
 
-  resource(:daemon_set_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:daemon_set_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:daemon_set)
     |> B.name("promtail")
@@ -115,8 +115,8 @@ defmodule KubeResources.Promtail do
     })
   end
 
-  resource(:secret_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:secret_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{} |> Map.put("promtail.yaml", get_resource(:promtail_yaml)) |> Secret.encode()
 
     B.build_resource(:secret)
@@ -126,8 +126,8 @@ defmodule KubeResources.Promtail do
     |> B.data(data)
   end
 
-  resource(:service_account_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("promtail")
@@ -135,8 +135,8 @@ defmodule KubeResources.Promtail do
     |> B.app_labels(@app)
   end
 
-  resource(:service_metrics, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_metrics, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("promtail-metrics")
@@ -156,8 +156,8 @@ defmodule KubeResources.Promtail do
     })
   end
 
-  resource(:service_monitor_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("promtail")

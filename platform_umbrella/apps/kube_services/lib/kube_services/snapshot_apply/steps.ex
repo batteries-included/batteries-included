@@ -8,6 +8,7 @@ defmodule KubeServices.SnapshotApply.Steps do
   alias KubeExt.Hashing
   alias KubeExt.KubeState
   alias KubeResources.ConfigGenerator
+  alias KubeExt.ApplyResource
 
   require Logger
 
@@ -112,10 +113,15 @@ defmodule KubeServices.SnapshotApply.Steps do
   end
 
   defp do_apply(%ResourcePath{} = rp) do
-    case KubeExt.apply_single(KubeExt.ConnectionPool.get(), rp.content_addressable_resource.value) do
-      {:ok, _result} -> {:ok, :applied}
-      {:error, %{error: error_reason}} -> {:error, error_reason}
-      {:error, reason} -> {:error, reason}
+    case ApplyResource.apply(KubeExt.ConnectionPool.get(), rp.content_addressable_resource.value) do
+      %ApplyResource.ResourceState{last_result: {:ok, _result}} ->
+        {:ok, :applied}
+
+      %ApplyResource.ResourceState{last_result: {:error, %{error: error_reason}}} ->
+        {:error, error_reason}
+
+      %ApplyResource.ResourceState{last_result: {:error, reason}} ->
+        {:error, reason}
     end
   end
 end

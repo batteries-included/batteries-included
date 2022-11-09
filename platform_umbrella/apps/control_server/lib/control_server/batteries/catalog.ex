@@ -187,11 +187,6 @@ defmodule ControlServer.Batteries.Catalog do
     # Security
     %CatalogBattery{
       group: :net_sec,
-      type: :cert_manager,
-      dependencies: [:battery_core]
-    },
-    %CatalogBattery{
-      group: :net_sec,
       type: :ory_hydra,
       dependencies: [:database_internal]
     }

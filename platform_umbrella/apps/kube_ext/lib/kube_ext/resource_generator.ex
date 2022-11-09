@@ -12,35 +12,30 @@ defmodule KubeExt.ResourceGenerator do
     end
   end
 
-  defmacro resource(name, var \\ quote(do: _), do: resource_block) do
+  defmacro resource(name, battery \\ quote(do: _), state \\ quote(do: _), do: resource_block) do
     quote do
-      @resource_generator {:materialize, unquote(name)}
-      def unquote(name)(unquote(var)), do: unquote(resource_block)
+      @resource_generator unquote(name)
+      def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
     end
   end
 
-  def perform_materialize(module, generators, group_name, config) do
+  def perform_materialize(module, generators, battery, state) do
     generators
-    |> filter_groupname(group_name)
-    |> do_apply(module, config)
+    |> do_apply(module, battery, state)
     |> flatten_to_tuple()
     |> filter_exists()
     |> dedupe_path()
     |> to_map()
   end
 
-  defp filter_groupname(generators, group_name) do
-    Enum.filter(generators, fn {gn, _} -> gn == group_name end)
-  end
-
   defp filter_exists(resources) do
     Enum.filter(resources, fn {_path, r} -> r != nil end)
   end
 
-  defp do_apply(generators, module, config) do
-    Enum.map(generators, fn {_group_name, method} ->
+  defp do_apply(generators, module, battery, state) do
+    Enum.map(generators, fn method ->
       # Do the actual work of creating the resource
-      apply(module, method, [config])
+      apply(module, method, [battery, state])
     end)
   end
 
@@ -106,26 +101,24 @@ defmodule KubeExt.ResourceGenerator do
   end
 
   defmacro __before_compile__(%{module: module} = _env) do
-    methods =
+    method =
       module
       |> Module.get_attribute(:resource_generator, [])
-      |> Enum.map(fn {name, _} -> name end)
-      |> Enum.uniq()
-      |> Enum.map(fn name ->
+      |> then(fn generators ->
         quote do
-          def unquote(name)(config) do
+          def materialize(battery, state) do
             KubeExt.ResourceGenerator.perform_materialize(
               __MODULE__,
-              @resource_generator,
-              unquote(name),
-              config
+              unquote(generators),
+              battery,
+              state
             )
           end
         end
       end)
 
     quote do
-      (unquote_splicing(methods))
+      unquote(method)
     end
   end
 end

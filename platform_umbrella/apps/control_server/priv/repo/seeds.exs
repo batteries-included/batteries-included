@@ -10,4 +10,4 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-ControlServer.Release.seed_dev()
+ControlServer.Release.seed()

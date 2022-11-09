@@ -34,8 +34,8 @@ defmodule KubeResources.TektonOperator do
     |> B.subject(B.build_group("system:authenticated", "default"))
   end
 
-  resource(:cluster_role_binding_tekton_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:cluster_role_binding_tekton_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("tekton-operator")
@@ -341,8 +341,8 @@ defmodule KubeResources.TektonOperator do
     |> B.rules(rules)
   end
 
-  resource(:config_map_logging, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_logging, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     data =
       %{}
@@ -357,8 +357,8 @@ defmodule KubeResources.TektonOperator do
     |> B.data(data)
   end
 
-  resource(:config_map_tekton_defaults, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_tekton_defaults, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     data =
       %{}
@@ -372,8 +372,8 @@ defmodule KubeResources.TektonOperator do
     |> B.data(data)
   end
 
-  resource(:config_map_tekton_observability, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_tekton_observability, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{}
 
     B.build_resource(:config_map)
@@ -383,8 +383,8 @@ defmodule KubeResources.TektonOperator do
     |> B.data(data)
   end
 
-  resource(:config_map_tekton_operator_info, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_tekton_operator_info, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"version" => "v0.62.0"}
 
     B.build_resource(:config_map)
@@ -426,8 +426,8 @@ defmodule KubeResources.TektonOperator do
     yaml(get_resource(:tektontriggers_operator_tekton_dev))
   end
 
-  resource(:deployment_tekton_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:deployment_tekton_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -542,8 +542,8 @@ defmodule KubeResources.TektonOperator do
     |> B.spec(spec)
   end
 
-  resource(:deployment_tekton_operator_webhook, config) do
-    namespace = Settings.namespace(config)
+  resource(:deployment_tekton_operator_webhook, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -591,8 +591,8 @@ defmodule KubeResources.TektonOperator do
     |> B.spec(spec)
   end
 
-  resource(:role_binding_tekton_operator_info, config) do
-    namespace = Settings.namespace(config)
+  resource(:role_binding_tekton_operator_info, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:role_binding)
     |> B.name("tekton-operator-info")
@@ -602,8 +602,8 @@ defmodule KubeResources.TektonOperator do
     |> B.subject(B.build_group("system:authenticated", "default"))
   end
 
-  resource(:role_tekton_operator_info, config) do
-    namespace = Settings.namespace(config)
+  resource(:role_tekton_operator_info, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     rules = [
       %{
@@ -621,8 +621,8 @@ defmodule KubeResources.TektonOperator do
     |> B.rules(rules)
   end
 
-  resource(:secret_tekton_operator_webhook_certs, config) do
-    namespace = Settings.namespace(config)
+  resource(:secret_tekton_operator_webhook_certs, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{}
 
     B.build_resource(:secret)
@@ -634,8 +634,8 @@ defmodule KubeResources.TektonOperator do
     |> B.data(data)
   end
 
-  resource(:service_account_tekton_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_tekton_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("tekton-operator")
@@ -643,8 +643,8 @@ defmodule KubeResources.TektonOperator do
     |> B.app_labels(@app)
   end
 
-  resource(:service_tekton_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_tekton_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}
@@ -662,8 +662,8 @@ defmodule KubeResources.TektonOperator do
     |> B.spec(spec)
   end
 
-  resource(:service_tekton_operator_webhook, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_tekton_operator_webhook, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     spec =
       %{}

@@ -87,13 +87,14 @@ defmodule ControlServer.PostgresTest do
     end
 
     test "find_or_create with reasonable defaults" do
-      cluster = KubeRawResources.Keycloak.keycloak_cluster()
+      cluster = KubeExt.RequiredDatabases.Gitea.gitea_cluster()
       assert {result, _db_res} = Postgres.find_or_create(cluster)
       assert :ok == result
     end
 
     test "find_or_create with reasonable Battery defaults" do
-      cluster = KubeRawResources.Battery.control_cluster()
+      cluster = KubeExt.RequiredDatabases.Control.control_cluster()
+
       assert {result, _db_res} = Postgres.find_or_create(cluster)
       assert :ok == result
     end

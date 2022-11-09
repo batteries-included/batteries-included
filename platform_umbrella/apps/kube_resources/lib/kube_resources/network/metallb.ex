@@ -12,12 +12,12 @@ defmodule KubeResources.MetalLB do
 
   import KubeExt.Yaml
 
-  alias KubeRawResources.NetworkSettings, as: Settings
+  alias KubeResources.NetworkSettings, as: Settings
 
   @app "metallb"
 
-  resource(:namespace, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:namespace, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:namespace)
     |> B.name(namespace)
@@ -25,8 +25,8 @@ defmodule KubeResources.MetalLB do
     |> B.label("istio-injection", "false")
   end
 
-  resource(:cluster_role_binding_controller, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:cluster_role_binding_controller, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("metallb:controller")
@@ -35,8 +35,8 @@ defmodule KubeResources.MetalLB do
     |> B.subject(B.build_service_account("metallb-controller", namespace))
   end
 
-  resource(:cluster_role_binding_speaker, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:cluster_role_binding_speaker, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("metallb:speaker")
@@ -113,8 +113,8 @@ defmodule KubeResources.MetalLB do
     yaml(get_resource(:l2advertisements_metallb_io))
   end
 
-  resource(:daemon_set_speaker, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:daemon_set_speaker, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:daemon_set)
     |> B.name("metallb-speaker")
@@ -215,8 +215,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:deployment_controller, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:deployment_controller, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:deployment)
     |> B.name("metallb-controller")
@@ -303,8 +303,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:pod_monitor_controller, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:pod_monitor_controller, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:pod_monitor)
     |> B.name("metallb-controller")
@@ -321,8 +321,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:pod_monitor_speaker, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:pod_monitor_speaker, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:pod_monitor)
     |> B.name("metallb-speaker")
@@ -339,8 +339,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:role_binding_controller, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:role_binding_controller, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:role_binding)
     |> B.name("metallb-controller")
@@ -350,8 +350,8 @@ defmodule KubeResources.MetalLB do
     |> B.subject(B.build_service_account("metallb-controller", namespace))
   end
 
-  resource(:role_binding_pod_lister, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:role_binding_pod_lister, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:role_binding)
     |> B.name("metallb-pod-lister")
@@ -361,8 +361,8 @@ defmodule KubeResources.MetalLB do
     |> B.subject(B.build_service_account("metallb-speaker", namespace))
   end
 
-  resource(:role_binding_prometheus, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:role_binding_prometheus, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:role_binding)
     |> B.name("metallb-prometheus")
@@ -372,8 +372,8 @@ defmodule KubeResources.MetalLB do
     |> B.subject(B.build_service_account("battery-prometheus-prometheus", namespace))
   end
 
-  resource(:role_controller, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:role_controller, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:role)
     |> B.name("metallb-controller")
@@ -436,8 +436,8 @@ defmodule KubeResources.MetalLB do
     ])
   end
 
-  resource(:role_pod_lister, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:role_pod_lister, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:role)
     |> B.name("metallb-pod-lister")
@@ -484,8 +484,8 @@ defmodule KubeResources.MetalLB do
     ])
   end
 
-  resource(:role_prometheus, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:role_prometheus, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:role)
     |> B.name("metallb-prometheus")
@@ -496,8 +496,8 @@ defmodule KubeResources.MetalLB do
     ])
   end
 
-  resource(:secret_webhook_server_cert, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:secret_webhook_server_cert, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
     data = %{}
 
     B.build_resource(:secret)
@@ -507,8 +507,8 @@ defmodule KubeResources.MetalLB do
     |> B.data(data)
   end
 
-  resource(:service_account_controller, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:service_account_controller, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("metallb-controller")
@@ -517,8 +517,8 @@ defmodule KubeResources.MetalLB do
     |> B.component_label("controller")
   end
 
-  resource(:service_account_speaker, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:service_account_speaker, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("metallb-speaker")
@@ -527,8 +527,8 @@ defmodule KubeResources.MetalLB do
     |> B.component_label("speaker")
   end
 
-  resource(:service_controller_monitor, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:service_controller_monitor, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("metallb-controller-monitor-service")
@@ -544,8 +544,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:service_monitor_controller, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:service_monitor_controller, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("metallb-controller-monitor")
@@ -560,8 +560,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:service_monitor_speaker, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:service_monitor_speaker, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("metallb-speaker-monitor")
@@ -576,8 +576,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:service_speaker_monitor, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:service_speaker_monitor, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("metallb-speaker-monitor-service")
@@ -591,8 +591,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:service_webhook, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:service_webhook, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("metallb-webhook-service")
@@ -604,8 +604,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:validating_webhook_config_configuration, config) do
-    namespace = Settings.metallb_namespace(config)
+  resource(:validating_webhook_config_configuration, battery, _state) do
+    namespace = Settings.metallb_namespace(battery.config)
 
     B.build_resource(:validating_webhook_config)
     |> B.name("metallb-webhook-configuration")

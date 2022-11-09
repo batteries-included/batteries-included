@@ -7,8 +7,8 @@ defmodule KubeResources.MonitoringCoredns do
 
   @app "monitoring_coredns"
 
-  resource(:service_monitor, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-coredns")
@@ -27,8 +27,8 @@ defmodule KubeResources.MonitoringCoredns do
     })
   end
 
-  resource(:config_map, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"k8s-coredns.json" => get_resource(:k8s_coredns_json)}
 
     B.build_resource(:config_map)

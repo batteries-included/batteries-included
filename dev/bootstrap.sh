@@ -116,15 +116,9 @@ buildLocalControl() {
   bash "${DIR}/build-local.sh"
 }
 
-cargoBootstrap() {
-  pushd "${DIR}/../rust_utils"
-  retry cargo run -- bootstrap
-  popd
-}
-
 mixBootstrap() {
-  pushd "${DIR}/../platform_umbrella/apps/kube_raw_resources"
-  retry mix run -e "KubeRawResources.Bootstrap.sync"
+  pushd "${DIR}/../platform_umbrella/apps/cli"
+  retry mix run -e "CLI.InitialSync.sync"
   popd
 }
 

@@ -40,8 +40,7 @@ defmodule KubeResources.MixProject do
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:logger_json, "~> 5.1"},
       {:kube_ext, in_umbrella: true},
-      {:kube_raw_resources, in_umbrella: true},
-      {:control_server, in_umbrella: true}
+      {:ex_machina, "~> 2.7.0", only: :test}
     ]
   end
 

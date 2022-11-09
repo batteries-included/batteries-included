@@ -1,32 +1,35 @@
 defmodule KubeResources.CephClusters do
-  alias ControlServer.Rook
   alias KubeExt.Builder, as: B
-  alias KubeRawResources.DataSettings, as: Settings
+  alias KubeResources.DataSettings, as: Settings
 
-  def materialize(%{} = config) do
-    clusters(config)
+  def materialize(battery, state) do
+    clusters(battery, state)
   end
 
-  def clusters(config) do
-    Rook.list_ceph_cluster()
-    |> Enum.map(fn ceph_cluster ->
-      {"/ceph_cluster/#{ceph_cluster.id}", cluster(ceph_cluster, config)}
+  def clusters(battery, state) do
+    state.ceph_clusters
+    |> Enum.with_index()
+    |> Enum.map(fn {ceph_cluster, idx} ->
+      {cluster_path(ceph_cluster, idx), cluster(ceph_cluster, battery, state)}
     end)
     |> Enum.into(%{})
   end
 
-  def cluster(%Rook.CephCluster{} = cluster, config) do
-    namespace = Settings.public_namespace(config)
+  defp cluster_path(%{id: id} = _ceph_cluster, _idx), do: "/ceph_cluster/#{id}"
+  defp cluster_path(_ceph_cluster, idx), do: "/ceph_cluster:idx/#{idx}"
+
+  def cluster(%{} = cluster, battery, state) do
+    namespace = Settings.public_namespace(battery.config)
 
     B.build_resource(:ceph_cluster)
     |> B.name(cluster.name)
     |> B.namespace(namespace)
     |> B.owner_label(cluster.id)
-    |> B.spec(cluster_spec(cluster, config))
+    |> B.spec(cluster_spec(cluster, battery, state))
   end
 
-  defp cluster_spec(%Rook.CephCluster{} = cluster, config) do
-    ceph_image = Settings.ceph_image(config)
+  defp cluster_spec(%{} = cluster, battery, _state) do
+    ceph_image = Settings.ceph_image(battery.config)
 
     %{
       # storage: %{useAllNodes: false, useAllDevices: false, nodes: cluster.nodes},

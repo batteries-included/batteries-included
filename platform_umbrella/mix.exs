@@ -44,7 +44,7 @@ defmodule ControlServer.Umbrella.MixProject do
         applications: [home_base: :permanent, home_base_web: :permanent]
       ],
       cli: [
-        applications: [cli: :permanent, kube_raw_resources: :permanent, kube_ext: :permanent],
+        applications: [cli: :permanent, kube_resources: :permanent, kube_ext: :permanent],
         runtime_config_path: "apps/cli/config/releases.exs",
         config_providers: config_providers_for_apps([:cli]),
         steps: [:assemble, &copy_configs/1, &Burrito.wrap/1],

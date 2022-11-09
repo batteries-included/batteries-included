@@ -17,24 +17,13 @@ defmodule ControlServer.Release do
     end
   end
 
-  def seed_prod do
+  def seed do
     load_app()
     Logger.info("Starting Seed")
 
-    Enum.each(
-      KubeRawResources.BatteryConfigs.prod_batteries(),
-      &ControlServer.Batteries.Installer.install!/1
-    )
-  end
-
-  def seed_dev do
-    load_app()
-    Logger.info("Starting Seed for DEVELOPMENT env")
-
-    Enum.each(
-      KubeRawResources.BatteryConfigs.dev_batteries(),
-      &ControlServer.Batteries.Installer.install!/1
-    )
+    KubeExt.cluster_type()
+    |> KubeExt.SnapshotApply.SeedStateSnapshot.seed()
+    |> ControlServer.Seed.seed_from_snapshot()
   end
 
   def rollback(repo, version) do

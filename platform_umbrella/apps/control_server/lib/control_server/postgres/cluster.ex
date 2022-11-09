@@ -5,8 +5,6 @@ defmodule ControlServer.Postgres.Cluster do
   use TypedEctoSchema
   import Ecto.Changeset
 
-  alias KubeRawResources.RawCluster
-
   require Logger
 
   @timestamps_opts [type: :utc_datetime_usec]
@@ -62,7 +60,4 @@ defmodule ControlServer.Postgres.Cluster do
 
     {changeset, data}
   end
-
-  defdelegate team_name(cluster), to: RawCluster
-  defdelegate full_name(cluster), to: RawCluster
 end

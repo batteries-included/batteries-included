@@ -8,8 +8,8 @@ defmodule KubeResources.MonitoringScheduler do
 
   @app "monitoring_scheduler"
 
-  resource(:config_map, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"scheduler.json" => get_resource(:scheduler_json)}
 
     B.build_resource(:config_map)
@@ -20,8 +20,8 @@ defmodule KubeResources.MonitoringScheduler do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule_rules, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_rules, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-system-scheduler.rules")
@@ -98,8 +98,8 @@ defmodule KubeResources.MonitoringScheduler do
     })
   end
 
-  resource(:prometheus_rule, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-system-scheduler")
@@ -145,8 +145,8 @@ defmodule KubeResources.MonitoringScheduler do
     })
   end
 
-  resource(:service_monitor, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-scheduler")

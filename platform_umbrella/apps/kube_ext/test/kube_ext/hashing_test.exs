@@ -73,7 +73,6 @@ defmodule KubeExt.HashingTest do
   }
 
   test "Hashing.different?" do
-    assert false == Hashing.different?([], [])
     assert false == Hashing.different?(%{test: 100}, %{test: 100})
   end
 

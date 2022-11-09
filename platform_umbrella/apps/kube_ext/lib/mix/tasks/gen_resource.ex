@@ -735,7 +735,7 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp resource_method_from_pipeline(pipeline, method_name) do
     quote do
-      resource(unquote(method_name), config) do
+      resource(unquote(method_name), battery, state) do
         namespace = Settings.namespace(config)
         unquote(pipeline)
       end
@@ -752,7 +752,7 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp resource_method_from_pipeline_and_data(data_pipeline, main_pipeline, method_name) do
     quote do
-      resource(unquote(method_name), config) do
+      resource(unquote(method_name), battery, state) do
         namespace = Settings.namespace(config)
         data = unquote(data_pipeline)
         unquote(main_pipeline)
@@ -762,7 +762,7 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp resource_method_from_pipeline_and_spec(spec_pipeline, main_pipeline, method_name) do
     quote do
-      resource(unquote(method_name), config) do
+      resource(unquote(method_name), battery, state) do
         namespace = Settings.namespace(config)
         spec = unquote(spec_pipeline)
         unquote(main_pipeline)
@@ -772,7 +772,7 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp resource_method_from_pipeline_and_rules(rules, main_pipeline, method_name) do
     quote do
-      resource(unquote(method_name), config) do
+      resource(unquote(method_name), battery, state) do
         namespace = Settings.namespace(config)
         rules = unquote(rules)
         unquote(main_pipeline)

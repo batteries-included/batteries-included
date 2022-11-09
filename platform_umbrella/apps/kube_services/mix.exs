@@ -35,7 +35,6 @@ defmodule KubeServices.MixProject do
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},
       {:kube_ext, in_umbrella: true},
-      {:kube_raw_resources, in_umbrella: true},
       {:kube_resources, in_umbrella: true}
     ]
   end

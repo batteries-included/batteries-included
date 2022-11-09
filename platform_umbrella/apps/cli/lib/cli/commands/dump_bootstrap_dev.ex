@@ -15,6 +15,6 @@ defmodule CLI.Commands.DumpBootstrapDev do
 
   def run(_command, %{args: %{outdir: outdir}} = parse_result) do
     Logger.debug("Dumping dev bootsrap yaml = #{inspect(parse_result)}")
-    KubeRawResources.Dump.dump_dev(outdir)
+    KubeResources.Dump.dump_dev(outdir)
   end
 end

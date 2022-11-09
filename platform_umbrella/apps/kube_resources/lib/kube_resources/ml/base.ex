@@ -4,14 +4,14 @@ defmodule KubeResources.ML.Base do
 
   @app "battery-ml"
 
-  def materialize(config) do
+  def materialize(battery, state) do
     %{
-      "/namespace" => namespace(config)
+      "/namespace" => namespace(battery, state)
     }
   end
 
-  defp namespace(config) do
-    namespace = MLSettings.public_namespace(config)
+  defp namespace(battery, _state) do
+    namespace = MLSettings.public_namespace(battery.config)
 
     B.build_resource(:namespace)
     |> B.name(namespace)

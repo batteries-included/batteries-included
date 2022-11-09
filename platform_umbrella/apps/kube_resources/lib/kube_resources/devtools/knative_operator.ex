@@ -79,10 +79,10 @@ defmodule KubeResources.KnativeOperator do
     |> B.subject(B.build_service_account(service_account, namespace))
   end
 
-  def aggregated_cluster_role_serving(_config),
+  def aggregated_cluster_role_serving(_config, _state),
     do: aggregated_cluster_role(@aggregated_serving_cluster_role, "serving.knative.dev/release")
 
-  def aggregated_cluster_role_serving_appname(_config),
+  def aggregated_cluster_role_serving_appname(_config, _state),
     do:
       aggregated_cluster_role(
         @aggregated_serving_appname_cluster_role,
@@ -90,7 +90,7 @@ defmodule KubeResources.KnativeOperator do
         ["knative-serving"]
       )
 
-  def aggregated_cluster_role_serving_battery_app(_config),
+  def aggregated_cluster_role_serving_battery_app(_config, _state),
     do:
       aggregated_cluster_role(
         @aggregated_serving_battery_app_cluster_role,
@@ -98,14 +98,14 @@ defmodule KubeResources.KnativeOperator do
         ["knative-serving", @app_name]
       )
 
-  def aggregated_cluster_role_eventing(_config),
+  def aggregated_cluster_role_eventing(_config, _state),
     do:
       aggregated_cluster_role(
         @aggregated_eventing_cluster_role,
         "eventing.knative.dev/release"
       )
 
-  def aggregated_cluster_role_eventing_appname(_config),
+  def aggregated_cluster_role_eventing_appname(_config, _state),
     do:
       aggregated_cluster_role(
         @aggregated_eventing_appname_cluster_role,
@@ -113,7 +113,7 @@ defmodule KubeResources.KnativeOperator do
         ["knative-eventing"]
       )
 
-  def aggregated_cluster_role_eventing_battery_app(_config),
+  def aggregated_cluster_role_eventing_battery_app(_config, _state),
     do:
       aggregated_cluster_role(
         @aggregated_eventing_battery_app_cluster_role,
@@ -121,7 +121,7 @@ defmodule KubeResources.KnativeOperator do
         ["knative-eventing", @app_name]
       )
 
-  def cluster_role_knative_serving_operator(_config) do
+  def cluster_role_knative_serving_operator(_battery, _state) do
     rules = [
       %{
         "apiGroups" => [
@@ -403,7 +403,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.rules(rules)
   end
 
-  def cluster_role_knative_eventing_operator(_config) do
+  def cluster_role_knative_eventing_operator(_battery, _state) do
     rules = [
       %{
         "apiGroups" => [
@@ -635,7 +635,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.rules(rules)
   end
 
-  def cluster_role_operator_webhook(_config) do
+  def cluster_role_operator_webhook(_battery, _state) do
     rules = [
       %{
         "apiGroups" => [
@@ -759,8 +759,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.rules(rules)
   end
 
-  def service_account_operator(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_account_operator(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.namespace(namespace)
@@ -768,8 +768,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.app_labels(@app_name)
   end
 
-  def service_account_webhook(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_account_webhook(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.namespace(namespace)
@@ -777,8 +777,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.app_labels(@app_name)
   end
 
-  def cluster_role_binding_serving_operator(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_serving_operator(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @serving_operator_cluster_role,
@@ -788,8 +788,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_serving(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_aggregated_serving(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @aggregated_serving_cluster_role,
@@ -799,8 +799,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_appname_serving(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_aggregated_appname_serving(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @aggregated_serving_appname_cluster_role,
@@ -810,8 +810,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_battery_app_serving(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_aggregated_battery_app_serving(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @aggregated_serving_battery_app_cluster_role,
@@ -821,8 +821,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_eventing_operator(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_eventing_operator(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @eventing_operator_cluster_role,
@@ -832,8 +832,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_eventing(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_aggregated_eventing(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @aggregated_eventing_cluster_role,
@@ -843,8 +843,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_appname_eventing(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_aggregated_appname_eventing(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @aggregated_eventing_appname_cluster_role,
@@ -854,8 +854,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_battery_app_eventing(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_aggregated_battery_app_eventing(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     cluster_role_binding(
       @aggregated_eventing_battery_app_cluster_role,
@@ -865,8 +865,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_operator_webhook(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def cluster_role_binding_operator_webhook(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name(@webhook_cluster_role)
@@ -875,8 +875,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.subject(B.build_service_account(@webhook_service_account, namespace))
   end
 
-  def role_operator_webhook(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def role_operator_webhook(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     rules = [
       %{
@@ -904,8 +904,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.rules(rules)
   end
 
-  def role_binding_operator_webhook(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def role_binding_operator_webhook(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     B.build_resource(:role_binding)
     |> B.name(@webhook_role)
@@ -915,8 +915,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.subject(B.build_service_account(@webhook_service_account, namespace))
   end
 
-  def secret_webhook_certs(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def secret_webhook_certs(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     B.build_resource(:secret)
     |> B.name(@webhook_certs_secret)
@@ -924,8 +924,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.app_labels(@app_name)
   end
 
-  def config_map_config_logging(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def config_map_config_logging(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     data = %{
       "_example" =>
@@ -939,8 +939,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.data(data)
   end
 
-  def deployment_webhook(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def deployment_webhook(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "selector" => %{
@@ -1082,8 +1082,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def config_map_config_observability(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def config_map_config_observability(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     data = %{
       "_example" =>
@@ -1097,8 +1097,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.data(data)
   end
 
-  def deployment_knative_operator(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def deployment_knative_operator(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "replicas" => 1,
@@ -1175,8 +1175,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_webhook(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_webhook(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "ports" => [
@@ -1196,16 +1196,16 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def change_conversion(%{"spec" => %{"conversion" => %{}}} = crd, config),
-    do: do_chang_conversion(crd, config)
+  def change_conversion(%{"spec" => %{"conversion" => %{}}} = crd, battery, state),
+    do: do_chang_conversion(crd, battery, state)
 
-  def change_conversion(%{spec: %{conversion: %{}}} = crd, config),
-    do: do_chang_conversion(crd, config)
+  def change_conversion(%{spec: %{conversion: %{}}} = crd, battery, state),
+    do: do_chang_conversion(crd, battery, state)
 
-  def change_conversion(crd, _), do: crd
+  def change_conversion(crd, _, _), do: crd
 
-  defp do_chang_conversion(crd, config) do
-    namespace = DevtoolsSettings.namespace(config)
+  defp do_chang_conversion(crd, battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     update_in(crd, ~w(spec conversion webhook clientConfig service), fn s ->
       (s || %{})
@@ -1214,23 +1214,23 @@ defmodule KubeResources.KnativeOperator do
     end)
   end
 
-  def monitors(config) do
+  def monitors(battery, state) do
     [
-      service_monitor_autoscaler(config),
-      service_monitor_activator(config),
-      service_monitor_controller(config),
-      service_monitor_filter(config),
-      service_monitor_webhook(config),
-      service_monitor_broker_ingress(config),
-      pod_monitor_eventing_controller(config),
-      pod_monitor_imc_controller(config),
-      pod_monitor_api_source(config),
-      pod_monitor_ping_source(config)
+      service_monitor_autoscaler(battery, state),
+      service_monitor_activator(battery, state),
+      service_monitor_controller(battery, state),
+      service_monitor_filter(battery, state),
+      service_monitor_webhook(battery, state),
+      service_monitor_broker_ingress(battery, state),
+      pod_monitor_eventing_controller(battery, state),
+      pod_monitor_imc_controller(battery, state),
+      pod_monitor_api_source(battery, state),
+      pod_monitor_ping_source(battery, state)
     ]
   end
 
-  def service_monitor_autoscaler(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_monitor_autoscaler(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "endpoints" => [
@@ -1259,8 +1259,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_activator(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_monitor_activator(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "endpoints" => [
@@ -1289,8 +1289,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_controller(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_monitor_controller(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "endpoints" => [
@@ -1319,8 +1319,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_filter(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_monitor_filter(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "endpoints" => [
@@ -1349,8 +1349,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_webhook(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_monitor_webhook(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "endpoints" => [
@@ -1379,8 +1379,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_broker_ingress(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def service_monitor_broker_ingress(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "endpoints" => [
@@ -1409,8 +1409,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_eventing_controller(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def pod_monitor_eventing_controller(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "namespaceSelector" => %{
@@ -1438,8 +1438,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_imc_controller(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def pod_monitor_imc_controller(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "namespaceSelector" => %{
@@ -1467,8 +1467,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_ping_source(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def pod_monitor_ping_source(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "namespaceSelector" => %{
@@ -1496,8 +1496,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_api_source(config) do
-    namespace = DevtoolsSettings.namespace(config)
+  def pod_monitor_api_source(battery, _state) do
+    namespace = DevtoolsSettings.namespace(battery.config)
 
     spec = %{
       "namespaceSelector" => %{
@@ -1522,46 +1522,49 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def materialize(config) do
+  def materialize(battery, state) do
     %{
       "/crds" => yaml(get_resource(:crd)),
-      "/service_account" => service_account_operator(config),
-      "/webhook_service_account" => service_account_webhook(config),
-      "/cluster_roles/webhook/main" => cluster_role_operator_webhook(config),
-      "/cluster_roles/serving/main" => cluster_role_knative_serving_operator(config),
-      "/cluster_roles/serving/aggregated" => aggregated_cluster_role_serving(config),
+      "/service_account" => service_account_operator(battery, state),
+      "/webhook_service_account" => service_account_webhook(battery, state),
+      "/cluster_roles/webhook/main" => cluster_role_operator_webhook(battery, state),
+      "/cluster_roles/serving/main" => cluster_role_knative_serving_operator(battery, state),
+      "/cluster_roles/serving/aggregated" => aggregated_cluster_role_serving(battery, state),
       "/cluster_roles/serving/aggregated_appname" =>
-        aggregated_cluster_role_serving_appname(config),
+        aggregated_cluster_role_serving_appname(battery, state),
       "/cluster_roles/serving/aggregated_battery" =>
-        aggregated_cluster_role_serving_battery_app(config),
-      "/cluster_roles/eventing/main" => cluster_role_knative_eventing_operator(config),
-      "/cluster_roles/eventing/aggregated" => aggregated_cluster_role_eventing(config),
+        aggregated_cluster_role_serving_battery_app(battery, state),
+      "/cluster_roles/eventing/main" => cluster_role_knative_eventing_operator(battery, state),
+      "/cluster_roles/eventing/aggregated" => aggregated_cluster_role_eventing(battery, state),
       "/cluster_roles/eventing/aggregated_appname" =>
-        aggregated_cluster_role_eventing_appname(config),
+        aggregated_cluster_role_eventing_appname(battery, state),
       "/cluster_roles/eventing/aggregated_battery" =>
-        aggregated_cluster_role_eventing_battery_app(config),
-      "/cluster_role_bindings/webhook/main" => cluster_role_binding_operator_webhook(config),
-      "/cluster_role_bindings/serving/main" => cluster_role_binding_serving_operator(config),
+        aggregated_cluster_role_eventing_battery_app(battery, state),
+      "/cluster_role_bindings/webhook/main" =>
+        cluster_role_binding_operator_webhook(battery, state),
+      "/cluster_role_bindings/serving/main" =>
+        cluster_role_binding_serving_operator(battery, state),
       "/cluster_role_bindings/serving/aggregated" =>
-        cluster_role_binding_aggregated_serving(config),
+        cluster_role_binding_aggregated_serving(battery, state),
       "/cluster_role_bindings/serving/aggregated_appname" =>
-        cluster_role_binding_aggregated_appname_serving(config),
+        cluster_role_binding_aggregated_appname_serving(battery, state),
       "/cluster_role_bindings/serving/aggregated_battery" =>
-        cluster_role_binding_aggregated_battery_app_serving(config),
-      "/cluster_role_bindings/eventing/main" => cluster_role_binding_eventing_operator(config),
+        cluster_role_binding_aggregated_battery_app_serving(battery, state),
+      "/cluster_role_bindings/eventing/main" =>
+        cluster_role_binding_eventing_operator(battery, state),
       "/cluster_role_bindings/eventing/aggregated" =>
-        cluster_role_binding_aggregated_eventing(config),
+        cluster_role_binding_aggregated_eventing(battery, state),
       "/cluster_role_bindings/eventing/aggregated_appname" =>
-        cluster_role_binding_aggregated_appname_eventing(config),
+        cluster_role_binding_aggregated_appname_eventing(battery, state),
       "/cluster_role_bindings/eventing/aggregated_battery" =>
-        cluster_role_binding_aggregated_battery_app_eventing(config),
-      "/role/webhook" => role_operator_webhook(config),
-      "/role_binding/webhook" => role_binding_operator_webhook(config),
-      "/secret/webhook_certs" => secret_webhook_certs(config),
-      "/configs/logging" => config_map_config_logging(config),
-      "/configs/observability" => config_map_config_observability(config),
-      "/deployments/webhook" => deployment_webhook(config),
-      "/deployments/operator" => deployment_knative_operator(config)
+        cluster_role_binding_aggregated_battery_app_eventing(battery, state),
+      "/role/webhook" => role_operator_webhook(battery, state),
+      "/role_binding/webhook" => role_binding_operator_webhook(battery, state),
+      "/secret/webhook_certs" => secret_webhook_certs(battery, state),
+      "/configs/logging" => config_map_config_logging(battery, state),
+      "/configs/observability" => config_map_config_observability(battery, state),
+      "/deployments/webhook" => deployment_webhook(battery, state),
+      "/deployments/operator" => deployment_knative_operator(battery, state)
     }
   end
 end

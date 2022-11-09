@@ -8,15 +8,12 @@ defmodule ControlServer.Redis.FailoverCluster do
   @foreign_key_type :binary_id
   typed_schema "redis_clusters" do
     field :name, :string
-    field :num_redis_instances, :integer
-    field :num_sentinel_instances, :integer
+    field :num_redis_instances, :integer, default: 1
+    field :num_sentinel_instances, :integer, default: 1
     field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
 
     timestamps()
   end
-
-  def num_sentinel_instances(failover), do: Map.get(failover, :num_sentinel_instances, 1)
-  def num_redis_instances(failover), do: Map.get(failover, :num_redis_instances, 1)
 
   @doc false
   def changeset(failover_cluster, attrs) do

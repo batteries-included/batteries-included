@@ -1,43 +1,40 @@
 defmodule KubeResources.DatabaseServiceMonitors do
-  alias ControlServer.Postgres
-  alias ControlServer.Postgres.Cluster
-  alias KubeRawResources.Database, as: RawDatabase
+  alias KubeResources.Database
 
-  def monitors(config) do
-    services_and_montitors(Postgres.normal_clusters(), config)
+  def monitors(battery, state) do
+    services_and_montitors(battery, state)
   end
 
-  def internal_monitors(config) do
-    services_and_montitors(Postgres.internal_clusters(), config)
+  def services_and_montitors(battery, state) do
+    Enum.flat_map(
+      state.postgres_clusters,
+      fn cluster ->
+        services(cluster, battery, state) ++ postgres_monitors(cluster, battery, state)
+      end
+    )
   end
 
-  def services_and_montitors(clusters, config) do
-    Enum.flat_map(clusters, fn cluster ->
-      services(cluster, config) ++ postgres_monitors(cluster, config)
-    end)
-  end
-
-  defp services(%Cluster{num_instances: num_instances} = cluster, config)
+  defp services(%{num_instances: num_instances} = cluster, battery, state)
        when is_integer(num_instances) and num_instances > 1 do
     [
-      RawDatabase.metrics_service(cluster, config, "master"),
-      RawDatabase.metrics_service(cluster, config, "replica")
+      Database.metrics_service(cluster, battery, state, "master"),
+      Database.metrics_service(cluster, battery, state, "replica")
     ]
   end
 
-  defp services(%Cluster{num_instances: _num_instances} = cluster, config) do
-    [RawDatabase.metrics_service(cluster, config, "master")]
+  defp services(%{num_instances: _num_instances} = cluster, battery, state) do
+    [Database.metrics_service(cluster, battery, state, "master")]
   end
 
-  defp postgres_monitors(%Cluster{num_instances: num_instances} = cluster, config)
+  defp postgres_monitors(%{num_instances: num_instances} = cluster, battery, state)
        when is_integer(num_instances) and num_instances > 1 do
     [
-      RawDatabase.service_monitor(cluster, config, "master"),
-      RawDatabase.service_monitor(cluster, config, "replica")
+      Database.service_monitor(cluster, battery, state, "master"),
+      Database.service_monitor(cluster, battery, state, "replica")
     ]
   end
 
-  defp postgres_monitors(%Cluster{} = cluster, config) do
-    [RawDatabase.service_monitor(cluster, config, "master")]
+  defp postgres_monitors(%{} = cluster, battery, state) do
+    [Database.service_monitor(cluster, battery, state, "master")]
   end
 end

@@ -96,8 +96,8 @@ defmodule KubeResources.KubeStateMetrics do
     ])
   end
 
-  resource(:cluster_role_binding_battery_kube_state_metrics, config) do
-    namespace = Settings.namespace(config)
+  resource(:cluster_role_binding_battery_kube_state_metrics, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-kube-state-metrics")
@@ -106,8 +106,8 @@ defmodule KubeResources.KubeStateMetrics do
     |> B.subject(B.build_service_account("battery-kube-state-metrics", namespace))
   end
 
-  resource(:deployment_battery_kube_state_metrics, config) do
-    namespace = Settings.namespace(config)
+  resource(:deployment_battery_kube_state_metrics, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:deployment)
     |> B.name("battery-kube-state-metrics")
@@ -162,8 +162,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:service_battery_kube_state_metrics, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_battery_kube_state_metrics, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("battery-kube-state-metrics")
@@ -178,8 +178,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:service_account_battery_kube_state_metrics, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_battery_kube_state_metrics, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> Map.put("imagePullSecrets", [])
@@ -188,8 +188,8 @@ defmodule KubeResources.KubeStateMetrics do
     |> B.app_labels(@app)
   end
 
-  resource(:prometheus_rule_battery_kube_st_kube_state_metrics, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_battery_kube_st_kube_state_metrics, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kube-state-metrics")
@@ -262,8 +262,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_node_rules, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_battery_kube_st_node_rules, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node.rules")
@@ -300,8 +300,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:service_monitor_battery_kube_state_metrics, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor_battery_kube_state_metrics, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-state-metrics")

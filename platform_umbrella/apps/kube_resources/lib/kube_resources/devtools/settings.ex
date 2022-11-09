@@ -4,7 +4,8 @@ defmodule KubeResources.DevtoolsSettings do
   """
 
   import KubeExt.MapSettings
-  alias KubeRawResources.Gitea, as: GiteaRaw
+
+  alias KubeExt.RequiredDatabases
 
   @namespace "battery-core"
   @knative_namespace "battery-knative"
@@ -40,9 +41,9 @@ defmodule KubeResources.DevtoolsSettings do
   setting(:gitea_image, :image, @gitea_image)
 
   def gitea_pg_secret_name(_config) do
-    user = GiteaRaw.db_username()
-    team = GiteaRaw.db_team()
-    cluster_name = GiteaRaw.db_name()
+    user = RequiredDatabases.Gitea.db_username()
+    team = RequiredDatabases.Gitea.db_team()
+    cluster_name = RequiredDatabases.Gitea.db_name()
 
     "#{user}.#{team}-#{cluster_name}.credentials.postgresql.acid.zalan.do"
   end

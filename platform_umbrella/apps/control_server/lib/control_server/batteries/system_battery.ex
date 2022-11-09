@@ -5,7 +5,6 @@ defmodule ControlServer.Batteries.SystemBattery do
   @possible_types [
     :alert_manager,
     :battery_core,
-    :cert_manager,
     :control_server,
     :data,
     :database_internal,

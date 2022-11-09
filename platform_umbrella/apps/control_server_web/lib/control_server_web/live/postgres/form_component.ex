@@ -25,8 +25,12 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(assigns)
      |> assign(:changeset, changeset)
      |> assign(:possible_owners, possible_owners(changeset))
-     |> assign(:full_name, Cluster.full_name(cluster))
+     |> assign(:full_name, full_name(cluster))
      |> assign(:num_instances, cluster.num_instances)}
+  end
+
+  defp full_name(cluster) do
+    "#{cluster.team_name}-#{cluster.name}"
   end
 
   def handle_event("add_user", _, %{assigns: %{changeset: changeset, cluster: cluster}} = socket) do
@@ -72,7 +76,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      socket
      |> assign(changeset: changeset)
      |> assign(:possible_owners, possible_owners(changeset))
-     |> assign(:full_name, Cluster.full_name(data))
+     |> assign(:full_name, full_name(data))
      |> assign(:num_instances, data.num_instances)}
   end
 

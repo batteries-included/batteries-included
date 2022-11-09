@@ -8,6 +8,7 @@ defmodule ControlServer.Batteries.Installer do
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
   alias ControlServer.Timeline
+  alias KubeExt.RequiredDatabases
 
   require Logger
 
@@ -143,8 +144,8 @@ defmodule ControlServer.Batteries.Installer do
   defp init_config(_), do: %{}
 
   defp post_install(%SystemBattery{type: :harbor}, repo) do
-    init_pg = KubeRawResources.Harbor.harbor_pg_cluster()
-    init_redis = KubeRawResources.Harbor.harbor_redis_cluster()
+    init_pg = RequiredDatabases.Harbor.harbor_pg_cluster()
+    init_redis = RequiredDatabases.Harbor.harbor_redis_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo),
          {:ok, redis} <- Redis.create_failover_cluster(init_redis, repo) do
@@ -153,7 +154,7 @@ defmodule ControlServer.Batteries.Installer do
   end
 
   defp post_install(%SystemBattery{type: :database_internal}, repo) do
-    init_pg = KubeRawResources.Battery.control_cluster()
+    init_pg = RequiredDatabases.Control.control_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
       {:ok, internal_postgres: postgres_db}
@@ -161,7 +162,7 @@ defmodule ControlServer.Batteries.Installer do
   end
 
   defp post_install(%SystemBattery{type: :gitea}, repo) do
-    init_pg = KubeRawResources.Gitea.gitea_cluster()
+    init_pg = RequiredDatabases.Gitea.gitea_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
       {:ok, gitea_postgres: postgres_db}
@@ -169,7 +170,7 @@ defmodule ControlServer.Batteries.Installer do
   end
 
   defp post_install(%SystemBattery{type: :ory_hydra}, repo) do
-    init_pg = KubeRawResources.OryHydra.hydra_cluster()
+    init_pg = RequiredDatabases.OryHydra.hydra_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
       {:ok, hydra_postgres: postgres_db}

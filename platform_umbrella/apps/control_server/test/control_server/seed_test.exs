@@ -16,14 +16,14 @@ defmodule ControlServer.SeedTest do
         assert 0 == battery_count()
         assert 0 == postgres_count()
 
-        Release.seed_prod()
+        Release.seed()
 
-        assert 8 == battery_count()
+        assert 6 == battery_count()
         assert 1 == postgres_count()
 
-        Release.seed_prod()
+        Release.seed()
 
-        assert 8 == battery_count()
+        assert 6 == battery_count()
         assert 1 == postgres_count()
       end)
     end

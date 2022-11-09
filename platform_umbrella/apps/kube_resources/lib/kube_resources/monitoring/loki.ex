@@ -21,8 +21,8 @@ defmodule KubeResources.Loki do
 
   @app "loki"
 
-  resource(:cluster_role_binding_grafana_agent, config) do
-    namespace = Settings.namespace(config)
+  resource(:cluster_role_binding_grafana_agent, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("loki-grafana-agent")
@@ -31,8 +31,8 @@ defmodule KubeResources.Loki do
     |> B.subject(B.build_service_account("loki-grafana-agent", namespace))
   end
 
-  resource(:cluster_role_binding_grafana_agent_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:cluster_role_binding_grafana_agent_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("loki-grafana-agent-operator")
@@ -129,8 +129,8 @@ defmodule KubeResources.Loki do
     ])
   end
 
-  resource(:config_map_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"config.yaml" => get_resource(:config_yaml)}
 
     B.build_resource(:config_map)
@@ -160,8 +160,8 @@ defmodule KubeResources.Loki do
     yaml(get_resource(:podlogs_monitoring_grafana_com))
   end
 
-  resource(:deployment_grafana_agent_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:deployment_grafana_agent_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:deployment)
     |> B.name("loki-grafana-agent-operator")
@@ -199,8 +199,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:grafana_agent_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:grafana_agent_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:grafana_agent)
     |> B.name("loki")
@@ -221,8 +221,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:logs_instance_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:logs_instance_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:logs_instance)
     |> B.name("loki")
@@ -240,8 +240,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:pod_logs_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:pod_logs_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:pod_logs)
     |> B.name("loki")
@@ -271,8 +271,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:prometheus_rule_rules, config) do
-    namespace = Settings.namespace(config)
+  resource(:prometheus_rule_rules, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:prometheus_rule)
     |> B.name("loki-rules")
@@ -419,8 +419,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:service_account_grafana_agent, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_grafana_agent, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("loki-grafana-agent")
@@ -428,8 +428,8 @@ defmodule KubeResources.Loki do
     |> B.app_labels(@app)
   end
 
-  resource(:service_account_grafana_agent_operator, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_grafana_agent_operator, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("loki-grafana-agent-operator")
@@ -438,8 +438,8 @@ defmodule KubeResources.Loki do
     |> B.component_label("grafana-agent-operator")
   end
 
-  resource(:service_account_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_account_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_account)
     |> B.name("loki")
@@ -448,8 +448,8 @@ defmodule KubeResources.Loki do
     |> Map.put("automountServiceAccountToken", true)
   end
 
-  resource(:service_headless, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_headless, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("loki-headless")
@@ -470,8 +470,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:service_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("loki")
@@ -492,8 +492,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:service_memberlist, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_memberlist, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service)
     |> B.name("loki-memberlist")
@@ -508,8 +508,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:service_monitor_read, config) do
-    namespace = Settings.namespace(config)
+  resource(:service_monitor_read, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:service_monitor)
     |> B.name("loki-read")
@@ -535,8 +535,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:stateful_set_main, config) do
-    namespace = Settings.namespace(config)
+  resource(:stateful_set_main, battery, _state) do
+    namespace = Settings.namespace(battery.config)
 
     B.build_resource(:stateful_set)
     |> B.name("loki")
@@ -625,8 +625,8 @@ defmodule KubeResources.Loki do
     })
   end
 
-  resource(:config_map_grafana_datasource, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_grafana_datasource, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"datasource.yaml" => get_resource(:datasource_yaml)}
 
     B.build_resource(:config_map)
@@ -637,8 +637,8 @@ defmodule KubeResources.Loki do
     |> B.data(data)
   end
 
-  resource(:config_map_dashboard, config) do
-    namespace = Settings.namespace(config)
+  resource(:config_map_dashboard, battery, _state) do
+    namespace = Settings.namespace(battery.config)
     data = %{"dashboard.json" => get_resource(:dashboard_json)}
 
     B.build_resource(:config_map)
