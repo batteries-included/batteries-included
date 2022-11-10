@@ -33,6 +33,8 @@ defmodule KubeExt.KubeState do
 
   @spec get_all(atom() | :ets.tid(), atom()) :: list(map)
   def get_all(t \\ @default_table, res_type) do
-    Runner.get_all(t, res_type)
+    t
+    |> Runner.get_all(res_type)
+    |> Enum.sort_by(&KubeExt.ResourceVersion.sortable_resource_version/1)
   end
 end
