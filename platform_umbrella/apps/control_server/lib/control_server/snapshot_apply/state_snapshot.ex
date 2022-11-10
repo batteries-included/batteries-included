@@ -1,9 +1,10 @@
 defmodule ControlServer.SnapshotApply.StateSnapshot do
+  alias ControlServer.Batteries
+  alias ControlServer.Knative
   alias ControlServer.Notebooks
   alias ControlServer.Postgres
   alias ControlServer.Redis
   alias ControlServer.Rook
-  alias ControlServer.Batteries
 
   alias KubeExt.SnapshotApply.StateSnapshot
 
@@ -32,6 +33,7 @@ defmodule ControlServer.SnapshotApply.StateSnapshot do
     |> Multi.all(:postgres_clusters, Postgres.Cluster)
     |> Multi.all(:redis_clusters, Redis.FailoverCluster)
     |> Multi.all(:notebooks, Notebooks.JupyterLabNotebook)
+    |> Multi.all(:knative_services, Knative.Service)
     |> Multi.all(:ceph_clusters, Rook.CephCluster)
     |> Multi.all(:ceph_filesystems, Rook.CephFilesystem)
     |> Multi.run(:kube_state, fn _repo, _state ->

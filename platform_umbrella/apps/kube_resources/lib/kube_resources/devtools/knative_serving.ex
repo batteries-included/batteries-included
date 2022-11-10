@@ -88,7 +88,7 @@ defmodule KubeResources.KnativeServing do
   @spec materialize(map(), map()) :: map()
   def materialize(battery, state) do
     res =
-      []
+      state.knative_services
       |> Enum.map(fn s ->
         {"/service/#{s.id}", serving_service(s, battery, state)}
       end)

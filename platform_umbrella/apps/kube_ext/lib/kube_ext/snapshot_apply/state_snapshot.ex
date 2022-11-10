@@ -4,6 +4,7 @@ defmodule KubeExt.SnapshotApply.StateSnapshot do
             postgres_clusters: [],
             redis_clusters: [],
             notebooks: [],
+            knative_services: [],
             ceph_clusters: [],
             ceph_filesystems: [],
             kube_state: %{}
@@ -13,6 +14,7 @@ defmodule KubeExt.SnapshotApply.StateSnapshot do
           postgres_clusters: list(),
           redis_clusters: list(),
           notebooks: list(),
+          knative_services: list(),
           ceph_clusters: list(),
           ceph_filesystems: list(),
           kube_state: map()
