@@ -8,6 +8,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   alias ControlServer.Postgres.PGUser
   alias ControlServer.Postgres.PGDatabase
 
+  alias Ecto.Changeset
+
   @impl true
   def mount(socket) do
     {:ok,
@@ -33,14 +35,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     "#{cluster.team_name}-#{cluster.name}"
   end
 
-  def handle_event("add_user", _, %{assigns: %{changeset: changeset, cluster: cluster}} = socket) do
+  def handle_event("add_user", _, %{assigns: %{changeset: changeset}} = socket) do
     users =
-      changeset
-      |> Map.get(:changes)
-      |> Map.get(:users, cluster.users || [])
-      |> Enum.concat([%PGUser{username: "user", roles: ["login"]}])
+      Changeset.get_field(changeset, :users, []) ++ [%PGUser{username: "user", roles: ["login"]}]
 
-    final_changeset = Ecto.Changeset.put_embed(changeset, :users, users)
+    final_changeset = Changeset.put_embed(changeset, :users, users)
 
     {:noreply,
      socket
@@ -60,7 +59,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       |> Map.get(:databases, cluster.databases || [])
       |> Enum.concat([%PGDatabase{}])
 
-    final_changeset = Ecto.Changeset.put_embed(changeset, :databases, databases)
+    final_changeset = Changeset.put_embed(changeset, :databases, databases)
 
     {:noreply,
      socket
@@ -192,29 +191,21 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     """
   end
 
-  defp possible_owners(%{data: data} = changeset) do
+  defp possible_owners(%Changeset{} = changeset) do
     # get any possible owners from changesets of adding users
-    changes_usernames =
+    usernames =
       changeset
-      |> Map.get(:changes, %{})
-      |> Map.get(:users, [])
-      |> Enum.map(& &1.data.username)
-
-    # Existing users are always possible
-    user_usernames =
-      data
-      |> Map.get(:users, [])
+      |> Changeset.get_field(:users, [])
       |> Enum.map(& &1.username)
 
     # Finally assume that previous owners are ok
     existing_owners =
-      data
-      |> Map.get(:databases, [])
+      changeset
+      |> Changeset.get_field(:databases, [])
       |> Enum.map(& &1.owner)
 
-    user_usernames
+    usernames
     |> Enum.concat(existing_owners)
-    |> Enum.concat(changes_usernames)
     |> Enum.filter(&(&1 != nil))
     |> Enum.uniq()
     |> Enum.sort()
