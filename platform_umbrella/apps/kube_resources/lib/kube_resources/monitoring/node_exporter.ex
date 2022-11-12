@@ -97,7 +97,7 @@ defmodule KubeResources.NodeExporter do
                 "httpGet" => %{
                   "httpHeaders" => nil,
                   "path" => "/",
-                  "docker pull grafana/loki:2.7.0port" => 9100,
+                  "port" => 9100,
                   "scheme" => "HTTP"
                 },
                 "initialDelaySeconds" => 0,
@@ -111,7 +111,7 @@ defmodule KubeResources.NodeExporter do
                 %{"mountPath" => "/host/sys", "name" => "sys", "readOnly" => true},
                 %{
                   "mountPath" => "/host/root",
-                  # "mountPropagation" => "HostToContainer",promtail
+                  # "mountPropagation" => "HostToContainer",
                   "name" => "root",
                   "readOnly" => true
                 }
