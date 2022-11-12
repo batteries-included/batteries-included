@@ -117,6 +117,8 @@ defmodule KubeResources.Grafana do
   resource(:deployment_battery_grafana, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.grafana_image(battery.config)
+
     B.build_resource(:deployment)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
@@ -207,7 +209,7 @@ defmodule KubeResources.Grafana do
                 %{"name" => "GF_PATHS_PLUGINS", "value" => "/var/lib/grafana/plugins"},
                 %{"name" => "GF_PATHS_PROVISIONING", "value" => "/etc/grafana/provisioning"}
               ],
-              "image" => "grafana/grafana:9.1.4",
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 10,

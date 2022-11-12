@@ -164,6 +164,8 @@ defmodule KubeResources.Loki do
   resource(:deployment_grafana_agent_operator, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    kubelet_service = Settings.kubelet_service(battery.config)
+
     B.build_resource(:deployment)
     |> B.name("loki-grafana-agent-operator")
     |> B.app_labels(@app_name)
@@ -188,7 +190,7 @@ defmodule KubeResources.Loki do
         "spec" => %{
           "containers" => [
             %{
-              "args" => ["--kubelet-service=default/kubelet"],
+              "args" => ["--kubelet-service=#{kubelet_service}"],
               "image" => "docker.io/grafana/agent-operator:v0.25.1",
               "imagePullPolicy" => "IfNotPresent",
               "name" => "grafana-agent-operator"
@@ -541,6 +543,8 @@ defmodule KubeResources.Loki do
   resource(:stateful_set_main, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.loki_image(battery.config)
+
     B.build_resource(:stateful_set)
     |> B.name("loki")
     |> B.namespace(namespace)
@@ -579,7 +583,7 @@ defmodule KubeResources.Loki do
           "containers" => [
             %{
               "args" => ["-config.file=/etc/loki/config/config.yaml", "-target=all"],
-              "image" => "docker.io/grafana/loki:2.6.1",
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "single-binary",
               "ports" => [

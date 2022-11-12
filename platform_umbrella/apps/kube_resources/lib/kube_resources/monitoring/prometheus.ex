@@ -63,6 +63,8 @@ defmodule KubeResources.Prometheus do
   resource(:prometheus_battery_kube_st, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.prometheus_image(battery.config)
+
     B.build_resource(:prometheus)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
@@ -81,7 +83,7 @@ defmodule KubeResources.Prometheus do
       },
       "enableAdminAPI" => false,
       "externalUrl" => @url_base,
-      "image" => "quay.io/prometheus/prometheus:v2.38.0",
+      "image" => image,
       "listenLocal" => false,
       "logFormat" => "logfmt",
       "logLevel" => "debug",

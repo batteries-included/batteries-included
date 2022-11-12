@@ -945,8 +945,8 @@ defmodule KubeResources.KnativeOperator do
     spec = %{
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "operator-webhook",
-          "role" => "operator-webhook"
+          "battery/app" => @app_name,
+          "battery/component" => "operator-webhook"
         }
       },
       "template" => %{
@@ -956,8 +956,8 @@ defmodule KubeResources.KnativeOperator do
             "sidecar.istio.io/inject" => "false"
           },
           "labels" => %{
-            "app.kubernetes.io/component" => "operator-webhook",
-            "battery/app" => "operator-webhook",
+            "battery/app" => @app_name,
+            "battery/component" => "operator-webhook",
             "battery/managed" => "true",
             "role" => "operator-webhook"
           }
@@ -1104,7 +1104,8 @@ defmodule KubeResources.KnativeOperator do
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "name" => "knative-operator"
+          "battery/app" => @app_name,
+          "battery/component" => "knative-operator"
         }
       },
       "template" => %{
@@ -1113,7 +1114,8 @@ defmodule KubeResources.KnativeOperator do
             "sidecar.istio.io/inject" => "false"
           },
           "labels" => %{
-            "battery/app" => "knative-operator",
+            "battery/app" => @app_name,
+            "battery/component" => "knative-operator",
             "battery/managed" => "true",
             "name" => "knative-operator"
           }
@@ -1197,14 +1199,14 @@ defmodule KubeResources.KnativeOperator do
   end
 
   def change_conversion(%{"spec" => %{"conversion" => %{}}} = crd, battery, state),
-    do: do_chang_conversion(crd, battery, state)
+    do: do_change_conversion(crd, battery, state)
 
   def change_conversion(%{spec: %{conversion: %{}}} = crd, battery, state),
-    do: do_chang_conversion(crd, battery, state)
+    do: do_change_conversion(crd, battery, state)
 
   def change_conversion(crd, _, _), do: crd
 
-  defp do_chang_conversion(crd, battery, _state) do
+  defp do_change_conversion(crd, battery, _state) do
     namespace = DevtoolsSettings.namespace(battery.config)
 
     update_in(crd, ~w(spec conversion webhook clientConfig service), fn s ->
@@ -1522,9 +1524,16 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
+  def crds(battery, state) do
+    :crd
+    |> get_resource()
+    |> yaml()
+    |> Enum.map(fn r -> change_conversion(r, battery, state) end)
+  end
+
   def materialize(battery, state) do
     %{
-      "/crds" => yaml(get_resource(:crd)),
+      "/crds" => crds(battery, state),
       "/service_account" => service_account_operator(battery, state),
       "/webhook_service_account" => service_account_webhook(battery, state),
       "/cluster_roles/webhook/main" => cluster_role_operator_webhook(battery, state),

@@ -38,6 +38,8 @@ defmodule KubeResources.NodeExporter do
   resource(:daemon_set_battery_prometheus_node_exporter, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.node_exporter_image(battery.config)
+
     B.build_resource(:daemon_set)
     |> B.name("battery-prometheus-node-exporter")
     |> B.namespace(namespace)
@@ -71,7 +73,7 @@ defmodule KubeResources.NodeExporter do
                 "--collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$"
               ],
               "env" => [%{"name" => "HOST_IP", "value" => "0.0.0.0"}],
-              "image" => "quay.io/prometheus/node-exporter:v1.3.1",
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 3,
@@ -95,7 +97,7 @@ defmodule KubeResources.NodeExporter do
                 "httpGet" => %{
                   "httpHeaders" => nil,
                   "path" => "/",
-                  "port" => 9100,
+                  "docker pull grafana/loki:2.7.0port" => 9100,
                   "scheme" => "HTTP"
                 },
                 "initialDelaySeconds" => 0,
@@ -109,7 +111,7 @@ defmodule KubeResources.NodeExporter do
                 %{"mountPath" => "/host/sys", "name" => "sys", "readOnly" => true},
                 %{
                   "mountPath" => "/host/root",
-                  # "mountPropagation" => "HostToContainer",
+                  # "mountPropagation" => "HostToContainer",promtail
                   "name" => "root",
                   "readOnly" => true
                 }

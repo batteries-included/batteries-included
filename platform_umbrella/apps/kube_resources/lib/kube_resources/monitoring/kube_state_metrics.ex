@@ -110,6 +110,8 @@ defmodule KubeResources.KubeStateMetrics do
   resource(:deployment_battery_kube_state_metrics, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.kube_state_image(battery.config)
+
     B.build_resource(:deployment)
     |> B.name("battery-kube-state-metrics")
     |> B.namespace(namespace)
@@ -135,7 +137,7 @@ defmodule KubeResources.KubeStateMetrics do
                 "--port=8080",
                 "--resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments"
               ],
-              "image" => "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.6.0",
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{"path" => "/healthz", "port" => 8080},

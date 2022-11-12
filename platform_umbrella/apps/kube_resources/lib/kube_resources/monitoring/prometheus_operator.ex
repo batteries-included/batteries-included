@@ -175,6 +175,11 @@ defmodule KubeResources.PrometheusOperator do
   resource(:deployment_operator, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.prometheus_operator_image(battery.config)
+    reloader_image = Settings.prometheus_reloader_image(battery.config)
+
+    kubelet_service = Settings.kubelet_service(battery.config)
+
     B.build_resource(:deployment)
     |> B.name("battery-prometheus-operator")
     |> B.namespace(namespace)
@@ -194,21 +199,21 @@ defmodule KubeResources.PrometheusOperator do
           "containers" => [
             %{
               "args" => [
-                "--kubelet-service=kube-system/battery-prometheus-kubelet",
+                "--kubelet-service=#{kubelet_service}",
                 "--localhost=127.0.0.1",
-                "--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.59.1",
+                "--prometheus-config-reloader=#{reloader_image}",
                 "--config-reloader-cpu-request=200m",
                 "--config-reloader-cpu-limit=200m",
                 "--config-reloader-memory-request=50Mi",
                 "--config-reloader-memory-limit=50Mi",
-                "--thanos-default-base-image=quay.io/thanos/thanos:v0.28.0",
+                "--thanos-default-base-image=quay.io/thanos/thanos:v0.29.0",
                 "--web.enable-tls=true",
                 "--web.cert-file=/cert/cert",
                 "--web.key-file=/cert/key",
                 "--web.listen-address=:10250",
                 "--web.tls-min-version=VersionTLS13"
               ],
-              "image" => "quay.io/prometheus-operator/prometheus-operator:v0.59.1",
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "kube-prometheus-stack",
               "ports" => [%{"containerPort" => 10_250, "name" => "https"}],

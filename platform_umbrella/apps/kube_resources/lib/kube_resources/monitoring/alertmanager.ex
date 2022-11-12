@@ -35,6 +35,8 @@ defmodule KubeResources.Alertmanager do
   resource(:alertmanager, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.alertmanager_image(battery.config)
+
     B.build_resource(:alertmanager)
     |> B.name("battery-prometheus-alertmanager")
     |> B.namespace(namespace)
@@ -43,7 +45,7 @@ defmodule KubeResources.Alertmanager do
       "alertmanagerConfigNamespaceSelector" => %{},
       "alertmanagerConfigSelector" => %{},
       "externalUrl" => url(),
-      "image" => "quay.io/prometheus/alertmanager:v0.24.0",
+      "image" => image,
       "listenLocal" => false,
       "logFormat" => "logfmt",
       "logLevel" => "info",

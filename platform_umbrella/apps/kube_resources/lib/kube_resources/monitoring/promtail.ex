@@ -34,6 +34,8 @@ defmodule KubeResources.Promtail do
   resource(:daemon_set_main, battery, _state) do
     namespace = Settings.namespace(battery.config)
 
+    image = Settings.promtail_image(battery.config)
+
     B.build_resource(:daemon_set)
     |> B.name("promtail")
     |> B.namespace(namespace)
@@ -59,7 +61,7 @@ defmodule KubeResources.Promtail do
                   "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}
                 }
               ],
-              "image" => "docker.io/grafana/promtail:2.6.1",
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "promtail",
               "ports" => [
