@@ -35,7 +35,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     "#{cluster.team_name}-#{cluster.name}"
   end
 
-  def handle_event("add_user", _, %{assigns: %{changeset: changeset}} = socket) do
+  def handle_event("add:user", _, %{assigns: %{changeset: changeset}} = socket) do
     users =
       Changeset.get_field(changeset, :users, []) ++ [%PGUser{username: "user", roles: ["login"]}]
 
@@ -47,17 +47,31 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:possible_owners, possible_owners(final_changeset))}
   end
 
-  def handle_event(
-        "add_database",
-        _,
-        %{assigns: %{changeset: changeset, cluster: cluster}} = socket
-      ) do
-    dbg(cluster)
+  def handle_event("del:user", %{"idx" => idx}, %{assigns: %{changeset: changeset}} = socket) do
+    users = changeset |> Changeset.get_field(:users, []) |> List.delete_at(String.to_integer(idx))
 
+    final_changeset = Changeset.put_embed(changeset, :users, users)
+
+    {:noreply,
+     socket
+     |> assign(changeset: final_changeset)
+     |> assign(:possible_owners, possible_owners(final_changeset))}
+  end
+
+  def handle_event("add:database", _, %{assigns: %{changeset: changeset}} = socket) do
+    databases = Changeset.get_field(changeset, :databases, []) ++ [%PGDatabase{}]
+
+    final_changeset = Changeset.put_embed(changeset, :databases, databases)
+
+    {:noreply,
+     socket
+     |> assign(changeset: final_changeset)
+     |> assign(:possible_owners, possible_owners(final_changeset))}
+  end
+
+  def handle_event("del:database", %{"idx" => idx}, %{assigns: %{changeset: changeset}} = socket) do
     databases =
-      changeset.changes
-      |> Map.get(:databases, cluster.databases || [])
-      |> Enum.concat([%PGDatabase{}])
+      changeset |> Changeset.get_field(:databases, []) |> List.delete_at(String.to_integer(idx))
 
     final_changeset = Changeset.put_embed(changeset, :databases, databases)
 
@@ -135,14 +149,20 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             />
           </div>
           <div class="col-span-1">
-            <.link phx-click="rm_user" phx-target={@target} class="text-sm" type="styled">
+            <.link
+              phx-click="del:user"
+              phx-value-idx={user_form.index}
+              phx-target={@target}
+              class="text-sm"
+              type="styled"
+            >
               <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
             </.link>
           </div>
         <% end %>
 
         <.link
-          phx-click="add_user"
+          phx-click="add:user"
           phx-target={@target}
           class="pt-5 text-lg col-span-12"
           type="styled"
@@ -172,14 +192,20 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             />
           </div>
           <div class="col-span-1">
-            <.link phx-click="rm_user" phx-target={@target} class="text-sm" type="styled">
+            <.link
+              phx-click="del:database"
+              phx-value-idx={database_form.index}
+              phx-target={@target}
+              class="text-sm"
+              type="styled"
+            >
               <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
             </.link>
           </div>
         <% end %>
 
         <.link
-          phx-click="add_database"
+          phx-click="add:database"
           phx-target={@target}
           class="pt-5 text-lg col-span-12"
           type="styled"

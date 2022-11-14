@@ -118,7 +118,8 @@ defmodule CommonUI.Form do
         name={@name}
         class={[
           input_border(@errors),
-          "mt-1 block w-full py-2 px-3 border bg-white rounded-lg shadow-sm text-base"
+          "block w-full px-2.5 pb-2.5 pt-4 border",
+          "bg-white rounded-lg shadow-sm text-base text-gray-900"
         ]}
         multiple={@multiple}
         {@rest}
