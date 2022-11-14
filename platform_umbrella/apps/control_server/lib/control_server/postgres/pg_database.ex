@@ -3,6 +3,7 @@ defmodule ControlServer.Postgres.PGDatabase do
   import Ecto.Changeset
 
   @primary_key false
+  @derive Jason.Encoder
   typed_embedded_schema do
     field :name, :string
     field :owner, :string

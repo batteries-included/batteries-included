@@ -1,8 +1,6 @@
 defmodule KubeResources.BatterySettings do
   import KubeExt.MapSettings
 
-  @namespace "battery-core"
-
   @control_image "battery-registry:5000/battery/control:c6f4bd1-dirty1"
   @control_name "control-server"
 
@@ -10,15 +8,13 @@ defmodule KubeResources.BatterySettings do
   @default_pg_username "controlserver"
   @default_pg_db "control"
 
-  setting(:namespace, :namespace, @namespace)
-
   setting(:control_server_image, :image, @control_image)
   setting(:control_server_name, :name, @control_name)
 
   setting(
     :control_server_pg_host,
     :pg_host,
-    "#{@default_pg_cluster_name}.#{@namespace}.svc.cluster.local"
+    "#{@default_pg_cluster_name}.battery-core.svc.cluster.local"
   )
 
   setting(:control_server_pg_db, :pg_db) do

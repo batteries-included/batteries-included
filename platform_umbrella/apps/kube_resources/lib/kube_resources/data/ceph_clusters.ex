@@ -1,4 +1,6 @@
 defmodule KubeResources.CephClusters do
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
   alias KubeResources.DataSettings, as: Settings
 
@@ -19,7 +21,7 @@ defmodule KubeResources.CephClusters do
   defp cluster_path(_ceph_cluster, idx), do: "/ceph_cluster:idx/#{idx}"
 
   def cluster(%{} = cluster, battery, state) do
-    namespace = Settings.public_namespace(battery.config)
+    namespace = data_namespace(state)
 
     B.build_resource(:ceph_cluster)
     |> B.name(cluster.name)

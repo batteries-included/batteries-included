@@ -1,12 +1,14 @@
 defmodule KubeResources.KubeStateMetrics do
   use KubeExt.ResourceGenerator
 
+  import KubeExt.SystemState.Namespaces
+
   alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
 
   @app_name "kube-state-metrics"
 
-  resource(:cluster_role_battery_kube_state_metrics) do
+  resource(:cluster_role_battery_kubestate_metrics) do
     B.build_resource(:cluster_role)
     |> B.name("battery-kube-state-metrics")
     |> B.app_labels(@app_name)
@@ -97,8 +99,8 @@ defmodule KubeResources.KubeStateMetrics do
     ])
   end
 
-  resource(:cluster_role_binding_battery_kube_state_metrics, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:cluster_role_binding_battery_kubestate_metrics, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-kube-state-metrics")
@@ -107,8 +109,8 @@ defmodule KubeResources.KubeStateMetrics do
     |> B.subject(B.build_service_account("battery-kube-state-metrics", namespace))
   end
 
-  resource(:deployment_battery_kube_state_metrics, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment_battery_kubestate_metrics, battery, state) do
+    namespace = core_namespace(state)
 
     image = Settings.kube_state_image(battery.config)
 
@@ -165,8 +167,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:service_battery_kube_state_metrics, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_battery_kubestate_metrics, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service)
     |> B.name("battery-kube-state-metrics")
@@ -181,8 +183,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:service_account_battery_kube_state_metrics, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_battery_kubestate_metrics, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> Map.put("imagePullSecrets", [])
@@ -191,8 +193,8 @@ defmodule KubeResources.KubeStateMetrics do
     |> B.app_labels(@app_name)
   end
 
-  resource(:prometheus_rule_battery_kube_st_kube_state_metrics, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_kubestate_metrics, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kube-state-metrics")
@@ -213,7 +215,7 @@ defmodule KubeResources.KubeStateMetrics do
                 "summary" => "kube-state-metrics is experiencing errors in list operations."
               },
               "expr" =>
-                "(sum(rate(kube_state_metrics_list_total{job=\"kube-state-metrics\",result=\"error\"}[5m]))\n  /\nsum(rate(kube_state_metrics_list_total{job=\"kube-state-metrics\"}[5m])))\n> 0.01",
+                "(sum(rate(kubestate_metrics_list_total{job=\"kube-state-metrics\",result=\"error\"}[5m]))\n  /\nsum(rate(kubestate_metrics_list_total{job=\"kube-state-metrics\"}[5m])))\n> 0.01",
               "for" => "15m",
               "labels" => %{"severity" => "critical"}
             },
@@ -227,7 +229,7 @@ defmodule KubeResources.KubeStateMetrics do
                 "summary" => "kube-state-metrics is experiencing errors in watch operations."
               },
               "expr" =>
-                "(sum(rate(kube_state_metrics_watch_total{job=\"kube-state-metrics\",result=\"error\"}[5m]))\n  /\nsum(rate(kube_state_metrics_watch_total{job=\"kube-state-metrics\"}[5m])))\n> 0.01",
+                "(sum(rate(kubestate_metrics_watch_total{job=\"kube-state-metrics\",result=\"error\"}[5m]))\n  /\nsum(rate(kubestate_metrics_watch_total{job=\"kube-state-metrics\"}[5m])))\n> 0.01",
               "for" => "15m",
               "labels" => %{"severity" => "critical"}
             },
@@ -241,7 +243,7 @@ defmodule KubeResources.KubeStateMetrics do
                 "summary" => "kube-state-metrics sharding is misconfigured."
               },
               "expr" =>
-                "stdvar (kube_state_metrics_total_shards{job=\"kube-state-metrics\"}) != 0",
+                "stdvar (kubestate_metrics_total_shards{job=\"kube-state-metrics\"}) != 0",
               "for" => "15m",
               "labels" => %{"severity" => "critical"}
             },
@@ -255,7 +257,7 @@ defmodule KubeResources.KubeStateMetrics do
                 "summary" => "kube-state-metrics shards are missing."
               },
               "expr" =>
-                "2^max(kube_state_metrics_total_shards{job=\"kube-state-metrics\"}) - 1\n  -\nsum( 2 ^ max by (shard_ordinal) (kube_state_metrics_shard_ordinal{job=\"kube-state-metrics\"}) )\n!= 0",
+                "2^max(kubestate_metrics_total_shards{job=\"kube-state-metrics\"}) - 1\n  -\nsum( 2 ^ max by (shard_ordinal) (kubestate_metrics_shard_ordinal{job=\"kube-state-metrics\"}) )\n!= 0",
               "for" => "15m",
               "labels" => %{"severity" => "critical"}
             }
@@ -265,8 +267,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_node_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_node_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node.rules")
@@ -303,8 +305,8 @@ defmodule KubeResources.KubeStateMetrics do
     })
   end
 
-  resource(:service_monitor_battery_kube_state_metrics, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor_battery_kubestate_metrics, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-state-metrics")

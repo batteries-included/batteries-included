@@ -13,7 +13,7 @@ defmodule KubeExt.KubeState.Hosts do
     host("harbor")
   end
 
-  def knative, do: host("knative")
+  def knative, do: host("webapp")
 
   defp host(name) do
     ip = IstioIngress.single_address()

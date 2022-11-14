@@ -1,6 +1,6 @@
 defmodule KubeServices.SnapshotApply.Steps do
   alias ControlServer.SnapshotApply.EctoSteps
-  alias ControlServer.SnapshotApply.StateSnapshot
+  alias ControlServer.SystemState.Summarizer
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
   alias KubeServices.SnapshotApply.ResourcePathWorker
@@ -22,7 +22,7 @@ defmodule KubeServices.SnapshotApply.Steps do
     {:ok, paths} =
       EctoSteps.snap_generation(
         snap,
-        StateSnapshot.materialize!(),
+        Summarizer.materialize!(),
         &ConfigGenerator.materialize/1
       )
 

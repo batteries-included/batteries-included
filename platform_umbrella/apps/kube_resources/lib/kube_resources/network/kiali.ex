@@ -3,10 +3,10 @@ defmodule KubeResources.Kiali do
   use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
+  import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
-  alias KubeResources.NetworkSettings, as: Settings
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.Grafana
 
@@ -21,8 +21,8 @@ defmodule KubeResources.Kiali do
 
   def url, do: "//#{Hosts.control_host()}#{@url_base}"
 
-  def virtual_service(battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  def virtual_service(_battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -31,8 +31,8 @@ defmodule KubeResources.Kiali do
     |> B.spec(VirtualService.prefix(@url_base, "kiali", port: 20_001))
   end
 
-  resource(:cluster_role_binding_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:cluster_role_binding_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("kiali-kiali-operator")
@@ -201,8 +201,8 @@ defmodule KubeResources.Kiali do
     yaml(get_resource(:kialis_kiali_io))
   end
 
-  resource(:deployment_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:deployment)
     |> B.name("kiali-kiali-operator")
@@ -271,8 +271,8 @@ defmodule KubeResources.Kiali do
     })
   end
 
-  resource(:kiali_main, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:kiali_main, _battery, state) do
+    namespace = istio_namespace(state)
 
     spec = %{
       "auth" => %{"strategy" => "anonymous"},
@@ -303,8 +303,8 @@ defmodule KubeResources.Kiali do
     |> B.spec(spec)
   end
 
-  resource(:service_account_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("kiali-kiali-operator")

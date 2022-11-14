@@ -7,6 +7,7 @@ defmodule KubeResources.PostgresOperator do
       "priv/manifests/postgres-operator/postgresteams_acid_zalan_do.yaml"
 
   import KubeExt.Yaml
+  import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeResources.DataSettings, as: Settings
@@ -16,7 +17,7 @@ defmodule KubeResources.PostgresOperator do
   @operator_cluster_role "battery-postgres-operator"
 
   def materialize(battery, state) do
-    namespace = Settings.namespace(battery.config)
+    namespace = core_namespace(state)
 
     %{}
     |> Map.put("/cluster_role/postgres_operator", cluster_role_postgres_operator(battery, state))
@@ -48,8 +49,8 @@ defmodule KubeResources.PostgresOperator do
     |> Map.merge(infra_users(battery, state, should_include_dev_infrausers()))
   end
 
-  def cluster_role_binding_postgres_operator(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  def cluster_role_binding_postgres_operator(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-postgres-operator")
@@ -167,8 +168,8 @@ defmodule KubeResources.PostgresOperator do
     yaml(get_resource(:postgresteams_acid_zalan_do))
   end
 
-  def deployment_postgres_operator(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  def deployment_postgres_operator(battery, state) do
+    namespace = core_namespace(state)
     operator_image = Settings.pg_operator_image(battery.config)
 
     B.build_resource(:deployment)
@@ -250,8 +251,8 @@ defmodule KubeResources.PostgresOperator do
 
   defp infra_users(_battery, _state, _include_dev_infrausers), do: %{}
 
-  defp infra_configmap(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  defp infra_configmap(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:config_map)
     |> B.app_labels(@app_name)
@@ -262,8 +263,8 @@ defmodule KubeResources.PostgresOperator do
     })
   end
 
-  defp infra_secret(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  defp infra_secret(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:secret)
     |> B.app_labels(@app_name)
@@ -274,8 +275,8 @@ defmodule KubeResources.PostgresOperator do
     })
   end
 
-  def postgresql_operator_config_main(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  def postgresql_operator_config_main(battery, state) do
+    namespace = core_namespace(state)
 
     pg_image = Settings.pg_image(battery.config)
     backup_image = Settings.pg_backup_image(battery.config)
@@ -402,8 +403,8 @@ defmodule KubeResources.PostgresOperator do
     |> B.app_labels(@app_name)
   end
 
-  def service_account_postgres_operator(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  def service_account_postgres_operator(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("postgres-operator")
@@ -411,8 +412,8 @@ defmodule KubeResources.PostgresOperator do
     |> B.app_labels(@app_name)
   end
 
-  def service_postgres_operator(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  def service_postgres_operator(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service)
     |> B.name("postgres-operator")

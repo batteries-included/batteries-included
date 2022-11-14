@@ -5,7 +5,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeExt.Builder, as: B
   alias KubeExt.Hashing
 
-  alias KubeExt.SnapshotApply.StateSnapshot
+  alias KubeExt.SystemState.StateSummary
 
   alias KubeResources.{
     Battery,
@@ -78,7 +78,7 @@ defmodule KubeResources.ConfigGenerator do
     kube_state_metrics: [&KubeStateMetrics.materialize/2],
     loki: [&Loki.materialize/2],
     metallb: [&MetalLB.materialize/2],
-    ml_core: [&ML.Base.materialize/2],
+    ml_core: [&ML.Core.materialize/2],
     monitoring_api_server: [&MonitoringApiServer.materialize/2],
     monitoring_controller_manager: [&MonitoringControllerManager.materialize/2],
     monitoring_coredns: [&MonitoringCoredns.materialize/2],
@@ -101,12 +101,12 @@ defmodule KubeResources.ConfigGenerator do
     tekton_operator: [&TektonOperator.materialize/2]
   ]
 
-  @spec materialize(StateSnapshot.t()) :: map()
-  def materialize(%StateSnapshot{} = state),
+  @spec materialize(StateSummary.t()) :: map()
+  def materialize(%StateSummary{} = state),
     do: do_materialize(state, @default_generator_mappings)
 
-  defp do_materialize(%StateSnapshot{} = state, mappings) do
-    state.system_batteries
+  defp do_materialize(%StateSummary{} = state, mappings) do
+    state.batteries
     |> Enum.map(fn system_battery ->
       generators = Keyword.fetch!(mappings, system_battery.type)
       materialize_system_battery(system_battery, state, generators)

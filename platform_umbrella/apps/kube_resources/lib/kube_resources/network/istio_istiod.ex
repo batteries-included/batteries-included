@@ -5,13 +5,14 @@ defmodule KubeResources.IstioIstiod do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.NetworkSettings, as: Settings
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
 
   @app_name "istio_istiod"
 
-  resource(:cluster_role_binding_istio_reader_clusterrole_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:cluster_role_binding_istio_reader_clusterrole_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istio-reader-clusterrole-battery-istio")
@@ -21,8 +22,8 @@ defmodule KubeResources.IstioIstiod do
     |> B.subject(B.build_service_account("istio-reader-service-account", namespace))
   end
 
-  resource(:cluster_role_binding_istiod_clusterrole_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:cluster_role_binding_istiod_clusterrole_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istiod-clusterrole-battery-istio")
@@ -32,8 +33,8 @@ defmodule KubeResources.IstioIstiod do
     |> B.subject(B.build_service_account("istiod", namespace))
   end
 
-  resource(:cluster_role_binding_istiod_gateway_controller_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:cluster_role_binding_istiod_gateway_controller_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istiod-gateway-controller-battery-istio")
@@ -258,8 +259,8 @@ defmodule KubeResources.IstioIstiod do
     ])
   end
 
-  resource(:config_map_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:config_map_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     data =
       %{}
@@ -278,8 +279,8 @@ defmodule KubeResources.IstioIstiod do
     |> B.data(data)
   end
 
-  resource(:config_map_istio_sidecar_injector, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:config_map_istio_sidecar_injector, _battery, state) do
+    namespace = istio_namespace(state)
 
     data =
       %{} |> Map.put("config", get_resource(:config)) |> Map.put("values", get_resource(:values))
@@ -293,8 +294,8 @@ defmodule KubeResources.IstioIstiod do
     |> B.data(data)
   end
 
-  resource(:deployment_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:deployment_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:deployment)
     |> B.name("istiod")
@@ -431,8 +432,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:horizontal_pod_autoscaler_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:horizontal_pod_autoscaler_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:horizontal_pod_autoscaler)
     |> B.name("istiod")
@@ -457,8 +458,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:istio_envoy_filter_stats_1_13, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:istio_envoy_filter_stats_1_13, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_envoy_filter)
     |> B.name("stats-filter-1.13")
@@ -591,8 +592,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:istio_envoy_filter_stats_1_14, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:istio_envoy_filter_stats_1_14, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_envoy_filter)
     |> B.name("stats-filter-1.14")
@@ -725,8 +726,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:istio_envoy_filter_stats_1_15, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:istio_envoy_filter_stats_1_15, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_envoy_filter)
     |> B.name("stats-filter-1.15")
@@ -859,8 +860,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:istio_envoy_filter_tcp_stats_1_13, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:istio_envoy_filter_tcp_stats_1_13, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_envoy_filter)
     |> B.name("tcp-stats-filter-1.13")
@@ -976,8 +977,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:istio_envoy_filter_tcp_stats_1_14, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:istio_envoy_filter_tcp_stats_1_14, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_envoy_filter)
     |> B.name("tcp-stats-filter-1.14")
@@ -1093,8 +1094,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:istio_envoy_filter_tcp_stats_1_15, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:istio_envoy_filter_tcp_stats_1_15, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_envoy_filter)
     |> B.name("tcp-stats-filter-1.15")
@@ -1210,8 +1211,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:mutating_webhook_config_istio_sidecar_injector_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:mutating_webhook_config_istio_sidecar_injector_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:mutating_webhook_config)
     |> B.name("istio-sidecar-injector-battery-istio")
@@ -1356,8 +1357,8 @@ defmodule KubeResources.IstioIstiod do
     ])
   end
 
-  resource(:pod_disruption_budget_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:pod_disruption_budget_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:pod_disruption_budget)
     |> B.name("istiod")
@@ -1373,8 +1374,8 @@ defmodule KubeResources.IstioIstiod do
     })
   end
 
-  resource(:role_binding_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:role_binding_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("istiod")
@@ -1385,8 +1386,8 @@ defmodule KubeResources.IstioIstiod do
     |> B.subject(B.build_service_account("istiod", namespace))
   end
 
-  resource(:role_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:role_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:role)
     |> B.name("istiod")
@@ -1407,8 +1408,8 @@ defmodule KubeResources.IstioIstiod do
     ])
   end
 
-  resource(:service_account_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:service_account_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("istiod")
@@ -1417,8 +1418,8 @@ defmodule KubeResources.IstioIstiod do
     |> B.component_label("istiod")
   end
 
-  resource(:service_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:service_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:service)
     |> B.name("istiod")

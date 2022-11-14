@@ -5,12 +5,12 @@ defmodule ControlServer.Notebooks.JupyterLabNotebook do
   require Logger
 
   @timestamps_opts [type: :utc_datetime_usec]
-
+  @derive {Jason.Encoder, except: [:__meta__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "jupyter_lab_notebooks" do
-    field :image, :string, default: "jupyter/datascience-notebook:lab-3.2.9"
-    field :name, :string
+    field(:image, :string, default: "jupyter/datascience-notebook:lab-3.5.0")
+    field(:name, :string)
 
     timestamps()
   end

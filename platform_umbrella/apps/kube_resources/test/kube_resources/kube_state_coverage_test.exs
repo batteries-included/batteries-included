@@ -8,7 +8,7 @@ defmodule KubeServices.KubeStateCoverageTest do
 
   describe "KubeState can watch for every battery" do
     test "All watchable" do
-      KubeExt.SnapshotApply.SeedStateSnapshot.seed(:everything)
+      KubeExt.SystemState.SeedState.seed(:everything)
       |> ConfigGenerator.materialize()
       |> Enum.map(fn {_path, resource} -> {api_version(resource), kind(resource)} end)
       |> Enum.each(fn {api_version, kind} ->

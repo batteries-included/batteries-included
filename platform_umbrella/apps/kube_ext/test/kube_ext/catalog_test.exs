@@ -1,7 +1,7 @@
-defmodule ControlServer.Batteries.CatalogTest do
-  use ControlServer.DataCase
+defmodule KubeExt.CatalogTest do
+  use ExUnit.Case
 
-  alias ControlServer.Batteries.Catalog
+  alias KubeExt.Defaults.Catalog
 
   describe "Catalog" do
     test "Catalog.get works for all" do

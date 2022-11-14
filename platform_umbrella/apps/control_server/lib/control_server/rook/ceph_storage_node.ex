@@ -3,6 +3,7 @@ defmodule ControlServer.Rook.CephStorageNode do
   import Ecto.Changeset
 
   @primary_key false
+  @derive Jason.Encoder
   typed_embedded_schema do
     field :name, :string
     field :device_filter, :string

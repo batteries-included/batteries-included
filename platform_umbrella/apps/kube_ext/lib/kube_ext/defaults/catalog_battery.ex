@@ -1,4 +1,4 @@
-defmodule ControlServer.Batteries.CatalogBattery do
+defmodule KubeExt.Defaults.CatalogBattery do
   @enforce_keys [:type, :group]
   defstruct type: nil,
             group: nil,

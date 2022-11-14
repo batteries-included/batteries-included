@@ -1,6 +1,6 @@
-defmodule KubeExt.SnapshotApply.StateSnapshot do
+defmodule KubeExt.SystemState.StateSummary do
   @derive Jason.Encoder
-  defstruct system_batteries: [],
+  defstruct batteries: [],
             postgres_clusters: [],
             redis_clusters: [],
             notebooks: [],
@@ -10,7 +10,7 @@ defmodule KubeExt.SnapshotApply.StateSnapshot do
             kube_state: %{}
 
   @type t :: %__MODULE__{
-          system_batteries: list(),
+          batteries: list(),
           postgres_clusters: list(),
           redis_clusters: list(),
           notebooks: list(),

@@ -1,4 +1,6 @@
 defmodule KubeResources.ControlServer do
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
   alias KubeResources.BatterySettings
   alias KubeResources.IstioConfig.VirtualService
@@ -14,19 +16,16 @@ defmodule KubeResources.ControlServer do
     }
   end
 
-  def virtual_service(battery, _state) do
-    namespace = BatterySettings.namespace(battery.config)
-
+  def virtual_service(_battery, state) do
     B.build_resource(:istio_virtual_service)
-    |> B.namespace(namespace)
+    |> B.namespace(core_namespace(state))
     |> B.app_labels(@app_name)
     |> B.name("control-server")
     |> B.spec(VirtualService.fallback("control-server"))
   end
 
   def deployment(battery, state) do
-    namespace = BatterySettings.namespace(battery.config)
-    name = BatterySettings.control_server_name(battery.config)
+    name = "controlserver"
 
     template =
       %{}
@@ -58,7 +57,7 @@ defmodule KubeResources.ControlServer do
 
     B.build_resource(:deployment)
     |> B.name(name)
-    |> B.namespace(namespace)
+    |> B.namespace(core_namespace(state))
     |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
@@ -109,9 +108,7 @@ defmodule KubeResources.ControlServer do
     ])
   end
 
-  def service(battery, _state) do
-    namespace = BatterySettings.namespace(battery.config)
-
+  def service(_battery, state) do
     spec =
       %{}
       |> B.short_selector(@app_name)
@@ -127,7 +124,7 @@ defmodule KubeResources.ControlServer do
     B.build_resource(:service)
     |> B.app_labels(@app_name)
     |> B.name("control-server")
-    |> B.namespace(namespace)
+    |> B.namespace(core_namespace(state))
     |> B.spec(spec)
   end
 end

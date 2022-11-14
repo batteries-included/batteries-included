@@ -1,6 +1,7 @@
 defmodule KubeResources.CephFilesystems do
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
-  alias KubeResources.DataSettings, as: Settings
 
   def materialize(battery, state) do
     filesystems(battery, state)
@@ -19,7 +20,7 @@ defmodule KubeResources.CephFilesystems do
   defp filesystem_path(_fs, idx), do: "/ceph_filesystem:idx/#{idx}"
 
   def filesystem(%{} = filesystem, battery, state) do
-    namespace = Settings.public_namespace(battery.config)
+    namespace = data_namespace(state)
 
     B.build_resource(:ceph_filesystem)
     |> B.name(filesystem.name)

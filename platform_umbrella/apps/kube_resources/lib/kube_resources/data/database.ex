@@ -1,5 +1,6 @@
 defmodule KubeResources.Database do
   import KubeResources.RawCluster
+  import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
 
@@ -23,19 +24,20 @@ defmodule KubeResources.Database do
     ["hostnossl", "all", "all", "all", "reject"]
   ]
 
-  def postgres(%{} = cluster, battery, _state) do
-    namespace = namespace(cluster, battery.config)
-
+  def postgres(%{} = cluster, _battery, state) do
     spec = postgres_spec(cluster)
 
     B.build_resource(:postgresql)
-    |> B.namespace(namespace)
+    |> B.namespace(namespace(cluster, state))
     |> B.name(full_name(cluster))
     |> B.app_labels(@app_name)
     |> B.label("sidecar.istio.io/inject", "false")
     |> B.spec(spec)
     |> B.owner_label(Map.get(cluster, :id, "bootstrapped"))
   end
+
+  defp namespace(%{type: :internal} = _cluster, state), do: core_namespace(state)
+  defp namespace(%{type: _} = _cluster, state), do: data_namespace(state)
 
   defp postgres_spec(cluster) do
     %{

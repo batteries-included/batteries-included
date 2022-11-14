@@ -4,12 +4,8 @@ defmodule KubeResources.SecuritySettings do
   """
   import KubeExt.MapSettings
 
-  @namespace "battery-core"
-
   @ory_hydra_image "oryd/hydra:v1.10.5"
   @ory_maester_image "oryd/hydra-maester:v0.0.25"
-
-  setting(:namespace, :namespace, @namespace)
 
   setting(:ory_hydra_image, :image, @ory_hydra_image)
   setting(:ory_maester_image, :maester_image, @ory_maester_image)

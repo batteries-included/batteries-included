@@ -11,7 +11,7 @@ defmodule KubeResources.VirtualService do
   alias KubeResources.Alertmanager
 
   def materialize(_battery, state) do
-    state.system_batteries
+    state.batteries
     |> Enum.with_index()
     |> Enum.map(fn {sys_battery, idx} ->
       {virtual_service_path(sys_battery, idx),

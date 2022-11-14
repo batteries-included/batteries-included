@@ -3,8 +3,9 @@ defmodule KubeResources.Redis do
   use KubeExt.IncludeResource,
     crd: "priv/manifests/redis/databases.spotahome.com_redisfailovers.yaml"
 
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
-  alias KubeResources.DataSettings
 
   @app_name "redisoperator"
 
@@ -24,11 +25,11 @@ defmodule KubeResources.Redis do
   defp cluster_path(%{id: id} = _cluster, _idx), do: "/redis/cluster/#{id}"
   defp cluster_path(_cluster, idx), do: "/redis/cluster:idx/#{idx}"
 
-  defp cluster_namespace(%{type: :internal} = _cluster, battery, _state),
-    do: DataSettings.namespace(battery.config)
+  defp cluster_namespace(%{type: :internal} = _cluster, _battery, state),
+    do: core_namespace(state)
 
-  defp cluster_namespace(%{type: _} = _cluster, battery, _state),
-    do: DataSettings.public_namespace(battery.config)
+  defp cluster_namespace(%{type: _} = _cluster, _battery, state),
+    do: data_namespace(state)
 
   def redis_failover_cluster(%{} = cluster, battery, state) do
     namespace = cluster_namespace(cluster, battery, state)

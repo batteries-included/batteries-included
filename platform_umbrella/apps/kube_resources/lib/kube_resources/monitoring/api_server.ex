@@ -4,13 +4,14 @@ defmodule KubeResources.MonitoringApiServer do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
 
   @app_name "monitoring_apiserver"
 
-  resource(:config_map_battery_kube_prometheus_st_apiserver, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_battery_kube_prometheus_st_apiserver, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"apiserver.json" => get_resource(:apiserver_json)}
 
     B.build_resource(:config_map)
@@ -21,8 +22,8 @@ defmodule KubeResources.MonitoringApiServer do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule_battery_kube_st_kube_apiserver_availability_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_kube_apiserver_availability_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-availability.rules")
@@ -131,8 +132,8 @@ defmodule KubeResources.MonitoringApiServer do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_kube_apiserver_burnrate_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_kube_apiserver_burnrate_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-burnrate.rules")
@@ -234,8 +235,8 @@ defmodule KubeResources.MonitoringApiServer do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_kube_apiserver_histogram_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_kube_apiserver_histogram_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-histogram.rules")
@@ -267,8 +268,8 @@ defmodule KubeResources.MonitoringApiServer do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_kube_apiserver_slos, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_kube_apiserver_slos, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kube-apiserver-slos")
@@ -338,8 +339,8 @@ defmodule KubeResources.MonitoringApiServer do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_kubernetes_system_apiserver, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_kubernetes_system_apiserver, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kubernetes-system-apiserver")
@@ -437,8 +438,8 @@ defmodule KubeResources.MonitoringApiServer do
     })
   end
 
-  resource(:service_monitor_battery_kube_prometheus_st_apiserver, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor_battery_kube_prometheus_st_apiserver, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-prometheus-st-apiserver")

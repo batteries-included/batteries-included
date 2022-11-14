@@ -32,12 +32,21 @@ defmodule KubeResources.IstioBase do
   use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
+  import KubeExt.SystemState.Namespaces
 
-  alias KubeResources.NetworkSettings, as: Settings
   alias KubeExt.Builder, as: B
   @app_name "istio_base"
-  resource(:cluster_role_binding_istio_reader_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+
+  resource(:istio_namespace, _battery, state) do
+    namespace = istio_namespace(state)
+
+    B.build_resource(:namespace)
+    |> B.app_labels(@app_name)
+    |> B.name(namespace)
+  end
+
+  resource(:cluster_role_binding_istio_reader_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istio-reader-battery-istio")
@@ -47,8 +56,8 @@ defmodule KubeResources.IstioBase do
     |> B.subject(B.build_service_account("istio-reader-service-account", namespace))
   end
 
-  resource(:cluster_role_binding_istiod_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:cluster_role_binding_istiod_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("istiod-battery-istio")
@@ -313,8 +322,8 @@ defmodule KubeResources.IstioBase do
     yaml(get_resource(:workloadgroups_networking_istio_io))
   end
 
-  resource(:role_binding_istiod_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:role_binding_istiod_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("istiod-battery-istio")
@@ -325,8 +334,8 @@ defmodule KubeResources.IstioBase do
     |> B.subject(B.build_service_account("istiod-service-account", namespace))
   end
 
-  resource(:role_istiod_battery_istio, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:role_istiod_battery_istio, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:role)
     |> B.name("istiod-battery-istio")
@@ -347,8 +356,8 @@ defmodule KubeResources.IstioBase do
     ])
   end
 
-  resource(:service_account_istio_reader, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:service_account_istio_reader, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("istio-reader-service-account")
@@ -357,8 +366,8 @@ defmodule KubeResources.IstioBase do
     |> B.component_label("istio-reader")
   end
 
-  resource(:service_account_istiod, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:service_account_istiod, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("istiod-service-account")
@@ -367,8 +376,8 @@ defmodule KubeResources.IstioBase do
     |> B.component_label("istiod")
   end
 
-  resource(:validating_webhook_config_istiod_default_validator, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:validating_webhook_config_istiod_default_validator, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:validating_webhook_config)
     |> B.name("istiod-default-validator")

@@ -1,15 +1,16 @@
 defmodule KubeResources.Notebooks do
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
-  alias KubeResources.MLSettings
 
   @app_name "notebooks"
   @url_base "/x/notebooks/"
 
-  def virtual_service(battery, state) do
-    namespace = MLSettings.public_namespace(battery.config)
+  def virtual_service(_battery, state) do
+    namespace = ml_namespace(state)
     build_virtual_service(state.notebooks, namespace)
   end
 
@@ -61,8 +62,8 @@ defmodule KubeResources.Notebooks do
   defp stateful_set_path(%{id: id}, _idx), do: "/notebooks/#{id}/stateful_set"
   defp stateful_set_path(_, idx), do: "/notebooks/#{idx}/idx/stateful_set"
 
-  defp service_account(battery, _state) do
-    namespace = MLSettings.public_namespace(battery.config)
+  defp service_account(_battery, state) do
+    namespace = ml_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("battery-notebooks")
@@ -70,8 +71,8 @@ defmodule KubeResources.Notebooks do
     |> B.app_labels(@app_name)
   end
 
-  defp stateful_set(%{} = notebook, battery, _state) do
-    namespace = MLSettings.public_namespace(battery.config)
+  defp stateful_set(%{} = notebook, _battery, state) do
+    namespace = ml_namespace(state)
     owner_id = Map.get(notebook, :id, "bootstrapped")
 
     template =
@@ -115,8 +116,8 @@ defmodule KubeResources.Notebooks do
     |> B.owner_label(owner_id)
   end
 
-  defp service(notebook, battery, _state) do
-    namespace = MLSettings.public_namespace(battery.config)
+  defp service(notebook, _battery, state) do
+    namespace = ml_namespace(state)
     owner_id = Map.get(notebook, :id, "bootstrapped")
 
     spec =

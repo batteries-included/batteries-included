@@ -20,6 +20,7 @@ defmodule KubeResources.PrometheusOperator do
   use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
+  import KubeExt.SystemState.Namespaces
 
   alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
@@ -112,8 +113,8 @@ defmodule KubeResources.PrometheusOperator do
     ])
   end
 
-  resource(:cluster_role_binding_battery_kube_prometheus_admission, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:cluster_role_binding_battery_kube_prometheus_admission, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-prometheus-admission")
@@ -122,8 +123,8 @@ defmodule KubeResources.PrometheusOperator do
     |> B.subject(B.build_service_account("battery-prometheus-admission", namespace))
   end
 
-  resource(:cluster_role_binding_battery_kube_prometheus_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:cluster_role_binding_battery_kube_prometheus_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-prometheus-operator")
@@ -132,8 +133,8 @@ defmodule KubeResources.PrometheusOperator do
     |> B.subject(B.build_service_account("battery-prometheus-operator", namespace))
   end
 
-  resource(:role_admission, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:role_admission, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:role)
     |> B.name("battery-prometheus-admission")
@@ -142,8 +143,8 @@ defmodule KubeResources.PrometheusOperator do
     |> B.rules([%{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "create"]}])
   end
 
-  resource(:role_binding_admission, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:role_binding_admission, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("battery-prometheus-admission")
@@ -153,8 +154,8 @@ defmodule KubeResources.PrometheusOperator do
     |> B.subject(B.build_service_account("battery-prometheus-admission", namespace))
   end
 
-  resource(:service_account_admission, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_admission, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-admission")
@@ -162,8 +163,8 @@ defmodule KubeResources.PrometheusOperator do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_account_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-operator")
@@ -172,8 +173,8 @@ defmodule KubeResources.PrometheusOperator do
     |> B.component_label("prometheus-operator")
   end
 
-  resource(:deployment_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment_operator, battery, state) do
+    namespace = core_namespace(state)
 
     image = Settings.prometheus_operator_image(battery.config)
     reloader_image = Settings.prometheus_reloader_image(battery.config)
@@ -248,8 +249,8 @@ defmodule KubeResources.PrometheusOperator do
     })
   end
 
-  resource(:job_admission_create, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:job_admission_create, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:job)
     |> B.name("battery-prometheus-admission-create")
@@ -295,8 +296,8 @@ defmodule KubeResources.PrometheusOperator do
     })
   end
 
-  resource(:job_admission_patch, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:job_admission_patch, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:job)
     |> B.name("battery-prometheus-admission-patch")
@@ -343,8 +344,8 @@ defmodule KubeResources.PrometheusOperator do
     })
   end
 
-  resource(:mutating_webhook_config_admission, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:mutating_webhook_config_admission, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:mutating_webhook_config)
     |> B.name("battery-prometheus-admission")
@@ -375,8 +376,8 @@ defmodule KubeResources.PrometheusOperator do
     ])
   end
 
-  resource(:validating_webhook_config_admission, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:validating_webhook_config_admission, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:validating_webhook_config)
     |> B.name("battery-prometheus-admission")
@@ -406,8 +407,8 @@ defmodule KubeResources.PrometheusOperator do
     ])
   end
 
-  resource(:service_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service)
     |> B.name("battery-prometheus-operator")
@@ -420,8 +421,8 @@ defmodule KubeResources.PrometheusOperator do
     })
   end
 
-  resource(:service_monitor_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-operator")

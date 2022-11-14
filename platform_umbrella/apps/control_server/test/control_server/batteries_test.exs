@@ -1,6 +1,8 @@
 defmodule ControlServer.BatteriesTest do
   use ControlServer.DataCase
 
+  alias ControlServer.Batteries.BatteryCoreConfig
+  alias ControlServer.Batteries.EmptyConfig
   alias ControlServer.Batteries
 
   describe "system_batteries" do
@@ -21,14 +23,25 @@ defmodule ControlServer.BatteriesTest do
     end
 
     test "create_system_battery/1 with valid data creates a system_battery" do
-      valid_attrs = %{config: %{}, group: :net_sec, type: :istio_istiod}
+      valid_attrs = %{config: %{__type__: :empty}, group: :net_sec, type: :istio_istiod}
 
       assert {:ok, %SystemBattery{} = system_battery} =
                Batteries.create_system_battery(valid_attrs)
 
-      assert system_battery.config == %{}
+      assert system_battery.config == %EmptyConfig{}
       assert system_battery.group == :net_sec
       assert system_battery.type == :istio_istiod
+    end
+
+    test "create_system_battery/1 with battery core config" do
+      valid_attrs = %{config: %{__type__: :battery_core}, group: :magic, type: :battery_core}
+
+      assert {:ok, %SystemBattery{} = system_battery} =
+               Batteries.create_system_battery(valid_attrs)
+
+      assert system_battery.config == %BatteryCoreConfig{}
+      assert system_battery.group == :magic
+      assert system_battery.type == :battery_core
     end
 
     test "create_system_battery/1 with invalid data returns error changeset" do
@@ -39,7 +52,6 @@ defmodule ControlServer.BatteriesTest do
       system_battery = system_battery_fixture()
 
       update_attrs = %{
-        config: %{test: 110},
         group: :ml,
         type: :notebooks
       }
@@ -47,7 +59,6 @@ defmodule ControlServer.BatteriesTest do
       assert {:ok, %SystemBattery{} = system_battery} =
                Batteries.update_system_battery(system_battery, update_attrs)
 
-      assert system_battery.config == %{test: 110}
       assert system_battery.group == :ml
       assert system_battery.type == :notebooks
     end

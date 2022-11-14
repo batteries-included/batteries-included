@@ -3,6 +3,7 @@ defmodule KubeResources.OryHydra do
   use KubeExt.IncludeResource, crd: "priv/manifests/ory_hydra/crd.yaml"
 
   import KubeExt.Yaml
+  import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeResources.SecuritySettings
@@ -29,8 +30,8 @@ defmodule KubeResources.OryHydra do
 
   def crd(_, _), do: yaml(get_resource(:crd))
 
-  def service_account_hydra_hydra_maester_account(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def service_account_hydra_hydra_maester_account(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.namespace(namespace)
@@ -39,8 +40,8 @@ defmodule KubeResources.OryHydra do
     |> B.component_label(@maester_component)
   end
 
-  def service_account_hydra(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def service_account_hydra(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.namespace(namespace)
@@ -49,8 +50,8 @@ defmodule KubeResources.OryHydra do
     |> B.component_label(@hydra_component)
   end
 
-  def config_map_hydra(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def config_map_hydra(_battery, state) do
+    namespace = core_namespace(state)
 
     config = %{
       "serve" => %{
@@ -111,8 +112,8 @@ defmodule KubeResources.OryHydra do
     |> B.rules(rules)
   end
 
-  def cluster_role_binding_hydra_hydra_maester_role_binding(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def cluster_role_binding_hydra_hydra_maester_role_binding(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("hydra-maester-role-binding")
@@ -121,8 +122,8 @@ defmodule KubeResources.OryHydra do
     |> B.subject(B.build_service_account(@maester_service_account, namespace))
   end
 
-  def role_hydra_hydra_maester_role_default(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def role_hydra_hydra_maester_role_default(_battery, state) do
+    namespace = core_namespace(state)
 
     rules = [
       %{
@@ -148,8 +149,8 @@ defmodule KubeResources.OryHydra do
     |> B.rules(rules)
   end
 
-  def role_binding_hydra_hydra_maester_role_binding_default(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def role_binding_hydra_hydra_maester_role_binding_default(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("hydra-maester-role-binding")
@@ -159,8 +160,8 @@ defmodule KubeResources.OryHydra do
     |> B.subject(B.build_service_account(@maester_service_account, namespace))
   end
 
-  def service_hydra_admin(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def service_hydra_admin(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -185,8 +186,8 @@ defmodule KubeResources.OryHydra do
     |> B.spec(spec)
   end
 
-  def service_hydra_public(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def service_hydra_public(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -211,8 +212,8 @@ defmodule KubeResources.OryHydra do
     |> B.spec(spec)
   end
 
-  def deployment_hydra_hydra_maester(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def deployment_hydra_hydra_maester(battery, state) do
+    namespace = core_namespace(state)
     image = SecuritySettings.ory_maester_image(battery.config)
 
     template =
@@ -273,8 +274,8 @@ defmodule KubeResources.OryHydra do
     |> B.spec(spec)
   end
 
-  def deployment_hydra(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def deployment_hydra(battery, state) do
+    namespace = core_namespace(state)
     image = SecuritySettings.ory_hydra_image(battery.config)
 
     template =
@@ -419,7 +420,7 @@ defmodule KubeResources.OryHydra do
   secret seeds for cookies and internal systems.
   """
   def secret_hydra(battery, state) do
-    namespace = SecuritySettings.namespace(battery.config)
+    namespace = core_namespace(state)
 
     B.build_resource(:secret)
     |> B.app_labels(@app_name)
@@ -437,7 +438,7 @@ defmodule KubeResources.OryHydra do
 
   defp dsn(battery, state) do
     sec_data =
-      battery |> fetch_current_secret_state(state) |> Map.get("data", %{}) |> Secret.decode!()
+      battery |> fetch_current_secretstate(state) |> Map.get("data", %{}) |> Secret.decode!()
 
     db_team = RequiredDatabases.OryHydra.db_team()
     db_name = RequiredDatabases.OryHydra.db_name()
@@ -449,8 +450,8 @@ defmodule KubeResources.OryHydra do
     "postgres://#{user}:#{password}@#{host}:5432/#{user}?sslmode=disable&max_conns=20&max_idle_conns=4"
   end
 
-  def fetch_current_secret_state(battery, state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def fetch_current_secretstate(battery, state) do
+    namespace = core_namespace(state)
     secret_name = pg_secret_name(battery, state)
 
     case KubeExt.KubeState.get(:secret, namespace, secret_name) do
@@ -472,8 +473,8 @@ defmodule KubeResources.OryHydra do
   @doc """
   Service account just for setup jobs.
   """
-  def service_account_jobs(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def service_account_jobs(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name(@jobs_service_account)
@@ -489,8 +490,8 @@ defmodule KubeResources.OryHydra do
   have an init pod so there's an ordering issue and it will
   keep restarting.
   """
-  def job_automigrate(battery, _state) do
-    namespace = SecuritySettings.namespace(battery.config)
+  def job_automigrate(battery, state) do
+    namespace = core_namespace(state)
     image = SecuritySettings.ory_hydra_image(battery.config)
 
     template =

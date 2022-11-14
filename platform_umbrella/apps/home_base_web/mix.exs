@@ -52,7 +52,8 @@ defmodule HomeBaseWeb.MixProject do
       {:heroicons, "~> 0.5"},
       {:jason, "~> 1.2"},
       {:logger_json, "~> 5.1"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.6"},
+      {:websock_adapter, "~> 0.4.4"}
     ]
   end
 

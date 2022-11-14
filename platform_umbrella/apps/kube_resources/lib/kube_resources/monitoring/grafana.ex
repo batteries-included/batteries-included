@@ -6,6 +6,8 @@ defmodule KubeResources.Grafana do
 
   use KubeExt.ResourceGenerator
 
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
 
@@ -24,8 +26,8 @@ defmodule KubeResources.Grafana do
 
   def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
-  def virtual_service(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  def virtual_service(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -47,8 +49,8 @@ defmodule KubeResources.Grafana do
     ])
   end
 
-  resource(:cluster_role_binding_battery_grafana_clusterrolebinding, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:cluster_role_binding_battery_grafana_clusterrolebinding, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-grafana-clusterrolebinding")
@@ -57,8 +59,8 @@ defmodule KubeResources.Grafana do
     |> B.subject(B.build_service_account("battery-grafana", namespace))
   end
 
-  resource(:config_map_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_battery_grafana, _battery, state) do
+    namespace = core_namespace(state)
 
     config = %{
       "server" => %{
@@ -91,8 +93,8 @@ defmodule KubeResources.Grafana do
     |> B.data(data)
   end
 
-  resource(:config_map_grafana_datasource, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_grafana_datasource, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"datasource.yaml" => get_resource(:datasource_yaml)}
 
     B.build_resource(:config_map)
@@ -103,8 +105,8 @@ defmodule KubeResources.Grafana do
     |> B.data(data)
   end
 
-  resource(:config_map_battery_grafana_dashboards, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_battery_grafana_dashboards, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"provider.yaml" => get_resource(:provider_yaml)}
 
     B.build_resource(:config_map)
@@ -114,8 +116,8 @@ defmodule KubeResources.Grafana do
     |> B.data(data)
   end
 
-  resource(:deployment_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment_battery_grafana, battery, state) do
+    namespace = core_namespace(state)
 
     image = Settings.grafana_image(battery.config)
 
@@ -259,8 +261,8 @@ defmodule KubeResources.Grafana do
     })
   end
 
-  resource(:role_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:role_battery_grafana, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:role)
     |> B.name("battery-grafana")
@@ -269,8 +271,8 @@ defmodule KubeResources.Grafana do
     |> B.rules([])
   end
 
-  resource(:role_binding_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:role_binding_battery_grafana, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("battery-grafana")
@@ -280,8 +282,8 @@ defmodule KubeResources.Grafana do
     |> B.subject(B.build_service_account("battery-grafana", namespace))
   end
 
-  resource(:secret_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:secret_battery_grafana, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:secret)
     |> Map.put(
@@ -293,8 +295,8 @@ defmodule KubeResources.Grafana do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_account_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_battery_grafana, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("battery-grafana")
@@ -302,8 +304,8 @@ defmodule KubeResources.Grafana do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_account_battery_grafana_test, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_battery_grafana_test, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("battery-grafana-test")
@@ -311,8 +313,8 @@ defmodule KubeResources.Grafana do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_battery_grafana, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service)
     |> B.name("battery-grafana")
@@ -327,8 +329,8 @@ defmodule KubeResources.Grafana do
     })
   end
 
-  resource(:service_monitor_battery_grafana, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor_battery_grafana, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-grafana")

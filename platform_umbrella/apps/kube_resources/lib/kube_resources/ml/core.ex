@@ -1,6 +1,5 @@
-defmodule KubeResources.ML.Base do
+defmodule KubeResources.ML.Core do
   alias KubeExt.Builder, as: B
-  alias KubeResources.MLSettings
 
   @app_name "battery-ml"
 
@@ -11,10 +10,8 @@ defmodule KubeResources.ML.Base do
   end
 
   defp namespace(battery, _state) do
-    namespace = MLSettings.public_namespace(battery.config)
-
     B.build_resource(:namespace)
-    |> B.name(namespace)
+    |> B.name(battery.config.namespace)
     |> B.app_labels(@app_name)
     |> B.label("istio-injection", "enabled")
   end

@@ -1,5 +1,5 @@
 defmodule ControlServer.Timeline.TimelineEvent do
-  use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
   import PolymorphicEmbed
   alias ControlServer.Timeline.BatteryInstall
@@ -10,7 +10,7 @@ defmodule ControlServer.Timeline.TimelineEvent do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "timeline_events" do
+  typed_schema "timeline_events" do
     field :level, Ecto.Enum,
       values: [
         :info,

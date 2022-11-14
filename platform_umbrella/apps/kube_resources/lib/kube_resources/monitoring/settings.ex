@@ -26,7 +26,6 @@ defmodule KubeResources.MonitoringSettings do
 
   @kubelet_service "kube-system/battery-kubelet"
 
-  setting(:namespace, :namespace, @namespace)
   setting(:monitored_namespaces, :monitored_namespace, @monitored_namespaces)
 
   setting(:prometheus_operator_image, :image, @prometheus_operator_image)

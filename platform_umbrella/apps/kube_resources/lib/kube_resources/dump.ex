@@ -1,5 +1,5 @@
 defmodule KubeResources.Dump do
-  alias KubeExt.SnapshotApply.SeedStateSnapshot
+  alias KubeExt.SystemState.SeedState
   alias KubeResources.ConfigGenerator
 
   require Logger
@@ -54,10 +54,10 @@ defmodule KubeResources.Dump do
   end
 
   def dump_dev(outdir) do
-    dump(SeedStateSnapshot.seed(:dev), outdir)
+    dump(SeedState.seed(:dev), outdir)
   end
 
   def dump_prod(outdir) do
-    dump(SeedStateSnapshot.seed(:prod), outdir)
+    dump(SeedState.seed(:prod), outdir)
   end
 end

@@ -3,7 +3,7 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
   import K8s.Resource.FieldAccessors
 
   alias ControlServer.Repo
-  alias KubeExt.SnapshotApply.StateSnapshot
+  alias KubeExt.SystemState.StateSummary
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.SnapshotApply.ContentAddressableResource
@@ -22,7 +22,7 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
 
   def snap_generation(
         %KubeSnapshot{} = snap,
-        %StateSnapshot{} = state,
+        %StateSummary{} = state,
         resource_gen_func
       ) do
     resource_map = resource_gen_func.(state)

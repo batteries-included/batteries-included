@@ -4,13 +4,14 @@ defmodule KubeResources.MonitoringControllerManager do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
 
   @app_name "monitoring_controller_manager"
 
-  resource(:config_map, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"controller-manager.json" => get_resource(:controller_manager_json)}
 
     B.build_resource(:config_map)
@@ -21,8 +22,8 @@ defmodule KubeResources.MonitoringControllerManager do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-kube-prometheus-st-kubernetes-system-controller-manager")
@@ -52,8 +53,8 @@ defmodule KubeResources.MonitoringControllerManager do
     })
   end
 
-  resource(:service_monitor, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-prometheus-st-kube-controller-manager")

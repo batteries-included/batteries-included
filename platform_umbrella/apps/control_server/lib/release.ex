@@ -22,7 +22,7 @@ defmodule ControlServer.Release do
     Logger.info("Starting Seed")
 
     KubeExt.cluster_type()
-    |> KubeExt.SnapshotApply.SeedStateSnapshot.seed()
+    |> KubeExt.SystemState.SeedState.seed()
     |> ControlServer.Seed.seed_from_snapshot()
   end
 
@@ -32,11 +32,17 @@ defmodule ControlServer.Release do
   end
 
   defp repos(app) do
-    Application.fetch_env!(app, :ecto_repos) || []
+    case Application.fetch_env(app, :ecto_repos) do
+      {:ok, repos} when is_list(repos) ->
+        repos
+
+      _ ->
+        []
+    end
   end
 
   defp load_app do
-    IO.puts("Ensuring app is starte")
+    Logger.debug("Ensuring app is starte")
 
     Enum.each(@start_apps, fn app ->
       {:ok, _apps} = Application.ensure_all_started(app, :permanent)
@@ -47,19 +53,21 @@ defmodule ControlServer.Release do
 
   def createdb do
     # Start postgrex and ecto
-    IO.puts("Starting dependencies...")
+    Logger.info("Starting createdb...")
 
     # Start apps necessary for executing migrations
     :ok = load_app()
 
-    for repo_app <- @apps do
+    Enum.each(@apps, fn repo_app ->
       # Create every repo for every app that's to be started.
-      for repo <- repos(repo_app) do
+      repo_app
+      |> repos()
+      |> Enum.each(fn repo ->
         :ok = ensure_repo_created(repo)
-      end
-    end
+      end)
+    end)
 
-    IO.puts("createdb task done!")
+    Logger.debug("createdb task done!")
   end
 
   defp ensure_repo_created(repo) do

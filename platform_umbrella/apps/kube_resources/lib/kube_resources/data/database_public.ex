@@ -1,10 +1,11 @@
 defmodule KubeResources.DatabasePublic do
+  import KubeExt.SystemState.Namespaces
+
   alias KubeResources.Database
-  alias KubeResources.DataSettings, as: Settings
   alias KubeResources.PostgresPod
 
   def materialize(battery, state) do
-    namespace = Settings.public_namespace(battery.config)
+    namespace = data_namespace(state)
 
     state.postgres_clusters
     |> Enum.filter(fn cluster -> cluster.type == :standard end)

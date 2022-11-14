@@ -1,6 +1,4 @@
 defmodule KubeResources.RawCluster do
-  alias KubeResources.DataSettings
-
   def team_name(%{} = cluster), do: Map.get(cluster, :team_name, "pg")
   def cluster_name(%{} = cluster), do: Map.get(cluster, :name, "")
   def cluster_type(%{} = cluster), do: Map.get(cluster, :type, :default)
@@ -26,12 +24,5 @@ defmodule KubeResources.RawCluster do
     team_name = team_name(cluster)
     cluster_name = cluster_name(cluster)
     "#{team_name}-#{cluster_name}"
-  end
-
-  def namespace(%{} = cluster, config \\ %{}) do
-    case cluster_type(cluster) do
-      :internal -> DataSettings.namespace(config)
-      _ -> DataSettings.public_namespace(config)
-    end
   end
 end

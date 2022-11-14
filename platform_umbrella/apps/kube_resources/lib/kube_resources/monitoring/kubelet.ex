@@ -4,13 +4,14 @@ defmodule KubeResources.MonitoringKubelet do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
 
   @app_name "monitoring_kubelet"
 
-  resource(:config_map, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"kubelet.json" => get_resource(:kubelet_json)}
 
     B.build_resource(:config_map)
@@ -22,8 +23,8 @@ defmodule KubeResources.MonitoringKubelet do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule_kubelet_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kubelet_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubelet.rules")
@@ -58,8 +59,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:prometheus_rule_kubernetes_system_kubelet, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kubernetes_system_kubelet, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-system-kubelet")
@@ -246,8 +247,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:prometheus_rule_k8s_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_k8s_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-k8s.rules")
@@ -355,8 +356,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:prometheus_rule_kubernetes_storage, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kubernetes_storage, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-storage")
@@ -443,8 +444,8 @@ defmodule KubeResources.MonitoringKubelet do
     })
   end
 
-  resource(:service_monitor, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-kubelet")
@@ -488,7 +489,7 @@ defmodule KubeResources.MonitoringKubelet do
             },
             %{
               "action" => "drop",
-              "regex" => "container_(file_descriptors|tasks_state|threads_max)",
+              "regex" => "container_(file_descriptors|tasksstate|threads_max)",
               "sourceLabels" => ["__name__"]
             },
             %{"action" => "drop", "regex" => "container_spec.*", "sourceLabels" => ["__name__"]},

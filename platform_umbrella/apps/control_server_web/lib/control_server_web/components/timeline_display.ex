@@ -137,7 +137,7 @@ defmodule ControlServerWeb.TimelineDisplay do
     "https://robohash.org/#{encoded_who}.png?set=set1"
   end
 
-  defp icon_url(_), do: icon_url("system_user")
+  # defp icon_url(_), do: icon_url("system_user")
 
   defp display_when(nil), do: "Unknown Time"
   defp display_when(datetime), do: Timex.from_now(datetime)

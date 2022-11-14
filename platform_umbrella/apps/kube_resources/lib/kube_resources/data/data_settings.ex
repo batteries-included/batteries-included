@@ -5,9 +5,6 @@ defmodule KubeResources.DataSettings do
 
   import KubeExt.MapSettings
 
-  @namepace "battery-core"
-  @public_namepace "battery-data"
-
   @pg_operator_image "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2"
   @pg_image "registry.opensource.zalan.do/acid/spilo-14:2.1-p7"
   @pg_logical_backup_image "registry.opensource.zalan.do/acid/logical-backup:v1.8.2"
@@ -16,10 +13,6 @@ defmodule KubeResources.DataSettings do
   @redis_operator_image "quay.io/spotahome/redis-operator:v1.2.2"
 
   @ceph_image "quay.io/ceph/ceph:v17.2.3"
-
-  setting(:namespace, :namespace, @namepace)
-
-  setting(:public_namespace, :namespace, @public_namepace)
 
   setting(:bootstrap_clusters, :bootstrap_clusters, [])
 

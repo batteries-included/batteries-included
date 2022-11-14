@@ -8,7 +8,7 @@ defmodule ControlServer.Postgres.Cluster do
   require Logger
 
   @timestamps_opts [type: :utc_datetime_usec]
-
+  @derive {Jason.Encoder, except: [:__meta__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "pg_clusters" do
@@ -18,8 +18,8 @@ defmodule ControlServer.Postgres.Cluster do
     field :team_name, :string, default: "pg"
     field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
     field :storage_size, :string
-    embeds_many :users, ControlServer.Postgres.PGUser, on_replace: :delete
-    embeds_many :databases, ControlServer.Postgres.PGDatabase, on_replace: :delete
+    embeds_many(:users, ControlServer.Postgres.PGUser, on_replace: :delete)
+    embeds_many(:databases, ControlServer.Postgres.PGDatabase, on_replace: :delete)
     timestamps()
   end
 

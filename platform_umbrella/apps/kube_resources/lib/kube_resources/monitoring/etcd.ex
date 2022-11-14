@@ -3,13 +3,15 @@ defmodule KubeResources.MonitoringEtcd do
     etcd_json: "priv/raw_files/prometheus_stack/etcd.json"
 
   use KubeExt.ResourceGenerator
-  alias KubeResources.MonitoringSettings, as: Settings
+
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
 
   @app_name "monitoring_etcd"
 
-  resource(:config_map_battery_kube_prometheus_st_etcd, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_battery_kube_prometheus_st_etcd, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"etcd.json" => get_resource(:etcd_json)}
 
     B.build_resource(:config_map)
@@ -20,8 +22,8 @@ defmodule KubeResources.MonitoringEtcd do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-etcd")
@@ -235,8 +237,8 @@ defmodule KubeResources.MonitoringEtcd do
     })
   end
 
-  resource(:service_monitor, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-kube-etcd")

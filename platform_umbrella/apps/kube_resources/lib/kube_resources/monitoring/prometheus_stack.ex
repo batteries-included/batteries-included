@@ -26,13 +26,14 @@ defmodule KubeResources.PrometheusStack do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
 
   @app_name "prometheus_stack"
 
-  resource(:config_map_alertmanager_overview, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_alertmanager_overview, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"alertmanager-overview.json" => get_resource(:alertmanager_overview_json)}
 
     B.build_resource(:config_map)
@@ -43,8 +44,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_cluster_total, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_cluster_total, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"cluster-total.json" => get_resource(:cluster_total_json)}
 
     B.build_resource(:config_map)
@@ -55,8 +56,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_grafana_overview, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_grafana_overview, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"grafana-overview.json" => get_resource(:grafana_overview_json)}
 
     B.build_resource(:config_map)
@@ -67,8 +68,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_k8s_coredns, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_k8s_coredns, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"k8s-coredns.json" => get_resource(:k8s_coredns_json)}
 
     B.build_resource(:config_map)
@@ -79,8 +80,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_k8s_resources_cluster, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_k8s_resources_cluster, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"k8s-resources-cluster.json" => get_resource(:k8s_resources_cluster_json)}
 
     B.build_resource(:config_map)
@@ -91,8 +92,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_k8s_resources_namespace, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_k8s_resources_namespace, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{"k8s-resources-namespace.json" => get_resource(:k8s_resources_namespace_json)}
 
@@ -104,8 +105,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_k8s_resources_node, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_k8s_resources_node, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"k8s-resources-node.json" => get_resource(:k8s_resources_node_json)}
 
     B.build_resource(:config_map)
@@ -116,8 +117,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_k8s_resources_pod, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_k8s_resources_pod, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"k8s-resources-pod.json" => get_resource(:k8s_resources_pod_json)}
 
     B.build_resource(:config_map)
@@ -128,8 +129,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_k8s_resources_workload, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_k8s_resources_workload, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{"k8s-resources-workload.json" => get_resource(:k8s_resources_workload_json)}
 
@@ -141,8 +142,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_k8s_resources_workloads_namespace, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_k8s_resources_workloads_namespace, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "k8s-resources-workloads-namespace.json" =>
@@ -157,8 +158,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_namespace_by_pod, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_namespace_by_pod, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"namespace-by-pod.json" => get_resource(:namespace_by_pod_json)}
 
     B.build_resource(:config_map)
@@ -169,8 +170,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_namespace_by_workload, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_namespace_by_workload, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"namespace-by-workload.json" => get_resource(:namespace_by_workload_json)}
 
     B.build_resource(:config_map)
@@ -181,8 +182,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_node_cluster_rsrc_use, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_node_cluster_rsrc_use, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"node-cluster-rsrc-use.json" => get_resource(:node_cluster_rsrc_use_json)}
 
     B.build_resource(:config_map)
@@ -193,8 +194,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_node_rsrc_use, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_node_rsrc_use, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"node-rsrc-use.json" => get_resource(:node_rsrc_use_json)}
 
     B.build_resource(:config_map)
@@ -205,8 +206,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_nodes, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_nodes, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"nodes.json" => get_resource(:nodes_json)}
 
     B.build_resource(:config_map)
@@ -217,8 +218,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_nodes_darwin, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_nodes_darwin, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"nodes-darwin.json" => get_resource(:nodes_darwin_json)}
 
     B.build_resource(:config_map)
@@ -229,8 +230,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_persistentvolumesusage, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_persistentvolumesusage, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{"persistentvolumesusage.json" => get_resource(:persistentvolumesusage_json)}
 
@@ -242,8 +243,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_pod_total, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_pod_total, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"pod-total.json" => get_resource(:pod_total_json)}
 
     B.build_resource(:config_map)
@@ -254,8 +255,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_prometheus, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_prometheus, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"prometheus.json" => get_resource(:prometheus_json)}
 
     B.build_resource(:config_map)
@@ -266,8 +267,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:config_map_workload_total, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_workload_total, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"workload-total.json" => get_resource(:workload_total_json)}
 
     B.build_resource(:config_map)
@@ -278,8 +279,8 @@ defmodule KubeResources.PrometheusStack do
     |> B.data(data)
   end
 
-  resource(:prometheus_rule_config_reloaders, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_config_reloaders, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-config-reloaders")
@@ -310,8 +311,8 @@ defmodule KubeResources.PrometheusStack do
     })
   end
 
-  resource(:prometheus_rule_general_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_general_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-general.rules")
@@ -368,8 +369,8 @@ defmodule KubeResources.PrometheusStack do
     })
   end
 
-  resource(:prometheus_rule_kube_general_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kube_general_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kube-prometheus-general.rules")
@@ -388,8 +389,8 @@ defmodule KubeResources.PrometheusStack do
     })
   end
 
-  resource(:prometheus_rule_kube_node_recording_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kube_node_recording_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kube-prometheus-node-recording.rules")
@@ -434,8 +435,8 @@ defmodule KubeResources.PrometheusStack do
     })
   end
 
-  resource(:prometheus_rule_kubernetes_apps, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kubernetes_apps, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-apps")
@@ -512,7 +513,7 @@ defmodule KubeResources.PrometheusStack do
                 "summary" => "Deployment has not matched the expected number of replicas."
               },
               "expr" =>
-                "(\n  kube_statefulset_status_replicas_ready{job=\"kube-state-metrics\", namespace=~\".*\"}\n    !=\n  kube_statefulset_status_replicas{job=\"kube-state-metrics\", namespace=~\".*\"}\n) and (\n  changes(kube_statefulset_status_replicas_updated{job=\"kube-state-metrics\", namespace=~\".*\"}[10m])\n    ==\n  0\n)",
+                "(\n  kubestatefulset_status_replicas_ready{job=\"kube-state-metrics\", namespace=~\".*\"}\n    !=\n  kubestatefulset_status_replicas{job=\"kube-state-metrics\", namespace=~\".*\"}\n) and (\n  changes(kubestatefulset_status_replicas_updated{job=\"kube-state-metrics\", namespace=~\".*\"}[10m])\n    ==\n  0\n)",
               "for" => "15m",
               "labels" => %{"severity" => "warning"}
             },
@@ -526,7 +527,7 @@ defmodule KubeResources.PrometheusStack do
                 "summary" => "StatefulSet generation mismatch due to possible roll-back"
               },
               "expr" =>
-                "kube_statefulset_status_observed_generation{job=\"kube-state-metrics\", namespace=~\".*\"}\n  !=\nkube_statefulset_metadata_generation{job=\"kube-state-metrics\", namespace=~\".*\"}",
+                "kubestatefulset_status_observed_generation{job=\"kube-state-metrics\", namespace=~\".*\"}\n  !=\nkubestatefulset_metadata_generation{job=\"kube-state-metrics\", namespace=~\".*\"}",
               "for" => "15m",
               "labels" => %{"severity" => "warning"}
             },
@@ -540,7 +541,7 @@ defmodule KubeResources.PrometheusStack do
                 "summary" => "StatefulSet update has not been rolled out."
               },
               "expr" =>
-                "(\n  max without (revision) (\n    kube_statefulset_status_current_revision{job=\"kube-state-metrics\", namespace=~\".*\"}\n      unless\n    kube_statefulset_status_update_revision{job=\"kube-state-metrics\", namespace=~\".*\"}\n  )\n    *\n  (\n    kube_statefulset_replicas{job=\"kube-state-metrics\", namespace=~\".*\"}\n      !=\n    kube_statefulset_status_replicas_updated{job=\"kube-state-metrics\", namespace=~\".*\"}\n  )\n)  and (\n  changes(kube_statefulset_status_replicas_updated{job=\"kube-state-metrics\", namespace=~\".*\"}[5m])\n    ==\n  0\n)",
+                "(\n  max without (revision) (\n    kubestatefulset_status_current_revision{job=\"kube-state-metrics\", namespace=~\".*\"}\n      unless\n    kubestatefulset_status_update_revision{job=\"kube-state-metrics\", namespace=~\".*\"}\n  )\n    *\n  (\n    kubestatefulset_replicas{job=\"kube-state-metrics\", namespace=~\".*\"}\n      !=\n    kubestatefulset_status_replicas_updated{job=\"kube-state-metrics\", namespace=~\".*\"}\n  )\n)  and (\n  changes(kubestatefulset_status_replicas_updated{job=\"kube-state-metrics\", namespace=~\".*\"}[5m])\n    ==\n  0\n)",
               "for" => "15m",
               "labels" => %{"severity" => "warning"}
             },
@@ -660,8 +661,8 @@ defmodule KubeResources.PrometheusStack do
     })
   end
 
-  resource(:prometheus_rule_kubernetes_resources, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kubernetes_resources, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-resources")
@@ -790,8 +791,8 @@ defmodule KubeResources.PrometheusStack do
     })
   end
 
-  resource(:prometheus_rule_kubernetes_system, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_kubernetes_system, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-kubernetes-system")
@@ -836,8 +837,8 @@ defmodule KubeResources.PrometheusStack do
     })
   end
 
-  resource(:prometheus_rule_operator, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_operator, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-prometheus-operator")

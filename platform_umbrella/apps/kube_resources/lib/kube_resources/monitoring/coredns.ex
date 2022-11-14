@@ -4,14 +4,14 @@ defmodule KubeResources.MonitoringCoredns do
 
   use KubeExt.ResourceGenerator
 
-  alias KubeResources.MonitoringSettings, as: Settings
+  import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
 
   @app_name "monitoring_coredns"
 
-  resource(:service_monitor, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-coredns")
@@ -30,8 +30,8 @@ defmodule KubeResources.MonitoringCoredns do
     })
   end
 
-  resource(:config_map, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"k8s-coredns.json" => get_resource(:k8s_coredns_json)}
 
     B.build_resource(:config_map)

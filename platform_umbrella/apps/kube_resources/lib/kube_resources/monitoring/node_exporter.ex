@@ -1,13 +1,15 @@
 defmodule KubeResources.NodeExporter do
   use KubeExt.ResourceGenerator
 
+  import KubeExt.SystemState.Namespaces
+
   alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
 
   @app_name "node-exporter"
 
-  resource(:service_account_battery_prometheus_node_exporter, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_battery_prometheus_node_exporter, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> Map.put("imagePullSecrets", [])
@@ -16,8 +18,8 @@ defmodule KubeResources.NodeExporter do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_battery_prometheus_node_exporter, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_battery_prometheus_node_exporter, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service)
     |> B.name("battery-prometheus-node-exporter")
@@ -35,8 +37,8 @@ defmodule KubeResources.NodeExporter do
     })
   end
 
-  resource(:daemon_set_battery_prometheus_node_exporter, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:daemon_set_battery_prometheus_node_exporter, battery, state) do
+    namespace = core_namespace(state)
 
     image = Settings.node_exporter_image(battery.config)
 
@@ -142,8 +144,8 @@ defmodule KubeResources.NodeExporter do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_node_exporter, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_node_exporter, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node-exporter")
@@ -410,8 +412,8 @@ defmodule KubeResources.NodeExporter do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_node_exporter_rules, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_node_exporter_rules, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node-exporter.rules")
@@ -483,8 +485,8 @@ defmodule KubeResources.NodeExporter do
     })
   end
 
-  resource(:prometheus_rule_battery_kube_st_node_network, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule_battery_kube_st_node_network, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-node-network")
@@ -515,8 +517,8 @@ defmodule KubeResources.NodeExporter do
     })
   end
 
-  resource(:service_monitor, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-node-exporter")

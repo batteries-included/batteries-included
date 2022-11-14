@@ -3,7 +3,7 @@ defmodule ControlServer.Rook.CephFilesystem do
   import Ecto.Changeset
 
   @timestamps_opts [type: :utc_datetime_usec]
-
+  @derive {Jason.Encoder, except: [:__meta__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "ceph_filesystems" do

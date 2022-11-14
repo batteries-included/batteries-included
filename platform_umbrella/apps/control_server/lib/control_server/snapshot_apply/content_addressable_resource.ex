@@ -7,7 +7,7 @@ defmodule ControlServer.SnapshotApply.ContentAddressableResource do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  schema "content_addressable_resources" do
+  typed_schema "content_addressable_resources" do
     field :hash, :string
     field :value, :map, redact: true
 

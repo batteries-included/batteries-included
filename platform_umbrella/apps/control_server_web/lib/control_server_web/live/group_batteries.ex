@@ -3,7 +3,7 @@ defmodule ControlServerWeb.GroupBatteriesLive do
 
   import ControlServerWeb.LeftMenuLayout
 
-  alias ControlServer.Batteries.Catalog
+  alias KubeExt.Defaults.Catalog
   alias ControlServer.Batteries.Installer
   alias ControlServer.Batteries
   alias Phoenix.Naming
@@ -90,7 +90,7 @@ defmodule ControlServerWeb.GroupBatteriesLive do
     """
   end
 
-  attr :battery, :any, required: true
+  attr(:battery, :any, required: true)
 
   def start_button(assigns) do
     ~H"""

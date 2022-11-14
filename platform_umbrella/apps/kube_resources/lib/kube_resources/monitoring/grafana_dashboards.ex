@@ -1,15 +1,16 @@
 defmodule KubeResources.GrafanaDashboards do
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
 
   alias K8s.Resource
   alias KubeResources.GrafanaDashboardClient
-  alias KubeResources.MonitoringSettings
 
   @dashboards_configmap "grafana-dashboards"
   @app_name "grafana"
 
   def all_dashboards(_battery, state) do
-    state.system_batteries
+    state.batteries
     |> Enum.map(fn %{} = sys_battery ->
       sys_battery
       |> dashboards(state)
@@ -52,8 +53,8 @@ defmodule KubeResources.GrafanaDashboards do
 
   def grafana_dashboard_name(id), do: "grafana-dashboard-#{id}"
 
-  def dashboard_configmap_from_grafana_id(battery, _state, id) do
-    namespace = MonitoringSettings.namespace(battery.config)
+  def dashboard_configmap_from_grafana_id(_battery, state, id) do
+    namespace = core_namespace(state)
 
     dash = get_updated_dashboard(id)
 

@@ -5,7 +5,7 @@ defmodule KubeResources.ServiceMonitors do
 
   @spec materialize(any, any) :: map()
   def materialize(_battery, state) do
-    state.system_batteries
+    state.batteries
     |> Enum.map(fn sys_battery ->
       {"/monitors/#{sys_battery.id}/#{sys_battery.type}",
        sys_battery.type

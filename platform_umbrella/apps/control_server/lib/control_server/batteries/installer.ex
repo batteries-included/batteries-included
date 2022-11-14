@@ -1,6 +1,8 @@
 defmodule ControlServer.Batteries.Installer do
-  alias ControlServer.Batteries.Catalog
-  alias ControlServer.Batteries.CatalogBattery
+  alias KubeExt.Defaults.Catalog
+  alias KubeExt.Defaults.CatalogBattery
+  alias KubeExt.RequiredDatabases
+
   alias ControlServer.Batteries.SystemBattery
   alias ControlServer.Postgres
   alias ControlServer.Redis
@@ -8,7 +10,6 @@ defmodule ControlServer.Batteries.Installer do
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
   alias ControlServer.Timeline
-  alias KubeExt.RequiredDatabases
 
   require Logger
 
@@ -32,38 +33,39 @@ defmodule ControlServer.Batteries.Installer do
     install(catalog_battery)
   end
 
-  def install(types) when is_list(types) do
-    total =
-      types
-      |> Enum.map(&Catalog.get/1)
-      |> Enum.flat_map(&get_recursive_deps/1)
-      |> Enum.concat(types)
-      |> Enum.uniq()
-
-    Logger.debug(
-      "Installing #{length(types)} batteries",
-      types: types
-    )
-
-    Logger.debug("#{length(total)} total batteries after dependencies", total: total)
-
-    do_install(total)
-  end
-
-  def install(%CatalogBattery{type: type} = catalog_battery) do
+  def install(%CatalogBattery{} = catalog_battery) do
     # Get every dep
     # Merge the find_or_create Ecto.Multi of every
     # dependency into one mega dependency multi
     # That we merge into the final result
 
-    deps = get_recursive_deps(catalog_battery)
-    Logger.debug("Found #{length(deps)} recursive dependencies", deps: deps)
-    do_install(deps ++ [type])
+    all_batteries = get_recursive(catalog_battery)
+    Logger.debug("Found #{length(all_batteries)} recursive dependencies", deps: all_batteries)
+    do_install(all_batteries)
   end
 
-  defp do_install(types) do
-    types
-    |> Enum.map(&find_or_create_multi/1)
+  def install_all(batteries) do
+    # get the catalog batteries for everything
+    # Then make sure that we have all the dependencies.
+    # We should since install_all should be used with a snapshot.
+    # Then make the whole thing unique.
+    catalog_batteries =
+      batteries
+      |> Enum.map(&Catalog.get(&1.type))
+      |> Enum.flat_map(&get_recursive/1)
+      |> Enum.uniq()
+
+    overrides = batteries |> Enum.map(&{&1.type, &1}) |> Map.new()
+
+    do_install(catalog_batteries, overrides)
+  end
+
+  defp do_install(catalog_batteries, overrides \\ %{}) do
+    catalog_batteries
+    |> Enum.map(fn battery ->
+      override = Map.get(overrides, battery.type, %{})
+      find_or_create_multi(battery, override)
+    end)
     |> Enum.reduce(Multi.new(), fn battery_type_multi, multi ->
       Multi.append(multi, battery_type_multi)
     end)
@@ -72,17 +74,19 @@ defmodule ControlServer.Batteries.Installer do
     |> broadcast()
   end
 
-  defp get_recursive_deps(%CatalogBattery{dependencies: deps} = _catalog_battery) do
+  defp get_recursive(%CatalogBattery{dependencies: deps} = catalog_battery) do
     (deps || [])
-    |> Enum.concat(
-      Enum.flat_map(deps, fn dep_type ->
-        dep_type |> Catalog.get() |> get_recursive_deps()
-      end)
-    )
+    |> Enum.flat_map(fn dep_type ->
+      dep_type |> Catalog.get() |> get_recursive()
+    end)
+    |> Enum.concat([catalog_battery])
     |> Enum.uniq()
   end
 
-  defp find_or_create_multi(battery_type) do
+  defp find_or_create_multi(
+         %CatalogBattery{type: battery_type} = catalog_battery,
+         %{} = value_overrides
+       ) do
     selected_key = "#{battery_type}_selected"
     installed_key = "#{battery_type}_installed"
     post_key = "#{battery_type}_post"
@@ -97,7 +101,7 @@ defmodule ControlServer.Batteries.Installer do
       # If there wasn't a selected from the
       # db battery then we need to insert it.
       case Map.get(state, selected_key, nil) do
-        nil -> repo.insert(changeset(battery_type))
+        nil -> repo.insert(changeset(catalog_battery, value_overrides))
         # Already inserted carry on
         _ -> {:ok, nil}
       end
@@ -131,17 +135,16 @@ defmodule ControlServer.Batteries.Installer do
     end)
   end
 
-  defp changeset(battery_type) do
-    catalog_battery = Catalog.get(battery_type)
-
-    SystemBattery.changeset(%SystemBattery{}, %{
-      type: catalog_battery.type,
-      group: catalog_battery.group,
-      config: init_config(battery_type)
-    })
+  defp changeset(catalog_battery, override) do
+    SystemBattery.changeset(
+      %SystemBattery{},
+      clean_merge(catalog_battery, override)
+    )
   end
 
-  defp init_config(_), do: %{}
+  defp to_map(val) when is_struct(val), do: Map.from_struct(val)
+  defp to_map(val) when is_map(val), do: val
+  defp clean_merge(m1, m2), do: Map.merge(to_map(m1), to_map(m2))
 
   defp post_install(%SystemBattery{type: :harbor}, repo) do
     init_pg = RequiredDatabases.Harbor.harbor_pg_cluster()

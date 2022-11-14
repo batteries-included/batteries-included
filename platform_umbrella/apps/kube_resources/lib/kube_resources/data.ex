@@ -1,6 +1,5 @@
 defmodule KubeResources.Data do
   alias KubeExt.Builder, as: B
-  alias KubeResources.DataSettings
 
   @app_name "data-common"
 
@@ -11,10 +10,8 @@ defmodule KubeResources.Data do
   end
 
   defp namespace(battery, _state) do
-    namespace = DataSettings.public_namespace(battery.config)
-
     B.build_resource(:namespace)
-    |> B.name(namespace)
+    |> B.name(battery.config.namespace)
     |> B.app_labels(@app_name)
   end
 end

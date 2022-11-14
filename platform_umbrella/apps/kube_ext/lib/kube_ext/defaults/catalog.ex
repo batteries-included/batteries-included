@@ -1,30 +1,31 @@
-defmodule ControlServer.Batteries.Catalog do
-  alias ControlServer.Batteries.CatalogBattery
+defmodule KubeExt.Defaults.Catalog do
+  alias KubeExt.Defaults.CatalogBattery
+  alias KubeExt.Defaults.Namespaces
 
   @all [
     # Data
-    %CatalogBattery{group: :data, type: :data, dependencies: [:battery_core]},
+    %CatalogBattery{group: :data, type: :data, dependencies: []},
     %CatalogBattery{group: :data, type: :redis_operator, dependencies: [:battery_core]},
     %CatalogBattery{group: :data, type: :redis, dependencies: [:data, :redis_operator]},
     %CatalogBattery{
       group: :data,
       type: :postgres_operator,
-      dependencies: [:data, :battery_core]
+      dependencies: [:battery_core]
     },
     %CatalogBattery{
       group: :data,
       type: :database_public,
-      dependencies: [:postgres_operator, :data, :battery_core]
+      dependencies: [:postgres_operator, :data]
     },
     %CatalogBattery{
       group: :data,
       type: :database_internal,
-      dependencies: [:postgres_operator, :data]
+      dependencies: [:postgres_operator, :battery_core]
     },
     %CatalogBattery{group: :data, type: :rook, dependencies: [:data]},
     %CatalogBattery{group: :data, type: :ceph, dependencies: [:data, :rook]},
     # Internal
-    %CatalogBattery{group: :magic, type: :battery_core},
+    %CatalogBattery{group: :magic, type: :battery_core, config: %{__type__: :battery_core}},
     %CatalogBattery{
       group: :magic,
       type: :control_server,
@@ -49,7 +50,7 @@ defmodule ControlServer.Batteries.Catalog do
       dependencies: [:battery_core, :redis, :istio_gateway, :database_internal]
     },
     # ML
-    %CatalogBattery{group: :ml, type: :ml_core},
+    %CatalogBattery{group: :ml, type: :ml_core, config: %{__type__: :ml_core}},
     %CatalogBattery{
       group: :ml,
       type: :notebooks,
@@ -153,7 +154,12 @@ defmodule ControlServer.Batteries.Catalog do
       dependencies: [:loki]
     },
     # Network/Security
-    %CatalogBattery{group: :net_sec, type: :istio, dependencies: [:battery_core]},
+    %CatalogBattery{
+      group: :net_sec,
+      type: :istio,
+      dependencies: [:battery_core],
+      config: %{__type__: :istio}
+    },
     %CatalogBattery{
       group: :net_sec,
       type: :istio_istiod,
@@ -192,10 +198,38 @@ defmodule ControlServer.Batteries.Catalog do
     }
   ]
 
-  def all, do: @all
-  def all(group), do: Enum.filter(@all, &(&1.group == group))
+  def all, do: Enum.map(@all, &add_config/1)
 
-  def get(type), do: Enum.find(@all, &(&1.type == type))
+  def all(group) do
+    @all
+    |> Enum.filter(&(&1.group == group))
+    |> Enum.map(&add_config/1)
+  end
 
-  def battery_type_map, do: @all |> Enum.map(&{&1.type, &1}) |> Map.new()
+  def get(type) do
+    @all
+    |> Enum.find(&(&1.type == type))
+    |> then(fn catalog_battery -> add_config(catalog_battery) end)
+  end
+
+  def battery_type_map do
+    @all
+    |> Enum.map(&add_config/1)
+    |> Enum.map(fn catalog_battery -> {catalog_battery.type, catalog_battery} end)
+    |> Map.new()
+  end
+
+  defp add_config(catalog_battery),
+    do: %{catalog_battery | config: default_config(catalog_battery.type)}
+
+  defp default_config(:battery_core), do: %{__type__: :istio, namespace: Namespaces.core()}
+  defp default_config(:data), do: %{__type__: :istio, namespace: Namespaces.data()}
+  defp default_config(:istio), do: %{__type__: :istio, namespace: Namespaces.istio()}
+  defp default_config(:ml_core), do: %{__type__: :ml_core, namespace: Namespaces.ml()}
+  defp default_config(:metallb), do: %{__type__: :metallb, namespace: Namespaces.loadbalancer()}
+
+  defp default_config(:knative_serving),
+    do: %{__type__: :knative_serving, namespace: Namespaces.knative()}
+
+  defp default_config(_type), do: %{__type__: :empty}
 end

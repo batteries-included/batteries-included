@@ -35,14 +35,14 @@ defmodule KubeResources.Rook do
   use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
+  import KubeExt.SystemState.Namespaces
 
-  alias KubeResources.DataSettings, as: Settings
   alias KubeExt.Builder, as: B
 
   @app_name "rook"
 
-  resource(:cluster_role_binding_ceph_global, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_ceph_global, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-global")
@@ -52,8 +52,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  resource(:cluster_role_binding_ceph_mgr, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_ceph_mgr, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-mgr-cluster")
@@ -62,8 +62,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  resource(:cluster_role_binding_ceph_object_bucket, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_ceph_object_bucket, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-object-bucket")
@@ -72,8 +72,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  resource(:cluster_role_binding_ceph_osd, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_ceph_osd, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-osd")
@@ -82,8 +82,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
 
-  resource(:cluster_role_binding_ceph_system, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_ceph_system, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-system")
@@ -93,8 +93,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  resource(:cluster_role_binding_ceph_system_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_ceph_system_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-ceph-system-psp")
@@ -104,8 +104,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  resource(:cluster_role_binding_cephfs_csi_provisioner, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_cephfs_csi_provisioner, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cephfs-csi-provisioner-role")
@@ -114,8 +114,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
 
-  resource(:cluster_role_binding_csi_cephfs_plugin_sa_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_csi_cephfs_plugin_sa_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-cephfs-plugin-sa-psp")
@@ -124,8 +124,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-plugin-sa", namespace))
   end
 
-  resource(:cluster_role_binding_csi_cephfs_provisioner_sa_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_csi_cephfs_provisioner_sa_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-cephfs-provisioner-sa-psp")
@@ -134,8 +134,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
 
-  resource(:cluster_role_binding_csi_rbd_plugin_sa_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_csi_rbd_plugin_sa_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-rbd-plugin-sa-psp")
@@ -144,8 +144,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
   end
 
-  resource(:cluster_role_binding_csi_rbd_provisioner_sa_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_csi_rbd_provisioner_sa_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rook-csi-rbd-provisioner-sa-psp")
@@ -154,8 +154,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
 
-  resource(:cluster_role_binding_rbd_csi_nodeplugin, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_rbd_csi_nodeplugin, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rbd-csi-nodeplugin")
@@ -164,8 +164,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
   end
 
-  resource(:cluster_role_binding_rbd_csi_provisioner, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:cluster_role_binding_rbd_csi_provisioner, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("rbd-csi-provisioner-role")
@@ -616,8 +616,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:config_map_ceph_operator, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:config_map_ceph_operator, _battery, state) do
+    namespace = data_namespace(state)
 
     data =
       %{}
@@ -735,8 +735,8 @@ defmodule KubeResources.Rook do
     yaml(get_resource(:objectbuckets_objectbucket_io))
   end
 
-  resource(:deployment_ceph_operator, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:deployment_ceph_operator, _battery, state) do
+    namespace = data_namespace(state)
 
     spec =
       %{}
@@ -847,8 +847,8 @@ defmodule KubeResources.Rook do
     )
   end
 
-  resource(:role_binding_ceph_cluster_mgmt, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_cluster_mgmt, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-cluster-mgmt")
@@ -858,8 +858,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  resource(:role_binding_ceph_cmd_reporter, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_cmd_reporter, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-cmd-reporter")
@@ -869,8 +869,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-cmd-reporter", namespace))
   end
 
-  resource(:role_binding_ceph_cmd_reporter_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_cmd_reporter_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-cmd-reporter-psp")
@@ -880,8 +880,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-cmd-reporter", namespace))
   end
 
-  resource(:role_binding_ceph_default_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_default_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-default-psp")
@@ -892,8 +892,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("default", namespace))
   end
 
-  resource(:role_binding_ceph_mgr, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_mgr, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-mgr")
@@ -903,8 +903,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  resource(:role_binding_ceph_mgr_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_mgr_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-mgr-psp")
@@ -914,8 +914,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  resource(:role_binding_ceph_mgr_system, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_mgr_system, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-mgr-system")
@@ -925,8 +925,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  resource(:role_binding_ceph_monitoring, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_monitoring, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-monitoring")
@@ -936,8 +936,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  resource(:role_binding_ceph_monitoring_mgr, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_monitoring_mgr, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-monitoring-mgr")
@@ -947,8 +947,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
   end
 
-  resource(:role_binding_ceph_osd, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_osd, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-osd")
@@ -958,8 +958,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
 
-  resource(:role_binding_ceph_osd_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_osd_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-osd-psp")
@@ -969,8 +969,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
   end
 
-  resource(:role_binding_ceph_purge_osd, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_purge_osd, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-purge-osd")
@@ -980,8 +980,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-purge-osd", namespace))
   end
 
-  resource(:role_binding_ceph_purge_osd_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_purge_osd_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-purge-osd-psp")
@@ -991,8 +991,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-purge-osd", namespace))
   end
 
-  resource(:role_binding_ceph_rgw, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_rgw, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-rgw")
@@ -1002,8 +1002,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-rgw", namespace))
   end
 
-  resource(:role_binding_ceph_rgw_psp, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_rgw_psp, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-rgw-psp")
@@ -1013,8 +1013,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-rgw", namespace))
   end
 
-  resource(:role_binding_ceph_system, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_ceph_system, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rook-ceph-system")
@@ -1025,8 +1025,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
   end
 
-  resource(:role_binding_cephfs_csi_provisioner_cfg, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_cephfs_csi_provisioner_cfg, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("cephfs-csi-provisioner-role-cfg")
@@ -1036,8 +1036,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
   end
 
-  resource(:role_binding_rbd_csi_provisioner_cfg, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_binding_rbd_csi_provisioner_cfg, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("rbd-csi-provisioner-role-cfg")
@@ -1047,8 +1047,8 @@ defmodule KubeResources.Rook do
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
   end
 
-  resource(:role_ceph_cmd_reporter, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_cmd_reporter, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{
@@ -1065,8 +1065,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_ceph_mgr, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_mgr, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{
@@ -1116,8 +1116,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_ceph_monitoring, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_monitoring, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{
@@ -1134,8 +1134,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_ceph_monitoring_mgr, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_monitoring_mgr, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{
@@ -1152,8 +1152,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_ceph_osd, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_osd, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get"]},
@@ -1176,8 +1176,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_ceph_purge_osd, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_purge_osd, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]},
@@ -1197,8 +1197,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_ceph_rgw, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_rgw, _battery, state) do
+    namespace = data_namespace(state)
     rules = [%{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]}]
 
     B.build_resource(:role)
@@ -1208,8 +1208,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_ceph_system, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_ceph_system, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{
@@ -1238,8 +1238,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_cephfs_external_provisioner_cfg, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_cephfs_external_provisioner_cfg, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{
@@ -1256,8 +1256,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:role_rbd_external_provisioner_cfg, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:role_rbd_external_provisioner_cfg, _battery, state) do
+    namespace = data_namespace(state)
 
     rules = [
       %{
@@ -1274,8 +1274,8 @@ defmodule KubeResources.Rook do
     |> B.rules(rules)
   end
 
-  resource(:service_account_ceph_cmd_reporter, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_ceph_cmd_reporter, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-ceph-cmd-reporter")
@@ -1284,8 +1284,8 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  resource(:service_account_ceph_mgr, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_ceph_mgr, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-ceph-mgr")
@@ -1294,8 +1294,8 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  resource(:service_account_ceph_osd, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_ceph_osd, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-ceph-osd")
@@ -1304,8 +1304,8 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  resource(:service_account_ceph_purge_osd, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_ceph_purge_osd, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-ceph-purge-osd")
@@ -1313,8 +1313,8 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_account_ceph_rgw, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_ceph_rgw, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-ceph-rgw")
@@ -1323,8 +1323,8 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  resource(:service_account_ceph_system, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_ceph_system, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-ceph-system")
@@ -1333,8 +1333,8 @@ defmodule KubeResources.Rook do
     |> B.label("storage-backend", "ceph")
   end
 
-  resource(:service_account_csi_cephfs_plugin_sa, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_csi_cephfs_plugin_sa, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-csi-cephfs-plugin-sa")
@@ -1342,8 +1342,8 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_account_csi_cephfs_provisioner_sa, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_csi_cephfs_provisioner_sa, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-csi-cephfs-provisioner-sa")
@@ -1351,8 +1351,8 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_account_csi_rbd_plugin_sa, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_csi_rbd_plugin_sa, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-csi-rbd-plugin-sa")
@@ -1360,8 +1360,8 @@ defmodule KubeResources.Rook do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_account_csi_rbd_provisioner_sa, battery, _state) do
-    namespace = Settings.public_namespace(battery.config)
+  resource(:service_account_csi_rbd_provisioner_sa, _battery, state) do
+    namespace = data_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("rook-csi-rbd-provisioner-sa")

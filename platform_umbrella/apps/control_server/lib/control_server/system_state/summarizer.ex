@@ -1,4 +1,4 @@
-defmodule ControlServer.SnapshotApply.StateSnapshot do
+defmodule ControlServer.SystemState.Summarizer do
   alias ControlServer.Batteries
   alias ControlServer.Knative
   alias ControlServer.Notebooks
@@ -6,12 +6,12 @@ defmodule ControlServer.SnapshotApply.StateSnapshot do
   alias ControlServer.Redis
   alias ControlServer.Rook
 
-  alias KubeExt.SnapshotApply.StateSnapshot
+  alias KubeExt.SystemState.StateSummary
 
   alias Ecto.Multi
 
-  @type t :: %StateSnapshot{
-          system_batteries: list(Batteries.SystemBattery.t()),
+  @type t :: %StateSummary{
+          batteries: list(Batteries.SystemBattery.t()),
           postgres_clusters: list(Postgres.Cluster.t()),
           redis_clusters: list(Redis.FailoverCluster.t()),
           notebooks: list(Notebooks.JupyterLabNotebook.t()),
@@ -23,13 +23,13 @@ defmodule ControlServer.SnapshotApply.StateSnapshot do
   @spec materialize! :: t()
   def materialize! do
     with {:ok, res} <- transaction() do
-      struct(StateSnapshot, res)
+      struct(StateSummary, res)
     end
   end
 
-  def transaction do
+  defp transaction do
     Multi.new()
-    |> Multi.all(:system_batteries, Batteries.SystemBattery)
+    |> Multi.all(:batteries, Batteries.SystemBattery)
     |> Multi.all(:postgres_clusters, Postgres.Cluster)
     |> Multi.all(:redis_clusters, Redis.FailoverCluster)
     |> Multi.all(:notebooks, Notebooks.JupyterLabNotebook)

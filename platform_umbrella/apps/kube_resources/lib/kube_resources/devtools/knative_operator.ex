@@ -4,9 +4,9 @@ defmodule KubeResources.KnativeOperator do
   use KubeExt.IncludeResource, crd: "priv/manifests/knative/operator-crds.yaml"
 
   import KubeExt.Yaml
+  import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.DevtoolsSettings
 
   @app_name "knative-operator"
 
@@ -79,10 +79,10 @@ defmodule KubeResources.KnativeOperator do
     |> B.subject(B.build_service_account(service_account, namespace))
   end
 
-  def aggregated_cluster_role_serving(_config, _state),
+  def aggregated_cluster_role_serving(_battery, _state),
     do: aggregated_cluster_role(@aggregated_serving_cluster_role, "serving.knative.dev/release")
 
-  def aggregated_cluster_role_serving_appname(_config, _state),
+  def aggregated_cluster_role_serving_appname(_battery, _state),
     do:
       aggregated_cluster_role(
         @aggregated_serving_appname_cluster_role,
@@ -90,7 +90,7 @@ defmodule KubeResources.KnativeOperator do
         ["knative-serving"]
       )
 
-  def aggregated_cluster_role_serving_battery_app(_config, _state),
+  def aggregated_cluster_role_serving_battery_app(_battery, _state),
     do:
       aggregated_cluster_role(
         @aggregated_serving_battery_app_cluster_role,
@@ -759,8 +759,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.rules(rules)
   end
 
-  def service_account_operator(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_account_operator(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.namespace(namespace)
@@ -768,8 +768,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.app_labels(@app_name)
   end
 
-  def service_account_webhook(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_account_webhook(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.namespace(namespace)
@@ -777,8 +777,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.app_labels(@app_name)
   end
 
-  def cluster_role_binding_serving_operator(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_serving_operator(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @serving_operator_cluster_role,
@@ -788,8 +788,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_serving(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_aggregated_serving(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @aggregated_serving_cluster_role,
@@ -799,8 +799,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_appname_serving(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_aggregated_appname_serving(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @aggregated_serving_appname_cluster_role,
@@ -810,8 +810,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_battery_app_serving(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_aggregated_battery_app_serving(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @aggregated_serving_battery_app_cluster_role,
@@ -821,8 +821,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_eventing_operator(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_eventing_operator(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @eventing_operator_cluster_role,
@@ -832,8 +832,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_eventing(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_aggregated_eventing(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @aggregated_eventing_cluster_role,
@@ -843,8 +843,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_appname_eventing(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_aggregated_appname_eventing(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @aggregated_eventing_appname_cluster_role,
@@ -854,8 +854,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_aggregated_battery_app_eventing(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_aggregated_battery_app_eventing(_battery, state) do
+    namespace = core_namespace(state)
 
     cluster_role_binding(
       @aggregated_eventing_battery_app_cluster_role,
@@ -865,8 +865,8 @@ defmodule KubeResources.KnativeOperator do
     )
   end
 
-  def cluster_role_binding_operator_webhook(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def cluster_role_binding_operator_webhook(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name(@webhook_cluster_role)
@@ -875,8 +875,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.subject(B.build_service_account(@webhook_service_account, namespace))
   end
 
-  def role_operator_webhook(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def role_operator_webhook(_battery, state) do
+    namespace = core_namespace(state)
 
     rules = [
       %{
@@ -904,8 +904,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.rules(rules)
   end
 
-  def role_binding_operator_webhook(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def role_binding_operator_webhook(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name(@webhook_role)
@@ -915,8 +915,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.subject(B.build_service_account(@webhook_service_account, namespace))
   end
 
-  def secret_webhook_certs(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def secret_webhook_certs(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:secret)
     |> B.name(@webhook_certs_secret)
@@ -924,8 +924,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.app_labels(@app_name)
   end
 
-  def config_map_config_logging(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def config_map_config_logging(_battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "_example" =>
@@ -939,8 +939,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.data(data)
   end
 
-  def deployment_webhook(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def deployment_webhook(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "selector" => %{
@@ -1082,8 +1082,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def config_map_config_observability(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def config_map_config_observability(_battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "_example" =>
@@ -1097,8 +1097,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.data(data)
   end
 
-  def deployment_knative_operator(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def deployment_knative_operator(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "replicas" => 1,
@@ -1177,8 +1177,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_webhook(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_webhook(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -1206,8 +1206,8 @@ defmodule KubeResources.KnativeOperator do
 
   def change_conversion(crd, _, _), do: crd
 
-  defp do_change_conversion(crd, battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  defp do_change_conversion(crd, _battery, state) do
+    namespace = core_namespace(state)
 
     update_in(crd, ~w(spec conversion webhook clientConfig service), fn s ->
       (s || %{})
@@ -1231,8 +1231,8 @@ defmodule KubeResources.KnativeOperator do
     ]
   end
 
-  def service_monitor_autoscaler(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_monitor_autoscaler(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "endpoints" => [
@@ -1261,8 +1261,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_activator(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_monitor_activator(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "endpoints" => [
@@ -1291,8 +1291,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_controller(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_monitor_controller(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "endpoints" => [
@@ -1321,8 +1321,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_filter(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_monitor_filter(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "endpoints" => [
@@ -1351,8 +1351,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_webhook(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_monitor_webhook(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "endpoints" => [
@@ -1381,8 +1381,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def service_monitor_broker_ingress(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def service_monitor_broker_ingress(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "endpoints" => [
@@ -1411,8 +1411,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_eventing_controller(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def pod_monitor_eventing_controller(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "namespaceSelector" => %{
@@ -1440,8 +1440,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_imc_controller(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def pod_monitor_imc_controller(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "namespaceSelector" => %{
@@ -1469,8 +1469,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_ping_source(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def pod_monitor_ping_source(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "namespaceSelector" => %{
@@ -1498,8 +1498,8 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  def pod_monitor_api_source(battery, _state) do
-    namespace = DevtoolsSettings.namespace(battery.config)
+  def pod_monitor_api_source(_battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "namespaceSelector" => %{

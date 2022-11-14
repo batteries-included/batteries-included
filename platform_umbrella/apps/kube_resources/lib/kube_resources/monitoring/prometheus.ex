@@ -4,6 +4,8 @@ defmodule KubeResources.Prometheus do
 
   use KubeExt.ResourceGenerator
 
+  import KubeExt.SystemState.Namespaces
+
   alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
@@ -20,8 +22,8 @@ defmodule KubeResources.Prometheus do
 
   def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
-  def virtual_service(battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  def virtual_service(_battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -49,8 +51,8 @@ defmodule KubeResources.Prometheus do
     ])
   end
 
-  resource(:cluster_role_binding_battery_kube_prometheus_prometheus, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:cluster_role_binding_battery_kube_prometheus_prometheus, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-prometheus-prometheus")
@@ -60,8 +62,8 @@ defmodule KubeResources.Prometheus do
     |> B.subject(B.build_service_account("battery-prometheus-prometheus", namespace))
   end
 
-  resource(:prometheus_battery_kube_st, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_battery_kube_st, battery, state) do
+    namespace = core_namespace(state)
 
     image = Settings.prometheus_image(battery.config)
 
@@ -113,8 +115,8 @@ defmodule KubeResources.Prometheus do
     })
   end
 
-  resource(:service_account_prometheus, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_account_prometheus, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("battery-prometheus-prometheus")
@@ -122,8 +124,8 @@ defmodule KubeResources.Prometheus do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_prometheus, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_prometheus, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service)
     |> B.name("battery-prometheus-prometheus")
@@ -140,8 +142,8 @@ defmodule KubeResources.Prometheus do
     })
   end
 
-  resource(:service_monitor_prometheus, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_monitor_prometheus, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:service_monitor)
     |> B.name("battery-prometheus-prometheus")
@@ -156,8 +158,8 @@ defmodule KubeResources.Prometheus do
     })
   end
 
-  resource(:prometheus_rule, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:prometheus_rule, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:prometheus_rule)
     |> B.name("battery-prometheus-prometheus")

@@ -30,7 +30,7 @@ defmodule KubeServices.ConfigGeneratorTest do
 
   describe "ConfigGenerator with everything enabled" do
     test "all battery resources are valid" do
-      KubeExt.SnapshotApply.SeedStateSnapshot.seed(:everythings)
+      KubeExt.SystemState.SeedState.seed(:everythings)
       |> ConfigGenerator.materialize()
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)
@@ -39,7 +39,7 @@ defmodule KubeServices.ConfigGeneratorTest do
 
   describe "ConfigGenerator a small set of batteries" do
     test "all battery resources are valid" do
-      KubeExt.SnapshotApply.SeedStateSnapshot.seed(:dev)
+      KubeExt.SystemState.SeedState.seed(:dev)
       |> ConfigGenerator.materialize()
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)

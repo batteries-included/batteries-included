@@ -2,14 +2,15 @@ defmodule KubeResources.IstioGateway do
   @moduledoc false
   use KubeExt.ResourceGenerator
 
+  import KubeExt.SystemState.Namespaces
+
   alias KubeExt.Builder, as: B
-  alias KubeResources.NetworkSettings, as: Settings
 
   @app_name "istio-ingressgateway"
   @istio_name "ingressgateway"
 
-  resource(:service_account_istio_ingressgateway, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:service_account_istio_ingressgateway, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("istio-ingressgateway")
@@ -18,8 +19,8 @@ defmodule KubeResources.IstioGateway do
     |> B.label("istio", @istio_name)
   end
 
-  resource(:role_binding_istio_ingressgateway, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:role_binding_istio_ingressgateway, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:role_binding)
     |> B.name("istio-ingressgateway")
@@ -29,8 +30,8 @@ defmodule KubeResources.IstioGateway do
     |> B.subject(B.build_service_account("istio-ingressgateway", namespace))
   end
 
-  resource(:role_istio_ingressgateway, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:role_istio_ingressgateway, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:role)
     |> B.name("istio-ingressgateway")
@@ -41,8 +42,8 @@ defmodule KubeResources.IstioGateway do
     ])
   end
 
-  resource(:telemetry, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:telemetry, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:istio_telemetry)
     |> B.name("mesh-default")
@@ -51,8 +52,8 @@ defmodule KubeResources.IstioGateway do
     |> B.spec(%{"accessLogging" => [%{"providers" => [%{"name" => "envoy"}]}]})
   end
 
-  resource(:horizontal_pod_autoscaler_istio_ingressgateway, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:horizontal_pod_autoscaler_istio_ingressgateway, _battery, state) do
+    namespace = istio_namespace(state)
 
     B.build_resource(:horizontal_pod_autoscaler)
     |> B.name("istio-ingressgateway")
@@ -79,8 +80,8 @@ defmodule KubeResources.IstioGateway do
     })
   end
 
-  resource(:service, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:service, _battery, state) do
+    namespace = istio_namespace(state)
 
     spec = %{
       "ports" => [
@@ -124,8 +125,8 @@ defmodule KubeResources.IstioGateway do
     |> B.spec(spec)
   end
 
-  resource(:deployment, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:deployment, _battery, state) do
+    namespace = istio_namespace(state)
 
     spec = %{
       "selector" => %{
@@ -203,8 +204,8 @@ defmodule KubeResources.IstioGateway do
     |> B.spec(spec)
   end
 
-  resource(:gateway, battery, _state) do
-    namespace = Settings.istio_namespace(battery.config)
+  resource(:gateway, _battery, state) do
+    namespace = istio_namespace(state)
 
     spec = %{
       selector: %{istio: @istio_name},

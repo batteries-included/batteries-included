@@ -3,6 +3,7 @@ defmodule ControlServer.Postgres.PGUser do
   import Ecto.Changeset
 
   @primary_key false
+  @derive Jason.Encoder
   typed_embedded_schema do
     field :username, :string
     field :roles, {:array, :string}, default: []

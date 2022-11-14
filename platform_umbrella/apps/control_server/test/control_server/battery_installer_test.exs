@@ -1,7 +1,8 @@
 defmodule ControlServer.Batteries.InstallerTest do
   use ControlServer.DataCase
 
-  alias ControlServer.Batteries.Catalog
+  alias KubeExt.Defaults.Catalog
+  alias ControlServer.Batteries.SystemBattery
   alias ControlServer.Batteries.Installer
   alias ControlServer.Postgres.Cluster, as: PGCluster
   alias ControlServer.Redis.FailoverCluster
@@ -13,12 +14,6 @@ defmodule ControlServer.Batteries.InstallerTest do
 
         assert {:ok, _result} = Installer.install(catalog_battery.type)
       end
-    end
-
-    test "Can install every battery together" do
-      Enum.each(Catalog.all(), fn cb ->
-        assert {:ok, _res} = Installer.install(cb.type)
-      end)
     end
 
     test "runs the internal_db post hook" do
@@ -45,6 +40,19 @@ defmodule ControlServer.Batteries.InstallerTest do
       assert {:ok, _res} = Installer.install(:harbor)
       assert 2 >= ControlServer.Repo.aggregate(PGCluster, :count, :id)
       assert 1 == ControlServer.Repo.aggregate(FailoverCluster, :count, :id)
+    end
+
+    test "installs all from system_batteries" do
+      assert 0 == ControlServer.Repo.aggregate(SystemBattery, :count, :id)
+
+      {:ok, _} =
+        :test
+        |> KubeExt.SystemState.SeedState.seed()
+        |> then(fn %{batteries: batteries} = _state ->
+          Installer.install_all(batteries)
+        end)
+
+      assert ControlServer.Repo.aggregate(SystemBattery, :count, :id) >= 5
     end
   end
 end

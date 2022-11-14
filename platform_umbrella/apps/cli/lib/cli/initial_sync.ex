@@ -37,7 +37,7 @@ defmodule CLI.InitialSync do
 
   def sync do
     KubeExt.cluster_type()
-    |> KubeExt.SnapshotApply.SeedStateSnapshot.seed()
+    |> KubeExt.SystemState.SeedState.seed()
     |> KubeResources.ConfigGenerator.materialize()
     |> do_apply(@num_retries, KubeExt.ConnectionPool.get())
   end

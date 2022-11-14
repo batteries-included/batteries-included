@@ -3,9 +3,13 @@ defmodule KubeResources.Harbor do
   use KubeExt.IncludeResource, nginx_conf: "priv/raw_files/harbor/nginx.conf"
   use KubeExt.ResourceGenerator
 
+  import KubeExt.SystemState.Namespaces
+  import KubeExt.SystemState.Hosts
+
+  alias KubeExt.KubeState
   alias KubeExt.Builder, as: B
-  alias KubeExt.KubeState.Hosts
   alias KubeExt.Secret
+  alias KubeState.Hosts
 
   alias KubeResources.DevtoolsSettings, as: Settings
   alias KubeResources.IstioConfig.HttpRoute
@@ -35,8 +39,8 @@ defmodule KubeResources.Harbor do
 
   def url, do: "//#{Hosts.harbor_host()}"
 
-  resource(:virtual_service, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:virtual_service, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
@@ -51,7 +55,7 @@ defmodule KubeResources.Harbor do
           HttpRoute.prefix("/c/", "harbor-core"),
           HttpRoute.fallback("harbor-portal")
         ],
-        hosts: [Hosts.harbor_host()]
+        hosts: [harbor_host(state)]
       )
     )
   end
@@ -64,8 +68,8 @@ defmodule KubeResources.Harbor do
     |> B.data(Secret.encode(data))
   end
 
-  resource(:secret, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:secret, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "CSRF_KEY" => "nSwN8m7nun4jCiMjwesQtp3hhWxfYdPW",
@@ -80,8 +84,8 @@ defmodule KubeResources.Harbor do
     build_secret(@core_secret, namespace, data)
   end
 
-  resource(:secret_1, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:secret_1, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "JOBSERVICE_SECRET" => "dzWy6TktiYJ3BKu2",
@@ -91,15 +95,15 @@ defmodule KubeResources.Harbor do
     build_secret(@jobservice_secret, namespace, data)
   end
 
-  resource(:secret_2, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:secret_2, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"REGISTRY_HTTP_SECRET" => "Jjk0Ig28EsLo6w6V", "REGISTRY_REDIS_PASSWORD" => ""}
 
     build_secret(@registry_secret, namespace, data)
   end
 
-  resource(:secret_3, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:secret_3, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "REGISTRY_HTPASSWD" =>
@@ -109,8 +113,8 @@ defmodule KubeResources.Harbor do
     build_secret(@registry_htpasswd_secret, namespace, data)
   end
 
-  resource(:secret_4, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:secret_4, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:secret)
     |> B.name(@registryctl_secret)
@@ -118,8 +122,8 @@ defmodule KubeResources.Harbor do
     |> B.namespace(namespace)
   end
 
-  resource(:secret_5, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:secret_5, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "gitHubToken" => "",
@@ -129,8 +133,8 @@ defmodule KubeResources.Harbor do
     build_secret(@trivy_secret, namespace, data)
   end
 
-  resource(:config_map, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "CHART_CACHE_DRIVER" => "redis",
@@ -180,8 +184,8 @@ defmodule KubeResources.Harbor do
     |> B.data(data)
   end
 
-  resource(:config_map_1, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_1, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "CORE_URL" => "http://harbor-core:80",
@@ -202,8 +206,8 @@ defmodule KubeResources.Harbor do
     |> B.data(data)
   end
 
-  resource(:config_map_2, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_2, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "config.yml" => jobservice_config_yml()
@@ -247,8 +251,8 @@ defmodule KubeResources.Harbor do
     YamlEncoder.to_s!(config)
   end
 
-  resource(:config_map_3, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_3, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{"nginx.conf" => get_resource(:nginx_conf)}
 
@@ -259,8 +263,8 @@ defmodule KubeResources.Harbor do
     |> B.data(data)
   end
 
-  resource(:config_map_4, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_4, _battery, state) do
+    namespace = core_namespace(state)
 
     data = %{
       "config.yml" => registry_config_yml(),
@@ -331,8 +335,8 @@ defmodule KubeResources.Harbor do
     YamlEncoder.to_s!(config)
   end
 
-  resource(:config_map_5, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:config_map_5, _battery, state) do
+    namespace = core_namespace(state)
 
     B.build_resource(:config_map)
     |> B.name("harbor-registryctl")
@@ -340,8 +344,8 @@ defmodule KubeResources.Harbor do
     |> B.namespace(namespace)
   end
 
-  resource(:persistent_volume_claim, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:persistent_volume_claim, _battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "accessModes" => [
@@ -362,8 +366,8 @@ defmodule KubeResources.Harbor do
     |> B.label("component", "jobservice")
   end
 
-  resource(:persistent_volume_claim_1, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:persistent_volume_claim_1, _battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "accessModes" => [
@@ -384,8 +388,8 @@ defmodule KubeResources.Harbor do
     |> B.label("component", "registry")
   end
 
-  resource(:service, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service, _battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -408,8 +412,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_1, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_1, _battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -432,8 +436,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_2, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_2, _battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -455,8 +459,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_3, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_3, _battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -482,8 +486,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app_name)
   end
 
-  resource(:service_4, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:service_4, _battery, state) do
+    namespace = core_namespace(state)
 
     spec = %{
       "ports" => [
@@ -506,8 +510,8 @@ defmodule KubeResources.Harbor do
     |> B.app_labels(@app_name)
   end
 
-  resource(:deployment, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment, battery, state) do
+    namespace = core_namespace(state)
     core_image = Settings.harbor_core_image(battery.config)
 
     spec = %{
@@ -684,8 +688,8 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:deployment_1, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment_1, battery, state) do
+    namespace = core_namespace(state)
     jobservice_image = Settings.harbor_jobservice_image(battery.config)
 
     spec = %{
@@ -814,8 +818,8 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:deployment_2, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment_2, battery, state) do
+    namespace = core_namespace(state)
     image = Settings.harbor_portal_image(battery.config)
 
     spec = %{
@@ -898,8 +902,8 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:deployment_3, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:deployment_3, battery, state) do
+    namespace = core_namespace(state)
     registry_image = Settings.harbor_registry_photon_image(battery.config)
     ctl_image = Settings.harbor_registry_ctl_image(battery.config)
 
@@ -1117,8 +1121,8 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:stateful_set, battery, _state) do
-    namespace = Settings.namespace(battery.config)
+  resource(:stateful_set, battery, state) do
+    namespace = core_namespace(state)
     trivy_adapter_image = Settings.harbor_trivy_adapter_image(battery.config)
 
     spec = %{
