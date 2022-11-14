@@ -43,14 +43,14 @@ defmodule KubeExt.OwnerRefernceTest do
 
   describe "KubeExt.OwnerRefernce" do
     test "return nil for un owned" do
-      assert nil == KubeExt.OwnerRefernce.get_owner(@empty)
-      assert nil == KubeExt.OwnerRefernce.get_owner(@empty_metadata)
-      assert nil == KubeExt.OwnerRefernce.get_owner(@empty_owner_metadata)
+      assert nil == KubeExt.OwnerReference.get_owner(@empty)
+      assert nil == KubeExt.OwnerReference.get_owner(@empty_metadata)
+      assert nil == KubeExt.OwnerReference.get_owner(@empty_owner_metadata)
     end
 
     test "return the uid for an owned" do
       assert "8f92fa99-ea9c-493f-b16d-79ee42770571" ==
-               KubeExt.OwnerRefernce.get_owner(@real_example)
+               KubeExt.OwnerReference.get_owner(@real_example)
     end
   end
 end

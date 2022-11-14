@@ -1,14 +1,18 @@
-defmodule KubeExt.OwnerRefernce do
+defmodule KubeExt.OwnerReference do
   @spec get_owner(map()) :: binary() | nil
   def get_owner(resource) do
     resource
-    |> get_in(~w(metadata ownerReferences))
-    |> extract_first_owner_uid()
+    |> get_all_owners()
+    |> List.first(nil)
   end
 
-  defp extract_first_owner_uid([owner | _rest]) do
-    Map.get(owner, "uid", nil)
+  def get_all_owners(resource) do
+    resource
+    |> get_in([
+      Access.key("metadata", %{}),
+      Access.key("ownerReferences", [])
+    ])
+    |> Enum.map(&Map.get(&1, "uid", nil))
+    |> Enum.reject(&(&1 == nil))
   end
-
-  defp extract_first_owner_uid(_), do: nil
 end
