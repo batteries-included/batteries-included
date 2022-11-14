@@ -14,8 +14,6 @@ defmodule KubeResources.DataSettings do
 
   @ceph_image "quay.io/ceph/ceph:v17.2.3"
 
-  setting(:bootstrap_clusters, :bootstrap_clusters, [])
-
   setting(:pg_image, :image, @pg_image)
   setting(:pg_operator_image, :operator_image, @pg_operator_image)
   setting(:pg_backup_image, :backup_image, @pg_logical_backup_image)
