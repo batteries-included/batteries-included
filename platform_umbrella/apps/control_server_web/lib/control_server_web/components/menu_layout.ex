@@ -98,7 +98,7 @@ defmodule ControlServerWeb.MenuLayout do
         <:label>Net/Security</:label>
         <.net_sec_icon class={@icon_class} />
       </.menu_item>
-      <.menu_item navigate={~p"/kube/snapshots"}>
+      <.menu_item navigate={~p"/snapshot_apply"}>
         <:label>Magic</:label>
         <Heroicons.sparkles class={@icon_class} />
       </.menu_item>

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.KubeSnapshotList do
+defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
@@ -45,7 +45,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotList do
         </:col>
         <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>
         <:action :let={snapshot}>
-          <.link navigate={~p"/kube/snapshots/#{snapshot}/show"} type="styled">Show Snapshot</.link>
+          <.link navigate={~p"/snapshot_apply/#{snapshot}/show"} type="styled">Show Deploy</.link>
         </:action>
       </.table>
 

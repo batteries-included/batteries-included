@@ -17,8 +17,6 @@ defmodule KubeResources.PostgresOperator do
   @operator_cluster_role "battery-postgres-operator"
 
   def materialize(battery, state) do
-    namespace = core_namespace(state)
-
     %{}
     |> Map.put("/cluster_role/postgres_operator", cluster_role_postgres_operator(battery, state))
     |> Map.put(
@@ -45,7 +43,6 @@ defmodule KubeResources.PostgresOperator do
       service_account_postgres_operator(battery, state)
     )
     |> Map.merge(PostgresPod.common(battery, state))
-    |> Map.merge(PostgresPod.per_namespace(namespace))
     |> Map.merge(infra_users(battery, state, should_include_dev_infrausers()))
   end
 

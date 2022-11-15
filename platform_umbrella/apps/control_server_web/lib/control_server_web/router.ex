@@ -64,8 +64,8 @@ defmodule ControlServerWeb.Router do
     live "/kube/pods", Live.ResourceList, :pod
     live "/kube/services", Live.ResourceList, :service
 
-    live "/kube/snapshots", Live.KubeSnapshotList, :index
-    live "/kube/snapshots/:id/show", Live.KubeSnapshotShow, :index
+    live "/snapshot_apply", Live.SnapshotApplyIndex, :index
+    live "/snapshot_apply/:id/show", Live.KubeSnapshotShow, :index
 
     live "/kube/:resource_type/:namespace/:name", Live.ResourceInfo, :index
 

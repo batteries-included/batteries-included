@@ -206,7 +206,7 @@ defmodule ControlServerWeb.LeftMenu do
   defp group_menu_item(%{group: :magic} = assigns) do
     ~H"""
     <.menu_item
-      navigate={~p"/kube/snapshots"}
+      navigate={~p"/snapshot_apply"}
       name="Snapshot Deploys"
       is_active={@active == :kube_snapshots}
     >

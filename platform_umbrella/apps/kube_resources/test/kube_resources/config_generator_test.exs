@@ -1,7 +1,10 @@
 defmodule KubeServices.ConfigGeneratorTest do
-  use ControlServer.DataCase
+  use ExUnit.Case
+
+  import K8s.Resource.FieldAccessors
 
   alias KubeResources.ConfigGenerator
+  alias KubeExt.ApiVersionKind
 
   def assert_named(%{} = resource) when is_map(resource) do
     real_name = K8s.Resource.name(resource)
@@ -18,20 +21,30 @@ defmodule KubeServices.ConfigGeneratorTest do
     assert match?({:ok, _value}, Jason.encode(resources))
   end
 
-  def assert_contains_resources(resource_map, battery) do
-    assert map_size(resource_map) >= 1,
-           "Expect battery of type #{inspect(battery)} to have some k8 resources."
+  def assert_one_resouce_definition(resource_map) do
+    resource_map
+    |> Enum.map(fn {path, res} ->
+      {{ApiVersionKind.resource_type!(res), namespace(res), name(res)}, path}
+    end)
+    |> Enum.group_by(fn {ident, _path} -> ident end, fn {_ident, path} -> path end)
+    |> Enum.each(fn {ident, paths} ->
+      assert length(paths) == 1,
+             "There should only be one path defining, #{inspect(ident)}, found #{Enum.join(paths, ", ")}"
+    end)
+
+    resource_map
   end
 
-  def assert_valid(resources) do
-    assert_named(resources)
-    assert_valid_json(resources)
+  def assert_valid(resource) do
+    assert_named(resource)
+    assert_valid_json(resource)
   end
 
   describe "ConfigGenerator with everything enabled" do
     test "all battery resources are valid" do
       KubeExt.SystemState.SeedState.seed(:everythings)
       |> ConfigGenerator.materialize()
+      |> then(&assert_one_resouce_definition/1)
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)
     end

@@ -1,5 +1,5 @@
 defmodule KubeResources.MonitoringTest do
-  use ControlServer.DataCase
+  use ExUnit.Case
 
   alias KubeResources.PrometheusOperator
   alias KubeResources.Prometheus

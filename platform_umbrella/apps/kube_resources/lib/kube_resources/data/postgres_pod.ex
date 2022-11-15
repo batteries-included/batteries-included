@@ -4,7 +4,7 @@ defmodule KubeResources.PostgresPod do
   @app_name "postgres-operator"
 
   @service_account "postgres-pod"
-  @pod_role "postres-pod"
+  @pod_role "postgres-pod"
   @pod_cluster_role "battery-postres-pod"
 
   @spec common(any(), any()) :: map()
