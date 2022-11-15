@@ -56,7 +56,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp assign_k8_services(%{assigns: assigns} = socket) do
     possible_owner_uids = [uid(assigns.k8_cluster)] ++ uids(assigns.k8_stateful_sets)
     possible_owner_ids = [assigns.cluster.id]
-    services = all_matching(:stateful_set, possible_owner_ids, possible_owner_uids)
+    services = all_matching(:service, possible_owner_ids, possible_owner_uids)
     assign(socket, :k8_services, services)
   end
 
