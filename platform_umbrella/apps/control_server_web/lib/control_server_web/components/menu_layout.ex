@@ -55,7 +55,7 @@ defmodule ControlServerWeb.MenuLayout do
 
   def menu_layout(assigns) do
     ~H"""
-    <div class="flex flex-col min-h-screen justify-between bg-fuscous-gray-50 pb-18 overflow-auto">
+    <div class="flex flex-col min-h-screen justify-between bg-gray-50 pb-18 overflow-auto">
       <header class="w-full bg-white h-16">
         <div class="flex max-w-full h-full">
           <.link navigate={~p"/"} class="my-auto mx-4">
