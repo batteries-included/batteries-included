@@ -2,7 +2,6 @@ defmodule KubeResources.CephClusters do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.DataSettings, as: Settings
 
   def materialize(battery, state) do
     clusters(battery, state)
@@ -31,15 +30,13 @@ defmodule KubeResources.CephClusters do
   end
 
   defp cluster_spec(%{} = cluster, battery, _state) do
-    ceph_image = Settings.ceph_image(battery.config)
-
     %{
       # storage: %{useAllNodes: false, useAllDevices: false, nodes: cluster.nodes},
       network: %{connections: %{encryption: %{enabled: false}, compression: %{enabled: false}}},
       dataDirHostPath: cluster.data_dir_host_path,
       mon: %{count: cluster.num_mon},
       mgr: %{count: cluster.num_mgr},
-      cephVersion: %{image: ceph_image}
+      cephVersion: %{image: battery.image}
     }
   end
 end

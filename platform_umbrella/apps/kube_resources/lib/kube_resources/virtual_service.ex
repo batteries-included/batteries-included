@@ -47,7 +47,7 @@ defmodule KubeResources.VirtualService do
   def virtual_service(%{type: :grafana} = battery, state),
     do: Grafana.virtual_service(battery, state)
 
-  def virtual_service(%{type: :alert_manager} = battery, state),
+  def virtual_service(%{type: :alertmanager} = battery, state),
     do: Alertmanager.virtual_service(battery, state)
 
   def virtual_service(%{type: :notebooks} = battery, state),

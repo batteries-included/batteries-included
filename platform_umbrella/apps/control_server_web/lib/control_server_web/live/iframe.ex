@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Live.Iframe do
   import ControlServerWeb.IFrame
   import ControlServerWeb.MenuLayout
 
-  def iframe_title(%{live_action: :alert_manager} = assigns) do
+  def iframe_title(%{live_action: :alertmanager} = assigns) do
     ~H"""
     <.title>AlertManager</.title>
     """
@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.Iframe do
     """
   end
 
-  def iframe_url(:alert_manager), do: KubeResources.Alertmanager.url()
+  def iframe_url(:alertmanager), do: KubeResources.Alertmanager.url()
   def iframe_url(:grafana), do: KubeResources.Grafana.url()
   def iframe_url(:prometheus), do: KubeResources.Prometheus.url()
 

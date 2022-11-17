@@ -6,7 +6,6 @@ defmodule KubeResources.Promtail do
 
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret
-  alias KubeResources.MonitoringSettings, as: Settings
 
   @app_name "promtail"
 
@@ -36,20 +35,18 @@ defmodule KubeResources.Promtail do
   resource(:daemon_set_main, battery, state) do
     namespace = core_namespace(state)
 
-    image = Settings.promtail_image(battery.config)
-
     B.build_resource(:daemon_set)
     |> B.name("promtail")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(%{
       "selector" => %{
-        "matchLabels" => %{"battery/app" => "promtail"}
+        "matchLabels" => %{"battery/app" => @app_name}
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "promtail",
+            "battery/app" => @app_name,
             "battery/managed" => "true"
           }
         },
@@ -63,7 +60,7 @@ defmodule KubeResources.Promtail do
                   "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}
                 }
               ],
-              "image" => image,
+              "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "promtail",
               "ports" => [
@@ -148,7 +145,6 @@ defmodule KubeResources.Promtail do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(%{
-      "clusterIP" => "None",
       "ports" => [
         %{
           "name" => "http-metrics",
@@ -157,7 +153,7 @@ defmodule KubeResources.Promtail do
           "targetPort" => "http-metrics"
         }
       ],
-      "selector" => %{"battery/app" => "promtail"}
+      "selector" => %{"battery/app" => @app_name}
     })
   end
 
@@ -171,7 +167,7 @@ defmodule KubeResources.Promtail do
     |> B.spec(%{
       "endpoints" => [%{"port" => "http-metrics"}],
       "selector" => %{
-        "matchLabels" => %{"battery/app" => "promtail"}
+        "matchLabels" => %{"battery/app" => @app_name}
       }
     })
   end

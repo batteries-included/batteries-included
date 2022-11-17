@@ -19,7 +19,7 @@ defmodule KubeResources.Kiali do
 
   def view_url(_), do: "/services/network/kiali"
 
-  def url, do: "//#{Hosts.control_host()}#{@url_base}"
+  def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
   def virtual_service(_battery, state) do
     namespace = istio_namespace(state)
@@ -201,7 +201,7 @@ defmodule KubeResources.Kiali do
     yaml(get_resource(:kialis_kiali_io))
   end
 
-  resource(:deployment_operator, _battery, state) do
+  resource(:deployment_operator, battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:deployment)
@@ -212,13 +212,13 @@ defmodule KubeResources.Kiali do
     |> B.spec(%{
       "replicas" => 1,
       "selector" => %{
-        "matchLabels" => %{"battery/app" => "kiali", "battery/component" => "kiali-operator"}
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "kiali-operator"}
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
             "app" => "kiali-operator",
-            "battery/app" => "kiali",
+            "battery/app" => @app_name,
             "battery/component" => "kiali-operator",
             "battery/managed" => "true",
             "name" => "kiali-kiali-operator"
@@ -248,7 +248,7 @@ defmodule KubeResources.Kiali do
                 %{"name" => "ANSIBLE_VERBOSITY_KIALI_KIALI_IO", "value" => "1"},
                 %{"name" => "ANSIBLE_CONFIG", "value" => "/etc/ansible/ansible.cfg"}
               ],
-              "image" => "quay.io/kiali/kiali-operator:v1.56.1",
+              "image" => battery.config.operator_image,
               "imagePullPolicy" => "Always",
               "name" => "operator",
               "ports" => [%{"containerPort" => 8080, "name" => "http-metrics"}],
@@ -271,24 +271,26 @@ defmodule KubeResources.Kiali do
     })
   end
 
-  resource(:kiali_main, _battery, state) do
+  resource(:kiali_main, battery, state) do
     namespace = istio_namespace(state)
+    core_namespace = core_namespace(state)
 
     spec = %{
       "auth" => %{"strategy" => "anonymous"},
       "deployment" => %{
         "accessible_namespaces" => ["**"],
-        "image_version" => "v1.56.1",
+        "image_version" => battery.config.version,
         "logger" => %{"log_level" => "TRACE"},
         "pod_labels" => %{"battery/app" => @app_name}
       },
       "external_services" => %{
         "prometheus" => %{
-          "url" => "http://battery-prometheus-prometheus.battery-core.svc.cluster.local:9090/"
+          "url" =>
+            "http://battery-prometheus-prometheus.#{core_namespace}.svc.cluster.local:9090/"
         },
         "grafana" => %{
           "in_cluster_url" =>
-            "http://battery-grafana.battery-core.svc.cluster.local:3000/x/grafana/",
+            "http://battery-grafana.#{core_namespace}.svc.cluster.local:3000/x/grafana/",
           "url" => Grafana.url()
         }
       },

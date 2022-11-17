@@ -17,8 +17,8 @@ defmodule KubeResources.MetalLB do
 
   @app_name "metallb"
 
-  resource(:namespace, _battery, state) do
-    namespace = loadbalancer_namespace(state)
+  resource(:namespace, battery, _state) do
+    namespace = battery.config.namespace
 
     B.build_resource(:namespace)
     |> B.name(namespace)
@@ -26,8 +26,8 @@ defmodule KubeResources.MetalLB do
     |> B.label("istio-injection", "false")
   end
 
-  resource(:cluster_role_binding_controller, _battery, state) do
-    namespace = loadbalancer_namespace(state)
+  resource(:cluster_role_binding_controller, battery, _state) do
+    namespace = battery.config.namespace
 
     B.build_resource(:cluster_role_binding)
     |> B.name("metallb:controller")
@@ -36,8 +36,8 @@ defmodule KubeResources.MetalLB do
     |> B.subject(B.build_service_account("metallb-controller", namespace))
   end
 
-  resource(:cluster_role_binding_speaker, _battery, state) do
-    namespace = loadbalancer_namespace(state)
+  resource(:cluster_role_binding_speaker, battery, _state) do
+    namespace = battery.config.namespace
 
     B.build_resource(:cluster_role_binding)
     |> B.name("metallb:speaker")
@@ -114,24 +114,27 @@ defmodule KubeResources.MetalLB do
     yaml(get_resource(:l2advertisements_metallb_io))
   end
 
-  resource(:daemon_set_speaker, _battery, state) do
-    namespace = loadbalancer_namespace(state)
+  resource(:daemon_set_speaker, battery, _state) do
+    namespace = battery.config.namespace
 
     B.build_resource(:daemon_set)
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.component_label("speaker")
+    |> B.label("app.kubernetes.io/name", @app_name)
     |> B.spec(%{
       "selector" => %{
-        "matchLabels" => %{"battery/app" => "metallb", "battery/component" => "speaker"}
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "metallb",
+            "battery/app" => @app_name,
             "battery/component" => "speaker",
-            "battery/managed" => "true"
+            "battery/managed" => "true",
+            "app.kubernetes.io/component" => "speaker",
+            "app.kubernetes.io/name" => @app_name
           }
         },
         "spec" => %{
@@ -163,7 +166,7 @@ defmodule KubeResources.MetalLB do
                   }
                 }
               ],
-              "image" => "quay.io/metallb/speaker:v0.13.5",
+              "image" => battery.config.speaker_image,
               "livenessProbe" => %{
                 "failureThreshold" => 3,
                 "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
@@ -216,8 +219,8 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:deployment_controller, _battery, state) do
-    namespace = loadbalancer_namespace(state)
+  resource(:deployment_controller, battery, _state) do
+    namespace = battery.config.namespace
 
     B.build_resource(:deployment)
     |> B.name("metallb-controller")
@@ -226,13 +229,13 @@ defmodule KubeResources.MetalLB do
     |> B.component_label("controller")
     |> B.spec(%{
       "selector" => %{
-        "matchLabels" => %{"battery/app" => "metallb", "battery/component" => "controller"}
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}
       },
       "strategy" => %{"type" => "RollingUpdate"},
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "metallb",
+            "battery/app" => @app_name,
             "battery/component" => "controller",
             "battery/managed" => "true"
           }
@@ -249,7 +252,7 @@ defmodule KubeResources.MetalLB do
                 %{"name" => "METALLB_ML_SECRET_NAME", "value" => "metallb-memberlist"},
                 %{"name" => "METALLB_DEPLOYMENT", "value" => "metallb-controller"}
               ],
-              "image" => "quay.io/metallb/controller:v0.13.5",
+              "image" => battery.config.controller_image,
               "livenessProbe" => %{
                 "failureThreshold" => 3,
                 "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
@@ -317,7 +320,7 @@ defmodule KubeResources.MetalLB do
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
       "selector" => %{
-        "matchLabels" => %{"battery/app" => "metallb", "battery/component" => "metallb"}
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}
       }
     })
   end
@@ -335,7 +338,7 @@ defmodule KubeResources.MetalLB do
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
       "selector" => %{
-        "matchLabels" => %{"battery/app" => "metallb", "battery/component" => "metallb"}
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}
       }
     })
   end
@@ -539,7 +542,7 @@ defmodule KubeResources.MetalLB do
     |> B.label("name", "metallb-controller-monitor-service")
     |> B.spec(%{
       "ports" => [%{"name" => "metrics", "port" => 7472, "targetPort" => 7472}],
-      "selector" => %{"battery/app" => "metallb", "battery/component" => "controller"},
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "controller"},
       "sessionAffinity" => "None",
       "type" => "ClusterIP"
     })
@@ -586,7 +589,7 @@ defmodule KubeResources.MetalLB do
     |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"name" => "metrics", "port" => 7472, "targetPort" => 7472}],
-      "selector" => %{"battery/app" => "metallb", "battery/component" => "speaker"},
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "speaker"},
       "sessionAffinity" => "None",
       "type" => "ClusterIP"
     })
@@ -601,7 +604,7 @@ defmodule KubeResources.MetalLB do
     |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"port" => 443, "targetPort" => 9443}],
-      "selector" => %{"battery/app" => "metallb", "battery/component" => "controller"}
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "controller"}
     })
   end
 

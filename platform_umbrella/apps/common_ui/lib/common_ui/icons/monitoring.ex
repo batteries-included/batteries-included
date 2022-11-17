@@ -31,7 +31,7 @@ defmodule CommonUI.Icons.Monitoring do
     """
   end
 
-  def alert_manager_icon(assigns) do
+  def alertmanager_icon(assigns) do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"

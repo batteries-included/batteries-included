@@ -13,7 +13,6 @@ defmodule KubeResources.Grafana do
 
   alias KubeResources.IniConfig
   alias KubeResources.IstioConfig.VirtualService
-  alias KubeResources.MonitoringSettings, as: Settings
 
   @app_name "grafana"
   @url_base "/x/grafana"
@@ -119,8 +118,6 @@ defmodule KubeResources.Grafana do
   resource(:deployment_battery_grafana, battery, state) do
     namespace = core_namespace(state)
 
-    image = Settings.grafana_image(battery.config)
-
     B.build_resource(:deployment)
     |> B.name("battery-grafana")
     |> B.namespace(namespace)
@@ -150,7 +147,7 @@ defmodule KubeResources.Grafana do
                 %{"name" => "FOLDER", "value" => "/tmp/dashboards"},
                 %{"name" => "RESOURCE", "value" => "both"}
               ],
-              "image" => "quay.io/kiwigrid/k8s-sidecar:1.19.2",
+              "image" => battery.config.sidecar_image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "grafana-sc-dashboard",
               "volumeMounts" => [
@@ -182,7 +179,7 @@ defmodule KubeResources.Grafana do
                 },
                 %{"name" => "REQ_METHOD", "value" => "POST"}
               ],
-              "image" => "quay.io/kiwigrid/k8s-sidecar:1.19.2",
+              "image" => battery.config.sidecar_image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "grafana-sc-datasources",
               "volumeMounts" => [
@@ -211,7 +208,7 @@ defmodule KubeResources.Grafana do
                 %{"name" => "GF_PATHS_PLUGINS", "value" => "/var/lib/grafana/plugins"},
                 %{"name" => "GF_PATHS_PROVISIONING", "value" => "/etc/grafana/provisioning"}
               ],
-              "image" => image,
+              "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 10,

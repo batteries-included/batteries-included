@@ -1,4 +1,5 @@
 locals_without_parens = [
+  polymorphic_embeds_one: 2,
   attr: 2,
   attr: 3,
   slot: 1,

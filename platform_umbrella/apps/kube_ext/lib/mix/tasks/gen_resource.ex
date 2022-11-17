@@ -45,7 +45,7 @@ defmodule Mix.Tasks.Gen.Resource do
   end
 
   def run(args) do
-    [file_path, app_name, settings_module] = args
+    [file_path, app_name] = args
 
     result =
       file_path
@@ -56,10 +56,10 @@ defmodule Mix.Tasks.Gen.Resource do
 
     write_manifests(result, app_name)
     write_raw_files(result, app_name)
-    write_resouce_elixir(result, app_name, settings_module)
+    write_resouce_elixir(result, app_name)
   end
 
-  defp write_resouce_elixir(%ResourceResult{} = result, app_name, settings_module) do
+  defp write_resouce_elixir(%ResourceResult{} = result, app_name) do
     module = module(app_name, result.include_paths, result.methods)
 
     resource_path =
@@ -75,7 +75,6 @@ defmodule Mix.Tasks.Gen.Resource do
     string_contents =
       module
       |> Macro.to_string()
-      |> String.replace("alias KubeResources.ExampleSettings", "alias #{settings_module}")
       |> String.replace(
         "defmodule KubeResources.ExampleServiceResource",
         "defmodule KubeResources.#{module_name}"
@@ -485,6 +484,9 @@ defmodule Mix.Tasks.Gen.Resource do
         {"app.kubernetes.io/name", _} ->
           {"battery/component", value}
 
+        {"operator.istio.io/component", _} ->
+          {"battery/component", value}
+
         {_, _} ->
           {key, value}
       end
@@ -494,11 +496,10 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp clean_template_metadata(metadata, app_name) do
     metadata
-    |> Map.drop(["annotations"])
     |> update_in(["labels"], fn labels ->
       (labels || %{})
       |> clean_labels(app_name)
-      |> Map.put("battery/app", app_name)
+      |> Map.put_new("battery/app", app_name)
       |> Map.put("battery/managed", "true")
     end)
   end
@@ -736,7 +737,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp resource_method_from_pipeline(pipeline, method_name) do
     quote do
       resource(unquote(method_name), battery, state) do
-        namespace = Settings.namespace(config)
+        namespace = core_namespace(state)
         unquote(pipeline)
       end
     end
@@ -753,7 +754,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp resource_method_from_pipeline_and_data(data_pipeline, main_pipeline, method_name) do
     quote do
       resource(unquote(method_name), battery, state) do
-        namespace = Settings.namespace(config)
+        namespace = core_namespace(state)
         data = unquote(data_pipeline)
         unquote(main_pipeline)
       end
@@ -763,7 +764,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp resource_method_from_pipeline_and_spec(spec_pipeline, main_pipeline, method_name) do
     quote do
       resource(unquote(method_name), battery, state) do
-        namespace = Settings.namespace(config)
+        namespace = core_namespace(state)
         spec = unquote(spec_pipeline)
         unquote(main_pipeline)
       end
@@ -773,7 +774,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp resource_method_from_pipeline_and_rules(rules, main_pipeline, method_name) do
     quote do
       resource(unquote(method_name), battery, state) do
-        namespace = Settings.namespace(config)
+        namespace = core_namespace(state)
         rules = unquote(rules)
         unquote(main_pipeline)
       end
@@ -795,8 +796,8 @@ defmodule Mix.Tasks.Gen.Resource do
       defmodule KubeResources.ExampleServiceResource do
         use KubeExt.ResourceGenerator
         import KubeExt.Yaml
+        import KubeExt.SystemState.Namespaces
 
-        alias KubeResources.ExampleSettings, as: Settings
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
 
@@ -821,8 +822,8 @@ defmodule Mix.Tasks.Gen.Resource do
         use KubeExt.ResourceGenerator
 
         import KubeExt.Yaml
+        import KubeExt.SystemState.Namespaces
 
-        alias KubeResources.ExampleSettings, as: Settings
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
 

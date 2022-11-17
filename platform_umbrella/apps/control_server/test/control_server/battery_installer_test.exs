@@ -28,12 +28,6 @@ defmodule ControlServer.Batteries.InstallerTest do
       assert 2 >= ControlServer.Repo.aggregate(PGCluster, :count, :id)
     end
 
-    test "runs the ory_hydra post hook" do
-      assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
-      assert {:ok, _res} = Installer.install(:ory_hydra)
-      assert 2 >= ControlServer.Repo.aggregate(PGCluster, :count, :id)
-    end
-
     test "runs the harbor post hook" do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
       assert 0 == ControlServer.Repo.aggregate(FailoverCluster, :count, :id)

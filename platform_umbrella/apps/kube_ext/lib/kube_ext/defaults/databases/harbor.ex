@@ -1,6 +1,6 @@
-defmodule KubeExt.RequiredDatabases.Gitea do
-  @username "gitea"
-  @cluster_name "gitea"
+defmodule KubeExt.Defaults.HarborDB do
+  @username "harbor"
+  @cluster_name "harbor"
   @team "pg"
   @default_pg_cluster %{
     :name => @cluster_name,
@@ -9,12 +9,27 @@ defmodule KubeExt.RequiredDatabases.Gitea do
     :storage_size => "200M",
     :type => :internal,
     :users => [%{username: @username, roles: ["superuser", "createrole", "createdb", "login"]}],
-    :databases => [%{name: "gitea", owner: @username}],
+    :databases => [
+      %{name: "registry", owner: @username},
+      %{name: "harbor", owner: @username},
+      %{name: "notary_signer", owner: @username}
+    ],
     :team_name => @team
   }
 
-  def gitea_cluster do
+  @default_redis_cluster %{
+    :name => @cluster_name,
+    :num_redis_instances => 1,
+    :num_sentinel_instances => 1,
+    :type => :internal
+  }
+
+  def harbor_pg_cluster do
     @default_pg_cluster
+  end
+
+  def harbor_redis_cluster do
+    @default_redis_cluster
   end
 
   @spec db_username :: binary()

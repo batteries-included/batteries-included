@@ -266,7 +266,7 @@ defmodule KubeResources.IstioIstiod do
       %{}
       |> Map.put(
         "mesh",
-        "defaultConfig:\n  discoveryAddress: istiod.battery-istio.svc:15012\n  tracing:\n    zipkin:\n      address: zipkin.battery-istio:9411\nenablePrometheusMerge: true\nrootNamespace: null\ntrustDomain: cluster.local"
+        "defaultConfig:\n  discoveryAddress: istiod.#{namespace}.svc:15012\n  tracing:\n    zipkin:\n      address: zipkin.battery-istio:9411\nenablePrometheusMerge: true\nrootNamespace: null\ntrustDomain: cluster.local"
       )
       |> Map.put("meshNetworks", "networks: {}")
 
@@ -294,7 +294,7 @@ defmodule KubeResources.IstioIstiod do
     |> B.data(data)
   end
 
-  resource(:deployment_istiod, _battery, state) do
+  resource(:deployment_istiod, battery, state) do
     namespace = istio_namespace(state)
 
     B.build_resource(:deployment)
@@ -312,7 +312,7 @@ defmodule KubeResources.IstioIstiod do
         "metadata" => %{
           "labels" => %{
             "app" => "istiod",
-            "battery/app" => "istio_istiod",
+            "battery/app" => @app_name,
             "battery/managed" => "true",
             "istio" => "pilot",
             "istio.io/rev" => "default",
@@ -361,11 +361,11 @@ defmodule KubeResources.IstioIstiod do
                 %{"name" => "PILOT_TRACE_SAMPLING", "value" => "1"},
                 %{"name" => "PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_OUTBOUND", "value" => "true"},
                 %{"name" => "PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_INBOUND", "value" => "true"},
-                %{"name" => "ISTIOD_ADDR", "value" => "istiod.battery-istio.svc:15012"},
+                %{"name" => "ISTIOD_ADDR", "value" => "istiod.#{namespace}.svc:15012"},
                 %{"name" => "PILOT_ENABLE_ANALYSIS", "value" => "false"},
                 %{"name" => "CLUSTER_ID", "value" => "Kubernetes"}
               ],
-              "image" => "docker.io/istio/pilot:1.15.0",
+              "image" => battery.config.pilot_image,
               "name" => "discovery",
               "ports" => [
                 %{"containerPort" => 8080, "protocol" => "TCP"},

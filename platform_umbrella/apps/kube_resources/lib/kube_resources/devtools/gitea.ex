@@ -9,11 +9,11 @@ defmodule KubeResources.Gitea do
   import KubeExt.SystemState.Namespaces
   import KubeExt.SystemState.Hosts
 
+  alias KubeExt.Defaults
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
   alias KubeExt.Secret
 
-  alias KubeResources.DevtoolsSettings, as: Settings
   alias KubeResources.IstioConfig.VirtualService
 
   @app_name "gitea"
@@ -64,7 +64,7 @@ defmodule KubeResources.Gitea do
       |> Map.put("endpoints", [%{"port" => "http"}])
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => "gitea", "battery/component" => "gitea"}}
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "gitea"}}
       )
 
     B.build_resource(:service_monitor)
@@ -160,7 +160,7 @@ defmodule KubeResources.Gitea do
       %{}
       |> Map.put("clusterIP", "None")
       |> Map.put("ports", [%{"name" => "http", "port" => 3000, "targetPort" => 3000}])
-      |> Map.put("selector", %{"battery/app" => "gitea", "battery/component" => "gitea"})
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "gitea"})
       |> Map.put("type", "ClusterIP")
 
     B.build_resource(:service)
@@ -179,7 +179,7 @@ defmodule KubeResources.Gitea do
       |> Map.put("ports", [
         %{"name" => "ssh", "port" => 22, "protocol" => "TCP", "targetPort" => 22}
       ])
-      |> Map.put("selector", %{"battery/app" => "gitea", "battery/component" => "gitea"})
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "gitea"})
       |> Map.put("type", "ClusterIP")
 
     B.build_resource(:service)
@@ -192,14 +192,14 @@ defmodule KubeResources.Gitea do
   resource(:stateful_set_main, battery, state) do
     namespace = core_namespace(state)
 
-    pg_secret = Settings.gitea_pg_secret_name(battery.config)
+    pg_secret = gitea_pg_secret_name(battery, state)
 
     spec =
       %{}
       |> Map.put("replicas", 1)
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => "gitea", "battery/component" => "gitea"}}
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "gitea"}}
       )
       |> Map.put("serviceName", "gitea")
       |> Map.put(
@@ -207,10 +207,9 @@ defmodule KubeResources.Gitea do
         %{
           "metadata" => %{
             "labels" => %{
-              "battery/app" => "gitea",
+              "battery/app" => @app_name,
               "battery/component" => "gitea",
-              "battery/managed" => "true",
-              "version" => "1.17.3"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -225,7 +224,7 @@ defmodule KubeResources.Gitea do
                   %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
                   %{"name" => "TMPDIR", "value" => "/tmp/gitea"}
                 ],
-                "image" => "gitea/gitea:1.17.3",
+                "image" => battery.config.image,
                 "imagePullPolicy" => "Always",
                 "livenessProbe" => %{
                   "failureThreshold" => 10,
@@ -265,7 +264,7 @@ defmodule KubeResources.Gitea do
                   %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
                   %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"}
                 ],
-                "image" => "gitea/gitea:1.17.3",
+                "image" => battery.config.image,
                 "imagePullPolicy" => "Always",
                 "name" => "init-directories",
                 "securityContext" => %{},
@@ -291,7 +290,7 @@ defmodule KubeResources.Gitea do
                     "valueFrom" => B.secret_key_ref(pg_secret, "password")
                   }
                 ],
-                "image" => "gitea/gitea:1.17.3",
+                "image" => battery.config.image,
                 "imagePullPolicy" => "Always",
                 "name" => "init-app-ini",
                 "securityContext" => %{},
@@ -315,7 +314,7 @@ defmodule KubeResources.Gitea do
                   %{"name" => "GITEA_ADMIN_USERNAME", "value" => "gitea_admin"},
                   %{"name" => "GITEA_ADMIN_PASSWORD", "value" => "r8sA8CPHD9!bt6d"}
                 ],
-                "image" => "gitea/gitea:1.17.3",
+                "image" => battery.config.image,
                 "imagePullPolicy" => "Always",
                 "name" => "configure-gitea",
                 "securityContext" => %{"runAsUser" => 1000},
@@ -358,5 +357,13 @@ defmodule KubeResources.Gitea do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+  end
+
+  def gitea_pg_secret_name(_battery, _state) do
+    user = Defaults.GiteaDB.db_username()
+    team = Defaults.GiteaDB.db_team()
+    cluster_name = Defaults.GiteaDB.db_name()
+
+    "#{user}.#{team}-#{cluster_name}.credentials.postgresql.acid.zalan.do"
   end
 end

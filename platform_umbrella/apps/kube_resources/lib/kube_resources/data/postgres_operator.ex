@@ -10,7 +10,6 @@ defmodule KubeResources.PostgresOperator do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.DataSettings, as: Settings
   alias KubeResources.PostgresPod
 
   @app_name "postgres-operator"
@@ -167,7 +166,6 @@ defmodule KubeResources.PostgresOperator do
 
   def deployment_postgres_operator(battery, state) do
     namespace = core_namespace(state)
-    operator_image = Settings.pg_operator_image(battery.config)
 
     B.build_resource(:deployment)
     |> B.name("postgres-operator")
@@ -200,10 +198,10 @@ defmodule KubeResources.PostgresOperator do
                 },
                 %{
                   "name" => "ENABLE_JSON_LOGGING",
-                  "value" => "true"
+                  "value" => to_string(battery.config.json_logging_enabled)
                 }
               ],
-              "image" => operator_image,
+              "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "postgres-operator",
               "resources" => %{
@@ -275,10 +273,6 @@ defmodule KubeResources.PostgresOperator do
   def postgresql_operator_config_main(battery, state) do
     namespace = core_namespace(state)
 
-    pg_image = Settings.pg_image(battery.config)
-    backup_image = Settings.pg_backup_image(battery.config)
-    bouncer_image = Settings.pg_bouncer_image(battery.config)
-
     config = %{
       "aws_or_gcp" => %{"aws_region" => "eu-central-1", "enable_ebs_gp3_migration" => false},
       "connection_pooler" => %{
@@ -286,7 +280,7 @@ defmodule KubeResources.PostgresOperator do
         "connection_pooler_default_cpu_request" => "500m",
         "connection_pooler_default_memory_limit" => "100Mi",
         "connection_pooler_default_memory_request" => "100Mi",
-        "connection_pooler_image" => bouncer_image,
+        "connection_pooler_image" => battery.config.bouncer_image,
         "connection_pooler_max_db_connections" => 60,
         "connection_pooler_mode" => "transaction",
         "connection_pooler_number_of_instances" => 2,
@@ -295,7 +289,7 @@ defmodule KubeResources.PostgresOperator do
       },
       "crd_categories" => ["all"],
       "debug" => %{"debug_logging" => true, "enable_database_access" => true},
-      "docker_image" => pg_image,
+      "docker_image" => battery.config.spilo_image,
       "enable_crd_registration" => false,
       "enable_lazy_spilo_upgrade" => false,
       "enable_pgversion_env_var" => true,
@@ -335,7 +329,7 @@ defmodule KubeResources.PostgresOperator do
         "replica_dns_name_format" => "{cluster}-repl.{team}.{hostedzone}"
       },
       "logical_backup" => %{
-        "logical_backup_docker_image" => backup_image,
+        "logical_backup_docker_image" => battery.config.logical_backup_image,
         "logical_backup_job_prefix" => "logical-backup-",
         "logical_backup_provider" => "s3",
         "logical_backup_s3_access_key_id" => "",

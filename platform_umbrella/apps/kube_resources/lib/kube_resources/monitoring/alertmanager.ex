@@ -13,7 +13,6 @@ defmodule KubeResources.Alertmanager do
   alias KubeExt.Secret
 
   alias KubeResources.IstioConfig.VirtualService
-  alias KubeResources.MonitoringSettings, as: Settings
 
   @app_name "alertmanager"
   @url_base "/x/alertmanager"
@@ -44,8 +43,6 @@ defmodule KubeResources.Alertmanager do
   resource(:alertmanager, battery, state) do
     namespace = core_namespace(state)
 
-    image = Settings.alertmanager_image(battery.config)
-
     B.build_resource(:alertmanager)
     |> B.name("battery-prometheus-alertmanager")
     |> B.namespace(namespace)
@@ -54,9 +51,9 @@ defmodule KubeResources.Alertmanager do
       "alertmanagerConfigNamespaceSelector" => %{},
       "alertmanagerConfigSelector" => %{},
       "externalUrl" => url(state),
-      "image" => image,
+      "image" => battery.config.image,
       "listenLocal" => false,
-      "logFormat" => "logfmt",
+      "logFormat" => "json",
       "logLevel" => "info",
       "paused" => false,
       "portName" => "http-web",
@@ -70,7 +67,7 @@ defmodule KubeResources.Alertmanager do
         "runAsUser" => 1000
       },
       "serviceAccountName" => "battery-prometheus-alertmanager",
-      "version" => "v0.24.0"
+      "version" => battery.config.version
     })
   end
 

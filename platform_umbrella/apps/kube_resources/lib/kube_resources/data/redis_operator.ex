@@ -76,7 +76,7 @@ defmodule KubeResources.RedisOperator do
     yaml(get_resource(:redisfailovers_databases_spotahome_com))
   end
 
-  resource(:deployment_redis_operator, _battery, state) do
+  resource(:deployment_redis_operator, battery, state) do
     namespace = core_namespace(state)
 
     spec =
@@ -105,7 +105,7 @@ defmodule KubeResources.RedisOperator do
           "spec" => %{
             "containers" => [
               %{
-                "image" => "quay.io/spotahome/redis-operator:v1.2.2",
+                "image" => battery.config.image,
                 "imagePullPolicy" => "IfNotPresent",
                 "livenessProbe" => %{
                   "failureThreshold" => 6,

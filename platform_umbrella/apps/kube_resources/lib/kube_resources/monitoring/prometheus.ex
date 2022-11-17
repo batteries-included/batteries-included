@@ -6,7 +6,6 @@ defmodule KubeResources.Prometheus do
 
   import KubeExt.SystemState.Namespaces
 
-  alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.VirtualService
@@ -65,8 +64,6 @@ defmodule KubeResources.Prometheus do
   resource(:prometheus_battery_kube_st, battery, state) do
     namespace = core_namespace(state)
 
-    image = Settings.prometheus_image(battery.config)
-
     B.build_resource(:prometheus)
     |> B.name("battery-prometheus-prometheus")
     |> B.namespace(namespace)
@@ -85,9 +82,9 @@ defmodule KubeResources.Prometheus do
       },
       "enableAdminAPI" => false,
       "externalUrl" => @url_base,
-      "image" => image,
+      "image" => battery.config.image,
       "listenLocal" => false,
-      "logFormat" => "logfmt",
+      "logFormat" => "json",
       "logLevel" => "debug",
       "paused" => false,
       "podMonitorNamespaceSelector" => %{},
@@ -96,7 +93,7 @@ defmodule KubeResources.Prometheus do
       "probeNamespaceSelector" => %{},
       "probeSelector" => %{},
       "replicas" => 1,
-      "retention" => "10d",
+      "retention" => battery.config.retention,
       "routePrefix" => "/",
       "ruleNamespaceSelector" => %{},
       "ruleSelector" => %{},
@@ -110,7 +107,7 @@ defmodule KubeResources.Prometheus do
       "serviceMonitorNamespaceSelector" => %{},
       "serviceMonitorSelector" => %{},
       "shards" => 1,
-      "version" => "v2.38.0",
+      "version" => battery.config.version,
       "walCompression" => true
     })
   end
@@ -137,8 +134,7 @@ defmodule KubeResources.Prometheus do
       "publishNotReadyAddresses" => false,
       "selector" => %{
         "prometheus" => "battery-prometheus-prometheus"
-      },
-      "type" => "ClusterIP"
+      }
     })
   end
 

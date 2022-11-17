@@ -54,7 +54,7 @@ defmodule ControlServerWeb.Router do
 
     live "/kiali", Live.Iframe, :kiali
     live "/grafana", Live.Iframe, :grafana
-    live "/alert_manager", Live.Iframe, :alert_manager
+    live "/alertmanager", Live.Iframe, :alertmanager
     live "/prometheus", Live.Iframe, :prometheus
     live "/gitea", Live.Iframe, :gitea
 

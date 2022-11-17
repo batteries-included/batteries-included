@@ -160,14 +160,14 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  defp battery_menu_item(%{battery: %{type: :alert_manager}} = assigns) do
+  defp battery_menu_item(%{battery: %{type: :alertmanager}} = assigns) do
     ~H"""
     <.menu_item
       href={KubeResources.Alertmanager.view_url()}
       name="Alert Manager"
-      is_active={@active == :alert_manager}
+      is_active={@active == :alertmanager}
     >
-      <.alert_manager_icon class={@icon_class} />
+      <.alertmanager_icon class={@icon_class} />
     </.menu_item>
     """
   end

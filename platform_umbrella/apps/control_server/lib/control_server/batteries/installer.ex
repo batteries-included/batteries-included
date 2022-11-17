@@ -1,7 +1,7 @@
 defmodule ControlServer.Batteries.Installer do
   alias KubeExt.Defaults.Catalog
   alias KubeExt.Defaults.CatalogBattery
-  alias KubeExt.RequiredDatabases
+  alias KubeExt.Defaults
 
   alias ControlServer.Batteries.SystemBattery
   alias ControlServer.Postgres
@@ -147,8 +147,8 @@ defmodule ControlServer.Batteries.Installer do
   defp clean_merge(m1, m2), do: Map.merge(to_map(m1), to_map(m2))
 
   defp post_install(%SystemBattery{type: :harbor}, repo) do
-    init_pg = RequiredDatabases.Harbor.harbor_pg_cluster()
-    init_redis = RequiredDatabases.Harbor.harbor_redis_cluster()
+    init_pg = Defaults.HarborDB.harbor_pg_cluster()
+    init_redis = Defaults.HarborDB.harbor_redis_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo),
          {:ok, redis} <- Redis.create_failover_cluster(init_redis, repo) do
@@ -157,7 +157,7 @@ defmodule ControlServer.Batteries.Installer do
   end
 
   defp post_install(%SystemBattery{type: :database_internal}, repo) do
-    init_pg = RequiredDatabases.Control.control_cluster()
+    init_pg = Defaults.ControlDB.control_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
       {:ok, internal_postgres: postgres_db}
@@ -165,18 +165,10 @@ defmodule ControlServer.Batteries.Installer do
   end
 
   defp post_install(%SystemBattery{type: :gitea}, repo) do
-    init_pg = RequiredDatabases.Gitea.gitea_cluster()
+    init_pg = Defaults.GiteaDB.gitea_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
       {:ok, gitea_postgres: postgres_db}
-    end
-  end
-
-  defp post_install(%SystemBattery{type: :ory_hydra}, repo) do
-    init_pg = RequiredDatabases.OryHydra.hydra_cluster()
-
-    with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
-      {:ok, hydra_postgres: postgres_db}
     end
   end
 

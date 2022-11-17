@@ -17,8 +17,8 @@ defmodule KubeResources.Loki do
 
   import KubeExt.Yaml
   import KubeExt.SystemState.Namespaces
+  import KubeExt.SystemState.Monitoring
 
-  alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
 
   @app_name "loki"
@@ -165,7 +165,7 @@ defmodule KubeResources.Loki do
   resource(:deployment_grafana_agent_operator, battery, state) do
     namespace = core_namespace(state)
 
-    kubelet_service = Settings.kubelet_service(battery.config)
+    kubelet_service = kubelet_service(state)
 
     B.build_resource(:deployment)
     |> B.name("loki-grafana-agent-operator")
@@ -176,14 +176,14 @@ defmodule KubeResources.Loki do
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "loki",
+          "battery/app" => @app_name,
           "battery/component" => "grafana-agent-operator"
         }
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "loki",
+            "battery/app" => @app_name,
             "battery/component" => "grafana-agent-operator",
             "battery/managed" => "true"
           }
@@ -192,7 +192,7 @@ defmodule KubeResources.Loki do
           "containers" => [
             %{
               "args" => ["--kubelet-service=#{kubelet_service}"],
-              "image" => "docker.io/grafana/agent-operator:v0.25.1",
+              "image" => battery.config.agent_operator_image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "grafana-agent-operator"
             }
@@ -237,14 +237,14 @@ defmodule KubeResources.Loki do
       "clients" => [
         %{
           "externalLabels" => %{"cluster" => "loki"},
-          "url" => "http://loki.battery-core.svc.cluster.local:3100/loki/api/v1/push"
+          "url" => "http://loki.#{namespace}.svc.cluster.local:3100/loki/api/v1/push"
         }
       ],
       "podLogsSelector" => %{"matchLabels" => %{"instance" => "primary"}}
     })
   end
 
-  resource(:pod_logs_main, _battery, state) do
+  resource(:pod_logs_main, battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:pod_logs)
@@ -253,7 +253,7 @@ defmodule KubeResources.Loki do
     |> B.app_labels(@app_name)
     |> B.label("instance", "primary")
     |> B.spec(%{
-      "namespaceSelector" => %{"matchNames" => [namespace]},
+      "namespaceSelector" => %{"matchNames" => watch_namespaces(battery, state)},
       "pipelineStages" => [%{"cri" => %{}}],
       "relabelings" => [
         %{"sourceLabels" => ["__meta_kubernetes_pod_node_name"], "targetLabel" => "__host__"},
@@ -275,6 +275,13 @@ defmodule KubeResources.Loki do
         "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "loki"}
       }
     })
+  end
+
+  defp watch_namespaces(_battery, state) do
+    state.kube_state
+    |> Map.get(:namespace, [])
+    |> Enum.map(&K8s.Resource.FieldAccessors.name/1)
+    |> Enum.filter(fn name -> String.starts_with?(name, "battery") end)
   end
 
   resource(:prometheus_rule_rules, _battery, state) do
@@ -472,7 +479,7 @@ defmodule KubeResources.Loki do
           "targetPort" => "http-metrics"
         }
       ],
-      "selector" => %{"battery/app" => "loki", "battery/component" => "loki"}
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "loki"}
     })
   end
 
@@ -493,7 +500,7 @@ defmodule KubeResources.Loki do
         },
         %{"name" => "grpc", "port" => 9095, "protocol" => "TCP", "targetPort" => "grpc"}
       ],
-      "selector" => %{"battery/app" => "loki", "battery/component" => "loki"},
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "loki"},
       "type" => "ClusterIP"
     })
   end
@@ -509,7 +516,7 @@ defmodule KubeResources.Loki do
       "ports" => [
         %{"name" => "tcp", "port" => 7946, "protocol" => "TCP", "targetPort" => "http-memberlist"}
       ],
-      "selector" => %{"battery/app" => "loki", "battery/component" => "loki"},
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "loki"},
       "type" => "ClusterIP"
     })
   end
@@ -537,14 +544,14 @@ defmodule KubeResources.Loki do
           "scheme" => "http"
         }
       ],
-      "selector" => %{"matchLabels" => %{"battery/app" => "loki", "battery/component" => "loki"}}
+      "selector" => %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "loki"}
+      }
     })
   end
 
   resource(:stateful_set_main, battery, state) do
     namespace = core_namespace(state)
-
-    image = Settings.loki_image(battery.config)
 
     B.build_resource(:stateful_set)
     |> B.name("loki")
@@ -555,12 +562,14 @@ defmodule KubeResources.Loki do
       "podManagementPolicy" => "Parallel",
       "replicas" => 1,
       "revisionHistoryLimit" => 10,
-      "selector" => %{"matchLabels" => %{"battery/app" => "loki", "battery/component" => "loki"}},
+      "selector" => %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "loki"}
+      },
       "serviceName" => "loki-headless",
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "loki",
+            "battery/app" => @app_name,
             "battery/component" => "loki",
             "battery/managed" => "true"
           }
@@ -573,7 +582,7 @@ defmodule KubeResources.Loki do
                   "labelSelector" => %{
                     "matchLabels" => %{
                       "battery/component" => "loki",
-                      "battery/app" => "loki"
+                      "battery/app" => @app_name
                     }
                   },
                   "topologyKey" => "kubernetes.io/hostname"
@@ -584,7 +593,7 @@ defmodule KubeResources.Loki do
           "containers" => [
             %{
               "args" => ["-config.file=/etc/loki/config/config.yaml", "-target=all"],
-              "image" => image,
+              "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "single-binary",
               "ports" => [

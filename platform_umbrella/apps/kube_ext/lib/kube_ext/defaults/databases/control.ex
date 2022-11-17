@@ -1,4 +1,4 @@
-defmodule KubeExt.RequiredDatabases.Control do
+defmodule KubeExt.Defaults.ControlDB do
   @default_pg_cluster %{
     :name => "control",
     :postgres_version => "14",

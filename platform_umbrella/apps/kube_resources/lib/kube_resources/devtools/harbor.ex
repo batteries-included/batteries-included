@@ -11,7 +11,6 @@ defmodule KubeResources.Harbor do
   alias KubeExt.Secret
   alias KubeState.Hosts
 
-  alias KubeResources.DevtoolsSettings, as: Settings
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
 
@@ -363,7 +362,7 @@ defmodule KubeResources.Harbor do
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> B.app_labels(@app_name)
-    |> B.label("component", "jobservice")
+    |> B.component_label("jobservice")
   end
 
   resource(:persistent_volume_claim_1, _battery, state) do
@@ -385,7 +384,7 @@ defmodule KubeResources.Harbor do
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> B.app_labels(@app_name)
-    |> B.label("component", "registry")
+    |> B.component_label("registry")
   end
 
   resource(:service, _battery, state) do
@@ -400,7 +399,7 @@ defmodule KubeResources.Harbor do
         }
       ],
       "selector" => %{
-        "battery/app" => "harbor",
+        "battery/app" => @app_name,
         "component" => "core"
       }
     }
@@ -424,7 +423,7 @@ defmodule KubeResources.Harbor do
         }
       ],
       "selector" => %{
-        "battery/app" => "harbor",
+        "battery/app" => @app_name,
         "component" => "jobservice"
       }
     }
@@ -447,7 +446,7 @@ defmodule KubeResources.Harbor do
         }
       ],
       "selector" => %{
-        "battery/app" => "harbor",
+        "battery/app" => @app_name,
         "component" => "portal"
       }
     }
@@ -474,7 +473,7 @@ defmodule KubeResources.Harbor do
         }
       ],
       "selector" => %{
-        "battery/app" => "harbor",
+        "battery/app" => @app_name,
         "component" => "registry"
       }
     }
@@ -498,7 +497,7 @@ defmodule KubeResources.Harbor do
         }
       ],
       "selector" => %{
-        "battery/app" => "harbor",
+        "battery/app" => @app_name,
         "component" => "trivy"
       }
     }
@@ -512,14 +511,13 @@ defmodule KubeResources.Harbor do
 
   resource(:deployment, battery, state) do
     namespace = core_namespace(state)
-    core_image = Settings.harbor_core_image(battery.config)
 
     spec = %{
       "replicas" => 1,
       "revisionHistoryLimit" => 10,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "harbor",
+          "battery/app" => @app_name,
           "battery/managed" => "true",
           "component" => "core"
         }
@@ -527,7 +525,7 @@ defmodule KubeResources.Harbor do
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "harbor",
+            "battery/app" => @app_name,
             "battery/managed" => "true",
             "component" => "core"
           }
@@ -576,7 +574,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => core_image,
+              "image" => battery.config.core_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 2,
@@ -684,20 +682,19 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-core")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("component", "core")
+    |> B.component_label("core")
     |> B.spec(spec)
   end
 
   resource(:deployment_1, battery, state) do
     namespace = core_namespace(state)
-    jobservice_image = Settings.harbor_jobservice_image(battery.config)
 
     spec = %{
       "replicas" => 1,
       "revisionHistoryLimit" => 10,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "harbor",
+          "battery/app" => @app_name,
           "battery/managed" => "true",
           "component" => "jobservice"
         }
@@ -708,7 +705,7 @@ defmodule KubeResources.Harbor do
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "harbor",
+            "battery/app" => @app_name,
             "battery/managed" => "true",
             "component" => "jobservice"
           }
@@ -748,7 +745,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => jobservice_image,
+              "image" => battery.config.jobservice_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -814,27 +811,26 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("component", "jobservice")
+    |> B.component_label("jobservice")
     |> B.spec(spec)
   end
 
   resource(:deployment_2, battery, state) do
     namespace = core_namespace(state)
-    image = Settings.harbor_portal_image(battery.config)
 
     spec = %{
       "replicas" => 1,
       "revisionHistoryLimit" => 10,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "harbor",
+          "battery/app" => @app_name,
           "component" => "portal"
         }
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "harbor",
+            "battery/app" => @app_name,
             "battery/managed" => "true",
             "component" => "portal"
           }
@@ -843,7 +839,7 @@ defmodule KubeResources.Harbor do
           "automountServiceAccountToken" => false,
           "containers" => [
             %{
-              "image" => image,
+              "image" => battery.config.portal_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -898,21 +894,19 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("component", "portal")
+    |> B.component_label("portal")
     |> B.spec(spec)
   end
 
   resource(:deployment_3, battery, state) do
     namespace = core_namespace(state)
-    registry_image = Settings.harbor_registry_photon_image(battery.config)
-    ctl_image = Settings.harbor_registry_ctl_image(battery.config)
 
     spec = %{
       "replicas" => 1,
       "revisionHistoryLimit" => 10,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "harbor",
+          "battery/app" => @app_name,
           "component" => "registry"
         }
       },
@@ -922,7 +916,7 @@ defmodule KubeResources.Harbor do
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "harbor",
+            "battery/app" => @app_name,
             "battery/managed" => "true",
             "component" => "registry"
           }
@@ -942,7 +936,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => registry_image,
+              "image" => battery.config.photon_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -1034,7 +1028,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => ctl_image,
+              "image" => battery.config.ctl_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
@@ -1117,19 +1111,18 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("component", "registry")
+    |> B.component_label("registry")
     |> B.spec(spec)
   end
 
   resource(:stateful_set, battery, state) do
     namespace = core_namespace(state)
-    trivy_adapter_image = Settings.harbor_trivy_adapter_image(battery.config)
 
     spec = %{
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => "harbor",
+          "battery/app" => @app_name,
           "component" => "trivy"
         }
       },
@@ -1137,7 +1130,7 @@ defmodule KubeResources.Harbor do
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => "harbor",
+            "battery/app" => @app_name,
             "battery/managed" => "true",
             "component" => "trivy"
           }
@@ -1245,7 +1238,7 @@ defmodule KubeResources.Harbor do
                   }
                 }
               ],
-              "image" => trivy_adapter_image,
+              "image" => battery.config.trivy_adapter_image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 10,
@@ -1309,7 +1302,7 @@ defmodule KubeResources.Harbor do
           "metadata" => %{
             "labels" => %{
               "component" => "trivy",
-              "battery/app" => "harbor",
+              "battery/app" => @app_name,
               "battery/managed" => "true"
             },
             "name" => "scanner-cache"
@@ -1332,7 +1325,7 @@ defmodule KubeResources.Harbor do
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("component", "trivy")
+    |> B.component_label("trivy")
     |> B.spec(spec)
   end
 end

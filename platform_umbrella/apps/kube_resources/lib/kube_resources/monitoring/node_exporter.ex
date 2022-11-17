@@ -3,7 +3,6 @@ defmodule KubeResources.NodeExporter do
 
   import KubeExt.SystemState.Namespaces
 
-  alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
 
   @app_name "node-exporter"
@@ -40,8 +39,6 @@ defmodule KubeResources.NodeExporter do
   resource(:daemon_set_battery_prometheus_node_exporter, battery, state) do
     namespace = core_namespace(state)
 
-    image = Settings.node_exporter_image(battery.config)
-
     B.build_resource(:daemon_set)
     |> B.name("battery-prometheus-node-exporter")
     |> B.namespace(namespace)
@@ -75,7 +72,7 @@ defmodule KubeResources.NodeExporter do
                 "--collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$"
               ],
               "env" => [%{"name" => "HOST_IP", "value" => "0.0.0.0"}],
-              "image" => image,
+              "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 3,

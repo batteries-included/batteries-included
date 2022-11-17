@@ -27,8 +27,6 @@ defmodule KubeResources.ConfigGenerator do
     Redis,
     RedisOperator,
     VirtualService,
-    TektonOperator,
-    OryHydra,
     Harbor,
     Rook,
     CephFilesystems,
@@ -50,7 +48,7 @@ defmodule KubeResources.ConfigGenerator do
     MonitoringScheduler,
     PrometheusStack,
     MetalLB,
-    DevMetalLB
+    MetalLBIPPool
   }
 
   alias KubeResources.ControlServer, as: ControlServerResources
@@ -58,13 +56,12 @@ defmodule KubeResources.ConfigGenerator do
   require Logger
 
   @default_generator_mappings [
-    alert_manager: [&Alertmanager.materialize/2],
+    alertmanager: [&Alertmanager.materialize/2],
     battery_core: [&Battery.materialize/2],
     control_server: [&ControlServerResources.materialize/2],
     data: [&Data.materialize/2],
     database_internal: [&DatabaseInternal.materialize/2],
     database_public: [&DatabasePublic.materialize/2],
-    dev_metallb: [&DevMetalLB.materialize/2],
     echo_server: [&EchoServer.materialize/2],
     gitea: [&Gitea.materialize/2],
     grafana: [&Grafana.materialize/2],
@@ -73,11 +70,12 @@ defmodule KubeResources.ConfigGenerator do
     istio_gateway: [&IstioGateway.materialize/2, &VirtualService.materialize/2],
     istio_istiod: [&IstioIstiod.materialize/2],
     kiali: [&Kiali.materialize/2],
-    knative: [&KnativeOperator.materialize/2],
+    knative_operator: [&KnativeOperator.materialize/2],
     knative_serving: [&KnativeServing.materialize/2],
     kube_state_metrics: [&KubeStateMetrics.materialize/2],
     loki: [&Loki.materialize/2],
     metallb: [&MetalLB.materialize/2],
+    metallb_ip_pool: [&MetalLBIPPool.materialize/2],
     ml_core: [&ML.Core.materialize/2],
     monitoring_api_server: [&MonitoringApiServer.materialize/2],
     monitoring_controller_manager: [&MonitoringControllerManager.materialize/2],
@@ -88,7 +86,6 @@ defmodule KubeResources.ConfigGenerator do
     monitoring_scheduler: [&MonitoringScheduler.materialize/2],
     node_exporter: [&NodeExporter.materialize/2],
     notebooks: [&Notebooks.materialize/2],
-    ory_hydra: [&OryHydra.materialize/2],
     postgres_operator: [&PostgresOperator.materialize/2],
     prometheus: [&Prometheus.materialize/2],
     prometheus_operator: [&PrometheusOperator.materialize/2],
@@ -97,8 +94,7 @@ defmodule KubeResources.ConfigGenerator do
     redis_operator: [&RedisOperator.materialize/2],
     redis: [&Redis.materialize/2],
     rook: [&Rook.materialize/2],
-    ceph: [&CephFilesystems.materialize/2, &CephClusters.materialize/2],
-    tekton_operator: [&TektonOperator.materialize/2]
+    ceph: [&CephFilesystems.materialize/2, &CephClusters.materialize/2]
   ]
 
   @spec materialize(StateSummary.t()) :: map()

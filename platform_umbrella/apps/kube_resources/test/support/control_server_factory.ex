@@ -58,7 +58,7 @@ defmodule KubeResources.ControlServerFactory do
       config: %{},
       type:
         sequence(:type, [
-          :alert_manager,
+          :alertmanager,
           :battery_core,
           :control_server,
           :data,
@@ -73,7 +73,7 @@ defmodule KubeResources.ControlServerFactory do
           :istio_gateway,
           :istio_istiod,
           :kiali,
-          :knative,
+          :knative_operator,
           :knative_serving,
           :kube_state_metrics,
           :loki,
@@ -88,7 +88,6 @@ defmodule KubeResources.ControlServerFactory do
           :monitoring_scheduler,
           :node_exporter,
           :notebooks,
-          :ory_hydra,
           :postgres_operator,
           :prometheus,
           :prometheus_operator,
@@ -97,8 +96,7 @@ defmodule KubeResources.ControlServerFactory do
           :redis_operator,
           :redis,
           :rook,
-          :ceph,
-          :tekton_operator
+          :ceph
         ])
     }
   end

@@ -939,7 +939,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.data(data)
   end
 
-  def deployment_webhook(_battery, state) do
+  def deployment_webhook(battery, state) do
     namespace = core_namespace(state)
 
     spec = %{
@@ -1003,8 +1003,7 @@ defmodule KubeResources.KnativeOperator do
                   "value" => "knative.dev/operator"
                 }
               ],
-              "image" =>
-                "gcr.io/knative-releases/knative.dev/operator/cmd/webhook@sha256:bcb52df48b96280209ae16eab953fc42e4cccbb00db09a6209101345b4e9fb63",
+              "image" => battery.config.webhook_image,
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{
@@ -1097,7 +1096,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.data(data)
   end
 
-  def deployment_knative_operator(_battery, state) do
+  def deployment_knative_operator(battery, state) do
     namespace = core_namespace(state)
 
     spec = %{
@@ -1153,8 +1152,7 @@ defmodule KubeResources.KnativeOperator do
                   "value" => @observability_configmap
                 }
               ],
-              "image" =>
-                "gcr.io/knative-releases/knative.dev/operator/cmd/operator@sha256:e1ea271f1292aed1d4700d1e6e8d12b92a5befc6f293da20dde2599d722db699",
+              "image" => battery.config.operator_image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "knative-operator",
               "ports" => [

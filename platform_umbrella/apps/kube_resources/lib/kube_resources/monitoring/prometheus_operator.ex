@@ -22,7 +22,6 @@ defmodule KubeResources.PrometheusOperator do
   import KubeExt.Yaml
   import KubeExt.SystemState.Namespaces
 
-  alias KubeResources.MonitoringSettings, as: Settings
   alias KubeExt.Builder, as: B
 
   @app_name "prometheus-operator"
@@ -176,18 +175,13 @@ defmodule KubeResources.PrometheusOperator do
   resource(:deployment_operator, battery, state) do
     namespace = core_namespace(state)
 
-    image = Settings.prometheus_operator_image(battery.config)
-    reloader_image = Settings.prometheus_reloader_image(battery.config)
-
-    kubelet_service = Settings.kubelet_service(battery.config)
-
     B.build_resource(:deployment)
     |> B.name("battery-prometheus-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(%{
       "replicas" => 1,
-      "selector" => %{"matchLabels" => %{"app" => "kube-prometheus-stack-operator"}},
+      "selector" => %{"matchLabels" => %{"battery/app" => @app_name}},
       "template" => %{
         "metadata" => %{
           "labels" => %{
@@ -200,9 +194,9 @@ defmodule KubeResources.PrometheusOperator do
           "containers" => [
             %{
               "args" => [
-                "--kubelet-service=#{kubelet_service}",
+                "--kubelet-service=#{battery.config.kubelet_service}",
                 "--localhost=127.0.0.1",
-                "--prometheus-config-reloader=#{reloader_image}",
+                "--prometheus-config-reloader=#{battery.config.reloader_image}",
                 "--config-reloader-cpu-request=200m",
                 "--config-reloader-cpu-limit=200m",
                 "--config-reloader-memory-request=50Mi",
@@ -214,7 +208,7 @@ defmodule KubeResources.PrometheusOperator do
                 "--web.listen-address=:10250",
                 "--web.tls-min-version=VersionTLS13"
               ],
-              "image" => image,
+              "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "kube-prometheus-stack",
               "ports" => [%{"containerPort" => 10_250, "name" => "https"}],
@@ -263,7 +257,7 @@ defmodule KubeResources.PrometheusOperator do
           "labels" => %{
             "app" => "kube-prometheus-stack-admission-create",
             "sidecar.istio.io/inject" => "false",
-            "battery/app" => "prometheus_stack",
+            "battery/app" => @app_name,
             "battery/managed" => "true"
           },
           "name" => "battery-prometheus-admission-create"

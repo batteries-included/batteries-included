@@ -741,12 +741,12 @@ defmodule KubeResources.Rook do
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => "rook"}})
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
       |> Map.put("strategy", %{"type" => "Recreate"})
       |> Map.put(
         "template",
         %{
-          "metadata" => %{"labels" => %{"battery/app" => "rook", "battery/managed" => "true"}},
+          "metadata" => %{"labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}},
           "spec" => %{
             "containers" => [
               %{

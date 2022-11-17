@@ -6,7 +6,10 @@ defmodule KubeExt.CatalogTest do
   describe "Catalog" do
     test "Catalog.get works for all" do
       for catalog_battery <- Catalog.all() do
-        assert catalog_battery == Catalog.get(catalog_battery.type)
+        # Don't check config because that's not going to be constant.
+        assert catalog_battery.dependencies == Catalog.get(catalog_battery.type).dependencies
+        assert catalog_battery.type == Catalog.get(catalog_battery.type).type
+        assert catalog_battery.group == Catalog.get(catalog_battery.type).group
       end
     end
 
