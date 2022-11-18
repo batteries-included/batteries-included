@@ -29,10 +29,14 @@ defmodule ControlServer.SystemState.Summarizer do
     :refresh_time
   ]
 
+  @spec new(atom | pid | {atom, any} | {:via, atom, any}) :: t()
   def new(target \\ @me), do: GenServer.call(target, :new)
+  @spec cached(atom | pid | {atom, any} | {:via, atom, any}) :: t()
   def cached(target \\ @me), do: GenServer.call(target, :cached)
+  @spec cached_field(atom | pid | {atom, any} | {:via, atom, any}, atom) :: any
   def cached_field(target \\ @me, field), do: GenServer.call(target, {:cached, field})
 
+  @spec start_link(keyword) :: {:ok, pid}
   def start_link(opts) do
     {state_opts, gen_opts} =
       opts
@@ -79,6 +83,7 @@ defmodule ControlServer.SystemState.Summarizer do
     Process.send_after(self(), :refresh, refresh_time)
   end
 
+  @spec new_summary! :: t()
   defp new_summary! do
     with {:ok, res} <- transaction() do
       struct(StateSummary, res)
