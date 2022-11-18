@@ -4,8 +4,7 @@ defmodule CommonUI.Typogoraphy do
 
   attr :class, :any, default: ""
 
-  attr :base_class, :string,
-    default: "text-4xl font-extrabold leading-7 text-pink-500 sm:text-3xl sm:truncate"
+  attr :base_class, :string, default: "text-4xl leading-7 text-pink-500 sm:text-3xl sm:truncate"
 
   slot :inner_block, required: true
 
