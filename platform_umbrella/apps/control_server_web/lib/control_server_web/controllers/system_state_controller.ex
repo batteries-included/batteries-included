@@ -6,6 +6,6 @@ defmodule ControlServerWeb.SystemStateController do
   action_fallback(ControlServerWeb.FallbackController)
 
   def index(conn, _params) do
-    render(conn, :index, summary: Summarizer.materialize!())
+    render(conn, :index, summary: Summarizer.cached())
   end
 end

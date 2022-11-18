@@ -22,7 +22,7 @@ defmodule KubeServices.SnapshotApply.Steps do
     {:ok, paths} =
       EctoSteps.snap_generation(
         snap,
-        Summarizer.materialize!(),
+        Summarizer.new(),
         &ConfigGenerator.materialize/1
       )
 

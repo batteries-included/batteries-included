@@ -10,7 +10,8 @@ defmodule ControlServer.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: ControlServer.PubSub},
       {Task.Supervisor, name: ControlServer.TaskSupervisor},
-      ControlServer.OryHydraFinch.child_spec()
+      ControlServer.OryHydraFinch.child_spec(),
+      {ControlServer.SystemState.Summarizer, name: ControlServer.SystemState.Summarizer}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
