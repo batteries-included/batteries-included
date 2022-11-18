@@ -1,16 +1,13 @@
-const themeDir = __dirname + "/../";
+const themeDir = __dirname + '/../';
 const assetsDir = __dirname;
 const tailwindConfig =
-  process.env.HUGO_FILE_TAILWIND_CONFIG_JS || assetsDir + "/tailwind.config.js";
-const tailwind = require("tailwindcss")(tailwindConfig);
-const autoprefixer = require("autoprefixer")({ path: [themeDir] });
+  process.env.HUGO_FILE_TAILWIND_CONFIG_JS || assetsDir + '/tailwind.config.js';
+const tailwind = require('tailwindcss')(tailwindConfig);
+const autoprefixer = require('autoprefixer')({ path: [themeDir] });
 
-const purgecss = require("@fullhuman/postcss-purgecss")({
+const purgecss = require('@fullhuman/postcss-purgecss')({
   // see https://gohugo.io/hugo-pipes/postprocess/#css-purging-with-postcss
-  content: [
-    "./hugo_stats.json",
-    themeDir + "../../hugo_stats.json",
-  ],
+  content: ['./hugo_stats.json', themeDir + '../../hugo_stats.json'],
   safelist: [/type/],
   defaultExtractor: (content) => {
     let els = JSON.parse(content).htmlElements;
@@ -23,7 +20,7 @@ module.exports = {
   plugins: [
     tailwind,
     autoprefixer,
-    ...(process.env.HUGO_ENVIRONMENT === "production" ? [purgecss] : []),
-    ...(process.env.HUGO_ENVIRONMENT === "production" ? [autoprefixer] : []),
+    ...(process.env.HUGO_ENVIRONMENT === 'production' ? [purgecss] : []),
+    ...(process.env.HUGO_ENVIRONMENT === 'production' ? [autoprefixer] : []),
   ],
 };

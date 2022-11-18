@@ -8,10 +8,10 @@ deleteAllTagged() {
 }
 
 deleteAllNamespaced() {
-    kubectl get ${1} -lbattery/managed=true --all-namespaces  \
-        | awk '{print $1} {print $2}' \
-        | grep -ve NAME \
-        | xargs -L2 bash -c "kubectl delete ${1} -n \$0 \$1" || true
+  kubectl get ${1} -lbattery/managed=true --all-namespaces \
+    | awk '{print $1} {print $2}' \
+    | grep -ve NAME \
+    | xargs -L2 bash -c "kubectl delete ${1} -n \$0 \$1" || true
 }
 
 deleteCrds() {
@@ -41,9 +41,9 @@ deleteJunk() {
 deleteRBAC
 deleteJunk
 
-deleteAllNamespaced knativeservings 
+deleteAllNamespaced knativeservings
 deleteAllNamespaced service
-deleteAllNamespaced configmap 
+deleteAllNamespaced configmap
 deleteAllNamespaced secret
 deleteAllNamespaced deployment
 deleteAllNamespaced pod

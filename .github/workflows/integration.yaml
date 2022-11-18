@@ -5,8 +5,9 @@ on:
     branches:
       - master
       - gh-readonly-queue/master/**
-      - gh-readonly-queue/main/**
   pull_request:
+    branches:
+      - master
 
 jobs:
   integration_test:
@@ -28,18 +29,16 @@ jobs:
         image: postgres
         env:
           POSTGRES_USER: batterydbuser
-          POSTGRES_PASSWORD: "batterypasswd"
+          POSTGRES_PASSWORD: 'batterypasswd'
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s
           --health-retries 5
         ports:
           - 5432/tcp
     env:
       POSTGRES_HOST: localhost
       POSTGRES_USER: batterydbuser
-      POSTGRES_PASSWORD: "batterypasswd"
+      POSTGRES_PASSWORD: 'batterypasswd'
 
     steps:
       - name: Checkout
@@ -62,11 +61,9 @@ jobs:
         name: Setup K3d cluster
         with:
           k3d-version: v5.4.1
-          cluster-name: "test-cluster-1"
+          cluster-name: 'test-cluster-1'
           args: >-
-            --servers 3
-            --wait
-            --k3s-arg '--disable=traefik@server:*'
+            --servers 3 --wait --k3s-arg '--disable=traefik@server:*'
 
       - name: Install test dependencies
         run: mix deps.get --only test

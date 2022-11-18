@@ -1,0 +1,138 @@
+name: Platform Umbrella
+
+on:
+  push:
+    branches:
+      - master
+      - gh-readonly-queue/master/**
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  dependencies:
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.14.1
+            otp: 25.1.2
+    defaults:
+      run:
+        working-directory: ./platform_umbrella
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.9.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout Github repo
+        uses: actions/checkout@v2
+      - name: Sets up an Erlang/OTP environment
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+      - name: Retrieve cached dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            platform_umbrella/deps
+            platform_umbrella/_build
+          key:
+            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{
+            hashFiles('**/mix.lock') }}
+      - name: Install dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+          mix deps.compile --skip-umbrella-children --force
+
+  mix-test:
+    needs: dependencies
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.14.1
+            otp: 25.1.2
+    defaults:
+      run:
+        working-directory: ./platform_umbrella
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: batterydbuser
+          POSTGRES_PASSWORD: 'batterypasswd'
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s
+          --health-retries 5
+        ports: ['5432:5432']
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_USER: batterydbuser
+      POSTGRES_PASSWORD: 'batterypasswd'
+      MIX_ENV: test
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.9.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout Github repo
+        uses: actions/checkout@v2
+      - name: Sets up an Erlang/OTP environment
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+      - name: Retrieve cached dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            platform_umbrella/deps
+            platform_umbrella/_build
+          key:
+            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{
+            hashFiles('**/mix.lock') }}
+      - run: mix compile --warnings-as-errors --force
+      - run: mix ecto.reset
+      - run: mix test --trace --slowest 10 --cover --export-coverage default
+      - run: mix test.coverage
+
+  static-code-analysis:
+    needs: dependencies
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.14.1
+            otp: 25.1.2
+    defaults:
+      run:
+        working-directory: ./platform_umbrella
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.9.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout Github repo
+        uses: actions/checkout@v2
+      - name: Sets up an Erlang/OTP environment
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+      - name: Retrieve cached dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            platform_umbrella/deps
+            platform_umbrella/_build
+          key:
+            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{
+            hashFiles('**/mix.lock') }}
+      - run: mix format --check-formatted
+      - run: mix credo
+      - run: mix dialyzer --format github

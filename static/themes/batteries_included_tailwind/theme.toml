@@ -8,52 +8,52 @@ features = []
 min_version = "0.41.0"
 
 [author]
-  name = ""
-  homepage = ""
+name = ""
+homepage = ""
 
 [build]
 # Used by PurgeCSS
-  writeStats = true
+writeStats = true
 
 [security.exec]
-  osEnv = ['.*']
+osEnv = ['.*']
 
 [[headers]]
-  for = "/*.jpg"
+for = "/*.jpg"
 
 [headers.values]
-  Cache-Control = "public, max-age=604800"
+Cache-Control = "public, max-age=604800"
 
 [[headers]]
-  for = "/*.png"
+for = "/*.png"
 
 [headers.values]
-  Cache-Control = "public, max-age=604800"
+Cache-Control = "public, max-age=604800"
 
 [[headers]]
-  for = "/*.css"
+for = "/*.css"
 
 [headers.values]
-  Cache-Control = "public, max-age=604800"
+Cache-Control = "public, max-age=604800"
 
 [[headers]]
-  for = "/*.js"
+for = "/*.js"
 
 [headers.values]
-  Cache-Control = "public, max-age=604800"
+Cache-Control = "public, max-age=604800"
 
 [[headers]]
-  for = "/webfonts/*"
+for = "/webfonts/*"
 
 [headers.values]
-  Cache-Control = "public, max-age=604800"
+Cache-Control = "public, max-age=604800"
 
 [[headers]]
-  for = "/*"
+for = "/*"
 
 [headers.values]
-  X-Frame-Options = "DENY"
-  X-XSS-Protection = "1; mode=block"
-  X-Content-Type-Options = "nosniff"
-  Referrer-Policy = "no-referrer"
-  Content-Security-Policy = "script-src 'self' 'unsafe-inline'"
+X-Frame-Options = "DENY"
+X-XSS-Protection = "1; mode=block"
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "no-referrer"
+Content-Security-Policy = "script-src 'self' 'unsafe-inline'"

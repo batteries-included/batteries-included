@@ -1,8 +1,0 @@
-deps/
-_build/
-cover/
-.elixir_ls
-assets/node_modules
-package-lock.json
-priv
-node_modules

@@ -1,22 +1,18 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
   - package-ecosystem: mix
-    directory: "/platform_umbrella"
+    directory: '/platform_umbrella'
     schedule:
       interval: daily
   - package-ecosystem: npm
-    directory: "/platform_umbrella/apps/control_server_web/assets"
+    directory: '/dev'
     schedule:
       interval: daily
   - package-ecosystem: npm
-    directory: "/platform_umbrella/apps/home_base_web/assets"
-    schedule:
-      interval: daily
-  - package-ecosystem: npm
-    directory: "/static"
+    directory: '/static'
     schedule:
       interval: daily

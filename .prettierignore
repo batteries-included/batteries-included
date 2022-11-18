@@ -1,0 +1,9 @@
+**/books/
+**/deps/
+**/_build/
+**/cover/
+**/apps/kube_resources/priv/
+.elixir_ls
+**/assets/node_modules
+**/package-lock.json
+**/ops/

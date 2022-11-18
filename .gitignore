@@ -5,3 +5,5 @@
 .netlify
 
 ops/aws/keys/
+
+node_modules

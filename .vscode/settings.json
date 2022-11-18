@@ -100,8 +100,5 @@
     "yaml",
     "elixir"
   ],
-  "githubIssues.ignoreUserCompletionTrigger": [
-    "python",
-    "elixir"
-  ]
+  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"]
 }

@@ -7,21 +7,27 @@
         {{ $image := resources.Get "images/logo.2.clip.png" }}
         {{ $image := $image | fingerprint }}
         {{ with $image }}
-        <img
-          width="{{ .Width }}" 
-          height="{{ .Height }}"
-          src="{{ .RelPermalink }}"
-          alt="Batteries Included"
-          class="w-auto h-8 m-1"
-        />
+          <img
+            width="{{ .Width }}"
+            height="{{ .Height }}"
+            src="{{ .RelPermalink }}"
+            alt="Batteries Included"
+            class="w-auto h-8 m-1"
+          />
         {{ end }}
 
       </a>
     </div>
     <div class="block ml-10 space-x-10">
-      <a href="/" class="font-medium text-gray-500 hover:text-gray-900">Product</a>
-      <a href="/#features" class="font-medium text-gray-500 hover:text-gray-900">Features</a>
-      <a href="/posts" class="font-medium text-gray-500 hover:text-gray-900">Posts</a>
+      <a href="/" class="font-medium text-gray-500 hover:text-gray-900"
+        >Product</a
+      >
+      <a href="/#features" class="font-medium text-gray-500 hover:text-gray-900"
+        >Features</a
+      >
+      <a href="/posts" class="font-medium text-gray-500 hover:text-gray-900"
+        >Posts</a
+      >
     </div>
   </div>
 </nav>

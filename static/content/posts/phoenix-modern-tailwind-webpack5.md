@@ -6,7 +6,10 @@ draft: false
 images: []
 ---
 
-Phoenix is a fantastic framework that we use and love at Batteries Included. We also really love tailwind CSS. So using both with the latest up-to-date software is essential to us. Below is a quick write-up on how we've modified the default phoenix install to use Webpack 5 and [TailwindCSS](https://tailwindcss.com/).
+Phoenix is a fantastic framework that we use and love at Batteries Included. We
+also really love tailwind CSS. So using both with the latest up-to-date software
+is essential to us. Below is a quick write-up on how we've modified the default
+phoenix install to use Webpack 5 and [TailwindCSS](https://tailwindcss.com/).
 
 # Starting Point
 
@@ -18,49 +21,65 @@ cd example_upgrade
 
 # Upgrade Versions
 
-Next, we need to get the js dependencies to be compatible with webpack5 and TailwindCSS. Some software will need updated versions, while others won't be compatible with newer Webpack, and others won't be useful with Tailwind.
+Next, we need to get the js dependencies to be compatible with webpack5 and
+TailwindCSS. Some software will need updated versions, while others won't be
+compatible with newer Webpack, and others won't be useful with Tailwind.
 
-Let's first remove the things that we're not going to use anymore. We're going to use Tailwind, which uses CSS and PostCSS for styling. Since sass has gone through several version upgrades and we're not going to rely on it actively, I'm going to remove it rather than ensuring that I don't break things.
+Let's first remove the things that we're not going to use anymore. We're going
+to use Tailwind, which uses CSS and PostCSS for styling. Since sass has gone
+through several version upgrades and we're not going to rely on it actively, I'm
+going to remove it rather than ensuring that I don't break things.
 
 ```bash
 cd assests
 npm remove sass-loader node-sass \
-    hard-source-webpack-plugin \
-    optimize-css-assets-webpack-plugin
+  hard-source-webpack-plugin \
+  optimize-css-assets-webpack-plugin
 ```
 
-Next, I want to upgrade all the Webpack things. Webpack 5 was a breaking change that will require some elixir code changes. First, let's upgrade. Here I'm going to use a utility and upgrade all the dependencies to know the latest versions. You can upgrade however you want.
+Next, I want to upgrade all the Webpack things. Webpack 5 was a breaking change
+that will require some elixir code changes. First, let's upgrade. Here I'm going
+to use a utility and upgrade all the dependencies to know the latest versions.
+You can upgrade however you want.
 
 ```bash
 npm i -g npm-check-updates
 ncu -u webpack webpack-cli terser-webpack-plugin \
-    css-loader copy-webpack-plugin \
-    babel-loader mini-css-extract-plugin \
-    "@babel/preset-env" "@babel/core"
+  css-loader copy-webpack-plugin \
+  babel-loader mini-css-extract-plugin \
+  "@babel/preset-env" "@babel/core"
 npm i
 ```
 
 # Add on Tailwind and PostCSS
 
-Before making changes to `webpack.config.js`, let's install the tailwind dependencies and build tools. These are all generating code in the final CSS so that they can be dev dependencies.
+Before making changes to `webpack.config.js`, let's install the tailwind
+dependencies and build tools. These are all generating code in the final CSS so
+that they can be dev dependencies.
 
 ```bash
 npm i tailwindcss @tailwindcss/typography \
-    autoprefixer postcss postcss-loader \
-    postcss-import css-minimizer-webpack-plugin --save-dev
+  autoprefixer postcss postcss-loader \
+  postcss-import css-minimizer-webpack-plugin --save-dev
 ```
 
 # Change Webpack Config
 
-`webpack.config.js` needs to be changed since we're drastically changing build versions and tools. First, terser became part of the build, and other CSS/js optimization plugins haven't been needed or updated for this version, so let's make the necessary changes.
+`webpack.config.js` needs to be changed since we're drastically changing build
+versions and tools. First, terser became part of the build, and other CSS/js
+optimization plugins haven't been needed or updated for this version, so let's
+make the necessary changes.
 
-For example, the setting `devtool` needs an updated in Webpack 5. That line becomes:
+For example, the setting `devtool` needs an updated in Webpack 5. That line
+becomes:
 
 ```js:webpack.config.js
 devtool: devMode ? 'source-map' : undefined,
 ```
 
-Terser became part of the main Webpack build. Since there's no longer a need to configure that and sourcemaps, we can significantly simplify the optimization setting.
+Terser became part of the main Webpack build. Since there's no longer a need to
+configure that and sourcemaps, we can significantly simplify the optimization
+setting.
 
 ```js:webpack.config.js
     optimization: {
@@ -68,7 +87,8 @@ Terser became part of the main Webpack build. Since there's no longer a need to 
     },
 ```
 
-We want to use post CSS and Tailwind; we'll need to change the module settings to include PostCSS and the file types we expect.
+We want to use post CSS and Tailwind; we'll need to change the module settings
+to include PostCSS and the file types we expect.
 
 For me, the CSS loader was configured like this previously:
 
@@ -94,7 +114,8 @@ For me, the CSS loader was configured like this previously:
     },
 ```
 
-We're not going to use sass, and we do want SVG and post sass. The end result for me is that the module rules become:
+We're not going to use sass, and we do want SVG and post sass. The end result
+for me is that the module rules become:
 
 ```js:webpack.config.js
     module: {
@@ -147,7 +168,8 @@ The plugins section and mode section need small tweaks becoming:
 
 # Finalize Changes
 
-`app.scss` needs to be `app.css` and we need to include Tailwind. We'll also need to clean up sass leftovers and renames.
+`app.scss` needs to be `app.css` and we need to include Tailwind. We'll also
+need to clean up sass leftovers and renames.
 
 ```bash
 # Move the file
@@ -157,15 +179,27 @@ mv css/app.scss css/app.css
 sed -i '/@import/d' css/app.css
 
 # Add the Tailwind imports
-echo "$(echo "@import 'tailwindcss/base'" ; cat css/app.css)" > css/app.css
-echo "$(echo "@import 'tailwindcss/components'" ; cat css/app.css)" > css/app.css
-echo "$(echo "@import 'tailwindcss/utilities'" ; cat css/app.css)" > css/app.css
+echo "$(
+  echo "@import 'tailwindcss/base'"
+  cat css/app.css
+)" > css/app.css
+echo "$(
+  echo "@import 'tailwindcss/components'"
+  cat css/app.css
+)" > css/app.css
+echo "$(
+  echo "@import 'tailwindcss/utilities'"
+  cat css/app.css
+)" > css/app.css
 
 # Reflect the new name in the js
 sed -i 's/scss/css/g' js/app.js
 ```
 
-Also, add the `NODE_ENV` environment variable when building the production version of our style and javascript assets. We'll need to change the scripts field in the `package.json` file to do all of this. That will end up looking like this:
+Also, add the `NODE_ENV` environment variable when building the production
+version of our style and javascript assets. We'll need to change the scripts
+field in the `package.json` file to do all of this. That will end up looking
+like this:
 
 ```js:package.json
   "scripts": {
@@ -176,7 +210,8 @@ Also, add the `NODE_ENV` environment variable when building the production versi
 
 # PostCSS and Tailwind
 
-Tailwind and PostCSS both need some configs. Let us create those. For PostCSS I am going to add `assets/postcss.config.js` that looks like this:
+Tailwind and PostCSS both need some configs. Let us create those. For PostCSS I
+am going to add `assets/postcss.config.js` that looks like this:
 
 ```js:postcss.config.js
 module.exports = {
@@ -188,7 +223,8 @@ module.exports = {
 };
 ```
 
-Then for Tailwind, I'm going to add a file `assets/tailwind.config.js` that should look like:
+Then for Tailwind, I'm going to add a file `assets/tailwind.config.js` that
+should look like:
 
 ```js:tailwind.config.js
 const typography = require("@tailwindcss/typography");
@@ -208,11 +244,14 @@ module.exports = {
 };
 ```
 
-The above code sets the defaults; You can add your colors or add other tailwind plugins as you see fit. This config does use the tailwind jit, which we've found to be faster but a little prone to missing a new class being added.
+The above code sets the defaults; You can add your colors or add other tailwind
+plugins as you see fit. This config does use the tailwind jit, which we've found
+to be faster but a little prone to missing a new class being added.
 
 # Building
 
-That should be good enough to get everything builds. Check that by running the production build.
+That should be good enough to get everything builds. Check that by running the
+production build.
 
 ```bash
 npm run deploy
@@ -222,9 +261,12 @@ If that works then we're all good to go for the next steps.
 
 # Dev Server STDIN
 
-Webpack changed the command line arguments for its watch and compile mode. That feature is used during development, and we're going to need to make changes to the Phoenix endpoint in dev.
+Webpack changed the command line arguments for its watch and compile mode. That
+feature is used during development, and we're going to need to make changes to
+the Phoenix endpoint in dev.
 
-Currently, there should be a config in `config/dev.exs` inside there is a key for configuring the static watchers.
+Currently, there should be a config in `config/dev.exs` inside there is a key
+for configuring the static watchers.
 
 ## Before:
 
@@ -264,8 +306,13 @@ config :example_upgrade, ExampleUpgradeWeb.Endpoint,
   ]
 ```
 
-Notice how `mode` is now equal to development, and we're watching and watching options-stdin the changes are subtle but essential.
+Notice how `mode` is now equal to development, and we're watching and watching
+options-stdin the changes are subtle but essential.
 
 # Done
 
-With everything all done, you should be good to go. Webpack 5 should be running and integrated with phoenix. TailwindCSS should be usable and purged if unused. We've put the result of the upgrade up in a repository here: [example_phoenix](https://github.com/batteries-included/example_phoenix). Each commit should be one step in the process above.
+With everything all done, you should be good to go. Webpack 5 should be running
+and integrated with phoenix. TailwindCSS should be usable and purged if unused.
+We've put the result of the upgrade up in a repository here:
+[example_phoenix](https://github.com/batteries-included/example_phoenix). Each
+commit should be one step in the process above.
