@@ -32,6 +32,7 @@ defmodule CLI.Command do
     |> then(fn module -> module.run(command_key, parse_result) end)
   end
 
+  @dialyzer {:nowarn_function, run: 1}
   def run(_parsed) do
     new!() |> Optimus.help() |> IO.puts()
   end

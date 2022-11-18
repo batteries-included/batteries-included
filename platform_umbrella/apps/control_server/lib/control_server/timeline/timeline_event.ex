@@ -1,16 +1,17 @@
 defmodule ControlServer.Timeline.TimelineEvent do
-  use TypedEctoSchema
+  use Ecto.Schema
+
   import Ecto.Changeset
   import PolymorphicEmbed
+
   alias ControlServer.Timeline.BatteryInstall
   alias ControlServer.Timeline.Kube
   alias ControlServer.Timeline.NamedDatabase
 
   @timestamps_opts [type: :utc_datetime_usec]
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  typed_schema "timeline_events" do
+  schema "timeline_events" do
     field :level, Ecto.Enum,
       values: [
         :info,
@@ -28,6 +29,15 @@ defmodule ControlServer.Timeline.TimelineEvent do
 
     timestamps()
   end
+
+  @type t() :: %__MODULE__{
+          __meta__: Ecto.Schema.Metadata.t(),
+          id: binary() | nil,
+          level: (:info | :error) | nil,
+          payload: BatteryInstall.t() | Kube.t() | NamedDatabase.t(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   @doc false
   def changeset(timeline_event, attrs) do

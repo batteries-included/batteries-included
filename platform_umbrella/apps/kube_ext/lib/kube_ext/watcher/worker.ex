@@ -62,14 +62,19 @@ defmodule KubeExt.Watcher.Worker do
   end
 
   @impl GenServer
-  def handle_info(:watch, %State{resource_version: curr_rv} = state) do
-    rv = curr_rv || Core.get_resource_version(state)
+  def handle_info(:watch, %State{resource_version: nil} = state) do
+    rv = Core.get_resource_version(state)
     state = %{state | resource_version: rv}
 
-    if is_first_watch(curr_rv, rv) do
-      _res = Core.get_before(state)
+    if rv != nil do
+      Core.get_before(state)
     end
 
+    {:noreply, do_watch(state)}
+  end
+
+  @impl GenServer
+  def handle_info(:watch, %State{resource_version: _curr_rv} = state) do
     {:noreply, do_watch(state)}
   end
 
@@ -148,6 +153,4 @@ defmodule KubeExt.Watcher.Worker do
   def handle_info(_other, %State{} = state) do
     {:noreply, state}
   end
-
-  defp is_first_watch(previous_rv, new_rv), do: previous_rv == nil && new_rv != nil
 end

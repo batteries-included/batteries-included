@@ -72,11 +72,13 @@ defmodule KubeExt.Watcher.Core do
 
     case result do
       {:ok, resources} ->
-        _ = async_run(resources, measurements, state)
+        :ok = async_run(resources, measurements, state)
+        :ok
 
       {:error, error} ->
         metadata = Map.put(metadata, :error, error)
         Event.watcher_first_resource_failed(measurements, metadata)
+        :error
     end
   end
 
@@ -93,26 +95,29 @@ defmodule KubeExt.Watcher.Core do
   defp async_run(resources, measurements, %State{watcher: watcher, resource_version: rv} = state) do
     metadata = State.metadata(state)
 
-    resources
-    |> Enum.map(fn
-      resource when is_map(resource) ->
-        Event.watcher_fetch_succeeded(measurements, metadata)
+    _results =
+      resources
+      |> Enum.map(fn
+        resource when is_map(resource) ->
+          Event.watcher_fetch_succeeded(measurements, metadata)
 
-        case is_before(resource, rv) do
-          true ->
-            do_dispatch(watcher, :add, [resource, state])
+          case is_before(resource, rv) do
+            true ->
+              do_dispatch(watcher, :add, [resource, state])
 
-          _false ->
-            nil
-        end
+            _false ->
+              nil
+          end
 
-      {:error, error} ->
-        metadata = Map.put(metadata, :error, error)
-        Event.watcher_fetch_failed(measurements, metadata)
-        nil
-    end)
-    |> Enum.filter(fn r -> r != nil end)
-    |> Task.await_many()
+        {:error, error} ->
+          metadata = Map.put(metadata, :error, error)
+          Event.watcher_fetch_failed(measurements, metadata)
+          nil
+      end)
+      |> Enum.filter(fn r -> r != nil end)
+      |> Task.await_many()
+
+    :ok
   end
 
   @doc """

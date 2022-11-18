@@ -1,5 +1,6 @@
 defmodule ControlServer.Batteries.SystemBattery do
-  use TypedEctoSchema
+  use Ecto.Schema
+
   import Ecto.Changeset
   import PolymorphicEmbed
 
@@ -77,7 +78,7 @@ defmodule ControlServer.Batteries.SystemBattery do
   @derive {Jason.Encoder, except: [:__meta__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  typed_schema "system_batteries" do
+  schema "system_batteries" do
     field(:group, Ecto.Enum,
       values: [
         :data,
@@ -91,13 +92,20 @@ defmodule ControlServer.Batteries.SystemBattery do
 
     field(:type, Ecto.Enum, values: Keyword.keys(@possible_types))
 
-    polymorphic_embeds_one(:config,
-      types: @possible_types,
-      on_replace: :update
-    )
+    polymorphic_embeds_one(:config, types: @possible_types, on_replace: :update)
 
     timestamps()
   end
+
+  @type t() :: %__MODULE__{
+          __meta__: Ecto.Schema.Metadata.t(),
+          id: binary() | nil,
+          group: (:data | :devtools | :magic | :ml | :monitoring | :net_sec) | nil,
+          type: atom(),
+          config: map(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   @doc false
   def changeset(system_battery, attrs) do
