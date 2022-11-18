@@ -23,10 +23,12 @@ defmodule CommonUI.Button do
       class={
         build_class([
           "relative inline-flex items-center justify-center",
-          "p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium",
-          "text-gray-900 rounded-lg group",
-          "bg-gradient-to-br from-primary-600 to-secondary-500",
-          "group-hover:from-secondary-500 group-hover:to-primary-600 group-hover:text-white hover:text-white",
+          "p-0.5 mb-2 mr-2 rounded-lg overflow-hidden",
+          "text-sm font-medium text-gray-900",
+          "transition-all ease-in-out duration-300 hover:scale-110",
+          "bg-gradient-to-br from-primary-500 to-secondary-500",
+          "group/button",
+          "hover:bg-gradient-to-r hover:text-white",
           "focus:ring-5 focus:outline-none focus:ring-blue-300",
           @class
         ])
@@ -36,8 +38,8 @@ defmodule CommonUI.Button do
     >
       <span class={[
         "relative px-5 py-2.5 transition-all",
-        "ease-in duration-200 bg-white rounded-md",
-        "group-hover:bg-opacity-0"
+        "ease-in-out duration-300 bg-white rounded-md",
+        "group-hover/button:bg-opacity-0"
       ]}>
         <%= render_slot(@inner_block) %>
       </span>
