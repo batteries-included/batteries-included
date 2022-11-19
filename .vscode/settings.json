@@ -1,5 +1,5 @@
 {
-  "elixirLS.projectDir": "platform_umbrella",
+  "elixirLS.projectDir": "platform_umbrella/",
   "[elixir]": {
     "editor.wordBasedSuggestions": false,
     "editor.acceptSuggestionOnEnter": "on",
@@ -100,5 +100,7 @@
     "yaml",
     "elixir"
   ],
-  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"]
+  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"],
+  "elixirLS.enableTestLenses": true,
+  "elixirLS.fetchDeps": true
 }
