@@ -56,10 +56,11 @@ defmodule CommonUI.Form do
   attr :name, :any
   attr :label, :string
 
-  attr :type, :string,
+  attr(:type, :string,
     default: "text",
     doc:
       ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range|
+  )
 
   attr :value, :any
   attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
@@ -70,10 +71,11 @@ defmodule CommonUI.Form do
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
-  attr :rest, :global,
+  attr(:rest, :global,
     doc: "the arbitrary HTML attributes for the input tag",
     include:
       ~w(autocomplete checked disabled form max maxlength min minlength pattern placeholder readonly required size step)
+  )
 
   slot :inner_block
 
@@ -162,7 +164,7 @@ defmodule CommonUI.Form do
         class={[
           input_border(@errors),
           "border-gray-300 focus:border-primary-500",
-          "focus:ring-primary-500 dark:border-gray-600",
+          "focus:ring-primary-300 dark:border-gray-600",
           "dark:focus:border-primary-500 w-full"
         ]}
         {@rest}
@@ -187,7 +189,7 @@ defmodule CommonUI.Form do
           "w-full text-base text-gray-900 bg-white rounded-lg border-1 border-gray-300",
           "appearance-none",
           "dark:text-white dark:border-gray-600 dark:focus:border-primary-500",
-          "focus:outline-none focus:ring-0 focus:border-primary-600 peer"
+          "focus:outline-none focus:ring-0 focus:border-pink-300 peer"
         ]}
         {@rest}
       />
@@ -202,7 +204,7 @@ defmodule CommonUI.Form do
 
   defp input_border([] = _errors),
     do:
-      "border-primary-400 focus:border-primary-600 focus:ring-primary-800 focus:ring-16 focus:ring-inset"
+      "border-primary-400 focus:border-primary-600 focus:ring-pink-300 focus:ring-4 focus:ring-inset"
 
   defp input_border([_ | _] = _errors),
     do:
@@ -239,7 +241,14 @@ defmodule CommonUI.Form do
   def peer_toggle(assigns) do
     ~H"""
     <div class={[
-      "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-secondary-300 dark:peer-focus:ring-secondary-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-secondary-600"
+      "w-11 h-6 bg-gray-200 rounded-full ",
+      "peer peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800",
+      "dark:bg-gray-700 peer-checked:after:translate-x-full",
+      "peer-checked:after:border-white",
+      "after:content-['']",
+      "after:absolute after:top-0.5 after:left-[2px]",
+      "after:bg-white",
+      "after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-secondary-600"
     ]}>
     </div>
     """

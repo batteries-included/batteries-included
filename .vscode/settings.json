@@ -1,72 +1,62 @@
 {
-  "elixirLS.projectDir": "platform_umbrella/",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.insertFinalNewline": true,
+  "editor.tabSize": 2,
+  "prettier.proseWrap": "always",
+  "prettier.singleQuote": true,
+  "prettier.prettierPath": "./dev/node_modules/prettier",
+  "prettier.bracketSameLine": true,
+  "elixirLS.projectDir": "./platform_umbrella",
+  "elixirLS.enableTestLenses": true,
+  "elixirLS.fetchDeps": true,
+  "emmet.includeLanguages": {
+    "phoenix-heex": "html",
+    "html-eex": "html",
+    "elixir": "html"
+  },
+  "tailwindCSS.includeLanguages": {
+    "phoenix-heex": "html",
+    "html-eex": "html",
+    "elixir": "html"
+  },
   "[elixir]": {
-    "editor.wordBasedSuggestions": false,
-    "editor.acceptSuggestionOnEnter": "on",
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
-  "emmet.includeLanguages": {
-    "html-eex": "html"
+  "[phoenix-heex]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
-  "files.associations": {
-    "*.eex": "html-eex",
-    "*.leex": "html-eex",
-    "*.ex": "elixir",
-    "*.sface": "elixir"
+  "[html-eex]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[json]": {
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[scss]": {
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.wordWrap": "bounded",
     "editor.wordWrapColumn": 80
   },
   "[mdx]": {
+    "editor.formatOnSave": true,
     "editor.wordWrap": "bounded",
     "editor.wordWrapColumn": 80
-  },
-  "[html-eex]": {
-    "breadcrumbs.showEvents": true,
-    "editor.trimAutoWhitespace": false,
-    "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true
-  },
-  "prettier.requireConfig": false,
-  "prettier.prettierPath": "./static_pages/node_modules/prettier",
-  "editor.codeActionsOnSave": {
-    "source.fixAll": true
-  },
-  "cSpell.words": [
-    "Alertmanager",
-    "Grafana",
-    "Juypter",
-    "Kube",
-    "Logstash",
-    "Pytorch",
-    "alpinejs",
-    "autogenerate",
-    "csrf",
-    "datetime",
-    "kubernetes",
-    "noreply",
-    "topbar"
-  ],
-  "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
   },
   "files.exclude": {
     "**/.git": true,
@@ -74,13 +64,13 @@
   },
   "search.exclude": {
     "**/node_modules": true,
-    "platform_umbrella/deps": true
+    "**/deps": true
   },
   "files.watcherExclude": {
     "**/.git/**": true,
     "**/node_modules/**": true,
     "**/_build/**": true,
-    "platform_umbrella/deps/**": true
+    "**/deps/**": true
   },
   "githubIssues.ignoreCompletionTrigger": [
     "coffeescript",
@@ -100,7 +90,5 @@
     "yaml",
     "elixir"
   ],
-  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"],
-  "elixirLS.enableTestLenses": true,
-  "elixirLS.fetchDeps": true
+  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"]
 }

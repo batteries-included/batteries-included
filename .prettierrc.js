@@ -3,6 +3,8 @@ module.exports = {
   singleQuote: true,
   trailingComma: 'es5',
   proseWrap: 'always',
+  bracketSameLine: true,
+  tabWidth: 2,
   overrides: [
     {
       files: ['static/**/*.html'],
