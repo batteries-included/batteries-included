@@ -27,7 +27,13 @@ defmodule CommonUI.CSSHelpers do
   defp join_list_cleanly([nil], _joiner, acc), do: acc
 
   # the final join
-  defp join_list_cleanly([value], _joiner, acc), do: [to_string(value) | acc]
+
+  # if the final join is a list then just restart the joining with that list
+  defp join_list_cleanly([value], joiner, acc) when is_list(value),
+    do: join_list_cleanly(value, joiner, acc)
+
+  # If the final value is anything else cast it to a string and trim it
+  defp join_list_cleanly([value], _joiner, acc), do: [to_trimmed_string(value) | acc]
 
   # ignore an empty string along the way
   defp join_list_cleanly(["" | rest], joiner, acc) do
@@ -42,6 +48,13 @@ defmodule CommonUI.CSSHelpers do
   # ignore false along the way
   defp join_list_cleanly([false | rest], joiner, acc) do
     join_list_cleanly(rest, joiner, acc)
+  end
+
+  # If the value is a list then treat is a coming before the rest of the values.
+  defp join_list_cleanly([value | rest], joiner, acc) when is_list(value) do
+    value
+    |> Enum.concat(rest)
+    |> join_list_cleanly(joiner, acc)
   end
 
   # The default case
