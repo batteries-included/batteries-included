@@ -15,7 +15,7 @@ defmodule KubeResources.RawCluster do
 
   def spec_databases(%{} = cluster) do
     cluster
-    |> Map.get(:clusters, [])
+    |> Map.get(:databases, [])
     |> Enum.map(fn c -> {c.name, c.owner} end)
     |> Map.new()
   end
