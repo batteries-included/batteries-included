@@ -619,7 +619,7 @@ defmodule Mix.Tasks.Gen.Resource do
     pipe(
       pipeline,
       quote do
-        B.app_labels(@app)
+        B.app_labels(@app_name)
       end
     )
   end
@@ -801,7 +801,7 @@ defmodule Mix.Tasks.Gen.Resource do
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
 
-        @app unquote(app_name)
+        @app_name unquote(app_name)
 
         unquote_splicing(Map.values(methods))
       end
@@ -827,7 +827,7 @@ defmodule Mix.Tasks.Gen.Resource do
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
 
-        @app unquote(app_name)
+        @app_name unquote(app_name)
 
         unquote_splicing(sorted_methods)
       end

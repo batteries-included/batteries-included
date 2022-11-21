@@ -13,6 +13,7 @@ defmodule KubeExt.Defaults.Images do
 
   def harbor_core_image, do: "goharbor/harbor-core:v2.6.2"
   def harbor_portal_image, do: "goharbor/harbor-portal:v2.6.2"
+  def harbor_exporter_image, do: "goharbor/harbor-exporter:v2.6.2"
   def harbor_jobservice_image, do: "goharbor/harbor-jobservice:v2.6.2"
   def harbor_photon_image, do: "goharbor/registry-photon:v2.6.2"
   def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.6.2"

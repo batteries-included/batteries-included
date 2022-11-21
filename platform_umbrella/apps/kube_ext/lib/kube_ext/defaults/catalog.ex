@@ -274,6 +274,7 @@ defmodule KubeExt.Defaults.Catalog do
       photon_image: Images.harbor_photon_image(),
       portal_image: Images.harbor_portal_image(),
       trivy_adapter_image: Images.harbor_trivy_adapter_image(),
+      exporter_image: Images.harbor_exporter_image(),
       csrf_key: Defaults.random_key_string(32),
       harbor_admin_password: Defaults.random_key_string(16),
       secret: Defaults.random_key_string(),

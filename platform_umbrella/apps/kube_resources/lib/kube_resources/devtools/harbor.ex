@@ -1,42 +1,34 @@
 defmodule KubeResources.Harbor do
-  @moduledoc false
-  use KubeExt.IncludeResource, nginx_conf: "priv/raw_files/harbor/nginx.conf"
+  use KubeExt.IncludeResource,
+    no_proxy: "priv/raw_files/harbor/NO_PROXY",
+    jobservice_config_yml: "priv/raw_files/harbor/jobservice_config.yml",
+    registry_config_yml: "priv/raw_files/harbor/registry_config.yml",
+    nginx_conf: "priv/raw_files/harbor/nginx.conf",
+    tls_crt: "priv/raw_files/harbor/tls.crt",
+    tls_key: "priv/raw_files/harbor/tls.key"
+
   use KubeExt.ResourceGenerator
 
   import KubeExt.SystemState.Namespaces
   import KubeExt.SystemState.Hosts
 
-  alias KubeExt.KubeState
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret
-  alias KubeState.Hosts
+  alias KubeExt.KubeState.Hosts
 
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
 
-  alias Ymlr.Encoder, as: YamlEncoder
-
   @app_name "harbor"
-
-  @core_secret "harbor-core"
-  @jobservice_secret "harbor-jobservice"
-  @registry_secret "harbor-registry"
-  @registry_htpasswd_secret "harbor-registry-htpasswd"
-  @registryctl_secret "harbor-registryctl"
-  @trivy_secret "harbor-trivy"
-
-  @core_config "harbor-core"
-
   @postgres_credentials "harbor.pg-harbor.credentials.postgresql.acid.zalan.do"
 
   def view_url, do: view_url(KubeExt.cluster_type())
 
-  # TODO: Figure out if we can mount the virtual service a few times.
   def view_url(:dev), do: url()
 
   def view_url(_), do: url()
 
-  def url, do: "//#{Hosts.harbor_host()}"
+  def url, do: "http://#{Hosts.harbor_host()}"
 
   resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
@@ -59,624 +51,414 @@ defmodule KubeResources.Harbor do
     )
   end
 
-  defp build_secret(name, namespace, data) do
-    B.build_resource(:secret)
-    |> B.name(name)
-    |> B.app_labels(@app_name)
-    |> B.namespace(namespace)
-    |> B.data(Secret.encode(data))
-  end
-
-  resource(:secret, _battery, state) do
+  resource(:config_map_core, _battery, state) do
     namespace = core_namespace(state)
 
-    data = %{
-      "CSRF_KEY" => "nSwN8m7nun4jCiMjwesQtp3hhWxfYdPW",
-      "HARBOR_ADMIN_PASSWORD" => "BatteryHarbor12345",
-      "REGISTRY_CREDENTIAL_PASSWORD" => "harbor_registry_password",
-      "secret" => "lUSSxLWl07Z4AaG4",
-      "secretKey" => "not-a-secure-key-really",
-      "tls.crt" => "",
-      "tls.key" => ""
-    }
-
-    build_secret(@core_secret, namespace, data)
-  end
-
-  resource(:secret_1, _battery, state) do
-    namespace = core_namespace(state)
-
-    data = %{
-      "JOBSERVICE_SECRET" => "dzWy6TktiYJ3BKu2",
-      "REGISTRY_CREDENTIAL_PASSWORD" => "harbor_registry_password"
-    }
-
-    build_secret(@jobservice_secret, namespace, data)
-  end
-
-  resource(:secret_2, _battery, state) do
-    namespace = core_namespace(state)
-    data = %{"REGISTRY_HTTP_SECRET" => "Jjk0Ig28EsLo6w6V", "REGISTRY_REDIS_PASSWORD" => ""}
-
-    build_secret(@registry_secret, namespace, data)
-  end
-
-  resource(:secret_3, _battery, state) do
-    namespace = core_namespace(state)
-
-    data = %{
-      "REGISTRY_HTPASSWD" =>
-        "harbor_registry_user:$2a$10$54x05QL8nPjsMm/pXovCme2E1dJpbFadO8FL2WuPkCCuUKk8iKJGW"
-    }
-
-    build_secret(@registry_htpasswd_secret, namespace, data)
-  end
-
-  resource(:secret_4, _battery, state) do
-    namespace = core_namespace(state)
-
-    B.build_resource(:secret)
-    |> B.name(@registryctl_secret)
-    |> B.app_labels(@app_name)
-    |> B.namespace(namespace)
-  end
-
-  resource(:secret_5, _battery, state) do
-    namespace = core_namespace(state)
-
-    data = %{
-      "gitHubToken" => "",
-      "redisURL" => "redis+sentinel://rfs-harbor:26379/mymaster/5?idle_timeout_seconds=30"
-    }
-
-    build_secret(@trivy_secret, namespace, data)
-  end
-
-  resource(:config_map, _battery, state) do
-    namespace = core_namespace(state)
-
-    data = %{
-      "CHART_CACHE_DRIVER" => "redis",
-      "CHART_REPOSITORY_URL" => "http://harbor-chartmuseum",
-      "CONFIG_PATH" => "/etc/core/app.conf",
-      "CORE_LOCAL_URL" => "http://127.0.0.1:8080",
-      "CORE_URL" => "http://harbor-core:80",
-      "DATABASE_TYPE" => "postgresql",
-      "EXT_ENDPOINT" => "http://core.harbor.domain",
-      "HTTPS_PROXY" => "",
-      "HTTP_PROXY" => "",
-      "JOBSERVICE_URL" => "http://harbor-jobservice",
-      "LOG_LEVEL" => "info",
-      "NOTARY_URL" => "http://harbor-notary-server:4443",
-      "NO_PROXY" =>
-        "harbor-core,harbor-jobservice,harbor-database,harbor-chartmuseum,harbor-notary-server,harbor-notary-signer,harbor-registry,harbor-portal,harbor-trivy,harbor-exporter,127.0.0.1,localhost,.local,.internal",
-      "PERMITTED_REGISTRY_TYPES_FOR_PROXY_CACHE" =>
-        "docker-hub,harbor,azure-acr,aws-ecr,google-gcr,quay,docker-registry",
-      "PORT" => "8080",
-      "PORTAL_URL" => "http://harbor-portal",
-      "POSTGRESQL_DATABASE" => "harbor",
-      "POSTGRESQL_HOST" => "pg-harbor",
-      "POSTGRESQL_MAX_IDLE_CONNS" => "100",
-      "POSTGRESQL_MAX_OPEN_CONNS" => "900",
-      "POSTGRESQL_PORT" => "5432",
-      "POSTGRESQL_SSLMODE" => "require",
-      "POSTGRESQL_USERNAME" => "harbor",
-      "REGISTRY_CONTROLLER_URL" => "http://harbor-registry:8080",
-      "REGISTRY_CREDENTIAL_USERNAME" => "harbor_registry_user",
-      "REGISTRY_STORAGE_PROVIDER_NAME" => "filesystem",
-      "REGISTRY_URL" => "http://harbor-registry:5000",
-      "TOKEN_SERVICE_URL" => "http://harbor-core:80/service/token",
-      "TRIVY_ADAPTER_URL" => "http://harbor-trivy:8080",
-      "WITH_CHARTMUSEUM" => "false",
-      "WITH_NOTARY" => "false",
-      "WITH_TRIVY" => "true",
-      "_REDIS_URL_CORE" => "redis+sentinel://rfs-harbor:26379/mymaster/0?idle_timeout_seconds=30",
-      "_REDIS_URL_REG" => "redis+sentinel://rfs-harbor:26379/mymaster/2?idle_timeout_seconds=30",
-      "app.conf" =>
+    data =
+      %{}
+      |> Map.put("CONFIG_PATH", "/etc/core/app.conf")
+      |> Map.put("EXT_ENDPOINT", "http://#{harbor_host(state)}")
+      |> Map.put("REGISTRY_STORAGE_PROVIDER_NAME", "filesystem")
+      |> Map.put(
+        "_REDIS_URL_CORE",
+        "redis+sentinel://rfs-harbor:26379/mymaster/0?idle_timeout_seconds=30"
+      )
+      |> Map.put("CHART_REPOSITORY_URL", "http://harbor-chartmuseum")
+      |> Map.put("METRIC_NAMESPACE", "harbor")
+      |> Map.put("JOBSERVICE_URL", "http://harbor-jobservice")
+      |> Map.put("METRIC_PATH", "/metrics")
+      |> Map.put(
+        "PERMITTED_REGISTRY_TYPES_FOR_PROXY_CACHE",
+        "docker-hub,harbor,azure-acr,aws-ecr,google-gcr,quay,docker-registry"
+      )
+      |> Map.put("HTTPS_PROXY", "")
+      |> Map.put("CORE_LOCAL_URL", "http://127.0.0.1:8080")
+      |> Map.put("WITH_CHARTMUSEUM", "false")
+      |> Map.put("DATABASE_TYPE", "postgresql")
+      |> Map.put("POSTGRESQL_DATABASE", "registry")
+      |> Map.put("POSTGRESQL_MAX_IDLE_CONNS", "100")
+      |> Map.put("POSTGRESQL_PORT", "5432")
+      |> Map.put("POSTGRESQL_HOST", "pg-harbor")
+      |> Map.put("POSTGRESQL_SSLMODE", "require")
+      |> Map.put("POSTGRESQL_MAX_OPEN_CONNS", "900")
+      |> Map.put("REGISTRY_URL", "http://harbor-registry:5000")
+      |> Map.put("HTTP_PROXY", "")
+      |> Map.put("LOG_LEVEL", "info")
+      |> Map.put("TOKEN_SERVICE_URL", "http://harbor-core:80/service/token")
+      |> Map.put("REGISTRY_CONTROLLER_URL", "http://harbor-registry:8080")
+      |> Map.put("METRIC_ENABLE", "true")
+      |> Map.put(
+        "_REDIS_URL_REG",
+        "redis+sentinel://rfs-harbor:26379/mymaster/2?idle_timeout_seconds=30"
+      )
+      |> Map.put("WITH_TRIVY", "true")
+      |> Map.put("TRIVY_ADAPTER_URL", "http://harbor-trivy:8080")
+      |> Map.put(
+        "app.conf",
         "appname = Harbor\nrunmode = prod\nenablegzip = true\n\n[prod]\nhttpport = 8080\n"
-    }
+      )
+      |> Map.put("WITH_NOTARY", "false")
+      |> Map.put("CHART_CACHE_DRIVER", "redis")
+      |> Map.put("CORE_URL", "http://harbor-core:80")
+      |> Map.put("METRIC_PORT", "8001")
+      |> Map.put("METRIC_SUBSYSTEM", "core")
+      |> Map.put("PORTAL_URL", "http://harbor-portal")
+      |> Map.put("PORT", "8080")
+      |> Map.put("REGISTRY_CREDENTIAL_USERNAME", "harbor_registry_user")
+      |> Map.put("NOTARY_URL", "http://harbor-notary-server:4443")
+      |> Map.put("NO_PROXY", get_resource(:no_proxy))
 
     B.build_resource(:config_map)
-    |> B.name(@core_config)
-    |> B.app_labels(@app_name)
+    |> B.name("harbor-core")
     |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
-  resource(:config_map_1, _battery, state) do
+  resource(:config_map_exporter_env, _battery, state) do
     namespace = core_namespace(state)
 
-    data = %{
-      "CORE_URL" => "http://harbor-core:80",
-      "HTTPS_PROXY" => "",
-      "HTTP_PROXY" => "",
-      "NO_PROXY" =>
-        "harbor-core,harbor-jobservice,harbor-database,harbor-chartmuseum,harbor-notary-server,harbor-notary-signer,harbor-registry,harbor-portal,harbor-trivy,harbor-exporter,127.0.0.1,localhost,.local,.internal",
-      "REGISTRY_CONTROLLER_URL" => "http://harbor-registry:8080",
-      "REGISTRY_CREDENTIAL_USERNAME" => "harbor_registry_user",
-      "REGISTRY_URL" => "http://harbor-registry:5000",
-      "TOKEN_SERVICE_URL" => "http://harbor-core:80/service/token"
-    }
+    data =
+      %{}
+      |> Map.put("HARBOR_DATABASE_DBNAME", "registry")
+      |> Map.put("HARBOR_DATABASE_HOST", "pg-harbor")
+      |> Map.put("HARBOR_DATABASE_MAX_IDLE_CONNS", "100")
+      |> Map.put("HARBOR_DATABASE_MAX_OPEN_CONNS", "900")
+      |> Map.put("HARBOR_DATABASE_PORT", "5432")
+      |> Map.put("HARBOR_DATABASE_SSLMODE", "require")
+      |> Map.put("HARBOR_EXPORTER_CACHE_CLEAN_INTERVAL", "14400")
+      |> Map.put("HARBOR_EXPORTER_CACHE_TIME", "23")
+      |> Map.put("HARBOR_EXPORTER_METRICS_ENABLED", "true")
+      |> Map.put("HARBOR_EXPORTER_METRICS_PATH", "/metrics")
+      |> Map.put("HARBOR_EXPORTER_PORT", "8001")
+      |> Map.put("HARBOR_METRIC_NAMESPACE", "harbor")
+      |> Map.put("HARBOR_METRIC_SUBSYSTEM", "exporter")
+      |> Map.put("HARBOR_REDIS_NAMESPACE", "harbor_job_service_namespace")
+      |> Map.put("HARBOR_REDIS_TIMEOUT", "3600")
+      |> Map.put("HARBOR_REDIS_URL", "redis+sentinel://rfs-harbor:26379/mymaster/1")
+      |> Map.put("HARBOR_SERVICE_HOST", "harbor-core")
+      |> Map.put("HARBOR_SERVICE_PORT", "80")
+      |> Map.put("HARBOR_SERVICE_SCHEME", "http")
+      |> Map.put("HTTPS_PROXY", "")
+      |> Map.put("HTTP_PROXY", "")
+      |> Map.put("LOG_LEVEL", "debug")
+      |> Map.put("NO_PROXY", get_resource(:no_proxy))
 
     B.build_resource(:config_map)
-    |> B.name("harbor-jobservice-env")
-    |> B.app_labels(@app_name)
+    |> B.name("harbor-exporter-env")
     |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
-  resource(:config_map_2, _battery, state) do
+  resource(:config_map_jobservice, _battery, state) do
     namespace = core_namespace(state)
-
-    data = %{
-      "config.yml" => jobservice_config_yml()
-    }
+    data = %{"config.yml" => get_resource(:jobservice_config_yml)}
 
     B.build_resource(:config_map)
     |> B.name("harbor-jobservice")
-    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
-  defp jobservice_config_yml do
-    config = %{
-      "job_loggers" => [
-        %{
-          "level" => "INFO",
-          "name" => "FILE",
-          "settings" => %{"base_dir" => "/var/log/jobs"},
-          "sweeper" => %{
-            "duration" => 14,
-            "settings" => %{"work_dir" => "/var/log/jobs"}
-          }
-        }
-      ],
-      "loggers" => [%{"level" => "INFO", "name" => "STD_OUTPUT"}],
-      "metric" => %{"enabled" => false, "path" => "/metrics", "port" => 8001},
-      "port" => 8080,
-      "protocol" => "http",
-      "worker_pool" => %{
-        "backend" => "redis",
-        "redis_pool" => %{
-          "idle_timeout_second" => 3600,
-          "namespace" => "harbor_job_service_namespace",
-          "redis_url" => "redis+sentinel://rfs-harbor:26379/mymaster/1"
-        },
-        "workers" => 10
-      }
-    }
-
-    YamlEncoder.to_s!(config)
-  end
-
-  resource(:config_map_3, _battery, state) do
+  resource(:config_map_jobservice_env, _battery, state) do
     namespace = core_namespace(state)
 
+    data =
+      %{}
+      |> Map.put("CORE_URL", "http://harbor-core:80")
+      |> Map.put("HTTPS_PROXY", "")
+      |> Map.put("HTTP_PROXY", "")
+      |> Map.put("METRIC_NAMESPACE", "harbor")
+      |> Map.put("METRIC_SUBSYSTEM", "jobservice")
+      |> Map.put("REGISTRY_CONTROLLER_URL", "http://harbor-registry:8080")
+      |> Map.put("REGISTRY_CREDENTIAL_USERNAME", "harbor_registry_user")
+      |> Map.put("REGISTRY_URL", "http://harbor-registry:5000")
+      |> Map.put("TOKEN_SERVICE_URL", "http://harbor-core:80/service/token")
+      |> Map.put("NO_PROXY", get_resource(:no_proxy))
+
+    B.build_resource(:config_map)
+    |> B.name("harbor-jobservice-env")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.data(data)
+  end
+
+  resource(:config_map_portal, _battery, state) do
+    namespace = core_namespace(state)
     data = %{"nginx.conf" => get_resource(:nginx_conf)}
 
     B.build_resource(:config_map)
     |> B.name("harbor-portal")
-    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
-  resource(:config_map_4, _battery, state) do
+  resource(:config_map_registry, _battery, state) do
     namespace = core_namespace(state)
 
-    data = %{
-      "config.yml" => registry_config_yml(),
-      "ctl-config.yml" => ctl_config_yml()
-    }
+    data =
+      %{}
+      |> Map.put(
+        "ctl-config.yml",
+        "---\nprotocol: \"http\"\nport: 8080\nlog_level: info\nregistry_config: \"/etc/registry/config.yml\"\n"
+      )
+      |> Map.put("config.yml", get_resource(:registry_config_yml))
 
     B.build_resource(:config_map)
     |> B.name("harbor-registry")
-    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
-  defp ctl_config_yml do
-    ctl_config = %{
-      "log_level" => "info",
-      "port" => 8080,
-      "protocol" => "http",
-      "registry_config" => "/etc/registry/config.yml"
-    }
-
-    # It really needs to look like this list format.
-    "---\n" <> YamlEncoder.to_s!(ctl_config)
-  end
-
-  defp registry_config_yml do
-    config = %{
-      "auth" => %{
-        "htpasswd" => %{
-          "path" => "/etc/registry/passwd",
-          "realm" => "harbor-registry-basic-realm"
-        }
-      },
-      "compatibility" => %{"schema1" => %{"enabled" => true}},
-      "http" => %{
-        "addr" => ":5000",
-        "debug" => %{"addr" => "localhost:5001"},
-        "relativeurls" => false
-      },
-      "log" => %{"fields" => %{"service" => "registry"}, "level" => "info"},
-      "redis" => %{
-        "addr" => "rfs-harbor:26379",
-        "db" => 2,
-        "dialtimeout" => "10s",
-        "pool" => %{"idletimeout" => "60s", "maxactive" => 500, "maxidle" => 100},
-        "readtimeout" => "10s",
-        "sentinelMasterSet" => "mymaster",
-        "writetimeout" => "10s"
-      },
-      "storage" => %{
-        "cache" => %{"layerinfo" => "redis"},
-        "delete" => %{"enabled" => true},
-        "filesystem" => %{"rootdirectory" => "/storage"},
-        "maintenance" => %{
-          "uploadpurging" => %{
-            "age" => "168h",
-            "dryrun" => false,
-            "enabled" => true,
-            "interval" => "24h"
-          }
-        },
-        "redirect" => %{"disable" => true}
-      },
-      "validation" => %{"disabled" => true},
-      "version" => 0.1
-    }
-
-    YamlEncoder.to_s!(config)
-  end
-
-  resource(:config_map_5, _battery, state) do
+  resource(:config_map_registryctl, _battery, state) do
     namespace = core_namespace(state)
+    data = %{}
 
     B.build_resource(:config_map)
     |> B.name("harbor-registryctl")
-    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.data(data)
   end
 
-  resource(:persistent_volume_claim, _battery, state) do
+  resource(:secret_core, battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "accessModes" => [
-        "ReadWriteOnce"
-      ],
-      "resources" => %{
-        "requests" => %{
-          "storage" => "1Gi"
-        }
-      }
-    }
+    data =
+      %{}
+      |> Map.put("CSRF_KEY", battery.config.csrf_key)
+      |> Map.put("HARBOR_ADMIN_PASSWORD", "BatteryHarbor12345")
+      |> Map.put("REGISTRY_CREDENTIAL_PASSWORD", "harbor_registry_password")
+      |> Map.put("secret", battery.config.secret)
+      |> Map.put("secretKey", "not-a-secure-key-really")
+      |> Map.put("tls.crt", get_resource(:tls_crt))
+      |> Map.put("tls.key", get_resource(:tls_key))
+      |> Secret.encode()
 
-    B.build_resource(:persistent_volume_claim)
-    |> B.name("harbor-jobservice")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> B.app_labels(@app_name)
-    |> B.component_label("jobservice")
-  end
-
-  resource(:persistent_volume_claim_1, _battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "accessModes" => [
-        "ReadWriteOnce"
-      ],
-      "resources" => %{
-        "requests" => %{
-          "storage" => "5Gi"
-        }
-      }
-    }
-
-    B.build_resource(:persistent_volume_claim)
-    |> B.name("harbor-registry")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> B.app_labels(@app_name)
-    |> B.component_label("registry")
-  end
-
-  resource(:service, _battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "ports" => [
-        %{
-          "name" => "http-web",
-          "port" => 80,
-          "targetPort" => 8080
-        }
-      ],
-      "selector" => %{
-        "battery/app" => @app_name,
-        "component" => "core"
-      }
-    }
-
-    B.build_resource(:service)
+    B.build_resource(:secret)
     |> B.name("harbor-core")
     |> B.namespace(namespace)
-    |> B.spec(spec)
     |> B.app_labels(@app_name)
+    |> B.data(data)
   end
 
-  resource(:service_1, _battery, state) do
+  resource(:secret_exporter, _battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "ports" => [
-        %{
-          "name" => "http-jobservice",
-          "port" => 80,
-          "targetPort" => 8080
-        }
-      ],
-      "selector" => %{
-        "battery/app" => @app_name,
-        "component" => "jobservice"
-      }
-    }
+    data =
+      %{}
+      |> Map.put("HARBOR_ADMIN_PASSWORD", "BatteryHarbor12345")
+      |> Map.put("tls.crt", get_resource(:tls_crt))
+      |> Map.put("tls.key", get_resource(:tls_key))
+      |> Secret.encode()
 
-    B.build_resource(:service)
+    B.build_resource(:secret)
+    |> B.name("harbor-exporter")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.data(data)
+  end
+
+  resource(:secret_jobservice, _battery, state) do
+    namespace = core_namespace(state)
+
+    data =
+      %{}
+      |> Map.put("JOBSERVICE_SECRET", "wpnBNVBDJV7pj63J")
+      |> Map.put("REGISTRY_CREDENTIAL_PASSWORD", "harbor_registry_password")
+      |> Secret.encode()
+
+    B.build_resource(:secret)
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
-    |> B.spec(spec)
     |> B.app_labels(@app_name)
+    |> B.data(data)
   end
 
-  resource(:service_2, _battery, state) do
+  resource(:secret_registry, _battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "ports" => [
-        %{
-          "port" => 80,
-          "targetPort" => 8080
-        }
-      ],
-      "selector" => %{
-        "battery/app" => @app_name,
-        "component" => "portal"
-      }
-    }
+    data =
+      %{}
+      |> Map.put("REGISTRY_HTTP_SECRET", "3m8GeLYglFqRckMu")
+      |> Map.put("REGISTRY_REDIS_PASSWORD", "")
+      |> Secret.encode()
 
-    B.build_resource(:service)
-    |> B.name("harbor-portal")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> B.app_labels(@app_name)
-  end
-
-  resource(:service_3, _battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "ports" => [
-        %{
-          "name" => "http-registry",
-          "port" => 5000
-        },
-        %{
-          "name" => "http-controller",
-          "port" => 8080
-        }
-      ],
-      "selector" => %{
-        "battery/app" => @app_name,
-        "component" => "registry"
-      }
-    }
-
-    B.build_resource(:service)
+    B.build_resource(:secret)
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
-    |> B.spec(spec)
     |> B.app_labels(@app_name)
+    |> B.data(data)
   end
 
-  resource(:service_4, _battery, state) do
+  resource(:secret_registry_htpasswd, _battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "ports" => [
-        %{
-          "name" => "http-trivy",
-          "port" => 8080,
-          "protocol" => "TCP"
-        }
-      ],
-      "selector" => %{
-        "battery/app" => @app_name,
-        "component" => "trivy"
-      }
-    }
+    data =
+      %{}
+      |> Map.put(
+        "REGISTRY_HTPASSWD",
+        "harbor_registry_user:$2a$10$GdMvorhxJZ6nFiD9w/AsbOkKocAcN5NnwTfJp32yD3Gc2cGA9w.om"
+      )
+      |> Secret.encode()
 
-    B.build_resource(:service)
+    B.build_resource(:secret)
+    |> B.name("harbor-registry-htpasswd")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.data(data)
+  end
+
+  resource(:secret_registryctl, _battery, state) do
+    namespace = core_namespace(state)
+    data = %{}
+
+    B.build_resource(:secret)
+    |> B.name("harbor-registryctl")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.data(data)
+  end
+
+  resource(:secret_trivy, _battery, state) do
+    namespace = core_namespace(state)
+
+    data =
+      %{}
+      |> Map.put("gitHubToken", "")
+      |> Map.put(
+        "redisURL",
+        "redis+sentinel://rfs-harbor:26379/mymaster/5?idle_timeout_seconds=30"
+      )
+      |> Secret.encode()
+
+    B.build_resource(:secret)
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
-    |> B.spec(spec)
     |> B.app_labels(@app_name)
+    |> B.data(data)
   end
 
-  resource(:deployment, battery, state) do
+  resource(:deployment_core, battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "replicas" => 1,
-      "revisionHistoryLimit" => 10,
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name,
-          "battery/managed" => "true",
-          "component" => "core"
-        }
-      },
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/managed" => "true",
-            "component" => "core"
-          }
-        },
-        "spec" => %{
-          "automountServiceAccountToken" => false,
-          "containers" => [
-            %{
-              "env" => [
-                %{
-                  "name" => "CORE_SECRET",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "secret",
-                      "name" => @core_secret
-                    }
-                  }
-                },
-                %{
-                  "name" => "JOBSERVICE_SECRET",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "JOBSERVICE_SECRET",
-                      "name" => @jobservice_secret
-                    }
-                  }
-                },
-                %{
-                  "name" => "POSTGRESQL_USERNAME",
-                  "valueFrom" => B.secret_key_ref(@postgres_credentials, "username")
-                },
-                %{
-                  "name" => "POSTGRESQL_PASSWORD",
-                  "valueFrom" => B.secret_key_ref(@postgres_credentials, "password")
-                }
-              ],
-              "envFrom" => [
-                %{
-                  "configMapRef" => %{
-                    "name" => @core_config
-                  }
-                },
-                %{
-                  "secretRef" => %{
-                    "name" => @core_secret
-                  }
-                }
-              ],
-              "image" => battery.config.core_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "livenessProbe" => %{
-                "failureThreshold" => 2,
-                "httpGet" => %{
-                  "path" => "/api/v2.0/ping",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "periodSeconds" => 10
-              },
-              "name" => "core",
-              "ports" => [
-                %{
-                  "containerPort" => 8080
-                }
-              ],
-              "readinessProbe" => %{
-                "failureThreshold" => 2,
-                "httpGet" => %{
-                  "path" => "/api/v2.0/ping",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "periodSeconds" => 10
-              },
-              "startupProbe" => %{
-                "failureThreshold" => 360,
-                "httpGet" => %{
-                  "path" => "/api/v2.0/ping",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 10,
-                "periodSeconds" => 10
-              },
-              "volumeMounts" => [
-                %{
-                  "mountPath" => "/etc/core/app.conf",
-                  "name" => "config",
-                  "subPath" => "app.conf"
-                },
-                %{
-                  "mountPath" => "/etc/core/key",
-                  "name" => "secret-key",
-                  "subPath" => "key"
-                },
-                %{
-                  "mountPath" => "/etc/core/private_key.pem",
-                  "name" => "token-service-private-key",
-                  "subPath" => "tls.key"
-                },
-                %{
-                  "mountPath" => "/etc/core/token",
-                  "name" => "psc"
-                }
-              ]
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("revisionHistoryLimit", 10)
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "core"}}
+      )
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/managed" => "true",
+              "battery/component" => "core"
             }
-          ],
-          "securityContext" => %{
-            "fsGroup" => 10_000,
-            "runAsUser" => 10_000
           },
-          "terminationGracePeriodSeconds" => 120,
-          "volumes" => [
-            %{
-              "configMap" => %{
-                "items" => [
+          "spec" => %{
+            "automountServiceAccountToken" => false,
+            "containers" => [
+              %{
+                "env" => [
                   %{
-                    "key" => "app.conf",
-                    "path" => "app.conf"
+                    "name" => "CORE_SECRET",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{"key" => "secret", "name" => "harbor-core"}
+                    }
+                  },
+                  %{
+                    "name" => "JOBSERVICE_SECRET",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{
+                        "key" => "JOBSERVICE_SECRET",
+                        "name" => "harbor-jobservice"
+                      }
+                    }
+                  },
+                  %{
+                    "name" => "POSTGRESQL_USERNAME",
+                    "valueFrom" => B.secret_key_ref(@postgres_credentials, "username")
+                  },
+                  %{
+                    "name" => "POSTGRESQL_PASSWORD",
+                    "valueFrom" => B.secret_key_ref(@postgres_credentials, "password")
                   }
                 ],
-                "name" => @core_config
+                "envFrom" => [
+                  %{"configMapRef" => %{"name" => "harbor-core"}},
+                  %{"secretRef" => %{"name" => "harbor-core"}}
+                ],
+                "image" => battery.config.core_image,
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "failureThreshold" => 2,
+                  "httpGet" => %{"path" => "/api/v2.0/ping", "port" => 8080, "scheme" => "HTTP"},
+                  "periodSeconds" => 10
+                },
+                "name" => "core",
+                "ports" => [%{"containerPort" => 8080}],
+                "readinessProbe" => %{
+                  "failureThreshold" => 2,
+                  "httpGet" => %{"path" => "/api/v2.0/ping", "port" => 8080, "scheme" => "HTTP"},
+                  "periodSeconds" => 10
+                },
+                "startupProbe" => %{
+                  "failureThreshold" => 360,
+                  "httpGet" => %{"path" => "/api/v2.0/ping", "port" => 8080, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 10,
+                  "periodSeconds" => 10
+                },
+                "volumeMounts" => [
+                  %{
+                    "mountPath" => "/etc/core/app.conf",
+                    "name" => "config",
+                    "subPath" => "app.conf"
+                  },
+                  %{"mountPath" => "/etc/core/key", "name" => "secret-key", "subPath" => "key"},
+                  %{
+                    "mountPath" => "/etc/core/private_key.pem",
+                    "name" => "token-service-private-key",
+                    "subPath" => "tls.key"
+                  },
+                  %{"mountPath" => "/etc/core/token", "name" => "psc"}
+                ]
+              }
+            ],
+            "securityContext" => %{"fsGroup" => 10_000, "runAsUser" => 10_000},
+            "terminationGracePeriodSeconds" => 120,
+            "volumes" => [
+              %{
+                "configMap" => %{
+                  "items" => [%{"key" => "app.conf", "path" => "app.conf"}],
+                  "name" => "harbor-core"
+                },
+                "name" => "config"
               },
-              "name" => "config"
-            },
-            %{
-              "name" => "secret-key",
-              "secret" => %{
-                "items" => [
-                  %{
-                    "key" => "secretKey",
-                    "path" => "key"
-                  }
-                ],
-                "secretName" => @core_secret
-              }
-            },
-            %{
-              "name" => "token-service-private-key",
-              "secret" => %{
-                "secretName" => "harbor-core"
-              }
-            },
-            %{
-              "emptyDir" => %{},
-              "name" => "psc"
-            }
-          ]
+              %{
+                "name" => "secret-key",
+                "secret" => %{
+                  "items" => [%{"key" => "secretKey", "path" => "key"}],
+                  "secretName" => "harbor-core"
+                }
+              },
+              %{
+                "name" => "token-service-private-key",
+                "secret" => %{"secretName" => "harbor-core"}
+              },
+              %{"emptyDir" => %{}, "name" => "psc"}
+            ]
+          }
         }
-      }
-    }
+      )
 
     B.build_resource(:deployment)
     |> B.name("harbor-core")
@@ -686,126 +468,159 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:deployment_1, battery, state) do
+  resource(:deployment_exporter, battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "replicas" => 1,
-      "revisionHistoryLimit" => 10,
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name,
-          "battery/managed" => "true",
-          "component" => "jobservice"
-        }
-      },
-      "strategy" => %{
-        "type" => "RollingUpdate"
-      },
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/managed" => "true",
-            "component" => "jobservice"
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("revisionHistoryLimit", 10)
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "exporter"}}
+      )
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/managed" => "true",
+              "battery/component" => "exporter"
+            }
+          },
+          "spec" => %{
+            "automountServiceAccountToken" => false,
+            "containers" => [
+              %{
+                "args" => ["-log-level", "info"],
+                "env" => [
+                  %{
+                    "name" => "HARBOR_DATABASE_USERNAME",
+                    "valueFrom" => B.secret_key_ref(@postgres_credentials, "username")
+                  },
+                  %{
+                    "name" => "HARBOR_DATABASE_PASSWORD",
+                    "valueFrom" => B.secret_key_ref(@postgres_credentials, "password")
+                  }
+                ],
+                "envFrom" => [
+                  %{"configMapRef" => %{"name" => "harbor-exporter-env"}},
+                  %{"secretRef" => %{"name" => "harbor-exporter"}}
+                ],
+                "image" => battery.config.exporter_image,
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "httpGet" => %{"path" => "/", "port" => 8001},
+                  "initialDelaySeconds" => 300,
+                  "periodSeconds" => 10
+                },
+                "name" => "exporter",
+                "ports" => [%{"containerPort" => 8080}],
+                "readinessProbe" => %{
+                  "httpGet" => %{"path" => "/", "port" => 8001},
+                  "initialDelaySeconds" => 30,
+                  "periodSeconds" => 10
+                }
+              }
+            ],
+            "securityContext" => %{"fsGroup" => 10_000, "runAsUser" => 10_000},
+            "volumes" => [%{"name" => "config", "secret" => %{"secretName" => "harbor-exporter"}}]
           }
-        },
-        "spec" => %{
-          "automountServiceAccountToken" => false,
-          "containers" => [
-            %{
-              "env" => [
-                %{
-                  "name" => "CORE_SECRET",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "secret",
-                      "name" => @core_secret
+        }
+      )
+
+    B.build_resource(:deployment)
+    |> B.name("harbor-exporter")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("exporter")
+    |> B.spec(spec)
+  end
+
+  resource(:deployment_jobservice, battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("revisionHistoryLimit", 10)
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "jobservice"}}
+      )
+      |> Map.put("strategy", %{"type" => "RollingUpdate"})
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/managed" => "true",
+              "battery/component" => "jobservice"
+            }
+          },
+          "spec" => %{
+            "automountServiceAccountToken" => false,
+            "containers" => [
+              %{
+                "env" => [
+                  %{
+                    "name" => "CORE_SECRET",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{"key" => "secret", "name" => "harbor-core"}
                     }
                   }
+                ],
+                "envFrom" => [
+                  %{"configMapRef" => %{"name" => "harbor-jobservice-env"}},
+                  %{"secretRef" => %{"name" => "harbor-jobservice"}}
+                ],
+                "image" => battery.config.jobservice_image,
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "httpGet" => %{"path" => "/api/v1/stats", "port" => 8080, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 300,
+                  "periodSeconds" => 10
                 },
-                %{
-                  "name" => "POSTGRESQL_USERNAME",
-                  "valueFrom" => B.secret_key_ref(@postgres_credentials, "username")
+                "name" => "jobservice",
+                "ports" => [%{"containerPort" => 8080}],
+                "readinessProbe" => %{
+                  "httpGet" => %{"path" => "/api/v1/stats", "port" => 8080, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 20,
+                  "periodSeconds" => 10
                 },
-                %{
-                  "name" => "POSTGRES_PASSWORD",
-                  "valueFrom" => B.secret_key_ref(@postgres_credentials, "password")
-                }
-              ],
-              "envFrom" => [
-                %{
-                  "configMapRef" => %{
-                    "name" => "harbor-jobservice-env"
+                "volumeMounts" => [
+                  %{
+                    "mountPath" => "/etc/jobservice/config.yml",
+                    "name" => "jobservice-config",
+                    "subPath" => "config.yml"
+                  },
+                  %{"mountPath" => "/var/log/jobs", "name" => "job-logs", "subPath" => nil},
+                  %{
+                    "mountPath" => "/var/scandata_exports",
+                    "name" => "job-scandata-exports",
+                    "subPath" => nil
                   }
-                },
-                %{
-                  "secretRef" => %{
-                    "name" => @jobservice_secret
-                  }
-                }
-              ],
-              "image" => battery.config.jobservice_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "livenessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/api/v1/stats",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 300,
-                "periodSeconds" => 10
-              },
-              "name" => "jobservice",
-              "ports" => [
-                %{
-                  "containerPort" => 8080
-                }
-              ],
-              "readinessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/api/v1/stats",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 20,
-                "periodSeconds" => 10
-              },
-              "volumeMounts" => [
-                %{
-                  "mountPath" => "/etc/jobservice/config.yml",
-                  "name" => "jobservice-config",
-                  "subPath" => "config.yml"
-                },
-                %{
-                  "mountPath" => "/var/log/jobs",
-                  "name" => "job-logs"
-                }
-              ]
-            }
-          ],
-          "securityContext" => %{
-            "fsGroup" => 10_000,
-            "runAsUser" => 10_000
-          },
-          "terminationGracePeriodSeconds" => 120,
-          "volumes" => [
-            %{
-              "configMap" => %{
-                "name" => "harbor-jobservice"
-              },
-              "name" => "jobservice-config"
-            },
-            %{
-              "name" => "job-logs",
-              "persistentVolumeClaim" => %{
-                "claimName" => "harbor-jobservice"
+                ]
               }
-            }
-          ]
+            ],
+            "securityContext" => %{"fsGroup" => 10_000, "runAsUser" => 10_000},
+            "terminationGracePeriodSeconds" => 120,
+            "volumes" => [
+              %{"configMap" => %{"name" => "harbor-jobservice"}, "name" => "jobservice-config"},
+              %{
+                "name" => "job-logs",
+                "persistentVolumeClaim" => %{"claimName" => "harbor-jobservice"}
+              },
+              %{
+                "name" => "job-scandata-exports",
+                "persistentVolumeClaim" => %{"claimName" => "harbor-jobservice-scandata"}
+              }
+            ]
+          }
         }
-      }
-    }
+      )
 
     B.build_resource(:deployment)
     |> B.name("harbor-jobservice")
@@ -815,80 +630,61 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:deployment_2, battery, state) do
+  resource(:deployment_portal, battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "replicas" => 1,
-      "revisionHistoryLimit" => 10,
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name,
-          "component" => "portal"
-        }
-      },
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/managed" => "true",
-            "component" => "portal"
-          }
-        },
-        "spec" => %{
-          "automountServiceAccountToken" => false,
-          "containers" => [
-            %{
-              "image" => battery.config.portal_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "livenessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 300,
-                "periodSeconds" => 10
-              },
-              "name" => "portal",
-              "ports" => [
-                %{
-                  "containerPort" => 8080
-                }
-              ],
-              "readinessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 1,
-                "periodSeconds" => 10
-              },
-              "volumeMounts" => [
-                %{
-                  "mountPath" => "/etc/nginx/nginx.conf",
-                  "name" => "portal-config",
-                  "subPath" => "nginx.conf"
-                }
-              ]
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("revisionHistoryLimit", 10)
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "portal"}}
+      )
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/managed" => "true",
+              "battery/component" => "portal"
             }
-          ],
-          "securityContext" => %{
-            "fsGroup" => 10_000,
-            "runAsUser" => 10_000
           },
-          "volumes" => [
-            %{
-              "configMap" => %{
-                "name" => "harbor-portal"
-              },
-              "name" => "portal-config"
-            }
-          ]
+          "spec" => %{
+            "automountServiceAccountToken" => false,
+            "containers" => [
+              %{
+                "image" => battery.config.portal_image,
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "httpGet" => %{"path" => "/", "port" => 8080, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 300,
+                  "periodSeconds" => 10
+                },
+                "name" => "portal",
+                "ports" => [%{"containerPort" => 8080}],
+                "readinessProbe" => %{
+                  "httpGet" => %{"path" => "/", "port" => 8080, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 1,
+                  "periodSeconds" => 10
+                },
+                "volumeMounts" => [
+                  %{
+                    "mountPath" => "/etc/nginx/nginx.conf",
+                    "name" => "portal-config",
+                    "subPath" => "nginx.conf"
+                  }
+                ]
+              }
+            ],
+            "securityContext" => %{"fsGroup" => 10_000, "runAsUser" => 10_000},
+            "volumes" => [
+              %{"configMap" => %{"name" => "harbor-portal"}, "name" => "portal-config"}
+            ]
+          }
         }
-      }
-    }
+      )
 
     B.build_resource(:deployment)
     |> B.name("harbor-portal")
@@ -898,214 +694,137 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:deployment_3, battery, state) do
+  resource(:deployment_registry, battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "replicas" => 1,
-      "revisionHistoryLimit" => 10,
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name,
-          "component" => "registry"
-        }
-      },
-      "strategy" => %{
-        "type" => "RollingUpdate"
-      },
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/managed" => "true",
-            "component" => "registry"
-          }
-        },
-        "spec" => %{
-          "automountServiceAccountToken" => false,
-          "containers" => [
-            %{
-              "args" => [
-                "serve",
-                "/etc/registry/config.yml"
-              ],
-              "envFrom" => [
-                %{
-                  "secretRef" => %{
-                    "name" => "harbor-registry"
-                  }
-                }
-              ],
-              "image" => battery.config.photon_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "livenessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/",
-                  "port" => 5000,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 300,
-                "periodSeconds" => 10
-              },
-              "name" => "registry",
-              "ports" => [
-                %{
-                  "containerPort" => 5000
-                },
-                %{
-                  "containerPort" => 5001
-                }
-              ],
-              "readinessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/",
-                  "port" => 5000,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 1,
-                "periodSeconds" => 10
-              },
-              "volumeMounts" => [
-                %{
-                  "mountPath" => "/storage",
-                  "name" => "registry-data"
-                },
-                %{
-                  "mountPath" => "/etc/registry/passwd",
-                  "name" => "registry-htpasswd",
-                  "subPath" => "passwd"
-                },
-                %{
-                  "mountPath" => "/etc/registry/config.yml",
-                  "name" => "registry-config",
-                  "subPath" => "config.yml"
-                }
-              ]
-            },
-            %{
-              "env" => [
-                %{
-                  "name" => "CORE_SECRET",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "secret",
-                      "name" => @core_secret
-                    }
-                  }
-                },
-                %{
-                  "name" => "JOBSERVICE_SECRET",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "JOBSERVICE_SECRET",
-                      "name" => @jobservice_secret
-                    }
-                  }
-                },
-                %{
-                  "name" => "POSTGRES_USER",
-                  "valueFrom" => B.secret_key_ref(@postgres_credentials, "username")
-                },
-                %{
-                  "name" => "POSTGRES_PASSWORD",
-                  "valueFrom" => B.secret_key_ref(@postgres_credentials, "password")
-                }
-              ],
-              "envFrom" => [
-                %{
-                  "configMapRef" => %{
-                    "name" => "harbor-registryctl"
-                  }
-                },
-                %{
-                  "secretRef" => %{
-                    "name" => @registry_secret
-                  }
-                },
-                %{
-                  "secretRef" => %{
-                    "name" => @registryctl_secret
-                  }
-                }
-              ],
-              "image" => battery.config.ctl_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "livenessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/api/health",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 300,
-                "periodSeconds" => 10
-              },
-              "name" => "registryctl",
-              "ports" => [
-                %{
-                  "containerPort" => 8080
-                }
-              ],
-              "readinessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/api/health",
-                  "port" => 8080,
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 1,
-                "periodSeconds" => 10
-              },
-              "volumeMounts" => [
-                %{
-                  "mountPath" => "/storage",
-                  "name" => "registry-data"
-                },
-                %{
-                  "mountPath" => "/etc/registry/config.yml",
-                  "name" => "registry-config",
-                  "subPath" => "config.yml"
-                },
-                %{
-                  "mountPath" => "/etc/registryctl/config.yml",
-                  "name" => "registry-config",
-                  "subPath" => "ctl-config.yml"
-                }
-              ]
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("revisionHistoryLimit", 10)
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "registry"}}
+      )
+      |> Map.put("strategy", %{"type" => "RollingUpdate"})
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/managed" => "true",
+              "battery/component" => "registry"
             }
-          ],
-          "securityContext" => %{
-            "fsGroup" => 10_000,
-            "runAsUser" => 10_000
           },
-          "terminationGracePeriodSeconds" => 120,
-          "volumes" => [
-            %{
-              "name" => "registry-htpasswd",
-              "secret" => %{
-                "items" => [
+          "spec" => %{
+            "automountServiceAccountToken" => false,
+            "containers" => [
+              %{
+                "args" => ["serve", "/etc/registry/config.yml"],
+                "envFrom" => [%{"secretRef" => %{"name" => "harbor-registry"}}],
+                "image" => battery.config.photon_image,
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "httpGet" => %{"path" => "/", "port" => 5000, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 300,
+                  "periodSeconds" => 10
+                },
+                "name" => "registry",
+                "ports" => [%{"containerPort" => 5000}, %{"containerPort" => 5001}],
+                "readinessProbe" => %{
+                  "httpGet" => %{"path" => "/", "port" => 5000, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 1,
+                  "periodSeconds" => 10
+                },
+                "volumeMounts" => [
+                  %{"mountPath" => "/storage", "name" => "registry-data", "subPath" => nil},
                   %{
-                    "key" => "REGISTRY_HTPASSWD",
-                    "path" => "passwd"
+                    "mountPath" => "/etc/registry/passwd",
+                    "name" => "registry-htpasswd",
+                    "subPath" => "passwd"
+                  },
+                  %{
+                    "mountPath" => "/etc/registry/config.yml",
+                    "name" => "registry-config",
+                    "subPath" => "config.yml"
+                  }
+                ]
+              },
+              %{
+                "env" => [
+                  %{
+                    "name" => "CORE_SECRET",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{"key" => "secret", "name" => "harbor-core"}
+                    }
+                  },
+                  %{
+                    "name" => "JOBSERVICE_SECRET",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{
+                        "key" => "JOBSERVICE_SECRET",
+                        "name" => "harbor-jobservice"
+                      }
+                    }
                   }
                 ],
-                "secretName" => @registry_htpasswd_secret
+                "envFrom" => [
+                  %{"configMapRef" => %{"name" => "harbor-registryctl"}},
+                  %{"secretRef" => %{"name" => "harbor-registry"}},
+                  %{"secretRef" => %{"name" => "harbor-registryctl"}}
+                ],
+                "image" => "goharbor/harbor-registryctl:v2.6.2",
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "httpGet" => %{"path" => "/api/health", "port" => 8080, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 300,
+                  "periodSeconds" => 10
+                },
+                "name" => "registryctl",
+                "ports" => [%{"containerPort" => 8080}],
+                "readinessProbe" => %{
+                  "httpGet" => %{"path" => "/api/health", "port" => 8080, "scheme" => "HTTP"},
+                  "initialDelaySeconds" => 1,
+                  "periodSeconds" => 10
+                },
+                "volumeMounts" => [
+                  %{"mountPath" => "/storage", "name" => "registry-data", "subPath" => nil},
+                  %{
+                    "mountPath" => "/etc/registry/config.yml",
+                    "name" => "registry-config",
+                    "subPath" => "config.yml"
+                  },
+                  %{
+                    "mountPath" => "/etc/registryctl/config.yml",
+                    "name" => "registry-config",
+                    "subPath" => "ctl-config.yml"
+                  }
+                ]
               }
+            ],
+            "securityContext" => %{
+              "fsGroup" => 10_000,
+              "fsGroupChangePolicy" => "OnRootMismatch",
+              "runAsUser" => 10_000
             },
-            %{
-              "configMap" => %{
-                "name" => "harbor-registry"
+            "terminationGracePeriodSeconds" => 120,
+            "volumes" => [
+              %{
+                "name" => "registry-htpasswd",
+                "secret" => %{
+                  "items" => [%{"key" => "REGISTRY_HTPASSWD", "path" => "passwd"}],
+                  "secretName" => "harbor-registry-htpasswd"
+                }
               },
-              "name" => "registry-config"
-            },
-            %{
-              "name" => "registry-data",
-              "persistentVolumeClaim" => %{
-                "claimName" => "harbor-registry"
+              %{"configMap" => %{"name" => "harbor-registry"}, "name" => "registry-config"},
+              %{
+                "name" => "registry-data",
+                "persistentVolumeClaim" => %{"claimName" => "harbor-registry"}
               }
-            }
-          ]
+            ]
+          }
         }
-      }
-    }
+      )
 
     B.build_resource(:deployment)
     |> B.name("harbor-registry")
@@ -1115,211 +834,145 @@ defmodule KubeResources.Harbor do
     |> B.spec(spec)
   end
 
-  resource(:stateful_set, battery, state) do
+  resource(:stateful_set_trivy, battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "replicas" => 1,
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name,
-          "component" => "trivy"
-        }
-      },
-      "serviceName" => "harbor-trivy",
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/managed" => "true",
-            "component" => "trivy"
-          }
-        },
-        "spec" => %{
-          "automountServiceAccountToken" => false,
-          "containers" => [
-            %{
-              "env" => [
-                %{
-                  "name" => "HTTP_PROXY",
-                  "value" => ""
-                },
-                %{
-                  "name" => "HTTPS_PROXY",
-                  "value" => ""
-                },
-                %{
-                  "name" => "NO_PROXY",
-                  "value" =>
-                    "harbor-core,harbor-jobservice,harbor-database,harbor-chartmuseum,harbor-notary-server,harbor-notary-signer,harbor-registry,harbor-portal,harbor-trivy,harbor-exporter,127.0.0.1,localhost,.local,.internal"
-                },
-                %{
-                  "name" => "SCANNER_LOG_LEVEL",
-                  "value" => "info"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_CACHE_DIR",
-                  "value" => "/home/scanner/.cache/trivy"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_REPORTS_DIR",
-                  "value" => "/home/scanner/.cache/reports"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_DEBUG_MODE",
-                  "value" => "true"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_VULN_TYPE",
-                  "value" => "os,library"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_TIMEOUT",
-                  "value" => "5m0s"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_GITHUB_TOKEN",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "gitHubToken",
-                      "name" => "harbor-trivy"
-                    }
-                  }
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_SEVERITY",
-                  "value" => "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_IGNORE_UNFIXED",
-                  "value" => "false"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_SKIP_UPDATE",
-                  "value" => "false"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_OFFLINE_SCAN",
-                  "value" => "false"
-                },
-                %{
-                  "name" => "SCANNER_TRIVY_INSECURE",
-                  "value" => "true"
-                },
-                %{
-                  "name" => "SCANNER_API_SERVER_ADDR",
-                  "value" => ":8080"
-                },
-                %{
-                  "name" => "SCANNER_REDIS_URL",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "redisURL",
-                      "name" => @trivy_secret
-                    }
-                  }
-                },
-                %{
-                  "name" => "SCANNER_STORE_REDIS_URL",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "redisURL",
-                      "name" => @trivy_secret
-                    }
-                  }
-                },
-                %{
-                  "name" => "SCANNER_JOB_QUEUE_REDIS_URL",
-                  "valueFrom" => %{
-                    "secretKeyRef" => %{
-                      "key" => "redisURL",
-                      "name" => @trivy_secret
-                    }
-                  }
-                }
-              ],
-              "image" => battery.config.trivy_adapter_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "livenessProbe" => %{
-                "failureThreshold" => 10,
-                "httpGet" => %{
-                  "path" => "/probe/healthy",
-                  "port" => "api-server",
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 5,
-                "periodSeconds" => 10,
-                "successThreshold" => 1
-              },
-              "name" => "trivy",
-              "ports" => [
-                %{
-                  "containerPort" => 8080,
-                  "name" => "api-server"
-                }
-              ],
-              "readinessProbe" => %{
-                "failureThreshold" => 3,
-                "httpGet" => %{
-                  "path" => "/probe/ready",
-                  "port" => "api-server",
-                  "scheme" => "HTTP"
-                },
-                "initialDelaySeconds" => 5,
-                "periodSeconds" => 10,
-                "successThreshold" => 1
-              },
-              "resources" => %{
-                "limits" => %{
-                  "memory" => "1Gi"
-                },
-                "requests" => %{
-                  "cpu" => "200m",
-                  "memory" => "512Mi"
-                }
-              },
-              "securityContext" => %{
-                "allowPrivilegeEscalation" => false,
-                "privileged" => false
-              },
-              "volumeMounts" => [
-                %{
-                  "mountPath" => "/home/scanner/.cache",
-                  "name" => "scanner-cache",
-                  "readOnly" => false
-                }
-              ]
-            }
-          ],
-          "securityContext" => %{
-            "fsGroup" => 10_000,
-            "runAsUser" => 10_000
-          }
-        }
-      },
-      "volumeClaimTemplates" => [
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "trivy"}}
+      )
+      |> Map.put("serviceName", "harbor-trivy")
+      |> Map.put(
+        "template",
         %{
           "metadata" => %{
             "labels" => %{
-              "component" => "trivy",
               "battery/app" => @app_name,
-              "battery/managed" => "true"
-            },
-            "name" => "scanner-cache"
+              "battery/managed" => "true",
+              "battery/component" => "trivy"
+            }
           },
           "spec" => %{
-            "accessModes" => [
-              "ReadWriteOnce"
-            ],
-            "resources" => %{
-              "requests" => %{
-                "storage" => "5Gi"
+            "automountServiceAccountToken" => false,
+            "containers" => [
+              %{
+                "env" => [
+                  %{"name" => "HTTP_PROXY", "value" => ""},
+                  %{"name" => "HTTPS_PROXY", "value" => ""},
+                  %{
+                    "name" => "NO_PROXY",
+                    "value" =>
+                      "harbor-core,harbor-jobservice,harbor-database,harbor-chartmuseum,harbor-notary-server,harbor-notary-signer,harbor-registry,harbor-portal,harbor-trivy,harbor-exporter,127.0.0.1,localhost,.local,.internal"
+                  },
+                  %{"name" => "SCANNER_LOG_LEVEL", "value" => "info"},
+                  %{"name" => "SCANNER_TRIVY_CACHE_DIR", "value" => "/home/scanner/.cache/trivy"},
+                  %{
+                    "name" => "SCANNER_TRIVY_REPORTS_DIR",
+                    "value" => "/home/scanner/.cache/reports"
+                  },
+                  %{"name" => "SCANNER_TRIVY_DEBUG_MODE", "value" => "true"},
+                  %{"name" => "SCANNER_TRIVY_VULN_TYPE", "value" => "os,library"},
+                  %{"name" => "SCANNER_TRIVY_TIMEOUT", "value" => "5m0s"},
+                  %{
+                    "name" => "SCANNER_TRIVY_GITHUB_TOKEN",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{"key" => "gitHubToken", "name" => "harbor-trivy"}
+                    }
+                  },
+                  %{
+                    "name" => "SCANNER_TRIVY_SEVERITY",
+                    "value" => "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+                  },
+                  %{"name" => "SCANNER_TRIVY_IGNORE_UNFIXED", "value" => "false"},
+                  %{"name" => "SCANNER_TRIVY_SKIP_UPDATE", "value" => "false"},
+                  %{"name" => "SCANNER_TRIVY_OFFLINE_SCAN", "value" => "false"},
+                  %{"name" => "SCANNER_TRIVY_SECURITY_CHECKS", "value" => "vuln"},
+                  %{"name" => "SCANNER_TRIVY_INSECURE", "value" => "true"},
+                  %{"name" => "SCANNER_API_SERVER_ADDR", "value" => ":8080"},
+                  %{
+                    "name" => "SCANNER_REDIS_URL",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{"key" => "redisURL", "name" => "harbor-trivy"}
+                    }
+                  },
+                  %{
+                    "name" => "SCANNER_STORE_REDIS_URL",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{"key" => "redisURL", "name" => "harbor-trivy"}
+                    }
+                  },
+                  %{
+                    "name" => "SCANNER_JOB_QUEUE_REDIS_URL",
+                    "valueFrom" => %{
+                      "secretKeyRef" => %{"key" => "redisURL", "name" => "harbor-trivy"}
+                    }
+                  }
+                ],
+                "image" => battery.config.trivy_adapter_image,
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "failureThreshold" => 10,
+                  "httpGet" => %{
+                    "path" => "/probe/healthy",
+                    "port" => "api-server",
+                    "scheme" => "HTTP"
+                  },
+                  "initialDelaySeconds" => 5,
+                  "periodSeconds" => 10,
+                  "successThreshold" => 1
+                },
+                "name" => "trivy",
+                "ports" => [%{"containerPort" => 8080, "name" => "api-server"}],
+                "readinessProbe" => %{
+                  "failureThreshold" => 3,
+                  "httpGet" => %{
+                    "path" => "/probe/ready",
+                    "port" => "api-server",
+                    "scheme" => "HTTP"
+                  },
+                  "initialDelaySeconds" => 5,
+                  "periodSeconds" => 10,
+                  "successThreshold" => 1
+                },
+                "resources" => %{
+                  "limits" => %{"cpu" => 1, "memory" => "1Gi"},
+                  "requests" => %{"cpu" => "200m", "memory" => "512Mi"}
+                },
+                "securityContext" => %{"allowPrivilegeEscalation" => false, "privileged" => false},
+                "volumeMounts" => [
+                  %{
+                    "mountPath" => "/home/scanner/.cache",
+                    "name" => "data",
+                    "readOnly" => false,
+                    "subPath" => nil
+                  }
+                ]
               }
-            }
+            ],
+            "securityContext" => %{"fsGroup" => 10_000, "runAsUser" => 10_000}
           }
         }
-      ]
-    }
+      )
+      |> Map.put("volumeClaimTemplates", [
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "chart" => "harbor",
+              "heritage" => "Helm",
+              "release" => "harbor"
+            },
+            "name" => "data"
+          },
+          "spec" => %{
+            "accessModes" => ["ReadWriteOnce"],
+            "resources" => %{"requests" => %{"storage" => "5Gi"}}
+          }
+        }
+      ])
 
     B.build_resource(:stateful_set)
     |> B.name("harbor-trivy")
@@ -1328,4 +981,215 @@ defmodule KubeResources.Harbor do
     |> B.component_label("trivy")
     |> B.spec(spec)
   end
+
+  resource(:persistent_volume_claim_jobservice, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("accessModes", ["ReadWriteOnce"])
+      |> Map.put("resources", %{"requests" => %{"storage" => "1Gi"}})
+
+    B.build_resource(:persistent_volume_claim)
+    |> B.name("harbor-jobservice")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("jobservice")
+    |> B.spec(spec)
+  end
+
+  resource(:persistent_volume_claim_jobservice_scandata, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("accessModes", ["ReadWriteOnce"])
+      |> Map.put("resources", %{"requests" => %{"storage" => "1Gi"}})
+
+    B.build_resource(:persistent_volume_claim)
+    |> B.name("harbor-jobservice-scandata")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("jobservice")
+    |> B.spec(spec)
+  end
+
+  resource(:persistent_volume_claim_registry, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("accessModes", ["ReadWriteOnce"])
+      |> Map.put("resources", %{"requests" => %{"storage" => "5Gi"}})
+
+    B.build_resource(:persistent_volume_claim)
+    |> B.name("harbor-registry")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("registry")
+    |> B.spec(spec)
+  end
+
+  resource(:service_core, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("ports", [
+        %{"name" => "http-web", "port" => 80, "targetPort" => 8080},
+        %{"name" => "http-metrics", "port" => 8001}
+      ])
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "core"})
+
+    B.build_resource(:service)
+    |> B.name("harbor-core")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
+  resource(:service_exporter, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("ports", [%{"name" => "http-metrics", "port" => 8001}])
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "exporter"})
+
+    B.build_resource(:service)
+    |> B.name("harbor-exporter")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
+  resource(:service_jobservice, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("ports", [
+        %{"name" => "http-jobservice", "port" => 80, "targetPort" => 8080},
+        %{"name" => "http-metrics", "port" => 8001}
+      ])
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "jobservice"})
+
+    B.build_resource(:service)
+    |> B.name("harbor-jobservice")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
+  resource(:service_portal, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("ports", [%{"port" => 80, "targetPort" => 8080}])
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "portal"})
+
+    B.build_resource(:service)
+    |> B.name("harbor-portal")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
+  end
+
+  resource(:service_registry, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("ports", [
+        %{"name" => "http-registry", "port" => 5000},
+        %{"name" => "http-controller", "port" => 8080},
+        %{"name" => "http-metrics", "port" => 8001}
+      ])
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "registry"})
+
+    B.build_resource(:service)
+    |> B.name("harbor-registry")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("registry")
+    |> B.spec(spec)
+  end
+
+  resource(:service_trivy, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("ports", [%{"name" => "http-trivy", "port" => 8080, "protocol" => "TCP"}])
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "trivy"})
+
+    B.build_resource(:service)
+    |> B.name("harbor-trivy")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("trivy")
+    |> B.spec(spec)
+  end
+
+  #   resource(:ingress_main, battery, state) do
+  #     namespace = core_namespace(state)
+  #     spec =
+  #       %{}
+  #       |> Map.put("rules", [
+  #         %{
+  #           "host" => "core.harbor.domain",
+  #           "http" => %{
+  #             "paths" => [
+  #               %{
+  #                 "backend" => %{
+  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
+  #                 },
+  #                 "path" => "/api/",
+  #                 "pathType" => "Prefix"
+  #               },
+  #               %{
+  #                 "backend" => %{
+  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
+  #                 },
+  #                 "path" => "/service/",
+  #                 "pathType" => "Prefix"
+  #               },
+  #               %{
+  #                 "backend" => %{
+  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
+  #                 },
+  #                 "path" => "/v2/",
+  #                 "pathType" => "Prefix"
+  #               },
+  #               %{
+  #                 "backend" => %{
+  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
+  #                 },
+  #                 "path" => "/chartrepo/",
+  #                 "pathType" => "Prefix"
+  #               },
+  #               %{
+  #                 "backend" => %{
+  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
+  #                 },
+  #                 "path" => "/c/",
+  #                 "pathType" => "Prefix"
+  #               },
+  #               %{
+  #                 "backend" => %{
+  #                   "service" => %{"name" => "harbor-portal", "port" => %{"number" => 80}}
+  #                 },
+  #                 "path" => "/",
+  #                 "pathType" => "Prefix"
+  #               }
+  #             ]
+  #           }
+  #         }
+  #       ])
+  #     B.build_resource(:ingress)
+  #     |> B.name("harbor-ingress")
+  #     |> B.app_labels(@app_name)
+  #     |> B.spec(spec)
+  #   end
 end

@@ -10,6 +10,7 @@ defmodule ControlServer.Batteries.HarborConfig do
     field(:core_image, :string, default: Defaults.Images.harbor_core_image())
     field(:ctl_image, :string, default: Defaults.Images.harbor_ctl_image())
     field(:jobservice_image, :string, default: Defaults.Images.harbor_jobservice_image())
+    field(:exporter_image, :string, default: Defaults.Images.harbor_exporter_image())
     field(:photon_image, :string, default: Defaults.Images.harbor_photon_image())
     field(:portal_image, :string, default: Defaults.Images.harbor_portal_image())
     field(:trivy_adapter_image, :string, default: Defaults.Images.harbor_trivy_adapter_image())
