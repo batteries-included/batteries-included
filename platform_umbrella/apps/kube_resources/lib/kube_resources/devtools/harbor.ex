@@ -43,6 +43,7 @@ defmodule KubeResources.Harbor do
           HttpRoute.prefix("/api/", "harbor-core"),
           HttpRoute.prefix("/service/", "harbor-core"),
           HttpRoute.prefix("/v2", "harbor-core"),
+          HttpRoute.prefix("/chartrepo/", "harbor-core"),
           HttpRoute.prefix("/c/", "harbor-core"),
           HttpRoute.fallback("harbor-portal")
         ],
@@ -864,8 +865,7 @@ defmodule KubeResources.Harbor do
                   %{"name" => "HTTPS_PROXY", "value" => ""},
                   %{
                     "name" => "NO_PROXY",
-                    "value" =>
-                      "harbor-core,harbor-jobservice,harbor-database,harbor-chartmuseum,harbor-notary-server,harbor-notary-signer,harbor-registry,harbor-portal,harbor-trivy,harbor-exporter,127.0.0.1,localhost,.local,.internal"
+                    "value" => get_resource(:no_proxy)
                   },
                   %{"name" => "SCANNER_LOG_LEVEL", "value" => "info"},
                   %{"name" => "SCANNER_TRIVY_CACHE_DIR", "value" => "/home/scanner/.cache/trivy"},
@@ -1131,65 +1131,4 @@ defmodule KubeResources.Harbor do
     |> B.component_label("trivy")
     |> B.spec(spec)
   end
-
-  #   resource(:ingress_main, battery, state) do
-  #     namespace = core_namespace(state)
-  #     spec =
-  #       %{}
-  #       |> Map.put("rules", [
-  #         %{
-  #           "host" => "core.harbor.domain",
-  #           "http" => %{
-  #             "paths" => [
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
-  #                 },
-  #                 "path" => "/api/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
-  #                 },
-  #                 "path" => "/service/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
-  #                 },
-  #                 "path" => "/v2/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
-  #                 },
-  #                 "path" => "/chartrepo/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{"name" => "harbor-core", "port" => %{"number" => 80}}
-  #                 },
-  #                 "path" => "/c/",
-  #                 "pathType" => "Prefix"
-  #               },
-  #               %{
-  #                 "backend" => %{
-  #                   "service" => %{"name" => "harbor-portal", "port" => %{"number" => 80}}
-  #                 },
-  #                 "path" => "/",
-  #                 "pathType" => "Prefix"
-  #               }
-  #             ]
-  #           }
-  #         }
-  #       ])
-  #     B.build_resource(:ingress)
-  #     |> B.name("harbor-ingress")
-  #     |> B.app_labels(@app_name)
-  #     |> B.spec(spec)
-  #   end
 end
