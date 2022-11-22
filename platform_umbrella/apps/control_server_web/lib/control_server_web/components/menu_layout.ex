@@ -3,6 +3,7 @@ defmodule ControlServerWeb.MenuLayout do
 
   import CommonUI.Icons.Devtools
   import CommonUI.Icons.Network
+  import CommonUI.Icons.Batteries
 
   @default_container_class "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-20 "
   @iframe_container_class "flex-1 py-0 px-0 w-full h-full "
@@ -59,7 +60,7 @@ defmodule ControlServerWeb.MenuLayout do
       <header class="w-full bg-white h-16">
         <div class="flex max-w-full h-full">
           <.link navigate={~p"/"} class="my-auto mx-4">
-            <img class="w-auto h-8" src="/images/logo.2.clip.png" alt="Batteries Included" />
+            <.batteries_logo />
           </.link>
           <%= if @title do %>
             <%= render_slot(@title) %>
