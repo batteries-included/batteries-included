@@ -34,13 +34,14 @@ jobs:
           otp-version: ${{ matrix.otp }}
       - name: Retrieve cached dependencies
         uses: actions/cache@v3
+        id: mix-cache
         with:
           path: |
             platform_umbrella/deps
             platform_umbrella/_build
           key:
-            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{
-            hashFiles('**/mix.lock') }}
+            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir
+            }}-${{hashFiles('**/mix.lock') }}
       - name: Install dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -94,8 +95,8 @@ jobs:
             platform_umbrella/deps
             platform_umbrella/_build
           key:
-            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{
-            hashFiles('**/mix.lock') }}
+            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir
+            }}-${{hashFiles('**/mix.lock') }}
       - run: mix compile --warnings-as-errors --force
       - run: mix ecto.reset
       - run: mix test --trace --slowest 10 --cover --export-coverage default
@@ -131,8 +132,8 @@ jobs:
             platform_umbrella/deps
             platform_umbrella/_build
           key:
-            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{
-            hashFiles('**/mix.lock') }}
+            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir
+            }}-${{hashFiles('**/mix.lock') }}
       - run: mix format --check-formatted
       - run: mix credo
       - run: mix dialyzer --format github
