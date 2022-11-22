@@ -117,8 +117,8 @@ buildLocalControl() {
 }
 
 mixBootstrap() {
-  pushd "${DIR}/../platform_umbrella/apps/cli"
-  retry mix run -e "CLI.InitialSync.sync"
+  pushd "${DIR}/../platform_umbrella/apps/cli_core"
+  retry mix run -e "CLICore.InitialSync.sync"
   popd
 }
 

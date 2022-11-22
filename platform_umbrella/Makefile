@@ -30,4 +30,4 @@ deps.get:
 	mix deps.compile
 
 format: deps.get
-	mix fmt
+	mix format

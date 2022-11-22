@@ -9,6 +9,6 @@ defmodule CLI.Commands.Sync do
 
   def run(_command, _parse_result) do
     Logger.debug("Sync with everything")
-    {:ok, _} = CLI.InitialSync.sync()
+    {:ok, _} = CLICore.InitialSync.sync()
   end
 end

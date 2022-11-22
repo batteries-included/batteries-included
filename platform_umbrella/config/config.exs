@@ -116,11 +116,7 @@ config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
 
 config :cli, should_halt: false
 
-config :cli, CLI.Commands,
-  sync: CLI.Commands.Sync,
-  dump_prod: CLI.Commands.DumpBootstrapProd,
-  dump_dev: CLI.Commands.DumpBootstrapDev,
-  cluster_k3d: CLI.Commands.K3DCluster
+config :cli, CLI.Commands, sync: CLI.Commands.Sync
 
 config :kube_ext, KubeExt.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 

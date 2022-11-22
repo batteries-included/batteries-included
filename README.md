@@ -74,15 +74,12 @@ exec bash
 Go to the main directory and run
 
 ```
-asdf plugin add k3d
 asdf plugin add kind
+asdf plugin add kubectl
 asdf plugin add k9s
 asdf plugin add erlang
 asdf plugin add elixir
 asdf plugin add nodejs
-asdf plugin add kubectl
-asdf plugin add awscli
-asdf plugin-add eksctl
 asdf plugin add hugo
 
 asdf install

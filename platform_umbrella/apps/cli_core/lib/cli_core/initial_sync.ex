@@ -1,4 +1,4 @@
-defmodule CLI.InitialSync do
+defmodule CLICore.InitialSync do
   alias KubeExt.ApplyResource
   require Logger
 
@@ -38,6 +38,11 @@ defmodule CLI.InitialSync do
   def sync do
     KubeExt.cluster_type()
     |> KubeExt.SystemState.SeedState.seed()
+    |> sync()
+  end
+
+  def sync(state_summary) do
+    state_summary
     |> KubeResources.ConfigGenerator.materialize()
     |> do_apply(@num_retries, KubeExt.ConnectionPool.get())
   end
