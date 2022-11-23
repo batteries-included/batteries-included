@@ -23,7 +23,8 @@ defmodule KubeServices.Application do
     [
       KubeServices.Usage.RestClientGenserver,
       {Oban, Application.fetch_env!(:kube_services, Oban)},
-      KubeServices.SnapshotApply.EventLauncher
+      KubeServices.SnapshotApply.EventLauncher,
+      KubeServices.SnapshotApply.Apply
     ] ++ kube_state_watchers() ++ timeline_watchers()
   end
 

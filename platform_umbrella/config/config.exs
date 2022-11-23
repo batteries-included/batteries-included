@@ -107,7 +107,7 @@ config :kube_services, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        {"*/6 * * * *", KubeServices.Stale.InitialWorker},
-       {"*/10 * * * *", KubeServices.SnapshotApply.CreationWorker},
+       {"*/10 * * * *", KubeServices.SnapshotApply.Worker},
        {"*/5 * * * *", KubeServices.Usage.Worker}
      ]}
   ]

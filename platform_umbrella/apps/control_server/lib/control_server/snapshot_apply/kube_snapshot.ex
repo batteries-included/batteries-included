@@ -22,14 +22,4 @@ defmodule ControlServer.SnapshotApply.KubeSnapshot do
     |> cast(attrs, [:status])
     |> validate_required([:status])
   end
-
-  def next_status(%__MODULE__{status: status} = _kube_snapshot), do: do_next_status(status)
-
-  defp do_next_status(status) do
-    ControlServer.SnapshotApply.KubeSnapshot
-    |> Ecto.Enum.values(:status)
-    |> Enum.drop_while(fn s -> s != status end)
-    |> Enum.drop(1)
-    |> List.first(:error)
-  end
 end

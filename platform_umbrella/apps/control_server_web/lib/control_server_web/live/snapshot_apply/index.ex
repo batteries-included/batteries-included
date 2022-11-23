@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
 
   @impl true
   def handle_event("start", _, socket) do
-    job = KubeServices.SnapshotApply.CreationWorker.start!()
+    job = KubeServices.SnapshotApply.Worker.start!()
 
     Logger.debug("Started oban Job #{job.id}")
 
@@ -40,6 +40,9 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
         <.title>Kube Deploys</.title>
       </:title>
       <.table id="kube-snapshot-table" rows={@snapshots.entries}>
+        <:col :let={snapshot} label="ID">
+          <%= snapshot.id %>
+        </:col>
         <:col :let={snapshot} label="Started">
           <%= Timex.format!(snapshot.inserted_at, "{RFC822z}") %>
         </:col>

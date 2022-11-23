@@ -3,7 +3,6 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
   import K8s.Resource.FieldAccessors
 
   alias ControlServer.Repo
-  alias KubeExt.SystemState.StateSummary
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.SnapshotApply.ContentAddressableResource
@@ -20,18 +19,14 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
     ControlServer.SnapshotApply.create_kube_snapshot()
   end
 
-  def snap_generation(
-        %KubeSnapshot{} = snap,
-        %StateSummary{} = state,
-        resource_gen_func
-      ) do
-    resource_map = resource_gen_func.(state)
-    addressables = addressables(resource_map)
-
+  def snap_generation(%KubeSnapshot{} = snap, resource_map) do
     Multi.new()
+    |> Multi.run(:addressables, fn _repo, _ ->
+      {:ok, raw_addressables(resource_map)}
+    end)
     |> Multi.all(
-      :content_addressable_resources,
-      fn _ ->
+      :existing_hashes,
+      fn %{addressables: addressables} ->
         # We're assuming there will be lots of hashes that already have content
         # So rather than pass all that content along the wire, just check for what's there.
         get_already_inserted_hashes(addressables)
@@ -40,7 +35,7 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
     |> Multi.insert_all(
       :new_content,
       ContentAddressableResource,
-      fn ctx ->
+      fn %{addressables: addressables} = ctx ->
         # The content_addressable_resources query will have
         # returned hashes. These don't need to be persisted.
         found_hashes = get_hashes_set(ctx)
@@ -51,7 +46,7 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
     |> Multi.insert_all(
       :resource_paths,
       ResourcePath,
-      fn _ctx ->
+      fn _ ->
         now = DateTime.utc_now()
 
         # Now we can create the ResourcePath that can be synced to kubernetes.
@@ -62,22 +57,20 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
           raw_rp_from_resource(snap, resource, path, now)
         end)
       end,
-      returning: [:id]
+      returning: true
     )
     # Finally run the transaction.
     |> Repo.transaction(timeout: @generation_timeout)
-    # ContentAddressableResource info isn't needed. So
-    # keep the resource path ids only
-    |> then(fn {:ok, result} ->
-      {_count, paths} = Map.get(result, :resource_paths, {0, []})
-      {:ok, Enum.map(paths, & &1.id)}
-    end)
   end
 
+  @spec update_snap_status(ControlServer.SnapshotApply.KubeSnapshot.t(), any) ::
+          {:ok, ControlServer.SnapshotApply.KubeSnapshot.t()} | {:error, Ecto.Changeset.t()}
   def update_snap_status(%KubeSnapshot{} = snap, status) do
     ControlServer.SnapshotApply.update_kube_snapshot(snap, %{status: status})
   end
 
+  @spec update_rp(ControlServer.SnapshotApply.ResourcePath.t(), boolean(), binary()) ::
+          {:ok, ControlServer.SnapshotApply.ResourcePath.t()} | {:error, Ecto.Changeset.t()}
   def update_rp(%ResourcePath{} = rp, is_success, reason) do
     ControlServer.SnapshotApply.update_resource_path(rp, %{
       is_success: is_success,
@@ -85,13 +78,18 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
     })
   end
 
-  def get_rp(id) do
-    ResourcePath
-    |> Repo.get(id)
-    |> Repo.preload(:content_addressable_resource)
+  @spec update_all_rp(list(), boolean(), binary()) :: any
+  def update_all_rp(paths, is_success, reason) do
+    ids = Enum.map(paths, & &1.id)
+
+    final_reason = String.slice(reason, 0, @max_reason_length)
+
+    ControlServer.Repo.update_all(from(rp in ResourcePath, where: rp.id in ^ids),
+      set: [is_success: is_success, apply_result: final_reason]
+    )
   end
 
-  def get_already_inserted_hashes(addressables) do
+  defp get_already_inserted_hashes(addressables) do
     hashes = Enum.map(addressables, & &1.hash)
 
     from(car in ContentAddressableResource,
@@ -100,10 +98,10 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
     )
   end
 
-  def get_hashes_set(ctx),
-    do: ctx |> Map.get(:content_addressable_resources, []) |> List.flatten() |> MapSet.new()
+  defp get_hashes_set(ctx),
+    do: ctx |> Map.get(:existing_hashes, []) |> List.flatten() |> MapSet.new()
 
-  defp addressables(resource_map) do
+  defp raw_addressables(resource_map) do
     # Grab now so that all addressables are created at the same time.
     now = DateTime.utc_now()
 

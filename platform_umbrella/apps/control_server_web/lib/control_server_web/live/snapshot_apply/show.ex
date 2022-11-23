@@ -115,6 +115,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
         <:col :let={rp} label="Path"><%= rp.path %></:col>
         <:col :let={rp} label="Successful"><.status_icon is_success={rp.is_success} /></:col>
         <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
+        <:col :let={rp} label="Hash"><%= rp.hash %></:col>
       </.table>
     </.layout>
     """

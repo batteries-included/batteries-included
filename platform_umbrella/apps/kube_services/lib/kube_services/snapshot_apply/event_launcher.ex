@@ -1,7 +1,7 @@
 defmodule KubeServices.SnapshotApply.EventLauncher do
   use GenServer
 
-  alias KubeServices.SnapshotApply.CreationWorker
+  alias KubeServices.SnapshotApply.Worker
 
   require Logger
 
@@ -25,13 +25,13 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
   end
 
   def handle_info({_action, _object}, %State{timer_reference: ref} = state) do
-    Logger.debug("XX got message might start job", state: state)
+    Logger.debug("Database event received, scheduling creation", state: state)
     {:noreply, %State{state | timer_reference: schedule_start(ref)}}
   end
 
   def handle_info(:do_start_creation, state) do
-    job = CreationWorker.start!()
-    Logger.info("XX Starting job #{job.id}", id: job.id)
+    job = Worker.start!()
+    Logger.info("Starting job #{job.id}", id: job.id)
     {:noreply, %State{state | timer_reference: nil}}
   end
 

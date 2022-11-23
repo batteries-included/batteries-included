@@ -96,7 +96,6 @@ defmodule KubeExt.ApplyResource do
 
   defp get_or_create_single(connection, resource) do
     metadata = Map.get(resource, "metadata")
-    Logger.debug("Creating or getting #{inspect(metadata)}")
 
     get_operation = Client.get(resource)
 
@@ -137,11 +136,7 @@ defmodule KubeExt.ApplyResource do
       |> Hashing.decorate()
       |> Client.create()
 
-    create_result = Client.run(connection, create_operation)
-
-    Logger.debug("Create Result: #{inspect(create_result)}")
-
-    create_result
+    Client.run(connection, create_operation)
   end
 
   defp update_single(connection, resource) do
