@@ -25,8 +25,8 @@ defmodule ControlServerWeb.LeftMenuLayout do
     """
   end
 
-  attr :group, :any, default: :magic
-  attr :active, :any, default: :batteries
+  attr :group, :atom, default: :magic
+  attr :active, :atom, default: :batteries
 
   slot :inner_block, required: true
   slot :title

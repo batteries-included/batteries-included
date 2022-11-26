@@ -48,8 +48,8 @@ defmodule ControlServerWeb.MenuLayout do
   end
 
   attr :icon_class, :string, default: "h-6 w-6 text-primary-500 group-hover:text-pink-500"
-  attr :container_type, :any, default: :default
-  attr :group, :any, default: :magic
+  attr :container_type, :atom, default: :default
+  attr :group, :atom, default: :magic
 
   slot :inner_block
   slot :title

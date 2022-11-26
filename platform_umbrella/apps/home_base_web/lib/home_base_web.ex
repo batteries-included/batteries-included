@@ -70,6 +70,7 @@ defmodule HomeBaseWeb do
   def html do
     quote do
       use Phoenix.Component
+      import Phoenix.Component, except: [link: 1]
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

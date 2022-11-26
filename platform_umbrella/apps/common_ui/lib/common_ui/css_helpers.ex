@@ -20,11 +20,13 @@ defmodule CommonUI.CSSHelpers do
   defp join_list_cleanly([false], joiner, [joiner | acc]), do: acc
   defp join_list_cleanly([""], joiner, [joiner | acc]), do: acc
   defp join_list_cleanly([nil], joiner, [joiner | acc]), do: acc
+  defp join_list_cleanly([{_val, false}], joiner, [joiner | acc]), do: acc
 
   # Ignore the last value if it's bad
   defp join_list_cleanly([false], _joiner, acc), do: acc
   defp join_list_cleanly([""], _joiner, acc), do: acc
   defp join_list_cleanly([nil], _joiner, acc), do: acc
+  defp join_list_cleanly([{_val, false}], _joiner, acc), do: acc
 
   # the final join
 
@@ -33,6 +35,7 @@ defmodule CommonUI.CSSHelpers do
     do: join_list_cleanly(value, joiner, acc)
 
   # If the final value is anything else cast it to a string and trim it
+  defp join_list_cleanly([{value, true}], _joiner, acc), do: [to_trimmed_string(value) | acc]
   defp join_list_cleanly([value], _joiner, acc), do: [to_trimmed_string(value) | acc]
 
   # ignore an empty string along the way
@@ -50,11 +53,20 @@ defmodule CommonUI.CSSHelpers do
     join_list_cleanly(rest, joiner, acc)
   end
 
+  defp join_list_cleanly([{_val, false} | rest], joiner, acc) do
+    join_list_cleanly(rest, joiner, acc)
+  end
+
   # If the value is a list then treat is a coming before the rest of the values.
   defp join_list_cleanly([value | rest], joiner, acc) when is_list(value) do
     value
     |> Enum.concat(rest)
     |> join_list_cleanly(joiner, acc)
+  end
+
+  # if the value is a tuple of a boolean and a class
+  defp join_list_cleanly([{value, true} | rest], joiner, acc) do
+    join_list_cleanly(rest, joiner, [joiner, to_trimmed_string(value) | acc])
   end
 
   # The default case
@@ -63,5 +75,6 @@ defmodule CommonUI.CSSHelpers do
   end
 
   defp to_trimmed_string(value) when is_binary(value), do: String.trim(value)
+  defp to_trimmed_string(value) when is_atom(value), do: Atom.to_string(value)
   defp to_trimmed_string(value), do: String.trim(to_string(value))
 end
