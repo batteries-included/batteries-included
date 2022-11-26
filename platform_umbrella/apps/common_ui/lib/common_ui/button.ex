@@ -26,10 +26,10 @@ defmodule CommonUI.Button do
           "p-0.5 mb-2 mr-2 rounded-lg overflow-hidden",
           "text-sm font-medium text-gray-900",
           "transition-all ease-in-out duration-300 hover:scale-110",
-          "bg-gradient-to-br from-primary-500 to-secondary-500",
+          "bg-gradient-to-tl from-primary-500 to-secondary-500",
           "group/button",
           "focus:ring-4 focus:outline-none focus:ring-pink-300",
-          "hover:bg-gradient-to-r hover:text-white hover:shadow-lg hover:shadow-secondary-500/20 ",
+          "hover:bg-gradient-to-bl hover:from-secondary-500 hover:to-primary-500 hover:text-white hover:shadow-lg hover:shadow-secondary-500/20 ",
           @class
         ])
       }
