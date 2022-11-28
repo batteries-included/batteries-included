@@ -45,7 +45,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
       <.table id="knative-display-table" rows={@services}>
         <:col :let={service} label="Name"><%= service.name %></:col>
         <:col :let={service} label="Link">
-          <.link href={service_url(service)} type="external">
+          <.link href={service_url(service)} variant="external">
             <%= service_url(service) %>
           </.link>
         </:col>

@@ -9,7 +9,7 @@ defmodule CommonUI.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.12",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -32,6 +32,7 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:common_testing, in_umbrella: true, only: :test},
       {:logger_json, "~> 5.1"},
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_live_view, "~> 0.18.3"},

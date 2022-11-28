@@ -62,10 +62,10 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
         <:col :let={system_project} label="Type"><%= system_project.type %></:col>
         <:col :let={system_project} label="Description"><%= system_project.description %></:col>
         <:action :let={system_project}>
-          <.link navigate={~p"/system_projects/#{system_project}/show"} type="styled">Show</.link>
+          <.link navigate={~p"/system_projects/#{system_project}/show"} variant="styled">Show</.link>
         </:action>
         <:action :let={system_project}>
-          <.link navigate={~p"/system_projects/#{system_project}/edit"} type="styled">Edit</.link>
+          <.link navigate={~p"/system_projects/#{system_project}/edit"} variant="styled">Edit</.link>
         </:action>
       </.table>
     </.layout>

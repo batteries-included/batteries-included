@@ -15,7 +15,7 @@ defmodule ControlServerWeb.StatefulSetsDisplay do
       </:col>
 
       <:action :let={stateful_set}>
-        <.link navigate={resource_show_url(stateful_set)} type="styled">
+        <.link navigate={resource_show_url(stateful_set)} variant="styled">
           Show Stateful Set
         </.link>
       </:action>

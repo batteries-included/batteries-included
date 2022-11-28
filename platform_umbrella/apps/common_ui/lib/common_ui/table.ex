@@ -11,7 +11,7 @@ defmodule CommonUI.Table do
         <:col :let={user} label="username"><%= user.username %></:col>
       </.table>
   """
-  attr :id, :string, required: true
+  attr :id, :string, default: nil
   attr :row_click, :any, default: nil
   attr :rows, :list, required: true
 

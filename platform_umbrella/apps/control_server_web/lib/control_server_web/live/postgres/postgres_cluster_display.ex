@@ -7,7 +7,7 @@ defmodule ControlServerWeb.PostgresClusterDisplay do
       <:col :let={pg} label="Name"><%= pg.name %></:col>
       <:col :let={pg} label="Type"><%= pg.type %></:col>
       <:action :let={pg}>
-        <.link navigate={show_url(pg)} type="styled">
+        <.link navigate={show_url(pg)} variant="styled">
           Show Postgres
         </.link>
       </:action>

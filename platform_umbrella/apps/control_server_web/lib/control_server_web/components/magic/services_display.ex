@@ -15,7 +15,7 @@ defmodule ControlServerWeb.ServicesDisplay do
       <:col :let={service} label="Ports"><%= ports(service) %></:col>
 
       <:action :let={service}>
-        <.link navigate={resource_show_url(service)} type="styled">
+        <.link navigate={resource_show_url(service)} variant="styled">
           Show service
         </.link>
       </:action>

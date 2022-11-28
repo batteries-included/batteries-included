@@ -7,13 +7,13 @@ defmodule CommonUI.Link do
 
   attr :href, :any
 
-  attr :type, :string, default: "unstyled"
+  attr :variant, :string, default: "unstyled"
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(download hreflang referrerpolicy rel target type)
 
   slot :inner_block, required: true
 
-  def link(%{type: "styled"} = assigns) do
+  def link(%{variant: "styled"} = assigns) do
     ~H"""
     <Phoenix.Component.link
       class={
@@ -30,7 +30,7 @@ defmodule CommonUI.Link do
     """
   end
 
-  def link(%{type: "external"} = assigns) do
+  def link(%{variant: "external"} = assigns) do
     ~H"""
     <Phoenix.Component.link
       class={build_class(["font-medium text-pink-600 hover:underline flex", @class])}
@@ -54,7 +54,7 @@ defmodule CommonUI.Link do
     """
   end
 
-  def link(%{type: "unstyled", navigate: _} = assigns) do
+  def link(%{variant: "unstyled", navigate: _} = assigns) do
     ~H"""
     <Phoenix.Component.link navigate={@navigate} class={build_class(@class)} {@rest}>
       <%= render_slot(@inner_block) %>

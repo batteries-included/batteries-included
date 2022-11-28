@@ -15,7 +15,7 @@ defmodule ControlServerWeb.DeploymentsDisplay do
       </:col>
 
       <:action :let={deployment}>
-        <.link navigate={resource_show_url(deployment)} type="styled">
+        <.link navigate={resource_show_url(deployment)} variant="styled">
           Show Deployment
         </.link>
       </:action>

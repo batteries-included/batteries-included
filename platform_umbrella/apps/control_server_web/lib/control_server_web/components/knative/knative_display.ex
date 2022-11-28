@@ -15,7 +15,9 @@ defmodule ControlServerWeb.KnativeDisplay do
           <.definition label="Namespace" value={namespace(@service)} />
           <.definition label="Concurrency Limit" value={max_concurrency(@service)} />
           <.definition label="URL" class="sm:col-span-3">
-            <.link href={service_url(@service)} type="external"><%= service_url(@service) %></.link>
+            <.link href={service_url(@service)} variant="external">
+              <%= service_url(@service) %>
+            </.link>
           </.definition>
         </dl>
       </div>

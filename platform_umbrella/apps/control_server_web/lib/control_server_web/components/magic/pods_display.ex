@@ -36,7 +36,7 @@ defmodule ControlServerWeb.PodsDisplay do
       <:col :let={pod} label="Age"><%= age(pod) %></:col>
 
       <:action :let={pod}>
-        <.link navigate={resource_show_url(pod)} type="styled">
+        <.link navigate={resource_show_url(pod)} variant="styled">
           Show Pod
         </.link>
       </:action>

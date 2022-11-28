@@ -40,7 +40,7 @@ defmodule ControlServerWeb.Live.CephIndex do
       <:col :let={ceph} label="Managers"><%= ceph.num_mgr %></:col>
       <:col :let={ceph} label="Data dir"><%= ceph.data_dir_host_path %></:col>
       <:action :let={ceph}>
-        <.link navigate={~p"/ceph/clusters/#{ceph}/show"} type="styled">
+        <.link navigate={~p"/ceph/clusters/#{ceph}/show"} variant="styled">
           Show Cluster
         </.link>
       </:action>
@@ -54,7 +54,7 @@ defmodule ControlServerWeb.Live.CephIndex do
       <:col :let={ceph} label="Name"><%= ceph.name %></:col>
       <:col :let={ceph} label="Include EC?"><%= ceph.include_erasure_encoded %></:col>
       <:action :let={ceph}>
-        <.link navigate={~p"/ceph/filesystems/#{ceph}/show"} type="styled">
+        <.link navigate={~p"/ceph/filesystems/#{ceph}/show"} variant="styled">
           Show FileSystem
         </.link>
       </:action>

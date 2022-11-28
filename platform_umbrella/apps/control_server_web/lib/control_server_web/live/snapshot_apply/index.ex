@@ -48,7 +48,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
         </:col>
         <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>
         <:action :let={snapshot}>
-          <.link navigate={~p"/snapshot_apply/#{snapshot}/show"} type="styled">Show Deploy</.link>
+          <.link navigate={~p"/snapshot_apply/#{snapshot}/show"} variant="styled">Show Deploy</.link>
         </:action>
       </.table>
 
