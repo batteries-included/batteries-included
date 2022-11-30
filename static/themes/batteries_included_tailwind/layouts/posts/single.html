@@ -6,8 +6,7 @@
           <dl class="space-y-10">
             <div>
               <dt class="sr-only">Published on</dt>
-              <dd
-                class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
+              <dd class="text-base font-medium leading-6 text-gray-500">
                 <time datetime="{{ .Date }}">
                   {{ .Date | time.Format ":date_full" }}
                 </time>
@@ -16,7 +15,7 @@
           </dl>
           <div>
             <h1
-              class="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
+              class="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
               {{ .Title }}
             </h1>
           </div>
@@ -24,9 +23,8 @@
       </header>
 
       <div
-        class="pb-8 divide-y divide-gray-200 xl:divide-y-0 dark:divide-gray-700 xl:grid xl:grid-cols-4 xl:gap-x-6">
-        <dl
-          class="pt-6 pb-10 xl:pt-11 xl:border-b xl:border-gray-200 xl:dark:border-gray-700">
+        class="pb-8 divide-y divide-gray-200 xl:divide-y-0 xl:grid xl:grid-cols-4 xl:gap-x-6">
+        <dl class="pt-6 pb-10 xl:pt-11 xl:border-b xl:border-gray-200">
           <dt class="sr-only">Authors</dt>
           <dd>
             <ul
@@ -39,9 +37,7 @@
                   class="w-10 h-10 rounded-full" />
                 <dl class="text-sm font-medium leading-5 whitespace-nowrap">
                   <dt class="sr-only">Name</dt>
-                  <dd class="text-gray-900 dark:text-gray-100">
-                    Batteries Included Team
-                  </dd>
+                  <dd class="text-gray-900">Batteries Included Team</dd>
                 </dl>
               </li>
             </ul>
@@ -49,34 +45,29 @@
         </dl>
 
         <div
-          class="divide-y divide-gray-200 dark:divide-gray-700 xl:pb-0 xl:col-span-3 xl:row-span-2">
-          <div class="pt-10 pb-8 prose dark:prose-dark max-w-none">
+          class="divide-y divide-gray-200 xl:pb-0 xl:col-span-3 xl:row-span-2">
+          <div class="pt-10 pb-8 prose max-w-none">
             {{ .Content }}
           </div>
         </div>
       </div>
-      <footer
-        class="text-sm font-medium leading-5 divide-gray-200 xl:divide-y dark:divide-gray-700">
+      <footer class="text-sm font-medium leading-5 divide-gray-200 xl:divide-y">
         {{ with .PrevInSection }}
           <div>
-            <h2
-              class="text-xs tracking-wide text-gray-500 uppercase dark:text-gray-400">
+            <h2 class="text-xs tracking-wide text-gray-500 uppercase">
               Previous Article
             </h2>
-            <div
-              class="text-pink-500 hover:text-pink-600 dark:hover:text-pink-400">
+            <div class="text-pink-500 hover:text-pink-600">
               <a class="previous" href="{{ .RelPermalink }}"> {{ .Title }}</a>
             </div>
           </div>
         {{ end }}
         {{ with .NextInSection }}
           <div>
-            <h2
-              class="text-xs tracking-wide text-gray-500 uppercase dark:text-gray-400">
+            <h2 class="text-xs tracking-wide text-gray-500 uppercase">
               Next Article
             </h2>
-            <div
-              class="text-pink-500 hover:text-pink-600 dark:hover:text-pink-400">
+            <div class="text-pink-500 hover:text-pink-600">
               <a class="next" href="{{ .RelPermalink }}"> {{ .Title }}</a>
             </div>
           </div>
