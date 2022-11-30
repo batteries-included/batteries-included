@@ -17,7 +17,12 @@ defmodule HomeBaseWeb.Router do
   scope "/", HomeBaseWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", Live.Home, :index
+
+    live "/installations/", Live.Installations, :index
+    live "/installations/new", Live.InstallationNew, :index
+    # live "/installations/:id/edit", Live.InstallationEdit, :edit
+    live "/installations/:id/show", Live.InstallatitonShow, :show
   end
 
   # Other scopes may use custom stacks.

@@ -6,7 +6,7 @@ defmodule HomeBaseWeb.TopMenuLayout do
 
   @main_menu_items [
     %{title: "Dashboard", url: "/", id: :home},
-    %{title: "Clusters", url: "/", id: :clusters}
+    %{title: "Installations", url: "/installations", id: :installations}
   ]
 
   attr :title, :string, default: "Batteries Included"
@@ -47,7 +47,9 @@ defmodule HomeBaseWeb.TopMenuLayout do
 
       <main class="-mt-32">
         <div class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-          <%= render_slot(@inner_block) %>
+          <div class="rounded-lg bg-white px-5 py-6 shadow sm:px-6 min-h-[32rem]">
+            <%= render_slot(@inner_block) %>
+          </div>
         </div>
       </main>
     </div>
@@ -65,6 +67,7 @@ defmodule HomeBaseWeb.TopMenuLayout do
         <.link
           :for={menu_item <- @menu_items}
           navigate={menu_item.url}
+          variant="unstyled"
           class={
             build_class([
               "px-3 py-2 text-sm font-medium",

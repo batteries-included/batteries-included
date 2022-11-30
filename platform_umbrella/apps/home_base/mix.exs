@@ -40,7 +40,14 @@ defmodule HomeBase.MixProject do
       {:ecto_sql, "~> 3.8"},
       {:postgrex, ">= 0.0.0"},
       {:logger_json, "~> 5.1"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:typed_ecto_schema, "~> 0.4.1"},
+      {:polymorphic_embed, "~> 3.0.5"},
+
+      # Filtering
+      {:paginator, "~> 1.2.0"},
+      # Slugs/Naming
+      {:mnemonic_slugs, "~> 0.0.3"}
     ]
   end
 

@@ -55,6 +55,8 @@ defmodule HomeBaseWeb do
       use Phoenix.LiveView,
         layout: {HomeBaseWeb.Layouts, :app}
 
+      import Phoenix.Component, except: [link: 1]
+
       unquote(html_helpers())
     end
   end
@@ -62,6 +64,8 @@ defmodule HomeBaseWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
+
+      import Phoenix.Component, except: [link: 1]
 
       unquote(html_helpers())
     end
