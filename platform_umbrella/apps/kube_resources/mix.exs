@@ -35,7 +35,7 @@ defmodule KubeResources.MixProject do
       {:ymlr, "~> 3.0.1"},
       # Caching for http requests
       {:cachex, "~> 3.4"},
-      {:finch, "~> 0.13.0"},
+      {:finch, "~> 0.14.0"},
       # logging
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:logger_json, "~> 5.1"},
