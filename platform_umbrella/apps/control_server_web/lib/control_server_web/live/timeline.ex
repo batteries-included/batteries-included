@@ -31,9 +31,9 @@ defmodule ControlServerWeb.TimelineLive do
       </:title>
       <.feed_timeline>
         <.timeline_item
-          :for={event <- @events}
-          action="installed"
+          :for={{event, idx} <- Enum.with_index(@events)}
           timestamp={event.inserted_at}
+          index={idx}
           payload={event.payload}
         />
       </.feed_timeline>

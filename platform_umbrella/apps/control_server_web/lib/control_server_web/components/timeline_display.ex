@@ -9,38 +9,29 @@ defmodule ControlServerWeb.TimelineDisplay do
 
   def feed_timeline(assigns) do
     ~H"""
-    <div class="flow-root">
-      <ul role="list" class="-mb-8">
+    <div class="container mx-auto w-full h-full">
+      <div class="relative wrap overflow-hidden p-10 h-full">
+        <div
+          class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border"
+          style="left: 50%"
+        >
+        </div>
         <%= render_slot(@inner_block) %>
-      </ul>
+      </div>
     </div>
     """
   end
 
-  attr :user_id, :string, default: nil
-  attr :user_name, :string, default: "System User"
-
   attr :timestamp, :any, default: nil
   attr :payload, :any, default: nil
-  attr :action, :string, default: "updated"
-  attr :display_line, :boolean, default: true
-  slot :image
+  attr :title, :string, default: ""
+  attr :index, :integer, default: 0
   slot :inner_block
 
   def timeline_item(%{payload: %NamedDatabase{}} = assigns) do
     ~H"""
-    <.timeline_item
-      timestamp={display_when(@timestamp)}
-      action={@payload.action}
-      user_name="You"
-      user_id="kubernetes"
-    >
-      <:image>
-        <.timeline_image src={icon_url("YOU")} />
-      </:image>
-      <p>
-        <%= human_name(@payload.action) %> on <%= human_name(@payload.type) %> named <%= @payload.name %>
-      </p>
+    <.timeline_item timestamp={display_when(@timestamp)} index={@index}>
+      <%= human_name(@payload.action) %> on <%= human_name(@payload.type) %> named <%= @payload.name %>
     </.timeline_item>
     """
   end
@@ -49,16 +40,13 @@ defmodule ControlServerWeb.TimelineDisplay do
     ~H"""
     <.timeline_item
       timestamp={display_when(@timestamp)}
-      action="add"
-      user_name="Kubernetes"
-      user_id="kubernetes"
+      index={@index}
+      title="New Kubernetes Resource"
     >
-      <:image>
-        <.timeline_image src={icon_url("kubernetes")} />
-      </:image>
-      <p>
-        New kubernetes <%= @payload.type %> resouce named <%= @payload.name %> added in <%= @payload.namespace %>
-      </p>
+      The Control Server detected a new <%= human_name(@payload.type) %> resouce named <%= @payload.name %> added in
+      the <%= @payload.namespace %> namespace. <br />
+      If that resource has not since been removed you can find a status page
+      <.link navigate={kube_link(@payload)} variant="styled">here</.link>
     </.timeline_item>
     """
   end
@@ -67,82 +55,66 @@ defmodule ControlServerWeb.TimelineDisplay do
     ~H"""
     <.timeline_item
       timestamp={display_when(@timestamp)}
-      action="delete"
-      user_name="Kubernetes"
-      user_id="kubernetes"
+      index={@index}
+      title="Removed Kubernetes Resource"
     >
-      <:image>
-        <.timeline_image src={icon_url("Kubernetes")} />
-      </:image>
-      <p>Removed <%= @payload.type %>/<%= @payload.name %> in <%= @payload.namespace %></p>
+      A previously existing <%= human_name(@payload.type) %> named <%= @payload.name %> in the <%= @payload.namespace %> namespace was removed.
     </.timeline_item>
     """
   end
 
   def timeline_item(%{payload: %BatteryInstall{}} = assigns) do
     ~H"""
-    <.timeline_item timestamp={display_when(@timestamp)} action="battery install" user_name="You">
-      <:image>
-        <.timeline_image src={icon_url("YOU")} />
-      </:image>
-      <p>The new battery <%= @payload.type %> was enabled.</p>
+    <.timeline_item timestamp={display_when(@timestamp)} index={@index} title="New Battery Installed">
+      Either you or the system installed a new battery of type <%= human_name(@payload.type) %>
     </.timeline_item>
     """
   end
 
   def timeline_item(assigns) do
     ~H"""
-    <li>
-      <div class="relative pb-8">
-        <span
-          :if={@display_line}
-          class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-          aria-hidden="true"
-        >
-        </span>
-        <div class="relative flex items-start space-x-3">
-          <div :if={@image != nil} class="relative">
-            <%= render_slot(@image) %>
-          </div>
-          <div class="min-w-0 flex-1">
-            <div>
-              <div class="text-sm text-lg font-medium text-gray-900">
-                <%= @user_name %>
-              </div>
-              <p class="mt-0.5 text-sm text-gray-500">
-                <%= @action %> @ <%= @timestamp %>
-              </p>
-            </div>
-            <div :if={@inner_block != nil} class="mt-2 text-sm">
-              <%= render_slot(@inner_block) %>
-            </div>
-          </div>
-        </div>
+    <div class={[timeline_item_container_class(@index)]}>
+      <div class="order-1 w-5/12"></div>
+      <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+        <h1 class="mx-auto font-semibold text-lg text-white"><%= @index %></h1>
       </div>
-    </li>
+      <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
+        <h3 class="font-bold text-gray-800 text-xl"><%= @title %></h3>
+        <h3 class=" text-primary-500 text-sm mb-3 "><%= @timestamp %></h3>
+        <p class="text-base leading-snug tracking-wide text-gray-900 text-opacity-100">
+          <%= render_slot(@inner_block) %>
+        </p>
+      </div>
+    </div>
     """
   end
 
-  attr :src, :string, required: true
+  defp timeline_item_container_class(index) when is_binary(index),
+    do: timeline_item_container_class(String.to_integer(index))
 
-  defp timeline_image(assigns) do
-    ~H"""
-    <img class="flex h-10 w-10 items-center justify-center rounded-full" src={@src} alt="" />
-    """
-  end
+  defp timeline_item_container_class(index) when is_integer(index),
+    do: timeline_item_container_class(Integer.mod(index, 2) == 0)
 
-  @spec icon_url(any()) :: binary()
-  defp icon_url(user_id) when is_binary(user_id) do
-    encoded_who = URI.encode(user_id)
-    "https://robohash.org/#{encoded_who}.png?set=set1"
-  end
+  defp timeline_item_container_class(true),
+    do: "mb-8 flex justify-between items-center w-full right-timeline"
 
-  # defp icon_url(_), do: icon_url("system_user")
+  defp timeline_item_container_class(false),
+    do: "mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline"
 
   defp display_when(nil), do: "Unknown Time"
   defp display_when(datetime), do: Timex.from_now(datetime)
 
   defp human_name(atom_var) do
-    atom_var |> to_string() |> Phoenix.Naming.humanize()
+    atom_var |> to_string() |> Phoenix.Naming.humanize() |> titlecase()
+  end
+
+  defp titlecase(var) do
+    var
+    |> String.split()
+    |> Enum.map_join(" ", &String.capitalize/1)
+  end
+
+  defp kube_link(%Kube{} = kube) do
+    ~p|/kube/#{kube.type}/#{kube.namespace}/#{kube.name}|
   end
 end
