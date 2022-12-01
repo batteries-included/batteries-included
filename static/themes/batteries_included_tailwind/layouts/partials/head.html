@@ -25,4 +25,12 @@
 
 
   <link href="{{ $styles.RelPermalink }}" rel="stylesheet" />
+
+  {{ if hugo.IsProduction }}
+    <script
+      async
+      defer
+      src="https://analytics.umami.is/script.js"
+      data-website-id="1979089e-75e1-447b-855c-d7f734824cdc"></script>
+  {{ end }}
 </head>
