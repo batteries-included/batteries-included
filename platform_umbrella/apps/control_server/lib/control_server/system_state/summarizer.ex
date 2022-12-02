@@ -24,7 +24,7 @@ defmodule ControlServer.SystemState.Summarizer do
         }
 
   @me __MODULE__
-  @default_refresh_time 30 * 1000
+  @default_refresh_time 90 * 1000
   @state_opts [
     :refresh_time
   ]
