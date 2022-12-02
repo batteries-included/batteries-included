@@ -23,13 +23,12 @@ defmodule KubeExt.Hashing do
   end
 
   def decorate(resource) do
-    hash = resource |> Sanitizer.sanitize() |> MapHMAC.get() |> Base.encode32()
-
     resource
     |> update_in(~w(metadata), fn meta -> Map.put_new(meta || %{}, "annotations", %{}) end)
     |> update_in(
       ~w(metadata annotations),
       fn annotations ->
+        hash = resource |> Sanitizer.sanitize() |> MapHMAC.get() |> Base.encode32()
         Map.put(annotations || %{}, @hash_annotation_key, hash)
       end
     )
