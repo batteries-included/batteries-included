@@ -1,5 +1,10 @@
 [
   import_deps: [:ecto],
-  inputs: ["*.{ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{ex,exs}"],
+  inputs: [
+    "{mix,.formatter}.exs",
+    "*.{ex,exs}",
+    "priv/*/seeds.exs",
+    "{lib,test}/**/*.{ex,exs}"
+  ],
   subdirectories: ["priv/*/migrations"]
 ]

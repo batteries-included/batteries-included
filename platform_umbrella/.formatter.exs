@@ -10,7 +10,10 @@ locals_without_parens = [
 [
   import_deps: [:phoenix, :ecto],
   plugins: [Phoenix.LiveView.HTMLFormatter],
-  inputs: ["mix.exs", "config/*.exs"],
+  inputs: [
+    "{mix,.formatter}.exs",
+    "config/*.exs"
+  ],
   subdirectories: ["apps/*"],
   locals_without_parens: locals_without_parens,
   export: [locals_without_parens: locals_without_parens]

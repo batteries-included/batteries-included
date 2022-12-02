@@ -97,32 +97,12 @@ defmodule KubeExt.Defaults.Catalog do
     },
     %CatalogBattery{
       group: :monitoring,
-      type: :monitoring_controller_manager,
-      dependencies: [:prometheus, :grafana]
-    },
-    %CatalogBattery{
-      group: :monitoring,
       type: :monitoring_coredns,
       dependencies: [:prometheus, :grafana]
     },
     %CatalogBattery{
       group: :monitoring,
-      type: :monitoring_etcd,
-      dependencies: [:prometheus, :grafana]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :monitoring_kube_proxy,
-      dependencies: [:prometheus, :grafana]
-    },
-    %CatalogBattery{
-      group: :monitoring,
       type: :monitoring_kubelet,
-      dependencies: [:prometheus, :grafana]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :monitoring_scheduler,
       dependencies: [:prometheus, :grafana]
     },
     %CatalogBattery{
@@ -137,12 +117,8 @@ defmodule KubeExt.Defaults.Catalog do
         :node_exporter,
         :kube_state_metrics,
         :monitoring_api_server,
-        :monitoring_controller_manager,
         :monitoring_coredns,
-        :monitoring_etcd,
-        :monitoring_kube_proxy,
-        :monitoring_kubelet,
-        :monitoring_scheduler
+        :monitoring_kubelet
       ]
     },
     %CatalogBattery{

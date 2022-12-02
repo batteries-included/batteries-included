@@ -1,5 +1,8 @@
 defmodule KubeResources.Promtail do
-  use KubeExt.IncludeResource, promtail_yaml: "priv/raw_files/promtail/promtail.yaml"
+  use KubeExt.IncludeResource,
+    promtail_yaml: "priv/raw_files/promtail/promtail.yaml",
+    dashboard: "priv/raw_files/promtail/dashboard_15095.json"
+
   use KubeExt.ResourceGenerator
 
   import KubeExt.SystemState.Namespaces
@@ -30,6 +33,19 @@ defmodule KubeResources.Promtail do
         "verbs" => ["get", "watch", "list"]
       }
     ])
+  end
+
+  resource(:dashboard, _battery, state) do
+    namespace = core_namespace(state)
+
+    data = %{"promtail-loki-dashboard.json" => get_resource(:dashboard)}
+
+    B.build_resource(:config_map)
+    |> B.name("promtail-dashboard")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.label("grafana_dashboard", "1")
+    |> B.data(data)
   end
 
   resource(:daemon_set_main, battery, state) do

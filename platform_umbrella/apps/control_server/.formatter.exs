@@ -4,7 +4,12 @@ locals_without_parens = [
 
 [
   import_deps: [:ecto],
-  inputs: ["*.{heex,ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{heex,ex,exs}"],
+  inputs: [
+    "{mix,.formatter}.exs",
+    "*.{heex,ex,exs}",
+    "priv/*/seeds.exs",
+    "{lib,test}/**/*.{heex,ex,exs}"
+  ],
   subdirectories: ["priv/*/migrations"],
   locals_without_parens: locals_without_parens
 ]

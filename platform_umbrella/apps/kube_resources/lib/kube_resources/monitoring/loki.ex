@@ -10,7 +10,6 @@ defmodule KubeResources.Loki do
     metricsinstances_monitoring_grafana_com:
       "priv/manifests/loki/metricsinstances_monitoring_grafana_com.yaml",
     podlogs_monitoring_grafana_com: "priv/manifests/loki/podlogs_monitoring_grafana_com.yaml",
-    dashboard_json: "priv/raw_files/loki/loki-dashboard_rev1.json",
     config_yaml: "priv/raw_files/loki/config.yaml"
 
   use KubeExt.ResourceGenerator
@@ -490,6 +489,7 @@ defmodule KubeResources.Loki do
     |> B.name("loki")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+    |> B.component_label("loki")
     |> B.spec(%{
       "ports" => [
         %{
@@ -528,19 +528,10 @@ defmodule KubeResources.Loki do
     |> B.name("loki-read")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("read")
     |> B.spec(%{
       "endpoints" => [
         %{
           "port" => "http-metrics",
-          "relabelings" => [
-            %{
-              "replacement" => "battery-core/$1",
-              "sourceLabels" => ["job"],
-              "targetLabel" => "job"
-            },
-            %{"replacement" => "loki", "targetLabel" => "cluster"}
-          ],
           "scheme" => "http"
         }
       ],
@@ -651,18 +642,6 @@ defmodule KubeResources.Loki do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.label("grafana_datasource", "1")
-    |> B.data(data)
-  end
-
-  resource(:config_map_dashboard, _battery, state) do
-    namespace = core_namespace(state)
-    data = %{"dashboard.json" => get_resource(:dashboard_json)}
-
-    B.build_resource(:config_map)
-    |> B.name("battery-loki-dashdoard")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end
 end

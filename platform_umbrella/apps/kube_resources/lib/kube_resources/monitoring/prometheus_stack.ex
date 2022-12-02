@@ -3,7 +3,6 @@ defmodule KubeResources.PrometheusStack do
     alertmanager_overview_json: "priv/raw_files/prometheus_stack/alertmanager-overview.json",
     apiserver_json: "priv/raw_files/prometheus_stack/apiserver.json",
     cluster_total_json: "priv/raw_files/prometheus_stack/cluster-total.json",
-    controller_manager_json: "priv/raw_files/prometheus_stack/controller-manager.json",
     grafana_overview_json: "priv/raw_files/prometheus_stack/grafana-overview.json",
     k8s_coredns_json: "priv/raw_files/prometheus_stack/k8s-coredns.json",
     k8s_resources_cluster_json: "priv/raw_files/prometheus_stack/k8s-resources-cluster.json",
