@@ -1,10 +1,17 @@
 defmodule CommonTesting.ComponentSnapshotTest do
   @moduledoc """
-  Documentation for `ComponentSnapshotTest`.
+  `ComponentSnapshotTest` allows for fast snapshot
+  testing of Phoenix components. Snapshot testing
+  components is a fast and easy way to ensure that
+  they work and produce what they expected to
+  produce without having to hand write
+  assertions.
+
+
   """
 
   @doc """
-  When used, dispatch to the appropriate controller/view/etc.
+  Wire up the module to prepare for snapshot testing.
   """
   defmacro __using__(_opts) do
     quote do
@@ -19,6 +26,9 @@ defmodule CommonTesting.ComponentSnapshotTest do
     end
   end
 
+  @doc """
+  A named component snapshot test
+  """
   defmacro component_snapshot_test(name, do: expr) do
     quote do
       test unquote(name) do
@@ -27,6 +37,9 @@ defmodule CommonTesting.ComponentSnapshotTest do
     end
   end
 
+  @doc """
+  A named component snapshot test, where context is passed through.
+  """
   defmacro component_snapshot_test(name, context, do: expr) do
     quote do
       test unquote(name), unquote(context) do

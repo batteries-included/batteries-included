@@ -31,7 +31,6 @@ defmodule CommonTesting.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:logger_json, "~> 5.1"},
       {:snapshy, "~> 0.2"},
       {:phoenix_live_view, "~> 0.18.3"},
       {:phoenix, github: "phoenixframework/phoenix", override: true}
