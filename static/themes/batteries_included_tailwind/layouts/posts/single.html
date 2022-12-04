@@ -22,35 +22,10 @@
         </div>
       </header>
 
-      <div
-        class="pb-8 divide-y divide-gray-200 xl:divide-y-0 xl:grid xl:grid-cols-4 xl:gap-x-6">
-        <dl class="pt-6 pb-10 xl:pt-11 xl:border-b xl:border-gray-200">
-          <dt class="sr-only">Authors</dt>
-          <dd>
-            <ul
-              class="flex justify-center space-x-8 xl:block sm:space-x-12 xl:space-x-0 xl:space-y-8">
-              <li class="flex items-center space-x-2">
-                {{ $image := resources.Get "images/logo.2.clip.png" }}
-                <img
-                  src="{{ $image.RelPermalink }}"
-                  alt="avatar"
-                  class="w-10 h-10 rounded-full" />
-                <dl class="text-sm font-medium leading-5 whitespace-nowrap">
-                  <dt class="sr-only">Name</dt>
-                  <dd class="text-gray-900">Batteries Included Team</dd>
-                </dl>
-              </li>
-            </ul>
-          </dd>
-        </dl>
-
-        <div
-          class="divide-y divide-gray-200 xl:pb-0 xl:col-span-3 xl:row-span-2">
-          <div class="pt-10 pb-8 prose max-w-none">
-            {{ .Content }}
-          </div>
-        </div>
+      <div class="pt-10 pb-8 prose max-w-none">
+        {{ .Content }}
       </div>
+
       <footer class="text-sm font-medium leading-5 divide-gray-200 xl:divide-y">
         {{ with .PrevInSection }}
           <div>
