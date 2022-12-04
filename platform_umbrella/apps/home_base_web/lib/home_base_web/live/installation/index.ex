@@ -5,12 +5,12 @@ defmodule HomeBaseWeb.Live.Installations do
 
   alias HomeBase.ControlServerClusters
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :installations, list_installations())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -23,7 +23,7 @@ defmodule HomeBaseWeb.Live.Installations do
     ControlServerClusters.list_installations()
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.top_menu_layout page={:installations} title={@page_title}>

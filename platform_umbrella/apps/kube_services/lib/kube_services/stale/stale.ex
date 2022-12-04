@@ -14,8 +14,7 @@ defmodule KubeServices.Stale do
     KubeState.snapshot()
     |> Map.get(:kube_state)
     |> Enum.flat_map(fn {_key, values} -> values end)
-    |> Enum.filter(&has_annotation/1)
-    |> Enum.reject(fn r -> in_some_kube_snapshot(r) end)
+    |> Enum.filter(fn r -> has_annotation(r) && !in_some_kube_snapshot(r) end)
     |> log_scan_results()
   end
 

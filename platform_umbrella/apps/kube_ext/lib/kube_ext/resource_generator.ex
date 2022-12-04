@@ -53,24 +53,26 @@ defmodule KubeExt.ResourceGenerator do
   defp dedupe_path(resources) do
     resources
     |> Enum.group_by(fn {path, _} -> path end, fn {_path, res} -> res end)
-    |> Enum.flat_map(fn
-      # After grouping by path it's possible that there are
-      # two resources with the same path (different namespaces)
-      # This will flatten this adding the index to the path if needed.
-      {path, rl} when length(rl) > 1 ->
-        rl
-        |> Enum.with_index()
-        |> Enum.map(fn {r, idx} -> {Path.join(path, Integer.to_string(idx)), r} end)
-
-      {path, rl} ->
-        # There's one or none in the list
-        Enum.map(rl, fn r -> {path, r} end)
-    end)
+    |> Enum.flat_map(&grouped_resources_to_path_map/1)
   end
 
   defp to_map(resources) do
     # Dump this back into a map
     Map.new(resources)
+  end
+
+  defp grouped_resources_to_path_map({path, resource_list}) when length(resource_list) > 1 do
+    # After grouping by path it's possible that there are
+    # two resources with the same path (different namespaces)
+    # This will flatten this adding the index to the path if needed.
+    resource_list
+    |> Enum.with_index()
+    |> Enum.map(fn {r, idx} -> {Path.join(path, Integer.to_string(idx)), r} end)
+  end
+
+  defp grouped_resources_to_path_map({path, resource_list}) do
+    # There's one or none in the list so it can have the path all to itself
+    resource_list |> Enum.map(fn r -> {path, r} end) |> Enum.take(1)
   end
 
   defp to_path(resource) do

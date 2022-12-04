@@ -364,7 +364,8 @@ defmodule Mix.Tasks.Gen.Resource do
   end
 
   defp data_pipeline(small_data, large_data) do
-    Enum.reduce(small_data, starting_data(), fn {key, value}, code ->
+    small_data
+    |> Enum.reduce(starting_data(), fn {key, value}, code ->
       add_map_put_key(code, key, value)
     end)
     |> then(fn code_with_small ->
@@ -495,8 +496,7 @@ defmodule Mix.Tasks.Gen.Resource do
   end
 
   defp clean_template_metadata(metadata, app_name) do
-    metadata
-    |> update_in(["labels"], fn labels ->
+    update_in(metadata, ["labels"], fn labels ->
       (labels || %{})
       |> clean_labels(app_name)
       |> Map.put_new("battery/app", app_name)
@@ -809,7 +809,7 @@ defmodule Mix.Tasks.Gen.Resource do
   end
 
   defp module(app_name, %{} = includes, methods) do
-    include_keywords = Keyword.new(includes) |> Enum.sort_by(fn {_, path} -> path end)
+    include_keywords = includes |> Keyword.new() |> Enum.sort_by(fn {_, path} -> path end)
 
     sorted_methods =
       methods

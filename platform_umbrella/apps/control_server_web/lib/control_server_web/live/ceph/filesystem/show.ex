@@ -5,12 +5,12 @@ defmodule ControlServerWeb.Live.CephFilesystemShow do
 
   alias ControlServer.Rook
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
@@ -20,7 +20,7 @@ defmodule ControlServerWeb.Live.CephFilesystemShow do
 
   defp page_title(:show), do: "Show Ceph Filesystem"
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:data} active={:rook}>

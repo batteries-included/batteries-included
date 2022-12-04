@@ -10,17 +10,17 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
   alias ControlServer.Notebooks
   alias ControlServer.Batteries.Installer
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :notebooks, notebooks())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("delete_notebook", %{"id" => id}, socket) do
     jupyter_lab_notebook = Notebooks.get_jupyter_lab_notebook!(id)
     {:ok, _} = Notebooks.delete_jupyter_lab_notebook(jupyter_lab_notebook)
@@ -40,7 +40,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
     Notebooks.list_jupyter_lab_notebooks()
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:ml} active={:notebooks}>

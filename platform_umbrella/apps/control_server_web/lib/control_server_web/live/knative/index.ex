@@ -6,12 +6,12 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   alias ControlServer.Knative
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :services, list_services())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -20,7 +20,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     assign(socket, :page_title, "Listing Services")
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     service = Knative.get_service!(id)
     {:ok, _} = Knative.delete_service(service)
@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     Knative.list_services()
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:devtools} active={:knative_serving}>

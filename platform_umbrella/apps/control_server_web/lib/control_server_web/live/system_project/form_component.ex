@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
 
   alias ControlServer.Projects
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>
@@ -34,7 +34,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(%{system_project: system_project} = assigns, socket) do
     changeset = Projects.change_system_project(system_project)
 
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"system_project" => system_project_params}, socket) do
     changeset =
       socket.assigns.system_project

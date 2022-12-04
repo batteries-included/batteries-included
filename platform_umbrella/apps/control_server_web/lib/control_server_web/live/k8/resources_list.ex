@@ -17,7 +17,7 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     live_action = socket.assigns.live_action
     subscribe(live_action)
@@ -29,12 +29,12 @@ defmodule ControlServerWeb.Live.ResourceList do
     :ok = KubeEventCenter.subscribe(resource_type)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
     {:noreply, assign(socket, :objects, objects(socket.assigns.live_action))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, assign(socket, :objects, objects(socket.assigns.live_action))}
   end
@@ -73,7 +73,7 @@ defmodule ControlServerWeb.Live.ResourceList do
     ]
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:magic} active={:kube_resources}>

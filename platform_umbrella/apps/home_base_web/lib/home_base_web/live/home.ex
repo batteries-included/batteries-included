@@ -3,7 +3,7 @@ defmodule HomeBaseWeb.Live.Home do
 
   import HomeBaseWeb.TopMenuLayout
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.top_menu_layout title="Dashboard" page={:home}></.top_menu_layout>

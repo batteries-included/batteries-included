@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     cluster = %Cluster{}
     changeset = Postgres.change_cluster(cluster)
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -35,7 +35,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
     new_path = ~p"/postgres/clusters/#{cluster}/show"
     Installer.install!(:database_public)
@@ -43,7 +43,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
     {:noreply, push_redirect(socket, to: new_path)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Integration.KubeState do
 
   feature "Can show kube nodes state", %{session: session} do
     # Make sure that there are at least this many nodes in the table
-    count = KubeState.nodes() |> length()
+    count = length(KubeState.nodes())
 
     session
     |> visit("/internal/nodes")
@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Integration.KubeState do
   end
 
   feature "Can show kube pods state", %{session: session} do
-    count = KubeState.pods() |> length()
+    count = length(KubeState.pods())
 
     session
     |> visit("/internal/pods")

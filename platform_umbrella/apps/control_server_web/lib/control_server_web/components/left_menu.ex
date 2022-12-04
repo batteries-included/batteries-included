@@ -10,7 +10,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   alias ControlServer.Batteries
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(assigns, socket) do
     {:ok,
      socket
@@ -250,7 +250,7 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <nav class="space-y-1">

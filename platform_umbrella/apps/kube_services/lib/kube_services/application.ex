@@ -9,7 +9,7 @@ defmodule KubeServices.Application do
   alias KubeExt.KubeState
   alias KubeExt.KubeState.ResourceWatcher
 
-  @impl true
+  @impl Application
   def start(_type, _args) do
     children = children(start_services?())
 
@@ -63,11 +63,10 @@ defmodule KubeServices.Application do
   end
 
   defp specs_for_types(types, base_name, func) do
-    types
-    |> Enum.map(fn type ->
-      {type, "#{base_name}.#{Macro.camelize(Atom.to_string(type))}"}
+    Enum.map(types, fn type ->
+      type_name = type |> Atom.to_string() |> Macro.camelize()
+      func.({type, "#{base_name}.#{type_name}"})
     end)
-    |> Enum.map(func)
   end
 
   defp resource_worker_child_spec({resource_type, id}) do

@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.Iframe do
 
   def iframe_url(:kiali), do: KubeResources.Kiali.url()
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout container_type={:iframe}>

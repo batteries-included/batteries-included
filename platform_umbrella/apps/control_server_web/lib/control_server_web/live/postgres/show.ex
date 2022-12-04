@@ -12,14 +12,14 @@ defmodule ControlServerWeb.Live.PostgresShow do
   alias KubeExt.OwnerReference
   alias EventCenter.KubeState, as: KubeEventCenter
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = KubeEventCenter.subscribe(:pod)
     :ok = KubeEventCenter.subscribe(:postgresql)
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
      |> assign_k8_pods()}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
     {:noreply,
      socket
@@ -112,7 +112,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
     |> Enum.find(nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("delete", _, socket) do
     {:ok, _} = Postgres.delete_cluster(socket.assigns.cluster)
 
@@ -155,7 +155,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:data} active={:postgres_operator}>

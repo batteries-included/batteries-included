@@ -8,22 +8,22 @@ defmodule ControlServerWeb.Live.RedisEdit do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply, assign(socket, :failover_cluster, Redis.get_failover_cluster!(id))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"failover_cluster:save", %{"failover_cluster" => cluster}}, socket) do
     {:noreply, push_redirect(socket, to: ~p"/redis/clusters/#{cluster}/show")}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

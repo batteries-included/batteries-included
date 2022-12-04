@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = SnapshotEventCenter.subscribe()
     {:ok, assign(socket, :snapshots, snapshots([]))}
@@ -18,12 +18,12 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
     SnapshotApply.paginated_kube_snapshots(params)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
     {:noreply, assign(socket, :snapshots, snapshots([]))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("start", _, socket) do
     job = KubeServices.SnapshotApply.Worker.start!()
 
@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:magic} active={:kube_snapshots}>

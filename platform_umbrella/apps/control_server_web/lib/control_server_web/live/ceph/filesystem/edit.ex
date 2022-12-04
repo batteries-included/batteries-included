@@ -8,22 +8,22 @@ defmodule ControlServerWeb.Live.CephFilesystemEdit do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply, assign(socket, :ceph_filesystem, Rook.get_ceph_filesystem!(id))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"ceph_filesystem:save", %{"ceph_filesystem" => ceph_filesystem}}, socket) do
     {:noreply, push_redirect(socket, to: ~p"/ceph/filesystems/#{ceph_filesystem}/show")}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout group={:devtools}>

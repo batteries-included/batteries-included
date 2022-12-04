@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.RedisNew do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     failover_cluster = %FailoverCluster{num_redis_instances: 1, num_sentinel_instances: 1}
     changeset = Redis.change_failover_cluster(failover_cluster)
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.RedisNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.RedisNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
     new_path = ~p"/redis/clusters/#{failover_cluster}/show"
     Installer.install!(:redis)
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Live.RedisNew do
     {:noreply, push_redirect(socket, to: new_path)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

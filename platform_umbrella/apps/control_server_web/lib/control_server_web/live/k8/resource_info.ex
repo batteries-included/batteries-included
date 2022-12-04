@@ -11,7 +11,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(
         %{"resource_type" => rt_param, "name" => name, "namespace" => namespace} = _params,
         _session,
@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     :ok = KubeEventCenter.subscribe(resource_type)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
     {:noreply,
      assign(
@@ -270,7 +270,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""

@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(params, _session, socket) do
     Logger.debug("Params => #{inspect(params)}")
 
@@ -65,7 +65,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:magic} active={:kube_snapshots}>

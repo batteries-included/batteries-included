@@ -95,10 +95,9 @@ defmodule KubeExt.HashingTest do
   end
 
   test "recompute hash stable" do
-    striped =
-      @service_two
-      |> update_in(~w(metadata), fn meta -> Map.drop(meta || %{}, ["annotations"]) end)
+    stripped =
+      update_in(@service_two, ~w(metadata), fn meta -> Map.drop(meta || %{}, ["annotations"]) end)
 
-    assert false == Hashing.different?(@service_two, striped)
+    assert false == Hashing.different?(@service_two, stripped)
   end
 end

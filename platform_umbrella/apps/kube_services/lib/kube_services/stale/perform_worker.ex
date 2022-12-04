@@ -24,17 +24,15 @@ defmodule KubeServices.Stale.PerformWorker do
   defp perform_delete(suspected_stale) do
     suspected_stale
     |> Enum.reject(&Stale.in_some_kube_snapshot/1)
-    |> Enum.map(&ResourceDeleter.delete/1)
-    |> Enum.map(fn
-      {:ok, _} ->
-        :ok
+    |> Enum.map(fn res ->
+      case ResourceDeleter.delete(res) do
+        {:ok, _} ->
+          :ok
 
-      :ok ->
-        :ok
-
-      result ->
-        Logger.debug("Delete result -> #{inspect(result)}")
-        result
+        result ->
+          Logger.debug("Delete result -> #{inspect(result)}")
+          result
+      end
     end)
     |> Enum.all?(fn v -> v == :ok end)
   end

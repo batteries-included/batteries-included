@@ -10,10 +10,6 @@ defmodule ControlServerWeb.Endpoint do
     signing_salt: "9OVm0RG/"
   ]
 
-  socket "/socket", ControlServerWeb.UserSocket,
-    websocket: true,
-    longpoll: false
-
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.

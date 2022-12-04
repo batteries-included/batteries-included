@@ -48,7 +48,7 @@ defmodule ControlServer.SystemState.Summarizer do
     result
   end
 
-  @impl true
+  @impl GenServer
   def init(opts) do
     sleep_time = Keyword.get(opts, :refresh_time, @default_refresh_time)
 
@@ -56,23 +56,23 @@ defmodule ControlServer.SystemState.Summarizer do
     {:ok, %{last: new_summary!(), refresh_time: sleep_time}}
   end
 
-  @impl true
+  @impl GenServer
   def handle_call(:new, _from, state) do
     new_summary = new_summary!()
     {:reply, new_summary, %{state | last: new_summary}}
   end
 
-  @impl true
+  @impl GenServer
   def handle_call(:cached, _from, %{last: cached} = state) do
     {:reply, cached, state}
   end
 
-  @impl true
+  @impl GenServer
   def handle_call({:cached, field}, _from, %{last: cached} = state) do
     {:reply, Map.get(cached, field), state}
   end
 
-  @impl true
+  @impl GenServer
   def handle_info(:refresh, %{refresh_time: time} = state) do
     schedule_refresh(time)
 

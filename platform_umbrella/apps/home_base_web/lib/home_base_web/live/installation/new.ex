@@ -8,7 +8,7 @@ defmodule HomeBaseWeb.Live.InstallationNew do
 
   alias HomeBaseWeb.Live.Installations.FormComponent
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     installation = %Installation{}
     changeset = ControlServerClusters.change_installation(installation)
@@ -28,14 +28,14 @@ defmodule HomeBaseWeb.Live.InstallationNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"installation:save", %{"installation" => installation}}, socket) do
     new_path = ~p"/installations/#{installation}/show"
 
     {:noreply, push_redirect(socket, to: new_path)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.top_menu_layout page={:installations} title="New Installation">

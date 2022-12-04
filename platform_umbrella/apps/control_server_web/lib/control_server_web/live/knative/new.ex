@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     service = %Service{}
     changeset = Knative.change_service(service)
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"service:save", %{"service" => service}}, socket) do
     new_path = ~p"/knative/services/#{service}/show"
     Installer.install!(:knative)
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
     {:noreply, push_redirect(socket, to: new_path)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

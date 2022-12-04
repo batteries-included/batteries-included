@@ -15,13 +15,13 @@ defmodule KubeServices.Timeline.DatabaseWatcher do
     GenServer.start_link(__MODULE__, state)
   end
 
-  @impl true
+  @impl GenServer
   def init(%State{source_type: type} = state) do
     :ok = DatabaseEventCenter.subscribe(type)
     {:ok, state}
   end
 
-  @impl true
+  @impl GenServer
   def handle_info({action, object}, %State{source_type: type} = state) do
     {:ok, _} = to_event(type, action, object)
     {:noreply, state}

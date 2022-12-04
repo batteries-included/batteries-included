@@ -12,7 +12,7 @@ defmodule KubeExt.KubeState.Runner do
     GenServer.start_link(__MODULE__, table_name, opts)
   end
 
-  @impl true
+  @impl GenServer
   def init(table_name) do
     ets_table = :ets.new(table_name, [:set, :named_table, read_concurrency: true])
     {:ok, {ets_table}}
@@ -54,7 +54,7 @@ defmodule KubeExt.KubeState.Runner do
     GenServer.call(table_name, {:update, resource})
   end
 
-  @impl true
+  @impl GenServer
   def handle_call({:add, resource}, _from, {ets_table}) do
     :ets.insert_new(ets_table, {key(resource), resource})
 
@@ -83,7 +83,7 @@ defmodule KubeExt.KubeState.Runner do
     end
   end
 
-  @impl true
+  @impl GenServer
   def handle_info(_, state) do
     {:noreply, state}
   end

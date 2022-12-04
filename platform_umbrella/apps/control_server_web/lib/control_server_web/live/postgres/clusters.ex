@@ -9,12 +9,12 @@ defmodule ControlServerWeb.Live.PostgresClusters do
 
   alias ControlServer.Postgres
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :clusters, list_clusters())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
 
   defp new_url, do: ~p"/postgres/clusters/new"
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:data} active={:postgres_operator}>

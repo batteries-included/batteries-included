@@ -59,7 +59,7 @@ defmodule KubeServices.SnapshotApply.Apply do
     result
   end
 
-  @impl true
+  @impl GenServer
   def init(opts) do
     {:ok, State.new(opts)}
   end
@@ -91,14 +91,14 @@ defmodule KubeServices.SnapshotApply.Apply do
     GenServer.cast(@me, {:run, snap})
   end
 
-  @impl true
+  @impl GenServer
   def handle_cast({:run, snap}, state) do
     with {:ok, _snap} <- do_run(snap, state) do
       {:noreply, state}
     end
   end
 
-  @impl true
+  @impl GenServer
   def handle_call({:run, snap}, _from, state) do
     {:reply, do_run(snap, state), state}
   end

@@ -3,7 +3,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
 
   alias HomeBase.ControlServerClusters
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def mount(socket) do
     {:ok,
      socket
@@ -11,7 +11,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
      |> assign_new(:save_target, fn -> nil end)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(%{installation: installation} = assigns, socket) do
     changeset = ControlServerClusters.change_installation(installation)
 
@@ -21,7 +21,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"installation" => installation_params}, socket) do
     changeset =
       socket.assigns.installation
@@ -69,7 +69,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
     socket
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>

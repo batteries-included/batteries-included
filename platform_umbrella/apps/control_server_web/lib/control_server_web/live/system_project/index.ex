@@ -6,12 +6,12 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
   alias ControlServer.Projects
   alias ControlServer.Projects.SystemProject
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :system_projects, list_system_projects())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -34,7 +34,7 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
     |> assign(:system_project, nil)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     system_project = Projects.get_system_project!(id)
     {:ok, _} = Projects.delete_system_project(system_project)
@@ -46,7 +46,7 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
     Projects.list_system_projects()
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:projects} active={:projects}>

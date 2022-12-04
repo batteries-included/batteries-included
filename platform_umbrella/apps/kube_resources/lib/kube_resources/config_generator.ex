@@ -99,7 +99,6 @@ defmodule KubeResources.ConfigGenerator do
       generators = Keyword.fetch!(mappings, system_battery.type)
       materialize_system_battery(system_battery, state, generators)
     end)
-    |> Enum.map(&Map.new/1)
     |> Enum.reduce(%{}, &Map.merge/2)
   end
 
@@ -120,6 +119,7 @@ defmodule KubeResources.ConfigGenerator do
         |> Hashing.decorate()
       }
     end)
+    |> Map.new()
   end
 
   defp add_owner(resource, %{id: id}), do: B.owner_label(resource, id)

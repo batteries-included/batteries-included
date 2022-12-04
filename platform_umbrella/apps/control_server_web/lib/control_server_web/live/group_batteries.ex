@@ -10,13 +10,13 @@ defmodule ControlServerWeb.GroupBatteriesLive do
   alias EventCenter.Database, as: DatabaseEventCenter
   alias ControlServerWeb.Components.LeftMenu
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = DatabaseEventCenter.subscribe(:system_battery)
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply,
      socket
@@ -38,14 +38,14 @@ defmodule ControlServerWeb.GroupBatteriesLive do
     assign(socket, :system_batteries, map)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("start", %{"type" => type} = params, socket) do
     dbg(params)
     Installer.install(type)
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(_, socket) do
     send_update(LeftMenu, id: "left", group: socket.assigns.live_action, active: :batteries)
     {:noreply, assign_system_batteries(socket, socket.assigns.live_action)}
@@ -102,7 +102,7 @@ defmodule ControlServerWeb.GroupBatteriesLive do
 
   defp is_active(active, type), do: Map.has_key?(active, type)
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={@live_action} active={:batteries}>

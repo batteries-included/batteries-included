@@ -16,7 +16,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   alias KubeExt.OwnerLabel
   alias KubeExt.OwnerReference
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = KubeEventCenter.subscribe(:pod)
     :ok = KubeEventCenter.subscribe(:knative_service)
@@ -24,7 +24,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     service = Knative.get_service!(id)
     k8_service = k8_service(service)
@@ -61,7 +61,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp page_title(:show), do: "Show Knative Service"
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:devtools} active={:knative_serving}>

@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.CephFilesystemFormComponent do
 
   alias ControlServer.Rook
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(%{ceph_filesystem: ceph_filesystem} = assigns, socket) do
     changeset = Rook.change_ceph_filesystem(ceph_filesystem)
 
@@ -14,7 +14,7 @@ defmodule ControlServerWeb.Live.CephFilesystemFormComponent do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"ceph_filesystem" => ceph_filesystem_params}, socket) do
     changeset =
       socket.assigns.ceph_filesystem
@@ -61,7 +61,7 @@ defmodule ControlServerWeb.Live.CephFilesystemFormComponent do
     socket
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>

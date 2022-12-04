@@ -13,7 +13,7 @@ defmodule KubeServices.ResourceDeleter do
     result
   end
 
-  @impl true
+  @impl GenServer
   def init(opts) do
     conn_func = Keyword.get(opts, :connection_func, fn -> KubeExt.ConnectionPool.get() end)
     conn = Keyword.get_lazy(opts, :connection, conn_func)
@@ -25,7 +25,7 @@ defmodule KubeServices.ResourceDeleter do
     GenServer.call(@me, {:delete, resource})
   end
 
-  @impl true
+  @impl GenServer
   def handle_call({:delete, resource}, _fromt, %{conn: conn} = state) do
     Logger.debug("Delete of resource #{inspect(summarize(resource))}")
     operation = K8s.Client.delete(resource)

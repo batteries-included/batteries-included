@@ -5,12 +5,12 @@ defmodule ControlServerWeb.Live.Redis do
 
   alias ControlServer.Redis
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :failover_clusters, list_failover_clusters())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.Redis do
     |> assign(:failover_cluster, nil)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     failover_cluster = Redis.get_failover_cluster!(id)
     {:ok, _} = Redis.delete_failover_cluster(failover_cluster)
@@ -38,7 +38,7 @@ defmodule ControlServerWeb.Live.Redis do
 
   def new_url, do: ~p"/redis/clusters/new"
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:data} active={:redis}>

@@ -25,12 +25,11 @@ defmodule CLICore.InitialSync do
     resource_map
     |> Enum.map(fn {path, resource} ->
       Logger.debug("Pushing #{inspect(path)}")
-      {ApplyResource.apply(connection, resource), path}
-    end)
-    |> Enum.map(fn {result, path} ->
-      apply_result = ApplyResource.ResourceState.ok?(result)
-      Logger.info("Initial sync result for #{path} = #{apply_result}")
-      apply_result
+      result = ApplyResource.apply(connection, resource)
+
+      is_ok = ApplyResource.ResourceState.ok?(result)
+      Logger.info("Initial sync result for #{path} = #{is_ok}")
+      is_ok
     end)
     |> Enum.reduce(true, fn res, acc -> acc && res end)
   end

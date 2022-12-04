@@ -192,8 +192,10 @@ defmodule KubeExt.Defaults.Catalog do
 
   def battery_type_map do
     @all
-    |> Enum.map(&add_config/1)
-    |> Enum.map(fn catalog_battery -> {catalog_battery.type, catalog_battery} end)
+    |> Enum.map(fn bat ->
+      final_bat = add_config(bat)
+      {final_bat.type, final_bat}
+    end)
     |> Map.new()
   end
 

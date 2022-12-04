@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   alias ControlServer.Knative.Service
   alias KubeResources.KnativeServing
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def mount(socket) do
     {:ok,
      socket
@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      |> assign_new(:save_target, fn -> nil end)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(%{service: service} = assigns, socket) do
     changeset = Knative.change_service(service)
 
@@ -24,7 +24,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"service" => params}, socket) do
     {changeset, new_service} = Service.validate(params)
 
@@ -71,7 +71,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     socket
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>

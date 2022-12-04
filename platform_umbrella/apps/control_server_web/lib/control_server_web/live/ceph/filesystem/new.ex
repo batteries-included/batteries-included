@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     ceph_filesystem = %CephFilesystem{
       name: MnemonicSlugs.generate_slug(),
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -40,14 +40,14 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"ceph_filesystem:save", %{"ceph_filesystem" => ceph_filesystem}}, socket) do
     Installer.install!(:rook)
 
     {:noreply, push_redirect(socket, to: ~p"/ceph/filesystems/#{ceph_filesystem}/show")}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

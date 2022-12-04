@@ -8,22 +8,22 @@ defmodule ControlServerWeb.Live.PostgresEdit do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply, assign(socket, :cluster, Postgres.get_cluster!(id))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
     {:noreply, push_redirect(socket, to: ~p"/postgres/clusters/#{cluster}/show")}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

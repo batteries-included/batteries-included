@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   alias Ecto.Changeset
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def mount(socket) do
     {:ok,
      socket
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign_new(:save_target, fn -> nil end)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(%{cluster: cluster} = assigns, socket) do
     changeset = Postgres.change_cluster(cluster)
 
@@ -81,7 +81,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:possible_owners, possible_owners(final_changeset))}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"cluster" => params}, socket) do
     {changeset, data} = Cluster.validate(params)
 
@@ -237,7 +237,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     |> Enum.sort()
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>

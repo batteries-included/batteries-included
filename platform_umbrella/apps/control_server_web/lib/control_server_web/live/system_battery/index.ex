@@ -4,12 +4,12 @@ defmodule ControlServerWeb.SystemBatteryLive.Index do
   import ControlServerWeb.LeftMenuLayout
   alias ControlServer.Batteries
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :system_batteries, list_system_batteries())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -20,7 +20,7 @@ defmodule ControlServerWeb.SystemBatteryLive.Index do
     |> assign(:system_battery, nil)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     system_battery = Batteries.get_system_battery!(id)
     {:ok, _} = Batteries.delete_system_battery(system_battery)
@@ -32,7 +32,7 @@ defmodule ControlServerWeb.SystemBatteryLive.Index do
     Batteries.list_system_batteries()
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:magic} active={:installed_batteries}>

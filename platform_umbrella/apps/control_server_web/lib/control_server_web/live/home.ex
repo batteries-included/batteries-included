@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.Home do
 
   import ControlServerWeb.MenuLayout
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

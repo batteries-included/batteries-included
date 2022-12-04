@@ -5,12 +5,12 @@ defmodule ControlServerWeb.Live.SystemProjectShow do
 
   alias ControlServer.Projects
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
@@ -20,7 +20,7 @@ defmodule ControlServerWeb.Live.SystemProjectShow do
 
   defp page_title(_), do: "Project"
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:projects} active={:projects}>

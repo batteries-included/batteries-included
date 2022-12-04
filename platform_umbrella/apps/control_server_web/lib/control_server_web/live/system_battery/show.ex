@@ -4,12 +4,12 @@ defmodule ControlServerWeb.SystemBatteryLive.Show do
   import ControlServerWeb.LeftMenuLayout
   alias ControlServer.Batteries
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
@@ -19,7 +19,7 @@ defmodule ControlServerWeb.SystemBatteryLive.Show do
 
   defp page_title(:show), do: "Show System battery"
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout>

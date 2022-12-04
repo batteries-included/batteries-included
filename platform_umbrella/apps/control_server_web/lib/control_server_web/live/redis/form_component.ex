@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
   alias ControlServer.Redis
   alias ControlServer.Redis.FailoverCluster
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def mount(socket) do
     {:ok,
      socket
@@ -12,7 +12,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
      |> assign_new(:save_target, fn -> nil end)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(%{failover_cluster: failover_cluster} = assigns, socket) do
     changeset = Redis.change_failover_cluster(failover_cluster)
 
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"failover_cluster" => failover_cluster_params}, socket) do
     {changeset, data} = FailoverCluster.validate(failover_cluster_params)
 
@@ -74,7 +74,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
     socket
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>

@@ -8,22 +8,22 @@ defmodule ControlServerWeb.Live.CephClusterEdit do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply, assign(socket, :ceph_cluster, Rook.get_ceph_cluster!(id))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"ceph_cluster:save", %{"ceph_cluster" => ceph_cluster}}, socket) do
     {:noreply, push_redirect(socket, to: ~p"/ceph/clusters/#{ceph_cluster}/show")}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

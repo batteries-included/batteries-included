@@ -7,14 +7,14 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
   alias ControlServer.Rook
   alias KubeExt.KubeState
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def mount(socket) do
     {:ok, assign(socket, :nodes, node_names())}
   end
 
   defp node_names, do: Enum.map(KubeState.get_all(:node), &name/1)
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def update(%{ceph_cluster: ceph_cluster} = assigns, socket) do
     changeset = Rook.change_ceph_cluster(ceph_cluster)
 
@@ -27,7 +27,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
      |> assign(:num_mon, ceph_cluster.num_mon)}
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"ceph_cluster" => ceph_cluster_params}, socket) do
     changeset =
       socket.assigns.ceph_cluster
@@ -93,7 +93,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
     socket
   end
 
-  @impl true
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>

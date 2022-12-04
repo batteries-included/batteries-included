@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.RedisShow do
   alias KubeExt.OwnerLabel
   alias EventCenter.KubeState, as: KubeEventCenter
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = KubeEventCenter.subscribe(:pod)
     :ok = KubeEventCenter.subscribe(:service)
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Live.RedisShow do
     {:ok, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
@@ -30,7 +30,7 @@ defmodule ControlServerWeb.Live.RedisShow do
      |> assign(:k8_pods, k8_pods(id))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
     {:noreply,
      socket
@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Live.RedisShow do
      |> assign(:k8_pods, k8_pods(socket.assigns.id))}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("delete", _, socket) do
     {:ok, _} = Redis.delete_failover_cluster(socket.assigns.failover_cluster)
 
@@ -63,7 +63,7 @@ defmodule ControlServerWeb.Live.RedisShow do
     Enum.filter(KubeState.get_all(:service), fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:data} active={:redis}>

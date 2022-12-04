@@ -19,13 +19,13 @@ defmodule KubeServices.Timeline.KubeWatcher do
     GenServer.start_link(__MODULE__, state)
   end
 
-  @impl true
+  @impl GenServer
   def init(%State{resource_type: type} = state) do
     :ok = KubeState.subscribe(type)
     {:ok, state}
   end
 
-  @impl true
+  @impl GenServer
   def handle_info(
         %Payload{action: action} = _msg,
         %State{past_init: false, resource_type: type} = state
@@ -43,7 +43,7 @@ defmodule KubeServices.Timeline.KubeWatcher do
     {:noreply, new_state}
   end
 
-  @impl true
+  @impl GenServer
   def handle_info(
         %Payload{action: action} = _msg,
         %State{past_init: false, resource_type: type} = state
@@ -57,7 +57,7 @@ defmodule KubeServices.Timeline.KubeWatcher do
     {:noreply, state}
   end
 
-  @impl true
+  @impl GenServer
   def handle_info(
         %Payload{action: action, resource: resource} = _msg,
         %State{past_init: true, resource_type: type} = state
@@ -79,7 +79,7 @@ defmodule KubeServices.Timeline.KubeWatcher do
     {:noreply, state}
   end
 
-  @impl true
+  @impl GenServer
   def handle_info(%Payload{} = _msg, %State{} = state) do
     {:noreply, state}
   end

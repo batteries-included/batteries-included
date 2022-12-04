@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.CephIndex do
 
   alias ControlServer.Rook
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
      socket
@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Live.CephIndex do
      |> assign(:ceph_filesystems, list_ceph_filesystems())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -62,7 +62,7 @@ defmodule ControlServerWeb.Live.CephIndex do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:data} active={:rook}>

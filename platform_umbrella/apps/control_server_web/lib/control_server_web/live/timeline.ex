@@ -7,13 +7,13 @@ defmodule ControlServerWeb.TimelineLive do
   alias ControlServer.Timeline
   alias EventCenter.Database, as: DatabaseEventCenter
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = DatabaseEventCenter.subscribe(:timeline_event)
     {:ok, assign(socket, :events, events())}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(_, socket) do
     {:noreply, assign(socket, :events, events())}
   end
@@ -22,7 +22,7 @@ defmodule ControlServerWeb.TimelineLive do
     Timeline.list_timeline_events()
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.layout group={:magic} active={:timeline}>

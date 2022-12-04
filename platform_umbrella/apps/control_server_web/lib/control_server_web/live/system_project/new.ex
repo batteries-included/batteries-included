@@ -8,12 +8,12 @@ defmodule ControlServerWeb.Live.SystemProjectNew do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :system_project, %Projects.SystemProject{})}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>

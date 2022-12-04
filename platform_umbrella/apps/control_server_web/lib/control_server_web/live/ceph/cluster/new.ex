@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.CephClusterNew do
 
   require Logger
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     ceph_cluster = %CephCluster{
       num_mon: 3,
@@ -27,7 +27,7 @@ defmodule ControlServerWeb.Live.CephClusterNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -42,14 +42,14 @@ defmodule ControlServerWeb.Live.CephClusterNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({"ceph_cluster:save", %{"ceph_cluster" => ceph_cluster}}, socket) do
     Installer.install!(:rook)
 
     {:noreply, push_redirect(socket, to: ~p"/ceph/clusters/#{ceph_cluster}/show")}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.menu_layout>
