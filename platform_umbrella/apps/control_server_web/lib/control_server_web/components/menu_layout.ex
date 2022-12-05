@@ -35,7 +35,7 @@ defmodule ControlServerWeb.MenuLayout do
       class={[
         "pt-1 text-sm font-medium text-gray-900",
         "text-mono",
-        "hover:bg-primary-50 hover:text-secondary-500",
+        "hover:bg-secondary-50/50 hover:text-secondary-500",
         "flex h-full w-full items-center flex-col justify-center"
       ]}
     >

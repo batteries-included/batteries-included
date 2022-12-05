@@ -54,11 +54,11 @@ defmodule ControlServerWeb.LeftMenu do
 
   attr :active_class, :string,
     default:
-      "text-pink-500 hover:text-pink-600 hover:bg-primary-100 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
+      "text-pink-500 hover:text-pink-600 hover:bg-secondary-50/50 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
 
   attr :inactive_class, :string,
     default:
-      "text-gray-600 hover:text-gray-900 hover:bg-primary-100 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
+      "text-gray-600 hover:text-gray-900 hover:bg-secondary-50/50 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
 
   slot :inner_block
 
