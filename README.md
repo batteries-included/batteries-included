@@ -37,30 +37,16 @@ the group changes to be visible.
 
 ## Install Toolchains
 
-There's a bunch of stuff (ostensibly) needed for development and we use common
-community tools to do the management of them.
+There's a bunch of stuff needed for development and we use common community
+tools to do the management of them.
 
-[Homebrew](https://brew.sh) and [ASDF](http://asdf-vm.com/) both have been
-fiddled with. Install one or the other. Or both, but you're on your own
-
-### (option 1) Homebrew
-
-[Go install homebrew](https://docs.brew.sh/Installation)
-
-Following that, you should be able to run the following to install the necessary
-dependencies
-
-```sh
-brew install k3d k9s erlang elixir nodejs kubectl
-```
-
-### (option 2) ASDF
+### ASDF
 
 I don't want to have to remember how to install all the dependencies. So install
 asdf and it will do that for us.
 
 ```
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.9.0
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
 
 #
 # Follow http://asdf-vm.com/guide/getting-started.html#_1-install-dependencies
@@ -111,12 +97,12 @@ Some parties have been comforted that the project is real via line count.
 install the parts of Batteries Included that is necessary for developing or
 running.
 
-### Static Pages
+### Static
 
-`static_pages` contains the code that builds and deploys
+`static` contains the code that builds and deploys
 [Batteries Included](https://www.batteriesincl.com)
 
-There are other non-public pages in `static_pages/posts`
+There are other non-public pages in `static/content`
 
 ## Platform Umbrella
 
@@ -125,16 +111,9 @@ This is the main directory. It contains two different
 `Application`'s in `platform_umbrella/apps` while the configuration is in
 `platform_ubrella/config`
 
-#### Kube Raw Resources
-
-These are the elixir files that contain kubernetes resources needed before the
-ecto.sql connection is there. This application is shared between `cli` and
-`kube_resources`.
-
 #### Kube Resources
 
-The main kubernetes resources. This will query ecto to get all the latest
-configurations, databases, etc. It needs postgres up and running.
+The main kubernetes resources.
 
 ### Control Server
 
