@@ -26,4 +26,20 @@ defmodule CommonUI.LinkTest do
     <.link navigate="/">Test unstyled Link</.link>
     """
   end
+
+  component_snapshot_test "Link patch" do
+    assigns = %{}
+
+    ~H"""
+    <.link patch="/test">Test patch</.link>
+    """
+  end
+
+  component_snapshot_test "Link patch with variant" do
+    assigns = %{}
+
+    ~H"""
+    <.link patch="/test" variant="styled">Test patch with var</.link>
+    """
+  end
 end
