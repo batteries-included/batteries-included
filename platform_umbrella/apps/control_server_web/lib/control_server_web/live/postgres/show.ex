@@ -136,12 +136,16 @@ defmodule ControlServerWeb.Live.PostgresShow do
     "#{username}.#{cluster_name}.credentials.postgresql.acid.zalan.do"
   end
 
+  defp user_namespace(:internal = _cluster_type), do: KubeExt.Defaults.Namespaces.core()
+  defp user_namespace(_cluster_type), do: KubeExt.Defaults.Namespaces.data()
+
   defp users_display(assigns) do
     ~H"""
     <.table id="users-display-table" rows={@cluster.users || []}>
       <:col :let={user} label="User Name"><%= user.username %></:col>
       <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
       <:col :let={user} label="Secret"><%= secret_name(@cluster.name, user.username) %></:col>
+      <:col label="Namespace"><%= user_namespace(@cluster.type) %></:col>
     </.table>
     """
   end
