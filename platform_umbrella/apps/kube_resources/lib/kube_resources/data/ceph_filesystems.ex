@@ -1,32 +1,20 @@
 defmodule KubeResources.CephFilesystems do
+  use KubeExt.ResourceGenerator
+
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
 
-  def materialize(battery, state) do
-    filesystems(battery, state)
-  end
-
-  def filesystems(battery, state) do
-    state.ceph_filesystems
-    |> Enum.with_index()
-    |> Enum.map(fn {fs, idx} ->
-      {filesystem_path(fs, idx), filesystem(fs, battery, state)}
-    end)
-    |> Enum.into(%{})
-  end
-
-  defp filesystem_path(%{id: id} = _fs, _idx), do: "/ceph_filesystem/#{id}"
-  defp filesystem_path(_fs, idx), do: "/ceph_filesystem:idx/#{idx}"
-
-  def filesystem(%{} = filesystem, battery, state) do
+  multi_resource(:filesystems, battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:ceph_filesystem)
-    |> B.name(filesystem.name)
-    |> B.namespace(namespace)
-    |> B.owner_label(filesystem.id)
-    |> B.spec(filesystem_spec(filesystem, battery, state))
+    Enum.map(state.ceph_filesystems, fn filesystem ->
+      B.build_resource(:ceph_filesystem)
+      |> B.name(filesystem.name)
+      |> B.namespace(namespace)
+      |> B.owner_label(filesystem.id)
+      |> B.spec(filesystem_spec(filesystem, battery, state))
+    end)
   end
 
   defp filesystem_spec(%{} = cluster, _battery, _state) do

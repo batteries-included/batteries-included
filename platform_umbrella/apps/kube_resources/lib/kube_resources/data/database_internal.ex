@@ -1,24 +1,20 @@
 defmodule KubeResources.DatabaseInternal do
+  use KubeExt.ResourceGenerator
   import KubeExt.SystemState.Namespaces
 
   alias KubeResources.Database
   alias KubeResources.PostgresPod
 
-  @spec materialize(
-          atom | %{:config => map, optional(any) => any},
-          atom | %{:postgres_clusters => any, optional(any) => any}
-        ) :: map
-  def materialize(battery, state) do
+  multi_resource(:postgres_internal_clusters, battery, state) do
     state.postgres_clusters
     |> Enum.filter(fn cluster -> cluster.type == :internal end)
-    |> Enum.with_index()
-    |> Enum.map(fn {cluster, idx} ->
-      {cluster_path(cluster, idx), Database.postgres(cluster, battery, state)}
+    |> Enum.map(fn cluster ->
+      Database.postgres(cluster, battery, state)
     end)
-    |> Map.new()
-    |> Map.merge(PostgresPod.per_namespace(core_namespace(state)))
   end
 
-  defp cluster_path(%{id: id} = _cluster, _idx), do: Path.join("/internal_cluster/", id)
-  defp cluster_path(_cluster, idx), do: Path.join("/internal_cluster:idx/", to_string(idx))
+  multi_resource(:postgres_pod_per_namespace, _battery, state) do
+    namespace = core_namespace(state)
+    PostgresPod.per_namespace(namespace)
+  end
 end
