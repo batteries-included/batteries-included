@@ -7,21 +7,45 @@ defmodule KubeExt.ResourceGenerator do
 
       Module.register_attribute(__MODULE__, :resource_generator, accumulate: true, persist: false)
 
+      Module.register_attribute(__MODULE__, :multi_resource_generator,
+        accumulate: true,
+        persist: false
+      )
+
       @before_compile unquote(__MODULE__)
     end
   end
 
-  defmacro resource(name, battery \\ quote(do: _), state \\ quote(do: _), do: resource_block) do
+  defmacro resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state),
+             do: resource_block
+           ) do
     quote do
       @resource_generator unquote(name)
       def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
     end
   end
 
-  def perform_materialize(module, generators, battery, state) do
-    generators
-    |> do_apply(module, battery, state)
-    |> flatten_to_tuple()
+  defmacro multi_resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state),
+             do: resource_block
+           ) do
+    quote do
+      @multi_resource_generator unquote(name)
+      def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
+    end
+  end
+
+  def perform_materialize(module, generators, multi_generators, battery, state) do
+    gen_resources =
+      generators
+      |> do_apply(module, battery, state)
+      |> flatten_to_tuple()
+
+    multi_resources =
+      multi_generators
+      |> do_apply(module, battery, state)
+      |> flatten_multis_to_tuple()
+
+    (gen_resources ++ multi_resources)
     |> filter_exists()
     |> dedupe_path()
     |> to_map()
@@ -47,6 +71,19 @@ defmodule KubeExt.ResourceGenerator do
 
       resource ->
         [{to_path(resource), resource}]
+    end)
+  end
+
+  defp flatten_multis_to_tuple(list_maps) do
+    Enum.flat_map(list_maps, fn
+      res_map when is_map(res_map) ->
+        Enum.map(res_map, fn {base_path, res} -> {Path.join(base_path, to_path(res)), res} end)
+
+      res_list when is_list(res_list) ->
+        Enum.map(res_list, fn
+          {base_path, res} -> {Path.join(base_path, to_path(res)), res}
+          res -> {to_path(res), res}
+        end)
     end)
   end
 
@@ -102,21 +139,21 @@ defmodule KubeExt.ResourceGenerator do
   end
 
   defmacro __before_compile__(%{module: module} = _env) do
+    generators = Module.get_attribute(module, :resource_generator, [])
+    multi_generators = Module.get_attribute(module, :multi_resource_generator, [])
+
     method =
-      module
-      |> Module.get_attribute(:resource_generator, [])
-      |> then(fn generators ->
-        quote do
-          def materialize(battery, state) do
-            KubeExt.ResourceGenerator.perform_materialize(
-              __MODULE__,
-              unquote(generators),
-              battery,
-              state
-            )
-          end
+      quote do
+        def materialize(battery, state) do
+          KubeExt.ResourceGenerator.perform_materialize(
+            __MODULE__,
+            unquote(generators),
+            unquote(multi_generators),
+            battery,
+            state
+          )
         end
-      end)
+      end
 
     quote do
       unquote(method)
