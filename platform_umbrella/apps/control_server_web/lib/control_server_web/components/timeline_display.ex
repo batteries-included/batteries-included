@@ -75,7 +75,7 @@ defmodule ControlServerWeb.TimelineDisplay do
     ~H"""
     <div class={[timeline_item_container_class(@index)]}>
       <div class="order-1 w-5/12"></div>
-      <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+      <div class="z-20 flex items-center order-1 bg-secondary-900 shadow-xl w-8 h-8 rounded-full">
         <h1 class="mx-auto font-semibold text-lg text-white"><%= @index %></h1>
       </div>
       <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
