@@ -170,7 +170,7 @@ cd platform_umbrella
 mix do setup, phx.server
 ```
 
-Now there are two web servers accessible. `http://localhost:5000` for the
+Now there are two web servers accessible. `http://localhost:4900` for the
 control server and `http://localhost:4000` for the home server.
 
 The drawback of this method is that no iframes work. All tools will be accessed
