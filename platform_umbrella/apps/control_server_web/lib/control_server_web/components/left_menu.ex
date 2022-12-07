@@ -196,6 +196,18 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
+  defp battery_menu_item(%{battery: %{type: :metallb_ip_pool}} = assigns) do
+    ~H"""
+    <.menu_item
+      navigate={~p"/ip_address_pools"}
+      name="IP Address Pools"
+      is_active={@active == :ip_address_pools}
+    >
+      <Heroicons.rectangle_group class={@icon_class} />
+    </.menu_item>
+    """
+  end
+
   defp battery_menu_item(%{battery: %{type: _}} = assigns), do: ~H||
 
   attr :active, :string, default: nil

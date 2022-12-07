@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.Redis do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.RedisTable
 
   alias ControlServer.Redis
 
@@ -33,9 +34,6 @@ defmodule ControlServerWeb.Live.Redis do
     Redis.list_failover_clusters()
   end
 
-  def show_url(cluster),
-    do: ~p"/redis/clusters/#{cluster}/show"
-
   def new_url, do: ~p"/redis/clusters/new"
 
   @impl Phoenix.LiveView
@@ -45,16 +43,8 @@ defmodule ControlServerWeb.Live.Redis do
       <:title>
         <.title>Redis Clusters</.title>
       </:title>
-      <.table id="redis-display-table" rows={@failover_clusters}>
-        <:col :let={redis} label="Name"><%= redis.name %></:col>
-        <:col :let={redis} label="Instances"><%= redis.num_redis_instances %></:col>
-        <:col :let={redis} label="Sentinel Instances"><%= redis.num_sentinel_instances %></:col>
-        <:action :let={redis}>
-          <.link navigate={show_url(redis)} variant="styled">
-            Show Redis Cluster
-          </.link>
-        </:action>
-      </.table>
+
+      <.redis_table failover_clusters={@failover_clusters} />
 
       <.h2>Actions</.h2>
       <.body_section>

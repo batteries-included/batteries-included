@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServicesDisplay do
+defmodule ControlServerWeb.ServicesTable do
   use ControlServerWeb, :html
 
   import ControlServerWeb.ResourceURL
@@ -6,9 +6,9 @@ defmodule ControlServerWeb.ServicesDisplay do
 
   attr :services, :list, required: true
 
-  def services_display(assigns) do
+  def services_table(assigns) do
     ~H"""
-    <.table id="service-display-table" rows={@services}>
+    <.table rows={@services}>
       <:col :let={service} label="Namespace"><%= namespace(service) %></:col>
       <:col :let={service} label="Name"><%= name(service) %></:col>
       <:col :let={service} label="Cluster IP"><%= get_in(service, ~w(spec clusterIP)) %></:col>

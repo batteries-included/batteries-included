@@ -52,6 +52,8 @@ defmodule ControlServerWeb.Router do
     live "/notebooks", Live.JupyterLabNotebook.Index, :index
     live "/notebooks/:id/show", Live.JupyterLabNotebook.Show, :index
 
+    live "/ip_address_pools", Live.IPAddressPool.Index, :index
+
     live "/kiali", Live.Iframe, :kiali
     live "/grafana", Live.Iframe, :grafana
     live "/alertmanager", Live.Iframe, :alertmanager

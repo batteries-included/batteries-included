@@ -5,11 +5,11 @@ defmodule ControlServerWeb.Live.ResourceList do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import ControlServerWeb.DeploymentsDisplay
-  import ControlServerWeb.StatefulSetsDisplay
-  import ControlServerWeb.NodesDisplay
-  import ControlServerWeb.ServicesDisplay
-  import ControlServerWeb.PodsDisplay
+  import ControlServerWeb.DeploymentsTable
+  import ControlServerWeb.StatefulSetsTable
+  import ControlServerWeb.NodesTable
+  import ControlServerWeb.ServicesTable
+  import ControlServerWeb.PodsTable
   import CommonUI.TabBar
 
   alias EventCenter.KubeState, as: KubeEventCenter
@@ -83,15 +83,15 @@ defmodule ControlServerWeb.Live.ResourceList do
       <.tab_bar tabs={tabs(@live_action)} />
       <%= case @live_action do %>
         <% :deployment -> %>
-          <.deployments_display deployments={@objects} />
+          <.deployments_table deployments={@objects} />
         <% :stateful_set -> %>
-          <.stateful_sets_display stateful_sets={@objects} />
+          <.stateful_sets_table stateful_sets={@objects} />
         <% :node -> %>
-          <.nodes_display nodes={@objects} />
+          <.nodes_table nodes={@objects} />
         <% :pod -> %>
-          <.pods_display pods={@objects} />
+          <.pods_table pods={@objects} />
         <% :service -> %>
-          <.services_display services={@objects} />
+          <.services_table services={@objects} />
       <% end %>
     </.layout>
     """

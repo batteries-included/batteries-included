@@ -1,11 +1,11 @@
-defmodule ControlServerWeb.NodesDisplay do
+defmodule ControlServerWeb.NodesTable do
   use ControlServerWeb, :html
 
   import K8s.Resource.FieldAccessors, only: [name: 1]
 
-  def nodes_display(assigns) do
+  def nodes_table(assigns) do
     ~H"""
-    <.table id="node-display-table" rows={@nodes}>
+    <.table rows={@nodes}>
       <:col :let={node} label="Name"><%= name(node) %></:col>
       <:col :let={node} label="CPU"><%= get_in(node, ~w(status capacity cpu)) %></:col>
       <:col :let={node} label="Memory"><%= get_in(node, ~w(status capacity memory)) %></:col>

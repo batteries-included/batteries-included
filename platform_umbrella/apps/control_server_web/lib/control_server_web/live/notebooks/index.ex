@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import ControlServerWeb.Live.JupyterLabNotebook.Display
+  import ControlServerWeb.NotebooksTable
 
   alias ControlServer.Notebooks
   alias ControlServer.Batteries.Installer
@@ -47,7 +47,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
       <:title>
         <.title>Notebooks</.title>
       </:title>
-      <.notebook_display notebooks={@notebooks} />
+      <.notebooks_table notebooks={@notebooks} />
       <.h2>
         Actions
       </.h2>

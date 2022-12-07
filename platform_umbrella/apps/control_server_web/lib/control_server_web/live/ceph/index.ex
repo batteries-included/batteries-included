@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Live.CephIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.CephFilesystemsTable
+  import ControlServerWeb.CephClustersTable
 
   alias ControlServer.Rook
 
@@ -32,36 +34,6 @@ defmodule ControlServerWeb.Live.CephIndex do
     Rook.list_ceph_filesystem()
   end
 
-  defp clusters_section(assigns) do
-    ~H"""
-    <.table rows={@ceph_clusters} id="clusters-table">
-      <:col :let={ceph} label="Name"><%= ceph.name %></:col>
-      <:col :let={ceph} label="Monitors"><%= ceph.num_mon %></:col>
-      <:col :let={ceph} label="Managers"><%= ceph.num_mgr %></:col>
-      <:col :let={ceph} label="Data dir"><%= ceph.data_dir_host_path %></:col>
-      <:action :let={ceph}>
-        <.link navigate={~p"/ceph/clusters/#{ceph}/show"} variant="styled">
-          Show Cluster
-        </.link>
-      </:action>
-    </.table>
-    """
-  end
-
-  defp filesystems_section(assigns) do
-    ~H"""
-    <.table rows={@ceph_filesystems} id="filesystems-table">
-      <:col :let={ceph} label="Name"><%= ceph.name %></:col>
-      <:col :let={ceph} label="Include EC?"><%= ceph.include_erasure_encoded %></:col>
-      <:action :let={ceph}>
-        <.link navigate={~p"/ceph/filesystems/#{ceph}/show"} variant="styled">
-          Show FileSystem
-        </.link>
-      </:action>
-    </.table>
-    """
-  end
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -71,10 +43,10 @@ defmodule ControlServerWeb.Live.CephIndex do
       </:title>
       <.section_title>Ceph Clusters</.section_title>
 
-      <.clusters_section ceph_clusters={@ceph_clusters} />
+      <.ceph_clusters_table ceph_clusters={@ceph_clusters} />
 
       <.section_title>Ceph FileSystem</.section_title>
-      <.filesystems_section ceph_filesystems={@ceph_filesystems} />
+      <.ceph_filesystems_table ceph_filesystems={@ceph_filesystems} />
 
       <.h2>Actions</.h2>
       <.body_section>

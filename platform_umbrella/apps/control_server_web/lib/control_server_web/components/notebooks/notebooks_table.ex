@@ -1,9 +1,9 @@
-defmodule ControlServerWeb.Live.JupyterLabNotebook.Display do
+defmodule ControlServerWeb.NotebooksTable do
   use ControlServerWeb, :html
 
   attr :notebooks, :list, default: []
 
-  def notebook_display(assigns) do
+  def notebooks_table(assigns) do
     ~H"""
     <.table id="notebook-display-table" rows={@notebooks}>
       <:col :let={notebook} label="Name"><%= notebook.name %></:col>

@@ -1,12 +1,12 @@
-defmodule ControlServerWeb.DeploymentsDisplay do
+defmodule ControlServerWeb.DeploymentsTable do
   use ControlServerWeb, :html
 
   import ControlServerWeb.ResourceURL
   import K8s.Resource.FieldAccessors
 
-  def deployments_display(assigns) do
+  def deployments_table(assigns) do
     ~H"""
-    <.table id="deployment-display-table" rows={@deployments}>
+    <.table rows={@deployments}>
       <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>
       <:col :let={deployment} label="Name"><%= name(deployment) %></:col>
       <:col :let={deployment} label="Replicas"><%= get_in(deployment, ~w(spec replicas)) %></:col>

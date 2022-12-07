@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  alias KubeResources.KnativeServing, as: KnativeResources
+  import ControlServerWeb.KnativeServicesTable
 
   alias ControlServer.Knative
 
@@ -20,14 +20,6 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     assign(socket, :page_title, "Listing Services")
   end
 
-  @impl Phoenix.LiveView
-  def handle_event("delete", %{"id" => id}, socket) do
-    service = Knative.get_service!(id)
-    {:ok, _} = Knative.delete_service(service)
-
-    {:noreply, assign(socket, :services, list_services())}
-  end
-
   defp list_services do
     Knative.list_services()
   end
@@ -42,17 +34,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
       <.section_title>
         Knative Services
       </.section_title>
-      <.table id="knative-display-table" rows={@services}>
-        <:col :let={service} label="Name"><%= service.name %></:col>
-        <:col :let={service} label="Link">
-          <.link href={service_url(service)} variant="external">
-            <%= service_url(service) %>
-          </.link>
-        </:col>
-        <:action :let={service}>
-          <.link navigate={~p"/knative/services/#{service}/show"}>Show Service</.link>
-        </:action>
-      </.table>
+      <.knative_services_table knative_services={@services} />
 
       <.h2>Actions</.h2>
       <.body_section>
@@ -65,6 +47,4 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     </.layout>
     """
   end
-
-  defp service_url(%Knative.Service{} = service), do: KnativeResources.url(service)
 end

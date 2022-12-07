@@ -3,8 +3,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   import CommonUI.Stats
   import ControlServerWeb.LeftMenuLayout
-  import ControlServerWeb.PodsDisplay
-  import ControlServerWeb.ServicesDisplay
+  import ControlServerWeb.PodsTable
+  import ControlServerWeb.ServicesTable
 
   alias ControlServer.Postgres
   alias KubeExt.KubeState
@@ -139,9 +139,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp user_namespace(:internal = _cluster_type), do: KubeExt.Defaults.Namespaces.core()
   defp user_namespace(_cluster_type), do: KubeExt.Defaults.Namespaces.data()
 
-  defp users_display(assigns) do
+  defp users_table(assigns) do
     ~H"""
-    <.table id="users-display-table" rows={@cluster.users || []}>
+    <.table rows={@cluster.users || []}>
       <:col :let={user} label="User Name"><%= user.username %></:col>
       <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
       <:col :let={user} label="Secret"><%= secret_name(@cluster.name, user.username) %></:col>
@@ -150,9 +150,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
     """
   end
 
-  defp databases_display(assigns) do
+  defp databases_table(assigns) do
     ~H"""
-    <.table id="databases-display-table" rows={@cluster.databases || []}>
+    <.table rows={@cluster.databases || []}>
       <:col :let={db} label="Name"><%= db.name %></:col>
       <:col :let={db} label="Owner"><%= db.owner %></:col>
     </.table>
@@ -188,16 +188,16 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </.stats>
 
       <.section_title>Users</.section_title>
-      <.users_display cluster={@cluster} />
+      <.users_table cluster={@cluster} />
 
       <.section_title>Databases</.section_title>
-      <.databases_display cluster={@cluster} />
+      <.databases_table cluster={@cluster} />
 
       <.section_title>Pods</.section_title>
-      <.pods_display pods={@k8_pods} />
+      <.pods_table pods={@k8_pods} />
 
       <.section_title>Services</.section_title>
-      <.services_display services={@k8_services} />
+      <.services_table services={@k8_services} />
 
       <.h2>Actions</.h2>
       <.body_section>

@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.KubeSnapshotsTable
 
   alias ControlServer.SnapshotApply
   alias EventCenter.KubeSnapshot, as: SnapshotEventCenter
@@ -39,18 +40,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
       <:title>
         <.title>Kube Deploys</.title>
       </:title>
-      <.table id="kube-snapshot-table" rows={@snapshots.entries}>
-        <:col :let={snapshot} label="ID">
-          <%= snapshot.id %>
-        </:col>
-        <:col :let={snapshot} label="Started">
-          <%= Timex.format!(snapshot.inserted_at, "{RFC822z}") %>
-        </:col>
-        <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>
-        <:action :let={snapshot}>
-          <.link navigate={~p"/snapshot_apply/#{snapshot}/show"} variant="styled">Show Deploy</.link>
-        </:action>
-      </.table>
+      <.kube_snapshots_table kube_snapshots={@snapshots.entries} />
 
       <.h2>Actions</.h2>
       <.body_section>

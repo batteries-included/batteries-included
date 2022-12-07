@@ -2,8 +2,8 @@ defmodule ControlServerWeb.Live.RedisShow do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import ControlServerWeb.PodsDisplay
-  import ControlServerWeb.ServicesDisplay
+  import ControlServerWeb.PodsTable
+  import ControlServerWeb.ServicesTable
 
   alias ControlServer.Redis
   alias KubeExt.KubeState
@@ -72,10 +72,10 @@ defmodule ControlServerWeb.Live.RedisShow do
       </:title>
 
       <.section_title>Pods</.section_title>
-      <.pods_display pods={@k8_pods} />
+      <.pods_table pods={@k8_pods} />
 
       <.section_title>Services</.section_title>
-      <.services_display services={@k8_services} />
+      <.services_table services={@k8_services} />
 
       <.h2>Actions</.h2>
       <.body_section>
