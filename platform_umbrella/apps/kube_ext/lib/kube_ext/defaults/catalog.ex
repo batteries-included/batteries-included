@@ -1,7 +1,6 @@
 defmodule KubeExt.Defaults.Catalog do
   alias KubeExt.Defaults.CatalogBattery
   alias KubeExt.Defaults.Namespaces
-  alias KubeExt.Defaults.Network
   alias KubeExt.Defaults.Images
   alias KubeExt.Defaults
 
@@ -216,7 +215,7 @@ defmodule KubeExt.Defaults.Catalog do
     }
 
   defp default_config(:metallb_ip_pool = type),
-    do: %{__type__: type, pools: Network.metallb_ip_pools()}
+    do: %{__type__: type}
 
   defp default_config(:control_server = type),
     do: %{

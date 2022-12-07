@@ -6,6 +6,7 @@ defmodule ControlServer.SystemState.Summarizer do
   alias ControlServer.Postgres
   alias ControlServer.Redis
   alias ControlServer.Rook
+  alias ControlServer.MetalLB
 
   alias KubeExt.SystemState.StateSummary
 
@@ -20,6 +21,7 @@ defmodule ControlServer.SystemState.Summarizer do
           notebooks: list(Notebooks.JupyterLabNotebook.t()),
           ceph_clusters: list(Rook.CephCluster.t()),
           ceph_filesystems: list(Rook.CephFilesystem.t()),
+          ip_address_pools: list(MetalLB.IPAddressPool.t()),
           kube_state: map()
         }
 
@@ -99,6 +101,7 @@ defmodule ControlServer.SystemState.Summarizer do
     |> Multi.all(:knative_services, Knative.Service)
     |> Multi.all(:ceph_clusters, Rook.CephCluster)
     |> Multi.all(:ceph_filesystems, Rook.CephFilesystem)
+    |> Multi.all(:ip_address_pools, MetalLB.IPAddressPool)
     |> Multi.run(:kube_state, fn _repo, _state ->
       {:ok, KubeExt.KubeState.snapshot()}
     end)

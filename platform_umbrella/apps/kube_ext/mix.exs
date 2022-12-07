@@ -30,6 +30,7 @@ defmodule KubeExt.MixProject do
       {:k8s, "~> 1.1"},
       {:jason, "~> 1.0"},
       {:tesla, "~> 1.4.3"},
+      {:cidr, "~> 1.1.0"},
       # Yaml encode
       {:ymlr, "~> 3.0.1"},
       {:event_center, in_umbrella: true},

@@ -1,0 +1,23 @@
+defmodule ControlServer.MetalLB.IPAddressPool do
+  use TypedEctoSchema
+  import Ecto.Changeset
+
+  @timestamps_opts [type: :utc_datetime_usec]
+  @derive {Jason.Encoder, except: [:__meta__]}
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+  typed_schema "ip_address_pools" do
+    field :name, :string
+    field :subnet, :string
+
+    timestamps()
+  end
+
+  @doc false
+  def changeset(ip_address_pool, attrs) do
+    ip_address_pool
+    |> cast(attrs, [:name, :subnet])
+    |> validate_required([:name, :subnet])
+    |> unique_constraint(:name)
+  end
+end

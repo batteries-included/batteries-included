@@ -4,6 +4,7 @@ defmodule ControlServerWeb.SystemStateControllerTest do
   @expected_empty %{
     "ceph_clusters" => [],
     "ceph_filesystems" => [],
+    "ip_address_pools" => [],
     "knative_services" => [],
     "kube_state" => %{},
     "notebooks" => [],

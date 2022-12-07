@@ -7,6 +7,7 @@ defmodule KubeExt.SystemState.StateSummary do
             knative_services: [],
             ceph_clusters: [],
             ceph_filesystems: [],
+            ip_address_pools: [],
             kube_state: %{}
 
   @type t :: %__MODULE__{
@@ -17,6 +18,7 @@ defmodule KubeExt.SystemState.StateSummary do
           knative_services: list(),
           ceph_clusters: list(),
           ceph_filesystems: list(),
+          ip_address_pools: list(),
           kube_state: map()
         }
 end

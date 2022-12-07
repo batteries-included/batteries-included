@@ -1,5 +1,5 @@
 defmodule KubeExt.KubeState.IstioIngress do
-  @default "172.30.0.4"
+  @default "127.0.0.1"
 
   def single_address do
     List.first(ingress_ips()) || @default
