@@ -1,5 +1,5 @@
 defmodule CommonUI.TableTest do
-  use CommonTesting.ComponentSnapshotTest
+  use Heyya
 
   import CommonUI.Table
 

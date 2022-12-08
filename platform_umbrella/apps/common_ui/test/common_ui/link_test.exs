@@ -1,5 +1,5 @@
 defmodule CommonUI.LinkTest do
-  use CommonTesting.ComponentSnapshotTest
+  use Heyya
 
   import CommonUI.Link
 
