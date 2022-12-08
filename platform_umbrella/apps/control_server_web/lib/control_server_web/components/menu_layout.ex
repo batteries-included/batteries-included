@@ -5,8 +5,8 @@ defmodule ControlServerWeb.MenuLayout do
   import CommonUI.Icons.Network
   import CommonUI.Icons.Batteries
 
-  @default_container_class "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-20 "
-  @iframe_container_class "flex-1 py-0 px-0 w-full h-full "
+  @default_container_class "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-16"
+  @iframe_container_class "flex-1 pb-16 pt-0 px-0"
 
   defp container_class(:iframe), do: @iframe_container_class
 

@@ -69,6 +69,7 @@ defmodule ControlServerWeb.Router do
     live "/snapshot_apply", Live.SnapshotApplyIndex, :index
     live "/snapshot_apply/:id/show", Live.KubeSnapshotShow, :index
 
+    live "/kube/raw/:resource_type/:namespace/:name", Live.RawResource, :index
     live "/kube/:resource_type/:namespace/:name", Live.ResourceInfo, :index
 
     live "/batteries/data", GroupBatteriesLive, :data

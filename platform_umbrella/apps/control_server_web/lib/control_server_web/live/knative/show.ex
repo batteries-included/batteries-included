@@ -27,17 +27,28 @@ defmodule ControlServerWeb.Live.KnativeShow do
   @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     service = Knative.get_service!(id)
-    k8_service = k8_service(service)
-    k8_configuration = k8_configuration(k8_service)
 
     {:noreply,
      socket
      |> assign(:id, id)
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:service, service)
-     |> assign(:k8_service, k8_service)
-     |> assign(:k8_configuration, k8_configuration)
-     |> assign(:k8_revisions, k8_revisions(k8_configuration))}
+     |> assign_k8s(service)}
+  end
+
+  defp assign_k8s(socket, service) do
+    k8_service = k8_service(service)
+    k8_configuration = k8_configuration(k8_service)
+
+    socket
+    |> assign(:k8_service, k8_service)
+    |> assign(:k8_configuration, k8_configuration)
+    |> assign(:k8_revisions, k8_revisions(k8_configuration))
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, assign_k8s(socket, socket.assigns.service)}
   end
 
   def k8_service(service) do

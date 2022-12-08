@@ -15,7 +15,7 @@ defmodule ControlServerWeb.LayoutTest do
       </.menu_layout>
       """)
 
-    assert html =~ "flex-1 py-0 px-0 w-full"
+    assert html =~ "flex-1 pb-16 pt-0 px-0"
     assert html =~ "Hello"
   end
 
@@ -29,7 +29,7 @@ defmodule ControlServerWeb.LayoutTest do
       </.menu_layout>
       """)
 
-    assert html =~ "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-20"
+    assert html =~ "flex-1 max-w-full sm:px-6 lg:px-8 pt-10 pb-16"
     assert html =~ "Hello"
   end
 end
