@@ -64,6 +64,8 @@ defmodule KubeExt.ApiVersionKind do
   def all_known, do: Keyword.keys(@known)
 
   @spec resource_type(map()) :: atom() | nil
+  def resource_type(nil), do: nil
+
   def resource_type(resource) do
     {key, _} =
       Enum.find(@known, {nil, nil}, fn {_key, {api_version, kind}} ->

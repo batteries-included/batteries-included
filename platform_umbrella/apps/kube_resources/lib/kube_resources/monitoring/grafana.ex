@@ -9,6 +9,8 @@ defmodule KubeResources.Grafana do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
+
   alias KubeExt.KubeState.Hosts
 
   alias KubeResources.IniConfig
@@ -25,7 +27,7 @@ defmodule KubeResources.Grafana do
 
   def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
-  def virtual_service(_battery, state) do
+  resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:istio_virtual_service)
@@ -33,6 +35,7 @@ defmodule KubeResources.Grafana do
     |> B.app_labels(@app_name)
     |> B.name("grafana")
     |> B.spec(VirtualService.prefix("/x/grafana", "battery-grafana"))
+    |> F.require_battery(state, :istio_gateway)
   end
 
   resource(:cluster_role_battery_grafana_clusterrole) do

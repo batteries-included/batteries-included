@@ -67,7 +67,14 @@ defmodule KubeExt.ResourceGenerator do
       # We might or might not get a list.
       # This will make it so everything is uniform
       resource_list when is_list(resource_list) ->
-        Enum.map(resource_list, fn r -> {to_path(r), r} end)
+        resource_list
+        # FilterResource can send nils
+        |> Enum.reject(fn r -> r == nil end)
+        # Prepare to make the map
+        |> Enum.map(fn r -> {to_path(r), r} end)
+
+      nil ->
+        []
 
       resource ->
         [{to_path(resource), resource}]
@@ -76,11 +83,26 @@ defmodule KubeExt.ResourceGenerator do
 
   defp flatten_multis_to_tuple(list_maps) do
     Enum.flat_map(list_maps, fn
+      # If the whole map is nil then just sidestep the whole thing.
+      nil ->
+        []
+
       res_map when is_map(res_map) ->
-        Enum.map(res_map, fn {base_path, res} -> {Path.join(base_path, to_path(res)), res} end)
+        res_map
+        # nils are out
+        |> Enum.reject(fn {_, r} -> r == nil end)
+        # Map everything to a path, resource tuple
+        |> Enum.map(fn {base_path, res} -> {Path.join(base_path, to_path(res)), res} end)
 
       res_list when is_list(res_list) ->
-        Enum.map(res_list, fn
+        res_list
+        |> Enum.reject(fn
+          # Since Filters might send nils through here
+          # reject anything that looks like nil
+          {_, r} -> r == nil
+          r -> r == nil
+        end)
+        |> Enum.map(fn
           {base_path, res} -> {Path.join(base_path, to_path(res)), res}
           res -> {to_path(res), res}
         end)

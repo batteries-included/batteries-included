@@ -33,7 +33,7 @@ defmodule KubeResources.Database do
     |> B.app_labels(@app_name)
     |> B.label("sidecar.istio.io/inject", "false")
     |> B.spec(spec)
-    |> B.owner_label(Map.get(cluster, :id, "bootstrapped"))
+    |> add_owner(cluster)
   end
 
   defp namespace(%{type: :internal} = _cluster, state), do: core_namespace(state)
@@ -63,8 +63,8 @@ defmodule KubeResources.Database do
     }
   end
 
-  def metrics_service(%{} = cluster, battery, _state, role) do
-    namespace = namespace(cluster, battery.config)
+  def metrics_service(%{} = cluster, _battery, state, role) do
+    namespace = namespace(cluster, state)
     cluster_name = full_name(cluster)
 
     selector = cluster |> cluster_label_selector(role) |> Map.put("application", "spilo")
@@ -88,20 +88,11 @@ defmodule KubeResources.Database do
     |> B.namespace(namespace)
     |> B.name(service_name)
     |> B.spec(spec)
-    |> B.owner_label(cluster.id)
+    |> add_owner(cluster)
   end
 
-  defp cluster_label_selector(%{} = cluster, role) do
-    cluster_name = full_name(cluster)
-
-    %{
-      "cluster-name" => cluster_name,
-      "spilo-role" => role
-    }
-  end
-
-  def service_monitor(%{} = cluster, battery, _state, role) do
-    namespace = namespace(cluster, battery.config)
+  def service_monitor(%{} = cluster, _battery, state, role) do
+    namespace = namespace(cluster, state)
     cluster_name = full_name(cluster)
 
     monitor_name = "#{cluster_name}-#{role}"
@@ -125,7 +116,7 @@ defmodule KubeResources.Database do
     |> B.namespace(namespace)
     |> B.name(monitor_name)
     |> B.spec(spec)
-    |> B.owner_label(cluster.id)
+    |> add_owner(cluster)
   end
 
   defp exporter_sidecar(cluster) do
@@ -175,5 +166,17 @@ defmodule KubeResources.Database do
 
   defp pg_hba do
     Enum.map(@pg_hba, fn spec -> Enum.join(spec, "\t") end)
+  end
+
+  defp add_owner(resource, %{id: id} = _cluster), do: B.owner_label(resource, id)
+  defp add_owner(resource, _), do: resource
+
+  defp cluster_label_selector(%{} = cluster, role) do
+    cluster_name = full_name(cluster)
+
+    %{
+      "cluster-name" => cluster_name,
+      "spilo-role" => role
+    }
   end
 end

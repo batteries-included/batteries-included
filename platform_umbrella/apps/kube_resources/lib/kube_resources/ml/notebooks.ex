@@ -1,18 +1,16 @@
 defmodule KubeResources.Notebooks do
+  use KubeExt.ResourceGenerator
+
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
 
   @app_name "notebooks"
   @url_base "/x/notebooks/"
-
-  def virtual_service(_battery, state) do
-    namespace = ml_namespace(state)
-    build_virtual_service(state.notebooks, namespace)
-  end
 
   def view_url(%{} = notebook), do: view_url(KubeExt.cluster_type(), notebook)
 
@@ -25,50 +23,38 @@ defmodule KubeResources.Notebooks do
 
   def base_url(%{} = notebook), do: "#{@url_base}#{notebook.name}"
 
-  defp build_virtual_service([_ | _] = notebooks, namespace) do
-    routes = Enum.map(notebooks, &notebook_http_route/1)
-
-    B.build_resource(:istio_virtual_service)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.name("notebooks")
-    |> B.spec(VirtualService.new(http: routes))
-  end
-
-  defp build_virtual_service([] = _notebooks, _namespace) do
-    nil
-  end
-
   def notebook_http_route(%{} = notebook) do
     HttpRoute.prefix(base_url(notebook), service_name(notebook))
   end
 
-  def materialize(battery, state) do
-    state.notebooks
-    |> Enum.with_index()
-    |> Enum.flat_map(fn {notebook, idx} ->
-      [
-        {stateful_set_path(notebook, idx), stateful_set(notebook, battery, state)},
-        {service_path(notebook, idx), service(notebook, battery, state)}
-      ]
-    end)
-    |> Map.new()
-    |> Map.put("/service_account", service_account(battery, state))
-  end
-
-  defp service_path(%{id: id}, _idx), do: "/notebooks/#{id}/service"
-  defp service_path(_, idx), do: "/notebooks/#{idx}/idx/service"
-
-  defp stateful_set_path(%{id: id}, _idx), do: "/notebooks/#{id}/stateful_set"
-  defp stateful_set_path(_, idx), do: "/notebooks/#{idx}/idx/stateful_set"
-
-  defp service_account(_battery, state) do
+  resource(:service_account, _battery, state) do
     namespace = ml_namespace(state)
 
     B.build_resource(:service_account)
     |> B.name("battery-notebooks")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+  end
+
+  resource(:virtual_service, _battery, state) do
+    namespace = ml_namespace(state)
+    routes = Enum.map(state.notebooks, &notebook_http_route/1)
+
+    B.build_resource(:istio_virtual_service)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.name("notebooks")
+    |> B.spec(VirtualService.new(http: routes))
+    |> F.require_battery(state, :istio_gateway)
+    |> F.require_non_empty(state.notebooks)
+  end
+
+  multi_resource(:stateful_sets, battery, state) do
+    Enum.map(state.notebooks, fn notebook -> stateful_set(notebook, battery, state) end)
+  end
+
+  multi_resource(:services, battery, state) do
+    Enum.map(state.notebooks, fn notebook -> service(notebook, battery, state) end)
   end
 
   defp stateful_set(%{} = notebook, _battery, state) do

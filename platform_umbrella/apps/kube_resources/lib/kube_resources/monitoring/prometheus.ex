@@ -7,6 +7,7 @@ defmodule KubeResources.Prometheus do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.VirtualService
 
@@ -21,7 +22,7 @@ defmodule KubeResources.Prometheus do
 
   def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
-  def virtual_service(_battery, state) do
+  resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:istio_virtual_service)
@@ -29,6 +30,7 @@ defmodule KubeResources.Prometheus do
     |> B.app_labels(@app_name)
     |> B.name("prometheus")
     |> B.spec(VirtualService.rewriting("/x/prometheus", "battery-prometheus-prometheus"))
+    |> F.require_battery(state, :istio_gateway)
   end
 
   resource(:cluster_role_battery_kube_prometheus_prometheus) do

@@ -7,6 +7,7 @@ defmodule KubeResources.KnativeOperator do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
 
   @app_name "knative-operator"
 
@@ -1214,21 +1215,6 @@ defmodule KubeResources.KnativeOperator do
     end)
   end
 
-  def monitors(battery, state) do
-    [
-      service_monitor_autoscaler(battery, state),
-      service_monitor_activator(battery, state),
-      service_monitor_controller(battery, state),
-      service_monitor_filter(battery, state),
-      service_monitor_webhook(battery, state),
-      service_monitor_broker_ingress(battery, state),
-      pod_monitor_eventing_controller(battery, state),
-      pod_monitor_imc_controller(battery, state),
-      pod_monitor_api_source(battery, state),
-      pod_monitor_ping_source(battery, state)
-    ]
-  end
-
   def service_monitor_autoscaler(_battery, state) do
     namespace = core_namespace(state)
 
@@ -1257,6 +1243,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-autoscaler")
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def service_monitor_activator(_battery, state) do
@@ -1271,7 +1258,6 @@ defmodule KubeResources.KnativeOperator do
       ],
       "namespaceSelector" => %{
         "matchNames" => [
-          "knative-serving",
           namespace
         ]
       },
@@ -1287,6 +1273,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-activator")
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def service_monitor_controller(_battery, state) do
@@ -1317,6 +1304,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-controller")
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def service_monitor_filter(_battery, state) do
@@ -1347,6 +1335,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-filter")
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def service_monitor_webhook(_battery, state) do
@@ -1377,6 +1366,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-webhook")
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def service_monitor_broker_ingress(_battery, state) do
@@ -1407,6 +1397,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-broker-ingress")
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def pod_monitor_eventing_controller(_battery, state) do
@@ -1436,6 +1427,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def pod_monitor_imc_controller(_battery, state) do
@@ -1465,6 +1457,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def pod_monitor_ping_source(_battery, state) do
@@ -1494,6 +1487,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def pod_monitor_api_source(_battery, state) do
@@ -1520,6 +1514,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   def crds(battery, state) do
@@ -1571,7 +1566,17 @@ defmodule KubeResources.KnativeOperator do
       "/configs/logging" => config_map_config_logging(battery, state),
       "/configs/observability" => config_map_config_observability(battery, state),
       "/deployments/webhook" => deployment_webhook(battery, state),
-      "/deployments/operator" => deployment_knative_operator(battery, state)
+      "/deployments/operator" => deployment_knative_operator(battery, state),
+      "/metrics/sm_autoscaler" => service_monitor_autoscaler(battery, state),
+      "/metrics/sm_activator" => service_monitor_activator(battery, state),
+      "/metrics/sm_controller" => service_monitor_controller(battery, state),
+      "/metrics/sm_filter" => service_monitor_filter(battery, state),
+      "/metrics/sm_webhook" => service_monitor_webhook(battery, state),
+      "/metrics/sm_ingress" => service_monitor_broker_ingress(battery, state),
+      "/metrics/pm_eventing_controller" => pod_monitor_eventing_controller(battery, state),
+      "/metrics/pm_imc_controller" => pod_monitor_imc_controller(battery, state),
+      "/metrics/pm_api_source" => pod_monitor_api_source(battery, state),
+      "/metrics/pm_ping_source" => pod_monitor_ping_source(battery, state)
     }
   end
 end

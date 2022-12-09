@@ -9,6 +9,7 @@ defmodule KubeResources.Alertmanager do
 
   alias KubeExt.SystemState.StateSummary
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
   alias KubeExt.KubeState.Hosts
   alias KubeExt.Secret
 
@@ -30,7 +31,7 @@ defmodule KubeResources.Alertmanager do
     "http://#{control}#{@url_base}"
   end
 
-  def virtual_service(_battery, state) do
+  resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:istio_virtual_service)
@@ -38,6 +39,7 @@ defmodule KubeResources.Alertmanager do
     |> B.app_labels(@app_name)
     |> B.name("alertmanager")
     |> B.spec(VirtualService.rewriting(@url_base, "battery-prometheus-alertmanager"))
+    |> F.require_battery(state, :istio_gateway)
   end
 
   resource(:alertmanager, battery, state) do

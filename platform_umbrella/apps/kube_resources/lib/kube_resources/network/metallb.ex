@@ -14,6 +14,7 @@ defmodule KubeResources.MetalLB do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
 
   @app_name "metallb"
 
@@ -323,6 +324,7 @@ defmodule KubeResources.MetalLB do
         "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}
       }
     })
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:pod_monitor_speaker, _battery, state) do
@@ -341,6 +343,7 @@ defmodule KubeResources.MetalLB do
         "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}
       }
     })
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:role_binding_controller, _battery, state) do
@@ -546,6 +549,7 @@ defmodule KubeResources.MetalLB do
       "sessionAffinity" => "None",
       "type" => "ClusterIP"
     })
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:service_monitor_controller, _battery, state) do
@@ -562,6 +566,7 @@ defmodule KubeResources.MetalLB do
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "selector" => %{"matchLabels" => %{"name" => "metallb-controller-monitor-service"}}
     })
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:service_monitor_speaker, _battery, state) do
@@ -578,6 +583,7 @@ defmodule KubeResources.MetalLB do
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "selector" => %{"matchLabels" => %{"name" => "metallb-speaker-monitor-service"}}
     })
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:service_speaker_monitor, _battery, state) do
@@ -593,6 +599,7 @@ defmodule KubeResources.MetalLB do
       "sessionAffinity" => "None",
       "type" => "ClusterIP"
     })
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:service_webhook, _battery, state) do

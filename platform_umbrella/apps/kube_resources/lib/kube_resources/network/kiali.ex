@@ -6,6 +6,7 @@ defmodule KubeResources.Kiali do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.Grafana
@@ -21,7 +22,7 @@ defmodule KubeResources.Kiali do
 
   def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
-  def virtual_service(_battery, state) do
+  resource(:virtual_service, _battery, state) do
     namespace = istio_namespace(state)
 
     B.build_resource(:istio_virtual_service)
@@ -29,6 +30,7 @@ defmodule KubeResources.Kiali do
     |> B.app_labels(@app_name)
     |> B.name("kiali")
     |> B.spec(VirtualService.prefix(@url_base, "kiali", port: 20_001))
+    |> F.require_battery(state, :istio_gateway)
   end
 
   resource(:cluster_role_binding_operator, _battery, state) do

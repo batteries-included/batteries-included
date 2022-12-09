@@ -26,7 +26,6 @@ defmodule KubeResources.ConfigGenerator do
     Notebooks,
     Redis,
     RedisOperator,
-    VirtualService,
     Harbor,
     Rook,
     CephFilesystems,
@@ -63,7 +62,7 @@ defmodule KubeResources.ConfigGenerator do
     grafana: [&Grafana.materialize/2],
     harbor: [&Harbor.materialize/2],
     istio: [&IstioBase.materialize/2],
-    istio_gateway: [&IstioGateway.materialize/2, &VirtualService.materialize/2],
+    istio_gateway: [&IstioGateway.materialize/2],
     istio_istiod: [&IstioIstiod.materialize/2],
     kiali: [&Kiali.materialize/2],
     knative_operator: [&KnativeOperator.materialize/2],
@@ -109,6 +108,7 @@ defmodule KubeResources.ConfigGenerator do
     |> Enum.map(fn gen ->
       gen.(system_battery, state)
     end)
+    |> Enum.reject(&(&1 == nil))
     |> Enum.reduce(%{}, &Map.merge/2)
     |> Enum.flat_map(&flatten/1)
     |> Enum.map(fn {key, resource} ->

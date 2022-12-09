@@ -13,6 +13,7 @@ defmodule KubeResources.Harbor do
   import KubeExt.SystemState.Hosts
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
   alias KubeExt.Secret
   alias KubeExt.KubeState.Hosts
 
@@ -50,6 +51,7 @@ defmodule KubeResources.Harbor do
         hosts: [harbor_host(state)]
       )
     )
+    |> F.require_battery(state, :istio_gateway)
   end
 
   resource(:config_map_core, _battery, state) do

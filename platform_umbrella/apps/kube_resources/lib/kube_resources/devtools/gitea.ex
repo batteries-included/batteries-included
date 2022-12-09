@@ -11,6 +11,7 @@ defmodule KubeResources.Gitea do
 
   alias KubeExt.Defaults
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
   alias KubeExt.KubeState.Hosts
   alias KubeExt.Secret
 
@@ -32,6 +33,7 @@ defmodule KubeResources.Gitea do
     |> B.app_labels(@app_name)
     |> B.name("gitea-http")
     |> B.spec(VirtualService.rewriting(@url_base, "gitea-http"))
+    |> F.require_battery(state, :istio_gateway)
   end
 
   resource(:ssh_virtual_service, _battery, state) do
@@ -44,6 +46,7 @@ defmodule KubeResources.Gitea do
     |> B.spec(
       VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh", hosts: [gitea_host(state)])
     )
+    |> F.require_battery(state, :istio_gateway)
   end
 
   def iframe_url, do: @iframe_base_url

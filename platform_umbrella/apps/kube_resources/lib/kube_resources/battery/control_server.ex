@@ -2,6 +2,7 @@ defmodule KubeResources.ControlServer do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
   alias KubeExt.Defaults
 
@@ -14,7 +15,8 @@ defmodule KubeResources.ControlServer do
       "/deployment" => deployment(battery, state),
       "/service" => service(battery, state),
       "/service_account" => service_account(battery, state),
-      "/cluster_role_binding" => cluster_role_binding(battery, state)
+      "/cluster_role_binding" => cluster_role_binding(battery, state),
+      "/virtual_service" => virtual_service(battery, state)
     }
   end
 
@@ -24,6 +26,7 @@ defmodule KubeResources.ControlServer do
     |> B.app_labels(@app_name)
     |> B.name("control-server")
     |> B.spec(VirtualService.fallback("control-server"))
+    |> F.require_battery(state, :istio_gateway)
   end
 
   def service_account(_battery, state) do
