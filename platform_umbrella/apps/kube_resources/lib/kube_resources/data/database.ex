@@ -3,6 +3,7 @@ defmodule KubeResources.Database do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
 
   @exporter_port 9187
   @exporter_port_name "exporter"
@@ -89,6 +90,7 @@ defmodule KubeResources.Database do
     |> B.name(service_name)
     |> B.spec(spec)
     |> add_owner(cluster)
+    |> F.require_battery(state, :prometheus)
   end
 
   def service_monitor(%{} = cluster, _battery, state, role) do
@@ -117,6 +119,7 @@ defmodule KubeResources.Database do
     |> B.name(monitor_name)
     |> B.spec(spec)
     |> add_owner(cluster)
+    |> F.require_battery(state, :prometheus)
   end
 
   defp exporter_sidecar(cluster) do
