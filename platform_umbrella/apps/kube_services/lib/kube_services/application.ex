@@ -9,20 +9,26 @@ defmodule KubeServices.Application do
   alias KubeExt.KubeState
   alias KubeExt.KubeState.ResourceWatcher
 
+  @task_supervisor KubeServices.TaskSupervisor
+
   @impl Application
   def start(_type, _args) do
-    children = children(start_services?())
+    should_start_services = start_services?()
+    children = children(should_start_services)
 
     opts = [strategy: :one_for_one, name: KubeServices.Supervisor]
-    Supervisor.start_link(children, opts)
+    res = Supervisor.start_link(children, opts)
+
+    res
   end
 
   defp start_services?, do: Application.get_env(:kube_services, :start_services)
 
   def children(true = _run) do
     [
-      KubeServices.Usage.RestClientGenserver,
+      {Task.Supervisor, name: @task_supervisor},
       {Oban, Application.fetch_env!(:kube_services, Oban)},
+      KubeServices.SnapshotApply.InitialLaunchTask,
       KubeServices.SnapshotApply.EventLauncher,
       KubeServices.SnapshotApply.Apply
     ] ++ kube_state_watchers() ++ timeline_watchers()

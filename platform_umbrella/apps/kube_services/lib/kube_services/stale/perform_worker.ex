@@ -30,7 +30,6 @@ defmodule KubeServices.Stale.PerformWorker do
           :ok
 
         result ->
-          Logger.debug("Delete result -> #{inspect(result)}")
           result
       end
     end)
