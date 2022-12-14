@@ -18,6 +18,7 @@ defmodule ControlServer.Knative.Service do
     service
     |> cast(attrs, [:name, :image])
     |> validate_required([:name, :image])
+    |> unique_constraint(:name)
   end
 
   def validate(params) do
