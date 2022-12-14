@@ -31,7 +31,7 @@ defmodule CommonUI.Link do
     ~H"""
     <Phoenix.Component.link
       class={build_class([link_class(@variant), @class])}
-      href={@href || @navigate}
+      href={@href}
       target="_blank"
       {@rest}
     >
