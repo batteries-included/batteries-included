@@ -1,287 +1,403 @@
 defmodule KubeResources.KnativeOperator do
-  @moduledoc false
+  use KubeExt.IncludeResource,
+    knativeeventings_operator_knative_dev:
+      "priv/manifests/knative_operator/knativeeventings_operator_knative_dev.yaml",
+    knativeservings_operator_knative_dev:
+      "priv/manifests/knative_operator/knativeservings_operator_knative_dev.yaml"
 
-  use KubeExt.IncludeResource, crd: "priv/manifests/knative/operator-crds.yaml"
+  use KubeExt.ResourceGenerator
 
   import KubeExt.Yaml
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeExt.Secret
 
-  @app_name "knative-operator"
-
-  @aggregated_serving_cluster_role "battery-knative-aggregated-serving"
-  @aggregated_serving_appname_cluster_role "battery-knative-aggregated-appname-serving"
-  @aggregated_serving_battery_app_cluster_role "battery-knative-aggregated-battery-app-serving"
-
-  @aggregated_eventing_cluster_role "battery-knative-aggregated-eventing"
-  @aggregated_eventing_appname_cluster_role "battery-knative-aggregated-appname-eventing"
-  @aggregated_eventing_battery_app_cluster_role "battery-knative-aggregated-battery-app-eventing"
-
-  @serving_operator_cluster_role "battery-knative-serving"
-  @eventing_operator_cluster_role "battery-knative-eventing"
-
-  @webhook_cluster_role "battery-knative-webhook"
-
-  @webhook_role "knative-operator-webhook"
-
-  @operator_service_account "knative-operator"
-  @webhook_service_account "knative-operator-webhook"
-
-  @webhook_certs_secret "operator-webhook-certs"
-
-  @logging_configmap "knative-config-logging"
-  @observability_configmap "knative-config-observability"
+  @app_name "knative_operator"
 
   @webhook_service "knative-operator-webhook"
 
-  defp aggregated_cluster_role(name, key) do
-    B.build_resource(:cluster_role)
+  resource(:cluster_role_binding_knative_eventing_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("knative-eventing-operator")
     |> B.app_labels(@app_name)
-    |> B.name(name)
-    |> B.rules([])
-    |> Map.put("aggregationRule", %{
+    |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator"))
+    |> B.subject(B.build_service_account("knative-operator", namespace))
+  end
+
+  resource(:cluster_role_binding_knative_eventing_operator_aggregated, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("knative-eventing-operator-aggregated")
+    |> B.app_labels(@app_name)
+    |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator-aggregated"))
+    |> B.subject(B.build_service_account("knative-operator", namespace))
+  end
+
+  resource(:cluster_role_binding_knative_eventing_operator_aggregated_stable, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("knative-eventing-operator-aggregated-stable")
+    |> B.app_labels(@app_name)
+    |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator-aggregated-stable"))
+    |> B.subject(B.build_service_account("knative-operator", namespace))
+  end
+
+  resource(:cluster_role_binding_knative_serving_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("knative-serving-operator")
+    |> B.app_labels(@app_name)
+    |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator"))
+    |> B.subject(B.build_service_account("knative-operator", namespace))
+  end
+
+  resource(:cluster_role_binding_knative_serving_operator_aggregated, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("knative-serving-operator-aggregated")
+    |> B.app_labels(@app_name)
+    |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator-aggregated"))
+    |> B.subject(B.build_service_account("knative-operator", namespace))
+  end
+
+  resource(:cluster_role_binding_knative_serving_operator_aggregated_stable, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("knative-serving-operator-aggregated-stable")
+    |> B.app_labels(@app_name)
+    |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator-aggregated-stable"))
+    |> B.subject(B.build_service_account("knative-operator", namespace))
+  end
+
+  resource(:cluster_role_binding_knative_operator_webhook, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name("knative-operator-webhook")
+    |> B.app_labels(@app_name)
+    |> B.role_ref(B.build_cluster_role_ref("knative-operator-webhook"))
+    |> B.subject(B.build_service_account("knative-operator-webhook", namespace))
+  end
+
+  resource(:cluster_role_knative_eventing_operator) do
+    rules = [
+      %{"apiGroups" => ["operator.knative.dev"], "resources" => ["*"], "verbs" => ["*"]},
+      %{
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resources" => ["clusterroles", "roles"],
+        "verbs" => ["create", "delete", "escalate", "get", "list", "update"]
+      },
+      %{
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resources" => ["clusterrolebindings", "rolebindings"],
+        "verbs" => ["create", "delete", "list", "get", "update"]
+      },
+      %{
+        "apiGroups" => ["apiregistration.k8s.io"],
+        "resources" => ["apiservices"],
+        "verbs" => ["update"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["services"],
+        "verbs" => ["create", "delete", "get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["caching.internal.knative.dev"],
+        "resources" => ["images"],
+        "verbs" => ["*"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["namespaces"],
+        "verbs" => ["get", "update", "watch"]
+      },
+      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "update", "patch"]},
+      %{
+        "apiGroups" => [""],
+        "resources" => ["configmaps"],
+        "verbs" => ["create", "delete", "get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["deployments", "daemonsets", "replicasets", "statefulsets"],
+        "verbs" => ["create", "delete", "get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apiregistration.k8s.io"],
+        "resources" => ["apiservices"],
+        "verbs" => ["create", "delete", "get", "list"]
+      },
+      %{
+        "apiGroups" => ["autoscaling"],
+        "resources" => ["horizontalpodautoscalers"],
+        "verbs" => ["create", "delete", "update", "get", "list"]
+      },
+      %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["*"]},
+      %{
+        "apiGroups" => ["apiextensions.k8s.io"],
+        "resources" => ["customresourcedefinitions"],
+        "verbs" => ["*"]
+      },
+      %{
+        "apiGroups" => ["batch"],
+        "resources" => ["jobs"],
+        "verbs" => ["create", "delete", "update", "get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resourceNames" => ["knative-eventing-operator"],
+        "resources" => ["serviceaccounts"],
+        "verbs" => ["delete"]
+      },
+      %{
+        "apiGroups" => ["rabbitmq.com"],
+        "resources" => ["rabbitmqclusters"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["rabbitmq.com"],
+        "resources" => ["bindings", "queues", "exchanges"],
+        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
+      },
+      %{
+        "apiGroups" => ["rabbitmq.com"],
+        "resources" => ["bindings/status", "queues/status", "exchanges/status"],
+        "verbs" => ["get"]
+      },
+      %{
+        "apiGroups" => ["keda.sh"],
+        "resources" => [
+          "scaledobjects",
+          "scaledobjects/finalizers",
+          "scaledobjects/status",
+          "triggerauthentications",
+          "triggerauthentications/status"
+        ],
+        "verbs" => ["get", "list", "watch", "update", "create", "delete"]
+      },
+      %{
+        "apiGroups" => ["internal.kafka.eventing.knative.dev"],
+        "resources" => [
+          "consumers",
+          "consumers/status",
+          "consumergroups",
+          "consumergroups/status"
+        ],
+        "verbs" => ["create", "get", "list", "watch", "patch", "update", "delete"]
+      },
+      %{
+        "apiGroups" => ["internal.kafka.eventing.knative.dev"],
+        "resources" => ["consumers/finalizers", "consumergroups/finalizers"],
+        "verbs" => ["update", "delete"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["statefulsets/scale"],
+        "verbs" => ["get", "list", "watch", "update", "patch"]
+      },
+      %{
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resources" => ["clusterrolebindings"],
+        "verbs" => ["watch"]
+      },
+      %{"apiGroups" => ["*"], "resources" => ["configmaps"], "verbs" => ["delete"]},
+      %{
+        "apiGroups" => ["*"],
+        "resources" => ["configmaps", "services"],
+        "verbs" => ["get", "list", "watch", "update", "create", "delete"]
+      },
+      %{
+        "apiGroups" => ["*"],
+        "resources" => ["pods"],
+        "verbs" => ["list", "update", "get", "watch"]
+      },
+      %{
+        "apiGroups" => ["*"],
+        "resources" => ["pods/finalizers"],
+        "verbs" => ["get", "list", "create", "update", "delete"]
+      },
+      %{"apiGroups" => ["*"], "resources" => ["events"], "verbs" => ["patch", "create"]},
+      %{
+        "apiGroups" => ["*"],
+        "resources" => ["secrets"],
+        "verbs" => ["get", "list", "watch", "update", "create", "delete"]
+      },
+      %{"apiGroups" => ["*"], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["*"],
+        "resources" => ["serviceaccounts"],
+        "verbs" => ["get", "list", "watch", "update", "create", "delete"]
+      },
+      %{
+        "apiGroups" => ["*"],
+        "resourceNames" => ["kafka-channel-config"],
+        "resources" => ["configmaps"],
+        "verbs" => ["patch"]
+      },
+      %{
+        "apiGroups" => ["*"],
+        "resourceNames" => ["kafka-webhook"],
+        "resources" => ["horizontalpodautoscalers"],
+        "verbs" => ["delete"]
+      },
+      %{"apiGroups" => ["*"], "resources" => ["leases"], "verbs" => ["delete"]},
+      %{
+        "apiGroups" => ["*"],
+        "resourceNames" => ["kafka-webhook"],
+        "resources" => ["poddisruptionbudgets"],
+        "verbs" => ["delete"]
+      },
+      %{"apiGroups" => ["*"], "resources" => ["services"], "verbs" => ["patch"]},
+      %{"apiGroups" => ["apps"], "resources" => ["deployments"], "verbs" => ["deletecollection"]}
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("knative-eventing-operator")
+    |> B.app_labels(@app_name)
+    |> B.rules(rules)
+  end
+
+  resource(:cluster_role_knative_eventing_operator_aggregated) do
+    rules = []
+
+    B.build_resource(:cluster_role)
+    |> B.aggregation_rule(%{
       "clusterRoleSelectors" => [
         %{
           "matchExpressions" => [
-            %{"key" => key, "operator" => "Exists"}
+            %{"key" => "eventing.knative.dev/release", "operator" => "Exists"}
           ]
         }
       ]
     })
+    |> B.name("knative-eventing-operator-aggregated")
+    |> B.app_labels(@app_name)
+    |> B.rules(rules)
   end
 
-  defp aggregated_cluster_role(name, key, values) do
+  resource(:cluster_role_knative_eventing_operator_aggregated_stable) do
+    rules = []
+
     B.build_resource(:cluster_role)
-    |> B.app_labels(@app_name)
-    |> B.name(name)
-    |> B.rules([])
-    |> Map.put("aggregationRule", %{
+    |> B.aggregation_rule(%{
       "clusterRoleSelectors" => [
         %{
           "matchExpressions" => [
             %{
-              "key" => key,
+              "key" => "app.kubernetes.io/name",
               "operator" => "In",
-              "values" => values
+              "values" => ["knative-eventing"]
             }
           ]
         }
       ]
     })
-  end
-
-  defp cluster_role_binding(name, cluster_role_name, service_account, namespace) do
-    B.build_resource(:cluster_role_binding)
-    |> B.name(name)
+    |> B.name("knative-eventing-operator-aggregated-stable")
     |> B.app_labels(@app_name)
-    |> B.role_ref(B.build_cluster_role_ref(cluster_role_name))
-    |> B.subject(B.build_service_account(service_account, namespace))
+    |> B.rules(rules)
   end
 
-  def aggregated_cluster_role_serving(_battery, _state),
-    do: aggregated_cluster_role(@aggregated_serving_cluster_role, "serving.knative.dev/release")
-
-  def aggregated_cluster_role_serving_appname(_battery, _state),
-    do:
-      aggregated_cluster_role(
-        @aggregated_serving_appname_cluster_role,
-        "app.kubernetes.io/name",
-        ["knative-serving"]
-      )
-
-  def aggregated_cluster_role_serving_battery_app(_battery, _state),
-    do:
-      aggregated_cluster_role(
-        @aggregated_serving_battery_app_cluster_role,
-        "battery/app",
-        ["knative-serving", @app_name]
-      )
-
-  def aggregated_cluster_role_eventing(_config, _state),
-    do:
-      aggregated_cluster_role(
-        @aggregated_eventing_cluster_role,
-        "eventing.knative.dev/release"
-      )
-
-  def aggregated_cluster_role_eventing_appname(_config, _state),
-    do:
-      aggregated_cluster_role(
-        @aggregated_eventing_appname_cluster_role,
-        "app.kubernetes.io/name",
-        ["knative-eventing"]
-      )
-
-  def aggregated_cluster_role_eventing_battery_app(_config, _state),
-    do:
-      aggregated_cluster_role(
-        @aggregated_eventing_battery_app_cluster_role,
-        "battery/app",
-        ["knative-eventing", @app_name]
-      )
-
-  def cluster_role_knative_serving_operator(_battery, _state) do
+  resource(:cluster_role_knative_operator_webhook) do
     rules = [
+      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]},
       %{
-        "apiGroups" => [
-          "operator.knative.dev"
-        ],
-        "resources" => [
-          "*"
-        ],
-        "verbs" => [
-          "*"
-        ]
+        "apiGroups" => [""],
+        "resources" => ["namespaces"],
+        "verbs" => ["get", "create", "update", "list", "watch", "patch"]
+      },
+      %{"apiGroups" => [""], "resources" => ["namespaces/finalizers"], "verbs" => ["update"]},
+      %{"apiGroups" => ["apps"], "resources" => ["deployments"], "verbs" => ["get"]},
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["deployments/finalizers"],
+        "verbs" => ["update"]
       },
       %{
-        "apiGroups" => [
-          "rbac.authorization.k8s.io"
-        ],
-        "resourceNames" => [
-          "system:auth-delegator"
-        ],
-        "resources" => [
-          "clusterroles"
-        ],
-        "verbs" => [
-          "bind",
-          "get"
-        ]
+        "apiGroups" => ["admissionregistration.k8s.io"],
+        "resources" => ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"],
+        "verbs" => ["get", "list", "create", "update", "delete", "patch", "watch"]
       },
       %{
-        "apiGroups" => [
-          "rbac.authorization.k8s.io"
-        ],
-        "resourceNames" => [
-          "extension-apiserver-authentication-reader"
-        ],
-        "resources" => [
-          "roles"
-        ],
-        "verbs" => [
-          "bind",
-          "get"
-        ]
+        "apiGroups" => ["coordination.k8s.io"],
+        "resources" => ["leases"],
+        "verbs" => ["get", "list", "create", "update", "delete", "patch", "watch"]
       },
       %{
-        "apiGroups" => [
-          "rbac.authorization.k8s.io"
-        ],
-        "resources" => [
-          "clusterroles",
-          "roles"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "escalate",
-          "get",
-          "list",
-          "update"
-        ]
+        "apiGroups" => ["apiextensions.k8s.io"],
+        "resources" => ["customresourcedefinitions"],
+        "verbs" => ["get", "list", "create", "update", "delete", "patch", "watch"]
+      }
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("knative-operator-webhook")
+    |> B.app_labels(@app_name)
+    |> B.label("eventing.knative.dev/release", "devel")
+    |> B.rules(rules)
+  end
+
+  resource(:cluster_role_knative_serving_operator) do
+    rules = [
+      %{"apiGroups" => ["operator.knative.dev"], "resources" => ["*"], "verbs" => ["*"]},
+      %{
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resourceNames" => ["system:auth-delegator"],
+        "resources" => ["clusterroles"],
+        "verbs" => ["bind", "get"]
       },
       %{
-        "apiGroups" => [
-          "rbac.authorization.k8s.io"
-        ],
-        "resources" => [
-          "clusterrolebindings",
-          "rolebindings"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "list",
-          "get",
-          "update"
-        ]
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resourceNames" => ["extension-apiserver-authentication-reader"],
+        "resources" => ["roles"],
+        "verbs" => ["bind", "get"]
       },
       %{
-        "apiGroups" => [
-          "apiregistration.k8s.io"
-        ],
-        "resources" => [
-          "apiservices"
-        ],
-        "verbs" => [
-          "update"
-        ]
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resources" => ["clusterroles", "roles"],
+        "verbs" => ["create", "delete", "escalate", "get", "list", "update"]
       },
       %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "services"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list",
-          "watch"
-        ]
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resources" => ["clusterrolebindings", "rolebindings"],
+        "verbs" => ["create", "delete", "list", "get", "update"]
       },
       %{
-        "apiGroups" => [
-          "caching.internal.knative.dev"
-        ],
-        "resources" => [
-          "images"
-        ],
-        "verbs" => [
-          "*"
-        ]
+        "apiGroups" => ["apiregistration.k8s.io"],
+        "resources" => ["apiservices"],
+        "verbs" => ["update"]
       },
       %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "namespaces"
-        ],
-        "verbs" => [
-          "get",
-          "update",
-          "watch"
-        ]
+        "apiGroups" => [""],
+        "resources" => ["services"],
+        "verbs" => ["create", "delete", "get", "list", "watch"]
       },
       %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "events"
-        ],
-        "verbs" => [
-          "create",
-          "update",
-          "patch"
-        ]
+        "apiGroups" => ["caching.internal.knative.dev"],
+        "resources" => ["images"],
+        "verbs" => ["*"]
       },
       %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "configmaps"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list",
-          "watch"
-        ]
+        "apiGroups" => [""],
+        "resources" => ["namespaces"],
+        "verbs" => ["get", "update", "watch"]
+      },
+      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "update", "patch"]},
+      %{
+        "apiGroups" => [""],
+        "resources" => ["configmaps"],
+        "verbs" => ["create", "delete", "get", "list", "watch"]
       },
       %{
-        "apiGroups" => [
-          "security.istio.io",
-          "apps",
-          "policy"
-        ],
+        "apiGroups" => ["security.istio.io", "apps", "policy"],
         "resources" => [
           "poddisruptionbudgets",
           "peerauthentications",
@@ -290,1293 +406,368 @@ defmodule KubeResources.KnativeOperator do
           "replicasets",
           "statefulsets"
         ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list",
-          "watch",
-          "update"
-        ]
+        "verbs" => ["create", "delete", "get", "list", "watch", "update"]
       },
       %{
-        "apiGroups" => [
-          "apiregistration.k8s.io"
-        ],
-        "resources" => [
-          "apiservices"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list"
-        ]
+        "apiGroups" => ["apiregistration.k8s.io"],
+        "resources" => ["apiservices"],
+        "verbs" => ["create", "delete", "get", "list"]
       },
       %{
-        "apiGroups" => [
-          "autoscaling"
-        ],
-        "resources" => [
-          "horizontalpodautoscalers"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list"
-        ]
+        "apiGroups" => ["autoscaling"],
+        "resources" => ["horizontalpodautoscalers"],
+        "verbs" => ["create", "delete", "get", "list"]
+      },
+      %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["*"]},
+      %{
+        "apiGroups" => ["apiextensions.k8s.io"],
+        "resources" => ["customresourcedefinitions"],
+        "verbs" => ["*"]
       },
       %{
-        "apiGroups" => [
-          "coordination.k8s.io"
-        ],
-        "resources" => [
-          "leases"
-        ],
-        "verbs" => [
-          "*"
-        ]
+        "apiGroups" => [""],
+        "resourceNames" => ["knative-ingressgateway"],
+        "resources" => ["services", "deployments", "horizontalpodautoscalers"],
+        "verbs" => ["delete"]
       },
       %{
-        "apiGroups" => [
-          "apiextensions.k8s.io"
-        ],
-        "resources" => [
-          "customresourcedefinitions"
-        ],
-        "verbs" => [
-          "*"
-        ]
+        "apiGroups" => [""],
+        "resourceNames" => ["config-controller"],
+        "resources" => ["configmaps"],
+        "verbs" => ["delete"]
       },
       %{
-        "apiGroups" => [
-          ""
-        ],
-        "resourceNames" => [
-          "knative-ingressgateway"
-        ],
-        "resources" => [
-          "services",
-          "deployments",
-          "horizontalpodautoscalers"
-        ],
-        "verbs" => [
-          "delete"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resourceNames" => [
-          @observability_configmap,
-          @logging_configmap,
-          "config-controller"
-        ],
-        "resources" => [
-          "configmaps"
-        ],
-        "verbs" => [
-          "delete"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resourceNames" => [
-          @operator_service_account,
-          @webhook_service_account
-        ],
-        "resources" => [
-          "serviceaccounts"
-        ],
-        "verbs" => [
-          "delete"
-        ]
+        "apiGroups" => [""],
+        "resourceNames" => ["knative-serving-operator"],
+        "resources" => ["serviceaccounts"],
+        "verbs" => ["delete"]
       }
     ]
 
     B.build_resource(:cluster_role)
+    |> B.name("knative-serving-operator")
     |> B.app_labels(@app_name)
-    |> B.name(@serving_operator_cluster_role)
     |> B.rules(rules)
   end
 
-  def cluster_role_knative_eventing_operator(_battery, _state) do
-    rules = [
-      %{
-        "apiGroups" => [
-          "operator.knative.dev"
-        ],
-        "resources" => [
-          "*"
-        ],
-        "verbs" => [
-          "*"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "rbac.authorization.k8s.io"
-        ],
-        "resources" => [
-          "clusterroles",
-          "roles"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "escalate",
-          "get",
-          "list",
-          "update"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "rbac.authorization.k8s.io"
-        ],
-        "resources" => [
-          "clusterrolebindings",
-          "rolebindings"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "list",
-          "get",
-          "update"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "apiregistration.k8s.io"
-        ],
-        "resources" => [
-          "apiservices"
-        ],
-        "verbs" => [
-          "update"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "services"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "caching.internal.knative.dev"
-        ],
-        "resources" => [
-          "images"
-        ],
-        "verbs" => [
-          "*"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "namespaces"
-        ],
-        "verbs" => [
-          "get",
-          "update",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "events"
-        ],
-        "verbs" => [
-          "create",
-          "update",
-          "patch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "configmaps"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "apps"
-        ],
-        "resources" => [
-          "deployments",
-          "daemonsets",
-          "replicasets",
-          "statefulsets"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "apiregistration.k8s.io"
-        ],
-        "resources" => [
-          "apiservices"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "get",
-          "list"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "autoscaling"
-        ],
-        "resources" => [
-          "horizontalpodautoscalers"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "update",
-          "get",
-          "list"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "coordination.k8s.io"
-        ],
-        "resources" => [
-          "leases"
-        ],
-        "verbs" => [
-          "*"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "apiextensions.k8s.io"
-        ],
-        "resources" => [
-          "customresourcedefinitions"
-        ],
-        "verbs" => [
-          "*"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "batch"
-        ],
-        "resources" => [
-          "jobs"
-        ],
-        "verbs" => [
-          "create",
-          "delete",
-          "update",
-          "get",
-          "list",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resourceNames" => [
-          @operator_service_account,
-          @webhook_service_account
-        ],
-        "resources" => [
-          "serviceaccounts"
-        ],
-        "verbs" => [
-          "delete"
-        ]
-      }
-    ]
+  resource(:cluster_role_knative_serving_operator_aggregated) do
+    rules = []
 
     B.build_resource(:cluster_role)
-    |> B.app_labels(@app_name)
-    |> B.name(@eventing_operator_cluster_role)
-    |> B.rules(rules)
-  end
-
-  def cluster_role_operator_webhook(_battery, _state) do
-    rules = [
+    |> Map.put(
+      "aggregationRule",
       %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "configmaps"
-        ],
-        "verbs" => [
-          "get",
-          "list",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "namespaces"
-        ],
-        "verbs" => [
-          "get",
-          "create",
-          "update",
-          "list",
-          "watch",
-          "patch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "namespaces/finalizers"
-        ],
-        "verbs" => [
-          "update"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "apps"
-        ],
-        "resources" => [
-          "deployments"
-        ],
-        "verbs" => [
-          "get"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "apps"
-        ],
-        "resources" => [
-          "deployments/finalizers"
-        ],
-        "verbs" => [
-          "update"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "admissionregistration.k8s.io"
-        ],
-        "resources" => [
-          "mutatingwebhookconfigurations",
-          "validatingwebhookconfigurations"
-        ],
-        "verbs" => [
-          "get",
-          "list",
-          "create",
-          "update",
-          "delete",
-          "patch",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "coordination.k8s.io"
-        ],
-        "resources" => [
-          "leases"
-        ],
-        "verbs" => [
-          "get",
-          "list",
-          "create",
-          "update",
-          "delete",
-          "patch",
-          "watch"
-        ]
-      },
-      %{
-        "apiGroups" => [
-          "apiextensions.k8s.io"
-        ],
-        "resources" => [
-          "customresourcedefinitions"
-        ],
-        "verbs" => [
-          "get",
-          "list",
-          "create",
-          "update",
-          "delete",
-          "patch",
-          "watch"
-        ]
-      }
-    ]
-
-    B.build_resource(:cluster_role)
-    |> B.name(@webhook_cluster_role)
-    |> B.app_labels(@app_name)
-    |> B.rules(rules)
-  end
-
-  def service_account_operator(_battery, state) do
-    namespace = core_namespace(state)
-
-    B.build_resource(:service_account)
-    |> B.namespace(namespace)
-    |> B.name(@operator_service_account)
-    |> B.app_labels(@app_name)
-  end
-
-  def service_account_webhook(_battery, state) do
-    namespace = core_namespace(state)
-
-    B.build_resource(:service_account)
-    |> B.namespace(namespace)
-    |> B.name(@webhook_service_account)
-    |> B.app_labels(@app_name)
-  end
-
-  def cluster_role_binding_serving_operator(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @serving_operator_cluster_role,
-      @serving_operator_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_aggregated_serving(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @aggregated_serving_cluster_role,
-      @aggregated_serving_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_aggregated_appname_serving(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @aggregated_serving_appname_cluster_role,
-      @aggregated_serving_appname_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_aggregated_battery_app_serving(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @aggregated_serving_battery_app_cluster_role,
-      @aggregated_serving_battery_app_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_eventing_operator(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @eventing_operator_cluster_role,
-      @eventing_operator_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_aggregated_eventing(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @aggregated_eventing_cluster_role,
-      @aggregated_eventing_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_aggregated_appname_eventing(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @aggregated_eventing_appname_cluster_role,
-      @aggregated_eventing_appname_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_aggregated_battery_app_eventing(_battery, state) do
-    namespace = core_namespace(state)
-
-    cluster_role_binding(
-      @aggregated_eventing_battery_app_cluster_role,
-      @aggregated_eventing_battery_app_cluster_role,
-      @operator_service_account,
-      namespace
-    )
-  end
-
-  def cluster_role_binding_operator_webhook(_battery, state) do
-    namespace = core_namespace(state)
-
-    B.build_resource(:cluster_role_binding)
-    |> B.name(@webhook_cluster_role)
-    |> B.app_labels(@app_name)
-    |> B.role_ref(B.build_cluster_role_ref(@webhook_cluster_role))
-    |> B.subject(B.build_service_account(@webhook_service_account, namespace))
-  end
-
-  def role_operator_webhook(_battery, state) do
-    namespace = core_namespace(state)
-
-    rules = [
-      %{
-        "apiGroups" => [
-          ""
-        ],
-        "resources" => [
-          "secrets"
-        ],
-        "verbs" => [
-          "get",
-          "create",
-          "update",
-          "list",
-          "watch",
-          "patch"
-        ]
-      }
-    ]
-
-    B.build_resource(:role)
-    |> B.name(@webhook_role)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.rules(rules)
-  end
-
-  def role_binding_operator_webhook(_battery, state) do
-    namespace = core_namespace(state)
-
-    B.build_resource(:role_binding)
-    |> B.name(@webhook_role)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.role_ref(B.build_role_ref(@webhook_role))
-    |> B.subject(B.build_service_account(@webhook_service_account, namespace))
-  end
-
-  def secret_webhook_certs(_battery, state) do
-    namespace = core_namespace(state)
-
-    B.build_resource(:secret)
-    |> B.name(@webhook_certs_secret)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-  end
-
-  def config_map_config_logging(_battery, state) do
-    namespace = core_namespace(state)
-
-    data = %{
-      "_example" =>
-        "################################\n#                              #\n#    EXAMPLE CONFIGURATION     #\n#                              #\n################################\n\n# This block is not actually functional configuration,\n# but serves to illustrate the available configuration\n# options and document them in a way that is accessible\n# to users that `kubectl edit` this config map.\n#\n# These sample configuration options may be copied out of\n# this example block and unindented to be in the data block\n# to actually change the configuration.\n\n# Common configuration for all Knative codebase\nzap-logger-config: |\n  %{\n    \"level\": \"info\",\n    \"development\": false,\n    \"outputPaths\": [\"stdout\"],\n    \"errorOutputPaths\": [\"stderr\"],\n    \"encoding\": \"json\",\n    \"encoderConfig\": %{\n      \"timeKey\": \"ts\",\n      \"levelKey\": \"level\",\n      \"nameKey\": \"logger\",\n      \"callerKey\": \"caller\",\n      \"messageKey\": \"msg\",\n      \"stacktraceKey\": \"stacktrace\",\n      \"lineEnding\": \"\",\n      \"levelEncoder\": \"\",\n      \"timeEncoder\": \"iso8601\",\n      \"durationEncoder\": \"\",\n      \"callerEncoder\": \"\"\n    }\n  }\n"
-    }
-
-    B.build_resource(:config_map)
-    |> B.name(@logging_configmap)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.data(data)
-  end
-
-  def deployment_webhook(battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name,
-          "battery/component" => "operator-webhook"
-        }
-      },
-      "template" => %{
-        "metadata" => %{
-          "annotations" => %{
-            "cluster-autoscaler.kubernetes.io/safe-to-evict" => "false",
-            "sidecar.istio.io/inject" => "false"
-          },
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/component" => "operator-webhook",
-            "battery/managed" => "true",
-            "role" => "operator-webhook"
+        "clusterRoleSelectors" => [
+          %{
+            "matchExpressions" => [
+              %{"key" => "serving.knative.dev/release", "operator" => "Exists"}
+            ]
           }
-        },
-        "spec" => %{
-          "containers" => [
-            %{
-              "env" => [
-                %{
-                  "name" => "POD_NAME",
-                  "valueFrom" => %{
-                    "fieldRef" => %{
-                      "fieldPath" => "metadata.name"
-                    }
-                  }
-                },
-                %{
-                  "name" => "SYSTEM_NAMESPACE",
-                  "valueFrom" => %{
-                    "fieldRef" => %{
-                      "fieldPath" => "metadata.namespace"
-                    }
-                  }
-                },
-                %{
-                  "name" => "CONFIG_LOGGING_NAME",
-                  "value" => @logging_configmap
-                },
-                %{
-                  "name" => "CONFIG_OBSERVABILITY_NAME",
-                  "value" => @observability_configmap
-                },
-                %{
-                  "name" => "WEBHOOK_NAME",
-                  "value" => "operator-webhook"
-                },
-                %{
-                  "name" => "WEBHOOK_PORT",
-                  "value" => "8443"
-                },
-                %{
-                  "name" => "METRICS_DOMAIN",
-                  "value" => "knative.dev/operator"
-                }
-              ],
-              "image" => battery.config.webhook_image,
-              "livenessProbe" => %{
-                "failureThreshold" => 6,
-                "httpGet" => %{
-                  "httpHeaders" => [
-                    %{
-                      "name" => "k-kubelet-probe",
-                      "value" => "webhook"
-                    }
-                  ],
-                  "port" => 8443,
-                  "scheme" => "HTTPS"
-                },
-                "initialDelaySeconds" => 20,
-                "periodSeconds" => 1
-              },
-              "name" => "operator-webhook",
-              "ports" => [
-                %{
-                  "containerPort" => 9090,
-                  "name" => "metrics"
-                },
-                %{
-                  "containerPort" => 8008,
-                  "name" => "profiling"
-                },
-                %{
-                  "containerPort" => 8443,
-                  "name" => "https-webhook"
-                }
-              ],
-              "readinessProbe" => %{
-                "httpGet" => %{
-                  "httpHeaders" => [
-                    %{
-                      "name" => "k-kubelet-probe",
-                      "value" => "webhook"
-                    }
-                  ],
-                  "port" => 8443,
-                  "scheme" => "HTTPS"
-                },
-                "periodSeconds" => 1
-              },
-              "resources" => %{
-                "limits" => %{
-                  "memory" => "500Mi"
-                },
-                "requests" => %{
-                  "cpu" => "100m",
-                  "memory" => "100Mi"
-                }
-              },
-              "securityContext" => %{
-                "allowPrivilegeEscalation" => false,
-                "capabilities" => %{
-                  "drop" => [
-                    "all"
-                  ]
-                },
-                "readOnlyRootFilesystem" => true,
-                "runAsNonRoot" => true
+        ]
+      }
+    )
+    |> B.name("knative-serving-operator-aggregated")
+    |> B.app_labels(@app_name)
+    |> B.rules(rules)
+  end
+
+  resource(:cluster_role_knative_serving_operator_aggregated_stable) do
+    rules = []
+
+    B.build_resource(:cluster_role)
+    |> Map.put(
+      "aggregationRule",
+      %{
+        "clusterRoleSelectors" => [
+          %{
+            "matchExpressions" => [
+              %{
+                "key" => "app.kubernetes.io/name",
+                "operator" => "In",
+                "values" => ["knative-serving"]
               }
-            }
-          ],
-          "serviceAccountName" => @webhook_service_account,
-          "terminationGracePeriodSeconds" => 300
-        }
+            ]
+          }
+        ]
       }
-    }
-
-    B.build_resource(:deployment)
-    |> B.name("operator-webhook")
-    |> B.namespace(namespace)
+    )
+    |> B.name("knative-serving-operator-aggregated-stable")
     |> B.app_labels(@app_name)
-    |> B.spec(spec)
+    |> B.rules(rules)
   end
 
-  def config_map_config_observability(_battery, state) do
+  resource(:config_map_logging, _battery, state) do
     namespace = core_namespace(state)
-
-    data = %{
-      "_example" =>
-        "################################\n#                              #\n#    EXAMPLE CONFIGURATION     #\n#                              #\n################################\n\n# This block is not actually functional configuration,\n# but serves to illustrate the available configuration\n# options and document them in a way that is accessible\n# to users that `kubectl edit` this config map.\n#\n# These sample configuration options may be copied out of\n# this example block and unindented to be in the data block\n# to actually change the configuration.\n\n# logging.enable-var-log-collection defaults to false.\n# The fluentd daemon set will be set up to collect /var/log if\n# this flag is true.\nlogging.enable-var-log-collection: false\n\n# logging.revision-url-template provides a template to use for producing the\n# logging URL that is injected into the status of each Revision.\n# This value is what you might use the the Knative monitoring bundle, and provides\n# access to Kibana after setting up kubectl proxy.\nlogging.revision-url-template: |\n  http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.serving-knative-dev%2FrevisionUID:(query:'$%{REVISION_UID}',type:phrase))))\n\n# If non-empty, this enables queue proxy writing request logs to stdout.\n# The value determines the shape of the request logs and it must be a valid go text/template.\n# It is important to keep this as a single line. Multiple lines are parsed as separate entities\n# by most collection agents and will split the request logs into multiple records.\n#\n# The following fields and functions are available to the template:\n#\n# Request: An http.Request (see https://golang.org/pkg/net/http/#Request)\n# representing an HTTP request received by the server.\n#\n# Response:\n# struct %{\n#   Code    int       // HTTP status code (see https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)\n#   Size    int       // An int representing the size of the response.\n#   Latency float64   // A float64 representing the latency of the response in seconds.\n# }\n#\n# Revision:\n# struct %{\n#   Name          string  // Knative revision name\n#   Namespace     string  // Knative revision namespace\n#   Service       string  // Knative service name\n#   Configuration string  // Knative configuration name\n#   PodName       string  // Name of the pod hosting the revision\n#   PodIP         string  // IP of the pod hosting the revision\n# }\n#\nlogging.request-log-template: '%{\"httpRequest\": %{\"requestMethod\": \"%{%{.Request.Method}}\", \"requestUrl\": \"%{%{js .Request.RequestURI}}\", \"requestSize\": \"%{%{.Request.ContentLength}}\", \"status\": %{%{.Response.Code}}, \"responseSize\": \"%{%{.Response.Size}}\", \"userAgent\": \"%{%{js .Request.UserAgent}}\", \"remoteIp\": \"%{%{js .Request.RemoteAddr}}\", \"serverIp\": \"%{%{.Revision.PodIP}}\", \"referer\": \"%{%{js .Request.Referer}}\", \"latency\": \"%{%{.Response.Latency}}s\", \"protocol\": \"%{%{.Request.Proto}}\"}, \"traceId\": \"%{%{index .Request.Header \"X-B3-Traceid\"}}\"}'\n\n# metrics.backend-destination field specifies the system metrics destination.\n# It supports either prometheus (the default) or stackdriver.\n# Note: Using stackdriver will incur additional charges\nmetrics.backend-destination: prometheus\n\n# metrics.request-metrics-backend-destination specifies the request metrics\n# destination. If non-empty, it enables queue proxy to send request metrics.\n# Currently supported values: prometheus, stackdriver.\nmetrics.request-metrics-backend-destination: prometheus\n\n# metrics.stackdriver-project-id field specifies the stackdriver project ID. This\n# field is optional. When running on GCE, application default credentials will be\n# used if this field is not provided.\nmetrics.stackdriver-project-id: \"<your stackdriver project id>\"\n\n# metrics.allow-stackdriver-custom-metrics indicates whether it is allowed to send metrics to\n# Stackdriver using \"global\" resource type and custom metric type if the\n# metrics are not supported by \"knative_revision\" resource type. Setting this\n# flag to \"true\" could cause extra Stackdriver charge.\n# If metrics.backend-destination is not Stackdriver, this is ignored.\nmetrics.allow-stackdriver-custom-metrics: \"false\"\n"
-    }
+    data = %{}
 
     B.build_resource(:config_map)
-    |> B.name(@observability_configmap)
+    |> B.name("config-logging")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
-  def deployment_knative_operator(battery, state) do
+  resource(:config_map_observability, _battery, state) do
+    namespace = core_namespace(state)
+    data = %{}
+
+    B.build_resource(:config_map)
+    |> B.name("config-observability")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.data(data)
+  end
+
+  resource(:crds, _battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "replicas" => 1,
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name,
-          "battery/component" => "knative-operator"
-        }
-      },
-      "template" => %{
-        "metadata" => %{
-          "annotations" => %{
-            "sidecar.istio.io/inject" => "false"
-          },
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/component" => "knative-operator",
-            "battery/managed" => "true",
-            "name" => "knative-operator"
-          }
-        },
-        "spec" => %{
-          "containers" => [
-            %{
-              "env" => [
-                %{
-                  "name" => "POD_NAME",
-                  "valueFrom" => %{
-                    "fieldRef" => %{
-                      "fieldPath" => "metadata.name"
-                    }
-                  }
-                },
-                %{
-                  "name" => "SYSTEM_NAMESPACE",
-                  "valueFrom" => %{
-                    "fieldRef" => %{
-                      "fieldPath" => "metadata.namespace"
-                    }
-                  }
-                },
-                %{
-                  "name" => "METRICS_DOMAIN",
-                  "value" => "knative.dev/operator"
-                },
-                %{
-                  "name" => "CONFIG_LOGGING_NAME",
-                  "value" => @logging_configmap
-                },
-                %{
-                  "name" => "CONFIG_OBSERVABILITY_NAME",
-                  "value" => @observability_configmap
-                }
-              ],
-              "image" => battery.config.operator_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "name" => "knative-operator",
-              "ports" => [
-                %{
-                  "containerPort" => 9090,
-                  "name" => "metrics"
-                }
-              ]
+    [:knativeeventings_operator_knative_dev, :knativeservings_operator_knative_dev]
+    |> Enum.map(&get_resource/1)
+    |> Enum.flat_map(&yaml/1)
+    |> Enum.map(fn crd ->
+      KubeExt.CrdWebhook.change_conversion(crd, "knative-operator-webhook", namespace)
+    end)
+  end
+
+  resource(:deployment_knative_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put("selector", %{"matchLabels" => %{"name" => "knative-operator"}})
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "annotations" => %{"sidecar.istio.io/inject" => "false"},
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/component" => "knative-operator",
+              "battery/managed" => "true",
+              "name" => "knative-operator"
             }
-          ],
-          "serviceAccountName" => @operator_service_account
+          },
+          "spec" => %{
+            "containers" => [
+              %{
+                "env" => [
+                  %{
+                    "name" => "POD_NAME",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
+                  },
+                  %{
+                    "name" => "SYSTEM_NAMESPACE",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+                  },
+                  %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/operator"},
+                  %{"name" => "CONFIG_LOGGING_NAME", "value" => "config-logging"},
+                  %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"}
+                ],
+                "image" => "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.8.1",
+                "imagePullPolicy" => "IfNotPresent",
+                "name" => "knative-operator",
+                "ports" => [%{"containerPort" => 9090, "name" => "metrics"}]
+              }
+            ],
+            "serviceAccountName" => "knative-operator"
+          }
         }
-      }
-    }
+      )
 
     B.build_resource(:deployment)
     |> B.name("knative-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+    |> B.component_label("knative-operator")
     |> B.spec(spec)
   end
 
-  def service_webhook(_battery, state) do
+  resource(:deployment_operator_webhook, _battery, state) do
     namespace = core_namespace(state)
 
-    spec = %{
-      "ports" => [
-        %{"name" => "http-metrics", "port" => 9090, "targetPort" => 9090},
-        %{"name" => "http-profiliing", "port" => 8008, "targetPort" => 8008},
-        %{"name" => "https-webhook", "port" => 443, "targetPort" => 8443}
-      ],
-      "selector" => %{
-        "role" => "operator-webhook"
+    spec =
+      %{}
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "role" => "operator-webhook"}}
+      )
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "annotations" => %{
+              "cluster-autoscaler.kubernetes.io/safe-to-evict" => "false",
+              "sidecar.istio.io/inject" => "false"
+            },
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/component" => "operator-webhook",
+              "battery/managed" => "true",
+              "role" => "operator-webhook"
+            }
+          },
+          "spec" => %{
+            "affinity" => %{
+              "podAntiAffinity" => %{
+                "preferredDuringSchedulingIgnoredDuringExecution" => [
+                  %{
+                    "podAffinityTerm" => %{
+                      "labelSelector" => %{"matchLabels" => %{"app" => "webhook"}},
+                      "topologyKey" => "kubernetes.io/hostname"
+                    },
+                    "weight" => 100
+                  }
+                ]
+              }
+            },
+            "containers" => [
+              %{
+                "env" => [
+                  %{
+                    "name" => "POD_NAME",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
+                  },
+                  %{
+                    "name" => "SYSTEM_NAMESPACE",
+                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+                  },
+                  %{"name" => "CONFIG_LOGGING_NAME", "value" => "config-logging"},
+                  %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"},
+                  %{"name" => "WEBHOOK_NAME", "value" => "knative-operator-webhook"},
+                  %{"name" => "WEBHOOK_PORT", "value" => "8443"},
+                  %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/operator"}
+                ],
+                "image" => "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.1",
+                "livenessProbe" => %{
+                  "failureThreshold" => 6,
+                  "httpGet" => %{
+                    "httpHeaders" => [%{"name" => "k-kubelet-probe", "value" => "webhook"}],
+                    "port" => 8443,
+                    "scheme" => "HTTPS"
+                  },
+                  "initialDelaySeconds" => 120,
+                  "periodSeconds" => 1
+                },
+                "name" => "operator-webhook",
+                "ports" => [
+                  %{"containerPort" => 9090, "name" => "metrics"},
+                  %{"containerPort" => 8008, "name" => "profiling"},
+                  %{"containerPort" => 8443, "name" => "https-webhook"}
+                ],
+                "readinessProbe" => %{
+                  "httpGet" => %{
+                    "httpHeaders" => [%{"name" => "k-kubelet-probe", "value" => "webhook"}],
+                    "port" => 8443,
+                    "scheme" => "HTTPS"
+                  },
+                  "periodSeconds" => 1
+                },
+                "resources" => %{
+                  "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
+                  "requests" => %{"cpu" => "100m", "memory" => "100Mi"}
+                },
+                "securityContext" => %{
+                  "allowPrivilegeEscalation" => false,
+                  "capabilities" => %{"drop" => ["all"]},
+                  "readOnlyRootFilesystem" => true,
+                  "runAsNonRoot" => true
+                }
+              }
+            ],
+            "serviceAccountName" => "knative-operator-webhook",
+            "terminationGracePeriodSeconds" => 300
+          }
+        }
+      )
+
+    B.build_resource(:deployment)
+    |> B.name("knative-operator-webhook")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("operator-webhook")
+    |> B.spec(spec)
+  end
+
+  resource(:role_binding_knative_operator_webhook, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:role_binding)
+    |> B.name("knative-operator-webhook")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.label("eventing.knative.dev/release", "devel")
+    |> B.role_ref(B.build_role_ref("knative-operator-webhook"))
+    |> B.subject(B.build_service_account("knative-operator-webhook", namespace))
+  end
+
+  resource(:role_knative_operator_webhook, _battery, state) do
+    namespace = core_namespace(state)
+
+    rules = [
+      %{
+        "apiGroups" => [""],
+        "resources" => ["secrets"],
+        "verbs" => ["get", "create", "update", "list", "watch", "patch"]
       }
-    }
+    ]
+
+    B.build_resource(:role)
+    |> B.name("knative-operator-webhook")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.label("eventing.knative.dev/release", "devel")
+    |> B.rules(rules)
+  end
+
+  resource(:secret_operator_webhook_certs, _battery, state) do
+    namespace = core_namespace(state)
+    data = Secret.encode(%{})
+
+    B.build_resource(:secret)
+    |> B.name("operator-webhook-certs")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.component_label("webhook")
+    |> B.data(data)
+  end
+
+  resource(:service_account_knative_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:service_account)
+    |> B.name("knative-operator")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
+
+  resource(:service_account_knative_operator_webhook, _battery, state) do
+    namespace = core_namespace(state)
+
+    B.build_resource(:service_account)
+    |> B.name("knative-operator-webhook")
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
+
+  resource(:service_knative_operator_webhook, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("ports", [
+        %{"name" => "http-metrics", "port" => 9090, "targetPort" => 9090},
+        %{"name" => "http-profiling", "port" => 8008, "targetPort" => 8008},
+        %{"name" => "https-webhook", "port" => 443, "targetPort" => 8443}
+      ])
+      |> Map.put("selector", %{"battery/app" => @app_name, "role" => "operator-webhook"})
 
     B.build_resource(:service)
     |> B.name(@webhook_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+    |> B.component_label("operator-webhook")
+    |> B.label("role", "operator-webhook")
     |> B.spec(spec)
-  end
-
-  def change_conversion(%{"spec" => %{"conversion" => %{}}} = crd, battery, state),
-    do: do_change_conversion(crd, battery, state)
-
-  def change_conversion(%{spec: %{conversion: %{}}} = crd, battery, state),
-    do: do_change_conversion(crd, battery, state)
-
-  def change_conversion(crd, _, _), do: crd
-
-  defp do_change_conversion(crd, _battery, state) do
-    namespace = core_namespace(state)
-
-    update_in(crd, ~w(spec conversion webhook clientConfig service), fn s ->
-      (s || %{})
-      |> Map.put("name", @webhook_service)
-      |> Map.put("namespace", namespace)
-    end)
-  end
-
-  def service_monitor_autoscaler(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "endpoints" => [
-        %{
-          "interval" => "30s",
-          "port" => "http-metrics"
-        }
-      ],
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-serving",
-          namespace
-        ]
-      },
-      "selector" => %{
-        "matchLabels" => %{
-          "app" => "autoscaler"
-        }
-      }
-    }
-
-    B.build_resource(:service_monitor)
-    |> B.app_labels(@app_name)
-    |> B.name("knative-autoscaler")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def service_monitor_activator(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "endpoints" => [
-        %{
-          "interval" => "30s",
-          "port" => "http-metrics"
-        }
-      ],
-      "namespaceSelector" => %{
-        "matchNames" => [
-          namespace
-        ]
-      },
-      "selector" => %{
-        "matchLabels" => %{
-          "app" => "activator"
-        }
-      }
-    }
-
-    B.build_resource(:service_monitor)
-    |> B.app_labels(@app_name)
-    |> B.name("knative-activator")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def service_monitor_controller(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "endpoints" => [
-        %{
-          "interval" => "30s",
-          "port" => "http-metrics"
-        }
-      ],
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-serving",
-          namespace
-        ]
-      },
-      "selector" => %{
-        "matchLabels" => %{
-          "app" => "controller"
-        }
-      }
-    }
-
-    B.build_resource(:service_monitor)
-    |> B.app_labels(@app_name)
-    |> B.name("knative-controller")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def service_monitor_filter(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "endpoints" => [
-        %{
-          "interval" => "30s",
-          "port" => "http-metrics"
-        }
-      ],
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-eventing",
-          namespace
-        ]
-      },
-      "selector" => %{
-        "matchLabels" => %{
-          "eventing.knative.dev/brokerRole" => "filter"
-        }
-      }
-    }
-
-    B.build_resource(:service_monitor)
-    |> B.app_labels(@app_name)
-    |> B.name("knative-filter")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def service_monitor_webhook(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "endpoints" => [
-        %{
-          "interval" => "30s",
-          "port" => "http-metrics"
-        }
-      ],
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-serving",
-          namespace
-        ]
-      },
-      "selector" => %{
-        "matchLabels" => %{
-          "app" => "activator"
-        }
-      }
-    }
-
-    B.build_resource(:service_monitor)
-    |> B.app_labels(@app_name)
-    |> B.name("knative-webhook")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def service_monitor_broker_ingress(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "endpoints" => [
-        %{
-          "interval" => "30s",
-          "port" => "http-metrics"
-        }
-      ],
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-eventing",
-          namespace
-        ]
-      },
-      "selector" => %{
-        "matchLabels" => %{
-          "eventing.knative.dev/brokerRole" => "ingress"
-        }
-      }
-    }
-
-    B.build_resource(:service_monitor)
-    |> B.app_labels(@app_name)
-    |> B.name("knative-broker-ingress")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def pod_monitor_eventing_controller(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-eventing",
-          namespace
-        ]
-      },
-      "podMetricsEndpoints" => [
-        %{
-          "port" => "metrics"
-        }
-      ],
-      "selector" => %{
-        "matchLabels" => %{
-          "app" => "eventing-controller"
-        }
-      }
-    }
-
-    B.build_resource(:pod_monitor)
-    |> B.name("knative-eventing-contoller")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def pod_monitor_imc_controller(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-eventing",
-          namespace
-        ]
-      },
-      "podMetricsEndpoints" => [
-        %{
-          "port" => "metrics"
-        }
-      ],
-      "selector" => %{
-        "matchLabels" => %{
-          "messaging.knative.dev/role" => "controller"
-        }
-      }
-    }
-
-    B.build_resource(:pod_monitor)
-    |> B.name("knative-imc-contoller")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def pod_monitor_ping_source(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "namespaceSelector" => %{
-        "matchNames" => [
-          "knative-eventing",
-          namespace
-        ]
-      },
-      "podMetricsEndpoints" => [
-        %{
-          "port" => "metrics"
-        }
-      ],
-      "selector" => %{
-        "matchLabels" => %{
-          "eventing.knative.dev/source" => "ping-source-controller"
-        }
-      }
-    }
-
-    B.build_resource(:pod_monitor)
-    |> B.name("knative-ping-source")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def pod_monitor_api_source(_battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "namespaceSelector" => %{
-        "any" => true
-      },
-      "podMetricsEndpoints" => [
-        %{
-          "port" => "metrics"
-        }
-      ],
-      "selector" => %{
-        "matchLabels" => %{
-          "eventing.knative.dev/source" => "apiserver-source-controller"
-        }
-      }
-    }
-
-    B.build_resource(:pod_monitor)
-    |> B.name("knative-ping-source")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
-  end
-
-  def crds(battery, state) do
-    :crd
-    |> get_resource()
-    |> yaml()
-    |> Enum.map(fn r -> change_conversion(r, battery, state) end)
-  end
-
-  def materialize(battery, state) do
-    %{
-      "/crds" => crds(battery, state),
-      "/service_account" => service_account_operator(battery, state),
-      "/webhook_service_account" => service_account_webhook(battery, state),
-      "/cluster_roles/webhook/main" => cluster_role_operator_webhook(battery, state),
-      "/cluster_roles/serving/main" => cluster_role_knative_serving_operator(battery, state),
-      "/cluster_roles/serving/aggregated" => aggregated_cluster_role_serving(battery, state),
-      "/cluster_roles/serving/aggregated_appname" =>
-        aggregated_cluster_role_serving_appname(battery, state),
-      "/cluster_roles/serving/aggregated_battery" =>
-        aggregated_cluster_role_serving_battery_app(battery, state),
-      "/cluster_roles/eventing/main" => cluster_role_knative_eventing_operator(battery, state),
-      "/cluster_roles/eventing/aggregated" => aggregated_cluster_role_eventing(battery, state),
-      "/cluster_roles/eventing/aggregated_appname" =>
-        aggregated_cluster_role_eventing_appname(battery, state),
-      "/cluster_roles/eventing/aggregated_battery" =>
-        aggregated_cluster_role_eventing_battery_app(battery, state),
-      "/cluster_role_bindings/webhook/main" =>
-        cluster_role_binding_operator_webhook(battery, state),
-      "/cluster_role_bindings/serving/main" =>
-        cluster_role_binding_serving_operator(battery, state),
-      "/cluster_role_bindings/serving/aggregated" =>
-        cluster_role_binding_aggregated_serving(battery, state),
-      "/cluster_role_bindings/serving/aggregated_appname" =>
-        cluster_role_binding_aggregated_appname_serving(battery, state),
-      "/cluster_role_bindings/serving/aggregated_battery" =>
-        cluster_role_binding_aggregated_battery_app_serving(battery, state),
-      "/cluster_role_bindings/eventing/main" =>
-        cluster_role_binding_eventing_operator(battery, state),
-      "/cluster_role_bindings/eventing/aggregated" =>
-        cluster_role_binding_aggregated_eventing(battery, state),
-      "/cluster_role_bindings/eventing/aggregated_appname" =>
-        cluster_role_binding_aggregated_appname_eventing(battery, state),
-      "/cluster_role_bindings/eventing/aggregated_battery" =>
-        cluster_role_binding_aggregated_battery_app_eventing(battery, state),
-      "/role/webhook" => role_operator_webhook(battery, state),
-      "/role_binding/webhook" => role_binding_operator_webhook(battery, state),
-      "/secret/webhook_certs" => secret_webhook_certs(battery, state),
-      "/configs/logging" => config_map_config_logging(battery, state),
-      "/configs/observability" => config_map_config_observability(battery, state),
-      "/deployments/webhook" => deployment_webhook(battery, state),
-      "/deployments/operator" => deployment_knative_operator(battery, state),
-      "/metrics/sm_autoscaler" => service_monitor_autoscaler(battery, state),
-      "/metrics/sm_activator" => service_monitor_activator(battery, state),
-      "/metrics/sm_controller" => service_monitor_controller(battery, state),
-      "/metrics/sm_filter" => service_monitor_filter(battery, state),
-      "/metrics/sm_webhook" => service_monitor_webhook(battery, state),
-      "/metrics/sm_ingress" => service_monitor_broker_ingress(battery, state),
-      "/metrics/pm_eventing_controller" => pod_monitor_eventing_controller(battery, state),
-      "/metrics/pm_imc_controller" => pod_monitor_imc_controller(battery, state),
-      "/metrics/pm_api_source" => pod_monitor_api_source(battery, state),
-      "/metrics/pm_ping_source" => pod_monitor_ping_source(battery, state)
-    }
   end
 end
