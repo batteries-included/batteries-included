@@ -98,6 +98,7 @@ defmodule KubeExt.Builder do
   def template(resource, %{} = template), do: Map.put(resource, "template", template)
   def ports(resource, ports), do: Map.put(resource, "ports", ports)
   def rules(resource, rules), do: Map.put(resource, "rules", rules)
+
   def role_ref(resource, role_ref), do: Map.put(resource, "roleRef", role_ref)
 
   def subject(resource, subject) do
@@ -105,6 +106,9 @@ defmodule KubeExt.Builder do
     |> Map.put_new("subjects", [])
     |> update_in(~w(subjects), fn subjects -> [subject | subjects] end)
   end
+
+  @spec role_ref(map, map) :: map
+  def aggregation_rule(resource, rule_map), do: Map.put(resource, "aggregationRule", rule_map)
 
   defp build_rule(:http, paths) do
     %{"http" => %{"paths" => paths}}

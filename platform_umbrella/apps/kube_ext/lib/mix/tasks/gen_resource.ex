@@ -400,9 +400,9 @@ defmodule Mix.Tasks.Gen.Resource do
     |> add_other_labels(field_value, app_name)
   end
 
-  # defp handle_field("spec" = _field_name, field_value, acc_code, app_name) do
-  #   add_spec(acc_code, clean_spec(field_value, app_name))
-  # end
+  defp handle_field("aggregationRule" = _field_name, field_value, acc_code, _app_name) do
+    add_aggregation_rule(acc_code, field_value)
+  end
 
   defp handle_field("rules" = _field_name, field_value, acc_code, _app_name) do
     add_rules(acc_code, field_value)
@@ -596,6 +596,15 @@ defmodule Mix.Tasks.Gen.Resource do
       pipeline,
       quote do
         B.rules(unquote(rules))
+      end
+    )
+  end
+
+  defp add_aggregation_rule(pipeline, agg_rule_map) do
+    pipe(
+      pipeline,
+      quote do
+        B.aggregation_rule(unquote(agg_rule_map))
       end
     )
   end
