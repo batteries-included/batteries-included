@@ -75,6 +75,7 @@ defmodule KubeResources.Gitea do
     |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:secret_init, _battery, state) do
