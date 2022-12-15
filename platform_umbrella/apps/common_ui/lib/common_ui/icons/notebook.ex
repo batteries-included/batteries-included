@@ -1,11 +1,15 @@
 defmodule CommonUI.Icons.Notebook do
   use Phoenix.Component
 
+  import CommonUI.CSSHelpers
+
+  attr :class, :any, default: nil
+
   def notebook_icon(assigns) do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class={["h-6 w-6 ", @class]}
+      class={build_class(["h-6 w-6 ", @class])}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

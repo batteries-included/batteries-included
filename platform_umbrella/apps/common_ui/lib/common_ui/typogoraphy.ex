@@ -10,7 +10,9 @@ defmodule CommonUI.Typogoraphy do
 
   def h1(assigns) do
     ~H"""
-    <h1 class={build_class([@class, @base_class])} {@rest}><%= render_slot(@inner_block) %></h1>
+    <h1 class={build_class([@base_class, @class])} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </h1>
     """
   end
 
@@ -21,7 +23,9 @@ defmodule CommonUI.Typogoraphy do
 
   def h2(assigns) do
     ~H"""
-    <h2 class={build_class([@class, @base_class])} {@rest}><%= render_slot(@inner_block) %></h2>
+    <h2 class={build_class([@base_class, @class])} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </h2>
     """
   end
 
@@ -32,7 +36,9 @@ defmodule CommonUI.Typogoraphy do
 
   def h3(assigns) do
     ~H"""
-    <h3 class={build_class([@class, @base_class])} {@rest}><%= render_slot(@inner_block) %></h3>
+    <h3 class={build_class([@base_class, @class])} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </h3>
     """
   end
 end

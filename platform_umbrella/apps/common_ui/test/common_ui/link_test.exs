@@ -42,4 +42,12 @@ defmodule CommonUI.LinkTest do
     <.link patch="/test" variant="styled">Test patch with var</.link>
     """
   end
+
+  component_snapshot_test "Link with just href" do
+    assigns = %{}
+
+    ~H"""
+    <.link href="https://www.google.com/">Test bare href</.link>
+    """
+  end
 end

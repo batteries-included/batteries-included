@@ -1,5 +1,8 @@
 defmodule CommonUI.Icons.Network do
   use Phoenix.Component
+  import CommonUI.CSSHelpers
+
+  attr :class, :any, default: nil
 
   def kiali_icon(assigns) do
     ~H"""
@@ -9,7 +12,7 @@ defmodule CommonUI.Icons.Network do
       xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 1280 1280"
       style="enable-background:new 0 0 1280 1280;"
-      class={["h-6 w-6 ", @class]}
+      class={build_class(["h-6 w-6 ", @class])}
       stroke="currentColor"
       fill="currentColor"
       xml:space="preserve"
@@ -31,6 +34,8 @@ defmodule CommonUI.Icons.Network do
     """
   end
 
+  attr :class, :any, default: nil
+
   def net_sec_icon(assigns) do
     ~H"""
     <svg
@@ -40,7 +45,7 @@ defmodule CommonUI.Icons.Network do
       viewBox="0 0 122.88 114.3"
       stroke="currentColor"
       fill="currentColor"
-      class={["h-6 w-6 ", @class]}
+      class={build_class(["h-6 w-6 ", @class])}
     >
       <defs>
         <style>

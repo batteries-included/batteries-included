@@ -45,7 +45,7 @@ defmodule CommonUI.Link do
 
   def link(%{href: _} = assigns) do
     ~H"""
-    <Phoenix.Component.link href={@href} class={@class} {@rest}>
+    <Phoenix.Component.link href={@href} class={build_class([link_class(@variant), @class])} {@rest}>
       <%= render_slot(@inner_block) %>
     </Phoenix.Component.link>
     """
@@ -73,7 +73,7 @@ defmodule CommonUI.Link do
 
   def link(assigns) do
     ~H"""
-    <Phoenix.Component.link class={@class} {@rest}>
+    <Phoenix.Component.link class={build_class([link_class(@variant), @class])} {@rest}>
       <%= render_slot(@inner_block) %>
     </Phoenix.Component.link>
     """

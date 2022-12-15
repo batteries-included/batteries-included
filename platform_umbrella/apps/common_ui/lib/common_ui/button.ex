@@ -12,7 +12,7 @@ defmodule CommonUI.Button do
   """
   attr :type, :string, default: nil
   attr :class, :any, default: nil
-  attr :variant, :string, default: "default"
+  attr :variant, :string, default: "default", values: ["default", "filled"]
   attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag"
 
   slot :inner_block, required: true
