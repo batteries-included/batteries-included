@@ -1,9 +1,11 @@
 defmodule ControlServerWeb.Live.ResourceInfo do
   use ControlServerWeb, :live_view
 
-  import ControlServerWeb.LeftMenuLayout
   import CommonUI.Stats
+  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.PodsTable
   import ControlServerWeb.ConditionsDisplay
+  import ControlServerWeb.PodsTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeExt.KubeState
@@ -19,27 +21,52 @@ defmodule ControlServerWeb.Live.ResourceInfo do
       ) do
     resource_type = String.to_existing_atom(rt_param)
     subscribe(resource_type)
+    resource = resource(resource_type, namespace, name)
 
     {:ok,
      socket
      |> assign(:resource_type, resource_type)
      |> assign(:name, name)
      |> assign(:namespace, namespace)
-     |> assign(:resource, resource(resource_type, namespace, name))}
+     |> assign(:resource, resource)
+     |> assign_subresources(resource_type, resource)}
   end
 
   defp subscribe(resource_type) do
     :ok = KubeEventCenter.subscribe(resource_type)
   end
 
+  defp assign_subresources(socket, resource_type, resource)
+
+  defp assign_subresources(socket, :stateful_set = _resource_type, resource) do
+    assign(
+      socket,
+      :ownedresources,
+      KubeState.get_owned_resources(:pod, [get_in(resource, ~w|metadata uid|)])
+    )
+  end
+
+  defp assign_subresources(socket, :deployment = _resource_type, resource) do
+    owned_rs_uids =
+      Enum.map(
+        KubeState.get_owned_resources(:replicaset, [get_in(resource, ~w|metadata uid|)]),
+        fn ors -> get_in(ors, ~w|metadata uid|) end
+      )
+
+    assign(socket, :ownedresources, KubeState.get_owned_resources(:pod, owned_rs_uids))
+  end
+
+  defp assign_subresources(socket, _resource_type, _resource), do: socket
+
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
     {:noreply,
-     assign(
-       socket,
+     socket
+     |> assign(
        :resource,
        resource(socket.assigns.resource_type, socket.assigns.namespace, socket.assigns.name)
-     )}
+     )
+     |> assign_subresources(socket.assigns.resource_type, socket.assigns.resource)}
   end
 
   defp resource(resource_type, namespace, name) do
@@ -225,6 +252,8 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     <.section_title>Messages</.section_title>
     <.conditions status={@status} />
     <.label_section resource={@resource} />
+    <.section_title>Pods</.section_title>
+    <.pods_table pods={@ownedresources} />
     """
   end
 
@@ -235,6 +264,8 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     ~H"""
     <.stateful_set_status status={@status} />
     <.label_section resource={@resource} />
+    <.section_title>Pods</.section_title>
+    <.pods_table pods={@ownedresources} />
     """
   end
 
@@ -246,9 +277,9 @@ defmodule ControlServerWeb.Live.ResourceInfo do
       <% :service -> %>
         <.service_info_section resource={@resource} />
       <% :deployment -> %>
-        <.deployment_info_section resource={@resource} />
+        <.deployment_info_section resource={@resource} ownedresources={@ownedresources} />
       <% :stateful_set -> %>
-        <.stateful_set_info_section resource={@resource} />
+        <.stateful_set_info_section resource={@resource} ownedresources={@ownedresources} />
       <% _ -> %>
         <%= inspect(@resource) %>
     <% end %>
@@ -279,7 +310,11 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <.title>Kube Status</.title>
       </:title>
       <.banner_section name={@name} namespace={@namespace} />
-      <.info_section resource_type={@resource_type} resource={@resource} />
+      <.info_section
+        resource_type={@resource_type}
+        resource={@resource}
+        ownedresources={@ownedresources}
+      />
     </.layout>
     """
   end

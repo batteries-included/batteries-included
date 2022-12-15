@@ -13,6 +13,7 @@ defmodule KubeExt.ApiVersionKind do
     job: {"batch/v1", "Job"},
     daemon_set: {"apps/v1", "DaemonSet"},
     deployment: {"apps/v1", "Deployment"},
+    replicaset: {"apps/v1", "ReplicaSet"},
     stateful_set: {"apps/v1", "StatefulSet"},
     role: {"rbac.authorization.k8s.io/v1", "Role"},
     role_binding: {"rbac.authorization.k8s.io/v1", "RoleBinding"},
