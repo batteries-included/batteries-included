@@ -269,23 +269,6 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     """
   end
 
-  defp info_section(assigns) do
-    ~H"""
-    <%= case @resource_type do %>
-      <% :pod -> %>
-        <.pod_info_section resource={@resource} />
-      <% :service -> %>
-        <.service_info_section resource={@resource} />
-      <% :deployment -> %>
-        <.deployment_info_section resource={@resource} ownedresources={@ownedresources} />
-      <% :stateful_set -> %>
-        <.stateful_set_info_section resource={@resource} ownedresources={@ownedresources} />
-      <% _ -> %>
-        <%= inspect(@resource) %>
-    <% end %>
-    """
-  end
-
   defp banner_section(assigns) do
     ~H"""
     <.stats>
@@ -310,11 +293,19 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <.title>Kube Status</.title>
       </:title>
       <.banner_section name={@name} namespace={@namespace} />
-      <.info_section
-        resource_type={@resource_type}
-        resource={@resource}
-        ownedresources={@ownedresources}
-      />
+
+      <%= case @resource_type do %>
+        <% :pod -> %>
+          <.pod_info_section resource={@resource} />
+        <% :service -> %>
+          <.service_info_section resource={@resource} />
+        <% :deployment -> %>
+          <.deployment_info_section resource={@resource} ownedresources={@ownedresources} />
+        <% :stateful_set -> %>
+          <.stateful_set_info_section resource={@resource} ownedresources={@ownedresources} />
+        <% _ -> %>
+          <%= inspect(@resource) %>
+      <% end %>
     </.layout>
     """
   end
