@@ -1,8 +1,14 @@
 defmodule KubeExt.Defaults.Images do
   def control_server_image, do: "battery-registry:5000/battery/control:c6f4bd1-dirty1"
-  def postgres_operator_image, do: "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2"
+
+  def postgres_operator_image,
+    do: "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-43-g3e148ea5"
+
   def spilo_image, do: "registry.opensource.zalan.do/acid/spilo-14:2.1-p7"
-  def postgres_logical_backup_image, do: "registry.opensource.zalan.do/acid/logical-backup:v1.8.2"
+
+  def postgres_logical_backup_image,
+    do: "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-43-g3e148ea5"
+
   def postgres_bouncer_image, do: "registry.opensource.zalan.do/acid/pgbouncer:master-25"
 
   def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.2"
