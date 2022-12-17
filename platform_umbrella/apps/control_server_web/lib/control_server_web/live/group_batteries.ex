@@ -79,12 +79,12 @@ defmodule ControlServerWeb.GroupBatteriesLive do
 
   defp active_check(assigns) do
     ~H"""
-    <div class="flex text-shamrock-500 font-semi-bold">
+    <div class="flex text-shamrock-700 font-semi-bold">
       <div class="flex-initial">
         Active
       </div>
       <div class="flex-none ml-2">
-        <Heroicons.check class="h-6 w-6" />
+        <Heroicons.check_circle class="h-6 w-6" />
       </div>
     </div>
     """

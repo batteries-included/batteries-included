@@ -88,12 +88,12 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   defp status_icon(%{status: status} = assigns) when status in ["true", true, :ok] do
     ~H"""
-    <div class="flex text-shamrock-500">
+    <div class="flex text-shamrock-700">
       <div class="flex-initial">
         True
       </div>
       <div class="flex-none ml-2">
-        <Heroicons.check class="h-6 w-6" />
+        <Heroicons.check_circle class="h-6 w-6" />
       </div>
     </div>
     """

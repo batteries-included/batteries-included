@@ -41,12 +41,12 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
 
   defp status_icon(%{is_success: is_success} = assigns) when is_success in ["true", true, :ok] do
     ~H"""
-    <div class="flex text-shamrock-500 font-semi-bold">
+    <div class="flex text-shamrock-700 font-semi-bold">
       <div class="flex-initial">
         Success
       </div>
       <div class="flex-none ml-2">
-        <Heroicons.check_badge class="h-6 w-6" />
+        <Heroicons.check_circle class="h-6 w-6" />
       </div>
     </div>
     """
