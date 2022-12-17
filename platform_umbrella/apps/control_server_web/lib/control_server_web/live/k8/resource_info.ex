@@ -70,10 +70,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   end
 
   defp resource(resource_type, namespace, name) do
-    case KubeState.get(resource_type, namespace, name) do
-      {:ok, %{} = res} -> res
-      _ -> nil
-    end
+    KubeState.get!(resource_type, namespace, name)
   end
 
   defp label_section(assigns) do

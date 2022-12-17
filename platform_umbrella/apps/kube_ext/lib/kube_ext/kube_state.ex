@@ -16,6 +16,30 @@ defmodule KubeExt.KubeState do
     Runner.snapshot(t)
   end
 
+  @spec get!(atom() | :ets.tid(), map()) :: map()
+  def get!(t \\ @default_table, resource) do
+    get!(
+      t,
+      ApiVersionKind.resource_type(resource),
+      Resource.namespace(resource),
+      Resource.name(resource)
+    )
+  end
+
+  @spec get!(atom() | :ets.tid(), atom(), binary(), binary()) :: map()
+  def get!(t \\ @default_table, resource_type, namespace, name) do
+    case get(t, resource_type, namespace, name) do
+      {:ok, %{} = res} ->
+        res
+
+      :missing ->
+        raise KubeExt.KubeState.NoResultsError,
+          name: name,
+          namespace: namespace,
+          resource_type: resource_type
+    end
+  end
+
   @spec get(atom() | :ets.tid(), map()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource),
     do:
