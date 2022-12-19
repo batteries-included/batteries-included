@@ -34,7 +34,11 @@ config :control_server_web, ControlServerWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:control_server_web, ~w(--sourcemap=inline --watch)]},
+    esbuild: {
+      Esbuild,
+      :install_and_run,
+      [:control_server_web, ~w(--sourcemap=inline --watch)]
+    },
     npx: [
       "tailwindcss",
       "--input=css/app.css",
@@ -50,7 +54,11 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:home_base_web, ~w(--sourcemap=inline --watch)]},
+    esbuild: {
+      Esbuild,
+      :install_and_run,
+      [:home_base_web, ~w(--sourcemap=inline --watch)]
+    },
     npx: [
       "tailwindcss",
       "--input=css/app.css",
