@@ -29,7 +29,7 @@ defmodule KubeExt.MixProject do
       {:telemetry, "~> 1.1"},
       {:k8s, "~> 1.1"},
       {:jason, "~> 1.0"},
-      {:tesla, "~> 1.4.3"},
+      {:tesla, "~> 1.5.0"},
       {:cidr, "~> 1.1.0"},
       # Yaml encode
       {:ymlr, "~> 3.0.1"},

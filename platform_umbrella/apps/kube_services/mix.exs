@@ -26,7 +26,7 @@ defmodule KubeServices.MixProject do
 
   defp deps do
     [
-      {:tesla, "~> 1.4.3"},
+      {:tesla, "~> 1.5.0"},
       {:jason, "~> 1.2"},
       {:oban, "~> 2.12"},
       # logging

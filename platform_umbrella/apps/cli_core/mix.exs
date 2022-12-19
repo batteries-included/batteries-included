@@ -32,7 +32,7 @@ defmodule CLICore.MixProject do
       # {:sibling_app_in_umbrella, in_umbrella: true}
       {:kube_ext, in_umbrella: true},
       {:kube_resources, in_umbrella: true},
-      {:tesla, "~> 1.4.3"}
+      {:tesla, "~> 1.5.0"}
     ]
   end
 
