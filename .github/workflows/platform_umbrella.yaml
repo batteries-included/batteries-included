@@ -21,10 +21,6 @@ jobs:
         working-directory: ./platform_umbrella
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout Github repo
         uses: actions/checkout@v3
       - name: Sets up an Erlang/OTP environment
@@ -77,10 +73,6 @@ jobs:
       POSTGRES_PASSWORD: 'batterypasswd'
       MIX_ENV: test
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout Github repo
         uses: actions/checkout@v3
       - name: Sets up an Erlang/OTP environment
@@ -114,10 +106,6 @@ jobs:
         working-directory: ./platform_umbrella
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout Github repo
         uses: actions/checkout@v3
       - name: Sets up an Erlang/OTP environment
