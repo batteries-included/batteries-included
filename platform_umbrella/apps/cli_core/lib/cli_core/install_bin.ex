@@ -31,8 +31,10 @@ defmodule CLICore.InstallBin do
   defp install_path(type) do
     location = install_location(type)
 
+    {status, path} = which(type)
+
     cond do
-      {:ok, path} = which(type) ->
+      status == :ok ->
         {:ok, path}
 
       File.exists?(location) ->
@@ -49,7 +51,7 @@ defmodule CLICore.InstallBin do
         {:ok, String.trim(path)}
 
       {_, 1} ->
-        :missing
+        {:missing, nil}
 
       _ ->
         :error
