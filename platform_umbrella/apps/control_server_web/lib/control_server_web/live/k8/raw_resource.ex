@@ -52,10 +52,7 @@ defmodule ControlServerWeb.Live.RawResource do
   end
 
   defp resource(resource_type, namespace, name) do
-    case KubeState.get(resource_type, namespace, name) do
-      {:ok, %{} = res} -> res
-      _ -> nil
-    end
+    KubeState.get!(resource_type, namespace, name)
   end
 
   @impl Phoenix.LiveView
