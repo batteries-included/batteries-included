@@ -11,6 +11,7 @@ defmodule KubeResources.ConfigGenerator do
     Battery,
     IstioBase,
     IstioIstiod,
+    IstioMetrics,
     PostgresOperator,
     ControlServerResources,
     Data,
@@ -61,9 +62,8 @@ defmodule KubeResources.ConfigGenerator do
     gitea: [&Gitea.materialize/2],
     grafana: [&Grafana.materialize/2],
     harbor: [&Harbor.materialize/2],
-    istio: [&IstioBase.materialize/2],
+    istio: [&IstioBase.materialize/2, &IstioIstiod.materialize/2, &IstioMetrics.materialize/2],
     istio_gateway: [&IstioGateway.materialize/2],
-    istio_istiod: [&IstioIstiod.materialize/2],
     kiali: [&Kiali.materialize/2],
     knative_operator: [&KnativeOperator.materialize/2],
     knative_serving: [&KnativeServing.materialize/2],
@@ -84,8 +84,7 @@ defmodule KubeResources.ConfigGenerator do
     promtail: [&Promtail.materialize/2],
     redis_operator: [&RedisOperator.materialize/2],
     redis: [&Redis.materialize/2],
-    rook: [&Rook.materialize/2],
-    ceph: [&CephFilesystems.materialize/2, &CephClusters.materialize/2]
+    rook: [&Rook.materialize/2, &CephFilesystems.materialize/2, &CephClusters.materialize/2]
   ]
 
   @spec materialize(StateSummary.t()) :: map()

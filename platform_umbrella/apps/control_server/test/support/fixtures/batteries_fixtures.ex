@@ -11,9 +11,9 @@ defmodule ControlServer.BatteriesFixtures do
     {:ok, system_battery} =
       attrs
       |> Enum.into(%{
-        config: %{__type__: :istio_istiod},
+        config: %{__type__: :istio},
         group: :net_sec,
-        type: :istio_istiod
+        type: :istio
       })
       |> ControlServer.Batteries.create_system_battery()
 

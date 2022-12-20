@@ -23,7 +23,7 @@
     "jwtPolicy": "third-party-jwt",
     "logAsJson": false,
     "logging": {
-      "level": "default:debug"
+      "level": "default:info"
     },
     "meshID": "",
     "meshNetworks": {},
@@ -58,6 +58,7 @@
       "readinessPeriodSeconds": 2,
       "resources": {
         "limits": {
+          "cpu": "2000m",
           "memory": "1024Mi"
         },
         "requests": {
@@ -80,7 +81,7 @@
     "sts": {
       "servicePort": 0
     },
-    "tag": "1.15.0",
+    "tag": "1.16.1",
     "tracer": {
       "datadog": {
         "address": "$(HOST_IP):8126"
@@ -99,7 +100,8 @@
         "address": ""
       }
     },
-    "useMCP": false
+    "useMCP": false,
+    "variant": ""
   },
   "revision": "",
   "sidecarInjectorWebhook": {

@@ -25,7 +25,6 @@ defmodule KubeExt.Defaults.Catalog do
       dependencies: [:postgres_operator, :battery_core]
     },
     %CatalogBattery{group: :data, type: :rook, dependencies: [:data]},
-    %CatalogBattery{group: :data, type: :ceph, dependencies: [:data, :rook]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core, config: %{__type__: :battery_core}},
     %CatalogBattery{
@@ -144,23 +143,18 @@ defmodule KubeExt.Defaults.Catalog do
     },
     %CatalogBattery{
       group: :net_sec,
-      type: :istio_istiod,
-      dependencies: [:istio, :battery_core]
-    },
-    %CatalogBattery{
-      group: :net_sec,
       type: :istio_gateway,
-      dependencies: [:istio_istiod, :istio]
+      dependencies: [:istio]
     },
     %CatalogBattery{
       group: :net_sec,
       type: :kiali,
-      dependencies: [:istio_istiod, :istio_gateway, :prometheus, :grafana]
+      dependencies: [:istio, :istio_gateway, :prometheus, :grafana]
     },
     %CatalogBattery{
       group: :net_sec,
       type: :metallb,
-      dependencies: [:istio_istiod, :istio_gateway]
+      dependencies: [:istio, :istio_gateway]
     },
     %CatalogBattery{
       group: :net_sec,
@@ -203,7 +197,10 @@ defmodule KubeExt.Defaults.Catalog do
 
   defp default_config(:battery_core = type), do: %{__type__: type, namespace: Namespaces.core()}
   defp default_config(:data = type), do: %{__type__: type, namespace: Namespaces.data()}
-  defp default_config(:istio = type), do: %{__type__: type, namespace: Namespaces.istio()}
+
+  defp default_config(:istio = type),
+    do: %{__type__: type, namespace: Namespaces.istio(), pilot_image: Images.istio_pilot_image()}
+
   defp default_config(:ml_core = type), do: %{__type__: type, namespace: Namespaces.ml()}
 
   defp default_config(:metallb = type),
@@ -224,7 +221,7 @@ defmodule KubeExt.Defaults.Catalog do
       secret_key: Defaults.random_key_string()
     }
 
-  defp default_config(:ceph = type),
+  defp default_config(:rook = type),
     do: %{__type__: type, image: Images.ceph_image()}
 
   defp default_config(:redis_operator = type),
@@ -312,9 +309,6 @@ defmodule KubeExt.Defaults.Catalog do
 
   defp default_config(:node_exporter = type),
     do: %{__type__: type, image: Images.node_exporter_image()}
-
-  defp default_config(:istio_istiod = type),
-    do: %{__type__: type, pilot_image: Images.istio_pilot_image()}
 
   defp default_config(:kiali = type),
     do: %{

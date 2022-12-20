@@ -2,7 +2,7 @@ defmodule ControlServer.BatteriesTest do
   use ControlServer.DataCase
 
   alias ControlServer.Batteries.BatteryCoreConfig
-  alias ControlServer.Batteries.IstioIstiodConfig
+  alias ControlServer.Batteries.IstioConfig
   alias ControlServer.Batteries
 
   describe "system_batteries" do
@@ -23,14 +23,14 @@ defmodule ControlServer.BatteriesTest do
     end
 
     test "create_system_battery/1 with valid data creates a system_battery" do
-      valid_attrs = %{config: %{__type__: :istio_istiod}, group: :net_sec, type: :istio_istiod}
+      valid_attrs = %{config: %{__type__: :istio}, group: :net_sec, type: :istio}
 
       assert {:ok, %SystemBattery{} = system_battery} =
                Batteries.create_system_battery(valid_attrs)
 
-      assert system_battery.config == %IstioIstiodConfig{}
+      assert system_battery.config == %IstioConfig{}
       assert system_battery.group == :net_sec
-      assert system_battery.type == :istio_istiod
+      assert system_battery.type == :istio
     end
 
     test "create_system_battery/1 with battery core config" do

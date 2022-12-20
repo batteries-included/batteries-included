@@ -26,7 +26,6 @@ defmodule KubeExt.SystemState.SeedState do
             :postgres_operator,
             :database_internal,
             :istio,
-            :istio_istiod,
             :metallb,
             :metallb_ip_pool
           ],

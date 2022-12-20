@@ -40,6 +40,9 @@ templates:
     metadata:
       labels:
         security.istio.io/tlsMode: {{ index .ObjectMeta.Labels `security.istio.io/tlsMode` | default "istio"  | quote }}
+        {{- if eq (index .ProxyConfig.ProxyMetadata "ISTIO_META_ENABLE_HBONE") "true" }}
+        networking.istio.io/tunnel: {{ index .ObjectMeta.Labels `networking.istio.io/tunnel` | default "http"  | quote }}
+        {{- end }}
         service.istio.io/canonical-name: {{ index .ObjectMeta.Labels `service.istio.io/canonical-name` | default (index .ObjectMeta.Labels `app.kubernetes.io/name`) | default (index .ObjectMeta.Labels `app`) | default .DeploymentMeta.Name  | quote }}
         service.istio.io/canonical-revision: {{ index .ObjectMeta.Labels `service.istio.io/canonical-revision` | default (index .ObjectMeta.Labels `app.kubernetes.io/version`) | default (index .ObjectMeta.Labels `version`) | default "latest"  | quote }}
       annotations: {
@@ -396,6 +399,10 @@ templates:
         - mountPath: /var/run/secrets/istio
           name: istiod-ca-cert
         {{- end }}
+        {{- if eq .Values.global.pilotCertProvider "kubernetes" }}
+        - mountPath: /var/run/secrets/istio/kubernetes
+          name: kube-ca-cert
+        {{- end }}
         - mountPath: /var/lib/istio/data
           name: istio-data
         {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/bootstrapOverride`) }}
@@ -474,6 +481,11 @@ templates:
       - name: istiod-ca-cert
         configMap:
           name: istio-ca-root-cert
+      {{- end }}
+      {{- if eq .Values.global.pilotCertProvider "kubernetes" }}
+      - name: kube-ca-cert
+        configMap:
+          name: kube-root-ca.crt
       {{- end }}
       {{- if .Values.global.mountMtlsCerts }}
       # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.

@@ -43,7 +43,7 @@ defmodule KubeExt.Defaults.Images do
   def loki_image, do: "grafana/loki:2.7.0"
   def grafana_agent_operator_image, do: "grafana/agent-operator:v0.29.0"
 
-  def istio_pilot_image, do: "istio/pilot:1.15.3"
+  def istio_pilot_image, do: "istio/pilot:1.16.1"
 
   def knative_operator_webhook_image,
     do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.1"

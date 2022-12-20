@@ -1,4 +1,4 @@
-defmodule ControlServer.Batteries.CephConfig do
+defmodule ControlServer.Batteries.RookConfig do
   use TypedEctoSchema
   import Ecto.Changeset
 

@@ -4,31 +4,32 @@ defmodule ControlServer.Batteries.SystemBattery do
   import Ecto.Changeset
   import PolymorphicEmbed
 
-  alias ControlServer.Batteries.AlertmanagerConfig
-  alias ControlServer.Batteries.BatteryCoreConfig
-  alias ControlServer.Batteries.CephConfig
-  alias ControlServer.Batteries.ControlServerConfig
-  alias ControlServer.Batteries.DataConfig
-  alias ControlServer.Batteries.EmptyConfig
-  alias ControlServer.Batteries.GiteaConfig
-  alias ControlServer.Batteries.GrafanaConfig
-  alias ControlServer.Batteries.HarborConfig
-  alias ControlServer.Batteries.IstioConfig
-  alias ControlServer.Batteries.IstioIstiodConfig
-  alias ControlServer.Batteries.KialiConfig
-  alias ControlServer.Batteries.KnativeOperatorConfig
-  alias ControlServer.Batteries.KnativeServingConfig
-  alias ControlServer.Batteries.KubeStateMetricsConfig
-  alias ControlServer.Batteries.LokiConfig
-  alias ControlServer.Batteries.MLCoreConfig
-  alias ControlServer.Batteries.MetalLBConfig
-  alias ControlServer.Batteries.MetalLBIPPoolConfig
-  alias ControlServer.Batteries.NodeExporterConfig
-  alias ControlServer.Batteries.PostgresOperatorConfig
-  alias ControlServer.Batteries.PrometheusConfig
-  alias ControlServer.Batteries.PrometheusOperatorConfig
-  alias ControlServer.Batteries.PromtailConfig
-  alias ControlServer.Batteries.RedisOperatorConfig
+  alias ControlServer.Batteries.{
+    AlertmanagerConfig,
+    BatteryCoreConfig,
+    ControlServerConfig,
+    DataConfig,
+    EmptyConfig,
+    GiteaConfig,
+    GrafanaConfig,
+    HarborConfig,
+    IstioConfig,
+    KialiConfig,
+    KnativeOperatorConfig,
+    KnativeServingConfig,
+    KubeStateMetricsConfig,
+    LokiConfig,
+    MLCoreConfig,
+    MetalLBConfig,
+    MetalLBIPPoolConfig,
+    NodeExporterConfig,
+    PostgresOperatorConfig,
+    PrometheusConfig,
+    PrometheusOperatorConfig,
+    PromtailConfig,
+    RedisOperatorConfig,
+    RookConfig
+  }
 
   @possible_types [
     alertmanager: AlertmanagerConfig,
@@ -43,7 +44,6 @@ defmodule ControlServer.Batteries.SystemBattery do
     harbor: HarborConfig,
     istio: IstioConfig,
     istio_gateway: EmptyConfig,
-    istio_istiod: IstioIstiodConfig,
     kiali: KialiConfig,
     knative_operator: KnativeOperatorConfig,
     knative_serving: KnativeServingConfig,
@@ -64,8 +64,7 @@ defmodule ControlServer.Batteries.SystemBattery do
     promtail: PromtailConfig,
     redis_operator: RedisOperatorConfig,
     redis: EmptyConfig,
-    rook: EmptyConfig,
-    ceph: CephConfig
+    rook: RookConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)

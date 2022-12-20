@@ -71,7 +71,6 @@ defmodule KubeResources.ControlServerFactory do
           :harbor,
           :istio,
           :istio_gateway,
-          :istio_istiod,
           :kiali,
           :knative_operator,
           :knative_serving,
@@ -95,8 +94,7 @@ defmodule KubeResources.ControlServerFactory do
           :promtail,
           :redis_operator,
           :redis,
-          :rook,
-          :ceph
+          :rook
         ])
     }
   end
