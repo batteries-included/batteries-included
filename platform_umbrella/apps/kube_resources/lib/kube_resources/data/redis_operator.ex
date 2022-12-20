@@ -9,6 +9,7 @@ defmodule KubeResources.RedisOperator do
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
 
   @app_name "redis-operator"
 
@@ -180,6 +181,7 @@ defmodule KubeResources.RedisOperator do
     |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 
   resource(:service_redis_operator, _battery, state) do
@@ -200,5 +202,6 @@ defmodule KubeResources.RedisOperator do
     |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
+    |> F.require_battery(state, :prometheus)
   end
 end
