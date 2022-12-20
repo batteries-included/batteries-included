@@ -86,6 +86,7 @@ defmodule KubeResources.Database do
     B.build_resource(:service)
     |> B.app_labels(@app_name)
     |> B.label("spilo-role", role)
+    |> B.label("monitor-cluster", cluster_name)
     |> B.namespace(namespace)
     |> B.name(service_name)
     |> B.spec(spec)
@@ -102,7 +103,9 @@ defmodule KubeResources.Database do
     spec =
       %{}
       |> Map.put("namespaceSelector", %{"matchNames" => [namespace]})
-      |> Map.put("selector", %{"matchLabels" => cluster_label_selector(cluster, role)})
+      |> Map.put("selector", %{
+        "matchLabels" => %{"monitor-cluster" => cluster_name, "spilo-role" => role}
+      })
       |> Map.put("endpoints", [
         %{
           "port" => @exporter_port_name,
