@@ -1,14 +1,28 @@
 # Welcome
 
-Welcome to Batteries Included's repo. Everything to run the company should be in
-here.
+Welcome to Batteries Included's all-inclusive software infrastructure platform!
+We're excited to have you as a part of our all-remote team.
 
-This is all confidential and proprietary code.
+In this repo, you'll find everything you need to contribute to the development
+and growth of our company. From code and scripts to confidential and proprietary
+information, this is the hub of all things Batteries Included.
 
-## Requirements
+To get started, make sure your operating system is set up and ready to go. We
+recommend using a Linux machine, but our code should work on any system with a
+docker daemon and a Unix-like shell. Follow the steps in the Set up operating
+system section to get started.
 
-This code works best on a linux machine. However it should work on anything with
-a docker daemon and a unix like shell.
+Once you're set up, it's time to install the toolchains you'll need for
+development. We use ASDF to manage our dependencies, so be sure to follow the
+instructions in the Install Toolchains section to get everything installed.
+
+Take a look at the Code Organization section to get an understanding of how our
+code is structured and where you can find everything you need. And don't forget
+to check out the Dev folder for scripts and tools that will help you develop and
+run the platform.
+
+We can't wait to see what you'll bring to the table as a member of the Batteries
+Included team. Let's build something amazing together!
 
 ## Set up operating system
 
