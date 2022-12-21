@@ -70,7 +70,9 @@ k3dCluster() {
 }
 
 kindCluster() {
-  kind create cluster --name battery || true
+  pushd "${DIR}/../platform_umbrella/apps/cli_core"
+  mix run -e "CLICore.KindCluster.kind_cluster"
+  popd
 }
 
 portForward() {
