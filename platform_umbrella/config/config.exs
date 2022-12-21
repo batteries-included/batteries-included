@@ -64,7 +64,6 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 
 # Configures Elixir's Logger
 config :logger,
-  backends: [LoggerJSON],
   handle_otp_reports: true,
   handle_sasl_reports: false
 

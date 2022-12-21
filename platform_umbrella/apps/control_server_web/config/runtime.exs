@@ -43,36 +43,8 @@ config :control_server, ControlServer.Repo,
   hostname: postgres_host,
   port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
-
-config :home_base, HomeBase.Repo,
-  ssl: true,
-  username: postgres_username,
-  password: postgres_password,
-  database: postgres_database,
-  hostname: postgres_host,
-  port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
-
-# ## Using releases (Elixir v1.9+)
-#
-# If you are doing OTP releases, you need to instruct Phoenix
-# to start each relevant endpoint:
-#
-#     config :control_server_web, ControlServerWeb.Endpoint, server: true
-#
-# Then you can assemble a release by calling `mix release`.
-# See `mix help release` for more information.
+.
 config :control_server_web, ControlServerWeb.Endpoint,
-  http: [
-    port: String.to_integer(port),
-    # url: [host: web_host, port: String.to_integer(web_port)],
-    transport_options: [socket_opts: [:inet6]]
-  ],
-  check_origin: false,
-  secret_key_base: secret_key_base,
-  server: true
-
-config :home_base_web, HomeBaseWeb.Endpoint,
   http: [
     port: String.to_integer(port),
     # url: [host: web_host, port: String.to_integer(web_port)],

@@ -8,7 +8,7 @@ TAG=$(git describe --always --dirty --broken)
 
 pushImage() {
   REGISTRY_PORT=$(docker port battery-registry | cut -d: -f2)
-  docker push "localhost:${REGISTRY_PORT}/${1}:${2}"
+  docker push "localhost:${REGISTRY_PORT}/${1}:${2}" || true
 }
 
 pushd ${DIR}/../platform_umbrella

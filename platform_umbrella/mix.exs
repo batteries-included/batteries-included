@@ -4,7 +4,7 @@ defmodule ControlServer.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "0.4.0",
+      version: "0.5.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       releases: releases(),
@@ -22,7 +22,7 @@ defmodule ControlServer.Umbrella.MixProject do
 
   defp deps do
     [
-      {:bakeware, "~> 0.2.4"},
+      {:burrito, github: "burrito-elixir/burrito"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 2.0", only: [:dev, :test], runtime: false},
@@ -39,46 +39,43 @@ defmodule ControlServer.Umbrella.MixProject do
           kube_ext: :permanent,
           kube_services: :permanent,
           control_server_web: :permanent
+        ],
+        steps: [:assemble, &copy_configs/1],
+        runtime_config_path: "apps/control_server_web/config/runtime.exs",
+        config_providers: [
+          {Config.Reader, {:system, "RELEASE_ROOT", "apps/control_server_web/config/runtime.exs"}}
         ]
       ],
       home_base: [
-        applications: [home_base: :permanent, home_base_web: :permanent]
+        applications: [home_base: :permanent, home_base_web: :permanent],
+        steps: [:assemble, &copy_configs/1],
+        runtime_config_path: "apps/home_base_web/config/runtime.exs",
+        config_providers: [
+          {Config.Reader, {:system, "RELEASE_ROOT", "apps/home_base_web/config/runtime.exs"}}
+        ]
       ],
       cli: [
         applications: [cli: :permanent, kube_resources: :permanent, kube_ext: :permanent],
-        runtime_config_path: "apps/cli/config/releases.exs",
-        config_providers: config_providers_for_apps([:cli]),
-        steps: [:assemble, &copy_configs/1, &Bakeware.assemble/1]
+        steps: [:assemble, &Burrito.wrap/1],
+        burrito: [
+          targets: [
+            linux: [os: :linux, cpu: :x86_64]
+          ]
+        ]
       ]
     ]
   end
 
-  defp config_providers_for_apps(apps) do
-    for app <- apps do
-      {Config.Reader,
-       path: {:system, "RELEASE_ROOT", "/apps/#{app}/config/releases.exs"}, env: Mix.env()}
-    end
-  end
-
-  # When assembling the release, we copy all the releases.exs files defined
-  # in `config_providers` to it, keeping the
-  # relative app path to avoid collisions.
-  defp copy_configs(
-         %Mix.Release{path: release_directory_path, config_providers: config_providers} = release
-       ) do
-    for {_module, path: {_context, _root, config_file_path}, env: _} <- config_providers do
-      config_directory = Path.join(release_directory_path, Path.dirname(config_file_path))
-
-      # Clean the config directory to make sure we
-      # are only including the files defined in
-      # the config_providers
-      File.rm_rf!(config_directory)
-      File.mkdir_p!(config_directory)
-
-      File.cp!(
-        Path.relative(config_file_path),
-        Path.join(config_directory, Path.basename(config_file_path))
-      )
+  defp copy_configs(%{path: path, config_providers: config_providers} = release) do
+    for {_module, {_context, _root, file_path}} <- config_providers do
+      # Creating new path
+      new_path = path <> Path.dirname(file_path)
+      # Removing possible leftover files from previous builds
+      File.rm_rf!(new_path)
+      # Creating directory if it doesn't exist
+      File.mkdir_p!(new_path)
+      # Copying files to the directory with the same name
+      File.cp!(Path.expand(file_path), new_path <> "/" <> Path.basename(file_path))
     end
 
     release

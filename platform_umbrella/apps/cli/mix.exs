@@ -4,7 +4,7 @@ defmodule Cli.MixProject do
   def project do
     [
       app: :cli,
-      version: "0.1.0",
+      version: "0.5.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -25,7 +25,7 @@ defmodule Cli.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:bakeware, "~> 0.2.4"},
+      {:burrito, github: "burrito-elixir/burrito"},
       {:cli_core, in_umbrella: true},
       {:optimus, "~> 0.2"}
     ]
