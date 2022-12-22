@@ -15,14 +15,34 @@
                 <span class="block text-gray-900">
                   Software infrastructure for tomorrow&apos;s
                 </span>
-                <span class="block text-pink-600"> technology business </span>
+                <span class="block text-pink-500"> technology business </span>
               </span>
             </h1>
             <p
               class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-              Batteries Included Infrastructure is more powerful and easier to
-              use than any public or private cloud. Everything that your
-              technology teams need without complexity.
+              Welcome to Batteries Included, the ultimate software
+              infrastructure platform built by a team of world-class SREs. Our
+              all-inclusive, cloud-agnostic platform is built on the best
+              open-source software and includes everything you need for seamless
+              software development, deployment, monitoring, and operational
+              workflows.
+            </p>
+
+            <p
+              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
+              But it's not just about having the best tools at your fingertips -
+              with Batteries Included; you'll also enjoy powerful automation
+              that fixes issues before they ever happen. Say goodbye to platform
+              engineering debates and hello to a fully modular solution that
+              fits your specific needs.
+            </p>
+
+            <p
+              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
+              Join us and see why Batteries Included is the go-to platform for
+              businesses looking to incubate, grow, scale, transform, observe,
+              and manage their most important assets. Try it out today and
+              experience the power of proper infrastructure as a service.
             </p>
             <div
               class="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
@@ -36,26 +56,28 @@
                 method="POST"
                 name="launch_email"
                 data-netlify="true">
+                <input type="hidden" name="form-name" value="launch_email" />
+                <label for="email" class="sr-only"> Email </label>
                 <input
-                  type="hidden"
-                  name="form-name"
-                  value="launch_email" /><label for="email" class="sr-only"
-                  >Email</label
-                ><input
                   type="text"
                   name="email"
                   id="email"
-                  class="block w-full py-3 text-base placeholder-gray-500 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:flex-1"
-                  placeholder="Enter your email" /><button
+                  class="block w-full py-3 text-base placeholder-gray-500 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:flex-1 mr-5"
+                  placeholder="Enter your email" />
+
+                <button
                   type="submit"
-                  class="w-full px-6 py-3 mt-3 text-base font-medium text-white bg-gray-800 border border-transparent rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto">
-                  Notify me
+                  class="relative inline-flex items-center justify-center p-0.5 rounded-lg overflow-hidden text-sm font-medium text-gray-900 transition-all ease-in-out duration-300 hover:scale-110 bg-gradient-to-tl from-primary-500 to-secondary-500 group/button focus:ring-4 focus:outline-none focus:ring-pink-300 hover:bg-gradient-to-bl hover:from-secondary-500 hover:to-primary-500 hover:text-white hover:shadow-lg hover:shadow-secondary-500/20">
+                  <span
+                    class="relative px-5 py-3 w-full rounded-md transition-all ease-in-out duration-300 bg-white group-hover/button:bg-opacity-0">
+                    Notify me
+                  </span>
                 </button>
               </form>
             </div>
           </div>
           <div
-            class="relative mt-12 bg-white shadow-2xl rounded-3xl sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
+            class="relative mt-12 sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
             {{ $image := resources.Get "images/logo.2.white.png" }}
             {{ $image := $image | fingerprint }}
             {{ with $image }}
@@ -77,7 +99,7 @@
       class="max-w-md px-4 mx-auto text-center sm:max-w-3xl sm:px-6 lg:px-8 lg:max-w-7xl">
       <a id="features">
         <h2
-          class="text-base font-semibold tracking-wider text-pink-600 uppercase">
+          class="text-base font-semibold tracking-wider text-pink-500 uppercase">
           Build Your Business
         </h2>
       </a>
