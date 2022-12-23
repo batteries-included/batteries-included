@@ -59,6 +59,7 @@ defmodule ControlServerWeb.MixProject do
       {:kube_ext, in_umbrella: true},
       # Components
       {:common_ui, in_umbrella: true},
+      {:heyya, "~> 0.2.0", only: :test},
       {:heroicons, "~> 0.5"},
       {:jason, "~> 1.2"},
       {:logger_json, "~> 5.1"},
