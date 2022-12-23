@@ -18,7 +18,6 @@ defmodule KubeResources.MonitoringKubelet do
     |> B.name("battery-kube-prometheus-st-kubelet")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("app", "kube-prometheus-stack-grafana")
     |> B.label("grafana_dashboard", "1")
     |> B.data(data)
   end

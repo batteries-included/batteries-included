@@ -58,7 +58,6 @@ defmodule KubeResources.Prometheus do
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-prometheus-prometheus")
     |> B.app_labels(@app_name)
-    |> B.label("app", "kube-prometheus-stack-prometheus")
     |> B.role_ref(B.build_cluster_role_ref("battery-prometheus-prometheus"))
     |> B.subject(B.build_service_account("battery-prometheus-prometheus", namespace))
   end

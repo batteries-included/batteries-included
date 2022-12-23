@@ -139,7 +139,6 @@ defmodule KubeResources.MonitoringApiServer do
     |> B.name("battery-kube-prometheus-st-kube-apiserver-burnrate.rules")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [
         %{
@@ -242,7 +241,6 @@ defmodule KubeResources.MonitoringApiServer do
     |> B.name("battery-kube-prometheus-st-kube-apiserver-histogram.rules")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("app", "kube-prometheus-stack")
     |> B.spec(%{
       "groups" => [
         %{
