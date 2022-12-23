@@ -79,7 +79,6 @@ defmodule KubeResources.Grafana do
       "analytics" => %{reporting_enabled: false},
       "log" => %{
         "mode" => "console",
-        "format" => "json",
         "info" => "debug"
       }
     }
@@ -135,8 +134,7 @@ defmodule KubeResources.Grafana do
       "template" => %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => @app_name,
-            "battery/managed" => "true"
+            "battery/app" => @app_name
           }
         },
         "spec" => %{

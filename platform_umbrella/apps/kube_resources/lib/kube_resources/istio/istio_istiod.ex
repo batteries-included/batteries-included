@@ -9,7 +9,7 @@ defmodule KubeResources.IstioIstiod do
 
   alias KubeExt.Builder, as: B
 
-  @app_name "istio_istiod"
+  @app_name "istiod"
 
   resource(:cluster_role_binding_istio_reader_clusterrole_battery_istio, _battery, state) do
     namespace = istio_namespace(state)
@@ -304,7 +304,6 @@ defmodule KubeResources.IstioIstiod do
     |> B.component_label("istiod")
     |> B.label("istio", "pilot")
     |> B.label("istio.io/rev", "default")
-    |> B.label("operator.istio.io/component", "Pilot")
     |> B.spec(%{
       "selector" => %{"matchLabels" => %{"istio" => "pilot"}},
       "strategy" => %{"rollingUpdate" => %{"maxSurge" => "100%", "maxUnavailable" => "25%"}},
@@ -313,10 +312,6 @@ defmodule KubeResources.IstioIstiod do
           "labels" => %{
             "app" => "istiod",
             "battery/app" => @app_name,
-            "battery/managed" => "true",
-            "istio" => "pilot",
-            "istio.io/rev" => "default",
-            "operator.istio.io/component" => "Pilot",
             "sidecar.istio.io/inject" => "false"
           }
         },
@@ -1428,7 +1423,6 @@ defmodule KubeResources.IstioIstiod do
     |> B.component_label("istiod")
     |> B.label("istio", "pilot")
     |> B.label("istio.io/rev", "default")
-    |> B.label("operator.istio.io/component", "Pilot")
     |> B.spec(%{
       "ports" => [
         %{"name" => "grpc-xds", "port" => 15_010, "protocol" => "TCP"},
@@ -1436,7 +1430,7 @@ defmodule KubeResources.IstioIstiod do
         %{"name" => "https-webhook", "port" => 443, "protocol" => "TCP", "targetPort" => 15_017},
         %{"name" => "http-monitoring", "port" => 15_014, "protocol" => "TCP"}
       ],
-      "selector" => %{"app" => "istiod", "istio" => "pilot"}
+      "selector" => %{"app" => @app_name, "istio" => "pilot"}
     })
   end
 end

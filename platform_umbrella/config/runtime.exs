@@ -2,4 +2,4 @@ import Config
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  level: :error
+  level: :debug

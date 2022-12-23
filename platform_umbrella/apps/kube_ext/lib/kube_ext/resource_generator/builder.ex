@@ -48,9 +48,11 @@ defmodule KubeExt.Builder do
   @spec app_labels(map(), binary()) :: map()
   def app_labels(resource, app_name) do
     resource
-    |> label("battery/app", app_name)
     |> label("app", app_name)
+    |> label("app.kubernetes.io/name", app_name)
+    |> label("battery/app", app_name)
     |> label("battery/managed", "true")
+    |> label("app.kubernetes.io/managed-by", "batteries-included")
   end
 
   @spec owner_label(map(), binary()) :: map()

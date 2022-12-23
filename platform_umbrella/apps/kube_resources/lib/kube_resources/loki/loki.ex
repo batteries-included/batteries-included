@@ -183,8 +183,7 @@ defmodule KubeResources.Loki do
         "metadata" => %{
           "labels" => %{
             "battery/app" => @app_name,
-            "battery/component" => "grafana-agent-operator",
-            "battery/managed" => "true"
+            "battery/component" => "grafana-agent-operator"
           }
         },
         "spec" => %{

@@ -20,7 +20,7 @@ defmodule KubeExt.ResourceGenerator do
              do: resource_block
            ) do
     quote do
-      @resource_generator unquote(name)
+      @resource_generator {:single, unquote(name)}
       def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
     end
   end
@@ -29,26 +29,41 @@ defmodule KubeExt.ResourceGenerator do
              do: resource_block
            ) do
     quote do
-      @multi_resource_generator unquote(name)
+      @resource_generator {:multi, unquote(name)}
       def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
     end
   end
 
-  def perform_materialize(module, generators, multi_generators, battery, state) do
+  def perform_materialize(module, generators, battery, state) do
     gen_resources =
       generators
+      |> pluck_generator_type(:single)
       |> do_apply(module, battery, state)
       |> flatten_to_tuple()
 
     multi_resources =
-      multi_generators
+      generators
+      |> pluck_generator_type(:multi)
       |> do_apply(module, battery, state)
       |> flatten_multis_to_tuple()
 
     (gen_resources ++ multi_resources)
     |> filter_exists()
     |> dedupe_path()
+    |> copy_labels()
     |> to_map()
+  end
+
+  defp pluck_generator_type(generators, keep_type) do
+    generators
+    |> Enum.filter(fn {type, _} -> keep_type == type end)
+    |> Enum.map(fn {_type, gen} -> gen end)
+  end
+
+  defp copy_labels(resources) do
+    Enum.map(resources, fn {path, resource} ->
+      {path, KubeExt.CopyLabels.copy_labels_downward(resource)}
+    end)
   end
 
   defp filter_exists(resources) do
@@ -162,7 +177,6 @@ defmodule KubeExt.ResourceGenerator do
 
   defmacro __before_compile__(%{module: module} = _env) do
     generators = Module.get_attribute(module, :resource_generator, [])
-    multi_generators = Module.get_attribute(module, :multi_resource_generator, [])
 
     method =
       quote do
@@ -170,7 +184,6 @@ defmodule KubeExt.ResourceGenerator do
           KubeExt.ResourceGenerator.perform_materialize(
             __MODULE__,
             unquote(generators),
-            unquote(multi_generators),
             battery,
             state
           )

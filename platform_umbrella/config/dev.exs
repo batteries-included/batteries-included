@@ -92,7 +92,9 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   level: :debug,
-  metadata: [:mfa, :request_id]
+  metadata: [:mfa, :request_id],
+  handle_otp_reports: true,
+  handle_sasl_reports: false
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime

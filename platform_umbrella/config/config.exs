@@ -64,13 +64,9 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 
 # Configures Elixir's Logger
 config :logger,
+  level: :debug,
   handle_otp_reports: true,
   handle_sasl_reports: false
-
-config :logger_json, :backend,
-  metadata: :all,
-  json_encoder: Jason,
-  formatter: LoggerJSON.Formatters.BasicLogger
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
