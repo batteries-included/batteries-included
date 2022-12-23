@@ -48,7 +48,6 @@ defmodule KubeExt.ApiVersionKind do
     postgresql: {"acid.zalan.do/v1", "postgresql"},
     postgresql_operator_config: {"acid.zalan.do/v1", "OperatorConfiguration"},
     keycloak: {"keycloak.org/v1alpha1", "Keycloak"},
-    tekton_task: {"tekton.dev/v1beta1", "Task"},
     redis_failover: {"databases.spotahome.com/v1", "RedisFailover"},
     certmanger_certificate: {"cert-manager.io/v1", "Certificate"},
     certmanger_issuer: {"cert-manager.io/v1", "Issuer"},
