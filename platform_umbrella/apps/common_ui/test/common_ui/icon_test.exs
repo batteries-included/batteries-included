@@ -1,5 +1,5 @@
 defmodule CommonUI.IconTest do
-  use Heyya
+  use Heyya.SnapshotTest
 
   import CommonUI.Icons.Batteries
   import CommonUI.Icons.Database

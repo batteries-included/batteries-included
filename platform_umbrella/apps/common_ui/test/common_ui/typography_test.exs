@@ -1,5 +1,5 @@
 defmodule CommonUI.TypographyTest do
-  use Heyya
+  use Heyya.SnapshotTest
 
   use CommonUI
 

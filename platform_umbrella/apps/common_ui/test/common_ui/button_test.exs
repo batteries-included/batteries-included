@@ -1,5 +1,5 @@
 defmodule CommonUI.ButtonTest do
-  use Heyya
+  use Heyya.SnapshotTest
 
   import CommonUI.Button
 

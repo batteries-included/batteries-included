@@ -1,5 +1,5 @@
 defmodule CommonUI.TabBarTest do
-  use Heyya
+  use Heyya.SnapshotTest
 
   import CommonUI.TabBar
 

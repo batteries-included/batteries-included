@@ -1,5 +1,5 @@
 defmodule CommonUI.CardTest do
-  use Heyya
+  use Heyya.SnapshotTest
 
   import CommonUI.Card
 
