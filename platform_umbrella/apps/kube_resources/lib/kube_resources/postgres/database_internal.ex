@@ -51,7 +51,7 @@ defmodule KubeResources.DatabaseInternal do
   end
 
   multi_resource(:postgres_pod_per_namespace, _battery, state) do
-    namespace = core_namespace(state)
+    namespace = base_namespace(state)
     PostgresPod.per_namespace(namespace)
   end
 end

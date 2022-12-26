@@ -26,7 +26,7 @@ defmodule KubeExt.Defaults.Catalog do
     },
     %CatalogBattery{group: :data, type: :rook, dependencies: [:data]},
     # Internal
-    %CatalogBattery{group: :magic, type: :battery_core, config: %{__type__: :battery_core}},
+    %CatalogBattery{group: :magic, type: :battery_core},
     %CatalogBattery{
       group: :magic,
       type: :control_server,
@@ -50,7 +50,7 @@ defmodule KubeExt.Defaults.Catalog do
       dependencies: [:battery_core, :redis, :istio_gateway, :database_internal]
     },
     # ML
-    %CatalogBattery{group: :ml, type: :ml_core, config: %{__type__: :ml_core}},
+    %CatalogBattery{group: :ml, type: :ml_core},
     %CatalogBattery{
       group: :ml,
       type: :notebooks,
@@ -139,7 +139,7 @@ defmodule KubeExt.Defaults.Catalog do
     %CatalogBattery{
       group: :net_sec,
       type: :istio,
-      dependencies: [:battery_core]
+      dependencies: []
     },
     %CatalogBattery{
       group: :net_sec,
@@ -154,19 +154,20 @@ defmodule KubeExt.Defaults.Catalog do
     %CatalogBattery{
       group: :net_sec,
       type: :metallb,
-      dependencies: [:istio, :istio_gateway]
+      dependencies: [:istio_gateway, :battery_core]
     },
     %CatalogBattery{
       group: :net_sec,
       type: :metallb_ip_pool,
       dependencies: [:metallb]
     },
+    # Security
+
     %CatalogBattery{
       group: :net_sec,
-      type: :echo_server,
-      dependencies: [:istio_gateway]
+      type: :cert_manager,
+      dependencies: [:battery_core]
     }
-    # Security
   ]
 
   def all, do: Enum.map(@all, &add_config/1)
@@ -195,7 +196,9 @@ defmodule KubeExt.Defaults.Catalog do
   defp add_config(catalog_battery),
     do: %{catalog_battery | config: default_config(catalog_battery.type)}
 
-  defp default_config(:battery_core = type), do: %{__type__: type, namespace: Namespaces.core()}
+  defp default_config(:battery_core = type),
+    do: %{__type__: type, core_namespace: Namespaces.core(), base_namespace: Namespaces.base()}
+
   defp default_config(:data = type), do: %{__type__: type, namespace: Namespaces.data()}
 
   defp default_config(:istio = type),
@@ -206,7 +209,6 @@ defmodule KubeExt.Defaults.Catalog do
   defp default_config(:metallb = type),
     do: %{
       __type__: type,
-      namespace: Namespaces.loadbalancer(),
       speaker_image: Images.metallb_speaker_image(),
       controller_image: Images.metallb_controller_image()
     }

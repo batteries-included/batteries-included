@@ -7,13 +7,13 @@ defmodule KubeExt.SystemState.Namespaces do
   def core_namespace(%StateSummary{} = state) do
     state
     |> get_battery(:battery_core)
-    |> get_config_value(:namespace, Defaults.Namespaces.core())
+    |> get_config_value(:core_namespace, Defaults.Namespaces.core())
   end
 
-  def data_namespace(%StateSummary{} = state) do
+  def base_namespace(%StateSummary{} = state) do
     state
-    |> get_battery(:data)
-    |> get_config_value(:namespace, Defaults.Namespaces.data())
+    |> get_battery(:battery_core)
+    |> get_config_value(:base_namespace, Defaults.Namespaces.base())
   end
 
   def istio_namespace(%StateSummary{} = state) do
@@ -22,15 +22,23 @@ defmodule KubeExt.SystemState.Namespaces do
     |> get_config_value(:namespace, Defaults.Namespaces.istio())
   end
 
+  #
+  # User Namespaces
+  # These namespaces exist to put stuff that users will
+  # run here.
+  #
+  # Databases
+  # Notebooks
+  # etc
   def ml_namespace(%StateSummary{} = state) do
     state
     |> get_battery(:ml_core)
     |> get_config_value(:namespace, Defaults.Namespaces.ml())
   end
 
-  def loadbalancer_namespace(%StateSummary{} = state) do
+  def data_namespace(%StateSummary{} = state) do
     state
-    |> get_battery(:metallb)
-    |> get_config_value(:namespace, Defaults.Namespaces.loadbalancer())
+    |> get_battery(:data)
+    |> get_config_value(:namespace, Defaults.Namespaces.data())
   end
 end

@@ -5,10 +5,11 @@ defmodule ControlServer.Batteries.BatteryCoreConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :namespace, :string, default: KubeExt.Defaults.Namespaces.core()
+    field :core_namespace, :string, default: KubeExt.Defaults.Namespaces.core()
+    field :base_namespace, :string, default: KubeExt.Defaults.Namespaces.base()
   end
 
   def changeset(struct, params \\ %{}) do
-    cast(struct, params, [:namespace])
+    cast(struct, params, [:core_namespace, :base_namespace])
   end
 end

@@ -1,5 +1,4 @@
 defmodule KubeResources.Database do
-  import KubeResources.RawCluster
   import KubeExt.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -37,15 +36,15 @@ defmodule KubeResources.Database do
     |> add_owner(cluster)
   end
 
-  defp namespace(%{type: :internal} = _cluster, state), do: core_namespace(state)
+  defp namespace(%{type: :internal} = _cluster, state), do: base_namespace(state)
   defp namespace(%{type: _} = _cluster, state), do: data_namespace(state)
 
   defp postgres_spec(cluster) do
     %{
-      "teamId" => team_name(cluster),
-      "numberOfInstances" => num_instances(cluster),
+      "teamId" => cluster.team_name,
+      "numberOfInstances" => cluster.num_instances,
       "postgresql" => %{
-        "version" => postgres_version(cluster),
+        "version" => cluster.postgres_version,
         "parameters" => %{
           "log_destination" => "stderr",
           "logging_collector" => "false",
@@ -54,7 +53,7 @@ defmodule KubeResources.Database do
       },
       "patroni" => %{"pg_hba" => pg_hba()},
       "volume" => %{
-        "size" => storage_size(cluster)
+        "size" => cluster.storage_size
       },
       "users" => spec_users(cluster),
       "databases" => spec_databases(cluster),
@@ -168,6 +167,24 @@ defmodule KubeResources.Database do
         }
       ]
     }
+  end
+
+  defp full_name(%{} = cluster) do
+    "#{cluster.team_name}-#{cluster.name}"
+  end
+
+  defp spec_users(%{} = cluster) do
+    cluster
+    |> Map.get(:users, [])
+    |> Enum.map(fn u -> {u.username, u.roles} end)
+    |> Map.new()
+  end
+
+  defp spec_databases(%{} = cluster) do
+    cluster
+    |> Map.get(:databases, [])
+    |> Enum.map(fn c -> {c.name, c.owner} end)
+    |> Map.new()
   end
 
   defp pg_hba do

@@ -8,7 +8,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeExt.SystemState.StateSummary
 
   alias KubeResources.{
-    Battery,
+    BatteryCore,
     IstioBase,
     IstioIstiod,
     IstioMetrics,
@@ -17,7 +17,6 @@ defmodule KubeResources.ConfigGenerator do
     Data,
     DatabaseInternal,
     DatabasePublic,
-    EchoServer,
     Gitea,
     IstioGateway,
     Kiali,
@@ -44,7 +43,8 @@ defmodule KubeResources.ConfigGenerator do
     MonitoringKubelet,
     PrometheusStack,
     MetalLB,
-    MetalLBIPPool
+    MetalLBIPPool,
+    CertManager
   }
 
   alias KubeResources.ControlServer, as: ControlServerResources
@@ -53,12 +53,12 @@ defmodule KubeResources.ConfigGenerator do
 
   @default_generator_mappings [
     alertmanager: [&Alertmanager.materialize/2],
-    battery_core: [&Battery.materialize/2],
+    battery_core: [&BatteryCore.materialize/2],
     control_server: [&ControlServerResources.materialize/2],
+    cert_manager: [&CertManager.materialize/2],
     data: [&Data.materialize/2],
     database_internal: [&DatabaseInternal.materialize/2],
     database_public: [&DatabasePublic.materialize/2],
-    echo_server: [&EchoServer.materialize/2],
     gitea: [&Gitea.materialize/2],
     grafana: [&Grafana.materialize/2],
     harbor: [&Harbor.materialize/2],

@@ -8,7 +8,7 @@ defmodule KubeResources.MetalLBIPPool do
   @app_name "metallb-ip-pool"
 
   multi_resource(:ip_pool, _battery, state) do
-    namespace = loadbalancer_namespace(state)
+    namespace = base_namespace(state)
 
     Enum.map(state.ip_address_pools, fn pool ->
       spec = %{
@@ -37,7 +37,7 @@ defmodule KubeResources.MetalLBIPPool do
   end
 
   resource(:l2, _battery, state) do
-    namespace = loadbalancer_namespace(state)
+    namespace = base_namespace(state)
     spec = %{"ipAddressPools" => Enum.map(state.ip_address_pools, & &1.name)}
 
     B.build_resource(:l2_advertisement)

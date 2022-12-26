@@ -95,7 +95,7 @@ postgresForward() {
 
   cluster=$1
   port=$2
-  ns=${3:-"battery-core"}
+  ns=${3:-"battery-base"}
   pod=$(kubectl \
     get pods \
     -o jsonpath={.items..metadata.name} \

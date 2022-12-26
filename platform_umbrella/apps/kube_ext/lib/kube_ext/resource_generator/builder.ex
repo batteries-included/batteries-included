@@ -1,25 +1,28 @@
 defmodule KubeExt.Builder do
   alias KubeExt.ApiVersionKind
 
-  @spec build_resource(atom) :: map()
-  def build_resource(:secret) do
-    Map.put(build_resource("v1", "Secret"), "type", "Opaque")
+  @spec build_resource(atom | {String.t(), String.t()}) :: map()
+  def build_resource(:secret = resource_type) do
+    resource_type
+    |> ApiVersionKind.from_resource_type()
+    |> build_resource()
+    |> Map.put("type", "Opaque")
+  end
+
+  def build_resource(:job = resource_type) do
+    resource_type
+    |> ApiVersionKind.from_resource_type()
+    |> build_resource()
+    |> annotation("sidecar.istio.io/inject", "false")
   end
 
   def build_resource(resource_type) when is_atom(resource_type) do
-    {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
-    build_resource(api_version, kind)
+    resource_type
+    |> ApiVersionKind.from_resource_type()
+    |> build_resource()
   end
 
-  @spec build_resource(:ingress, any, any, binary | number) :: map
-  def build_resource(:ingress, path, service_name, port) do
-    build_resource("networking.k8s.io/v1", "Ingress")
-    |> annotation("kubernetes.io/ingress.class", "battery-nginx")
-    |> spec(%{"rules" => [build_rule(:http, [build_path(path, service_name, port)])]})
-  end
-
-  @spec build_resource(binary(), binary()) :: map()
-  def build_resource(api_version, kind) do
+  def build_resource({api_version, kind}) do
     %{"apiVersion" => api_version, "kind" => kind, "metadata" => %{}}
   end
 
@@ -111,36 +114,6 @@ defmodule KubeExt.Builder do
 
   @spec role_ref(map, map) :: map
   def aggregation_rule(resource, rule_map), do: Map.put(resource, "aggregationRule", rule_map)
-
-  defp build_rule(:http, paths) do
-    %{"http" => %{"paths" => paths}}
-  end
-
-  defp build_path(path, service_name, port_name) when is_binary(port_name) do
-    %{
-      "path" => path,
-      "pathType" => "Prefix",
-      "backend" => %{
-        "service" => %{
-          "name" => service_name,
-          "port" => %{"name" => port_name}
-        }
-      }
-    }
-  end
-
-  defp build_path(path, service_name, port_number) when is_number(port_number) do
-    %{
-      "path" => path,
-      "pathType" => "Prefix",
-      "backend" => %{
-        "service" => %{
-          "name" => service_name,
-          "port" => %{"number" => port_number}
-        }
-      }
-    }
-  end
 
   def build_cluster_role_ref(cluster_role_name) do
     %{

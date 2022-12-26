@@ -13,6 +13,10 @@ defmodule Apps.KubeResources.Test.KubeResources.DatabaseTest do
           %{
             name: "test",
             type: :public,
+            team_name: "pg",
+            num_instances: 1,
+            postgres_version: "14",
+            storage_size: "500M",
             databases: [%{name: "contains_test", owner: "special_owner"}]
           },
           Catalog.get(:database_public),

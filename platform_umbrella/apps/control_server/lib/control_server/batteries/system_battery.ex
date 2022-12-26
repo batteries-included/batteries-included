@@ -38,7 +38,6 @@ defmodule ControlServer.Batteries.SystemBattery do
     data: DataConfig,
     database_internal: EmptyConfig,
     database_public: EmptyConfig,
-    echo_server: EmptyConfig,
     gitea: GiteaConfig,
     grafana: GrafanaConfig,
     harbor: HarborConfig,
@@ -64,7 +63,8 @@ defmodule ControlServer.Batteries.SystemBattery do
     promtail: PromtailConfig,
     redis_operator: RedisOperatorConfig,
     redis: EmptyConfig,
-    rook: RookConfig
+    rook: RookConfig,
+    cert_manager: EmptyConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)
