@@ -9,9 +9,11 @@ defmodule KubeResources.ConfigGenerator do
 
   alias KubeResources.{
     BatteryCore,
+    BatteryCA,
     IstioBase,
     IstioIstiod,
     IstioMetrics,
+    IstioCsr,
     PostgresOperator,
     ControlServerResources,
     Data,
@@ -55,6 +57,7 @@ defmodule KubeResources.ConfigGenerator do
   @default_generator_mappings [
     alertmanager: [&Alertmanager.materialize/2],
     battery_core: [&BatteryCore.materialize/2],
+    battery_ca: [&BatteryCA.materialize/2],
     control_server: [&ControlServerResources.materialize/2],
     cert_manager: [&CertManager.materialize/2],
     trust_manager: [&TrustManager.materialize/2],
@@ -66,6 +69,7 @@ defmodule KubeResources.ConfigGenerator do
     harbor: [&Harbor.materialize/2],
     istio: [&IstioBase.materialize/2, &IstioIstiod.materialize/2, &IstioMetrics.materialize/2],
     istio_gateway: [&IstioGateway.materialize/2],
+    istio_csr: [&IstioCsr.materialize/2],
     kiali: [&Kiali.materialize/2],
     knative_operator: [&KnativeOperator.materialize/2],
     knative_serving: [&KnativeServing.materialize/2],

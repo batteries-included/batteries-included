@@ -297,6 +297,140 @@ defmodule KubeResources.IstioIstiod do
   resource(:deployment_istiod, battery, state) do
     namespace = istio_namespace(state)
 
+    volumes = [
+      %{"emptyDir" => %{"medium" => "Memory"}, "name" => "local-certs"},
+      %{
+        "name" => "istio-token",
+        "projected" => %{
+          "sources" => [
+            %{
+              "serviceAccountToken" => %{
+                "audience" => "istio-ca",
+                "expirationSeconds" => 43_200,
+                "path" => "istio-token"
+              }
+            }
+          ]
+        }
+      },
+      %{"name" => "cacerts", "secret" => %{"optional" => true, "secretName" => "cacerts"}},
+      %{
+        "name" => "istio-kubeconfig",
+        "secret" => %{"optional" => true, "secretName" => "istio-kubeconfig"}
+      }
+    ]
+
+    # Every container shares the same env.
+    env = [
+      %{"name" => "REVISION", "value" => "default"},
+      %{"name" => "JWT_POLICY", "value" => "third-party-jwt"},
+      %{"name" => "PILOT_CERT_PROVIDER", "value" => "istiod"},
+      %{
+        "name" => "POD_NAME",
+        "valueFrom" => %{
+          "fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.name"}
+        }
+      },
+      %{
+        "name" => "POD_NAMESPACE",
+        "valueFrom" => %{
+          "fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.namespace"}
+        }
+      },
+      %{
+        "name" => "SERVICE_ACCOUNT",
+        "valueFrom" => %{
+          "fieldRef" => %{
+            "apiVersion" => "v1",
+            "fieldPath" => "spec.serviceAccountName"
+          }
+        }
+      },
+      %{"name" => "KUBECONFIG", "value" => "/var/run/secrets/remote/config"},
+      %{"name" => "PILOT_TRACE_SAMPLING", "value" => "1"},
+      %{"name" => "PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_OUTBOUND", "value" => "true"},
+      %{"name" => "PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_INBOUND", "value" => "true"},
+      %{"name" => "ISTIOD_ADDR", "value" => "istiod.#{namespace}.svc:15012"},
+      %{"name" => "PILOT_ENABLE_ANALYSIS", "value" => "false"},
+      %{"name" => "CLUSTER_ID", "value" => "Kubernetes"}
+    ]
+
+    args = [
+      "discovery",
+      "--monitoringAddr=:15014",
+      "--log_output_level=default:info",
+      "--domain",
+      "cluster.local",
+      "--keepaliveMaxServerConnectionAge",
+      "30m"
+    ]
+
+    volume_mounts = [
+      %{
+        "mountPath" => "/var/run/secrets/tokens",
+        "name" => "istio-token",
+        "readOnly" => true
+      },
+      %{"mountPath" => "/var/run/secrets/istio-dns", "name" => "local-certs"},
+      %{"mountPath" => "/etc/cacerts", "name" => "cacerts", "readOnly" => true},
+      %{
+        "mountPath" => "/var/run/secrets/remote",
+        "name" => "istio-kubeconfig",
+        "readOnly" => true
+      }
+    ]
+
+    containers = [
+      %{
+        "args" => args,
+        "env" => env,
+        "image" => battery.config.pilot_image,
+        "name" => "discovery",
+        "ports" => [
+          %{"containerPort" => 8080, "protocol" => "TCP"},
+          %{"containerPort" => 15_010, "protocol" => "TCP"},
+          %{"containerPort" => 15_017, "protocol" => "TCP"}
+        ],
+        "readinessProbe" => %{
+          "httpGet" => %{"path" => "/ready", "port" => 8080},
+          "initialDelaySeconds" => 1,
+          "periodSeconds" => 3,
+          "timeoutSeconds" => 5
+        },
+        "resources" => %{"requests" => %{"cpu" => "500m", "memory" => "2048Mi"}},
+        "securityContext" => %{
+          "allowPrivilegeEscalation" => false,
+          "capabilities" => %{"drop" => ["ALL"]},
+          "readOnlyRootFilesystem" => true,
+          "runAsGroup" => 1337,
+          "runAsNonRoot" => true,
+          "runAsUser" => 1337
+        },
+        "volumeMounts" => volume_mounts
+      }
+    ]
+
+    template = %{
+      "metadata" => %{
+        "labels" => %{
+          "battery/app" => @app_name,
+          "sidecar.istio.io/inject" => "false"
+        }
+      },
+      "spec" => %{
+        "containers" => containers,
+        "securityContext" => %{"fsGroup" => 1337},
+        "serviceAccountName" => "istiod",
+        "volumes" => volumes
+      }
+    }
+
+    spec = %{
+      "selector" => %{"matchLabels" => %{"istio" => "pilot"}},
+      "strategy" => %{"rollingUpdate" => %{"maxSurge" => "100%", "maxUnavailable" => "25%"}},
+      "template" => template
+    }
+
     B.build_resource(:deployment)
     |> B.name("istiod")
     |> B.namespace(namespace)
@@ -304,127 +438,8 @@ defmodule KubeResources.IstioIstiod do
     |> B.component_label("istiod")
     |> B.label("istio", "pilot")
     |> B.label("istio.io/rev", "default")
-    |> B.spec(%{
-      "selector" => %{"matchLabels" => %{"istio" => "pilot"}},
-      "strategy" => %{"rollingUpdate" => %{"maxSurge" => "100%", "maxUnavailable" => "25%"}},
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "app" => "istiod",
-            "battery/app" => @app_name,
-            "sidecar.istio.io/inject" => "false"
-          }
-        },
-        "spec" => %{
-          "containers" => [
-            %{
-              "args" => [
-                "discovery",
-                "--monitoringAddr=:15014",
-                "--log_output_level=default:info",
-                "--domain",
-                "cluster.local",
-                "--keepaliveMaxServerConnectionAge",
-                "30m"
-              ],
-              "env" => [
-                %{"name" => "REVISION", "value" => "default"},
-                %{"name" => "JWT_POLICY", "value" => "third-party-jwt"},
-                %{"name" => "PILOT_CERT_PROVIDER", "value" => "istiod"},
-                %{
-                  "name" => "POD_NAME",
-                  "valueFrom" => %{
-                    "fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.name"}
-                  }
-                },
-                %{
-                  "name" => "POD_NAMESPACE",
-                  "valueFrom" => %{
-                    "fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.namespace"}
-                  }
-                },
-                %{
-                  "name" => "SERVICE_ACCOUNT",
-                  "valueFrom" => %{
-                    "fieldRef" => %{
-                      "apiVersion" => "v1",
-                      "fieldPath" => "spec.serviceAccountName"
-                    }
-                  }
-                },
-                %{"name" => "KUBECONFIG", "value" => "/var/run/secrets/remote/config"},
-                %{"name" => "PILOT_TRACE_SAMPLING", "value" => "1"},
-                %{"name" => "PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_OUTBOUND", "value" => "true"},
-                %{"name" => "PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_INBOUND", "value" => "true"},
-                %{"name" => "ISTIOD_ADDR", "value" => "istiod.#{namespace}.svc:15012"},
-                %{"name" => "PILOT_ENABLE_ANALYSIS", "value" => "false"},
-                %{"name" => "CLUSTER_ID", "value" => "Kubernetes"}
-              ],
-              "image" => battery.config.pilot_image,
-              "name" => "discovery",
-              "ports" => [
-                %{"containerPort" => 8080, "protocol" => "TCP"},
-                %{"containerPort" => 15_010, "protocol" => "TCP"},
-                %{"containerPort" => 15_017, "protocol" => "TCP"}
-              ],
-              "readinessProbe" => %{
-                "httpGet" => %{"path" => "/ready", "port" => 8080},
-                "initialDelaySeconds" => 1,
-                "periodSeconds" => 3,
-                "timeoutSeconds" => 5
-              },
-              "resources" => %{"requests" => %{"cpu" => "500m", "memory" => "2048Mi"}},
-              "securityContext" => %{
-                "allowPrivilegeEscalation" => false,
-                "capabilities" => %{"drop" => ["ALL"]},
-                "readOnlyRootFilesystem" => true,
-                "runAsGroup" => 1337,
-                "runAsNonRoot" => true,
-                "runAsUser" => 1337
-              },
-              "volumeMounts" => [
-                %{
-                  "mountPath" => "/var/run/secrets/tokens",
-                  "name" => "istio-token",
-                  "readOnly" => true
-                },
-                %{"mountPath" => "/var/run/secrets/istio-dns", "name" => "local-certs"},
-                %{"mountPath" => "/etc/cacerts", "name" => "cacerts", "readOnly" => true},
-                %{
-                  "mountPath" => "/var/run/secrets/remote",
-                  "name" => "istio-kubeconfig",
-                  "readOnly" => true
-                }
-              ]
-            }
-          ],
-          "securityContext" => %{"fsGroup" => 1337},
-          "serviceAccountName" => "istiod",
-          "volumes" => [
-            %{"emptyDir" => %{"medium" => "Memory"}, "name" => "local-certs"},
-            %{
-              "name" => "istio-token",
-              "projected" => %{
-                "sources" => [
-                  %{
-                    "serviceAccountToken" => %{
-                      "audience" => "istio-ca",
-                      "expirationSeconds" => 43_200,
-                      "path" => "istio-token"
-                    }
-                  }
-                ]
-              }
-            },
-            %{"name" => "cacerts", "secret" => %{"optional" => true, "secretName" => "cacerts"}},
-            %{
-              "name" => "istio-kubeconfig",
-              "secret" => %{"optional" => true, "secretName" => "istio-kubeconfig"}
-            }
-          ]
-        }
-      }
-    })
+    |> B.label("sidecar.istio.io/inject", "false")
+    |> B.spec(spec)
   end
 
   resource(:horizontal_pod_autoscaler_istiod, _battery, state) do

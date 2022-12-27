@@ -28,7 +28,7 @@ defmodule KubeResources.MetalLBIPPool do
         avoidBuggyIPs: true
       }
 
-      B.build_resource(:ip_address_pool)
+      B.build_resource(:metal_ip_address_pool)
       |> B.name(pool.name)
       |> B.namespace(namespace)
       |> B.app_labels(@app_name)
@@ -40,7 +40,7 @@ defmodule KubeResources.MetalLBIPPool do
     namespace = base_namespace(state)
     spec = %{"ipAddressPools" => Enum.map(state.ip_address_pools, & &1.name)}
 
-    B.build_resource(:l2_advertisement)
+    B.build_resource(:metal_l2_advertisement)
     |> B.name("core")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

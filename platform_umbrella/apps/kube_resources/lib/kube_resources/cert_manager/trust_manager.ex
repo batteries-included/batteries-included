@@ -21,23 +21,12 @@ defmodule KubeResources.TrustManager do
       |> Map.put("dnsNames", ["trust-manager.#{namespace}.svc"])
       |> Map.put(
         "issuerRef",
-        %{"group" => "cert-manager.io", "kind" => "Issuer", "name" => "trust-manager"}
+        %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"}
       )
       |> Map.put("revisionHistoryLimit", 1)
       |> Map.put("secretName", "trust-manager-tls")
 
     B.build_resource(:certmanger_certificate)
-    |> B.name("trust-manager")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.spec(spec)
-  end
-
-  resource(:certmanger_issuer_trust_manager, _battery, state) do
-    namespace = base_namespace(state)
-    spec = %{"selfSigned" => %{}}
-
-    B.build_resource(:certmanger_issuer)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

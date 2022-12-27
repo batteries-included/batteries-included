@@ -114,7 +114,6 @@ defmodule KubeResources.MetalLB do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.component_label("speaker")
-    |> B.label("app.kubernetes.io/name", @app_name)
     |> B.spec(%{
       "selector" => %{
         "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
@@ -123,10 +122,7 @@ defmodule KubeResources.MetalLB do
         "metadata" => %{
           "labels" => %{
             "battery/app" => @app_name,
-            "battery/component" => "speaker",
-            "battery/managed" => "true",
-            "app.kubernetes.io/component" => "speaker",
-            "app.kubernetes.io/name" => @app_name
+            "battery/component" => "speaker"
           }
         },
         "spec" => %{
@@ -148,7 +144,7 @@ defmodule KubeResources.MetalLB do
                 },
                 %{
                   "name" => "METALLB_ML_LABELS",
-                  "value" => "app.kubernetes.io/name=metallb,app.kubernetes.io/component=speaker"
+                  "value" => "battery/app=#{@app_name},battery/component=speaker"
                 },
                 %{"name" => "METALLB_ML_BIND_PORT", "value" => "7946"},
                 %{

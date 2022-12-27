@@ -135,7 +135,11 @@ defmodule KubeExt.Defaults.Catalog do
       type: :promtail,
       dependencies: [:loki]
     },
+    #
     # Network/Security
+    #
+
+    # Network
     %CatalogBattery{
       group: :net_sec,
       type: :istio,
@@ -162,7 +166,6 @@ defmodule KubeExt.Defaults.Catalog do
       dependencies: [:metallb]
     },
     # Security
-
     %CatalogBattery{
       group: :net_sec,
       type: :cert_manager,
@@ -170,8 +173,18 @@ defmodule KubeExt.Defaults.Catalog do
     },
     %CatalogBattery{
       group: :net_sec,
+      type: :battery_ca,
+      dependencies: [:cert_manager]
+    },
+    %CatalogBattery{
+      group: :net_sec,
       type: :trust_manager,
-      dependencies: [:battery_core, :cert_manager]
+      dependencies: [:battery_core, :battery_ca, :cert_manager]
+    },
+    %CatalogBattery{
+      group: :net_sec,
+      type: :istio_csr,
+      dependencies: [:istio, :battery_ca]
     }
   ]
 

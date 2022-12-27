@@ -179,9 +179,6 @@ defmodule KubeResources.Kiali do
         %{
           "metadata" => %{
             "annotations" => %{
-              "checksum/config" =>
-                "c7a6b120dd3b46ca19ca89803d3c3a2f77e0657b0ba6e15985683fd35aa0f54a",
-              "kiali.io/dashboards" => "go,kiali",
               "prometheus.io/port" => "9090",
               "prometheus.io/scrape" => "true"
             },

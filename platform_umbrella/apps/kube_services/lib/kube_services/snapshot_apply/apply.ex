@@ -279,6 +279,7 @@ defmodule KubeServices.SnapshotApply.Apply do
   defp resource_path_result_is_success?(:ok), do: true
   defp resource_path_result_is_success?(_result), do: false
 
+  defp reason_string(:applied), do: "Applied"
   defp reason_string(reason_atom) when is_atom(reason_atom), do: Atom.to_string(reason_atom)
   defp reason_string(reason) when is_binary(reason), do: reason
   defp reason_string(obj), do: inspect(obj)

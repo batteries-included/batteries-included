@@ -43,6 +43,7 @@ defmodule ControlServer.Batteries.SystemBattery do
     harbor: HarborConfig,
     istio: IstioConfig,
     istio_gateway: EmptyConfig,
+    istio_csr: EmptyConfig,
     kiali: KialiConfig,
     knative_operator: KnativeOperatorConfig,
     knative_serving: KnativeServingConfig,
@@ -65,7 +66,8 @@ defmodule ControlServer.Batteries.SystemBattery do
     redis: EmptyConfig,
     rook: RookConfig,
     cert_manager: EmptyConfig,
-    trust_manager: EmptyConfig
+    trust_manager: EmptyConfig,
+    battery_ca: EmptyConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)

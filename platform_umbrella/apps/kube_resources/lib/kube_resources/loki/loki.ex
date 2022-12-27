@@ -226,7 +226,7 @@ defmodule KubeResources.Loki do
   resource(:logs_instance_main, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:logs_instance)
+    B.build_resource(:grafana_logs_instance)
     |> B.name("loki")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
@@ -245,7 +245,7 @@ defmodule KubeResources.Loki do
   resource(:pod_logs_main, battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:pod_logs)
+    B.build_resource(:grafana_pod_logs)
     |> B.name("loki")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
