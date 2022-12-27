@@ -16,7 +16,7 @@ defmodule KubeExt.FilterResource do
     do: require_battery(resource, state, [battery_type])
 
   def require_battery(resource, state, battery_types) when is_list(battery_types) do
-    case batteries_installed(battery_types, state.batteries) do
+    case batteries_installed?(state, battery_types) do
       true -> resource
       _ -> nil
     end
@@ -30,8 +30,11 @@ defmodule KubeExt.FilterResource do
     end
   end
 
-  defp batteries_installed(required_battery_types, installed_batteries) do
-    installed = installed_batteries |> Enum.map(& &1.type) |> MapSet.new()
-    Enum.all?(required_battery_types, fn bt -> MapSet.member?(installed, bt) end)
+  def batteries_installed?(state, battery_type) when is_atom(battery_type),
+    do: batteries_installed?(state, [battery_type])
+
+  def batteries_installed?(state, battery_types) when is_list(battery_types) do
+    installed = state.batteries |> Enum.map(& &1.type) |> MapSet.new()
+    Enum.all?(battery_types, fn bt -> MapSet.member?(installed, bt) end)
   end
 end
