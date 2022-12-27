@@ -167,6 +167,11 @@ defmodule KubeExt.Defaults.Catalog do
       group: :net_sec,
       type: :cert_manager,
       dependencies: [:battery_core]
+    },
+    %CatalogBattery{
+      group: :net_sec,
+      type: :trust_manager,
+      dependencies: [:battery_core, :cert_manager]
     }
   ]
 

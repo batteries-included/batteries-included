@@ -18,7 +18,6 @@ defmodule Mix.Tasks.Gen.Resource do
     "helm.sh/chart",
     "helm.sh/hook-delete-policy",
     "app.kubernetes.io/part-of",
-    "install.operator.istio.io/owning-resource",
     "operator.tekton.dev/release",
     "chart",
     "release",

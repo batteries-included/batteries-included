@@ -37,6 +37,7 @@ defmodule KubeResources.CertManager do
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-approve:cert-manager-io")
     |> B.app_labels(@app_name)
+    |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-approve:cert-manager-io"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
   end
@@ -58,6 +59,7 @@ defmodule KubeResources.CertManager do
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-certificatesigningrequests")
     |> B.app_labels(@app_name)
+    |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-certificatesigningrequests"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
   end
@@ -178,6 +180,7 @@ defmodule KubeResources.CertManager do
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-approve:cert-manager-io")
     |> B.app_labels(@app_name)
+    |> B.component_label("controller")
     |> B.rules(rules)
   end
 
@@ -251,6 +254,7 @@ defmodule KubeResources.CertManager do
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-certificatesigningrequests")
     |> B.app_labels(@app_name)
+    |> B.component_label("controller")
     |> B.rules(rules)
   end
 
@@ -548,6 +552,7 @@ defmodule KubeResources.CertManager do
 
   resource(:deployment_cert_manager, _battery, state) do
     namespace = base_namespace(state)
+    component = "controller"
 
     spec =
       %{}
@@ -557,7 +562,7 @@ defmodule KubeResources.CertManager do
         %{
           "matchLabels" => %{
             "battery/app" => @app_name,
-            "battery/component" => "cert-manager"
+            "battery/component" => component
           }
         }
       )
@@ -567,15 +572,14 @@ defmodule KubeResources.CertManager do
           "metadata" => %{
             "labels" => %{
               "battery/app" => @app_name,
-              "battery/component" => "cert-manager",
-              "battery/managed" => "true"
+              "battery/component" => component
             }
           },
           "spec" => %{
             "containers" => [
               %{
                 "args" => [
-                  "--v=2",
+                  "--v=4",
                   "--cluster-resource-namespace=$(POD_NAMESPACE)",
                   "--leader-election-namespace=$(POD_NAMESPACE)"
                 ],
@@ -611,12 +615,13 @@ defmodule KubeResources.CertManager do
     |> B.name("cert-manager")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("controller")
+    |> B.component_label(component)
     |> B.spec(spec)
   end
 
   resource(:deployment_cainjector, _battery, state) do
     namespace = base_namespace(state)
+    component = "cainjector"
 
     spec =
       %{}
@@ -624,7 +629,7 @@ defmodule KubeResources.CertManager do
       |> Map.put(
         "selector",
         %{
-          "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "cainjector"}
+          "matchLabels" => %{"battery/app" => @app_name, "battery/component" => component}
         }
       )
       |> Map.put(
@@ -633,8 +638,7 @@ defmodule KubeResources.CertManager do
           "metadata" => %{
             "labels" => %{
               "battery/app" => @app_name,
-              "battery/component" => "cainjector",
-              "battery/managed" => "true"
+              "battery/component" => component
             }
           },
           "spec" => %{
@@ -670,19 +674,20 @@ defmodule KubeResources.CertManager do
     |> B.name("cert-manager-cainjector")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("cainjector")
+    |> B.component_label(component)
     |> B.spec(spec)
   end
 
   resource(:deployment_webhook, _battery, state) do
     namespace = base_namespace(state)
+    component = "webhook"
 
     spec =
       %{}
       |> Map.put("replicas", 1)
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "webhook"}}
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => component}}
       )
       |> Map.put(
         "template",
@@ -690,15 +695,14 @@ defmodule KubeResources.CertManager do
           "metadata" => %{
             "labels" => %{
               "battery/app" => @app_name,
-              "battery/component" => "webhook",
-              "battery/managed" => "true"
+              "battery/component" => component
             }
           },
           "spec" => %{
             "containers" => [
               %{
                 "args" => [
-                  "--v=2",
+                  "--v=4",
                   "--secure-port=10250",
                   "--dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)",
                   "--dynamic-serving-ca-secret-name=cert-manager-webhook-ca",
@@ -755,7 +759,7 @@ defmodule KubeResources.CertManager do
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("webhook")
+    |> B.component_label(component)
     |> B.spec(spec)
   end
 
@@ -812,6 +816,10 @@ defmodule KubeResources.CertManager do
     |> B.name("cert-manager-webhook")
     |> B.app_labels(@app_name)
     |> B.component_label("webhook")
+    |> B.annotation(
+      "cert-manager.io/inject-ca-from-secret",
+      "#{namespace}/cert-manager-webhook-ca"
+    )
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1"],
@@ -1018,6 +1026,7 @@ defmodule KubeResources.CertManager do
 
   resource(:service_cert_manager, _battery, state) do
     namespace = base_namespace(state)
+    component = "controller"
 
     spec =
       %{}
@@ -1031,7 +1040,7 @@ defmodule KubeResources.CertManager do
       ])
       |> Map.put(
         "selector",
-        %{"battery/app" => @app_name, "battery/component" => "cert-manager"}
+        %{"battery/app" => @app_name, "battery/component" => component}
       )
       |> Map.put("type", "ClusterIP")
 
@@ -1039,31 +1048,32 @@ defmodule KubeResources.CertManager do
     |> B.name("cert-manager")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("controller")
+    |> B.component_label(component)
     |> B.spec(spec)
   end
 
   resource(:service_webhook, _battery, state) do
     namespace = base_namespace(state)
+    component = "webhook"
 
     spec =
       %{}
       |> Map.put("ports", [
         %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => "https"}
       ])
-      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "webhook"})
-      |> Map.put("type", "ClusterIP")
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => component})
 
     B.build_resource(:service)
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("webhook")
+    |> B.component_label(component)
     |> B.spec(spec)
   end
 
   resource(:service_monitor_cert_manager, _battery, state) do
     namespace = base_namespace(state)
+    component = "controller"
 
     spec =
       %{}
@@ -1082,7 +1092,7 @@ defmodule KubeResources.CertManager do
         %{
           "matchLabels" => %{
             "battery/app" => @app_name,
-            "battery/component" => "cert-manager"
+            "battery/component" => component
           }
         }
       )
@@ -1091,7 +1101,7 @@ defmodule KubeResources.CertManager do
     |> B.name("cert-manager")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("controller")
+    |> B.component_label(component)
     |> B.label("prometheus", "default")
     |> B.spec(spec)
     |> F.require_battery(state, :prometheus)
@@ -1104,6 +1114,10 @@ defmodule KubeResources.CertManager do
     |> B.name("cert-manager-webhook")
     |> B.app_labels(@app_name)
     |> B.component_label("webhook")
+    |> B.annotation(
+      "cert-manager.io/inject-ca-from-secret",
+      "#{namespace}/cert-manager-webhook-ca"
+    )
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1"],

@@ -28,10 +28,14 @@ defmodule KubeExt.Hashing do
     |> update_in(
       ~w(metadata annotations),
       fn annotations ->
-        hash = resource |> Sanitizer.sanitize() |> MapHMAC.get() |> Base.encode32()
+        hash = compute_hash(resource)
         Map.put(annotations || %{}, @hash_annotation_key, hash)
       end
     )
+  end
+
+  def compute_hash(resource) do
+    resource |> Sanitizer.sanitize() |> MapHMAC.get() |> Base.encode32()
   end
 
   def different?(applied, new) when is_map(applied) and is_map(new) do

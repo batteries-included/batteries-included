@@ -44,7 +44,8 @@ defmodule KubeResources.ConfigGenerator do
     PrometheusStack,
     MetalLB,
     MetalLBIPPool,
-    CertManager
+    CertManager,
+    TrustManager
   }
 
   alias KubeResources.ControlServer, as: ControlServerResources
@@ -56,6 +57,7 @@ defmodule KubeResources.ConfigGenerator do
     battery_core: [&BatteryCore.materialize/2],
     control_server: [&ControlServerResources.materialize/2],
     cert_manager: [&CertManager.materialize/2],
+    trust_manager: [&TrustManager.materialize/2],
     data: [&Data.materialize/2],
     database_internal: [&DatabaseInternal.materialize/2],
     database_public: [&DatabasePublic.materialize/2],

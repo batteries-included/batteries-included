@@ -64,7 +64,8 @@ defmodule ControlServer.Batteries.SystemBattery do
     redis_operator: RedisOperatorConfig,
     redis: EmptyConfig,
     rook: RookConfig,
-    cert_manager: EmptyConfig
+    cert_manager: EmptyConfig,
+    trust_manager: EmptyConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)
