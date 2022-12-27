@@ -3,9 +3,6 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
   name: virtualservices.networking.istio.io
 spec:
   group: networking.istio.io

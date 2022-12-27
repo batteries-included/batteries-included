@@ -3,10 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app: istio-pilot
-    chart: istio
-    heritage: Tiller
     istio: security
-    release: istio
   name: authorizationpolicies.security.istio.io
 spec:
   group: security.istio.io

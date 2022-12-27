@@ -3,9 +3,6 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app: istio-pilot
-    chart: istio
-    heritage: Tiller
-    release: istio
   name: wasmplugins.extensions.istio.io
 spec:
   group: extensions.istio.io
