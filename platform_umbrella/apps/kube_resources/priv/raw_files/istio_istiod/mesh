@@ -1,8 +1,0 @@
-defaultConfig:
-  discoveryAddress: istiod.battery-istio.svc:15012
-  tracing:
-    zipkin:
-      address: zipkin.battery-istio:9411
-enablePrometheusMerge: true
-rootNamespace: null
-trustDomain: cluster.local
