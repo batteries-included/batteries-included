@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.IPAddressPoolsTable do
   use ControlServerWeb, :html
 
-  attr(:ip_address_pools, :list, default: [])
+  attr :ip_address_pools, :list, default: []
 
   def ip_address_pools_table(assigns) do
     ~H"""

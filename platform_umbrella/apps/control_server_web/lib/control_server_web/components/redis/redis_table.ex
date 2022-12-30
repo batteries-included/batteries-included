@@ -4,7 +4,7 @@ defmodule ControlServerWeb.RedisTable do
   def show_url(cluster),
     do: ~p"/redis/clusters/#{cluster}/show"
 
-  attr(:failover_clusters, :list, default: [])
+  attr :failover_clusters, :list, default: []
 
   def redis_table(assigns) do
     ~H"""
