@@ -39,7 +39,7 @@ defmodule KubeServices.Application do
   def kube_state_watchers,
     do:
       specs_for_types(
-        KubeExt.ApiVersionKind.all_known(),
+        CommonCore.ApiVersionKind.all_known(),
         "KubeState.Resource",
         &resource_worker_child_spec/1
       )

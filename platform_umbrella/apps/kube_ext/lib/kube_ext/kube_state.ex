@@ -4,7 +4,7 @@ defmodule KubeExt.KubeState do
   """
 
   alias K8s.Resource
-  alias KubeExt.ApiVersionKind
+  alias CommonCore.ApiVersionKind
   alias KubeExt.KubeState.Runner
 
   @default_table :default_state_table

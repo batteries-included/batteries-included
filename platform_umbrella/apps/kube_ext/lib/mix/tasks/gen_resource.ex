@@ -4,8 +4,8 @@ defmodule Mix.Tasks.Gen.Resource do
 
   use Mix.Task
 
-  import KubeExt.Yaml
-  import KubeExt.ApiVersionKind, only: [resource_type: 1]
+  import CommonCore.Yaml
+  import CommonCore.ApiVersionKind, only: [resource_type: 1]
   alias K8s.Resource, as: K8Resource
   alias KubeExt.Secret
 
@@ -254,7 +254,7 @@ defmodule Mix.Tasks.Gen.Resource do
       |> Enum.into(%{})
 
     # Keep track of where we are writing these things out. This is used
-    # to create the KubeExt.IncludeResource line.
+    # to create the CommonCore.IncludeResource line.
     include_paths =
       large_data
       |> Enum.map(fn {file_name, _} ->
@@ -803,8 +803,9 @@ defmodule Mix.Tasks.Gen.Resource do
     quote do
       defmodule KubeResources.ExampleServiceResource do
         use KubeExt.ResourceGenerator
-        import KubeExt.Yaml
-        import KubeExt.SystemState.Namespaces
+
+        import CommonCore.Yaml
+        import CommonCore.SystemState.Namespaces
 
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
@@ -826,11 +827,11 @@ defmodule Mix.Tasks.Gen.Resource do
 
     quote do
       defmodule KubeResources.ExampleServiceResource do
-        use KubeExt.IncludeResource, unquote(include_keywords)
+        use CommonCore.IncludeResource, unquote(include_keywords)
         use KubeExt.ResourceGenerator
 
-        import KubeExt.Yaml
-        import KubeExt.SystemState.Namespaces
+        import CommonCore.Yaml
+        import CommonCore.SystemState.Namespaces
 
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret

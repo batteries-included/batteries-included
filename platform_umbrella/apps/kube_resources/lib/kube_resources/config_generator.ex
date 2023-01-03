@@ -5,7 +5,7 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeExt.Builder, as: B
   alias KubeExt.Hashing
 
-  alias KubeExt.SystemState.StateSummary
+  alias CommonCore.SystemState.StateSummary
 
   alias KubeResources.{
     BatteryCA,

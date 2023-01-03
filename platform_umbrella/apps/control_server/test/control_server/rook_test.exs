@@ -1,11 +1,12 @@
 defmodule ControlServer.RookTest do
   use ControlServer.DataCase
 
+  alias CommonCore.Rook.CephCluster
+  alias CommonCore.Rook.CephFilesystem
+
   alias ControlServer.Rook
 
   describe "ceph_cluster" do
-    alias ControlServer.Rook.CephCluster
-
     import ControlServer.Factory
 
     @invalid_attrs %{data_dir_host_path: nil, name: nil, nodes: nil, num_mgr: nil, num_mon: nil}
@@ -86,8 +87,6 @@ defmodule ControlServer.RookTest do
   end
 
   describe "ceph_filesystems" do
-    alias ControlServer.Rook.CephFilesystem
-
     import ControlServer.Factory
 
     setup do

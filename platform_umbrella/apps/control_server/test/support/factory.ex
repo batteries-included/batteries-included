@@ -7,19 +7,24 @@ defmodule ControlServer.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: ControlServer.Repo
 
+  alias CommonCore.Notebooks.JupyterLabNotebook
+  alias CommonCore.Rook.CephCluster
+  alias CommonCore.Rook.CephFilesystem
+  alias CommonCore.Rook.CephStorageNode
+
   def kube_notebook_factory do
-    %ControlServer.Notebooks.JupyterLabNotebook{}
+    %JupyterLabNotebook{}
   end
 
   def ceph_storage_node_factory do
-    %ControlServer.Rook.CephStorageNode{
+    %CephStorageNode{
       name: sequence("ceph-node"),
       device_filter: sequence(:device_filter, &"/dev/by-path/#{&1}-sata*")
     }
   end
 
   def ceph_cluster_factory do
-    %ControlServer.Rook.CephCluster{
+    %CephCluster{
       name: sequence("test-ceph-cluster"),
       data_dir_host_path: "/var/lib/rook/ceph",
       num_mgr: 2,
@@ -30,7 +35,7 @@ defmodule ControlServer.Factory do
   end
 
   def ceph_filesystem_factory do
-    %ControlServer.Rook.CephFilesystem{
+    %CephFilesystem{
       name: sequence("test-ceph-filesystem"),
       include_erasure_encoded: sequence(:include_erasure_encoded, [true, false])
     }

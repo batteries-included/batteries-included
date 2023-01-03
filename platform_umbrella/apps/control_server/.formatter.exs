@@ -1,5 +1,7 @@
 locals_without_parens = [
-  polymorphic_embeds_one: 2
+  polymorphic_embeds_one: 2,
+  field: 3,
+  field: 2
 ]
 
 [
@@ -7,7 +9,6 @@ locals_without_parens = [
   inputs: [
     "{mix,.formatter}.exs",
     "*.{heex,ex,exs}",
-    "priv/*/seeds.exs",
     "{lib,test}/**/*.{heex,ex,exs}"
   ],
   subdirectories: ["priv/*/migrations"],

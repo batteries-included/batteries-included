@@ -1,10 +1,10 @@
 defmodule KubeResources.ControlServer do
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
-  alias KubeExt.Defaults
+  alias CommonCore.Defaults
 
   @app_name "control-server"
   @service_account "battery-admin"

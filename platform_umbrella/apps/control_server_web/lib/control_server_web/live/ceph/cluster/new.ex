@@ -3,9 +3,11 @@ defmodule ControlServerWeb.Live.CephClusterNew do
 
   import ControlServerWeb.MenuLayout
 
+  alias CommonCore.Rook.CephCluster
+
   alias ControlServer.Rook
-  alias ControlServer.Rook.CephCluster
   alias ControlServer.Batteries.Installer
+
   alias ControlServerWeb.Live.CephClusterFormComponent
 
   require Logger

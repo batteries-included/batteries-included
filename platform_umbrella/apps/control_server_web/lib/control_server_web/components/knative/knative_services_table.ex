@@ -1,10 +1,11 @@
 defmodule ControlServerWeb.KnativeServicesTable do
   use ControlServerWeb, :html
 
-  alias KubeResources.KnativeServing, as: KnativeResources
-  alias ControlServer.Knative
+  alias CommonCore.Knative.Service
 
-  attr :knative_services, :list, required: true
+  alias KubeResources.KnativeServing, as: KnativeResources
+
+  attr(:knative_services, :list, required: true)
 
   def knative_services_table(assigns) do
     ~H"""
@@ -22,5 +23,5 @@ defmodule ControlServerWeb.KnativeServicesTable do
     """
   end
 
-  defp service_url(%Knative.Service{} = service), do: KnativeResources.url(service)
+  defp service_url(%Service{} = service), do: KnativeResources.url(service)
 end

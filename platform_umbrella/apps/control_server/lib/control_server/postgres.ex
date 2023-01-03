@@ -5,7 +5,7 @@ defmodule ControlServer.Postgres do
 
   import Ecto.Query, warn: false
 
-  alias ControlServer.Postgres.Cluster
+  alias CommonCore.Postgres.Cluster
   alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 

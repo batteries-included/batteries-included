@@ -1,11 +1,11 @@
 defmodule ControlServer.KnativeTest do
   use ControlServer.DataCase
 
+  alias CommonCore.Knative.Service
+
   alias ControlServer.Knative
 
   describe "services" do
-    alias ControlServer.Knative.Service
-
     import ControlServer.KnativeFixtures
 
     # TODO: Add string validity tests for names and images, not just presence:

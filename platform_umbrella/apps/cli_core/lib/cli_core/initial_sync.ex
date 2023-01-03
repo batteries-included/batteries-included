@@ -36,7 +36,7 @@ defmodule CLICore.InitialSync do
 
   def sync do
     KubeExt.cluster_type()
-    |> KubeExt.SystemState.SeedState.seed()
+    |> CommonCore.SystemState.SeedState.seed()
     |> sync()
   end
 

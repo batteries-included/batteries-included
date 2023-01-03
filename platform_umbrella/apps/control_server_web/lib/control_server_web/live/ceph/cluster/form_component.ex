@@ -4,6 +4,8 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
   import Phoenix.HTML.Form, only: [inputs_for: 2]
   import K8s.Resource.FieldAccessors, only: [name: 1]
 
+  alias CommonCore.Rook.CephStorageNode
+
   alias ControlServer.Rook
   alias KubeExt.KubeState
 
@@ -54,7 +56,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
       changeset.changes
       |> Map.get(:nodes, ceph_cluster.nodes || [])
       |> Enum.concat([
-        %ControlServer.Rook.CephStorageNode{name: "", device_filter: "/dev/sd?"}
+        %CephStorageNode{name: "", device_filter: "/dev/sd?"}
       ])
 
     {:noreply, assign(socket, changeset: Ecto.Changeset.put_embed(changeset, :nodes, nodes))}

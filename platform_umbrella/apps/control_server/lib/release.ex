@@ -22,7 +22,7 @@ defmodule ControlServer.Release do
     Logger.info("Starting Seed")
 
     KubeExt.cluster_type()
-    |> KubeExt.SystemState.SeedState.seed()
+    |> CommonCore.SystemState.SeedState.seed()
     |> ControlServer.Seed.seed_from_snapshot()
   end
 

@@ -1,15 +1,16 @@
 defmodule Apps.KubeResources.Test.KubeResources.DatabaseTest do
   use ExUnit.Case
 
-  alias KubeExt.Defaults.Catalog
-  alias KubeExt.SystemState.StateSummary
+  alias CommonCore.Batteries.CatalogBattery
+  alias CommonCore.Batteries.Catalog
+  alias CommonCore.SystemState.StateSummary
 
-  import KubeResources.Database
+  alias KubeResources.Database
 
   describe "KubeResources.Database" do
     test "postgres/3 contains databases" do
       spec =
-        postgres(
+        Database.postgres(
           %{
             name: "test",
             type: :public,
@@ -19,7 +20,7 @@ defmodule Apps.KubeResources.Test.KubeResources.DatabaseTest do
             storage_size: "500M",
             databases: [%{name: "contains_test", owner: "special_owner"}]
           },
-          Catalog.get(:database_public),
+          :database_public |> Catalog.get() |> CatalogBattery.to_fresh_system_battery(),
           %StateSummary{}
         )
 

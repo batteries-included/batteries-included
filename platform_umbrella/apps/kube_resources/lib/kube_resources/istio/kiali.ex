@@ -1,8 +1,8 @@
 defmodule KubeResources.Kiali do
-  use KubeExt.IncludeResource, config_yaml: "priv/raw_files/kiali/config.yaml"
+  use CommonCore.IncludeResource, config_yaml: "priv/raw_files/kiali/config.yaml"
   use KubeExt.ResourceGenerator
 
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

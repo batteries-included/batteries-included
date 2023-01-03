@@ -1,5 +1,5 @@
 defmodule KubeExt.Builder do
-  alias KubeExt.ApiVersionKind
+  alias CommonCore.ApiVersionKind
 
   @spec build_resource(atom | {String.t(), String.t()}) :: map()
   def build_resource(:secret = resource_type) do

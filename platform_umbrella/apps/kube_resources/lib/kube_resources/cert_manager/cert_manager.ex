@@ -1,5 +1,5 @@
 defmodule KubeResources.CertManager do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     certificaterequests_cert_manager_io:
       "priv/manifests/cert_manager/certificaterequests_cert_manager_io.yaml",
     certificates_cert_manager_io: "priv/manifests/cert_manager/certificates_cert_manager_io.yaml",
@@ -12,8 +12,8 @@ defmodule KubeResources.CertManager do
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

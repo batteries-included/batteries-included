@@ -2,7 +2,7 @@ defmodule KubeExt.KubeState.ResourceWatcher do
   @behaviour KubeExt.Watcher
 
   alias KubeExt.KubeState.Runner
-  alias KubeExt.ApiVersionKind
+  alias CommonCore.ApiVersionKind
   alias KubeExt.Watcher.State
 
   require Logger

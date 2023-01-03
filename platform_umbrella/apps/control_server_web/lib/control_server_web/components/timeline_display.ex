@@ -1,11 +1,11 @@
 defmodule ControlServerWeb.TimelineDisplay do
   use ControlServerWeb, :html
 
-  alias ControlServer.Timeline.BatteryInstall
-  alias ControlServer.Timeline.Kube
-  alias ControlServer.Timeline.NamedDatabase
+  alias CommonCore.Timeline.BatteryInstall
+  alias CommonCore.Timeline.Kube
+  alias CommonCore.Timeline.NamedDatabase
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def feed_timeline(assigns) do
     ~H"""
@@ -22,11 +22,11 @@ defmodule ControlServerWeb.TimelineDisplay do
     """
   end
 
-  attr :timestamp, :any, default: nil
-  attr :payload, :any, default: nil
-  attr :title, :string, default: ""
-  attr :index, :integer, default: 0
-  slot :inner_block
+  attr(:timestamp, :any, default: nil)
+  attr(:payload, :any, default: nil)
+  attr(:title, :string, default: "")
+  attr(:index, :integer, default: 0)
+  slot(:inner_block)
 
   def timeline_item(%{payload: %NamedDatabase{}} = assigns) do
     ~H"""

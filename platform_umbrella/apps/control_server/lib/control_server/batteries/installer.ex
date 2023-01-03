@@ -1,15 +1,16 @@
 defmodule ControlServer.Batteries.Installer do
-  alias KubeExt.Defaults.Catalog
-  alias KubeExt.Defaults.CatalogBattery
-  alias KubeExt.Defaults
+  alias CommonCore.Batteries.Catalog
+  alias CommonCore.Batteries.CatalogBattery
+  alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.Defaults
 
-  alias ControlServer.Batteries.SystemBattery
   alias ControlServer.Postgres
   alias ControlServer.Redis
   alias ControlServer.Repo
+  alias ControlServer.Timeline
+
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
-  alias ControlServer.Timeline
 
   require Logger
 
@@ -21,57 +22,51 @@ defmodule ControlServer.Batteries.Installer do
 
   def install(type) when is_binary(type) do
     atom_type = String.to_existing_atom(type)
-    Logger.debug("Install type #{type} atom = #{atom_type}")
-
     install(atom_type)
   end
 
   def install(type) when is_atom(type) do
     Logger.info("Begining install of #{type}")
 
-    case Catalog.get(type) do
-      %{} = catalog_battery ->
-        Logger.debug("Found catalog service", catalog_battery: catalog_battery)
-
-        install(catalog_battery)
-
-      _ ->
-        {:error, reason: "Can't find #{inspect(type)} got unexpected result"}
-    end
+    type
+    |> Catalog.get()
+    |> install()
   end
 
   def install(%CatalogBattery{} = catalog_battery) do
-    # Get every dep
-    # Merge the find_or_create Ecto.Multi of every
-    # dependency into one mega dependency multi
-    # That we merge into the final result
-
-    all_batteries = get_recursive(catalog_battery)
-    Logger.debug("Found #{length(all_batteries)} recursive dependencies", deps: all_batteries)
-    do_install(all_batteries)
+    catalog_battery
+    |> CatalogBattery.to_fresh_args()
+    |> List.wrap()
+    |> install_all()
   end
+
+  def install(%SystemBattery{} = system_battery), do: install_all([system_battery])
 
   def install_all(batteries) do
-    # get the catalog batteries for everything
-    # Then make sure that we have all the dependencies.
-    # We should since install_all should be used with a snapshot.
-    # Then make the whole thing unique.
-    catalog_batteries =
-      batteries
-      |> Enum.map(&Catalog.get(&1.type))
-      |> Enum.flat_map(&get_recursive/1)
-      |> Enum.uniq()
-
-    overrides = batteries |> Enum.map(&{&1.type, &1}) |> Map.new()
-
-    do_install(catalog_batteries, overrides)
+    # For every battery that's there get the dependencies as catalog batteries.
+    # Then make the whole list unique
+    # Then convert all those to system batteries giving preference to the passed in batteries and their possibly customized configs.
+    # Give that list to the `do_install method`
+    batteries
+    |> Enum.map(&Catalog.get(&1.type))
+    |> Enum.flat_map(&Catalog.get_recursive/1)
+    |> Enum.uniq_by(& &1.type)
+    |> Enum.reduce(
+      batteries |> Enum.map(&{&1.type, &1}) |> Map.new(),
+      fn catalog_battery, battery_map ->
+        Map.put_new_lazy(battery_map, catalog_battery.type, fn ->
+          CatalogBattery.to_fresh_args(catalog_battery)
+        end)
+      end
+    )
+    |> Map.values()
+    |> do_install()
   end
 
-  defp do_install(catalog_batteries, overrides \\ %{}) do
-    catalog_batteries
-    |> Enum.map(fn battery ->
-      override = Map.get(overrides, battery.type, %{})
-      find_or_create_multi(battery, override)
+  defp do_install(battery_arg_list) do
+    battery_arg_list
+    |> Enum.map(fn arg ->
+      find_or_create_multi(arg)
     end)
     |> Enum.reduce(Multi.new(), fn battery_type_multi, multi ->
       Multi.append(multi, battery_type_multi)
@@ -81,19 +76,7 @@ defmodule ControlServer.Batteries.Installer do
     |> broadcast()
   end
 
-  defp get_recursive(%CatalogBattery{dependencies: deps} = catalog_battery) do
-    (deps || [])
-    |> Enum.flat_map(fn dep_type ->
-      dep_type |> Catalog.get() |> get_recursive()
-    end)
-    |> Enum.concat([catalog_battery])
-    |> Enum.uniq()
-  end
-
-  defp find_or_create_multi(
-         %CatalogBattery{type: battery_type} = catalog_battery,
-         %{} = value_overrides
-       ) do
+  defp find_or_create_multi(%{type: battery_type} = battery_args) do
     selected_key = "#{battery_type}_selected"
     installed_key = "#{battery_type}_installed"
     post_key = "#{battery_type}_post"
@@ -108,9 +91,12 @@ defmodule ControlServer.Batteries.Installer do
       # If there wasn't a selected from the
       # db battery then we need to insert it.
       case Map.get(state, selected_key, nil) do
-        nil -> repo.insert(changeset(catalog_battery, value_overrides))
+        nil ->
+          repo.insert(changeset(%SystemBattery{}, battery_args))
+
         # Already inserted carry on
-        _ -> {:ok, nil}
+        _ ->
+          {:ok, nil}
       end
     end)
     |> Multi.run(post_key, fn repo, so_far ->

@@ -3,9 +3,11 @@ defmodule ControlServerWeb.Live.RedisNew do
 
   import ControlServerWeb.MenuLayout
 
+  alias CommonCore.Redis.FailoverCluster
+
   alias ControlServer.Redis
-  alias ControlServer.Redis.FailoverCluster
   alias ControlServer.Batteries.Installer
+
   alias ControlServerWeb.Live.Redis.FormComponent
 
   require Logger

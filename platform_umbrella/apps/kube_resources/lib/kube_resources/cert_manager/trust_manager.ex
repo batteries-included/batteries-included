@@ -1,12 +1,12 @@
 defmodule KubeResources.TrustManager do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     bundles_trust_cert_manager_io:
       "priv/manifests/trust_manager/bundles_trust_cert_manager_io.yaml"
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

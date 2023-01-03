@@ -1,15 +1,15 @@
 defmodule KubeResources.Gitea do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     config_environment_sh: "priv/raw_files/gitea/config_environment.sh",
     configure_gitea_sh: "priv/raw_files/gitea/configure_gitea.sh",
     init_directory_structure_sh: "priv/raw_files/gitea/init_directory_structure.sh"
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.SystemState.Namespaces
-  import KubeExt.SystemState.Hosts
+  import CommonCore.SystemState.Namespaces
+  import CommonCore.SystemState.Hosts
 
-  alias KubeExt.Defaults
+  alias CommonCore.Defaults
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
   alias KubeExt.KubeState.Hosts

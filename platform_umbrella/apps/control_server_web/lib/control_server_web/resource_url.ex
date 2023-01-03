@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.ResourceURL do
   use ControlServerWeb, :verified_routes
 
-  alias KubeExt.ApiVersionKind
+  alias CommonCore.ApiVersionKind
   alias K8s.Resource
 
   def resource_show_url(%{} = resource) do

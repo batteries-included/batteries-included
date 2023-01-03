@@ -6,7 +6,7 @@ defmodule ControlServer.Knative do
   import Ecto.Query, warn: false
   alias ControlServer.Repo
 
-  alias ControlServer.Knative.Service
+  alias CommonCore.Knative.Service
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

@@ -1,11 +1,11 @@
 defmodule ControlServer.TimelineTest do
   use ControlServer.DataCase
 
+  alias CommonCore.Timeline.TimelineEvent
+  alias CommonCore.Timeline.BatteryInstall
   alias ControlServer.Timeline
 
   describe "timeline_events" do
-    alias ControlServer.Timeline.TimelineEvent
-
     import ControlServer.TimelineFixtures
     alias EventCenter.Database, as: DatabaseEventCenter
 
@@ -14,7 +14,7 @@ defmodule ControlServer.TimelineTest do
     test "Can create changeset for TimelineEvent with a poly embed" do
       event = %TimelineEvent{
         level: :info,
-        payload: %ControlServer.Timeline.BatteryInstall{type: :postgres_operator}
+        payload: %BatteryInstall{type: :postgres_operator}
       }
 
       assert _ = TimelineEvent.changeset(event, %{})

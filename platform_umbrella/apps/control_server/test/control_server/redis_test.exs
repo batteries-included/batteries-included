@@ -1,11 +1,10 @@
 defmodule ControlServer.RedisTest do
   use ControlServer.DataCase
+  alias CommonCore.Redis.FailoverCluster
 
   alias ControlServer.Redis
 
   describe "failover_clusters" do
-    alias ControlServer.Redis.FailoverCluster
-
     import ControlServer.RedisFixtures
 
     @invalid_attrs %{

@@ -1,5 +1,5 @@
 defmodule KubeResources.Database do
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

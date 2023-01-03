@@ -1,7 +1,7 @@
 defmodule KubeResources.DatabasePublic do
   use KubeExt.ResourceGenerator
 
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.SystemState.Namespaces
 
   alias KubeResources.Database
   alias KubeResources.PostgresPod

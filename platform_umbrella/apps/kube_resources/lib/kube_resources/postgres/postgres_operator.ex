@@ -1,13 +1,13 @@
 defmodule KubeResources.PostgresOperator do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     operatorconfigurations_acid_zalan_do:
       "priv/manifests/postgres-operator/operatorconfigurations_acid_zalan_do.yaml",
     postgresqls_acid_zalan_do: "priv/manifests/postgres-operator/postgresqls_acid_zalan_do.yaml",
     postgresteams_acid_zalan_do:
       "priv/manifests/postgres-operator/postgresteams_acid_zalan_do.yaml"
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeResources.PostgresPod

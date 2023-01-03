@@ -3,9 +3,11 @@ defmodule ControlServerWeb.Live.KnativeNew do
 
   import ControlServerWeb.MenuLayout
 
+  alias CommonCore.Knative.Service
+
   alias ControlServer.Knative
-  alias ControlServer.Knative.Service
   alias ControlServer.Batteries.Installer
+
   alias ControlServerWeb.Live.Knative.FormComponent
 
   require Logger

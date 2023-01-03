@@ -1,7 +1,7 @@
 defmodule KubeResources.IstioMetrics do
   use KubeExt.ResourceGenerator
 
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

@@ -1,5 +1,5 @@
 defmodule KubeResources.Rook do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     cephblockpoolradosnamespaces_ceph_rook_io:
       "priv/manifests/rook/cephblockpoolradosnamespaces_ceph_rook_io.yaml",
     cephblockpools_ceph_rook_io: "priv/manifests/rook/cephblockpools_ceph_rook_io.yaml",
@@ -34,8 +34,8 @@ defmodule KubeResources.Rook do
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
 

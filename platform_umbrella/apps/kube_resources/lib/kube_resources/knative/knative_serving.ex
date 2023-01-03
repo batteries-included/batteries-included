@@ -1,10 +1,10 @@
 defmodule KubeResources.KnativeServing do
-  import KubeExt.SystemState.Namespaces
-  import KubeExt.SystemState.Hosts
+  import CommonCore.SystemState.Namespaces
+  import CommonCore.SystemState.Hosts
 
   alias KubeExt.Builder, as: B
   alias KubeExt.KubeState.Hosts
-  alias KubeExt.Defaults
+  alias CommonCore.Defaults
 
   @app_name "knative-serving"
 

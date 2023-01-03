@@ -4,7 +4,7 @@ defmodule KubeExt.MixProject do
   def project do
     [
       app: :kube_ext,
-      version: "0.3.0",
+      version: "0.6.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -26,18 +26,10 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
-      {:telemetry, "~> 1.1"},
       {:k8s, "~> 1.1"},
       {:jason, "~> 1.0"},
-      {:tesla, "~> 1.5.0"},
-      {:cidr, "~> 1.1.0"},
-      # Yaml encode
-      {:ymlr, "~> 3.0.1"},
       {:event_center, in_umbrella: true},
-      # Time
-      {:timex, "~> 3.7"},
-      # logging
-      {:logger_json, "~> 5.1"}
+      {:common_core, in_umbrella: true}
     ]
   end
 

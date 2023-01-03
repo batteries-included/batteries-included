@@ -1,5 +1,5 @@
 defmodule KubeResources.IstioBase do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     authorizationpolicies_security_istio_io:
       "priv/manifests/istio_base/authorizationpolicies_security_istio_io.yaml",
     destinationrules_networking_istio_io:
@@ -31,8 +31,8 @@ defmodule KubeResources.IstioBase do
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   @app_name "istio_base"

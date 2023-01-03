@@ -1,12 +1,11 @@
 defmodule ControlServer.PostgresTest do
   use ControlServer.DataCase
 
+  alias CommonCore.Postgres.Cluster
+  alias CommonCore.Postgres.PGUser
   alias ControlServer.Postgres
 
   describe "clusters" do
-    alias ControlServer.Postgres.Cluster
-    alias ControlServer.Postgres.PGUser
-
     @valid_attrs %{
       name: "some name",
       num_instances: 2,
@@ -87,13 +86,13 @@ defmodule ControlServer.PostgresTest do
     end
 
     test "find_or_create with reasonable defaults" do
-      cluster = KubeExt.Defaults.GiteaDB.gitea_cluster()
+      cluster = CommonCore.Defaults.GiteaDB.gitea_cluster()
       assert {result, _db_res} = Postgres.find_or_create(cluster)
       assert :ok == result
     end
 
     test "find_or_create with reasonable Battery defaults" do
-      cluster = KubeExt.Defaults.ControlDB.control_cluster()
+      cluster = CommonCore.Defaults.ControlDB.control_cluster()
 
       assert {result, _db_res} = Postgres.find_or_create(cluster)
       assert :ok == result

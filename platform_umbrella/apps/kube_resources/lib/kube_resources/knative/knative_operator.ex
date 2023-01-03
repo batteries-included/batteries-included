@@ -1,5 +1,5 @@
 defmodule KubeResources.KnativeOperator do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     knativeeventings_operator_knative_dev:
       "priv/manifests/knative_operator/knativeeventings_operator_knative_dev.yaml",
     knativeservings_operator_knative_dev:
@@ -7,8 +7,8 @@ defmodule KubeResources.KnativeOperator do
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret

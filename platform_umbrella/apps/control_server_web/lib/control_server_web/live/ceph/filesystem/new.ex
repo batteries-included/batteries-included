@@ -3,9 +3,11 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
 
   import ControlServerWeb.MenuLayout
 
+  alias CommonCore.Rook.CephFilesystem
+
   alias ControlServer.Rook
-  alias ControlServer.Rook.CephFilesystem
   alias ControlServer.Batteries.Installer
+
   alias ControlServerWeb.Live.CephFilesystemFormComponent
 
   require Logger

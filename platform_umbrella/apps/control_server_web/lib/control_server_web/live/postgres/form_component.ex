@@ -4,9 +4,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   import Phoenix.HTML.Form, only: [inputs_for: 2]
 
   alias ControlServer.Postgres
-  alias ControlServer.Postgres.Cluster
-  alias ControlServer.Postgres.PGUser
-  alias ControlServer.Postgres.PGDatabase
+
+  alias CommonCore.Postgres.Cluster
+  alias CommonCore.Postgres.PGUser
+  alias CommonCore.Postgres.PGDatabase
 
   alias Ecto.Changeset
 

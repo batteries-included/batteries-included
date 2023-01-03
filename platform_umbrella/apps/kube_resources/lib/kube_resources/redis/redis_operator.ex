@@ -1,12 +1,12 @@
 defmodule KubeResources.RedisOperator do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     redisfailovers_databases_spotahome_com:
       "priv/manifests/redis_operator/redisfailovers_databases_spotahome_com.yaml"
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

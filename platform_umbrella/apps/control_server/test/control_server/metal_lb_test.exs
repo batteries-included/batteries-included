@@ -1,11 +1,10 @@
 defmodule ControlServer.MetalLBTest do
   use ControlServer.DataCase
 
+  alias CommonCore.MetalLB.IPAddressPool
   alias ControlServer.MetalLB
 
   describe "ip_address_pools" do
-    alias ControlServer.MetalLB.IPAddressPool
-
     import ControlServer.MetalLBFixtures
 
     @invalid_attrs %{name: nil, subnet: nil}

@@ -2,12 +2,12 @@ defmodule ControlServer.SeedTest do
   use ControlServer.DataCase
 
   alias ControlServer.Release
-  alias ControlServer.Postgres
-  alias ControlServer.Batteries.SystemBattery
+  alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.Postgres.Cluster
 
   describe "ControlServer.Seed" do
     def battery_count, do: Repo.aggregate(SystemBattery, :count)
-    def postgres_count, do: Repo.aggregate(Postgres.Cluster, :count)
+    def postgres_count, do: Repo.aggregate(Cluster, :count)
 
     test "its idempotent" do
       assert 0 == battery_count()

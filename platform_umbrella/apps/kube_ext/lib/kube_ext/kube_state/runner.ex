@@ -5,7 +5,7 @@ defmodule KubeExt.KubeState.Runner do
   import EventCenter.KubeState
 
   alias EventCenter.KubeState.Payload
-  alias KubeExt.ApiVersionKind
+  alias CommonCore.ApiVersionKind
 
   def start_link(opts) do
     table_name = Keyword.fetch!(opts, :name)

@@ -7,7 +7,7 @@ defmodule ControlServer.Batteries do
   alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
-  alias ControlServer.Batteries.SystemBattery
+  alias CommonCore.Batteries.SystemBattery
 
   @doc """
   Returns the list of system_batteries.

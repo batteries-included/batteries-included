@@ -5,7 +5,7 @@ defmodule KubeServices.Stale do
   alias ControlServer.Repo
   alias KubeExt.KubeState
   alias KubeExt.Hashing
-  alias KubeExt.ApiVersionKind
+  alias CommonCore.ApiVersionKind
 
   require Logger
 

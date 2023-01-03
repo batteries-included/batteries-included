@@ -1,5 +1,5 @@
 defmodule KubeResources.Harbor do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     no_proxy: "priv/raw_files/harbor/NO_PROXY",
     jobservice_config_yml: "priv/raw_files/harbor/jobservice_config.yml",
     registry_config_yml: "priv/raw_files/harbor/registry_config.yml",
@@ -9,8 +9,8 @@ defmodule KubeResources.Harbor do
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.SystemState.Namespaces
-  import KubeExt.SystemState.Hosts
+  import CommonCore.SystemState.Namespaces
+  import CommonCore.SystemState.Hosts
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

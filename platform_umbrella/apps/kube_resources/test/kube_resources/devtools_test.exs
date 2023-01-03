@@ -2,8 +2,8 @@ defmodule KubeResources.DevtoolsTest do
   use ExUnit.Case
 
   alias KubeResources.KnativeOperator
-  alias KubeExt.SystemState.StateSummary
-  alias KubeExt.Defaults.Images
+  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.Defaults.Images
 
   test "Can materialize knative operator" do
     assert map_size(KnativeOperator.materialize(knative_operator_battery(), %StateSummary{})) >= 5

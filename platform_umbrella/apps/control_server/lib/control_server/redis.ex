@@ -6,7 +6,7 @@ defmodule ControlServer.Redis do
   import Ecto.Query, warn: false
   alias ControlServer.Repo
 
-  alias ControlServer.Redis.FailoverCluster
+  alias CommonCore.Redis.FailoverCluster
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

@@ -1,5 +1,6 @@
 defmodule ControlServer.Seed do
   alias ControlServer.Batteries.Installer
+  alias CommonCore.Batteries.SystemBattery
   alias ControlServer.MetalLB
 
   require Logger
@@ -10,7 +11,11 @@ defmodule ControlServer.Seed do
   end
 
   defp seed_batteries(snapshot) do
-    {:ok, _} = Installer.install_all(snapshot.batteries)
+    {:ok, _} =
+      snapshot.batteries
+      |> Enum.map(&SystemBattery.to_fresh_args/1)
+      |> Installer.install_all()
+
     :ok
   end
 

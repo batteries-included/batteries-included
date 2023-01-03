@@ -1,6 +1,6 @@
 defmodule KubeExt.Watcher.Event do
   @moduledoc false
-  use KubeExt.Telemetry, name: :kube_ext_watcher
+  use CommonCore.Telemetry, name: :kube_ext_watcher
 
   defevent([:watcher, :initialized])
   defevent([:watcher, :first_resource, :started])

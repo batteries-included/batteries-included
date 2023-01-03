@@ -11,7 +11,7 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
 
     field :hash, :string
 
-    field :type, Ecto.Enum, values: KubeExt.ApiVersionKind.all_known()
+    field :type, Ecto.Enum, values: CommonCore.ApiVersionKind.all_known()
 
     field :name, :string
     field :namespace, :string

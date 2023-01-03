@@ -1,5 +1,5 @@
 defmodule KubeResources.MetalLB do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     addresspools_metallb_io: "priv/manifests/metallb/addresspools_metallb_io.yaml",
     bfdprofiles_metallb_io: "priv/manifests/metallb/bfdprofiles_metallb_io.yaml",
     bgpadvertisements_metallb_io: "priv/manifests/metallb/bgpadvertisements_metallb_io.yaml",
@@ -10,8 +10,8 @@ defmodule KubeResources.MetalLB do
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.Yaml
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.Yaml
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

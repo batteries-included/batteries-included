@@ -1,7 +1,8 @@
 defmodule KubeExt.Watcher.Core do
+  alias CommonCore.Telemetry
+
   alias KubeExt.Watcher.Event
   alias KubeExt.ResourceVersion
-  alias KubeExt.Telemetry
   alias KubeExt.Watcher.State
 
   def watch(

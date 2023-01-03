@@ -3,8 +3,9 @@ defmodule ControlServerWeb.Live.PostgresNew do
 
   import ControlServerWeb.MenuLayout
 
+  alias CommonCore.Postgres.Cluster
+
   alias ControlServer.Postgres
-  alias ControlServer.Postgres.Cluster
   alias ControlServer.Batteries.Installer
   alias ControlServerWeb.Live.PostgresFormComponent
 

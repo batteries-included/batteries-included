@@ -1,29 +1,10 @@
 defmodule ControlServer.SystemState.Summarizer do
   use GenServer
-  alias ControlServer.Batteries
-  alias ControlServer.Knative
-  alias ControlServer.Notebooks
-  alias ControlServer.Postgres
-  alias ControlServer.Redis
-  alias ControlServer.Rook
-  alias ControlServer.MetalLB
-
-  alias KubeExt.SystemState.StateSummary
+  alias CommonCore.SystemState.StateSummary
 
   alias Ecto.Multi
 
   require Logger
-
-  @type t :: %StateSummary{
-          batteries: list(Batteries.SystemBattery.t()),
-          postgres_clusters: list(Postgres.Cluster.t()),
-          redis_clusters: list(Redis.FailoverCluster.t()),
-          notebooks: list(Notebooks.JupyterLabNotebook.t()),
-          ceph_clusters: list(Rook.CephCluster.t()),
-          ceph_filesystems: list(Rook.CephFilesystem.t()),
-          ip_address_pools: list(MetalLB.IPAddressPool.t()),
-          kube_state: map()
-        }
 
   @me __MODULE__
   @default_refresh_time 90 * 1000
@@ -31,9 +12,9 @@ defmodule ControlServer.SystemState.Summarizer do
     :refresh_time
   ]
 
-  @spec new(atom | pid | {atom, any} | {:via, atom, any}) :: t()
+  @spec new(atom | pid | {atom, any} | {:via, atom, any}) :: StateSummary.t()
   def new(target \\ @me), do: GenServer.call(target, :new)
-  @spec cached(atom | pid | {atom, any} | {:via, atom, any}) :: t()
+  @spec cached(atom | pid | {atom, any} | {:via, atom, any}) :: StateSummary.t()
   def cached(target \\ @me), do: GenServer.call(target, :cached)
   @spec cached_field(atom | pid | {atom, any} | {:via, atom, any}, atom) :: any
   def cached_field(target \\ @me, field), do: GenServer.call(target, {:cached, field})
@@ -85,7 +66,7 @@ defmodule ControlServer.SystemState.Summarizer do
     Process.send_after(self(), :refresh, refresh_time)
   end
 
-  @spec new_summary! :: t()
+  @spec new_summary! :: StateSummary.t()
   defp new_summary! do
     with {:ok, res} <- transaction() do
       struct(StateSummary, res)
@@ -94,14 +75,14 @@ defmodule ControlServer.SystemState.Summarizer do
 
   defp transaction do
     Multi.new()
-    |> Multi.all(:batteries, Batteries.SystemBattery)
-    |> Multi.all(:postgres_clusters, Postgres.Cluster)
-    |> Multi.all(:redis_clusters, Redis.FailoverCluster)
-    |> Multi.all(:notebooks, Notebooks.JupyterLabNotebook)
-    |> Multi.all(:knative_services, Knative.Service)
-    |> Multi.all(:ceph_clusters, Rook.CephCluster)
-    |> Multi.all(:ceph_filesystems, Rook.CephFilesystem)
-    |> Multi.all(:ip_address_pools, MetalLB.IPAddressPool)
+    |> Multi.all(:batteries, CommonCore.Batteries.SystemBattery)
+    |> Multi.all(:postgres_clusters, CommonCore.Postgres.Cluster)
+    |> Multi.all(:redis_clusters, CommonCore.Redis.FailoverCluster)
+    |> Multi.all(:notebooks, CommonCore.Notebooks.JupyterLabNotebook)
+    |> Multi.all(:knative_services, CommonCore.Knative.Service)
+    |> Multi.all(:ceph_clusters, CommonCore.Rook.CephCluster)
+    |> Multi.all(:ceph_filesystems, CommonCore.Rook.CephFilesystem)
+    |> Multi.all(:ip_address_pools, CommonCore.MetalLB.IPAddressPool)
     |> Multi.run(:kube_state, fn _repo, _state ->
       {:ok, KubeExt.KubeState.snapshot()}
     end)

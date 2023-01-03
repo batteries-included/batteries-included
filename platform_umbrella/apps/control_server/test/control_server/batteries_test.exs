@@ -1,13 +1,13 @@
 defmodule ControlServer.BatteriesTest do
   use ControlServer.DataCase
 
-  alias ControlServer.Batteries.BatteryCoreConfig
-  alias ControlServer.Batteries.IstioConfig
+  alias CommonCore.Batteries.BatteryCoreConfig
+  alias CommonCore.Batteries.IstioConfig
+  alias CommonCore.Batteries.SystemBattery
+
   alias ControlServer.Batteries
 
   describe "system_batteries" do
-    alias ControlServer.Batteries.SystemBattery
-
     import ControlServer.BatteriesFixtures
 
     @invalid_attrs %{config: nil, group: nil, type: nil}

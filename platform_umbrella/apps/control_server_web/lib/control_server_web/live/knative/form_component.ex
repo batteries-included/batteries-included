@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   use ControlServerWeb, :live_component
 
   alias ControlServer.Knative
-  alias ControlServer.Knative.Service
+  alias CommonCore.Knative.Service
   alias KubeResources.KnativeServing
 
   @impl Phoenix.LiveComponent

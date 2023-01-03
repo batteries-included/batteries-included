@@ -154,7 +154,7 @@ defmodule KubeExt.ResourceGenerator do
   end
 
   defp type_path(resource) do
-    case KubeExt.ApiVersionKind.resource_type(resource) do
+    case CommonCore.ApiVersionKind.resource_type(resource) do
       nil -> fallback_type_path(resource)
       atom_type -> Atom.to_string(atom_type)
     end

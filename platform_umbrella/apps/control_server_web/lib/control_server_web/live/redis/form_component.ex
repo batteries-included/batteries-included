@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
   use ControlServerWeb, :live_component
 
   alias ControlServer.Redis
-  alias ControlServer.Redis.FailoverCluster
+  alias CommonCore.Redis.FailoverCluster
 
   @impl Phoenix.LiveComponent
   def mount(socket) do

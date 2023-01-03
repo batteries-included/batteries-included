@@ -3,7 +3,11 @@ defmodule EventCenter.Database do
 
   @pubsub EventCenter.Database.PubSub
 
+  # WAIT!
+  # If you are changing here then also change in CommonCore.Timeline
   @allowed_actions [:insert, :update, :delete, :multi]
+  # WAIT!
+  # If you are changing here then also change in CommonCore.Timeline
   @allowed_sources [
     :jupyter_notebook,
     :knative_service,

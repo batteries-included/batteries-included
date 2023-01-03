@@ -136,8 +136,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
     "#{username}.#{cluster_name}.credentials.postgresql.acid.zalan.do"
   end
 
-  defp user_namespace(:internal = _cluster_type), do: KubeExt.Defaults.Namespaces.core()
-  defp user_namespace(_cluster_type), do: KubeExt.Defaults.Namespaces.data()
+  defp user_namespace(:internal = _cluster_type), do: CommonCore.Defaults.Namespaces.core()
+  defp user_namespace(_cluster_type), do: CommonCore.Defaults.Namespaces.data()
 
   defp users_table(assigns) do
     ~H"""

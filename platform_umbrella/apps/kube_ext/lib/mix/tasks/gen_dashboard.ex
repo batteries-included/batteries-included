@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Gen.Dashboard do
 
   use Mix.Task
 
-  alias KubeExt.GrafanaDashboardClient
+  alias CommonCore.GrafanaDashboardClient
 
   @requirements ["app.config"]
 

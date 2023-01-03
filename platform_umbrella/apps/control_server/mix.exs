@@ -4,7 +4,7 @@ defmodule ControlServer.MixProject do
   def project do
     [
       app: :control_server,
-      version: "0.3.0",
+      version: "0.6.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -36,6 +36,9 @@ defmodule ControlServer.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:event_center, in_umbrella: true},
+      {:common_core, in_umbrella: true},
+
       # Auth
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix_pubsub, "~> 2.1"},
@@ -56,7 +59,6 @@ defmodule ControlServer.MixProject do
       {:paginator, "~> 1.2.0"},
 
       # Kubernetes
-      {:telemetry, "~> 1.0", override: true},
       {:k8s, "~> 1.1"},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 5.0"},
@@ -70,10 +72,6 @@ defmodule ControlServer.MixProject do
 
       # Http
       {:finch, "~> 0.14.0"},
-
-      # Naming
-      {:mnemonic_slugs, "~> 0.0.3"},
-      {:event_center, in_umbrella: true},
 
       ## Dev/Test only deps
 

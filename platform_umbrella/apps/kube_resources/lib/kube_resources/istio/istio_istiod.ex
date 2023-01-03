@@ -1,11 +1,11 @@
 defmodule KubeResources.IstioIstiod do
-  use KubeExt.IncludeResource,
+  use CommonCore.IncludeResource,
     config: "priv/raw_files/istio_istiod/config",
     values: "priv/raw_files/istio_istiod/values"
 
   use KubeExt.ResourceGenerator
 
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
 

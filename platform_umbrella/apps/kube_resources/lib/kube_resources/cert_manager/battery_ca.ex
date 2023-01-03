@@ -1,7 +1,7 @@
 defmodule KubeResources.BatteryCA do
   use KubeExt.ResourceGenerator
 
-  import KubeExt.SystemState.Namespaces
+  import CommonCore.SystemState.Namespaces
   alias KubeExt.Builder, as: B
 
   @app_name "istio_ca"

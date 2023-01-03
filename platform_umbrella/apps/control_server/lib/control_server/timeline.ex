@@ -6,7 +6,10 @@ defmodule ControlServer.Timeline do
   import Ecto.Query, warn: false
   alias ControlServer.Repo
 
-  alias ControlServer.Timeline.TimelineEvent
+  alias CommonCore.Timeline.TimelineEvent
+  alias CommonCore.Timeline.BatteryInstall
+  alias CommonCore.Timeline.Kube
+  alias CommonCore.Timeline.NamedDatabase
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
@@ -69,14 +72,14 @@ defmodule ControlServer.Timeline do
   def battery_install_event(type) do
     %TimelineEvent{
       level: :info,
-      payload: %ControlServer.Timeline.BatteryInstall{type: type}
+      payload: %BatteryInstall{type: type}
     }
   end
 
   def kube_event(action, resource_type, name, namespace \\ nil) do
     %TimelineEvent{
       level: :info,
-      payload: %ControlServer.Timeline.Kube{
+      payload: %Kube{
         action: action,
         type: resource_type,
         name: name,
@@ -88,7 +91,7 @@ defmodule ControlServer.Timeline do
   def named_database_event(action, type, name) do
     %TimelineEvent{
       level: :info,
-      payload: %ControlServer.Timeline.NamedDatabase{
+      payload: %NamedDatabase{
         name: name,
         action: action,
         type: type
