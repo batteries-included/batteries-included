@@ -3,11 +3,13 @@ defmodule ControlServerWeb.LeftMenu do
 
   import CommonUI.Icons.Database
   import CommonUI.Icons.Devtools
-  import CommonUI.Icons.Notebook
+  import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Network
+  import CommonUI.Icons.Notebook
   import CommonUI.Icons.Rook
 
   alias ControlServer.Batteries
+  alias KubeExt.KubeState.Hosts
 
   @impl Phoenix.LiveComponent
   def update(assigns, socket) do
@@ -159,7 +161,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :kiali}} = assigns) do
     ~H"""
-    <.menu_item href={KubeResources.Kiali.view_url()} name="Kiali" is_active={@active == :kiali}>
+    <.menu_item href={} name="Kiali" is_active={@active == :kiali}>
       <.kiali_icon class={@icon_class} />
     </.menu_item>
     """
@@ -173,6 +175,14 @@ defmodule ControlServerWeb.LeftMenu do
       is_active={@active == :ip_address_pools}
     >
       <Heroicons.rectangle_group class={@icon_class} />
+    </.menu_item>
+    """
+  end
+
+  defp battery_menu_item(%{battery: %{type: :grafana}} = assigns) do
+    ~H"""
+    <.menu_item href={"//#{Hosts.grafana_host()}"} name="Grafana" is_active={@active == :grafana}>
+      <.grafana_icon class={@icon_class} />
     </.menu_item>
     """
   end

@@ -1,0 +1,11 @@
+apiVersion: 1
+providers:
+  - name: 'sidecarProvider'
+    orgId: 1
+    type: file
+    disableDeletion: false
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      foldersFromFilesStructure: true
+      path: /tmp/dashboards/

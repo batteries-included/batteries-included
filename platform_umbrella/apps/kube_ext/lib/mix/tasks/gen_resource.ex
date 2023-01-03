@@ -113,7 +113,7 @@ defmodule Mix.Tasks.Gen.Resource do
     do: process_resource(resource, resource_type(resource), app_name)
 
   defp process_resource(resource, nil, _app_name) do
-    raise "Unable to find canonical resource_type for #{K8Resource.kind(resource)} #{K8Resource.api_version(resource)}"
+    raise "Unable to find canonical resource_type for { #{inspect(K8Resource.api_version(resource))}, #{inspect(K8Resource.kind(resource))} }"
   end
 
   defp process_resource(resource, :crd = _resource_type, app_name) do

@@ -9,14 +9,18 @@ defmodule KubeExt.KubeState.Hosts do
     host("gitea")
   end
 
+  def grafana_host do
+    host("grafana")
+  end
+
   def harbor_host do
     host("harbor")
   end
 
-  def knative, do: host("webapp")
+  def knative, do: host("webapp", "user")
 
-  defp host(name) do
+  defp host(name, group \\ "core") do
     ip = IstioIngress.single_address()
-    "#{name}.#{ip}.ip.batteriesincl.com"
+    "#{name}.#{group}.#{ip}.ip.batteriesincl.com"
   end
 end

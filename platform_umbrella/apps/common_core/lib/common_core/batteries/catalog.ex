@@ -57,7 +57,11 @@ defmodule CommonCore.Batteries.Catalog do
     },
 
     # Monitoring
-
+    %CatalogBattery{
+      group: :monitoring,
+      type: :grafana,
+      dependencies: [:battery_core]
+    },
     #
     # Network/Security
     #

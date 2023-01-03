@@ -10,6 +10,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     DataConfig,
     EmptyConfig,
     GiteaConfig,
+    GrafanaConfig,
     HarborConfig,
     IstioConfig,
     KialiConfig,

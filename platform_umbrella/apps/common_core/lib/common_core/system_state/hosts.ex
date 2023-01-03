@@ -6,23 +6,31 @@ defmodule CommonCore.SystemState.Hosts do
   @default ["127.0.0.1"]
 
   def control_host(%StateSummary{} = state) do
-    state |> ingress_ips() |> List.first() |> host("control")
+    state |> ip() |> host("control")
   end
 
   def gitea_host(%StateSummary{} = state) do
-    state |> ingress_ips() |> List.last() |> host("gitea")
+    state |> ip() |> host("gitea")
+  end
+
+  def grafana_host(%StateSummary{} = state) do
+    state |> ip() |> host("grafana")
   end
 
   def harbor_host(%StateSummary{} = state) do
-    state |> ingress_ips() |> List.first() |> host("harbor")
+    state |> ip() |> host("harbor")
   end
 
   def knative_host(%StateSummary{} = state) do
-    state |> ingress_ips() |> List.first() |> host("webapp")
+    state |> ip() |> host("webapp", "user")
   end
 
-  defp host(ip, name) do
-    "#{name}.#{ip}.ip.batteriesincl.com"
+  defp ip(state) do
+    state |> ingress_ips() |> List.first()
+  end
+
+  defp host(ip, name, group \\ "core") do
+    "#{name}.#{group}.#{ip}.ip.batteriesincl.com"
   end
 
   defp ingress_ips(%StateSummary{} = state) do
