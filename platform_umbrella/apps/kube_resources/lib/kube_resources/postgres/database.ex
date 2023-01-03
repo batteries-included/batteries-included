@@ -114,7 +114,7 @@ defmodule KubeResources.Database do
         }
       ])
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.app_labels("postgres-operator")
     |> B.label("spilo-role", role)
     |> B.namespace(namespace)

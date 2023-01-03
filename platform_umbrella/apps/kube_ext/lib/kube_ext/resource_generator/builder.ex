@@ -4,21 +4,21 @@ defmodule KubeExt.Builder do
   @spec build_resource(atom | {String.t(), String.t()}) :: map()
   def build_resource(:secret = resource_type) do
     resource_type
-    |> ApiVersionKind.from_resource_type()
+    |> ApiVersionKind.from_resource_type!()
     |> build_resource()
     |> Map.put("type", "Opaque")
   end
 
   def build_resource(:job = resource_type) do
     resource_type
-    |> ApiVersionKind.from_resource_type()
+    |> ApiVersionKind.from_resource_type!()
     |> build_resource()
     |> annotation("sidecar.istio.io/inject", "false")
   end
 
   def build_resource(resource_type) when is_atom(resource_type) do
     resource_type
-    |> ApiVersionKind.from_resource_type()
+    |> ApiVersionKind.from_resource_type!()
     |> build_resource()
   end
 

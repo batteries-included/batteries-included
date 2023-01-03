@@ -39,8 +39,7 @@ defmodule ControlServerWeb.GroupBatteriesLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("start", %{"type" => type} = params, socket) do
-    dbg(params)
+  def handle_event("start", %{"type" => type} = _params, socket) do
     Installer.install(type)
     {:noreply, socket}
   end

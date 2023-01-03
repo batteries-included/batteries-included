@@ -8,45 +8,33 @@ defmodule KubeResources.ConfigGenerator do
   alias KubeExt.SystemState.StateSummary
 
   alias KubeResources.{
-    BatteryCore,
     BatteryCA,
-    IstioBase,
-    IstioIstiod,
-    IstioMetrics,
-    IstioCsr,
-    PostgresOperator,
+    BatteryCore,
+    CephClusters,
+    CephFilesystems,
+    CertManager,
     ControlServerResources,
     Data,
     DatabaseInternal,
     DatabasePublic,
     Gitea,
+    Harbor,
+    IstioBase,
+    IstioCsr,
     IstioGateway,
+    IstioIstiod,
+    IstioMetrics,
     Kiali,
     KnativeOperator,
     KnativeServing,
     ML,
-    Notebooks,
-    Redis,
-    RedisOperator,
-    Harbor,
-    Rook,
-    CephFilesystems,
-    CephClusters,
-    PrometheusOperator,
-    Prometheus,
-    Grafana,
-    Alertmanager,
-    NodeExporter,
-    KubeStateMetrics,
-    Loki,
-    Promtail,
-    MonitoringApiServer,
-    MonitoringCoredns,
-    MonitoringKubelet,
-    PrometheusStack,
     MetalLB,
     MetalLBIPPool,
-    CertManager,
+    Notebooks,
+    PostgresOperator,
+    Redis,
+    RedisOperator,
+    Rook,
     TrustManager
   }
 
@@ -55,7 +43,6 @@ defmodule KubeResources.ConfigGenerator do
   require Logger
 
   @default_generator_mappings [
-    alertmanager: [&Alertmanager.materialize/2],
     battery_core: [&BatteryCore.materialize/2],
     battery_ca: [&BatteryCA.materialize/2],
     control_server: [&ControlServerResources.materialize/2],
@@ -65,7 +52,6 @@ defmodule KubeResources.ConfigGenerator do
     database_internal: [&DatabaseInternal.materialize/2],
     database_public: [&DatabasePublic.materialize/2],
     gitea: [&Gitea.materialize/2],
-    grafana: [&Grafana.materialize/2],
     harbor: [&Harbor.materialize/2],
     istio: [&IstioBase.materialize/2, &IstioIstiod.materialize/2, &IstioMetrics.materialize/2],
     istio_gateway: [&IstioGateway.materialize/2],
@@ -73,21 +59,11 @@ defmodule KubeResources.ConfigGenerator do
     kiali: [&Kiali.materialize/2],
     knative_operator: [&KnativeOperator.materialize/2],
     knative_serving: [&KnativeServing.materialize/2],
-    kube_state_metrics: [&KubeStateMetrics.materialize/2],
-    loki: [&Loki.materialize/2],
     metallb: [&MetalLB.materialize/2],
     metallb_ip_pool: [&MetalLBIPPool.materialize/2],
     ml_core: [&ML.Core.materialize/2],
-    monitoring_api_server: [&MonitoringApiServer.materialize/2],
-    monitoring_coredns: [&MonitoringCoredns.materialize/2],
-    monitoring_kubelet: [&MonitoringKubelet.materialize/2],
-    node_exporter: [&NodeExporter.materialize/2],
     notebooks: [&Notebooks.materialize/2],
     postgres_operator: [&PostgresOperator.materialize/2],
-    prometheus: [&Prometheus.materialize/2],
-    prometheus_operator: [&PrometheusOperator.materialize/2],
-    prometheus_stack: [&PrometheusStack.materialize/2],
-    promtail: [&Promtail.materialize/2],
     redis_operator: [&RedisOperator.materialize/2],
     redis: [&Redis.materialize/2],
     rook: [&Rook.materialize/2, &CephFilesystems.materialize/2, &CephClusters.materialize/2]
@@ -101,6 +77,7 @@ defmodule KubeResources.ConfigGenerator do
     state.batteries
     |> Enum.map(fn system_battery ->
       generators = Keyword.fetch!(mappings, system_battery.type)
+
       materialize_system_battery(system_battery, state, generators)
     end)
     |> Enum.reduce(%{}, &Map.merge/2)

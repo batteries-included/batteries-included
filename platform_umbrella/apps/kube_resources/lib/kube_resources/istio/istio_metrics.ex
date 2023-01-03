@@ -62,7 +62,7 @@ defmodule KubeResources.IstioMetrics do
         }
       )
 
-    B.build_resource(:pod_monitor)
+    B.build_resource(:monitoring_pod_monitor)
     |> B.name("envoy-stats-monitor")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
@@ -85,7 +85,7 @@ defmodule KubeResources.IstioMetrics do
       )
       |> Map.put("targetLabels", ["app"])
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.name("istio-component-monitor")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

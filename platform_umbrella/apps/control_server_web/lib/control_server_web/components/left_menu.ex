@@ -3,7 +3,6 @@ defmodule ControlServerWeb.LeftMenu do
 
   import CommonUI.Icons.Database
   import CommonUI.Icons.Devtools
-  import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Notebook
   import CommonUI.Icons.Network
   import CommonUI.Icons.Rook
@@ -47,20 +46,22 @@ defmodule ControlServerWeb.LeftMenu do
     assign(socket, :group, group)
   end
 
-  attr :name, :string, required: true
-  attr :navigate, :any
-  attr :href, :any
-  attr :is_active, :boolean, default: false
+  attr(:name, :string, required: true)
+  attr(:navigate, :any)
+  attr(:href, :any)
+  attr(:is_active, :boolean, default: false)
 
-  attr :active_class, :string,
+  attr(:active_class, :string,
     default:
       "text-pink-500 hover:text-pink-600 hover:bg-secondary-50/50 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
+  )
 
-  attr :inactive_class, :string,
+  attr(:inactive_class, :string,
     default:
       "text-gray-600 hover:text-gray-900 hover:bg-secondary-50/50 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
+  )
 
-  slot :inner_block
+  slot(:inner_block)
 
   defp menu_item(%{navigate: _} = assigns) do
     ~H"""
@@ -87,10 +88,10 @@ defmodule ControlServerWeb.LeftMenu do
   defp menu_item_class(true = _is_active, active_class, _), do: active_class
   defp menu_item_class(false = _is_active, _, inactive_class), do: inactive_class
 
-  attr :battery, :any, default: %{type: :unknown}
-  attr :active, :string, default: nil
+  attr(:battery, :any, default: %{type: :unknown})
+  attr(:active, :string, default: nil)
 
-  attr :icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
+  attr(:icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group")
 
   defp battery_menu_item(%{battery: %{type: :postgres_operator}} = assigns) do
     ~H"""
@@ -140,38 +141,6 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  defp battery_menu_item(%{battery: %{type: :grafana}} = assigns) do
-    ~H"""
-    <.menu_item href={KubeResources.Grafana.view_url()} name="Grafana" is_active={@active == :grafana}>
-      <.grafana_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :prometheus}} = assigns) do
-    ~H"""
-    <.menu_item
-      href={KubeResources.Prometheus.view_url()}
-      name="Prometheus"
-      is_active={@active == :prometheus}
-    >
-      <.prometheus_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :alertmanager}} = assigns) do
-    ~H"""
-    <.menu_item
-      href={KubeResources.Alertmanager.view_url()}
-      name="Alert Manager"
-      is_active={@active == :alertmanager}
-    >
-      <.alertmanager_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
   defp battery_menu_item(%{battery: %{type: :gitea}} = assigns) do
     ~H"""
     <.menu_item href={KubeResources.Gitea.view_url()} name="Gitea" is_active={@active == :gitea}>
@@ -210,10 +179,10 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: _}} = assigns), do: ~H||
 
-  attr :active, :string, default: nil
-  attr :group, :any
+  attr(:active, :string, default: nil)
+  attr(:group, :any)
 
-  attr :icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group"
+  attr(:icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group")
 
   defp group_menu_item(%{group: :magic} = assigns) do
     ~H"""

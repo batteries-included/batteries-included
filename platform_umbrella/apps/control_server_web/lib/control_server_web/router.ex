@@ -55,9 +55,6 @@ defmodule ControlServerWeb.Router do
     live "/ip_address_pools", Live.IPAddressPool.Index, :index
 
     live "/kiali", Live.Iframe, :kiali
-    live "/grafana", Live.Iframe, :grafana
-    live "/alertmanager", Live.Iframe, :alertmanager
-    live "/prometheus", Live.Iframe, :prometheus
     live "/gitea", Live.Iframe, :gitea
 
     live "/kube/deployments", Live.ResourceList, :deployment

@@ -248,7 +248,7 @@ defmodule KubeResources.IstioCsr do
         }
       })
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

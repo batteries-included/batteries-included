@@ -298,7 +298,7 @@ defmodule KubeResources.MetalLB do
   resource(:pod_monitor_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:pod_monitor)
+    B.build_resource(:monitoring_pod_monitor)
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
@@ -317,7 +317,7 @@ defmodule KubeResources.MetalLB do
   resource(:pod_monitor_speaker, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:pod_monitor)
+    B.build_resource(:monitoring_pod_monitor)
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
@@ -542,7 +542,7 @@ defmodule KubeResources.MetalLB do
   resource(:service_monitor_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.name("metallb-controller-monitor")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
@@ -559,7 +559,7 @@ defmodule KubeResources.MetalLB do
   resource(:service_monitor_speaker, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.name("metallb-speaker-monitor")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

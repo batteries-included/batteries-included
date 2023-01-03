@@ -175,7 +175,7 @@ defmodule KubeResources.RedisOperator do
         }
       )
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

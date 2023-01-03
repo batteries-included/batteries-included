@@ -28,9 +28,16 @@ defmodule ControlServer.Batteries.Installer do
 
   def install(type) when is_atom(type) do
     Logger.info("Begining install of #{type}")
-    catalog_battery = Catalog.get(type)
-    Logger.debug("Found catalog service", catalog_battery: catalog_battery)
-    install(catalog_battery)
+
+    case Catalog.get(type) do
+      %{} = catalog_battery ->
+        Logger.debug("Found catalog service", catalog_battery: catalog_battery)
+
+        install(catalog_battery)
+
+      _ ->
+        {:error, reason: "Can't find #{inspect(type)} got unexpected result"}
+    end
   end
 
   def install(%CatalogBattery{} = catalog_battery) do

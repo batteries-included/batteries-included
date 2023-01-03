@@ -1,8 +1,5 @@
 defmodule KubeResources.Redis do
   @moduledoc false
-  use KubeExt.IncludeResource,
-    crd: "priv/manifests/redis/databases.spotahome.com_redisfailovers.yaml"
-
   use KubeExt.ResourceGenerator
 
   import KubeExt.SystemState.Namespaces

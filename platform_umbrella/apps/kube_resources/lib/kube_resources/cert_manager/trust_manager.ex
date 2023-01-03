@@ -230,7 +230,7 @@ defmodule KubeResources.TrustManager do
       |> Map.put("jobLabel", @app_name)
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

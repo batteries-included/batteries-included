@@ -29,8 +29,6 @@ defmodule KubeServices.KubeStateCoverageTest do
 
     # Gotta look into why this is here
     {"install.istio.io/v1alpha1", "IstioOperator"},
-    # No use for this
-    {"monitoring.coreos.com/v1", "ThanosRuler"},
 
     # BGP will come later
     {"metallb.io/v1beta1", "BGPAdvertisement"},

@@ -6,7 +6,7 @@ defmodule KubeExt.SystemState.SeedState do
   def seed, do: seed(KubeExt.cluster_type())
 
   def seed(:everything) do
-    %StateSummary{
+    state_summary = %StateSummary{
       batteries: Defaults.Catalog.all(),
       postgres_clusters: [
         Defaults.ControlDB.control_cluster(),
@@ -15,6 +15,8 @@ defmodule KubeExt.SystemState.SeedState do
       ],
       redis_clusters: [Defaults.HarborDB.harbor_redis_cluster()]
     }
+
+    add_docker_lb_ips(state_summary)
   end
 
   def seed(_type) do

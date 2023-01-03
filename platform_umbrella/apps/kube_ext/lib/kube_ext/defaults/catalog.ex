@@ -4,6 +4,8 @@ defmodule KubeExt.Defaults.Catalog do
   alias KubeExt.Defaults.Images
   alias KubeExt.Defaults
 
+  require Logger
+
   @all [
     # Data
     %CatalogBattery{group: :data, type: :data, dependencies: []},
@@ -58,83 +60,7 @@ defmodule KubeExt.Defaults.Catalog do
     },
 
     # Monitoring
-    %CatalogBattery{
-      group: :monitoring,
-      type: :prometheus_operator,
-      dependencies: [:battery_core]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :grafana,
-      dependencies: [:prometheus_operator, :istio_gateway]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :alertmanager,
-      dependencies: [:prometheus_operator, :istio_gateway]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :prometheus,
-      dependencies: [:prometheus_operator, :istio_gateway]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :kube_state_metrics,
-      dependencies: [:prometheus]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :node_exporter,
-      dependencies: [:prometheus]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :monitoring_api_server,
-      dependencies: [:prometheus, :grafana]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :monitoring_coredns,
-      dependencies: [:prometheus, :grafana]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :monitoring_kubelet,
-      dependencies: [:prometheus, :grafana]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :prometheus_stack,
-      dependencies: [
-        :battery_core,
-        :prometheus_operator,
-        :grafana,
-        :alertmanager,
-        :prometheus,
-        :node_exporter,
-        :kube_state_metrics,
-        :monitoring_api_server,
-        :monitoring_coredns,
-        :monitoring_kubelet
-      ]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :loki,
-      dependencies: [
-        :battery_core,
-        :prometheus_operator,
-        :prometheus,
-        :grafana,
-        :istio_gateway
-      ]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :promtail,
-      dependencies: [:loki]
-    },
+
     #
     # Network/Security
     #
@@ -153,7 +79,7 @@ defmodule KubeExt.Defaults.Catalog do
     %CatalogBattery{
       group: :net_sec,
       type: :kiali,
-      dependencies: [:istio, :istio_gateway, :prometheus, :grafana]
+      dependencies: [:istio, :istio_gateway]
     },
     %CatalogBattery{
       group: :net_sec,
@@ -198,8 +124,14 @@ defmodule KubeExt.Defaults.Catalog do
 
   def get(type) do
     @all
-    |> Enum.find(&(&1.type == type))
-    |> then(fn catalog_battery -> add_config(catalog_battery) end)
+    |> Enum.find(nil, &(&1.type == type))
+    |> then(fn
+      nil ->
+        nil
+
+      %{} = catalog_battery ->
+        add_config(catalog_battery)
+    end)
   end
 
   def battery_type_map do
@@ -284,51 +216,6 @@ defmodule KubeExt.Defaults.Catalog do
 
   defp default_config(:knative_serving = type),
     do: %{__type__: type, namespace: Namespaces.knative()}
-
-  defp default_config(:prometheus_operator = type),
-    do: %{
-      __type__: type,
-      kubelet_service: Defaults.Monitoring.kubelet_service(),
-      image: Images.prometheus_operator_image(),
-      reloader_image: Images.prometheus_reloader_image()
-    }
-
-  defp default_config(:prometheus = type),
-    do: %{
-      __type__: type,
-      version: Defaults.Monitoring.prometheus_version(),
-      image: Images.prometheus_image(),
-      retention: Defaults.Monitoring.prometheus_retention()
-    }
-
-  defp default_config(:alertmanager = type),
-    do: %{
-      __type__: type,
-      version: Defaults.Monitoring.alertmanager_version(),
-      image: Images.alertmanager_image()
-    }
-
-  defp default_config(:grafana = type),
-    do: %{
-      __type__: type,
-      image: Images.grafana_image(),
-      sidecar_image: Images.kiwigrid_sidecar_image()
-    }
-
-  defp default_config(:loki = type),
-    do: %{
-      __type__: type,
-      image: Images.loki_image(),
-      agent_operator_image: Images.grafana_agent_operator_image()
-    }
-
-  defp default_config(:promtail = type), do: %{__type__: type, image: Images.promtail_image()}
-
-  defp default_config(:kube_state_metrics = type),
-    do: %{__type__: type, image: Images.kube_state_image()}
-
-  defp default_config(:node_exporter = type),
-    do: %{__type__: type, image: Images.node_exporter_image()}
 
   defp default_config(:kiali = type),
     do: %{

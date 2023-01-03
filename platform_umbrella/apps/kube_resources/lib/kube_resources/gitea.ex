@@ -70,7 +70,7 @@ defmodule KubeResources.Gitea do
         %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "gitea"}}
       )
 
-    B.build_resource(:service_monitor)
+    B.build_resource(:monitoring_service_monitor)
     |> B.name("gitea")
     |> B.app_labels(@app_name)
     |> B.namespace(namespace)

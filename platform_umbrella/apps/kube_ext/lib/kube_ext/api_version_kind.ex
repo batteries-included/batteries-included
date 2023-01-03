@@ -36,18 +36,6 @@ defmodule KubeExt.ApiVersionKind do
     istio_request_auth: {"security.istio.io/v1beta1", "RequestAuthentication"},
     istio_wasm_plugin: {"extensions.istio.io/v1alpha1", "WasmPlugin"},
     kiali: {"kiali.io/v1alpha1", "Kiali"},
-    service_monitor: {"monitoring.coreos.com/v1", "ServiceMonitor"},
-    pod_monitor: {"monitoring.coreos.com/v1", "PodMonitor"},
-    prometheus: {"monitoring.coreos.com/v1", "Prometheus"},
-    prometheus_rule: {"monitoring.coreos.com/v1", "PrometheusRule"},
-    alertmanager: {"monitoring.coreos.com/v1", "Alertmanager"},
-    alertmanager_config: {"monitoring.coreos.com/v1alpha1", "AlertmanagerConfig"},
-    grafana_agent: {"monitoring.grafana.com/v1alpha1", "GrafanaAgent"},
-    grafana_integration: {"monitoring.grafana.com/v1alpha1", "Integration"},
-    grafana_logs_instance: {"monitoring.grafana.com/v1alpha1", "LogsInstance"},
-    grafana_metrics_instance: {"monitoring.grafana.com/v1alpha1", "MetricsInstance"},
-    grafana_pod_logs: {"monitoring.grafana.com/v1alpha1", "PodLogs"},
-    monitoring_probe: {"monitoring.coreos.com/v1", "Probe"},
     knative_serving: {"operator.knative.dev/v1beta1", "KnativeServing"},
     knative_eventing: {"operator.knative.dev/v1beta1", "KnativeEventing"},
     knative_service: {"serving.knative.dev/v1", "Service"},
@@ -68,11 +56,16 @@ defmodule KubeExt.ApiVersionKind do
     ceph_filesystem: {"ceph.rook.io/v1", "CephFilesystem"},
     metal_ip_address_pool: {"metallb.io/v1beta1", "IPAddressPool"},
     metal_address_pool: {"metallb.io/v1beta1", "AddressPool"},
-    metal_l2_advertisement: {"metallb.io/v1beta1", "L2Advertisement"}
+    metal_l2_advertisement: {"metallb.io/v1beta1", "L2Advertisement"},
+    monitoring_service_monitor: {"monitoring.coreos.com/v1", "ServiceMonitor"},
+    monitoring_pod_monitor: {"monitoring.coreos.com/v1", "PodMonitor"}
   ]
 
   @spec from_resource_type(atom) :: {binary(), binary()} | nil
   def from_resource_type(resource_type), do: Keyword.get(@known, resource_type, nil)
+
+  @spec from_resource_type!(atom) :: {binary(), binary()}
+  def from_resource_type!(resource_type), do: Keyword.fetch!(@known, resource_type)
 
   @spec all_known :: [atom()]
   def all_known, do: Keyword.keys(@known)
