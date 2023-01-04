@@ -36,7 +36,7 @@ defmodule CommonCore.Defaults.Images do
   def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.21.0"
 
   def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.4.0"
-  def kube_state_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.6.0"
+  def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.6.0"
   def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.24.0"
 
   def promtail_image, do: "grafana/promtail:2.7.0"
