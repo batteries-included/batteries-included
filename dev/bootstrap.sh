@@ -20,8 +20,16 @@ error() {
   exit "${code}"
 }
 
+killSpawned() {
+  # process group inheritance doesn't play nice with long running System.cmd's from elixir, so specifically kill the
+  # kubectl port-forward by using lsof (present on Mac OS and available across all linuces) and then kill all
+  # process-group members
+  kill -- $(lsof -t -i :5432) -$$
+}
+
 trap 'error ${LINENO} Trap:' ERR
-trap 'trap - SIGTERM && kill -- -$$' SIGINT SIGTERM EXIT
+
+trap "trap - SIGTERM && killSpawned" SIGINT SIGTERM EXIT
 
 retry() {
   local n
@@ -65,43 +73,14 @@ kindCluster() {
   popd
 }
 
-portForward() {
-  local target
-  local portMap
-  local namespace
-
-  target=$1
-  portMap=$2
-  namespace=$3
-
-  if kubectl get ns "${namespace}"; then
-
-    set +e
-    kubectl port-forward "${target}" "${portMap}" -n "${namespace}" --address 0.0.0.0
-    local code=$?
-    set -e
-    echo "Exited"
-    return 1
-  else
-    return 0
-  fi
-}
-
-postgresForward() {
-  local cluster
-  local port
-  local ns
-  local pod
-
-  cluster=$1
-  port=$2
-  ns=${3:-"battery-base"}
-  pod=$(kubectl \
-    get pods \
-    -o jsonpath={.items..metadata.name} \
-    -n "${ns}" \
-    -l "application=spilo,cluster-name=${cluster},spilo-role=master")
-  portForward "pods/${pod}" "${port}:5432" "${ns}"
+postgresForwardControl() {
+  pushd "${DIR}/../platform_umbrella/apps/cli_core"
+  set +e
+  mix run -e "CLICore.Kubectl.postgres_forward_control"
+  set -e
+  echo "Exited"
+  popd
+  return 1
 }
 
 buildLocalControl() {
@@ -129,10 +108,6 @@ while (("$#")); do
       ;;
     -d | --dont-create-cluster)
       CREATE_CLUSTER=false
-      shift
-      ;;
-    -b | --forward-home-base)
-      FORWARD_HOME_POSTGRES=true
       shift
       ;;
     -D | --dont-forward-control)
@@ -172,11 +147,7 @@ fi
 mixBootstrap
 
 if [ "${FORWARD_CONTROL_POSTGRES}" == "true" ]; then
-  (retry postgresForward "pg-control" "5432") &
-fi
-
-if [[ "${FORWARD_HOME_POSTGRES}" == "true" ]]; then
-  (retry postgresForward "default-home-base" "5433") &
+  (retry postgresForwardControl) &
 fi
 
 wait
