@@ -55,4 +55,9 @@ defmodule CommonCore.Defaults.Images do
 
   def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.7"
   def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.7"
+
+  def vm_cluster_tag, do: "v1.85.3-cluster"
+  def vm_tag, do: "v1.85.3"
+
+  def vmoperator_image, do: "victoriametrics/operator:v0.29.2"
 end

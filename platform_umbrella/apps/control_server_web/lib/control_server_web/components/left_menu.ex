@@ -187,6 +187,25 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
+  defp battery_menu_item(%{battery: %{type: :victoria_metrics}} = assigns) do
+    ~H"""
+    <.menu_item
+      href={"//#{Hosts.vmselect_host()}/select/0/vmui"}
+      name="VM Select"
+      is_active={@active == :victoria_metrics}
+    >
+      <.victoria_metrics_icon class={@icon_class} />
+    </.menu_item>
+    <.menu_item
+      href={"//#{Hosts.vmagent_host()}"}
+      name="VM Agent"
+      is_active={@active == :victoria_metrics}
+    >
+      <.victoria_metrics_icon class={@icon_class} />
+    </.menu_item>
+    """
+  end
+
   defp battery_menu_item(%{battery: %{type: _}} = assigns), do: ~H||
 
   attr(:active, :string, default: nil)

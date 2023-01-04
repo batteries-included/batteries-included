@@ -23,7 +23,8 @@ defmodule CommonCore.Batteries.SystemBattery do
     NodeExporterConfig,
     PostgresOperatorConfig,
     RedisOperatorConfig,
-    RookConfig
+    RookConfig,
+    VictoriaMetricsConfig
   }
 
   @possible_types [
@@ -53,7 +54,8 @@ defmodule CommonCore.Batteries.SystemBattery do
     rook: RookConfig,
     cert_manager: EmptyConfig,
     trust_manager: EmptyConfig,
-    battery_ca: EmptyConfig
+    battery_ca: EmptyConfig,
+    victoria_metrics: VictoriaMetricsConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)

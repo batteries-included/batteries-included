@@ -210,7 +210,7 @@ defmodule KubeResources.TrustManager do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_monitor_trust_manager, _battery, state) do
@@ -236,7 +236,7 @@ defmodule KubeResources.TrustManager do
     |> B.app_labels(@app_name)
     |> B.label("prometheus", "default")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:validating_webhook_config_trust_manager, _battery, state) do

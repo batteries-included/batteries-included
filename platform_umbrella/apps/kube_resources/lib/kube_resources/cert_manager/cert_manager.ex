@@ -1104,7 +1104,7 @@ defmodule KubeResources.CertManager do
     |> B.component_label(component)
     |> B.label("prometheus", "default")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:validating_webhook_config_cert_manager, _battery, state) do

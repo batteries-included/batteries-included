@@ -93,7 +93,7 @@ defmodule ControlServerWeb.GroupBatteriesLive do
     """
   end
 
-  attr(:battery, :any, required: true)
+  attr :battery, :any, required: true
 
   def start_button(assigns) do
     ~H"""

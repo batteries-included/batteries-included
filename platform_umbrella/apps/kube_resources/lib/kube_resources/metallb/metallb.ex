@@ -308,10 +308,10 @@ defmodule KubeResources.MetalLB do
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
       "selector" => %{
-        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}
       }
     })
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:pod_monitor_speaker, _battery, state) do
@@ -327,10 +327,10 @@ defmodule KubeResources.MetalLB do
       "namespaceSelector" => %{"matchNames" => [namespace]},
       "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
       "selector" => %{
-        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
       }
     })
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:role_binding_controller, _battery, state) do
@@ -340,6 +340,7 @@ defmodule KubeResources.MetalLB do
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+    |> B.component_label("controller")
     |> B.role_ref(B.build_role_ref("metallb-controller"))
     |> B.subject(B.build_service_account("metallb-controller", namespace))
   end
@@ -351,19 +352,9 @@ defmodule KubeResources.MetalLB do
     |> B.name("metallb-pod-lister")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+    |> B.component_label("speaker")
     |> B.role_ref(B.build_role_ref("metallb-pod-lister"))
     |> B.subject(B.build_service_account("metallb-speaker", namespace))
-  end
-
-  resource(:role_binding_prometheus, _battery, state) do
-    namespace = base_namespace(state)
-
-    B.build_resource(:role_binding)
-    |> B.name("metallb-prometheus")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.role_ref(B.build_role_ref("metallb-prometheus"))
-    |> B.subject(B.build_service_account("battery-prometheus-prometheus", namespace))
   end
 
   resource(:role_controller, _battery, state) do
@@ -478,18 +469,6 @@ defmodule KubeResources.MetalLB do
     ])
   end
 
-  resource(:role_prometheus, _battery, state) do
-    namespace = base_namespace(state)
-
-    B.build_resource(:role)
-    |> B.name("metallb-prometheus")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.rules([
-      %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["get", "list", "watch"]}
-    ])
-  end
-
   resource(:secret_webhook_server_cert, _battery, state) do
     namespace = base_namespace(state)
     data = %{}
@@ -529,14 +508,11 @@ defmodule KubeResources.MetalLB do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.component_label("controller")
-    |> B.label("name", "metallb-controller-monitor-service")
     |> B.spec(%{
       "ports" => [%{"name" => "metrics", "port" => 7472, "targetPort" => 7472}],
-      "selector" => %{"battery/app" => @app_name, "battery/component" => "controller"},
-      "sessionAffinity" => "None",
-      "type" => "ClusterIP"
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "controller"}
     })
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_monitor_controller, _battery, state) do
@@ -548,12 +524,14 @@ defmodule KubeResources.MetalLB do
     |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.spec(%{
-      "endpoints" => [%{"honorLabels" => true, "port" => "metrics"}],
       "jobLabel" => "app.kubernetes.io/name",
+      "endpoints" => [%{"honorLabels" => true, "port" => "metrics"}],
       "namespaceSelector" => %{"matchNames" => [namespace]},
-      "selector" => %{"matchLabels" => %{"name" => "metallb-controller-monitor-service"}}
+      "selector" => %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}
+      }
     })
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_monitor_speaker, _battery, state) do
@@ -565,12 +543,14 @@ defmodule KubeResources.MetalLB do
     |> B.app_labels(@app_name)
     |> B.component_label("speaker")
     |> B.spec(%{
-      "endpoints" => [%{"honorLabels" => true, "port" => "metrics"}],
       "jobLabel" => "app.kubernetes.io/name",
+      "endpoints" => [%{"honorLabels" => true, "port" => "metrics"}],
       "namespaceSelector" => %{"matchNames" => [namespace]},
-      "selector" => %{"matchLabels" => %{"name" => "metallb-speaker-monitor-service"}}
+      "selector" => %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
+      }
     })
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_speaker_monitor, _battery, state) do
@@ -579,14 +559,13 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:service)
     |> B.name("metallb-speaker-monitor-service")
     |> B.namespace(namespace)
+    |> B.component_label("speaker")
     |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [%{"name" => "metrics", "port" => 7472, "targetPort" => 7472}],
-      "selector" => %{"battery/app" => @app_name, "battery/component" => "speaker"},
-      "sessionAffinity" => "None",
-      "type" => "ClusterIP"
+      "selector" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
     })
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_webhook, _battery, state) do
@@ -597,6 +576,7 @@ defmodule KubeResources.MetalLB do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(%{
+      "jobLabel" => "battery/app",
       "ports" => [%{"port" => 443, "targetPort" => 9443}],
       "selector" => %{"battery/app" => @app_name, "battery/component" => "controller"}
     })

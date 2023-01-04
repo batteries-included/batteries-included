@@ -181,7 +181,7 @@ defmodule KubeResources.RedisOperator do
     |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_redis_operator, _battery, state) do
@@ -202,6 +202,6 @@ defmodule KubeResources.RedisOperator do
     |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 end

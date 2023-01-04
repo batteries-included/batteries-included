@@ -5,7 +5,7 @@ defmodule ControlServerWeb.KnativeServicesTable do
 
   alias KubeResources.KnativeServing, as: KnativeResources
 
-  attr(:knative_services, :list, required: true)
+  attr :knative_services, :list, required: true
 
   def knative_services_table(assigns) do
     ~H"""

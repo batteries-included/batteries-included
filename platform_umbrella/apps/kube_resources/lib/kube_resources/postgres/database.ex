@@ -90,7 +90,7 @@ defmodule KubeResources.Database do
     |> B.name(service_name)
     |> B.spec(spec)
     |> add_owner(cluster)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   def service_monitor(%{} = cluster, _battery, state, role) do
@@ -121,7 +121,7 @@ defmodule KubeResources.Database do
     |> B.name(monitor_name)
     |> B.spec(spec)
     |> add_owner(cluster)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   defp exporter_sidecar(cluster) do

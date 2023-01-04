@@ -68,7 +68,7 @@ defmodule KubeResources.IstioMetrics do
     |> B.app_labels(@app_name)
     |> B.label("monitoring", "istio-proxies")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_monitor_istio_component, _battery, state) do
@@ -91,6 +91,6 @@ defmodule KubeResources.IstioMetrics do
     |> B.app_labels(@app_name)
     |> B.label("monitoring", "istio-components")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 end

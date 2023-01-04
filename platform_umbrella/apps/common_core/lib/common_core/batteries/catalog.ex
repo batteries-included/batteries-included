@@ -72,6 +72,11 @@ defmodule CommonCore.Batteries.Catalog do
       type: :node_exporter,
       dependencies: [:battery_core]
     },
+    %CatalogBattery{
+      group: :monitoring,
+      type: :victoria_metrics,
+      dependencies: [:battery_core]
+    },
     #
     # Network/Security
     #

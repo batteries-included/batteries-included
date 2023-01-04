@@ -38,7 +38,10 @@ defmodule KubeResources.ConfigGenerator do
     Redis,
     RedisOperator,
     Rook,
-    TrustManager
+    TrustManager,
+    VMAgent,
+    VMCluster,
+    VMOperator
   }
 
   alias KubeResources.ControlServer, as: ControlServerResources
@@ -72,7 +75,12 @@ defmodule KubeResources.ConfigGenerator do
     redis: [&Redis.materialize/2],
     redis_operator: [&RedisOperator.materialize/2],
     rook: [&Rook.materialize/2, &CephFilesystems.materialize/2, &CephClusters.materialize/2],
-    trust_manager: [&TrustManager.materialize/2]
+    trust_manager: [&TrustManager.materialize/2],
+    victoria_metrics: [
+      &VMOperator.materialize/2,
+      &VMCluster.materialize/2,
+      &VMAgent.materialize/2
+    ]
   ]
 
   @spec materialize(StateSummary.t()) :: map()

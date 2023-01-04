@@ -4,6 +4,7 @@ defmodule KubeResources.NodeExporter do
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
+  alias KubeExt.FilterResource, as: F
 
   @app_name "node-exporter"
 
@@ -145,6 +146,7 @@ defmodule KubeResources.NodeExporter do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_node_exporter_prometheus_node_exporter, _battery, state) do
@@ -165,5 +167,6 @@ defmodule KubeResources.NodeExporter do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+    |> F.require_battery(state, :victoria_metrics)
   end
 end

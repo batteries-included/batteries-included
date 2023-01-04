@@ -17,6 +17,14 @@ defmodule CommonCore.SystemState.Hosts do
     state |> ip() |> host("grafana")
   end
 
+  def vmselect_host(%StateSummary{} = state) do
+    state |> ip() |> host("vmselect")
+  end
+
+  def vmagent_host(%StateSummary{} = state) do
+    state |> ip() |> host("vmagent")
+  end
+
   def harbor_host(%StateSummary{} = state) do
     state |> ip() |> host("harbor")
   end

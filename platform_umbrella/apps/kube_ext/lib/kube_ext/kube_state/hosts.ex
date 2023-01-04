@@ -13,6 +13,14 @@ defmodule KubeExt.KubeState.Hosts do
     host("grafana")
   end
 
+  def vmselect_host do
+    host("vmselect")
+  end
+
+  def vmagent_host do
+    host("vmagent")
+  end
+
   def harbor_host do
     host("harbor")
   end

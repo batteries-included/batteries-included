@@ -223,7 +223,7 @@ defmodule KubeResources.IstioCsr do
     |> B.app_labels(@app_name)
     |> B.component_label("metrics")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:service_monitor_cert_manager_istio_csr, _battery, state) do
@@ -255,6 +255,6 @@ defmodule KubeResources.IstioCsr do
     |> B.component_label("metrics")
     |> B.label("prometheus", "default")
     |> B.spec(spec)
-    |> F.require_battery(state, :prometheus)
+    |> F.require_battery(state, :victoria_metrics)
   end
 end

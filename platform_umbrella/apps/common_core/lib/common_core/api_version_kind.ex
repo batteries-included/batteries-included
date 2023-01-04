@@ -55,8 +55,20 @@ defmodule CommonCore.ApiVersionKind do
     metal_ip_address_pool: {"metallb.io/v1beta1", "IPAddressPool"},
     metal_address_pool: {"metallb.io/v1beta1", "AddressPool"},
     metal_l2_advertisement: {"metallb.io/v1beta1", "L2Advertisement"},
-    monitoring_service_monitor: {"monitoring.coreos.com/v1", "ServiceMonitor"},
-    monitoring_pod_monitor: {"monitoring.coreos.com/v1", "PodMonitor"}
+    monitoring_node_monitor: {"operator.victoriametrics.com/v1beta1", "VMNodeScrape"},
+    monitoring_service_monitor: {"operator.victoriametrics.com/v1beta1", "VMServiceScrape"},
+    monitoring_pod_monitor: {"operator.victoriametrics.com/v1beta1", "VMPodScrape"},
+    monitoring_endpoint_monitor: {"operator.victoriametrics.com/v1beta1", "VMStaticScrape"},
+    monitoring_probe: {"operator.victoriametrics.com/v1beta1", "VMProbe"},
+    monitoring_rule: {"operator.victoriametrics.com/v1beta1", "VMRule"},
+    vm_alertmanager_config: {"operator.victoriametrics.com/v1beta1", "VMAlertmanagerConfig"},
+    vm_agent: {"operator.victoriametrics.com/v1beta1", "VMAgent"},
+    vm_alert: {"operator.victoriametrics.com/v1beta1", "VMAlert"},
+    vm_alertmanager: {"operator.victoriametrics.com/v1beta1", "VMAlertmanager"},
+    vm_cluster: {"operator.victoriametrics.com/v1beta1", "VMCluster"},
+    vm_single: {"operator.victoriametrics.com/v1beta1", "VMSingle"},
+    vm_auth: {"operator.victoriametrics.com/v1beta1", "VMAuth"},
+    vm_user: {"operator.victoriametrics.com/v1beta1", "VMUser"}
   ]
 
   @spec from_resource_type(atom) :: {binary(), binary()} | nil
