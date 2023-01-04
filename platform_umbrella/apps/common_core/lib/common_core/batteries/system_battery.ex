@@ -20,6 +20,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     MLCoreConfig,
     MetalLBConfig,
     MetalLBIPPoolConfig,
+    NodeExporterConfig,
     PostgresOperatorConfig,
     RedisOperatorConfig,
     RookConfig
@@ -44,6 +45,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     metallb: MetalLBConfig,
     metallb_ip_pool: MetalLBIPPoolConfig,
     ml_core: MLCoreConfig,
+    node_exporter: NodeExporterConfig,
     notebooks: EmptyConfig,
     postgres_operator: PostgresOperatorConfig,
     redis_operator: RedisOperatorConfig,

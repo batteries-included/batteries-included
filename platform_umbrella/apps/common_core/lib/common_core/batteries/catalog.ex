@@ -67,6 +67,11 @@ defmodule CommonCore.Batteries.Catalog do
       type: :kube_state_metrics,
       dependencies: [:battery_core]
     },
+    %CatalogBattery{
+      group: :monitoring,
+      type: :node_exporter,
+      dependencies: [:battery_core]
+    },
     #
     # Network/Security
     #
