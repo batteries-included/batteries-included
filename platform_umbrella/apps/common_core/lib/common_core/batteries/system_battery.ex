@@ -55,7 +55,8 @@ defmodule CommonCore.Batteries.SystemBattery do
     cert_manager: EmptyConfig,
     trust_manager: EmptyConfig,
     battery_ca: EmptyConfig,
-    victoria_metrics: VictoriaMetricsConfig
+    victoria_metrics: VictoriaMetricsConfig,
+    kube_monitoring: EmptyConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)

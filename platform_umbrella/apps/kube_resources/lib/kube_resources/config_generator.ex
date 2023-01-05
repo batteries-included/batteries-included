@@ -28,6 +28,7 @@ defmodule KubeResources.ConfigGenerator do
     Kiali,
     KnativeOperator,
     KnativeServing,
+    KubeMonitoring,
     KubeStateMetrics,
     ML,
     MetalLB,
@@ -80,7 +81,8 @@ defmodule KubeResources.ConfigGenerator do
       &VMOperator.materialize/2,
       &VMCluster.materialize/2,
       &VMAgent.materialize/2
-    ]
+    ],
+    kube_monitoring: [&KubeMonitoring.materialize/2]
   ]
 
   @spec materialize(StateSummary.t()) :: map()
