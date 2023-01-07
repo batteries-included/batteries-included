@@ -20,16 +20,9 @@ error() {
   exit "${code}"
 }
 
-killSpawned() {
-  # process group inheritance doesn't play nice with long running System.cmd's from elixir, so specifically kill the
-  # kubectl port-forward by using lsof (present on Mac OS and available across all linuces) and then kill all
-  # process-group members
-  kill -- $(lsof -t -i :5432) -$$
-}
-
 trap 'error ${LINENO} Trap:' ERR
 
-trap "trap - SIGTERM && killSpawned" SIGINT SIGTERM EXIT
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 retry() {
   local n
@@ -146,6 +139,7 @@ fi
 
 mixBootstrap
 
+# TODO: move postgresForwardControl directly into mixBootstrap
 if [ "${FORWARD_CONTROL_POSTGRES}" == "true" ]; then
   (retry postgresForwardControl) &
 fi

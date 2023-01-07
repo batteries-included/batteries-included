@@ -71,11 +71,25 @@ defmodule CLICore.Kubectl do
   end
 
   defp run_kubectl_command(kubectl_path, action, opts) do
-    args = kubectl_command_args(action, opts)
+    argstr = Enum.join(kubectl_command_args(action, opts), " ")
 
-    Logger.debug(Enum.join(args, " "))
+    # we wrap the command in a script to ensure that the process dies
+    # with the erlang vm when it gets torn down
+    shell_snippet = ~s"""
+    #{kubectl_path} #{argstr} &
+    pid=$!
 
-    case System.cmd(kubectl_path, args, stderr_to_stdout: true) do
+    exec >/dev/null 2>&1
+
+    trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+
+    wait $pid
+    exit $?
+    """
+
+    Logger.debug(argstr)
+
+    case System.cmd("/usr/bin/env", ["bash", "-c", "#{shell_snippet}"], stderr_to_stdout: true) do
       {stdouterr, 0} ->
         {:ok, stdouterr}
 
