@@ -21,7 +21,7 @@ defmodule KubeResources.Harbor do
   alias KubeResources.IstioConfig.VirtualService
 
   @app_name "harbor"
-  @postgres_credentials "harbor.pg-harbor.credentials.postgresql.acid.zalan.do"
+  @postgres_credentials "harbor.pg-harbor.credentials.postgresql"
 
   def view_url, do: view_url(KubeExt.cluster_type())
 

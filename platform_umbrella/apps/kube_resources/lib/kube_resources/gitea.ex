@@ -368,6 +368,6 @@ defmodule KubeResources.Gitea do
     team = Defaults.GiteaDB.db_team()
     cluster_name = Defaults.GiteaDB.db_name()
 
-    "#{user}.#{team}-#{cluster_name}.credentials.postgresql.acid.zalan.do"
+    "#{user}.#{team}-#{cluster_name}.credentials.postgresql"
   end
 end

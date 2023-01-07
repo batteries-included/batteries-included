@@ -175,15 +175,13 @@ defmodule KubeResources.PostgresOperator do
       "replicas" => 1,
       "selector" => %{
         "matchLabels" => %{
-          "battery/app" => @app_name,
-          "battery/component" => "postgres-operator"
+          "battery/app" => @app_name
         }
       },
       "template" => %{
         "metadata" => %{
           "labels" => %{
             "battery/app" => @app_name,
-            "battery/component" => "postgres-operator",
             "battery/managed" => "true"
           }
         },
@@ -312,7 +310,7 @@ defmodule KubeResources.PostgresOperator do
         "pod_service_account_name" => PostgresPod.service_account_name(),
         "inherited_labels" => ["sidecar.istio.io/inject", "battery/app", "battery/owner"],
         "pod_terminate_grace_period" => "5m",
-        "secret_name_template" => "{username}.{cluster}.credentials.{tprkind}.{tprgroup}",
+        "secret_name_template" => "{username}.{cluster}.credentials.{tprkind}",
         "spilo_allow_privilege_escalation" => true,
         "spilo_privileged" => false,
         "storage_resize_mode" => "pvc",
@@ -413,8 +411,7 @@ defmodule KubeResources.PostgresOperator do
     |> B.spec(%{
       "ports" => [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
       "selector" => %{
-        "battery/app" => "postgres-operator",
-        "battery/component" => "postgres-operator"
+        "battery/app" => @app_name
       },
       "type" => "ClusterIP"
     })

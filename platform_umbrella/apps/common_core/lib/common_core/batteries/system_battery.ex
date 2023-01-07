@@ -81,7 +81,7 @@ defmodule CommonCore.Batteries.SystemBattery do
       ]
     )
 
-    field(:type, Ecto.Enum, values: Keyword.keys(@possible_types))
+    field :type, Ecto.Enum, values: Keyword.keys(@possible_types)
 
     polymorphic_embeds_one(:config, types: @possible_types, on_replace: :update)
 

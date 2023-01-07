@@ -143,7 +143,7 @@ defmodule KubeResources.ControlServer do
     pg_cluster = Defaults.ControlDB.control_cluster()
     owner = pg_first_database().owner
 
-    "#{owner}.#{pg_cluster.name}.credentials.postgresql.acid.zalan.do"
+    "#{owner}.#{pg_cluster.name}.credentials.postgresql"
   end
 
   defp pg_db_name(_battery, _state) do

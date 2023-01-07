@@ -1,13 +1,15 @@
 defmodule KubeResources.Database do
   import CommonCore.SystemState.Namespaces
+  import CommonCore.SystemState.FromKubeState
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
+  alias KubeExt.Secret
 
   @exporter_port 9187
   @exporter_port_name "exporter"
 
-  @app_name "postgres-operator"
+  @app_name "postgres-database"
 
   @pg_hba [
     ["local", "all", "all", "trust"],
@@ -34,33 +36,6 @@ defmodule KubeResources.Database do
     |> B.label("sidecar.istio.io/inject", "false")
     |> B.spec(spec)
     |> add_owner(cluster)
-  end
-
-  defp namespace(%{type: :internal} = _cluster, state), do: base_namespace(state)
-  defp namespace(%{type: _} = _cluster, state), do: data_namespace(state)
-
-  defp postgres_spec(cluster) do
-    %{
-      "teamId" => cluster.team_name,
-      "numberOfInstances" => cluster.num_instances,
-      "postgresql" => %{
-        "version" => cluster.postgres_version,
-        "parameters" => %{
-          "log_destination" => "stderr",
-          "logging_collector" => "false",
-          "password_encryption" => "scram-sha-256"
-        }
-      },
-      "patroni" => %{"pg_hba" => pg_hba()},
-      "volume" => %{
-        "size" => cluster.storage_size
-      },
-      "users" => spec_users(cluster),
-      "databases" => spec_databases(cluster),
-      "sidecars" => [
-        exporter_sidecar(cluster)
-      ]
-    }
   end
 
   def metrics_service(%{} = cluster, _battery, state, role) do
@@ -115,13 +90,44 @@ defmodule KubeResources.Database do
       ])
 
     B.build_resource(:monitoring_service_monitor)
-    |> B.app_labels("postgres-operator")
+    |> B.app_labels(@app_name)
     |> B.label("spilo-role", role)
     |> B.namespace(namespace)
     |> B.name(monitor_name)
     |> B.spec(spec)
     |> add_owner(cluster)
     |> F.require_battery(state, :victoria_metrics)
+  end
+
+  def credential_copies(cluster, _battery, state) do
+    cluster
+    |> Map.get(:credential_copies, [])
+    |> Enum.map(fn pg_credential_copy ->
+      source_namespace = namespace(cluster, state)
+      secret_name = secret_name(cluster, pg_credential_copy.username)
+
+      with %{} = _dest_namespace <-
+             find_state_resource(state, :namespace, pg_credential_copy.namespace),
+           %{"data" => %{}} = source_secret <-
+             find_state_resource(state, :secret, source_namespace, secret_name) do
+        cred_copy(cluster, pg_credential_copy, source_secret, state)
+      else
+        _ ->
+          nil
+      end
+    end)
+    |> Enum.reject(fn r -> r == nil end)
+  end
+
+  defp cred_copy(cluster, pg_cred_copy, source_secret, state) do
+    secret_name = secret_name(cluster, pg_cred_copy.username)
+    source_data = extract_secret_data(source_secret)
+
+    B.build_resource(:secret)
+    |> B.name(secret_name)
+    |> B.namespace(pg_cred_copy.namespace)
+    |> add_owner(cluster)
+    |> B.data(credential_copy_spec(cluster, pg_cred_copy, source_data, state))
   end
 
   defp exporter_sidecar(cluster) do
@@ -147,7 +153,7 @@ defmodule KubeResources.Database do
           "name" => "DATA_SOURCE_USER",
           "valueFrom" => %{
             "secretKeyRef" => %{
-              "name" => "postgres.#{cluster_name}.credentials.postgresql.acid.zalan.do",
+              "name" => secret_name(cluster, "postgres"),
               "key" => "username"
             }
           }
@@ -156,7 +162,7 @@ defmodule KubeResources.Database do
           "name" => "DATA_SOURCE_PASS",
           "valueFrom" => %{
             "secretKeyRef" => %{
-              "name" => "postgres.#{cluster_name}.credentials.postgresql.acid.zalan.do",
+              "name" => secret_name(cluster, "postgres"),
               "key" => "password"
             }
           }
@@ -169,8 +175,66 @@ defmodule KubeResources.Database do
     }
   end
 
+  defp postgres_spec(cluster) do
+    %{
+      "teamId" => cluster.team_name,
+      "numberOfInstances" => cluster.num_instances,
+      "postgresql" => %{
+        "version" => cluster.postgres_version,
+        "parameters" => %{
+          "log_destination" => "stderr",
+          "logging_collector" => "false",
+          "password_encryption" => "scram-sha-256"
+        }
+      },
+      "patroni" => %{"pg_hba" => pg_hba()},
+      "volume" => %{
+        "size" => cluster.storage_size
+      },
+      "users" => spec_users(cluster),
+      "databases" => spec_databases(cluster),
+      "sidecars" => [
+        exporter_sidecar(cluster)
+      ]
+    }
+  end
+
+  defp credential_copy_spec(_cluster, %{format: :user_password} = _cc, source_data, _state) do
+    Secret.encode(source_data)
+  end
+
+  defp credential_copy_spec(cluster, %{format: :user_password_host} = _cc, source_data, state) do
+    %{}
+    |> Map.put("username", Map.fetch!(source_data, "username"))
+    |> Map.put("password", Map.fetch!(source_data, "password"))
+    |> Map.put("hostname", hostname(cluster, state))
+    |> Secret.encode()
+  end
+
+  defp credential_copy_spec(cluster, %{format: :dsn} = _cc, source_data, state) do
+    username = Map.fetch!(source_data, "username")
+    pass = Map.fetch!(source_data, "password")
+    hostname = hostname(cluster, state)
+
+    %{}
+    |> Map.put("dsn", "postgresql://#{username}:#{pass}@#{hostname}")
+    |> Secret.encode()
+  end
+
+  defp namespace(%{type: :internal} = _cluster, state), do: base_namespace(state)
+  defp namespace(%{type: _} = _cluster, state), do: data_namespace(state)
+
   defp full_name(%{} = cluster) do
     "#{cluster.team_name}-#{cluster.name}"
+  end
+
+  defp secret_name(%{} = cluster, username) do
+    "#{username}.#{cluster.team_name}-#{cluster.name}.credentials.postgresql"
+  end
+
+  defp hostname(cluster, state) do
+    namespace = namespace(cluster, state)
+    "#{cluster.team_name}-#{cluster.name}.#{namespace}.svc"
   end
 
   defp spec_users(%{} = cluster) do
@@ -201,5 +265,9 @@ defmodule KubeResources.Database do
       "cluster-name" => cluster_name,
       "spilo-role" => role
     }
+  end
+
+  defp extract_secret_data(resource) do
+    resource |> Map.get("data", %{}) |> Secret.decode!()
   end
 end

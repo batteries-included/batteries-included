@@ -8,6 +8,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Postgres.PGDatabase
+  alias CommonCore.Postgres.PGCredentialCopy
+
+  alias KubeExt.KubeState
 
   alias Ecto.Changeset
 
@@ -28,8 +31,13 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(assigns)
      |> assign(:changeset, changeset)
      |> assign(:possible_owners, possible_owners(changeset))
+     |> assign(:possible_namespaces, namespaces())
      |> assign(:full_name, full_name(cluster))
      |> assign(:num_instances, cluster.num_instances)}
+  end
+
+  defp namespaces do
+    :namespace |> KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
   end
 
   defp full_name(cluster) do
@@ -80,6 +88,30 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      socket
      |> assign(changeset: final_changeset)
      |> assign(:possible_owners, possible_owners(final_changeset))}
+  end
+
+  def handle_event("add:credential_copy", _, %{assigns: %{changeset: changeset}} = socket) do
+    credential_copies =
+      Changeset.get_field(changeset, :credential_copies, []) ++ [%PGCredentialCopy{}]
+
+    final_changeset = Changeset.put_embed(changeset, :credential_copies, credential_copies)
+
+    {:noreply, assign(socket, changeset: final_changeset)}
+  end
+
+  def handle_event(
+        "del:credential_copy",
+        %{"idx" => idx},
+        %{assigns: %{changeset: changeset}} = socket
+      ) do
+    credential_copies =
+      changeset
+      |> Changeset.get_field(:credential_copies, [])
+      |> List.delete_at(String.to_integer(idx))
+
+    final_changeset = Changeset.put_embed(changeset, :credential_copies, credential_copies)
+
+    {:noreply, assign(socket, changeset: final_changeset)}
   end
 
   @impl Phoenix.LiveComponent
@@ -218,6 +250,62 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     """
   end
 
+  def credential_copies_form(assigns) do
+    ~H"""
+    <.h2 class="col-span-2 mt-16">Copies of Credentials</.h2>
+    <div class="sm:col-span-2">
+      <div class="grid grid-cols-12 gap-y-6 gap-x-4">
+        <%= for credential_form <- inputs_for(@form, :credential_copies) do %>
+          <div class="col-span-4">
+            <.input
+              field={{credential_form, :username}}
+              label="Username"
+              type="select"
+              options={@possible_owners}
+            />
+          </div>
+          <div class="col-span-4">
+            <.input
+              field={{credential_form, :namespace}}
+              label="Namespace"
+              type="select"
+              options={@possible_namespaces}
+            />
+          </div>
+          <div class="col-span-3">
+            <.input
+              field={{credential_form, :format}}
+              label="Format"
+              type="select"
+              options={PGCredentialCopy.possible_formats()}
+            />
+          </div>
+          <div class="col-span-1">
+            <.link
+              phx-click="del:credential_copy"
+              phx-value-idx={credential_form.index}
+              phx-target={@target}
+              class="text-sm"
+              type="styled"
+            >
+              <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
+            </.link>
+          </div>
+        <% end %>
+
+        <.link
+          phx-click="add:credential_copy"
+          phx-target={@target}
+          class="pt-5 text-lg col-span-12"
+          type="styled"
+        >
+          Add Copy of Credentials
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
   defp possible_owners(%Changeset{} = changeset) do
     # get any possible owners from changesets of adding users
     usernames =
@@ -267,6 +355,12 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         <.input field={{f, :storage_size}} placeholder="Storage Size" />
         <.users_form form={f} target={@myself} />
         <.databases_form form={f} target={@myself} possible_owners={@possible_owners} />
+        <.credential_copies_form
+          form={f}
+          target={@myself}
+          possible_owners={@possible_owners}
+          possible_namespaces={@possible_namespaces}
+        />
 
         <:actions>
           <.button type="submit" phx-disable-with="Saving…">

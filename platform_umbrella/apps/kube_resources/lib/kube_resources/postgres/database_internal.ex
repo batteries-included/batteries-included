@@ -50,6 +50,14 @@ defmodule KubeResources.DatabaseInternal do
     end)
   end
 
+  multi_resource(:credential_copy, battery, state) do
+    state.postgres_clusters
+    |> Enum.filter(fn cluster -> cluster.type == :internal end)
+    |> Enum.flat_map(fn cluster ->
+      Database.credential_copies(cluster, battery, state)
+    end)
+  end
+
   multi_resource(:postgres_pod_per_namespace, _battery, state) do
     namespace = base_namespace(state)
     PostgresPod.per_namespace(namespace)

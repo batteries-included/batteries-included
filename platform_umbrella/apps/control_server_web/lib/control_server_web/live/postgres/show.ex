@@ -133,11 +133,18 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp secret_name(cluster_name, username) do
-    "#{username}.#{cluster_name}.credentials.postgresql.acid.zalan.do"
+    "#{username}.#{cluster_name}.credentials.postgresql"
   end
 
   defp user_namespace(:internal = _cluster_type), do: CommonCore.Defaults.Namespaces.core()
   defp user_namespace(_cluster_type), do: CommonCore.Defaults.Namespaces.data()
+
+  defp namespaces(cluster) do
+    cluster.credential_copies
+    |> Enum.map(& &1.namespace)
+    |> Enum.concat([user_namespace(cluster.type)])
+    |> Enum.join(", ")
+  end
 
   defp users_table(assigns) do
     ~H"""
@@ -145,7 +152,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       <:col :let={user} label="User Name"><%= user.username %></:col>
       <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
       <:col :let={user} label="Secret"><%= secret_name(@cluster.name, user.username) %></:col>
-      <:col label="Namespace"><%= user_namespace(@cluster.type) %></:col>
+      <:col label="Namespace"><%= namespaces(@cluster) %></:col>
     </.table>
     """
   end

@@ -20,6 +20,7 @@ defmodule CommonCore.Postgres.Cluster do
     field :storage_size, :string
     embeds_many(:users, CommonCore.Postgres.PGUser, on_replace: :delete)
     embeds_many(:databases, CommonCore.Postgres.PGDatabase, on_replace: :delete)
+    embeds_many(:credential_copies, CommonCore.Postgres.PGCredentialCopy, on_replace: :delete)
     timestamps()
   end
 
@@ -36,6 +37,7 @@ defmodule CommonCore.Postgres.Cluster do
     ])
     |> cast_embed(:users)
     |> cast_embed(:databases)
+    |> cast_embed(:credential_copies)
     |> validate_required([
       :name,
       :postgres_version,
