@@ -71,6 +71,10 @@ defmodule CommonCore.ApiVersionKind do
     vm_user: {"operator.victoriametrics.com/v1beta1", "VMUser"}
   ]
 
+  @alternatives [
+    {:monitoring_service_monitor, {"monitoring.coreos.com/v1", "ServiceMonitor"}}
+  ]
+
   @spec from_resource_type(atom) :: {binary(), binary()} | nil
   def from_resource_type(resource_type), do: Keyword.get(@known, resource_type, nil)
 
@@ -84,21 +88,43 @@ defmodule CommonCore.ApiVersionKind do
   def resource_type(nil), do: nil
 
   def resource_type(resource) do
-    {key, _} =
-      Enum.find(@known, {nil, nil}, fn {_type, {api_version, kind}} ->
-        api_version == api_version(resource) && kind == kind(resource)
-      end)
+    case find_known(resource) do
+      nil ->
+        find_alternative(resource)
 
-    key
+      val ->
+        val
+    end
+  end
+
+  defp find_known(resource) do
+    resource_api_ver = api_version(resource)
+    resource_kind = kind(resource)
+
+    Enum.find_value(@known, nil, fn {type, {api_version, kind}} ->
+      if api_version == resource_api_ver && kind == resource_kind, do: type
+    end)
+  end
+
+  defp find_alternative(resource) do
+    resource_api_ver = api_version(resource)
+    resource_kind = kind(resource)
+
+    Enum.find_value(@alternatives, nil, fn {type, {api_version, kind}} ->
+      if api_version == resource_api_ver && kind == resource_kind, do: type
+    end)
   end
 
   def resource_type!(resource) do
-    {key, _} =
-      Enum.find(@known, fn {_key, {api_version, kind}} ->
-        api_version == api_version(resource) && kind == kind(resource)
-      end)
+    case resource_type(resource) do
+      nil ->
+        resource_api_ver = api_version(resource)
+        resource_kind = kind(resource)
+        raise "Unable to find suitable resource type for {#{resource_api_ver}, #{resource_kind}}"
 
-    key
+      val ->
+        val
+    end
   end
 
   @spec is_watchable({binary(), binary()}) :: boolean

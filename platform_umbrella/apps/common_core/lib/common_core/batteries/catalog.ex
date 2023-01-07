@@ -82,6 +82,16 @@ defmodule CommonCore.Batteries.Catalog do
       type: :kube_monitoring,
       dependencies: [:battery_core, :victoria_metrics, :kube_state_metrics, :node_exporter]
     },
+    %CatalogBattery{
+      group: :monitoring,
+      type: :loki,
+      dependencies: [:battery_core, :grafana]
+    },
+    %CatalogBattery{
+      group: :monitoring,
+      type: :promtail,
+      dependencies: [:battery_core, :loki]
+    },
     #
     # Network/Security
     #

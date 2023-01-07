@@ -420,6 +420,7 @@ defmodule KubeResources.Grafana do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(spec)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   resource(:role_binding_main, _battery, state) do

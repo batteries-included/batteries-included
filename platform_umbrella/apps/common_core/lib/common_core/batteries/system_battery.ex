@@ -17,18 +17,22 @@ defmodule CommonCore.Batteries.SystemBattery do
     KnativeOperatorConfig,
     KnativeServingConfig,
     KubeStateMetricsConfig,
+    LokiConfig,
     MLCoreConfig,
     MetalLBConfig,
     MetalLBIPPoolConfig,
     NodeExporterConfig,
     PostgresOperatorConfig,
+    PromtailConfig,
     RedisOperatorConfig,
     RookConfig,
     VictoriaMetricsConfig
   }
 
   @possible_types [
+    battery_ca: EmptyConfig,
     battery_core: BatteryCoreConfig,
+    cert_manager: EmptyConfig,
     control_server: ControlServerConfig,
     data: DataConfig,
     database_internal: EmptyConfig,
@@ -37,26 +41,26 @@ defmodule CommonCore.Batteries.SystemBattery do
     grafana: GrafanaConfig,
     harbor: HarborConfig,
     istio: IstioConfig,
-    istio_gateway: EmptyConfig,
     istio_csr: EmptyConfig,
+    istio_gateway: EmptyConfig,
     kiali: KialiConfig,
     knative_operator: KnativeOperatorConfig,
     knative_serving: KnativeServingConfig,
+    kube_monitoring: EmptyConfig,
     kube_state_metrics: KubeStateMetricsConfig,
+    loki: LokiConfig,
     metallb: MetalLBConfig,
     metallb_ip_pool: MetalLBIPPoolConfig,
     ml_core: MLCoreConfig,
     node_exporter: NodeExporterConfig,
     notebooks: EmptyConfig,
     postgres_operator: PostgresOperatorConfig,
-    redis_operator: RedisOperatorConfig,
+    promtail: PromtailConfig,
     redis: EmptyConfig,
+    redis_operator: RedisOperatorConfig,
     rook: RookConfig,
-    cert_manager: EmptyConfig,
     trust_manager: EmptyConfig,
-    battery_ca: EmptyConfig,
-    victoria_metrics: VictoriaMetricsConfig,
-    kube_monitoring: EmptyConfig
+    victoria_metrics: VictoriaMetricsConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)
