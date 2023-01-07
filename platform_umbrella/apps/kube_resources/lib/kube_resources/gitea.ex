@@ -108,7 +108,7 @@ defmodule KubeResources.Gitea do
         "database",
         """
         DB_TYPE=postgres
-        HOST=pg-gitea.battery-core.svc.cluster.local
+        HOST=pg-gitea.#{namespace}.svc.cluster.local
         NAME=gitea
         USER=root
         PASSWD=gitea
