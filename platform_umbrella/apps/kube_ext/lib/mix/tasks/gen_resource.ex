@@ -116,9 +116,10 @@ defmodule Mix.Tasks.Gen.Resource do
     raise "Unable to find canonical resource_type for { #{inspect(K8Resource.api_version(resource))}, #{inspect(K8Resource.kind(resource))} }"
   end
 
-  defp process_resource(resource, :crd = _resource_type, app_name) do
-    file_name = crd_file_name(resource)
-    include_name = crd_include_name(resource)
+  defp process_resource(resource, resource_type, app_name)
+       when resource_type in [:crd, :aqua_cluster_compliance_report] do
+    file_name = manifest_file_name(resource)
+    include_name = manifest_include_name(resource)
     method_name = resource_method_name(resource, app_name)
 
     manifests = Map.put(%{}, file_name, to_yaml_contents(resource))
@@ -843,14 +844,14 @@ defmodule Mix.Tasks.Gen.Resource do
     end
   end
 
-  defp crd_file_name(resource) do
+  defp manifest_file_name(resource) do
     sanitized_name =
       resource |> K8s.Resource.name() |> String.downcase() |> String.replace(~r/[^\w\d]/, "_")
 
     "#{sanitized_name}.yaml"
   end
 
-  defp crd_include_name(resource),
+  defp manifest_include_name(resource),
     do:
       resource
       |> K8s.Resource.name()

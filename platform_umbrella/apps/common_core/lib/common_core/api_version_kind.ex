@@ -68,7 +68,18 @@ defmodule CommonCore.ApiVersionKind do
     vm_cluster: {"operator.victoriametrics.com/v1beta1", "VMCluster"},
     vm_single: {"operator.victoriametrics.com/v1beta1", "VMSingle"},
     vm_auth: {"operator.victoriametrics.com/v1beta1", "VMAuth"},
-    vm_user: {"operator.victoriametrics.com/v1beta1", "VMUser"}
+    vm_user: {"operator.victoriametrics.com/v1beta1", "VMUser"},
+    aqua_cluster_compliance_report:
+      {"aquasecurity.github.io/v1alpha1", "ClusterComplianceReport"},
+    aqua_cluster_config_audit_config_report:
+      {"aquasecurity.github.io/v1alpha1", "ClusterConfigAuditReport"},
+    aqua_config_audit_report: {"aquasecurity.github.io/v1alpha1", "ConfigAuditReport"},
+    aqua_cluster_rbac_assesment_report:
+      {"aquasecurity.github.io/v1alpha1", "ClusterRbacAssessmentReport"},
+    aqua_rbac_assessment_report: {"aquasecurity.github.io/v1alpha1", "RbacAssessmentReport"},
+    aqua_exposed_secret_report: {"aquasecurity.github.io/v1alpha1", "ExposedSecretReport"},
+    aqua_infra_assessment_report: {"aquasecurity.github.io/v1alpha1", "InfraAssessmentReport"},
+    aqua_vulnerability_report: {"aquasecurity.github.io/v1alpha1", "VulnerabilityReport"}
   ]
 
   @alternatives [

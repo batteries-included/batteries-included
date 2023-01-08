@@ -59,6 +59,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     redis: EmptyConfig,
     redis_operator: RedisOperatorConfig,
     rook: RookConfig,
+    trivy_operator: EmptyConfig,
     trust_manager: EmptyConfig,
     victoria_metrics: VictoriaMetricsConfig
   ]

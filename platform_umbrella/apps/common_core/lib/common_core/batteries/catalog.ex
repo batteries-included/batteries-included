@@ -142,6 +142,11 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :istio_csr,
       dependencies: [:istio, :battery_ca]
+    },
+    %CatalogBattery{
+      group: :net_sec,
+      type: :trivy_operator,
+      dependencies: [:battery_core]
     }
   ]
 

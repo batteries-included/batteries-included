@@ -41,6 +41,7 @@ defmodule KubeResources.ConfigGenerator do
     Redis,
     RedisOperator,
     Rook,
+    TrivyOperator,
     TrustManager,
     VMAgent,
     VMCluster,
@@ -81,6 +82,7 @@ defmodule KubeResources.ConfigGenerator do
     redis_operator: [&RedisOperator.materialize/2],
     rook: [&Rook.materialize/2, &CephFilesystems.materialize/2, &CephClusters.materialize/2],
     trust_manager: [&TrustManager.materialize/2],
+    trivy_operator: [&TrivyOperator.materialize/2],
     victoria_metrics: [
       &VMOperator.materialize/2,
       &VMCluster.materialize/2,
