@@ -2,9 +2,9 @@ defmodule CommonCore.Defaults.Images do
   def control_server_image, do: "battery-registry:5000/battery/control:c6f4bd1-dirty1"
 
   def postgres_operator_image,
-    do: "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-43-g3e148ea5"
+    do: "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-61-g29cec0ce"
 
-  def spilo_image, do: "registry.opensource.zalan.do/acid/spilo-14:2.1-p7"
+  def spilo_image, do: "registry.opensource.zalan.do/acid/spilo-15:2.1-p9"
 
   def postgres_logical_backup_image,
     do: "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-43-g3e148ea5"
