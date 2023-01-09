@@ -22,7 +22,7 @@ defmodule CommonCore.ApiVersionKind do
       {"admissionregistration.k8s.io/v1", "ValidatingWebhookConfiguration"},
     mutating_webhook_config: {"admissionregistration.k8s.io/v1", "MutatingWebhookConfiguration"},
     ingress: {"networking.k8s.io/v1", "Ingress"},
-    pod_disruption_budget: {"policy/v1beta1", "PodDisruptionBudget"},
+    pod_disruption_budget: {"policy/v1", "PodDisruptionBudget"},
     pod_security_policy: {"policy/v1beta1", "PodSecurityPolicy"},
     horizontal_pod_autoscaler: {"autoscaling/v2", "HorizontalPodAutoscaler"},
     istio_gateway: {"networking.istio.io/v1beta1", "Gateway"},
