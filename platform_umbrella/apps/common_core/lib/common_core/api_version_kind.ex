@@ -126,6 +126,7 @@ defmodule CommonCore.ApiVersionKind do
     end)
   end
 
+  @spec resource_type!(map()) :: atom()
   def resource_type!(resource) do
     case resource_type(resource) do
       nil ->
