@@ -73,14 +73,22 @@ defmodule CLICore.Kubectl do
     # with the erlang vm when it gets torn down
     shell_snippet = ~s"""
     #{path} #{Enum.join(args, " ")} &
-    pid=$!
+    pid1=$!
 
     exec >/dev/null 2>&1
 
-    trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+    # Read from stdin in the background and
+    # kill running program when stdin closes
+    exec 0<&0 $(
+      while read; do :; done
+      kill -KILL $pid1
+    ) &
+    pid2=$!
 
-    wait $pid
-    exit $?
+    wait $pid1
+    ret=$?
+    kill -KILL $pid2
+    exit $ret
     """
 
     case System.cmd("/usr/bin/env", ["bash", "-c", shell_snippet], stderr_to_stdout: true) do
