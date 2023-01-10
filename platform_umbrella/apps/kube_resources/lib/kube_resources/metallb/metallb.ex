@@ -576,7 +576,6 @@ defmodule KubeResources.MetalLB do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.spec(%{
-      "jobLabel" => "battery/app",
       "ports" => [%{"port" => 443, "targetPort" => 9443}],
       "selector" => %{"battery/app" => @app_name, "battery/component" => "controller"}
     })
