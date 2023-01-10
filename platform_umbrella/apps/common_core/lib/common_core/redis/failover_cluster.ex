@@ -20,6 +20,7 @@ defmodule CommonCore.Redis.FailoverCluster do
     failover_cluster
     |> cast(attrs, [:name, :num_sentinel_instances, :num_redis_instances, :type])
     |> validate_required([:name, :num_redis_instances])
+    |> unique_constraint([:type, :name])
   end
 
   def validate(params) do
@@ -31,5 +32,13 @@ defmodule CommonCore.Redis.FailoverCluster do
     data = Ecto.Changeset.apply_changes(changeset)
 
     {changeset, data}
+  end
+
+  def to_fresh_cluster(%{} = args) do
+    clean_args = Map.drop(args, [:id, :inserted_at, :updated_at])
+
+    %__MODULE__{}
+    |> changeset(clean_args)
+    |> Ecto.Changeset.apply_action!(:create)
   end
 end

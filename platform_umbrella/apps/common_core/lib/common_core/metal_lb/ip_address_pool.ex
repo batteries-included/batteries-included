@@ -20,4 +20,12 @@ defmodule CommonCore.MetalLB.IPAddressPool do
     |> validate_required([:name, :subnet])
     |> unique_constraint(:name)
   end
+
+  def to_fresh_ip_address_pool(%{} = args) do
+    clean_args = Map.drop(args, [:id, :inserted_at, :updated_at])
+
+    %__MODULE__{}
+    |> changeset(clean_args)
+    |> Ecto.Changeset.apply_action!(:create)
+  end
 end

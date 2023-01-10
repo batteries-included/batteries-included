@@ -1,5 +1,6 @@
 locals_without_parens = [
   polymorphic_embeds_one: 2,
+  embeds_many: 3,
   field: 3,
   field: 2
 ]

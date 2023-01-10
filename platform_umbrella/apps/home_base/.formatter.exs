@@ -1,10 +1,17 @@
+locals_without_parens = [
+  polymorphic_embeds_one: 2,
+  embeds_many: 3,
+  field: 3,
+  field: 2
+]
+
 [
   import_deps: [:ecto],
   inputs: [
     "{mix,.formatter}.exs",
-    "*.{ex,exs}",
-    "priv/*/seeds.exs",
-    "{lib,test}/**/*.{ex,exs}"
+    "*.{heex,ex,exs}",
+    "{lib,test}/**/*.{heex,ex,exs}"
   ],
-  subdirectories: ["priv/*/migrations"]
+  subdirectories: ["priv/*/migrations"],
+  locals_without_parens: locals_without_parens
 ]

@@ -6,7 +6,7 @@ defmodule CommonCore.Defaults.ControlDB do
     :storage_size => "500M",
     :type => :internal,
     :users => [
-      %{username: "controlserver", roles: ["superuser", "createrole", "createdb", "login"]}
+      %{username: "controlserver", roles: ["createdb", "login"]}
     ],
     :databases => [%{name: "control", owner: "controlserver"}],
     :team_name => "pg"

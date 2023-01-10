@@ -53,6 +53,7 @@ defmodule ControlServerWeb.MixProject do
       {:gettext, "~> 0.20"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
+      {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:kube_resources, in_umbrella: true},
       {:kube_services, in_umbrella: true},

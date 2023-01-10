@@ -18,9 +18,9 @@ defmodule CommonCore.Postgres.Cluster do
     field :team_name, :string, default: "pg"
     field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
     field :storage_size, :string
-    embeds_many(:users, CommonCore.Postgres.PGUser, on_replace: :delete)
-    embeds_many(:databases, CommonCore.Postgres.PGDatabase, on_replace: :delete)
-    embeds_many(:credential_copies, CommonCore.Postgres.PGCredentialCopy, on_replace: :delete)
+    embeds_many :users, CommonCore.Postgres.PGUser, on_replace: :delete
+    embeds_many :databases, CommonCore.Postgres.PGDatabase, on_replace: :delete
+    embeds_many :credential_copies, CommonCore.Postgres.PGCredentialCopy, on_replace: :delete
     timestamps()
   end
 
@@ -61,5 +61,13 @@ defmodule CommonCore.Postgres.Cluster do
     data = Ecto.Changeset.apply_changes(changeset)
 
     {changeset, data}
+  end
+
+  def to_fresh_cluster(%{} = args) do
+    clean_args = Map.drop(args, [:id, :inserted_at, :updated_at])
+
+    %__MODULE__{}
+    |> changeset(clean_args)
+    |> Ecto.Changeset.apply_action!(:create)
   end
 end

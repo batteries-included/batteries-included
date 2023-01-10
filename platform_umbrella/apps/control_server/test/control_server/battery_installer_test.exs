@@ -8,6 +8,8 @@ defmodule ControlServer.Batteries.InstallerTest do
 
   alias ControlServer.Batteries.Installer
 
+  import CommonCore.SeedArgsConverter
+
   describe "ControlServer.Batteries.Installer" do
     test "every battery in the catalog installs :ok" do
       for catalog_battery <- Catalog.all() do
@@ -17,9 +19,9 @@ defmodule ControlServer.Batteries.InstallerTest do
       end
     end
 
-    test "runs the internal_db post hook" do
+    test "runs the postgres post hook" do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
-      assert {:ok, _res} = Installer.install(:database_internal)
+      assert {:ok, _res} = Installer.install(:postgres)
       assert 1 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
     end
 
@@ -45,11 +47,11 @@ defmodule ControlServer.Batteries.InstallerTest do
         |> CommonCore.SystemState.SeedState.seed()
         |> then(fn %{batteries: batteries} = _state ->
           batteries
-          |> Enum.map(&SystemBattery.to_fresh_args/1)
+          |> Enum.map(&to_fresh_args/1)
           |> Installer.install_all()
         end)
 
-      assert ControlServer.Repo.aggregate(SystemBattery, :count, :id) >= 5
+      assert ControlServer.Repo.aggregate(SystemBattery, :count, :id) >= 4
     end
   end
 end

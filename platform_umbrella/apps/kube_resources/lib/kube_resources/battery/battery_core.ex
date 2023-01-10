@@ -18,4 +18,10 @@ defmodule KubeResources.BatteryCore do
     |> B.name(battery.config.base_namespace)
     |> B.label("istio-injection", "false")
   end
+
+  resource(:data_namespace, battery, _state) do
+    B.build_resource(:namespace)
+    |> B.name(battery.config.data_namespace)
+    |> B.app_labels(@app_name)
+  end
 end

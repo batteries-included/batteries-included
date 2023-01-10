@@ -5,12 +5,12 @@ defmodule Apps.KubeResources.Test.KubeResources.DatabaseTest do
   alias CommonCore.Batteries.Catalog
   alias CommonCore.SystemState.StateSummary
 
-  alias KubeResources.Database
+  alias KubeResources.Postgres
 
   describe "KubeResources.Database" do
     test "postgres/3 contains databases" do
       spec =
-        Database.postgres(
+        Postgres.postgres(
           %{
             name: "test",
             type: :public,
@@ -20,7 +20,7 @@ defmodule Apps.KubeResources.Test.KubeResources.DatabaseTest do
             storage_size: "500M",
             databases: [%{name: "contains_test", owner: "special_owner"}]
           },
-          :database_public |> Catalog.get() |> CatalogBattery.to_fresh_system_battery(),
+          :postgres |> Catalog.get() |> CatalogBattery.to_fresh_system_battery(),
           %StateSummary{}
         )
 

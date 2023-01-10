@@ -10,7 +10,7 @@ defmodule CommonCore.Rook.CephCluster do
     field :data_dir_host_path, :string
     field :name, :string
     field :namespace, :string, default: "battery-data"
-    embeds_many(:nodes, CommonCore.Rook.CephStorageNode, on_replace: :delete)
+    embeds_many :nodes, CommonCore.Rook.CephStorageNode, on_replace: :delete
     field :num_mgr, :integer, default: 1
     field :num_mon, :integer, default: 1
 

@@ -7,7 +7,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.{
     BatteryCoreConfig,
     ControlServerConfig,
-    DataConfig,
     EmptyConfig,
     GiteaConfig,
     GrafanaConfig,
@@ -34,9 +33,6 @@ defmodule CommonCore.Batteries.SystemBattery do
     battery_core: BatteryCoreConfig,
     cert_manager: EmptyConfig,
     control_server: ControlServerConfig,
-    data: DataConfig,
-    database_internal: EmptyConfig,
-    database_public: EmptyConfig,
     gitea: GiteaConfig,
     grafana: GrafanaConfig,
     harbor: HarborConfig,
@@ -55,6 +51,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     node_exporter: NodeExporterConfig,
     notebooks: EmptyConfig,
     postgres_operator: PostgresOperatorConfig,
+    postgres: EmptyConfig,
     promtail: PromtailConfig,
     redis: EmptyConfig,
     redis_operator: RedisOperatorConfig,
@@ -105,20 +102,5 @@ defmodule CommonCore.Batteries.SystemBattery do
     |> cast(attrs, [:group, :type])
     |> validate_required([:group, :type])
     |> cast_polymorphic_embed(:config)
-  end
-
-  def to_fresh_args(system_battery) do
-    system_battery
-    |> Map.from_struct()
-    |> Map.drop([:__meta__, :__struct__])
-    |> Map.update(:config, %{}, fn val ->
-      val
-      |> Map.put(:__type__, system_battery.type)
-      |> Map.drop([:__meta__, :__struct__])
-      |> Enum.filter(fn {_key, value} -> value != nil end)
-      |> Map.new()
-    end)
-    |> Enum.filter(fn {_key, value} -> value != nil end)
-    |> Map.new()
   end
 end

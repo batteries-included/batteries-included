@@ -6,60 +6,34 @@ defmodule KubeResources.PostgresOperator do
     postgresteams_acid_zalan_do:
       "priv/manifests/postgres-operator/postgresteams_acid_zalan_do.yaml"
 
+  use KubeExt.ResourceGenerator
+
   import CommonCore.Yaml
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-  alias KubeResources.PostgresPod
+  alias KubeExt.Secret
 
-  @app_name "postgres-operator"
-  @operator_cluster_role "battery-postgres-operator"
+  @app_name "battery-postgres-operator"
 
-  def materialize(battery, state) do
-    %{}
-    |> Map.put("/cluster_role/postgres_operator", cluster_role_postgres_operator(battery, state))
-    |> Map.put(
-      "/cluster_role_binding/postgres_operator",
-      cluster_role_binding_postgres_operator(battery, state)
-    )
-    |> Map.put(
-      "/crd/operatorconfigurations_acid_zalan_do",
-      crd_operatorconfigurations_acid_zalan_do(battery, state)
-    )
-    |> Map.put("/crd/postgresqls_acid_zalan_do", crd_postgresqls_acid_zalan_do(battery, state))
-    |> Map.put(
-      "/crd/postgresteams_acid_zalan_do",
-      crd_postgresteams_acid_zalan_do(battery, state)
-    )
-    |> Map.put("/deployment/postgres_operator", deployment_postgres_operator(battery, state))
-    |> Map.put(
-      "/postgresql_operator_config/main",
-      postgresql_operator_config_main(battery, state)
-    )
-    |> Map.put("/service/postgres_operator", service_postgres_operator(battery, state))
-    |> Map.put(
-      "/service_account/postgres_operator",
-      service_account_postgres_operator(battery, state)
-    )
-    |> Map.merge(PostgresPod.common(battery, state))
-    |> Map.merge(infra_users(battery, state, should_include_dev_infrausers()))
-  end
+  @service_account "battery-postgres-operator"
+  @postgres_pod_service_account "battery-postgres-pod"
+  @cluster_role "battery-postgres-operator-role"
 
-  def cluster_role_binding_postgres_operator(_battery, state) do
+  @infa_user_config "postgres-operator-infrauser-config"
+
+  resource(:cluster_role_binding_postgres_operator, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
-    |> B.name("battery-postgres-operator")
+    |> B.name("postgres-operator")
     |> B.app_labels(@app_name)
-    |> B.role_ref(B.build_cluster_role_ref(@operator_cluster_role))
-    |> B.subject(B.build_service_account("postgres-operator", namespace))
+    |> B.role_ref(B.build_cluster_role_ref(@cluster_role))
+    |> B.subject(B.build_service_account(@service_account, namespace))
   end
 
-  def cluster_role_postgres_operator(_battery, _state) do
-    B.build_resource(:cluster_role)
-    |> B.name(@operator_cluster_role)
-    |> B.app_labels(@app_name)
-    |> B.rules([
+  resource(:cluster_role_postgres_operator) do
+    rules = [
       %{
         "apiGroups" => ["acid.zalan.do"],
         "resources" => ["postgresqls", "postgresqls/status", "operatorconfigurations"],
@@ -149,129 +123,149 @@ defmodule KubeResources.PostgresOperator do
         "resources" => ["rolebindings"],
         "verbs" => ["get", "create"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name(@cluster_role)
+    |> B.app_labels(@app_name)
+    |> B.rules(rules)
   end
 
-  def crd_operatorconfigurations_acid_zalan_do(_battery, _state) do
-    yaml(get_resource(:operatorconfigurations_acid_zalan_do))
+  resource(:service_account_postgres_pod_data, _battery, state) do
+    namespace = data_namespace(state)
+
+    B.build_resource(:service_account)
+    |> B.name(@postgres_pod_service_account)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
   end
 
-  def crd_postgresqls_acid_zalan_do(_battery, _state) do
-    yaml(get_resource(:postgresqls_acid_zalan_do))
+  resource(:service_account_postgres_pod_base, _battery, state) do
+    namespace = base_namespace(state)
+
+    B.build_resource(:service_account)
+    |> B.name(@postgres_pod_service_account)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
   end
 
-  def crd_postgresteams_acid_zalan_do(_battery, _state) do
-    yaml(get_resource(:postgresteams_acid_zalan_do))
+  resource(:cluster_role_binding_postgres_pod, _battery, state) do
+    data_namespace = data_namespace(state)
+    base_namespace = base_namespace(state)
+
+    B.build_resource(:cluster_role_binding)
+    |> B.name(@postgres_pod_service_account)
+    |> B.app_labels(@app_name)
+    |> B.role_ref(B.build_cluster_role_ref(@postgres_pod_service_account))
+    |> B.subject(B.build_service_account(@postgres_pod_service_account, data_namespace))
+    |> B.subject(B.build_service_account(@postgres_pod_service_account, base_namespace))
   end
 
-  def deployment_postgres_operator(battery, state) do
+  resource(:cluster_role_postgres_pod) do
+    rules = [
+      %{
+        "apiGroups" => [""],
+        "resources" => ["endpoints"],
+        "verbs" => [
+          "create",
+          "delete",
+          "deletecollection",
+          "get",
+          "list",
+          "patch",
+          "update",
+          "watch"
+        ]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["pods"],
+        "verbs" => ["get", "list", "patch", "update", "watch"]
+      },
+      %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["create"]}
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name(@postgres_pod_service_account)
+    |> B.app_labels(@app_name)
+    |> B.rules(rules)
+  end
+
+  resource(:service_account_postgres_operator, _battery, state) do
     namespace = core_namespace(state)
+
+    B.build_resource(:service_account)
+    |> B.name(@service_account)
+    |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+  end
+
+  resource(:deployment_postgres_operator, battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put(
+        "selector",
+        %{
+          "matchLabels" => %{
+            "battery/app" => @app_name
+          }
+        }
+      )
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/managed" => "true"
+            }
+          },
+          "spec" => %{
+            "affinity" => %{},
+            "containers" => [
+              %{
+                "env" => [
+                  %{
+                    "name" => "POSTGRES_OPERATOR_CONFIGURATION_OBJECT",
+                    "value" => "postgres-operator"
+                  }
+                ],
+                "image" => battery.config.image,
+                "imagePullPolicy" => "IfNotPresent",
+                "name" => "postgres-operator",
+                "resources" => %{
+                  "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
+                  "requests" => %{"cpu" => "100m", "memory" => "250Mi"}
+                },
+                "securityContext" => %{
+                  "allowPrivilegeEscalation" => false,
+                  "readOnlyRootFilesystem" => true,
+                  "runAsNonRoot" => true,
+                  "runAsUser" => 1000
+                }
+              }
+            ],
+            "nodeSelector" => %{},
+            "serviceAccountName" => @service_account,
+            "tolerations" => []
+          }
+        }
+      )
 
     B.build_resource(:deployment)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.spec(%{
-      "replicas" => 1,
-      "selector" => %{
-        "matchLabels" => %{
-          "battery/app" => @app_name
-        }
-      },
-      "template" => %{
-        "metadata" => %{
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/managed" => "true"
-          }
-        },
-        "spec" => %{
-          "affinity" => %{},
-          "containers" => [
-            %{
-              "env" => [
-                %{
-                  "name" => "POSTGRES_OPERATOR_CONFIGURATION_OBJECT",
-                  "value" => "postgres-operator"
-                },
-                %{
-                  "name" => "ENABLE_JSON_LOGGING",
-                  "value" => to_string(battery.config.json_logging_enabled)
-                }
-              ],
-              "image" => battery.config.image,
-              "imagePullPolicy" => "IfNotPresent",
-              "name" => "postgres-operator",
-              "resources" => %{
-                "limits" => %{"memory" => "500Mi"},
-                "requests" => %{"cpu" => "100m", "memory" => "250Mi"}
-              },
-              "securityContext" => %{
-                "allowPrivilegeEscalation" => false,
-                "readOnlyRootFilesystem" => true,
-                "runAsNonRoot" => true,
-                "runAsUser" => 1000
-              }
-            }
-          ],
-          "nodeSelector" => %{},
-          "serviceAccountName" => "postgres-operator",
-          "tolerations" => []
-        }
-      }
-    })
+    |> B.spec(spec)
   end
 
-  defp should_include_dev_infrausers,
-    do: Application.get_env(:kube_resources, :include_dev_infrausers, false)
-
-  defp maybe_add_infrausers(resource, true = _include_dev_infrausers) do
-    put_in(
-      resource,
-      ["kubernetes", "infrastructure_roles_secret_name"],
-      "postgres-infrauser-config"
-    )
-  end
-
-  defp maybe_add_infrausers(resource, _include_dev_infrausers), do: resource
-
-  defp infra_users(battery, state, true = _include_dev_infrausers) do
-    %{
-      "/infra_configmap" => infra_configmap(battery, state),
-      "/infra_secret" => infra_secret(battery, state)
-    }
-  end
-
-  defp infra_users(_battery, _state, _include_dev_infrausers), do: %{}
-
-  defp infra_configmap(_battery, state) do
+  resource(:postgresql_operator_config_main, battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:config_map)
-    |> B.app_labels(@app_name)
-    |> B.namespace(namespace)
-    |> B.name("postgres-infrauser-config")
-    |> B.data(%{
-      "batterydbuser" => Ymlr.Encoder.to_s!(%{user_flags: ["createdb", "superuser"]})
-    })
-  end
-
-  defp infra_secret(_battery, state) do
-    namespace = core_namespace(state)
-
-    B.build_resource(:secret)
-    |> B.app_labels(@app_name)
-    |> B.namespace(namespace)
-    |> B.name("postgres-infrauser-config")
-    |> B.data(%{
-      "batterydbuser" => Base.encode64("not-real")
-    })
-  end
-
-  def postgresql_operator_config_main(battery, state) do
-    namespace = core_namespace(state)
-
-    config = %{
+    configuration = %{
       "aws_or_gcp" => %{"aws_region" => "eu-central-1", "enable_ebs_gp3_migration" => false},
       "connection_pooler" => %{
         "connection_pooler_default_cpu_limit" => "1",
@@ -293,6 +287,7 @@ defmodule KubeResources.PostgresOperator do
       "enable_pgversion_env_var" => true,
       "enable_shm_volume" => true,
       "enable_spilo_wal_path_compat" => false,
+      "etcd_host" => "",
       "kubernetes" => %{
         "cluster_domain" => "cluster.local",
         "cluster_labels" => %{"application" => "spilo"},
@@ -302,13 +297,14 @@ defmodule KubeResources.PostgresOperator do
         "enable_pod_antiaffinity" => false,
         "enable_pod_disruption_budget" => true,
         "enable_sidecars" => true,
+        "inherited_labels" => ["battery/app", "app", "sidecar.istio.io/inject", "battery/owner"],
+        "infrastructure_roles_secret_name" => @infa_user_config,
         "oauth_token_secret_name" => "postgres-operator",
         "pdb_name_format" => "postgres-{cluster}-pdb",
         "pod_antiaffinity_topology_key" => "kubernetes.io/hostname",
         "pod_management_policy" => "ordered_ready",
         "pod_role_label" => "spilo-role",
-        "pod_service_account_name" => PostgresPod.service_account_name(),
-        "inherited_labels" => ["sidecar.istio.io/inject", "battery/app", "battery/owner"],
+        "pod_service_account_name" => @postgres_pod_service_account,
         "pod_terminate_grace_period" => "5m",
         "secret_name_template" => "{username}.{cluster}.credentials.{tprkind}",
         "spilo_allow_privilege_escalation" => true,
@@ -326,6 +322,11 @@ defmodule KubeResources.PostgresOperator do
         "master_dns_name_format" => "{cluster}.{team}.{hostedzone}",
         "replica_dns_name_format" => "{cluster}-repl.{team}.{hostedzone}"
       },
+      "logging_rest_api" => %{
+        "api_port" => 8080,
+        "cluster_history_entries" => 1000,
+        "ring_log_lines" => 100
+      },
       "logical_backup" => %{
         "logical_backup_docker_image" => battery.config.logical_backup_image,
         "logical_backup_job_prefix" => "logical-backup-",
@@ -338,6 +339,11 @@ defmodule KubeResources.PostgresOperator do
         "logical_backup_s3_secret_access_key" => "",
         "logical_backup_s3_sse" => "AES256",
         "logical_backup_schedule" => "30 00 * * *"
+      },
+      "major_version_upgrade" => %{
+        "major_version_upgrade_mode" => "manual",
+        "minimal_major_version" => "9.6",
+        "target_major_version" => "14"
       },
       "max_instances" => -1,
       "min_instances" => -1,
@@ -352,13 +358,13 @@ defmodule KubeResources.PostgresOperator do
       "repair_period" => "5m",
       "resync_period" => "30m",
       "teams_api" => %{
-        "enable_admin_role_for_users" => true,
+        "enable_admin_role_for_users" => false,
         "enable_postgres_team_crd" => false,
         "enable_postgres_team_crd_superusers" => false,
         "enable_team_member_deprecation" => false,
         "enable_team_superuser" => false,
         "enable_teams_api" => false,
-        "pam_role_name" => "batteryincl",
+        "pam_role_name" => "batteries_included",
         "postgres_superuser_teams" => ["postgres_superusers"],
         "protected_role_names" => ["admin", "cron_admin"],
         "role_deletion_suffix" => "_deleted",
@@ -382,38 +388,76 @@ defmodule KubeResources.PostgresOperator do
         "replication_username" => "standby",
         "super_username" => "postgres"
       },
-      "workers" => 6
+      "workers" => 8
     }
 
     B.build_resource(:postgresql_operator_config)
-    |> Map.put("configuration", maybe_add_infrausers(config, should_include_dev_infrausers()))
+    |> Map.put("configuration", configuration)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
   end
 
-  def service_account_postgres_operator(_battery, state) do
+  resource(:service_postgres_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
-    |> B.name("postgres-operator")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-  end
-
-  def service_postgres_operator(_battery, state) do
-    namespace = core_namespace(state)
+    spec =
+      %{}
+      |> Map.put("ports", [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}])
+      |> Map.put("selector", %{"battery/app" => @app_name})
 
     B.build_resource(:service)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.spec(%{
-      "ports" => [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}],
-      "selector" => %{
-        "battery/app" => @app_name
-      },
-      "type" => "ClusterIP"
-    })
+    |> B.spec(spec)
+  end
+
+  resource(:secret_postgres_infra_users, battery, state) do
+    namespace = core_namespace(state)
+
+    data = infra_users_password_map(battery, state)
+
+    B.build_resource(:secret)
+    |> B.app_labels(@app_name)
+    |> B.namespace(namespace)
+    |> B.name(@infa_user_config)
+    |> B.data(data)
+  end
+
+  resource(:configmap_infra_users, battery, state) do
+    namespace = core_namespace(state)
+
+    data = infra_users_config_map(battery, state)
+
+    B.build_resource(:config_map)
+    |> B.app_labels(@app_name)
+    |> B.namespace(namespace)
+    |> B.name(@infa_user_config)
+    |> B.data(data)
+  end
+
+  defp infra_users_password_map(battery, _state) do
+    battery.config.infra_users
+    |> Enum.map(fn u -> {u.username, u.generated_key} end)
+    |> Secret.encode()
+  end
+
+  defp infra_users_config_map(battery, _state) do
+    battery.config.infra_users
+    |> Enum.map(fn u -> {u.username, Ymlr.Encoder.to_s!(%{user_flags: u.roles})} end)
+    |> Map.new()
+  end
+
+  resource(:crd_operatorconfigurations_acid_zalan_do) do
+    yaml(get_resource(:operatorconfigurations_acid_zalan_do))
+  end
+
+  resource(:crd_postgresqls_acid_zalan_do) do
+    yaml(get_resource(:postgresqls_acid_zalan_do))
+  end
+
+  resource(:crd_postgresteams_acid_zalan_do) do
+    yaml(get_resource(:postgresteams_acid_zalan_do))
   end
 end

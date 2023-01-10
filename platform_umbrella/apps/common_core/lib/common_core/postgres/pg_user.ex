@@ -1,6 +1,7 @@
 defmodule CommonCore.Postgres.PGUser do
   use TypedEctoSchema
   import Ecto.Changeset
+  import CommonCore.Postgres
 
   @primary_key false
   @derive Jason.Encoder
@@ -9,12 +10,10 @@ defmodule CommonCore.Postgres.PGUser do
     field :roles, {:array, :string}, default: []
   end
 
-  def possible_roles,
-    do: ~w(superuser inherit login nologin createrole createdb replication bypassrls)
-
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:username, :roles])
     |> validate_required([:username, :roles])
+    |> validate_pg_rolelist(:roles)
   end
 end

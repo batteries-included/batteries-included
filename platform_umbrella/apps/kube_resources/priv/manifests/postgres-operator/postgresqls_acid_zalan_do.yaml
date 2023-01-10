@@ -63,37 +63,423 @@ spec:
               type: string
             spec:
               properties:
-                allowedSourceRanges:
+                teamId:
+                  type: string
+                spiloRunAsGroup:
+                  type: integer
+                additionalVolumes:
                   items:
-                    pattern: ^(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\/(\d|[1-2]\d|3[0-2])$
-                    type: string
-                  nullable: true
+                    properties:
+                      mountPath:
+                        type: string
+                      name:
+                        type: string
+                      subPath:
+                        type: string
+                      targetContainers:
+                        items:
+                          type: string
+                        nullable: true
+                        type: array
+                      volumeSource:
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                    required:
+                      - name
+                      - mountPath
+                      - volumeSource
+                    type: object
                   type: array
-                enableConnectionPooler:
-                  type: boolean
-                clone:
+                standby:
+                  oneOf:
+                    - required:
+                        - s3_wal_path
+                    - required:
+                        - gs_wal_path
+                    - required:
+                        - standby_host
                   properties:
-                    cluster:
-                      type: string
-                    s3_access_key_id:
-                      type: string
-                    s3_endpoint:
-                      type: string
-                    s3_force_path_style:
-                      type: boolean
-                    s3_secret_access_key:
+                    gs_wal_path:
                       type: string
                     s3_wal_path:
                       type: string
-                    timestamp:
-                      pattern: ^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([+-]([01][0-9]|2[0-3]):[0-5][0-9]))$
+                    standby_host:
                       type: string
-                    uid:
-                      format: uuid
+                    standby_port:
+                      type: string
+                  type: object
+                patroni:
+                  properties:
+                    initdb:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    loop_wait:
+                      type: integer
+                    maximum_lag_on_failover:
+                      type: integer
+                    pg_hba:
+                      items:
+                        type: string
+                      type: array
+                    retry_timeout:
+                      type: integer
+                    slots:
+                      additionalProperties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      type: object
+                    synchronous_mode:
+                      type: boolean
+                    synchronous_mode_strict:
+                      type: boolean
+                    synchronous_node_count:
+                      type: integer
+                    ttl:
+                      type: integer
+                  type: object
+                logicalBackupSchedule:
+                  pattern: ^(\d+|\*)(/\d+)?(\s+(\d+|\*)(/\d+)?){4}$
+                  type: string
+                env:
+                  items:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  nullable: true
+                  type: array
+                enableShmVolume:
+                  type: boolean
+                initContainers:
+                  items:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  nullable: true
+                  type: array
+                sidecars:
+                  items:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  nullable: true
+                  type: array
+                users:
+                  additionalProperties:
+                    items:
+                      enum:
+                        - bypassrls
+                        - BYPASSRLS
+                        - nobypassrls
+                        - NOBYPASSRLS
+                        - createdb
+                        - CREATEDB
+                        - nocreatedb
+                        - NOCREATEDB
+                        - createrole
+                        - CREATEROLE
+                        - nocreaterole
+                        - NOCREATEROLE
+                        - inherit
+                        - INHERIT
+                        - noinherit
+                        - NOINHERIT
+                        - login
+                        - LOGIN
+                        - nologin
+                        - NOLOGIN
+                        - replication
+                        - REPLICATION
+                        - noreplication
+                        - NOREPLICATION
+                        - superuser
+                        - SUPERUSER
+                        - nosuperuser
+                        - NOSUPERUSER
+                      type: string
+                    nullable: true
+                    type: array
+                  type: object
+                postgresql:
+                  properties:
+                    parameters:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    version:
+                      enum:
+                        - '9.5'
+                        - '9.6'
+                        - '10'
+                        - '11'
+                        - '12'
+                        - '13'
+                        - '14'
                       type: string
                   required:
-                    - cluster
+                    - version
                   type: object
+                pod_priority_class_name:
+                  description: deprecated
+                  type: string
+                usersWithSecretRotation:
+                  items:
+                    type: string
+                  nullable: true
+                  type: array
+                serviceAnnotations:
+                  additionalProperties:
+                    type: string
+                  type: object
+                enableReplicaLoadBalancer:
+                  type: boolean
+                maintenanceWindows:
+                  items:
+                    pattern: ^\ *((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\d):([0-5]?\d)|(2[0-3]|[01]?\d):([0-5]?\d))-((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\d):([0-5]?\d)|(2[0-3]|[01]?\d):([0-5]?\d))\ *$
+                    type: string
+                  type: array
+                volume:
+                  properties:
+                    iops:
+                      type: integer
+                    selector:
+                      properties:
+                        matchExpressions:
+                          items:
+                            properties:
+                              key:
+                                type: string
+                              operator:
+                                enum:
+                                  - DoesNotExists
+                                  - Exists
+                                  - In
+                                  - NotIn
+                                type: string
+                              values:
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                              - key
+                              - operator
+                            type: object
+                          type: array
+                        matchLabels:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      type: object
+                    size:
+                      pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
+                      type: string
+                    storageClass:
+                      type: string
+                    subPath:
+                      type: string
+                    throughput:
+                      type: integer
+                  required:
+                    - size
+                  type: object
+                enableLogicalBackup:
+                  type: boolean
+                init_containers:
+                  description: deprecated
+                  items:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  nullable: true
+                  type: array
+                connectionPooler:
+                  properties:
+                    dockerImage:
+                      type: string
+                    maxDBConnections:
+                      type: integer
+                    mode:
+                      enum:
+                        - session
+                        - transaction
+                      type: string
+                    numberOfInstances:
+                      minimum: 1
+                      type: integer
+                    resources:
+                      properties:
+                        limits:
+                          properties:
+                            cpu:
+                              pattern: ^(\d+m|\d+(\.\d{1,3})?)$
+                              type: string
+                            memory:
+                              pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
+                              type: string
+                          type: object
+                        requests:
+                          properties:
+                            cpu:
+                              pattern: ^(\d+m|\d+(\.\d{1,3})?)$
+                              type: string
+                            memory:
+                              pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
+                              type: string
+                          type: object
+                      type: object
+                    schema:
+                      type: string
+                    user:
+                      type: string
+                  type: object
+                databases:
+                  additionalProperties:
+                    type: string
+                  type: object
+                preparedDatabases:
+                  additionalProperties:
+                    properties:
+                      defaultUsers:
+                        type: boolean
+                      extensions:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      schemas:
+                        additionalProperties:
+                          properties:
+                            defaultRoles:
+                              type: boolean
+                            defaultUsers:
+                              type: boolean
+                          type: object
+                        type: object
+                      secretNamespace:
+                        type: string
+                    type: object
+                  type: object
+                enableReplicaConnectionPooler:
+                  type: boolean
+                streams:
+                  items:
+                    properties:
+                      applicationId:
+                        type: string
+                      batchSize:
+                        type: integer
+                      database:
+                        type: string
+                      filter:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      tables:
+                        additionalProperties:
+                          properties:
+                            eventType:
+                              type: string
+                            idColumn:
+                              type: string
+                            payloadColumn:
+                              type: string
+                          required:
+                            - eventType
+                          type: object
+                        type: object
+                    required:
+                      - applicationId
+                      - database
+                      - tables
+                    type: object
+                  type: array
+                schedulerName:
+                  type: string
+                spiloRunAsUser:
+                  type: integer
+                replicaLoadBalancer:
+                  description: deprecated
+                  type: boolean
+                spiloFSGroup:
+                  type: integer
+                podPriorityClassName:
+                  type: string
+                enableReplicaPoolerLoadBalancer:
+                  type: boolean
+                usersWithInPlaceSecretRotation:
+                  items:
+                    type: string
+                  nullable: true
+                  type: array
+                tolerations:
+                  items:
+                    properties:
+                      effect:
+                        enum:
+                          - NoExecute
+                          - NoSchedule
+                          - PreferNoSchedule
+                        type: string
+                      key:
+                        type: string
+                      operator:
+                        enum:
+                          - Equal
+                          - Exists
+                        type: string
+                      tolerationSeconds:
+                        type: integer
+                      value:
+                        type: string
+                    type: object
+                  type: array
+                enableMasterLoadBalancer:
+                  type: boolean
+                tls:
+                  properties:
+                    caFile:
+                      type: string
+                    caSecretName:
+                      type: string
+                    certificateFile:
+                      type: string
+                    privateKeyFile:
+                      type: string
+                    secretName:
+                      type: string
+                  required:
+                    - secretName
+                  type: object
+                useLoadBalancer:
+                  description: deprecated
+                  type: boolean
+                enableMasterPoolerLoadBalancer:
+                  type: boolean
+                resources:
+                  properties:
+                    limits:
+                      properties:
+                        cpu:
+                          pattern: ^(\d+m|\d+(\.\d{1,3})?)$
+                          type: string
+                        memory:
+                          pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
+                          type: string
+                      type: object
+                    requests:
+                      properties:
+                        cpu:
+                          pattern: ^(\d+m|\d+(\.\d{1,3})?)$
+                          type: string
+                        memory:
+                          pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
+                          type: string
+                      type: object
+                  type: object
+                numberOfInstances:
+                  minimum: 0
+                  type: integer
+                podAnnotations:
+                  additionalProperties:
+                    type: string
+                  type: object
+                dockerImage:
+                  type: string
                 nodeAffinity:
                   properties:
                     preferredDuringSchedulingIgnoredDuringExecution:
@@ -185,423 +571,37 @@ spec:
                         - nodeSelectorTerms
                       type: object
                   type: object
-                dockerImage:
-                  type: string
-                podAnnotations:
-                  additionalProperties:
-                    type: string
-                  type: object
-                numberOfInstances:
-                  minimum: 0
-                  type: integer
-                resources:
+                clone:
                   properties:
-                    limits:
-                      properties:
-                        cpu:
-                          pattern: ^(\d+m|\d+(\.\d{1,3})?)$
-                          type: string
-                        memory:
-                          pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
-                          type: string
-                      type: object
-                    requests:
-                      properties:
-                        cpu:
-                          pattern: ^(\d+m|\d+(\.\d{1,3})?)$
-                          type: string
-                        memory:
-                          pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
-                          type: string
-                      type: object
-                  type: object
-                enableMasterPoolerLoadBalancer:
-                  type: boolean
-                useLoadBalancer:
-                  description: deprecated
-                  type: boolean
-                tls:
-                  properties:
-                    caFile:
+                    cluster:
                       type: string
-                    caSecretName:
+                    s3_access_key_id:
                       type: string
-                    certificateFile:
+                    s3_endpoint:
                       type: string
-                    privateKeyFile:
-                      type: string
-                    secretName:
-                      type: string
-                  required:
-                    - secretName
-                  type: object
-                enableMasterLoadBalancer:
-                  type: boolean
-                tolerations:
-                  items:
-                    properties:
-                      effect:
-                        enum:
-                          - NoExecute
-                          - NoSchedule
-                          - PreferNoSchedule
-                        type: string
-                      key:
-                        type: string
-                      operator:
-                        enum:
-                          - Equal
-                          - Exists
-                        type: string
-                      tolerationSeconds:
-                        type: integer
-                      value:
-                        type: string
-                    type: object
-                  type: array
-                usersWithInPlaceSecretRotation:
-                  items:
-                    type: string
-                  nullable: true
-                  type: array
-                enableReplicaPoolerLoadBalancer:
-                  type: boolean
-                podPriorityClassName:
-                  type: string
-                spiloFSGroup:
-                  type: integer
-                replicaLoadBalancer:
-                  description: deprecated
-                  type: boolean
-                spiloRunAsUser:
-                  type: integer
-                schedulerName:
-                  type: string
-                streams:
-                  items:
-                    properties:
-                      applicationId:
-                        type: string
-                      batchSize:
-                        type: integer
-                      database:
-                        type: string
-                      filter:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      tables:
-                        additionalProperties:
-                          properties:
-                            eventType:
-                              type: string
-                            idColumn:
-                              type: string
-                            payloadColumn:
-                              type: string
-                          required:
-                            - eventType
-                          type: object
-                        type: object
-                    required:
-                      - applicationId
-                      - database
-                      - tables
-                    type: object
-                  type: array
-                enableReplicaConnectionPooler:
-                  type: boolean
-                preparedDatabases:
-                  additionalProperties:
-                    properties:
-                      defaultUsers:
-                        type: boolean
-                      extensions:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      schemas:
-                        additionalProperties:
-                          properties:
-                            defaultRoles:
-                              type: boolean
-                            defaultUsers:
-                              type: boolean
-                          type: object
-                        type: object
-                      secretNamespace:
-                        type: string
-                    type: object
-                  type: object
-                databases:
-                  additionalProperties:
-                    type: string
-                  type: object
-                connectionPooler:
-                  properties:
-                    dockerImage:
-                      type: string
-                    maxDBConnections:
-                      type: integer
-                    mode:
-                      enum:
-                        - session
-                        - transaction
-                      type: string
-                    numberOfInstances:
-                      minimum: 1
-                      type: integer
-                    resources:
-                      properties:
-                        limits:
-                          properties:
-                            cpu:
-                              pattern: ^(\d+m|\d+(\.\d{1,3})?)$
-                              type: string
-                            memory:
-                              pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
-                              type: string
-                          type: object
-                        requests:
-                          properties:
-                            cpu:
-                              pattern: ^(\d+m|\d+(\.\d{1,3})?)$
-                              type: string
-                            memory:
-                              pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
-                              type: string
-                          type: object
-                      type: object
-                    schema:
-                      type: string
-                    user:
-                      type: string
-                  type: object
-                init_containers:
-                  description: deprecated
-                  items:
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  nullable: true
-                  type: array
-                enableLogicalBackup:
-                  type: boolean
-                volume:
-                  properties:
-                    iops:
-                      type: integer
-                    selector:
-                      properties:
-                        matchExpressions:
-                          items:
-                            properties:
-                              key:
-                                type: string
-                              operator:
-                                enum:
-                                  - DoesNotExists
-                                  - Exists
-                                  - In
-                                  - NotIn
-                                type: string
-                              values:
-                                items:
-                                  type: string
-                                type: array
-                            required:
-                              - key
-                              - operator
-                            type: object
-                          type: array
-                        matchLabels:
-                          type: object
-                          x-kubernetes-preserve-unknown-fields: true
-                      type: object
-                    size:
-                      pattern: ^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$
-                      type: string
-                    storageClass:
-                      type: string
-                    subPath:
-                      type: string
-                    throughput:
-                      type: integer
-                  required:
-                    - size
-                  type: object
-                maintenanceWindows:
-                  items:
-                    pattern: ^\ *((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\d):([0-5]?\d)|(2[0-3]|[01]?\d):([0-5]?\d))-((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\d):([0-5]?\d)|(2[0-3]|[01]?\d):([0-5]?\d))\ *$
-                    type: string
-                  type: array
-                enableReplicaLoadBalancer:
-                  type: boolean
-                serviceAnnotations:
-                  additionalProperties:
-                    type: string
-                  type: object
-                usersWithSecretRotation:
-                  items:
-                    type: string
-                  nullable: true
-                  type: array
-                pod_priority_class_name:
-                  description: deprecated
-                  type: string
-                postgresql:
-                  properties:
-                    parameters:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    version:
-                      enum:
-                        - '9.5'
-                        - '9.6'
-                        - '10'
-                        - '11'
-                        - '12'
-                        - '13'
-                        - '14'
-                      type: string
-                  required:
-                    - version
-                  type: object
-                users:
-                  additionalProperties:
-                    items:
-                      enum:
-                        - bypassrls
-                        - BYPASSRLS
-                        - nobypassrls
-                        - NOBYPASSRLS
-                        - createdb
-                        - CREATEDB
-                        - nocreatedb
-                        - NOCREATEDB
-                        - createrole
-                        - CREATEROLE
-                        - nocreaterole
-                        - NOCREATEROLE
-                        - inherit
-                        - INHERIT
-                        - noinherit
-                        - NOINHERIT
-                        - login
-                        - LOGIN
-                        - nologin
-                        - NOLOGIN
-                        - replication
-                        - REPLICATION
-                        - noreplication
-                        - NOREPLICATION
-                        - superuser
-                        - SUPERUSER
-                        - nosuperuser
-                        - NOSUPERUSER
-                      type: string
-                    nullable: true
-                    type: array
-                  type: object
-                sidecars:
-                  items:
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  nullable: true
-                  type: array
-                initContainers:
-                  items:
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  nullable: true
-                  type: array
-                enableShmVolume:
-                  type: boolean
-                env:
-                  items:
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  nullable: true
-                  type: array
-                logicalBackupSchedule:
-                  pattern: ^(\d+|\*)(/\d+)?(\s+(\d+|\*)(/\d+)?){4}$
-                  type: string
-                patroni:
-                  properties:
-                    initdb:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    loop_wait:
-                      type: integer
-                    maximum_lag_on_failover:
-                      type: integer
-                    pg_hba:
-                      items:
-                        type: string
-                      type: array
-                    retry_timeout:
-                      type: integer
-                    slots:
-                      additionalProperties:
-                        additionalProperties:
-                          type: string
-                        type: object
-                      type: object
-                    synchronous_mode:
+                    s3_force_path_style:
                       type: boolean
-                    synchronous_mode_strict:
-                      type: boolean
-                    synchronous_node_count:
-                      type: integer
-                    ttl:
-                      type: integer
-                  type: object
-                standby:
-                  oneOf:
-                    - required:
-                        - s3_wal_path
-                    - required:
-                        - gs_wal_path
-                    - required:
-                        - standby_host
-                  properties:
-                    gs_wal_path:
+                    s3_secret_access_key:
                       type: string
                     s3_wal_path:
                       type: string
-                    standby_host:
+                    timestamp:
+                      pattern: ^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([+-]([01][0-9]|2[0-3]):[0-5][0-9]))$
                       type: string
-                    standby_port:
+                    uid:
+                      format: uuid
                       type: string
+                  required:
+                    - cluster
                   type: object
-                additionalVolumes:
+                enableConnectionPooler:
+                  type: boolean
+                allowedSourceRanges:
                   items:
-                    properties:
-                      mountPath:
-                        type: string
-                      name:
-                        type: string
-                      subPath:
-                        type: string
-                      targetContainers:
-                        items:
-                          type: string
-                        nullable: true
-                        type: array
-                      volumeSource:
-                        type: object
-                        x-kubernetes-preserve-unknown-fields: true
-                    required:
-                      - name
-                      - mountPath
-                      - volumeSource
-                    type: object
+                    pattern: ^(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\/(\d|[1-2]\d|3[0-2])$
+                    type: string
+                  nullable: true
                   type: array
-                spiloRunAsGroup:
-                  type: integer
-                teamId:
-                  type: string
               required:
                 - numberOfInstances
                 - teamId

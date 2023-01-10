@@ -158,109 +158,34 @@ spec:
                   type: string
                 kubernetes:
                   properties:
-                    node_readiness_label_merge:
-                      enum:
-                        - AND
-                        - OR
+                    pod_service_account_definition:
+                      default: ''
                       type: string
-                    inherited_annotations:
-                      items:
-                        type: string
-                      type: array
-                    inherited_labels:
-                      items:
-                        type: string
-                      type: array
-                    pod_environment_secret:
+                    spilo_fsgroup:
+                      type: integer
+                    cluster_name_label:
+                      default: cluster-name
                       type: string
-                    custom_pod_annotations:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    enable_init_containers:
+                    pod_service_account_role_binding_definition:
+                      default: ''
+                      type: string
+                    enable_sidecars:
                       default: true
                       type: boolean
-                    pod_management_policy:
-                      default: ordered_ready
-                      enum:
-                        - ordered_ready
-                        - parallel
+                    delete_annotation_name_key:
                       type: string
-                    pod_antiaffinity_topology_key:
-                      default: kubernetes.io/hostname
+                    pod_environment_configmap:
                       type: string
-                    oauth_token_secret_name:
-                      default: postgresql-operator
+                    pod_terminate_grace_period:
+                      default: 5m
                       type: string
-                    pod_role_label:
-                      default: spilo-role
+                    pod_priority_class_name:
                       type: string
-                    node_readiness_label:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    enable_pod_disruption_budget:
-                      default: true
-                      type: boolean
-                    enable_pod_antiaffinity:
+                    enable_cross_namespace_secret:
                       default: false
                       type: boolean
-                    spilo_runasgroup:
-                      type: integer
-                    toleration:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    additional_pod_capabilities:
-                      items:
-                        type: string
-                      type: array
-                    pdb_name_format:
-                      default: postgres-{cluster}-pdb
-                      type: string
-                    spilo_runasuser:
-                      type: integer
-                    storage_resize_mode:
-                      default: pvc
-                      enum:
-                        - ebs
-                        - pvc
-                        - off
-                      type: string
-                    delete_annotation_date_key:
-                      type: string
-                    cluster_labels:
-                      additionalProperties:
-                        type: string
-                      default:
-                        application: spilo
-                      type: object
-                    infrastructure_roles_secret_name:
-                      type: string
-                    downscaler_annotations:
-                      items:
-                        type: string
-                      type: array
-                    master_pod_move_timeout:
-                      default: 20m
-                      type: string
-                    spilo_privileged:
-                      default: false
-                      type: boolean
-                    cluster_domain:
-                      default: cluster.local
-                      type: string
-                    ignored_annotations:
-                      items:
-                        type: string
-                      type: array
-                    spilo_allow_privilege_escalation:
-                      default: true
-                      type: boolean
-                    pod_service_account_name:
-                      default: postgres-pod
-                      type: string
-                    watched_namespace:
+                    secret_name_template:
+                      default: '{username}.{cluster}.credentials.{tprkind}.{tprgroup}'
                       type: string
                     infrastructure_roles_secrets:
                       items:
@@ -288,34 +213,109 @@ spec:
                         type: object
                       nullable: true
                       type: array
-                    secret_name_template:
-                      default: '{username}.{cluster}.credentials.{tprkind}.{tprgroup}'
+                    watched_namespace:
                       type: string
-                    enable_cross_namespace_secret:
-                      default: false
-                      type: boolean
-                    pod_priority_class_name:
+                    pod_service_account_name:
+                      default: postgres-pod
                       type: string
-                    pod_terminate_grace_period:
-                      default: 5m
-                      type: string
-                    pod_environment_configmap:
-                      type: string
-                    delete_annotation_name_key:
-                      type: string
-                    enable_sidecars:
+                    spilo_allow_privilege_escalation:
                       default: true
                       type: boolean
-                    pod_service_account_role_binding_definition:
-                      default: ''
+                    ignored_annotations:
+                      items:
+                        type: string
+                      type: array
+                    cluster_domain:
+                      default: cluster.local
                       type: string
-                    cluster_name_label:
-                      default: cluster-name
+                    spilo_privileged:
+                      default: false
+                      type: boolean
+                    master_pod_move_timeout:
+                      default: 20m
                       type: string
-                    spilo_fsgroup:
+                    downscaler_annotations:
+                      items:
+                        type: string
+                      type: array
+                    infrastructure_roles_secret_name:
+                      type: string
+                    cluster_labels:
+                      additionalProperties:
+                        type: string
+                      default:
+                        application: spilo
+                      type: object
+                    delete_annotation_date_key:
+                      type: string
+                    storage_resize_mode:
+                      default: pvc
+                      enum:
+                        - ebs
+                        - pvc
+                        - off
+                      type: string
+                    spilo_runasuser:
                       type: integer
-                    pod_service_account_definition:
-                      default: ''
+                    pdb_name_format:
+                      default: postgres-{cluster}-pdb
+                      type: string
+                    additional_pod_capabilities:
+                      items:
+                        type: string
+                      type: array
+                    toleration:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    spilo_runasgroup:
+                      type: integer
+                    enable_pod_antiaffinity:
+                      default: false
+                      type: boolean
+                    enable_pod_disruption_budget:
+                      default: true
+                      type: boolean
+                    node_readiness_label:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    pod_role_label:
+                      default: spilo-role
+                      type: string
+                    oauth_token_secret_name:
+                      default: postgresql-operator
+                      type: string
+                    pod_antiaffinity_topology_key:
+                      default: kubernetes.io/hostname
+                      type: string
+                    pod_management_policy:
+                      default: ordered_ready
+                      enum:
+                        - ordered_ready
+                        - parallel
+                      type: string
+                    enable_init_containers:
+                      default: true
+                      type: boolean
+                    custom_pod_annotations:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    pod_environment_secret:
+                      type: string
+                    inherited_labels:
+                      items:
+                        type: string
+                      type: array
+                    inherited_annotations:
+                      items:
+                        type: string
+                      type: array
+                    node_readiness_label_merge:
+                      enum:
+                        - AND
+                        - OR
                       type: string
                   type: object
                 kubernetes_use_configmaps:

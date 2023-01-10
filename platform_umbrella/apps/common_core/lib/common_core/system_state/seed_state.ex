@@ -8,44 +8,52 @@ defmodule CommonCore.SystemState.SeedState do
   def seed(:everything) do
     state_summary = %StateSummary{
       batteries: batteries(),
-      postgres_clusters: [
-        Defaults.ControlDB.control_cluster(),
-        Defaults.GiteaDB.gitea_cluster(),
-        Defaults.HarborDB.harbor_pg_cluster()
-      ],
-      redis_clusters: [Defaults.HarborDB.harbor_redis_cluster()]
+      postgres_clusters:
+        pg_clusters([
+          Defaults.ControlDB.control_cluster(),
+          Defaults.GiteaDB.gitea_cluster(),
+          Defaults.HarborDB.harbor_pg_cluster()
+        ]),
+      redis_clusters: redis_clusters([Defaults.HarborDB.harbor_redis_cluster()])
     }
 
     add_docker_lb_ips(state_summary)
   end
 
-  def seed(_type) do
-    state_summary = %StateSummary{
+  def seed(:dev) do
+    summary = %StateSummary{
       batteries:
         batteries([
           :battery_core,
           :postgres_operator,
-          :database_internal,
+          :postgres,
           :istio,
           :metallb,
           :metallb_ip_pool
         ]),
-      postgres_clusters: [Defaults.ControlDB.control_cluster()]
+      postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }
 
-    add_docker_lb_ips(state_summary)
+    # The things below are here on the client side.
+    # They require that we know something about the
+    # what the client side looks like.
+    #
+    summary
+    |> add_docker_lb_ips()
+    |> add_dev_infra_user()
   end
 
-  defp batteries do
-    Enum.map(Catalog.all(), &CatalogBattery.to_fresh_system_battery/1)
-  end
-
-  defp batteries(types) do
-    types
-    |> Enum.map(&Catalog.get/1)
-    |> Enum.flat_map(&Catalog.get_recursive/1)
-    |> Enum.uniq_by(& &1.type)
-    |> Enum.map(&CatalogBattery.to_fresh_system_battery/1)
+  def seed(_type) do
+    %StateSummary{
+      batteries:
+        batteries([
+          :battery_core,
+          :postgres_operator,
+          :postgres,
+          :istio
+        ]),
+      postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
+    }
   end
 
   defp add_docker_lb_ips(%StateSummary{} = state_summary) do
@@ -54,6 +62,27 @@ defmodule CommonCore.SystemState.SeedState do
       | ip_address_pools: get_lb_ranges() ++ state_summary.ip_address_pools
     }
   end
+
+  defp add_dev_infra_user(%StateSummary{} = summary) do
+    %StateSummary{summary | batteries: Enum.map(summary.batteries, &add_dev_infra_to_battery/1)}
+  end
+
+  defp add_dev_infra_to_battery(%{type: :postgres_operator} = battery) do
+    update_in(battery, [Access.key(:config, %{}), Access.key(:infra_users, [])], fn users ->
+      clean_users = users || []
+
+      [
+        %CommonCore.Postgres.PGInfraUser{
+          username: "batterydbuser",
+          generated_key: "not-real",
+          roles: ["createdb", "superuser", "login"]
+        }
+        | clean_users
+      ]
+    end)
+  end
+
+  defp add_dev_infra_to_battery(battery), do: battery
 
   def get_lb_ranges do
     # I'm not 100% sure that if we add more
@@ -73,7 +102,18 @@ defmodule CommonCore.SystemState.SeedState do
         |> Enum.drop(1)
         |> Enum.map(fn c -> to_string(c) end)
         |> Enum.with_index()
-        |> Enum.map(fn {el, idx} -> %{name: "kind-#{idx}", subnet: el} end)
+        |> Enum.map(fn {el, idx} ->
+          # This is kind of silly but *shrug*
+          #
+          # We are creating the StateSummary struct that
+          # has a type signature. So regardless of the fact that
+          # this map that we turn into struct is almost directly going
+          # to be turned back into a map, we do this.
+          CommonCore.MetalLB.IPAddressPool.to_fresh_ip_address_pool(%{
+            name: "kind-#{idx}",
+            subnet: el
+          })
+        end)
     end
   end
 
@@ -81,5 +121,25 @@ defmodule CommonCore.SystemState.SeedState do
     DockerIps.get_kind_ips()
     |> Enum.map(&CIDR.parse/1)
     |> List.first()
+  end
+
+  defp redis_clusters(args_list) do
+    Enum.map(args_list, &CommonCore.Redis.FailoverCluster.to_fresh_cluster/1)
+  end
+
+  defp pg_clusters(args_list) do
+    Enum.map(args_list, &CommonCore.Postgres.Cluster.to_fresh_cluster/1)
+  end
+
+  defp batteries do
+    Enum.map(Catalog.all(), &CatalogBattery.to_fresh_system_battery/1)
+  end
+
+  defp batteries(types) do
+    types
+    |> Enum.map(&Catalog.get/1)
+    |> Enum.flat_map(&Catalog.get_recursive/1)
+    |> Enum.uniq_by(& &1.type)
+    |> Enum.map(&CatalogBattery.to_fresh_system_battery/1)
   end
 end

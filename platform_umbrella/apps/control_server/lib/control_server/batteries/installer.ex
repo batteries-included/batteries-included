@@ -149,7 +149,7 @@ defmodule ControlServer.Batteries.Installer do
     end
   end
 
-  defp post_install(%SystemBattery{type: :database_internal}, repo) do
+  defp post_install(%SystemBattery{type: :postgres}, repo) do
     init_pg = Defaults.ControlDB.control_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do

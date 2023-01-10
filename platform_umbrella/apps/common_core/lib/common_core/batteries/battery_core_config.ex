@@ -9,9 +9,10 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
   typed_embedded_schema do
     field :core_namespace, :string, default: Defaults.Namespaces.core()
     field :base_namespace, :string, default: Defaults.Namespaces.base()
+    field :data_namespace, :string, default: Defaults.Namespaces.data()
   end
 
   def changeset(struct, params \\ %{}) do
-    cast(struct, params, [:core_namespace, :base_namespace])
+    cast(struct, params, [:core_namespace, :base_namespace, :data_namespace])
   end
 end

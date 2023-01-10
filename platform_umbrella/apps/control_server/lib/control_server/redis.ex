@@ -9,6 +9,8 @@ defmodule ControlServer.Redis do
   alias CommonCore.Redis.FailoverCluster
   alias EventCenter.Database, as: DatabaseEventCenter
 
+  alias Ecto.Multi
+
   @doc """
   Returns the list of failover_clusters.
 
@@ -105,6 +107,35 @@ defmodule ControlServer.Redis do
   """
   def change_failover_cluster(%FailoverCluster{} = failover_cluster, attrs \\ %{}) do
     FailoverCluster.changeset(failover_cluster, attrs)
+  end
+
+  def find_or_create(attrs, transaction_repo \\ Repo) do
+    Multi.new()
+    |> Multi.run(:selected, fn repo, _ ->
+      {:ok,
+       repo.one(
+         from(failover_cluster in FailoverCluster,
+           where:
+             failover_cluster.type == ^attrs.type and
+               failover_cluster.name == ^attrs.name
+         )
+       )}
+    end)
+    |> Multi.run(:created, fn repo, %{selected: sel} ->
+      maybe_insert(sel, repo, attrs)
+    end)
+    |> transaction_repo.transaction()
+  end
+
+  defp maybe_insert(nil = _selected, repo, attrs) do
+    %FailoverCluster{}
+    |> FailoverCluster.changeset(attrs)
+    |> repo.insert()
+    |> broadcast(:insert)
+  end
+
+  defp maybe_insert(%FailoverCluster{} = _selected, _repo, _attrs) do
+    {:ok, nil}
   end
 
   defp broadcast({:ok, fc} = result, action) do

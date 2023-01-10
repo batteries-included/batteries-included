@@ -5,9 +5,8 @@ defmodule CommonCore.Batteries.Catalog do
 
   @all [
     # Data
-    %CatalogBattery{group: :data, type: :data, dependencies: []},
     %CatalogBattery{group: :data, type: :redis_operator, dependencies: [:battery_core]},
-    %CatalogBattery{group: :data, type: :redis, dependencies: [:data, :redis_operator]},
+    %CatalogBattery{group: :data, type: :redis, dependencies: [:battery_core, :redis_operator]},
     %CatalogBattery{
       group: :data,
       type: :postgres_operator,
@@ -15,15 +14,10 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :data,
-      type: :database_public,
-      dependencies: [:postgres_operator, :data]
-    },
-    %CatalogBattery{
-      group: :data,
-      type: :database_internal,
+      type: :postgres,
       dependencies: [:postgres_operator, :battery_core]
     },
-    %CatalogBattery{group: :data, type: :rook, dependencies: [:data]},
+    %CatalogBattery{group: :data, type: :rook, dependencies: [:battery_core]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core},
     %CatalogBattery{
@@ -41,12 +35,12 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :devtools,
       type: :gitea,
-      dependencies: [:database_internal, :istio_gateway, :battery_core]
+      dependencies: [:postgres, :istio_gateway, :battery_core]
     },
     %CatalogBattery{
       group: :devtools,
       type: :harbor,
-      dependencies: [:battery_core, :redis, :istio_gateway, :database_internal]
+      dependencies: [:battery_core, :redis, :istio_gateway, :postgres]
     },
     # ML
     %CatalogBattery{group: :ml, type: :ml_core},

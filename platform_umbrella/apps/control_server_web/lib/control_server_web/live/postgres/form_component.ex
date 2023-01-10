@@ -178,7 +178,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               label="Roles"
               type="select"
               multiple={true}
-              options={PGUser.possible_roles()}
+              options={CommonCore.Postgres.possible_roles()}
             />
           </div>
           <div class="col-span-1">
