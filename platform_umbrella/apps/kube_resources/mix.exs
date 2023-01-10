@@ -34,7 +34,6 @@ defmodule KubeResources.MixProject do
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 3.0.1"},
       # Caching for http requests
-      {:cachex, "~> 3.4"},
       {:finch, "~> 0.14.0"},
       # logging
       {:phoenix, github: "phoenixframework/phoenix", override: true},
