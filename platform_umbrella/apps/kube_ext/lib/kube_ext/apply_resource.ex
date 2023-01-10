@@ -131,22 +131,20 @@ defmodule KubeExt.ApplyResource do
       "Going to create Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)}"
     )
 
-    create_operation =
-      resource
-      |> Hashing.decorate()
-      |> Client.create()
+    create_operation = Client.create(resource)
 
     Client.run(connection, create_operation)
   end
 
   defp update_single(connection, resource) do
     Logger.info(
-      "Going to update Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)} Namespace: #{Resource.namespace(resource)}"
+      "Going to apply Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)} Namespace: #{Resource.namespace(resource)}"
     )
 
-    operation = Client.update(resource)
+    operation = Client.apply(resource)
+
     result = Client.run(connection, operation)
-    Logger.debug("Completed update on single resource", result: result)
+    Logger.debug("Completed apply on single resource", result: result)
     result
   end
 
