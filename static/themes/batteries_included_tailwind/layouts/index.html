@@ -1,17 +1,17 @@
 {{ define "main" }}
   <div class="relative overflow-hidden bg-white">
     <div class="relative pt-6 pb-16 sm:pb-24 lg:pb-32">
-      <main class="px-4 mx-auto mt-16 max-w-7xl sm:mt-24 sm:px-6 lg:mt-32">
+      <main class="mx-auto mt-16 max-w-7xl px-4 sm:mt-24 sm:px-6 lg:mt-32">
         <div class="lg:grid lg:grid-cols-12 lg:gap-8">
           <div
-            class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
+            class="sm:text-center md:mx-auto md:max-w-2xl lg:col-span-6 lg:text-left">
             <h1>
               <span
-                class="block text-sm font-semibold tracking-wide text-gray-500 uppercase sm:text-base lg:text-sm xl:text-base">
+                class="block text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base">
                 Coming soon
               </span>
               <span
-                class="block mt-1 text-4xl font-extrabold tracking-tight sm:text-5xl xl:text-6xl">
+                class="mt-1 block text-4xl font-extrabold tracking-tight sm:text-5xl xl:text-6xl">
                 <span class="block text-gray-900">
                   Software infrastructure for tomorrow&apos;s
                 </span>
@@ -45,7 +45,7 @@
               experience the power of proper infrastructure as a service.
             </p>
             <div
-              class="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
+              class="mt-8 sm:mx-auto sm:max-w-lg sm:text-center lg:mx-0 lg:text-left">
               <p class="text-base font-medium text-gray-900">
                 Sign up to get notified when it's ready.
               </p>
@@ -62,14 +62,14 @@
                   type="text"
                   name="email"
                   id="email"
-                  class="block w-full py-3 text-base placeholder-gray-500 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:flex-1 mr-5"
+                  class="mr-5 block w-full rounded-md border-gray-300 py-3 text-base placeholder-gray-500 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:flex-1"
                   placeholder="Enter your email" />
 
                 <button
                   type="submit"
-                  class="relative inline-flex items-center justify-center p-0.5 rounded-lg overflow-hidden text-sm font-medium text-gray-900 transition-all ease-in-out duration-300 hover:scale-110 bg-gradient-to-tl from-primary-500 to-secondary-500 group/button focus:ring-4 focus:outline-none focus:ring-pink-300 hover:bg-gradient-to-bl hover:from-secondary-500 hover:to-primary-500 hover:text-white hover:shadow-lg hover:shadow-secondary-500/20">
+                  class="from-primary-500 to-secondary-500 group/button hover:from-secondary-500 hover:to-primary-500 hover:shadow-secondary-500/20 relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-tl p-0.5 text-sm font-medium text-gray-900 transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gradient-to-bl hover:text-white hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-pink-300">
                   <span
-                    class="relative px-5 py-3 w-full rounded-md transition-all ease-in-out duration-300 bg-white group-hover/button:bg-opacity-0">
+                    class="relative w-full rounded-md bg-white px-5 py-3 transition-all duration-300 ease-in-out group-hover/button:bg-opacity-0">
                     Notify me
                   </span>
                 </button>
@@ -77,7 +77,7 @@
             </div>
           </div>
           <div
-            class="relative mt-12 sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
+            class="relative mt-12 sm:mx-auto sm:max-w-lg lg:col-span-6 lg:mx-0 lg:mt-0 lg:flex lg:max-w-none lg:items-center">
             {{ $image := resources.Get "images/logo.2.white.png" }}
             {{ $image := $image | fingerprint }}
             {{ with $image }}
@@ -94,12 +94,12 @@
     </div>
   </div>
 
-  <div class="relative py-16 bg-white sm:py-24 lg:py-32">
+  <div class="relative bg-white py-16 sm:py-24 lg:py-32">
     <div
-      class="max-w-md px-4 mx-auto text-center sm:max-w-3xl sm:px-6 lg:px-8 lg:max-w-7xl">
+      class="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
       <a id="features">
         <h2
-          class="text-base font-semibold tracking-wider text-pink-500 uppercase">
+          class="text-base font-semibold uppercase tracking-wider text-pink-500">
           Build Your Business
         </h2>
       </a>
@@ -107,7 +107,7 @@
         class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
         Everything you need to build tomorrow&apos;s technology company
       </p>
-      <p class="mx-auto mt-5 text-xl text-gray-500 max-w-prose">
+      <p class="mx-auto mt-5 max-w-prose text-xl text-gray-500">
         All of the systems needed to run a modern company are complex, but
         necessary. When combined correctly they can super charge your business;
         making software fast, stable, and able to predict the future. Tech

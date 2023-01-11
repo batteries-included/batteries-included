@@ -18,12 +18,12 @@ defmodule CommonUI.Form do
         <:actions>
       </.simple_form>
   """
-  attr :for, :any, default: nil, doc: "the datastructure for the form"
-  attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
-  attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the form tag"
+  attr(:for, :any, default: nil, doc: "the datastructure for the form")
+  attr(:as, :any, default: nil, doc: "the server side parameter to collect all input under")
+  attr(:rest, :global, doc: "the arbitraty HTML attributes to apply to the form tag")
 
-  slot :inner_block, required: true
-  slot :actions, doc: "the slot for form actions, such as a submit button"
+  slot(:inner_block, required: true)
+  slot(:actions, doc: "the slot for form actions, such as a submit button")
 
   def simple_form(assigns) do
     ~H"""
@@ -52,9 +52,9 @@ defmodule CommonUI.Form do
       <.input field={{f, :email}} type="email" />
       <.input name="my-input" errors={["oh no!"]} />
   """
-  attr :id, :any
-  attr :name, :any
-  attr :label, :string
+  attr(:id, :any)
+  attr(:name, :any)
+  attr(:label, :string)
 
   attr(:type, :string,
     default: "text",
@@ -62,14 +62,14 @@ defmodule CommonUI.Form do
       ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range|
   )
 
-  attr :value, :any
-  attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
-  attr :errors, :list
-  attr :wrapper_class, :string, default: "form-control"
+  attr(:value, :any)
+  attr(:field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}")
+  attr(:errors, :list)
+  attr(:wrapper_class, :string, default: "form-control")
 
-  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
-  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
-  attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr(:prompt, :string, default: nil, doc: "the prompt for select inputs")
+  attr(:options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2")
+  attr(:multiple, :boolean, default: false, doc: "the multiple flag for select inputs")
 
   attr(:rest, :global,
     doc: "the arbitrary HTML attributes for the input tag",
@@ -77,7 +77,7 @@ defmodule CommonUI.Form do
       ~w(autocomplete checked disabled form max maxlength min minlength pattern placeholder readonly required size step)
   )
 
-  slot :inner_block
+  slot(:inner_block)
 
   def input(%{field: {f, field}} = assigns) do
     assigns
@@ -118,11 +118,7 @@ defmodule CommonUI.Form do
       <select
         id={@id}
         name={@name}
-        class={[
-          input_border(@errors),
-          "block w-full px-2.5 pb-2.5 pt-4 border",
-          "bg-white rounded-lg shadow-sm text-base text-gray-900"
-        ]}
+        class={[border("select", @errors), "select select-md w-full max-w-x"]}
         multiple={@multiple}
         {@rest}
       >
@@ -141,10 +137,7 @@ defmodule CommonUI.Form do
       <textarea
         id={@id || @name}
         name={@name}
-        class={[
-          input_border(@errors),
-          "block p-2.5 w-full text-base text-gray-900 bg-gray-50 rounded-lg"
-        ]}
+        class={[border("textarea", @errors), "textarea"]}
         {@rest}
       ><%= @value %></textarea>
       <.error :for={msg <- @errors} message={msg} />
@@ -161,12 +154,7 @@ defmodule CommonUI.Form do
         name={@name}
         value={@value}
         type="range"
-        class={[
-          input_border(@errors),
-          "border-gray-300 focus:border-primary-500",
-          "focus:ring-primary-300 dark:border-gray-600",
-          "dark:focus:border-primary-500 w-full"
-        ]}
+        class={["range range-md range-primary w-full"]}
         {@rest}
       />
       <.error :for={msg <- @errors} message={msg} />
@@ -183,14 +171,7 @@ defmodule CommonUI.Form do
         name={@name}
         id={@id || @name}
         value={@value}
-        class={[
-          input_border(@errors),
-          "block px-2.5 pb-2.5 pt-4",
-          "w-full text-base text-gray-900 bg-white rounded-lg border-1 border-gray-300",
-          "appearance-none",
-          "dark:text-white dark:border-gray-600 dark:focus:border-primary-500",
-          "focus:outline-none focus:ring-0 focus:border-pink-300 peer"
-        ]}
+        class={[border("input", @errors), "input input-md inptut-bordered"]}
         {@rest}
       />
       <.error :for={msg <- @errors} message={msg} />
@@ -202,23 +183,20 @@ defmodule CommonUI.Form do
   defp input_checked(_rest, value) when is_boolean(value), do: value
   defp input_checked(_rest, value), do: to_string(value) == "true"
 
-  defp input_border([] = _errors),
-    do:
-      "border-primary-400 focus:border-primary-600 focus:ring-pink-300 focus:ring-4 focus:ring-inset"
+  defp border(type, [] = _errors), do: "#{type}-bordered"
 
-  defp input_border([_ | _] = _errors),
-    do:
-      "border border-sea-buckthorn-400 focus:border-sea-buckthorn-500 focus:ring-sea-buckthorn-400/10"
+  defp border(type, [_ | _] = _errors),
+    do: "#{type}-bordered #{type}-error"
 
   @doc """
   Renders a label.
   """
-  attr :for, :string, default: nil
-  slot :inner_block, required: true
+  attr(:for, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block mb-2 text-lg font-semibold text-gray-900 dark:text-gray-300">
+    <label for={@for} class="label">
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -227,7 +205,7 @@ defmodule CommonUI.Form do
   @doc """
   Generates a generic error message.
   """
-  attr :message, :string, default: ""
+  attr(:message, :string, default: "")
 
   def error(assigns) do
     ~H"""
@@ -248,7 +226,7 @@ defmodule CommonUI.Form do
       "after:content-['']",
       "after:absolute after:top-0.5 after:left-[2px]",
       "after:bg-white",
-      "after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-secondary-600"
+      "after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"
     ]}>
     </div>
     """

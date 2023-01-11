@@ -9,38 +9,39 @@ defmodule CommonUI.Modal do
 
   @doc """
   Renders a modal.
-
   ## Examples
-
       <.modal id="confirm-modal">
         Are you sure?
         <:confirm>OK</:confirm>
         <:cancel>Cancel</:cancel>
-      <.modal>
-
+      </.modal>
   JS commands may be passed to the `:on_cancel` and `on_confirm` attributes
-  for the caller to reactor to each button press, for example:
-
-      <.modal id="confirm" on_confirm={JS.push("delete")} on_cancel={JS.navigate("/posts")}>
+  for the caller to react to each button press, for example:
+      <.modal id="confirm" on_confirm={JS.push("delete")} on_cancel={JS.navigate(~p"/posts")}>
         Are you sure you?
         <:confirm>OK</:confirm>
-        <:cancel>Cancel</:confirm>
-      <.modal>
+        <:cancel>Cancel</:cancel>
+      </.modal>
   """
-  attr :id, :string, required: true
-  attr :show, :boolean, default: false
-  attr :on_cancel, JS, default: %JS{}
-  attr :on_confirm, JS, default: %JS{}
+  attr(:id, :string, required: true)
+  attr(:show, :boolean, default: false)
+  attr(:on_cancel, JS, default: %JS{})
+  attr(:on_confirm, JS, default: %JS{})
 
-  slot :inner_block, required: true
-  slot :title
-  slot :subtitle
-  slot :confirm
-  slot :cancel
+  slot(:inner_block, required: true)
+  slot(:title)
+  slot(:subtitle)
+  slot(:confirm)
+  slot(:cancel)
 
   def modal(assigns) do
     ~H"""
-    <div id={@id} phx-mounted={@show && show_modal(@id)} class="relative z-50 hidden">
+    <div
+      id={@id}
+      phx-mounted={@show && show_modal(@id)}
+      phx-remove={hide_modal(@id)}
+      class="relative z-50 hidden"
+    >
       <div id={"#{@id}-bg"} class="fixed inset-0 bg-gray-50/90 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
@@ -75,7 +76,11 @@ defmodule CommonUI.Modal do
                   <h1 id={"#{@id}-title"} class="text-lg font-semibold leading-8 text-gray-800">
                     <%= render_slot(@title) %>
                   </h1>
-                  <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-gray-600">
+                  <p
+                    :if={@subtitle != []}
+                    id={"#{@id}-description"}
+                    class="mt-2 text-sm leading-6 text-astral-900"
+                  >
                     <%= render_slot(@subtitle) %>
                   </p>
                 </header>
@@ -93,7 +98,7 @@ defmodule CommonUI.Modal do
                   <.link
                     :for={cancel <- @cancel}
                     phx-click={hide_modal(@on_cancel, @id)}
-                    class="text-sm font-semibold leading-6 text-gray-900 hover:text-gray-700"
+                    variant="styled"
                   >
                     <%= render_slot(cancel) %>
                   </.link>

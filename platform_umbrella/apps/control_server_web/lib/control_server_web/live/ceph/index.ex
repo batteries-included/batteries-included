@@ -48,7 +48,7 @@ defmodule ControlServerWeb.Live.CephIndex do
       <.section_title>Ceph FileSystem</.section_title>
       <.ceph_filesystems_table ceph_filesystems={@ceph_filesystems} />
 
-      <.h2>Actions</.h2>
+      <.h2 variant="fancy">Actions</.h2>
       <.body_section>
         <.link navigate={~p"/ceph/clusters/new"}>
           <.button>

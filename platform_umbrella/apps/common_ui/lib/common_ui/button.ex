@@ -10,12 +10,12 @@ defmodule CommonUI.Button do
       <.button>Send!</.button>
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
-  attr :type, :string, default: nil
-  attr :class, :any, default: nil
-  attr :variant, :string, default: "default", values: ["default", "filled"]
-  attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag"
+  attr(:type, :string, default: nil)
+  attr(:class, :any, default: nil)
+  attr(:variant, :string, default: "default", values: ["default", "filled"])
+  attr(:rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag")
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def button(%{variant: "default"} = assigns) do
     ~H"""
@@ -26,10 +26,10 @@ defmodule CommonUI.Button do
           "p-0.5 mb-2 mr-2 rounded-lg overflow-hidden",
           "text-sm font-medium text-gray-900",
           "transition-all ease-in-out duration-300 hover:scale-110",
-          "bg-gradient-to-tl from-primary-500 to-secondary-500",
+          "bg-gradient-to-tl from-astral-500 to-pink-500",
           "group/button",
           "focus:ring-4 focus:outline-none focus:ring-pink-300",
-          "hover:bg-gradient-to-bl hover:from-secondary-500 hover:to-primary-500 hover:text-white hover:shadow-lg hover:shadow-secondary-500/20 ",
+          "hover:bg-gradient-to-bl hover:from-pink-500 hover:to-astral-500 hover:text-white hover:shadow-lg hover:shadow-pink-500/20 ",
           @class
         ])
       }
@@ -53,7 +53,7 @@ defmodule CommonUI.Button do
       class={
         build_class([
           "text-white text-center",
-          "bg-gradient-to-br from-primary-600 to-secondary-500 hover:bg-gradient-to-bl",
+          "bg-gradient-to-br from-astral-600 to-pink-500 hover:bg-gradient-to-bl",
           "focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800",
           "font-medium rounded-lg text-md px-5 py-2.5",
           @class

@@ -32,7 +32,7 @@ defmodule CommonUI.Stats do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <div class="text-2xl text-primary-500">
+    <div class="text-2xl text-astral-800">
       <%= if @inner_block do %>
         <%= render_slot(@inner_block) %>
       <% end %>

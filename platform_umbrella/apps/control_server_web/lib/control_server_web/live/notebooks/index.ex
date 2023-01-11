@@ -48,9 +48,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
         <.title>Notebooks</.title>
       </:title>
       <.notebooks_table notebooks={@notebooks} />
-      <.h2>
-        Actions
-      </.h2>
+      <.h2 variant="fancy">Actions</.h2>
       <.body_section>
         <.button type="primary" phx-click="start_notebook">
           Start New Notebook

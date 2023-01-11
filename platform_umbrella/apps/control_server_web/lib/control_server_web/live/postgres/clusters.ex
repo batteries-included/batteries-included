@@ -34,7 +34,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
       </:title>
 
       <.pg_cluster_display clusters={@clusters} />
-      <.h2>Actions</.h2>
+      <.h2 variant="fancy">Actions</.h2>
       <.body_section>
         <.link navigate={new_url()}>
           <.button>

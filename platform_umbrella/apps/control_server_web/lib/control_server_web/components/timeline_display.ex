@@ -5,7 +5,7 @@ defmodule ControlServerWeb.TimelineDisplay do
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def feed_timeline(assigns) do
     ~H"""
@@ -22,11 +22,11 @@ defmodule ControlServerWeb.TimelineDisplay do
     """
   end
 
-  attr :timestamp, :any, default: nil
-  attr :payload, :any, default: nil
-  attr :title, :string, default: ""
-  attr :index, :integer, default: 0
-  slot :inner_block
+  attr(:timestamp, :any, default: nil)
+  attr(:payload, :any, default: nil)
+  attr(:title, :string, default: "")
+  attr(:index, :integer, default: 0)
+  slot(:inner_block)
 
   def timeline_item(%{payload: %NamedDatabase{}} = assigns) do
     ~H"""
@@ -75,12 +75,12 @@ defmodule ControlServerWeb.TimelineDisplay do
     ~H"""
     <div class={[timeline_item_container_class(@index)]}>
       <div class="order-1 w-5/12"></div>
-      <div class="z-20 flex items-center order-1 bg-secondary-900 shadow-xl w-8 h-8 rounded-full">
+      <div class="z-20 flex items-center order-1 bg-pink-900 shadow-xl w-8 h-8 rounded-full">
         <h1 class="mx-auto font-semibold text-lg text-white"><%= @index %></h1>
       </div>
       <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
         <h3 class="font-bold text-gray-800 text-xl"><%= @title %></h3>
-        <h3 class=" text-primary-500 text-sm mb-3 "><%= @timestamp %></h3>
+        <h3 class=" text-astral-500 text-sm mb-3 "><%= @timestamp %></h3>
         <p class="text-base leading-snug tracking-wide text-gray-900 text-opacity-100">
           <%= render_slot(@inner_block) %>
         </p>

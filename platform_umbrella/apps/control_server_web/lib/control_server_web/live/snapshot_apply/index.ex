@@ -42,7 +42,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
       </:title>
       <.kube_snapshots_table kube_snapshots={@snapshots.entries} />
 
-      <.h2>Actions</.h2>
+      <.h2 variant="fancy">Actions</.h2>
       <.body_section>
         <.button phx-click="start">
           Start Deploy

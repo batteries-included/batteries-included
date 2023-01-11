@@ -139,8 +139,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp user_namespace(:internal = _cluster_type), do: CommonCore.Defaults.Namespaces.core()
   defp user_namespace(_cluster_type), do: CommonCore.Defaults.Namespaces.data()
 
-  defp namespaces(cluster) do
+  defp namespaces(user_name, cluster) do
     cluster.credential_copies
+    |> Enum.filter(fn cc -> cc.username == user_name end)
     |> Enum.map(& &1.namespace)
     |> Enum.concat([user_namespace(cluster.type)])
     |> Enum.join(", ")
@@ -152,7 +153,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       <:col :let={user} label="User Name"><%= user.username %></:col>
       <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
       <:col :let={user} label="Secret"><%= secret_name(@cluster.name, user.username) %></:col>
-      <:col label="Namespace"><%= namespaces(@cluster) %></:col>
+      <:col :let={user} label="Namespace"><%= namespaces(user.username, @cluster) %></:col>
     </.table>
     """
   end
@@ -206,7 +207,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       <.section_title>Services</.section_title>
       <.services_table services={@k8_services} />
 
-      <.h2>Actions</.h2>
+      <.h2 variant="fancy">Actions</.h2>
       <.body_section>
         <.link navigate={edit_url(@cluster)}>
           <.button>

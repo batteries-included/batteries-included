@@ -1,17 +1,17 @@
 {{ define "main" }}
   <div class="relative overflow-hidden bg-white">
-    <div class="max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 xl:max-w-5xl xl:px-0">
       <header class="pt-6 xl:pb-6">
         <div class="space-y-1 text-center">
           <h1
-            class="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
+            class="md:leading-14 text-3xl font-extrabold leading-9 tracking-tight text-gray-900 sm:text-4xl sm:leading-10 md:text-5xl">
             {{ .Title }}
           </h1>
         </div>
       </header>
 
-      <div class="pb-8 divide-y divide-gray-200 xl:divide-y-0 ">
-        <div class="pt-10 pb-8 prose max-w-none">
+      <div class="divide-y divide-gray-200 pb-8 xl:divide-y-0 ">
+        <div class="prose max-w-none pt-10 pb-8">
           {{ .Content }}
         </div>
       </div>

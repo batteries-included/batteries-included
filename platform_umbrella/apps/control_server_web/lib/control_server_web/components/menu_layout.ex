@@ -14,7 +14,7 @@ defmodule ControlServerWeb.MenuLayout do
     @default_container_class
   end
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def title(assigns) do
     ~H"""
@@ -24,18 +24,18 @@ defmodule ControlServerWeb.MenuLayout do
     """
   end
 
-  attr :navigate, :string, required: true
-  slot :label, required: true
-  slot :inner_block, required: true
+  attr(:navigate, :string, required: true)
+  slot(:label, required: true)
+  slot(:inner_block, required: true)
 
   def menu_item(assigns) do
     ~H"""
     <.link
       navigate={@navigate}
       class={[
-        "pt-1 text-sm font-medium text-gray-900",
+        "pt-1 text-sm font-medium text-astral-700",
         "text-mono",
-        "hover:bg-secondary-50/50 hover:text-secondary-500",
+        "hover:bg-pink-50/50 hover:text-pink-500",
         "flex h-full w-full items-center flex-col justify-center"
       ]}
     >
@@ -47,12 +47,12 @@ defmodule ControlServerWeb.MenuLayout do
     """
   end
 
-  attr :icon_class, :string, default: "h-6 w-6 text-primary-500 group-hover:text-pink-500"
-  attr :container_type, :atom, default: :default
-  attr :group, :atom, default: :magic
+  attr(:icon_class, :string, default: "h-6 w-6 text-astral-700 group-hover:text-pink-500")
+  attr(:container_type, :atom, default: :default)
+  attr(:group, :atom, default: :magic)
 
-  slot :inner_block
-  slot :title
+  slot(:inner_block)
+  slot(:title)
 
   def menu_layout(assigns) do
     ~H"""
@@ -65,7 +65,7 @@ defmodule ControlServerWeb.MenuLayout do
           <%= if @title do %>
             <%= render_slot(@title) %>
           <% end %>
-          <h2 class="flex-grow px-5 text-2xl text-right text-gray-500 my-auto mx-6">
+          <h2 class="flex-grow px-5 text-2xl text-right text-astral-800 my-auto mx-6">
             Batteries Included
           </h2>
         </div>

@@ -1,9 +1,9 @@
 defmodule ControlServerWeb.ObjectDisplay do
   use ControlServerWeb, :html
 
-  attr :base_url, :string, default: "/"
-  attr :path, :any, default: []
-  attr :object, :any, default: %{}
+  attr(:base_url, :string, default: "/")
+  attr(:path, :any, default: [])
+  attr(:object, :any, default: %{})
 
   def object_display(assigns) do
     ~H"""
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.ObjectDisplay do
     """
   end
 
-  attr :selected, :string, default: nil
+  attr(:selected, :string, default: nil)
 
   defp column_title(%{selected: nil} = assigns) do
     ~H"""
@@ -42,9 +42,9 @@ defmodule ControlServerWeb.ObjectDisplay do
     |> String.trim()
   end
 
-  attr :base_url, :string, default: "/"
-  attr :path, :any, default: []
-  attr :object, :any, default: %{}
+  attr(:base_url, :string, default: "/")
+  attr(:path, :any, default: [])
+  attr(:object, :any, default: %{})
 
   defp column(%{object: object} = assigns) when is_map(object) or is_list(object) do
     ~H"""
@@ -64,16 +64,16 @@ defmodule ControlServerWeb.ObjectDisplay do
     """
   end
 
-  attr :base_url, :string, default: "/"
-  attr :path, :any, default: []
-  attr :object, :any, default: %{}
+  attr(:base_url, :string, default: "/")
+  attr(:path, :any, default: [])
+  attr(:object, :any, default: %{})
 
   defp column_data(%{object: object} = assigns) when is_map(object) do
     ~H"""
     <div class="overflow-y-auto no-scrollbar h-full">
       <.link
         :for={{key, value} <- @object}
-        class="flex flex-grow h-10 mx-2 hover:bg-secondary-100/50 items-center"
+        class="flex flex-grow h-10 mx-2 hover:bg-pink-100/50 items-center"
         patch={object_path_url(@base_url, @path ++ [key])}
       >
         <.value_icon value_type={value_type(value)} class="text-gray-400 w-6 mr-2 my-auto" />
@@ -89,7 +89,7 @@ defmodule ControlServerWeb.ObjectDisplay do
     <div class="overflow-y-auto no-scrollbar">
       <.link
         :for={{value, idx} <- Enum.with_index(@object)}
-        class="flex flex-grow h-10 mx-2 hover:bg-secondary-100/50 items-center"
+        class="flex flex-grow h-10 mx-2 hover:bg-pink-100/50 items-center"
         patch={object_path_url(@base_url, @path ++ [Integer.to_string(idx)])}
       >
         <.value_icon value_type={value_type(value)} class="text-gray-400 w-6 mr-2 my-auto" />
@@ -100,8 +100,8 @@ defmodule ControlServerWeb.ObjectDisplay do
     """
   end
 
-  attr :value_type, :atom, required: true
-  attr :class, :any, default: nil
+  attr(:value_type, :atom, required: true)
+  attr(:class, :any, default: nil)
 
   defp value_icon(%{value_type: :map} = assigns) do
     ~H"""

@@ -5,7 +5,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
 
   defdelegate title(assigns), to: ControlServerWeb.MenuLayout
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def body_section(assigns) do
     ~H"""
@@ -15,7 +15,7 @@ defmodule ControlServerWeb.LeftMenuLayout do
     """
   end
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def section_title(assigns) do
     ~H"""
@@ -25,11 +25,11 @@ defmodule ControlServerWeb.LeftMenuLayout do
     """
   end
 
-  attr :group, :atom, default: :magic
-  attr :active, :atom, default: :batteries
+  attr(:group, :atom, default: :magic)
+  attr(:active, :atom, default: :batteries)
 
-  slot :inner_block, required: true
-  slot :title
+  slot(:inner_block, required: true)
+  slot(:title)
 
   def layout(assigns) do
     ~H"""

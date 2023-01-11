@@ -1,24 +1,12 @@
 const plugin = require('tailwindcss/plugin');
 
 const defaultTheme = require('tailwindcss/defaultTheme');
+const colors = require('tailwindcss/colors');
 
 const typography = require('@tailwindcss/typography');
 const forms = require('@tailwindcss/forms');
-const flowbite = require('flowbite/plugin');
+const daisyui = require('daisyui');
 
-// Grey for standard things
-const heavyMetal = {
-  50: '#C9CAC8',
-  100: '#BFC0BD',
-  200: '#AAACA9',
-  300: '#969894',
-  400: '#82847F',
-  500: '#6D6F6B',
-  600: '#595B57',
-  700: '#444643',
-  800: '#30312F',
-  900: '#141414',
-};
 // The main accent color
 // Use it sparingly
 const violetRed = {
@@ -64,21 +52,6 @@ const blizardBlue = {
 };
 
 // Action Only Color
-
-// INFO
-// info = blizardBlue
-// const blizardBlue = {
-//   50: '#FFFFFF',
-//   100: '#FFFFFF',
-//   200: '#FFFFFF',
-//   300: '#DEFAF8',
-//   400: '#BAF4F0',
-//   500: '#97EFE9',
-//   600: '#66E8DF',
-//   700: '#36E0D4',
-//   800: '#1EC0B5',
-//   900: '#169087',
-// };
 
 // success
 // SUCCESS
@@ -127,8 +100,6 @@ const heath = {
 
 module.exports = {
   content: [
-    // Include flowbite
-    './node_modules/flowbite/**/*.js',
     // This project hooks and js
     './js/**/*.js',
 
@@ -141,9 +112,26 @@ module.exports = {
     '../../common_ui/lib/**/*.*ex',
   ],
 
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          primary: astral[500],
+          secondary: violetRed[500],
+          accent: blizardBlue[500],
+          neutral: '#3D4451',
+          'base-100': colors.white,
+          info: astral[200],
+          success: shamrock[500],
+          warning: seaBuckthorn[500],
+          error: heath[500],
+        },
+      },
+    ],
+  },
+
   theme: {
     colors: {
-      'heavy-metal': heavyMetal,
       'violet-red': violetRed,
       astral,
       // Accent and INFO
@@ -154,18 +142,17 @@ module.exports = {
       'sea-buckthorn': seaBuckthorn,
       // Error
       heath,
-
       // Base Renames
       pink: violetRed,
-      gray: heavyMetal,
       blue: blizardBlue,
 
-      // Action renames
-      primary: astral,
-      secondary: violetRed,
-      success: shamrock,
-      warning: seaBuckthorn,
-      error: heath,
+      // Pass through
+      inherit: colors.inherit,
+      transparent: colors.transparent,
+      current: colors.current,
+      black: colors.black,
+      white: colors.white,
+      gray: colors.gray,
     },
     extend: {
       fontFamily: {
@@ -173,11 +160,10 @@ module.exports = {
       },
     },
   },
-
   plugins: [
     typography,
     forms,
-    flowbite,
+    daisyui,
     plugin(({ addVariant }) =>
       addVariant('phx-no-feedback', ['.phx-no-feedback&', '.phx-no-feedback &'])
     ),

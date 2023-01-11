@@ -12,3 +12,7 @@
   width: 100vw;
   height: calc(100vh - 8rem);
 }
+
+::selection {
+  @apply bg-pink-500;
+}
