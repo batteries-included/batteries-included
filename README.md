@@ -81,6 +81,7 @@ asdf plugin add erlang
 asdf plugin add elixir
 asdf plugin add nodejs
 asdf plugin add hugo
+asdf plugin add zig
 
 asdf install
 ```
