@@ -11,7 +11,7 @@ defmodule CommonUI.Icons.Batteries do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 144 92"
+      viewBox="0 0 145 92"
       class={build_class(["h-9 w-auto", @class])}
     >
       <path

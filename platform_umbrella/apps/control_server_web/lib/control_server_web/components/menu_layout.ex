@@ -33,7 +33,7 @@ defmodule ControlServerWeb.MenuLayout do
     <.link
       navigate={@navigate}
       class={[
-        "pt-1 text-sm font-medium text-astral-700",
+        "pt-1 text-sm font-medium text-astral-800",
         "text-mono",
         "hover:bg-pink-50/50 hover:text-pink-500",
         "flex h-full w-full items-center flex-col justify-center"
@@ -59,13 +59,13 @@ defmodule ControlServerWeb.MenuLayout do
     <div class="flex flex-col min-h-screen justify-between bg-gray-50 pb-18 overflow-auto">
       <header class="w-full bg-white h-16">
         <div class="flex max-w-full h-full">
-          <.link navigate={~p"/"} class="my-auto mx-4">
+          <.link navigate={~p"/"} class="my-auto mx-5">
             <.batteries_logo />
           </.link>
           <%= if @title do %>
             <%= render_slot(@title) %>
           <% end %>
-          <h2 class="flex-grow px-5 text-2xl text-right text-astral-800 my-auto mx-6">
+          <h2 class="flex-grow px-5 text-3xl text-right text-astral-800 my-auto mx-6">
             Batteries Included
           </h2>
         </div>
