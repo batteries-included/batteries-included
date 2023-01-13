@@ -23,6 +23,7 @@ defmodule ControlServerWeb.TimelineLive do
   end
 
   @impl Phoenix.LiveView
+  @spec render(any) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <.layout group={:magic} active={:timeline}>

@@ -48,9 +48,11 @@ defmodule ControlServer.TimelineTest do
       assert_receive {:insert, _}
     end
 
-    test "list_timeline_events/0 returns all timeline_events" do
-      timeline_event = timeline_event_fixture()
-      assert Timeline.list_timeline_events() == [timeline_event]
+    test "list_timeline_events/0 returns limited timeline_events" do
+      timeline_event_0 = timeline_event_fixture()
+      timeline_event_1 = timeline_event_fixture()
+      limit = 1
+      assert Timeline.list_timeline_events(1) == [timeline_event_1]
     end
 
     test "get_timeline_event!/1 returns the timeline_event with given id" do

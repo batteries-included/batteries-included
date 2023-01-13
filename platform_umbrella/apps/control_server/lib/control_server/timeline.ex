@@ -21,8 +21,8 @@ defmodule ControlServer.Timeline do
       [%TimelineEvent{}, ...]
 
   """
-  def list_timeline_events do
-    Repo.all(from TimelineEvent, order_by: [desc: :inserted_at])
+  def list_timeline_events(limit \\ 50) do
+    Repo.all(from TimelineEvent, order_by: [desc: :updated_at], limit: ^limit)
   end
 
   @doc """
