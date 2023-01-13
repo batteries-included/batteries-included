@@ -1,8 +1,14 @@
 defmodule KubeExt.CopyLabels do
   import K8s.Resource.FieldAccessors
 
+  @banned_labels ["battery/managed.direct"]
+
   def copy_labels_downward(resource) do
-    good_labels = labels(resource)
+    good_labels =
+      resource
+      |> labels()
+      |> Enum.filter(fn {key, _} -> key not in @banned_labels end)
+      |> Map.new()
 
     copy_labels_downward(resource, good_labels)
   end

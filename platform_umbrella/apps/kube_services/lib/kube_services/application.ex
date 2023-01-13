@@ -30,6 +30,7 @@ defmodule KubeServices.Application do
       {Oban, Application.fetch_env!(:kube_services, Oban)},
       KubeServices.SnapshotApply.InitialLaunchTask,
       KubeServices.SnapshotApply.EventLauncher,
+      KubeServices.ResourceDeleter,
       KubeServices.SnapshotApply.Apply
     ] ++ kube_state_watchers() ++ timeline_watchers()
   end

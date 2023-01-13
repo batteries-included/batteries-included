@@ -17,11 +17,14 @@ defmodule KubeServices.ResourceDeleter do
   def init(opts) do
     conn_func = Keyword.get(opts, :connection_func, fn -> KubeExt.ConnectionPool.get() end)
     conn = Keyword.get_lazy(opts, :connection, conn_func)
+
+    Logger.debug("Starting ResourceDeleter")
     {:ok, %{conn: conn}}
   end
 
   @spec delete(map) :: {:ok, map() | reference()} | {:error, any()}
   def delete(resource) do
+    Logger.debug("delete res")
     GenServer.call(@me, {:delete, resource})
   end
 

@@ -101,8 +101,8 @@ config :kube_services, Oban,
     {Oban.Plugins.Pruner, max_age: 3600},
     {Oban.Plugins.Cron,
      crontab: [
-       {"*/6 * * * *", KubeServices.Stale.InitialWorker},
-       {"*/10 * * * *", KubeServices.SnapshotApply.Worker}
+       {"*/11 * * * *", KubeServices.Stale.InitialWorker},
+       {"*/9 * * * *", KubeServices.SnapshotApply.Worker}
      ]}
   ]
 

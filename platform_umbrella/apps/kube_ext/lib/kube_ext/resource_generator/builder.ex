@@ -55,6 +55,7 @@ defmodule KubeExt.Builder do
     |> label("app.kubernetes.io/name", app_name)
     |> label("battery/app", app_name)
     |> label("battery/managed", "true")
+    |> label("battery/managed.direct", "true")
     |> label("app.kubernetes.io/managed-by", "batteries-included")
   end
 

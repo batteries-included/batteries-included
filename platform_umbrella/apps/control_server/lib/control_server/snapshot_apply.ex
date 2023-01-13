@@ -54,7 +54,7 @@ defmodule ControlServer.SnapshotApply do
   end
 
   def trim_kube_snapshots(keep_time) do
-    Repo.delete_all(from(ks in KubeSnapshot, where: ks.updated_at > ^keep_time))
+    Repo.delete_all(from ks in KubeSnapshot, where: ks.updated_at > ^keep_time)
   end
 
   @doc """
@@ -74,28 +74,28 @@ defmodule ControlServer.SnapshotApply do
   def get_kube_snapshot!(id), do: Repo.get!(KubeSnapshot, id)
 
   def get_preloaded_kube_snapshot!(id) do
+    rp_query =
+      from rp in ResourcePath,
+        order_by: rp.path,
+        select: [
+          :apply_result,
+          :hash,
+          :id,
+          :name,
+          :namespace,
+          :inserted_at,
+          :is_success,
+          :path,
+          :updated_at
+        ]
+
     query =
-      from(ks in KubeSnapshot,
+      from ks in KubeSnapshot,
         select: ks,
         where: ks.id == ^id,
         preload: [
-          resource_paths:
-            ^from(rp in ResourcePath,
-              order_by: rp.path,
-              select: [
-                :apply_result,
-                :hash,
-                :id,
-                :name,
-                :namespace,
-                :inserted_at,
-                :is_success,
-                :path,
-                :updated_at
-              ]
-            )
+          resource_paths: ^rp_query
         ]
-      )
 
     Repo.one!(query)
   end
@@ -126,10 +126,6 @@ defmodule ControlServer.SnapshotApply do
   def snapshot_recently(query \\ KubeSnapshot) do
     from ks in query,
       where: ks.inserted_at >= ^Timex.shift(Timex.now(), hours: -1)
-  end
-
-  def resource_paths_for_snapshot(query \\ ResourcePath, kube_snapshot) do
-    from rp in query, where: rp.kube_snapshot_id == ^kube_snapshot.id
   end
 
   def resource_paths_outstanding(query \\ ResourcePath) do
@@ -163,9 +159,9 @@ defmodule ControlServer.SnapshotApply do
     from rp in query, where: rp.namespace == ^namespace
   end
 
-  def resource_paths_recently(query \\ ResourcePath) do
+  def resource_paths_recently(query \\ ResourcePath, shift_opts \\ [hours: -1]) do
     from rp in query,
-      where: rp.inserted_at >= ^Timex.shift(Timex.now(), hours: -1)
+      where: rp.inserted_at >= ^Timex.shift(Timex.now(), shift_opts)
   end
 
   def count_paths(query \\ ResourcePath),
