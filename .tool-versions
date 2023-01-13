@@ -1,5 +1,5 @@
-elixir 1.14.1-otp-25
-erlang 25.1.2
+elixir 1.14.2-otp-25
+erlang 25.2
 hugo 0.107.0
 k9s 0.25.18
 kind 0.14.0
