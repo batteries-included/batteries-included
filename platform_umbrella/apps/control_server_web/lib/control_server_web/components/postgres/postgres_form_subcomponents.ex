@@ -82,7 +82,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           phx-click="add:database"
           phx-target={@target}
           class="pt-5 text-lg col-span-12"
-          type="styled"
+          variant="styled"
         >
           Add Database
         </.link>
@@ -138,7 +138,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           phx-click="add:credential_copy"
           phx-target={@target}
           class="pt-5 text-lg col-span-12"
-          type="styled"
+          variant="styled"
         >
           Add Copy of Credentials
         </.link>
