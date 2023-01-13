@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout
-  import ControlServerWeb.PostgresClusterDisplay
+  import ControlServerWeb.PostgresClusterTable
 
   alias ControlServer.Postgres
 
@@ -33,7 +33,8 @@ defmodule ControlServerWeb.Live.PostgresClusters do
         <.title>Postgres Clusters</.title>
       </:title>
 
-      <.pg_cluster_display clusters={@clusters} />
+      <.postgres_clusters_table clusters={@clusters} />
+
       <.h2 variant="fancy">Actions</.h2>
       <.body_section>
         <.link navigate={new_url()}>

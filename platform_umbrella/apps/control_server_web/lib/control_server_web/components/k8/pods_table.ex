@@ -26,9 +26,12 @@ defmodule ControlServerWeb.PodsTable do
     end
   end
 
+  attr :id, :string, default: "pods-table"
+  attr :pods, :list, required: true
+
   def pods_table(assigns) do
     ~H"""
-    <.table rows={@pods}>
+    <.table rows={@pods} id={@id}>
       <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
       <:col :let={pod} label="Name"><%= name(pod) %></:col>
       <:col :let={pod} label="Status"><%= get_in(pod, ~w(status phase)) %></:col>

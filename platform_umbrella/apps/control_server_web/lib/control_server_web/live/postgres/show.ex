@@ -5,6 +5,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
   import ControlServerWeb.LeftMenuLayout
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
+  import ControlServerWeb.PgDatabaseTable
+  import ControlServerWeb.PgUserTable
 
   alias ControlServer.Postgres
   alias KubeExt.KubeState
@@ -132,41 +134,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
     k8_cluster |> Map.get("status", %{}) |> Map.get("PostgresClusterStatus", "Not Running")
   end
 
-  defp secret_name(cluster_name, username) do
-    "#{username}.#{cluster_name}.credentials.postgresql"
-  end
-
-  defp user_namespace(:internal = _cluster_type), do: CommonCore.Defaults.Namespaces.core()
-  defp user_namespace(_cluster_type), do: CommonCore.Defaults.Namespaces.data()
-
-  defp namespaces(user_name, cluster) do
-    cluster.credential_copies
-    |> Enum.filter(fn cc -> cc.username == user_name end)
-    |> Enum.map(& &1.namespace)
-    |> Enum.concat([user_namespace(cluster.type)])
-    |> Enum.join(", ")
-  end
-
-  defp users_table(assigns) do
-    ~H"""
-    <.table rows={@cluster.users || []}>
-      <:col :let={user} label="User Name"><%= user.username %></:col>
-      <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
-      <:col :let={user} label="Secret"><%= secret_name(@cluster.name, user.username) %></:col>
-      <:col :let={user} label="Namespace"><%= namespaces(user.username, @cluster) %></:col>
-    </.table>
-    """
-  end
-
-  defp databases_table(assigns) do
-    ~H"""
-    <.table rows={@cluster.databases || []}>
-      <:col :let={db} label="Name"><%= db.name %></:col>
-      <:col :let={db} label="Owner"><%= db.owner %></:col>
-    </.table>
-    """
-  end
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -196,10 +163,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </.stats>
 
       <.section_title>Users</.section_title>
-      <.users_table cluster={@cluster} />
+      <.pg_users_table users={@cluster.users || []} cluster={@cluster} />
 
       <.section_title>Databases</.section_title>
-      <.databases_table cluster={@cluster} />
+      <.pg_databases_table databases={@cluster.databases || []} />
 
       <.section_title>Pods</.section_title>
       <.pods_table pods={@k8_pods} />
