@@ -27,7 +27,6 @@ defmodule EventCenter.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:logger_json, "~> 5.1"},
       # Braodcast to thos who need events
       {:phoenix_pubsub, "~> 2.1"}
     ]

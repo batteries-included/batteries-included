@@ -44,7 +44,7 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.18.6"},
+      {:phoenix_live_view, "~> 0.18.7"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_dashboard, "~> 0.7.2"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
@@ -63,7 +63,6 @@ defmodule ControlServerWeb.MixProject do
       {:heyya, "~> 0.2.0", only: :test},
       {:heroicons, "~> 0.5"},
       {:jason, "~> 1.2"},
-      {:logger_json, "~> 5.1"},
       {:plug_cowboy, "~> 2.6"},
       {:websock_adapter, "~> 0.4.4"}
     ]

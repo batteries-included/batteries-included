@@ -39,7 +39,6 @@ defmodule HomeBase.MixProject do
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.9"},
       {:postgrex, ">= 0.0.0"},
-      {:logger_json, "~> 5.1"},
       {:jason, "~> 1.0"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
