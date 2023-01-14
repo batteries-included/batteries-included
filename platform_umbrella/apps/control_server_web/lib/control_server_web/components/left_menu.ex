@@ -183,6 +183,18 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
+  defp battery_menu_item(%{battery: %{type: :trivy_operator}} = assigns) do
+    ~H"""
+    <.menu_item
+      navigate={~p"/trivy_reports/vulnerability_report"}
+      name="Security Reports"
+      is_active={@active == :trivy_reports}
+    >
+      <Heroicons.flag class={@icon_class} />
+    </.menu_item>
+    """
+  end
+
   defp battery_menu_item(%{battery: %{type: :grafana}} = assigns) do
     ~H"""
     <.menu_item href={"//#{Hosts.grafana_host()}"} name="Grafana" is_active={@active == :grafana}>

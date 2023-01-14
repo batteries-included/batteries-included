@@ -17,7 +17,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/", ControlServerWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
     live "/", Live.Home, :index
 
@@ -54,8 +54,23 @@ defmodule ControlServerWeb.Router do
 
     live "/ip_address_pools", Live.IPAddressPool.Index, :index
 
-    live "/kiali", Live.Iframe, :kiali
-    live "/gitea", Live.Iframe, :gitea
+    live "/trivy_reports/config_audit_report", Live.TrivyReportsIndex, :aqua_config_audit_report
+
+    live "/trivy_reports/cluster_rbac_assessment_report",
+         Live.TrivyReportsIndex,
+         :aqua_cluster_rbac_assessment_report
+
+    live "/trivy_reports/rbac_assessment_report",
+         Live.TrivyReportsIndex,
+         :aqua_rbac_assessment_report
+
+    live "/trivy_reports/infra_assessment_report",
+         Live.TrivyReportsIndex,
+         :aqua_infra_assessment_report
+
+    live "/trivy_reports/vulnerability_report",
+         Live.TrivyReportsIndex,
+         :aqua_vulnerability_report
 
     live "/kube/deployments", Live.ResourceList, :deployment
     live "/kube/stateful_sets", Live.ResourceList, :stateful_set
@@ -82,7 +97,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/api", ControlServerWeb do
-    pipe_through :api
+    pipe_through(:api)
   end
 
   # Enables LiveDashboard only for development
@@ -94,12 +109,12 @@ defmodule ControlServerWeb.Router do
   # as long as you are also using SSL (which you should anyway).
   if Enum.member?([:dev, :test], Mix.env()) do
     scope "/" do
-      pipe_through :browser
-      live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
+      pipe_through(:browser)
+      live_dashboard("/dashboard", metrics: ControlServerWeb.Telemetry)
     end
 
     scope "/api" do
-      pipe_through :api
+      pipe_through(:api)
 
       get "/system_state", ControlServerWeb.SystemStateController, :index
     end
