@@ -145,7 +145,11 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :gitea}} = assigns) do
     ~H"""
-    <.menu_item href={KubeResources.Gitea.view_url()} name="Gitea" is_active={@active == :gitea}>
+    <.menu_item
+      href={"//#{Hosts.gitea_host()}/explore/repos"}
+      name="Gitea"
+      is_active={@active == :gitea}
+    >
       <.gitea_icon class={@icon_class} />
     </.menu_item>
     """

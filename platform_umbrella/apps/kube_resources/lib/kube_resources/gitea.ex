@@ -12,15 +12,13 @@ defmodule KubeResources.Gitea do
   alias CommonCore.Defaults
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-  alias KubeExt.KubeState.Hosts
   alias KubeExt.Secret
 
   alias KubeResources.IstioConfig.VirtualService
+  alias KubeResources.IstioConfig.HttpRoute
+  alias KubeResources.IstioConfig.TCPRoute
 
   @app_name "gitea"
-
-  @url_base "/x/gitea"
-  @iframe_base_url "/services/devtools/gitea"
 
   @ssh_port 2202
   @ssh_listen_port 2022
@@ -28,36 +26,20 @@ defmodule KubeResources.Gitea do
   resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:istio_virtual_service)
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.name("gitea-http")
-    |> B.spec(VirtualService.rewriting(@url_base, "gitea-http"))
-    |> F.require_battery(state, :istio_gateway)
-  end
-
-  resource(:ssh_virtual_service, _battery, state) do
-    namespace = core_namespace(state)
+    spec =
+      VirtualService.new(
+        hosts: [gitea_host(state)],
+        tcp: [TCPRoute.port(@ssh_port, @ssh_listen_port, "gitea-ssh")],
+        http: [HttpRoute.fallback("gitea-http")]
+      )
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.name("gitea-ssh")
-    |> B.spec(
-      VirtualService.tcp_port(@ssh_port, @ssh_listen_port, "gitea-ssh", hosts: [gitea_host(state)])
-    )
+    |> B.name("gitea")
+    |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end
-
-  def iframe_url, do: @iframe_base_url
-
-  def view_url, do: view_url(KubeExt.cluster_type())
-
-  def view_url(:dev), do: url()
-
-  def view_url(_), do: iframe_url()
-
-  def url, do: "http://#{Hosts.control_host()}#{@url_base}" <> "/explore/repos"
 
   resource(:service_monitor_main, _battery, state) do
     namespace = core_namespace(state)
@@ -108,7 +90,7 @@ defmodule KubeResources.Gitea do
         "database",
         """
         DB_TYPE=postgres
-        HOST=pg-gitea.#{namespace}.svc.cluster.local
+        HOST=pg-gitea.#{namespace}.svc
         NAME=gitea
         USER=root
         PASSWD=gitea
@@ -127,7 +109,7 @@ defmodule KubeResources.Gitea do
         ENABLE_PPROF=false
         HTTP_PORT=3000
         PROTOCOL=http
-        ROOT_URL=http://#{http_domain}#{@url_base}
+        ROOT_URL=http://#{http_domain}
         SSH_DOMAIN=#{ssh_domain}
         SSH_LISTEN_PORT=#{@ssh_listen_port}
         SSH_PORT=#{@ssh_port}
@@ -292,6 +274,10 @@ defmodule KubeResources.Gitea do
                   %{
                     "name" => "ENV_TO_INI__DATABASE__PASSWD",
                     "valueFrom" => B.secret_key_ref(pg_secret, "password")
+                  },
+                  %{
+                    "name" => "ENV_TO_INI__DATABASE__HOST",
+                    "valueFrom" => B.secret_key_ref(pg_secret, "hostname")
                   }
                 ],
                 "image" => battery.config.image,

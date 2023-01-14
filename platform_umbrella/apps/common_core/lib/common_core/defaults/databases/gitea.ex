@@ -10,7 +10,10 @@ defmodule CommonCore.Defaults.GiteaDB do
     :type => :internal,
     :users => [%{username: @username, roles: ["superuser", "createrole", "createdb", "login"]}],
     :databases => [%{name: "gitea", owner: @username}],
-    :team_name => @team
+    :team_name => @team,
+    :credential_copies => [
+      %{username: "gitea", namespace: "battery-core", format: :user_password_host}
+    ]
   }
 
   def gitea_cluster do
