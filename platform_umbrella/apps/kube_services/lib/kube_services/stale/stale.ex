@@ -18,7 +18,7 @@ defmodule KubeServices.Stale do
     KubeState.snapshot()
     |> Enum.flat_map(fn {_key, values} -> values end)
     |> Enum.filter(fn r ->
-      case {has_label?(r), has_annotation?(r), to_tuple(r)} do
+      case {good_labels?(r), has_annotation?(r), to_tuple(r)} do
         # We need to have the direct label to be potentially stale
         {false, _, _} ->
           false
@@ -44,8 +44,9 @@ defmodule KubeServices.Stale do
   def is_stale(resource, nil), do: is_stale(resource, recent_resource_map_set())
 
   def is_stale(resource, seen_res_set) do
-    case {has_label?(resource), has_annotation?(resource), to_tuple(resource)} do
-      {true, true, {:ok, tup}} ->
+    case {unowned?(resource), good_labels?(resource), has_annotation?(resource),
+          to_tuple(resource)} do
+      {true, true, true, {:ok, tup}} ->
         is_in_recent = MapSet.member?(seen_res_set, tup)
         Logger.debug("is_in_recent= #{is_in_recent} key= #{inspect(tup)}")
         !is_in_recent
@@ -79,17 +80,25 @@ defmodule KubeServices.Stale do
     end
   end
 
+  defp unowned?(%{"metadata" => %{"ownerReferences" => [_ | _]}} = _res), do: false
+  defp unowned?(_res), do: true
+
   @spec has_annotation?(nil | map) :: boolean
   defp has_annotation?(%{} = resource),
     do: K8s.Resource.has_annotation?(resource, Hashing.key())
 
   defp has_annotation?(nil), do: false
 
-  @spec has_label?(nil | map) :: boolean
-  defp has_label?(%{} = resource),
-    do: K8s.Resource.has_label?(resource, "battery/managed.direct")
+  @spec good_labels?(nil | map) :: boolean
+  defp good_labels?(%{} = resource) do
+    K8s.Resource.has_label?(resource, "battery/managed.direct") &&
+      K8s.Resource.label(resource, "battery/managed.direct") == "true" &&
+      !K8s.Resource.has_label?(resource, "battery/managed.indirect") &&
+      !K8s.Resource.has_label?(resource, "managed-by=vm-operator") &&
+      !K8s.Resource.has_label?(resource, "serving.knative.dev/service")
+  end
 
-  defp has_label?(nil = _resource), do: false
+  defp good_labels?(nil = _resource), do: false
 
   @spec can_delete_safe? :: boolean
   def can_delete_safe?, do: resource_paths_success?() and snapshot_success?()

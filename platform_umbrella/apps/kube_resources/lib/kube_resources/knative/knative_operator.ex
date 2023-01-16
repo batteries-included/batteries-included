@@ -13,7 +13,7 @@ defmodule KubeResources.KnativeOperator do
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret
 
-  @app_name "knative_operator"
+  @app_name "knative-operator"
 
   @webhook_service "knative-operator-webhook"
 
@@ -525,17 +525,19 @@ defmodule KubeResources.KnativeOperator do
     |> Enum.map(&get_resource/1)
     |> Enum.flat_map(&yaml/1)
     |> Enum.map(fn crd ->
-      KubeExt.CrdWebhook.change_conversion(crd, "knative-operator-webhook", namespace)
+      KubeExt.CrdWebhook.change_conversion(crd, @webhook_service, namespace)
     end)
   end
 
-  resource(:deployment_knative_operator, _battery, state) do
+  resource(:deployment_knative_operator, battery, state) do
     namespace = core_namespace(state)
 
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put("selector", %{"matchLabels" => %{"name" => "knative-operator"}})
+      |> Map.put("selector", %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "knative-operator"}
+      })
       |> Map.put(
         "template",
         %{
@@ -544,8 +546,7 @@ defmodule KubeResources.KnativeOperator do
             "labels" => %{
               "battery/app" => @app_name,
               "battery/component" => "knative-operator",
-              "battery/managed" => "true",
-              "name" => "knative-operator"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -564,7 +565,7 @@ defmodule KubeResources.KnativeOperator do
                   %{"name" => "CONFIG_LOGGING_NAME", "value" => "config-logging"},
                   %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"}
                 ],
-                "image" => "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.8.1",
+                "image" => battery.config.operator_image,
                 "imagePullPolicy" => "IfNotPresent",
                 "name" => "knative-operator",
                 "ports" => [%{"containerPort" => 9090, "name" => "metrics"}]
@@ -583,15 +584,14 @@ defmodule KubeResources.KnativeOperator do
     |> B.spec(spec)
   end
 
-  resource(:deployment_operator_webhook, _battery, state) do
+  resource(:deployment_operator_webhook, battery, state) do
     namespace = core_namespace(state)
 
     spec =
       %{}
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "role" => "operator-webhook"}}
-      )
+      |> Map.put("selector", %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "operator-webhook"}
+      })
       |> Map.put(
         "template",
         %{
@@ -603,8 +603,7 @@ defmodule KubeResources.KnativeOperator do
             "labels" => %{
               "battery/app" => @app_name,
               "battery/component" => "operator-webhook",
-              "battery/managed" => "true",
-              "role" => "operator-webhook"
+              "battery/managed" => "true"
             }
           },
           "spec" => %{
@@ -613,7 +612,12 @@ defmodule KubeResources.KnativeOperator do
                 "preferredDuringSchedulingIgnoredDuringExecution" => [
                   %{
                     "podAffinityTerm" => %{
-                      "labelSelector" => %{"matchLabels" => %{"app" => "webhook"}},
+                      "labelSelector" => %{
+                        "matchLabels" => %{
+                          "battery/app" => @app_name,
+                          "battery/component" => "operator-webhook"
+                        }
+                      },
                       "topologyKey" => "kubernetes.io/hostname"
                     },
                     "weight" => 100
@@ -638,7 +642,7 @@ defmodule KubeResources.KnativeOperator do
                   %{"name" => "WEBHOOK_PORT", "value" => "8443"},
                   %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/operator"}
                 ],
-                "image" => "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.1",
+                "image" => battery.config.webhook_image,
                 "livenessProbe" => %{
                   "failureThreshold" => 6,
                   "httpGet" => %{
@@ -696,7 +700,6 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("eventing.knative.dev/release", "devel")
     |> B.role_ref(B.build_role_ref("knative-operator-webhook"))
     |> B.subject(B.build_service_account("knative-operator-webhook", namespace))
   end
@@ -716,7 +719,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.label("eventing.knative.dev/release", "devel")
+    |> B.component_label("operator-webhook")
     |> B.rules(rules)
   end
 
@@ -728,7 +731,7 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("operator-webhook-certs")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.component_label("webhook")
+    |> B.component_label("operator-webhook")
     |> B.data(data)
   end
 
@@ -747,6 +750,7 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:service_account)
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
+    |> B.component_label("operator-webhook")
     |> B.app_labels(@app_name)
   end
 
@@ -760,7 +764,10 @@ defmodule KubeResources.KnativeOperator do
         %{"name" => "http-profiling", "port" => 8008, "targetPort" => 8008},
         %{"name" => "https-webhook", "port" => 443, "targetPort" => 8443}
       ])
-      |> Map.put("selector", %{"battery/app" => @app_name, "role" => "operator-webhook"})
+      |> Map.put("selector", %{
+        "battery/app" => @app_name,
+        "battery/component" => "operator-webhook"
+      })
 
     B.build_resource(:service)
     |> B.name(@webhook_service)

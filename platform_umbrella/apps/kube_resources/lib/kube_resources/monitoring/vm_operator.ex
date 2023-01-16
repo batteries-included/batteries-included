@@ -441,7 +441,11 @@ defmodule KubeResources.VMOperator do
                     "value" => "true"
                   },
                   %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "false"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "false"}
+                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "false"},
+                  %{
+                    "name" => "VM_DEFAULTLABELS",
+                    "value" => "managed-by=vm-operator,battery/managed.indirect=true"
+                  }
                 ],
                 "image" => battery.config.vmoperator_image,
                 "imagePullPolicy" => "IfNotPresent",
