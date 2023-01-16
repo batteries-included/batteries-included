@@ -25,13 +25,6 @@ defmodule CommonCore.Defaults.Images do
   def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.6.2"
   def harbor_trivy_adapter_image, do: "goharbor/trivy-adapter-photon:v2.6.2"
 
-  def prometheus_operator_image, do: "quay.io/prometheus-operator/prometheus-operator:v0.60.1"
-
-  def prometheus_reloader_image,
-    do: "quay.io/prometheus-operator/prometheus-config-reloader:v0.60.1"
-
-  def prometheus_image, do: "quay.io/prometheus/prometheus:v2.39.2"
-
   def grafana_image, do: "grafana/grafana:9.2.4"
   def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.21.0"
 
