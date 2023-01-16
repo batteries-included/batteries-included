@@ -203,57 +203,49 @@ defmodule KubeResources.PostgresOperator do
   resource(:deployment_postgres_operator, battery, state) do
     namespace = core_namespace(state)
 
+    template = %{
+      "metadata" => %{
+        "labels" => %{
+          "battery/app" => @app_name,
+          "battery/managed" => "true"
+        }
+      },
+      "spec" => %{
+        "affinity" => %{},
+        "containers" => [
+          %{
+            "env" => [
+              %{
+                "name" => "POSTGRES_OPERATOR_CONFIGURATION_OBJECT",
+                "value" => "postgres-operator"
+              }
+            ],
+            "image" => battery.config.image,
+            "imagePullPolicy" => "IfNotPresent",
+            "name" => "postgres-operator",
+            "resources" => %{
+              "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
+              "requests" => %{"cpu" => "100m", "memory" => "250Mi"}
+            },
+            "securityContext" => %{
+              "allowPrivilegeEscalation" => false,
+              "readOnlyRootFilesystem" => true,
+              "runAsNonRoot" => true,
+              "runAsUser" => 1000
+            }
+          }
+        ],
+        "nodeSelector" => %{},
+        "serviceAccountName" => @service_account,
+        "tolerations" => []
+      }
+    }
+
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put(
-        "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name
-          }
-        }
-      )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/managed" => "true"
-            }
-          },
-          "spec" => %{
-            "affinity" => %{},
-            "containers" => [
-              %{
-                "env" => [
-                  %{
-                    "name" => "POSTGRES_OPERATOR_CONFIGURATION_OBJECT",
-                    "value" => "postgres-operator"
-                  }
-                ],
-                "image" => battery.config.image,
-                "imagePullPolicy" => "IfNotPresent",
-                "name" => "postgres-operator",
-                "resources" => %{
-                  "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
-                  "requests" => %{"cpu" => "100m", "memory" => "250Mi"}
-                },
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "readOnlyRootFilesystem" => true,
-                  "runAsNonRoot" => true,
-                  "runAsUser" => 1000
-                }
-              }
-            ],
-            "nodeSelector" => %{},
-            "serviceAccountName" => @service_account,
-            "tolerations" => []
-          }
-        }
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
+      |> Map.put("template", template)
 
     B.build_resource(:deployment)
     |> B.name("postgres-operator")
