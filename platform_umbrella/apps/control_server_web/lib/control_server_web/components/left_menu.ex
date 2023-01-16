@@ -245,7 +245,7 @@ defmodule ControlServerWeb.LeftMenu do
       <Heroicons.rectangle_group class={@icon_class} />
     </.menu_item>
     <.menu_item
-      navigate={~p"/batteries"}
+      navigate={~p"/system_batteries"}
       name="Installed Batteries"
       is_active={@active == :installed_batteries}
     >

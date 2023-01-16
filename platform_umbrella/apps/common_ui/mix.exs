@@ -34,6 +34,7 @@ defmodule CommonUI.MixProject do
     [
       {:heyya, "~> 0.2.0", only: :test},
       {:phoenix, github: "phoenixframework/phoenix", override: true},
+      {:jason, "~> 1.2"},
       {:phoenix_live_view, "~> 0.18.7"},
       {:heroicons, "~> 0.5"},
       {:gettext, "~> 0.19"}

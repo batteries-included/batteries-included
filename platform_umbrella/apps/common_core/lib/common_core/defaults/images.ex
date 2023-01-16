@@ -15,15 +15,15 @@ defmodule CommonCore.Defaults.Images do
 
   def ceph_image, do: "quay.io/ceph/ceph:v17.2.3"
 
-  def gitea_image, do: "gitea/gitea:1.16.8"
+  def gitea_image, do: "gitea/gitea:1.17.4"
 
-  def harbor_core_image, do: "goharbor/harbor-core:v2.6.2"
-  def harbor_portal_image, do: "goharbor/harbor-portal:v2.6.2"
-  def harbor_exporter_image, do: "goharbor/harbor-exporter:v2.6.2"
-  def harbor_jobservice_image, do: "goharbor/harbor-jobservice:v2.6.2"
-  def harbor_photon_image, do: "goharbor/registry-photon:v2.6.2"
-  def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.6.2"
-  def harbor_trivy_adapter_image, do: "goharbor/trivy-adapter-photon:v2.6.2"
+  def harbor_core_image, do: "goharbor/harbor-core:v2.6.3"
+  def harbor_portal_image, do: "goharbor/harbor-portal:v2.6.3"
+  def harbor_exporter_image, do: "goharbor/harbor-exporter:v2.6.3"
+  def harbor_jobservice_image, do: "goharbor/harbor-jobservice:v2.6.3"
+  def harbor_photon_image, do: "goharbor/registry-photon:v2.6.3"
+  def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.6.3"
+  def harbor_trivy_adapter_image, do: "goharbor/trivy-adapter-photon:v2.6.3"
 
   def grafana_image, do: "grafana/grafana:9.2.4"
   def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.21.0"

@@ -2,15 +2,13 @@ defmodule KubeServices.SnapshotApply.Worker do
   use Oban.Worker,
     max_attempts: 3
 
-  alias ControlServer.SnapshotApply.EctoSteps
+  alias KubeServices.SnapshotApply.Apply
 
   require Logger
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{} = _args}) do
-    with {:ok, snap} <- EctoSteps.create_snap() do
-      KubeServices.SnapshotApply.Apply.run(snap)
-    end
+    Apply.run()
   end
 
   def start!(opts \\ []) do

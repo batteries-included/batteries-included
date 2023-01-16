@@ -196,15 +196,8 @@ defmodule KubeResources.KubeStateMetrics do
     spec =
       %{}
       |> Map.put("endpoints", [%{"port" => "http"}])
-      |> Map.put("jobLabel", "app.kubernetes.io/name")
-      |> Map.put(
-        "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name
-          }
-        }
-      )
+      |> Map.put("jobLabel", "battery/app")
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
     B.build_resource(:monitoring_service_monitor)
     |> B.name("kube-state-metrics")
@@ -221,10 +214,7 @@ defmodule KubeResources.KubeStateMetrics do
       |> Map.put("ports", [
         %{"name" => "http", "port" => 8080, "protocol" => "TCP", "targetPort" => 8080}
       ])
-      |> Map.put(
-        "selector",
-        %{"battery/app" => @app_name}
-      )
+      |> Map.put("selector", %{"battery/app" => @app_name})
 
     B.build_resource(:service)
     |> B.name("kube-state-metrics")

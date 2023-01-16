@@ -14,39 +14,48 @@ defmodule ControlServer.Batteries.Installer do
 
   require Logger
 
-  def install!(type) do
-    with {:ok, result} <- install(type) do
+  def install!(type, update_target \\ nil) do
+    with {:ok, result} <- install(type, update_target) do
       result
     end
   end
 
-  def install(type) when is_binary(type) do
+  def install(type, update_target \\ nil)
+
+  def install(type, update_target) when is_binary(type) do
     atom_type = String.to_existing_atom(type)
-    install(atom_type)
+    install(atom_type, update_target)
   end
 
-  def install(type) when is_atom(type) do
+  def install(type, update_target) when is_atom(type) do
     Logger.info("Begining install of #{type}")
 
     type
     |> Catalog.get()
-    |> install()
+    |> install(update_target)
   end
 
-  def install(%CatalogBattery{} = catalog_battery) do
+  def install(%CatalogBattery{} = catalog_battery, update_target) do
     catalog_battery
     |> CatalogBattery.to_fresh_args()
     |> List.wrap()
-    |> install_all()
+    |> install_all(update_target)
   end
 
-  def install(%SystemBattery{} = system_battery), do: install_all([system_battery])
+  def install(%SystemBattery{} = system_battery, update_target),
+    do: install_all([system_battery], update_target)
 
-  def install_all(batteries) do
+  def install_all(batteries, update_target \\ nil) do
+    update_progress(update_target, :starting)
     # For every battery that's there get the dependencies as catalog batteries.
+    #
     # Then make the whole list unique
-    # Then convert all those to system batteries giving preference to the passed in batteries and their possibly customized configs.
-    # Give that list to the `do_install method`
+    #
+    # Then convert all those to system batteries giving preference to the passed
+    # in batteries and their possibly customized configs.
+    #
+    # Give that list to the `do_install method` which actually does the
+    # combined find or create multi transaction for all batteries
     batteries
     |> Enum.map(&Catalog.get(&1.type))
     |> Enum.flat_map(&Catalog.get_recursive/1)
@@ -60,10 +69,14 @@ defmodule ControlServer.Batteries.Installer do
       end
     )
     |> Map.values()
-    |> do_install()
+    |> then(fn battery_arg_list ->
+      update_progress(update_target, :args_ready)
+      battery_arg_list
+    end)
+    |> do_install(update_target)
   end
 
-  defp do_install(battery_arg_list) do
+  defp do_install(battery_arg_list, update_target) do
     battery_arg_list
     |> Enum.map(fn arg ->
       find_or_create_multi(arg)
@@ -73,7 +86,7 @@ defmodule ControlServer.Batteries.Installer do
     end)
     |> Repo.transaction()
     |> summarize()
-    |> broadcast()
+    |> broadcast(update_target)
   end
 
   defp find_or_create_multi(%{type: battery_type} = battery_args) do
@@ -205,10 +218,21 @@ defmodule ControlServer.Batteries.Installer do
     |> String.to_existing_atom()
   end
 
-  defp broadcast({:ok, install_result} = result) do
+  defp update_progress(target, msg)
+  defp update_progress(nil = _target, _msg), do: :ok
+
+  defp update_progress(update_target, msg) do
+    send(update_target, {:async_installer, msg})
+  end
+
+  defp broadcast({:ok, install_result} = result, update_target) do
     :ok = DatabaseEventCenter.broadcast(:system_battery, :multi, install_result)
+    update_progress(update_target, {:install_complete, install_result})
     result
   end
 
-  defp broadcast(result), do: result
+  defp broadcast(failed_result, update_target) do
+    update_progress(update_target, {:install_failed, failed_result})
+    failed_result
+  end
 end

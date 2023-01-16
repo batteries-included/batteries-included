@@ -14,7 +14,8 @@ defmodule CommonUI do
         LabeledDefiniton,
         Link,
         Table,
-        Typogoraphy
+        Typogoraphy,
+        VerticalSteps
       }
     end
   end
