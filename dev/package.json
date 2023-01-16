@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "prettier": "^2.8.2",
+    "prettier": "^2.8.3",
     "prettier-plugin-go-template": "^0.0.13",
     "prettier-plugin-sh": "^0.12.8",
     "prettier-plugin-toml": "^0.3.1"
