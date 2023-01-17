@@ -92,6 +92,7 @@ defmodule ControlServerWeb.Router do
 
     live "/timeline", TimelineLive, :index
     live "/stale", Live.StaleIndex, :index
+    live "/deleted_resources", Live.DeletedResourcesIndex, :index
   end
 
   scope "/api", ControlServerWeb do

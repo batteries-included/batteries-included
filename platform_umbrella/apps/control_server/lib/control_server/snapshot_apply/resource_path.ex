@@ -22,7 +22,7 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
     belongs_to :kube_snapshot, ControlServer.SnapshotApply.KubeSnapshot
 
     belongs_to :content_addressable_resource,
-               ControlServer.SnapshotApply.ContentAddressableResource
+               ControlServer.ContentAddressable.ContentAddressableResource
 
     timestamps()
   end

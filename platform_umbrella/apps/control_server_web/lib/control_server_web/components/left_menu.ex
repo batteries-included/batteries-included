@@ -244,9 +244,15 @@ defmodule ControlServerWeb.LeftMenu do
     <.menu_item navigate={~p"/kube/pods"} name="Kubernetes" is_active={@active == :kube_resources}>
       <Heroicons.rectangle_group class={@icon_class} />
     </.menu_item>
-
     <.menu_item navigate={~p"/stale"} name="Stale Deleter" is_active={@active == :stale}>
       <Heroicons.clock class={@icon_class} />
+    </.menu_item>
+    <.menu_item
+      navigate={~p"/deleted_resources"}
+      name="Deleted Resources"
+      is_active={@active == :deleted}
+    >
+      <Heroicons.trash class={@icon_class} />
     </.menu_item>
     <.menu_item
       navigate={~p"/system_batteries"}

@@ -16,7 +16,7 @@ test: compile test.unit
 
 test.unit: compile
 	MIX_ENV=test mix ecto.reset
-	mix test --cover --export-coverage default
+	mix test --cover --export-coverage default --trace
 
 test.integration:
 	MIX_ENV=integration mix ecto.reset

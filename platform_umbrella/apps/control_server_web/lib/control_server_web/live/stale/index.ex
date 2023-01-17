@@ -1,7 +1,9 @@
 defmodule ControlServerWeb.Live.StaleIndex do
   use ControlServerWeb, :live_view
+
   import ControlServerWeb.LeftMenuLayout
   import K8s.Resource.FieldAccessors
+
   alias KubeServices.Stale
   alias CommonCore.ApiVersionKind
   alias Phoenix.Naming

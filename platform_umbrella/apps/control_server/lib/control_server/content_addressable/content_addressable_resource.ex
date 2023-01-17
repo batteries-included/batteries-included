@@ -1,4 +1,4 @@
-defmodule ControlServer.SnapshotApply.ContentAddressableResource do
+defmodule ControlServer.ContentAddressable.ContentAddressableResource do
   use TypedEctoSchema
   import Ecto.Changeset
 
@@ -12,6 +12,7 @@ defmodule ControlServer.SnapshotApply.ContentAddressableResource do
     field :value, :map, redact: true
 
     has_many :resource_paths, ControlServer.SnapshotApply.ResourcePath
+    has_many :deleted_resources, ControlServer.Stale.DeletedResource
 
     timestamps()
   end
@@ -34,7 +35,7 @@ defmodule ControlServer.SnapshotApply.ContentAddressableResource do
   @doc false
   def changeset(content_addressable_resource, attrs) do
     content_addressable_resource
-    |> cast(attrs, [:id, :type, :value, :hash])
-    |> validate_required([:type, :value, :hash])
+    |> cast(attrs, [:id, :value, :hash])
+    |> validate_required([:value, :hash])
   end
 end
