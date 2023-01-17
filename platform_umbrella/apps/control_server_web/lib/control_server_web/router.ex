@@ -91,6 +91,7 @@ defmodule ControlServerWeb.Router do
     live "/system_batteries/:id", SystemBatteryLive.Show, :show
 
     live "/timeline", TimelineLive, :index
+    live "/stale", Live.StaleIndex, :index
   end
 
   scope "/api", ControlServerWeb do

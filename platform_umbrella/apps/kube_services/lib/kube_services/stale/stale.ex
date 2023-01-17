@@ -18,42 +18,36 @@ defmodule KubeServices.Stale do
     KubeState.snapshot()
     |> Enum.flat_map(fn {_key, values} -> values end)
     |> Enum.filter(fn r ->
-      case {good_labels?(r), has_annotation?(r), to_tuple(r)} do
-        # We need to have the direct label to be potentially stale
-        {false, _, _} ->
-          false
-
-        # We need to have the annotation since there's no way to push without it
-        {_, false, _} ->
-          false
-
-        # We need to have been able to make an apiversionkind tuple
-        {_, _, {:error, _}} ->
-          false
-
-        # If all of those things are  true this
-        # might be stale if the
-        # matching {type, namespace, name} tuple is not in the set.
-        {true, true, {:ok, tup}} ->
-          !MapSet.member?(seen_res_set, tup)
-      end
+      is_stale(r, seen_res_set)
     end)
   end
 
   def is_stale(resource, seen_res_set \\ nil)
   def is_stale(resource, nil), do: is_stale(resource, recent_resource_map_set())
 
-  def is_stale(resource, seen_res_set) do
-    case {unowned?(resource), good_labels?(resource), has_annotation?(resource),
-          to_tuple(resource)} do
-      {true, true, true, {:ok, tup}} ->
-        is_in_recent = MapSet.member?(seen_res_set, tup)
-        Logger.debug("is_in_recent= #{is_in_recent} key= #{inspect(tup)}")
-        !is_in_recent
-
-      res ->
-        Logger.debug("Not stale res = #{inspect(res)}")
+  def is_stale(r, seen_res_set) do
+    case {has_owners?(r), good_labels?(r), has_annotation?(r), to_tuple(r)} do
+      # If this resource is owned by something then is directly controlled by us
+      {true, _, _, _} ->
         false
+
+      # We need to have the direct label to be potentially stale
+      {_, false, _, _} ->
+        false
+
+      # We need to have the annotation since there's no way to push without it
+      {_, _, false, _} ->
+        false
+
+      # We need to have been able to make an apiversionkind tuple
+      {_, _, _, {:error, _}} ->
+        false
+
+      # If all of those things are ok this
+      # might be stale if the
+      # matching {type, namespace, name} tuple is not in the set.
+      {false, true, true, {:ok, tup}} ->
+        !MapSet.member?(seen_res_set, tup)
     end
   end
 
@@ -80,8 +74,13 @@ defmodule KubeServices.Stale do
     end
   end
 
-  defp unowned?(%{"metadata" => %{"ownerReferences" => [_ | _]}} = _res), do: false
-  defp unowned?(_res), do: true
+  defp has_owners?(nil), do: false
+
+  defp has_owners?(%{} = res) do
+    res
+    |> KubeExt.OwnerReference.get_all_owners()
+    |> Enum.empty?() == false
+  end
 
   @spec has_annotation?(nil | map) :: boolean
   defp has_annotation?(%{} = resource),
@@ -91,14 +90,31 @@ defmodule KubeServices.Stale do
 
   @spec good_labels?(nil | map) :: boolean
   defp good_labels?(%{} = resource) do
-    K8s.Resource.has_label?(resource, "battery/managed.direct") &&
-      K8s.Resource.label(resource, "battery/managed.direct") == "true" &&
-      !K8s.Resource.has_label?(resource, "battery/managed.indirect") &&
-      !K8s.Resource.has_label?(resource, "managed-by=vm-operator") &&
-      !K8s.Resource.has_label?(resource, "serving.knative.dev/service")
+    has_direct_label(resource) &&
+      !has_indirect_label(resource) &&
+      !managed_by_vm_operator(resource) &&
+      !managed_by_knative(resource)
   end
 
   defp good_labels?(nil = _resource), do: false
+
+  defp has_direct_label(resource) do
+    K8s.Resource.has_label?(resource, "battery/managed.direct") &&
+      K8s.Resource.label(resource, "battery/managed.direct") == "true"
+  end
+
+  defp has_indirect_label(resource) do
+    K8s.Resource.has_label?(resource, "battery/managed.indirect")
+  end
+
+  defp managed_by_vm_operator(resource) do
+    K8s.Resource.has_label?(resource, "managed-by") &&
+      K8s.Resource.label(resource, "managed-by") == "vm-operator"
+  end
+
+  defp managed_by_knative(resource) do
+    K8s.Resource.has_label?(resource, "serving.knative.dev/service")
+  end
 
   @spec can_delete_safe? :: boolean
   def can_delete_safe?, do: resource_paths_success?() and snapshot_success?()

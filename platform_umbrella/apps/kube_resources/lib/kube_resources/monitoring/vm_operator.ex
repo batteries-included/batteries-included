@@ -438,7 +438,7 @@ defmodule KubeResources.VMOperator do
                   %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "false"},
                   %{
                     "name" => "VM_DEFAULTLABELS",
-                    "value" => "managed-by=vm-operator,battery/managed.indirect=true"
+                    "value" => "battery/managed.indirect=true,managed-by=vm-operator"
                   }
                 ],
                 "image" => battery.config.vmoperator_image,
