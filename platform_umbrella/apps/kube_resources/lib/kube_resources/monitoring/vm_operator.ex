@@ -29,12 +29,11 @@ defmodule KubeResources.VMOperator do
     vmusers_operator_victoriametrics_com:
       "priv/manifests/vcitoria_metrics/vmusers_operator_victoriametrics_com.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "victoria-metrics-operator"
   import CommonCore.Yaml
   import CommonCore.SystemState.Namespaces
   alias KubeExt.Builder, as: B
 
-  @app_name "victoria-metrics-operator"
   @service_account_name "victoria-metrics-operator"
 
   resource(:crd_vmagents_operator_victoriametrics_com) do
@@ -98,7 +97,6 @@ defmodule KubeResources.VMOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("victoria-metrics-operator")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("victoria-metrics-operator"))
     |> B.subject(B.build_service_account(@service_account_name, namespace))
   end
@@ -344,7 +342,6 @@ defmodule KubeResources.VMOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("victoria-metrics-operator")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -354,7 +351,6 @@ defmodule KubeResources.VMOperator do
     B.build_resource(:role_binding)
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("victoria-metrics-operator"))
     |> B.subject(B.build_service_account(@service_account_name, namespace))
   end
@@ -384,7 +380,6 @@ defmodule KubeResources.VMOperator do
     B.build_resource(:role)
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -394,7 +389,6 @@ defmodule KubeResources.VMOperator do
     B.build_resource(:service_account)
     |> B.name(@service_account_name)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:deployment_victoria_metrics_operator, battery, state) do
@@ -467,7 +461,6 @@ defmodule KubeResources.VMOperator do
     B.build_resource(:deployment)
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -485,7 +478,6 @@ defmodule KubeResources.VMOperator do
     B.build_resource(:service)
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -501,7 +493,6 @@ defmodule KubeResources.VMOperator do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 end

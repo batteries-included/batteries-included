@@ -1,18 +1,37 @@
 defmodule KubeExt.ResourceGenerator do
   alias K8s.Resource
+  alias KubeExt.Builder, as: B
+  alias KubeExt.Hashing
+  alias KubeExt.CopyLabels
 
-  defmacro __using__(_opts) do
+  defmacro __using__(opts \\ []) do
+    app_name = Keyword.get(opts, :app_name, nil)
+
+    [main_macro_content(opts), app_name_macro_contents(app_name)]
+  end
+
+  defp main_macro_content(opts) do
     quote do
       import unquote(__MODULE__)
 
       Module.register_attribute(__MODULE__, :resource_generator, accumulate: true, persist: false)
+      Module.register_attribute(__MODULE__, :resource_generator_opts, [])
 
-      Module.register_attribute(__MODULE__, :multi_resource_generator,
-        accumulate: true,
-        persist: false
-      )
+      @resource_generator_opts unquote(opts)
 
       @before_compile unquote(__MODULE__)
+    end
+  end
+
+  defp app_name_macro_contents(nil), do: nil
+
+  defp app_name_macro_contents(app_name) do
+    string_name = to_string(app_name)
+
+    quote do
+      @app_name unquote(string_name)
+
+      def app_name, do: unquote(string_name)
     end
   end
 
@@ -34,36 +53,69 @@ defmodule KubeExt.ResourceGenerator do
     end
   end
 
-  def perform_materialize(module, generators, battery, state) do
-    gen_resources =
-      generators
-      |> pluck_generator_type(:single)
-      |> do_apply(module, battery, state)
-      |> flatten_to_tuple()
+  def perform_materialize(module, generators, opts, battery, state) do
+    resources = generate_resources(module, generators, battery, state)
+    multi_resources = generate_multi_resources(module, generators, battery, state)
 
-    multi_resources =
-      generators
-      |> pluck_generator_type(:multi)
-      |> do_apply(module, battery, state)
-      |> flatten_multis_to_tuple()
-
-    (gen_resources ++ multi_resources)
+    (resources ++ multi_resources)
     |> filter_exists()
     |> dedupe_path()
-    |> copy_labels()
+    |> enrich(opts, battery, state)
     |> to_map()
   end
+
+  defp generate_resources(module, generators, battery, state) do
+    generators
+    |> pluck_generator_type(:single)
+    |> do_apply(module, battery, state)
+    |> flatten_to_tuple()
+  end
+
+  defp generate_multi_resources(module, generators, battery, state) do
+    generators
+    |> pluck_generator_type(:multi)
+    |> do_apply(module, battery, state)
+    |> flatten_multis_to_tuple()
+  end
+
+  defp enrich(resource_path_list, opts, battery, _state) do
+    resource_path_list
+    |> maybe_add_app_name(opts)
+    |> Enum.map(fn {path, resource} ->
+      {path,
+       resource
+       |> B.managed_labels()
+       |> add_owner(battery)
+       |> CopyLabels.copy_labels_downward()
+       |> Hashing.decorate()}
+    end)
+  end
+
+  defp maybe_add_app_name(resources, opts) do
+    name = Keyword.get(opts, :app_name, nil)
+
+    case name do
+      nil ->
+        resources
+
+      "" ->
+        resources
+
+      app_name ->
+        Enum.map(resources, fn {path, resource} ->
+          {path, B.app_labels(resource, to_string(app_name))}
+        end)
+    end
+  end
+
+  defp add_owner(resource, %{id: nil}), do: resource
+  defp add_owner(resource, %{id: id}), do: B.owner_label(resource, id)
+  defp add_owner(resource, _), do: resource
 
   defp pluck_generator_type(generators, keep_type) do
     generators
     |> Enum.filter(fn {type, _} -> keep_type == type end)
     |> Enum.map(fn {_type, gen} -> gen end)
-  end
-
-  defp copy_labels(resources) do
-    Enum.map(resources, fn {path, resource} ->
-      {path, KubeExt.CopyLabels.copy_labels_downward(resource)}
-    end)
   end
 
   defp filter_exists(resources) do
@@ -177,21 +229,18 @@ defmodule KubeExt.ResourceGenerator do
 
   defmacro __before_compile__(%{module: module} = _env) do
     generators = Module.get_attribute(module, :resource_generator, [])
-
-    method =
-      quote do
-        def materialize(battery, state) do
-          KubeExt.ResourceGenerator.perform_materialize(
-            __MODULE__,
-            unquote(generators),
-            battery,
-            state
-          )
-        end
-      end
+    opts = Module.get_attribute(module, :resource_generator_opts, [])
 
     quote do
-      unquote(method)
+      def materialize(battery, state) do
+        KubeExt.ResourceGenerator.perform_materialize(
+          __MODULE__,
+          unquote(generators),
+          unquote(opts),
+          battery,
+          state
+        )
+      end
     end
   end
 end

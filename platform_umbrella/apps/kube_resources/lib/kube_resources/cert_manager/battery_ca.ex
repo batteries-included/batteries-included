@@ -1,10 +1,8 @@
 defmodule KubeResources.BatteryCA do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "battery-ca"
 
   import CommonCore.SystemState.Namespaces
   alias KubeExt.Builder, as: B
-
-  @app_name "istio_ca"
 
   resource(:certmanger_issuer_selfsigned, _battery, state) do
     namespace = base_namespace(state)
@@ -13,7 +11,6 @@ defmodule KubeResources.BatteryCA do
     B.build_resource(:certmanger_issuer)
     |> B.name("battery-root")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -37,7 +34,6 @@ defmodule KubeResources.BatteryCA do
     B.build_resource(:certmanger_certificate)
     |> B.name("battery-ca")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -53,7 +49,6 @@ defmodule KubeResources.BatteryCA do
 
     B.build_resource(:certmanger_cluster_issuer)
     |> B.name("battery-ca")
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 end

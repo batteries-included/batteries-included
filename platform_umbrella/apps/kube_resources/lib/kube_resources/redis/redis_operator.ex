@@ -3,7 +3,7 @@ defmodule KubeResources.RedisOperator do
     redisfailovers_databases_spotahome_com:
       "priv/manifests/redis_operator/redisfailovers_databases_spotahome_com.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "redis-operator"
 
   import CommonCore.Yaml
   import CommonCore.SystemState.Namespaces
@@ -11,14 +11,11 @@ defmodule KubeResources.RedisOperator do
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
 
-  @app_name "redis-operator"
-
   resource(:cluster_role_binding_redis_operator, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("redis-operator")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("redis-operator"))
     |> B.subject(B.build_service_account("redis-operator", namespace))
   end
@@ -68,7 +65,6 @@ defmodule KubeResources.RedisOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("redis-operator")
-    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.rules(rules)
   end
@@ -143,7 +139,6 @@ defmodule KubeResources.RedisOperator do
     B.build_resource(:deployment)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
   end
@@ -154,7 +149,6 @@ defmodule KubeResources.RedisOperator do
     B.build_resource(:service_account)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
   end
 
@@ -178,7 +172,6 @@ defmodule KubeResources.RedisOperator do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
@@ -199,7 +192,6 @@ defmodule KubeResources.RedisOperator do
     B.build_resource(:service)
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("redis-operator")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)

@@ -1,6 +1,6 @@
 defmodule KubeResources.Promtail do
   use CommonCore.IncludeResource, promtail_yaml: "priv/raw_files/promtail/promtail.yaml"
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "promtail"
 
   import CommonCore.SystemState.Namespaces
 
@@ -8,14 +8,11 @@ defmodule KubeResources.Promtail do
   alias KubeExt.FilterResource, as: F
   alias KubeExt.Secret
 
-  @app_name "promtail"
-
   resource(:cluster_role_binding_main, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("promtail")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("promtail"))
     |> B.subject(B.build_service_account("promtail", namespace))
   end
@@ -31,7 +28,6 @@ defmodule KubeResources.Promtail do
 
     B.build_resource(:cluster_role)
     |> B.name("promtail")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -41,7 +37,6 @@ defmodule KubeResources.Promtail do
     B.build_resource(:service_account)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:daemon_set_main, _battery, state) do
@@ -128,7 +123,6 @@ defmodule KubeResources.Promtail do
     B.build_resource(:daemon_set)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -143,7 +137,6 @@ defmodule KubeResources.Promtail do
     B.build_resource(:secret)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -165,7 +158,6 @@ defmodule KubeResources.Promtail do
     B.build_resource(:service)
     |> B.name("promtail-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("metrics")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
@@ -185,7 +177,6 @@ defmodule KubeResources.Promtail do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("promtail")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end

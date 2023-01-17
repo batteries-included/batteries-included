@@ -1,5 +1,5 @@
 defmodule KubeResources.VMAgent do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "vcitoria-metrics-agent"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.SystemState.Hosts
@@ -7,8 +7,6 @@ defmodule KubeResources.VMAgent do
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
-
-  @app_name "vcitoria-metrics-agent"
 
   resource(:vm_agent_main, _battery, state) do
     namespace = core_namespace(state)
@@ -30,7 +28,6 @@ defmodule KubeResources.VMAgent do
     B.build_resource(:vm_agent)
     |> B.name("main-agent")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -42,7 +39,6 @@ defmodule KubeResources.VMAgent do
     B.build_resource(:istio_virtual_service)
     |> B.name("vmagent")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end

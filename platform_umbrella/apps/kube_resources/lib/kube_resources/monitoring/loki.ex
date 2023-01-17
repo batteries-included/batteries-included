@@ -1,13 +1,11 @@
 defmodule KubeResources.Loki do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "loki"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-
-  @app_name "loki"
 
   resource(:config_map_main, battery, state) do
     namespace = core_namespace(state)
@@ -17,7 +15,6 @@ defmodule KubeResources.Loki do
     B.build_resource(:config_map)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -28,7 +25,6 @@ defmodule KubeResources.Loki do
     |> Map.put("automountServiceAccountToken", true)
     |> B.namespace(namespace)
     |> B.name("loki")
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_headless, _battery, state) do
@@ -49,7 +45,6 @@ defmodule KubeResources.Loki do
     B.build_resource(:service)
     |> B.name("loki-headless")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.label("prometheus.io/service-monitor", "false")
     |> B.label("variant", "headless")
     |> B.spec(spec)
@@ -74,7 +69,6 @@ defmodule KubeResources.Loki do
     B.build_resource(:service)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -91,7 +85,6 @@ defmodule KubeResources.Loki do
     B.build_resource(:service)
     |> B.name("loki-memberlist")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -188,7 +181,6 @@ defmodule KubeResources.Loki do
     B.build_resource(:stateful_set)
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -200,7 +192,6 @@ defmodule KubeResources.Loki do
     B.build_resource(:config_map)
     |> B.name("loki-datasources")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.label("grafana_datasource", "1")
     |> B.data(data)
     |> F.require_battery(state, :grafana)

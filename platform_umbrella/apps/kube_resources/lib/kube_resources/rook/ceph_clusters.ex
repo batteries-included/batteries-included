@@ -1,5 +1,5 @@
 defmodule KubeResources.CephClusters do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "ceph-clusters"
 
   import CommonCore.SystemState.Namespaces
 

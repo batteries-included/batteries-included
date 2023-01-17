@@ -1,5 +1,5 @@
 defmodule KubeResources.CephFilesystems do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "ceph-filesystems"
 
   import CommonCore.SystemState.Namespaces
 

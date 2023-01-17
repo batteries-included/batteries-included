@@ -42,7 +42,7 @@ defmodule KubeServices.ConfigGeneratorTest do
 
   describe "ConfigGenerator with everything enabled" do
     test "all battery resources are valid" do
-      CommonCore.SystemState.SeedState.seed(:everythings)
+      CommonCore.SystemState.SeedState.seed(:everything)
       |> ConfigGenerator.materialize()
       |> then(&assert_one_resouce_definition/1)
       |> then(&Map.values/1)

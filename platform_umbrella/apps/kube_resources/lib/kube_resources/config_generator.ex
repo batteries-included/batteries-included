@@ -2,9 +2,6 @@ defmodule KubeResources.ConfigGenerator do
   @moduledoc """
   Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
-  alias KubeExt.Builder, as: B
-  alias KubeExt.Hashing
-
   alias CommonCore.SystemState.StateSummary
 
   alias KubeResources.{
@@ -28,7 +25,6 @@ defmodule KubeResources.ConfigGenerator do
     KubeMonitoring,
     KubeStateMetrics,
     Loki,
-    ML,
     MetalLB,
     MetalLBIPPool,
     NodeExporter,
@@ -68,7 +64,6 @@ defmodule KubeResources.ConfigGenerator do
     loki: [&Loki.materialize/2],
     metallb: [&MetalLB.materialize/2],
     metallb_ip_pool: [&MetalLBIPPool.materialize/2],
-    ml_core: [&ML.Core.materialize/2],
     node_exporter: [&NodeExporter.materialize/2],
     notebooks: [&Notebooks.materialize/2],
     postgres_operator: [&PostgresOperator.materialize/2],
@@ -95,7 +90,6 @@ defmodule KubeResources.ConfigGenerator do
     state.batteries
     |> Enum.map(fn system_battery ->
       generators = Keyword.fetch!(mappings, system_battery.type)
-
       materialize_system_battery(system_battery, state, generators)
     end)
     |> Enum.reduce(%{}, &Map.merge/2)
@@ -108,22 +102,16 @@ defmodule KubeResources.ConfigGenerator do
     |> Enum.map(fn gen ->
       gen.(system_battery, state)
     end)
-    |> Enum.reject(&(&1 == nil))
     |> Enum.reduce(%{}, &Map.merge/2)
     |> Enum.flat_map(&flatten/1)
     |> Enum.map(fn {key, resource} ->
       {
         Path.join("/#{Atom.to_string(system_battery.type)}", key),
         resource
-        |> add_owner(system_battery)
-        |> Hashing.decorate()
       }
     end)
     |> Map.new()
   end
-
-  defp add_owner(resource, %{id: id}), do: B.owner_label(resource, id)
-  defp add_owner(resource, _), do: resource
 
   defp flatten({key, values} = _input) when is_list(values) do
     values

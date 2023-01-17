@@ -1,12 +1,10 @@
 defmodule KubeResources.IstioMetrics do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "istio-metrics"
 
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-
-  @app_name "istio_metrics"
 
   resource(:pod_monitor_envoy_stats, _battery, state) do
     namespace = istio_namespace(state)
@@ -65,7 +63,6 @@ defmodule KubeResources.IstioMetrics do
     B.build_resource(:monitoring_pod_monitor)
     |> B.name("envoy-stats-monitor")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.label("monitoring", "istio-proxies")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
@@ -88,7 +85,6 @@ defmodule KubeResources.IstioMetrics do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("istio-component-monitor")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.label("monitoring", "istio-components")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)

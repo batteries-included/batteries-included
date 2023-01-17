@@ -1,11 +1,9 @@
 defmodule KubeResources.KubeMonitoring do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "kube-mon"
 
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-
-  @app_name "kube-mon"
 
   resource(:monitoring_node_monitor_cadvisor, _battery, state) do
     namespace = core_namespace(state)
@@ -44,7 +42,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:monitoring_node_monitor)
     |> B.name("battery-metrics-cadvisor")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -84,7 +81,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:monitoring_node_monitor)
     |> B.name("battery-metrics-kubelet")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -125,7 +121,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:monitoring_node_monitor)
     |> B.name("battery-metrics-probes")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -155,7 +150,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("battery-metrics-apiserver")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -178,7 +172,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("battery-metrics-coredns")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -194,7 +187,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:service)
     |> B.name("battery-metrics-coredns")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app_name)
     |> B.component_label("coredns")
     |> B.label("jobLabel", "coredns")
     |> B.spec(spec)
@@ -222,7 +214,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("battery-metrics-kube-etcd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("etcd")
     |> B.spec(spec)
   end
@@ -238,7 +229,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:service)
     |> B.name("battery-metrics-kube-etcd")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app_name)
     |> B.component_label("etcd")
     |> B.label("jobLabel", "kube-etcd")
     |> B.spec(spec)
@@ -273,7 +263,6 @@ defmodule KubeResources.KubeMonitoring do
     |> B.name("battery-metrics-kube-controller-man")
     |> B.namespace(namespace)
     |> B.component_label("kube-controller-man")
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -288,7 +277,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:service)
     |> B.name("battery-metrics-kube-controller-man")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app_name)
     |> B.component_label("kube-controller-man")
     |> B.label("jobLabel", "kube-controller-manager")
     |> B.spec(spec)
@@ -316,7 +304,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("battery-metrics-kube-scheduler")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("kube-scheduler")
     |> B.spec(spec)
   end
@@ -332,7 +319,6 @@ defmodule KubeResources.KubeMonitoring do
     B.build_resource(:service)
     |> B.name("battery-metrics-kube-scheduler")
     |> B.namespace("kube-system")
-    |> B.app_labels(@app_name)
     |> B.component_label("kube-scheduler")
     |> B.label("jobLabel", "kube-scheduler")
     |> B.spec(spec)

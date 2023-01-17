@@ -1,5 +1,5 @@
 defmodule KubeResources.VMCluster do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "vcitoria-metrics-cluster"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.SystemState.Hosts
@@ -7,8 +7,6 @@ defmodule KubeResources.VMCluster do
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
-
-  @app_name "vcitoria-metrics-cluster"
 
   resource(:vm_cluster_main, battery, state) do
     namespace = core_namespace(state)
@@ -67,7 +65,6 @@ defmodule KubeResources.VMCluster do
     B.build_resource(:vm_cluster)
     |> B.name("main-cluster")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -79,7 +76,6 @@ defmodule KubeResources.VMCluster do
     B.build_resource(:istio_virtual_service)
     |> B.name("vmselect")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end

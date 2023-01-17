@@ -2,7 +2,7 @@ defmodule KubeResources.Grafana do
   use CommonCore.IncludeResource,
     provider_yaml: "priv/raw_files/grafana/provider.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "grafana"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.SystemState.Hosts
@@ -13,14 +13,11 @@ defmodule KubeResources.Grafana do
   alias KubeExt.Secret
   alias KubeResources.IniConfig
 
-  @app_name "grafana"
-
   resource(:cluster_role_binding_clusterrolebinding, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("grafana-clusterrolebinding")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("grafana-clusterrole"))
     |> B.subject(B.build_service_account("grafana", namespace))
   end
@@ -36,7 +33,6 @@ defmodule KubeResources.Grafana do
 
     B.build_resource(:cluster_role)
     |> B.name("grafana-clusterrole")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -47,7 +43,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:config_map)
     |> B.name("grafana-config-dashboards")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -82,7 +77,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:config_map)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -361,7 +355,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:deployment)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -389,7 +382,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:horizontal_pod_autoscaler)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -418,7 +410,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
@@ -429,7 +420,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:role_binding)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("grafana"))
     |> B.subject(B.build_service_account("grafana", namespace))
   end
@@ -449,7 +439,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:role)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -466,7 +455,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:secret)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -476,7 +464,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:service_account)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_main, _battery, state) do
@@ -492,7 +479,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:service)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -504,7 +490,6 @@ defmodule KubeResources.Grafana do
     B.build_resource(:istio_virtual_service)
     |> B.name("grafana")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end

@@ -43,7 +43,7 @@ defmodule ControlServer.Batteries.InstallerTest do
       assert 0 == ControlServer.Repo.aggregate(SystemBattery, :count, :id)
 
       {:ok, _} =
-        :test
+        :everything
         |> CommonCore.SystemState.SeedState.seed()
         |> then(fn %{batteries: batteries} = _state ->
           batteries

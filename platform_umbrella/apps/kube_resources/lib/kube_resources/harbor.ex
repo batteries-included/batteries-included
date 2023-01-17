@@ -7,7 +7,7 @@ defmodule KubeResources.Harbor do
     tls_crt: "priv/raw_files/harbor/tls.crt",
     tls_key: "priv/raw_files/harbor/tls.key"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "harbor"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.SystemState.Hosts
@@ -20,7 +20,6 @@ defmodule KubeResources.Harbor do
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
 
-  @app_name "harbor"
   @postgres_credentials "harbor.pg-harbor.credentials.postgresql"
 
   def view_url, do: view_url(KubeExt.cluster_type())
@@ -36,7 +35,6 @@ defmodule KubeResources.Harbor do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.name("harbor-host-vs")
     |> B.spec(
       VirtualService.new(
@@ -114,7 +112,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:config_map)
     |> B.name("harbor-core")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -150,7 +147,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:config_map)
     |> B.name("harbor-exporter-env")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -161,7 +157,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:config_map)
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -184,7 +179,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:config_map)
     |> B.name("harbor-jobservice-env")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -195,7 +189,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:config_map)
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -213,7 +206,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:config_map)
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -224,7 +216,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:config_map)
     |> B.name("harbor-registryctl")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -245,7 +236,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:secret)
     |> B.name("harbor-core")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -262,7 +252,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:secret)
     |> B.name("harbor-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -278,7 +267,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:secret)
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -294,7 +282,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:secret)
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -312,7 +299,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:secret)
     |> B.name("harbor-registry-htpasswd")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -323,7 +309,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:secret)
     |> B.name("harbor-registryctl")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -342,7 +327,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:secret)
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -466,7 +450,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-core")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("core")
     |> B.spec(spec)
   end
@@ -536,7 +519,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("exporter")
     |> B.spec(spec)
   end
@@ -628,7 +610,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("jobservice")
     |> B.spec(spec)
   end
@@ -692,7 +673,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("portal")
     |> B.spec(spec)
   end
@@ -832,7 +812,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:deployment)
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("registry")
     |> B.spec(spec)
   end
@@ -979,7 +958,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:stateful_set)
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("trivy")
     |> B.spec(spec)
   end
@@ -995,7 +973,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:persistent_volume_claim)
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("jobservice")
     |> B.spec(spec)
   end
@@ -1011,7 +988,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:persistent_volume_claim)
     |> B.name("harbor-jobservice-scandata")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("jobservice")
     |> B.spec(spec)
   end
@@ -1027,7 +1003,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:persistent_volume_claim)
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("registry")
     |> B.spec(spec)
   end
@@ -1046,7 +1021,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:service)
     |> B.name("harbor-core")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -1061,7 +1035,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:service)
     |> B.name("harbor-exporter")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -1079,7 +1052,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:service)
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -1094,7 +1066,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:service)
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -1113,7 +1084,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:service)
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("registry")
     |> B.spec(spec)
   end
@@ -1129,7 +1099,6 @@ defmodule KubeResources.Harbor do
     B.build_resource(:service)
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("trivy")
     |> B.spec(spec)
   end

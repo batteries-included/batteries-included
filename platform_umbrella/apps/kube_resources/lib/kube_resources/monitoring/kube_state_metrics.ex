@@ -1,18 +1,15 @@
 defmodule KubeResources.KubeStateMetrics do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "kube-state-metrics"
 
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-
-  @app_name "kube-state-metrics"
 
   resource(:cluster_role_binding_kube_state_metrics, _battery, state) do
     namespace = core_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("kube-state-metrics")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("kube-state-metrics"))
     |> B.subject(B.build_service_account("kube-state-metrics", namespace))
   end
@@ -111,7 +108,6 @@ defmodule KubeResources.KubeStateMetrics do
 
     B.build_resource(:cluster_role)
     |> B.name("kube-state-metrics")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -122,7 +118,6 @@ defmodule KubeResources.KubeStateMetrics do
     |> Map.put("imagePullSecrets", [])
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:deployment_kube_state_metrics, battery, state) do
@@ -186,7 +181,6 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:deployment)
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -202,7 +196,6 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -219,7 +212,6 @@ defmodule KubeResources.KubeStateMetrics do
     B.build_resource(:service)
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 end

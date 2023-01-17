@@ -1,0 +1,2663 @@
+{
+  "initial_resource": {
+    "/battery_core/namespace/battery_base": {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "MZSAVCFYGWGVPGAZ5QYDSKGVLZOK2KALJOB7VWLHSJBU7WKJTOWQ===="
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio-injection": "false"
+        },
+        "name": "battery-base"
+      }
+    },
+    "/battery_core/namespace/battery_core": {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "R2EF5OJ3AQDOFV46OLSMCGN3S5NXVS7YSPLM5NXCIWKCJMZG5SLA===="
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio-injection": "enabled"
+        },
+        "name": "battery-core"
+      }
+    },
+    "/battery_core/namespace/battery_data": {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "MXKHE4INMCSFA6ISJ7FGCZMGY5BME5IG7WZD7NQ7EGIA2BFZK3IA===="
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "battery-data"
+      }
+    },
+    "/battery_core/namespace/battery_ml": {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "5ORYF2O66Y5MPBPLEX7XO6ERZLRDMYH7BUNLS3WZQWLYQX7B5JKA===="
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio-injection": "enabled"
+        },
+        "name": "battery-ml"
+      }
+    },
+    "/postgres/postgresql/pg_control": {
+      "apiVersion": "acid.zalan.do/v1",
+      "kind": "postgresql",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "YWNWDHFUIZX5VFWQTHLNYQFJ2HGOJDCEPRVAD2MCMAGRNR2FNULQ===="
+        },
+        "labels": {
+          "app": "postgres",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres",
+          "battery/app": "postgres",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "battery/owner": null,
+          "sidecar.istio.io/inject": "false"
+        },
+        "name": "pg-control",
+        "namespace": "battery-base"
+      },
+      "spec": {
+        "databases": {
+          "control": "controlserver"
+        },
+        "numberOfInstances": 1,
+        "postgresql": {
+          "parameters": {
+            "log_destination": "stderr",
+            "logging_collector": "false",
+            "password_encryption": "scram-sha-256"
+          },
+          "version": "14"
+        },
+        "teamId": "pg",
+        "users": {
+          "controlserver": ["createdb", "login"]
+        },
+        "volume": {
+          "size": "500M"
+        }
+      }
+    },
+    "/postgres_operator/cluster_role/battery_postgres_operator_role": {
+      "apiVersion": "rbac.authorization.k8s.io/v1",
+      "kind": "ClusterRole",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "L7BOXEBUU4Z75DHJGFM2CQNYX4OTHAOCAUAGDYKYQ3MKCF6GB5UA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "battery-postgres-operator-role"
+      },
+      "rules": [
+        {
+          "apiGroups": ["acid.zalan.do"],
+          "resources": [
+            "postgresqls",
+            "postgresqls/status",
+            "operatorconfigurations"
+          ],
+          "verbs": [
+            "create",
+            "delete",
+            "deletecollection",
+            "get",
+            "list",
+            "patch",
+            "update",
+            "watch"
+          ]
+        },
+        {
+          "apiGroups": ["acid.zalan.do"],
+          "resources": ["postgresteams"],
+          "verbs": ["get", "list", "watch"]
+        },
+        {
+          "apiGroups": ["apiextensions.k8s.io"],
+          "resources": ["customresourcedefinitions"],
+          "verbs": ["get"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["events"],
+          "verbs": ["create", "get", "list", "patch", "update", "watch"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["configmaps"],
+          "verbs": ["get"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["endpoints"],
+          "verbs": [
+            "create",
+            "delete",
+            "deletecollection",
+            "get",
+            "list",
+            "patch",
+            "update",
+            "watch"
+          ]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["secrets"],
+          "verbs": ["create", "delete", "get", "update"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["nodes"],
+          "verbs": ["get", "list", "watch"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["persistentvolumeclaims"],
+          "verbs": ["delete", "get", "list", "patch", "update"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["persistentvolumes"],
+          "verbs": ["get", "list"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["pods"],
+          "verbs": ["delete", "get", "list", "patch", "update", "watch"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["pods/exec"],
+          "verbs": ["create"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["services"],
+          "verbs": ["create", "delete", "get", "patch", "update"]
+        },
+        {
+          "apiGroups": ["apps"],
+          "resources": ["statefulsets", "deployments"],
+          "verbs": ["create", "delete", "get", "list", "patch"]
+        },
+        {
+          "apiGroups": ["batch"],
+          "resources": ["cronjobs"],
+          "verbs": ["create", "delete", "get", "list", "patch", "update"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["namespaces"],
+          "verbs": ["get"]
+        },
+        {
+          "apiGroups": ["policy"],
+          "resources": ["poddisruptionbudgets"],
+          "verbs": ["create", "delete", "get"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["serviceaccounts"],
+          "verbs": ["get", "create"]
+        },
+        {
+          "apiGroups": ["rbac.authorization.k8s.io"],
+          "resources": ["rolebindings"],
+          "verbs": ["get", "create"]
+        }
+      ]
+    },
+    "/postgres_operator/cluster_role/battery_postgres_pod": {
+      "apiVersion": "rbac.authorization.k8s.io/v1",
+      "kind": "ClusterRole",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "OUJRIS5SY3Y73UHTD36PI233JHRVY4FD3GOSSQLF3IBGVW4MW3YA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "battery-postgres-pod"
+      },
+      "rules": [
+        {
+          "apiGroups": [""],
+          "resources": ["endpoints"],
+          "verbs": [
+            "create",
+            "delete",
+            "deletecollection",
+            "get",
+            "list",
+            "patch",
+            "update",
+            "watch"
+          ]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["pods"],
+          "verbs": ["get", "list", "patch", "update", "watch"]
+        },
+        {
+          "apiGroups": [""],
+          "resources": ["services"],
+          "verbs": ["create"]
+        }
+      ]
+    },
+    "/postgres_operator/cluster_role_binding/battery_postgres_pod": {
+      "apiVersion": "rbac.authorization.k8s.io/v1",
+      "kind": "ClusterRoleBinding",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "7URXHCCMO3Y4AOGKV5ZQSTTLZABGGAV5A7KEVBVTCV5H5MOEEQYA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "battery-postgres-pod"
+      },
+      "roleRef": {
+        "apiGroup": "rbac.authorization.k8s.io",
+        "kind": "ClusterRole",
+        "name": "battery-postgres-pod"
+      },
+      "subjects": [
+        {
+          "kind": "ServiceAccount",
+          "name": "battery-postgres-pod",
+          "namespace": "battery-base"
+        },
+        {
+          "kind": "ServiceAccount",
+          "name": "battery-postgres-pod",
+          "namespace": "battery-data"
+        }
+      ]
+    },
+    "/postgres_operator/cluster_role_binding/postgres_operator": {
+      "apiVersion": "rbac.authorization.k8s.io/v1",
+      "kind": "ClusterRoleBinding",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "QZGBSWIP76M3UWQQ42Q4DT4IKINV77FIAXA7UQCZH4UGINFLNEZQ===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgres-operator"
+      },
+      "roleRef": {
+        "apiGroup": "rbac.authorization.k8s.io",
+        "kind": "ClusterRole",
+        "name": "battery-postgres-operator-role"
+      },
+      "subjects": [
+        {
+          "kind": "ServiceAccount",
+          "name": "battery-postgres-operator",
+          "namespace": "battery-core"
+        }
+      ]
+    },
+    "/postgres_operator/config_map/postgres_operator_infrauser_config": {
+      "apiVersion": "v1",
+      "data": {},
+      "kind": "ConfigMap",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "XFXPPXAZEO24TMHDD5RY6TDVCBN7WRRRSL2USKT6NRVMKMNRLJVA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgres-operator-infrauser-config",
+        "namespace": "battery-core"
+      }
+    },
+    "/postgres_operator/crd/operatorconfigurations_acid_zalan_do": {
+      "apiVersion": "apiextensions.k8s.io/v1",
+      "kind": "CustomResourceDefinition",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "RMODTWY724TT3WGWVCD7U2A5BE4MG5WLNK6CFC55XMVYVXNDUUNQ===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "operatorconfigurations.acid.zalan.do"
+      },
+      "spec": {
+        "group": "acid.zalan.do",
+        "names": {
+          "categories": ["all"],
+          "kind": "OperatorConfiguration",
+          "listKind": "OperatorConfigurationList",
+          "plural": "operatorconfigurations",
+          "shortNames": ["opconfig"],
+          "singular": "operatorconfiguration"
+        },
+        "scope": "Namespaced",
+        "versions": [
+          {
+            "additionalPrinterColumns": [
+              {
+                "description": "Spilo image to be used for Pods",
+                "jsonPath": ".configuration.docker_image",
+                "name": "Image",
+                "type": "string"
+              },
+              {
+                "description": "Label for K8s resources created by operator",
+                "jsonPath": ".configuration.kubernetes.cluster_name_label",
+                "name": "Cluster-Label",
+                "type": "string"
+              },
+              {
+                "description": "Name of service account to be used",
+                "jsonPath": ".configuration.kubernetes.pod_service_account_name",
+                "name": "Service-Account",
+                "type": "string"
+              },
+              {
+                "description": "Minimum number of instances per Postgres cluster",
+                "jsonPath": ".configuration.min_instances",
+                "name": "Min-Instances",
+                "type": "integer"
+              },
+              {
+                "jsonPath": ".metadata.creationTimestamp",
+                "name": "Age",
+                "type": "date"
+              }
+            ],
+            "name": "v1",
+            "schema": {
+              "openAPIV3Schema": {
+                "properties": {
+                  "apiVersion": {
+                    "enum": ["acid.zalan.do/v1"],
+                    "type": "string"
+                  },
+                  "configuration": {
+                    "properties": {
+                      "aws_or_gcp": {
+                        "properties": {
+                          "additional_secret_mount": {
+                            "type": "string"
+                          },
+                          "additional_secret_mount_path": {
+                            "default": "/meta/credentials",
+                            "type": "string"
+                          },
+                          "aws_region": {
+                            "default": "eu-central-1",
+                            "type": "string"
+                          },
+                          "enable_ebs_gp3_migration": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "enable_ebs_gp3_migration_max_size": {
+                            "default": 1000,
+                            "type": "integer"
+                          },
+                          "gcp_credentials": {
+                            "type": "string"
+                          },
+                          "kube_iam_role": {
+                            "type": "string"
+                          },
+                          "log_s3_bucket": {
+                            "type": "string"
+                          },
+                          "wal_az_storage_account": {
+                            "type": "string"
+                          },
+                          "wal_gs_bucket": {
+                            "type": "string"
+                          },
+                          "wal_s3_bucket": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "connection_pooler": {
+                        "properties": {
+                          "connection_pooler_default_cpu_limit": {
+                            "default": "1",
+                            "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                            "type": "string"
+                          },
+                          "connection_pooler_default_cpu_request": {
+                            "default": "500m",
+                            "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                            "type": "string"
+                          },
+                          "connection_pooler_default_memory_limit": {
+                            "default": "100Mi",
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          },
+                          "connection_pooler_default_memory_request": {
+                            "default": "100Mi",
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          },
+                          "connection_pooler_image": {
+                            "default": "registry.opensource.zalan.do/acid/pgbouncer:master-22",
+                            "type": "string"
+                          },
+                          "connection_pooler_max_db_connections": {
+                            "default": 60,
+                            "type": "integer"
+                          },
+                          "connection_pooler_mode": {
+                            "default": "transaction",
+                            "enum": ["session", "transaction"],
+                            "type": "string"
+                          },
+                          "connection_pooler_number_of_instances": {
+                            "default": 2,
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "connection_pooler_schema": {
+                            "default": "pooler",
+                            "type": "string"
+                          },
+                          "connection_pooler_user": {
+                            "default": "pooler",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "crd_categories": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "debug": {
+                        "properties": {
+                          "debug_logging": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "enable_database_access": {
+                            "default": true,
+                            "type": "boolean"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "docker_image": {
+                        "default": "registry.opensource.zalan.do/acid/spilo-14:2.1-p6",
+                        "type": "string"
+                      },
+                      "enable_crd_registration": {
+                        "default": true,
+                        "type": "boolean"
+                      },
+                      "enable_crd_validation": {
+                        "default": true,
+                        "description": "deprecated",
+                        "type": "boolean"
+                      },
+                      "enable_lazy_spilo_upgrade": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "enable_pgversion_env_var": {
+                        "default": true,
+                        "type": "boolean"
+                      },
+                      "enable_shm_volume": {
+                        "default": true,
+                        "type": "boolean"
+                      },
+                      "enable_spilo_wal_path_compat": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "etcd_host": {
+                        "default": "",
+                        "type": "string"
+                      },
+                      "kubernetes": {
+                        "properties": {
+                          "pod_service_account_definition": {
+                            "default": "",
+                            "type": "string"
+                          },
+                          "spilo_fsgroup": {
+                            "type": "integer"
+                          },
+                          "cluster_name_label": {
+                            "default": "cluster-name",
+                            "type": "string"
+                          },
+                          "pod_service_account_role_binding_definition": {
+                            "default": "",
+                            "type": "string"
+                          },
+                          "enable_sidecars": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "delete_annotation_name_key": {
+                            "type": "string"
+                          },
+                          "pod_environment_configmap": {
+                            "type": "string"
+                          },
+                          "pod_terminate_grace_period": {
+                            "default": "5m",
+                            "type": "string"
+                          },
+                          "pod_priority_class_name": {
+                            "type": "string"
+                          },
+                          "enable_cross_namespace_secret": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "secret_name_template": {
+                            "default": "{username}.{cluster}.credentials.{tprkind}.{tprgroup}",
+                            "type": "string"
+                          },
+                          "infrastructure_roles_secrets": {
+                            "items": {
+                              "properties": {
+                                "defaultrolevalue": {
+                                  "type": "string"
+                                },
+                                "defaultuservalue": {
+                                  "type": "string"
+                                },
+                                "details": {
+                                  "type": "string"
+                                },
+                                "passwordkey": {
+                                  "type": "string"
+                                },
+                                "rolekey": {
+                                  "type": "string"
+                                },
+                                "secretname": {
+                                  "type": "string"
+                                },
+                                "template": {
+                                  "type": "boolean"
+                                },
+                                "userkey": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "secretname",
+                                "userkey",
+                                "passwordkey"
+                              ],
+                              "type": "object"
+                            },
+                            "nullable": true,
+                            "type": "array"
+                          },
+                          "watched_namespace": {
+                            "type": "string"
+                          },
+                          "pod_service_account_name": {
+                            "default": "postgres-pod",
+                            "type": "string"
+                          },
+                          "spilo_allow_privilege_escalation": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "ignored_annotations": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "cluster_domain": {
+                            "default": "cluster.local",
+                            "type": "string"
+                          },
+                          "spilo_privileged": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "master_pod_move_timeout": {
+                            "default": "20m",
+                            "type": "string"
+                          },
+                          "downscaler_annotations": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "infrastructure_roles_secret_name": {
+                            "type": "string"
+                          },
+                          "cluster_labels": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "default": {
+                              "application": "spilo"
+                            },
+                            "type": "object"
+                          },
+                          "delete_annotation_date_key": {
+                            "type": "string"
+                          },
+                          "storage_resize_mode": {
+                            "default": "pvc",
+                            "enum": ["ebs", "pvc", "off"],
+                            "type": "string"
+                          },
+                          "spilo_runasuser": {
+                            "type": "integer"
+                          },
+                          "pdb_name_format": {
+                            "default": "postgres-{cluster}-pdb",
+                            "type": "string"
+                          },
+                          "additional_pod_capabilities": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "toleration": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "spilo_runasgroup": {
+                            "type": "integer"
+                          },
+                          "enable_pod_antiaffinity": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "enable_pod_disruption_budget": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "node_readiness_label": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "pod_role_label": {
+                            "default": "spilo-role",
+                            "type": "string"
+                          },
+                          "oauth_token_secret_name": {
+                            "default": "postgresql-operator",
+                            "type": "string"
+                          },
+                          "pod_antiaffinity_topology_key": {
+                            "default": "kubernetes.io/hostname",
+                            "type": "string"
+                          },
+                          "pod_management_policy": {
+                            "default": "ordered_ready",
+                            "enum": ["ordered_ready", "parallel"],
+                            "type": "string"
+                          },
+                          "enable_init_containers": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "custom_pod_annotations": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "pod_environment_secret": {
+                            "type": "string"
+                          },
+                          "inherited_labels": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "inherited_annotations": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "node_readiness_label_merge": {
+                            "enum": ["AND", "OR"],
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "kubernetes_use_configmaps": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "load_balancer": {
+                        "properties": {
+                          "custom_service_annotations": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "db_hosted_zone": {
+                            "default": "db.example.com",
+                            "type": "string"
+                          },
+                          "enable_master_load_balancer": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "enable_master_pooler_load_balancer": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "enable_replica_load_balancer": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "enable_replica_pooler_load_balancer": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "external_traffic_policy": {
+                            "default": "Cluster",
+                            "enum": ["Cluster", "Local"],
+                            "type": "string"
+                          },
+                          "master_dns_name_format": {
+                            "default": "{cluster}.{team}.{hostedzone}",
+                            "type": "string"
+                          },
+                          "replica_dns_name_format": {
+                            "default": "{cluster}-repl.{team}.{hostedzone}",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "logging_rest_api": {
+                        "properties": {
+                          "api_port": {
+                            "default": 8080,
+                            "type": "integer"
+                          },
+                          "cluster_history_entries": {
+                            "default": 1000,
+                            "type": "integer"
+                          },
+                          "ring_log_lines": {
+                            "default": 100,
+                            "type": "integer"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "logical_backup": {
+                        "properties": {
+                          "logical_backup_docker_image": {
+                            "default": "registry.opensource.zalan.do/acid/logical-backup:v1.8.2",
+                            "type": "string"
+                          },
+                          "logical_backup_google_application_credentials": {
+                            "type": "string"
+                          },
+                          "logical_backup_job_prefix": {
+                            "default": "logical-backup-",
+                            "type": "string"
+                          },
+                          "logical_backup_provider": {
+                            "default": "s3",
+                            "type": "string"
+                          },
+                          "logical_backup_s3_access_key_id": {
+                            "type": "string"
+                          },
+                          "logical_backup_s3_bucket": {
+                            "type": "string"
+                          },
+                          "logical_backup_s3_endpoint": {
+                            "type": "string"
+                          },
+                          "logical_backup_s3_region": {
+                            "type": "string"
+                          },
+                          "logical_backup_s3_retention_time": {
+                            "type": "string"
+                          },
+                          "logical_backup_s3_secret_access_key": {
+                            "type": "string"
+                          },
+                          "logical_backup_s3_sse": {
+                            "type": "string"
+                          },
+                          "logical_backup_schedule": {
+                            "default": "30 00 * * *",
+                            "pattern": "^(\\d+|\\*)(/\\d+)?(\\s+(\\d+|\\*)(/\\d+)?){4}$",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "major_version_upgrade": {
+                        "properties": {
+                          "major_version_upgrade_mode": {
+                            "default": "off",
+                            "type": "string"
+                          },
+                          "major_version_upgrade_team_allow_list": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "minimal_major_version": {
+                            "default": "9.6",
+                            "type": "string"
+                          },
+                          "target_major_version": {
+                            "default": "14",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "max_instances": {
+                        "default": -1,
+                        "description": "-1 = disabled",
+                        "minimum": -1,
+                        "type": "integer"
+                      },
+                      "min_instances": {
+                        "default": -1,
+                        "description": "-1 = disabled",
+                        "minimum": -1,
+                        "type": "integer"
+                      },
+                      "postgres_pod_resources": {
+                        "properties": {
+                          "default_cpu_limit": {
+                            "default": "1",
+                            "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                            "type": "string"
+                          },
+                          "default_cpu_request": {
+                            "default": "100m",
+                            "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                            "type": "string"
+                          },
+                          "default_memory_limit": {
+                            "default": "500Mi",
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          },
+                          "default_memory_request": {
+                            "default": "100Mi",
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          },
+                          "min_cpu_limit": {
+                            "default": "250m",
+                            "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                            "type": "string"
+                          },
+                          "min_memory_limit": {
+                            "default": "250Mi",
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "repair_period": {
+                        "default": "5m",
+                        "type": "string"
+                      },
+                      "resync_period": {
+                        "default": "30m",
+                        "type": "string"
+                      },
+                      "scalyr": {
+                        "properties": {
+                          "scalyr_api_key": {
+                            "type": "string"
+                          },
+                          "scalyr_cpu_limit": {
+                            "default": "1",
+                            "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                            "type": "string"
+                          },
+                          "scalyr_cpu_request": {
+                            "default": "100m",
+                            "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                            "type": "string"
+                          },
+                          "scalyr_image": {
+                            "type": "string"
+                          },
+                          "scalyr_memory_limit": {
+                            "default": "500Mi",
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          },
+                          "scalyr_memory_request": {
+                            "default": "50Mi",
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          },
+                          "scalyr_server_url": {
+                            "default": "https://upload.eu.scalyr.com",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "set_memory_request_to_limit": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "sidecar_docker_images": {
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "sidecars": {
+                        "items": {
+                          "type": "object",
+                          "x-kubernetes-preserve-unknown-fields": true
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "teams_api": {
+                        "properties": {
+                          "enable_admin_role_for_users": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "enable_postgres_team_crd": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "enable_postgres_team_crd_superusers": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "enable_team_member_deprecation": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "enable_team_superuser": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "enable_teams_api": {
+                            "default": true,
+                            "type": "boolean"
+                          },
+                          "pam_configuration": {
+                            "default": "https://info.example.com/oauth2/tokeninfo?access_token= uid realm=/employees",
+                            "type": "string"
+                          },
+                          "pam_role_name": {
+                            "default": "zalandos",
+                            "type": "string"
+                          },
+                          "postgres_superuser_teams": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "protected_role_names": {
+                            "default": ["admin", "cron_admin"],
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "role_deletion_suffix": {
+                            "default": "_deleted",
+                            "type": "string"
+                          },
+                          "team_admin_role": {
+                            "default": "admin",
+                            "type": "string"
+                          },
+                          "team_api_role_configuration": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "default": {
+                              "log_statement": "all"
+                            },
+                            "type": "object"
+                          },
+                          "teams_api_url": {
+                            "default": "https://teams.example.com/api/",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "timeouts": {
+                        "properties": {
+                          "patroni_api_check_interval": {
+                            "default": "1s",
+                            "type": "string"
+                          },
+                          "patroni_api_check_timeout": {
+                            "default": "5s",
+                            "type": "string"
+                          },
+                          "pod_deletion_wait_timeout": {
+                            "default": "10m",
+                            "type": "string"
+                          },
+                          "pod_label_wait_timeout": {
+                            "default": "10m",
+                            "type": "string"
+                          },
+                          "ready_wait_interval": {
+                            "default": "4s",
+                            "type": "string"
+                          },
+                          "ready_wait_timeout": {
+                            "default": "30s",
+                            "type": "string"
+                          },
+                          "resource_check_interval": {
+                            "default": "3s",
+                            "type": "string"
+                          },
+                          "resource_check_timeout": {
+                            "default": "10m",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "users": {
+                        "properties": {
+                          "additional_owner_roles": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "nullable": true,
+                            "type": "array"
+                          },
+                          "enable_password_rotation": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "password_rotation_interval": {
+                            "default": 90,
+                            "type": "integer"
+                          },
+                          "password_rotation_user_retention": {
+                            "default": 180,
+                            "type": "integer"
+                          },
+                          "replication_username": {
+                            "default": "standby",
+                            "type": "string"
+                          },
+                          "super_username": {
+                            "default": "postgres",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "workers": {
+                        "default": 8,
+                        "minimum": 1,
+                        "type": "integer"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "kind": {
+                    "enum": ["OperatorConfiguration"],
+                    "type": "string"
+                  },
+                  "status": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  }
+                },
+                "required": ["kind", "apiVersion", "configuration"],
+                "type": "object"
+              }
+            },
+            "served": true,
+            "storage": true,
+            "subresources": {
+              "status": {}
+            }
+          }
+        ]
+      }
+    },
+    "/postgres_operator/crd/postgresqls_acid_zalan_do": {
+      "apiVersion": "apiextensions.k8s.io/v1",
+      "kind": "CustomResourceDefinition",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "NV7WE7EUEAD5PNTWS7QYM7TAHFERPMG55BVW4WX5LBAPUCJKBCQQ===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgresqls.acid.zalan.do"
+      },
+      "spec": {
+        "group": "acid.zalan.do",
+        "names": {
+          "categories": ["all"],
+          "kind": "postgresql",
+          "listKind": "postgresqlList",
+          "plural": "postgresqls",
+          "shortNames": ["pg"],
+          "singular": "postgresql"
+        },
+        "scope": "Namespaced",
+        "versions": [
+          {
+            "additionalPrinterColumns": [
+              {
+                "description": "Team responsible for Postgres cluster",
+                "jsonPath": ".spec.teamId",
+                "name": "Team",
+                "type": "string"
+              },
+              {
+                "description": "PostgreSQL version",
+                "jsonPath": ".spec.postgresql.version",
+                "name": "Version",
+                "type": "string"
+              },
+              {
+                "description": "Number of Pods per Postgres cluster",
+                "jsonPath": ".spec.numberOfInstances",
+                "name": "Pods",
+                "type": "integer"
+              },
+              {
+                "description": "Size of the bound volume",
+                "jsonPath": ".spec.volume.size",
+                "name": "Volume",
+                "type": "string"
+              },
+              {
+                "description": "Requested CPU for Postgres containers",
+                "jsonPath": ".spec.resources.requests.cpu",
+                "name": "CPU-Request",
+                "type": "string"
+              },
+              {
+                "description": "Requested memory for Postgres containers",
+                "jsonPath": ".spec.resources.requests.memory",
+                "name": "Memory-Request",
+                "type": "string"
+              },
+              {
+                "jsonPath": ".metadata.creationTimestamp",
+                "name": "Age",
+                "type": "date"
+              },
+              {
+                "description": "Current sync status of postgresql resource",
+                "jsonPath": ".status.PostgresClusterStatus",
+                "name": "Status",
+                "type": "string"
+              }
+            ],
+            "name": "v1",
+            "schema": {
+              "openAPIV3Schema": {
+                "properties": {
+                  "apiVersion": {
+                    "enum": ["acid.zalan.do/v1"],
+                    "type": "string"
+                  },
+                  "kind": {
+                    "enum": ["postgresql"],
+                    "type": "string"
+                  },
+                  "spec": {
+                    "properties": {
+                      "teamId": {
+                        "type": "string"
+                      },
+                      "spiloRunAsGroup": {
+                        "type": "integer"
+                      },
+                      "additionalVolumes": {
+                        "items": {
+                          "properties": {
+                            "mountPath": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "subPath": {
+                              "type": "string"
+                            },
+                            "targetContainers": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "nullable": true,
+                              "type": "array"
+                            },
+                            "volumeSource": {
+                              "type": "object",
+                              "x-kubernetes-preserve-unknown-fields": true
+                            }
+                          },
+                          "required": ["name", "mountPath", "volumeSource"],
+                          "type": "object"
+                        },
+                        "type": "array"
+                      },
+                      "standby": {
+                        "oneOf": [
+                          {
+                            "required": ["s3_wal_path"]
+                          },
+                          {
+                            "required": ["gs_wal_path"]
+                          },
+                          {
+                            "required": ["standby_host"]
+                          }
+                        ],
+                        "properties": {
+                          "gs_wal_path": {
+                            "type": "string"
+                          },
+                          "s3_wal_path": {
+                            "type": "string"
+                          },
+                          "standby_host": {
+                            "type": "string"
+                          },
+                          "standby_port": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "patroni": {
+                        "properties": {
+                          "initdb": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "loop_wait": {
+                            "type": "integer"
+                          },
+                          "maximum_lag_on_failover": {
+                            "type": "integer"
+                          },
+                          "pg_hba": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "retry_timeout": {
+                            "type": "integer"
+                          },
+                          "slots": {
+                            "additionalProperties": {
+                              "additionalProperties": {
+                                "type": "string"
+                              },
+                              "type": "object"
+                            },
+                            "type": "object"
+                          },
+                          "synchronous_mode": {
+                            "type": "boolean"
+                          },
+                          "synchronous_mode_strict": {
+                            "type": "boolean"
+                          },
+                          "synchronous_node_count": {
+                            "type": "integer"
+                          },
+                          "ttl": {
+                            "type": "integer"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "logicalBackupSchedule": {
+                        "pattern": "^(\\d+|\\*)(/\\d+)?(\\s+(\\d+|\\*)(/\\d+)?){4}$",
+                        "type": "string"
+                      },
+                      "env": {
+                        "items": {
+                          "type": "object",
+                          "x-kubernetes-preserve-unknown-fields": true
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "enableShmVolume": {
+                        "type": "boolean"
+                      },
+                      "initContainers": {
+                        "items": {
+                          "type": "object",
+                          "x-kubernetes-preserve-unknown-fields": true
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "sidecars": {
+                        "items": {
+                          "type": "object",
+                          "x-kubernetes-preserve-unknown-fields": true
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "users": {
+                        "additionalProperties": {
+                          "items": {
+                            "enum": [
+                              "bypassrls",
+                              "BYPASSRLS",
+                              "nobypassrls",
+                              "NOBYPASSRLS",
+                              "createdb",
+                              "CREATEDB",
+                              "nocreatedb",
+                              "NOCREATEDB",
+                              "createrole",
+                              "CREATEROLE",
+                              "nocreaterole",
+                              "NOCREATEROLE",
+                              "inherit",
+                              "INHERIT",
+                              "noinherit",
+                              "NOINHERIT",
+                              "login",
+                              "LOGIN",
+                              "nologin",
+                              "NOLOGIN",
+                              "replication",
+                              "REPLICATION",
+                              "noreplication",
+                              "NOREPLICATION",
+                              "superuser",
+                              "SUPERUSER",
+                              "nosuperuser",
+                              "NOSUPERUSER"
+                            ],
+                            "type": "string"
+                          },
+                          "nullable": true,
+                          "type": "array"
+                        },
+                        "type": "object"
+                      },
+                      "postgresql": {
+                        "properties": {
+                          "parameters": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "version": {
+                            "enum": [
+                              "9.5",
+                              "9.6",
+                              "10",
+                              "11",
+                              "12",
+                              "13",
+                              "14"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": ["version"],
+                        "type": "object"
+                      },
+                      "pod_priority_class_name": {
+                        "description": "deprecated",
+                        "type": "string"
+                      },
+                      "usersWithSecretRotation": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "serviceAnnotations": {
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "enableReplicaLoadBalancer": {
+                        "type": "boolean"
+                      },
+                      "maintenanceWindows": {
+                        "items": {
+                          "pattern": "^\\ *((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\\d):([0-5]?\\d)|(2[0-3]|[01]?\\d):([0-5]?\\d))-((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\\d):([0-5]?\\d)|(2[0-3]|[01]?\\d):([0-5]?\\d))\\ *$",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "volume": {
+                        "properties": {
+                          "iops": {
+                            "type": "integer"
+                          },
+                          "selector": {
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "enum": [
+                                        "DoesNotExists",
+                                        "Exists",
+                                        "In",
+                                        "NotIn"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "required": ["key", "operator"],
+                                  "type": "object"
+                                },
+                                "type": "array"
+                              },
+                              "matchLabels": {
+                                "type": "object",
+                                "x-kubernetes-preserve-unknown-fields": true
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "size": {
+                            "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                            "type": "string"
+                          },
+                          "storageClass": {
+                            "type": "string"
+                          },
+                          "subPath": {
+                            "type": "string"
+                          },
+                          "throughput": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": ["size"],
+                        "type": "object"
+                      },
+                      "enableLogicalBackup": {
+                        "type": "boolean"
+                      },
+                      "init_containers": {
+                        "description": "deprecated",
+                        "items": {
+                          "type": "object",
+                          "x-kubernetes-preserve-unknown-fields": true
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "connectionPooler": {
+                        "properties": {
+                          "dockerImage": {
+                            "type": "string"
+                          },
+                          "maxDBConnections": {
+                            "type": "integer"
+                          },
+                          "mode": {
+                            "enum": ["session", "transaction"],
+                            "type": "string"
+                          },
+                          "numberOfInstances": {
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          "resources": {
+                            "properties": {
+                              "limits": {
+                                "properties": {
+                                  "cpu": {
+                                    "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                                    "type": "string"
+                                  },
+                                  "memory": {
+                                    "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "requests": {
+                                "properties": {
+                                  "cpu": {
+                                    "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                                    "type": "string"
+                                  },
+                                  "memory": {
+                                    "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "schema": {
+                            "type": "string"
+                          },
+                          "user": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "databases": {
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "preparedDatabases": {
+                        "additionalProperties": {
+                          "properties": {
+                            "defaultUsers": {
+                              "type": "boolean"
+                            },
+                            "extensions": {
+                              "additionalProperties": {
+                                "type": "string"
+                              },
+                              "type": "object"
+                            },
+                            "schemas": {
+                              "additionalProperties": {
+                                "properties": {
+                                  "defaultRoles": {
+                                    "type": "boolean"
+                                  },
+                                  "defaultUsers": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "object"
+                            },
+                            "secretNamespace": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "object"
+                      },
+                      "enableReplicaConnectionPooler": {
+                        "type": "boolean"
+                      },
+                      "streams": {
+                        "items": {
+                          "properties": {
+                            "applicationId": {
+                              "type": "string"
+                            },
+                            "batchSize": {
+                              "type": "integer"
+                            },
+                            "database": {
+                              "type": "string"
+                            },
+                            "filter": {
+                              "additionalProperties": {
+                                "type": "string"
+                              },
+                              "type": "object"
+                            },
+                            "tables": {
+                              "additionalProperties": {
+                                "properties": {
+                                  "eventType": {
+                                    "type": "string"
+                                  },
+                                  "idColumn": {
+                                    "type": "string"
+                                  },
+                                  "payloadColumn": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["eventType"],
+                                "type": "object"
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "required": ["applicationId", "database", "tables"],
+                          "type": "object"
+                        },
+                        "type": "array"
+                      },
+                      "schedulerName": {
+                        "type": "string"
+                      },
+                      "spiloRunAsUser": {
+                        "type": "integer"
+                      },
+                      "replicaLoadBalancer": {
+                        "description": "deprecated",
+                        "type": "boolean"
+                      },
+                      "spiloFSGroup": {
+                        "type": "integer"
+                      },
+                      "podPriorityClassName": {
+                        "type": "string"
+                      },
+                      "enableReplicaPoolerLoadBalancer": {
+                        "type": "boolean"
+                      },
+                      "usersWithInPlaceSecretRotation": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      },
+                      "tolerations": {
+                        "items": {
+                          "properties": {
+                            "effect": {
+                              "enum": [
+                                "NoExecute",
+                                "NoSchedule",
+                                "PreferNoSchedule"
+                              ],
+                              "type": "string"
+                            },
+                            "key": {
+                              "type": "string"
+                            },
+                            "operator": {
+                              "enum": ["Equal", "Exists"],
+                              "type": "string"
+                            },
+                            "tolerationSeconds": {
+                              "type": "integer"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      },
+                      "enableMasterLoadBalancer": {
+                        "type": "boolean"
+                      },
+                      "tls": {
+                        "properties": {
+                          "caFile": {
+                            "type": "string"
+                          },
+                          "caSecretName": {
+                            "type": "string"
+                          },
+                          "certificateFile": {
+                            "type": "string"
+                          },
+                          "privateKeyFile": {
+                            "type": "string"
+                          },
+                          "secretName": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["secretName"],
+                        "type": "object"
+                      },
+                      "useLoadBalancer": {
+                        "description": "deprecated",
+                        "type": "boolean"
+                      },
+                      "enableMasterPoolerLoadBalancer": {
+                        "type": "boolean"
+                      },
+                      "resources": {
+                        "properties": {
+                          "limits": {
+                            "properties": {
+                              "cpu": {
+                                "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                                "type": "string"
+                              },
+                              "memory": {
+                                "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "requests": {
+                            "properties": {
+                              "cpu": {
+                                "pattern": "^(\\d+m|\\d+(\\.\\d{1,3})?)$",
+                                "type": "string"
+                              },
+                              "memory": {
+                                "pattern": "^(\\d+(e\\d+)?|\\d+(\\.\\d+)?(e\\d+)?[EPTGMK]i?)$",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "numberOfInstances": {
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "podAnnotations": {
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "type": "object"
+                      },
+                      "dockerImage": {
+                        "type": "string"
+                      },
+                      "nodeAffinity": {
+                        "properties": {
+                          "preferredDuringSchedulingIgnoredDuringExecution": {
+                            "items": {
+                              "properties": {
+                                "preference": {
+                                  "properties": {
+                                    "matchExpressions": {
+                                      "items": {
+                                        "properties": {
+                                          "key": {
+                                            "type": "string"
+                                          },
+                                          "operator": {
+                                            "type": "string"
+                                          },
+                                          "values": {
+                                            "items": {
+                                              "type": "string"
+                                            },
+                                            "type": "array"
+                                          }
+                                        },
+                                        "required": ["key", "operator"],
+                                        "type": "object"
+                                      },
+                                      "type": "array"
+                                    },
+                                    "matchFields": {
+                                      "items": {
+                                        "properties": {
+                                          "key": {
+                                            "type": "string"
+                                          },
+                                          "operator": {
+                                            "type": "string"
+                                          },
+                                          "values": {
+                                            "items": {
+                                              "type": "string"
+                                            },
+                                            "type": "array"
+                                          }
+                                        },
+                                        "required": ["key", "operator"],
+                                        "type": "object"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "weight": {
+                                  "format": "int32",
+                                  "type": "integer"
+                                }
+                              },
+                              "required": ["preference", "weight"],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "properties": {
+                              "nodeSelectorTerms": {
+                                "items": {
+                                  "properties": {
+                                    "matchExpressions": {
+                                      "items": {
+                                        "properties": {
+                                          "key": {
+                                            "type": "string"
+                                          },
+                                          "operator": {
+                                            "type": "string"
+                                          },
+                                          "values": {
+                                            "items": {
+                                              "type": "string"
+                                            },
+                                            "type": "array"
+                                          }
+                                        },
+                                        "required": ["key", "operator"],
+                                        "type": "object"
+                                      },
+                                      "type": "array"
+                                    },
+                                    "matchFields": {
+                                      "items": {
+                                        "properties": {
+                                          "key": {
+                                            "type": "string"
+                                          },
+                                          "operator": {
+                                            "type": "string"
+                                          },
+                                          "values": {
+                                            "items": {
+                                              "type": "string"
+                                            },
+                                            "type": "array"
+                                          }
+                                        },
+                                        "required": ["key", "operator"],
+                                        "type": "object"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "required": ["nodeSelectorTerms"],
+                            "type": "object"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "clone": {
+                        "properties": {
+                          "cluster": {
+                            "type": "string"
+                          },
+                          "s3_access_key_id": {
+                            "type": "string"
+                          },
+                          "s3_endpoint": {
+                            "type": "string"
+                          },
+                          "s3_force_path_style": {
+                            "type": "boolean"
+                          },
+                          "s3_secret_access_key": {
+                            "type": "string"
+                          },
+                          "s3_wal_path": {
+                            "type": "string"
+                          },
+                          "timestamp": {
+                            "pattern": "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([+-]([01][0-9]|2[0-3]):[0-5][0-9]))$",
+                            "type": "string"
+                          },
+                          "uid": {
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": ["cluster"],
+                        "type": "object"
+                      },
+                      "enableConnectionPooler": {
+                        "type": "boolean"
+                      },
+                      "allowedSourceRanges": {
+                        "items": {
+                          "pattern": "^(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\/(\\d|[1-2]\\d|3[0-2])$",
+                          "type": "string"
+                        },
+                        "nullable": true,
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "numberOfInstances",
+                      "teamId",
+                      "postgresql",
+                      "volume"
+                    ],
+                    "type": "object"
+                  },
+                  "status": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  }
+                },
+                "required": ["kind", "apiVersion", "spec"],
+                "type": "object"
+              }
+            },
+            "served": true,
+            "storage": true,
+            "subresources": {
+              "status": {}
+            }
+          }
+        ]
+      }
+    },
+    "/postgres_operator/crd/postgresteams_acid_zalan_do": {
+      "apiVersion": "apiextensions.k8s.io/v1",
+      "kind": "CustomResourceDefinition",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "54QL6V7REDAJ24EBWRCNQMVZ7VZALLIX47UEJLAVJWGHNMNG5TTA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgresteams.acid.zalan.do"
+      },
+      "spec": {
+        "group": "acid.zalan.do",
+        "names": {
+          "categories": ["all"],
+          "kind": "PostgresTeam",
+          "listKind": "PostgresTeamList",
+          "plural": "postgresteams",
+          "shortNames": ["pgteam"],
+          "singular": "postgresteam"
+        },
+        "scope": "Namespaced",
+        "versions": [
+          {
+            "name": "v1",
+            "schema": {
+              "openAPIV3Schema": {
+                "properties": {
+                  "apiVersion": {
+                    "enum": ["acid.zalan.do/v1"],
+                    "type": "string"
+                  },
+                  "kind": {
+                    "enum": ["PostgresTeam"],
+                    "type": "string"
+                  },
+                  "spec": {
+                    "properties": {
+                      "additionalMembers": {
+                        "additionalProperties": {
+                          "description": "List of users who will also be added to the Postgres cluster",
+                          "items": {
+                            "type": "string"
+                          },
+                          "nullable": true,
+                          "type": "array"
+                        },
+                        "description": "Map for teamId and associated additional users",
+                        "type": "object"
+                      },
+                      "additionalSuperuserTeams": {
+                        "additionalProperties": {
+                          "description": "List of teams to become Postgres superusers",
+                          "items": {
+                            "type": "string"
+                          },
+                          "nullable": true,
+                          "type": "array"
+                        },
+                        "description": "Map for teamId and associated additional superuser teams",
+                        "type": "object"
+                      },
+                      "additionalTeams": {
+                        "additionalProperties": {
+                          "description": "List of teams whose members will also be added to the Postgres cluster",
+                          "items": {
+                            "type": "string"
+                          },
+                          "nullable": true,
+                          "type": "array"
+                        },
+                        "description": "Map for teamId and associated additional teams",
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "required": ["kind", "apiVersion", "spec"],
+                "type": "object"
+              }
+            },
+            "served": true,
+            "storage": true,
+            "subresources": {
+              "status": {}
+            }
+          }
+        ]
+      }
+    },
+    "/postgres_operator/deployment/postgres_operator": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "Q342HLCLGEEM5Y2ZGNETAJHZZ2BTHUURLA7YKZTRUPQYQNDGVIOA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgres-operator",
+        "namespace": "battery-core"
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "battery/app": "postgres-operator"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "postgres-operator",
+              "app.kubernetes.io/managed-by": "batteries-included",
+              "app.kubernetes.io/name": "postgres-operator",
+              "battery/app": "postgres-operator",
+              "battery/managed": "true"
+            }
+          },
+          "spec": {
+            "affinity": {},
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "POSTGRES_OPERATOR_CONFIGURATION_OBJECT",
+                    "value": "postgres-operator"
+                  }
+                ],
+                "image": "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-61-g29cec0ce",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "postgres-operator",
+                "resources": {
+                  "limits": {
+                    "cpu": "500m",
+                    "memory": "500Mi"
+                  },
+                  "requests": {
+                    "cpu": "100m",
+                    "memory": "250Mi"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "readOnlyRootFilesystem": true,
+                  "runAsNonRoot": true,
+                  "runAsUser": 1000
+                }
+              }
+            ],
+            "nodeSelector": {},
+            "serviceAccountName": "battery-postgres-operator",
+            "tolerations": []
+          }
+        }
+      }
+    },
+    "/postgres_operator/postgresql_operator_config/postgres_operator": {
+      "apiVersion": "acid.zalan.do/v1",
+      "configuration": {
+        "aws_or_gcp": {
+          "aws_region": "eu-central-1",
+          "enable_ebs_gp3_migration": false
+        },
+        "connection_pooler": {
+          "connection_pooler_default_cpu_limit": "1",
+          "connection_pooler_default_cpu_request": "500m",
+          "connection_pooler_default_memory_limit": "100Mi",
+          "connection_pooler_default_memory_request": "100Mi",
+          "connection_pooler_image": "registry.opensource.zalan.do/acid/pgbouncer:master-25",
+          "connection_pooler_max_db_connections": 60,
+          "connection_pooler_mode": "transaction",
+          "connection_pooler_number_of_instances": 2,
+          "connection_pooler_schema": "pooler",
+          "connection_pooler_user": "pooler"
+        },
+        "crd_categories": ["all"],
+        "debug": {
+          "debug_logging": true,
+          "enable_database_access": true
+        },
+        "docker_image": "registry.opensource.zalan.do/acid/spilo-15:2.1-p9",
+        "enable_crd_registration": false,
+        "enable_lazy_spilo_upgrade": false,
+        "enable_pgversion_env_var": true,
+        "enable_shm_volume": true,
+        "enable_spilo_wal_path_compat": false,
+        "etcd_host": "",
+        "kubernetes": {
+          "cluster_domain": "cluster.local",
+          "cluster_labels": {
+            "application": "spilo"
+          },
+          "cluster_name_label": "cluster-name",
+          "enable_cross_namespace_secret": false,
+          "enable_init_containers": true,
+          "enable_pod_antiaffinity": false,
+          "enable_pod_disruption_budget": true,
+          "enable_sidecars": true,
+          "infrastructure_roles_secret_name": "postgres-operator-infrauser-config",
+          "inherited_labels": [
+            "battery/app",
+            "app",
+            "sidecar.istio.io/inject",
+            "battery/owner"
+          ],
+          "oauth_token_secret_name": "postgres-operator",
+          "pdb_name_format": "postgres-{cluster}-pdb",
+          "pod_antiaffinity_topology_key": "kubernetes.io/hostname",
+          "pod_management_policy": "ordered_ready",
+          "pod_role_label": "spilo-role",
+          "pod_service_account_name": "battery-postgres-pod",
+          "pod_terminate_grace_period": "5m",
+          "secret_name_template": "{username}.{cluster}.credentials.{tprkind}",
+          "spilo_allow_privilege_escalation": true,
+          "spilo_privileged": false,
+          "storage_resize_mode": "pvc",
+          "watched_namespace": "*"
+        },
+        "load_balancer": {
+          "db_hosted_zone": "db.example.com",
+          "enable_master_load_balancer": false,
+          "enable_master_pooler_load_balancer": false,
+          "enable_replica_load_balancer": false,
+          "enable_replica_pooler_load_balancer": false,
+          "external_traffic_policy": "Cluster",
+          "master_dns_name_format": "{cluster}.{team}.{hostedzone}",
+          "replica_dns_name_format": "{cluster}-repl.{team}.{hostedzone}"
+        },
+        "logging_rest_api": {
+          "api_port": 8080,
+          "cluster_history_entries": 1000,
+          "ring_log_lines": 100
+        },
+        "logical_backup": {
+          "logical_backup_docker_image": "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-43-g3e148ea5",
+          "logical_backup_job_prefix": "logical-backup-",
+          "logical_backup_provider": "s3",
+          "logical_backup_s3_access_key_id": "",
+          "logical_backup_s3_bucket": "my-bucket-url",
+          "logical_backup_s3_endpoint": "",
+          "logical_backup_s3_region": "",
+          "logical_backup_s3_retention_time": "",
+          "logical_backup_s3_secret_access_key": "",
+          "logical_backup_s3_sse": "AES256",
+          "logical_backup_schedule": "30 00 * * *"
+        },
+        "major_version_upgrade": {
+          "major_version_upgrade_mode": "manual",
+          "minimal_major_version": "9.6",
+          "target_major_version": "14"
+        },
+        "max_instances": -1,
+        "min_instances": -1,
+        "postgres_pod_resources": {
+          "default_cpu_limit": "1",
+          "default_cpu_request": "100m",
+          "default_memory_limit": "500Mi",
+          "default_memory_request": "100Mi",
+          "min_cpu_limit": "250m",
+          "min_memory_limit": "250Mi"
+        },
+        "repair_period": "5m",
+        "resync_period": "30m",
+        "teams_api": {
+          "enable_admin_role_for_users": false,
+          "enable_postgres_team_crd": false,
+          "enable_postgres_team_crd_superusers": false,
+          "enable_team_member_deprecation": false,
+          "enable_team_superuser": false,
+          "enable_teams_api": false,
+          "pam_role_name": "batteries_included",
+          "postgres_superuser_teams": ["postgres_superusers"],
+          "protected_role_names": ["admin", "cron_admin"],
+          "role_deletion_suffix": "_deleted",
+          "team_admin_role": "admin",
+          "team_api_role_configuration": {
+            "log_statement": "all"
+          }
+        },
+        "timeouts": {
+          "patroni_api_check_interval": "1s",
+          "patroni_api_check_timeout": "5s",
+          "pod_deletion_wait_timeout": "10m",
+          "pod_label_wait_timeout": "10m",
+          "ready_wait_interval": "3s",
+          "ready_wait_timeout": "30s",
+          "resource_check_interval": "3s",
+          "resource_check_timeout": "10m"
+        },
+        "users": {
+          "enable_password_rotation": false,
+          "password_rotation_interval": 90,
+          "password_rotation_user_retention": 180,
+          "replication_username": "standby",
+          "super_username": "postgres"
+        },
+        "workers": 8
+      },
+      "kind": "OperatorConfiguration",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "IBHIBXG2FP75TV2BSVCN4TKASIM4GY64XVDATWXTU6AZWYYPMWDQ===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgres-operator",
+        "namespace": "battery-core"
+      }
+    },
+    "/postgres_operator/secret/postgres_operator_infrauser_config": {
+      "apiVersion": "v1",
+      "data": {},
+      "kind": "Secret",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "AGN5AYTJ2GPHM6DSPD4DABG5BKA6LXOQU2FT4ARXERANSBWINYNQ===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgres-operator-infrauser-config",
+        "namespace": "battery-core"
+      },
+      "type": "Opaque"
+    },
+    "/postgres_operator/service/postgres_operator": {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "5XU6GXYAIQZBLJVS4MUV763BBAQ6D22IYXMS5OQTXXFDLNC3DPFA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "postgres-operator",
+        "namespace": "battery-core"
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": 8080,
+            "protocol": "TCP",
+            "targetPort": 8080
+          }
+        ],
+        "selector": {
+          "battery/app": "postgres-operator"
+        }
+      }
+    },
+    "/postgres_operator/service_account/battery_postgres_operator": {
+      "apiVersion": "v1",
+      "kind": "ServiceAccount",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "QQPMTOEISHTCXGISWE6ZWORRYZ2BR6ANSQWXRFPOMYIN2X3HBTIQ===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "battery-postgres-operator",
+        "namespace": "battery-core"
+      }
+    },
+    "/postgres_operator/service_account/battery_postgres_pod/0": {
+      "apiVersion": "v1",
+      "kind": "ServiceAccount",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "QBVLD6BVNJ7N42DU4WO23AWP66PZ3PQGFJLL77V2UQF4JNTEYKOA===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "battery-postgres-pod",
+        "namespace": "battery-base"
+      }
+    },
+    "/postgres_operator/service_account/battery_postgres_pod/1": {
+      "apiVersion": "v1",
+      "kind": "ServiceAccount",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "OABOMWCKHERXDJX3K2TNEREDABMFW4VFP45L7CIDLY2HNEPNY73A===="
+        },
+        "labels": {
+          "app": "postgres-operator",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "postgres-operator",
+          "battery/app": "postgres-operator",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "battery-postgres-pod",
+        "namespace": "battery-data"
+      }
+    }
+  },
+  "kube_cluster": {
+    "type": "kind"
+  },
+  "target_summary": {
+    "batteries": [
+      {
+        "config": {
+          "base_namespace": "battery-base",
+          "core_namespace": "battery-core",
+          "data_namespace": "battery-data",
+          "ml_namespace": "battery-ml"
+        },
+        "group": "magic",
+        "id": null,
+        "inserted_at": null,
+        "type": "battery_core",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "bouncer_image": "registry.opensource.zalan.do/acid/pgbouncer:master-25",
+          "image": "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-61-g29cec0ce",
+          "infra_users": [
+            {
+              "generated_key": "not-real",
+              "roles": ["createdb", "superuser", "login"],
+              "username": "batterydbuser"
+            }
+          ],
+          "json_logging_enabled": true,
+          "logical_backup_image": "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-43-g3e148ea5",
+          "spilo_image": "registry.opensource.zalan.do/acid/spilo-15:2.1-p9"
+        },
+        "group": "data",
+        "id": null,
+        "inserted_at": null,
+        "type": "postgres_operator",
+        "updated_at": null
+      },
+      {
+        "config": {},
+        "group": "data",
+        "id": null,
+        "inserted_at": null,
+        "type": "postgres",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "namespace": "battery-istio",
+          "pilot_image": "istio/pilot:1.16.1"
+        },
+        "group": "net_sec",
+        "id": null,
+        "inserted_at": null,
+        "type": "istio",
+        "updated_at": null
+      },
+      {
+        "config": {},
+        "group": "net_sec",
+        "id": null,
+        "inserted_at": null,
+        "type": "istio_gateway",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "controller_image": "quay.io/metallb/controller:v0.13.7",
+          "speaker_image": "quay.io/metallb/speaker:v0.13.7"
+        },
+        "group": "net_sec",
+        "id": null,
+        "inserted_at": null,
+        "type": "metallb",
+        "updated_at": null
+      },
+      {
+        "config": {},
+        "group": "net_sec",
+        "id": null,
+        "inserted_at": null,
+        "type": "metallb_ip_pool",
+        "updated_at": null
+      }
+    ],
+    "ceph_clusters": [],
+    "ceph_filesystems": [],
+    "ip_address_pools": [
+      {
+        "id": null,
+        "inserted_at": null,
+        "name": "kind-0",
+        "subnet": "172.18.128.0/17",
+        "updated_at": null
+      }
+    ],
+    "knative_services": [],
+    "kube_state": {},
+    "notebooks": [],
+    "postgres_clusters": [
+      {
+        "credential_copies": [],
+        "databases": [
+          {
+            "name": "control",
+            "owner": "controlserver"
+          }
+        ],
+        "id": null,
+        "inserted_at": null,
+        "name": "control",
+        "num_instances": 1,
+        "postgres_version": "14",
+        "storage_size": "500M",
+        "team_name": "pg",
+        "type": "internal",
+        "updated_at": null,
+        "users": [
+          {
+            "roles": ["createdb", "login"],
+            "username": "controlserver"
+          }
+        ]
+      }
+    ],
+    "redis_clusters": []
+  }
+}

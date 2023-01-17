@@ -43,11 +43,10 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [:battery_core, :redis, :istio_gateway, :postgres]
     },
     # ML
-    %CatalogBattery{group: :ml, type: :ml_core},
     %CatalogBattery{
       group: :ml,
       type: :notebooks,
-      dependencies: [:ml_core, :istio_gateway]
+      dependencies: [:istio_gateway]
     },
 
     # Monitoring

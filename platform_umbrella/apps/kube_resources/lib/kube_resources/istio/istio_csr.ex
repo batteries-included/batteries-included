@@ -1,12 +1,10 @@
 defmodule KubeResources.IstioCsr do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "istio-csr"
 
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-
-  @app_name "istio-csr"
 
   resource(:certmanger_certificate_istiod, _battery, state) do
     namespace = istio_namespace(state)
@@ -34,7 +32,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:certmanger_certificate)
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("istiod")
     |> B.spec(spec)
   end
@@ -44,7 +41,6 @@ defmodule KubeResources.IstioCsr do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-istio-csr")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-istio-csr"))
     |> B.subject(B.build_service_account("cert-manager-istio-csr", namespace))
   end
@@ -66,7 +62,6 @@ defmodule KubeResources.IstioCsr do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-istio-csr")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -142,7 +137,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:deployment)
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -152,7 +146,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:role_binding)
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("cert-manager-istio-csr"))
     |> B.subject(B.build_service_account("cert-manager-istio-csr", namespace))
   end
@@ -177,7 +170,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:role)
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -187,7 +179,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:service_account)
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_cert_manager_istio_csr, _battery, state) do
@@ -203,7 +194,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:service)
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -220,7 +210,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:service)
     |> B.name("cert-manager-istio-csr-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("metrics")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
@@ -251,7 +240,6 @@ defmodule KubeResources.IstioCsr do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("metrics")
     |> B.label("prometheus", "default")
     |> B.spec(spec)

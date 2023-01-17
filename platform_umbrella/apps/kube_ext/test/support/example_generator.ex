@@ -1,5 +1,5 @@
 defmodule KubeExt.ExampleGenerator do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "example-app"
   alias KubeExt.Builder, as: B
 
   resource(:main) do

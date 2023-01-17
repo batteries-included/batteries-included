@@ -1,13 +1,11 @@
 defmodule KubeResources.Postgres do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "postgres"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.SystemState.FromKubeState
 
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret
-
-  @app_name "postgres"
 
   multi_resource(:postgres_clusters, battery, state) do
     Enum.map(state.postgres_clusters, fn cluster ->
@@ -27,7 +25,6 @@ defmodule KubeResources.Postgres do
     B.build_resource(:postgresql)
     |> B.namespace(namespace(cluster, state))
     |> B.name(full_name(cluster))
-    |> B.app_labels(@app_name)
     |> B.label("sidecar.istio.io/inject", "false")
     |> B.spec(spec)
     |> add_owner(cluster)

@@ -1,5 +1,5 @@
 defmodule KubeResources.Notebooks do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "juypter-notebooks"
 
   import CommonCore.SystemState.Namespaces
 
@@ -9,7 +9,6 @@ defmodule KubeResources.Notebooks do
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
 
-  @app_name "notebooks"
   @url_base "/x/notebooks/"
 
   def view_url(%{} = notebook), do: view_url(KubeExt.cluster_type(), notebook)

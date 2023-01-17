@@ -32,13 +32,13 @@ defmodule CommonCore.SystemState.Namespaces do
   # etc
   def ml_namespace(%StateSummary{} = state) do
     state
-    |> get_battery(:ml_core)
-    |> get_config_value(:namespace, Defaults.Namespaces.ml())
+    |> get_battery(:battery_core)
+    |> get_config_value(:ml_namespace, Defaults.Namespaces.ml())
   end
 
   def data_namespace(%StateSummary{} = state) do
     state
-    |> get_battery(:data)
-    |> get_config_value(:namespace, Defaults.Namespaces.data())
+    |> get_battery(:battery_core)
+    |> get_config_value(:data_namespace, Defaults.Namespaces.data())
   end
 end

@@ -3,15 +3,13 @@ defmodule KubeResources.TrustManager do
     bundles_trust_cert_manager_io:
       "priv/manifests/trust_manager/bundles_trust_cert_manager_io.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "trust-manager"
 
   import CommonCore.Yaml
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-
-  @app_name "trust-manager"
 
   resource(:certmanger_certificate_trust_manager, _battery, state) do
     namespace = base_namespace(state)
@@ -29,7 +27,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:certmanger_certificate)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -38,7 +35,6 @@ defmodule KubeResources.TrustManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("trust-manager")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("trust-manager"))
     |> B.subject(B.build_service_account("trust-manager", namespace))
   end
@@ -66,7 +62,6 @@ defmodule KubeResources.TrustManager do
 
     B.build_resource(:cluster_role)
     |> B.name("trust-manager")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -135,7 +130,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:deployment)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -145,7 +139,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:role_binding)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("trust-manager"))
     |> B.subject(B.build_service_account("trust-manager", namespace))
   end
@@ -165,7 +158,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:role)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -175,7 +167,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:service_account)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_trust_manager, _battery, state) do
@@ -191,7 +182,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:service)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -208,7 +198,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:service)
     |> B.name("trust-manager-metrics")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
@@ -233,7 +222,6 @@ defmodule KubeResources.TrustManager do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("trust-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.label("prometheus", "default")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
@@ -244,7 +232,6 @@ defmodule KubeResources.TrustManager do
 
     B.build_resource(:validating_webhook_config)
     |> B.name("trust-manager")
-    |> B.app_labels(@app_name)
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1", "v1beta1"],

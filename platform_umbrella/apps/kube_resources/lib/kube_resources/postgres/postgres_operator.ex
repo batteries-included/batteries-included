@@ -6,15 +6,13 @@ defmodule KubeResources.PostgresOperator do
     postgresteams_acid_zalan_do:
       "priv/manifests/postgres-operator/postgresteams_acid_zalan_do.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "postgres-operator"
 
   import CommonCore.Yaml
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret
-
-  @app_name "battery-postgres-operator"
 
   @service_account "battery-postgres-operator"
   @postgres_pod_service_account "battery-postgres-pod"
@@ -27,7 +25,6 @@ defmodule KubeResources.PostgresOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("postgres-operator")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref(@cluster_role))
     |> B.subject(B.build_service_account(@service_account, namespace))
   end
@@ -127,7 +124,6 @@ defmodule KubeResources.PostgresOperator do
 
     B.build_resource(:cluster_role)
     |> B.name(@cluster_role)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -137,7 +133,6 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:service_account)
     |> B.name(@postgres_pod_service_account)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_postgres_pod_base, _battery, state) do
@@ -146,7 +141,6 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:service_account)
     |> B.name(@postgres_pod_service_account)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:cluster_role_binding_postgres_pod, _battery, state) do
@@ -155,7 +149,6 @@ defmodule KubeResources.PostgresOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name(@postgres_pod_service_account)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref(@postgres_pod_service_account))
     |> B.subject(B.build_service_account(@postgres_pod_service_account, data_namespace))
     |> B.subject(B.build_service_account(@postgres_pod_service_account, base_namespace))
@@ -187,7 +180,6 @@ defmodule KubeResources.PostgresOperator do
 
     B.build_resource(:cluster_role)
     |> B.name(@postgres_pod_service_account)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -197,7 +189,6 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:service_account)
     |> B.name(@service_account)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:deployment_postgres_operator, battery, state) do
@@ -250,7 +241,6 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:deployment)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -387,7 +377,6 @@ defmodule KubeResources.PostgresOperator do
     |> Map.put("configuration", configuration)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_postgres_operator, _battery, state) do
@@ -401,7 +390,6 @@ defmodule KubeResources.PostgresOperator do
     B.build_resource(:service)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -411,7 +399,6 @@ defmodule KubeResources.PostgresOperator do
     data = infra_users_password_map(battery, state)
 
     B.build_resource(:secret)
-    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.name(@infa_user_config)
     |> B.data(data)
@@ -423,7 +410,6 @@ defmodule KubeResources.PostgresOperator do
     data = infra_users_config_map(battery, state)
 
     B.build_resource(:config_map)
-    |> B.app_labels(@app_name)
     |> B.namespace(namespace)
     |> B.name(@infa_user_config)
     |> B.data(data)

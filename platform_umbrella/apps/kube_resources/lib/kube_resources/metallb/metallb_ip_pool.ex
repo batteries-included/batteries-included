@@ -1,11 +1,9 @@
 defmodule KubeResources.MetalLBIPPool do
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "metallb-ip-pool"
 
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
-
-  @app_name "metallb-ip-pool"
 
   multi_resource(:ip_pool, _battery, state) do
     namespace = base_namespace(state)
@@ -31,7 +29,6 @@ defmodule KubeResources.MetalLBIPPool do
       B.build_resource(:metal_ip_address_pool)
       |> B.name(pool.name)
       |> B.namespace(namespace)
-      |> B.app_labels(@app_name)
       |> B.spec(spec)
     end)
   end
@@ -43,7 +40,6 @@ defmodule KubeResources.MetalLBIPPool do
     B.build_resource(:metal_l2_advertisement)
     |> B.name("core")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 end

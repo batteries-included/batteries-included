@@ -5,15 +5,13 @@ defmodule KubeResources.KnativeOperator do
     knativeservings_operator_knative_dev:
       "priv/manifests/knative_operator/knativeservings_operator_knative_dev.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "knative-operator"
 
   import CommonCore.Yaml
   import CommonCore.SystemState.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret
-
-  @app_name "knative-operator"
 
   @webhook_service "knative-operator-webhook"
 
@@ -22,7 +20,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("knative-eventing-operator")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
   end
@@ -32,7 +29,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("knative-eventing-operator-aggregated")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator-aggregated"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
   end
@@ -42,7 +38,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("knative-eventing-operator-aggregated-stable")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator-aggregated-stable"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
   end
@@ -52,7 +47,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("knative-serving-operator")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
   end
@@ -62,7 +56,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("knative-serving-operator-aggregated")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator-aggregated"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
   end
@@ -72,7 +65,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("knative-serving-operator-aggregated-stable")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator-aggregated-stable"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
   end
@@ -82,7 +74,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("knative-operator-webhook")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("knative-operator-webhook"))
     |> B.subject(B.build_service_account("knative-operator-webhook", namespace))
   end
@@ -262,7 +253,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("knative-eventing-operator")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -280,7 +270,6 @@ defmodule KubeResources.KnativeOperator do
       ]
     })
     |> B.name("knative-eventing-operator-aggregated")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -302,7 +291,6 @@ defmodule KubeResources.KnativeOperator do
       ]
     })
     |> B.name("knative-eventing-operator-aggregated-stable")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -340,7 +328,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("knative-operator-webhook")
-    |> B.app_labels(@app_name)
     |> B.label("eventing.knative.dev/release", "devel")
     |> B.rules(rules)
   end
@@ -446,7 +433,6 @@ defmodule KubeResources.KnativeOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("knative-serving-operator")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -467,7 +453,6 @@ defmodule KubeResources.KnativeOperator do
       }
     )
     |> B.name("knative-serving-operator-aggregated")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -492,7 +477,6 @@ defmodule KubeResources.KnativeOperator do
       }
     )
     |> B.name("knative-serving-operator-aggregated-stable")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -503,7 +487,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:config_map)
     |> B.name("config-logging")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -514,7 +497,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:config_map)
     |> B.name("config-observability")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -579,7 +561,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:deployment)
     |> B.name("knative-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("knative-operator")
     |> B.spec(spec)
   end
@@ -688,7 +669,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:deployment)
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("operator-webhook")
     |> B.spec(spec)
   end
@@ -699,7 +679,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:role_binding)
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("knative-operator-webhook"))
     |> B.subject(B.build_service_account("knative-operator-webhook", namespace))
   end
@@ -718,7 +697,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:role)
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("operator-webhook")
     |> B.rules(rules)
   end
@@ -730,7 +708,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:secret)
     |> B.name("operator-webhook-certs")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("operator-webhook")
     |> B.data(data)
   end
@@ -741,7 +718,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:service_account)
     |> B.name("knative-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_account_knative_operator_webhook, _battery, state) do
@@ -751,7 +727,6 @@ defmodule KubeResources.KnativeOperator do
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
     |> B.component_label("operator-webhook")
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_knative_operator_webhook, _battery, state) do
@@ -772,7 +747,6 @@ defmodule KubeResources.KnativeOperator do
     B.build_resource(:service)
     |> B.name(@webhook_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("operator-webhook")
     |> B.label("role", "operator-webhook")
     |> B.spec(spec)

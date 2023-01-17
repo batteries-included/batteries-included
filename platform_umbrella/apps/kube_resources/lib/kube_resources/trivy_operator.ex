@@ -19,15 +19,13 @@ defmodule KubeResources.TrivyOperator do
     cis: "priv/manifests/trivy_operator/cis.yaml",
     nsa: "priv/manifests/trivy_operator/nsa.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "trivy-operator"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-
-  @app_name "trivy-operator"
 
   resource(:crd_clustercompliancereports_aquasecurity_github_io) do
     yaml(get_resource(:clustercompliancereports_aquasecurity_github_io))
@@ -66,7 +64,6 @@ defmodule KubeResources.TrivyOperator do
     |> get_resource()
     |> yaml()
     |> hd()
-    |> B.app_labels(@app_name)
   end
 
   resource(:aqua_cluster_compliance_report_nsa) do
@@ -74,7 +71,6 @@ defmodule KubeResources.TrivyOperator do
     |> get_resource()
     |> yaml()
     |> hd()
-    |> B.app_labels(@app_name)
   end
 
   resource(:cluster_role_aggregate_config_audit_reports_view) do
@@ -88,7 +84,6 @@ defmodule KubeResources.TrivyOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("aggregate-config-audit-reports-view")
-    |> B.app_labels(@app_name)
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-cluster-reader", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-edit", "true")
@@ -107,7 +102,6 @@ defmodule KubeResources.TrivyOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("aggregate-exposed-secret-reports-view")
-    |> B.app_labels(@app_name)
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-cluster-reader", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-edit", "true")
@@ -126,7 +120,6 @@ defmodule KubeResources.TrivyOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("aggregate-vulnerability-reports-view")
-    |> B.app_labels(@app_name)
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-cluster-reader", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-edit", "true")
@@ -139,7 +132,6 @@ defmodule KubeResources.TrivyOperator do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("trivy-operator")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("trivy-operator"))
     |> B.subject(B.build_service_account("trivy-operator", namespace))
   end
@@ -282,7 +274,6 @@ defmodule KubeResources.TrivyOperator do
 
     B.build_resource(:cluster_role)
     |> B.name("trivy-operator")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -303,7 +294,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:config_map)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -314,7 +304,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:config_map)
     |> B.name("trivy-operator-policies-config")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -347,7 +336,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:config_map)
     |> B.name("trivy-operator-trivy-config")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -462,7 +450,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:deployment)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -472,7 +459,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:role_binding)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("trivy-operator"))
     |> B.subject(B.build_service_account("trivy-operator", namespace))
   end
@@ -483,7 +469,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:role_binding)
     |> B.name("trivy-operator-leader-election")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("trivy-operator-leader-election"))
     |> B.subject(B.build_service_account("trivy-operator", namespace))
   end
@@ -503,7 +488,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:role)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -522,7 +506,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:role)
     |> B.name("trivy-operator-leader-election")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -533,7 +516,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:secret)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -544,7 +526,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:secret)
     |> B.name("trivy-operator-trivy-config")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -554,7 +535,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:service_account)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_trivy_operator, _battery, state) do
@@ -570,7 +550,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:service)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
@@ -586,7 +565,6 @@ defmodule KubeResources.TrivyOperator do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end

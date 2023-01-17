@@ -1,45 +1,32 @@
 defmodule KubeResources.ControlServer do
   import CommonCore.SystemState.Namespaces
+  use KubeExt.ResourceGenerator, app_name: "battery-control-server"
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
   alias CommonCore.Defaults
 
-  @app_name "control-server"
   @service_account "battery-admin"
   @server_port 4000
 
-  def materialize(battery, state) do
-    %{
-      "/deployment" => deployment(battery, state),
-      "/service" => service(battery, state),
-      "/service_account" => service_account(battery, state),
-      "/cluster_role_binding" => cluster_role_binding(battery, state),
-      "/virtual_service" => virtual_service(battery, state)
-    }
-  end
-
-  def virtual_service(_battery, state) do
+  resource(:virtual_service, _battery, state) do
     B.build_resource(:istio_virtual_service)
     |> B.namespace(core_namespace(state))
-    |> B.app_labels(@app_name)
     |> B.name("control-server")
     |> B.spec(VirtualService.fallback("control-server"))
     |> F.require_battery(state, :istio_gateway)
   end
 
-  def service_account(_battery, state) do
+  resource(:service_account, _battery, state) do
     B.build_resource(:service_account)
     |> B.namespace(core_namespace(state))
     |> B.name("battery-admin")
-    |> B.app_labels(@app_name)
   end
 
-  def cluster_role_binding(_battery, state) do
+  resource(:cluster_role_binding, _battery, state) do
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-admin-cluster-admin")
-    |> B.app_labels(@app_name)
     |> Map.put(
       "roleRef",
       B.build_cluster_role_ref("cluster-admin")
@@ -49,13 +36,36 @@ defmodule KubeResources.ControlServer do
     ])
   end
 
-  def deployment(battery, state) do
+  resource(:service, _battery, state) do
+    spec =
+      %{}
+      |> B.short_selector(@app_name)
+      |> B.ports([
+        %{
+          "targetPort" => @server_port,
+          "port" => @server_port,
+          "protocol" => "TCP",
+          "name" => "http"
+        }
+      ])
+
+    B.build_resource(:service)
+    |> B.name("control-server")
+    |> B.namespace(core_namespace(state))
+    |> B.spec(spec)
+  end
+
+  resource(:deployment, battery, state) do
     name = "controlserver"
 
-    template =
-      %{}
-      |> B.app_labels(@app_name)
-      |> B.spec(%{
+    template = %{
+      "metadata" => %{
+        "labels" => %{
+          "battery/app" => @app_name,
+          "battery/managed" => "true"
+        }
+      },
+      "spec" => %{
         "serviceAccount" => @service_account,
         "initContainers" => [
           control_container(battery, state,
@@ -72,7 +82,8 @@ defmodule KubeResources.ControlServer do
             }
           )
         ]
-      })
+      }
+    }
 
     spec =
       %{}
@@ -83,7 +94,6 @@ defmodule KubeResources.ControlServer do
     B.build_resource(:deployment)
     |> B.name(name)
     |> B.namespace(core_namespace(state))
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -136,7 +146,7 @@ defmodule KubeResources.ControlServer do
   defp pg_host(_battery, state) do
     pg_cluster = Defaults.ControlDB.control_cluster()
     ns = core_namespace(state)
-    "#{pg_cluster.team_name}-#{pg_cluster.name}.#{ns}.svc.cluster.local"
+    "#{pg_cluster.team_name}-#{pg_cluster.name}.#{ns}.svc"
   end
 
   defp pg_secret(_battery, _state) do
@@ -154,25 +164,5 @@ defmodule KubeResources.ControlServer do
     Defaults.ControlDB.control_cluster()
     |> Map.get(:databases, [])
     |> List.first(%{name: "control", owner: "controlserver"})
-  end
-
-  def service(_battery, state) do
-    spec =
-      %{}
-      |> B.short_selector(@app_name)
-      |> B.ports([
-        %{
-          "targetPort" => @server_port,
-          "port" => @server_port,
-          "protocol" => "TCP",
-          "name" => "http"
-        }
-      ])
-
-    B.build_resource(:service)
-    |> B.app_labels(@app_name)
-    |> B.name("control-server")
-    |> B.namespace(core_namespace(state))
-    |> B.spec(spec)
   end
 end

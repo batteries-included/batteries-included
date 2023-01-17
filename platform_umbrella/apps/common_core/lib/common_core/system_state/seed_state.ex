@@ -20,6 +20,24 @@ defmodule CommonCore.SystemState.SeedState do
     add_docker_lb_ips(state_summary)
   end
 
+  def seed(:local_kind) do
+    summary = %StateSummary{
+      batteries:
+        batteries([
+          :battery_core,
+          :postgres_operator,
+          :postgres,
+          :istio,
+          :metallb,
+          :metallb_ip_pool,
+          :control_server
+        ]),
+      postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
+    }
+
+    add_docker_lb_ips(summary)
+  end
+
   def seed(:dev) do
     summary = %StateSummary{
       batteries:
@@ -43,14 +61,13 @@ defmodule CommonCore.SystemState.SeedState do
     |> add_dev_infra_user()
   end
 
-  def seed(_type) do
+  def seed(:limited) do
     %StateSummary{
       batteries:
         batteries([
           :battery_core,
           :postgres_operator,
-          :postgres,
-          :istio
+          :postgres
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }

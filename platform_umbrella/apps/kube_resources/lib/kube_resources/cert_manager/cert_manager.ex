@@ -10,7 +10,7 @@ defmodule KubeResources.CertManager do
     issuers_cert_manager_io: "priv/manifests/cert_manager/issuers_cert_manager_io.yaml",
     orders_acme_cert_manager_io: "priv/manifests/cert_manager/orders_acme_cert_manager_io.yaml"
 
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "cert-manager"
 
   import CommonCore.Yaml
   import CommonCore.SystemState.Namespaces
@@ -18,14 +18,11 @@ defmodule KubeResources.CertManager do
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
 
-  @app_name "cert-manager"
-
   resource(:cluster_role_binding_cainjector, _battery, state) do
     namespace = base_namespace(state)
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-cainjector")
-    |> B.app_labels(@app_name)
     |> B.component_label("cainjector")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-cainjector"))
     |> B.subject(B.build_service_account("cert-manager-cainjector", namespace))
@@ -36,7 +33,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-approve:cert-manager-io")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-approve:cert-manager-io"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -47,7 +43,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-certificates")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-certificates"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -58,7 +53,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-certificatesigningrequests")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-certificatesigningrequests"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -69,7 +63,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-challenges")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-challenges"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -80,7 +73,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-clusterissuers")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-clusterissuers"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -91,7 +83,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-ingress-shim")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-ingress-shim"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -102,7 +93,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-issuers")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-issuers"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -113,7 +103,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-controller-orders")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-orders"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -124,7 +113,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("cert-manager-webhook:subjectaccessreviews")
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-webhook:subjectaccessreviews"))
     |> B.subject(B.build_service_account("cert-manager-webhook", namespace))
@@ -162,7 +150,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-cainjector")
-    |> B.app_labels(@app_name)
     |> B.component_label("cainjector")
     |> B.rules(rules)
   end
@@ -179,7 +166,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-approve:cert-manager-io")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -221,7 +207,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-certificates")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -253,7 +238,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-certificatesigningrequests")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -307,7 +291,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-challenges")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -334,7 +317,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-clusterissuers")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -376,7 +358,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-ingress-shim")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -403,7 +384,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-issuers")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -441,7 +421,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-controller-orders")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -467,7 +446,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-edit")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-edit", "true")
@@ -490,7 +468,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-view")
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-edit", "true")
@@ -509,7 +486,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:cluster_role)
     |> B.name("cert-manager-webhook:subjectaccessreviews")
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> B.rules(rules)
   end
@@ -521,7 +497,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:config_map)
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> B.data(data)
   end
@@ -614,7 +589,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:deployment)
     |> B.name("cert-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label(component)
     |> B.spec(spec)
   end
@@ -673,7 +647,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:deployment)
     |> B.name("cert-manager-cainjector")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label(component)
     |> B.spec(spec)
   end
@@ -758,7 +731,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:deployment)
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label(component)
     |> B.spec(spec)
   end
@@ -804,7 +776,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:job)
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("startupapicheck")
     |> B.spec(spec)
   end
@@ -814,7 +785,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:mutating_webhook_config)
     |> B.name("cert-manager-webhook")
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> B.annotation(
       "cert-manager.io/inject-ca-from-secret",
@@ -853,7 +823,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role_binding)
     |> B.name("cert-manager-cainjector:leaderelection")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("cainjector")
     |> B.role_ref(B.build_role_ref("cert-manager-cainjector:leaderelection"))
     |> B.subject(B.build_service_account("cert-manager-cainjector", namespace))
@@ -865,7 +834,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role_binding)
     |> B.name("cert-manager:leaderelection")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.role_ref(B.build_role_ref("cert-manager:leaderelection"))
     |> B.subject(B.build_service_account("cert-manager", namespace))
@@ -877,7 +845,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role_binding)
     |> B.name("cert-manager-startupapicheck:create-cert")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("startupapicheck")
     |> B.role_ref(B.build_role_ref("cert-manager-startupapicheck:create-cert"))
     |> B.subject(B.build_service_account("cert-manager-startupapicheck", namespace))
@@ -889,7 +856,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role_binding)
     |> B.name("cert-manager-webhook:dynamic-serving")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> B.role_ref(B.build_role_ref("cert-manager-webhook:dynamic-serving"))
     |> B.subject(B.build_service_account("cert-manager-webhook", namespace))
@@ -914,7 +880,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role)
     |> B.name("cert-manager-cainjector:leaderelection")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("cainjector")
     |> B.rules(rules)
   end
@@ -935,7 +900,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role)
     |> B.name("cert-manager:leaderelection")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
     |> B.rules(rules)
   end
@@ -954,7 +918,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role)
     |> B.name("cert-manager-startupapicheck:create-cert")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("startupapicheck")
     |> B.rules(rules)
   end
@@ -975,7 +938,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:role)
     |> B.name("cert-manager-webhook:dynamic-serving")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> B.rules(rules)
   end
@@ -987,7 +949,6 @@ defmodule KubeResources.CertManager do
     |> Map.put("automountServiceAccountToken", true)
     |> B.name("cert-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("controller")
   end
 
@@ -997,7 +958,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:service_account)
     |> B.name("cert-manager-cainjector")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("cainjector")
     |> Map.put("automountServiceAccountToken", true)
   end
@@ -1008,7 +968,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:service_account)
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("startupapicheck")
     |> Map.put("automountServiceAccountToken", true)
   end
@@ -1019,7 +978,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:service_account)
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> Map.put("automountServiceAccountToken", true)
   end
@@ -1047,7 +1005,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:service)
     |> B.name("cert-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label(component)
     |> B.spec(spec)
   end
@@ -1066,7 +1023,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:service)
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label(component)
     |> B.spec(spec)
   end
@@ -1100,7 +1056,6 @@ defmodule KubeResources.CertManager do
     B.build_resource(:monitoring_service_monitor)
     |> B.name("cert-manager")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.component_label(component)
     |> B.label("prometheus", "default")
     |> B.spec(spec)
@@ -1112,7 +1067,6 @@ defmodule KubeResources.CertManager do
 
     B.build_resource(:validating_webhook_config)
     |> B.name("cert-manager-webhook")
-    |> B.app_labels(@app_name)
     |> B.component_label("webhook")
     |> B.annotation(
       "cert-manager.io/inject-ca-from-secret",

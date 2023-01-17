@@ -1,6 +1,6 @@
 defmodule KubeResources.Kiali do
   use CommonCore.IncludeResource, config_yaml: "priv/raw_files/kiali/config.yaml"
-  use KubeExt.ResourceGenerator
+  use KubeExt.ResourceGenerator, app_name: "kiali"
 
   import CommonCore.SystemState.Namespaces
 
@@ -9,7 +9,6 @@ defmodule KubeResources.Kiali do
   alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.VirtualService
 
-  @app_name "kiali"
   @url_base "/x/kiali"
 
   def view_url, do: view_url(KubeExt.cluster_type())
@@ -25,7 +24,6 @@ defmodule KubeResources.Kiali do
 
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.name("kiali")
     |> B.spec(VirtualService.prefix(@url_base, "kiali", port: 20_001))
     |> F.require_battery(state, :istio_gateway)
@@ -36,7 +34,6 @@ defmodule KubeResources.Kiali do
 
     B.build_resource(:cluster_role_binding)
     |> B.name("kiali")
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_cluster_role_ref("kiali"))
     |> B.subject(B.build_service_account("kiali", namespace))
   end
@@ -91,7 +88,6 @@ defmodule KubeResources.Kiali do
 
     B.build_resource(:cluster_role)
     |> B.name("kiali")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -145,7 +141,6 @@ defmodule KubeResources.Kiali do
 
     B.build_resource(:cluster_role)
     |> B.name("kiali-viewer")
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -156,7 +151,6 @@ defmodule KubeResources.Kiali do
     B.build_resource(:config_map)
     |> B.name("kiali")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.data(data)
   end
 
@@ -270,7 +264,6 @@ defmodule KubeResources.Kiali do
     B.build_resource(:deployment)
     |> B.name("kiali")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 
@@ -280,7 +273,6 @@ defmodule KubeResources.Kiali do
     B.build_resource(:role_binding)
     |> B.name("kiali-controlplane")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.role_ref(B.build_role_ref("kiali-controlplane"))
     |> B.subject(B.build_service_account("kiali", namespace))
   end
@@ -301,7 +293,6 @@ defmodule KubeResources.Kiali do
     B.build_resource(:role)
     |> B.name("kiali-controlplane")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.rules(rules)
   end
 
@@ -311,7 +302,6 @@ defmodule KubeResources.Kiali do
     B.build_resource(:service_account)
     |> B.name("kiali")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
   end
 
   resource(:service_main, _battery, state) do
@@ -328,7 +318,6 @@ defmodule KubeResources.Kiali do
     B.build_resource(:service)
     |> B.name("kiali")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
     |> B.spec(spec)
   end
 end
