@@ -44,7 +44,7 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.18.8"},
+      {:phoenix_live_view, "~> 0.18.9"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_dashboard, "~> 0.7.2"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
