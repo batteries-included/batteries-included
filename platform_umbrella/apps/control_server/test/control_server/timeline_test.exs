@@ -49,9 +49,8 @@ defmodule ControlServer.TimelineTest do
     end
 
     test "list_timeline_events/0 returns limited timeline_events" do
-      timeline_event_0 = timeline_event_fixture()
+      _ = timeline_event_fixture()
       timeline_event_1 = timeline_event_fixture()
-      limit = 1
       assert Timeline.list_timeline_events(1) == [timeline_event_1]
     end
 

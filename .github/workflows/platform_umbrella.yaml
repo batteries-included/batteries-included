@@ -91,7 +91,9 @@ jobs:
             }}-${{hashFiles('**/mix.lock') }}
       - run: mix compile --warnings-as-errors --force
       - run: mix ecto.reset
-      - run: mix test --trace --slowest 10 --cover --export-coverage default
+      - run:
+          mix test --trace --slowest 10 --cover --export-coverage default
+          --warnings-as-errors
       - run: mix test.coverage
 
   static-code-analysis:
