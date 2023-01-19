@@ -154,9 +154,8 @@ defmodule ControlServerWeb.GroupBatteriesLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_info({:async_installer, msg}, socket) do
+  def handle_info({:async_installer, _msg}, socket) do
     # This is the handler for making progress from the async install task
-    dbg(msg)
     {:noreply, assign_install_step(socket, socket.assigns.install_step + 1)}
   end
 
