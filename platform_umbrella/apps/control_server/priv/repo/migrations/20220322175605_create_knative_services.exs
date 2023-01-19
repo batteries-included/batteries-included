@@ -5,7 +5,11 @@ defmodule ControlServer.Repo.Migrations.CreateServices do
     create table(:knative_services, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
-      add :image, :string
+      add :rollout_duration, :string
+
+      add :containers, :map
+      add :init_containers, :map
+      add :env_values, :map
 
       timestamps(type: :utc_datetime_usec)
     end

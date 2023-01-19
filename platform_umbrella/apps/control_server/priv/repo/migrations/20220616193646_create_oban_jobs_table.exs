@@ -1,4 +1,4 @@
-defmodule ControlServer.Repo.Migrations.AddObanJobsTable do
+defmodule ControlServer.Repo.Migrations.CreateObanJobsTable do
   use Ecto.Migration
 
   def up do

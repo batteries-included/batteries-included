@@ -12,8 +12,8 @@ defmodule ControlServer.KnativeTest do
     #       * empty string
     #       * invalid characters
     #       * wrong type
-    @invalid_name %{name: nil, image: "test-image"}
-    @invalid_image %{name: "invalid-image-test", image: nil}
+    @invalid_name %{name: nil, containers: [%{image: "test-image"}]}
+    @invalid_image %{name: "invalid-image-test", containers: [%{image: "test-image"}]}
 
     test "list_services/0 returns all services" do
       service = service_fixture()
@@ -30,7 +30,6 @@ defmodule ControlServer.KnativeTest do
 
       assert {:ok, %Service{} = service} = Knative.create_service(valid_attrs)
       assert service.name == valid_attrs.name
-      assert service.image == valid_attrs.image
     end
 
     test "create_service/1 with invalid data returns error changeset" do
