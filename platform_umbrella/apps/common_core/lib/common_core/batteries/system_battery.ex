@@ -17,6 +17,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     KnativeServingConfig,
     KubeStateMetricsConfig,
     LokiConfig,
+    MailhogConfig,
     MetalLBConfig,
     MetalLBIPPoolConfig,
     NodeExporterConfig,
@@ -44,6 +45,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     kube_monitoring: EmptyConfig,
     kube_state_metrics: KubeStateMetricsConfig,
     loki: LokiConfig,
+    mailhog: MailhogConfig,
     metallb: MetalLBConfig,
     metallb_ip_pool: MetalLBIPPoolConfig,
     node_exporter: NodeExporterConfig,
@@ -77,7 +79,7 @@ defmodule CommonCore.Batteries.SystemBattery do
       ]
     )
 
-    field :type, Ecto.Enum, values: Keyword.keys(@possible_types)
+    field(:type, Ecto.Enum, values: Keyword.keys(@possible_types))
 
     polymorphic_embeds_one(:config, types: @possible_types, on_replace: :update)
 

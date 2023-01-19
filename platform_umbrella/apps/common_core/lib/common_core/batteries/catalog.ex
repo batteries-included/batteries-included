@@ -42,6 +42,11 @@ defmodule CommonCore.Batteries.Catalog do
       type: :harbor,
       dependencies: [:battery_core, :redis, :istio_gateway, :postgres]
     },
+    %CatalogBattery{
+      group: :devtools,
+      type: :mailhog,
+      dependencies: [:battery_core, :istio_gateway]
+    },
     # ML
     %CatalogBattery{
       group: :ml,

@@ -53,4 +53,6 @@ defmodule CommonCore.Defaults.Images do
   def vm_tag, do: "v1.85.3"
 
   def vmoperator_image, do: "victoriametrics/operator:v0.29.2"
+
+  def mailhog_image, do: "mailhog/mailhog:v1.0.1"
 end

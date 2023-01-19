@@ -163,6 +163,14 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
+  defp battery_menu_item(%{battery: %{type: :mailhog}} = assigns) do
+    ~H"""
+    <.menu_item href={"//#{Hosts.mailhog_host()}"} name="Mailhog" is_active={@active == :harbor}>
+      <Heroicons.envelope_open class={@icon_class} />
+    </.menu_item>
+    """
+  end
+
   defp battery_menu_item(%{battery: %{type: :kiali}} = assigns) do
     ~H"""
     <.menu_item href={} name="Kiali" is_active={@active == :kiali}>

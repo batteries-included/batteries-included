@@ -25,6 +25,10 @@ defmodule KubeExt.KubeState.Hosts do
     host("harbor")
   end
 
+  def mailhog_host do
+    host("mailhog")
+  end
+
   def knative, do: host("webapp", "user")
 
   defp host(name, group \\ "core") do

@@ -29,6 +29,10 @@ defmodule CommonCore.SystemState.Hosts do
     state |> ip() |> host("harbor")
   end
 
+  def mailhog_host(%StateSummary{} = state) do
+    state |> ip() |> host("mailhog")
+  end
+
   def knative_host(%StateSummary{} = state) do
     state |> ip() |> host("webapp", "user")
   end
