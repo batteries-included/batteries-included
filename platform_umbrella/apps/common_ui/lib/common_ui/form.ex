@@ -101,11 +101,10 @@ defmodule CommonUI.Form do
         type="checkbox"
         id={@id}
         name={@name}
-        class="sr-only peer"
+        class="toggle toggle-primary"
         value="true"
         checked={input_checked(@rest, @value)}
       />
-      <.peer_toggle />
       <%= @label %>
     </label>
     """
@@ -213,22 +212,6 @@ defmodule CommonUI.Form do
       <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-sea-buckthorn-500" />
       <%= @message %>
     </p>
-    """
-  end
-
-  def peer_toggle(assigns) do
-    ~H"""
-    <div class={[
-      "w-11 h-6 bg-gray-200 rounded-full ",
-      "peer peer-focus:ring-4 peer-focus:ring-pink-300 dark:peer-focus:ring-pink-800",
-      "dark:bg-gray-700 peer-checked:after:translate-x-full",
-      "peer-checked:after:border-white",
-      "after:content-['']",
-      "after:absolute after:top-0.5 after:left-[2px]",
-      "after:bg-white",
-      "after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-600"
-    ]}>
-    </div>
     """
   end
 
