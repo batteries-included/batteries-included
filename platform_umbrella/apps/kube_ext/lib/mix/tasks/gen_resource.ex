@@ -396,7 +396,6 @@ defmodule Mix.Tasks.Gen.Resource do
     acc_code
     |> add_name(name)
     |> add_namespace(namespace)
-    |> add_app_labels()
     |> add_other_labels(field_value, app_name)
   end
 
@@ -624,15 +623,6 @@ defmodule Mix.Tasks.Gen.Resource do
     end)
   end
 
-  defp add_app_labels(pipeline) do
-    pipe(
-      pipeline,
-      quote do
-        B.app_labels(@app_name)
-      end
-    )
-  end
-
   defp add_component_label(pipeline, label) do
     pipe(
       pipeline,
@@ -803,15 +793,13 @@ defmodule Mix.Tasks.Gen.Resource do
   defp module(app_name, includes, methods) when map_size(includes) == 0 do
     quote do
       defmodule KubeResources.ExampleServiceResource do
-        use KubeExt.ResourceGenerator
+        use KubeExt.ResourceGenerator, app_name: unquote(app_name)
 
         import CommonCore.Yaml
         import CommonCore.SystemState.Namespaces
 
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
-
-        @app_name unquote(app_name)
 
         unquote_splicing(Map.values(methods))
       end
@@ -829,15 +817,13 @@ defmodule Mix.Tasks.Gen.Resource do
     quote do
       defmodule KubeResources.ExampleServiceResource do
         use CommonCore.IncludeResource, unquote(include_keywords)
-        use KubeExt.ResourceGenerator
+        use KubeExt.ResourceGenerator, app_name: unquote(app_name)
 
         import CommonCore.Yaml
         import CommonCore.SystemState.Namespaces
 
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
-
-        @app_name unquote(app_name)
 
         unquote_splicing(sorted_methods)
       end
