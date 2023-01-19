@@ -17,6 +17,9 @@ defmodule CommonUI do
         Typogoraphy,
         VerticalSteps
       }
+
+      import CommonUI.CSSHelpers
+      import CommonUI.TextHelpers
     end
   end
 end

@@ -1,5 +1,6 @@
 defmodule CommonCore.ApiVersionKind do
   @known [
+    event: {"v1", "Event"},
     namespace: {"v1", "Namespace"},
     pod: {"v1", "Pod"},
     service: {"v1", "Service"},
@@ -33,7 +34,6 @@ defmodule CommonCore.ApiVersionKind do
     istio_auth_policy: {"security.istio.io/v1beta1", "AuthorizationPolicy"},
     istio_request_auth: {"security.istio.io/v1beta1", "RequestAuthentication"},
     istio_wasm_plugin: {"extensions.istio.io/v1alpha1", "WasmPlugin"},
-    kiali: {"kiali.io/v1alpha1", "Kiali"},
     knative_serving: {"operator.knative.dev/v1beta1", "KnativeServing"},
     knative_eventing: {"operator.knative.dev/v1beta1", "KnativeEventing"},
     knative_service: {"serving.knative.dev/v1", "Service"},

@@ -70,4 +70,11 @@ defmodule KubeExt.KubeState do
       end)
     end)
   end
+
+  def get_events(t \\ @default_table, involved_uid) do
+    t
+    |> Runner.get_all(:event)
+    |> Enum.filter(fn e -> get_in(e, ~w(involvedObject uid)) == involved_uid end)
+    |> Enum.sort_by(&KubeExt.ResourceVersion.sortable_resource_version/1)
+  end
 end
