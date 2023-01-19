@@ -6,7 +6,6 @@ defmodule ControlServerWeb.Live.KnativeNew do
   alias CommonCore.Knative.Service
 
   alias ControlServer.Knative
-  alias ControlServer.Batteries.Installer
 
   alias ControlServerWeb.Live.Knative.FormComponent
 
@@ -41,7 +40,6 @@ defmodule ControlServerWeb.Live.KnativeNew do
   @impl Phoenix.LiveView
   def handle_info({"service:save", %{"service" => service}}, socket) do
     new_path = ~p"/knative/services/#{service}/show"
-    Installer.install!(:knative)
 
     {:noreply, push_redirect(socket, to: new_path)}
   end
