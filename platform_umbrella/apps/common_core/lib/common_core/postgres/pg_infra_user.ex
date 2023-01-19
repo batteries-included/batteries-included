@@ -3,6 +3,8 @@ defmodule CommonCore.Postgres.PGInfraUser do
   import Ecto.Changeset
   import CommonCore.Postgres
 
+  alias CommonCore.Defaults.RandomKeyChangeset
+
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
@@ -16,18 +18,6 @@ defmodule CommonCore.Postgres.PGInfraUser do
     |> cast(params, [:username, :generated_key, :roles])
     |> validate_required([:username, :roles])
     |> validate_pg_rolelist(:roles)
-    |> maybe_add_random_generated_key()
-  end
-
-  defp maybe_add_random_generated_key(changeset) do
-    generated_key = get_field(changeset, :generated_key)
-
-    case generated_key do
-      nil ->
-        put_change(changeset, :generated_key, CommonCore.Defaults.random_key_string(128))
-
-      _ ->
-        changeset
-    end
+    |> RandomKeyChangeset.maybe_set_random(:generated_key)
   end
 end
