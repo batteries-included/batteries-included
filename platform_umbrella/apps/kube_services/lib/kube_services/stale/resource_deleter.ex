@@ -1,4 +1,9 @@
 defmodule KubeServices.ResourceDeleter do
+  @moduledoc """
+  The `KubeServices.ResourceDeleter` module is a GenServer that is responsible for deleting resources
+  in a Kubernetes cluster.
+  """
+
   use GenServer
 
   alias K8s.Resource.FieldAccessors
@@ -8,16 +13,30 @@ defmodule KubeServices.ResourceDeleter do
 
   @me __MODULE__
 
+  @doc """
+    Starts the `KubeServices.ResourceDeleter` GenServer with the provided options.
+    Returns a tuple of `{:ok, pid}` on success.
+
+    ## Example
+    ```elixir
+    {:ok, pid} = KubeServices.ResourceDeleter.start_link(conn: connection)
+    ```
+
+  """
   def start_link(opts) do
-    {:ok, pid} = result = GenServer.start_link(@me, opts, name: @me)
+    {state_opts, genserver_opts} = Keyword.split(opts, [:conn_func, :conn])
+
+    {:ok, pid} =
+      result = GenServer.start_link(@me, state_opts, Keyword.merge([name: @me], genserver_opts))
+
     Logger.debug("#{@me} GenServer started with# #{inspect(pid)}.")
     result
   end
 
   @impl GenServer
   def init(opts) do
-    conn_func = Keyword.get(opts, :connection_func, fn -> KubeExt.ConnectionPool.get() end)
-    conn = Keyword.get_lazy(opts, :connection, conn_func)
+    conn_func = Keyword.get(opts, :conn_func, &KubeExt.ConnectionPool.get/1)
+    conn = Keyword.get_lazy(opts, :conn, conn_func)
 
     Logger.debug("Starting ResourceDeleter")
     {:ok, %{conn: conn}}
@@ -29,6 +48,7 @@ defmodule KubeServices.ResourceDeleter do
     GenServer.call(@me, {:delete, resource})
   end
 
+  @spec undelete(Ecto.UUID.t()) :: any
   def undelete(deleted_resourcce_id) do
     GenServer.call(@me, {:undelete, deleted_resourcce_id})
   end
@@ -45,16 +65,26 @@ defmodule KubeServices.ResourceDeleter do
   def handle_call({:undelete, deleted_resource_id}, _from, %{conn: conn} = state) do
     deleted_resource = DeleteArchivist.get_deleted_resource!(deleted_resource_id)
 
-    op =
-      deleted_resource.content_addressable_resource.value
-      |> clean_undeleted()
-      |> K8s.Client.apply()
+    Logger.debug(
+      "UN-delete of resource #{inspect(summarize(deleted_resource.content_addressable_resource.value))}"
+    )
 
-    res = K8s.Client.run(conn, op)
-
-    {:ok, _} = update_with_result(deleted_resource, res)
-
+    res = apply_undelete(deleted_resource, conn)
     {:reply, res, state}
+  end
+
+  defp apply_undelete(deleted_resource, conn) do
+    op = undelete_apply_operation(deleted_resource.content_addressable_resource.value)
+
+    apply_result = K8s.Client.run(conn, op)
+    {:ok, _} = update_with_result(deleted_resource, apply_result)
+    apply_result
+  end
+
+  defp undelete_apply_operation(resource) do
+    resource
+    |> clean_meta_for_undelete()
+    |> K8s.Client.apply()
   end
 
   defp record_delete(conn, res) do
@@ -77,7 +107,7 @@ defmodule KubeServices.ResourceDeleter do
     DeleteArchivist.update_deleted_resource(deleted_resource, %{been_undeleted: false})
   end
 
-  defp clean_undeleted(resource) do
+  defp clean_meta_for_undelete(resource) do
     resource
     |> update_in([Access.key("metadata", %{})], fn meta ->
       Map.drop(meta || %{}, ~w(managedFields creationTimestamp uid resourceVersion))
