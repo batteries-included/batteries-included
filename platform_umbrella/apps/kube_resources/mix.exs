@@ -38,6 +38,7 @@ defmodule KubeResources.MixProject do
       # logging
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:kube_ext, in_umbrella: true},
+      {:common_core, in_umbrella: true},
       {:ex_machina, "~> 2.7.0", only: :test}
     ]
   end

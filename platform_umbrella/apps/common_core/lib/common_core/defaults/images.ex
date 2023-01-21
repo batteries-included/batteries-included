@@ -55,4 +55,6 @@ defmodule CommonCore.Defaults.Images do
   def vmoperator_image, do: "victoriametrics/operator:v0.29.2"
 
   def mailhog_image, do: "mailhog/mailhog:v1.0.1"
+
+  def ory_kratos_image, do: "oryd/kratos:v0.11.1"
 end

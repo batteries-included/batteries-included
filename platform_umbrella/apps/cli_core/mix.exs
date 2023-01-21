@@ -31,6 +31,7 @@ defmodule CLICore.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       # {:sibling_app_in_umbrella, in_umbrella: true}
       {:kube_ext, in_umbrella: true},
+      {:common_core, in_umbrella: true},
       {:kube_resources, in_umbrella: true},
       {:tesla, "~> 1.5.0"}
     ]

@@ -178,6 +178,14 @@ defmodule ControlServer.Batteries.Installer do
     end
   end
 
+  defp post_install(%SystemBattery{type: :ory_kratos}, repo) do
+    init_pg = Defaults.OryDB.ory_pg_cluster()
+
+    with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
+      {:ok, ory_db: postgres_db}
+    end
+  end
+
   defp post_install(%SystemBattery{type: _}, _repo), do: {:ok, nil}
 
   defp summarize({:ok, multi_result}) do

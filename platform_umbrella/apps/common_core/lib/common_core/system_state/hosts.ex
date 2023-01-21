@@ -33,6 +33,14 @@ defmodule CommonCore.SystemState.Hosts do
     state |> ip() |> host("mailhog")
   end
 
+  def kratos_host(%StateSummary{} = state) do
+    state |> ip() |> host("kratos")
+  end
+
+  def kratos_admin_host(%StateSummary{} = state) do
+    state |> ip() |> host("kratos-admin")
+  end
+
   def knative_host(%StateSummary{} = state) do
     state |> ip() |> host("webapp", "user")
   end

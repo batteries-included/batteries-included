@@ -145,6 +145,11 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :trivy_operator,
       dependencies: [:battery_core]
+    },
+    %CatalogBattery{
+      group: :net_sec,
+      type: :ory_kratos,
+      dependencies: [:battery_core, :postgres]
     }
   ]
 
