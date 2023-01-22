@@ -1,8 +1,11 @@
 defmodule KubeExt.ResourceGenerator do
+  alias CommonCore.ApiVersionKind
   alias K8s.Resource
   alias KubeExt.Builder, as: B
   alias KubeExt.Hashing
-  alias KubeExt.CopyLabels
+  alias KubeExt.CopyDown
+
+  require Logger
 
   defmacro __using__(opts \\ []) do
     app_name = Keyword.get(opts, :app_name, nil)
@@ -80,14 +83,146 @@ defmodule KubeExt.ResourceGenerator do
 
   defp enrich(resource_path_list, opts, battery, _state) do
     resource_path_list
-    |> maybe_add_app_name(opts)
     |> Enum.map(fn {path, resource} ->
       {path,
        resource
        |> B.managed_labels()
-       |> add_owner(battery)
-       |> CopyLabels.copy_labels_downward()
-       |> Hashing.decorate()}
+       |> add_owner(battery)}
+    end)
+    # We need Access.key to work so make everyt hing a map
+    |> map_spec()
+    # If we know app name add the label
+    |> maybe_add_app_name(opts)
+    # things with no spec and template are done hash them
+    |> decorate_non_mounting_resources()
+    # Things that can mount need to get the annotations
+    |> maybe_annotate_mounted_resources(opts)
+    # Now those same things need th labels copied
+    |> maybe_copy_labels(opts)
+    # Then the annotations too.
+    |> maybe_copy_annotations(opts)
+    # Finally everything should get the hash.decorate treatment just in case.
+    |> decorate_mounting_resources()
+  end
+
+  defp map_spec(resource_path_list) do
+    Enum.map(resource_path_list, fn
+      {path, %{"spec" => spec} = res} when is_struct(spec) ->
+        {path, %{res | "spec" => Map.from_struct(spec)}}
+
+      val ->
+        val
+    end)
+  end
+
+  defp maybe_copy_labels(resource_path_list, opts) do
+    should_copy = Keyword.get(opts, :copy_labels, true)
+
+    if should_copy do
+      Enum.map(resource_path_list, fn {path, resource} ->
+        {path, CopyDown.copy_labels_downward(resource)}
+      end)
+    else
+      resource_path_list
+    end
+  end
+
+  defp maybe_copy_annotations(resource_path_list, opts) do
+    should_copy = Keyword.get(opts, :copy_annotations, true)
+
+    if should_copy do
+      Enum.map(resource_path_list, fn {path, resource} ->
+        {path, CopyDown.copy_annotations_downward(resource)}
+      end)
+    else
+      resource_path_list
+    end
+  end
+
+  def decorate_mounting_resources(resource_path_list) do
+    Enum.map(resource_path_list, fn {path, resource} ->
+      {path, Hashing.decorate(resource)}
+    end)
+  end
+
+  def decorate_non_mounting_resources(resource_path_list) do
+    Enum.map(resource_path_list, fn {path, resource} = input ->
+      if could_have_volumes(resource) do
+        # Just send this through it could maybe have a volume mount
+        input
+      else
+        # No mounting something or referencing it. So this
+        # is free to add the hash. That's useful since a ltitle later
+        # in the resource generator pipeline we're going to
+        # use configmap and secrets hash for annotation on the
+        # pods mounting them.
+        {path, Hashing.decorate(resource)}
+      end
+    end)
+  end
+
+  def could_have_volumes(resource), do: get_in(resource, ~w(spec template metadata)) != nil
+
+  def maybe_annotate_mounted_resources(resource_path_list, opts) do
+    should_annotate = Keyword.get(opts, :annotate_volumes, true)
+
+    if should_annotate do
+      annotate_mounted_resources(resource_path_list)
+    else
+      resource_path_list
+    end
+  end
+
+  defp annotate_mounted_resources(resource_path_list) do
+    {has_vol_path_list, other_path_list} =
+      Enum.split_with(resource_path_list, fn {_path, res} -> could_have_volumes(res) end)
+
+    has_vol_path_list
+    |> Enum.map(fn {path, res} -> {path, add_vol_annotations(res, other_path_list)} end)
+    |> Enum.concat(other_path_list)
+  end
+
+  defp add_vol_annotations(resource, other_path_list) do
+    volumes = get_in(resource, ~w(spec template spec volumes)) || []
+
+    Enum.reduce(volumes, resource, fn
+      %{"configMap" => %{"name" => config_name}} = _vol, res ->
+        add_reference(res, other_path_list, :config_map, config_name)
+
+      %{"secret" => %{"secretName" => secret_name}} = _vol, res ->
+        add_reference(res, other_path_list, :secret, secret_name)
+
+      _vol, res ->
+        res
+    end)
+  end
+
+  defp add_reference(resource, other_path_list, resource_type, name) do
+    namespace = Resource.namespace(resource)
+    ref_resource = find_in_path_list(other_path_list, resource_type, namespace, name)
+
+    case ref_resource do
+      nil ->
+        Logger.warning("Unable to find matching #{resource_type} for #{name} in #{namespace}")
+
+        resource
+
+      ref ->
+        Hashing.add_reference(resource, resource_type, name, Hashing.get_hash(ref))
+    end
+  end
+
+  defp find_in_path_list(resource_path_list, resource_type, namespace, name) do
+    resource_path_list
+    |> Enum.find(fn {_path, r} ->
+      ApiVersionKind.resource_type!(r) == resource_type and
+        Resource.namespace(r) == namespace and
+        Resource.name(r) == name
+    end)
+    |> then(fn
+      nil -> nil
+      {_path, r} -> r
+      anything_else -> anything_else
     end)
   end
 

@@ -1,5 +1,5 @@
 defmodule KubeExt.Hashing.Sanitizer do
-  @bad_meta_keys ["resourceVersion", "generation", "creationTimestamp", "uid"]
+  @bad_meta_keys ~w(resourceVersion generation creationTimestamp uid managedFields)
   @bad_annotation_keys ["battery/hash"]
   @bad_top_keys ["status"]
 

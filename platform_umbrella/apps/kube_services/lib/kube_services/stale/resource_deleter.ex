@@ -8,6 +8,7 @@ defmodule KubeServices.ResourceDeleter do
 
   alias K8s.Resource.FieldAccessors
   alias ControlServer.Stale.DeleteArchivist
+  alias KubeExt.CopyDown
 
   require Logger
 
@@ -110,7 +111,7 @@ defmodule KubeServices.ResourceDeleter do
   defp clean_meta_for_undelete(resource) do
     resource
     |> update_in([Access.key("metadata", %{})], fn meta ->
-      Map.drop(meta || %{}, ~w(managedFields creationTimestamp uid resourceVersion))
+      Map.drop(meta || %{}, ~w(resourceVersion generation creationTimestamp uid managedFields))
     end)
     |> update_in([Access.key("metadata", %{}), Access.key("labels", %{})], fn labels ->
       (labels || %{})
@@ -121,11 +122,11 @@ defmodule KubeServices.ResourceDeleter do
     end)
     |> update_in([Access.key("metadata", %{}), Access.key("annotations", %{})], fn annotations ->
       (annotations || %{})
-      |> Map.drop(["battery/hash"])
-      |> Map.put("battery/undeleted", "true")
+      |> Enum.reject(fn {name, _va} -> String.starts_with?(name, "battery") end)
+      |> Map.new()
     end)
     |> Map.drop(~w(status))
-    |> KubeExt.CopyLabels.copy_labels_downward()
+    |> CopyDown.copy_labels_downward()
   end
 
   defp summarize(resource) do

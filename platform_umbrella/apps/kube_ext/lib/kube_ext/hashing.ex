@@ -49,4 +49,24 @@ defmodule KubeExt.Hashing do
   def different?(applied, new) do
     applied != new
   end
+
+  def add_reference(resource, referenced_type, referenced_name, referenced_hash) do
+    update_in(
+      resource,
+      [Access.key("metadata", %{}), Access.key("annotations", %{})],
+      fn annotations ->
+        Map.put(
+          annotations || %{},
+          ref_annotation_name(referenced_type, referenced_name),
+          referenced_hash
+        )
+      end
+    )
+  end
+
+  defp ref_annotation_name(referenced_type, referenced_name) do
+    type_str = referenced_type |> to_string() |> String.replace(~r/[^[:alnum:]]+/, "")
+
+    "battery.#{type_str}.ref/#{referenced_name}"
+  end
 end

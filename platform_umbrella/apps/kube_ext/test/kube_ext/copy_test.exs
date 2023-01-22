@@ -1,7 +1,7 @@
 defmodule KubeExt.CopyTest do
   use ExUnit.Case
 
-  alias KubeExt.CopyLabels
+  alias KubeExt.CopyDown
   alias KubeExt.Builder, as: B
 
   def deployment do
@@ -28,7 +28,7 @@ defmodule KubeExt.CopyTest do
 
   describe "KubeExt.CopyLabels" do
     test "Can copy labels for deployment" do
-      assert deployment() != CopyLabels.copy_labels_downward(deployment())
+      assert deployment() != CopyDown.copy_labels_downward(deployment())
     end
   end
 end
