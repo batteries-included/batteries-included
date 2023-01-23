@@ -30,7 +30,7 @@ defmodule ControlServerWeb.Router do
     live "/deleted_resources", Live.DeletedResourcesIndex, :index
   end
 
-  scope "/snapshot_apply", ControlServer do
+  scope "/snapshot_apply", ControlServerWeb do
     pipe_through :browser
 
     live "/", Live.SnapshotApplyIndex, :index
