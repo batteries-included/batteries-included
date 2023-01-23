@@ -1,20 +1,32 @@
 defmodule ControlServerWeb.CSP do
   @default_allowed %{
-    "script-src" => ["self", "unsafe-eval", "unsafe-inline"],
-    "default-src" => ["self", {:url, "https://rsms.me"}, "unsafe-inline"],
+    "script-src" => [
+      "self",
+      "unsafe-eval",
+      "unsafe-inline",
+      {:url, "http://*.ip.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4000"}
+    ],
+    "default-src" => [
+      "self",
+      {:url, "https://rsms.me"},
+      "unsafe-inline",
+      {:url, "http://*.ip.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4000"}
+    ],
     "img-src" => [
       "self",
       {:url, "data:"},
       {:url, "https://images.unsplash.com"},
-      {:url, "https://robohash.org/"}
+      {:url, "https://robohash.org/"},
+      {:url, "http://*.ip.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4000"}
     ],
     "font-src" => ["self", {:url, "data:"}, {:url, "https://rsms.me"}],
     "frame-src" => [
       "self",
-      {:url, "localhost:8081"},
-      {:url, "localhost:4000"},
-      {:url, "anton2:8081"},
-      {:url, "anton2:4000"}
+      {:url, "http://*.ip.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4000"}
     ]
   }
 
