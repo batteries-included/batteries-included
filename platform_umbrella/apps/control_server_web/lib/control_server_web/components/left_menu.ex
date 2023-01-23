@@ -8,8 +8,9 @@ defmodule ControlServerWeb.LeftMenu do
   import CommonUI.Icons.Notebook
   import CommonUI.Icons.Rook
 
+  import KubeServices.SystemState.SummaryHosts
+
   alias ControlServer.Batteries
-  alias KubeExt.KubeState.Hosts
 
   @impl Phoenix.LiveComponent
   def update(assigns, socket) do
@@ -97,11 +98,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :postgres_operator}} = assigns) do
     ~H"""
-    <.menu_item
-      navigate={~p"/postgres/clusters"}
-      name="Postgres"
-      is_active={@active == :postgres_operator}
-    >
+    <.menu_item navigate={~p"/postgres"} name="Postgres" is_active={@active == :postgres_operator}>
       <Heroicons.circle_stack solid class={@icon_class} />
     </.menu_item>
     """
@@ -109,7 +106,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :redis}} = assigns) do
     ~H"""
-    <.menu_item navigate={~p"/redis/clusters"} name="Redis" is_active={@active == :redis}>
+    <.menu_item navigate={~p"/redis"} name="Redis" is_active={@active == :redis}>
       <.redis_icon class={@icon_class} />
     </.menu_item>
     """
@@ -145,11 +142,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :gitea}} = assigns) do
     ~H"""
-    <.menu_item
-      href={"//#{Hosts.gitea_host()}/explore/repos"}
-      name="Gitea"
-      is_active={@active == :gitea}
-    >
+    <.menu_item href={"//#{gitea_host()}/explore/repos"} name="Gitea" is_active={@active == :gitea}>
       <.gitea_icon class={@icon_class} />
     </.menu_item>
     """
@@ -157,7 +150,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :harbor}} = assigns) do
     ~H"""
-    <.menu_item href={KubeResources.Harbor.view_url()} name="Harbor" is_active={@active == :harbor}>
+    <.menu_item href={"//#{harbor_host()}"} name="Harbor" is_active={@active == :harbor}>
       <.harbor_icon class={@icon_class} />
     </.menu_item>
     """
@@ -165,7 +158,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :mailhog}} = assigns) do
     ~H"""
-    <.menu_item href={"//#{Hosts.mailhog_host()}"} name="Mailhog" is_active={@active == :harbor}>
+    <.menu_item href={"//#{mailhog_host()}"} name="Mailhog" is_active={@active == :harbor}>
       <Heroicons.envelope_open class={@icon_class} />
     </.menu_item>
     """
@@ -205,7 +198,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_menu_item(%{battery: %{type: :grafana}} = assigns) do
     ~H"""
-    <.menu_item href={"//#{Hosts.grafana_host()}"} name="Grafana" is_active={@active == :grafana}>
+    <.menu_item href={"//#{grafana_host()}"} name="Grafana" is_active={@active == :grafana}>
       <.grafana_icon class={@icon_class} />
     </.menu_item>
     """
@@ -214,17 +207,13 @@ defmodule ControlServerWeb.LeftMenu do
   defp battery_menu_item(%{battery: %{type: :victoria_metrics}} = assigns) do
     ~H"""
     <.menu_item
-      href={"//#{Hosts.vmselect_host()}/select/0/vmui"}
+      href={"//#{vmselect_host()}/select/0/vmui"}
       name="VM Select"
       is_active={@active == :victoria_metrics}
     >
       <.victoria_metrics_icon class={@icon_class} />
     </.menu_item>
-    <.menu_item
-      href={"//#{Hosts.vmagent_host()}"}
-      name="VM Agent"
-      is_active={@active == :victoria_metrics}
-    >
+    <.menu_item href={"//#{vmagent_host()}"} name="VM Agent" is_active={@active == :victoria_metrics}>
       <.victoria_metrics_icon class={@icon_class} />
     </.menu_item>
     """

@@ -118,13 +118,13 @@ defmodule ControlServerWeb.Live.PostgresShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = Postgres.delete_cluster(socket.assigns.cluster)
 
-    {:noreply, push_redirect(socket, to: ~p"/postgres/clusters")}
+    {:noreply, push_redirect(socket, to: ~p"/postgres")}
   end
 
   defp page_title(:show), do: "Show Postgres"
 
   defp edit_url(cluster),
-    do: ~p"/postgres/clusters/#{cluster}/edit"
+    do: ~p"/postgres/#{cluster}/edit"
 
   defp k8_cluster_status(nil) do
     "Not Running"

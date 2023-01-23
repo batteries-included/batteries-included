@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.TimelineLive do
+defmodule ControlServerWeb.Live.Timeline do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout

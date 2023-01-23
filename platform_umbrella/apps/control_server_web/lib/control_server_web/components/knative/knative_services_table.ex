@@ -1,9 +1,8 @@
 defmodule ControlServerWeb.KnativeServicesTable do
   use ControlServerWeb, :html
+  import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Knative.Service
-
-  alias KubeResources.KnativeServing, as: KnativeResources
 
   attr :knative_services, :list, required: true
 
@@ -23,5 +22,5 @@ defmodule ControlServerWeb.KnativeServicesTable do
     """
   end
 
-  defp service_url(%Service{} = service), do: KnativeResources.url(service)
+  defp service_url(%Service{} = service), do: "//#{knative_host(service)}"
 end

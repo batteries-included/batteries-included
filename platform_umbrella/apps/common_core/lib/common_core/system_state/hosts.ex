@@ -41,8 +41,21 @@ defmodule CommonCore.SystemState.Hosts do
     state |> ip() |> host("kratos-admin")
   end
 
-  def knative_host(%StateSummary{} = state) do
+  def kiali_host(%StateSummary{} = state) do
+    state |> ip() |> host("kiali")
+  end
+
+  def knative_base_host(%StateSummary{} = state) do
     state |> ip() |> host("webapp", "user")
+  end
+
+  def knative_host(%StateSummary{} = state, service) do
+    namespace = knative_namespace(state)
+    "#{service.name}.#{namespace}.#{knative_base_host(state)}"
+  end
+
+  def notebooks_host(%StateSummary{} = state) do
+    state |> ip() |> host("notebooks", "user")
   end
 
   defp ip(state) do

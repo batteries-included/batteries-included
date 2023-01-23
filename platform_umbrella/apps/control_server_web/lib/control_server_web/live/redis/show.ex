@@ -43,13 +43,13 @@ defmodule ControlServerWeb.Live.RedisShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = Redis.delete_failover_cluster(socket.assigns.failover_cluster)
 
-    {:noreply, push_redirect(socket, to: ~p"/redis/clusters")}
+    {:noreply, push_redirect(socket, to: ~p"/redis")}
   end
 
   defp page_title(:show), do: "Show Redis Failover Cluster"
 
   defp edit_url(cluster),
-    do: ~p"/redis/clusters/#{cluster}/edit"
+    do: ~p"/redis/#{cluster}/edit"
 
   defp k8_failover(id) do
     Enum.find(KubeState.get_all(:redis_failover), nil, fn pg -> id == OwnerLabel.get_owner(pg) end)

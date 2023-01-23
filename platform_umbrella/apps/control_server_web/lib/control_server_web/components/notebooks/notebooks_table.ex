@@ -1,6 +1,8 @@
 defmodule ControlServerWeb.NotebooksTable do
   use ControlServerWeb, :html
 
+  import KubeServices.SystemState.SummaryHosts
+
   attr :notebooks, :list, default: []
 
   def notebooks_table(assigns) do
@@ -17,5 +19,5 @@ defmodule ControlServerWeb.NotebooksTable do
     """
   end
 
-  defp notebook_path(notebook), do: KubeResources.Notebooks.view_url(notebook)
+  defp notebook_path(notebook), do: "//#{notebooks_host()}/#{notebook.name}"
 end

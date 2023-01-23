@@ -28,6 +28,7 @@ defmodule KubeServices.Application do
     [
       {Task.Supervisor, name: @task_supervisor},
       {Oban, Application.fetch_env!(:kube_services, Oban)},
+      KubeServices.SystemState.SummaryHosts,
       KubeServices.SnapshotApply.InitialLaunchTask,
       KubeServices.SnapshotApply.EventLauncher,
       KubeServices.ResourceDeleter,
@@ -35,7 +36,10 @@ defmodule KubeServices.Application do
     ] ++ kube_state_watchers() ++ timeline_watchers()
   end
 
-  def children(_run), do: []
+  def children(_run),
+    do: [
+      KubeServices.SystemState.SummaryHosts
+    ]
 
   def kube_state_watchers,
     do:

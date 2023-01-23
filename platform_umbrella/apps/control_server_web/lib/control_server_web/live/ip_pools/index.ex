@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.IPAddressPool.Index do
+defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @moduledoc """
   Live web app for database stored json configs.
   """

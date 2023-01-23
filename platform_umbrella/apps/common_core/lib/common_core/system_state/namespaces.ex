@@ -41,4 +41,10 @@ defmodule CommonCore.SystemState.Namespaces do
     |> get_battery(:battery_core)
     |> get_config_value(:data_namespace, Defaults.Namespaces.data())
   end
+
+  def knative_namespace(%StateSummary{} = state) do
+    state
+    |> get_battery(:knative_serving)
+    |> get_config_value(:namespace, Defaults.Namespaces.knative())
+  end
 end

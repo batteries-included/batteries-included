@@ -2,13 +2,13 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   use ControlServerWeb, :live_component
 
   import ControlServerWeb.KnativeFormSubcomponents
+  import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Knative.Container
   alias Ecto.Changeset
   alias CommonCore.Knative.EnvValue
   alias ControlServer.Knative
   alias CommonCore.Knative.Service
-  alias KubeResources.KnativeServing
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -33,7 +33,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_url(KnativeServing.url(service))
+     |> assign_url("//#{knative_host(service)}")
      |> assign_changeset(changeset)}
   end
 
@@ -91,7 +91,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:noreply,
      socket
      |> assign_changeset(changeset)
-     |> assign_url(KnativeServing.url(new_service))}
+     |> assign_url("//#{knative_host(new_service)}")}
   end
 
   def handle_event("save", %{"service" => service_params}, socket) do

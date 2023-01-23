@@ -18,5 +18,5 @@ defmodule ControlServerWeb.PostgresClusterTable do
     """
   end
 
-  defp show_url(cluster), do: ~p"/postgres/clusters/#{cluster}/show"
+  defp show_url(cluster), do: ~p"/postgres/#{cluster}/show"
 end

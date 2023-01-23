@@ -34,7 +34,7 @@ defmodule ControlServerWeb.Live.Redis do
     Redis.list_failover_clusters()
   end
 
-  def new_url, do: ~p"/redis/clusters/new"
+  def new_url, do: ~p"/redis/new"
 
   @impl Phoenix.LiveView
   def render(assigns) do

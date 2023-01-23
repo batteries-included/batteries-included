@@ -29,6 +29,12 @@ defmodule KubeExt.ConnectionPool do
   def get, do: get(@me, @default_cluster)
   def get(cluster_name), do: get(@me, cluster_name)
 
+  def get! do
+    with {:ok, conn} <- get() do
+      conn
+    end
+  end
+
   def get(pool_name, cluster_name) do
     connection = pool_name |> registry_name() |> Registry.lookup(cluster_name) |> List.first(nil)
 

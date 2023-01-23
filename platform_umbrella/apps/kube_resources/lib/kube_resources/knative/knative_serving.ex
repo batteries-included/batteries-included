@@ -7,8 +7,6 @@ defmodule KubeResources.KnativeServing do
   alias CommonCore.Knative.EnvValue
   alias CommonCore.Knative.Service
   alias KubeExt.Builder, as: B
-  alias KubeExt.KubeState.Hosts
-  alias CommonCore.Defaults
 
   resource(:namespace_dest, battery, _state) do
     B.build_resource(:namespace)
@@ -40,7 +38,7 @@ defmodule KubeResources.KnativeServing do
   end
 
   resource(:domain_config, battery, state) do
-    data = Map.put(%{}, knative_host(state), "")
+    data = Map.put(%{}, knative_base_host(state), "")
 
     B.build_resource(:config_map)
     |> B.name("config-domain")
@@ -66,7 +64,6 @@ defmodule KubeResources.KnativeServing do
       %{
         "metadata" => %{
           "labels" => %{
-            "battery/owner" => service.id,
             "battery/app" => @app_name,
             "battery/managed" => "true"
           }
@@ -164,15 +161,5 @@ defmodule KubeResources.KnativeServing do
       {"/service/#{s.id}", serving_service(s, battery, state)}
     end)
     |> Map.new()
-  end
-
-  def url(%{} = service) do
-    # assume the default config for now /shrug
-    "http://#{service.name}.#{Defaults.Namespaces.knative()}.#{Hosts.knative()}"
-  end
-
-  def url(%{} = service, state) do
-    # assume the default config for now /shrug
-    "http://#{service.name}.#{Defaults.Namespaces.knative()}.#{knative_host(state)}"
   end
 end

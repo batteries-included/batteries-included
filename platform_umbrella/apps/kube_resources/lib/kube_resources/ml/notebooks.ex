@@ -2,25 +2,12 @@ defmodule KubeResources.Notebooks do
   use KubeExt.ResourceGenerator, app_name: "juypter-notebooks"
 
   import CommonCore.SystemState.Namespaces
+  import CommonCore.SystemState.Hosts
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-  alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
-
-  @url_base "/x/notebooks/"
-
-  def view_url(%{} = notebook), do: view_url(KubeExt.cluster_type(), notebook)
-
-  def view_url(:dev, %{} = notebook), do: url(notebook)
-
-  def view_url(_, %{} = notebook), do: "/services/ml/notebooks/#{notebook.id}"
-
-  def url(%{} = notebook),
-    do: "http://#{Hosts.control_host()}#{base_url(notebook)}"
-
-  def base_url(%{} = notebook), do: "#{@url_base}#{notebook.name}"
 
   def notebook_http_route(%{} = notebook) do
     HttpRoute.prefix(base_url(notebook), service_name(notebook))
@@ -43,7 +30,7 @@ defmodule KubeResources.Notebooks do
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("notebooks")
-    |> B.spec(VirtualService.new(http: routes))
+    |> B.spec(VirtualService.new(http: routes, hosts: [notebooks_host(state)]))
     |> F.require_battery(state, :istio_gateway)
     |> F.require_non_empty(state.notebooks)
   end
@@ -119,4 +106,6 @@ defmodule KubeResources.Notebooks do
   end
 
   def service_name(notebook), do: "notebook-#{notebook.name}"
+
+  def base_url(notebook), do: "/#{notebook.name}"
 end

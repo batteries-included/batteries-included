@@ -21,82 +21,123 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.Home, :index
 
-    live "/system_projects/", Live.SystemProjectIndex, :index
-    live "/system_projects/new", Live.SystemProjectNew, :index
-    live "/system_projects/:id/edit", Live.SystemProjectEdit, :edit
-    live "/system_projects/:id/show", Live.SystemProjectShow, :show
+    live "/notebooks", Live.JupyterLabNotebookIndex, :index
 
-    live "/postgres/clusters", Live.PostgresClusters, :index
-    live "/postgres/clusters/new", Live.PostgresNew, :new
-    live "/postgres/clusters/:id/edit", Live.PostgresEdit, :edit
-    live "/postgres/clusters/:id/show", Live.PostgresShow, :show
+    live "/ip_address_pools", Live.IPAddressPoolIndex, :index
 
-    live "/redis/clusters", Live.Redis, :index
-    live "/redis/clusters/new", Live.RedisNew, :new
-    live "/redis/clusters/:id/edit", Live.RedisEdit, :edit
-    live "/redis/clusters/:id/show", Live.RedisShow, :show
-
-    live "/ceph", Live.CephIndex, :index
-    live "/ceph/clusters/new", Live.CephClusterNew, :new
-    live "/ceph/clusters/:id/edit", Live.CephClusterEdit, :edit
-    live "/ceph/clusters/:id/show", Live.CephClusterShow, :show
-    live "/ceph/filesystems/new", Live.CephFilesystemNew, :new
-    live "/ceph/filesystems/:id/edit", Live.CephFilesystemEdit, :edit
-    live "/ceph/filesystems/:id/show", Live.CephFilesystemShow, :show
-
-    live "/knative/services", Live.KnativeServicesIndex, :index
-    live "/knative/services/new", Live.KnativeNew, :new
-    live "/knative/services/:id/edit", Live.KnativeEdit, :edit
-    live "/knative/services/:id/show", Live.KnativeShow, :show
-
-    live "/notebooks", Live.JupyterLabNotebook.Index, :index
-    live "/notebooks/:id/show", Live.JupyterLabNotebook.Show, :index
-
-    live "/ip_address_pools", Live.IPAddressPool.Index, :index
-
-    live "/trivy_reports/config_audit_report", Live.TrivyReportsIndex, :aqua_config_audit_report
-
-    live "/trivy_reports/cluster_rbac_assessment_report",
-         Live.TrivyReportsIndex,
-         :aqua_cluster_rbac_assessment_report
-
-    live "/trivy_reports/rbac_assessment_report",
-         Live.TrivyReportsIndex,
-         :aqua_rbac_assessment_report
-
-    live "/trivy_reports/infra_assessment_report",
-         Live.TrivyReportsIndex,
-         :aqua_infra_assessment_report
-
-    live "/trivy_reports/vulnerability_report",
-         Live.TrivyReportsIndex,
-         :aqua_vulnerability_report
-
-    live "/kube/deployments", Live.ResourceList, :deployment
-    live "/kube/stateful_sets", Live.ResourceList, :stateful_set
-    live "/kube/nodes", Live.ResourceList, :node
-    live "/kube/pods", Live.ResourceList, :pod
-    live "/kube/services", Live.ResourceList, :service
-
-    live "/snapshot_apply", Live.SnapshotApplyIndex, :index
-    live "/snapshot_apply/:id/show", Live.KubeSnapshotShow, :index
-
-    live "/kube/raw/:resource_type/:namespace/:name", Live.RawResource, :index
-    live "/kube/:resource_type/:namespace/:name", Live.ResourceInfo, :index
-
-    live "/batteries/:group", GroupBatteriesLive, :show
-    live "/batteries/:group/install/:battery_type", GroupBatteriesLive, :install
-
-    live "/system_batteries", SystemBatteryLive.Index, :index
-    live "/system_batteries/:id", SystemBatteryLive.Show, :show
-
-    live "/timeline", TimelineLive, :index
+    live "/timeline", Live.Timeline, :index
     live "/stale", Live.StaleIndex, :index
     live "/deleted_resources", Live.DeletedResourcesIndex, :index
   end
 
+  scope "/snapshot_apply", ControlServer do
+    pipe_through :browser
+
+    live "/", Live.SnapshotApplyIndex, :index
+    live "/:id/show", Live.KubeSnapshotShow, :index
+  end
+
+  scope "/system_batteries", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.SystemBatteryIndex, :index
+    live "/:id", Live.SystemBatteryShow, :show
+  end
+
+  scope "/batteries", ControlServerWeb do
+    pipe_through :browser
+
+    live "/:group", Live.GroupBatteries, :show
+    live "/:group/install/:battery_type", Live.GroupBatteries, :install
+  end
+
+  scope "/system_projects", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.SystemProjectIndex, :index
+    live "/new", Live.SystemProjectNew, :index
+    live "/:id/edit", Live.SystemProjectEdit, :edit
+    live "/:id/show", Live.SystemProjectShow, :show
+  end
+
+  scope "/kube", ControlServerWeb do
+    pipe_through :browser
+
+    live "/deployments", Live.ResourceList, :deployment
+    live "/stateful_sets", Live.ResourceList, :stateful_set
+    live "/nodes", Live.ResourceList, :node
+    live "/pods", Live.ResourceList, :pod
+    live "/services", Live.ResourceList, :service
+
+    live "/raw/:resource_type/:namespace/:name", Live.RawResource, :index
+    live "/:resource_type/:namespace/:name", Live.ResourceInfo, :index
+  end
+
+  scope "/redis", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.Redis, :index
+    live "/new", Live.RedisNew, :new
+    live "/:id/edit", Live.RedisEdit, :edit
+    live "/:id/show", Live.RedisShow, :show
+  end
+
+  scope "/postgres", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.PostgresClusters, :index
+    live "/new", Live.PostgresNew, :new
+    live "/:id/edit", Live.PostgresEdit, :edit
+    live "/:id/show", Live.PostgresShow, :show
+  end
+
+  scope "/ceph", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.CephIndex, :index
+    live "/clusters/new", Live.CephClusterNew, :new
+    live "/clusters/:id/edit", Live.CephClusterEdit, :edit
+    live "/clusters/:id/show", Live.CephClusterShow, :show
+    live "/filesystems/new", Live.CephFilesystemNew, :new
+    live "/filesystems/:id/edit", Live.CephFilesystemEdit, :edit
+    live "/filesystems/:id/show", Live.CephFilesystemShow, :show
+  end
+
+  scope "/knative", ControlServerWeb do
+    pipe_through :browser
+
+    live "/services", Live.KnativeServicesIndex, :index
+    live "/services/new", Live.KnativeNew, :new
+    live "/services/:id/edit", Live.KnativeEdit, :edit
+    live "/services/:id/show", Live.KnativeShow, :show
+  end
+
+  scope "/trivy_reports", ControlServerWeb do
+    pipe_through :browser
+
+    live "/config_audit_report", Live.TrivyReportsIndex, :aqua_config_audit_report
+
+    live "/cluster_rbac_assessment_report",
+         Live.TrivyReportsIndex,
+         :aqua_cluster_rbac_assessment_report
+
+    live "/rbac_assessment_report", Live.TrivyReportsIndex, :aqua_rbac_assessment_report
+
+    live "/infra_assessment_report", Live.TrivyReportsIndex, :aqua_infra_assessment_report
+
+    live "/vulnerability_report", Live.TrivyReportsIndex, :aqua_vulnerability_report
+  end
+
+  scope "/auth", ControlServerWeb do
+    pipe_through :browser
+
+    live "/register", Live.OryKratosRegister, :index
+  end
+
   scope "/api", ControlServerWeb do
     pipe_through :api
+
+    get "/system_state", SystemStateController, :index
   end
 
   # Enables LiveDashboard only for development
@@ -110,12 +151,6 @@ defmodule ControlServerWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
-    end
-
-    scope "/api" do
-      pipe_through :api
-
-      get "/system_state", ControlServerWeb.SystemStateController, :index
     end
   end
 end

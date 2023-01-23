@@ -3,29 +3,21 @@ defmodule KubeResources.Kiali do
   use KubeExt.ResourceGenerator, app_name: "kiali"
 
   import CommonCore.SystemState.Namespaces
+  import CommonCore.SystemState.Hosts
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
-  alias KubeExt.KubeState.Hosts
   alias KubeResources.IstioConfig.VirtualService
-
-  @url_base "/x/kiali"
-
-  def view_url, do: view_url(KubeExt.cluster_type())
-
-  def view_url(:dev), do: url()
-
-  def view_url(_), do: "/services/network/kiali"
-
-  def url, do: "http://#{Hosts.control_host()}#{@url_base}"
 
   resource(:virtual_service, _battery, state) do
     namespace = istio_namespace(state)
 
+    spec = VirtualService.fallback("kiali", hosts: [kiali_host(state)])
+
     B.build_resource(:istio_virtual_service)
     |> B.namespace(namespace)
     |> B.name("kiali")
-    |> B.spec(VirtualService.prefix(@url_base, "kiali", port: 20_001))
+    |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end
 

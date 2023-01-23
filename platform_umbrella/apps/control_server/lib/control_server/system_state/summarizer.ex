@@ -68,8 +68,10 @@ defmodule ControlServer.SystemState.Summarizer do
 
   @spec new_summary! :: StateSummary.t()
   defp new_summary! do
-    with {:ok, res} <- transaction() do
-      struct(StateSummary, res)
+    with {:ok, res} <- transaction(),
+         summary <- struct(StateSummary, res),
+         :ok <- EventCenter.SystemStateSummary.broadcast(summary) do
+      summary
     end
   end
 

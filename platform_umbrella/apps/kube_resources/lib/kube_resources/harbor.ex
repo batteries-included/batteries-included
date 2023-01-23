@@ -15,20 +15,11 @@ defmodule KubeResources.Harbor do
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
   alias KubeExt.Secret
-  alias KubeExt.KubeState.Hosts
 
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
 
   @postgres_credentials "harbor.pg-harbor.credentials.postgresql"
-
-  def view_url, do: view_url(KubeExt.cluster_type())
-
-  def view_url(:dev), do: url()
-
-  def view_url(_), do: url()
-
-  def url, do: "http://#{Hosts.harbor_host()}"
 
   resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)

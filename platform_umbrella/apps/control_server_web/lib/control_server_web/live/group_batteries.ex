@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.GroupBatteriesLive do
+defmodule ControlServerWeb.Live.GroupBatteries do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout

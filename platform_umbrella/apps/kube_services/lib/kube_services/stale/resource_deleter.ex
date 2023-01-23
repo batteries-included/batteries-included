@@ -36,7 +36,7 @@ defmodule KubeServices.ResourceDeleter do
 
   @impl GenServer
   def init(opts) do
-    conn_func = Keyword.get(opts, :conn_func, &KubeExt.ConnectionPool.get/1)
+    conn_func = Keyword.get(opts, :conn_func, &KubeExt.ConnectionPool.get!/0)
     conn = Keyword.get_lazy(opts, :conn, conn_func)
 
     Logger.debug("Starting ResourceDeleter")

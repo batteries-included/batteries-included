@@ -41,6 +41,10 @@ defmodule KubeResources.OryKratos do
     base_namspace = base_namespace(state)
 
     %{
+      "cookies" => %{
+        "domain" => "ip.batteriesincl.com",
+        "same_site" => "Lax"
+      },
       "courier" => %{
         "smtp" => %{
           "connection_uri" =>
@@ -74,6 +78,11 @@ defmodule KubeResources.OryKratos do
             "config" => %{"issuer" => "BatteriesIncluded"},
             "enabled" => true
           }
+        },
+        "flows" => %{
+          "registration" => %{
+            "ui_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/register"
+          }
         }
       },
       "session" => %{
@@ -94,7 +103,10 @@ defmodule KubeResources.OryKratos do
           "cors" => %{
             "enabled" => true,
             "allowed_origins" => [
-              "127.0.0.1",
+              "http://127.0.0.1/",
+              "https://127.0.0.1/",
+              "https://127.0.0.1:4000/",
+              "https://localhost:4000/",
               "http://*.ip.batteriesincl.com",
               "https://*.ip.batteriesincl.com"
             ],

@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
     Postgres.list_clusters()
   end
 
-  defp new_url, do: ~p"/postgres/clusters/new"
+  defp new_url, do: ~p"/postgres/new"
 
   @impl Phoenix.LiveView
   def render(assigns) do

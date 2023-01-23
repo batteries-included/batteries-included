@@ -19,6 +19,10 @@ defmodule EventCenter.Application do
       Supervisor.child_spec(
         {Phoenix.PubSub, name: EventCenter.KubeSnapshot.PubSub},
         id: EventCenter.KubeSnapshot.PubSub
+      ),
+      Supervisor.child_spec(
+        {Phoenix.PubSub, name: EventCenter.SystemStateSummary.PubSub},
+        id: EventCenter.SystemStateSummary.PubSub
       )
     ]
 

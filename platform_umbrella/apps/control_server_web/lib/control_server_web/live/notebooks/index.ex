@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.JupyterLabNotebook.Index do
+defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   @moduledoc """
   Live web app for database stored json configs.
   """

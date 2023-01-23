@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.SystemBatteryLive.Index do
+defmodule ControlServerWeb.Live.SystemBatteryIndex do
   use ControlServerWeb, :live_view
 
   import ControlServerWeb.LeftMenuLayout

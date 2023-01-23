@@ -3,11 +3,11 @@ defmodule ControlServerWeb.PostgresLiveTest do
   use ControlServerWeb.ConnCase
 
   test "render list postgres", %{conn: conn} do
-    start(conn, ~p|/postgres/clusters|)
+    start(conn, ~p|/postgres|)
     |> assert_html("Postgres Clusters")
     |> assert_html("Name")
     |> assert_html("Type")
     |> click("a", "New Cluster")
-    |> follow(~p|/postgres/clusters/new|)
+    |> follow(~p|/postgres/new|)
   end
 end

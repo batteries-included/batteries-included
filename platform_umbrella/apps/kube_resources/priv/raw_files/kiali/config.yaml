@@ -55,10 +55,10 @@ deployment:
 external_services:
   grafana:
     enabled: true
-    in_cluster_url: http://battery-grafana.battery-core.svc/x/grafana/
-    url: http://control.172.18.128.1.ip.batteriesincl.com/x/grafana/
+    in_cluster_url: http://grafana.battery-core.svc/
+    url: http://grafana.172.18.128.1.ip.batteriesincl.com/
   prometheus:
-    url: http://battery-prometheus-prometheus.battery-core.svc:9090/
+    url: http://vmselect-main-cluster.battery-core.svc:9090/
   custom_dashboards:
     enabled: true
   istio:
@@ -85,4 +85,4 @@ server:
   metrics_enabled: true
   metrics_port: 9090
   port: 20001
-  web_root: /x/kiali
+  web_root: /

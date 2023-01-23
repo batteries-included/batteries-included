@@ -38,7 +38,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
 
   @impl Phoenix.LiveView
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
-    new_path = ~p"/postgres/clusters/#{cluster}/show"
+    new_path = ~p"/postgres/#{cluster}/show"
     Installer.install!(:postgres)
 
     {:noreply, push_redirect(socket, to: new_path)}

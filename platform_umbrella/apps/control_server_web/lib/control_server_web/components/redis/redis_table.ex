@@ -1,8 +1,7 @@
 defmodule ControlServerWeb.RedisTable do
   use ControlServerWeb, :html
 
-  def show_url(cluster),
-    do: ~p"/redis/clusters/#{cluster}/show"
+  def show_url(cluster), do: ~p"/redis/#{cluster}/show"
 
   attr :failover_clusters, :list, default: []
 
