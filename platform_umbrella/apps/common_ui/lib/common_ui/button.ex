@@ -11,6 +11,8 @@ defmodule CommonUI.Button do
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
   attr(:type, :string, default: nil)
+  attr(:value, :string, default: nil)
+  attr(:name, :string, default: nil)
   attr(:class, :any, default: nil)
   attr(:variant, :string, default: "default", values: ["default", "filled"])
   attr(:rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag")
@@ -33,6 +35,8 @@ defmodule CommonUI.Button do
           @class
         ])
       }
+      name={@name}
+      value={@value}
       type={@type}
       {@rest}
     >

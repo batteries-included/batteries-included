@@ -103,11 +103,8 @@ defmodule KubeResources.OryKratos do
           "cors" => %{
             "enabled" => true,
             "allowed_origins" => [
-              "http://127.0.0.1/",
-              "https://127.0.0.1/",
-              "https://127.0.0.1:4000/",
-              "https://localhost:4000/",
               "http://*.ip.batteriesincl.com",
+              "http://*.ip.batteriesincl.com:4000",
               "https://*.ip.batteriesincl.com"
             ],
             "allowed_methods" => ["POST", "GET", "PUT", "PATCH", "DELETE"],
