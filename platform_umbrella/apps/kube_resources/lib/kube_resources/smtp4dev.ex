@@ -1,5 +1,5 @@
-defmodule KubeResources.Mailhog do
-  use KubeExt.ResourceGenerator, app_name: "mailhog"
+defmodule KubeResources.Smtp4Dev do
+  use KubeExt.ResourceGenerator, app_name: "smtp4dev"
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.SystemState.Hosts
@@ -11,10 +11,10 @@ defmodule KubeResources.Mailhog do
   resource(:virtual_service, _battery, state) do
     namespace = base_namespace(state)
 
-    spec = VirtualService.fallback("mailhog-http", hosts: [mailhog_host(state)])
+    spec = VirtualService.fallback("smtp-four-dev-http", hosts: [smtp4dev_host(state)])
 
     B.build_resource(:istio_virtual_service)
-    |> B.name("mailhog")
+    |> B.name("smtp-dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
@@ -43,47 +43,34 @@ defmodule KubeResources.Mailhog do
             "automountServiceAccountToken" => false,
             "containers" => [
               %{
-                "env" => [
-                  %{
-                    "name" => "MH_HOSTNAME",
-                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
-                  }
-                ],
                 "image" => battery.config.image,
                 "imagePullPolicy" => "IfNotPresent",
+                "env" => [
+                  %{
+                    "name" => "ServerOptions__HostName",
+                    "value" => "smtp-four-dev"
+                  }
+                ],
                 "livenessProbe" => %{
                   "initialDelaySeconds" => 10,
-                  "tcpSocket" => %{"port" => 1025},
+                  "tcpSocket" => %{"port" => 25},
                   "timeoutSeconds" => 1
                 },
-                "name" => "mailhog",
+                "name" => "smtp4dev",
                 "ports" => [
-                  %{"containerPort" => 8025, "name" => "http", "protocol" => "TCP"},
-                  %{"containerPort" => 1025, "name" => "tcp-smtp", "protocol" => "TCP"}
+                  %{"containerPort" => 80, "name" => "http", "protocol" => "TCP"},
+                  %{"containerPort" => 25, "name" => "tcp-smtp", "protocol" => "TCP"}
                 ],
-                "readinessProbe" => %{"tcpSocket" => %{"port" => 1025}},
-                "resources" => %{},
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]},
-                  "privileged" => false,
-                  "readOnlyRootFilesystem" => true
-                }
+                "readinessProbe" => %{"tcpSocket" => %{"port" => 25}}
               }
             ],
-            "securityContext" => %{
-              "fsGroup" => 1000,
-              "runAsGroup" => 1000,
-              "runAsNonRoot" => true,
-              "runAsUser" => 1000
-            },
-            "serviceAccountName" => "mailhog"
+            "serviceAccountName" => "smtp4dev"
           }
         }
       )
 
     B.build_resource(:deployment)
-    |> B.name("mailhog")
+    |> B.name("smtp4dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -92,8 +79,7 @@ defmodule KubeResources.Mailhog do
     namespace = base_namespace(state)
 
     B.build_resource(:service_account)
-    |> Map.put("imagePullSecrets", [])
-    |> B.name("mailhog")
+    |> B.name("smtp4dev")
     |> B.namespace(namespace)
   end
 
@@ -103,12 +89,13 @@ defmodule KubeResources.Mailhog do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "tcp-smtp", "port" => 1025, "protocol" => "TCP", "targetPort" => "tcp-smtp"}
+        %{"name" => "tcp-smtp", "port" => 25, "protocol" => "TCP", "targetPort" => "tcp-smtp"},
+        %{"name" => "http", "port" => 8000, "protocol" => "TCP", "targetPort" => "http"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
     B.build_resource(:service)
-    |> B.name("mailhog")
+    |> B.name("smtp-four-dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -119,12 +106,12 @@ defmodule KubeResources.Mailhog do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "http", "port" => 8025, "protocol" => "TCP", "targetPort" => "http"}
+        %{"name" => "http", "port" => 8000, "protocol" => "TCP", "targetPort" => "http"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
     B.build_resource(:service)
-    |> B.name("mailhog-http")
+    |> B.name("smtp-four-dev-http")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end

@@ -42,13 +42,13 @@ defmodule KubeResources.OryKratos do
 
     %{
       "cookies" => %{
-        "domain" => "ip.batteriesincl.com",
+        "domain" => ".ip.batteriesincl.com",
         "same_site" => "Lax"
       },
       "courier" => %{
         "smtp" => %{
           "connection_uri" =>
-            "smtps://test:test@mailhog.#{base_namspace}.svc:1025/?skip_ssl_verify=true"
+            "smtp://test:test@smtp-four-dev.#{base_namspace}.svc:25/?disable_starttls=true"
         }
       },
       "identity" => %{
@@ -71,7 +71,7 @@ defmodule KubeResources.OryKratos do
         "allowed_return_urls" => ["http://control.127.0.0.1.ip.batteriesincl.com:4000/"],
         "default_browser_return_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/",
         "methods" => %{
-          "link" => %{"enabled" => false},
+          "code" => %{"enabled" => true, "config" => %{"lifespan" => "15m"}},
           "lookup_secret" => %{"enabled" => true},
           "password" => %{"enabled" => true},
           "totp" => %{
@@ -80,15 +80,27 @@ defmodule KubeResources.OryKratos do
           }
         },
         "flows" => %{
+          "login" => %{
+            "ui_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/login",
+            "after" => %{"hooks" => [%{"hook" => "require_verified_address"}]}
+          },
           "registration" => %{
-            "ui_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/register"
+            "ui_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/registration"
+          },
+          "recovery" => %{
+            "ui_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/recovery",
+            "enabled" => true,
+            "after" => %{"hooks" => [%{"hook" => "revoke_active_sessions"}]}
+          },
+          "verification" => %{
+            "ui_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/verification",
+            "use" => "code",
+            "enabled" => true,
+            "lifespan" => "15m"
+          },
+          "error" => %{
+            "ui_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/error"
           }
-        }
-      },
-      "session" => %{
-        "cookie" => %{
-          "domain" => "ip.batteriesincl.com",
-          "same_site" => "Lax"
         }
       },
       "serve" => %{
@@ -136,9 +148,9 @@ defmodule KubeResources.OryKratos do
 
     data =
       %{}
-      |> Map.put("secretsCipher", battery.config.secret_cipher)
-      |> Map.put("secretsCookie", battery.config.secret_cookie)
-      |> Map.put("secretsDefault", battery.config.secret_default)
+      |> Map.put("secretsCipher", battery.config.kratos_secret_cipher)
+      |> Map.put("secretsCookie", battery.config.kratos_secret_cookie)
+      |> Map.put("secretsDefault", battery.config.kratos_secret_default)
       |> Secret.encode()
 
     B.build_resource(:secret)
@@ -250,7 +262,7 @@ defmodule KubeResources.OryKratos do
                     "valueFrom" => %{
                       "secretKeyRef" => %{
                         "key" => "username",
-                        "name" => "orykratos.pg-ory.credentials.postgresql",
+                        "name" => "orykratos.pg-auth.credentials.postgresql",
                         "optional" => false
                       }
                     }
@@ -260,7 +272,7 @@ defmodule KubeResources.OryKratos do
                     "valueFrom" => %{
                       "secretKeyRef" => %{
                         "key" => "password",
-                        "name" => "orykratos.pg-ory.credentials.postgresql",
+                        "name" => "orykratos.pg-auth.credentials.postgresql",
                         "optional" => false
                       }
                     }
@@ -268,7 +280,7 @@ defmodule KubeResources.OryKratos do
                   %{
                     "name" => "DSN",
                     "value" =>
-                      "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@pg-ory.battery-base.svc/kratos?sslmode=prefer"
+                      "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@pg-auth.battery-base.svc/kratos?sslmode=prefer"
                   },
                   %{
                     "name" => "SECRETS_DEFAULT",
@@ -301,7 +313,7 @@ defmodule KubeResources.OryKratos do
                     }
                   }
                 ],
-                "image" => battery.config.image,
+                "image" => battery.config.kratos_image,
                 "imagePullPolicy" => "IfNotPresent",
                 "name" => "ory-kratos-courier",
                 "resources" => nil,
@@ -368,7 +380,7 @@ defmodule KubeResources.OryKratos do
                 "valueFrom" => %{
                   "secretKeyRef" => %{
                     "key" => "username",
-                    "name" => "orykratos.pg-ory.credentials.postgresql",
+                    "name" => "orykratos.pg-auth.credentials.postgresql",
                     "optional" => false
                   }
                 }
@@ -378,7 +390,7 @@ defmodule KubeResources.OryKratos do
                 "valueFrom" => %{
                   "secretKeyRef" => %{
                     "key" => "password",
-                    "name" => "orykratos.pg-ory.credentials.postgresql",
+                    "name" => "orykratos.pg-auth.credentials.postgresql",
                     "optional" => false
                   }
                 }
@@ -386,7 +398,7 @@ defmodule KubeResources.OryKratos do
               %{
                 "name" => "DSN",
                 "value" =>
-                  "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@pg-ory.battery-base.svc/kratos?sslmode=prefer"
+                  "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@pg-auth.battery-base.svc/kratos?sslmode=prefer"
               },
               %{
                 "name" => "SECRETS_DEFAULT",
@@ -419,7 +431,7 @@ defmodule KubeResources.OryKratos do
                 }
               }
             ],
-            "image" => battery.config.image,
+            "image" => battery.config.kratos_image,
             "imagePullPolicy" => "IfNotPresent",
             "livenessProbe" => %{
               "failureThreshold" => 5,
@@ -485,7 +497,7 @@ defmodule KubeResources.OryKratos do
                 "valueFrom" => %{
                   "secretKeyRef" => %{
                     "key" => "username",
-                    "name" => "orykratos.pg-ory.credentials.postgresql"
+                    "name" => "orykratos.pg-auth.credentials.postgresql"
                   }
                 }
               },
@@ -494,17 +506,17 @@ defmodule KubeResources.OryKratos do
                 "valueFrom" => %{
                   "secretKeyRef" => %{
                     "key" => "password",
-                    "name" => "orykratos.pg-ory.credentials.postgresql"
+                    "name" => "orykratos.pg-auth.credentials.postgresql"
                   }
                 }
               },
               %{
                 "name" => "DSN",
                 "value" =>
-                  "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@pg-ory.battery-base.svc/kratos?sslmode=prefer"
+                  "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@pg-auth.battery-base.svc/kratos?sslmode=prefer"
               }
             ],
-            "image" => battery.config.image,
+            "image" => battery.config.kratos_image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "kratos-automigrate",
             "volumeMounts" => [
@@ -526,7 +538,7 @@ defmodule KubeResources.OryKratos do
     spec =
       %{}
       |> Map.put("progressDeadlineSeconds", 3600)
-      |> Map.put("replicas", battery.config.replicas)
+      |> Map.put("replicas", battery.config.kratos_replicas)
       |> Map.put(
         "selector",
         %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "kratos"}}

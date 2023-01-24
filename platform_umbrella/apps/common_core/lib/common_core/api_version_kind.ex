@@ -79,7 +79,8 @@ defmodule CommonCore.ApiVersionKind do
     aqua_rbac_assessment_report: {"aquasecurity.github.io/v1alpha1", "RbacAssessmentReport"},
     aqua_exposed_secret_report: {"aquasecurity.github.io/v1alpha1", "ExposedSecretReport"},
     aqua_infra_assessment_report: {"aquasecurity.github.io/v1alpha1", "InfraAssessmentReport"},
-    aqua_vulnerability_report: {"aquasecurity.github.io/v1alpha1", "VulnerabilityReport"}
+    aqua_vulnerability_report: {"aquasecurity.github.io/v1alpha1", "VulnerabilityReport"},
+    ory_oauth_client: {"hydra.ory.sh/v1alpha1", "OAuth2Client"}
   ]
 
   @alternatives [

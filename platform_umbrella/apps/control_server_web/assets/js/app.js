@@ -6,13 +6,13 @@ import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
 
 import IFrame from './iframe';
-import KratosFlow from './kratos-flow';
+import Kratos from './kratos';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
 const liveSocket = new LiveSocket('/live', Socket, {
-  hooks: { IFrame, KratosFlow },
+  hooks: { IFrame, Kratos },
   params: { _csrf_token: csrfToken },
 });
 

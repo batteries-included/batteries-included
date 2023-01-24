@@ -131,7 +131,11 @@ defmodule ControlServerWeb.Router do
   scope "/auth", ControlServerWeb do
     pipe_through :browser
 
-    live "/register", Live.OryKratosRegister, :index
+    live "/login", Live.OryKratosFlow, :login
+    live "/recovery", Live.OryKratosFlow, :recovery
+    live "/registration", Live.OryKratosFlow, :registration
+    live "/verification", Live.OryKratosFlow, :verification
+    live "/error", Live.OryKratosError, :error
   end
 
   scope "/api", ControlServerWeb do

@@ -1,6 +1,19 @@
 defmodule ControlServerWeb.Ory.Flow do
   use ControlServerWeb, :html
   import CommonUI.Form
+  attr :flow_id, :string, required: true
+  attr :flow_url, :string, required: true
+  slot :inner_block
+
+  def flow_container(assigns) do
+    ~H"""
+    <div id={flow_container_id(@flow_id)} phx-hook="Kratos" data-url={@flow_url}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  defp flow_container_id(flow_id), do: "flow_container-#{flow_id}"
 
   attr(:ui, :any, required: true)
 

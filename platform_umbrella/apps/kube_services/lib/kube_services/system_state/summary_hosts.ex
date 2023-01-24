@@ -76,9 +76,9 @@ defmodule KubeServices.SystemState.SummaryHosts do
     GenServer.call(target, :harbor_host)
   end
 
-  @spec mailhog_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def mailhog_host(target \\ @me) do
-    GenServer.call(target, :mailhog_host)
+  @spec smtp4dev_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def smtp4dev_host(target \\ @me) do
+    GenServer.call(target, :smtp4dev_host)
   end
 
   @spec kratos_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil

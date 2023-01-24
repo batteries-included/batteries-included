@@ -1,4 +1,4 @@
-defmodule CommonCore.Batteries.MailhogConfig do
+defmodule CommonCore.Batteries.Smtp4devConfig do
   use TypedEctoSchema
   import Ecto.Changeset
 
@@ -10,7 +10,7 @@ defmodule CommonCore.Batteries.MailhogConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :image, :string, default: Defaults.Images.mailhog_image()
+    field :image, :string, default: Defaults.Images.smtp4dev_image()
   end
 
   def changeset(struct, params \\ %{}) do

@@ -44,7 +44,7 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :devtools,
-      type: :mailhog,
+      type: :smtp4dev,
       dependencies: [:battery_core, :istio_gateway]
     },
     # ML
@@ -148,7 +148,7 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :net_sec,
-      type: :ory_kratos,
+      type: :sso,
       dependencies: [:battery_core, :postgres]
     }
   ]

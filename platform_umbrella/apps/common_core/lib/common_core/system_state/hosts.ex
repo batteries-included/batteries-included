@@ -29,8 +29,8 @@ defmodule CommonCore.SystemState.Hosts do
     state |> ip() |> host("harbor")
   end
 
-  def mailhog_host(%StateSummary{} = state) do
-    state |> ip() |> host("mailhog")
+  def smtp4dev_host(%StateSummary{} = state) do
+    state |> ip() |> host("smtp4dev")
   end
 
   def kratos_host(%StateSummary{} = state) do
@@ -39,6 +39,14 @@ defmodule CommonCore.SystemState.Hosts do
 
   def kratos_admin_host(%StateSummary{} = state) do
     state |> ip() |> host("kratos-admin")
+  end
+
+  def hydra_host(%StateSummary{} = state) do
+    state |> ip() |> host("hydra")
+  end
+
+  def hydra_admin_host(%StateSummary{} = state) do
+    state |> ip() |> host("hydra-admin")
   end
 
   def kiali_host(%StateSummary{} = state) do
