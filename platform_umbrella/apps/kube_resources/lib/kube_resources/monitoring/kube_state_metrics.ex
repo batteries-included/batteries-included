@@ -196,23 +196,10 @@ defmodule KubeResources.KubeStateMetrics do
         %{
           "honorLabels" => true,
           "interval" => "30s",
-          "metricRelabelings" => [
-            %{
-              "action" => "drop",
-              "regex" => "kube_endpoint_address_not_ready|kube_endpoint_address_available",
-              "sourceLabels" => ["__name__"]
-            }
-          ],
           "port" => "http",
-          "relabelings" => [
-            %{
-              "action" => "labeldrop",
-              "regex" => "(pod|service|endpoint|namespace)"
-            }
-          ],
           "scrapeTimeout" => "30s"
         },
-        %{"interval" => "30s", "port" => "https-self"}
+        %{"interval" => "30s", "port" => "http-self"}
       ])
       |> Map.put("jobLabel", "battery/app")
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})

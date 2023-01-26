@@ -55,7 +55,8 @@ defmodule KubeResources.IstioMetrics do
         "selector",
         %{
           "matchExpressions" => [
-            %{"key" => "istio-prometheus-ignore", "operator" => "DoesNotExist"}
+            %{"key" => "istio-prometheus-ignore", "operator" => "DoesNotExist"},
+            %{"key" => "service.istio.io/canonical-name", "operator" => "Exists"}
           ]
         }
       )

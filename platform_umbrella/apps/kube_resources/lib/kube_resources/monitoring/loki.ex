@@ -69,6 +69,7 @@ defmodule KubeResources.Loki do
     B.build_resource(:service)
     |> B.name("loki")
     |> B.namespace(namespace)
+    |> B.component_label("main")
     |> B.spec(spec)
   end
 
@@ -184,6 +185,31 @@ defmodule KubeResources.Loki do
     |> B.spec(spec)
   end
 
+  resource(:monitoring_service_monitor_main, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("endpoints", [
+        %{
+          "port" => "http-metrics",
+          "scheme" => "http",
+          "path" => "/metrics"
+          # "relabelings" => [%{"replacement" => @app_name, "targetLabel" => "cluster"}]
+        }
+      ])
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "main"}}
+      )
+
+    B.build_resource(:monitoring_service_monitor)
+    |> B.name("loki")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :victoria_metrics)
+  end
+
   resource(:config_map_data_source, battery, state) do
     namespace = core_namespace(state)
     contents = battery |> datasources_contents(state) |> to_yaml()
@@ -248,7 +274,7 @@ defmodule KubeResources.Loki do
           type: "loki",
           url: "http://loki.#{namespace}.svc:3100",
           version: 1,
-          isDefault: true,
+          isDefault: false,
           jsonData: %{}
         }
       ]
