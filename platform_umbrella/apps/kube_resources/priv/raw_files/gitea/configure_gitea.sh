@@ -26,13 +26,13 @@ function configure_admin_user() {
 configure_admin_user
 
 function configure_ldap() {
-    echo 'no ldap configuration... skipping.'
+  echo 'no ldap configuration... skipping.'
 }
 
 configure_ldap
 
 function configure_oauth() {
-    echo 'no oauth configuration... skipping.'
+  echo 'no oauth configuration... skipping.'
 }
 
 configure_oauth

@@ -1,7 +1,6 @@
 server:
   log_level: info
   http_listen_port: 3101
-  
 
 clients:
   - url: http://loki.battery-core.svc:3100/loki/api/v1/push
@@ -46,44 +45,42 @@ scrape_configs:
         target_label: component
       - action: replace
         source_labels:
-        - __meta_kubernetes_pod_node_name
+          - __meta_kubernetes_pod_node_name
         target_label: node_name
       - action: replace
         source_labels:
-        - __meta_kubernetes_namespace
+          - __meta_kubernetes_namespace
         target_label: namespace
       - action: replace
         replacement: $1
         separator: /
         source_labels:
-        - namespace
-        - app
+          - namespace
+          - app
         target_label: job
       - action: replace
         source_labels:
-        - __meta_kubernetes_pod_name
+          - __meta_kubernetes_pod_name
         target_label: pod
       - action: replace
         source_labels:
-        - __meta_kubernetes_pod_container_name
+          - __meta_kubernetes_pod_container_name
         target_label: container
       - action: replace
         replacement: /var/log/pods/*$1/*.log
         separator: /
         source_labels:
-        - __meta_kubernetes_pod_uid
-        - __meta_kubernetes_pod_container_name
+          - __meta_kubernetes_pod_uid
+          - __meta_kubernetes_pod_container_name
         target_label: __path__
       - action: replace
         regex: true/(.*)
         replacement: /var/log/pods/*$1/*.log
         separator: /
         source_labels:
-        - __meta_kubernetes_pod_annotationpresent_kubernetes_io_config_hash
-        - __meta_kubernetes_pod_annotation_kubernetes_io_config_hash
-        - __meta_kubernetes_pod_container_name
+          - __meta_kubernetes_pod_annotationpresent_kubernetes_io_config_hash
+          - __meta_kubernetes_pod_annotation_kubernetes_io_config_hash
+          - __meta_kubernetes_pod_container_name
         target_label: __path__
-  
-  
 
 limits_config:

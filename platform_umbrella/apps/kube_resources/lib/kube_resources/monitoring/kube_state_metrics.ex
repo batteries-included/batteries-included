@@ -149,7 +149,7 @@ defmodule KubeResources.KubeStateMetrics do
                 "args" => [
                   "--enable-gzip-encoding",
                   "--port=8080",
-                  "--resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments"
+                  "--telemetry-port=8081"
                 ],
                 "image" => battery.config.image,
                 "imagePullPolicy" => "IfNotPresent",
@@ -159,7 +159,10 @@ defmodule KubeResources.KubeStateMetrics do
                   "timeoutSeconds" => 5
                 },
                 "name" => "kube-state-metrics",
-                "ports" => [%{"containerPort" => 8080, "name" => "http"}],
+                "ports" => [
+                  %{"containerPort" => 8080, "name" => "http"},
+                  %{"containerPort" => 8081, "name" => "http-self"}
+                ],
                 "readinessProbe" => %{
                   "httpGet" => %{"path" => "/", "port" => 8080},
                   "initialDelaySeconds" => 5,
@@ -189,7 +192,28 @@ defmodule KubeResources.KubeStateMetrics do
 
     spec =
       %{}
-      |> Map.put("endpoints", [%{"port" => "http"}])
+      |> Map.put("endpoints", [
+        %{
+          "honorLabels" => true,
+          "interval" => "30s",
+          "metricRelabelings" => [
+            %{
+              "action" => "drop",
+              "regex" => "kube_endpoint_address_not_ready|kube_endpoint_address_available",
+              "sourceLabels" => ["__name__"]
+            }
+          ],
+          "port" => "http",
+          "relabelings" => [
+            %{
+              "action" => "labeldrop",
+              "regex" => "(pod|service|endpoint|namespace)"
+            }
+          ],
+          "scrapeTimeout" => "30s"
+        },
+        %{"interval" => "30s", "port" => "https-self"}
+      ])
       |> Map.put("jobLabel", "battery/app")
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
@@ -205,7 +229,8 @@ defmodule KubeResources.KubeStateMetrics do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "http", "port" => 8080, "protocol" => "TCP", "targetPort" => 8080}
+        %{"name" => "http", "port" => 8080, "protocol" => "TCP", "targetPort" => 8080},
+        %{"name" => "http-self", "port" => 8081, "protocol" => "TCP", "targetPort" => 8081}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 

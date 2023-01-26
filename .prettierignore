@@ -2,7 +2,7 @@
 **/_build/
 **/cover/
 cli/Cargo.lock
-platform_umbrella/apps/kube_resources/priv/
+platform_umbrella/apps/kube_resources/priv/manifests/
 .elixir_ls
 
 books/

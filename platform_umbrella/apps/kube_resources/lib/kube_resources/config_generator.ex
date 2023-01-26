@@ -23,6 +23,7 @@ defmodule KubeResources.ConfigGenerator do
     KnativeOperator,
     KnativeServing,
     KubeMonitoring,
+    KubeDashboards,
     KubeStateMetrics,
     Loki,
     MetalLB,
@@ -41,6 +42,7 @@ defmodule KubeResources.ConfigGenerator do
     TrivyOperator,
     TrustManager,
     VMAgent,
+    VMDashboards,
     VMCluster,
     VMOperator
   }
@@ -63,7 +65,7 @@ defmodule KubeResources.ConfigGenerator do
     kiali: [&Kiali.materialize/2],
     knative_operator: [&KnativeOperator.materialize/2],
     knative_serving: [&KnativeServing.materialize/2],
-    kube_monitoring: [&KubeMonitoring.materialize/2],
+    kube_monitoring: [&KubeMonitoring.materialize/2, &KubeDashboards.materialize/2],
     kube_state_metrics: [&KubeStateMetrics.materialize/2],
     loki: [&Loki.materialize/2],
     metallb: [&MetalLB.materialize/2],
@@ -83,7 +85,8 @@ defmodule KubeResources.ConfigGenerator do
     victoria_metrics: [
       &VMOperator.materialize/2,
       &VMCluster.materialize/2,
-      &VMAgent.materialize/2
+      &VMAgent.materialize/2,
+      &VMDashboards.materialize/2
     ]
   ]
 

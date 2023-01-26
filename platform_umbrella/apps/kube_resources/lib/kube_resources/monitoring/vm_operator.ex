@@ -1,33 +1,33 @@
 defmodule KubeResources.VMOperator do
   use CommonCore.IncludeResource,
     vmagents_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmagents_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmagents_operator_victoriametrics_com.yaml",
     vmalertmanagerconfigs_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmalertmanagerconfigs_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmalertmanagerconfigs_operator_victoriametrics_com.yaml",
     vmalertmanagers_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmalertmanagers_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmalertmanagers_operator_victoriametrics_com.yaml",
     vmalerts_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmalerts_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmalerts_operator_victoriametrics_com.yaml",
     vmauths_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmauths_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmauths_operator_victoriametrics_com.yaml",
     vmclusters_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmclusters_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmclusters_operator_victoriametrics_com.yaml",
     vmnodescrapes_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmnodescrapes_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmnodescrapes_operator_victoriametrics_com.yaml",
     vmpodscrapes_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmpodscrapes_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmpodscrapes_operator_victoriametrics_com.yaml",
     vmprobes_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmprobes_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmprobes_operator_victoriametrics_com.yaml",
     vmrules_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmrules_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmrules_operator_victoriametrics_com.yaml",
     vmservicescrapes_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmservicescrapes_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmservicescrapes_operator_victoriametrics_com.yaml",
     vmsingles_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmsingles_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmsingles_operator_victoriametrics_com.yaml",
     vmstaticscrapes_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmstaticscrapes_operator_victoriametrics_com.yaml",
+      "priv/manifests/victoria_metrics/vmstaticscrapes_operator_victoriametrics_com.yaml",
     vmusers_operator_victoriametrics_com:
-      "priv/manifests/vcitoria_metrics/vmusers_operator_victoriametrics_com.yaml"
+      "priv/manifests/victoria_metrics/vmusers_operator_victoriametrics_com.yaml"
 
   use KubeExt.ResourceGenerator, app_name: "victoria-metrics-operator"
   import CommonCore.Yaml

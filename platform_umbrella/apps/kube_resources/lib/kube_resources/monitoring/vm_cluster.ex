@@ -3,6 +3,7 @@ defmodule KubeResources.VMCluster do
 
   import CommonCore.SystemState.Namespaces
   import CommonCore.SystemState.Hosts
+  import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
@@ -78,5 +79,31 @@ defmodule KubeResources.VMCluster do
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
+  end
+
+  resource(:config_map_grafana_datasource, _battery, state) do
+    namespace = core_namespace(state)
+
+    datasources = %{
+      "apiVersion" => 1,
+      "datasources" => [
+        %{
+          "name" => "vmselect",
+          "type" => "prometheus",
+          "orgId" => 1,
+          "isDefault" => true,
+          "url" => "http://vmselect-main-cluster.#{namespace}.svc:8481/select/0/prometheus/"
+        }
+      ]
+    }
+
+    data = %{"vmselect-datasources.yaml" => to_yaml(datasources)}
+
+    B.build_resource(:config_map)
+    |> B.name("grafana-datasource-vmselect")
+    |> B.namespace(namespace)
+    |> B.data(data)
+    |> B.label("grafana_datasource", "1")
+    |> F.require_battery(state, :grafana)
   end
 end

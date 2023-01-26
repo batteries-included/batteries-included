@@ -13,7 +13,7 @@ function env2ini::read_config_to_env() {
     # skip empty line
     return
   fi
-  
+
   # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new line
   local setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
 
@@ -34,14 +34,14 @@ function env2ini::read_config_to_env() {
   env2ini::log "    + '${setting}'"
 
   if [[ -z "${section}" ]]; then
-    export "ENV_TO_INI____${setting^^}=${value}"                           # '^^' makes the variable content uppercase
+    export "ENV_TO_INI____${setting^^}=${value}" # '^^' makes the variable content uppercase
     return
   fi
 
-  local masked_section="${section//./_0X2E_}"                            # '//' instructs to replace all matches
+  local masked_section="${section//./_0X2E_}" # '//' instructs to replace all matches
   masked_section="${masked_section//-/_0X2D_}"
 
-  export "ENV_TO_INI__${masked_section^^}__${setting^^}=${value}"        # '^^' makes the variable content uppercase
+  export "ENV_TO_INI__${masked_section^^}__${setting^^}=${value}" # '^^' makes the variable content uppercase
 }
 
 function env2ini::reload_preset_envs() {
@@ -72,12 +72,11 @@ function env2ini::reload_preset_envs() {
 
     env2ini::log "  + '${setting}'"
 
-    export "${setting^^}=${value}"                           # '^^' makes the variable content uppercase
+    export "${setting^^}=${value}" # '^^' makes the variable content uppercase
   done < "/tmp/existing-envs"
 
   rm /tmp/existing-envs
 }
-
 
 function env2ini::process_config_file() {
   local config_file="${1}"
@@ -92,7 +91,7 @@ function env2ini::process_config_file() {
 
   while read -r line; do
     env2ini::read_config_to_env "${section}" "${line}"
-  done < <(awk 1 "${config_file}")                             # Helm .toYaml trims the trailing new line which breaks line processing; awk 1 ... adds it back while reading
+  done < <(awk 1 "${config_file}") # Helm .toYaml trims the trailing new line which breaks line processing; awk 1 ... adds it back while reading
 }
 
 function env2ini::load_config_sources() {
