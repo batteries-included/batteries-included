@@ -10,5 +10,11 @@ assert_cmd = { version = "*" }
 clap = { version = "*", features = ["derive"] }
 exitcode = { version = "*" }
 env_logger = { version = "*" }
+futures = { version = "*" }
+hyper = { version = "*" }
+kube-client = { version = "*" }
+k8s-openapi = { version = "*", features = ["v1_26"] }
 log = { version = "*" }
 predicates = { version = "*" }
+tokio = { version = "*", features = ["full"] }
+tower-test = { version = "*" }
