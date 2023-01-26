@@ -2,9 +2,9 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.NotebooksTable
 
   alias ControlServer.Notebooks
@@ -43,10 +43,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:ml} active={:notebooks}>
-      <:title>
-        <.title>Notebooks</.title>
-      </:title>
+    <.left_menu_page group={:ml} active={:notebooks}>
       <.notebooks_table notebooks={@notebooks} />
       <.h2 variant="fancy">Actions</.h2>
       <.body_section>
@@ -54,7 +51,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
           Start New Notebook
         </.button>
       </.body_section>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.CephClusterShow do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
 
   alias ControlServer.Rook
 
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Live.CephClusterShow do
      |> assign(:ceph_cluster, Rook.get_ceph_cluster!(id))}
   end
 
-  defp page_title(:show), do: "Show Ceph cluster"
+  defp page_title(_), do: "Show Ceph cluster"
 
   defp nodes_list(assigns) do
     ~H"""
@@ -32,10 +32,7 @@ defmodule ControlServerWeb.Live.CephClusterShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:data} active={:rook}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
+    <.left_menu_page group={:data} active={:rook}>
       <.body_section>
         <ul>
           <li>
@@ -69,7 +66,7 @@ defmodule ControlServerWeb.Live.CephClusterShow do
         <%= live_patch("Edit", to: ~p"/ceph/clusters/#{@ceph_cluster}/show", class: "button") %>
       </span>
       | <span><%= live_redirect("Back", to: ~p"/ceph/clusters/#{@ceph_cluster}/show") %></span>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.CephFilesystemShow do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
 
   alias ControlServer.Rook
 
@@ -23,11 +23,7 @@ defmodule ControlServerWeb.Live.CephFilesystemShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:data} active={:rook}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
-
+    <.left_menu_page group={:data} active={:rook}>
       <.body_section>
         <ul>
           <li>
@@ -49,7 +45,7 @@ defmodule ControlServerWeb.Live.CephFilesystemShow do
       <span>
         <.link navigate={~p"/ceph"}>Back</.link>
       </span>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

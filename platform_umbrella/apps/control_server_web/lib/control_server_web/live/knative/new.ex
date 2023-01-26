@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.KnativeNew do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias CommonCore.Knative.Service
 
@@ -47,20 +45,15 @@ defmodule ControlServerWeb.Live.KnativeNew do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>New service</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={FormComponent}
-          service={@service}
-          id={@service.id || "new-service-form"}
-          action={:new}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={FormComponent}
+        service={@service}
+        id={@service.id || "new-service-form"}
+        action={:new}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

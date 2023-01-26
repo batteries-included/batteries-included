@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.SystemProjectEdit do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias ControlServer.Projects
   alias ControlServerWeb.Live.Project.FormComponent
@@ -21,20 +19,15 @@ defmodule ControlServerWeb.Live.SystemProjectEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>Edit Project</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={FormComponent}
-          system_project={@system_project}
-          id={@system_project.id || "edit-project-form"}
-          action={:edit}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={FormComponent}
+        system_project={@system_project}
+        id={@system_project.id || "edit-project-form"}
+        action={:edit}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

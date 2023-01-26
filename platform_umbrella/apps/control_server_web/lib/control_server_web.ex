@@ -50,10 +50,12 @@ defmodule ControlServerWeb do
     end
   end
 
-  def live_view do
+  def live_view(opts \\ []) do
+    layout = Keyword.get(opts, :layout, :app)
+
     quote do
       use Phoenix.LiveView,
-        layout: {ControlServerWeb.Layouts, :app}
+        layout: {ControlServerWeb.Layouts, unquote(layout)}
 
       import Phoenix.Component, except: [link: 1]
 
@@ -117,5 +119,9 @@ defmodule ControlServerWeb do
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
+  end
+
+  defmacro __using__({:live_view = which, opts}) when is_atom(which) do
+    apply(__MODULE__, which, [opts])
   end
 end

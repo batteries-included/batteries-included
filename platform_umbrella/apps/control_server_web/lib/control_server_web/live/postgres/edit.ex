@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.PostgresEdit do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent
@@ -26,20 +24,15 @@ defmodule ControlServerWeb.Live.PostgresEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>Edit Cluster</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={PostgresFormComponent}
-          cluster={@cluster}
-          id={@cluster.id || "edit-cluster-form"}
-          action={:edit}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={PostgresFormComponent}
+        cluster={@cluster}
+        id={@cluster.id || "edit-cluster-form"}
+        action={:edit}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

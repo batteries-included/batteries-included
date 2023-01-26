@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.RedisNew do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias CommonCore.Redis.FailoverCluster
 
@@ -49,20 +47,15 @@ defmodule ControlServerWeb.Live.RedisNew do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>New Cluster</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={FormComponent}
-          failover_cluster={@failover_cluster}
-          id={@failover_cluster.id || "new-failover-cluster-form"}
-          action={:new}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={FormComponent}
+        failover_cluster={@failover_cluster}
+        id={@failover_cluster.id || "new-failover-cluster-form"}
+        action={:new}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

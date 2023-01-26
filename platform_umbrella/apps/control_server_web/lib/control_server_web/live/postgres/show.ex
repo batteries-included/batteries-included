@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.PostgresShow do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   import CommonUI.Stats
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
   import ControlServerWeb.PgDatabaseTable
@@ -137,10 +137,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:data} active={:postgres_operator}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
+    <.left_menu_page group={:data} active={:postgres_operator}>
       <.stats>
         <.stat>
           <.stat_title>Name</.stat_title>
@@ -186,7 +183,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           Delete Cluster
         </.button>
       </.body_section>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

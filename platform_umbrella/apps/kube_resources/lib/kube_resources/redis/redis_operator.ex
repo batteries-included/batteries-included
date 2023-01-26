@@ -187,7 +187,6 @@ defmodule KubeResources.RedisOperator do
         "selector",
         %{"battery/app" => @app_name, "battery/component" => "redis-operator"}
       )
-      |> Map.put("type", "ClusterIP")
 
     B.build_resource(:service)
     |> B.name("redis-operator")

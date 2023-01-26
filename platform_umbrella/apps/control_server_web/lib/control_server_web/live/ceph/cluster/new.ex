@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.CephClusterNew do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias CommonCore.Rook.CephCluster
 
@@ -54,20 +52,15 @@ defmodule ControlServerWeb.Live.CephClusterNew do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>New Cluster</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={CephClusterFormComponent}
-          ceph_cluster={@ceph_cluster}
-          id={@ceph_cluster.id || "new-cluster-form"}
-          action={:new}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={CephClusterFormComponent}
+        ceph_cluster={@ceph_cluster}
+        id={@ceph_cluster.id || "new-cluster-form"}
+        action={:new}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

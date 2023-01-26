@@ -1000,7 +1000,6 @@ defmodule KubeResources.CertManager do
         "selector",
         %{"battery/app" => @app_name, "battery/component" => component}
       )
-      |> Map.put("type", "ClusterIP")
 
     B.build_resource(:service)
     |> B.name("cert-manager")

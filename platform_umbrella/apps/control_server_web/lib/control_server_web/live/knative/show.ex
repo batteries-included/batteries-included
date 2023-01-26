@@ -5,9 +5,9 @@ defmodule ControlServerWeb.Live.KnativeShow do
   This depends on the Knative operator being installed and
   the owned resources being present in kubernetes.
   """
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.KnativeDisplay
 
   alias EventCenter.KubeState, as: KubeEventCenter
@@ -82,10 +82,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:devtools} active={:knative_serving}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
+    <.left_menu_page group={:devtools} active={:knative_serving}>
       <.service_display service={@k8_service} />
       <.revisions_display revisions={@k8_revisions} />
       <.h2>Actions</.h2>
@@ -100,7 +97,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
           Delete Service
         </.button>
       </.body_section>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

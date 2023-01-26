@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Integration.Knative do
 
   @button_text "New Knative Service"
   @base_service_name "knative-integration-test"
-  @image "gcr.io/kubernetes-e2e-test-images/echoserver:2.2"
+  @image "registry.k8s.io/kubernetes-e2e-test-images/echoserver:2.2"
 
   @root_url "/services/devtools/knative_services"
 

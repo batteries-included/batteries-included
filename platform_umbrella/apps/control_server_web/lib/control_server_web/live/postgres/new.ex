@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.PostgresNew do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias CommonCore.Postgres.Cluster
 
@@ -47,20 +45,15 @@ defmodule ControlServerWeb.Live.PostgresNew do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>New Cluster</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={PostgresFormComponent}
-          cluster={@cluster}
-          id={@cluster.id || "new-cluster-form"}
-          action={:new}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={PostgresFormComponent}
+        cluster={@cluster}
+        id={@cluster.id || "new-cluster-form"}
+        action={:new}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

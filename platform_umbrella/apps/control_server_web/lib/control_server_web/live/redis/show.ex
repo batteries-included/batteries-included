@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.RedisShow do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
 
@@ -66,11 +66,7 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:data} active={:redis}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
-
+    <.left_menu_page group={:data} active={:redis}>
       <.section_title>Pods</.section_title>
       <.pods_table pods={@k8_pods} />
 
@@ -89,7 +85,7 @@ defmodule ControlServerWeb.Live.RedisShow do
           Delete Cluster
         </.button>
       </.body_section>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

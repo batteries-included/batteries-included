@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.TrivyReportsIndex do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.VulnerabilityReportTable
   import ControlServerWeb.ConfigAuditReportTable
   import ControlServerWeb.RBACReportTable
@@ -88,10 +88,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:net_sec} active={:trivy_reports}>
-      <:title>
-        <.title><%= title_text(@live_action) %></.title>
-      </:title>
+    <.left_menu_page group={:net_sec} active={:trivy_reports}>
       <.tab_bar tabs={tabs(@live_action)} />
       <%= case @live_action do %>
         <% :aqua_config_audit_report -> %>
@@ -105,7 +102,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
         <% :aqua_vulnerability_report -> %>
           <.vulnerability_reports_table reports={@objects} />
       <% end %>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

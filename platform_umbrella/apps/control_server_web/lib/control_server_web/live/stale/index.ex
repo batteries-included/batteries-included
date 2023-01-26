@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.StaleIndex do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import K8s.Resource.FieldAccessors
 
   alias KubeServices.Stale
@@ -11,10 +11,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={:stale}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
+    <.left_menu_page group={:magic} active={:stale}>
       <.table id="stale-table" rows={@stale}>
         <:col :let={resource} label="Kind">
           <%= Naming.humanize(ApiVersionKind.resource_type!(resource)) %>
@@ -26,7 +23,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
           <%= namespace(resource) %>
         </:col>
       </.table>
-    </.layout>
+    </.left_menu_page>
     """
   end
 

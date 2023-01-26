@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.CephFilesystemEdit do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias ControlServer.Rook
   alias ControlServerWeb.Live.CephFilesystemFormComponent
@@ -26,20 +24,15 @@ defmodule ControlServerWeb.Live.CephFilesystemEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout group={:devtools}>
-      <:title>
-        <.title>Edit Cluster</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={CephFilesystemFormComponent}
-          ceph_filesystem={@ceph_filesystem}
-          id={@ceph_filesystem.id || "edit-ceph_filesystem-form"}
-          action={:edit}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={CephFilesystemFormComponent}
+        ceph_filesystem={@ceph_filesystem}
+        id={@ceph_filesystem.id || "edit-ceph_filesystem-form"}
+        action={:edit}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

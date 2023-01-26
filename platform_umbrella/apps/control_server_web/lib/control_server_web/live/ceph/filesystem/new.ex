@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.CephFilesystemNew do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias CommonCore.Rook.CephFilesystem
 
@@ -52,20 +50,15 @@ defmodule ControlServerWeb.Live.CephFilesystemNew do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>New Cluster</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={CephFilesystemFormComponent}
-          ceph_filesystem={@ceph_filesystem}
-          id={@ceph_filesystem.id || "new-filesystem-form"}
-          action={:new}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={CephFilesystemFormComponent}
+        ceph_filesystem={@ceph_filesystem}
+        id={@ceph_filesystem.id || "new-filesystem-form"}
+        action={:new}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

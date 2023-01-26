@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.SystemProjectIndex do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
 
   alias ControlServer.Projects
   alias ControlServer.Projects.SystemProject
@@ -49,10 +49,7 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:projects} active={:projects}>
-      <:title>
-        <.title>Projects</.title>
-      </:title>
+    <.left_menu_page group={:projects} active={:projects}>
       <.table
         id="system_projects"
         rows={@system_projects}
@@ -68,7 +65,7 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
           <.link navigate={~p"/system_projects/#{system_project}/edit"} variant="styled">Edit</.link>
         </:action>
       </.table>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

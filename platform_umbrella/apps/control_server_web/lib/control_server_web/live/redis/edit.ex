@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.RedisEdit do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias ControlServer.Redis
   alias ControlServerWeb.Live.Redis.FormComponent
@@ -26,20 +24,15 @@ defmodule ControlServerWeb.Live.RedisEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>Edit Redis Cluster</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={FormComponent}
-          failover_cluster={@failover_cluster}
-          id={@failover_cluster.id || "edit-failover-cluster-form"}
-          action={:edit}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={FormComponent}
+        failover_cluster={@failover_cluster}
+        id={@failover_cluster.id || "edit-failover-cluster-form"}
+        action={:edit}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end

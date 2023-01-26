@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.GroupBatteries do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
 
   import CommonUI.Modal
 
@@ -272,10 +272,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={@group} active={:batteries}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
+    <.left_menu_page group={@group} active={:batteries}>
       <.install_modal
         :if={@live_action == :install}
         current_step={@install_step}
@@ -297,7 +294,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
           <.start_button :if={!is_active(@system_batteries, battery.type)} battery={battery} />
         </:action>
       </.table>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

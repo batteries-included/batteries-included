@@ -2,9 +2,9 @@ defmodule ControlServerWeb.Live.ResourceList do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.DeploymentsTable
   import ControlServerWeb.StatefulSetsTable
   import ControlServerWeb.NodesTable
@@ -22,7 +22,18 @@ defmodule ControlServerWeb.Live.ResourceList do
     live_action = socket.assigns.live_action
     subscribe(live_action)
 
-    {:ok, assign(socket, :objects, objects(live_action))}
+    {:ok,
+     socket
+     |> assign_objects(objects(live_action))
+     |> assign_page_title(title_text(live_action))}
+  end
+
+  def assign_page_title(socket, page_title) do
+    assign(socket, page_title: page_title)
+  end
+
+  def assign_objects(socket, objects) do
+    assign(socket, objects: objects)
   end
 
   defp subscribe(resource_type) do
@@ -31,12 +42,12 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
-    {:noreply, assign(socket, :objects, objects(socket.assigns.live_action))}
+    {:noreply, assign_objects(socket, objects(socket.assigns.live_action))}
   end
 
   @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
-    {:noreply, assign(socket, :objects, objects(socket.assigns.live_action))}
+    {:noreply, assign_objects(socket, objects(socket.assigns.live_action))}
   end
 
   defp objects(type) do
@@ -76,10 +87,7 @@ defmodule ControlServerWeb.Live.ResourceList do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={:kube_resources}>
-      <:title>
-        <.title><%= title_text(@live_action) %></.title>
-      </:title>
+    <.left_menu_page group={:magic} active={:kube_resources}>
       <.tab_bar tabs={tabs(@live_action)} />
       <%= case @live_action do %>
         <% :deployment -> %>
@@ -93,7 +101,7 @@ defmodule ControlServerWeb.Live.ResourceList do
         <% :service -> %>
           <.services_table services={@objects} />
       <% end %>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

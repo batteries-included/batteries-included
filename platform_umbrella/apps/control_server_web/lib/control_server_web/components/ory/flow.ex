@@ -19,7 +19,11 @@ defmodule ControlServerWeb.Ory.Flow do
 
   def flow_form(assigns) do
     ~H"""
-    <form action={Map.get(@ui, "action")} method={Map.get(@ui, "method")}>
+    <form
+      action={Map.get(@ui, "action")}
+      method={Map.get(@ui, "method")}
+      class="flex flex-col space-y-6"
+    >
       <.flow_node
         :for={node <- Map.get(@ui, "nodes", [])}
         attributes={Map.get(node, "attributes", %{})}
@@ -112,7 +116,12 @@ defmodule ControlServerWeb.Ory.Flow do
         name={Map.get(@attributes, "name")}
         id={Map.get(@attributes, "name")}
         value={Map.get(@attributes, "value")}
-        class={[border("input", @messages), "input input-md inptut-bordered"]}
+        class={
+          build_class([
+            "input input-md input-bordered",
+            border("input", @messages)
+          ])
+        }
       />
       <.error :for={msg <- @messages} message={Map.get(msg, "text")} />
     </div>
@@ -125,8 +134,8 @@ defmodule ControlServerWeb.Ory.Flow do
     """
   end
 
-  defp border(type, [] = _errors), do: "#{type}-bordered"
+  defp border(_type, [] = _errors), do: ""
 
   defp border(type, [_ | _] = _errors),
-    do: "#{type}-bordered #{type}-error"
+    do: "#{type}-error"
 end

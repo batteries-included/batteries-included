@@ -1,9 +1,9 @@
 defmodule ControlServerWeb.Live.ResourceInfo do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   import CommonUI.Stats
   import CommonUI.RoundedLabel
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.PodsTable
@@ -351,10 +351,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={:kube_resources}>
-      <:title>
-        <.title>Kube Status</.title>
-      </:title>
+    <.left_menu_page group={:magic} active={:kube_resources}>
       <.banner_section name={@name} namespace={@namespace} />
 
       <%= case @resource_type do %>
@@ -369,7 +366,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <% _ -> %>
           <%= inspect(@resource) %>
       <% end %>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

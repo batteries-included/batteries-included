@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.RawResource do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.MenuLayout
   import ControlServerWeb.ObjectDisplay
 
   alias EventCenter.KubeState, as: KubeEventCenter
@@ -59,12 +58,7 @@ defmodule ControlServerWeb.Live.RawResource do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.menu_layout group={:magic} container_type={:iframe}>
-      <:title>
-        <.title>Raw Resource</.title>
-      </:title>
-      <.object_display object={@resource} path={@path} base_url={} />
-    </.menu_layout>
+    <.object_display object={@resource} path={@path} base_url={} />
     """
   end
 end

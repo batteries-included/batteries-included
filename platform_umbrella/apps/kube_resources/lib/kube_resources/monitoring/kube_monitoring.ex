@@ -178,7 +178,6 @@ defmodule KubeResources.KubeMonitoring do
   resource(:service_victoria_metrics_k8s_stack_coredns) do
     spec =
       %{}
-      |> Map.put("clusterIP", "None")
       |> Map.put("ports", [
         %{"name" => "http-metrics", "port" => 9153, "protocol" => "TCP", "targetPort" => 9153}
       ])

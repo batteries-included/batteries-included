@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.DeletedResourcesIndex do
-  use ControlServerWeb, :live_view
-  import ControlServerWeb.LeftMenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
+  import ControlServerWeb.LeftMenuPage
 
   alias ControlServer.Stale.DeleteArchivist
   alias KubeServices.ResourceDeleter
@@ -8,10 +8,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={:deleted}>
-      <:title>
-        <.title><%= @page_title %></.title>
-      </:title>
+    <.left_menu_page group={:magic} active={:deleted}>
       <.table id="deleted-resources-table" rows={@deleted_resources}>
         <:col :let={resource} label="Kind">
           <%= resource.kind %>
@@ -37,7 +34,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
           </.link>
         </:action>
       </.table>
-    </.layout>
+    </.left_menu_page>
     """
   end
 

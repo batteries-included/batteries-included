@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.SystemBatteryIndex do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
   alias ControlServer.Batteries
 
   @impl Phoenix.LiveView
@@ -35,10 +35,7 @@ defmodule ControlServerWeb.Live.SystemBatteryIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={:installed_batteries}>
-      <:title>
-        <.title>Installed Batteries</.title>
-      </:title>
+    <.left_menu_page group={:magic} active={:installed_batteries}>
       <.table
         id="system_batteries"
         rows={@system_batteries}
@@ -61,7 +58,7 @@ defmodule ControlServerWeb.Live.SystemBatteryIndex do
           </.link>
         </:action>
       </.table>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

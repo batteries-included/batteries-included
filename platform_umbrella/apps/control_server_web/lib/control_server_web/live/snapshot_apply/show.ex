@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.KubeSnapshotShow do
-  use ControlServerWeb, :live_view
+  use ControlServerWeb, {:live_view, layout: :menu}
 
-  import ControlServerWeb.LeftMenuLayout
+  import ControlServerWeb.LeftMenuPage
 
   alias ControlServer.SnapshotApply
   alias Timex
@@ -68,10 +68,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.layout group={:magic} active={:kube_snapshots}>
-      <:title>
-        <.title>Kube Snapshot Deploy</.title>
-      </:title>
+    <.left_menu_page group={:magic} active={:kube_snapshots}>
       <.body_section>
         <dl class="">
           <.definition_row wrapper_class="pb-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -117,7 +114,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
         <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
         <:col :let={rp} label="Hash"><%= rp.hash %></:col>
       </.table>
-    </.layout>
+    </.left_menu_page>
     """
   end
 end

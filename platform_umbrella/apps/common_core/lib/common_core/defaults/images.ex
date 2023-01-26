@@ -11,11 +11,11 @@ defmodule CommonCore.Defaults.Images do
 
   def postgres_bouncer_image, do: "registry.opensource.zalan.do/acid/pgbouncer:master-25"
 
-  def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.2"
+  def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.4"
 
   def ceph_image, do: "quay.io/ceph/ceph:v17.2.3"
 
-  def gitea_image, do: "gitea/gitea:1.17.4"
+  def gitea_image, do: "gitea/gitea:1.18.3"
 
   def harbor_core_image, do: "goharbor/harbor-core:v2.6.3"
   def harbor_portal_image, do: "goharbor/harbor-portal:v2.6.3"
@@ -25,38 +25,37 @@ defmodule CommonCore.Defaults.Images do
   def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.6.3"
   def harbor_trivy_adapter_image, do: "goharbor/trivy-adapter-photon:v2.6.3"
 
-  def grafana_image, do: "grafana/grafana:9.2.4"
+  def grafana_image, do: "grafana/grafana:9.3.4"
   def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.21.0"
 
-  def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.4.0"
+  def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.5.0"
   def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.6.0"
   def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.24.0"
 
-  def promtail_image, do: "grafana/promtail:2.7.0"
-  def loki_image, do: "grafana/loki:2.7.0"
-  def grafana_agent_operator_image, do: "grafana/agent-operator:v0.29.0"
+  def promtail_image, do: "grafana/promtail:2.7.1"
+  def loki_image, do: "grafana/loki:2.7.1"
 
   def istio_pilot_image, do: "istio/pilot:1.16.1"
 
   def knative_operator_webhook_image,
-    do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.1"
+    do: "registry.k8s.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.2"
 
   def knative_operator_image,
-    do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.8.1"
+    do: "registry.k8s.io/knative-releases/knative.dev/operator/cmd/operator:v1.8.2"
 
-  def kiali_operator_image, do: "quay.io/kiali/kiali-operator:v1.59.1"
+  def kiali_operator_image, do: "quay.io/kiali/kiali-operator:v1.62.0"
 
   def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.7"
   def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.7"
 
-  def vm_cluster_tag, do: "v1.85.3-cluster"
-  def vm_tag, do: "v1.85.3"
+  def vm_cluster_tag, do: "v1.86.2-cluster"
+  def vm_tag, do: "v1.86.2"
 
-  def vmoperator_image, do: "victoriametrics/operator:v0.29.2"
+  def vmoperator_image, do: "victoriametrics/operator:v0.30.3"
 
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
 
   def ory_kratos_image, do: "oryd/kratos:v0.11.1"
-  def ory_hydra_image, do: "oryd/hydra:v2.0.1"
-  def ory_hydra_maester_image, do: "oryd/hydra-maester:v0.0.25"
+  def ory_hydra_image, do: "oryd/hydra:v2.0.3"
+  def ory_hydra_maester_image, do: "oryd/hydra-maester:v0.0.26"
 end

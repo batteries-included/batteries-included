@@ -387,7 +387,6 @@ defmodule KubeResources.OryHydra do
         %{"name" => "http", "port" => 4444, "protocol" => "TCP", "targetPort" => "http-public"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "hydra"})
-      |> Map.put("type", "ClusterIP")
 
     B.build_resource(:service)
     |> B.name("ory-hydra-public")

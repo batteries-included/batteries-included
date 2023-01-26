@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.KnativeEdit do
-  use ControlServerWeb, :live_view
-
-  import ControlServerWeb.MenuLayout
+  use ControlServerWeb, {:live_view, layout: :menu}
 
   alias ControlServer.Knative
   alias ControlServerWeb.Live.Knative.FormComponent
@@ -26,20 +24,15 @@ defmodule ControlServerWeb.Live.KnativeEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.menu_layout>
-      <:title>
-        <.title>Edit Service</.title>
-      </:title>
-      <div>
-        <.live_component
-          module={FormComponent}
-          service={@service}
-          id={@service.id || "edit-cluster-form"}
-          action={:edit}
-          save_target={self()}
-        />
-      </div>
-    </.menu_layout>
+    <div>
+      <.live_component
+        module={FormComponent}
+        service={@service}
+        id={@service.id || "edit-cluster-form"}
+        action={:edit}
+        save_target={self()}
+      />
+    </div>
     """
   end
 end
