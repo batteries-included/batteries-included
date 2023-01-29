@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.CephFilesystemNew do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Rook.CephFilesystem
 

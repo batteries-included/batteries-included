@@ -14,7 +14,7 @@ defmodule CommonUI.Button do
   attr(:value, :string, default: nil)
   attr(:name, :string, default: nil)
   attr(:class, :any, default: nil)
-  attr(:variant, :string, default: "default", values: ["default", "filled"])
+  attr(:variant, :string, default: "default", values: ["default", "filled", "unstyled"])
   attr(:rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag")
 
   slot(:inner_block, required: true)
@@ -47,6 +47,14 @@ defmodule CommonUI.Button do
       ]}>
         <%= render_slot(@inner_block) %>
       </span>
+    </button>
+    """
+  end
+
+  def button(%{variant: "unstyled"} = assigns) do
+    ~H"""
+    <button class={@class} type={@type} {@rest}>
+      <%= render_slot(@inner_block) %>
     </button>
     """
   end

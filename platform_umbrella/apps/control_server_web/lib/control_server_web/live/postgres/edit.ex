@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.PostgresEdit do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent

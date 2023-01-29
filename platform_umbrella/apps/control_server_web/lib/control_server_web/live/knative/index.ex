@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.KnativeServicesIndex do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.KnativeServicesTable
 
   alias ControlServer.Knative
@@ -27,21 +26,19 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:devtools} active={:knative_serving}>
-      <.section_title>
-        Knative Services
-      </.section_title>
-      <.knative_services_table knative_services={@services} />
+    <.h2 class="text-right">
+      Knative Services
+    </.h2>
+    <.knative_services_table knative_services={@services} />
 
-      <.h2>Actions</.h2>
-      <.body_section>
-        <.link navigate={~p"/knative/services/new"}>
-          <.button>
-            New Knative Service
-          </.button>
-        </.link>
-      </.body_section>
-    </.left_menu_page>
+    <.h2>Actions</.h2>
+    <.card>
+      <.link navigate={~p"/knative/services/new"}>
+        <.button>
+          New Knative Service
+        </.button>
+      </.link>
+    </.card>
     """
   end
 end

@@ -1,4 +1,21 @@
 defmodule CommonCore.SystemState.StateSummary do
+  @moduledoc """
+    The StateSummary module provides a struct to store and manage system state information.
+
+    ## Example Usage
+
+    ```elixir
+    # Create a new state summary struct
+    state_summary = %CommonCore.SystemState.StateSummary{}
+
+    # Access fields
+    batteries = state_summary.batteries
+    postgres_clusters = state_summary.postgres_clusters
+
+    # Update fields
+    state_summary = %{state_summary | batteries: [%CommonCore.Batteries.SystemBattery{}]}
+
+  """
   @derive Jason.Encoder
   defstruct batteries: [],
             postgres_clusters: [],

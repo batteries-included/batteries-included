@@ -1,6 +1,5 @@
 defmodule ControlServerWeb.Live.DeletedResourcesIndex do
-  use ControlServerWeb, {:live_view, layout: :menu}
-  import ControlServerWeb.LeftMenuPage
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Stale.DeleteArchivist
   alias KubeServices.ResourceDeleter
@@ -8,33 +7,31 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic} active={:deleted}>
-      <.table id="deleted-resources-table" rows={@deleted_resources}>
-        <:col :let={resource} label="Kind">
-          <%= resource.kind %>
-        </:col>
-        <:col :let={resource} label="Name">
-          <%= resource.name %>
-        </:col>
-        <:col :let={resource} label="Namespace">
-          <%= resource.namespace %>
-        </:col>
-        <:col :let={resource} label="When">
-          <%= Timex.from_now(resource.inserted_at) %>
-        </:col>
-        <:action :let={resource}>
-          <.link
-            :if={!resource.been_undeleted}
-            phx-click="undelete"
-            phx-value-id={resource.id}
-            data-confirm="Are you sure?"
-            variant="styled"
-          >
-            Un-Delete
-          </.link>
-        </:action>
-      </.table>
-    </.left_menu_page>
+    <.table id="deleted-resources-table" rows={@deleted_resources}>
+      <:col :let={resource} label="Kind">
+        <%= resource.kind %>
+      </:col>
+      <:col :let={resource} label="Name">
+        <%= resource.name %>
+      </:col>
+      <:col :let={resource} label="Namespace">
+        <%= resource.namespace %>
+      </:col>
+      <:col :let={resource} label="When">
+        <%= Timex.from_now(resource.inserted_at) %>
+      </:col>
+      <:action :let={resource}>
+        <.link
+          :if={!resource.been_undeleted}
+          phx-click="undelete"
+          phx-value-id={resource.id}
+          data-confirm="Are you sure?"
+          variant="styled"
+        >
+          Un-Delete
+        </.link>
+      </:action>
+    </.table>
     """
   end
 

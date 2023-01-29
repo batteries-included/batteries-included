@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.PostgresShow do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Stats
-  import ControlServerWeb.LeftMenuPage
+
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
   import ControlServerWeb.PgDatabaseTable
@@ -137,53 +137,51 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:data} active={:postgres_operator}>
-      <.stats>
-        <.stat>
-          <.stat_title>Name</.stat_title>
-          <.stat_value><%= @cluster.name %></.stat_value>
-        </.stat>
-        <.stat>
-          <.stat_title>Instances</.stat_title>
-          <.stat_description>The number of replics to run</.stat_description>
-          <.stat_value><%= @cluster.num_instances %></.stat_value>
-        </.stat>
-        <.stat>
-          <.stat_title>PG Version</.stat_title>
-          <.stat_description>Major Version of Postgres</.stat_description>
-          <.stat_value><%= @cluster.postgres_version %></.stat_value>
-        </.stat>
-        <.stat>
-          <.stat_title>Cluster Status</.stat_title>
-          <.stat_value><%= k8_cluster_status(@k8_cluster) %></.stat_value>
-        </.stat>
-      </.stats>
+    <.stats>
+      <.stat>
+        <.stat_title>Name</.stat_title>
+        <.stat_value><%= @cluster.name %></.stat_value>
+      </.stat>
+      <.stat>
+        <.stat_title>Instances</.stat_title>
+        <.stat_description>The number of replics to run</.stat_description>
+        <.stat_value><%= @cluster.num_instances %></.stat_value>
+      </.stat>
+      <.stat>
+        <.stat_title>PG Version</.stat_title>
+        <.stat_description>Major Version of Postgres</.stat_description>
+        <.stat_value><%= @cluster.postgres_version %></.stat_value>
+      </.stat>
+      <.stat>
+        <.stat_title>Cluster Status</.stat_title>
+        <.stat_value><%= k8_cluster_status(@k8_cluster) %></.stat_value>
+      </.stat>
+    </.stats>
 
-      <.section_title>Users</.section_title>
-      <.pg_users_table users={@cluster.users || []} cluster={@cluster} />
+    <.h2 class="text-right">Users</.h2>
+    <.pg_users_table users={@cluster.users || []} cluster={@cluster} />
 
-      <.section_title>Databases</.section_title>
-      <.pg_databases_table databases={@cluster.databases || []} />
+    <.h2 class="text-right">Databases</.h2>
+    <.pg_databases_table databases={@cluster.databases || []} />
 
-      <.section_title>Pods</.section_title>
-      <.pods_table pods={@k8_pods} />
+    <.h2 class="text-right">Pods</.h2>
+    <.pods_table pods={@k8_pods} />
 
-      <.section_title>Services</.section_title>
-      <.services_table services={@k8_services} />
+    <.h2 class="text-right">Services</.h2>
+    <.services_table services={@k8_services} />
 
-      <.h2 variant="fancy">Actions</.h2>
-      <.body_section>
-        <.link navigate={edit_url(@cluster)}>
-          <.button>
-            Edit Cluster
-          </.button>
-        </.link>
-
-        <.button phx-click="delete" data-confirm="Are you sure?">
-          Delete Cluster
+    <.h2 variant="fancy">Actions</.h2>
+    <.card>
+      <.link navigate={edit_url(@cluster)}>
+        <.button>
+          Edit Cluster
         </.button>
-      </.body_section>
-    </.left_menu_page>
+      </.link>
+
+      <.button phx-click="delete" data-confirm="Are you sure?">
+        Delete Cluster
+      </.button>
+    </.card>
     """
   end
 end

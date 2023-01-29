@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.SystemProjectNew do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Projects
   alias ControlServerWeb.Live.Project.FormComponent

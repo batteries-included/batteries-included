@@ -1,9 +1,9 @@
 defmodule ControlServerWeb.Live.ResourceInfo do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Stats
   import CommonUI.RoundedLabel
-  import ControlServerWeb.LeftMenuPage
+
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.PodsTable
@@ -111,7 +111,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   defp label_section(assigns) do
     ~H"""
-    <.section_title>Labels</.section_title>
+    <.h2 class="text-right">Labels</.h2>
     <div class="my-5">
       <.rounded_label :for={{key, value} <- Resource.labels(@resource)} class={label_class(key)}>
         <%= "#{key}=#{value}" %>
@@ -185,7 +185,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     assigns = assign(assigns, :container_statuses, all_containers)
 
     ~H"""
-    <.body_section>
+    <.card>
       <%= for {cs, idx} <- Enum.with_index(@container_statuses) do %>
         <.h3 class={[idx != 0 && "mt-10"]}><%= Map.get(cs, "name", "") %></.h3>
         <div class="grid grid-cols-4 gap-1">
@@ -201,7 +201,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
           <div><%= Map.get(cs, "restartCount", 0) %></div>
         </div>
       <% end %>
-    </.body_section>
+    </.card>
     """
   end
 
@@ -221,7 +221,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
       |> assign(:selector, Map.get(assigns.spec, "selector", %{}))
 
     ~H"""
-    <.body_section>
+    <.card>
       <.h3>Selector</.h3>
       <div class="grid grid-cols-2 gap-1">
         <%= for {key, value} <- @selector do %>
@@ -237,13 +237,13 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <:col :let={port} label="Target Port"><%= Map.get(port, "targetPort", "") %></:col>
         <:col :let={port} label="Protocol"><%= Map.get(port, "protocol", "") %></:col>
       </.table>
-    </.body_section>
+    </.card>
     """
   end
 
   defp events_section(assigns) do
     ~H"""
-    <.section_title>Events</.section_title>
+    <.h2 class="text-right">Events</.h2>
     <.table id="events-table" rows={@events}>
       <:col :let={event} label="Type"><%= get_in(event, ~w(type)) %></:col>
       <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
@@ -284,7 +284,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
     ~H"""
     <.label_section resource={@resource} />
-    <.section_title>Service Info</.section_title>
+    <.h2 class="text-right">Service Info</.h2>
     <.service_spec spec={@spec} />
     """
   end
@@ -296,9 +296,9 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     ~H"""
     <.pod_facts_section resource={@resource} />
     <.label_section resource={@resource} />
-    <.section_title>Container Status</.section_title>
+    <.h2 class="text-right">Container Status</.h2>
     <.pod_containers_section status={@status} />
-    <.section_title>Messages</.section_title>
+    <.h2 class="text-right">Messages</.h2>
     <.conditions status={@status} />
     <.events_section events={@events} />
     """
@@ -311,10 +311,10 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     ~H"""
     <.deployment_status status={@status} />
     <.label_section resource={@resource} />
-    <.section_title>Messages</.section_title>
+    <.h2 class="text-right">Messages</.h2>
     <.conditions status={@status} />
     <.events_section events={@events} />
-    <.section_title>Pods</.section_title>
+    <.h2 class="text-right">Pods</.h2>
     <.pods_table pods={@pods} />
     """
   end
@@ -327,7 +327,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     <.stateful_set_status status={@status} />
     <.label_section resource={@resource} />
     <.events_section events={@events} />
-    <.section_title>Pods</.section_title>
+    <.h2 class="text-right">Pods</.h2>
     <.pods_table pods={@pods} />
     """
   end
@@ -351,22 +351,20 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic} active={:kube_resources}>
-      <.banner_section name={@name} namespace={@namespace} />
+    <.banner_section name={@name} namespace={@namespace} />
 
-      <%= case @resource_type do %>
-        <% :pod -> %>
-          <.pod_info_section resource={@resource} events={@events} />
-        <% :service -> %>
-          <.service_info_section resource={@resource} events={@events} />
-        <% :deployment -> %>
-          <.deployment_info_section resource={@resource} pods={@pods} events={@events} />
-        <% :stateful_set -> %>
-          <.stateful_set_info_section resource={@resource} pods={@pods} events={@events} />
-        <% _ -> %>
-          <%= inspect(@resource) %>
-      <% end %>
-    </.left_menu_page>
+    <%= case @resource_type do %>
+      <% :pod -> %>
+        <.pod_info_section resource={@resource} events={@events} />
+      <% :service -> %>
+        <.service_info_section resource={@resource} events={@events} />
+      <% :deployment -> %>
+        <.deployment_info_section resource={@resource} pods={@pods} events={@events} />
+      <% :stateful_set -> %>
+        <.stateful_set_info_section resource={@resource} pods={@pods} events={@events} />
+      <% _ -> %>
+        <%= inspect(@resource) %>
+    <% end %>
     """
   end
 end

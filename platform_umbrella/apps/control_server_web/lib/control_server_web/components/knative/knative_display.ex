@@ -1,14 +1,13 @@
 defmodule ControlServerWeb.KnativeDisplay do
   use ControlServerWeb, :html
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.ConditionsDisplay
 
   import K8s.Resource.FieldAccessors
 
   def service_display(assigns) do
     ~H"""
-    <.body_section>
+    <.card>
       <div class="px-4 py-5 sm:px-6">
         <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
           <.definition label="Service Name" value={name(@service)} />
@@ -21,10 +20,10 @@ defmodule ControlServerWeb.KnativeDisplay do
           </.definition>
         </dl>
       </div>
-    </.body_section>
-    <.section_title>Traffic Split</.section_title>
+    </.card>
+    <.h2 class="text-right">Traffic Split</.h2>
     <.traffic_table traffic={traffic(@service)} />
-    <.section_title>Status Gates</.section_title>
+    <.h2 class="text-right">Status Gates</.h2>
     <.status_table service={@service} />
     """
   end
@@ -93,7 +92,7 @@ defmodule ControlServerWeb.KnativeDisplay do
 
   def revisions_display(assigns) do
     ~H"""
-    <.section_title>Revisions</.section_title>
+    <.h2 class="text-right">Revisions</.h2>
     <.revisions_table revisions={@revisions} />
     """
   end

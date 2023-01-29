@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.RedisNew do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Redis.FailoverCluster
 

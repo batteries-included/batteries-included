@@ -15,7 +15,7 @@ defmodule ControlServerWeb.SystemProjectLiveTest do
     test "lists all system_projects", %{conn: conn, system_project: system_project} do
       {:ok, _index_live, html} = live(conn, ~p"/system_projects")
 
-      assert html =~ "Projects"
+      assert html =~ "projects"
       assert html =~ system_project.description
     end
   end

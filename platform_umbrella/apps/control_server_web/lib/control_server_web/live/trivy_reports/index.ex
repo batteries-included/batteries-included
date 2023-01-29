@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.TrivyReportsIndex do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.VulnerabilityReportTable
   import ControlServerWeb.ConfigAuditReportTable
   import ControlServerWeb.RBACReportTable
@@ -88,21 +87,19 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:net_sec} active={:trivy_reports}>
-      <.tab_bar tabs={tabs(@live_action)} />
-      <%= case @live_action do %>
-        <% :aqua_config_audit_report -> %>
-          <.config_audit_reports_table reports={@objects} />
-        <% :aqua_cluster_rbac_assessment_report -> %>
-          <.cluster_rbac_reports_table reports={@objects} />
-        <% :aqua_rbac_assessment_report -> %>
-          <.rbac_reports_table reports={@objects} />
-        <% :aqua_infra_assessment_report -> %>
-          <.infra_assessment_reports_table reports={@objects} />
-        <% :aqua_vulnerability_report -> %>
-          <.vulnerability_reports_table reports={@objects} />
-      <% end %>
-    </.left_menu_page>
+    <.tab_bar tabs={tabs(@live_action)} />
+    <%= case @live_action do %>
+      <% :aqua_config_audit_report -> %>
+        <.config_audit_reports_table reports={@objects} />
+      <% :aqua_cluster_rbac_assessment_report -> %>
+        <.cluster_rbac_reports_table reports={@objects} />
+      <% :aqua_rbac_assessment_report -> %>
+        <.rbac_reports_table reports={@objects} />
+      <% :aqua_infra_assessment_report -> %>
+        <.infra_assessment_reports_table reports={@objects} />
+      <% :aqua_vulnerability_report -> %>
+        <.vulnerability_reports_table reports={@objects} />
+    <% end %>
     """
   end
 end

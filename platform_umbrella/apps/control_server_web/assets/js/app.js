@@ -4,6 +4,7 @@ import 'phoenix_html';
 import { Socket } from 'phoenix';
 import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
+import Alpine from 'alpinejs';
 
 import IFrame from './iframe';
 import Kratos from './kratos';
@@ -11,7 +12,16 @@ import Kratos from './kratos';
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
+
 const liveSocket = new LiveSocket('/live', Socket, {
+  dom: {
+    // make LiveView work nicely with AlpineJS
+    onBeforeElUpdated(from, to) {
+      if (from._x_dataStack) {
+        window.Alpine.clone(from, to);
+      }
+    },
+  },
   hooks: { IFrame, Kratos },
   params: { _csrf_token: csrfToken },
 });
@@ -28,6 +38,8 @@ topbar.config({
   shadowBlur: 5,
   shadowColor: 'rgba(0, 0, 0, .3)',
 });
+
+Alpine.start();
 
 let topBarScheduled;
 window.addEventListener('phx:page-loading-start', () => {
@@ -48,3 +60,4 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+window.Alpine = Alpine;

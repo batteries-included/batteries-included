@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.SnapshotApplyIndex do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.KubeSnapshotsTable
 
   alias ControlServer.SnapshotApply
@@ -36,16 +35,14 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic} active={:kube_snapshots}>
-      <.kube_snapshots_table kube_snapshots={@snapshots.entries} />
+    <.kube_snapshots_table kube_snapshots={@snapshots.entries} />
 
-      <.h2 variant="fancy">Actions</.h2>
-      <.body_section>
-        <.button phx-click="start">
-          Start Deploy
-        </.button>
-      </.body_section>
-    </.left_menu_page>
+    <.h2 variant="fancy">Actions</.h2>
+    <.card>
+      <.button phx-click="start">
+        Start Deploy
+      </.button>
+    </.card>
     """
   end
 end

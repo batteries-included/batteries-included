@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.Timeline do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.TimelineDisplay
 
   alias ControlServer.Timeline
@@ -26,16 +25,14 @@ defmodule ControlServerWeb.Live.Timeline do
   @spec render(any) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic} active={:timeline}>
-      <.feed_timeline>
-        <.timeline_item
-          :for={{event, idx} <- Enum.with_index(@events)}
-          timestamp={event.inserted_at}
-          index={idx}
-          payload={event.payload}
-        />
-      </.feed_timeline>
-    </.left_menu_page>
+    <.feed_timeline>
+      <.timeline_item
+        :for={{event, idx} <- Enum.with_index(@events)}
+        timestamp={event.inserted_at}
+        index={idx}
+        payload={event.payload}
+      />
+    </.feed_timeline>
     """
   end
 end

@@ -2,9 +2,8 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.PostgresClusterTable
 
   alias ControlServer.Postgres
@@ -39,18 +38,16 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:data} active={:postgres_operator}>
-      <.postgres_clusters_table clusters={@clusters} />
+    <.postgres_clusters_table clusters={@clusters} />
 
-      <.h2 variant="fancy">Actions</.h2>
-      <.body_section>
-        <.link navigate={new_url()}>
-          <.button>
-            New Cluster
-          </.button>
-        </.link>
-      </.body_section>
-    </.left_menu_page>
+    <.h2 variant="fancy">Actions</.h2>
+    <.card>
+      <.link navigate={new_url()}>
+        <.button>
+          New Cluster
+        </.button>
+      </.link>
+    </.card>
     """
   end
 end

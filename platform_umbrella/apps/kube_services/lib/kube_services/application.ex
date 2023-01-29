@@ -29,6 +29,7 @@ defmodule KubeServices.Application do
       {Task.Supervisor, name: @task_supervisor},
       {Oban, Application.fetch_env!(:kube_services, Oban)},
       KubeServices.SystemState.SummaryHosts,
+      KubeServices.SystemState.SummaryBatteries,
       KubeServices.SnapshotApply.InitialLaunchTask,
       KubeServices.SnapshotApply.EventLauncher,
       KubeServices.ResourceDeleter,
@@ -38,6 +39,7 @@ defmodule KubeServices.Application do
 
   def children(_run),
     do: [
+      KubeServices.SystemState.SummaryBatteries,
       KubeServices.SystemState.SummaryHosts
     ]
 

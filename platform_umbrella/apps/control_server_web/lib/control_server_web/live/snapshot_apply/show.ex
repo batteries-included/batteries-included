@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.KubeSnapshotShow do
-  use ControlServerWeb, {:live_view, layout: :menu}
-
-  import ControlServerWeb.LeftMenuPage
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.SnapshotApply
   alias Timex
@@ -68,53 +66,51 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic} active={:kube_snapshots}>
-      <.body_section>
-        <dl class="">
-          <.definition_row wrapper_class="pb-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-            <:label>
-              ID
-            </:label>
-            <%= @snapshot.id %>
-          </.definition_row>
+    <.card>
+      <dl class="">
+        <.definition_row wrapper_class="pb-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+          <:label>
+            ID
+          </:label>
+          <%= @snapshot.id %>
+        </.definition_row>
 
-          <.definition_row>
-            <:label>
-              Started
-            </:label>
-            <%= Timex.format!(@snapshot.inserted_at, "{RFC822z}") %>
-          </.definition_row>
+        <.definition_row>
+          <:label>
+            Started
+          </:label>
+          <%= Timex.format!(@snapshot.inserted_at, "{RFC822z}") %>
+        </.definition_row>
 
-          <.definition_row>
-            <:label>
-              Last Update
-            </:label>
-            <%= Timex.format!(@snapshot.updated_at, "{RFC822z}") %>
-          </.definition_row>
+        <.definition_row>
+          <:label>
+            Last Update
+          </:label>
+          <%= Timex.format!(@snapshot.updated_at, "{RFC822z}") %>
+        </.definition_row>
 
-          <.definition_row>
-            <:label>
-              Elapsed
-            </:label>
-            <%= display_duration(@snapshot) %>
-          </.definition_row>
+        <.definition_row>
+          <:label>
+            Elapsed
+          </:label>
+          <%= display_duration(@snapshot) %>
+        </.definition_row>
 
-          <.definition_row>
-            <:label>
-              Status
-            </:label>
-            <.status_icon is_success={@snapshot.status} />
-          </.definition_row>
-        </dl>
-      </.body_section>
-      <.section_title>Path Results</.section_title>
-      <.table id="resource-paths" rows={@snapshot.resource_paths}>
-        <:col :let={rp} label="Path"><%= rp.path %></:col>
-        <:col :let={rp} label="Successful"><.status_icon is_success={rp.is_success} /></:col>
-        <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
-        <:col :let={rp} label="Hash"><%= rp.hash %></:col>
-      </.table>
-    </.left_menu_page>
+        <.definition_row>
+          <:label>
+            Status
+          </:label>
+          <.status_icon is_success={@snapshot.status} />
+        </.definition_row>
+      </dl>
+    </.card>
+    <.h2 class="text-right">Path Results</.h2>
+    <.table id="resource-paths" rows={@snapshot.resource_paths}>
+      <:col :let={rp} label="Path"><%= rp.path %></:col>
+      <:col :let={rp} label="Successful"><.status_icon is_success={rp.is_success} /></:col>
+      <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
+      <:col :let={rp} label="Hash"><%= rp.hash %></:col>
+    </.table>
     """
   end
 end

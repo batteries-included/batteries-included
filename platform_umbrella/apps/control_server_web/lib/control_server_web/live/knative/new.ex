@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.KnativeNew do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Knative.Service
 

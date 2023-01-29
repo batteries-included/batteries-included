@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.CephClusterEdit do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Rook
   alias ControlServerWeb.Live.CephClusterFormComponent

@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.SystemProjectShow do
-  use ControlServerWeb, {:live_view, layout: :menu}
-
-  import ControlServerWeb.LeftMenuPage
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Projects
 
@@ -23,7 +21,7 @@ defmodule ControlServerWeb.Live.SystemProjectShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:projects} active={:projects}></.left_menu_page>
+
     """
   end
 end

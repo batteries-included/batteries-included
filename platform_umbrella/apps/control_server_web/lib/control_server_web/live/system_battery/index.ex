@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.SystemBatteryIndex do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   alias ControlServer.Batteries
 
   @impl Phoenix.LiveView
@@ -35,30 +34,28 @@ defmodule ControlServerWeb.Live.SystemBatteryIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic} active={:installed_batteries}>
-      <.table
-        id="system_batteries"
-        rows={@system_batteries}
-        row_click={&JS.navigate("/system_batteries/#{&1.id}")}
-      >
-        <:col :let={system_battery} label="Id"><%= system_battery.id %></:col>
-        <:col :let={system_battery} label="Group"><%= system_battery.group %></:col>
-        <:col :let={system_battery} label="Type"><%= system_battery.type %></:col>
-        <:action :let={system_battery}>
-          <.link navigate={~p"/batteries/#{system_battery.id}"} variant="styled">
-            Show
-          </.link>
-        </:action>
-        <:action :let={system_battery}>
-          <.link
-            phx-click={JS.push("delete", value: %{id: system_battery.id})}
-            data-confirm="Are you sure?"
-          >
-            Delete
-          </.link>
-        </:action>
-      </.table>
-    </.left_menu_page>
+    <.table
+      id="system_batteries"
+      rows={@system_batteries}
+      row_click={&JS.navigate("/system_batteries/#{&1.id}")}
+    >
+      <:col :let={system_battery} label="Id"><%= system_battery.id %></:col>
+      <:col :let={system_battery} label="Group"><%= system_battery.group %></:col>
+      <:col :let={system_battery} label="Type"><%= system_battery.type %></:col>
+      <:action :let={system_battery}>
+        <.link navigate={~p"/batteries/#{system_battery.id}"} variant="styled">
+          Show
+        </.link>
+      </:action>
+      <:action :let={system_battery}>
+        <.link
+          phx-click={JS.push("delete", value: %{id: system_battery.id})}
+          data-confirm="Are you sure?"
+        >
+          Delete
+        </.link>
+      </:action>
+    </.table>
     """
   end
 end

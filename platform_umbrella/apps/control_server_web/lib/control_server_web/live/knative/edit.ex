@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.KnativeEdit do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Knative
   alias ControlServerWeb.Live.Knative.FormComponent

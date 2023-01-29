@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.CephClusterShow do
-  use ControlServerWeb, {:live_view, layout: :menu}
-
-  import ControlServerWeb.LeftMenuPage
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Rook
 
@@ -32,41 +30,39 @@ defmodule ControlServerWeb.Live.CephClusterShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:data} active={:rook}>
-      <.body_section>
-        <ul>
-          <li>
-            <strong>Name:</strong>
-            <%= @ceph_cluster.name %>
-          </li>
+    <.card>
+      <ul>
+        <li>
+          <strong>Name:</strong>
+          <%= @ceph_cluster.name %>
+        </li>
 
-          <li>
-            <strong>Num mon:</strong>
-            <%= @ceph_cluster.num_mon %>
-          </li>
+        <li>
+          <strong>Num mon:</strong>
+          <%= @ceph_cluster.num_mon %>
+        </li>
 
-          <li>
-            <strong>Num mgr:</strong>
-            <%= @ceph_cluster.num_mgr %>
-          </li>
+        <li>
+          <strong>Num mgr:</strong>
+          <%= @ceph_cluster.num_mgr %>
+        </li>
 
-          <li>
-            <strong>Data dir host path:</strong>
-            <%= @ceph_cluster.data_dir_host_path %>
-          </li>
-        </ul>
-      </.body_section>
+        <li>
+          <strong>Data dir host path:</strong>
+          <%= @ceph_cluster.data_dir_host_path %>
+        </li>
+      </ul>
+    </.card>
 
-      <.section_title>Nodes</.section_title>
-      <.body_section>
-        <.nodes_list nodes={@ceph_cluster.nodes} />
-      </.body_section>
+    <.h2 class="text-right">Nodes</.h2>
+    <.card>
+      <.nodes_list nodes={@ceph_cluster.nodes} />
+    </.card>
 
-      <span>
-        <%= live_patch("Edit", to: ~p"/ceph/clusters/#{@ceph_cluster}/show", class: "button") %>
-      </span>
-      | <span><%= live_redirect("Back", to: ~p"/ceph/clusters/#{@ceph_cluster}/show") %></span>
-    </.left_menu_page>
+    <span>
+      <%= live_patch("Edit", to: ~p"/ceph/clusters/#{@ceph_cluster}/show", class: "button") %>
+    </span>
+    | <span><%= live_redirect("Back", to: ~p"/ceph/clusters/#{@ceph_cluster}/show") %></span>
     """
   end
 end

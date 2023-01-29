@@ -38,10 +38,10 @@ defmodule CommonCore.Defaults.Images do
   def istio_pilot_image, do: "istio/pilot:1.16.1"
 
   def knative_operator_webhook_image,
-    do: "registry.k8s.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.2"
+    do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.2"
 
   def knative_operator_image,
-    do: "registry.k8s.io/knative-releases/knative.dev/operator/cmd/operator:v1.8.2"
+    do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.8.2"
 
   def kiali_operator_image, do: "quay.io/kiali/kiali-operator:v1.62.0"
 

@@ -52,29 +52,37 @@ defmodule ControlServerWeb do
 
   def live_view(opts \\ []) do
     layout = Keyword.get(opts, :layout, :app)
+    global_prefixes = Keyword.get(opts, :global_prefixes, ["x-"])
 
     quote do
       use Phoenix.LiveView,
+        global_prefixes: unquote(global_prefixes),
         layout: {ControlServerWeb.Layouts, unquote(layout)}
 
       import Phoenix.Component, except: [link: 1]
 
+      on_mount {ControlServerWeb.InstalledBatteriesHook, :installed_batteries}
+
       unquote(html_helpers())
     end
   end
 
-  def live_component do
+  def live_component(opts \\ []) do
+    global_prefixes = Keyword.get(opts, :global_prefixes, ["x-"])
+
     quote do
-      use Phoenix.LiveComponent
+      use Phoenix.LiveComponent, global_prefixes: unquote(global_prefixes)
       import Phoenix.Component, except: [link: 1]
 
       unquote(html_helpers())
     end
   end
 
-  def html do
+  def html(opts \\ []) do
+    global_prefixes = Keyword.get(opts, :global_prefixes, ["x-"])
+
     quote do
-      use Phoenix.Component
+      use Phoenix.Component, global_prefixes: unquote(global_prefixes)
       import Phoenix.Component, except: [link: 1]
 
       # Import convenience functions from controllers
@@ -121,7 +129,7 @@ defmodule ControlServerWeb do
     apply(__MODULE__, which, [])
   end
 
-  defmacro __using__({:live_view = which, opts}) when is_atom(which) do
+  defmacro __using__({which, opts}) when is_atom(which) do
     apply(__MODULE__, which, [opts])
   end
 end

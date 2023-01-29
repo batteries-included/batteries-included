@@ -2,9 +2,8 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.IPAddressPoolsTable
 
   alias ControlServer.MetalLB
@@ -26,9 +25,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:net_sec} active={:ip_address_pools}>
-      <.ip_address_pools_table ip_address_pools={@ip_address_pools} />
-    </.left_menu_page>
+    <.ip_address_pools_table ip_address_pools={@ip_address_pools} />
     """
   end
 end

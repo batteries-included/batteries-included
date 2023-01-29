@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.Redis do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.RedisTable
 
   alias ControlServer.Redis
@@ -39,18 +38,16 @@ defmodule ControlServerWeb.Live.Redis do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:data} active={:redis}>
-      <.redis_table failover_clusters={@failover_clusters} />
+    <.redis_table failover_clusters={@failover_clusters} />
 
-      <.h2>Actions</.h2>
-      <.body_section>
-        <.link navigate={new_url()}>
-          <.button>
-            New Cluster
-          </.button>
-        </.link>
-      </.body_section>
-    </.left_menu_page>
+    <.h2>Actions</.h2>
+    <.card>
+      <.link navigate={new_url()}>
+        <.button>
+          New Cluster
+        </.button>
+      </.link>
+    </.card>
     """
   end
 end

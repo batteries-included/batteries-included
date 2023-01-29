@@ -11,21 +11,18 @@ defmodule KubeServices.SystemState.SummaryHosts do
   def start_link(opts) do
     {state_opts, genserver_opts} = Keyword.split(opts, [:summary])
 
-    {:ok, pid} =
-      result = GenServer.start_link(@me, state_opts, Keyword.merge([name: @me], genserver_opts))
-
-    Logger.debug("#{@me} GenServer started with# #{inspect(pid)}.")
-    result
+    GenServer.start_link(@me, state_opts, Keyword.merge([name: @me], genserver_opts))
   end
 
   @impl GenServer
   def init(opts) do
     Logger.debug("Starting SummaryHosts")
-    :ok = SystemStateSummary.subscribe()
 
     state = %{
       summary: Keyword.get_lazy(opts, :summary, &Summarizer.cached/0)
     }
+
+    :ok = SystemStateSummary.subscribe()
 
     {:ok, state}
   end

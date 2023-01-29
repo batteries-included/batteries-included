@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.SystemBatteryShow do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   alias ControlServer.Batteries
 
   @impl Phoenix.LiveView
@@ -22,13 +21,11 @@ defmodule ControlServerWeb.Live.SystemBatteryShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic}>
-      <.data_list>
-        <:item title="Id"><%= @system_battery.id %></:item>
-        <:item title="Group"><%= @system_battery.group %></:item>
-        <:item title="Type"><%= @system_battery.type %></:item>
-      </.data_list>
-    </.left_menu_page>
+    <.data_list>
+      <:item title="Id"><%= @system_battery.id %></:item>
+      <:item title="Group"><%= @system_battery.group %></:item>
+      <:item title="Type"><%= @system_battery.type %></:item>
+    </.data_list>
     """
   end
 end

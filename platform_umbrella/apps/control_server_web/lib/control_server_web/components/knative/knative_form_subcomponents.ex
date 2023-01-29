@@ -25,7 +25,7 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
           phx-value-containers-field={@containers_field}
           variant="styled"
         >
-          <Heroicons.plus_circle class="w-6" /> Add Container
+          <Heroicons.plus_circle class="w-6 inline-flex" /> Add Container
         </.link>
       </div>
     </div>
@@ -44,7 +44,8 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
         <% end %>
 
         <.link phx-click="add:env_value" phx-target={@target} variant="styled">
-          <Heroicons.plus_circle class="w-6" /> Add Environment Variable
+          <Heroicons.plus_circle class="w-6 inline-flex" />
+          <span>Add Env</span>
         </.link>
       </div>
     </div>
@@ -64,7 +65,7 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
       <div class="col-span-5">
         <.input field={{@form, :image}} label="Image" />
       </div>
-      <div class="col-span-2">
+      <div class="col-span-2 mx-auto my-auto">
         <.link
           phx-click="del:container"
           phx-value-idx={@form.index}
@@ -72,7 +73,7 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
           phx-value-containers-field={@containers_field}
           variant="styled"
         >
-          <Heroicons.trash class="w-6" /> Remove Container
+          <Heroicons.trash class="w-6 inline-flex" /> Remove Container
         </.link>
       </div>
     </div>
@@ -97,14 +98,14 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
           options={[:value, :config, :secret]}
         />
       </div>
-      <div class="col-span-2">
+      <div class="col-span-2 mx-auto my-auto">
         <.link
           phx-click="del:env_value"
           phx-value-idx={@form.index}
           phx-target={@target}
           variant="styled"
         >
-          <Heroicons.trash class="w-6" /> Remove Environment Variable
+          <Heroicons.trash class="w-6 inline-flex" /> Remove Env
         </.link>
       </div>
       <.env_value_body form={@form} source={input_value(@form, :source_type)} />

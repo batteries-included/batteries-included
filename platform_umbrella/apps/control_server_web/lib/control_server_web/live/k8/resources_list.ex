@@ -2,9 +2,8 @@ defmodule ControlServerWeb.Live.ResourceList do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.DeploymentsTable
   import ControlServerWeb.StatefulSetsTable
   import ControlServerWeb.NodesTable
@@ -87,21 +86,19 @@ defmodule ControlServerWeb.Live.ResourceList do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:magic} active={:kube_resources}>
-      <.tab_bar tabs={tabs(@live_action)} />
-      <%= case @live_action do %>
-        <% :deployment -> %>
-          <.deployments_table deployments={@objects} />
-        <% :stateful_set -> %>
-          <.stateful_sets_table stateful_sets={@objects} />
-        <% :node -> %>
-          <.nodes_table nodes={@objects} />
-        <% :pod -> %>
-          <.pods_table pods={@objects} />
-        <% :service -> %>
-          <.services_table services={@objects} />
-      <% end %>
-    </.left_menu_page>
+    <.tab_bar tabs={tabs(@live_action)} />
+    <%= case @live_action do %>
+      <% :deployment -> %>
+        <.deployments_table deployments={@objects} />
+      <% :stateful_set -> %>
+        <.stateful_sets_table stateful_sets={@objects} />
+      <% :node -> %>
+        <.nodes_table nodes={@objects} />
+      <% :pod -> %>
+        <.pods_table pods={@objects} />
+      <% :service -> %>
+        <.services_table services={@objects} />
+    <% end %>
     """
   end
 end

@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.RedisShow do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
 
@@ -66,26 +65,24 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:data} active={:redis}>
-      <.section_title>Pods</.section_title>
-      <.pods_table pods={@k8_pods} />
+    <.h2 class="text-right">Pods</.h2>
+    <.pods_table pods={@k8_pods} />
 
-      <.section_title>Services</.section_title>
-      <.services_table services={@k8_services} />
+    <.h2 class="text-right">Services</.h2>
+    <.services_table services={@k8_services} />
 
-      <.h2>Actions</.h2>
-      <.body_section>
-        <.link navigate={edit_url(@failover_cluster)}>
-          <.button>
-            Edit Cluster
-          </.button>
-        </.link>
-
-        <.button phx-click="delete" data-confirm="Are you sure?">
-          Delete Cluster
+    <.h2>Actions</.h2>
+    <.card>
+      <.link navigate={edit_url(@failover_cluster)}>
+        <.button>
+          Edit Cluster
         </.button>
-      </.body_section>
-    </.left_menu_page>
+      </.link>
+
+      <.button phx-click="delete" data-confirm="Are you sure?">
+        Delete Cluster
+      </.button>
+    </.card>
     """
   end
 end

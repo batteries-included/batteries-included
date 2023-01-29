@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.GroupBatteries do
-  use ControlServerWeb, {:live_view, layout: :menu}
-
-  import ControlServerWeb.LeftMenuPage
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Modal
 
@@ -248,7 +246,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
       <:title>
         <.h2 variant="fancy">Installing Batteries</.h2>
       </:title>
-      <div class="flex flex-row mt-5 space-x-4">
+      <div class="flex flex-row mt-5 justify-around">
         <.vertical_steps current_step={@current_step}>
           <:step>Generate Configuration</:step>
           <:step>Install Batteries</:step>
@@ -272,29 +270,27 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={@group} active={:batteries}>
-      <.install_modal
-        :if={@live_action == :install}
-        current_step={@install_step}
-        group={@group}
-        install_result={@install_result}
-        apply_result={@apply_result}
-      />
-      <.table id="batteries-table" rows={@catalog_batteries}>
-        <:col :let={battery} label="Type">
-          <%= Naming.humanize(battery.type) %>
-        </:col>
-        <:col :let={battery} label="Group">
-          <%= battery.group %>
-        </:col>
-        <:col :let={battery} label="Status">
-          <.active_check :if={is_active(@system_batteries, battery.type)} />
-        </:col>
-        <:action :let={battery}>
-          <.start_button :if={!is_active(@system_batteries, battery.type)} battery={battery} />
-        </:action>
-      </.table>
-    </.left_menu_page>
+    <.install_modal
+      :if={@live_action == :install}
+      current_step={@install_step}
+      group={@group}
+      install_result={@install_result}
+      apply_result={@apply_result}
+    />
+    <.table id="batteries-table" rows={@catalog_batteries}>
+      <:col :let={battery} label="Type">
+        <%= Naming.humanize(battery.type) %>
+      </:col>
+      <:col :let={battery} label="Group">
+        <%= battery.group %>
+      </:col>
+      <:col :let={battery} label="Status">
+        <.active_check :if={is_active(@system_batteries, battery.type)} />
+      </:col>
+      <:action :let={battery}>
+        <.start_button :if={!is_active(@system_batteries, battery.type)} battery={battery} />
+      </:action>
+    </.table>
     """
   end
 end

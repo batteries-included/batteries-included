@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.RawResource do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.ObjectDisplay
 

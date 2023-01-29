@@ -1,5 +1,7 @@
 defmodule ControlServerWeb.LeftMenu do
-  use ControlServerWeb, :live_component
+  use ControlServerWeb, :html
+
+  alias CommonCore.Batteries.SystemBattery
 
   import CommonUI.Icons.Database
   import CommonUI.Icons.Devtools
@@ -7,289 +9,575 @@ defmodule ControlServerWeb.LeftMenu do
   import CommonUI.Icons.Network
   import CommonUI.Icons.Notebook
   import CommonUI.Icons.Rook
-
   import KubeServices.SystemState.SummaryHosts
 
-  alias ControlServer.Batteries
+  attr :icon_class, :string, default: "h-7"
+  attr :page_group, :atom, required: true
+  attr :page_detail_type, :atom, required: true
+  attr :installed_batteries, :list, default: []
+  attr :rest, :global
 
-  @impl Phoenix.LiveComponent
-  def update(assigns, socket) do
-    {:ok,
-     socket
-     |> assign_active(assigns.active)
-     |> assign_group(assigns.group)
-     |> assign_batteries(assigns.group)}
+  def left_menu(assigns) do
+    ~H"""
+    <aside
+      class="menu-container sticky shadow-lg bg-white"
+      x-data="{'show': false, 'tab': 'data'}"
+      x-on:keydown.escape="show = false"
+      {@rest}
+    >
+      <div class="menu-items w-36 h-full flex flex-col overflow-x-hidden shadow-lg text-gray-600">
+        <.main_menu_item navigate={~p{/}}>
+          <:icon><Heroicons.home class={@icon_class} /></:icon>
+          <:label>Home</:label>
+        </.main_menu_item>
+
+        <.main_menu_item group={:data} page_group={@page_group}>
+          <:icon><Heroicons.circle_stack class={@icon_class} /></:icon>
+          <:label>Datastores</:label>
+        </.main_menu_item>
+
+        <.main_menu_item group={:devtools} page_group={@page_group}>
+          <:icon><.devtools_icon class={@icon_class} /></:icon>
+          <:label>Devtools</:label>
+        </.main_menu_item>
+
+        <.main_menu_item group={:monitoring} page_group={@page_group}>
+          <:icon><Heroicons.chart_bar class={@icon_class} /></:icon>
+          <:label>Monitoring</:label>
+        </.main_menu_item>
+
+        <.main_menu_item group={:net_sec} page_group={@page_group}>
+          <:icon><.net_sec_icon class={@icon_class} /></:icon>
+          <:label>Net/Security</:label>
+        </.main_menu_item>
+
+        <.main_menu_item group={:ml} page_group={@page_group}>
+          <:icon><Heroicons.beaker class={@icon_class} /></:icon>
+          <:label>ML</:label>
+        </.main_menu_item>
+
+        <.main_menu_item group={:magic} page_group={@page_group}>
+          <:icon><Heroicons.sparkles class={@icon_class} /></:icon>
+          <:label>Magic</:label>
+        </.main_menu_item>
+      </div>
+
+      <.menu_detail
+        page_group={@page_group}
+        page_detail_type={@page_detail_type}
+        installed_batteries={batteries_for_group(@installed_batteries || [], :data)}
+        group={:data}
+      />
+
+      <.menu_detail
+        page_group={@page_group}
+        page_detail_type={@page_detail_type}
+        installed_batteries={batteries_for_group(@installed_batteries || [], :devtools)}
+        group={:devtools}
+      />
+
+      <.menu_detail
+        page_group={@page_group}
+        page_detail_type={@page_detail_type}
+        installed_batteries={batteries_for_group(@installed_batteries || [], :monitoring)}
+        group={:monitoring}
+      />
+
+      <.menu_detail
+        page_group={@page_group}
+        page_detail_type={@page_detail_type}
+        installed_batteries={batteries_for_group(@installed_batteries || [], :net_sec)}
+        group={:net_sec}
+      />
+
+      <.menu_detail
+        page_group={@page_group}
+        page_detail_type={@page_detail_type}
+        installed_batteries={batteries_for_group(@installed_batteries || [], :ml)}
+        group={:ml}
+      />
+
+      <.menu_detail
+        page_group={@page_group}
+        page_detail_type={@page_detail_type}
+        installed_batteries={batteries_for_group(@installed_batteries || [], :magic)}
+        group={:magic}
+      />
+    </aside>
+    """
   end
 
-  defp assign_batteries(socket, :projects) do
-    assign(socket, :batteries, [])
-  end
-
-  defp assign_batteries(socket, group) when is_binary(group) do
-    assign_batteries(socket, String.to_existing_atom(group))
-  end
-
-  defp assign_batteries(socket, group) do
-    assign(socket, :batteries, Batteries.list_system_batteries_for_group(group))
-  end
-
-  defp assign_active(socket, active) when is_binary(active) do
-    assign_active(socket, String.to_existing_atom(active))
-  end
-
-  defp assign_active(socket, active) do
-    assign(socket, :active, active)
-  end
-
-  defp assign_group(socket, group) when is_binary(group) do
-    assign_group(socket, String.to_existing_atom(group))
-  end
-
-  defp assign_group(socket, group) do
-    assign(socket, :group, group)
-  end
-
-  attr(:name, :string, required: true)
-  attr(:navigate, :any)
-  attr(:href, :any)
   attr(:is_active, :boolean, default: false)
+  attr(:navigate, :string)
+  attr(:group, :atom)
+  attr(:page_group, :atom)
+  attr(:rest, :global)
+  slot(:label)
+  slot(:icon)
 
-  attr(:active_class, :string,
-    default:
-      "text-pink-500 hover:text-pink-600 hover:bg-pink-50/50 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
-  )
-
-  attr(:inactive_class, :string,
-    default:
-      "text-gray-600 hover:text-gray-900 hover:bg-pink-50/50 hover:shadow-sm group rounded-md px-3 py-2 flex items-center text-sm font-medium"
-  )
-
-  slot(:inner_block)
-
-  defp menu_item(%{navigate: _} = assigns) do
+  def main_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
     ~H"""
-    <.link navigate={@navigate} class={[@is_active && @active_class, !@is_active && @inactive_class]}>
-      <%= render_slot(@inner_block) %>
-      <span class="truncate">
-        <%= @name %>
-      </span>
+    <.link navigate={@navigate} variant="unstyled" class={main_menu_class(@is_active)} {@rest}>
+      <div class="my-2 mx-auto">
+        <%= render_slot(@icon) %>
+      </div>
+      <div>
+        <%= render_slot(@label) %>
+      </div>
     </.link>
     """
   end
 
-  defp menu_item(%{href: _} = assigns) do
+  def main_menu_item(assigns) do
     ~H"""
-    <.link href={@href} class={menu_item_class(@is_active, @active_class, @inactive_class)}>
-      <%= render_slot(@inner_block) %>
-      <span class="truncate">
-        <%= @name %>
-      </span>
-    </.link>
+    <.button
+      variant="unstyled"
+      x-on:click={menu_item_click(@group)}
+      x-on:click.stop
+      class={main_menu_class(@is_active)}
+      {@rest}
+    >
+      <div class="my-2 mx-auto">
+        <%= render_slot(@icon) %>
+      </div>
+      <div>
+        <%= render_slot(@label) %>
+      </div>
+    </.button>
     """
   end
 
-  defp menu_item_class(true = _is_active, active_class, _), do: active_class
-  defp menu_item_class(false = _is_active, _, inactive_class), do: inactive_class
+  attr(:installed_batteries, :list, required: true)
+  attr(:group, :atom, required: true)
+  attr(:page_group, :atom, required: true)
+  attr(:page_detail_type, :atom, required: true)
 
-  attr(:battery, :any, default: %{type: :unknown})
-  attr(:active, :string, default: nil)
+  def menu_detail(assigns) do
+    ~H"""
+    <div
+      class="menu-detail bg-white shadow-lg p-4 flex flex-col w-72 absolute ease-in-out duration-500 space-y-4"
+      x-bind:class={"{'active': show && tab == '#{@group}' }"}
+      x-on:click.away="show = false"
+      x-on:click.stop
+      x-cloak
+      x-transition
+    >
+      <.group_detail_item
+        group={@group}
+        page_detail_type={@page_detail_type}
+        page_group={@page_group}
+      />
+      <.battery_detail_item
+        :for={battery <- @installed_batteries}
+        battery={battery}
+        page_detail_type={@page_detail_type}
+        page_group={@page_group}
+      />
+    </div>
+    """
+  end
 
+  attr(:group, :atom, required: true)
+  attr(:page_group, :atom, required: true)
+  attr(:page_detail_type, :atom, required: true)
   attr(:icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group")
 
-  defp battery_menu_item(%{battery: %{type: :postgres_operator}} = assigns) do
+  def group_detail_item(%{group: :data} = assigns) do
     ~H"""
-    <.menu_item navigate={~p"/postgres"} name="Postgres" is_active={@active == :postgres_operator}>
-      <Heroicons.circle_stack solid class={@icon_class} />
-    </.menu_item>
-    """
-  end
+    <.h3>Datastores</.h3>
 
-  defp battery_menu_item(%{battery: %{type: :redis}} = assigns) do
-    ~H"""
-    <.menu_item navigate={~p"/redis"} name="Redis" is_active={@active == :redis}>
-      <.redis_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :rook}} = assigns) do
-    ~H"""
-    <.menu_item navigate={~p"/ceph"} name="Ceph" is_active={@active == :rook}>
-      <.ceph_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :knative_serving}} = assigns) do
-    ~H"""
-    <.menu_item
-      navigate={~p"/knative/services"}
-      name="Knative Serving"
-      is_active={@active == :knative_serving}
+    <.detail_menu_item
+      navigate={~p"/batteries/#{@group}"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.square_3_stack_3d solid class={@icon_class} />
-    </.menu_item>
+      <Heroicons.battery_0 class={@icon_class} />
+    </.detail_menu_item>
     """
   end
 
-  defp battery_menu_item(%{battery: %{type: :notebooks}} = assigns) do
+  def group_detail_item(%{group: :devtools} = assigns) do
     ~H"""
-    <.menu_item navigate={~p"/notebooks"} name="Notebooks" is_active={@active == :notebooks}>
-      <.notebook_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
+    <.h3>Devtools</.h3>
 
-  defp battery_menu_item(%{battery: %{type: :gitea}} = assigns) do
-    ~H"""
-    <.menu_item href={"//#{gitea_host()}/explore/repos"} name="Gitea" is_active={@active == :gitea}>
-      <.gitea_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :harbor}} = assigns) do
-    ~H"""
-    <.menu_item href={"//#{harbor_host()}"} name="Harbor" is_active={@active == :harbor}>
-      <.harbor_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :smtp4dev}} = assigns) do
-    ~H"""
-    <.menu_item href={"//#{smtp4dev_host()}"} name="SMTP4Dev" is_active={@active == :smtp4dev}>
-      <Heroicons.envelope class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :kiali}} = assigns) do
-    ~H"""
-    <.menu_item href={} name="Kiali" is_active={@active == :kiali}>
-      <.kiali_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
-
-  defp battery_menu_item(%{battery: %{type: :metallb_ip_pool}} = assigns) do
-    ~H"""
-    <.menu_item
-      navigate={~p"/ip_address_pools"}
-      name="IP Address Pools"
-      is_active={@active == :ip_address_pools}
+    <.detail_menu_item
+      navigate={~p"/batteries/#{@group}"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.rectangle_group class={@icon_class} />
-    </.menu_item>
+      <Heroicons.battery_0 class={@icon_class} />
+    </.detail_menu_item>
     """
   end
 
-  defp battery_menu_item(%{battery: %{type: :trivy_operator}} = assigns) do
+  def group_detail_item(%{group: :monitoring} = assigns) do
     ~H"""
-    <.menu_item
-      navigate={~p"/trivy_reports/vulnerability_report"}
-      name="Security Reports"
-      is_active={@active == :trivy_reports}
+    <.h3>Monitoring</.h3>
+
+    <.detail_menu_item
+      navigate={~p"/batteries/#{@group}"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.flag class={@icon_class} />
-    </.menu_item>
+      <Heroicons.battery_0 class={@icon_class} />
+    </.detail_menu_item>
     """
   end
 
-  defp battery_menu_item(%{battery: %{type: :grafana}} = assigns) do
+  def group_detail_item(%{group: :ml} = assigns) do
     ~H"""
-    <.menu_item href={"//#{grafana_host()}"} name="Grafana" is_active={@active == :grafana}>
-      <.grafana_icon class={@icon_class} />
-    </.menu_item>
-    """
-  end
+    <.h3>Machine Learning</.h3>
 
-  defp battery_menu_item(%{battery: %{type: :victoria_metrics}} = assigns) do
-    ~H"""
-    <.menu_item
-      href={"//#{vmselect_host()}/select/0/vmui"}
-      name="VM Select"
-      is_active={@active == :victoria_metrics}
+    <.detail_menu_item
+      navigate={~p"/batteries/#{@group}"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <.victoria_metrics_icon class={@icon_class} />
-    </.menu_item>
-    <.menu_item href={"//#{vmagent_host()}"} name="VM Agent" is_active={@active == :victoria_metrics}>
-      <.victoria_metrics_icon class={@icon_class} />
-    </.menu_item>
+      <Heroicons.battery_0 class={@icon_class} />
+    </.detail_menu_item>
     """
   end
 
-  defp battery_menu_item(%{battery: %{type: _}} = assigns), do: ~H||
-
-  attr(:active, :string, default: nil)
-  attr(:group, :any)
-
-  attr(:icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group")
-
-  defp group_menu_item(%{group: :magic} = assigns) do
+  def group_detail_item(%{group: :net_sec} = assigns) do
     ~H"""
-    <.menu_item
+    <.h3>Networking/Security</.h3>
+
+    <.detail_menu_item
+      navigate={~p"/batteries/#{@group}"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries && @page_group == @group}
+    >
+      <Heroicons.battery_0 class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  def group_detail_item(%{group: :magic} = assigns) do
+    ~H"""
+    <.h3>Magic</.h3>
+
+    <.detail_menu_item
+      navigate={~p"/batteries/magic"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries}
+    >
+      <Heroicons.battery_0 class={@icon_class} />
+    </.detail_menu_item>
+    <.detail_menu_item
       navigate={~p"/snapshot_apply"}
-      name="Snapshot Deploys"
-      is_active={@active == :kube_snapshots}
+      name="Deploys"
+      is_active={@page_detail_type == :kube_snapshots}
     >
       <Heroicons.rocket_launch class={@icon_class} />
-    </.menu_item>
-    <.menu_item navigate={~p"/timeline"} name="Timeline" is_active={@active == :timeline}>
+    </.detail_menu_item>
+    <.detail_menu_item
+      navigate={~p"/timeline"}
+      name="Timeline"
+      is_active={@page_detail_type == :timeline}
+    >
       <Heroicons.clock class={@icon_class} />
-    </.menu_item>
-    <.menu_item navigate={~p"/kube/pods"} name="Kubernetes" is_active={@active == :kube_resources}>
+    </.detail_menu_item>
+
+    <.h3>Kubernetes</.h3>
+    <.detail_menu_item navigate={~p"/kube/pods"} name="Pods" is_active={@page_detail_type == :pods}>
       <Heroicons.rectangle_group class={@icon_class} />
-    </.menu_item>
-    <.menu_item navigate={~p"/stale"} name="Stale Deleter" is_active={@active == :stale}>
+    </.detail_menu_item>
+    <.detail_menu_item
+      navigate={~p"/kube/deployments"}
+      name="Deployments"
+      is_active={@page_detail_type == :deployments}
+    >
+      <Heroicons.square_3_stack_3d class={@icon_class} />
+    </.detail_menu_item>
+    <.detail_menu_item
+      navigate={~p"/kube/stateful_sets"}
+      name="Stateful Sets"
+      is_active={@page_detail_type == :stateful_sets}
+    >
+      <Heroicons.rectangle_stack class={@icon_class} />
+    </.detail_menu_item>
+    <.detail_menu_item
+      navigate={~p"/kube/services"}
+      name="Services"
+      is_active={@page_detail_type == :services}
+    >
+      <Heroicons.phone_arrow_down_left class={@icon_class} />
+    </.detail_menu_item>
+    <.detail_menu_item navigate={~p"/kube/nodes"} name="Nodes" is_active={@page_detail_type == :nodes}>
+      <Heroicons.server class={@icon_class} />
+    </.detail_menu_item>
+
+    <.h3>Delete</.h3>
+    <.detail_menu_item
+      navigate={~p"/stale"}
+      name="Stale Delete Queue"
+      is_active={@page_detail_type == :stale}
+    >
       <Heroicons.clock class={@icon_class} />
-    </.menu_item>
-    <.menu_item
+    </.detail_menu_item>
+    <.detail_menu_item
       navigate={~p"/deleted_resources"}
       name="Deleted Resources"
-      is_active={@active == :deleted}
+      is_active={@page_detail_type == :deleted}
     >
       <Heroicons.trash class={@icon_class} />
-    </.menu_item>
-    <.menu_item
+    </.detail_menu_item>
+
+    <.h3>Batteries</.h3>
+    <.detail_menu_item
       navigate={~p"/system_batteries"}
       name="Installed Batteries"
-      is_active={@active == :installed_batteries}
+      is_active={@page_detail_type == :installed_batteries}
     >
       <Heroicons.battery_100 class={@icon_class} />
-    </.menu_item>
-    <.menu_item navigate={~p"/batteries/magic"} name="Batteries" is_active={@active == :batteries}>
+    </.detail_menu_item>
+    """
+  end
+
+  def group_detail_item(assigns) do
+    ~H"""
+    <.detail_menu_item
+      navigate={~p"/batteries/#{@group}"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries && @page_group == @group}
+    >
       <Heroicons.battery_0 class={@icon_class} />
-    </.menu_item>
+    </.detail_menu_item>
     """
   end
 
-  defp group_menu_item(%{group: :projects} = assigns) do
+  attr(:icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group")
+  attr(:battery, :any, default: %{type: :unknown})
+  attr(:page_detail_type, :atom, required: true)
+  attr(:page_group, :atom, required: true)
+
+  defp battery_detail_item(%{battery: %{type: :postgres}} = assigns) do
     ~H"""
-    <.menu_item navigate={~p"/system_projects/new"} name="New Project" is_active={@active == :new}>
-      <Heroicons.plus class={@icon_class} />
-    </.menu_item>
-    <.menu_item navigate={~p"/system_projects"} name="Projects" is_active={@active == :projects}>
-      <Heroicons.briefcase class={@icon_class} />
-    </.menu_item>
+    <.h3>Postgres</.h3>
+    <.detail_menu_item
+      navigate={~p"/postgres"}
+      name="Postgres Clusters"
+      is_active={@page_detail_type == :postgres_clusters}
+    >
+      <Heroicons.circle_stack class={@icon_class} />
+    </.detail_menu_item>
+
+    <.detail_menu_item
+      navigate={~p"/postgres/new"}
+      name="New PostgreSQL"
+      is_active={@page_detail_type == :new_cluster}
+    >
+      <Heroicons.plus_circle class={@icon_class} />
+    </.detail_menu_item>
     """
   end
 
-  defp group_menu_item(%{group: _} = assigns) do
+  defp battery_detail_item(%{battery: %{type: :redis}} = assigns) do
     ~H"""
-    <.menu_item navigate={~p"/batteries/#{@group}"} name="Batteries" is_active={@active == :batteries}>
-      <Heroicons.battery_0 class={@icon_class} />
-    </.menu_item>
+    <.detail_menu_item
+      navigate={~p"/redis"}
+      name="Redis Clusters"
+      is_active={@page_detail_type == :redis}
+    >
+      <.redis_icon class={@icon_class} />
+    </.detail_menu_item>
+
+    <.detail_menu_item
+      navigate={~p"/redis"}
+      name="New Redis"
+      is_active={@page_detail_type == :new_redis}
+    >
+      <Heroicons.plus_circle class={@icon_class} />
+    </.detail_menu_item>
     """
   end
 
-  @impl Phoenix.LiveComponent
-  def render(assigns) do
+  defp battery_detail_item(%{battery: %{type: :rook}} = assigns) do
     ~H"""
-    <nav class="space-y-1">
-      <.battery_menu_item :for={battery <- @batteries} battery={battery} active={@active} />
-      <.group_menu_item group={@group} active={@active} />
-    </nav>
+    <.detail_menu_item navigate={~p"/ceph"} name="Ceph" is_active={@page_detail_type == :rook}>
+      <.ceph_icon class={@icon_class} />
+    </.detail_menu_item>
     """
   end
+
+  defp battery_detail_item(%{battery: %{type: :knative_serving}} = assigns) do
+    ~H"""
+    <.h3>Knative  Serverless</.h3>
+    <.detail_menu_item
+      navigate={~p"/knative/services"}
+      name="Knative Services"
+      is_active={@page_detail_type == :knative_serving}
+    >
+      <Heroicons.square_3_stack_3d solid class={@icon_class} />
+    </.detail_menu_item>
+
+    <.detail_menu_item
+      navigate={~p"/knative/services/new"}
+      name="New Serverless Service"
+      is_active={@page_detail_type == :new_knative}
+    >
+      <Heroicons.plus_circle class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :notebooks}} = assigns) do
+    ~H"""
+    <.detail_menu_item
+      navigate={~p"/notebooks"}
+      name="Notebooks"
+      is_active={@page_detail_type == :notebooks}
+    >
+      <.notebook_icon class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :gitea}} = assigns) do
+    ~H"""
+    <.detail_menu_item
+      href={"//#{gitea_host()}/explore/repos"}
+      name="Gitea"
+      is_active={@page_detail_type == :gitea}
+    >
+      <.gitea_icon class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :harbor}} = assigns) do
+    ~H"""
+    <.detail_menu_item
+      href={"//#{harbor_host()}"}
+      name="Harbor"
+      is_active={@page_detail_type == :harbor}
+    >
+      <.harbor_icon class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :smtp4dev}} = assigns) do
+    ~H"""
+    <.detail_menu_item
+      href={"//#{smtp4dev_host()}"}
+      name="SMTP4Dev"
+      is_active={@page_detail_type == :smtp4dev}
+    >
+      <Heroicons.envelope class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :kiali}} = assigns) do
+    ~H"""
+    <.detail_menu_item href={} name="Kiali" is_active={@page_detail_type == :kiali}>
+      <.kiali_icon class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :metallb_ip_pool}} = assigns) do
+    ~H"""
+    <.detail_menu_item
+      navigate={~p"/ip_address_pools"}
+      name="IP Address Pools"
+      is_active={@page_detail_type == :ip_address_pools}
+    >
+      <Heroicons.rectangle_group class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :trivy_operator}} = assigns) do
+    ~H"""
+    <.h3>Trivy</.h3>
+
+    <.detail_menu_item
+      navigate={~p"/trivy_reports/vulnerability_report"}
+      name="Vulnerability Report"
+      is_active={@page_detail_type == :vulnerability_report}
+    >
+      <Heroicons.flag class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :grafana}} = assigns) do
+    ~H"""
+    <.detail_menu_item
+      href={"//#{grafana_host()}"}
+      name="Grafana"
+      is_active={@page_detail_type == :grafana}
+    >
+      <.grafana_icon class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :victoria_metrics}} = assigns) do
+    ~H"""
+    <.detail_menu_item
+      href={"//#{vmselect_host()}/select/0/vmui"}
+      name="VM Select"
+      is_active={@page_detail_type == :victoria_metrics}
+    >
+      <.victoria_metrics_icon class={@icon_class} />
+    </.detail_menu_item>
+    <.detail_menu_item
+      href={"//#{vmagent_host()}"}
+      name="VM Agent"
+      is_active={@page_detail_type == :victoria_metrics}
+    >
+      <.victoria_metrics_icon class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: _}} = assigns), do: ~H||
+
+  attr(:navigate, :string)
+  attr(:href, :string)
+  attr(:name, :string, required: true)
+  attr(:is_active, :boolean, default: false)
+  slot(:inner_block)
+
+  def detail_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
+    ~H"""
+    <.link navigate={@navigate} class={menu_detail_class(@is_active)}>
+      <span class="inline-block"><%= render_slot(@inner_block) %></span>
+      <%= truncate(@name) %>
+    </.link>
+    """
+  end
+
+  def detail_menu_item(%{href: href} = assigns) when not is_nil(href) do
+    ~H"""
+    <.link href={@href} class={menu_detail_class(@is_active)}>
+      <span class="inline-block"><%= render_slot(@inner_block) %></span>
+      <%= @name %>
+    </.link>
+    """
+  end
+
+  defp menu_item_click(nil = _show_var), do: nil
+  defp menu_item_click(group) when is_atom(group), do: menu_item_click(Atom.to_string(group))
+
+  defp menu_item_click(group) when is_binary(group),
+    do: "show = (tab === '#{group}' ? !show : true); tab = '#{group}';"
+
+  defp main_menu_class(false = _is_active),
+    do: "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-4"
+
+  defp main_menu_class(true = _is_active), do: build_class(["active", main_menu_class(false)])
+
+  defp batteries_for_group(batteries, group) do
+    Enum.filter(batteries, fn %SystemBattery{} = bat -> bat.group == group end)
+  end
+
+  defp menu_detail_class(true = _is_active),
+    do: "text-pink-500 whitespace-nowrap flex hover:under-line"
+
+  defp menu_detail_class(false = _is_active),
+    do: "whitespace-nowrap flex hover:under-line hover:text-pink-500"
 end

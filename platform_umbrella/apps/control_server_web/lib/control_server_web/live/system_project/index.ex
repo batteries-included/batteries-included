@@ -1,7 +1,5 @@
 defmodule ControlServerWeb.Live.SystemProjectIndex do
-  use ControlServerWeb, {:live_view, layout: :menu}
-
-  import ControlServerWeb.LeftMenuPage
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Projects
   alias ControlServer.Projects.SystemProject
@@ -49,23 +47,21 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:projects} active={:projects}>
-      <.table
-        id="system_projects"
-        rows={@system_projects}
-        row_click={&JS.navigate(~p"/system_projects/#{&1}/show")}
-      >
-        <:col :let={system_project} label="Name"><%= system_project.name %></:col>
-        <:col :let={system_project} label="Type"><%= system_project.type %></:col>
-        <:col :let={system_project} label="Description"><%= system_project.description %></:col>
-        <:action :let={system_project}>
-          <.link navigate={~p"/system_projects/#{system_project}/show"} variant="styled">Show</.link>
-        </:action>
-        <:action :let={system_project}>
-          <.link navigate={~p"/system_projects/#{system_project}/edit"} variant="styled">Edit</.link>
-        </:action>
-      </.table>
-    </.left_menu_page>
+    <.table
+      id="system_projects"
+      rows={@system_projects}
+      row_click={&JS.navigate(~p"/system_projects/#{&1}/show")}
+    >
+      <:col :let={system_project} label="Name"><%= system_project.name %></:col>
+      <:col :let={system_project} label="Type"><%= system_project.type %></:col>
+      <:col :let={system_project} label="Description"><%= system_project.description %></:col>
+      <:action :let={system_project}>
+        <.link navigate={~p"/system_projects/#{system_project}/show"} variant="styled">Show</.link>
+      </:action>
+      <:action :let={system_project}>
+        <.link navigate={~p"/system_projects/#{system_project}/edit"} variant="styled">Edit</.link>
+      </:action>
+    </.table>
     """
   end
 end

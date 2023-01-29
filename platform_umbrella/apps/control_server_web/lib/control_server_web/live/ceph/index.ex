@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Live.CephIndex do
-  use ControlServerWeb, {:live_view, layout: :menu}
+  use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.LeftMenuPage
   import ControlServerWeb.CephFilesystemsTable
   import ControlServerWeb.CephClustersTable
 
@@ -37,29 +36,27 @@ defmodule ControlServerWeb.Live.CephIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.left_menu_page group={:data} active={:rook}>
-      <.section_title>Ceph Clusters</.section_title>
+    <.h2 class="text-right">Ceph Clusters</.h2>
 
-      <.ceph_clusters_table ceph_clusters={@ceph_clusters} />
+    <.ceph_clusters_table ceph_clusters={@ceph_clusters} />
 
-      <.section_title>Ceph FileSystem</.section_title>
-      <.ceph_filesystems_table ceph_filesystems={@ceph_filesystems} />
+    <.h2 class="text-right">Ceph FileSystem</.h2>
+    <.ceph_filesystems_table ceph_filesystems={@ceph_filesystems} />
 
-      <.h2 variant="fancy">Actions</.h2>
-      <.body_section>
-        <.link navigate={~p"/ceph/clusters/new"}>
-          <.button>
-            New Cluster
-          </.button>
-        </.link>
+    <.h2 variant="fancy">Actions</.h2>
+    <.card>
+      <.link navigate={~p"/ceph/clusters/new"}>
+        <.button>
+          New Cluster
+        </.button>
+      </.link>
 
-        <.link navigate={~p"/ceph/filesystems/new"}>
-          <.button>
-            New FileSystem
-          </.button>
-        </.link>
-      </.body_section>
-    </.left_menu_page>
+      <.link navigate={~p"/ceph/filesystems/new"}>
+        <.button>
+          New FileSystem
+        </.button>
+      </.link>
+    </.card>
     """
   end
 end

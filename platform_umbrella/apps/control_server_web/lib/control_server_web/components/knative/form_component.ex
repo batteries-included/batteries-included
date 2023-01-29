@@ -33,7 +33,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_url("//#{knative_host(service)}")
+     |> assign_url("http://#{knative_host(service)}")
      |> assign_changeset(changeset)}
   end
 
@@ -91,7 +91,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:noreply,
      socket
      |> assign_changeset(changeset)
-     |> assign_url("//#{knative_host(new_service)}")}
+     |> assign_url("http://#{knative_host(new_service)}")}
   end
 
   def handle_event("save", %{"service" => service_params}, socket) do
