@@ -7,8 +7,8 @@ defmodule ControlServerWeb.DeploymentsTable do
   def deployments_table(assigns) do
     ~H"""
     <.table rows={@deployments}>
-      <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>
       <:col :let={deployment} label="Name"><%= name(deployment) %></:col>
+      <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>
       <:col :let={deployment} label="Replicas"><%= get_in(deployment, ~w(spec replicas)) %></:col>
       <:col :let={deployment} label="Available">
         <%= get_in(deployment, ~w(status availableReplicas)) %>

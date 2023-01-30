@@ -7,8 +7,8 @@ defmodule ControlServerWeb.StatefulSetsTable do
   def stateful_sets_table(assigns) do
     ~H"""
     <.table rows={@stateful_sets}>
-      <:col :let={stateful_set} label="Namespace"><%= namespace(stateful_set) %></:col>
       <:col :let={stateful_set} label="Name"><%= name(stateful_set) %></:col>
+      <:col :let={stateful_set} label="Namespace"><%= namespace(stateful_set) %></:col>
       <:col :let={stateful_set} label="Replicas"><%= get_in(stateful_set, ~w(spec replicas)) %></:col>
       <:col :let={stateful_set} label="Available">
         <%= get_in(stateful_set, ~w(status availableReplicas)) %>

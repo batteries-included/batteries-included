@@ -27,7 +27,9 @@ defmodule CommonUI.Table do
       <table class="mt-4 w-full">
         <thead class="text-left text-base leading-6 text-gray-700">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class="p-0 pb-4 pr-6 text-pink-500">
+              <%= col[:label] %>
+            </th>
             <th :if={@action != nil && @action != []} class="relative p-0 pb-4">
               <span class="sr-only">Actions</span>
             </th>

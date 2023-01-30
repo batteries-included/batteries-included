@@ -32,8 +32,8 @@ defmodule ControlServerWeb.PodsTable do
   def pods_table(assigns) do
     ~H"""
     <.table rows={@pods} id={@id}>
-      <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
       <:col :let={pod} label="Name"><%= name(pod) %></:col>
+      <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
       <:col :let={pod} label="Status"><%= get_in(pod, ~w(status phase)) %></:col>
       <:col :let={pod} label="Restarts"><%= restart_count(pod) %></:col>
       <:col :let={pod} label="Age"><%= age(pod) %></:col>
