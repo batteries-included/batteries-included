@@ -180,7 +180,7 @@ defmodule ControlServerWeb.LeftMenu do
   attr(:group, :atom, required: true)
   attr(:page_group, :atom, required: true)
   attr(:page_detail_type, :atom, required: true)
-  attr(:icon_class, :any, default: "flex-shrink-0 -ml-1 mr-3 h-6 w-6 group")
+  attr(:icon_class, :any, default: "flex-shrink-0 -ml-1 mr-2 h-5 w-auto group")
 
   def group_detail_item(%{group: :data} = assigns) do
     ~H"""
