@@ -11,11 +11,11 @@ defmodule ControlServerWeb.LeftMenu do
   import CommonUI.Icons.Rook
   import KubeServices.SystemState.SummaryHosts
 
-  attr :icon_class, :string, default: "h-7"
-  attr :page_group, :atom, required: true
-  attr :page_detail_type, :atom, required: true
-  attr :installed_batteries, :list, default: []
-  attr :rest, :global
+  attr(:icon_class, :string, default: "h-7")
+  attr(:page_group, :atom, required: true)
+  attr(:page_detail_type, :atom, required: true)
+  attr(:installed_batteries, :list, default: [])
+  attr(:rest, :global)
 
   def left_menu(assigns) do
     ~H"""
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.LeftMenu do
       x-on:keydown.escape="show = false"
       {@rest}
     >
-      <div class="menu-items w-36 h-full flex flex-col overflow-x-hidden shadow-lg text-gray-600">
+      <div class="menu-items w-36 h-full flex flex-col overflow-x-hidden shadow-lg text-gray-600 bg-white">
         <.main_menu_item navigate={~p{/}}>
           <:icon><Heroicons.home class={@icon_class} /></:icon>
           <:label>Home</:label>
@@ -567,7 +567,8 @@ defmodule ControlServerWeb.LeftMenu do
     do: "show = (tab === '#{group}' ? !show : true); tab = '#{group}';"
 
   defp main_menu_class(false = _is_active),
-    do: "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-4"
+    do:
+      "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-4 bg-white"
 
   defp main_menu_class(true = _is_active), do: build_class(["active", main_menu_class(false)])
 
