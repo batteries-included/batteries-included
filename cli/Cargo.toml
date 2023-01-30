@@ -8,6 +8,7 @@ edition = "2021"
 # Todo: pin to versions before releasing
 assert_cmd = { version = "*" }
 clap = { version = "*", features = ["derive"] }
+dirs = { version = "*" }
 exitcode = { version = "*" }
 env_logger = { version = "*" }
 futures = { version = "*" }
@@ -16,5 +17,6 @@ kube-client = { version = "*" }
 k8s-openapi = { version = "*", features = ["v1_26"] }
 log = { version = "*" }
 predicates = { version = "*" }
+tempdir = { version = "*" }
 tokio = { version = "*", features = ["full"] }
 tower-test = { version = "*" }

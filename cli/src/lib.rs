@@ -1,4 +1,9 @@
-use std::io::{BufRead, Write};
+use std::{
+    io::{BufRead, Write},
+    path::PathBuf,
+};
+
+use helpers::get_install_path;
 
 #[derive(clap::Parser)]
 pub struct Args {
@@ -33,6 +38,7 @@ pub mod konstants {
 mod helpers {
     use k8s_openapi::api::core::v1::Pod;
     use kube_client::{api::ListParams, Api};
+    use std::path::{Path, PathBuf};
 
     use crate::konstants;
 
@@ -60,6 +66,12 @@ mod helpers {
             None => return Err("Pod doesn't have `name` attribute".into()),
         }
     }
+
+    pub(crate) fn get_install_path(parent: &Path) -> PathBuf {
+        let mut install_path = std::path::PathBuf::from(parent);
+        install_path.push(".batteries/bin");
+        install_path
+    }
 }
 
 #[cfg(test)]
@@ -75,7 +87,7 @@ mod tests {
     use tower_test::mock;
 
     #[tokio::test]
-    async fn test_blank() {
+    async fn test_empty_parent_dir() {
         let mut err = Vec::new();
         let mut out = Vec::new();
         let input = "".as_bytes();
@@ -88,6 +100,33 @@ mod tests {
             &mut err,
             &input,
             &mut out,
+            None,
+        )
+        .await;
+        assert_eq!(rc, exitcode::CANTCREAT);
+        assert_eq!(
+            String::from_utf8(err).unwrap(),
+            "Error: expected user homedir, got None\n"
+        );
+        assert_eq!(String::from_utf8(out).unwrap(), "");
+    }
+
+    #[tokio::test]
+    async fn test_blank() {
+        let mut err = Vec::new();
+        let mut out = Vec::new();
+        let input = "".as_bytes();
+        let tmp = tempdir::TempDir::new("test_blank").unwrap();
+        let rc = program_main(
+            Args::parse_from(["cli", "create"]),
+            Box::new(|| {
+                let (mock_service, _) = mock::pair::<Request<Body>, Response<Body>>();
+                return kube_client::Client::new(mock_service, "default");
+            }),
+            &mut err,
+            &input,
+            &mut out,
+            Some(tmp.into_path()),
         )
         .await;
         assert_eq!(rc, exitcode::UNAVAILABLE);
@@ -111,7 +150,16 @@ pub async fn program_main<'a>(
     stderr: &'a mut dyn Write,
     _stdin: &'a dyn BufRead,
     _stdout: &'a mut dyn Write,
+    dir_parent: Option<PathBuf>,
 ) -> exitcode::ExitCode {
+    // TODO: wire this up for downloading kubectl and kind
+    let _install_dir = match dir_parent {
+        Some(x) => get_install_path(&x),
+        None => {
+            log(stderr, "Error: expected user homedir, got None\n");
+            return exitcode::CANTCREAT;
+        }
+    };
     let client = kube_client_factory();
     match args.cli_action {
         CliAction::Create {

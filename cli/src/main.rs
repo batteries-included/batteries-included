@@ -35,6 +35,7 @@ async fn main() {
     let stdin = BufReader::new(io::stdin().lock());
     let mut stderr = BufWriter::new(io::stderr());
     let mut stdout = BufWriter::new(io::stdout());
+    let dir_parent = dirs::home_dir();
 
     let code = program_main(
         Args::parse(),
@@ -42,6 +43,7 @@ async fn main() {
         &mut stderr,
         &stdin,
         &mut stdout,
+        dir_parent,
     )
     .await;
 
