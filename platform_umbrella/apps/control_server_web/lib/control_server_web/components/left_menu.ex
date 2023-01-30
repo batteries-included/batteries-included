@@ -184,7 +184,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   def group_detail_item(%{group: :data} = assigns) do
     ~H"""
-    <.h3>Datastores</.h3>
+    <.h4>Datastores</.h4>
 
     <.detail_menu_item
       navigate={~p"/batteries/#{@group}"}
@@ -198,7 +198,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   def group_detail_item(%{group: :devtools} = assigns) do
     ~H"""
-    <.h3>Devtools</.h3>
+    <.h4>Devtools</.h4>
 
     <.detail_menu_item
       navigate={~p"/batteries/#{@group}"}
@@ -212,7 +212,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   def group_detail_item(%{group: :monitoring} = assigns) do
     ~H"""
-    <.h3>Monitoring</.h3>
+    <.h4>Monitoring</.h4>
 
     <.detail_menu_item
       navigate={~p"/batteries/#{@group}"}
@@ -226,7 +226,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   def group_detail_item(%{group: :ml} = assigns) do
     ~H"""
-    <.h3>Machine Learning</.h3>
+    <.h4>Machine Learning</.h4>
 
     <.detail_menu_item
       navigate={~p"/batteries/#{@group}"}
@@ -240,7 +240,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   def group_detail_item(%{group: :net_sec} = assigns) do
     ~H"""
-    <.h3>Networking/Security</.h3>
+    <.h4>Networking/Security</.h4>
 
     <.detail_menu_item
       navigate={~p"/batteries/#{@group}"}
@@ -254,7 +254,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   def group_detail_item(%{group: :magic} = assigns) do
     ~H"""
-    <.h3>Magic</.h3>
+    <.h4>Magic</.h4>
 
     <.detail_menu_item
       navigate={~p"/batteries/magic"}
@@ -278,7 +278,7 @@ defmodule ControlServerWeb.LeftMenu do
       <Heroicons.clock class={@icon_class} />
     </.detail_menu_item>
 
-    <.h3>Kubernetes</.h3>
+    <.h4>Kubernetes</.h4>
     <.detail_menu_item navigate={~p"/kube/pods"} name="Pods" is_active={@page_detail_type == :pods}>
       <Heroicons.rectangle_group class={@icon_class} />
     </.detail_menu_item>
@@ -307,7 +307,7 @@ defmodule ControlServerWeb.LeftMenu do
       <Heroicons.server class={@icon_class} />
     </.detail_menu_item>
 
-    <.h3>Delete</.h3>
+    <.h4>Delete</.h4>
     <.detail_menu_item
       navigate={~p"/stale"}
       name="Stale Delete Queue"
@@ -323,7 +323,7 @@ defmodule ControlServerWeb.LeftMenu do
       <Heroicons.trash class={@icon_class} />
     </.detail_menu_item>
 
-    <.h3>Batteries</.h3>
+    <.h4>Batteries</.h4>
     <.detail_menu_item
       navigate={~p"/system_batteries"}
       name="Installed Batteries"
@@ -353,7 +353,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_detail_item(%{battery: %{type: :postgres}} = assigns) do
     ~H"""
-    <.h3>Postgres</.h3>
+    <.h4>Postgres</.h4>
     <.detail_menu_item
       navigate={~p"/postgres"}
       name="Postgres Clusters"
@@ -402,7 +402,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_detail_item(%{battery: %{type: :knative_serving}} = assigns) do
     ~H"""
-    <.h3>Knative  Serverless</.h3>
+    <.h4>Knative  Serverless</.h4>
     <.detail_menu_item
       navigate={~p"/knative/services"}
       name="Knative Services"
@@ -491,7 +491,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_detail_item(%{battery: %{type: :trivy_operator}} = assigns) do
     ~H"""
-    <.h3>Trivy</.h3>
+    <.h4>Trivy</.h4>
 
     <.detail_menu_item
       navigate={~p"/trivy_reports/vulnerability_report"}
@@ -555,7 +555,7 @@ defmodule ControlServerWeb.LeftMenu do
     ~H"""
     <.link href={@href} class={menu_detail_class(@is_active)}>
       <span class="inline-block"><%= render_slot(@inner_block) %></span>
-      <%= @name %>
+      <%= truncate(@name) %>
     </.link>
     """
   end

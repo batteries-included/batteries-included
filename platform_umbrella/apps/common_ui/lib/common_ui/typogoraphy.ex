@@ -17,7 +17,7 @@ defmodule CommonUI.Typogoraphy do
   end
 
   attr(:class, :any, default: "")
-  attr(:base_class, :string, default: "text-3xl sm:text-3xl font-bold leading-10")
+  attr(:base_class, :string, default: "text-3xl sm:text-3xl font-bold leading-loose")
   attr(:color_class, :string, default: "text-astral-700")
 
   attr(:fancy_class, :string,
@@ -47,7 +47,7 @@ defmodule CommonUI.Typogoraphy do
   end
 
   attr(:class, :any, default: "")
-  attr(:base_class, :string, default: "text-xl sm:text-2xl font-bold leading-6")
+  attr(:base_class, :string, default: "text-xl sm:text-2xl font-bold leading-loose")
   slot(:inner_block, required: true)
   attr(:rest, :global)
 
@@ -56,6 +56,19 @@ defmodule CommonUI.Typogoraphy do
     <h3 class={build_class([@base_class, @class])} {@rest}>
       <%= render_slot(@inner_block) %>
     </h3>
+    """
+  end
+
+  attr(:class, :any, default: "")
+  attr(:base_class, :string, default: "text-lg font-bold leading-loose text-blizzard-blue-800")
+  slot(:inner_block, required: true)
+  attr(:rest, :global)
+
+  def h4(assigns) do
+    ~H"""
+    <h4 class={build_class([@base_class, @class])} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </h4>
     """
   end
 end

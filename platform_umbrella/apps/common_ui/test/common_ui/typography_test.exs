@@ -34,4 +34,12 @@ defmodule CommonUI.TypographyTest do
     <.h3>Test H3 Header</.h3>
     """
   end
+
+  component_snapshot_test "default h4" do
+    assigns = %{}
+
+    ~H"""
+    <.h4>Test H4 Accent Color Header</.h4>
+    """
+  end
 end
