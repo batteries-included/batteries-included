@@ -102,7 +102,7 @@ defmodule KubeResources.RedisOperator do
           "spec" => %{
             "containers" => [
               %{
-                "image" => battery.config.image,
+                "image" => battery.config.operator_image,
                 "imagePullPolicy" => "IfNotPresent",
                 "livenessProbe" => %{
                   "failureThreshold" => 6,

@@ -72,7 +72,6 @@ defmodule KubeResources.ControlServerFactory do
           :knative_serving,
           :metallb,
           :notebooks,
-          :redis_operator,
           :redis,
           :rook
         ])

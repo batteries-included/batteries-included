@@ -12,7 +12,7 @@ defmodule ControlServer.TimelineFixtures do
       attrs
       |> Enum.into(%{
         level: :info,
-        payload: %{__type__: :battery_install, type: :postgres_operator}
+        payload: %{__type__: :battery_install, type: :postgres}
       })
       |> ControlServer.Timeline.create_timeline_event()
 

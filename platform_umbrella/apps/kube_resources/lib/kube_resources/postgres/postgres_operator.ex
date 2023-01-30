@@ -211,7 +211,7 @@ defmodule KubeResources.PostgresOperator do
                 "value" => "postgres-operator"
               }
             ],
-            "image" => battery.config.image,
+            "image" => battery.config.operator_image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "postgres-operator",
             "resources" => %{

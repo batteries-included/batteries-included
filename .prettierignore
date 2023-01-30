@@ -17,3 +17,5 @@ static/resources/_gen/
 
 .sl/
 .jj/
+
+**/target/

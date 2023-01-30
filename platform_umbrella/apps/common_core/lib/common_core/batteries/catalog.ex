@@ -5,17 +5,11 @@ defmodule CommonCore.Batteries.Catalog do
 
   @all [
     # Data
-    %CatalogBattery{group: :data, type: :redis_operator, dependencies: [:battery_core]},
-    %CatalogBattery{group: :data, type: :redis, dependencies: [:battery_core, :redis_operator]},
-    %CatalogBattery{
-      group: :data,
-      type: :postgres_operator,
-      dependencies: [:battery_core]
-    },
+    %CatalogBattery{group: :data, type: :redis, dependencies: [:battery_core]},
     %CatalogBattery{
       group: :data,
       type: :postgres,
-      dependencies: [:postgres_operator, :battery_core]
+      dependencies: [:battery_core]
     },
     %CatalogBattery{group: :data, type: :rook, dependencies: [:battery_core]},
     # Internal

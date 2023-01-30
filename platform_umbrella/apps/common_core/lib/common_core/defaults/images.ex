@@ -2,18 +2,18 @@ defmodule CommonCore.Defaults.Images do
   def control_server_image, do: "battery-registry:5000/battery/control:c6f4bd1-dirty1"
 
   def postgres_operator_image,
-    do: "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-61-g29cec0ce"
+    do: "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-76-g7a90fbcb"
 
   def spilo_image, do: "registry.opensource.zalan.do/acid/spilo-15:2.1-p9"
 
   def postgres_logical_backup_image,
-    do: "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-43-g3e148ea5"
+    do: "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-76-g7a90fbcb"
 
-  def postgres_bouncer_image, do: "registry.opensource.zalan.do/acid/pgbouncer:master-25"
+  def postgres_bouncer_image, do: "registry.opensource.zalan.do/acid/pgbouncer:master-26"
 
   def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.4"
 
-  def ceph_image, do: "quay.io/ceph/ceph:v17.2.3"
+  def ceph_image, do: "quay.io/ceph/ceph:v17.2.5"
 
   def gitea_image, do: "gitea/gitea:1.18.3"
 
@@ -25,17 +25,17 @@ defmodule CommonCore.Defaults.Images do
   def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.6.3"
   def harbor_trivy_adapter_image, do: "goharbor/trivy-adapter-photon:v2.6.3"
 
-  def grafana_image, do: "grafana/grafana:9.3.4"
-  def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.21.0"
+  def grafana_image, do: "grafana/grafana:9.3.6"
+  def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.22.2"
 
   def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.5.0"
-  def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.6.0"
+  def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.7.0"
   def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.24.0"
 
-  def promtail_image, do: "grafana/promtail:2.7.1"
-  def loki_image, do: "grafana/loki:2.7.1"
+  def promtail_image, do: "grafana/promtail:2.7.2"
+  def loki_image, do: "grafana/loki:2.7.2"
 
-  def istio_pilot_image, do: "istio/pilot:1.16.1"
+  def istio_pilot_image, do: "istio/pilot:1.16.1-distroless"
 
   def knative_operator_webhook_image,
     do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.8.2"
@@ -51,7 +51,7 @@ defmodule CommonCore.Defaults.Images do
   def vm_cluster_tag, do: "v1.86.2-cluster"
   def vm_tag, do: "v1.86.2"
 
-  def vmoperator_image, do: "victoriametrics/operator:v0.30.3"
+  def vmoperator_image, do: "victoriametrics/operator:v0.30.4"
 
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
 

@@ -25,7 +25,6 @@ defmodule CommonCore.SystemState.SeedState do
       batteries:
         batteries([
           :battery_core,
-          :postgres_operator,
           :postgres,
           :istio,
           :metallb,
@@ -43,7 +42,6 @@ defmodule CommonCore.SystemState.SeedState do
       batteries:
         batteries([
           :battery_core,
-          :postgres_operator,
           :postgres,
           :istio,
           :metallb,
@@ -66,7 +64,6 @@ defmodule CommonCore.SystemState.SeedState do
       batteries:
         batteries([
           :battery_core,
-          :postgres_operator,
           :postgres
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
@@ -84,7 +81,7 @@ defmodule CommonCore.SystemState.SeedState do
     %StateSummary{summary | batteries: Enum.map(summary.batteries, &add_dev_infra_to_battery/1)}
   end
 
-  defp add_dev_infra_to_battery(%{type: :postgres_operator} = battery) do
+  defp add_dev_infra_to_battery(%{type: :postgres} = battery) do
     update_in(battery, [Access.key(:config, %{}), Access.key(:infra_users, [])], fn users ->
       clean_users = users || []
 

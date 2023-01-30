@@ -1,4 +1,4 @@
-defmodule CommonCore.Batteries.RedisOperatorConfig do
+defmodule CommonCore.Batteries.RedisConfig do
   use TypedEctoSchema
   import Ecto.Changeset
 
@@ -7,10 +7,10 @@ defmodule CommonCore.Batteries.RedisOperatorConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :image, :string, default: Defaults.Images.redis_operator_image()
+    field(:operator_image, :string, default: Defaults.Images.redis_operator_image())
   end
 
   def changeset(struct, params \\ %{}) do
-    cast(struct, params, [:image])
+    cast(struct, params, [:operator_image])
   end
 end
