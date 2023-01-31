@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use helpers::{ensure_binaries_installed, get_arch, get_install_path, get_os};
+use helpers::{ensure_binaries_installed, get_arch, get_install_path, get_os, kind_cluster};
 
 #[derive(clap::Parser)]
 pub struct CliArgs {
@@ -43,6 +43,44 @@ enum CliAction {
     },
 }
 
+pub mod errors {
+    use std::{error::Error, fmt};
+
+    #[derive(Debug)]
+    pub(crate) struct KindClusterInstallError(String);
+
+    impl fmt::Display for KindClusterInstallError {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "Error installing kind cluster: {}", self.0)
+        }
+    }
+
+    impl Error for KindClusterInstallError {}
+
+    impl KindClusterInstallError {
+        pub fn new(output: String) -> KindClusterInstallError {
+            Self(output)
+        }
+    }
+
+    #[derive(Debug)]
+    pub(crate) struct KindClusterGetError(String);
+
+    impl fmt::Display for KindClusterGetError {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "Error getting kind cluster: {}", self.0)
+        }
+    }
+
+    impl Error for KindClusterGetError {}
+
+    impl KindClusterGetError {
+        pub fn new(output: String) -> KindClusterGetError {
+            Self(output)
+        }
+    }
+}
+
 pub mod prod {
     pub const URL_STUB_KIND: &str =
         "https://github.com/kubernetes-sigs/kind/releases/download/v0.17.0";
@@ -62,6 +100,7 @@ mod konstants {
 }
 
 mod helpers {
+    use crate::errors;
     use k8s_openapi::api::core::v1::Pod;
     use kube_client::{api::ListParams, Api};
     use std::{
@@ -174,6 +213,39 @@ mod helpers {
         validate_or_fetch_bin(kubectl_path, kubectl_url).await?;
         Ok(())
     }
+
+    pub(crate) fn kind_cluster(
+        kind_bin: &Path,
+        cluster_name: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let install_out = std::process::Command::new(kind_bin)
+            .args(["create", "cluster", "--name", cluster_name])
+            .output()?;
+        match install_out.status.success() {
+            false => {
+                return Err(Box::new(errors::KindClusterInstallError::new(format!(
+                    "\n\nSTDOUT: {}\n\nSTDERR: {}\n\n",
+                    std::str::from_utf8(&install_out.stdout)?,
+                    std::str::from_utf8(&install_out.stderr)?,
+                ))));
+            }
+            true => {
+                let get_out = std::process::Command::new(kind_bin)
+                    .args(["get", "kubeconfig", "--name", cluster_name])
+                    .output()?;
+                match get_out.status.success() {
+                    false => {
+                        return Err(Box::new(errors::KindClusterGetError::new(format!(
+                            "\n\nSTDOUT: {}\n\nSTDERR: {}\n\n",
+                            std::str::from_utf8(&get_out.stdout)?,
+                            std::str::from_utf8(&get_out.stderr)?
+                        ))));
+                    }
+                    true => Ok(()),
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -191,7 +263,16 @@ mod tests {
     use tower_test::mock;
 
     use std::fs;
+    use std::io::Write;
     use std::os::unix::prelude::OpenOptionsExt;
+
+    mod fixtures {
+        pub(crate) static DUMMY_KIND_SUCCEDS: &[u8; 22] = b"#!/bin/bash
+
+exit 0;
+
+";
+    }
 
     #[tokio::test]
     async fn test_empty_parent_dir() {
@@ -297,6 +378,8 @@ mod tests {
             .write(true)
             .mode(0o755)
             .open(tmp.path().join("kind-linux-amd64"))
+            .unwrap()
+            .write_all(fixtures::DUMMY_KIND_SUCCEDS)
             .unwrap();
         std::fs::create_dir_all(vec![tmp.path().to_str().unwrap(), "linux", "amd64"].join("/"))
             .unwrap();
@@ -383,6 +466,19 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             );
             return exitcode::TEMPFAIL;
         }
+    };
+
+    // start kind cluster
+    let mut kind_path = install_dir;
+    kind_path.push("kind");
+
+    // TODO: change hardcoded cluster name
+    match kind_cluster(&kind_path, "battery") {
+        Err(e) => {
+            log(args.stderr, &e.to_string());
+            return exitcode::SOFTWARE;
+        }
+        Ok(_) => ..,
     };
 
     let client = (args.kube_client_factory)();
