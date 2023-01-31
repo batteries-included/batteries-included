@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use helpers::{get_arch, get_install_path, get_os};
+use helpers::{ensure_binaries_installed, get_arch, get_install_path, get_os};
 
 #[derive(clap::Parser)]
 pub struct Args {
@@ -30,7 +30,13 @@ enum CliAction {
     },
 }
 
-pub mod konstants {
+pub mod prod {
+    pub const URL_STUB_KIND: &str =
+        "https://github.com/kubernetes-sigs/kind/releases/download/v0.17.0";
+    pub const URL_STUB_KUBECTL: &str = "https://dl.k8s.io/release/v1.25.4/bin";
+}
+
+mod konstants {
     pub static DEFAULT_POSTGRES_FWD_TGT: &str = "battery-base/pg-control";
     pub static NOT_IMPL: &str = "Not yet implemented";
     pub const LINUX: &str = "linux";
@@ -45,7 +51,11 @@ pub mod konstants {
 mod helpers {
     use k8s_openapi::api::core::v1::Pod;
     use kube_client::{api::ListParams, Api};
-    use std::path::{Path, PathBuf};
+    use std::{
+        io::Cursor,
+        os::unix::prelude::PermissionsExt,
+        path::{Path, PathBuf},
+    };
 
     use crate::konstants;
 
@@ -98,6 +108,56 @@ mod helpers {
             _ => None,
         }
     }
+
+    async fn validate_or_fetch_bin(
+        bin_path: PathBuf,
+        fetch_url: url::Url,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        match bin_path.exists() {
+            true => return Ok(()),
+            false => {
+                std::fs::create_dir_all(bin_path.parent().unwrap())?;
+                match fetch_url.scheme() {
+                    "file" => {
+                        std::fs::copy(Path::new(fetch_url.path()), &bin_path)?;
+                    }
+                    "https" => {
+                        let mut out = std::fs::File::create(&bin_path).unwrap();
+                        let mut content =
+                            Cursor::new(reqwest::get(fetch_url.as_str()).await?.bytes().await?);
+
+                        std::io::copy(&mut content, &mut out)?;
+                    }
+                    x => {
+                        return Err(format!("Unsupported file scheme: `{}`", x).into());
+                    }
+                };
+                std::fs::set_permissions(&bin_path, std::fs::Permissions::from_mode(0o755))?;
+                return Ok(());
+            }
+        };
+    }
+
+    pub(crate) async fn ensure_binaries_installed(
+        install_dir: &Path,
+        arch: &str,
+        os: &str,
+        kind_stub: &str,
+        kubectl_stub: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let kind_path = install_dir.join("kind");
+        let kind_url = url::Url::parse(
+            vec![kind_stub, &format!("kind-{}-{}", os, arch)]
+                .join("/")
+                .as_str(),
+        )?;
+        validate_or_fetch_bin(kind_path, kind_url).await?;
+        let kubectl_path = install_dir.join("kubectl");
+        let kubectl_url =
+            url::Url::parse(vec![kubectl_stub, os, arch, "kubectl"].join("/").as_str())?;
+        validate_or_fetch_bin(kubectl_path, kubectl_url).await?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -105,12 +165,16 @@ mod tests {
     use clap::Parser;
     use hyper::Body;
     use k8s_openapi::http::{Request, Response};
+    use url::Url;
 
     use crate::konstants;
     use crate::program_main;
     use crate::Args;
 
     use tower_test::mock;
+
+    use std::fs;
+    use std::os::unix::prelude::OpenOptionsExt;
 
     #[tokio::test]
     async fn test_empty_parent_dir() {
@@ -129,6 +193,8 @@ mod tests {
             None,
             String::from("x86_64"),
             String::from("linux"),
+            String::from("foo"),
+            String::from("bar"),
         )
         .await;
         assert_eq!(rc, exitcode::CANTCREAT);
@@ -145,6 +211,9 @@ mod tests {
         let mut out = Vec::new();
         let input = "".as_bytes();
         let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
+        let kind_stub: String = Url::from_file_path(tmp.path()).unwrap().into();
+        let kubectl_stub: String = Url::from_file_path(tmp.path()).unwrap().into();
+
         let rc = program_main(
             Args::parse_from(["cli", "create"]),
             Box::new(|| {
@@ -157,6 +226,8 @@ mod tests {
             Some(tmp.into_path()),
             String::from("sparc64"),
             String::from("linux"),
+            kind_stub,
+            kubectl_stub,
         )
         .await;
         assert_eq!(rc, exitcode::OSERR);
@@ -173,6 +244,8 @@ mod tests {
         let mut out = Vec::new();
         let input = "".as_bytes();
         let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
+        let kind_stub = Url::from_file_path(tmp.path()).unwrap().to_string();
+        let kubectl_stub = Url::from_file_path(tmp.path()).unwrap().to_string();
         let rc = program_main(
             Args::parse_from(["cli", "create"]),
             Box::new(|| {
@@ -185,6 +258,8 @@ mod tests {
             Some(tmp.into_path()),
             String::from("amd64"),
             String::from("freebsd"),
+            kind_stub,
+            kubectl_stub,
         )
         .await;
         assert_eq!(rc, exitcode::OSERR);
@@ -201,6 +276,23 @@ mod tests {
         let mut out = Vec::new();
         let input = "".as_bytes();
         let tmp = tempdir::TempDir::new("test_blank").unwrap();
+        fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .mode(0o755)
+            .open(tmp.path().join("kind-linux-amd64"))
+            .unwrap();
+        std::fs::create_dir_all(vec![tmp.path().to_str().unwrap(), "linux", "amd64"].join("/"))
+            .unwrap();
+        fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .mode(0o755)
+            .open(vec![tmp.path().to_str().unwrap(), "linux", "amd64", "kubectl"].join("/"))
+            .unwrap();
+
+        let kind_stub = Url::from_file_path(&tmp).unwrap().to_string();
+        let kubectl_stub = Url::from_file_path(&tmp).unwrap().to_string();
         let rc = program_main(
             Args::parse_from(["cli", "create"]),
             Box::new(|| {
@@ -213,6 +305,8 @@ mod tests {
             Some(tmp.into_path()),
             String::from("x86_64"),
             String::from("linux"),
+            kind_stub,
+            kubectl_stub,
         )
         .await;
         assert_eq!(rc, exitcode::UNAVAILABLE);
@@ -239,17 +333,17 @@ pub async fn program_main<'a>(
     dir_parent: Option<PathBuf>,
     raw_arch: String,
     raw_os: String,
+    kind_stub: String,
+    kubectl_stub: String,
 ) -> exitcode::ExitCode {
-    // TODO: wire this up for downloading kubectl and kind
-    let _install_dir = match dir_parent {
+    let install_dir = match dir_parent {
         Some(x) => get_install_path(&x),
         None => {
             log(stderr, "Error: expected user homedir, got None\n");
             return exitcode::CANTCREAT;
         }
     };
-    // TODO: wire this into downloading kubectl and kind
-    let _arch = match get_arch(&raw_arch) {
+    let arch = match get_arch(&raw_arch) {
         Some(x) => x,
         None => {
             log(
@@ -259,8 +353,7 @@ pub async fn program_main<'a>(
             return exitcode::OSERR;
         }
     };
-    // TODO: wire this into downloading kubectl and kind
-    let _os = match get_os(&raw_os) {
+    let os = match get_os(&raw_os) {
         Some(x) => x,
         None => {
             log(
@@ -270,6 +363,19 @@ pub async fn program_main<'a>(
             return exitcode::OSERR;
         }
     };
+    match ensure_binaries_installed(install_dir.as_path(), arch, os, &kind_stub, &kubectl_stub)
+        .await
+    {
+        Ok(_) => {}
+        Err(e) => {
+            log(
+                stderr,
+                &format!("Error: problem installing tools\nMessage: `{}`", e),
+            );
+            return exitcode::TEMPFAIL;
+        }
+    };
+
     let client = kube_client_factory();
     match args.cli_action {
         CliAction::Create {

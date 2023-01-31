@@ -1,4 +1,6 @@
 use clap::Parser;
+use cli::prod::URL_STUB_KIND;
+use cli::prod::URL_STUB_KUBECTL;
 use cli::program_main;
 use cli::Args;
 use std::io;
@@ -46,6 +48,8 @@ async fn main() {
         dir_parent,
         String::from(std::env::consts::ARCH),
         String::from(std::env::consts::OS),
+        String::from(URL_STUB_KIND),
+        String::from(URL_STUB_KUBECTL),
     )
     .await;
 

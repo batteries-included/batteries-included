@@ -17,6 +17,8 @@ kube-client = { version = "*" }
 k8s-openapi = { version = "*", features = ["v1_26"] }
 log = { version = "*" }
 predicates = { version = "*" }
+reqwest = { version = "*" }
 tempdir = { version = "*" }
 tokio = { version = "*", features = ["full"] }
 tower-test = { version = "*" }
+url = { version = "*" }
