@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use helpers::{get_arch, get_install_path};
+use helpers::{get_arch, get_install_path, get_os};
 
 #[derive(clap::Parser)]
 pub struct Args {
@@ -82,10 +82,19 @@ mod helpers {
 
     pub(crate) fn get_arch(arch: &str) -> Option<&'static str> {
         match arch {
-            konstants::AMD64 => return Some(konstants::AMD64),
-            konstants::X86_64 => Some(konstants::AMD64),
             konstants::AARCH64 => Some(konstants::ARM64),
+            konstants::AMD64 => return Some(konstants::AMD64),
             konstants::ARM64 => Some(konstants::ARM64),
+            konstants::X86_64 => Some(konstants::AMD64),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn get_os(os: &str) -> Option<&'static str> {
+        match os {
+            konstants::DARWIN => Some(konstants::DARWIN),
+            konstants::LINUX => return Some(konstants::LINUX),
+            konstants::MACOS => Some(konstants::DARWIN),
             _ => None,
         }
     }
@@ -119,6 +128,7 @@ mod tests {
             &mut out,
             None,
             String::from("x86_64"),
+            String::from("linux"),
         )
         .await;
         assert_eq!(rc, exitcode::CANTCREAT);
@@ -146,12 +156,41 @@ mod tests {
             &mut out,
             Some(tmp.into_path()),
             String::from("sparc64"),
+            String::from("linux"),
         )
         .await;
         assert_eq!(rc, exitcode::OSERR);
         assert_eq!(
             String::from_utf8(err).unwrap(),
             "Error: architecture `sparc64` is not supported\n"
+        );
+        assert_eq!(String::from_utf8(out).unwrap(), "");
+    }
+
+    #[tokio::test]
+    async fn test_invalid_os_fails() {
+        let mut err = Vec::new();
+        let mut out = Vec::new();
+        let input = "".as_bytes();
+        let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
+        let rc = program_main(
+            Args::parse_from(["cli", "create"]),
+            Box::new(|| {
+                let (mock_service, _) = mock::pair::<Request<Body>, Response<Body>>();
+                return kube_client::Client::new(mock_service, "default");
+            }),
+            &mut err,
+            &input,
+            &mut out,
+            Some(tmp.into_path()),
+            String::from("amd64"),
+            String::from("freebsd"),
+        )
+        .await;
+        assert_eq!(rc, exitcode::OSERR);
+        assert_eq!(
+            String::from_utf8(err).unwrap(),
+            "Error: OS `freebsd` is not supported\n"
         );
         assert_eq!(String::from_utf8(out).unwrap(), "");
     }
@@ -173,6 +212,7 @@ mod tests {
             &mut out,
             Some(tmp.into_path()),
             String::from("x86_64"),
+            String::from("linux"),
         )
         .await;
         assert_eq!(rc, exitcode::UNAVAILABLE);
@@ -198,6 +238,7 @@ pub async fn program_main<'a>(
     _stdout: &'a mut dyn Write,
     dir_parent: Option<PathBuf>,
     raw_arch: String,
+    raw_os: String,
 ) -> exitcode::ExitCode {
     // TODO: wire this up for downloading kubectl and kind
     let _install_dir = match dir_parent {
@@ -214,6 +255,17 @@ pub async fn program_main<'a>(
             log(
                 stderr,
                 &format!("Error: architecture `{}` is not supported\n", raw_arch),
+            );
+            return exitcode::OSERR;
+        }
+    };
+    // TODO: wire this into downloading kubectl and kind
+    let _os = match get_os(&raw_os) {
+        Some(x) => x,
+        None => {
+            log(
+                stderr,
+                &format!("Error: OS `{}` is not supported\n", raw_os),
             );
             return exitcode::OSERR;
         }

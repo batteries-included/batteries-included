@@ -45,6 +45,7 @@ async fn main() {
         &mut stdout,
         dir_parent,
         String::from(std::env::consts::ARCH),
+        String::from(std::env::consts::OS),
     )
     .await;
 
