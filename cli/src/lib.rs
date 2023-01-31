@@ -52,7 +52,7 @@ mod helpers {
     use k8s_openapi::api::core::v1::Pod;
     use kube_client::{api::ListParams, Api};
     use std::{
-        io::Cursor,
+        io::Read,
         os::unix::prelude::PermissionsExt,
         path::{Path, PathBuf},
     };
@@ -117,21 +117,25 @@ mod helpers {
             true => return Ok(()),
             false => {
                 std::fs::create_dir_all(bin_path.parent().unwrap())?;
+                let mut dst = std::fs::File::create(&bin_path)?;
+                let bytes: Vec<u8>;
+
                 match fetch_url.scheme() {
                     "file" => {
-                        std::fs::copy(Path::new(fetch_url.path()), &bin_path)?;
+                        let mut buf = String::new();
+                        std::fs::File::open(Path::new(fetch_url.path()))?
+                            .read_to_string(&mut buf)?;
+                        bytes = buf.into_bytes();
                     }
                     "https" => {
-                        let mut out = std::fs::File::create(&bin_path).unwrap();
-                        let mut content =
-                            Cursor::new(reqwest::get(fetch_url.as_str()).await?.bytes().await?);
-
-                        std::io::copy(&mut content, &mut out)?;
+                        bytes = (&reqwest::get(fetch_url.as_str()).await?.bytes().await?).to_vec();
                     }
                     x => {
                         return Err(format!("Unsupported file scheme: `{}`", x).into());
                     }
                 };
+
+                std::io::copy(&mut bytes.as_slice(), &mut dst)?;
                 std::fs::set_permissions(&bin_path, std::fs::Permissions::from_mode(0o755))?;
                 return Ok(());
             }
