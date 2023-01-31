@@ -6,9 +6,22 @@ use std::{
 use helpers::{ensure_binaries_installed, get_arch, get_install_path, get_os};
 
 #[derive(clap::Parser)]
-pub struct Args {
+pub struct CliArgs {
     #[command(subcommand)]
     cli_action: CliAction,
+}
+
+pub struct ProgramArgs<'a> {
+    pub cli_args: CliArgs,
+    pub kube_client_factory: Box<dyn Fn() -> kube_client::Client>,
+    pub stderr: &'a mut dyn Write,
+    pub _stdin: &'a dyn BufRead,
+    pub _stdout: &'a mut dyn Write,
+    pub dir_parent: Option<PathBuf>,
+    pub raw_arch: String,
+    pub raw_os: String,
+    pub kind_stub: String,
+    pub kubectl_stub: String,
 }
 
 #[derive(clap::Subcommand)]
@@ -74,13 +87,12 @@ mod helpers {
         namespace: &str,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let pods: Api<Pod> = Api::namespaced(client, namespace);
-        let lp =
-            ListParams::default().labels(&format!("spilo-role=master,cluster-name={}", cluster));
+        let lp = ListParams::default().labels(&format!("spilo-role=master,cluster-name={cluster}"));
         let results = pods.list(&lp).await?;
         let pod = results.iter().next();
-        match pod.and_then(|x| Some(x.metadata.name.as_ref().unwrap().to_string())) {
-            Some(p) => return Ok(p),
-            None => return Err("Pod doesn't have `name` attribute".into()),
+        match pod.map(|x| x.metadata.name.as_ref().unwrap().to_string()) {
+            Some(p) => Ok(p),
+            None => Err("Pod doesn't have `name` attribute".into()),
         }
     }
 
@@ -93,7 +105,7 @@ mod helpers {
     pub(crate) fn get_arch(arch: &str) -> Option<&'static str> {
         match arch {
             konstants::AARCH64 => Some(konstants::ARM64),
-            konstants::AMD64 => return Some(konstants::AMD64),
+            konstants::AMD64 => Some(konstants::AMD64),
             konstants::ARM64 => Some(konstants::ARM64),
             konstants::X86_64 => Some(konstants::AMD64),
             _ => None,
@@ -103,7 +115,7 @@ mod helpers {
     pub(crate) fn get_os(os: &str) -> Option<&'static str> {
         match os {
             konstants::DARWIN => Some(konstants::DARWIN),
-            konstants::LINUX => return Some(konstants::LINUX),
+            konstants::LINUX => Some(konstants::LINUX),
             konstants::MACOS => Some(konstants::DARWIN),
             _ => None,
         }
@@ -113,33 +125,33 @@ mod helpers {
         bin_path: PathBuf,
         fetch_url: url::Url,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        match bin_path.exists() {
-            true => return Ok(()),
+        let res = match bin_path.exists() {
+            true => Ok(()),
             false => {
                 std::fs::create_dir_all(bin_path.parent().unwrap())?;
                 let mut dst = std::fs::File::create(&bin_path)?;
-                let bytes: Vec<u8>;
-
-                match fetch_url.scheme() {
+                let bytes: Vec<u8> = match fetch_url.scheme() {
                     "file" => {
                         let mut buf = String::new();
                         std::fs::File::open(Path::new(fetch_url.path()))?
                             .read_to_string(&mut buf)?;
-                        bytes = buf.into_bytes();
+                        buf.into_bytes()
                     }
-                    "https" => {
-                        bytes = (&reqwest::get(fetch_url.as_str()).await?.bytes().await?).to_vec();
-                    }
+                    "https" => reqwest::get(fetch_url.as_str())
+                        .await?
+                        .bytes()
+                        .await?
+                        .to_vec(),
                     x => {
-                        return Err(format!("Unsupported file scheme: `{}`", x).into());
+                        return Err(format!("Unsupported file scheme: `{x}`").into());
                     }
                 };
-
                 std::io::copy(&mut bytes.as_slice(), &mut dst)?;
                 std::fs::set_permissions(&bin_path, std::fs::Permissions::from_mode(0o755))?;
-                return Ok(());
+                Ok(())
             }
         };
+        res
     }
 
     pub(crate) async fn ensure_binaries_installed(
@@ -151,7 +163,7 @@ mod helpers {
     ) -> Result<(), Box<dyn std::error::Error>> {
         let kind_path = install_dir.join("kind");
         let kind_url = url::Url::parse(
-            vec![kind_stub, &format!("kind-{}-{}", os, arch)]
+            vec![kind_stub, &format!("kind-{os}-{arch}")]
                 .join("/")
                 .as_str(),
         )?;
@@ -173,7 +185,8 @@ mod tests {
 
     use crate::konstants;
     use crate::program_main;
-    use crate::Args;
+    use crate::CliArgs;
+    use crate::ProgramArgs;
 
     use tower_test::mock;
 
@@ -185,22 +198,22 @@ mod tests {
         let mut err = Vec::new();
         let mut out = Vec::new();
         let input = "".as_bytes();
-        let rc = program_main(
-            Args::parse_from(["cli", "create"]),
-            Box::new(|| {
+        let mut program_args = ProgramArgs {
+            cli_args: CliArgs::parse_from(["cli", "create"]),
+            kube_client_factory: Box::new(|| {
                 let (mock_service, _) = mock::pair::<Request<Body>, Response<Body>>();
-                return kube_client::Client::new(mock_service, "default");
+                kube_client::Client::new(mock_service, "default")
             }),
-            &mut err,
-            &input,
-            &mut out,
-            None,
-            String::from("x86_64"),
-            String::from("linux"),
-            String::from("foo"),
-            String::from("bar"),
-        )
-        .await;
+            stderr: &mut err,
+            _stdin: &input,
+            _stdout: &mut out,
+            dir_parent: None,
+            raw_arch: String::from("x86_64"),
+            raw_os: String::from("linux"),
+            kind_stub: String::from("foo"),
+            kubectl_stub: String::from("bar"),
+        };
+        let rc = program_main(&mut program_args).await;
         assert_eq!(rc, exitcode::CANTCREAT);
         assert_eq!(
             String::from_utf8(err).unwrap(),
@@ -217,23 +230,22 @@ mod tests {
         let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
         let kind_stub: String = Url::from_file_path(tmp.path()).unwrap().into();
         let kubectl_stub: String = Url::from_file_path(tmp.path()).unwrap().into();
-
-        let rc = program_main(
-            Args::parse_from(["cli", "create"]),
-            Box::new(|| {
+        let mut program_args = ProgramArgs {
+            cli_args: CliArgs::parse_from(["cli", "create"]),
+            kube_client_factory: Box::new(|| {
                 let (mock_service, _) = mock::pair::<Request<Body>, Response<Body>>();
-                return kube_client::Client::new(mock_service, "default");
+                kube_client::Client::new(mock_service, "default")
             }),
-            &mut err,
-            &input,
-            &mut out,
-            Some(tmp.into_path()),
-            String::from("sparc64"),
-            String::from("linux"),
+            stderr: &mut err,
+            _stdin: &input,
+            _stdout: &mut out,
+            dir_parent: Some(tmp.into_path()),
+            raw_arch: String::from("sparc64"),
+            raw_os: String::from("linux"),
             kind_stub,
             kubectl_stub,
-        )
-        .await;
+        };
+        let rc = program_main(&mut program_args).await;
         assert_eq!(rc, exitcode::OSERR);
         assert_eq!(
             String::from_utf8(err).unwrap(),
@@ -250,22 +262,22 @@ mod tests {
         let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
         let kind_stub = Url::from_file_path(tmp.path()).unwrap().to_string();
         let kubectl_stub = Url::from_file_path(tmp.path()).unwrap().to_string();
-        let rc = program_main(
-            Args::parse_from(["cli", "create"]),
-            Box::new(|| {
+        let mut program_args = ProgramArgs {
+            cli_args: CliArgs::parse_from(["cli", "create"]),
+            kube_client_factory: Box::new(|| {
                 let (mock_service, _) = mock::pair::<Request<Body>, Response<Body>>();
-                return kube_client::Client::new(mock_service, "default");
+                kube_client::Client::new(mock_service, "default")
             }),
-            &mut err,
-            &input,
-            &mut out,
-            Some(tmp.into_path()),
-            String::from("amd64"),
-            String::from("freebsd"),
+            stderr: &mut err,
+            _stdin: &input,
+            _stdout: &mut out,
+            dir_parent: Some(tmp.into_path()),
+            raw_arch: String::from("amd64"),
+            raw_os: String::from("freebsd"),
             kind_stub,
             kubectl_stub,
-        )
-        .await;
+        };
+        let rc = program_main(&mut program_args).await;
         assert_eq!(rc, exitcode::OSERR);
         assert_eq!(
             String::from_utf8(err).unwrap(),
@@ -297,22 +309,22 @@ mod tests {
 
         let kind_stub = Url::from_file_path(&tmp).unwrap().to_string();
         let kubectl_stub = Url::from_file_path(&tmp).unwrap().to_string();
-        let rc = program_main(
-            Args::parse_from(["cli", "create"]),
-            Box::new(|| {
+        let mut program_args = ProgramArgs {
+            cli_args: CliArgs::parse_from(["cli", "create"]),
+            kube_client_factory: Box::new(|| {
                 let (mock_service, _) = mock::pair::<Request<Body>, Response<Body>>();
-                return kube_client::Client::new(mock_service, "default");
+                kube_client::Client::new(mock_service, "default")
             }),
-            &mut err,
-            &input,
-            &mut out,
-            Some(tmp.into_path()),
-            String::from("x86_64"),
-            String::from("linux"),
+            stderr: &mut err,
+            _stdin: &input,
+            _stdout: &mut out,
+            dir_parent: Some(tmp.into_path()),
+            raw_arch: String::from("x86_64"),
+            raw_os: String::from("linux"),
             kind_stub,
             kubectl_stub,
-        )
-        .await;
+        };
+        let rc = program_main(&mut program_args).await;
         assert_eq!(rc, exitcode::UNAVAILABLE);
         assert_eq!(
             String::from_utf8(err).unwrap(),
@@ -323,76 +335,69 @@ mod tests {
 }
 
 fn log(stderr: &mut dyn Write, msg: &str) {
-    match write!(stderr, "{}", msg) {
-        _ => return,
-    }
+    write!(stderr, "{msg}").unwrap();
 }
 
-pub async fn program_main<'a>(
-    args: Args,
-    kube_client_factory: Box<dyn Fn() -> kube_client::Client>,
-    stderr: &'a mut dyn Write,
-    _stdin: &'a dyn BufRead,
-    _stdout: &'a mut dyn Write,
-    dir_parent: Option<PathBuf>,
-    raw_arch: String,
-    raw_os: String,
-    kind_stub: String,
-    kubectl_stub: String,
-) -> exitcode::ExitCode {
-    let install_dir = match dir_parent {
-        Some(x) => get_install_path(&x),
+pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode {
+    let install_dir = match &args.dir_parent {
+        Some(x) => get_install_path(x),
         None => {
-            log(stderr, "Error: expected user homedir, got None\n");
+            log(args.stderr, "Error: expected user homedir, got None\n");
             return exitcode::CANTCREAT;
         }
     };
-    let arch = match get_arch(&raw_arch) {
+    let arch = match get_arch(&args.raw_arch) {
         Some(x) => x,
         None => {
             log(
-                stderr,
-                &format!("Error: architecture `{}` is not supported\n", raw_arch),
+                args.stderr,
+                &format!("Error: architecture `{}` is not supported\n", args.raw_arch),
             );
             return exitcode::OSERR;
         }
     };
-    let os = match get_os(&raw_os) {
+    let os = match get_os(&args.raw_os) {
         Some(x) => x,
         None => {
             log(
-                stderr,
-                &format!("Error: OS `{}` is not supported\n", raw_os),
+                args.stderr,
+                &format!("Error: OS `{}` is not supported\n", args.raw_os),
             );
             return exitcode::OSERR;
         }
     };
-    match ensure_binaries_installed(install_dir.as_path(), arch, os, &kind_stub, &kubectl_stub)
-        .await
+    match ensure_binaries_installed(
+        install_dir.as_path(),
+        arch,
+        os,
+        &args.kind_stub,
+        &args.kubectl_stub,
+    )
+    .await
     {
         Ok(_) => {}
         Err(e) => {
             log(
-                stderr,
-                &format!("Error: problem installing tools\nMessage: `{}`", e),
+                args.stderr,
+                &format!("Error: problem installing tools\nMessage: `{e}`"),
             );
             return exitcode::TEMPFAIL;
         }
     };
 
-    let client = kube_client_factory();
-    match args.cli_action {
+    let client = (args.kube_client_factory)();
+    match &args.cli_args.cli_action {
         CliAction::Create {
             ref forward_postgres,
             sync,
         } => {
-            let ref _fwd_postgres_tgt: String = helpers::forward_postgres_handle(&forward_postgres);
-            if sync {
-                log(stderr, "sync: true\n");
+            let _fwd_postgres_tgt: &String = &helpers::forward_postgres_handle(forward_postgres);
+            if *sync {
+                log(args.stderr, "sync: true\n");
             }
 
-            log(stderr, &format!("{}: create\n", konstants::NOT_IMPL));
-            return exitcode::UNAVAILABLE;
+            log(args.stderr, &format!("{}: create\n", konstants::NOT_IMPL));
+            exitcode::UNAVAILABLE
         }
         CliAction::Start {
             forward_postgres,
@@ -403,23 +408,23 @@ pub async fn program_main<'a>(
                 None => "demo".to_string(),
                 Some(tgt) => tgt.to_string(),
             };
-            if overwrite_resources {
-                log(stderr, "overwrite-resources: true\n");
+            if *overwrite_resources {
+                log(args.stderr, "overwrite-resources: true\n");
             }
-            log(stderr, &format!("id: {}\n", id_tgt));
-            log(stderr, &format!("{}: start\n", konstants::NOT_IMPL));
-            let fwd_postgres_tgt = helpers::forward_postgres_handle(&forward_postgres);
+            log(args.stderr, &format!("id: {id_tgt}\n"));
+            log(args.stderr, &format!("{}: start\n", konstants::NOT_IMPL));
+            let fwd_postgres_tgt = helpers::forward_postgres_handle(forward_postgres);
             if !(fwd_postgres_tgt.is_empty()) {
-                let (namespace, cluster) = fwd_postgres_tgt.split_once("/").unwrap();
-                let _pod = match helpers::get_pg_control_primary(client, cluster, namespace).await {
-                    Ok(p) => log(stderr, &format!("{}\n", p)),
+                let (namespace, cluster) = fwd_postgres_tgt.split_once('/').unwrap();
+                match helpers::get_pg_control_primary(client, cluster, namespace).await {
+                    Ok(p) => log(args.stderr, &format!("{p}\n")),
                     Err(e) => {
-                        log(stderr, &format!("Error: {}\n", e));
+                        log(args.stderr, &format!("Error: {e}\n"));
                         return exitcode::TEMPFAIL;
                     }
                 };
             }
-            return exitcode::UNAVAILABLE;
+            exitcode::UNAVAILABLE
         }
-    };
+    }
 }
