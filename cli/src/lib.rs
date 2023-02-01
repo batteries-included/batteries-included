@@ -47,35 +47,18 @@ pub mod errors {
     use std::{error::Error, fmt};
 
     #[derive(Debug)]
-    pub(crate) struct KindClusterInstallError(String);
+    pub(crate) struct KindClusterError(String);
 
-    impl fmt::Display for KindClusterInstallError {
+    impl fmt::Display for KindClusterError {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "Error installing kind cluster: {}", self.0)
+            write!(f, "Error creating or getting kind cluster: {}", self.0)
         }
     }
 
-    impl Error for KindClusterInstallError {}
+    impl Error for KindClusterError {}
 
-    impl KindClusterInstallError {
-        pub fn new(output: String) -> KindClusterInstallError {
-            Self(output)
-        }
-    }
-
-    #[derive(Debug)]
-    pub(crate) struct KindClusterGetError(String);
-
-    impl fmt::Display for KindClusterGetError {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "Error getting kind cluster: {}", self.0)
-        }
-    }
-
-    impl Error for KindClusterGetError {}
-
-    impl KindClusterGetError {
-        pub fn new(output: String) -> KindClusterGetError {
+    impl KindClusterError {
+        pub fn new(output: String) -> KindClusterError {
             Self(output)
         }
     }
@@ -221,29 +204,20 @@ mod helpers {
         let install_out = std::process::Command::new(kind_bin)
             .args(["create", "cluster", "--name", cluster_name])
             .output()?;
-        match install_out.status.success() {
+        let get_out = std::process::Command::new(kind_bin)
+            .args(["get", "kubeconfig", "--name", cluster_name])
+            .output()?;
+        match get_out.status.success() {
             false => {
-                return Err(Box::new(errors::KindClusterInstallError::new(format!(
-                    "\n\nSTDOUT: {}\n\nSTDERR: {}\n\n",
-                    std::str::from_utf8(&install_out.stdout)?,
-                    std::str::from_utf8(&install_out.stderr)?,
-                ))));
-            }
-            true => {
-                let get_out = std::process::Command::new(kind_bin)
-                    .args(["get", "kubeconfig", "--name", cluster_name])
-                    .output()?;
-                match get_out.status.success() {
-                    false => {
-                        return Err(Box::new(errors::KindClusterGetError::new(format!(
-                            "\n\nSTDOUT: {}\n\nSTDERR: {}\n\n",
+                return Err(Box::new(errors::KindClusterError::new(format!(
+                            "\n\nInstall STDOUT: {}\n\nInstall STDERR: {}\n\nGet STDOUT {}\n\nGet STDERR: {}\n",
+                            std::str::from_utf8(&install_out.stdout)?,
+                            std::str::from_utf8(&install_out.stderr)?,
                             std::str::from_utf8(&get_out.stdout)?,
                             std::str::from_utf8(&get_out.stderr)?
                         ))));
-                    }
-                    true => Ok(()),
-                }
             }
+            true => Ok(()),
         }
     }
 }
