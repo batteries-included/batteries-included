@@ -482,7 +482,7 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
     };
 
     let client = (args.kube_client_factory)();
-    match &args.cli_args.cli_action {
+    let rc = match &args.cli_args.cli_action {
         CliAction::Create {
             ref forward_postgres,
             sync,
@@ -522,5 +522,7 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             }
             exitcode::UNAVAILABLE
         }
-    }
+    };
+    args.stderr.flush().unwrap();
+    rc
 }
