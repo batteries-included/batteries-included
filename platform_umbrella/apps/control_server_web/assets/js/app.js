@@ -7,7 +7,6 @@ import { LiveSocket } from 'phoenix_live_view';
 import Alpine from 'alpinejs';
 
 import IFrame from './iframe';
-import Kratos from './kratos';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -22,7 +21,7 @@ const liveSocket = new LiveSocket('/live', Socket, {
       }
     },
   },
-  hooks: { IFrame, Kratos },
+  hooks: { IFrame },
   params: { _csrf_token: csrfToken },
 });
 

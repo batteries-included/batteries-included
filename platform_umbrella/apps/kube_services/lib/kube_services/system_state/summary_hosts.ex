@@ -78,24 +78,14 @@ defmodule KubeServices.SystemState.SummaryHosts do
     GenServer.call(target, :smtp4dev_host)
   end
 
-  @spec kratos_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def kratos_host(target \\ @me) do
-    GenServer.call(target, :kratos_host)
+  @spec keycloak_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def keycloak_host(target \\ @me) do
+    GenServer.call(target, :keycloak_host)
   end
 
-  @spec kratos_admin_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def kratos_admin_host(target \\ @me) do
-    GenServer.call(target, :kratos_admin_host)
-  end
-
-  @spec hydra_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def hydra_host(target \\ @me) do
-    GenServer.call(target, :hydra_host)
-  end
-
-  @spec hydra_admin_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def hydra_admin_host(target \\ @me) do
-    GenServer.call(target, :hydra_admin_host)
+  @spec keycloak_admin_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def keycloak_admin_host(target \\ @me) do
+    GenServer.call(target, :keycloak_admin_host)
   end
 
   @spec notebooks_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil

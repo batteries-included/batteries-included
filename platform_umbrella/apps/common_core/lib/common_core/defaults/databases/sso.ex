@@ -1,9 +1,8 @@
 defmodule CommonCore.Defaults.SsoDB do
-  @kratos_username "orykratos"
-  @hydra_username "oryhydra"
-
   @cluster_name "auth"
   @team "pg"
+
+  @keycloak_username "keycloak"
 
   @default_pg_cluster %{
     :name => @cluster_name,
@@ -12,16 +11,13 @@ defmodule CommonCore.Defaults.SsoDB do
     :storage_size => "200M",
     :type => :internal,
     :users => [
-      %{username: @kratos_username, roles: ["createdb", "login"]},
-      %{username: @hydra_username, roles: ["createdb", "login"]}
+      %{username: @keycloak_username, roles: ["createdb", "login"]}
     ],
     :databases => [
-      %{name: "kratos", owner: @kratos_username},
-      %{name: "hydra", owner: @hydra_username}
+      %{name: "keycloak", owner: @keycloak_username}
     ],
     :credential_copies => [
-      %{username: @kratos_username, namespace: "battery-core", format: :user_password},
-      %{username: @hydra_username, namespace: "battery-core", format: :user_password}
+      %{username: @keycloak_username, namespace: "battery-core", format: :user_password}
     ],
     :team_name => @team
   }

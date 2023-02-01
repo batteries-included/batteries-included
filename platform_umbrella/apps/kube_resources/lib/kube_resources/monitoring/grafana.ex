@@ -46,40 +46,51 @@ defmodule KubeResources.Grafana do
     |> B.data(data)
   end
 
-  def config_contents(_battery, state) do
-    %{
-      "server" => %{
-        "domain" => grafana_host(state),
-        "root_url" => "http://#{grafana_host(state)}/"
-      },
-      "auth" => %{"oauth_auto_login" => true},
-      "auth.generic_oauth" => %{
+  def config_contents(battery, state) do
+    %{}
+    |> add_common_config(battery, state)
+    |> add_auth_config(battery, state)
+  end
+
+  defp add_common_config(config, _battery, state) do
+    config
+    |> Map.put("server", %{
+      "domain" => grafana_host(state),
+      "root_url" => "http://#{grafana_host(state)}/"
+    })
+    |> Map.put("security", %{"allow_embedding" => true})
+    |> Map.put("users", %{
+      "viewers_can_edit" => true,
+      "auto_assign_org_role" => "Admin"
+    })
+    |> Map.put("analytics", %{"reporting_enabled" => true})
+    |> Map.put("log", %{
+      "mode" => "console",
+      "info" => "debug"
+    })
+    |> Map.put("paths", %{
+      "data" => "/var/lib/grafana/",
+      "logs" => "/var/log/grafana",
+      "plugins" => "/var/lib/grafana/plugins",
+      "provisioning" => "/etc/grafana/provisioning"
+    })
+  end
+
+  defp add_auth_config(config, _battery, state) do
+    if F.batteries_installed?(state, :sso) do
+      config
+      |> Map.put("auth.generic_oauth", %{
         "name" => "Batteries Included",
         "icon" => "signin",
         "enabled" => true,
         "scopes" => "openid offline offline_access profile email",
-        "api_url" => "http://ory-hydra-public:4444/userinfo",
-        "token_url" => "http://ory-hydra-public:4444/oauth2/token",
-        "auth_url" => "http://#{hydra_host(state)}/oauth2/auth"
-      },
-      "security" => %{"allow_embedding" => true},
-      "users" => %{
-        "viewers_can_edit" => true,
-        "auto_assign_org_role" => "Admin"
-      },
-      "analytics" => %{"reporting_enabled" => true},
-      "log" => %{
-        "filters" => "oauth.generic_oauth:debug",
-        "mode" => "console",
-        "info" => "trace"
-      },
-      "paths" => %{
-        "data" => "/var/lib/grafana/",
-        "logs" => "/var/log/grafana",
-        "plugins" => "/var/lib/grafana/plugins",
-        "provisioning" => "/etc/grafana/provisioning"
-      }
-    }
+        "auth_url" => "http://#{keycloak_host(state)}/oauth2/auth"
+      })
+      |> Map.put("auth", %{"oauth_auto_login" => true})
+      |> put_in(~w(log filters), "oauth.generic_oauth:debug")
+    else
+      Map.put(config, "auth.anonymous", %{"enabled" => true})
+    end
   end
 
   resource(:config_map_main, battery, state) do
@@ -90,28 +101,6 @@ defmodule KubeResources.Grafana do
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.data(data)
-  end
-
-  resource(:oauth_client, _battery, state) do
-    namespace = core_namespace(state)
-
-    spec = %{
-      "grantTypes" => [
-        "authorization_code",
-        "refresh_token",
-        "implicit"
-      ],
-      "responseTypes" => ["token", "id_token", "code"],
-      "scope" => "openid offline offline_access profile email",
-      "secretName" => "grafana.oauth2-client",
-      "redirectUris" => ["http://#{grafana_host(state)}/login/generic_oauth"]
-    }
-
-    B.build_resource(:ory_oauth_client)
-    |> B.name("grafana-client")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-    |> F.require_battery(state, :sso)
   end
 
   resource(:deployment_main, battery, state) do
@@ -311,24 +300,24 @@ defmodule KubeResources.Grafana do
               },
 
               # Oauth
-              %{
-                "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_ID",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{
-                    "key" => "client_id",
-                    "name" => "grafana.oauth2-client"
-                  }
-                }
-              },
-              %{
-                "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{
-                    "key" => "client_secret",
-                    "name" => "grafana.oauth2-client"
-                  }
-                }
-              },
+              # %{
+              #   "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_ID",
+              #   "valueFrom" => %{
+              #     "secretKeyRef" => %{
+              #       "key" => "client_id",
+              #       "name" => "grafana.oauth2-client"
+              #     }
+              #   }
+              # },
+              # %{
+              #   "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET",
+              #   "valueFrom" => %{
+              #     "secretKeyRef" => %{
+              #       "key" => "client_secret",
+              #       "name" => "grafana.oauth2-client"
+              #     }
+              #   }
+              # },
               %{"name" => "GF_PATHS_DATA", "value" => "/var/lib/grafana/"},
               %{"name" => "GF_PATHS_LOGS", "value" => "/var/log/grafana"},
               %{"name" => "GF_PATHS_PLUGINS", "value" => "/var/lib/grafana/plugins"},

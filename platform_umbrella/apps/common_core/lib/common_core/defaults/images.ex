@@ -54,8 +54,4 @@ defmodule CommonCore.Defaults.Images do
   def vmoperator_image, do: "victoriametrics/operator:v0.30.4"
 
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
-
-  def ory_kratos_image, do: "oryd/kratos:v0.11.1"
-  def ory_hydra_image, do: "oryd/hydra:v2.0.3"
-  def ory_hydra_maester_image, do: "oryd/hydra-maester:v0.0.26"
 end

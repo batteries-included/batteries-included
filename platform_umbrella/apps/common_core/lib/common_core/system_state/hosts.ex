@@ -33,20 +33,12 @@ defmodule CommonCore.SystemState.Hosts do
     state |> ip() |> host("smtp4dev")
   end
 
-  def kratos_host(%StateSummary{} = state) do
-    state |> ip() |> host("kratos")
+  def keycloak_host(%StateSummary{} = state) do
+    state |> ip() |> host("keycloak")
   end
 
-  def kratos_admin_host(%StateSummary{} = state) do
-    state |> ip() |> host("kratos-admin")
-  end
-
-  def hydra_host(%StateSummary{} = state) do
-    state |> ip() |> host("hydra")
-  end
-
-  def hydra_admin_host(%StateSummary{} = state) do
-    state |> ip() |> host("hydra-admin")
+  def keycloak_admin_host(%StateSummary{} = state) do
+    state |> ip() |> host("keycloak-admin")
   end
 
   def kiali_host(%StateSummary{} = state) do

@@ -128,18 +128,6 @@ defmodule ControlServerWeb.Router do
     live "/vulnerability_report", Live.TrivyReportsIndex, :aqua_vulnerability_report
   end
 
-  scope "/auth", ControlServerWeb do
-    pipe_through :browser
-
-    live "/login", Live.OryKratosFlow, :login
-    live "/recovery", Live.OryKratosFlow, :recovery
-    live "/registration", Live.OryKratosFlow, :registration
-    live "/verification", Live.OryKratosFlow, :verification
-    live "/error", Live.OryKratosError, :error
-
-    get "/consent", OryHydraController, :consent
-  end
-
   scope "/api", ControlServerWeb do
     pipe_through :api
 
