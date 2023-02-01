@@ -62,13 +62,16 @@ defmodule KubeResources.OryKratos do
       },
       "log" => %{
         "format" => "text",
-        "leak_sensitive_values" => false,
-        "level" => "debug"
+        "leak_sensitive_values" => battery.config.dev,
+        "level" => "trace"
       },
       "dev" => battery.config.dev,
       "sqa-opt-out" => true,
       "selfservice" => %{
-        "allowed_return_urls" => ["http://control.127.0.0.1.ip.batteriesincl.com:4000/"],
+        "allowed_return_urls" => [
+          "http://control.127.0.0.1.ip.batteriesincl.com:4000/",
+          "http://#{grafana_host(state)}/login/generic_oauth"
+        ],
         "default_browser_return_url" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/",
         "methods" => %{
           "code" => %{"enabled" => true, "config" => %{"lifespan" => "15m"}},
@@ -103,15 +106,18 @@ defmodule KubeResources.OryKratos do
           }
         }
       },
+      "oauth2_provider" => %{"url" => "http://ory-hydra-admin:4445/"},
       "serve" => %{
         "admin" => %{
           "port" => 4434,
-          "host" => "0.0.0.0"
+          "host" => "0.0.0.0",
+          "request_log" => %{"disable_for_health" => true}
         },
         "public" => %{
           "port" => 4433,
           "base_url" => "http://#{kratos_host(state)}/",
           "host" => "0.0.0.0",
+          "request_log" => %{"disable_for_health" => true},
           "cors" => %{
             "enabled" => true,
             "allowed_origins" => [

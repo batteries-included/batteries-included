@@ -1,5 +1,5 @@
 {
-  "$id": "https://schemas.ory.sh/presets/kratos/identity.email.schema.json",
+  "$id": "batteriesincl",
   "title": "Person",
   "type": "object",
   "properties": {

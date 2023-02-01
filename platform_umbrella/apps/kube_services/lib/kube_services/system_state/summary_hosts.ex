@@ -88,6 +88,16 @@ defmodule KubeServices.SystemState.SummaryHosts do
     GenServer.call(target, :kratos_admin_host)
   end
 
+  @spec hydra_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def hydra_host(target \\ @me) do
+    GenServer.call(target, :hydra_host)
+  end
+
+  @spec hydra_admin_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def hydra_admin_host(target \\ @me) do
+    GenServer.call(target, :hydra_admin_host)
+  end
+
   @spec notebooks_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
   def notebooks_host(target \\ @me) do
     GenServer.call(target, :notebooks_host)

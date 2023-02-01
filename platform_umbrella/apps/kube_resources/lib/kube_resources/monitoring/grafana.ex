@@ -46,20 +46,32 @@ defmodule KubeResources.Grafana do
     |> B.data(data)
   end
 
-  def config_contents(_battery, _state) do
+  def config_contents(_battery, state) do
     %{
-      "server" => %{"domain" => ""},
-      "auth.anonymous" => %{
-        enabled: true
+      "server" => %{
+        "domain" => grafana_host(state),
+        "root_url" => "http://#{grafana_host(state)}/"
       },
-      "security" => %{
-        allow_embedding: true
+      "auth" => %{"oauth_auto_login" => true},
+      "auth.generic_oauth" => %{
+        "name" => "Batteries Included",
+        "icon" => "signin",
+        "enabled" => true,
+        "scopes" => "openid offline offline_access profile email",
+        "api_url" => "http://ory-hydra-public:4444/userinfo",
+        "token_url" => "http://ory-hydra-public:4444/oauth2/token",
+        "auth_url" => "http://#{hydra_host(state)}/oauth2/auth"
       },
-      "users" => %{default_theme: "light", viewers_can_edit: true},
-      "analytics" => %{reporting_enabled: false},
+      "security" => %{"allow_embedding" => true},
+      "users" => %{
+        "viewers_can_edit" => true,
+        "auto_assign_org_role" => "Admin"
+      },
+      "analytics" => %{"reporting_enabled" => true},
       "log" => %{
+        "filters" => "oauth.generic_oauth:debug",
         "mode" => "console",
-        "info" => "debug"
+        "info" => "trace"
       },
       "paths" => %{
         "data" => "/var/lib/grafana/",
@@ -80,7 +92,29 @@ defmodule KubeResources.Grafana do
     |> B.data(data)
   end
 
-  resource(:deployment_main, _battery, state) do
+  resource(:oauth_client, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec = %{
+      "grantTypes" => [
+        "authorization_code",
+        "refresh_token",
+        "implicit"
+      ],
+      "responseTypes" => ["token", "id_token", "code"],
+      "scope" => "openid offline offline_access profile email",
+      "secretName" => "grafana.oauth2-client",
+      "redirectUris" => ["http://#{grafana_host(state)}/login/generic_oauth"]
+    }
+
+    B.build_resource(:ory_oauth_client)
+    |> B.name("grafana-client")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :sso)
+  end
+
+  resource(:deployment_main, battery, state) do
     namespace = core_namespace(state)
 
     template = %{
@@ -117,7 +151,7 @@ defmodule KubeResources.Grafana do
               },
               %{"name" => "REQ_METHOD", "value" => "POST"}
             ],
-            "image" => "quay.io/kiwigrid/k8s-sidecar:1.21.0",
+            "image" => battery.config.sidecar_image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "grafana-sc-alerts",
             "volumeMounts" => [
@@ -152,7 +186,7 @@ defmodule KubeResources.Grafana do
               },
               %{"name" => "REQ_METHOD", "value" => "POST"}
             ],
-            "image" => "quay.io/kiwigrid/k8s-sidecar:1.21.0",
+            "image" => battery.config.sidecar_image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "grafana-sc-dashboard",
             "volumeMounts" => [
@@ -183,7 +217,7 @@ defmodule KubeResources.Grafana do
               },
               %{"name" => "REQ_METHOD", "value" => "POST"}
             ],
-            "image" => "quay.io/kiwigrid/k8s-sidecar:1.21.0",
+            "image" => battery.config.sidecar_image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "grafana-sc-datasources",
             "volumeMounts" => [
@@ -217,7 +251,7 @@ defmodule KubeResources.Grafana do
               },
               %{"name" => "REQ_METHOD", "value" => "POST"}
             ],
-            "image" => "quay.io/kiwigrid/k8s-sidecar:1.21.0",
+            "image" => battery.config.sidecar_image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "grafana-sc-notifiers",
             "volumeMounts" => [
@@ -251,7 +285,7 @@ defmodule KubeResources.Grafana do
               },
               %{"name" => "REQ_METHOD", "value" => "POST"}
             ],
-            "image" => "quay.io/kiwigrid/k8s-sidecar:1.21.0",
+            "image" => battery.config.sidecar_image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "grafana-sc-plugins",
             "volumeMounts" => [
@@ -275,12 +309,32 @@ defmodule KubeResources.Grafana do
                   "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
                 }
               },
+
+              # Oauth
+              %{
+                "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_ID",
+                "valueFrom" => %{
+                  "secretKeyRef" => %{
+                    "key" => "client_id",
+                    "name" => "grafana.oauth2-client"
+                  }
+                }
+              },
+              %{
+                "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET",
+                "valueFrom" => %{
+                  "secretKeyRef" => %{
+                    "key" => "client_secret",
+                    "name" => "grafana.oauth2-client"
+                  }
+                }
+              },
               %{"name" => "GF_PATHS_DATA", "value" => "/var/lib/grafana/"},
               %{"name" => "GF_PATHS_LOGS", "value" => "/var/log/grafana"},
               %{"name" => "GF_PATHS_PLUGINS", "value" => "/var/lib/grafana/plugins"},
               %{"name" => "GF_PATHS_PROVISIONING", "value" => "/etc/grafana/provisioning"}
             ],
-            "image" => "grafana/grafana:9.3.1",
+            "image" => battery.config.image,
             "imagePullPolicy" => "IfNotPresent",
             "livenessProbe" => %{
               "failureThreshold" => 10,

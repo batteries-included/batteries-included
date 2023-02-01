@@ -1,7 +1,6 @@
 defmodule KubeResources.OryHydra do
   use CommonCore.IncludeResource,
-    oauth2clients_hydra_ory_sh: "priv/manifests/ory_hydra/oauth2clients_hydra_ory_sh.yaml",
-    hydra_yaml: "priv/raw_files/ory_hydra/hydra.yaml"
+    oauth2clients_hydra_ory_sh: "priv/manifests/ory_hydra/oauth2clients_hydra_ory_sh.yaml"
 
   use KubeExt.ResourceGenerator, app_name: "ory-hydra"
   import CommonCore.Yaml
@@ -92,9 +91,63 @@ defmodule KubeResources.OryHydra do
     yaml(get_resource(:oauth2clients_hydra_ory_sh))
   end
 
-  resource(:config_map_ory_hydra, _battery, state) do
+  defp config(battery, state) do
+    %{
+      "log" => %{
+        "format" => "text",
+        "leak_sensitive_values" => battery.config.dev,
+        "level" => "trace"
+      },
+      "dev" => battery.config.dev,
+      "sqa" => %{
+        "opt-out" => true
+      },
+      "serve" => %{
+        "cookies" => %{
+          "domain" => ".ip.batteriesincl.com",
+          "same_site_mode" => "Lax"
+        },
+        "admin" => %{
+          "port" => 4445,
+          "host" => "0.0.0.0",
+          "request_log" => %{
+            "disable_for_health" => true
+          }
+        },
+        "public" => %{
+          "port" => 4444,
+          "host" => "0.0.0.0",
+          "request_log" => %{
+            "disable_for_health" => true
+          },
+          "cors" => %{
+            "enabled" => true,
+            "allowed_origins" => [
+              "http://*.ip.batteriesincl.com",
+              "http://*.ip.batteriesincl.com:4000",
+              "https://*.ip.batteriesincl.com"
+            ],
+            "allowed_methods" => ["POST", "GET", "PUT", "PATCH", "DELETE"],
+            "allowed_headers" => ["Authorization", "Cookie", "Content-Type"],
+            "exposed_headers" => ["Content-Type", "Set-Cookie"]
+          }
+        }
+      },
+      "urls" => %{
+        "login" => "http://#{kratos_host(state)}/self-service/login/browser",
+        "consent" => "http://control.127.0.0.1.ip.batteriesincl.com:4000/auth/consent",
+        "self" => %{
+          "public" => "http://#{hydra_host(state)}",
+          "issuer" => "http://#{hydra_host(state)}",
+          "admin" => "http://ory-hydra-admin:4445/"
+        }
+      }
+    }
+  end
+
+  resource(:config_map_ory_hydra, battery, state) do
     namespace = core_namespace(state)
-    data = %{"hydra.yaml" => get_resource(:hydra_yaml)}
+    data = %{"hydra.yaml" => to_yaml(config(battery, state))}
 
     B.build_resource(:config_map)
     |> B.name("ory-hydra")
@@ -122,7 +175,6 @@ defmodule KubeResources.OryHydra do
             "args" => ["serve", "all", "--dev", "--config", "/etc/config/hydra.yaml"],
             "command" => ["hydra"],
             "env" => [
-              %{"name" => "URLS_SELF_ISSUER", "value" => "http://127.0.0.1:4444/"},
               %{
                 "name" => "SECRETS_SYSTEM",
                 "valueFrom" => %{

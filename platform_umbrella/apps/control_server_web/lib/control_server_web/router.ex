@@ -136,6 +136,8 @@ defmodule ControlServerWeb.Router do
     live "/registration", Live.OryKratosFlow, :registration
     live "/verification", Live.OryKratosFlow, :verification
     live "/error", Live.OryKratosError, :error
+
+    get "/consent", OryHydraController, :consent
   end
 
   scope "/api", ControlServerWeb do
