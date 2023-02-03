@@ -41,12 +41,12 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   end
 
   defp full_name(cluster) do
-    "#{cluster.team_name}-#{cluster.name}"
+    String.downcase("#{cluster.team_name}-#{cluster.name}")
   end
 
   def handle_event("add:user", _, %{assigns: %{changeset: changeset}} = socket) do
     users =
-      Changeset.get_field(changeset, :users, []) ++ [%PGUser{username: "user", roles: ["login"]}]
+      Changeset.get_field(changeset, :users, []) ++ [%PGUser{username: "", roles: ["login"]}]
 
     final_changeset = Changeset.put_embed(changeset, :users, users)
 
@@ -195,7 +195,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.input field={{f, :name}} />
+        <.input field={{f, :name}} placeholder="Cluster Name" />
         <div class="sm:col-span-1">
           <.labeled_definition title="Service Name" contents={@full_name} />
         </div>

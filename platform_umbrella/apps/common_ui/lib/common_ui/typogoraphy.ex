@@ -47,7 +47,11 @@ defmodule CommonUI.Typogoraphy do
   end
 
   attr(:class, :any, default: "")
-  attr(:base_class, :string, default: "text-xl sm:text-2xl font-bold leading-loose")
+
+  attr(:base_class, :string,
+    default: "text-xl sm:text-2xl font-semibold leading-loose text-gray-600"
+  )
+
   slot(:inner_block, required: true)
   attr(:rest, :global)
 
@@ -60,7 +64,9 @@ defmodule CommonUI.Typogoraphy do
   end
 
   attr(:class, :any, default: "")
+
   attr(:base_class, :string, default: "text-lg font-bold leading-loose text-blizzard-blue-800")
+
   slot(:inner_block, required: true)
   attr(:rest, :global)
 

@@ -6,12 +6,12 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
   def users_form(assigns) do
     ~H"""
-    <.h2 class="col-span-2 mt-16">Users</.h2>
-    <div class="sm:col-span-2">
+    <.card class="col-span-2">
+      <:title>Users</:title>
       <div class="grid grid-cols-12 gap-y-6 gap-x-4">
         <%= for user_form <- inputs_for(@form, :users) do %>
           <div class="col-span-4">
-            <.input field={{user_form, :username}} label="Username" />
+            <.input field={{user_form, :username}} label="Username" placeholder="Username" />
           </div>
           <div class="col-span-7">
             <.input
@@ -44,14 +44,14 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           Add User
         </.link>
       </div>
-    </div>
+    </.card>
     """
   end
 
   def databases_form(assigns) do
     ~H"""
-    <.h2 class="col-span-2 mt-16">Databases</.h2>
-    <div class="sm:col-span-2">
+    <.card class="col-span-2">
+      <:title>Database</:title>
       <div class="grid grid-cols-12 gap-y-6 gap-x-4">
         <%= for database_form <- inputs_for(@form, :databases) do %>
           <div class="col-span-4">
@@ -87,14 +87,14 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           Add Database
         </.link>
       </div>
-    </div>
+    </.card>
     """
   end
 
   def credential_copies_form(assigns) do
     ~H"""
-    <.h2 class="col-span-2 mt-16">Copies of Credentials</.h2>
-    <div class="sm:col-span-2">
+    <.card class="col-span-2">
+      <:title>Credential Secret Copies</:title>
       <div class="grid grid-cols-12 gap-y-6 gap-x-4">
         <%= for credential_form <- inputs_for(@form, :credential_copies) do %>
           <div class="col-span-4">
@@ -143,7 +143,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           Add Copy of Credentials
         </.link>
       </div>
-    </div>
+    </.card>
     """
   end
 end

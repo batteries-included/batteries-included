@@ -158,11 +158,17 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </.stat>
     </.stats>
 
-    <.h2 class="text-right">Users</.h2>
-    <.pg_users_table users={@cluster.users || []} cluster={@cluster} />
+    <div class="grid xl:grid-cols-2 gap-6">
+      <.card>
+        <:title>Users</:title>
 
-    <.h2 class="text-right">Databases</.h2>
-    <.pg_databases_table databases={@cluster.databases || []} />
+        <.pg_users_table users={@cluster.users || []} cluster={@cluster} />
+      </.card>
+      <.card>
+        <:title>Databases</:title>
+        <.pg_databases_table databases={@cluster.databases || []} />
+      </.card>
+    </div>
 
     <.h2 class="text-right">Pods</.h2>
     <.pods_table pods={@k8_pods} />

@@ -10,7 +10,15 @@ defmodule ControlServerWeb.Live.StaleIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.table id="stale-table" rows={@stale}>
+    <.h1><%= @page_title %></.h1>
+    <.stale_table :if={@stale != nil && @stale != []} rows={@stale} />
+    <.empty_state :if={@stale == nil || @stale == []} />
+    """
+  end
+
+  defp stale_table(assigns) do
+    ~H"""
+    <.table id="stale-table" rows={@rows}>
       <:col :let={resource} label="Kind">
         <%= Naming.humanize(ApiVersionKind.resource_type!(resource)) %>
       </:col>
@@ -21,6 +29,20 @@ defmodule ControlServerWeb.Live.StaleIndex do
         <%= namespace(resource) %>
       </:col>
     </.table>
+    """
+  end
+
+  defp empty_state(assigns) do
+    ~H"""
+    <.card>
+      <:title>Empty Queue</:title>
+      <div class="max-w-none prose prose-lg my-4">
+        <p>
+          There are currently no Kubernetes resources that are stale (no longer referenced in a deploy). Batteries Included control server will continue to monitor and seach for resources to clean up. Any Kubernetes objects found that are not needed will be placed in this queue for eventual deletion.
+        </p>
+      </div>
+      <img class="w-auto" src={~p"/images/search-amico.svg"} alt="" />
+    </.card>
     """
   end
 

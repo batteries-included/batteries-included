@@ -6,7 +6,8 @@ import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
 import Alpine from 'alpinejs';
 
-import IFrame from './iframe';
+import { IFrame } from './iframe';
+import { ChartHook } from './chart-hook';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -21,7 +22,7 @@ const liveSocket = new LiveSocket('/live', Socket, {
       }
     },
   },
-  hooks: { IFrame },
+  hooks: { IFrame: IFrame, ChartHook: ChartHook },
   params: { _csrf_token: csrfToken },
 });
 

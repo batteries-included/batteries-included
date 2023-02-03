@@ -46,6 +46,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
   def render(assigns) do
     ~H"""
     <div>
+      <.h1>New PostgreSQL Cluster</.h1>
       <.live_component
         module={PostgresFormComponent}
         cluster={@cluster}

@@ -170,7 +170,7 @@ defmodule CommonUI.Form do
         name={@name}
         id={@id || @name}
         value={@value}
-        class={[border("input", @errors), "input input-md inptut-bordered"]}
+        class={[border("input", @errors), "input-md"]}
         {@rest}
       />
       <.error :for={msg <- @errors} message={msg} />
@@ -182,10 +182,25 @@ defmodule CommonUI.Form do
   defp input_checked(_rest, value) when is_boolean(value), do: value
   defp input_checked(_rest, value), do: to_string(value) == "true"
 
-  defp border(type, [] = _errors), do: "#{type}-bordered"
+  # Border helpers. Yes these are repetitive to make sure
+  # that tailwindcss doesn't purge the needed types.
+  defp border("input" = _type, [] = _errors), do: "input input-bordered"
+  defp border("textarea" = _type, [] = _errors), do: "textarea textarea-bordered"
+  defp border("select" = _type, [] = _errors), do: "select select-bordered"
+
+  defp border("input" = _type, [_ | _] = _errors),
+    do: "input input-bordered input-error"
+
+  defp border("select" = _type, [_ | _] = _errors),
+    do: "selct select-bordered select-error"
+
+  defp border("textarea" = _type, [_ | _] = _errors),
+    do: "text-area textarea-bordered textarea-error"
+
+  defp border(type, [] = _errors), do: "#{type} #{type}-secondary #{type}-bordered"
 
   defp border(type, [_ | _] = _errors),
-    do: "#{type}-bordered #{type}-error"
+    do: "#{type} #{type}-bordered #{type}-error"
 
   @doc """
   Renders a label.

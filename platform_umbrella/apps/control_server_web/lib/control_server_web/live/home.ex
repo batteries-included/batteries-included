@@ -1,9 +1,16 @@
 defmodule ControlServerWeb.Live.Home do
+  alias KubeExt.KubeState
   use ControlServerWeb, {:live_view, layout: :fresh}
+  alias Phoenix.Naming
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_page_group(:home) |> assign_page_title("Home")}
+    {:ok,
+     socket
+     |> assign_page_group(:home)
+     |> assign_page_title("Home")
+     |> assign_pods(KubeState.get_all(:pod))
+     |> assign_nodes(KubeState.get_all(:node))}
   end
 
   def assign_page_group(socket, page_group) do
@@ -14,41 +21,92 @@ defmodule ControlServerWeb.Live.Home do
     assign(socket, page_title: page_title)
   end
 
+  def assign_pods(socket, pods) do
+    assign(socket, pods: pods)
+  end
+
+  def assign_nodes(socket, nodes) do
+    assign(socket, nodes: nodes)
+  end
+
+  defp pod_data(pods) do
+    count_map =
+      pods
+      |> Enum.map(&K8s.Resource.FieldAccessors.namespace/1)
+      |> Enum.filter(fn ns -> ns != nil and String.contains?(ns, "battery") end)
+      |> Enum.reduce(%{}, fn ns, acc ->
+        Map.update(acc, ns, 1, fn v -> v + 1 end)
+      end)
+
+    %{
+      labels: Map.keys(count_map),
+      datasets: [
+        %{
+          label: "Pods",
+          data: Map.values(count_map)
+        }
+      ]
+    }
+  end
+
+  defp most_recent(batteries, n \\ 8) do
+    batteries
+    |> Enum.sort_by(& &1.inserted_at, :desc)
+    |> Enum.slice(-n..-1)
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    Intentionally Empty
-    <div class="prose">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tincidunt libero eu erat blandit, eu elementum quam sagittis. Sed sollicitudin turpis in ultricies elementum. Praesent at ipsum et sapien mattis mollis. Vivamus viverra dolor sit amet augue pharetra porttitor. Phasellus eu ante quis tellus rutrum ornare id vitae ante. Aliquam mollis leo faucibus vehicula dignissim. Nulla volutpat ligula ac massa rutrum maximus. Interdum et malesuada fames ac ante ipsum primis in faucibus.
-      </p>
-      <p>
-        Sed gravida vel lectus quis bibendum. Nullam vulputate ex a commodo convallis. Nam luctus sit amet eros at mollis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam porta tellus ut urna lacinia congue. Etiam feugiat, diam eu tempus tristique, nisl risus porttitor augue, in ullamcorper quam justo eget massa. Integer pharetra mauris ut justo efficitur, at suscipit lorem vestibulum. Donec eget blandit metus, tincidunt iaculis lorem. Cras in justo ut magna scelerisque pharetra. Suspendisse pulvinar mauris ornare tortor feugiat dictum. Donec id pellentesque augue. In mauris eros, maximus vitae aliquet vitae, laoreet vel elit. In mi arcu, accumsan eu arcu sed, sodales imperdiet tellus. Vivamus sit amet arcu at mauris facilisis accumsan. In ac nibh euismod, gravida quam eget, ullamcorper ligula.
-      </p>
-      <p>
-        Quisque bibendum justo posuere condimentum mollis. Praesent maximus est sit amet ligula laoreet, ac tincidunt odio aliquet. Sed quis sapien vel nisi sollicitudin aliquet ut rutrum quam. Nulla sagittis metus blandit ante pellentesque, ut hendrerit justo dictum. Pellentesque aliquet nisi sit amet est tempor, quis fringilla ipsum mattis. Vestibulum laoreet risus quis dolor ultrices dignissim. Aenean dapibus egestas finibus. Phasellus dui eros, consequat non tincidunt eu, sodales eu mi. Sed sed vehicula lorem, at dictum diam. Duis vitae vestibulum ex. Maecenas dictum purus a mauris mattis eleifend. Sed vehicula est et justo volutpat, a tincidunt dolor vestibulum. Quisque eleifend lacus non risus sagittis, sed tempus eros molestie. Aliquam erat volutpat.
-      </p>
-      <p>
-        Pellentesque mollis est quis arcu scelerisque lobortis eget quis nulla. Praesent at justo dignissim, rutrum lorem id, lacinia sem. Proin consectetur volutpat tortor, at molestie sapien porta quis. Duis lacinia eget est id vehicula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lobortis magna at egestas blandit. Nam auctor risus id viverra commodo.
-      </p>
-      <p>
-        Morbi sit amet eros feugiat, ultrices purus vel, rhoncus tellus. Donec id hendrerit turpis. Donec eu malesuada felis, sed convallis purus. Vivamus vel fermentum orci. Maecenas quis dignissim lorem. Ut tortor nibh, bibendum sed leo a, rhoncus cursus urna. In eu lacinia quam. Aenean accumsan leo ligula, ac pretium nisl ultricies non.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tincidunt libero eu erat blandit, eu elementum quam sagittis. Sed sollicitudin turpis in ultricies elementum. Praesent at ipsum et sapien mattis mollis. Vivamus viverra dolor sit amet augue pharetra porttitor. Phasellus eu ante quis tellus rutrum ornare id vitae ante. Aliquam mollis leo faucibus vehicula dignissim. Nulla volutpat ligula ac massa rutrum maximus. Interdum et malesuada fames ac ante ipsum primis in faucibus.
-      </p>
-      <p>
-        Sed gravida vel lectus quis bibendum. Nullam vulputate ex a commodo convallis. Nam luctus sit amet eros at mollis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam porta tellus ut urna lacinia congue. Etiam feugiat, diam eu tempus tristique, nisl risus porttitor augue, in ullamcorper quam justo eget massa. Integer pharetra mauris ut justo efficitur, at suscipit lorem vestibulum. Donec eget blandit metus, tincidunt iaculis lorem. Cras in justo ut magna scelerisque pharetra. Suspendisse pulvinar mauris ornare tortor feugiat dictum. Donec id pellentesque augue. In mauris eros, maximus vitae aliquet vitae, laoreet vel elit. In mi arcu, accumsan eu arcu sed, sodales imperdiet tellus. Vivamus sit amet arcu at mauris facilisis accumsan. In ac nibh euismod, gravida quam eget, ullamcorper ligula.
-      </p>
-      <p>
-        Quisque bibendum justo posuere condimentum mollis. Praesent maximus est sit amet ligula laoreet, ac tincidunt odio aliquet. Sed quis sapien vel nisi sollicitudin aliquet ut rutrum quam. Nulla sagittis metus blandit ante pellentesque, ut hendrerit justo dictum. Pellentesque aliquet nisi sit amet est tempor, quis fringilla ipsum mattis. Vestibulum laoreet risus quis dolor ultrices dignissim. Aenean dapibus egestas finibus. Phasellus dui eros, consequat non tincidunt eu, sodales eu mi. Sed sed vehicula lorem, at dictum diam. Duis vitae vestibulum ex. Maecenas dictum purus a mauris mattis eleifend. Sed vehicula est et justo volutpat, a tincidunt dolor vestibulum. Quisque eleifend lacus non risus sagittis, sed tempus eros molestie. Aliquam erat volutpat.
-      </p>
-      <p>
-        Pellentesque mollis est quis arcu scelerisque lobortis eget quis nulla. Praesent at justo dignissim, rutrum lorem id, lacinia sem. Proin consectetur volutpat tortor, at molestie sapien porta quis. Duis lacinia eget est id vehicula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lobortis magna at egestas blandit. Nam auctor risus id viverra commodo.
-      </p>
-      <p>
-        Morbi sit amet eros feugiat, ultrices purus vel, rhoncus tellus. Donec id hendrerit turpis. Donec eu malesuada felis, sed convallis purus. Vivamus vel fermentum orci. Maecenas quis dignissim lorem. Ut tortor nibh, bibendum sed leo a, rhoncus cursus urna. In eu lacinia quam. Aenean accumsan leo ligula, ac pretium nisl ultricies non.
-      </p>
+    <.h1>Home</.h1>
+
+    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <.card>
+        <:title>Battery Count</:title>
+        <div class="text-6xl text-center text-secondary">
+          <%= length(@installed_batteries) %>
+        </div>
+      </.card>
+      <.card>
+        <:title>Last Deploy</:title>
+        <Heroicons.check_circle class="w-auto h-16 text-pink-500" />
+      </.card>
+
+      <.card>
+        <:title>Total Pods</:title>
+        <div class="text-6xl text-center text-pink-500"><%= length(@pods) %></div>
+      </.card>
+      <.card>
+        <:title>Nodes</:title>
+        <div class="text-6xl text-center text-secondary"><%= length(@nodes) %></div>
+      </.card>
+    </div>
+
+    <div class="grid xl:grid-cols-2 gap-6">
+      <.card>
+        <:title>Pod Namespaces</:title>
+        <div
+          class="pods-chart"
+          id="pod-chart"
+          phx-hook="ChartHook"
+          data-chart-type="doughnut"
+          data-chart-data={Jason.encode!(pod_data(@pods))}
+        >
+          <canvas class="w-full h-full"></canvas>
+        </div>
+      </.card>
+
+      <.card>
+        <:title>Recent Batteries</:title>
+        <.table id="recent-batteries" rows={most_recent(@installed_batteries)}>
+          <:col :let={battery} label="Type">
+            <%= Naming.humanize(battery.type) %>
+          </:col>
+          <:col :let={battery} label="Group">
+            <%= battery.group %>
+          </:col>
+        </.table>
+      </.card>
     </div>
     """
   end

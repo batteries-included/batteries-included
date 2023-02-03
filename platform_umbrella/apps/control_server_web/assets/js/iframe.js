@@ -28,7 +28,7 @@ const resize = (element) => {
   }
 };
 
-export default {
+const IFrame = {
   mounted() {
     const doResize = debounce(() => resize(this.el), 500, {
       leading: true,
@@ -39,3 +39,5 @@ export default {
     setInterval(doResize, 1000);
   },
 };
+
+export { IFrame };

@@ -8,9 +8,11 @@ defmodule CommonUI.Stats do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <.card class="flex flex-row justify-around">
+    <.card>
       <%= if @inner_block do %>
-        <%= render_slot(@inner_block) %>
+        <div class="flex flex-row justify-around">
+          <%= render_slot(@inner_block) %>
+        </div>
       <% end %>
     </.card>
     """

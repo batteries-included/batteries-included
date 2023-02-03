@@ -1,1 +1,1 @@
-"<h3 class=\"text-xl sm:text-2xl font-bold leading-loose\">\n  Test H3 Header\n</h3>"
+"<h3 class=\"text-xl sm:text-2xl font-semibold leading-loose text-gray-600\">\n  Test H3 Header\n</h3>"
