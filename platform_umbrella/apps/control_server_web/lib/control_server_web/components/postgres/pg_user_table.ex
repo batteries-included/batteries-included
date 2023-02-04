@@ -1,9 +1,9 @@
 defmodule ControlServerWeb.PgUserTable do
   use ControlServerWeb, :html
 
-  attr(:users, :list, required: true)
-  attr(:cluster, :any, required: true)
-  attr(:id, :string, default: "pg-users-table")
+  attr :users, :list, required: true
+  attr :cluster, :any, required: true
+  attr :id, :string, default: "pg-users-table"
 
   def pg_users_table(assigns) do
     ~H"""

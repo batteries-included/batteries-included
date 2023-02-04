@@ -3,8 +3,8 @@ defmodule CommonUI.RoundedLabel do
   import Phoenix.Component, except: [link: 1]
   import CommonUI.CSSHelpers
 
-  attr(:class, :string, default: "")
-  slot(:inner_block)
+  attr :class, :string, default: ""
+  slot :inner_block
 
   def rounded_label(assigns) do
     ~H"""

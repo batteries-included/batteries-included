@@ -23,16 +23,16 @@ defmodule CommonUI.Modal do
         <:cancel>Cancel</:cancel>
       </.modal>
   """
-  attr(:id, :string, required: true)
-  attr(:show, :boolean, default: false)
-  attr(:on_cancel, JS, default: %JS{})
-  attr(:on_confirm, JS, default: %JS{})
+  attr :id, :string, required: true
+  attr :show, :boolean, default: false
+  attr :on_cancel, JS, default: %JS{}
+  attr :on_confirm, JS, default: %JS{}
 
-  slot(:inner_block, required: true)
-  slot(:title)
-  slot(:subtitle)
-  slot(:confirm)
-  slot(:cancel)
+  slot :inner_block, required: true
+  slot :title
+  slot :subtitle
+  slot :confirm
+  slot :cancel
 
   def modal(assigns) do
     ~H"""

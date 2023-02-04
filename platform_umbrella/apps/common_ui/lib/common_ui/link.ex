@@ -20,13 +20,13 @@ defmodule CommonUI.Link do
     """
   )
 
-  attr(:href, :any)
+  attr :href, :any
 
-  attr(:variant, :string, default: "unstyled", values: ["styled", "external", "unstyled"])
-  attr(:class, :any, default: nil)
-  attr(:rest, :global, include: ~w(download hreflang referrerpolicy rel target type))
+  attr :variant, :string, default: "unstyled", values: ["styled", "external", "unstyled"]
+  attr :class, :any, default: nil
+  attr :rest, :global, include: ~w(download hreflang referrerpolicy rel target type)
 
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
   def link(assigns)
 
   def link(%{variant: "external"} = assigns) do

@@ -18,12 +18,12 @@ defmodule CommonUI.Form do
         <:actions>
       </.simple_form>
   """
-  attr(:for, :any, default: nil, doc: "the datastructure for the form")
-  attr(:as, :any, default: nil, doc: "the server side parameter to collect all input under")
-  attr(:rest, :global, doc: "the arbitraty HTML attributes to apply to the form tag")
+  attr :for, :any, default: nil, doc: "the datastructure for the form"
+  attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
+  attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the form tag"
 
-  slot(:inner_block, required: true)
-  slot(:actions, doc: "the slot for form actions, such as a submit button")
+  slot :inner_block, required: true
+  slot :actions, doc: "the slot for form actions, such as a submit button"
 
   def simple_form(assigns) do
     ~H"""
@@ -52,9 +52,9 @@ defmodule CommonUI.Form do
       <.input field={{f, :email}} type="email" />
       <.input name="my-input" errors={["oh no!"]} />
   """
-  attr(:id, :any)
-  attr(:name, :any)
-  attr(:label, :string)
+  attr :id, :any
+  attr :name, :any
+  attr :label, :string
 
   attr(:type, :string,
     default: "text",
@@ -62,14 +62,14 @@ defmodule CommonUI.Form do
       ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range|
   )
 
-  attr(:value, :any)
-  attr(:field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}")
-  attr(:errors, :list)
-  attr(:wrapper_class, :string, default: "form-control")
+  attr :value, :any
+  attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
+  attr :errors, :list
+  attr :wrapper_class, :string, default: "form-control"
 
-  attr(:prompt, :string, default: nil, doc: "the prompt for select inputs")
-  attr(:options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2")
-  attr(:multiple, :boolean, default: false, doc: "the multiple flag for select inputs")
+  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
+  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
   attr(:rest, :global,
     doc: "the arbitrary HTML attributes for the input tag",
@@ -77,7 +77,7 @@ defmodule CommonUI.Form do
       ~w(autocomplete checked disabled form max maxlength min minlength pattern placeholder readonly required size step)
   )
 
-  slot(:inner_block)
+  slot :inner_block
 
   def input(%{field: {f, field}} = assigns) do
     assigns
@@ -205,8 +205,8 @@ defmodule CommonUI.Form do
   @doc """
   Renders a label.
   """
-  attr(:for, :string, default: nil)
-  slot(:inner_block, required: true)
+  attr :for, :string, default: nil
+  slot :inner_block, required: true
 
   def label(assigns) do
     ~H"""
@@ -219,7 +219,7 @@ defmodule CommonUI.Form do
   @doc """
   Generates a generic error message.
   """
-  attr(:message, :string, default: "")
+  attr :message, :string, default: ""
 
   def error(assigns) do
     ~H"""

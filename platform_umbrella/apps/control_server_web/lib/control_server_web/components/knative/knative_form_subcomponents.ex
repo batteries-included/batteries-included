@@ -3,9 +3,9 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
 
   import Phoenix.HTML.Form, only: [inputs_for: 2, input_value: 2]
 
-  attr(:containers_field, :atom, default: :containers)
-  attr(:form, :any, required: true)
-  attr(:target, :any, required: true)
+  attr :containers_field, :atom, default: :containers
+  attr :form, :any, required: true
+  attr :target, :any, required: true
 
   def containers_form(assigns) do
     ~H"""
@@ -32,8 +32,8 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
     """
   end
 
-  attr(:form, :any, required: true)
-  attr(:target, :any, required: true)
+  attr :form, :any, required: true
+  attr :target, :any, required: true
 
   def env_values_form(assigns) do
     ~H"""
@@ -52,9 +52,9 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
     """
   end
 
-  attr(:form, :any, required: true)
-  attr(:target, :any, required: true)
-  attr(:containers_field, :atom, required: true)
+  attr :form, :any, required: true
+  attr :target, :any, required: true
+  attr :containers_field, :atom, required: true
 
   def single_container_form(assigns) do
     ~H"""
@@ -80,8 +80,8 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
     """
   end
 
-  attr(:form, :any, required: true)
-  attr(:target, :any, required: true)
+  attr :form, :any, required: true
+  attr :target, :any, required: true
 
   def single_env_value_form(assigns) do
     ~H"""

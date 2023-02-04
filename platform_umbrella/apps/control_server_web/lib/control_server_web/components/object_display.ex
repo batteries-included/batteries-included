@@ -1,9 +1,9 @@
 defmodule ControlServerWeb.ObjectDisplay do
   use ControlServerWeb, :html
 
-  attr(:base_url, :string, default: "/")
-  attr(:path, :any, default: [])
-  attr(:object, :any, default: %{})
+  attr :base_url, :string, default: "/"
+  attr :path, :any, default: []
+  attr :object, :any, default: %{}
 
   def object_display(assigns) do
     ~H"""
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.ObjectDisplay do
     """
   end
 
-  attr(:selected, :string, default: nil)
+  attr :selected, :string, default: nil
 
   defp column_title(%{selected: nil} = assigns) do
     ~H"""
@@ -42,9 +42,9 @@ defmodule ControlServerWeb.ObjectDisplay do
     |> String.trim()
   end
 
-  attr(:base_url, :string, default: "/")
-  attr(:path, :any, default: [])
-  attr(:object, :any, default: %{})
+  attr :base_url, :string, default: "/"
+  attr :path, :any, default: []
+  attr :object, :any, default: %{}
 
   defp column(%{object: object} = assigns) when is_map(object) or is_list(object) do
     ~H"""
@@ -64,9 +64,9 @@ defmodule ControlServerWeb.ObjectDisplay do
     """
   end
 
-  attr(:base_url, :string, default: "/")
-  attr(:path, :any, default: [])
-  attr(:object, :any, default: %{})
+  attr :base_url, :string, default: "/"
+  attr :path, :any, default: []
+  attr :object, :any, default: %{}
 
   defp column_data(%{object: object} = assigns) when is_map(object) do
     ~H"""
@@ -100,8 +100,8 @@ defmodule ControlServerWeb.ObjectDisplay do
     """
   end
 
-  attr(:value_type, :atom, required: true)
-  attr(:class, :any, default: nil)
+  attr :value_type, :atom, required: true
+  attr :class, :any, default: nil
 
   defp value_icon(%{value_type: :map} = assigns) do
     ~H"""

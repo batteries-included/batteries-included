@@ -10,14 +10,14 @@ defmodule CommonUI.Button do
       <.button>Send!</.button>
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
-  attr(:type, :string, default: nil)
-  attr(:value, :string, default: nil)
-  attr(:name, :string, default: nil)
-  attr(:class, :any, default: nil)
-  attr(:variant, :string, default: "default", values: ["default", "filled", "unstyled"])
-  attr(:rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag")
+  attr :type, :string, default: nil
+  attr :value, :string, default: nil
+  attr :name, :string, default: nil
+  attr :class, :any, default: nil
+  attr :variant, :string, default: "default", values: ["default", "filled", "unstyled"]
+  attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag"
 
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def button(%{variant: "default"} = assigns) do
     ~H"""

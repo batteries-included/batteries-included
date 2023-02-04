@@ -4,9 +4,9 @@ defmodule CommonUI.Card do
   import CommonUI.CSSHelpers
   import CommonUI.Typogoraphy
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block)
-  slot(:title)
+  attr :class, :string, default: nil
+  slot :inner_block
+  slot :title
 
   def card(assigns) do
     ~H"""
