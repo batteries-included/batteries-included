@@ -9,6 +9,7 @@ defmodule ControlServerWeb.LeftMenu do
   import CommonUI.Icons.Network
   import CommonUI.Icons.Notebook
   import CommonUI.Icons.Rook
+  import CommonUI.Icons.CNCF
   import KubeServices.SystemState.SummaryHosts
 
   attr :icon_class, :string, default: "h-7"
@@ -56,6 +57,11 @@ defmodule ControlServerWeb.LeftMenu do
           <:label>ML</:label>
         </.main_menu_item>
 
+        <.main_menu_item group={:kube} page_group={@page_group}>
+          <:icon><.kubernetes_logo class={@icon_class} /></:icon>
+          <:label>Kubernetes</:label>
+        </.main_menu_item>
+
         <.main_menu_item group={:magic} page_group={@page_group}>
           <:icon><Heroicons.sparkles class={@icon_class} /></:icon>
           <:label>Magic</:label>
@@ -95,6 +101,13 @@ defmodule ControlServerWeb.LeftMenu do
         page_detail_type={@page_detail_type}
         installed_batteries={batteries_for_group(@installed_batteries || [], :ml)}
         group={:ml}
+      />
+
+      <.menu_detail
+        page_group={@page_group}
+        page_detail_type={@page_detail_type}
+        installed_batteries={[]}
+        group={:kube}
       />
 
       <.menu_detail
@@ -252,33 +265,10 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  def group_detail_item(%{group: :magic} = assigns) do
+  def group_detail_item(%{group: :kube} = assigns) do
     ~H"""
-    <.h4>Magic</.h4>
-
-    <.detail_menu_item
-      navigate={~p"/batteries/magic"}
-      name="Batteries"
-      is_active={@page_detail_type == :batteries}
-    >
-      <Heroicons.battery_0 class={@icon_class} />
-    </.detail_menu_item>
-    <.detail_menu_item
-      navigate={~p"/snapshot_apply"}
-      name="Deploys"
-      is_active={@page_detail_type == :kube_snapshots}
-    >
-      <Heroicons.rocket_launch class={@icon_class} />
-    </.detail_menu_item>
-    <.detail_menu_item
-      navigate={~p"/timeline"}
-      name="Timeline"
-      is_active={@page_detail_type == :timeline}
-    >
-      <Heroicons.clock class={@icon_class} />
-    </.detail_menu_item>
-
     <.h4>Kubernetes</.h4>
+
     <.detail_menu_item navigate={~p"/kube/pods"} name="Pods" is_active={@page_detail_type == :pods}>
       <Heroicons.rectangle_group class={@icon_class} />
     </.detail_menu_item>
@@ -305,6 +295,34 @@ defmodule ControlServerWeb.LeftMenu do
     </.detail_menu_item>
     <.detail_menu_item navigate={~p"/kube/nodes"} name="Nodes" is_active={@page_detail_type == :nodes}>
       <Heroicons.server class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  def group_detail_item(%{group: :magic} = assigns) do
+    ~H"""
+    <.h4>Magic</.h4>
+
+    <.detail_menu_item
+      navigate={~p"/batteries/magic"}
+      name="Batteries"
+      is_active={@page_detail_type == :batteries}
+    >
+      <Heroicons.battery_0 class={@icon_class} />
+    </.detail_menu_item>
+    <.detail_menu_item
+      navigate={~p"/snapshot_apply"}
+      name="Deploys"
+      is_active={@page_detail_type == :kube_snapshots}
+    >
+      <Heroicons.rocket_launch class={@icon_class} />
+    </.detail_menu_item>
+    <.detail_menu_item
+      navigate={~p"/timeline"}
+      name="Timeline"
+      is_active={@page_detail_type == :timeline}
+    >
+      <Heroicons.clock class={@icon_class} />
     </.detail_menu_item>
 
     <.h4>Delete</.h4>

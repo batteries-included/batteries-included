@@ -7,7 +7,7 @@ defmodule KubeServices.ResourceDeleter do
   use GenServer
 
   alias K8s.Resource.FieldAccessors
-  alias ControlServer.Stale.DeleteArchivist
+  alias ControlServer.Deleted.DeleteArchivist
   alias KubeExt.CopyDown
 
   require Logger

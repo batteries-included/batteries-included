@@ -1,4 +1,4 @@
-defmodule ControlServer.Stale.DeletedResource do
+defmodule ControlServer.Deleted.DeletedResource do
   use TypedEctoSchema
   import Ecto.Changeset
 

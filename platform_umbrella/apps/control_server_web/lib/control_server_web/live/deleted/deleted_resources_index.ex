@@ -1,13 +1,43 @@
 defmodule ControlServerWeb.Live.DeletedResourcesIndex do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  alias ControlServer.Stale.DeleteArchivist
+  alias ControlServer.Deleted.DeleteArchivist
   alias KubeServices.ResourceDeleter
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.table id="deleted-resources-table" rows={@deleted_resources}>
+    <.h1><%= @page_title %></.h1>
+    <.deleted_resources_table
+      :if={@deleted_resources != nil && @deleted_resources != []}
+      rows={@deleted_resources}
+    />
+    <.empty_state
+      :if={@deleted_resources == nil || @deleted_resources == []}
+      rows={@deleted_resources}
+    />
+    """
+  end
+
+  defp empty_state(assigns) do
+    ~H"""
+    <.card>
+      <:title>Empty Delete Archive</:title>
+      <div class="max-w-none prose prose-lg my-4">
+        <p>
+          There no deleted resources. If the Batteries Included platform does delete any resources it will
+          record that here. Deletes usually come from stale resources that are no longer referenced in
+          deploys, or UI interaction on Kubernetes pages.
+        </p>
+      </div>
+      <img class="w-auto max-w-md mx-auto" src={~p"/images/server-amico.svg"} alt="" />
+    </.card>
+    """
+  end
+
+  defp deleted_resources_table(assigns) do
+    ~H"""
+    <.table id="deleted-resources-table" rows={@rows}>
       <:col :let={resource} label="Kind">
         <%= resource.kind %>
       </:col>

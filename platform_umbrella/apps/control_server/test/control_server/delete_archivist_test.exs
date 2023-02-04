@@ -3,7 +3,7 @@ defmodule ControlServer.DeleteArchivistTest do
 
   alias ControlServer.ContentAddressable
   alias KubeExt.Builder, as: B
-  alias ControlServer.Stale.DeleteArchivist
+  alias ControlServer.Deleted.DeleteArchivist
 
   defp build_resource do
     B.build_resource(:deployment)

@@ -1,4 +1,4 @@
-defmodule ControlServer.Stale.DeleteArchivist do
+defmodule ControlServer.Deleted.DeleteArchivist do
   import Ecto.Query
   import K8s.Resource.FieldAccessors
 
@@ -6,7 +6,7 @@ defmodule ControlServer.Stale.DeleteArchivist do
   alias ControlServer.Repo
   alias ControlServer.ContentAddressable.ContentAddressableResource
   alias ControlServer.ContentAddressable
-  alias ControlServer.Stale.DeletedResource
+  alias ControlServer.Deleted.DeletedResource
   alias KubeExt.Hashing
 
   alias Ecto.Multi
