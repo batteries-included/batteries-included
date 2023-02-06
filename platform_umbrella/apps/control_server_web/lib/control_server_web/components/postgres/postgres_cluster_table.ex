@@ -2,13 +2,15 @@ defmodule ControlServerWeb.PostgresClusterTable do
   use ControlServerWeb, :html
 
   attr :id, :string, default: "postgres-cluster-table"
-  attr :clusters, :list, required: true
+  attr :rows, :list, required: true
 
   def postgres_clusters_table(assigns) do
     ~H"""
-    <.table id={@id} rows={@clusters}>
+    <.table id={@id} rows={@rows}>
       <:col :let={pg} label="Name"><%= pg.name %></:col>
       <:col :let={pg} label="Type"><%= pg.type %></:col>
+      <:col :let={pg} label="User Count"><%= length(pg.users) %></:col>
+      <:col :let={pg} label="DB Count"><%= length(pg.users) %></:col>
       <:action :let={pg}>
         <.link navigate={show_url(pg)} variant="styled">
           Show Postgres

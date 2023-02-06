@@ -38,7 +38,10 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.postgres_clusters_table clusters={@clusters} />
+    <.h1><%= @page_title %></.h1>
+    <.card>
+      <.postgres_clusters_table rows={@clusters} />
+    </.card>
 
     <.h2 variant="fancy">Actions</.h2>
     <.card>
