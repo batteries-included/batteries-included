@@ -1,0 +1,9 @@
+_target_: src.data.tiny_shakespeare_datamodule.TinyShakespeareDataModule
+data_dir: ${paths.data_dir}
+batch_size: 128
+sequence_length: 128
+
+encoder_type: 'char'
+train_val_test_split: [0.95, 0.04, 0.01]
+num_workers: 12
+pin_memory: False

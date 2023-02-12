@@ -1,0 +1,19 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: tiny_shakespeare.yaml
+  - override /model: tinygpt.yaml
+  - override /callbacks: default.yaml
+  - override /trainer: gpu.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ['tiny_shakespeare', 'gpt']
+
+trainer:
+  min_epochs: 3
+  max_epochs: 3
