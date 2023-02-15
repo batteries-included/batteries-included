@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -xuo pipefail
 
 # Grab the location we'll use it for yaml locations soon

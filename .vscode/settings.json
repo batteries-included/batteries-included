@@ -98,5 +98,6 @@
     "yaml",
     "elixir"
   ],
-  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"]
+  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"],
+  "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
 }
