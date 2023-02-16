@@ -29,12 +29,12 @@ defmodule KubeServices.MixProject do
       {:tesla, "~> 1.5.0"},
       {:jason, "~> 1.2"},
       {:oban, "~> 2.12"},
-      # logging
+      {:k8s, "~> 2.0.1"},
       {:phoenix, github: "phoenixframework/phoenix", override: true},
+      {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},
       {:kube_ext, in_umbrella: true},
-      {:common_core, in_umbrella: true},
       {:kube_resources, in_umbrella: true}
     ]
   end

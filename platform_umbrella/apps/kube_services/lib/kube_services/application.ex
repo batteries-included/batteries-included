@@ -7,7 +7,6 @@ defmodule KubeServices.Application do
 
   alias KubeExt.ConnectionPool
   alias KubeExt.KubeState
-  alias KubeExt.KubeState.ResourceWatcher
 
   @task_supervisor KubeServices.TaskSupervisor
 
@@ -47,8 +46,8 @@ defmodule KubeServices.Application do
     do:
       specs_for_types(
         CommonCore.ApiVersionKind.all_known(),
-        "KubeState.Resource",
-        &resource_worker_child_spec/1
+        "KubeState.ResourceWatcher",
+        &resource_watcher_child_spec/1
       )
 
   def timeline_watchers do
@@ -82,17 +81,14 @@ defmodule KubeServices.Application do
     end)
   end
 
-  defp resource_worker_child_spec({resource_type, id}) do
+  defp resource_watcher_child_spec({resource_type, id}) do
     Supervisor.child_spec(
-      {KubeExt.Watcher.Worker,
+      {KubeExt.KubeState.ResourceWatcher,
        [
-         watcher: ResourceWatcher,
          connection_func: &ConnectionPool.get/0,
-         should_retry_watch: true,
-         extra: %{
-           resource_type: resource_type,
-           table_name: KubeState.default_state_table()
-         }
+         client: K8s.Client,
+         resource_type: resource_type,
+         table_name: KubeState.default_state_table()
        ]},
       id: id
     )

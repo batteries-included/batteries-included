@@ -42,45 +42,38 @@ defmodule KubeExt.KubeState.Runner do
     end)
   end
 
-  def add(table_name, resource) do
-    GenServer.call(table_name, {:add, resource})
+  def add(table_name, resource, opts \\ []) do
+    GenServer.call(table_name, {:add, resource, opts})
   end
 
-  def delete(table_name, resource) do
-    GenServer.call(table_name, {:delete, resource})
+  def delete(table_name, resource, opts \\ []) do
+    GenServer.call(table_name, {:delete, resource, opts})
   end
 
-  def update(table_name, resource) do
-    GenServer.call(table_name, {:update, resource})
+  def update(table_name, resource, opts \\ []) do
+    GenServer.call(table_name, {:update, resource, opts})
   end
 
   @impl GenServer
-  def handle_call({:add, resource}, _from, {ets_table}) do
-    :ets.insert_new(ets_table, {key(resource), resource})
-
-    with :ok <- do_broadcast(:add, resource) do
-      {:reply, :ok, {ets_table}}
-    end
-
-    {:reply, :ok, {ets_table}}
-  end
-
-  def handle_call({:delete, resource}, _from, {ets_table}) do
-    :ets.delete(ets_table, key(resource))
-
-    with :ok <- do_broadcast(:delete, resource) do
-      {:reply, :ok, {ets_table}}
-    end
-
-    {:reply, :ok, {ets_table}}
-  end
-
-  def handle_call({:update, resource}, _from, {ets_table}) do
+  def handle_call({:add, resource, opts}, _from, {ets_table}) do
     :ets.insert(ets_table, {key(resource), resource})
 
-    with :ok <- do_broadcast(:update, resource) do
-      {:reply, :ok, {ets_table}}
-    end
+    broadcast(:add, resource, opts)
+    {:reply, :ok, {ets_table}}
+  end
+
+  def handle_call({:delete, resource, opts}, _from, {ets_table}) do
+    :ets.delete(ets_table, key(resource))
+
+    broadcast(:delete, resource, opts)
+    {:reply, :ok, {ets_table}}
+  end
+
+  def handle_call({:update, resource, opts}, _from, {ets_table}) do
+    :ets.insert(ets_table, {key(resource), resource})
+
+    broadcast(:update, resource, opts)
+    {:reply, :ok, {ets_table}}
   end
 
   @impl GenServer
@@ -92,8 +85,16 @@ defmodule KubeExt.KubeState.Runner do
     {ApiVersionKind.resource_type(resource), namespace(resource), name(resource)}
   end
 
-  defp do_broadcast(action, resource) do
-    broadcast(
+  defp broadcast(action, resource, opts) do
+    skip_broadcast = Keyword.get(opts, :skip_broadcast, false)
+
+    do_broadcast(skip_broadcast, action, resource)
+  end
+
+  defp do_broadcast(true = _skip, _action, _resource), do: nil
+
+  defp do_broadcast(false = _skip, action, resource) do
+    broadcast!(
       ApiVersionKind.resource_type(resource),
       %Payload{
         resource: resource,

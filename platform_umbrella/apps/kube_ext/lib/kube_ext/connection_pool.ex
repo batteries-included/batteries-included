@@ -76,7 +76,12 @@ defmodule KubeExt.ConnectionPool do
     |> new_connection()
   end
 
-  defp new_connection({:file, path}), do: Conn.from_file(path)
+  defp new_connection({:file, path}) do
+    {:ok, conn} = Conn.from_file(path)
+    tls_con = struct!(conn, insecure_skip_tls_verify: true)
+    {:ok, tls_con}
+  end
+
   defp new_connection({:service_account, path}), do: Conn.from_service_account(path)
   defp new_connection(:service_account), do: Conn.from_service_account()
 

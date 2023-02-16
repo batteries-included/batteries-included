@@ -131,9 +131,9 @@ defmodule KubeExt.ApplyResource do
       "Going to create Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)}"
     )
 
-    create_operation = Client.create(resource)
-
-    Client.run(connection, create_operation)
+    Client.create(resource)
+    |> Client.put_conn(connection)
+    |> K8s.Client.run()
   end
 
   defp update_single(connection, resource) do
@@ -141,11 +141,9 @@ defmodule KubeExt.ApplyResource do
       "Going to apply Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)} Namespace: #{Resource.namespace(resource)}"
     )
 
-    operation = Client.apply(resource)
-
-    result = Client.run(connection, operation)
-    Logger.debug("Completed apply on single resource", result: result)
-    result
+    Client.apply(resource)
+    |> Client.put_conn(connection)
+    |> K8s.Client.run()
   end
 
   defp increment_ok({:ok, cnt}), do: {:ok, cnt + 1}
