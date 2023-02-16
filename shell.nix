@@ -1,6 +1,13 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs ? import <nixpkgs> {
+  overlays = [
+    (import (fetchTarball
+      "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"))
+  ];
+} }:
 
-pkgs.mkShell {
+let toolchain = pkgs.rust-bin.stable."1.67.1".complete;
+
+in pkgs.mkShell {
   buildInputs = with pkgs; [
     elixir_1_14
     nodejs-19_x
@@ -10,12 +17,9 @@ pkgs.mkShell {
 
     kind
     kubectl
+    docker
 
-    clippy
-    rustc
-    cargo
-    rustfmt
-    rust-analyzer
+    toolchain
     bashInteractive
   ];
 
