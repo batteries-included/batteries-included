@@ -22,7 +22,6 @@ defmodule ControlServer.Umbrella.MixProject do
 
   defp deps do
     [
-      {:burrito, github: "burrito-elixir/burrito"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 2.0", only: [:dev, :test], runtime: false},
@@ -53,15 +52,6 @@ defmodule ControlServer.Umbrella.MixProject do
         config_providers: [
           {Config.Reader, {:system, "RELEASE_ROOT", "apps/home_base_web/config/runtime.exs"}}
         ]
-      ],
-      cli: [
-        applications: [cli: :permanent, kube_resources: :permanent, kube_ext: :permanent],
-        steps: [:assemble, &Burrito.wrap/1],
-        burrito: [
-          targets: [
-            linux: [os: :linux, cpu: :x86_64]
-          ]
-        ]
       ]
     ]
   end
@@ -84,11 +74,7 @@ defmodule ControlServer.Umbrella.MixProject do
   defp aliases do
     [
       setup: ["cmd mix setup"],
-      "ecto.reset": ["cmd mix ecto.reset"],
-      prettier:
-        "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier -w . --color",
-      prettier_check:
-        "cmd --app control_server_web --cd ../.. ./apps/control_server_web/assets/node_modules/.bin/prettier --check . --color"
+      "ecto.reset": ["cmd mix ecto.reset"]
     ]
   end
 end

@@ -83,7 +83,6 @@ WORKDIR /app
 COPY mix.exs .
 COPY mix.lock .
 
-COPY apps/cli/mix.exs apps/cli/mix.exs
 COPY apps/cli_core/mix.exs apps/cli_core/mix.exs
 COPY apps/common_core/mix.exs apps/common_core/mix.exs
 COPY apps/common_ui/mix.exs apps/common_ui/mix.exs
