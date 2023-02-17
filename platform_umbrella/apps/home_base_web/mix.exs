@@ -39,7 +39,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.18.11"},
+      {:phoenix_live_view, "~> 0.18.15"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.7.2"},
