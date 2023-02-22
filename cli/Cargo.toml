@@ -18,6 +18,9 @@ k8s-openapi = { version = "*", features = ["v1_26"] }
 log = { version = "*" }
 predicates = { version = "*" }
 reqwest = { version = "*" }
+retry = { version = "*" }
+serde_json = { version = "1.0", default-features = true }
+signal-hook = { version = "*" }
 tempdir = { version = "*" }
 tokio = { version = "*", features = ["full"] }
 tower-test = { version = "*" }

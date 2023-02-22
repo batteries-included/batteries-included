@@ -24,52 +24,10 @@ trap 'error ${LINENO} Trap:' ERR
 
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-retry() {
-  local n
-  local max
-  local delay
-  local start
-  local code
-  local end
-  local runtime
-
-  n=1
-  max=10
-  delay=30
-  start=$(date +%s)
-
-  while true; do
-    start=$(date +%s)
-    "$@" && break || {
-      code=$?
-      end=$(date +%s)
-      runtime=$((end - start))
-      if [[ $n -lt $max ]]; then
-        # Explicitly treat timeouts as not failures.
-        if [[ $runtime -gt 200 ]]; then
-          echo "Looks command timed out. Not counting it"
-        else
-          ((n++))
-          echo "Failed. ${n}/${max}"
-          sleep $delay
-        fi
-      else
-        error ${LINENO} "The command has failed after ${n} attempts."
-      fi
-    }
-  done
-}
-
-kindCluster() {
-  pushd "${DIR}/../platform_umbrella/apps/cli_core"
-  mix run -e "CLICore.KindCluster.kind_cluster"
-  popd
-}
-
-postgresForwardControl() {
-  pushd "${DIR}/../platform_umbrella/apps/cli_core"
+cliDev() {
+  pushd "${DIR}/../cli/src"
   set +e
-  mix run -e "CLICore.Kubectl.postgres_forward_control"
+  cargo run -- dev --forward-postgres
   set -e
   echo "Exited"
   popd
@@ -129,19 +87,26 @@ done
 # set positional arguments in their proper place
 eval set -- "$PARAMS"
 
+COMMAND="cargo run -- dev"
+
 if [[ $CREATE_CLUSTER == 'true' ]]; then
-  kindCluster
+  COMMAND="${COMMAND} --create-cluster"
 fi
 
 if [ "${BUILD_CONTROL_SERVER}" == "true" ]; then
   buildLocalControl
 fi
 
-mixBootstrap
-
-# TODO: move postgresForwardControl directly into mixBootstrap
 if [ "${FORWARD_CONTROL_POSTGRES}" == "true" ]; then
-  (retry postgresForwardControl) &
+  COMMAND="${COMMAND} --forward-postgres"
 fi
+
+pushd "${DIR}/../cli/src"
+set +e
+${COMMAND}
+set -e
+echo "Exited"
+popd
+return 1
 
 wait

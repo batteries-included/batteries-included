@@ -1,9 +1,9 @@
+mod helpers;
+
 use std::{
     io::{BufRead, Write},
     path::PathBuf,
 };
-
-use helpers::{ensure_binaries_installed, get_arch, get_install_path, get_os, kind_cluster};
 
 #[derive(clap::Parser)]
 pub struct CliArgs {
@@ -11,6 +11,8 @@ pub struct CliArgs {
     cli_action: CliAction,
 }
 
+// TODO: add setters so that we can reduce boilerplate in tests
+// with a factory method for constructing a base test ProgramArgs struct
 pub struct ProgramArgs<'a> {
     pub cli_args: CliArgs,
     pub kube_client_factory: Box<dyn Fn() -> kube_client::Client>,
@@ -31,6 +33,14 @@ enum CliAction {
         forward_postgres: Option<Option<String>>,
         #[clap(long, default_value_t = false)]
         sync: bool,
+    },
+    // subcommand `dev` is hidden from help output
+    #[clap(hide = true)]
+    Dev {
+        #[clap(long)]
+        forward_postgres: Option<Option<String>>,
+        #[clap(long, default_value_t = true)]
+        create_cluster: bool,
     },
     Start {
         #[clap(long)]
@@ -70,6 +80,10 @@ pub mod prod {
     pub const URL_STUB_KUBECTL: &str = "https://dl.k8s.io/release/v1.25.4/bin";
 }
 
+mod statik {
+    pub(crate) const DEV_JSON: &str = include_str!("../../static/static/installations/dev.json");
+}
+
 mod konstants {
     pub static DEFAULT_POSTGRES_FWD_TGT: &str = "battery-base/pg-control";
     pub static NOT_IMPL: &str = "Not yet implemented";
@@ -80,146 +94,6 @@ mod konstants {
     pub const AMD64: &str = "amd64";
     pub const ARM64: &str = "arm64";
     pub const X86_64: &str = "x86_64";
-}
-
-mod helpers {
-    use crate::errors;
-    use k8s_openapi::api::core::v1::Pod;
-    use kube_client::{api::ListParams, Api};
-    use std::{
-        io::Read,
-        os::unix::prelude::PermissionsExt,
-        path::{Path, PathBuf},
-    };
-
-    use crate::konstants;
-
-    pub(crate) fn forward_postgres_handle(fwd_postgres_opt: &Option<Option<String>>) -> String {
-        let fwd_postgres = match fwd_postgres_opt {
-            None => "".to_string(),
-            Some(None) => konstants::DEFAULT_POSTGRES_FWD_TGT.to_string(),
-            Some(Some(tgt_opt)) => tgt_opt.trim().to_string(),
-        };
-        fwd_postgres
-    }
-
-    pub(crate) async fn get_pg_control_primary(
-        client: kube_client::Client,
-        cluster: &str,
-        namespace: &str,
-    ) -> Result<String, Box<dyn std::error::Error>> {
-        let pods: Api<Pod> = Api::namespaced(client, namespace);
-        let lp = ListParams::default().labels(&format!("spilo-role=master,cluster-name={cluster}"));
-        let results = pods.list(&lp).await?;
-        let pod = results.iter().next();
-        match pod.map(|x| x.metadata.name.as_ref().unwrap().to_string()) {
-            Some(p) => Ok(p),
-            None => Err("Pod doesn't have `name` attribute".into()),
-        }
-    }
-
-    pub(crate) fn get_install_path(parent: &Path) -> PathBuf {
-        let mut install_path = std::path::PathBuf::from(parent);
-        install_path.push(".batteries/bin");
-        install_path
-    }
-
-    pub(crate) fn get_arch(arch: &str) -> Option<&'static str> {
-        match arch {
-            konstants::AARCH64 => Some(konstants::ARM64),
-            konstants::AMD64 => Some(konstants::AMD64),
-            konstants::ARM64 => Some(konstants::ARM64),
-            konstants::X86_64 => Some(konstants::AMD64),
-            _ => None,
-        }
-    }
-
-    pub(crate) fn get_os(os: &str) -> Option<&'static str> {
-        match os {
-            konstants::DARWIN => Some(konstants::DARWIN),
-            konstants::LINUX => Some(konstants::LINUX),
-            konstants::MACOS => Some(konstants::DARWIN),
-            _ => None,
-        }
-    }
-
-    async fn validate_or_fetch_bin(
-        bin_path: PathBuf,
-        fetch_url: url::Url,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let res = match bin_path.exists() {
-            true => Ok(()),
-            false => {
-                std::fs::create_dir_all(bin_path.parent().unwrap())?;
-                let mut dst = std::fs::File::create(&bin_path)?;
-                let bytes: Vec<u8> = match fetch_url.scheme() {
-                    "file" => {
-                        let mut buf = String::new();
-                        std::fs::File::open(Path::new(fetch_url.path()))?
-                            .read_to_string(&mut buf)?;
-                        buf.into_bytes()
-                    }
-                    "https" => reqwest::get(fetch_url.as_str())
-                        .await?
-                        .bytes()
-                        .await?
-                        .to_vec(),
-                    x => {
-                        return Err(format!("Unsupported file scheme: `{x}`").into());
-                    }
-                };
-                std::io::copy(&mut bytes.as_slice(), &mut dst)?;
-                std::fs::set_permissions(&bin_path, std::fs::Permissions::from_mode(0o755))?;
-                Ok(())
-            }
-        };
-        res
-    }
-
-    pub(crate) async fn ensure_binaries_installed(
-        install_dir: &Path,
-        arch: &str,
-        os: &str,
-        kind_stub: &str,
-        kubectl_stub: &str,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let kind_path = install_dir.join("kind");
-        let kind_url = url::Url::parse(
-            vec![kind_stub, &format!("kind-{os}-{arch}")]
-                .join("/")
-                .as_str(),
-        )?;
-        validate_or_fetch_bin(kind_path, kind_url).await?;
-        let kubectl_path = install_dir.join("kubectl");
-        let kubectl_url =
-            url::Url::parse(vec![kubectl_stub, os, arch, "kubectl"].join("/").as_str())?;
-        validate_or_fetch_bin(kubectl_path, kubectl_url).await?;
-        Ok(())
-    }
-
-    pub(crate) fn kind_cluster(
-        kind_bin: &Path,
-        cluster_name: &str,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let install_out = std::process::Command::new(kind_bin)
-            .args(["create", "cluster", "--name", cluster_name])
-            .output()?;
-        let get_out = std::process::Command::new(kind_bin)
-            .args(["get", "kubeconfig", "--name", cluster_name])
-            .output()?;
-        match get_out.status.success() {
-            false => {
-                return Err(Box::new(errors::KindClusterError::new(format!(
-                            "\n\nInstall STDOUT: {}\n\nInstall STDERR: {}\n\nGet STDOUT {}\n\nGet STDERR: {}\n",
-                            std::str::from_utf8(&install_out.stdout)?,
-                            std::str::from_utf8(&install_out.stderr)?,
-                            std::str::from_utf8(&get_out.stdout)?,
-                            std::str::from_utf8(&get_out.stderr)?
-                        ))));
-            }
-            true => Ok(()),
-        }
-    }
 }
 
 #[cfg(test)]
@@ -392,18 +266,19 @@ exit 0;
 }
 
 fn log(stderr: &mut dyn Write, msg: &str) {
-    write!(stderr, "{msg}").unwrap();
+    write!(stderr, "{}", msg).unwrap();
+    stderr.flush().unwrap();
 }
 
 pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode {
     let install_dir = match &args.dir_parent {
-        Some(x) => get_install_path(x),
+        Some(x) => helpers::get_install_path(x),
         None => {
             log(args.stderr, "Error: expected user homedir, got None\n");
             return exitcode::CANTCREAT;
         }
     };
-    let arch = match get_arch(&args.raw_arch) {
+    let arch = match helpers::get_arch(&args.raw_arch) {
         Some(x) => x,
         None => {
             log(
@@ -413,7 +288,7 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             return exitcode::OSERR;
         }
     };
-    let os = match get_os(&args.raw_os) {
+    let os = match helpers::get_os(&args.raw_os) {
         Some(x) => x,
         None => {
             log(
@@ -423,7 +298,7 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             return exitcode::OSERR;
         }
     };
-    match ensure_binaries_installed(
+    match helpers::ensure_binaries_installed(
         install_dir.as_path(),
         arch,
         os,
@@ -442,21 +317,8 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
         }
     };
 
-    // start kind cluster
-    let mut kind_path = install_dir;
-    kind_path.push("kind");
-
-    // TODO: change hardcoded cluster name
-    match kind_cluster(&kind_path, "battery") {
-        Err(e) => {
-            log(args.stderr, &e.to_string());
-            return exitcode::SOFTWARE;
-        }
-        Ok(_) => ..,
-    };
-
-    let client = (args.kube_client_factory)();
     let rc = match &args.cli_args.cli_action {
+        // INCOMPLETE
         CliAction::Create {
             ref forward_postgres,
             sync,
@@ -469,6 +331,80 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             log(args.stderr, &format!("{}: create\n", konstants::NOT_IMPL));
             exitcode::UNAVAILABLE
         }
+        // COMPLETE
+        CliAction::Dev {
+            ref forward_postgres,
+            create_cluster,
+        } => {
+            match helpers::ensure_binaries_installed(
+                install_dir.as_path(),
+                arch,
+                os,
+                &args.kind_stub,
+                &args.kubectl_stub,
+            )
+            .await
+            {
+                Ok(_) => {}
+                Err(e) => {
+                    log(
+                        args.stderr,
+                        &format!("Error: problem installing tools\nMessage: `{e}`"),
+                    );
+                    return exitcode::TEMPFAIL;
+                }
+            };
+
+            if *create_cluster {
+                // start kind cluster
+                let mut kind_path = PathBuf::from(&install_dir);
+                kind_path.push("kind");
+
+                // TODO: change hardcoded cluster name
+                match helpers::kind_cluster(
+                    &kind_path,
+                    "battery",
+                    args.dir_parent.as_ref().unwrap(),
+                ) {
+                    Err(e) => {
+                        log(args.stderr, &e.to_string());
+                        return exitcode::SOFTWARE;
+                    }
+                    Ok(_) => ..,
+                };
+            }
+
+            // load custom resources to cluster
+            let mut kubectl_path = PathBuf::from(&install_dir);
+            kubectl_path.push("kubectl");
+            let _res = helpers::apply_resources(&kubectl_path, statik::DEV_JSON);
+
+            // port-forward postgres
+            let fwd_postgres_tgt = helpers::forward_postgres_handle(forward_postgres);
+            if !(fwd_postgres_tgt.is_empty()) {
+                let (namespace, cluster) = fwd_postgres_tgt.split_once('/').unwrap();
+                match helpers::forward_postgres(
+                    &args.kube_client_factory,
+                    kubectl_path,
+                    cluster,
+                    namespace,
+                    5432,
+                )
+                .await
+                {
+                    Ok(_) => {
+                        log(args.stderr, "Received signal, shutting down...\n");
+                    }
+                    Err(e) => {
+                        log(args.stderr, &format!("Error: {e}\n"));
+                        return exitcode::TEMPFAIL;
+                    }
+                };
+            }
+            exitcode::OK
+        }
+
+        // INCOMPLETE
         CliAction::Start {
             forward_postgres,
             id,
@@ -484,9 +420,12 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             log(args.stderr, &format!("id: {id_tgt}\n"));
             log(args.stderr, &format!("{}: start\n", konstants::NOT_IMPL));
             let fwd_postgres_tgt = helpers::forward_postgres_handle(forward_postgres);
+            // TODO: refactor this because it's repeated in a few places
             if !(fwd_postgres_tgt.is_empty()) {
                 let (namespace, cluster) = fwd_postgres_tgt.split_once('/').unwrap();
-                match helpers::get_pg_control_primary(client, cluster, namespace).await {
+                match helpers::get_pg_control_primary(&args.kube_client_factory, cluster, namespace)
+                    .await
+                {
                     Ok(p) => log(args.stderr, &format!("{p}\n")),
                     Err(e) => {
                         log(args.stderr, &format!("Error: {e}\n"));
@@ -497,6 +436,5 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             exitcode::UNAVAILABLE
         }
     };
-    args.stderr.flush().unwrap();
     rc
 }
