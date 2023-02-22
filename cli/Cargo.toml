@@ -7,6 +7,7 @@ edition = "2021"
 [dependencies]
 # Todo: pin to versions before releasing
 assert_cmd = { version = "*" }
+async-process = { version = "*" }
 clap = { version = "*", features = ["derive"] }
 dirs = { version = "*" }
 exitcode = { version = "*" }

@@ -42,8 +42,8 @@ pub(crate) async fn get_pg_control_primary(
             None => {
                 eprintln!("waiting for pod to come up...");
                 Err(format!(
-            "Failed to get pg control primary for cluster {cluster} in namespace {namespace}"
-          ))
+                        "Failed to get pg control primary for cluster {cluster} in namespace {namespace}"
+                ))
             }
         }
     }) {
@@ -61,30 +61,43 @@ pub(crate) async fn forward_postgres(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let should_terminate = Arc::new(AtomicBool::new(false));
     flag::register(signal_hook::consts::SIGTERM, Arc::clone(&should_terminate)).unwrap();
-    match get_pg_control_primary(client_factory, cluster, namespace).await {
-        Ok(p) => {
-            // TODO: change this to use the native client instead of kubectl
-            let mut proc = std::process::Command::new(kubectl_path)
-                .args([
-                    "port-forward",
-                    &format!("pods/{p}"),
-                    &format!("{port}:{port}"),
-                    "-n",
-                    namespace,
-                    "--address",
-                    "0.0.0.0",
-                ])
-                .spawn()
-                .expect("could not spawn port-forward");
+    let mut pg_control_primary = get_pg_control_primary(client_factory, cluster, namespace).await?;
+    // TODO: change this to use the native client instead of kubectl
+    let mut proc = async_process::Command::new(&kubectl_path)
+        .args([
+            "port-forward",
+            &format!("pods/{pg_control_primary}"),
+            &format!("{port}:{port}"),
+            "-n",
+            namespace,
+            "--address",
+            "0.0.0.0",
+        ])
+        .spawn()?;
 
-            while !should_terminate.load(Ordering::Relaxed) {
-                thread::sleep(core::time::Duration::from_secs(1));
+    while !should_terminate.load(Ordering::Relaxed) {
+        match proc.try_status()? {
+            None => {}
+            Some(_) => {
+                pg_control_primary =
+                    get_pg_control_primary(client_factory, cluster, namespace).await?;
+                proc = async_process::Command::new(&kubectl_path)
+                    .args([
+                        "port-forward",
+                        &format!("pods/{pg_control_primary}"),
+                        &format!("{port}:{port}"),
+                        "-n",
+                        namespace,
+                        "--address",
+                        "0.0.0.0",
+                    ])
+                    .spawn()?;
             }
-            proc.kill().expect("could not kill port-forward");
-            Ok(())
         }
-        Err(e) => Err(e),
+        thread::sleep(core::time::Duration::from_secs(1));
     }
+    proc.kill().expect("could not kill port-forward");
+    Ok(())
 }
 
 pub(crate) fn get_install_path(parent: &Path) -> PathBuf {
