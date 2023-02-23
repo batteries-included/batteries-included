@@ -1,10 +1,12 @@
 use crate::errors;
+use async_process::Child;
 use k8s_openapi::api::core::v1::Pod;
 use kube_client::{api::ListParams, Api};
 use retry::delay::Fixed;
 use serde_json::{from_str, Value};
 use signal_hook::flag;
 use std::{
+    error::Error,
     fs::{self, OpenOptions},
     io::{Read, Write},
     os::unix::prelude::PermissionsExt,
@@ -35,20 +37,50 @@ pub(crate) async fn get_pg_control_primary(
     match retry::retry(Fixed::from_millis(10000).take(100), || {
         let pods: Api<Pod> = Api::namespaced(client_factory(), namespace);
         let lp = ListParams::default().labels(&format!("spilo-role=master,cluster-name={cluster}"));
-        let results = futures::executor::block_on(pods.list(&lp)).unwrap();
-        let pod = results.iter().next();
-        match pod.map(|x| x.metadata.name.as_ref().unwrap().to_string()) {
-            Some(name) => Ok(name),
-            None => {
-                eprintln!("waiting for pod to come up...");
-                Err(format!(
-                        "Failed to get pg control primary for cluster {cluster} in namespace {namespace}"
-                ))
+        match futures::executor::block_on(pods.list(&lp)) {
+            Ok(res) => {
+                let pod = res.iter().next();
+                match pod.map(|x| x.metadata.name.as_ref().unwrap().to_string()) {
+                    Some(name) => Ok(name),
+                    None => {
+                        println!("waiting for pod to come up...");
+                        Err(format!(
+                            "Failed to get pg control primary for cluster {cluster} in namespace {namespace}"
+                        ))
+                    }
+                }
             }
+            Err(err) => Err(format!("Failed to connect to cluster: {}", err)),
         }
     }) {
         Ok(name) => Ok(name),
         Err(e) => Err(e.to_string().into()),
+    }
+}
+
+// TODO: change this to use the native client instead of kubectl
+async fn launch_port_forward_to_pg_control_process(
+    client_factory: &dyn Fn() -> kube_client::Client,
+    kubectl_path: &PathBuf,
+    cluster: &str,
+    namespace: &str,
+    port: u16,
+) -> Result<Child, Box<dyn Error>> {
+    let pg_control_primary = get_pg_control_primary(client_factory, cluster, namespace).await?;
+    match async_process::Command::new(kubectl_path)
+        .args([
+            "port-forward",
+            &format!("pods/{pg_control_primary}"),
+            &format!("{port}:{port}"),
+            "-n",
+            namespace,
+            "--address",
+            "0.0.0.0",
+        ])
+        .spawn()
+    {
+        Ok(child) => Ok(child),
+        Err(e) => Err(format!("Failed to launch port forward: {}", e).into()),
     }
 }
 
@@ -60,38 +92,32 @@ pub(crate) async fn forward_postgres(
     port: u16,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let should_terminate = Arc::new(AtomicBool::new(false));
-    flag::register(signal_hook::consts::SIGTERM, Arc::clone(&should_terminate)).unwrap();
-    let mut pg_control_primary = get_pg_control_primary(client_factory, cluster, namespace).await?;
-    // TODO: change this to use the native client instead of kubectl
-    let mut proc = async_process::Command::new(&kubectl_path)
-        .args([
-            "port-forward",
-            &format!("pods/{pg_control_primary}"),
-            &format!("{port}:{port}"),
-            "-n",
-            namespace,
-            "--address",
-            "0.0.0.0",
-        ])
-        .spawn()?;
+    flag::register(signal_hook::consts::SIGTERM, Arc::clone(&should_terminate))?;
+    let mut proc = launch_port_forward_to_pg_control_process(
+        client_factory,
+        &kubectl_path,
+        cluster,
+        namespace,
+        port,
+    )
+    .await?;
 
     while !should_terminate.load(Ordering::Relaxed) {
         match proc.try_status()? {
             None => {}
             Some(_) => {
-                pg_control_primary =
-                    get_pg_control_primary(client_factory, cluster, namespace).await?;
-                proc = async_process::Command::new(&kubectl_path)
-                    .args([
-                        "port-forward",
-                        &format!("pods/{pg_control_primary}"),
-                        &format!("{port}:{port}"),
-                        "-n",
-                        namespace,
-                        "--address",
-                        "0.0.0.0",
-                    ])
-                    .spawn()?;
+                // if the connection was dropped, wait to retry
+                //
+                // TODO: parameterize this, or move to exponential backoff
+                thread::sleep(core::time::Duration::from_secs(10));
+                proc = launch_port_forward_to_pg_control_process(
+                    client_factory,
+                    &kubectl_path,
+                    cluster,
+                    namespace,
+                    port,
+                )
+                .await?;
             }
         }
         thread::sleep(core::time::Duration::from_secs(1));
@@ -132,7 +158,13 @@ async fn validate_or_fetch_bin(
     let res = match bin_path.exists() {
         true => Ok(()),
         false => {
-            std::fs::create_dir_all(bin_path.parent().unwrap())?;
+            let parent_dir: Result<&Path, Box<dyn std::error::Error>> = match bin_path.parent() {
+                Some(p) => Ok(p),
+                None => {
+                    Err(format!("Could not get parent directory for {}", bin_path.display()).into())
+                }
+            };
+            std::fs::create_dir_all(parent_dir?)?;
             let mut dst = std::fs::File::create(&bin_path)?;
             let bytes: Vec<u8> = match fetch_url.scheme() {
                 "file" => {
@@ -157,12 +189,52 @@ async fn validate_or_fetch_bin(
     res
 }
 
+fn retry_apply(kubectl_path: &str, data_path: &str) -> Result<(), Box<dyn Error>> {
+    let res = retry::retry(
+        Fixed::from_millis(10000).take(50),
+        || match std::process::Command::new(kubectl_path)
+            .args(["apply", "-f", data_path, "-R"])
+            .status()
+        {
+            Ok(status) => match status.success() {
+                true => Ok(()),
+                false => Err(status.to_string()),
+            },
+            Err(e) => Err(e.to_string()),
+        },
+    );
+    match res {
+        Ok(_) => Ok(()),
+        Err(e) => Err(format!("Failed to apply resources: {}", e).into()),
+    }
+}
+
 pub(crate) fn apply_resources(
     kubectl_path: &Path,
     json_blob: &str,
-) -> Result<(), retry::Error<String>> {
-    let data: Value = from_str(json_blob).unwrap();
-    let tmp = tempdir::TempDir::new("custom_resources").unwrap();
+) -> Result<(), Box<dyn std::error::Error>> {
+    let data: Value = from_str(json_blob)?;
+    let tmp = tempdir::TempDir::new("custom_resources")?;
+    let tmp_path_str = match tmp.as_ref().to_str() {
+        Some(x) => x,
+        None => {
+            return Err(format!(
+                "Could not convert TempDir path to string: {}",
+                tmp.path().display()
+            )
+            .into());
+        }
+    };
+    let kubectl_str = match kubectl_path.to_str() {
+        Some(s) => s,
+        None => {
+            return Err(format!(
+                "Could not convert path to string: {}",
+                kubectl_path.display()
+            )
+            .into());
+        }
+    };
     for (i, (_k, v)) in data["initial_resource"]
         .as_object()
         .unwrap()
@@ -172,22 +244,10 @@ pub(crate) fn apply_resources(
         fs::write(
             vec![tmp.as_ref().to_str().unwrap(), &format!("{i}.json")].join("/"),
             v.to_string(),
-        )
-        .unwrap();
+        )?;
     }
-    retry::retry(Fixed::from_millis(10000).take(50), || {
-        let lkubectl = PathBuf::from(kubectl_path);
-        match std::process::Command::new(lkubectl)
-            .args(["apply", "-f", tmp.as_ref().to_str().unwrap(), "-R"])
-            .status()
-        {
-            Ok(status) => match status.success() {
-                true => Ok(()),
-                false => Err(status.to_string()),
-            },
-            Err(e) => Err(e.to_string()),
-        }
-    })
+
+    retry_apply(kubectl_str, tmp_path_str)
 }
 
 pub(crate) async fn ensure_binaries_installed(
@@ -232,15 +292,13 @@ pub(crate) fn kind_cluster(
     }
 
     match get_out.status.success() {
-        false => {
-            return Err(Box::new(errors::KindClusterError::new(format!(
-                "\n\nInstall STDOUT: {}\n\nInstall STDERR: {}\n\nGet STDOUT {}\n\nGet STDERR: {}\n",
-                std::str::from_utf8(&install_out.stdout)?,
-                std::str::from_utf8(&install_out.stderr)?,
-                std::str::from_utf8(&get_out.stdout)?,
-                std::str::from_utf8(&get_out.stderr)?
-            ))));
-        }
+        false => Err(Box::new(errors::KindClusterError::new(format!(
+            "\n\nInstall STDOUT: {}\n\nInstall STDERR: {}\n\nGet STDOUT {}\n\nGet STDERR: {}\n",
+            std::str::from_utf8(&install_out.stdout)?,
+            std::str::from_utf8(&install_out.stderr)?,
+            std::str::from_utf8(&get_out.stdout)?,
+            std::str::from_utf8(&get_out.stderr)?
+        )))),
         true => Ok(()),
     }
 }
