@@ -1,11 +1,9 @@
----
-title: Machine Learning Needed
-date: '2021-06-23'
-tags: ['company']
-draft: false
-summary: Machine Learning is Needed
-images: []
----
++++
+title = 'Machine Learning Needed'
+date = '2021-06-23'
+tags = ['company']
+draft = false
++++
 
 > The current and upcoming needs of businesses will include machine learning.
 

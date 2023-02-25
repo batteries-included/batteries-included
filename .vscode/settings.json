@@ -4,7 +4,6 @@
   "editor.tabSize": 2,
   "prettier.proseWrap": "always",
   "prettier.singleQuote": true,
-  "prettier.prettierPath": "./dev/node_modules/prettier",
   "prettier.bracketSameLine": true,
   "elixirLS.projectDir": "./platform_umbrella",
   "elixirLS.enableTestLenses": true,
@@ -19,14 +18,10 @@
     "html-eex": "html",
     "elixir": "html"
   },
-  "[ts]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[js]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  "rust-analyzer.linkedProjects": [
+    "cli/Cargo.toml",
+    "project_templates/web/pastebin/Cargo.toml"
+  ],
   "[elixir]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
@@ -55,19 +50,9 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[markdown]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.wordWrap": "bounded",
-    "editor.wordWrapColumn": 80
-  },
-  "[mdx]": {
-    "editor.formatOnSave": true,
-    "editor.wordWrap": "bounded",
-    "editor.wordWrapColumn": 80
-  },
   "files.exclude": {
     "**/.git": true,
+    "**/.sl": true,
     "**/.DS_Store": true
   },
   "search.exclude": {
@@ -76,6 +61,7 @@
   },
   "files.watcherExclude": {
     "**/.git/**": true,
+    "**/.sl/**": true,
     "**/node_modules/**": true,
     "**/_build/**": true,
     "**/deps/**": true

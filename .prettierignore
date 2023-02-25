@@ -9,9 +9,6 @@ books/
 
 ops/
 
-static/public/
-static/resources/_gen/
-
 **/assets/node_modules
 **/package-lock.json
 

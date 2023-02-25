@@ -1,11 +1,9 @@
----
-title: Don't boil the ocean
-date: '2021-06-22'
-tags: ['company', 'open-source', 'sell']
-draft: false
-summary: We're not going to build too much, just enough to sell.
-images: []
----
++++
+title = "Don't boil the ocean"
+date = '2021-06-22'
+tags = ['company', 'open-source', 'sell']
+draft = false
++++
 
 # Open Source
 

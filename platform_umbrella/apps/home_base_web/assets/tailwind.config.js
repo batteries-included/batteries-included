@@ -98,6 +98,7 @@ const heath = {
   900: '#000000',
 };
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     // This project hooks and js

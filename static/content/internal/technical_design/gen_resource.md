@@ -1,12 +1,10 @@
----
-title: Gen Resource - Yaml to Elixir
-date: '2022-12-04'
-tags: ['overview', 'code', 'control-server', 'yaml']
-draft: false
-images: []
----
-
-# Gen Resource - Yaml to Elixir
++++
+title = 'Gen Resource - Yaml to Elixir'
+date = '2022-12-04'
+tags = ['overview', 'code', 'control-server', 'yaml']
+draft = false
+images = []
++++
 
 Mix.Tasks.Gen.Resource is an Elixir Mix task that allows you to generate Elixir
 source modules from Kubernetes resource definitions. To use
@@ -31,5 +29,5 @@ The above will decode the YAML file, use macro expansion to generate a new
 Elixir source module that utilizes `KubeExt.Builder`, and dump the
 CustomResourceDefinition (CRD) to `priv/manifests` for use with
 `KubeExt.IncludeResource`. The final result is an Elixir source module called
-BatteryName that you can use with the
-[`snapshot_apply`]({{< ref "snapshot_apply" >}} "Snapshot Apply") system.
+BatteryName that you can use with the [`snapshot_apply`]({< ref
+"snapshot_apply" >}} "Snapshot Apply") system.

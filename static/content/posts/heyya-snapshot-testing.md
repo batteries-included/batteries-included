@@ -1,12 +1,9 @@
----
-title: Heyya Snap It Like A Polaroid
-date: '2022-12-08'
-tags: ['phoenix', 'elixir', 'testing']
-draft: false
-images: []
----
-
-# Release
++++
+title = 'Heyya Snap It Like A Polaroid'
+date = '2022-12-08'
+tags = ['phoenix', 'elixir', 'testing']
+draft = false
++++
 
 Batteries Included has just released a new open-source library for testing
 Phoenix components. The library, called

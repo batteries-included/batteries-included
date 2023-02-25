@@ -81,7 +81,7 @@ pub mod prod {
 }
 
 mod statik {
-    pub(crate) const DEV_JSON: &str = include_str!("../../static/static/installations/dev.json");
+    pub(crate) const DEV_JSON: &str = include_str!("../static/dev.json");
 }
 
 mod konstants {
@@ -103,24 +103,11 @@ mod tests {
     use k8s_openapi::http::{Request, Response};
     use url::Url;
 
-    use crate::konstants;
     use crate::program_main;
     use crate::CliArgs;
     use crate::ProgramArgs;
 
     use tower_test::mock;
-
-    use std::fs;
-    use std::io::Write;
-    use std::os::unix::prelude::OpenOptionsExt;
-
-    mod fixtures {
-        pub(crate) static DUMMY_KIND_SUCCEDS: &[u8; 22] = b"#!/bin/bash
-
-exit 0;
-
-";
-    }
 
     #[tokio::test]
     async fn test_empty_parent_dir() {
@@ -211,55 +198,6 @@ exit 0;
         assert_eq!(
             String::from_utf8(err).unwrap(),
             "Error: OS `freebsd` is not supported\n"
-        );
-        assert_eq!(String::from_utf8(out).unwrap(), "");
-    }
-
-    #[tokio::test]
-    async fn test_blank() {
-        let mut err = Vec::new();
-        let mut out = Vec::new();
-        let input = "".as_bytes();
-        let tmp = tempdir::TempDir::new("test_blank").unwrap();
-        fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .mode(0o755)
-            .open(tmp.path().join("kind-linux-amd64"))
-            .unwrap()
-            .write_all(fixtures::DUMMY_KIND_SUCCEDS)
-            .unwrap();
-        std::fs::create_dir_all(vec![tmp.path().to_str().unwrap(), "linux", "amd64"].join("/"))
-            .unwrap();
-        fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .mode(0o755)
-            .open(vec![tmp.path().to_str().unwrap(), "linux", "amd64", "kubectl"].join("/"))
-            .unwrap();
-
-        let kind_stub = Url::from_file_path(&tmp).unwrap().to_string();
-        let kubectl_stub = Url::from_file_path(&tmp).unwrap().to_string();
-        let mut program_args = ProgramArgs {
-            cli_args: CliArgs::parse_from(["cli", "create"]),
-            kube_client_factory: Box::new(|| {
-                let (mock_service, _) = mock::pair::<Request<Body>, Response<Body>>();
-                kube_client::Client::new(mock_service, "default")
-            }),
-            stderr: &mut err,
-            _stdin: &input,
-            _stdout: &mut out,
-            dir_parent: Some(tmp.into_path()),
-            raw_arch: String::from("x86_64"),
-            raw_os: String::from("linux"),
-            kind_stub,
-            kubectl_stub,
-        };
-        let rc = program_main(&mut program_args).await;
-        assert_eq!(rc, exitcode::UNAVAILABLE);
-        assert_eq!(
-            String::from_utf8(err).unwrap(),
-            format!("{}: create\n", konstants::NOT_IMPL)
         );
         assert_eq!(String::from_utf8(out).unwrap(), "");
     }

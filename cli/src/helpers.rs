@@ -34,7 +34,9 @@ pub(crate) async fn get_pg_control_primary(
     cluster: &str,
     namespace: &str,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    match retry::retry(Fixed::from_millis(10000).take(100), || {
+    match retry::retry(Fixed::from_millis(1000).take(100), || {
+        eprintln!("Getting pg control primary");
+
         let pods: Api<Pod> = Api::namespaced(client_factory(), namespace);
         let lp = ListParams::default().labels(&format!("spilo-role=master,cluster-name={cluster}"));
         match futures::executor::block_on(pods.list(&lp)) {

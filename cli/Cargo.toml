@@ -1,28 +1,33 @@
 [package]
-name = "cli"
-version = "0.1.0"
+name = "bcli"
+version = "0.4.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 # Todo: pin to versions before releasing
-assert_cmd = { version = "*" }
-async-process = { version = "*" }
-clap = { version = "*", features = ["derive"] }
-dirs = { version = "*" }
-exitcode = { version = "*" }
-env_logger = { version = "*" }
-futures = { version = "*" }
-hyper = { version = "*" }
-kube-client = { version = "*" }
-k8s-openapi = { version = "*", features = ["v1_26"] }
-log = { version = "*" }
-predicates = { version = "*" }
-reqwest = { version = "*" }
-retry = { version = "*" }
-serde_json = { version = "1.0", default-features = true }
-signal-hook = { version = "*" }
-tempdir = { version = "*" }
-tokio = { version = "*", features = ["full"] }
-tower-test = { version = "*" }
-url = { version = "*" }
+assert_cmd = { version = "2.0.8" }
+async-process = { version = "1.6.0" }
+clap = { version = "4.1.6", features = ["derive", "color", "usage"] }
+dirs = { version = "4.0.0" }
+env_logger = { version = "0.10.0" }
+exitcode = { version = "1.1.2" }
+futures = { version = "0.3.26" }
+hyper = { version = "0.14.24" }
+k8s-openapi = { version = "0.17.0", features = ["v1_26"] }
+kube-client = { version = "0.79.0" }
+log = { version = "0.4.17" }
+predicates = { version = "2.1.5" }
+reqwest = { version = "0.11.14" }
+retry = {version ="2.0.0"}
+serde_json = { version = "1.0.93", default-features = true }
+signal-hook = { version = "0.3.15" }
+tempdir = { version = "0.3.7" }
+tokio = { version = "1.25.0", features = ["full"] }
+tower-test = { version = "0.4.0" }
+url = { version = "2.3.1" }
+
+[profile.release]
+strip = true
+lto = "thin"
+opt-level = "z"
+codegen-units = 1

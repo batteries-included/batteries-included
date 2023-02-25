@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% import "macros.html" as macros %}
+
+<!-- content-->
+{% block content %}
+<header class="header">
+  {% block header %}
+  <!-- Start Header -->
+  {% set base_url = get_url(path="/", lang=lang) %}
+  <h2 class="text-center">{{section.title}}</h2>
+  <div>{{ section.content | as_str | markdown(inline=true) | safe }}</div>
+  <!-- End header -->
+  {% endblock header %}
+</header>
+
+<section class="relative overflow-hidden flex flex-col gap-10 divide-y py-6">
+  {% for page in paginator.pages %}
+  <article id="{{page.title}}" class="mx-auto max-w-3xl py-8">
+    <h2 class="text-2xl font-bold leading-8 tracking-wide text-astral-800">
+      <a href="{{page.permalink}}">{{page.title}}</a>
+    </h2>
+    {{ macros::frontmatter(date=page.date | default(value=""),
+    word_count=page.word_count, read_time=page.reading_time ) }}
+    <p class="prose">
+      {{ page.summary | default(value=page.content | striptags | truncate) |
+      safe }}
+    </p>
+    <a class="button small" href="{{page.permalink}}">Continue Reading →</a>
+  </article>
+  {% endfor %}
+</section>
+{% endblock content %}
+
+<!-- Pagination block -->
+{% block pagination %}
+<nav class="pagination">
+  <!-- Start Prev -->
+  {% if paginator.previous %}
+  <span class="prev">
+    <a
+      rel="prev"
+      href="{{paginator.previous}}"
+      class="button medium font_faint">
+      ← prev
+    </a>
+  </span>
+  <!-- End Prev -->
+  {% endif %}
+  <!-- Start Next -->
+  {% if paginator.next %}
+  <span class="next">
+    <a rel="next" href="{{paginator.next}}" class="button medium font_faint">
+      next →
+    </a>
+  </span>
+  {% endif %}
+</nav>
+{% endblock pagination %}

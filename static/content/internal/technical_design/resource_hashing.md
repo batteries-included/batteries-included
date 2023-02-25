@@ -1,12 +1,10 @@
----
-title: Resource Hashing
-date: '2022-12-1'
-tags: ['overview', 'code', 'control-server', 'kubernetes']
-draft: false
-images: []
----
-
-# Resource Hashing
++++
+title = 'Resource Hashing'
+date = '2022-12-01'
+tags = ['overview', 'code', 'control-server', 'kubernetes']
+draft = false
+images = []
++++
 
 Kubernetes resources are challenging to compare versus the resources that
 created them. For example, some resources get status fields that are constantly
@@ -20,7 +18,7 @@ This is where `platform_umbrella/apps/kube_ext/lib/kube_ext/hashing.ex` shines.
 It ties together all the code needed to derive object equivalency on Kubernetes
 resources stored using annotations.
 
-## Adding the Hash
+# Adding the Hash
 
 - Sanitize the resource, removing any fields that are machine-generated or
   contain mutable state.
@@ -30,7 +28,7 @@ resources stored using annotations.
 - Finalize the mac
 - place the computed hash in `battery/hash` annotation
 
-## Comparing Resources
+# Comparing Resources
 
 - For each resource, check if there's an annotation. If both are present, then
   string-compare the hashes.

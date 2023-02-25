@@ -1,0 +1,13 @@
+{
+  "repository": {},
+  "description": " ",
+  "scripts": {
+    "build:tailwind": "NODE_ENV=production npx tailwindcss --minify -i styles/styles.css -o static/styles.css",
+    "dev:tailwind": "npx tailwindcss -i styles/styles.css -o static/styles.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "0.5.3",
+    "@tailwindcss/typography": "0.5.9",
+    "tailwindcss": "3.2.4"
+  }
+}

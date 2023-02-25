@@ -1,24 +1,24 @@
 {
-  "repository": {},
-  "description": " ",
   "license": "COMMERCIAL",
+  "name": "control_server_web_assets",
   "scripts": {
-    "deploy": "NODE_ENV=production tailwindcss --minify --input=css/app.css --output=../priv/static/assets/app.css"
+    "css:deploy": "NODE_ENV=production tailwindcss --minify --input=css/app.css --output=dist/app.css",
+    "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle --target=chrome58,firefox57,safari11,edge18 --outdir=dist"
   },
   "dependencies": {
-    "alpinejs": "^3.11.1",
-    "chart.js": "^4.0.0",
+    "alpinejs": "3.11.1",
+    "chart.js": "4.2.1",
+    "esbuild": "^0.17.10",
     "lodash": "4.17.21",
-    "phoenix": "file:../../../deps/phoenix",
-    "phoenix_html": "file:../../../deps/phoenix_html",
-    "phoenix_live_view": "file:../../../deps/phoenix_live_view",
-    "topbar": "1.0.1"
+    "phoenix": "1.7.0",
+    "phoenix_html": "3.3.0",
+    "phoenix_live_view": "0.18.16",
+    "topbar": "2.0.1"
   },
   "devDependencies": {
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
-    "@types/phoenix_live_view": "^0.15.1",
-    "daisyui": "^2.47.0",
-    "tailwindcss": "3.2.4"
+    "daisyui": "2.25.0",
+    "tailwindcss": "3.2.7"
   }
 }

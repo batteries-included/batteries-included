@@ -5,12 +5,4 @@ module.exports = {
   proseWrap: 'always',
   bracketSameLine: true,
   tabWidth: 2,
-  overrides: [
-    {
-      files: ['static/**/*.html'],
-      options: {
-        parser: 'go-template',
-      },
-    },
-  ],
 };

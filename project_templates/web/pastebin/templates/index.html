@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+<!-- -->
+{% block content %}
+<h1 class="text-3xl font-bold underline text-pink-500 text-center">
+  {{greeting}}
+</h1>
+<form action="/" method="post" class="mt-5 flex flex-col space-y-8">
+  <div
+    class="overflow-hidden rounded-lg border border-gray-300 shadow-sm focus-within:border-pink-500 focus-within:ring-1 focus-within:ring-pink-500">
+    <textarea
+      rows="3"
+      name="content"
+      id="content"
+      class="block w-full resize-none border-0 py-3 focus:ring-0 sm:text-sm px-3"
+      placeholder="Paste text here"></textarea>
+  </div>
+  <button
+    type="submit"
+    class="from-astral-500 to-pink-500 group/button hover:from-pink-500 hover:to-astral-500 hover:shadow-pink-500/30 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-tl p-0.5 text-sm font-medium text-gray-900 transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gradient-to-bl hover:text-white hover:shadow-lg focus:outline-none">
+    <span
+      class="relative w-full rounded-md bg-white px-5 py-3 transition-all duration-300 ease-in-out group-hover/button:bg-opacity-0">
+      Submit
+    </span>
+  </button>
+</form>
+{% endblock content %}

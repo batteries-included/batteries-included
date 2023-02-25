@@ -1,10 +1,9 @@
----
-title: Phoenix with latest tailwind and webpack
-date: '2021-06-24'
-tags: ['phoenix', 'js', 'javascript', 'elixir', 'tailwind', 'css']
-draft: false
-images: []
----
++++
+title = 'Phoenix with latest tailwind and webpack'
+date = '2021-06-24'
+tags = ['phoenix', 'js', 'javascript', 'elixir', 'tailwind', 'css']
+draft = false
++++
 
 Phoenix is a fantastic framework that we use and love at Batteries Included. We
 also really love tailwind CSS. So using both with the latest up-to-date software

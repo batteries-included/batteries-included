@@ -44,10 +44,10 @@ defmodule ControlServer.MixProject do
       {:phoenix_pubsub, "~> 2.1"},
       {:jason, "~> 1.0"},
       {:oban, "~> 2.12"},
-      {:phoenix_swoosh, "~> 1.0"},
+      {:phoenix_swoosh, "~> 1.2.0"},
 
       # SQL
-      {:phoenix, github: "phoenixframework/phoenix", override: true},
+      {:phoenix, "~> 1.7.0", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
@@ -58,8 +58,8 @@ defmodule ControlServer.MixProject do
       {:paginator, "~> 1.2.0"},
 
       # Kubernetes
-      {:k8s, "~> 2.0.1"},
-      {:httpoison, "~> 1.4"},
+      {:k8s, "~> 2.0.3"},
+      {:httpoison, "~> 1.8"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},
 

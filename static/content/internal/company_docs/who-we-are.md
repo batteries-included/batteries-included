@@ -1,10 +1,9 @@
----
-title: Who We Are
-date: '2022-11-27'
-tags: ['Batteries Included', 'company']
-draft: false
-images: []
----
++++
+title = 'Who We Are'
+date = '2022-11-27'
+tags = ['Batteries Included', 'company']
+draft = false
++++
 
 We empower businesses to incubate, grow, scale, transform, observe, and manage
 what matters most to them rather than worrying about the minutia of DevOps,

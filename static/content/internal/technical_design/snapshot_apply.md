@@ -1,12 +1,9 @@
----
-title: Snapshot Apply
-date: '2022-12-2'
-tags: ['overview', 'code', 'control-server', 'kubernetes']
-draft: false
-images: []
----
-
-# Snapshot Apply
++++
+title = 'Snapshot Apply'
+date = '2022-12-02'
+tags = ['overview', 'code', 'control-server', 'kubernetes']
+draft = false
++++
 
 Since the ControlServer is running on Kubernetes, we need some way to go from
 our desired state, stored in the database as ecto battery settings, to running

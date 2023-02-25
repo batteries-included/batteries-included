@@ -33,9 +33,9 @@ defmodule CommonUI.MixProject do
   defp deps do
     [
       {:heyya, "~> 0.2.0", only: :test},
-      {:phoenix, github: "phoenixframework/phoenix", override: true},
+      {:phoenix, "~> 1.7.0", override: true},
       {:jason, "~> 1.2"},
-      {:phoenix_live_view, "~> 0.18.15"},
+      {:phoenix_live_view, "~> 0.18.16"},
       {:heroicons, "~> 0.5"},
       {:gettext, "~> 0.19"}
     ]

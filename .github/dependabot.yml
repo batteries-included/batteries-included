@@ -4,14 +4,6 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
-  - package-ecosystem: mix
-    directory: '/platform_umbrella'
-    schedule:
-      interval: daily
-  - package-ecosystem: npm
-    directory: '/dev'
-    schedule:
-      interval: daily
   - package-ecosystem: npm
     directory: '/static'
     schedule:

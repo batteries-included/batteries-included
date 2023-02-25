@@ -1,9 +1,9 @@
+use bcli::prod::URL_STUB_KIND;
+use bcli::prod::URL_STUB_KUBECTL;
+use bcli::program_main;
+use bcli::CliArgs;
+use bcli::ProgramArgs;
 use clap::Parser;
-use cli::prod::URL_STUB_KIND;
-use cli::prod::URL_STUB_KUBECTL;
-use cli::program_main;
-use cli::CliArgs;
-use cli::ProgramArgs;
 use std::io;
 use std::io::BufReader;
 use std::io::BufWriter;

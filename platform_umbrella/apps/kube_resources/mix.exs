@@ -30,13 +30,10 @@ defmodule KubeResources.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      # Yaml
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 3.0.1"},
-      # Caching for http requests
       {:finch, "~> 0.14.0"},
-      # logging
-      {:phoenix, github: "phoenixframework/phoenix", override: true},
+      {:phoenix, "~> 1.7.0", override: true},
       {:kube_ext, in_umbrella: true},
       {:common_core, in_umbrella: true},
       {:ex_machina, "~> 2.7.0", only: :test}

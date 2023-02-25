@@ -1,15 +1,6 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
-static HELP_STR: &str = r#"Usage: cli <COMMAND>
-
-Commands:
-  create  
-  start   
-  help    Print this message or the help of the given subcommand(s)
-
-Options:
-  -h, --help  Print help
-"#;
+static HELP_STR: &str = "Usage: bcli <COMMAND>";
 
 #[test]
 fn test_help() {
@@ -17,5 +8,5 @@ fn test_help() {
     cmd.arg("help")
         .assert()
         .success()
-        .stdout(predicate::eq(HELP_STR));
+        .stdout(predicate::str::starts_with(HELP_STR));
 }

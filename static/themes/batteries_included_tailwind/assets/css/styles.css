@@ -1,6 +1,0 @@
-/* TailwindCSS base styles */
-/* see https://tailwindcss.com/docs/functions-and-directives#tailwind */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind variants;

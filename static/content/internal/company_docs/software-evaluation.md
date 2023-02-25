@@ -1,11 +1,9 @@
----
-title: Software Evaluation
-date: '2021-11-11'
-tags: ['planning']
-draft: false
-summary: How to think about what we use to build the platform
-images: []
----
++++
+title = 'Software Evaluation'
+date = '2021-11-11'
+tags = ['planning']
+draft = false
++++
 
 # Component Evaluation
 

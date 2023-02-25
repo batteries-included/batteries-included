@@ -1,10 +1,9 @@
----
-title: System State Overview
-date: '2022-12-1'
-tags: ['overview', 'code', 'control-server']
-draft: false
-images: []
----
++++
+title = 'System State Overview'
+date = '2022-12-01'
+tags = ['overview', 'code', 'control-server']
+draft = false
++++
 
 # What is System State
 

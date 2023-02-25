@@ -1,11 +1,9 @@
----
-title: Platform Goals
-date: '2021-11-11'
-tags: ['planning']
-draft: false
-summary: What the platform should provide.
-images: []
----
++++
+title = 'Platform Goals'
+date = '2021-11-11'
+tags = ['planning']
+draft = false
++++
 
 # Main Platform Goals
 

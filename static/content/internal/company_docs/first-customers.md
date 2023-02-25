@@ -1,11 +1,9 @@
----
-title: First Customer Profile
-date: '2021-06-22'
-tags: ['company', 'segmentation', 'market', 'first customer']
-draft: false
-summary:
-images: []
----
++++
+title = 'First Customer Profile'
+date = '2021-06-22'
+tags = ['company', 'segmentation', 'market', 'first customer']
+draft = false
++++
 
 While a platform with the best features completely integrated is a broadly
 helpful thing, we also need a laser focus on our first customers. So who are

@@ -1,21 +1,16 @@
-baseURL = 'http://www.batteriesincl.com/'
-languageCode = 'en-us'
-title = 'Batteries Included'
-theme = 'batteries_included_tailwind'
+# The URL the site will be built for
+base_url = "https://www.batteriesincl.com/"
 
-[markup]
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = false
 
-[markup.highlight]
-codeFences = true
-guessSyntax = true
-lineNoStart = 1
-lineNos = true
-lineNumbersInTable = true
-style = 'dracula'
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = true
 
-[build]
-# Used by PurgeCSS
-writeStats = true
+[markdown]
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+highlight_code = true
 
-[security.exec]
-osEnv = ['.*']
+[extra]
+# Put all your custom variables here

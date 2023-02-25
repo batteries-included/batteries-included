@@ -1,10 +1,8 @@
----
-title: Batteries Included Thesis
-date: '2021-06-21'
-tags: ['company', 'cloud', 'FAANG']
-draft: false
-images: []
----
++++
+title = 'Batteries Included Thesis'
+date = '2021-06-21'
+tags = ['company', 'cloud', 'FAANG']
++++
 
 There's a need for an integrated software platform with all the parts of a
 modern tech stack pre-configured to work together, tuned, and operated

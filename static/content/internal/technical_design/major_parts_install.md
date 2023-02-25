@@ -1,12 +1,10 @@
----
-title: Major Parts Tour via Install
-date: '2022-11-30'
-tags: ['overview', 'code', 'install', 'control-server', 'home-base']
-draft: false
-images: []
----
-
-# Major Parts Tour via Install
++++
+title = 'Major Parts Tour via Install'
+date = '2022-11-30'
+tags = ['overview', 'code', 'install', 'control-server', 'home-base']
+draft = false
+images = []
++++
 
 Batteries Included's platform has four significant architectural elements. Those
 are the Static, Control Server, Home Base, and CLI. Below we'll walk through
@@ -39,7 +37,7 @@ emphasize the fun, fast, and accessible nature of Batteries Included.
 
 - `home_base` This directory contains the structs for everything the home base
   server stores in DBS and the code to retrieve, create and mutate them.
-- `home_base_web` This directory contains: The API that control-servers, CLI,
+- `home_base_web` This directory contains = The API that control-servers, CLI,
   and use The front UI for billing and billing user creation/auth/etc The front
   end for onboarding a new cluster installation (choose options -> copy pastable
   install instruction)
