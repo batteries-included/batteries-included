@@ -1,8 +1,8 @@
 elixir 1.14.2-otp-25
-erlang 25.2
+erlang 25.2.3
 hugo 0.107.0
 k9s 0.25.18
 kind 0.14.0
 kubectl 1.25.4
-nodejs 16.15.0
+nodejs 18.14.2
 zig 0.10.0
