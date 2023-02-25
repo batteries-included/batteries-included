@@ -46,7 +46,7 @@
         </div>
         <div class="ml-10 block space-x-10">
           <a href="/" class="font-medium text-gray-500 hover:text-gray-900"
-            >Product</a
+            >Home</a
           >
           <a href="/posts" class="font-medium text-gray-500 hover:text-gray-900"
             >Posts</a
@@ -55,11 +55,14 @@
       </div>
     </nav>
 
-    {% endblock nav %} {% block content %}
+    {% endblock nav %}
+    <!-- content -->
+    {% block content %} {% endblock content %}
     <!-- Content -->
-    {% endblock content %} {% block pagination %}
+
     <!-- Pagination-->
-    {% endblock pagination %}
+    {% block pagination %} {% endblock pagination %}
+    <!-- Pagination-->
 
     <footer>{% block footer %} {% endblock footer %}</footer>
   </body>
