@@ -6,13 +6,11 @@ let
 
   beam = pkgs.beam;
 
-  inherit (pkgs) lib;
   beamPackages = beam.packagesWith beam.interpreters.erlang;
 
   # all elixir and erlange packages
   erlang = beamPackages.erlang;
   elixir = beamPackages.elixir;
-  esbuild = pkgs.esbuild;
   rustToolChain = pkgs.rust-bin.nightly.latest.default;
   pkg-config = pkgs.pkg-config;
   gcc = pkgs.gcc;

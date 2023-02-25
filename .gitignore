@@ -4,6 +4,10 @@
 # Local Netlify folder
 .netlify
 
+# Local elixir/hex/mix dirs
+.nix-mix
+.nix-hex
+
 ops/aws/keys/
 
 node_modules

@@ -12,24 +12,10 @@ recommend using a Linux machine, but our code should work on any system with a
 docker daemon and a Unix-like shell. Follow the steps in the Set up operating
 system section to get started.
 
-Once you're set up, it's time to install the toolchains you'll need for
-development. We use ASDF to manage our dependencies, so be sure to follow the
-instructions in the Install Toolchains section to get everything installed.
-
-Take a look at the Code Organization section to get an understanding of how our
-code is structured and where you can find everything you need. And don't forget
-to check out the Dev folder for scripts and tools that will help you develop and
-run the platform.
-
 We can't wait to see what you'll bring to the table as a member of the Batteries
 Included team. Let's build something amazing together!
 
 ## Set up operating system
-
-### The Basics
-
-Read and run the helper script in `./dev/ubuntu.sh`, it will install the
-commonly used packages and other first-time stuff you might need.
 
 ### Install Docker
 
@@ -46,8 +32,8 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-**NB** you'll need to either `newgrp docker` docker or log out and back in for
-the group changes to be visible.
+**NB** You need to either `newgrp docker` docker or log out and back in for the
+group changes to be visible.
 
 ## Install Toolchains
 
@@ -106,8 +92,6 @@ mix local.hex --force && \
 ### Dev
 
 The dev folder contains scripts to use in developing and running the platform.
-`dev/cloc.sh` is the script that I use to get stats about the current repo size.
-Some parties have been comforted that the project is real via line count.
 
 `dev/bootstrap.sh` This is the folder to start up a kubernetes cluster and
 install the parts of Batteries Included that is necessary for developing or
@@ -127,10 +111,6 @@ This is the main directory. It contains two different
 `Application`'s in `platform_umbrella/apps` while the configuration is in
 `platform_ubrella/config`
 
-#### Kube Resources
-
-The main kubernetes resources.
-
 ### Control Server
 
 This is the main ecto repo for the control server that gets installed on the
@@ -141,18 +121,6 @@ customer's kubernetes.
 This is the phoenix web aplication. It's mostly `Phoenix.Component`,
 `Phoenix.LiveComponent` and `Phoenix.LiveView`. Extensively using
 [Tailwind CSS](https://tailwindcss.com/) as the styling.
-
-### Kube State
-
-This contains all the code for getting the current kubernetes state. It doesn't
-start the workers running. Instead that's done by
-`platform_umbrella/apps/kube_services`
-
-### Kube Services
-
-These are the running processes that actually touch kubernetes. This containes
-the code to sync resources, the code that starts `kube_state` watchers, and code
-that reports billing usage.
 
 ### Home Server
 
@@ -186,36 +154,9 @@ cd platform_umbrella
 mix do setup, phx.server
 ```
 
-Now there are two web servers accessible. `http://localhost:4900` for the
-control server and `http://localhost:4000` for the home server.
-
-The drawback of this method is that no iframes work. All tools will be accessed
-in their own window.
-
-### In Cluster
-
-This is the method of running it with `platform_umbrella/apps/control_server`
-running in a container in the cluster.
-
-```
-git checkout in_cluster_demo
-git rebase master
-```
-
-Open up
-`platform_umbrella/apps/kube_raw_resources/lib/kube_raw_resources/battery/battery_settings.ex`
-change the string next to `@contol_version` to be blank
-
-Get the version that we want it to be
-
-```
-git describe --always --dirty --broken
-```
-
-Now put that value back in the string next to `@contol_version`
-
-Now that we have specified the version it's time to start everything and build
-the software, pushing it to the local docker registry.
+Now there are two web servers accessible.
+`http://home.127.0.0.1.ip.batteriesincl.com:4900` for the home server and
+`http://control.127.0.0.1.ip.batteriesincl.com:4000` for the control server.
 
 ```
 ./dev/bootstrap.sh -B

@@ -1,7 +1,7 @@
 { inputs, ... }:
 
 {
-  perSystem = { system, lib, ... }:
+  perSystem = { system, ... }:
     let
       overlays = [ (import inputs.rust-overlay) ];
       pkgs = import inputs.nixpkgs {

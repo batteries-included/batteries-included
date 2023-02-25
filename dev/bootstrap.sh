@@ -34,10 +34,6 @@ cliDev() {
   return 1
 }
 
-buildLocalControl() {
-  bash "${DIR}/build-local.sh"
-}
-
 mixBootstrap() {
   pushd "${DIR}/../platform_umbrella/apps/cli_core"
   retry mix run -e "CLICore.InitialSync.sync"
@@ -46,8 +42,6 @@ mixBootstrap() {
 
 CREATE_CLUSTER=${CREATE_CLUSTER:-true}
 FORWARD_CONTROL_POSTGRES=${FORWARD_CONTROL_POSTGRES:-true}
-FORWARD_HOME_POSTGRES=${FORWARD_HOME_POSTGRES:-false}
-BUILD_CONTROL_SERVER=${BUILD_CONTROL_SERVER:-false}
 NUM_SERVERS=${NUM_SERVERS:-3}
 
 PARAMS=""
@@ -63,10 +57,6 @@ while (("$#")); do
       ;;
     -D | --dont-forward-control)
       FORWARD_CONTROL_POSTGRES=false
-      shift
-      ;;
-    -B | --build-local)
-      BUILD_CONTROL_SERVER=true
       shift
       ;;
     -S | --num-servers)
@@ -91,10 +81,6 @@ COMMAND="cargo run -- dev"
 
 if [[ $CREATE_CLUSTER == 'true' ]]; then
   COMMAND="${COMMAND} --create-cluster"
-fi
-
-if [ "${BUILD_CONTROL_SERVER}" == "true" ]; then
-  buildLocalControl
 fi
 
 if [ "${FORWARD_CONTROL_POSTGRES}" == "true" ]; then
