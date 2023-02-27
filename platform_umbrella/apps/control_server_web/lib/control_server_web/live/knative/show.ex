@@ -83,17 +83,19 @@ defmodule ControlServerWeb.Live.KnativeShow do
     ~H"""
     <.service_display service={@k8_service} />
     <.revisions_display revisions={@k8_revisions} />
-    <.h2>Actions</.h2>
+    <.h2 variant="fancy">Actions</.h2>
     <.card>
-      <.link navigate={~p"/knative/services/#{@service}/edit"}>
-        <.button>
-          Edit Service
-        </.button>
-      </.link>
+      <div class="grid md:grid-cols-2 gap-6">
+        <.link navigate={~p"/knative/services/#{@service}/edit"} class="block">
+          <.button>
+            Edit Service
+          </.button>
+        </.link>
 
-      <.button phx-click="delete" data-confirm="Are you sure?">
-        Delete Service
-      </.button>
+        <.button phx-click="delete" data-confirm="Are you sure?">
+          Delete Service
+        </.button>
+      </div>
     </.card>
     """
   end

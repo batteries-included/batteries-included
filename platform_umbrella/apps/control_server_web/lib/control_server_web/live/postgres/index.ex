@@ -45,11 +45,13 @@ defmodule ControlServerWeb.Live.PostgresClusters do
 
     <.h2 variant="fancy">Actions</.h2>
     <.card>
-      <.link navigate={new_url()}>
-        <.button>
-          New Cluster
-        </.button>
-      </.link>
+      <div class="grid md:grid-cols-1 gap-6">
+        <.link navigate={new_url()} class="block">
+          <.button class="w-full">
+            New Cluster
+          </.button>
+        </.link>
+      </div>
     </.card>
     """
   end

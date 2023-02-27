@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Stats
-
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
   import ControlServerWeb.PgDatabaseTable
@@ -137,18 +136,15 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>PG Cluster: <%= @cluster.name %></.h1>
     <.stats>
-      <.stat>
-        <.stat_title>Name</.stat_title>
-        <.stat_value><%= @cluster.name %></.stat_value>
-      </.stat>
       <.stat>
         <.stat_title>Instances</.stat_title>
         <.stat_description>The number of replics to run</.stat_description>
         <.stat_value><%= @cluster.num_instances %></.stat_value>
       </.stat>
       <.stat>
-        <.stat_title>PG Version</.stat_title>
+        <.stat_title>Version</.stat_title>
         <.stat_description>Major Version of Postgres</.stat_description>
         <.stat_value><%= @cluster.postgres_version %></.stat_value>
       </.stat>
@@ -158,7 +154,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </.stat>
     </.stats>
 
-    <div class="grid xl:grid-cols-2 gap-6">
+    <div class="grid xl:grid-cols-2 gap-4 sm:gap-8">
       <.card>
         <:title>Users</:title>
 
@@ -170,23 +166,25 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </.card>
     </div>
 
-    <.h2 class="text-right">Pods</.h2>
+    <.h2>Pods</.h2>
     <.pods_table pods={@k8_pods} />
 
-    <.h2 class="text-right">Services</.h2>
+    <.h2>Services</.h2>
     <.services_table services={@k8_services} />
 
     <.h2 variant="fancy">Actions</.h2>
     <.card>
-      <.link navigate={edit_url(@cluster)}>
-        <.button>
-          Edit Cluster
-        </.button>
-      </.link>
+      <div class="grid md:grid-cols-2 gap-6">
+        <.link navigate={edit_url(@cluster)} class="block">
+          <.button class="w-full">
+            Edit Cluster
+          </.button>
+        </.link>
 
-      <.button phx-click="delete" data-confirm="Are you sure?">
-        Delete Cluster
-      </.button>
+        <.button phx-click="delete" data-confirm="Are you sure?" class="w-full">
+          Delete Cluster
+        </.button>
+      </div>
     </.card>
     """
   end

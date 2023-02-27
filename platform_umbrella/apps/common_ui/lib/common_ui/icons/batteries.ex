@@ -19,4 +19,17 @@ defmodule CommonUI.Icons.Batteries do
     </svg>
     """
   end
+
+  def batteries_icon(assigns) do
+    ~H"""
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 4.5 22 12" class={@class} fill="none">
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M20 10v4m-9-4l-2 2h3l-2 2M4 9v6c0 .5523.44772 1 1 1h12c.5523 0 1-.4477 1-1V9c0-.55228-.4477-1-1-1H5c-.55228 0-1 .44772-1 1z"
+      />
+    </svg>
+    """
+  end
 end

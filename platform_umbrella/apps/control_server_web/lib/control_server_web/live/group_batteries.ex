@@ -193,7 +193,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
 
   defp active_check(assigns) do
     ~H"""
-    <div class="flex text-shamrock-700 font-semi-bold">
+    <div class="flex text-shamrock-500 font-semi-bold">
       <div class="flex-initial">
         Active
       </div>

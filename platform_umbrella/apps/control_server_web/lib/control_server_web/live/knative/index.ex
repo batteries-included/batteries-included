@@ -26,18 +26,20 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h2 class="text-right">
+    <.h1>
       Knative Services
-    </.h2>
+    </.h1>
     <.knative_services_table knative_services={@services} />
 
-    <.h2>Actions</.h2>
+    <.h2 variant="fancy">Actions</.h2>
     <.card>
-      <.link navigate={~p"/knative/services/new"}>
-        <.button>
-          New Knative Service
-        </.button>
-      </.link>
+      <div class="grid md:grid-cols-1 gap-6">
+        <.link navigate={~p"/knative/services/new"} class="block w-full">
+          <.button class="w-full">
+            New Knative Service
+          </.button>
+        </.link>
+      </div>
     </.card>
     """
   end

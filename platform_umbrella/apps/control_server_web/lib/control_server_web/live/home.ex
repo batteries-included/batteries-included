@@ -69,7 +69,7 @@ defmodule ControlServerWeb.Live.Home do
       </.card>
       <.card>
         <:title>Last Deploy</:title>
-        <Heroicons.check_circle class="w-auto h-16 text-pink-500" />
+        <Heroicons.check_circle class="w-auto h-16 text-shamrock-500" />
       </.card>
 
       <.card>
@@ -83,8 +83,8 @@ defmodule ControlServerWeb.Live.Home do
     </div>
 
     <div class="grid xl:grid-cols-2 gap-6">
-      <.card>
-        <:title>Pod Namespaces</:title>
+      <div class="div">
+        <.h2>Pod Namespaces</.h2>
         <div
           class="pods-chart"
           id="pod-chart"
@@ -94,7 +94,7 @@ defmodule ControlServerWeb.Live.Home do
         >
           <canvas class="w-full h-full"></canvas>
         </div>
-      </.card>
+      </div>
 
       <.card>
         <:title>Recent Batteries</:title>

@@ -19,7 +19,9 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
 
   defp definition_row(assigns) do
     assigns =
-      assign_new(assigns, :wrapper_class, fn -> "py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4" end)
+      assign_new(assigns, :wrapper_class, fn ->
+        "py-4 sm:py-5 grid sm:grid-cols-3 gap-4 sm:gap-8"
+      end)
 
     ~H"""
     <div class={@wrapper_class}>
@@ -39,7 +41,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
 
   defp status_icon(%{is_success: is_success} = assigns) when is_success in ["true", true, :ok] do
     ~H"""
-    <div class="flex text-shamrock-700 font-semi-bold">
+    <div class="flex text-shamrock-500 font-semi-bold">
       <div class="flex-initial">
         Success
       </div>
@@ -104,7 +106,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
         </.definition_row>
       </dl>
     </.card>
-    <.h2 class="text-right">Path Results</.h2>
+    <.h2>Path Results</.h2>
     <.table id="resource-paths" rows={@snapshot.resource_paths}>
       <:col :let={rp} label="Path"><%= rp.path %></:col>
       <:col :let={rp} label="Successful"><.status_icon is_success={rp.is_success} /></:col>

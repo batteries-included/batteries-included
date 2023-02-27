@@ -36,11 +36,11 @@ defmodule ControlServerWeb.Live.CephIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h2 class="text-right">Ceph Clusters</.h2>
+    <.h2>Ceph Clusters</.h2>
 
     <.ceph_clusters_table ceph_clusters={@ceph_clusters} />
 
-    <.h2 class="text-right">Ceph FileSystem</.h2>
+    <.h2>Ceph FileSystem</.h2>
     <.ceph_filesystems_table ceph_filesystems={@ceph_filesystems} />
 
     <.h2 variant="fancy">Actions</.h2>

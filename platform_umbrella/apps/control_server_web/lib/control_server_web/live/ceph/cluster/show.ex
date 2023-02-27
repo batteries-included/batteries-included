@@ -54,7 +54,7 @@ defmodule ControlServerWeb.Live.CephClusterShow do
       </ul>
     </.card>
 
-    <.h2 class="text-right">Nodes</.h2>
+    <.h2>Nodes</.h2>
     <.card>
       <.nodes_list nodes={@ceph_cluster.nodes} />
     </.card>

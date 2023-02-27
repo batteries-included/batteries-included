@@ -4,7 +4,7 @@ defmodule CommonUI.Typogoraphy do
   import CommonUI.CSSHelpers
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-5xl leading-7 text-pink-500 sm:text-3xl sm:truncate"
+  attr :base_class, :string, default: "text-3xl text-pink-500 sm:text-5xl font-extrabold my-6"
   slot :inner_block, required: true
   attr :rest, :global
 
@@ -17,11 +17,11 @@ defmodule CommonUI.Typogoraphy do
   end
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-3xl sm:text-3xl font-bold leading-loose"
-  attr :color_class, :string, default: "text-astral-700"
+  attr :base_class, :string, default: "text-xl sm:text-3xl font-semibold my-3"
+  attr :color_class, :string, default: "text-astral-800"
 
   attr(:fancy_class, :string,
-    default: "text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-astral-500 "
+    default: "text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-astral-500"
   )
 
   attr :variant, :string, default: "default", values: ["default", "fancy"]
@@ -48,9 +48,7 @@ defmodule CommonUI.Typogoraphy do
 
   attr :class, :any, default: ""
 
-  attr(:base_class, :string,
-    default: "text-xl sm:text-2xl font-semibold leading-loose text-gray-600"
-  )
+  attr(:base_class, :string, default: "text-lg sm:text-2xl text-bold my-2")
 
   slot :inner_block, required: true
   attr :rest, :global
@@ -65,7 +63,7 @@ defmodule CommonUI.Typogoraphy do
 
   attr :class, :any, default: ""
 
-  attr :base_class, :string, default: "text-lg font-bold leading-loose text-blizzard-blue-800"
+  attr :base_class, :string, default: "text-lg sm:text-xl uppercase text-semibold"
 
   slot :inner_block, required: true
   attr :rest, :global

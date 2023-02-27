@@ -65,10 +65,10 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h2 class="text-right">Pods</.h2>
+    <.h2>Pods</.h2>
     <.pods_table pods={@k8_pods} />
 
-    <.h2 class="text-right">Services</.h2>
+    <.h2>Services</.h2>
     <.services_table services={@k8_services} />
 
     <.h2>Actions</.h2>

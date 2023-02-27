@@ -8,7 +8,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     ~H"""
     <.card class="col-span-2">
       <:title>Users</:title>
-      <div class="grid grid-cols-12 gap-y-6 gap-x-4">
+      <div class="grid grid-cols-12 gap-4 sm:gap-8">
         <%= for user_form <- inputs_for(@form, :users) do %>
           <div class="col-span-4">
             <.input field={{user_form, :username}} label="Username" placeholder="Username" />

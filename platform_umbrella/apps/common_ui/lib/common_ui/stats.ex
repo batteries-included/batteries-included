@@ -3,6 +3,7 @@ defmodule CommonUI.Stats do
   import Phoenix.Component, except: [link: 1]
 
   import CommonUI.Card
+  import CommonUI.Typogoraphy
 
   def stats(assigns) do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
@@ -34,11 +35,11 @@ defmodule CommonUI.Stats do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)
 
     ~H"""
-    <div class="text-2xl text-astral-800">
+    <.h2>
       <%= if @inner_block do %>
         <%= render_slot(@inner_block) %>
       <% end %>
-    </div>
+    </.h2>
     """
   end
 

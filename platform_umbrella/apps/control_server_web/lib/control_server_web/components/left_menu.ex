@@ -4,6 +4,7 @@ defmodule ControlServerWeb.LeftMenu do
   alias CommonCore.Batteries.SystemBattery
 
   import CommonUI.Icons.Database
+  import CommonUI.Icons.Batteries
   import CommonUI.Icons.Devtools
   import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Network
@@ -193,7 +194,7 @@ defmodule ControlServerWeb.LeftMenu do
   attr :group, :atom, required: true
   attr :page_group, :atom, required: true
   attr :page_detail_type, :atom, required: true
-  attr :icon_class, :any, default: "flex-shrink-0 -ml-1 mr-2 h-5 w-auto group"
+  attr :icon_class, :any, default: "flex-shrink-0 mr-2 h-5 w-auto group my-auto"
 
   def group_detail_item(%{group: :data} = assigns) do
     ~H"""
@@ -204,7 +205,7 @@ defmodule ControlServerWeb.LeftMenu do
       name="Batteries"
       is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.battery_0 class={@icon_class} />
+      <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end
@@ -218,7 +219,7 @@ defmodule ControlServerWeb.LeftMenu do
       name="Batteries"
       is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.battery_0 class={@icon_class} />
+      <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end
@@ -232,7 +233,7 @@ defmodule ControlServerWeb.LeftMenu do
       name="Batteries"
       is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.battery_0 class={@icon_class} />
+      <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end
@@ -246,7 +247,7 @@ defmodule ControlServerWeb.LeftMenu do
       name="Batteries"
       is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.battery_0 class={@icon_class} />
+      <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end
@@ -260,7 +261,7 @@ defmodule ControlServerWeb.LeftMenu do
       name="Batteries"
       is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.battery_0 class={@icon_class} />
+      <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end
@@ -308,7 +309,7 @@ defmodule ControlServerWeb.LeftMenu do
       name="Batteries"
       is_active={@page_detail_type == :batteries}
     >
-      <Heroicons.battery_0 class={@icon_class} />
+      <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     <.detail_menu_item
       navigate={~p"/snapshot_apply"}
@@ -359,7 +360,7 @@ defmodule ControlServerWeb.LeftMenu do
       name="Batteries"
       is_active={@page_detail_type == :batteries && @page_group == @group}
     >
-      <Heroicons.battery_0 class={@icon_class} />
+      <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end
@@ -392,6 +393,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_detail_item(%{battery: %{type: :redis}} = assigns) do
     ~H"""
+    <.h4>Redis</.h4>
     <.detail_menu_item
       navigate={~p"/redis"}
       name="Redis Clusters"

@@ -21,9 +21,9 @@ defmodule ControlServerWeb.KnativeDisplay do
         </dl>
       </div>
     </.card>
-    <.h2 class="text-right">Traffic Split</.h2>
+    <.h2>Traffic Split</.h2>
     <.traffic_table traffic={traffic(@service)} />
-    <.h2 class="text-right">Status Gates</.h2>
+    <.h2>Status Gates</.h2>
     <.status_table service={@service} />
     """
   end
@@ -92,7 +92,7 @@ defmodule ControlServerWeb.KnativeDisplay do
 
   def revisions_display(assigns) do
     ~H"""
-    <.h2 class="text-right">Revisions</.h2>
+    <.h2>Revisions</.h2>
     <.revisions_table revisions={@revisions} />
     """
   end

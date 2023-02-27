@@ -17,9 +17,9 @@ defmodule CommonUI.Card do
         @class
       ])
     }>
-      <.h3 :if={@title != nil and @title != []}>
+      <.h2 :if={@title != nil and @title != []}>
         <%= render_slot(@title) %>
-      </.h3>
+      </.h2>
       <%= render_slot(@inner_block) %>
     </div>
     """

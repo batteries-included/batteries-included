@@ -41,7 +41,7 @@ defmodule ControlServerWeb.Layouts do
         page_detail_type={Map.get(assigns, :page_detail_type, nil)}
       />
 
-      <main class="flex-auto relative p-6 space-y-6">
+      <main class="flex-auto relative p-6 space-y-4 sm:space-y-8">
         <%= @inner_content %>
       </main>
     </div>

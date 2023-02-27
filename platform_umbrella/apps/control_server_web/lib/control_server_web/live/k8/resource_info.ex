@@ -111,7 +111,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   defp label_section(assigns) do
     ~H"""
-    <.h2 class="text-right">Labels</.h2>
+    <.h2>Labels</.h2>
     <div class="my-5">
       <.rounded_label :for={{key, value} <- Resource.labels(@resource)} class={label_class(key)}>
         <%= "#{key}=#{value}" %>
@@ -243,7 +243,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   defp events_section(assigns) do
     ~H"""
-    <.h2 class="text-right">Events</.h2>
+    <.h2>Events</.h2>
     <.table id="events-table" rows={@events}>
       <:col :let={event} label="Type"><%= get_in(event, ~w(type)) %></:col>
       <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
@@ -284,7 +284,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
     ~H"""
     <.label_section resource={@resource} />
-    <.h2 class="text-right">Service Info</.h2>
+    <.h2>Service Info</.h2>
     <.service_spec spec={@spec} />
     """
   end
@@ -296,9 +296,9 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     ~H"""
     <.pod_facts_section resource={@resource} />
     <.label_section resource={@resource} />
-    <.h2 class="text-right">Container Status</.h2>
+    <.h2>Container Status</.h2>
     <.pod_containers_section status={@status} />
-    <.h2 class="text-right">Messages</.h2>
+    <.h2>Messages</.h2>
     <.conditions status={@status} />
     <.events_section events={@events} />
     """
@@ -311,10 +311,10 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     ~H"""
     <.deployment_status status={@status} />
     <.label_section resource={@resource} />
-    <.h2 class="text-right">Messages</.h2>
+    <.h2>Messages</.h2>
     <.conditions status={@status} />
     <.events_section events={@events} />
-    <.h2 class="text-right">Pods</.h2>
+    <.h2>Pods</.h2>
     <.pods_table pods={@pods} />
     """
   end
@@ -327,7 +327,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     <.stateful_set_status status={@status} />
     <.label_section resource={@resource} />
     <.events_section events={@events} />
-    <.h2 class="text-right">Pods</.h2>
+    <.h2>Pods</.h2>
     <.pods_table pods={@pods} />
     """
   end
