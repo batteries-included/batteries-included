@@ -17,6 +17,7 @@ use std::{
     },
     thread,
 };
+use tokio::runtime::Handle;
 
 use crate::konstants;
 
@@ -39,6 +40,8 @@ pub(crate) async fn get_pg_control_primary(
 
         let pods: Api<Pod> = Api::namespaced(client_factory(), namespace);
         let lp = ListParams::default().labels(&format!("spilo-role=master,cluster-name={cluster}"));
+        let handle = Handle::current();
+        let _ = handle.enter();
         match futures::executor::block_on(pods.list(&lp)) {
             Ok(res) => {
                 let pod = res.iter().next();

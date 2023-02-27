@@ -7,6 +7,7 @@ use clap::Parser;
 use std::io;
 use std::io::BufReader;
 use std::io::BufWriter;
+use tokio::runtime::Handle;
 
 #[tokio::main]
 async fn main() {
@@ -17,6 +18,8 @@ async fn main() {
     let mut program_args = ProgramArgs {
         cli_args: CliArgs::parse(),
         kube_client_factory: Box::new(|| {
+            let handle = Handle::current();
+            let _ = handle.enter();
             futures::executor::block_on(kube_client::Client::try_default()).unwrap()
         }),
         stderr: &mut stderr,
