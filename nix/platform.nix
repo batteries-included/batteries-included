@@ -67,7 +67,7 @@
         inherit erlang elixir hex;
         inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
 
-        pname = "control";
+        pname = "platform";
         mixEnv = "test";
         mixFodDeps = mixTestFodDeps;
         command = "credo";
@@ -78,12 +78,23 @@
         inherit erlang elixir hex;
         inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
 
-        pname = "control";
+        pname = "platform";
         mixEnv = "test";
         mixFodDeps = mixTestFodDeps;
         command = "dialyzer";
       };
 
+
+      format = pkgs.callPackage ./mix-command.nix {
+        inherit version src pkgs;
+        inherit erlang elixir hex;
+        inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
+
+        pname = "platform";
+        mixEnv = "test";
+        mixFodDeps = mixTestFodDeps;
+        command = "format --check";
+      };
 
     in
     {
@@ -91,7 +102,7 @@
         inherit home-base control-server;
       };
       checks = {
-        inherit credo dialyzer;
+        inherit credo dialyzer format;
       };
     };
 }
