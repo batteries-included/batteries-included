@@ -16,6 +16,7 @@ use std::{
         Arc,
     },
     thread,
+    time::Duration,
 };
 use tokio::runtime::Handle;
 
@@ -30,37 +31,51 @@ pub fn forward_postgres_handle(fwd_postgres_opt: &Option<Option<String>>) -> Str
     fwd_postgres
 }
 
+pub async fn get_pg_control_primary_raw(
+    client_factory: &dyn Fn() -> kube_client::Client,
+    cluster: &str,
+    namespace: &str,
+) -> Result<String, Box<dyn std::error::Error>> {
+    let pods: Api<Pod> = Api::namespaced(client_factory(), namespace);
+    let lp = ListParams::default().labels(&format!("spilo-role=master,cluster-name={cluster}"));
+    let handle = Handle::current();
+    let _ = handle.enter();
+    match pods.list(&lp).await {
+        Ok(res) => {
+            let pod = res.iter().next();
+            match pod.map(|x| x.metadata.name.as_ref().unwrap().to_string()) {
+                Some(name) => Ok(name),
+                None => {
+                    println!("waiting for pod to come up...");
+                    Err(format!(
+                        "Failed to get pg control primary for cluster {cluster} in namespace {namespace}").into()
+                    )
+                }
+            }
+        }
+        Err(err) => Err(format!("Failed to connect to cluster: {}", err).into()),
+    }
+}
+
 pub(crate) async fn get_pg_control_primary(
     client_factory: &dyn Fn() -> kube_client::Client,
     cluster: &str,
     namespace: &str,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    match retry::retry(Fixed::from_millis(1000).take(100), || {
-        eprintln!("Getting pg control primary");
-
-        let pods: Api<Pod> = Api::namespaced(client_factory(), namespace);
-        let lp = ListParams::default().labels(&format!("spilo-role=master,cluster-name={cluster}"));
-        let handle = Handle::current();
-        let _ = handle.enter();
-        match futures::executor::block_on(pods.list(&lp)) {
-            Ok(res) => {
-                let pod = res.iter().next();
-                match pod.map(|x| x.metadata.name.as_ref().unwrap().to_string()) {
-                    Some(name) => Ok(name),
-                    None => {
-                        println!("waiting for pod to come up...");
-                        Err(format!(
-                            "Failed to get pg control primary for cluster {cluster} in namespace {namespace}"
-                        ))
-                    }
+    let mut retries = 10;
+    let wait = 10;
+    let res = loop {
+        match get_pg_control_primary_raw(client_factory, cluster, namespace).await {
+            Err(_) => {
+                if retries > 0 {
+                    retries -= 1;
+                    tokio::time::sleep(Duration::from_secs(wait)).await;
                 }
             }
-            Err(err) => Err(format!("Failed to connect to cluster: {}", err)),
+            res => break res,
         }
-    }) {
-        Ok(name) => Ok(name),
-        Err(e) => Err(e.to_string().into()),
-    }
+    };
+    res
 }
 
 // TODO: change this to use the native client instead of kubectl
