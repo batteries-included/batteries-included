@@ -15,30 +15,50 @@ system section to get started.
 We can't wait to see what you'll bring to the table as a member of the Batteries
 Included team. Let's build something amazing together!
 
-## Set up operating system
+## Setup
 
 ### Install Docker
 
-[Follow the Docker Engine install instructions](https://docs.docker.com/engine/install/)
-Mac nerds, you'll be getting Docker Desktop and living life on your own terms.
-At least you can use brew?
+Please install docker. For linux make sure to use a recent version of docker.
+For mac users Rancher Destop has been widely recommended.
 
 If the `docker` group is present, then Docker Engine will create its socket with
 that group, otherwise it's owned by root. To fix this, just add a `docker` group
 and add yourself to it:
 
-```sh
-sudo groupadd docker
-sudo usermod -aG docker $USER
+```bash
+sudo groupadd docker && sudo usermod -aG docker $USER
 ```
 
 **NB** You need to either `newgrp docker` docker or log out and back in for the
 group changes to be visible.
 
-## Install Toolchains
+## Install Developmen Dependencies
 
-There's a bunch of stuff needed for development and we use common community
-tools to do the management of them.
+There are two different ways that you can install the dependencies that have
+been tried.
+
+- Nix
+- ASDF
+
+Nix is more supported, but more involved and complicated. ASDF or just
+installing the dependencies yourself should work too.
+
+### Nix
+
+Nix is a package manager that can install and build deterministic versions of
+just about any software on Linux and MacOSX. It's a weird little language but a
+great development tool. Installing Nix and Direnv will mean that you need no
+other dependencies and everything other than kubernetes is automatically
+versioned for you.
+
+Install Nix:
+
+https://nixos.org/download.html#nix-install-macos
+
+```bash
+sh <(curl -L https://nixos.org/nix/install)
+```
 
 ### ASDF
 
@@ -78,11 +98,9 @@ might be system dependencies that are needed.
 
 ### Elixir Dependencies
 
-```
+```bash
 cd platform_umbrella
-mix local.hex --force && \
-  mix local.rebar --force && \
-  mix deps.get && \
+mix deps.get && \
   mix deps.compile --force
 
 ```
@@ -102,7 +120,9 @@ running.
 `static` contains the code that builds and deploys
 [Batteries Included](https://www.batteriesincl.com)
 
-There are other non-public pages in `static/content`
+Public posts are in `static/content/posts`
+
+There are other non-public pages in `static/content/internal`
 
 ## Platform Umbrella
 
@@ -136,9 +156,6 @@ This is the UI.
 
 ### Development
 
-In this method you run the elixir daeamon not in a docker container. This allows
-live code changes and fast redeploys.
-
 In one tmux pane start the k3d cluster, compile the rust bootstrap binary, run
 it, installing postgres and istiod, then start a port forward to the postgres
 process.
@@ -147,7 +164,8 @@ process.
 ./dev/bootstrap.sh
 ```
 
-Then in another tmux pane start the daeamon
+Then in another tmux pane start the control, and home web servers and background
+processes.
 
 ```bash
 cd platform_umbrella
@@ -157,23 +175,3 @@ mix do setup, phx.server
 Now there are two web servers accessible.
 `http://home.127.0.0.1.ip.batteriesincl.com:4900` for the home server and
 `http://control.127.0.0.1.ip.batteriesincl.com:4000` for the control server.
-
-```
-./dev/bootstrap.sh -B
-```
-
-That will take a while, it will build and push a lot to the docker registry and
-then the control server will be started. However the cluster is also starting
-postgres so the total start time can take ~10 minutes.
-
-Ater a while you should come back to control server running in your kubernetes
-cluster
-
-Assuming there haven't been any networking changes recently the server will be
-available at `http://control.172.30.0.4.sslip.io/`
-
-### Smaller Machines
-
-If you want to conserve resources then the `dev/bootstrap.sh` script takes in a
-`-S` flag with a number of servers. You can set this to 1 which should lower the
-resource usage.

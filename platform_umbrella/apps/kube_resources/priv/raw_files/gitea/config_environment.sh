@@ -9,15 +9,15 @@ function env2ini::read_config_to_env() {
   local section="${1}"
   local line="${2}"
 
-  if [[ -z "${line}" ]]; then
+  if [[ -z ${line} ]]; then
     # skip empty line
     return
   fi
 
   # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new line
-  local setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
+  local setting="$(awk -F '=' '{print $1}' <<<"${line}" | xargs echo -n)"
 
-  if [[ -z "${setting}" ]]; then
+  if [[ -z ${setting} ]]; then
     env2ini::log '  ! invalid setting'
     exit 1
   fi
@@ -33,7 +33,7 @@ function env2ini::read_config_to_env() {
 
   env2ini::log "    + '${setting}'"
 
-  if [[ -z "${section}" ]]; then
+  if [[ -z ${section} ]]; then
     export "ENV_TO_INI____${setting^^}=${value}" # '^^' makes the variable content uppercase
     return
   fi
@@ -48,15 +48,15 @@ function env2ini::reload_preset_envs() {
   env2ini::log "Reloading preset envs..."
 
   while read -r line; do
-    if [[ -z "${line}" ]]; then
+    if [[ -z ${line} ]]; then
       # skip empty line
       return
     fi
 
     # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new line
-    local setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
+    local setting="$(awk -F '=' '{print $1}' <<<"${line}" | xargs echo -n)"
 
-    if [[ -z "${setting}" ]]; then
+    if [[ -z ${setting} ]]; then
       env2ini::log '  ! invalid setting'
       exit 1
     fi
@@ -73,7 +73,7 @@ function env2ini::reload_preset_envs() {
     env2ini::log "  + '${setting}'"
 
     export "${setting^^}=${value}" # '^^' makes the variable content uppercase
-  done < "/tmp/existing-envs"
+  done <"/tmp/existing-envs"
 
   rm /tmp/existing-envs
 }
@@ -97,7 +97,7 @@ function env2ini::process_config_file() {
 function env2ini::load_config_sources() {
   local path="${1}"
 
-  if [[ -d "${path}" ]]; then
+  if [[ -d ${path} ]]; then
     env2ini::log "Processing $(basename "${path}")..."
 
     while read -d '' configFile; do
@@ -122,7 +122,7 @@ function env2ini::generate_initial_secrets() {
   env2ini::log "...Initial secrets generated\n"
 }
 
-env | (grep ENV_TO_INI || [[ $? == 1 ]]) > /tmp/existing-envs
+env | (grep ENV_TO_INI || [[ $? == 1 ]]) >/tmp/existing-envs
 
 # MUST BE CALLED BEFORE OTHER CONFIGURATION
 env2ini::generate_initial_secrets

@@ -11,8 +11,8 @@ echo '==== BEGIN GITEA CONFIGURATION ===='
   exit 1
 }
 function configure_admin_user() {
-  local ACCOUNT_ID=$(gitea admin user list --admin | grep -e "\s\+${GITEA_ADMIN_USERNAME}\s\+" | awk -F " " "{printf \$1}")
-  if [[ -z "${ACCOUNT_ID}" ]]; then
+  local ACCOUNT_ID=$(gitea admin user list --admin | grep -e "\s\+${GITEA_ADMIN_USERNAME}\s\+" | awk -F " " '{printf $1}')
+  if [[ -z ${ACCOUNT_ID} ]]; then
     echo "No admin user '${GITEA_ADMIN_USERNAME}' found. Creating now..."
     gitea admin user create --admin --username "${GITEA_ADMIN_USERNAME}" --password "${GITEA_ADMIN_PASSWORD}" --email "gitea@batteriesincl.com" --must-change-password=false
     echo '...created.'

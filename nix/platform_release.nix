@@ -1,27 +1,26 @@
-{ pname, src, version, pkgs, nodejs, mixEnv ? "prod", npmlock2nix, ... }:
+{ pname
+, src
+, version
+, pkgs
+, gcc
+, libgcc
+, openssl_1_1
+, rustToolChain
+, pkg-config
+, mixEnv ? "prod"
+, npmlock2nix
+, nodejs
+, beamPackages
+, erlang
+, elixir
+, hex
+, mixFodDeps
+, ...
+}:
 let
 
   MIX_ENV = mixEnv;
   LANG = "C.UTF-8";
-
-  beam = pkgs.beam;
-
-  beamPackages = beam.packagesWith beam.interpreters.erlang;
-
-  # all elixir and erlange packages
-  erlang = beamPackages.erlang;
-  elixir = beamPackages.elixir;
-  rustToolChain = pkgs.rust-bin.nightly.latest.default;
-  pkg-config = pkgs.pkg-config;
-  gcc = pkgs.gcc;
-  libgcc = pkgs.libgcc;
-
-
-  mixFodDeps = beamPackages.fetchMixDeps {
-    pname = "mix-deps-${pname}";
-    inherit src version MIX_ENV LANG;
-    sha256 = "cRPssvVoi7FU1+z1fo/pW85xskYsNYjPdCHZpmBpJQk=";
-  };
 
   homePriv = pkgs.callPackage ./priv.nix {
     inherit pname version nodejs npmlock2nix;
@@ -45,10 +44,11 @@ let
   '';
 in
 beamPackages.mixRelease {
-  inherit src pname version mixFodDeps MIX_ENV LANG erlang elixir;
+  inherit src pname version mixFodDeps MIX_ENV LANG;
+  inherit erlang elixir hex;
 
   nativeBuildInputs = [ gcc rustToolChain pkg-config ];
-  buildInputs = [ pkgs.openssl_1_1 gcc libgcc ];
+  buildInputs = [ openssl_1_1 gcc libgcc ];
 
   postUnpack = ''
     mkdir -p apps/control_server_web/priv/static/assets/

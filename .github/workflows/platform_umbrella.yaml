@@ -10,52 +10,7 @@ on:
       - master
 
 jobs:
-  dependencies:
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.14.1
-            otp: 25.1.2
-    defaults:
-      run:
-        working-directory: ./platform_umbrella
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Github repo
-        uses: actions/checkout@v3
-      - name: Sets up an Erlang/OTP environment
-        uses: erlef/setup-beam@v1
-        with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
-      - name: Retrieve cached dependencies
-        uses: actions/cache@v3
-        id: mix-cache
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-          key:
-            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir
-            }}-${{hashFiles('**/mix.lock') }}
-      - name: Install dependencies
-        if: steps.mix-cache.outputs.cache-hit != 'true'
-        run: |
-          mix local.rebar --force
-          mix local.hex --force
-          mix deps.get
-          mix deps.compile --skip-umbrella-children --force
-
-  mix-test:
-    needs: dependencies
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.14.1
-            otp: 25.1.2
-    defaults:
-      run:
-        working-directory: ./platform_umbrella
+  platform-test:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -73,57 +28,9 @@ jobs:
       POSTGRES_PASSWORD: 'batterypasswd'
       MIX_ENV: test
     steps:
-      - name: Checkout Github repo
-        uses: actions/checkout@v3
-      - name: Sets up an Erlang/OTP environment
-        uses: erlef/setup-beam@v1
-        with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
-      - name: Retrieve cached dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-          key:
-            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir
-            }}-${{hashFiles('**/mix.lock') }}
-      - run: mix compile --warnings-as-errors --force
-      - run: mix ecto.reset
-      - run:
-          mix test --trace --slowest 10 --cover --export-coverage default
-          --warnings-as-errors
-      - run: mix test.coverage
-
-  static-code-analysis:
-    needs: dependencies
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.14.1
-            otp: 25.1.2
-    defaults:
-      run:
-        working-directory: ./platform_umbrella
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Github repo
-        uses: actions/checkout@v3
-      - name: Sets up an Erlang/OTP environment
-        uses: erlef/setup-beam@v1
-        with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
-      - name: Retrieve cached dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-          key:
-            ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir
-            }}-${{hashFiles('**/mix.lock') }}
-      - run: mix format --check-formatted
-      - run: mix credo
-      - run: mix dialyzer --format github
+    - uses: actions/checkout@v3
+    - uses: cachix/install-nix-action@v19
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+        extra_nix_config: experimental-features = nix-command flakes
+    - run: nix develop --command bash ./dev/run-mix-test.sh

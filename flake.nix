@@ -44,19 +44,8 @@
         ./nix/shell.nix
         ./nix/cli.nix
         ./nix/pastebin.nix
-        ./nix/control.nix
+        ./nix/platform.nix
+        ./nix/fmt.nix
       ];
-      perSystem = { ... }:
-        {
-
-          treefmt = {
-            projectRootFile = "flake.nix";
-            programs.nixpkgs-fmt.enable = true;
-            programs.rustfmt.enable = true;
-            programs.black.enable = true;
-            programs.prettier.enable = true;
-          };
-        };
     };
-
 }
