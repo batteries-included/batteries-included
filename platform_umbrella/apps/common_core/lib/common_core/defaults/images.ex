@@ -46,7 +46,7 @@ defmodule CommonCore.Defaults.Images do
   def kiali_operator_image, do: "quay.io/kiali/kiali-operator:v1.62.0"
 
   def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.7"
-    def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.9"
+  def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.9"
 
   def vm_cluster_tag, do: "v1.88.0-cluster"
   def vm_tag, do: "v1.88.0"

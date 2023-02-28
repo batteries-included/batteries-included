@@ -15,7 +15,7 @@ defmodule ControlServer.Umbrella.MixProject do
       dialyzer: [
         flags: ~w[error_handling unmatched_returns unknown]a,
         plt_add_deps: :app_tree,
-        plt_add_apps: [:mix]
+        plt_add_apps: [:mix, :ex_unit]
       ]
     ]
   end

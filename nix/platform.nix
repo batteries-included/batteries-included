@@ -93,7 +93,7 @@
         pname = "platform";
         mixEnv = "test";
         mixFodDeps = mixTestFodDeps;
-        command = "format --check";
+        command = "format --check-formatted";
       };
 
     in

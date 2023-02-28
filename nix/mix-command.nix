@@ -24,6 +24,8 @@ let
 in
 pkgs.stdenv.mkDerivation ({
 
+  doCheck = true;
+
   name = "mix-command-${pname}-${command}";
   inherit pname version src;
   nativeBuildInputs = nativeBuildInputs ++ [
@@ -66,15 +68,14 @@ pkgs.stdenv.mkDerivation ({
 
   buildPhase = ''
     mix deps.compile --no-deps-check --skip-umbrella-children
-    mix compile --no-deps-check --force --warnings-as-errors
+    mix compile --no-deps-check --warnings-as-errors
   '';
 
   checkPhase = ''
-    mix ${command}
+    mix ${command} && echo Success
   '';
 
   installPhase = ''
     touch $out
   '';
-
 })
