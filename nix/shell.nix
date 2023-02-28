@@ -29,6 +29,7 @@
         postgresql
 
         awscli2
+        bind
       ];
 
       rustNativeBuildTools = with pkgs; [
