@@ -27,6 +27,8 @@
 
         mix2nix
         postgresql
+
+        awscli2
       ];
 
       rustNativeBuildTools = with pkgs; [
