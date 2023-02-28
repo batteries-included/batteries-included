@@ -1,9 +1,13 @@
 /* eslint no-underscore-dangle: 0 */
 
 import 'phoenix_html';
+import '@fontsource/jetbrains-mono';
+import '@fontsource/inter';
+
 import { Socket } from 'phoenix';
 import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
+
 import Alpine from 'alpinejs';
 
 import { IFrame } from './iframe';

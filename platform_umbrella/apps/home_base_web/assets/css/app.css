@@ -1,5 +1,10 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-
+@import '@fontsource/inter';
+@import '@fontsource/jetbrains-mono';
 /* This file is for your main application CSS */
+
+::selection {
+  @apply bg-pink-500;
+}

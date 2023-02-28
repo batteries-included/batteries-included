@@ -3,22 +3,24 @@
   "name": "control_server_web_assets",
   "scripts": {
     "css:deploy": "NODE_ENV=production tailwindcss --minify --input=css/app.css --output=dist/app.css",
-    "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle --target=chrome58,firefox57,safari11,edge18 --outdir=dist"
+    "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle  --loader:.woff2=file --loader:.woff=file --target=chrome58,firefox57,safari11,edge18 --outdir=dist"
   },
   "dependencies": {
+    "@fontsource/inter": "^4.2.2",
+    "@fontsource/jetbrains-mono": "^4.2.2",
     "alpinejs": "3.11.1",
     "chart.js": "4.2.1",
     "esbuild": "^0.17.10",
     "lodash": "4.17.21",
     "phoenix": "1.7.0",
-    "phoenix_html": "3.3.0",
+    "phoenix_html": "3.3.1",
     "phoenix_live_view": "0.18.16",
     "topbar": "2.0.1"
   },
   "devDependencies": {
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
-    "daisyui": "2.25.0",
+    "daisyui": "2.51.2",
     "tailwindcss": "3.2.7"
   }
 }

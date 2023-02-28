@@ -38,7 +38,7 @@ defmodule HomeBaseWeb.MixProject do
     [
       {:phoenix, "~> 1.7.0", override: true},
       {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_html, "~> 3.0"},
+      {:phoenix_html, "~> 3.3.1"},
       {:phoenix_live_view, "~> 0.18.16"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:floki, ">= 0.30.0", only: :test},
