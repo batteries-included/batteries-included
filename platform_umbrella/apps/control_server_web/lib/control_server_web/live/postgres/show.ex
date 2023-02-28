@@ -57,7 +57,11 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp assign_k8_services(%{assigns: assigns} = socket) do
     possible_owner_uids = [uid(assigns.k8_cluster)] ++ uids(assigns.k8_stateful_sets)
     possible_owner_ids = [assigns.cluster.id]
-    services = all_matching(:service, possible_owner_ids, possible_owner_uids)
+
+    cluster_info =
+      {K8s.Resource.name(assigns.k8_cluster), K8s.Resource.namespace(assigns.k8_cluster)}
+
+    services = all_matching(:service, possible_owner_ids, possible_owner_uids, cluster_info)
     assign(socket, :k8_services, services)
   end
 
@@ -65,12 +69,20 @@ defmodule ControlServerWeb.Live.PostgresShow do
     possible_owner_uids =
       [uid(assigns.k8_cluster)] ++ uids(assigns.k8_stateful_sets) ++ uids(assigns.k8_services)
 
+    cluster_info =
+      {K8s.Resource.name(assigns.k8_cluster), K8s.Resource.namespace(assigns.k8_cluster)}
+
     possible_owner_ids = [assigns.cluster.id]
-    pods = all_matching(:pod, possible_owner_ids, possible_owner_uids)
+    pods = all_matching(:pod, possible_owner_ids, possible_owner_uids, cluster_info)
     assign(socket, :k8_pods, pods)
   end
 
-  defp all_matching(resource_type, owner_ids, owner_uids) do
+  defp all_matching(
+         resource_type,
+         owner_ids,
+         owner_uids,
+         {cluster_name, cluster_namespace} \\ {nil, nil}
+       ) do
     possible_uid_mapset = MapSet.new(owner_uids)
     possible_id_mapset = MapSet.new(owner_ids)
 
@@ -79,7 +91,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
     |> Enum.filter(fn res ->
       # Keep any resource that has a battery/owner label
       # or any resource that has a metadata -> ownerReference with a uid in owner_uids
-      is_owned_by_label(res, possible_id_mapset) || is_owned_by_ref(res, possible_uid_mapset)
+      # or any that has a postgres cluster name matching ours
+      is_owned_by_label(res, possible_id_mapset) ||
+        is_owned_by_ref(res, possible_uid_mapset) ||
+        is_owned_by_cluster_name(res, cluster_name, cluster_namespace)
     end)
   end
 
@@ -97,6 +112,11 @@ defmodule ControlServerWeb.Live.PostgresShow do
       owner_id ->
         MapSet.member?(possible_id_mapset, owner_id)
     end
+  end
+
+  defp is_owned_by_cluster_name(resource, cluster_name, cluster_namespace) do
+    K8s.Resource.label(resource, "cluster-name") == cluster_name &&
+      K8s.Resource.namespace(resource) == cluster_namespace
   end
 
   defp uids(resources) do
