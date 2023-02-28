@@ -277,6 +277,10 @@ defmodule ControlServerWeb.Live.GroupBatteries do
       install_result={@install_result}
       apply_result={@apply_result}
     />
+    <.h1>
+      Batteries
+      <:sub_header :if={@group != nil && @group != ""}><%= @group %></:sub_header>
+    </.h1>
     <.table id="batteries-table" rows={@catalog_batteries}>
       <:col :let={battery} label="Type">
         <%= Naming.humanize(battery.type) %>

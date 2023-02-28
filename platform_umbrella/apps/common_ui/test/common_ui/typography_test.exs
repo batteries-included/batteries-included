@@ -11,6 +11,15 @@ defmodule CommonUI.TypographyTest do
     """
   end
 
+  component_snapshot_test "h1 with sub header" do
+    assigns = %{}
+
+    ~H"""
+    <.h1>Header<:sub_header>with sub</:sub_header></.h1>
+    """
+  end
+
+
   component_snapshot_test "h1 with class" do
     assigns = %{needed_class: "m-10"}
 

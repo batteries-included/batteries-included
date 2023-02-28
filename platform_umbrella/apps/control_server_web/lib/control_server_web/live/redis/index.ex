@@ -38,6 +38,7 @@ defmodule ControlServerWeb.Live.Redis do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>Redis Clusters</.h1>
     <.redis_table failover_clusters={@failover_clusters} />
 
     <.h2>Actions</.h2>

@@ -194,7 +194,7 @@ defmodule ControlServerWeb.LeftMenu do
   attr :group, :atom, required: true
   attr :page_group, :atom, required: true
   attr :page_detail_type, :atom, required: true
-  attr :icon_class, :any, default: "flex-shrink-0 mr-2 h-5 w-auto group my-auto"
+  attr :icon_class, :any, default: "flex-shrink-0 mr-2 w-5 h-auto group my-auto"
 
   def group_detail_item(%{group: :data} = assigns) do
     ~H"""
@@ -565,7 +565,7 @@ defmodule ControlServerWeb.LeftMenu do
   def detail_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
     ~H"""
     <.link navigate={@navigate} class={menu_detail_class(@is_active)}>
-      <span class="inline-block"><%= render_slot(@inner_block) %></span>
+      <span class="inline-block my-auto"><%= render_slot(@inner_block) %></span>
       <%= truncate(@name) %>
     </.link>
     """

@@ -34,6 +34,7 @@ defmodule ControlServerWeb.Live.SystemBatteryIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>All Installed Batteries</.h1>
     <.table
       id="system_batteries"
       rows={@system_batteries}

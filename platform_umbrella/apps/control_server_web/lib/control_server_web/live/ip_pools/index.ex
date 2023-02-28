@@ -25,6 +25,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>MetalLB IP Addresses</.h1>
     <.ip_address_pools_table ip_address_pools={@ip_address_pools} />
     """
   end

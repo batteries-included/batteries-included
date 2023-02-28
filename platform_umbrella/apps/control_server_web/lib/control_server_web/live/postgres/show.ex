@@ -156,7 +156,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>PG Cluster: <%= @cluster.name %></.h1>
+    <.h1>
+      Postgres Cluster
+      <:sub_header><%= @cluster.name %></:sub_header>
+    </.h1>
     <.stats>
       <.stat>
         <.stat_title>Instances</.stat_title>

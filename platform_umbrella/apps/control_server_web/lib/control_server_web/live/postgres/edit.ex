@@ -24,6 +24,10 @@ defmodule ControlServerWeb.Live.PostgresEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>
+      Edit Postgres
+      <:sub_header><%= @cluster.name %></:sub_header>
+    </.h1>
     <div>
       <.live_component
         module={PostgresFormComponent}

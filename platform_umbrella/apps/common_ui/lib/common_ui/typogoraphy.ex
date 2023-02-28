@@ -5,13 +5,18 @@ defmodule CommonUI.Typogoraphy do
 
   attr :class, :any, default: ""
   attr :base_class, :string, default: "text-3xl text-pink-500 sm:text-5xl font-extrabold my-6"
-  slot :inner_block, required: true
+  slot :inner_block, required: true, doc: "The main text of the header"
+  slot :sub_header, required: false, doc: "The sub text of the header"
   attr :rest, :global
 
   def h1(assigns) do
     ~H"""
     <h1 class={build_class([@base_class, @class])} {@rest}>
       <%= render_slot(@inner_block) %>
+      <span :if={@sub_header != nil && @sub_header != []} class="m-0 text-gray-700">::</span>
+      <span :if={@sub_header != nil && @sub_header != []} class="text-gray-700 font-mono">
+        <%= render_slot(@sub_header) %>
+      </span>
     </h1>
     """
   end

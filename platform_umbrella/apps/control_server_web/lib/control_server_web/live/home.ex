@@ -58,8 +58,6 @@ defmodule ControlServerWeb.Live.Home do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>Home</.h1>
-
     <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
       <.card>
         <:title>Battery Count</:title>

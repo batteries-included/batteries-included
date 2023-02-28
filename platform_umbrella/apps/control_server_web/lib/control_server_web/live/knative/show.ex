@@ -81,13 +81,17 @@ defmodule ControlServerWeb.Live.KnativeShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>
+      Knaitve Service
+      <:sub_header><%= @service.name %></:sub_header>
+    </.h1>
     <.service_display service={@k8_service} />
     <.revisions_display revisions={@k8_revisions} />
     <.h2 variant="fancy">Actions</.h2>
     <.card>
       <div class="grid md:grid-cols-2 gap-6">
         <.link navigate={~p"/knative/services/#{@service}/edit"} class="block">
-          <.button>
+          <.button class="w-full">
             Edit Service
           </.button>
         </.link>

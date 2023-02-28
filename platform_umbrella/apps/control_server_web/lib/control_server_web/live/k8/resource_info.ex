@@ -351,6 +351,12 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
+    <.h1>
+      <span class="capitalize">
+        <%= @resource_type %>
+      </span>
+      <:sub_header><%= @name %></:sub_header>
+    </.h1>
     <.banner_section name={@name} namespace={@namespace} />
 
     <%= case @resource_type do %>

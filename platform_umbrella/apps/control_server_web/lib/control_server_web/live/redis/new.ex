@@ -37,6 +37,8 @@ defmodule ControlServerWeb.Live.RedisNew do
   end
 
   @impl Phoenix.LiveView
+  @spec handle_info({<<_::168>>, map}, Phoenix.LiveView.Socket.t()) ::
+          {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
     new_path = ~p"/redis/#{failover_cluster}/show"
     Installer.install!(:redis)
@@ -47,6 +49,7 @@ defmodule ControlServerWeb.Live.RedisNew do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>New Redis Cluster</.h1>
     <div>
       <.live_component
         module={FormComponent}

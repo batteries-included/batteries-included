@@ -65,6 +65,10 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>
+      Redis
+      <:sub_header><%= @failover_cluster.name %></:sub_header>
+    </.h1>
     <.h2>Pods</.h2>
     <.pods_table pods={@k8_pods} />
 

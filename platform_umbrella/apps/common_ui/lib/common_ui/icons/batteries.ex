@@ -22,7 +22,7 @@ defmodule CommonUI.Icons.Batteries do
 
   def batteries_icon(assigns) do
     ~H"""
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 4.5 22 12" class={@class} fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="3 7 17.5 11.5" class={@class} fill="none">
       <path
         stroke="currentColor"
         stroke-linecap="round"

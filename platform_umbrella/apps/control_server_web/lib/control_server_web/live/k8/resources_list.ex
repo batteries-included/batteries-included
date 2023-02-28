@@ -86,6 +86,10 @@ defmodule ControlServerWeb.Live.ResourceList do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>
+      Kubernetes
+      <:sub_header><%= @live_action %></:sub_header>
+    </.h1>
     <.tab_bar tabs={tabs(@live_action)} />
     <%= case @live_action do %>
       <% :deployment -> %>

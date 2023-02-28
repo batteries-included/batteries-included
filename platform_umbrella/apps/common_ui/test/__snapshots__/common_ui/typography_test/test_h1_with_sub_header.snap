@@ -1,0 +1,1 @@
+"<h1 class=\"text-3xl text-pink-500 sm:text-5xl font-extrabold my-6\">\n  Header\n  <span class=\"m-0 text-gray-700\">::</span>\n  <span class=\"text-gray-700 font-mono\">\n    with sub\n  </span>\n</h1>"

@@ -35,6 +35,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.h1>Deploys</.h1>
     <.kube_snapshots_table kube_snapshots={@snapshots.entries} />
 
     <.h2 variant="fancy">Actions</.h2>
