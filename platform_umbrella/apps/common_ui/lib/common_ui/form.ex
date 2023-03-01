@@ -59,7 +59,7 @@ defmodule CommonUI.Form do
   attr(:type, :string,
     default: "text",
     doc:
-      ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range|
+      ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range", "multicheck"|
   )
 
   attr :value, :any
@@ -84,7 +84,7 @@ defmodule CommonUI.Form do
     |> assign(field: nil)
     |> assign_new(:name, fn ->
       name = input_name(f, field)
-      if assigns.multiple, do: name <> "[]", else: name
+      if assigns.multiple || assigns.type == "multicheck", do: name <> "[]", else: name
     end)
     |> assign_new(:id, fn -> input_id(f, field) end)
     |> assign_new(:value, fn -> input_value(f, field) end)
@@ -124,6 +124,29 @@ defmodule CommonUI.Form do
         <option :if={@prompt}><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
+      <.error :for={msg <- @errors} message={msg} />
+    </div>
+    """
+  end
+
+  def input(%{type: "multicheck"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <input type="hidden" name={@name} value="" />
+      <.label for={@id}><%= @label %></.label>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+        <div :for={o <- @options}>
+          <.label for={"#{@name}-#{o}"}><%= o %></.label>
+          <input
+            type="checkbox"
+            id={"#{@name}-#{o}"}
+            name={@name}
+            class="toggle toggle-primary"
+            value={o}
+            checked={o in @value}
+          />
+        </div>
+      </div>
       <.error :for={msg <- @errors} message={msg} />
     </div>
     """

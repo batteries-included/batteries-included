@@ -17,8 +17,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             <.input
               field={{user_form, :roles}}
               label="Roles"
-              type="select"
-              multiple={true}
+              type="multicheck"
               options={CommonCore.Postgres.possible_roles()}
             />
           </div>
