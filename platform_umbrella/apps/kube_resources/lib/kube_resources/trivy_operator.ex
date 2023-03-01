@@ -307,7 +307,7 @@ defmodule KubeResources.TrivyOperator do
     |> B.data(data)
   end
 
-  resource(:config_map_trivy_operator_trivy, _battery, state) do
+  resource(:config_map_trivy_operator_trivy, battery, state) do
     namespace = base_namespace(state)
 
     data =
@@ -329,7 +329,7 @@ defmodule KubeResources.TrivyOperator do
         "trivy.supportedConfigAuditKinds",
         "Workload,Service,Role,ClusterRole,NetworkPolicy,Ingress,LimitRange,ResourceQuota"
       )
-      |> Map.put("trivy.tag", "0.35.0")
+      |> Map.put("trivy.tag", battery.config.version_tag)
       |> Map.put("trivy.timeout", "5m0s")
       |> Map.put("trivy.useBuiltinRegoPolicies", "true")
 
@@ -339,7 +339,7 @@ defmodule KubeResources.TrivyOperator do
     |> B.data(data)
   end
 
-  resource(:deployment_trivy_operator, _battery, state) do
+  resource(:deployment_trivy_operator, battery, state) do
     namespace = base_namespace(state)
 
     template = %{
@@ -398,7 +398,7 @@ defmodule KubeResources.TrivyOperator do
               %{"name" => "TRIVY_SERVER_HEALTH_CHECK_CACHE_EXPIRATION", "value" => "10h"},
               %{"name" => "OPERATOR_MERGE_RBAC_FINDING_WITH_CONFIG_AUDIT", "value" => "false"}
             ],
-            "image" => "ghcr.io/aquasecurity/trivy-operator:0.10.1",
+            "image" => battery.config.image,
             "imagePullPolicy" => "IfNotPresent",
             "livenessProbe" => %{
               "failureThreshold" => 10,

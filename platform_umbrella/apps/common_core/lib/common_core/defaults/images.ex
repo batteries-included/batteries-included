@@ -25,6 +25,8 @@ defmodule CommonCore.Defaults.Images do
   def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.5.6"
   def harbor_trivy_adapter_image, do: "goharbor/trivy-adapter-photon:v2.5.6"
 
+  def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.11.1"
+
   def grafana_image, do: "grafana/grafana:9.3.6"
   def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.22.2"
 

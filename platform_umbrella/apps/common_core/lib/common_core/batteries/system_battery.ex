@@ -26,6 +26,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     RookConfig,
     Smtp4devConfig,
     SsoConfig,
+    TrivyOperatorConfig,
     VictoriaMetricsConfig
   }
 
@@ -56,7 +57,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     rook: RookConfig,
     smtp4dev: Smtp4devConfig,
     sso: SsoConfig,
-    trivy_operator: EmptyConfig,
+    trivy_operator: TrivyOperatorConfig,
     trust_manager: EmptyConfig,
     victoria_metrics: VictoriaMetricsConfig
   ]
