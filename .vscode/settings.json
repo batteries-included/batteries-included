@@ -90,5 +90,6 @@
     "elixir"
   ],
   "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"],
-  "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
+  "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix",
+  "elixir.credo.configurationFile": "platform_umbrella/.credo.exs"
 }
