@@ -18,7 +18,7 @@ const ChartHook = {
       : {};
     const options = this.el.dataset.chartOptions
       ? JSON.parse(this.el.dataset.chartOptions)
-      : { responsive: true };
+      : { responsive: true, plugins: { legend: { position: 'bottom' } } };
 
     this.chart = new Chart(canvas, {
       type: type,
