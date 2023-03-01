@@ -22,5 +22,5 @@ defmodule ControlServerWeb.KnativeServicesTable do
     """
   end
 
-  defp service_url(%Service{} = service), do: "//#{knative_host(service)}"
+  defp service_url(%Service{} = service), do: "http://#{knative_host(service)}"
 end
