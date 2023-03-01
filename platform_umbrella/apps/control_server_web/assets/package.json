@@ -3,6 +3,7 @@
   "name": "control_server_web_assets",
   "scripts": {
     "css:deploy": "NODE_ENV=production tailwindcss --minify --input=css/app.css --output=dist/app.css",
+    "css:deploy:dev": "tailwindcss --input=css/app.css --output=static/app.css",
     "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle  --loader:.woff2=file --loader:.woff=file --target=chrome58,firefox57,safari11,edge18 --outdir=dist"
   },
   "dependencies": {

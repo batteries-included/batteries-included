@@ -1,6 +1,9 @@
 defmodule ControlServerWeb.Live.Home do
-  alias KubeExt.KubeState
   use ControlServerWeb, {:live_view, layout: :fresh}
+
+  import ControlServerWeb.Chart
+
+  alias KubeExt.KubeState
   alias Phoenix.Naming
 
   @impl Phoenix.LiveView
@@ -83,15 +86,7 @@ defmodule ControlServerWeb.Live.Home do
     <div class="grid xl:grid-cols-2 gap-6">
       <div class="div">
         <.h2>Pod Namespaces</.h2>
-        <div
-          class="pods-chart"
-          id="pod-chart"
-          phx-hook="ChartHook"
-          data-chart-type="doughnut"
-          data-chart-data={Jason.encode!(pod_data(@pods))}
-        >
-          <canvas class="w-full h-full"></canvas>
-        </div>
+        <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} />
       </div>
 
       <.card>

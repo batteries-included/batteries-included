@@ -10,6 +10,27 @@ const colors = [
 ];
 
 const ChartHook = {
+  updated() {
+    const data = this.el.dataset.chartData
+      ? JSON.parse(this.el.dataset.chartData)
+      : {};
+
+    const enrichedData = {
+      ...data,
+      datasets: this.enrichDatasets(data.datasets),
+    };
+    this.chart.data = enrichedData;
+    this.chart.update('none');
+
+    console.log(enrichedData);
+  },
+
+  enrichDatasets(datasets) {
+    return datasets.map((ds) => {
+      return { backgroundColor: colors, ...ds };
+    });
+  },
+
   mounted() {
     const canvas = this.el.getElementsByTagName('canvas')[0];
     const type = this.el.dataset.chartType || '';
@@ -24,9 +45,7 @@ const ChartHook = {
       type: type,
       data: {
         ...data,
-        datasets: data.datasets.map((ds) => {
-          return { backgroundColor: colors, ...ds };
-        }),
+        datasets: this.enrichDatasets(data.datasets),
       },
       options: options,
     });

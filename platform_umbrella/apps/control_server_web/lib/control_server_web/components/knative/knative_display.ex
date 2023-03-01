@@ -2,8 +2,10 @@ defmodule ControlServerWeb.KnativeDisplay do
   use ControlServerWeb, :html
 
   import ControlServerWeb.ConditionsDisplay
+  import ControlServerWeb.Chart
 
   import K8s.Resource.FieldAccessors
+  alias Jason
 
   def service_display(assigns) do
     ~H"""
@@ -21,8 +23,7 @@ defmodule ControlServerWeb.KnativeDisplay do
         </dl>
       </div>
     </.card>
-    <.h2>Traffic Split</.h2>
-    <.traffic_table traffic={traffic(@service)} />
+    <.traffic_display traffic={traffic(@service)} />
     <.h2>Status Gates</.h2>
     <.status_table service={@service} />
     """
@@ -75,18 +76,36 @@ defmodule ControlServerWeb.KnativeDisplay do
     get_in(revision, ~w(status actualReplicas)) || 0
   end
 
+  defp traffic_chart_data(traffic_list) do
+    dataset = %{
+      data: Enum.map(traffic_list, &get_in(&1, ~w(percent))),
+      label: "Traffic"
+    }
+
+    labels = Enum.map(traffic_list, &get_in(&1, ~w(revisionName)))
+
+    %{labels: labels, datasets: [dataset]}
+  end
+
   defp status_table(assigns) do
     ~H"""
     <.conditions_display conditions={conditions(@service)} />
     """
   end
 
-  defp traffic_table(assigns) do
+  defp traffic_display(%{traffic: []} = assigns), do: ~H||
+  defp traffic_display(%{traffic: [_]} = assigns), do: ~H||
+
+  defp traffic_display(%{traffic: [_ | _]} = assigns) do
     ~H"""
-    <.table rows={@traffic} id="traffic-table">
-      <:col :let={split} label="Revision"><%= Map.get(split, "revisionName", "") %></:col>
-      <:col :let={split} label="Percent"><%= Map.get(split, "percent", "") %></:col>
-    </.table>
+    <.h2>Traffic Split</.h2>
+    <div class="grid grid-cols-1 md:grid-cols-2">
+      <.table rows={@traffic} id="traffic-table">
+        <:col :let={split} label="Revision"><%= Map.get(split, "revisionName", "") %></:col>
+        <:col :let={split} label="Percent"><%= Map.get(split, "percent", 0) %></:col>
+      </.table>
+      <.chart class="max-h-[32rem] mx-auto" id="traffic-chart" data={traffic_chart_data(@traffic)} />
+    </div>
     """
   end
 
