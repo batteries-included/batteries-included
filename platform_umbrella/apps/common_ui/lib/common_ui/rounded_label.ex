@@ -11,9 +11,10 @@ defmodule CommonUI.RoundedLabel do
     <div class={
       build_class([
         "text-xs font-bold leading-sm uppercase",
-        "rounded-full border",
+        "rounded-lg border",
+        "shadow-md",
         "inline-flex items-center",
-        "m-1 px-4 py-1",
+        "m-1 px-4 py-2",
         @class
       ])
     }>
