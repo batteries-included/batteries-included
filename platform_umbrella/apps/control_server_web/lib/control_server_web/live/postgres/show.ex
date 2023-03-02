@@ -177,7 +177,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </.stat>
     </.stats>
 
-    <div class="grid xl:grid-cols-2 gap-4 sm:gap-8">
+    <div class="grid 2xl:grid-cols-2 gap-4 sm:gap-8">
       <.card>
         <:title>Users</:title>
 

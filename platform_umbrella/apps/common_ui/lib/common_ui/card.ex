@@ -14,6 +14,7 @@ defmodule CommonUI.Card do
       build_class([
         "p-4 bg-white rounded-lg border border-gray-200 shadow-lg",
         "flex flex-col",
+        "overflow-auto",
         @class
       ])
     }>
