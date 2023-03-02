@@ -3,5 +3,5 @@ k3s_version: v1.24.4+k3s1
 ansible_user: elliott
 systemd_dir: /etc/systemd/system
 master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
-extra_server_args: "--disable=traefik"
+extra_server_args: "--disable=traefik --disable=servicelb"
 extra_agent_args: ""
