@@ -3,12 +3,19 @@ defmodule ControlServerWeb.Chart do
 
   alias Jason
 
-  attr(:class, :string, default: "")
-  attr(:canvas_class, :string, default: "w-full h-full")
-  attr(:id, :string, required: true)
+  @default_options %{
+    responsive: true,
+    plugins: %{
+      legend: %{position: "bottom", labels: %{font: %{size: 16}}}
+    }
+  }
+
+  attr :class, :string, default: ""
+  attr :canvas_class, :string, default: "w-full h-full"
+  attr :id, :string, required: true
   attr :type, :string, default: "pie"
   attr :data, :any, required: true
-  attr :options, :any, default: %{responsive: true, plugins: %{legend: %{position: "bottom"}}}
+  attr :options, :any, default: @default_options
 
   @spec chart(any) :: Phoenix.LiveView.Rendered.t()
   def chart(assigns) do
