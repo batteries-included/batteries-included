@@ -18,16 +18,20 @@ defmodule ControlServerWeb.Router do
 
   scope "/", ControlServerWeb do
     pipe_through :browser
-
     live "/", Live.Home, :index
-
     live "/notebooks", Live.JupyterLabNotebookIndex, :index
-
-    live "/ip_address_pools", Live.IPAddressPoolIndex, :index
-
     live "/timeline", Live.Timeline, :index
     live "/stale", Live.StaleIndex, :index
     live "/deleted_resources", Live.DeletedResourcesIndex, :index
+  end
+
+  scope "/ip_address_pools", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.IPAddressPoolIndex, :index
+    live "/new", Live.IPAddressPoolNew, :index
+    live "/:id/show", Live.IPAddressPoolShow, :index
+    live "/:id/edit", Live.IPAddressPoolEdit, :index
   end
 
   scope "/snapshot_apply", ControlServerWeb do

@@ -23,15 +23,15 @@
     "project_templates/web/pastebin/Cargo.toml"
   ],
   "[elixir]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[phoenix-heex]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[html-eex]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[javascript]": {

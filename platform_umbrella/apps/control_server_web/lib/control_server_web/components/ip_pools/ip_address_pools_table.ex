@@ -8,7 +8,15 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
     <.table rows={@ip_address_pools}>
       <:col :let={pool} label="Name"><%= pool.name %></:col>
       <:col :let={pool} label="Subnet"><%= pool.subnet %></:col>
+
+      <:action :let={pool}>
+        <.link navigate={show_url(pool)} variant="styled">
+          Show IP Pool
+        </.link>
+      </:action>
     </.table>
     """
   end
+
+  defp show_url(pool), do: ~p"/ip_address_pools/#{pool}/show"
 end

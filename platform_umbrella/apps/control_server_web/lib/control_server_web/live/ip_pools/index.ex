@@ -22,11 +22,24 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
     MetalLB.list_ip_address_pools()
   end
 
+  defp new_url, do: ~p"/ip_address_pools/new"
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.h1>MetalLB IP Addresses</.h1>
     <.ip_address_pools_table ip_address_pools={@ip_address_pools} />
+
+    <.h2 variant="fancy">Actions</.h2>
+    <.card>
+      <div class="grid md:grid-cols-1 gap-6">
+        <.link navigate={new_url()} class="block">
+          <.button class="w-full">
+            New IP Address Pool
+          </.button>
+        </.link>
+      </div>
+    </.card>
     """
   end
 end

@@ -14,11 +14,22 @@ defmodule CommonCore.MetalLB.IPAddressPool do
   end
 
   @doc false
-  def changeset(ip_address_pool, attrs) do
+  def changeset(ip_address_pool, attrs \\ %{}) do
     ip_address_pool
     |> cast(attrs, [:name, :subnet])
     |> validate_required([:name, :subnet])
     |> unique_constraint(:name)
+  end
+
+  def validate(params) do
+    changeset =
+      %__MODULE__{}
+      |> changeset(params)
+      |> Map.put(:action, :validate)
+
+    data = Ecto.Changeset.apply_changes(changeset)
+
+    {changeset, data}
   end
 
   def to_fresh_ip_address_pool(%{} = args) do

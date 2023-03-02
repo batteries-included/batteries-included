@@ -25,15 +25,6 @@ defmodule ControlServerWeb.Live.PostgresNew do
     {:noreply, socket}
   end
 
-  def update(%{cluster: cluster} = assigns, socket) do
-    changeset = Postgres.change_cluster(cluster)
-
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:changeset, changeset)}
-  end
-
   @impl Phoenix.LiveView
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
     new_path = ~p"/postgres/#{cluster}/show"
