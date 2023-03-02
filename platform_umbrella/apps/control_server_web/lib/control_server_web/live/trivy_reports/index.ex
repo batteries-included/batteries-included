@@ -71,15 +71,14 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
 
   defp tabs(selected) do
     [
-      {"Audit Report", ~p"/trivy_reports/config_audit_report",
-       :aqua_config_audit_report == selected},
-      {"Cluster RBAC Report", ~p"/trivy_reports/cluster_rbac_assessment_report",
+      {"Audit", ~p"/trivy_reports/config_audit_report", :aqua_config_audit_report == selected},
+      {"Cluster RBAC", ~p"/trivy_reports/cluster_rbac_assessment_report",
        :aqua_cluster_rbac_assessment_report == selected},
-      {"RBAC Report", ~p"/trivy_reports/rbac_assessment_report",
+      {"RBAC", ~p"/trivy_reports/rbac_assessment_report",
        :aqua_rbac_assessment_report == selected},
-      {"Kube Infra Report", ~p"/trivy_reports/infra_assessment_report",
+      {"Kube Infra", ~p"/trivy_reports/infra_assessment_report",
        :aqua_infra_assessment_report == selected},
-      {"Vulnerability Report", ~p"/trivy_reports/vulnerability_report",
+      {"Vulnerability", ~p"/trivy_reports/vulnerability_report",
        :aqua_vulnerability_report == selected}
     ]
   end

@@ -126,6 +126,8 @@ defmodule ControlServerWeb.Router do
     live "/infra_assessment_report", Live.TrivyReportsIndex, :aqua_infra_assessment_report
 
     live "/vulnerability_report", Live.TrivyReportsIndex, :aqua_vulnerability_report
+
+    live "/:resource_type/:namespace/:name", Live.TrivyReportShow, :show
   end
 
   scope "/api", ControlServerWeb do

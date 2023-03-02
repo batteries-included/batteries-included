@@ -13,7 +13,7 @@ defmodule ControlServerWeb.LeftMenu do
   import CommonUI.Icons.CNCF
   import KubeServices.SystemState.SummaryHosts
 
-  attr :icon_class, :string, default: "h-7"
+  attr :icon_class, :string, default: "h-6"
   attr :page_group, :atom, required: true
   attr :page_detail_type, :atom, required: true
   attr :installed_batteries, :list, default: []
@@ -588,7 +588,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp main_menu_class(false = _is_active),
     do:
-      "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-4 bg-white"
+      "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-3 bg-white"
 
   defp main_menu_class(true = _is_active), do: build_class(["active", main_menu_class(false)])
 
