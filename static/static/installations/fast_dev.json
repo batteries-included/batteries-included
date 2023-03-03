@@ -2615,15 +2615,7 @@
     ],
     "ceph_clusters": [],
     "ceph_filesystems": [],
-    "ip_address_pools": [
-      {
-        "id": null,
-        "inserted_at": null,
-        "name": "kind-0",
-        "subnet": "172.18.128.0/17",
-        "updated_at": null
-      }
-    ],
+    "ip_address_pools": [],
     "knative_services": [],
     "kube_state": {},
     "notebooks": [],

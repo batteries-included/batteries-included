@@ -919,29 +919,6 @@
         }
       }
     },
-    "/metallb_ip_pool/metal_ip_address_pool/kind_0": {
-      "apiVersion": "metallb.io/v1beta1",
-      "kind": "IPAddressPool",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "SWKJEIFRMOYRSECNII2BMGB2O7X5TJ2LLQIYZZNJT2BXVBDGWOZQ===="
-        },
-        "labels": {
-          "app": "metallb-ip-pool",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "metallb-ip-pool",
-          "battery/app": "metallb-ip-pool",
-          "battery/managed": "true",
-          "battery/managed.direct": "true"
-        },
-        "name": "kind-0",
-        "namespace": "battery-base"
-      },
-      "spec": {
-        "addresses": ["172.18.128.0/17"],
-        "avoidBuggyIPs": true
-      }
-    },
     "/istio/cluster_role/istiod_clusterrole_battery_istio": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "ClusterRole",
@@ -11225,7 +11202,7 @@
         "namespace": "battery-base"
       },
       "spec": {
-        "ipAddressPools": ["kind-0"]
+        "ipAddressPools": []
       }
     },
     "/istio/crd/telemetries_telemetry_istio_io": {
@@ -16776,15 +16753,7 @@
     ],
     "ceph_clusters": [],
     "ceph_filesystems": [],
-    "ip_address_pools": [
-      {
-        "id": null,
-        "inserted_at": null,
-        "name": "kind-0",
-        "subnet": "172.18.128.0/17",
-        "updated_at": null
-      }
-    ],
+    "ip_address_pools": [],
     "knative_services": [],
     "kube_state": {},
     "notebooks": [],
