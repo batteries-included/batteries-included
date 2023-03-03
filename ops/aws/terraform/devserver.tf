@@ -53,3 +53,21 @@ resource "aws_instance" "elliott" {
     ignore_changes = [ami]
   }
 }
+
+resource "aws_instance" "backup" {
+  ami                    = data.aws_ami.ubuntu.id
+  subnet_id              = module.vpc_main.public_subnets[1]
+  instance_type          = var.devserver_instance_type
+  key_name               = aws_key_pair.devserver.key_name
+  vpc_security_group_ids = [aws_security_group.devserver.id]
+
+  root_block_device {
+    volume_type = var.ebs_volume_type
+    volume_size = var.devserver_instance_disk_size
+  }
+
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
+}

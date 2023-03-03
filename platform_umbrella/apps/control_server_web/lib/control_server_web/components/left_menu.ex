@@ -13,7 +13,7 @@ defmodule ControlServerWeb.LeftMenu do
   import CommonUI.Icons.CNCF
   import KubeServices.SystemState.SummaryHosts
 
-  attr :icon_class, :string, default: "h-6"
+  attr :icon_class, :string, default: "h-5"
   attr :page_group, :atom, required: true
   attr :page_detail_type, :atom, required: true
   attr :installed_batteries, :list, default: []
@@ -169,7 +169,7 @@ defmodule ControlServerWeb.LeftMenu do
   def menu_detail(assigns) do
     ~H"""
     <div
-      class="menu-detail bg-white shadow-lg p-4 flex flex-col w-72 absolute ease-in-out duration-500 space-y-4"
+      class="menu-detail bg-white shadow-lg px-4 py-3 flex flex-col w-72 absolute ease-in-out duration-500 space-y-4"
       x-bind:class={"{'active': show && tab == '#{@group}' }"}
       x-on:click.away="show = false"
       x-on:click.stop

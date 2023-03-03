@@ -1,4 +1,3 @@
-use crate::errors;
 use async_process::Child;
 use k8s_openapi::api::core::v1::Pod;
 use kube_client::{api::ListParams, Api};
@@ -7,8 +6,8 @@ use serde_json::{from_str, Value};
 use signal_hook::flag;
 use std::{
     error::Error,
-    fs::{self, OpenOptions},
-    io::{Read, Write},
+    fs,
+    io::Read,
     os::unix::prelude::PermissionsExt,
     path::{Path, PathBuf},
     sync::{
@@ -274,51 +273,10 @@ pub(crate) async fn ensure_binaries_installed(
     install_dir: &Path,
     arch: &str,
     os: &str,
-    kind_stub: &str,
     kubectl_stub: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let kind_path = install_dir.join("kind");
-    let kind_url = url::Url::parse(
-        vec![kind_stub, &format!("kind-{os}-{arch}")]
-            .join("/")
-            .as_str(),
-    )?;
-    validate_or_fetch_bin(kind_path, kind_url).await?;
     let kubectl_path = install_dir.join("kubectl");
     let kubectl_url = url::Url::parse(vec![kubectl_stub, os, arch, "kubectl"].join("/").as_str())?;
     validate_or_fetch_bin(kubectl_path, kubectl_url).await?;
     Ok(())
-}
-
-pub(crate) fn kind_cluster(
-    kind_bin: &Path,
-    cluster_name: &str,
-    user_homedir: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let install_out = std::process::Command::new(kind_bin)
-        .args(["create", "cluster", "--name", cluster_name])
-        .output()?;
-    let get_out = std::process::Command::new(kind_bin)
-        .args(["get", "kubeconfig", "--name", cluster_name])
-        .output()?;
-
-    if !(install_out.status.success()) {
-        let kube_config_path = user_homedir.join(".kube/config");
-        let mut kube_config_f = OpenOptions::new()
-            .truncate(true)
-            .write(true)
-            .open(kube_config_path)?;
-        kube_config_f.write_all(&get_out.stdout)?;
-    }
-
-    match get_out.status.success() {
-        false => Err(Box::new(errors::KindClusterError::new(format!(
-            "\n\nInstall STDOUT: {}\n\nInstall STDERR: {}\n\nGet STDOUT {}\n\nGet STDERR: {}\n",
-            std::str::from_utf8(&install_out.stdout)?,
-            std::str::from_utf8(&install_out.stderr)?,
-            std::str::from_utf8(&get_out.stdout)?,
-            std::str::from_utf8(&get_out.stderr)?
-        )))),
-        true => Ok(()),
-    }
 }

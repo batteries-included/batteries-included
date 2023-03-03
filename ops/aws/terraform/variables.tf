@@ -1,8 +1,3 @@
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-variable "aws_token" {}
-
-
 variable "aws_region" {
   description = "AWS region"
   type        = string
@@ -36,11 +31,11 @@ variable "gateway_network_cidr_block" {
 }
 
 variable "gateway_ssh_public_key" {
-  default = "../pub_keys/gateway_ssh.pub"
+  default = "../keys/gateway_ssh.pub"
 }
 
 variable "devserver_ssh_public_key" {
-  default = "../pub_keys/devserver_ssh.pub"
+  default = "../keys/devserver_ssh.pub"
 }
 
 variable "ebs_volume_type" {

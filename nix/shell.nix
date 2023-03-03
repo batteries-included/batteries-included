@@ -28,7 +28,6 @@
         mix2nix
         postgresql
 
-        awscli2
         bind
       ];
 
@@ -45,12 +44,21 @@
         inotify-tools
       ];
 
-      darwinOnlyTools = [ ];
+      frameworks = pkgs.darwin.apple_sdk.frameworks;
+
+      darwinOnlyTools = [
+        frameworks.Security
+        frameworks.CoreServices
+        frameworks.CoreFoundation
+        frameworks.Foundation
+      ];
+
 
       nativeBuildInputs = with pkgs; [
         # node is needed, because
         # javascript won for better or worse
         nodejs
+
 
         # For static site generation
         zola
@@ -64,6 +72,9 @@
         # Use for pushing docker
         skopeo
         terraform
+        wireguard-tools
+        ansible_2_13
+        awscli2
       ]
       ++ elixirNativeTools
       ++ rustNativeBuildTools
@@ -73,6 +84,7 @@
 
       buildInputs = with pkgs; [
         openssl_1_1
+        glibcLocales
       ];
 
       shellHook = ''
@@ -93,7 +105,7 @@
     {
       devShells.default = pkgs.mkShell {
         inherit nativeBuildInputs buildInputs shellHook;
-        LANG = "en_US.UTF-8";
+        LANG = "C.UTF-8";
         RUST_BACKTRACE = 1;
         ERL_AFLAGS = "-kernel shell_history enabled";
       };

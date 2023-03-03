@@ -1,4 +1,3 @@
-use bcli::prod::URL_STUB_KIND;
 use bcli::prod::URL_STUB_KUBECTL;
 use bcli::program_main;
 use bcli::CliArgs;
@@ -28,7 +27,6 @@ async fn main() {
         dir_parent,
         raw_arch: String::from(std::env::consts::ARCH),
         raw_os: String::from(std::env::consts::OS),
-        kind_stub: String::from(URL_STUB_KIND),
         kubectl_stub: String::from(URL_STUB_KUBECTL),
     };
     let code = program_main(&mut program_args).await;

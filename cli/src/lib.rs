@@ -22,7 +22,6 @@ pub struct ProgramArgs<'a> {
     pub dir_parent: Option<PathBuf>,
     pub raw_arch: String,
     pub raw_os: String,
-    pub kind_stub: String,
     pub kubectl_stub: String,
 }
 
@@ -39,8 +38,6 @@ enum CliAction {
     Dev {
         #[clap(long)]
         forward_postgres: Option<Option<String>>,
-        #[clap(long, default_value_t = true)]
-        create_cluster: bool,
     },
     Start {
         #[clap(long)]
@@ -53,30 +50,7 @@ enum CliAction {
     },
 }
 
-pub mod errors {
-    use std::{error::Error, fmt};
-
-    #[derive(Debug)]
-    pub(crate) struct KindClusterError(String);
-
-    impl fmt::Display for KindClusterError {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "Error creating or getting kind cluster: {}", self.0)
-        }
-    }
-
-    impl Error for KindClusterError {}
-
-    impl KindClusterError {
-        pub fn new(output: String) -> KindClusterError {
-            Self(output)
-        }
-    }
-}
-
 pub mod prod {
-    pub const URL_STUB_KIND: &str =
-        "https://github.com/kubernetes-sigs/kind/releases/download/v0.17.0";
     pub const URL_STUB_KUBECTL: &str = "https://dl.k8s.io/release/v1.25.4/bin";
 }
 
@@ -126,7 +100,6 @@ mod tests {
             dir_parent: None,
             raw_arch: String::from("x86_64"),
             raw_os: String::from("linux"),
-            kind_stub: String::from("foo"),
             kubectl_stub: String::from("bar"),
         };
         let rc = program_main(&mut program_args).await;
@@ -144,7 +117,6 @@ mod tests {
         let mut out = Vec::new();
         let input = "".as_bytes();
         let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
-        let kind_stub: String = Url::from_file_path(tmp.path()).unwrap().into();
         let kubectl_stub: String = Url::from_file_path(tmp.path()).unwrap().into();
         let mut program_args = ProgramArgs {
             cli_args: CliArgs::parse_from(["cli", "create"]),
@@ -158,7 +130,6 @@ mod tests {
             dir_parent: Some(tmp.into_path()),
             raw_arch: String::from("sparc64"),
             raw_os: String::from("linux"),
-            kind_stub,
             kubectl_stub,
         };
         let rc = program_main(&mut program_args).await;
@@ -176,7 +147,6 @@ mod tests {
         let mut out = Vec::new();
         let input = "".as_bytes();
         let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
-        let kind_stub = Url::from_file_path(tmp.path()).unwrap().to_string();
         let kubectl_stub = Url::from_file_path(tmp.path()).unwrap().to_string();
         let mut program_args = ProgramArgs {
             cli_args: CliArgs::parse_from(["cli", "create"]),
@@ -190,7 +160,6 @@ mod tests {
             dir_parent: Some(tmp.into_path()),
             raw_arch: String::from("amd64"),
             raw_os: String::from("freebsd"),
-            kind_stub,
             kubectl_stub,
         };
         let rc = program_main(&mut program_args).await;
@@ -236,14 +205,8 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
             return exitcode::OSERR;
         }
     };
-    match helpers::ensure_binaries_installed(
-        install_dir.as_path(),
-        arch,
-        os,
-        &args.kind_stub,
-        &args.kubectl_stub,
-    )
-    .await
+    match helpers::ensure_binaries_installed(install_dir.as_path(), arch, os, &args.kubectl_stub)
+        .await
     {
         Ok(_) => {}
         Err(e) => {
@@ -272,46 +235,7 @@ pub async fn program_main<'a>(args: &mut ProgramArgs<'_>) -> exitcode::ExitCode 
         // COMPLETE
         CliAction::Dev {
             ref forward_postgres,
-            create_cluster,
         } => {
-            match helpers::ensure_binaries_installed(
-                install_dir.as_path(),
-                arch,
-                os,
-                &args.kind_stub,
-                &args.kubectl_stub,
-            )
-            .await
-            {
-                Ok(_) => {}
-                Err(e) => {
-                    log(
-                        args.stderr,
-                        &format!("Error: problem installing tools\nMessage: `{e}`"),
-                    );
-                    return exitcode::TEMPFAIL;
-                }
-            };
-
-            if *create_cluster {
-                // start kind cluster
-                let mut kind_path = PathBuf::from(&install_dir);
-                kind_path.push("kind");
-
-                // TODO: change hardcoded cluster name
-                match helpers::kind_cluster(
-                    &kind_path,
-                    "battery",
-                    args.dir_parent.as_ref().unwrap(),
-                ) {
-                    Err(e) => {
-                        log(args.stderr, &e.to_string());
-                        return exitcode::SOFTWARE;
-                    }
-                    Ok(_) => ..,
-                };
-            }
-
             // load custom resources to cluster
             let mut kubectl_path = PathBuf::from(&install_dir);
             kubectl_path.push("kubectl");

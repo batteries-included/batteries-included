@@ -9,7 +9,6 @@
 , rustToolChain
 , pkg-config
 , gcc
-, libgcc
 , openssl_1_1
 , erlang
 , elixir
@@ -35,7 +34,6 @@ pkgs.stdenv.mkDerivation ({
     rustToolChain
     pkg-config
     gcc
-    libgcc
     openssl_1_1
   ];
   buildInputs = buildInputs;

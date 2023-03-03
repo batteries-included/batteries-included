@@ -11,6 +11,7 @@
     upgrade: safe
 
 - name: Install basic packages
+  become: true
   apt:
     state: present
     pkg:

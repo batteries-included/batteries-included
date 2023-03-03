@@ -38,7 +38,11 @@ defmodule KubeResources.MetalLB do
     B.build_resource(:cluster_role)
     |> B.name("metallb:controller")
     |> B.rules([
-      %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => [""],
+        "resources" => ["services", "namespaces"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{"apiGroups" => [""], "resources" => ["services/status"], "verbs" => ["update"]},
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
       %{
@@ -60,7 +64,7 @@ defmodule KubeResources.MetalLB do
     |> B.rules([
       %{
         "apiGroups" => [""],
-        "resources" => ["services", "endpoints", "nodes"],
+        "resources" => ["services", "endpoints", "nodes", "namespaces"],
         "verbs" => ["get", "list", "watch"]
       },
       %{
@@ -287,42 +291,6 @@ defmodule KubeResources.MetalLB do
     })
   end
 
-  resource(:pod_monitor_controller, _battery, state) do
-    namespace = base_namespace(state)
-
-    B.build_resource(:monitoring_pod_monitor)
-    |> B.name("metallb-controller")
-    |> B.namespace(namespace)
-    |> B.component_label("controller")
-    |> B.spec(%{
-      "jobLabel" => "app.kubernetes.io/name",
-      "namespaceSelector" => %{"matchNames" => [namespace]},
-      "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
-      "selector" => %{
-        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}
-      }
-    })
-    |> F.require_battery(state, :victoria_metrics)
-  end
-
-  resource(:pod_monitor_speaker, _battery, state) do
-    namespace = base_namespace(state)
-
-    B.build_resource(:monitoring_pod_monitor)
-    |> B.name("metallb-speaker")
-    |> B.namespace(namespace)
-    |> B.component_label("speaker")
-    |> B.spec(%{
-      "jobLabel" => "app.kubernetes.io/name",
-      "namespaceSelector" => %{"matchNames" => [namespace]},
-      "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
-      "selector" => %{
-        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
-      }
-    })
-    |> F.require_battery(state, :victoria_metrics)
-  end
-
   resource(:role_binding_controller, _battery, state) do
     namespace = base_namespace(state)
 
@@ -543,6 +511,42 @@ defmodule KubeResources.MetalLB do
     |> B.spec(%{
       "ports" => [%{"name" => "metrics", "port" => 7472, "targetPort" => 7472}],
       "selector" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
+    })
+    |> F.require_battery(state, :victoria_metrics)
+  end
+
+  resource(:pod_monitor_controller, _battery, state) do
+    namespace = base_namespace(state)
+
+    B.build_resource(:monitoring_pod_monitor)
+    |> B.name("metallb-controller")
+    |> B.namespace(namespace)
+    |> B.component_label("controller")
+    |> B.spec(%{
+      "jobLabel" => "app.kubernetes.io/name",
+      "namespaceSelector" => %{"matchNames" => [namespace]},
+      "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
+      "selector" => %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}
+      }
+    })
+    |> F.require_battery(state, :victoria_metrics)
+  end
+
+  resource(:pod_monitor_speaker, _battery, state) do
+    namespace = base_namespace(state)
+
+    B.build_resource(:monitoring_pod_monitor)
+    |> B.name("metallb-speaker")
+    |> B.namespace(namespace)
+    |> B.component_label("speaker")
+    |> B.spec(%{
+      "jobLabel" => "app.kubernetes.io/name",
+      "namespaceSelector" => %{"matchNames" => [namespace]},
+      "podMetricsEndpoints" => [%{"path" => "/metrics", "port" => "monitoring"}],
+      "selector" => %{
+        "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}
+      }
     })
     |> F.require_battery(state, :victoria_metrics)
   end

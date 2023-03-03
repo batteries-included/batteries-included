@@ -32,61 +32,14 @@
     loop_var: user
     label: "{{ user.username }}"
 
-- name: "install asdf"
-  git:
-    repo: "https://github.com/asdf-vm/asdf.git"
-    dest: "~{{user.username}}/.asdf"
-    depth: 1
-    version: "v0.10.2"
-    force: yes
-  become: true
-  become_user: "{{ user.username }}"
-  with_items: "{{users}}"
-  loop_control:
-    loop_var: user
-    label: "{{ user.username }}"
-
-- name: "install oh my zsh"
-  git:
-    repo: "https://github.com/robbyrussell/oh-my-zsh.git"
-    dest: "~{{user.username}}/.oh-my-zsh"
-    depth: 1
-    force: yes
-    version: 11daa7dd5f22acadef1135000e92cc899e22c134
-  become: true
-  become_user: "{{ user.username }}"
-  with_items: "{{users}}"
-  loop_control:
-    loop_var: user
-    label: "{{ user.username }}"
-
-- name: "install oh my power level 10k"
-  git:
-    repo: "https://github.com/romkatv/powerlevel10k.git"
-    dest: "~{{user.username}}/.oh-my-zsh/custom/themes/powerlevel10k"
-    depth: 1
-    force: yes
-    version: 8091c8a3a8a845c70046684235a01cd500075def
-  become: true
-  become_user: "{{ user.username }}"
-  with_items: "{{users}}"
-  loop_control:
-    loop_var: user
-    label: "{{ user.username }}"
-
-- name: set permissions of oh-my-zsh for users
-  file:
-    path: "~{{ user.username }}/.oh-my-zsh"
-    mode: "go-w"
-    recurse: yes
-  become: true
-  with_items: "{{ users }}"
-  loop_control:
-    loop_var: user
-    label: "{{ user.username }}"
-
 - name: Set authorized key for elliott
   authorized_key:
     user: elliott
     state: present
     key: "{{ lookup('file', '../pub_keys/elliott_ssh.pub') }}"
+
+- name: Set authorized key for zoe
+  authorized_key:
+    user: zoe 
+    state: present
+    key: "{{ lookup('file', '../pub_keys/zoe_ssh.pub') }}"

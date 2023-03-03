@@ -24,7 +24,6 @@
       rustToolChain = pkgs.rust-bin.nightly.latest.default;
       pkg-config = pkgs.pkg-config;
       gcc = pkgs.gcc;
-      libgcc = pkgs.libgcc;
       openssl_1_1 = pkgs.openssl_1_1;
 
       nodejs = pkgs.nodejs;
@@ -35,22 +34,22 @@
         pname = "mix-deps-platform-test";
         inherit src version LANG;
         mixEnv = "test";
-        sha256 = "sha256-nFvR36prvlKKwfh+3UC+rfuRdWtFM0QBzxkjHzMB7BQ=";
+        sha256 = "sha256-WsKM80t526hKwATRcso5ZfOSIfFK46VnRQX6wRPclsI=";
         #sha256 = lib.fakeSha256;
       };
 
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
         inherit src version LANG;
-        sha256 = "sha256-ofTgLc7DTQOnCTuDYDknEoCttE3CBFScaqY6/vb4464=";
-        # sha256 = lib.fakeSha256;
+        sha256 = "sha256-zyzkzOcn7+Gyu5BfGywp+3kjys0p9kKluKuC+a1h3D0=";
+        #sha256 = lib.fakeSha256;
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {
         inherit version src mixFodDeps pkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
-        inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
+        inherit rustToolChain pkg-config gcc openssl_1_1;
         pname = "control_server";
         mixEnv = "prod";
       };
@@ -58,7 +57,7 @@
         inherit version src mixFodDeps pkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
-        inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
+        inherit rustToolChain pkg-config gcc openssl_1_1;
 
         pname = "home_base";
         mixEnv = "prod";
@@ -67,7 +66,7 @@
       credo = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
+        inherit rustToolChain pkg-config gcc openssl_1_1;
 
         pname = "platform";
         mixEnv = "test";
@@ -78,7 +77,7 @@
       dialyzer = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
+        inherit rustToolChain pkg-config gcc openssl_1_1;
 
         pname = "platform";
         mixEnv = "test";
@@ -90,7 +89,7 @@
       format = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit rustToolChain pkg-config gcc libgcc openssl_1_1;
+        inherit rustToolChain pkg-config gcc openssl_1_1;
 
         pname = "platform";
         mixEnv = "test";

@@ -1,12 +1,16 @@
 all:
   hosts:
     wireguard:
-      # ansible_host: 34.237.192.214
+      ansible_host: 3.234.74.48
       ansible_user: ubuntu
-      ansible_host: 10.0.1.40
+      #ansible_host: 10.0.1.79
       ansible_ssh_private_key_file: ../keys/gateway_ssh
     elliott:
-      ansible_host: 10.0.2.254
+      ansible_host: 10.0.2.26
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: ../keys/devserver_ssh
+    backup:
+      ansible_host: 10.0.2.204
       ansible_user: ubuntu
       ansible_ssh_private_key_file: ../keys/devserver_ssh
   children:
@@ -16,3 +20,4 @@ all:
     devservers:
       hosts:
         elliott:
+        backup:

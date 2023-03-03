@@ -44,8 +44,7 @@ defmodule CommonCore.SystemState.SeedState do
           :battery_core,
           :postgres,
           :istio,
-          :metallb,
-          :metallb_ip_pool
+          :istio_gateway
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }
@@ -54,9 +53,7 @@ defmodule CommonCore.SystemState.SeedState do
     # They require that we know something about the
     # what the client side looks like.
     #
-    summary
-    |> add_docker_lb_ips()
-    |> add_dev_infra_user()
+    add_dev_infra_user(summary)
   end
 
   def seed(:limited) do

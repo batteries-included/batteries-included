@@ -6,12 +6,16 @@ defmodule CommonCore.DockerIps do
   end
 
   def get_network_subnets(network \\ "kind") do
-    case System.cmd("docker", ["network", "inspect", network]) do
-      {result_string, 0} ->
-        parse_subnets(result_string)
+    try do
+      case System.cmd("docker", ["network", "inspect", network]) do
+        {result_string, 0} ->
+          parse_subnets(result_string)
 
-      _ ->
-        []
+        _ ->
+          []
+      end
+    rescue
+      _ -> []
     end
   end
 

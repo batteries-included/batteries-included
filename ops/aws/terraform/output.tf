@@ -17,3 +17,7 @@ output "gateway_public_ip" {
 output "devserver_elliott_ip" {
   value = aws_instance.elliott.private_ip
 }
+
+output "devserver_backup_ip" {
+  value = aws_instance.backup.private_ip
+}
