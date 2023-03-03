@@ -29,7 +29,7 @@ defmodule KubeServices.MixProject do
       {:tesla, "~> 1.5.0"},
       {:jason, "~> 1.2"},
       {:oban, "~> 2.12"},
-      {:k8s, "~> 2.1.1"},
+      {:k8s, "~> 2.0.2"},
       {:phoenix, "~> 1.7.1"},
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},

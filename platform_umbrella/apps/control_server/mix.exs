@@ -58,7 +58,7 @@ defmodule ControlServer.MixProject do
       {:paginator, "~> 1.2.0"},
 
       # Kubernetes
-      {:k8s, "~> 2.1.1"},
+      {:k8s, "~> 2.0.2"},
       {:httpoison, "~> 1.8"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},
