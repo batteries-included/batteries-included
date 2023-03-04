@@ -135,7 +135,7 @@ defmodule ControlServerWeb.LeftMenu do
       <div class="my-2 mx-auto">
         <%= render_slot(@icon) %>
       </div>
-      <div>
+      <div class="mx-auto">
         <%= render_slot(@label) %>
       </div>
     </.link>
