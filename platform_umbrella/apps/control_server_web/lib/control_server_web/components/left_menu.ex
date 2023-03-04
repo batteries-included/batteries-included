@@ -132,10 +132,10 @@ defmodule ControlServerWeb.LeftMenu do
   def main_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
     ~H"""
     <.link navigate={@navigate} variant="unstyled" class={main_menu_class(@is_active)} {@rest}>
-      <div class="my-2 mx-auto">
+      <div class="mt-2 mb-1 mx-auto">
         <%= render_slot(@icon) %>
       </div>
-      <div class="mx-auto">
+      <div class="mx-auto text-center">
         <%= render_slot(@label) %>
       </div>
     </.link>
@@ -151,10 +151,10 @@ defmodule ControlServerWeb.LeftMenu do
       class={main_menu_class(@is_active)}
       {@rest}
     >
-      <div class="my-2 mx-auto">
+      <div class="mt-2 mb-1 mx-auto">
         <%= render_slot(@icon) %>
       </div>
-      <div>
+      <div class="mx-auto text-center">
         <%= render_slot(@label) %>
       </div>
     </.button>

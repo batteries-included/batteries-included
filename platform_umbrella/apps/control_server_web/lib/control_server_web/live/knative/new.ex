@@ -46,6 +46,7 @@ defmodule ControlServerWeb.Live.KnativeNew do
   def render(assigns) do
     ~H"""
     <div>
+      <.h1>New Knative Serverless</.h1>
       <.live_component
         module={FormComponent}
         service={@service}

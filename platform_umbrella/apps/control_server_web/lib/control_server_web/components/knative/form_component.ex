@@ -147,7 +147,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           <.input field={{f, :name}} placeholder="Name" />
           <.input field={{f, :rollout_duration}} placeholder="Rollout Duration" />
         </div>
-        <.card class="col-span-1">
+        <.card class="col-span-1 truncate">
           <.data_list>
             <:item title="Namespace">battery-kube</:item>
             <:item title="Url"><%= @url %></:item>
