@@ -13,3 +13,6 @@ peers:
   - name: "zoe"
     public_key: "+P6OevZCBHygxKVwLZZUtYHsn9TM4Vez2uQJUo54TRY="
     addr: "10.250.0.3"
+  - name: "elliott-ipad"
+    public_key: "f1i9tbEuhM6u8Goa3zQy61upoAWrPGZShc4pCIafDgk="
+    addr: "10.250.0.4"

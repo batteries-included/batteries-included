@@ -27,6 +27,7 @@ gen_ssh_key "${DEVSERVER_SSH_KEY}" "devserver"
 gen_wg_key "gateway"
 gen_wg_key "elliott-desktop"
 gen_wg_key "elliott-air"
+gen_wg_key "elliott-ipad"
 
 cp -nv *.pub ../pub_keys/
 
