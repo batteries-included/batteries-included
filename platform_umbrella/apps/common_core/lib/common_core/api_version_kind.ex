@@ -73,6 +73,8 @@ defmodule CommonCore.ApiVersionKind do
       {"aquasecurity.github.io/v1alpha1", "ClusterComplianceReport"},
     aqua_cluster_config_audit_config_report:
       {"aquasecurity.github.io/v1alpha1", "ClusterConfigAuditReport"},
+    aqua_cluster_infra_assesment_report:
+      {"aquasecurity.github.io/v1alpha1", "ClusterInfraAssessmentReport"},
     aqua_config_audit_report: {"aquasecurity.github.io/v1alpha1", "ConfigAuditReport"},
     aqua_cluster_rbac_assessment_report:
       {"aquasecurity.github.io/v1alpha1", "ClusterRbacAssessmentReport"},

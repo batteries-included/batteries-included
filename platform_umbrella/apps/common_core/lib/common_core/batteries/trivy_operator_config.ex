@@ -8,7 +8,7 @@ defmodule CommonCore.Batteries.TrivyOperatorConfig do
   @derive Jason.Encoder
   typed_embedded_schema do
     field :image, :string, default: Defaults.Images.trivy_operator_image()
-    field :version_tag, :string, default: "0.38.0"
+    field :version_tag, :string, default: "0.37.2"
   end
 
   def changeset(struct, params \\ %{}) do

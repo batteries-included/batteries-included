@@ -1,23 +1,25 @@
 defmodule KubeResources.TrivyOperator do
   use CommonCore.IncludeResource,
-    clustercompliancereports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/clustercompliancereports_aquasecurity_github_io.yaml",
-    clusterconfigauditreports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/clusterconfigauditreports_aquasecurity_github_io.yaml",
-    clusterrbacassessmentreports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/clusterrbacassessmentreports_aquasecurity_github_io.yaml",
-    configauditreports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/configauditreports_aquasecurity_github_io.yaml",
-    exposedsecretreports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/exposedsecretreports_aquasecurity_github_io.yaml",
-    infraassessmentreports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/infraassessmentreports_aquasecurity_github_io.yaml",
-    rbacassessmentreports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/rbacassessmentreports_aquasecurity_github_io.yaml",
-    vulnerabilityreports_aquasecurity_github_io:
-      "priv/manifests/trivy_operator/vulnerabilityreports_aquasecurity_github_io.yaml",
-    cis: "priv/manifests/trivy_operator/cis.yaml",
-    nsa: "priv/manifests/trivy_operator/nsa.yaml"
+    clustercompliancereports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_clustercompliancereports.yaml",
+    clusterconfigauditreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_clusterconfigauditreports.yaml",
+    clusterinfraassessmentreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_clusterinfraassessmentreports.yaml",
+    clusterrbacassessmentreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_clusterrbacassessmentreports.yaml",
+    configauditreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_configauditreports.yaml",
+    exposedsecretreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_exposedsecretreports.yaml",
+    infraassessmentreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_infraassessmentreports.yaml",
+    rbacassessmentreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_rbacassessmentreports.yaml",
+    vulnerabilityreports:
+      "priv/manifests/trivy_operator/aquasecurity.github.io_vulnerabilityreports.yaml",
+    cis: "priv/manifests/trivy_operator/cis-1.23.yaml",
+    nsa: "priv/manifests/trivy_operator/nsa-1.0.yaml"
 
   use KubeExt.ResourceGenerator, app_name: "trivy-operator"
 
@@ -27,36 +29,22 @@ defmodule KubeResources.TrivyOperator do
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
 
-  resource(:crd_clustercompliancereports_aquasecurity_github_io) do
-    yaml(get_resource(:clustercompliancereports_aquasecurity_github_io))
-  end
-
-  resource(:crd_clusterconfigauditreports_aquasecurity_github_io) do
-    yaml(get_resource(:clusterconfigauditreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_clusterrbacassessmentreports_aquasecurity_github_io) do
-    yaml(get_resource(:clusterrbacassessmentreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_configauditreports_aquasecurity_github_io) do
-    yaml(get_resource(:configauditreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_exposedsecretreports_aquasecurity_github_io) do
-    yaml(get_resource(:exposedsecretreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_infraassessmentreports_aquasecurity_github_io) do
-    yaml(get_resource(:infraassessmentreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_rbacassessmentreports_aquasecurity_github_io) do
-    yaml(get_resource(:rbacassessmentreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_vulnerabilityreports_aquasecurity_github_io) do
-    :vulnerabilityreports_aquasecurity_github_io |> get_resource() |> yaml()
+  multi_resource(:crds) do
+    [
+      :clustercompliancereports,
+      :clusterconfigauditreports,
+      :clusterinfraassessmentreports,
+      :clusterrbacassessmentreports,
+      :configauditreports,
+      :exposedsecretreports,
+      :infraassessmentreports,
+      :rbacassessmentreports,
+      :vulnerabilityreports
+    ]
+    |> Enum.map(fn crd_name ->
+      {to_string(crd_name), crd_name |> get_resource() |> yaml() |> hd()}
+    end)
+    |> Map.new()
   end
 
   resource(:aqua_cluster_compliance_report_cis) do
@@ -127,19 +115,11 @@ defmodule KubeResources.TrivyOperator do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_binding_trivy_operator, _battery, state) do
-    namespace = base_namespace(state)
-
-    B.build_resource(:cluster_role_binding)
-    |> B.name("trivy-operator")
-    |> B.role_ref(B.build_cluster_role_ref("trivy-operator"))
-    |> B.subject(B.build_service_account("trivy-operator", namespace))
-  end
-
   resource(:cluster_role_trivy_operator) do
     rules = [
       %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["limitranges"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["pods/log"], "verbs" => ["get", "list"]},
       %{
@@ -196,6 +176,11 @@ defmodule KubeResources.TrivyOperator do
       %{
         "apiGroups" => ["aquasecurity.github.io"],
         "resources" => ["clusterconfigauditreports"],
+        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
+      },
+      %{
+        "apiGroups" => ["aquasecurity.github.io"],
+        "resources" => ["clusterinfraassessmentreports"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
       %{
@@ -277,199 +262,12 @@ defmodule KubeResources.TrivyOperator do
     |> B.rules(rules)
   end
 
-  resource(:config_map_trivy_operator, _battery, state) do
+  resource(:cluster_role_binding_trivy_operator, _battery, state) do
     namespace = base_namespace(state)
 
-    data =
-      %{}
-      |> Map.put("configAuditReports.scanner", "Trivy")
-      |> Map.put("report.recordFailedChecksOnly", "true")
-      |> Map.put("scanJob.compressLogs", "true")
-      |> Map.put(
-        "scanJob.podTemplateContainerSecurityContext",
-        "{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"readOnlyRootFilesystem\":true}"
-      )
-      |> Map.put("vulnerabilityReports.scanner", "Trivy")
-
-    B.build_resource(:config_map)
+    B.build_resource(:cluster_role_binding)
     |> B.name("trivy-operator")
-    |> B.namespace(namespace)
-    |> B.data(data)
-  end
-
-  resource(:config_map_trivy_operator_policies, _battery, state) do
-    namespace = base_namespace(state)
-    data = %{}
-
-    B.build_resource(:config_map)
-    |> B.name("trivy-operator-policies-config")
-    |> B.namespace(namespace)
-    |> B.data(data)
-  end
-
-  resource(:config_map_trivy_operator_trivy, battery, state) do
-    namespace = base_namespace(state)
-
-    data =
-      %{}
-      |> Map.put("trivy.additionalVulnerabilityReportFields", "")
-      |> Map.put("trivy.command", "image")
-      |> Map.put("trivy.dbRepository", "ghcr.io/aquasecurity/trivy-db")
-      |> Map.put("trivy.dbRepositoryInsecure", "false")
-      |> Map.put("trivy.ignoreUnfixed", "true")
-      |> Map.put("trivy.mode", "Standalone")
-      |> Map.put("trivy.repository", "ghcr.io/aquasecurity/trivy")
-      |> Map.put("trivy.resources.limits.cpu", "500m")
-      |> Map.put("trivy.resources.limits.memory", "500M")
-      |> Map.put("trivy.resources.requests.cpu", "100m")
-      |> Map.put("trivy.resources.requests.memory", "100M")
-      |> Map.put("trivy.severity", "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL")
-      |> Map.put("trivy.slow", "true")
-      |> Map.put(
-        "trivy.supportedConfigAuditKinds",
-        "Workload,Service,Role,ClusterRole,NetworkPolicy,Ingress,LimitRange,ResourceQuota"
-      )
-      |> Map.put("trivy.tag", battery.config.version_tag)
-      |> Map.put("trivy.timeout", "5m0s")
-      |> Map.put("trivy.useBuiltinRegoPolicies", "true")
-
-    B.build_resource(:config_map)
-    |> B.name("trivy-operator-trivy-config")
-    |> B.namespace(namespace)
-    |> B.data(data)
-  end
-
-  resource(:deployment_trivy_operator, battery, state) do
-    namespace = base_namespace(state)
-
-    template = %{
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => @app_name,
-          "battery/managed" => "true"
-        }
-      },
-      "spec" => %{
-        "automountServiceAccountToken" => true,
-        "containers" => [
-          %{
-            "env" => [
-              %{"name" => "OPERATOR_NAMESPACE", "value" => namespace},
-              %{"name" => "OPERATOR_TARGET_NAMESPACES", "value" => ""},
-              %{"name" => "OPERATOR_EXCLUDE_NAMESPACES", "value" => ""},
-              %{
-                "name" => "OPERATOR_TARGET_WORKLOADS",
-                "value" =>
-                  "pod,replicaset,replicationcontroller,statefulset,daemonset,cronjob,job"
-              },
-              %{"name" => "OPERATOR_SERVICE_ACCOUNT", "value" => "trivy-operator"},
-              %{"name" => "OPERATOR_LOG_DEV_MODE", "value" => "false"},
-              %{"name" => "OPERATOR_SCAN_JOB_TIMEOUT", "value" => "5m"},
-              %{"name" => "OPERATOR_CONCURRENT_SCAN_JOBS_LIMIT", "value" => "10"},
-              %{"name" => "OPERATOR_SCAN_JOB_RETRY_AFTER", "value" => "30s"},
-              %{"name" => "OPERATOR_BATCH_DELETE_LIMIT", "value" => "10"},
-              %{"name" => "OPERATOR_BATCH_DELETE_DELAY", "value" => "10s"},
-              %{"name" => "OPERATOR_METRICS_BIND_ADDRESS", "value" => ":8080"},
-              %{"name" => "OPERATOR_METRICS_FINDINGS_ENABLED", "value" => "true"},
-              %{"name" => "OPERATOR_METRICS_VULN_ID_ENABLED", "value" => "false"},
-              %{"name" => "OPERATOR_HEALTH_PROBE_BIND_ADDRESS", "value" => ":9090"},
-              %{"name" => "OPERATOR_VULNERABILITY_SCANNER_ENABLED", "value" => "true"},
-              %{
-                "name" => "OPERATOR_VULNERABILITY_SCANNER_SCAN_ONLY_CURRENT_REVISIONS",
-                "value" => "true"
-              },
-              %{"name" => "OPERATOR_SCANNER_REPORT_TTL", "value" => "24h"},
-              %{"name" => "OPERATOR_CONFIG_AUDIT_SCANNER_ENABLED", "value" => "true"},
-              %{"name" => "OPERATOR_RBAC_ASSESSMENT_SCANNER_ENABLED", "value" => "true"},
-              %{"name" => "OPERATOR_INFRA_ASSESSMENT_SCANNER_ENABLED", "value" => "true"},
-              %{
-                "name" => "OPERATOR_CONFIG_AUDIT_SCANNER_SCAN_ONLY_CURRENT_REVISIONS",
-                "value" => "true"
-              },
-              %{"name" => "OPERATOR_EXPOSED_SECRET_SCANNER_ENABLED", "value" => "true"},
-              %{"name" => "OPERATOR_WEBHOOK_BROADCAST_URL", "value" => ""},
-              %{"name" => "OPERATOR_WEBHOOK_BROADCAST_TIMEOUT", "value" => "30s"},
-              %{"name" => "OPERATOR_PRIVATE_REGISTRY_SCAN_SECRETS_NAMES", "value" => "{}"},
-              %{
-                "name" => "OPERATOR_ACCESS_GLOBAL_SECRETS_SERVICE_ACCOUNTS",
-                "value" => "true"
-              },
-              %{"name" => "OPERATOR_BUILT_IN_TRIVY_SERVER", "value" => "false"},
-              %{"name" => "TRIVY_SERVER_HEALTH_CHECK_CACHE_EXPIRATION", "value" => "10h"},
-              %{"name" => "OPERATOR_MERGE_RBAC_FINDING_WITH_CONFIG_AUDIT", "value" => "false"}
-            ],
-            "image" => battery.config.image,
-            "imagePullPolicy" => "IfNotPresent",
-            "livenessProbe" => %{
-              "failureThreshold" => 10,
-              "httpGet" => %{"path" => "/healthz/", "port" => "probes"},
-              "initialDelaySeconds" => 5,
-              "periodSeconds" => 10,
-              "successThreshold" => 1
-            },
-            "name" => "trivy-operator",
-            "ports" => [
-              %{"containerPort" => 8080, "name" => "metrics"},
-              %{"containerPort" => 9090, "name" => "probes"}
-            ],
-            "readinessProbe" => %{
-              "failureThreshold" => 3,
-              "httpGet" => %{"path" => "/readyz/", "port" => "probes"},
-              "initialDelaySeconds" => 5,
-              "periodSeconds" => 10,
-              "successThreshold" => 1
-            },
-            "resources" => %{},
-            "securityContext" => %{
-              "allowPrivilegeEscalation" => false,
-              "capabilities" => %{"drop" => ["ALL"]},
-              "privileged" => false,
-              "readOnlyRootFilesystem" => true
-            }
-          }
-        ],
-        "securityContext" => %{},
-        "serviceAccountName" => "trivy-operator"
-      }
-    }
-
-    spec =
-      %{}
-      |> Map.put("replicas", 1)
-      |> Map.put(
-        "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name
-          }
-        }
-      )
-      |> Map.put("strategy", %{"type" => "Recreate"})
-      |> Map.put("template", template)
-
-    B.build_resource(:deployment)
-    |> B.name("trivy-operator")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-  end
-
-  resource(:role_binding_trivy_operator, _battery, state) do
-    namespace = base_namespace(state)
-
-    B.build_resource(:role_binding)
-    |> B.name("trivy-operator")
-    |> B.namespace(namespace)
-    |> B.role_ref(B.build_role_ref("trivy-operator"))
-    |> B.subject(B.build_service_account("trivy-operator", namespace))
-  end
-
-  resource(:role_binding_trivy_operator_leader_election, _battery, state) do
-    namespace = base_namespace(state)
-
-    B.build_resource(:role_binding)
-    |> B.name("trivy-operator-leader-election")
-    |> B.namespace(namespace)
-    |> B.role_ref(B.build_role_ref("trivy-operator-leader-election"))
+    |> B.role_ref(B.build_cluster_role_ref("trivy-operator"))
     |> B.subject(B.build_service_account("trivy-operator", namespace))
   end
 
@@ -509,6 +307,96 @@ defmodule KubeResources.TrivyOperator do
     |> B.rules(rules)
   end
 
+  resource(:role_binding_trivy_operator_leader_election, _battery, state) do
+    namespace = base_namespace(state)
+
+    B.build_resource(:role_binding)
+    |> B.name("trivy-operator-leader-election")
+    |> B.namespace(namespace)
+    |> B.role_ref(B.build_role_ref("trivy-operator-leader-election"))
+    |> B.subject(B.build_service_account("trivy-operator", namespace))
+  end
+
+  resource(:role_binding_trivy_operator, _battery, state) do
+    namespace = base_namespace(state)
+
+    B.build_resource(:role_binding)
+    |> B.name("trivy-operator")
+    |> B.namespace(namespace)
+    |> B.role_ref(B.build_role_ref("trivy-operator"))
+    |> B.subject(B.build_service_account("trivy-operator", namespace))
+  end
+
+  resource(:service_account_trivy_operator, _battery, state) do
+    namespace = base_namespace(state)
+
+    B.build_resource(:service_account)
+    |> B.name("trivy-operator")
+    |> B.namespace(namespace)
+  end
+
+  resource(:config_map_trivy_operator, _battery, state) do
+    namespace = base_namespace(state)
+
+    data =
+      %{}
+      |> Map.put("configAuditReports.scanner", "Trivy")
+      |> Map.put("node.collector.imageRef", "ghcr.io/aquasecurity/node-collector:0.0.5")
+      |> Map.put("report.recordFailedChecksOnly", "true")
+      |> Map.put("scanJob.compressLogs", "true")
+      |> Map.put(
+        "scanJob.podTemplateContainerSecurityContext",
+        "{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"readOnlyRootFilesystem\":true}"
+      )
+      |> Map.put("vulnerabilityReports.scanner", "Trivy")
+
+    B.build_resource(:config_map)
+    |> B.name("trivy-operator")
+    |> B.namespace(namespace)
+    |> B.data(data)
+  end
+
+  resource(:config_map_trivy_operator_policies, _battery, state) do
+    namespace = base_namespace(state)
+    data = %{}
+
+    B.build_resource(:config_map)
+    |> B.name("trivy-operator-policies-config")
+    |> B.namespace(namespace)
+    |> B.data(data)
+  end
+
+  resource(:config_map_trivy_operator_trivy, battery, state) do
+    namespace = base_namespace(state)
+
+    data =
+      %{}
+      |> Map.put("trivy.additionalVulnerabilityReportFields", "")
+      |> Map.put("trivy.command", "image")
+      |> Map.put("trivy.dbRepository", "ghcr.io/aquasecurity/trivy-db")
+      |> Map.put("trivy.dbRepositoryInsecure", "false")
+      |> Map.put("trivy.mode", "Standalone")
+      |> Map.put("trivy.repository", "ghcr.io/aquasecurity/trivy")
+      |> Map.put("trivy.resources.limits.cpu", "500m")
+      |> Map.put("trivy.resources.limits.memory", "500M")
+      |> Map.put("trivy.resources.requests.cpu", "100m")
+      |> Map.put("trivy.resources.requests.memory", "100M")
+      |> Map.put("trivy.severity", "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL")
+      |> Map.put("trivy.slow", "true")
+      |> Map.put(
+        "trivy.supportedConfigAuditKinds",
+        "Workload,Service,Role,ClusterRole,NetworkPolicy,Ingress,LimitRange,ResourceQuota"
+      )
+      |> Map.put("trivy.tag", battery.config.version_tag)
+      |> Map.put("trivy.timeout", "5m0s")
+      |> Map.put("trivy.useBuiltinRegoPolicies", "true")
+
+    B.build_resource(:config_map)
+    |> B.name("trivy-operator-trivy-config")
+    |> B.namespace(namespace)
+    |> B.data(data)
+  end
+
   resource(:secret_trivy_operator, _battery, state) do
     namespace = base_namespace(state)
     data = %{}
@@ -529,12 +417,121 @@ defmodule KubeResources.TrivyOperator do
     |> B.data(data)
   end
 
-  resource(:service_account_trivy_operator, _battery, state) do
+  resource(:deployment_trivy_operator, battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    spec =
+      %{}
+      |> Map.put("replicas", 1)
+      |> Map.put(
+        "selector",
+        %{
+          "matchLabels" => %{
+            "battery/app" => @app_name
+          }
+        }
+      )
+      |> Map.put("strategy", %{"type" => "Recreate"})
+      |> Map.put(
+        "template",
+        %{
+          "metadata" => %{
+            "labels" => %{
+              "battery/app" => @app_name,
+              "battery/managed" => "true"
+            }
+          },
+          "spec" => %{
+            "automountServiceAccountToken" => true,
+            "containers" => [
+              %{
+                "env" => [
+                  %{"name" => "OPERATOR_NAMESPACE", "value" => namespace},
+                  %{"name" => "OPERATOR_TARGET_NAMESPACES", "value" => ""},
+                  %{"name" => "OPERATOR_EXCLUDE_NAMESPACES", "value" => ""},
+                  %{
+                    "name" => "OPERATOR_TARGET_WORKLOADS",
+                    "value" =>
+                      "pod,replicaset,replicationcontroller,statefulset,daemonset,cronjob,job"
+                  },
+                  %{"name" => "OPERATOR_SERVICE_ACCOUNT", "value" => "trivy-operator"},
+                  %{"name" => "OPERATOR_LOG_DEV_MODE", "value" => "false"},
+                  %{"name" => "OPERATOR_SCAN_JOB_TTL", "value" => ""},
+                  %{"name" => "OPERATOR_SCAN_JOB_TIMEOUT", "value" => "5m"},
+                  %{"name" => "OPERATOR_CONCURRENT_SCAN_JOBS_LIMIT", "value" => "10"},
+                  %{"name" => "OPERATOR_SCAN_JOB_RETRY_AFTER", "value" => "30s"},
+                  %{"name" => "OPERATOR_BATCH_DELETE_LIMIT", "value" => "10"},
+                  %{"name" => "OPERATOR_BATCH_DELETE_DELAY", "value" => "10s"},
+                  %{"name" => "OPERATOR_METRICS_BIND_ADDRESS", "value" => ":8080"},
+                  %{"name" => "OPERATOR_METRICS_FINDINGS_ENABLED", "value" => "true"},
+                  %{"name" => "OPERATOR_METRICS_VULN_ID_ENABLED", "value" => "false"},
+                  %{"name" => "OPERATOR_HEALTH_PROBE_BIND_ADDRESS", "value" => ":9090"},
+                  %{"name" => "OPERATOR_VULNERABILITY_SCANNER_ENABLED", "value" => "true"},
+                  %{
+                    "name" => "OPERATOR_VULNERABILITY_SCANNER_SCAN_ONLY_CURRENT_REVISIONS",
+                    "value" => "true"
+                  },
+                  %{"name" => "OPERATOR_SCANNER_REPORT_TTL", "value" => "24h"},
+                  %{"name" => "OPERATOR_CONFIG_AUDIT_SCANNER_ENABLED", "value" => "true"},
+                  %{"name" => "OPERATOR_RBAC_ASSESSMENT_SCANNER_ENABLED", "value" => "true"},
+                  %{"name" => "OPERATOR_INFRA_ASSESSMENT_SCANNER_ENABLED", "value" => "true"},
+                  %{
+                    "name" => "OPERATOR_CONFIG_AUDIT_SCANNER_SCAN_ONLY_CURRENT_REVISIONS",
+                    "value" => "true"
+                  },
+                  %{"name" => "OPERATOR_EXPOSED_SECRET_SCANNER_ENABLED", "value" => "true"},
+                  %{"name" => "OPERATOR_METRICS_EXPOSED_SECRET_INFO_ENABLED", "value" => "false"},
+                  %{"name" => "OPERATOR_WEBHOOK_BROADCAST_URL", "value" => ""},
+                  %{"name" => "OPERATOR_WEBHOOK_BROADCAST_TIMEOUT", "value" => "30s"},
+                  %{"name" => "OPERATOR_PRIVATE_REGISTRY_SCAN_SECRETS_NAMES", "value" => "{}"},
+                  %{
+                    "name" => "OPERATOR_ACCESS_GLOBAL_SECRETS_SERVICE_ACCOUNTS",
+                    "value" => "true"
+                  },
+                  %{"name" => "OPERATOR_BUILT_IN_TRIVY_SERVER", "value" => "false"},
+                  %{"name" => "TRIVY_SERVER_HEALTH_CHECK_CACHE_EXPIRATION", "value" => "10h"},
+                  %{"name" => "OPERATOR_MERGE_RBAC_FINDING_WITH_CONFIG_AUDIT", "value" => "false"}
+                ],
+                "image" => battery.config.image,
+                "imagePullPolicy" => "IfNotPresent",
+                "livenessProbe" => %{
+                  "failureThreshold" => 10,
+                  "httpGet" => %{"path" => "/healthz/", "port" => "probes"},
+                  "initialDelaySeconds" => 5,
+                  "periodSeconds" => 10,
+                  "successThreshold" => 1
+                },
+                "name" => "trivy-operator",
+                "ports" => [
+                  %{"containerPort" => 8080, "name" => "metrics"},
+                  %{"containerPort" => 9090, "name" => "probes"}
+                ],
+                "readinessProbe" => %{
+                  "failureThreshold" => 3,
+                  "httpGet" => %{"path" => "/readyz/", "port" => "probes"},
+                  "initialDelaySeconds" => 5,
+                  "periodSeconds" => 10,
+                  "successThreshold" => 1
+                },
+                "resources" => %{},
+                "securityContext" => %{
+                  "allowPrivilegeEscalation" => false,
+                  "capabilities" => %{"drop" => ["ALL"]},
+                  "privileged" => false,
+                  "readOnlyRootFilesystem" => true
+                }
+              }
+            ],
+            "securityContext" => %{},
+            "serviceAccountName" => "trivy-operator"
+          }
+        }
+      )
+
+    B.build_resource(:deployment)
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
+    |> B.spec(spec)
   end
 
   resource(:service_trivy_operator, _battery, state) do
