@@ -63,7 +63,8 @@ pub(crate) async fn get_pg_control_primary(
 ) -> Result<String, Box<dyn std::error::Error>> {
     let mut retries = 10;
     let wait = 10;
-    let res = loop {
+
+    loop {
         match get_pg_control_primary_raw(client_factory, cluster, namespace).await {
             Err(_) => {
                 if retries > 0 {
@@ -73,8 +74,7 @@ pub(crate) async fn get_pg_control_primary(
             }
             res => break res,
         }
-    };
-    res
+    }
 }
 
 // TODO: change this to use the native client instead of kubectl
@@ -233,7 +233,7 @@ pub(crate) fn apply_resources(
     json_blob: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let data: Value = from_str(json_blob)?;
-    let tmp = tempdir::TempDir::new("custom_resources")?;
+    let tmp = tempfile::TempDir::new()?;
     let tmp_path_str = match tmp.as_ref().to_str() {
         Some(x) => x,
         None => {

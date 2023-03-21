@@ -116,7 +116,7 @@ mod tests {
         let mut err = Vec::new();
         let mut out = Vec::new();
         let input = "".as_bytes();
-        let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
+        let tmp = tempfile::TempDir::new().unwrap();
         let kubectl_stub: String = Url::from_file_path(tmp.path()).unwrap().into();
         let mut program_args = ProgramArgs {
             cli_args: CliArgs::parse_from(["cli", "create"]),
@@ -146,7 +146,7 @@ mod tests {
         let mut err = Vec::new();
         let mut out = Vec::new();
         let input = "".as_bytes();
-        let tmp = tempdir::TempDir::new("test_invalid_arch_fails").unwrap();
+        let tmp = tempfile::TempDir::new().unwrap();
         let kubectl_stub = Url::from_file_path(tmp.path()).unwrap().to_string();
         let mut program_args = ProgramArgs {
             cli_args: CliArgs::parse_from(["cli", "create"]),
