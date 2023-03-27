@@ -17,7 +17,7 @@ axum = {version = "0.6.12", features = ["headers", "json", "query"] }
 tower = { version ="0.4.13"}
 tower-http = { version = "0.4.0", features = ["compression-full", "limit", "fs", "timeout", "trace"] }
 tower-cookies = "0.9.0"
-axum-extra = { version = "0.7.1", features = ["cookie-signed"] }
+axum-extra = { version = "0.7.2", features = ["cookie-signed"] }
 
 askama = {version ="0.12.0", features = ["with-axum","mime",  "mime_guess", "serde-json", "config", "humansize", "num-traits", "urlencode"]}
 askama_axum = {version = "0.3.0"}
