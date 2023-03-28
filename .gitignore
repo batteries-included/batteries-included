@@ -8,6 +8,9 @@
 .nix-mix
 .nix-hex
 
+# Local cargo dirs
+.nix-cargo-home
+
 ops/aws/keys/
 
 node_modules

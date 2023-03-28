@@ -1,16 +1,22 @@
 {
-  "repository": {},
-  "description": " ",
-  "license": "COMMERCIAL",
+  "name": "static",
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "build:tailwind": "NODE_ENV=production npx tailwindcss --minify -i styles/styles.css -o static/styles/styles.css",
-    "build:zola": "zola build",
-    "dev:tailwind": "npx tailwindcss -i styles/styles.css -o static/styles/styles.css --watch",
-    "dev:zola": "zola serve"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
-  "devDependencies": {
+  "dependencies": {
+    "@astrojs/tailwind": "3.1.1",
+    "astro": "2.1.7",
+    "tailwindcss": "3.2.7",
+    "@fontsource/inter": "^4.2.2",
+    "@fontsource/jetbrains-mono": "^4.2.2",
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
-    "tailwindcss": "3.2.7"
+    "daisyui": "2.51.5"
   }
 }

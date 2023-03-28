@@ -59,10 +59,6 @@
         # javascript won for better or worse
         nodejs
 
-
-        # For static site generation
-        zola
-
         # Command line tools
         jq
         k9s
@@ -83,11 +79,13 @@
 
 
       buildInputs = with pkgs; [
-        openssl_1_1
+        openssl
         glibcLocales
       ];
 
       shellHook = ''
+        pushd $(git rev-parse --show-toplevel)
+
         # this allows mix to work on the local directory
         mkdir -p .nix-mix
         mkdir -p .nix-hex
@@ -96,8 +94,16 @@
         export PATH=$MIX_HOME/bin:$PATH
         export PATH=$HEX_HOME/bin:$PATH
 
-        mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3;
-        mix local.hex --force --if-missing
+        pushd platform_umbrella
+        mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3 || true;
+        mix local.hex --force --if-missing || true;
+        popd
+
+        # This keeps cargo self contained in this dir
+        export CARGO_HOME=$PWD/.nix-cargo-home
+        mkdir -p $CARGO_HOME
+
+        popd
       '';
 
 

@@ -1,10 +1,4 @@
 [build]
 base    = "static"
-publish = "public"
-command = "npm install; npm run build:tailwind; zola build"
-
-[build.environment]
-ZOLA_VERSION = "0.16.1"
-
-[context.deploy-preview]
-command = "npm install; npm run build:tailwind; zola build --base-url $DEPLOY_PRIME_URL"
+publish = "dist"
+command = "npm install; npm run build"

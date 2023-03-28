@@ -7,7 +7,7 @@ let
     inherit pname cargoExtraArgs;
     src = src;
     nativeBuildInputs = with pkgs; [ pkg-config ] ++ nativeBuildInputs;
-    buildInputs = with pkgs; [ openssl_1_1 ]
+    buildInputs = with pkgs; [ openssl ]
       ++ buildInputs
       ++ lib.optionals pkgs.stdenv.isDarwin [ ]
       ++ lib.optionals pkgs.stdenv.isLinux [ ];
