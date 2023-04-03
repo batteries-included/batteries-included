@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
   alias CommonCore.SystemState.SeedState
   alias KubeResources.ConfigGenerator
 
-  @installations [:dev, :fast_dev]
+  @installations ~w(dev dev_cluster)a
 
   def run(args) do
     [directory] = args
@@ -36,24 +36,10 @@ defmodule Mix.Tasks.Gen.Static.Installations do
   """
   def installation(type)
 
-  def installation(:fast_dev) do
-    summary = SeedState.seed(:dev)
+  def installation(:dev), do: dev_installation(%{provider: :kind})
+  def installation(:dev_cluster), do: dev_installation(%{provider: :provided})
 
-    res_map =
-      :limited
-      |> SeedState.seed()
-      |> ConfigGenerator.materialize()
-      |> Enum.sort_by(fn {path, _} -> path end)
-      |> Map.new()
-
-    %{
-      kube_cluster: %{type: :kind},
-      target_summary: summary,
-      initial_resource: res_map
-    }
-  end
-
-  def installation(:dev) do
+  def dev_installation(kube_cluster) do
     summary = SeedState.seed(:dev)
 
     res_map =
@@ -62,7 +48,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
       |> Map.new()
 
     %{
-      kube_cluster: %{type: :kind},
+      kube_cluster: kube_cluster,
       target_summary: summary,
       initial_resource: res_map
     }

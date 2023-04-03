@@ -63,7 +63,11 @@ defmodule KubeExt.Builder do
     |> label("app.kubernetes.io/managed-by", "batteries-included")
   end
 
-  @spec owner_label(map(), binary()) :: map()
+  @spec owner_label(map(), binary() | nil) :: map()
+  def owner_label(resource, nil = _owner_id) do
+    resource
+  end
+
   def owner_label(resource, owner_id) do
     label(resource, "battery/owner", owner_id)
   end

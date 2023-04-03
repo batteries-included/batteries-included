@@ -41,13 +41,13 @@ defmodule ControlServerWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.1"},
+      {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.3.1"},
-      {:phoenix_live_view, "~> 0.18.16"},
+      {:phoenix_live_view, "~> 0.18.18"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_dashboard, "~> 0.7.2"},
-      {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:ex_machina, "~> 2.7", only: :test},
       {:wallaby, "~> 0.30.1", runtime: false, only: [:test, :integration]},
       {:gettext, "~> 0.20"},
@@ -64,7 +64,7 @@ defmodule ControlServerWeb.MixProject do
       {:heroicons, "~> 0.5"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
-      {:websock_adapter, "~> 0.4.4"}
+      {:websock_adapter, "~> 0.5.0"}
     ]
   end
 

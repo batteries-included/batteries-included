@@ -47,7 +47,7 @@ defmodule ControlServer.MixProject do
       {:phoenix_swoosh, "~> 1.2.0"},
 
       # SQL
-      {:phoenix, "~> 1.7.1"},
+      {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
@@ -58,8 +58,8 @@ defmodule ControlServer.MixProject do
       {:paginator, "~> 1.2.0"},
 
       # Kubernetes
-      {:k8s, "~> 2.1.1"},
-      {:httpoison, "~> 1.8"},
+      {:k8s, "~> 2.2.0"},
+      {:httpoison, "~> 2.1"},
       {:poison, "~> 5.0"},
       {:kube_ext, in_umbrella: true},
 
@@ -68,9 +68,6 @@ defmodule ControlServer.MixProject do
 
       # Time
       {:timex, "~> 3.7"},
-
-      # Http
-      {:finch, "~> 0.14.0"},
 
       ## Dev/Test only deps
 

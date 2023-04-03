@@ -16,7 +16,7 @@ defmodule CommonCore.Batteries.CatalogBattery do
     args =
       catalog_battery
       |> Map.from_struct()
-      |> Map.drop([:__meta__, :__struct__, :id, :inserted_at, :updated_at])
+      |> Map.drop([:__meta__, :__struct__, :id])
       |> Map.put_new(:config, %{__type__: catalog_battery.type})
 
     %SystemBattery{}

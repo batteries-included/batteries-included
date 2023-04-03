@@ -54,12 +54,17 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[toml]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
   "files.exclude": {
     "**/.git": true,
     "**/.sl": true,
     "**/.DS_Store": true,
     "**/.direnv": true,
     "**/.nix-hex": true,
+    "**/.nix-cargo": true,
     "**/.nix-mix": true
   },
   "search.exclude": {

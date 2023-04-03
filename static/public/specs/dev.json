@@ -546,7 +546,6 @@
         ]
       }
     },
-
     "/istio/role/istiod_battery_istio": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "Role",
@@ -581,7 +580,6 @@
         }
       ]
     },
-
     "/istio_gateway/service_account/istio_ingressgateway": {
       "apiVersion": "v1",
       "kind": "ServiceAccount",
@@ -602,7 +600,6 @@
         "namespace": "battery-istio"
       }
     },
-
     "/istio/istio_envoy_filter/stats_filter_1_15": {
       "apiVersion": "networking.istio.io/v1alpha3",
       "kind": "EnvoyFilter",
@@ -797,7 +794,7 @@
       "kind": "postgresql",
       "metadata": {
         "annotations": {
-          "battery/hash": "YWNWDHFUIZX5VFWQTHLNYQFJ2HGOJDCEPRVAD2MCMAGRNR2FNULQ===="
+          "battery/hash": "EGXOONCDFSB3GLBYU4O5XSNVHJCQFCYPPYIEA5VMMCWVT7LNEK3A===="
         },
         "labels": {
           "app": "postgres",
@@ -806,7 +803,6 @@
           "battery/app": "postgres",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": null,
           "sidecar.istio.io/inject": "false"
         },
         "name": "pg-control",
@@ -1034,7 +1030,6 @@
         ]
       }
     },
-
     "/istio_gateway/deployment/istio_ingressgateway": {
       "apiVersion": "apps/v1",
       "kind": "Deployment",
@@ -1122,7 +1117,6 @@
         }
       }
     },
-
     "/istio/role/istiod": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "Role",
@@ -1415,7 +1409,7 @@
       "kind": "Deployment",
       "metadata": {
         "annotations": {
-          "battery/hash": "IIJ4VUTTV7KUUYRO6GFLT7UR4522EU5QX63U62ZTSOOKARHFQZ5Q===="
+          "battery/hash": "BCKHPHKRFKEKTEBLJMSU3HCNQGSAI2US2WVCHBSBGE7IJMDESVJQ===="
         },
         "labels": {
           "app": "istiod",
@@ -1545,7 +1539,7 @@
                     "value": "Kubernetes"
                   }
                 ],
-                "image": "istio/pilot:1.16.1-distroless",
+                "image": "istio/pilot:1.17.1-distroless",
                 "name": "discovery",
                 "ports": [
                   {
@@ -1819,7 +1813,6 @@
         "priority": -1
       }
     },
-
     "/postgres/service/postgres_operator": {
       "apiVersion": "v1",
       "kind": "Service",
@@ -3159,7 +3152,6 @@
         }
       ]
     },
-
     "/istio/crd/proxyconfigs_networking_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -3418,7 +3410,7 @@
           "connection_pooler_default_cpu_request": "500m",
           "connection_pooler_default_memory_limit": "100Mi",
           "connection_pooler_default_memory_request": "100Mi",
-          "connection_pooler_image": "registry.opensource.zalan.do/acid/pgbouncer:master-26",
+          "connection_pooler_image": "registry.opensource.zalan.do/acid/pgbouncer:master-27",
           "connection_pooler_max_db_connections": 60,
           "connection_pooler_mode": "transaction",
           "connection_pooler_number_of_instances": 2,
@@ -3484,7 +3476,7 @@
           "ring_log_lines": 100
         },
         "logical_backup": {
-          "logical_backup_docker_image": "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-76-g7a90fbcb",
+          "logical_backup_docker_image": "registry.opensource.zalan.do/acid/logical-backup:v1.9.0-8-g645fcc01",
           "logical_backup_job_prefix": "logical-backup-",
           "logical_backup_provider": "s3",
           "logical_backup_s3_access_key_id": "",
@@ -3551,7 +3543,7 @@
       "kind": "OperatorConfiguration",
       "metadata": {
         "annotations": {
-          "battery/hash": "YIAYHY7IOLYNPFPNHYLAUZ725GHZXE4FSMHC4SPXV34N2YQBI54Q===="
+          "battery/hash": "JL7E3LJKJQSB4K4O26NQYSPIZX4TQRCA7DROOPGTCAZUPGOZAA4A===="
         },
         "labels": {
           "app": "postgres-operator",
@@ -3599,7 +3591,6 @@
         }
       }
     },
-
     "/istio/cluster_role/istio_reader_battery_istio": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "ClusterRole",
@@ -3880,7 +3871,6 @@
         }
       ]
     },
-
     "/istio/crd/destinationrules_networking_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -7518,7 +7508,6 @@
         ]
       }
     },
-
     "/istio/config_map/istio": {
       "apiVersion": "v1",
       "data": {
@@ -8413,7 +8402,7 @@
       "kind": "Deployment",
       "metadata": {
         "annotations": {
-          "battery/hash": "6L36YZ5BAWLI3BTBUCPNPFQWWPML5JFDRDOOF4ZXFCQNTO3QWDBA===="
+          "battery/hash": "27HRRZYH72J2RTPEYCAKMDVHRDI5MEDS6SXQCHRCHPH4ZM7CDJSA===="
         },
         "labels": {
           "app": "postgres-operator",
@@ -8455,7 +8444,7 @@
                     "value": "postgres-operator"
                   }
                 ],
-                "image": "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-76-g7a90fbcb",
+                "image": "registry.opensource.zalan.do/acid/postgres-operator:v1.9.0-8-g645fcc01",
                 "imagePullPolicy": "IfNotPresent",
                 "name": "postgres-operator",
                 "resources": {
@@ -8483,7 +8472,6 @@
         }
       }
     },
-
     "/istio/istio_envoy_filter/tcp_stats_filter_1_15": {
       "apiVersion": "networking.istio.io/v1alpha3",
       "kind": "EnvoyFilter",
@@ -9500,7 +9488,6 @@
         ]
       }
     },
-
     "/istio/crd/telemetries_telemetry_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -10026,7 +10013,6 @@
         "priority": -1
       }
     },
-
     "/istio_gateway/role/istio_ingressgateway": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "Role",
@@ -10392,7 +10378,6 @@
         }
       ]
     },
-
     "/battery_core/namespace/battery_ml": {
       "apiVersion": "v1",
       "kind": "Namespace",
@@ -10660,7 +10645,6 @@
         "name": "battery-base"
       }
     },
-
     "/istio/service/istiod": {
       "apiVersion": "v1",
       "kind": "Service",
@@ -10747,7 +10731,6 @@
         }
       ]
     },
-
     "/istio/crd/sidecars_networking_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -11294,7 +11277,6 @@
         "namespace": "battery-istio"
       }
     },
-
     "/istio/role_binding/istiod": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "RoleBinding",
@@ -11604,7 +11586,6 @@
         "priority": -1
       }
     },
-
     "/istio/crd/virtualservices_networking_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -14488,7 +14469,7 @@
     }
   },
   "kube_cluster": {
-    "type": "kind"
+    "provider": "kind"
   },
   "target_summary": {
     "batteries": [
@@ -14507,7 +14488,7 @@
       },
       {
         "config": {
-          "bouncer_image": "registry.opensource.zalan.do/acid/pgbouncer:master-26",
+          "bouncer_image": "registry.opensource.zalan.do/acid/pgbouncer:master-27",
           "infra_users": [
             {
               "generated_key": "not-real",
@@ -14516,8 +14497,8 @@
             }
           ],
           "json_logging_enabled": true,
-          "logical_backup_image": "registry.opensource.zalan.do/acid/logical-backup:v1.8.2-76-g7a90fbcb",
-          "operator_image": "registry.opensource.zalan.do/acid/postgres-operator:v1.8.2-76-g7a90fbcb",
+          "logical_backup_image": "registry.opensource.zalan.do/acid/logical-backup:v1.9.0-8-g645fcc01",
+          "operator_image": "registry.opensource.zalan.do/acid/postgres-operator:v1.9.0-8-g645fcc01",
           "spilo_image": "registry.opensource.zalan.do/acid/spilo-15:2.1-p9"
         },
         "group": "data",
@@ -14529,7 +14510,7 @@
       {
         "config": {
           "namespace": "battery-istio",
-          "pilot_image": "istio/pilot:1.16.1-distroless"
+          "pilot_image": "istio/pilot:1.17.1-distroless"
         },
         "group": "net_sec",
         "id": null,

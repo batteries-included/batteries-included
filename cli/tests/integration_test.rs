@@ -1,6 +1,6 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
-static HELP_STR: &str = "Usage: bcli <COMMAND>";
+static HELP_STR: &str = "Usage: bcli [OPTIONS] <COMMAND>";
 
 #[test]
 fn test_help() {

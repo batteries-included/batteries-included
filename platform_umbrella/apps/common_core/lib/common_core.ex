@@ -1,18 +1,6 @@
 defmodule CommonCore do
   @moduledoc """
-  Documentation for `CommonCore`.
+  Schemas and other code that needs to be used
+  without database access sometimes.
   """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> CommonCore.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end

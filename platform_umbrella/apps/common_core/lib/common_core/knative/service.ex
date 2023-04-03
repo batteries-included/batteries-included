@@ -10,7 +10,7 @@ defmodule CommonCore.Knative.Service do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "knative_services" do
-    field(:name, :string, null: false)
+    field :name, :string, null: false
     field(:rollout_duration, :string, default: "10m")
 
     embeds_many(:containers, CommonCore.Knative.Container, on_replace: :delete)

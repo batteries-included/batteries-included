@@ -1,7 +1,7 @@
 { pname, crane, pkgs, advisory-db, src, nativeBuildInputs ? [ ], buildInputs ? [ ], cargoExtraArgs ? "" }:
 
 let
-  craneLib = (crane.mkLib pkgs).overrideToolchain pkgs.rust-bin.stable.latest.default;
+  craneLib = (crane.mkLib pkgs).overrideToolchain pkgs.rust-bin.nightly.latest.default;
   # Common arguments can be set here to avoid repeating them later
   commonArgs = {
     inherit pname cargoExtraArgs;

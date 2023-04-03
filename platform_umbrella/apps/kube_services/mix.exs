@@ -26,11 +26,11 @@ defmodule KubeServices.MixProject do
 
   defp deps do
     [
-      {:tesla, "~> 1.5.0"},
+      {:tesla, "~> 1.6.0"},
       {:jason, "~> 1.2"},
       {:oban, "~> 2.12"},
-      {:k8s, "~> 2.1.1"},
-      {:phoenix, "~> 1.7.1"},
+      {:k8s, "~> 2.2.0"},
+      {:phoenix, "~> 1.7.2"},
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},

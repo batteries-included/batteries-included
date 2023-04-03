@@ -9,7 +9,7 @@
 .nix-hex
 
 # Local cargo dirs
-.nix-cargo-home
+.nix-cargo
 
 ops/aws/keys/
 

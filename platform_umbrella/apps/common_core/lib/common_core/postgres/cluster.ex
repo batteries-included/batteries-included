@@ -64,7 +64,7 @@ defmodule CommonCore.Postgres.Cluster do
   end
 
   def to_fresh_cluster(%{} = args) do
-    clean_args = Map.drop(args, [:id, :inserted_at, :updated_at])
+    clean_args = Map.drop(args, [:id])
 
     %__MODULE__{}
     |> changeset(clean_args)

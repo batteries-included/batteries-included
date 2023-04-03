@@ -30,7 +30,7 @@ defmodule CommonCore.MixProject do
       {:mnemonic_slugs, "~> 0.0.3"},
       {:polymorphic_embed, "~> 3.0.5"},
       {:telemetry, "~> 1.1"},
-      {:tesla, "~> 1.5.0"},
+      {:tesla, "~> 1.6.0"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 3.0.1"}

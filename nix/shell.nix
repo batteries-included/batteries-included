@@ -32,7 +32,7 @@
       ];
 
       rustNativeBuildTools = with pkgs; [
-        rust-bin.stable.latest.complete
+        rust-bin.nightly.latest.complete
         pkg-config
         cargo-flamegraph
         postgresql
@@ -84,13 +84,16 @@
       ];
 
       shellHook = ''
-        pushd $(git rev-parse --show-toplevel)
+        # go to the top level.
+        pushd $(git rev-parse --show-toplevel || echo ".")
 
         # this allows mix to work on the local directory
-        mkdir -p .nix-mix
-        mkdir -p .nix-hex
         export MIX_HOME=$PWD/.nix-mix
+        mkdir -p $MIX_HOME
+
         export HEX_HOME=$PWD/.nix-hex
+        mkdir -p $HEX_HOME
+
         export PATH=$MIX_HOME/bin:$PATH
         export PATH=$HEX_HOME/bin:$PATH
 
@@ -100,7 +103,7 @@
         popd
 
         # This keeps cargo self contained in this dir
-        export CARGO_HOME=$PWD/.nix-cargo-home
+        export CARGO_HOME=$PWD/.nix-cargo
         mkdir -p $CARGO_HOME
 
         popd

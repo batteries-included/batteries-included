@@ -36,14 +36,14 @@ defmodule HomeBaseWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.0", override: true},
+      {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.3.1"},
       {:phoenix_live_view, "~> 0.18.16"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.7.2"},
-      {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:gettext, "~> 0.20"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
@@ -52,7 +52,7 @@ defmodule HomeBaseWeb.MixProject do
       {:heroicons, "~> 0.5"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
-      {:websock_adapter, "~> 0.4.4"}
+      {:websock_adapter, "~> 0.5.0"}
     ]
   end
 

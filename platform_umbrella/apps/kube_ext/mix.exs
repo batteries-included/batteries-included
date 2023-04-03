@@ -26,8 +26,7 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
-      {:k8s, "~> 2.1.1"},
-      {:mint, "1.4.2"},
+      {:k8s, "~> 2.2.0"},
       {:jason, "~> 1.0"},
       {:event_center, in_umbrella: true},
       {:common_core, in_umbrella: true}
