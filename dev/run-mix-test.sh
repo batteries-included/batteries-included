@@ -18,3 +18,4 @@ mix compile --force --warnings-as-errors
 mix ecto.reset
 # Then run all the tests.
 mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors
+mix test.coverage

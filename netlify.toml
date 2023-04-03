@@ -1,4 +1,4 @@
 [build]
-base    = "static"
+base = "static"
 publish = "dist"
 command = "npm install; npm run build"
