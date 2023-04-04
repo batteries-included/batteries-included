@@ -50,23 +50,10 @@ install or upgrade and then run the bootstrap procedure via the CLI.
 
 ## CLI
 
-This elixir app gets packaged into a fat binary, and `ZSTD` compressed. The
-CLI's primary purpose is to bootstrap our complete set of tools onto a cluster
-with no dependencies and no YAML.
-
-For this, it contacts the home base to get the starting config of the cluster;
-then, the CLI generates the resources needed and pushes them to Kubernetes.
-
-The CLI should remain small and lightweight, have zero dependencies, and be
-focused on installing and debugging.
-
 ### Directories
 
-- `cli` is the code to parse command line, and to run the desired code. Because
-  parsing the command line requires exiting, we put that code here and don't
-  load it when developing or running servers.
-- `cli_core` is the code to do anything on the command line. It's the majority
-  of the cli code and used for dev bootstrapping.
+- `cli` This is a small statically compiled rust project that producces the bcli
+  command line application.
 
 ## Control Server
 
