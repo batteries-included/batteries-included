@@ -61,6 +61,7 @@
   "files.exclude": {
     "**/.git": true,
     "**/.sl": true,
+    "**/.jj": true,
     "**/.DS_Store": true,
     "**/.direnv": true,
     "**/.nix-hex": true,
@@ -74,6 +75,7 @@
   "files.watcherExclude": {
     "**/.git/**": true,
     "**/.sl/**": true,
+    "**/.jj/**": true,
     "**/.direnv/**": true,
     "**/.nix-*/**": true,
     "**/node_modules/**": true,
