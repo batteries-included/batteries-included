@@ -10,12 +10,16 @@ pub async fn program_main(program_args: ProgramArgs) -> Result<()> {
         CliAction::Dev {
             installation_url,
             overwrite_resources,
+            forward_postgres,
+            platform_dir,
             ..
         } => {
             dev_command(
                 program_args.base_args,
                 installation_url,
                 overwrite_resources,
+                forward_postgres,
+                platform_dir,
             )
             .await
         }

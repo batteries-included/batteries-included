@@ -12,6 +12,7 @@ pub struct CliArgs {
 pub struct BaseArgs {
     pub kube_client_factory: Box<dyn Fn() -> kube_client::Client>,
     pub dir_parent: PathBuf,
+    pub current_dir: PathBuf,
     pub arch: String,
 }
 
@@ -33,6 +34,8 @@ pub enum CliAction {
         overwrite_resources: bool,
         #[clap(long, action = clap::ArgAction::Set, default_value_t = true)]
         forward_postgres: bool,
+        #[clap(long)]
+        platform_dir: Option<PathBuf>,
     },
     Start {
         /// optional, positional customer id
@@ -68,6 +71,7 @@ mod tests {
             CliAction::Dev {
                 installation_url: url::Url::parse("https://www.batteriesincl.com/specs/dev.json")
                     .expect("Parsable default"),
+                platform_dir: None,
                 forward_postgres: true,
                 overwrite_resources: false
             }
@@ -88,6 +92,7 @@ mod tests {
                 forward_postgres: false,
                 installation_url: url::Url::parse("http://localhost:3000/specs/dev.json")
                     .expect("Parsable default"),
+                platform_dir: None,
                 overwrite_resources: false,
             }
         )

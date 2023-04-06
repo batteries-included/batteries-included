@@ -25,7 +25,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 pushd "${DIR}/../cli"
 set +e
-cargo run -- dev -vv
+cargo run -- dev -vvv --platform-dir="${DIR}/../platform_umbrella/"
 set -e
 echo "Exited"
 popd

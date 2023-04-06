@@ -2,24 +2,14 @@ use bcli::args::BaseArgs;
 use bcli::args::CliArgs;
 use bcli::args::ProgramArgs;
 use bcli::commands::program_main;
+use bcli::logging::TracingFilterExt;
 use clap::Parser;
 
+use eyre::Context;
 use eyre::ContextCompat;
 use eyre::Result;
-use tracing::log;
 
-fn convert_filter(filter: log::LevelFilter) -> tracing_subscriber::filter::LevelFilter {
-    match filter {
-        log::LevelFilter::Off => tracing_subscriber::filter::LevelFilter::OFF,
-        log::LevelFilter::Error => tracing_subscriber::filter::LevelFilter::ERROR,
-        log::LevelFilter::Warn => tracing_subscriber::filter::LevelFilter::WARN,
-        log::LevelFilter::Info => tracing_subscriber::filter::LevelFilter::INFO,
-        log::LevelFilter::Debug => tracing_subscriber::filter::LevelFilter::DEBUG,
-        log::LevelFilter::Trace => tracing_subscriber::filter::LevelFilter::TRACE,
-    }
-}
-
-#[tokio::main(worker_threads = 2)]
+#[tokio::main(worker_threads = 4)]
 async fn main() -> Result<()> {
     color_eyre::install()?;
 
@@ -31,14 +21,19 @@ async fn main() -> Result<()> {
             }),
             dir_parent: dirs::home_dir()
                 .context("Expected a home directory for us to install into")?,
+            current_dir: std::env::current_dir().context("Expected to get a current dir")?,
             arch: String::from(std::env::consts::ARCH),
         },
     };
 
     tracing_subscriber::fmt()
-        .with_max_level(convert_filter(
-            program_args.cli_args.verbose.log_level_filter(),
-        ))
+        .with_max_level(
+            program_args
+                .cli_args
+                .verbose
+                .log_level_filter()
+                .to_tracing_subscriber_filter(),
+        )
         .init();
 
     program_main(program_args).await

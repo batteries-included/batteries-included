@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use time::OffsetDateTime;
 use tracing::debug;
 
-pub async fn get_install_spec(url: url::Url) -> ::color_eyre::Result<InstallationSpec> {
+pub async fn get_install_spec(url: url::Url) -> eyre::Result<InstallationSpec> {
     debug!("Getting install spec from {}", &url);
     let result = reqwest::get(url).await?.json::<InstallationSpec>().await?;
 
