@@ -82,23 +82,5 @@
     "**/_build/**": true,
     "**/deps/**": true
   },
-  "githubIssues.ignoreCompletionTrigger": [
-    "coffeescript",
-    "diff",
-    "dockerfile",
-    "dockercompose",
-    "ignore",
-    "ini",
-    "julia",
-    "makefile",
-    "perl",
-    "powershell",
-    "python",
-    "r",
-    "ruby",
-    "shellscript",
-    "yaml",
-    "elixir"
-  ],
-  "githubIssues.ignoreUserCompletionTrigger": ["python", "elixir"]
+  "rust-analyzer.showUnlinkedFileNotification": false
 }
