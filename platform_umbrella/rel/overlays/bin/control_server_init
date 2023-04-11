@@ -6,4 +6,3 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 ${DIR}/control_server eval 'ControlServer.Release.createdb()'
 ${DIR}/control_server eval 'ControlServer.Release.migrate()'
-${DIR}/control_server eval 'ControlServer.Release.seed()'

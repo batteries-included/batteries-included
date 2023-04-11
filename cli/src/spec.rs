@@ -3,19 +3,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 use time::OffsetDateTime;
-use tracing::debug;
-
-pub async fn get_install_spec(url: url::Url) -> eyre::Result<InstallationSpec> {
-    debug!("Getting install spec from {}", &url);
-    let result = reqwest::get(url).await?.json::<InstallationSpec>().await?;
-
-    // Re-wrap in Ok so that error's above go to the correct types.
-    Ok(result)
-}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct InstallationSpec {
-    pub initial_resource: HashMap<String, DynamicObject>,
+    pub initial_resources: HashMap<String, DynamicObject>,
     pub kube_cluster: ClusterSpec,
     pub target_summary: StateSummarySpec,
 }
@@ -229,6 +220,6 @@ mod tests {
             fs::read_to_string(base.as_path()).expect("Should have been able to read the file");
 
         let json: InstallationSpec = serde_json::from_str(&contents).expect("Should parse");
-        assert!(!json.initial_resource.is_empty())
+        assert!(!json.initial_resources.is_empty())
     }
 }

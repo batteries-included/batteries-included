@@ -1,7 +1,7 @@
 defmodule KubeResources.MLTest do
   use ExUnit.Case
 
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
   alias KubeResources.Notebooks
   import KubeResources.ControlServerFactory
 

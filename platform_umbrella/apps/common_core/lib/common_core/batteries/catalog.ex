@@ -109,11 +109,6 @@ defmodule CommonCore.Batteries.Catalog do
       type: :metallb,
       dependencies: [:istio_gateway, :battery_core]
     },
-    %CatalogBattery{
-      group: :net_sec,
-      type: :metallb_ip_pool,
-      dependencies: [:metallb]
-    },
     # Security
     %CatalogBattery{
       group: :net_sec,
@@ -151,6 +146,10 @@ defmodule CommonCore.Batteries.Catalog do
 
   def all(group) do
     Enum.filter(@all, &(&1.group == group))
+  end
+
+  def get(type) when is_binary(type) do
+    get(String.to_existing_atom(type))
   end
 
   def get(type) when is_atom(type) do

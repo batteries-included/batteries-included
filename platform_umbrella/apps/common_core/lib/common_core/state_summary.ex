@@ -1,4 +1,4 @@
-defmodule CommonCore.SystemState.StateSummary do
+defmodule CommonCore.StateSummary do
   @moduledoc """
     The StateSummary module provides a struct to store and manage system state information.
 
@@ -6,7 +6,7 @@ defmodule CommonCore.SystemState.StateSummary do
 
     ```elixir
     # Create a new state summary struct
-    state_summary = %CommonCore.SystemState.StateSummary{}
+    state_summary = %CommonCore.StateSummary{}
 
     # Access fields
     batteries = state_summary.batteries

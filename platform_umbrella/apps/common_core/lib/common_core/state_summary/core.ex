@@ -1,5 +1,5 @@
-defmodule CommonCore.SystemState.Core do
-  alias CommonCore.SystemState.StateSummary
+defmodule CommonCore.StateSummary.Core do
+  alias CommonCore.StateSummary
 
   def get_battery(%StateSummary{} = state, type) do
     Enum.find(state.batteries, &(&1.type == type))

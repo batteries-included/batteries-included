@@ -1,6 +1,5 @@
-defmodule CommonCore.Batteries.MetalLBIPPoolConfig do
+defmodule CommonCore.Batteries.CertManagerConfig do
   use TypedEctoSchema
-
   import Ecto.Changeset
 
   @primary_key false

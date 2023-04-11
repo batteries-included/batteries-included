@@ -1,12 +1,7 @@
 defmodule CommonCore.SeedArgsConverter do
-  alias CommonCore.Batteries.SystemBattery
-
   @moduledoc """
-  This will help convert from Ecto.Schema based structs
+  This will help convert from json
   into args that can be used to insert.
-
-  This cleans things that aren't needed after converting
-  from structs and takes care of polymorphic embed types
 
   This is here in CommonCore since any structs that
   have polymorhic types need to specialize here. So
@@ -14,41 +9,29 @@ defmodule CommonCore.SeedArgsConverter do
   code.
   """
 
-  @bad_keys [:__meta__, :__struct__, :inserted_at, :updated_at]
+  @bad_keys [:__meta__, :__struct__, :inserted_at, :updated_at, "inserted_at", "updated_at", "id"]
 
-  def to_fresh_args(%SystemBattery{} = system_battery) do
-    system_battery
-    |> Map.from_struct()
-    |> Map.update(:config, %{}, fn val ->
+  def to_fresh_battery_args(%{} = system_battery) do
+    raw_battery =
+      system_battery
+      |> to_fresh_args()
+      |> Map.update!(:type, fn val -> String.to_existing_atom(val) end)
+
+    Map.update(raw_battery, :config, %{}, fn val ->
       # This is a polymorphic type. So we
       # have to add the special field.
-      val
-      |> to_fresh_args()
-      |> Map.put(:__type__, system_battery.type)
-    end)
-    |> Map.drop(@bad_keys)
-    |> Enum.map(fn {key, value} -> {key, to_fresh_args(value)} end)
-    |> Map.new()
-  end
 
-  def to_fresh_args(s) when is_struct(s) do
-    s
-    |> Map.from_struct()
-    |> Map.drop(@bad_keys)
-    |> Enum.map(fn {key, value} -> {key, to_fresh_args(value)} end)
-    |> Map.new()
+      Map.put_new(val, "__type__", raw_battery.type)
+    end)
   end
 
   def to_fresh_args(%{} = m) do
     m
-    |> Map.drop(@bad_keys)
-    |> Enum.map(fn {key, value} -> {key, to_fresh_args(value)} end)
+    |> Enum.map(fn {key, value} -> {to_key(key), value} end)
     |> Map.new()
+    |> Map.drop(@bad_keys)
   end
 
-  def to_fresh_args(l) when is_list(l) do
-    Enum.map(l, fn v -> to_fresh_args(v) end)
-  end
-
-  def to_fresh_args(v), do: v
+  def to_key(key) when is_binary(key), do: String.to_existing_atom(key)
+  def to_key(key) when is_atom(key), do: key
 end

@@ -1,7 +1,7 @@
-defmodule CommonCore.SystemState.Hosts do
-  import CommonCore.SystemState.Namespaces
+defmodule CommonCore.StateSummary.Hosts do
+  import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
 
   @default ["127.0.0.1"]
 

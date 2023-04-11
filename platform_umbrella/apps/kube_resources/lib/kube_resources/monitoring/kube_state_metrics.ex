@@ -1,7 +1,7 @@
 defmodule KubeResources.KubeStateMetrics do
   use KubeExt.ResourceGenerator, app_name: "kube-state-metrics"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
 

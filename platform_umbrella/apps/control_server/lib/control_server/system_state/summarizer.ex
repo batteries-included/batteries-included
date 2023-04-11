@@ -1,6 +1,6 @@
 defmodule ControlServer.SystemState.Summarizer do
   use GenServer
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
 
   alias Ecto.Multi
 

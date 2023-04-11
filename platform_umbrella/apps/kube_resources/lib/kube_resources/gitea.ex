@@ -6,8 +6,8 @@ defmodule KubeResources.Gitea do
 
   use KubeExt.ResourceGenerator, app_name: "gitea"
 
-  import CommonCore.SystemState.Namespaces
-  import CommonCore.SystemState.Hosts
+  import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.Hosts
 
   alias CommonCore.Defaults
   alias KubeExt.Builder, as: B

@@ -1,7 +1,7 @@
 defmodule KubeResources.KubeMonitoring do
   use KubeExt.ResourceGenerator, app_name: "kube-mon"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
 

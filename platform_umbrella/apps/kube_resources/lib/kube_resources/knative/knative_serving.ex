@@ -1,8 +1,8 @@
 defmodule KubeResources.KnativeServing do
   use KubeExt.ResourceGenerator, app_name: "knative-serving"
 
-  import CommonCore.SystemState.Namespaces
-  import CommonCore.SystemState.Hosts
+  import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.Hosts
 
   alias CommonCore.Knative.EnvValue
   alias CommonCore.Knative.Service

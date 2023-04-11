@@ -7,7 +7,7 @@ use tempfile::NamedTempFile;
 use crate::operating_system;
 
 const KIND_URL_BASE: &str = "https://github.com/kubernetes-sigs/kind/releases/download";
-const KIND_VER: &str = "v0.17.0";
+const KIND_VER: &str = "v0.18.0";
 
 const XDG_BASE: &str = ".config/batteriesincluded";
 const BIN_PATH: &str = "bin";

@@ -1,5 +1,5 @@
 defmodule KubeResources.ControlServer do
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
   use KubeExt.ResourceGenerator, app_name: "battery-control-server"
 
   alias KubeExt.Builder, as: B

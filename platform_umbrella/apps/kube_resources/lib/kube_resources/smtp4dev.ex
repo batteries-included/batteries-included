@@ -1,8 +1,8 @@
 defmodule KubeResources.Smtp4Dev do
   use KubeExt.ResourceGenerator, app_name: "smtp4dev"
 
-  import CommonCore.SystemState.Namespaces
-  import CommonCore.SystemState.Hosts
+  import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.Hosts
 
   alias KubeResources.IstioConfig.VirtualService
   alias KubeExt.Builder, as: B

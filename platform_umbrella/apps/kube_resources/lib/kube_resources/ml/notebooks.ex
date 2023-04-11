@@ -1,8 +1,8 @@
 defmodule KubeResources.Notebooks do
   use KubeExt.ResourceGenerator, app_name: "juypter-notebooks"
 
-  import CommonCore.SystemState.Namespaces
-  import CommonCore.SystemState.Hosts
+  import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.Hosts
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

@@ -17,6 +17,14 @@ Included team. Let's build something amazing together!
 
 ## Setup
 
+### Install Nix
+
+Nix is what we use to ensure that all dev environments have all the software
+needed. It's a packaging system and more. To install it the determinate
+installer is the reccomended.
+
+If you are on linux consider NixOS.
+
 ### Install Docker
 
 Please install docker. For linux make sure to use a recent version of docker.
@@ -33,77 +41,9 @@ sudo groupadd docker && sudo usermod -aG docker $USER
 **NB** You need to either `newgrp docker` docker or log out and back in for the
 group changes to be visible.
 
-## Install Developmen Dependencies
+### Optional: Install direnv
 
-There are two different ways that you can install the dependencies that have
-been tried.
-
-- Nix
-- ASDF
-
-Nix is more supported, but more involved and complicated. ASDF or just
-installing the dependencies yourself should work too.
-
-### Nix
-
-Nix is a package manager that can install and build deterministic versions of
-just about any software on Linux and MacOSX. It's a weird little language but a
-great development tool. Installing Nix and Direnv will mean that you need no
-other dependencies and everything other than kubernetes is automatically
-versioned for you.
-
-Install Nix:
-
-https://nixos.org/download.html#nix-install-macos
-
-```bash
-sh <(curl -L https://nixos.org/nix/install)
-```
-
-### ASDF
-
-I don't want to have to remember how to install all the dependencies. So install
-asdf and it will do that for us.
-
-```
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
-
-#
-# Follow http://asdf-vm.com/guide/getting-started.html#_1-install-dependencies
-# Or if you're using bash just do the following.
-#
-echo ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
-echo ". $HOME/.asdf/completions/asdf.bash" >> ~/.bashrc
-exec bash
-```
-
-Go to the main directory and run
-
-```
-asdf plugin add elixir
-asdf plugin add erlang
-asdf plugin add hugo
-asdf plugin add k9s
-asdf plugin add kind
-asdf plugin add kubectl
-asdf plugin add nodejs
-asdf plugin add rebar3
-asdf plugin add zig
-
-asdf install
-```
-
-That should install elixir, erlang, k3d, k9s, kubectl, nodejs, and tmux. There
-might be system dependencies that are needed.
-
-### Elixir Dependencies
-
-```bash
-cd platform_umbrella
-mix deps.get && \
-  mix deps.compile --force
-
-```
+While it's optional it's highly recommended to use direnv. It allows
 
 ## Code Orgnaization
 

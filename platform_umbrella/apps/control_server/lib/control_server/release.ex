@@ -7,7 +7,7 @@ defmodule ControlServer.Release do
   @apps [:control_server]
 
   def migrate do
-    load_app()
+    :ok = load_app()
     Logger.debug("Starting Migrate")
 
     for app <- @apps do
@@ -17,13 +17,29 @@ defmodule ControlServer.Release do
     end
   end
 
-  def seed do
-    load_app()
-    Logger.info("Starting Seed")
+  def createdb do
+    # Start postgrex and ecto
+    Logger.info("Starting createdb...")
 
-    KubeExt.cluster_type()
-    |> CommonCore.SystemState.SeedState.seed()
-    |> ControlServer.Seed.seed_from_snapshot()
+    # Start apps necessary for executing migrations
+    :ok = load_app()
+
+    Enum.each(@apps, fn repo_app ->
+      # Create every repo for every app that's to be started.
+      repo_app
+      |> repos()
+      |> Enum.each(fn repo ->
+        :ok = ensure_repo_created(repo)
+      end)
+    end)
+
+    Logger.debug("createdb task done!")
+  end
+
+  def seed(path) do
+    # Start apps necessary for executing migrations
+    :ok = load_app()
+    :ok = ControlServer.Seed.seed_from_install_path(path)
   end
 
   def rollback(repo, version) do
@@ -49,25 +65,6 @@ defmodule ControlServer.Release do
     end)
 
     :ok
-  end
-
-  def createdb do
-    # Start postgrex and ecto
-    Logger.info("Starting createdb...")
-
-    # Start apps necessary for executing migrations
-    :ok = load_app()
-
-    Enum.each(@apps, fn repo_app ->
-      # Create every repo for every app that's to be started.
-      repo_app
-      |> repos()
-      |> Enum.each(fn repo ->
-        :ok = ensure_repo_created(repo)
-      end)
-    end)
-
-    Logger.debug("createdb task done!")
   end
 
   defp ensure_repo_created(repo) do

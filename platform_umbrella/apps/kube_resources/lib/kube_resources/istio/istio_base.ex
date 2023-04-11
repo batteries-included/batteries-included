@@ -32,7 +32,7 @@ defmodule KubeResources.IstioBase do
   use KubeExt.ResourceGenerator, app_name: "istio-base"
 
   import CommonCore.Yaml
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
 

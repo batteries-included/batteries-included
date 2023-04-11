@@ -1,7 +1,7 @@
 defmodule KubeResources.BatteryCA do
   use KubeExt.ResourceGenerator, app_name: "battery-ca"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
   alias KubeExt.Builder, as: B
 
   resource(:certmanger_issuer_selfsigned, _battery, state) do

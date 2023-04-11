@@ -8,8 +8,6 @@ defmodule ControlServer.Batteries.InstallerTest do
 
   alias ControlServer.Batteries.Installer
 
-  import CommonCore.SeedArgsConverter
-
   describe "ControlServer.Batteries.Installer" do
     test "every battery in the catalog installs :ok" do
       for catalog_battery <- Catalog.all() do
@@ -44,11 +42,9 @@ defmodule ControlServer.Batteries.InstallerTest do
 
       {:ok, _} =
         :everything
-        |> CommonCore.SystemState.SeedState.seed()
+        |> CommonCore.StateSummary.SeedState.seed()
         |> then(fn %{batteries: batteries} = _state ->
-          batteries
-          |> Enum.map(&to_fresh_args/1)
-          |> Installer.install_all()
+          Installer.install_all(batteries)
         end)
 
       assert ControlServer.Repo.aggregate(SystemBattery, :count, :id) >= 4

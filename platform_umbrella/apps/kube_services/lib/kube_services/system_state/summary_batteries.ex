@@ -1,6 +1,6 @@
 defmodule KubeServices.SystemState.SummaryBatteries do
   alias ControlServer.SystemState.Summarizer
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
   alias EventCenter.SystemStateSummary
   use GenServer
 

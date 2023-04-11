@@ -796,7 +796,7 @@ defmodule Mix.Tasks.Gen.Resource do
         use KubeExt.ResourceGenerator, app_name: unquote(app_name)
 
         import CommonCore.Yaml
-        import CommonCore.SystemState.Namespaces
+        import CommonCore.StateSummary.Namespaces
 
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret
@@ -820,7 +820,7 @@ defmodule Mix.Tasks.Gen.Resource do
         use KubeExt.ResourceGenerator, app_name: unquote(app_name)
 
         import CommonCore.Yaml
-        import CommonCore.SystemState.Namespaces
+        import CommonCore.StateSummary.Namespaces
 
         alias KubeExt.Builder, as: B
         alias KubeExt.Secret

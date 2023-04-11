@@ -2,7 +2,7 @@ defmodule KubeResources.DevtoolsTest do
   use ExUnit.Case
 
   alias KubeResources.KnativeOperator
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
   alias CommonCore.Defaults.Images
 
   test "Can materialize knative operator" do

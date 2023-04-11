@@ -7,7 +7,7 @@ defmodule KubeResources.KubeDashboards do
 
   use KubeExt.ResourceGenerator, app_name: "kube-dashboard"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

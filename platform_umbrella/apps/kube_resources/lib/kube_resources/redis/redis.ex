@@ -2,7 +2,7 @@ defmodule KubeResources.Redis do
   @moduledoc false
   use KubeExt.ResourceGenerator, app_name: "redis-operator"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
 

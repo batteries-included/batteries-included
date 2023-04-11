@@ -1,4 +1,4 @@
-defmodule CommonCore.Batteries.EmptyConfig do
+defmodule CommonCore.Batteries.IstioCSRConfig do
   use TypedEctoSchema
   import Ecto.Changeset
 

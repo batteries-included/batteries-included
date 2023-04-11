@@ -1,7 +1,7 @@
 defmodule KubeResources.NodeExporter do
   use KubeExt.ResourceGenerator, app_name: "node-exporter"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

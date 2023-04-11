@@ -2,7 +2,7 @@ defmodule KubeResources.IstioGateway do
   @moduledoc false
   use KubeExt.ResourceGenerator, app_name: "istio-ingressgateway"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
 

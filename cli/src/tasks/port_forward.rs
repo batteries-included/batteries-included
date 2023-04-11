@@ -8,7 +8,7 @@ use tokio::io::{AsyncRead, AsyncWrite};
 use tokio::net::TcpListener;
 use tokio_stream::wrappers::TcpListenerStream;
 
-use tracing::{error, info};
+use tracing::{debug, info, warn};
 
 use crate::postgres_kube::master_name;
 
@@ -36,7 +36,7 @@ async fn forward_connection(
     tokio::io::copy_bidirectional(&mut client_conn, &mut upstream_conn).await?;
     drop(upstream_conn);
     forwarder.join().await?;
-    info!("connection closed");
+    debug!("connection closed");
     Ok(())
 }
 
@@ -56,13 +56,13 @@ async fn run_server(pods: Api<Pod>) -> Result<()> {
                     if let Err(e) =
                         forward_connection(&pods, &master_name, pod_port, client_conn).await
                     {
-                        error!(
+                        warn!(
                             error = e.as_ref() as &dyn std::error::Error,
                             "failed to forward connection"
                         );
                     }
                 } else {
-                    error!("Unable to determine the correct master");
+                    warn!("Unable to determine the correct master");
                 }
             });
             // keep the server running

@@ -1,8 +1,8 @@
 defmodule KubeResources.VMCluster do
   use KubeExt.ResourceGenerator, app_name: "vcitoria-metrics-cluster"
 
-  import CommonCore.SystemState.Namespaces
-  import CommonCore.SystemState.Hosts
+  import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.Hosts
   import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B

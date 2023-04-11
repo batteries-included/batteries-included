@@ -1,7 +1,7 @@
 defmodule KubeResources.Loki do
   use KubeExt.ResourceGenerator, app_name: "loki"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
   import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B

@@ -1,9 +1,14 @@
 use eyre::{ContextCompat, Result};
 use futures::{StreamExt, TryStreamExt};
 use k8s_openapi::api::core::v1::Pod;
-use kube_client::{api::ListParams, Api, Client};
+use kube_client::{
+    api::{ListParams, WatchParams},
+    Api, Client,
+};
 use kube_runtime::wait::{await_condition, conditions::is_pod_running};
 use tracing::info;
+
+const LABEL_SELECTOR: &str = "spilo-role=master,cluster-name=pg-control";
 
 pub async fn wait_healthy_pg(kube_client: Client, namespace: &str) -> Result<()> {
     info!("Waiting for the first postgres pod to be running");
@@ -15,17 +20,17 @@ pub async fn wait_healthy_pg(kube_client: Client, namespace: &str) -> Result<()>
 }
 
 pub async fn master_name(pods: Api<Pod>) -> Result<String> {
-    let list_params = ListParams::default()
-        .labels("spilo-role=master,cluster-name=pg-control")
-        .disable_bookmarks()
-        .timeout(290);
+    let list_params = ListParams::default().labels(LABEL_SELECTOR);
     let list = pods.list(&list_params).await?;
     if list.items.is_empty() {
         let rv = list
             .metadata
             .resource_version
             .unwrap_or_else(|| "0".to_string());
-        let mut stream = pods.watch(&list_params, &rv).await?.boxed();
+        let watch_params = WatchParams::default()
+            .labels(LABEL_SELECTOR)
+            .disable_bookmarks();
+        let mut stream = pods.watch(&watch_params, &rv).await?.boxed();
         let res = stream.try_next().await?.and_then(|event| match event {
             kube_client::core::WatchEvent::Added(pod) => pod.metadata.name,
             kube_client::core::WatchEvent::Modified(pod) => pod.metadata.name,

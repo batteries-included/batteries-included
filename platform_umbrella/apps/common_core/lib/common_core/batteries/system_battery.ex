@@ -5,21 +5,25 @@ defmodule CommonCore.Batteries.SystemBattery do
   import PolymorphicEmbed
 
   alias CommonCore.Batteries.{
+    BatteryCAConfig,
     BatteryCoreConfig,
+    CertManagerConfig,
     ControlServerConfig,
-    EmptyConfig,
     GiteaConfig,
     GrafanaConfig,
     HarborConfig,
     IstioConfig,
+    IstioCSRConfig,
+    IstioGatewayConfig,
     KialiConfig,
+    KubeMonitoringConfig,
     KnativeOperatorConfig,
     KnativeServingConfig,
     KubeStateMetricsConfig,
     LokiConfig,
     MetalLBConfig,
-    MetalLBIPPoolConfig,
     NodeExporterConfig,
+    NotebooksConfig,
     PostgresConfig,
     PromtailConfig,
     RedisConfig,
@@ -27,30 +31,30 @@ defmodule CommonCore.Batteries.SystemBattery do
     Smtp4devConfig,
     SsoConfig,
     TrivyOperatorConfig,
+    TrustManagerConfig,
     VictoriaMetricsConfig
   }
 
   @possible_types [
-    battery_ca: EmptyConfig,
+    battery_ca: BatteryCAConfig,
     battery_core: BatteryCoreConfig,
-    cert_manager: EmptyConfig,
+    cert_manager: CertManagerConfig,
     control_server: ControlServerConfig,
     gitea: GiteaConfig,
     grafana: GrafanaConfig,
     harbor: HarborConfig,
     istio: IstioConfig,
-    istio_csr: EmptyConfig,
-    istio_gateway: EmptyConfig,
+    istio_csr: IstioCSRConfig,
+    istio_gateway: IstioGatewayConfig,
     kiali: KialiConfig,
     knative_operator: KnativeOperatorConfig,
     knative_serving: KnativeServingConfig,
-    kube_monitoring: EmptyConfig,
+    kube_monitoring: KubeMonitoringConfig,
     kube_state_metrics: KubeStateMetricsConfig,
     loki: LokiConfig,
     metallb: MetalLBConfig,
-    metallb_ip_pool: MetalLBIPPoolConfig,
     node_exporter: NodeExporterConfig,
-    notebooks: EmptyConfig,
+    notebooks: NotebooksConfig,
     postgres: PostgresConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
@@ -58,7 +62,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     smtp4dev: Smtp4devConfig,
     sso: SsoConfig,
     trivy_operator: TrivyOperatorConfig,
-    trust_manager: EmptyConfig,
+    trust_manager: TrustManagerConfig,
     victoria_metrics: VictoriaMetricsConfig
   ]
 
@@ -103,5 +107,23 @@ defmodule CommonCore.Batteries.SystemBattery do
     |> cast(attrs, [:group, :type])
     |> validate_required([:group, :type])
     |> cast_polymorphic_embed(:config)
+  end
+
+  def to_fresh_args(%__MODULE__{} = system_battery) do
+    system_battery
+    |> Map.from_struct()
+    |> Map.update!(:config, fn config ->
+      config
+      |> Map.from_struct()
+      |> Map.put_new(:__type__, system_battery.type)
+    end)
+  end
+
+  def to_fresh_args(%{} = sb_map) do
+    battery_type = Map.get_lazy(sb_map, :type, fn -> Map.fetch!(sb_map, "type") end)
+
+    Map.update(sb_map, :config, %{"__type__" => battery_type}, fn config ->
+      Map.put_new(config, "__type__", battery_type)
+    end)
   end
 end

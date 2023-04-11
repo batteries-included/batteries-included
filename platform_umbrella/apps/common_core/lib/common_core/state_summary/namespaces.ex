@@ -1,7 +1,7 @@
-defmodule CommonCore.SystemState.Namespaces do
-  import CommonCore.SystemState.Core
+defmodule CommonCore.StateSummary.Namespaces do
+  import CommonCore.StateSummary.Core
 
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
   alias CommonCore.Defaults
 
   def core_namespace(%StateSummary{} = state) do

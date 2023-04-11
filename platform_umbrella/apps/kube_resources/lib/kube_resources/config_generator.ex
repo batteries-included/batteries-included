@@ -2,7 +2,7 @@ defmodule KubeResources.ConfigGenerator do
   @moduledoc """
   Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
 
   alias KubeResources.{
     BatteryCA,
@@ -28,7 +28,6 @@ defmodule KubeResources.ConfigGenerator do
     KubeStateMetrics,
     Loki,
     MetalLB,
-    MetalLBIPPool,
     NodeExporter,
     Notebooks,
     Postgres,
@@ -68,7 +67,6 @@ defmodule KubeResources.ConfigGenerator do
     kube_state_metrics: [&KubeStateMetrics.materialize/2],
     loki: [&Loki.materialize/2],
     metallb: [&MetalLB.materialize/2],
-    metallb_ip_pool: [&MetalLBIPPool.materialize/2],
     node_exporter: [&NodeExporter.materialize/2],
     notebooks: [&Notebooks.materialize/2],
     postgres: [&Postgres.materialize/2, &PostgresOperator.materialize/2],

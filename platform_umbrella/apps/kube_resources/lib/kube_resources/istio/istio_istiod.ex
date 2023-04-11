@@ -5,7 +5,7 @@ defmodule KubeResources.IstioIstiod do
 
   use KubeExt.ResourceGenerator, app_name: "istiod"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
 

@@ -1,8 +1,8 @@
 defmodule KubeResources.Postgres do
   use KubeExt.ResourceGenerator, app_name: "postgres"
 
-  import CommonCore.SystemState.Namespaces
-  import CommonCore.SystemState.FromKubeState
+  import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.FromKubeState
 
   alias KubeExt.Builder, as: B
   alias KubeExt.Secret

@@ -31,7 +31,7 @@ defmodule KubeResources.VMOperator do
 
   use KubeExt.ResourceGenerator, app_name: "victoria-metrics-operator"
   import CommonCore.Yaml
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
   alias KubeExt.Builder, as: B
 
   @service_account_name "victoria-metrics-operator"

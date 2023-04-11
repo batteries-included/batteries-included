@@ -1,5 +1,5 @@
-defmodule CommonCore.SystemState.FromKubeState do
-  alias CommonCore.SystemState.StateSummary
+defmodule CommonCore.StateSummary.FromKubeState do
+  alias CommonCore.StateSummary
 
   @namespaceless [:namespace, :node, :cluster_role, :cluster_role_binding]
 

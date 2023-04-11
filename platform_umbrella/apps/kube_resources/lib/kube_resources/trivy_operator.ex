@@ -23,7 +23,7 @@ defmodule KubeResources.TrivyOperator do
 
   use KubeExt.ResourceGenerator, app_name: "trivy-operator"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
   import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B

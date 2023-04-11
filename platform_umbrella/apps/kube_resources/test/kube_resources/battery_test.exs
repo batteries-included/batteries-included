@@ -2,7 +2,7 @@ defmodule KubeResources.BatteryTest do
   use ExUnit.Case
 
   alias KubeResources.ControlServer, as: ControlServerResources
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
   alias CommonCore.Defaults
 
   describe "Battery core services works" do

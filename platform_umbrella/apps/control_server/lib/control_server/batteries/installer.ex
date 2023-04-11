@@ -47,7 +47,8 @@ defmodule ControlServer.Batteries.Installer do
 
   def install_all(batteries, update_target \\ nil) do
     update_progress(update_target, :starting)
-    # For every battery that's there get the dependencies as catalog batteries.
+    # For every battery that's passed in get the dependencies
+    # as catalog batteries (`CommonCore.Batteries.CatalogBattery`).
     #
     # Then make the whole list unique
     #
@@ -56,12 +57,18 @@ defmodule ControlServer.Batteries.Installer do
     #
     # Give that list to the `do_install method` which actually does the
     # combined find or create multi transaction for all batteries
+
+    start_arg_map =
+      batteries
+      |> Enum.map(fn sb -> {sb.type, SystemBattery.to_fresh_args(sb)} end)
+      |> Map.new()
+
     batteries
     |> Enum.map(&Catalog.get(&1.type))
     |> Enum.flat_map(&Catalog.get_recursive/1)
     |> Enum.uniq_by(& &1.type)
     |> Enum.reduce(
-      batteries |> Enum.map(&{&1.type, &1}) |> Map.new(),
+      start_arg_map,
       fn catalog_battery, battery_map ->
         Map.put_new_lazy(battery_map, catalog_battery.type, fn ->
           CatalogBattery.to_fresh_args(catalog_battery)

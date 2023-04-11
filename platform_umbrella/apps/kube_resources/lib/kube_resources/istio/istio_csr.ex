@@ -1,7 +1,7 @@
 defmodule KubeResources.IstioCsr do
   use KubeExt.ResourceGenerator, app_name: "istio-csr"
 
-  import CommonCore.SystemState.Namespaces
+  import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F

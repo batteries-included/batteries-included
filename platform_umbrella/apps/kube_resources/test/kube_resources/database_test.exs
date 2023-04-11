@@ -3,7 +3,7 @@ defmodule Apps.KubeResources.Test.KubeResources.DatabaseTest do
 
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Batteries.Catalog
-  alias CommonCore.SystemState.StateSummary
+  alias CommonCore.StateSummary
 
   alias KubeResources.Postgres
 

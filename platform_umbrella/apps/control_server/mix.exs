@@ -83,7 +83,7 @@ defmodule ControlServer.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
 
       # We want to be able to test seeding the data so mix ecto.reset no
       # longer seeds the database. This allows tests to

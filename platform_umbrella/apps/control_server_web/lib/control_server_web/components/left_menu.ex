@@ -497,7 +497,7 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  defp battery_detail_item(%{battery: %{type: :metallb_ip_pool}} = assigns) do
+  defp battery_detail_item(%{battery: %{type: :metallb}} = assigns) do
     ~H"""
     <.detail_menu_item
       navigate={~p"/ip_address_pools"}
