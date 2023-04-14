@@ -1,8 +1,7 @@
 defmodule CommonUI.Flash do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+  use CommonUI.Component
 
-  import CommonUI.Gettext
+  import CommonUI.Gettext, warn: false
 
   alias Phoenix.LiveView.JS
 

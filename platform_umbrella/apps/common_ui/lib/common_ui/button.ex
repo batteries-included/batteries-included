@@ -1,7 +1,5 @@
 defmodule CommonUI.Button do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
-  import CommonUI.CSSHelpers
+  use CommonUI.Component
 
   @doc """
   Renders a button.

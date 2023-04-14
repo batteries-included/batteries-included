@@ -1,6 +1,5 @@
 defmodule CommonUI.Icons.CNCF do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+  use CommonUI.Component
 
   attr :class, :any, default: "h-9 w-auto"
 

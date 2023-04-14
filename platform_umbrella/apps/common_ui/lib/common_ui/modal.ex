@@ -1,9 +1,7 @@
 defmodule CommonUI.Modal do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+  use CommonUI.Component
 
   import CommonUI.Button
-  import CommonUI.Link
 
   alias Phoenix.LiveView.JS
 

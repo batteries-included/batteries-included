@@ -1,6 +1,5 @@
 defmodule CommonUI.Icons.Batteries do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+  use CommonUI.Component
 
   attr :class, :any, default: "h-9 w-auto"
   attr :top_cloud_class, :any, default: "fill-gray-500"

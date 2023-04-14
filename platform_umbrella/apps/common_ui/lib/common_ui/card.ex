@@ -1,7 +1,6 @@
 defmodule CommonUI.Card do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
-  import CommonUI.CSSHelpers
+  use CommonUI.Component
+
   import CommonUI.Typogoraphy
 
   attr :class, :string, default: nil

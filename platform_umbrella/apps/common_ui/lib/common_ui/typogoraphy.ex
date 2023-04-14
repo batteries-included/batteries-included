@@ -1,7 +1,5 @@
 defmodule CommonUI.Typogoraphy do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
-  import CommonUI.CSSHelpers
+  use CommonUI.Component
 
   attr :class, :any, default: ""
   attr :base_class, :string, default: "text-3xl text-pink-500 sm:text-5xl font-extrabold my-6"

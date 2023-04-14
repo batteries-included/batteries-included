@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Chart do
     <div
       class={build_class([@class])}
       id={@id}
-      phx-hook="ChartHook"
+      phx-hook="Chart"
       data-chart-type={@type}
       data-chart-data={Jason.encode!(@data)}
       data-chart-options={Jason.encode!(@options)}

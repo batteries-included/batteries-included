@@ -1,11 +1,11 @@
 defmodule CommonUI.Icons.Rook do
-  use Phoenix.Component
+  use CommonUI.Component
 
   def ceph_icon(assigns) do
     ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class={["h-6 w-6 ", @class]}
+      class={build_class(["h-6 w-6 ", @class])}
       viewBox="-3.22 -4.4 66.773 66.338"
       fill="currentColor"
     >

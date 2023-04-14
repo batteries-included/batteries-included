@@ -1,6 +1,5 @@
 defmodule CommonUI.DataList do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+  use CommonUI.Component
 
   @doc """
   Renders a data list.

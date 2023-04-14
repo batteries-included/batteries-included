@@ -1,7 +1,5 @@
 defmodule CommonUI.Icons.Database do
-  use Phoenix.Component
-
-  import CommonUI.CSSHelpers
+  use CommonUI.Component
 
   attr :class, :any, default: nil
 

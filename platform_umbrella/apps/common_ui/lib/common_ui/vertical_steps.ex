@@ -1,7 +1,5 @@
 defmodule CommonUI.VerticalSteps do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
-  import CommonUI.CSSHelpers
+  use CommonUI.Component
 
   attr :current_step, :integer, default: 0
   attr :base_class, :string, default: "steps steps-vertical"

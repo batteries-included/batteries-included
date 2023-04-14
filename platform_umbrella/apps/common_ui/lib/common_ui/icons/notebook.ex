@@ -1,7 +1,5 @@
 defmodule CommonUI.Icons.Notebook do
-  use Phoenix.Component
-
-  import CommonUI.CSSHelpers
+  use CommonUI.Component
 
   attr :class, :any, default: nil
 

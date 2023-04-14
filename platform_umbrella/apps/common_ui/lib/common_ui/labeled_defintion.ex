@@ -1,6 +1,6 @@
 defmodule CommonUI.LabeledDefiniton do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+  use CommonUI.Component
+
   import CommonUI.Card
 
   def labeled_definition(assigns) do

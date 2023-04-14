@@ -1,7 +1,5 @@
 defmodule CommonUI.TabBar do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
-  import CommonUI.Link
+  use CommonUI.Component
 
   defp link_class(false),
     do:

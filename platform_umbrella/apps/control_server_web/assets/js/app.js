@@ -26,7 +26,7 @@ const liveSocket = new LiveSocket('/live', Socket, {
       }
     },
   },
-  hooks: { IFrame: IFrame, ChartHook: ChartHook },
+  hooks: { IFrame: IFrame, Chart: ChartHook },
   params: { _csrf_token: csrfToken },
 });
 

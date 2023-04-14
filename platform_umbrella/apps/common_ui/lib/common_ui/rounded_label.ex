@@ -1,7 +1,5 @@
 defmodule CommonUI.RoundedLabel do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
-  import CommonUI.CSSHelpers
+  use CommonUI.Component
 
   attr :class, :string, default: ""
   slot :inner_block

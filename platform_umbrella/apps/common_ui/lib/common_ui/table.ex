@@ -1,5 +1,5 @@
 defmodule CommonUI.Table do
-  use Phoenix.Component
+  use CommonUI.Component
 
   @doc ~S"""
   Renders a table with generic styling.

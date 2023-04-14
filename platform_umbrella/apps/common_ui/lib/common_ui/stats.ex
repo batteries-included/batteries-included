@@ -1,6 +1,5 @@
 defmodule CommonUI.Stats do
-  use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+  use CommonUI.Component
 
   import CommonUI.Card
   import CommonUI.Typogoraphy
