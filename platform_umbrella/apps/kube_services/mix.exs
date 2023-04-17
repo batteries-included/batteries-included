@@ -28,7 +28,7 @@ defmodule KubeServices.MixProject do
     [
       {:tesla, "~> 1.6.0"},
       {:jason, "~> 1.2"},
-      {:oban, "~> 2.12"},
+      {:oban, "~> 2.15"},
       {:k8s, "~> 2.2.0"},
       {:phoenix, "~> 1.7.2"},
       {:common_core, in_umbrella: true},

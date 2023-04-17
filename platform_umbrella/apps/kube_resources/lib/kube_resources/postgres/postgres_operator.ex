@@ -8,7 +8,6 @@ defmodule KubeResources.PostgresOperator do
 
   use KubeExt.ResourceGenerator, app_name: "postgres-operator"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -423,19 +422,19 @@ defmodule KubeResources.PostgresOperator do
 
   defp infra_users_config_map(battery, _state) do
     battery.config.infra_users
-    |> Enum.map(fn u -> {u.username, Ymlr.Encoder.to_s!(%{user_flags: u.roles})} end)
+    |> Enum.map(fn u -> {u.username, Ymlr.document!(%{user_flags: u.roles})} end)
     |> Map.new()
   end
 
   resource(:crd_operatorconfigurations_acid_zalan_do) do
-    yaml(get_resource(:operatorconfigurations_acid_zalan_do))
+    YamlElixir.read_all_from_string!(get_resource(:operatorconfigurations_acid_zalan_do))
   end
 
   resource(:crd_postgresqls_acid_zalan_do) do
-    yaml(get_resource(:postgresqls_acid_zalan_do))
+    YamlElixir.read_all_from_string!(get_resource(:postgresqls_acid_zalan_do))
   end
 
   resource(:crd_postgresteams_acid_zalan_do) do
-    yaml(get_resource(:postgresteams_acid_zalan_do))
+    YamlElixir.read_all_from_string!(get_resource(:postgresteams_acid_zalan_do))
   end
 end

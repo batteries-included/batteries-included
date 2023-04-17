@@ -7,7 +7,6 @@ defmodule KubeResources.KnativeOperator do
 
   use KubeExt.ResourceGenerator, app_name: "knative-operator"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -505,7 +504,7 @@ defmodule KubeResources.KnativeOperator do
 
     [:knativeeventings_operator_knative_dev, :knativeservings_operator_knative_dev]
     |> Enum.map(&get_resource/1)
-    |> Enum.flat_map(&yaml/1)
+    |> Enum.flat_map(&YamlElixir.read_all_from_string!/1)
     |> Enum.map(fn crd ->
       KubeExt.CrdWebhook.change_conversion(crd, @webhook_service, namespace)
     end)

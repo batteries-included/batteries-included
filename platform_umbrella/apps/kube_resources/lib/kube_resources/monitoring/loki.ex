@@ -2,14 +2,13 @@ defmodule KubeResources.Loki do
   use KubeExt.ResourceGenerator, app_name: "loki"
 
   import CommonCore.StateSummary.Namespaces
-  import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
 
   resource(:config_map_main, battery, state) do
     namespace = core_namespace(state)
-    contents = battery |> config_contents(state) |> to_yaml()
+    contents = battery |> config_contents(state) |> Ymlr.document!()
     data = %{"config.yaml" => contents}
 
     B.build_resource(:config_map)
@@ -212,7 +211,7 @@ defmodule KubeResources.Loki do
 
   resource(:config_map_data_source, battery, state) do
     namespace = core_namespace(state)
-    contents = battery |> datasources_contents(state) |> to_yaml()
+    contents = battery |> datasources_contents(state) |> Ymlr.document!()
     data = %{"loki-datasources.yaml" => contents}
 
     B.build_resource(:config_map)

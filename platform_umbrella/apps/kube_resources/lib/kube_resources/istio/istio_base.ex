@@ -31,7 +31,6 @@ defmodule KubeResources.IstioBase do
 
   use KubeExt.ResourceGenerator, app_name: "istio-base"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -258,63 +257,63 @@ defmodule KubeResources.IstioBase do
   end
 
   resource(:crd_authorizationpolicies_security_istio_io) do
-    yaml(get_resource(:authorizationpolicies_security_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:authorizationpolicies_security_istio_io))
   end
 
   resource(:crd_destinationrules_networking_istio_io) do
-    yaml(get_resource(:destinationrules_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:destinationrules_networking_istio_io))
   end
 
   resource(:crd_envoyfilters_networking_istio_io) do
-    yaml(get_resource(:envoyfilters_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:envoyfilters_networking_istio_io))
   end
 
   resource(:crd_gateways_networking_istio_io) do
-    yaml(get_resource(:gateways_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:gateways_networking_istio_io))
   end
 
   resource(:crd_istiooperators_install_istio_io) do
-    yaml(get_resource(:istiooperators_install_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:istiooperators_install_istio_io))
   end
 
   resource(:crd_peerauthentications_security_istio_io) do
-    yaml(get_resource(:peerauthentications_security_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:peerauthentications_security_istio_io))
   end
 
   resource(:crd_proxyconfigs_networking_istio_io) do
-    yaml(get_resource(:proxyconfigs_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:proxyconfigs_networking_istio_io))
   end
 
   resource(:crd_requestauthentications_security_istio_io) do
-    yaml(get_resource(:requestauthentications_security_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:requestauthentications_security_istio_io))
   end
 
   resource(:crd_serviceentries_networking_istio_io) do
-    yaml(get_resource(:serviceentries_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:serviceentries_networking_istio_io))
   end
 
   resource(:crd_sidecars_networking_istio_io) do
-    yaml(get_resource(:sidecars_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:sidecars_networking_istio_io))
   end
 
   resource(:crd_telemetries_telemetry_istio_io) do
-    yaml(get_resource(:telemetries_telemetry_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:telemetries_telemetry_istio_io))
   end
 
   resource(:crd_virtualservices_networking_istio_io) do
-    yaml(get_resource(:virtualservices_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:virtualservices_networking_istio_io))
   end
 
   resource(:crd_wasmplugins_extensions_istio_io) do
-    yaml(get_resource(:wasmplugins_extensions_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:wasmplugins_extensions_istio_io))
   end
 
   resource(:crd_workloadentries_networking_istio_io) do
-    yaml(get_resource(:workloadentries_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:workloadentries_networking_istio_io))
   end
 
   resource(:crd_workloadgroups_networking_istio_io) do
-    yaml(get_resource(:workloadgroups_networking_istio_io))
+    YamlElixir.read_all_from_string!(get_resource(:workloadgroups_networking_istio_io))
   end
 
   resource(:role_binding_istiod_battery_istio, _battery, state) do

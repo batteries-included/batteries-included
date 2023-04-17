@@ -24,7 +24,6 @@ defmodule KubeResources.TrivyOperator do
   use KubeExt.ResourceGenerator, app_name: "trivy-operator"
 
   import CommonCore.StateSummary.Namespaces
-  import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
@@ -42,7 +41,8 @@ defmodule KubeResources.TrivyOperator do
       :vulnerabilityreports
     ]
     |> Enum.map(fn crd_name ->
-      {to_string(crd_name), crd_name |> get_resource() |> yaml() |> hd()}
+      {to_string(crd_name),
+       crd_name |> get_resource() |> YamlElixir.read_all_from_string!() |> hd()}
     end)
     |> Map.new()
   end
@@ -50,14 +50,14 @@ defmodule KubeResources.TrivyOperator do
   resource(:aqua_cluster_compliance_report_cis) do
     :cis
     |> get_resource()
-    |> yaml()
+    |> YamlElixir.read_all_from_string!()
     |> hd()
   end
 
   resource(:aqua_cluster_compliance_report_nsa) do
     :nsa
     |> get_resource()
-    |> yaml()
+    |> YamlElixir.read_all_from_string!()
     |> hd()
   end
 

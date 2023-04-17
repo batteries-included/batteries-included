@@ -10,7 +10,6 @@ defmodule KubeResources.MetalLB do
 
   use KubeExt.ResourceGenerator, app_name: "metallb"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -115,31 +114,31 @@ defmodule KubeResources.MetalLB do
   end
 
   resource(:crd_addresspools_io) do
-    yaml(get_resource(:addresspools_metallb_io))
+    YamlElixir.read_all_from_string!(get_resource(:addresspools_metallb_io))
   end
 
   resource(:crd_bfdprofiles_io) do
-    yaml(get_resource(:bfdprofiles_metallb_io))
+    YamlElixir.read_all_from_string!(get_resource(:bfdprofiles_metallb_io))
   end
 
   resource(:crd_bgpadvertisements_io) do
-    yaml(get_resource(:bgpadvertisements_metallb_io))
+    YamlElixir.read_all_from_string!(get_resource(:bgpadvertisements_metallb_io))
   end
 
   resource(:crd_bgppeers_io) do
-    yaml(get_resource(:bgppeers_metallb_io))
+    YamlElixir.read_all_from_string!(get_resource(:bgppeers_metallb_io))
   end
 
   resource(:crd_communities_io) do
-    yaml(get_resource(:communities_metallb_io))
+    YamlElixir.read_all_from_string!(get_resource(:communities_metallb_io))
   end
 
   resource(:crd_ipaddresspools_io) do
-    yaml(get_resource(:ipaddresspools_metallb_io))
+    YamlElixir.read_all_from_string!(get_resource(:ipaddresspools_metallb_io))
   end
 
   resource(:crd_l2advertisements_io) do
-    yaml(get_resource(:l2advertisements_metallb_io))
+    YamlElixir.read_all_from_string!(get_resource(:l2advertisements_metallb_io))
   end
 
   resource(:daemon_set_speaker, battery, state) do

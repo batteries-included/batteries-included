@@ -2,13 +2,17 @@
   description = "The entire Batteries Included world";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    systems.url = "github:nix-systems/default";
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
     flake-root.url = "github:srid/flake-root";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
+        systems.follows = "systems";
       };
     };
     crane = {
@@ -31,13 +35,17 @@
       url = "github:hercules-ci/flake-parts";
       inputs = { nixpkgs-lib.follows = "nixpkgs"; };
     };
+    gitignore = {
+      url = "github:hercules-ci/gitignore.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs = { nixpkgs.follows = "nixpkgs"; };
     };
   };
 
-  outputs = inputs@{ flake-utils, treefmt-nix, flake-root, flake-parts, ... }:
+  outputs = inputs@{ flake-utils, treefmt-nix, flake-root, flake-parts, gitignore, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = flake-utils.lib.defaultSystems;
       imports = [

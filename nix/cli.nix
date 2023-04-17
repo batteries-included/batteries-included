@@ -3,6 +3,7 @@
 {
   perSystem = { system, ... }:
     let
+      inherit (inputs.gitignore.lib) gitignoreSource;
       overlays = [ (import inputs.rust-overlay) ];
       pkgs = import inputs.nixpkgs {
         inherit system overlays;
@@ -10,7 +11,7 @@
       };
       crane = inputs.crane;
       advisory-db = inputs.advisory-db;
-      src = ./../cli;
+      src = gitignoreSource ./../cli;
       pname = "bcli";
 
       out = import ./rust_crate.nix {

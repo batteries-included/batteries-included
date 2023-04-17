@@ -5,7 +5,6 @@ defmodule KubeResources.RedisOperator do
 
   use KubeExt.ResourceGenerator, app_name: "redis-operator"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -70,7 +69,7 @@ defmodule KubeResources.RedisOperator do
   end
 
   resource(:crd_redisfailovers_databases_spotahome_com) do
-    yaml(get_resource(:redisfailovers_databases_spotahome_com))
+    YamlElixir.read_all_from_string!(get_resource(:redisfailovers_databases_spotahome_com))
   end
 
   resource(:deployment_redis_operator, battery, state) do

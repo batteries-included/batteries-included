@@ -34,7 +34,6 @@ defmodule KubeResources.Rook do
 
   use KubeExt.ResourceGenerator, app_name: "rook"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -636,75 +635,75 @@ defmodule KubeResources.Rook do
   end
 
   resource(:crd_cephblockpoolradosnamespaces_ceph_io) do
-    yaml(get_resource(:cephblockpoolradosnamespaces_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephblockpoolradosnamespaces_ceph_rook_io))
   end
 
   resource(:crd_cephblockpools_ceph_io) do
-    yaml(get_resource(:cephblockpools_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephblockpools_ceph_rook_io))
   end
 
   resource(:crd_cephbucketnotifications_ceph_io) do
-    yaml(get_resource(:cephbucketnotifications_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephbucketnotifications_ceph_rook_io))
   end
 
   resource(:crd_cephbuckettopics_ceph_io) do
-    yaml(get_resource(:cephbuckettopics_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephbuckettopics_ceph_rook_io))
   end
 
   resource(:crd_cephclients_ceph_io) do
-    yaml(get_resource(:cephclients_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephclients_ceph_rook_io))
   end
 
   resource(:crd_cephclusters_ceph_io) do
-    yaml(get_resource(:cephclusters_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephclusters_ceph_rook_io))
   end
 
   resource(:crd_cephfilesystemmirrors_ceph_io) do
-    yaml(get_resource(:cephfilesystemmirrors_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephfilesystemmirrors_ceph_rook_io))
   end
 
   resource(:crd_cephfilesystems_ceph_io) do
-    yaml(get_resource(:cephfilesystems_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephfilesystems_ceph_rook_io))
   end
 
   resource(:crd_cephfilesystemsubvolumegroups_ceph_io) do
-    yaml(get_resource(:cephfilesystemsubvolumegroups_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephfilesystemsubvolumegroups_ceph_rook_io))
   end
 
   resource(:crd_cephnfses_ceph_io) do
-    yaml(get_resource(:cephnfses_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephnfses_ceph_rook_io))
   end
 
   resource(:crd_cephobjectrealms_ceph_io) do
-    yaml(get_resource(:cephobjectrealms_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephobjectrealms_ceph_rook_io))
   end
 
   resource(:crd_cephobjectstores_ceph_io) do
-    yaml(get_resource(:cephobjectstores_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephobjectstores_ceph_rook_io))
   end
 
   resource(:crd_cephobjectstoreusers_ceph_io) do
-    yaml(get_resource(:cephobjectstoreusers_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephobjectstoreusers_ceph_rook_io))
   end
 
   resource(:crd_cephobjectzonegroups_ceph_io) do
-    yaml(get_resource(:cephobjectzonegroups_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephobjectzonegroups_ceph_rook_io))
   end
 
   resource(:crd_cephobjectzones_ceph_io) do
-    yaml(get_resource(:cephobjectzones_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephobjectzones_ceph_rook_io))
   end
 
   resource(:crd_cephrbdmirrors_ceph_io) do
-    yaml(get_resource(:cephrbdmirrors_ceph_rook_io))
+    YamlElixir.read_all_from_string!(get_resource(:cephrbdmirrors_ceph_rook_io))
   end
 
   resource(:crd_objectbucketclaims_objectbucket_io) do
-    yaml(get_resource(:objectbucketclaims_objectbucket_io))
+    YamlElixir.read_all_from_string!(get_resource(:objectbucketclaims_objectbucket_io))
   end
 
   resource(:crd_objectbuckets_objectbucket_io) do
-    yaml(get_resource(:objectbuckets_objectbucket_io))
+    YamlElixir.read_all_from_string!(get_resource(:objectbuckets_objectbucket_io))
   end
 
   resource(:deployment_ceph_operator, _battery, state) do

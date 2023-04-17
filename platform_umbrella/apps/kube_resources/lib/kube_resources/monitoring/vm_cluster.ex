@@ -3,7 +3,6 @@ defmodule KubeResources.VMCluster do
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
-  import CommonCore.Yaml
 
   alias KubeExt.Builder, as: B
   alias KubeExt.FilterResource, as: F
@@ -97,7 +96,7 @@ defmodule KubeResources.VMCluster do
       ]
     }
 
-    data = %{"vmselect-datasources.yaml" => to_yaml(datasources)}
+    data = %{"vmselect-datasources.yaml" => Ymlr.document!(datasources)}
 
     B.build_resource(:config_map)
     |> B.name("grafana-datasource-vmselect")

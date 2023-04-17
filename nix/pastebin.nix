@@ -3,6 +3,7 @@
 {
   perSystem = { system, ... }:
     let
+      inherit (inputs.gitignore.lib) gitignoreSource;
       overlays = [ (import inputs.rust-overlay) ];
       pkgs = import inputs.nixpkgs {
         inherit system overlays;
@@ -15,12 +16,12 @@
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
 
       pname = "pastebin";
-      src = ./../project_templates/web/pastebin;
+      src = gitignoreSource ./../project_templates/web/pastebin;
 
       static = pkgs.callPackage ./pastebin_static.nix {
         inherit src pname npmlock2nix nodejs;
         name = "pastebin-static";
-        version = "0.0.0";
+        version = "0.6.0";
       };
 
       crate-out = import ./rust_crate.nix {

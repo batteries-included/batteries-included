@@ -30,66 +30,68 @@ defmodule KubeResources.VMOperator do
       "priv/manifests/victoria_metrics/vmusers_operator_victoriametrics_com.yaml"
 
   use KubeExt.ResourceGenerator, app_name: "victoria-metrics-operator"
-  import CommonCore.Yaml
+
   import CommonCore.StateSummary.Namespaces
   alias KubeExt.Builder, as: B
 
   @service_account_name "victoria-metrics-operator"
 
   resource(:crd_vmagents_operator_victoriametrics_com) do
-    yaml(get_resource(:vmagents_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmagents_operator_victoriametrics_com))
   end
 
   resource(:crd_vmalertmanagerconfigs_operator_victoriametrics_com) do
-    yaml(get_resource(:vmalertmanagerconfigs_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(
+      get_resource(:vmalertmanagerconfigs_operator_victoriametrics_com)
+    )
   end
 
   resource(:crd_vmalertmanagers_operator_victoriametrics_com) do
-    yaml(get_resource(:vmalertmanagers_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmalertmanagers_operator_victoriametrics_com))
   end
 
   resource(:crd_vmalerts_operator_victoriametrics_com) do
-    yaml(get_resource(:vmalerts_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmalerts_operator_victoriametrics_com))
   end
 
   resource(:crd_vmauths_operator_victoriametrics_com) do
-    yaml(get_resource(:vmauths_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmauths_operator_victoriametrics_com))
   end
 
   resource(:crd_vmclusters_operator_victoriametrics_com) do
-    yaml(get_resource(:vmclusters_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmclusters_operator_victoriametrics_com))
   end
 
   resource(:crd_vmnodescrapes_operator_victoriametrics_com) do
-    yaml(get_resource(:vmnodescrapes_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmnodescrapes_operator_victoriametrics_com))
   end
 
   resource(:crd_vmpodscrapes_operator_victoriametrics_com) do
-    yaml(get_resource(:vmpodscrapes_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmpodscrapes_operator_victoriametrics_com))
   end
 
   resource(:crd_vmprobes_operator_victoriametrics_com) do
-    yaml(get_resource(:vmprobes_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmprobes_operator_victoriametrics_com))
   end
 
   resource(:crd_vmrules_operator_victoriametrics_com) do
-    yaml(get_resource(:vmrules_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmrules_operator_victoriametrics_com))
   end
 
   resource(:crd_vmservicescrapes_operator_victoriametrics_com) do
-    yaml(get_resource(:vmservicescrapes_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmservicescrapes_operator_victoriametrics_com))
   end
 
   resource(:crd_vmsingles_operator_victoriametrics_com) do
-    yaml(get_resource(:vmsingles_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmsingles_operator_victoriametrics_com))
   end
 
   resource(:crd_vmstaticscrapes_operator_victoriametrics_com) do
-    yaml(get_resource(:vmstaticscrapes_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmstaticscrapes_operator_victoriametrics_com))
   end
 
   resource(:crd_vmusers_operator_victoriametrics_com) do
-    yaml(get_resource(:vmusers_operator_victoriametrics_com))
+    YamlElixir.read_all_from_string!(get_resource(:vmusers_operator_victoriametrics_com))
   end
 
   resource(:cluster_role_binding_victoria_metrics_operator, _battery, state) do

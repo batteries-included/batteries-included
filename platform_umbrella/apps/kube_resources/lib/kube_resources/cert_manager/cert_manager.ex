@@ -12,7 +12,6 @@ defmodule KubeResources.CertManager do
 
   use KubeExt.ResourceGenerator, app_name: "cert-manager"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -502,27 +501,27 @@ defmodule KubeResources.CertManager do
   end
 
   resource(:crd_certificaterequests_io) do
-    yaml(get_resource(:certificaterequests_cert_manager_io))
+    YamlElixir.read_all_from_string!(get_resource(:certificaterequests_cert_manager_io))
   end
 
   resource(:crd_certificates_io) do
-    yaml(get_resource(:certificates_cert_manager_io))
+    YamlElixir.read_all_from_string!(get_resource(:certificates_cert_manager_io))
   end
 
   resource(:crd_challenges_acme_io) do
-    yaml(get_resource(:challenges_acme_cert_manager_io))
+    YamlElixir.read_all_from_string!(get_resource(:challenges_acme_cert_manager_io))
   end
 
   resource(:crd_clusterissuers_io) do
-    yaml(get_resource(:clusterissuers_cert_manager_io))
+    YamlElixir.read_all_from_string!(get_resource(:clusterissuers_cert_manager_io))
   end
 
   resource(:crd_issuers_io) do
-    yaml(get_resource(:issuers_cert_manager_io))
+    YamlElixir.read_all_from_string!(get_resource(:issuers_cert_manager_io))
   end
 
   resource(:crd_orders_acme_io) do
-    yaml(get_resource(:orders_acme_cert_manager_io))
+    YamlElixir.read_all_from_string!(get_resource(:orders_acme_cert_manager_io))
   end
 
   resource(:deployment_cert_manager, _battery, state) do

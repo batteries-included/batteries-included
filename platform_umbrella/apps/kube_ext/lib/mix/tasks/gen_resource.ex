@@ -4,7 +4,6 @@ defmodule Mix.Tasks.Gen.Resource do
 
   use Mix.Task
 
-  import CommonCore.Yaml
   import CommonCore.ApiVersionKind, only: [resource_type: 1]
   alias K8s.Resource, as: K8Resource
   alias KubeExt.Secret
@@ -283,7 +282,7 @@ defmodule Mix.Tasks.Gen.Resource do
       Map.drop(meta || %{}, ["annotations", "creationTimestamp"])
     end)
     |> Map.drop(["state"])
-    |> to_yaml()
+    |> Ymlr.document!()
   end
 
   defp default_method(resource, method_name, resource_type, app_name) do
@@ -384,7 +383,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp yaml_resource_method(method_name, include_name) do
     quote do
       resource(unquote(method_name)) do
-        yaml(get_resource(unquote(include_name)))
+        YamlElixir.read_all_from_string!(get_resource(unquote(include_name)))
       end
     end
   end
@@ -795,7 +794,6 @@ defmodule Mix.Tasks.Gen.Resource do
       defmodule KubeResources.ExampleServiceResource do
         use KubeExt.ResourceGenerator, app_name: unquote(app_name)
 
-        import CommonCore.Yaml
         import CommonCore.StateSummary.Namespaces
 
         alias KubeExt.Builder, as: B
@@ -819,7 +817,6 @@ defmodule Mix.Tasks.Gen.Resource do
         use CommonCore.IncludeResource, unquote(include_keywords)
         use KubeExt.ResourceGenerator, app_name: unquote(app_name)
 
-        import CommonCore.Yaml
         import CommonCore.StateSummary.Namespaces
 
         alias KubeExt.Builder, as: B

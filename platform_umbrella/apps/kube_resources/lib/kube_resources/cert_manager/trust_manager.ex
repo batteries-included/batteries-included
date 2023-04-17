@@ -5,7 +5,6 @@ defmodule KubeResources.TrustManager do
 
   use KubeExt.ResourceGenerator, app_name: "trust-manager"
 
-  import CommonCore.Yaml
   import CommonCore.StateSummary.Namespaces
 
   alias KubeExt.Builder, as: B
@@ -66,7 +65,7 @@ defmodule KubeResources.TrustManager do
   end
 
   resource(:crd_bundles_trust_cert_manager_io) do
-    yaml(get_resource(:bundles_trust_cert_manager_io))
+    YamlElixir.read_all_from_string!(get_resource(:bundles_trust_cert_manager_io))
   end
 
   resource(:deployment_trust_manager, _battery, state) do

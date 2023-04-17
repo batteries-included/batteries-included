@@ -38,12 +38,9 @@ defmodule ControlServer.MixProject do
     [
       {:event_center, in_umbrella: true},
       {:common_core, in_umbrella: true},
-
-      # Auth
-      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix_pubsub, "~> 2.1"},
       {:jason, "~> 1.0"},
-      {:oban, "~> 2.12"},
+      {:oban, "~> 2.15"},
       {:phoenix_swoosh, "~> 1.2.0"},
 
       # SQL
@@ -51,7 +48,7 @@ defmodule ControlServer.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
-      {:ecto_sql, "~> 3.9"},
+      {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
 
       # Filtering

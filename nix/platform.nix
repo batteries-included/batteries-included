@@ -4,14 +4,15 @@
   perSystem = { system, lib, ... }:
 
     let
+      inherit (inputs.gitignore.lib) gitignoreSource;
       overlays = [ (import inputs.rust-overlay) ];
       pkgs = import inputs.nixpkgs {
         inherit system overlays;
         config.allowUnfree = true;
       };
       LANG = "C.UTF-8";
-      src = ../platform_umbrella;
-      version = "0.5.0";
+      src = gitignoreSource ./../platform_umbrella;
+      version = "0.6.0";
       beam = pkgs.beam;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang;
@@ -34,14 +35,14 @@
         pname = "mix-deps-platform-test";
         inherit src version LANG;
         mixEnv = "test";
-        sha256 = "sha256-Gk9fhXSGzngkamlWvs9mVJz/nwTo45DjTToL7tmTez0=";
+        sha256 = "sha256-qylFCda29meWPM+UjvTM/pv/H/l5Ww50btFN1a++5/w=";
         #sha256 = lib.fakeSha256;
       };
 
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
         inherit src version LANG;
-        sha256 = "sha256-SUumSEajzOmDy6lTSZ8QWZ1TAPive8Kb9zFw88a7WP8=";
+        sha256 = "sha256-/PkJt31m6uOdhe0BQT248KfCPm/D+tc1gGTHfhoAMDA=";
         #sha256 = lib.fakeSha256;
       };
 

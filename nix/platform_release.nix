@@ -3,7 +3,7 @@
 , version
 , pkgs
 , gcc
-, openssl_1_1
+, openssl
 , rustToolChain
 , pkg-config
 , mixEnv ? "prod"
@@ -47,7 +47,7 @@ beamPackages.mixRelease {
   inherit erlang elixir hex;
 
   nativeBuildInputs = [ gcc rustToolChain pkg-config ];
-  buildInputs = [ openssl_1_1 gcc ];
+  buildInputs = [ openssl gcc ];
 
   postUnpack = ''
     mkdir -p apps/control_server_web/priv/static/assets/
@@ -64,4 +64,3 @@ beamPackages.mixRelease {
     mix phx.digest --no-deps-check
   '';
 }
-

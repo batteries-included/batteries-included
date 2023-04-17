@@ -33,7 +33,7 @@ defmodule CommonCore.MixProject do
       {:tesla, "~> 1.6.0"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:yaml_elixir, "~> 2.6"},
-      {:ymlr, "~> 3.0.1"}
+      {:ymlr, "~> 4.0.0"}
     ]
   end
 
