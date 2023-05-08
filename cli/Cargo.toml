@@ -22,7 +22,7 @@ tempfile = { version = "3.5.0" }
 thiserror = { version = "1.0.40" }
 time = { version = "0.3.20", features = ["serde", "serde-human-readable"] }
 tokio = { version = "1.28.0", features = ["full"] }
-tokio-stream = { version = "0.1.12", features = ["net", "time"] }
+tokio-stream = { version = "0.1.14", features = ["net", "time"] }
 tracing = { version = "0.1.37" }
 tracing-subscriber = { version = "0.3.17" }
 url = { version = "2.3.1" }
