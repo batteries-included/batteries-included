@@ -23,6 +23,10 @@ Nix is what we use to ensure that all dev environments have all the software
 needed. It's a packaging system and more. To install it the determinate
 installer is the reccomended.
 
+https://github.com/DeterminateSystems/nix-installer
+
+`curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install`
+
 If you are on linux consider NixOS.
 
 ### Install Docker
@@ -43,7 +47,8 @@ group changes to be visible.
 
 ### Optional: Install direnv
 
-While it's optional it's highly recommended to use direnv. It allows
+While it's optional it's highly recommended to use direnv. It allows easy use of
+all the things nix installs.
 
 ## Code Orgnaization
 
@@ -60,9 +65,10 @@ running.
 `static` contains the code that builds and deploys
 [Batteries Included](https://www.batteriesincl.com)
 
-Public posts are in `static/content/posts`
+Public posts are in `static/src/content/posts`
 
-There are other non-public pages in `static/content/internal`
+There are other non-public pages in `static/src/content/company_docs` and
+`static/src/content/technical_design`
 
 ## Platform Umbrella
 
@@ -90,26 +96,26 @@ billing.
 
 ### Home Server Web
 
-This is the UI.
+This is the UI for billing, and starting new clusters.
 
 ## Running It
 
 ### Development
 
-In one tmux pane start the k3d cluster, compile the rust bootstrap binary, run
-it, installing postgres and istiod, then start a port forward to the postgres
+In one shell start the kind cluster, compile the rust bootstrap binary, run it,
+installing postgres and istiod, then start a port forward to the postgres
 process.
 
 ```bash
 ./dev/bootstrap.sh
 ```
 
-Then in another tmux pane start the control, and home web servers and background
-processes.
+Then in another shell (or tmux pane) start the control, and home web servers and
+background processes.
 
 ```bash
 cd platform_umbrella
-mix do setup, phx.server
+mix phx.server
 ```
 
 Now there are two web servers accessible.
