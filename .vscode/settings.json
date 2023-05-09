@@ -5,7 +5,6 @@
   "prettier.proseWrap": "always",
   "prettier.singleQuote": true,
   "prettier.bracketSameLine": true,
-  "elixirLS.projectDir": "./platform_umbrella",
   "elixirLS.enableTestLenses": true,
   "elixirLS.fetchDeps": true,
   "emmet.includeLanguages": {
@@ -23,20 +22,19 @@
     "project_templates/web/pastebin/Cargo.toml"
   ],
   "[astro]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "astro-build.astro-vscode"
+    "editor.formatOnSave": true
   },
   "[elixir]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
   },
   "[phoenix-heex]": {
     "editor.formatOnSave": false,
-    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
   },
   "[html-eex]": {
     "editor.formatOnSave": false,
-    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
   },
   "[javascript]": {
     "editor.formatOnSave": true,
@@ -82,5 +80,6 @@
     "**/_build/**": true,
     "**/deps/**": true
   },
-  "rust-analyzer.showUnlinkedFileNotification": false
+  "rust-analyzer.showUnlinkedFileNotification": false,
+  "elixirLS.projectDir": "platform_umbrella"
 }

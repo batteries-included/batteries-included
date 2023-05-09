@@ -12,7 +12,7 @@
       url = "github:oxalica/rust-overlay";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        systems.follows = "systems";
+        flake-utils.follows = "flake-utils";
       };
     };
     crane = {

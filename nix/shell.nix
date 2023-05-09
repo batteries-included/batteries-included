@@ -16,6 +16,7 @@
       elixir = beamPackages.elixir;
       rebar = beamPackages.rebar;
       rebar3 = beamPackages.rebar3;
+      elixir-ls = beamPackages.elixir-ls;
 
       elixirNativeTools = with pkgs; [
         erlang
@@ -24,6 +25,7 @@
         rebar
         rebar3
         hex
+        elixir-ls
 
         mix2nix
         postgresql
@@ -69,7 +71,7 @@
         skopeo
         terraform
         wireguard-tools
-        ansible_2_13
+        ansible
         awscli2
       ]
       ++ elixirNativeTools
