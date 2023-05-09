@@ -1,2 +1,3 @@
 ---
-# vars file for devserver
+nix_build: nix-{{ nix_version }}-x86_64-linux
+installer_path: https://releases.nixos.org/nix/nix-{{ nix_version }}/{{ nix_build }}.tar.xz

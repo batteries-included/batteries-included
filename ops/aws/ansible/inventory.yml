@@ -6,11 +6,11 @@ all:
       #ansible_host: 10.0.1.79
       ansible_ssh_private_key_file: ../keys/gateway_ssh
     elliott:
-      ansible_host: 10.0.2.26
+      ansible_host: 10.0.2.247
       ansible_user: ubuntu
       ansible_ssh_private_key_file: ../keys/devserver_ssh
-    backup:
-      ansible_host: 10.0.2.204
+    art:
+      ansible_host: 10.0.2.13
       ansible_user: ubuntu
       ansible_ssh_private_key_file: ../keys/devserver_ssh
   children:
@@ -20,4 +20,4 @@ all:
     devservers:
       hosts:
         elliott:
-        backup:
+        art:

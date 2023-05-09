@@ -30,6 +30,8 @@ gen_wg_key "elliott-desktop"
 gen_wg_key "elliott-air"
 gen_wg_key "elliott-ipad"
 
+gen_wg_key "art"
+
 gen_wg_key "race-bernard"
 gen_wg_key "race-shared"
 

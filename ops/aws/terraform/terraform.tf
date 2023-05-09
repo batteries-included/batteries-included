@@ -9,5 +9,5 @@ terraform {
 
 provider "aws" {
   region  = var.aws_region
-  profile = "batteries"
+  profile = "SystemAdministrator-037532365270"
 }

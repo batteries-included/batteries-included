@@ -10,12 +10,17 @@
     name: developers
     state: present
 
+- name: Ensure group "docker" exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+
 - name: "Add the user"
   ansible.builtin.user:
     name: "{{user.username}}"
     comment: "{{user.name}}"
     group: admin
-    groups: admin,adm,sudo,developers
+    groups: admin,adm,sudo,developers,docker
     shell: /usr/bin/zsh
   with_items: "{{users}}"
   loop_control:
@@ -38,8 +43,20 @@
     state: present
     key: "{{ lookup('file', '../pub_keys/elliott_ssh.pub') }}"
 
-- name: Set authorized key for zoe
+- name: Set authorized key for art
   authorized_key:
-    user: zoe 
+    user: art
     state: present
-    key: "{{ lookup('file', '../pub_keys/zoe_ssh.pub') }}"
+    key: "{{ lookup('file', '../pub_keys/art_ssh.pub') }}"
+
+- name: Ensure .zshrc in place
+  template:
+    src: zshrc.j2
+    dest: "/home/{{user.username}}/.zshrc"
+    backup: true
+    owner: "{{user.username}}"
+    mode: 0640
+  with_items: "{{users}}"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"

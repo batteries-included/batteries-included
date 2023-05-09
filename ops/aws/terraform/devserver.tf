@@ -54,7 +54,7 @@ resource "aws_instance" "elliott" {
   }
 }
 
-resource "aws_instance" "backup" {
+resource "aws_instance" "art" {
   ami                    = data.aws_ami.ubuntu.id
   subnet_id              = module.vpc_main.public_subnets[1]
   instance_type          = var.devserver_instance_type

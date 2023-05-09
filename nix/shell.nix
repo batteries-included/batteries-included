@@ -116,7 +116,9 @@
     {
       devShells.default = pkgs.mkShell {
         inherit nativeBuildInputs buildInputs shellHook;
-        LANG = "C.UTF-8";
+        LANG = "en_US.UTF-8";
+        LC_ALL = "en_US.UTF-8";
+        LC_CTYPE = "en_US.UTF-8";
         RUST_BACKTRACE = 1;
         ERL_AFLAGS = "-kernel shell_history enabled";
       };
