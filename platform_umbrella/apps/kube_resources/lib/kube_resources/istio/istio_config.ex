@@ -1,6 +1,5 @@
 defmodule KubeResources.IstioConfig do
   defmodule StringMatch do
-    @derive Jason.Encoder
     defstruct [:exact, :prefix, :regex]
 
     def prefix(p), do: %__MODULE__{prefix: p}
@@ -10,17 +9,14 @@ defmodule KubeResources.IstioConfig do
   end
 
   defmodule Destination do
-    @derive Jason.Encoder
     defstruct [:host, :subset, :port]
   end
 
   defmodule HttpRewrite do
-    @derive Jason.Encoder
     defstruct [:uri, :authority]
   end
 
   defmodule HttpMatchRequest do
-    @derive Jason.Encoder
     defstruct [
       :name,
       :uri,
@@ -39,7 +35,6 @@ defmodule KubeResources.IstioConfig do
   end
 
   defmodule RouteDestination do
-    @derive Jason.Encoder
     defstruct [:destination, :weight]
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
@@ -49,7 +44,6 @@ defmodule KubeResources.IstioConfig do
   end
 
   defmodule HttpRouteDestination do
-    @derive Jason.Encoder
     defstruct [:destination, :weight, :headers]
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
@@ -60,7 +54,6 @@ defmodule KubeResources.IstioConfig do
   end
 
   defmodule HttpRoute do
-    @derive Jason.Encoder
     defstruct [:rewrite, :name, :fault, match: [], route: []]
 
     def prefix(prefix, service_host, opts \\ []) do
@@ -120,7 +113,6 @@ defmodule KubeResources.IstioConfig do
   end
 
   defmodule L4MatchAttributes do
-    @derive Jason.Encoder
     defstruct [:port, :gateways]
 
     def port(port) do
@@ -129,7 +121,6 @@ defmodule KubeResources.IstioConfig do
   end
 
   defmodule TCPRoute do
-    @derive Jason.Encoder
     defstruct match: [], route: []
 
     def port(port, service_port, service_host) do
@@ -141,7 +132,6 @@ defmodule KubeResources.IstioConfig do
   end
 
   defmodule VirtualService do
-    @derive Jason.Encoder
     defstruct hosts: [], gateways: [], http: [], tcp: []
 
     def new(opts \\ []) do
@@ -176,6 +166,30 @@ defmodule KubeResources.IstioConfig do
       opts
       |> Keyword.merge(http: [HttpRoute.fallback(service_host)])
       |> new()
+    end
+  end
+
+  defimpl Jason.Encoder,
+    for: [
+      VirtualService,
+      TCPRoute,
+      L4MatchAttributes,
+      HttpRoute,
+      HttpRouteDestination,
+      RouteDestination,
+      HttpMatchRequest,
+      HttpRewrite,
+      Destination,
+      StringMatch
+    ] do
+    def encode(value, opts) do
+      value
+      |> Map.from_struct()
+      |> Map.reject(fn
+        {_k, nil} -> true
+        {_k, _} -> false
+      end)
+      |> Jason.Encode.map(opts)
     end
   end
 end
