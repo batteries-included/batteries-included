@@ -12,6 +12,7 @@ import Alpine from 'alpinejs';
 
 import { IFrame } from './iframe';
 import { ChartHook } from './chart-hook';
+import { Tooltip } from './tooltip';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -26,7 +27,7 @@ const liveSocket = new LiveSocket('/live', Socket, {
       }
     },
   },
-  hooks: { IFrame: IFrame, Chart: ChartHook },
+  hooks: { IFrame: IFrame, Chart: ChartHook, Tooltip },
   params: { _csrf_token: csrfToken },
 });
 

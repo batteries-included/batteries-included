@@ -16,6 +16,7 @@
     "phoenix": "1.7.2",
     "phoenix_html": "3.3.1",
     "phoenix_live_view": "0.18.18",
+    "tippy.js": "^6.3.7",
     "topbar": "2.0.1"
   },
   "devDependencies": {

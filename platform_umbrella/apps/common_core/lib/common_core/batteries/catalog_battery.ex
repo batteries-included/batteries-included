@@ -4,7 +4,8 @@ defmodule CommonCore.Batteries.CatalogBattery do
   @enforce_keys [:type, :group]
   defstruct type: nil,
             group: nil,
-            dependencies: []
+            dependencies: [],
+            description: nil
 
   def to_fresh_args(%__MODULE__{} = catalog_battery) do
     catalog_battery

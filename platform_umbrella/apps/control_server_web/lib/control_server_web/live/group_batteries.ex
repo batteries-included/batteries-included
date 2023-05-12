@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Modal
+  import ControlServerWeb.CatalogBatteriesTable
 
   alias CommonCore.Batteries.Catalog
 
@@ -11,8 +12,6 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   alias EventCenter.Database, as: DatabaseEventCenter
 
   alias KubeServices.SnapshotApply.Apply
-
-  alias Phoenix.Naming
 
   @impl Phoenix.LiveView
   def mount(%{"group" => group_str} = _params, _session, socket) do
@@ -191,29 +190,6 @@ defmodule ControlServerWeb.Live.GroupBatteries do
     "#{string_title} Batteries"
   end
 
-  defp active_check(assigns) do
-    ~H"""
-    <div class="flex text-shamrock-500 font-semi-bold">
-      <div class="flex-initial">
-        Active
-      </div>
-      <div class="flex-none ml-2">
-        <Heroicons.check_circle class="h-6 w-6" />
-      </div>
-    </div>
-    """
-  end
-
-  attr :battery, :any, required: true
-
-  def start_button(assigns) do
-    ~H"""
-    <.button phx-click={:start} phx-value-type={@battery.type}>
-      Install Battery
-    </.button>
-    """
-  end
-
   def install_summary(assigns) do
     ~H"""
     <.h3 class="text-astral-800 text-right">Summary</.h3>
@@ -265,8 +241,6 @@ defmodule ControlServerWeb.Live.GroupBatteries do
     """
   end
 
-  defp is_active(active, type), do: Map.has_key?(active, type)
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -281,20 +255,10 @@ defmodule ControlServerWeb.Live.GroupBatteries do
       Batteries
       <:sub_header :if={@group != nil && @group != ""}><%= @group %></:sub_header>
     </.h1>
-    <.table id="batteries-table" rows={@catalog_batteries}>
-      <:col :let={battery} label="Type">
-        <%= Naming.humanize(battery.type) %>
-      </:col>
-      <:col :let={battery} label="Group">
-        <%= battery.group %>
-      </:col>
-      <:col :let={battery} label="Status">
-        <.active_check :if={is_active(@system_batteries, battery.type)} />
-      </:col>
-      <:action :let={battery}>
-        <.start_button :if={!is_active(@system_batteries, battery.type)} battery={battery} />
-      </:action>
-    </.table>
+    <.catalog_batteries_table
+      catalog_batteries={@catalog_batteries}
+      system_batteries={@system_batteries}
+    />
     """
   end
 end
