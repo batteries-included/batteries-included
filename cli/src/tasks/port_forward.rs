@@ -48,7 +48,7 @@ async fn run_server(pods: Api<Pod>) -> Result<()> {
         .take_until(tokio::signal::ctrl_c())
         .try_for_each(|client_conn| async {
             if let Ok(peer_addr) = client_conn.peer_addr() {
-                info!(%peer_addr, "new connection");
+                debug!(%peer_addr, "new connection");
             }
             let pods = pods.clone();
             tokio::spawn(async move {
