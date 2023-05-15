@@ -5,6 +5,7 @@ defmodule ControlServerWeb.Live.Home do
 
   alias KubeExt.KubeState
   alias Phoenix.Naming
+  alias ControlServer.SnapshotApply
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -13,7 +14,8 @@ defmodule ControlServerWeb.Live.Home do
      |> assign_page_group(:home)
      |> assign_page_title("Home")
      |> assign_pods(KubeState.get_all(:pod))
-     |> assign_nodes(KubeState.get_all(:node))}
+     |> assign_nodes(KubeState.get_all(:node))
+     |> assign_status(SnapshotApply.get_latest_snapshot_status())}
   end
 
   def assign_page_group(socket, page_group) do
@@ -30,6 +32,10 @@ defmodule ControlServerWeb.Live.Home do
 
   def assign_nodes(socket, nodes) do
     assign(socket, nodes: nodes)
+  end
+
+  def assign_status(socket, status) do
+    assign(socket, status: status)
   end
 
   defp pod_data(pods) do
@@ -58,6 +64,16 @@ defmodule ControlServerWeb.Live.Home do
     |> Enum.slice(-n..-1)
   end
 
+  defp status_icon(%{status: :ok} = assigns),
+    do: ~H"""
+    <Heroicons.check_circle class="w-auto h-16 text-shamrock-500" />
+    """
+
+  defp status_icon(%{status: _} = assigns),
+    do: ~H"""
+    <Heroicons.exclamation_circle class="w-auto h-16 text-heath-100" />
+    """
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -70,7 +86,7 @@ defmodule ControlServerWeb.Live.Home do
       </.card>
       <.card>
         <:title>Last Deploy</:title>
-        <Heroicons.check_circle class="w-auto h-16 text-shamrock-500" />
+        <.status_icon status={@status} />
       </.card>
 
       <.card>

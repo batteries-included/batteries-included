@@ -73,6 +73,23 @@ defmodule ControlServer.SnapshotApply do
   """
   def get_kube_snapshot!(id), do: Repo.get!(KubeSnapshot, id)
 
+  @spec get_latest_snapshot_status() :: nil | :error | :ok
+  def get_latest_snapshot_status() do
+    query =
+      from ks in KubeSnapshot,
+        order_by: [desc: ks.inserted_at, desc: ks.id],
+        select: [:status],
+        limit: 1
+
+    snapshot = Repo.one(query)
+
+    case snapshot do
+      %KubeSnapshot{status: :ok} -> :ok
+      %KubeSnapshot{status: :error} -> :error
+      _ -> nil
+    end
+  end
+
   def get_preloaded_kube_snapshot!(id) do
     rp_query =
       from rp in ResourcePath,

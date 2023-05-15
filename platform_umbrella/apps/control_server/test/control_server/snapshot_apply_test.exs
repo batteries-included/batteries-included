@@ -147,5 +147,26 @@ defmodule ControlServer.SnapshotApplyTest do
       kube_snapshot = kube_snapshot_fixture()
       assert %Ecto.Changeset{} = SnapshotApply.change_kube_snapshot(kube_snapshot)
     end
+
+    test "get_latest_snapshot_status!/0 returns the latest kube_snapshot status" do
+      update_attrs_success = %{status: :ok}
+      update_attrs_fail = %{status: :error}
+
+      _kube_snapshot_oldest = kube_snapshot_fixture()
+      _kube_snapshot_older = kube_snapshot_fixture()
+      kube_snapshot_success = kube_snapshot_fixture()
+
+      # status => :creation by default
+      assert SnapshotApply.get_latest_snapshot_status() === nil
+
+      # update latest snapshot to succeed
+      SnapshotApply.update_kube_snapshot(kube_snapshot_success, update_attrs_success)
+      assert SnapshotApply.get_latest_snapshot_status() === :ok
+
+      # create a new snapshot and fail it
+      kube_snapshot_fail = kube_snapshot_fixture()
+      SnapshotApply.update_kube_snapshot(kube_snapshot_fail, update_attrs_fail)
+      assert SnapshotApply.get_latest_snapshot_status() === :error
+    end
   end
 end
