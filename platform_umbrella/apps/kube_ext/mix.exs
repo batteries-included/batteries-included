@@ -4,7 +4,7 @@ defmodule KubeExt.MixProject do
   def project do
     [
       app: :kube_ext,
-      version: "0.6.0",
+      version: "0.7.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -26,7 +26,8 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
-      {:k8s, "~> 2.2.0"},
+      {:k8s, "~> 2.3.0"},
+      {:httpoison, "~> 2.1"},
       {:jason, "~> 1.0"},
       {:event_center, in_umbrella: true},
       {:common_core, in_umbrella: true}

@@ -4,7 +4,7 @@ defmodule ControlServer.MixProject do
   def project do
     [
       app: :control_server,
-      version: "0.6.0",
+      version: "0.7.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -55,9 +55,7 @@ defmodule ControlServer.MixProject do
       {:paginator, "~> 1.2.0"},
 
       # Kubernetes
-      {:k8s, "~> 2.2.0"},
-      {:httpoison, "~> 2.1"},
-      {:poison, "~> 5.0"},
+      {:k8s, "~> 2.3.0"},
       {:kube_ext, in_umbrella: true},
 
       # Yaml
