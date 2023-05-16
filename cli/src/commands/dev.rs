@@ -8,7 +8,8 @@ use crate::args::BaseArgs;
 use crate::postgres_kube::wait_healthy_pg;
 use crate::spec::InstallationSpec;
 use crate::tasks::{
-    ensure_kube_provider_started, get_install_spec, initial_apply, port_forward, setup_platform_db,
+    add_local_to_spec, ensure_kube_provider_started, get_install_spec, initial_apply, port_forward,
+    setup_platform_db,
 };
 
 pub async fn dev_command(
@@ -30,6 +31,8 @@ pub async fn dev_command(
     )
     .await?;
 
+    let spec_with_local = add_local_to_spec(install_spec).await?;
+
     // Create a new kubernetes client.
     let kube_client = (base_args.kube_client_factory)();
 
@@ -39,7 +42,7 @@ pub async fn dev_command(
     initial_apply(
         kube_client.clone(),
         overwrite_resources,
-        install_spec.initial_resources.clone(),
+        spec_with_local.initial_resources.clone(),
     )
     .await?;
 
@@ -48,7 +51,7 @@ pub async fn dev_command(
     wait_healthy_pg(kube_client.clone(), "battery-base").await?;
 
     match (forward_postgres, platform_dir) {
-        (true, Some(dir)) => port_forward_and_setup(kube_client, dir, install_spec).await,
+        (true, Some(dir)) => port_forward_and_setup(kube_client, dir, spec_with_local).await,
         (true, None) => port_forward(kube_client, "battery-base").await,
         (_, _) => Ok(()),
     }

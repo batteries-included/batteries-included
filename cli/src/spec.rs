@@ -41,14 +41,14 @@ pub struct BatterySpec {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct StateSummarySpec {
-    batteries: Vec<BatterySpec>,
-    ceph_clusters: Vec<CephClusterSpec>,
-    ceph_filesystems: Vec<CephFilesystemSpec>,
-    ip_address_pools: Vec<IPAddressPoolSpec>,
-    knative_services: Vec<KnativeServiceSpec>,
-    notebooks: Vec<NotebookSpec>,
-    postgres_clusters: Vec<PGClusterSpec>,
-    redis_clusters: Vec<RedisClusterSpec>,
+    pub batteries: Vec<BatterySpec>,
+    pub ceph_clusters: Vec<CephClusterSpec>,
+    pub ceph_filesystems: Vec<CephFilesystemSpec>,
+    pub ip_address_pools: Vec<IPAddressPoolSpec>,
+    pub knative_services: Vec<KnativeServiceSpec>,
+    pub notebooks: Vec<NotebookSpec>,
+    pub postgres_clusters: Vec<PGClusterSpec>,
+    pub redis_clusters: Vec<RedisClusterSpec>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -84,15 +84,16 @@ pub struct CephFilesystemSpec {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct IPAddressPoolSpec {
-    name: String,
-    subnet: String,
+    pub name: String,
+    pub subnet: String,
 
-    id: Option<uuid::Uuid>,
+    pub id: Option<uuid::Uuid>,
 
     #[serde(with = "time::serde::iso8601::option")]
-    inserted_at: Option<OffsetDateTime>,
+    pub inserted_at: Option<OffsetDateTime>,
+
     #[serde(with = "time::serde::iso8601::option")]
-    updated_at: Option<OffsetDateTime>,
+    pub updated_at: Option<OffsetDateTime>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

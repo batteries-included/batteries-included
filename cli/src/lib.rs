@@ -3,6 +3,7 @@
 
 pub mod args;
 pub mod commands;
+mod docker;
 mod install_bin;
 mod kind;
 pub mod logging;
