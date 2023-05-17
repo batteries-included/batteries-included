@@ -34,6 +34,12 @@ pub enum CliAction {
         overwrite_resources: bool,
         #[clap(long, action = clap::ArgAction::Set, default_value_t = true)]
         forward_postgres: bool,
+        #[clap(
+            long,
+            value_delimiter = ',',
+            value_name = "NAMESPACE.POD:HOST_PORT:POD_PORT"
+        )]
+        forward_pods: Vec<String>,
         #[clap(long)]
         platform_dir: Option<PathBuf>,
     },
@@ -73,7 +79,8 @@ mod tests {
                     .expect("Parsable default"),
                 platform_dir: None,
                 forward_postgres: true,
-                overwrite_resources: false
+                overwrite_resources: false,
+                forward_pods: vec![]
             }
         )
     }
@@ -94,6 +101,7 @@ mod tests {
                     .expect("Parsable default"),
                 platform_dir: None,
                 overwrite_resources: false,
+                forward_pods: vec![]
             }
         )
     }
