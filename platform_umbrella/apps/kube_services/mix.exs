@@ -26,9 +26,9 @@ defmodule KubeServices.MixProject do
 
   defp deps do
     [
-      {:tesla, "~> 1.6.0"},
+      {:tesla, "~> 1.7.0"},
       {:jason, "~> 1.2"},
-      {:oban, "~> 2.15"},
+      {:oban, "~> 2.15.1"},
       {:k8s, "~> 2.3.0"},
       {:phoenix, "~> 1.7.2"},
       {:common_core, in_umbrella: true},

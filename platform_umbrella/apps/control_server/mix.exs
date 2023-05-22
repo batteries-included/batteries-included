@@ -40,12 +40,12 @@ defmodule ControlServer.MixProject do
       {:common_core, in_umbrella: true},
       {:phoenix_pubsub, "~> 2.1"},
       {:jason, "~> 1.0"},
-      {:oban, "~> 2.15"},
+      {:oban, "~> 2.15.1"},
       {:phoenix_swoosh, "~> 1.2.0"},
 
       # SQL
       {:phoenix, "~> 1.7.2"},
-      {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_ecto, "~> 4.4.1"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
       {:ecto_sql, "~> 3.10"},
