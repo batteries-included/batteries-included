@@ -8,11 +8,9 @@ use crate::spec::IPAddressPoolSpec;
 
 pub async fn get_kind_ip_address_pools() -> Result<Vec<IPAddressPoolSpec>> {
     let docker = Docker::connect_with_local_defaults()?;
-    let networks = docker
-        .list_networks(Some(ListNetworksOptions {
-            filters: HashMap::from([("name", vec!["kind"])]),
-        }))
-        .await?;
+    let filters = HashMap::from([("name", vec!["kind"])]);
+    let options = ListNetworksOptions { filters };
+    let networks = docker.list_networks(Some(options)).await?;
     Ok(networks.into_iter().flat_map(to_ip_pool).collect())
 }
 
