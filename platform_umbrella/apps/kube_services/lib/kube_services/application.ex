@@ -30,6 +30,7 @@ defmodule KubeServices.Application do
       KubeServices.SystemState.SummaryHosts,
       KubeServices.SystemState.SummaryBatteries,
       KubeServices.SnapshotApply.InitialLaunchTask,
+      KubeServices.SnapshotApply.FailedLauncher,
       KubeServices.SnapshotApply.EventLauncher,
       KubeServices.ResourceDeleter,
       KubeServices.SnapshotApply.Apply
