@@ -25,7 +25,6 @@ defmodule CommonCore.MixProject do
 
   defp deps do
     [
-      {:cidr, "~> 1.1.0"},
       {:jason, "~> 1.0"},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:polymorphic_embed, "~> 3.0.5"},
