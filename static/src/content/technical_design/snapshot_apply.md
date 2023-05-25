@@ -1,29 +1,58 @@
 ---
 title: 'Snapshot Apply'
 date: 2022-12-02
-tags: ['overview', 'code', 'control-server', 'kubernetes']
+tags: ['overview', 'code', 'control-server', 'kubernetes', 'keycloak']
 draft: false
 ---
 
-Since the ControlServer is running on Kubernetes, we need some way to go from
-our desired state, stored in the database as ecto battery settings, to running
-functional Deployments, Pods, and Services, etc. Snapshot Apply is the code
-responsible for doing that database to k8s transition. The process takes
-`KubeExt.SystemState.StateSummary` as input and pushes all updated or added
-resources to Kubernetes as output.
+We need a repeatable process that can take current database state and the
+current system state, use those to create a plan of action, then apply that plan
+to the current cluster.
 
-## Process
+The snapshot apply process in the `control-server` binary is that system.
 
-- Insert a new `ControlServer.SnapshotApply.KubeSnapshot` in the database, where
-  we will keep track of the status and record the final snapshot of the
-  resources requested.
-- `KubeServices.SnapshotApply.Apply` a genserver in the `kube_services` app gets
-  a call to `&run/1` with the `KubeSnapshot.` Take a new StateSummary, getting a
-  list of all installed batteries and current configs, among other things.
-- For each `SystemBattery` installed, iterated through them, combining the
-  battery and the `StateSummary` to get a map of path string to resources. Most
-  of this is in `KubeResources.ConfigGenerator`
-- Merge all of those maps into a total snapshot of all resources requested
-- Store a copy of each resource in the addressable content system
-- Push any resources to Kubernetes if the resource hashes don't match
-- Report the final result for each path and overall
+- Take a point in time snapshot of everything. (Prepare)
+- Feed that snapshot into functional code that generate desired system states.
+  (Generate)
+- Take all of those desired systems states (Kubernetes resources, and other
+  system configurations, etc) find all differences (Filter)
+- Apply any changes need to go from the current state to the desired state on
+  all systems. (Apply)
+- Record the status for all desired state pieces (Report)
+- Broadcast the result of the overall atempt (Broadcast)
+
+## Prepare
+
+- We need a summary of everything in the database and everything in the current
+  system state. For that we use the system state summarizer.
+- Then we need to create the target snapshots for the different systems.
+  (KubeSnapshot and KeyCloakSnapshot)
+
+## Generation
+
+- For each target snapshot use the summarized system state with functional
+  modules to generate the target system specifications.
+- Store each kube or keycloak target resource in the database (ResourcePath for
+  kube)
+
+## Filter
+
+- Remove any target system configuration or resource that already match with
+  what's there. For kubernetes this is done via sha hmac `KubeExt.Hashing`
+- Update any matching resources are successfuly applied
+
+## Apply
+
+- Push each of the kube resource targets to kubernetes via
+  `KubeExt.ApplyResource`
+- Push each of the keycloak resource targets to keycloak.
+- Trigger any post apply operations needed for keycloak
+
+## Report
+
+- Record the per resource target results
+- Compute an overal result
+
+## Broadcast
+
+- Send the latest result via Phoenix pub sub and `EventCenter`
