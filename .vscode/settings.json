@@ -22,19 +22,20 @@
     "project_templates/web/pastebin/Cargo.toml"
   ],
   "[astro]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "astro-build.astro-vscode"
   },
   "[elixir]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[phoenix-heex]": {
     "editor.formatOnSave": false,
-    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[html-eex]": {
     "editor.formatOnSave": false,
-    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[javascript]": {
     "editor.formatOnSave": true,

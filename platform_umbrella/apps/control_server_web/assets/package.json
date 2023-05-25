@@ -7,8 +7,8 @@
     "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle  --loader:.woff2=file --loader:.woff=file --target=chrome58,firefox57,safari11,edge18 --outdir=dist"
   },
   "dependencies": {
-    "@fontsource/inter": "^4.2.2",
-    "@fontsource/jetbrains-mono": "^4.2.2",
+    "@fontsource/inter": "^5.0.1",
+    "@fontsource/jetbrains-mono": "^5.0.1",
     "alpinejs": "3.12.1",
     "chart.js": "4.3.0",
     "esbuild": "^0.17.19",
