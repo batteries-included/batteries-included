@@ -1,3 +1,0 @@
-# HomeBase
-
-**TODO: Add description**
