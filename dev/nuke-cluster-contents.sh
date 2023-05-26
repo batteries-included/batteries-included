@@ -16,9 +16,10 @@ deleteAllNamespaced() {
 
 deleteCrds() {
   kubectl get crds |
-    grep -ve cattle |
+    grep -ve "cattle|NAME" |
     awk '{print $1}' |
     xargs kubectl delete crds || true
+  deleteAllTagged crds
 }
 
 deleteRBAC() {
