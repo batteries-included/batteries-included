@@ -1,5 +1,24 @@
 defmodule KubeServices.SystemState.SummaryHosts do
-  alias ControlServer.SystemState.Summarizer
+  @moduledoc """
+  This GenServer watches for the new system state
+  summaries then caches some computed properties. These
+  are then made available to the front end without
+  having to compute a full system state snapshot.
+
+  This genserver is responsible for host name computation
+
+  - Gitea Hostname
+  - Grafana Hostname
+  - Vmselect Hostname
+  - Harbor Hostname
+  - Keycloak Hostname
+  - Smtp4dev Hostname
+  - Notebook Hostname
+
+  It also hosts the ablity to compute a knative service hostname
+  """
+
+  alias KubeServices.SystemState.Summarizer
   alias CommonCore.StateSummary
   alias EventCenter.SystemStateSummary
   use GenServer

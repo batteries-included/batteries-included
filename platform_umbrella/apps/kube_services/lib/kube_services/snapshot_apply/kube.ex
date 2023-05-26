@@ -1,12 +1,13 @@
-defmodule KubeServices.SnapshotApply.Apply do
+defmodule KubeServices.SnapshotApply.KubeApply do
   use GenServer
 
   import ControlServer.SnapshotApply.EctoSteps
 
+  alias CommonCore.StateSummary
   alias ControlServer.SnapshotApply.EctoSteps
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-  alias ControlServer.SystemState.Summarizer
+  alias KubeServices.SystemState.Summarizer
 
   alias KubeResources.ConfigGenerator
 
@@ -64,68 +65,53 @@ defmodule KubeServices.SnapshotApply.Apply do
     {:ok, State.new(opts)}
   end
 
-  @spec run :: {:ok, KubeSnapshot.t()} | {:error, any()}
-  def run do
-    case EctoSteps.create_snap() do
-      {:ok, snap} -> run(snap)
-      {:error, err} -> {:error, err}
-      err -> {:error, %{error: err}}
+  def prepare do
+    with {:ok, snap} <- EctoSteps.create_snap() do
+      snap
     end
   end
 
-  @spec run(KubeSnapshot.t()) :: any
-  def run(snap) do
-    GenServer.call(@me, {:run, snap}, 600_000)
+  @spec generate(KubeSnapshot.t(), StateSummary.t()) :: any
+  def generate(snap, summary) do
+    GenServer.call(@me, {:generate, snap, summary}, 600_000)
   end
 
-  @spec cast_run :: :ok | {:error, any}
-  def cast_run do
-    case EctoSteps.create_snap() do
-      {:ok, snap} -> cast_run(snap)
-      {:error, err} -> {:error, err}
-      err -> {:error, %{error: err}}
-    end
-  end
-
-  def cast_run(snap) do
-    GenServer.cast(@me, {:run, snap})
+  @spec apply(KubeSnapshot.t(), list(ResourcePath.t())) :: any
+  def apply(snap, resource_paths) do
+    GenServer.call(@me, {:apply, snap, resource_paths}, 600_000)
   end
 
   @impl GenServer
-  def handle_cast({:run, snap}, state) do
-    with {:ok, _snap} <- do_run(snap, state) do
-      {:noreply, state}
-    end
+  def handle_call({:generate, snap, summary}, _from, state) do
+    {:reply, do_generate(snap, summary, state), state}
   end
 
   @impl GenServer
-  def handle_call({:run, snap}, _from, state) do
-    {:reply, do_run(snap, state), state}
+  def handle_call({:apply, snap, resource_paths}, _from, state) do
+    {:reply, do_apply(snap, resource_paths, state), state}
   end
 
-  defp do_run(
-         %KubeSnapshot{} = snap,
-         %State{} = server_state
-       ) do
+  defp do_generate(%KubeSnapshot{} = snap, %StateSummary{} = summary, _state) do
+    with {:ok, up_g_snap} <- update_snap_status(snap, :generation),
+         resource_map <- ConfigGenerator.materialize(summary),
+         {:ok, %{resource_paths: {_cnt, resource_paths}}} <-
+           snap_generation(up_g_snap, resource_map) do
+      {:ok, {resource_paths, resource_map}}
+    end
+  end
+
+  defp do_apply(%KubeSnapshot{} = snap, {resource_paths, resource_map}, %State{} = state) do
     # this is the beating heart of snapshot apply
     # It's a beast
-    # First we set that this kube snapshot is in the generation phase
-    # Then we get the current state. Usually by calling `ControlServer.SystemState.Summarizer`
-    # After we have the state we generate the giant map of what resources should look like
-    # Then apply that to the KubeSnapshot getting a bunch of resource paths.
+    # First we set that this kube snapshot is in the applying phase
     # Push resource paths that need it to kubernetes, updating the resouce paths in the db
     # Then update the kube snapshot one final time
     #
     # This whole thing tries really really really hard to never throw
-    # insteam errors are propogated everywhere so that they can be written as status
+    # instead errors are propogated everywhere so that they can be written as status
     # results and error messages.
-    with {:ok, up_g_snap} <- update_snap_status(snap, :generation),
-         system_state <- do_system_state_summary(server_state),
-         resource_map <- do_resource_gen(system_state, server_state),
-         {:ok, %{resource_paths: {_cnt, resource_paths}}} <-
-           snap_generation(up_g_snap, resource_map),
-         {:ok, up_g_snap} <- update_snap_status(snap, :applying),
-         {:ok, apply_result} <- apply_resource_paths(resource_paths, resource_map, server_state) do
+    with {:ok, up_g_snap} <- update_snap_status(snap, :applying),
+         {:ok, apply_result} <- apply_resource_paths(resource_paths, resource_map, state) do
       final_snap_update(up_g_snap, apply_result)
     else
       {:error, err} -> {:error, err}
@@ -133,32 +119,17 @@ defmodule KubeServices.SnapshotApply.Apply do
     end
   end
 
-  defp do_system_state_summary(
-         %State{system_state_summarizer_func: sys_state_func} = _server_state
-       ) do
-    res = sys_state_func.()
-    Logger.debug("System state summary created")
-    res
-  end
-
-  defp do_resource_gen(system_state, %{resource_gen_func: gen_func} = _server_state) do
-    res = gen_func.(system_state)
-    Logger.debug("Generated new resource map from system state", map_size: map_size(res))
-    res
-  end
-
-  defp apply_resource_paths(paths, resource_map, server_state) do
+  defp apply_resource_paths(paths, resource_map, state) do
     {needs_apply, matches} =
       Enum.split_with(paths, fn %ResourcePath{} = rp ->
-        kube_state_different?(rp, server_state)
+        kube_state_different?(rp, state)
       end)
 
     Logger.debug("Need Apply: #{length(needs_apply)} Matches: #{length(matches)}")
 
     with {_update_cnt, fail_update_match_cnt} <-
-           update_matching_resource_paths(matches, server_state),
-         {:ok, applied_rp} <-
-           apply_needs_apply_resource_paths(needs_apply, resource_map, server_state) do
+           update_matching_resource_paths(matches, state),
+         {:ok, applied_rp} <- apply_needs_apply_resource_paths(needs_apply, resource_map, state) do
       need_match_cnt = length(matches)
       need_kube_apply_cnt = length(needs_apply)
       fail_apply_cnt = Enum.count(applied_rp, &(!&1.is_success))

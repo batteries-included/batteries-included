@@ -1,8 +1,7 @@
-defmodule ControlServer.SystemState.Summarizer do
+defmodule KubeServices.SystemState.Summarizer do
   use GenServer
-  alias CommonCore.StateSummary
 
-  alias Ecto.Multi
+  alias CommonCore.StateSummary
 
   require Logger
 
@@ -68,26 +67,12 @@ defmodule ControlServer.SystemState.Summarizer do
 
   @spec new_summary! :: StateSummary.t()
   defp new_summary! do
-    with {:ok, res} <- transaction(),
-         summary <- struct(StateSummary, res),
+    with {:ok, res} <- ControlServer.SystemState.transaction(),
+         kube_state <- KubeExt.KubeState.snapshot(),
+         full <- Map.put(res, :kube_state, kube_state),
+         summary <- struct(StateSummary, full),
          :ok <- EventCenter.SystemStateSummary.broadcast(summary) do
       summary
     end
-  end
-
-  defp transaction do
-    Multi.new()
-    |> Multi.all(:batteries, CommonCore.Batteries.SystemBattery)
-    |> Multi.all(:postgres_clusters, CommonCore.Postgres.Cluster)
-    |> Multi.all(:redis_clusters, CommonCore.Redis.FailoverCluster)
-    |> Multi.all(:notebooks, CommonCore.Notebooks.JupyterLabNotebook)
-    |> Multi.all(:knative_services, CommonCore.Knative.Service)
-    |> Multi.all(:ceph_clusters, CommonCore.Rook.CephCluster)
-    |> Multi.all(:ceph_filesystems, CommonCore.Rook.CephFilesystem)
-    |> Multi.all(:ip_address_pools, CommonCore.MetalLB.IPAddressPool)
-    |> Multi.run(:kube_state, fn _repo, _state ->
-      {:ok, KubeExt.KubeState.snapshot()}
-    end)
-    |> ControlServer.Repo.transaction()
   end
 end

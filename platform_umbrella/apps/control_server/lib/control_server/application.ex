@@ -9,8 +9,7 @@ defmodule ControlServer.Application do
       ControlServer.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: ControlServer.PubSub},
-      {Task.Supervisor, name: ControlServer.TaskSupervisor},
-      {ControlServer.SystemState.Summarizer, name: ControlServer.SystemState.Summarizer}
+      {Task.Supervisor, name: ControlServer.TaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

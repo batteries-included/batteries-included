@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.SystemStateController do
   use ControlServerWeb, :controller
 
-  alias ControlServer.SystemState.Summarizer
+  alias KubeServices.SystemState.Summarizer
 
   action_fallback(ControlServerWeb.FallbackController)
 

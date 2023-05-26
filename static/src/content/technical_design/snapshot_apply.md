@@ -14,8 +14,6 @@ The snapshot apply process in the `control-server` binary is that system.
 - Take a point in time snapshot of everything. (Prepare)
 - Feed that snapshot into functional code that generate desired system states.
   (Generate)
-- Take all of those desired systems states (Kubernetes resources, and other
-  system configurations, etc) find all differences (Filter)
 - Apply any changes need to go from the current state to the desired state on
   all systems. (Apply)
 - Record the status for all desired state pieces (Report)
@@ -35,14 +33,11 @@ The snapshot apply process in the `control-server` binary is that system.
 - Store each kube or keycloak target resource in the database (ResourcePath for
   kube)
 
-## Filter
+## Apply
 
 - Remove any target system configuration or resource that already match with
   what's there. For kubernetes this is done via sha hmac `KubeExt.Hashing`
 - Update any matching resources are successfuly applied
-
-## Apply
-
 - Push each of the kube resource targets to kubernetes via
   `KubeExt.ApplyResource`
 - Push each of the keycloak resource targets to keycloak.

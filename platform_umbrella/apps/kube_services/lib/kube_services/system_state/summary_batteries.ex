@@ -1,5 +1,13 @@
 defmodule KubeServices.SystemState.SummaryBatteries do
-  alias ControlServer.SystemState.Summarizer
+  @moduledoc """
+  This GenServer watches for the new system state
+  summaries then caches some computed properties. These
+  are then made available to the front end without
+  having to compute a full system state snapshot.
+
+  This genserver hosts the the installed batteries
+  """
+  alias KubeServices.SystemState.Summarizer
   alias CommonCore.StateSummary
   alias EventCenter.SystemStateSummary
   use GenServer

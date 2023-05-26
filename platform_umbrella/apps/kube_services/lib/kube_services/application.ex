@@ -5,9 +5,6 @@ defmodule KubeServices.Application do
 
   use Application
 
-  alias KubeExt.ConnectionPool
-  alias KubeExt.KubeState
-
   @task_supervisor KubeServices.TaskSupervisor
 
   @impl Application
@@ -27,85 +24,13 @@ defmodule KubeServices.Application do
     [
       {Task.Supervisor, name: @task_supervisor},
       {Oban, Application.fetch_env!(:kube_services, Oban)},
-      KubeServices.SystemState.SummaryHosts,
-      KubeServices.SystemState.SummaryBatteries,
-      KubeServices.SnapshotApply.InitialLaunchTask,
-      KubeServices.SnapshotApply.FailedLauncher,
-      KubeServices.SnapshotApply.EventLauncher,
-      KubeServices.ResourceDeleter,
-      KubeServices.SnapshotApply.Apply
-    ] ++ kube_state_watchers() ++ timeline_watchers()
-  end
-
-  def children(_run),
-    do: [
-      KubeServices.SystemState.SummaryBatteries,
-      KubeServices.SystemState.SummaryHosts
+      KubeServices.KubeState,
+      KubeServices.Timeline,
+      KubeServices.SystemState,
+      KubeServices.SnapshotApply,
+      KubeServices.ResourceDeleter
     ]
-
-  def kube_state_watchers,
-    do:
-      specs_for_types(
-        CommonCore.ApiVersionKind.all_known(),
-        "KubeState.ResourceWatcher",
-        &resource_watcher_child_spec/1
-      )
-
-  def timeline_watchers do
-    specs_for_types(
-      [
-        :namspace,
-        :pod,
-        :node,
-        :deployment,
-        :stateful_set
-      ],
-      "Timeline.Kube",
-      &kube_watcher_child_spec/1
-    ) ++
-      specs_for_types(
-        [
-          :jupyter_notebook,
-          :knative_service,
-          :postgres_cluster,
-          :redis_cluster
-        ],
-        "Timeline.Database",
-        &database_watcher_child_spec/1
-      )
   end
 
-  defp specs_for_types(types, base_name, func) do
-    Enum.map(types, fn type ->
-      type_name = type |> Atom.to_string() |> Macro.camelize()
-      func.({type, "#{base_name}.#{type_name}"})
-    end)
-  end
-
-  defp resource_watcher_child_spec({resource_type, id}) do
-    Supervisor.child_spec(
-      {KubeExt.KubeState.ResourceWatcher,
-       [
-         connection_func: &ConnectionPool.get/0,
-         client: K8s.Client,
-         resource_type: resource_type,
-         table_name: KubeState.default_state_table()
-       ]},
-      id: id
-    )
-  end
-
-  defp kube_watcher_child_spec({resource_type, id}) do
-    Supervisor.child_spec(
-      {KubeServices.Timeline.KubeWatcher, [resource_type: resource_type]},
-      id: id
-    )
-  end
-
-  defp database_watcher_child_spec({database_source_type, id}) do
-    Supervisor.child_spec(
-      {KubeServices.Timeline.DatabaseWatcher, [source_type: database_source_type]},
-      id: id
-    )
-  end
+  def children(_run), do: [KubeServices.SystemState]
 end

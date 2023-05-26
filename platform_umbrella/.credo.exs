@@ -169,6 +169,7 @@
                excluded: [
                  # Gen Resource creates a new file in a short lived VM there's no danger here.
                  "apps/kube_ext/lib/mix/tasks/gen_resource.ex",
+                 "apps/common_core/lib/common_core/seed_args_converter.ex",
                  # Connection Pools are per cluster.
                  "apps/kube_ext/lib/kube_ext/connection_pool.ex"
                ]

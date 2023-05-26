@@ -11,8 +11,6 @@ defmodule ControlServerWeb.Live.GroupBatteries do
 
   alias EventCenter.Database, as: DatabaseEventCenter
 
-  alias KubeServices.SnapshotApply.Apply
-
   @impl Phoenix.LiveView
   def mount(%{"group" => group_str} = _params, _session, socket) do
     :ok = DatabaseEventCenter.subscribe(:system_battery)
@@ -118,8 +116,8 @@ defmodule ControlServerWeb.Live.GroupBatteries do
         Process.sleep(500)
         _res = Installer.install!(type, progress_target)
         Process.sleep(500)
-        {:ok, apply_result} = Apply.run()
-        send(progress_target, {:async_installer, {:apply_complete, apply_result}})
+        _ = KubeServices.SnapshotApply.Worker.start!()
+        send(progress_target, {:async_installer, {:apply_complete, "Started"}})
         Process.sleep(500)
         {:async_installer, :full_complete}
       end)
@@ -201,12 +199,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
         <%= map_size(@install_result.selected) %>
       </:item>
       <:item :if={@apply_result != nil} title="Kubernetes Deploy">
-        <%= @apply_result.status %>
-      </:item>
-      <:item :if={@apply_result != nil} title="Deploy Status Page">
-        <.link navigate={~p"/snapshot_apply/#{@apply_result.id}/show"} variant="styled">
-          Show Deploy
-        </.link>
+        <%= @apply_result %>
       </:item>
     </.data_list>
     """

@@ -15,7 +15,7 @@ defmodule CommonCore.SeedArgsConverter do
     raw_battery =
       system_battery
       |> to_fresh_args()
-      |> Map.update!(:type, fn val -> String.to_existing_atom(val) end)
+      |> Map.update!(:type, fn val -> String.to_atom(val) end)
 
     Map.update(raw_battery, :config, %{}, fn val ->
       # This is a polymorphic type. So we
@@ -32,6 +32,6 @@ defmodule CommonCore.SeedArgsConverter do
     |> Map.drop(@bad_keys)
   end
 
-  def to_key(key) when is_binary(key), do: String.to_existing_atom(key)
+  def to_key(key) when is_binary(key), do: String.to_atom(key)
   def to_key(key) when is_atom(key), do: key
 end
