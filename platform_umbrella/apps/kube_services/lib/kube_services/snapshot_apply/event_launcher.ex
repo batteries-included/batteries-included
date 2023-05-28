@@ -1,5 +1,6 @@
 defmodule KubeServices.SnapshotApply.EventLauncher do
   use GenServer
+  use TypedStruct
 
   alias KubeServices.SnapshotApply.Worker
 
@@ -7,8 +8,8 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
 
   @delay 2000
 
-  defmodule State do
-    defstruct timer_reference: nil
+  typedstruct module: State do
+    field :timer_reference, reference() | nil, default: nil
   end
 
   def start_link(opts \\ []) do
@@ -35,6 +36,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
     {:noreply, %State{state | timer_reference: nil}}
   end
 
+  @spec schedule_start(reference() | nil) :: reference()
   defp schedule_start(nil = _current_reference),
     do: Process.send_after(self(), :do_start_creation, @delay)
 

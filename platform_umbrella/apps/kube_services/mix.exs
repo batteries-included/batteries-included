@@ -26,6 +26,7 @@ defmodule KubeServices.MixProject do
 
   defp deps do
     [
+      {:typed_struct, "~> 0.3.0", runtime: false},
       {:tesla, "~> 1.7.0"},
       {:jason, "~> 1.2"},
       {:oban, "~> 2.15.1"},

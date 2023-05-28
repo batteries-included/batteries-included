@@ -8,7 +8,7 @@ locals_without_parens = [
 ]
 
 [
-  import_deps: [:phoenix, :ecto],
+  import_deps: [:phoenix, :ecto, :typed_struct],
   plugins: [Phoenix.LiveView.HTMLFormatter],
   inputs: [
     "{mix,.formatter,.credo}.exs",

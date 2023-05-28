@@ -1,5 +1,6 @@
 defmodule KubeServices.Timeline.KubeWatcher do
   use GenServer
+  use TypedStruct
 
   import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]
 
@@ -9,8 +10,8 @@ defmodule KubeServices.Timeline.KubeWatcher do
 
   require Logger
 
-  defmodule State do
-    defstruct resource_type: :pod
+  typedstruct module: State do
+    field :resource_type, atom(), default: :pod
   end
 
   def start_link(opts) do

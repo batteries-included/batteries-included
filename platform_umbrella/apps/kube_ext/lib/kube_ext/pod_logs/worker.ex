@@ -1,12 +1,17 @@
 defmodule KubeExt.PodLogs.Worker do
+  use TypedStruct
   use GenServer
 
   alias CommonCore.ApiVersionKind
 
   require Logger
 
-  defmodule State do
-    defstruct namespace: nil, name: nil, conn: nil, connection_func: nil, target: nil
+  typedstruct module: State do
+    field :namespace, String.t()
+    field :name, String.t()
+    field :conn, K8s.Conn.t() | nil
+    field :connection_func, any()
+    field :target, pid()
   end
 
   def start_link(args) do

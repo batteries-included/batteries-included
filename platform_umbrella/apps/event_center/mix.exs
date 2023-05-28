@@ -27,6 +27,7 @@ defmodule EventCenter.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:typed_struct, "~> 0.3.0", runtime: false},
       # Braodcast to thos who need events
       {:phoenix_pubsub, "~> 2.1"}
     ]

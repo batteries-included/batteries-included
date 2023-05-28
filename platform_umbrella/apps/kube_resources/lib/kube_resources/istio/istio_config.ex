@@ -1,6 +1,16 @@
 defmodule KubeResources.IstioConfig do
+  use TypedStruct
+
+  typedstruct module: PortSelector do
+    field :number, integer()
+  end
+
   defmodule StringMatch do
-    defstruct [:exact, :prefix, :regex]
+    typedstruct do
+      field :exact, String.t(), enforce: false
+      field :prefix, PortSelector.t(), enforce: false
+      field :regext, PortSelector.t(), enforce: false
+    end
 
     def prefix(p), do: %__MODULE__{prefix: p}
     def exact(p), do: %__MODULE__{exact: p}
@@ -8,53 +18,101 @@ defmodule KubeResources.IstioConfig do
     def value(%__MODULE__{} = sm), do: sm.exact || sm.prefix
   end
 
-  defmodule Destination do
-    defstruct [:host, :subset, :port]
+  typedstruct module: Destination do
+    field :host, String.t()
+    field :subset, String.t(), enforce: false
+    field :port, PortSelector.t(), enforce: false
   end
 
-  defmodule HttpRewrite do
-    defstruct [:uri, :authority]
+  typedstruct module: HttpRewrite do
+    field :uri, String.t(), enforce: false
+    field :authority, PortSelector.t(), enforce: false
   end
 
-  defmodule HttpMatchRequest do
-    defstruct [
-      :name,
-      :uri,
-      :scheme,
-      :method,
-      :authority,
-      :headers,
-      :port,
-      :sourceLabels,
-      :gateways,
-      :queryParams,
-      :ignoreUriCase,
-      :withoutHeaders,
-      :sourceNamespace
-    ]
+  typedstruct module: Percent do
+    field :value, float(), enforce: false
+  end
+
+  typedstruct module: Delay do
+    field :fixedDelay, map(), enforce: false
+    field :percentage, Percent.t(), enforce: false
+    field :percent, integer(), enforce: false
+  end
+
+  typedstruct module: Abort do
+    field :httpStatus, integer(), enforce: false
+    field :grpcStatus, String.t(), enforce: false
+    field :percentage, Percent.t(), enforce: false
+  end
+
+  typedstruct module: HttpFaultInjection do
+    field :delay, Delay.t(), enforce: false
+    field :abort, Abort.t(), enforce: false
+  end
+
+  typedstruct module: HttpMatchRequest do
+    field :name, String.t(), enforce: false
+    field :uri, StringMatch.t(), enforce: false
+    field :scheme, StringMatch.t(), enforce: false
+    field :method, StringMatch.t(), enforce: false
+    field :authority, StringMatch.t(), enforce: false
+    field :headers, map(), enforce: false
+    field :port, integer(), enfore: false
+    field :sourceLabels, map(), enforce: false
+    field :gateways, list(String.t()), enforce: false
+    field :queryParams, map(), enforce: false
+    field :ignoreUriCase, bool(), enforce: false
+    field :withoutHeaders, map(), enforce: false
+    field :sourceNamespace, String.t(), enforce: false
+    field :statPrefix, String.t(), enforce: false
+  end
+
+  typedstruct module: HeaderOperations do
+    field :set, map(), enforce: false
+    field :add, map(), enforce: false
+    field :remove, list(String.t()), enforce: false
+  end
+
+  typedstruct module: Headers do
+    field :request, HeaderOperations.t(), enforce: false
+    field :response, HeaderOperations.t(), enforce: false
   end
 
   defmodule RouteDestination do
-    defstruct [:destination, :weight]
+    typedstruct do
+      field :destination, Destination.t(), enforce: false
+      field :weight, integer(), enforce: false
+    end
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
 
     def new(port, host),
-      do: %__MODULE__{destination: %Destination{host: host, port: %{number: port}}}
+      do: %__MODULE__{destination: %Destination{host: host, port: %PortSelector{number: port}}}
   end
 
   defmodule HttpRouteDestination do
-    defstruct [:destination, :weight, :headers]
+    typedstruct do
+      field :destination, Destination.t(), enforce: false
+      field :weight, integer(), enforce: false
+      field :headers, Headers.t(), enforce: false
+    end
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
     def new(host, nil = _port), do: %__MODULE__{destination: %Destination{host: host}}
 
     def new(host, port),
-      do: %__MODULE__{destination: %Destination{host: host, port: %{number: port}}}
+      do: %__MODULE__{destination: %Destination{host: host, port: %PortSelector{number: port}}}
   end
 
   defmodule HttpRoute do
-    defstruct [:rewrite, :name, :fault, match: [], route: []]
+    typedstruct do
+      field :name, String.t(), enforce: false
+      field :match, list(HttpMatchRequest.t()), enforce: false
+      field :route, list(HttpRouteDestination.t()), enforce: false
+      field :rewrite, HttpRewrite.t(), enforce: false
+      field :fault, HttpFaultInjection.t(), enforce: false
+      field :headers, Headers.t(), enforce: false
+    end
 
     def prefix(prefix, service_host, opts \\ []) do
       do_rewrite = Keyword.get(opts, :rewrite, False)
@@ -84,7 +142,7 @@ defmodule KubeResources.IstioConfig do
 
       %__MODULE__{
         name: name,
-        fault: %{abort: %{httpStatus: 404}}
+        fault: %HttpFaultInjection{abort: %{httpStatus: 404}}
       }
     end
 
@@ -171,16 +229,23 @@ defmodule KubeResources.IstioConfig do
 
   defimpl Jason.Encoder,
     for: [
-      VirtualService,
-      TCPRoute,
-      L4MatchAttributes,
-      HttpRoute,
-      HttpRouteDestination,
-      RouteDestination,
+      Abort,
+      Delay,
+      Destination,
+      HeaderOperations,
+      Headers,
+      HttpFaultInjection,
       HttpMatchRequest,
       HttpRewrite,
-      Destination,
-      StringMatch
+      HttpRoute,
+      HttpRouteDestination,
+      L4MatchAttributes,
+      Percent,
+      PortSelector,
+      RouteDestination,
+      StringMatch,
+      TCPRoute,
+      VirtualService
     ] do
     def encode(value, opts) do
       value

@@ -8,13 +8,13 @@ defmodule CommonCore.Knative.Container do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field(:args, {:array, :string}, default: nil)
-    field(:command, {:array, :string}, default: nil)
+    field :args, {:array, :string}, default: nil
+    field :command, {:array, :string}, default: nil
 
     # TODO: validate that we can reach whatever registry/image/version is set
     #       in :image; at least warn if we can't
-    field(:image, :string)
-    field(:name, :string)
+    field :image, :string
+    field :name, :string
 
     embeds_many(:env_values, CommonCore.Knative.EnvValue, on_replace: :delete)
   end

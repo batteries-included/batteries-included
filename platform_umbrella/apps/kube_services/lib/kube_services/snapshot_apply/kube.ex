@@ -1,5 +1,6 @@
 defmodule KubeServices.SnapshotApply.KubeApply do
   use GenServer
+  use TypedStruct
 
   import ControlServer.SnapshotApply.EctoSteps
 
@@ -7,7 +8,6 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   alias ControlServer.SnapshotApply.EctoSteps
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-  alias KubeServices.SystemState.Summarizer
 
   alias KubeResources.ConfigGenerator
 
@@ -19,29 +19,21 @@ defmodule KubeServices.SnapshotApply.KubeApply do
 
   @me __MODULE__
   @state_opts [
-    :resource_gen_func,
-    :system_state_summarizer_func,
     :apply_kube_func,
-    :kube_state_get_func,
     :kube_connection,
     :stream_concurrency
   ]
 
   defmodule State do
-    defstruct resource_gen_func: nil,
-              system_state_summarizer_func: nil,
-              kube_connection: nil,
-              apply_kube_func: nil,
-              kube_state_get_func: nil,
-              stream_concurrency: 5
+    typedstruct do
+      field :kube_connection, K8s.Conn.t() | nil
+      field :apply_kube_func, any()
+      field :stream_concurrency, non_neg_integer(), default: 5
+    end
 
     def new(opts) do
       %__MODULE__{
-        resource_gen_func: Keyword.get(opts, :resource_gen_func, &ConfigGenerator.materialize/1),
-        system_state_summarizer_func:
-          Keyword.get(opts, :system_state_summarizer_func, &Summarizer.new/0),
         apply_kube_func: Keyword.get(opts, :apply_kube_func, &ApplyResource.apply/2),
-        kube_state_get_func: Keyword.get(opts, :kube_state_get_func, &KubeState.get/3),
         kube_connection: Keyword.get_lazy(opts, :kube_connection, &KubeExt.ConnectionPool.get/0),
         stream_concurrency: Keyword.get(opts, :stream_concurrency, 5)
       }
@@ -214,11 +206,8 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     end)
   end
 
-  defp kube_state_different?(
-         %ResourcePath{} = rp,
-         %{kube_state_get_func: kube_state_get_func} = _server_state
-       ) do
-    case kube_state_get_func.(rp.type, rp.namespace, rp.name) do
+  defp kube_state_different?(%ResourcePath{} = rp, _server_state) do
+    case KubeState.get(rp.type, rp.namespace, rp.name) do
       # Resource path doesn't have the whole annotated
       # resource so just check the equality of the hashes here.
       {:ok, current_resource} ->

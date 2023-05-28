@@ -29,6 +29,7 @@ defmodule KubeResources.MixProject do
 
   defp deps do
     [
+      {:typed_struct, "~> 0.3.0", runtime: false},
       {:jason, "~> 1.2"},
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 4.1.0"},

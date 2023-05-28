@@ -26,6 +26,7 @@ defmodule KubeExt.MixProject do
 
   defp deps do
     [
+      {:typed_struct, "~> 0.3.0", runtime: false},
       {:k8s, "~> 2.3.0"},
       {:httpoison, "~> 2.1"},
       {:jason, "~> 1.0"},

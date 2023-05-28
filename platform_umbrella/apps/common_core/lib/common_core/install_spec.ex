@@ -1,16 +1,17 @@
 defmodule CommonCore.InstallSpec do
   @moduledoc """
-  A struct to hold all information needed for
-  bootstrapping a single kube cluster.
+  A struct holding the information needed the bootstrap
+  an instalation of Batteries included control server
+  onto a kubernetes cluster.
   """
-  @derive Jason.Encoder
-  defstruct [:kube_cluster, :target_summary, :initial_resources]
+  use TypedStruct
 
-  @type t :: %__MODULE__{
-          kube_cluster: map(),
-          target_summary: CommonCore.StateSummary.t(),
-          initial_resources: map()
-        }
+  typedstruct do
+    @typedoc ""
+    field :kube_cluster, map()
+    field :target_summary, CommonCore.StateSummary.t()
+    field :initial_resources, map(), default: %{}
+  end
 
   def new(m) do
     struct!(__MODULE__, m)

@@ -1,5 +1,6 @@
 defmodule KubeServices.SnapshotApply.FailedLauncher do
   use GenServer
+  use TypedStruct
 
   require Logger
 
@@ -7,8 +8,11 @@ defmodule KubeServices.SnapshotApply.FailedLauncher do
   alias EventCenter.KubeSnapshot.Payload
   alias KubeServices.SnapshotApply.Worker
 
-  defmodule State do
-    defstruct delay: 5000, initial_delay: 5000, max_delay: 600_000, timer_reference: nil
+  typedstruct module: State do
+    field :delay, non_neg_integer(), deafult: 5000
+    field :initial_delay, non_neg_integer(), default: 5000
+    field :max_delay, non_neg_integer(), default: 600_000
+    field :timer_reference, reference() | nil, default: nil
   end
 
   def start_link(opts \\ []) do
@@ -54,8 +58,8 @@ defmodule KubeServices.SnapshotApply.FailedLauncher do
     %State{state | delay: init_delay}
   end
 
-  def init(_args) do
+  def init(args) do
     :ok = EventCenter.KubeSnapshot.subscribe()
-    {:ok, %State{}}
+    {:ok, struct(State, args)}
   end
 end

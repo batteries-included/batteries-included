@@ -5,6 +5,7 @@ defmodule KubeExt.ApplyResource do
   # K8s' typespec is wrong, or it could be both.
   @dialyzer {:nowarn_function, get_or_create_single: 2}
 
+  use TypedStruct
   alias KubeExt.Hashing
   alias K8s.Client
   alias K8s.Resource
@@ -16,7 +17,10 @@ defmodule KubeExt.ApplyResource do
     Simple struct to hold information about the last time we
     tried to apply this resource spec to kubernetes.
     """
-    defstruct [:resource, :last_result]
+    typedstruct do
+      field :resource, map()
+      field :last_result, any()
+    end
 
     def needs_apply(%ResourceState{} = resource_state, new_resource) do
       # If the last try was an error then we always try and sync.

@@ -1,11 +1,12 @@
 defmodule EventCenter.KubeState do
+  use TypedStruct
   alias Phoenix.PubSub
 
   @pubsub EventCenter.KubeState.PubSub
 
-  defmodule Payload do
-    defstruct action: nil,
-              resource: nil
+  typedstruct module: Payload do
+    field :action, atom()
+    field :resource, map()
   end
 
   def broadcast(resource_type, %Payload{} = payload) do

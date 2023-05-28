@@ -3,6 +3,7 @@ defmodule Mix.Tasks.Gen.Resource do
   @shortdoc "Elixir resource skeletons from yaml"
 
   use Mix.Task
+  use TypedStruct
 
   import CommonCore.ApiVersionKind, only: [resource_type: 1]
   alias K8s.Resource, as: K8Resource
@@ -27,10 +28,12 @@ defmodule Mix.Tasks.Gen.Resource do
   @max_config_string_size 128
 
   defmodule ResourceResult do
-    defstruct methods: %{},
-              manifests: %{},
-              raw_files: %{},
-              include_paths: %{}
+    typedstruct do
+      field :methods, map(), default: %{}
+      field :manifests, map(), default: %{}
+      field :raw_files, map(), default: %{}
+      field :include_paths, map(), default: %{}
+    end
 
     def merge(rr_one, rr_two) do
       %__MODULE__{

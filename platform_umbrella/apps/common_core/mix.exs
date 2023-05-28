@@ -25,6 +25,7 @@ defmodule CommonCore.MixProject do
 
   defp deps do
     [
+      {:typed_struct, "~> 0.3.0", runtime: false},
       {:jason, "~> 1.0"},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:polymorphic_embed, "~> 3.0.5"},

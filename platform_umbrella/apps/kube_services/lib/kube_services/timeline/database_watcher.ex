@@ -1,13 +1,14 @@
 defmodule KubeServices.Timeline.DatabaseWatcher do
   use GenServer
+  use TypedStruct
 
   alias ControlServer.Timeline
   alias EventCenter.Database, as: DatabaseEventCenter
 
   require Logger
 
-  defmodule State do
-    defstruct source_type: :postgres_cluster
+  typedstruct module: State do
+    field :source_type, atom(), default: :postgres_cluster
   end
 
   def start_link(opts) do

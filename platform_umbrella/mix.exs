@@ -22,11 +22,12 @@ defmodule ControlServer.Umbrella.MixProject do
 
   defp deps do
     [
+      {:typed_struct, "~> 0.3.0", runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 2.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.12.2", only: :dev}
+      {:sobelow, "~> 0.12.2", only: :dev, runtime: false}
     ]
   end
 

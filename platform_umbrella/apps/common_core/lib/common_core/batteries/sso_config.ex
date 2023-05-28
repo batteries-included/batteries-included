@@ -8,7 +8,7 @@ defmodule CommonCore.Batteries.SsoConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field(:dev, :boolean, default: true)
+    field :dev, :boolean, default: true
   end
 
   @doc """

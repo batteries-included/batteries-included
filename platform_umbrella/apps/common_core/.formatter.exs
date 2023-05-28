@@ -6,7 +6,7 @@ locals_without_parens = [
 ]
 
 [
-  import_deps: [:ecto],
+  import_deps: [:ecto, :typed_struct],
   inputs: [
     "{mix,.formatter}.exs",
     "*.{heex,ex,exs}",

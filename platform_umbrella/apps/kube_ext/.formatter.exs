@@ -4,6 +4,7 @@ locals_without_parens = [
 ]
 
 [
+  import_deps: [:typed_struct],
   inputs: [
     "{mix,.formatter}.exs",
     "*.{ex,exs}",

@@ -1,11 +1,13 @@
 defmodule EventCenter.KubeSnapshot do
+  use TypedStruct
+
   alias Phoenix.PubSub
 
   @pubsub EventCenter.KubeSnapshot.PubSub
   @topic "snapshots"
 
-  defmodule Payload do
-    defstruct snapshot: nil
+  typedstruct module: Payload do
+    field :snapshot, map(), default: nil, enforce: false
   end
 
   @spec broadcast(any()) :: :ok | {:error, any()}

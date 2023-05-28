@@ -1,11 +1,14 @@
 defmodule CommonCore.Batteries.CatalogBattery do
+  use TypedStruct
+
   alias CommonCore.Batteries.SystemBattery
 
-  @enforce_keys [:type, :group]
-  defstruct type: nil,
-            group: nil,
-            dependencies: [],
-            description: nil
+  typedstruct do
+    field :type, atom(), enforce: true
+    field :group, atom(), enforce: true
+    field :dependencies, list(atom()), default: []
+    field :description, String.t(), default: ""
+  end
 
   def to_fresh_args(%__MODULE__{} = catalog_battery) do
     catalog_battery
