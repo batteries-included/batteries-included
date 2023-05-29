@@ -1,11 +1,11 @@
 defmodule KubeResources.Postgres do
-  use KubeExt.ResourceGenerator, app_name: "postgres"
+  use KubeResources.ResourceGenerator, app_name: "postgres"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.FromKubeState
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.Secret
+  alias KubeResources.Builder, as: B
+  alias KubeResources.Secret
 
   multi_resource(:postgres_clusters, battery, state) do
     Enum.map(state.postgres_clusters, fn cluster ->

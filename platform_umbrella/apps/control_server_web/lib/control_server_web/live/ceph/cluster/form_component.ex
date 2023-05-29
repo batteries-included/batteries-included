@@ -7,7 +7,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
   alias CommonCore.Rook.CephStorageNode
 
   alias ControlServer.Rook
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
 
   @impl Phoenix.LiveComponent
   def mount(socket) do

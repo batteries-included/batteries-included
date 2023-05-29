@@ -1,9 +1,9 @@
 defmodule KubeResources.KubeStateMetrics do
-  use KubeExt.ResourceGenerator, app_name: "kube-state-metrics"
+  use KubeResources.ResourceGenerator, app_name: "kube-state-metrics"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:cluster_role_binding_kube_state_metrics, _battery, state) do
     namespace = core_namespace(state)

@@ -21,12 +21,12 @@ defmodule KubeResources.TrivyOperator do
     cis: "priv/manifests/trivy_operator/cis-1.23.yaml",
     nsa: "priv/manifests/trivy_operator/nsa-1.0.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "trivy-operator"
+  use KubeResources.ResourceGenerator, app_name: "trivy-operator"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   multi_resource(:crds) do
     [

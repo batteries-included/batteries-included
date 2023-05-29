@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGCredentialCopy
 
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
 
   alias Ecto.Changeset
 

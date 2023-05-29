@@ -1,6 +1,4 @@
 defmodule KubeServices.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -22,15 +20,20 @@ defmodule KubeServices.Application do
 
   def children(true = _run) do
     [
+      KubeServices.ConnectionPool,
       {Task.Supervisor, name: @task_supervisor},
       {Oban, Application.fetch_env!(:kube_services, Oban)},
       KubeServices.KubeState,
-      KubeServices.Timeline,
       KubeServices.SystemState,
+      KubeServices.Timeline,
       KubeServices.SnapshotApply,
       KubeServices.ResourceDeleter
     ]
   end
 
-  def children(_run), do: [KubeServices.SystemState]
+  def children(_run),
+    do: [
+      {KubeServices.KubeState, [should_watch: false]},
+      {KubeServices.SystemState, [should_refresh: false]}
+    ]
 end

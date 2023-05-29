@@ -1,10 +1,10 @@
 defmodule KubeResources.IstioCsr do
-  use KubeExt.ResourceGenerator, app_name: "istio-csr"
+  use KubeResources.ResourceGenerator, app_name: "istio-csr"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:certmanger_certificate_istiod, _battery, state) do
     namespace = istio_namespace(state)

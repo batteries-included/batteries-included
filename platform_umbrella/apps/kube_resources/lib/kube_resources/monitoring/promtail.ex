@@ -1,12 +1,12 @@
 defmodule KubeResources.Promtail do
   use CommonCore.IncludeResource, promtail_yaml: "priv/raw_files/promtail/promtail.yaml"
-  use KubeExt.ResourceGenerator, app_name: "promtail"
+  use KubeResources.ResourceGenerator, app_name: "promtail"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
-  alias KubeExt.Secret
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
+  alias KubeResources.Secret
 
   resource(:cluster_role_binding_main, _battery, state) do
     namespace = core_namespace(state)

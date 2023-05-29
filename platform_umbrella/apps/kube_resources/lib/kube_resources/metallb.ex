@@ -8,12 +8,12 @@ defmodule KubeResources.MetalLB do
     ipaddresspools_metallb_io: "priv/manifests/metallb/ipaddresspools_metallb_io.yaml",
     l2advertisements_metallb_io: "priv/manifests/metallb/l2advertisements_metallb_io.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "metallb"
+  use KubeResources.ResourceGenerator, app_name: "metallb"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   multi_resource(:ip_pool, _battery, state) do
     namespace = base_namespace(state)

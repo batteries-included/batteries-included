@@ -6,12 +6,12 @@ defmodule KubeResources.PostgresOperator do
     postgresteams_acid_zalan_do:
       "priv/manifests/postgres-operator/postgresteams_acid_zalan_do.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "postgres-operator"
+  use KubeResources.ResourceGenerator, app_name: "postgres-operator"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.Secret
+  alias KubeResources.Builder, as: B
+  alias KubeResources.Secret
 
   @service_account "battery-postgres-operator"
   @postgres_pod_service_account "battery-postgres-pod"

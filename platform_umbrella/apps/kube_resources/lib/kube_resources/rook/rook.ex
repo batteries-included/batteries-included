@@ -32,11 +32,11 @@ defmodule KubeResources.Rook do
     csi_rbd_plugin_resource: "priv/raw_files/rook/CSI_RBD_PLUGIN_RESOURCE",
     csi_rbd_provisioner_resource: "priv/raw_files/rook/CSI_RBD_PROVISIONER_RESOURCE"
 
-  use KubeExt.ResourceGenerator, app_name: "rook"
+  use KubeResources.ResourceGenerator, app_name: "rook"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:cluster_role_binding_ceph_global, _battery, state) do
     namespace = data_namespace(state)

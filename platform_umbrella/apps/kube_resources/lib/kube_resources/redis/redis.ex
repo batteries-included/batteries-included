@@ -1,10 +1,10 @@
 defmodule KubeResources.Redis do
   @moduledoc false
-  use KubeExt.ResourceGenerator, app_name: "redis-operator"
+  use KubeResources.ResourceGenerator, app_name: "redis-operator"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   multi_resource(:redis_failover_cluster, battery, state) do
     Enum.map(state.redis_clusters, fn cluster ->

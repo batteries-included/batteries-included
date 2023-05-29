@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.Home do
 
   import ControlServerWeb.Chart
 
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
   alias Phoenix.Naming
   alias ControlServer.SnapshotApply
 

@@ -5,12 +5,12 @@ defmodule KubeResources.KubeDashboards do
     dashboard_15759: "priv/raw_files/kube_monitoring/dashboard_15759.json",
     dashboard_15760: "priv/raw_files/kube_monitoring/dashboard_15760.json"
 
-  use KubeExt.ResourceGenerator, app_name: "kube-dashboard"
+  use KubeResources.ResourceGenerator, app_name: "kube-dashboard"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:config_map_dashboard_15760, _battery, state) do
     namespace = core_namespace(state)

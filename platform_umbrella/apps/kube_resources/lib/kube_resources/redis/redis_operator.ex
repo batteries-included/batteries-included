@@ -3,12 +3,12 @@ defmodule KubeResources.RedisOperator do
     redisfailovers_databases_spotahome_com:
       "priv/manifests/redis_operator/redisfailovers_databases_spotahome_com.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "redis-operator"
+  use KubeResources.ResourceGenerator, app_name: "redis-operator"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:cluster_role_binding_redis_operator, _battery, state) do
     namespace = core_namespace(state)

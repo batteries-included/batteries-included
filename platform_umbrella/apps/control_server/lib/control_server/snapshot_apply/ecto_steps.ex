@@ -7,7 +7,7 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.ContentAddressable.ContentAddressableResource
 
-  alias KubeExt.Hashing
+  alias KubeResources.Hashing
   alias CommonCore.ApiVersionKind
 
   alias Ecto.Multi

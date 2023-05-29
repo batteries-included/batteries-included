@@ -34,7 +34,7 @@ defmodule KubeResources.MixProject do
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 4.1.0"},
       {:phoenix, "~> 1.7.2"},
-      {:kube_ext, in_umbrella: true},
+      {:k8s, "~> 2.3.0"},
       {:common_core, in_umbrella: true},
       {:ex_machina, "~> 2.7.0", only: :test}
     ]

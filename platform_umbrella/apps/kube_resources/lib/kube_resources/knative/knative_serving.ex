@@ -1,12 +1,12 @@
 defmodule KubeResources.KnativeServing do
-  use KubeExt.ResourceGenerator, app_name: "knative-serving"
+  use KubeResources.ResourceGenerator, app_name: "knative-serving"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
   alias CommonCore.Knative.EnvValue
   alias CommonCore.Knative.Service
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:namespace_dest, battery, _state) do
     B.build_resource(:namespace)

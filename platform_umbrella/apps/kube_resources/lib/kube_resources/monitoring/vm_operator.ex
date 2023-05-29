@@ -29,10 +29,10 @@ defmodule KubeResources.VMOperator do
     vmusers_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmusers_operator_victoriametrics_com.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "victoria-metrics-operator"
+  use KubeResources.ResourceGenerator, app_name: "victoria-metrics-operator"
 
   import CommonCore.StateSummary.Namespaces
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   @service_account_name "victoria-metrics-operator"
 

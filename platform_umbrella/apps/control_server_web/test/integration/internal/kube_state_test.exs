@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Integration.KubeState do
   use ControlServerWeb.IntegrationTestCase
 
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
 
   feature "Can show kube nodes state", %{session: session} do
     # Make sure that there are at least this many nodes in the table

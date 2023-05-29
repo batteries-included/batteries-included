@@ -10,12 +10,12 @@ defmodule KubeResources.CertManager do
     issuers_cert_manager_io: "priv/manifests/cert_manager/issuers_cert_manager_io.yaml",
     orders_acme_cert_manager_io: "priv/manifests/cert_manager/orders_acme_cert_manager_io.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "cert-manager"
+  use KubeResources.ResourceGenerator, app_name: "cert-manager"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:cluster_role_binding_cainjector, _battery, state) do
     namespace = base_namespace(state)

@@ -3,11 +3,11 @@ defmodule KubeResources.IstioIstiod do
     config: "priv/raw_files/istio_istiod/config",
     values: "priv/raw_files/istio_istiod/values"
 
-  use KubeExt.ResourceGenerator, app_name: "istiod"
+  use KubeResources.ResourceGenerator, app_name: "istiod"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:cluster_role_binding_istio_reader_clusterrole_battery_istio, _battery, state) do
     namespace = istio_namespace(state)

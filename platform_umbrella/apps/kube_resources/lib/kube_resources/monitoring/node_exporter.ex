@@ -1,10 +1,10 @@
 defmodule KubeResources.NodeExporter do
-  use KubeExt.ResourceGenerator, app_name: "node-exporter"
+  use KubeResources.ResourceGenerator, app_name: "node-exporter"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:service_account_node_exporter_prometheus_node_exporter, _battery, state) do
     namespace = core_namespace(state)

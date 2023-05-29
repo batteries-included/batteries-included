@@ -103,7 +103,7 @@ config :phoenix, :plug_init_mode, :runtime
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
-config :kube_ext, cluster_type: :dev
+config :kube_services, cluster_type: :dev
 
 config :kube_resources, include_dev_infrausers: true
 

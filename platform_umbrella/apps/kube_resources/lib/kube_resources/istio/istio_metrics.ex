@@ -1,10 +1,10 @@
 defmodule KubeResources.IstioMetrics do
-  use KubeExt.ResourceGenerator, app_name: "istio-metrics"
+  use KubeResources.ResourceGenerator, app_name: "istio-metrics"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:pod_monitor_envoy_stats, _battery, state) do
     namespace = istio_namespace(state)

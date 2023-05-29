@@ -1,12 +1,12 @@
 defmodule KubeResources.Keycloak do
-  use KubeExt.ResourceGenerator, app_name: "keycloak"
+  use KubeResources.ResourceGenerator, app_name: "keycloak"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
-  alias KubeExt.Secret
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
+  alias KubeResources.Secret
   alias KubeResources.IstioConfig.VirtualService
 
   resource(:config_map_env_vars, _battery, state) do

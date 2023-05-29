@@ -1,7 +1,7 @@
 defmodule KubeResources.BatteryCore do
-  use KubeExt.ResourceGenerator, app_name: "battery-core"
+  use KubeResources.ResourceGenerator, app_name: "battery-core"
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:core_namespace, battery, _state) do
     B.build_resource(:namespace)

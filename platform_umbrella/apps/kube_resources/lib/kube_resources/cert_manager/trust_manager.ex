@@ -3,12 +3,12 @@ defmodule KubeResources.TrustManager do
     bundles_trust_cert_manager_io:
       "priv/manifests/trust_manager/bundles_trust_cert_manager_io.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "trust-manager"
+  use KubeResources.ResourceGenerator, app_name: "trust-manager"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:certmanger_certificate_trust_manager, _battery, state) do
     namespace = base_namespace(state)

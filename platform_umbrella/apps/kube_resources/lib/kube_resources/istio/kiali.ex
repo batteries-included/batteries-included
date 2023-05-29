@@ -1,12 +1,12 @@
 defmodule KubeResources.Kiali do
   use CommonCore.IncludeResource, config_yaml: "priv/raw_files/kiali/config.yaml"
-  use KubeExt.ResourceGenerator, app_name: "kiali"
+  use KubeResources.ResourceGenerator, app_name: "kiali"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
 
   resource(:virtual_service, _battery, state) do

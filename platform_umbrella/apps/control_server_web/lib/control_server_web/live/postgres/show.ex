@@ -8,9 +8,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
   import ControlServerWeb.PgUserTable
 
   alias ControlServer.Postgres
-  alias KubeExt.KubeState
-  alias KubeExt.OwnerLabel
-  alias KubeExt.OwnerReference
+  alias KubeServices.KubeState
+  alias KubeResources.OwnerLabel
+  alias KubeResources.OwnerReference
   alias EventCenter.KubeState, as: KubeEventCenter
 
   @impl Phoenix.LiveView

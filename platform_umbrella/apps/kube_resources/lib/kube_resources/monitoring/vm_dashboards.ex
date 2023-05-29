@@ -3,12 +3,12 @@ defmodule KubeResources.VMDashboards do
     dashboard_11176: "priv/raw_files/victoria_metrics/dashboard_11176.json",
     dashboard_12683: "priv/raw_files/victoria_metrics/dashboard_12683.json"
 
-  use KubeExt.ResourceGenerator, app_name: "vm-dashboards"
+  use KubeResources.ResourceGenerator, app_name: "vm-dashboards"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:config_map_dashboard_11176, _battery, state) do
     namespace = core_namespace(state)

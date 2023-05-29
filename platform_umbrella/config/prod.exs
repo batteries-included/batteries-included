@@ -38,8 +38,8 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   level: :error
 
-config :kube_ext, :clusters, default: :service_account
-config :kube_ext, cluster_type: :prod
+config :kube_services, :clusters, default: :service_account
+config :kube_services, cluster_type: :prod
 
 # Important!! Setting this to false will filter
 # out all materialization of infra users that

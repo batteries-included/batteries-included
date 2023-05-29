@@ -4,15 +4,15 @@ defmodule KubeResources.Gitea do
     configure_gitea_sh: "priv/raw_files/gitea/configure_gitea.sh",
     init_directory_structure_sh: "priv/raw_files/gitea/init_directory_structure.sh"
 
-  use KubeExt.ResourceGenerator, app_name: "gitea"
+  use KubeResources.ResourceGenerator, app_name: "gitea"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
   alias CommonCore.Defaults
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
-  alias KubeExt.Secret
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
+  alias KubeResources.Secret
 
   alias KubeResources.IstioConfig.VirtualService
   alias KubeResources.IstioConfig.HttpRoute

@@ -108,7 +108,7 @@ config :kube_services, Oban,
 
 config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
 
-config :kube_ext, KubeExt.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
+config :kube_resources, KubeResources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 
 config :hackney, use_default_pool: false
 

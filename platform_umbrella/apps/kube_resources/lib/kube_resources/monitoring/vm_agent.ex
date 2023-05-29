@@ -1,11 +1,11 @@
 defmodule KubeResources.VMAgent do
-  use KubeExt.ResourceGenerator, app_name: "vcitoria-metrics-agent"
+  use KubeResources.ResourceGenerator, app_name: "vcitoria-metrics-agent"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
 
   resource(:vm_agent_main, _battery, state) do

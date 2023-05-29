@@ -7,14 +7,14 @@ defmodule KubeResources.Harbor do
     tls_crt: "priv/raw_files/harbor/tls.crt",
     tls_key: "priv/raw_files/harbor/tls.key"
 
-  use KubeExt.ResourceGenerator, app_name: "harbor"
+  use KubeResources.ResourceGenerator, app_name: "harbor"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
-  alias KubeExt.Secret
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
+  alias KubeResources.Secret
 
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService

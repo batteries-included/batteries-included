@@ -5,8 +5,8 @@ defmodule ControlServerWeb.Live.RedisShow do
   import ControlServerWeb.ServicesTable
 
   alias ControlServer.Redis
-  alias KubeExt.KubeState
-  alias KubeExt.OwnerLabel
+  alias KubeServices.KubeState
+  alias KubeResources.OwnerLabel
   alias EventCenter.KubeState, as: KubeEventCenter
 
   @impl Phoenix.LiveView

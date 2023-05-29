@@ -17,7 +17,7 @@ defmodule KubeServices.Timeline.Kube do
 
   defp spec(type) do
     type_name = type |> Atom.to_string() |> Macro.camelize()
-    id = "KubeExt.Timeline.KubeWatcher.#{type_name}"
+    id = "KubeServices.Timeline.KubeWatcher.#{type_name}"
 
     Supervisor.child_spec(
       {KubeServices.Timeline.KubeWatcher, [resource_type: type]},

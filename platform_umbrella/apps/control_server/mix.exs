@@ -56,7 +56,7 @@ defmodule ControlServer.MixProject do
 
       # Kubernetes
       {:k8s, "~> 2.3.0"},
-      {:kube_ext, in_umbrella: true},
+      {:kube_resources, in_umbrella: true},
 
       # Yaml
       {:yaml_elixir, "~> 2.6"},

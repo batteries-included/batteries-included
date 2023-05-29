@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Live.RawResource do
   import ControlServerWeb.ObjectDisplay
 
   alias EventCenter.KubeState, as: KubeEventCenter
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
 
   require Logger
 

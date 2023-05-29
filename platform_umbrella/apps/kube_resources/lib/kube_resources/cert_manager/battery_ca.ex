@@ -1,8 +1,8 @@
 defmodule KubeResources.BatteryCA do
-  use KubeExt.ResourceGenerator, app_name: "battery-ca"
+  use KubeResources.ResourceGenerator, app_name: "battery-ca"
 
   import CommonCore.StateSummary.Namespaces
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:certmanger_issuer_selfsigned, _battery, state) do
     namespace = base_namespace(state)

@@ -11,9 +11,9 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias ControlServer.Knative
-  alias KubeExt.KubeState
-  alias KubeExt.OwnerLabel
-  alias KubeExt.OwnerReference
+  alias KubeServices.KubeState
+  alias KubeResources.OwnerLabel
+  alias KubeResources.OwnerReference
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -58,14 +58,14 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   def k8_configuration(k8_service) do
     KubeState.get_all(:knative_configuration)
-    |> Enum.filter(fn c -> KubeExt.uid(k8_service) == OwnerReference.get_owner(c) end)
+    |> Enum.filter(fn c -> KubeResources.uid(k8_service) == OwnerReference.get_owner(c) end)
     |> Enum.at(0, %{})
   end
 
   def k8_revisions(k8_configuration) do
     Enum.filter(
       KubeState.get_all(:knative_revision),
-      fn r -> KubeExt.uid(k8_configuration) == OwnerReference.get_owner(r) end
+      fn r -> KubeResources.uid(k8_configuration) == OwnerReference.get_owner(r) end
     )
   end
 

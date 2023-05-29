@@ -1,12 +1,12 @@
 defmodule KubeResources.Smtp4Dev do
-  use KubeExt.ResourceGenerator, app_name: "smtp4dev"
+  use KubeResources.ResourceGenerator, app_name: "smtp4dev"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
   alias KubeResources.IstioConfig.VirtualService
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
 
   resource(:virtual_service, _battery, state) do
     namespace = base_namespace(state)

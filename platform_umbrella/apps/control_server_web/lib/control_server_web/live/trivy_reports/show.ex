@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.TrivyReportShow do
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Table

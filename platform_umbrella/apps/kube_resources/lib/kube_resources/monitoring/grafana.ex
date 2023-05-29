@@ -2,15 +2,15 @@ defmodule KubeResources.Grafana do
   use CommonCore.IncludeResource,
     provider_yaml: "priv/raw_files/grafana/provider.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "grafana"
+  use KubeResources.ResourceGenerator, app_name: "grafana"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
   alias KubeResources.IstioConfig.VirtualService
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
-  alias KubeExt.Secret
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
+  alias KubeResources.Secret
   alias KubeResources.IniConfig
 
   resource(:cluster_role_binding_clusterrolebinding, _battery, state) do

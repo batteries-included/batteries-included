@@ -1,9 +1,9 @@
 defmodule KubeResources.CephClusters do
-  use KubeExt.ResourceGenerator, app_name: "ceph-clusters"
+  use KubeResources.ResourceGenerator, app_name: "ceph-clusters"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   multi_resource(:clusters, battery, state) do
     namespace = data_namespace(state)

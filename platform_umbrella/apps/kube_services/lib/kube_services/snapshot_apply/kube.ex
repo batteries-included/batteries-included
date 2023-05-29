@@ -11,9 +11,10 @@ defmodule KubeServices.SnapshotApply.KubeApply do
 
   alias KubeResources.ConfigGenerator
 
-  alias KubeExt.ApplyResource
-  alias KubeExt.KubeState
-  alias KubeExt.Hashing
+  alias KubeServices.KubeState
+  alias KubeServices.SnapshotApply.ApplyResource
+
+  alias KubeResources.Hashing
 
   require Logger
 
@@ -34,7 +35,8 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     def new(opts) do
       %__MODULE__{
         apply_kube_func: Keyword.get(opts, :apply_kube_func, &ApplyResource.apply/2),
-        kube_connection: Keyword.get_lazy(opts, :kube_connection, &KubeExt.ConnectionPool.get/0),
+        kube_connection:
+          Keyword.get_lazy(opts, :kube_connection, &KubeServices.ConnectionPool.get/0),
         stream_concurrency: Keyword.get(opts, :stream_concurrency, 5)
       }
     end

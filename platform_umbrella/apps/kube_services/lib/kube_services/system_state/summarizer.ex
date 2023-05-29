@@ -1,7 +1,9 @@
 defmodule KubeServices.SystemState.Summarizer do
   use GenServer
+  use TypedStruct
 
   alias CommonCore.StateSummary
+  alias KubeServices.KubeState
 
   require Logger
 
@@ -10,6 +12,12 @@ defmodule KubeServices.SystemState.Summarizer do
   @state_opts [
     :refresh_time
   ]
+
+  typedstruct module: State do
+    field :refresh_time, integer(), default: 90_000
+    field :should_refresh, bool(), default: true
+    field :last, StateSummary.t()
+  end
 
   @spec new(atom | pid | {atom, any} | {:via, atom, any}) :: StateSummary.t()
   def new(target \\ @me), do: GenServer.call(target, :new)
@@ -34,8 +42,9 @@ defmodule KubeServices.SystemState.Summarizer do
   def init(opts) do
     sleep_time = Keyword.get(opts, :refresh_time, @default_refresh_time)
 
-    schedule_refresh(sleep_time)
-    {:ok, %{last: new_summary!(), refresh_time: sleep_time}}
+    state = %State{last: new_summary!(), refresh_time: sleep_time}
+    _ref = schedule_refresh(state)
+    {:ok, state}
   end
 
   @impl GenServer
@@ -56,19 +65,21 @@ defmodule KubeServices.SystemState.Summarizer do
 
   @impl GenServer
   def handle_info(:refresh, %{refresh_time: time} = state) do
-    schedule_refresh(time)
+    _ref = schedule_refresh(time)
 
     {:noreply, %{state | last: new_summary!()}}
   end
 
-  defp schedule_refresh(refresh_time) do
+  defp schedule_refresh(%State{should_refresh: true, refresh_time: refresh_time} = _state) do
     Process.send_after(self(), :refresh, refresh_time)
   end
+
+  defp schedule_refresh(%State{should_refresh: _} = _state), do: nil
 
   @spec new_summary! :: StateSummary.t()
   defp new_summary! do
     with {:ok, res} <- ControlServer.SystemState.transaction(),
-         kube_state <- KubeExt.KubeState.snapshot(),
+         kube_state <- KubeState.snapshot(),
          full <- Map.put(res, :kube_state, kube_state),
          summary <- struct(StateSummary, full),
          :ok <- EventCenter.SystemStateSummary.broadcast(summary) do

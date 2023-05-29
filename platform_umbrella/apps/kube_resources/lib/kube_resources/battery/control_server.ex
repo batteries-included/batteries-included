@@ -1,9 +1,9 @@
 defmodule KubeResources.ControlServer do
   import CommonCore.StateSummary.Namespaces
-  use KubeExt.ResourceGenerator, app_name: "battery-control-server"
+  use KubeResources.ResourceGenerator, app_name: "battery-control-server"
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
   alias KubeResources.IstioConfig.VirtualService
   alias CommonCore.Defaults
 

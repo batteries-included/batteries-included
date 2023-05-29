@@ -8,7 +8,7 @@ defmodule KubeServices.ResourceDeleter do
 
   alias K8s.Resource.FieldAccessors
   alias ControlServer.Deleted.DeleteArchivist
-  alias KubeExt.CopyDown
+  alias KubeResources.CopyDown
 
   require Logger
 
@@ -36,7 +36,7 @@ defmodule KubeServices.ResourceDeleter do
 
   @impl GenServer
   def init(opts) do
-    conn_func = Keyword.get(opts, :conn_func, &KubeExt.ConnectionPool.get!/0)
+    conn_func = Keyword.get(opts, :conn_func, &KubeServices.ConnectionPool.get!/0)
     conn = Keyword.get_lazy(opts, :conn, conn_func)
 
     Logger.debug("Starting ResourceDeleter")

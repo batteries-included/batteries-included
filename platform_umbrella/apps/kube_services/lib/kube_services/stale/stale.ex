@@ -5,8 +5,8 @@ defmodule KubeServices.Stale do
   alias ControlServer.StaleSnaphotApply
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.Repo
-  alias KubeExt.KubeState
-  alias KubeExt.Hashing
+  alias KubeServices.KubeState
+  alias KubeResources.Hashing
   alias CommonCore.ApiVersionKind
 
   require Logger
@@ -78,7 +78,7 @@ defmodule KubeServices.Stale do
 
   defp has_owners?(%{} = res) do
     res
-    |> KubeExt.OwnerReference.get_all_owners()
+    |> KubeResources.OwnerReference.get_all_owners()
     |> Enum.empty?() == false
   end
 

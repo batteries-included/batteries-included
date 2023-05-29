@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   import CommonUI.TabBar
 
   alias EventCenter.KubeState, as: KubeEventCenter
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
 
   require Logger
 

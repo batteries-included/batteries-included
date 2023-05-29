@@ -1,11 +1,11 @@
 defmodule KubeResources.Notebooks do
-  use KubeExt.ResourceGenerator, app_name: "juypter-notebooks"
+  use KubeResources.ResourceGenerator, app_name: "juypter-notebooks"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
-  alias KubeExt.Builder, as: B
-  alias KubeExt.FilterResource, as: F
+  alias KubeResources.Builder, as: B
+  alias KubeResources.FilterResource, as: F
   alias KubeResources.IstioConfig.HttpRoute
   alias KubeResources.IstioConfig.VirtualService
 

@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   import ControlServerWeb.PodsTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
-  alias KubeExt.KubeState
+  alias KubeServices.KubeState
   alias K8s.Resource
 
   require Logger

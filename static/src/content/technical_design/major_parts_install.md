@@ -75,7 +75,6 @@ We deploy it as a containerized Kubernetes 'Deployment.'
 - `kube_resources` is the code for templatizing the desired resource state in
   Kubernetes. So this contains the code that says current databse settings have
   an image version at `Foo,` create a Pod with image `Foo.`
-- `kube_ext` is code to make dealing with Kube more palatable.
 - `kube_services` is the code that runs every OTP genserver interacting with
   Kubernetes. So watching state and putting it into ETS, or pushing a snapshot
   or desired state to Kubernetes.

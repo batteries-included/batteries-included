@@ -1,9 +1,9 @@
 defmodule KubeResources.CephFilesystems do
-  use KubeExt.ResourceGenerator, app_name: "ceph-filesystems"
+  use KubeResources.ResourceGenerator, app_name: "ceph-filesystems"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   multi_resource(:filesystems, battery, state) do
     namespace = data_namespace(state)

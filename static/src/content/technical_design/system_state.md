@@ -22,15 +22,15 @@ case tolerates staleness, you can use `&cached/1`. If you only need a small part
 of the summary, then call `&cached_field/2`
 
 Some code may need derived data from the system state. That code lives in
-`platform_umbrella/apps/kube_ext/lib/kube_ext/system_state` and notable examples
-include:
+`platform_umbrella/apps/kube_services/lib/kube_services/system_state` and
+notable examples include:
 
 - What the current best service to connect to the kubelet is
-  (`platform_umbrella/apps/kube_ext/lib/kube_ext/system_state/monitoring.ex`)
+  (`platform_umbrella/apps/kube_services/lib/kube_services/system_state/monitoring.ex`)
 - What is the best hostname to give out of installed battery systems
-  (`platform_umbrella/apps/kube_ext/lib/kube_ext/system_state/hosts.ex`)
+  (`platform_umbrella/apps/kube_services/lib/kube_services/system_state/hosts.ex`)
 - What the configured namespaces are
-  (`platform_umbrella/apps/kube_ext/lib/kube_ext/system_state/namespaces.ex`)
+  (`platform_umbrella/apps/kube_services/lib/kube_services/system_state/namespaces.ex`)
 
 ## Internals
 

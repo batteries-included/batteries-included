@@ -29,11 +29,11 @@ defmodule KubeResources.IstioBase do
     workloadgroups_networking_istio_io:
       "priv/manifests/istio_base/workloadgroups_networking_istio_io.yaml"
 
-  use KubeExt.ResourceGenerator, app_name: "istio-base"
+  use KubeResources.ResourceGenerator, app_name: "istio-base"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:istio_namespace, _battery, state) do
     namespace = istio_namespace(state)

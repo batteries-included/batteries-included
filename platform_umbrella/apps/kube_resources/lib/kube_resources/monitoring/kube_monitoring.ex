@@ -1,9 +1,9 @@
 defmodule KubeResources.KubeMonitoring do
-  use KubeExt.ResourceGenerator, app_name: "kube-mon"
+  use KubeResources.ResourceGenerator, app_name: "kube-mon"
 
   import CommonCore.StateSummary.Namespaces
 
-  alias KubeExt.Builder, as: B
+  alias KubeResources.Builder, as: B
 
   resource(:monitoring_node_monitor_cadvisor, _battery, state) do
     namespace = core_namespace(state)
