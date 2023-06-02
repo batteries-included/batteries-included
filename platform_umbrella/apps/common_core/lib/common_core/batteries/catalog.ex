@@ -22,11 +22,6 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{group: :data, type: :rook, dependencies: [:battery_core]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core},
-    %CatalogBattery{
-      group: :magic,
-      type: :control_server,
-      dependencies: [:battery_core, :istio_gateway]
-    },
     # Devtools
     %CatalogBattery{
       group: :devtools,

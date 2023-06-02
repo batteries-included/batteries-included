@@ -1,8 +1,10 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   labels:
     app: istio-pilot
+    release: istio
   name: virtualservices.networking.istio.io
 spec:
   group: networking.istio.io
@@ -553,6 +555,16 @@ spec:
                             type: string
                           uri:
                             type: string
+                          uriRegexRewrite:
+                            description: rewrite the path portion of the URI with the specified regex.
+                            properties:
+                              match:
+                                description: RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+                                type: string
+                              rewrite:
+                                description: The string that should replace into matching portions of original URI.
+                                type: string
+                            type: object
                         type: object
                       route:
                         description: A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
@@ -1280,6 +1292,16 @@ spec:
                             type: string
                           uri:
                             type: string
+                          uriRegexRewrite:
+                            description: rewrite the path portion of the URI with the specified regex.
+                            properties:
+                              match:
+                                description: RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+                                type: string
+                              rewrite:
+                                description: The string that should replace into matching portions of original URI.
+                                type: string
+                            type: object
                         type: object
                       route:
                         description: A HTTP rule can either return a direct_response, redirect or forward (default) traffic.

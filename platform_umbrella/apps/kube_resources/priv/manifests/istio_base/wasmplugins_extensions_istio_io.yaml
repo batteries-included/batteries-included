@@ -1,8 +1,10 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   labels:
     app: istio-pilot
+    release: istio
   name: wasmplugins.extensions.istio.io
 spec:
   group: extensions.istio.io
@@ -37,6 +39,28 @@ spec:
                 imagePullSecret:
                   description: Credentials to use for OCI image pulling.
                   type: string
+                match:
+                  description: Specifies the criteria to determine which traffic is passed to WasmPlugin.
+                  items:
+                    properties:
+                      mode:
+                        description: Criteria for selecting traffic by their direction.
+                        enum:
+                          - UNDEFINED
+                          - CLIENT
+                          - SERVER
+                          - CLIENT_AND_SERVER
+                        type: string
+                      ports:
+                        description: Criteria for selecting traffic by their destination port.
+                        items:
+                          properties:
+                            number:
+                              type: integer
+                          type: object
+                        type: array
+                    type: object
+                  type: array
                 phase:
                   description: Determines where in the filter chain this `WasmPlugin` is to be injected.
                   enum:

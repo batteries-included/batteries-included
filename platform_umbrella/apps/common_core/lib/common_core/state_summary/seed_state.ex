@@ -1,4 +1,6 @@
 defmodule CommonCore.StateSummary.SeedState do
+  alias CommonCore.Batteries.BatteryCoreConfig
+  alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.StateSummary
   alias CommonCore.Batteries.Catalog
@@ -89,7 +91,14 @@ defmodule CommonCore.StateSummary.SeedState do
     types
     |> Enum.map(&Catalog.get/1)
     |> Enum.flat_map(&Catalog.get_recursive/1)
-    |> Enum.uniq_by(& &1.type)
     |> Enum.map(&CatalogBattery.to_fresh_system_battery/1)
+    |> Enum.uniq_by(& &1.type)
+    |> Enum.map(&clean_config/1)
   end
+
+  defp clean_config(%SystemBattery{type: :battery_core, config: config} = sb) do
+    %SystemBattery{sb | config: %BatteryCoreConfig{config | secret_key: nil}}
+  end
+
+  defp clean_config(x), do: x
 end

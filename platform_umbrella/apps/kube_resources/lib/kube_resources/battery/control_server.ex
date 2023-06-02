@@ -10,21 +10,23 @@ defmodule KubeResources.ControlServer do
   @service_account "battery-admin"
   @server_port 4000
 
-  resource(:virtual_service, _battery, state) do
+  resource(:virtual_service, battery, state) do
     B.build_resource(:istio_virtual_service)
     |> B.namespace(core_namespace(state))
     |> B.name("control-server")
     |> B.spec(VirtualService.fallback("control-server"))
     |> F.require_battery(state, :istio_gateway)
+    |> F.require(battery.config.server_in_cluster)
   end
 
-  resource(:service_account, _battery, state) do
+  resource(:service_account, battery, state) do
     B.build_resource(:service_account)
     |> B.namespace(core_namespace(state))
     |> B.name("battery-admin")
+    |> F.require(battery.config.server_in_cluster)
   end
 
-  resource(:cluster_role_binding, _battery, state) do
+  resource(:cluster_role_binding, battery, state) do
     B.build_resource(:cluster_role_binding)
     |> B.name("battery-admin-cluster-admin")
     |> Map.put(
@@ -34,9 +36,10 @@ defmodule KubeResources.ControlServer do
     |> Map.put("subjects", [
       B.build_service_account("battery-admin", core_namespace(state))
     ])
+    |> F.require(battery.config.server_in_cluster)
   end
 
-  resource(:service, _battery, state) do
+  resource(:service, battery, state) do
     spec =
       %{}
       |> B.short_selector(@app_name)
@@ -53,6 +56,7 @@ defmodule KubeResources.ControlServer do
     |> B.name("control-server")
     |> B.namespace(core_namespace(state))
     |> B.spec(spec)
+    |> F.require(battery.config.server_in_cluster)
   end
 
   resource(:deployment, battery, state) do
@@ -95,6 +99,7 @@ defmodule KubeResources.ControlServer do
     |> B.name(name)
     |> B.namespace(core_namespace(state))
     |> B.spec(spec)
+    |> F.require(battery.config.server_in_cluster)
   end
 
   defp control_container(battery, state, options) do

@@ -30,6 +30,9 @@ defmodule KubeResources.FilterResource do
     end
   end
 
+  def require(resource, true), do: resource
+  def require(_, _falsey), do: nil
+
   def batteries_installed?(state, battery_type) when is_atom(battery_type),
     do: batteries_installed?(state, [battery_type])
 

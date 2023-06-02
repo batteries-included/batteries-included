@@ -1,7 +1,6 @@
 defmodule ControlServer.BatteriesTest do
   use ControlServer.DataCase
 
-  alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.IstioConfig
   alias CommonCore.Batteries.SystemBattery
 
@@ -39,7 +38,6 @@ defmodule ControlServer.BatteriesTest do
       assert {:ok, %SystemBattery{} = system_battery} =
                Batteries.create_system_battery(valid_attrs)
 
-      assert system_battery.config == %BatteryCoreConfig{}
       assert system_battery.group == :magic
       assert system_battery.type == :battery_core
     end

@@ -51,9 +51,8 @@ defmodule KubeResources.ConfigGenerator do
 
   @default_generator_mappings [
     battery_ca: [&BatteryCA.materialize/2],
-    battery_core: [&BatteryCore.materialize/2],
+    battery_core: [&BatteryCore.materialize/2, &ControlServerResources.materialize/2],
     cert_manager: [&CertManager.materialize/2],
-    control_server: [&ControlServerResources.materialize/2],
     gitea: [&Gitea.materialize/2],
     grafana: [&Grafana.materialize/2],
     harbor: [&Harbor.materialize/2],

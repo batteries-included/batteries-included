@@ -1,10 +1,9 @@
 defmodule KubeResources.PostgresOperator do
   use CommonCore.IncludeResource,
     operatorconfigurations_acid_zalan_do:
-      "priv/manifests/postgres-operator/operatorconfigurations_acid_zalan_do.yaml",
-    postgresqls_acid_zalan_do: "priv/manifests/postgres-operator/postgresqls_acid_zalan_do.yaml",
-    postgresteams_acid_zalan_do:
-      "priv/manifests/postgres-operator/postgresteams_acid_zalan_do.yaml"
+      "priv/manifests/postgres_operator/operatorconfiguration.crd.yaml",
+    postgresqls_acid_zalan_do: "priv/manifests/postgres_operator/postgresql.crd.yaml",
+    postgresteams_acid_zalan_do: "priv/manifests/postgres_operator/postgresteam.crd.yaml"
 
   use KubeResources.ResourceGenerator, app_name: "postgres-operator"
 

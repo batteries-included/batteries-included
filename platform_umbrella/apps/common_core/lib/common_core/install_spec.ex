@@ -6,6 +6,7 @@ defmodule CommonCore.InstallSpec do
   """
   use TypedStruct
 
+  @derive Jason.Encoder
   typedstruct do
     @typedoc ""
     field :kube_cluster, map()

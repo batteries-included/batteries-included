@@ -15,7 +15,8 @@ defmodule KubeResources.BatteryTest do
     %{
       config: %{
         image: Defaults.Images.control_server_image(),
-        secret_key: Defaults.random_key_string()
+        secret_key: Defaults.random_key_string(),
+        server_in_cluster: true
       }
     }
   end
