@@ -75,15 +75,13 @@ config :esbuild,
   version: "0.17.19",
   control_server_web: [
     args:
-      ~w(js/app.js --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.woff2=file --loader:.woff=file),
-    cd: Path.expand("../apps/control_server_web/assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+      ~w(js/app.js js/storybook.js --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.woff2=file --loader:.woff=file),
+    cd: Path.expand("../apps/control_server_web/assets", __DIR__)
   ],
   home_base_web: [
     args:
       ~w(js/app.js --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.woff2=file --loader:.woff=file),
-    cd: Path.expand("../apps/home_base_web/assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+    cd: Path.expand("../apps/home_base_web/assets", __DIR__)
   ]
 
 config :kube_services, start_services: true

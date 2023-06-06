@@ -10,10 +10,11 @@ locals_without_parens = [
   import_deps: [:phoenix],
   plugins: [Phoenix.LiveView.HTMLFormatter],
   inputs: [
-    "{mix,.formatter}.exs",
-    "*.{heex,ex,exs}",
+    "{lib,test}/**/*.{heex,ex,exs}",
     "priv/*/seeds.exs",
-    "{lib,test}/**/*.{heex,ex,exs}"
+    "storybook/**/*.exs",
+    "*.{heex,ex,exs}",
+    "{mix,.formatter}.exs"
   ],
   subdirectories: ["priv/*/migrations"],
   locals_without_parens: locals_without_parens,

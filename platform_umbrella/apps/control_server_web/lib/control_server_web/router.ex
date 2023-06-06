@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Router do
   use ControlServerWeb, :router
 
   import Phoenix.LiveDashboard.Router
+  import PhoenixStorybook.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -147,17 +148,21 @@ defmodule ControlServerWeb.Router do
     get "/system_state", SystemStateController, :index
   end
 
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
   if Enum.member?([:dev, :test], Mix.env()) do
+    # Enables LiveDashboard only for development
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
+    end
+
+    # Enablees Storybook ony for development
+    scope "/" do
+      storybook_assets()
+    end
+
+    scope "/", ControlServerWeb do
+      pipe_through(:browser)
+      live_storybook("/storybook", backend_module: ControlServerWeb.Storybook)
     end
   end
 end

@@ -45,6 +45,13 @@ config :control_server_web, ControlServerWeb.Endpoint,
       "--output=../priv/static/assets/app.css",
       "--watch",
       cd: Path.expand("../apps/control_server_web/assets", __DIR__)
+    ],
+    npx: [
+      "tailwindcss",
+      "--input=css/storybook.css",
+      "--output=../priv/static/assets/storybook.css",
+      "--watch",
+      cd: Path.expand("../apps/control_server_web/assets", __DIR__)
     ]
   ]
 
@@ -75,7 +82,8 @@ config :control_server_web, ControlServerWeb.Endpoint,
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/control_server_web/(live|views)/.*(ex)$",
-      ~r"lib/control_server_web/templates/.*(eex)$"
+      ~r"lib/control_server_web/templates/.*(eex)$",
+      ~r"storybook/.*(exs)$"
     ]
   ]
 

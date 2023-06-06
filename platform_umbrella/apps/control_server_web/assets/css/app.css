@@ -1,127 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 @import '@fontsource/inter';
 @import '@fontsource/jetbrains-mono';
 
-.iframe-container {
-  width: 1px;
-  min-width: 100%;
-  min-height: 100%;
-}
-
-.full-screen-minus {
-  width: 100vw;
-  height: calc(100vh - 8rem);
-}
+@import './loader';
+@import './iframe';
+@import './fresh_menu';
 
 ::selection {
   @apply bg-pink-500;
-}
-
-.loader {
-  position: relative;
-  width: 10em;
-  height: 10em;
-  border-radius: 50%;
-  background: linear-gradient(#fc408b, #247ba0);
-  animation: animate 1.2s linear infinite;
-}
-
-@keyframes animate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.loader span {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: linear-gradient(#fc408b, #247ba0);
-}
-
-.loader span:nth-child(1) {
-  filter: blur(5px);
-}
-
-.loader span:nth-child(2) {
-  filter: blur(10px);
-}
-
-.loader span:nth-child(3) {
-  filter: blur(25px);
-}
-
-.loader span:nth-child(4) {
-  filter: blur(50px);
-}
-
-.loader:after {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  background: #f1f1f1;
-  border: solid white 10px;
-  border-radius: 50%;
-}
-.fresh-container > .navbar {
-  top: 0px;
-  left: 0px;
-  z-index: 30;
-}
-
-.fresh-container > main {
-  margin-top: 5rem;
-}
-
-.menu-container {
-  top: 5rem;
-  bottom: 0px;
-  left: 0px;
-  height: calc(100vh - 5rem);
-  margin-top: 5rem;
-  z-index: 20;
-}
-
-.menu-items {
-  z-index: 19;
-}
-
-.menu-items .active {
-  @apply text-pink-500;
-}
-
-.menu-items .active::before {
-  content: '';
-  left: 0px;
-  top: 0px;
-  bottom: 0px;
-  position: absolute;
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
-  display: block;
-  width: 0.25rem;
-  border-top-right-radius: 20rem;
-  border-bottom-right-radius: 20rem;
-  @apply bg-pink-500;
-}
-
-.menu-detail {
-  top: 0px;
-  left: -28rem;
-  bottom: 0px;
-  z-index: -1;
-}
-
-.menu-detail.active {
-  left: 9rem;
 }

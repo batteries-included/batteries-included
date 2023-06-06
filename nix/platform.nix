@@ -35,14 +35,14 @@
         pname = "mix-deps-platform-test";
         inherit src version LANG;
         mixEnv = "test";
-        sha256 = "sha256-48yQKYKnszNlG14TZLgMChxTg3ijtd61Mn9SZkfc1IQ=";
+        sha256 = "sha256-fZ4vuaypmz9xXUdX0ad6sTvXUCX33lI4ZayrbQsg4oU=";
         #sha256 = lib.fakeSha256;
       };
 
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
         inherit src version LANG;
-        sha256 = "sha256-nIOeHgSPiGuD9DvI7sHKRbPEmmWuKEpiXg1v21qj6mE=";
+        sha256 = "sha256-+I7v/Pb51bKd/9AHyCQIJx8SwlJFHU/RkJDZZVFo7Nw=";
         #sha256 = lib.fakeSha256;
       };
 

@@ -1,0 +1,10 @@
+.iframe-container {
+  width: 1px;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.full-screen-minus {
+  width: 100vw;
+  height: calc(100vh - 8rem);
+}
