@@ -26,6 +26,7 @@ defmodule KubeServices.MixProject do
 
   defp deps do
     [
+      {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
       {:typed_struct, "~> 0.3.0", runtime: false},
       {:tesla, "~> 1.7.0"},
       {:jason, "~> 1.2"},
@@ -42,7 +43,7 @@ defmodule KubeServices.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      test: [],
+      test: ["test"],
       "ecto.reset": []
     ]
   end

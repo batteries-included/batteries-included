@@ -39,7 +39,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4.1"},
       {:phoenix_html, "~> 3.3.1"},
-      {:phoenix_live_view, "~> 0.19.0", override: true},
+      {:phoenix_live_view, "~> 0.19.0"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.0"},
@@ -49,7 +49,7 @@ defmodule HomeBaseWeb.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:home_base, in_umbrella: true},
       {:common_ui, in_umbrella: true},
-      {:heroicons, "~> 0.5"},
+      {:heroicons, "~> 0.5.3"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
       {:websock_adapter, "~> 0.5.1"}

@@ -64,8 +64,8 @@ defmodule KubeServices.SystemState.Summarizer do
   end
 
   @impl GenServer
-  def handle_info(:refresh, %{refresh_time: time} = state) do
-    _ref = schedule_refresh(time)
+  def handle_info(:refresh, %State{} = state) do
+    _ref = schedule_refresh(state)
 
     {:noreply, %{state | last: new_summary!()}}
   end

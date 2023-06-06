@@ -48,3 +48,5 @@ config :home_base, HomeBase.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   ownership_timeout: 300_000,
   timeout: 180_000
+
+config :hackney, use_default_pool: false

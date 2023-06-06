@@ -25,9 +25,7 @@ defmodule KubeServices.Application do
       {Oban, Application.fetch_env!(:kube_services, Oban)},
       KubeServices.KubeState,
       KubeServices.SystemState,
-      KubeServices.Timeline,
-      KubeServices.SnapshotApply,
-      KubeServices.ResourceDeleter
+      KubeServices.Batteries
     ]
   end
 

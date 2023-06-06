@@ -499,6 +499,7 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_detail_item(%{battery: %{type: :metallb}} = assigns) do
     ~H"""
+    <.h4>MetalLB</.h4>
     <.detail_menu_item
       navigate={~p"/ip_address_pools"}
       name="IP Address Pools"
@@ -550,6 +551,19 @@ defmodule ControlServerWeb.LeftMenu do
       is_active={@page_detail_type == :victoria_metrics}
     >
       <.victoria_metrics_icon class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :sso}} = assigns) do
+    ~H"""
+    <.h4>Keycloak</.h4>
+    <.detail_menu_item
+      navigate={~p"/keycloak/realms"}
+      name="Realms"
+      is_active={@page_detail_type == :realms}
+    >
+      <Heroicons.key class={@icon_class} />
     </.detail_menu_item>
     """
   end

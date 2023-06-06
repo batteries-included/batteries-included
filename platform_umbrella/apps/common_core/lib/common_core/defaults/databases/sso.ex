@@ -1,4 +1,4 @@
-defmodule CommonCore.Defaults.SsoDB do
+defmodule CommonCore.Defaults.SSODB do
   @cluster_name "auth"
   @team "pg"
 

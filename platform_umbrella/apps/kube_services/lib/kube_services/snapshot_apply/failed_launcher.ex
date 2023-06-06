@@ -54,7 +54,7 @@ defmodule KubeServices.SnapshotApply.FailedLauncher do
   end
 
   defp reset_delay(%State{initial_delay: init_delay} = state) do
-    Logger.info("Resetting delay")
+    Logger.debug("Successful apply, resetting delay back to initial values #{init_delay}")
     %State{state | delay: init_delay}
   end
 

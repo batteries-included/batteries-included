@@ -186,7 +186,7 @@ defmodule ControlServer.Batteries.Installer do
   end
 
   defp post_install(%SystemBattery{type: :sso}, repo) do
-    init_pg = Defaults.SsoDB.pg_cluster()
+    init_pg = Defaults.SSODB.pg_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
       {:ok, sso_db: postgres_db}

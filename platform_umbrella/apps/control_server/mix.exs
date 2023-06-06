@@ -44,8 +44,8 @@ defmodule ControlServer.MixProject do
       {:phoenix_swoosh, "~> 1.2.0"},
 
       # SQL
-      {:phoenix, "~> 1.7.2"},
-      {:phoenix_ecto, "~> 4.4.1"},
+      {:phoenix, "~> 1.7.3"},
+      {:phoenix_ecto, "~> 4.4.2"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
       {:ecto_sql, "~> 3.10"},

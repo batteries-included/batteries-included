@@ -4,7 +4,7 @@
   "scripts": {
     "css:deploy": "NODE_ENV=production tailwindcss --minify --input=css/app.css --output=dist/app.css",
     "css:deploy:dev": "tailwindcss --input=css/app.css --output=../priv/static/assets/app.css",
-    "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle  --loader:.woff2=file --loader:.woff=file --target=chrome58,firefox57,safari11,edge18 --outdir=dist"
+    "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle  --loader:.woff2=file --loader:.woff=file --target=chrome109,firefox112,safari15.6,edge112 --outdir=dist"
   },
   "dependencies": {
     "@fontsource/inter": "^5.0.1",
@@ -13,7 +13,7 @@
     "chart.js": "4.3.0",
     "esbuild": "^0.17.19",
     "lodash": "4.17.21",
-    "phoenix": "1.7.2",
+    "phoenix": "1.7.3",
     "phoenix_html": "3.3.1",
     "phoenix_live_view": "0.19.0",
     "tippy.js": "^6.3.7",

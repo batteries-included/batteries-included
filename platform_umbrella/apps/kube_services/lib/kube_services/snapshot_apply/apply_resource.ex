@@ -121,6 +121,9 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
       {:error, %K8s.Operation.Error{message: "NotFound"}} ->
         create(connection, resource)
 
+      {:error, %K8s.Client.HTTPError{message: "HTTP Error 404"}} ->
+        create(connection, resource)
+
       unknown ->
         Logger.warning(
           "Got unknown result from get on #{inspect(metadata)} => #{inspect(unknown)}"

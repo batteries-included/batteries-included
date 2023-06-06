@@ -72,16 +72,16 @@ config :logger,
 config :phoenix, :json_library, Jason
 
 config :esbuild,
-  version: "0.14.41",
+  version: "0.17.19",
   control_server_web: [
     args:
-      ~w(js/app.js --bundle --target=chrome58,firefox57,safari11,edge18 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.woff2=file --loader:.woff=file),
+      ~w(js/app.js --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.woff2=file --loader:.woff=file),
     cd: Path.expand("../apps/control_server_web/assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ],
   home_base_web: [
     args:
-      ~w(js/app.js --bundle --target=chrome58,firefox57,safari11,edge18 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.woff2=file --loader:.woff=file),
+      ~w(js/app.js --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --loader:.woff2=file --loader:.woff=file),
     cd: Path.expand("../apps/home_base_web/assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
@@ -110,7 +110,7 @@ config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
 
 config :kube_resources, KubeResources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 
-config :hackney, use_default_pool: false
+config :tesla, adapter: {Tesla.Adapter.Mint, [timeout: 30_000]}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

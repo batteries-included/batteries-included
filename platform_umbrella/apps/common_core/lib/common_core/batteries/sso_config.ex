@@ -1,4 +1,4 @@
-defmodule CommonCore.Batteries.SsoConfig do
+defmodule CommonCore.Batteries.SSOConfig do
   use TypedEctoSchema
   import Ecto.Changeset
 

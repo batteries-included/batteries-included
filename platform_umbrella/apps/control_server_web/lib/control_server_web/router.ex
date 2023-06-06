@@ -134,6 +134,13 @@ defmodule ControlServerWeb.Router do
     live "/:resource_type/:namespace/:name", Live.TrivyReportShow, :show
   end
 
+  scope "/keycloak", ControlServerWeb do
+    pipe_through :browser
+
+    live "/realms", Live.KeycloakRealmsList
+    live "/realm/:name", Live.KeycloakRealm
+  end
+
   scope "/api", ControlServerWeb do
     pipe_through :api
 

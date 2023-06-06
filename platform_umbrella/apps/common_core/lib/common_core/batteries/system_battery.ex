@@ -28,7 +28,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     RedisConfig,
     RookConfig,
     Smtp4devConfig,
-    SsoConfig,
+    SSOConfig,
     TrivyOperatorConfig,
     TrustManagerConfig,
     VictoriaMetricsConfig
@@ -58,7 +58,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     redis: RedisConfig,
     rook: RookConfig,
     smtp4dev: Smtp4devConfig,
-    sso: SsoConfig,
+    sso: SSOConfig,
     trivy_operator: TrivyOperatorConfig,
     trust_manager: TrustManagerConfig,
     victoria_metrics: VictoriaMetricsConfig
