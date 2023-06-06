@@ -26,8 +26,8 @@ defmodule KubeServices.Keycloak.TokenAcquirer do
     field :refresh_expires, DateTime.t()
   end
 
-  # @spec refresh(Tesla.Client.t(), String.t(), Keyword.t()) ::
-  # {:ok, TokenResult.t()} | {:error, any()}
+  @spec refresh(Tesla.Client.t(), String.t(), keyword) ::
+          {:error, any} | {:ok, KubeServices.Keycloak.TokenAcquirer.TokenResult.t()}
   def refresh(client, token, opts \\ [client_id: @client_id]) do
     # Take the start time just before sending the request
     # This ensures that we'll never overestimate the expire times.
@@ -46,7 +46,8 @@ defmodule KubeServices.Keycloak.TokenAcquirer do
     |> extract_body(start_time)
   end
 
-  # @spec login(Tesla.Client.t(), String.t(), String.t(), Keyword.t()) :: {:ok, TokenResult.t()} | {:error, any()}
+  @spec login(Tesla.Client.t(), String.t(), String.t(), keyword) ::
+          {:error, any} | {:ok, KubeServices.Keycloak.TokenAcquirer.TokenResult.t()}
   def login(client, username, password, opts \\ [client_id: @client_id]) do
     # Take the start time just before sending the request
     # This ensures that we'll never overestimate the expire times.
