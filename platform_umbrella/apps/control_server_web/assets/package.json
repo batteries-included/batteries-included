@@ -2,8 +2,8 @@
   "license": "COMMERCIAL",
   "name": "control_server_web_assets",
   "scripts": {
-    "css:deploy": "NODE_ENV=production tailwindcss --minify --input=css/app.css --output=dist/app.css",
-    "css:deploy:dev": "tailwindcss --input=css/app.css --output=../priv/static/assets/app.css",
+    "css:deploy": "NODE_ENV=production tailwindcss --postcss --minify --input=css/app.css --output=dist/app.css",
+    "css:deploy:dev": "tailwindcss --postcss --input=css/app.css --output=../priv/static/assets/app.css",
     "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle  --loader:.woff2=file --loader:.woff=file --target=chrome109,firefox112,safari15.6,edge112 --outdir=dist"
   },
   "dependencies": {
@@ -22,7 +22,11 @@
   "devDependencies": {
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
+    "autoprefixer": "^10.4.14",
+    "cssnano": "^6.0.1",
     "daisyui": "2.52.0",
+    "postcss": "^8.4.24",
+    "postcss-import": "^15.1.0",
     "tailwindcss": "3.3.2"
   }
 }

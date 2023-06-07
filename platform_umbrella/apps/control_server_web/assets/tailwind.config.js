@@ -106,11 +106,14 @@ module.exports = {
 
     // All the templates in
     // this umbrella project
-    '../lib/*.*ex',
-    '../lib/**/*.*ex',
+    '../lib/*.*ex*',
+    '../lib/**/*.*ex*',
+    // Storybook
+    '../storybook/*.*ex*',
+    '../storybook/**/*.*ex*',
     // Common UI
-    '../../common_ui/lib/*.*ex',
-    '../../common_ui/lib/**/*.*ex',
+    '../../common_ui/lib/*.*ex*',
+    '../../common_ui/lib/**/*.*ex*',
   ],
 
   daisyui: {

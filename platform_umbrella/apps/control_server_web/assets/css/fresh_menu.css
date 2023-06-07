@@ -1,11 +1,12 @@
-.fresh-container > .navbar {
-  top: 0px;
-  left: 0px;
-  z-index: 30;
-}
-
-.fresh-container > main {
-  margin-top: 5rem;
+.fresh-container {
+  .navbar {
+    top: 0px;
+    left: 0px;
+    z-index: 30;
+  }
+  main {
+    margin-top: 5rem;
+  }
 }
 
 .menu-container {
@@ -19,25 +20,25 @@
 
 .menu-items {
   z-index: 19;
-}
 
-.menu-items .active {
-  @apply text-pink-500;
-}
+  .active {
+    @apply text-pink-500;
 
-.menu-items .active::before {
-  content: '';
-  left: 0px;
-  top: 0px;
-  bottom: 0px;
-  position: absolute;
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
-  display: block;
-  width: 0.25rem;
-  border-top-right-radius: 20rem;
-  border-bottom-right-radius: 20rem;
-  @apply bg-pink-500;
+    &::before {
+      content: '';
+      left: 0px;
+      top: 0px;
+      bottom: 0px;
+      position: absolute;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+      display: block;
+      width: 0.25rem;
+      border-top-right-radius: 20rem;
+      border-bottom-right-radius: 20rem;
+      @apply bg-pink-500;
+    }
+  }
 }
 
 .menu-detail {
