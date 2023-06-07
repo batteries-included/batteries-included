@@ -25,10 +25,10 @@ defmodule CommonUI.TabBar do
         ]}
         aria-label="Tabs"
       >
-        <.link :for={{tab_name, path, selected} <- @tabs} navigate={path} class={link_class(selected)}>
+        <.a :for={{tab_name, path, selected} <- @tabs} navigate={path} class={link_class(selected)}>
           <span><%= tab_name %></span>
           <span aria-hidden="true" class={decoration_class(selected)}></span>
-        </.link>
+        </.a>
       </nav>
     </div>
     """

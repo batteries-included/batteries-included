@@ -51,7 +51,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
         <%= Timex.from_now(resource.inserted_at) %>
       </:col>
       <:action :let={resource}>
-        <.link
+        <.a
           :if={!resource.been_undeleted}
           phx-click="undelete"
           phx-value-id={resource.id}
@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
           variant="styled"
         >
           Un-Delete
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

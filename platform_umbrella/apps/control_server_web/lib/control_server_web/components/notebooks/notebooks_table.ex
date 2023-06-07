@@ -11,9 +11,9 @@ defmodule ControlServerWeb.NotebooksTable do
       <:col :let={notebook} label="Name"><%= notebook.name %></:col>
       <:col :let={notebook} label="Image"><%= notebook.image %></:col>
       <:action :let={notebook}>
-        <.link variant="external" href={notebook_path(notebook)}>
+        <.a variant="external" href={notebook_path(notebook)}>
           Open Notebook
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

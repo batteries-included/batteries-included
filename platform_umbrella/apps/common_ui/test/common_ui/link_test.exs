@@ -7,7 +7,7 @@ defmodule CommonUI.LinkTest do
     assigns = %{}
 
     ~H"""
-    <.link variant="styled" navigate="/">Test Link</.link>
+    <.a variant="styled" navigate="/">Test Link</.a>
     """
   end
 
@@ -15,7 +15,7 @@ defmodule CommonUI.LinkTest do
     assigns = %{}
 
     ~H"""
-    <.link variant="external" href="https://google.com">Test External Link</.link>
+    <.a variant="external" href="https://google.com">Test External Link</.a>
     """
   end
 
@@ -23,7 +23,7 @@ defmodule CommonUI.LinkTest do
     assigns = %{}
 
     ~H"""
-    <.link navigate="/">Test unstyled Link</.link>
+    <.a navigate="/">Test unstyled Link</.a>
     """
   end
 
@@ -31,7 +31,7 @@ defmodule CommonUI.LinkTest do
     assigns = %{}
 
     ~H"""
-    <.link patch="/test">Test patch</.link>
+    <.a patch="/test">Test patch</.a>
     """
   end
 
@@ -39,7 +39,7 @@ defmodule CommonUI.LinkTest do
     assigns = %{}
 
     ~H"""
-    <.link patch="/test" variant="styled">Test patch with var</.link>
+    <.a patch="/test" variant="styled">Test patch with var</.a>
     """
   end
 
@@ -47,7 +47,7 @@ defmodule CommonUI.LinkTest do
     assigns = %{}
 
     ~H"""
-    <.link href="https://www.google.com/">Test bare href</.link>
+    <.a href="https://www.google.com/">Test bare href</.a>
     """
   end
 end

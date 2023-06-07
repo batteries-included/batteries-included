@@ -22,13 +22,13 @@ defmodule ControlServerWeb.Layouts do
           </button>
         </div>
         <div class="flex-1">
-          <.link
+          <.a
             class="inline-flex normal-case text-xl transition-none animation-none m-4 justify-center"
             navigate={~p|/|}
           >
             <.batteries_logo class="h-10 w-auto mr-6" />
             <span class="align-middle my-auto">Batteries Included</span>
-          </.link>
+          </.a>
         </div>
       </header>
 

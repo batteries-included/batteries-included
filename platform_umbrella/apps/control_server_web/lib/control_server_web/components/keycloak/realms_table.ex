@@ -11,13 +11,13 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
       <:col :let={realm} label="Name"><%= realm["displayName"] %></:col>
 
       <:action :let={realm}>
-        <.link href={admin_url(@keycloak_url, realm)}>Keycloak Admin</.link>
+        <.a href={admin_url(@keycloak_url, realm)}>Keycloak Admin</.a>
       </:action>
 
       <:action :let={realm}>
-        <.link navigate={~p"/keycloak/realm/#{Map.get(realm, "realm")}"} variant="styled">
+        <.a navigate={~p"/keycloak/realm/#{Map.get(realm, "realm")}"} variant="styled">
           Show Realm
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

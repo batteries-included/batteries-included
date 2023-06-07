@@ -22,7 +22,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             />
           </div>
           <div class="col-span-1">
-            <.link
+            <.a
               phx-click="del:user"
               phx-value-idx={user_form.index}
               phx-target={@target}
@@ -30,18 +30,18 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
               variant="styled"
             >
               <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
-            </.link>
+            </.a>
           </div>
         <% end %>
 
-        <.link
+        <.a
           phx-click="add:user"
           phx-target={@target}
           class="pt-5 text-lg col-span-12"
           variant="styled"
         >
           Add User
-        </.link>
+        </.a>
       </div>
     </.card>
     """
@@ -65,7 +65,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             />
           </div>
           <div class="col-span-1">
-            <.link
+            <.a
               phx-click="del:database"
               phx-value-idx={database_form.index}
               phx-target={@target}
@@ -73,18 +73,18 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
               variant="styled"
             >
               <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
-            </.link>
+            </.a>
           </div>
         <% end %>
 
-        <.link
+        <.a
           phx-click="add:database"
           phx-target={@target}
           class="pt-5 text-lg col-span-12"
           variant="styled"
         >
           Add Database
-        </.link>
+        </.a>
       </div>
     </.card>
     """
@@ -121,7 +121,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             />
           </div>
           <div class="col-span-1">
-            <.link
+            <.a
               phx-click="del:credential_copy"
               phx-value-idx={credential_form.index}
               phx-target={@target}
@@ -129,18 +129,18 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
               variant="styled"
             >
               <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
-            </.link>
+            </.a>
           </div>
         <% end %>
 
-        <.link
+        <.a
           phx-click="add:credential_copy"
           phx-target={@target}
           class="pt-5 text-lg col-span-12"
           variant="styled"
         >
           Add Copy of Credentials
-        </.link>
+        </.a>
       </div>
     </.card>
     """

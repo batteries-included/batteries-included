@@ -33,11 +33,11 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
     <.h2 variant="fancy">Actions</.h2>
     <.card>
       <div class="grid md:grid-cols-1 gap-6">
-        <.link navigate={new_url()} class="block">
+        <.a navigate={new_url()} class="block">
           <.button class="w-full">
             New IP Address Pool
           </.button>
-        </.link>
+        </.a>
       </div>
     </.card>
     """

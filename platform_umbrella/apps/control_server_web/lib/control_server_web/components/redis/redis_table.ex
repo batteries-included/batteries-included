@@ -12,9 +12,9 @@ defmodule ControlServerWeb.RedisTable do
       <:col :let={redis} label="Instances"><%= redis.num_redis_instances %></:col>
       <:col :let={redis} label="Sentinel Instances"><%= redis.num_sentinel_instances %></:col>
       <:action :let={redis}>
-        <.link navigate={show_url(redis)} variant="styled">
+        <.a navigate={show_url(redis)} variant="styled">
           Show Redis Cluster
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

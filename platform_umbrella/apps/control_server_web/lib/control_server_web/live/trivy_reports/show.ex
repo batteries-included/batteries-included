@@ -85,16 +85,16 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
       <.table rows={get_in(@report, ~w(report vulnerabilities))}>
         <:col :let={vuln} label="Severity"><%= get_in(vuln, ~w(severity)) %></:col>
         <:col :let={vuln} label="Title">
-          <.link href={get_in(vuln, ~w(primaryLink))}>
+          <.a href={get_in(vuln, ~w(primaryLink))}>
             <%= get_in(vuln, ~w(title)) %>
-          </.link>
+          </.a>
         </:col>
         <:col :let={vuln} label="Used"><%= get_in(vuln, ~w(installedVersion)) %></:col>
         <:col :let={vuln} label="Fixed"><%= get_in(vuln, ~w(fixedVersion)) %></:col>
         <:action :let={vuln}>
-          <.link href={get_in(vuln, ~w(primaryLink))} variant="styled">
+          <.a href={get_in(vuln, ~w(primaryLink))} variant="styled">
             Show
-          </.link>
+          </.a>
         </:action>
       </.table>
     </.card>

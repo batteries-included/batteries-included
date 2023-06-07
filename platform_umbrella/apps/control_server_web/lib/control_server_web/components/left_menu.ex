@@ -131,14 +131,14 @@ defmodule ControlServerWeb.LeftMenu do
 
   def main_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
     ~H"""
-    <.link navigate={@navigate} variant="unstyled" class={main_menu_class(@is_active)} {@rest}>
+    <.a navigate={@navigate} variant="unstyled" class={main_menu_class(@is_active)} {@rest}>
       <div class="mt-2 mb-1 mx-auto">
         <%= render_slot(@icon) %>
       </div>
       <div class="mx-auto text-center">
         <%= render_slot(@label) %>
       </div>
-    </.link>
+    </.a>
     """
   end
 
@@ -578,19 +578,19 @@ defmodule ControlServerWeb.LeftMenu do
 
   def detail_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
     ~H"""
-    <.link navigate={@navigate} class={menu_detail_class(@is_active)}>
+    <.a navigate={@navigate} class={menu_detail_class(@is_active)}>
       <span class="inline-block my-auto"><%= render_slot(@inner_block) %></span>
       <%= truncate(@name) %>
-    </.link>
+    </.a>
     """
   end
 
   def detail_menu_item(%{href: href} = assigns) when not is_nil(href) do
     ~H"""
-    <.link href={@href} class={menu_detail_class(@is_active)}>
+    <.a href={@href} class={menu_detail_class(@is_active)}>
       <span class="inline-block"><%= render_slot(@inner_block) %></span>
       <%= truncate(@name) %>
-    </.link>
+    </.a>
     """
   end
 

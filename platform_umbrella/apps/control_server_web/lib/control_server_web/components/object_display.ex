@@ -71,7 +71,7 @@ defmodule ControlServerWeb.ObjectDisplay do
   defp column_data(%{object: object} = assigns) when is_map(object) do
     ~H"""
     <div class="overflow-y-auto no-scrollbar h-full">
-      <.link
+      <.a
         :for={{key, value} <- @object}
         class="flex flex-grow h-10 mx-2 hover:bg-pink-100/50 items-center"
         patch={object_path_url(@base_url, @path ++ [key])}
@@ -79,7 +79,7 @@ defmodule ControlServerWeb.ObjectDisplay do
         <.value_icon value_type={value_type(value)} class="text-gray-400 w-6 mr-2 my-auto" />
         <span class="grow"><%= key %></span>
         <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
-      </.link>
+      </.a>
     </div>
     """
   end
@@ -87,7 +87,7 @@ defmodule ControlServerWeb.ObjectDisplay do
   defp column_data(%{object: object} = assigns) when is_list(object) do
     ~H"""
     <div class="overflow-y-auto no-scrollbar">
-      <.link
+      <.a
         :for={{value, idx} <- Enum.with_index(@object)}
         class="flex flex-grow h-10 mx-2 hover:bg-pink-100/50 items-center"
         patch={object_path_url(@base_url, @path ++ [Integer.to_string(idx)])}
@@ -95,7 +95,7 @@ defmodule ControlServerWeb.ObjectDisplay do
         <.value_icon value_type={value_type(value)} class="text-gray-400 w-6 mr-2 my-auto" />
         <span class="grow">Index <%= idx %></span>
         <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
-      </.link>
+      </.a>
     </div>
     """
   end

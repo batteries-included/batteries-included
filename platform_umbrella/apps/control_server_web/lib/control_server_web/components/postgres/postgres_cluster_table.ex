@@ -12,9 +12,9 @@ defmodule ControlServerWeb.PostgresClusterTable do
       <:col :let={pg} label="User Count"><%= length(pg.users) %></:col>
       <:col :let={pg} label="DB Count"><%= length(pg.users) %></:col>
       <:action :let={pg}>
-        <.link navigate={show_url(pg)} variant="styled">
+        <.a navigate={show_url(pg)} variant="styled">
           Show Postgres
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

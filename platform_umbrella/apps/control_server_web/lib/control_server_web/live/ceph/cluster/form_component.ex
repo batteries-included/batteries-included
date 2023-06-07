@@ -126,7 +126,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
         <% end %>
 
         <div class="sm:col-span-1">
-          <.link phx-click="add_node" phx-target={@myself}>Add Node</.link>
+          <.a phx-click="add_node" phx-target={@myself}>Add Node</.a>
         </div>
 
         <:actions>

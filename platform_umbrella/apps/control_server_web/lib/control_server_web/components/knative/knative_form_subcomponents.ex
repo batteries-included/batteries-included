@@ -19,14 +19,14 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
           />
         <% end %>
 
-        <.link
+        <.a
           phx-click="add:container"
           phx-target={@target}
           phx-value-containers-field={@containers_field}
           variant="styled"
         >
           <Heroicons.plus_circle class="w-6 inline-flex" /> Add Container
-        </.link>
+        </.a>
       </div>
     </div>
     """
@@ -43,10 +43,10 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
           <.single_env_value_form form={env_form} target={@target} />
         <% end %>
 
-        <.link phx-click="add:env_value" phx-target={@target} variant="styled">
+        <.a phx-click="add:env_value" phx-target={@target} variant="styled">
           <Heroicons.plus_circle class="w-6 inline-flex" />
           <span>Add Env</span>
-        </.link>
+        </.a>
       </div>
     </div>
     """
@@ -66,7 +66,7 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
         <.input field={{@form, :image}} label="Image" />
       </div>
       <div class="col-span-2 mx-auto my-auto">
-        <.link
+        <.a
           phx-click="del:container"
           phx-value-idx={@form.index}
           phx-target={@target}
@@ -74,7 +74,7 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
           variant="styled"
         >
           <Heroicons.trash class="w-6 inline-flex" /> Remove Container
-        </.link>
+        </.a>
       </div>
     </div>
     """
@@ -99,14 +99,14 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
         />
       </div>
       <div class="col-span-2 mx-auto my-auto">
-        <.link
+        <.a
           phx-click="del:env_value"
           phx-value-idx={@form.index}
           phx-target={@target}
           variant="styled"
         >
           <Heroicons.trash class="w-6 inline-flex" /> Remove Env
-        </.link>
+        </.a>
       </div>
       <.env_value_body form={@form} source={input_value(@form, :source_type)} />
     </div>

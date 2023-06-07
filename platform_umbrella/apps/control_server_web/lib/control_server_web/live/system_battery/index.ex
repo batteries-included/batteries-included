@@ -44,17 +44,17 @@ defmodule ControlServerWeb.Live.SystemBatteryIndex do
       <:col :let={system_battery} label="Group"><%= system_battery.group %></:col>
       <:col :let={system_battery} label="Type"><%= system_battery.type %></:col>
       <:action :let={system_battery}>
-        <.link navigate={~p"/batteries/#{system_battery.id}"} variant="styled">
+        <.a navigate={~p"/batteries/#{system_battery.id}"} variant="styled">
           Show
-        </.link>
+        </.a>
       </:action>
       <:action :let={system_battery}>
-        <.link
+        <.a
           phx-click={JS.push("delete", value: %{id: system_battery.id})}
           data-confirm="Are you sure?"
         >
           Delete
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

@@ -28,9 +28,9 @@ defmodule HomeBaseWeb.Live.InstallatitonShow do
         <:item title="Slug"><%= @installation.slug %></:item>
       </.data_list>
 
-      <.link navigate={~p"/installations/#{@installation}/show"}>
+      <.a navigate={~p"/installations/#{@installation}/show"}>
         <.button>Edit installation</.button>
-      </.link>
+      </.a>
     </.top_menu_layout>
     """
   end

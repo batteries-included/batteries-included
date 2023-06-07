@@ -45,17 +45,17 @@ defmodule ControlServerWeb.Live.CephIndex do
 
     <.h2 variant="fancy">Actions</.h2>
     <.card>
-      <.link navigate={~p"/ceph/clusters/new"}>
+      <.a navigate={~p"/ceph/clusters/new"}>
         <.button>
           New Cluster
         </.button>
-      </.link>
+      </.a>
 
-      <.link navigate={~p"/ceph/filesystems/new"}>
+      <.a navigate={~p"/ceph/filesystems/new"}>
         <.button>
           New FileSystem
         </.button>
-      </.link>
+      </.a>
     </.card>
     """
   end

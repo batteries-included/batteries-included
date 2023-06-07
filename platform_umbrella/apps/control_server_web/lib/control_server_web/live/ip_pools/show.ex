@@ -27,11 +27,11 @@ defmodule ControlServerWeb.Live.IPAddressPoolShow do
     <.h2 variant="fancy">Actions</.h2>
     <.card>
       <div class="grid md:grid-cols-2 gap-6">
-        <.link navigate={~p"/ip_address_pools/#{@ip_address_pool}/edit"} class="block">
+        <.a navigate={~p"/ip_address_pools/#{@ip_address_pool}/edit"} class="block">
           <.button class="w-full">
             Edit IP Address Pool
           </.button>
-        </.link>
+        </.a>
 
         <.button phx-click="delete" data-confirm="Are you sure?" class="w-full">
           Delete IP Address Pool

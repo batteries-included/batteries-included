@@ -34,11 +34,11 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     <.h2 variant="fancy">Actions</.h2>
     <.card>
       <div class="grid md:grid-cols-1 gap-6">
-        <.link navigate={~p"/knative/services/new"} class="block w-full">
+        <.a navigate={~p"/knative/services/new"} class="block w-full">
           <.button class="w-full">
             New Knative Service
           </.button>
-        </.link>
+        </.a>
       </div>
     </.card>
     """

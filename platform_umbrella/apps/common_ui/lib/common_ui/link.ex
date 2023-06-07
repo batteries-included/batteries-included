@@ -25,9 +25,9 @@ defmodule CommonUI.Link do
   attr :rest, :global, include: ~w(download hreflang referrerpolicy rel target type)
 
   slot :inner_block, required: true
-  def link(assigns)
+  def a(assigns)
 
-  def link(%{variant: "external"} = assigns) do
+  def a(%{variant: "external"} = assigns) do
     ~H"""
     <Phoenix.Component.link
       class={build_class([link_class(@variant), @class])}
@@ -43,7 +43,7 @@ defmodule CommonUI.Link do
     """
   end
 
-  def link(%{href: _} = assigns) do
+  def a(%{href: _} = assigns) do
     ~H"""
     <Phoenix.Component.link href={@href} class={build_class([link_class(@variant), @class])} {@rest}>
       <%= render_slot(@inner_block) %>
@@ -51,7 +51,7 @@ defmodule CommonUI.Link do
     """
   end
 
-  def link(%{navigate: _} = assigns) do
+  def a(%{navigate: _} = assigns) do
     ~H"""
     <Phoenix.Component.link
       navigate={@navigate}
@@ -63,7 +63,7 @@ defmodule CommonUI.Link do
     """
   end
 
-  def link(%{patch: _} = assigns) do
+  def a(%{patch: _} = assigns) do
     ~H"""
     <Phoenix.Component.link patch={@patch} class={build_class([link_class(@variant), @class])} {@rest}>
       <%= render_slot(@inner_block) %>
@@ -71,7 +71,7 @@ defmodule CommonUI.Link do
     """
   end
 
-  def link(assigns) do
+  def a(assigns) do
     ~H"""
     <Phoenix.Component.link class={build_class([link_class(@variant), @class])} {@rest}>
       <%= render_slot(@inner_block) %>

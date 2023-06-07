@@ -10,9 +10,9 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
       <:col :let={pool} label="Subnet"><%= pool.subnet %></:col>
 
       <:action :let={pool}>
-        <.link navigate={show_url(pool)} variant="styled">
+        <.a navigate={show_url(pool)} variant="styled">
           Show IP Pool
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

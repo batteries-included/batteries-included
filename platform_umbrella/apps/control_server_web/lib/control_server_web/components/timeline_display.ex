@@ -46,7 +46,7 @@ defmodule ControlServerWeb.TimelineDisplay do
       The Control Server detected a new <%= human_name(@payload.type) %> resouce named <%= @payload.name %> added in
       the <%= @payload.namespace %> namespace. <br />
       If that resource has not since been removed you can find a status page
-      <.link navigate={kube_link(@payload)} variant="styled">here</.link>
+      <.a navigate={kube_link(@payload)} variant="styled">here</.a>
     </.timeline_item>
     """
   end

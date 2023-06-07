@@ -36,11 +36,11 @@ defmodule ControlServerWeb.Live.CephFilesystemShow do
     </.card>
 
     <span>
-      <.link navigate={~p"/ceph/filesystems/#{@ceph_filesystem}/edit"}>Edit</.link>
+      <.a navigate={~p"/ceph/filesystems/#{@ceph_filesystem}/edit"}>Edit</.a>
     </span>
     |
     <span>
-      <.link navigate={~p"/ceph"}>Back</.link>
+      <.a navigate={~p"/ceph"}>Back</.a>
     </span>
     """
   end

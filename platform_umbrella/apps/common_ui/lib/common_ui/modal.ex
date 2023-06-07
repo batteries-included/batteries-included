@@ -100,13 +100,13 @@ defmodule CommonUI.Modal do
                   >
                     <%= render_slot(confirm) %>
                   </.button>
-                  <.link
+                  <.a
                     :for={cancel <- @cancel}
                     phx-click={hide_modal(@on_cancel, @id)}
                     variant="styled"
                   >
                     <%= render_slot(cancel) %>
-                  </.link>
+                  </.a>
                 </div>
               </div>
             </.focus_wrap>

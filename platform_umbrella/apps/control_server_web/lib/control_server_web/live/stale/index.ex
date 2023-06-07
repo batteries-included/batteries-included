@@ -33,7 +33,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
       </:col>
 
       <:action :let={resource}>
-        <.link
+        <.a
           phx-click="delete"
           phx-value-kind={ApiVersionKind.resource_type!(resource)}
           phx-value-name={name(resource)}
@@ -42,7 +42,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
           variant="styled"
         >
           Delete Now
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

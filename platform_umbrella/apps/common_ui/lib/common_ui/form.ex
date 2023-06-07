@@ -55,11 +55,10 @@ defmodule CommonUI.Form do
   attr :name, :any
   attr :label, :string
 
-  attr(:type, :string,
+  attr :type, :string,
     default: "text",
     doc:
       ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range", "multicheck"|
-  )
 
   attr :value, :any
   attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
@@ -70,11 +69,10 @@ defmodule CommonUI.Form do
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
-  attr(:rest, :global,
+  attr :rest, :global,
     doc: "the arbitrary HTML attributes for the input tag",
     include:
       ~w(autocomplete checked disabled form max maxlength min minlength pattern placeholder readonly required size step)
-  )
 
   slot :inner_block
 

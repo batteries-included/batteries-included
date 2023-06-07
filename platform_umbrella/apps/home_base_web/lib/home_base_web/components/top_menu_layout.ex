@@ -25,9 +25,9 @@ defmodule HomeBaseWeb.TopMenuLayout do
               <div class="flex h-16 items-center justify-between px-4 sm:px-0">
                 <div class="flex items-center">
                   <div class="flex-shrink-0">
-                    <.link navigate="/">
+                    <.a navigate="/">
                       <.batteries_logo top_cloud_class="fill-pink-500" />
-                    </.link>
+                    </.a>
                   </div>
                   <.main_menu menu_items={@main_menu_items} page={@page} />
                 </div>
@@ -64,7 +64,7 @@ defmodule HomeBaseWeb.TopMenuLayout do
     <div class="hidden md:block">
       <div class="ml-10 flex items-baseline space-x-4">
         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-        <.link
+        <.a
           :for={menu_item <- @menu_items}
           navigate={menu_item.url}
           variant="unstyled"
@@ -78,7 +78,7 @@ defmodule HomeBaseWeb.TopMenuLayout do
           }
         >
           <%= menu_item.title %>
-        </.link>
+        </.a>
       </div>
     </div>
     """

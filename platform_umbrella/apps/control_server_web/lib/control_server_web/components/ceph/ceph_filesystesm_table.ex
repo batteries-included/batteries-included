@@ -9,9 +9,9 @@ defmodule ControlServerWeb.CephFilesystemsTable do
       <:col :let={ceph} label="Name"><%= ceph.name %></:col>
       <:col :let={ceph} label="Include EC?"><%= ceph.include_erasure_encoded %></:col>
       <:action :let={ceph}>
-        <.link navigate={~p"/ceph/filesystems/#{ceph}/show"} variant="styled">
+        <.a navigate={~p"/ceph/filesystems/#{ceph}/show"} variant="styled">
           Show FileSystem
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

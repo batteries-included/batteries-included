@@ -43,11 +43,11 @@ defmodule ControlServerWeb.Live.Redis do
 
     <.h2>Actions</.h2>
     <.card>
-      <.link navigate={new_url()}>
+      <.a navigate={new_url()}>
         <.button>
           New Cluster
         </.button>
-      </.link>
+      </.a>
     </.card>
     """
   end

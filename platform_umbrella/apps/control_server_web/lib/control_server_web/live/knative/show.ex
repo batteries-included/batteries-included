@@ -90,11 +90,11 @@ defmodule ControlServerWeb.Live.KnativeShow do
     <.h2 variant="fancy">Actions</.h2>
     <.card>
       <div class="grid md:grid-cols-2 gap-6">
-        <.link navigate={~p"/knative/services/#{@service}/edit"} class="block">
+        <.a navigate={~p"/knative/services/#{@service}/edit"} class="block">
           <.button class="w-full">
             Edit Service
           </.button>
-        </.link>
+        </.a>
 
         <.button phx-click="delete" data-confirm="Are you sure?">
           Delete Service

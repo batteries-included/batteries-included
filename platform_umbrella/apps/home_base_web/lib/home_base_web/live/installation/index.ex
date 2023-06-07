@@ -27,9 +27,9 @@ defmodule HomeBaseWeb.Live.Installations do
   def render(assigns) do
     ~H"""
     <.top_menu_layout page={:installations} title={@page_title}>
-      <.link navigate={~p"/installations/new"}>
+      <.a navigate={~p"/installations/new"}>
         <.button>New Installation</.button>
-      </.link>
+      </.a>
       <.table
         id="installations"
         rows={@installations}
@@ -39,9 +39,9 @@ defmodule HomeBaseWeb.Live.Installations do
         <:col :let={installation} label="Slug"><%= installation.slug %></:col>
         <:action :let={installation}>
           <div class="sr-only">
-            <.link navigate={~p"/installations/#{installation}/show"}>Show</.link>
+            <.a navigate={~p"/installations/#{installation}/show"}>Show</.a>
           </div>
-          <.link navigate={~p"/installations/#{installation}/show"}>Edit</.link>
+          <.a navigate={~p"/installations/#{installation}/show"}>Edit</.a>
         </:action>
       </.table>
     </.top_menu_layout>

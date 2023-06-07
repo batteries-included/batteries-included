@@ -11,9 +11,9 @@ defmodule ControlServerWeb.CephClustersTable do
       <:col :let={ceph} label="Managers"><%= ceph.num_mgr %></:col>
       <:col :let={ceph} label="Data dir"><%= ceph.data_dir_host_path %></:col>
       <:action :let={ceph}>
-        <.link navigate={~p"/ceph/clusters/#{ceph}/show"} variant="styled">
+        <.a navigate={~p"/ceph/clusters/#{ceph}/show"} variant="styled">
           Show Cluster
-        </.link>
+        </.a>
       </:action>
     </.table>
     """

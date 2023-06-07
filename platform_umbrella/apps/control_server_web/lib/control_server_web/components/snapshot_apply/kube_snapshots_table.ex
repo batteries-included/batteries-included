@@ -14,7 +14,7 @@ defmodule ControlServerWeb.KubeSnapshotsTable do
       </:col>
       <:col :let={snapshot} label="Status"><%= snapshot.status %></:col>
       <:action :let={snapshot}>
-        <.link navigate={~p"/snapshot_apply/#{snapshot}/show"} variant="styled">Show Deploy</.link>
+        <.a navigate={~p"/snapshot_apply/#{snapshot}/show"} variant="styled">Show Deploy</.a>
       </:action>
     </.table>
     """

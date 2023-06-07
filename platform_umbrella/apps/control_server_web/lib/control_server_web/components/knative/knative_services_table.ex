@@ -11,12 +11,12 @@ defmodule ControlServerWeb.KnativeServicesTable do
     <.table id="knative-display-table" rows={@knative_services}>
       <:col :let={service} label="Name"><%= service.name %></:col>
       <:col :let={service} label="Link">
-        <.link href={service_url(service)} variant="external">
+        <.a href={service_url(service)} variant="external">
           <%= service_url(service) %>
-        </.link>
+        </.a>
       </:col>
       <:action :let={service}>
-        <.link navigate={~p"/knative/services/#{service}/show"}>Show Service</.link>
+        <.a navigate={~p"/knative/services/#{service}/show"}>Show Service</.a>
       </:action>
     </.table>
     """
