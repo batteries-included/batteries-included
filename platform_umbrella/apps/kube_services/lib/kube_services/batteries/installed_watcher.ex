@@ -23,7 +23,10 @@ defmodule KubeServices.Batteries.InstalledWatcher do
 
   def init(_args) do
     :ok = Database.subscribe(:system_battery)
-    Enum.each(ControlServer.Batteries.list_system_batteries(), &start_battery/1)
+
+    Logger.debug("Started watching for new batteries. Making sure already installed are running")
+    batteries = ControlServer.Batteries.list_system_batteries()
+    Enum.each(batteries, &start_battery/1)
     {:ok, :initial_state}
   end
 
@@ -71,7 +74,11 @@ defmodule KubeServices.Batteries.InstalledWatcher do
   defp process_type(%{type: :battery_core} = battery),
     do: {KubeServices.Batteries.BatteryCore, battery}
 
-  defp process_type(%{} = battery), do: {nil, battery}
+  defp process_type(%{} = battery) do
+    Logger.debug("Not starting anything for battery #{battery.id} with type #{battery.type}")
+
+    {nil, battery}
+  end
 
   defp start_process({nil = _process_module, _battery}), do: {:ok, nil}
 

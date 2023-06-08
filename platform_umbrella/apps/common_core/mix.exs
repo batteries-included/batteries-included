@@ -32,8 +32,12 @@ defmodule CommonCore.MixProject do
       {:telemetry, "~> 1.1"},
       {:tesla, "~> 1.7.0"},
       {:typed_ecto_schema, "~> 0.4.1"},
+      {:ex_audit, "~> 0.10.0"},
       {:yaml_elixir, "~> 2.6"},
-      {:ymlr, "~> 4.1.0"}
+      {:ymlr, "~> 4.1.0"},
+
+      # History
+      {:ex_audit, "~> 0.10.0"}
     ]
   end
 

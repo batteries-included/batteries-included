@@ -4,4 +4,5 @@ defmodule ControlServer.Repo do
     adapter: Ecto.Adapters.Postgres
 
   use Paginator
+  use ExAudit.Repo
 end

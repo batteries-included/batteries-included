@@ -318,12 +318,22 @@ defmodule ControlServerWeb.LeftMenu do
     >
       <Heroicons.rocket_launch class={@icon_class} />
     </.detail_menu_item>
+
+    <.h4>History</.h4>
     <.detail_menu_item
-      navigate={~p"/timeline"}
+      navigate={~p"/history/timeline"}
       name="Timeline"
       is_active={@page_detail_type == :timeline}
     >
       <Heroicons.clock class={@icon_class} />
+    </.detail_menu_item>
+
+    <.detail_menu_item
+      navigate={~p"/history/edit_versions"}
+      name="Edit Versions"
+      is_active={@page_detail_type == :edit_versions}
+    >
+      <Heroicons.document_minus class={@icon_class} />
     </.detail_menu_item>
 
     <.h4>Delete</.h4>

@@ -40,6 +40,17 @@ config :kube_services,
   ecto_repos: [ControlServer.Repo],
   generators: [context_app: :control_server, binary_id: true]
 
+config :ex_audit,
+  ecto_repos: [ControlServer.Repo],
+  version_schema: CommonCore.Audit.EditVersion,
+  tracked_schemas: [
+    CommonCore.Batteries.SystemBattery,
+    CommonCore.Knative.Service,
+    CommonCore.MetalLB.IPAddressPool,
+    CommonCore.Postgres.Cluster,
+    CommonCore.Redis.FailoverCluster
+  ]
+
 # Configures the endpoint
 config :control_server_web, ControlServerWeb.Endpoint,
   url: [host: "localhost"],

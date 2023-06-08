@@ -35,7 +35,7 @@ defmodule CommonUI.MixProject do
       {:heyya, "~> 0.3.1", only: :test},
       {:phoenix, "~> 1.7.3"},
       {:jason, "~> 1.2"},
-      {:phoenix_live_view, "~> 0.19.0"},
+      {:phoenix_live_view, "~> 0.19.1"},
       {:heroicons, "~> 0.5.3"},
       {:gettext, "~> 0.19"}
     ]

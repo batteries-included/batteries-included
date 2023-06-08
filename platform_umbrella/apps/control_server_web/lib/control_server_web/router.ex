@@ -21,7 +21,6 @@ defmodule ControlServerWeb.Router do
     pipe_through :browser
     live "/", Live.Home, :index
     live "/notebooks", Live.JupyterLabNotebookIndex, :index
-    live "/timeline", Live.Timeline, :index
     live "/stale", Live.StaleIndex, :index
     live "/deleted_resources", Live.DeletedResourcesIndex, :index
   end
@@ -140,6 +139,13 @@ defmodule ControlServerWeb.Router do
 
     live "/realms", Live.KeycloakRealmsList
     live "/realm/:name", Live.KeycloakRealm
+  end
+
+  scope "/history", ControlServerWeb do
+    pipe_through :browser
+
+    live "/timeline", Live.Timeline, :index
+    live "/edit_versions", Live.EditVersionsList, :index
   end
 
   scope "/api", ControlServerWeb do

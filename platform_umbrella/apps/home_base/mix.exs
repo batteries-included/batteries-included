@@ -45,6 +45,10 @@ defmodule HomeBase.MixProject do
 
       # Filtering
       {:paginator, "~> 1.2.0"},
+
+      # History
+      {:ex_audit, "~> 0.10.0"},
+
       # Slugs/Naming
       {:mnemonic_slugs, "~> 0.0.3"}
     ]

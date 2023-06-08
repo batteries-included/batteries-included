@@ -10,7 +10,6 @@ defmodule ControlServerWeb.Integration.Knative do
   @root_url "/services/devtools/knative_services"
 
   feature "Can create a knative server", %{session: session} do
-    Logger.warn("XXXXXXXXXX Starting knative test")
     EventCenter.KubeState.subscribe(:knative_serving)
 
     service_name = service_name()

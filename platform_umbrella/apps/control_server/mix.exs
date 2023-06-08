@@ -54,6 +54,9 @@ defmodule ControlServer.MixProject do
       # Filtering
       {:paginator, "~> 1.2.0"},
 
+      # History
+      {:ex_audit, "~> 0.10.0"},
+
       # Kubernetes
       {:k8s, "~> 2.3.0"},
       {:kube_resources, in_umbrella: true},
