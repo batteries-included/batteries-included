@@ -1,0 +1,4 @@
+.full-screen-minus {
+  width: calc(100vw - 20rem);
+  height: calc(100vh - 20rem);
+}

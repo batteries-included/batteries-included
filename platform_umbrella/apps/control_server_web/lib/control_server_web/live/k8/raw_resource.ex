@@ -58,7 +58,10 @@ defmodule ControlServerWeb.Live.RawResource do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.object_display object={@resource} path={@path} base_url={} />
+    <.h1>Raw <%= @resource_type %></.h1>
+    <.card>
+      <.object_display object={@resource} path={@path} base_url={@base_url} />
+    </.card>
     """
   end
 end
