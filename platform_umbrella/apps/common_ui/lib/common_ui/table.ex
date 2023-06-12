@@ -73,7 +73,7 @@ defmodule CommonUI.Table do
     """
   end
 
-  defp to_row_id(parent_id, %{id: _} = row, _idx),
+  defp to_row_id(parent_id, %{id: _} = row, _idx) when is_struct(row),
     do: "#{parent_id}-#{Phoenix.Param.to_param(row)}"
 
   defp to_row_id(parent_id, _row, idx), do: "#{parent_id}-idx-#{idx}"

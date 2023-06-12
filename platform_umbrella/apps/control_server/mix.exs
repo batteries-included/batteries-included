@@ -62,6 +62,7 @@ defmodule ControlServer.MixProject do
       {:kube_resources, in_umbrella: true},
 
       # Yaml
+      {:ymlr, "~> 4.1.0"},
       {:yaml_elixir, "~> 2.6"},
 
       # Time

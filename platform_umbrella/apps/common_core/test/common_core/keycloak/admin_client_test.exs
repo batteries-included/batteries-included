@@ -1,9 +1,10 @@
-defmodule KubeServices.Keycloak.TestAdminClient do
+defmodule CommonCore.Keycloak.TestAdminClient do
   use ExUnit.Case
 
   import Mox
 
-  alias KubeServices.Keycloak.AdminClient
+  alias CommonCore.Keycloak.AdminClient
+  alias CommonCore.Keycloak.TeslaMock
 
   @access_key_value "VALUE_KEY_HERE"
   @refresh_key_value "REFRESH_KEY_HERE"
@@ -58,25 +59,25 @@ defmodule KubeServices.Keycloak.TestAdminClient do
   defp setup_mocked_admin(_context) do
     {:ok, pid} =
       AdminClient.start_link(
-        adapter: KubeServices.Keycloak.TeslaMock,
+        adapter: CommonCore.Keycloak.TeslaMock,
         base_url: "http://keycloak.local.test/",
         username: "test_user",
         password: "not-real-test"
       )
 
-    allow(KubeServices.Keycloak.TeslaMock, self(), pid)
+    allow(CommonCore.Keycloak.TeslaMock, self(), pid)
 
     %{pid: pid}
   end
 
   defp expect_openid_token(n_calls) do
-    expect(KubeServices.Keycloak.TeslaMock, :call, n_calls, fn %{url: @full_url}, _opts ->
+    expect(TeslaMock, :call, n_calls, fn %{url: @full_url}, _opts ->
       {:ok, %Tesla.Env{status: 200, body: @default_token_response_body}}
     end)
   end
 
   defp expect_realms do
-    expect(KubeServices.Keycloak.TeslaMock, :call, fn %{url: @realms_url}, _opts ->
+    expect(TeslaMock, :call, fn %{url: @realms_url}, _opts ->
       {:ok, %Tesla.Env{status: 200, body: []}}
     end)
   end

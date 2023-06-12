@@ -151,14 +151,7 @@
           {Credo.Check.Warning.UnusedStringOperation, []},
           {Credo.Check.Warning.UnusedTupleOperation, []},
           {Credo.Check.Refactor.NegatedIsNil, []},
-          {Credo.Check.Refactor.IoPuts,
-           [
-             files: %{
-               excluded: [
-                 "apps/cli/lib/"
-               ]
-             }
-           ]},
+          {Credo.Check.Refactor.IoPuts, []},
           {Credo.Check.Refactor.DoubleBooleanNegation, []},
           {Credo.Check.Refactor.AppendSingleItem, []},
           {Credo.Check.Readability.WithCustomTaggedTuple, []},
@@ -169,6 +162,8 @@
                excluded: [
                  # Gen Resource creates a new file in a short lived VM there's no danger here.
                  "apps/kube_resources/lib/mix/tasks/gen_resource.ex",
+                 # Gen Openapi Struct creates a new file in a short lived vm.
+                 "apps/common_core/lib/mix/gen_openapi_struct.ex",
                  "apps/common_core/lib/common_core/seed_args_converter.ex",
                  # Connection Pools are per cluster.
                  "apps/kube_services/lib/kube_services/connection_pool.ex"

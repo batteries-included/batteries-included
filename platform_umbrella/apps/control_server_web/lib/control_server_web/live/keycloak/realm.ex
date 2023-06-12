@@ -2,12 +2,10 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias KubeServices.SystemState.SummaryHosts
-  alias KubeServices.Keycloak.AdminClient
+  alias CommonCore.Keycloak.AdminClient
 
   import ControlServerWeb.Keycloak.UsersTable
   import ControlServerWeb.Keycloak.ClientsTable
-
-  @good_keys ~w(id displayName realm)
 
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do
@@ -47,13 +45,13 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     ~H"""
     <.h1>
       Keycloak Realm
-      <:sub_header><%= display_name(@realm) %></:sub_header>
+      <:sub_header><%= @realm.displayName %></:sub_header>
     </.h1>
     <.card>
       <.data_list>
-        <:item :for={{key, value} <- display_map(@realm)} title={key}>
-          <%= value %>
-        </:item>
+        <:item title="ID"><%= @realm.id %></:item>
+        <:item title="Name"><%= @realm.realm %></:item>
+        <:item title="Display Name"><%= @realm.displayName %></:item>
       </.data_list>
     </.card>
 
@@ -63,8 +61,4 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     <.keycloak_users_table users={@users} />
     """
   end
-
-  defp display_name(realm), do: Map.get(realm, "displayName")
-
-  defp display_map(realm), do: Map.take(realm, @good_keys)
 end

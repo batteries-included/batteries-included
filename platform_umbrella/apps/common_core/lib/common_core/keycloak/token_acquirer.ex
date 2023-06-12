@@ -1,4 +1,4 @@
-defmodule KubeServices.Keycloak.TokenAcquirer do
+defmodule CommonCore.Keycloak.TokenAcquirer do
   @moduledoc """
   This module will aquire a new openid connect
   token from keycloak. Either via username/password
@@ -27,7 +27,7 @@ defmodule KubeServices.Keycloak.TokenAcquirer do
   end
 
   @spec refresh(Tesla.Client.t(), String.t(), keyword) ::
-          {:error, any} | {:ok, KubeServices.Keycloak.TokenAcquirer.TokenResult.t()}
+          {:error, any} | {:ok, CommonCore.Keycloak.TokenAcquirer.TokenResult.t()}
   def refresh(client, token, opts \\ [client_id: @client_id]) do
     # Take the start time just before sending the request
     # This ensures that we'll never overestimate the expire times.
@@ -47,7 +47,7 @@ defmodule KubeServices.Keycloak.TokenAcquirer do
   end
 
   @spec login(Tesla.Client.t(), String.t(), String.t(), keyword) ::
-          {:error, any} | {:ok, KubeServices.Keycloak.TokenAcquirer.TokenResult.t()}
+          {:error, any} | {:ok, CommonCore.Keycloak.TokenAcquirer.TokenResult.t()}
   def login(client, username, password, opts \\ [client_id: @client_id]) do
     # Take the start time just before sending the request
     # This ensures that we'll never overestimate the expire times.

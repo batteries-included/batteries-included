@@ -1,4 +1,4 @@
-defmodule KubeServices.Keycloak.TeslaBuilder do
+defmodule CommonCore.Keycloak.TeslaBuilder do
   @type adapter_spec :: module() | {module(), Keyword.t()} | nil
 
   @spec build_client(String.t(), adapter_spec()) :: Tesla.Client.t()

@@ -1,4 +1,4 @@
-defmodule KubeServices.Keycloak.AdminClient do
+defmodule CommonCore.Keycloak.AdminClient do
   @moduledoc """
   This GenServer is a single entry point into
   the Keycloak api. It handles open id connect
@@ -38,10 +38,9 @@ defmodule KubeServices.Keycloak.AdminClient do
   use GenServer
   use TypedStruct
 
-  alias KubeServices.Keycloak.TokenAcquirer
-  alias KubeServices.Keycloak.TeslaBuilder
-  alias CommonCore.StateSummary.Hosts
-  alias CommonCore.StateSummary.Creds
+  alias CommonCore.Keycloak.TokenAcquirer
+  alias CommonCore.Keycloak.TeslaBuilder
+  alias CommonCore.OpenApi.KeycloakAdminSpec
 
   require Logger
 
@@ -81,9 +80,11 @@ defmodule KubeServices.Keycloak.AdminClient do
       |> struct(args)
       |> build_base_client()
 
-    :ok = EventCenter.SystemStateSummary.subscribe()
-
     {:ok, state}
+  end
+
+  def reset(target \\ @me, base_url, username, password) do
+    GenServer.call(target, {:reset, base_url: base_url, username: username, password: password})
   end
 
   def login(target \\ @me) do
@@ -182,14 +183,14 @@ defmodule KubeServices.Keycloak.AdminClient do
     end
   end
 
-  def handle_info(
-        %CommonCore.StateSummary{} = summary,
+  def handle_call(
+        {:reset, opts},
+        _from,
         %State{base_url: base_url, username: username, password: password} = state
       ) do
-    new_host = Hosts.keycloak_host(summary)
-    new_base_url = "http://" <> new_host
-    new_username = Creds.root_keycloak_user(summary)
-    new_password = Creds.root_keycloak_password(summary)
+    new_base_url = Keyword.get(opts, :base_url, base_url)
+    new_username = Keyword.get(opts, :username, username)
+    new_password = Keyword.get(opts, :password, password)
 
     if new_base_url != base_url || new_username != username || new_password != password do
       Logger.debug("Resetting credentials or base url for keycloak")
@@ -200,9 +201,9 @@ defmodule KubeServices.Keycloak.AdminClient do
         |> reset_tokens()
         |> build_base_client()
 
-      {:noreply, new_state}
+      {:reply, :ok, new_state}
     else
-      {:noreply, state}
+      {:reply, :ok, state}
     end
   end
 
@@ -328,31 +329,31 @@ defmodule KubeServices.Keycloak.AdminClient do
   defp do_list_realms(%State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms")
-    |> to_result()
+    |> to_result(&KeycloakAdminSpec.RealmRepresentation.decode_list/1)
   end
 
   defp do_get_realm(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name)
-    |> to_result()
+    |> to_result(&KeycloakAdminSpec.RealmRepresentation.decode/1)
   end
 
   defp do_list_clients(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name <> "/clients")
-    |> to_result()
+    |> to_result(&KeycloakAdminSpec.ClientRepresentation.decode_list/1)
   end
 
   defp do_list_users(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name <> "/users")
-    |> to_result()
+    |> to_result(&KeycloakAdminSpec.UserRepresentation.decode_list/1)
   end
 
   defp do_get_user(realm_name, user_id, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name <> "/users/" <> user_id)
-    |> to_result()
+    |> to_result(&KeycloakAdminSpec.UserRepresentation.decode/1)
   end
 
   defp do_delete_user(realm_name, user_id, %State{bearer_client: client} = _state) do
@@ -361,10 +362,16 @@ defmodule KubeServices.Keycloak.AdminClient do
     |> to_result()
   end
 
-  defp to_result({:ok, %{status: 200, body: body}}) do
+  defp to_result({:ok, %{status: 200, body: _body}} = in_res), do: to_result(in_res, nil)
+
+  defp to_result({:ok, %{status: 200, body: body}}, nil) do
     {:ok, body}
   end
 
-  defp to_result({:error, error}), do: {:error, error}
-  defp to_result(_), do: {:error, :unknown_keycloak_error}
+  defp to_result({:ok, %{status: 200, body: body}}, mapper) do
+    {:ok, mapper.(body)}
+  end
+
+  defp to_result({:error, error}, _mapper), do: {:error, error}
+  defp to_result(_, _), do: {:error, :unknown_keycloak_error}
 end

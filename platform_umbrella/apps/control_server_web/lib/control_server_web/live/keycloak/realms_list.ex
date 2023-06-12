@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias KubeServices.SystemState.SummaryHosts
-  alias KubeServices.Keycloak.AdminClient
+  alias CommonCore.Keycloak.AdminClient
 
   import ControlServerWeb.Keycloak.RealmsTable
 
