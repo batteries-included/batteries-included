@@ -1,7 +1,7 @@
 {
   "recommendations": [
     "astro-build.astro-vscode",
-    "elixir-lsp.elixir-ls",
+    "JakeBecker.elixir-ls",
     "jnoortheen.nix-ide",
     "phoenixframework.phoenix",
     "rust-lang.rust-analyzer"
