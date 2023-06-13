@@ -11,5 +11,5 @@ sea-orm = { version = "0.11.3", features = [
   "sqlx-postgres",
   "runtime-tokio-native-tls",
 ] }
-serde = { version = "1.0.162", features = ["derive"] }
+serde = { version = "1.0.164", features = ["derive"] }
 uuid = { version = "1.3.2", features = ["v4"] }
