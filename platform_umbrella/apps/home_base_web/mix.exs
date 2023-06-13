@@ -4,7 +4,7 @@ defmodule HomeBaseWeb.MixProject do
   def project do
     [
       app: :home_base_web,
-      version: "0.7.0",
+      version: "0.8.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -48,7 +48,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix_html, "~> 3.3.1"},
       {:phoenix_live_dashboard, "~> 0.8.0"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_view, "~> 0.19.1"},
+      {:phoenix_live_view, "~> 0.19.2"},
       {:plug_cowboy, "~> 2.6"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},

@@ -4,7 +4,7 @@ defmodule CommonUI.MixProject do
   def project do
     [
       app: :common_ui,
-      version: "0.7.0",
+      version: "0.8.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -35,7 +35,7 @@ defmodule CommonUI.MixProject do
       {:heyya, "~> 0.3.1", only: :test},
       {:phoenix, "~> 1.7.3"},
       {:jason, "~> 1.2"},
-      {:phoenix_live_view, "~> 0.19.1"},
+      {:phoenix_live_view, "~> 0.19.2"},
       {:heroicons, "~> 0.5.3"},
       {:gettext, "~> 0.19"}
     ]

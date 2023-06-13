@@ -12,7 +12,7 @@
       };
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      version = "0.7.0";
+      version = "0.8.0";
       beam = pkgs.beam;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang;
@@ -35,14 +35,14 @@
         pname = "mix-deps-platform-test";
         inherit src version LANG;
         mixEnv = "test";
-        sha256 = "sha256-HZL5RrFLtzTJpweH4Ig9yqgEuiTb/as0Efi/crMAlbE=";
+        sha256 = "sha256-nKMK5A0v+3B26MRgCg6yHUGk9FPy0/Mn7ZBXa+ocCgc=";
         #sha256 = lib.fakeSha256;
       };
 
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
         inherit src version LANG;
-        sha256 = "sha256-AY0Sx0SyrWvcZhiYnI1yMmfz7dFEqwWT+KziqGo2PV0=";
+        sha256 = "sha256-WGSZ0OsYdl8TDyuOg6gOGHJx/JFStrnmmYMwzVnKag4=";
         #sha256 = lib.fakeSha256;
       };
 
