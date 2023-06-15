@@ -107,6 +107,7 @@
         # This keeps cargo self contained in this dir
         export CARGO_HOME=$PWD/.nix-cargo
         mkdir -p $CARGO_HOME
+        export PATH=$CARGO_HOME/bin:$PATH
 
         popd
       '';
