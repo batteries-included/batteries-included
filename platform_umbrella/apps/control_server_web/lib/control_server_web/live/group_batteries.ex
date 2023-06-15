@@ -116,7 +116,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
         Process.sleep(500)
         _res = Installer.install!(type, progress_target)
         Process.sleep(500)
-        _ = KubeServices.SnapshotApply.Worker.start!()
+        _ = KubeServices.SnapshotApply.Worker.start()
         send(progress_target, {:async_installer, {:apply_complete, "Started"}})
         Process.sleep(500)
         {:async_installer, :full_complete}

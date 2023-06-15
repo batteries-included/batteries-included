@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.Home do
 
   alias KubeServices.KubeState
   alias Phoenix.Naming
-  alias ControlServer.SnapshotApply
+  alias ControlServer.SnapshotApply.Kube
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -15,7 +15,7 @@ defmodule ControlServerWeb.Live.Home do
      |> assign_page_title("Home")
      |> assign_pods(KubeState.get_all(:pod))
      |> assign_nodes(KubeState.get_all(:node))
-     |> assign_status(SnapshotApply.get_latest_snapshot_status())}
+     |> assign_status(Kube.get_latest_snapshot_status())}
   end
 
   def assign_page_group(socket, page_group) do

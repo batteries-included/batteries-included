@@ -1,4 +1,4 @@
-defmodule ControlServer.SnapshotApply.KubeSnapshot do
+defmodule ControlServer.SnapshotApply.KeycloakSnapshot do
   use TypedEctoSchema
   import Ecto.Changeset
 
@@ -6,12 +6,9 @@ defmodule ControlServer.SnapshotApply.KubeSnapshot do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  typed_schema "kube_snapshots" do
-    field :status, Ecto.Enum,
-      values: [:creation, :generation, :applying, :ok, :error],
-      default: :creation
 
-    has_many :resource_paths, ControlServer.SnapshotApply.ResourcePath
+  typed_schema "keycloak_snapshots" do
+    field :status, Ecto.Enum, values: [:creation, :generation, :applying, :ok, :error]
 
     belongs_to :umbrella_snapshot,
                ControlServer.SnapshotApply.UmbrellaSnapshot
@@ -20,8 +17,8 @@ defmodule ControlServer.SnapshotApply.KubeSnapshot do
   end
 
   @doc false
-  def changeset(kube_snapshot, attrs) do
-    kube_snapshot
+  def changeset(keycloak_snapshot, attrs) do
+    keycloak_snapshot
     |> cast(attrs, [:status, :umbrella_snapshot_id])
     |> validate_required([:status])
   end

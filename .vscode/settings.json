@@ -82,5 +82,5 @@
     "**/deps/**": true
   },
   "rust-analyzer.showUnlinkedFileNotification": false,
-  "elixirLS.projectDir": "platform_umbrella"
+  "elixirLS.projectDir": "./platform_umbrella/"
 }

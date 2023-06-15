@@ -7,10 +7,10 @@ defmodule KubeServices.SnapshotApply do
 
   def init(_opts) do
     children = [
-      KubeServices.SnapshotApply.InitialLaunchTask,
-      KubeServices.SnapshotApply.FailedLauncher,
-      KubeServices.SnapshotApply.EventLauncher,
-      KubeServices.SnapshotApply.KubeApply
+      KubeServices.SnapshotApply.KubeApply,
+      KubeServices.SnapshotApply.Worker,
+      KubeServices.SnapshotApply.FailedKubeLauncher,
+      KubeServices.SnapshotApply.EventLauncher
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

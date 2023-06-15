@@ -1,4 +1,4 @@
-defmodule ControlServer.SnapshotApplyFixtures do
+defmodule ControlServer.KubeSnapshotApplyFixtures do
   @moduledoc """
   This module defines test helpers for creating
   entities via the `ControlServer.SnapshotApply` context.
@@ -17,7 +17,7 @@ defmodule ControlServer.SnapshotApplyFixtures do
         namespace: "default",
         type: :pod
       })
-      |> ControlServer.SnapshotApply.create_resource_path()
+      |> ControlServer.SnapshotApply.Kube.create_resource_path()
 
     resource_path
   end
@@ -31,7 +31,7 @@ defmodule ControlServer.SnapshotApplyFixtures do
       |> Enum.into(%{
         status: :creation
       })
-      |> ControlServer.SnapshotApply.create_kube_snapshot()
+      |> ControlServer.SnapshotApply.Kube.create_kube_snapshot()
 
     kube_snapshot
   end

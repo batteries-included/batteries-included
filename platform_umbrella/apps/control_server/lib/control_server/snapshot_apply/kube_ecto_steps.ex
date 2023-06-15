@@ -1,6 +1,7 @@
-defmodule ControlServer.SnapshotApply.EctoSteps do
+defmodule ControlServer.SnapshotApply.KubeEctoSteps do
   import Ecto.Query
   import K8s.Resource.FieldAccessors
+  import ControlServer.SnapshotApply.Kube
 
   alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KubeSnapshot
@@ -15,8 +16,8 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
   @max_reason_length 255
   @generation_timeout 60_000
 
-  def create_snap do
-    ControlServer.SnapshotApply.create_kube_snapshot()
+  def create_snap(attrs \\ %{}) do
+    create_kube_snapshot(attrs)
   end
 
   def snap_generation(%KubeSnapshot{} = snap, resource_map) do
@@ -66,13 +67,13 @@ defmodule ControlServer.SnapshotApply.EctoSteps do
   @spec update_snap_status(ControlServer.SnapshotApply.KubeSnapshot.t(), any) ::
           {:ok, ControlServer.SnapshotApply.KubeSnapshot.t()} | {:error, Ecto.Changeset.t()}
   def update_snap_status(%KubeSnapshot{} = snap, status) do
-    ControlServer.SnapshotApply.update_kube_snapshot(snap, %{status: status})
+    update_kube_snapshot(snap, %{status: status})
   end
 
   @spec update_rp(ControlServer.SnapshotApply.ResourcePath.t(), boolean(), binary()) ::
           {:ok, ControlServer.SnapshotApply.ResourcePath.t()} | {:error, Ecto.Changeset.t()}
   def update_rp(%ResourcePath{} = rp, is_success, reason) do
-    ControlServer.SnapshotApply.update_resource_path(rp, %{
+    update_resource_path(rp, %{
       is_success: is_success,
       apply_result: String.slice(reason, 0, @max_reason_length)
     })

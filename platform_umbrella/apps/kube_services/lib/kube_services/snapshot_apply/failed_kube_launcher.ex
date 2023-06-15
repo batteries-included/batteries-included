@@ -1,4 +1,4 @@
-defmodule KubeServices.SnapshotApply.FailedLauncher do
+defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
   use GenServer
   use TypedStruct
 
@@ -20,8 +20,7 @@ defmodule KubeServices.SnapshotApply.FailedLauncher do
   end
 
   def handle_info(:start_apply, state) do
-    job = Worker.start!()
-    Logger.info("Starting job #{job.id} to retry failed snapshot apply", id: job.id)
+    _ = Worker.start()
     {:noreply, %State{state | timer_reference: nil}}
   end
 

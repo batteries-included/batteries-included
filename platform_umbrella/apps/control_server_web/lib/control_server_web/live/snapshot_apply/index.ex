@@ -3,32 +3,29 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
 
   import ControlServerWeb.KubeSnapshotsTable
 
-  alias ControlServer.SnapshotApply
-  alias EventCenter.KubeSnapshot, as: SnapshotEventCenter
+  alias ControlServer.SnapshotApply.Kube
+  alias EventCenter.KubeSnapshot, as: KubeSnapshotEventCenter
 
   require Logger
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = SnapshotEventCenter.subscribe()
-    {:ok, assign(socket, :snapshots, snapshots([]))}
+    :ok = KubeSnapshotEventCenter.subscribe()
+    {:ok, assign_snapshots(socket)}
   end
 
-  def snapshots(params) do
-    SnapshotApply.paginated_kube_snapshots(params)
+  def assign_snapshots(socket) do
+    assign(socket, :snapshots, Kube.paginated_kube_snapshots([]))
   end
 
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
-    {:noreply, assign(socket, :snapshots, snapshots([]))}
+    {:noreply, assign_snapshots(socket)}
   end
 
   @impl Phoenix.LiveView
   def handle_event("start", _, socket) do
-    job = KubeServices.SnapshotApply.Worker.start!()
-
-    Logger.debug("Started oban Job #{job.id}")
-
+    _ = KubeServices.SnapshotApply.Worker.start()
     {:noreply, socket}
   end
 

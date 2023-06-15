@@ -2,10 +2,9 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   use GenServer
   use TypedStruct
 
-  import ControlServer.SnapshotApply.EctoSteps
-
+  alias ControlServer.SnapshotApply.UmbrellaSnapshot
   alias CommonCore.StateSummary
-  alias ControlServer.SnapshotApply.EctoSteps
+  alias ControlServer.SnapshotApply.KubeEctoSteps
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
 
@@ -59,10 +58,8 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     {:ok, State.new(opts)}
   end
 
-  def prepare do
-    with {:ok, snap} <- EctoSteps.create_snap() do
-      snap
-    end
+  def prepare(%UmbrellaSnapshot{} = us) do
+    KubeEctoSteps.create_snap(%{umbrella_snapshot_id: us.id})
   end
 
   @spec generate(KubeSnapshot.t(), StateSummary.t()) :: any
@@ -86,10 +83,10 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   end
 
   defp do_generate(%KubeSnapshot{} = snap, %StateSummary{} = summary, _state) do
-    with {:ok, up_g_snap} <- update_snap_status(snap, :generation),
+    with {:ok, up_g_snap} <- KubeEctoSteps.update_snap_status(snap, :generation),
          resource_map <- ConfigGenerator.materialize(summary),
          {:ok, %{resource_paths: {_cnt, resource_paths}}} <-
-           snap_generation(up_g_snap, resource_map) do
+           KubeEctoSteps.snap_generation(up_g_snap, resource_map) do
       {:ok, {resource_paths, resource_map}}
     end
   end
@@ -104,7 +101,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     # This whole thing tries really really really hard to never throw
     # instead errors are propogated everywhere so that they can be written as status
     # results and error messages.
-    with {:ok, up_g_snap} <- update_snap_status(snap, :applying),
+    with {:ok, up_g_snap} <- KubeEctoSteps.update_snap_status(snap, :applying),
          {:ok, apply_result} <- apply_resource_paths(resource_paths, resource_map, state) do
       final_snap_update(up_g_snap, apply_result)
     else
@@ -144,15 +141,15 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   end
 
   defp final_snap_update(snap, %{fail_kube_apply_count: 0}) do
-    EctoSteps.update_snap_status(snap, :ok)
+    KubeEctoSteps.update_snap_status(snap, :ok)
   end
 
   defp final_snap_update(snap, %{fail_kube_apply_count: _}) do
-    EctoSteps.update_snap_status(snap, :error)
+    KubeEctoSteps.update_snap_status(snap, :error)
   end
 
   defp update_matching_resource_paths(paths, _server_state) do
-    EctoSteps.update_all_rp(paths, true, "Hash Match")
+    KubeEctoSteps.update_all_rp(paths, true, "Hash Match")
   end
 
   defp apply_needs_apply_resource_paths(
@@ -177,7 +174,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
         # Write the result back to the database
         is_success = resource_path_result_is_success?(result)
         reason_string = reason_string(reason)
-        EctoSteps.update_rp(rp, is_success, reason_string)
+        KubeEctoSteps.update_rp(rp, is_success, reason_string)
       end,
       timeout: 10_000,
       max_concurrency: stream_concurrency,

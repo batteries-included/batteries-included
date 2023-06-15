@@ -1,7 +1,7 @@
 defmodule KubeServices.Stale do
   import K8s.Resource.FieldAccessors
 
-  alias ControlServer.SnapshotApply, as: ControlSnapshot
+  alias ControlServer.SnapshotApply.Kube, as: ControlSnapshot
   alias ControlServer.StaleSnaphotApply
   alias ControlServer.SnapshotApply.ResourcePath
   alias ControlServer.Repo

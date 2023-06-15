@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.KubeSnapshotShow do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  alias ControlServer.SnapshotApply
+  alias ControlServer.SnapshotApply.Kube
   alias Timex
 
   require Logger
@@ -14,7 +14,7 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   end
 
   def snapshot(params) do
-    SnapshotApply.get_preloaded_kube_snapshot!(params["id"])
+    Kube.get_preloaded_kube_snapshot!(params["id"])
   end
 
   defp definition_row(assigns) do

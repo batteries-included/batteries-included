@@ -31,8 +31,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
   end
 
   def handle_info(:do_start_creation, state) do
-    job = Worker.start!()
-    Logger.info("Starting job #{job.id}", id: job.id)
+    _ = Worker.start()
     {:noreply, %State{state | timer_reference: nil}}
   end
 
