@@ -40,7 +40,7 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.Keycloak.TeslaBuilder
-  alias CommonCore.OpenApi.KeycloakAdminSpec
+  alias CommonCore.OpenApi.KeycloakAdminSchema
 
   require Logger
 
@@ -329,31 +329,31 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp do_list_realms(%State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms")
-    |> to_result(&KeycloakAdminSpec.RealmRepresentation.decode_list/1)
+    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
   end
 
   defp do_get_realm(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name)
-    |> to_result(&KeycloakAdminSpec.RealmRepresentation.decode/1)
+    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
   end
 
   defp do_list_clients(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name <> "/clients")
-    |> to_result(&KeycloakAdminSpec.ClientRepresentation.decode_list/1)
+    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
   end
 
   defp do_list_users(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name <> "/users")
-    |> to_result(&KeycloakAdminSpec.UserRepresentation.decode_list/1)
+    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
   end
 
   defp do_get_user(realm_name, user_id, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name <> "/users/" <> user_id)
-    |> to_result(&KeycloakAdminSpec.UserRepresentation.decode/1)
+    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
   end
 
   defp do_delete_user(realm_name, user_id, %State{bearer_client: client} = _state) do
@@ -363,6 +363,10 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   defp to_result({:ok, %{status: 200, body: _body}} = in_res), do: to_result(in_res, nil)
+
+  defp to_result({:ok, %{status: 200, body: body}}, mapper) when is_list(body) do
+    {:ok, Enum.map(body, mapper)}
+  end
 
   defp to_result({:ok, %{status: 200, body: body}}, nil) do
     {:ok, body}

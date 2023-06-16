@@ -6,7 +6,7 @@ defmodule KubeServices.Batteries.SSO do
   def init(opts) do
     _battery = Keyword.fetch!(opts, :battery)
 
-    children = [KubeServices.Keycloak.Wrangler, KubeServices.SnapshotApply.Keycloak]
+    children = [KubeServices.Keycloak.Wrangler, KubeServices.SnapshotApply.KeycloakApply]
 
     Supervisor.init(children, strategy: :one_for_one)
   end
