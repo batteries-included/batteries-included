@@ -43,7 +43,7 @@ defmodule HomeBaseWeb.MixProject do
       {:heroicons, "~> 0.5.3"},
       {:home_base, in_umbrella: true},
       {:jason, "~> 1.2"},
-      {:phoenix, "~> 1.7.2"},
+      {:phoenix, "~> 1.7.6"},
       {:phoenix_ecto, "~> 4.4.1"},
       {:phoenix_html, "~> 3.3.1"},
       {:phoenix_live_dashboard, "~> 0.8.0"},

@@ -33,7 +33,7 @@ defmodule CommonUI.MixProject do
   defp deps do
     [
       {:heyya, "~> 0.3.1", only: :test},
-      {:phoenix, "~> 1.7.3"},
+      {:phoenix, "~> 1.7.6"},
       {:jason, "~> 1.2"},
       {:phoenix_live_view, "~> 0.19.2"},
       {:heroicons, "~> 0.5.3"},

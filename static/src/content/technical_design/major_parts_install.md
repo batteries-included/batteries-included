@@ -54,6 +54,10 @@ install or upgrade and then run the bootstrap procedure via the CLI.
 
 - `cli` This is a small statically compiled rust project that producces the bcli
   command line application.
+- `cli/src/tasks` These are small composabile bits of functionality that do one
+  thing during install or debugging.
+- `cli/src/commands` These implement the commands that are dirrectly callable
+  from the command line. Currently only `dev`.
 
 ## Control Server
 
@@ -78,3 +82,6 @@ We deploy it as a containerized Kubernetes 'Deployment.'
 - `kube_services` is the code that runs every OTP genserver interacting with
   Kubernetes. So watching state and putting it into ETS, or pushing a snapshot
   or desired state to Kubernetes.
+- `common_core` is the code that's not dependent on `ecto_sql` or a running
+  kubernetes cluster and might be used in Home or Control Server. Things like
+  HTTP clients, Default configs, Ecto schemas,

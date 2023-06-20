@@ -32,7 +32,7 @@ defmodule KubeServices.MixProject do
       {:jason, "~> 1.2"},
       {:oban, "~> 2.15.1"},
       {:k8s, "~> 2.3.0"},
-      {:phoenix, "~> 1.7.2"},
+      {:phoenix, "~> 1.7.6"},
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},

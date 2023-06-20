@@ -52,7 +52,7 @@ defmodule ControlServerWeb.MixProject do
       {:jason, "~> 1.2"},
       {:kube_resources, in_umbrella: true},
       {:kube_services, in_umbrella: true},
-      {:phoenix, "~> 1.7.3"},
+      {:phoenix, "~> 1.7.6"},
       {:phoenix_ecto, "~> 4.4.2"},
       {:phoenix_html, "~> 3.3.1"},
       {:phoenix_live_dashboard, "~> 0.8.0"},

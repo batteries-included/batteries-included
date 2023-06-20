@@ -11,12 +11,12 @@
     "@fontsource/jetbrains-mono": "^5.0.3",
     "alpinejs": "3.12.2",
     "chart.js": "4.3.0",
-    "esbuild": "^0.18.5",
+    "esbuild": "0.18.5",
     "lodash": "4.17.21",
-    "phoenix": "1.7.3",
+    "phoenix": "1.7.6",
     "phoenix_html": "3.3.1",
     "phoenix_live_view": "0.19.2",
-    "tippy.js": "^6.3.7",
+    "tippy.js": "6.3.7",
     "topbar": "2.0.1"
   },
   "devDependencies": {
