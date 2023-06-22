@@ -4,21 +4,28 @@ version = "0.7.0"
 edition = "2021"
 
 [dependencies]
-assert_cmd = { version = "2.0.10" }
-clap = { version = "4.3.4", features = ["derive", "color", "usage"] }
+assert_cmd = { version = "2.0.11" }
+clap = { version = "4.3.5", features = ["derive", "color", "usage"] }
 clap-verbosity-flag = { version = "2.0.1" }
 color-eyre = { version = "0.6.2" }
-bollard = { version = "0.14.0", features = ["time"] }
+bollard = { version = "0.14.0", features = ["time", "ssl"] }
 dirs = { version = "5.0.1" }
 eyre = { version = "0.6.8" }
 futures = { version = "0.3.28" }
-hyper = { version = "0.14.25" }
+hyper = { version = "0.14.26" }
 ipnet = "2.7.2"
 k8s-openapi = { version = "0.18.0", features = ["v1_26"] }
-kube-client = { version = "0.82.1", features = ["ws", "oauth"] }
-kube-runtime = { version = "0.82.1" }
-reqwest = { version = "0.11.18", features = ["json", "gzip"] }
-serde = { version = "1.0.163" }
+kube-client = { version = "0.83.0", features = ["ws", "oauth", "rustls-tls"] }
+kube-runtime = { version = "0.83.0" }
+reqwest = { version = "0.11.18", default-features = false, features = [
+  "async-compression",
+  "gzip",
+  "deflate",
+  "brotli",
+  "json",
+  "rustls-tls",
+] }
+serde = { version = "1.0.164" }
 serde_json = { version = "1.0.97", default-features = true }
 tempfile = { version = "3.6.0" }
 thiserror = { version = "1.0.40" }

@@ -45,7 +45,7 @@
     };
   };
 
-  outputs = inputs@{ flake-utils, treefmt-nix, flake-root, flake-parts, gitignore, ... }:
+  outputs = inputs@{ flake-utils, treefmt-nix, flake-root, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = flake-utils.lib.defaultSystems;
       imports = [

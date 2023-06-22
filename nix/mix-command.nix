@@ -17,10 +17,6 @@
 , command
 , ...
 }:
-let
-  makeWrapper = pkgs.makeWrapper;
-  git = pkgs.git;
-in
 pkgs.stdenv.mkDerivation ({
 
   doCheck = true;

@@ -1,6 +1,6 @@
 [package]
 name = "migration"
-version = "0.1.0"
+version = "0.7.0"
 edition = "2021"
 publish = false
 
@@ -13,4 +13,4 @@ async-std = { version = "1.12.0", features = ["attributes", "tokio1"] }
 
 [dependencies.sea-orm-migration]
 version = "0.11.3"
-features = ["sqlx-postgres", "runtime-tokio-native-tls"]
+features = ["sqlx-postgres", "runtime-tokio-rustls"]
