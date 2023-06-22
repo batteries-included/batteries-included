@@ -15,18 +15,22 @@
         programs.shfmt.enable = true;
         programs.terraform.enable = true;
 
-        settings.formatter.prettier.excludes = [
-          ".nix-cargo/**"
-          ".nix-hex/**"
-          ".nix-mix/**"
-          "result/**"
-          ".jj/**"
-          "./platform_umbrella/_build/*"
-          "./platform_umbrella/deps/*"
-          "**/.elixir_ls/**"
-          "**/node_modules/**"
-        ];
+        settings = {
+          global.excludes = [
+            "./platform_umbrella/_build/*"
+            "./platform_umbrella/deps/*"
+            "./cli/target/*"
+            "./result/**"
+            ".jj/**"
+            ".git/**"
+            ".nix-cargo/**"
+            ".nix-hex/**"
+            ".nix-mix/**"
+            "**/target/**"
+            "**/.elixir_ls/**"
+            "**/node_modules/**"
+          ];
+        };
       };
-
     };
 }
