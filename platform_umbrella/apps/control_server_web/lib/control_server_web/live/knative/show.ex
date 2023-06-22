@@ -82,7 +82,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   def render(assigns) do
     ~H"""
     <.h1>
-      Knaitve Service
+      Knative Service
       <:sub_header><%= @service.name %></:sub_header>
     </.h1>
     <.service_display service={@k8_service} />
