@@ -148,6 +148,12 @@ defmodule ControlServerWeb.Router do
     live "/edit_versions", Live.EditVersionsList, :index
   end
 
+  scope "/content_addressable", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.ContentAddressableIndex, :index
+  end
+
   scope "/api", ControlServerWeb do
     pipe_through :api
 
@@ -167,7 +173,7 @@ defmodule ControlServerWeb.Router do
     end
 
     scope "/", ControlServerWeb do
-      pipe_through(:browser)
+      pipe_through :browser
       live_storybook("/storybook", backend_module: ControlServerWeb.Storybook)
     end
   end

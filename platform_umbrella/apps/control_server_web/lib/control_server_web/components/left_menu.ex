@@ -319,6 +319,14 @@ defmodule ControlServerWeb.LeftMenu do
       <Heroicons.rocket_launch class={@icon_class} />
     </.detail_menu_item>
 
+    <.detail_menu_item
+      navigate={~p"/content_addressable"}
+      name="Content Storage"
+      is_active={@page_detail_type == :cas}
+    >
+      <Heroicons.building_library class={@icon_class} />
+    </.detail_menu_item>
+
     <.h4>History</.h4>
     <.detail_menu_item
       navigate={~p"/history/timeline"}

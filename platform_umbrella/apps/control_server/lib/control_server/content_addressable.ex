@@ -29,4 +29,32 @@ defmodule ControlServer.ContentAddressable do
     |> ContentAddressableResource.changeset(attrs)
     |> repo.insert()
   end
+
+  def get_stats(repo \\ Repo) do
+    repo.one(
+      from car in ContentAddressableResource,
+        select: %{
+          oldest: min(car.inserted_at),
+          newest: max(car.inserted_at),
+          record_count: count(car.id)
+        }
+    )
+  end
+
+  def paginated_content_addressable_resources(opts \\ []) do
+    default_opts = [
+      include_total_count: true,
+      cursor_fields: [{:inserted_at, :desc}, {:id, :desc}],
+      limit: 12
+    ]
+
+    total_opts = Keyword.merge(default_opts, opts)
+
+    Repo.paginate(
+      from(car in ContentAddressableResource,
+        order_by: [desc: car.inserted_at, desc: car.id]
+      ),
+      total_opts
+    )
+  end
 end
