@@ -244,14 +244,22 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   defp events_section(assigns) do
     ~H"""
     <.h2>Events</.h2>
-    <.table id="events-table" rows={@events}>
-      <:col :let={event} label="Type"><%= get_in(event, ~w(type)) %></:col>
+    <.table rows={@events}>
       <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
       <:col :let={event} label="Message"><%= event |> get_in(~w(message)) |> truncate() %></:col>
-      <:col :let={event} label="First Time"><%= get_in(event, ~w(firstTimestamp)) %></:col>
+      <:col :let={event} label="Type"><%= get_in(event, ~w(type)) %></:col>
+      <:col :let={event} label="First Time">
+        <%= Timex.format!(event_time(event), "{RFC822z}") %>
+      </:col>
       <:col :let={event} label="Count"><%= get_in(event, ~w(count)) %></:col>
     </.table>
     """
+  end
+
+  defp event_time(event) do
+    event
+    |> get_in(~w(firstTimestamp))
+    |> Timex.parse!("{ISO:Extended:Z}")
   end
 
   defp deployment_status(assigns) do
