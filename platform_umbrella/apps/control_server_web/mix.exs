@@ -24,7 +24,7 @@ defmodule ControlServerWeb.MixProject do
   def application do
     [
       mod: {ControlServerWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :dialyzer]
     ]
   end
 
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.MixProject do
       {:common_core, in_umbrella: true},
       {:common_ui, in_umbrella: true},
       {:control_server, in_umbrella: true},
-      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.7.1", runtime: Mix.env() == :dev},
       {:ex_machina, "~> 2.7", only: :test},
       {:gettext, "~> 0.20"},
       {:heroicons, "~> 0.5.3"},
@@ -57,12 +57,13 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix_html, "~> 3.3.1"},
       {:phoenix_live_dashboard, "~> 0.8.0"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_view, "~> 0.19.2"},
+      {:phoenix_live_view, "~> 0.19.3"},
       {:phoenix_storybook, "~> 0.5.0"},
       {:plug_cowboy, "~> 2.6"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:wallaby, "~> 0.30.1", runtime: false, only: [:test, :integration]},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:websock_adapter, "~> 0.5.1"}
     ]
   end

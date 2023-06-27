@@ -49,7 +49,7 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
   end
 
   defp schedule_start(%State{timer_reference: _} = _state) do
-    Logger.warn("Failed snapshot timer already running. Ignoring")
+    Logger.warning("Failed snapshot timer already running. Ignoring")
   end
 
   defp reset_delay(%State{initial_delay: init_delay} = state) do

@@ -19,7 +19,7 @@ defmodule KubeServices.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :dialyzer],
       mod: {KubeServices.Application, []}
     ]
   end
@@ -30,13 +30,14 @@ defmodule KubeServices.MixProject do
       {:typed_struct, "~> 0.3.0", runtime: false},
       {:tesla, "~> 1.7.0"},
       {:jason, "~> 1.2"},
-      {:oban, "~> 2.15.1"},
+      {:oban, "~> 2.15.2"},
       {:k8s, "~> 2.3.0"},
       {:phoenix, "~> 1.7.6"},
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},
-      {:kube_resources, in_umbrella: true}
+      {:kube_resources, in_umbrella: true},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 

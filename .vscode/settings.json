@@ -26,15 +26,15 @@
     "editor.defaultFormatter": "astro-build.astro-vscode"
   },
   "[elixir]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[phoenix-heex]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[html-eex]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "JakeBecker.elixir-ls"
   },
   "[javascript]": {

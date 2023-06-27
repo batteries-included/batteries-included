@@ -17,13 +17,10 @@ defmodule ControlServer.MixProject do
     ]
   end
 
-  # Configuration for the OTP application.
-  #
-  # Type `mix help compile.app` for more information.
   def application do
     [
       mod: {ControlServer.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :dialyzer]
     ]
   end
 
@@ -40,7 +37,7 @@ defmodule ControlServer.MixProject do
       {:common_core, in_umbrella: true},
       {:phoenix_pubsub, "~> 2.1"},
       {:jason, "~> 1.0"},
-      {:oban, "~> 2.15.1"},
+      {:oban, "~> 2.15.2"},
       {:phoenix_swoosh, "~> 1.2.0"},
 
       # SQL
@@ -72,6 +69,7 @@ defmodule ControlServer.MixProject do
 
       # Testing.
       {:ex_machina, "~> 2.7", only: :test},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:floki, "~> 0.33", only: :test}
     ]
   end

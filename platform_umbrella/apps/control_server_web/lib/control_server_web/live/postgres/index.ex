@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @moduledoc """
   Live web app for database stored json configs.
   """
+  alias CommonCore.Postgres.Cluster
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.PostgresClusterTable
@@ -29,6 +30,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
     assign(socket, page_title: page_title)
   end
 
+  @spec list_clusters() :: list(Cluster.t())
   defp list_clusters do
     Postgres.list_clusters()
   end

@@ -20,7 +20,7 @@ defmodule KubeResources.MixProject do
   def application do
     [
       mod: {KubeResources.Application, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger, :dialyzer]
     ]
   end
 
@@ -36,7 +36,8 @@ defmodule KubeResources.MixProject do
       {:phoenix, "~> 1.7.6"},
       {:k8s, "~> 2.3.0"},
       {:common_core, in_umbrella: true},
-      {:ex_machina, "~> 2.7.0", only: :test}
+      {:ex_machina, "~> 2.7.0", only: :test},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 

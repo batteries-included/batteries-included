@@ -13,7 +13,7 @@
       beam = pkgs.beam;
       beamPackages = beam.packagesWith beam.interpreters.erlang;
       erlang = beamPackages.erlang;
-      elixir = beamPackages.elixir;
+      elixir = beamPackages.elixir_1_15;
       rebar = beamPackages.rebar;
       rebar3 = beamPackages.rebar3;
       elixir-ls = beamPackages.elixir-ls;

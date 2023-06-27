@@ -22,6 +22,7 @@ defmodule ControlServer.Postgres do
       [%Cluster{}, ...]
 
   """
+  @spec list_clusters() :: list(Cluster.t())
   def list_clusters do
     Repo.all(Cluster)
   end

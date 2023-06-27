@@ -60,7 +60,7 @@ defmodule KubeServices.Stale.PerformWorker do
             :ok
 
           result ->
-            Logger.warn(
+            Logger.warning(
               "Un-expected result deleting stale kind: #{kind} name: #{name} namespace: #{namespace} Result = #{inspect(result)}",
               kind: kind,
               namespace: namespace,

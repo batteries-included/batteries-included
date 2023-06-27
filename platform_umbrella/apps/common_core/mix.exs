@@ -19,7 +19,7 @@ defmodule CommonCore.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :dialyzer]
     ]
   end
 
@@ -44,7 +44,8 @@ defmodule CommonCore.MixProject do
       {:ex_audit, "~> 0.10.0"},
 
       # Testing
-      {:mox, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 

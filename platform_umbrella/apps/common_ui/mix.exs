@@ -17,10 +17,9 @@ defmodule CommonUI.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :dialyzer]
     ]
   end
 
@@ -35,9 +34,10 @@ defmodule CommonUI.MixProject do
       {:heyya, "~> 0.3.1", only: :test},
       {:phoenix, "~> 1.7.6"},
       {:jason, "~> 1.2"},
-      {:phoenix_live_view, "~> 0.19.2"},
+      {:phoenix_live_view, "~> 0.19.3"},
       {:heroicons, "~> 0.5.3"},
-      {:gettext, "~> 0.19"}
+      {:gettext, "~> 0.19"},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 

@@ -23,7 +23,7 @@ defmodule HomeBase.MixProject do
   def application do
     [
       mod: {HomeBase.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :dialyzer]
     ]
   end
 
@@ -50,7 +50,10 @@ defmodule HomeBase.MixProject do
       {:ex_audit, "~> 0.10.0"},
 
       # Slugs/Naming
-      {:mnemonic_slugs, "~> 0.0.3"}
+      {:mnemonic_slugs, "~> 0.0.3"},
+
+      # testing
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 

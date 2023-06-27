@@ -19,7 +19,7 @@
 
       # all elixir and erlange packages
       erlang = beamPackages.erlang;
-      elixir = beamPackages.elixir;
+      elixir = beamPackages.elixir_1_15;
       hex = beamPackages.hex;
 
       rustToolChain = pkgs.rust-bin.nightly.latest.default;
@@ -35,14 +35,14 @@
         pname = "mix-deps-platform-test";
         inherit src version LANG;
         mixEnv = "test";
-        sha256 = "sha256-+HK6s+0FCzgVpS3Eie5wwmOJbUj8uSKTdG13q0acoPw=";
+        sha256 = "sha256-OMESnKQOWmZnAtZkYyygJLGwXVtaSkvSdZcMYStU6U4=";
         #sha256 = lib.fakeSha256;
       };
 
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
         inherit src version LANG;
-        sha256 = "sha256-9PHdOWavkZHwt3WILe6pgQN91/GeNmd2LV+upmgkmNw=";
+        sha256 = "sha256-ziQyr/d7+M/R/Mf+jgVMx5btjkyFSD1c7loKhMwwhSo=";
         #sha256 = lib.fakeSha256;
       };
 
