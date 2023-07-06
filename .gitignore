@@ -1,6 +1,3 @@
-.venv
-.direnv/
-
 # Local elixir/hex/mix dirs
 .nix-mix
 .nix-hex
@@ -8,8 +5,18 @@
 # Local cargo dirs
 .nix-cargo
 
+# Sssssshhhhh
 ops/aws/keys/
 
+# npm makes a copy of the javascript world here.
+# don't look inside you'll cry
 node_modules
+# Python
+.venv
+.direnv/
 
+# If the VM crashes, it generates a dump, let's ignore it too.
+erl_crash.dump
+
+# The output link from the last time nix built
 result
