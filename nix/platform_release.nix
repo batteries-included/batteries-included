@@ -53,8 +53,8 @@ beamPackages.mixRelease {
     mkdir -p apps/control_server_web/priv/static/assets/
     mkdir -p apps/home_base_web/priv/static/assets/
 
-    cp ${controlPriv}/* apps/control_server_web/priv/static/assets/
-    cp ${homePriv}/* apps/home_base_web/priv/static/assets/
+    cp -r ${controlPriv}/* apps/control_server_web/priv/static/assets/
+    cp -r ${homePriv}/* apps/home_base_web/priv/static/assets/
   '';
 
   installPhase = installHook { release = pname; inherit version; };

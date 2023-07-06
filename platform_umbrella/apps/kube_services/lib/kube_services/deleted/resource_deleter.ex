@@ -8,7 +8,7 @@ defmodule KubeServices.ResourceDeleter do
 
   alias K8s.Resource.FieldAccessors
   alias ControlServer.Deleted.DeleteArchivist
-  alias KubeResources.CopyDown
+  alias CommonCore.Resources.CopyDown
 
   require Logger
 

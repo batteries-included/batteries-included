@@ -11,7 +11,7 @@
       };
 
       beam = pkgs.beam;
-      beamPackages = beam.packagesWith beam.interpreters.erlang;
+      beamPackages = beam.packagesWith beam.interpreters.erlang_26;
       erlang = beamPackages.erlang;
       elixir = beamPackages.elixir_1_15;
       rebar = beamPackages.rebar;

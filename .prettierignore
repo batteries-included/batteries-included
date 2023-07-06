@@ -5,7 +5,6 @@
 **/target/
 **/.elixir_ls/
 
-platform_umbrella/apps/kube_resources/priv/manifests/
 platform_umbrella/apps/control_server_web/assets/node_modules/
 platform_umbrella/apps/home_base_web/assets/node_modules/
 project_templates/web/pastebin/node_modules/

@@ -2,7 +2,7 @@ defmodule ControlServer.DeleteArchivistTest do
   use ControlServer.DataCase
 
   alias ControlServer.ContentAddressable
-  alias KubeResources.Builder, as: B
+  alias CommonCore.Resources.Builder, as: B
   alias ControlServer.Deleted.DeleteArchivist
 
   defp build_resource do

@@ -16,6 +16,7 @@ defmodule CommonCore.StateSummary do
     state_summary = %{state_summary | batteries: [%CommonCore.Batteries.SystemBattery{}]}
 
   """
+  alias CommonCore.StateSummary.KeycloakSummary
   use TypedStruct
   @derive Jason.Encoder
 
@@ -29,5 +30,6 @@ defmodule CommonCore.StateSummary do
     field :ceph_filesystems, list(CommonCore.Rook.CephFilesystem.t()), default: []
     field :ip_address_pools, list(CommonCore.MetalLB.IPAddressPool.t()), default: []
     field :kube_state, map(), default: %{}
+    field :keycloak_state, KeycloakSummary.t(), enforce: false
   end
 end

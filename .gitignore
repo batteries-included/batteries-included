@@ -1,9 +1,6 @@
 .venv
 .direnv/
 
-# Local Netlify folder
-.netlify
-
 # Local elixir/hex/mix dirs
 .nix-mix
 .nix-hex

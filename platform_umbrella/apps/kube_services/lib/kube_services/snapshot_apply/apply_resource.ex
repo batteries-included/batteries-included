@@ -6,7 +6,7 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
   @dialyzer {:nowarn_function, get_or_create_single: 2}
 
   use TypedStruct
-  alias KubeResources.Hashing
+  alias CommonCore.Resources.Hashing
   alias K8s.Client
   alias K8s.Resource
 

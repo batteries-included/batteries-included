@@ -76,12 +76,12 @@ We deploy it as a containerized Kubernetes 'Deployment.'
 - `control_server_web` is the web UI for everything in the control server
   binary. It's a status UI, an editing UI, and an opinionated portal to all the
   tools.
-- `kube_resources` is the code for templatizing the desired resource state in
-  Kubernetes. So this contains the code that says current databse settings have
-  an image version at `Foo,` create a Pod with image `Foo.`
 - `kube_services` is the code that runs every OTP genserver interacting with
   Kubernetes. So watching state and putting it into ETS, or pushing a snapshot
   or desired state to Kubernetes.
 - `common_core` is the code that's not dependent on `ecto_sql` or a running
   kubernetes cluster and might be used in Home or Control Server. Things like
   HTTP clients, Default configs, Ecto schemas,
+- `common_core/resources` is the code for templatizing the desired resource
+  state in Kubernetes. So this contains the code that says current databse
+  settings have an image version at `Foo,` create a Pod with image `Foo.`

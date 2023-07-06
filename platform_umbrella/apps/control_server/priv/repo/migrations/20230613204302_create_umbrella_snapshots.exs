@@ -71,9 +71,22 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
       timestamps(type: :utc_datetime_usec)
     end
 
-    # Not sure about this one.
-    # It was here before, but it might not be needed.
-    create index(:deleted_resources, [:content_addressable_resource_id])
+    create table(:keycloak_actions) do
+      add :action, :string
+      add :type, :string
+
+      add :realm, :string
+
+      add :result, :string
+      add :post_handler, :string
+
+      add :content_addressable_resource_id,
+          references(:content_addressable_resources, on_delete: :nothing)
+
+      add :keycloak_snapshot_id, references(:keycloak_snapshots, on_delete: :nothing)
+
+      timestamps()
+    end
 
     # We generate the id from the hash.
     # They should be equally unique
@@ -87,5 +100,14 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
     # has_one/belongs_to a single umbrella_snapshot
     create unique_index(:kube_snapshots, [:umbrella_snapshot_id])
     create unique_index(:keycloak_snapshots, [:umbrella_snapshot_id])
+
+    # Each acion belongs to a snapshot and we'll need to list them
+    create index(:keycloak_actions, [:keycloak_snapshot_id])
+
+    # For when we want to show content addressable info
+    #
+    create index(:deleted_resources, [:content_addressable_resource_id])
+    create index(:keycloak_actions, [:content_addressable_resource_id])
+    create index(:resource_paths, [:content_addressable_resource_id])
   end
 end

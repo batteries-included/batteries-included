@@ -32,6 +32,7 @@ defmodule CommonCore.MixProject do
       {:telemetry, "~> 1.1"},
       {:tesla, "~> 1.7.0"},
       {:typed_ecto_schema, "~> 0.4.1"},
+      {:k8s, "~> 2.3.0"},
 
       # Yaml
       {:ymlr, "~> 4.1.0"},
@@ -45,6 +46,7 @@ defmodule CommonCore.MixProject do
 
       # Testing
       {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:ex_machina, "~> 2.7.0", only: :test},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end

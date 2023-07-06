@@ -92,7 +92,7 @@ defmodule KubeServices.KubeState do
   def get_all(t \\ @default_table, res_type) do
     t
     |> Runner.get_all(res_type)
-    |> Enum.sort_by(&KubeResources.ResourceVersion.sortable_resource_version/1)
+    |> Enum.sort_by(&CommonCore.Resources.ResourceVersion.sortable_resource_version/1)
   end
 
   @spec get_owned_resources(atom() | :ets.tid(), atom(), list(String.t())) :: list(map)
@@ -108,6 +108,6 @@ defmodule KubeServices.KubeState do
     t
     |> Runner.get_all(:event)
     |> Enum.filter(fn e -> get_in(e, ~w(involvedObject uid)) == involved_uid end)
-    |> Enum.sort_by(&KubeResources.ResourceVersion.sortable_resource_version/1)
+    |> Enum.sort_by(&CommonCore.Resources.ResourceVersion.sortable_resource_version/1)
   end
 end

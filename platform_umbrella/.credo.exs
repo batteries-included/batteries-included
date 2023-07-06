@@ -161,9 +161,9 @@
              files: %{
                excluded: [
                  # Gen Resource creates a new file in a short lived VM there's no danger here.
-                 "apps/kube_resources/lib/mix/tasks/gen_resource.ex",
+                 "apps/common_core/lib/mix/tasks/gen_resource.ex",
                  # Gen Openapi Struct creates a new file in a short lived vm.
-                 "apps/common_core/lib/mix/gen_openapi_schema.ex",
+                 "apps/common_core/lib/mix/tasks/gen_openapi_schema.ex",
                  "apps/common_core/lib/common_core/seed_args_converter.ex",
                  # Connection Pools are per cluster.
                  "apps/kube_services/lib/kube_services/connection_pool.ex"
@@ -182,7 +182,7 @@
                excluded: [
                  # Gen Resource is weird since it's all macros creating code.
                  # allow it here.
-                 "apps/kube_resources/lib/mix/tasks/gen_resource.ex"
+                 "apps/common_core/lib/mix/tasks/gen_resource.ex"
                ]
              }
            ]},

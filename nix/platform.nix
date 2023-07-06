@@ -15,7 +15,7 @@
       version = "0.8.0";
       beam = pkgs.beam;
 
-      beamPackages = beam.packagesWith beam.interpreters.erlang;
+      beamPackages = beam.packagesWith beam.interpreters.erlang_26;
 
       # all elixir and erlange packages
       erlang = beamPackages.erlang;
@@ -35,14 +35,14 @@
         pname = "mix-deps-platform-test";
         inherit src version LANG;
         mixEnv = "test";
-        sha256 = "sha256-OMESnKQOWmZnAtZkYyygJLGwXVtaSkvSdZcMYStU6U4=";
+        sha256 = "sha256-hdwfRcenfA9r2pn0x+JXi0VCyNFL9UUeZ+hN0ineBaw=";
         #sha256 = lib.fakeSha256;
       };
 
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
         inherit src version LANG;
-        sha256 = "sha256-ziQyr/d7+M/R/Mf+jgVMx5btjkyFSD1c7loKhMwwhSo=";
+        sha256 = "sha256-1g6ABoVvw+iZKL3x9BNessM4K8Np4IK1oGcZU4dmBkw=";
         #sha256 = lib.fakeSha256;
       };
 

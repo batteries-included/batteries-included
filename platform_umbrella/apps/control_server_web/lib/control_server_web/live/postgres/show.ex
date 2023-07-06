@@ -9,8 +9,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   alias ControlServer.Postgres
   alias KubeServices.KubeState
-  alias KubeResources.OwnerLabel
-  alias KubeResources.OwnerReference
+  alias CommonCore.Resources.OwnerLabel
+  alias CommonCore.Resources.OwnerReference
   alias EventCenter.KubeState, as: KubeEventCenter
 
   @impl Phoenix.LiveView

@@ -7,7 +7,7 @@ defmodule ControlServer.Deleted.DeleteArchivist do
   alias ControlServer.ContentAddressable.ContentAddressableResource
   alias ControlServer.ContentAddressable
   alias ControlServer.Deleted.DeletedResource
-  alias KubeResources.Hashing
+  alias CommonCore.Resources.Hashing
 
   alias Ecto.Multi
 

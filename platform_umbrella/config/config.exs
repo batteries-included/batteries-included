@@ -32,10 +32,6 @@ config :home_base_web,
   ecto_repos: [HomeBase.Repo],
   generators: [context_app: :home_base, binary_id: true]
 
-config :kube_resources,
-  ecto_repos: [ControlServer.Repo],
-  generators: [context_app: :control_server, binary_id: true]
-
 config :kube_services,
   ecto_repos: [ControlServer.Repo],
   generators: [context_app: :control_server, binary_id: true]
@@ -116,7 +112,8 @@ config :kube_services, Oban,
 
 config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
 
-config :kube_resources, KubeResources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
+config :common_core, CommonCore.Resources.Hashing,
+  key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 
 config :tesla, adapter: {Tesla.Adapter.Mint, [timeout: 30_000]}
 

@@ -38,6 +38,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   use GenServer
   use TypedStruct
 
+  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.Keycloak.TeslaBuilder
   alias CommonCore.OpenApi.KeycloakAdminSchema
@@ -103,6 +104,8 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:realm, name})
   end
 
+  @spec clients(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
+          {:ok, list(ClientRepresentation.t())} | {:error, any()}
   def clients(target \\ @me, realm_name) do
     GenServer.call(target, {:clients, realm_name})
   end

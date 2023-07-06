@@ -2,6 +2,7 @@ defmodule KubeServices.SystemState.Summarizer do
   use GenServer
   use TypedStruct
 
+  alias KubeServices.SystemState.KeycloakSummarizer
   alias CommonCore.StateSummary
   alias KubeServices.KubeState
 
@@ -76,14 +77,37 @@ defmodule KubeServices.SystemState.Summarizer do
 
   defp schedule_refresh(%State{should_refresh: _} = _state), do: nil
 
+  defp get_db_state do
+    {:ok, res} = ControlServer.SystemState.transaction()
+    res
+  end
+
+  defp get_kube_state do
+    KubeState.snapshot()
+  end
+
+  defp get_keycloak_state do
+    KeycloakSummarizer.snapshot()
+  end
+
   @spec new_summary! :: StateSummary.t()
   defp new_summary! do
-    with {:ok, res} <- ControlServer.SystemState.transaction(),
-         kube_state <- KubeState.snapshot(),
-         full <- Map.put(res, :kube_state, kube_state),
-         summary <- struct(StateSummary, full),
-         :ok <- EventCenter.SystemStateSummary.broadcast(summary) do
-      summary
-    end
+    # Start a bunch of tasks
+    # We need all of them before going on so speed this
+    # up.
+    tasks = [
+      Task.async(&get_db_state/0),
+      Task.async(&get_kube_state/0),
+      Task.async(&get_keycloak_state/0)
+    ]
+
+    # Split the result list into something we can use
+    [base_map, kube, keycloak] = Task.await_many(tasks)
+
+    base = struct(StateSummary, base_map)
+
+    summary = %StateSummary{base | keycloak_state: keycloak, kube_state: kube}
+    _ = EventCenter.SystemStateSummary.broadcast(summary)
+    summary
   end
 end

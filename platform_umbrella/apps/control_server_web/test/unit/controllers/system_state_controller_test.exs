@@ -10,7 +10,8 @@ defmodule ControlServerWeb.SystemStateControllerTest do
     "notebooks" => [],
     "postgres_clusters" => [],
     "redis_clusters" => [],
-    "batteries" => []
+    "batteries" => [],
+    "keycloak_state" => nil
   }
 
   setup %{conn: conn} do

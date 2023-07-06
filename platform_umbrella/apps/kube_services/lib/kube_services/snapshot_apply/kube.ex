@@ -8,12 +8,12 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
 
-  alias KubeResources.ConfigGenerator
+  alias CommonCore.Resources.ConfigGenerator
 
   alias KubeServices.KubeState
   alias KubeServices.SnapshotApply.ApplyResource
 
-  alias KubeResources.Hashing
+  alias CommonCore.Resources.Hashing
 
   require Logger
 

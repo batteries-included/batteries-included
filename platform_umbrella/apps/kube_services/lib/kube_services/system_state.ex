@@ -9,6 +9,7 @@ defmodule KubeServices.SystemState do
     should_refresh = Keyword.get(opts, :should_refresh, true)
 
     children = [
+      KubeServices.SystemState.KeycloakSummarizer,
       {KubeServices.SystemState.Summarizer, [should_refresh: should_refresh]},
       KubeServices.SystemState.SummaryHosts,
       KubeServices.SystemState.SummaryBatteries

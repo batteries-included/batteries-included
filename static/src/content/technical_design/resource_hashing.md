@@ -14,10 +14,9 @@ functionally equivalent. However, we need a fast way to tell if a resource is
 functionally the same as a proposed new resource (Very useful when syncing
 changes to Kubernetes).
 
-This is where
-`platform_umbrella/apps/kube_resource/lib/kube_resources/hashing.ex` shines. It
-ties together all the code needed to derive object equivalency on Kubernetes
-resources stored using annotations.
+This is where `platform_umbrella/apps/common_core/lib/common_core/hashing.ex`
+shines. It ties together all the code needed to derive object equivalency on
+Kubernetes resources stored using annotations.
 
 # Adding the Hash
 

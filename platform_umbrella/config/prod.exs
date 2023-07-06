@@ -40,10 +40,3 @@ config :logger, :console,
 
 config :kube_services, :clusters, default: :service_account
 config :kube_services, cluster_type: :prod
-
-# Important!! Setting this to false will filter
-# out all materialization of infra users that
-# are needed for development. These infra users
-# should never be included in a production
-# deploy.
-config :kube_resources, include_dev_infrausers: false
