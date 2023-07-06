@@ -56,13 +56,21 @@ defmodule CommonCore.Keycloak.TestAdminClient do
     end
   end
 
+  defp build_random_byte_string(n) do
+    n
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64()
+    |> binary_part(0, n)
+  end
+
   defp setup_mocked_admin(_context) do
     {:ok, pid} =
       AdminClient.start_link(
         adapter: CommonCore.Keycloak.TeslaMock,
         base_url: "http://keycloak.local.test/",
         username: "test_user",
-        password: "not-real-test"
+        password: "not-real-test",
+        name: String.to_atom("admin-client-test-#{build_random_byte_string(10)}")
       )
 
     allow(CommonCore.Keycloak.TeslaMock, self(), pid)
