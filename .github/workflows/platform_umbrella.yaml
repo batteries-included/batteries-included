@@ -33,5 +33,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix develop --command bash ./dev/run-mix-test.sh

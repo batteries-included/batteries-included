@@ -18,7 +18,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix build .#bcli -L
   pastebin:
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix build .#pastebin -L
       - run: nix build .#pastebin-docker -L
   control-server:
@@ -39,7 +39,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix build .#control-server -L
   tests:
     runs-on: ubuntu-latest
@@ -49,5 +49,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix flake check
