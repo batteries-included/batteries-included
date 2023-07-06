@@ -4,7 +4,8 @@
     "JakeBecker.elixir-ls",
     "jnoortheen.nix-ide",
     "phoenixframework.phoenix",
-    "rust-lang.rust-analyzer"
+    "rust-lang.rust-analyzer",
+    "tamasfe.even-better-toml"
   ],
   "unwantedRecommendations": []
 }

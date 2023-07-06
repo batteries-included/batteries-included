@@ -121,3 +121,8 @@ mix phx.server
 Now there are two web servers accessible.
 `http://home.127.0.0.1.ip.batteriesincl.com:4900` for the home server and
 `http://control.127.0.0.1.ip.batteriesincl.com:4000` for the control server.
+
+### VSCode
+
+To open a fully configured editor simply cd into the main dir and then open the
+everything workspace. `cd main && code .vscode/everything.code-workspace`

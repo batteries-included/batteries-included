@@ -26,6 +26,7 @@
         rebar3
         hex
         elixir-ls
+        sqlite
 
         mix2nix
         postgresql

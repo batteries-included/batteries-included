@@ -1,62 +1,7 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
   "files.insertFinalNewline": true,
-  "editor.tabSize": 2,
-  "prettier.proseWrap": "always",
-  "prettier.singleQuote": true,
-  "prettier.bracketSameLine": true,
-  "elixirLS.enableTestLenses": true,
-  "elixirLS.fetchDeps": true,
-  "emmet.includeLanguages": {
-    "phoenix-heex": "html",
-    "html-eex": "html",
-    "elixir": "html"
-  },
-  "tailwindCSS.includeLanguages": {
-    "phoenix-heex": "html",
-    "html-eex": "html",
-    "elixir": "html"
-  },
-  "rust-analyzer.linkedProjects": [
-    "cli/Cargo.toml",
-    "project_templates/web/pastebin/Cargo.toml"
-  ],
-  "[astro]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "astro-build.astro-vscode"
-  },
-  "[elixir]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "JakeBecker.elixir-ls"
-  },
-  "[phoenix-heex]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "JakeBecker.elixir-ls"
-  },
-  "[html-eex]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "JakeBecker.elixir-ls"
-  },
-  "[javascript]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[toml]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
-  },
   "files.exclude": {
     "**/.git": true,
     "**/.sl": true,
@@ -80,7 +25,5 @@
     "**/node_modules/**": true,
     "**/_build/**": true,
     "**/deps/**": true
-  },
-  "rust-analyzer.showUnlinkedFileNotification": false,
-  "elixirLS.projectDir": "./platform_umbrella/"
+  }
 }
