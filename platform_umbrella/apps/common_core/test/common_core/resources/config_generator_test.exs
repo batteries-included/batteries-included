@@ -1,9 +1,9 @@
-defmodule KubeServices.ConfigGeneratorTest do
+defmodule KubeServices.RootResourceGeneratorTest do
   use ExUnit.Case
 
   import K8s.Resource.FieldAccessors
 
-  alias CommonCore.Resources.ConfigGenerator
+  alias CommonCore.Resources.RootResourceGenerator
   alias CommonCore.ApiVersionKind
 
   def assert_named(%{} = resource) when is_map(resource) do
@@ -40,20 +40,20 @@ defmodule KubeServices.ConfigGeneratorTest do
     assert_valid_json(resource)
   end
 
-  describe "ConfigGenerator with everything enabled" do
+  describe "RootResourceGenerator with everything enabled" do
     test "all battery resources are valid" do
       CommonCore.StateSummary.SeedState.seed(:everything)
-      |> ConfigGenerator.materialize()
+      |> RootResourceGenerator.materialize()
       |> then(&assert_one_resouce_definition/1)
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)
     end
   end
 
-  describe "ConfigGenerator a small set of batteries" do
+  describe "RootResourceGenerator a small set of batteries" do
     test "all battery resources are valid" do
       CommonCore.StateSummary.SeedState.seed(:dev)
-      |> ConfigGenerator.materialize()
+      |> RootResourceGenerator.materialize()
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)
     end

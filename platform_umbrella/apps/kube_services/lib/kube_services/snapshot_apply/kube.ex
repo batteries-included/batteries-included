@@ -8,7 +8,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
 
-  alias CommonCore.Resources.ConfigGenerator
+  alias CommonCore.Resources.RootResourceGenerator
 
   alias KubeServices.KubeState
   alias KubeServices.SnapshotApply.ApplyResource
@@ -84,7 +84,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
 
   defp do_generate(%KubeSnapshot{} = snap, %StateSummary{} = summary, _state) do
     with {:ok, up_g_snap} <- KubeEctoSteps.update_snap_status(snap, :generation),
-         resource_map <- ConfigGenerator.materialize(summary),
+         resource_map <- RootResourceGenerator.materialize(summary),
          {:ok, %{resource_paths: {_cnt, resource_paths}}} <-
            KubeEctoSteps.snap_generation(up_g_snap, resource_map) do
       {:ok, {resource_paths, resource_map}}

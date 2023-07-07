@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
   use Mix.Task
 
   alias CommonCore.StateSummary.SeedState
-  alias CommonCore.Resources.ConfigGenerator
+  alias CommonCore.Resources.RootResourceGenerator
   alias CommonCore.InstallSpec
 
   @installations ~w(dev dev_cluster)a
@@ -44,7 +44,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
 
   def dev_installation(kube_cluster, summary) do
     res_map =
-      ConfigGenerator.materialize(summary)
+      RootResourceGenerator.materialize(summary)
       |> Enum.sort_by(fn {path, _} -> path end)
       |> Map.new()
 

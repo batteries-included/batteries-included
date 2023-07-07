@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.ConfigGenerator do
+defmodule CommonCore.Resources.RootResourceGenerator do
   @moduledoc """
   Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
