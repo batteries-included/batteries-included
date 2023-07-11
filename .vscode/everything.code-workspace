@@ -1,0 +1,37 @@
+{
+  "folders": [
+    {
+      "path": "../platform_umbrella"
+    },
+    {
+      "path": "../static"
+    },
+    {
+      "path": "../cli"
+    },
+    {
+      "path": "../project_templates/web/pastebin"
+    },
+    {
+      "path": "../coding_challenges/whats_up"
+    },
+    {
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.insertFinalNewline": true,
+
+    // UI Things that are always needed
+    "tailwindCSS.includeLanguages": {
+      "elixir": "html",
+      "phoenix-heex": "html"
+    },
+    "emmet.includeLanguages": {
+      "phoenix-heex": "html",
+      "elixir": "html"
+    }
+  }
+}
