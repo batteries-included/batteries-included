@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@fontsource/inter": "^5.0.3",
-    "@fontsource/jetbrains-mono": "^5.0.3",
+    "@fontsource/jetbrains-mono": "^5.0.5",
     "alpinejs": "3.12.3",
     "chart.js": "4.3.0",
     "esbuild": "^0.18.11",
