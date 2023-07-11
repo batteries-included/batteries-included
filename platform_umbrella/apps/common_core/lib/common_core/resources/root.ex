@@ -10,7 +10,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     CephClusters,
     CephFilesystems,
     CertManager,
-    ControlServerResources,
     Gitea,
     Grafana,
     Harbor,
