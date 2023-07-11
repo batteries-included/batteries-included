@@ -66,30 +66,46 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     [
       replicasets: replicasets,
       pods: pods,
-      events: events(resource)
+      events: events(resource),
+      conditions: conditions(resource),
+      status: status(resource)
     ]
   end
 
   defp subresources(:stateful_set = _resource_type, resource) do
     [
       pods: owned_resources(resource, :pod),
-      events: events(resource)
+      events: events(resource),
+      conditions: conditions(resource),
+      status: status(resource)
     ]
   end
 
   defp subresources(_resource_type, resource) do
-    [events: events(resource)]
+    [
+      events: events(resource),
+      conditions: conditions(resource),
+      status: status(resource)
+    ]
   end
 
-  defp owned_resources(resource, wanted_type),
-    do: KubeState.get_owned_resources(wanted_type, [get_uid(resource)])
+  defp owned_resources(resource, wanted_type) do
+    uid = get_in(resource, ~w|metadata uid|)
+    KubeState.get_owned_resources(wanted_type, [uid])
+  end
 
   defp events(resource) do
-    uid = get_uid(resource)
+    uid = get_in(resource, ~w|metadata uid|)
     KubeState.get_events(uid)
   end
 
-  defp get_uid(resource), do: get_in(resource, ~w|metadata uid|)
+  defp conditions(resource) do
+    get_in(resource, ~w|status conditions|) || []
+  end
+
+  defp status(resource) do
+    get_in(resource, ["status"])
+  end
 
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
@@ -205,15 +221,6 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     """
   end
 
-  defp conditions(assigns) do
-    conds = Map.get(assigns.status, "conditions", [])
-    assigns = assign(assigns, :conditions, conds)
-
-    ~H"""
-    <.conditions_display conditions={@conditions} />
-    """
-  end
-
   defp service_spec(assigns) do
     assigns =
       assigns
@@ -238,6 +245,14 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <:col :let={port} label="Protocol"><%= Map.get(port, "protocol", "") %></:col>
       </.table>
     </.card>
+    """
+  end
+
+  defp events_section(assigns = %{events: events}) when events == [] do
+    ~H"""
+    <.h2 class="flex items-center">
+      Events - <span class="text-base text-gray-500 pt-1 pl-3">No new events!</span>
+    </.h2>
     """
   end
 
@@ -298,29 +313,21 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   end
 
   defp pod_info_section(assigns) do
-    status = Map.get(assigns.resource, "status", %{})
-    assigns = assign(assigns, :status, status)
-
     ~H"""
     <.pod_facts_section resource={@resource} />
     <.label_section resource={@resource} />
     <.h2>Container Status</.h2>
     <.pod_containers_section status={@status} />
-    <.h2>Messages</.h2>
-    <.conditions status={@status} />
+    <.conditions_display conditions={@conditions} />
     <.events_section events={@events} />
     """
   end
 
   defp deployment_info_section(assigns) do
-    status = Map.get(assigns.resource, "status", %{})
-    assigns = assign(assigns, :status, status)
-
     ~H"""
     <.deployment_status status={@status} />
     <.label_section resource={@resource} />
-    <.h2>Messages</.h2>
-    <.conditions status={@status} />
+    <.conditions_display conditions={@conditions} />
     <.events_section events={@events} />
     <.h2>Pods</.h2>
     <.pods_table pods={@pods} />
@@ -328,9 +335,6 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   end
 
   defp stateful_set_info_section(assigns) do
-    status = Map.get(assigns.resource, "status", %{})
-    assigns = assign(assigns, :status, status)
-
     ~H"""
     <.stateful_set_status status={@status} />
     <.label_section resource={@resource} />
@@ -369,13 +373,29 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
     <%= case @resource_type do %>
       <% :pod -> %>
-        <.pod_info_section resource={@resource} events={@events} />
+        <.pod_info_section
+          resource={@resource}
+          events={@events}
+          status={@status}
+          conditions={@conditions}
+        />
       <% :service -> %>
         <.service_info_section resource={@resource} events={@events} />
       <% :deployment -> %>
-        <.deployment_info_section resource={@resource} pods={@pods} events={@events} />
+        <.deployment_info_section
+          resource={@resource}
+          pods={@pods}
+          status={@status}
+          conditions={@conditions}
+          events={@events}
+        />
       <% :stateful_set -> %>
-        <.stateful_set_info_section resource={@resource} pods={@pods} events={@events} />
+        <.stateful_set_info_section
+          resource={@resource}
+          pods={@pods}
+          status={@status}
+          events={@events}
+        />
       <% _ -> %>
         <%= inspect(@resource) %>
     <% end %>
