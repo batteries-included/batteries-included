@@ -17,6 +17,6 @@
     "@fontsource/jetbrains-mono": "^5.0.5",
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
-    "daisyui": "3.1.7"
+    "daisyui": "3.2.1"
   }
 }
