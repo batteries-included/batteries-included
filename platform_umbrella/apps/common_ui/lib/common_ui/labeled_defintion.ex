@@ -7,7 +7,6 @@ defmodule CommonUI.LabeledDefiniton do
     ~H"""
     <.card>
       <:title><%= @title %></:title>
-
       <%= @contents %>
     </.card>
     """
