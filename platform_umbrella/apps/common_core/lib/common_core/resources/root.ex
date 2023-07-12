@@ -84,14 +84,17 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   ]
 
   @spec materialize(StateSummary.t()) :: map()
-  def materialize(%StateSummary{} = state),
-    do: do_materialize(state, @default_generator_mappings)
-
-  defp do_materialize(%StateSummary{} = state, mappings) do
-    state.batteries
-    |> Enum.map(fn system_battery ->
-      generators = Keyword.fetch!(mappings, system_battery.type)
-      materialize_system_battery(system_battery, state, generators)
+  def materialize(%StateSummary{batteries: batteries} = state) do
+    batteries
+    |> Enum.map(fn %{type: type} = sb ->
+      # Materialize the battery with the generators
+      # We do all generators in one step rather than
+      # flat map to allow for conflict resolution of paths.
+      materialize_system_battery(
+        sb,
+        state,
+        Keyword.fetch!(@default_generator_mappings, type)
+      )
     end)
     |> Enum.reduce(%{}, &Map.merge/2)
   end
