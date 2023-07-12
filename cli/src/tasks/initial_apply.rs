@@ -33,7 +33,7 @@ pub async fn initial_apply(
             unsynced.len()
         );
 
-        unsynced = stream::iter(unsynced.into_iter())
+        unsynced = stream::iter(unsynced)
             .filter_map(|(path, resource)| async {
                 // Try and create the resource via apply.
                 // Sometimes this will fail.
