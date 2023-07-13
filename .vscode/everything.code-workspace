@@ -20,7 +20,6 @@
     }
   ],
   "settings": {
-    "editor.formatOnSave": true,
     "files.insertFinalNewline": true,
 
     // UI Things that are always needed
