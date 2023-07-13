@@ -95,7 +95,6 @@ async fn port_forward_and_setup(
         }
     }
 
-    dbg!(&forward_pods);
     // Add each of the specific pod port forwards that need to run.
     unordered.extend(forward_pods.into_iter().map(|spec_string| {
         let c = kube_client.clone();
