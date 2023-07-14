@@ -42,6 +42,9 @@ defmodule ControlServerWeb.PodsTable do
         <.a navigate={resource_show_url(pod)} variant="styled">
           Show Pod
         </.a>
+        <.a class="ml-4" navigate={resource_show_url(pod, %{"log" => true})}>
+          Logs
+        </.a>
       </:action>
     </.table>
     """

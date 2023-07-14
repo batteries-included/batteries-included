@@ -22,7 +22,7 @@ defmodule CommonUI.Link do
 
   attr :variant, :string, default: "unstyled", values: ["styled", "external", "unstyled"]
   attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(download hreflang referrerpolicy rel target type)
+  attr :rest, :global, include: ~w(download hreflang replace referrerpolicy rel target type)
 
   slot :inner_block, required: true
   def a(assigns)

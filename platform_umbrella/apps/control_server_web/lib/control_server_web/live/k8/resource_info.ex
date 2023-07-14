@@ -1,12 +1,15 @@
 defmodule ControlServerWeb.Live.ResourceInfo do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
+  import CommonUI.Modal
+  import CommonUI.Link
   import CommonUI.Stats
   import CommonUI.RoundedLabel
 
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.PodsTable
+  import ControlServerWeb.ResourceURL
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -30,7 +33,19 @@ defmodule ControlServerWeb.Live.ResourceInfo do
      |> assign_resource_type(resource_type)
      |> assign_namespace(namespace)
      |> assign_name(name)
+     |> assign_logs(nil)
      |> assign_subresources(subresources(resource_type, resource))}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(%{"log" => "true", "namespace" => namespace, "name" => name}, _uri, socket) do
+    initial_logs = get_and_watch_logs(namespace, name)
+    {:noreply, assign_logs(socket, initial_logs)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(_params, _uri, socket) do
+    {:noreply, assign_logs(socket, nil)}
   end
 
   def assign_resource(socket, resource) do
@@ -47,6 +62,23 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   def assign_resource_type(socket, resource_type) do
     assign(socket, resource_type: resource_type)
+  end
+
+  def assign_logs(socket, nil) do
+    assign(socket, logs: nil)
+  end
+
+  def assign_logs(socket, logs) do
+    assign(socket, logs: format_logs(logs))
+  end
+
+  defp format_logs(logs) do
+    Enum.map(logs, &format_log/1)
+  end
+
+  defp format_log(line) do
+    # TODO(@artokun) improve formatting
+    line
   end
 
   defp subscribe(resource_type) do
@@ -108,6 +140,16 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   end
 
   @impl Phoenix.LiveView
+  def handle_info(:pod_logs, socket) do
+    if socket.assigns.logs == nil do
+      {:noreply, socket}
+    else
+      logs = get_and_watch_logs(socket.assigns.namespace, socket.assigns.name)
+      {:noreply, assign_logs(socket, logs)}
+    end
+  end
+
+  @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
     # re-fetch the resources
     resource =
@@ -123,6 +165,13 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   defp resource(resource_type, namespace, name) do
     KubeState.get!(resource_type, namespace, name)
+  end
+
+  defp get_and_watch_logs(namespace, name) do
+    Process.send_after(self(), :pod_logs, 1000)
+    {:ok, logs} = KubeServices.PodLogs.get_logs(namespace, name)
+
+    logs
   end
 
   defp label_section(assigns) do
@@ -359,6 +408,31 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     """
   end
 
+  defp logs_modal(assigns) do
+    ~H"""
+    <div :if={@logs != nil}>
+      <.modal
+        show={true}
+        id="resource-logs"
+        on_cancel={JS.patch(resource_show_url(@resource), replace: true)}
+      >
+        <:title>
+          <.h2 variant="fancy">Logs</.h2>
+        </:title>
+        <div style="max-height: 70vh" class="overflow-auto bg-astral-900 min-h-16 max-h-full rounded">
+          <code class="block p-3 text-white overflow-x-scroll">
+            <p :for={line <- @logs || []} class="mb-3 whitespace-normal leading-none">
+              <span class="px-2 inline-block bg-astral-400 bg-opacity-20 font-mono text-sm">
+                <%= line %>
+              </span>
+            </p>
+          </code>
+        </div>
+      </.modal>
+    </div>
+    """
+  end
+
   @impl Phoenix.LiveView
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
@@ -370,6 +444,9 @@ defmodule ControlServerWeb.Live.ResourceInfo do
       <:sub_header><%= @name %></:sub_header>
     </.h1>
     <.banner_section name={@name} namespace={@namespace} />
+    <.a class="block mt-7" patch={resource_show_url(@resource, %{"log" => true})} replace={true}>
+      <.button>Stream Logs</.button>
+    </.a>
 
     <%= case @resource_type do %>
       <% :pod -> %>
@@ -399,6 +476,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
       <% _ -> %>
         <%= inspect(@resource) %>
     <% end %>
+    <.logs_modal resource={@resource} logs={@logs} />
     """
   end
 end
