@@ -71,7 +71,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "system_batteries" do
-    field(:group, Ecto.Enum,
+    field :group, Ecto.Enum,
       values: [
         :data,
         :devtools,
@@ -80,11 +80,10 @@ defmodule CommonCore.Batteries.SystemBattery do
         :monitoring,
         :net_sec
       ]
-    )
 
     field :type, Ecto.Enum, values: Keyword.keys(@possible_types)
 
-    polymorphic_embeds_one(:config, types: @possible_types, on_replace: :update)
+    polymorphic_embeds_one :config, types: @possible_types, on_replace: :update
 
     timestamps()
   end
