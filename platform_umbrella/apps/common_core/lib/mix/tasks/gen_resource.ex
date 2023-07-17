@@ -64,7 +64,7 @@ defmodule Mix.Tasks.Gen.Resource do
     module = module(app_name, result.include_paths, result.methods)
 
     resource_path =
-      Path.join(File.cwd!(), "apps/common_core/lib/common_code/resources/#{app_name}.ex")
+      Path.join(File.cwd!(), "apps/common_core/lib/common_core/resources/#{app_name}.ex")
 
     module_name =
       app_name
