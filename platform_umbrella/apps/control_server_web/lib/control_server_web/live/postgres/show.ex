@@ -57,9 +57,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp assign_k8_services(%{assigns: assigns} = socket) do
     possible_owner_uids = [uid(assigns.k8_cluster)] ++ uids(assigns.k8_stateful_sets)
     possible_owner_ids = [assigns.cluster.id]
+    k8_cluster = assigns.k8_cluster || %{}
 
-    cluster_info =
-      {K8s.Resource.name(assigns.k8_cluster), K8s.Resource.namespace(assigns.k8_cluster)}
+    cluster_info = {K8s.Resource.name(k8_cluster), K8s.Resource.namespace(k8_cluster)}
 
     services = all_matching(:service, possible_owner_ids, possible_owner_uids, cluster_info)
     assign(socket, :k8_services, services)
@@ -69,8 +69,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
     possible_owner_uids =
       [uid(assigns.k8_cluster)] ++ uids(assigns.k8_stateful_sets) ++ uids(assigns.k8_services)
 
-    cluster_info =
-      {K8s.Resource.name(assigns.k8_cluster), K8s.Resource.namespace(assigns.k8_cluster)}
+    k8_cluster = assigns.k8_cluster || %{}
+    cluster_info = {K8s.Resource.name(k8_cluster), K8s.Resource.namespace(k8_cluster)}
 
     possible_owner_ids = [assigns.cluster.id]
     pods = all_matching(:pod, possible_owner_ids, possible_owner_uids, cluster_info)
