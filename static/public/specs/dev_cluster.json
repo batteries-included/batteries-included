@@ -1,4 +1,101 @@
 {
+  "kube_cluster": {
+    "provider": "provided"
+  },
+  "target_summary": {
+    "batteries": [
+      {
+        "id": null,
+        "type": "battery_core",
+        "config": {
+          "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
+          "core_namespace": "battery-core",
+          "base_namespace": "battery-base",
+          "data_namespace": "battery-data",
+          "ml_namespace": "battery-ml",
+          "secret_key": null,
+          "server_in_cluster": false
+        },
+        "group": "magic",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "postgres",
+        "config": {
+          "operator_image": "registry.opensource.zalan.do/acid/postgres-operator:v1.10.0",
+          "spilo_image": "registry.opensource.zalan.do/acid/spilo-15:3.0-p1",
+          "bouncer_image": "registry.opensource.zalan.do/acid/pgbouncer:master-27",
+          "logical_backup_image": "registry.opensource.zalan.do/acid/logical-backup:v1.10.0",
+          "json_logging_enabled": true,
+          "infra_users": [
+            {
+              "username": "batterydbuser",
+              "roles": ["createdb", "superuser", "login"],
+              "generated_key": "not-real"
+            }
+          ]
+        },
+        "group": "data",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "istio",
+        "config": {
+          "namespace": "battery-istio",
+          "pilot_image": "istio/pilot:1.17.2-distroless"
+        },
+        "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "istio_gateway",
+        "config": {},
+        "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      }
+    ],
+    "notebooks": [],
+    "knative_services": [],
+    "ip_address_pools": [],
+    "postgres_clusters": [
+      {
+        "id": null,
+        "name": "control",
+        "type": "internal",
+        "inserted_at": null,
+        "updated_at": null,
+        "postgres_version": "14",
+        "num_instances": 1,
+        "storage_size": "500M",
+        "users": [
+          {
+            "username": "controlserver",
+            "roles": ["createdb", "login"]
+          }
+        ],
+        "databases": [
+          {
+            "name": "control",
+            "owner": "controlserver"
+          }
+        ],
+        "team_name": "pg",
+        "credential_copies": []
+      }
+    ],
+    "redis_clusters": [],
+    "ceph_clusters": [],
+    "ceph_filesystems": [],
+    "kube_state": {},
+    "keycloak_state": null
+  },
   "initial_resources": {
     "/istio/crd/envoyfilters_networking_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
@@ -1150,20 +1247,20 @@
         },
         "servers": [
           {
-            "hosts": ["*"],
             "port": {
               "name": "http2",
-              "number": 80,
-              "protocol": "HTTP"
-            }
+              "protocol": "HTTP",
+              "number": 80
+            },
+            "hosts": ["*"]
           },
           {
-            "hosts": ["*"],
             "port": {
               "name": "ssh",
-              "number": 22,
-              "protocol": "TCP"
-            }
+              "protocol": "TCP",
+              "number": 22
+            },
+            "hosts": ["*"]
           }
         ]
       }
@@ -15732,101 +15829,5 @@
         }
       ]
     }
-  },
-  "kube_cluster": {
-    "provider": "provided"
-  },
-  "target_summary": {
-    "batteries": [
-      {
-        "config": {
-          "base_namespace": "battery-base",
-          "core_namespace": "battery-core",
-          "data_namespace": "battery-data",
-          "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
-          "ml_namespace": "battery-ml",
-          "secret_key": null,
-          "server_in_cluster": false
-        },
-        "group": "magic",
-        "id": null,
-        "inserted_at": null,
-        "type": "battery_core",
-        "updated_at": null
-      },
-      {
-        "config": {
-          "bouncer_image": "registry.opensource.zalan.do/acid/pgbouncer:master-27",
-          "infra_users": [
-            {
-              "generated_key": "not-real",
-              "roles": ["createdb", "superuser", "login"],
-              "username": "batterydbuser"
-            }
-          ],
-          "json_logging_enabled": true,
-          "logical_backup_image": "registry.opensource.zalan.do/acid/logical-backup:v1.10.0",
-          "operator_image": "registry.opensource.zalan.do/acid/postgres-operator:v1.10.0",
-          "spilo_image": "registry.opensource.zalan.do/acid/spilo-15:3.0-p1"
-        },
-        "group": "data",
-        "id": null,
-        "inserted_at": null,
-        "type": "postgres",
-        "updated_at": null
-      },
-      {
-        "config": {
-          "namespace": "battery-istio",
-          "pilot_image": "istio/pilot:1.17.2-distroless"
-        },
-        "group": "net_sec",
-        "id": null,
-        "inserted_at": null,
-        "type": "istio",
-        "updated_at": null
-      },
-      {
-        "config": {},
-        "group": "net_sec",
-        "id": null,
-        "inserted_at": null,
-        "type": "istio_gateway",
-        "updated_at": null
-      }
-    ],
-    "ceph_clusters": [],
-    "ceph_filesystems": [],
-    "ip_address_pools": [],
-    "knative_services": [],
-    "kube_state": {},
-    "notebooks": [],
-    "postgres_clusters": [
-      {
-        "credential_copies": [],
-        "databases": [
-          {
-            "name": "control",
-            "owner": "controlserver"
-          }
-        ],
-        "id": null,
-        "inserted_at": null,
-        "name": "control",
-        "num_instances": 1,
-        "postgres_version": "14",
-        "storage_size": "500M",
-        "team_name": "pg",
-        "type": "internal",
-        "updated_at": null,
-        "users": [
-          {
-            "roles": ["createdb", "login"],
-            "username": "controlserver"
-          }
-        ]
-      }
-    ],
-    "redis_clusters": []
   }
 }

@@ -6,7 +6,6 @@ defmodule KubeServices.Batteries.BatteryCore do
 
     children = [
       KubeServices.SnapshotApply,
-      KubeServices.Timeline,
       KubeServices.ResourceDeleter
     ]
 

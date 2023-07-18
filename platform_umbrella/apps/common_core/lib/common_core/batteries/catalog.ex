@@ -22,6 +22,12 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{group: :data, type: :rook, dependencies: [:battery_core]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core},
+    %CatalogBattery{
+      group: :magic,
+      type: :timeline,
+      dependencies: [:battery_core],
+      description: "Monitor what's happened on Kubernetes and store that for later investigation."
+    },
     # Devtools
     %CatalogBattery{
       group: :devtools,

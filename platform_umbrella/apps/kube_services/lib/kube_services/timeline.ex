@@ -8,6 +8,7 @@ defmodule KubeServices.Timeline do
   def init(_opts) do
     children = [
       KubeServices.Timeline.Database,
+      KubeServices.Timeline.Battery,
       KubeServices.Timeline.Kube
     ]
 

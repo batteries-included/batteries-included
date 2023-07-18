@@ -327,15 +327,6 @@ defmodule ControlServerWeb.LeftMenu do
       <Heroicons.building_library class={@icon_class} />
     </.detail_menu_item>
 
-    <.h4>History</.h4>
-    <.detail_menu_item
-      navigate={~p"/history/timeline"}
-      name="Timeline"
-      is_active={@page_detail_type == :timeline}
-    >
-      <Heroicons.clock class={@icon_class} />
-    </.detail_menu_item>
-
     <.detail_menu_item
       navigate={~p"/history/edit_versions"}
       name="Edit Versions"
@@ -582,6 +573,19 @@ defmodule ControlServerWeb.LeftMenu do
       is_active={@page_detail_type == :realms}
     >
       <Heroicons.key class={@icon_class} />
+    </.detail_menu_item>
+    """
+  end
+
+  defp battery_detail_item(%{battery: %{type: :timeline}} = assigns) do
+    ~H"""
+    <.h4>Timeline</.h4>
+    <.detail_menu_item
+      navigate={~p"/history/timeline"}
+      name="History"
+      is_active={@page_detail_type == :timeline}
+    >
+      <Heroicons.clock class={@icon_class} />
     </.detail_menu_item>
     """
   end

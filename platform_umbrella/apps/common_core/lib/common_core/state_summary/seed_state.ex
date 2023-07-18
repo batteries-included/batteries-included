@@ -19,15 +19,16 @@ defmodule CommonCore.StateSummary.SeedState do
     }
   end
 
-  def seed(:local_kind) do
+  def seed(:dev) do
     summary = %StateSummary{
       batteries:
         batteries([
           :battery_core,
           :postgres,
           :istio,
-          :metallb,
-          :control_server
+          :istio_gateway,
+          :timeline,
+          :metallb
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }
@@ -35,7 +36,7 @@ defmodule CommonCore.StateSummary.SeedState do
     add_dev_infra_user(summary)
   end
 
-  def seed(:dev) do
+  def seed(:slim_dev) do
     summary = %StateSummary{
       batteries:
         batteries([

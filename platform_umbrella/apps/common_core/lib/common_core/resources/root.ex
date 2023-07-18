@@ -74,6 +74,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     smtp4dev: [&Smtp4Dev.materialize/2],
     sso: [&Keycloak.materialize/2],
     trivy_operator: [&TrivyOperator.materialize/2],
+    timeline: [],
     trust_manager: [&TrustManager.materialize/2],
     victoria_metrics: [
       &VMOperator.materialize/2,

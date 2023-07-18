@@ -74,6 +74,9 @@ defmodule KubeServices.Batteries.InstalledWatcher do
   defp process_type(%{type: :battery_core} = battery),
     do: {KubeServices.Batteries.BatteryCore, battery}
 
+  defp process_type(%{type: :timeline} = battery),
+    do: {KubeServices.Batteries.Timeline, battery}
+
   defp process_type(%{} = battery) do
     Logger.debug("Not starting anything for battery #{battery.id} with type #{battery.type}")
 

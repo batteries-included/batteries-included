@@ -7,7 +7,6 @@ defmodule ControlServer.Batteries.Installer do
   alias ControlServer.Postgres
   alias ControlServer.Redis
   alias ControlServer.Repo
-  alias ControlServer.Timeline
 
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
@@ -100,7 +99,6 @@ defmodule ControlServer.Batteries.Installer do
     selected_key = "#{battery_type}_selected"
     installed_key = "#{battery_type}_installed"
     post_key = "#{battery_type}_post"
-    event_key = "#{battery_type}_event"
 
     Multi.new()
     |> Multi.run(selected_key, fn repo, _ ->
@@ -131,19 +129,6 @@ defmodule ControlServer.Batteries.Installer do
         nil -> {:ok, nil}
         #
         installed -> post_install(installed, repo)
-      end
-    end)
-    |> Multi.run(event_key, fn repo, so_far ->
-      # If there was an install then run the post
-      case Map.get(so_far, installed_key, nil) do
-        nil ->
-          {:ok, nil}
-
-        #
-        installed ->
-          installed.type
-          |> Timeline.battery_install_event()
-          |> Timeline.create_timeline_event(repo)
       end
     end)
   end
