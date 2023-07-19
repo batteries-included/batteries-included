@@ -4,7 +4,7 @@ version = "0.7.0"
 edition = "2021"
 
 [dependencies]
-assert_cmd = { version = "2.0.11" }
+assert_cmd = { version = "2.0.12" }
 clap = { version = "4.3.14", features = ["derive", "color", "usage"] }
 clap-verbosity-flag = { version = "2.0.1" }
 color-eyre = { version = "0.6.2" }
