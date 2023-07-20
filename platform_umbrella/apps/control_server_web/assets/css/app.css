@@ -9,6 +9,7 @@
 @import './iframe';
 @import './object_resource';
 @import './fresh_menu';
+@import './modal_scroller';
 
 ::selection {
   @apply bg-pink-500;

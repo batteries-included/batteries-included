@@ -419,13 +419,19 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <:title>
           <.h2 variant="fancy">Logs</.h2>
         </:title>
-        <div style="max-height: 70vh" class="overflow-auto bg-astral-900 min-h-16 max-h-full rounded">
+        <div
+          id="scroller"
+          style="max-height: 70vh"
+          class="bg-astral-900 min-h-16 max-h-full rounded"
+          phx-hook="ResourceLogsModal"
+        >
           <code class="block p-3 text-white overflow-x-scroll">
             <p :for={line <- @logs || []} class="mb-3 whitespace-normal leading-none">
               <span class="px-2 inline-block bg-astral-400 bg-opacity-20 font-mono text-sm">
                 <%= line %>
               </span>
             </p>
+            <div id="anchor"></div>
           </code>
         </div>
       </.modal>

@@ -1,0 +1,17 @@
+#scroller * {
+  overflow-anchor: none;
+}
+
+#scroller {
+  overflow-y: scroll;
+  /* 
+  Need to set !important here as tailwindcss forces all elements to auto !important.
+  without it the container will refuse to smooth scroll when directed.
+  */
+  scroll-behavior: smooth !important;
+}
+
+#anchor {
+  overflow-anchor: auto;
+  height: 1px;
+}

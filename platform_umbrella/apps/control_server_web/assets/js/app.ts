@@ -12,9 +12,19 @@ import * as Hooks from './hooks';
 
 import Alpine from 'alpinejs';
 
-const csrfToken = document
-  .querySelector("meta[name='csrf-token']")
-  .getAttribute('content');
+declare global {
+  interface Window {
+    liveSocket: any;
+    Alpine: any;
+  }
+  interface HTMLElement {
+    _x_dataStack: any;
+  }
+}
+
+const csrfToken =
+  document?.querySelector("meta[name='csrf-token']")?.getAttribute('content') ||
+  '';
 
 const liveSocket = new LiveSocket('/live', Socket, {
   dom: {
@@ -23,6 +33,7 @@ const liveSocket = new LiveSocket('/live', Socket, {
       if (from._x_dataStack) {
         window.Alpine.clone(from, to);
       }
+      return true;
     },
   },
   hooks: Hooks,
