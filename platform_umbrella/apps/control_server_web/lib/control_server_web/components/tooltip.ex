@@ -30,8 +30,14 @@ defmodule ControlServerWeb.Tooltip do
   slot :inner_block
 
   def help_question_mark(assigns) do
+    dbg(assigns)
+
     ~H"""
-    <div class={build_class(["cursor-pointer", @class])} id={@id}>
+    <div
+      :if={@inner_block != nil && @inner_block != []}
+      class={build_class(["cursor-pointer", @class])}
+      id={@id}
+    >
       <Heroicons.question_mark_circle class="w-6 h-auto" />
       <.tooltip target_id={@id}>
         <%= render_slot(@inner_block) %>

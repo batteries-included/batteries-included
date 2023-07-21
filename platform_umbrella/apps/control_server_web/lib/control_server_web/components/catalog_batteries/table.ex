@@ -42,7 +42,10 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
         <%= Naming.humanize(battery.type) %>
       </:col>
       <:col :let={battery}>
-        <.help_question_mark :if={battery.description != nil} id={"battery-#{battery.type}-desc"}>
+        <.help_question_mark
+          :if={battery.description != nil && battery.description != ""}
+          id={"battery-#{battery.type}-desc"}
+        >
           <%= battery.description %>
         </.help_question_mark>
       </:col>
