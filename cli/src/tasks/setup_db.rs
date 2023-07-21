@@ -2,7 +2,7 @@ use assert_cmd::Command;
 use eyre::{Context, ContextCompat, Result};
 use std::{path::PathBuf, time::Duration};
 use tempfile::NamedTempFile;
-use tracing::{debug, info};
+use tracing::{info, warn};
 
 use crate::spec::InstallationSpec;
 
@@ -15,13 +15,6 @@ pub async fn setup_platform_db(
         "Wrote temp file with installation spec to {}",
         temp_file.path().display()
     );
-    let sleep_duration = Duration::from_secs(5);
-    info!(
-        "Sleeping {:?} for leader election and port-forward setup",
-        sleep_duration
-    );
-    tokio::time::sleep(sleep_duration).await;
-    debug!("Done sleeping, starting to setup db");
 
     run_mix_command(platform_path.clone(), vec!["deps.get".to_string()]).await?;
     run_mix_command(platform_path.clone(), vec!["compile".to_string()]).await?;
@@ -43,15 +36,30 @@ pub async fn setup_platform_db(
 
 async fn run_mix_command(platform_path: PathBuf, command: Vec<String>) -> Result<()> {
     info!("Running mix command {:?}", command);
-    tokio::task::spawn_blocking(move || -> Result<()> {
+
+    let task = move || -> Result<()> {
         let out = Command::new("mix")
             .args(command)
             .current_dir(platform_path)
-            .output();
+            .output()?;
 
-        Ok(out?.status.exit_ok()?)
-    })
-    .await?
+        info!("mix command status = {}", out.status.clone());
+        Ok(out.status.exit_ok()?)
+    };
+    let mut retries = 9;
+    // We really have no way of knowing if postgres has been
+    // set up with the correct users and permissions to create
+    // tables and connect, other than to give it a try.
+    while retries > 0 {
+        let res = tokio::task::spawn_blocking(task.clone()).await?;
+        if res.is_ok() {
+            return res;
+        }
+        warn!("failed mix command sleeping, retries = {}", retries);
+        tokio::time::sleep(Duration::from_millis(750)).await;
+        retries -= 1;
+    }
+    tokio::task::spawn_blocking(task).await?
 }
 
 async fn write_temp_file(install_spec: &InstallationSpec) -> Result<NamedTempFile> {
