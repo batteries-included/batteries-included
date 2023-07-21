@@ -54,8 +54,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :devtools,
       type: :harbor,
       dependencies: [:battery_core, :redis, :istio_gateway, :postgres],
-      description:
-        "Harbor is the trusted cloud native repository for Kubernetesthe trusted cloud native repository for Kubernetes"
+      description: "Harbor is the trusted cloud native repository for Kubernetes"
     },
     %CatalogBattery{
       group: :devtools,
