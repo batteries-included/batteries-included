@@ -30,8 +30,6 @@ defmodule ControlServerWeb.Tooltip do
   slot :inner_block
 
   def help_question_mark(assigns) do
-    dbg(assigns)
-
     ~H"""
     <div
       :if={@inner_block != nil && @inner_block != []}
