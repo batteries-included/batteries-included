@@ -39,13 +39,15 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   @impl Phoenix.LiveView
   def handle_params(%{"log" => "true", "namespace" => namespace, "name" => name}, _uri, socket) do
-    initial_logs = get_and_watch_logs(namespace, name)
-    {:noreply, assign_logs(socket, initial_logs)}
+    {:noreply, monitor_and_assign_logs(socket, namespace, name)}
   end
 
   @impl Phoenix.LiveView
   def handle_params(_params, _uri, socket) do
-    {:noreply, assign_logs(socket, nil)}
+    {:noreply,
+     socket
+     |> stop_logs()
+     |> assign_logs(nil)}
   end
 
   def assign_resource(socket, resource) do
@@ -70,6 +72,10 @@ defmodule ControlServerWeb.Live.ResourceInfo do
 
   def assign_logs(socket, logs) do
     assign(socket, logs: format_logs(logs))
+  end
+
+  def assign_logs_pid(socket, pid) do
+    assign(socket, logs_pid: pid)
   end
 
   defp format_logs(logs) do
@@ -140,12 +146,16 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   end
 
   @impl Phoenix.LiveView
-  def handle_info(:pod_logs, socket) do
-    if socket.assigns.logs == nil do
-      {:noreply, socket}
-    else
-      logs = get_and_watch_logs(socket.assigns.namespace, socket.assigns.name)
-      {:noreply, assign_logs(socket, logs)}
+  def handle_info({:pod_log, line}, socket) do
+    case socket.assigns.logs do
+      nil ->
+        {:noreply, socket}
+
+      [_ | _] = logs ->
+        {:noreply, assign_logs(socket, logs ++ [line])}
+
+      _ ->
+        {:noreply, socket}
     end
   end
 
@@ -167,11 +177,29 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     KubeState.get!(resource_type, namespace, name)
   end
 
-  defp get_and_watch_logs(namespace, name) do
-    Process.send_after(self(), :pod_logs, 1000)
-    {:ok, logs} = KubeServices.PodLogs.get_logs(namespace, name)
+  defp stop_logs(%{assigns: assigns} = socket) do
+    case Map.get(assigns, :logs_pid, nil) do
+      nil ->
+        socket
 
-    logs
+      pid ->
+        _ = KubeServices.PodLogs.stop(pid)
+        socket
+    end
+  end
+
+  defp monitor_and_assign_logs(socket, namespace, name) do
+    {:ok, logs_pid, logs} =
+      KubeServices.PodLogs.monitor(
+        namespace: namespace,
+        name: name,
+        target: self(),
+        tailLines: 25
+      )
+
+    socket
+    |> assign_logs(logs)
+    |> assign_logs_pid(logs_pid)
   end
 
   defp label_section(assigns) do

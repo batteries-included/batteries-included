@@ -11,29 +11,30 @@ defmodule KubeServices.PodLogs do
 
   require Logger
 
-  @spec monitor(:all | binary, binary, any, any) :: {:ok, pid, list}
+  @spec monitor(keyword()) :: {:ok, pid, list}
   @doc """
   Monitor the log lines by spawning a `KubeServices.PodLogs.Worker` that will `send`
   each new log of a pod and get the latest set of lines.
   """
-  def monitor(namespace, name, pid, opts \\ [tailLines: 50]) do
-    {:ok, worker_pid} =
-      KubeServices.PodLogs.Worker.start_link(namespace: namespace, name: name, target: pid)
-
-    {:ok, logs} = get_logs(namespace, name, opts)
-
+  def monitor(opts \\ [tailLines: 50]) do
+    {:ok, worker_pid} = KubeServices.PodLogs.Worker.start_link(opts)
+    {:ok, logs} = get_logs(opts)
     {:ok, worker_pid, logs}
   end
 
-  @spec get_logs(:all | binary, binary, any) :: {:error, atom | binary | struct} | {:ok, list}
+  def stop(pid) do
+    GenServer.cast(pid, :stop_please)
+  end
+
+  @spec get_logs(keyword()) :: {:error, atom | binary | struct} | {:ok, list}
   @doc """
   Get the log of a pod specified by `namespace` and `name` default opts
   `get` the last 100 lines from the tail of the stdout logs.
   """
-  def get_logs(namespace, name, opts \\ [tailLines: 100]) do
+  def get_logs(opts \\ [tailLines: 100]) do
     conn = KubeServices.ConnectionPool.get()
 
-    with {:ok, log_str} <- K8s.Client.run(conn, get_operation(namespace, name, opts)) do
+    with {:ok, log_str} <- K8s.Client.run(conn, get_operation(opts)) do
       {:ok,
        to_string(log_str)
        |> String.split(~r{\n+})
@@ -41,15 +42,23 @@ defmodule KubeServices.PodLogs do
     end
   end
 
-  @spec get_operation(:all | binary, binary, any) :: K8s.Operation.t()
-  defp get_operation(namespace, name, query_params) do
+  @spec get_operation(keyword()) :: K8s.Operation.t()
+  defp get_operation(opts) do
     {api_version, _kind} = ApiVersionKind.from_resource_type(:pod)
+
+    # Use name namespace and container for targeting
+    {get_opts, other_params} = Keyword.split(opts, ~w|name namespace container|a)
+
+    # The target option is used for which pid to send info
+    # It's never for kubernetnes
+    {_bad_opts, query_params} = Keyword.split(other_params, ~w|target|a)
+
     # Use that to get the subresource log off of a specific pod
     #
     # This is using the convention that slashes after plural kind leads to subresource. This
     # was found after too long.
     api_version
-    |> K8s.Client.get("pods/log", namespace: namespace, name: name)
+    |> K8s.Client.get("pods/log", get_opts)
     |> Map.put(:query_params, query_params)
   end
 end

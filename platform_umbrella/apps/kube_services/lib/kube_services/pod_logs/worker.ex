@@ -7,11 +7,10 @@ defmodule KubeServices.PodLogs.Worker do
   require Logger
 
   typedstruct module: State do
-    field :namespace, String.t()
-    field :name, String.t()
+    field :opts, keyword()
     field :conn, K8s.Conn.t() | nil
     field :connection_func, any()
-    field :target, pid()
+    field :target, pid(), enforce: false
   end
 
   def start_link(args) do
@@ -20,21 +19,20 @@ defmodule KubeServices.PodLogs.Worker do
 
   @impl GenServer
   def init(args) do
+    {get_args, other_args} = Keyword.split(args, ~w|name namespace container|a)
     # These are the required arguments that should be passed in as keyword lists.
-    namespace = Keyword.fetch!(args, :namespace)
-    name = Keyword.fetch!(args, :name)
-    pid = Keyword.fetch!(args, :target)
+    pid = Keyword.get(other_args, :target, nil)
 
     # Optional argument. Use the default connection pool if not specified.
-    connection_func = Keyword.get(args, :connection_func, &KubeServices.ConnectionPool.get/0)
+    connection_func =
+      Keyword.get(other_args, :connection_func, &KubeServices.ConnectionPool.get/0)
 
     Process.send_after(self(), :start_connect, 50)
 
     # Create the inital state with conn being nil explictly
     # to allow for a lazy connection inside of `handle_info(:start_connect, ctx)`
     state = %State{
-      namespace: namespace,
-      name: name,
+      opts: get_args,
       connection_func: connection_func,
       conn: nil,
       target: pid
@@ -44,7 +42,7 @@ defmodule KubeServices.PodLogs.Worker do
   end
 
   @impl GenServer
-  def handle_info(:start_connect, %State{namespace: namespace, name: name} = state) do
+  def handle_info(:start_connect, %State{opts: opts} = state) do
     conn = connection(state)
 
     {api_version, _kind} = ApiVersionKind.from_resource_type(:pod)
@@ -69,7 +67,7 @@ defmodule KubeServices.PodLogs.Worker do
       K8s.Client.connect(
         api_version,
         "pods/log",
-        [namespace: namespace, name: name],
+        opts,
         # No previous lines
         tailLines: 0,
         # But we do want to continue following.
@@ -86,6 +84,13 @@ defmodule KubeServices.PodLogs.Worker do
   @impl GenServer
   def handle_info({:open, true}, state) do
     {:noreply, state}
+  end
+
+  @impl GenServer
+  def handle_info({:stdout, _}, %State{target: nil} = ctx) do
+    # If there's no target
+    # Don't to anything
+    {:noreply, ctx}
   end
 
   @impl GenServer
@@ -110,6 +115,11 @@ defmodule KubeServices.PodLogs.Worker do
   @impl GenServer
   def handle_info(_other_msg, ctx) do
     {:noreply, ctx}
+  end
+
+  @impl GenServer
+  def handle_cast(:stop_please, state) do
+    {:stop, :normal, state}
   end
 
   def connection(%State{conn: conn} = _state) when not is_nil(conn), do: conn
