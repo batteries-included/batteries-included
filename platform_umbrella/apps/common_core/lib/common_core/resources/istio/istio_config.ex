@@ -130,10 +130,11 @@ defmodule CommonCore.Resources.IstioConfig do
 
     def fallback(service_host, opts \\ []) do
       name = Keyword.get(opts, :name, "fallback")
+      port = Keyword.get(opts, :port, nil)
 
       %__MODULE__{
         name: name,
-        route: [HttpRouteDestination.new(service_host)]
+        route: [HttpRouteDestination.new(service_host, port)]
       }
     end
 
@@ -223,6 +224,12 @@ defmodule CommonCore.Resources.IstioConfig do
     def fallback(service_host, opts \\ []) do
       opts
       |> Keyword.merge(http: [HttpRoute.fallback(service_host)])
+      |> new()
+    end
+
+    def fallback_port(service_host, service_port, opts \\ []) do
+      opts
+      |> Keyword.merge(http: [HttpRoute.fallback(service_host, port: service_port)])
       |> new()
     end
   end

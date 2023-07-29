@@ -20,3 +20,5 @@ erl_crash.dump
 
 # The output link from the last time nix built
 result
+
+_tmp

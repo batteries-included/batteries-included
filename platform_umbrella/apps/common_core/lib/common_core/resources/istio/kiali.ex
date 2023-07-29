@@ -9,16 +9,12 @@ defmodule CommonCore.Resources.Kiali do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.IstioConfig.VirtualService
 
-  resource(:virtual_service, _battery, state) do
+  resource(:service_account_main, _battery, state) do
     namespace = istio_namespace(state)
 
-    spec = VirtualService.fallback("kiali", hosts: [kiali_host(state)])
-
-    B.build_resource(:istio_virtual_service)
-    |> B.namespace(namespace)
+    B.build_resource(:service_account)
     |> B.name("kiali")
-    |> B.spec(spec)
-    |> F.require_battery(state, :istio_gateway)
+    |> B.namespace(namespace)
   end
 
   resource(:cluster_role_binding_main, _battery, state) do
@@ -146,7 +142,35 @@ defmodule CommonCore.Resources.Kiali do
     |> B.data(data)
   end
 
-  resource(:deployment_main, _battery, state) do
+  resource(:role_binding_controlplane, _battery, state) do
+    namespace = istio_namespace(state)
+
+    B.build_resource(:role_binding)
+    |> B.name("kiali-controlplane")
+    |> B.namespace(namespace)
+    |> B.role_ref(B.build_role_ref("kiali-controlplane"))
+    |> B.subject(B.build_service_account("kiali", namespace))
+  end
+
+  resource(:role_controlplane, _battery, state) do
+    namespace = istio_namespace(state)
+
+    rules = [
+      %{
+        "apiGroups" => [""],
+        "resourceNames" => ["cacerts", "istio-ca-secret"],
+        "resources" => ["secrets"],
+        "verbs" => ["get", "list", "watch"]
+      }
+    ]
+
+    B.build_resource(:role)
+    |> B.name("kiali-controlplane")
+    |> B.namespace(namespace)
+    |> B.rules(rules)
+  end
+
+  resource(:deployment_main, battery, state) do
     namespace = istio_namespace(state)
 
     spec =
@@ -154,7 +178,7 @@ defmodule CommonCore.Resources.Kiali do
       |> Map.put("replicas", 1)
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "kiali"}}
+        %{"matchLabels" => %{"battery/app" => @app_name}}
       )
       |> Map.put(
         "strategy",
@@ -165,12 +189,12 @@ defmodule CommonCore.Resources.Kiali do
         %{
           "metadata" => %{
             "annotations" => %{
+              "kiali.io/dashboards" => "go,kiali",
               "prometheus.io/port" => "9090",
               "prometheus.io/scrape" => "true"
             },
             "labels" => %{
               "battery/app" => @app_name,
-              "battery/component" => "kiali",
               "battery/managed" => "true"
             },
             "name" => "kiali"
@@ -189,11 +213,11 @@ defmodule CommonCore.Resources.Kiali do
                   %{"name" => "LOG_TIME_FIELD_FORMAT", "value" => "2006-01-02T15:04:05Z07:00"},
                   %{"name" => "LOG_SAMPLER_RATE", "value" => "1"}
                 ],
-                "image" => "quay.io/kiali/kiali:v1.61.0",
+                "image" => battery.config.image,
                 "imagePullPolicy" => "Always",
                 "livenessProbe" => %{
                   "httpGet" => %{
-                    "path" => "/x/kiali/healthz",
+                    "path" => "/kiali/healthz",
                     "port" => "api-port",
                     "scheme" => "HTTP"
                   },
@@ -207,7 +231,7 @@ defmodule CommonCore.Resources.Kiali do
                 ],
                 "readinessProbe" => %{
                   "httpGet" => %{
-                    "path" => "/x/kiali/healthz",
+                    "path" => "/kiali/healthz",
                     "port" => "api-port",
                     "scheme" => "HTTP"
                   },
@@ -259,57 +283,32 @@ defmodule CommonCore.Resources.Kiali do
     |> B.spec(spec)
   end
 
-  resource(:role_binding_controlplane, _battery, state) do
-    namespace = istio_namespace(state)
-
-    B.build_resource(:role_binding)
-    |> B.name("kiali-controlplane")
-    |> B.namespace(namespace)
-    |> B.role_ref(B.build_role_ref("kiali-controlplane"))
-    |> B.subject(B.build_service_account("kiali", namespace))
-  end
-
-  resource(:role_controlplane, _battery, state) do
-    namespace = istio_namespace(state)
-
-    rules = [
-      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["list"]},
-      %{
-        "apiGroups" => [""],
-        "resourceNames" => ["cacerts", "istio-ca-secret"],
-        "resources" => ["secrets"],
-        "verbs" => ["get", "list", "watch"]
-      }
-    ]
-
-    B.build_resource(:role)
-    |> B.name("kiali-controlplane")
-    |> B.namespace(namespace)
-    |> B.rules(rules)
-  end
-
-  resource(:service_account_main, _battery, state) do
-    namespace = istio_namespace(state)
-
-    B.build_resource(:service_account)
-    |> B.name("kiali")
-    |> B.namespace(namespace)
-  end
-
   resource(:service_main, _battery, state) do
     namespace = istio_namespace(state)
 
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "http", "port" => 20_001, "protocol" => "TCP"},
-        %{"name" => "http-metrics", "port" => 9090, "protocol" => "TCP"}
+        %{"appProtocol" => "http", "name" => "http", "port" => 20_001, "protocol" => "TCP"},
+        %{"appProtocol" => "http", "name" => "http-metrics", "port" => 9090, "protocol" => "TCP"}
       ])
-      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "kiali"})
+      |> Map.put("selector", %{"battery/app" => @app_name})
 
     B.build_resource(:service)
     |> B.name("kiali")
     |> B.namespace(namespace)
     |> B.spec(spec)
+  end
+
+  resource(:virtual_service, _battery, state) do
+    namespace = istio_namespace(state)
+
+    spec = VirtualService.fallback_port("kiali", 20_001, hosts: [kiali_host(state)])
+
+    B.build_resource(:istio_virtual_service)
+    |> B.namespace(namespace)
+    |> B.name("kiali")
+    |> B.spec(spec)
+    |> F.require_battery(state, :istio_gateway)
   end
 end

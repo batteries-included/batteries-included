@@ -67,6 +67,7 @@
         k9s
         kind
         kubectl
+        kubernetes-helm
 
         # Use for pushing docker
         skopeo

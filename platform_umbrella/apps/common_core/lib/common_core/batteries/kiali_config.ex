@@ -7,11 +7,11 @@ defmodule CommonCore.Batteries.KialiConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :operator_image, :string, default: Defaults.Images.kiali_operator_image()
+    field :image, :string, default: Defaults.Images.kiali_image()
     field :version, :string, default: Defaults.Monitoring.kiali_version()
   end
 
   def changeset(struct, params \\ %{}) do
-    cast(struct, params, [:operator_image, :version])
+    cast(struct, params, [:image, :version])
   end
 end

@@ -500,7 +500,11 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_detail_item(%{battery: %{type: :kiali}} = assigns) do
     ~H"""
-    <.detail_menu_item href={} name="Kiali" is_active={@page_detail_type == :kiali}>
+    <.detail_menu_item
+      href={"//#{kiali_host()}/kiali"}
+      name="Kiali"
+      is_active={@page_detail_type == :kiali}
+    >
       <.kiali_icon class={@icon_class} />
     </.detail_menu_item>
     """

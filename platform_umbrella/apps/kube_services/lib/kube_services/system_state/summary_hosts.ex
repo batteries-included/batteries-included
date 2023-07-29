@@ -117,4 +117,9 @@ defmodule KubeServices.SystemState.SummaryHosts do
   def knative_host(target \\ @me, service) do
     GenServer.call(target, {:knative_host, service})
   end
+
+  @spec kiali_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def kiali_host(target \\ @me) do
+    GenServer.call(target, :kiali_host)
+  end
 end

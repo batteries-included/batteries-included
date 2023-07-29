@@ -21,7 +21,7 @@ deployment:
   image_name: quay.io/kiali/kiali
   image_pull_policy: Always
   image_pull_secrets: []
-  image_version: v1.61.0
+  image_version: v1.71.0
   ingress:
     additional_labels: {}
     class_name: nginx
@@ -30,7 +30,7 @@ deployment:
   instance_name: kiali
   logger:
     log_format: text
-    log_level: info
+    log_level: debug
     sampler_rate: '1'
     time_field_format: 2006-01-02T15:04:05Z07:00
   namespace: battery-istio
@@ -50,15 +50,9 @@ deployment:
   service_annotations: {}
   service_type: ''
   tolerations: []
-  version_label: v1.61.0
+  version_label: v1.71.0
   view_only_mode: false
 external_services:
-  grafana:
-    enabled: true
-    in_cluster_url: http://grafana.battery-core.svc/
-    url: http://grafana.172.18.128.1.ip.batteriesincl.com/
-  prometheus:
-    url: http://vmselect-main-cluster.battery-core.svc:9090/
   custom_dashboards:
     enabled: true
   istio:
@@ -74,15 +68,18 @@ kiali_feature_flags:
       - cacerts
       - istio-ca-secret
   clustering:
-    enabled: true
+    autodetect_secrets:
+      enabled: true
+      label: kiali.io/multiCluster=true
+    clusters: []
   disabled_features: []
   validations:
     ignore:
-      - KIA1201
+      - KIA1301
 login_token:
-  signing_key: ZLUFtSOKN3ZtIRsL
+  signing_key: gEmf58MPasrZkPsh
 server:
   metrics_enabled: true
   metrics_port: 9090
   port: 20001
-  web_root: /
+  web_root: /kiali
