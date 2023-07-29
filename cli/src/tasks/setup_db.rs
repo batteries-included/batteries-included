@@ -46,7 +46,7 @@ async fn run_mix_command(platform_path: PathBuf, command: Vec<String>) -> Result
         info!("mix command status = {}", out.status.clone());
         Ok(out.status.exit_ok()?)
     };
-    let mut retries = 9;
+    let mut retries = 15;
     // We really have no way of knowing if postgres has been
     // set up with the correct users and permissions to create
     // tables and connect, other than to give it a try.
@@ -56,7 +56,7 @@ async fn run_mix_command(platform_path: PathBuf, command: Vec<String>) -> Result
             return res;
         }
         warn!("failed mix command sleeping, retries = {}", retries);
-        tokio::time::sleep(Duration::from_millis(750)).await;
+        tokio::time::sleep(Duration::from_millis(950)).await;
         retries -= 1;
     }
     tokio::task::spawn_blocking(task).await?
