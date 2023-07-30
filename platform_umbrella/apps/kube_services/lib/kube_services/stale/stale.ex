@@ -120,14 +120,14 @@ defmodule KubeServices.Stale do
   def can_delete_safe?, do: resource_paths_success?() and snapshot_success?()
 
   defp snapshot_success? do
-    ControlSnapshot.KubeSnapshot
+    ControlServer.SnapshotApply.KubeSnapshot
     |> ControlSnapshot.snapshot_recently()
     |> ControlSnapshot.snapshot_success()
     |> Repo.exists?()
   end
 
   defp resource_paths_success? do
-    ControlSnapshot.ResourcePath
+    ResourcePath
     |> ControlSnapshot.resource_paths_recently()
     |> ControlSnapshot.resource_paths_success()
     |> Repo.exists?()

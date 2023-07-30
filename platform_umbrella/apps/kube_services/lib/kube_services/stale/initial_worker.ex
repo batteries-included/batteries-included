@@ -2,6 +2,8 @@ defmodule KubeServices.Stale.InitialWorker do
   use Oban.Worker,
     max_attempts: 3
 
+  alias KubeServices.Stale.Reaper
+
   require Logger
 
   @impl Oban.Worker
@@ -17,9 +19,7 @@ defmodule KubeServices.Stale.InitialWorker do
     else
       Logger.info("Found possible stale resource scheduling job to check")
       # Enque a run that will check again.
-      %{stale: possible_stale}
-      |> KubeServices.Stale.PerformWorker.new(schedule_in: 10)
-      |> Oban.insert()
+      :ok = Reaper.queue_reap(possible_stale)
     end
   end
 end
