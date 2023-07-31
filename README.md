@@ -21,7 +21,9 @@ Included team. Let's build something amazing together!
 
 Nix is what we use to ensure that all dev environments have all the software
 needed. It's a packaging system and more. To install it the determinate
-installer is the reccomended.
+installer is the reccomended. If you are using a different installer Batteries
+Included will need experimental (nix-command and
+flakes)[https://nixos.wiki/wiki/Flakes] support turned on.
 
 https://github.com/DeterminateSystems/nix-installer
 
