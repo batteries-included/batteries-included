@@ -22,7 +22,6 @@ defmodule KubeServices.Application do
     [
       KubeServices.ConnectionPool,
       {Task.Supervisor, name: @task_supervisor},
-      {Oban, Application.fetch_env!(:kube_services, Oban)},
       KubeServices.KubeState,
       KubeServices.SystemState,
       KubeServices.Batteries

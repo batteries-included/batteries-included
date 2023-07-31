@@ -34,5 +34,3 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 config :logger, level: :error
 
 config :kube_services, start_services: false, cluster_type: :dev
-
-config :kube_services, Oban, testing: :inline, plugins: []

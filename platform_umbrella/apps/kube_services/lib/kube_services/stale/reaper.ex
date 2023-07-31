@@ -18,9 +18,9 @@ defmodule KubeServices.Stale.Reaper do
   ]
 
   typedstruct module: State do
-    field :waiting_count, integer(), default: 0
-    field :delay, integer(), default: 10_000
-    field :running, boolean(), default: true
+    field(:waiting_count, integer(), default: 0)
+    field(:delay, integer(), default: 10_000)
+    field(:running, boolean(), default: true)
   end
 
   def start_link(opts \\ []) do
@@ -34,7 +34,30 @@ defmodule KubeServices.Stale.Reaper do
 
   @impl GenServer
   def init(opts) do
+    # queue the initial worker to run pretty soon after startup
+    schedule_worker(60 * 1000)
     {:ok, struct(State, opts)}
+  end
+
+  @impl GenServer
+  def handle_info({:find_possible_stale}, %State{delay: delay} = state) do
+    possible_stale = Stale.find_potential_stale()
+
+    Logger.debug("length(possible_stale)= #{length(possible_stale)}")
+
+    added =
+      if Enum.empty?(possible_stale) do
+        Logger.debug("No possible stale resources")
+        0
+      else
+        Logger.info("Found possible stale resource(s). Scheduling job to check")
+        Process.send_after(self(), {:maybe_reap, possible_stale}, delay)
+        1
+      end
+
+    # Enque a run that will check again.
+    schedule_worker()
+    {:noreply, %State{state | waiting_count: state.waiting_count + added}}
   end
 
   @impl GenServer
@@ -43,6 +66,7 @@ defmodule KubeServices.Stale.Reaper do
     {:noreply, %State{state | waiting_count: state.waiting_count - 1}}
   end
 
+  @impl GenServer
   def handle_info({:maybe_reap, suspected_stale}, state) do
     Logger.warning("Stale worker running checking on #{length(suspected_stale)}.")
 
@@ -58,16 +82,8 @@ defmodule KubeServices.Stale.Reaper do
     {:noreply, %State{state | waiting_count: state.waiting_count - 1}}
   end
 
-  @impl GenServer
-  def handle_call({:queue_reap, potential_stale}, _from, %State{delay: delay} = state) do
-    _timer_ref = Process.send_after(self(), {:maybe_reap, potential_stale}, delay)
-    {:reply, :ok, %State{state | waiting_count: state.waiting_count + 1}}
-  end
-
-  def queue_reap(target \\ @me, potential_stale) do
-    # Send the potential stale resources into the genserver.
-    # From there we'll use `Process.send_after()` to  queue checking if they are still stale
-    GenServer.call(target, {:queue_reap, potential_stale})
+  defp schedule_worker(delay \\ 60 * 60 * 1000) do
+    Process.send_after(self(), {:find_possible_stale}, delay)
   end
 
   defp can_delete_safe? do

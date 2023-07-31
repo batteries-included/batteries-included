@@ -97,19 +97,6 @@ config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
   delay: 900_000,
   failing_delay: 10_000
 
-config :kube_services, Oban,
-  repo: ControlServer.Repo,
-  queues: [default: 10, kube: 10],
-  plugins: [
-    Oban.Plugins.Stager,
-    Oban.Plugins.Reindexer,
-    {Oban.Plugins.Pruner, max_age: 3600},
-    {Oban.Plugins.Cron,
-     crontab: [
-       {"*/11 * * * *", KubeServices.Stale.InitialWorker}
-     ]}
-  ]
-
 config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
 
 config :common_core, CommonCore.Resources.Hashing,
