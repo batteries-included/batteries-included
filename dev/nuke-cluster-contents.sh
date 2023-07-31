@@ -2,13 +2,13 @@
 set -exuo pipefail
 
 deleteAllTagged() {
-  kubectl get -lbattery/managed=true ${1} |
+  kubectl get -lbattery/managed=true "${1}" |
     awk '{print $1}' |
-    xargs kubectl delete ${1} || true
+    xargs kubectl delete "${1}" || true
 }
 
 deleteAllNamespaced() {
-  kubectl get ${1} -lbattery/managed=true --all-namespaces |
+  kubectl get "${1}" -lbattery/managed=true --all-namespaces |
     awk '{print $1} {print $2}' |
     grep -ve NAME |
     xargs -L2 bash -c "kubectl delete ${1} -n \$0 \$1" || true

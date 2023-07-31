@@ -5,7 +5,8 @@ set -exuo pipefail
 export MIX_ENV=test
 
 # Go there.
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DIR="${BASH_SOURCE%/*}"
+
 pushd "${DIR}/../platform_umbrella"
 
 # Debug printing just in case

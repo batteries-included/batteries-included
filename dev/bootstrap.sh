@@ -2,9 +2,9 @@
 set -xuo pipefail
 
 # Grab the location we'll use it for yaml locations soon
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DIR="${BASH_SOURCE%/*}"
 
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+trap 'trap - SIGTERM && kill -- -$$' SIGINT SIGTERM EXIT
 
 pushd "${DIR}/../cli"
 set +e

@@ -9,7 +9,7 @@ deleteK3dCluster() {
 
 deleteKindCluster() {
   if command -v kind; then
-    kind delete cluster --name ${1} || true
+    kind delete cluster --name "${1}" || true
   fi
 }
 

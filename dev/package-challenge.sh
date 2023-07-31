@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 set -exuo pipefail
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+DIR="${BASH_SOURCE%/*}"
 
 DEV=${1}
 DEST=${2:-"$HOME/coding_challenges/$DEV"}
 CHALLENGE=${3:-whats_up}
 
 createDest() {
-  rm -rf ${DEST}
-  mkdir -p ${DEST}
-  cp -r ${DIR}/../coding_challenges/${CHALLENGE} ${DEST}/
+  rm -rf "${DEST}"
+  mkdir -p "${DEST}"
+  cp -r "${DIR}/../coding_challenges/${CHALLENGE}" "${DEST}/"
 }
 
 cleanChallenge() {
@@ -24,16 +25,16 @@ initGit() {
 createTar() {
   local tar_name
   tar_name=${CHALLENGE}.tar.gz
-  tar czf ${tar_name} ${CHALLENGE}
-  sha256sum -b ${tar_name} >SHA256SUMS
-  rm -rf ${CHALLENGE}
+  tar czf "${tar_name}" "${CHALLENGE}"
+  sha256sum -b "${tar_name}" >SHA256SUMS
+  rm -rf "${CHALLENGE}"
 }
 
 createDest
 
-pushd ${DEST}
+pushd "${DEST}"
 
-pushd ${CHALLENGE}
+pushd "${CHALLENGE}"
 cleanChallenge
 initGit
 popd
