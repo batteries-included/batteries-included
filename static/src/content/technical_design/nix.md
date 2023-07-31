@@ -193,3 +193,96 @@ well as in the Nix directory.
 Welcome aboard! We hope this guide helps you get started with our code
 repository and Nix. If you have any questions or issues, please get in touch
 with me.
+
+## Upgrading Nix Dependencies
+
+Since we use nix to build all the final packages, it also knows about the
+desired versions. We rely on each languages' package manager as much as
+possible.
+
+### Update Nix Dependencies
+
+If you want to upgrade the tools that nix provides, there's a simple nix command
+to run. Be sure to run tests and formatting as new versions often cause changes.
+
+```sh
+nix flake update
+nix fmt
+nix flake check
+```
+
+### Update Mix Dependencies
+
+Elixir is the only langugage that we can't rely 100% on the language dependency
+resolution. Elixir's `mix deps.get` reaches out to the network and isn't
+determinitic; so we have to specify the expected hash value of all dependencies
+to nix.
+
+That means when updating mix dependencies we need to change nix code as well.
+
+```sh
+
+mix hex.outdated
+# Change any specified versions needed
+# in mix.exs in the apps of umbrella
+
+# Then change the .lock file
+mix deps.unlock --all
+mix deps.get
+```
+
+From there change the `sha256` for `mixFodDeps` and `mixTestFodDeps` to the fake
+value provided by `lib` like this:
+
+```nix
+      mixTestFodDeps = beamPackages.fetchMixDeps {
+        pname = "mix-deps-platform-test";
+        inherit src version LANG;
+        mixEnv = "test";
+        #sha256 = "TO BE RECOMPUTED";
+        sha256 = lib.fakeSha256;
+      };
+
+      mixFodDeps = beamPackages.fetchMixDeps {
+        pname = "mix-deps-platform";
+        inherit src version LANG;
+        #sha256 = "TO BE RECOMPUTED";
+        sha256 = lib.fakeSha256;
+      };
+
+
+```
+
+Then get nix to recompute the expected hash value, removing the fake value and
+replacing it with the expected value
+
+First find the non-test hash
+
+```sh
+nix build -L ".#control-server"
+```
+
+Then the test hash
+
+```sh
+nix flake check -L
+```
+
+Finally ending up with something like this:
+
+```nix
+      mixTestFodDeps = beamPackages.fetchMixDeps {
+        pname = "mix-deps-platform-test";
+        inherit src version LANG;
+        mixEnv = "test";
+        sha256 = "sha256-a290WCJZetXA6NIoZNQj//dDO7Pj02PTSV0IOZzOEd8=";
+        #sha256 = lib.fakeSha256;
+      };
+
+      mixFodDeps = beamPackages.fetchMixDeps {
+        pname = "mix-deps-platform";
+        inherit src version LANG;
+        sha256 = "sha256-ddfioRONtL3nfO5wp6ocX3RzRWTLElZMH3GNnZS6PoI=";
+        #sha256 = lib.fakeSha256;
+      };
+```
