@@ -62,8 +62,12 @@ async fn download_to(url: &str, to: &Path) -> Result<()> {
         .await?;
     // Copy all the bytes.
     std::io::copy(&mut contents.as_ref(), &mut file.as_file_mut())?;
+
     // Now atomically rename the file.
-    file.persist(to)?;
+    if file.persist(to).is_err() {
+        // If this failed then copy over.
+        std::fs::write(to, contents)?;
+    }
 
     // Set the permissions.
     //
