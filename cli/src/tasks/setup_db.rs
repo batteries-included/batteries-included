@@ -6,6 +6,8 @@ use tracing::{info, warn};
 
 use crate::spec::InstallationSpec;
 
+const MAX_DELAY: std::time::Duration = Duration::from_secs(30);
+
 pub async fn setup_platform_db(
     platform_path: PathBuf,
     install_spec: &InstallationSpec,
@@ -46,7 +48,8 @@ async fn run_mix_command(platform_path: PathBuf, command: Vec<String>) -> Result
         info!("mix command status = {}", out.status.clone());
         Ok(out.status.exit_ok()?)
     };
-    let mut retries = 15;
+    let mut retries = 20;
+    let mut delay = Duration::from_millis(500);
     // We really have no way of knowing if postgres has been
     // set up with the correct users and permissions to create
     // tables and connect, other than to give it a try.
@@ -55,8 +58,9 @@ async fn run_mix_command(platform_path: PathBuf, command: Vec<String>) -> Result
         if res.is_ok() {
             return res;
         }
-        warn!("failed mix command sleeping, retries = {}", retries);
-        tokio::time::sleep(Duration::from_millis(950)).await;
+        warn!("failed mix command sleeping retries = {}", retries);
+        tokio::time::sleep(delay).await;
+        delay = (2 * delay).min(MAX_DELAY);
         retries -= 1;
     }
     tokio::task::spawn_blocking(task).await?

@@ -17,7 +17,7 @@ pub async fn initial_apply(
     initial_resources: HashMap<String, DynamicObject>,
 ) -> Result<()> {
     let apply_params = PatchParams::apply("bcli").force();
-    let mut retries = 15;
+    let mut retries = 20;
     let mut unsynced = initial_resources;
 
     while retries >= 0 && !unsynced.is_empty() {
