@@ -1,4 +1,13 @@
 defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
+  @moduledoc """
+  This GenServer handles failed control server snapshots.
+
+  It does this by subscribing to `EventCenter.KubeSnapshot` and starting
+  `KubeServices.SnapshotApply.Worker` on snapshot failures.
+
+  It should handle back off by exponentially delaying on subsequent failures
+  and resetting on success.
+  """
   use GenServer
   use TypedStruct
 
@@ -9,7 +18,7 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
   alias KubeServices.SnapshotApply.Worker
 
   typedstruct module: State do
-    field :delay, non_neg_integer(), deafult: 5000
+    field :delay, non_neg_integer(), default: 5000
     field :initial_delay, non_neg_integer(), default: 5000
     field :max_delay, non_neg_integer(), default: 600_000
     field :timer_reference, reference() | nil, default: nil
@@ -19,24 +28,43 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
     GenServer.start_link(__MODULE__, opts)
   end
 
+  @impl GenServer
+  @doc """
+  Initialize the server by subscribing to EventCenter.KubeSnapshot
+  """
+  def init(args) do
+    :ok = EventCenter.KubeSnapshot.subscribe()
+    {:ok, struct(State, args)}
+  end
+
+  @impl GenServer
+  @doc """
+  Handle regular messages
+  """
+  # start a `KubeServices.SnapshotApply.Worker` and remove the reference to the
+  # timer that invoked this message
   def handle_info(:start_apply, state) do
+    # should we handle the worker not starting?
     _ = Worker.start()
     {:noreply, %State{state | timer_reference: nil}}
   end
 
+  # kick off the loop when there's a snapshot error
   def handle_info(%Payload{snapshot: %KubeSnapshot{status: :error}} = _payload, state) do
     {:noreply, schedule_start(state)}
   end
 
+  # reset the backoff when there's a successful snapshot
   def handle_info(%Payload{snapshot: %KubeSnapshot{status: :ok}} = _payload, state) do
     {:noreply, reset_delay(state)}
   end
 
+  # ignore in progress snapshot apply
   def handle_info(%Payload{snapshot: _} = _payload, state) do
-    # In progress snapshot apply, ignore until it's a terminal status
     {:noreply, state}
   end
 
+  # start loop after delay based on current state
   defp schedule_start(%State{timer_reference: nil, max_delay: max_delay, delay: delay} = state) do
     new_delay = min(max_delay, delay * 2)
     Logger.warning("After a failed snapshot scheduling the next retry in #{new_delay}")
@@ -48,17 +76,15 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
     }
   end
 
-  defp schedule_start(%State{timer_reference: _} = _state) do
+  # handle case where snapshot fails while we're backing off
+  defp schedule_start(%State{timer_reference: _} = state) do
     Logger.warning("Failed snapshot timer already running. Ignoring")
+    state
   end
 
+  # reset delay in state to the initial delay
   defp reset_delay(%State{initial_delay: init_delay} = state) do
     Logger.debug("Successful apply, resetting delay back to initial values #{init_delay}")
     %State{state | delay: init_delay}
-  end
-
-  def init(args) do
-    :ok = EventCenter.KubeSnapshot.subscribe()
-    {:ok, struct(State, args)}
   end
 end
