@@ -3,6 +3,7 @@
     "autoscalingv2API": true,
     "caAddress": "",
     "caName": "",
+    "certSigners": [],
     "configCluster": false,
     "defaultPodDisruptionBudget": {
       "enabled": true
@@ -46,7 +47,6 @@
       "excludeIPRanges": "",
       "excludeInboundPorts": "",
       "excludeOutboundPorts": "",
-      "holdApplicationUntilProxyStarts": false,
       "image": "proxyv2",
       "includeIPRanges": "*",
       "includeInboundPorts": "*",
@@ -81,26 +81,7 @@
     "sts": {
       "servicePort": 0
     },
-    "tag": "1.16.1",
-    "tracer": {
-      "datadog": {
-        "address": "$(HOST_IP):8126"
-      },
-      "lightstep": {
-        "accessToken": "",
-        "address": ""
-      },
-      "stackdriver": {
-        "debug": false,
-        "maxNumberOfAnnotations": 200,
-        "maxNumberOfAttributes": 200,
-        "maxNumberOfMessageEvents": 200
-      },
-      "zipkin": {
-        "address": ""
-      }
-    },
-    "useMCP": false,
+    "tag": "1.18.2",
     "variant": ""
   },
   "revision": "",

@@ -68,7 +68,10 @@ defmodule CommonCore.StateSummary.Hosts do
 
   defp ingress_ips(%StateSummary{} = state) do
     istio_namespace = istio_namespace(state)
-    ingress_name = "ingressgateway"
+    # the name of the ingress service.
+    # We aren't using the Gateway name or the istio tag here
+    # We are using metadata.name for service selection
+    ingress_name = "istio-ingress"
 
     state.kube_state
     |> Map.get(:service, [])

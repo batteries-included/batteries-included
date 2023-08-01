@@ -4,6 +4,8 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app: istio-pilot
+    chart: istio
+    heritage: Tiller
     istio: telemetry
     release: istio
   name: telemetries.telemetry.istio.io

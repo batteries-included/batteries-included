@@ -194,7 +194,7 @@ defmodule CommonCore.Resources.IstioConfig do
     defstruct hosts: [], gateways: [], http: [], tcp: []
 
     def new(opts \\ []) do
-      gateways = Keyword.get(opts, :gateways, ["battery-istio/ingressgateway"])
+      gateways = Keyword.get(opts, :gateways, ["battery-istio/ingress"])
       hosts = Keyword.get(opts, :hosts, ["*"])
       routes = Keyword.get(opts, :http, [])
       tcp = Keyword.get(opts, :tcp, [])

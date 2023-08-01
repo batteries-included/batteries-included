@@ -1,38 +1,36 @@
 defmodule CommonCore.Resources.IstioBase do
   use CommonCore.IncludeResource,
     authorizationpolicies_security_istio_io:
-      "priv/manifests/istio_base/authorizationpolicies_security_istio_io.yaml",
+      "priv/manifests/istio-base/authorizationpolicies_security_istio_io.yaml",
     destinationrules_networking_istio_io:
-      "priv/manifests/istio_base/destinationrules_networking_istio_io.yaml",
+      "priv/manifests/istio-base/destinationrules_networking_istio_io.yaml",
     envoyfilters_networking_istio_io:
-      "priv/manifests/istio_base/envoyfilters_networking_istio_io.yaml",
-    gateways_networking_istio_io: "priv/manifests/istio_base/gateways_networking_istio_io.yaml",
+      "priv/manifests/istio-base/envoyfilters_networking_istio_io.yaml",
+    gateways_networking_istio_io: "priv/manifests/istio-base/gateways_networking_istio_io.yaml",
     istiooperators_install_istio_io:
-      "priv/manifests/istio_base/istiooperators_install_istio_io.yaml",
+      "priv/manifests/istio-base/istiooperators_install_istio_io.yaml",
     peerauthentications_security_istio_io:
-      "priv/manifests/istio_base/peerauthentications_security_istio_io.yaml",
+      "priv/manifests/istio-base/peerauthentications_security_istio_io.yaml",
     proxyconfigs_networking_istio_io:
-      "priv/manifests/istio_base/proxyconfigs_networking_istio_io.yaml",
+      "priv/manifests/istio-base/proxyconfigs_networking_istio_io.yaml",
     requestauthentications_security_istio_io:
-      "priv/manifests/istio_base/requestauthentications_security_istio_io.yaml",
+      "priv/manifests/istio-base/requestauthentications_security_istio_io.yaml",
     serviceentries_networking_istio_io:
-      "priv/manifests/istio_base/serviceentries_networking_istio_io.yaml",
-    sidecars_networking_istio_io: "priv/manifests/istio_base/sidecars_networking_istio_io.yaml",
+      "priv/manifests/istio-base/serviceentries_networking_istio_io.yaml",
+    sidecars_networking_istio_io: "priv/manifests/istio-base/sidecars_networking_istio_io.yaml",
     telemetries_telemetry_istio_io:
-      "priv/manifests/istio_base/telemetries_telemetry_istio_io.yaml",
+      "priv/manifests/istio-base/telemetries_telemetry_istio_io.yaml",
     virtualservices_networking_istio_io:
-      "priv/manifests/istio_base/virtualservices_networking_istio_io.yaml",
+      "priv/manifests/istio-base/virtualservices_networking_istio_io.yaml",
     wasmplugins_extensions_istio_io:
-      "priv/manifests/istio_base/wasmplugins_extensions_istio_io.yaml",
+      "priv/manifests/istio-base/wasmplugins_extensions_istio_io.yaml",
     workloadentries_networking_istio_io:
-      "priv/manifests/istio_base/workloadentries_networking_istio_io.yaml",
+      "priv/manifests/istio-base/workloadentries_networking_istio_io.yaml",
     workloadgroups_networking_istio_io:
-      "priv/manifests/istio_base/workloadgroups_networking_istio_io.yaml"
+      "priv/manifests/istio-base/workloadgroups_networking_istio_io.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-base"
-
   import CommonCore.StateSummary.Namespaces
-
   alias CommonCore.Resources.Builder, as: B
 
   resource(:istio_namespace, _battery, state) do
@@ -64,10 +62,7 @@ defmodule CommonCore.Resources.IstioBase do
   end
 
   resource(:cluster_role_istio_reader_battery_istio) do
-    B.build_resource(:cluster_role)
-    |> B.name("istio-reader-battery-istio")
-    |> B.component_label("istio-reader")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => [
           "config.istio.io",
@@ -132,14 +127,16 @@ defmodule CommonCore.Resources.IstioBase do
         "resources" => ["serviceimports"],
         "verbs" => ["get", "watch", "list"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("istio-reader-battery-istio")
+    |> B.component_label("istio-reader")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_istiod_battery_istio) do
-    B.build_resource(:cluster_role)
-    |> B.name("istiod-battery-istio")
-    |> B.component_label("istiod")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => ["admissionregistration.k8s.io"],
         "resources" => ["mutatingwebhookconfigurations"],
@@ -253,7 +250,12 @@ defmodule CommonCore.Resources.IstioBase do
         "resources" => ["serviceimports"],
         "verbs" => ["get", "watch", "list"]
       }
-    ])
+    ]
+
+    B.build_resource(:cluster_role)
+    |> B.name("istiod-battery-istio")
+    |> B.component_label("istiod")
+    |> B.rules(rules)
   end
 
   resource(:crd_authorizationpolicies_security_istio_io) do
@@ -330,11 +332,7 @@ defmodule CommonCore.Resources.IstioBase do
   resource(:role_istiod_battery_istio, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:role)
-    |> B.name("istiod-battery-istio")
-    |> B.namespace(namespace)
-    |> B.component_label("istiod")
-    |> B.rules([
+    rules = [
       %{
         "apiGroups" => ["networking.istio.io"],
         "resources" => ["gateways"],
@@ -345,7 +343,13 @@ defmodule CommonCore.Resources.IstioBase do
         "resources" => ["secrets"],
         "verbs" => ["create", "get", "watch", "list", "update", "delete"]
       }
-    ])
+    ]
+
+    B.build_resource(:role)
+    |> B.name("istiod-battery-istio")
+    |> B.namespace(namespace)
+    |> B.component_label("istiod")
+    |> B.rules(rules)
   end
 
   resource(:service_account_istio_reader, _battery, state) do
@@ -378,13 +382,22 @@ defmodule CommonCore.Resources.IstioBase do
       %{
         "admissionReviewVersions" => ["v1beta1", "v1"],
         "clientConfig" => %{
-          "service" => %{"name" => "istiod", "namespace" => namespace, "path" => "/validate"}
+          "service" => %{
+            "name" => "istiod",
+            "namespace" => namespace,
+            "path" => "/validate"
+          }
         },
         "failurePolicy" => "Ignore",
         "name" => "validation.istio.io",
         "rules" => [
           %{
-            "apiGroups" => ["security.istio.io", "networking.istio.io"],
+            "apiGroups" => [
+              "security.istio.io",
+              "networking.istio.io",
+              "telemetry.istio.io",
+              "extensions.istio.io"
+            ],
             "apiVersions" => ["*"],
             "operations" => ["CREATE", "UPDATE"],
             "resources" => ["*"]
