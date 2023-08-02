@@ -1,5 +1,4 @@
 defmodule CommonCore.Resources.Kiali do
-  use CommonCore.IncludeResource, config_yaml: "priv/raw_files/kiali/config.yaml"
   use CommonCore.Resources.ResourceGenerator, app_name: "kiali"
 
   import CommonCore.StateSummary.Namespaces
@@ -134,7 +133,87 @@ defmodule CommonCore.Resources.Kiali do
 
   resource(:config_map_main, _battery, state) do
     namespace = istio_namespace(state)
-    data = %{"config.yaml" => get_resource(:config_yaml)}
+
+    data = %{
+      "config.yaml" => %{
+        "auth" => %{
+          "openid" => %{},
+          "openshift" => %{"client_id_prefix" => "kiali"},
+          "strategy" => "anonymous"
+        },
+        "deployment" => %{
+          "accessible_namespaces" => ["**"],
+          "additional_service_yaml" => %{},
+          "affinity" => %{"node" => %{}, "pod" => %{}, "pod_anti" => %{}},
+          "configmap_annotations" => %{},
+          "custom_secrets" => [],
+          "host_aliases" => [],
+          "hpa" => %{"api_version" => "autoscaling/v2", "spec" => %{}},
+          "image_digest" => "",
+          "image_name" => "quay.io/kiali/kiali",
+          "image_pull_policy" => "Always",
+          "image_pull_secrets" => [],
+          "image_version" => "v1.71.0",
+          "ingress" => %{
+            "additional_labels" => %{},
+            "class_name" => "nginx",
+            "override_yaml" => %{"metadata" => %{}}
+          },
+          "instance_name" => "kiali",
+          "logger" => %{
+            "log_format" => "text",
+            "log_level" => "debug",
+            "sampler_rate" => "1",
+            "time_field_format" => "2006-01-02T15:04:05Z07:00"
+          },
+          "namespace" => "battery-istio",
+          "node_selector" => %{},
+          "pod_annotations" => %{},
+          "pod_labels" => %{},
+          "priority_class_name" => "",
+          "replicas" => 1,
+          "resources" => %{
+            "limits" => %{"memory" => "1Gi"},
+            "requests" => %{"cpu" => "10m", "memory" => "64Mi"}
+          },
+          "secret_name" => "kiali",
+          "security_context" => %{},
+          "service_annotations" => %{},
+          "service_type" => "",
+          "tolerations" => [],
+          "version_label" => "v1.71.0",
+          "view_only_mode" => false
+        },
+        "external_services" => %{
+          "custom_dashboards" => %{"enabled" => true},
+          "istio" => %{"root_namespace" => "battery-istio"}
+        },
+        "identity" => %{"cert_file" => "", "private_key_file" => ""},
+        "istio_namespace" => "battery-istio",
+        "kiali_feature_flags" => %{
+          "certificates_information_indicators" => %{
+            "enabled" => true,
+            "secrets" => ["cacerts", "istio-ca-secret"]
+          },
+          "clustering" => %{
+            "autodetect_secrets" => %{
+              "enabled" => true,
+              "label" => "kiali.io/multiCluster=true"
+            },
+            "clusters" => []
+          },
+          "disabled_features" => [],
+          "validations" => %{"ignore" => ["KIA1301"]}
+        },
+        "login_token" => %{"signing_key" => "gEmf58MPasrZkPsh"},
+        "server" => %{
+          "metrics_enabled" => true,
+          "metrics_port" => 9090,
+          "port" => 20_001,
+          "web_root" => "/kiali"
+        }
+      }
+    }
 
     B.build_resource(:config_map)
     |> B.name("kiali")
