@@ -1,5 +1,5 @@
 defmodule CommonCore.Resources.VMAgent do
-  use CommonCore.Resources.ResourceGenerator, app_name: "vcitoria-metrics-agent"
+  use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-agent"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts

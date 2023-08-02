@@ -1,5 +1,5 @@
 defmodule CommonCore.Resources.VMCluster do
-  use CommonCore.Resources.ResourceGenerator, app_name: "vcitoria-metrics-cluster"
+  use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-cluster"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
