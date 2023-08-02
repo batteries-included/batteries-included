@@ -4,6 +4,7 @@ defmodule CommonCore.Resources.Kiali do
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
 
+  require Logger
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.IstioConfig.VirtualService
@@ -132,7 +133,8 @@ defmodule CommonCore.Resources.Kiali do
   end
 
   resource(:config_map_main, _battery, state) do
-    namespace = istio_namespace(state)
+    namespace_istio = istio_namespace(state)
+    namespace_core = core_namespace(state)
 
     kiali_config = %{
       "auth" => %{
@@ -165,7 +167,7 @@ defmodule CommonCore.Resources.Kiali do
           "sampler_rate" => "1",
           "time_field_format" => "2006-01-02T15:04:05Z07:00"
         },
-        "namespace" => "battery-istio",
+        "namespace" => namespace_istio,
         "node_selector" => %{},
         "pod_annotations" => %{},
         "pod_labels" => %{},
@@ -185,10 +187,41 @@ defmodule CommonCore.Resources.Kiali do
       },
       "external_services" => %{
         "custom_dashboards" => %{"enabled" => true},
-        "istio" => %{"root_namespace" => "battery-istio"}
+        "istio" => %{
+          "root_namespace" => namespace_istio,
+          "component_status" => %{
+            "components" => [
+              %{"app_label" => "istiod", "is_core" => true, "is_proxy" => false},
+              %{
+                "app_label" => "istio-ingress",
+                "is_core" => true,
+                "is_proxy" => true,
+                "namespace" => namespace_core
+              }
+              # %{
+              #   "app_label" => "istio-egressgateway",
+              #   "is_core" => false,
+              #   "is_proxy" => true,
+              #   "namespace" => "istio-system"
+              # }
+            ]
+          }
+        },
+        "grafana" => %{
+          "in_cluster_url" => "http://grafana.#{namespace_core}.svc",
+          "url" => grafana_host(state)
+        },
+        "prometheus" => %{
+          "health_check_url" =>
+            "http://vmselect-main-cluster.#{namespace_core}.svc:8481/select/0/prometheus/api/v1/status/tsdb",
+          "url" => "http://vmselect-main-cluster.#{namespace_core}.svc:8481/select/0/prometheus/"
+        },
+        "tracing" => %{
+          "enabled" => false
+        }
       },
       "identity" => %{"cert_file" => "", "private_key_file" => ""},
-      "istio_namespace" => "battery-istio",
+      "istio_namespace" => namespace_istio,
       "kiali_feature_flags" => %{
         "certificates_information_indicators" => %{
           "enabled" => true,
@@ -217,7 +250,7 @@ defmodule CommonCore.Resources.Kiali do
 
     B.build_resource(:config_map)
     |> B.name("kiali")
-    |> B.namespace(namespace)
+    |> B.namespace(namespace_istio)
     |> B.data(data)
   end
 
