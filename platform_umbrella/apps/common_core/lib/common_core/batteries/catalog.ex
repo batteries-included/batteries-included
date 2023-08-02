@@ -132,7 +132,7 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :net_sec,
       type: :kiali,
-      dependencies: [:istio, :istio_gateway],
+      dependencies: [:istio, :istio_gateway, :grafana, :victoria_metrics],
       description:
         "Kiali is an open-source observability tool for Istio that provides a unified view of your service mesh, including traffic, health, and configuration."
     },
