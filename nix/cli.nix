@@ -16,7 +16,6 @@
 
       out = import ./rust_crate.nix {
         inherit pkgs crane advisory-db pname src;
-        cargoExtraArgs = "--no-default-features";
       };
     in
     out;

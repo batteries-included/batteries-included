@@ -56,6 +56,7 @@ in
       inherit cargoArtifacts;
       partitions = 1;
       partitionType = "count";
+      cargoNextestExtraArgs = "--all-targets";
     });
   };
 
