@@ -37,7 +37,6 @@ defmodule ControlServer.MixProject do
       {:common_core, in_umbrella: true},
       {:phoenix_pubsub, "~> 2.1"},
       {:jason, "~> 1.4.1"},
-      {:oban, "~> 2.15.2"},
       {:phoenix_swoosh, "~> 1.2.0"},
 
       # SQL
