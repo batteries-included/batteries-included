@@ -109,7 +109,9 @@ defmodule KubeServices.SnapshotApply.Worker do
     do: KubeApply.generate(kube_snap, summary)
 
   defp keycloak_generate(nil = _key_cloak_snapshot, _, _), do: {:ok, nil}
-  defp keycloak_generate(%KeycloakSnapshot{} = _, _, _), do: {:ok, nil}
+
+  defp keycloak_generate(%KeycloakSnapshot{} = key_snap, summary, _),
+    do: KeycloakApply.generate(key_snap, summary)
 
   # Apply
   defp kube_apply(kube_snap, gen_payload, _state), do: KubeApply.apply(kube_snap, gen_payload)

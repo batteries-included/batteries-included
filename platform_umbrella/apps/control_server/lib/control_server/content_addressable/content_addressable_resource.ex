@@ -12,6 +12,7 @@ defmodule ControlServer.ContentAddressable.ContentAddressableResource do
     field :value, :map, redact: true
 
     has_many :resource_paths, ControlServer.SnapshotApply.ResourcePath
+    has_many :keycloak_actions, ControlServer.SnapshotApply.KeycloakAction
     has_many :deleted_resources, ControlServer.Deleted.DeletedResource
 
     timestamps()
