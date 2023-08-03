@@ -231,8 +231,8 @@ mix deps.unlock --all
 mix deps.get
 ```
 
-From there change the `sha256` for `mixFodDeps` and `mixTestFodDeps` to the fake
-value provided by `lib` like this:
+Next, in `nix/platform.nix`, change the `sha256` for `mixFodDeps` and
+`mixTestFodDeps` to the fake value provided by `lib` like this:
 
 ```nix
       mixTestFodDeps = beamPackages.fetchMixDeps {
