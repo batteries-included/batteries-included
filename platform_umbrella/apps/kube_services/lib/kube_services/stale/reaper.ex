@@ -19,7 +19,7 @@ defmodule KubeServices.Stale.Reaper do
 
   typedstruct module: State do
     field(:waiting_count, integer(), default: 0)
-    field(:delay, integer(), default: 10_000)
+    field(:delay, integer(), default: 900_000)
     field(:running, boolean(), default: true)
   end
 
@@ -35,7 +35,7 @@ defmodule KubeServices.Stale.Reaper do
   @impl GenServer
   def init(opts) do
     # queue the initial worker to run pretty soon after startup
-    schedule_worker(60 * 1000)
+    schedule_worker(1000)
     {:ok, struct(State, opts)}
   end
 
@@ -56,7 +56,7 @@ defmodule KubeServices.Stale.Reaper do
       end
 
     # Enque a run that will check again.
-    schedule_worker()
+    schedule_worker(60_000)
     {:noreply, %State{state | waiting_count: state.waiting_count + added}}
   end
 
@@ -82,7 +82,7 @@ defmodule KubeServices.Stale.Reaper do
     {:noreply, %State{state | waiting_count: state.waiting_count - 1}}
   end
 
-  defp schedule_worker(delay \\ 60 * 60 * 1000) do
+  defp schedule_worker(delay) do
     Process.send_after(self(), {:find_possible_stale}, delay)
   end
 
