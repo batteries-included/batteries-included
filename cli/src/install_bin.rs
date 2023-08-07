@@ -44,6 +44,7 @@ fn to_kind_arch(arch: &str) -> String {
     let lower = arch.to_ascii_lowercase();
     match lower.as_str() {
         "x86_64" => "amd64".to_owned(),
+        "aarch64" => "arm64".to_owned(),
         _ => lower,
     }
 }
