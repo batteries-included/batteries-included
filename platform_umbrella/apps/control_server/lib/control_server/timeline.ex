@@ -76,14 +76,15 @@ defmodule ControlServer.Timeline do
     }
   end
 
-  def kube_event(action, resource_type, name, namespace \\ nil) do
+  def kube_event(action, resource_type, name, namespace \\ nil, status \\ nil) do
     %TimelineEvent{
       level: :info,
       payload: %Kube{
         action: action,
         type: resource_type,
         name: name,
-        namespace: namespace
+        namespace: namespace,
+        computed_status: status
       }
     }
   end
