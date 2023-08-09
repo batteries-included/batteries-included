@@ -8,6 +8,9 @@ on:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - uses: ahmadnassri/action-dependabot-auto-merge@v2
