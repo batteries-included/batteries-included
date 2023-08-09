@@ -24,7 +24,6 @@ defmodule ControlServerWeb.KnativeDisplay do
       </div>
     </.card>
     <.traffic_display traffic={traffic(@service)} />
-    <.h2>Status Gates</.h2>
     <.status_table service={@service} />
     """
   end
