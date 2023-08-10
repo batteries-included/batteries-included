@@ -14,8 +14,9 @@ defmodule KubeServices.Timeline.PodStatus do
   require Logger
 
   @me __MODULE__
-  @init_args [:table_name]
-  @type option :: {:table_name, atom()}
+  @init_args [:table_name, :initial_sync_delay]
+
+  @type option :: [table_name: atom(), initial_sync_delay: non_neg_integer()]
   @type state :: {:ets.table()}
   @type condition :: %{type: String.t(), status: boolean()}
   @type resource :: %{
@@ -45,11 +46,19 @@ defmodule KubeServices.Timeline.PodStatus do
   @spec init(opts :: [option()]) :: {result :: atom(), initial_state :: state()}
   def init(opts) do
     ets_table = :ets.new(opts[:table_name], [:set, :named_table, read_concurrency: true])
-    Process.send_after(@me, :sync, 10_000)
+    delay = Keyword.get(opts, :initial_sync_delay, 10_000)
+
+    if delay > 0 do
+      _ref = Process.send_after(@me, :sync, delay)
+      # return :ok from this block to make dialyzer
+      # realize we handled the ref above, by ignoring it.
+      :ok
+    end
+
     {:ok, {ets_table}}
   end
 
-  # sync our mapping from `KubeServices.SystemState.Summarizer`
+  # sync our mapping from a summarizer
   @impl GenServer
   @spec handle_info(msg :: :sync, state :: state()) :: {action :: :noreply, newstate :: state()}
   def handle_info(:sync, state) do

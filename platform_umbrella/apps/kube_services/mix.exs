@@ -8,6 +8,7 @@ defmodule KubeServices.MixProject do
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
+      elixirc_paths: elixirc_paths(Mix.env()),
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
@@ -24,6 +25,10 @@ defmodule KubeServices.MixProject do
     ]
   end
 
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(env) when env in [:dev, :test], do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
   defp deps do
     [
       {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
@@ -35,7 +40,8 @@ defmodule KubeServices.MixProject do
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:ex_machina, "~> 2.7", only: [:dev, :test]}
     ]
   end
 
