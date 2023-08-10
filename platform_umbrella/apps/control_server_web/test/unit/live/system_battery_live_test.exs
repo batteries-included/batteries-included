@@ -19,6 +19,7 @@ defmodule ControlServerWeb.SystemBatteryLiveTest do
       assert html =~ Atom.to_string(system_battery.group)
     end
 
+    @tag :slow
     test "deletes system_battery in listing", %{conn: conn, system_battery: system_battery} do
       {:ok, index_live, _html} = live(conn, ~p"/system_batteries")
 

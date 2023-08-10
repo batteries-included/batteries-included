@@ -46,6 +46,7 @@ defmodule KubeServices.KubeStateCoverageTest do
   ]
 
   describe "KubeState can watch for every battery" do
+    @tag :slow
     test "All watchable" do
       CommonCore.StateSummary.SeedState.seed(:everything)
       |> RootResourceGenerator.materialize()
@@ -71,6 +72,7 @@ defmodule KubeServices.KubeStateCoverageTest do
       {api_version, kind}
     end
 
+    @tag :slow
     test "All CRD's watchable" do
       CommonCore.StateSummary.SeedState.seed(:everything)
       |> RootResourceGenerator.materialize()

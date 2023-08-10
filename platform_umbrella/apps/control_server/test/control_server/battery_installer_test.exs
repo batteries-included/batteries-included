@@ -9,6 +9,7 @@ defmodule ControlServer.Batteries.InstallerTest do
   alias ControlServer.Batteries.Installer
 
   describe "ControlServer.Batteries.Installer" do
+    @tag :slow
     test "every battery in the catalog installs :ok" do
       for catalog_battery <- Catalog.all() do
         ControlServer.Repo.delete_all(SystemBattery)
@@ -17,18 +18,21 @@ defmodule ControlServer.Batteries.InstallerTest do
       end
     end
 
+    @tag :slow
     test "runs the postgres post hook" do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
       assert {:ok, _res} = Installer.install(:postgres)
       assert 1 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
     end
 
+    @tag :slow
     test "runs the gitea post hook" do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
       assert {:ok, _res} = Installer.install(:gitea)
       assert 2 >= ControlServer.Repo.aggregate(PGCluster, :count, :id)
     end
 
+    @tag :slow
     test "runs the harbor post hook" do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
       assert 0 == ControlServer.Repo.aggregate(FailoverCluster, :count, :id)
@@ -37,6 +41,7 @@ defmodule ControlServer.Batteries.InstallerTest do
       assert 1 == ControlServer.Repo.aggregate(FailoverCluster, :count, :id)
     end
 
+    @tag :slow
     test "installs all from system_batteries" do
       assert 0 == ControlServer.Repo.aggregate(SystemBattery, :count, :id)
 

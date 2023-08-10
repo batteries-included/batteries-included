@@ -41,6 +41,7 @@ defmodule KubeServices.RootResourceGeneratorTest do
   end
 
   describe "RootResourceGenerator with everything enabled" do
+    @tag :slow
     test "all battery resources are valid" do
       CommonCore.StateSummary.SeedState.seed(:everything)
       |> RootResourceGenerator.materialize()
@@ -51,6 +52,7 @@ defmodule KubeServices.RootResourceGeneratorTest do
   end
 
   describe "RootResourceGenerator a small set of batteries" do
+    @tag :slow
     test "all battery resources are valid" do
       CommonCore.StateSummary.SeedState.seed(:dev)
       |> RootResourceGenerator.materialize()

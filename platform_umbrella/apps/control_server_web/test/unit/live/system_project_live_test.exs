@@ -12,6 +12,7 @@ defmodule ControlServerWeb.SystemProjectLiveTest do
   describe "Index" do
     setup [:create_system_project]
 
+    @tag :slow
     test "lists all system_projects", %{conn: conn, system_project: system_project} do
       {:ok, _index_live, html} = live(conn, ~p"/system_projects")
 
@@ -23,6 +24,7 @@ defmodule ControlServerWeb.SystemProjectLiveTest do
   describe "Show" do
     setup [:create_system_project]
 
+    @tag :slow
     test "displays system_project", %{conn: conn, system_project: system_project} do
       {:ok, _show_live, html} = live(conn, ~p"/system_projects/#{system_project}/show")
 

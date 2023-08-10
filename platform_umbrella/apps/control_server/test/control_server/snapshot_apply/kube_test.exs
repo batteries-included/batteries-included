@@ -146,6 +146,7 @@ defmodule ControlServer.SnapshotApply.KubeTest do
       assert %Ecto.Changeset{} = Kube.change_kube_snapshot(kube_snapshot)
     end
 
+    @tag :slow
     test "get_latest_snapshot_status!/0 returns the latest kube_snapshot status" do
       update_attrs_success = %{status: :ok}
       update_attrs_fail = %{status: :error}

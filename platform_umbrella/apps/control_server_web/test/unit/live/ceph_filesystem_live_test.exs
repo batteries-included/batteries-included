@@ -11,6 +11,7 @@ defmodule ControlServerWeb.CephFilesystemLiveTest do
   describe "Show" do
     setup [:create_ceph_filesystem]
 
+    @tag :slow
     test "displays ceph_filesystem", %{conn: conn, ceph_filesystem: ceph_filesystem} do
       {:ok, _show_live, html} = live(conn, ~p"/ceph/filesystems/#{ceph_filesystem}/show")
 
@@ -31,13 +32,15 @@ defmodule ControlServerWeb.CephFilesystemLiveTest do
       include_erasure_encoded: true
     }
 
+    @tag :slow
     test "Can display an edit page for a filesystem", %{conn: conn, ceph_filesystem: fs} do
       {:ok, _show_live, html} = live(conn, ~p"/ceph/filesystems/#{fs}/edit")
 
       assert html =~ fs.name
     end
 
-    test "updates a filessystem", %{conn: conn, ceph_filesystem: fs} do
+    @tag :slow
+    test "updates a filesystem", %{conn: conn, ceph_filesystem: fs} do
       {:ok, edit_live, _html} = live(conn, ~p"/ceph/filesystems/#{fs}/edit")
 
       assert edit_live
