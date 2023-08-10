@@ -26,7 +26,7 @@ defmodule KubeServices.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(env) when env in [:dev, :test], do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp deps do
@@ -41,7 +41,7 @@ defmodule KubeServices.MixProject do
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_machina, "~> 2.7", only: [:dev, :test]}
+      {:ex_machina, "~> 2.7", only: [:test]}
     ]
   end
 
