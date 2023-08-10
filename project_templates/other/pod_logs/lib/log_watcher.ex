@@ -1,10 +1,10 @@
-defmodule PodLogs.Worker do
+defmodule PodLogs.LogWatcher do
   use GenServer
 
   require Logger
 
   defmodule State do
-    defstruct namespace: nil, name: nil
+    defstruct namespace: nil, name: nil, connection: nil
   end
 
   def start_link(args) do
@@ -16,6 +16,7 @@ defmodule PodLogs.Worker do
     # These are the required arguments that should be passed in as keyword lists.
     namespace = Keyword.fetch!(args, :namespace)
     name = Keyword.fetch!(args, :name)
+    connection = Keyword.fetch!(args, :connection)
 
     Process.send_after(self(), :start_connect, 50)
 
@@ -23,16 +24,19 @@ defmodule PodLogs.Worker do
     # to allow for a lazy connection inside of `handle_info(:start_connect, ctx)`
     state = %State{
       namespace: namespace,
-      name: name
+      name: name,
+      connection: connection
     }
 
     {:ok, state}
   end
 
   @impl GenServer
-  def handle_info(:start_connect, %State{namespace: namespace, name: name} = state) do
+  def handle_info(
+        :start_connect,
+        %State{namespace: namespace, name: name, connection: conn} = state
+      ) do
     api_version = "v1"
-    {:ok, conn} = K8s.Conn.from_file("~/.kube/config", insecure_skip_tls_verify: true)
 
     {:ok, _} =
       K8s.Client.connect(
@@ -54,8 +58,8 @@ defmodule PodLogs.Worker do
   end
 
   @impl GenServer
-  def handle_info({:stdout, data}, ctx) do
-    Logger.info(data)
+  def handle_info({:stdout, _data}, ctx) do
+    Logger.info("Log recieved")
     {:noreply, ctx}
   end
 
