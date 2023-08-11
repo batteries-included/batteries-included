@@ -16,11 +16,10 @@ defmodule KubeServices.Batteries.InstalledWatcher do
   @dynamic_supervisor KubeServices.Batteries.DynamicSupervisor
   @registry KubeServices.Batteries.Registry
   def start_link(opts \\ []) do
-    # you may want to register your server with `name: __MODULE__`
-    # as a third argument to `start_link`
     GenServer.start_link(__MODULE__, opts)
   end
 
+  @impl GenServer
   def init(_args) do
     :ok = Database.subscribe(:system_battery)
 
@@ -30,6 +29,8 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     {:ok, :initial_state}
   end
 
+  @impl GenServer
+  # handle starting all installed system batteries
   def handle_info({:multi, %{installed: bat_map} = _install_result}, state) do
     Enum.each(bat_map, fn {_type, system_battery} ->
       start_battery(system_battery)
@@ -38,12 +39,15 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     {:noreply, state}
   end
 
+  @impl GenServer
+  # handle a deleted battery
   def handle_info({:delete, deleted_battery}, state) do
     Logger.debug("Got delete message, #{inspect(deleted_battery)}")
     :ok = stop_battery(deleted_battery)
     {:noreply, state}
   end
 
+  @impl GenServer
   def handle_info(_msg, state) do
     {:noreply, state}
   end
@@ -86,7 +90,7 @@ defmodule KubeServices.Batteries.InstalledWatcher do
   defp start_process({nil = _process_module, _battery}), do: {:ok, nil}
 
   defp start_process({process_module, battery}) do
-    Logger.info("New batery #{battery.id} with proccess #{process_module} tree to install.")
+    Logger.info("New battery #{battery.id} with proccess #{process_module} tree to install.")
 
     DynamicSupervisor.start_child(@dynamic_supervisor, {process_module, [battery: battery]})
   end

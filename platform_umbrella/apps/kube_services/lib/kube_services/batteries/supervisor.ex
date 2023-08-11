@@ -1,6 +1,7 @@
 defmodule KubeServices.Batteries.Supervisor do
   @doc """
-  This is a macro to create a supervisor that will run for each battery with the correct child spect to run on the dynamic supervisor and not conflict.
+  This is a macro to create a supervisor that will run for each battery with the correct child
+  spec to run on the dynamic supervisor and not conflict.
   """
   defmacro __using__(_opts) do
     quote do

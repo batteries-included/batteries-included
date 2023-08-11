@@ -1,4 +1,7 @@
 defmodule KubeServices.Keycloak.Wrangler do
+  @moduledoc """
+  ???
+  """
   use GenServer
   use TypedStruct
 
@@ -15,6 +18,7 @@ defmodule KubeServices.Keycloak.Wrangler do
     GenServer.start_link(__MODULE__, [opts])
   end
 
+  @impl GenServer
   def init(_args) do
     :ok = EventCenter.SystemStateSummary.subscribe()
 
@@ -28,6 +32,7 @@ defmodule KubeServices.Keycloak.Wrangler do
     {:ok, %State{client_pid: pid}}
   end
 
+  @impl GenServer
   def handle_info(
         %CommonCore.StateSummary{} = summary,
         %State{client_pid: pid} = state

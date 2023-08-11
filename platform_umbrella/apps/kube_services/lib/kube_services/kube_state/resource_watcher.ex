@@ -6,7 +6,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   It does this by:
   - listing all existing resources
   - Adding those to the table
-  - Then starting a watch a
+  - Then starting a watch on the resource type
   - handling every event after that
 
   One single lazy connection to kube is used.
@@ -59,6 +59,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     end
   end
 
+  # do the initial sync of the resource type and add found resources to state
   defp fetch_initial(%{resource_type: resource_type, table_name: table_name} = state, conn) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
 
@@ -86,6 +87,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     state
   end
 
+  # set up watch on resource type
   defp watch(%{resource_type: resource_type, table_name: table_name} = state, conn) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
     op = K8s.Client.watch(api_version, kind, namespace: :all)
@@ -103,6 +105,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
         :ok
 
       _ ->
+        # TODO(jdt): hoist this out of the watch fn and consolidate delay + jitter handling
         watch_delay = Map.get_lazy(state, :watch_delay, fn -> 500 + Enum.random(1..1000) end)
         {:delay, Process.send_after(self(), :start_watch, watch_delay)}
     end
@@ -129,6 +132,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     |> Map.put_new("kind", kind)
   end
 
+  # memoize connection fn
   defp connection(%{conn: conn} = _state), do: conn
   defp connection(%{connection_func: connection_func} = _state), do: connection_func.()
 end

@@ -43,15 +43,20 @@ defmodule KubeServices.ResourceDeleter do
     {:ok, %{conn: conn}}
   end
 
+  @doc """
+  Delete a K8s resource.
+  """
   @spec delete(map) :: {:ok, map() | reference()} | {:error, any()}
   def delete(resource) do
-    Logger.debug("delete res")
     GenServer.call(@me, {:delete, resource})
   end
 
+  @doc """
+  Undo the deletion of a K8s resource.
+  """
   @spec undelete(Ecto.UUID.t()) :: any
-  def undelete(deleted_resourcce_id) do
-    GenServer.call(@me, {:undelete, deleted_resourcce_id})
+  def undelete(deleted_resource_id) do
+    GenServer.call(@me, {:undelete, deleted_resource_id})
   end
 
   @impl GenServer
@@ -133,7 +138,8 @@ defmodule KubeServices.ResourceDeleter do
     %{
       api_version: FieldAccessors.api_version(resource),
       kind: FieldAccessors.kind(resource),
-      name: FieldAccessors.name(resource)
+      name: FieldAccessors.name(resource),
+      namespace: FieldAccessors.namespace(resource)
     }
   end
 end
