@@ -51,6 +51,22 @@ defmodule ControlServerWeb.TimelineDisplay do
     """
   end
 
+  def timeline_item(
+        %{payload: %Kube{action: :update, type: :pod, computed_status: :ready}} = assigns
+      ) do
+    ~H"""
+    <.timeline_item
+      timestamp={display_when(@timestamp)}
+      index={@index}
+      title="Kubernetes Resource Ready"
+    >
+      A <%= human_name(@payload.type) %> named
+      <.a navigate={kube_link(@payload)} variant="styled"><%= @payload.name %></.a>
+      in the <%= @payload.namespace %> namespace became Ready.
+    </.timeline_item>
+    """
+  end
+
   def timeline_item(%{payload: %Kube{action: :delete}} = assigns) do
     ~H"""
     <.timeline_item
