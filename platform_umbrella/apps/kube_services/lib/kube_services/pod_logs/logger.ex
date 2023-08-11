@@ -1,10 +1,13 @@
 defmodule KubeServices.PodLogs.Logger do
+  @moduledoc """
+  Handles the actual processing of log lines.
+
+  Currently, just repeats them using `Logger.warning/2`
+  """
   use GenServer
   require Logger
 
   def start_link(_init_args \\ []) do
-    # you may want to register your server with `name: __MODULE__`
-    # as a third argument to `start_link`
     GenServer.start_link(__MODULE__, [])
   end
 

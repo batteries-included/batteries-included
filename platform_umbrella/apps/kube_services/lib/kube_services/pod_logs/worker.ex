@@ -1,4 +1,9 @@
 defmodule KubeServices.PodLogs.Worker do
+  @moduledoc """
+  Handles K8s pod logs.
+
+  Connects to pod/logs endpoint and sends stdout log lines to the target pid.
+  """
   use TypedStruct
   use GenServer
 
@@ -30,7 +35,7 @@ defmodule KubeServices.PodLogs.Worker do
     Process.send_after(self(), :start_connect, 50)
 
     # Create the inital state with conn being nil explictly
-    # to allow for a lazy connection inside of `handle_info(:start_connect, ctx)`
+    # to allow for a lazy connection inside of `handle_info(:start_connect, state)`
     state = %State{
       opts: get_args,
       connection_func: connection_func,
@@ -58,7 +63,7 @@ defmodule KubeServices.PodLogs.Worker do
     # logs of a pod. Since we've configured `stream_to`
     # `K8s` will `&send/2` that log line to this process.
     #
-    # We can then receive each log line in `handle_info({:stdout, data}, ctx)`
+    # We can then receive each log line in `handle_info({:stdout, data}, state)`
     # where we do what we want with it.
     #
     # For now that's forward clean the line up and send it on.
@@ -87,34 +92,34 @@ defmodule KubeServices.PodLogs.Worker do
   end
 
   @impl GenServer
-  def handle_info({:stdout, _}, %State{target: nil} = ctx) do
+  def handle_info({:stdout, _}, %State{target: nil} = state) do
     # If there's no target
     # Don't to anything
-    {:noreply, ctx}
+    {:noreply, state}
   end
 
   @impl GenServer
-  def handle_info({:stdout, data}, %State{target: pid} = ctx) do
+  def handle_info({:stdout, data}, %State{target: pid} = state) do
     # This is a single line from the stdout logs
     # Clean them up then send them on.
     message = {:pod_log, String.trim(data)}
     send(pid, message)
-    {:noreply, ctx}
+    {:noreply, state}
   end
 
   @impl GenServer
-  def handle_info({:close, _reason}, ctx) do
+  def handle_info({:close, _reason}, state) do
     # This means that the steam stopped
     # For now we just ignore this and
     # assume that the pod was deleted.
     #
     # We might want to :stop
-    {:noreply, ctx}
+    {:noreply, state}
   end
 
   @impl GenServer
-  def handle_info(_other_msg, ctx) do
-    {:noreply, ctx}
+  def handle_info(_other_msg, state) do
+    {:noreply, state}
   end
 
   @impl GenServer
@@ -122,6 +127,8 @@ defmodule KubeServices.PodLogs.Worker do
     {:stop, :normal, state}
   end
 
+  # memoize connection
+  # TODO(jdt): maybe pull this out into a separate module as it's duplicated a few times
   def connection(%State{conn: conn} = _state) when not is_nil(conn), do: conn
   def connection(%State{connection_func: connection_func} = _state), do: connection_func.()
 end

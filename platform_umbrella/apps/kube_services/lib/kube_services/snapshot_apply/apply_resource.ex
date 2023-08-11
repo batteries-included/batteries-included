@@ -1,4 +1,8 @@
 defmodule KubeServices.SnapshotApply.ApplyResource do
+  @moduledoc """
+  Handles apply K8s resources.
+  """
+
   # Get or create single matches on lots of things that could mean 404.
   # These matches are more comprehensive than the typespec on K8s.
   # Could be that old versions had different types, or it could be
@@ -22,12 +26,20 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
       field :last_result, any()
     end
 
-    def needs_apply(%ResourceState{} = resource_state, new_resource) do
+    @doc """
+    Determines if a resource needs to be applied.
+    """
+    @spec needs_apply?(ResourceState.t(), map()) :: boolean()
+    def needs_apply?(%ResourceState{} = resource_state, new_resource) do
       # If the last try was an error then we always try and sync.
       # otherwise if there's been something that changed in the database.
       !ok?(resource_state) || Hashing.different?(resource(resource_state), new_resource)
     end
 
+    @doc """
+    Determine if a resource is ok.
+    """
+    @spec ok?(ResourceState.t()) :: boolean()
     def ok?(%ResourceState{last_result: last_result}), do: result_ok?(last_result)
 
     defp result_ok?(:ok), do: true
@@ -38,14 +50,26 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
     defp resource(%ResourceState{resource: res}), do: res
   end
 
+  @doc """
+  Apply a k8s resource if needed.
+  """
+  @spec apply(K8s.Conn.t(), map()) :: ResourceState.t()
   def apply(connection, resource) do
     apply_result = maybe_apply(connection, resource)
     %ResourceState{last_result: apply_result, resource: resource}
   end
 
-  def needs_apply(%ResourceState{} = resource_state, new_resource),
-    do: ResourceState.needs_apply(resource_state, new_resource)
+  @doc """
+  Determine if a resource needs to be updated / applied.
+  """
+  @spec needs_apply?(ResourceState.t(), map()) :: boolean()
+  def needs_apply?(%ResourceState{} = resource_state, new_resource),
+    do: ResourceState.needs_apply?(resource_state, new_resource)
 
+  @doc """
+  Mark a resource as being successfully applied and not in need of an apply.
+  """
+  @spec verify(K8s.Conn.t(), map()) :: ResourceState.t()
   def verify(_connection, new_resource) do
     %ResourceState{last_result: :ok, resource: new_resource}
   end

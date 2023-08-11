@@ -62,7 +62,7 @@ defmodule KubeServices.SnapshotApply.Worker do
 
   defp do_start do
     # Create the new umbrella snapshot.
-    # If that works then schedule a cast immediately to
+    # If that works then schedule a cast immediately to perform snapshot
     case ControlServer.SnapshotApply.create_umbrella_snapshot(%{}) do
       {:ok, umbrella_snapshot} ->
         GenServer.cast(self(), {:perform, umbrella_snapshot})

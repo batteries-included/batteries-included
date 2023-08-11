@@ -1,4 +1,7 @@
 defmodule KubeServices.PodLogs.Run do
+  @moduledoc """
+  Starts logging pod logs for pg-control-0??
+  """
   def hello do
     {:ok, logger_pid} =
       KubeServices.PodLogs.Logger.start_link()

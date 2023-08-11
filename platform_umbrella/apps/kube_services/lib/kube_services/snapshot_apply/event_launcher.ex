@@ -1,4 +1,9 @@
 defmodule KubeServices.SnapshotApply.EventLauncher do
+  @moduledoc """
+  Handles starting `KubeServices.SnapshotApply.Worker`
+
+  Only starts the worker if an appropriate resource has been created in the DB.
+  """
   use GenServer
   use TypedStruct
 
@@ -16,6 +21,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
     GenServer.start_link(__MODULE__, opts)
   end
 
+  @impl GenServer
   def init(opts) do
     Enum.each(
       [:jupyter_notebook, :knative_service, :postgres_cluster, :redis_cluster],
@@ -25,16 +31,19 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
     {:ok, struct!(State, opts)}
   end
 
+  @impl GenServer
   def handle_info({_action, _object}, %State{timer_reference: ref} = state) do
     Logger.debug("Database event received, scheduling creation", state: state)
     {:noreply, %State{state | timer_reference: schedule_start(ref)}}
   end
 
+  @impl GenServer
   def handle_info(:do_start_creation, state) do
     _ = Worker.start()
     {:noreply, %State{state | timer_reference: nil}}
   end
 
+  # handle scheduling start without overlapping
   @spec schedule_start(reference() | nil) :: reference()
   defp schedule_start(nil = _current_reference),
     do: Process.send_after(self(), :do_start_creation, @delay)

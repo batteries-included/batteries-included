@@ -1,4 +1,7 @@
 defmodule KubeServices.KubeState.Runner do
+  @moduledoc """
+  Responsible for mediating state storage.
+  """
   use GenServer
 
   import K8s.Resource
@@ -18,7 +21,10 @@ defmodule KubeServices.KubeState.Runner do
     {:ok, {ets_table}}
   end
 
-  @spec get(atom() | :ets.tid(), atom(), String.t(), String.t()) :: {:ok, map()} | :missing
+  @doc """
+  Get the stored state of a resource.
+  """
+  @spec get(:ets.table(), atom(), String.t(), String.t()) :: {:ok, map()} | :missing
   def get(table_name, resource_type, namespace, name) do
     case :ets.lookup(table_name, {resource_type, namespace, name}) do
       [{_key, resource}] -> {:ok, resource}
@@ -26,14 +32,20 @@ defmodule KubeServices.KubeState.Runner do
     end
   end
 
-  @spec get_all(atom() | :ets.tid(), atom()) :: list()
+  @doc """
+  Get the stored state of all resources of type.
+  """
+  @spec get_all(:ets.table(), atom()) :: list()
   def get_all(table_name, resource_type) do
     table_name
     |> :ets.match({{resource_type, :_, :_}, :"$1"})
     |> Enum.map(fn [resource] -> resource end)
   end
 
-  @spec snapshot(atom() | :ets.tid()) :: map()
+  @doc """
+  Get the stored state of all resources.
+  """
+  @spec snapshot(:ets.table()) :: map()
   def snapshot(table_name) do
     table_name
     |> :ets.tab2list()
@@ -42,14 +54,26 @@ defmodule KubeServices.KubeState.Runner do
     end)
   end
 
+  @doc """
+  Add a resource.
+  """
+  @spec add(:ets.table(), map(), list()) :: term()
   def add(table_name, resource, opts \\ []) do
     GenServer.call(table_name, {:add, resource, opts})
   end
 
+  @doc """
+  Delete a resource.
+  """
+  @spec delete(:ets.table(), map(), list()) :: term()
   def delete(table_name, resource, opts \\ []) do
     GenServer.call(table_name, {:delete, resource, opts})
   end
 
+  @doc """
+  Update a resource.
+  """
+  @spec update(:ets.table(), map(), list()) :: term()
   def update(table_name, resource, opts \\ []) do
     GenServer.call(table_name, {:update, resource, opts})
   end
@@ -81,6 +105,9 @@ defmodule KubeServices.KubeState.Runner do
     {:noreply, state}
   end
 
+  @doc """
+  Generate the key from the given resource.
+  """
   def key(resource) do
     {ApiVersionKind.resource_type(resource), namespace(resource), name(resource)}
   end
