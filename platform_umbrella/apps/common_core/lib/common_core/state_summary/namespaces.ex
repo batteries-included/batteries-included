@@ -18,7 +18,7 @@ defmodule CommonCore.StateSummary.Namespaces do
 
   def istio_namespace(%StateSummary{} = state) do
     state
-    |> get_battery(:istio_base)
+    |> get_battery(:istio)
     |> get_config_value(:namespace, Defaults.Namespaces.istio())
   end
 

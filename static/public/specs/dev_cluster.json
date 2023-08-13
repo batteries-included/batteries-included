@@ -62,8 +62,8 @@
       }
     ],
     "notebooks": [],
-    "ip_address_pools": [],
     "knative_services": [],
+    "ip_address_pools": [],
     "postgres_clusters": [
       {
         "id": null,
@@ -790,7 +790,7 @@
       "kind": "Service",
       "metadata": {
         "annotations": {
-          "battery/hash": "RZHZ3O36NHBBMDBODYFN2KU5REHYLNS2VX7BMQK76YCKSY2KNTZA===="
+          "battery/hash": "7YWF7DADVEVZV2GQV32MBALEM65SSWFXXAC2ETVUXB2LOR7R7I2Q===="
         },
         "labels": {
           "app": "istio-ingress",
@@ -802,7 +802,7 @@
           "istio": "ingress"
         },
         "name": "istio-ingress",
-        "namespace": "battery-core"
+        "namespace": "battery-istio"
       },
       "spec": {
         "ports": [
@@ -2867,7 +2867,7 @@
       "kind": "HorizontalPodAutoscaler",
       "metadata": {
         "annotations": {
-          "battery/hash": "H5TNWD5RLJMQFHXWZRB4PWRNTMMKOW5KN56NW345RBKHVVPQO5IA===="
+          "battery/hash": "BM4NR27JRI4YOL4AAJXQQQ3DRGNZR3C5V3HKFUGJUSBKDVOTQI6A===="
         },
         "labels": {
           "app": "istio-ingress",
@@ -2879,7 +2879,7 @@
           "istio": "ingress"
         },
         "name": "istio-ingress",
-        "namespace": "battery-core"
+        "namespace": "battery-istio"
       },
       "spec": {
         "maxReplicas": 5,
@@ -3518,7 +3518,7 @@
       "kind": "Deployment",
       "metadata": {
         "annotations": {
-          "battery/hash": "BO5OEJXVNGOXXMER5UDAEGHDSKNS7NECRXKKLUDZIFZGYOP7Z7EA===="
+          "battery/hash": "DPXKS5INYOUCATFKE4B4PHKDBAG6QJEWQBAYRSARA3H3VEQW4BBQ===="
         },
         "labels": {
           "app": "istio-ingress",
@@ -3530,7 +3530,7 @@
           "istio": "ingress"
         },
         "name": "istio-ingress",
-        "namespace": "battery-core"
+        "namespace": "battery-istio"
       },
       "spec": {
         "selector": {
@@ -3712,7 +3712,7 @@
       "kind": "RoleBinding",
       "metadata": {
         "annotations": {
-          "battery/hash": "UYUVQYOHT6BXQBISEHBP352NAXKD2V7P444MFEON2RNZ36Z2ZEMQ===="
+          "battery/hash": "RU6TYN2BQSTYEWXJLG7454G646CLFSGF7ZVNOEET6ZQ6NMSSR5XQ===="
         },
         "labels": {
           "app": "istio-ingress",
@@ -3724,7 +3724,7 @@
           "istio": "ingress"
         },
         "name": "istio-ingress",
-        "namespace": "battery-core"
+        "namespace": "battery-istio"
       },
       "roleRef": {
         "apiGroup": "rbac.authorization.k8s.io",
@@ -3735,7 +3735,7 @@
         {
           "kind": "ServiceAccount",
           "name": "istio-ingress",
-          "namespace": "battery-core"
+          "namespace": "battery-istio"
         }
       ]
     },
@@ -8134,7 +8134,7 @@
       "kind": "Role",
       "metadata": {
         "annotations": {
-          "battery/hash": "N7DWASYZFVZOAMGEKVGBA75Y75DPLEZ7X7GUE3FILQ3FYC4SXGRA===="
+          "battery/hash": "XI4Y4NOVQIK7SUUFVB7WNLX5N2MVH6GPCGDXEAH546Q4OCSA5UAQ===="
         },
         "labels": {
           "app": "istio-ingress",
@@ -8146,7 +8146,7 @@
           "istio": "ingress"
         },
         "name": "istio-ingress",
-        "namespace": "battery-core"
+        "namespace": "battery-istio"
       },
       "rules": [
         {
@@ -11866,7 +11866,7 @@
       "kind": "ServiceAccount",
       "metadata": {
         "annotations": {
-          "battery/hash": "CWMJWO6SSPFHCJTSN7TI7DMEX2J7D2UGDYJ2NO7OTU32GCE7LLEA===="
+          "battery/hash": "URFPJY5ZWSFXGYMQ4CDBMRZ25JZ3G5ZBTT3EO5LACLYGYWDQLQ4A===="
         },
         "labels": {
           "app": "istio-ingress",
@@ -11878,7 +11878,7 @@
           "istio": "ingress"
         },
         "name": "istio-ingress",
-        "namespace": "battery-core"
+        "namespace": "battery-istio"
       }
     },
     "/istio/crd/peerauthentications_security_istio_io": {
