@@ -5,6 +5,11 @@ tags: ['phoenix', 'js', 'javascript', 'elixir', 'tailwind', 'css']
 draft: false
 ---
 
+## Editor's Note
+
+> Later versions of Phoenix do not require this. The pages is kept for
+> historical reasons only. Please upgrade to a newer version.
+
 Phoenix is a fantastic framework that we use and love at Batteries Included. We
 also really love tailwind CSS. So using both with the latest up-to-date software
 is essential to us. Below is a quick write-up on how we've modified the default
