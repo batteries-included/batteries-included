@@ -1,12 +1,12 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
-import Nav from "../../components/Nav.astro";
-import FormattedDate from "../../components/FormattedDate.astro";
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
 
 // 1. Generate a new path for every collection entry
 export async function getStaticPaths() {
-  const postEntries = await getCollection("posts");
+  const postEntries = await getCollection('posts');
   return postEntries.map((entry) => ({
     params: { slug: entry.slug },
     props: { entry },
@@ -30,7 +30,8 @@ const { Content } = await entry.render();
         </div>
       </dl>
 
-      <h1 class="text-pink-500 text-5xl font-extrabold leading-none tracking-tight">
+      <h1
+        class="text-pink-500 text-5xl font-extrabold leading-none tracking-tight">
         {entry.data.title}
       </h1>
     </header>

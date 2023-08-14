@@ -1,11 +1,11 @@
 ---
-import { getCollection } from "astro:content";
-import FormattedDate from "../../components/FormattedDate.astro";
-import Nav from "../../components/Nav.astro";
-import Layout from "../../layouts/Layout.astro";
-const posts = (await getCollection("posts")).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Nav from '../../components/Nav.astro';
+import Layout from '../../layouts/Layout.astro';
+const posts = (await getCollection('posts'))
+  .filter((p) => p.data.draft == false)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <Layout title="Posts">
