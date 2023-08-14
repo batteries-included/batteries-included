@@ -2,11 +2,21 @@ defmodule ControlServer.ContentAddressable.ContentAddressableResource do
   use TypedEctoSchema
   import Ecto.Changeset
 
+  @derive {
+    Flop.Schema,
+    filterable: [],
+    sortable: [:inserted_at, :id],
+    default_limit: 12,
+    default_order: %{
+      order_by: [:inserted_at, :id],
+      order_directions: [:desc, :desc]
+    }
+  }
+
   @timestamps_opts [type: :utc_datetime_usec]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-
   typed_schema "content_addressable_resources" do
     field :hash, :string
     field :value, :map, redact: true

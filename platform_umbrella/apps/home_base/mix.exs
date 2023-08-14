@@ -43,9 +43,6 @@ defmodule HomeBase.MixProject do
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
 
-      # Filtering
-      {:paginator, "~> 1.2.0"},
-
       # History
       {:ex_audit, "~> 0.10.0"},
 

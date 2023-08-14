@@ -15,7 +15,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   end
 
   def assign_snapshots(socket) do
-    assign(socket, :snapshots, Kube.paginated_kube_snapshots([]))
+    assign(socket, :snapshots, Kube.paginated_kube_snapshots())
   end
 
   @impl Phoenix.LiveView
@@ -33,7 +33,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   def render(assigns) do
     ~H"""
     <.h1>Deploys</.h1>
-    <.kube_snapshots_table kube_snapshots={@snapshots.entries} />
+    <.kube_snapshots_table kube_snapshots={elem(@snapshots, 0)} />
 
     <.h2 variant="fancy">Actions</.h2>
     <.card>

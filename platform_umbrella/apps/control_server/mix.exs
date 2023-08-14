@@ -48,7 +48,7 @@ defmodule ControlServer.MixProject do
       {:postgrex, "~> 0.17.2"},
 
       # Filtering
-      {:paginator, "~> 1.2.0"},
+      {:flop, "~> 0.22.0"},
 
       # History
       {:ex_audit, "~> 0.10.0"},

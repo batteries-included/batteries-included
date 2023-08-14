@@ -36,20 +36,11 @@ defmodule ControlServer.SnapshotApply.Kube do
     Repo.all(KubeSnapshot)
   end
 
-  def paginated_kube_snapshots(opts \\ []) do
-    default_opts = [
-      include_total_count: true,
-      cursor_fields: [{:inserted_at, :desc}, {:id, :desc}],
-      limit: 12
-    ]
-
-    total_opts = Keyword.merge(default_opts, opts)
-
-    Repo.paginate(
-      from(ks in KubeSnapshot,
-        order_by: [desc: ks.inserted_at, desc: ks.id]
-      ),
-      total_opts
+  def paginated_kube_snapshots(opts \\ %{}) do
+    Repo.Flop.validate_and_run!(
+      from(ks in KubeSnapshot),
+      opts,
+      for: KubeSnapshot
     )
   end
 

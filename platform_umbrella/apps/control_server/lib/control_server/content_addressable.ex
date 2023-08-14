@@ -41,20 +41,11 @@ defmodule ControlServer.ContentAddressable do
     )
   end
 
-  def paginated_content_addressable_resources(opts \\ []) do
-    default_opts = [
-      include_total_count: true,
-      cursor_fields: [{:inserted_at, :desc}, {:id, :desc}],
-      limit: 12
-    ]
-
-    total_opts = Keyword.merge(default_opts, opts)
-
-    Repo.paginate(
-      from(car in ContentAddressableResource,
-        order_by: [desc: car.inserted_at, desc: car.id]
-      ),
-      total_opts
+  def paginated_content_addressable_resources(opts \\ %{}) do
+    Repo.Flop.validate_and_run!(
+      from(car in ContentAddressableResource),
+      opts,
+      for: ContentAddressableResource
     )
   end
 end

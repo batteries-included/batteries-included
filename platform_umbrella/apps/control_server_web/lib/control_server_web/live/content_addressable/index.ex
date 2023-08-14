@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
       </.stat>
     </.stats>
 
-    <.content_addressable_resources_table resources={@resources.entries} />
+    <.content_addressable_resources_table resources={elem(@resources, 0)} />
     """
   end
 

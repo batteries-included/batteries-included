@@ -3,6 +3,9 @@ defmodule ControlServer.Repo do
     otp_app: :control_server,
     adapter: Ecto.Adapters.Postgres
 
-  use Paginator
   use ExAudit.Repo
+end
+
+defmodule ControlServer.Repo.Flop do
+  use Flop, repo: ControlServer.Repo
 end
