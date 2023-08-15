@@ -13,6 +13,12 @@ defmodule KubeServices.Batteries.InstalledWatcher do
 
   require Logger
 
+  @default_battery_type_mapping [
+    sso: KubeServices.Batteries.SSO,
+    battery_core: KubeServices.Batteries.BatteryCore,
+    timeline: KubeServices.Batteries.Timeline
+  ]
+
   @dynamic_supervisor KubeServices.Batteries.DynamicSupervisor
   @registry KubeServices.Batteries.Registry
   def start_link(opts \\ []) do
@@ -24,18 +30,15 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     :ok = Database.subscribe(:system_battery)
 
     Logger.debug("Started watching for new batteries. Making sure already installed are running")
-    batteries = ControlServer.Batteries.list_system_batteries()
-    Enum.each(batteries, &start_battery/1)
+    _ = start_batteries(ControlServer.Batteries.list_system_batteries())
     {:ok, :initial_state}
   end
 
   @impl GenServer
-  # handle starting all installed system batteries
+  # handle starting multiple installed system batteries from database subscription
   def handle_info({:multi, %{installed: bat_map} = _install_result}, state) do
-    Enum.each(bat_map, fn {_type, system_battery} ->
-      start_battery(system_battery)
-    end)
-
+    batteries = Enum.map(bat_map, fn {_type, battery} -> battery end)
+    _ = start_batteries(batteries)
     {:noreply, state}
   end
 
@@ -52,13 +55,30 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     {:noreply, state}
   end
 
-  defp start_battery(%{} = battery) do
-    {:ok, _child} =
-      battery
-      |> process_type()
-      |> start_process()
+  @spec start_batteries([CommonCore.Batteries.SystemBattery.t()]) :: [
+          DynamicSupervisor.on_start_child()
+        ]
+  defp start_batteries(batteries) do
+    Enum.map(batteries, &start_battery/1)
   end
 
+  @spec start_battery(CommonCore.Batteries.SystemBattery.t()) ::
+          DynamicSupervisor.on_start_child()
+  defp start_battery(%{type: type} = battery) do
+    mod = Keyword.get(@default_battery_type_mapping, type)
+
+    case mod do
+      nil ->
+        Logger.debug("Not starting anything for battery #{battery.id} with type #{type}")
+        :ignore
+
+      _ ->
+        Logger.info("New battery #{battery.id} with process #{mod} tree to install.")
+        DynamicSupervisor.start_child(@dynamic_supervisor, {mod, [battery: battery]})
+    end
+  end
+
+  @spec stop_battery(CommonCore.Batteries.SystemBattery.t()) :: :ok | {:error, :not_found}
   defp stop_battery(%{id: id} = _battery) do
     case Registry.lookup(@registry, id) do
       [{pid, _}] ->
@@ -68,30 +88,5 @@ defmodule KubeServices.Batteries.InstalledWatcher do
       [] ->
         :ok
     end
-  end
-
-  # For each battery type that needs some process tree (one genserver, to a whole process tree, etc)
-  # needs to implement this function. Specifying the base module to use when determing the
-  # `child_spec` to run
-  defp process_type(%{type: :sso} = battery), do: {KubeServices.Batteries.SSO, battery}
-
-  defp process_type(%{type: :battery_core} = battery),
-    do: {KubeServices.Batteries.BatteryCore, battery}
-
-  defp process_type(%{type: :timeline} = battery),
-    do: {KubeServices.Batteries.Timeline, battery}
-
-  defp process_type(%{} = battery) do
-    Logger.debug("Not starting anything for battery #{battery.id} with type #{battery.type}")
-
-    {nil, battery}
-  end
-
-  defp start_process({nil = _process_module, _battery}), do: {:ok, nil}
-
-  defp start_process({process_module, battery}) do
-    Logger.info("New battery #{battery.id} with proccess #{process_module} tree to install.")
-
-    DynamicSupervisor.start_child(@dynamic_supervisor, {process_module, [battery: battery]})
   end
 end

@@ -18,6 +18,7 @@ defmodule ControlServer.Batteries do
       [%SystemBattery{}, ...]
 
   """
+  @spec list_system_batteries() :: [SystemBattery.t()]
   def list_system_batteries do
     Repo.all(SystemBattery)
   end
