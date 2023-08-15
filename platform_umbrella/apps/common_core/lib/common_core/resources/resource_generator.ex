@@ -7,6 +7,13 @@ defmodule CommonCore.Resources.ResourceGenerator do
 
   require Logger
 
+  defmodule Materialize do
+    @callback materialize(
+                battery :: CommonCore.Batteries.SystemBattery.t(),
+                state :: CommonCore.StateSummary.t()
+              ) :: map()
+  end
+
   defmacro __using__(opts \\ []) do
     app_name = Keyword.get(opts, :app_name, nil)
 
@@ -21,6 +28,7 @@ defmodule CommonCore.Resources.ResourceGenerator do
       Module.register_attribute(__MODULE__, :resource_generator_opts, [])
 
       @resource_generator_opts unquote(opts)
+      @behaviour CommonCore.Resources.ResourceGenerator.Materialize
 
       @before_compile unquote(__MODULE__)
     end
@@ -367,6 +375,7 @@ defmodule CommonCore.Resources.ResourceGenerator do
     opts = Module.get_attribute(module, :resource_generator_opts, [])
 
     quote do
+      @impl CommonCore.Resources.ResourceGenerator.Materialize
       def materialize(battery, state) do
         CommonCore.Resources.ResourceGenerator.perform_materialize(
           __MODULE__,

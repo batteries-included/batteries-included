@@ -49,38 +49,38 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   require Logger
 
   @default_generator_mappings [
-    battery_ca: [&BatteryCA.materialize/2],
-    battery_core: [&BatteryCore.materialize/2, &ControlServerResources.materialize/2],
-    cert_manager: [&CertManager.materialize/2],
-    gitea: [&Gitea.materialize/2],
-    grafana: [&Grafana.materialize/2],
-    harbor: [&Harbor.materialize/2],
-    istio: [&IstioBase.materialize/2, &Istiod.materialize/2, &IstioMetrics.materialize/2],
-    istio_csr: [&IstioCsr.materialize/2],
-    istio_gateway: [&IstioIngress.materialize/2],
-    kiali: [&Kiali.materialize/2],
-    knative_operator: [&KnativeOperator.materialize/2],
-    knative_serving: [&KnativeServing.materialize/2],
-    kube_monitoring: [&KubeMonitoring.materialize/2, &KubeDashboards.materialize/2],
-    kube_state_metrics: [&KubeStateMetrics.materialize/2],
-    loki: [&Loki.materialize/2],
-    metallb: [&MetalLB.materialize/2],
-    node_exporter: [&NodeExporter.materialize/2],
-    notebooks: [&Notebooks.materialize/2],
-    postgres: [&Postgres.materialize/2, &PostgresOperator.materialize/2],
-    promtail: [&Promtail.materialize/2],
-    redis: [&Redis.materialize/2, &RedisOperator.materialize/2],
-    rook: [&Rook.materialize/2, &CephFilesystems.materialize/2, &CephClusters.materialize/2],
-    smtp4dev: [&Smtp4Dev.materialize/2],
-    sso: [&Keycloak.materialize/2],
-    trivy_operator: [&TrivyOperator.materialize/2],
+    battery_ca: [BatteryCA],
+    battery_core: [BatteryCore, ControlServerResources],
+    cert_manager: [CertManager],
+    gitea: [Gitea],
+    grafana: [Grafana],
+    harbor: [Harbor],
+    istio: [IstioBase, Istiod, IstioMetrics],
+    istio_csr: [IstioCsr],
+    istio_gateway: [IstioIngress],
+    kiali: [Kiali],
+    knative_operator: [KnativeOperator],
+    knative_serving: [KnativeServing],
+    kube_monitoring: [KubeMonitoring, KubeDashboards],
+    kube_state_metrics: [KubeStateMetrics],
+    loki: [Loki],
+    metallb: [MetalLB],
+    node_exporter: [NodeExporter],
+    notebooks: [Notebooks],
+    postgres: [Postgres, PostgresOperator],
+    promtail: [Promtail],
+    redis: [Redis, RedisOperator],
+    rook: [Rook, CephFilesystems, CephClusters],
+    smtp4dev: [Smtp4Dev],
+    sso: [Keycloak],
+    trivy_operator: [TrivyOperator],
     timeline: [],
-    trust_manager: [&TrustManager.materialize/2],
+    trust_manager: [TrustManager],
     victoria_metrics: [
-      &VMOperator.materialize/2,
-      &VMCluster.materialize/2,
-      &VMAgent.materialize/2,
-      &VMDashboards.materialize/2
+      VMOperator,
+      VMCluster,
+      VMAgent,
+      VMDashboards
     ]
   ]
 
@@ -104,14 +104,14 @@ defmodule CommonCore.Resources.RootResourceGenerator do
 
   def materialize_system_battery(system_battery, state, generators) do
     generators
-    |> Enum.map(fn gen ->
-      gen.(system_battery, state)
+    |> Enum.map(fn mod ->
+      mod.materialize(system_battery, state)
     end)
     |> Enum.reduce(%{}, &Map.merge/2)
     |> Enum.flat_map(&flatten/1)
     |> Enum.map(fn {key, resource} ->
       {
-        Path.join("/#{Atom.to_string(system_battery.type)}", key),
+        Path.join(["/", Atom.to_string(system_battery.type), key]),
         resource
       }
     end)
