@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Live.SystemBatteryIndex do
       <:col :let={system_battery} label="Group"><%= system_battery.group %></:col>
       <:col :let={system_battery} label="Type"><%= system_battery.type %></:col>
       <:action :let={system_battery}>
-        <.a navigate={~p"/batteries/#{system_battery.id}"} variant="styled">
+        <.a navigate={~p"/system_batteries/#{system_battery.id}"} variant="styled">
           Show
         </.a>
       </:action>
