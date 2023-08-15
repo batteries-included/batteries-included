@@ -3,28 +3,28 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: weekly
+      interval: daily
   - package-ecosystem: npm
     directory: '/static'
     schedule:
-      interval: weekly
+      interval: daily
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/control_server_web/assets'
     schedule:
-      interval: weekly
+      interval: daily
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/home_base_web/assets'
     schedule:
-      interval: weekly
+      interval: daily
   - package-ecosystem: npm
     directory: '/project_templates/web/pastebin'
     schedule:
-      interval: weekly
+      interval: daily
   - package-ecosystem: cargo
     directory: '/cli'
     schedule:
-      interval: weekly
+      interval: daily
   - package-ecosystem: cargo
     directory: '/project_templates/web/pastebin'
     schedule:
-      interval: weekly
+      interval: daily
