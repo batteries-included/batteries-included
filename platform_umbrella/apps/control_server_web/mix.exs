@@ -53,15 +53,15 @@ defmodule ControlServerWeb.MixProject do
       {:kube_services, in_umbrella: true},
       {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4.2"},
-      {:phoenix_html, "~> 3.3.1"},
-      {:phoenix_live_dashboard, "~> 0.8.0"},
+      {:phoenix_html, "3.3.1"},
+      {:phoenix_live_dashboard, "~> 0.8.1"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_view, "~> 0.19.5"},
       {:phoenix_storybook, "~> 0.5.5"},
       {:plug_cowboy, "~> 2.6"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:wallaby, "~> 0.30.1", runtime: false, only: [:test, :integration]},
+      {:wallaby, "~> 0.30.6", runtime: false, only: [:test, :integration]},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:websock_adapter, "~> 0.5.1"}
     ]

@@ -35,7 +35,7 @@ defmodule KubeServices.MixProject do
       {:typed_struct, "~> 0.3.0", runtime: false},
       {:tesla, "~> 1.7.0"},
       {:jason, "~> 1.4.1"},
-      {:k8s, "~> 2.4.0"},
+      {:k8s, "~> 2.4.1"},
       {:phoenix, "~> 1.7.7"},
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},

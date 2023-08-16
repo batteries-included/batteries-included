@@ -32,7 +32,7 @@ defmodule CommonCore.MixProject do
       {:telemetry, "~> 1.1"},
       {:tesla, "~> 1.7.0"},
       {:typed_ecto_schema, "~> 0.4.1"},
-      {:k8s, "~> 2.4.0"},
+      {:k8s, "~> 2.4.1"},
 
       # Yaml
       {:ymlr, "~> 4.1.0"},

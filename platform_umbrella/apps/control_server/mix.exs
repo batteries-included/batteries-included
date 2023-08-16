@@ -54,7 +54,7 @@ defmodule ControlServer.MixProject do
       {:ex_audit, "~> 0.10.0"},
 
       # Kubernetes
-      {:k8s, "~> 2.4.0"},
+      {:k8s, "~> 2.4.1"},
 
       # Yaml
       {:ymlr, "~> 4.1.0"},
