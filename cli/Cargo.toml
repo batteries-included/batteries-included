@@ -28,7 +28,7 @@ reqwest = { version = "0.11.18", default-features = false, features = [
 serde = { version = "1.0.183" }
 serde_json = { version = "1.0.105", default-features = true }
 tempfile = { version = "3.7.1" }
-thiserror = { version = "1.0.46" }
+thiserror = { version = "1.0.47" }
 time = { version = "0.3.24", features = ["serde", "serde-human-readable"] }
 tokio = { version = "1.29.1", features = ["full"] }
 tokio-stream = { version = "0.1.14", features = ["net", "time"] }
