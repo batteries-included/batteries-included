@@ -63,6 +63,7 @@
         nodejs
 
         # Command line tools
+        cachix
         jq
         k9s
         kind
@@ -89,7 +90,7 @@
 
       shellHook = ''
         # go to the top level.
-        pushd $(git rev-parse --show-toplevel || echo ".")
+        pushd $(git rev-parse --show-toplevel || echo ".") &> /dev/null
 
         # this allows mix to work on the local directory
         export MIX_HOME=$PWD/.nix-mix
@@ -101,17 +102,17 @@
         export PATH=$MIX_HOME/bin:$PATH
         export PATH=$HEX_HOME/bin:$PATH
 
-        pushd platform_umbrella
+        pushd platform_umbrella &> /dev/null
         mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3 || true;
         mix local.hex --force --if-missing || true;
-        popd
+        popd &> /dev/null
 
         # This keeps cargo self contained in this dir
         export CARGO_HOME=$PWD/.nix-cargo
         mkdir -p $CARGO_HOME
         export PATH=$CARGO_HOME/bin:$PATH
 
-        popd
+        popd &> /dev/null
       '';
 
 

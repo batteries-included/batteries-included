@@ -128,6 +128,22 @@ shell in the `main` repository. You should see one of two things:
 - Log messages saying that direnv was loaded and it changed a bunch of
   environment variables.
 
+#### Setup `cachix`
+
+We have a binary cache of everything that's build on `master`. You may use this
+cache to speed up local tasks. The `cachix` tool is already installed and
+available via `direnv`.
+
+- [Sign in](https://app.cachix.org) using Github SSO.
+- Create a [personal auth token](https://app.cachix.org/personal-auth-tokens)
+- Use `cachix authtoken` to authenticate. You'll need to be in the main repo.
+  You may paste the token as part of the command or use e.g.
+  `pbpaste | cachix authtoken` to read from stdin.
+- `cachix use batteries-included` to start using the cache. Depending on how you
+  installed `nix`, there may be additional setup required. If that's the case,
+  the command will tell you exactly what to do.
+- Profit!
+
 #### Install VSCode Extension
 
 In order for VSCode to follow along with what nix and direnv think, install the
