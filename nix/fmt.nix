@@ -16,6 +16,7 @@
         programs.terraform.enable = true;
 
         settings = {
+          # NOTE(jdt): could we use gitignore here?
           global.excludes = [
             "./platform_umbrella/_build/*"
             "./platform_umbrella/deps/*"

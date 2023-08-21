@@ -56,8 +56,9 @@ pkgs.stdenv.mkDerivation ({
     # thus a copy to the TEMPDIR is inevitable here
     export MIX_DEPS_PATH="$TEMPDIR/deps"
     cp --no-preserve=mode -R "${mixFodDeps}" "$MIX_DEPS_PATH"
-
-    ls -alR $MIX_DEPS_PATH
+    
+    # for troubleshooting
+    # ls -alR $MIX_DEPS_PATH
   '';
 
   buildPhase = ''
