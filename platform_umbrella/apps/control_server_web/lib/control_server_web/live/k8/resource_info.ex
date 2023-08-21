@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
       ) do
     resource_type = String.to_existing_atom(rt_param)
     subscribe(resource_type)
-    resource = resource(resource_type, namespace, name)
+    resource = resource!(resource_type, namespace, name)
 
     {:ok,
      socket
@@ -163,7 +163,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   def handle_info(_unused, socket) do
     # re-fetch the resources
     resource =
-      resource(socket.assigns.resource_type, socket.assigns.namespace, socket.assigns.name)
+      resource!(socket.assigns.resource_type, socket.assigns.namespace, socket.assigns.name)
 
     subs = subresources(socket.assigns.resource_type, resource)
 
@@ -173,7 +173,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
      |> assign_subresources(subs)}
   end
 
-  defp resource(resource_type, namespace, name) do
+  defp resource!(resource_type, namespace, name) do
     KubeState.get!(resource_type, namespace, name)
   end
 
