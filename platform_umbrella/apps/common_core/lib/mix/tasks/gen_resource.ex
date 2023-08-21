@@ -70,8 +70,7 @@ defmodule Mix.Tasks.Gen.Resource do
       app_name
       |> String.downcase()
       |> String.split(~r/[^\w]/, trim: true)
-      |> Enum.join("_")
-      |> Macro.camelize()
+      |> Enum.map_join(".", &Macro.camelize/1)
 
     string_contents =
       module
