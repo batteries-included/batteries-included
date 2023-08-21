@@ -7,10 +7,11 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   This genserver hosts the the installed batteries
   """
-  alias KubeServices.SystemState.Summarizer
+  use GenServer
+
   alias CommonCore.StateSummary
   alias EventCenter.SystemStateSummary
-  use GenServer
+  alias KubeServices.SystemState.Summarizer
 
   require Logger
 
@@ -46,11 +47,7 @@ defmodule KubeServices.SystemState.SummaryBatteries do
   end
 
   @impl GenServer
-  def handle_call(
-        :installed_batteries,
-        _from,
-        %{summary: %StateSummary{batteries: batteries}} = state
-      ) do
+  def handle_call(:installed_batteries, _from, %{summary: %StateSummary{batteries: batteries}} = state) do
     {:reply, batteries, state}
   end
 

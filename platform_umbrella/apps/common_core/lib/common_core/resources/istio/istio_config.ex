@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.IstioConfig do
+  @moduledoc false
   use TypedStruct
 
   typedstruct module: PortSelector do
@@ -6,6 +7,7 @@ defmodule CommonCore.Resources.IstioConfig do
   end
 
   defmodule StringMatch do
+    @moduledoc false
     typedstruct do
       field :exact, String.t(), enforce: false
       field :prefix, PortSelector.t(), enforce: false
@@ -79,6 +81,7 @@ defmodule CommonCore.Resources.IstioConfig do
   end
 
   defmodule RouteDestination do
+    @moduledoc false
     typedstruct do
       field :destination, Destination.t(), enforce: false
       field :weight, integer(), enforce: false
@@ -86,11 +89,11 @@ defmodule CommonCore.Resources.IstioConfig do
 
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
 
-    def new(port, host),
-      do: %__MODULE__{destination: %Destination{host: host, port: %PortSelector{number: port}}}
+    def new(port, host), do: %__MODULE__{destination: %Destination{host: host, port: %PortSelector{number: port}}}
   end
 
   defmodule HttpRouteDestination do
+    @moduledoc false
     typedstruct do
       field :destination, Destination.t(), enforce: false
       field :weight, integer(), enforce: false
@@ -100,11 +103,11 @@ defmodule CommonCore.Resources.IstioConfig do
     def new(host), do: %__MODULE__{destination: %Destination{host: host}}
     def new(host, nil = _port), do: %__MODULE__{destination: %Destination{host: host}}
 
-    def new(host, port),
-      do: %__MODULE__{destination: %Destination{host: host, port: %PortSelector{number: port}}}
+    def new(host, port), do: %__MODULE__{destination: %Destination{host: host, port: %PortSelector{number: port}}}
   end
 
   defmodule HttpRoute do
+    @moduledoc false
     typedstruct do
       field :name, String.t(), enforce: false
       field :match, list(HttpMatchRequest.t()), enforce: false
@@ -172,6 +175,7 @@ defmodule CommonCore.Resources.IstioConfig do
   end
 
   defmodule L4MatchAttributes do
+    @moduledoc false
     defstruct [:port, :gateways]
 
     def port(port) do
@@ -180,6 +184,7 @@ defmodule CommonCore.Resources.IstioConfig do
   end
 
   defmodule TCPRoute do
+    @moduledoc false
     defstruct match: [], route: []
 
     def port(port, service_port, service_host) do
@@ -191,6 +196,7 @@ defmodule CommonCore.Resources.IstioConfig do
   end
 
   defmodule VirtualService do
+    @moduledoc false
     defstruct hosts: [], gateways: [], http: [], tcp: []
 
     def new(opts \\ []) do

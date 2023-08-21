@@ -1,11 +1,10 @@
 defmodule ControlServerWeb.Live.CephClusterNew do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Rook.CephCluster
-
-  alias ControlServer.Rook
   alias ControlServer.Batteries.Installer
-
+  alias ControlServer.Rook
   alias ControlServerWeb.Live.CephClusterFormComponent
 
   require Logger

@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.CephFilesystemLiveTest do
   use ControlServerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import ControlServer.Factory
+  import Phoenix.LiveViewTest
 
   defp create_ceph_filesystem(_) do
     %{ceph_filesystem: insert(:ceph_filesystem)}

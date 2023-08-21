@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.PostgresClusterTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :id, :string, default: "postgres-cluster-table"

@@ -1,11 +1,12 @@
 # credo:disable-for-this-file
 defmodule KubeServices.Timeline.PodStatusTest do
   use ExUnit.Case, async: true
-  require Logger
 
   import KubeServices.Factory
 
   alias KubeServices.Timeline.PodStatus
+
+  require Logger
 
   setup do
     pid = start_supervised!({PodStatus, [table_name: :test, initial_sync_delay: 0]})
@@ -49,11 +50,14 @@ defmodule KubeServices.Timeline.PodStatusTest do
       upserts = Enum.random(51..100)
       deletes = Enum.random(1..50)
 
-      for _ <- 1..upserts do
-        pod = build(:pod)
-        PodStatus.upsert(pid, pod)
-        pod
-      end
+      for_result =
+        for _ <- 1..upserts do
+          pod = build(:pod)
+          PodStatus.upsert(pid, pod)
+          pod
+        end
+
+      for_result
       |> Enum.take(deletes)
       |> Enum.each(&PodStatus.delete(pid, &1))
 
@@ -87,7 +91,7 @@ defmodule KubeServices.Timeline.PodStatusTest do
 
     test "it handles all permutations of statuses", %{pid: pid, pod: _pod} do
       for {condition, _} <- get_container_status_mapping() ++ [unknown: "Unknown"] do
-        pod = build(:pod) |> with_conditions(build(:conditions, condition: condition))
+        pod = :pod |> build() |> with_conditions(build(:conditions, condition: condition))
         PodStatus.upsert(pod)
         _ = :sys.get_state(pid)
 

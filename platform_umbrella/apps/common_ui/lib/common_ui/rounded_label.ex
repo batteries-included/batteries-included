@@ -1,4 +1,5 @@
 defmodule CommonUI.RoundedLabel do
+  @moduledoc false
   use CommonUI.Component
 
   attr :class, :string, default: ""

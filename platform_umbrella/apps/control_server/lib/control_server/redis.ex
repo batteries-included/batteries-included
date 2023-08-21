@@ -4,12 +4,11 @@ defmodule ControlServer.Redis do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
   alias CommonCore.Redis.FailoverCluster
-  alias EventCenter.Database, as: DatabaseEventCenter
-
+  alias ControlServer.Repo
   alias Ecto.Multi
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
   Returns the list of failover_clusters.

@@ -1,5 +1,7 @@
 defmodule CommonCore.Knative.EnvValue do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @required_fields ~w(name source_type)a

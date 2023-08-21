@@ -1,9 +1,9 @@
 defmodule CommonCore.Resources.DevtoolsTest do
   use ExUnit.Case
 
+  alias CommonCore.Defaults.Images
   alias CommonCore.Resources.KnativeOperator
   alias CommonCore.StateSummary
-  alias CommonCore.Defaults.Images
 
   test "Can materialize knative operator" do
     assert map_size(KnativeOperator.materialize(knative_operator_battery(), %StateSummary{})) >= 5

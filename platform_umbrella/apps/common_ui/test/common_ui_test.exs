@@ -1,5 +1,6 @@
 defmodule CommonUI.Test do
   use ExUnit.Case
+
   import Phoenix.LiveViewTest
 
   doctest CommonUI

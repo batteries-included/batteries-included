@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.TrivyOperator do
+  @moduledoc false
   use CommonCore.IncludeResource,
     clustercompliancereports_aquasecurity_github_io:
       "priv/manifests/trivy_operator/clustercompliancereports_aquasecurity_github_io.yaml",
@@ -22,7 +23,9 @@ defmodule CommonCore.Resources.TrivyOperator do
     nodecollector_volumes: "priv/raw_files/trivy_operator/nodeCollector.volumes"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "trivy-operator"
+
   import CommonCore.StateSummary.Namespaces
+
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
@@ -36,7 +39,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("aggregate-config-audit-reports-view")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-cluster-reader", "true")
@@ -54,7 +58,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("aggregate-exposed-secret-reports-view")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-cluster-reader", "true")
@@ -72,7 +77,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("aggregate-vulnerability-reports-view")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-cluster-reader", "true")
@@ -84,7 +90,8 @@ defmodule CommonCore.Resources.TrivyOperator do
   resource(:cluster_role_binding_trivy_operator, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.role_ref(B.build_cluster_role_ref("trivy-operator"))
     |> B.subject(B.build_service_account("trivy-operator", namespace))
@@ -232,7 +239,7 @@ defmodule CommonCore.Resources.TrivyOperator do
       %{"apiGroups" => [""], "resources" => ["serviceaccounts"], "verbs" => ["get"]}
     ]
 
-    B.build_resource(:cluster_role) |> B.name("trivy-operator") |> B.rules(rules)
+    :cluster_role |> B.build_resource() |> B.name("trivy-operator") |> B.rules(rules)
   end
 
   resource(:config_map_trivy_operator, _battery, state) do
@@ -253,7 +260,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       |> Map.put("nodeCollector.volumeMounts", get_resource(:nodecollector_volumemounts))
       |> Map.put("nodeCollector.volumes", get_resource(:nodecollector_volumes))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -263,7 +271,8 @@ defmodule CommonCore.Resources.TrivyOperator do
     namespace = base_namespace(state)
     data = %{}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("trivy-operator-policies-config")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -295,34 +304,27 @@ defmodule CommonCore.Resources.TrivyOperator do
       |> Map.put("trivy.timeout", "5m0s")
       |> Map.put("trivy.useBuiltinRegoPolicies", "true")
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("trivy-operator-trivy-config")
     |> B.namespace(namespace)
     |> B.data(data)
   end
 
   resource(:crd_clustercompliancereports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(
-      get_resource(:clustercompliancereports_aquasecurity_github_io)
-    )
+    YamlElixir.read_all_from_string!(get_resource(:clustercompliancereports_aquasecurity_github_io))
   end
 
   resource(:crd_clusterconfigauditreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(
-      get_resource(:clusterconfigauditreports_aquasecurity_github_io)
-    )
+    YamlElixir.read_all_from_string!(get_resource(:clusterconfigauditreports_aquasecurity_github_io))
   end
 
   resource(:crd_clusterinfraassessmentreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(
-      get_resource(:clusterinfraassessmentreports_aquasecurity_github_io)
-    )
+    YamlElixir.read_all_from_string!(get_resource(:clusterinfraassessmentreports_aquasecurity_github_io))
   end
 
   resource(:crd_clusterrbacassessmentreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(
-      get_resource(:clusterrbacassessmentreports_aquasecurity_github_io)
-    )
+    YamlElixir.read_all_from_string!(get_resource(:clusterrbacassessmentreports_aquasecurity_github_io))
   end
 
   resource(:crd_configauditreports_aquasecurity_github_io) do
@@ -379,8 +381,7 @@ defmodule CommonCore.Resources.TrivyOperator do
                   %{"name" => "OPERATOR_EXCLUDE_NAMESPACES", "value" => ""},
                   %{
                     "name" => "OPERATOR_TARGET_WORKLOADS",
-                    "value" =>
-                      "pod,replicaset,replicationcontroller,statefulset,daemonset,cronjob,job"
+                    "value" => "pod,replicaset,replicationcontroller,statefulset,daemonset,cronjob,job"
                   },
                   %{"name" => "OPERATOR_SERVICE_ACCOUNT", "value" => "trivy-operator"},
                   %{"name" => "OPERATOR_LOG_DEV_MODE", "value" => "false"},
@@ -462,7 +463,8 @@ defmodule CommonCore.Resources.TrivyOperator do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -471,7 +473,8 @@ defmodule CommonCore.Resources.TrivyOperator do
   resource(:role_binding_trivy_operator, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("trivy-operator"))
@@ -481,7 +484,8 @@ defmodule CommonCore.Resources.TrivyOperator do
   resource(:role_binding_trivy_operator_leader_election, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("trivy-operator-leader-election")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("trivy-operator-leader-election"))
@@ -500,7 +504,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["create", "get", "delete"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -518,7 +523,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("trivy-operator-leader-election")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -528,7 +534,8 @@ defmodule CommonCore.Resources.TrivyOperator do
     namespace = base_namespace(state)
     data = Secret.encode(%{})
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -538,7 +545,8 @@ defmodule CommonCore.Resources.TrivyOperator do
     namespace = base_namespace(state)
     data = Secret.encode(%{})
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("trivy-operator-trivy-config")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -547,7 +555,8 @@ defmodule CommonCore.Resources.TrivyOperator do
   resource(:service_account_trivy_operator, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.component_label("trivy-operator")
@@ -563,7 +572,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.component_label("trivy-operator")
@@ -579,7 +589,8 @@ defmodule CommonCore.Resources.TrivyOperator do
       |> Map.put("endpoints", [%{"honorLabels" => true, "port" => "metrics", "scheme" => "http"}])
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)

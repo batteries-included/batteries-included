@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.Builder do
+  @moduledoc false
   alias CommonCore.ApiVersionKind
 
   @spec build_resource(atom | {String.t(), String.t()}) :: map()

@@ -1,4 +1,5 @@
 defmodule CommonCore.Defaults do
+  @moduledoc false
   def random_key_string(length \\ 64) do
     length
     |> :crypto.strong_rand_bytes()

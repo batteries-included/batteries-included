@@ -1,5 +1,7 @@
 defmodule CommonCore.Batteries.SSOConfig do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @required_fields ~w()a

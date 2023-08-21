@@ -1,4 +1,7 @@
 defmodule CommonCore.Actions.FreshGeneratedAction do
+  @moduledoc false
+  use TypedStruct
+
   @doc """
   FreshGeneratedAction is a struct to hold information about
   what actions the systems has just generated. They are not
@@ -6,8 +9,6 @@ defmodule CommonCore.Actions.FreshGeneratedAction do
 
   These are transitory and will be re-created at will.
   """
-  use TypedStruct
-
   typedstruct do
     # create, delete
     field :action, atom()

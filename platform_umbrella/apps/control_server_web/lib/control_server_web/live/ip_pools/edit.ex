@@ -1,8 +1,9 @@
 defmodule ControlServerWeb.Live.IPAddressPoolEdit do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  alias ControlServerWeb.Live.IPAddressPoolFormComponent
   alias ControlServer.MetalLB
+  alias ControlServerWeb.Live.IPAddressPoolFormComponent
 
   require Logger
 

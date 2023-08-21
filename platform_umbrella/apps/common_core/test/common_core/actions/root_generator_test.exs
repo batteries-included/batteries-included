@@ -1,8 +1,8 @@
 defmodule CommonCore.Actions.RootGeneratorTest do
-  alias CommonCore.Actions.RootActionGenerator
-  alias CommonCore.Actions.FreshGeneratedAction
-
   use ExUnit.Case
+
+  alias CommonCore.Actions.FreshGeneratedAction
+  alias CommonCore.Actions.RootActionGenerator
 
   defp assert_valid(value) do
     assert %FreshGeneratedAction{} = value
@@ -14,7 +14,8 @@ defmodule CommonCore.Actions.RootGeneratorTest do
       # Then try and materialize everything.
       #
       # In the end it's a pretty good code coverage for produces something reasonable
-      CommonCore.StateSummary.SeedState.seed(:everything)
+      :everything
+      |> CommonCore.StateSummary.SeedState.seed()
       |> RootActionGenerator.materialize()
       |> Enum.each(&assert_valid/1)
     end

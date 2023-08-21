@@ -1,7 +1,7 @@
 defmodule CommonCore.Resources.RedisOperator do
+  @moduledoc false
   use CommonCore.IncludeResource,
-    redisfailovers_databases_spotahome_com:
-      "priv/manifests/redis_operator/redisfailovers_databases_spotahome_com.yaml"
+    redisfailovers_databases_spotahome_com: "priv/manifests/redis_operator/redisfailovers_databases_spotahome_com.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "redis-operator"
 
@@ -13,7 +13,8 @@ defmodule CommonCore.Resources.RedisOperator do
   resource(:cluster_role_binding_redis_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("redis-operator")
     |> B.role_ref(B.build_cluster_role_ref("redis-operator"))
     |> B.subject(B.build_service_account("redis-operator", namespace))
@@ -62,7 +63,8 @@ defmodule CommonCore.Resources.RedisOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("redis-operator")
     |> B.component_label("redis-operator")
     |> B.rules(rules)
@@ -135,7 +137,8 @@ defmodule CommonCore.Resources.RedisOperator do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
     |> B.component_label("redis-operator")
@@ -145,7 +148,8 @@ defmodule CommonCore.Resources.RedisOperator do
   resource(:service_account_redis_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
     |> B.component_label("redis-operator")
@@ -168,7 +172,8 @@ defmodule CommonCore.Resources.RedisOperator do
         }
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
     |> B.component_label("redis-operator")
@@ -187,7 +192,8 @@ defmodule CommonCore.Resources.RedisOperator do
         %{"battery/app" => @app_name, "battery/component" => "redis-operator"}
       )
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
     |> B.component_label("redis-operator")

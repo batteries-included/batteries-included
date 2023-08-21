@@ -1,5 +1,7 @@
 defmodule CommonCore.Batteries.NotebooksConfig do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @primary_key false

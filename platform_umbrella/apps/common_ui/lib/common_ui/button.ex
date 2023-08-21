@@ -1,4 +1,5 @@
 defmodule CommonUI.Button do
+  @moduledoc false
   use CommonUI.Component
 
   @doc """

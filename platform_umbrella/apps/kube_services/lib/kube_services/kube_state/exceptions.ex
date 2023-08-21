@@ -1,4 +1,5 @@
 defmodule KubeServices.KubeState.NoResultsError do
+  @moduledoc false
   defexception [:message, plug_status: 404]
 
   def exception(opts) do

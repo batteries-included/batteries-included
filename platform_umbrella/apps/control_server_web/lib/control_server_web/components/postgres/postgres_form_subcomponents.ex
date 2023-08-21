@@ -1,5 +1,7 @@
 defmodule ControlServerWeb.PostgresFormSubcomponents do
+  @moduledoc false
   use ControlServerWeb, :html
+
   import Phoenix.HTML.Form, only: [inputs_for: 2]
 
   alias CommonCore.Postgres.PGCredentialCopy

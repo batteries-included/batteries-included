@@ -1,4 +1,5 @@
 defmodule CommonCore.Defaults.ControlDB do
+  @moduledoc false
   @default_pg_cluster %{
     :name => "control",
     :postgres_version => "14",

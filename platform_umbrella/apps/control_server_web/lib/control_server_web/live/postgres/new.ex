@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.Live.PostgresNew do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Postgres.Cluster
-
-  alias ControlServer.Postgres
   alias ControlServer.Batteries.Installer
+  alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent
 
   require Logger

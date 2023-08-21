@@ -1,7 +1,9 @@
 defmodule CommonCore.Postgres.PGUser do
+  @moduledoc false
   use TypedEctoSchema
-  import Ecto.Changeset
+
   import CommonCore.Postgres
+  import Ecto.Changeset
 
   @primary_key false
   @derive Jason.Encoder

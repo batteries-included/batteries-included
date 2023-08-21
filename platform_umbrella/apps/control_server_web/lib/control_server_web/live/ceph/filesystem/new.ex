@@ -1,11 +1,10 @@
 defmodule ControlServerWeb.Live.CephFilesystemNew do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Rook.CephFilesystem
-
-  alias ControlServer.Rook
   alias ControlServer.Batteries.Installer
-
+  alias ControlServer.Rook
   alias ControlServerWeb.Live.CephFilesystemFormComponent
 
   require Logger

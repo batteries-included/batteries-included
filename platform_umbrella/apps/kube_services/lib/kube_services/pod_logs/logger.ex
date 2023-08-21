@@ -5,6 +5,7 @@ defmodule KubeServices.PodLogs.Logger do
   Currently, just repeats them using `Logger.warning/2`
   """
   use GenServer
+
   require Logger
 
   def start_link(_init_args \\ []) do

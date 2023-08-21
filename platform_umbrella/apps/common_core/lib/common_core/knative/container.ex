@@ -1,5 +1,7 @@
 defmodule CommonCore.Knative.Container do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @required_fields ~w(image name)a

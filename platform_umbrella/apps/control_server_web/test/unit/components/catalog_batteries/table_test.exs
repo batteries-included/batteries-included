@@ -1,9 +1,10 @@
 defmodule ControlServerWeb.CatalogBatteriesTableTest do
   use Heyya.SnapshotTest
 
+  import ControlServerWeb.CatalogBatteriesTable
+
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
-  import ControlServerWeb.CatalogBatteriesTable
 
   component_snapshot_test "single catalog battery table" do
     catalog_batteries = Catalog.all() |> List.first() |> List.wrap()

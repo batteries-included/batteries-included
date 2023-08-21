@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Storybook.Loader do
+  @moduledoc false
   use PhoenixStorybook.Story, :component
 
   def function, do: &ControlServerWeb.Loader.loader/1
@@ -6,11 +7,5 @@ defmodule ControlServerWeb.Storybook.Loader do
   def attributes, do: []
   def slots, do: []
 
-  def variations,
-    do: [
-      %Variation{
-        id: :default,
-        attributes: %{}
-      }
-    ]
+  def variations, do: [%Variation{id: :default, attributes: %{}}]
 end

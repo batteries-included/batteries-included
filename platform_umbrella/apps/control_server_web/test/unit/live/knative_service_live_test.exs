@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.ServiceLiveTest do
   use ControlServerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import ControlServer.KnativeFixtures
+  import Phoenix.LiveViewTest
 
   defp create_service(_) do
     service = service_fixture()

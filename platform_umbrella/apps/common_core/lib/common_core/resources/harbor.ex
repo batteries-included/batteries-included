@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.Harbor do
+  @moduledoc false
   use CommonCore.IncludeResource,
     no_proxy: "priv/raw_files/harbor/NO_PROXY",
     jobservice_config_yml: "priv/raw_files/harbor/jobservice_config.yml",
@@ -9,22 +10,22 @@ defmodule CommonCore.Resources.Harbor do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "harbor"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.Secret
-
   alias CommonCore.Resources.IstioConfig.HttpRoute
   alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.Resources.Secret
 
   @postgres_credentials "harbor.pg-harbor.credentials.postgresql"
 
   resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.namespace(namespace)
     |> B.name("harbor-host-vs")
     |> B.spec(
@@ -100,7 +101,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("NOTARY_URL", "http://harbor-notary-server:4443")
       |> Map.put("NO_PROXY", get_resource(:no_proxy))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("harbor-core")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -135,7 +137,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("LOG_LEVEL", "debug")
       |> Map.put("NO_PROXY", get_resource(:no_proxy))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("harbor-exporter-env")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -145,7 +148,8 @@ defmodule CommonCore.Resources.Harbor do
     namespace = core_namespace(state)
     data = %{"config.yml" => get_resource(:jobservice_config_yml)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -167,7 +171,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("TOKEN_SERVICE_URL", "http://harbor-core:80/service/token")
       |> Map.put("NO_PROXY", get_resource(:no_proxy))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("harbor-jobservice-env")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -177,7 +182,8 @@ defmodule CommonCore.Resources.Harbor do
     namespace = core_namespace(state)
     data = %{"nginx.conf" => get_resource(:nginx_conf)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -194,7 +200,8 @@ defmodule CommonCore.Resources.Harbor do
       )
       |> Map.put("config.yml", get_resource(:registry_config_yml))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -204,7 +211,8 @@ defmodule CommonCore.Resources.Harbor do
     namespace = core_namespace(state)
     data = %{}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("harbor-registryctl")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -224,7 +232,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("tls.key", get_resource(:tls_key))
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("harbor-core")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -240,7 +249,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("tls.key", get_resource(:tls_key))
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("harbor-exporter")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -255,7 +265,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("REGISTRY_CREDENTIAL_PASSWORD", "harbor_registry_password")
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -270,7 +281,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("REGISTRY_REDIS_PASSWORD", "")
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -287,7 +299,8 @@ defmodule CommonCore.Resources.Harbor do
       )
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("harbor-registry-htpasswd")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -297,7 +310,8 @@ defmodule CommonCore.Resources.Harbor do
     namespace = core_namespace(state)
     data = %{}
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("harbor-registryctl")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -315,7 +329,8 @@ defmodule CommonCore.Resources.Harbor do
       )
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -438,7 +453,8 @@ defmodule CommonCore.Resources.Harbor do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("harbor-core")
     |> B.namespace(namespace)
     |> B.component_label("core")
@@ -507,7 +523,8 @@ defmodule CommonCore.Resources.Harbor do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("harbor-exporter")
     |> B.namespace(namespace)
     |> B.component_label("exporter")
@@ -598,7 +615,8 @@ defmodule CommonCore.Resources.Harbor do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.component_label("jobservice")
@@ -661,7 +679,8 @@ defmodule CommonCore.Resources.Harbor do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
     |> B.component_label("portal")
@@ -800,7 +819,8 @@ defmodule CommonCore.Resources.Harbor do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.component_label("registry")
@@ -946,7 +966,8 @@ defmodule CommonCore.Resources.Harbor do
         }
       ])
 
-    B.build_resource(:stateful_set)
+    :stateful_set
+    |> B.build_resource()
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
     |> B.component_label("trivy")
@@ -961,7 +982,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("accessModes", ["ReadWriteOnce"])
       |> Map.put("resources", %{"requests" => %{"storage" => "1Gi"}})
 
-    B.build_resource(:persistent_volume_claim)
+    :persistent_volume_claim
+    |> B.build_resource()
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.component_label("jobservice")
@@ -976,7 +998,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("accessModes", ["ReadWriteOnce"])
       |> Map.put("resources", %{"requests" => %{"storage" => "1Gi"}})
 
-    B.build_resource(:persistent_volume_claim)
+    :persistent_volume_claim
+    |> B.build_resource()
     |> B.name("harbor-jobservice-scandata")
     |> B.namespace(namespace)
     |> B.component_label("jobservice")
@@ -991,7 +1014,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("accessModes", ["ReadWriteOnce"])
       |> Map.put("resources", %{"requests" => %{"storage" => "5Gi"}})
 
-    B.build_resource(:persistent_volume_claim)
+    :persistent_volume_claim
+    |> B.build_resource()
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.component_label("registry")
@@ -1009,7 +1033,8 @@ defmodule CommonCore.Resources.Harbor do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "core"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("harbor-core")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -1023,7 +1048,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("ports", [%{"name" => "http-metrics", "port" => 8001}])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "exporter"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("harbor-exporter")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -1040,7 +1066,8 @@ defmodule CommonCore.Resources.Harbor do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "jobservice"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("harbor-jobservice")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -1054,7 +1081,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("ports", [%{"port" => 80, "targetPort" => 8080}])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "portal"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("harbor-portal")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -1072,7 +1100,8 @@ defmodule CommonCore.Resources.Harbor do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "registry"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("harbor-registry")
     |> B.namespace(namespace)
     |> B.component_label("registry")
@@ -1087,7 +1116,8 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("ports", [%{"name" => "http-trivy", "port" => 8080, "protocol" => "TCP"}])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "trivy"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("harbor-trivy")
     |> B.namespace(namespace)
     |> B.component_label("trivy")

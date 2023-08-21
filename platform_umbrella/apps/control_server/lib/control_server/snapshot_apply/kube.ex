@@ -4,10 +4,10 @@ defmodule ControlServer.SnapshotApply.Kube do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
-  alias ControlServer.SnapshotApply.ResourcePath
+  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KubeSnapshot
+  alias ControlServer.SnapshotApply.ResourcePath
   alias EventCenter.KubeSnapshot, as: SnapshotEventCenter
 
   @doc """
@@ -65,7 +65,7 @@ defmodule ControlServer.SnapshotApply.Kube do
   def get_kube_snapshot!(id), do: Repo.get!(KubeSnapshot, id)
 
   @spec get_latest_snapshot_status() :: nil | :error | :ok
-  def get_latest_snapshot_status() do
+  def get_latest_snapshot_status do
     query =
       from ks in KubeSnapshot,
         order_by: [desc: ks.inserted_at, desc: ks.id],
@@ -133,7 +133,7 @@ defmodule ControlServer.SnapshotApply.Kube do
 
   def snapshot_recently(query \\ KubeSnapshot) do
     from ks in query,
-      where: ks.inserted_at >= ^Timex.shift(Timex.now(), hours: -1)
+      where: ks.inserted_at >= ^Timex.shift(DateTime.utc_now(), hours: -1)
   end
 
   def resource_paths_outstanding(query \\ ResourcePath) do
@@ -156,8 +156,7 @@ defmodule ControlServer.SnapshotApply.Kube do
     from rp in query, where: rp.name == ^name
   end
 
-  def resource_paths_by_namespace(query \\ ResourcePath, namespace),
-    do: by_namespace(query, namespace)
+  def resource_paths_by_namespace(query \\ ResourcePath, namespace), do: by_namespace(query, namespace)
 
   defp by_namespace(query, namespace) when is_nil(namespace) do
     from rp in query, where: is_nil(rp.namespace)
@@ -169,11 +168,10 @@ defmodule ControlServer.SnapshotApply.Kube do
 
   def resource_paths_recently(query \\ ResourcePath, shift_opts \\ [hours: -1]) do
     from rp in query,
-      where: rp.inserted_at >= ^Timex.shift(Timex.now(), shift_opts)
+      where: rp.inserted_at >= ^Timex.shift(DateTime.utc_now(), shift_opts)
   end
 
-  def count_paths(query \\ ResourcePath),
-    do: Repo.one(from rp in query, select: fragment("count(*)"))
+  def count_paths(query \\ ResourcePath), do: Repo.one(from rp in query, select: fragment("count(*)"))
 
   @doc """
   Updates a kube_snapshot.

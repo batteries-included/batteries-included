@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Live.CephFilesystemFormComponent do
+  @moduledoc false
   use ControlServerWeb, :live_component
 
   alias ControlServer.Rook

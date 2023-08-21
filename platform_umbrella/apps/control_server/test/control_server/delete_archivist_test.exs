@@ -1,12 +1,13 @@
 defmodule ControlServer.DeleteArchivistTest do
   use ControlServer.DataCase
 
-  alias ControlServer.ContentAddressable
   alias CommonCore.Resources.Builder, as: B
+  alias ControlServer.ContentAddressable
   alias ControlServer.Deleted.DeleteArchivist
 
   defp build_resource do
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.app_labels("test-app")
     |> B.name("test-deployment")
     |> B.namespace("battery-core")

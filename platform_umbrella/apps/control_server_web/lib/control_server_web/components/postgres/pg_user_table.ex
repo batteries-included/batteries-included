@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.PgUserTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :users, :list, required: true

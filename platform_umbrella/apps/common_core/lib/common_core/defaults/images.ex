@@ -1,13 +1,12 @@
 defmodule CommonCore.Defaults.Images do
+  @moduledoc false
   def control_server_image, do: "battery-registry:5000/battery/control:c6f4bd1-dirty1"
 
-  def postgres_operator_image,
-    do: "registry.opensource.zalan.do/acid/postgres-operator:v1.10.0"
+  def postgres_operator_image, do: "registry.opensource.zalan.do/acid/postgres-operator:v1.10.0"
 
   def spilo_image, do: "registry.opensource.zalan.do/acid/spilo-15:3.0-p1"
 
-  def postgres_logical_backup_image,
-    do: "registry.opensource.zalan.do/acid/logical-backup:v1.10.0"
+  def postgres_logical_backup_image, do: "registry.opensource.zalan.do/acid/logical-backup:v1.10.0"
 
   def postgres_bouncer_image, do: "registry.opensource.zalan.do/acid/pgbouncer:master-27"
 
@@ -41,11 +40,9 @@ defmodule CommonCore.Defaults.Images do
 
   def keycloak_image, do: "quay.io/keycloak/keycloak:21.1.2"
 
-  def knative_operator_webhook_image,
-    do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.10.1"
+  def knative_operator_webhook_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.10.1"
 
-  def knative_operator_image,
-    do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.10.1"
+  def knative_operator_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.10.1"
 
   def kiali_image, do: "quay.io/kiali/kiali:v1.71.0"
 

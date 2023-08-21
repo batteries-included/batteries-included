@@ -24,9 +24,9 @@ defmodule ControlServerWeb do
       use Phoenix.Router, helpers: false
 
       # Import common connection and controller functions to use in pipelines
-      import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+      import Plug.Conn
     end
   end
 
@@ -43,8 +43,8 @@ defmodule ControlServerWeb do
         formats: [:html, :json],
         layouts: [html: ControlServerWeb.Layouts]
 
-      import Plug.Conn
       import ControlServerWeb.Gettext
+      import Plug.Conn
 
       unquote(verified_routes())
     end
@@ -72,6 +72,7 @@ defmodule ControlServerWeb do
 
     quote do
       use Phoenix.LiveComponent, global_prefixes: unquote(global_prefixes)
+
       import Phoenix.Component, except: [link: 1]
 
       unquote(html_helpers())
@@ -83,6 +84,7 @@ defmodule ControlServerWeb do
 
     quote do
       use Phoenix.Component, global_prefixes: unquote(global_prefixes)
+
       import Phoenix.Component, except: [link: 1]
 
       # Import convenience functions from controllers
@@ -97,13 +99,14 @@ defmodule ControlServerWeb do
   defp html_helpers do
     quote do
       # HTML escaping functionality
-      import Phoenix.HTML
       # Core UI components and translation
       # import ControlServerWeb.CoreComponents
       use CommonUI
-      alias Heroicons
 
       import ControlServerWeb.Gettext
+      import Phoenix.HTML
+
+      alias Heroicons
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

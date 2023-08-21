@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.VMDashboards do
+  @moduledoc false
   use CommonCore.IncludeResource,
     dashboard_11176: "priv/raw_files/victoria_metrics/dashboard_11176.json",
     dashboard_12683: "priv/raw_files/victoria_metrics/dashboard_12683.json"
@@ -14,7 +15,8 @@ defmodule CommonCore.Resources.VMDashboards do
     namespace = core_namespace(state)
     data = %{"dashboard_11176.json" => get_resource(:dashboard_11176)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-dashboard-11176")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -27,7 +29,8 @@ defmodule CommonCore.Resources.VMDashboards do
     namespace = core_namespace(state)
     data = %{"dashboard_14205.json" => get_resource(:dashboard_12683)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-dashboard-12682")
     |> B.namespace(namespace)
     |> B.data(data)

@@ -1,14 +1,13 @@
 defmodule ControlServerWeb.Live.GroupBatteries do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Modal
   import ControlServerWeb.CatalogBatteriesTable
 
   alias CommonCore.Batteries.Catalog
-
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
-
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @impl Phoenix.LiveView
@@ -31,11 +30,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   should only ever patch this in. So no need for mount.
   """
   @impl Phoenix.LiveView
-  def handle_params(
-        %{"group" => group_str, "battery_type" => installing_type_str} = _params,
-        _url,
-        socket
-      ) do
+  def handle_params(%{"group" => group_str, "battery_type" => installing_type_str} = _params, _url, socket) do
     group = String.to_existing_atom(group_str)
     installing_type = String.to_existing_atom(installing_type_str)
 

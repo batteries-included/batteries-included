@@ -7,14 +7,15 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
   # These matches are more comprehensive than the typespec on K8s.
   # Could be that old versions had different types, or it could be
   # K8s' typespec is wrong, or it could be both.
-  @dialyzer {:nowarn_function, get_or_create_single: 2}
-
   use TypedStruct
+
   alias CommonCore.Resources.Hashing
   alias K8s.Client
   alias K8s.Resource
 
   require Logger
+
+  @dialyzer {:nowarn_function, get_or_create_single: 2}
 
   defmodule ResourceState do
     @moduledoc """
@@ -149,20 +150,17 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
         create(connection, resource)
 
       unknown ->
-        Logger.warning(
-          "Got unknown result from get on #{inspect(metadata)} => #{inspect(unknown)}"
-        )
+        Logger.warning("Got unknown result from get on #{inspect(metadata)} => #{inspect(unknown)}")
 
         {:error, :unknown_result}
     end
   end
 
   defp create(connection, resource) do
-    Logger.info(
-      "Going to create Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)}"
-    )
+    Logger.info("Going to create Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)}")
 
-    Client.create(resource)
+    resource
+    |> Client.create()
     |> Client.put_conn(connection)
     |> K8s.Client.run()
   end
@@ -172,7 +170,8 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
       "Going to apply Kind: #{Resource.kind(resource)} Name: #{Resource.name(resource)} Namespace: #{Resource.namespace(resource)}"
     )
 
-    Client.apply(resource)
+    resource
+    |> Client.apply()
     |> Client.put_conn(connection)
     |> K8s.Client.run()
   end

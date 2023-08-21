@@ -1,16 +1,15 @@
 defmodule ControlServer.SnapshotApply.KubeEctoSteps do
+  @moduledoc false
+  import ControlServer.SnapshotApply.Kube
   import Ecto.Query
   import K8s.Resource.FieldAccessors
-  import ControlServer.SnapshotApply.Kube
 
+  alias CommonCore.ApiVersionKind
+  alias CommonCore.Resources.Hashing
+  alias ControlServer.ContentAddressable.Document
   alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-  alias ControlServer.ContentAddressable.Document
-
-  alias CommonCore.Resources.Hashing
-  alias CommonCore.ApiVersionKind
-
   alias Ecto.Multi
 
   @max_reason_length 255
@@ -99,8 +98,7 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
     )
   end
 
-  defp get_hashes_set(ctx),
-    do: ctx |> Map.get(:existing_hashes, []) |> List.flatten() |> MapSet.new()
+  defp get_hashes_set(ctx), do: ctx |> Map.get(:existing_hashes, []) |> List.flatten() |> MapSet.new()
 
   defp document_args(resource_map) do
     # Grab now so that all addressables are created at the same time.

@@ -1,8 +1,10 @@
 defmodule ControlServerWeb.Live.TrivyReportShow do
-  alias KubeServices.KubeState
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Table
+
+  alias KubeServices.KubeState
 
   require Logger
 
@@ -12,11 +14,7 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
   end
 
   @impl Phoenix.LiveView
-  def handle_params(
-        %{"resource_type" => report_type, "namespace" => namespace, "name" => name},
-        _,
-        socket
-      ) do
+  def handle_params(%{"resource_type" => report_type, "namespace" => namespace, "name" => name}, _, socket) do
     report_type_atom = String.to_existing_atom(report_type)
     report = report(report_type_atom, namespace, name)
 

@@ -1,4 +1,5 @@
 defmodule CommonCore.Defaults.RandomKeyChangeset do
+  @moduledoc false
   import Ecto.Changeset
 
   @default_length 128

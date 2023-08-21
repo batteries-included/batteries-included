@@ -4,9 +4,9 @@ defmodule ControlServer.Notebooks do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
   alias CommonCore.Notebooks.JupyterLabNotebook
+  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

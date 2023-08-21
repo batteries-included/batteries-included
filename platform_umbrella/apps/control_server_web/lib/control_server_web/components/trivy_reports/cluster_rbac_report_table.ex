@@ -1,5 +1,7 @@
 defmodule ControlServerWeb.RBACReportTable do
+  @moduledoc false
   use ControlServerWeb, :html
+
   import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]
 
   def cluster_rbac_reports_table(assigns) do

@@ -1,12 +1,13 @@
 defmodule ControlServer.TimelineTest do
   use ControlServer.DataCase
 
-  alias CommonCore.Timeline.TimelineEvent
   alias CommonCore.Timeline.BatteryInstall
+  alias CommonCore.Timeline.TimelineEvent
   alias ControlServer.Timeline
 
   describe "timeline_events" do
     import ControlServer.TimelineFixtures
+
     alias EventCenter.Database, as: DatabaseEventCenter
 
     @invalid_attrs %{payload: nil}
@@ -41,9 +42,7 @@ defmodule ControlServer.TimelineTest do
       DatabaseEventCenter.subscribe(:timeline_event)
 
       assert {:ok, _} =
-               Timeline.create_timeline_event(
-                 Timeline.kube_event(:add, :pod, "pg-control-0", "battery-core")
-               )
+               Timeline.create_timeline_event(Timeline.kube_event(:add, :pod, "pg-control-0", "battery-core"))
 
       assert_receive {:insert, _}
     end

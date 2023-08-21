@@ -1,13 +1,14 @@
 defmodule Mix.Tasks.Gen.Resource do
-  @moduledoc "The mix task to generate a resource code module from yaml"
   @shortdoc "Elixir resource skeletons from yaml"
 
+  @moduledoc "The mix task to generate a resource code module from yaml"
   use Mix.Task
   use TypedStruct
 
   import CommonCore.ApiVersionKind, only: [resource_type: 1]
-  alias K8s.Resource, as: K8Resource
+
   alias CommonCore.Resources.Secret
+  alias K8s.Resource, as: K8Resource
 
   @requirements ["app.config"]
 
@@ -28,6 +29,7 @@ defmodule Mix.Tasks.Gen.Resource do
   @max_config_string_size 128
 
   defmodule ResourceResult do
+    @moduledoc false
     typedstruct do
       field :methods, map(), default: %{}
       field :manifests, map(), default: %{}
@@ -101,17 +103,14 @@ defmodule Mix.Tasks.Gen.Resource do
     |> Enum.each(fn {path, contents} -> File.write!(path, contents) end)
   end
 
-  defp crd_path(app_name, crd_filename),
-    do: "apps/common_core/priv/manifests/#{app_name}/#{crd_filename}"
+  defp crd_path(app_name, crd_filename), do: "apps/common_core/priv/manifests/#{app_name}/#{crd_filename}"
 
-  defp raw_file_path(app_name, filename),
-    do: "apps/common_core/priv/raw_files/#{app_name}/#{filename}"
+  defp raw_file_path(app_name, filename), do: "apps/common_core/priv/raw_files/#{app_name}/#{filename}"
 
   defp relative_crd_path(app_name, crd_filename), do: "priv/manifests/#{app_name}/#{crd_filename}"
   defp relative_raw_file_path(app_name, filename), do: "priv/raw_files/#{app_name}/#{filename}"
 
-  defp process_resource(resource, app_name),
-    do: process_resource(resource, resource_type(resource), app_name)
+  defp process_resource(resource, app_name), do: process_resource(resource, resource_type(resource), app_name)
 
   defp process_resource(resource, nil, _app_name) do
     raise "Unable to find canonical resource_type for { #{inspect(K8Resource.api_version(resource))}, #{inspect(K8Resource.kind(resource))} }"
@@ -253,16 +252,14 @@ defmodule Mix.Tasks.Gen.Resource do
         {_key, _value} ->
           false
       end)
-      |> Enum.into(%{})
+      |> Map.new()
 
     # Keep track of where we are writing these things out. This is used
     # to create the CommonCore.IncludeResource line.
     include_paths =
-      large_data
-      |> Enum.map(fn {file_name, _} ->
+      Map.new(large_data, fn {file_name, _} ->
         {to_include_name(file_name), relative_raw_file_path(app_name, file_name)}
       end)
-      |> Enum.into(%{})
 
     # these are the values that we'll add ourself
     small_data = Map.drop(data, Map.keys(large_data))
@@ -408,21 +405,11 @@ defmodule Mix.Tasks.Gen.Resource do
     add_rules(acc_code, field_value)
   end
 
-  defp handle_field(
-         "roleRef" = _field_name,
-         %{"kind" => "Role"} = field_value,
-         acc_code,
-         _app_name
-       ) do
+  defp handle_field("roleRef" = _field_name, %{"kind" => "Role"} = field_value, acc_code, _app_name) do
     add_role_ref(acc_code, Map.get(field_value, "name"))
   end
 
-  defp handle_field(
-         "roleRef" = _field_name,
-         %{"kind" => "ClusterRole"} = field_value,
-         acc_code,
-         _app_name
-       ) do
+  defp handle_field("roleRef" = _field_name, %{"kind" => "ClusterRole"} = field_value, acc_code, _app_name) do
     add_cluster_role_ref(acc_code, Map.get(field_value, "name"))
   end
 
@@ -437,9 +424,7 @@ defmodule Mix.Tasks.Gen.Resource do
   end
 
   defp clean_spec(spec, app_name) do
-    spec
-    |> Enum.map(fn {key, value} -> clean_spec_field(key, value, app_name) end)
-    |> Enum.into(%{})
+    Map.new(spec, fn {key, value} -> clean_spec_field(key, value, app_name) end)
   end
 
   defp clean_spec_field("selector", %{"matchLabels" => label_map}, app_name) do
@@ -452,14 +437,12 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp clean_spec_field("template", template, app_name) do
     clean_template =
-      template
-      |> Enum.map(fn {key, value} ->
+      Map.new(template, fn {key, value} ->
         case {key, value} do
           {"metadata", _} -> {"metadata", clean_template_metadata(value, app_name)}
           {_, _} -> {key, value}
         end
       end)
-      |> Enum.into(%{})
 
     {"template", clean_template}
   end
@@ -471,28 +454,16 @@ defmodule Mix.Tasks.Gen.Resource do
   defp clean_labels(label_map, app_name) do
     label_map
     |> Map.drop(@bad_labels)
-    |> Enum.map(fn {key, value} ->
+    |> Map.new(fn {key, value} ->
       case {key, value} do
-        {"app", _} ->
-          {"battery/app", app_name}
-
-        {"app.kubernetes.io/instance", _} ->
-          {"battery/app", app_name}
-
-        {"app.kubernetes.io/component", _} ->
-          {"battery/component", value}
-
-        {"app.kubernetes.io/name", _} ->
-          {"battery/component", value}
-
-        {"operator.istio.io/component", _} ->
-          {"battery/component", value}
-
-        {_, _} ->
-          {key, value}
+        {"app", _} -> {"battery/app", app_name}
+        {"app.kubernetes.io/instance", _} -> {"battery/app", app_name}
+        {"app.kubernetes.io/component", _} -> {"battery/component", value}
+        {"app.kubernetes.io/name", _} -> {"battery/component", value}
+        {"operator.istio.io/component", _} -> {"battery/component", value}
+        {_, _} -> {key, value}
       end
     end)
-    |> Enum.into(%{})
   end
 
   defp clean_template_metadata(metadata, app_name) do
@@ -794,6 +765,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp module(app_name, includes, methods) when map_size(includes) == 0 do
     quote do
       defmodule CommonCore.Resources.ExampleServiceResource do
+        @moduledoc false
         use CommonCore.Resources.ResourceGenerator, app_name: unquote(app_name)
 
         import CommonCore.StateSummary.Namespaces
@@ -816,6 +788,7 @@ defmodule Mix.Tasks.Gen.Resource do
 
     quote do
       defmodule CommonCore.Resources.ExampleServiceResource do
+        @moduledoc false
         use CommonCore.IncludeResource, unquote(include_keywords)
         use CommonCore.Resources.ResourceGenerator, app_name: unquote(app_name)
 
@@ -836,16 +809,7 @@ defmodule Mix.Tasks.Gen.Resource do
     "#{sanitized_name}.yaml"
   end
 
-  defp manifest_include_name(resource),
-    do:
-      resource
-      |> K8s.Resource.name()
-      |> to_include_name()
+  defp manifest_include_name(resource), do: resource |> K8s.Resource.name() |> to_include_name()
 
-  defp to_include_name(name),
-    do:
-      name
-      |> String.downcase()
-      |> String.replace(~r/[^\w\d]/, "_")
-      |> String.to_atom()
+  defp to_include_name(name), do: name |> String.downcase() |> String.replace(~r/[^\w\d]/, "_") |> String.to_atom()
 end

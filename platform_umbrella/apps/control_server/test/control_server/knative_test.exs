@@ -2,7 +2,6 @@ defmodule ControlServer.KnativeTest do
   use ControlServer.DataCase
 
   alias CommonCore.Knative.Service
-
   alias ControlServer.Knative
 
   describe "services" do

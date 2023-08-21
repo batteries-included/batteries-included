@@ -1,17 +1,18 @@
 defmodule ControlServerWeb.LeftMenu do
+  @moduledoc false
   use ControlServerWeb, :html
 
-  alias CommonCore.Batteries.SystemBattery
-
-  import CommonUI.Icons.Database
   import CommonUI.Icons.Batteries
+  import CommonUI.Icons.CNCF
+  import CommonUI.Icons.Database
   import CommonUI.Icons.Devtools
   import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Network
   import CommonUI.Icons.Notebook
   import CommonUI.Icons.Rook
-  import CommonUI.Icons.CNCF
   import KubeServices.SystemState.SummaryHosts
+
+  alias CommonCore.Batteries.SystemBattery
 
   attr :icon_class, :string, default: "h-5"
   attr :page_group, :atom, required: true
@@ -623,12 +624,10 @@ defmodule ControlServerWeb.LeftMenu do
   defp menu_item_click(nil = _show_var), do: nil
   defp menu_item_click(group) when is_atom(group), do: menu_item_click(Atom.to_string(group))
 
-  defp menu_item_click(group) when is_binary(group),
-    do: "show = (tab === '#{group}' ? !show : true); tab = '#{group}';"
+  defp menu_item_click(group) when is_binary(group), do: "show = (tab === '#{group}' ? !show : true); tab = '#{group}';"
 
   defp main_menu_class(false = _is_active),
-    do:
-      "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-3 bg-white"
+    do: "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-3 bg-white"
 
   defp main_menu_class(true = _is_active), do: build_class(["active", main_menu_class(false)])
 
@@ -636,9 +635,7 @@ defmodule ControlServerWeb.LeftMenu do
     Enum.filter(batteries, fn %SystemBattery{} = bat -> bat.group == group end)
   end
 
-  defp menu_detail_class(true = _is_active),
-    do: "text-pink-500 whitespace-nowrap flex hover:under-line"
+  defp menu_detail_class(true = _is_active), do: "text-pink-500 whitespace-nowrap flex hover:under-line"
 
-  defp menu_detail_class(false = _is_active),
-    do: "whitespace-nowrap flex hover:under-line hover:text-pink-500"
+  defp menu_detail_class(false = _is_active), do: "whitespace-nowrap flex hover:under-line hover:text-pink-500"
 end

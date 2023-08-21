@@ -1,7 +1,9 @@
 defmodule CommonUI.Link do
+  @moduledoc false
   use Phoenix.Component
-  import Phoenix.Component, except: [link: 1]
+
   import CommonUI.CSSHelpers
+  import Phoenix.Component, except: [link: 1]
 
   attr :navigate, :any,
     doc: """
@@ -79,8 +81,7 @@ defmodule CommonUI.Link do
     """
   end
 
-  defp link_class("styled" = _variant),
-    do: "font-medium text-pink-500 hover:text-pink-600 hover:underline"
+  defp link_class("styled" = _variant), do: "font-medium text-pink-500 hover:text-pink-600 hover:underline"
 
   defp link_class("external" = _variant), do: "font-medium text-pink-600 hover:underline flex"
   defp link_class(_variant), do: ""

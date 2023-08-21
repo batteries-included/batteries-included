@@ -35,8 +35,8 @@
         pname = "mix-deps-platform-test";
         inherit src version LANG;
         mixEnv = "test";
-        sha256 = "sha256-l7qRkXisK36Z5E1yp9JMtTXCbtZONz+ZrAtoA3PbgsQ=";
         #sha256 = lib.fakeSha256;
+        sha256 = "sha256-4+0iVJPAK+EuP+SfyXSj7k0Cm/os0zDHlRIm+IvnD+8=";
       };
 
       # mix fixed output derivation dependencies
@@ -48,8 +48,8 @@
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
         inherit src version LANG;
-        sha256 = "sha256-46WZKfnmS4JG3rsZXdxAFfzNZbmytD2eHfmYwRus5iw=";
         #sha256 = lib.fakeSha256;
+        sha256 = "sha256-EneuzUndPuRLxqM/maWJfPo6aAzhhHvEqunVSm9ZAwA=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {

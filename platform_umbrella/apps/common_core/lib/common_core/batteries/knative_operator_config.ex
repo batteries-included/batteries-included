@@ -1,6 +1,9 @@
 defmodule CommonCore.Batteries.KnativeOperatorConfig do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
+
   alias CommonCore.Defaults.Images
 
   @primary_key false

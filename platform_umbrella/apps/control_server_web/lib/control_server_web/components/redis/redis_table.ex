@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.RedisTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   def show_url(cluster), do: ~p"/redis/#{cluster}/show"

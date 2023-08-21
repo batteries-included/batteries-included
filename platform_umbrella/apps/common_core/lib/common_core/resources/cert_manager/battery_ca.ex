@@ -1,14 +1,17 @@
 defmodule CommonCore.Resources.BatteryCA do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "battery-ca"
 
   import CommonCore.StateSummary.Namespaces
+
   alias CommonCore.Resources.Builder, as: B
 
   resource(:certmanger_issuer_selfsigned, _battery, state) do
     namespace = base_namespace(state)
     spec = %{"selfSigned" => %{}}
 
-    B.build_resource(:certmanger_issuer)
+    :certmanger_issuer
+    |> B.build_resource()
     |> B.name("battery-root")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -31,7 +34,8 @@ defmodule CommonCore.Resources.BatteryCA do
       |> Map.put("secretName", "battery-ca")
       |> Map.put("subject", %{"organizations" => ["cluster.local", "batteries-included"]})
 
-    B.build_resource(:certmanger_certificate)
+    :certmanger_certificate
+    |> B.build_resource()
     |> B.name("battery-ca")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -47,7 +51,8 @@ defmodule CommonCore.Resources.BatteryCA do
     # running for the secret.
     spec = %{"ca" => %{"secretName" => "battery-ca"}}
 
-    B.build_resource(:certmanger_cluster_issuer)
+    :certmanger_cluster_issuer
+    |> B.build_resource()
     |> B.name("battery-ca")
     |> B.spec(spec)
   end

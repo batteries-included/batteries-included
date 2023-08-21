@@ -1,6 +1,7 @@
 defmodule Mix.Tasks.Gen.Openapi.Schema do
   @shortdoc "Given a json schema for open api generate a module for the given stuct types using Ecto.Schema"
 
+  @moduledoc false
   use Mix.Task
   use TypedStruct
 
@@ -83,8 +84,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
       |> Enum.reject(fn {k, _v} -> k == schema_name end)
       |> Map.new()
 
-    {[module | result],
-     %State{state | modules: Map.delete(state.modules, schema_name), deps: new_deps}}
+    {[module | result], %State{state | modules: Map.delete(state.modules, schema_name), deps: new_deps}}
   end
 
   defp add(state, open_api, schema_name) do
@@ -128,6 +128,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
         quote do
           defmodule unquote(String.to_atom("Elixir.#{schema_name}")) do
             use CommonCore.OpenApi.Schema
+
             @derive Jason.Encoder
 
             unquote(typed_ecto_schema)
@@ -150,8 +151,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end
   end
 
-  def seen_schema_names(schema_name, properties)
-      when schema_name not in @dont_specialize_spec_types do
+  def seen_schema_names(schema_name, properties) when schema_name not in @dont_specialize_spec_types do
     properties
     |> Enum.map(fn {_property_name, info} ->
       ref_schema_name(info)
@@ -164,11 +164,9 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
 
   defp ref_schema_name(%{"$ref" => ref_name}), do: ref_name_to_schema_name(ref_name)
 
-  defp ref_schema_name(%{"items" => %{"$ref" => ref_name}}),
-    do: ref_name_to_schema_name(ref_name)
+  defp ref_schema_name(%{"items" => %{"$ref" => ref_name}}), do: ref_name_to_schema_name(ref_name)
 
-  defp ref_schema_name(%{"additionalProperties" => additional_properties}),
-    do: ref_schema_name(additional_properties)
+  defp ref_schema_name(%{"additionalProperties" => additional_properties}), do: ref_schema_name(additional_properties)
 
   defp ref_schema_name(_), do: nil
 
@@ -202,8 +200,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end
   end
 
-  defp field_def(_schema_name, {field_name, field_info}),
-    do: non_embed_def(field_name, field_info)
+  defp field_def(_schema_name, {field_name, field_info}), do: non_embed_def(field_name, field_info)
 
   defp non_embed_def(field_name, field_info) do
     type = type(field_info)

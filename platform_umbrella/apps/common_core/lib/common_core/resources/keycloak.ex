@@ -1,13 +1,14 @@
 defmodule CommonCore.Resources.Keycloak do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "keycloak"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.Secret
   alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.Resources.Secret
 
   resource(:config_map_env_vars, battery, state) do
     namespace = core_namespace(state)
@@ -29,7 +30,8 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("KEYCLOAK_ADMIN", battery.config.admin_username)
       |> Map.put("jgroups.dns.query", "keycloak-headless.#{namespace}")
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("keycloak-env-vars")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -43,7 +45,8 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("admin-password", battery.config.admin_password)
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("keycloak")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -52,7 +55,8 @@ defmodule CommonCore.Resources.Keycloak do
   resource(:service_account_main, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> Map.put("automountServiceAccountToken", true)
     |> B.name("keycloak")
     |> B.namespace(namespace)
@@ -69,7 +73,8 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("publishNotReadyAddresses", true)
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("keycloak-headless")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -85,7 +90,8 @@ defmodule CommonCore.Resources.Keycloak do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("keycloak")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -196,7 +202,8 @@ defmodule CommonCore.Resources.Keycloak do
       )
       |> Map.put("updateStrategy", %{"rollingUpdate" => %{}, "type" => "RollingUpdate"})
 
-    B.build_resource(:stateful_set)
+    :stateful_set
+    |> B.build_resource()
     |> B.name("keycloak")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -207,7 +214,8 @@ defmodule CommonCore.Resources.Keycloak do
 
     spec = VirtualService.fallback("keycloak", hosts: [keycloak_host(state)])
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.name("keycloak")
     |> B.namespace(namespace)
     |> B.spec(spec)

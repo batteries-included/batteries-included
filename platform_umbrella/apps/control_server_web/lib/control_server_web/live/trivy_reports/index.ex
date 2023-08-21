@@ -1,11 +1,12 @@
 defmodule ControlServerWeb.Live.TrivyReportsIndex do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.VulnerabilityReportTable
-  import ControlServerWeb.ConfigAuditReportTable
-  import ControlServerWeb.RBACReportTable
-  import ControlServerWeb.InfraAssessmentReportTable
   import CommonUI.TabBar
+  import ControlServerWeb.ConfigAuditReportTable
+  import ControlServerWeb.InfraAssessmentReportTable
+  import ControlServerWeb.RBACReportTable
+  import ControlServerWeb.VulnerabilityReportTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -74,12 +75,9 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
       {"Audit", ~p"/trivy_reports/config_audit_report", :aqua_config_audit_report == selected},
       {"Cluster RBAC", ~p"/trivy_reports/cluster_rbac_assessment_report",
        :aqua_cluster_rbac_assessment_report == selected},
-      {"RBAC", ~p"/trivy_reports/rbac_assessment_report",
-       :aqua_rbac_assessment_report == selected},
-      {"Kube Infra", ~p"/trivy_reports/infra_assessment_report",
-       :aqua_infra_assessment_report == selected},
-      {"Vulnerability", ~p"/trivy_reports/vulnerability_report",
-       :aqua_vulnerability_report == selected}
+      {"RBAC", ~p"/trivy_reports/rbac_assessment_report", :aqua_rbac_assessment_report == selected},
+      {"Kube Infra", ~p"/trivy_reports/infra_assessment_report", :aqua_infra_assessment_report == selected},
+      {"Vulnerability", ~p"/trivy_reports/vulnerability_report", :aqua_vulnerability_report == selected}
     ]
   end
 

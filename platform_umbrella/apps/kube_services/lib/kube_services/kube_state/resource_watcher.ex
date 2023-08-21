@@ -13,6 +13,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   Errors in the list or watch cause everything to be retried after some time
   """
   use GenServer
+
   alias CommonCore.ApiVersionKind
 
   require Logger

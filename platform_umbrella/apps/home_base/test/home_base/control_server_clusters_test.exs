@@ -4,9 +4,9 @@ defmodule HomeBase.ControlServerClustersTest do
   alias HomeBase.ControlServerClusters
 
   describe "installations" do
-    alias HomeBase.ControlServerClusters.Installation
-
     import HomeBase.ControlServerClustersFixtures
+
+    alias HomeBase.ControlServerClusters.Installation
 
     @invalid_attrs %{bootstrap_config: nil, slug: nil}
 

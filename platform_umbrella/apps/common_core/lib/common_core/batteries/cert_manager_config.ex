@@ -1,5 +1,7 @@
 defmodule CommonCore.Batteries.CertManagerConfig do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @primary_key false

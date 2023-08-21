@@ -11,7 +11,8 @@ defmodule CommonCore.Resources.Redis do
       spec = failover_spec(cluster)
       namespace = cluster_namespace(cluster, battery, state)
 
-      B.build_resource(:redis_failover)
+      :redis_failover
+      |> B.build_resource()
       |> B.namespace(namespace)
       |> B.name(cluster.name)
       |> B.spec(spec)
@@ -19,11 +20,9 @@ defmodule CommonCore.Resources.Redis do
     end)
   end
 
-  defp cluster_namespace(%{type: :internal} = _cluster, _battery, state),
-    do: core_namespace(state)
+  defp cluster_namespace(%{type: :internal} = _cluster, _battery, state), do: core_namespace(state)
 
-  defp cluster_namespace(%{type: _} = _cluster, _battery, state),
-    do: data_namespace(state)
+  defp cluster_namespace(%{type: _} = _cluster, _battery, state), do: data_namespace(state)
 
   defp add_owner(resource, %{id: nil} = _cluster), do: resource
   defp add_owner(resource, %{id: id} = _cluster), do: B.owner_label(resource, id)

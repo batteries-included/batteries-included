@@ -4,9 +4,9 @@ defmodule ControlServer.SnapshotApply.ActionsTest do
   alias ControlServer.SnapshotApply.Actions
 
   describe "keycloak_actions" do
-    alias ControlServer.SnapshotApply.KeycloakAction
-
     import ControlServer.SnapshotApply.ActionsFixtures
+
+    alias ControlServer.SnapshotApply.KeycloakAction
 
     @invalid_attrs %{
       action: :create,

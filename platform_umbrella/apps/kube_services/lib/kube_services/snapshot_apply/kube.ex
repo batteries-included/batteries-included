@@ -1,19 +1,17 @@
 defmodule KubeServices.SnapshotApply.KubeApply do
+  @moduledoc false
   use GenServer
   use TypedStruct
 
-  alias ControlServer.SnapshotApply.UmbrellaSnapshot
+  alias CommonCore.Resources.Hashing
+  alias CommonCore.Resources.RootResourceGenerator
   alias CommonCore.StateSummary
   alias ControlServer.SnapshotApply.KubeEctoSteps
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-
-  alias CommonCore.Resources.RootResourceGenerator
-
+  alias ControlServer.SnapshotApply.UmbrellaSnapshot
   alias KubeServices.KubeState
   alias KubeServices.SnapshotApply.ApplyResource
-
-  alias CommonCore.Resources.Hashing
 
   require Logger
 
@@ -25,6 +23,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   ]
 
   defmodule State do
+    @moduledoc false
     typedstruct do
       field :kube_connection, K8s.Conn.t() | nil
       field :apply_kube_func, any()
@@ -34,8 +33,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     def new(opts) do
       %__MODULE__{
         apply_kube_func: Keyword.get(opts, :apply_kube_func, &ApplyResource.apply/2),
-        kube_connection:
-          Keyword.get_lazy(opts, :kube_connection, &KubeServices.ConnectionPool.get/0),
+        kube_connection: Keyword.get_lazy(opts, :kube_connection, &KubeServices.ConnectionPool.get/0),
         stream_concurrency: Keyword.get(opts, :stream_concurrency, 5)
       }
     end
@@ -152,11 +150,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     KubeEctoSteps.update_all_rp(paths, true, "Hash Match")
   end
 
-  defp apply_needs_apply_resource_paths(
-         paths,
-         resource_map,
-         %{stream_concurrency: stream_concurrency} = server_state
-       ) do
+  defp apply_needs_apply_resource_paths(paths, resource_map, %{stream_concurrency: stream_concurrency} = server_state) do
     paths
     |> Task.async_stream(
       fn rp ->
@@ -168,10 +162,12 @@ defmodule KubeServices.SnapshotApply.KubeApply do
             |> Map.get(rp.path)
             |> apply_resource_to_kube(server_state)
           rescue
-            exp -> {:error, %{exception: exp}}
+            exp ->
+              {:error, %{exception: exp}}
+
+              # Write the result back to the database
           end
 
-        # Write the result back to the database
         is_success = resource_path_result_is_success?(result)
         reason_string = reason_string(reason)
         KubeEctoSteps.update_rp(rp, is_success, reason_string)

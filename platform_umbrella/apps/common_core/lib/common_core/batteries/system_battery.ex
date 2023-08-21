@@ -1,4 +1,5 @@
 defmodule CommonCore.Batteries.SystemBattery do
+  @moduledoc false
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -13,11 +14,11 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.IstioConfig
   alias CommonCore.Batteries.IstioCSRConfig
   alias CommonCore.Batteries.IstioGatewayConfig
-  alias CommonCore.Batteries.KialiConfig
   alias CommonCore.Batteries.KeycloakConfig
-  alias CommonCore.Batteries.KubeMonitoringConfig
+  alias CommonCore.Batteries.KialiConfig
   alias CommonCore.Batteries.KnativeOperatorConfig
   alias CommonCore.Batteries.KnativeServingConfig
+  alias CommonCore.Batteries.KubeMonitoringConfig
   alias CommonCore.Batteries.KubeStateMetricsConfig
   alias CommonCore.Batteries.LokiConfig
   alias CommonCore.Batteries.MetalLBConfig
@@ -29,9 +30,9 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.RookConfig
   alias CommonCore.Batteries.Smtp4devConfig
   alias CommonCore.Batteries.SSOConfig
+  alias CommonCore.Batteries.TimelineConfig
   alias CommonCore.Batteries.TrivyOperatorConfig
   alias CommonCore.Batteries.TrustManagerConfig
-  alias CommonCore.Batteries.TimelineConfig
   alias CommonCore.Batteries.VictoriaMetricsConfig
 
   @possible_types [

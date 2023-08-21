@@ -1,5 +1,7 @@
 defmodule ControlServer.SnapshotApply.KubeSnapshot do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @derive {

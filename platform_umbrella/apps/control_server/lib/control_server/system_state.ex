@@ -1,4 +1,5 @@
 defmodule ControlServer.SystemState do
+  @moduledoc false
   alias Ecto.Multi
 
   def transaction do

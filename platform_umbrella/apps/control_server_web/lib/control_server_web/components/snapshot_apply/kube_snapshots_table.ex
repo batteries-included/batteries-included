@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.KubeSnapshotsTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :kube_snapshots, :list, required: true

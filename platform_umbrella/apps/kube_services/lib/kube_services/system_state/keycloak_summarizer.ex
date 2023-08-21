@@ -1,9 +1,11 @@
 defmodule KubeServices.SystemState.KeycloakSummarizer do
+  @moduledoc false
   use GenServer
   use TypedStruct
+
+  alias CommonCore.Keycloak.AdminClient
   alias CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.StateSummary.KeycloakSummary
-  alias CommonCore.Keycloak.AdminClient
 
   require Logger
 

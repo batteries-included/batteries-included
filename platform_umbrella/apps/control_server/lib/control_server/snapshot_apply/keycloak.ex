@@ -4,8 +4,8 @@ defmodule ControlServer.SnapshotApply.Keycloak do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
+  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KeycloakSnapshot
 
   @doc """

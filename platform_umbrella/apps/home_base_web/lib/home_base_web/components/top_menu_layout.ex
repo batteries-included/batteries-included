@@ -1,8 +1,9 @@
 defmodule HomeBaseWeb.TopMenuLayout do
+  @moduledoc false
   use HomeBaseWeb, :html
 
-  import CommonUI.Icons.Batteries
   import CommonUI.CSSHelpers
+  import CommonUI.Icons.Batteries
 
   @main_menu_items [
     %{title: "Dashboard", url: "/", id: :home},

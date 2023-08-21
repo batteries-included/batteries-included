@@ -1,4 +1,5 @@
 defmodule CommonCore.Timeline.TimelineEvent do
+  @moduledoc false
   use Ecto.Schema
 
   import Ecto.Changeset

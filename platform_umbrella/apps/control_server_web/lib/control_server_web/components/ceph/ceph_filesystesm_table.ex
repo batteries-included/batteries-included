@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.CephFilesystemsTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :ceph_filesystems, :list, required: true

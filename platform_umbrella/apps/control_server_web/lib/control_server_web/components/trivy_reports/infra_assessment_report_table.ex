@@ -1,5 +1,7 @@
 defmodule ControlServerWeb.InfraAssessmentReportTable do
+  @moduledoc false
   use ControlServerWeb, :html
+
   import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]
 
   def infra_assessment_reports_table(assigns) do

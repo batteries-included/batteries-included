@@ -1,9 +1,9 @@
 defmodule CommonCore.Resources.BatteryTest do
   use ExUnit.Case
 
+  alias CommonCore.Defaults
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
   alias CommonCore.StateSummary
-  alias CommonCore.Defaults
 
   describe "Battery core services works" do
     test "Can materialize control server" do

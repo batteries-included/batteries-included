@@ -1,10 +1,11 @@
 defmodule ControlServerWeb.Live.KeycloakRealmsList do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  alias KubeServices.SystemState.SummaryHosts
-  alias CommonCore.Keycloak.AdminClient
-
   import ControlServerWeb.Keycloak.RealmsTable
+
+  alias CommonCore.Keycloak.AdminClient
+  alias KubeServices.SystemState.SummaryHosts
 
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do

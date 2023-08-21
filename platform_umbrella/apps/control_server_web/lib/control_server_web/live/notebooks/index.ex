@@ -6,8 +6,8 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
 
   import ControlServerWeb.NotebooksTable
 
-  alias ControlServer.Notebooks
   alias ControlServer.Batteries.Installer
+  alias ControlServer.Notebooks
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do

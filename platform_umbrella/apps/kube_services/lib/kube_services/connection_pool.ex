@@ -1,4 +1,5 @@
 defmodule KubeServices.ConnectionPool do
+  @moduledoc false
   use Supervisor
 
   alias K8s.Conn
@@ -71,7 +72,8 @@ defmodule KubeServices.ConnectionPool do
   end
 
   defp connection_from_name(cluster_name) do
-    Application.get_env(:kube_services, :clusters, [])
+    :kube_services
+    |> Application.get_env(:clusters, [])
     |> Keyword.get(cluster_name, {:file, "~/.kube/config"})
     |> new_connection()
   end
@@ -95,6 +97,5 @@ defmodule KubeServices.ConnectionPool do
     task_supervisor_name(Atom.to_string(cluster_name))
   end
 
-  defp task_supervisor_name(cluster_name),
-    do: String.to_atom("#{cluster_name}.TaskSupervisor")
+  defp task_supervisor_name(cluster_name), do: String.to_atom("#{cluster_name}.TaskSupervisor")
 end

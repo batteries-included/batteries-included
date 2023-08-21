@@ -1,4 +1,5 @@
 defmodule CommonUI.CSSHelpers do
+  @moduledoc false
   @spec build_class(false | nil | binary | list, any) :: binary
   def build_class(list, joiner \\ " ")
   def build_class(string, _joiner) when is_binary(string), do: string
@@ -31,8 +32,7 @@ defmodule CommonUI.CSSHelpers do
   # the final join
 
   # if the final join is a list then just restart the joining with that list
-  defp join_list_cleanly([value], joiner, acc) when is_list(value),
-    do: join_list_cleanly(value, joiner, acc)
+  defp join_list_cleanly([value], joiner, acc) when is_list(value), do: join_list_cleanly(value, joiner, acc)
 
   # If the final value is anything else cast it to a string and trim it
   defp join_list_cleanly([{value, true}], _joiner, acc), do: [to_trimmed_string(value) | acc]

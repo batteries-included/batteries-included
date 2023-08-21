@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.ObjectDisplay do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :base_url, :string, default: "/"

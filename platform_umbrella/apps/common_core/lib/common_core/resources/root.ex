@@ -2,27 +2,26 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   @moduledoc """
   Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
-  alias CommonCore.StateSummary
-
   alias CommonCore.Resources.BatteryCA
   alias CommonCore.Resources.BatteryCore
   alias CommonCore.Resources.CephClusters
   alias CommonCore.Resources.CephFilesystems
   alias CommonCore.Resources.CertManager
+  alias CommonCore.Resources.ControlServer, as: ControlServerResources
   alias CommonCore.Resources.Gitea
   alias CommonCore.Resources.Grafana
   alias CommonCore.Resources.Harbor
   alias CommonCore.Resources.IstioBase
   alias CommonCore.Resources.IstioCsr
-  alias CommonCore.Resources.IstioIngress
   alias CommonCore.Resources.Istiod
+  alias CommonCore.Resources.IstioIngress
   alias CommonCore.Resources.IstioMetrics
   alias CommonCore.Resources.Keycloak
   alias CommonCore.Resources.Kiali
   alias CommonCore.Resources.KnativeOperator
   alias CommonCore.Resources.KnativeServing
-  alias CommonCore.Resources.KubeMonitoring
   alias CommonCore.Resources.KubeDashboards
+  alias CommonCore.Resources.KubeMonitoring
   alias CommonCore.Resources.KubeStateMetrics
   alias CommonCore.Resources.Loki
   alias CommonCore.Resources.MetalLB
@@ -38,11 +37,10 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.TrivyOperator
   alias CommonCore.Resources.TrustManager
   alias CommonCore.Resources.VMAgent
-  alias CommonCore.Resources.VMDashboards
   alias CommonCore.Resources.VMCluster
+  alias CommonCore.Resources.VMDashboards
   alias CommonCore.Resources.VMOperator
-
-  alias CommonCore.Resources.ControlServer, as: ControlServerResources
+  alias CommonCore.StateSummary
 
   require Logger
 

@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Live.KnativeServicesIndex do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.KnativeServicesTable

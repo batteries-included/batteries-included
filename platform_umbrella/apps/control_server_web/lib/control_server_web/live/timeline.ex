@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Live.Timeline do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.TimelineDisplay

@@ -1,4 +1,5 @@
 defmodule CommonCore.Batteries.LokiConfig do
+  @moduledoc false
   use TypedEctoSchema
 
   import Ecto.Changeset

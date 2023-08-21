@@ -1,8 +1,9 @@
 defmodule CommonCore.Resources.Notebooks do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "juypter-notebooks"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
@@ -16,7 +17,8 @@ defmodule CommonCore.Resources.Notebooks do
   resource(:service_account, _battery, state) do
     namespace = ml_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("battery-notebooks")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
@@ -26,7 +28,8 @@ defmodule CommonCore.Resources.Notebooks do
     namespace = ml_namespace(state)
     routes = Enum.map(state.notebooks, &notebook_http_route/1)
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("notebooks")
@@ -79,7 +82,8 @@ defmodule CommonCore.Resources.Notebooks do
       |> B.match_labels_selector(@app_name)
       |> B.template(template)
 
-    B.build_resource(:stateful_set)
+    :stateful_set
+    |> B.build_resource()
     |> B.name("notebook-#{notebook.name}")
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
@@ -97,7 +101,8 @@ defmodule CommonCore.Resources.Notebooks do
       |> B.short_selector("battery/notebook", notebook.name)
       |> B.ports([%{name: "http", port: 8888, targetPort: 8888}])
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name(service_name(notebook))
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)

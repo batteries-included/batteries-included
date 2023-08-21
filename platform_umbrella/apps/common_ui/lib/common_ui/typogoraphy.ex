@@ -1,4 +1,5 @@
 defmodule CommonUI.Typogoraphy do
+  @moduledoc false
   use CommonUI.Component
 
   attr :class, :any, default: ""
@@ -29,8 +30,7 @@ defmodule CommonUI.Typogoraphy do
   attr :base_class, :string, default: "text-xl sm:text-3xl font-semibold my-3"
   attr :color_class, :string, default: "text-astral-800"
 
-  attr :fancy_class, :string,
-    default: "text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-astral-500"
+  attr :fancy_class, :string, default: "text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-astral-500"
 
   attr :variant, :string, default: "default", values: ["default", "fancy"]
   slot :inner_block, required: true

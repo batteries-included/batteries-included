@@ -3,6 +3,7 @@ defmodule CommonCore.Postgres.Cluster do
   The postgres cluster module
   """
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   require Logger

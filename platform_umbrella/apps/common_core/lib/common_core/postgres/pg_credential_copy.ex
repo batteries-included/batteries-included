@@ -1,5 +1,7 @@
 defmodule CommonCore.Postgres.PGCredentialCopy do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @possible_formats [

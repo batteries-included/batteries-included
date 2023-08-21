@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.Gitea do
+  @moduledoc false
   use CommonCore.IncludeResource,
     config_environment_sh: "priv/raw_files/gitea/config_environment.sh",
     configure_gitea_sh: "priv/raw_files/gitea/configure_gitea.sh",
@@ -6,17 +7,16 @@ defmodule CommonCore.Resources.Gitea do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "gitea"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.Secret
-
-  alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.IstioConfig.HttpRoute
   alias CommonCore.Resources.IstioConfig.TCPRoute
+  alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.Resources.Secret
 
   @ssh_port 2202
   @ssh_listen_port 2022
@@ -32,7 +32,8 @@ defmodule CommonCore.Resources.Gitea do
         http: [HttpRoute.fallback("gitea-http")]
       )
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.namespace(namespace)
     |> B.name("gitea")
     |> B.spec(spec)
@@ -50,7 +51,8 @@ defmodule CommonCore.Resources.Gitea do
         %{"matchLabels" => %{"battery/app" => @app_name}}
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("gitea")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -66,7 +68,8 @@ defmodule CommonCore.Resources.Gitea do
       |> Map.put("init_directory_structure.sh", get_resource(:init_directory_structure_sh))
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("gitea-init")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -112,7 +115,8 @@ defmodule CommonCore.Resources.Gitea do
       )
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("gitea-inline-config")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -126,7 +130,8 @@ defmodule CommonCore.Resources.Gitea do
       |> Map.put("config_environment.sh", get_resource(:config_environment_sh))
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("gitea")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -142,7 +147,8 @@ defmodule CommonCore.Resources.Gitea do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("gitea-http")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -163,7 +169,8 @@ defmodule CommonCore.Resources.Gitea do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("gitea-ssh")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -331,7 +338,8 @@ defmodule CommonCore.Resources.Gitea do
         }
       ])
 
-    B.build_resource(:stateful_set)
+    :stateful_set
+    |> B.build_resource()
     |> B.name("gitea")
     |> B.namespace(namespace)
     |> B.spec(spec)

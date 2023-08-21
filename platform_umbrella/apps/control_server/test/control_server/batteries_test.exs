@@ -3,7 +3,6 @@ defmodule ControlServer.BatteriesTest do
 
   alias CommonCore.Batteries.IstioConfig
   alias CommonCore.Batteries.SystemBattery
-
   alias ControlServer.Batteries
 
   describe "system_batteries" do

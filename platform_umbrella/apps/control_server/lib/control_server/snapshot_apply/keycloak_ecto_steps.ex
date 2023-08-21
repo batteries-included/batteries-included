@@ -1,14 +1,15 @@
 defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
-  alias ControlServer.SnapshotApply.KeycloakAction
-  alias CommonCore.Actions.FreshGeneratedAction
-  alias ControlServer.SnapshotApply.KeycloakSnapshot
-  alias CommonCore.Resources.Hashing
-  alias ControlServer.ContentAddressable.Document
-  alias Ecto.Multi
-  alias ControlServer.Repo
-
+  @moduledoc false
   import ControlServer.SnapshotApply.Keycloak
   import Ecto.Query
+
+  alias CommonCore.Actions.FreshGeneratedAction
+  alias CommonCore.Resources.Hashing
+  alias ControlServer.ContentAddressable.Document
+  alias ControlServer.Repo
+  alias ControlServer.SnapshotApply.KeycloakAction
+  alias ControlServer.SnapshotApply.KeycloakSnapshot
+  alias Ecto.Multi
 
   @generation_timeout 60_000
 
@@ -115,12 +116,7 @@ defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
     }
   end
 
-  defp action_args(
-         %KeycloakSnapshot{} = snap,
-         %FreshGeneratedAction{} = base_action,
-         raw_document,
-         now
-       ) do
+  defp action_args(%KeycloakSnapshot{} = snap, %FreshGeneratedAction{} = base_action, raw_document, now) do
     base_action
     |> Map.from_struct()
     |> Map.drop([:value])

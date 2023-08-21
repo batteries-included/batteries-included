@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Storybook.H2 do
+  @moduledoc false
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Typogoraphy.h2/1
@@ -8,16 +9,7 @@ defmodule ControlServerWeb.Storybook.H2 do
 
   def variations,
     do: [
-      %Variation{
-        id: :default,
-        slots: ["H2 Header"]
-      },
-      %Variation{
-        id: :fancy,
-        slots: [
-          ~s|Main Text|
-        ],
-        attributes: %{variant: "fancy"}
-      }
+      %Variation{id: :default, slots: ["H2 Header"]},
+      %Variation{id: :fancy, slots: [~s|Main Text|], attributes: %{variant: "fancy"}}
     ]
 end

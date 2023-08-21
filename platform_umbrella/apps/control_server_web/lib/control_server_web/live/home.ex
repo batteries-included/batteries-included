@@ -1,11 +1,12 @@
 defmodule ControlServerWeb.Live.Home do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.Chart
 
+  alias ControlServer.SnapshotApply.Kube
   alias KubeServices.KubeState
   alias Phoenix.Naming
-  alias ControlServer.SnapshotApply.Kube
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do

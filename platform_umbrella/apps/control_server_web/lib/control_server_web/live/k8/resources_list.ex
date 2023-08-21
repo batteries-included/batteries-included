@@ -4,12 +4,12 @@ defmodule ControlServerWeb.Live.ResourceList do
   """
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.DeploymentsTable
-  import ControlServerWeb.StatefulSetsTable
-  import ControlServerWeb.NodesTable
-  import ControlServerWeb.ServicesTable
-  import ControlServerWeb.PodsTable
   import CommonUI.TabBar
+  import ControlServerWeb.DeploymentsTable
+  import ControlServerWeb.NodesTable
+  import ControlServerWeb.PodsTable
+  import ControlServerWeb.ServicesTable
+  import ControlServerWeb.StatefulSetsTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState

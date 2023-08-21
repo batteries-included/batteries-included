@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.CephClusters do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "ceph-clusters"
 
   import CommonCore.StateSummary.Namespaces
@@ -9,7 +10,8 @@ defmodule CommonCore.Resources.CephClusters do
     namespace = data_namespace(state)
 
     Enum.map(state.ceph_clusters, fn cluster ->
-      B.build_resource(:ceph_cluster)
+      :ceph_cluster
+      |> B.build_resource()
       |> B.name(cluster.name)
       |> B.namespace(namespace)
       |> B.owner_label(cluster.id)

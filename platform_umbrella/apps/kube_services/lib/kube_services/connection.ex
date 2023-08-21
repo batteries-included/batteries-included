@@ -1,4 +1,5 @@
 defmodule KubeServices.Connection do
+  @moduledoc false
   def get, do: get(KubeServices.cluster_type())
 
   defp get(:dev) do

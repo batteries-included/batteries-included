@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.CephClustersTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :ceph_clusters, :list, required: true

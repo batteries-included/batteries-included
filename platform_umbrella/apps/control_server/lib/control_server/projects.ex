@@ -4,9 +4,9 @@ defmodule ControlServer.Projects do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
   alias ControlServer.Projects.SystemProject
+  alias ControlServer.Repo
 
   @doc """
   Returns the list of system_projects.

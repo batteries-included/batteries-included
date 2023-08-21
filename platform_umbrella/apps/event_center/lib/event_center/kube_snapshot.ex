@@ -1,4 +1,5 @@
 defmodule EventCenter.KubeSnapshot do
+  @moduledoc false
   use TypedStruct
 
   alias Phoenix.PubSub

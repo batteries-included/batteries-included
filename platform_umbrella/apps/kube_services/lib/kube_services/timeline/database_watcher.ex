@@ -1,4 +1,5 @@
 defmodule KubeServices.Timeline.DatabaseWatcher do
+  @moduledoc false
   use GenServer
   use TypedStruct
 

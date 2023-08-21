@@ -1,17 +1,18 @@
 defmodule ControlServerWeb.Live.PostgresShow do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import CommonUI.Stats
-  import ControlServerWeb.PodsTable
-  import ControlServerWeb.ServicesTable
   import ControlServerWeb.PgDatabaseTable
   import ControlServerWeb.PgUserTable
+  import ControlServerWeb.PodsTable
+  import ControlServerWeb.ServicesTable
 
-  alias ControlServer.Postgres
-  alias KubeServices.KubeState
   alias CommonCore.Resources.OwnerLabel
   alias CommonCore.Resources.OwnerReference
+  alias ControlServer.Postgres
   alias EventCenter.KubeState, as: KubeEventCenter
+  alias KubeServices.KubeState
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -77,12 +78,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
     assign(socket, :k8_pods, pods)
   end
 
-  defp all_matching(
-         resource_type,
-         owner_ids,
-         owner_uids,
-         {cluster_name, cluster_namespace} \\ {nil, nil}
-       ) do
+  defp all_matching(resource_type, owner_ids, owner_uids, {cluster_name, cluster_namespace} \\ {nil, nil}) do
     possible_uid_mapset = MapSet.new(owner_uids)
     possible_id_mapset = MapSet.new(owner_ids)
 
@@ -142,8 +138,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp page_title(:show), do: "Show Postgres"
 
-  defp edit_url(cluster),
-    do: ~p"/postgres/#{cluster}/edit"
+  defp edit_url(cluster), do: ~p"/postgres/#{cluster}/edit"
 
   defp k8_cluster_status(nil) do
     "Not Running"

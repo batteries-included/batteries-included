@@ -14,9 +14,8 @@ defmodule CommonCore.Resources.FilterResource do
     do: require_battery(resource, state, [battery_type])
 
   def require_battery(resource, state, battery_types) when is_list(battery_types) do
-    case batteries_installed?(state, battery_types) do
-      true -> resource
-      _ -> nil
+    if batteries_installed?(state, battery_types) do
+      resource
     end
   end
 

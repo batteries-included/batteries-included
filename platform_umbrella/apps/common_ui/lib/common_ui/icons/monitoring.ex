@@ -1,4 +1,5 @@
 defmodule CommonUI.Icons.Monitoring do
+  @moduledoc false
   use CommonUI.Component
 
   attr :class, :any, default: nil

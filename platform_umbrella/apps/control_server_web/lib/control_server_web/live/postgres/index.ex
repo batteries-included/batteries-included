@@ -2,11 +2,11 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  alias CommonCore.Postgres.Cluster
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.PostgresClusterTable
 
+  alias CommonCore.Postgres.Cluster
   alias ControlServer.Postgres
 
   @impl Phoenix.LiveView

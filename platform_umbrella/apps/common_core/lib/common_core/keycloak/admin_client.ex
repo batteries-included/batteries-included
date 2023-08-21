@@ -38,10 +38,10 @@ defmodule CommonCore.Keycloak.AdminClient do
   use GenServer
   use TypedStruct
 
-  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
-  alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.Keycloak.TeslaBuilder
+  alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.OpenApi.KeycloakAdminSchema
+  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
 
   require Logger
 
@@ -199,11 +199,7 @@ defmodule CommonCore.Keycloak.AdminClient do
     end
   end
 
-  def handle_call(
-        {:reset, opts},
-        _from,
-        %State{base_url: base_url, username: username, password: password} = state
-      ) do
+  def handle_call({:reset, opts}, _from, %State{base_url: base_url, username: username, password: password} = state) do
     new_base_url = Keyword.get(opts, :base_url, base_url)
     new_username = Keyword.get(opts, :username, username)
     new_password = Keyword.get(opts, :password, password)
@@ -286,7 +282,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp maybe_aquire_refresh(%State{refresh_token: tok, refresh_expire: expire} = state) do
     cond do
       tok == nil -> do_login(state)
-      1 == Timex.compare(Timex.now(), expire) -> do_login(state)
+      1 == Timex.compare(DateTime.utc_now(), expire) -> do_login(state)
       true -> {:ok, state}
     end
   end
@@ -295,7 +291,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   # Then use the refresh token.
   @spec maybe_aquire_access(State.t()) :: {:ok, State.t()} | {:error, any()}
   defp maybe_aquire_access(%State{access_expire: expire} = state) do
-    if 1 == Timex.compare(Timex.now(), expire) do
+    if 1 == Timex.compare(DateTime.utc_now(), expire) do
       do_refresh(state)
     else
       {:ok, state}
@@ -303,9 +299,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   @spec build_bearer_client(State.t() | {:error, any()} | any()) :: State.t() | {:error, any()}
-  def build_bearer_client(
-        %State{access_token: token, base_url: base_url, adapter: adapter} = state
-      ) do
+  def build_bearer_client(%State{access_token: token, base_url: base_url, adapter: adapter} = state) do
     %State{state | bearer_client: TeslaBuilder.build_client(base_url, token, adapter)}
   end
 

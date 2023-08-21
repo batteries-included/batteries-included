@@ -8,7 +8,7 @@ locals_without_parens = [
 
 [
   import_deps: [:phoenix],
-  plugins: [Phoenix.LiveView.HTMLFormatter],
+  plugins: [Phoenix.LiveView.HTMLFormatter, Styler],
   inputs: [
     "{mix,.formatter}.exs",
     "*.{heex,ex,exs}",

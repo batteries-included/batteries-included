@@ -1,5 +1,7 @@
 defmodule CommonCore.Notebooks.JupyterLabNotebook do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   require Logger
@@ -29,8 +31,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     put_change(changeset, :name, MnemonicSlugs.generate_slug())
   end
 
-  defp add_name(%Ecto.Changeset{data: %{name: name}} = changeset) when is_bitstring(name),
-    do: changeset
+  defp add_name(%Ecto.Changeset{data: %{name: name}} = changeset) when is_bitstring(name), do: changeset
 
   defp add_name(changeset) do
     put_change(changeset, :name, MnemonicSlugs.generate_slug())

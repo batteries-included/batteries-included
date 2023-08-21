@@ -1,10 +1,11 @@
 defmodule CommonCore.StateSummary.SeedState do
+  @moduledoc false
   alias CommonCore.Batteries.BatteryCoreConfig
-  alias CommonCore.Batteries.SystemBattery
-  alias CommonCore.Batteries.CatalogBattery
-  alias CommonCore.StateSummary
   alias CommonCore.Batteries.Catalog
+  alias CommonCore.Batteries.CatalogBattery
+  alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Defaults
+  alias CommonCore.StateSummary
 
   def seed(:everything) do
     %StateSummary{

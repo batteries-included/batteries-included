@@ -10,7 +10,7 @@ defmodule ControlServer.SnapshotApplyFixtures do
   def umbrella_snapshot_fixture(attrs \\ %{}) do
     {:ok, umbrella_snapshot} =
       attrs
-      |> Enum.into(%{})
+      |> Map.new()
       |> ControlServer.SnapshotApply.create_umbrella_snapshot()
 
     umbrella_snapshot

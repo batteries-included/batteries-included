@@ -1,4 +1,5 @@
 defmodule ControlServer.Release do
+  @moduledoc false
   alias Ecto.Migrator
 
   require Logger

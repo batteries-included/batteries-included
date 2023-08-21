@@ -1,12 +1,13 @@
 defmodule KubeServices.Stale.Reaper do
+  @moduledoc false
   use GenServer
   use TypedStruct
 
   import K8s.Resource.FieldAccessors
 
   alias CommonCore.ApiVersionKind
-  alias KubeServices.Stale
   alias KubeServices.ResourceDeleter
+  alias KubeServices.Stale
 
   require Logger
 

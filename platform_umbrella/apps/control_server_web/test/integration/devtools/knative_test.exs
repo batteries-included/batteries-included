@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Integration.Knative do
+  @moduledoc false
   use ControlServerWeb.IntegrationTestCase
 
   require Logger
@@ -27,5 +28,5 @@ defmodule ControlServerWeb.Integration.Knative do
     assert_receive _, 240_000
   end
 
-  defp service_name, do: "#{@base_service_name}-#{:rand.uniform(10000)}"
+  defp service_name, do: "#{@base_service_name}-#{:rand.uniform(10_000)}"
 end

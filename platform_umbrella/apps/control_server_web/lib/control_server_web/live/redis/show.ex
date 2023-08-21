@@ -1,13 +1,14 @@
 defmodule ControlServerWeb.Live.RedisShow do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
 
-  alias ControlServer.Redis
-  alias KubeServices.KubeState
   alias CommonCore.Resources.OwnerLabel
+  alias ControlServer.Redis
   alias EventCenter.KubeState, as: KubeEventCenter
+  alias KubeServices.KubeState
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -47,8 +48,7 @@ defmodule ControlServerWeb.Live.RedisShow do
 
   defp page_title(:show), do: "Show Redis Failover Cluster"
 
-  defp edit_url(cluster),
-    do: ~p"/redis/#{cluster}/edit"
+  defp edit_url(cluster), do: ~p"/redis/#{cluster}/edit"
 
   defp k8_failover(id) do
     Enum.find(KubeState.get_all(:redis_failover), nil, fn pg -> id == OwnerLabel.get_owner(pg) end)

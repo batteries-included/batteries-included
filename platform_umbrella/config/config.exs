@@ -99,8 +99,7 @@ config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
 
 config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
 
-config :common_core, CommonCore.Resources.Hashing,
-  key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
+config :common_core, CommonCore.Resources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 
 config :tesla, adapter: {Tesla.Adapter.Mint, [timeout: 30_000]}
 

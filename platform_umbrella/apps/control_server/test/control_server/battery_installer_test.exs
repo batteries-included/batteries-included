@@ -3,9 +3,8 @@ defmodule ControlServer.Batteries.InstallerTest do
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.SystemBattery
-  alias CommonCore.Redis.FailoverCluster
   alias CommonCore.Postgres.Cluster, as: PGCluster
-
+  alias CommonCore.Redis.FailoverCluster
   alias ControlServer.Batteries.Installer
 
   describe "ControlServer.Batteries.Installer" do

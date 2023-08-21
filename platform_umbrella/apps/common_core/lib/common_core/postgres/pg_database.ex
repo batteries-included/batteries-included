@@ -1,5 +1,7 @@
 defmodule CommonCore.Postgres.PGDatabase do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @primary_key false

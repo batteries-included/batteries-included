@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.Loki do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "loki"
 
   import CommonCore.StateSummary.Namespaces
@@ -11,7 +12,8 @@ defmodule CommonCore.Resources.Loki do
     contents = battery |> config_contents(state) |> Ymlr.document!()
     data = %{"config.yaml" => contents}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("loki")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -20,7 +22,8 @@ defmodule CommonCore.Resources.Loki do
   resource(:service_account_main, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> Map.put("automountServiceAccountToken", true)
     |> B.namespace(namespace)
     |> B.name("loki")
@@ -41,7 +44,8 @@ defmodule CommonCore.Resources.Loki do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("loki-headless")
     |> B.namespace(namespace)
     |> B.label("prometheus.io/service-monitor", "false")
@@ -65,7 +69,8 @@ defmodule CommonCore.Resources.Loki do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("loki")
     |> B.namespace(namespace)
     |> B.component_label("main")
@@ -82,7 +87,8 @@ defmodule CommonCore.Resources.Loki do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("loki-memberlist")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -178,7 +184,8 @@ defmodule CommonCore.Resources.Loki do
         }
       ])
 
-    B.build_resource(:stateful_set)
+    :stateful_set
+    |> B.build_resource()
     |> B.name("loki")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -202,7 +209,8 @@ defmodule CommonCore.Resources.Loki do
         %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "main"}}
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("loki")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -214,7 +222,8 @@ defmodule CommonCore.Resources.Loki do
     contents = battery |> datasources_contents(state) |> Ymlr.document!()
     data = %{"loki-datasources.yaml" => contents}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("loki-datasources")
     |> B.namespace(namespace)
     |> B.label("grafana_datasource", "1")

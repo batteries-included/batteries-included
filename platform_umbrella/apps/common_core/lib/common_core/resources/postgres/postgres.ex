@@ -1,8 +1,9 @@
 defmodule CommonCore.Resources.Postgres do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "postgres"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.FromKubeState
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.Secret
@@ -22,7 +23,8 @@ defmodule CommonCore.Resources.Postgres do
   def postgres(%{} = cluster, _battery, state) do
     spec = postgres_spec(cluster)
 
-    B.build_resource(:postgresql)
+    :postgresql
+    |> B.build_resource()
     |> B.namespace(namespace(cluster, state))
     |> B.name(full_name(cluster))
     |> B.label("sidecar.istio.io/inject", "false")
@@ -54,7 +56,8 @@ defmodule CommonCore.Resources.Postgres do
     secret_name = secret_name(cluster, pg_cred_copy.username)
     source_data = extract_secret_data(source_secret)
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name(secret_name)
     |> B.namespace(pg_cred_copy.namespace)
     |> add_owner(cluster)

@@ -9,15 +9,15 @@ defmodule CommonCore.Keycloak.TokenAcquirer do
 
   # We have to masqerade as the admin cli because
   # it's there before any other configuration.
+  use TypedStruct
+
+  require Logger
+
   @client_id "admin-cli"
   @password_grant_type "password"
   @refresh_grant_type "refresh_token"
 
   @master_realm_login_url "/realms/master/protocol/openid-connect/token"
-
-  use TypedStruct
-
-  require Logger
 
   typedstruct module: TokenResult do
     field :access_token, String.t()
@@ -31,7 +31,7 @@ defmodule CommonCore.Keycloak.TokenAcquirer do
   def refresh(client, token, opts \\ [client_id: @client_id]) do
     # Take the start time just before sending the request
     # This ensures that we'll never overestimate the expire times.
-    start_time = Timex.now()
+    start_time = DateTime.utc_now()
 
     body =
       opts
@@ -51,7 +51,7 @@ defmodule CommonCore.Keycloak.TokenAcquirer do
   def login(client, username, password, opts \\ [client_id: @client_id]) do
     # Take the start time just before sending the request
     # This ensures that we'll never overestimate the expire times.
-    start_time = Timex.now()
+    start_time = DateTime.utc_now()
 
     body =
       opts

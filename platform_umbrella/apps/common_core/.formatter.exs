@@ -6,6 +6,7 @@ locals_without_parens = [
 ]
 
 [
+  plugins: [Styler],
   import_deps: [:ecto, :typed_struct],
   inputs: [
     "{mix,.formatter}.exs",

@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.IstioCsr do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-csr"
 
   import CommonCore.StateSummary.Namespaces
@@ -29,7 +30,8 @@ defmodule CommonCore.Resources.IstioCsr do
       |> Map.put("secretName", "istiod-tls")
       |> Map.put("uris", ["spiffe://cluster.local/ns/#{namespace}/sa/istiod"])
 
-    B.build_resource(:certmanger_certificate)
+    :certmanger_certificate
+    |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
     |> B.component_label("istiod")
@@ -39,7 +41,8 @@ defmodule CommonCore.Resources.IstioCsr do
   resource(:cluster_role_binding_cert_manager_istio_csr, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-istio-csr"))
     |> B.subject(B.build_service_account("cert-manager-istio-csr", namespace))
@@ -60,7 +63,8 @@ defmodule CommonCore.Resources.IstioCsr do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.rules(rules)
   end
@@ -134,7 +138,8 @@ defmodule CommonCore.Resources.IstioCsr do
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
       |> Map.put("template", template)
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -143,7 +148,8 @@ defmodule CommonCore.Resources.IstioCsr do
   resource(:role_binding_cert_manager_istio_csr, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("cert-manager-istio-csr"))
@@ -167,7 +173,8 @@ defmodule CommonCore.Resources.IstioCsr do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -176,7 +183,8 @@ defmodule CommonCore.Resources.IstioCsr do
   resource(:service_account_cert_manager_istio_csr, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
   end
@@ -191,7 +199,8 @@ defmodule CommonCore.Resources.IstioCsr do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -207,7 +216,8 @@ defmodule CommonCore.Resources.IstioCsr do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr-metrics")
     |> B.namespace(namespace)
     |> B.component_label("metrics")
@@ -237,7 +247,8 @@ defmodule CommonCore.Resources.IstioCsr do
         }
       })
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
     |> B.component_label("metrics")

@@ -1,4 +1,5 @@
 defmodule CommonUI.LabeledDefiniton do
+  @moduledoc false
   use CommonUI.Component
 
   import CommonUI.Card

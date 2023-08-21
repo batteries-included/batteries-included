@@ -1,11 +1,11 @@
 defmodule ControlServerWeb.Live.CephClusterFormComponent do
+  @moduledoc false
   use ControlServerWeb, :live_component
 
-  import Phoenix.HTML.Form, only: [inputs_for: 2]
   import K8s.Resource.FieldAccessors, only: [name: 1]
+  import Phoenix.HTML.Form, only: [inputs_for: 2]
 
   alias CommonCore.Rook.CephStorageNode
-
   alias ControlServer.Rook
   alias KubeServices.KubeState
 
@@ -47,11 +47,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
     save_ceph_cluster(socket, socket.assigns.action, ceph_cluster_params)
   end
 
-  def handle_event(
-        "add_node",
-        _,
-        %{assigns: %{changeset: changeset, ceph_cluster: ceph_cluster}} = socket
-      ) do
+  def handle_event("add_node", _, %{assigns: %{changeset: changeset, ceph_cluster: ceph_cluster}} = socket) do
     nodes =
       changeset.changes
       |> Map.get(:nodes, ceph_cluster.nodes || [])

@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Live.DeletedResourcesIndex do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias ControlServer.Deleted.DeleteArchivist

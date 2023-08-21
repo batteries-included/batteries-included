@@ -1,4 +1,5 @@
 defmodule EventCenter.Database do
+  @moduledoc false
   alias Phoenix.PubSub
 
   @pubsub EventCenter.Database.PubSub

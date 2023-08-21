@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.KubeMonitoring do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "kube-mon"
 
   import CommonCore.StateSummary.Namespaces
@@ -39,7 +40,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         }
       )
 
-    B.build_resource(:monitoring_node_monitor)
+    :monitoring_node_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-cadvisor")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -78,7 +80,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         }
       )
 
-    B.build_resource(:monitoring_node_monitor)
+    :monitoring_node_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-kubelet")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -118,7 +121,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         }
       )
 
-    B.build_resource(:monitoring_node_monitor)
+    :monitoring_node_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-probes")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -147,7 +151,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         %{"matchLabels" => %{"component" => "apiserver", "provider" => "kubernetes"}}
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-apiserver")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -169,7 +174,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "coredns"}
       })
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-coredns")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -183,7 +189,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
       ])
       |> Map.put("selector", %{"k8s-app" => "kube-dns"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("battery-metrics-coredns")
     |> B.namespace("kube-system")
     |> B.component_label("coredns")
@@ -210,7 +217,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "etcd"}
       })
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-kube-etcd")
     |> B.namespace(namespace)
     |> B.component_label("etcd")
@@ -225,7 +233,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
       ])
       |> Map.put("selector", %{"component" => "etcd"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("battery-metrics-kube-etcd")
     |> B.namespace("kube-system")
     |> B.component_label("etcd")
@@ -258,7 +267,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         }
       })
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-kube-controller-man")
     |> B.namespace(namespace)
     |> B.component_label("kube-controller-man")
@@ -273,7 +283,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
       ])
       |> Map.put("selector", %{"component" => "kube-controller-manager"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("battery-metrics-kube-controller-man")
     |> B.namespace("kube-system")
     |> B.component_label("kube-controller-man")
@@ -300,7 +311,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
         "matchLabels" => %{"battery/app" => @app_name, "battery/component" => "kube-scheduler"}
       })
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("battery-metrics-kube-scheduler")
     |> B.namespace(namespace)
     |> B.component_label("kube-scheduler")
@@ -315,7 +327,8 @@ defmodule CommonCore.Resources.KubeMonitoring do
       ])
       |> Map.put("selector", %{"component" => "kube-scheduler"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("battery-metrics-kube-scheduler")
     |> B.namespace("kube-system")
     |> B.component_label("kube-scheduler")

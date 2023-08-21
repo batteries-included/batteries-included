@@ -1,17 +1,21 @@
 defmodule CommonCore.Resources.Istiod do
+  @moduledoc false
   use CommonCore.IncludeResource,
     config: "priv/raw_files/istiod/config",
     mesh: "priv/raw_files/istiod/mesh",
     values: "priv/raw_files/istiod/values"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "istiod"
+
   import CommonCore.StateSummary.Namespaces
+
   alias CommonCore.Resources.Builder, as: B
 
   resource(:cluster_role_binding_clusterrole_battery_istio, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("istiod-clusterrole-battery-istio")
     |> B.role_ref(B.build_cluster_role_ref("istiod-clusterrole-battery-istio"))
     |> B.subject(B.build_service_account("istiod", namespace))
@@ -20,7 +24,8 @@ defmodule CommonCore.Resources.Istiod do
   resource(:cluster_role_binding_gateway_controller_battery_istio, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("istiod-gateway-controller-battery-istio")
     |> B.role_ref(B.build_cluster_role_ref("istiod-gateway-controller-battery-istio"))
     |> B.subject(B.build_service_account("istiod", namespace))
@@ -29,7 +34,8 @@ defmodule CommonCore.Resources.Istiod do
   resource(:cluster_role_binding_istio_reader_clusterrole_battery_istio, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("istio-reader-clusterrole-battery-istio")
     |> B.component_label("istio-reader")
     |> B.role_ref(B.build_cluster_role_ref("istio-reader-clusterrole-battery-istio"))
@@ -139,7 +145,8 @@ defmodule CommonCore.Resources.Istiod do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("istiod-clusterrole-battery-istio")
     |> B.rules(rules)
   end
@@ -163,7 +170,8 @@ defmodule CommonCore.Resources.Istiod do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("istiod-gateway-controller-battery-istio")
     |> B.rules(rules)
   end
@@ -236,7 +244,8 @@ defmodule CommonCore.Resources.Istiod do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("istio-reader-clusterrole-battery-istio")
     |> B.component_label("istio-reader")
     |> B.rules(rules)
@@ -246,7 +255,8 @@ defmodule CommonCore.Resources.Istiod do
     namespace = istio_namespace(state)
     data = %{} |> Map.put("meshNetworks", "networks: {}") |> Map.put("mesh", get_resource(:mesh))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("istio")
     |> B.namespace(namespace)
     |> B.label("install.operator.istio.io/owning-resource", "unknown")
@@ -261,7 +271,8 @@ defmodule CommonCore.Resources.Istiod do
     data =
       %{} |> Map.put("config", get_resource(:config)) |> Map.put("values", get_resource(:values))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("istio-sidecar-injector")
     |> B.namespace(namespace)
     |> B.label("install.operator.istio.io/owning-resource", "unknown")
@@ -440,7 +451,8 @@ defmodule CommonCore.Resources.Istiod do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
     |> B.label("install.operator.istio.io/owning-resource", "unknown")
@@ -471,7 +483,8 @@ defmodule CommonCore.Resources.Istiod do
         %{"apiVersion" => "apps/v1", "kind" => "Deployment", "name" => "istiod"}
       )
 
-    B.build_resource(:horizontal_pod_autoscaler)
+    :horizontal_pod_autoscaler
+    |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
     |> B.label("install.operator.istio.io/owning-resource", "unknown")
@@ -481,7 +494,8 @@ defmodule CommonCore.Resources.Istiod do
   end
 
   resource(:mutating_webhook_config_istio_sidecar_injector_battery_istio) do
-    B.build_resource(:mutating_webhook_config)
+    :mutating_webhook_config
+    |> B.build_resource()
     |> B.name("istio-sidecar-injector-battery-istio")
     |> B.component_label("sidecar-injector")
     |> B.label("install.operator.istio.io/owning-resource", "unknown")
@@ -632,7 +646,8 @@ defmodule CommonCore.Resources.Istiod do
       |> Map.put("minAvailable", 1)
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "istio" => "pilot"}})
 
-    B.build_resource(:pod_disruption_budget)
+    :pod_disruption_budget
+    |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
     |> B.label("install.operator.istio.io/owning-resource", "unknown")
@@ -645,7 +660,8 @@ defmodule CommonCore.Resources.Istiod do
   resource(:role_binding_main, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("istiod"))
@@ -674,7 +690,8 @@ defmodule CommonCore.Resources.Istiod do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -682,7 +699,7 @@ defmodule CommonCore.Resources.Istiod do
 
   resource(:service_account_main, _battery, state) do
     namespace = istio_namespace(state)
-    B.build_resource(:service_account) |> B.name("istiod") |> B.namespace(namespace)
+    :service_account |> B.build_resource() |> B.name("istiod") |> B.namespace(namespace)
   end
 
   resource(:service_main, _battery, state) do
@@ -698,7 +715,8 @@ defmodule CommonCore.Resources.Istiod do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name, "istio" => "pilot"})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
     |> B.label("install.operator.istio.io/owning-resource", "unknown")

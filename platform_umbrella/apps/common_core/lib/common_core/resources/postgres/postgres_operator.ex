@@ -1,7 +1,7 @@
 defmodule CommonCore.Resources.PostgresOperator do
+  @moduledoc false
   use CommonCore.IncludeResource,
-    operatorconfigurations_acid_zalan_do:
-      "priv/manifests/postgres_operator/operatorconfiguration.crd.yaml",
+    operatorconfigurations_acid_zalan_do: "priv/manifests/postgres_operator/operatorconfiguration.crd.yaml",
     postgresqls_acid_zalan_do: "priv/manifests/postgres_operator/postgresql.crd.yaml",
     postgresteams_acid_zalan_do: "priv/manifests/postgres_operator/postgresteam.crd.yaml"
 
@@ -21,7 +21,8 @@ defmodule CommonCore.Resources.PostgresOperator do
   resource(:cluster_role_binding_postgres_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("postgres-operator")
     |> B.role_ref(B.build_cluster_role_ref(@cluster_role))
     |> B.subject(B.build_service_account(@service_account, namespace))
@@ -120,7 +121,8 @@ defmodule CommonCore.Resources.PostgresOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name(@cluster_role)
     |> B.rules(rules)
   end
@@ -128,7 +130,8 @@ defmodule CommonCore.Resources.PostgresOperator do
   resource(:service_account_postgres_pod_data, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name(@postgres_pod_service_account)
     |> B.namespace(namespace)
   end
@@ -136,7 +139,8 @@ defmodule CommonCore.Resources.PostgresOperator do
   resource(:service_account_postgres_pod_base, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name(@postgres_pod_service_account)
     |> B.namespace(namespace)
   end
@@ -145,7 +149,8 @@ defmodule CommonCore.Resources.PostgresOperator do
     data_namespace = data_namespace(state)
     base_namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name(@postgres_pod_service_account)
     |> B.role_ref(B.build_cluster_role_ref(@postgres_pod_service_account))
     |> B.subject(B.build_service_account(@postgres_pod_service_account, data_namespace))
@@ -176,7 +181,8 @@ defmodule CommonCore.Resources.PostgresOperator do
       %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["create"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name(@postgres_pod_service_account)
     |> B.rules(rules)
   end
@@ -184,7 +190,8 @@ defmodule CommonCore.Resources.PostgresOperator do
   resource(:service_account_postgres_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name(@service_account)
     |> B.namespace(namespace)
   end
@@ -236,7 +243,8 @@ defmodule CommonCore.Resources.PostgresOperator do
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
       |> Map.put("template", template)
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -371,7 +379,8 @@ defmodule CommonCore.Resources.PostgresOperator do
       "workers" => 8
     }
 
-    B.build_resource(:postgresql_operator_config)
+    :postgresql_operator_config
+    |> B.build_resource()
     |> Map.put("configuration", configuration)
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
@@ -385,7 +394,8 @@ defmodule CommonCore.Resources.PostgresOperator do
       |> Map.put("ports", [%{"port" => 8080, "protocol" => "TCP", "targetPort" => 8080}])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("postgres-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -396,7 +406,8 @@ defmodule CommonCore.Resources.PostgresOperator do
 
     data = infra_users_password_map(battery, state)
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.namespace(namespace)
     |> B.name(@infa_user_config)
     |> B.data(data)
@@ -407,7 +418,8 @@ defmodule CommonCore.Resources.PostgresOperator do
 
     data = infra_users_config_map(battery, state)
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.namespace(namespace)
     |> B.name(@infa_user_config)
     |> B.data(data)

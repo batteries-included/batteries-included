@@ -1,4 +1,5 @@
 defmodule CommonCore.StateSummary.Hosts do
+  @moduledoc false
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.StateSummary

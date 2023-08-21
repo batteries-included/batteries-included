@@ -1,8 +1,9 @@
 defmodule ControlServerWeb.Live.CephIndex do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import ControlServerWeb.CephFilesystemsTable
   import ControlServerWeb.CephClustersTable
+  import ControlServerWeb.CephFilesystemsTable
 
   alias ControlServer.Rook
 

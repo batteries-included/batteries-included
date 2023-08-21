@@ -1,8 +1,9 @@
 defmodule CommonCore.Resources.VMAgent do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-agent"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
@@ -18,14 +19,14 @@ defmodule CommonCore.Resources.VMAgent do
       |> Map.put("image", %{"tag" => "v1.85.3"})
       |> Map.put("remoteWrite", [
         %{
-          "url" =>
-            "http://vminsert-main-cluster.#{namespace}.svc:8480/insert/0/prometheus/api/v1/write"
+          "url" => "http://vminsert-main-cluster.#{namespace}.svc:8480/insert/0/prometheus/api/v1/write"
         }
       ])
       |> Map.put("scrapeInterval", "25s")
       |> Map.put("selectAllByDefault", true)
 
-    B.build_resource(:vm_agent)
+    :vm_agent
+    |> B.build_resource()
     |> B.name("main-agent")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -36,7 +37,8 @@ defmodule CommonCore.Resources.VMAgent do
 
     spec = VirtualService.fallback("vmagent-main-agent", hosts: [vmagent_host(state)])
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.name("vmagent")
     |> B.namespace(namespace)
     |> B.spec(spec)

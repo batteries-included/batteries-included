@@ -62,7 +62,8 @@ defmodule KubeServices.Timeline.PodStatus do
   @impl GenServer
   @spec handle_info(msg :: :sync, state :: state()) :: {action :: :noreply, newstate :: state()}
   def handle_info(:sync, state) do
-    Summarizer.cached_field(:kube_state)
+    :kube_state
+    |> Summarizer.cached_field()
     |> Map.get(:pod)
     |> Enum.each(&upsert/1)
 
@@ -77,8 +78,7 @@ defmodule KubeServices.Timeline.PodStatus do
           state :: state()
         ) ::
           {action :: :reply, response :: {:ok, {key(), status()}}, state()}
-  def handle_call({:get, key}, _from, {ets_table}),
-    do: {:reply, {:ok, get(ets_table, key)}, {ets_table}}
+  def handle_call({:get, key}, _from, {ets_table}), do: {:reply, {:ok, get(ets_table, key)}, {ets_table}}
 
   # dump the interal state. for troubleshooting
   @impl GenServer
@@ -193,7 +193,7 @@ defmodule KubeServices.Timeline.PodStatus do
         conditions
         |> Enum.filter(&(&1["status"] == "True"))
         |> Enum.reduce(%{}, &Map.put(&2, &1["type"], &1["status"]))
-        |> status_for_conditions
+        |> status_for_conditions()
     end
   end
 

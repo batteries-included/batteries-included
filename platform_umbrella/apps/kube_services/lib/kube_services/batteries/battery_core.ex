@@ -1,4 +1,5 @@
 defmodule KubeServices.Batteries.BatteryCore do
+  @moduledoc false
   use KubeServices.Batteries.Supervisor
 
   def init(opts) do

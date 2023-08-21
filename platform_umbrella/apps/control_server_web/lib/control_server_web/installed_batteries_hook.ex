@@ -1,6 +1,7 @@
 defmodule ControlServerWeb.InstalledBatteriesHook do
-  import Phoenix.Component
+  @moduledoc false
   import KubeServices.SystemState.SummaryBatteries
+  import Phoenix.Component
 
   def on_mount(:installed_batteries, _params, _session, socket) do
     {:cont, assign_installed_batteries(socket, &installed_batteries/0)}

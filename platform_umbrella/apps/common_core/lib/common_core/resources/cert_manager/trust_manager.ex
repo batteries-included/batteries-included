@@ -1,7 +1,7 @@
 defmodule CommonCore.Resources.TrustManager do
+  @moduledoc false
   use CommonCore.IncludeResource,
-    bundles_trust_cert_manager_io:
-      "priv/manifests/trust_manager/bundles_trust_cert_manager_io.yaml"
+    bundles_trust_cert_manager_io: "priv/manifests/trust_manager/bundles_trust_cert_manager_io.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "trust-manager"
 
@@ -23,7 +23,8 @@ defmodule CommonCore.Resources.TrustManager do
       |> Map.put("revisionHistoryLimit", 1)
       |> Map.put("secretName", "trust-manager-tls")
 
-    B.build_resource(:certmanger_certificate)
+    :certmanger_certificate
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -32,7 +33,8 @@ defmodule CommonCore.Resources.TrustManager do
   resource(:cluster_role_binding_trust_manager, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.role_ref(B.build_cluster_role_ref("trust-manager"))
     |> B.subject(B.build_service_account("trust-manager", namespace))
@@ -59,7 +61,8 @@ defmodule CommonCore.Resources.TrustManager do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.rules(rules)
   end
@@ -126,7 +129,8 @@ defmodule CommonCore.Resources.TrustManager do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -135,7 +139,8 @@ defmodule CommonCore.Resources.TrustManager do
   resource(:role_binding_trust_manager, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("trust-manager"))
@@ -154,7 +159,8 @@ defmodule CommonCore.Resources.TrustManager do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -163,7 +169,8 @@ defmodule CommonCore.Resources.TrustManager do
   resource(:service_account_trust_manager, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)
   end
@@ -178,7 +185,8 @@ defmodule CommonCore.Resources.TrustManager do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -194,7 +202,8 @@ defmodule CommonCore.Resources.TrustManager do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("trust-manager-metrics")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -218,7 +227,8 @@ defmodule CommonCore.Resources.TrustManager do
       |> Map.put("jobLabel", @app_name)
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)
     |> B.label("prometheus", "default")
@@ -229,7 +239,8 @@ defmodule CommonCore.Resources.TrustManager do
   resource(:validating_webhook_config_trust_manager, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:validating_webhook_config)
+    :validating_webhook_config
+    |> B.build_resource()
     |> B.name("trust-manager")
     |> Map.put("webhooks", [
       %{

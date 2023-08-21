@@ -3,8 +3,8 @@ defmodule CommonCore.RootResourceGeneratorTest do
 
   import K8s.Resource.FieldAccessors
 
-  alias CommonCore.Resources.RootResourceGenerator
   alias CommonCore.ApiVersionKind
+  alias CommonCore.Resources.RootResourceGenerator
 
   def assert_named(%{} = resource) when is_map(resource) do
     real_name = K8s.Resource.name(resource)
@@ -43,7 +43,8 @@ defmodule CommonCore.RootResourceGeneratorTest do
   describe "RootResourceGenerator with everything enabled" do
     @tag :slow
     test "all battery resources are valid" do
-      CommonCore.StateSummary.SeedState.seed(:everything)
+      :everything
+      |> CommonCore.StateSummary.SeedState.seed()
       |> RootResourceGenerator.materialize()
       |> then(&assert_one_resouce_definition/1)
       |> then(&Map.values/1)
@@ -54,7 +55,8 @@ defmodule CommonCore.RootResourceGeneratorTest do
   describe "RootResourceGenerator a small set of batteries" do
     @tag :slow
     test "all battery resources are valid" do
-      CommonCore.StateSummary.SeedState.seed(:dev)
+      :dev
+      |> CommonCore.StateSummary.SeedState.seed()
       |> RootResourceGenerator.materialize()
       |> then(&Map.values/1)
       |> Enum.each(&assert_valid/1)

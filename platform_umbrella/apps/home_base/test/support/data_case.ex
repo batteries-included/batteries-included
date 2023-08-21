@@ -18,12 +18,12 @@ defmodule HomeBase.DataCase do
 
   using do
     quote do
-      alias HomeBase.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import HomeBase.DataCase
+
+      alias HomeBase.Repo
     end
   end
 

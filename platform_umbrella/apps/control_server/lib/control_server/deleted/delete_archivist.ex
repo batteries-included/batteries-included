@@ -1,14 +1,14 @@
 defmodule ControlServer.Deleted.DeleteArchivist do
+  @moduledoc false
   import Ecto.Query
   import K8s.Resource.FieldAccessors
 
   alias CommonCore.ApiVersionKind
-  alias ControlServer.Repo
-  alias ControlServer.ContentAddressable.Document
-  alias ControlServer.ContentAddressable
-  alias ControlServer.Deleted.DeletedResource
   alias CommonCore.Resources.Hashing
-
+  alias ControlServer.ContentAddressable
+  alias ControlServer.ContentAddressable.Document
+  alias ControlServer.Deleted.DeletedResource
+  alias ControlServer.Repo
   alias Ecto.Multi
 
   def record_delete(resource, repo \\ Repo) do
@@ -87,8 +87,7 @@ defmodule ControlServer.Deleted.DeleteArchivist do
     end)
   end
 
-  defp deleted_resource_builder(%{} = resource, hash, %Document{} = car)
-       when is_binary(hash) do
+  defp deleted_resource_builder(%{} = resource, hash, %Document{} = car) when is_binary(hash) do
     %DeletedResource{
       hash: hash,
       name: name(resource),

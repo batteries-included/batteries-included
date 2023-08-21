@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.IstioMetrics do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-metrics"
 
   import CommonCore.StateSummary.Namespaces
@@ -61,7 +62,8 @@ defmodule CommonCore.Resources.IstioMetrics do
         }
       )
 
-    B.build_resource(:monitoring_pod_monitor)
+    :monitoring_pod_monitor
+    |> B.build_resource()
     |> B.name("envoy-stats-monitor")
     |> B.namespace(namespace)
     |> B.label("monitoring", "istio-proxies")
@@ -83,7 +85,8 @@ defmodule CommonCore.Resources.IstioMetrics do
       )
       |> Map.put("targetLabels", ["app"])
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("istio-component-monitor")
     |> B.namespace(namespace)
     |> B.label("monitoring", "istio-components")

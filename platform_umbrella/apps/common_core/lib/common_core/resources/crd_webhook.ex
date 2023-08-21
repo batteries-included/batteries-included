@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.CrdWebhook do
+  @moduledoc false
   def change_conversion(%{"spec" => %{"conversion" => %{}}} = crd, service_name, namespace),
     do: do_change_conversion(crd, service_name, namespace)
 

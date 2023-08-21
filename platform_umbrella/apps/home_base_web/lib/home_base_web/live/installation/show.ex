@@ -1,4 +1,5 @@
 defmodule HomeBaseWeb.Live.InstallatitonShow do
+  @moduledoc false
   use HomeBaseWeb, :live_view
 
   import HomeBaseWeb.TopMenuLayout

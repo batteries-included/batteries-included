@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Storybook do
+  @moduledoc false
   use PhoenixStorybook,
     otp_app: :control_server_web,
     content_path: Path.expand("../../storybook", __DIR__),

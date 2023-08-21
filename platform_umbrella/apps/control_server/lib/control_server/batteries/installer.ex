@@ -1,13 +1,12 @@
 defmodule ControlServer.Batteries.Installer do
+  @moduledoc false
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Defaults
-
   alias ControlServer.Postgres
   alias ControlServer.Redis
   alias ControlServer.Repo
-
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
 
@@ -41,8 +40,7 @@ defmodule ControlServer.Batteries.Installer do
     |> install_all(update_target)
   end
 
-  def install(%SystemBattery{} = system_battery, update_target),
-    do: install_all([system_battery], update_target)
+  def install(%SystemBattery{} = system_battery, update_target), do: install_all([system_battery], update_target)
 
   def install_all(batteries, update_target \\ nil) do
     update_progress(update_target, :starting)

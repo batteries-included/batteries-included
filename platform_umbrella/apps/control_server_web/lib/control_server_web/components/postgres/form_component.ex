@@ -1,18 +1,16 @@
 defmodule ControlServerWeb.Live.PostgresFormComponent do
+  @moduledoc false
   use ControlServerWeb, :live_component
 
   import ControlServerWeb.PostgresFormSubcomponents
 
-  alias ControlServer.Postgres
-
   alias CommonCore.Postgres.Cluster
-  alias CommonCore.Postgres.PGUser
-  alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGCredentialCopy
-
-  alias KubeServices.KubeState
-
+  alias CommonCore.Postgres.PGDatabase
+  alias CommonCore.Postgres.PGUser
+  alias ControlServer.Postgres
   alias Ecto.Changeset
+  alias KubeServices.KubeState
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -99,11 +97,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     {:noreply, assign(socket, changeset: final_changeset)}
   end
 
-  def handle_event(
-        "del:credential_copy",
-        %{"idx" => idx},
-        %{assigns: %{changeset: changeset}} = socket
-      ) do
+  def handle_event("del:credential_copy", %{"idx" => idx}, %{assigns: %{changeset: changeset}} = socket) do
     credential_copies =
       changeset
       |> Changeset.get_field(:credential_copies, [])

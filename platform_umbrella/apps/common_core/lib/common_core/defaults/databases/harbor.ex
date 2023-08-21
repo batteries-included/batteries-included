@@ -1,4 +1,5 @@
 defmodule CommonCore.Defaults.HarborDB do
+  @moduledoc false
   @username "harbor"
   @cluster_name "harbor"
   @team "pg"

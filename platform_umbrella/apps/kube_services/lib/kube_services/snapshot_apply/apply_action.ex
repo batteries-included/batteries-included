@@ -1,6 +1,7 @@
 defmodule KubeServices.SnapshotApply.ApplyAction do
-  alias ControlServer.SnapshotApply.KeycloakAction
+  @moduledoc false
   alias CommonCore.Keycloak.AdminClient
+  alias ControlServer.SnapshotApply.KeycloakAction
 
   @spec apply(ControlServer.SnapshotApply.KeycloakAction.t()) :: {:ok, nil}
   def apply(%KeycloakAction{action: :create, type: :realm} = action) do

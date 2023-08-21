@@ -1,10 +1,9 @@
 defmodule ControlServerWeb.Live.KnativeNew do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Knative.Service
-
   alias ControlServer.Knative
-
   alias ControlServerWeb.Live.Knative.FormComponent
 
   require Logger

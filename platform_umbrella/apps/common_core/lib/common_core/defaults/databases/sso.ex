@@ -1,4 +1,5 @@
 defmodule CommonCore.Defaults.SSODB do
+  @moduledoc false
   @cluster_name "auth"
   @team "pg"
 

@@ -1,4 +1,5 @@
 defmodule CommonCore.Defaults.Namespaces do
+  @moduledoc false
   def core, do: "battery-core"
   def base, do: "battery-base"
   def data, do: "battery-data"

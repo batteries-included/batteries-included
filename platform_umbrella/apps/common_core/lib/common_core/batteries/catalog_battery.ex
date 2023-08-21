@@ -1,4 +1,5 @@
 defmodule CommonCore.Batteries.CatalogBattery do
+  @moduledoc false
   use TypedStruct
 
   alias CommonCore.Batteries.SystemBattery

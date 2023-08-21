@@ -1,4 +1,5 @@
 defmodule CommonUI.VerticalSteps do
+  @moduledoc false
   use CommonUI.Component
 
   attr :current_step, :integer, default: 0

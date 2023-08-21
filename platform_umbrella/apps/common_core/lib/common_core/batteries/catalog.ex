@@ -1,4 +1,5 @@
 defmodule CommonCore.Batteries.Catalog do
+  @moduledoc false
   alias CommonCore.Batteries.CatalogBattery
 
   require Logger
@@ -90,8 +91,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :monitoring,
       type: :victoria_metrics,
       dependencies: [:battery_core],
-      description:
-        "Victoria Metrics is a fast, open source, and scalable monitoring solution and time series database."
+      description: "Victoria Metrics is a fast, open source, and scalable monitoring solution and time series database."
     },
     %CatalogBattery{
       group: :monitoring,
@@ -175,8 +175,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :keycloak,
       dependencies: [:battery_core, :postgres],
-      description:
-        "Open Source Identity and Access Management For Modern Applications and Services"
+      description: "Open Source Identity and Access Management For Modern Applications and Services"
     },
     %CatalogBattery{
       group: :net_sec,

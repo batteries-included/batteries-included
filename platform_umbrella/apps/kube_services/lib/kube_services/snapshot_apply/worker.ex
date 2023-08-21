@@ -1,15 +1,17 @@
 defmodule KubeServices.SnapshotApply.Worker do
+  @moduledoc false
   use GenServer
   use TypedStruct
 
   alias ControlServer.Batteries
-  alias KubeServices.SnapshotApply.KubeApply
-  alias KubeServices.SnapshotApply.KeycloakApply
-  alias KubeServices.SystemState.Summarizer
-  alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.KeycloakSnapshot
+  alias ControlServer.SnapshotApply.KubeSnapshot
+  alias KubeServices.SnapshotApply.KeycloakApply
+  alias KubeServices.SnapshotApply.KubeApply
+  alias KubeServices.SystemState.Summarizer
 
   require Logger
+
   @me __MODULE__
   @state_opts [:keycloak_running]
 
@@ -56,11 +58,7 @@ defmodule KubeServices.SnapshotApply.Worker do
     {:reply, do_start(), state}
   end
 
-  def handle_call(
-        {:set_keycloak_running, running},
-        _from,
-        %State{keycloak_running: was_running} = state
-      ) do
+  def handle_call({:set_keycloak_running, running}, _from, %State{keycloak_running: was_running} = state) do
     {:reply, was_running, %State{state | keycloak_running: running}}
   end
 
@@ -114,18 +112,15 @@ defmodule KubeServices.SnapshotApply.Worker do
   # Generate
   defp summary(_state), do: Summarizer.new()
 
-  defp kube_generate(%KubeSnapshot{} = kube_snap, summary, _state),
-    do: KubeApply.generate(kube_snap, summary)
+  defp kube_generate(%KubeSnapshot{} = kube_snap, summary, _state), do: KubeApply.generate(kube_snap, summary)
 
   defp keycloak_generate(nil = _key_cloak_snapshot, _, _), do: {:ok, nil}
 
-  defp keycloak_generate(%KeycloakSnapshot{} = key_snap, summary, _),
-    do: KeycloakApply.generate(key_snap, summary)
+  defp keycloak_generate(%KeycloakSnapshot{} = key_snap, summary, _), do: KeycloakApply.generate(key_snap, summary)
 
   # Apply
   defp kube_apply(kube_snap, gen_payload, _state), do: KubeApply.apply(kube_snap, gen_payload)
   defp keycloak_apply(nil = _keycloak_snap, _gen_payload, _state), do: {:ok, nil}
 
-  defp keycloak_apply(%KeycloakSnapshot{} = key_snap, actions, _state),
-    do: KeycloakApply.apply(key_snap, actions)
+  defp keycloak_apply(%KeycloakSnapshot{} = key_snap, actions, _state), do: KeycloakApply.apply(key_snap, actions)
 end

@@ -1,10 +1,9 @@
 defmodule CommonCore.StateSummary.Creds do
-  alias CommonCore.Batteries.KeycloakConfig
-  alias CommonCore.Batteries.SystemBattery
-  alias CommonCore.StateSummary
-
+  @moduledoc false
   import CommonCore.StateSummary.Core
 
+  alias CommonCore.Batteries.KeycloakConfig
+  alias CommonCore.Batteries.SystemBattery
   alias CommonCore.StateSummary
 
   @doc """
@@ -16,7 +15,7 @@ defmodule CommonCore.StateSummary.Creds do
   @spec root_keycloak_username(CommonCore.StateSummary.t()) :: binary() | nil
   def root_keycloak_username(%StateSummary{} = summary) do
     case keycloak_config(summary) do
-      config = %KeycloakConfig{} -> config.admin_username
+      %KeycloakConfig{} = config -> config.admin_username
       _ -> nil
     end
   end
@@ -30,7 +29,7 @@ defmodule CommonCore.StateSummary.Creds do
   @spec root_keycloak_password(CommonCore.StateSummary.t()) :: binary() | nil
   def root_keycloak_password(%StateSummary{} = summary) do
     case keycloak_config(summary) do
-      config = %KeycloakConfig{} -> config.admin_password
+      %KeycloakConfig{} = config -> config.admin_password
       _ -> nil
     end
   end

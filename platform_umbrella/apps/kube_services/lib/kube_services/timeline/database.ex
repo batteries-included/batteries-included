@@ -1,4 +1,5 @@
 defmodule KubeServices.Timeline.Database do
+  @moduledoc false
   use Supervisor
 
   @watched_types [:jupyter_notebook, :knative_service, :postgres_cluster, :redis_cluster]
@@ -11,7 +12,7 @@ defmodule KubeServices.Timeline.Database do
     Supervisor.init(children(), strategy: :one_for_one)
   end
 
-  defp children() do
+  defp children do
     Enum.map(@watched_types, &spec/1)
   end
 

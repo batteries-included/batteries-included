@@ -1,6 +1,7 @@
 defmodule CommonCore.Resources.Hashing do
-  alias CommonCore.Resources.Hashing.Sanitizer
+  @moduledoc false
   alias CommonCore.Resources.Hashing.MapHMAC
+  alias CommonCore.Resources.Hashing.Sanitizer
 
   require Logger
 

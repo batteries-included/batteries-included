@@ -1,11 +1,10 @@
 defmodule CommonCore.Resources.Test.CommonCore.Resources.DatabaseTest do
   use ExUnit.Case
 
-  alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Batteries.Catalog
-  alias CommonCore.StateSummary
-
+  alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Resources.Postgres
+  alias CommonCore.StateSummary
 
   describe "CommonCore.Resources.Database" do
     test "postgres/3 contains databases" do

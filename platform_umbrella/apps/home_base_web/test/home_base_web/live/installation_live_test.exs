@@ -1,8 +1,8 @@
 defmodule HomeBaseWeb.InstallationLiveTest do
   use HomeBaseWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import HomeBase.ControlServerClustersFixtures
+  import Phoenix.LiveViewTest
 
   @create_attrs %{slug: "some-slug"}
   @invalid_attrs %{slug: ""}

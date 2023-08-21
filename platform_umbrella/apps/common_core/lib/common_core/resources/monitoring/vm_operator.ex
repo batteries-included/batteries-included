@@ -1,37 +1,32 @@
 defmodule CommonCore.Resources.VMOperator do
+  @moduledoc false
   use CommonCore.IncludeResource,
-    vmagents_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmagents_operator_victoriametrics_com.yaml",
+    vmagents_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmagents_operator_victoriametrics_com.yaml",
     vmalertmanagerconfigs_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmalertmanagerconfigs_operator_victoriametrics_com.yaml",
     vmalertmanagers_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmalertmanagers_operator_victoriametrics_com.yaml",
-    vmalerts_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmalerts_operator_victoriametrics_com.yaml",
-    vmauths_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmauths_operator_victoriametrics_com.yaml",
+    vmalerts_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmalerts_operator_victoriametrics_com.yaml",
+    vmauths_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmauths_operator_victoriametrics_com.yaml",
     vmclusters_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmclusters_operator_victoriametrics_com.yaml",
     vmnodescrapes_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmnodescrapes_operator_victoriametrics_com.yaml",
     vmpodscrapes_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmpodscrapes_operator_victoriametrics_com.yaml",
-    vmprobes_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmprobes_operator_victoriametrics_com.yaml",
-    vmrules_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmrules_operator_victoriametrics_com.yaml",
+    vmprobes_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmprobes_operator_victoriametrics_com.yaml",
+    vmrules_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmrules_operator_victoriametrics_com.yaml",
     vmservicescrapes_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmservicescrapes_operator_victoriametrics_com.yaml",
-    vmsingles_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmsingles_operator_victoriametrics_com.yaml",
+    vmsingles_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmsingles_operator_victoriametrics_com.yaml",
     vmstaticscrapes_operator_victoriametrics_com:
       "priv/manifests/victoria_metrics/vmstaticscrapes_operator_victoriametrics_com.yaml",
-    vmusers_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmusers_operator_victoriametrics_com.yaml"
+    vmusers_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmusers_operator_victoriametrics_com.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-operator"
 
   import CommonCore.StateSummary.Namespaces
+
   alias CommonCore.Resources.Builder, as: B
 
   @service_account_name "victoria-metrics-operator"
@@ -41,9 +36,7 @@ defmodule CommonCore.Resources.VMOperator do
   end
 
   resource(:crd_vmalertmanagerconfigs_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(
-      get_resource(:vmalertmanagerconfigs_operator_victoriametrics_com)
-    )
+    YamlElixir.read_all_from_string!(get_resource(:vmalertmanagerconfigs_operator_victoriametrics_com))
   end
 
   resource(:crd_vmalertmanagers_operator_victoriametrics_com) do
@@ -97,7 +90,8 @@ defmodule CommonCore.Resources.VMOperator do
   resource(:cluster_role_binding_victoria_metrics_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("victoria-metrics-operator")
     |> B.role_ref(B.build_cluster_role_ref("victoria-metrics-operator"))
     |> B.subject(B.build_service_account(@service_account_name, namespace))
@@ -342,7 +336,8 @@ defmodule CommonCore.Resources.VMOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("victoria-metrics-operator")
     |> B.rules(rules)
   end
@@ -350,7 +345,8 @@ defmodule CommonCore.Resources.VMOperator do
   resource(:role_binding_victoria_metrics_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("victoria-metrics-operator"))
@@ -379,7 +375,8 @@ defmodule CommonCore.Resources.VMOperator do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -388,7 +385,8 @@ defmodule CommonCore.Resources.VMOperator do
   resource(:service_account_victoria_metrics_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name(@service_account_name)
     |> B.namespace(namespace)
   end
@@ -460,7 +458,8 @@ defmodule CommonCore.Resources.VMOperator do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -477,7 +476,8 @@ defmodule CommonCore.Resources.VMOperator do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -492,7 +492,8 @@ defmodule CommonCore.Resources.VMOperator do
       |> Map.put("namespaceSelector", %{"matchNames" => [namespace]})
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("victoria-metrics-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)

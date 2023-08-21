@@ -1,4 +1,5 @@
 defmodule KubeServices.Timeline.Battery do
+  @moduledoc false
   use Supervisor
 
   def start_link(opts) do
@@ -9,7 +10,7 @@ defmodule KubeServices.Timeline.Battery do
     Supervisor.init(children(), strategy: :one_for_one)
   end
 
-  defp children() do
+  defp children do
     [{KubeServices.Timeline.BatteryWatcher, []}]
   end
 end

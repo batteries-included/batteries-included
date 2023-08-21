@@ -1,4 +1,5 @@
 defmodule CommonUI.Tooltip do
+  @moduledoc false
   use CommonUI.Component
 
   slot :inner_block, required: true

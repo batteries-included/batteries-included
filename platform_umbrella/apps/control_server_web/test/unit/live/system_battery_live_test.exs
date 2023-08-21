@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.SystemBatteryLiveTest do
   use ControlServerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import ControlServer.BatteriesFixtures
+  import Phoenix.LiveViewTest
 
   defp create_system_battery(_) do
     system_battery = system_battery_fixture()

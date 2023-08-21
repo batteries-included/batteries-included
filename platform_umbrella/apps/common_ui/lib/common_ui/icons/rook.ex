@@ -1,4 +1,5 @@
 defmodule CommonUI.Icons.Rook do
+  @moduledoc false
   use CommonUI.Component
 
   def ceph_icon(assigns) do

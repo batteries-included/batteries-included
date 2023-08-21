@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.CopyDown do
+  @moduledoc false
   import K8s.Resource.FieldAccessors
 
   @banned_labels ["battery/managed.direct"]
@@ -16,12 +17,10 @@ defmodule CommonCore.Resources.CopyDown do
       |> Map.new()
       |> Map.merge(@default_labels)
 
-    case has_template_meta(resource) do
-      true ->
-        merge(resource, ~w|spec template metadata labels|, good_labels)
-
-      false ->
-        resource
+    if has_template_meta(resource) do
+      merge(resource, ~w|spec template metadata labels|, good_labels)
+    else
+      resource
     end
   end
 
@@ -32,12 +31,10 @@ defmodule CommonCore.Resources.CopyDown do
       |> Enum.filter(fn {key, _} -> key not in @banned_annotations end)
       |> Map.new()
 
-    case has_template_meta(resource) do
-      true ->
-        merge(resource, ~w|spec template metadata annotations|, good_annotations)
-
-      false ->
-        resource
+    if has_template_meta(resource) do
+      merge(resource, ~w|spec template metadata annotations|, good_annotations)
+    else
+      resource
     end
   end
 

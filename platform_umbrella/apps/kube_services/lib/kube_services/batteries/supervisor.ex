@@ -1,4 +1,5 @@
 defmodule KubeServices.Batteries.Supervisor do
+  @moduledoc false
   @doc """
   This is a macro to create a supervisor that will run for each battery with the correct child
   spec to run on the dynamic supervisor and not conflict.

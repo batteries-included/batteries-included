@@ -1,12 +1,10 @@
 defmodule CommonCore.Resources.CertManager do
+  @moduledoc false
   use CommonCore.IncludeResource,
-    certificaterequests_cert_manager_io:
-      "priv/manifests/cert_manager/certificaterequests_cert_manager_io.yaml",
+    certificaterequests_cert_manager_io: "priv/manifests/cert_manager/certificaterequests_cert_manager_io.yaml",
     certificates_cert_manager_io: "priv/manifests/cert_manager/certificates_cert_manager_io.yaml",
-    challenges_acme_cert_manager_io:
-      "priv/manifests/cert_manager/challenges_acme_cert_manager_io.yaml",
-    clusterissuers_cert_manager_io:
-      "priv/manifests/cert_manager/clusterissuers_cert_manager_io.yaml",
+    challenges_acme_cert_manager_io: "priv/manifests/cert_manager/challenges_acme_cert_manager_io.yaml",
+    clusterissuers_cert_manager_io: "priv/manifests/cert_manager/clusterissuers_cert_manager_io.yaml",
     issuers_cert_manager_io: "priv/manifests/cert_manager/issuers_cert_manager_io.yaml",
     orders_acme_cert_manager_io: "priv/manifests/cert_manager/orders_acme_cert_manager_io.yaml"
 
@@ -20,7 +18,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_cainjector, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-cainjector")
     |> B.component_label("cainjector")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-cainjector"))
@@ -30,7 +29,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_approve_io, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-approve:cert-manager-io")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-approve:cert-manager-io"))
@@ -40,7 +40,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_certificates, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-certificates")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-certificates"))
@@ -50,7 +51,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_certificatesigningrequests, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-certificatesigningrequests")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-certificatesigningrequests"))
@@ -60,7 +62,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_challenges, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-challenges")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-challenges"))
@@ -70,7 +73,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_clusterissuers, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-clusterissuers")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-clusterissuers"))
@@ -80,7 +84,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_ingress_shim, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-ingress-shim")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-ingress-shim"))
@@ -90,7 +95,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_issuers, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-issuers")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-issuers"))
@@ -100,7 +106,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_controller_orders, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-controller-orders")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-orders"))
@@ -110,7 +117,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:cluster_role_binding_webhook_subjectaccessreviews, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-webhook:subjectaccessreviews")
     |> B.component_label("webhook")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-webhook:subjectaccessreviews"))
@@ -147,7 +155,8 @@ defmodule CommonCore.Resources.CertManager do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-cainjector")
     |> B.component_label("cainjector")
     |> B.rules(rules)
@@ -163,7 +172,8 @@ defmodule CommonCore.Resources.CertManager do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-approve:cert-manager-io")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -204,7 +214,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-certificates")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -235,7 +246,8 @@ defmodule CommonCore.Resources.CertManager do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-certificatesigningrequests")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -288,7 +300,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-challenges")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -314,7 +327,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-clusterissuers")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -355,7 +369,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-ingress-shim")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -381,7 +396,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-issuers")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -418,7 +434,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-controller-orders")
     |> B.component_label("controller")
     |> B.rules(rules)
@@ -443,7 +460,8 @@ defmodule CommonCore.Resources.CertManager do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-edit")
     |> B.component_label("controller")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
@@ -465,7 +483,8 @@ defmodule CommonCore.Resources.CertManager do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-view")
     |> B.component_label("controller")
     |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
@@ -483,7 +502,8 @@ defmodule CommonCore.Resources.CertManager do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cert-manager-webhook:subjectaccessreviews")
     |> B.component_label("webhook")
     |> B.rules(rules)
@@ -493,7 +513,8 @@ defmodule CommonCore.Resources.CertManager do
     namespace = base_namespace(state)
     data = %{}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
     |> B.component_label("webhook")
@@ -585,7 +606,8 @@ defmodule CommonCore.Resources.CertManager do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("cert-manager")
     |> B.namespace(namespace)
     |> B.component_label(component)
@@ -643,7 +665,8 @@ defmodule CommonCore.Resources.CertManager do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("cert-manager-cainjector")
     |> B.namespace(namespace)
     |> B.component_label(component)
@@ -727,7 +750,8 @@ defmodule CommonCore.Resources.CertManager do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
     |> B.component_label(component)
@@ -772,7 +796,8 @@ defmodule CommonCore.Resources.CertManager do
         }
       )
 
-    B.build_resource(:job)
+    :job
+    |> B.build_resource()
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
     |> B.component_label("startupapicheck")
@@ -782,7 +807,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:mutating_webhook_config_cert_manager, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:mutating_webhook_config)
+    :mutating_webhook_config
+    |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.component_label("webhook")
     |> B.annotation(
@@ -819,7 +845,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:role_binding_cainjector_leaderelection, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-cainjector:leaderelection")
     |> B.namespace(namespace)
     |> B.component_label("cainjector")
@@ -830,7 +857,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:role_binding_leaderelection, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("cert-manager:leaderelection")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -841,7 +869,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:role_binding_startupapicheck_create_cert, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-startupapicheck:create-cert")
     |> B.namespace(namespace)
     |> B.component_label("startupapicheck")
@@ -852,7 +881,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:role_binding_webhook_dynamic_serving, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("cert-manager-webhook:dynamic-serving")
     |> B.namespace(namespace)
     |> B.component_label("webhook")
@@ -876,7 +906,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["create"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("cert-manager-cainjector:leaderelection")
     |> B.namespace(namespace)
     |> B.component_label("cainjector")
@@ -896,7 +927,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["create"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("cert-manager:leaderelection")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -914,7 +946,8 @@ defmodule CommonCore.Resources.CertManager do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("cert-manager-startupapicheck:create-cert")
     |> B.namespace(namespace)
     |> B.component_label("startupapicheck")
@@ -934,7 +967,8 @@ defmodule CommonCore.Resources.CertManager do
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["create"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("cert-manager-webhook:dynamic-serving")
     |> B.namespace(namespace)
     |> B.component_label("webhook")
@@ -944,7 +978,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:service_account_cert_manager, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> Map.put("automountServiceAccountToken", true)
     |> B.name("cert-manager")
     |> B.namespace(namespace)
@@ -954,7 +989,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:service_account_cainjector, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("cert-manager-cainjector")
     |> B.namespace(namespace)
     |> B.component_label("cainjector")
@@ -964,7 +1000,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:service_account_startupapicheck, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
     |> B.component_label("startupapicheck")
@@ -974,7 +1011,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:service_account_webhook, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
     |> B.component_label("webhook")
@@ -1000,7 +1038,8 @@ defmodule CommonCore.Resources.CertManager do
         %{"battery/app" => @app_name, "battery/component" => component}
       )
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("cert-manager")
     |> B.namespace(namespace)
     |> B.component_label(component)
@@ -1018,7 +1057,8 @@ defmodule CommonCore.Resources.CertManager do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => component})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
     |> B.component_label(component)
@@ -1051,7 +1091,8 @@ defmodule CommonCore.Resources.CertManager do
         }
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("cert-manager")
     |> B.namespace(namespace)
     |> B.component_label(component)
@@ -1063,7 +1104,8 @@ defmodule CommonCore.Resources.CertManager do
   resource(:validating_webhook_config_cert_manager, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:validating_webhook_config)
+    :validating_webhook_config
+    |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.component_label("webhook")
     |> B.annotation(

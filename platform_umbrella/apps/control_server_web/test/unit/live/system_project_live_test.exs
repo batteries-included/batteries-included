@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.SystemProjectLiveTest do
   use ControlServerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import ControlServer.ProjectsFixtures
+  import Phoenix.LiveViewTest
 
   defp create_system_project(_) do
     system_project = system_project_fixture()

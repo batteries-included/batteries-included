@@ -1,11 +1,11 @@
 defmodule HomeBaseWeb.Live.InstallationNew do
+  @moduledoc false
   use HomeBaseWeb, :live_view
 
   import HomeBaseWeb.TopMenuLayout
 
-  alias HomeBase.ControlServerClusters.Installation
   alias HomeBase.ControlServerClusters
-
+  alias HomeBase.ControlServerClusters.Installation
   alias HomeBaseWeb.Live.Installations.FormComponent
 
   @impl Phoenix.LiveView

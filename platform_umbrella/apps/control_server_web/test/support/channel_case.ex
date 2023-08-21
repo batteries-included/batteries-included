@@ -16,13 +16,14 @@ defmodule ControlServerWeb.ChannelCase do
   """
 
   use ExUnit.CaseTemplate
+
   alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
+      import ControlServerWeb.ChannelCase
       # Import conveniences for testing with channels
       import Phoenix.ChannelTest
-      import ControlServerWeb.ChannelCase
 
       # The default endpoint for testing
       @endpoint ControlServerWeb.Endpoint

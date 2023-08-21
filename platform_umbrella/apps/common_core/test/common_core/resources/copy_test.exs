@@ -1,11 +1,12 @@
 defmodule CommonCore.Resources.CopyTest do
   use ExUnit.Case
 
-  alias CommonCore.Resources.CopyDown
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.CopyDown
 
   def deployment do
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("my_deployment")
     |> B.app_labels("my-app")
     |> B.namespace("battery-core")

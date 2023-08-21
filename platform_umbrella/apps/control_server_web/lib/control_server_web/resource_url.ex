@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.ResourceURL do
+  @moduledoc false
   use ControlServerWeb, :verified_routes
 
   alias CommonCore.ApiVersionKind

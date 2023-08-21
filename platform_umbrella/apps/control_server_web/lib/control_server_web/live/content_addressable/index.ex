@@ -1,10 +1,11 @@
 defmodule ControlServerWeb.Live.ContentAddressableIndex do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
-
-  alias ControlServer.ContentAddressable
 
   import CommonUI.Stats
   import ControlServerWeb.ContentAddressable.ResourceTable
+
+  alias ControlServer.ContentAddressable
 
   @impl Phoenix.LiveView
   def render(assigns) do

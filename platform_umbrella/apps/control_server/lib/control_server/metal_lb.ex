@@ -4,9 +4,9 @@ defmodule ControlServer.MetalLB do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
   alias CommonCore.MetalLB.IPAddressPool
+  alias ControlServer.Repo
 
   @doc """
   Returns the list of ip_address_pools.

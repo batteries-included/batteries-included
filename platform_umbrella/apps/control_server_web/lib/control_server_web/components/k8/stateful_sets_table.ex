@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.StatefulSetsTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   import ControlServerWeb.ResourceURL

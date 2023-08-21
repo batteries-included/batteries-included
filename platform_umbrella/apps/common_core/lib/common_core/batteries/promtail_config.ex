@@ -1,5 +1,7 @@
 defmodule CommonCore.Batteries.PromtailConfig do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   alias CommonCore.Defaults

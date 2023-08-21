@@ -1,14 +1,15 @@
 defmodule KubeServices.SnapshotApply.KeycloakApply do
+  @moduledoc false
   use GenServer
   use TypedStruct
 
-  alias KubeServices.SnapshotApply.ApplyAction
-  alias ControlServer.SnapshotApply.KeycloakAction
   alias CommonCore.Actions.RootActionGenerator
-  alias ControlServer.SnapshotApply.KeycloakEctoSteps
-  alias ControlServer.SnapshotApply.UmbrellaSnapshot
-  alias ControlServer.SnapshotApply.KeycloakSnapshot
   alias CommonCore.StateSummary
+  alias ControlServer.SnapshotApply.KeycloakAction
+  alias ControlServer.SnapshotApply.KeycloakEctoSteps
+  alias ControlServer.SnapshotApply.KeycloakSnapshot
+  alias ControlServer.SnapshotApply.UmbrellaSnapshot
+  alias KubeServices.SnapshotApply.ApplyAction
 
   require Logger
 

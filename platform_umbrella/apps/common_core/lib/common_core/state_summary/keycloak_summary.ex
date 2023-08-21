@@ -1,7 +1,9 @@
 defmodule CommonCore.StateSummary.KeycloakSummary do
+  @moduledoc false
   use TypedStruct
 
   alias CommonCore.OpenApi.KeycloakAdminSchema
+
   @derive Jason.Encoder
 
   typedstruct do

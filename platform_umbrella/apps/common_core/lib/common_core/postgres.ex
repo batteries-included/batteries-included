@@ -1,4 +1,5 @@
 defmodule CommonCore.Postgres do
+  @moduledoc false
   import Ecto.Changeset
 
   def possible_roles do

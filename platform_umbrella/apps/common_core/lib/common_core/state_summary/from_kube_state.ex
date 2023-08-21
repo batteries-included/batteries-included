@@ -1,4 +1,5 @@
 defmodule CommonCore.StateSummary.FromKubeState do
+  @moduledoc false
   alias CommonCore.StateSummary
 
   @namespaceless [:namespace, :node, :cluster_role, :cluster_role_binding]

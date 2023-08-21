@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.CSP do
+  @moduledoc false
   @default_allowed %{
     "script-src" => [
       "self",

@@ -3,8 +3,8 @@ defmodule KubeServices.KubeStateCoverageTest do
 
   import K8s.Resource.FieldAccessors
 
-  alias CommonCore.Resources.RootResourceGenerator
   alias CommonCore.ApiVersionKind
+  alias CommonCore.Resources.RootResourceGenerator
 
   # We open up a watcher for each type.
   # Some types aren't worth the http connections
@@ -48,7 +48,8 @@ defmodule KubeServices.KubeStateCoverageTest do
   describe "KubeState can watch for every battery" do
     @tag :slow
     test "All watchable" do
-      CommonCore.StateSummary.SeedState.seed(:everything)
+      :everything
+      |> CommonCore.StateSummary.SeedState.seed()
       |> RootResourceGenerator.materialize()
       |> Enum.map(fn {_path, resource} -> {api_version(resource), kind(resource)} end)
       |> Enum.each(fn {api_version, kind} ->
@@ -74,7 +75,8 @@ defmodule KubeServices.KubeStateCoverageTest do
 
     @tag :slow
     test "All CRD's watchable" do
-      CommonCore.StateSummary.SeedState.seed(:everything)
+      :everything
+      |> CommonCore.StateSummary.SeedState.seed()
       |> RootResourceGenerator.materialize()
       |> Enum.filter(fn {_path, resource} -> ApiVersionKind.resource_type!(resource) == :crd end)
       |> Enum.map(fn {_path, crd} ->

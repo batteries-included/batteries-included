@@ -1,9 +1,10 @@
 defmodule ControlServer.StaleSnaphotApply do
+  @moduledoc false
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
-  alias ControlServer.SnapshotApply.ResourcePath
+  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KubeSnapshot
+  alias ControlServer.SnapshotApply.ResourcePath
 
   @doc """
   Get the most recent resource paths from a snapshot.

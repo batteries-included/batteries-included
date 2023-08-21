@@ -1,22 +1,24 @@
 defmodule CommonCore.Resources.Grafana do
+  @moduledoc false
   use CommonCore.IncludeResource,
     provider_yaml: "priv/raw_files/grafana/provider.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "grafana"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.INIConfig
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Secret
-  alias CommonCore.INIConfig
 
   resource(:cluster_role_binding_clusterrolebinding, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("grafana-clusterrolebinding")
     |> B.role_ref(B.build_cluster_role_ref("grafana-clusterrole"))
     |> B.subject(B.build_service_account("grafana", namespace))
@@ -31,7 +33,8 @@ defmodule CommonCore.Resources.Grafana do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("grafana-clusterrole")
     |> B.rules(rules)
   end
@@ -40,7 +43,8 @@ defmodule CommonCore.Resources.Grafana do
     namespace = core_namespace(state)
     data = %{"provider.yaml" => get_resource(:provider_yaml)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-config-dashboards")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -97,7 +101,8 @@ defmodule CommonCore.Resources.Grafana do
     namespace = core_namespace(state)
     data = %{"grafana.ini" => INIConfig.to_ini(config_contents(battery, state))}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -395,7 +400,8 @@ defmodule CommonCore.Resources.Grafana do
       |> Map.put("strategy", %{"type" => "RollingUpdate"})
       |> Map.put("template", template)
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -422,7 +428,8 @@ defmodule CommonCore.Resources.Grafana do
         %{"apiVersion" => "apps/v1", "kind" => "Deployment", "name" => "grafana"}
       )
 
-    B.build_resource(:horizontal_pod_autoscaler)
+    :horizontal_pod_autoscaler
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -450,7 +457,8 @@ defmodule CommonCore.Resources.Grafana do
         %{"matchLabels" => %{"battery/app" => @app_name}}
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -460,7 +468,8 @@ defmodule CommonCore.Resources.Grafana do
   resource(:role_binding_main, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("grafana"))
@@ -479,7 +488,8 @@ defmodule CommonCore.Resources.Grafana do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -495,7 +505,8 @@ defmodule CommonCore.Resources.Grafana do
       |> Map.put("ldap-toml", "")
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -504,7 +515,8 @@ defmodule CommonCore.Resources.Grafana do
   resource(:service_account_main, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
   end
@@ -519,7 +531,8 @@ defmodule CommonCore.Resources.Grafana do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -530,7 +543,8 @@ defmodule CommonCore.Resources.Grafana do
 
     spec = VirtualService.fallback("grafana", hosts: [grafana_host(state)])
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
     |> B.spec(spec)

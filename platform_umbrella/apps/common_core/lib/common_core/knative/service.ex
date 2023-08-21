@@ -1,5 +1,7 @@
 defmodule CommonCore.Knative.Service do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @required_fields ~w(name)a

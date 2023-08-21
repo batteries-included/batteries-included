@@ -1,4 +1,5 @@
 defmodule CommonCore.Keycloak.TestAdminClient do
+  @moduledoc false
   use ExUnit.Case
 
   import Mox

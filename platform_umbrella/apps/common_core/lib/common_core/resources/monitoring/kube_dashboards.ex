@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.KubeDashboards do
+  @moduledoc false
   use CommonCore.IncludeResource,
     dashboard_15757: "priv/raw_files/kube_monitoring/dashboard_15757.json",
     dashboard_15758: "priv/raw_files/kube_monitoring/dashboard_15758.json",
@@ -16,7 +17,8 @@ defmodule CommonCore.Resources.KubeDashboards do
     namespace = core_namespace(state)
     data = %{"dashboard_15760.json" => get_resource(:dashboard_15760)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-dashboard-15760")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -29,7 +31,8 @@ defmodule CommonCore.Resources.KubeDashboards do
     namespace = core_namespace(state)
     data = %{"dashboard_15759.json" => get_resource(:dashboard_15759)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-dashboard-15759")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -42,7 +45,8 @@ defmodule CommonCore.Resources.KubeDashboards do
     namespace = core_namespace(state)
     data = %{"dashboard_15758.json" => get_resource(:dashboard_15758)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-dashboard-15758")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -55,7 +59,8 @@ defmodule CommonCore.Resources.KubeDashboards do
     namespace = core_namespace(state)
     data = %{"dashboard_15757.json" => get_resource(:dashboard_15757)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-dashboard-15757")
     |> B.namespace(namespace)
     |> B.data(data)

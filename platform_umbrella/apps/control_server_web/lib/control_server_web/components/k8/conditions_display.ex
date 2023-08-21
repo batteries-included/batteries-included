@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.ConditionsDisplay do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :conditions, :list, required: true

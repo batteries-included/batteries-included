@@ -1,5 +1,7 @@
 defmodule CommonCore.Resources.ExampleGenerator do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "example-app"
+
   alias CommonCore.Resources.Builder, as: B
 
   resource(:main) do

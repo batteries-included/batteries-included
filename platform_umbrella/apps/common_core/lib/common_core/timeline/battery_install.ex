@@ -1,6 +1,9 @@
 defmodule CommonCore.Timeline.BatteryInstall do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
+
   alias CommonCore.Batteries.SystemBattery
 
   @primary_key false

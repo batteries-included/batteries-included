@@ -9,12 +9,12 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   import ControlServerWeb.KnativeDisplay
 
-  alias EventCenter.KubeState, as: KubeEventCenter
-  alias ControlServer.Knative
-  alias KubeServices.KubeState
   alias CommonCore.Resources.OwnerLabel
   alias CommonCore.Resources.OwnerReference
   alias CommonCore.Resources.UID
+  alias ControlServer.Knative
+  alias EventCenter.KubeState, as: KubeEventCenter
+  alias KubeServices.KubeState
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -52,13 +52,15 @@ defmodule ControlServerWeb.Live.KnativeShow do
   end
 
   def k8_service(service) do
-    KubeState.get_all(:knative_service)
+    :knative_service
+    |> KubeState.get_all()
     |> Enum.filter(fn s -> service.id == OwnerLabel.get_owner(s) end)
     |> Enum.at(0, %{})
   end
 
   def k8_configuration(k8_service) do
-    KubeState.get_all(:knative_configuration)
+    :knative_configuration
+    |> KubeState.get_all()
     |> Enum.filter(fn c -> UID.uid(k8_service) == OwnerReference.get_owner(c) end)
     |> Enum.at(0, %{})
   end

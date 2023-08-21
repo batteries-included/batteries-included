@@ -1,13 +1,14 @@
 defmodule KubeServices.Stale do
+  @moduledoc false
   import K8s.Resource.FieldAccessors
 
-  alias ControlServer.SnapshotApply.Kube, as: ControlSnapshot
-  alias ControlServer.StaleSnaphotApply
-  alias ControlServer.SnapshotApply.ResourcePath
-  alias ControlServer.Repo
-  alias KubeServices.KubeState
-  alias CommonCore.Resources.Hashing
   alias CommonCore.ApiVersionKind
+  alias CommonCore.Resources.Hashing
+  alias ControlServer.Repo
+  alias ControlServer.SnapshotApply.Kube, as: ControlSnapshot
+  alias ControlServer.SnapshotApply.ResourcePath
+  alias ControlServer.StaleSnaphotApply
+  alias KubeServices.KubeState
 
   require Logger
 
@@ -83,8 +84,7 @@ defmodule KubeServices.Stale do
   end
 
   @spec has_annotation?(nil | map) :: boolean
-  defp has_annotation?(%{} = resource),
-    do: K8s.Resource.has_annotation?(resource, Hashing.key())
+  defp has_annotation?(%{} = resource), do: K8s.Resource.has_annotation?(resource, Hashing.key())
 
   defp has_annotation?(nil), do: false
 

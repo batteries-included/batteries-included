@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.Hashing.Sanitizer do
+  @moduledoc false
   @bad_meta_keys ~w(resourceVersion generation creationTimestamp uid managedFields)
   @bad_annotation_keys ["battery/hash"]
   @bad_top_keys ["status"]

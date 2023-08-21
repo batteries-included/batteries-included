@@ -1,7 +1,9 @@
 defmodule ControlServer.Audit do
+  @moduledoc false
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
+
   alias CommonCore.Audit.EditVersion
+  alias ControlServer.Repo
 
   def list_edit_versions do
     EditVersion

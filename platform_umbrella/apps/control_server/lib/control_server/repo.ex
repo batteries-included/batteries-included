@@ -7,5 +7,6 @@ defmodule ControlServer.Repo do
 end
 
 defmodule ControlServer.Repo.Flop do
+  @moduledoc false
   use Flop, repo: ControlServer.Repo
 end

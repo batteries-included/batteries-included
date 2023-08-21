@@ -16,8 +16,10 @@ defmodule CommonCore.StateSummary do
     state_summary = %{state_summary | batteries: [%CommonCore.Batteries.SystemBattery{}]}
 
   """
-  alias CommonCore.StateSummary.KeycloakSummary
   use TypedStruct
+
+  alias CommonCore.StateSummary.KeycloakSummary
+
   @derive Jason.Encoder
 
   typedstruct do

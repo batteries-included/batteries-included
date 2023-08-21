@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
+  @moduledoc false
   use ControlServerWeb, :live_component
 
   alias CommonCore.MetalLB.IPAddressPool

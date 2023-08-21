@@ -1,4 +1,5 @@
 defmodule CommonUI.TextHelpers do
+  @moduledoc false
   @default_length 48
   @default_omission "..."
 

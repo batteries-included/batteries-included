@@ -1,6 +1,8 @@
 defmodule KubeServices.Timeline.Kube do
-  require Logger
+  @moduledoc false
   use Supervisor
+
+  require Logger
 
   @watched_types [:namspace, :pod, :node, :deployment, :stateful_set]
   @pod_status_table :pod_status
@@ -13,7 +15,7 @@ defmodule KubeServices.Timeline.Kube do
     Supervisor.init(children(), strategy: :one_for_one)
   end
 
-  defp children() do
+  defp children do
     Enum.map(@watched_types, &spec/1) ++
       [
         {KubeServices.Timeline.PodStatus, [table_name: @pod_status_table]}
@@ -30,5 +32,5 @@ defmodule KubeServices.Timeline.Kube do
     )
   end
 
-  def pod_status_table(), do: @pod_status_table
+  def pod_status_table, do: @pod_status_table
 end

@@ -1,7 +1,7 @@
 defmodule ControlServer.RedisTest do
   use ControlServer.DataCase
-  alias CommonCore.Redis.FailoverCluster
 
+  alias CommonCore.Redis.FailoverCluster
   alias ControlServer.Redis
 
   describe "failover_clusters" do

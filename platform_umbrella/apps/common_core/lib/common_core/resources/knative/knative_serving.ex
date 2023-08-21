@@ -1,15 +1,17 @@
 defmodule CommonCore.Resources.KnativeServing do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Knative.EnvValue
   alias CommonCore.Knative.Service
   alias CommonCore.Resources.Builder, as: B
 
   resource(:namespace_dest, battery, _state) do
-    B.build_resource(:namespace)
+    :namespace
+    |> B.build_resource()
     |> B.name(battery.config.namespace)
     |> B.label("istio-injection", "enabled")
   end
@@ -22,8 +24,7 @@ defmodule CommonCore.Resources.KnativeServing do
     spec = %{
       "config" => %{
         "istio" => %{
-          "gateway.#{namespace}.knative-ingress-gateway" =>
-            "istio-ingress.#{istio_namespace}.svc.cluster.local",
+          "gateway.#{namespace}.knative-ingress-gateway" => "istio-ingress.#{istio_namespace}.svc.cluster.local",
           "local-gateway.#{namespace}.knative-local-gateway" =>
             "knative-local-gateway.#{istio_namespace}.svc.cluster.local"
         }
@@ -31,7 +32,8 @@ defmodule CommonCore.Resources.KnativeServing do
       "ingress" => %{"istio" => %{"enabled" => true}}
     }
 
-    B.build_resource(:knative_serving)
+    :knative_serving
+    |> B.build_resource()
     |> B.namespace(namespace)
     |> B.name("knative-serving")
     |> B.spec(spec)
@@ -40,7 +42,8 @@ defmodule CommonCore.Resources.KnativeServing do
   resource(:domain_config, battery, state) do
     data = Map.put(%{}, knative_base_host(state), "")
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("config-domain")
     |> B.namespace(battery.config.namespace)
     |> Map.put("data", data)
@@ -53,7 +56,8 @@ defmodule CommonCore.Resources.KnativeServing do
       |> Map.put("kubernetes.podspec-volumes-emptydir", "enabled")
       |> Map.put("kubernetes.podspec-init-containers", "enabled")
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("config-features")
     |> B.namespace(battery.config.namespace)
     |> Map.put("data", data)
@@ -76,7 +80,8 @@ defmodule CommonCore.Resources.KnativeServing do
 
     spec = %{"template" => template}
 
-    B.build_resource(:knative_service)
+    :knative_service
+    |> B.build_resource()
     |> B.name(service.name)
     |> B.namespace(battery.config.namespace)
     |> B.owner_label(service.id)
@@ -86,9 +91,8 @@ defmodule CommonCore.Resources.KnativeServing do
 
   defp add_rollout_duration(resource_template, %{rollout_duration: nil}), do: resource_template
 
-  defp add_rollout_duration(resource_template, %{rollout_duration: dur})
-       when is_binary(dur) and dur == "",
-       do: resource_template
+  defp add_rollout_duration(resource_template, %{rollout_duration: dur}) when is_binary(dur) and dur == "",
+    do: resource_template
 
   defp add_rollout_duration(resource_template, %{rollout_duration: dur}) do
     update_in(
@@ -102,8 +106,7 @@ defmodule CommonCore.Resources.KnativeServing do
 
   defp add_containers(resource_template, _name, nil, _), do: resource_template
 
-  defp add_containers(resource_template, _name, [] = containers, _) when containers == [],
-    do: resource_template
+  defp add_containers(resource_template, _name, [] = containers, _) when containers == [], do: resource_template
 
   defp add_containers(resource_template, spec_field_name, [_ | _] = containers, base_env_values) do
     put_in(

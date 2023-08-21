@@ -1,4 +1,5 @@
 defmodule CommonCore.Defaults.GiteaDB do
+  @moduledoc false
   @username "gitea"
   @cluster_name "gitea"
   @team "pg"

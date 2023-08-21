@@ -3,7 +3,6 @@ defmodule ControlServer.RookTest do
 
   alias CommonCore.Rook.CephCluster
   alias CommonCore.Rook.CephFilesystem
-
   alias ControlServer.Rook
 
   describe "ceph_cluster" do

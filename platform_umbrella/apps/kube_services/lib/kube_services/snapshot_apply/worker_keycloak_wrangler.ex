@@ -1,15 +1,16 @@
 defmodule KubeServices.SnapshotApply.WorkerKeycloakWrangler do
+  @moduledoc false
+  use GenServer
+  use TypedStruct
+
+  alias EventCenter.Database
+
   @doc """
   This GenServer will subscribe to the battery events then if
   it sees that any battery changes that will effect *HOW* we
   apply the snapshot then the wrangler takes the correct
   action. Currently SSO status is the only thing.
   """
-  use GenServer
-  use TypedStruct
-
-  alias EventCenter.Database
-
   @state_opts []
   @me __MODULE__
 

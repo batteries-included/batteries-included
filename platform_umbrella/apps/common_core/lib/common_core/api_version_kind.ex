@@ -1,4 +1,5 @@
 defmodule CommonCore.ApiVersionKind do
+  @moduledoc false
   @known [
     event: {"v1", "Event"},
     namespace: {"v1", "Namespace"},
@@ -19,8 +20,7 @@ defmodule CommonCore.ApiVersionKind do
     cluster_role: {"rbac.authorization.k8s.io/v1", "ClusterRole"},
     cluster_role_binding: {"rbac.authorization.k8s.io/v1", "ClusterRoleBinding"},
     crd: {"apiextensions.k8s.io/v1", "CustomResourceDefinition"},
-    validating_webhook_config:
-      {"admissionregistration.k8s.io/v1", "ValidatingWebhookConfiguration"},
+    validating_webhook_config: {"admissionregistration.k8s.io/v1", "ValidatingWebhookConfiguration"},
     mutating_webhook_config: {"admissionregistration.k8s.io/v1", "MutatingWebhookConfiguration"},
     ingress: {"networking.k8s.io/v1", "Ingress"},
     pod_disruption_budget: {"policy/v1", "PodDisruptionBudget"},
@@ -69,15 +69,11 @@ defmodule CommonCore.ApiVersionKind do
     vm_single: {"operator.victoriametrics.com/v1beta1", "VMSingle"},
     vm_auth: {"operator.victoriametrics.com/v1beta1", "VMAuth"},
     vm_user: {"operator.victoriametrics.com/v1beta1", "VMUser"},
-    aqua_cluster_compliance_report:
-      {"aquasecurity.github.io/v1alpha1", "ClusterComplianceReport"},
-    aqua_cluster_config_audit_config_report:
-      {"aquasecurity.github.io/v1alpha1", "ClusterConfigAuditReport"},
-    aqua_cluster_infra_assesment_report:
-      {"aquasecurity.github.io/v1alpha1", "ClusterInfraAssessmentReport"},
+    aqua_cluster_compliance_report: {"aquasecurity.github.io/v1alpha1", "ClusterComplianceReport"},
+    aqua_cluster_config_audit_config_report: {"aquasecurity.github.io/v1alpha1", "ClusterConfigAuditReport"},
+    aqua_cluster_infra_assesment_report: {"aquasecurity.github.io/v1alpha1", "ClusterInfraAssessmentReport"},
     aqua_config_audit_report: {"aquasecurity.github.io/v1alpha1", "ConfigAuditReport"},
-    aqua_cluster_rbac_assessment_report:
-      {"aquasecurity.github.io/v1alpha1", "ClusterRbacAssessmentReport"},
+    aqua_cluster_rbac_assessment_report: {"aquasecurity.github.io/v1alpha1", "ClusterRbacAssessmentReport"},
     aqua_rbac_assessment_report: {"aquasecurity.github.io/v1alpha1", "RbacAssessmentReport"},
     aqua_exposed_secret_report: {"aquasecurity.github.io/v1alpha1", "ExposedSecretReport"},
     aqua_infra_assessment_report: {"aquasecurity.github.io/v1alpha1", "InfraAssessmentReport"},

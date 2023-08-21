@@ -1,14 +1,15 @@
 defmodule ControlServerWeb.Live.Knative.FormComponent do
+  @moduledoc false
   use ControlServerWeb, :live_component
 
   import ControlServerWeb.KnativeFormSubcomponents
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Knative.Container
-  alias Ecto.Changeset
   alias CommonCore.Knative.EnvValue
-  alias ControlServer.Knative
   alias CommonCore.Knative.Service
+  alias ControlServer.Knative
+  alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -45,11 +46,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event(
-        "del:env_value",
-        %{"idx" => idx} = _params,
-        %{assigns: %{changeset: changeset}} = socket
-      ) do
+  def handle_event("del:env_value", %{"idx" => idx} = _params, %{assigns: %{changeset: changeset}} = socket) do
     env_values =
       changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(String.to_integer(idx))
 

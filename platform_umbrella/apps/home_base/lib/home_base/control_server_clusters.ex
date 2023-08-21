@@ -4,9 +4,9 @@ defmodule HomeBase.ControlServerClusters do
   """
 
   import Ecto.Query, warn: false
-  alias HomeBase.Repo
 
   alias HomeBase.ControlServerClusters.Installation
+  alias HomeBase.Repo
 
   @doc """
   Returns the list of installations.

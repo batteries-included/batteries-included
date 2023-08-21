@@ -22,5 +22,5 @@ defmodule ControlServerWeb.Integration.PostgrestTest do
     assert_receive _, 240_000
   end
 
-  defp cluster_name, do: "#{@base_cluster_name}-#{:rand.uniform(10000)}"
+  defp cluster_name, do: "#{@base_cluster_name}-#{:rand.uniform(10_000)}"
 end

@@ -1,5 +1,7 @@
 defmodule CommonCore.Timeline.NamedDatabase do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @primary_key false

@@ -1,6 +1,5 @@
 defmodule CommonUI.TypographyTest do
   use Heyya.SnapshotTest
-
   use CommonUI
 
   component_snapshot_test "default h1" do

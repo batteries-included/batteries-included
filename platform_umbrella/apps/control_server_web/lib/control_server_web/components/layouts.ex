@@ -1,8 +1,9 @@
 defmodule ControlServerWeb.Layouts do
+  @moduledoc false
   use ControlServerWeb, :html
 
-  import ControlServerWeb.LeftMenu
   import CommonUI.Icons.Batteries
+  import ControlServerWeb.LeftMenu
 
   embed_templates("layouts/*")
 

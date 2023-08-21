@@ -1,10 +1,11 @@
 defmodule CommonCore.Actions.SSO do
-  alias CommonCore.StateSummary.KeycloakSummary
+  @moduledoc false
+  @behaviour CommonCore.Actions.ActionGenerator
+
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.StateSummary
-
-  @behaviour CommonCore.Actions.ActionGenerator
+  alias CommonCore.StateSummary.KeycloakSummary
 
   # Keycloak requires us to use the name for most things.
   #
@@ -16,10 +17,7 @@ defmodule CommonCore.Actions.SSO do
     [ensure_core_realm(system_battery, state_summary)]
   end
 
-  defp ensure_core_realm(
-         %SystemBattery{} = _system_battery,
-         %StateSummary{keycloak_state: key_state} = _state_summary
-       ) do
+  defp ensure_core_realm(%SystemBattery{} = _system_battery, %StateSummary{keycloak_state: key_state} = _state_summary) do
     # No action needed if the realm already exists
     if KeycloakSummary.realm_member?(key_state, @realm_name) do
       nil

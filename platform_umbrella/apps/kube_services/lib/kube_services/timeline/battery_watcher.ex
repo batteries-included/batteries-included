@@ -1,4 +1,5 @@
 defmodule KubeServices.Timeline.BatteryWatcher do
+  @moduledoc false
   use GenServer
 
   alias ControlServer.Timeline

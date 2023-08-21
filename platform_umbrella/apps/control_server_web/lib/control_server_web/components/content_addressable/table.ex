@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.ContentAddressable.ResourceTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :resources, :list, required: true

@@ -1,7 +1,8 @@
 defmodule CommonCore.Actions.RootActionGenerator do
-  alias CommonCore.StateSummary
+  @moduledoc false
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Actions.SSO
+  alias CommonCore.StateSummary
 
   @default_generator_mappings [
     sso: SSO

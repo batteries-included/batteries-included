@@ -4,10 +4,10 @@ defmodule ControlServer.Rook do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
   alias CommonCore.Rook.CephCluster
   alias CommonCore.Rook.CephFilesystem
+  alias ControlServer.Repo
 
   @doc """
   Returns the list of ceph_cluster.

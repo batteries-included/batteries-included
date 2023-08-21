@@ -1,4 +1,5 @@
 defmodule EventCenter.SystemStateSummary do
+  @moduledoc false
   alias Phoenix.PubSub
 
   @pubsub EventCenter.SystemStateSummary.PubSub
@@ -8,6 +9,5 @@ defmodule EventCenter.SystemStateSummary do
     PubSub.broadcast(@pubsub, @topic, summary)
   end
 
-  def subscribe,
-    do: PubSub.subscribe(@pubsub, @topic)
+  def subscribe, do: PubSub.subscribe(@pubsub, @topic)
 end

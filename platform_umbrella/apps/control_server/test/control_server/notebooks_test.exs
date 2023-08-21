@@ -1,8 +1,8 @@
 defmodule ControlServer.NotebooksTest do
   use ControlServer.DataCase
 
-  alias ControlServer.Notebooks
   alias CommonCore.Notebooks.JupyterLabNotebook
+  alias ControlServer.Notebooks
 
   describe "jupyter_lab_notebooks" do
     @valid_attrs %{image: "some image", name: "some name"}

@@ -1,8 +1,9 @@
 defmodule CommonCore.Resources.VMCluster do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-cluster"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
@@ -62,7 +63,8 @@ defmodule CommonCore.Resources.VMCluster do
         }
       )
 
-    B.build_resource(:vm_cluster)
+    :vm_cluster
+    |> B.build_resource()
     |> B.name("main-cluster")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -73,7 +75,8 @@ defmodule CommonCore.Resources.VMCluster do
 
     spec = VirtualService.fallback("vmselect-main-cluster", hosts: [vmselect_host(state)])
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.name("vmselect")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -98,7 +101,8 @@ defmodule CommonCore.Resources.VMCluster do
 
     data = %{"vmselect-datasources.yaml" => Ymlr.document!(datasources)}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("grafana-datasource-vmselect")
     |> B.namespace(namespace)
     |> B.data(data)

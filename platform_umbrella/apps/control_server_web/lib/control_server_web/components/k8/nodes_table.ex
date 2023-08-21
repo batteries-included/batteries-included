@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.NodesTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   import K8s.Resource.FieldAccessors, only: [name: 1]

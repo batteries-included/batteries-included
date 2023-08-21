@@ -1,4 +1,5 @@
 defmodule CommonUI.Card do
+  @moduledoc false
   use CommonUI.Component
 
   import CommonUI.Typogoraphy

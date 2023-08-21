@@ -36,7 +36,8 @@ defmodule KubeServices.PodLogs do
 
     with {:ok, log_str} <- K8s.Client.run(conn, get_operation(opts)) do
       {:ok,
-       to_string(log_str)
+       log_str
+       |> to_string()
        |> String.split(~r{\n+})
        |> Enum.filter(&(&1 != ""))}
     end

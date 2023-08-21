@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Audit.EditVersionsTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :edit_versions, :list, required: true

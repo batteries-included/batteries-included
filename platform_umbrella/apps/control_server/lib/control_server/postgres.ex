@@ -7,9 +7,8 @@ defmodule ControlServer.Postgres do
 
   alias CommonCore.Postgres.Cluster
   alias ControlServer.Repo
-  alias EventCenter.Database, as: DatabaseEventCenter
-
   alias Ecto.Multi
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   require Logger
 

@@ -4,9 +4,9 @@ defmodule ControlServer.SnapshotApply.KeycloakTest do
   alias ControlServer.SnapshotApply.Keycloak
 
   describe "keycloak_snapshots" do
-    alias ControlServer.SnapshotApply.KeycloakSnapshot
-
     import ControlServer.KeycloakSnapshotApplyFixtures
+
+    alias ControlServer.SnapshotApply.KeycloakSnapshot
 
     @invalid_attrs %{status: nil}
 

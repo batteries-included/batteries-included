@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.CephClusterLiveTest do
   use ControlServerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import ControlServer.Factory
+  import Phoenix.LiveViewTest
 
   defp create_ceph_cluster(_) do
     %{ceph_cluster: insert(:ceph_cluster)}

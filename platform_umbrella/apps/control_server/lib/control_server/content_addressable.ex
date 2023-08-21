@@ -1,8 +1,9 @@
 defmodule ControlServer.ContentAddressable do
+  @moduledoc false
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
   alias ControlServer.ContentAddressable.Document
+  alias ControlServer.Repo
 
   def list_documents do
     Repo.all(Document)

@@ -1,9 +1,10 @@
 defmodule KubeServices.KubeState do
+  @moduledoc false
   use Supervisor
 
-  alias KubeServices.ConnectionPool
-  alias K8s.Resource
   alias CommonCore.ApiVersionKind
+  alias K8s.Resource
+  alias KubeServices.ConnectionPool
   alias KubeServices.KubeState.Runner
 
   @default_table :default_state_table
@@ -75,13 +76,7 @@ defmodule KubeServices.KubeState do
 
   @spec get(atom() | :ets.tid(), map()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource),
-    do:
-      get(
-        t,
-        ApiVersionKind.resource_type(resource),
-        Resource.namespace(resource),
-        Resource.name(resource)
-      )
+    do: get(t, ApiVersionKind.resource_type(resource), Resource.namespace(resource), Resource.name(resource))
 
   @spec get(atom() | :ets.tid(), atom(), binary(), binary()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource_type, namespace, name) do

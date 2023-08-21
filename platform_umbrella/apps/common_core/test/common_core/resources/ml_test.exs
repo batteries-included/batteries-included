@@ -1,9 +1,10 @@
 defmodule CommonCore.Resources.MLTest do
   use ExUnit.Case
 
-  alias CommonCore.StateSummary
-  alias CommonCore.Resources.Notebooks
   import CommonCore.Resources.ControlServerFactory
+
+  alias CommonCore.Resources.Notebooks
+  alias CommonCore.StateSummary
 
   require Logger
 

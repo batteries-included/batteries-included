@@ -4,9 +4,9 @@ defmodule ControlServer.SnapshotApply.KubeTest do
   alias ControlServer.SnapshotApply.Kube
 
   describe "resource_paths" do
-    alias ControlServer.SnapshotApply.ResourcePath
-
     import ControlServer.KubeSnapshotApplyFixtures
+
+    alias ControlServer.SnapshotApply.ResourcePath
 
     @invalid_attrs %{
       hash: nil,
@@ -85,9 +85,9 @@ defmodule ControlServer.SnapshotApply.KubeTest do
   end
 
   describe "kube_snapshots" do
-    alias ControlServer.SnapshotApply.KubeSnapshot
-
     import ControlServer.KubeSnapshotApplyFixtures
+
+    alias ControlServer.SnapshotApply.KubeSnapshot
 
     @invalid_attrs %{status: nil}
 

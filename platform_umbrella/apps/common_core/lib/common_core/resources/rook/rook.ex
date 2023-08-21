@@ -1,29 +1,23 @@
 defmodule CommonCore.Resources.Rook do
+  @moduledoc false
   use CommonCore.IncludeResource,
-    cephblockpoolradosnamespaces_ceph_rook_io:
-      "priv/manifests/rook/cephblockpoolradosnamespaces_ceph_rook_io.yaml",
+    cephblockpoolradosnamespaces_ceph_rook_io: "priv/manifests/rook/cephblockpoolradosnamespaces_ceph_rook_io.yaml",
     cephblockpools_ceph_rook_io: "priv/manifests/rook/cephblockpools_ceph_rook_io.yaml",
-    cephbucketnotifications_ceph_rook_io:
-      "priv/manifests/rook/cephbucketnotifications_ceph_rook_io.yaml",
+    cephbucketnotifications_ceph_rook_io: "priv/manifests/rook/cephbucketnotifications_ceph_rook_io.yaml",
     cephbuckettopics_ceph_rook_io: "priv/manifests/rook/cephbuckettopics_ceph_rook_io.yaml",
     cephclients_ceph_rook_io: "priv/manifests/rook/cephclients_ceph_rook_io.yaml",
     cephclusters_ceph_rook_io: "priv/manifests/rook/cephclusters_ceph_rook_io.yaml",
-    cephfilesystemmirrors_ceph_rook_io:
-      "priv/manifests/rook/cephfilesystemmirrors_ceph_rook_io.yaml",
+    cephfilesystemmirrors_ceph_rook_io: "priv/manifests/rook/cephfilesystemmirrors_ceph_rook_io.yaml",
     cephfilesystems_ceph_rook_io: "priv/manifests/rook/cephfilesystems_ceph_rook_io.yaml",
-    cephfilesystemsubvolumegroups_ceph_rook_io:
-      "priv/manifests/rook/cephfilesystemsubvolumegroups_ceph_rook_io.yaml",
+    cephfilesystemsubvolumegroups_ceph_rook_io: "priv/manifests/rook/cephfilesystemsubvolumegroups_ceph_rook_io.yaml",
     cephnfses_ceph_rook_io: "priv/manifests/rook/cephnfses_ceph_rook_io.yaml",
     cephobjectrealms_ceph_rook_io: "priv/manifests/rook/cephobjectrealms_ceph_rook_io.yaml",
     cephobjectstores_ceph_rook_io: "priv/manifests/rook/cephobjectstores_ceph_rook_io.yaml",
-    cephobjectstoreusers_ceph_rook_io:
-      "priv/manifests/rook/cephobjectstoreusers_ceph_rook_io.yaml",
-    cephobjectzonegroups_ceph_rook_io:
-      "priv/manifests/rook/cephobjectzonegroups_ceph_rook_io.yaml",
+    cephobjectstoreusers_ceph_rook_io: "priv/manifests/rook/cephobjectstoreusers_ceph_rook_io.yaml",
+    cephobjectzonegroups_ceph_rook_io: "priv/manifests/rook/cephobjectzonegroups_ceph_rook_io.yaml",
     cephobjectzones_ceph_rook_io: "priv/manifests/rook/cephobjectzones_ceph_rook_io.yaml",
     cephrbdmirrors_ceph_rook_io: "priv/manifests/rook/cephrbdmirrors_ceph_rook_io.yaml",
-    objectbucketclaims_objectbucket_io:
-      "priv/manifests/rook/objectbucketclaims_objectbucket_io.yaml",
+    objectbucketclaims_objectbucket_io: "priv/manifests/rook/objectbucketclaims_objectbucket_io.yaml",
     objectbuckets_objectbucket_io: "priv/manifests/rook/objectbuckets_objectbucket_io.yaml",
     csi_cephfs_plugin_resource: "priv/raw_files/rook/CSI_CEPHFS_PLUGIN_RESOURCE",
     csi_cephfs_provisioner_resource: "priv/raw_files/rook/CSI_CEPHFS_PROVISIONER_RESOURCE",
@@ -41,7 +35,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_ceph_global, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-global")
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-global"))
@@ -51,7 +46,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_ceph_mgr, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr-cluster")
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-mgr-cluster"))
     |> B.subject(B.build_service_account("rook-ceph-mgr", namespace))
@@ -60,7 +56,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_ceph_object_bucket, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-object-bucket")
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-object-bucket"))
     |> B.subject(B.build_service_account("rook-ceph-system", namespace))
@@ -69,7 +66,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_ceph_osd, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-osd")
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-osd"))
     |> B.subject(B.build_service_account("rook-ceph-osd", namespace))
@@ -78,7 +76,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_ceph_system, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-system")
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-system"))
@@ -88,7 +87,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_ceph_system_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-system-psp")
     |> B.label("storage-backend", "ceph")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
@@ -98,7 +98,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_cephfs_csi_provisioner, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("cephfs-csi-provisioner-role")
     |> B.role_ref(B.build_cluster_role_ref("cephfs-external-provisioner-runner"))
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
@@ -107,7 +108,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_csi_cephfs_plugin_sa_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-csi-cephfs-plugin-sa-psp")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-cephfs-plugin-sa", namespace))
@@ -116,7 +118,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_csi_cephfs_provisioner_sa_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-csi-cephfs-provisioner-sa-psp")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-cephfs-provisioner-sa", namespace))
@@ -125,7 +128,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_csi_rbd_plugin_sa_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-csi-rbd-plugin-sa-psp")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
@@ -134,7 +138,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_csi_rbd_provisioner_sa_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rook-csi-rbd-provisioner-sa-psp")
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
@@ -143,7 +148,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_rbd_csi_nodeplugin, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rbd-csi-nodeplugin")
     |> B.role_ref(B.build_cluster_role_ref("rbd-csi-nodeplugin"))
     |> B.subject(B.build_service_account("rook-csi-rbd-plugin-sa", namespace))
@@ -152,7 +158,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_binding_rbd_csi_provisioner, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("rbd-csi-provisioner-role")
     |> B.role_ref(B.build_cluster_role_ref("rbd-external-provisioner-runner"))
     |> B.subject(B.build_service_account("rook-csi-rbd-provisioner-sa", namespace))
@@ -273,7 +280,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rook-ceph-global")
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
@@ -296,7 +304,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rook-ceph-cluster-mgmt")
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
@@ -321,7 +330,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr-cluster")
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
@@ -332,7 +342,8 @@ defmodule CommonCore.Resources.Rook do
       %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr-system")
     |> B.rules(rules)
   end
@@ -367,7 +378,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rook-ceph-object-bucket")
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
@@ -376,7 +388,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_ceph_osd) do
     rules = [%{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list"]}]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rook-ceph-osd")
     |> B.rules(rules)
   end
@@ -392,7 +405,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rook-ceph-system")
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
@@ -401,7 +415,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:cluster_role_cephfs_csi_nodeplugin) do
     rules = [%{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get"]}]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cephfs-csi-nodeplugin")
     |> B.rules(rules)
   end
@@ -466,7 +481,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("cephfs-external-provisioner-runner")
     |> B.rules(rules)
   end
@@ -481,7 +497,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("psp:rook")
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
@@ -502,7 +519,8 @@ defmodule CommonCore.Resources.Rook do
       %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rbd-csi-nodeplugin")
     |> B.label("storage-backend", "ceph")
     |> B.rules(rules)
@@ -583,7 +601,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("rbd-external-provisioner-runner")
     |> B.rules(rules)
   end
@@ -628,7 +647,8 @@ defmodule CommonCore.Resources.Rook do
       |> Map.put("CSI_RBD_PLUGIN_RESOURCE", get_resource(:csi_rbd_plugin_resource))
       |> Map.put("CSI_RBD_PROVISIONER_RESOURCE", get_resource(:csi_rbd_provisioner_resource))
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("rook-ceph-operator-config")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -773,7 +793,8 @@ defmodule CommonCore.Resources.Rook do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("rook-ceph-operator")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -781,7 +802,8 @@ defmodule CommonCore.Resources.Rook do
   end
 
   resource(:pod_security_policy_00_privileged) do
-    B.build_resource(:pod_security_policy)
+    :pod_security_policy
+    |> B.build_resource()
     |> B.name("00-rook-privileged")
     |> Map.put(
       "spec",
@@ -819,7 +841,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_cluster_mgmt, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-cluster-mgmt")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-cluster-mgmt"))
@@ -829,7 +852,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_cmd_reporter, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-cmd-reporter")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rook-ceph-cmd-reporter"))
@@ -839,7 +863,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_cmd_reporter_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-cmd-reporter-psp")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
@@ -849,7 +874,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_default_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-default-psp")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -860,7 +886,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_mgr, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rook-ceph-mgr"))
@@ -870,7 +897,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_mgr_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr-psp")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
@@ -880,7 +908,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_mgr_system, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr-system")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_cluster_role_ref("rook-ceph-mgr-system"))
@@ -890,7 +919,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_monitoring, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-monitoring")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rook-ceph-monitoring"))
@@ -900,7 +930,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_monitoring_mgr, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-monitoring-mgr")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rook-ceph-monitoring-mgr"))
@@ -910,7 +941,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_osd, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-osd")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rook-ceph-osd"))
@@ -920,7 +952,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_osd_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-osd-psp")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
@@ -930,7 +963,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_purge_osd, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-purge-osd")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rook-ceph-purge-osd"))
@@ -940,7 +974,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_purge_osd_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-purge-osd-psp")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
@@ -950,7 +985,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_rgw, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-rgw")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rook-ceph-rgw"))
@@ -960,7 +996,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_rgw_psp, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-rgw-psp")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_cluster_role_ref("psp:rook"))
@@ -970,7 +1007,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_ceph_system, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rook-ceph-system")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -981,7 +1019,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_cephfs_csi_provisioner_cfg, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("cephfs-csi-provisioner-role-cfg")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("cephfs-external-provisioner-cfg"))
@@ -991,7 +1030,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:role_binding_rbd_csi_provisioner_cfg, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("rbd-csi-provisioner-role-cfg")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("rbd-external-provisioner-cfg"))
@@ -1009,7 +1049,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-cmd-reporter")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1059,7 +1100,8 @@ defmodule CommonCore.Resources.Rook do
       %{"apiGroups" => [""], "resources" => ["persistentvolumeclaims"], "verbs" => ["delete"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1076,7 +1118,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-monitoring")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1093,7 +1136,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-monitoring-mgr")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1116,7 +1160,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-osd")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1136,7 +1181,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-purge-osd")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1146,7 +1192,8 @@ defmodule CommonCore.Resources.Rook do
     namespace = data_namespace(state)
     rules = [%{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get"]}]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-rgw")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1174,7 +1221,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rook-ceph-system")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -1192,7 +1240,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("cephfs-external-provisioner-cfg")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1209,7 +1258,8 @@ defmodule CommonCore.Resources.Rook do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("rbd-external-provisioner-cfg")
     |> B.namespace(namespace)
     |> B.rules(rules)
@@ -1218,7 +1268,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_ceph_cmd_reporter, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-ceph-cmd-reporter")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -1227,7 +1278,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_ceph_mgr, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-ceph-mgr")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -1236,7 +1288,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_ceph_osd, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-ceph-osd")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -1245,7 +1298,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_ceph_purge_osd, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-ceph-purge-osd")
     |> B.namespace(namespace)
   end
@@ -1253,7 +1307,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_ceph_rgw, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-ceph-rgw")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -1262,7 +1317,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_ceph_system, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-ceph-system")
     |> B.namespace(namespace)
     |> B.label("storage-backend", "ceph")
@@ -1271,7 +1327,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_csi_cephfs_plugin_sa, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-csi-cephfs-plugin-sa")
     |> B.namespace(namespace)
   end
@@ -1279,7 +1336,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_csi_cephfs_provisioner_sa, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-csi-cephfs-provisioner-sa")
     |> B.namespace(namespace)
   end
@@ -1287,7 +1345,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_csi_rbd_plugin_sa, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-csi-rbd-plugin-sa")
     |> B.namespace(namespace)
   end
@@ -1295,7 +1354,8 @@ defmodule CommonCore.Resources.Rook do
   resource(:service_account_csi_rbd_provisioner_sa, _battery, state) do
     namespace = data_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("rook-csi-rbd-provisioner-sa")
     |> B.namespace(namespace)
   end

@@ -1,28 +1,23 @@
 defmodule ControlServerWeb.Live.ResourceInfo do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
-  import CommonUI.Modal
   import CommonUI.Link
-  import CommonUI.Stats
+  import CommonUI.Modal
   import CommonUI.RoundedLabel
-
-  import ControlServerWeb.PodsTable
+  import CommonUI.Stats
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ResourceURL
 
   alias EventCenter.KubeState, as: KubeEventCenter
-  alias KubeServices.KubeState
   alias K8s.Resource
+  alias KubeServices.KubeState
 
   require Logger
 
   @impl Phoenix.LiveView
-  def mount(
-        %{"resource_type" => rt_param, "name" => name, "namespace" => namespace} = _params,
-        _session,
-        socket
-      ) do
+  def mount(%{"resource_type" => rt_param, "name" => name, "namespace" => namespace} = _params, _session, socket) do
     resource_type = String.to_existing_atom(rt_param)
     subscribe(resource_type)
     resource = resource!(resource_type, namespace, name)
@@ -325,7 +320,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     """
   end
 
-  defp events_section(assigns = %{events: events}) when events == [] do
+  defp events_section(%{events: events} = assigns) when events == [] do
     ~H"""
     <.h2 class="flex items-center">
       Events - <span class="text-base text-gray-500 pt-1 pl-3">No new events!</span>

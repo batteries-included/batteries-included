@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.Hashing.MapHMAC do
+  @moduledoc false
   @spec get(map()) :: binary
   def get(obj) do
     :hmac |> :crypto.mac_init(:sha3_256, key()) |> update_state(obj) |> :crypto.mac_final()

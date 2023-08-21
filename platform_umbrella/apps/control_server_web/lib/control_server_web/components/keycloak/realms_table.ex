@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Keycloak.RealmsTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :realms, :list, required: true

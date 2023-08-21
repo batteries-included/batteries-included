@@ -6,9 +6,9 @@ defmodule KubeServices.ResourceDeleter do
 
   use GenServer
 
-  alias K8s.Resource.FieldAccessors
-  alias ControlServer.Deleted.DeleteArchivist
   alias CommonCore.Resources.CopyDown
+  alias ControlServer.Deleted.DeleteArchivist
+  alias K8s.Resource.FieldAccessors
 
   require Logger
 
@@ -71,9 +71,7 @@ defmodule KubeServices.ResourceDeleter do
   def handle_call({:undelete, deleted_resource_id}, _from, %{conn: conn} = state) do
     deleted_resource = DeleteArchivist.get_deleted_resource!(deleted_resource_id)
 
-    Logger.debug(
-      "UN-delete of resource #{inspect(summarize(deleted_resource.content_addressable_resource.value))}"
-    )
+    Logger.debug("UN-delete of resource #{inspect(summarize(deleted_resource.content_addressable_resource.value))}")
 
     res = apply_undelete(deleted_resource, conn)
     {:reply, res, state}

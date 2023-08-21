@@ -1,4 +1,5 @@
 defmodule CommonCore.IncludeResource do
+  @moduledoc false
   @callback get_resource(file_id :: atom()) :: binary()
 
   defmacro __using__(opts \\ []) do

@@ -1,5 +1,7 @@
 defmodule ControlServerWeb.Live.IPAddressPoolShow do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
+
   alias ControlServer.MetalLB
 
   @impl Phoenix.LiveView

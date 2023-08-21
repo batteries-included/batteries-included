@@ -4,10 +4,10 @@ defmodule ControlServer.Batteries do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
-  alias EventCenter.Database, as: DatabaseEventCenter
 
   alias CommonCore.Batteries.SystemBattery
+  alias ControlServer.Repo
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
   Returns the list of system_batteries.

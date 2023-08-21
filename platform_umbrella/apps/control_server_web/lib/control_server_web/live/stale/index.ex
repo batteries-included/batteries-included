@@ -1,12 +1,13 @@
 defmodule ControlServerWeb.Live.StaleIndex do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import K8s.Resource.FieldAccessors
 
-  alias KubeServices.Stale
   alias CommonCore.ApiVersionKind
-  alias Phoenix.Naming
   alias KubeServices.ResourceDeleter
+  alias KubeServices.Stale
+  alias Phoenix.Naming
 
   require Logger
 
@@ -63,11 +64,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
   end
 
   @impl Phoenix.LiveView
-  def handle_event(
-        "delete",
-        %{"kind" => kind, "name" => name, "namespace" => namespace} = _params,
-        socket
-      ) do
+  def handle_event("delete", %{"kind" => kind, "name" => name, "namespace" => namespace} = _params, socket) do
     with %{} = res <-
            get_resource(socket.assigns.stale, String.to_existing_atom(kind), name, namespace),
          {:ok, deleted_resource} <- ResourceDeleter.delete(res) do

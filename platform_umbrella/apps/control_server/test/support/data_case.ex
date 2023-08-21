@@ -18,12 +18,12 @@ defmodule ControlServer.DataCase do
 
   using do
     quote do
-      alias ControlServer.Repo
-
+      import ControlServer.DataCase
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import ControlServer.DataCase
+
+      alias ControlServer.Repo
     end
   end
 

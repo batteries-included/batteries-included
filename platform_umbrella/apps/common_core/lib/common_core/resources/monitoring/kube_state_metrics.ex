@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.KubeStateMetrics do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "kube-state-metrics"
 
   import CommonCore.StateSummary.Namespaces
@@ -8,7 +9,8 @@ defmodule CommonCore.Resources.KubeStateMetrics do
   resource(:cluster_role_binding_kube_state_metrics, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("kube-state-metrics")
     |> B.role_ref(B.build_cluster_role_ref("kube-state-metrics"))
     |> B.subject(B.build_service_account("kube-state-metrics", namespace))
@@ -106,7 +108,8 @@ defmodule CommonCore.Resources.KubeStateMetrics do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("kube-state-metrics")
     |> B.rules(rules)
   end
@@ -114,7 +117,8 @@ defmodule CommonCore.Resources.KubeStateMetrics do
   resource(:service_account_kube_state_metrics, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> Map.put("imagePullSecrets", [])
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
@@ -181,7 +185,8 @@ defmodule CommonCore.Resources.KubeStateMetrics do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -204,7 +209,8 @@ defmodule CommonCore.Resources.KubeStateMetrics do
       |> Map.put("jobLabel", "battery/app")
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -221,7 +227,8 @@ defmodule CommonCore.Resources.KubeStateMetrics do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("kube-state-metrics")
     |> B.namespace(namespace)
     |> B.spec(spec)

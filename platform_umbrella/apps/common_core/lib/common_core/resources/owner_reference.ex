@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.OwnerReference do
+  @moduledoc false
   @spec get_owner(map()) :: binary() | nil
   def get_owner(resource) do
     resource

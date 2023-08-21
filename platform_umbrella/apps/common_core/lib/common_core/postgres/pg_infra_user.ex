@@ -1,7 +1,9 @@
 defmodule CommonCore.Postgres.PGInfraUser do
+  @moduledoc false
   use TypedEctoSchema
-  import Ecto.Changeset
+
   import CommonCore.Postgres
+  import Ecto.Changeset
 
   alias CommonCore.Defaults.RandomKeyChangeset
 

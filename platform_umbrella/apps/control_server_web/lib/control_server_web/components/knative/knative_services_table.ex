@@ -1,5 +1,7 @@
 defmodule ControlServerWeb.KnativeServicesTable do
+  @moduledoc false
   use ControlServerWeb, :html
+
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Knative.Service

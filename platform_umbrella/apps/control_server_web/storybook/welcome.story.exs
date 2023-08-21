@@ -1,4 +1,5 @@
 defmodule Storybook.MyPage do
+  @moduledoc false
   # See https://hexdocs.pm/phoenix_storybook/PhoenixStorybook.Story.html for full story
   # documentation.
   use PhoenixStorybook.Story, :page
@@ -16,7 +17,7 @@ defmodule Storybook.MyPage do
   end
 
   # This is a dummy fonction that you should replace with your own HEEx content.
-  def render(assigns = %{tab: :welcome}) do
+  def render(%{tab: :welcome} = assigns) do
     ~H"""
     <div class="lsb-welcome-page">
       <p>
@@ -44,7 +45,7 @@ defmodule Storybook.MyPage do
     """
   end
 
-  def render(assigns = %{tab: guide}) when guide in ~w(components sandboxing icons)a do
+  def render(%{tab: guide} = assigns) when guide in ~w(components sandboxing icons)a do
     assigns =
       assign(assigns,
         guide: guide,

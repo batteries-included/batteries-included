@@ -6,9 +6,9 @@ defmodule KubeServices.Keycloak.Wrangler do
   use TypedStruct
 
   alias CommonCore.Keycloak.AdminClient
-  alias KubeServices.SystemState.SummaryHosts
-  alias CommonCore.StateSummary.Hosts
   alias CommonCore.StateSummary.Creds
+  alias CommonCore.StateSummary.Hosts
+  alias KubeServices.SystemState.SummaryHosts
 
   typedstruct module: State do
     field :client_pid, pid()
@@ -33,10 +33,7 @@ defmodule KubeServices.Keycloak.Wrangler do
   end
 
   @impl GenServer
-  def handle_info(
-        %CommonCore.StateSummary{} = summary,
-        %State{client_pid: pid} = state
-      ) do
+  def handle_info(%CommonCore.StateSummary{} = summary, %State{client_pid: pid} = state) do
     new_host = Hosts.keycloak_host(summary)
     new_base_url = "http://" <> new_host
     new_username = Creds.root_keycloak_username(summary)

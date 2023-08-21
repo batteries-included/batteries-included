@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.TimelineDisplay do
+  @moduledoc false
   use ControlServerWeb, :html
 
   alias CommonCore.Timeline.BatteryInstall
@@ -51,9 +52,7 @@ defmodule ControlServerWeb.TimelineDisplay do
     """
   end
 
-  def timeline_item(
-        %{payload: %Kube{action: :update, type: :pod, computed_status: :ready}} = assigns
-      ) do
+  def timeline_item(%{payload: %Kube{action: :update, type: :pod, computed_status: :ready}} = assigns) do
     ~H"""
     <.timeline_item
       timestamp={display_when(@timestamp)}
@@ -111,8 +110,7 @@ defmodule ControlServerWeb.TimelineDisplay do
   defp timeline_item_container_class(index) when is_integer(index),
     do: timeline_item_container_class(Integer.mod(index, 2) == 0)
 
-  defp timeline_item_container_class(true),
-    do: "mb-8 flex justify-between items-center w-full right-timeline"
+  defp timeline_item_container_class(true), do: "mb-8 flex justify-between items-center w-full right-timeline"
 
   defp timeline_item_container_class(false),
     do: "mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline"

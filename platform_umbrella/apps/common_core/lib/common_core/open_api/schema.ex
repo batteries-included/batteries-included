@@ -1,4 +1,5 @@
 defmodule CommonCore.OpenApi.Schema do
+  @moduledoc false
   defmacro __using__(_ots \\ []) do
     quote do
       use TypedEctoSchema
@@ -8,8 +9,7 @@ defmodule CommonCore.OpenApi.Schema do
       def new(map), do: unquote(__MODULE__).schema_new(map, __MODULE__)
       def new!(map), do: with({:ok, value} <- new(map), do: value)
 
-      def changeset(base_struct, args),
-        do: unquote(__MODULE__).schema_changeset(args, base_struct)
+      def changeset(base_struct, args), do: unquote(__MODULE__).schema_changeset(args, base_struct)
 
       defoverridable new: 1, changeset: 2
     end

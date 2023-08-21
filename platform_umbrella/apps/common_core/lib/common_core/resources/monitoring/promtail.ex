@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.Promtail do
+  @moduledoc false
   use CommonCore.IncludeResource, promtail_yaml: "priv/raw_files/promtail/promtail.yaml"
   use CommonCore.Resources.ResourceGenerator, app_name: "promtail"
 
@@ -11,7 +12,8 @@ defmodule CommonCore.Resources.Promtail do
   resource(:cluster_role_binding_main, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("promtail")
     |> B.role_ref(B.build_cluster_role_ref("promtail"))
     |> B.subject(B.build_service_account("promtail", namespace))
@@ -26,7 +28,8 @@ defmodule CommonCore.Resources.Promtail do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("promtail")
     |> B.rules(rules)
   end
@@ -34,7 +37,8 @@ defmodule CommonCore.Resources.Promtail do
   resource(:service_account_main, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("promtail")
     |> B.namespace(namespace)
   end
@@ -120,7 +124,8 @@ defmodule CommonCore.Resources.Promtail do
       |> Map.put("template", template)
       |> Map.put("updateStrategy", %{})
 
-    B.build_resource(:daemon_set)
+    :daemon_set
+    |> B.build_resource()
     |> B.name("promtail")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -134,7 +139,8 @@ defmodule CommonCore.Resources.Promtail do
       |> Map.put("promtail.yaml", get_resource(:promtail_yaml))
       |> Secret.encode()
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("promtail")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -155,7 +161,8 @@ defmodule CommonCore.Resources.Promtail do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("promtail-metrics")
     |> B.namespace(namespace)
     |> B.component_label("metrics")
@@ -174,7 +181,8 @@ defmodule CommonCore.Resources.Promtail do
         %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metrics"}}
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("promtail")
     |> B.namespace(namespace)
     |> B.spec(spec)

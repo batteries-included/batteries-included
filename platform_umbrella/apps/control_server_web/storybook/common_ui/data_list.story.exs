@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Storybook.DataList do
+  @moduledoc false
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.DataList.data_list/1

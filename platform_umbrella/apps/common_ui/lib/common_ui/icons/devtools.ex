@@ -1,4 +1,5 @@
 defmodule CommonUI.Icons.Devtools do
+  @moduledoc false
   use CommonUI.Component
 
   attr :class, :any, default: nil

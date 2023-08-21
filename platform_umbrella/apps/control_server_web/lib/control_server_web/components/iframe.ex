@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.IFrame do
+  @moduledoc false
   use ControlServerWeb, :html
 
   def iframe(assigns) do

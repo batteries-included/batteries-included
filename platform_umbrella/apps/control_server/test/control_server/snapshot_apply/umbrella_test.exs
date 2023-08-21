@@ -4,9 +4,9 @@ defmodule ControlServer.SnapshotApply.UmbrellaTest do
   alias ControlServer.SnapshotApply
 
   describe "umbrella_snapshots" do
-    alias ControlServer.SnapshotApply.UmbrellaSnapshot
-
     import ControlServer.SnapshotApplyFixtures
+
+    alias ControlServer.SnapshotApply.UmbrellaSnapshot
 
     test "list_umbrella_snapshots/0 returns all umbrella_snapshots" do
       umbrella_snapshot = umbrella_snapshot_fixture()

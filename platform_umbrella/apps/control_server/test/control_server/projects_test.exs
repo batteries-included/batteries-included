@@ -4,9 +4,9 @@ defmodule ControlServer.ProjectsTest do
   alias ControlServer.Projects
 
   describe "system_projects" do
-    alias ControlServer.Projects.SystemProject
-
     import ControlServer.ProjectsFixtures
+
+    alias ControlServer.Projects.SystemProject
 
     @invalid_attrs %{description: nil, name: nil, type: nil}
 

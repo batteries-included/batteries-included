@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.FailoverClusterLiveTest do
   use ControlServerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import ControlServer.RedisFixtures
+  import Phoenix.LiveViewTest
 
   defp create_failover_cluster(_) do
     failover_cluster = failover_cluster_fixture()

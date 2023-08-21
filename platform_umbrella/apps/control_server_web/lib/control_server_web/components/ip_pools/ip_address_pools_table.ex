@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.IPAddressPoolsTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :ip_address_pools, :list, default: []

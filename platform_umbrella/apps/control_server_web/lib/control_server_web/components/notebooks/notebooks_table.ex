@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.NotebooksTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   import KubeServices.SystemState.SummaryHosts

@@ -1,4 +1,5 @@
 defmodule CommonUI.Stats do
+  @moduledoc false
   use CommonUI.Component
 
   import CommonUI.Card

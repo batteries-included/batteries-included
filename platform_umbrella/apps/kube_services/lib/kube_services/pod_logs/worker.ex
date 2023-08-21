@@ -69,8 +69,8 @@ defmodule KubeServices.PodLogs.Worker do
     # For now that's forward clean the line up and send it on.
     # TODO: send this to a phoenix pubsub from `event_center`
     {:ok, _} =
-      K8s.Client.connect(
-        api_version,
+      api_version
+      |> K8s.Client.connect(
         "pods/log",
         opts,
         # No previous lines

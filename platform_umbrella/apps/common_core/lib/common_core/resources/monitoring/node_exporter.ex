@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.NodeExporter do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "node-exporter"
 
   import CommonCore.StateSummary.Namespaces
@@ -9,7 +10,8 @@ defmodule CommonCore.Resources.NodeExporter do
   resource(:service_account_node_exporter_prometheus_node_exporter, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("node-exporter")
     |> B.namespace(namespace)
   end
@@ -113,7 +115,8 @@ defmodule CommonCore.Resources.NodeExporter do
         %{"rollingUpdate" => %{"maxUnavailable" => 1}, "type" => "RollingUpdate"}
       )
 
-    B.build_resource(:daemon_set)
+    :daemon_set
+    |> B.build_resource()
     |> B.name("node-exporter")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -137,7 +140,8 @@ defmodule CommonCore.Resources.NodeExporter do
         }
       )
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("node-exporter")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -157,7 +161,8 @@ defmodule CommonCore.Resources.NodeExporter do
         %{"battery/app" => @app_name}
       )
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("node-exporter")
     |> B.namespace(namespace)
     |> B.spec(spec)

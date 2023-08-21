@@ -24,9 +24,9 @@ defmodule HomeBaseWeb do
       use Phoenix.Router, helpers: false
 
       # Import common connection and controller functions to use in pipelines
-      import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+      import Plug.Conn
     end
   end
 
@@ -43,8 +43,8 @@ defmodule HomeBaseWeb do
         formats: [:html, :json],
         layouts: [html: HomeBaseWeb.Layouts]
 
-      import Plug.Conn
       import HomeBaseWeb.Gettext
+      import Plug.Conn
 
       unquote(verified_routes())
     end
@@ -74,6 +74,7 @@ defmodule HomeBaseWeb do
   def html do
     quote do
       use Phoenix.Component
+
       import Phoenix.Component, except: [link: 1]
 
       # Import convenience functions from controllers
@@ -88,12 +89,13 @@ defmodule HomeBaseWeb do
   defp html_helpers do
     quote do
       # HTML escaping functionality
-      import Phoenix.HTML
       # Core UI components and translation
       use CommonUI
-      alias Heroicons
 
       import HomeBaseWeb.Gettext
+      import Phoenix.HTML
+
+      alias Heroicons
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

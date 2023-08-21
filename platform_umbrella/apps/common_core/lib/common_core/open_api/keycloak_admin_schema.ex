@@ -1,6 +1,9 @@
 defmodule CommonCore.OpenApi.KeycloakAdminSchema do
+  @moduledoc false
   defmodule AuthenticationExecutionExportRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :flowAlias, :string
@@ -9,7 +12,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule AuthenticationFlowRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :alias, :string
@@ -23,7 +28,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule AuthenticatorConfigRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :alias, :string
@@ -33,7 +40,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ClaimRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :address, :boolean
@@ -50,7 +59,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ApplicationRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       embeds_one :claims, ClaimRepresentation
@@ -59,7 +70,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ComponentExportRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :config, :map
@@ -72,7 +85,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule Composites do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :application, :map
@@ -82,7 +97,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule CredentialRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :algorithm, :string
@@ -107,7 +124,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule FederatedIdentityRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :identityProvider, :string
@@ -117,7 +136,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule GroupRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :access, :map
@@ -132,7 +153,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule IdentityProviderMapperRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :config, :map
@@ -144,7 +167,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule IdentityProviderRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :addReadTokenRoleOnCreate, :boolean
@@ -165,7 +190,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule PolicyRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :config, :map
@@ -173,7 +200,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ProtocolMapperRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :config, :map
@@ -187,7 +216,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ClientScopeRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :attributes, :map
@@ -200,7 +231,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ClientTemplateRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :attributes, :map
@@ -222,7 +255,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule RequiredActionProviderRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :alias, :string
@@ -236,7 +271,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ResourceRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :attributes, :map
@@ -253,7 +290,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule RoleRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :attributes, :map
@@ -269,7 +308,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule RolesRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :application, :map
@@ -279,7 +320,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ScopeMappingRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :client, :string
@@ -291,7 +334,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ScopeRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :displayName, :string
@@ -304,7 +349,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ResourceServerRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :allowRemoteResourceManagement, :boolean
@@ -320,7 +367,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule ClientRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :access, :map
@@ -370,7 +419,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule SocialLinkRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :socialProvider, :string
@@ -380,7 +431,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule UserConsentRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :clientId, :string
@@ -392,7 +445,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule UserFederationMapperRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :config, :map
@@ -404,7 +459,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule UserFederationProviderRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :changedSyncPeriod, :integer
@@ -419,7 +476,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule UserRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :access, :map
@@ -452,7 +511,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
   end
 
   defmodule RealmRepresentation do
+    @moduledoc false
     use CommonCore.OpenApi.Schema
+
     @derive Jason.Encoder
     typed_embedded_schema do
       field :accessCodeLifespan, :integer

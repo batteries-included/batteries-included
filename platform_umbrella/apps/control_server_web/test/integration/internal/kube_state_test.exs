@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Integration.KubeState do
+  @moduledoc false
   use ControlServerWeb.IntegrationTestCase
 
   alias KubeServices.KubeState

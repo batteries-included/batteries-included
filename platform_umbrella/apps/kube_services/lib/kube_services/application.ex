@@ -29,8 +29,5 @@ defmodule KubeServices.Application do
   end
 
   def children(_run),
-    do: [
-      {KubeServices.KubeState, [should_watch: false]},
-      {KubeServices.SystemState, [should_refresh: false]}
-    ]
+    do: [{KubeServices.KubeState, [should_watch: false]}, {KubeServices.SystemState, [should_refresh: false]}]
 end

@@ -1,4 +1,5 @@
 defmodule KubeServices.Batteries.SSO do
+  @moduledoc false
   use KubeServices.Batteries.Supervisor
 
   require Logger

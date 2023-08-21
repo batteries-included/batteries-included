@@ -1,17 +1,20 @@
 defmodule CommonCore.Resources.ControlServer do
-  import CommonCore.StateSummary.Namespaces
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "battery-control-server"
 
+  import CommonCore.StateSummary.Namespaces
+
+  alias CommonCore.Defaults
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.IstioConfig.VirtualService
-  alias CommonCore.Defaults
 
   @service_account "battery-admin"
   @server_port 4000
 
   resource(:virtual_service, battery, state) do
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.namespace(core_namespace(state))
     |> B.name("control-server")
     |> B.spec(VirtualService.fallback("control-server"))
@@ -20,14 +23,16 @@ defmodule CommonCore.Resources.ControlServer do
   end
 
   resource(:service_account, battery, state) do
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.namespace(core_namespace(state))
     |> B.name("battery-admin")
     |> F.require(battery.config.server_in_cluster)
   end
 
   resource(:cluster_role_binding, battery, state) do
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("battery-admin-cluster-admin")
     |> Map.put(
       "roleRef",
@@ -52,7 +57,8 @@ defmodule CommonCore.Resources.ControlServer do
         }
       ])
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("control-server")
     |> B.namespace(core_namespace(state))
     |> B.spec(spec)
@@ -95,7 +101,8 @@ defmodule CommonCore.Resources.ControlServer do
       |> B.match_labels_selector(@app_name)
       |> B.template(template)
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name(name)
     |> B.namespace(core_namespace(state))
     |> B.spec(spec)

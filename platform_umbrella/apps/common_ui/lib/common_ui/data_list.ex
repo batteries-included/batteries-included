@@ -1,4 +1,5 @@
 defmodule CommonUI.DataList do
+  @moduledoc false
   use CommonUI.Component
 
   @doc """

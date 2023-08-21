@@ -4,12 +4,12 @@ defmodule ControlServer.Timeline do
   """
 
   import Ecto.Query, warn: false
-  alias ControlServer.Repo
 
-  alias CommonCore.Timeline.TimelineEvent
   alias CommonCore.Timeline.BatteryInstall
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase
+  alias CommonCore.Timeline.TimelineEvent
+  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

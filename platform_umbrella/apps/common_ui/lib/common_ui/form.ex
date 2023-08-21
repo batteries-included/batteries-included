@@ -1,4 +1,5 @@
 defmodule CommonUI.Form do
+  @moduledoc false
   use CommonUI.Component
 
   import CommonUI.Gettext, warn: false
@@ -57,8 +58,7 @@ defmodule CommonUI.Form do
 
   attr :type, :string,
     default: "text",
-    doc:
-      ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range", "multicheck"|
+    doc: ~s|one of "text", "textarea", "number" "email", "date", "time", "datetime", "select", "range", "multicheck"|
 
   attr :value, :any
   attr :field, :any, doc: "a %Phoenix.HTML.Form{}/field name tuple, for example: {f, :email}"
@@ -208,19 +208,15 @@ defmodule CommonUI.Form do
   defp border("textarea" = _type, [] = _errors), do: "textarea textarea-bordered"
   defp border("select" = _type, [] = _errors), do: "select select-bordered"
 
-  defp border("input" = _type, [_ | _] = _errors),
-    do: "input input-bordered input-error"
+  defp border("input" = _type, [_ | _] = _errors), do: "input input-bordered input-error"
 
-  defp border("select" = _type, [_ | _] = _errors),
-    do: "selct select-bordered select-error"
+  defp border("select" = _type, [_ | _] = _errors), do: "selct select-bordered select-error"
 
-  defp border("textarea" = _type, [_ | _] = _errors),
-    do: "text-area textarea-bordered textarea-error"
+  defp border("textarea" = _type, [_ | _] = _errors), do: "text-area textarea-bordered textarea-error"
 
   defp border(type, [] = _errors), do: "#{type} #{type}-secondary #{type}-bordered"
 
-  defp border(type, [_ | _] = _errors),
-    do: "#{type} #{type}-bordered #{type}-error"
+  defp border(type, [_ | _] = _errors), do: "#{type} #{type}-bordered #{type}-error"
 
   @doc """
   Renders a label.

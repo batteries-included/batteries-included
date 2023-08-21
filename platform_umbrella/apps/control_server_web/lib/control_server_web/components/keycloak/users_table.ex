@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Keycloak.UsersTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :users, :list, required: true

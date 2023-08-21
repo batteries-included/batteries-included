@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Chart do
+  @moduledoc false
   use ControlServerWeb, :html
 
   alias Jason

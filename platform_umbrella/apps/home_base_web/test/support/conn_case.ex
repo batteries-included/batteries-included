@@ -20,14 +20,14 @@ defmodule HomeBaseWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint HomeBaseWeb.Endpoint
-
       use HomeBaseWeb, :verified_routes
 
       # Import conveniences for testing with connections
-      import Plug.Conn
-      import Phoenix.ConnTest
       import HomeBaseWeb.ConnCase
+      import Phoenix.ConnTest
+      import Plug.Conn
+
+      @endpoint HomeBaseWeb.Endpoint
     end
   end
 

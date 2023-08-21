@@ -11,11 +11,11 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
   use GenServer
   use TypedStruct
 
-  require Logger
-
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias EventCenter.KubeSnapshot.Payload
   alias KubeServices.SnapshotApply.Worker
+
+  require Logger
 
   typedstruct module: State do
     field :delay, non_neg_integer(), default: 5000

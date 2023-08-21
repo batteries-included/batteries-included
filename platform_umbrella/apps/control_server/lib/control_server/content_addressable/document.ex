@@ -1,5 +1,7 @@
 defmodule ControlServer.ContentAddressable.Document do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @derive {

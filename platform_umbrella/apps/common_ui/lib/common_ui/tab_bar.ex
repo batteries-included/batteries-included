@@ -1,4 +1,5 @@
 defmodule CommonUI.TabBar do
+  @moduledoc false
   use CommonUI.Component
 
   defp link_class(false),

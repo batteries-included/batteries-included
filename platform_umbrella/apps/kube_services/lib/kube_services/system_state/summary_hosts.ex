@@ -18,10 +18,11 @@ defmodule KubeServices.SystemState.SummaryHosts do
   It also hosts the ablity to compute a knative service hostname
   """
 
-  alias KubeServices.SystemState.Summarizer
+  use GenServer
+
   alias CommonCore.StateSummary
   alias EventCenter.SystemStateSummary
-  use GenServer
+  alias KubeServices.SystemState.Summarizer
 
   require Logger
 

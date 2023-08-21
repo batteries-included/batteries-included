@@ -1,4 +1,5 @@
 defmodule HomeBaseWeb.Live.Installations.FormComponent do
+  @moduledoc false
   use HomeBaseWeb, :live_component
 
   alias HomeBase.ControlServerClusters

@@ -1,11 +1,10 @@
 defmodule ControlServerWeb.Live.RedisNew do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Redis.FailoverCluster
-
-  alias ControlServer.Redis
   alias ControlServer.Batteries.Installer
-
+  alias ControlServer.Redis
   alias ControlServerWeb.Live.Redis.FormComponent
 
   require Logger

@@ -1,12 +1,12 @@
 defmodule Mix.Tasks.Gen.Static.Installations do
-  @moduledoc "Create the json for static installations that can be used during dev cluster bring up."
   @shortdoc "Just enough to get a dev cluster up and running."
 
+  @moduledoc "Create the json for static installations that can be used during dev cluster bring up."
   use Mix.Task
 
-  alias CommonCore.StateSummary.SeedState
-  alias CommonCore.Resources.RootResourceGenerator
   alias CommonCore.InstallSpec
+  alias CommonCore.Resources.RootResourceGenerator
+  alias CommonCore.StateSummary.SeedState
 
   @installations ~w(dev dev_cluster)a
 
@@ -39,12 +39,12 @@ defmodule Mix.Tasks.Gen.Static.Installations do
 
   def installation(:dev), do: dev_installation(%{provider: :kind}, SeedState.seed(:dev))
 
-  def installation(:dev_cluster),
-    do: dev_installation(%{provider: :provided}, SeedState.seed(:slim_dev))
+  def installation(:dev_cluster), do: dev_installation(%{provider: :provided}, SeedState.seed(:slim_dev))
 
   def dev_installation(kube_cluster, summary) do
     res_map =
-      RootResourceGenerator.materialize(summary)
+      summary
+      |> RootResourceGenerator.materialize()
       |> Enum.sort_by(fn {path, _} -> path end)
       |> Map.new()
 

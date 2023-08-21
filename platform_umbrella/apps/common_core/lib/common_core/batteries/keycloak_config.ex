@@ -1,8 +1,11 @@
 defmodule CommonCore.Batteries.KeycloakConfig do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
-  alias CommonCore.Defaults.RandomKeyChangeset
+
   alias CommonCore.Defaults
+  alias CommonCore.Defaults.RandomKeyChangeset
 
   @required_fields ~w()a
   @optional_fields ~w(image admin_username admin_password)a

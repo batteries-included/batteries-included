@@ -1,12 +1,16 @@
 defmodule CommonCore.Resources.IstioIngress do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingress"
+
   import CommonCore.StateSummary.Namespaces
+
   alias CommonCore.Resources.Builder, as: B
 
   resource(:service_account_istio_ingress, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("istio-ingress")
     |> B.namespace(namespace)
     |> B.label("istio", "ingress")
@@ -19,7 +23,8 @@ defmodule CommonCore.Resources.IstioIngress do
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "watch", "list"]}
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("istio-ingress")
     |> B.namespace(namespace)
     |> B.label("istio", "ingress")
@@ -29,7 +34,8 @@ defmodule CommonCore.Resources.IstioIngress do
   resource(:role_binding_istio_ingress, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("istio-ingress")
     |> B.namespace(namespace)
     |> B.label("istio", "ingress")
@@ -50,7 +56,8 @@ defmodule CommonCore.Resources.IstioIngress do
       |> Map.put("selector", %{"battery/app" => @app_name, "istio" => "ingress"})
       |> Map.put("type", "LoadBalancer")
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("istio-ingress")
     |> B.namespace(namespace)
     |> B.label("istio", "ingress")
@@ -113,7 +120,8 @@ defmodule CommonCore.Resources.IstioIngress do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("istio-ingress")
     |> B.namespace(namespace)
     |> B.label("istio", "ingress")
@@ -141,7 +149,8 @@ defmodule CommonCore.Resources.IstioIngress do
         %{"apiVersion" => "apps/v1", "kind" => "Deployment", "name" => "istio-ingress"}
       )
 
-    B.build_resource(:horizontal_pod_autoscaler)
+    :horizontal_pod_autoscaler
+    |> B.build_resource()
     |> B.name("istio-ingress")
     |> B.namespace(namespace)
     |> B.label("istio", "ingress")
@@ -160,7 +169,8 @@ defmodule CommonCore.Resources.IstioIngress do
       ]
     }
 
-    B.build_resource(:istio_gateway)
+    :istio_gateway
+    |> B.build_resource()
     |> B.name("ingress")
     |> B.namespace(namespace)
     |> B.label("istio", "ingress")
@@ -170,7 +180,8 @@ defmodule CommonCore.Resources.IstioIngress do
   resource(:telemetry, _battery, state) do
     namespace = istio_namespace(state)
 
-    B.build_resource(:istio_telemetry)
+    :istio_telemetry
+    |> B.build_resource()
     |> B.name("mesh-default")
     |> B.namespace(namespace)
     |> B.spec(%{"accessLogging" => [%{"providers" => [%{"name" => "envoy"}]}]})

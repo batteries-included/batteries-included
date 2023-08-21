@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Keycloak.ClientsTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :clients, :list, required: true

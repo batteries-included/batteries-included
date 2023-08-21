@@ -1,5 +1,7 @@
 defmodule ControlServerWeb.IntegrationTestCase do
+  @moduledoc false
   use ExUnit.CaseTemplate
+
   alias Ecto.Adapters.SQL.Sandbox
 
   using do

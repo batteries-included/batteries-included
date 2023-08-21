@@ -1,10 +1,11 @@
 defmodule KubeServices.SystemState.Summarizer do
+  @moduledoc false
   use GenServer
   use TypedStruct
 
-  alias KubeServices.SystemState.KeycloakSummarizer
   alias CommonCore.StateSummary
   alias KubeServices.KubeState
+  alias KubeServices.SystemState.KeycloakSummarizer
 
   require Logger
 

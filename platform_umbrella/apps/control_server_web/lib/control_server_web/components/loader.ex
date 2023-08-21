@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Loader do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :class, :string, default: ""

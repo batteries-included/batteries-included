@@ -4,6 +4,7 @@ end
 
 defmodule Endpoint do
   use Phoenix.Endpoint, otp_app: :common_ui_test
+
   plug(Router)
 end
 

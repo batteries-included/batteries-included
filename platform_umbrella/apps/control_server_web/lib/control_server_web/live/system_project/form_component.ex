@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Live.Project.FormComponent do
+  @moduledoc false
   use ControlServerWeb, :live_component
 
   alias ControlServer.Projects

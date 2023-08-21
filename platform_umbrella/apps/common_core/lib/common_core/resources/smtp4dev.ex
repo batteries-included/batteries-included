@@ -1,19 +1,21 @@
 defmodule CommonCore.Resources.Smtp4Dev do
+  @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "smtp4dev"
 
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.IstioConfig.VirtualService
 
   resource(:virtual_service, _battery, state) do
     namespace = base_namespace(state)
 
     spec = VirtualService.fallback("smtp-four-dev-http", hosts: [smtp4dev_host(state)])
 
-    B.build_resource(:istio_virtual_service)
+    :istio_virtual_service
+    |> B.build_resource()
     |> B.name("smtp-dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -69,7 +71,8 @@ defmodule CommonCore.Resources.Smtp4Dev do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("smtp4dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -78,7 +81,8 @@ defmodule CommonCore.Resources.Smtp4Dev do
   resource(:service_account_main, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("smtp4dev")
     |> B.namespace(namespace)
   end
@@ -94,7 +98,8 @@ defmodule CommonCore.Resources.Smtp4Dev do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("smtp-four-dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -110,7 +115,8 @@ defmodule CommonCore.Resources.Smtp4Dev do
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("smtp-four-dev-http")
     |> B.namespace(namespace)
     |> B.spec(spec)

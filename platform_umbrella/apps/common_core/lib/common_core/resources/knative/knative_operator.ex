@@ -1,9 +1,8 @@
 defmodule CommonCore.Resources.KnativeOperator do
+  @moduledoc false
   use CommonCore.IncludeResource,
-    knativeeventings_operator_knative_dev:
-      "priv/manifests/knative_operator/knativeeventings_operator_knative_dev.yaml",
-    knativeservings_operator_knative_dev:
-      "priv/manifests/knative_operator/knativeservings_operator_knative_dev.yaml"
+    knativeeventings_operator_knative_dev: "priv/manifests/knative_operator/knativeeventings_operator_knative_dev.yaml",
+    knativeservings_operator_knative_dev: "priv/manifests/knative_operator/knativeservings_operator_knative_dev.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-operator"
 
@@ -17,7 +16,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_binding_knative_eventing_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("knative-eventing-operator")
     |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
@@ -26,7 +26,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_binding_knative_eventing_operator_aggregated, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("knative-eventing-operator-aggregated")
     |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator-aggregated"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
@@ -35,7 +36,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_binding_knative_eventing_operator_aggregated_stable, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("knative-eventing-operator-aggregated-stable")
     |> B.role_ref(B.build_cluster_role_ref("knative-eventing-operator-aggregated-stable"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
@@ -44,7 +46,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_binding_knative_serving_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("knative-serving-operator")
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
@@ -53,7 +56,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_binding_knative_serving_operator_aggregated, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("knative-serving-operator-aggregated")
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator-aggregated"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
@@ -62,7 +66,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_binding_knative_serving_operator_aggregated_stable, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("knative-serving-operator-aggregated-stable")
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-operator-aggregated-stable"))
     |> B.subject(B.build_service_account("knative-operator", namespace))
@@ -71,7 +76,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_binding_knative_operator_webhook, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("knative-operator-webhook")
     |> B.role_ref(B.build_cluster_role_ref("knative-operator-webhook"))
     |> B.subject(B.build_service_account("knative-operator-webhook", namespace))
@@ -250,7 +256,8 @@ defmodule CommonCore.Resources.KnativeOperator do
       %{"apiGroups" => ["apps"], "resources" => ["deployments"], "verbs" => ["deletecollection"]}
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("knative-eventing-operator")
     |> B.rules(rules)
   end
@@ -258,7 +265,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_knative_eventing_operator_aggregated) do
     rules = []
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.aggregation_rule(%{
       "clusterRoleSelectors" => [
         %{
@@ -275,7 +283,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_knative_eventing_operator_aggregated_stable) do
     rules = []
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.aggregation_rule(%{
       "clusterRoleSelectors" => [
         %{
@@ -325,7 +334,8 @@ defmodule CommonCore.Resources.KnativeOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("knative-operator-webhook")
     |> B.label("eventing.knative.dev/release", "devel")
     |> B.rules(rules)
@@ -430,7 +440,8 @@ defmodule CommonCore.Resources.KnativeOperator do
       }
     ]
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("knative-serving-operator")
     |> B.rules(rules)
   end
@@ -438,7 +449,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_knative_serving_operator_aggregated) do
     rules = []
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> Map.put(
       "aggregationRule",
       %{
@@ -458,7 +470,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:cluster_role_knative_serving_operator_aggregated_stable) do
     rules = []
 
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> Map.put(
       "aggregationRule",
       %{
@@ -483,7 +496,8 @@ defmodule CommonCore.Resources.KnativeOperator do
     namespace = core_namespace(state)
     data = %{}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("config-logging")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -493,7 +507,8 @@ defmodule CommonCore.Resources.KnativeOperator do
     namespace = core_namespace(state)
     data = %{}
 
-    B.build_resource(:config_map)
+    :config_map
+    |> B.build_resource()
     |> B.name("config-observability")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -557,7 +572,8 @@ defmodule CommonCore.Resources.KnativeOperator do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("knative-operator")
     |> B.namespace(namespace)
     |> B.component_label("knative-operator")
@@ -665,7 +681,8 @@ defmodule CommonCore.Resources.KnativeOperator do
         }
       )
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
     |> B.component_label("operator-webhook")
@@ -675,7 +692,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:role_binding_knative_operator_webhook, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("knative-operator-webhook"))
@@ -693,7 +711,8 @@ defmodule CommonCore.Resources.KnativeOperator do
       }
     ]
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
     |> B.component_label("operator-webhook")
@@ -704,7 +723,8 @@ defmodule CommonCore.Resources.KnativeOperator do
     namespace = core_namespace(state)
     data = Secret.encode(%{})
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("operator-webhook-certs")
     |> B.namespace(namespace)
     |> B.component_label("operator-webhook")
@@ -714,7 +734,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:service_account_knative_operator, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("knative-operator")
     |> B.namespace(namespace)
   end
@@ -722,7 +743,8 @@ defmodule CommonCore.Resources.KnativeOperator do
   resource(:service_account_knative_operator_webhook, _battery, state) do
     namespace = core_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("knative-operator-webhook")
     |> B.namespace(namespace)
     |> B.component_label("operator-webhook")
@@ -743,7 +765,8 @@ defmodule CommonCore.Resources.KnativeOperator do
         "battery/component" => "operator-webhook"
       })
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name(@webhook_service)
     |> B.namespace(namespace)
     |> B.component_label("operator-webhook")

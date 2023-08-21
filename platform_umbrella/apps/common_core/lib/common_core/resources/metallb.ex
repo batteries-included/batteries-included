@@ -1,4 +1,5 @@
 defmodule CommonCore.Resources.MetalLB do
+  @moduledoc false
   use CommonCore.IncludeResource,
     addresspools_metallb_io: "priv/manifests/metallb/addresspools_metallb_io.yaml",
     bfdprofiles_metallb_io: "priv/manifests/metallb/bfdprofiles_metallb_io.yaml",
@@ -36,7 +37,8 @@ defmodule CommonCore.Resources.MetalLB do
         avoidBuggyIPs: true
       }
 
-      B.build_resource(:metal_ip_address_pool)
+      :metal_ip_address_pool
+      |> B.build_resource()
       |> B.name(pool.name)
       |> B.namespace(namespace)
       |> B.spec(spec)
@@ -47,7 +49,8 @@ defmodule CommonCore.Resources.MetalLB do
     namespace = base_namespace(state)
     spec = %{"ipAddressPools" => Enum.map(state.ip_address_pools, & &1.name)}
 
-    B.build_resource(:metal_l2_advertisement)
+    :metal_l2_advertisement
+    |> B.build_resource()
     |> B.name("core")
     |> B.namespace(namespace)
     |> B.spec(spec)
@@ -56,7 +59,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:cluster_role_binding_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("metallb:controller")
     |> B.role_ref(B.build_cluster_role_ref("metallb:controller"))
     |> B.subject(B.build_service_account("metallb-controller", namespace))
@@ -65,14 +69,16 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:cluster_role_binding_speaker, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:cluster_role_binding)
+    :cluster_role_binding
+    |> B.build_resource()
     |> B.name("metallb:speaker")
     |> B.role_ref(B.build_cluster_role_ref("metallb:speaker"))
     |> B.subject(B.build_service_account("metallb-speaker", namespace))
   end
 
   resource(:cluster_role_controller) do
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("metallb:controller")
     |> B.rules([
       %{
@@ -96,7 +102,8 @@ defmodule CommonCore.Resources.MetalLB do
   end
 
   resource(:cluster_role_speaker) do
-    B.build_resource(:cluster_role)
+    :cluster_role
+    |> B.build_resource()
     |> B.name("metallb:speaker")
     |> B.rules([
       %{
@@ -144,7 +151,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:daemon_set_speaker, battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:daemon_set)
+    :daemon_set
+    |> B.build_resource()
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
     |> B.component_label("speaker")
@@ -244,7 +252,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:deployment_controller, battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:deployment)
+    :deployment
+    |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -331,7 +340,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:role_binding_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -342,7 +352,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:role_binding_pod_lister, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role_binding)
+    :role_binding
+    |> B.build_resource()
     |> B.name("metallb-pod-lister")
     |> B.namespace(namespace)
     |> B.component_label("speaker")
@@ -353,7 +364,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:role_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
     |> B.rules([
@@ -416,7 +428,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:role_pod_lister, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:role)
+    :role
+    |> B.build_resource()
     |> B.name("metallb-pod-lister")
     |> B.namespace(namespace)
     |> B.rules([
@@ -464,7 +477,8 @@ defmodule CommonCore.Resources.MetalLB do
     namespace = base_namespace(state)
     data = %{}
 
-    B.build_resource(:secret)
+    :secret
+    |> B.build_resource()
     |> B.name("webhook-server-cert")
     |> B.namespace(namespace)
     |> B.data(data)
@@ -473,7 +487,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:service_account_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -482,7 +497,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:service_account_speaker, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service_account)
+    :service_account
+    |> B.build_resource()
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
     |> B.component_label("speaker")
@@ -491,7 +507,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:service_controller_monitor, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("metallb-controller-monitor-service")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -505,7 +522,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:service_monitor_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("metallb-controller-monitor")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -523,7 +541,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:service_monitor_speaker, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:monitoring_service_monitor)
+    :monitoring_service_monitor
+    |> B.build_resource()
     |> B.name("metallb-speaker-monitor")
     |> B.namespace(namespace)
     |> B.component_label("speaker")
@@ -541,7 +560,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:service_speaker_monitor, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("metallb-speaker-monitor-service")
     |> B.namespace(namespace)
     |> B.component_label("speaker")
@@ -555,7 +575,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:pod_monitor_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:monitoring_pod_monitor)
+    :monitoring_pod_monitor
+    |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
     |> B.component_label("controller")
@@ -573,7 +594,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:pod_monitor_speaker, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:monitoring_pod_monitor)
+    :monitoring_pod_monitor
+    |> B.build_resource()
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
     |> B.component_label("speaker")
@@ -591,7 +613,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:service_webhook, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:service)
+    :service
+    |> B.build_resource()
     |> B.name("metallb-webhook-service")
     |> B.namespace(namespace)
     |> B.spec(%{
@@ -603,7 +626,8 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:validating_webhook_config_configuration, _battery, state) do
     namespace = base_namespace(state)
 
-    B.build_resource(:validating_webhook_config)
+    :validating_webhook_config
+    |> B.build_resource()
     |> B.name("metallb-webhook-configuration")
     |> Map.put("webhooks", [
       %{

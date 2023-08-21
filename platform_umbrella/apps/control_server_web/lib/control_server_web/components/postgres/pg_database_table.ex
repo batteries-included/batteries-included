@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.PgDatabaseTable do
+  @moduledoc false
   use ControlServerWeb, :html
 
   attr :databases, :list, required: true

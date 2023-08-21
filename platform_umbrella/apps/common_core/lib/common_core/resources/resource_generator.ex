@@ -1,13 +1,15 @@
 defmodule CommonCore.Resources.ResourceGenerator do
+  @moduledoc false
   alias CommonCore.ApiVersionKind
-  alias K8s.Resource
   alias CommonCore.Resources.Builder, as: B
-  alias CommonCore.Resources.Hashing
   alias CommonCore.Resources.CopyDown
+  alias CommonCore.Resources.Hashing
+  alias K8s.Resource
 
   require Logger
 
   defmodule Materialize do
+    @moduledoc false
     @callback materialize(
                 battery :: CommonCore.Batteries.SystemBattery.t(),
                 state :: CommonCore.StateSummary.t()
@@ -22,14 +24,14 @@ defmodule CommonCore.Resources.ResourceGenerator do
 
   defp main_macro_content(opts) do
     quote do
+      @behaviour CommonCore.Resources.ResourceGenerator.Materialize
+
       import unquote(__MODULE__)
 
       Module.register_attribute(__MODULE__, :resource_generator, accumulate: true, persist: false)
       Module.register_attribute(__MODULE__, :resource_generator_opts, [])
 
       @resource_generator_opts unquote(opts)
-      @behaviour CommonCore.Resources.ResourceGenerator.Materialize
-
       @before_compile unquote(__MODULE__)
     end
   end
@@ -46,18 +48,14 @@ defmodule CommonCore.Resources.ResourceGenerator do
     end
   end
 
-  defmacro resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state),
-             do: resource_block
-           ) do
+  defmacro resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state), do: resource_block) do
     quote do
       @resource_generator {:single, unquote(name)}
       def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
     end
   end
 
-  defmacro multi_resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state),
-             do: resource_block
-           ) do
+  defmacro multi_resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state), do: resource_block) do
     quote do
       @resource_generator {:multi, unquote(name)}
       def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)

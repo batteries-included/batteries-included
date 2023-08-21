@@ -1,6 +1,9 @@
 defmodule ControlServer.SnapshotApply.KeycloakAction do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
+
   alias Ecto.Changeset
 
   @timestamps_opts [type: :utc_datetime_usec]
@@ -66,8 +69,6 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
   def validate_realm_with_type(changeset, "realm"), do: changeset
 
   def validate_realm_with_type(changeset, _) do
-    validate_required(changeset, [:realm],
-      message: "realm is required for all types other than realm itself"
-    )
+    validate_required(changeset, [:realm], message: "realm is required for all types other than realm itself")
   end
 end

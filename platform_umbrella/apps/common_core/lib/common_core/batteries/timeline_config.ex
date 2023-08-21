@@ -1,5 +1,7 @@
 defmodule CommonCore.Batteries.TimelineConfig do
+  @moduledoc false
   use TypedEctoSchema
+
   import Ecto.Changeset
 
   @optional_fields []

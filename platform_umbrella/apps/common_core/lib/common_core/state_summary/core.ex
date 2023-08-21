@@ -1,4 +1,5 @@
 defmodule CommonCore.StateSummary.Core do
+  @moduledoc false
   alias CommonCore.StateSummary
 
   def get_battery(%StateSummary{} = summary, type) do

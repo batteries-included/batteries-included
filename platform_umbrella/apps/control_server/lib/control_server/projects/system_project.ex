@@ -1,5 +1,7 @@
 defmodule ControlServer.Projects.SystemProject do
+  @moduledoc false
   use Ecto.Schema
+
   import Ecto.Changeset
 
   @possible_types [

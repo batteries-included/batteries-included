@@ -1,10 +1,11 @@
 defmodule ControlServerWeb.KnativeDisplay do
+  @moduledoc false
   use ControlServerWeb, :html
 
-  import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.Chart
-
+  import ControlServerWeb.ConditionsDisplay
   import K8s.Resource.FieldAccessors
+
   alias Jason
 
   def service_display(assigns) do

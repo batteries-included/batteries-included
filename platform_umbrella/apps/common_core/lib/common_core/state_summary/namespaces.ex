@@ -1,4 +1,5 @@
 defmodule CommonCore.StateSummary.Namespaces do
+  @moduledoc false
   import CommonCore.StateSummary.Core
 
   alias CommonCore.Batteries.BatteryCoreConfig
@@ -8,7 +9,7 @@ defmodule CommonCore.StateSummary.Namespaces do
   @spec core_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def core_namespace(%StateSummary{} = summary) do
     case battery_core_config(summary) do
-      config = %BatteryCoreConfig{} -> config.core_namespace
+      %BatteryCoreConfig{} = config -> config.core_namespace
       _ -> nil
     end
   end
@@ -16,7 +17,7 @@ defmodule CommonCore.StateSummary.Namespaces do
   @spec base_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def base_namespace(%StateSummary{} = summary) do
     case battery_core_config(summary) do
-      config = %BatteryCoreConfig{} -> config.base_namespace
+      %BatteryCoreConfig{} = config -> config.base_namespace
       _ -> nil
     end
   end
@@ -43,7 +44,7 @@ defmodule CommonCore.StateSummary.Namespaces do
   @spec ml_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def ml_namespace(%StateSummary{} = summary) do
     case battery_core_config(summary) do
-      config = %BatteryCoreConfig{} -> config.ml_namespace
+      %BatteryCoreConfig{} = config -> config.ml_namespace
       _ -> nil
     end
   end
@@ -51,7 +52,7 @@ defmodule CommonCore.StateSummary.Namespaces do
   @spec data_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def data_namespace(%StateSummary{} = summary) do
     case battery_core_config(summary) do
-      config = %BatteryCoreConfig{} -> config.data_namespace
+      %BatteryCoreConfig{} = config -> config.data_namespace
       _ -> nil
     end
   end

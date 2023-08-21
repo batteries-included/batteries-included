@@ -1,10 +1,11 @@
 defmodule ControlServer.Seed do
+  @moduledoc false
+  import CommonCore.SeedArgsConverter
+
   alias ControlServer.Batteries.Installer
   alias ControlServer.MetalLB
   alias ControlServer.Postgres
   alias ControlServer.Redis
-
-  import CommonCore.SeedArgsConverter
 
   require Logger
 

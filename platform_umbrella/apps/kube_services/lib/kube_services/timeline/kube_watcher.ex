@@ -1,4 +1,5 @@
 defmodule KubeServices.Timeline.KubeWatcher do
+  @moduledoc false
   use GenServer
   use TypedStruct
 
@@ -27,10 +28,7 @@ defmodule KubeServices.Timeline.KubeWatcher do
   end
 
   @impl GenServer
-  def handle_info(
-        %Payload{action: action, resource: resource} = _msg,
-        %State{resource_type: type} = state
-      )
+  def handle_info(%Payload{action: action, resource: resource} = _msg, %State{resource_type: type} = state)
       when type in ["pod", :pod] do
     case action do
       :delete ->
@@ -64,10 +62,7 @@ defmodule KubeServices.Timeline.KubeWatcher do
   end
 
   @impl GenServer
-  def handle_info(
-        %Payload{action: action, resource: resource} = _msg,
-        %State{resource_type: type} = state
-      )
+  def handle_info(%Payload{action: action, resource: resource} = _msg, %State{resource_type: type} = state)
       when action in ["add", :add, "delete", :delete] do
     create_event(action, type, resource)
     {:noreply, state}

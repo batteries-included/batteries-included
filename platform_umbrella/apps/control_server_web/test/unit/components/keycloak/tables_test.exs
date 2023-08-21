@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Keycloak.TablesTest do
   use Heyya.SnapshotTest
 
-  import ControlServerWeb.Keycloak.RealmsTable
   import ControlServerWeb.Keycloak.ClientsTable
+  import ControlServerWeb.Keycloak.RealmsTable
   import ControlServerWeb.Keycloak.UsersTable
 
   @realm_one %{id: "00-00-00-00-00-00", displayName: "Keycloak", realm: "master"}

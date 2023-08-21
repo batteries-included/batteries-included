@@ -4,11 +4,11 @@ defmodule KubeServices.KubeState.Runner do
   """
   use GenServer
 
-  import K8s.Resource
   import EventCenter.KubeState
+  import K8s.Resource
 
-  alias EventCenter.KubeState.Payload
   alias CommonCore.ApiVersionKind
+  alias EventCenter.KubeState.Payload
 
   def start_link(opts) do
     table_name = Keyword.fetch!(opts, :name)

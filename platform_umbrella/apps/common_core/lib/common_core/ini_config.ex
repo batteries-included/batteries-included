@@ -1,4 +1,5 @@
 defmodule CommonCore.INIConfig do
+  @moduledoc false
   @spec to_ini(map()) :: String.t()
   def to_ini(content) do
     Enum.map_join(content, "\n", &to_section/1)

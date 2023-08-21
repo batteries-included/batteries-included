@@ -45,8 +45,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
 
   # handle scheduling start without overlapping
   @spec schedule_start(reference() | nil) :: reference()
-  defp schedule_start(nil = _current_reference),
-    do: Process.send_after(self(), :do_start_creation, @delay)
+  defp schedule_start(nil = _current_reference), do: Process.send_after(self(), :do_start_creation, @delay)
 
   defp schedule_start(current_reference), do: current_reference
 end

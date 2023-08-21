@@ -1,4 +1,5 @@
 defmodule ControlServerWeb.Live.RawResource do
+  @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   import ControlServerWeb.ObjectDisplay
@@ -9,11 +10,7 @@ defmodule ControlServerWeb.Live.RawResource do
   require Logger
 
   @impl Phoenix.LiveView
-  def mount(
-        %{"resource_type" => rt, "namespace" => namespace, "name" => name} = params,
-        _session,
-        socket
-      ) do
+  def mount(%{"resource_type" => rt, "namespace" => namespace, "name" => name} = params, _session, socket) do
     resource_type = String.to_existing_atom(rt)
     subscribe(resource_type)
 
