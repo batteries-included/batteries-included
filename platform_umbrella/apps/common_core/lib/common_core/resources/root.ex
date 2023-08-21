@@ -4,45 +4,43 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   """
   alias CommonCore.StateSummary
 
-  alias CommonCore.Resources.{
-    BatteryCA,
-    BatteryCore,
-    CephClusters,
-    CephFilesystems,
-    CertManager,
-    Gitea,
-    Grafana,
-    Harbor,
-    IstioBase,
-    IstioCsr,
-    IstioIngress,
-    Istiod,
-    IstioMetrics,
-    Keycloak,
-    Kiali,
-    KnativeOperator,
-    KnativeServing,
-    KubeMonitoring,
-    KubeDashboards,
-    KubeStateMetrics,
-    Loki,
-    MetalLB,
-    NodeExporter,
-    Notebooks,
-    Postgres,
-    PostgresOperator,
-    Promtail,
-    Redis,
-    RedisOperator,
-    Rook,
-    Smtp4Dev,
-    TrivyOperator,
-    TrustManager,
-    VMAgent,
-    VMDashboards,
-    VMCluster,
-    VMOperator
-  }
+  alias CommonCore.Resources.BatteryCA
+  alias CommonCore.Resources.BatteryCore
+  alias CommonCore.Resources.CephClusters
+  alias CommonCore.Resources.CephFilesystems
+  alias CommonCore.Resources.CertManager
+  alias CommonCore.Resources.Gitea
+  alias CommonCore.Resources.Grafana
+  alias CommonCore.Resources.Harbor
+  alias CommonCore.Resources.IstioBase
+  alias CommonCore.Resources.IstioCsr
+  alias CommonCore.Resources.IstioIngress
+  alias CommonCore.Resources.Istiod
+  alias CommonCore.Resources.IstioMetrics
+  alias CommonCore.Resources.Keycloak
+  alias CommonCore.Resources.Kiali
+  alias CommonCore.Resources.KnativeOperator
+  alias CommonCore.Resources.KnativeServing
+  alias CommonCore.Resources.KubeMonitoring
+  alias CommonCore.Resources.KubeDashboards
+  alias CommonCore.Resources.KubeStateMetrics
+  alias CommonCore.Resources.Loki
+  alias CommonCore.Resources.MetalLB
+  alias CommonCore.Resources.NodeExporter
+  alias CommonCore.Resources.Notebooks
+  alias CommonCore.Resources.Postgres
+  alias CommonCore.Resources.PostgresOperator
+  alias CommonCore.Resources.Promtail
+  alias CommonCore.Resources.Redis
+  alias CommonCore.Resources.RedisOperator
+  alias CommonCore.Resources.Rook
+  alias CommonCore.Resources.Smtp4Dev
+  alias CommonCore.Resources.TrivyOperator
+  alias CommonCore.Resources.TrustManager
+  alias CommonCore.Resources.VMAgent
+  alias CommonCore.Resources.VMDashboards
+  alias CommonCore.Resources.VMCluster
+  alias CommonCore.Resources.VMOperator
 
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
 
@@ -72,7 +70,8 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     redis: [Redis, RedisOperator],
     rook: [Rook, CephFilesystems, CephClusters],
     smtp4dev: [Smtp4Dev],
-    sso: [Keycloak],
+    keycloak: [Keycloak],
+    sso: [],
     trivy_operator: [TrivyOperator],
     timeline: [],
     trust_manager: [TrustManager],

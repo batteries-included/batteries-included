@@ -15,6 +15,7 @@ defmodule KubeServices.Batteries.InstalledWatcher do
 
   @default_battery_type_mapping [
     sso: KubeServices.Batteries.SSO,
+    keycloak: KubeServices.Batteries.Keycloak,
     battery_core: KubeServices.Batteries.BatteryCore,
     timeline: KubeServices.Batteries.Timeline
   ]

@@ -6,7 +6,7 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
   alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-  alias ControlServer.ContentAddressable.ContentAddressableResource
+  alias ControlServer.ContentAddressable.Document
 
   alias CommonCore.Resources.Hashing
   alias CommonCore.ApiVersionKind
@@ -23,7 +23,7 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
   def snap_generation(%KubeSnapshot{} = snap, resource_map) do
     Multi.new()
     |> Multi.run(:addressables, fn _repo, _ ->
-      {:ok, raw_addressables(resource_map)}
+      {:ok, document_args(resource_map)}
     end)
     |> Multi.all(
       :existing_hashes,
@@ -35,9 +35,9 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
     )
     |> Multi.insert_all(
       :new_content,
-      ContentAddressableResource,
+      Document,
       fn %{addressables: addressables} = ctx ->
-        # The content_addressable_resources query will have
+        # The documents query will have
         # returned hashes. These don't need to be persisted.
         found_hashes = get_hashes_set(ctx)
         Enum.reject(addressables, fn adr -> MapSet.member?(found_hashes, adr.hash) end)
@@ -51,11 +51,11 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
         now = DateTime.utc_now()
 
         # Now we can create the ResourcePath that can be synced to kubernetes.
-        # Since ContentAddressableResources have known ID's and
+        # Since Documents have known ID's and
         # we have the hash of the content it's safe to create
-        # refencing `content_addressable_resource_id`.
+        # refencing `document_id`.
         Enum.map(resource_map, fn {path, resource} ->
-          raw_rp_from_resource(snap, resource, path, now)
+          rp_args_from_resource(snap, resource, path, now)
         end)
       end,
       returning: true
@@ -93,7 +93,7 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
   defp get_already_inserted_hashes(addressables) do
     hashes = Enum.map(addressables, & &1.hash)
 
-    from(car in ContentAddressableResource,
+    from(car in Document,
       where: car.hash in ^hashes,
       select: [car.hash]
     )
@@ -102,25 +102,25 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
   defp get_hashes_set(ctx),
     do: ctx |> Map.get(:existing_hashes, []) |> List.flatten() |> MapSet.new()
 
-  defp raw_addressables(resource_map) do
+  defp document_args(resource_map) do
     # Grab now so that all addressables are created at the same time.
     now = DateTime.utc_now()
 
     resource_map
     |> Map.values()
-    |> Enum.map(fn r -> raw_addressable_from_resource(r, now) end)
+    |> Enum.map(fn r -> document_args_from_resource(r, now) end)
     # group by id and dedupe
     |> Enum.group_by(& &1.id)
     |> Enum.map(fn {_key, [first | _rest]} -> first end)
   end
 
-  defp raw_rp_from_resource(%KubeSnapshot{} = snap, %{} = resource, path, now) do
+  defp rp_args_from_resource(%KubeSnapshot{} = snap, %{} = resource, path, now) do
     hash = Hashing.get_hash(resource)
 
     %{
       path: path,
       hash: hash,
-      content_addressable_resource_id: ContentAddressableResource.hash_to_uuid!(hash),
+      document_id: Document.hash_to_uuid!(hash),
       name: name(resource),
       namespace: namespace(resource),
       type: ApiVersionKind.resource_type!(resource),
@@ -130,9 +130,9 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
     }
   end
 
-  defp raw_addressable_from_resource(resource, now) do
+  defp document_args_from_resource(resource, now) do
     hash = Hashing.get_hash(resource)
-    id = ContentAddressableResource.hash_to_uuid!(hash)
+    id = Document.hash_to_uuid!(hash)
 
     %{
       value: resource,

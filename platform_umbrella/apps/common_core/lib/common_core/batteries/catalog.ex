@@ -173,8 +173,15 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :net_sec,
+      type: :keycloak,
+      dependencies: [:battery_core, :postgres],
+      description:
+        "Open Source Identity and Access Management For Modern Applications and Services"
+    },
+    %CatalogBattery{
+      group: :net_sec,
       type: :sso,
-      dependencies: [:battery_core, :postgres]
+      dependencies: [:battery_core, :keycloak]
     }
   ]
 

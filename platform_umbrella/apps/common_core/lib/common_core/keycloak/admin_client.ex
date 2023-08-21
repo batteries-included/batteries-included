@@ -50,6 +50,8 @@ defmodule CommonCore.Keycloak.AdminClient do
   @me __MODULE__
 
   typedstruct module: State do
+    # This is the adapter to use for Tesla, a way to pass in a
+    # different module (for example a mocked module) if you wanted.
     field :adapter, module(), enforce: false
 
     field :username, String.t()
@@ -104,6 +106,10 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:realm, name})
   end
 
+  def create_realm(target \\ @me, realm) do
+    GenServer.call(target, {:create_realm, realm})
+  end
+
   @spec clients(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
           {:ok, list(ClientRepresentation.t())} | {:error, any()}
   def clients(target \\ @me, realm_name) do
@@ -148,6 +154,13 @@ defmodule CommonCore.Keycloak.AdminClient do
   def handle_call({:realm, realm_name}, _from, %State{} = state) do
     case handle_auth(state) do
       {:ok, %State{} = new_state} -> {:reply, do_get_realm(realm_name, new_state), new_state}
+      error -> {:reply, error, reset_tokens(state)}
+    end
+  end
+
+  def handle_call({:create_realm, realm}, _from, %State{} = state) do
+    case handle_auth(state) do
+      {:ok, %State{} = new_state} -> {:reply, do_create_realm(realm, new_state), new_state}
       error -> {:reply, error, reset_tokens(state)}
     end
   end
@@ -299,7 +312,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   def build_bearer_client({:error, err}), do: {:error, err}
 
   def build_base_client(%State{base_url: base_url, adapter: adapter} = state) do
-    %State{state | base_client: TeslaBuilder.build_client(base_url, adapter)}
+    %State{state | base_client: TeslaBuilder.build_client(base_url, nil, adapter)}
   end
 
   @spec update_token(TokenAcquirer.TokenResult.t(), State.t()) :: State.t()
@@ -341,6 +354,12 @@ defmodule CommonCore.Keycloak.AdminClient do
     |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
   end
 
+  defp do_create_realm(realm, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.post("/admin/realms", realm)
+    |> to_result(nil)
+  end
+
   defp do_list_clients(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms/" <> realm_name <> "/clients")
@@ -379,6 +398,23 @@ defmodule CommonCore.Keycloak.AdminClient do
     {:ok, mapper.(body)}
   end
 
+  defp to_result({:ok, %{status: 201, headers: headers}}, nil) do
+    location =
+      headers
+      |> Enum.filter(fn {key, _} -> key == "location" end)
+      |> Enum.map(fn {_, value} -> value end)
+      |> List.first()
+
+    {:ok, location}
+  end
+
+  defp to_result({:ok, %{body: %{"error" => error}}}, _mapper) do
+    {:error, error}
+  end
+
   defp to_result({:error, error}, _mapper), do: {:error, error}
-  defp to_result(_, _), do: {:error, :unknown_keycloak_error}
+
+  defp to_result(_error, _mapper) do
+    {:error, :unknown_keycloak_error}
+  end
 end

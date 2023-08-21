@@ -1,11 +1,11 @@
 defmodule CommonCore.Actions.RootGeneratorTest do
   alias CommonCore.Actions.RootActionGenerator
-  alias CommonCore.Actions.BaseAction
+  alias CommonCore.Actions.FreshGeneratedAction
 
   use ExUnit.Case
 
   defp assert_valid(value) do
-    assert %BaseAction{} = value
+    assert %FreshGeneratedAction{} = value
   end
 
   describe "RootActionGenerator works" do

@@ -1,4 +1,4 @@
-defmodule KubeServices.RootResourceGeneratorTest do
+defmodule CommonCore.RootResourceGeneratorTest do
   use ExUnit.Case
 
   import K8s.Resource.FieldAccessors

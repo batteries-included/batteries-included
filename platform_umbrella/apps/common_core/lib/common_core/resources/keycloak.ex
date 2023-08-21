@@ -9,7 +9,7 @@ defmodule CommonCore.Resources.Keycloak do
   alias CommonCore.Resources.Secret
   alias CommonCore.Resources.IstioConfig.VirtualService
 
-  resource(:config_map_env_vars, _battery, state) do
+  resource(:config_map_env_vars, battery, state) do
     namespace = core_namespace(state)
     basenamespace = base_namespace(state)
 
@@ -26,24 +26,26 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("KC_DB", "postgres")
       |> Map.put("KC_DB_URL_HOST", "pg-auth.#{basenamespace}.svc")
       |> Map.put("KC_LOG_LEVEL", "info")
-      |> Map.put("KEYCLOAK_ADMIN", "batteryadmin")
+      |> Map.put("KEYCLOAK_ADMIN", battery.config.admin_username)
       |> Map.put("jgroups.dns.query", "keycloak-headless.#{namespace}")
 
     B.build_resource(:config_map)
     |> B.name("keycloak-env-vars")
     |> B.namespace(namespace)
-    |> B.component_label("keycloak")
     |> B.data(data)
   end
 
-  resource(:secret_main, _battery, state) do
+  resource(:secret_main, battery, state) do
     namespace = core_namespace(state)
-    data = %{} |> Map.put("admin-password", "testing") |> Secret.encode()
+
+    data =
+      %{}
+      |> Map.put("admin-password", battery.config.admin_password)
+      |> Secret.encode()
 
     B.build_resource(:secret)
     |> B.name("keycloak")
     |> B.namespace(namespace)
-    |> B.component_label("keycloak")
     |> B.data(data)
   end
 
@@ -54,7 +56,6 @@ defmodule CommonCore.Resources.Keycloak do
     |> Map.put("automountServiceAccountToken", true)
     |> B.name("keycloak")
     |> B.namespace(namespace)
-    |> B.component_label("keycloak")
   end
 
   resource(:service_headless, _battery, state) do
@@ -71,7 +72,6 @@ defmodule CommonCore.Resources.Keycloak do
     B.build_resource(:service)
     |> B.name("keycloak-headless")
     |> B.namespace(namespace)
-    |> B.component_label("keycloak")
     |> B.spec(spec)
   end
 
@@ -88,11 +88,10 @@ defmodule CommonCore.Resources.Keycloak do
     B.build_resource(:service)
     |> B.name("keycloak")
     |> B.namespace(namespace)
-    |> B.component_label("keycloak")
     |> B.spec(spec)
   end
 
-  resource(:stateful_set_main, _battery, state) do
+  resource(:stateful_set_main, battery, state) do
     namespace = core_namespace(state)
 
     spec =
@@ -165,7 +164,7 @@ defmodule CommonCore.Resources.Keycloak do
                   %{"name" => "KEYCLOAK_HTTP_RELATIVE_PATH", "value" => "/"}
                 ],
                 "envFrom" => [%{"configMapRef" => %{"name" => "keycloak-env-vars"}}],
-                "image" => "quay.io/keycloak/keycloak:20.0.3",
+                "image" => battery.config.image,
                 "args" => ["start-dev", "--features=preview"],
                 "imagePullPolicy" => "IfNotPresent",
                 "livenessProbe" => %{
@@ -200,7 +199,6 @@ defmodule CommonCore.Resources.Keycloak do
     B.build_resource(:stateful_set)
     |> B.name("keycloak")
     |> B.namespace(namespace)
-    |> B.component_label("keycloak")
     |> B.spec(spec)
   end
 

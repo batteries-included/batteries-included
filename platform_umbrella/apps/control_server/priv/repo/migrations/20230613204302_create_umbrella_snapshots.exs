@@ -29,7 +29,7 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
       timestamps(type: :utc_datetime_usec)
     end
 
-    create table(:content_addressable_resources, primary_key: false) do
+    create table(:documents, primary_key: false) do
       add :id, :uuid, primary_key: true
       add :value, :map
       add :hash, :string
@@ -52,7 +52,7 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
       add :apply_result, :string
 
       add :kube_snapshot_id, references(:kube_snapshots, on_delete: :delete_all, type: :uuid)
-      add :content_addressable_resource_id, references(:content_addressable_resources)
+      add :document_id, references(:documents)
 
       timestamps(type: :utc_datetime_usec)
     end
@@ -63,8 +63,7 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
       add :namespace, :string
       add :hash, :string
 
-      add :content_addressable_resource_id,
-          references(:content_addressable_resources, on_delete: :nothing)
+      add :document_id, references(:documents, on_delete: :nothing)
 
       add :been_undeleted, :boolean
 
@@ -77,11 +76,10 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
 
       add :realm, :string
 
-      add :result, :string
-      add :post_handler, :string
+      add :apply_result, :string
+      add :is_success, :boolean
 
-      add :content_addressable_resource_id,
-          references(:content_addressable_resources, on_delete: :nothing)
+      add :document_id, references(:documents, on_delete: :nothing)
 
       add :keycloak_snapshot_id, references(:keycloak_snapshots, on_delete: :nothing)
 
@@ -90,7 +88,7 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
 
     # We generate the id from the hash.
     # They should be equally unique
-    create unique_index(:content_addressable_resources, [:hash])
+    create unique_index(:documents, [:hash])
 
     # When going to the UI to show all resource paths for a snapshot
     # we get this list using the kube_snapshot_id
@@ -106,8 +104,8 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
 
     # For when we want to show content addressable info
     #
-    create index(:deleted_resources, [:content_addressable_resource_id])
-    create index(:keycloak_actions, [:content_addressable_resource_id])
-    create index(:resource_paths, [:content_addressable_resource_id])
+    create index(:deleted_resources, [:document_id])
+    create index(:keycloak_actions, [:document_id])
+    create index(:resource_paths, [:document_id])
   end
 end

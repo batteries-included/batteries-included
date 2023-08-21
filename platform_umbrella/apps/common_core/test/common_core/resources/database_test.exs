@@ -1,4 +1,4 @@
-defmodule Apps.CommonCore.Resources.Test.CommonCore.Resources.DatabaseTest do
+defmodule CommonCore.Resources.Test.CommonCore.Resources.DatabaseTest do
   use ExUnit.Case
 
   alias CommonCore.Batteries.CatalogBattery

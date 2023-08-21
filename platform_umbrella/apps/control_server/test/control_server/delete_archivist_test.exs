@@ -19,7 +19,7 @@ defmodule ControlServer.DeleteArchivistTest do
       {:ok, _} = DeleteArchivist.record_delete(res)
       {:ok, _} = DeleteArchivist.record_delete(res)
 
-      assert 1 == ContentAddressable.count_content_addressable_resources()
+      assert 1 == ContentAddressable.count_documents()
     end
   end
 end

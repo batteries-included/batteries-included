@@ -2,6 +2,7 @@ defmodule KubeServices.SnapshotApply.Worker do
   use GenServer
   use TypedStruct
 
+  alias ControlServer.Batteries
   alias KubeServices.SnapshotApply.KubeApply
   alias KubeServices.SnapshotApply.KeycloakApply
   alias KubeServices.SystemState.Summarizer
@@ -10,10 +11,9 @@ defmodule KubeServices.SnapshotApply.Worker do
 
   require Logger
   @me __MODULE__
-  @state_opts [:running, :keycloak_running]
+  @state_opts [:keycloak_running]
 
   typedstruct module: State do
-    field :running, boolean(), default: true
     field :keycloak_running, boolean(), default: false
     field :init_delay, non_neg_integer(), default: 5_000
     field :delay, non_neg_integer(), default: 300_000
@@ -23,6 +23,7 @@ defmodule KubeServices.SnapshotApply.Worker do
     {state_opts, opts} =
       opts
       |> Keyword.put_new(:name, @me)
+      |> Keyword.put_new(:keycloak_running, Batteries.battery_enabled?(:sso))
       |> Keyword.split(@state_opts)
 
     GenServer.start_link(__MODULE__, state_opts, opts)
@@ -38,6 +39,10 @@ defmodule KubeServices.SnapshotApply.Worker do
     GenServer.call(target, :start)
   end
 
+  def set_keycloak_running(target \\ @me, running) do
+    GenServer.call(target, {:set_keycloak_running, running})
+  end
+
   @doc """
   Handle the background message sent through `Process.send_after()` for periodic
   """
@@ -51,12 +56,16 @@ defmodule KubeServices.SnapshotApply.Worker do
     {:reply, do_start(), state}
   end
 
-  def handle_cast({:perform, umbrella_snapshot}, %State{running: true} = state) do
-    :ok = do_perform(umbrella_snapshot, state)
-    {:noreply, state}
+  def handle_call(
+        {:set_keycloak_running, running},
+        _from,
+        %State{keycloak_running: was_running} = state
+      ) do
+    {:reply, was_running, %State{state | keycloak_running: running}}
   end
 
-  def handle_cast({:perform, _umbrella_snapshot}, state) do
+  def handle_cast({:perform, umbrella_snapshot}, %State{} = state) do
+    :ok = do_perform(umbrella_snapshot, state)
     {:noreply, state}
   end
 
@@ -115,6 +124,8 @@ defmodule KubeServices.SnapshotApply.Worker do
 
   # Apply
   defp kube_apply(kube_snap, gen_payload, _state), do: KubeApply.apply(kube_snap, gen_payload)
-  defp keycloak_apply(nil = _kecloak_snap, _gen_payload, _state), do: {:ok, nil}
-  defp keycloak_apply(%KeycloakSnapshot{} = _, _gen_payload, _state), do: {:ok, nil}
+  defp keycloak_apply(nil = _keycloak_snap, _gen_payload, _state), do: {:ok, nil}
+
+  defp keycloak_apply(%KeycloakSnapshot{} = key_snap, actions, _state),
+    do: KeycloakApply.apply(key_snap, actions)
 end

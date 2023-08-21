@@ -1,4 +1,4 @@
-defmodule ControlServer.ContentAddressable.ContentAddressableResource do
+defmodule ControlServer.ContentAddressable.Document do
   use TypedEctoSchema
   import Ecto.Changeset
 
@@ -17,7 +17,7 @@ defmodule ControlServer.ContentAddressable.ContentAddressableResource do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  typed_schema "content_addressable_resources" do
+  typed_schema "documents" do
     field :hash, :string
     field :value, :map, redact: true
 

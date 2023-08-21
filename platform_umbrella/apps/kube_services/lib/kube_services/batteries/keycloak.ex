@@ -1,4 +1,4 @@
-defmodule KubeServices.Batteries.SSO do
+defmodule KubeServices.Batteries.Keycloak do
   use KubeServices.Batteries.Supervisor
 
   require Logger
@@ -6,7 +6,7 @@ defmodule KubeServices.Batteries.SSO do
   def init(opts) do
     _battery = Keyword.fetch!(opts, :battery)
 
-    children = [KubeServices.SnapshotApply.KeycloakApply]
+    children = [KubeServices.Keycloak.Wrangler]
 
     Supervisor.init(children, strategy: :one_for_one)
   end

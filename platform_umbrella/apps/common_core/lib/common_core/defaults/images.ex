@@ -39,6 +39,8 @@ defmodule CommonCore.Defaults.Images do
 
   def istio_pilot_image, do: "istio/pilot:1.17.2-distroless"
 
+  def keycloak_image, do: "quay.io/keycloak/keycloak:21.1.2"
+
   def knative_operator_webhook_image,
     do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.10.1"
 

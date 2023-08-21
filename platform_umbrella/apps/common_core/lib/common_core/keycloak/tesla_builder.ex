@@ -1,12 +1,15 @@
 defmodule CommonCore.Keycloak.TeslaBuilder do
-  @type adapter_spec :: module() | {module(), Keyword.t()} | nil
+  @spec build_client(
+          binary,
+          nil | binary,
+          nil | module() | {module(), Keyword.t()}
+        ) :: Tesla.Client.t()
+  def build_client(base_url, nil = _token, nil = _adapter), do: Tesla.client(middleware(base_url))
 
-  @spec build_client(String.t(), adapter_spec()) :: Tesla.Client.t()
-  def build_client(base_url, nil), do: Tesla.client(middleware(base_url))
-  def build_client(base_url, adapter), do: Tesla.client(middleware(base_url), adapter)
+  def build_client(base_url, nil = _token, adapter),
+    do: Tesla.client(middleware(base_url), adapter)
 
-  @spec build_client(binary, binary, adapter_spec()) :: Tesla.Client.t()
-  def build_client(base_url, token, nil) do
+  def build_client(base_url, token, nil = _adapter) do
     Tesla.client(middleware(base_url, token))
   end
 
@@ -23,6 +26,11 @@ defmodule CommonCore.Keycloak.TeslaBuilder do
     ]
 
   @spec middleware(String.t(), String.t()) :: list(module() | {module(), any()})
-  defp middleware(base_url, token),
-    do: [{Tesla.Middleware.BearerAuth, token: token} | middleware(base_url)]
+  defp middleware(base_url, token) do
+    [
+      {Tesla.Middleware.BearerAuth, token: token},
+      {Tesla.Middleware.BaseUrl, base_url},
+      Tesla.Middleware.JSON
+    ]
+  end
 end

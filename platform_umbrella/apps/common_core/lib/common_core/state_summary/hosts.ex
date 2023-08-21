@@ -5,75 +5,75 @@ defmodule CommonCore.StateSummary.Hosts do
 
   @default ["127.0.0.1"]
 
-  def control_host(%StateSummary{} = state) do
-    state |> ip() |> host("control")
+  def control_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("control")
   end
 
-  def gitea_host(%StateSummary{} = state) do
-    state |> ip() |> host("gitea")
+  def gitea_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("gitea")
   end
 
-  def grafana_host(%StateSummary{} = state) do
-    state |> ip() |> host("grafana")
+  def grafana_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("grafana")
   end
 
-  def vmselect_host(%StateSummary{} = state) do
-    state |> ip() |> host("vmselect")
+  def vmselect_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("vmselect")
   end
 
-  def vmagent_host(%StateSummary{} = state) do
-    state |> ip() |> host("vmagent")
+  def vmagent_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("vmagent")
   end
 
-  def harbor_host(%StateSummary{} = state) do
-    state |> ip() |> host("harbor")
+  def harbor_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("harbor")
   end
 
-  def smtp4dev_host(%StateSummary{} = state) do
-    state |> ip() |> host("smtp4dev")
+  def smtp4dev_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("smtp4dev")
   end
 
-  def keycloak_host(%StateSummary{} = state) do
-    state |> ip() |> host("keycloak")
+  def keycloak_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("keycloak")
   end
 
-  def keycloak_admin_host(%StateSummary{} = state) do
-    state |> ip() |> host("keycloak-admin")
+  def keycloak_admin_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("keycloak-admin")
   end
 
-  def kiali_host(%StateSummary{} = state) do
-    state |> ip() |> host("kiali")
+  def kiali_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("kiali")
   end
 
-  def knative_base_host(%StateSummary{} = state) do
-    state |> ip() |> host("webapp", "user")
+  def knative_base_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("webapp", "user")
   end
 
-  def knative_host(%StateSummary{} = state, service) do
-    namespace = knative_namespace(state)
-    "#{service.name}.#{namespace}.#{knative_base_host(state)}"
+  def knative_host(%StateSummary{} = summary, service) do
+    namespace = knative_namespace(summary)
+    "#{service.name}.#{namespace}.#{knative_base_host(summary)}"
   end
 
-  def notebooks_host(%StateSummary{} = state) do
-    state |> ip() |> host("notebooks", "user")
+  def notebooks_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("notebooks", "user")
   end
 
-  defp ip(state) do
-    state |> ingress_ips() |> List.first()
+  defp ip(summary) do
+    summary |> ingress_ips() |> List.first()
   end
 
   defp host(ip, name, group \\ "core") do
     "#{name}.#{group}.#{ip}.ip.batteriesincl.com"
   end
 
-  defp ingress_ips(%StateSummary{} = state) do
-    istio_namespace = istio_namespace(state)
+  defp ingress_ips(%StateSummary{} = summary) do
+    istio_namespace = istio_namespace(summary)
     # the name of the ingress service.
     # We aren't using the Gateway name or the istio tag here
     # We are using metadata.name for service selection
     ingress_name = "istio-ingress"
 
-    state.kube_state
+    summary.kube_state
     |> Map.get(:service, [])
     |> ingress_ips_from_service(istio_namespace, ingress_name)
     |> Enum.sort(:asc)

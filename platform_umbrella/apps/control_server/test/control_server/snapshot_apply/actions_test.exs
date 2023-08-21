@@ -27,7 +27,7 @@ defmodule ControlServer.SnapshotApply.ActionsTest do
     test "create_keycloak_action/1 with valid data creates a keycloak_action" do
       valid_attrs = %{
         action: :create,
-        result: "ok",
+        apply_result: "ok",
         type: :user,
         realm: "battery",
         post_handler: nil
@@ -37,7 +37,7 @@ defmodule ControlServer.SnapshotApply.ActionsTest do
                Actions.create_keycloak_action(valid_attrs)
 
       assert keycloak_action.action == :create
-      assert keycloak_action.result == "ok"
+      assert keycloak_action.apply_result == "ok"
     end
 
     test "create_keycloak_action/1 with invalid data returns error changeset" do
@@ -46,13 +46,13 @@ defmodule ControlServer.SnapshotApply.ActionsTest do
 
     test "update_keycloak_action/2 with valid data updates the keycloak_action" do
       keycloak_action = keycloak_action_fixture()
-      update_attrs = %{action: :sync, result: "some updated result"}
+      update_attrs = %{action: :sync, apply_result: "some updated result"}
 
       assert {:ok, %KeycloakAction{} = keycloak_action} =
                Actions.update_keycloak_action(keycloak_action, update_attrs)
 
       assert keycloak_action.action == :sync
-      assert keycloak_action.result == "some updated result"
+      assert keycloak_action.apply_result == "some updated result"
     end
 
     test "update_keycloak_action/2 with invalid data returns error changeset" do

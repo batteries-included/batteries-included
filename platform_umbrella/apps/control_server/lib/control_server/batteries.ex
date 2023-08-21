@@ -43,6 +43,11 @@ defmodule ControlServer.Batteries do
   """
   def get_system_battery!(id), do: Repo.get!(SystemBattery, id)
 
+  def battery_enabled?(type) do
+    query = from sb in SystemBattery, where: sb.type == ^type
+    Repo.exists?(query)
+  end
+
   @doc """
   Creates a system_battery.
 

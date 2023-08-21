@@ -4,7 +4,7 @@ defmodule ControlServer.Deleted.DeleteArchivist do
 
   alias CommonCore.ApiVersionKind
   alias ControlServer.Repo
-  alias ControlServer.ContentAddressable.ContentAddressableResource
+  alias ControlServer.ContentAddressable.Document
   alias ControlServer.ContentAddressable
   alias ControlServer.Deleted.DeletedResource
   alias CommonCore.Resources.Hashing
@@ -45,7 +45,7 @@ defmodule ControlServer.Deleted.DeleteArchivist do
   def get_deleted_resource!(id, repo \\ Repo) do
     DeletedResource
     |> repo.get!(id)
-    |> repo.preload([:content_addressable_resource])
+    |> repo.preload([:document])
   end
 
   @doc """
@@ -70,37 +70,37 @@ defmodule ControlServer.Deleted.DeleteArchivist do
     hash = Hashing.compute_hash(resource)
 
     Multi.new()
-    |> Multi.one(:selected_content_addressable, fn _ ->
-      from(ContentAddressableResource, where: [hash: ^hash])
+    |> Multi.one(:selected_document, fn _ ->
+      from Document, where: [hash: ^hash], select: [:id, :hash]
     end)
-    |> Multi.run(:final_content_addressable, fn
-      repo, %{:selected_content_addressable => nil} ->
+    |> Multi.run(:final_document, fn
+      repo, %{:selected_document => nil} ->
         resource
         |> addressable_args(hash)
-        |> ContentAddressable.create_content_addressable_resource(repo)
+        |> ContentAddressable.create_document(repo)
 
-      _, %{:selected_content_addressable => existing} ->
+      _, %{:selected_document => existing} ->
         {:ok, existing}
     end)
-    |> Multi.insert(:deleted_resource, fn %{final_content_addressable: car} = _status ->
+    |> Multi.insert(:deleted_resource, fn %{final_document: car} = _status ->
       deleted_resource_builder(resource, hash, car)
     end)
   end
 
-  defp deleted_resource_builder(%{} = resource, hash, %ContentAddressableResource{} = car)
+  defp deleted_resource_builder(%{} = resource, hash, %Document{} = car)
        when is_binary(hash) do
     %DeletedResource{
       hash: hash,
       name: name(resource),
       namespace: namespace(resource),
       kind: ApiVersionKind.resource_type!(resource),
-      content_addressable_resource_id: Map.get(car, :id, nil),
+      document_id: Map.get(car, :id, nil),
       been_undeleted: false
     }
   end
 
   defp addressable_args(resource, hash) do
-    id = ContentAddressableResource.hash_to_uuid!(hash)
+    id = Document.hash_to_uuid!(hash)
 
     %{
       value: resource,

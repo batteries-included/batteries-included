@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
       </.stat>
     </.stats>
 
-    <.content_addressable_resources_table resources={elem(@resources, 0)} />
+    <.documents_table resources={elem(@resources, 0)} />
     """
   end
 
@@ -51,6 +51,6 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
   end
 
   defp assign_resources(socket) do
-    assign(socket, :resources, ContentAddressable.paginated_content_addressable_resources())
+    assign(socket, :resources, ContentAddressable.paginated_documents())
   end
 end

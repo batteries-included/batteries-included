@@ -6,6 +6,16 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+
+  @required_fields [:path, :hash, :type, :name]
+  @optional_fields [
+    :kube_snapshot_id,
+    :document_id,
+    :is_success,
+    :apply_result,
+    :namespace
+  ]
+
   typed_schema "resource_paths" do
     field :path, :string
 
@@ -21,8 +31,8 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
 
     belongs_to :kube_snapshot, ControlServer.SnapshotApply.KubeSnapshot
 
-    belongs_to :content_addressable_resource,
-               ControlServer.ContentAddressable.ContentAddressableResource
+    belongs_to :document,
+               ControlServer.ContentAddressable.Document
 
     timestamps()
   end
@@ -30,17 +40,7 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
   @doc false
   def changeset(resource_path, attrs) do
     resource_path
-    |> cast(attrs, [
-      :path,
-      :hash,
-      :kube_snapshot_id,
-      :content_addressable_resource_id,
-      :is_success,
-      :apply_result,
-      :type,
-      :name,
-      :namespace
-    ])
-    |> validate_required([:path, :hash, :type, :name])
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

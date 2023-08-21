@@ -39,7 +39,7 @@ defmodule KubeServices.Keycloak.Wrangler do
       ) do
     new_host = Hosts.keycloak_host(summary)
     new_base_url = "http://" <> new_host
-    new_username = Creds.root_keycloak_user(summary)
+    new_username = Creds.root_keycloak_username(summary)
     new_password = Creds.root_keycloak_password(summary)
 
     AdminClient.reset(pid, new_base_url, new_username, new_password)

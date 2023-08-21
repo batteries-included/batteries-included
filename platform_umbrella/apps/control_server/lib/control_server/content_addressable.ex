@@ -2,14 +2,14 @@ defmodule ControlServer.ContentAddressable do
   import Ecto.Query, warn: false
   alias ControlServer.Repo
 
-  alias ControlServer.ContentAddressable.ContentAddressableResource
+  alias ControlServer.ContentAddressable.Document
 
-  def list_content_addressable_resources do
-    Repo.all(ContentAddressableResource)
+  def list_documents do
+    Repo.all(Document)
   end
 
-  def count_content_addressable_resources do
-    Repo.aggregate(ContentAddressableResource, :count)
+  def count_documents do
+    Repo.aggregate(Document, :count)
   end
 
   @doc """
@@ -17,22 +17,22 @@ defmodule ControlServer.ContentAddressable do
 
   ## Examples
 
-      iex> create_content_addressable_resource(%{field: value})
-      {:ok, %ContentAddressableResource{}}
+      iex> create_document(%{field: value})
+      {:ok, %Document{}}
 
-      iex> create_content_addressable_resource(%{field: bad_value})
+      iex> create_document(%{field: bad_value})
       {:error, ...}
 
   """
-  def create_content_addressable_resource(attrs \\ %{}, repo \\ Repo) do
-    %ContentAddressableResource{}
-    |> ContentAddressableResource.changeset(attrs)
+  def create_document(attrs \\ %{}, repo \\ Repo) do
+    %Document{}
+    |> Document.changeset(attrs)
     |> repo.insert()
   end
 
   def get_stats(repo \\ Repo) do
     repo.one(
-      from car in ContentAddressableResource,
+      from car in Document,
         select: %{
           oldest: min(car.inserted_at),
           newest: max(car.inserted_at),
@@ -41,11 +41,11 @@ defmodule ControlServer.ContentAddressable do
     )
   end
 
-  def paginated_content_addressable_resources(opts \\ %{}) do
+  def paginated_documents(opts \\ %{}) do
     Repo.Flop.validate_and_run!(
-      from(car in ContentAddressableResource),
+      from(car in Document),
       opts,
-      for: ContentAddressableResource
+      for: Document
     )
   end
 end

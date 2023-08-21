@@ -4,36 +4,35 @@ defmodule CommonCore.Batteries.SystemBattery do
   import Ecto.Changeset
   import PolymorphicEmbed
 
-  alias CommonCore.Batteries.{
-    BatteryCAConfig,
-    BatteryCoreConfig,
-    CertManagerConfig,
-    GiteaConfig,
-    GrafanaConfig,
-    HarborConfig,
-    IstioConfig,
-    IstioCSRConfig,
-    IstioGatewayConfig,
-    KialiConfig,
-    KubeMonitoringConfig,
-    KnativeOperatorConfig,
-    KnativeServingConfig,
-    KubeStateMetricsConfig,
-    LokiConfig,
-    MetalLBConfig,
-    NodeExporterConfig,
-    NotebooksConfig,
-    PostgresConfig,
-    PromtailConfig,
-    RedisConfig,
-    RookConfig,
-    Smtp4devConfig,
-    SSOConfig,
-    TrivyOperatorConfig,
-    TrustManagerConfig,
-    TimelineConfig,
-    VictoriaMetricsConfig
-  }
+  alias CommonCore.Batteries.BatteryCAConfig
+  alias CommonCore.Batteries.BatteryCoreConfig
+  alias CommonCore.Batteries.CertManagerConfig
+  alias CommonCore.Batteries.GiteaConfig
+  alias CommonCore.Batteries.GrafanaConfig
+  alias CommonCore.Batteries.HarborConfig
+  alias CommonCore.Batteries.IstioConfig
+  alias CommonCore.Batteries.IstioCSRConfig
+  alias CommonCore.Batteries.IstioGatewayConfig
+  alias CommonCore.Batteries.KialiConfig
+  alias CommonCore.Batteries.KeycloakConfig
+  alias CommonCore.Batteries.KubeMonitoringConfig
+  alias CommonCore.Batteries.KnativeOperatorConfig
+  alias CommonCore.Batteries.KnativeServingConfig
+  alias CommonCore.Batteries.KubeStateMetricsConfig
+  alias CommonCore.Batteries.LokiConfig
+  alias CommonCore.Batteries.MetalLBConfig
+  alias CommonCore.Batteries.NodeExporterConfig
+  alias CommonCore.Batteries.NotebooksConfig
+  alias CommonCore.Batteries.PostgresConfig
+  alias CommonCore.Batteries.PromtailConfig
+  alias CommonCore.Batteries.RedisConfig
+  alias CommonCore.Batteries.RookConfig
+  alias CommonCore.Batteries.Smtp4devConfig
+  alias CommonCore.Batteries.SSOConfig
+  alias CommonCore.Batteries.TrivyOperatorConfig
+  alias CommonCore.Batteries.TrustManagerConfig
+  alias CommonCore.Batteries.TimelineConfig
+  alias CommonCore.Batteries.VictoriaMetricsConfig
 
   @possible_types [
     battery_ca: BatteryCAConfig,
@@ -45,6 +44,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     istio: IstioConfig,
     istio_csr: IstioCSRConfig,
     istio_gateway: IstioGatewayConfig,
+    keycloak: KeycloakConfig,
     kiali: KialiConfig,
     knative_operator: KnativeOperatorConfig,
     knative_serving: KnativeServingConfig,

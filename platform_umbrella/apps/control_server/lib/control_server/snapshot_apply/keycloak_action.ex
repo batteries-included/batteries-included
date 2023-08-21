@@ -9,7 +9,13 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
   @foreign_key_type :binary_id
 
   @required_fields [:action, :type]
-  @optional_fields [:result, :realm, :post_handler, :result, :content_addressable_resource_id]
+  @optional_fields [
+    :realm,
+    :is_success,
+    :apply_result,
+    :document_id,
+    :keycloak_snapshot_id
+  ]
 
   typed_schema "keycloak_actions" do
     # What we're trying to do.
@@ -25,15 +31,14 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
     # The owning realm
     field :realm, :string
 
-    # The code to call after creating this
-    field :post_handler, Ecto.Enum, values: []
-
     # What happended to this in the end
-    field :result, :string
+    field :is_success, :boolean
+
+    # The reaso
+    field :apply_result, :string
 
     # The contents of what we are trying to push
-    belongs_to :content_addressable_resource,
-               ControlServer.ContentAddressable.ContentAddressableResource
+    belongs_to :document, ControlServer.ContentAddressable.Document
 
     # The snapshot this action is a part of.
     belongs_to :keycloak_snapshot, ControlServer.SnapshotApply.KeycloakSnapshot

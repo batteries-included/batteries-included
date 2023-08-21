@@ -3,7 +3,7 @@ defmodule ControlServerWeb.ContentAddressable.ResourceTable do
 
   attr :resources, :list, required: true
 
-  def content_addressable_resources_table(%{} = assigns) do
+  def documents_table(%{} = assigns) do
     ~H"""
     <.table id="resources-table" rows={@resources}>
       <:col :let={resource} label="Hash"><%= resource.hash %></:col>

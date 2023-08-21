@@ -1,10 +1,13 @@
 defmodule CommonCore.Actions.RootActionGenerator do
   alias CommonCore.StateSummary
-  alias CommonCore.Actions.BaseAction
+  alias CommonCore.Actions.FreshGeneratedAction
+  alias CommonCore.Actions.SSO
 
-  @default_generator_mappings []
+  @default_generator_mappings [
+    sso: SSO
+  ]
 
-  @spec materialize(StateSummary.t()) :: list(BaseAction.t())
+  @spec materialize(StateSummary.t()) :: list(FreshGeneratedAction.t())
   def materialize(%StateSummary{batteries: batteries} = state) do
     batteries
     |> Enum.map(fn %{type: type} = sb ->
@@ -15,8 +18,9 @@ defmodule CommonCore.Actions.RootActionGenerator do
     # Remove any elements with no generator
     |> Enum.filter(fn {_system_battery, gen} -> gen end)
     |> Enum.flat_map(fn {system_battery, generator} ->
-      generator.(system_battery, state)
+      generator.materialize(system_battery, state)
     end)
+    # Remove anything nil or false.
     |> Enum.filter(& &1)
   end
 end

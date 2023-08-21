@@ -13,8 +13,8 @@ defmodule ControlServer.Deleted.DeletedResource do
     field :kind, Ecto.Enum, values: CommonCore.ApiVersionKind.all_known()
     field :been_undeleted, :boolean, default: false
 
-    belongs_to :content_addressable_resource,
-               ControlServer.ContentAddressable.ContentAddressableResource
+    belongs_to :document,
+               ControlServer.ContentAddressable.Document
 
     timestamps()
   end
@@ -27,7 +27,7 @@ defmodule ControlServer.Deleted.DeletedResource do
       :name,
       :namespace,
       :hash,
-      :content_addressable_resource_id,
+      :document_id,
       :been_undeleted
     ])
     |> validate_required([
@@ -35,7 +35,7 @@ defmodule ControlServer.Deleted.DeletedResource do
       :name,
       :namespace,
       :hash,
-      :content_addressable_resource_id,
+      :document_id,
       :been_undeleted
     ])
   end
