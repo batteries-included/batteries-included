@@ -17,7 +17,7 @@ The snapshot apply process in the `control-server` binary is that system.
 - Apply any changes need to go from the current state to the desired state on
   all systems. (Apply)
 - Record the status for all desired state pieces (Report)
-- Broadcast the result of the overall atempt (Broadcast)
+- Broadcast the result of the overall attempt (Broadcast)
 
 ## Prepare
 
@@ -37,7 +37,7 @@ The snapshot apply process in the `control-server` binary is that system.
 
 - Remove any target system configuration or resource that already match with
   what's there. For kubernetes this is done via sha hmac `KubeExt.Hashing`
-- Update any matching resources are successfuly applied
+- Update any matching resources are successfully applied
 - Push each of the kube resource targets to kubernetes via
   `KubeExt.ApplyResource`
 - Push each of the keycloak resource targets to keycloak.
@@ -46,7 +46,7 @@ The snapshot apply process in the `control-server` binary is that system.
 ## Report
 
 - Record the per resource target results
-- Compute an overal result
+- Compute an overall result
 
 ## Broadcast
 

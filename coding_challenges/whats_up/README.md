@@ -7,8 +7,8 @@ unexpected response, or too slow)
 
 # Exercise
 
-For this execise we're going to help make that service. Right now both the
-backend and the front end are bare skeleton versions for a comming MVP. Choose
+For this exercise we're going to help make that service. Right now both the
+backend and the front end are bare skeleton versions for a coming MVP. Choose
 the FrontEnd or the BackEnd or both for a full stack and make some improvements
 in the project. Along the way create clean code, that's well designed, modular,
 functional, documented well, and testable.
@@ -40,7 +40,7 @@ and some components that all need some work.
   `WhatsUpWeb.HomeLive.Home` located at `lib/whats_up_web/live/home.ex` It
   currently simply polls showing two different tables with no sorting,
   filtering, display though, or design.
-- `http://localhost:4000/sites` is implented by the live view
+- `http://localhost:4000/sites` is implemented by the live view
   `WhatsUpWeb.SiteLive.Index` located at
   `lib/whats_up_web/live/site_live/index.ex`
 - Components are just the auto generated components from Phoenix live view

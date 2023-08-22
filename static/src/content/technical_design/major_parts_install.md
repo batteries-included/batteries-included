@@ -56,7 +56,7 @@ install or upgrade and then run the bootstrap procedure via the CLI.
   command line application.
 - `cli/src/tasks` These are small composabile bits of functionality that do one
   thing during install or debugging.
-- `cli/src/commands` These implement the commands that are dirrectly callable
+- `cli/src/commands` These implement the commands that are directly callable
   from the command line. Currently only `dev`.
 
 ## Control Server
@@ -83,5 +83,5 @@ We deploy it as a containerized Kubernetes 'Deployment.'
   kubernetes cluster and might be used in Home or Control Server. Things like
   HTTP clients, Default configs, Ecto schemas,
 - `common_core/resources` is the code for templatizing the desired resource
-  state in Kubernetes. So this contains the code that says current databse
+  state in Kubernetes. So this contains the code that says current database
   settings have an image version at `Foo,` create a Pod with image `Foo.`

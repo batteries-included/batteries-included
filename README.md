@@ -21,7 +21,7 @@ Included team. Let's build something amazing together!
 
 Nix is what we use to ensure that all dev environments have all the software
 needed. It's a packaging system and more. To install it the determinate
-installer is the reccomended. If you are using a different installer Batteries
+installer is the recommended. If you are using a different installer Batteries
 Included will need experimental (nix-command and
 flakes)[https://nixos.wiki/wiki/Flakes] support turned on.
 
@@ -34,7 +34,7 @@ If you are on linux consider NixOS.
 ### Install Docker
 
 Please install docker. For linux make sure to use a recent version of docker.
-For mac users Rancher Destop has been widely recommended.
+For mac users Rancher Desktop has been widely recommended.
 
 If the `docker` group is present, then Docker Engine will create its socket with
 that group, otherwise it's owned by root. To fix this, just add a `docker` group
@@ -86,7 +86,7 @@ customer's kubernetes.
 
 ### Control Server Web
 
-This is the phoenix web aplication. It's mostly `Phoenix.Component`,
+This is the phoenix web application. It's mostly `Phoenix.Component`,
 `Phoenix.LiveComponent` and `Phoenix.LiveView`. Extensively using
 [Tailwind CSS](https://tailwindcss.com/) as the styling.
 

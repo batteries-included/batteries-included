@@ -100,7 +100,7 @@ echo 'export PATH=$PATH:${HOME}/.bun/bin/' >> ~/.bashrc
 echo 'export PATH=$PATH:${HOME}/.bun/bin/' >> ~/.zshrc
 ```
 
-If you're on a newer verison of Ubuntu then you can install via apt.
+If you're on a newer version of Ubuntu then you can install via apt.
 
 ```
 sudo apt install direnv
@@ -172,7 +172,7 @@ That will build the `bcli` package in the. `.` current flake. If you need extra
 status log,`-L` will make this more verbose.
 
 Please note that if you're running zsh as your shell it probably won't like the
-hash caracter unescaped. In that case you can use quotes.
+hash character unescaped. In that case you can use quotes.
 
 ```bash
 nix build '.#bcli'
@@ -229,7 +229,7 @@ nix flake check
 
 ### Update Mix Dependencies
 
-Elixir is the only langugage that we can't rely 100% on the language dependency
+Elixir is the only language that we can't rely 100% on the language dependency
 resolution. Elixir's `mix deps.get` reaches out to the network and isn't
 determinitic; so we have to specify the expected hash value of all dependencies
 to nix.

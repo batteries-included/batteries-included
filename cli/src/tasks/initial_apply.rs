@@ -48,7 +48,7 @@ pub async fn initial_apply(
                 .await;
                 // Turn the result into an option.
                 // If we get a good result  then return None
-                // which will filter this path from future atempts.
+                // which will filter this path from future attempts.
                 //
                 // If we call the default closure then something went wrong
                 // Log it and keep the path and resource for future retries.
@@ -91,7 +91,7 @@ async fn initial_apply_single(
         .context("Everything needs a name")?;
 
     // Figure out the kubernetes group/kind/version and
-    // the endpoints for each in the kubernetes cluser.
+    // the endpoints for each in the kubernetes cluster.
     let (api_res, api_cap) = run_discovery(discovery, &resource)?;
     // Build the either namespaced or not kube client api.
     let api = build_api(kube_client, api_res, api_cap, &resource.metadata.namespace)?;
@@ -136,7 +136,7 @@ fn build_api(
             kube_client,
             res_namespace
                 .as_ref()
-                .context("All non-namespaced resources should be in a namesapce for bcli")?,
+                .context("All non-namespaced resources should be in a namespace for bcli")?,
             &api_res,
         ))
     }

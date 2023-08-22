@@ -88,7 +88,7 @@ HTTP content via Netlify.
 
 ## Nix Tests
 
-Nix has a check command that will preform all the checks that don't need a
+Nix has a check command that will perform all the checks that don't need a
 database.
 
 Example:
