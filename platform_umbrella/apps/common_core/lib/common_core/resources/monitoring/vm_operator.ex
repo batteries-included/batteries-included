@@ -1,103 +1,44 @@
 defmodule CommonCore.Resources.VMOperator do
   @moduledoc false
   use CommonCore.IncludeResource,
-    vmagents_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmagents_operator_victoriametrics_com.yaml",
+    vmagents_operator_victoriametrics_com: "priv/manifests/vm_operator/vmagents_operator_victoriametrics_com.yaml",
     vmalertmanagerconfigs_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmalertmanagerconfigs_operator_victoriametrics_com.yaml",
+      "priv/manifests/vm_operator/vmalertmanagerconfigs_operator_victoriametrics_com.yaml",
     vmalertmanagers_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmalertmanagers_operator_victoriametrics_com.yaml",
-    vmalerts_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmalerts_operator_victoriametrics_com.yaml",
-    vmauths_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmauths_operator_victoriametrics_com.yaml",
-    vmclusters_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmclusters_operator_victoriametrics_com.yaml",
+      "priv/manifests/vm_operator/vmalertmanagers_operator_victoriametrics_com.yaml",
+    vmalerts_operator_victoriametrics_com: "priv/manifests/vm_operator/vmalerts_operator_victoriametrics_com.yaml",
+    vmauths_operator_victoriametrics_com: "priv/manifests/vm_operator/vmauths_operator_victoriametrics_com.yaml",
+    vmclusters_operator_victoriametrics_com: "priv/manifests/vm_operator/vmclusters_operator_victoriametrics_com.yaml",
     vmnodescrapes_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmnodescrapes_operator_victoriametrics_com.yaml",
+      "priv/manifests/vm_operator/vmnodescrapes_operator_victoriametrics_com.yaml",
     vmpodscrapes_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmpodscrapes_operator_victoriametrics_com.yaml",
-    vmprobes_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmprobes_operator_victoriametrics_com.yaml",
-    vmrules_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmrules_operator_victoriametrics_com.yaml",
+      "priv/manifests/vm_operator/vmpodscrapes_operator_victoriametrics_com.yaml",
+    vmprobes_operator_victoriametrics_com: "priv/manifests/vm_operator/vmprobes_operator_victoriametrics_com.yaml",
+    vmrules_operator_victoriametrics_com: "priv/manifests/vm_operator/vmrules_operator_victoriametrics_com.yaml",
     vmservicescrapes_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmservicescrapes_operator_victoriametrics_com.yaml",
-    vmsingles_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmsingles_operator_victoriametrics_com.yaml",
+      "priv/manifests/vm_operator/vmservicescrapes_operator_victoriametrics_com.yaml",
+    vmsingles_operator_victoriametrics_com: "priv/manifests/vm_operator/vmsingles_operator_victoriametrics_com.yaml",
     vmstaticscrapes_operator_victoriametrics_com:
-      "priv/manifests/victoria_metrics/vmstaticscrapes_operator_victoriametrics_com.yaml",
-    vmusers_operator_victoriametrics_com: "priv/manifests/victoria_metrics/vmusers_operator_victoriametrics_com.yaml"
+      "priv/manifests/vm_operator/vmstaticscrapes_operator_victoriametrics_com.yaml",
+    vmusers_operator_victoriametrics_com: "priv/manifests/vm_operator/vmusers_operator_victoriametrics_com.yaml"
 
-  use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-operator"
+  use CommonCore.Resources.ResourceGenerator, app_name: "vm_operator"
 
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
 
-  @service_account_name "victoria-metrics-operator"
-
-  resource(:crd_vmagents_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmagents_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmalertmanagerconfigs_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmalertmanagerconfigs_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmalertmanagers_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmalertmanagers_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmalerts_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmalerts_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmauths_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmauths_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmclusters_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmclusters_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmnodescrapes_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmnodescrapes_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmpodscrapes_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmpodscrapes_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmprobes_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmprobes_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmrules_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmrules_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmservicescrapes_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmservicescrapes_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmsingles_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmsingles_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmstaticscrapes_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmstaticscrapes_operator_victoriametrics_com))
-  end
-
-  resource(:crd_vmusers_operator_victoriametrics_com) do
-    YamlElixir.read_all_from_string!(get_resource(:vmusers_operator_victoriametrics_com))
-  end
-
-  resource(:cluster_role_binding_victoria_metrics_operator, _battery, state) do
+  resource(:cluster_role_binding_vm_operator, _battery, state) do
     namespace = core_namespace(state)
 
     :cluster_role_binding
     |> B.build_resource()
-    |> B.name("victoria-metrics-operator")
-    |> B.role_ref(B.build_cluster_role_ref("victoria-metrics-operator"))
-    |> B.subject(B.build_service_account(@service_account_name, namespace))
+    |> B.name("vm-operator")
+    |> B.role_ref(B.build_cluster_role_ref("vm-operator"))
+    |> B.subject(B.build_service_account("vm-operator", namespace))
   end
 
-  resource(:cluster_role_victoria_metrics_operator) do
+  resource(:cluster_role_vm_operator) do
     rules = [
       %{
         "apiGroups" => [""],
@@ -338,60 +279,67 @@ defmodule CommonCore.Resources.VMOperator do
 
     :cluster_role
     |> B.build_resource()
-    |> B.name("victoria-metrics-operator")
+    |> B.name("vm-operator")
     |> B.rules(rules)
   end
 
-  resource(:role_binding_victoria_metrics_operator, _battery, state) do
-    namespace = core_namespace(state)
-
-    :role_binding
-    |> B.build_resource()
-    |> B.name("victoria-metrics-operator")
-    |> B.namespace(namespace)
-    |> B.role_ref(B.build_role_ref("victoria-metrics-operator"))
-    |> B.subject(B.build_service_account(@service_account_name, namespace))
+  resource(:crd_vmagents_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmagents_operator_victoriametrics_com))
   end
 
-  resource(:role_victoria_metrics_operator, _battery, state) do
-    namespace = core_namespace(state)
-
-    rules = [
-      %{
-        "apiGroups" => [""],
-        "resources" => ["configmaps"],
-        "verbs" => ["get", "list", "watch", "create", "update", "patch", "delete"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["configmaps/status"],
-        "verbs" => ["get", "update", "patch"]
-      },
-      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
-      %{
-        "apiGroups" => ["coordination.k8s.io"],
-        "resources" => ["leases"],
-        "verbs" => ["create", "get", "update"]
-      }
-    ]
-
-    :role
-    |> B.build_resource()
-    |> B.name("victoria-metrics-operator")
-    |> B.namespace(namespace)
-    |> B.rules(rules)
+  resource(:crd_vmalertmanagerconfigs_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmalertmanagerconfigs_operator_victoriametrics_com))
   end
 
-  resource(:service_account_victoria_metrics_operator, _battery, state) do
-    namespace = core_namespace(state)
-
-    :service_account
-    |> B.build_resource()
-    |> B.name(@service_account_name)
-    |> B.namespace(namespace)
+  resource(:crd_vmalertmanagers_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmalertmanagers_operator_victoriametrics_com))
   end
 
-  resource(:deployment_victoria_metrics_operator, battery, state) do
+  resource(:crd_vmalerts_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmalerts_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmauths_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmauths_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmclusters_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmclusters_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmnodescrapes_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmnodescrapes_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmpodscrapes_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmpodscrapes_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmprobes_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmprobes_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmrules_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmrules_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmservicescrapes_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmservicescrapes_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmsingles_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmsingles_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmstaticscrapes_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmstaticscrapes_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmusers_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmusers_operator_victoriametrics_com))
+  end
+
+  resource(:deployment_vm_operator, battery, state) do
     namespace = core_namespace(state)
 
     spec =
@@ -426,22 +374,10 @@ defmodule CommonCore.Resources.VMOperator do
                     "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
                   },
                   %{"name" => "OPERATOR_NAME", "value" => "victoria-metrics-operator"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTER_PODMONITOR", "value" => "true"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTER_SERVICESCRAPE", "value" => "true"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTER_PROMETHEUSRULE", "value" => "true"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTER_PROBE", "value" => "true"},
-                  %{
-                    "name" => "VM_ENABLEDPROMETHEUSCONVERTER_ALERTMANAGERCONFIG",
-                    "value" => "true"
-                  },
-                  %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "false"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "false"},
-                  %{
-                    "name" => "VM_DEFAULTLABELS",
-                    "value" => "battery/managed.indirect=true,managed-by=vm-operator"
-                  }
+                  %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "true"},
+                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "false"}
                 ],
-                "image" => battery.config.vmoperator_image,
+                "image" => battery.config.vm_operator_image,
                 "imagePullPolicy" => "IfNotPresent",
                 "name" => "victoria-metrics-operator",
                 "ports" => [
@@ -452,7 +388,7 @@ defmodule CommonCore.Resources.VMOperator do
                 "volumeMounts" => nil
               }
             ],
-            "serviceAccountName" => @service_account_name,
+            "serviceAccountName" => "vm-operator",
             "volumes" => nil
           }
         }
@@ -460,12 +396,61 @@ defmodule CommonCore.Resources.VMOperator do
 
     :deployment
     |> B.build_resource()
-    |> B.name("victoria-metrics-operator")
+    |> B.name("vm-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
 
-  resource(:service_victoria_metrics_operator, _battery, state) do
+  resource(:role_binding_vm_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    :role_binding
+    |> B.build_resource()
+    |> B.name("vm-operator")
+    |> B.namespace(namespace)
+    |> B.role_ref(B.build_role_ref("vm-operator"))
+    |> B.subject(B.build_service_account("vm-operator", namespace))
+  end
+
+  resource(:role_vm_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    rules = [
+      %{
+        "apiGroups" => [""],
+        "resources" => ["configmaps"],
+        "verbs" => ["get", "list", "watch", "create", "update", "patch", "delete"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["configmaps/status"],
+        "verbs" => ["get", "update", "patch"]
+      },
+      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
+      %{
+        "apiGroups" => ["coordination.k8s.io"],
+        "resources" => ["leases"],
+        "verbs" => ["create", "get", "update"]
+      }
+    ]
+
+    :role
+    |> B.build_resource()
+    |> B.name("vm-operator")
+    |> B.namespace(namespace)
+    |> B.rules(rules)
+  end
+
+  resource(:service_account_vm_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("vm-operator")
+    |> B.namespace(namespace)
+  end
+
+  resource(:service_vm_operator, _battery, state) do
     namespace = core_namespace(state)
 
     spec =
@@ -474,27 +459,14 @@ defmodule CommonCore.Resources.VMOperator do
         %{"name" => "http", "port" => 8080, "protocol" => "TCP", "targetPort" => 8080},
         %{"name" => "webhook", "port" => 443, "targetPort" => 9443}
       ])
-      |> Map.put("selector", %{"battery/app" => @app_name})
+      |> Map.put(
+        "selector",
+        %{"battery/app" => @app_name}
+      )
 
     :service
     |> B.build_resource()
-    |> B.name("victoria-metrics-operator")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-  end
-
-  resource(:monitoring_service_monitor_operator, _battery, state) do
-    namespace = core_namespace(state)
-
-    spec =
-      %{}
-      |> Map.put("endpoints", [%{"port" => "http"}])
-      |> Map.put("namespaceSelector", %{"matchNames" => [namespace]})
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
-
-    :monitoring_service_monitor
-    |> B.build_resource()
-    |> B.name("victoria-metrics-operator")
+    |> B.name("vm-operator")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end

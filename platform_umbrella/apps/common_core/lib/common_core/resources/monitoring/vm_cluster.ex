@@ -29,7 +29,6 @@ defmodule CommonCore.Resources.VMCluster do
         "vmselect",
         %{
           "cacheMountPath" => "/select-cache",
-          # "extraArgs" => %{ "vmalert.proxyURL" => "http://vmalert-main-alert.#{namespace}.svc:8080" },
           "image" => %{"tag" => battery.config.cluster_image_tag},
           "replicaCount" => battery.config.vmselect_replicas,
           "resources" => %{},
@@ -70,7 +69,7 @@ defmodule CommonCore.Resources.VMCluster do
     |> B.spec(spec)
   end
 
-  resource(:virtual_service, _battery, state) do
+  resource(:virtual_service_main, _battery, state) do
     namespace = core_namespace(state)
 
     spec = VirtualService.fallback("vmselect-main-cluster", hosts: [vmselect_host(state)])

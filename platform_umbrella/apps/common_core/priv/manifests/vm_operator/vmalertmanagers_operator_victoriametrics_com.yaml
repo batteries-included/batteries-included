@@ -1,3 +1,4 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -79,6 +80,7 @@ spec:
                           TODO: Add other useful fields. apiVersion, kind, uid?'
                         type: string
                     type: object
+                    x-kubernetes-map-type: atomic
                   type: array
                 initContainers:
                   description:
@@ -209,10 +211,10 @@ spec:
                       properties:
                         medium:
                           description:
-                            'What type of storage medium should back this
-                            directory. The default is "" which means to use the
-                            node''s default medium. Must be an empty string
-                            (default) or Memory. More info:
+                            'medium represents what type of storage medium
+                            should back this directory. The default is "" which
+                            means to use the node''s default medium. Must be an
+                            empty string (default) or Memory. More info:
                             https://kubernetes.io/docs/concepts/storage/volumes#emptydir'
                           type: string
                         sizeLimit:
@@ -220,14 +222,14 @@ spec:
                             - type: integer
                             - type: string
                           description:
-                            'Total amount of local storage required for this
-                            EmptyDir volume. The size limit is also applicable
-                            for memory medium. The maximum usage on memory
-                            medium EmptyDir would be the minimum value between
-                            the SizeLimit specified here and the sum of memory
-                            limits of all containers in a pod. The default is
-                            nil which means that the limit is undefined. More
-                            info:
+                            'sizeLimit is the total amount of local storage
+                            required for this EmptyDir volume. The size limit is
+                            also applicable for memory medium. The maximum usage
+                            on memory medium EmptyDir would be the minimum value
+                            between the SizeLimit specified here and the sum of
+                            memory limits of all containers in a pod. The
+                            default is nil which means that the limit is
+                            undefined. More info:
                             http://kubernetes.io/docs/user-guide/volumes#emptydir'
                           pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                           x-kubernetes-int-or-string: true
@@ -299,7 +301,7 @@ spec:
                           properties:
                             accessModes:
                               description:
-                                'AccessModes contains the desired access modes
+                                'accessModes contains the desired access modes
                                 the volume should have. More info:
                                 https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1'
                               items:
@@ -307,8 +309,8 @@ spec:
                               type: array
                             dataSource:
                               description:
-                                'This field can be used to specify either: * An
-                                existing VolumeSnapshot object
+                                'dataSource field can be used to specify either:
+                                * An existing VolumeSnapshot object
                                 (snapshot.storage.k8s.io/VolumeSnapshot) * An
                                 existing PVC (PersistentVolumeClaim) If the
                                 provisioner or an external controller can
@@ -341,15 +343,16 @@ spec:
                                 - kind
                                 - name
                               type: object
+                              x-kubernetes-map-type: atomic
                             dataSourceRef:
                               description:
-                                'Specifies the object from which to populate the
-                                volume with data, if a non-empty volume is
-                                desired. This may be any local object from a
-                                non-empty API group (non core object) or a
-                                PersistentVolumeClaim object. When this field is
-                                specified, volume binding will only succeed if
-                                the type of the specified object matches some
+                                'dataSourceRef specifies the object from which
+                                to populate the volume with data, if a non-empty
+                                volume is desired. This may be any local object
+                                from a non-empty API group (non core object) or
+                                a PersistentVolumeClaim object. When this field
+                                is specified, volume binding will only succeed
+                                if the type of the specified object matches some
                                 installed volume populator or dynamic
                                 provisioner. This field will replace the
                                 functionality of the DataSource field and as
@@ -361,15 +364,14 @@ spec:
                                 other is non-empty. There are two important
                                 differences between DataSource and
                                 DataSourceRef: * While DataSource only allows
-                                two specific types of objects,
-                                DataSourceRef   allows any non-core object, as
-                                well as PersistentVolumeClaim objects. * While
+                                two specific types of objects, DataSourceRef
+                                allows any non-core object, as well as
+                                PersistentVolumeClaim objects. * While
                                 DataSource ignores disallowed values (dropping
-                                them), DataSourceRef   preserves all values, and
-                                generates an error if a disallowed value
-                                is   specified. (Alpha) Using this field
-                                requires the AnyVolumeDataSource feature gate to
-                                be enabled.'
+                                them), DataSourceRef preserves all values, and
+                                generates an error if a disallowed value is
+                                specified. (Beta) Using this field requires the
+                                AnyVolumeDataSource feature gate to be enabled.'
                               properties:
                                 apiGroup:
                                   description:
@@ -393,9 +395,10 @@ spec:
                                 - kind
                                 - name
                               type: object
+                              x-kubernetes-map-type: atomic
                             resources:
                               description:
-                                'Resources represents the minimum resources the
+                                'resources represents the minimum resources the
                                 volume should have. If
                                 RecoverVolumeExpansionFailure feature is enabled
                                 users are allowed to specify resource
@@ -435,8 +438,8 @@ spec:
                               type: object
                             selector:
                               description:
-                                A label query over volumes to consider for
-                                binding.
+                                selector is a label query over volumes to
+                                consider for binding.
                               properties:
                                 matchExpressions:
                                   description:
@@ -490,10 +493,11 @@ spec:
                                     ANDed.
                                   type: object
                               type: object
+                              x-kubernetes-map-type: atomic
                             storageClassName:
                               description:
-                                'Name of the StorageClass required by the claim.
-                                More info:
+                                'storageClassName is the name of the
+                                StorageClass required by the claim. More info:
                                 https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1'
                               type: string
                             volumeMode:
@@ -504,7 +508,7 @@ spec:
                               type: string
                             volumeName:
                               description:
-                                VolumeName is the binding reference to the
+                                volumeName is the binding reference to the
                                 PersistentVolume backing this claim.
                               type: string
                           type: object
@@ -516,7 +520,7 @@ spec:
                           properties:
                             accessModes:
                               description:
-                                'AccessModes contains the actual access modes
+                                'accessModes contains the actual access modes
                                 the volume backing the PVC has. More info:
                                 https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1'
                               items:
@@ -530,12 +534,13 @@ spec:
                                 pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                 x-kubernetes-int-or-string: true
                               description:
-                                The storage resource within AllocatedResources
-                                tracks the capacity allocated to a PVC. It may
-                                be larger than the actual capacity when a volume
-                                expansion operation is requested. For storage
-                                quota, the larger value from allocatedResources
-                                and PVC.spec.resources is used. If
+                                allocatedResources is the storage resource
+                                within AllocatedResources tracks the capacity
+                                allocated to a PVC. It may be larger than the
+                                actual capacity when a volume expansion
+                                operation is requested. For storage quota, the
+                                larger value from allocatedResources and
+                                PVC.spec.resources is used. If
                                 allocatedResources is not set,
                                 PVC.spec.resources alone is used for quota
                                 calculation. If a volume expansion capacity
@@ -554,15 +559,15 @@ spec:
                                 pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                 x-kubernetes-int-or-string: true
                               description:
-                                Represents the actual resources of the
+                                capacity represents the actual resources of the
                                 underlying volume.
                               type: object
                             conditions:
                               description:
-                                Current Condition of persistent volume claim. If
-                                underlying persistent volume is being resized
-                                then the Condition will be set to
-                                'ResizeStarted'.
+                                conditions is the current Condition of
+                                persistent volume claim. If underlying
+                                persistent volume is being resized then the
+                                Condition will be set to 'ResizeStarted'.
                               items:
                                 description:
                                   PersistentVolumeClaimCondition contails
@@ -570,28 +575,30 @@ spec:
                                 properties:
                                   lastProbeTime:
                                     description:
-                                      Last time we probed the condition.
+                                      lastProbeTime is the time we probed the
+                                      condition.
                                     format: date-time
                                     type: string
                                   lastTransitionTime:
                                     description:
-                                      Last time the condition transitioned from
-                                      one status to another.
+                                      lastTransitionTime is the time the
+                                      condition transitioned from one status to
+                                      another.
                                     format: date-time
                                     type: string
                                   message:
                                     description:
-                                      Human-readable message indicating details
-                                      about last transition.
+                                      message is the human-readable message
+                                      indicating details about last transition.
                                     type: string
                                   reason:
                                     description:
-                                      Unique, this should be a short, machine
-                                      understandable string that gives the
-                                      reason for condition's last transition. If
-                                      it reports "ResizeStarted" that means the
-                                      underlying persistent volume is being
-                                      resized.
+                                      reason is a unique, this should be a
+                                      short, machine understandable string that
+                                      gives the reason for condition's last
+                                      transition. If it reports "ResizeStarted"
+                                      that means the underlying persistent
+                                      volume is being resized.
                                     type: string
                                   status:
                                     type: string
@@ -608,12 +615,12 @@ spec:
                               type: array
                             phase:
                               description:
-                                Phase represents the current phase of
+                                phase represents the current phase of
                                 PersistentVolumeClaim.
                               type: string
                             resizeStatus:
                               description:
-                                ResizeStatus stores status of resize operation.
+                                resizeStatus stores status of resize operation.
                                 ResizeStatus is not set by default but when
                                 expansion is complete resizeStatus is set to
                                 empty string by resize controller or kubelet.
@@ -698,13 +705,13 @@ spec:
                         x-kubernetes-preserve-unknown-fields: true
                       spec:
                         description:
-                          'Spec defines the desired characteristics of a volume
+                          'spec defines the desired characteristics of a volume
                           requested by a pod author. More info:
                           https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims'
                         properties:
                           accessModes:
                             description:
-                              'AccessModes contains the desired access modes the
+                              'accessModes contains the desired access modes the
                               volume should have. More info:
                               https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1'
                             items:
@@ -712,8 +719,8 @@ spec:
                             type: array
                           dataSource:
                             description:
-                              'This field can be used to specify either: * An
-                              existing VolumeSnapshot object
+                              'dataSource field can be used to specify either: *
+                              An existing VolumeSnapshot object
                               (snapshot.storage.k8s.io/VolumeSnapshot) * An
                               existing PVC (PersistentVolumeClaim) If the
                               provisioner or an external controller can support
@@ -743,12 +750,13 @@ spec:
                               - kind
                               - name
                             type: object
+                            x-kubernetes-map-type: atomic
                           dataSourceRef:
                             description:
-                              'Specifies the object from which to populate the
-                              volume with data, if a non-empty volume is
-                              desired. This may be any local object from a
-                              non-empty API group (non core object) or a
+                              'dataSourceRef specifies the object from which to
+                              populate the volume with data, if a non-empty
+                              volume is desired. This may be any local object
+                              from a non-empty API group (non core object) or a
                               PersistentVolumeClaim object. When this field is
                               specified, volume binding will only succeed if the
                               type of the specified object matches some
@@ -762,12 +770,12 @@ spec:
                               other is non-empty. There are two important
                               differences between DataSource and DataSourceRef:
                               * While DataSource only allows two specific types
-                              of objects, DataSourceRef   allows any non-core
+                              of objects, DataSourceRef allows any non-core
                               object, as well as PersistentVolumeClaim objects.
                               * While DataSource ignores disallowed values
-                              (dropping them), DataSourceRef   preserves all
+                              (dropping them), DataSourceRef preserves all
                               values, and generates an error if a disallowed
-                              value is   specified. (Alpha) Using this field
+                              value is specified. (Beta) Using this field
                               requires the AnyVolumeDataSource feature gate to
                               be enabled.'
                             properties:
@@ -791,9 +799,10 @@ spec:
                               - kind
                               - name
                             type: object
+                            x-kubernetes-map-type: atomic
                           resources:
                             description:
-                              'Resources represents the minimum resources the
+                              'resources represents the minimum resources the
                               volume should have. If
                               RecoverVolumeExpansionFailure feature is enabled
                               users are allowed to specify resource requirements
@@ -832,8 +841,8 @@ spec:
                             type: object
                           selector:
                             description:
-                              A label query over volumes to consider for
-                              binding.
+                              selector is a label query over volumes to consider
+                              for binding.
                             properties:
                               matchExpressions:
                                 description:
@@ -884,10 +893,11 @@ spec:
                                   "value". The requirements are ANDed.
                                 type: object
                             type: object
+                            x-kubernetes-map-type: atomic
                           storageClassName:
                             description:
-                              'Name of the StorageClass required by the claim.
-                              More info:
+                              'storageClassName is the name of the StorageClass
+                              required by the claim. More info:
                               https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1'
                             type: string
                           volumeMode:
@@ -898,19 +908,19 @@ spec:
                             type: string
                           volumeName:
                             description:
-                              VolumeName is the binding reference to the
+                              volumeName is the binding reference to the
                               PersistentVolume backing this claim.
                             type: string
                         type: object
                       status:
                         description:
-                          'Status represents the current information/status of a
+                          'status represents the current information/status of a
                           persistent volume claim. Read-only. More info:
                           https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims'
                         properties:
                           accessModes:
                             description:
-                              'AccessModes contains the actual access modes the
+                              'accessModes contains the actual access modes the
                               volume backing the PVC has. More info:
                               https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1'
                             items:
@@ -924,21 +934,21 @@ spec:
                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                               x-kubernetes-int-or-string: true
                             description:
-                              The storage resource within AllocatedResources
-                              tracks the capacity allocated to a PVC. It may be
-                              larger than the actual capacity when a volume
-                              expansion operation is requested. For storage
-                              quota, the larger value from allocatedResources
-                              and PVC.spec.resources is used. If
-                              allocatedResources is not set, PVC.spec.resources
-                              alone is used for quota calculation. If a volume
-                              expansion capacity request is lowered,
-                              allocatedResources is only lowered if there are no
-                              expansion operations in progress and if the actual
-                              volume capacity is equal or lower than the
-                              requested capacity. This is an alpha field and
-                              requires enabling RecoverVolumeExpansionFailure
-                              feature.
+                              allocatedResources is the storage resource within
+                              AllocatedResources tracks the capacity allocated
+                              to a PVC. It may be larger than the actual
+                              capacity when a volume expansion operation is
+                              requested. For storage quota, the larger value
+                              from allocatedResources and PVC.spec.resources is
+                              used. If allocatedResources is not set,
+                              PVC.spec.resources alone is used for quota
+                              calculation. If a volume expansion capacity
+                              request is lowered, allocatedResources is only
+                              lowered if there are no expansion operations in
+                              progress and if the actual volume capacity is
+                              equal or lower than the requested capacity. This
+                              is an alpha field and requires enabling
+                              RecoverVolumeExpansionFailure feature.
                             type: object
                           capacity:
                             additionalProperties:
@@ -948,14 +958,15 @@ spec:
                               pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                               x-kubernetes-int-or-string: true
                             description:
-                              Represents the actual resources of the underlying
-                              volume.
+                              capacity represents the actual resources of the
+                              underlying volume.
                             type: object
                           conditions:
                             description:
-                              Current Condition of persistent volume claim. If
-                              underlying persistent volume is being resized then
-                              the Condition will be set to 'ResizeStarted'.
+                              conditions is the current Condition of persistent
+                              volume claim. If underlying persistent volume is
+                              being resized then the Condition will be set to
+                              'ResizeStarted'.
                             items:
                               description:
                                 PersistentVolumeClaimCondition contails details
@@ -963,26 +974,27 @@ spec:
                               properties:
                                 lastProbeTime:
                                   description:
-                                    Last time we probed the condition.
+                                    lastProbeTime is the time we probed the
+                                    condition.
                                   format: date-time
                                   type: string
                                 lastTransitionTime:
                                   description:
-                                    Last time the condition transitioned from
-                                    one status to another.
+                                    lastTransitionTime is the time the condition
+                                    transitioned from one status to another.
                                   format: date-time
                                   type: string
                                 message:
                                   description:
-                                    Human-readable message indicating details
-                                    about last transition.
+                                    message is the human-readable message
+                                    indicating details about last transition.
                                   type: string
                                 reason:
                                   description:
-                                    Unique, this should be a short, machine
-                                    understandable string that gives the reason
-                                    for condition's last transition. If it
-                                    reports "ResizeStarted" that means the
+                                    reason is a unique, this should be a short,
+                                    machine understandable string that gives the
+                                    reason for condition's last transition. If
+                                    it reports "ResizeStarted" that means the
                                     underlying persistent volume is being
                                     resized.
                                   type: string
@@ -1001,12 +1013,12 @@ spec:
                             type: array
                           phase:
                             description:
-                              Phase represents the current phase of
+                              phase represents the current phase of
                               PersistentVolumeClaim.
                             type: string
                           resizeStatus:
                             description:
-                              ResizeStatus stores status of resize operation.
+                              resizeStatus stores status of resize operation.
                               ResizeStatus is not set by default but when
                               expansion is complete resizeStatus is set to empty
                               string by resize controller or kubelet. This is an
@@ -1135,6 +1147,7 @@ spec:
                         "value". The requirements are ANDed.
                       type: object
                   type: object
+                  x-kubernetes-map-type: atomic
                 -:
                   description:
                     ParsingError contents error with context if operator was
@@ -1281,6 +1294,12 @@ spec:
                     termination
                   format: int64
                   type: integer
+                disableRouteContinueEnforce:
+                  description:
+                    DisableRouteContinueEnforce cancel the behavior for
+                    VMAlertmanagerConfig that always enforce first-level route
+                    continue to true
+                  type: boolean
                 resources:
                   description:
                     Resources container resource request and limits,
@@ -1462,6 +1481,31 @@ spec:
                     hours).
                   pattern: '[0-9]+(ms|s|m|h)'
                   type: string
+                templates:
+                  description:
+                    Templates is a list of ConfigMap key references for
+                    ConfigMaps in the same namespace as the VMAlertmanager
+                    object, which shall be mounted into the VMAlertmanager Pods.
+                    The Templates are mounted into
+                    /etc/vm/templates/<configmap-name>/<configmap-key>.
+                  items:
+                    description:
+                      ConfigMapKeyReference refers to a key in a ConfigMap.
+                    properties:
+                      key:
+                        description: The ConfigMap key to refer to.
+                        type: string
+                      name:
+                        description:
+                          'Name of the referent. More info:
+                          https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                    required:
+                      - key
+                    type: object
+                    x-kubernetes-map-type: atomic
+                  type: array
                 dnsConfig:
                   description:
                     Specifies the DNS parameters of a pod. Parameters specified
@@ -1562,6 +1606,7 @@ spec:
                         "value". The requirements are ANDed.
                       type: object
                   type: object
+                  x-kubernetes-map-type: atomic
                 volumeMounts:
                   description:
                     VolumeMounts allows configuration of additional VolumeMounts

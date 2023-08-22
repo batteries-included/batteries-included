@@ -1,6 +1,6 @@
 defmodule CommonCore.Resources.VMAgent do
   @moduledoc false
-  use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-agent"
+  use CommonCore.Resources.ResourceGenerator, app_name: "vm_agent"
 
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
@@ -9,14 +9,14 @@ defmodule CommonCore.Resources.VMAgent do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.IstioConfig.VirtualService
 
-  resource(:vm_agent_main, _battery, state) do
+  resource(:vm_agent_main, battery, state) do
     namespace = core_namespace(state)
 
     spec =
       %{}
       |> Map.put("externalLabels", %{"cluster" => "cluster-name"})
       |> Map.put("extraArgs", %{"promscrape.streamParse" => "true"})
-      |> Map.put("image", %{"tag" => "v1.85.3"})
+      |> Map.put("image", %{"tag" => battery.config.image_tag})
       |> Map.put("remoteWrite", [
         %{
           "url" => "http://vminsert-main-cluster.#{namespace}.svc:8480/insert/0/prometheus/api/v1/write"

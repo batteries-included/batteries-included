@@ -1,21 +1,25 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: vmstaticscrapes.operator.victoriametrics.com
+  name: vmservicescrapes.operator.victoriametrics.com
 spec:
   group: operator.victoriametrics.com
   names:
-    kind: VMStaticScrape
-    listKind: VMStaticScrapeList
-    plural: vmstaticscrapes
-    singular: vmstaticscrape
+    kind: VMServiceScrape
+    listKind: VMServiceScrapeList
+    plural: vmservicescrapes
+    singular: vmservicescrape
   scope: Namespaced
   versions:
     - name: v1beta1
       schema:
         openAPIV3Schema:
           description:
-            VMStaticScrape  defines static targets configuration for scraping.
+            VMServiceScrape is scrape configuration for endpoints associated
+            with kubernetes service, it generates scrape configuration for
+            vmagent based on selectors. result config will scrape service
+            endpoints
           properties:
             apiVersion:
               description:
@@ -37,24 +41,40 @@ spec:
               type: object
             spec:
               description:
-                VMStaticScrapeSpec defines the desired state of VMStaticScrape.
+                VMServiceScrapeSpec defines the desired state of VMServiceScrape
               properties:
-                jobName:
-                  description: JobName name of job.
+                discoveryRole:
+                  description:
+                    'DiscoveryRole - defines kubernetes_sd role for objects
+                    discovery. by default, its endpoints. can be changed to
+                    service or endpointslices. note, that with service setting,
+                    you have to use port: "name" and cannot use targetPort for
+                    endpoints.'
+                  enum:
+                    - endpoints
+                    - service
+                    - endpointslices
                   type: string
-                sampleLimit:
+                endpoints:
                   description:
-                    SampleLimit defines per-scrape limit on number of scraped
-                    samples that will be accepted.
-                  format: int64
-                  type: integer
-                targetEndpoints:
-                  description:
-                    A list of target endpoints to scrape metrics from.
+                    A list of endpoints allowed as part of this ServiceScrape.
                   items:
                     description:
-                      TargetEndpoint defines single static target endpoint.
+                      Endpoint defines a scrapeable endpoint serving Prometheus
+                      metrics.
                     properties:
+                      attach_metadata:
+                        description:
+                          AttachMetadata configures metadata attaching from
+                          service discovery
+                        properties:
+                          node:
+                            description:
+                              'Node instructs vmagent to add node specific
+                              metadata from service discovery Valid for roles:
+                              pod, endpoints, endpointslice.'
+                            type: boolean
+                        type: object
                       authorization:
                         description:
                           Authorization with http header Authorization
@@ -84,6 +104,7 @@ spec:
                             required:
                               - key
                             type: object
+                            x-kubernetes-map-type: atomic
                           credentialsFile:
                             description: File with value for authorization
                             type: string
@@ -124,6 +145,7 @@ spec:
                             required:
                               - key
                             type: object
+                            x-kubernetes-map-type: atomic
                           password_file:
                             description:
                               PasswordFile defines path to password file at disk
@@ -154,6 +176,7 @@ spec:
                             required:
                               - key
                             type: object
+                            x-kubernetes-map-type: atomic
                         type: object
                       bearerTokenFile:
                         description:
@@ -187,6 +210,7 @@ spec:
                         required:
                           - key
                         type: object
+                        x-kubernetes-map-type: atomic
                       follow_redirects:
                         description:
                           FollowRedirects controls redirects for scraping.
@@ -204,11 +228,6 @@ spec:
                       interval:
                         description: Interval at which metrics should be scraped
                         type: string
-                      labels:
-                        additionalProperties:
-                          type: string
-                        description: Labels static labels for targets.
-                        type: object
                       metricRelabelConfigs:
                         description:
                           MetricRelabelConfigs to apply to samples before
@@ -225,6 +244,23 @@ spec:
                               description:
                                 Action to perform based on regex matching.
                                 Default is 'replace'
+                              type: string
+                            if:
+                              description:
+                                'If represents metricsQL match expression:
+                                ''{__name__=~"foo_.*"}'''
+                              type: string
+                            labels:
+                              additionalProperties:
+                                type: string
+                              description:
+                                'Labels is used together with Match for `action:
+                                graphite`'
+                              type: object
+                            match:
+                              description:
+                                'Match is used together with Labels for `action:
+                                graphite`'
                               type: string
                             modulus:
                               description:
@@ -318,6 +354,7 @@ spec:
                                 required:
                                   - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                               secret:
                                 description:
                                   Secret containing data to use for the targets.
@@ -342,6 +379,7 @@ spec:
                                 required:
                                   - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                             type: object
                           client_secret:
                             description:
@@ -367,6 +405,7 @@ spec:
                             required:
                               - key
                             type: object
+                            x-kubernetes-map-type: atomic
                           client_secret_file:
                             description:
                               ClientSecretFile defines path for client secret
@@ -402,7 +441,9 @@ spec:
                         description: HTTP path to scrape for metrics.
                         type: string
                       port:
-                        description: Default port for target.
+                        description:
+                          Name of the service port this endpoint refers to.
+                          Mutually exclusive with targetPort.
                         type: string
                       proxyURL:
                         description:
@@ -426,6 +467,23 @@ spec:
                               description:
                                 Action to perform based on regex matching.
                                 Default is 'replace'
+                              type: string
+                            if:
+                              description:
+                                'If represents metricsQL match expression:
+                                ''{__name__=~"foo_.*"}'''
+                              type: string
+                            labels:
+                              additionalProperties:
+                                type: string
+                              description:
+                                'Labels is used together with Match for `action:
+                                graphite`'
+                              type: object
+                            match:
+                              description:
+                                'Match is used together with Labels for `action:
+                                graphite`'
                               type: string
                             modulus:
                               description:
@@ -490,12 +548,15 @@ spec:
                         type: array
                       sampleLimit:
                         description:
-                          SampleLimit defines per-scrape limit on number of
+                          SampleLimit defines per-endpoint limit on number of
                           scraped samples that will be accepted.
                         format: int64
                         type: integer
                       scheme:
                         description: HTTP scheme to use for scraping.
+                        enum:
+                          - http
+                          - https
                         type: string
                       scrapeTimeout:
                         description: Timeout after which the scrape is ended
@@ -506,13 +567,14 @@ spec:
                           priority over it. one of scrape_interval or interval
                           can be used
                         type: string
-                      targets:
+                      targetPort:
+                        anyOf:
+                          - type: integer
+                          - type: string
                         description:
-                          Targets static targets addresses in form of
-                          ["192.122.55.55:9100","some-name:9100"].
-                        items:
-                          type: string
-                        type: array
+                          Name or number of the pod port this endpoint refers
+                          to. Mutually exclusive with port.
+                        x-kubernetes-int-or-string: true
                       tlsConfig:
                         description:
                           TLSConfig configuration to use when scraping the
@@ -546,6 +608,7 @@ spec:
                                 required:
                                   - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                               secret:
                                 description:
                                   Secret containing data to use for the targets.
@@ -570,6 +633,7 @@ spec:
                                 required:
                                   - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                             type: object
                           caFile:
                             description:
@@ -604,6 +668,7 @@ spec:
                                 required:
                                   - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                               secret:
                                 description:
                                   Secret containing data to use for the targets.
@@ -628,6 +693,7 @@ spec:
                                 required:
                                   - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                             type: object
                           certFile:
                             description:
@@ -667,6 +733,7 @@ spec:
                             required:
                               - key
                             type: object
+                            x-kubernetes-map-type: atomic
                           serverName:
                             description:
                               Used to verify the hostname for the targets.
@@ -732,6 +799,7 @@ spec:
                                     required:
                                       - key
                                     type: object
+                                    x-kubernetes-map-type: atomic
                                   password_file:
                                     description:
                                       PasswordFile defines path to password file
@@ -764,6 +832,7 @@ spec:
                                     required:
                                       - key
                                     type: object
+                                    x-kubernetes-map-type: atomic
                                 type: object
                               bearer_token:
                                 description:
@@ -789,6 +858,7 @@ spec:
                                 required:
                                   - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                               bearer_token_file:
                                 type: string
                               tls_config:
@@ -824,6 +894,7 @@ spec:
                                         required:
                                           - key
                                         type: object
+                                        x-kubernetes-map-type: atomic
                                       secret:
                                         description:
                                           Secret containing data to use for the
@@ -849,6 +920,7 @@ spec:
                                         required:
                                           - key
                                         type: object
+                                        x-kubernetes-map-type: atomic
                                     type: object
                                   caFile:
                                     description:
@@ -883,6 +955,7 @@ spec:
                                         required:
                                           - key
                                         type: object
+                                        x-kubernetes-map-type: atomic
                                       secret:
                                         description:
                                           Secret containing data to use for the
@@ -908,6 +981,7 @@ spec:
                                         required:
                                           - key
                                         type: object
+                                        x-kubernetes-map-type: atomic
                                     type: object
                                   certFile:
                                     description:
@@ -948,6 +1022,7 @@ spec:
                                     required:
                                       - key
                                     type: object
+                                    x-kubernetes-map-type: atomic
                                   serverName:
                                     description:
                                       Used to verify the hostname for the
@@ -964,18 +1039,109 @@ spec:
                           stream_parse:
                             type: boolean
                         type: object
-                    required:
-                      - targets
                     type: object
                   type: array
+                jobLabel:
+                  description: The label to use to retrieve the job name from.
+                  type: string
+                namespaceSelector:
+                  description:
+                    Selector to select which namespaces the Endpoints objects
+                    are discovered from.
+                  properties:
+                    any:
+                      description:
+                        Boolean describing whether all namespaces are selected
+                        in contrast to a list restricting them.
+                      type: boolean
+                    matchNames:
+                      description: List of namespace names.
+                      items:
+                        type: string
+                      type: array
+                  type: object
+                podTargetLabels:
+                  description:
+                    PodTargetLabels transfers labels on the Kubernetes Pod onto
+                    the target.
+                  items:
+                    type: string
+                  type: array
+                sampleLimit:
+                  description:
+                    SampleLimit defines per-scrape limit on number of scraped
+                    samples that will be accepted.
+                  format: int64
+                  type: integer
+                selector:
+                  description:
+                    Selector to select Endpoints objects by corresponding
+                    Service labels.
+                  properties:
+                    matchExpressions:
+                      description:
+                        matchExpressions is a list of label selector
+                        requirements. The requirements are ANDed.
+                      items:
+                        description:
+                          A label selector requirement is a selector that
+                          contains values, a key, and an operator that relates
+                          the key and values.
+                        properties:
+                          key:
+                            description:
+                              key is the label key that the selector applies to.
+                            type: string
+                          operator:
+                            description:
+                              operator represents a key's relationship to a set
+                              of values. Valid operators are In, NotIn, Exists
+                              and DoesNotExist.
+                            type: string
+                          values:
+                            description:
+                              values is an array of string values. If the
+                              operator is In or NotIn, the values array must be
+                              non-empty. If the operator is Exists or
+                              DoesNotExist, the values array must be empty. This
+                              array is replaced during a strategic merge patch.
+                            items:
+                              type: string
+                            type: array
+                        required:
+                          - key
+                          - operator
+                        type: object
+                      type: array
+                    matchLabels:
+                      additionalProperties:
+                        type: string
+                      description:
+                        matchLabels is a map of {key,value} pairs. A single
+                        {key,value} in the matchLabels map is equivalent to an
+                        element of matchExpressions, whose key field is "key",
+                        the operator is "In", and the values array contains only
+                        "value". The requirements are ANDed.
+                      type: object
+                  type: object
+                  x-kubernetes-map-type: atomic
+                targetLabels:
+                  description:
+                    TargetLabels transfers labels on the Kubernetes Service onto
+                    the target.
+                  items:
+                    type: string
+                  type: array
               required:
-                - targetEndpoints
+                - endpoints
               type: object
             status:
               description:
-                VMStaticScrapeStatus defines the observed state of
-                VMStaticScrape
+                VMServiceScrapeStatus defines the observed state of
+                VMServiceScrape
               type: object
+          required:
+            - spec
           type: object
       served: true
       storage: true

@@ -49,10 +49,10 @@ defmodule CommonCore.Defaults.Images do
   def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.9"
   def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.9"
 
-  def vm_cluster_tag, do: "v1.92.1-cluster"
-  def vm_tag, do: "v1.92.1"
+  def vm_cluster_tag, do: "v1.93.0-cluster"
 
-  def vmoperator_image, do: "victoriametrics/operator:v0.35.1"
+  def vm_operator_image, do: "victoriametrics/operator:v0.35.1"
+  def vm_tag, do: "v1.93.0"
 
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
 end
