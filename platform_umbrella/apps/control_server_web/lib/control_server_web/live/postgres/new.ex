@@ -3,6 +3,8 @@ defmodule ControlServerWeb.Live.PostgresNew do
   use ControlServerWeb, {:live_view, layout: :fresh}
 
   alias CommonCore.Postgres.Cluster
+  alias CommonCore.Postgres.PGDatabase
+  alias CommonCore.Postgres.PGUser
   alias ControlServer.Batteries.Installer
   alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent
@@ -11,7 +13,12 @@ defmodule ControlServerWeb.Live.PostgresNew do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    cluster = %Cluster{}
+    # Pre-populate the databases and users with decent
+    cluster = %Cluster{
+      databases: [%PGDatabase{name: "app", owner: "app"}],
+      users: [%PGUser{username: "app", roles: ["login", "createdb", "createrole"]}]
+    }
+
     changeset = Postgres.change_cluster(cluster)
 
     {:ok,
@@ -41,7 +48,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
       <.live_component
         module={PostgresFormComponent}
         cluster={@cluster}
-        id={@cluster.id || "new-cluster-form"}
+        id="new-cluster-form"
         action={:new}
         save_target={self()}
       />

@@ -8,6 +8,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.BatteryCAConfig
   alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.CertManagerConfig
+  alias CommonCore.Batteries.CloudnativePGConfig
   alias CommonCore.Batteries.GiteaConfig
   alias CommonCore.Batteries.GrafanaConfig
   alias CommonCore.Batteries.HarborConfig
@@ -39,6 +40,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     battery_ca: BatteryCAConfig,
     battery_core: BatteryCoreConfig,
     cert_manager: CertManagerConfig,
+    cloudnative_pg: CloudnativePGConfig,
     gitea: GiteaConfig,
     grafana: GrafanaConfig,
     harbor: HarborConfig,

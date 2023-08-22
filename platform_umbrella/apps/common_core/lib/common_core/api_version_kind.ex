@@ -77,11 +77,16 @@ defmodule CommonCore.ApiVersionKind do
     aqua_rbac_assessment_report: {"aquasecurity.github.io/v1alpha1", "RbacAssessmentReport"},
     aqua_exposed_secret_report: {"aquasecurity.github.io/v1alpha1", "ExposedSecretReport"},
     aqua_infra_assessment_report: {"aquasecurity.github.io/v1alpha1", "InfraAssessmentReport"},
-    aqua_vulnerability_report: {"aquasecurity.github.io/v1alpha1", "VulnerabilityReport"}
+    aqua_vulnerability_report: {"aquasecurity.github.io/v1alpha1", "VulnerabilityReport"},
+    cloudnative_pg_backup: {"postgresql.cnpg.io/v1", "Backup"},
+    cloudnative_pg_scheduledbackup: {"postgresql.cnpg.io/v1", "ScheduledBackup"},
+    cloudnative_pg_cluster: {"postgresql.cnpg.io/v1", "Cluster"},
+    cloudnative_pg_pooler: {"postgresql.cnpg.io/v1", "Pooler"}
   ]
 
   @alternatives [
-    {:monitoring_service_monitor, {"monitoring.coreos.com/v1", "ServiceMonitor"}}
+    {:monitoring_service_monitor, {"monitoring.coreos.com/v1", "ServiceMonitor"}},
+    {:monitoring_pod_monitor, {"monitoring.coreos.com/v1", "PodMonitor"}}
   ]
 
   @spec from_resource_type(atom) :: {binary(), binary()} | nil

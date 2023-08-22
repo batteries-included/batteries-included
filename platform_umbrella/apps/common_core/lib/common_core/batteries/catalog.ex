@@ -15,6 +15,13 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :data,
+      type: :cloudnative_pg,
+      dependencies: [:battery_core],
+      description:
+        "PostgreSQL is a free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility."
+    },
+    %CatalogBattery{
+      group: :data,
       type: :postgres,
       dependencies: [:battery_core],
       description:

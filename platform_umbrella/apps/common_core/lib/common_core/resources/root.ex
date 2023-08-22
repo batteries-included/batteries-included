@@ -7,6 +7,8 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.CephClusters
   alias CommonCore.Resources.CephFilesystems
   alias CommonCore.Resources.CertManager
+  alias CommonCore.Resources.CloudnativePG
+  alias CommonCore.Resources.CloudnativePGClusters
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
   alias CommonCore.Resources.Gitea
   alias CommonCore.Resources.Grafana
@@ -48,6 +50,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     battery_ca: [BatteryCA],
     battery_core: [BatteryCore, ControlServerResources],
     cert_manager: [CertManager],
+    cloudnative_pg: [CloudnativePG, CloudnativePGClusters],
     gitea: [Gitea],
     grafana: [Grafana],
     harbor: [Harbor],

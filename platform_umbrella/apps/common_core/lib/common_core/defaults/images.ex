@@ -4,6 +4,8 @@ defmodule CommonCore.Defaults.Images do
 
   def postgres_operator_image, do: "registry.opensource.zalan.do/acid/postgres-operator:v1.10.0"
 
+  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.20.2"
+
   def spilo_image, do: "registry.opensource.zalan.do/acid/spilo-15:3.0-p1"
 
   def postgres_logical_backup_image, do: "registry.opensource.zalan.do/acid/logical-backup:v1.10.0"

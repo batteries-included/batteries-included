@@ -53,12 +53,12 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     ~H"""
     <.card class="col-span-2">
       <:title>Database</:title>
-      <div class="grid grid-cols-12 gap-y-6 gap-x-4">
+      <div class="grid grid-cols-12 gap-4">
         <%= for database_form <- inputs_for(@form, :databases) do %>
-          <div class="col-span-4">
+          <div class="col-span-6">
             <.input field={{database_form, :name}} label="Name" />
           </div>
-          <div class="col-span-7">
+          <div class="col-span-6">
             <.input
               field={{database_form, :owner}}
               label="Owner"
@@ -66,27 +66,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
               options={@possible_owners}
             />
           </div>
-          <div class="col-span-1">
-            <.a
-              phx-click="del:database"
-              phx-value-idx={database_form.index}
-              phx-target={@target}
-              class="text-sm"
-              variant="styled"
-            >
-              <Heroicons.trash class="w-7 h-7 mx-auto mt-8" />
-            </.a>
-          </div>
         <% end %>
-
-        <.a
-          phx-click="add:database"
-          phx-target={@target}
-          class="pt-5 text-lg col-span-12"
-          variant="styled"
-        >
-          Add Database
-        </.a>
       </div>
     </.card>
     """

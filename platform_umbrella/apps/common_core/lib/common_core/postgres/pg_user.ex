@@ -5,17 +5,26 @@ defmodule CommonCore.Postgres.PGUser do
   import CommonCore.Postgres
   import Ecto.Changeset
 
+  alias CommonCore.Defaults.RandomKeyChangeset
+
+  @required_fields ~w()a
+  @optional_fields ~w(username password roles)a
+
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
     field :username, :string
+    field :password, :string
     field :roles, {:array, :string}, default: []
   end
 
   def changeset(struct, params \\ %{}) do
+    fields = Enum.concat(@required_fields, @optional_fields)
+
     struct
-    |> cast(params, [:username, :roles])
-    |> validate_required([:username, :roles])
+    |> cast(params, fields)
+    |> RandomKeyChangeset.maybe_set_random(:password, length: 24)
+    |> validate_required(@required_fields)
     |> validate_pg_rolelist(:roles)
   end
 end

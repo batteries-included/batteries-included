@@ -2,13 +2,13 @@ defmodule CommonCore.Defaults.RandomKeyChangeset do
   @moduledoc false
   import Ecto.Changeset
 
-  @default_length 128
+  @default_length 64
 
   @doc """
     Adds a random key to the given `field` of the `changeset` if it is `nil`.
 
     The `opts` keyword list can contain the `:length` option to specify the length of the generated key.
-    The default length is `128`.
+    The default length is `64`.
 
     ## Examples
     ```elixir

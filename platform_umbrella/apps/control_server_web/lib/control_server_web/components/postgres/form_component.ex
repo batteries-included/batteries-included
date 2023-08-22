@@ -6,7 +6,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGCredentialCopy
-  alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGUser
   alias ControlServer.Postgres
   alias Ecto.Changeset
@@ -58,29 +57,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     users = changeset |> Changeset.get_field(:users, []) |> List.delete_at(String.to_integer(idx))
 
     final_changeset = Changeset.put_embed(changeset, :users, users)
-
-    {:noreply,
-     socket
-     |> assign(changeset: final_changeset)
-     |> assign(:possible_owners, possible_owners(final_changeset))}
-  end
-
-  def handle_event("add:database", _, %{assigns: %{changeset: changeset}} = socket) do
-    databases = Changeset.get_field(changeset, :databases, []) ++ [%PGDatabase{}]
-
-    final_changeset = Changeset.put_embed(changeset, :databases, databases)
-
-    {:noreply,
-     socket
-     |> assign(changeset: final_changeset)
-     |> assign(:possible_owners, possible_owners(final_changeset))}
-  end
-
-  def handle_event("del:database", %{"idx" => idx}, %{assigns: %{changeset: changeset}} = socket) do
-    databases =
-      changeset |> Changeset.get_field(:databases, []) |> List.delete_at(String.to_integer(idx))
-
-    final_changeset = Changeset.put_embed(changeset, :databases, databases)
 
     {:noreply,
      socket
