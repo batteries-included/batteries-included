@@ -56,19 +56,25 @@
       url = "github:numtide/treefmt-nix";
       inputs = { nixpkgs.follows = "nixpkgs"; };
     };
+
+    mission-control = {
+      url = "github:Platonic-Systems/mission-control";
+    };
   };
 
-  outputs = inputs@{ flake-utils, treefmt-nix, flake-root, flake-parts, ... }:
+  outputs = inputs@{ flake-utils, treefmt-nix, flake-root, flake-parts, mission-control, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = flake-utils.lib.defaultSystems;
       imports = [
         treefmt-nix.flakeModule
         flake-root.flakeModule
+        mission-control.flakeModule
         ./nix/shell.nix
         ./nix/cli.nix
         ./nix/pastebin.nix
         ./nix/platform.nix
         ./nix/fmt.nix
+        ./nix/mission-control.nix
       ];
     };
 }

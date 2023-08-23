@@ -134,6 +134,21 @@
         "type": "github"
       }
     },
+    "mission-control": {
+      "locked": {
+        "lastModified": 1690573269,
+        "narHash": "sha256-9NSmHRQvzBzfuKD3zHE2fM5xPa+hHSy7xcWQqZaCjFw=",
+        "owner": "Platonic-Systems",
+        "repo": "mission-control",
+        "rev": "9d25d9f8d610916fc144f6afc1f064392fbeec1c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Platonic-Systems",
+        "repo": "mission-control",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1690640159,
@@ -174,6 +189,7 @@
         "flake-root": "flake-root",
         "flake-utils": "flake-utils",
         "gitignore": "gitignore",
+        "mission-control": "mission-control",
         "nixpkgs": "nixpkgs",
         "npmlock2nix": "npmlock2nix",
         "rust-overlay": "rust-overlay",

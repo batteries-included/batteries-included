@@ -1,6 +1,3 @@
-#!/usr/bin/env bash
-set -exuo pipefail
-
 deleteAllTagged() {
   kubectl get -lbattery/managed=true "${1}" |
     awk '{print $1}' |

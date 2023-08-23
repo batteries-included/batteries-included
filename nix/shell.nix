@@ -2,7 +2,7 @@
 
 {
 
-  perSystem = { system, ... }:
+  perSystem = { system, config, lib, ... }:
     let
       overlays = [ (import inputs.rust-overlay) ];
       pkgs = import inputs.nixpkgs {
@@ -80,7 +80,8 @@
       ++ elixirNativeTools
       ++ rustNativeBuildTools
       ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
-      ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools;
+      ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
+      ++ [ config.treefmt.build.wrapper ];
 
 
       buildInputs = with pkgs; [
@@ -89,6 +90,9 @@
       ];
 
       shellHook = ''
+        # NOTE(jdt): try very hard not to run mix commands here.
+        # they take a bit to start and execute even if they don't do anything
+
         # go to the top level.
         pushd $(git rev-parse --show-toplevel || echo ".") &> /dev/null
 
@@ -103,8 +107,10 @@
         export PATH=$HEX_HOME/bin:$PATH
 
         pushd platform_umbrella &> /dev/null
-        mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3 || true;
-        mix local.hex --force --if-missing || true;
+        [[ $(find $MIX_HOME -type f -name 'rebar3' -executable -print0 | grep -qz .) ]] \
+            || mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3
+        [[ $(find $MIX_HOME -type d -name 'hex-*' -print0 | grep -qz . ) ]] \
+            || mix local.hex --force --if-missing
         popd &> /dev/null
 
         # This keeps cargo self contained in this dir
@@ -115,7 +121,6 @@
         popd &> /dev/null
       '';
 
-
     in
     {
       devShells.default = pkgs.mkShell {
@@ -125,6 +130,8 @@
         LC_CTYPE = "en_US.UTF-8";
         RUST_BACKTRACE = 1;
         ERL_AFLAGS = "-kernel shell_history enabled";
+
+        inputsFrom = [ config.mission-control.devShell ];
       };
     };
 }

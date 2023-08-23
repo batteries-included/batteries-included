@@ -41,4 +41,4 @@ jobs:
             'push') }}
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v2
-      - run: nix develop --command bash ./dev/run-mix-test.sh
+      - run: nix develop --command bash bi ex-test-deep
