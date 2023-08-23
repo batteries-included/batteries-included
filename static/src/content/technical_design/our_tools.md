@@ -6,12 +6,57 @@ draft: false
 images: []
 ---
 
+## `bi`
+
+We use [mission-control](https://github.com/Platonic-Systems/mission-control) to
+provide consistent dev tooling.
+
+If you're using `direnv`, you should see a menu listing all of our commands when
+you enter the repo.
+
+If not, you'll need to enter a nix shell by running something like
+`nix develop`.
+
+Example:
+
+```sh
+bi
+Available commands:
+
+## code
+
+  bi fmt  : Format the codebase
+
+## dev
+
+  bi bootstrap              : Bootstrap the dev environment
+  bi dev                    : Start dev environment
+  bi dev-iex                : Start dev environment with iex
+  bi gen-static-specs       : Generate static specs
+  bi nuke-cluster-contents  : Clean up dev cluster resources
+  bi nuke-clusters          : Destroy dev clusters completely
+  bi nuke-test-db           : Reset test DB
+
+## elixir
+
+  bi ex-deep-clean  : Really clean the elixir codebase
+  bi ex-fmt         : Format elixir codebase
+  bi ex-test        : Run stale tests
+  bi ex-test-deep   : Run all tests with coverage and all that jazz
+  bi ex-test-quick  : Run tests excluding @tag slow
+  bi m              : Run mix commands
+
+## ops
+
+  bi push-aws  : Push to AWS
+```
+
 ## Bootstrap
 
 Example:
 
 ```sh
-./dev/bootstrap.sh
+bi bootstrap
 ```
 
 This script calls into the rust `cli` binary with auto-discovered paths and
@@ -42,14 +87,12 @@ command line arguments. The end result is calling `cli dev` that will:
     spec. This mimics how installs will happen without needing to package any
     docker.
 
-##
-
-## Nuke Platform
+## Deep clean (f.k.a Nuke Platform)
 
 Example:
 
 ```sh
-../dev/nuke-platform.sh && mix do deps.get, compile --force, test
+bi ex-deep-clean
 ```
 
 Every once in a while, there is some caching issue that will cause tests to
@@ -63,7 +106,7 @@ all the time == "Works for me")
 Example:
 
 ```sh
-./dev/nuke-clusters.sh && ./dev/bootstrap.sh
+bi nuke-clusters && bi bootstrap
 ```
 
 Sometimes things on the kind cluster get all messed up, and you don't want to
@@ -77,7 +120,7 @@ the Nuke Clusters discussion?
 ## Gen Static Specs
 
 ```sh
-./dev/gen-static-specs.sh
+bi get-static-specs
 ```
 
 While developing, we want the bootstrapping process to be stable and free from
@@ -104,32 +147,61 @@ Rather than wire up markdown, shell, and rust formatters Nix gives it to us.
 Example:
 
 ```sh
-nix fmt
+bi fmt
 ```
 
-This command will format all source code in the directory. Elixir's formatter
-doesn't play as well with treefmt. So we will need some wrapping shell script.
-Until then this command formats everything except for elixir code.
+This command will format all source code in the directory. It uses `treefmt` for
+formatting everything besides elixir and then uses `mix format`.
 
 ### Format Elixir
+
+If you only want to format the elixir code, there's a command for that.
 
 Example:
 
 ```sh
-cd platform_umbrella && mix format
+bi ex-fmt
 ```
 
-## Run Mix Test
+## Run Mix Tests
+
+### Stale
+
+This runs "stale" tests - tests that have changed or where the output could have
+changed based on your code changes. This is nice for a fast, inner-loop.
+
+Example
+
+```
+bi ex-test
+```
+
+### Quick
+
+There are a few tests in the codebase that take a little bit longer (roughly >
+100ms). We tag those `slow` so we can identify them. We can also use the tag to
+exclude those tests. This still provides pretty good coverage while saving a bit
+of time.
+
+Example
+
+```
+bi ex-test-quick
+```
+
+### Deep
 
 Sometimes you don't want to remember if the Test database is migrated, or you
 want to see all the details on test speed or coverage. If you said yes to any of
 those, do I have a deal for you? The run mix test does all that for the price of
 one shell command.
 
+This is also the command that is used in CI.
+
 Example
 
 ```
-./dev/run-mix-test.sh
+bi ex-test-deep
 ```
 
 ## Mix Server
@@ -141,7 +213,7 @@ cli command).
 Example:
 
 ```sh
-mix phx.server
+bi dev       # essentially, mix phx.server
 ```
 
 ## Mix Server With REPL
@@ -149,12 +221,25 @@ mix phx.server
 Elixir has an excellent command `iex` that takes an argument for what to run.
 Combining this knowledge with the previous, we get a handy command.
 
+Example:
+
 ```sh
-iex -S mix phx.server
+bi dev-iex  # essentially, iex -S mix phx.server
 ```
 
 That will start the Phoenix servers and give you a REPL with access to the
 process trees, the ETS, and the database connections.
+
+## Mix
+
+We provide a convenient alias for `mix` so that any mix command can be ran from
+any directory in the repo.
+
+Example:
+
+```sh
+cd cli && bi m help test
+```
 
 ## Dashboard
 

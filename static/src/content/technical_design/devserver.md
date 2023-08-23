@@ -84,8 +84,8 @@ Explore tab on the left. `devserver` should be an option there, and the `main`
 repo should be selectable.
 
 You can continue with the Developing section from the readme, by running
-`dev/bootstrap.sh` in one shell, and after everything's ready `mix phx.server`
-in another server.
+`bi bootstrap` in one shell, and after everything's ready `bi dev` in another
+server.
 
 ## Limitations
 

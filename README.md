@@ -20,10 +20,15 @@ Included team. Let's build something amazing together!
 ### Install Nix
 
 Nix is what we use to ensure that all dev environments have all the software
-needed. It's a packaging system and more. To install it the determinate
-installer is the recommended. If you are using a different installer Batteries
-Included will need experimental (nix-command and
-flakes)[https://nixos.wiki/wiki/Flakes] support turned on.
+needed. It's a packaging system and more. The Determinate Systems installer is
+the recommended approach for installing.
+
+No, seriously. We hate piping from curl and having random stuff installed on our
+machines as well but you'll have some issues if you use your distro's package.
+Don't say you haven't been warned!
+
+If you are using a different installer Batteries Included will need experimental
+[nix-command and flakes](https://nixos.wiki/wiki/Flakes) support turned on.
 
 https://github.com/DeterminateSystems/nix-installer
 
@@ -53,14 +58,6 @@ While it's optional it's highly recommended to use direnv. It allows easy use of
 all the things nix installs.
 
 ## Code Orgnaization
-
-### Dev
-
-The dev folder contains scripts to use in developing and running the platform.
-
-`dev/bootstrap.sh` This is the folder to start up a kubernetes cluster and
-install the parts of Batteries Included that is necessary for developing or
-running.
 
 ### Static
 
@@ -109,15 +106,14 @@ installing postgres and istiod, then start a port forward to the postgres
 process.
 
 ```bash
-./dev/bootstrap.sh
+bi bootstrap
 ```
 
 Then in another shell (or tmux pane) start the control, and home web servers and
 background processes.
 
 ```bash
-cd platform_umbrella
-mix phx.server
+bi dev
 ```
 
 Now there are two web servers accessible.
