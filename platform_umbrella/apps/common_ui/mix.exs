@@ -37,7 +37,8 @@ defmodule CommonUI.MixProject do
       {:phoenix_live_view, "~> 0.19.5"},
       {:heroicons, "~> 0.5.3"},
       {:gettext, "~> 0.19"},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:petal_components, "~> 1.0"}
     ]
   end
 

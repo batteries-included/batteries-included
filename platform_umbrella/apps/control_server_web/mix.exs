@@ -51,6 +51,7 @@ defmodule ControlServerWeb.MixProject do
       {:heyya, "~> 0.3.1", only: :test},
       {:jason, "~> 1.4.1"},
       {:kube_services, in_umbrella: true},
+      {:petal_components, "~> 1.0"},
       {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4.2"},
       {:phoenix_html, "3.3.1"},

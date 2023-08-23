@@ -96,6 +96,12 @@
             '';
           };
 
+          build = {
+            description = "Build the given flake.";
+            category = "dev";
+            exec = ''nix build ".#$1"'';
+          };
+
           stop = {
             description = "Stop the kind cluster and all things";
             category = "dev";
