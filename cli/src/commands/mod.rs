@@ -1,9 +1,10 @@
 use crate::args::{CliAction, ProgramArgs};
 use eyre::Result;
 
-use self::dev::dev_command;
+use self::{dev::dev_command, stop::stop_command};
 
 pub mod dev;
+pub mod stop;
 
 pub async fn program_main(program_args: ProgramArgs) -> Result<()> {
     match program_args.cli_args.action {
@@ -25,6 +26,7 @@ pub async fn program_main(program_args: ProgramArgs) -> Result<()> {
             )
             .await
         }
+        CliAction::Stop { .. } => stop_command(program_args.base_args).await,
         CliAction::Start { .. } => unimplemented!(),
     }
 }

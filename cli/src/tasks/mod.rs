@@ -4,6 +4,7 @@ mod initial_apply;
 mod kube_provider;
 mod port_forward;
 mod setup_db;
+mod stop_kind;
 
 pub use download_install_spec::get_install_spec;
 pub use inflate_local_spec::add_local_to_spec;
@@ -14,3 +15,4 @@ pub use port_forward::port_forward;
 pub use port_forward::port_forward_postgres;
 pub use port_forward::port_forward_spec;
 pub use setup_db::setup_platform_db;
+pub use stop_kind::stop_kind_cluster;

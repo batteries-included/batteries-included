@@ -43,6 +43,10 @@ pub enum CliAction {
         #[clap(long)]
         platform_dir: Option<PathBuf>,
     },
+    Stop {
+        /// optional, positional customer id
+        id: Option<String>,
+    },
     Start {
         /// optional, positional customer id
         id: Option<String>,
@@ -104,5 +108,11 @@ mod tests {
                 forward_pods: vec![]
             }
         )
+    }
+
+    #[tokio::test]
+    async fn test_parse_stop() {
+        let args = CliArgs::parse_from(["bcli", "stop"]);
+        assert_eq!(args.action, CliAction::Stop { id: None })
     }
 }

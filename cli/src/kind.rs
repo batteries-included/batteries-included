@@ -19,6 +19,14 @@ pub fn start_cluster(kind_path: &Path, cluster_name: &str) -> Result<()> {
     Ok(command_status.exit_ok()?)
 }
 
+pub fn stop_cluster(kind_path: &Path, cluster_name: &str) -> Result<()> {
+    let command_status = Command::new(kind_path)
+        .args(["delete", "cluster", "-n", cluster_name])
+        .status()?;
+
+    Ok(command_status.exit_ok()?)
+}
+
 pub fn ensure_cluster_started(kind_path: &Path, cluster_name: &str) -> Result<()> {
     let running_clusters = list_clusters(kind_path)?;
     if running_clusters.iter().any(|run| run == cluster_name) {

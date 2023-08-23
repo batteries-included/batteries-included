@@ -13,9 +13,7 @@
             category = "code";
             exec = ''
               treefmt
-              pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
-              mix format
+              ex-fmt
             '';
           };
 
@@ -98,6 +96,14 @@
             '';
           };
 
+          stop = {
+            description = "Stop the kind cluster and all things";
+            category = "dev";
+            exec = ''
+              ${lib.getExe config.packages.bcli} stop -vv
+            '';
+          };
+
           dev = {
             description = "Start dev environment";
             category = "dev";
@@ -133,29 +139,6 @@
             description = "Clean up dev cluster resources";
             category = "dev";
             exec = builtins.readFile ./scripts/nuke-cluster-contents.sh;
-          };
-
-          nuke-clusters = {
-            description = "Destroy dev clusters completely";
-            category = "dev";
-            exec = ''
-              deleteK3dCluster() {
-                if command -v k3d; then
-                  k3d cluster delete || true
-                fi
-              }
-
-              deleteKindCluster() {
-                if command -v kind; then
-                  # NOTE(jdt): the single single escapes the nix string interpolation
-                  kind delete cluster --name "''${1}" || true
-                fi
-              }
-
-              deleteKindCluster "battery"
-              deleteKindCluster "batteries"
-              deleteK3dCluster
-            '';
           };
 
           nuke-test-db = {
