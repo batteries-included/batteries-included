@@ -176,6 +176,42 @@
             '';
           };
 
+          gen-keys = {
+            description = "Generate SSH and wireguard keys";
+            category = "ops";
+            exec = builtins.readFile ./scripts/gen-keys.sh;
+          };
+
+          gen-wg-client-config = {
+            description = "Generate SSH and wireguard keys";
+            category = "ops";
+            exec = ''
+              KEYS_DIR="ops/aws/keys"
+              CLIENT_NAME=''${1:-wireguard-client}
+              CLIENT_KEY=$(cat "$KEYS_DIR/$CLIENT_NAME")
+              SERVER_PUBKEY=$(cat "$KEYS_DIR/gateway.pub")
+
+              cat <<END
+              [Interface]
+              PrivateKey = $CLIENT_KEY
+              Address = 10.250.0.1/32
+
+              [Peer]
+              PublicKey = $SERVER_PUBKEY
+              AllowedIPs = 10.250.0.0/24, 10.0.0.0/16
+              Endpoint = pub-wg.batteriesincl.com:51820
+              END
+            '';
+          };
+
+          package-challenge = {
+            description = ''
+              Package up candidate challenge: "bi package-challenge candidate-name [destination-dir] [challenge]"
+            '';
+            category = "recruiting";
+            exec = builtins.readFile ./scripts/package-challenge.sh;
+          };
+
           # template = {
           #   description = "";
           #   category = "";

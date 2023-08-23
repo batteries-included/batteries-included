@@ -1,7 +1,4 @@
-#!/usr/bin/env bash
-set -exuo pipefail
-
-DIR="${BASH_SOURCE%/*}"
+# shellcheck disable=2164
 
 GATEWAY_SSH_KEY="gateway_ssh"
 DEVSERVER_SSH_KEY="devserver_ssh"
@@ -19,21 +16,21 @@ gen_ssh_key() {
   fi
 }
 
-pushd "${DIR}/../ops/aws/keys"
+pushd "ops/aws/keys" &>/dev/null
+trap 'popd &> /dev/null' EXIT
 
 gen_ssh_key "${GATEWAY_SSH_KEY}" "gateway"
 gen_ssh_key "${DEVSERVER_SSH_KEY}" "devserver"
 
-gen_wg_key "gateway"
-
-gen_wg_key "elliott-desktop"
-gen_wg_key "elliott-air"
-gen_wg_key "elliott-ipad"
-
-gen_wg_key "art"
-
-gen_wg_key "race-bernard"
-gen_wg_key "race-shared"
+# iterate over lines in ops/aws/keys/keys-to-generate
+# if you need to add a key, that's the place to do it
+while read -r line; do
+  # TODO(jdt): trim trailing comments
+  trimmed="$(echo "$line" | tr -d '[:space:]')"
+  [[ -z $trimmed ]] && continue
+  [[ $trimmed =~ ^#.* ]] && continue
+  gen_wg_key "$trimmed"
+done <keys-to-generate
 
 cp -nv ./*.pub ../pub_keys/
 
@@ -41,5 +38,3 @@ cat <<EOF >ansible_vars.yaml
 gateway_private_key: "$(cat gateway)"
 gateway_public_key: "$(cat ../pub_keys/gateway.pub)"
 EOF
-
-popd

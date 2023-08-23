@@ -6,7 +6,8 @@
 .nix-cargo
 
 # Sssssshhhhh
-ops/aws/keys/
+ops/aws/keys/*
+!ops/aws/keys/keys-to-generate
 
 # npm makes a copy of the javascript world here.
 # don't look inside you'll cry
