@@ -1,3 +1,5 @@
+[[ -z ${TRACE:-""} ]] || set -x
+
 deleteAllTagged() {
   kubectl get -lbattery/managed=true "${1}" |
     awk '{print $1}' |

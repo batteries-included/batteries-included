@@ -51,6 +51,15 @@ Available commands:
   bi push-aws  : Push to AWS
 ```
 
+Most of the scripts will `set -x` if `$TRACE` is set for additional debugging
+assistance.
+
+Example:
+
+```sh
+TRACE=1 bi nuke-test-db
+```
+
 ## Bootstrap
 
 Example:

@@ -21,6 +21,7 @@
             description = "Format elixir codebase";
             category = "elixir";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               mix format
@@ -31,6 +32,7 @@
             description = "Run stale tests";
             category = "elixir";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               mix test --trace --stale
@@ -41,6 +43,7 @@
             description = "Run tests excluding @tag slow";
             category = "elixir";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               mix test --trace --exclude slow --cover --export-coverage default --warnings-as-errors
@@ -52,6 +55,7 @@
             description = "Run all tests with coverage and all that jazz";
             category = "elixir";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               mix deps.get
@@ -66,6 +70,7 @@
             description = "Really clean the elixir codebase";
             category = "elixir";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               mix clean --deps
@@ -80,6 +85,7 @@
             description = "Run mix commands";
             category = "elixir";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               mix "$@"
@@ -90,6 +96,7 @@
             description = "Bootstrap the dev environment";
             category = "dev";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               trap 'trap - SIGTERM && kill -- -$$' SIGINT SIGTERM EXIT
               ${lib.getExe config.packages.bcli} dev -vv --platform-dir=platform_umbrella
               echo "Exited"
@@ -122,6 +129,7 @@
             description = "Start dev environment with iex";
             category = "dev";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               iex -S mix phx.server
@@ -132,6 +140,7 @@
             description = "Generate static specs";
             category = "dev";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               mix "do" clean, compile --force
               mix gen.static.installations "../cli/tests/resources/specs"
@@ -151,6 +160,7 @@
             description = "Reset test DB";
             category = "dev";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               export MIX_ENV=test
               m "do" compile --force, ecto.reset
             '';
@@ -160,6 +170,7 @@
             description = "Push to AWS";
             category = "ops";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               DIR=ops/aws/ansible
               ansible-playbook -i "$DIR/inventory.yml" "$DIR/all.yml" -b
             '';
@@ -175,6 +186,7 @@
             description = "Generate SSH and wireguard keys";
             category = "ops";
             exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
               KEYS_DIR="ops/aws/keys"
               CLIENT_NAME=''${1:-wireguard-client}
               CLIENT_KEY=$(cat "$KEYS_DIR/$CLIENT_NAME")

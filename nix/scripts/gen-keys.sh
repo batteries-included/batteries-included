@@ -1,5 +1,7 @@
 # shellcheck disable=2164
 
+[[ -z ${TRACE:-""} ]] || set -x
+
 GATEWAY_SSH_KEY="gateway_ssh"
 DEVSERVER_SSH_KEY="devserver_ssh"
 

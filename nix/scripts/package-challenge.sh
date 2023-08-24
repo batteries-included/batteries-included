@@ -1,5 +1,7 @@
 # shellcheck disable=2164
 
+[[ -z ${TRACE:-""} ]] || set -x
+
 DEV="${1}"
 DEST="${2:-"$HOME/coding_challenges/$DEV"}"
 CHALLENGE="${3:-whats_up}"
