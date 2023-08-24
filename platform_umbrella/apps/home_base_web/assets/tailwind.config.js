@@ -111,6 +111,9 @@ module.exports = {
     // Common UI
     '../../common_ui/lib/*.*ex',
     '../../common_ui/lib/**/*.*ex',
+
+    // Petal Components
+    '../../../deps/petal_components/**/*.*ex*',
   ],
 
   daisyui: {
