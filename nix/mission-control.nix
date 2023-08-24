@@ -99,7 +99,7 @@
           build = {
             description = "Build the given flake.";
             category = "dev";
-            exec = ''nix build ".#$1"'';
+            exec = ''nix build ".#''${1:-""}"'';
           };
 
           stop = {

@@ -21,16 +21,10 @@ let
   MIX_ENV = mixEnv;
   LANG = "C.UTF-8";
 
-  homePriv = pkgs.callPackage ./priv.nix {
+  priv = pkgs.callPackage ./priv.nix {
     inherit pname version nodejs npmlock2nix;
-    name = "home_priv";
-    src = src + /apps/home_base_web/assets/.;
-  };
-
-  controlPriv = pkgs.callPackage ./priv.nix {
-    inherit pname version nodejs npmlock2nix;
-    name = "ctrl_priv";
-    src = src + /apps/control_server_web/assets/.;
+    name = "${pname}_priv";
+    src = src + /apps/${pname}_web/assets/.;
   };
 
   installHook = { release, version }: ''
@@ -50,11 +44,8 @@ beamPackages.mixRelease {
   buildInputs = [ openssl gcc ];
 
   postUnpack = ''
-    mkdir -p apps/control_server_web/priv/static/assets/
-    mkdir -p apps/home_base_web/priv/static/assets/
-
-    cp -r ${controlPriv}/* apps/control_server_web/priv/static/assets/
-    cp -r ${homePriv}/* apps/home_base_web/priv/static/assets/
+    mkdir -p apps/${pname}_web/priv/static/assets/
+    cp -r ${priv}/* apps/${pname}_web/priv/static/assets/
   '';
 
   installPhase = installHook { release = pname; inherit version; };
