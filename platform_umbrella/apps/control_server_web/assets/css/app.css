@@ -1,6 +1,4 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import './site_tailwind.css';
 
 @import '@fontsource/inter';
 @import '@fontsource/jetbrains-mono';
@@ -11,6 +9,8 @@
 @import './fresh_menu';
 @import './modal_scroller';
 
+@import '../../../../deps/petal_components/assets/default.css';
+
 ::selection {
-  @apply bg-pink-500;
+  @apply bg-primary-500;
 }

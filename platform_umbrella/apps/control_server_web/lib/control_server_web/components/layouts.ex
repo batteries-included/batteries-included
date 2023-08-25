@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Layouts do
       class="fresh-container flex bg-gray-50 h-full w-full min-h-screen"
       x-data="{'menuOpen': true}"
     >
-      <header class="navbar h-20 fixed bg-base-100 shadow-lg p-6">
+      <header class="navbar h-20 fixed bg-white shadow-lg p-6">
         <div class="flex-none">
           <button
             class="inline-flex hover:text-pink-500 transition-none"

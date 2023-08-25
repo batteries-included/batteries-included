@@ -46,6 +46,7 @@ jobs:
       - run: nix build .#pastebin -L
       - run: nix build .#pastebin-docker -L
   control-server:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

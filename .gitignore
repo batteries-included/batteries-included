@@ -12,6 +12,7 @@ ops/aws/keys/*
 # npm makes a copy of the javascript world here.
 # don't look inside you'll cry
 node_modules
+dist
 # Python
 .venv
 .direnv/
