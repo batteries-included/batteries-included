@@ -98,7 +98,10 @@
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
               trap 'trap - SIGTERM && kill -- -$$' SIGINT SIGTERM EXIT
-              ${lib.getExe config.packages.bcli} dev -vv --platform-dir=platform_umbrella
+              # shellcheck disable=2046
+              ${lib.getExe config.packages.bcli} dev \
+                $([[ -z ''${TRACE:-""} ]] || echo "-vv") \
+                --platform-dir=platform_umbrella
               echo "Exited"
             '';
           };
@@ -107,7 +110,8 @@
             description = "Uninstall everything from the kube cluster";
             category = "dev";
             exec = ''
-              ${lib.getExe config.packages.bcli} uninstall -vv
+              # shellcheck disable=2046
+              ${lib.getExe config.packages.bcli} uninstall $([[ -z ''${TRACE:-""} ]] || echo "-vv")
             '';
           };
 
@@ -126,7 +130,8 @@
             description = "Stop the kind cluster and all things";
             category = "dev";
             exec = ''
-              ${lib.getExe config.packages.bcli} stop -vv
+              # shellcheck disable=2046
+              ${lib.getExe config.packages.bcli} stop $([[ -z ''${TRACE:-""} ]] || echo "-vv")
             '';
           };
 
