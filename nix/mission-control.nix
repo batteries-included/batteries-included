@@ -103,6 +103,14 @@
             '';
           };
 
+          uninstall = {
+            description = "Uninstall everything from the kube cluster";
+            category = "dev";
+            exec = ''
+              ${lib.getExe config.packages.bcli} uninstall -vv
+            '';
+          };
+
           build = {
             description = "Build the given flake.";
             category = "dev";
@@ -148,12 +156,6 @@
               popd &> /dev/null
               treefmt
             '';
-          };
-
-          nuke-cluster-contents = {
-            description = "Clean up dev cluster resources";
-            category = "dev";
-            exec = builtins.readFile ./scripts/nuke-cluster-contents.sh;
           };
 
           nuke-test-db = {

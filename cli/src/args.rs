@@ -43,6 +43,7 @@ pub enum CliAction {
         #[clap(long)]
         platform_dir: Option<PathBuf>,
     },
+    Uninstall,
     Stop {
         /// optional, positional customer id
         id: Option<String>,
