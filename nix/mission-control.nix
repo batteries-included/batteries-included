@@ -114,7 +114,12 @@
           build = {
             description = "Build the given flake.";
             category = "dev";
-            exec = ''nix build ".#''${1:-""}"'';
+            exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
+              flake=".#''${1:-""}"
+              shift
+              nix build "$flake" "$@"
+            '';
           };
 
           stop = {
