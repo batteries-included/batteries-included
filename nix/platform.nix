@@ -6,7 +6,8 @@
     let
       inherit (inputs.gitignore.lib) gitignoreSource;
       overlays = [ (import inputs.rust-overlay) ];
-      pkgs = import inputs.nixpkgs {
+      nixpkgs = inputs.nixpkgs;
+      pkgs = import nixpkgs {
         inherit system overlays;
         config.allowUnfree = true;
       };
@@ -53,7 +54,7 @@
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {
-        inherit version src mixFodDeps pkgs;
+        inherit version src mixFodDeps pkgs nixpkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
         inherit rustToolChain pkg-config gcc openssl;
@@ -62,7 +63,7 @@
       };
 
       home-base = pkgs.callPackage ./platform_release.nix {
-        inherit version src mixFodDeps pkgs;
+        inherit version src mixFodDeps pkgs nixpkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
         inherit rustToolChain pkg-config gcc openssl;

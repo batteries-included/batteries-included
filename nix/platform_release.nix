@@ -14,6 +14,7 @@
 , elixir
 , hex
 , mixFodDeps
+, stdenv
 , ...
 }:
 let
@@ -22,9 +23,8 @@ let
   LANG = "C.UTF-8";
 
   priv = pkgs.callPackage ./priv.nix {
-    inherit pname version nodejs npmlock2nix;
+    inherit src pname version nodejs npmlock2nix mixFodDeps stdenv;
     name = "${pname}_priv";
-    src = src + /apps/${pname}_web/assets/.;
   };
 
   installHook = { release, version }: ''
