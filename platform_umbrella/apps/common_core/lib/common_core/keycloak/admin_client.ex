@@ -4,35 +4,31 @@ defmodule CommonCore.Keycloak.AdminClient do
   the Keycloak api. It handles open id connect
   token rotation.
 
+  See rest documentation here:
+  https://www.keycloak.org/docs-api/22.0.1/rest-api/index.html
+
   The following apis are currently implemented:
 
   ## Realms
 
-  List the realms on the keycloak instance
+  - List the realms on the keycloak instance
 
   ## Clients
 
-  List all the clients that can connect to a given realm.
+  - List all the clients that can connect to a given realm.
 
   ## Users
 
-  List all the users that can login to a given realm
+  - List all the users that can login to a given realm
+  - Get a single user
+  - Create a single user
+  - Reset a single user's password
+  - Delete a single user
 
-  ## Get User
+  ## REST Auth
 
-  Get a single user
-
-  ## Delete User
-
-  Delete a single user
-
-  ## Refresh
-
-  Force a refresh of the access token
-
-  ## Login
-
-  Force a username/password login.
+  - Force a username/password login.
+  - Force a refresh of the access token
 
   """
   use GenServer
@@ -42,12 +38,16 @@ defmodule CommonCore.Keycloak.AdminClient do
   alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.OpenApi.KeycloakAdminSchema
   alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
 
   require Logger
 
   @state_opts ~w(username password base_url adapter)a
 
   @me __MODULE__
+
+  @base_path "/admin/realms/"
 
   typedstruct module: State do
     # This is the adapter to use for Tesla, a way to pass in a
@@ -86,26 +86,58 @@ defmodule CommonCore.Keycloak.AdminClient do
     {:ok, state}
   end
 
+  @spec reset(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t(), String.t()) :: :ok
+  @doc """
+  Reset the credentials used for this rest client. This won't log in to keycloak. That happens
+  when needed or if forced via `login/1`
+  """
   def reset(target \\ @me, base_url, username, password) do
     GenServer.call(target, {:reset, base_url: base_url, username: username, password: password})
   end
 
+  @doc """
+  Login to the Keycloak
+  """
   def login(target \\ @me) do
     GenServer.call(target, :login)
   end
 
+  @doc """
+  Refresh the access tokens using configured credentials
+  """
   def refresh(target \\ @me) do
     GenServer.call(target, :refresh)
   end
 
+  @spec realms(atom | pid | {atom, any} | {:via, atom, any}) ::
+          {:ok, list(RealmRepresentation.t())} | {:error, any()}
+  @doc """
+  List the realms on Keycloak
+
+  This is a rest call into the api server.
+  """
   def realms(target \\ @me) do
     GenServer.call(target, :realms)
   end
 
+  @spec realm(atom | pid | {atom, any} | {:via, atom, any}, any) ::
+          {:ok, RealmRepresentation.t()} | {:error, any()}
+  @doc """
+  Get the realm representation from Keycloak
+
+  This is a rest call into the api server.
+  """
   def realm(target \\ @me, name) do
     GenServer.call(target, {:realm, name})
   end
 
+  @spec create_realm(atom | pid | {atom, any} | {:via, atom, any}, map()) ::
+          {:ok, RealmRepresentation.t()} | {:error, any()}
+  @doc """
+  Given a realm representation create it.
+
+  This is a rest call into keycloak
+  """
   def create_realm(target \\ @me, realm) do
     GenServer.call(target, {:create_realm, realm})
   end
@@ -116,16 +148,32 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:clients, realm_name})
   end
 
+  @spec users(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
+          {:ok, list(UserRepresentation.t())} | {:error, any()}
   def users(target \\ @me, realm_name) do
     GenServer.call(target, {:users, realm_name})
   end
 
+  @spec user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) ::
+          {:ok, UserRepresentation.t()} | {:error, any()}
   def user(target \\ @me, realm_name, user_id) do
     GenServer.call(target, {:user, realm_name, user_id})
   end
 
+  @spec delete_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) :: any
   def delete_user(target \\ @me, realm_name, user_id) do
     GenServer.call(target, {:delete_user, realm_name, user_id})
+  end
+
+  @spec create_user(atom | pid | {atom, any} | {:via, atom, any}, any, any) ::
+          {:ok, UserRepresentation.t()} | {:error, any()}
+  def create_user(target \\ @me, realm_name, user_data) do
+    GenServer.call(target, {:create_user, realm_name, user_data})
+  end
+
+  @spec reset_password_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t(), String.t()) :: any
+  def reset_password_user(target \\ @me, realm_name, user_id, creds) do
+    GenServer.call(target, {:reset_password_user, realm_name, user_id, creds})
   end
 
   def handle_call(:refresh, _from, state) do
@@ -193,6 +241,26 @@ defmodule CommonCore.Keycloak.AdminClient do
     case handle_auth(state) do
       {:ok, %State{} = new_state} ->
         {:reply, do_delete_user(realm_name, user_id, new_state), new_state}
+
+      error ->
+        {:reply, error, reset_tokens(state)}
+    end
+  end
+
+  def handle_call({:create_user, realm_name, user_data}, _from, %State{} = state) do
+    case handle_auth(state) do
+      {:ok, %State{} = new_state} ->
+        {:reply, do_create_user(realm_name, user_data, new_state), new_state}
+
+      error ->
+        {:reply, error, reset_tokens(state)}
+    end
+  end
+
+  def handle_call({:reset_password_user, realm_name, user_id, creds}, _from, %State{} = state) do
+    case handle_auth(state) do
+      {:ok, %State{} = new_state} ->
+        {:reply, do_reset_password_user(realm_name, user_id, creds, new_state), new_state}
 
       error ->
         {:reply, error, reset_tokens(state)}
@@ -344,7 +412,7 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   defp do_get_realm(realm_name, %State{bearer_client: client} = _state) do
     client
-    |> Tesla.get("/admin/realms/" <> realm_name)
+    |> Tesla.get(@base_path <> realm_name)
     |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
   end
 
@@ -356,29 +424,39 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   defp do_list_clients(realm_name, %State{bearer_client: client} = _state) do
     client
-    |> Tesla.get("/admin/realms/" <> realm_name <> "/clients")
+    |> Tesla.get(@base_path <> realm_name <> "/clients")
     |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
   end
 
   defp do_list_users(realm_name, %State{bearer_client: client} = _state) do
     client
-    |> Tesla.get("/admin/realms/" <> realm_name <> "/users")
+    |> Tesla.get(@base_path <> realm_name <> "/users")
     |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
   end
 
   defp do_get_user(realm_name, user_id, %State{bearer_client: client} = _state) do
     client
-    |> Tesla.get("/admin/realms/" <> realm_name <> "/users/" <> user_id)
+    |> Tesla.get(@base_path <> realm_name <> "/users/" <> user_id)
     |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
   end
 
   defp do_delete_user(realm_name, user_id, %State{bearer_client: client} = _state) do
     client
-    |> Tesla.delete("/admin/realms/" <> realm_name <> "/users/" <> user_id)
-    |> to_result()
+    |> Tesla.delete(@base_path <> realm_name <> "/users/" <> user_id)
+    |> to_result(nil)
   end
 
-  defp to_result({:ok, %{status: 200, body: _body}} = in_res), do: to_result(in_res, nil)
+  defp do_create_user(realm_name, user_data, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.post(@base_path <> realm_name <> "/users", user_data)
+    |> to_result(nil)
+  end
+
+  defp do_reset_password_user(realm_name, user_id, creds, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.put(@base_path <> realm_name <> "/users/" <> user_id <> "/reset-password", creds)
+    |> to_result(nil)
+  end
 
   defp to_result({:ok, %{status: 200, body: body}}, mapper) when is_list(body) do
     {:ok, Enum.map(body, mapper)}
@@ -403,6 +481,10 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   defp to_result({:ok, %{body: %{"error" => error}}}, _mapper) do
+    {:error, error}
+  end
+
+  defp to_result({:ok, %Tesla.Env{body: %{"errorMessage" => error}}}, _mapper) do
     {:error, error}
   end
 

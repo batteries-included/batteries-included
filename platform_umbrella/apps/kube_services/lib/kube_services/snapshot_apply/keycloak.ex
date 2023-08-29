@@ -85,7 +85,8 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
     with {:ok, up_g_snap} <- KeycloakEctoSteps.update_snap_status(snap, :applying),
          # Apply the actions
          {:ok, _apply_result} <- apply_actions(actions) do
-      # The results
+      # The results for the keycloak snapshot need
+      # to be written after all the actions have been accounted for.
       final_snap_update(up_g_snap, :ok)
     else
       {:error, err} -> {:error, err}
@@ -96,35 +97,27 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
   @spec apply_actions(list(KeycloakAction.t())) :: {:ok, any()} | {:error, any()}
   defp apply_actions(actions) do
     updates =
-      actions
-      |> Enum.map(fn action -> ApplyAction.apply(action) end)
-      |> Enum.each(fn res -> Logger.debug("Action result = #{inspect(res)}") end)
-      |> Enum.map(&update_action_args/1)
+      Enum.map(actions, fn action ->
+        # This sends the actual action to
+        # Keycloak.
+        case ApplyAction.apply(action) do
+          # After applying plan what we need to change with
+          # an update to each action.
+          {:ok, _good_result} ->
+            %{is_success: true, apply_result: nil}
 
-    # Hand those plans to the database.
-    {:ok, update_result} = KeycloakEctoSteps.update_actions(actions, updates)
+          {:error, bad_result} ->
+            %{is_success: false, apply_result: reason_string(bad_result)}
+        end
+      end)
 
-    {:ok, update_result}
-  end
-
-  defp update_action_args(result) do
-    result_is_success = is_success?(result)
-
-    apply_result = if result_is_success, do: nil, else: reason_string(result)
-
-    %{
-      is_success: result_is_success,
-      apply_result: apply_result
-    }
+    # Tell the database about what happened in all the actions, batch style.
+    KeycloakEctoSteps.update_actions(actions, updates)
   end
 
   defp final_snap_update(snap, _) do
     KeycloakEctoSteps.update_snap_status(snap, :ok)
   end
-
-  defp is_success?(:ok), do: true
-  defp is_success?({:ok, _}), do: true
-  defp is_success?(_result), do: false
 
   defp reason_string(nil), do: nil
   defp reason_string(reason_atom) when is_atom(reason_atom), do: Atom.to_string(reason_atom)

@@ -3,7 +3,7 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
   alias CommonCore.Keycloak.AdminClient
   alias ControlServer.SnapshotApply.KeycloakAction
 
-  @spec apply(ControlServer.SnapshotApply.KeycloakAction.t()) :: {:ok, nil}
+  @spec apply(ControlServer.SnapshotApply.KeycloakAction.t()) :: {:ok, any()} | {:error, any()}
   def apply(%KeycloakAction{action: :create, type: :realm} = action) do
     # Here we rely on the fact that
     # Document is already loaded for us
@@ -11,7 +11,7 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
       {:ok, _new_url} ->
         {:ok, nil}
 
-      err ->
+      {:error, err} ->
         {:error, err}
     end
   end

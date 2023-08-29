@@ -18,6 +18,7 @@ defmodule CommonCore.Keycloak.TestAdminClient do
 
   @full_url "http://keycloak.local.test/realms/master/protocol/openid-connect/token"
   @realms_url "http://keycloak.local.test/admin/realms"
+  @battery_core_users_url "http://keycloak.local.test/admin/realms/batterycore/users"
 
   describe "login/1" do
     setup [:verify_on_exit!, :setup_mocked_admin]
@@ -57,6 +58,26 @@ defmodule CommonCore.Keycloak.TestAdminClient do
     end
   end
 
+  describe "create_user/1" do
+    setup [:verify_on_exit!, :setup_mocked_admin]
+
+    test "will return ok", %{pid: pid} do
+      expect_openid_token(1)
+      new_url = @battery_core_users_url <> "/33"
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_users_url}, _opts ->
+        {:ok, %Tesla.Env{status: 201, headers: [{"location", new_url}]}}
+      end)
+
+      assert {:ok, ^new_url} =
+               AdminClient.create_user(pid, "batterycore", %{
+                 username: "elliott",
+                 email: "elliott@batteriesincl.com",
+                 enabled: true
+               })
+    end
+  end
+
   defp build_random_byte_string(n) do
     n
     |> :crypto.strong_rand_bytes()
@@ -85,9 +106,9 @@ defmodule CommonCore.Keycloak.TestAdminClient do
     end)
   end
 
-  defp expect_realms do
+  defp expect_realms(return_value \\ []) do
     expect(TeslaMock, :call, fn %{url: @realms_url}, _opts ->
-      {:ok, %Tesla.Env{status: 200, body: []}}
+      {:ok, %Tesla.Env{status: 200, body: return_value}}
     end)
   end
 end
