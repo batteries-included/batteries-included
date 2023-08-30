@@ -56,7 +56,7 @@ easy to use. Sometimes it is so complex as to be prohibitavely hard to operate.
 
 ## Batteries Included: The All-Inclusive Platform
 
-![All Inclusive Resort](../../assets/images/posts/open-source-platform/all-inclusive.png)
+![All Inclusive Resort](./open-source-platform/all-inclusive.png)
 
 Enter Batteries Included, a platform that embodies the very essence of
 open-source systems. Based on the robust Kubernetes framework, our platform
@@ -71,7 +71,7 @@ software, often daunting for many teams due to technical intricacies, becomes
 accessible. Teams no longer have to grapple with the challenges of installing,
 testing, configuring, or deploying open-source software. And let's face it, not
 
-![CRD CLI](../../assets/images/posts/open-source-platform/fault-tolerance.png)
+![CRD CLI](./open-source-platform/fault-tolerance.png)
 
 > [Original source here](http://howfuckedismydatabase.com/nosql/)
 
@@ -81,7 +81,7 @@ tools, and machine learning notebooks—all under a single OAuth login.
 
 ## The Robin Hood of Software Platforms
 
-![Robinhood](../../assets/images/posts/open-source-platform/robinhood.png)
+![Robinhood](./open-source-platform/robinhood.png)
 
 Choosing Batteries Included is akin to the legendary tale of Robin Hood. By
 leveraging our platform, businesses can tap into the open-source innovations of

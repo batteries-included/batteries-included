@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
+import { Image } from 'astro:assets';
 import logo from '../assets/images/logo-with-text.svg';
 ---
 
@@ -86,7 +87,7 @@ import logo from '../assets/images/logo-with-text.svg';
           </div>
           <div
             class="relative mt-12 sm:mx-auto sm:max-w-lg lg:col-span-6 lg:mx-0 lg:mt-0 lg:flex lg:max-w-none lg:items-center">
-            <img src={logo.src} alt="Batteries Included Logo" />
+            <Image src={logo} alt="Batteries Included Logo" class="w-full h-full" />
           </div>
         </div>
       </main>

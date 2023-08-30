@@ -52,7 +52,7 @@ customer satisfaction and business results.
 
 ## Silos Aren't Just For Grain
 
-![Golden Silo](../../assets/images/posts/devops-pe/silo.png)
+![Golden Silo](./devops-pe/silo.png)
 
 DevOps teams have many different challenges. One of the most daunting is the
 siloed nature of their work. Production teams with designers, mobile, web, and
@@ -61,7 +61,7 @@ DevOps being an ancillary team with almost insurmountable disadvantages.
 
 ## The Disconnect of Perspective
 
-![Perspective](../../assets/images/posts/devops-pe/perspective.png)
+![Perspective](./devops-pe/perspective.png)
 
 DevOps engineers, by the very nature of their role, focus on the intersection of
 development and operations. Their primary concerns revolve around deployment,
@@ -91,7 +91,7 @@ with their needs.
 
 ## Communication Gaps
 
-![Communications](../../assets/images/posts/devops-pe/communications.png)
+![Communications](./devops-pe/communications.png)
 
 Siloed development often leads to communication gaps. When a DevOps engineer
 crafts a tool in isolation, there's limited feedback from potential end-users
@@ -152,7 +152,7 @@ is to protect operations from yourself.
 
 ## Testing
 
-![Science!](../../assets/images/posts/devops-pe/testing.png)
+![Science!](./devops-pe/testing.png)
 
 As [Robert C. Martin](https://cleancoders.com/series/clean-code) aptly said,
 "Truth can only be found in one place: the code." But what happens when that
@@ -169,7 +169,7 @@ security issues lurking beneath the surface.
 
 ### Zoom Zoom
 
-![Formula One Car](../../assets/images/posts/devops-pe/car.png)
+![Formula One Car](./devops-pe/car.png)
 
 > Testing leads to failure, and failure leads to understanding -- Burt Rutan
 
@@ -208,7 +208,7 @@ corners are being cut to move faster.
 
 # The Way Forward
 
-![Path](../../assets/images/posts/devops-pe/path.png)
+![Path](./devops-pe/path.png)
 
 DevOps has historically focused on pushing developers in the direction of
 operations and automating that. While SREs are about bringing the sysadmin
