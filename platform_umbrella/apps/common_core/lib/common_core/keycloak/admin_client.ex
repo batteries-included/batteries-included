@@ -185,88 +185,7 @@ defmodule CommonCore.Keycloak.AdminClient do
     end
   end
 
-  def handle_call(:login, _from, state) do
-    case do_login(state) do
-      {:ok, new_state} -> {:reply, :ok, new_state}
-      error -> {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call(:realms, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} -> {:reply, do_list_realms(new_state), new_state}
-      error -> {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:realm, realm_name}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} -> {:reply, do_get_realm(realm_name, new_state), new_state}
-      error -> {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:create_realm, realm}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} -> {:reply, do_create_realm(realm, new_state), new_state}
-      error -> {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:clients, realm_name}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} -> {:reply, do_list_clients(realm_name, new_state), new_state}
-      error -> {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:users, realm_name}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} -> {:reply, do_list_users(realm_name, new_state), new_state}
-      error -> {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:user, realm_name, user_id}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} ->
-        {:reply, do_get_user(realm_name, user_id, new_state), new_state}
-
-      error ->
-        {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:delete_user, realm_name, user_id}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} ->
-        {:reply, do_delete_user(realm_name, user_id, new_state), new_state}
-
-      error ->
-        {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:create_user, realm_name, user_data}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} ->
-        {:reply, do_create_user(realm_name, user_data, new_state), new_state}
-
-      error ->
-        {:reply, error, reset_tokens(state)}
-    end
-  end
-
-  def handle_call({:reset_password_user, realm_name, user_id, creds}, _from, %State{} = state) do
-    case handle_auth(state) do
-      {:ok, %State{} = new_state} ->
-        {:reply, do_reset_password_user(realm_name, user_id, creds, new_state), new_state}
-
-      error ->
-        {:reply, error, reset_tokens(state)}
-    end
-  end
-
+  # These are the handle_call/3 functions that will deal with authentication state
   def handle_call({:reset, opts}, _from, %State{base_url: base_url, username: username, password: password} = state) do
     new_base_url = Keyword.get(opts, :base_url, base_url)
     new_username = Keyword.get(opts, :username, username)
@@ -284,6 +203,60 @@ defmodule CommonCore.Keycloak.AdminClient do
       {:reply, :ok, new_state}
     else
       {:reply, :ok, state}
+    end
+  end
+
+  def handle_call(:login, _from, state) do
+    case do_login(state) do
+      {:ok, new_state} -> {:reply, :ok, new_state}
+      error -> {:reply, error, reset_tokens(state)}
+    end
+  end
+
+  # These are the handle_call/3 functions that will send requests to keycloak
+  def handle_call(:realms, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_list_realms(new_state) end)
+  end
+
+  def handle_call({:realm, realm_name}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_get_realm(realm_name, new_state) end)
+  end
+
+  def handle_call({:create_realm, realm}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_create_realm(realm, new_state) end)
+  end
+
+  def handle_call({:clients, realm_name}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_list_clients(realm_name, new_state) end)
+  end
+
+  def handle_call({:users, realm_name}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_list_users(realm_name, new_state) end)
+  end
+
+  def handle_call({:user, realm_name, user_id}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_get_user(realm_name, user_id, new_state) end)
+  end
+
+  def handle_call({:delete_user, realm_name, user_id}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_delete_user(realm_name, user_id, new_state) end)
+  end
+
+  def handle_call({:create_user, realm_name, user_data}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_create_user(realm_name, user_data, new_state) end)
+  end
+
+  def handle_call({:reset_password_user, realm_name, user_id, creds}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_reset_password_user(realm_name, user_id, creds, new_state) end)
+  end
+
+  defp with_auth(state, fun) do
+    case handle_auth(state) do
+      {:ok, %State{} = new_state} ->
+        {:reply, fun.(new_state), new_state}
+
+      error ->
+        {:reply, error, reset_tokens(state)}
     end
   end
 
