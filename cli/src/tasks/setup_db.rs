@@ -31,7 +31,7 @@ pub async fn setup_platform_db(
     let seed_args = vec!["seed.control".to_string(), path_string];
     run_mix_command(platform_path, seed_args).await?;
 
-    info!("Setup complete. Database ready.");
+    println!("Setup complete. Database ready.");
 
     Ok(())
 }
