@@ -116,48 +116,58 @@ module.exports = {
     '../../common_ui/lib/**/*.*ex*',
 
     // Petal Components
-    '../../../deps/petal_components/**/*.*ex*',
+    '../../../deps/petal_components/**/*.*ex',
   ],
+
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          primary: astral[500],
+          secondary: violetRed[500],
+          accent: blizardBlue[500],
+          neutral: '#3D4451',
+          'base-100': colors.white,
+          info: astral[200],
+          success: shamrock[500],
+          warning: seaBuckthorn[500],
+          error: heath[500],
+        },
+      },
+    ],
+  },
 
   theme: {
     extend: {
       colors: {
-        // Primary
         'violet-red': violetRed,
-        primary: violetRed,
-        pink: violetRed,
-
-        // Secondary
-        secondary: astral,
         astral,
-
-        // SUCCESS
-        shamrock,
-        success: shamrock,
-
-        // Error + Danger
-        heath,
-        danger: heath,
-
-        // INFO and Accent
+        // Accent and INFO
         'blizzard-blue': blizardBlue,
-        info: blizardBlue,
-        blue: blizardBlue,
-
+        // Success
+        shamrock,
+        // warning
         'sea-buckthorn': seaBuckthorn,
+        // Error
+        heath,
+        // Base Renames
+        pink: violetRed,
+        blue: blizardBlue,
+        // Petal Components
+        primary: violetRed,
+        secondary: blizardBlue,
+        success: shamrock,
+        danger: heath,
         warning: seaBuckthorn,
-
-        // Gray
-        gray: colors.gray,
+        info: blizardBlue,
+        gray: colors.slate,
       },
-
       fontFamily: {
         sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
         mono: ['JetBrains MonoVariable', ...defaultTheme.fontFamily.mono],
       },
     },
   },
-
   plugins: [
     typography,
     forms,
