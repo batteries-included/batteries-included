@@ -46,7 +46,7 @@ defmodule KubeServices.MixProject do
       {:control_server, in_umbrella: true},
       {:event_center, in_umbrella: true},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:ex_machina, "~> 2.7", only: [:test]}
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]}
     ]
   end
 
