@@ -23,6 +23,10 @@ defmodule EventCenter.Application do
       Supervisor.child_spec(
         {Phoenix.PubSub, name: EventCenter.SystemStateSummary.PubSub},
         id: EventCenter.SystemStateSummary.PubSub
+      ),
+      Supervisor.child_spec(
+        {Phoenix.PubSub, name: EventCenter.Keycloak.PubSub},
+        id: EventCenter.Keycloak.PubSub
       )
     ]
 

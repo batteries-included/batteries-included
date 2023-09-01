@@ -165,7 +165,7 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:delete_user, realm_name, user_id})
   end
 
-  @spec create_user(atom | pid | {atom, any} | {:via, atom, any}, any, any) ::
+  @spec create_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), UserRepresentation.t()) ::
           {:ok, UserRepresentation.t()} | {:error, any()}
   def create_user(target \\ @me, realm_name, user_data) do
     GenServer.call(target, {:create_user, realm_name, user_data})
