@@ -11,6 +11,7 @@ defmodule HomeBase.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -29,7 +30,11 @@ defmodule HomeBase.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 
   # Specifies your project dependencies.
   #
@@ -39,6 +44,7 @@ defmodule HomeBase.MixProject do
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.9"},
       {:postgrex, "~> 0.17.2"},
+      {:ecto_sqlite3, ">= 0.0.0"},
       {:jason, "~> 1.4.1"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},
@@ -50,7 +56,7 @@ defmodule HomeBase.MixProject do
       {:mnemonic_slugs, "~> 0.0.3"},
 
       # testing
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
     ]
   end
 

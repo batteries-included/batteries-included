@@ -11,6 +11,7 @@ defmodule CommonUI.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()
@@ -23,21 +24,16 @@ defmodule CommonUI.MixProject do
     ]
   end
 
-  # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:dev), do: ["lib"]
-  defp elixirc_paths(_), do: ["lib"]
-
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:heyya, "~> 0.3.1", only: :test},
+      {:heyya, "~> 0.3.1", only: [:dev, :test, :integration]},
       {:phoenix, "~> 1.7.7"},
       {:jason, "~> 1.4.1"},
       {:phoenix_live_view, "~> 0.19.5"},
       {:heroicons, "~> 0.5.3"},
       {:gettext, "~> 0.19"},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:petal_components, "~> 1.0"}
     ]
   end
@@ -48,4 +44,12 @@ defmodule CommonUI.MixProject do
       "ecto.reset": []
     ]
   end
+
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:integration), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 end

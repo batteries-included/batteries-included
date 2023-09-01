@@ -27,26 +27,18 @@ config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
   delay: 20_000,
   failing_delay: 20_000
 
-config :logger, level: :warn
+config :logger, level: :warning
 
 config :control_server, ControlServer.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
-  password: System.get_env("POSTGRES_PASSWORD") || "not-real",
-  database: System.get_env("POSTGRES_DB") || "server_int_test",
-  hostname: System.get_env("POSTGRES_HOST") || "127.0.0.1",
-  port: System.get_env("POSTGRES_PORT") || 5432,
-  pool: Ecto.Adapters.SQL.Sandbox,
-  ownership_timeout: 300_000,
-  timeout: 180_000
+  database: Path.expand("../control_server_int.db", Path.dirname(__ENV__.file)),
+  stacktrace: true,
+  timeout: 180_000,
+  show_sensitive_data_on_connection_error: true
 
 config :home_base, HomeBase.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
-  password: System.get_env("POSTGRES_PASSWORD") || "not-real",
-  database: System.get_env("POSTGRES_DB") || "home_base_int_test",
-  hostname: System.get_env("POSTGRES_HOST") || "127.0.0.1",
-  port: System.get_env("POSTGRES_PORT") || 5432,
-  pool: Ecto.Adapters.SQL.Sandbox,
-  ownership_timeout: 300_000,
-  timeout: 180_000
+  database: Path.expand("../home_base_int.db", Path.dirname(__ENV__.file)),
+  stacktrace: true,
+  timeout: 180_000,
+  show_sensitive_data_on_connection_error: true
 
 config :hackney, use_default_pool: false

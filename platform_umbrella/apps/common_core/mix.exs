@@ -11,6 +11,7 @@ defmodule CommonCore.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -45,9 +46,9 @@ defmodule CommonCore.MixProject do
       {:ex_audit, "~> 0.10.0"},
 
       # Testing
-      {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_machina, "~> 2.7.0", only: :test},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
+      {:ex_machina, "~> 2.7.0", only: [:dev, :test, :integration]},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
     ]
   end
 
@@ -59,5 +60,9 @@ defmodule CommonCore.MixProject do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 end

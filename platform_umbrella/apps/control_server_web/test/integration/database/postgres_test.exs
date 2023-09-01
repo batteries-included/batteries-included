@@ -1,7 +1,6 @@
 defmodule ControlServerWeb.Integration.PostgrestTest do
   use ControlServerWeb.IntegrationTestCase
 
-  @new_cluster_text "New Cluster"
   @base_cluster_name "int-test"
 
   feature "Can start a postgres cluster", %{session: session} do
@@ -10,9 +9,7 @@ defmodule ControlServerWeb.Integration.PostgrestTest do
     cluster_name = cluster_name()
 
     session
-    |> visit("/services/data/postgres_clusters")
-    |> refute_has(css("tr td"))
-    |> click(link(@new_cluster_text))
+    |> visit("/postgres/new")
     |> fill_in(text_field("cluster[name]"), with: cluster_name)
     |> fill_in(text_field("cluster[storage_size]"), with: "100M")
     |> click(button("Save"))

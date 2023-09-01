@@ -28,6 +28,12 @@
         elixir-ls
         sqlite
 
+        # Yes the whole fucking world
+        # just for integration tests.
+        chromedriver
+        chromium
+        selenium-server-standalone
+
         mix2nix
         postgresql
 

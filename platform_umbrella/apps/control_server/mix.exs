@@ -11,6 +11,7 @@ defmodule ControlServer.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -26,7 +27,11 @@ defmodule ControlServer.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 
   # Specifies your project dependencies.
   #
@@ -46,6 +51,7 @@ defmodule ControlServer.MixProject do
       {:polymorphic_embed, "~> 3.0.5"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, "~> 0.17.2"},
+      {:ecto_sqlite3, ">= 0.0.0"},
 
       # Filtering
       {:flop, "~> 0.22.0"},
@@ -66,9 +72,9 @@ defmodule ControlServer.MixProject do
       ## Dev/Test only deps
 
       # Testing.
-      {:ex_machina, "~> 2.7", only: :test},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:floki, "~> 0.33", only: :test}
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
+      {:floki, "~> 0.33", only: [:dev, :test, :integration]}
     ]
   end
 

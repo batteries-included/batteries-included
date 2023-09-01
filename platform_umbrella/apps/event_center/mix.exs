@@ -11,6 +11,7 @@ defmodule EventCenter.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
+      test_paths: test_paths(Mix.env()),
       aliases: aliases(),
       deps: deps()
     ]
@@ -27,7 +28,7 @@ defmodule EventCenter.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:typed_struct, "~> 0.3.0", runtime: false},
       # Braodcast to thos who need events
       {:phoenix_pubsub, "~> 2.1"}
@@ -40,4 +41,7 @@ defmodule EventCenter.MixProject do
       "ecto.reset": []
     ]
   end
+
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 end

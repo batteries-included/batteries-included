@@ -34,6 +34,7 @@ defmodule ControlServerWeb.MixProject do
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:integration), do: ["test/integration"]
+  defp test_paths(:dev), do: ["test/unit", "test/integration"]
   defp test_paths(_), do: ["test/unit"]
 
   # Specifies your project dependencies.
@@ -45,10 +46,10 @@ defmodule ControlServerWeb.MixProject do
       {:common_ui, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:esbuild, "~> 0.7.1", runtime: Mix.env() == :dev},
-      {:ex_machina, "~> 2.7", only: :test},
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},
       {:heroicons, "~> 0.5.3"},
-      {:heyya, "~> 0.3.1", only: :test},
+      {:heyya, "~> 0.3.1", only: [:dev, :test, :integration]},
       {:jason, "~> 1.4.1"},
       {:kube_services, in_umbrella: true},
       {:petal_components, "~> 1.0"},
@@ -63,7 +64,7 @@ defmodule ControlServerWeb.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:wallaby, "~> 0.30.6", runtime: false, only: [:test, :integration]},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:websock_adapter, "~> 0.5.1"}
     ]
   end

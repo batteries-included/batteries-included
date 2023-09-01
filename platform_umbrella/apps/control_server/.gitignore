@@ -23,3 +23,6 @@ erl_crash.dump
 control_server-*.tar
 
 priv/secure/
+
+
+*.db-*

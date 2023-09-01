@@ -11,6 +11,7 @@ defmodule HomeBaseWeb.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -29,7 +30,11 @@ defmodule HomeBaseWeb.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 
   # Specifies your project dependencies.
   #
@@ -38,7 +43,7 @@ defmodule HomeBaseWeb.MixProject do
     [
       {:common_ui, in_umbrella: true},
       {:esbuild, "~> 0.7.1", runtime: Mix.env() == :dev},
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.30.0", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},
       {:heroicons, "~> 0.5.3"},
       {:home_base, in_umbrella: true},
@@ -54,7 +59,7 @@ defmodule HomeBaseWeb.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:websock_adapter, "~> 0.5.1"},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
     ]
   end
 
