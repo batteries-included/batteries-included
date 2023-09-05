@@ -28,7 +28,7 @@ jobs:
       POSTGRES_PASSWORD: 'batterypasswd'
       MIX_ENV: test
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
