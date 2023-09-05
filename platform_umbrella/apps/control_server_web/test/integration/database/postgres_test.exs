@@ -4,19 +4,25 @@ defmodule ControlServerWeb.Integration.PostgrestTest do
   @base_cluster_name "int-test"
 
   feature "Can start a postgres cluster", %{session: session} do
-    EventCenter.KubeState.subscribe(:postgresql)
-
     cluster_name = cluster_name()
 
     session
     |> visit("/postgres/new")
+    |> assert_text("New PostgreSQL Cluster")
     |> fill_in(text_field("cluster[name]"), with: cluster_name)
     |> fill_in(text_field("cluster[storage_size]"), with: "100M")
     |> click(button("Save"))
-    |> assert_has(css("tr td", count: nil, minimum: 4))
+    # Make sure that the postres cluster show page title is there
+    |> assert_text("Postgres Cluster")
+    # Make sure that this page has the kubenetes elements
+    |> assert_text("Pods")
+    |> assert_text("Services")
+    # Assert that we are on the correct cluster show page
     |> assert_text(cluster_name)
 
-    assert_receive _, 240_000
+    # Assert that we have gotten to the show page
+    path = current_path(session)
+    assert path =~ ~r/\/postgres\/[\d\w-]+\/show$/
   end
 
   defp cluster_name, do: "#{@base_cluster_name}-#{:rand.uniform(10_000)}"
