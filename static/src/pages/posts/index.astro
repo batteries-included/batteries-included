@@ -20,7 +20,11 @@ const posts = (await getCollection('posts'))
       posts.map((post) => (
         <article class="mx-auto w-full max-w-3xl">
           <h2 class="text-2xl font-bold leading-8 tracking-wide text-astral-800">
-            <a href={`/posts/${post.slug}/`}>{post.data.title}</a>
+            <a
+              href={`/posts/${post.slug}/`}
+              aria-label={`Read the article ${post.data.title}`}>
+              {post.data.title}
+            </a>
           </h2>
           <FormattedDate date={post.data.date} />
         </article>
