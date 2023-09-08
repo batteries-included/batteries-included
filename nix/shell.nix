@@ -100,7 +100,7 @@
         # they take a bit to start and execute even if they don't do anything
 
         # go to the top level.
-        pushd $(git rev-parse --show-toplevel || echo ".") &> /dev/null
+        pushd "$FLAKE_ROOT" &> /dev/null
 
         # this allows mix to work on the local directory
         export MIX_HOME=$PWD/.nix-mix
@@ -137,7 +137,7 @@
         RUST_BACKTRACE = 1;
         ERL_AFLAGS = "-kernel shell_history enabled";
 
-        inputsFrom = [ config.mission-control.devShell ];
+        inputsFrom = [ config.mission-control.devShell config.flake-root.devShell ];
       };
     };
 }
