@@ -2,6 +2,15 @@
 
 let
   craneLib = (crane.mkLib pkgs).overrideToolchain pkgs.rust-bin.nightly.latest.default;
+  frameworks = pkgs.darwin.apple_sdk.frameworks;
+
+  darwinOnlyTools = [
+    frameworks.Security
+    frameworks.CoreServices
+    frameworks.CoreFoundation
+    frameworks.Foundation
+  ];
+
   # Common arguments can be set here to avoid repeating them later
   commonArgs = {
     inherit pname cargoExtraArgs;
@@ -9,7 +18,7 @@ let
     nativeBuildInputs = with pkgs; [ pkg-config ] ++ nativeBuildInputs;
     buildInputs = with pkgs; [ openssl ]
       ++ buildInputs
-      ++ lib.optionals pkgs.stdenv.isDarwin [ ]
+      ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
       ++ lib.optionals pkgs.stdenv.isLinux [ ];
   };
 

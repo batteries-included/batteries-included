@@ -28,12 +28,6 @@
         elixir-ls
         sqlite
 
-        # Yes the whole fucking world
-        # just for integration tests.
-        chromedriver
-        chromium
-        selenium-server-standalone
-
         mix2nix
         postgresql
 
@@ -51,6 +45,12 @@
       linuxOnlyTools = with pkgs; [
         # Track when files change for css updates
         inotify-tools
+
+        # Yes the whole fucking world
+        # just for integration tests.
+        chromedriver
+        chromium
+        selenium-server-standalone
       ];
 
       frameworks = pkgs.darwin.apple_sdk.frameworks;
