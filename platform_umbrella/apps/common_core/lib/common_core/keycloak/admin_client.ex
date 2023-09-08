@@ -148,6 +148,23 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:clients, realm_name})
   end
 
+  @spec client(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) ::
+          {:ok, ClientRepresentation.t()} | {:error, any()}
+  def client(target \\ @me, realm_name, client_id) do
+    GenServer.call(target, {:client, realm_name, client_id})
+  end
+
+  @spec delete_client(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) :: any
+  def delete_client(target \\ @me, realm_name, client_id) do
+    GenServer.call(target, {:delete_client, realm_name, client_id})
+  end
+
+  @spec create_client(atom | pid | {atom, any} | {:via, atom, any}, String.t(), ClientRepresentation.t()) ::
+          {:ok, ClientRepresentation.t()} | {:error, any()}
+  def create_client(target \\ @me, realm_name, client_data) do
+    GenServer.call(target, {:create_client, realm_name, client_data})
+  end
+
   @spec users(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
           {:ok, list(UserRepresentation.t())} | {:error, any()}
   def users(target \\ @me, realm_name) do
@@ -214,6 +231,10 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   # These are the handle_call/3 functions that will send requests to keycloak
+
+  #
+  # Realms
+  #
   def handle_call(:realms, _from, %State{} = state) do
     with_auth(state, fn new_state -> do_list_realms(new_state) end)
   end
@@ -226,9 +247,25 @@ defmodule CommonCore.Keycloak.AdminClient do
     with_auth(state, fn new_state -> do_create_realm(realm, new_state) end)
   end
 
+  #
+  #  Clients
+  #
+
   def handle_call({:clients, realm_name}, _from, %State{} = state) do
     with_auth(state, fn new_state -> do_list_clients(realm_name, new_state) end)
   end
+
+  def handle_call({:client, realm_name, client_id}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_get_client(realm_name, client_id, new_state) end)
+  end
+
+  def handle_call({:create_client, realm_name, client_data}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_create_client(realm_name, client_data, new_state) end)
+  end
+
+  #
+  # Users
+  #
 
   def handle_call({:users, realm_name}, _from, %State{} = state) do
     with_auth(state, fn new_state -> do_list_users(realm_name, new_state) end)
@@ -377,6 +414,10 @@ defmodule CommonCore.Keycloak.AdminClient do
     end
   end
 
+  #
+  # Realms http methods
+  #
+
   defp do_list_realms(%State{bearer_client: client} = _state) do
     client
     |> Tesla.get("/admin/realms")
@@ -395,11 +436,31 @@ defmodule CommonCore.Keycloak.AdminClient do
     |> to_result(nil)
   end
 
+  #
+  # Clients http methods
+  #
+
   defp do_list_clients(realm_name, %State{bearer_client: client} = _state) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/clients")
     |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
   end
+
+  defp do_get_client(realm_name, client_id, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id)
+    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
+  end
+
+  defp do_create_client(realm_name, client_data, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.post(@base_path <> realm_name <> "/clients", client_data)
+    |> to_result(nil)
+  end
+
+  #
+  # Users http methods
+  #
 
   defp do_list_users(realm_name, %State{bearer_client: client} = _state) do
     client

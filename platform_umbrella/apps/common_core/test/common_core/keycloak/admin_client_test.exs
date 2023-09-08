@@ -19,6 +19,7 @@ defmodule CommonCore.Keycloak.TestAdminClient do
   @full_url "http://keycloak.local.test/realms/master/protocol/openid-connect/token"
   @realms_url "http://keycloak.local.test/admin/realms"
   @battery_core_users_url "http://keycloak.local.test/admin/realms/batterycore/users"
+  @battery_core_clients_url "http://keycloak.local.test/admin/realms/batterycore/clients"
 
   describe "login/1" do
     setup [:verify_on_exit!, :setup_mocked_admin]
@@ -74,6 +75,27 @@ defmodule CommonCore.Keycloak.TestAdminClient do
                  username: "elliott",
                  email: "elliott@batteriesincl.com",
                  enabled: true
+               })
+    end
+  end
+
+  describe "create_client/1" do
+    setup [:verify_on_exit!, :setup_mocked_admin]
+
+    test "will return ok", %{pid: pid} do
+      expect_openid_token(1)
+      new_url = @battery_core_clients_url <> "/33"
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_clients_url}, _opts ->
+        {:ok, %Tesla.Env{status: 201, headers: [{"location", new_url}]}}
+      end)
+
+      assert {:ok, ^new_url} =
+               AdminClient.create_client(pid, "batterycore", %{
+                 name: "grafana-0",
+                 rootUrl: "https://grafana.example.com",
+                 enabled: true,
+                 secret: "secret123"
                })
     end
   end
