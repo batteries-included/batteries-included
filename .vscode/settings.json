@@ -23,10 +23,5 @@
     "**/node_modules/**": true,
     "**/_build/**": true,
     "**/deps/**": true
-  },
-  "workbench.colorCustomizations": {
-    "activityBar.background": "#1A2179",
-    "titleBar.activeBackground": "#252EAA",
-    "titleBar.activeForeground": "#FBFBFE"
   }
 }
