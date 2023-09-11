@@ -14,10 +14,10 @@ defmodule CommonCore.Batteries.SSOConfig do
   end
 
   @doc """
-  Function for creating a change set that generates a OryKratosConfig suitable for inserting into a database.
+  Function for creating a change set that generates a config suitable for inserting into a database.
 
   This function should not be used with anything exposed to the
-  use as it requires the secret_* fields to be exposed.
+  user as it requires the secret_* fields to be exposed.
   """
   def changeset(struct, params \\ %{}) do
     fields = Enum.concat(@required_fields, @optional_fields)

@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Gen.Dashboard do
-  @shortdoc "Create json files to be embedded into kube resources with grafana dashobards"
+  @shortdoc "Create json files to be embedded into kube resources with grafana dashboards"
   @moduledoc "The mix task to generate a dashboard json for grafana"
 
   use Mix.Task
