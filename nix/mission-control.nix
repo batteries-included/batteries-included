@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  perSystem = { lib, config, ... }:
+  perSystem = { lib, config, pkgs, ... }:
     {
       mission-control = {
         wrapperName = "bi";
@@ -78,6 +78,19 @@
               find . -name node_modules -print0 | xargs -0 rm -rf || true
               find . -name assets | grep priv | xargs rm -rf || true
               mix deps.get && mix compile --force
+            '';
+          };
+
+          ex-watch = {
+            description = "Watch for changes to elixir source";
+            category = "elixir";
+            exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
+              ${lib.getExe pkgs.fswatch} \
+                --one-per-batch \
+                --event=Updated \
+                --recursive \
+                platform_umbrella/apps/
             '';
           };
 
