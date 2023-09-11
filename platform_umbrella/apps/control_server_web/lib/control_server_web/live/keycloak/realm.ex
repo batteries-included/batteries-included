@@ -8,6 +8,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
 
   alias CommonCore.Keycloak.AdminClient
   alias ControlServerWeb.Keycloak.NewUserForm
+  alias KubeServices.Keycloak.UserManager
   alias KubeServices.SystemState.SummaryHosts
 
   @impl Phoenix.LiveView
@@ -23,7 +24,8 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
      |> assign_realm(name)
      |> assign_clients(name)
      |> assign_users(name)
-     |> assign_new_user(nil)}
+     |> assign_new_user(nil)
+     |> assign_temp_password(nil)}
   end
 
   @impl Phoenix.LiveView
@@ -67,6 +69,10 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     assign(socket, :new_user, user)
   end
 
+  defp assign_temp_password(socket, temp_password) do
+    assign(socket, :temp_password, temp_password)
+  end
+
   @impl Phoenix.LiveView
   def handle_event("new-user", _, socket) do
     {:noreply, assign_new_user(socket, %{enabled: true})}
@@ -75,6 +81,28 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   @impl Phoenix.LiveView
   def handle_event("cancel_user", _, socket) do
     {:noreply, assign_new_user(socket, nil)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("reset_password", %{"user-id" => user_id}, socket) do
+    realm_name = socket.assigns.realm.realm
+
+    case UserManager.reset_password(realm_name, user_id) do
+      {:ok, temp_password} ->
+        {:noreply, assign_temp_password(socket, temp_password)}
+
+      {:error, _reason} ->
+        # Ignore for now
+        #
+        # TODO(elliott): when we figure out flash/temporary messaging
+        # use that here for error reporting.
+        {:noreply, socket}
+    end
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("cancel_temp_password", _, socket) do
+    {:noreply, assign_temp_password(socket, nil)}
   end
 
   @impl Phoenix.LiveView
@@ -106,6 +134,13 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
           realm={@realm.realm}
           id="new-user-modal"
         />
+      </.modal>
+    </div>
+
+    <div :if={@temp_password != nil}>
+      <.modal on_cancel={JS.push("cancel_temp_password")} id="temp-password-modal" show={true}>
+        <.h2>Temporary Password Set</.h2>
+        A new password has been set for this user. The temporary password is: <%= @temp_password %>
       </.modal>
     </div>
     <.button phx-click="new-user">New User</.button>

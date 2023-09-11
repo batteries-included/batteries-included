@@ -6,7 +6,7 @@ defmodule EventCenter.Keycloak do
 
   @pubsub EventCenter.Keycloak.PubSub
 
-  @allowed_actions [:create_user, :create_realm]
+  @allowed_actions [:create_user, :create_realm, :reset_user_password]
 
   def broadcast(action, object) when action in @allowed_actions do
     PubSub.broadcast(@pubsub, clean_topic(action), object)

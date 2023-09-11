@@ -45,6 +45,7 @@ defmodule ControlServerWeb.MixProject do
       {:common_core, in_umbrella: true},
       {:common_ui, in_umbrella: true},
       {:control_server, in_umbrella: true},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:esbuild, "~> 0.7.1", runtime: Mix.env() == :dev},
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},
@@ -52,6 +53,7 @@ defmodule ControlServerWeb.MixProject do
       {:heyya, "~> 0.3.1", only: [:dev, :test, :integration]},
       {:jason, "~> 1.4.1"},
       {:kube_services, in_umbrella: true},
+      {:mnemonic_slugs, "~> 0.0.3"},
       {:petal_components, "~> 1.0"},
       {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4.2"},
@@ -64,7 +66,6 @@ defmodule ControlServerWeb.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:wallaby, "~> 0.30.6", runtime: false, only: [:test, :integration]},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:websock_adapter, "~> 0.5.1"}
     ]
   end

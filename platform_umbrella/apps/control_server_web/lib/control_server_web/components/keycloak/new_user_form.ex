@@ -46,7 +46,7 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
 
   # This function UserManager to keycloak and sets the results into assigns.
   defp send_create(realm, user_params, socket) do
-    case UserManager.create_user(realm, user_params) do
+    case UserManager.create(realm, user_params) do
       {:ok, url} ->
         {:noreply, assign_new_url(socket, url)}
 

@@ -36,17 +36,18 @@ defmodule KubeServices.MixProject do
 
   defp deps do
     [
-      {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:typed_struct, "~> 0.3.0", runtime: false},
-      {:tesla, "~> 1.7.0"},
-      {:jason, "~> 1.4.1"},
-      {:k8s, "~> 2.4.1"},
-      {:phoenix, "~> 1.7.7"},
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
-      {:event_center, in_umbrella: true},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]}
+      {:event_center, in_umbrella: true},
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
+      {:jason, "~> 1.4.1"},
+      {:k8s, "~> 2.4.1"},
+      {:mnemonic_slugs, "~> 0.0.3"},
+      {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
+      {:phoenix, "~> 1.7.7"},
+      {:tesla, "~> 1.7.0"},
+      {:typed_struct, "~> 0.3.0", runtime: false}
     ]
   end
 

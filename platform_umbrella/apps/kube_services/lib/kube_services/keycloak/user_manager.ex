@@ -4,12 +4,15 @@ defmodule KubeServices.Keycloak.UserManager do
   use TypedStruct
 
   alias CommonCore.Keycloak.AdminClient
+  alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
 
   require Logger
 
   @me __MODULE__
   @state_opts ~w(admin_client_target)a
+
+  @temp_creds_length 5
 
   typedstruct module: State do
     field :admin_client_target, atom | pid, default: AdminClient
@@ -26,13 +29,17 @@ defmodule KubeServices.Keycloak.UserManager do
     {:ok, struct!(State, args)}
   end
 
-  @spec create_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), Keyword.t() | map() | struct()) ::
+  @spec create(atom | pid | {atom, any} | {:via, atom, any}, String.t(), Keyword.t() | map() | struct()) ::
           {:ok, binary()} | {:error, any()}
-  def create_user(target \\ @me, realm, attributes) do
-    GenServer.call(target, {:create_user, realm, attributes})
+  def create(target \\ @me, realm, attributes) do
+    GenServer.call(target, {:create, realm, attributes})
   end
 
-  def handle_call({:create_user, realm, attributes}, _from, %{admin_client_target: act} = state) do
+  def reset_password(target \\ @me, realm, user_id) do
+    GenServer.call(target, {:reset_password, realm, user_id})
+  end
+
+  def handle_call({:create, realm, attributes}, _from, %{admin_client_target: act} = state) do
     user_rep =
       attributes
       |> keyword_from_any()
@@ -56,6 +63,27 @@ defmodule KubeServices.Keycloak.UserManager do
 
       res ->
         Logger.warning("Unable to create user: #{inspect(res)}")
+        {:reply, res, state}
+    end
+  end
+
+  def handle_call({:reset_password, realm, user_id}, _from, %{admin_client_target: act} = state) do
+    # Create an easy to read and write password that is secure
+    temp_creds = @temp_creds_length |> MnemonicSlugs.Wordlist.get_words() |> Enum.join(" ")
+
+    # It's always a temporary password
+    cred = %CredentialRepresentation{temporary: true, value: temp_creds}
+
+    # Reset the password
+    case AdminClient.reset_password_user(act, realm, user_id, cred) do
+      {:ok, _} = _res ->
+        # If it worked then broadcast so we can have timeline events.
+        Logger.info("User password reset successfully: #{inspect(user_id)}")
+        :ok = EventCenter.Keycloak.broadcast(:reset_user_password, %{id: user_id, realm: realm})
+        {:reply, {:ok, temp_creds}, state}
+
+      res ->
+        Logger.warning("Unable reset user password: #{inspect(res)}")
         {:reply, res, state}
     end
   end

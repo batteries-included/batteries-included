@@ -6,6 +6,7 @@ defmodule CommonCore.Keycloak.TestAdminClient do
 
   alias CommonCore.Keycloak.AdminClient
   alias CommonCore.Keycloak.TeslaMock
+  alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
 
   @access_key_value "VALUE_KEY_HERE"
   @refresh_key_value "REFRESH_KEY_HERE"
@@ -16,10 +17,13 @@ defmodule CommonCore.Keycloak.TestAdminClient do
     "refresh_token" => @refresh_key_value
   }
 
+  @test_user_id "00-00-00-00-00-00-00"
+
   @full_url "http://keycloak.local.test/realms/master/protocol/openid-connect/token"
   @realms_url "http://keycloak.local.test/admin/realms"
-  @battery_core_users_url "http://keycloak.local.test/admin/realms/batterycore/users"
   @battery_core_clients_url "http://keycloak.local.test/admin/realms/batterycore/clients"
+  @battery_core_users_url "http://keycloak.local.test/admin/realms/batterycore/users"
+  @battery_core_reset_test_user_url "http://keycloak.local.test/admin/realms/batterycore/users/#{@test_user_id}/reset-password"
 
   describe "login/1" do
     setup [:verify_on_exit!, :setup_mocked_admin]
@@ -97,6 +101,30 @@ defmodule CommonCore.Keycloak.TestAdminClient do
                  enabled: true,
                  secret: "secret123"
                })
+    end
+  end
+
+  describe "reset_password_user/3" do
+    setup [:verify_on_exit!, :setup_mocked_admin]
+
+    test "will return ok", %{pid: pid} do
+      expect_openid_token(1)
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_reset_test_user_url}, _opts ->
+        {:ok, %Tesla.Env{status: 204}}
+      end)
+
+      assert {:ok, _} =
+               AdminClient.reset_password_user(
+                 pid,
+                 "batterycore",
+                 @test_user_id,
+                 %CredentialRepresentation{
+                   value: "testing the password",
+                   temporary: true,
+                   userLabel: "Temp Pass"
+                 }
+               )
     end
   end
 

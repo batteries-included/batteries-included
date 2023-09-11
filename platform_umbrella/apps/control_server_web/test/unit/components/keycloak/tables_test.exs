@@ -7,6 +7,7 @@ defmodule ControlServerWeb.Keycloak.TablesTest do
 
   @realm_one %{id: "00-00-00-00-00-00", displayName: "Keycloak", realm: "master"}
   @user_one %{
+    id: "00-00-00-00-00-00-00-00-00-00-01",
     username: "root",
     enabled: true,
     emailVerified: false,

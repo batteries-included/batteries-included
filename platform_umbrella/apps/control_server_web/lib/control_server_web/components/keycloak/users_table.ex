@@ -13,6 +13,17 @@ defmodule ControlServerWeb.Keycloak.UsersTable do
       <:col :let={user} label="Created">
         <%= Timex.from_unix(user.createdTimestamp || 0, :millisecond) %>
       </:col>
+
+      <:action :let={user}>
+        <.a
+          variant="styled"
+          phx-click="reset_password"
+          data-confirm="Are you sure?"
+          phx-value-user-id={user.id}
+        >
+          Reset Password
+        </.a>
+      </:action>
     </.table>
     """
   end

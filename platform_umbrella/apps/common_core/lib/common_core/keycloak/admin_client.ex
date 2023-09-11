@@ -38,6 +38,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.OpenApi.KeycloakAdminSchema
   alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
 
@@ -188,7 +189,12 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:create_user, realm_name, user_data})
   end
 
-  @spec reset_password_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t(), String.t()) :: any
+  @spec reset_password_user(
+          atom | pid | {atom, any} | {:via, atom, any},
+          String.t(),
+          String.t(),
+          CredentialRepresentation.t()
+        ) :: any
   def reset_password_user(target \\ @me, realm_name, user_id, creds) do
     GenServer.call(target, {:reset_password_user, realm_name, user_id, creds})
   end
@@ -502,6 +508,10 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   defp to_result({:ok, %{status: 200, body: body}}, mapper) do
     {:ok, mapper.(body)}
+  end
+
+  defp to_result({:ok, %{status: 204}}, _mapper) do
+    {:ok, :success}
   end
 
   defp to_result({:ok, %{status: 201, headers: headers}}, nil) do
