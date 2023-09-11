@@ -87,7 +87,8 @@ defmodule CommonCore.Keycloak.AdminClient do
     {:ok, state}
   end
 
-  @spec reset(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t(), String.t()) :: :ok
+  @spec reset(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t(), String.t()) ::
+          :ok
   @doc """
   Reset the credentials used for this rest client. This won't log in to keycloak. That happens
   when needed or if forced via `login/1`
@@ -160,7 +161,11 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:delete_client, realm_name, client_id})
   end
 
-  @spec create_client(atom | pid | {atom, any} | {:via, atom, any}, String.t(), ClientRepresentation.t()) ::
+  @spec create_client(
+          atom | pid | {atom, any} | {:via, atom, any},
+          String.t(),
+          ClientRepresentation.t()
+        ) ::
           {:ok, ClientRepresentation.t()} | {:error, any()}
   def create_client(target \\ @me, realm_name, client_data) do
     GenServer.call(target, {:create_client, realm_name, client_data})
@@ -183,7 +188,11 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:delete_user, realm_name, user_id})
   end
 
-  @spec create_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), UserRepresentation.t()) ::
+  @spec create_user(
+          atom | pid | {atom, any} | {:via, atom, any},
+          String.t(),
+          UserRepresentation.t()
+        ) ::
           {:ok, UserRepresentation.t()} | {:error, any()}
   def create_user(target \\ @me, realm_name, user_data) do
     GenServer.call(target, {:create_user, realm_name, user_data})
@@ -290,7 +299,9 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   def handle_call({:reset_password_user, realm_name, user_id, creds}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_reset_password_user(realm_name, user_id, creds, new_state) end)
+    with_auth(state, fn new_state ->
+      do_reset_password_user(realm_name, user_id, creds, new_state)
+    end)
   end
 
   defp with_auth(state, fun) do
@@ -522,6 +533,10 @@ defmodule CommonCore.Keycloak.AdminClient do
       |> List.first()
 
     {:ok, location}
+  end
+
+  defp to_result({:ok, %{status: 409, body: %{"error" => _error}}}, _mapper) do
+    {:error, :error_already_exists}
   end
 
   defp to_result({:ok, %{body: %{"error" => error}}}, _mapper) do

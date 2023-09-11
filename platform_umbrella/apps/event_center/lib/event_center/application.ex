@@ -7,28 +7,17 @@ defmodule EventCenter.Application do
 
   @impl Application
   def start(_type, _args) do
-    children = [
-      Supervisor.child_spec(
-        {Phoenix.PubSub, name: EventCenter.Database.PubSub},
-        id: EventCenter.Database.PubSub
-      ),
-      Supervisor.child_spec(
-        {Phoenix.PubSub, name: EventCenter.KubeState.PubSub},
-        id: EventCenter.KubeState.PubSub
-      ),
-      Supervisor.child_spec(
-        {Phoenix.PubSub, name: EventCenter.KubeSnapshot.PubSub},
-        id: EventCenter.KubeSnapshot.PubSub
-      ),
-      Supervisor.child_spec(
-        {Phoenix.PubSub, name: EventCenter.SystemStateSummary.PubSub},
-        id: EventCenter.SystemStateSummary.PubSub
-      ),
-      Supervisor.child_spec(
-        {Phoenix.PubSub, name: EventCenter.Keycloak.PubSub},
-        id: EventCenter.Keycloak.PubSub
+    children =
+      Enum.map(
+        [
+          EventCenter.Database.PubSub,
+          EventCenter.KubeState.PubSub,
+          EventCenter.KubeSnapshot.PubSub,
+          EventCenter.SystemStateSummary.PubSub,
+          EventCenter.Keycloak.Pubsub
+        ],
+        fn mod -> Supervisor.child_spec({Phoenix.PubSub, name: mod}, id: mod) end
       )
-    ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
