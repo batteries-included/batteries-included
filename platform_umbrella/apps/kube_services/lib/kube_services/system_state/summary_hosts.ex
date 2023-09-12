@@ -59,6 +59,11 @@ defmodule KubeServices.SystemState.SummaryHosts do
   end
 
   @impl GenServer
+  def handle_call({:for_battery, battery_type}, _from, %{summary: summary} = state) do
+    {:reply, CommonCore.StateSummary.Hosts.for_battery(summary, battery_type), state}
+  end
+
+  @impl GenServer
   def handle_call(method, _from, %{summary: summary} = state) when is_atom(method) do
     {:reply, apply(CommonCore.StateSummary.Hosts, method, [summary]), state}
   end
@@ -122,5 +127,10 @@ defmodule KubeServices.SystemState.SummaryHosts do
   @spec kiali_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
   def kiali_host(target \\ @me) do
     GenServer.call(target, :kiali_host)
+  end
+
+  @spec for_battery(atom | pid | {atom, any} | {:via, atom, any}, atom) :: String.t() | nil
+  def for_battery(target \\ @me, battery_type) do
+    GenServer.call(target, {:for_battery, battery_type})
   end
 end

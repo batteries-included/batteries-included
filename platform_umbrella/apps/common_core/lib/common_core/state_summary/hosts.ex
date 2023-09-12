@@ -59,6 +59,19 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ip() |> host("notebooks", "user")
   end
 
+  @spec for_battery(StateSummary.t(), atom()) :: String.t()
+  def for_battery(summary, battery_type)
+
+  def for_battery(summary, :gitea), do: gitea_host(summary)
+  def for_battery(summary, :grafana), do: grafana_host(summary)
+  def for_battery(summary, :harbor), do: harbor_host(summary)
+  def for_battery(summary, :keycloak), do: keycloak_host(summary)
+  def for_battery(summary, :kiali), do: kiali_host(summary)
+  def for_battery(summary, :notebooks), do: notebooks_host(summary)
+  def for_battery(summary, :smtp4dev), do: smtp4dev_host(summary)
+  def for_battery(summary, :victoria_metrics), do: vmselect_host(summary)
+  def for_battery(_summary, _battery_type), do: nil
+
   defp ip(summary) do
     summary |> ingress_ips() |> List.first()
   end
