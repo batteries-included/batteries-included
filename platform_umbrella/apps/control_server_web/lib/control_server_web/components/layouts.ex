@@ -48,4 +48,77 @@ defmodule ControlServerWeb.Layouts do
     </div>
     """
   end
+
+  @doc """
+  In your live view:
+
+      use ControlServerWeb, {:live_view, layout: :sidebar}
+  """
+  def sidebar(assigns) do
+    ~H"""
+    <ControlServerWeb.SidebarLayout.sidebar_layout
+      main_menu_items={[
+        %{
+          name: :home,
+          label: "Home",
+          path: ~p"/",
+          icon: :home
+        },
+        %{
+          name: :datastores,
+          label: "Datastores",
+          path: ~p"/postgres",
+          icon: :circle_stack
+        },
+        %{
+          name: :devtools,
+          label: "Devtools",
+          path: ~p"/",
+          icon: :wrench
+        },
+        %{
+          name: :monitoring,
+          label: "Monitoring",
+          path: ~p"/",
+          icon: :chart_bar_square
+        },
+        %{
+          name: :netsecurity,
+          label: "Net/Security",
+          path: ~p"/",
+          icon: :shield_check
+        },
+        %{
+          name: :ml,
+          label: "ML",
+          path: ~p"/",
+          icon: :beaker
+        },
+        %{
+          name: :kubernetes,
+          label: "Kubernetes",
+          path: ~p"/kube/pods",
+          icon: :globe_alt
+        },
+        %{
+          name: :magic,
+          label: "Magic",
+          path: ~p"/snapshot_apply",
+          icon: :sparkles
+        }
+      ]}
+      bottom_menu_items={[
+        %{
+          name: :settings,
+          label: "Settings",
+          path: ~p"/",
+          icon: :adjustments_horizontal
+        }
+      ]}
+      current_page={if assigns[:current_page], do: @current_page, else: nil}
+    >
+      <%= @inner_content %>
+    </ControlServerWeb.SidebarLayout.sidebar_layout>
+    """
+  end
 end

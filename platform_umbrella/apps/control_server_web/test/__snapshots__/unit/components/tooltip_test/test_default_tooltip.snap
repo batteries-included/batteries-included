@@ -1,0 +1,1 @@
+"<div id=\"important\">Hoverable</div>\n<div class=\"hidden\" id=\"tooltip-important\" phx-hook=\"Tooltip\" data-target=\"important\">\n  <div class=\"min-w-24 bg-white shadow-sm p-2 rounded-md\">\n    This is the tootip for something important\n  </div>\n</div>"

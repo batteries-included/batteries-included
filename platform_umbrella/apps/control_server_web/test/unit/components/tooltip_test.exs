@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Components.TooltopTest do
+defmodule ControlServerWeb.Components.TooltipTest do
   use Heyya.SnapshotTest
 
   import ControlServerWeb.Tooltip

@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.Home do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.Chart
 
@@ -12,6 +12,7 @@ defmodule ControlServerWeb.Live.Home do
   def mount(_params, _session, socket) do
     {:ok,
      socket
+     |> assign(current_page: :home)
      |> assign_page_group(:home)
      |> assign_page_title("Home")
      |> assign_pods(KubeState.get_all(:pod))

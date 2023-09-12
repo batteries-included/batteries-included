@@ -14,3 +14,56 @@
 ::selection {
   @apply bg-primary-500;
 }
+
+.pc-vertical-menu-item__icon {
+  @apply flex-shrink-0 w-6 h-6;
+}
+
+.pc-vertical-menu__menu-group {
+  @apply space-y-2;
+}
+
+.pc-vertical-menu-item__icon--active {
+  @apply flex-shrink-0 w-6 h-6 text-[#FC408B];
+}
+
+.pc-vertical-menu-item--inactive {
+  @apply text-[#545155] hover:bg-white dark:text-[#A8A9AD] hover:text-gray-900 dark:hover:text-white dark:hover:bg-[#181B22];
+}
+
+.pc-vertical-menu-item {
+  @apply flex items-center w-full gap-3 p-3 text-sm font-normal leading-none transition duration-200 rounded-xl;
+}
+
+.pc-vertical-menu-item--active {
+  @apply text-[#1C1C1E] font-medium dark:text-white shadow-black/5 shadow-md bg-white dark:bg-[#181B22];
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar-background {
+    --start-gradient-color: #313145;
+    --mid-gradient-color: #181b22;
+    /* This is pink 950 with a different opacity */
+    --end-gradient-color: rgba(80, 7, 36, 0.4);
+    background: linear-gradient(
+        180deg,
+        var(--start-gradient-color) -0.1%,
+        var(--mid-gradient-color) 62.9%,
+        var(--end-gradient-color) 100%
+      ),
+      linear-gradient(0deg, #4e535f, #4e535f);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .sidebar-background {
+    background: linear-gradient(
+        180deg,
+        #ffffff -0.1%,
+        #fafaff -0.1%,
+        #fbf0f9 62.9%,
+        #fffcfd 100%
+      ),
+      linear-gradient(0deg, #dadada, #dadada);
+  }
+}
