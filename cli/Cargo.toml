@@ -26,7 +26,7 @@ reqwest = { version = "0.11.20", default-features = false, features = [
   "rustls-tls",
 ] }
 serde = { version = "1.0.188" }
-serde_json = { version = "1.0.105", default-features = true }
+serde_json = { version = "1.0.107", default-features = true }
 tempfile = { version = "3.8.0" }
 thiserror = { version = "1.0.48" }
 time = { version = "0.3.28", features = ["serde", "serde-human-readable"] }
