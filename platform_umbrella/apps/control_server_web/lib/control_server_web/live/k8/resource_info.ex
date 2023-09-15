@@ -33,8 +33,21 @@ defmodule ControlServerWeb.Live.ResourceInfo do
   end
 
   @impl Phoenix.LiveView
-  def handle_params(%{"log" => "true", "namespace" => namespace, "name" => name}, _uri, socket) do
-    {:noreply, monitor_and_assign_logs(socket, namespace, name)}
+  def handle_params(%{"log" => "true", "namespace" => namespace, "name" => name, "container" => container}, _uri, socket) do
+    {:noreply, monitor_and_assign_logs(socket, namespace, name, container)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(%{"log" => "true", "namespace" => _, "name" => _}, _uri, socket) do
+    container_name =
+      socket.assigns.resource
+      |> get_in(~w(spec containers))
+      |> Enum.map(& &1["name"])
+      |> List.first()
+
+    url = resource_show_url(socket.assigns.resource, %{"log" => true, "container" => container_name})
+
+    {:noreply, push_navigate(socket, to: url, replace: true)}
   end
 
   @impl Phoenix.LiveView
@@ -183,11 +196,12 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     end
   end
 
-  defp monitor_and_assign_logs(socket, namespace, name) do
+  defp monitor_and_assign_logs(socket, namespace, name, container) do
     {:ok, logs_pid, logs} =
       KubeServices.PodLogs.monitor(
         namespace: namespace,
         name: name,
+        container: container,
         target: self(),
         tailLines: 25
       )
@@ -273,22 +287,27 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     assigns = assign(assigns, :container_statuses, all_containers)
 
     ~H"""
-    <.card>
-      <%= for {cs, idx} <- Enum.with_index(@container_statuses) do %>
-        <.h3 class={[idx != 0 && "mt-10"]}><%= Map.get(cs, "name", "") %></.h3>
-        <div class="grid grid-cols-4 gap-1">
-          <div class="col-span-1 font-mono">Image</div>
-          <div class="col-span-3"><%= Map.get(cs, "image", "") %></div>
-        </div>
-        <div class="grid grid-cols-6 gap-1">
-          <div class="font-mono">Started</div>
-          <div><.status_icon status={Map.get(cs, "started", false)} /></div>
-          <div class="font-mono">Ready</div>
-          <div><.status_icon status={Map.get(cs, "ready", false)} /></div>
-          <div class="font-mono">Restart Count</div>
-          <div><%= Map.get(cs, "restartCount", 0) %></div>
-        </div>
-      <% end %>
+    <.card class="py-0">
+      <.table id="pod-containers" rows={@container_statuses}>
+        <:col :let={cs} label="Name"><%= Map.get(cs, "name", "") %></:col>
+        <:col :let={cs} label="Image"><%= Map.get(cs, "image", "") %></:col>
+        <:col :let={cs} label="Started"><.status_icon status={Map.get(cs, "started", false)} /></:col>
+        <:col :let={cs} label="Ready"><.status_icon status={Map.get(cs, "ready", false)} /></:col>
+        <:col :let={cs} label="Restart Count">
+          <.status_icon status={Map.get(cs, "restartCount", 0)} />
+        </:col>
+        <:action :let={cs}>
+          <.a
+            patch={
+              resource_show_url(@resource, %{"log" => true, "container" => Map.get(cs, "name", "")})
+            }
+            replace={true}
+            variant="styled"
+          >
+            Stream Log
+          </.a>
+        </:action>
+      </.table>
     </.card>
     """
   end
@@ -389,7 +408,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
     <.pod_facts_section resource={@resource} />
     <.label_section resource={@resource} />
     <.h2>Container Status</.h2>
-    <.pod_containers_section status={@status} />
+    <.pod_containers_section status={@status} resource={@resource} />
     <.conditions_display conditions={@conditions} />
     <.events_section events={@events} />
     """
@@ -473,9 +492,6 @@ defmodule ControlServerWeb.Live.ResourceInfo do
       <:sub_header><%= @name %></:sub_header>
     </.h1>
     <.banner_section name={@name} namespace={@namespace} />
-    <.a class="block mt-7" patch={resource_show_url(@resource, %{"log" => true})} replace={true}>
-      <.button>Stream Logs</.button>
-    </.a>
 
     <%= case @resource_type do %>
       <% :pod -> %>

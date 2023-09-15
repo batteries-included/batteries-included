@@ -48,7 +48,7 @@ defmodule KubeServices.PodLogs do
     {api_version, _kind} = ApiVersionKind.from_resource_type(:pod)
 
     # Use name namespace and container for targeting
-    {get_opts, other_params} = Keyword.split(opts, ~w|name namespace container|a)
+    {get_opts, other_params} = Keyword.split(opts, ~w|name namespace|a)
 
     # The target option is used for which pid to send info
     # It's never for kubernetnes

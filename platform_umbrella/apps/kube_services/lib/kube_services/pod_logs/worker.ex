@@ -52,6 +52,22 @@ defmodule KubeServices.PodLogs.Worker do
 
     {api_version, _kind} = ApiVersionKind.from_resource_type(:pod)
 
+    # Kubernetes expects name and namespace on the path.
+    # Other options should be in the query params or this fails.
+    {main_opts, others} = Keyword.split(opts, [:name, :namespace])
+
+    # However we know some of the query params are
+    # always needed so add those here.
+    query_params =
+      Keyword.merge(others,
+        # No previous lines
+        tailLines: 0,
+        # But we do want to continue following.
+        # This param combined with using `K8s.Client.connect()`
+        # is what allow this genserver to work.
+        follow: true
+      )
+
     # Start a K8s connection operation
     # (not to be confused with an actual connection)
     # Then configure it to stream to this process.
@@ -72,13 +88,8 @@ defmodule KubeServices.PodLogs.Worker do
       api_version
       |> K8s.Client.connect(
         "pods/log",
-        opts,
-        # No previous lines
-        tailLines: 0,
-        # But we do want to continue following.
-        # This param combined with using `K8s.Client.connect()`
-        # is what allow this genserver to work.
-        follow: true
+        main_opts,
+        query_params
       )
       |> K8s.Client.put_conn(conn)
       |> K8s.Client.stream_to(self())
