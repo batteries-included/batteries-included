@@ -294,7 +294,7 @@ defmodule ControlServerWeb.Live.ResourceInfo do
         <:col :let={cs} label="Started"><.status_icon status={Map.get(cs, "started", false)} /></:col>
         <:col :let={cs} label="Ready"><.status_icon status={Map.get(cs, "ready", false)} /></:col>
         <:col :let={cs} label="Restart Count">
-          <.status_icon status={Map.get(cs, "restartCount", 0)} />
+          <%= Map.get(cs, "restartCount", 0) %>
         </:col>
         <:action :let={cs}>
           <.a
