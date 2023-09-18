@@ -27,7 +27,9 @@ defmodule KubeServices.SnapshotApply do
       KubeServices.SnapshotApply.FailedKubeLauncher,
       # A genserver that watches for database changes that
       # likely cause a deploy to be needed.
-      KubeServices.SnapshotApply.EventLauncher
+      KubeServices.SnapshotApply.EventLauncher,
+      # Remove old UmbrellaSnapshot and dependent rows after they are too old.
+      KubeServices.SnapshotApply.Reaper
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

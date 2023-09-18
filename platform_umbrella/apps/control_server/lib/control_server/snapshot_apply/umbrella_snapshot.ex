@@ -19,7 +19,7 @@ defmodule ControlServer.SnapshotApply.UmbrellaSnapshot do
   @doc false
   def changeset(umbrella_snapshot, attrs) do
     umbrella_snapshot
-    |> cast(attrs, [])
+    |> cast(attrs, [:inserted_at])
     |> validate_required([])
   end
 end

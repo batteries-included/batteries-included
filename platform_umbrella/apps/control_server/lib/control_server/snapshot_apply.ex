@@ -101,4 +101,16 @@ defmodule ControlServer.SnapshotApply do
   def change_umbrella_snapshot(%UmbrellaSnapshot{} = umbrella_snapshot, attrs \\ %{}) do
     UmbrellaSnapshot.changeset(umbrella_snapshot, attrs)
   end
+
+  @doc """
+  Delete `UmbrellaSnapshot` older than the specified number
+  of hours. The number of deleted records is returned.
+  """
+  @spec reap_old_snapshots(number) :: pos_integer()
+  def reap_old_snapshots(hours_to_keep \\ 72) do
+    end_time = DateTime.add(DateTime.utc_now(), -hours_to_keep, :hour)
+    query = from s in UmbrellaSnapshot, where: s.inserted_at < ^end_time
+    {deleted_count, _} = Repo.delete_all(query)
+    deleted_count
+  end
 end
