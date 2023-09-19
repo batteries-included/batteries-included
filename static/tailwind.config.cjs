@@ -144,9 +144,9 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['InterVariable', 'Inter', ...defaultTheme.fontFamily.sans],
+        sans: ['Inter Variable', 'Inter', ...defaultTheme.fontFamily.sans],
         mono: [
-          'JetBrains MonoVariable',
+          'JetBrains Mono Variable',
           'JetBrains Mono',
           ...defaultTheme.fontFamily.mono,
         ],

@@ -1,8 +1,6 @@
 /* eslint no-underscore-dangle: 0 */
 
 import 'phoenix_html';
-import '@fontsource/jetbrains-mono';
-import '@fontsource/inter';
 
 import { Socket } from 'phoenix';
 import topbar from 'topbar';

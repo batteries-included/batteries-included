@@ -163,8 +163,8 @@ module.exports = {
         gray: colors.slate,
       },
       fontFamily: {
-        sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
-        mono: ['JetBrains MonoVariable', ...defaultTheme.fontFamily.mono],
+        sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
+        mono: ['JetBrains Mono Variable', ...defaultTheme.fontFamily.mono],
       },
     },
   },

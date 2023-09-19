@@ -1,7 +1,7 @@
 @import './site_tailwind';
 
-@import '@fontsource/inter';
-@import '@fontsource/jetbrains-mono';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
 
 @import '../../../../deps/petal_components/assets/default.css';
 
