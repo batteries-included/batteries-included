@@ -99,6 +99,7 @@
       shellHook = ''
         # NOTE(jdt): try very hard not to run mix commands here.
         # they take a bit to start and execute even if they don't do anything
+        [[ -z ''${TRACE:-""} ]] || set -x
 
         # go to the top level.
         pushd "$FLAKE_ROOT" &> /dev/null
@@ -114,9 +115,9 @@
         export PATH=$HEX_HOME/bin:$PATH
 
         pushd platform_umbrella &> /dev/null
-        [[ $(find $MIX_HOME -type f -name 'rebar3' -executable -print0 | grep -qz .) ]] \
+        find $MIX_HOME -type f -name 'rebar3' -executable -print0 | grep -qz . \
             || mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3
-        [[ $(find $MIX_HOME -type d -name 'hex-*' -print0 | grep -qz . ) ]] \
+        find $MIX_HOME -type f -name 'hex.app' -print0 | grep -qz . \
             || mix local.hex --force --if-missing
         popd &> /dev/null
 

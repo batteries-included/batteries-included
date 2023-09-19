@@ -152,18 +152,18 @@
             description = "Start dev environment";
             category = "dev";
             exec = ''
-              m phx.server
-            '';
-          };
-
-          dev-iex = {
-            description = "Start dev environment with iex";
-            category = "dev";
-            exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
               iex -S mix phx.server
+            '';
+          };
+
+          dev-no-iex = {
+            description = "Start dev environment without iex";
+            category = "dev";
+            exec = ''
+              m phx.server
             '';
           };
 

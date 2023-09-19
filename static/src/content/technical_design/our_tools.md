@@ -31,7 +31,7 @@ Available commands:
 
   bi bootstrap              : Bootstrap the dev environment
   bi dev                    : Start dev environment
-  bi dev-iex                : Start dev environment with iex
+  bi dev-iex                : Start dev environment without iex
   bi gen-static-specs       : Generate static specs
   bi nuke-cluster-contents  : Clean up dev cluster resources
   bi nuke-clusters          : Destroy dev clusters completely
@@ -213,31 +213,28 @@ Example
 bi ex-test-deep
 ```
 
-## Mix Server
+## Mix Server w/ REPL
 
 The platform umbrella has 2 different Phoenix elixir servers in it. After making
 a database available on the correct port (Usually via the bootstrap script or
 cli command).
 
-Example:
-
-```sh
-bi dev       # essentially, mix phx.server
-```
-
-## Mix Server With REPL
-
-Elixir has an excellent command `iex` that takes an argument for what to run.
-Combining this knowledge with the previous, we get a handy command.
+This also starts the elixir REPL, `iex`, with access to the process trees, ETS,
+and database connections.
 
 Example:
 
 ```sh
-bi dev-iex  # essentially, iex -S mix phx.server
+bi dev       # essentially, iex -S mix phx.server
 ```
 
-That will start the Phoenix servers and give you a REPL with access to the
-process trees, the ETS, and the database connections.
+## Mix Server Without REPL
+
+Example:
+
+```sh
+bi dev-no-iex  # essentially, mix phx.server
+```
 
 ## Mix
 
