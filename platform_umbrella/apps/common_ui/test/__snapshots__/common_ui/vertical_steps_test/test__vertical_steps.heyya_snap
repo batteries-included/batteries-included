@@ -1,0 +1,9 @@
+<ul class="steps steps-vertical">
+  <li class="step step-secondary">
+    Step 0
+  </li><li class="step step-secondary">
+    Step 1
+  </li><li class="step">
+    Step 2
+  </li>
+</ul>

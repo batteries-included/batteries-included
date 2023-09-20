@@ -1,0 +1,71 @@
+<div id="keycloak-users-table" class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table class="mt-4 w-full">
+    <thead class="text-left text-base leading-6 text-gray-700">
+      <tr>
+        <th class="p-0 pb-4 pr-6 text-pink-500">
+          Username
+        </th><th class="p-0 pb-4 pr-6 text-pink-500">
+          Enabled
+        </th><th class="p-0 pb-4 pr-6 text-pink-500">
+          Email Verified
+        </th><th class="p-0 pb-4 pr-6 text-pink-500">
+          Created
+        </th>
+        <th class="relative p-0 pb-4">
+          <span class="sr-only">Actions</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody class="relative divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6 text-gray-700">
+      <tr id="keycloak-users-table-idx-0" class="relative group hover:bg-gray-50">
+        <td class="p-0 ">
+          <div>
+            <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-gray-50 sm:rounded-l-xl"></span>
+            <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-gray-50 sm:rounded-r-xl"></span>
+          </div>
+          <div class="block py-4 pr-6">
+            <span class="relative font-semibold text-gray-900">
+              root
+            </span>
+          </div>
+        </td><td class="p-0 ">
+          
+          <div class="block py-4 pr-6">
+            <span class="relative ">
+              true
+            </span>
+          </div>
+        </td><td class="p-0 ">
+          
+          <div class="block py-4 pr-6">
+            <span class="relative ">
+              false
+            </span>
+          </div>
+        </td><td class="p-0 ">
+          
+          <div class="block py-4 pr-6">
+            <span class="relative ">
+              
+    2023-06-06T05:10:10.946Z
+  
+            </span>
+          </div>
+        </td>
+        <td class="p-0 w-14">
+          <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
+            <span class="relative ml-4 font-semibold leading-6 text-gray-900 hover:text-gray-700">
+              
+    <a href="#" class="font-medium text-pink-500 hover:text-pink-600 hover:underline" phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
+  
+      Reset Password
+    
+</a>
+  
+            </span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -74,8 +74,8 @@ defmodule CommonCore.StateSummary.Namespaces do
   # Return nil if the config isn't there
   # Return nil if the config isn't valid.
   defp battery_core_config(summary) do
-    with sb = %SystemBattery{} <- get_battery(summary, :battery_core),
-         config = %BatteryCoreConfig{} <- sb.config do
+    with %SystemBattery{} = sb <- get_battery(summary, :battery_core),
+         %BatteryCoreConfig{} = config <- sb.config do
       config
     else
       _ ->

@@ -37,7 +37,7 @@
         inherit src version LANG;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-Z5ckt0oRaaPXDtHLp/KHM4MWKHJmNsBN6+QiA2Odmtg=";
+        sha256 = "sha256-4Jspg+TXIR8SOize76NUx48IW6I35MbQb7MuaGgjcVE=";
       };
 
       # mix fixed output derivation dependencies
@@ -50,7 +50,7 @@
         pname = "mix-deps-platform";
         inherit src version LANG;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-Elg6rmP2vz1s3PSjoVf/hsn3ua4E8z05gNXAMwofkRE=";
+        sha256 = "sha256-quPheYrqmvJxu1w8VmvSqAvDC+bsd5X2/8cMAJG0IkY=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {

@@ -35,8 +35,8 @@ defmodule CommonCore.StateSummary.Creds do
   end
 
   defp keycloak_config(summary) do
-    with sb = %SystemBattery{} <- get_battery(summary, :keycloak),
-         config = %KeycloakConfig{} <- sb.config do
+    with %SystemBattery{} = sb <- get_battery(summary, :keycloak),
+         %KeycloakConfig{} = config <- sb.config do
       config
     else
       _ ->

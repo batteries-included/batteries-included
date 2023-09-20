@@ -63,7 +63,7 @@ defmodule ControlServer.MixProject do
       {:k8s, "~> 2.4.1"},
 
       # Yaml
-      {:ymlr, "~> 4.1.0"},
+      {:ymlr, "~> 4.2.0"},
       {:yaml_elixir, "~> 2.6"},
 
       # Time

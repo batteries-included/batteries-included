@@ -1,0 +1,6 @@
+<div id="important">Hoverable</div>
+<div class="hidden" id="tooltip-important" phx-hook="Tooltip" data-target="important">
+  <div class="min-w-24 bg-white shadow-sm p-2 rounded-md">
+    This is the tootip for something important
+  </div>
+</div>

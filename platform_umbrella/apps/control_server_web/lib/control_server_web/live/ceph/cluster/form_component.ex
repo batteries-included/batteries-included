@@ -91,6 +91,7 @@ defmodule ControlServerWeb.Live.CephClusterFormComponent do
     socket
   end
 
+  @dialyzer {:nowarn_function, render: 1}
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""

@@ -1,0 +1,77 @@
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table class="mt-4 w-full">
+    <thead class="text-left text-base leading-6 text-gray-700">
+      <tr>
+        <th class="p-0 pb-4 pr-6 text-pink-500">
+          A
+        </th><th class="p-0 pb-4 pr-6 text-pink-500">
+          B
+        </th>
+        
+      </tr>
+    </thead>
+    <tbody class="relative divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6 text-gray-700">
+      <tr id="-idx-0" class="relative group hover:bg-gray-50">
+        <td class="p-0 ">
+          <div>
+            <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-gray-50 sm:rounded-l-xl"></span>
+            <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-gray-50 sm:rounded-r-xl"></span>
+          </div>
+          <div class="block py-4 pr-6">
+            <span class="relative font-semibold text-gray-900">
+              100
+            </span>
+          </div>
+        </td><td class="p-0 ">
+          
+          <div class="block py-4 pr-6">
+            <span class="relative ">
+              test
+            </span>
+          </div>
+        </td>
+        
+      </tr><tr id="-idx-1" class="relative group hover:bg-gray-50">
+        <td class="p-0 ">
+          <div>
+            <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-gray-50 sm:rounded-l-xl"></span>
+            <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-gray-50 sm:rounded-r-xl"></span>
+          </div>
+          <div class="block py-4 pr-6">
+            <span class="relative font-semibold text-gray-900">
+              102
+            </span>
+          </div>
+        </td><td class="p-0 ">
+          
+          <div class="block py-4 pr-6">
+            <span class="relative ">
+              testing
+            </span>
+          </div>
+        </td>
+        
+      </tr><tr id="-idx-2" class="relative group hover:bg-gray-50">
+        <td class="p-0 ">
+          <div>
+            <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-gray-50 sm:rounded-l-xl"></span>
+            <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-gray-50 sm:rounded-r-xl"></span>
+          </div>
+          <div class="block py-4 pr-6">
+            <span class="relative font-semibold text-gray-900">
+              420
+            </span>
+          </div>
+        </td><td class="p-0 ">
+          
+          <div class="block py-4 pr-6">
+            <span class="relative ">
+              anyone there?
+            </span>
+          </div>
+        </td>
+        
+      </tr>
+    </tbody>
+  </table>
+</div>
