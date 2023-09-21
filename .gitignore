@@ -1,6 +1,7 @@
 # Local elixir/hex/mix dirs
 .nix-mix
 .nix-hex
+platform_umbrella/.iex.exs
 
 # Local cargo dirs
 .nix-cargo
@@ -13,6 +14,7 @@ ops/aws/keys/*
 # don't look inside you'll cry
 node_modules
 dist
+
 # Python
 .venv
 .direnv/
