@@ -4,7 +4,8 @@
   "scripts": {
     "css:deploy": "NODE_ENV=production tailwindcss --postcss --minify --input=css/app.css --output=dist/app.css",
     "css:deploy:dev": "tailwindcss --postcss --input=css/app.css --output=../priv/static/assets/app.css",
-    "js:deploy": "NODE_ENV=production esbuild js/app.ts --external:/fonts/* --external:/images/* --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=dist"
+    "js:deploy": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=dist",
+    "js:deploy:dev": "NODE_ENV=production esbuild js/app.js --external:/fonts/* --external:/images/* --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.0.8",

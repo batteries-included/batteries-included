@@ -22,9 +22,7 @@
             category = "elixir";
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
-              pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
-              mix format
+              m format
             '';
           };
 
@@ -33,9 +31,7 @@
             category = "elixir";
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
-              pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
-              mix test --trace --stale
+              m test --trace --stale
             '';
           };
 
@@ -44,10 +40,9 @@
             category = "elixir";
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
-              pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
-              mix test --trace --exclude slow --cover --export-coverage default --warnings-as-errors
-              mix test.coverage
+              m "do" \
+                test --trace --exclude slow --cover --export-coverage default --warnings-as-errors, \
+                test.coverage
             '';
           };
 
@@ -64,6 +59,17 @@
               mix ecto.reset
               mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors
               mix test.coverage
+            '';
+          };
+
+          ex-test-int = {
+            description = "Run integration tests. Used in CI as well.";
+            category = "elixir";
+
+            exec = ''
+              export WALLABY_CHROME_BINARY=${pkgs.chromium}/bin/chromium
+
+              ${builtins.readFile ./scripts/integration-test.sh}
             '';
           };
 

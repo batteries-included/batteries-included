@@ -5,7 +5,10 @@ import_config "test.exs"
 config :wallaby,
   screenshot_on_failure: true,
   driver: Wallaby.Chrome,
-  hackney_options: [timeout: 5_000]
+  hackney_options: [timeout: 5_000],
+  chromedriver: [
+    binary: System.get_env("WALLABY_CHROME_BINARY")
+  ]
 
 config :control_server_web, ControlServerWeb.Endpoint,
   http: [port: 4882],
