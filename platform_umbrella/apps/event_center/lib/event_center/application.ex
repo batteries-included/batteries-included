@@ -11,10 +11,10 @@ defmodule EventCenter.Application do
       Enum.map(
         [
           EventCenter.Database.PubSub,
-          EventCenter.KubeState.PubSub,
+          EventCenter.Keycloak.PubSub,
           EventCenter.KubeSnapshot.PubSub,
-          EventCenter.SystemStateSummary.PubSub,
-          EventCenter.Keycloak.Pubsub
+          EventCenter.KubeState.PubSub,
+          EventCenter.SystemStateSummary.PubSub
         ],
         fn mod -> Supervisor.child_spec({Phoenix.PubSub, name: mod}, id: mod) end
       )

@@ -129,6 +129,8 @@ defmodule KubeServices.SystemState.SummaryHosts do
     GenServer.call(target, :kiali_host)
   end
 
+  # NOTE: This isn't exclusive - some batteries don't have host mappings, some may have multiple in the future.
+  # This should probably be revisited / revised in the future.
   @spec for_battery(atom | pid | {atom, any} | {:via, atom, any}, atom) :: String.t() | nil
   def for_battery(target \\ @me, battery_type) do
     GenServer.call(target, {:for_battery, battery_type})

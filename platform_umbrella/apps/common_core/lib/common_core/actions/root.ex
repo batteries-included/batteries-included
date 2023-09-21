@@ -1,11 +1,13 @@
 defmodule CommonCore.Actions.RootActionGenerator do
   @moduledoc false
   alias CommonCore.Actions.FreshGeneratedAction
+  alias CommonCore.Actions.Grafana
   alias CommonCore.Actions.SSO
   alias CommonCore.StateSummary
 
   @default_generator_mappings [
-    sso: SSO
+    sso: SSO,
+    grafana: Grafana
   ]
 
   @spec materialize(StateSummary.t()) :: list(FreshGeneratedAction.t())

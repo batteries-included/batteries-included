@@ -6,6 +6,7 @@ defmodule KubeServices.Keycloak.UserManager do
   alias CommonCore.Keycloak.AdminClient
   alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
+  alias EventCenter.Keycloak.Payload
 
   require Logger
 
@@ -29,7 +30,11 @@ defmodule KubeServices.Keycloak.UserManager do
     {:ok, struct!(State, args)}
   end
 
-  @spec create(atom | pid | {atom, any} | {:via, atom, any}, String.t(), Keyword.t() | map() | struct()) ::
+  @spec create(
+          atom | pid | {atom, any} | {:via, atom, any},
+          String.t(),
+          Keyword.t() | map() | struct()
+        ) ::
           {:ok, binary()} | {:error, any()}
   def create(target \\ @me, realm, attributes) do
     GenServer.call(target, {:create, realm, attributes})
@@ -58,7 +63,7 @@ defmodule KubeServices.Keycloak.UserManager do
     case AdminClient.create_user(act, realm, user_rep) do
       {:ok, user} = res ->
         Logger.info("User created successfully: #{inspect(user)}")
-        :ok = EventCenter.Keycloak.broadcast(:create_user, user)
+        :ok = EventCenter.Keycloak.broadcast(%Payload{action: :create_user, resource: user})
         {:reply, res, state}
 
       res ->
@@ -79,7 +84,13 @@ defmodule KubeServices.Keycloak.UserManager do
       {:ok, _} = _res ->
         # If it worked then broadcast so we can have timeline events.
         Logger.info("User password reset successfully: #{inspect(user_id)}")
-        :ok = EventCenter.Keycloak.broadcast(:reset_user_password, %{id: user_id, realm: realm})
+
+        :ok =
+          EventCenter.Keycloak.broadcast(%Payload{
+            action: :reset_user_password,
+            resource: %{id: user_id, realm: realm}
+          })
+
         {:reply, {:ok, temp_creds}, state}
 
       res ->
@@ -89,5 +100,6 @@ defmodule KubeServices.Keycloak.UserManager do
   end
 
   defp keyword_from_any(attributes) when is_struct(attributes), do: attributes |> Map.from_struct() |> Keyword.new()
+
   defp keyword_from_any(attributes), do: Keyword.new(attributes)
 end

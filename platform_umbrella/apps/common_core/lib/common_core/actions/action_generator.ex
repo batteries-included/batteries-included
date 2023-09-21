@@ -4,5 +4,6 @@ defmodule CommonCore.Actions.ActionGenerator do
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.StateSummary
 
-  @callback materialize(SystemBattery.t(), StateSummary.t()) :: list(FreshGeneratedAction.t())
+  @callback materialize(SystemBattery.t(), StateSummary.t()) ::
+              list(FreshGeneratedAction.t() | nil)
 end

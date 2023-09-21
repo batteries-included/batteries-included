@@ -44,6 +44,8 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   require Logger
 
+  @type keycloak_url :: binary()
+
   @state_opts ~w(username password base_url adapter)a
 
   @me __MODULE__
@@ -134,7 +136,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   @spec create_realm(atom | pid | {atom, any} | {:via, atom, any}, map()) ::
-          {:ok, RealmRepresentation.t()} | {:error, any()}
+          {:ok, keycloak_url()} | {:error, any()}
   @doc """
   Given a realm representation create it.
 
@@ -166,7 +168,7 @@ defmodule CommonCore.Keycloak.AdminClient do
           String.t(),
           ClientRepresentation.t()
         ) ::
-          {:ok, ClientRepresentation.t()} | {:error, any()}
+          {:ok, keycloak_url()} | {:error, any()}
   def create_client(target \\ @me, realm_name, client_data) do
     GenServer.call(target, {:create_client, realm_name, client_data})
   end
