@@ -19,13 +19,25 @@ defmodule CommonCore.Actions.Grafana do
 
   defp ensure_grafana_client(%SystemBattery{} = battery, %StateSummary{keycloak_state: key_state} = summary) do
     realm = CommonCore.Defaults.Keycloak.realm_name()
+    root_url = "http://#{Hosts.for_battery(summary, battery.type)}"
 
+    # https://web.archive.org/web/20230802094035/https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
+    # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
     expected = %ClientRepresentation{
+      adminUrl: root_url,
+      baseUrl: root_url,
+      clientId: "grafana-oauth",
+      directAccessGrantsEnabled: true,
       enabled: true,
       id: battery.id,
+      implicitFlowEnabled: false,
       name: @client_name,
-      secret: CommonCore.Defaults.random_key_string(),
-      rootUrl: "http://#{Hosts.for_battery(summary, battery.type)}"
+      protocol: "openid-connect",
+      publicClient: false,
+      redirectUris: ["#{root_url}/login/generic_oauth"],
+      rootUrl: root_url,
+      standardFlowEnabled: true,
+      webOrigins: [root_url]
     }
 
     case KeycloakSummary.check_client_state(key_state, realm, expected) do

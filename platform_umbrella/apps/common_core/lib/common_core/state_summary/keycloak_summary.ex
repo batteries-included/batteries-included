@@ -8,6 +8,12 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
   require Logger
 
   @derive Jason.Encoder
+  @check_fields ~w(
+    adminUrl baseUrl clientId directAccessGrantsEnabled
+    enabled id implicitFlowEnabled name
+    protocol publicClient redirectUris rootUrl
+    standardFlowEnabled webOrigins
+  )a
 
   typedstruct do
     field :realms, list(KeycloakAdminSchema.RealmRepresentation.t())
@@ -79,13 +85,7 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
 
   # TODO(jdt): this will probably need to be different per client?
   defp scrub_client(client) do
-    %ClientRepresentation{
-      enabled: client.enabled,
-      id: client.id,
-      name: client.name,
-      secret: client.secret,
-      rootUrl: client.rootUrl
-    }
+    Map.take(client, @check_fields)
   end
 
   def clients_for_realm(%__MODULE__{realms: realms}, realm) do

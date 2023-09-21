@@ -4,6 +4,7 @@ defmodule EventCenter.Keycloak do
   """
   use TypedStruct
 
+  alias EventCenter.Keycloak.Payload
   alias Phoenix.PubSub
 
   @pubsub EventCenter.Keycloak.PubSub
@@ -21,18 +22,21 @@ defmodule EventCenter.Keycloak do
     field :resource, map()
   end
 
-  def broadcast(%Payload{action: action, resource: resource}) when action in @allowed_actions do
-    PubSub.broadcast(@pubsub, clean_topic(action), resource)
+  @spec broadcast(Payload.t()) :: :ok | {:error, term}
+  def broadcast(%Payload{action: action} = payload) when action in @allowed_actions do
+    PubSub.broadcast(@pubsub, clean_topic(action), payload)
   end
 
-  def broadcast!(%Payload{action: action, resource: resource}) when action in @allowed_actions do
-    PubSub.broadcast!(@pubsub, clean_topic(action), resource)
+  @spec broadcast!(Payload.t()) :: :ok
+  def broadcast!(%Payload{action: action} = payload) when action in @allowed_actions do
+    PubSub.broadcast!(@pubsub, clean_topic(action), payload)
   end
 
+  @spec subscribe(binary() | atom()) :: :ok | {:error, term()}
   def subscribe(topic) do
     PubSub.subscribe(@pubsub, clean_topic(topic))
   end
 
-  def clean_topic(topic) when is_atom(topic), do: Atom.to_string(topic)
-  def clean_topic(topic), do: topic
+  defp clean_topic(topic) when is_atom(topic), do: Atom.to_string(topic)
+  defp clean_topic(topic), do: topic
 end

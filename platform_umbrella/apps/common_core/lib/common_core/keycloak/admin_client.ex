@@ -491,9 +491,9 @@ defmodule CommonCore.Keycloak.AdminClient do
     |> to_result(nil)
   end
 
-  defp do_update_client(realm_name, client_data, %State{bearer_client: client} = _state) do
+  defp do_update_client(realm_name, %{id: id} = client_data, %State{bearer_client: client} = _state) do
     client
-    |> Tesla.put(@base_path <> realm_name <> "/clients/" <> client_data.id, client_data)
+    |> Tesla.put(@base_path <> realm_name <> "/clients/" <> id, client_data)
     |> to_result(nil)
   end
 

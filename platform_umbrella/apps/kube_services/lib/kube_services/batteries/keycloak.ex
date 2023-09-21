@@ -8,8 +8,9 @@ defmodule KubeServices.Batteries.Keycloak do
     _battery = Keyword.fetch!(opts, :battery)
 
     children = [
-      KubeServices.Keycloak.Wrangler,
-      KubeServices.Keycloak.UserManager
+      KubeServices.Keycloak.ClientManager,
+      KubeServices.Keycloak.UserManager,
+      KubeServices.Keycloak.Wrangler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
