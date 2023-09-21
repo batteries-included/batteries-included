@@ -13,7 +13,8 @@ defmodule KubeServices.SystemState do
       KubeServices.SystemState.KeycloakSummarizer,
       {KubeServices.SystemState.Summarizer, [should_refresh: should_refresh]},
       KubeServices.SystemState.SummaryHosts,
-      KubeServices.SystemState.SummaryBatteries
+      KubeServices.SystemState.SummaryBatteries,
+      KubeServices.SystemState.SummaryStorage
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
