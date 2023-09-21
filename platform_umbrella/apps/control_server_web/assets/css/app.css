@@ -1,8 +1,6 @@
 @import './site_tailwind.css';
 
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/jetbrains-mono';
-
+@import './fonts';
 @import './loader';
 @import './iframe';
 @import './object_resource';
