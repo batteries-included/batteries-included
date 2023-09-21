@@ -15,6 +15,7 @@ defmodule CommonCore.ApiVersionKind do
     deployment: {"apps/v1", "Deployment"},
     replicaset: {"apps/v1", "ReplicaSet"},
     stateful_set: {"apps/v1", "StatefulSet"},
+    storage_class: {"storage.k8s.io/v1", "StorageClass"},
     role: {"rbac.authorization.k8s.io/v1", "Role"},
     role_binding: {"rbac.authorization.k8s.io/v1", "RoleBinding"},
     cluster_role: {"rbac.authorization.k8s.io/v1", "ClusterRole"},
