@@ -45,11 +45,32 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
             }
           })
 
-        Logger.debug("Creating new client: #{value["id"]} for #{value["name"]}")
+        Logger.debug("Creating new client: #{value.id} for #{value.name}")
         {:ok, nil}
 
       {:error, :already_exists} ->
         Logger.info("Client already exists. This shouldn't typically happen")
+        {:ok, nil}
+
+      {:error, err} ->
+        Logger.error("Error creating client: #{inspect(err)}")
+        {:error, err}
+    end
+  end
+
+  def apply(%KeycloakAction{action: :sync, type: :client, realm: realm, document: %Document{value: value}}) do
+    case AdminClient.update_client(realm, value) do
+      {:ok, client_url} ->
+        :ok =
+          EventCenter.Keycloak.broadcast(%Payload{
+            action: :update_client,
+            resource: %{
+              client_url: client_url,
+              contents: value
+            }
+          })
+
+        Logger.debug("Updating client: #{value.id} for #{value.name}")
         {:ok, nil}
 
       {:error, err} ->

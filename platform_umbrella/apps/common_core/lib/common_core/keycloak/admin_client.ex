@@ -173,6 +173,16 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:create_client, realm_name, client_data})
   end
 
+  @spec update_client(
+          atom | pid | {atom, any} | {:via, atom, any},
+          String.t(),
+          ClientRepresentation.t()
+        ) ::
+          {:ok, keycloak_url()} | {:error, any()}
+  def update_client(target \\ @me, realm_name, client_data) do
+    GenServer.call(target, {:update_client, realm_name, client_data})
+  end
+
   @spec users(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
           {:ok, list(UserRepresentation.t())} | {:error, any()}
   def users(target \\ @me, realm_name) do
@@ -278,6 +288,10 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   def handle_call({:create_client, realm_name, client_data}, _from, %State{} = state) do
     with_auth(state, fn new_state -> do_create_client(realm_name, client_data, new_state) end)
+  end
+
+  def handle_call({:update_client, realm_name, client_data}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_update_client(realm_name, client_data, new_state) end)
   end
 
   #
@@ -474,6 +488,12 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp do_create_client(realm_name, client_data, %State{bearer_client: client} = _state) do
     client
     |> Tesla.post(@base_path <> realm_name <> "/clients", client_data)
+    |> to_result(nil)
+  end
+
+  defp do_update_client(realm_name, client_data, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.put(@base_path <> realm_name <> "/clients/" <> client_data.id, client_data)
     |> to_result(nil)
   end
 

@@ -83,7 +83,7 @@ defmodule CommonCore.Keycloak.TestAdminClient do
     end
   end
 
-  describe "create_client/1" do
+  describe "create_client/2" do
     setup [:verify_on_exit!, :setup_mocked_admin]
 
     test "will return ok", %{pid: pid} do
@@ -100,6 +100,40 @@ defmodule CommonCore.Keycloak.TestAdminClient do
                  rootUrl: "https://grafana.example.com",
                  enabled: true,
                  secret: "secret123"
+               })
+    end
+  end
+
+  describe "update_client/2" do
+    setup [:verify_on_exit!, :setup_mocked_admin]
+
+    test "will return ok", %{pid: pid} do
+      expect_openid_token(1)
+      realm = "batterycore"
+      new_url = @battery_core_clients_url <> "/33"
+
+      client = %{
+        id: "33",
+        name: "grafana-0",
+        rootUrl: "https://grafana.example.com",
+        enabled: true,
+        secret: "secret123"
+      }
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_clients_url}, _opts ->
+        {:ok, %Tesla.Env{status: 201, headers: [{"location", new_url}]}}
+      end)
+
+      assert {:ok, ^new_url} = AdminClient.create_client(pid, realm, client)
+
+      expect(TeslaMock, :call, fn %{method: :put, url: ^new_url}, _opts ->
+        {:ok, %Tesla.Env{status: 204}}
+      end)
+
+      assert {:ok, :success} =
+               AdminClient.update_client(pid, realm, %{
+                 client
+                 | rootUrl: "https://updated.grafana.example.com"
                })
     end
   end
