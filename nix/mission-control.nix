@@ -35,6 +35,7 @@
               [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
+              export MIX_ENV=test
               mix test --trace --stale
             '';
           };
@@ -46,6 +47,7 @@
               [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
+              export MIX_ENV=test
               mix test --trace --exclude slow --cover --export-coverage default --warnings-as-errors
               mix test.coverage
             '';
@@ -58,6 +60,7 @@
               [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
               trap 'popd &> /dev/null' EXIT
+              export MIX_ENV=test
               mix deps.get
               mix compile --force --warnings-as-errors
               mix ecto.reset
