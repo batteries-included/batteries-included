@@ -36,14 +36,12 @@ defmodule CommonCore.Actions.Grafana do
         nil
 
       {:changed, _existing} ->
-        # TODO(jdt): add update
-        # %FreshGeneratedAction{
-        #   action: :sync,
-        #   type: :client,
-        #   realm: realm,
-        #   value: Map.from_struct(expected)
-        # }
-        nil
+        %FreshGeneratedAction{
+          action: :sync,
+          type: :client,
+          realm: realm,
+          value: Map.from_struct(expected)
+        }
 
       {:potential_name_change, _existing} ->
         # TODO(jdt): can we change the ID? Do we delete and recreate?
