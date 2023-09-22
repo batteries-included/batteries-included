@@ -92,7 +92,7 @@
             category = "elixir";
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
-              ${lib.getExe pkgs.fswatch} \
+              ${lib.getExe' pkgs.fswatch "fswatch"} \
                 --one-per-batch \
                 --event=Updated \
                 --recursive \

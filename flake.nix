@@ -11,7 +11,6 @@
       inputs.systems.follows = "systems";
     };
     # utilities for finding the flake root (e.g. where is flake.nix)
-    # TODO(jdt): we should use this to inject FLAKE_ROOT into dev shell as it a supported mechanism
     flake-root.url = "github:srid/flake-root";
     # provides rust toolchain
     rust-overlay = {

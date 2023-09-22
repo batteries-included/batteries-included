@@ -29,6 +29,7 @@ let
   cargo-crate = craneLib.buildPackage (commonArgs // {
     inherit cargoArtifacts;
     doCheck = false;
+    meta.mainProgram = "${pname}";
   });
 in
 
