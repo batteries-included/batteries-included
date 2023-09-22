@@ -54,7 +54,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix_html, "~> 3.3.2"},
       {:phoenix_live_dashboard, "~> 0.8.1"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_view, "~> 0.19.5"},
+      {:phoenix_live_view, "~> 0.20.0", override: true},
       {:plug_cowboy, "~> 2.6"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},

@@ -61,9 +61,11 @@ defmodule ControlServerWeb.Live.CephClusterShow do
     </.card>
 
     <span>
-      <%= live_patch("Edit", to: ~p"/ceph/clusters/#{@ceph_cluster}/show", class: "button") %>
+      <.a patch={~p"/ceph/clusters/#{@ceph_cluster}/edit"} class="button">Edit</.a>
     </span>
-    | <span><%= live_redirect("Back", to: ~p"/ceph/clusters/#{@ceph_cluster}/show") %></span>
+    |<span>
+      <.a navigate={~p"/ceph"} class="button">Back</.a>
+      </span>
     """
   end
 end

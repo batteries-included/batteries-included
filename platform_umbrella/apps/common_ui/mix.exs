@@ -27,10 +27,10 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:heyya, "~> 0.5.0", only: [:dev, :test, :integration]},
+      {:heyya, "~> 0.5.1", only: [:dev, :test, :integration]},
       {:phoenix, "~> 1.7.7"},
       {:jason, "~> 1.4.1"},
-      {:phoenix_live_view, "~> 0.19.5"},
+      {:phoenix_live_view, "~> 0.20.0", override: true},
       {:heroicons, "~> 0.5.3"},
       {:gettext, "~> 0.19"},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
