@@ -81,13 +81,6 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
     end
   end
 
-  defp scrub_client(client) when is_nil(client), do: nil
-
-  # TODO(jdt): this will probably need to be different per client?
-  defp scrub_client(client) do
-    Map.take(client, @check_fields)
-  end
-
   def clients_for_realm(%__MODULE__{realms: realms}, realm) do
     existing_realm = Enum.find(realms, &(&1.realm == realm))
 
@@ -98,5 +91,30 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
       _ ->
         existing_realm.clients
     end
+  end
+
+  @spec client(t(), binary()) ::
+          %{realm: binary(), client: ClientRepresentation.t()} | nil
+  def client(nil, _name), do: nil
+  def client(%__MODULE__{realms: nil}, _name), do: nil
+
+  def client(%__MODULE__{realms: realms}, name) do
+    clients =
+      realms
+      |> Enum.flat_map(fn realm ->
+        Enum.map(realm.clients, fn client ->
+          {client.name, %{realm: realm.realm, client: client}}
+        end)
+      end)
+      |> Map.new()
+
+    Map.get(clients, name)
+  end
+
+  defp scrub_client(client) when is_nil(client), do: nil
+
+  # TODO(jdt): this will probably need to be different per client?
+  defp scrub_client(client) do
+    Map.take(client, @check_fields)
   end
 end

@@ -14,6 +14,8 @@ defmodule CommonCore.Resources.Grafana do
   alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Secret
 
+  require Logger
+
   resource(:cluster_role_binding_clusterrolebinding, _battery, state) do
     namespace = core_namespace(state)
 
@@ -21,7 +23,7 @@ defmodule CommonCore.Resources.Grafana do
     |> B.build_resource()
     |> B.name("grafana-clusterrolebinding")
     |> B.role_ref(B.build_cluster_role_ref("grafana-clusterrole"))
-    |> B.subject(B.build_service_account("grafana", namespace))
+    |> B.subject(B.build_service_account(app_name(), namespace))
   end
 
   resource(:cluster_role_clusterrole) do
@@ -80,18 +82,43 @@ defmodule CommonCore.Resources.Grafana do
     })
   end
 
+  # https://web.archive.org/web/20230802094035/https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
+  # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
   defp add_auth_config(config, _battery, state) do
     if F.batteries_installed?(state, :sso) do
-      config
-      |> Map.put("auth.generic_oauth", %{
-        "name" => "Batteries Included",
-        "icon" => "signin",
-        "enabled" => true,
-        "scopes" => "openid offline offline_access profile email",
-        "auth_url" => "http://#{keycloak_host(state)}/oauth2/auth"
-      })
-      |> Map.put("auth", %{"oauth_auto_login" => true})
-      |> put_in(~w(log filters), "oauth.generic_oauth:debug")
+      case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, app_name()) do
+        %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
+          keycloak_root_url =
+            "http://#{keycloak_host(state)}/realms/#{realm}/protocol/openid-connect"
+
+          config
+          |> Map.put("auth.generic_oauth", %{
+            "allow_sign_up" => true,
+            "enabled" => true,
+            "icon" => "signin",
+            "name" => "Batteries Included",
+
+            # URLs
+            "api_url" => "#{keycloak_root_url}/userinfo",
+            "auth_url" => "#{keycloak_root_url}/auth",
+            "token_url" => "#{keycloak_root_url}/token",
+
+            # Client config
+            "client_id" => client_id,
+            "client_secret" => client_secret,
+            "email_attribute_path" => "email",
+            "login_attribute_path" => "username",
+            "name_attribute_path" => "full_name",
+            "role_attribute_path" =>
+              "contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'",
+            "scopes" => "openid email profile offline_access roles"
+          })
+          |> Map.put("auth", %{"oauth_auto_login" => true})
+          |> put_in(~w(log filters), "oauth.generic_oauth:debug")
+
+        nil ->
+          config
+      end
     else
       Map.put(config, "auth.anonymous", %{"enabled" => true})
     end
