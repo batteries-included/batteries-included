@@ -62,13 +62,12 @@
             '';
           };
 
-          ex-test-int = {
+          ex-test-int = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
             description = "Run integration tests. Used in CI as well.";
             category = "elixir";
 
             exec = ''
               export WALLABY_CHROME_BINARY=${pkgs.chromium}/bin/chromium
-
               ${builtins.readFile ./scripts/integration-test.sh}
             '';
           };

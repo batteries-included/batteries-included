@@ -47,7 +47,9 @@
       linuxOnlyTools = with pkgs; [
         # Track when files change for css updates
         inotify-tools
+      ];
 
+      integrationTestingTools = with pkgs; [
         # Yes the whole fucking world
         # just for integration tests.
         chromedriver
@@ -90,6 +92,7 @@
       ++ rustNativeBuildTools
       ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
       ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
+      ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) integrationTestingTools
       ++ [ config.treefmt.build.wrapper ];
 
 
