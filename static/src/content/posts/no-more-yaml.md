@@ -11,9 +11,18 @@ Helm and Kubernetes, which enable developers to manage and deploy services using
 declarative configurations, predominantly written in YAML. This approach allows
 for a more structured, readable, and maintainable infrastructure setup. However,
 the practical realization of these benefits is often more complex and elusive
-than it appears. The integration and interaction between numerous systems
-introduce a level of complexity that can be daunting. Developers find themselves
-navigating through a labyrinth of configurations, each with its unique set of
-rules and intricacies. This complexity often overshadows the promised simplicity
-and efficiency, making the benefits of IaC seem like distant, unattainable
-mirages for many developers.
+than it appears.
+
+# Not Only Syntax
+
+The integration and interaction between numerous systems introduce a level of
+complexity that can be daunting. This complexity often overshadows the promised
+simplicity and efficiency, making the benefits of IaC seem like distant,
+unattainable mirages for many developers. The struggle is not only with the
+syntax or the tool, but with the inherent complexity and specialized knowledge
+required to operate modern distributed infrastructure effectively.
+
+# But The Syntax Sucks
+
+```yaml
+```
