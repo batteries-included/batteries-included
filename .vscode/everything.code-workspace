@@ -33,6 +33,7 @@
     "emmet.includeLanguages": {
       "phoenix-heex": "html",
       "elixir": "html"
-    }
+    },
+    "editor.formatOnSave": true
   }
 }
