@@ -32,7 +32,33 @@ function configure_ldap() {
 configure_ldap
 
 function configure_oauth() {
-  echo 'no oauth configuration... skipping.'
+  if [[ -z ${OAUTH_NAME:-""} ]]; then
+    echo 'no oauth configuration... skipping.'
+    return 0
+  fi
+
+  local AUTH_ID=$(gitea admin auth list --vertical-bars | grep -E "\|${OAUTH_NAME}\s+\|" | grep -iE '\|OAuth2\s+\|' | awk -F " " '{print $1}')
+
+  if [[ -z ${AUTH_ID} ]]; then
+    echo "No oauth configuration found with name '${OAUTH_NAME}'. Installing it now..."
+    gitea admin auth add-oauth \
+      --provider "openidConnect" \
+      --auto-discover-url "${AUTODISCOVER_URL}" \
+      --name "${OAUTH_NAME}" \
+      --key "${CLIENT_ID}" \
+      --secret "${CLIENT_SECRET}"
+    echo '...installed.'
+  else
+    echo "Existing oauth configuration with name '${OAUTH_NAME}': '${AUTH_ID}'. Running update to sync settings..."
+    gitea admin auth update-oauth \
+      --id "${AUTH_ID}" \
+      --provider "openidConnect" \
+      --auto-discover-url "${AUTODISCOVER_URL}" \
+      --name "${OAUTH_NAME}" \
+      --key "${CLIENT_ID}" \
+      --secret "${CLIENT_SECRET}"
+    echo '...sync settings done.'
+  fi
 }
 
 configure_oauth

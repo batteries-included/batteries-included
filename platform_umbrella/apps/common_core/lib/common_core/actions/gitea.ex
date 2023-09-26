@@ -1,5 +1,5 @@
 # credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
-defmodule CommonCore.Actions.Grafana do
+defmodule CommonCore.Actions.Gitea do
   @moduledoc false
   @behaviour CommonCore.Actions.ActionGenerator
 
@@ -10,24 +10,21 @@ defmodule CommonCore.Actions.Grafana do
   alias CommonCore.StateSummary.Hosts
   alias CommonCore.StateSummary.KeycloakSummary
 
-  # TODO(jdt): do we essentially recreate this file for each battery type?
-  @client_name "grafana"
+  @client_name "gitea"
 
   @spec materialize(SystemBattery.t(), StateSummary.t()) :: list(FreshGeneratedAction.t() | nil)
   def materialize(%SystemBattery{} = system_battery, %StateSummary{} = state_summary) do
-    [ensure_grafana_client(system_battery, state_summary)]
+    [ensure_gitea_client(system_battery, state_summary)]
   end
 
-  defp ensure_grafana_client(%SystemBattery{} = battery, %StateSummary{keycloak_state: key_state} = summary) do
+  defp ensure_gitea_client(%SystemBattery{} = battery, %StateSummary{keycloak_state: key_state} = summary) do
     realm = CommonCore.Defaults.Keycloak.realm_name()
     root_url = "http://#{Hosts.for_battery(summary, battery.type)}"
 
-    # https://web.archive.org/web/20230802094035/https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
-    # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
     expected = %ClientRepresentation{
       adminUrl: root_url,
       baseUrl: root_url,
-      clientId: "grafana-oauth",
+      clientId: "gitea-oauth",
       directAccessGrantsEnabled: true,
       enabled: true,
       id: battery.id,
@@ -35,7 +32,7 @@ defmodule CommonCore.Actions.Grafana do
       name: @client_name,
       protocol: "openid-connect",
       publicClient: false,
-      redirectUris: ["#{root_url}/login/generic_oauth"],
+      redirectUris: ["#{root_url}/*"],
       rootUrl: root_url,
       standardFlowEnabled: true,
       webOrigins: [root_url]
@@ -57,8 +54,6 @@ defmodule CommonCore.Actions.Grafana do
         }
 
       {:potential_name_change, _existing} ->
-        # TODO(jdt): can we change the ID? Do we delete and recreate?
-        # For now, just ostrich
         nil
 
       {:not_found, _} ->

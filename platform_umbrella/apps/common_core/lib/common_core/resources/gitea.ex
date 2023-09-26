@@ -80,6 +80,8 @@ defmodule CommonCore.Resources.Gitea do
 
     domain = gitea_host(state)
 
+    sso_enabled? = F.batteries_installed?(state, :sso)
+
     data =
       %{}
       |> Map.put("_generals_", "")
@@ -111,6 +113,26 @@ defmodule CommonCore.Resources.Gitea do
         SSH_DOMAIN=#{domain}
         SSH_LISTEN_PORT=#{@ssh_listen_port}
         SSH_PORT=#{@ssh_port}
+        DISABLE_REGISTRATION=#{sso_enabled?}
+        SHOW_REGISTRATION_BUTTON=#{!sso_enabled?}
+        ALLOW_ONLY_EXTERNAL_REGISTRATION=#{sso_enabled?}
+        """
+      )
+      |> maybe_put(
+        sso_enabled?,
+        "openid",
+        """
+        ENABLE_OPENID_SIGNIN=true
+        ENABLE_OPENID_SIGNUP=true
+        """
+      )
+      |> maybe_put(
+        sso_enabled?,
+        "oauth2_client",
+        """
+        OPENID_CONNECT_SCOPES=openid email profile offline_access roles
+        ENABLE_AUTO_REGISTRATION=true
+        USERNAME=email
         """
       )
       |> Secret.encode()
@@ -180,6 +202,8 @@ defmodule CommonCore.Resources.Gitea do
     namespace = core_namespace(state)
 
     pg_secret = gitea_pg_secret_name(battery, state)
+
+    sso_enabled? = F.batteries_installed?(state, :sso)
 
     template = %{
       "metadata" => %{
@@ -286,14 +310,37 @@ defmodule CommonCore.Resources.Gitea do
           },
           %{
             "command" => ["/usr/sbin/configure_gitea.sh"],
-            "env" => [
-              %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
-              %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
-              %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
-              %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
-              %{"name" => "GITEA_ADMIN_USERNAME", "value" => "gitea_admin"},
-              %{"name" => "GITEA_ADMIN_PASSWORD", "value" => "r8sA8CPHD9!bt6d"}
-            ],
+            "env" =>
+              [
+                %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
+                %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
+                %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
+                %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
+                %{"name" => "GITEA_ADMIN_USERNAME", "value" => "gitea_admin"},
+                %{"name" => "GITEA_ADMIN_PASSWORD", "value" => "r8sA8CPHD9!bt6d"}
+              ] ++
+                if sso_enabled? do
+                  case CommonCore.StateSummary.KeycloakSummary.client(
+                         state.keycloak_state,
+                         app_name()
+                       ) do
+                    %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
+                      keycloak_autodiscover_url =
+                        "http://#{keycloak_host(state)}/realms/#{realm}/.well-known/openid-configuration"
+
+                      [
+                        %{"name" => "OAUTH_NAME", "value" => "keycloak"},
+                        %{"name" => "AUTODISCOVER_URL", "value" => keycloak_autodiscover_url},
+                        %{"name" => "CLIENT_ID", "value" => client_id},
+                        %{"name" => "CLIENT_SECRET", "value" => client_secret}
+                      ]
+
+                    nil ->
+                      []
+                  end
+                else
+                  []
+                end,
             "image" => battery.config.image,
             "imagePullPolicy" => "Always",
             "name" => "configure-gitea",
@@ -352,4 +399,8 @@ defmodule CommonCore.Resources.Gitea do
 
     "#{user}.#{team}-#{cluster_name}.credentials.postgresql"
   end
+
+  @spec maybe_put(map(), boolean(), String.t(), String.t()) :: map()
+  def maybe_put(map, predicate, key, value) when predicate, do: Map.put(map, key, value)
+  def maybe_put(map, _predicate, _key, _value), do: map
 end
