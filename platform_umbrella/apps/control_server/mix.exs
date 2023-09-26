@@ -51,7 +51,7 @@ defmodule ControlServer.MixProject do
       {:polymorphic_embed, "~> 3.0.5"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, "~> 0.17.2"},
-      {:ecto_sqlite3, ">= 0.0.0"},
+      {:ecto_sqlite3, "~> 0.11.0", only: [:test, :integration]},
 
       # Filtering
       {:flop, "~> 0.22.0"},

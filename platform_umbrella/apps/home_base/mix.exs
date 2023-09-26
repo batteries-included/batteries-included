@@ -44,7 +44,7 @@ defmodule HomeBase.MixProject do
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.9"},
       {:postgrex, "~> 0.17.2"},
-      {:ecto_sqlite3, ">= 0.0.0"},
+      {:ecto_sqlite3, "~> 0.11.0", only: [:test, :integration]},
       {:jason, "~> 1.4.1"},
       {:typed_ecto_schema, "~> 0.4.1"},
       {:polymorphic_embed, "~> 3.0.5"},

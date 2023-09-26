@@ -50,7 +50,7 @@
         pname = "mix-deps-platform";
         inherit src version LANG;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-Xd4AXf6XzMNS/21CdJBqNvQVveicPKXhdEm02PjUgew=";
+        sha256 = "sha256-UlPUWVCvkPe0gvuDcXIg8qFbuT/VlenloFZDYMWTW7w=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {

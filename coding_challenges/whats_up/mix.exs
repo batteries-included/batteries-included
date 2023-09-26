@@ -35,7 +35,7 @@ defmodule WhatsUp.MixProject do
       {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
-      {:ecto_sqlite3, ">= 0.0.0"},
+      {:ecto_sqlite3, "~> 0.11.0"},
       {:phoenix_html, "~> 3.3.2"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20.0", override: true},
