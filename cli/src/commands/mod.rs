@@ -14,6 +14,7 @@ pub async fn program_main(program_args: ProgramArgs) -> Result<()> {
             overwrite_resources,
             forward_postgres,
             platform_dir,
+            static_dir,
             forward_pods,
             ..
         } => {
@@ -24,6 +25,7 @@ pub async fn program_main(program_args: ProgramArgs) -> Result<()> {
                 forward_postgres,
                 forward_pods,
                 platform_dir,
+                static_dir,
             )
             .await
         }

@@ -120,7 +120,8 @@
               # shellcheck disable=2046
               ${lib.getExe config.packages.bcli} dev \
                 $([[ -z ''${TRACE:-""} ]] || echo "-vv") \
-                --platform-dir=platform_umbrella
+                --platform-dir=platform_umbrella \
+                --static-dir=static
               echo "Exited"
             '';
           };

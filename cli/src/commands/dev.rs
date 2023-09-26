@@ -10,8 +10,8 @@ use crate::args::BaseArgs;
 use crate::postgres_kube::wait_healthy_pg;
 use crate::spec::InstallationSpec;
 use crate::tasks::{
-    add_local_to_spec, ensure_kube_provider_started, get_install_spec, initial_apply,
-    port_forward_postgres, port_forward_spec, setup_platform_db,
+    add_local_to_spec, download_install_spec, ensure_kube_provider_started, initial_apply,
+    port_forward_postgres, port_forward_spec, read_install_spec, setup_platform_db,
 };
 
 pub async fn dev_command(
@@ -21,9 +21,11 @@ pub async fn dev_command(
     forward_postgres: bool,
     forward_pods: Vec<String>,
     platform_dir: Option<PathBuf>,
+    static_dir: Option<PathBuf>,
 ) -> Result<()> {
     // Get the install spec from http server
-    let install_spec = get_install_spec(installation_url).await?;
+    let install_spec = get_install_spec(static_dir, installation_url).await?;
+
     // Now that we have the install spec and know what type of
     // kubernetes cluster we're expecting, make sure that it's started.
     // This will download the needed binaries
@@ -61,6 +63,24 @@ pub async fn dev_command(
         forward_pods,
     )
     .await
+}
+
+async fn get_install_spec(
+    static_dir_opt: Option<PathBuf>,
+    installation_url: Url,
+) -> Result<InstallationSpec> {
+    // If we know where to find the static files, we'll use them. Otherwise
+    // download them from the installation url.
+    if let Some(static_path) = static_dir_opt {
+        info!("Using local static files: {}", static_path.display());
+        // Using the local files allows long lived branches to change the install
+        // spec.
+        read_install_spec(static_path).await
+    } else {
+        info!("Downloading static files from {}", installation_url);
+        // Act like production and download from the interwebs.
+        download_install_spec(installation_url).await
+    }
 }
 
 async fn port_forward_and_setup(

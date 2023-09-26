@@ -1,4 +1,4 @@
-mod download_install_spec;
+mod get_install_spec;
 mod inflate_local_spec;
 mod initial_apply;
 mod kube_provider;
@@ -7,7 +7,7 @@ mod setup_db;
 mod stop_kind;
 mod uninstall_all_kube;
 
-pub use download_install_spec::get_install_spec;
+pub use get_install_spec::{download_install_spec, read_install_spec};
 pub use inflate_local_spec::add_local_to_spec;
 pub use initial_apply::initial_apply;
 pub use kube_provider::ensure_kube_provider_started;

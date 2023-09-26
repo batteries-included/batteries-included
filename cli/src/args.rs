@@ -30,6 +30,7 @@ pub enum CliAction {
     Dev {
         #[clap(long, default_value = "https://www.batteriesincl.com/specs/dev.json")]
         installation_url: Url,
+
         #[clap(long, default_value_t = false)]
         overwrite_resources: bool,
         #[clap(long, action = clap::ArgAction::Set, default_value_t = true)]
@@ -40,8 +41,12 @@ pub enum CliAction {
             value_name = "NAMESPACE.POD:HOST_PORT:POD_PORT"
         )]
         forward_pods: Vec<String>,
+        // The root dirctory of `platform_umbrella`
         #[clap(long)]
         platform_dir: Option<PathBuf>,
+        // The root directory of `static`
+        #[clap(long)]
+        static_dir: Option<PathBuf>,
     },
     Uninstall,
     Stop {
@@ -59,6 +64,8 @@ pub enum CliAction {
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
     use super::{CliAction, CliArgs};
     use clap::Parser;
 
@@ -83,6 +90,7 @@ mod tests {
                 installation_url: url::Url::parse("https://www.batteriesincl.com/specs/dev.json")
                     .expect("Parsable default"),
                 platform_dir: None,
+                static_dir: None,
                 forward_postgres: true,
                 overwrite_resources: false,
                 forward_pods: vec![]
@@ -104,7 +112,31 @@ mod tests {
                 forward_postgres: false,
                 installation_url: url::Url::parse("http://localhost:3000/specs/dev.json")
                     .expect("Parsable default"),
+                static_dir: None,
                 platform_dir: None,
+                overwrite_resources: false,
+                forward_pods: vec![]
+            }
+        )
+    }
+
+    #[tokio::test]
+    async fn test_parse_dev_with_path_args() {
+        let args = CliArgs::parse_from([
+            "bcli",
+            "dev",
+            "--forward-postgres=false",
+            "--static-dir=static",
+            "--platform-dir=platform_umbrella",
+        ]);
+        assert_eq!(
+            args.action,
+            CliAction::Dev {
+                installation_url: url::Url::parse("https://www.batteriesincl.com/specs/dev.json")
+                    .expect("Parsable default"),
+                forward_postgres: false,
+                static_dir: Some(PathBuf::from("static")),
+                platform_dir: Some(PathBuf::from("platform_umbrella")),
                 overwrite_resources: false,
                 forward_pods: vec![]
             }
