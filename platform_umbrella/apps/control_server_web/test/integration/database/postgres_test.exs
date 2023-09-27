@@ -8,9 +8,8 @@ defmodule ControlServerWeb.Integration.PostgrestTest do
 
     session
     |> visit("/postgres/new")
-    |> assert_text("New PostgreSQL Cluster")
+    |> assert_text("New Postgres Cluster")
     |> fill_in(text_field("cluster[name]"), with: cluster_name)
-    |> fill_in(text_field("cluster[storage_size]"), with: "100M")
     |> click(button("Save"))
     # Make sure that the postres cluster show page title is there
     |> assert_text("Postgres Cluster")

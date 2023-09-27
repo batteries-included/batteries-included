@@ -7,8 +7,8 @@ defmodule CommonCore.Postgres.PGUser do
 
   alias CommonCore.Defaults.RandomKeyChangeset
 
-  @required_fields ~w()a
-  @optional_fields ~w(username password roles)a
+  @required_fields ~w(username password roles)a
+  @optional_fields ~w()a
 
   @primary_key false
   @derive Jason.Encoder

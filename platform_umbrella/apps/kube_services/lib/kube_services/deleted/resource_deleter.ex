@@ -27,8 +27,7 @@ defmodule KubeServices.ResourceDeleter do
   def start_link(opts) do
     {state_opts, genserver_opts} = Keyword.split(opts, [:conn_func, :conn])
 
-    {:ok, pid} =
-      result = GenServer.start_link(@me, state_opts, Keyword.merge([name: @me], genserver_opts))
+    {:ok, pid} = result = GenServer.start_link(@me, state_opts, Keyword.merge([name: @me], genserver_opts))
 
     Logger.debug("#{@me} GenServer started with# #{inspect(pid)}.")
     result

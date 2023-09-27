@@ -1,17 +1,17 @@
-<div class="flex h-screen overflow-hidden bg-white dark:bg-[#181B22]" x-data="{sidebarOpen: false}">
+<div class="flex h-screen overflow-hidden bg-white dark:bg-gray-900" x-data="{sidebarOpen: false}">
   <div class="relative z-40 lg:w-64">
     <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900/80">
     </div>
 
-    <div id="sidebar" class="absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-200 ease-in-out transform border-r no-scrollbar lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto bg-white dark:bg-gray-900 border-[#DADADA] dark:border-[#4E535F]" x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'" @click.away="sidebarOpen = false" @keydown.escape.window="sidebarOpen = false" x-cloak>
+    <div id="sidebar" class="absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-200 ease-in-out transform border-r no-scrollbar lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600" x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'" @click.away="sidebarOpen = false" @keydown.escape.window="sidebarOpen = false" x-cloak>
       <div class="relative flex flex-col w-full h-full p-4 sidebar-background">
         <div class="flex items-center justify-between h-auto gap-2 px-3 pt-5 mb-10">
           <a class="flex-1 block h-9" href="/">
             <div class="inline-flex h-10 justify-center transition-none animation-none ">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145 92" class="h-auto w-10 mr-4" aria-label="Batteries Included Logo, a cloud with charged ends">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145 92" class="w-10 h-auto mr-4" aria-label="Batteries Included Logo, a cloud with charged ends">
   <path class="fill-pink-500" d="M36.54,38.3h-4.68c-11.73,0-21.32,9.59-21.32,21.32h0c0,11.73,9.6,21.32,21.32,21.32h27.17c1.4,0,2.76-.14,4.09-.4h-.06c7.83-1.54,14.16-7.4,16.38-14.97-2.83-1.96-4.68-5.23-4.68-8.94,0-6,4.87-10.87,10.87-10.87s10.87,4.87,10.87,10.87c0,4.42-2.64,8.23-6.44,9.93-.05,.21-.09,.41-.14,.61h.06c-3.42,13.85-15.98,24.2-30.84,24.2H31.76C14.29,91.37,0,77.08,0,59.62H0c0-15.85,11.77-29.09,27.01-31.4l-.07-.07C33.69-2.39,69.77-8.99,89.27,12.83,57.24,1.93,38.52,9.66,36.54,38.3h0Zm47.66,12.24v4.68h-4.68v2.84h4.68v4.68h2.84v-4.68h4.68v-2.84h-4.68v-4.68h-2.84Z"></path><path class="fill-gray-500 dark:fill-white" d="M118.42,35.8c14.48,.15,26.28,12.04,26.28,26.55h0c0,14.61-11.95,26.56-26.56,26.56-10.12,0-17.43-2.12-25.23-9.31h24.02c9.49,0,17.25-7.76,17.25-17.25h0c0-9.49-7.76-17.25-17.25-17.25h-5.27c-3.86-9.35-13.07-15.93-23.81-15.93-11.57,0-21.37,7.64-24.61,18.14,3.16,1.9,5.27,5.36,5.27,9.32,0,6-4.87,10.87-10.87,10.87s-10.87-4.87-10.87-10.87c0-4.22,2.4-7.87,5.91-9.67,3.63-16.08,18-28.09,35.17-28.09,12.88,0,24.19,6.76,30.56,16.92h0Zm-54.68,19.42h-12.19v2.84h12.19v-2.84Z"></path>
 </svg>
-  <div class="flex flex-col justify-between h-8 my-auto text-sm leading-none align-middle dark:text-[#D1C7CA] whitespace-nowrap">
+  <div class="flex flex-col justify-between h-8 my-auto text-sm leading-none align-middle dark:text-gray-300 whitespace-nowrap">
     <span class="font-semibold tracking-[0.25rem] uppercase">
       Batteries
     </span>
@@ -69,7 +69,7 @@
     </div>
   </div>
 
-  <svg class="absolute right-0" width="491" height="205" viewBox="0 0 491 205" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg class="absolute top-0 right-0" width="491" height="205" viewBox="0 0 491 205" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g opacity="0.5" filter="url(#filter0_f_834_17481)">
     <circle class="fill-[#F0EDFF] dark:fill-[#5D5589]" cx="245.016" cy="-40.0562" r="149.016"></circle>
   </g>
@@ -82,7 +82,7 @@
   </defs>
 </svg>
 
-<svg class="absolute right-0" width="497" height="272" viewBox="0 0 497 272" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg class="absolute top-0 right-0" width="497" height="272" viewBox="0 0 497 272" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g opacity="0.44" filter="url(#filter0_f_834_17482)">
     <ellipse class="fill-[#FED8EB] dark:fill-[#4B2538]" cx="337.394" cy="-58.9357" rx="240.606" ry="234.064"></ellipse>
   </g>

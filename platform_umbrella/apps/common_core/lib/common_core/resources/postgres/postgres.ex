@@ -80,7 +80,7 @@ defmodule CommonCore.Resources.Postgres do
         }
       },
       "volume" => %{
-        "size" => cluster.storage_size
+        "size" => Integer.to_string(cluster.storage_size)
       },
       "users" => spec_users(cluster),
       "databases" => spec_databases(cluster)

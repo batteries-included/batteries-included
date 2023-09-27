@@ -9,8 +9,8 @@ defmodule CommonUI.Brand do
   def logo(assigns) do
     ~H"""
     <div class={["inline-flex h-10 justify-center transition-none animation-none", @class]}>
-      <.batteries_logo class="h-auto w-10 mr-4" />
-      <div class="flex flex-col justify-between h-8 my-auto text-sm leading-none align-middle dark:text-[#D1C7CA] whitespace-nowrap">
+      <.batteries_logo class="w-10 h-auto mr-4" />
+      <div class="flex flex-col justify-between h-8 my-auto text-sm leading-none align-middle dark:text-gray-300 whitespace-nowrap">
         <span class="font-semibold tracking-[0.25rem] uppercase">
           Batteries
         </span>

@@ -4,7 +4,7 @@ defmodule CommonCore.Defaults.ControlDB do
     :name => "control",
     :postgres_version => "14",
     :num_instances => 1,
-    :storage_size => "500M",
+    :storage_size => 524_288_000,
     :type => :internal,
     :users => [
       %{username: "controlserver", roles: ["createdb", "login"]}

@@ -31,8 +31,7 @@ defmodule ControlServer.RedisTest do
         num_sentinel_instances: 42
       }
 
-      assert {:ok, %FailoverCluster{} = failover_cluster} =
-               Redis.create_failover_cluster(valid_attrs)
+      assert {:ok, %FailoverCluster{} = failover_cluster} = Redis.create_failover_cluster(valid_attrs)
 
       assert failover_cluster.name == "some name"
       assert failover_cluster.num_redis_instances == 42
@@ -52,8 +51,7 @@ defmodule ControlServer.RedisTest do
         num_sentinel_instances: 43
       }
 
-      assert {:ok, %FailoverCluster{} = failover_cluster} =
-               Redis.update_failover_cluster(failover_cluster, update_attrs)
+      assert {:ok, %FailoverCluster{} = failover_cluster} = Redis.update_failover_cluster(failover_cluster, update_attrs)
 
       assert failover_cluster.name == "some updated name"
       assert failover_cluster.num_redis_instances == 43
@@ -63,8 +61,7 @@ defmodule ControlServer.RedisTest do
     test "update_failover_cluster/2 with invalid data returns error changeset" do
       failover_cluster = failover_cluster_fixture()
 
-      assert {:error, %Ecto.Changeset{}} =
-               Redis.update_failover_cluster(failover_cluster, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Redis.update_failover_cluster(failover_cluster, @invalid_attrs)
 
       assert failover_cluster == Redis.get_failover_cluster!(failover_cluster.id)
     end

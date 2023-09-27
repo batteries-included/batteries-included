@@ -67,8 +67,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp assign_k8_pods(%{assigns: assigns} = socket) do
-    possible_owner_uids =
-      [uid(assigns.k8_cluster)] ++ uids(assigns.k8_stateful_sets) ++ uids(assigns.k8_services)
+    possible_owner_uids = [uid(assigns.k8_cluster)] ++ uids(assigns.k8_stateful_sets) ++ uids(assigns.k8_services)
 
     k8_cluster = assigns.k8_cluster || %{}
     cluster_info = {K8s.Resource.name(k8_cluster), K8s.Resource.namespace(k8_cluster)}

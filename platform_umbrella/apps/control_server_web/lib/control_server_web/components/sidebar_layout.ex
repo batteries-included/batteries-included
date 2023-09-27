@@ -23,7 +23,7 @@ defmodule ControlServerWeb.SidebarLayout do
     doc: "The path to the home page. When a user clicks the logo, they will be taken to this path."
 
   attr :sidebar_bg_class, :string, default: "bg-white dark:bg-gray-900"
-  attr :sidebar_border_class, :string, default: "border-[#DADADA] dark:border-[#4E535F]"
+  attr :sidebar_border_class, :string, default: "border-gray-300 dark:border-gray-600"
   slot :inner_block, required: true, doc: "The main content of the page."
 
   slot :logo,
@@ -31,10 +31,7 @@ defmodule ControlServerWeb.SidebarLayout do
 
   def sidebar_layout(assigns) do
     ~H"""
-    <div
-      class="flex h-screen overflow-hidden bg-white dark:bg-[#181B22]"
-      x-data="{sidebarOpen: false}"
-    >
+    <div class="flex h-screen overflow-hidden bg-white dark:bg-gray-900" x-data="{sidebarOpen: false}">
       <div class="relative z-40 lg:w-64">
         <div
           x-show="sidebarOpen"
@@ -113,7 +110,7 @@ defmodule ControlServerWeb.SidebarLayout do
   def background_gradient_blur(assigns) do
     ~H"""
     <svg
-      class="absolute right-0"
+      class="absolute top-0 right-0"
       width="491"
       height="205"
       viewBox="0 0 491 205"
@@ -141,7 +138,7 @@ defmodule ControlServerWeb.SidebarLayout do
     </svg>
 
     <svg
-      class="absolute right-0"
+      class="absolute top-0 right-0"
       width="497"
       height="272"
       viewBox="0 0 497 272"

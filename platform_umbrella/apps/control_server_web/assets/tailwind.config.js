@@ -114,7 +114,6 @@ module.exports = {
     // Common UI
     '../../common_ui/lib/*.*ex*',
     '../../common_ui/lib/**/*.*ex*',
-
     // Petal Components
     '../../../deps/petal_components/**/*.*ex',
   ],
@@ -157,10 +156,10 @@ module.exports = {
         primary: violetRed,
         secondary: blizardBlue,
         success: shamrock,
-        danger: heath,
+        danger: colors.red,
         warning: seaBuckthorn,
         info: blizardBlue,
-        gray: colors.slate,
+        gray: colors.zinc,
       },
       fontFamily: {
         sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],

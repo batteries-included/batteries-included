@@ -2,9 +2,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, {:live_view, layout: :fresh}
-
-  import ControlServerWeb.PostgresClusterTable
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias CommonCore.Postgres.Cluster
   alias ControlServer.Postgres
@@ -13,6 +11,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   def mount(_params, _session, socket) do
     {:ok,
      socket
+     |> assign(current_page: :datastores)
      |> assign_clusters(list_clusters())
      |> assign_page_title("Postgres Clusters")}
   end
@@ -40,21 +39,17 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1><%= @page_title %></.h1>
-    <.card>
-      <.postgres_clusters_table rows={@clusters} />
-    </.card>
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/"}}>
+      <:right_side>
+        <PC.button to={new_url()} link_type="live_redirect" label="New Cluster" />
+      </:right_side>
+    </.page_header>
 
-    <.h2 variant="fancy">Actions</.h2>
-    <.card>
-      <div class="grid md:grid-cols-1 gap-6">
-        <.a navigate={new_url()} class="block">
-          <.button class="w-full">
-            New Cluster
-          </.button>
-        </.a>
+    <%= for cluster <- @clusters do %>
+      <div>
+        <.a class="underline" navigate={~p"/postgres/#{cluster.id}/show"}><%= cluster.name %></.a>
       </div>
-    </.card>
+    <% end %>
     """
   end
 end

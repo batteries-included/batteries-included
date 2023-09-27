@@ -83,4 +83,17 @@ defmodule CommonUI.Typogoraphy do
     </h4>
     """
   end
+
+  attr :class, :any, default: ""
+  attr :base_class, :string, default: "text-lg leading-6 font-normal"
+  slot :inner_block, required: true
+  attr :rest, :global
+
+  def h5(assigns) do
+    ~H"""
+    <h4 class={build_class([@base_class, @class])} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </h4>
+    """
+  end
 end

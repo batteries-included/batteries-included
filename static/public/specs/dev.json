@@ -3,6 +3,7 @@
     "provider": "kind"
   },
   "target_summary": {
+    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -88,14 +89,16 @@
         "id": null,
         "name": "control",
         "type": "internal",
+        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
         "postgres_version": "14",
         "num_instances": 1,
-        "storage_size": "500M",
+        "storage_size": 524288000,
         "users": [
           {
             "username": "controlserver",
+            "password": "uPxnABf4xudEu59T0Mi89MPN",
             "roles": ["createdb", "login"]
           }
         ],
@@ -106,14 +109,19 @@
           }
         ],
         "team_name": "pg",
-        "credential_copies": []
+        "credential_copies": [],
+        "cpu_requested": null,
+        "cpu_limits": null,
+        "memory_requested": null,
+        "memory_limits": null,
+        "virtual_size": null,
+        "virtual_storage_size_range_value": null
       }
     ],
     "redis_clusters": [],
     "ceph_clusters": [],
     "ceph_filesystems": [],
-    "kube_state": {},
-    "keycloak_state": null
+    "kube_state": {}
   },
   "initial_resources": {
     "/istio/crd/envoyfilters_networking_istio_io": {
@@ -1001,7 +1009,7 @@
       "kind": "postgresql",
       "metadata": {
         "annotations": {
-          "battery/hash": "EGXOONCDFSB3GLBYU4O5XSNVHJCQFCYPPYIEA5VMMCWVT7LNEK3A===="
+          "battery/hash": "PM5VM4RBUXNSPCUYLO4KLSTJJZF3L3KGX2WVYUDQEN6VA5VZHV5Q===="
         },
         "labels": {
           "app": "postgres",
@@ -1033,7 +1041,7 @@
           "controlserver": ["createdb", "login"]
         },
         "volume": {
-          "size": "500M"
+          "size": "524288000"
         }
       }
     },

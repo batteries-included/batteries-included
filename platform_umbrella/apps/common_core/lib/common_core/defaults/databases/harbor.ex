@@ -7,7 +7,7 @@ defmodule CommonCore.Defaults.HarborDB do
     :name => @cluster_name,
     :postgres_version => "14",
     :num_instances => 1,
-    :storage_size => "200M",
+    :storage_size => 209_715_200,
     :type => :internal,
     :users => [%{username: @username, roles: ["superuser", "createrole", "createdb", "login"]}],
     :databases => [

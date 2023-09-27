@@ -10,7 +10,7 @@ defmodule ControlServer.PostgresTest do
       name: "some name",
       num_instances: 2,
       postgres_version: "12.1",
-      storage_size: "500Mi",
+      storage_size: 524_288_000,
       users: [%{username: "userone", roles: ["superuser"]}],
       databases: [%{name: "maindata", owner: "userone"}]
     }
@@ -18,7 +18,7 @@ defmodule ControlServer.PostgresTest do
       name: "some updated name",
       num_instances: 3,
       postgres_version: "13",
-      storage_size: "250Mi",
+      storage_size: 209_715_200,
       users: [
         %{username: "userone", roles: ["superuser"]},
         %{username: "usertwo", roles: ["nologin"]}
@@ -51,7 +51,7 @@ defmodule ControlServer.PostgresTest do
       assert cluster.name == "some name"
       assert cluster.num_instances == 2
       assert cluster.postgres_version == "12.1"
-      assert cluster.storage_size == "500Mi"
+      assert cluster.storage_size == 524_288_000
       assert [%PGUser{username: "userone", roles: ["superuser"], password: _}] = cluster.users
     end
 
@@ -65,7 +65,7 @@ defmodule ControlServer.PostgresTest do
       assert cluster.name == "some updated name"
       assert cluster.num_instances == 3
       assert cluster.postgres_version == "13"
-      assert cluster.storage_size == "250Mi"
+      assert cluster.storage_size == 209_715_200
     end
 
     test "update_cluster/2 with invalid data returns error changeset" do

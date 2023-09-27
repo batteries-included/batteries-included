@@ -28,11 +28,11 @@ defmodule CommonUI.Form do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="space-y-8 mt-10">
+      <div class="mt-10 space-y-8">
         <div class="grid grid-cols-1 mt-6 sm:gap-y-4 gap-y-8 gap-x-4 sm:gap-x-8 sm:grid-cols-2">
           <%= render_slot(@inner_block, f) %>
         </div>
-        <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-2">
+        <div :for={action <- @actions} class="flex items-center justify-between gap-2 mt-2">
           <%= render_slot(action, f) %>
         </div>
       </div>
@@ -92,7 +92,7 @@ defmodule CommonUI.Form do
 
   def input(%{type: "checkbox"} = assigns) do
     ~H"""
-    <label phx-feedback-for={@name} class="flex items-center gap-4 text-base leading-6 pt-10">
+    <label phx-feedback-for={@name} class="flex items-center gap-4 pt-10 text-base leading-6">
       <input type="hidden" id={@id} name={@name} value="false" />
       <input
         type="checkbox"
@@ -131,7 +131,7 @@ defmodule CommonUI.Form do
     <div phx-feedback-for={@name}>
       <input type="hidden" name={@name} value="" />
       <.label for={@id}><%= @label %></.label>
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+      <div class="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
         <div :for={o <- @options}>
           <.label for={"#{@name}-#{o}"}><%= o %></.label>
           <input
@@ -198,6 +198,22 @@ defmodule CommonUI.Form do
     """
   end
 
+  attr :label, :string, default: nil
+  attr :rest, :global, include: ~w(name value)
+
+  def switch(assigns) do
+    ~H"""
+    <label class="relative inline-flex items-center mb-4 cursor-pointer">
+      <input type="checkbox" {@rest} class="sr-only peer" />
+      <div class="dark:peer-focus:ring-primary-500 after:peer-checked:bg-primary-500 h-[24px] w-[42px] rounded-full border border-gray-300 bg-white after:absolute after:left-[5px] after:top-1 after:h-[16px] after:w-[16px] after:rounded-full after:border-none after:bg-gray-500 dark:after:bg-gray-400 after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-none dark:border-gray-600 dark:bg-gray-800">
+      </div>
+      <span :if={@label} class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+        <%= @label %>
+      </span>
+    </label>
+    """
+  end
+
   defp input_checked(%{checked: checked}, _value) when not is_nil(checked), do: checked
   defp input_checked(_rest, value) when is_boolean(value), do: value
   defp input_checked(_rest, value), do: to_string(value) == "true"
@@ -239,7 +255,7 @@ defmodule CommonUI.Form do
 
   def error(assigns) do
     ~H"""
-    <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-sea-buckthorn-600 input-error">
+    <p class="flex gap-3 mt-3 text-sm leading-6 phx-no-feedback:hidden text-sea-buckthorn-600 input-error">
       <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-sea-buckthorn-500" />
       <%= @message %>
     </p>

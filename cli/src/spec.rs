@@ -169,7 +169,7 @@ pub struct PGClusterSpec {
     #[serde(rename = "type")]
     cluster_type: PGClusterType,
 
-    storage_size: String,
+    storage_size: u64,
 
     users: Option<Vec<PGUserSpec>>,
     databases: Option<Vec<PGDatabaseSpec>>,

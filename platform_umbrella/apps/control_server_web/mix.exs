@@ -66,7 +66,8 @@ defmodule ControlServerWeb.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:wallaby, "~> 0.30.6", runtime: false, only: [:test, :integration]},
-      {:websock_adapter, "~> 0.5.1"}
+      {:websock_adapter, "~> 0.5.1"},
+      {:inflex, "~> 2.0.0"}
     ]
   end
 

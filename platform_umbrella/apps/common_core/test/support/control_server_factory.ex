@@ -17,7 +17,7 @@ defmodule CommonCore.Resources.ControlServerFactory do
   def postgres_factory do
     %{
       name: sequence("test-postgres-cluster"),
-      storage_size: "1G"
+      storage_size: 524_288_000
     }
   end
 

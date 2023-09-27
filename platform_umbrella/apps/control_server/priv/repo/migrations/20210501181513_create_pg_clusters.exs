@@ -6,7 +6,12 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :postgres_version, :string
-      add :storage_size, :string
+      add :storage_size, :bigint
+      add :storage_class, :string
+      add :cpu_requested, :integer
+      add :cpu_limits, :integer
+      add :memory_requested, :bigint
+      add :memory_limits, :bigint
       add :num_instances, :integer
       add :type, :string
       add :team_name, :string

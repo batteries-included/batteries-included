@@ -47,8 +47,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   @impl Phoenix.LiveComponent
   def handle_event("del:env_value", %{"idx" => idx} = _params, %{assigns: %{changeset: changeset}} = socket) do
-    env_values =
-      changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(String.to_integer(idx))
+    env_values = changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(String.to_integer(idx))
 
     final_changeset = Changeset.put_embed(changeset, :env_values, env_values)
     {:noreply, assign_changeset(socket, final_changeset)}
@@ -74,8 +73,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
       ) do
     field_name = String.to_existing_atom(field_name_str)
 
-    containers =
-      changeset |> Changeset.get_field(field_name, []) |> List.delete_at(String.to_integer(idx))
+    containers = changeset |> Changeset.get_field(field_name, []) |> List.delete_at(String.to_integer(idx))
 
     final_changeset = Changeset.put_embed(changeset, field_name, containers)
     {:noreply, assign_changeset(socket, final_changeset)}

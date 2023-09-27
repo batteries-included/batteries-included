@@ -157,7 +157,7 @@ module.exports = {
         danger: heath,
         warning: seaBuckthorn,
         info: blizardBlue,
-        gray: colors.slate,
+        gray: colors.zinc,
       },
       fontFamily: {
         sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],

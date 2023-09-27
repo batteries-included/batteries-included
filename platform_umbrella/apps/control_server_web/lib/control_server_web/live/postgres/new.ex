@@ -1,30 +1,31 @@
 defmodule ControlServerWeb.Live.PostgresNew do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGUser
   alias ControlServer.Batteries.Installer
-  alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent
 
   require Logger
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    # Pre-populate the databases and users with decent
+    # Pre-populate the databases and users with decent permissions
     cluster = %Cluster{
+      virtual_size: "medium",
       databases: [%PGDatabase{name: "app", owner: "app"}],
-      users: [%PGUser{username: "app", roles: ["login", "createdb", "createrole"]}]
+      users: [%PGUser{username: "app", roles: ["login", "createdb", "createrole"]}],
+      credential_copies: []
     }
 
-    changeset = Postgres.change_cluster(cluster)
+    socket =
+      socket
+      |> assign(current_page: :datastores)
+      |> assign(cluster: cluster)
 
-    {:ok,
-     socket
-     |> assign(:cluster, cluster)
-     |> assign(:changeset, changeset)}
+    {:ok, socket}
   end
 
   @impl Phoenix.LiveView
@@ -44,7 +45,6 @@ defmodule ControlServerWeb.Live.PostgresNew do
   def render(assigns) do
     ~H"""
     <div>
-      <.h1>New PostgreSQL Cluster</.h1>
       <.live_component
         module={PostgresFormComponent}
         cluster={@cluster}

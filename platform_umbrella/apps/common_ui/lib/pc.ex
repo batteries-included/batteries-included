@@ -10,12 +10,14 @@ defmodule PC do
   defdelegate badge(assigns), to: PetalComponents.Badge
   defdelegate breadcrumbs(assigns), to: PetalComponents.Breadcrumbs
   defdelegate button(assigns), to: PetalComponents.Button
+  defdelegate icon_button(assigns), to: PetalComponents.Button
   defdelegate card(assigns), to: PetalComponents.Card
   defdelegate container(assigns), to: PetalComponents.Container
   defdelegate dropdown(assigns), to: PetalComponents.Dropdown
   defdelegate field(assigns), to: PetalComponents.Field
   defdelegate icon(assigns), to: PetalComponents.Icon
   defdelegate input(assigns), to: PetalComponents.Input
+  defdelegate form_label(assigns), to: PetalComponents.Form
   defdelegate a(assigns), to: PetalComponents.Link
   defdelegate spinner(assigns), to: PetalComponents.Loading
   defdelegate modal(assigns), to: PetalComponents.Modal
