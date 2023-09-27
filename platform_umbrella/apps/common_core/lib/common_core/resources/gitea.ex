@@ -77,6 +77,7 @@ defmodule CommonCore.Resources.Gitea do
 
   resource(:secret_inline_config, _battery, state) do
     namespace = core_namespace(state)
+    namespace_base = base_namespace(state)
 
     domain = gitea_host(state)
 
@@ -90,7 +91,7 @@ defmodule CommonCore.Resources.Gitea do
         "database",
         """
         DB_TYPE=postgres
-        HOST=pg-gitea.#{namespace}.svc
+        HOST=pg-gitea.#{namespace_base}.svc.cluster.local.
         NAME=gitea
         USER=root
         PASSWD=gitea

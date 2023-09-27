@@ -15,6 +15,9 @@ defmodule CommonCore.Defaults.HarborDB do
       %{name: "harbor", owner: @username},
       %{name: "notary_signer", owner: @username}
     ],
+    :credential_copies => [
+      %{username: @username, namespace: "battery-core", format: :user_password_host}
+    ],
     :team_name => @team
   }
 

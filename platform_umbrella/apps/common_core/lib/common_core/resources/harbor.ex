@@ -46,6 +46,7 @@ defmodule CommonCore.Resources.Harbor do
 
   resource(:config_map_core, _battery, state) do
     namespace = core_namespace(state)
+    namespace_base = base_namespace(state)
 
     data =
       %{}
@@ -71,7 +72,7 @@ defmodule CommonCore.Resources.Harbor do
       |> Map.put("POSTGRESQL_DATABASE", "registry")
       |> Map.put("POSTGRESQL_MAX_IDLE_CONNS", "100")
       |> Map.put("POSTGRESQL_PORT", "5432")
-      |> Map.put("POSTGRESQL_HOST", "pg-harbor")
+      |> Map.put("POSTGRESQL_HOST", "pg-harbor.#{namespace_base}.svc.cluster.local.")
       |> Map.put("POSTGRESQL_SSLMODE", "require")
       |> Map.put("POSTGRESQL_MAX_OPEN_CONNS", "900")
       |> Map.put("REGISTRY_URL", "http://harbor-registry:5000")
@@ -110,11 +111,12 @@ defmodule CommonCore.Resources.Harbor do
 
   resource(:config_map_exporter_env, _battery, state) do
     namespace = core_namespace(state)
+    namespace_base = base_namespace(state)
 
     data =
       %{}
       |> Map.put("HARBOR_DATABASE_DBNAME", "registry")
-      |> Map.put("HARBOR_DATABASE_HOST", "pg-harbor")
+      |> Map.put("HARBOR_DATABASE_HOST", "pg-harbor.#{namespace_base}.svc.cluster.local.")
       |> Map.put("HARBOR_DATABASE_MAX_IDLE_CONNS", "100")
       |> Map.put("HARBOR_DATABASE_MAX_OPEN_CONNS", "900")
       |> Map.put("HARBOR_DATABASE_PORT", "5432")
