@@ -126,6 +126,17 @@
             '';
           };
 
+          clean = {
+            description = "Clean the working tree";
+            category = "dev";
+            exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
+              git clean -idx \
+                -e .env \
+                -e .iex.exs
+            '';
+          };
+
           uninstall = {
             description = "Uninstall everything from the kube cluster";
             category = "dev";
