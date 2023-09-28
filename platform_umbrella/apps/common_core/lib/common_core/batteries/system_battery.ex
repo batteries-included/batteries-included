@@ -11,7 +11,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.CloudnativePGConfig
   alias CommonCore.Batteries.GiteaConfig
   alias CommonCore.Batteries.GrafanaConfig
-  alias CommonCore.Batteries.HarborConfig
   alias CommonCore.Batteries.IstioConfig
   alias CommonCore.Batteries.IstioCSRConfig
   alias CommonCore.Batteries.IstioGatewayConfig
@@ -43,7 +42,6 @@ defmodule CommonCore.Batteries.SystemBattery do
     cloudnative_pg: CloudnativePGConfig,
     gitea: GiteaConfig,
     grafana: GrafanaConfig,
-    harbor: HarborConfig,
     istio: IstioConfig,
     istio_csr: IstioCSRConfig,
     istio_gateway: IstioGatewayConfig,

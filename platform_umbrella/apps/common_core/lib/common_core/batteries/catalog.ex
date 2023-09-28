@@ -60,12 +60,6 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :devtools,
-      type: :harbor,
-      dependencies: [:battery_core, :redis, :istio_gateway, :postgres],
-      description: "Harbor is the trusted cloud native repository for Kubernetes"
-    },
-    %CatalogBattery{
-      group: :devtools,
       type: :smtp4dev,
       dependencies: [:battery_core, :istio_gateway]
     },

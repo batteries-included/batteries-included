@@ -32,14 +32,6 @@ defmodule CommonUI.IconTest do
     """
   end
 
-  component_snapshot_test "Harbor Icon" do
-    assigns = %{}
-
-    ~H"""
-    <.harbor_icon />
-    """
-  end
-
   component_snapshot_test "Gitea Icon" do
     assigns = %{}
 

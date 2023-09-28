@@ -18,14 +18,6 @@ defmodule CommonCore.Defaults.Images do
 
   def gitea_image, do: "gitea/gitea:1.19.3"
 
-  def harbor_core_image, do: "goharbor/harbor-core:v2.8.1"
-  def harbor_portal_image, do: "goharbor/harbor-portal:v2.8.1"
-  def harbor_exporter_image, do: "goharbor/harbor-exporter:v2.8.1"
-  def harbor_jobservice_image, do: "goharbor/harbor-jobservice:v2.8.1"
-  def harbor_photon_image, do: "goharbor/registry-photon:v2.8.1"
-  def harbor_ctl_image, do: "goharbor/harbor-registryctl:v2.8.1"
-  def harbor_trivy_adapter_image, do: "goharbor/trivy-adapter-photon:v2.8.1"
-
   def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.14.1"
 
   def grafana_image, do: "grafana/grafana:9.3.6"

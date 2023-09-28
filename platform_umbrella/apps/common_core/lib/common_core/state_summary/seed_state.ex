@@ -13,10 +13,8 @@ defmodule CommonCore.StateSummary.SeedState do
       postgres_clusters:
         pg_clusters([
           Defaults.ControlDB.control_cluster(),
-          Defaults.GiteaDB.gitea_cluster(),
-          Defaults.HarborDB.harbor_pg_cluster()
-        ]),
-      redis_clusters: redis_clusters([Defaults.HarborDB.harbor_redis_cluster()])
+          Defaults.GiteaDB.gitea_cluster()
+        ])
     }
   end
 
@@ -76,10 +74,6 @@ defmodule CommonCore.StateSummary.SeedState do
   end
 
   defp add_dev_infra_to_battery(battery), do: battery
-
-  defp redis_clusters(args_list) do
-    Enum.map(args_list, &CommonCore.Redis.FailoverCluster.to_fresh_cluster/1)
-  end
 
   defp pg_clusters(args_list) do
     Enum.map(args_list, &CommonCore.Postgres.Cluster.to_fresh_cluster/1)

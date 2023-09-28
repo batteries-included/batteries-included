@@ -12,7 +12,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
   alias CommonCore.Resources.Gitea
   alias CommonCore.Resources.Grafana
-  alias CommonCore.Resources.Harbor
   alias CommonCore.Resources.IstioBase
   alias CommonCore.Resources.IstioCsr
   alias CommonCore.Resources.Istiod
@@ -53,7 +52,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     cloudnative_pg: [CloudnativePG, CloudnativePGClusters],
     gitea: [Gitea],
     grafana: [Grafana],
-    harbor: [Harbor],
     istio: [IstioBase, Istiod, IstioMetrics],
     istio_csr: [IstioCsr],
     istio_gateway: [IstioIngress],

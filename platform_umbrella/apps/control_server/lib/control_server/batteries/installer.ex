@@ -5,7 +5,6 @@ defmodule ControlServer.Batteries.Installer do
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Defaults
   alias ControlServer.Postgres
-  alias ControlServer.Redis
   alias ControlServer.Repo
   alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
@@ -141,16 +140,6 @@ defmodule ControlServer.Batteries.Installer do
   defp to_map(val) when is_struct(val), do: Map.from_struct(val)
   defp to_map(val) when is_map(val), do: val
   defp clean_merge(m1, m2), do: Map.merge(to_map(m1), to_map(m2))
-
-  defp post_install(%SystemBattery{type: :harbor}, repo) do
-    init_pg = Defaults.HarborDB.harbor_pg_cluster()
-    init_redis = Defaults.HarborDB.harbor_redis_cluster()
-
-    with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo),
-         {:ok, redis} <- Redis.create_failover_cluster(init_redis, repo) do
-      {:ok, harbor_postgres: postgres_db, harbor_redis: redis}
-    end
-  end
 
   defp post_install(%SystemBattery{type: :battery_core}, repo) do
     init_pg = Defaults.ControlDB.control_cluster()

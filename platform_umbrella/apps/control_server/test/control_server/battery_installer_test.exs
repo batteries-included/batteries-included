@@ -4,7 +4,6 @@ defmodule ControlServer.Batteries.InstallerTest do
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Postgres.Cluster, as: PGCluster
-  alias CommonCore.Redis.FailoverCluster
   alias ControlServer.Batteries.Installer
 
   describe "ControlServer.Batteries.Installer" do
@@ -29,15 +28,6 @@ defmodule ControlServer.Batteries.InstallerTest do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
       assert {:ok, _res} = Installer.install(:gitea)
       assert 2 >= ControlServer.Repo.aggregate(PGCluster, :count, :id)
-    end
-
-    @tag :slow
-    test "runs the harbor post hook" do
-      assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
-      assert 0 == ControlServer.Repo.aggregate(FailoverCluster, :count, :id)
-      assert {:ok, _res} = Installer.install(:harbor)
-      assert 2 >= ControlServer.Repo.aggregate(PGCluster, :count, :id)
-      assert 1 == ControlServer.Repo.aggregate(FailoverCluster, :count, :id)
     end
 
     @tag :slow

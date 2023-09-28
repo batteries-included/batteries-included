@@ -10,7 +10,6 @@ defmodule KubeServices.SystemState.SummaryHosts do
   - Gitea Hostname
   - Grafana Hostname
   - Vmselect Hostname
-  - Harbor Hostname
   - Keycloak Hostname
   - Smtp4dev Hostname
   - Notebook Hostname
@@ -91,11 +90,6 @@ defmodule KubeServices.SystemState.SummaryHosts do
   @spec vmagent_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
   def vmagent_host(target \\ @me) do
     GenServer.call(target, :vmagent_host)
-  end
-
-  @spec harbor_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def harbor_host(target \\ @me) do
-    GenServer.call(target, :harbor_host)
   end
 
   @spec smtp4dev_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil

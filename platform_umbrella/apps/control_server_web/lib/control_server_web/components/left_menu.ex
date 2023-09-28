@@ -14,11 +14,11 @@ defmodule ControlServerWeb.LeftMenu do
 
   alias CommonCore.Batteries.SystemBattery
 
-  attr :icon_class, :string, default: "h-5"
-  attr :page_group, :atom, required: true
-  attr :page_detail_type, :atom, required: true
-  attr :installed_batteries, :list, default: []
-  attr :rest, :global
+  attr(:icon_class, :string, default: "h-5")
+  attr(:page_group, :atom, required: true)
+  attr(:page_detail_type, :atom, required: true)
+  attr(:installed_batteries, :list, default: [])
+  attr(:rest, :global)
 
   def left_menu(assigns) do
     ~H"""
@@ -122,13 +122,13 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  attr :is_active, :boolean, default: false
-  attr :navigate, :string
-  attr :group, :atom
-  attr :page_group, :atom
-  attr :rest, :global
-  slot :label
-  slot :icon
+  attr(:is_active, :boolean, default: false)
+  attr(:navigate, :string)
+  attr(:group, :atom)
+  attr(:page_group, :atom)
+  attr(:rest, :global)
+  slot(:label)
+  slot(:icon)
 
   def main_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
     ~H"""
@@ -162,10 +162,10 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  attr :installed_batteries, :list, required: true
-  attr :group, :atom, required: true
-  attr :page_group, :atom, required: true
-  attr :page_detail_type, :atom, required: true
+  attr(:installed_batteries, :list, required: true)
+  attr(:group, :atom, required: true)
+  attr(:page_group, :atom, required: true)
+  attr(:page_detail_type, :atom, required: true)
 
   def menu_detail(assigns) do
     ~H"""
@@ -192,10 +192,10 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  attr :group, :atom, required: true
-  attr :page_group, :atom, required: true
-  attr :page_detail_type, :atom, required: true
-  attr :icon_class, :any, default: "mx-2 h-5 w-auto group my-1"
+  attr(:group, :atom, required: true)
+  attr(:page_group, :atom, required: true)
+  attr(:page_detail_type, :atom, required: true)
+  attr(:icon_class, :any, default: "mx-2 h-5 w-auto group my-1")
 
   def group_detail_item(%{group: :data} = assigns) do
     ~H"""
@@ -375,10 +375,10 @@ defmodule ControlServerWeb.LeftMenu do
     """
   end
 
-  attr :icon_class, :any, default: "mx-2 h-5 w-auto group my-1"
-  attr :battery, :any, default: %{type: :unknown}
-  attr :page_detail_type, :atom, required: true
-  attr :page_group, :atom, required: true
+  attr(:icon_class, :any, default: "mx-2 h-5 w-auto group my-1")
+  attr(:battery, :any, default: %{type: :unknown})
+  attr(:page_detail_type, :atom, required: true)
+  attr(:page_group, :atom, required: true)
 
   defp battery_detail_item(%{battery: %{type: :postgres}} = assigns) do
     ~H"""
@@ -471,18 +471,6 @@ defmodule ControlServerWeb.LeftMenu do
       is_active={@page_detail_type == :gitea}
     >
       <.gitea_icon class={@icon_class} />
-    </.detail_menu_item>
-    """
-  end
-
-  defp battery_detail_item(%{battery: %{type: :harbor}} = assigns) do
-    ~H"""
-    <.detail_menu_item
-      href={"//#{harbor_host()}"}
-      name="Harbor"
-      is_active={@page_detail_type == :harbor}
-    >
-      <.harbor_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end
@@ -597,11 +585,11 @@ defmodule ControlServerWeb.LeftMenu do
 
   defp battery_detail_item(%{battery: %{type: _}} = assigns), do: ~H||
 
-  attr :navigate, :string
-  attr :href, :string
-  attr :name, :string, required: true
-  attr :is_active, :boolean, default: false
-  slot :inner_block
+  attr(:navigate, :string)
+  attr(:href, :string)
+  attr(:name, :string, required: true)
+  attr(:is_active, :boolean, default: false)
+  slot(:inner_block)
 
   def detail_menu_item(%{navigate: nav} = assigns) when not is_nil(nav) do
     ~H"""

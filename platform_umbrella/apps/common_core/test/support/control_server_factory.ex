@@ -64,7 +64,6 @@ defmodule CommonCore.Resources.ControlServerFactory do
           :postgres,
           :dev_metallb,
           :gitea,
-          :harbor,
           :istio,
           :istio_gateway,
           :kiali,

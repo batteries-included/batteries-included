@@ -26,10 +26,6 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ip() |> host("vmagent")
   end
 
-  def harbor_host(%StateSummary{} = summary) do
-    summary |> ip() |> host("harbor")
-  end
-
   def smtp4dev_host(%StateSummary{} = summary) do
     summary |> ip() |> host("smtp4dev")
   end
@@ -66,7 +62,6 @@ defmodule CommonCore.StateSummary.Hosts do
 
   def for_battery(summary, :gitea), do: gitea_host(summary)
   def for_battery(summary, :grafana), do: grafana_host(summary)
-  def for_battery(summary, :harbor), do: harbor_host(summary)
   def for_battery(summary, :keycloak), do: keycloak_host(summary)
   def for_battery(summary, :kiali), do: kiali_host(summary)
   def for_battery(summary, :notebooks), do: notebooks_host(summary)
