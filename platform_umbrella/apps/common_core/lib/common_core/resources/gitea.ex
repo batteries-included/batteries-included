@@ -1,5 +1,6 @@
 defmodule CommonCore.Resources.Gitea do
   @moduledoc false
+
   use CommonCore.IncludeResource,
     config_environment_sh: "priv/raw_files/gitea/config_environment.sh",
     configure_gitea_sh: "priv/raw_files/gitea/configure_gitea.sh",
@@ -7,6 +8,7 @@ defmodule CommonCore.Resources.Gitea do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "gitea"
 
+  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
@@ -400,8 +402,4 @@ defmodule CommonCore.Resources.Gitea do
 
     "#{user}.#{team}-#{cluster_name}.credentials.postgresql"
   end
-
-  @spec maybe_put(map(), boolean(), String.t(), String.t()) :: map()
-  def maybe_put(map, predicate, key, value) when predicate, do: Map.put(map, key, value)
-  def maybe_put(map, _predicate, _key, _value), do: map
 end

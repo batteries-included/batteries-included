@@ -290,8 +290,14 @@ defmodule CommonCore.Keycloak.AdminClient do
     with_auth(state, fn new_state -> do_create_client(realm_name, client_data, new_state) end)
   end
 
-  def handle_call({:update_client, realm_name, client_data}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_update_client(realm_name, client_data, new_state) end)
+  # map/struct with atom keys
+  def handle_call({:update_client, realm_name, %{id: id} = client_data}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_update_client(realm_name, id, client_data, new_state) end)
+  end
+
+  # map with string keys
+  def handle_call({:update_client, realm_name, %{"id" => id} = client_data}, _from, %State{} = state) do
+    with_auth(state, fn new_state -> do_update_client(realm_name, id, client_data, new_state) end)
   end
 
   #
@@ -491,7 +497,7 @@ defmodule CommonCore.Keycloak.AdminClient do
     |> to_result(nil)
   end
 
-  defp do_update_client(realm_name, %{id: id} = client_data, %State{bearer_client: client} = _state) do
+  defp do_update_client(realm_name, id, client_data, %State{bearer_client: client} = _state) do
     client
     |> Tesla.put(@base_path <> realm_name <> "/clients/" <> id, client_data)
     |> to_result(nil)
