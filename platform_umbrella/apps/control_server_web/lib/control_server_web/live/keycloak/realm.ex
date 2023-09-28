@@ -140,7 +140,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     <div :if={@temp_password != nil}>
       <.modal on_cancel={JS.push("cancel_temp_password")} id="temp-password-modal" show={true}>
         <.h2>Temporary Password Set</.h2>
-        A new password has been set for this user. The temporary password is: <%= @temp_password %>
+        A new password has been set for this user. The temporary password is: <pre><%= @temp_password %></pre>
       </.modal>
     </div>
     <.button phx-click="new-user">New User</.button>
