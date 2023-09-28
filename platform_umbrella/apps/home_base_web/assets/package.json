@@ -12,7 +12,7 @@
     "@fontsource-variable/jetbrains-mono": "5.0.13",
     "alpinejs": "3.13.0",
     "chart.js": "4.4.0",
-    "esbuild": "^0.19.3",
+    "esbuild": "^0.19.4",
     "lodash": "4.17.21",
     "phoenix": "1.7.7",
     "phoenix_html": "3.3.2",
