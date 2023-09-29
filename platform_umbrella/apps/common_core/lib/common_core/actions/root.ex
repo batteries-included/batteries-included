@@ -3,13 +3,15 @@ defmodule CommonCore.Actions.RootActionGenerator do
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Actions.Gitea
   alias CommonCore.Actions.Grafana
+  alias CommonCore.Actions.Kiali
   alias CommonCore.Actions.SSO
   alias CommonCore.StateSummary
 
   @default_generator_mappings [
     sso: SSO,
+    gitea: Gitea,
     grafana: Grafana,
-    gitea: Gitea
+    kiali: Kiali
   ]
 
   @spec materialize(StateSummary.t()) :: list(FreshGeneratedAction.t())

@@ -2,14 +2,13 @@ defmodule CommonCore.Resources.Kiali do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "kiali"
 
+  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.IstioConfig.VirtualService
-
-  require Logger
 
   resource(:service_account_main, _battery, state) do
     namespace = istio_namespace(state)
@@ -248,9 +247,31 @@ defmodule CommonCore.Resources.Kiali do
         "metrics_enabled" => true,
         "metrics_port" => 9090,
         "port" => 20_001,
+        "web_port" => 80,
         "web_root" => "/kiali"
       }
     }
+
+    kiali_config =
+      maybe_put_lazy(kiali_config, F.batteries_installed?(state, :sso), "auth", fn orig ->
+        case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, app_name()) do
+          %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
+            keycloak_url = "http://#{keycloak_host(state)}/realms/#{realm}"
+
+            %{
+              "strategy" => "openid",
+              "openid" => %{
+                "client_id" => client_id,
+                "client_secret" => client_secret,
+                "disable_rbac" => true,
+                "issuer_uri" => keycloak_url
+              }
+            }
+
+          _ ->
+            orig["auth"]
+        end
+      end)
 
     data = %{"config.yaml" => Ymlr.document!(kiali_config)}
 
