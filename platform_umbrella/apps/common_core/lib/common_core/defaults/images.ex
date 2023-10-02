@@ -38,7 +38,8 @@ defmodule CommonCore.Defaults.Images do
 
   def knative_operator_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.10.1"
 
-  def kiali_image, do: "quay.io/kiali/kiali:v1.71.0"
+  def kiali_image, do: "quay.io/kiali/kiali:#{kiali_image_version()}"
+  def kiali_image_version, do: "v1.74.1"
 
   def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.9"
   def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.9"

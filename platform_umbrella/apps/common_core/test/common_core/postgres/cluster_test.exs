@@ -1,5 +1,5 @@
 defmodule CommonCore.Postgres.ClusterTest do
-  use ControlServer.DataCase
+  use ExUnit.Case
 
   alias CommonCore.Postgres.Cluster
   alias Ecto.Changeset
