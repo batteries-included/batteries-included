@@ -117,6 +117,22 @@ defmodule ControlServer.Postgres do
     Cluster.changeset(cluster, attrs)
   end
 
+  @doc """
+  Finds an existing cluster matching the given attributes, or creates a new one if not found.
+
+  Params:
+  - attrs: Map of attributes to search for or use for cluster creation
+  - transaction_repo: The repo to use for the transaction
+
+  Returns:
+  - {:ok, cluster} if found or created successfully
+  - {:error, reason} if something went wrong
+
+  Searches for an existing cluster with matching type, team_name and name.
+  If found, returns the existing cluster.
+  If not found, creates a new cluster with the given attributes.
+  Runs as a transaction to avoid race conditions.
+  """
   def find_or_create(attrs, transaction_repo \\ Repo) do
     Multi.new()
     |> Multi.run(:selected, fn repo, _ ->

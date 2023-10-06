@@ -130,7 +130,7 @@ defmodule CommonCore.Postgres.Cluster do
 
   def get_preset("small"),
     do: %{
-      storage_size: Memory.gb_to_bytes(128),
+      storage_size: Memory.mb_to_bytes(512),
       cpu_requested: 100,
       cpu_limits: 500,
       memory_requested: Memory.mb_to_bytes(512),
@@ -139,7 +139,7 @@ defmodule CommonCore.Postgres.Cluster do
 
   def get_preset("medium"),
     do: %{
-      storage_size: Memory.gb_to_bytes(256),
+      storage_size: Memory.gb_to_bytes(64),
       cpu_requested: 500,
       cpu_limits: 2000,
       memory_requested: Memory.gb_to_bytes(2),
@@ -148,7 +148,7 @@ defmodule CommonCore.Postgres.Cluster do
 
   def get_preset("large"),
     do: %{
-      storage_size: Memory.gb_to_bytes(512),
+      storage_size: Memory.gb_to_bytes(256),
       cpu_requested: 2000,
       cpu_limits: 4000,
       memory_requested: Memory.gb_to_bytes(8),
@@ -157,7 +157,7 @@ defmodule CommonCore.Postgres.Cluster do
 
   def get_preset("huge"),
     do: %{
-      storage_size: Memory.gb_to_bytes(4096),
+      storage_size: Memory.gb_to_bytes(1024),
       cpu_requested: 4000,
       cpu_limits: 8000,
       memory_requested: Memory.gb_to_bytes(32),
