@@ -11,7 +11,7 @@ serde_json = { version = "1.0.107" }
 
 thiserror = "1.0.49"
 
-tokio = { version = "1.32.0", features = ["full"] }
+tokio = { version = "1.33.0", features = ["full"] }
 
 axum = { version = "0.6.20", features = ["headers", "json", "query"] }
 tower = { version = "0.4.13" }
