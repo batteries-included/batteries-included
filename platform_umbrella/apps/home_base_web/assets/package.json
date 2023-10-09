@@ -16,7 +16,7 @@
     "lodash": "4.17.21",
     "phoenix": "1.7.7",
     "phoenix_html": "3.3.2",
-    "phoenix_live_view": "0.20.0",
+    "phoenix_live_view": "0.20.1",
     "topbar": "2.0.1"
   },
   "devDependencies": {
