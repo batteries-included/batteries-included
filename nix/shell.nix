@@ -28,7 +28,6 @@
         elixir-ls
         sqlite
 
-        mix2nix
         postgresql
 
         bind
@@ -83,7 +82,6 @@
 
         # Use for pushing docker
         skopeo
-        terraform
         wireguard-tools
         ansible
         awscli2
