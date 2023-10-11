@@ -54,20 +54,20 @@ defmodule ControlServerWeb.MixProject do
       {:jason, "~> 1.4.1"},
       {:kube_services, in_umbrella: true},
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:petal_components, "~> 1.6.0"},
+      {:petal_components, "~> 1.6.2"},
       {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4.2"},
       {:phoenix_html, "~> 3.3.2"},
       {:phoenix_live_dashboard, "~> 0.8.2"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_view, "~> 0.20.0", override: true},
-      {:phoenix_storybook, "~> 0.5.5"},
+      {:phoenix_live_view, "~> 0.20.1", override: true},
+      {:phoenix_storybook, "~> 0.5.7"},
       {:plug_cowboy, "~> 2.6"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:wallaby, "~> 0.30.6", runtime: false, only: [:test, :integration]},
       {:websock_adapter, "~> 0.5.1"},
-      {:inflex, "~> 2.0.0"}
+      {:inflex, "~> 2.1.0"}
     ]
   end
 

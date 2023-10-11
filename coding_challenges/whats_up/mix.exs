@@ -38,7 +38,7 @@ defmodule WhatsUp.MixProject do
       {:ecto_sqlite3, "~> 0.11.0"},
       {:phoenix_html, "~> 3.3.2"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.20.0", override: true},
+      {:phoenix_live_view, "~> 0.20.1", override: true},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.2"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},

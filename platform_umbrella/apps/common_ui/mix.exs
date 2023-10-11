@@ -30,11 +30,11 @@ defmodule CommonUI.MixProject do
       {:heyya, "~> 0.5.1", only: [:dev, :test, :integration]},
       {:phoenix, "~> 1.7.7"},
       {:jason, "~> 1.4.1"},
-      {:phoenix_live_view, "~> 0.20.0", override: true},
+      {:phoenix_live_view, "~> 0.20.1", override: true},
       {:heroicons, "~> 0.5.3"},
       {:gettext, "~> 0.19"},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:petal_components, "~> 1.6.0"}
+      {:petal_components, "~> 1.6.2"}
     ]
   end
 

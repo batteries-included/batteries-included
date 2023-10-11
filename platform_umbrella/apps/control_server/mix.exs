@@ -54,7 +54,7 @@ defmodule ControlServer.MixProject do
       {:ecto_sqlite3, "~> 0.11.0", only: [:test, :integration]},
 
       # Filtering
-      {:flop, "~> 0.22.0"},
+      {:flop, "~> 0.23.0"},
 
       # History
       {:ex_audit, "~> 0.10.0"},
