@@ -2,8 +2,6 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import ControlServerWeb.Tooltip
-
   alias Phoenix.Naming
 
   defp active_check(assigns) do

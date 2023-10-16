@@ -10,7 +10,7 @@ const Tooltip = {
   updated() {
     if (this.tippyInstances != null) {
       this.tippyInstances.forEach((element) => {
-        element.destro();
+        element.destroy();
       });
       this.tippyInstances = null;
     }
@@ -21,11 +21,13 @@ const Tooltip = {
   createTippy() {
     const target = '#' + this.el.dataset.target;
     const content = this.el.innerHTML;
-
-    this.tippyInstances = tippy(target, {
+    const tippyOptions = JSON.parse(this.el.dataset.tippyOptions);
+    const defaultOptions = {
       content: content,
       allowHTML: true,
-    });
+    };
+
+    this.tippyInstances = tippy(target, { ...defaultOptions, ...tippyOptions });
   },
 };
 

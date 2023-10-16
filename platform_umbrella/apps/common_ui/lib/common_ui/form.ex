@@ -5,6 +5,8 @@ defmodule CommonUI.Form do
   import CommonUI.Gettext, warn: false
   import Phoenix.HTML.Form, only: [input_name: 2, input_id: 2, input_value: 2, humanize: 1]
 
+  alias Phoenix.LiveView.JS
+
   @doc """
   Renders a simple form with a css grid based 2 column layout.
 
@@ -260,6 +262,75 @@ defmodule CommonUI.Form do
       <%= @message %>
     </p>
     """
+  end
+
+  @doc """
+  Editable component.
+
+      <.editable_field
+        field_attrs={%{
+          field: @form[:storage_size],
+          label: "Storage Size",
+          type: "number",
+          "phx-change": "change_storage_size"
+        }}
+        editing?={@storage_size_editable}
+        toggle_event_target={@myself}
+        toggle_event="toggle_storage_size_editable"
+        value_when_not_editing={@form[:storage_size].value |> your_custom_formatting()}
+      />
+  """
+  attr :field_attrs, :map, default: %{}, doc: "attrs to pass to <.field> from Petal Components"
+  attr :editing?, :boolean, default: false, doc: "whether the field is editable or not"
+
+  attr :toggle_event, :string,
+    doc: "the event that will toggle the `editing?` state. Your live view/component should handle it"
+
+  attr :toggle_event_target, :any, doc: "target of the event. In most cases will be `@myself`"
+
+  attr :value_when_not_editing, :string,
+    default: nil,
+    doc: "optionally format the value how you like. Defaults to the value of the field"
+
+  def editable_field(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "editable_field_#{DateTime.to_unix(DateTime.now!("Etc/UTC"))}" end)
+
+    ~H"""
+    <div id={@id} class="w-full">
+      <div class={"items-center gap-1 w-full phx-click-loading:hidden #{if @editing?, do: "flex", else: "hidden"}"}>
+        <PC.field wrapper_class="flex-1" {@field_attrs} />
+        <PC.icon_button
+          phx-click={toggle_editable(@toggle_event, @toggle_event_target, @id)}
+          type="button"
+          size="xs"
+          class="mt-1"
+        >
+          <Heroicons.x_mark solid />
+        </PC.icon_button>
+      </div>
+
+      <div class={"gap-1 phx-click-loading:hidden #{if @editing?, do: "hidden", else: "block"}"}>
+        <PC.form_label><%= @field_attrs[:label] %></PC.form_label>
+        <div
+          phx-click={toggle_editable(@toggle_event, @toggle_event_target, @id)}
+          id={"#{@id}_uneditable"}
+          class="text-sm py-2 text-gray-500 dark:text-gray-400 cursor-text border border-transparent border-dashed hover:border-gray-300 dark:hover:border-gray-700 px-3 rounded hover:bg-gray-50 dark:hover:bg-gray-800"
+        >
+          <%= if @value_when_not_editing,
+            do: @value_when_not_editing,
+            else: get_in(@field_attrs, [:field, :value]) %>
+        </div>
+        <CommonUI.Tooltip.tooltip target_id={"#{@id}_uneditable"} tippy_options={%{placement: "left"}}>
+          Click to edit
+        </CommonUI.Tooltip.tooltip>
+      </div>
+      <PC.spinner class="hidden phx-click-loading:block mt-9" />
+    </div>
+    """
+  end
+
+  defp toggle_editable(event, target, id) do
+    JS.push(event, target: target, loading: "##{id}")
   end
 
   @doc """

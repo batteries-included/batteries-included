@@ -8,20 +8,16 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   alias CommonCore.Postgres.PGCredentialCopy
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Util.Memory
+  alias CommonCore.Util.MemorySliderConverter
   alias ControlServer.Postgres
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent
-  def mount(socket) do
-    {:ok,
-     socket
-     |> assign_new(:save_info, fn -> "cluster:save" end)
-     |> assign_new(:save_target, fn -> nil end)}
-  end
-
-  @impl Phoenix.LiveComponent
   def update(%{cluster: cluster} = assigns, socket) do
-    changeset = Postgres.change_cluster(cluster)
+    changeset =
+      cluster
+      |> Postgres.change_cluster()
+      |> Cluster.maybe_convert_virtual_size_to_presets()
 
     {:ok,
      socket
@@ -33,7 +29,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:possible_namespaces, possible_namespaces())
      |> assign(:num_instances, cluster.num_instances)
      |> assign(:pg_user_form, nil)
-     |> assign(:pg_credential_copy_form, nil)}
+     |> assign(:pg_credential_copy_form, nil)
+     |> assign(:storage_size_editable, false)}
   end
 
   def handle_event("close_modal", _, socket) do
@@ -143,7 +140,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
     virtual_storage_size_range_value =
-      CommonCore.Util.MemorySliderConverter.bytes_to_slider_value(String.to_integer(bytes))
+      MemorySliderConverter.bytes_to_slider_value(String.to_integer(bytes))
 
     form =
       socket.assigns.form.source
@@ -154,6 +151,25 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     {:noreply, assign(socket, :form, form)}
   end
 
+  # This only happens when the user is manually editing the storage size.
+  # In this case, we need to update the range slider and helper text "x GB"
+  def handle_event("change_storage_size", %{"cluster" => %{"storage_size" => storage_size}}, socket) do
+    virtual_storage_size_range_value =
+      MemorySliderConverter.bytes_to_slider_value(String.to_integer(storage_size))
+
+    form =
+      socket.assigns.form.source
+      |> Changeset.put_change(:virtual_storage_size_range_value, virtual_storage_size_range_value)
+      |> Changeset.put_change(:storage_size, storage_size)
+      |> to_form()
+
+    {:noreply, assign(socket, :form, form)}
+  end
+
+  def handle_event("toggle_storage_size_editable", _, socket) do
+    {:noreply, assign(socket, storage_size_editable: !socket.assigns.storage_size_editable)}
+  end
+
   def handle_event("save", %{"cluster" => cluster_params}, socket) do
     cluster_params = prepare_cluster_params(cluster_params, socket)
     save_cluster(socket, socket.assigns.action, cluster_params)
@@ -162,10 +178,12 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   defp save_cluster(socket, :new, cluster_params) do
     case Postgres.create_cluster(cluster_params) do
       {:ok, new_cluster} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Postgres Cluster created successfully")
-         |> send_info(socket.assigns.save_target, new_cluster)}
+        socket =
+          socket
+          |> push_redirect(to: ~p"/postgres/#{new_cluster}/show")
+          |> put_flash(:info, "Postgres Cluster created successfully")
+
+        {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -175,21 +193,16 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   defp save_cluster(socket, :edit, cluster_params) do
     case Postgres.update_cluster(socket.assigns.cluster, cluster_params) do
       {:ok, updated_cluster} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Postgres Cluster updated successfully")
-         |> send_info(socket.assigns.save_target, updated_cluster)}
+        socket =
+          socket
+          |> push_redirect(to: ~p"/postgres/#{updated_cluster}/show")
+          |> put_flash(:info, "Postgres Cluster updated successfully")
+
+        {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp send_info(socket, nil, _cluster), do: {:noreply, socket}
-
-  defp send_info(socket, target, cluster) do
-    send(target, {socket.assigns.save_info, %{"cluster" => cluster}})
-    socket
   end
 
   defp possible_owners(%Changeset{} = changeset) do
@@ -238,13 +251,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               field={@form[:virtual_size]}
               type="select"
               label="Size"
-              options={[
-                {"Small", "small"},
-                {"Medium", "medium"},
-                {"Large", "large"},
-                {"Huge", "huge"},
-                {"Custom", "custom"}
-              ]}
+              options={Cluster.preset_options_for_select()}
             />
           </div>
 
@@ -267,92 +274,105 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             </div>
           </div>
 
-          <div :if={@form[:virtual_size].value == "custom"} class="grid grid-cols-2 gap-6 mb-5">
-            <div>
-              <div class="grid grid-cols-2 gap-6">
-                <div>
-                  <PC.field
-                    field={@form[:storage_class]}
-                    type="select"
-                    label="Storage Class"
-                    options={@possible_storage_classes}
+          <div :if={@form[:virtual_size].value == "custom"} class="mb-5 grid grid-cols-1 gap-6">
+            <div class="grid grid-cols-4 gap-6">
+              <div>
+                <PC.field
+                  field={@form[:storage_class]}
+                  type="select"
+                  label="Storage Class"
+                  options={@possible_storage_classes}
+                />
+              </div>
+              <div class="flex">
+                <div class="flex-1">
+                  <.editable_field
+                    field_attrs={
+                      %{
+                        field: @form[:storage_size],
+                        label: "Storage Size",
+                        type: "number",
+                        "phx-change": "change_storage_size"
+                      }
+                    }
+                    editing?={@storage_size_editable}
+                    toggle_event_target={@myself}
+                    toggle_event="toggle_storage_size_editable"
+                    value_when_not_editing={
+                      Memory.format_bytes(@form[:storage_size].value, true) || "0GB"
+                    }
                   />
                 </div>
-                <div class="flex">
-                  <div class="flex-1">
-                    <PC.field disabled field={@form[:storage_size]} label="Storage Size, B" />
-                  </div>
-                  <div class="w-24 mt-10 mr-3 text-sm text-right text-gray-500 dark:text-gray-400">
-                    <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
-                  </div>
+                <div
+                  :if={@storage_size_editable}
+                  class="mt-9 mx-3 text-sm text-right text-gray-500 dark:text-gray-400 w-16"
+                >
+                  <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
                 </div>
               </div>
-              <div class="grid grid-cols-2 gap-6">
-                <div>
-                  <PC.field
-                    field={@form[:cpu_requested]}
-                    type="select"
-                    label="CPU Requested"
-                    options={Cluster.cpu_select_options()}
-                  />
-                </div>
-                <div>
-                  <PC.field
-                    field={@form[:cpu_limits]}
-                    type="select"
-                    label="CPU Limits"
-                    options={Cluster.cpu_select_options()}
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="pt-3 pb-1">
+              <div class="pt-3 pb-1 mb-[22px] col-span-2">
                 <div class="flex justify-between w-full">
-                  <%= for memory_size <- [128, 256, 512, 1024, 2048, 4096] do %>
+                  <%= for memory_size <- MemorySliderConverter.control_points() do %>
                     <span
                       phx-click="set_storage_size_shortcut"
-                      phx-value-bytes={memory_size * 1024 * 1024 * 1024}
+                      phx-value-bytes={memory_size}
                       phx-target={@myself}
                       class="cursor-pointer hover:underline text-sm font-medium text-gray-700 dark:text-white w-[45px] text-center"
                     >
-                      <%= Memory.format_bytes(memory_size * 1024 * 1024 * 1024) %>
+                      <%= Memory.format_bytes(memory_size) %>
                     </span>
                   <% end %>
                 </div>
 
                 <PC.input
                   min="1"
-                  max="256"
+                  max="120"
                   step="1"
                   field={@form[:virtual_storage_size_range_value]}
                   type="range"
                 />
               </div>
+            </div>
 
-              <div class="grid grid-cols-2 gap-6 mt-[22px]">
-                <div>
-                  <PC.field
-                    field={@form[:memory_requested]}
-                    type="select"
-                    label="Memory Requested"
-                    options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
-                  />
-                </div>
-                <div>
-                  <PC.field
-                    field={@form[:memory_limits]}
-                    type="select"
-                    label="Memory Limits"
-                    options={Cluster.memory_limits_options() |> Memory.bytes_as_select_options()}
-                  />
-                </div>
+            <div class="grid grid-cols-4 gap-6">
+              <div>
+                <PC.field
+                  field={@form[:cpu_requested]}
+                  type="select"
+                  label="CPU Requested"
+                  options={Cluster.cpu_select_options()}
+                />
+              </div>
+              <div>
+                <PC.field
+                  field={@form[:cpu_limits]}
+                  type="select"
+                  label="CPU Limits"
+                  options={Cluster.cpu_select_options()}
+                />
+              </div>
+              <div>
+                <PC.field
+                  field={@form[:memory_requested]}
+                  type="select"
+                  label="Memory Requested"
+                  options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
+                />
+              </div>
+              <div>
+                <PC.field
+                  field={@form[:memory_limits]}
+                  type="select"
+                  label="Memory Limits"
+                  options={Cluster.memory_limits_options() |> Memory.bytes_as_select_options()}
+                />
               </div>
             </div>
           </div>
 
           <div class="flex justify-between w-full py-5 border-t border-gray-300 dark:border-gray-600">
           </div>
+
           <div class="flex items-center gap-6">
             <div class="flex justify-between w-full lg:w-1/2">
               <PC.h5>Number of instances</PC.h5>
@@ -518,7 +538,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     bytes =
       virtual_storage_size_range_value
       |> String.to_integer()
-      |> CommonCore.Util.MemorySliderConverter.slider_value_to_bytes()
+      |> MemorySliderConverter.slider_value_to_bytes()
 
     Map.put(params, "storage_size", Integer.to_string(bytes))
   end

@@ -5,7 +5,6 @@ defmodule ControlServerWeb.Live.PostgresNew do
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGUser
-  alias ControlServer.Batteries.Installer
   alias ControlServerWeb.Live.PostgresFormComponent
 
   require Logger
@@ -34,14 +33,6 @@ defmodule ControlServerWeb.Live.PostgresNew do
   end
 
   @impl Phoenix.LiveView
-  def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
-    new_path = ~p"/postgres/#{cluster}/show"
-    Installer.install!(:postgres)
-
-    {:noreply, push_redirect(socket, to: new_path)}
-  end
-
-  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <div>
@@ -50,7 +41,6 @@ defmodule ControlServerWeb.Live.PostgresNew do
         cluster={@cluster}
         id="new-cluster-form"
         action={:new}
-        save_target={self()}
       />
     </div>
     """

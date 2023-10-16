@@ -10,6 +10,41 @@ defmodule CommonCore.Postgres.Cluster do
 
   require Logger
 
+  @presets [
+    %{
+      name: "small",
+      storage_size: Memory.mb_to_bytes(512),
+      cpu_requested: 100,
+      cpu_limits: 500,
+      memory_requested: Memory.mb_to_bytes(512),
+      memory_limits: Memory.mb_to_bytes(1024)
+    },
+    %{
+      name: "medium",
+      storage_size: Memory.gb_to_bytes(64),
+      cpu_requested: 500,
+      cpu_limits: 2000,
+      memory_requested: Memory.gb_to_bytes(2),
+      memory_limits: Memory.gb_to_bytes(4)
+    },
+    %{
+      name: "large",
+      storage_size: Memory.gb_to_bytes(256),
+      cpu_requested: 2000,
+      cpu_limits: 4000,
+      memory_requested: Memory.gb_to_bytes(8),
+      memory_limits: Memory.gb_to_bytes(16)
+    },
+    %{
+      name: "huge",
+      storage_size: Memory.gb_to_bytes(1024),
+      cpu_requested: 4000,
+      cpu_limits: 8000,
+      memory_requested: Memory.gb_to_bytes(32),
+      memory_limits: Memory.gb_to_bytes(64)
+    }
+  ]
+
   @timestamps_opts [type: :utc_datetime_usec]
   @derive {Jason.Encoder, except: [:__meta__]}
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -75,7 +110,7 @@ defmodule CommonCore.Postgres.Cluster do
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_limits_options())
     |> validate_length(:name, min: 1, max: 50)
-    |> unique_constraint([:type, :team_name, :name])
+    |> unique_constraint([:type, :team_name, :name], error_key: :name)
   end
 
   def validate(params) do
@@ -127,50 +162,18 @@ defmodule CommonCore.Postgres.Cluster do
     ]
 
   def memory_limits_options, do: memory_options()
+  def preset_options, do: @presets
+  def preset_options_for_select, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
 
-  def get_preset("small"),
-    do: %{
-      storage_size: Memory.mb_to_bytes(512),
-      cpu_requested: 100,
-      cpu_limits: 500,
-      memory_requested: Memory.mb_to_bytes(512),
-      memory_limits: Memory.mb_to_bytes(1024)
-    }
+  def get_preset(preset), do: Enum.find(@presets, &(&1.name == preset))
 
-  def get_preset("medium"),
-    do: %{
-      storage_size: Memory.gb_to_bytes(64),
-      cpu_requested: 500,
-      cpu_limits: 2000,
-      memory_requested: Memory.gb_to_bytes(2),
-      memory_limits: Memory.gb_to_bytes(4)
-    }
-
-  def get_preset("large"),
-    do: %{
-      storage_size: Memory.gb_to_bytes(256),
-      cpu_requested: 2000,
-      cpu_limits: 4000,
-      memory_requested: Memory.gb_to_bytes(8),
-      memory_limits: Memory.gb_to_bytes(16)
-    }
-
-  def get_preset("huge"),
-    do: %{
-      storage_size: Memory.gb_to_bytes(1024),
-      cpu_requested: 4000,
-      cpu_limits: 8000,
-      memory_requested: Memory.gb_to_bytes(32),
-      memory_limits: Memory.gb_to_bytes(64)
-    }
-
-  defp maybe_convert_virtual_size_to_presets(changeset) do
+  def maybe_convert_virtual_size_to_presets(changeset) do
     convert_virtual_size_to_presets(changeset, get_field(changeset, :virtual_size))
   end
 
-  defp convert_virtual_size_to_presets(changeset, nil), do: changeset
+  def convert_virtual_size_to_presets(changeset, nil), do: changeset
 
-  defp convert_virtual_size_to_presets(changeset, "custom") do
+  def convert_virtual_size_to_presets(changeset, "custom") do
     case get_change(changeset, :storage_size) do
       nil ->
         # When switching to "custom" in the form, we set some defaults to start with:
@@ -188,7 +191,7 @@ defmodule CommonCore.Postgres.Cluster do
     end
   end
 
-  defp convert_virtual_size_to_presets(changeset, virtual_size) do
+  def convert_virtual_size_to_presets(changeset, virtual_size) do
     preset = get_preset(virtual_size)
     set_preset(changeset, preset)
   end

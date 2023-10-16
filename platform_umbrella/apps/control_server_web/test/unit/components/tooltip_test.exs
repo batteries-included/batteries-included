@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Components.TooltipTest do
   use Heyya.SnapshotTest
 
-  import ControlServerWeb.Tooltip
+  import CommonUI.Tooltip
 
   component_snapshot_test "default tooltip" do
     assigns = %{}

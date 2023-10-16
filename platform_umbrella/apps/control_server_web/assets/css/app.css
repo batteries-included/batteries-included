@@ -8,6 +8,7 @@
 @import './modal_scroller';
 
 @import '../../../../deps/petal_components/assets/default.css';
+@import './tippy.css';
 
 ::selection {
   @apply bg-primary-500;
