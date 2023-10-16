@@ -5,14 +5,17 @@ defmodule CommonCore.Resources.Keycloak do
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
+  alias CommonCore.Defaults
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Secret
+  alias CommonCore.StateSummary.PostgresState
 
   resource(:config_map_env_vars, battery, state) do
     namespace = core_namespace(state)
-    basenamespace = base_namespace(state)
+    pg_cluster = PostgresState.cluster(state, name: Defaults.KeycloakDB.db_username(), type: :internal)
+    hostname = PostgresState.read_write_hostname(state, pg_cluster)
 
     data =
       %{}
@@ -25,7 +28,7 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("KC_HTTP_PORT", "8080")
       |> Map.put("KC_PROXY", "edge")
       |> Map.put("KC_DB", "postgres")
-      |> Map.put("KC_DB_URL_HOST", "pg-auth.#{basenamespace}.svc")
+      |> Map.put("KC_DB_URL_HOST", hostname)
       |> Map.put("KC_LOG_LEVEL", "info")
       |> Map.put("KEYCLOAK_ADMIN", battery.config.admin_username)
       |> Map.put("jgroups.dns.query", "keycloak-headless.#{namespace}")
@@ -99,6 +102,12 @@ defmodule CommonCore.Resources.Keycloak do
 
   resource(:stateful_set_main, battery, state) do
     namespace = core_namespace(state)
+    pg_cluster = PostgresState.cluster(state, name: Defaults.KeycloakDB.cluster_name(), type: :internal)
+
+    pg_user =
+      Enum.find((pg_cluster || %{users: []}).users, fn user -> user.username == Defaults.KeycloakDB.db_username() end)
+
+    secret_name = PostgresState.user_secret(state, pg_cluster, pg_user)
 
     spec =
       %{}
@@ -151,21 +160,11 @@ defmodule CommonCore.Resources.Keycloak do
                   },
                   %{
                     "name" => "KC_DB_USERNAME",
-                    "valueFrom" => %{
-                      "secretKeyRef" => %{
-                        "key" => "username",
-                        "name" => "keycloak.pg-auth.credentials.postgresql"
-                      }
-                    }
+                    "valueFrom" => B.secret_key_ref(secret_name, "username")
                   },
                   %{
                     "name" => "KC_DB_PASSWORD",
-                    "valueFrom" => %{
-                      "secretKeyRef" => %{
-                        "key" => "password",
-                        "name" => "keycloak.pg-auth.credentials.postgresql"
-                      }
-                    }
+                    "valueFrom" => B.secret_key_ref(secret_name, "password")
                   },
                   %{"name" => "KEYCLOAK_HTTP_RELATIVE_PATH", "value" => "/"}
                 ],

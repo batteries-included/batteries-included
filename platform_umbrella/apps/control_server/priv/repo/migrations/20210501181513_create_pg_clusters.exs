@@ -5,7 +5,6 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
     create table(:pg_clusters, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
-      add :postgres_version, :string
       add :storage_size, :bigint
       add :storage_class, :string
       add :cpu_requested, :integer
@@ -14,7 +13,6 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       add :memory_limits, :bigint
       add :num_instances, :integer
       add :type, :string
-      add :team_name, :string
       add :users, :map
       add :databases, :map
 
@@ -23,6 +21,6 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       timestamps(type: :utc_datetime_usec)
     end
 
-    create unique_index(:pg_clusters, [:type, :team_name, :name])
+    create unique_index(:pg_clusters, [:type, :name])
   end
 end

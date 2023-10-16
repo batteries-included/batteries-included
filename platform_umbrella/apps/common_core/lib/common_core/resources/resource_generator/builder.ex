@@ -64,6 +64,11 @@ defmodule CommonCore.Resources.Builder do
     |> label("app.kubernetes.io/managed-by", "batteries-included")
   end
 
+  @spec add_owner(map(), String.t() | map() | nil) :: any
+  def add_owner(resource, %{id: id} = _cluster), do: owner_label(resource, id)
+  def add_owner(resource, owner_binary) when is_binary(owner_binary), do: add_owner(resource, owner_binary)
+  def add_owner(resource, _), do: resource
+
   @spec owner_label(map(), binary() | nil) :: map()
   def owner_label(resource, nil = _owner_id) do
     resource

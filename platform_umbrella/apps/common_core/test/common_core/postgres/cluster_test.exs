@@ -9,11 +9,9 @@ defmodule CommonCore.Postgres.ClusterTest do
       %{
         valid_attrs: %{
           name: "test",
-          postgres_version: "14",
           storage_size: 137_438_953_472,
           num_instances: 1,
-          type: :standard,
-          team_name: "pg"
+          type: :standard
         }
       }
     end
@@ -47,11 +45,9 @@ defmodule CommonCore.Postgres.ClusterTest do
     test "returns a valid changeset and struct with valid attributes" do
       attrs = %{
         name: "test",
-        postgres_version: "14",
         storage_size: 137_438_953_472,
         num_instances: 1,
-        type: :standard,
-        team_name: "pg"
+        type: :standard
       }
 
       {changeset, _data} = Cluster.validate(attrs)
@@ -70,11 +66,9 @@ defmodule CommonCore.Postgres.ClusterTest do
     test "creates a new cluster with valid attributes" do
       attrs = %{
         name: "test",
-        postgres_version: "14",
         storage_size: 137_438_953_472,
         num_instances: 1,
-        type: :standard,
-        team_name: "pg"
+        type: :standard
       }
 
       cluster = Cluster.to_fresh_cluster(attrs)

@@ -43,9 +43,9 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:14
+        image: postgres:15
         env:
-          POSTGRES_USER: batterydbuser
+          POSTGRES_USER: battery-local-user
           POSTGRES_PASSWORD: 'batterypasswd'
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s
@@ -53,7 +53,7 @@ jobs:
         ports: ['5432:5432']
     env:
       POSTGRES_HOST: localhost
-      POSTGRES_USER: batterydbuser
+      POSTGRES_USER: battery-local-user
       POSTGRES_PASSWORD: 'batterypasswd'
       MIX_ENV: test
     steps:

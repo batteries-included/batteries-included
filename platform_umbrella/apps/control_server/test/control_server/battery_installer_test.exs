@@ -19,7 +19,7 @@ defmodule ControlServer.Batteries.InstallerTest do
     @tag :slow
     test "runs the postgres post hook" do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
-      assert {:ok, _res} = Installer.install(:postgres)
+      assert {:ok, _res} = Installer.install(:cloudnative_pg)
       assert 1 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
     end
 

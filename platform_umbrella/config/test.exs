@@ -7,7 +7,7 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :control_server, ControlServer.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
+  username: System.get_env("POSTGRES_USER") || "battery-local-user",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
   database: System.get_env("POSTGRES_DB") || "server_test",
   hostname: System.get_env("POSTGRES_HOST") || "127.0.0.1",
@@ -15,7 +15,7 @@ config :control_server, ControlServer.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :home_base, HomeBase.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
+  username: System.get_env("POSTGRES_USER") || "battery-local-user",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
   database: System.get_env("POSTGRES_DB") || "home-base-test",
   hostname: System.get_env("POSTGRES_HOST") || "127.0.0.1",

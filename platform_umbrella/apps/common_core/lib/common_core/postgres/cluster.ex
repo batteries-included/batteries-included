@@ -52,8 +52,6 @@ defmodule CommonCore.Postgres.Cluster do
   typed_schema "pg_clusters" do
     field :name, :string
     field :num_instances, :integer, default: 1
-    field :postgres_version, :string, default: "14"
-    field :team_name, :string, default: "pg"
     field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
     field :storage_size, :integer
     field :storage_class, :string
@@ -81,8 +79,6 @@ defmodule CommonCore.Postgres.Cluster do
     |> cast(attrs, [
       :name,
       :num_instances,
-      :postgres_version,
-      :team_name,
       :type,
       :storage_size,
       :storage_class,
@@ -99,18 +95,16 @@ defmodule CommonCore.Postgres.Cluster do
     |> cast_embed(:credential_copies)
     |> validate_required([
       :name,
-      :postgres_version,
       :storage_size,
       :num_instances,
-      :type,
-      :team_name
+      :type
     ])
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_limits_options())
     |> validate_length(:name, min: 1, max: 50)
-    |> unique_constraint([:type, :team_name, :name], error_key: :name)
+    |> unique_constraint([:type, :name])
   end
 
   def validate(params) do

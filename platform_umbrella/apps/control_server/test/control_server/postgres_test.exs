@@ -9,7 +9,6 @@ defmodule ControlServer.PostgresTest do
     @valid_attrs %{
       name: "some name",
       num_instances: 2,
-      postgres_version: "12.1",
       storage_size: 524_288_000,
       users: [%{username: "userone", roles: ["superuser"]}],
       databases: [%{name: "maindata", owner: "userone"}]
@@ -17,7 +16,6 @@ defmodule ControlServer.PostgresTest do
     @update_attrs %{
       name: "some updated name",
       num_instances: 3,
-      postgres_version: "13",
       storage_size: 209_715_200,
       users: [
         %{username: "userone", roles: ["superuser"]},
@@ -25,7 +23,7 @@ defmodule ControlServer.PostgresTest do
       ],
       databases: [%{name: "maindata", owner: "userone"}, %{name: "testdata", owner: "usertwo"}]
     }
-    @invalid_attrs %{name: nil, num_instances: nil, postgres_version: nil, size: nil}
+    @invalid_attrs %{name: nil, num_instances: nil, size: nil}
 
     def cluster_fixture(attrs \\ %{}) do
       {:ok, cluster} =
@@ -50,7 +48,6 @@ defmodule ControlServer.PostgresTest do
       assert {:ok, %Cluster{} = cluster} = Postgres.create_cluster(@valid_attrs)
       assert cluster.name == "some name"
       assert cluster.num_instances == 2
-      assert cluster.postgres_version == "12.1"
       assert cluster.storage_size == 524_288_000
       assert [%PGUser{username: "userone", roles: ["superuser"], password: _}] = cluster.users
     end
@@ -64,7 +61,6 @@ defmodule ControlServer.PostgresTest do
       assert {:ok, %Cluster{} = cluster} = Postgres.update_cluster(cluster, @update_attrs)
       assert cluster.name == "some updated name"
       assert cluster.num_instances == 3
-      assert cluster.postgres_version == "13"
       assert cluster.storage_size == 209_715_200
     end
 

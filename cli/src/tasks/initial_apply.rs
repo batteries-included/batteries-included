@@ -49,16 +49,19 @@ pub async fn initial_apply(
                 // Turn the result into an option.
                 // If we get a good result  then return None
                 // which will filter this path from future attempts.
-                //
-                // If we call the default closure then something went wrong
-                // Log it and keep the path and resource for future retries.
-                apply_result.ok().map_or_else(
-                    || {
-                        debug!("Non ok apply path = {:?} retries = {:?}", &path, retries);
+                match apply_result {
+                    Ok(_) => {
+                        debug!("Apply success path = {:?}", &path);
+                        None
+                    }
+                    Err(e) => {
+                        info!(
+                            "Non ok apply path = {:?} retries = {:?} err = {}",
+                            &path, retries, e
+                        );
                         Some((path, resource))
-                    },
-                    |_| None,
-                )
+                    }
+                }
             })
             .collect()
             .await;

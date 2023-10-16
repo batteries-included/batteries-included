@@ -8,6 +8,7 @@ defmodule CommonCore.Resources.ControlServer do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.StateSummary.PostgresState
 
   @service_account "battery-admin"
   @server_port 4000
@@ -114,10 +115,11 @@ defmodule CommonCore.Resources.ControlServer do
     name = Keyword.get(options, :name, "control-server")
 
     image = Keyword.get(options, :image, battery.config.image)
+    cluster = PostgresState.cluster(state, name: Defaults.ControlDB.cluster_name(), type: :internal)
+    user = Enum.find(cluster.users, &(&1.username == Defaults.ControlDB.user_name()))
 
-    host = pg_host(battery, state)
-    db = pg_db_name(battery, state)
-    credential_secret = pg_secret(battery, state)
+    secret_name = PostgresState.user_secret(state, cluster, user)
+    host = PostgresState.read_write_hostname(state, cluster)
 
     base
     |> Map.put_new("name", name)
@@ -137,7 +139,7 @@ defmodule CommonCore.Resources.ControlServer do
       },
       %{
         "name" => "POSTGRES_DB",
-        "value" => db
+        "value" => Defaults.ControlDB.database_name()
       },
       %{
         "name" => "SECRET_KEY_BASE",
@@ -145,36 +147,13 @@ defmodule CommonCore.Resources.ControlServer do
       },
       %{
         "name" => "POSTGRES_USER",
-        "valueFrom" => B.secret_key_ref(credential_secret, "username")
+        "valueFrom" => B.secret_key_ref(secret_name, "username")
       },
       %{
         "name" => "POSTGRES_PASSWORD",
-        "valueFrom" => B.secret_key_ref(credential_secret, "password")
+        "valueFrom" => B.secret_key_ref(secret_name, "password")
       },
       %{"name" => "MIX_ENV", "value" => "prod"}
     ])
-  end
-
-  defp pg_host(_battery, state) do
-    pg_cluster = Defaults.ControlDB.control_cluster()
-    ns = core_namespace(state)
-    "#{pg_cluster.team_name}-#{pg_cluster.name}.#{ns}.svc"
-  end
-
-  defp pg_secret(_battery, _state) do
-    pg_cluster = Defaults.ControlDB.control_cluster()
-    owner = pg_first_database().owner
-
-    "#{owner}.#{pg_cluster.name}.credentials.postgresql"
-  end
-
-  defp pg_db_name(_battery, _state) do
-    pg_first_database().name
-  end
-
-  defp pg_first_database do
-    Defaults.ControlDB.control_cluster()
-    |> Map.get(:databases, [])
-    |> List.first(%{name: "control", owner: "controlserver"})
   end
 end

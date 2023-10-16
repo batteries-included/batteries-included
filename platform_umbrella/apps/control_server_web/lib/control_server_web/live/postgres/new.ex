@@ -33,6 +33,13 @@ defmodule ControlServerWeb.Live.PostgresNew do
   end
 
   @impl Phoenix.LiveView
+  def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
+    new_path = ~p"/postgres/#{cluster}/show"
+
+    {:noreply, push_redirect(socket, to: new_path)}
+  end
+
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <div>

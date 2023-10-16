@@ -16,17 +16,13 @@ defmodule CommonCore.Resources.Redis do
       |> B.namespace(namespace)
       |> B.name(cluster.name)
       |> B.spec(spec)
-      |> add_owner(cluster)
+      |> B.add_owner(cluster)
     end)
   end
 
   defp cluster_namespace(%{type: :internal} = _cluster, _battery, state), do: core_namespace(state)
 
   defp cluster_namespace(%{type: _} = _cluster, _battery, state), do: data_namespace(state)
-
-  defp add_owner(resource, %{id: nil} = _cluster), do: resource
-  defp add_owner(resource, %{id: id} = _cluster), do: B.owner_label(resource, id)
-  defp add_owner(resource, _), do: resource
 
   defp failover_spec(%{} = cluster) do
     %{

@@ -17,7 +17,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = KubeEventCenter.subscribe(:pod)
-    :ok = KubeEventCenter.subscribe(:postgresql)
+    :ok = KubeEventCenter.subscribe(:cloudnative_pg_cluster)
     {:ok, socket}
   end
 
@@ -45,7 +45,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp assign_k8_cluster(%{assigns: %{cluster: cluster}} = socket) do
-    assign(socket, :k8_cluster, k8_cluster(cluster.id))
+    cluster = k8_cluster(cluster.id)
+    assign(socket, :k8_cluster, cluster)
   end
 
   defp assign_k8_stateful_set(%{assigns: assigns} = socket) do
@@ -110,7 +111,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp is_owned_by_cluster_name(resource, cluster_name, cluster_namespace) do
-    K8s.Resource.label(resource, "cluster-name") == cluster_name &&
+    cluster_label = K8s.Resource.label(resource, "cnpg.io/cluster")
+
+    cluster_label == cluster_name &&
       K8s.Resource.namespace(resource) == cluster_namespace
   end
 
@@ -123,7 +126,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp k8_cluster(id) do
-    :postgresql
+    :cloudnative_pg_cluster
     |> KubeState.get_all()
     |> Enum.find(nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
   end
@@ -159,11 +162,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
         <.stat_title>Instances</.stat_title>
         <.stat_description>The number of replics to run</.stat_description>
         <.stat_value><%= @cluster.num_instances %></.stat_value>
-      </.stat>
-      <.stat>
-        <.stat_title>Version</.stat_title>
-        <.stat_description>Major Version of Postgres</.stat_description>
-        <.stat_value><%= @cluster.postgres_version %></.stat_value>
       </.stat>
       <.stat>
         <.stat_title>Cluster Status</.stat_title>

@@ -205,7 +205,7 @@ checksum = "9ba43ea6f343b788c8764558649e08df62f86c6ef251fdaeb1ffd010a9ae50a2"
 
 [[package]]
 name = "bcli"
-version = "0.7.0"
+version = "0.10.0"
 dependencies = [
  "assert_cmd",
  "bollard",

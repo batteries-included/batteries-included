@@ -13,7 +13,7 @@
       };
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      version = "0.8.0";
+      version = "0.10.0";
       beam = pkgs.beam;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;

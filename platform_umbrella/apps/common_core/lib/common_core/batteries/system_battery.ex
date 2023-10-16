@@ -24,7 +24,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.MetalLBConfig
   alias CommonCore.Batteries.NodeExporterConfig
   alias CommonCore.Batteries.NotebooksConfig
-  alias CommonCore.Batteries.PostgresConfig
   alias CommonCore.Batteries.PromtailConfig
   alias CommonCore.Batteries.RedisConfig
   alias CommonCore.Batteries.RookConfig
@@ -55,7 +54,6 @@ defmodule CommonCore.Batteries.SystemBattery do
     metallb: MetalLBConfig,
     node_exporter: NodeExporterConfig,
     notebooks: NotebooksConfig,
-    postgres: PostgresConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
     rook: RookConfig,

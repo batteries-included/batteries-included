@@ -24,7 +24,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(assigns)
      |> assign(:form, to_form(changeset))
      |> assign(:possible_owners, possible_owners(changeset))
-     |> assign(:full_name, full_name(cluster))
      |> assign(:possible_storage_classes, possible_storage_classes())
      |> assign(:possible_namespaces, possible_namespaces())
      |> assign(:num_instances, cluster.num_instances)
@@ -134,7 +133,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:form, to_form(changeset))
      |> assign(changeset: changeset)
      |> assign(:possible_owners, possible_owners(changeset))
-     |> assign(:full_name, full_name(data))
      |> assign(:num_instances, data.num_instances)}
   end
 
@@ -526,10 +524,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   defp possible_namespaces,
     do: :namespace |> KubeServices.KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
-
-  defp full_name(cluster) do
-    String.downcase("#{cluster.team_name}-#{cluster.name}")
-  end
 
   defp convert_storage_slider_value_to_bytes(
          %{"virtual_storage_size_range_value" => virtual_storage_size_range_value} = params

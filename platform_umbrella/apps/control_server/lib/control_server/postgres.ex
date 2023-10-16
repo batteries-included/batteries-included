@@ -128,7 +128,7 @@ defmodule ControlServer.Postgres do
   - {:ok, cluster} if found or created successfully
   - {:error, reason} if something went wrong
 
-  Searches for an existing cluster with matching type, team_name and name.
+  Searches for an existing cluster with matching type and name.
   If found, returns the existing cluster.
   If not found, creates a new cluster with the given attributes.
   Runs as a transaction to avoid race conditions.
@@ -141,7 +141,6 @@ defmodule ControlServer.Postgres do
          from(cluster in Cluster,
            where:
              cluster.type == ^attrs.type and
-               cluster.team_name == ^attrs.team_name and
                cluster.name == ^attrs.name
          )
        )}

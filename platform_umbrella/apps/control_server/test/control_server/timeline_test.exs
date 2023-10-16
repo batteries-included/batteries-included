@@ -15,14 +15,14 @@ defmodule ControlServer.TimelineTest do
     test "Can create changeset for TimelineEvent with a poly embed" do
       event = %TimelineEvent{
         level: :info,
-        payload: %BatteryInstall{type: :postgres}
+        payload: %BatteryInstall{type: :cloudnative_pg_cluster}
       }
 
       assert _ = TimelineEvent.changeset(event, %{})
     end
 
     test "Can create a batery_install event" do
-      event = Timeline.battery_install_event(:postgres)
+      event = Timeline.battery_install_event(:cloudnative_pg)
       assert {:ok, _} = Timeline.create_timeline_event(event)
     end
 
@@ -33,9 +33,9 @@ defmodule ControlServer.TimelineTest do
     end
 
     test "Can create a database event" do
-      event = Timeline.named_database_event(:update, :postgres, "pg-control")
+      event = Timeline.named_database_event(:update, :cloudnative_pg_cluster, "pg-control")
       assert {:ok, inserted_event} = Timeline.create_timeline_event(event)
-      assert inserted_event.payload.type == :postgres
+      assert inserted_event.payload.type == :cloudnative_pg_cluster
     end
 
     test "get database message for events" do

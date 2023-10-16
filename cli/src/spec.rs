@@ -41,45 +41,14 @@ pub struct BatterySpec {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct StateSummarySpec {
-    pub batteries: Vec<BatterySpec>,
-    pub ceph_clusters: Vec<CephClusterSpec>,
-    pub ceph_filesystems: Vec<CephFilesystemSpec>,
+    pub batteries: Vec<DynamicObject>,
+    pub ceph_clusters: Vec<DynamicObject>,
+    pub ceph_filesystems: Vec<DynamicObject>,
     pub ip_address_pools: Vec<IPAddressPoolSpec>,
-    pub knative_services: Vec<KnativeServiceSpec>,
-    pub notebooks: Vec<NotebookSpec>,
-    pub postgres_clusters: Vec<PGClusterSpec>,
-    pub redis_clusters: Vec<RedisClusterSpec>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct CephClusterSpec {
-    name: String,
-
-    data_dir: Option<String>,
-    namespace: Option<String>,
-    nodes: Option<Vec<Value>>,
-    num_mgr: Option<i16>,
-    num_mon: Option<i16>,
-
-    id: Option<uuid::Uuid>,
-
-    #[serde(with = "time::serde::iso8601::option")]
-    inserted_at: Option<OffsetDateTime>,
-    #[serde(with = "time::serde::iso8601::option")]
-    updated_at: Option<OffsetDateTime>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct CephFilesystemSpec {
-    name: String,
-    include_erasure_encoded: bool,
-
-    id: Option<uuid::Uuid>,
-
-    #[serde(with = "time::serde::iso8601::option")]
-    inserted_at: Option<OffsetDateTime>,
-    #[serde(with = "time::serde::iso8601::option")]
-    updated_at: Option<OffsetDateTime>,
+    pub knative_services: Vec<DynamicObject>,
+    pub notebooks: Vec<DynamicObject>,
+    pub postgres_clusters: Vec<DynamicObject>,
+    pub redis_clusters: Vec<DynamicObject>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -94,115 +63,6 @@ pub struct IPAddressPoolSpec {
 
     #[serde(with = "time::serde::iso8601::option")]
     pub updated_at: Option<OffsetDateTime>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct KnativeServiceSpec {
-    name: String,
-    rollout_duration: Option<String>,
-    containers: Option<Vec<Value>>,
-    init_containers: Option<Vec<Value>>,
-    env_values: Option<Vec<Value>>,
-
-    id: Option<uuid::Uuid>,
-
-    #[serde(with = "time::serde::iso8601::option")]
-    inserted_at: Option<OffsetDateTime>,
-    #[serde(with = "time::serde::iso8601::option")]
-    updated_at: Option<OffsetDateTime>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct NotebookSpec {
-    name: String,
-    image: String,
-
-    id: Option<uuid::Uuid>,
-
-    #[serde(with = "time::serde::iso8601::option")]
-    inserted_at: Option<OffsetDateTime>,
-    #[serde(with = "time::serde::iso8601::option")]
-    updated_at: Option<OffsetDateTime>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "snake_case")]
-pub enum PGClusterType {
-    Internal,
-    Standard,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PGUserSpec {
-    username: String,
-    roles: Option<Vec<String>>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PGDatabaseSpec {
-    name: String,
-    owner: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "snake_case")]
-pub enum PGCredentialCopyType {
-    Dsn,
-    UserPassword,
-    UserPasswordHost,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PGCredentialCopySpec {
-    username: String,
-    namespace: String,
-    format: PGCredentialCopyType,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PGClusterSpec {
-    name: String,
-    num_instances: usize,
-    postgres_version: String,
-    team_name: String,
-
-    #[serde(rename = "type")]
-    cluster_type: PGClusterType,
-
-    storage_size: u64,
-
-    users: Option<Vec<PGUserSpec>>,
-    databases: Option<Vec<PGDatabaseSpec>>,
-    credential_copies: Option<Vec<PGCredentialCopySpec>>,
-
-    id: Option<uuid::Uuid>,
-
-    #[serde(with = "time::serde::iso8601::option")]
-    inserted_at: Option<OffsetDateTime>,
-    #[serde(with = "time::serde::iso8601::option")]
-    updated_at: Option<OffsetDateTime>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "snake_case")]
-pub enum RedisClusterType {
-    Internal,
-    Standard,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct RedisClusterSpec {
-    name: String,
-    num_redis_isntances: usize,
-    num_sentinel_instances: usize,
-    cluster_type: RedisClusterType,
-
-    id: Option<uuid::Uuid>,
-
-    #[serde(with = "time::serde::iso8601::option")]
-    inserted_at: Option<OffsetDateTime>,
-    #[serde(with = "time::serde::iso8601::option")]
-    updated_at: Option<OffsetDateTime>,
 }
 
 #[cfg(test)]

@@ -2,7 +2,7 @@ import Config
 
 # Configure your database
 config :control_server, ControlServer.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
+  username: System.get_env("POSTGRES_USER") || "battery-local-user",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
   database: System.get_env("POSTGRES_DB") || "control",
   hostname: System.get_env("POSTGRES_HOST") || "127.0.0.1",
@@ -12,7 +12,7 @@ config :control_server, ControlServer.Repo,
   log: false
 
 config :home_base, HomeBase.Repo,
-  username: System.get_env("POSTGRES_USER") || "batterydbuser",
+  username: System.get_env("POSTGRES_USER") || "battery-local-user",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
   database: System.get_env("POSTGRES_DB") || "home",
   hostname: System.get_env("POSTGRES_HOST") || "127.0.0.1",

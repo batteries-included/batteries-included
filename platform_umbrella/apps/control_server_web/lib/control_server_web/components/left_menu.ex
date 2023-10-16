@@ -380,7 +380,7 @@ defmodule ControlServerWeb.LeftMenu do
   attr(:page_detail_type, :atom, required: true)
   attr(:page_group, :atom, required: true)
 
-  defp battery_detail_item(%{battery: %{type: :postgres}} = assigns) do
+  defp battery_detail_item(%{battery: %{type: :cloudnative_pg}} = assigns) do
     ~H"""
     <.h4>Postgres</.h4>
     <.detail_menu_item

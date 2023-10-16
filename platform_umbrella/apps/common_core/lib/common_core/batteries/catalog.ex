@@ -20,13 +20,6 @@ defmodule CommonCore.Batteries.Catalog do
       description:
         "PostgreSQL is a free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility."
     },
-    %CatalogBattery{
-      group: :data,
-      type: :postgres,
-      dependencies: [:battery_core],
-      description:
-        "PostgreSQL is a free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility."
-    },
     %CatalogBattery{group: :data, type: :rook, dependencies: [:battery_core]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core},
@@ -54,7 +47,7 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :devtools,
       type: :gitea,
-      dependencies: [:postgres, :istio_gateway, :battery_core],
+      dependencies: [:cloudnative_pg, :istio_gateway, :battery_core],
       description:
         "Gitea is a self-hosted, open-source, Go-based Git repository manager with a web interface and command-line tools."
     },
@@ -175,7 +168,7 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :net_sec,
       type: :keycloak,
-      dependencies: [:battery_core, :postgres],
+      dependencies: [:battery_core, :cloudnative_pg],
       description: "Open Source Identity and Access Management For Modern Applications and Services"
     },
     %CatalogBattery{

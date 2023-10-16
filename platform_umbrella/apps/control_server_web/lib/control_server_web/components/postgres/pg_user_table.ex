@@ -2,6 +2,8 @@ defmodule ControlServerWeb.PgUserTable do
   @moduledoc false
   use ControlServerWeb, :html
 
+  alias CommonCore.StateSummary.PostgresState
+
   attr :users, :list, required: true
   attr :cluster, :any, required: true
   attr :id, :string, default: "pg-users-table"
@@ -11,7 +13,7 @@ defmodule ControlServerWeb.PgUserTable do
     <.table id={@id} rows={@users}>
       <:col :let={user} label="User Name"><%= user.username %></:col>
       <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
-      <:col :let={user} label="Secret"><%= secret_name(@cluster, user.username) %></:col>
+      <:col :let={user} label="Secret"><%= secret_name(@cluster, user) %></:col>
       <:col :let={user} label="Namespace"><%= namespaces(user.username, @cluster) %></:col>
     </.table>
     """
@@ -28,7 +30,14 @@ defmodule ControlServerWeb.PgUserTable do
     |> Enum.join(", ")
   end
 
-  defp secret_name(cluster, username) do
-    "#{username}.#{cluster.team_name}-#{cluster.name}.credentials.postgresql"
+  defp secret_name(cluster, user) do
+    # TODO: HACK alert
+    #
+    # There's nothing currently that needs postgres state.
+    # When there is this should be replaced with the
+    # kube_services version
+    #
+    # Until then we use fake state summary it's not used in naming the secret for a user
+    PostgresState.user_secret(%{}, cluster, user)
   end
 end

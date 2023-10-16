@@ -19,6 +19,7 @@ defmodule CommonCore.Resources.Gitea do
   alias CommonCore.Resources.IstioConfig.TCPRoute
   alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Secret
+  alias CommonCore.StateSummary.PostgresState
 
   @ssh_port 2202
   @ssh_listen_port 2022
@@ -203,8 +204,9 @@ defmodule CommonCore.Resources.Gitea do
 
   resource(:stateful_set_main, battery, state) do
     namespace = core_namespace(state)
-
-    pg_secret = gitea_pg_secret_name(battery, state)
+    cluster = PostgresState.cluster(state, name: Defaults.GiteaDB.cluster_name(), type: :internal)
+    user = Enum.find(cluster.users, fn user -> user.username == Defaults.GiteaDB.db_username() end)
+    secret_name = PostgresState.user_secret(state, cluster, user)
 
     sso_enabled? = F.batteries_installed?(state, :sso)
 
@@ -286,15 +288,15 @@ defmodule CommonCore.Resources.Gitea do
               %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
               %{
                 "name" => "ENV_TO_INI__DATABASE__USER",
-                "valueFrom" => B.secret_key_ref(pg_secret, "username")
+                "valueFrom" => B.secret_key_ref(secret_name, "username")
               },
               %{
                 "name" => "ENV_TO_INI__DATABASE__PASSWD",
-                "valueFrom" => B.secret_key_ref(pg_secret, "password")
+                "valueFrom" => B.secret_key_ref(secret_name, "password")
               },
               %{
                 "name" => "ENV_TO_INI__DATABASE__HOST",
-                "valueFrom" => B.secret_key_ref(pg_secret, "hostname")
+                "valueFrom" => B.secret_key_ref(secret_name, "hostname")
               }
             ],
             "image" => battery.config.image,
@@ -319,8 +321,8 @@ defmodule CommonCore.Resources.Gitea do
                 %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
                 %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
                 %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
-                %{"name" => "GITEA_ADMIN_USERNAME", "value" => "gitea_admin"},
-                %{"name" => "GITEA_ADMIN_PASSWORD", "value" => "r8sA8CPHD9!bt6d"}
+                %{"name" => "GITEA_ADMIN_USERNAME", "value" => battery.config.admin_username},
+                %{"name" => "GITEA_ADMIN_PASSWORD", "value" => battery.config.admin_password}
               ] ++
                 if sso_enabled? do
                   case CommonCore.StateSummary.KeycloakSummary.client(
@@ -393,13 +395,5 @@ defmodule CommonCore.Resources.Gitea do
     |> B.name("gitea")
     |> B.namespace(namespace)
     |> B.spec(spec)
-  end
-
-  def gitea_pg_secret_name(_battery, _state) do
-    user = Defaults.GiteaDB.db_username()
-    team = Defaults.GiteaDB.db_team()
-    cluster_name = Defaults.GiteaDB.db_name()
-
-    "#{user}.#{team}-#{cluster_name}.credentials.postgresql"
   end
 end

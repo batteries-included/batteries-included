@@ -28,8 +28,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.MetalLB
   alias CommonCore.Resources.NodeExporter
   alias CommonCore.Resources.Notebooks
-  alias CommonCore.Resources.Postgres
-  alias CommonCore.Resources.PostgresOperator
   alias CommonCore.Resources.Promtail
   alias CommonCore.Resources.Redis
   alias CommonCore.Resources.RedisOperator
@@ -64,7 +62,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     metallb: [MetalLB],
     node_exporter: [NodeExporter],
     notebooks: [Notebooks],
-    postgres: [Postgres, PostgresOperator],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],
     rook: [Rook, CephFilesystems, CephClusters],

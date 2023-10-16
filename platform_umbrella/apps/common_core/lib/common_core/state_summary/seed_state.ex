@@ -13,17 +13,18 @@ defmodule CommonCore.StateSummary.SeedState do
       postgres_clusters:
         pg_clusters([
           Defaults.ControlDB.control_cluster(),
+          Defaults.KeycloakDB.pg_cluster(),
           Defaults.GiteaDB.gitea_cluster()
         ])
     }
   end
 
   def seed(:dev) do
-    summary = %StateSummary{
+    %StateSummary{
       batteries:
         batteries([
           :battery_core,
-          :postgres,
+          :cloudnative_pg,
           :istio,
           :istio_gateway,
           :timeline,
@@ -31,53 +32,35 @@ defmodule CommonCore.StateSummary.SeedState do
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }
-
-    add_dev_infra_user(summary)
   end
 
   def seed(:slim_dev) do
-    summary = %StateSummary{
+    %StateSummary{
       batteries:
         batteries([
           :battery_core,
-          :postgres,
+          :cloudnative_pg,
           :istio,
           :istio_gateway
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }
-
-    # The things below are here on the client side.
-    # They require that we know something about the
-    # what the client side looks like.
-    #
-    add_dev_infra_user(summary)
   end
 
-  defp add_dev_infra_user(%StateSummary{} = summary) do
-    %StateSummary{summary | batteries: Enum.map(summary.batteries, &add_dev_infra_to_battery/1)}
+  defp pg_clusters(clusters) do
+    Enum.map(clusters, fn cluster -> cluster |> add_local_user() |> CommonCore.Postgres.Cluster.to_fresh_cluster() end)
   end
 
-  defp add_dev_infra_to_battery(%{type: :postgres} = battery) do
-    update_in(battery, [Access.key(:config, %{}), Access.key(:infra_users, [])], fn users ->
-      clean_users = users || []
-
-      [
-        %CommonCore.Postgres.PGInfraUser{
-          username: "batterydbuser",
-          generated_key: "not-real",
-          roles: ["createdb", "superuser", "login"]
-        }
-        | clean_users
-      ]
-    end)
+  defp add_local_user(%{name: cluster_name, users: users} = cluster) do
+    if cluster_name == Defaults.ControlDB.cluster_name() do
+      users = users || []
+      %{cluster | users: [Defaults.ControlDB.local_user() | users]}
+    else
+      cluster
+    end
   end
 
-  defp add_dev_infra_to_battery(battery), do: battery
-
-  defp pg_clusters(args_list) do
-    Enum.map(args_list, &CommonCore.Postgres.Cluster.to_fresh_cluster/1)
-  end
+  defp add_local_user(%{} = cluster), do: cluster
 
   defp batteries do
     Enum.map(Catalog.all(), &CatalogBattery.to_fresh_system_battery/1)
