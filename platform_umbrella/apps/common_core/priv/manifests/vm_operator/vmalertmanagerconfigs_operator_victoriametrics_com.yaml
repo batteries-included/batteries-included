@@ -923,7 +923,8 @@ spec:
                                 notification.
                               items:
                                 description:
-                                  See
+                                  SlackField configures a single Slack field
+                                  that is sent with each notification. See
                                   https://api.slack.com/docs/message-attachments#fields
                                   for more information.
                                 properties:

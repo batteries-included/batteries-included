@@ -4,50 +4,44 @@ defmodule CommonCore.Defaults.Images do
 
   def postgres_operator_image, do: "registry.opensource.zalan.do/acid/postgres-operator:v1.10.0"
 
-  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.20.2"
-
-  def spilo_image, do: "registry.opensource.zalan.do/acid/spilo-15:3.0-p1"
-
-  def postgres_logical_backup_image, do: "registry.opensource.zalan.do/acid/logical-backup:v1.10.0"
-
-  def postgres_bouncer_image, do: "registry.opensource.zalan.do/acid/pgbouncer:master-27"
+  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.0"
 
   def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.4"
 
   def ceph_image, do: "quay.io/ceph/ceph:v17.2.6"
 
-  def gitea_image, do: "gitea/gitea:1.19.3"
+  def gitea_image, do: "gitea/gitea:1.20.5"
 
   def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.14.1"
 
-  def grafana_image, do: "grafana/grafana:9.3.6"
-  def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.22.2"
+  def grafana_image, do: "grafana/grafana:10.1.5"
+  def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.25.2"
 
-  def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.5.0"
-  def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.8.1"
-  def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.25.0"
+  def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.6.1"
+  def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.10.0"
+  def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.26.0"
 
-  def promtail_image, do: "grafana/promtail:2.7.4"
-  def loki_image, do: "grafana/loki:2.7.4"
+  def promtail_image, do: "grafana/promtail:2.8.6"
+  def loki_image, do: "grafana/loki:2.8.6"
 
-  def istio_pilot_image, do: "istio/pilot:1.17.2-distroless"
+  def istio_pilot_image, do: "istio/pilot:1.19.3-distroless"
 
-  def keycloak_image, do: "quay.io/keycloak/keycloak:21.1.2"
+  def keycloak_image, do: "quay.io/keycloak/keycloak:22.0.4"
 
-  def knative_operator_webhook_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.10.1"
+  def knative_operator_webhook_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.11.7"
 
-  def knative_operator_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.10.1"
+  def knative_operator_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.11.7"
 
   def kiali_image, do: "quay.io/kiali/kiali:#{kiali_image_version()}"
   def kiali_image_version, do: "v1.74.1"
 
-  def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.9"
-  def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.9"
+  def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.11"
+  def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.11"
 
-  def vm_cluster_tag, do: "v1.93.0-cluster"
+  def vm_cluster_tag, do: "v1.93.6-cluster"
 
-  def vm_operator_image, do: "victoriametrics/operator:v0.35.1"
-  def vm_tag, do: "v1.93.0"
+  def vm_operator_image, do: "victoriametrics/operator:v0.39.0"
+  def vm_tag, do: "v1.93.6"
 
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
 end

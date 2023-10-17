@@ -40,11 +40,7 @@ defmodule CommonCore.Resources.VMOperator do
 
   resource(:cluster_role_vm_operator) do
     rules = [
-      %{
-        "apiGroups" => [""],
-        "resources" => ["configmaps", "configmaps/finalizers"],
-        "verbs" => ["*"]
-      },
+      %{"apiGroups" => [""], "resources" => ["configmaps", "configmaps/finalizers"], "verbs" => ["*"]},
       %{"apiGroups" => [""], "resources" => ["endpoints"], "verbs" => ["*"]},
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["*"]},
       %{"apiGroups" => [""], "resources" => ["namespaces"], "verbs" => ["get", "list", "watch"]},
@@ -57,11 +53,7 @@ defmodule CommonCore.Resources.VMOperator do
       %{"apiGroups" => [""], "resources" => ["secrets", "secrets/finalizers"], "verbs" => ["*"]},
       %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["*"]},
       %{"apiGroups" => [""], "resources" => ["services/finalizers"], "verbs" => ["*"]},
-      %{
-        "apiGroups" => ["apps"],
-        "resources" => ["deployments", "deployments/finalizers"],
-        "verbs" => ["*"]
-      },
+      %{"apiGroups" => ["apps"], "resources" => ["deployments", "deployments/finalizers"], "verbs" => ["*"]},
       %{"apiGroups" => ["apps"], "resources" => ["replicasets"], "verbs" => ["*"]},
       %{
         "apiGroups" => ["apps"],
@@ -189,10 +181,7 @@ defmodule CommonCore.Resources.VMOperator do
         "resources" => ["ingresses"],
         "verbs" => ["get", "list", "watch"]
       },
-      %{
-        "nonResourceURLs" => ["/metrics", "/metrics/resources"],
-        "verbs" => ["get", "watch", "list"]
-      },
+      %{"nonResourceURLs" => ["/metrics", "/metrics/resources"], "verbs" => ["get", "watch", "list"]},
       %{
         "apiGroups" => ["rbac.authorization.k8s.io"],
         "resources" => [
@@ -245,11 +234,7 @@ defmodule CommonCore.Resources.VMOperator do
         "resources" => ["vmusers/status", "vmauths/status"],
         "verbs" => ["get", "patch", "update"]
       },
-      %{
-        "apiGroups" => ["storage.k8s.io"],
-        "resources" => ["storageclasses"],
-        "verbs" => ["list", "get", "watch"]
-      },
+      %{"apiGroups" => ["storage.k8s.io"], "resources" => ["storageclasses"], "verbs" => ["list", "get", "watch"]},
       %{
         "apiGroups" => ["policy"],
         "resources" => ["poddisruptionbudgets", "poddisruptionbudgets/finalizers"],
@@ -274,7 +259,8 @@ defmodule CommonCore.Resources.VMOperator do
         "apiGroups" => ["apiextensions.k8s.io"],
         "resources" => ["customresourcedefinitions"],
         "verbs" => ["get", "list"]
-      }
+      },
+      %{"apiGroups" => ["discovery.k8s.io"], "resources" => ["endpointslices"], "verbs" => ["list", "watch", "get"]}
     ]
 
     :cluster_role
@@ -347,20 +333,13 @@ defmodule CommonCore.Resources.VMOperator do
       |> Map.put("replicas", 1)
       |> Map.put(
         "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name
-          }
-        }
+        %{"matchLabels" => %{"battery/app" => @app_name}}
       )
       |> Map.put(
         "template",
         %{
           "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/managed" => "true"
-            }
+            "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
           },
           "spec" => %{
             "containers" => [
@@ -369,17 +348,15 @@ defmodule CommonCore.Resources.VMOperator do
                 "command" => ["manager"],
                 "env" => [
                   %{"name" => "WATCH_NAMESPACE", "value" => ""},
-                  %{
-                    "name" => "POD_NAME",
-                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
-                  },
-                  %{"name" => "OPERATOR_NAME", "value" => "victoria-metrics-operator"},
-                  %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "true"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "false"}
+                  %{"name" => "POD_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}},
+                  %{"name" => "OPERATOR_NAME", "value" => "vm-operator"},
+                  %{"name" => "VM_USECUSTOMCONFIGRELOADER", "value" => "true"},
+                  %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "false"},
+                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "true"}
                 ],
                 "image" => battery.config.vm_operator_image,
                 "imagePullPolicy" => "IfNotPresent",
-                "name" => "victoria-metrics-operator",
+                "name" => "operator",
                 "ports" => [
                   %{"containerPort" => 8080, "name" => "http", "protocol" => "TCP"},
                   %{"containerPort" => 9443, "name" => "webhook", "protocol" => "TCP"}
@@ -421,17 +398,9 @@ defmodule CommonCore.Resources.VMOperator do
         "resources" => ["configmaps"],
         "verbs" => ["get", "list", "watch", "create", "update", "patch", "delete"]
       },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["configmaps/status"],
-        "verbs" => ["get", "update", "patch"]
-      },
+      %{"apiGroups" => [""], "resources" => ["configmaps/status"], "verbs" => ["get", "update", "patch"]},
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
-      %{
-        "apiGroups" => ["coordination.k8s.io"],
-        "resources" => ["leases"],
-        "verbs" => ["create", "get", "update"]
-      }
+      %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["create", "get", "update"]}
     ]
 
     :role
@@ -459,10 +428,7 @@ defmodule CommonCore.Resources.VMOperator do
         %{"name" => "http", "port" => 8080, "protocol" => "TCP", "targetPort" => 8080},
         %{"name" => "webhook", "port" => 443, "targetPort" => 9443}
       ])
-      |> Map.put(
-        "selector",
-        %{"battery/app" => @app_name}
-      )
+      |> Map.put("selector", %{"battery/app" => @app_name})
 
     :service
     |> B.build_resource()

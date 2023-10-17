@@ -1,0 +1,14 @@
+announcedInterfacesToExclude:
+  - ^docker.*
+  - ^cbr.*
+  - ^dummy.*
+  - ^virbr.*
+  - ^lxcbr.*
+  - ^veth.*
+  - ^lo$
+  - ^cali.*
+  - ^tunl.*
+  - ^flannel.*
+  - ^kube-ipvs.*
+  - ^cni.*
+  - ^nodelocaldns.*
