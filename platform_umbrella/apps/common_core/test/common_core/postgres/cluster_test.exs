@@ -33,7 +33,9 @@ defmodule CommonCore.Postgres.ClusterTest do
           Map.put(
             valid_attrs,
             :name,
-            "this name is too long this name is too long this name is too long this name is too long"
+            "this name is too long this name is too long this" <>
+              "name is too long this name is too long really really" <>
+              "really really long like super long and i dont know why"
           )
         )
 

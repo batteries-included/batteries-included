@@ -103,7 +103,7 @@ defmodule CommonCore.Postgres.Cluster do
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_limits_options())
-    |> validate_length(:name, min: 1, max: 50)
+    |> validate_length(:name, min: 1, max: 128)
     |> unique_constraint([:type, :name])
   end
 
