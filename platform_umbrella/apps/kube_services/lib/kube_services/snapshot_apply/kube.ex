@@ -237,5 +237,6 @@ defmodule KubeServices.SnapshotApply.KubeApply do
   defp reason_string(:applied), do: "Applied"
   defp reason_string(reason_atom) when is_atom(reason_atom), do: Atom.to_string(reason_atom)
   defp reason_string(reason) when is_binary(reason), do: reason
+  defp reason_string(%K8s.Client.APIError{message: message}) when is_binary(message), do: message
   defp reason_string(obj), do: inspect(obj)
 end
