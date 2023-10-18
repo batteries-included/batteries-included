@@ -9,6 +9,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.CertManager
   alias CommonCore.Resources.CloudnativePG
   alias CommonCore.Resources.CloudnativePGClusters
+  alias CommonCore.Resources.CloudnativePGDashboards
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
   alias CommonCore.Resources.Gitea
   alias CommonCore.Resources.Grafana
@@ -48,7 +49,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     battery_ca: [BatteryCA],
     battery_core: [BatteryCore, ControlServerResources],
     cert_manager: [CertManager],
-    cloudnative_pg: [CloudnativePG, CloudnativePGClusters],
+    cloudnative_pg: [CloudnativePG, CloudnativePGClusters, CloudnativePGDashboards],
     gitea: [Gitea],
     grafana: [Grafana],
     istio: [IstioBase, Istiod, IstioMetrics],
@@ -57,11 +58,9 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     kiali: [Kiali],
     knative_operator: [KnativeOperator],
     knative_serving: [KnativeServing],
-    kube_monitoring: [KubeMonitoring, KubeDashboards],
-    kube_state_metrics: [KubeStateMetrics],
+    kube_monitoring: [KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
     loki: [Loki],
     metallb: [MetalLB, MetalLBPools],
-    node_exporter: [NodeExporter],
     notebooks: [Notebooks],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],

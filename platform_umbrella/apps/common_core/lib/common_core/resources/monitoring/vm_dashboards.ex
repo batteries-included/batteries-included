@@ -4,7 +4,7 @@ defmodule CommonCore.Resources.VMDashboards do
     dashboard_11176: "priv/raw_files/victoria_metrics/dashboard_11176.json",
     dashboard_12683: "priv/raw_files/victoria_metrics/dashboard_12683.json"
 
-  use CommonCore.Resources.ResourceGenerator, app_name: "vm-dashboards"
+  use CommonCore.Resources.ResourceGenerator, app_name: "victoriametrics-dashboards"
 
   import CommonCore.StateSummary.Namespaces
 
@@ -22,6 +22,7 @@ defmodule CommonCore.Resources.VMDashboards do
     |> B.data(data)
     |> B.label("grafana_dashboard", "1")
     |> B.label("grafana_folder", @app_name)
+    |> B.annotation("grafana_folder", @app_name)
     |> F.require_battery(state, :grafana)
   end
 
@@ -36,6 +37,7 @@ defmodule CommonCore.Resources.VMDashboards do
     |> B.data(data)
     |> B.label("grafana_dashboard", "1")
     |> B.label("grafana_folder", @app_name)
+    |> B.annotation("grafana_folder", @app_name)
     |> F.require_battery(state, :grafana)
   end
 end

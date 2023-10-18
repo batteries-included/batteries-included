@@ -6,6 +6,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Postgres.PGCredentialCopy
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.PostgresState
 
@@ -33,6 +34,12 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     end)
   end
 
+  multi_resource(:pod_monitors, battery, state) do
+    Enum.map(state.postgres_clusters, fn cluster ->
+      cluster_pod_monitor(battery, state, cluster)
+    end)
+  end
+
   def cluster_resource(%Cluster{} = cluster, _battery, state) do
     # TOTAL FUCKING HACK
     #
@@ -56,6 +63,13 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
       enableSuperuserAccess: false,
       bootstrap: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}},
+      postgresql: %{
+        parameters: postgres_paramters(cluster)
+      },
+      affinity: %{
+        enablePodAntiAffinity: true,
+        topologyKey: "failure-domain.beta.kubernetes.io/zone"
+      },
 
       # Users are called roles in postgres just to confuse
       # the fuck out of us here.
@@ -71,6 +85,27 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
           end)
       }
     })
+  end
+
+  defp postgres_paramters(_cluster) do
+    %{
+      "timezone" => "UTC",
+      "max_connections" => "200",
+      # Autovacuum
+      "autovacuum" => "on",
+      # Stats for the dashboards
+      "pg_stat_statements.max" => "10000",
+      "pg_stat_statements.track" => "all",
+      "pg_stat_statements.track_utility" => "false",
+
+      # Auto explain long running queries.
+      "auto_explain.log_min_duration" => "5s",
+      "auto_explain.log_analyze" => "true",
+      "auto_explain.log_buffers" => "true",
+      "auto_explain.sample_rate" => "0.01",
+      "pgaudit.log" => "role, ddl, misc_set",
+      "pgaudit.log_catalog" => "off"
+    }
   end
 
   @spec user_role_secret(
@@ -106,6 +141,29 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.namespace(copy.namespace)
     |> B.add_owner(cluster)
     |> B.data(data)
+  end
+
+  defp cluster_pod_monitor(_battery, state, %Cluster{name: cluster_name} = cluster) do
+    spec =
+      %{}
+      |> Map.put("podMetricsEndpoints", [%{"port" => "metrics"}])
+      |> Map.put(
+        "selector",
+        %{
+          "matchLabels" => %{
+            "battery/app" => @app_name,
+            "cnpg.io/cluster" => cluster_name
+          }
+        }
+      )
+
+    :monitoring_pod_monitor
+    |> B.build_resource()
+    |> B.name("pg-cloudnative-" <> cluster_name)
+    |> B.namespace(PostgresState.cluster_namespace(state, cluster))
+    |> B.spec(spec)
+    |> B.add_owner(cluster)
+    |> F.require_battery(state, :victoria_metrics)
   end
 
   defp secret_data(state, cluster, user) do

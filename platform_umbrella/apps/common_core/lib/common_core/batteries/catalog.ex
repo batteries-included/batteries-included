@@ -73,16 +73,6 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :monitoring,
-      type: :kube_state_metrics,
-      dependencies: [:battery_core]
-    },
-    %CatalogBattery{
-      group: :monitoring,
-      type: :node_exporter,
-      dependencies: [:battery_core]
-    },
-    %CatalogBattery{
-      group: :monitoring,
       type: :victoria_metrics,
       dependencies: [:battery_core],
       description: "Victoria Metrics is a fast, open source, and scalable monitoring solution and time series database."
@@ -90,7 +80,8 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :monitoring,
       type: :kube_monitoring,
-      dependencies: [:battery_core, :victoria_metrics, :kube_state_metrics, :node_exporter]
+      description: "All of the systems needed to monitor Kubernetes with VictoriaMetrics.",
+      dependencies: [:battery_core, :victoria_metrics]
     },
     %CatalogBattery{
       group: :monitoring,

@@ -91,7 +91,7 @@
           },
           {
             "username": "battery-control-user",
-            "password": "Xq2+CMQZjd1wccYX4EP4QeG7",
+            "password": "7ApjN1R37yUGtTEK3DeL5lMS",
             "roles": ["createdb", "login"]
           }
         ],
@@ -11975,13 +11975,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "WHEyK0NNUVpqZDF3Y2NZWDRFUDRRZUc3",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlhxMitDTVFaamQxd2NjWVg0RVA0UWVHN0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "N0Fwak4xUjM3eVVHdFRFSzNEZUw1bE1T",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjdBcGpOMVIzN3lVR3RURUszRGVMNWxNU0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "XHFZERC5XNNYTSORFQTQ4TS2WGXRFPZIF2QTL3IDWD22UBMMEEUQ===="
+          "battery/hash": "MI65QDBKTVD3SJLMZB3BDXH23Y7U32SNMJUNINA2XIPIUADBR3PQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -15386,7 +15386,7 @@
       "kind": "Cluster",
       "metadata": {
         "annotations": {
-          "battery/hash": "5IMASXUDZSO3GJWEMXZOBRBDN3ZCU4SUGMADEJXK4KJ3HSNPQ2KQ===="
+          "battery/hash": "MLNRV4ILKFR4CABFH7YYAYFUVSS44Y6JN2ARAAU6X5EBDUDEPRYA===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -15406,6 +15406,10 @@
             "database": "control",
             "dataChecksums": true
           }
+        },
+        "affinity": {
+          "enablePodAntiAffinity": true,
+          "topologyKey": "failure-domain.beta.kubernetes.io/zone"
         },
         "enableSuperuserAccess": false,
         "instances": 1,
@@ -15432,6 +15436,22 @@
               "login": true
             }
           ]
+        },
+        "postgresql": {
+          "parameters": {
+            "auto_explain.log_analyze": "true",
+            "auto_explain.log_buffers": "true",
+            "auto_explain.log_min_duration": "5s",
+            "auto_explain.sample_rate": "0.01",
+            "autovacuum": "on",
+            "max_connections": "200",
+            "pg_stat_statements.max": "10000",
+            "pg_stat_statements.track": "all",
+            "pg_stat_statements.track_utility": "false",
+            "pgaudit.log": "role, ddl, misc_set",
+            "pgaudit.log_catalog": "off",
+            "timezone": "UTC"
+          }
         },
         "storage": {
           "size": "524288000",

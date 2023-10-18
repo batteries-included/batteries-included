@@ -50,7 +50,7 @@ defmodule CommonCore.Resources.NodeExporter do
                   "--web.listen-address=[$(HOST_IP)]:9100"
                 ],
                 "env" => [%{"name" => "HOST_IP", "value" => "0.0.0.0"}],
-                "image" => battery.config.image,
+                "image" => battery.config.node_exporter_image,
                 "imagePullPolicy" => "IfNotPresent",
                 "livenessProbe" => %{
                   "failureThreshold" => 3,

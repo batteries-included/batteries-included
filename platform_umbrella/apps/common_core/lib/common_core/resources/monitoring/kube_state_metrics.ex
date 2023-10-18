@@ -155,7 +155,7 @@ defmodule CommonCore.Resources.KubeStateMetrics do
                   "--port=8080",
                   "--telemetry-port=8081"
                 ],
-                "image" => battery.config.image,
+                "image" => battery.config.kube_state_metrics_image,
                 "imagePullPolicy" => "IfNotPresent",
                 "livenessProbe" => %{
                   "httpGet" => %{"path" => "/healthz", "port" => 8080},

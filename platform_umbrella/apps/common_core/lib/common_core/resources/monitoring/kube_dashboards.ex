@@ -24,6 +24,7 @@ defmodule CommonCore.Resources.KubeDashboards do
     |> B.data(data)
     |> B.label("grafana_dashboard", "1")
     |> B.label("grafana_folder", @app_name)
+    |> B.annotation("grafana_folder", @app_name)
     |> F.require_battery(state, :grafana)
   end
 
@@ -38,6 +39,7 @@ defmodule CommonCore.Resources.KubeDashboards do
     |> B.data(data)
     |> B.label("grafana_dashboard", "1")
     |> B.label("grafana_folder", @app_name)
+    |> B.annotation("grafana_folder", @app_name)
     |> F.require_battery(state, :grafana)
   end
 
@@ -52,6 +54,7 @@ defmodule CommonCore.Resources.KubeDashboards do
     |> B.data(data)
     |> B.label("grafana_dashboard", "1")
     |> B.label("grafana_folder", @app_name)
+    |> B.annotation("grafana_folder", @app_name)
     |> F.require_battery(state, :grafana)
   end
 
@@ -66,6 +69,7 @@ defmodule CommonCore.Resources.KubeDashboards do
     |> B.data(data)
     |> B.label("grafana_dashboard", "1")
     |> B.label("grafana_folder", @app_name)
+    |> B.annotation("grafana_folder", @app_name)
     |> F.require_battery(state, :grafana)
   end
 end

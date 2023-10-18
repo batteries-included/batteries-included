@@ -19,10 +19,8 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.KnativeOperatorConfig
   alias CommonCore.Batteries.KnativeServingConfig
   alias CommonCore.Batteries.KubeMonitoringConfig
-  alias CommonCore.Batteries.KubeStateMetricsConfig
   alias CommonCore.Batteries.LokiConfig
   alias CommonCore.Batteries.MetalLBConfig
-  alias CommonCore.Batteries.NodeExporterConfig
   alias CommonCore.Batteries.NotebooksConfig
   alias CommonCore.Batteries.PromtailConfig
   alias CommonCore.Batteries.RedisConfig
@@ -49,10 +47,8 @@ defmodule CommonCore.Batteries.SystemBattery do
     knative_operator: KnativeOperatorConfig,
     knative_serving: KnativeServingConfig,
     kube_monitoring: KubeMonitoringConfig,
-    kube_state_metrics: KubeStateMetricsConfig,
     loki: LokiConfig,
     metallb: MetalLBConfig,
-    node_exporter: NodeExporterConfig,
     notebooks: NotebooksConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
