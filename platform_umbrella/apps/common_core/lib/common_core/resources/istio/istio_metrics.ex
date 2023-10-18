@@ -18,6 +18,7 @@ defmodule CommonCore.Resources.IstioMetrics do
         %{
           "interval" => "15s",
           "path" => "/stats/prometheus",
+          "port" => "http-envoy-prom",
           "relabelings" => [
             %{
               "action" => "keep",
