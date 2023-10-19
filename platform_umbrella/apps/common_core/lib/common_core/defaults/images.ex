@@ -10,7 +10,7 @@ defmodule CommonCore.Defaults.Images do
 
   def ceph_image, do: "quay.io/ceph/ceph:v17.2.6"
 
-  def gitea_image, do: "gitea/gitea:1.20.5"
+  def gitea_image, do: "gitea/gitea:1.19.4"
 
   def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.14.1"
 
