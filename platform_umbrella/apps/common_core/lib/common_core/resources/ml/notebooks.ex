@@ -5,14 +5,12 @@ defmodule CommonCore.Resources.Notebooks do
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
+  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.IstioConfig.HttpRoute
-  alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
-  def notebook_http_route(%{} = notebook) do
-    HttpRoute.prefix(base_url(notebook), service_name(notebook))
-  end
+  @container_port 8888
 
   resource(:service_account, _battery, state) do
     namespace = ml_namespace(state)
@@ -26,14 +24,18 @@ defmodule CommonCore.Resources.Notebooks do
 
   resource(:virtual_service, _battery, state) do
     namespace = ml_namespace(state)
-    routes = Enum.map(state.notebooks, &notebook_http_route/1)
+
+    virtual_service =
+      Enum.reduce(state.notebooks, VirtualService.new!(hosts: [notebooks_host(state)]), fn nb, vs ->
+        V.prefix(vs, base_url(nb), service_name(nb), @container_port)
+      end)
 
     :istio_virtual_service
     |> B.build_resource()
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
     |> B.name("notebooks")
-    |> B.spec(VirtualService.new(http: routes, hosts: [notebooks_host(state)]))
+    |> B.spec(virtual_service)
     |> F.require_battery(state, :istio_gateway)
     |> F.require_non_empty(state.notebooks)
   end
@@ -71,7 +73,7 @@ defmodule CommonCore.Resources.Notebooks do
               "--NotebookApp.password=''"
             ],
             "ports" => [
-              %{"containerPort" => 8888, "name" => "http"}
+              %{"containerPort" => @container_port, "name" => "http"}
             ]
           }
         ]
@@ -99,7 +101,7 @@ defmodule CommonCore.Resources.Notebooks do
     spec =
       %{}
       |> B.short_selector("battery/notebook", notebook.name)
-      |> B.ports([%{name: "http", port: 8888, targetPort: 8888}])
+      |> B.ports([%{name: "http", port: @container_port, targetPort: @container_port}])
 
     :service
     |> B.build_resource()

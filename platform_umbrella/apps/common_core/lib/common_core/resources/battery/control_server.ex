@@ -2,23 +2,31 @@ defmodule CommonCore.Resources.ControlServer do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "battery-control-server"
 
+  import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
+  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.PostgresState
 
   @service_account "battery-admin"
   @server_port 4000
+  @web_port 4001
 
   resource(:virtual_service, battery, state) do
+    spec =
+      [hosts: [control_host(state)]]
+      |> VirtualService.new!()
+      |> V.fallback("control-server", @web_port)
+
     :istio_virtual_service
     |> B.build_resource()
     |> B.namespace(core_namespace(state))
     |> B.name("control-server")
-    |> B.spec(VirtualService.fallback("control-server"))
+    |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
     |> F.require(battery.config.server_in_cluster)
   end
@@ -52,7 +60,7 @@ defmodule CommonCore.Resources.ControlServer do
       |> B.ports([
         %{
           "targetPort" => @server_port,
-          "port" => @server_port,
+          "port" => @web_port,
           "protocol" => "TCP",
           "name" => "http"
         }

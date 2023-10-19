@@ -111,6 +111,18 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end)
   end
 
+  defp definition(%{"oneOf" => one_of} = _schema, schema_name) do
+    properties =
+      one_of
+      |> Enum.map(fn v -> Map.get(v, "properties", %{}) end)
+      |> Enum.reduce(%{}, &Map.merge/2)
+      |> Enum.sort_by(fn {name, _} -> name end)
+
+    seen = seen_schema_names(schema_name, properties)
+    res = typed_ecto_module(properties, schema_name)
+    {seen, res}
+  end
+
   defp definition(%{} = schema, schema_name) do
     properties =
       schema
@@ -120,22 +132,24 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     if Enum.empty?(properties) do
       {[], nil}
     else
-      typed_ecto_schema = typed_ecto_schema(schema_name, properties)
-
       seen = seen_schema_names(schema_name, properties)
 
-      res =
-        quote do
-          defmodule unquote(String.to_atom("Elixir.#{schema_name}")) do
-            use CommonCore.OpenApi.Schema
-
-            @derive Jason.Encoder
-
-            unquote(typed_ecto_schema)
-          end
-        end
-
+      res = typed_ecto_module(properties, schema_name)
       {seen, res}
+    end
+  end
+
+  defp typed_ecto_module(properties, schema_name) do
+    typed_ecto_schema = typed_ecto_schema(schema_name, properties)
+
+    quote do
+      defmodule unquote(String.to_atom("Elixir.#{schema_name}")) do
+        use CommonCore.OpenApi.Schema
+
+        @derive Jason.Encoder
+
+        unquote(typed_ecto_schema)
+      end
     end
   end
 
@@ -238,7 +252,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
 
   defp type(%{"type" => "array"} = _info) do
     quote do
-      {:array, :any}
+      {:array, :string}
     end
   end
 
@@ -249,6 +263,13 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   end
 
   defp type(%{"type" => "number", "format" => "float"}) do
+    quote do
+      :float
+    end
+  end
+
+  # Floats are double precision in elixir
+  defp type(%{"type" => "number", "format" => "double"}) do
     quote do
       :float
     end

@@ -5,14 +5,21 @@ defmodule CommonCore.Resources.Smtp4Dev do
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
+  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.IstioConfig.VirtualService
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
+
+  @http_port 80
+  @smtp_port 25
 
   resource(:virtual_service, _battery, state) do
     namespace = base_namespace(state)
 
-    spec = VirtualService.fallback("smtp-four-dev-http", hosts: [smtp4dev_host(state)])
+    spec =
+      [hosts: [smtp4dev_host(state)]]
+      |> VirtualService.new!()
+      |> V.fallback("smtp-four-dev", @http_port)
 
     :istio_virtual_service
     |> B.build_resource()
@@ -55,15 +62,15 @@ defmodule CommonCore.Resources.Smtp4Dev do
                 ],
                 "livenessProbe" => %{
                   "initialDelaySeconds" => 10,
-                  "tcpSocket" => %{"port" => 25},
+                  "tcpSocket" => %{"port" => @smtp_port},
                   "timeoutSeconds" => 1
                 },
                 "name" => "smtp4dev",
                 "ports" => [
-                  %{"containerPort" => 80, "name" => "http", "protocol" => "TCP"},
-                  %{"containerPort" => 25, "name" => "tcp-smtp", "protocol" => "TCP"}
+                  %{"containerPort" => @http_port, "name" => "http", "protocol" => "TCP"},
+                  %{"containerPort" => @smtp_port, "name" => "tcp-smtp", "protocol" => "TCP"}
                 ],
-                "readinessProbe" => %{"tcpSocket" => %{"port" => 25}}
+                "readinessProbe" => %{"tcpSocket" => %{"port" => @smtp_port}}
               }
             ],
             "serviceAccountName" => "smtp4dev"
@@ -93,31 +100,14 @@ defmodule CommonCore.Resources.Smtp4Dev do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "tcp-smtp", "port" => 25, "protocol" => "TCP", "targetPort" => "tcp-smtp"},
-        %{"name" => "http", "port" => 8000, "protocol" => "TCP", "targetPort" => "http"}
+        %{"name" => "tcp-smtp", "port" => @smtp_port, "protocol" => "TCP", "targetPort" => "tcp-smtp"},
+        %{"name" => "http", "port" => @http_port, "protocol" => "TCP", "targetPort" => "http"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
     :service
     |> B.build_resource()
     |> B.name("smtp-four-dev")
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-  end
-
-  resource(:service_http, _battery, state) do
-    namespace = base_namespace(state)
-
-    spec =
-      %{}
-      |> Map.put("ports", [
-        %{"name" => "http", "port" => 8000, "protocol" => "TCP", "targetPort" => "http"}
-      ])
-      |> Map.put("selector", %{"battery/app" => @app_name})
-
-    :service
-    |> B.build_resource()
-    |> B.name("smtp-four-dev-http")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end

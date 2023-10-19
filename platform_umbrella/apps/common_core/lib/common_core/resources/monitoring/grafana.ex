@@ -9,12 +9,15 @@ defmodule CommonCore.Resources.Grafana do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.INIConfig
+  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Secret
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
   require Logger
+
+  @service_http_port 80
 
   resource(:cluster_role_binding_clusterrolebinding, _battery, state) do
     namespace = core_namespace(state)
@@ -554,7 +557,7 @@ defmodule CommonCore.Resources.Grafana do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "service", "port" => 80, "protocol" => "TCP", "targetPort" => 3000}
+        %{"name" => "service", "port" => @service_http_port, "protocol" => "TCP", "targetPort" => 3000}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
@@ -568,7 +571,10 @@ defmodule CommonCore.Resources.Grafana do
   resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
 
-    spec = VirtualService.fallback("grafana", hosts: [grafana_host(state)])
+    spec =
+      [hosts: [grafana_host(state)]]
+      |> VirtualService.new!()
+      |> V.fallback("grafana", @service_http_port)
 
     :istio_virtual_service
     |> B.build_resource()

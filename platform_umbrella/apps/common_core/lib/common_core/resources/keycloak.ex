@@ -6,11 +6,15 @@ defmodule CommonCore.Resources.Keycloak do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
+  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Secret
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.PostgresState
+
+  @web_port 8181
+  @web_listen_port 8080
 
   resource(:config_map_env_vars, battery, state) do
     namespace = core_namespace(state)
@@ -25,7 +29,7 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("KC_HOSTNAME_STRICT", "false")
       |> Map.put("KC_HOSTNAME_STRICT_BACKCHANNEL", "false")
       |> Map.put("KC_HTTP_ENABLED", "true")
-      |> Map.put("KC_HTTP_PORT", "8080")
+      |> Map.put("KC_HTTP_PORT", "#{@web_listen_port}")
       |> Map.put("KC_PROXY", "edge")
       |> Map.put("KC_DB", "postgres")
       |> Map.put("KC_DB_URL_HOST", hostname)
@@ -89,7 +93,7 @@ defmodule CommonCore.Resources.Keycloak do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "http", "port" => 80, "protocol" => "TCP", "targetPort" => "http"}
+        %{"name" => "http", "port" => @web_port, "protocol" => "TCP", "targetPort" => "http"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
@@ -181,7 +185,7 @@ defmodule CommonCore.Resources.Keycloak do
                   "timeoutSeconds" => 5
                 },
                 "name" => "keycloak",
-                "ports" => [%{"containerPort" => 8080, "name" => "http", "protocol" => "TCP"}],
+                "ports" => [%{"containerPort" => @web_listen_port, "name" => "http", "protocol" => "TCP"}],
                 "readinessProbe" => %{
                   "failureThreshold" => 3,
                   "httpGet" => %{"path" => "/realms/master", "port" => "http"},
@@ -211,7 +215,10 @@ defmodule CommonCore.Resources.Keycloak do
   resource(:virtual_service, _battery, state) do
     namespace = core_namespace(state)
 
-    spec = VirtualService.fallback("keycloak", hosts: [keycloak_host(state)])
+    spec =
+      [hosts: [keycloak_host(state)]]
+      |> VirtualService.new!()
+      |> V.fallback("keycloak", @web_port)
 
     :istio_virtual_service
     |> B.build_resource()

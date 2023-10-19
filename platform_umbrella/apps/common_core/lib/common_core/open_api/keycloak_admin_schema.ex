@@ -92,7 +92,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
     typed_embedded_schema do
       field :application, :map
       field :client, :map
-      field :realm, {:array, :any}
+      field :realm, {:array, :string}
     end
   end
 
@@ -147,7 +147,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :id, :string
       field :name, :string
       field :path, :string
-      field :realmRoles, {:array, :any}
+      field :realmRoles, {:array, :string}
       embeds_many :subGroups, GroupRepresentation
     end
   end
@@ -283,9 +283,9 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :name, :string
       field :owner, :map
       field :ownerManagedAccess, :boolean
-      field :scopes, {:array, :any}
+      field :scopes, {:array, :string}
       field :type, :string
-      field :uris, {:array, :any}
+      field :uris, {:array, :string}
     end
   end
 
@@ -328,7 +328,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :client, :string
       field :clientScope, :string
       field :clientTemplate, :string
-      field :roles, {:array, :any}
+      field :roles, {:array, :string}
       field :self, :string
     end
   end
@@ -385,8 +385,8 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :clientId, :string
       field :clientTemplate, :string
       field :consentRequired, :boolean
-      field :defaultClientScopes, {:array, :any}
-      field :defaultRoles, {:array, :any}
+      field :defaultClientScopes, {:array, :string}
+      field :defaultRoles, {:array, :string}
       field :description, :string
       field :directAccessGrantsEnabled, :boolean
       field :directGrantsOnly, :boolean
@@ -398,12 +398,12 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :name, :string
       field :nodeReRegistrationTimeout, :integer
       field :notBefore, :integer
-      field :optionalClientScopes, {:array, :any}
+      field :optionalClientScopes, {:array, :string}
       field :origin, :string
       field :protocol, :string
       embeds_many :protocolMappers, ProtocolMapperRepresentation
       field :publicClient, :boolean
-      field :redirectUris, {:array, :any}
+      field :redirectUris, {:array, :string}
       field :registeredNodes, :map
       field :registrationAccessToken, :string
       field :rootUrl, :string
@@ -414,7 +414,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :useTemplateConfig, :boolean
       field :useTemplateMappers, :boolean
       field :useTemplateScope, :boolean
-      field :webOrigins, {:array, :any}
+      field :webOrigins, {:array, :string}
     end
   end
 
@@ -438,8 +438,8 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
     typed_embedded_schema do
       field :clientId, :string
       field :createdDate, :integer
-      field :grantedClientScopes, {:array, :any}
-      field :grantedRealmRoles, {:array, :any}
+      field :grantedClientScopes, {:array, :string}
+      field :grantedRealmRoles, {:array, :string}
       field :lastUpdatedDate, :integer
     end
   end
@@ -488,20 +488,20 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :clientRoles, :map
       field :createdTimestamp, :integer
       embeds_many :credentials, CredentialRepresentation
-      field :disableableCredentialTypes, {:array, :any}
+      field :disableableCredentialTypes, {:array, :string}
       field :email, :string
       field :emailVerified, :boolean
       field :enabled, :boolean
       embeds_many :federatedIdentities, FederatedIdentityRepresentation
       field :federationLink, :string
       field :firstName, :string
-      field :groups, {:array, :any}
+      field :groups, {:array, :string}
       field :id, :string
       field :lastName, :string
       field :notBefore, :integer
       field :origin, :string
-      field :realmRoles, {:array, :any}
-      field :requiredActions, {:array, :any}
+      field :realmRoles, {:array, :string}
+      field :requiredActions, {:array, :string}
       field :self, :string
       field :serviceAccountClientId, :string
       embeds_many :socialLinks, SocialLinkRepresentation
@@ -547,12 +547,12 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       embeds_many :clients, ClientRepresentation
       field :codeSecret, :string
       field :components, :map
-      field :defaultDefaultClientScopes, {:array, :any}
-      field :defaultGroups, {:array, :any}
+      field :defaultDefaultClientScopes, {:array, :string}
+      field :defaultGroups, {:array, :string}
       field :defaultLocale, :string
-      field :defaultOptionalClientScopes, {:array, :any}
+      field :defaultOptionalClientScopes, {:array, :string}
       embeds_one :defaultRole, RoleRepresentation
-      field :defaultRoles, {:array, :any}
+      field :defaultRoles, {:array, :string}
       field :defaultSignatureAlgorithm, :string
       field :directGrantFlow, :string
       field :displayName, :string
@@ -562,10 +562,10 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :editUsernameAllowed, :boolean
       field :emailTheme, :string
       field :enabled, :boolean
-      field :enabledEventTypes, {:array, :any}
+      field :enabledEventTypes, {:array, :string}
       field :eventsEnabled, :boolean
       field :eventsExpiration, :integer
-      field :eventsListeners, {:array, :any}
+      field :eventsListeners, {:array, :string}
       field :failureFactor, :integer
       embeds_many :federatedUsers, UserRepresentation
       embeds_many :groups, GroupRepresentation
@@ -582,7 +582,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :notBefore, :integer
       field :oAuth2DeviceCodeLifespan, :integer
       field :oAuth2DevicePollingInterval, :integer
-      field :oauthClients, {:array, :any}
+      field :oauthClients, {:array, :string}
       field :offlineSessionIdleTimeout, :integer
       field :offlineSessionMaxLifespan, :integer
       field :offlineSessionMaxLifespanEnabled, :boolean
@@ -593,7 +593,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :otpPolicyLookAheadWindow, :integer
       field :otpPolicyPeriod, :integer
       field :otpPolicyType, :string
-      field :otpSupportedApplications, {:array, :any}
+      field :otpSupportedApplications, {:array, :string}
       field :passwordCredentialGrantAllowed, :boolean
       field :passwordPolicy, :string
       field :permanentLockout, :boolean
@@ -608,7 +608,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :registrationFlow, :string
       field :rememberMe, :boolean
       embeds_many :requiredActions, RequiredActionProviderRepresentation
-      field :requiredCredentials, {:array, :any}
+      field :requiredCredentials, {:array, :string}
       field :resetCredentialsFlow, :string
       field :resetPasswordAllowed, :boolean
       field :revokeRefreshToken, :boolean
@@ -622,7 +622,7 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :ssoSessionIdleTimeoutRememberMe, :integer
       field :ssoSessionMaxLifespan, :integer
       field :ssoSessionMaxLifespanRememberMe, :integer
-      field :supportedLocales, {:array, :any}
+      field :supportedLocales, {:array, :string}
       field :updateProfileOnInitialSocialLogin, :boolean
       embeds_many :userFederationMappers, UserFederationMapperRepresentation
       embeds_many :userFederationProviders, UserFederationProviderRepresentation
@@ -630,12 +630,12 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       embeds_many :users, UserRepresentation
       field :verifyEmail, :boolean
       field :waitIncrementSeconds, :integer
-      field :webAuthnPolicyAcceptableAaguids, {:array, :any}
+      field :webAuthnPolicyAcceptableAaguids, {:array, :string}
       field :webAuthnPolicyAttestationConveyancePreference, :string
       field :webAuthnPolicyAuthenticatorAttachment, :string
       field :webAuthnPolicyAvoidSameAuthenticatorRegister, :boolean
       field :webAuthnPolicyCreateTimeout, :integer
-      field :webAuthnPolicyPasswordlessAcceptableAaguids, {:array, :any}
+      field :webAuthnPolicyPasswordlessAcceptableAaguids, {:array, :string}
       field :webAuthnPolicyPasswordlessAttestationConveyancePreference, :string
       field :webAuthnPolicyPasswordlessAuthenticatorAttachment, :string
       field :webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister, :boolean
@@ -643,12 +643,12 @@ defmodule CommonCore.OpenApi.KeycloakAdminSchema do
       field :webAuthnPolicyPasswordlessRequireResidentKey, :string
       field :webAuthnPolicyPasswordlessRpEntityName, :string
       field :webAuthnPolicyPasswordlessRpId, :string
-      field :webAuthnPolicyPasswordlessSignatureAlgorithms, {:array, :any}
+      field :webAuthnPolicyPasswordlessSignatureAlgorithms, {:array, :string}
       field :webAuthnPolicyPasswordlessUserVerificationRequirement, :string
       field :webAuthnPolicyRequireResidentKey, :string
       field :webAuthnPolicyRpEntityName, :string
       field :webAuthnPolicyRpId, :string
-      field :webAuthnPolicySignatureAlgorithms, {:array, :any}
+      field :webAuthnPolicySignatureAlgorithms, {:array, :string}
       field :webAuthnPolicyUserVerificationRequirement, :string
     end
   end

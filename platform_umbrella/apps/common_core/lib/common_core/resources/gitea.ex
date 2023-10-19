@@ -13,12 +13,11 @@ defmodule CommonCore.Resources.Gitea do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
+  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.IstioConfig.HttpRoute
-  alias CommonCore.Resources.IstioConfig.TCPRoute
-  alias CommonCore.Resources.IstioConfig.VirtualService
   alias CommonCore.Resources.Secret
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.PostgresState
 
   @ssh_port 2202
@@ -29,11 +28,10 @@ defmodule CommonCore.Resources.Gitea do
     namespace = core_namespace(state)
 
     spec =
-      VirtualService.new(
-        hosts: [gitea_host(state)],
-        tcp: [TCPRoute.port(@ssh_port, @ssh_listen_port, "gitea-ssh")],
-        http: [HttpRoute.fallback("gitea-http")]
-      )
+      [hosts: [gitea_host(state)]]
+      |> VirtualService.new!()
+      |> V.fallback("gitea-http", @http_listen_port)
+      |> V.tcp(@ssh_port, "gitea-ssh", @ssh_listen_port)
 
     :istio_virtual_service
     |> B.build_resource()
