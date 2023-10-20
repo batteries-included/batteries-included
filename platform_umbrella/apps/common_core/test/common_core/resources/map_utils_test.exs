@@ -22,11 +22,9 @@ defmodule CommonCore.Resources.MapUtilsTest do
       assert %{"a" => "b"} = maybe_put(%{}, fn _m -> true end, "a", "b")
       assert %{} = maybe_put(%{}, fn _m -> false end, "a", "b")
 
-      assert %{"a" => "c"} =
-               maybe_put(%{"a" => "b"}, fn orig -> orig["a"] == "b" end, "a", "c")
+      assert %{"a" => "c"} = maybe_put(%{"a" => "b"}, fn orig -> orig["a"] == "b" end, "a", "c")
 
-      assert %{"a" => "b"} =
-               maybe_put(%{"a" => "b"}, fn orig -> orig["a"] == "c" end, "a", "c")
+      assert %{"a" => "b"} = maybe_put(%{"a" => "b"}, fn orig -> orig["a"] == "c" end, "a", "c")
     end
   end
 
@@ -58,6 +56,29 @@ defmodule CommonCore.Resources.MapUtilsTest do
                maybe_put_lazy(%{"a" => "b"}, fn orig -> orig["a"] == "c" end, "a", fn m ->
                  length(Map.keys(m))
                end)
+    end
+  end
+
+  describe "maybe_append/4" do
+    test "updates the map when predicate is `true`" do
+      assert %{"a" => ["b"]} = maybe_append(%{}, true, "a", "b")
+      assert %{"a" => ["b"]} = maybe_append(%{"a" => nil}, true, "a", "b")
+      assert %{"a" => ["a", "b"]} = maybe_append(%{"a" => ["a"]}, true, "a", "b")
+      assert %{"a" => ["a", "b", "b", "c"]} = maybe_append(%{"a" => ["a", "b"]}, true, "a", ["b", "c"])
+    end
+
+    test "doesn't update the map when predicate is `false`" do
+      assert %{} = maybe_append(%{}, false, "a", "b")
+      assert %{"a" => nil} = maybe_append(%{"a" => nil}, false, "a", "b")
+      assert %{"a" => ["a"]} = maybe_append(%{"a" => ["a"]}, false, "a", "b")
+    end
+
+    test "evaluates `predicate` if it's a function" do
+      assert %{"a" => ["b"]} = maybe_append(%{}, fn _ -> true end, "a", "b")
+      assert %{"a" => ["b"]} = maybe_append(%{"a" => nil}, fn m -> m["a"] == nil end, "a", "b")
+
+      assert %{} = maybe_append(%{}, fn _ -> false end, "a", "b")
+      assert %{"a" => nil} = maybe_append(%{"a" => nil}, fn m -> m["a"] == "blargh" end, "a", "b")
     end
   end
 end

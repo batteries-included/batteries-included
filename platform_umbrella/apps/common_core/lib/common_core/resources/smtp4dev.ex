@@ -14,11 +14,12 @@ defmodule CommonCore.Resources.Smtp4Dev do
   @smtp_port 25
 
   resource(:virtual_service, _battery, state) do
-    namespace = base_namespace(state)
+    namespace = core_namespace(state)
 
     spec =
       [hosts: [smtp4dev_host(state)]]
       |> VirtualService.new!()
+      |> V.prefix("/oauth2", "oauth2-proxy-#{@app_name}", 80)
       |> V.fallback("smtp-four-dev", @http_port)
 
     :istio_virtual_service
@@ -30,7 +31,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
   end
 
   resource(:deployment_main, battery, state) do
-    namespace = base_namespace(state)
+    namespace = core_namespace(state)
 
     spec =
       %{}
@@ -65,7 +66,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
                   "tcpSocket" => %{"port" => @smtp_port},
                   "timeoutSeconds" => 1
                 },
-                "name" => "smtp4dev",
+                "name" => @app_name,
                 "ports" => [
                   %{"containerPort" => @http_port, "name" => "http", "protocol" => "TCP"},
                   %{"containerPort" => @smtp_port, "name" => "tcp-smtp", "protocol" => "TCP"}
@@ -73,34 +74,39 @@ defmodule CommonCore.Resources.Smtp4Dev do
                 "readinessProbe" => %{"tcpSocket" => %{"port" => @smtp_port}}
               }
             ],
-            "serviceAccountName" => "smtp4dev"
+            "serviceAccountName" => @app_name
           }
         }
       )
 
     :deployment
     |> B.build_resource()
-    |> B.name("smtp4dev")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
 
   resource(:service_account_main, _battery, state) do
-    namespace = base_namespace(state)
+    namespace = core_namespace(state)
 
     :service_account
     |> B.build_resource()
-    |> B.name("smtp4dev")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
   end
 
   resource(:service_main, _battery, state) do
-    namespace = base_namespace(state)
+    namespace = core_namespace(state)
 
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "tcp-smtp", "port" => @smtp_port, "protocol" => "TCP", "targetPort" => "tcp-smtp"},
+        %{
+          "name" => "tcp-smtp",
+          "port" => @smtp_port,
+          "protocol" => "TCP",
+          "targetPort" => "tcp-smtp"
+        },
         %{"name" => "http", "port" => @http_port, "protocol" => "TCP", "targetPort" => "http"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
@@ -110,5 +116,52 @@ defmodule CommonCore.Resources.Smtp4Dev do
     |> B.name("smtp-four-dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
+  end
+
+  resource(:istio_request_auth, _battery, state) do
+    namespace = core_namespace(state)
+
+    keycloak_root = "http://#{keycloak_host(state)}"
+    workload_root = "#{keycloak_root}/realms/#{CommonCore.Defaults.Keycloak.realm_name()}"
+
+    # TODO(jdt): get keycloak urls from the server or something instead of interpolating
+    spec =
+      %{}
+      |> Map.put("jwtRules", [
+        %{
+          "issuer" => workload_root,
+          "jwksUri" => "#{workload_root}/protocol/openid-connect/certs"
+        }
+      ])
+      |> B.match_labels_selector(@app_name)
+
+    :istio_request_auth
+    |> B.build_resource()
+    |> B.name("#{@app_name}-keycloak-auth")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :sso)
+  end
+
+  resource(:istio_auth_policy, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("action", "CUSTOM")
+      |> Map.put("provider", %{"name" => "#{@app_name}-ext-authz-http"})
+      |> Map.put("rules", [
+        %{
+          "to" => [%{"operation" => %{"hosts" => [smtp4dev_host(state)]}}]
+        }
+      ])
+      |> B.match_labels_selector(@app_name)
+
+    :istio_auth_policy
+    |> B.build_resource()
+    |> B.name("#{@app_name}-require-keycloak-auth")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :sso)
   end
 end

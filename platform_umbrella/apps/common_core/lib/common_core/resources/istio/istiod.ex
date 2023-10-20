@@ -2,7 +2,6 @@ defmodule CommonCore.Resources.Istiod do
   @moduledoc false
   use CommonCore.IncludeResource,
     config: "priv/raw_files/istiod/config",
-    mesh: "priv/raw_files/istiod/mesh",
     values: "priv/raw_files/istiod/values"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "istiod"
@@ -10,6 +9,7 @@ defmodule CommonCore.Resources.Istiod do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.Istio.IstioConfigMapGenerator
 
   resource(:cluster_role_binding_clusterrole_battery_istio, _battery, state) do
     namespace = istio_namespace(state)
@@ -251,9 +251,8 @@ defmodule CommonCore.Resources.Istiod do
     |> B.rules(rules)
   end
 
-  resource(:config_map_istio, _battery, state) do
+  resource(:config_map_istio, battery, state) do
     namespace = istio_namespace(state)
-    data = %{} |> Map.put("meshNetworks", "networks: {}") |> Map.put("mesh", get_resource(:mesh))
 
     :config_map
     |> B.build_resource()
@@ -262,14 +261,16 @@ defmodule CommonCore.Resources.Istiod do
     |> B.label("install.operator.istio.io/owning-resource", "unknown")
     |> B.label("istio.io/rev", "default")
     |> B.label("operator.istio.io/component", "Pilot")
-    |> B.data(data)
+    |> B.data(IstioConfigMapGenerator.materialize(battery, state))
   end
 
   resource(:config_map_istio_sidecar_injector, _battery, state) do
     namespace = istio_namespace(state)
 
     data =
-      %{} |> Map.put("config", get_resource(:config)) |> Map.put("values", get_resource(:values))
+      %{}
+      |> Map.put("config", get_resource(:config))
+      |> Map.put("values", get_resource(:values))
 
     :config_map
     |> B.build_resource()

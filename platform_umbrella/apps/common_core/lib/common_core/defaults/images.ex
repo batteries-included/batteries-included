@@ -44,4 +44,6 @@ defmodule CommonCore.Defaults.Images do
   def vm_tag, do: "v1.93.6"
 
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
+
+  def oauth2_proxy_image, do: "quay.io/oauth2-proxy/oauth2-proxy:v7.5.1"
 end

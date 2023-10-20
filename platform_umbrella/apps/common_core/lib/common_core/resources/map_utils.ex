@@ -62,4 +62,41 @@ defmodule CommonCore.Resources.MapUtils do
   @spec maybe_put_lazy(map(), (map() -> boolean()), String.t(), (map() -> any())) :: map()
   def maybe_put_lazy(%{} = map, predicate, key, func) when is_function(predicate),
     do: maybe_put_lazy(map, predicate.(map), key, func)
+
+  @doc """
+  Append `value` to the list value of `key` if `predicate` is `true`.
+  Will create list if the value is `nil`.
+  `predicate` may be a function that accepts the original map as its sole argument.
+
+  ## Examples
+
+    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, true, :key, "b")
+    %{key: ["a","b"]}
+
+    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, true, :key, ["b", "c"])
+    %{key: ["a","b","c"]}
+
+    iex> CommonCore.Resources.MapUtils.maybe_append(%{}, true, :key, "b")
+    %{key: ["b"]}
+
+    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, false, :key, "b")
+    %{key: ["a"]}
+
+    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, fn _original_map -> true end, :key, "b")
+    %{key: ["a", "b"]}
+
+  """
+
+  @spec maybe_append(map(), boolean() | (map() -> boolean()), String.t(), term()) :: map()
+  def maybe_append(%{} = map, predicate, key, val) when not is_list(val), do: maybe_append(map, predicate, key, [val])
+
+  @spec maybe_append(map(), boolean(), String.t(), list(term())) :: map()
+  def maybe_append(%{} = map, predicate, key, val) when is_boolean(predicate) and predicate,
+    do: Map.put(map, key, (map[key] || []) ++ val)
+
+  def maybe_append(%{} = map, predicate, _key, _val) when is_boolean(predicate) and not predicate, do: map
+
+  @spec maybe_append(map(), (map() -> boolean()), String.t(), list(term())) :: map()
+  def maybe_append(%{} = map, predicate, key, val) when is_function(predicate),
+    do: maybe_append(map, predicate.(map), key, val)
 end

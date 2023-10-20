@@ -35,6 +35,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.RedisOperator
   alias CommonCore.Resources.Rook
   alias CommonCore.Resources.Smtp4Dev
+  alias CommonCore.Resources.SSO
   alias CommonCore.Resources.TrivyOperator
   alias CommonCore.Resources.TrustManager
   alias CommonCore.Resources.VMAgent
@@ -67,7 +68,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     rook: [Rook, CephFilesystems, CephClusters],
     smtp4dev: [Smtp4Dev],
     keycloak: [Keycloak],
-    sso: [],
+    sso: [SSO],
     trivy_operator: [TrivyOperator],
     timeline: [],
     trust_manager: [TrustManager],
