@@ -9,13 +9,16 @@ use url::Url;
 use crate::args::BaseArgs;
 use crate::postgres_kube::wait_healthy_pg;
 use crate::spec::InstallationSpec;
+use crate::tasks::ensure_podman_started;
 use crate::tasks::{
     add_local_to_spec, download_install_spec, ensure_kube_provider_started, initial_apply,
     port_forward_postgres, port_forward_spec, read_install_spec, setup_platform_db,
 };
 
+#[allow(clippy::too_many_arguments)]
 pub async fn dev_command(
     base_args: BaseArgs,
+    start_podman: bool,
     installation_url: Url,
     overwrite_resources: bool,
     forward_postgres: bool,
@@ -23,6 +26,11 @@ pub async fn dev_command(
     platform_dir: Option<PathBuf>,
     static_dir: Option<PathBuf>,
 ) -> Result<()> {
+    // If this is OSX we make sure that podman is setup.
+    if start_podman && base_args.os == "macos" {
+        ensure_podman_started(base_args.temp_dir.clone()).await?;
+    }
+
     // Get the install spec from http server
     let install_spec = get_install_spec(static_dir, installation_url).await?;
 

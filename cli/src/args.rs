@@ -14,6 +14,8 @@ pub struct BaseArgs {
     pub dir_parent: PathBuf,
     pub current_dir: PathBuf,
     pub arch: String,
+    pub os: String,
+    pub temp_dir: PathBuf,
 }
 
 // TODO: add setters so that we can reduce boilerplate in tests
@@ -28,6 +30,9 @@ pub enum CliAction {
     // subcommand `dev` is hidden from help output
     #[clap(hide = true)]
     Dev {
+        #[clap(long, action = clap::ArgAction::Set, default_value_t = false,)]
+        start_podman: bool,
+
         #[clap(long, default_value = "https://www.batteriesincl.com/specs/dev.json")]
         installation_url: Url,
 
@@ -93,7 +98,8 @@ mod tests {
                 static_dir: None,
                 forward_postgres: true,
                 overwrite_resources: false,
-                forward_pods: vec![]
+                forward_pods: vec![],
+                start_podman: false
             }
         )
     }
@@ -115,7 +121,8 @@ mod tests {
                 static_dir: None,
                 platform_dir: None,
                 overwrite_resources: false,
-                forward_pods: vec![]
+                forward_pods: vec![],
+                start_podman: false
             }
         )
     }
@@ -138,7 +145,8 @@ mod tests {
                 static_dir: Some(PathBuf::from("static")),
                 platform_dir: Some(PathBuf::from("platform_umbrella")),
                 overwrite_resources: false,
-                forward_pods: vec![]
+                forward_pods: vec![],
+                start_podman: false
             }
         )
     }

@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use eyre::{Context, Result};
 use std::os::unix::fs::PermissionsExt;
 use tempfile::NamedTempFile;
+use tracing::info;
 
 use crate::operating_system;
 
@@ -28,6 +29,7 @@ fn ensure_battery_bin(dir_parent: &Path) -> Result<PathBuf> {
 async fn ensure_kind_binary(bin_path: &Path, arch: &str) -> Result<PathBuf> {
     let kind_path = bin_path.join(format!("kind-{}", KIND_VER));
     if !kind_path.exists() {
+        info!("Fetching kind via https");
         let os = operating_system::detect();
         let kind_arch = to_kind_arch(arch);
         download_kind(&kind_path, &os.to_string(), &kind_arch).await?;

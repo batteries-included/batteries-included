@@ -19,6 +19,7 @@ pub async fn initial_apply(
     let apply_params = PatchParams::apply("bcli").force();
     let mut retries = 20;
     let mut unsynced = initial_resources;
+    let mut sleep_time = Duration::from_secs(5);
 
     while retries >= 0 && !unsynced.is_empty() {
         retries -= 1;
@@ -67,7 +68,12 @@ pub async fn initial_apply(
             .await;
 
         if !unsynced.is_empty() {
-            sleep(Duration::from_millis(5000)).await;
+            debug!(
+                "Sleeping {:?} for kubernetes to settle, and applys' to succeed",
+                sleep_time
+            );
+            sleep(sleep_time).await;
+            sleep_time = (sleep_time + Duration::from_secs(2)).max(Duration::from_secs(30));
         }
     }
 

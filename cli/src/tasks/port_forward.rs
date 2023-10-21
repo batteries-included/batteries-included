@@ -13,7 +13,7 @@ use tracing::{debug, error, info, warn};
 use crate::postgres_kube::master_name;
 
 pub async fn port_forward_postgres(kube_client: Client, namespace: &str) -> Result<()> {
-    info!("Starting port forward");
+    debug!("Starting port forward");
     let pods: Api<Pod> = Api::namespaced(kube_client, namespace);
     // Get and wait for the master name.
     //

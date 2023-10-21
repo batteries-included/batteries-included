@@ -6,7 +6,7 @@ use kube_client::{
     Api, Client,
 };
 use kube_runtime::wait::{await_condition, conditions::is_pod_running};
-use tracing::info;
+use tracing::{debug, info};
 
 const LABEL_SELECTOR: &str = "cnpg.io/cluster=controlserver,role=primary";
 const INITIAL_PODNAME: &str = "controlserver-1";
@@ -26,6 +26,7 @@ pub async fn wait_healthy_pg(kube_client: Client, namespace: &str) -> Result<()>
 /// controlserver-primary label selector. If no pod is initially found, watches
 /// for a Added or Modified event matching the selector.
 pub async fn master_name(pods: Api<Pod>) -> Result<String> {
+    debug!("Getting master name from label selector");
     let list_params = ListParams::default().labels(LABEL_SELECTOR);
     let list = pods.list(&list_params).await?;
     if list.items.is_empty() {

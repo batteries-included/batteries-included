@@ -63,6 +63,7 @@
         frameworks.CoreServices
         frameworks.CoreFoundation
         frameworks.Foundation
+        pkgs.qemu
       ];
 
 
@@ -79,6 +80,7 @@
         kind
         kubectl
         kubernetes-helm
+        podman
 
         # Use for pushing docker
         skopeo

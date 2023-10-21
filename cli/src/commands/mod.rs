@@ -10,6 +10,7 @@ pub mod uninstall;
 pub async fn program_main(program_args: ProgramArgs) -> Result<()> {
     match program_args.cli_args.action {
         CliAction::Dev {
+            start_podman,
             installation_url,
             overwrite_resources,
             forward_postgres,
@@ -20,6 +21,7 @@ pub async fn program_main(program_args: ProgramArgs) -> Result<()> {
         } => {
             dev_command(
                 program_args.base_args,
+                start_podman,
                 installation_url,
                 overwrite_resources,
                 forward_postgres,

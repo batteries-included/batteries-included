@@ -19,12 +19,14 @@
       "path": "../coding_challenges/whats_up"
     },
     {
+      "path": "../nix"
+    },
+    {
       "path": ".."
     }
   ],
   "settings": {
     "files.insertFinalNewline": true,
-
     // UI Things that are always needed
     "tailwindCSS.includeLanguages": {
       "elixir": "html",

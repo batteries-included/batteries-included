@@ -23,6 +23,8 @@ async fn main() -> Result<()> {
                 .context("Expected a home directory for us to install into")?,
             current_dir: std::env::current_dir().context("Expected to get a current dir")?,
             arch: String::from(std::env::consts::ARCH),
+            os: String::from(std::env::consts::OS),
+            temp_dir: std::env::temp_dir(),
         },
     };
 
