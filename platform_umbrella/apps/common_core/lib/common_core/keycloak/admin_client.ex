@@ -30,7 +30,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   - Force a username/password login.
   - Force a refresh of the access token
 
-  ## Miscellaneous 
+  ## Miscellaneous
 
   - Query openid discovery endpoint
 
@@ -45,6 +45,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
+  alias CommonCore.OpenApi.OIDC.OIDCConfiguration
 
   require Logger
 
@@ -560,7 +561,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp do_get_openid_wellknown(realm_name, %State{base_client: client} = _state) do
     client
     |> Tesla.get("realms/" <> realm_name <> "/.well-known/openid-configuration")
-    |> to_result(nil)
+    |> to_result(&OIDCConfiguration.new!/1)
   end
 
   #

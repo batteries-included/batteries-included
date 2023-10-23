@@ -7,6 +7,7 @@ defmodule CommonCore.Keycloak.TestAdminClient do
   alias CommonCore.Keycloak.AdminClient
   alias CommonCore.Keycloak.TeslaMock
   alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
+  alias CommonCore.OpenApi.OIDC.OIDCConfiguration
 
   @access_key_value "VALUE_KEY_HERE"
   @refresh_key_value "REFRESH_KEY_HERE"
@@ -168,10 +169,10 @@ defmodule CommonCore.Keycloak.TestAdminClient do
 
     test "will return ok", %{pid: pid} do
       expect(TeslaMock, :call, fn %{url: @discovery_url}, _opts ->
-        {:ok, %Tesla.Env{status: 200}}
+        {:ok, %Tesla.Env{status: 200, body: %{}}}
       end)
 
-      assert {:ok, _} = AdminClient.openid_wellknown_configuration(pid, "master")
+      assert {:ok, %OIDCConfiguration{}} = AdminClient.openid_wellknown_configuration(pid, "master")
     end
   end
 
