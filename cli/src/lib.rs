@@ -1,5 +1,6 @@
 #![feature(exit_status_error)]
 #![feature(async_closure)]
+#![feature(let_chains)]
 
 pub mod args;
 pub mod commands;

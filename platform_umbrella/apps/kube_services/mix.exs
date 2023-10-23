@@ -41,13 +41,14 @@ defmodule KubeServices.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:event_center, in_umbrella: true},
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
-      {:jason, "~> 1.4.1"},
-      {:k8s, "~> 2.4.1"},
+      {:jason, "~> 1.4"},
+      {:k8s, "~> 2.4"},
+      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:phoenix, "~> 1.7.7"},
-      {:tesla, "~> 1.7.0"},
-      {:typed_struct, "~> 0.3.0", runtime: false}
+      {:phoenix, "~> 1.7"},
+      {:tesla, "~> 1.7"},
+      {:typed_struct, "~> 0.3", runtime: false}
     ]
   end
 

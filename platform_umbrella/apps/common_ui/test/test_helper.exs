@@ -15,4 +15,5 @@ Application.put_env(:common_ui_test, Endpoint,
   ]
 )
 
+ExUnit.configure(formatters: [JUnitFormatter, ExUnit.CLIFormatter])
 ExUnit.start()

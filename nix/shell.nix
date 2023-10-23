@@ -4,19 +4,21 @@
 
   perSystem = { system, config, lib, ... }:
     let
-      overlays = [ (import inputs.rust-overlay) ];
       pkgs = import inputs.nixpkgs {
-        inherit system overlays;
+        inherit system;
+        overlays = [ (import inputs.rust-overlay) ];
         config.allowUnfree = true;
       };
 
       beam = pkgs.beam;
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
       erlang = beamPackages.erlang;
-      elixir = beamPackages.elixir_1_15;
       rebar = beamPackages.rebar;
       rebar3 = beamPackages.rebar3;
-      elixir-ls = beamPackages.elixir-ls;
+
+      # elixir and elixir-ls are using the same version
+      elixir = beamPackages.elixir_1_15;
+      elixir-ls = beamPackages.elixir-ls.override { elixir = elixir; };
 
       elixirNativeTools = with pkgs; [
         erlang

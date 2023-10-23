@@ -43,19 +43,20 @@ defmodule HomeBase.MixProject do
     [
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.9"},
-      {:postgrex, "~> 0.17.2"},
-      {:ecto_sqlite3, "~> 0.11.0", only: [:test, :integration]},
-      {:jason, "~> 1.4.1"},
-      {:typed_ecto_schema, "~> 0.4.1"},
-      {:polymorphic_embed, "~> 3.0.5"},
+      {:postgrex, "~> 0.17"},
+      {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
+      {:jason, "~> 1.4"},
+      {:typed_ecto_schema, "~> 0.4"},
+      {:polymorphic_embed, "~> 3.0"},
 
       # History
-      {:ex_audit, "~> 0.10.0"},
+      {:ex_audit, "~> 0.10"},
 
       # Slugs/Naming
       {:mnemonic_slugs, "~> 0.0.3"},
 
       # testing
+      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
     ]
   end

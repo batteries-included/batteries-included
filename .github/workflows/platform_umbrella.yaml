@@ -20,7 +20,7 @@ jobs:
       - uses: cachix/cachix-action@v12
         with:
           name: batteries-included
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
@@ -39,6 +39,13 @@ jobs:
           name: wallaby-screenshots
           path: |
             platform_umbrella/apps/control_server_web/screenshots
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Mix Integration Test Results
+          path: platform_umbrella/_build/**/test-junit-report.xml
+          reporter: java-junit
   platform-test:
     runs-on: ubuntu-latest
     services:
@@ -46,15 +53,15 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_USER: battery-local-user
-          POSTGRES_PASSWORD: 'batterypasswd'
+          POSTGRES_PASSWORD: "batterypasswd"
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s
           --health-retries 5
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
     env:
       POSTGRES_HOST: localhost
       POSTGRES_USER: battery-local-user
-      POSTGRES_PASSWORD: 'batterypasswd'
+      POSTGRES_PASSWORD: "batterypasswd"
       MIX_ENV: test
     steps:
       - uses: actions/checkout@v4
@@ -64,10 +71,17 @@ jobs:
       - uses: cachix/cachix-action@v12
         with:
           name: batteries-included
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix develop --command bash bi ex-test-deep
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Mix Test Results
+          path: platform_umbrella/_build/**/test-junit-report.xml
+          reporter: java-junit

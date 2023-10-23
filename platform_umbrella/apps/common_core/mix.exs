@@ -26,28 +26,29 @@ defmodule CommonCore.MixProject do
 
   defp deps do
     [
-      {:typed_struct, "~> 0.3.0", runtime: false},
-      {:jason, "~> 1.4.1"},
+      {:typed_struct, "~> 0.3", runtime: false},
+      {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:polymorphic_embed, "~> 3.0.5"},
+      {:polymorphic_embed, "~> 3.0"},
       {:telemetry, "~> 1.1"},
-      {:tesla, "~> 1.7.0"},
-      {:typed_ecto_schema, "~> 0.4.1"},
-      {:k8s, "~> 2.4.1"},
+      {:tesla, "~> 1.7"},
+      {:typed_ecto_schema, "~> 0.4"},
+      {:k8s, "~> 2.4"},
 
       # Yaml
-      {:ymlr, "~> 4.2.0"},
+      {:ymlr, "~> 4.2"},
       {:yaml_elixir, "~> 2.6"},
 
       # Time
       {:timex, "~> 3.7"},
 
       # History
-      {:ex_audit, "~> 0.10.0"},
+      {:ex_audit, "~> 0.10"},
 
       # Testing
+      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:ex_machina, "~> 2.7.0", only: [:dev, :test, :integration]},
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
     ]
   end
