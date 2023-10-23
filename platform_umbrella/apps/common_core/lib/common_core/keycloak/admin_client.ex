@@ -30,6 +30,10 @@ defmodule CommonCore.Keycloak.AdminClient do
   - Force a username/password login.
   - Force a refresh of the access token
 
+  ## Miscellaneous 
+
+  - Query openid discovery endpoint
+
   """
   use GenServer
   use TypedStruct
@@ -220,6 +224,10 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:reset_password_user, realm_name, user_id, creds})
   end
 
+  def openid_wellknown_configuration(target \\ @me, realm_name) do
+    GenServer.call(target, {:get_openid_wellknown, realm_name})
+  end
+
   def handle_call(:refresh, _from, state) do
     with {:ok, %State{} = with_refresh} <- maybe_aquire_refresh(state),
          {:ok, %State{} = refreshed_state} <- do_refresh(with_refresh) do
@@ -324,6 +332,14 @@ defmodule CommonCore.Keycloak.AdminClient do
     with_auth(state, fn new_state ->
       do_reset_password_user(realm_name, user_id, creds, new_state)
     end)
+  end
+
+  #
+  # Users
+  #
+
+  def handle_call({:get_openid_wellknown, realm_name}, _from, %State{} = state) do
+    {:reply, do_get_openid_wellknown(realm_name, state), state}
   end
 
   defp with_auth(state, fun) do
@@ -536,6 +552,20 @@ defmodule CommonCore.Keycloak.AdminClient do
     |> Tesla.put(@base_path <> realm_name <> "/users/" <> user_id <> "/reset-password", creds)
     |> to_result(nil)
   end
+
+  #
+  # Miscellaneous http methods
+  #
+
+  defp do_get_openid_wellknown(realm_name, %State{base_client: client} = _state) do
+    client
+    |> Tesla.get("realms/" <> realm_name <> "/.well-known/openid-configuration")
+    |> to_result(nil)
+  end
+
+  #
+  # Helpers
+  #
 
   defp to_result({:ok, %{status: 200, body: body}}, mapper) when is_list(body) do
     {:ok, Enum.map(body, mapper)}
