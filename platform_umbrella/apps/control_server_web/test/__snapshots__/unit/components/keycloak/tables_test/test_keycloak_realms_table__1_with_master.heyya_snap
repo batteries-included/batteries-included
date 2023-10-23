@@ -1,57 +1,49 @@
-<div id="keycloak-realms-table" class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="mt-4 w-full">
-    <thead class="text-left text-base leading-6 text-gray-700">
-      <tr>
-        <th class="p-0 pb-4 pr-6 text-pink-500">
-          Id
-        </th><th class="p-0 pb-4 pr-6 text-pink-500">
-          Name
-        </th>
-        <th class="relative p-0 pb-4">
-          <span class="sr-only">Actions</span>
-        </th>
-      </tr>
-    </thead>
-    <tbody class="relative divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6 text-gray-700">
-      <tr id="keycloak-realms-table-idx-0" class="relative group hover:bg-gray-50">
-        <td class="p-0 ">
-          <div>
-            <span class="absolute h-full w-4 top-0 -left-4 group-hover:bg-gray-50 sm:rounded-l-xl"></span>
-            <span class="absolute h-full w-4 top-0 -right-4 group-hover:bg-gray-50 sm:rounded-r-xl"></span>
-          </div>
-          <div class="block py-4 pr-6">
-            <span class="relative font-semibold text-gray-900">
-              00-00-00-00-00-00
-            </span>
-          </div>
-        </td><td class="p-0 ">
-          
-          <div class="block py-4 pr-6">
-            <span class="relative ">
-              Keycloak
-            </span>
-          </div>
-        </td>
-        <td class="p-0 w-14">
-          <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-            <span class="relative ml-4 font-semibold leading-6 text-gray-900 hover:text-gray-700">
-              
-    <a href="http://keycloak.example.129.99.1.1.ip.batteriesincl.com/admin/master/console" class="">
-  Keycloak Admin
+<table class="pc-table " id="keycloak-realms-table">
+  
+  <tr class="pc-table__tr ">
+  
+    <th class="pc-table__th ">
+  ID
+</th>
+    <th class="pc-table__th ">
+  Name
+</th>
+    <th class="pc-table__th w-10">
+  
+</th>
+  
+</tr>
+  
+    <tr class="pc-table__tr ">
+  
+      <td class="pc-table__td ">
+  
+        00-00-00-00-00-00
+      
+</td>
+      <td class="pc-table__td ">
+  Keycloak
+</td>
+      <td class="pc-table__td ">
+  
+        <a href="http://keycloak.example.129.99.1.1.ip.batteriesincl.com/admin/master/console" target="_blank" class="font-medium text-pink-600 hover:underline flex">
+  <span class="flex-initial">
+    Keycloak Admin
+  </span>
+  <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 w-5 h-5 flex-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+</svg>
 </a>
+
+        <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" class="">
   
-            </span><span class="relative ml-4 font-semibold leading-6 text-gray-900 hover:text-gray-700">
-              
-    <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" class="font-medium text-pink-500 hover:text-pink-600 hover:underline">
-  
-      Show Realm
+          Show Realm
+        
+</a>
+      
+</td>
     
-</a>
+</tr>
   
-            </span>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+
+</table>

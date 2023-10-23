@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.KeycloakRealmsList do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.Keycloak.RealmsTable
 
@@ -25,11 +25,10 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.h1>
-      Keycloak
-      <:sub_header>Realms</:sub_header>
-    </.h1>
-    <.keycloak_realms_table realms={@realms} keycloak_url={@keycloak_url} />
+    <.page_header title="Keycloak" back_button={%{link_type: "live_redirect", to: ~p"/"}} />
+    <.panel>
+      <.keycloak_realms_table realms={@realms} keycloak_url={@keycloak_url} />
+    </.panel>
     """
   end
 end

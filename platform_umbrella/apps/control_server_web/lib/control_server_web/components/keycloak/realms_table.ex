@@ -7,20 +7,28 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
 
   def keycloak_realms_table(%{} = assigns) do
     ~H"""
-    <.table id="keycloak-realms-table" rows={@realms}>
-      <:col :let={realm} label="Id"><%= realm.id %></:col>
-      <:col :let={realm} label="Name"><%= realm.displayName %></:col>
+    <PC.table id="keycloak-realms-table">
+      <PC.tr>
+        <PC.th>ID</PC.th>
+        <PC.th>Name</PC.th>
+        <PC.th class="w-10"></PC.th>
+      </PC.tr>
+      <%= for realm <- @realms do %>
+        <PC.tr>
+          <PC.td>
+            <%= realm.id %>
+          </PC.td>
+          <PC.td><%= realm.displayName %></PC.td>
+          <PC.td>
+            <.a href={admin_url(@keycloak_url, realm)} variant="external">Keycloak Admin</.a>
 
-      <:action :let={realm}>
-        <.a href={admin_url(@keycloak_url, realm)}>Keycloak Admin</.a>
-      </:action>
-
-      <:action :let={realm}>
-        <.a navigate={~p"/keycloak/realm/#{realm.realm}"} variant="styled">
-          Show Realm
-        </.a>
-      </:action>
-    </.table>
+            <.a navigate={~p"/keycloak/realm/#{realm.realm}"}>
+              Show Realm
+            </.a>
+          </PC.td>
+        </PC.tr>
+      <% end %>
+    </PC.table>
     """
   end
 
