@@ -24,7 +24,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         <PC.table>
           <PC.tr>
             <PC.th>Name</PC.th>
-            <PC.th>Roles #</PC.th>
+            <PC.th>Roles</PC.th>
             <PC.th class="w-10"></PC.th>
           </PC.tr>
           <%= for {user, i} <- Enum.with_index(@users) do %>
@@ -33,7 +33,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
                 <%= user.username %>
               </PC.td>
               <PC.td>
-                <%= length(user.roles) %> <%= Inflex.inflect("role", length(user.roles)) %>
+                <%= user.roles |> Enum.join(",") |> truncate(length: 25) %>
               </PC.td>
               <PC.td>
                 <PC.icon_button
