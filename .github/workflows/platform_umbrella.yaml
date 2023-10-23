@@ -41,7 +41,7 @@ jobs:
             platform_umbrella/apps/control_server_web/screenshots
       - name: Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure()
+        if: ${{github.actor != 'dependabot[bot]' &&  (success() || failure())}}
         with:
           name: Mix Integration Test Results
           path: platform_umbrella/_build/**/test-junit-report.xml
@@ -80,7 +80,7 @@ jobs:
       - run: nix develop --command bash bi ex-test-deep
       - name: Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure()
+        if: ${{github.actor != 'dependabot[bot]' &&  (success() || failure())}}
         with:
           name: Mix Test Results
           path: platform_umbrella/_build/**/test-junit-report.xml
