@@ -29,11 +29,10 @@ defmodule EventCenter.MixProject do
   defp deps do
     [
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:typed_struct, "~> 0.3.0", runtime: false},
       {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
-      {:typed_struct, "~> 0.3", runtime: false},
-      # Braodcast to thos who need events
-      {:phoenix_pubsub, "~> 2.1"}
+      # Braodcast to those who need events
+      {:phoenix_pubsub, "~> 2.1"},
+      {:typed_struct, "~> 0.3", runtime: false}
     ]
   end
 

@@ -26,13 +26,13 @@ defmodule CommonCore.MixProject do
 
   defp deps do
     [
-      {:typed_struct, "~> 0.3", runtime: false},
       {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:polymorphic_embed, "~> 3.0"},
       {:telemetry, "~> 1.1"},
       {:tesla, "~> 1.7"},
       {:typed_ecto_schema, "~> 0.4"},
+      {:typed_struct, "~> 0.3", runtime: false},
       {:k8s, "~> 2.4"},
 
       # Yaml
