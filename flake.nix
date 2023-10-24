@@ -1,6 +1,11 @@
 {
   description = "The entire Batteries Included world";
 
+  nixConfig = {
+    extra-substituters = [ "https://batteries-included.cachix.org" ];
+    extra-trusted-public-keys = [ "batteries-included.cachix.org-1:T+/ob5AkOlh2hsUo+z3dAwpEal96lATK7mQx/6I7o/A=" ];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
