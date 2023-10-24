@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.KeycloakRealm do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonUI.Modal
   import ControlServerWeb.Keycloak.ClientsTable
@@ -109,22 +109,29 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.h1>
-      Keycloak Realm
-      <:sub_header><%= @realm.displayName %></:sub_header>
-    </.h1>
-    <.card>
+    <.page_header
+      title="Keycloak Realm"
+      back_button={%{link_type: "live_redirect", to: ~p"/keycloak/realms"}}
+    />
+    <.panel>
+      <:title><%= @realm.displayName %></:title>
       <.data_list>
         <:item title="ID"><%= @realm.id %></:item>
         <:item title="Name"><%= @realm.realm %></:item>
-        <:item title="Display Name"><%= @realm.displayName %></:item>
       </.data_list>
-    </.card>
+    </.panel>
 
-    <.h2>Clients</.h2>
-    <.keycloak_clients_table clients={@clients} />
-    <.h2>Users</.h2>
-    <.keycloak_users_table users={@users} />
+    <.panel class="mt-5">
+      <:title>Users</:title>
+      <.keycloak_clients_table clients={@clients} />
+    </.panel>
+    <.panel class="mt-5">
+      <:title>Users</:title>
+      <:top_right>
+        <PC.button phx-click="new-user">New User</PC.button>
+      </:top_right>
+      <.keycloak_users_table users={@users} />
+    </.panel>
 
     <div :if={@new_user != nil}>
       <.modal on_cancel={JS.push("cancel_user")} id="new-user-inner-modal" show={true}>
@@ -143,7 +150,6 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
         A new password has been set for this user. The temporary password is: <pre><%= @temp_password %></pre>
       </.modal>
     </div>
-    <.button phx-click="new-user">New User</.button>
     """
   end
 end
