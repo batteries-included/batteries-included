@@ -1,32 +1,40 @@
-<table class="pc-table " id="keycloak-realms-table">
-  
-  <tr class="pc-table__tr ">
-  
-    <th class="pc-table__th ">
-  ID
-</th>
-    <th class="pc-table__th ">
-  Name
-</th>
-    <th class="pc-table__th w-10">
-  
-</th>
-  
-</tr>
+<div id="keycloak-realms-table" class="overflow-y-auto sm:overflow-visible px-2">
+  <table class="pc-table ">
   
     <tr class="pc-table__tr ">
+  
+      <th class="pc-table__th ">
+  
+        ID
+      
+</th><th class="pc-table__th ">
+  
+        Name
+      
+</th>
+      <th class="pc-table__th ">
+  
+        <span class="sr-only">Actions</span>
+      
+</th>
+    
+</tr>
+    <tr class="pc-table__tr " id="keycloak-realms-table-idx-0">
   
       <td class="pc-table__td ">
   
         00-00-00-00-00-00
       
-</td>
-      <td class="pc-table__td ">
-  Keycloak
-</td>
-      <td class="pc-table__td ">
+</td><td class="pc-table__td ">
   
-        <a href="http://keycloak.example.129.99.1.1.ip.batteriesincl.com/admin/master/console" target="_blank" class="font-medium text-pink-600 hover:underline flex">
+        Keycloak
+      
+</td>
+      <td class="pc-table__td w-10 relative">
+  
+        <span class="relative ml-4 font-semibold leading-6">
+          
+    <a href="http://keycloak.example.129.99.1.1.ip.batteriesincl.com/admin/master/console" target="_blank" class="font-medium text-pink-600 hover:underline flex">
   <span class="flex-initial">
     Keycloak Admin
   </span>
@@ -34,16 +42,20 @@
   <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
 </svg>
 </a>
-
-        <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" class="">
   
-          Show Realm
-        
+        </span><span class="relative ml-4 font-semibold leading-6">
+          
+    <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" class="">
+  
+      Show Realm
+    
 </a>
+  
+        </span>
       
 </td>
     
 </tr>
   
-
 </table>
+</div>

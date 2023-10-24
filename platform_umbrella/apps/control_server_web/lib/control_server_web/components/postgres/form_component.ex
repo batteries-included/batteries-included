@@ -73,8 +73,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     end
   end
 
-  def handle_event("del:user", %{"idx" => idx}, %{assigns: %{form: %{source: changeset}}} = socket) do
-    users = changeset |> Changeset.get_field(:users, []) |> List.delete_at(String.to_integer(idx))
+  def handle_event("del:user", %{"username" => bad_username}, %{assigns: %{form: %{source: changeset}}} = socket) do
+    users =
+      changeset
+      |> Changeset.get_field(:users, [])
+      |> Enum.reject(fn user -> user.username == bad_username end)
 
     final_changeset = Changeset.put_embed(changeset, :users, users)
 
@@ -489,7 +492,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
             <.role_option
               field={@pg_user_form[:roles]}
-              label="Replicatio"
+              label="Replication"
               help_text="A special user account used for system administration"
             />
 

@@ -21,35 +21,24 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       </div>
 
       <div :if={@users != []} class="px-3 pb-6 -mt-3">
-        <PC.table>
-          <PC.tr>
-            <PC.th>Name</PC.th>
-            <PC.th>Roles</PC.th>
-            <PC.th class="w-10"></PC.th>
-          </PC.tr>
-          <%= for {user, i} <- Enum.with_index(@users) do %>
-            <PC.tr>
-              <PC.td>
-                <%= user.username %>
-              </PC.td>
-              <PC.td>
-                <%= user.roles |> Enum.join(",") |> truncate(length: 25) %>
-              </PC.td>
-              <PC.td>
-                <PC.icon_button
-                  type="button"
-                  phx-click="del:user"
-                  phx-value-idx={i}
-                  tooltip="Remove"
-                  size="xs"
-                  phx-target={@phx_target}
-                >
-                  <Heroicons.x_mark solid />
-                </PC.icon_button>
-              </PC.td>
-            </PC.tr>
-          <% end %>
-        </PC.table>
+        <.table rows={@users}>
+          <:col :let={user} label="Name"><%= user.username %></:col>
+          <:col :let={user} label="Roles">
+            <%= user.roles |> Enum.join(", ") |> truncate(length: 35) %>
+          </:col>
+          <:action :let={user}>
+            <PC.icon_button
+              type="button"
+              phx-click="del:user"
+              phx-value-username={user.username}
+              tooltip="Remove"
+              size="xs"
+              phx-target={@phx_target}
+            >
+              <Heroicons.x_mark solid />
+            </PC.icon_button>
+          </:action>
+        </.table>
       </div>
     </.panel>
     """
@@ -58,6 +47,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   attr(:phx_target, :any)
   attr(:credential_copies, :list, default: [])
 
+  @spec credential_copies_table(map()) :: Phoenix.LiveView.Rendered.t()
   def credential_copies_table(assigns) do
     ~H"""
     <.panel no_body_padding>
@@ -76,37 +66,22 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         No copies added
       </div>
 
-      <div :if={@credential_copies != []} class="px-3 pb-6 -mt-3">
-        <PC.table>
-          <PC.tr>
-            <PC.th>Username</PC.th>
-            <PC.th>Namespace</PC.th>
-            <PC.th>Format</PC.th>
-            <PC.th class="w-10"></PC.th>
-          </PC.tr>
-          <%= for {credential_copy, i} <- Enum.with_index(@credential_copies) do %>
-            <PC.tr>
-              <PC.td>
-                <%= credential_copy.username %>
-              </PC.td>
-              <PC.td><%= credential_copy.namespace %></PC.td>
-              <PC.td><%= credential_copy.format %></PC.td>
-              <PC.td>
-                <PC.icon_button
-                  type="button"
-                  phx-click="del:credential_copy"
-                  phx-value-idx={i}
-                  tooltip="Remove"
-                  size="xs"
-                  phx-target={@phx_target}
-                >
-                  <Heroicons.x_mark solid />
-                </PC.icon_button>
-              </PC.td>
-            </PC.tr>
-          <% end %>
-        </PC.table>
-      </div>
+      <.table :if={@credential_copies != []} rows={@credential_copies}>
+        <:col :let={cc} label="Name"><%= cc.username %></:col>
+        <:action :let={cc}>
+          <PC.icon_button
+            type="button"
+            phx-click="del:credential_copy"
+            phx-value-username={cc.username}
+            phx-value-namespace={cc.namespace}
+            tooltip="Remove"
+            size="xs"
+            phx-target={@phx_target}
+          >
+            <Heroicons.x_mark solid />
+          </PC.icon_button>
+        </:action>
+      </.table>
     </.panel>
     """
   end
