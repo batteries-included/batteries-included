@@ -215,6 +215,14 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:create_user, realm_name, user_data})
   end
 
+  def groups(target \\ @me, realm_name) do
+    GenServer.call(target, {:groups, realm_name})
+  end
+
+  def roles(target \\ @me, realm_name) do
+    GenServer.call(target, {:roles, realm_name})
+  end
+
   @spec reset_password_user(
           atom | pid | {atom, any} | {:via, atom, any},
           String.t(),
@@ -336,7 +344,24 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   #
-  # Users
+  # Groups
+  #
+  def handle_call({:groups, realm_name}, _from, %State{} = state) do
+    with_auth(state, fn new_state ->
+      do_list_groups(realm_name, new_state)
+    end)
+  end
+
+  #
+  # Roles
+  #
+
+  def handle_call({:roles, realm_name}, _from, state) do
+    with_auth(state, fn new_state -> do_list_roles(realm_name, new_state) end)
+  end
+
+  #
+  # Misc
   #
 
   def handle_call({:get_openid_wellknown, realm_name}, _from, %State{} = state) do
@@ -552,6 +577,24 @@ defmodule CommonCore.Keycloak.AdminClient do
     client
     |> Tesla.put(@base_path <> realm_name <> "/users/" <> user_id <> "/reset-password", creds)
     |> to_result(nil)
+  end
+
+  #
+  # Groups http methods
+  #
+  defp do_list_groups(realm_name, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/groups")
+    |> to_result(&KeycloakAdminSchema.GroupRepresentation.new!/1)
+  end
+
+  #
+  # roles http methods
+  #
+  defp do_list_roles(realm_name, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/roles")
+    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
   end
 
   #

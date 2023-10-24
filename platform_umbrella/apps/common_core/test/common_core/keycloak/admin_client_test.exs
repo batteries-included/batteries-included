@@ -7,6 +7,8 @@ defmodule CommonCore.Keycloak.TestAdminClient do
   alias CommonCore.Keycloak.AdminClient
   alias CommonCore.Keycloak.TeslaMock
   alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.GroupRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenApi.OIDC.OIDCConfiguration
 
   @access_key_value "VALUE_KEY_HERE"
@@ -26,6 +28,8 @@ defmodule CommonCore.Keycloak.TestAdminClient do
   @battery_core_clients_url "http://keycloak.local.test/admin/realms/batterycore/clients"
   @battery_core_users_url "http://keycloak.local.test/admin/realms/batterycore/users"
   @battery_core_reset_test_user_url "http://keycloak.local.test/admin/realms/batterycore/users/#{@test_user_id}/reset-password"
+  @battery_core_groups_url "http://keycloak.local.test/admin/realms/batterycore/groups"
+  @battery_core_roles_url "http://keycloak.local.test/admin/realms/batterycore/roles"
 
   describe "login/1" do
     setup [:verify_on_exit!, :setup_mocked_admin]
@@ -161,6 +165,57 @@ defmodule CommonCore.Keycloak.TestAdminClient do
                    userLabel: "Temp Pass"
                  }
                )
+    end
+  end
+
+  describe "Groups" do
+    setup [:verify_on_exit!, :setup_mocked_admin]
+
+    test "list groups returns ok", %{pid: pid} do
+      # Groups is behind authentication so setup the mocks
+      expect_openid_token(1)
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_groups_url}, _opts ->
+        {:ok, %Tesla.Env{status: 200, body: [%{id: "other-test"}, %{id: "test"}]}}
+      end)
+
+      assert {:ok, [%GroupRepresentation{}, %GroupRepresentation{}]} = AdminClient.groups(pid, "batterycore")
+    end
+
+    test "returns error tuple on error", %{pid: pid} do
+      expect_openid_token(1)
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_groups_url}, _opts ->
+        {:ok, %Tesla.Env{status: 500, body: %{"error" => "reason"}}}
+      end)
+
+      assert AdminClient.groups(pid, "batterycore") == {:error, "reason"}
+    end
+  end
+
+  describe "Roles" do
+    setup [:verify_on_exit!, :setup_mocked_admin]
+
+    test "list roles returns ok", %{pid: pid} do
+      # Groups is behind authentication so setup the mocks
+      expect_openid_token(1)
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_roles_url}, _opts ->
+        {:ok, %Tesla.Env{status: 200, body: [%{id: "test-role-id"}, %{id: "other-test-id"}]}}
+      end)
+
+      assert {:ok, [%RoleRepresentation{id: "test-role-id"}, %RoleRepresentation{}]} =
+               AdminClient.roles(pid, "batterycore")
+    end
+
+    test "returns error tuple on error", %{pid: pid} do
+      expect_openid_token(1)
+
+      expect(TeslaMock, :call, fn %{url: @battery_core_roles_url}, _opts ->
+        {:ok, %Tesla.Env{status: 500, body: %{"error" => "bad role reason"}}}
+      end)
+
+      assert AdminClient.roles(pid, "batterycore") == {:error, "bad role reason"}
     end
   end
 
