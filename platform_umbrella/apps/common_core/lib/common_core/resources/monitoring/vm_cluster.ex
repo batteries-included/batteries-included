@@ -10,7 +10,7 @@ defmodule CommonCore.Resources.VMCluster do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
-  @web_port 80
+  @vm_select_port 8481
 
   resource(:vm_cluster_main, battery, state) do
     namespace = core_namespace(state)
@@ -78,7 +78,7 @@ defmodule CommonCore.Resources.VMCluster do
     spec =
       [hosts: [vmselect_host(state)]]
       |> VirtualService.new!()
-      |> V.fallback("vmselect-main-cluster", @web_port)
+      |> V.fallback("vmselect-main-cluster", @vm_select_port)
 
     :istio_virtual_service
     |> B.build_resource()
@@ -99,7 +99,7 @@ defmodule CommonCore.Resources.VMCluster do
           "type" => "prometheus",
           "orgId" => 1,
           "isDefault" => true,
-          "url" => "http://vmselect-main-cluster.#{namespace}.svc:8481/select/0/prometheus/"
+          "url" => "http://vmselect-main-cluster.#{namespace}.svc.cluster.local:8481/select/0/prometheus/"
         }
       ]
     }

@@ -10,7 +10,7 @@ defmodule CommonCore.Resources.VMAgent do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
-  @web_port 80
+  @vm_agent_port 8429
 
   resource(:vm_agent_main, battery, state) do
     namespace = core_namespace(state)
@@ -22,7 +22,7 @@ defmodule CommonCore.Resources.VMAgent do
       |> Map.put("image", %{"tag" => battery.config.image_tag})
       |> Map.put("remoteWrite", [
         %{
-          "url" => "http://vminsert-main-cluster.#{namespace}.svc:8480/insert/0/prometheus/api/v1/write"
+          "url" => "http://vminsert-main-cluster.#{namespace}.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
         }
       ])
       |> Map.put("scrapeInterval", "25s")
@@ -41,7 +41,7 @@ defmodule CommonCore.Resources.VMAgent do
     spec =
       [hosts: [vmagent_host(state)]]
       |> VirtualService.new!()
-      |> V.fallback("vmagent-main-agent", @web_port)
+      |> V.fallback("vmagent-main-agent", @vm_agent_port)
 
     :istio_virtual_service
     |> B.build_resource()
