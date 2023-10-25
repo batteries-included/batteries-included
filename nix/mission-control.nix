@@ -26,6 +26,17 @@
             '';
           };
 
+          ex-test-setup = {
+            description = "Run test setup";
+            category = "elixir";
+            exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
+              export MIX_ENV=test
+              m ecto.reset
+            '';
+          };
+
+
           ex-test = {
             description = "Run stale tests";
             category = "elixir";
@@ -40,6 +51,7 @@
             category = "elixir";
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
+              export MIX_ENV=test
               m "do" \
                 test --trace --exclude slow --cover --export-coverage default --warnings-as-errors, \
                 test.coverage
