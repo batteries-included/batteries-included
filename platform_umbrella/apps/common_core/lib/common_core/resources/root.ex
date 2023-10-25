@@ -72,12 +72,10 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     trivy_operator: [TrivyOperator],
     timeline: [],
     trust_manager: [TrustManager],
-    victoria_metrics: [
-      VMOperator,
-      VMCluster,
-      VMAgent,
-      VMDashboards
-    ]
+    vm_operator: [VMOperator],
+    vm_agent: [VMAgent],
+    vm_cluster: [VMCluster],
+    victoria_metrics: [VMDashboards]
   ]
 
   @spec materialize(StateSummary.t()) :: map()

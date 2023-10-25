@@ -31,6 +31,9 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.TrivyOperatorConfig
   alias CommonCore.Batteries.TrustManagerConfig
   alias CommonCore.Batteries.VictoriaMetricsConfig
+  alias CommonCore.Batteries.VMAgentConfig
+  alias CommonCore.Batteries.VMClusterConfig
+  alias CommonCore.Batteries.VMOperatorConfig
 
   @possible_types [
     battery_ca: BatteryCAConfig,
@@ -58,7 +61,10 @@ defmodule CommonCore.Batteries.SystemBattery do
     timeline: TimelineConfig,
     trivy_operator: TrivyOperatorConfig,
     trust_manager: TrustManagerConfig,
-    victoria_metrics: VictoriaMetricsConfig
+    victoria_metrics: VictoriaMetricsConfig,
+    vm_operator: VMOperatorConfig,
+    vm_agent: VMAgentConfig,
+    vm_cluster: VMClusterConfig
   ]
 
   def possible_types, do: Keyword.keys(@possible_types)

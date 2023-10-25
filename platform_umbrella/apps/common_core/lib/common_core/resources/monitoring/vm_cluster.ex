@@ -17,7 +17,7 @@ defmodule CommonCore.Resources.VMCluster do
 
     spec =
       %{}
-      |> Map.put("replicationFactor", 1)
+      |> Map.put("replicationFactor", battery.config.replication_factor)
       |> Map.put("retentionPeriod", "14")
       |> Map.put(
         "vminsert",
@@ -99,7 +99,7 @@ defmodule CommonCore.Resources.VMCluster do
           "type" => "prometheus",
           "orgId" => 1,
           "isDefault" => true,
-          "url" => "http://vmselect-main-cluster.#{namespace}.svc.cluster.local:8481/select/0/prometheus/"
+          "url" => "http://vmselect-main-cluster.#{namespace}.svc.cluster.local:#{@vm_select_port}/select/0/prometheus/"
         }
       ]
     }

@@ -73,8 +73,23 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :monitoring,
+      type: :vm_operator,
+      dependencies: [:battery_core]
+    },
+    %CatalogBattery{
+      group: :monitoring,
+      type: :vm_agent,
+      dependencies: [:vm_operator]
+    },
+    %CatalogBattery{
+      group: :monitoring,
+      type: :vm_cluster,
+      dependencies: [:vm_operator]
+    },
+    %CatalogBattery{
+      group: :monitoring,
       type: :victoria_metrics,
-      dependencies: [:battery_core],
+      dependencies: [:battery_core, :vm_operator, :vm_agent, :vm_cluster],
       description: "Victoria Metrics is a fast, open source, and scalable monitoring solution and time series database."
     },
     %CatalogBattery{
