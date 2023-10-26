@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import ControlServerWeb.KubeSnapshotsTable
+  import ControlServerWeb.UmbrellaSnapshotsTable
 
-  alias ControlServer.SnapshotApply.Kube
+  alias ControlServer.SnapshotApply.Umbrella
   alias EventCenter.KubeSnapshot, as: KubeSnapshotEventCenter
 
   require Logger
@@ -16,7 +16,8 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   end
 
   def assign_snapshots(socket) do
-    assign(socket, :snapshots, Kube.paginated_kube_snapshots())
+    {:ok, {snaps, _}} = Umbrella.paginated_umbrella_snapshots()
+    assign(socket, :snapshots, snaps)
   end
 
   @impl Phoenix.LiveView
@@ -33,15 +34,21 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>Deploys</.h1>
-    <.kube_snapshots_table kube_snapshots={elem(@snapshots, 0)} />
-
-    <.h2 variant="fancy">Actions</.h2>
-    <.card>
-      <.button phx-click="start">
-        Start Deploy
-      </.button>
-    </.card>
+    <.page_header
+      title="Deploys"
+      back_button={%{link_type: "live_redirect", to: ~p"/batteries/magic"}}
+    />
+    <.panel>
+      <:title>
+        Status
+      </:title>
+      <:top_right>
+        <.button phx-click="start">
+          Start Deploy
+        </.button>
+      </:top_right>
+      <.umbrella_snapshots_table snapshots={@snapshots} />
+    </.panel>
     """
   end
 end

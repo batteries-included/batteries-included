@@ -6,6 +6,7 @@ defmodule KubeServices.SnapshotApply.Worker do
   alias ControlServer.Batteries
   alias ControlServer.SnapshotApply.KeycloakSnapshot
   alias ControlServer.SnapshotApply.KubeSnapshot
+  alias ControlServer.SnapshotApply.Umbrella
   alias KubeServices.SnapshotApply.KeycloakApply
   alias KubeServices.SnapshotApply.KubeApply
   alias KubeServices.SystemState.Summarizer
@@ -70,7 +71,7 @@ defmodule KubeServices.SnapshotApply.Worker do
   defp do_start do
     # Create the new umbrella snapshot.
     # If that works then schedule a cast immediately to perform snapshot
-    case ControlServer.SnapshotApply.create_umbrella_snapshot(%{}) do
+    case Umbrella.create_umbrella_snapshot(%{}) do
       {:ok, umbrella_snapshot} ->
         GenServer.cast(self(), {:perform, umbrella_snapshot})
         {:ok, umbrella_snapshot}

@@ -1,4 +1,4 @@
-defmodule ControlServer.SnapshotApply do
+defmodule ControlServer.SnapshotApply.Umbrella do
   @moduledoc """
   The SnapshotApply context.
   """
@@ -19,6 +19,15 @@ defmodule ControlServer.SnapshotApply do
   """
   def list_umbrella_snapshots do
     Repo.all(UmbrellaSnapshot)
+  end
+
+  def paginated_umbrella_snapshots(opts \\ %{}) do
+    from(ks in UmbrellaSnapshot)
+    |> preload([:kube_snapshot, :keycloak_snapshot])
+    |> Repo.Flop.validate_and_run(
+      opts,
+      for: UmbrellaSnapshot
+    )
   end
 
   @doc """

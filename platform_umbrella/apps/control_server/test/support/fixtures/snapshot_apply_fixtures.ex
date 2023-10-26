@@ -11,7 +11,7 @@ defmodule ControlServer.SnapshotApplyFixtures do
     {:ok, umbrella_snapshot} =
       attrs
       |> Map.new()
-      |> ControlServer.SnapshotApply.create_umbrella_snapshot()
+      |> ControlServer.SnapshotApply.Umbrella.create_umbrella_snapshot()
 
     umbrella_snapshot
   end

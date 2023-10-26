@@ -7,7 +7,7 @@ defmodule KubeServices.SnapshotApply.Reaper do
   use GenServer
   use TypedStruct
 
-  alias ControlServer.SnapshotApply
+  alias ControlServer.SnapshotApply.Umbrella
 
   require Logger
 
@@ -40,7 +40,7 @@ defmodule KubeServices.SnapshotApply.Reaper do
   @impl GenServer
   def handle_info(:reap, state) do
     Process.send_after(self(), :reap, state.delay)
-    deleted_count = SnapshotApply.reap_old_snapshots(state.max_age)
+    deleted_count = Umbrella.reap_old_snapshots(state.max_age)
     Logger.info("Deleted #{deleted_count} snapshots")
     {:noreply, state}
   end

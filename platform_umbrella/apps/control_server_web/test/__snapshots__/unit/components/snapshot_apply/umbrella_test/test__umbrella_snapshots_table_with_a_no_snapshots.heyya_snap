@@ -1,0 +1,33 @@
+<div class="overflow-y-auto sm:overflow-visible px-2">
+  <table class="pc-table ">
+  
+    <tr class="pc-table__tr ">
+  
+      <th class="pc-table__th ">
+  
+        ID
+      
+</th><th class="pc-table__th ">
+  
+        Started
+      
+</th><th class="pc-table__th ">
+  
+        Kube Status
+      
+</th><th class="pc-table__th ">
+  
+        Keycloak Status
+      
+</th>
+      <th class="pc-table__th ">
+  
+        <span class="sr-only">Actions</span>
+      
+</th>
+    
+</tr>
+    
+  
+</table>
+</div>
