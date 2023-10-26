@@ -43,7 +43,9 @@ defmodule CommonCore.Keycloak.AdminClient do
   alias CommonCore.OpenApi.KeycloakAdminSchema
   alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.GroupRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
   alias CommonCore.OpenApi.OIDC.OIDCConfiguration
 
@@ -215,10 +217,14 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:create_user, realm_name, user_data})
   end
 
+  @spec groups(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
+          {:ok, list(GroupRepresentation.t())} | {:error, any()}
   def groups(target \\ @me, realm_name) do
     GenServer.call(target, {:groups, realm_name})
   end
 
+  @spec groups(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
+          {:ok, list(RoleRepresentation.t())} | {:error, any()}
   def roles(target \\ @me, realm_name) do
     GenServer.call(target, {:roles, realm_name})
   end
