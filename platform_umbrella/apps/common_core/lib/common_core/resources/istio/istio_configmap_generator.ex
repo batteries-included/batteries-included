@@ -2,10 +2,13 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
   @moduledoc false
 
   import CommonCore.Resources.MapUtils
+  import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Namespaces
 
+  alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Core
 
   @default_mesh_config %{
     "defaultProviders" => %{"metrics" => ["prometheus"]},
@@ -30,7 +33,10 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
     authz_ext_providers =
       CommonCore.Resources.SSO.proxy_enabled_batteries()
       |> Enum.filter(battery_installed?)
-      |> Enum.map(&build_authz_ext_provider(&1, state))
+      |> Enum.map(fn battery_type ->
+        batt = Core.get_battery(state, battery_type)
+        build_authz_ext_provider(batt, state)
+      end)
 
     # add em to the config if sso is enabled
     @default_mesh_config
@@ -41,18 +47,12 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
     |> maybe_append(battery_installed?.(:sso), "extensionProviders", authz_ext_providers)
   end
 
-  defp build_authz_ext_provider(battery, %StateSummary{} = state) when is_atom(battery),
-    do: build_authz_ext_provider(Atom.to_string(battery), state)
-
-  defp build_authz_ext_provider(battery, %StateSummary{} = state) do
-    # TODO(jdt): need to be able to interrogate which namespace a battery is installed in
-    namespace = core_namespace(state)
-
+  defp build_authz_ext_provider(%SystemBattery{} = battery, %StateSummary{} = state) do
     %{
-      "name" => "#{battery}-ext-authz-http",
+      "name" => extension_name(battery, state),
       "envoyExtAuthzHttp" => %{
-        "service" => "oauth2-proxy-#{battery}.#{namespace}.svc.cluster.local",
-        "port" => "80",
+        "service" => fully_qualified_service_name(battery, state),
+        "port" => port(battery, state),
         # headers sent to the oauth2-proxy in the check request
         "includeRequestHeadersInCheck" => ["authorization", "cookie"],
         # headers sent to backend application when request is allowed.

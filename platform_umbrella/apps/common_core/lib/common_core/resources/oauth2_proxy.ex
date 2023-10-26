@@ -2,6 +2,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "oauth2_proxy"
 
+  import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
@@ -136,10 +137,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     name = name(battery)
     redirect_url = "http://#{for_battery(state, battery.type)}"
 
-    case CommonCore.StateSummary.KeycloakSummary.client(
-           state.keycloak_state,
-           Atom.to_string(battery.type)
-         ) do
+    case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
       %{realm: realm, client: %{}} ->
         keycloak_url = "http://#{keycloak_host(state)}/realms/#{realm}"
 
@@ -177,16 +175,12 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     namespace = core_namespace(state)
 
     data =
-      case CommonCore.StateSummary.KeycloakSummary.client(
-             state.keycloak_state,
-             Atom.to_string(battery.type)
-           ) do
+      case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
         %{realm: _realm, client: %{clientId: client_id, secret: client_secret}} ->
           %{}
           |> Map.put("client-id", client_id)
           |> Map.put("client-secret", client_secret)
-          # TODO(jdt): figure out how to generate a unique cookie secret per battery type / install?
-          |> Map.put("cookie-secret", "R2x0cExMMjhZR1d5WmQrd2Q4dEZYYnhKMGhhWDVPa2Y=")
+          |> Map.put("cookie-secret", cookie_secret(battery, state))
           |> Secret.encode()
 
         nil ->

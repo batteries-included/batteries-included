@@ -2,6 +2,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "smtp4dev"
 
+  import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
@@ -13,13 +14,13 @@ defmodule CommonCore.Resources.Smtp4Dev do
   @http_port 80
   @smtp_port 25
 
-  resource(:virtual_service, _battery, state) do
+  resource(:virtual_service, battery, state) do
     namespace = core_namespace(state)
 
     spec =
       [hosts: [smtp4dev_host(state)]]
       |> VirtualService.new!()
-      |> V.prefix("/oauth2", "oauth2-proxy-#{@app_name}", 80)
+      |> V.prefix(prefix(battery, state), service_name(battery, state), port(battery, state))
       |> V.fallback("smtp-four-dev", @http_port)
 
     :istio_virtual_service
@@ -124,7 +125,6 @@ defmodule CommonCore.Resources.Smtp4Dev do
     keycloak_root = "http://#{keycloak_host(state)}"
     workload_root = "#{keycloak_root}/realms/#{CommonCore.Defaults.Keycloak.realm_name()}"
 
-    # TODO(jdt): get keycloak urls from the server or something instead of interpolating
     spec =
       %{}
       |> Map.put("jwtRules", [
@@ -143,18 +143,14 @@ defmodule CommonCore.Resources.Smtp4Dev do
     |> F.require_battery(state, :sso)
   end
 
-  resource(:istio_auth_policy, _battery, state) do
+  resource(:istio_auth_policy, battery, state) do
     namespace = core_namespace(state)
 
     spec =
       %{}
       |> Map.put("action", "CUSTOM")
-      |> Map.put("provider", %{"name" => "#{@app_name}-ext-authz-http"})
-      |> Map.put("rules", [
-        %{
-          "to" => [%{"operation" => %{"hosts" => [smtp4dev_host(state)]}}]
-        }
-      ])
+      |> Map.put("provider", %{"name" => extension_name(battery, state)})
+      |> Map.put("rules", [%{"to" => [%{"operation" => %{"hosts" => [smtp4dev_host(state)]}}]}])
       |> B.match_labels_selector(@app_name)
 
     :istio_auth_policy
