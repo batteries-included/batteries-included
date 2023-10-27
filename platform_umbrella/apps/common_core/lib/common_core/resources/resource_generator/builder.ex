@@ -102,14 +102,16 @@ defmodule CommonCore.Resources.Builder do
   @spec match_labels_selector(map(), binary(), binary()) :: map()
   def match_labels_selector(resource, key, value) do
     resource
-    |> Map.put_new("selector", %{})
-    |> put_in(~w[selector matchLabels], %{key => value})
+    |> Map.get("selector", %{})
+    |> Map.get("matchLabels", %{})
+    |> Map.put(key, value)
+    |> then(&short_selector(resource, "matchLabels", &1))
   end
 
   @spec short_selector(map(), binary()) :: map()
   def short_selector(resource, app_name), do: short_selector(resource, "battery/app", app_name)
 
-  @spec short_selector(map(), binary(), binary()) :: map()
+  @spec short_selector(map(), binary(), term()) :: map()
   def short_selector(resource, key, value) do
     resource
     |> Map.put_new("selector", %{})
