@@ -22,7 +22,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   defp name(battery) when is_atom(battery), do: name(Atom.to_string(battery))
 
   defp name(battery) do
-    "#{@component}-#{battery}"
+    sanitize("#{@component}-#{battery}")
   end
 
   resource(:deployment, battery, state) do

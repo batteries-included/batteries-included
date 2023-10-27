@@ -6,4 +6,10 @@ defmodule CommonCore.Defaults do
     |> Base.encode64(padding: false)
     |> binary_part(0, length)
   end
+
+  def urlsafe_random_key_string(length \\ 64) do
+    length
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64()
+  end
 end

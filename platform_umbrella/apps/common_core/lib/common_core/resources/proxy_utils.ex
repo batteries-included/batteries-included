@@ -44,7 +44,7 @@ defmodule CommonCore.Resources.ProxyUtils do
   end
 
   @spec sanitize(String.t()) :: String.t()
-  defp sanitize(s) do
+  def sanitize(s) do
     s
     |> String.downcase()
     |> String.replace(" ", "-")
