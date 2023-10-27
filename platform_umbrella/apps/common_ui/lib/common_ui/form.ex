@@ -305,7 +305,7 @@ defmodule CommonUI.Form do
           size="xs"
           class="mt-1"
         >
-          <Heroicons.x_mark solid />
+          <Heroicons.check solid />
         </PC.icon_button>
       </div>
 
