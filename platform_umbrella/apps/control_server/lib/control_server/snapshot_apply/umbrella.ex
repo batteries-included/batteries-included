@@ -30,6 +30,14 @@ defmodule ControlServer.SnapshotApply.Umbrella do
     )
   end
 
+  def latest_umbrella_snapshots(limit \\ 10) do
+    from(ks in UmbrellaSnapshot)
+    |> order_by(desc: :inserted_at)
+    |> preload([:kube_snapshot, :keycloak_snapshot])
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single umbrella_snapshot.
 

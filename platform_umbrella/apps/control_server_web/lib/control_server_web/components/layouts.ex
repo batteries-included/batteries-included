@@ -103,7 +103,7 @@ defmodule ControlServerWeb.Layouts do
         %{
           name: :magic,
           label: "Magic",
-          path: ~p"/snapshot_apply",
+          path: ~p"/magic",
           icon: :sparkles
         }
       ]}

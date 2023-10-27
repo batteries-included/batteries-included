@@ -23,6 +23,7 @@ defmodule ControlServerWeb.Router do
     live "/notebooks", Live.JupyterLabNotebookIndex, :index
     live "/stale", Live.StaleIndex, :index
     live "/deleted_resources", Live.DeletedResourcesIndex, :index
+    live "/magic", Live.MagicHome, :index
   end
 
   scope "/ip_address_pools", ControlServerWeb do

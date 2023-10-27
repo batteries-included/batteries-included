@@ -49,4 +49,21 @@ defmodule ControlServer.SnapshotApply.UmbrellaTest do
       assert %Ecto.Changeset{} = Umbrella.change_umbrella_snapshot(umbrella_snapshot)
     end
   end
+
+  describe "latest_umbrella_snapshots/1" do
+    import ControlServer.SnapshotApplyFixtures
+
+    test "returns latest umbrella snapshots" do
+      for _i <- 1..20, do: umbrella_snapshot_fixture()
+
+      snapshots = Umbrella.latest_umbrella_snapshots(10)
+      assert is_list(snapshots)
+      assert length(snapshots) <= 10
+    end
+
+    test "returns empty list if no snapshots exist" do
+      snapshots = Umbrella.latest_umbrella_snapshots(10)
+      assert snapshots == []
+    end
+  end
 end
