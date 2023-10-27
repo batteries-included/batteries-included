@@ -74,7 +74,7 @@ defmodule CommonCore.Resources.VMAgent do
 
     :istio_request_auth
     |> B.build_resource()
-    |> B.name("#{sanitize(@app_name)}-keycloak-auth")
+    |> B.name("#{@k8s_name}-keycloak-auth")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
@@ -93,7 +93,7 @@ defmodule CommonCore.Resources.VMAgent do
 
     :istio_auth_policy
     |> B.build_resource()
-    |> B.name("#{sanitize(@app_name)}-require-keycloak-auth")
+    |> B.name("#{@k8s_name}-require-keycloak-auth")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)

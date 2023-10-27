@@ -2,6 +2,7 @@ defmodule CommonCore.Resources.VMCluster do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "victoria-metrics-cluster"
 
+  import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
@@ -11,6 +12,8 @@ defmodule CommonCore.Resources.VMCluster do
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
   @vm_select_port 8481
+  @instance_name "main-cluster"
+  @select_k8s_name "vmselect"
 
   resource(:vm_cluster_main, battery, state) do
     namespace = core_namespace(state)
@@ -67,7 +70,7 @@ defmodule CommonCore.Resources.VMCluster do
 
     :vm_cluster
     |> B.build_resource()
-    |> B.name("main-cluster")
+    |> B.name(@instance_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -82,7 +85,7 @@ defmodule CommonCore.Resources.VMCluster do
 
     :istio_virtual_service
     |> B.build_resource()
-    |> B.name("vmselect")
+    |> B.name(@select_k8s_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
@@ -95,7 +98,7 @@ defmodule CommonCore.Resources.VMCluster do
       "apiVersion" => 1,
       "datasources" => [
         %{
-          "name" => "vmselect",
+          "name" => @select_k8s_name,
           "type" => "prometheus",
           "orgId" => 1,
           "isDefault" => true,
@@ -113,5 +116,49 @@ defmodule CommonCore.Resources.VMCluster do
     |> B.data(data)
     |> B.label("grafana_datasource", "1")
     |> F.require_battery(state, :grafana)
+  end
+
+  resource(:istio_request_auth, _battery, state) do
+    namespace = core_namespace(state)
+
+    keycloak_root = "http://#{keycloak_host(state)}"
+    workload_root = "#{keycloak_root}/realms/#{CommonCore.Defaults.Keycloak.realm_name()}"
+
+    spec =
+      %{}
+      |> Map.put("jwtRules", [
+        %{
+          "issuer" => workload_root,
+          "jwksUri" => "#{workload_root}/protocol/openid-connect/certs"
+        }
+      ])
+      |> B.match_labels_selector("app.kubernetes.io/name", @select_k8s_name)
+      |> B.match_labels_selector("app.kubernetes.io/instance", @instance_name)
+
+    :istio_request_auth
+    |> B.build_resource()
+    |> B.name("#{@select_k8s_name}-keycloak-auth")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :sso)
+  end
+
+  resource(:istio_auth_policy, battery, state) do
+    namespace = core_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("action", "CUSTOM")
+      |> Map.put("provider", %{"name" => extension_name(battery, state)})
+      |> Map.put("rules", [%{"to" => [%{"operation" => %{"hosts" => [vmselect_host(state)]}}]}])
+      |> B.match_labels_selector("app.kubernetes.io/name", @select_k8s_name)
+      |> B.match_labels_selector("app.kubernetes.io/instance", @instance_name)
+
+    :istio_auth_policy
+    |> B.build_resource()
+    |> B.name("#{@select_k8s_name}-require-keycloak-auth")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :sso)
   end
 end

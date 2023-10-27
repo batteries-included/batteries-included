@@ -7,6 +7,7 @@ defmodule CommonCore.Actions.RootActionGenerator do
   alias CommonCore.Actions.Smtp4dev
   alias CommonCore.Actions.SSO
   alias CommonCore.Actions.VMAgent
+  alias CommonCore.Actions.VMCluster
   alias CommonCore.StateSummary
 
   @default_generator_mappings [
@@ -15,7 +16,8 @@ defmodule CommonCore.Actions.RootActionGenerator do
     kiali: Kiali,
     smtp4dev: Smtp4dev,
     sso: SSO,
-    vm_agent: VMAgent
+    vm_agent: VMAgent,
+    vm_cluster: VMCluster
   ]
 
   @spec materialize(StateSummary.t()) :: list(FreshGeneratedAction.t())

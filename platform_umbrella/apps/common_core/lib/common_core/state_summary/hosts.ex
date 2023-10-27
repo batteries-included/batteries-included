@@ -67,6 +67,7 @@ defmodule CommonCore.StateSummary.Hosts do
   def for_battery(summary, :notebooks), do: notebooks_host(summary)
   def for_battery(summary, :smtp4dev), do: smtp4dev_host(summary)
   def for_battery(summary, :vm_agent), do: vmagent_host(summary)
+  def for_battery(summary, :vm_cluster), do: vmselect_host(summary)
   def for_battery(summary, :victoria_metrics), do: vmselect_host(summary)
   def for_battery(_summary, _battery_type), do: nil
 

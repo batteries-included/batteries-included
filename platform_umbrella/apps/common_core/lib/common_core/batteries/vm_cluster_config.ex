@@ -5,10 +5,12 @@ defmodule CommonCore.Batteries.VMClusterConfig do
   import Ecto.Changeset
 
   alias CommonCore.Defaults
+  alias CommonCore.Defaults.RandomKeyChangeset
 
   @required_fields ~w()a
   @optional_fields ~w(
     cluster_image_tag
+    cookie_secret
     replication_factor
 
     vminsert_replicas vmselect_replicas vmstorage_replicas
@@ -18,6 +20,7 @@ defmodule CommonCore.Batteries.VMClusterConfig do
   @derive Jason.Encoder
   typed_embedded_schema do
     field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
+    field :cookie_secret, :string
 
     field :replication_factor, :integer, default: 1
 
@@ -39,5 +42,6 @@ defmodule CommonCore.Batteries.VMClusterConfig do
     |> validate_number(:vmstorage_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vminsert_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vmselect_replicas, greater_than: 0, less_than: 99)
+    |> RandomKeyChangeset.maybe_set_random(:cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1)
   end
 end
