@@ -246,7 +246,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           </:right_side>
         </.page_header>
         <.panel class="mb-6">
-          <div class="grid grid-cols-2 gap-6">
+          <.grid columns={[sm: 1, xl: 2]}>
             <PC.field field={@form[:name]} autofocus />
             <PC.field
               field={@form[:virtual_size]}
@@ -254,29 +254,30 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               label="Size"
               options={Cluster.preset_options_for_select()}
             />
-          </div>
+          </.grid>
 
           <div :if={@form[:virtual_size].value != "custom"} class="flex justify-between mt-3 mb-5">
-            <div class="flex items-center justify-center gap-3">
+            <.flex class="items-center justify-center">
               <PC.form_label class="!mb-0" label="Storage size:" />
               <PC.h5 class="font-semibold">
                 <%= @form[:storage_size].value |> Memory.format_bytes(true) || "0GB" %>
               </PC.h5>
-            </div>
-            <div class="flex items-center justify-center gap-3">
+            </.flex>
+            <.flex class="items-center justify-center">
               <PC.form_label class="!mb-0" label="Memory limits:" />
               <PC.h5 class="font-semibold">
                 <%= @form[:memory_limits].value |> Memory.format_bytes(true) %>
               </PC.h5>
-            </div>
-            <div class="flex items-center justify-center gap-3">
+            </.flex>
+            <.flex class="items-center justify-center">
               <PC.form_label class="!mb-0" label="CPU limits:" />
               <PC.h5 class="font-semibold"><%= @form[:cpu_limits].value %></PC.h5>
-            </div>
+            </.flex>
           </div>
 
-          <div :if={@form[:virtual_size].value == "custom"} class="mb-5 grid grid-cols-1 gap-6">
-            <div class="grid grid-cols-4 gap-6">
+          <.grid :if={@form[:virtual_size].value == "custom"} columns="1" class="mb-5">
+            <PC.h3>Storage</PC.h3>
+            <.grid>
               <div>
                 <PC.field
                   field={@form[:storage_class]}
@@ -285,7 +286,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   options={@possible_storage_classes}
                 />
               </div>
-              <div class="flex">
+              <.flex>
                 <div class="flex-1">
                   <.editable_field
                     field_attrs={
@@ -310,9 +311,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                 >
                   <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
                 </div>
-              </div>
-              <div class="pt-3 pb-1 mb-[22px] col-span-2">
-                <div class="flex justify-between w-full">
+              </.flex>
+              <div class="pt-3 pb-1 mb-[22px] xl:col-span-2">
+                <.flex class="justify-between w-full">
                   <%= for memory_size <- MemorySliderConverter.control_points() do %>
                     <span
                       phx-click="set_storage_size_shortcut"
@@ -323,7 +324,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                       <%= Memory.format_bytes(memory_size) %>
                     </span>
                   <% end %>
-                </div>
+                </.flex>
 
                 <PC.input
                   min="1"
@@ -333,9 +334,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   type="range"
                 />
               </div>
-            </div>
+            </.grid>
 
-            <div class="grid grid-cols-4 gap-6">
+            <PC.h3>Running Limits</PC.h3>
+            <.grid>
               <div>
                 <PC.field
                   field={@form[:cpu_requested]}
@@ -368,21 +370,21 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   options={Cluster.memory_limits_options() |> Memory.bytes_as_select_options()}
                 />
               </div>
-            </div>
-          </div>
+            </.grid>
+          </.grid>
 
-          <div class="flex justify-between w-full py-5 border-t border-gray-300 dark:border-gray-600">
-          </div>
+          <.flex class="justify-between w-full py-5 border-t border-gray-300 dark:border-gray-600">
+          </.flex>
 
-          <div class="flex items-center gap-6">
-            <div class="flex justify-between w-full lg:w-1/2">
+          <.flex class="items-center">
+            <.flex class="justify-between w-full lg:w-1/2">
               <PC.h5>Number of instances</PC.h5>
-              <PC.h5><%= @num_instances %></PC.h5>
-            </div>
-            <div class="w-full lg:w-1/2">
+              <div class="font-bold text-4xl text-primary-500"><%= @num_instances %></div>
+            </.flex>
+            <.flex class="w-full lg:w-1/2">
               <PC.input min="0" max="5" step="1" field={@form[:num_instances]} type="range" />
-            </div>
-          </div>
+            </.flex>
+          </.flex>
         </.panel>
 
         <.panel class="pb-4 mb-8">
@@ -391,18 +393,18 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           </:title>
 
           <.inputs_for :let={database_form} field={@form[:databases]}>
-            <div class="grid grid-cols-2 gap-6">
+            <.grid columns={%{sm: 1, lg: 2}}>
               <div>
                 <PC.field field={database_form[:name]} />
               </div>
               <div>
                 <PC.field field={database_form[:owner]} type="select" options={@possible_owners} />
               </div>
-            </div>
+            </.grid>
           </.inputs_for>
         </.panel>
 
-        <div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-2">
+        <.grid columns={%{sm: 1, lg: 2}} class="mb-8">
           <.users_table
             users={Ecto.Changeset.get_field(@form[:users].form.source, :users)}
             phx_target={@myself}
@@ -413,13 +415,13 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             }
             phx_target={@myself}
           />
-        </div>
+        </.grid>
       </.form>
 
       <PC.modal
         :if={@pg_credential_copy_form}
         id="credential_copy_modal"
-        max_width="md"
+        max_width="lg"
         title="New Copy Of Credentials"
         close_modal_target={@myself}
       >
@@ -440,26 +442,26 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             options={PGCredentialCopy.possible_formats()}
           />
 
-          <div class="flex justify-end gap-4">
+          <.flex class="justify-end">
             <PC.button phx-target={@myself} phx-click="close_modal" type="button" color="light">
               Cancel
             </PC.button>
             <PC.button>Add copy</PC.button>
-          </div>
+          </.flex>
         </.form>
       </PC.modal>
 
       <PC.modal
         :if={@pg_user_form}
         id="user_modal"
-        max_width="md"
+        max_width="lg"
         title="Add user"
         close_modal_target={@myself}
       >
         <.form for={@pg_user_form} phx-submit="add:user" phx-target={@myself}>
           <PC.field field={@pg_user_form[:username]} label="User Name" />
-          <PC.p class="!mt-8 !mb-6 !text-gray-500">Roles</PC.p>
-          <div class="flex flex-col gap-4 mb-8">
+          <PC.h3 class="!mt-8 !mb-6 !text-gray-500">Roles</PC.h3>
+          <.grid columns={%{sm: 1, xl: 2}} class="mb-8">
             <.role_option
               field={@pg_user_form[:roles]}
               label="Superuser"
@@ -501,14 +503,14 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               label="Bypassrls"
               help_text="A special user account used for system administration"
             />
-          </div>
+          </.grid>
 
-          <div class="flex justify-end gap-4">
+          <.flex class="justify-end">
             <PC.button phx-target={@myself} phx-click="close_modal" type="button" color="light">
               Cancel
             </PC.button>
             <PC.button>Add user</PC.button>
-          </div>
+          </.flex>
         </.form>
       </PC.modal>
     </div>

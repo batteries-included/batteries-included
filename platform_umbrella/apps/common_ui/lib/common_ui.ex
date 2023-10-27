@@ -7,6 +7,7 @@ defmodule CommonUI do
     quote do
       import CommonUI.Button
       import CommonUI.Card
+      import CommonUI.Container
       import CommonUI.CSSHelpers
       import CommonUI.DataList
       import CommonUI.Flash
