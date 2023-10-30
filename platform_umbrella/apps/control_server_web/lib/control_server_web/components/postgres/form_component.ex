@@ -312,7 +312,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
                 </div>
               </.flex>
-              <div class="pt-3 pb-1 mb-[22px] xl:col-span-2">
+              <div class="pt-3 pb-1 mb-[22px] lg:col-span-2">
                 <.flex class="justify-between w-full">
                   <%= for memory_size <- MemorySliderConverter.control_points() do %>
                     <span
