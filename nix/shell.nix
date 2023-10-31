@@ -118,6 +118,9 @@
         export HEX_HOME=$PWD/.nix-hex
         mkdir -p $HEX_HOME
 
+        export ELIXIR_MAKE_CACHE_DIR=$PWD/.nix-elixir.cache
+        mkdir -p $ELIXIR_MAKE_CACHE_DIR
+
         export PATH=$MIX_HOME/bin:$PATH
         export PATH=$HEX_HOME/bin:$PATH
 

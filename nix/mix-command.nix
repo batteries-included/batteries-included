@@ -46,6 +46,7 @@ pkgs.stdenv.mkDerivation ({
   postUnpack = ''
     export HEX_HOME="$TEMPDIR/hex"
     export MIX_HOME="$TEMPDIR/mix"
+    export ELIXIR_MAKE_CACHE_DIR="$TEMPDIR/elixir.cache"
 
     # Rebar
     export REBAR_GLOBAL_CONFIG_DIR="$TEMPDIR/rebar3"
@@ -56,7 +57,7 @@ pkgs.stdenv.mkDerivation ({
     # thus a copy to the TEMPDIR is inevitable here
     export MIX_DEPS_PATH="$TEMPDIR/deps"
     cp --no-preserve=mode -R "${mixFodDeps}" "$MIX_DEPS_PATH"
-    
+
     # for troubleshooting
     # ls -alR $MIX_DEPS_PATH
   '';

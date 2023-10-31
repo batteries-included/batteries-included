@@ -23,7 +23,7 @@ defmodule ControlServer.Umbrella.MixProject do
 
   defp deps do
     [
-      {:styler, "~> 0.9.6", only: [:dev, :test, :integration], runtime: false},
+      {:styler, "~> 0.9.7", only: [:dev, :test, :integration], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test, :integration], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test, :integration], runtime: false},
       {:credo_naming, "~> 2.0", only: [:dev, :test, :integration], runtime: false},

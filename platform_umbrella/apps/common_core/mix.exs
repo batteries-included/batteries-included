@@ -30,7 +30,7 @@ defmodule CommonCore.MixProject do
       {:mnemonic_slugs, "~> 0.0.3"},
       {:polymorphic_embed, "~> 3.0"},
       {:telemetry, "~> 1.1"},
-      {:tesla, "~> 1.7"},
+      {:tesla, "~> 1.8"},
       {:typed_ecto_schema, "~> 0.4"},
       {:typed_struct, "~> 0.3", runtime: false},
       {:k8s, "~> 2.4"},
