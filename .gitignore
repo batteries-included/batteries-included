@@ -1,6 +1,7 @@
 # Local elixir/hex/mix dirs
 .nix-mix
 .nix-hex
+.nix-elixir.cache
 platform_umbrella/.iex.exs
 
 # Local cargo dirs
