@@ -24,7 +24,7 @@ defmodule CommonUI.Table do
 
   def table(assigns) do
     ~H"""
-    <div id={@id} class="overflow-y-auto sm:overflow-visible px-2">
+    <div id={@id} class="overflow-auto px-2">
       <PC.table>
         <PC.tr>
           <PC.th :for={col <- @col}>

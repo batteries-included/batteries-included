@@ -2,16 +2,16 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServer.Notebooks
   import ControlServerWeb.NotebooksTable
 
   alias ControlServer.Batteries.Installer
-  alias ControlServer.Notebooks
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :notebooks, notebooks())}
+    {:ok, socket |> assign_page_title() |> assign_notebooks()}
   end
 
   @impl Phoenix.LiveView
@@ -21,34 +21,41 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
 
   @impl Phoenix.LiveView
   def handle_event("delete_notebook", %{"id" => id}, socket) do
-    jupyter_lab_notebook = Notebooks.get_jupyter_lab_notebook!(id)
-    {:ok, _} = Notebooks.delete_jupyter_lab_notebook(jupyter_lab_notebook)
+    {:ok, _} = id |> get_jupyter_lab_notebook!() |> delete_jupyter_lab_notebook()
 
-    {:noreply, assign(socket, :notebooks, notebooks())}
+    {:noreply, assign_notebooks(socket)}
   end
 
   def handle_event("start_notebook", _, socket) do
-    with {:ok, _} <-
-           Notebooks.create_jupyter_lab_notebook(%{}) do
+    with {:ok, _} <- create_jupyter_lab_notebook(%{}) do
       Installer.install!(:notebooks)
-      {:noreply, assign(socket, :notebooks, notebooks())}
+      {:noreply, assign_notebooks(socket)}
     end
   end
 
-  defp notebooks do
-    Notebooks.list_jupyter_lab_notebooks()
+  defp assign_page_title(socket) do
+    assign(socket, :page_title, "ML Notebooks")
+  end
+
+  defp assign_notebooks(socket) do
+    assign(socket, :notebooks, list_jupyter_lab_notebooks())
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.notebooks_table notebooks={@notebooks} />
-    <.h2 variant="fancy">Actions</.h2>
-    <.card>
-      <.button type="primary" phx-click="start_notebook">
-        Start New Notebook
-      </.button>
-    </.card>
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/ml"}} />
+    <.panel>
+      <:title>
+        Jupyter Notebooks
+      </:title>
+      <:top_right>
+        <.button type="primary" phx-click="start_notebook">
+          Start New Notebook
+        </.button>
+      </:top_right>
+      <.notebooks_table rows={@notebooks} />
+    </.panel>
     """
   end
 end

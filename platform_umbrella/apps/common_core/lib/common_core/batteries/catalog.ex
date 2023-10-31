@@ -29,6 +29,12 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [:battery_core],
       description: "Monitor what's happened on Kubernetes and store that for later investigation."
     },
+    %CatalogBattery{
+      group: :magic,
+      type: :stale_resource_cleaner,
+      dependencies: [:battery_core],
+      description: "A battery that removes old resources that are no longer needed."
+    },
     # Devtools
     %CatalogBattery{
       group: :devtools,

@@ -48,7 +48,7 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   @impl GenServer
   def handle_call(:installed_batteries, _from, %{summary: %StateSummary{batteries: batteries}} = state) do
-    {:reply, batteries, state}
+    {:reply, Enum.sort_by(batteries, fn b -> b.type end), state}
   end
 
   @impl GenServer

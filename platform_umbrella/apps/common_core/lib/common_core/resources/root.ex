@@ -56,6 +56,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     istio: [IstioBase, Istiod, IstioMetrics],
     istio_csr: [IstioCsr],
     istio_gateway: [IstioIngress],
+    keycloak: [Keycloak],
     kiali: [Kiali],
     knative_operator: [KnativeOperator],
     knative_serving: [KnativeServing],
@@ -67,15 +68,15 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     redis: [Redis, RedisOperator],
     rook: [Rook, CephFilesystems, CephClusters],
     smtp4dev: [Smtp4Dev],
-    keycloak: [Keycloak],
     sso: [SSO],
-    trivy_operator: [TrivyOperator],
+    stale_resource_cleaner: [],
     timeline: [],
+    trivy_operator: [TrivyOperator],
     trust_manager: [TrustManager],
-    vm_operator: [VMOperator],
+    victoria_metrics: [VMDashboards],
     vm_agent: [VMAgent],
     vm_cluster: [VMCluster],
-    victoria_metrics: [VMDashboards]
+    vm_operator: [VMOperator]
   ]
 
   @spec materialize(StateSummary.t()) :: map()

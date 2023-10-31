@@ -2,15 +2,14 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServer.MetalLB
   import ControlServerWeb.IPAddressPoolsTable
-
-  alias ControlServer.MetalLB
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :ip_address_pools, ip_address_pools())}
+    {:ok, socket |> assign_page_title() |> assign_ip_address_pools()}
   end
 
   @impl Phoenix.LiveView
@@ -18,8 +17,12 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
     {:noreply, socket}
   end
 
-  defp ip_address_pools do
-    MetalLB.list_ip_address_pools()
+  defp assign_page_title(socket) do
+    assign(socket, :page_title, "IP Pools")
+  end
+
+  defp assign_ip_address_pools(socket) do
+    assign(socket, :ip_address_pools, list_ip_address_pools())
   end
 
   defp new_url, do: ~p"/ip_address_pools/new"
@@ -27,19 +30,18 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>MetalLB IP Addresses</.h1>
-    <.ip_address_pools_table ip_address_pools={@ip_address_pools} />
-
-    <.h2 variant="fancy">Actions</.h2>
-    <.card>
-      <div class="grid md:grid-cols-1 gap-6">
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/net_sec"}} />
+    <.panel>
+      <:title>MetalLB IP Addresses</:title>
+      <:top_right>
         <.a navigate={new_url()} class="block">
           <.button class="w-full">
             New IP Address Pool
           </.button>
         </.a>
-      </div>
-    </.card>
+      </:top_right>
+      <.ip_address_pools_table rows={@ip_address_pools} />
+    </.panel>
     """
   end
 end

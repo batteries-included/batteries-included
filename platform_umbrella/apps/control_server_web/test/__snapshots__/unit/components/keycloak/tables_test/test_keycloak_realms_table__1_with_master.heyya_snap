@@ -1,4 +1,4 @@
-<div id="keycloak-realms-table" class="overflow-y-auto sm:overflow-visible px-2">
+<div id="keycloak-realms-table" class="overflow-auto px-2">
   <table class="pc-table ">
   
     <tr class="pc-table__tr ">
@@ -47,7 +47,7 @@
           
     <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" class="">
   
-      Show Realm
+      Show
     
 </a>
   

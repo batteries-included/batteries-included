@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.Redis do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.RedisTable
 
@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Live.Redis do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :failover_clusters, list_failover_clusters())}
+    {:ok, socket |> assign_failover_clusters() |> assign_page_title("Redis Clusters")}
   end
 
   @impl Phoenix.LiveView
@@ -20,6 +20,14 @@ defmodule ControlServerWeb.Live.Redis do
     socket
     |> assign(:page_title, "Listing Failover clusters")
     |> assign(:failover_cluster, nil)
+  end
+
+  def assign_page_title(socket, page_title) do
+    assign(socket, page_title: page_title)
+  end
+
+  defp assign_failover_clusters(socket) do
+    assign(socket, :failover_clusters, list_failover_clusters())
   end
 
   @impl Phoenix.LiveView
@@ -39,17 +47,18 @@ defmodule ControlServerWeb.Live.Redis do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>Redis Clusters</.h1>
-    <.redis_table failover_clusters={@failover_clusters} />
-
-    <.h2>Actions</.h2>
-    <.card>
-      <.a navigate={new_url()}>
-        <.button>
-          New Cluster
-        </.button>
-      </.a>
-    </.card>
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/data"}} />
+    <.panel>
+      <:title>All Redis Clusters</:title>
+      <:top_right>
+        <.a navigate={new_url()}>
+          <.button>
+            New Cluster
+          </.button>
+        </.a>
+      </:top_right>
+      <.redis_table rows={@failover_clusters} />
+    </.panel>
     """
   end
 end

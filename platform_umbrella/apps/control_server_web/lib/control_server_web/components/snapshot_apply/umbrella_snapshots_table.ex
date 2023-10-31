@@ -2,6 +2,8 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
   @moduledoc false
   use ControlServerWeb, :html
 
+  import CommonUI.DatetimeDisplay
+
   attr :snapshots, :list, required: true
   attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
 
@@ -12,7 +14,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
         <%= snapshot.id %>
       </:col>
       <:col :let={snapshot} label="Started">
-        <%= Timex.format!(snapshot.inserted_at, "{RFC822z}") %>
+        <.relative_display time={snapshot.inserted_at} />
       </:col>
 
       <:col :let={snapshot} label="Kube Status">

@@ -35,7 +35,8 @@ defmodule CommonUI.MixProject do
       {:heroicons, "~> 0.5"},
       {:gettext, "~> 0.19"},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:petal_components, "~> 1.7"}
+      {:petal_components, "~> 1.7"},
+      {:timex, "~> 3.7"}
     ]
   end
 

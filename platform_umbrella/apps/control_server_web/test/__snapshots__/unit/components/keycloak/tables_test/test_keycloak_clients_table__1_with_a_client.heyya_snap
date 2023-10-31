@@ -1,4 +1,4 @@
-<div id="keycloak-clients-table" class="overflow-y-auto sm:overflow-visible px-2">
+<div id="keycloak-clients-table" class="overflow-auto px-2">
   <table class="pc-table ">
   
     <tr class="pc-table__tr ">

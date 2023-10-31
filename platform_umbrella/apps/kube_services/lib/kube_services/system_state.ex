@@ -14,7 +14,8 @@ defmodule KubeServices.SystemState do
       {KubeServices.SystemState.Summarizer, [should_refresh: should_refresh]},
       KubeServices.SystemState.SummaryHosts,
       KubeServices.SystemState.SummaryBatteries,
-      KubeServices.SystemState.SummaryStorage
+      KubeServices.SystemState.SummaryStorage,
+      KubeServices.SystemState.SummaryRecent
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -1,4 +1,4 @@
-<div class="overflow-y-auto sm:overflow-visible px-2">
+<div class="overflow-auto px-2">
   <table class="pc-table ">
   
     <tr class="pc-table__tr ">
@@ -38,7 +38,16 @@
 </td><td class="pc-table__td ">
   
         
-    Tue, 28 Feb 23 07:00:00 Z
+    <div class="group relative">
+  <div class="invisible group-hover:visible group-focus-within:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-sm bg-gray-100 bg-opacity-95 p-2" role="tooltip" aria-hidden="true">
+    
+    2023-02-28T07:00:00+00:00
+  
+  </div>
+  
+  8 months ago
+
+</div>
   
       
 </td><td class="pc-table__td ">
@@ -80,7 +89,16 @@
 </td><td class="pc-table__td ">
   
         
-    Tue, 28 Feb 23 07:00:00 Z
+    <div class="group relative">
+  <div class="invisible group-hover:visible group-focus-within:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-sm bg-gray-100 bg-opacity-95 p-2" role="tooltip" aria-hidden="true">
+    
+    2023-02-28T07:00:00+00:00
+  
+  </div>
+  
+  8 months ago
+
+</div>
   
       
 </td><td class="pc-table__td ">

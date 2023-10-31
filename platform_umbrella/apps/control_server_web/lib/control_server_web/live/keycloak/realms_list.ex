@@ -25,9 +25,9 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.page_header title="Keycloak" back_button={%{link_type: "live_redirect", to: ~p"/"}} />
+    <.page_header title="Keycloak" back_button={%{link_type: "live_redirect", to: ~p"/net_sec"}} />
     <.panel>
-      <.keycloak_realms_table realms={@realms} keycloak_url={@keycloak_url} />
+      <.keycloak_realms_table rows={@realms} keycloak_url={@keycloak_url} />
     </.panel>
     """
   end

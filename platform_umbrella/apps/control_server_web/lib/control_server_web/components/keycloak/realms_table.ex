@@ -2,22 +2,23 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  attr :realms, :list, required: true
+  attr :rows, :list, required: true
   attr :keycloak_url, :string, required: true
+  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
 
   def keycloak_realms_table(%{} = assigns) do
     ~H"""
-    <.table id="keycloak-realms-table" rows={@realms}>
-      <:col :let={realm} label="ID"><%= realm.id %></:col>
+    <.table id="keycloak-realms-table" rows={@rows}>
+      <:col :let={realm} :if={!@abbridged} label="ID"><%= realm.id %></:col>
       <:col :let={realm} label="Name"><%= realm.displayName %></:col>
 
-      <:action :let={realm}>
+      <:action :let={realm} :if={!@abbridged}>
         <.a href={admin_url(@keycloak_url, realm)} variant="external">Keycloak Admin</.a>
       </:action>
 
       <:action :let={realm}>
         <.a navigate={~p"/keycloak/realm/#{realm.realm}"}>
-          Show Realm
+          Show
         </.a>
       </:action>
     </.table>

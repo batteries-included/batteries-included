@@ -60,6 +60,16 @@
       },
       {
         "id": null,
+        "type": "stale_resource_cleaner",
+        "config": {
+          "delay": 900000
+        },
+        "group": "magic",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
         "type": "metallb",
         "config": {
           "speaker_image": "quay.io/metallb/speaker:v0.13.11",
@@ -91,7 +101,7 @@
           },
           {
             "username": "battery-control-user",
-            "password": "7ApjN1R37yUGtTEK3DeL5lMS",
+            "password": "2gX4BrIVCrZqd7P6xHgmbWsL",
             "roles": ["createdb", "login"]
           }
         ],
@@ -11975,13 +11985,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "N0Fwak4xUjM3eVVHdFRFSzNEZUw1bE1T",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjdBcGpOMVIzN3lVR3RURUszRGVMNWxNU0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "MmdYNEJySVZDclpxZDdQNnhIZ21iV3NM",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjJnWDRCcklWQ3JacWQ3UDZ4SGdtYldzTEBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "MI65QDBKTVD3SJLMZB3BDXH23Y7U32SNMJUNINA2XIPIUADBR3PQ===="
+          "battery/hash": "ZEX7LSR4KPF57VBJ6ETZVA5HRF5PVSVDIKDHHS6SZUTX64DGA5XQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -12480,13 +12490,13 @@
     "/istio/config_map/istio": {
       "apiVersion": "v1",
       "data": {
-        "mesh": "defaultConfig:\n  discoveryAddress: istiod.battery-istio.svc:15012\n  tracing:\n    zipkin:\n      address: zipkin.battery-istio:9411\ndefaultProviders:\n  metrics:\n  - prometheus\nenablePrometheusMerge: true\nrootNamespace: battery-istio\ntrustDomain: cluster.local",
-        "meshNetworks": "networks: {}"
+        "mesh": "---\ndefaultConfig:\n  discoveryAddress: istiod.battery-istio.svc.cluster.local.:15012\ndefaultProviders:\n  metrics:\n    - prometheus\nenablePrometheusMerge: true\nrootNamespace: battery-istio\ntrustDomain: cluster.local\n",
+        "meshNetworks": "---\nnetworks: {}\n"
       },
       "kind": "ConfigMap",
       "metadata": {
         "annotations": {
-          "battery/hash": "6JC4K3MYEIBNIOUUV3WHKZLSCUQVGX6DESLEDF6KZFWR5KLJL46Q===="
+          "battery/hash": "ROOAVDKTVAAYKULJPYANLVGLVNBK4PKTGS6MYGCC33HBYSN7WO4Q===="
         },
         "labels": {
           "app": "istiod",

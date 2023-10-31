@@ -6,11 +6,13 @@ defmodule ControlServerWeb.KnativeServicesTable do
 
   alias CommonCore.Knative.Service
 
-  attr :knative_services, :list, required: true
+  attr :rows, :list, required: true
+  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
 
   def knative_services_table(assigns) do
     ~H"""
-    <.table id="knative-display-table" rows={@knative_services}>
+    <.table id="knative-display-table" rows={@rows}>
+      <:col :let={service} :if={!@abbridged} label="ID"><%= service.id %></:col>
       <:col :let={service} label="Name"><%= service.name %></:col>
       <:col :let={service} label="Link">
         <.a href={service_url(service)} variant="external">

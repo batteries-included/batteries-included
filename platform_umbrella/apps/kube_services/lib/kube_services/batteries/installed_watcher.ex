@@ -17,7 +17,8 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     sso: KubeServices.Batteries.SSO,
     keycloak: KubeServices.Batteries.Keycloak,
     battery_core: KubeServices.Batteries.BatteryCore,
-    timeline: KubeServices.Batteries.Timeline
+    timeline: KubeServices.Batteries.Timeline,
+    stale_resource_cleaner: KubeServices.Batteries.StaleResourceCleaner
   ]
 
   @dynamic_supervisor KubeServices.Batteries.DynamicSupervisor

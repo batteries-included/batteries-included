@@ -2,13 +2,12 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
+  import ControlServer.Knative
   import ControlServerWeb.KnativeServicesTable
-
-  alias ControlServer.Knative
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :services, list_services())}
+    {:ok, assign_services(socket)}
   end
 
   @impl Phoenix.LiveView
@@ -20,28 +19,24 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     assign(socket, :page_title, "Listing Services")
   end
 
-  defp list_services do
-    Knative.list_services()
+  defp assign_services(socket) do
+    assign(socket, :services, list_services())
   end
+
+  defp new_url, do: ~p"/knative/services/new"
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>
-      Knative Services
-    </.h1>
-    <.knative_services_table knative_services={@services} />
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/devtools"}} />
 
-    <.h2 variant="fancy">Actions</.h2>
-    <.card>
-      <div class="grid md:grid-cols-1 gap-6">
-        <.a navigate={~p"/knative/services/new"} class="block w-full">
-          <.button class="w-full">
-            New Knative Service
-          </.button>
-        </.a>
-      </div>
-    </.card>
+    <.panel>
+      <:title>Knative Serverless</:title>
+      <:top_right>
+        <PC.button to={new_url()} link_type="live_redirect" label="New Service" />
+      </:top_right>
+      <.knative_services_table rows={@services} />
+    </.panel>
     """
   end
 end

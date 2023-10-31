@@ -28,6 +28,7 @@ defmodule CommonCore.StateSummary.SeedState do
           :istio,
           :istio_gateway,
           :timeline,
+          :stale_resource_cleaner,
           :metallb
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])

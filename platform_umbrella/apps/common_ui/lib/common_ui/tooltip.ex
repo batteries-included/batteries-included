@@ -64,7 +64,7 @@ defmodule CommonUI.Tooltip do
           build_class([
             "invisible group-hover:visible group-focus-within:visible",
             "absolute -translate-x-1 -translate-y-full",
-            "rounded-md shadow-sm bg-pink-200 bg-opacity-95 p-2"
+            "rounded-md shadow-sm bg-gray-100 bg-opacity-95 p-2"
           ])
         }
         role="tooltip"

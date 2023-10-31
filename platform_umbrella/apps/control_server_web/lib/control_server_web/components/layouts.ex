@@ -67,31 +67,31 @@ defmodule ControlServerWeb.Layouts do
         %{
           name: :datastores,
           label: "Datastores",
-          path: ~p"/postgres",
+          path: ~p"/data",
           icon: :circle_stack
         },
         %{
           name: :devtools,
           label: "Devtools",
-          path: ~p"/",
+          path: ~p"/devtools",
           icon: :wrench
         },
         %{
           name: :monitoring,
           label: "Monitoring",
-          path: ~p"/",
+          path: ~p"/monitoring",
           icon: :chart_bar_square
         },
         %{
           name: :netsecurity,
           label: "Net/Security",
-          path: ~p"/",
+          path: ~p"/net_sec",
           icon: :shield_check
         },
         %{
           name: :ml,
           label: "ML",
-          path: ~p"/",
+          path: ~p"/ml",
           icon: :beaker
         },
         %{
