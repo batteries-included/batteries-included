@@ -145,8 +145,11 @@ defmodule CommonCore.Actions.SSOClient do
   """
   @spec determine_action(KeycloakSummary.t(), String.t(), ClientRepresentation.t(), list(atom())) ::
           FreshGeneratedAction.t() | nil
-  def determine_action(%KeycloakSummary{} = key_state, realm, expected, fields) do
-    case KeycloakSummary.check_client_state(key_state, realm, expected, fields) do
+  # before a keycloak summary has been generated, nothing to do, return nil
+  def determine_action(nil, _, _, _), do: nil
+
+  def determine_action(%KeycloakSummary{} = keycloak_state, realm, expected, fields) do
+    case KeycloakSummary.check_client_state(keycloak_state, realm, expected, fields) do
       {:too_early, nil} ->
         nil
 

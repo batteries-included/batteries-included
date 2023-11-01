@@ -9,14 +9,6 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
 
   @derive Jason.Encoder
 
-  # TODO(jdt): remove these
-  @check_fields ~w(
-    adminUrl baseUrl clientId directAccessGrantsEnabled
-    enabled id implicitFlowEnabled name
-    protocol publicClient redirectUris rootUrl
-    standardFlowEnabled webOrigins
-  )a
-
   typedstruct do
     field :realms, list(KeycloakAdminSchema.RealmRepresentation.t())
   end
@@ -53,7 +45,6 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
   Assumes YES if there's no summary yet, so we don't try and create a client twice during boot up.
   """
 
-  def check_client_state(summary, realm, client, fields \\ @check_fields)
   def check_client_state(nil, _realm, _, _), do: {:too_early, nil}
   def check_client_state(%__MODULE__{realms: nil}, _realm, _, _), do: {:too_early, nil}
 
