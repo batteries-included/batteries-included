@@ -1,65 +1,11 @@
-# credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
 defmodule CommonCore.Actions.Smtp4dev do
   @moduledoc false
-  @behaviour CommonCore.Actions.ActionGenerator
 
-  alias CommonCore.Actions.FreshGeneratedAction
-  alias CommonCore.Batteries.SystemBattery
-  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
-  alias CommonCore.StateSummary
-  alias CommonCore.StateSummary.Hosts
-  alias CommonCore.StateSummary.KeycloakSummary
+  use CommonCore.Actions.SSOClient, client_name: "smtp4dev"
 
-  @client_name "smtp4dev"
-
-  @spec materialize(SystemBattery.t(), StateSummary.t()) :: list(FreshGeneratedAction.t() | nil)
-  def materialize(%SystemBattery{} = system_battery, %StateSummary{} = state_summary) do
-    [ensure_smtp4dev_client(system_battery, state_summary)]
-  end
-
-  defp ensure_smtp4dev_client(%SystemBattery{} = battery, %StateSummary{keycloak_state: key_state} = summary) do
-    realm = CommonCore.Defaults.Keycloak.realm_name()
-    root_url = "http://#{Hosts.for_battery(summary, battery.type)}"
-
-    expected = %ClientRepresentation{
-      clientId: "#{@client_name}-oauth",
-      directAccessGrantsEnabled: true,
-      enabled: true,
-      id: battery.id,
-      implicitFlowEnabled: false,
-      name: @client_name,
-      protocol: "openid-connect",
-      publicClient: false,
-      standardFlowEnabled: true,
-      rootUrl: root_url,
-      redirectUris: ["/*"]
-    }
-
-    case KeycloakSummary.check_client_state(key_state, realm, expected) do
-      {:too_early, nil} ->
-        nil
-
-      {:exists, _existing} ->
-        nil
-
-      {:changed, _existing} ->
-        %FreshGeneratedAction{
-          action: :sync,
-          type: :client,
-          realm: realm,
-          value: Map.from_struct(expected)
-        }
-
-      {:potential_name_change, _existing} ->
-        nil
-
-      {:not_found, _} ->
-        %FreshGeneratedAction{
-          action: :create,
-          type: :client,
-          realm: realm,
-          value: Map.from_struct(expected)
-        }
-    end
+  @impl Client
+  def configure_client(_battery, _state, client) do
+    opts = [adminUrl: nil, baseUrl: nil, redirectUris: ["/*"], webOrigins: nil]
+    {struct!(client, opts), Keyword.keys(opts)}
   end
 end

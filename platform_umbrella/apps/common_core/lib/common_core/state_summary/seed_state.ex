@@ -15,7 +15,8 @@ defmodule CommonCore.StateSummary.SeedState do
           Defaults.ControlDB.control_cluster(),
           Defaults.KeycloakDB.pg_cluster(),
           Defaults.GiteaDB.gitea_cluster()
-        ])
+        ]),
+      keycloak_state: keycloak_state()
     }
   end
 
@@ -50,6 +51,10 @@ defmodule CommonCore.StateSummary.SeedState do
 
   defp pg_clusters(clusters) do
     Enum.map(clusters, fn cluster -> cluster |> add_local_user() |> CommonCore.Postgres.Cluster.to_fresh_cluster() end)
+  end
+
+  defp keycloak_state do
+    %CommonCore.StateSummary.KeycloakSummary{}
   end
 
   defp add_local_user(%{name: cluster_name, users: users} = cluster) do

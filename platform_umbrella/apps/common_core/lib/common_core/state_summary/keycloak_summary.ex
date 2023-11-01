@@ -8,6 +8,8 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
   require Logger
 
   @derive Jason.Encoder
+
+  # TODO(jdt): remove these
   @check_fields ~w(
     adminUrl baseUrl clientId directAccessGrantsEnabled
     enabled id implicitFlowEnabled name
@@ -37,7 +39,8 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
   @spec check_client_state(
           nil | t(),
           binary(),
-          ClientRepresentation.t() | nil
+          ClientRepresentation.t() | nil,
+          list(atom())
         ) ::
           {:too_early, nil}
           | {:exists, ClientRepresentation.t()}
@@ -50,15 +53,16 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
   Assumes YES if there's no summary yet, so we don't try and create a client twice during boot up.
   """
 
-  def check_client_state(nil, _realm, _), do: {:too_early, nil}
-  def check_client_state(%__MODULE__{realms: nil}, _realm, _), do: {:too_early, nil}
+  def check_client_state(summary, realm, client, fields \\ @check_fields)
+  def check_client_state(nil, _realm, _, _), do: {:too_early, nil}
+  def check_client_state(%__MODULE__{realms: nil}, _realm, _, _), do: {:too_early, nil}
 
-  def check_client_state(%__MODULE__{realms: _realms} = summary, realm, client) do
+  def check_client_state(%__MODULE__{realms: _realms} = summary, realm, client, fields) do
     clients = clients_for_realm(summary, realm)
 
     existing = Enum.find(clients, &(&1.id == client.id))
     potential_name_change = Enum.find(clients, &(&1.name == client.name))
-    is_same = scrub_client(existing) == scrub_client(client)
+    is_same = scrub_client(existing, fields) == scrub_client(client, fields)
 
     cond do
       # client exists and no changes needed
@@ -111,10 +115,9 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
     Map.get(clients, name)
   end
 
-  defp scrub_client(client) when is_nil(client), do: nil
+  defp scrub_client(client, _fields) when is_nil(client), do: nil
 
-  # TODO(jdt): this will probably need to be different per client?
-  defp scrub_client(client) do
-    Map.take(client, @check_fields)
+  defp scrub_client(client, fields) do
+    Map.take(client, fields)
   end
 end
