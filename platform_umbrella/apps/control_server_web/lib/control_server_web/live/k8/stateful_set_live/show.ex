@@ -2,11 +2,12 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ResourceComponents
 
-  alias ControlServerWeb.Resource
   alias EventCenter.KubeState, as: KubeEventCenter
+  alias KubeServices.KubeState
 
   require Logger
 
@@ -30,10 +31,10 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
 
   defp assign_subresources(socket, resource) do
     assign(socket,
-      pods: Resource.owned_resources(resource, :pod),
-      events: Resource.events(resource),
-      conditions: Resource.conditions(resource),
-      status: Resource.status(resource)
+      pods: KubeState.get_owned_resources(:pod, resource),
+      events: KubeState.get_events(resource),
+      conditions: conditions(resource),
+      status: status(resource)
     )
   end
 
@@ -49,7 +50,7 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
   end
 
   defp get_resource!(namespace, name) do
-    Resource.get_resource!(@resource_type, namespace, name)
+    KubeState.get!(@resource_type, namespace, name)
   end
 
   @impl Phoenix.LiveView
@@ -68,10 +69,10 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
         <:item title="Updated Replicas"><%= Map.get(@status, "updatedReplicas", 0) %></:item>
         <:item title="Generations"><%= Map.get(@status, "Generations", 0) %></:item>
       </.data_pills>
-      <.events_section events={@events} />
       <.panel title="Pods">
         <.pods_table pods={@pods} />
       </.panel>
+      <.events_section events={@events} />
       <.label_section resource={@resource} />
     </div>
     """

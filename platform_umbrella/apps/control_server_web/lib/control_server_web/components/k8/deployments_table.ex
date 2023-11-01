@@ -2,9 +2,8 @@ defmodule ControlServerWeb.DeploymentsTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import ControlServerWeb.ResourceURL
-
-  alias ControlServerWeb.Resource
+  import CommonCore.Resources.FieldAccessors
+  import ControlServerWeb.ResourceHTMLHelper
 
   def deployments_table(assigns) do
     ~H"""
@@ -13,18 +12,16 @@ defmodule ControlServerWeb.DeploymentsTable do
       rows={@deployments}
       row_click={&JS.navigate(resource_show_path(&1))}
     >
-      <:col :let={deployment} label="Name"><%= Resource.name(deployment) %></:col>
-      <:col :let={deployment} label="Namespace"><%= Resource.namespace(deployment) %></:col>
-      <:col :let={deployment} label="Replicas"><%= get_in(deployment, ~w(spec replicas)) %></:col>
-      <:col :let={deployment} label="Available">
-        <%= get_in(deployment, ~w(status availableReplicas)) %>
-      </:col>
+      <:col :let={deployment} label="Name"><%= name(deployment) %></:col>
+      <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>
+      <:col :let={deployment} label="Replicas"><%= replicas(deployment) %></:col>
+      <:col :let={deployment} label="Available"><%= available_replicas(deployment) %></:col>
 
       <:action :let={deployment}>
         <.action_icon
           to={resource_show_path(deployment)}
           icon={:eye}
-          id={"show_deployment_" <> Resource.id(deployment)}
+          id={"show_deployment_" <> to_html_id(deployment)}
           tooltip="Show Deployment"
         />
       </:action>

@@ -7,11 +7,10 @@ defmodule ControlServerWeb.Live.KnativeShow do
   """
   use ControlServerWeb, {:live_view, layout: :fresh}
 
+  import CommonCore.Resources.FieldAccessors, only: [uid: 1, labeled_owner: 1]
   import ControlServerWeb.KnativeDisplay
 
-  alias CommonCore.Resources.OwnerLabel
   alias CommonCore.Resources.OwnerReference
-  alias CommonCore.Resources.UID
   alias ControlServer.Knative
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -54,21 +53,21 @@ defmodule ControlServerWeb.Live.KnativeShow do
   def k8_service(service) do
     :knative_service
     |> KubeState.get_all()
-    |> Enum.filter(fn s -> service.id == OwnerLabel.get_owner(s) end)
+    |> Enum.filter(fn s -> service.id == labeled_owner(s) end)
     |> Enum.at(0, %{})
   end
 
   def k8_configuration(k8_service) do
     :knative_configuration
     |> KubeState.get_all()
-    |> Enum.filter(fn c -> UID.uid(k8_service) == OwnerReference.get_owner(c) end)
+    |> Enum.filter(fn c -> uid(k8_service) == OwnerReference.get_owner(c) end)
     |> Enum.at(0, %{})
   end
 
   def k8_revisions(k8_configuration) do
     Enum.filter(
       KubeState.get_all(:knative_revision),
-      fn r -> CommonCore.Resources.UID.uid(k8_configuration) == OwnerReference.get_owner(r) end
+      fn r -> uid(k8_configuration) == OwnerReference.get_owner(r) end
     )
   end
 

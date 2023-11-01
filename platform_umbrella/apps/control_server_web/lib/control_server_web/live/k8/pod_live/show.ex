@@ -2,12 +2,13 @@ defmodule ControlServerWeb.PodLive.Show do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.ResourceComponents
-  import ControlServerWeb.ResourceURL
+  import ControlServerWeb.ResourceHTMLHelper
 
-  alias ControlServerWeb.Resource
   alias EventCenter.KubeState, as: KubeEventCenter
+  alias KubeServices.KubeState
 
   require Logger
 
@@ -77,9 +78,9 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp assign_subresources(socket, resource) do
     assign(socket,
-      events: Resource.events(resource),
-      conditions: Resource.conditions(resource),
-      status: Resource.status(resource)
+      events: KubeState.get_events(resource),
+      conditions: conditions(resource),
+      status: status(resource)
     )
   end
 
@@ -114,7 +115,7 @@ defmodule ControlServerWeb.PodLive.Show do
   end
 
   defp get_resource!(namespace, name) do
-    Resource.get_resource!(@resource_type, namespace, name)
+    KubeState.get!(@resource_type, namespace, name)
   end
 
   defp stop_logs(%{assigns: assigns} = socket) do

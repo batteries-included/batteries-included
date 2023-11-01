@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.Live.DeployementLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.ResourceFixtures
   import Phoenix.LiveViewTest
 
-  alias ControlServerWeb.Resource
   alias KubeServices.KubeState.Runner
 
   @table_name :default_state_table
@@ -25,14 +25,14 @@ defmodule ControlServerWeb.Live.DeployementLiveTest do
 
     test "displays deployment", %{conn: conn, deployment: deployment} do
       {:ok, _show_live, html} =
-        live(conn, ~p"/kube/deployment/#{Resource.namespace(deployment)}/#{Resource.name(deployment)}")
+        live(conn, ~p"/kube/deployment/#{namespace(deployment)}/#{name(deployment)}")
 
-      assert html =~ Resource.name(deployment)
+      assert html =~ name(deployment)
 
-      conditions = Resource.conditions(deployment)
+      conditions = conditions(deployment)
       assert html =~ get_in(conditions, [Access.at(0), "type"])
 
-      labels = Resource.labels(deployment)
+      labels = labels(deployment)
       {label_key, label_value} = Enum.at(Map.to_list(labels), 0)
       assert html =~ label_key
       assert html =~ label_value

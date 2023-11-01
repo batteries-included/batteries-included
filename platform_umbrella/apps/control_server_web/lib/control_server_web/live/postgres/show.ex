@@ -2,13 +2,13 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
+  import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
   import CommonUI.Stats
   import ControlServerWeb.PgDatabaseTable
   import ControlServerWeb.PgUserTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
 
-  alias CommonCore.Resources.OwnerLabel
   alias CommonCore.Resources.OwnerReference
   alias ControlServer.Postgres
   alias EventCenter.KubeState, as: KubeEventCenter
@@ -101,7 +101,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp is_owned_by_label(resource, possible_id_mapset) do
-    case OwnerLabel.get_owner(resource) do
+    case labeled_owner(resource) do
       nil ->
         false
 
@@ -128,7 +128,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp k8_cluster(id) do
     :cloudnative_pg_cluster
     |> KubeState.get_all()
-    |> Enum.find(nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
+    |> Enum.find(nil, fn pg -> id == labeled_owner(pg) end)
   end
 
   @impl Phoenix.LiveView

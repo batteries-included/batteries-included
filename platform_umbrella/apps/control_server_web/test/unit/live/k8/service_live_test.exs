@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.Live.ServiceLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.ResourceFixtures
   import Phoenix.LiveViewTest
 
-  alias ControlServerWeb.Resource
   alias KubeServices.KubeState.Runner
 
   @table_name :default_state_table
@@ -24,11 +24,11 @@ defmodule ControlServerWeb.Live.ServiceLiveTest do
     setup [:create_service]
 
     test "displays service", %{conn: conn, service: service} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/service/#{Resource.namespace(service)}/#{Resource.name(service)}")
+      {:ok, _show_live, html} = live(conn, ~p"/kube/service/#{namespace(service)}/#{name(service)}")
 
-      assert html =~ Resource.name(service)
+      assert html =~ name(service)
 
-      labels = Resource.labels(service)
+      labels = labels(service)
       {label_key, label_value} = Enum.at(Map.to_list(labels), 0)
       assert html =~ label_key
       assert html =~ label_value

@@ -2,17 +2,14 @@ defmodule ControlServerWeb.PodsTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import ControlServerWeb.ResourceURL
-
-  alias ControlServerWeb.Resource
+  import CommonCore.Resources.FieldAccessors
+  import ControlServerWeb.ResourceHTMLHelper
 
   defp restart_count(pod) do
     pod
-    |> Map.get("status", %{})
-    |> Map.get("containerStatuses", [])
-    |> Enum.filter(fn cs -> cs != nil end)
-    |> Enum.map(fn cs -> Map.get(cs, "restartCount", 0) end)
-    |> Enum.sum()
+    |> container_statuses()
+    |> Enum.filter(& &1)
+    |> Enum.reduce(0, fn cs, acc -> acc + Map.get(cs, "restartCount", 0) end)
   end
 
   defp age(pod) do
@@ -34,9 +31,9 @@ defmodule ControlServerWeb.PodsTable do
   def pods_table(assigns) do
     ~H"""
     <.table :if={@pods != []} rows={@pods} id={@id} row_click={&JS.navigate(resource_show_path(&1))}>
-      <:col :let={pod} label="Name"><%= Resource.name(pod) %></:col>
-      <:col :let={pod} label="Namespace"><%= Resource.namespace(pod) %></:col>
-      <:col :let={pod} label="Status"><%= get_in(pod, ~w(status phase)) %></:col>
+      <:col :let={pod} label="Name"><%= name(pod) %></:col>
+      <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
+      <:col :let={pod} label="Status"><%= phase(pod) %></:col>
       <:col :let={pod} label="Restarts"><%= restart_count(pod) %></:col>
       <:col :let={pod} label="Age"><%= age(pod) %></:col>
 
@@ -45,13 +42,13 @@ defmodule ControlServerWeb.PodsTable do
           to={resource_show_path(pod)}
           icon={:eye}
           tooltip="Show Pod"
-          id={"show_pod_" <> Resource.id(pod)}
+          id={"show_pod_" <> to_html_id(pod)}
         />
         <.action_icon
           to={resource_show_path(pod, %{"log" => true})}
           icon={:document_text}
           tooltip="Logs"
-          id={"logs_for_" <> Resource.id(pod)}
+          id={"logs_for_" <> to_html_id(pod)}
         />
       </:action>
     </.table>

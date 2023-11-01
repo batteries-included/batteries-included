@@ -2,10 +2,10 @@ defmodule ControlServerWeb.Live.RedisShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :fresh}
 
+  import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
 
-  alias CommonCore.Resources.OwnerLabel
   alias ControlServer.Redis
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -51,15 +51,15 @@ defmodule ControlServerWeb.Live.RedisShow do
   defp edit_url(cluster), do: ~p"/redis/#{cluster}/edit"
 
   defp k8_failover(id) do
-    Enum.find(KubeState.get_all(:redis_failover), nil, fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.find(KubeState.get_all(:redis_failover), nil, fn pg -> id == labeled_owner(pg) end)
   end
 
   defp k8_pods(id) do
-    Enum.filter(KubeState.get_all(:pod), fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.filter(KubeState.get_all(:pod), fn pg -> id == labeled_owner(pg) end)
   end
 
   defp k8_services(id) do
-    Enum.filter(KubeState.get_all(:service), fn pg -> id == OwnerLabel.get_owner(pg) end)
+    Enum.filter(KubeState.get_all(:service), fn pg -> id == labeled_owner(pg) end)
   end
 
   @impl Phoenix.LiveView

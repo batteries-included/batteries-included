@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.Live.StatefulSetLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.ResourceFixtures
   import Phoenix.LiveViewTest
 
-  alias ControlServerWeb.Resource
   alias KubeServices.KubeState.Runner
 
   @table_name :default_state_table
@@ -25,11 +25,11 @@ defmodule ControlServerWeb.Live.StatefulSetLiveTest do
 
     test "displays stateful_set", %{conn: conn, stateful_set: stateful_set} do
       {:ok, _show_live, html} =
-        live(conn, ~p"/kube/stateful_set/#{Resource.namespace(stateful_set)}/#{Resource.name(stateful_set)}")
+        live(conn, ~p"/kube/stateful_set/#{namespace(stateful_set)}/#{name(stateful_set)}")
 
-      assert html =~ Resource.name(stateful_set)
+      assert html =~ name(stateful_set)
 
-      labels = Resource.labels(stateful_set)
+      labels = labels(stateful_set)
       {label_key, label_value} = Enum.at(Map.to_list(labels), 0)
       assert html =~ label_key
       assert html =~ label_value

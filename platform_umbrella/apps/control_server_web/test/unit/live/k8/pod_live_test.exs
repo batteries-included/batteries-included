@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.Live.PodLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.ResourceFixtures
   import Phoenix.LiveViewTest
 
-  alias ControlServerWeb.Resource
   alias KubeServices.KubeState.Runner
 
   @table_name :default_state_table
@@ -24,16 +24,16 @@ defmodule ControlServerWeb.Live.PodLiveTest do
     setup [:create_pod]
 
     test "displays pod", %{conn: conn, pod: pod} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/pod/#{Resource.namespace(pod)}/#{Resource.name(pod)}")
-      assert html =~ Resource.name(pod)
+      {:ok, _show_live, html} = live(conn, ~p"/kube/pod/#{namespace(pod)}/#{name(pod)}")
+      assert html =~ name(pod)
 
-      conditions = Resource.conditions(pod)
+      conditions = conditions(pod)
       assert html =~ get_in(conditions, [Access.at(0), "type"])
 
-      container_statuses = Resource.container_statuses(pod)
+      container_statuses = container_statuses(pod)
       assert html =~ get_in(container_statuses, [Access.at(0), "name"])
 
-      labels = Resource.labels(pod)
+      labels = labels(pod)
       {label_key, label_value} = Enum.at(Map.to_list(labels), 0)
       assert html =~ label_key
       assert html =~ label_value

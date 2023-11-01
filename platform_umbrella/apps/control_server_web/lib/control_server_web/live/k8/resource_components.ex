@@ -2,15 +2,15 @@ defmodule ControlServerWeb.ResourceComponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import ControlServerWeb.ResourceURL
+  import CommonCore.Resources.FieldAccessors
+  import ControlServerWeb.ResourceHTMLHelper
 
   alias CommonCore.Util.Time
-  alias ControlServerWeb.Resource
 
   def label_section(assigns) do
     ~H"""
     <.panel title="Labels">
-      <.data_horizontal_plain data={Resource.labels(@resource)} />
+      <.data_horizontal_plain data={labels(@resource)} />
     </.panel>
     """
   end
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.ResourceComponents do
   attr :resource, :map, required: true
 
   def pod_containers_section(assigns) do
-    assigns = assign(assigns, :container_statuses, Resource.container_statuses(assigns.resource))
+    assigns = assign(assigns, :container_statuses, container_statuses(assigns.resource))
 
     ~H"""
     <.panel class="py-0 mt-8" title="Containers">
@@ -37,7 +37,7 @@ defmodule ControlServerWeb.ResourceComponents do
             }
             icon={:document_text}
             tooltip="Logs"
-            id={"show_resource_" <> Resource.id(@resource)}
+            id={"show_resource_" <> to_html_id(@resource)}
           />
         </:action>
       </.table>
@@ -124,7 +124,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def logs_modal(assigns) do
     ~H"""
     <PC.modal :if={@logs != nil} title="Logs" max_width="xl">
-      <.light_text class="mb-5"><%= Resource.name(@resource) %></.light_text>
+      <.light_text class="mb-5"><%= name(@resource) %></.light_text>
       <div
         id="scroller"
         style="max-height: 70vh"

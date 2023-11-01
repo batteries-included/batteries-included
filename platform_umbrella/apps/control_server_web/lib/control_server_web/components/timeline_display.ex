@@ -129,6 +129,6 @@ defmodule ControlServerWeb.TimelineDisplay do
   end
 
   defp kube_link(%Kube{} = kube) do
-    ControlServerWeb.ResourceURL.show_path(kube.type, kube.namespace, kube.name)
+    ControlServerWeb.ResourceHTMLHelper.show_path(kube.type, kube.namespace, kube.name)
   end
 end
