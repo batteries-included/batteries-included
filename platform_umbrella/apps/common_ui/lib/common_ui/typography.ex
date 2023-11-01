@@ -55,9 +55,7 @@ defmodule CommonUI.Typogoraphy do
   end
 
   attr :class, :any, default: ""
-
-  attr :base_class, :string, default: "text-lg sm:text-2xl text-bold my-2"
-
+  attr :base_class, :string, default: "text-xl font-medium text-black dark:text-white"
   slot :inner_block, required: true
   attr :rest, :global
 
@@ -94,6 +92,18 @@ defmodule CommonUI.Typogoraphy do
     <h4 class={build_class([@base_class, @class])} {@rest}>
       <%= render_slot(@inner_block) %>
     </h4>
+    """
+  end
+
+  attr :rest, :global
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+
+  def light_text(assigns) do
+    ~H"""
+    <div class={["text-gray-500 text-sm dark:text-gray-400", @class]} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </div>
     """
   end
 end

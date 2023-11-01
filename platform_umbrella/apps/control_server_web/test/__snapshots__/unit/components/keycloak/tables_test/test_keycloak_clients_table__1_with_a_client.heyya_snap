@@ -1,50 +1,54 @@
-<div id="keycloak-clients-table" class="overflow-auto px-2">
-  <table class="pc-table ">
+<div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
+  <table class="pc-table " id="keycloak-clients-table">
   
-    <tr class="pc-table__tr ">
+    <thead>
+      <tr class="pc-table__tr ">
   
-      <th class="pc-table__th ">
+        <th class="pc-table__th ">
   
-        Client Id
-      
+          Client Id
+        
 </th><th class="pc-table__th ">
   
-        Name
-      
+          Name
+        
 </th><th class="pc-table__th ">
   
-        Url
-      
+          Url
+        
 </th><th class="pc-table__th ">
   
-        Enabled
-      
+          Enabled
+        
 </th>
-      
-    
-</tr>
-    <tr class="pc-table__tr " id="keycloak-clients-table-idx-0">
-  
-      <td class="pc-table__td ">
-  
-        admin-cli
-      
-</td><td class="pc-table__td ">
-  
-        Admin CLI
-      
-</td><td class="pc-table__td ">
-  
         
       
+</tr>
+    </thead>
+    <tbody>
+      <tr class="pc-table__tr group " id="keycloak-clients-table-idx-0">
+  
+        <td class="pc-table__td ">
+  
+          admin-cli
+        
 </td><td class="pc-table__td ">
   
-        true
-      
+          Admin CLI
+        
+</td><td class="pc-table__td ">
+  
+          
+        
+</td><td class="pc-table__td ">
+  
+          true
+        
 </td>
+        
       
-    
 </tr>
+    </tbody>
   
 </table>
 </div>

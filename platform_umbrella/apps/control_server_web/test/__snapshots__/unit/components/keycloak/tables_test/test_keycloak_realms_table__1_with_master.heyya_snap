@@ -1,39 +1,43 @@
-<div id="keycloak-realms-table" class="overflow-auto px-2">
-  <table class="pc-table ">
+<div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
+  <table class="pc-table " id="keycloak-realms-table">
   
-    <tr class="pc-table__tr ">
+    <thead>
+      <tr class="pc-table__tr ">
   
-      <th class="pc-table__th ">
+        <th class="pc-table__th ">
   
-        ID
-      
+          ID
+        
 </th><th class="pc-table__th ">
   
-        Name
-      
+          Name
+        
 </th>
-      <th class="pc-table__th ">
+        <th class="pc-table__th ">
   
-        <span class="sr-only">Actions</span>
-      
+          <span class="sr-only">Actions</span>
+        
 </th>
-    
+      
 </tr>
-    <tr class="pc-table__tr " id="keycloak-realms-table-idx-0">
+    </thead>
+    <tbody>
+      <tr class="pc-table__tr group " id="keycloak-realms-table-idx-0">
   
-      <td class="pc-table__td ">
+        <td class="pc-table__td ">
   
-        00-00-00-00-00-00
-      
+          00-00-00-00-00-00
+        
 </td><td class="pc-table__td ">
   
-        Keycloak
-      
+          Keycloak
+        
 </td>
-      <td class="pc-table__td w-10 relative">
+        <td class="pc-table__td w-24">
   
-        <span class="relative ml-4 font-semibold leading-6">
-          
+          <div class="items-center justify-end hidden gap-2 group-hover:flex">
+            
+              
     <a href="http://keycloak.example.129.99.1.1.ip.batteriesincl.com/admin/master/console" target="_blank" class="font-medium text-pink-600 hover:underline flex">
   <span class="flex-initial">
     Keycloak Admin
@@ -43,19 +47,21 @@
 </svg>
 </a>
   
-        </span><span class="relative ml-4 font-semibold leading-6">
-          
+            
+              
     <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" class="">
   
       Show
     
 </a>
   
-        </span>
-      
+            
+          </div>
+        
 </td>
-    
+      
 </tr>
+    </tbody>
   
 </table>
 </div>

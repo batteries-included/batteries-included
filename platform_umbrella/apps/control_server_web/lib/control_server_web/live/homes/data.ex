@@ -31,8 +31,7 @@ defmodule ControlServerWeb.Live.DataHome do
 
   defp postgres_panel(assigns) do
     ~H"""
-    <.panel>
-      <:title>Postgres</:title>
+    <.panel title="Postgres">
       <:top_right>
         <.flex>
           <.a navigate={~p"/postgres"}>View All</.a>
@@ -45,8 +44,7 @@ defmodule ControlServerWeb.Live.DataHome do
 
   defp redis_panel(assigns) do
     ~H"""
-    <.panel>
-      <:title>Redis</:title>
+    <.panel title="Redis">
       <:top_right>
         <.flex>
           <.a navigate={~p"/redis"}>View All</.a>

@@ -21,7 +21,11 @@ defmodule CommonUI.Page do
         >
           <Heroicons.arrow_left class="w-4 h-4 stroke-[3] text-primary-500 fill-primary-500 dark:text-primary-300 dark:fill-primary-300" />
         </PC.a>
-        <h3 class="text-2xl font-medium text-black dark:text-white"><%= @title %></h3>
+        <div class="flex items-center gap-3">
+          <h3 class="text-2xl font-medium text-black dark:text-white">
+            <%= @title %>
+          </h3>
+        </div>
       </div>
 
       <%= if render_slot(@right_side) do %>

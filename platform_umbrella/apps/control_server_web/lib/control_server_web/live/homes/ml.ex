@@ -22,8 +22,7 @@ defmodule ControlServerWeb.Live.MLHome do
 
   defp notebooks_panel(assigns) do
     ~H"""
-    <.panel>
-      <:title>Notebooks</:title>
+    <.panel title="Notebooks">
       <:top_right>
         <.flex>
           <.a navigate={~p"/notebooks"}>View All</.a>

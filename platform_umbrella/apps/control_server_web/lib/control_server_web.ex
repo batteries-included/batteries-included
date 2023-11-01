@@ -103,7 +103,6 @@ defmodule ControlServerWeb do
       # import ControlServerWeb.CoreComponents
       use CommonUI
 
-      import CommonUI.Tooltip
       import ControlServerWeb.Gettext
       import Phoenix.HTML
 

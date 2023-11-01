@@ -31,8 +31,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/net_sec"}} />
-    <.panel>
-      <:title>MetalLB IP Addresses</:title>
+    <.panel title="MetalLB IP Addresses">
       <:top_right>
         <.a navigate={new_url()} class="block">
           <.button class="w-full">

@@ -3,7 +3,8 @@ defmodule ControlServerWeb.PodsTable do
   use ControlServerWeb, :html
 
   import ControlServerWeb.ResourceURL
-  import K8s.Resource.FieldAccessors, only: [name: 1, namespace: 1]
+
+  alias ControlServerWeb.Resource
 
   defp restart_count(pod) do
     pod
@@ -32,22 +33,30 @@ defmodule ControlServerWeb.PodsTable do
 
   def pods_table(assigns) do
     ~H"""
-    <.table rows={@pods} id={@id}>
-      <:col :let={pod} label="Name"><%= name(pod) %></:col>
-      <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
+    <.table :if={@pods != []} rows={@pods} id={@id} row_click={&JS.navigate(resource_show_path(&1))}>
+      <:col :let={pod} label="Name"><%= Resource.name(pod) %></:col>
+      <:col :let={pod} label="Namespace"><%= Resource.namespace(pod) %></:col>
       <:col :let={pod} label="Status"><%= get_in(pod, ~w(status phase)) %></:col>
       <:col :let={pod} label="Restarts"><%= restart_count(pod) %></:col>
       <:col :let={pod} label="Age"><%= age(pod) %></:col>
 
       <:action :let={pod}>
-        <.a navigate={resource_show_url(pod)} variant="styled">
-          Show Pod
-        </.a>
-        <.a class="ml-4" navigate={resource_show_url(pod, %{"log" => true})}>
-          Logs
-        </.a>
+        <.action_icon
+          to={resource_show_path(pod)}
+          icon={:eye}
+          tooltip="Show Pod"
+          id={"show_pod_" <> Resource.id(pod)}
+        />
+        <.action_icon
+          to={resource_show_path(pod, %{"log" => true})}
+          icon={:document_text}
+          tooltip="Logs"
+          id={"logs_for_" <> Resource.id(pod)}
+        />
       </:action>
     </.table>
+
+    <.light_text :if={@pods == []}>No pods available</.light_text>
     """
   end
 end

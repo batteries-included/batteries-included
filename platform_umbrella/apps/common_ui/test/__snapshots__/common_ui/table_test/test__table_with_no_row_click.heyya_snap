@@ -1,60 +1,64 @@
-<div class="overflow-auto px-2">
+<div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
   <table class="pc-table ">
   
-    <tr class="pc-table__tr ">
+    <thead>
+      <tr class="pc-table__tr ">
   
-      <th class="pc-table__th ">
+        <th class="pc-table__th ">
   
-        A
-      
+          A
+        
 </th><th class="pc-table__th ">
   
-        B
-      
+          B
+        
 </th>
+        
       
-    
 </tr>
-    <tr class="pc-table__tr " id="-idx-0">
+    </thead>
+    <tbody>
+      <tr class="pc-table__tr group " id="-idx-0">
   
-      <td class="pc-table__td ">
+        <td class="pc-table__td ">
   
-        100
-      
+          100
+        
 </td><td class="pc-table__td ">
   
-        test
-      
+          test
+        
 </td>
+        
       
-    
-</tr><tr class="pc-table__tr " id="-idx-1">
+</tr><tr class="pc-table__tr group " id="-idx-1">
   
-      <td class="pc-table__td ">
+        <td class="pc-table__td ">
   
-        102
-      
+          102
+        
 </td><td class="pc-table__td ">
   
-        testing
-      
+          testing
+        
 </td>
+        
       
-    
-</tr><tr class="pc-table__tr " id="-idx-2">
+</tr><tr class="pc-table__tr group " id="-idx-2">
   
-      <td class="pc-table__td ">
+        <td class="pc-table__td ">
   
-        420
-      
+          420
+        
 </td><td class="pc-table__td ">
   
-        anyone there?
-      
+          anyone there?
+        
 </td>
+        
       
-    
 </tr>
+    </tbody>
   
 </table>
 </div>

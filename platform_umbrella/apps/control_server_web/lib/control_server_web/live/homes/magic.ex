@@ -70,8 +70,7 @@ defmodule ControlServerWeb.Live.MagicHome do
       </:right_side>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
-      <.panel>
-        <:title>Deploys</:title>
+      <.panel title="Deploys">
         <:top_right>
           <.flex>
             <.a navigate={~p"/snapshot_apply"}>View All</.a>

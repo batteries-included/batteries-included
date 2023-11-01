@@ -38,10 +38,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
       title="Deploys"
       back_button={%{link_type: "live_redirect", to: ~p"/batteries/magic"}}
     />
-    <.panel>
-      <:title>
-        Status
-      </:title>
+    <.panel title="Status">
       <:top_right>
         <.button phx-click="start">
           Start Deploy

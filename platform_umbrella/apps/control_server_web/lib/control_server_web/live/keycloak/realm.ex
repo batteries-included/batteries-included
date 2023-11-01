@@ -113,20 +113,16 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
       title="Keycloak Realm"
       back_button={%{link_type: "live_redirect", to: ~p"/keycloak/realms"}}
     />
-    <.panel>
-      <:title><%= @realm.displayName %></:title>
+    <.panel title={@realm.displayName}>
       <.data_list>
         <:item title="ID"><%= @realm.id %></:item>
         <:item title="Name"><%= @realm.realm %></:item>
       </.data_list>
     </.panel>
-
-    <.panel class="mt-5">
-      <:title>Users</:title>
+    <.panel class="mt-5" title="Users">
       <.keycloak_clients_table clients={@clients} />
     </.panel>
-    <.panel class="mt-5">
-      <:title>Users</:title>
+    <.panel class="mt-5" title="Users">
       <:top_right>
         <PC.button phx-click="new-user">New User</PC.button>
       </:top_right>

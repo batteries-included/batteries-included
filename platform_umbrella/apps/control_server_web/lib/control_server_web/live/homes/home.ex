@@ -68,7 +68,7 @@ defmodule ControlServerWeb.Live.Home do
 
   defp status_icon(%{status: :ok} = assigns),
     do: ~H"""
-    <Heroicons.check_circle class="w-auto h-16 text-shamrock-500" />
+    <Heroicons.check_circle class="w-auto h-16 text-primary-500" />
     """
 
   defp status_icon(%{status: _} = assigns),

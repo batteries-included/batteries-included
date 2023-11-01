@@ -13,7 +13,8 @@ defmodule CommonUI.Button do
   attr :value, :string, default: nil
   attr :name, :string, default: nil
   attr :class, :any, default: nil
-  attr :variant, :string, default: "default", values: ["default", "filled", "unstyled"]
+  attr :variant, :string, default: "default", values: ["default", "filled", "unstyled", "transparent"]
+  attr :icon, :atom, default: nil
   attr :rest, :global, doc: "the arbitraty HTML attributes to apply to the button tag"
 
   slot :inner_block, required: true
@@ -75,6 +76,49 @@ defmodule CommonUI.Button do
     >
       <%= render_slot(@inner_block) %>
     </button>
+    """
+  end
+
+  def button(%{variant: "transparent"} = assigns) do
+    ~H"""
+    <button
+      type={@type}
+      {@rest}
+      class={[
+        "flex items-center gap-2 group text-primary-500 hover:text-primary-700 group-hover:fill-primary-700",
+        @class
+      ]}
+    >
+      <PC.icon :if={@icon} name={@icon} class={["w-4 h-4 fill-primary-500", icon_class(@icon)]} />
+      <%= render_slot(@inner_block) %>
+    </button>
+    """
+  end
+
+  defp icon_class(:plus), do: "stroke-[3]"
+  defp icon_class(_), do: nil
+
+  attr :id, :string, required: true
+  attr :to, :string, required: true
+  attr :tooltip, :string, default: nil
+  attr :icon, :atom
+  attr :link_type, :string, default: "live_redirect"
+
+  def action_icon(assigns) do
+    ~H"""
+    <div>
+      <PC.a id={@id} to={@to} link_type={@link_type} size="xs" class="cursor-pointer">
+        <PC.icon
+          name={@icon}
+          solid
+          class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600"
+        />
+      </PC.a>
+
+      <CommonUI.Tooltip.tooltip :if={@tooltip} target_id={@id}>
+        <%= @tooltip %>
+      </CommonUI.Tooltip.tooltip>
+    </div>
     """
   end
 end

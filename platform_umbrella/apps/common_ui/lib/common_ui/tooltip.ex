@@ -20,7 +20,7 @@ defmodule CommonUI.Tooltip do
       class="hidden"
       id={"tooltip-#{@target_id}"}
       phx-hook="Tooltip"
-      data-target={"#{@target_id}"}
+      data-target={@target_id}
       data-tippy-options={Jason.encode!(@tippy_options)}
     >
       <div {@rest}>

@@ -7,13 +7,16 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
   def users_table(assigns) do
     ~H"""
-    <.panel no_body_padding>
-      <:title>
-        Users
-      </:title>
-
+    <.panel no_body_padding title="Users">
       <:top_right>
-        <.new_button label="New user" phx-click="toggle_user_modal" phx-target={@phx_target} />
+        <.button
+          variant="transparent"
+          icon={:plus}
+          phx-click="toggle_user_modal"
+          phx-target={@phx_target}
+        >
+          New User
+        </.button>
       </:top_right>
 
       <div :if={@users == []} class="p-6 text-sm text-gray-500 dark:text-gray-400">
@@ -50,16 +53,16 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   @spec credential_copies_table(map()) :: Phoenix.LiveView.Rendered.t()
   def credential_copies_table(assigns) do
     ~H"""
-    <.panel no_body_padding>
-      <:title>
-        Credential Secret Copies
-      </:title>
+    <.panel no_body_padding title="Credential Secret Copies">
       <:top_right>
-        <.new_button
-          label="New copy"
+        <.button
+          variant="transparent"
+          icon={:plus}
           phx-click="toggle_credential_copy_modal"
           phx-target={@phx_target}
-        />
+        >
+          New copy
+        </.button>
       </:top_right>
 
       <div :if={@credential_copies == []} class="p-6 text-sm text-gray-500 dark:text-gray-400">

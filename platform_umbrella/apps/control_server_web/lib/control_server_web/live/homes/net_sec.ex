@@ -32,8 +32,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   defp sso_panel(assigns) do
     ~H"""
-    <.panel>
-      <:title>Realms</:title>
+    <.panel title="Realms">
       <:top_right>
         <.flex>
           <.a navigate={~p"/keycloak/realms"}>View All</.a>
@@ -46,8 +45,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   defp metallb_panel(assigns) do
     ~H"""
-    <.panel>
-      <:title>MetalLB IPs</:title>
+    <.panel title="MetalLB IPs">
       <:top_right>
         <.flex>
           <.a navigate={~p"/ip_address_pools"}>View All</.a>

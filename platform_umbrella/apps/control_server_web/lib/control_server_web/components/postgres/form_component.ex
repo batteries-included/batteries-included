@@ -387,11 +387,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           </.flex>
         </.panel>
 
-        <.panel class="pb-4 mb-8">
-          <:title>
-            Database
-          </:title>
-
+        <.panel class="pb-4 mb-8" title="Database">
           <.inputs_for :let={database_form} field={@form[:databases]}>
             <.grid columns={%{sm: 1, lg: 2}}>
               <div>

@@ -82,7 +82,10 @@ defmodule ControlServerWeb.Router do
     live "/services", Live.ResourceList, :service
 
     live "/raw/:resource_type/:namespace/:name", Live.RawResource, :index
-    live "/:resource_type/:namespace/:name", Live.ResourceInfo, :index
+    live "/pod/:namespace/:name", PodLive.Show
+    live "/deployment/:namespace/:name", DeploymentLive.Show
+    live "/stateful_set/:namespace/:name", StatefulSetLive.Show
+    live "/service/:namespace/:name", ServiceLive.Show
   end
 
   scope "/redis", ControlServerWeb do

@@ -23,8 +23,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   defp knative_serving_panel(assigns) do
     ~H"""
-    <.panel>
-      <:title>Knative Services</:title>
+    <.panel title="Knative Services">
       <:top_right>
         <.flex>
           <.a navigate={~p"/knative/services"}>View All</.a>

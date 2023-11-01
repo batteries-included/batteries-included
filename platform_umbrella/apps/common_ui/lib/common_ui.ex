@@ -17,6 +17,7 @@ defmodule CommonUI do
       import CommonUI.Page
       import CommonUI.Table
       import CommonUI.TextHelpers
+      import CommonUI.Tooltip
       import CommonUI.Typogoraphy
       import CommonUI.VerticalSteps
     end

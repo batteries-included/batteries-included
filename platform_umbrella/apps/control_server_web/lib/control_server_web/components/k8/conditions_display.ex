@@ -21,24 +21,25 @@ defmodule ControlServerWeb.ConditionsDisplay do
     conditions_display(assigns)
   end
 
-  def conditions_display(%{empty: true} = assigns) do
+  def conditions_display(%{conditions: []} = assigns) do
     ~H"""
-    <.h2 class="flex items-center">
-      Conditions - <span class="text-base text-gray-500 pt-1 pl-3">no outstanding messages!</span>
-    </.h2>
+    <.panel variant="gray" title="Conditions">
+      <.light_text>No outstanding messages!</.light_text>
+    </.panel>
     """
   end
 
   def conditions_display(assigns) do
     ~H"""
-    <.h2>Conditions</.h2>
-    <.table rows={Enum.sort_by(@conditions, &get_condition_time/1, :desc)}>
-      <:col :let={condition} label="Type"><%= Map.get(condition, "type", "") %></:col>
-      <:col :let={condition} label="Message"><%= Map.get(condition, "message", "") %></:col>
-      <:col :let={condition} label="Time">
-        <%= Timex.format!(get_condition_time(condition), "{RFC822z}") %>
-      </:col>
-    </.table>
+    <.panel variant="gray" title="Conditions">
+      <.table transparent rows={Enum.sort_by(@conditions, &get_condition_time/1, :desc)}>
+        <:col :let={condition} label="Type"><%= Map.get(condition, "type", "") %></:col>
+        <:col :let={condition} label="Message"><%= Map.get(condition, "message", "") %></:col>
+        <:col :let={condition} label="Time">
+          <%= Timex.format!(get_condition_time(condition), "{RFC822z}") %>
+        </:col>
+      </.table>
+    </.panel>
     """
   end
 

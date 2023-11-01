@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.ResourceList do
   @moduledoc """
   Live web app for database stored json configs.
   """
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonUI.TabBar
   import ControlServerWeb.DeploymentsTable
@@ -23,6 +23,7 @@ defmodule ControlServerWeb.Live.ResourceList do
 
     {:ok,
      socket
+     |> assign(current_page: :kubernetes)
      |> assign_objects(objects(live_action))
      |> assign_page_title(title_text(live_action))}
   end
@@ -86,22 +87,29 @@ defmodule ControlServerWeb.Live.ResourceList do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>
-      Kubernetes
-      <:sub_header><%= @live_action %></:sub_header>
-    </.h1>
+    <.page_header title="Kubernetes" />
     <.tab_bar tabs={tabs(@live_action)} />
     <%= case @live_action do %>
       <% :deployment -> %>
-        <.deployments_table deployments={@objects} />
+        <.panel title="Deployments">
+          <.deployments_table deployments={@objects} />
+        </.panel>
       <% :stateful_set -> %>
-        <.stateful_sets_table stateful_sets={@objects} />
+        <.panel title="Stateful Sets">
+          <.stateful_sets_table stateful_sets={@objects} />
+        </.panel>
       <% :node -> %>
-        <.nodes_table nodes={@objects} />
+        <.panel title="Nodes">
+          <.nodes_table nodes={@objects} />
+        </.panel>
       <% :pod -> %>
-        <.pods_table pods={@objects} />
+        <.panel title="Pods">
+          <.pods_table pods={@objects} />
+        </.panel>
       <% :service -> %>
-        <.services_table services={@objects} />
+        <.panel title="Services">
+          <.services_table services={@objects} />
+        </.panel>
     <% end %>
     """
   end

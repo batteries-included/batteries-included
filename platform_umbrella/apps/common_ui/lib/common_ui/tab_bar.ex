@@ -2,13 +2,13 @@ defmodule CommonUI.TabBar do
   @moduledoc false
   use CommonUI.Component
 
-  defp link_class(false),
-    do:
-      "text-gray-500 hover:text-gray-700 group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-100 focus:z-10"
+  defp link_class_base,
+    do: "group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg"
 
-  defp link_class(true),
-    do:
-      "text-gray-900 rounded-l-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-100 focus:z-10"
+  defp link_class(false),
+    do: link_class_base() <> " text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
+
+  defp link_class(true), do: link_class_base() <> " text-white rounded-l-lg bg-primary-500"
 
   defp decoration_class(false), do: "bg-transparent absolute inset-x-0 bottom-0 h-0.5"
   defp decoration_class(true), do: "bg-pink-500 absolute inset-x-0 bottom-0 h-0.5"
@@ -20,9 +20,9 @@ defmodule CommonUI.TabBar do
     <div class="block pb-8">
       <nav
         class={[
-          "flex isolate rounded-lg shadow divide-gray-200",
+          "flex isolate rounded-lg border-gray-200 dark:bg-gray-800 dark:border-gray-600 border",
           "flex-col mx-5",
-          "lg:flex-row lg:divide-x lg:mx-0"
+          "lg:flex-row lg:mx-0"
         ]}
         aria-label="Tabs"
       >
