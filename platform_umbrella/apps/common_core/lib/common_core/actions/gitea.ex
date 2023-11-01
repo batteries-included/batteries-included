@@ -3,6 +3,6 @@ defmodule CommonCore.Actions.Gitea do
 
   use CommonCore.Actions.SSOClient, client_name: "gitea"
 
-  @impl Client
-  def configure_client(_battery, _state, client), do: {client, []}
+  @impl ClientConfigurator
+  def configure(_battery, _state, client), do: {client, []}
 end

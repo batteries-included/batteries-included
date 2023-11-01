@@ -17,7 +17,7 @@ defmodule CommonCore.Actions.SSOClient do
   end
   ```
 
-  See the documentation for `__using__/1` and `CommonCore.Actions.SSOClient.Client.configure_client/3` for additional details.
+  See the documentation for `__using__/1` and `CommonCore.Actions.SSOClient.ClientConfigurator.configure_client/3` for additional details.
   """
 
   alias CommonCore.Actions.FreshGeneratedAction
@@ -33,10 +33,10 @@ defmodule CommonCore.Actions.SSOClient do
     standardFlowEnabled webOrigins
   )a
 
-  defmodule Client do
+  defmodule ClientConfigurator do
     @moduledoc false
     @type f :: (SystemBattery.t(), StateSummary.t(), ClientRepresentation.t() -> {ClientRepresentation.t(), keyword()})
-    @callback configure_client(
+    @callback configure(
                 SystemBattery.t(),
                 StateSummary.t(),
                 ClientRepresentation.t()
@@ -53,14 +53,14 @@ defmodule CommonCore.Actions.SSOClient do
   defp module_setup(_opts) do
     quote do
       @behaviour CommonCore.Actions.ActionGenerator
-      @behaviour unquote(__MODULE__.Client)
+      @behaviour unquote(__MODULE__.ClientConfigurator)
 
       import unquote(__MODULE__)
 
       alias CommonCore.Batteries.SystemBattery
       alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
       alias CommonCore.StateSummary
-      alias unquote(__MODULE__.Client)
+      alias unquote(__MODULE__.ClientConfigurator)
     end
   end
 
@@ -81,7 +81,7 @@ defmodule CommonCore.Actions.SSOClient do
     quote do
       @impl CommonCore.Actions.ActionGenerator
       def materialize(%SystemBattery{} = system_battery, %StateSummary{} = state_summary) do
-        [generate_client_action(system_battery, state_summary, client_name(), &configure_client/3)]
+        [generate_client_action(system_battery, state_summary, client_name(), &configure/3)]
       end
 
       defoverridable materialize: 2
@@ -91,9 +91,9 @@ defmodule CommonCore.Actions.SSOClient do
   @doc """
   Called by `materialize/2` to determine the client desired state and what action may be needed to bring actual to desired.
 
-  Uses an implementation of `CommonCore.Actions.SSOClient.Client` to delegate client desired state definition to each battery.
+  Uses an implementation of `CommonCore.Actions.SSOClient.ClientConfigurator` to delegate client desired state definition to each battery.
   """
-  @spec generate_client_action(SystemBattery.t(), StateSummary.t(), String.t(), Client.f()) ::
+  @spec generate_client_action(SystemBattery.t(), StateSummary.t(), String.t(), ClientConfigurator.f()) ::
           FreshGeneratedAction.t() | nil
   def generate_client_action(
         %SystemBattery{id: battery_id, type: battery_type} = battery,
