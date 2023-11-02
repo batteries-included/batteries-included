@@ -83,6 +83,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
                   "--skip-jwt-bearer-tokens=true",
                   "--skip-provider-button=true",
                   "--ssl-insecure-skip-verify=true",
+                  "--insecure-oidc-allow-unverified-email=true",
                   "--standard-logging=true"
                 ],
                 "env" => build_env(battery, state),
