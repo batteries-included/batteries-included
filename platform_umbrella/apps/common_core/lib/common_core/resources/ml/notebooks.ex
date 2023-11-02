@@ -1,7 +1,8 @@
 defmodule CommonCore.Resources.Notebooks do
   @moduledoc false
-  use CommonCore.Resources.ResourceGenerator, app_name: "juypter-notebooks"
+  use CommonCore.Resources.ResourceGenerator, app_name: "jupyter-notebooks"
 
+  import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
@@ -22,13 +23,16 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.app_labels(@app_name)
   end
 
-  resource(:virtual_service, _battery, state) do
+  resource(:virtual_service, battery, state) do
     namespace = ml_namespace(state)
+    host = notebooks_host(state)
 
     virtual_service =
-      Enum.reduce(state.notebooks, VirtualService.new!(hosts: [notebooks_host(state)]), fn nb, vs ->
+      state.notebooks
+      |> Enum.reduce(VirtualService.new!(hosts: [host]), fn nb, vs ->
         V.prefix(vs, base_url(nb), service_name(nb), @container_port)
       end)
+      |> V.prefix(prefix(battery, state), fully_qualified_service_name(battery, state), port(battery, state))
 
     :istio_virtual_service
     |> B.build_resource()
@@ -115,4 +119,46 @@ defmodule CommonCore.Resources.Notebooks do
   def service_name(notebook), do: "notebook-#{notebook.name}"
 
   def base_url(notebook), do: "/#{notebook.name}"
+
+  resource(:istio_request_auth, _battery, state) do
+    namespace = ml_namespace(state)
+
+    keycloak_root = "http://#{keycloak_host(state)}"
+    workload_root = "#{keycloak_root}/realms/#{CommonCore.Defaults.Keycloak.realm_name()}"
+
+    spec =
+      %{}
+      |> Map.put("jwtRules", [
+        %{
+          "issuer" => workload_root,
+          "jwksUri" => "#{workload_root}/protocol/openid-connect/certs"
+        }
+      ])
+      |> B.match_labels_selector(@app_name)
+
+    :istio_request_auth
+    |> B.build_resource()
+    |> B.name("#{@app_name}-keycloak-auth")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :sso)
+  end
+
+  resource(:istio_auth_policy, battery, state) do
+    namespace = ml_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("action", "CUSTOM")
+      |> Map.put("provider", %{"name" => extension_name(battery, state)})
+      |> Map.put("rules", [%{"to" => [%{"operation" => %{"hosts" => [notebooks_host(state)]}}]}])
+      |> B.match_labels_selector(@app_name)
+
+    :istio_auth_policy
+    |> B.build_resource()
+    |> B.name("#{@app_name}-require-keycloak-auth")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :sso)
+  end
 end

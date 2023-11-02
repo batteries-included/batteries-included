@@ -21,10 +21,14 @@ defmodule CommonCore.Resources.ProxyUtils do
     "#{battery_type |> Atom.to_string() |> sanitize()}-ext-authz-http"
   end
 
+  def extension_name(_, _), do: nil
+
   @spec service_name(SystemBattery.t(), StateSummary.t()) :: String.t()
   def service_name(%SystemBattery{type: battery_type} = _battery, %StateSummary{} = _state) do
     "oauth2-proxy-#{battery_type |> Atom.to_string() |> sanitize()}"
   end
+
+  def service_name(_, _), do: nil
 
   @spec fully_qualified_service_name(SystemBattery.t(), StateSummary.t()) :: String.t()
   def fully_qualified_service_name(%SystemBattery{} = battery, %StateSummary{} = state) do
@@ -33,8 +37,10 @@ defmodule CommonCore.Resources.ProxyUtils do
     "#{svc}.#{namespace}.svc.cluster.local"
   end
 
+  def fully_qualified_service_name(_, _), do: nil
+
   @spec prefix(SystemBattery.t(), StateSummary.t()) :: String.t()
-  def prefix(%SystemBattery{} = _battery, %StateSummary{} = _state) do
+  def prefix(_, _) do
     "/oauth2"
   end
 
@@ -42,6 +48,8 @@ defmodule CommonCore.Resources.ProxyUtils do
   def cookie_secret(%SystemBattery{config: battery_config} = _battery, %StateSummary{} = _state) do
     battery_config.cookie_secret
   end
+
+  def cookie_secret(_, _), do: nil
 
   @spec sanitize(String.t()) :: String.t()
   def sanitize(s) do
