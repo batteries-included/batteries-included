@@ -119,7 +119,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
         <:item title="Name"><%= @realm.realm %></:item>
       </.data_list>
     </.panel>
-    <.panel class="mt-5" title="Users">
+    <.panel class="mt-5" title="Clients">
       <.keycloak_clients_table clients={@clients} />
     </.panel>
     <.panel class="mt-5" title="Users">
