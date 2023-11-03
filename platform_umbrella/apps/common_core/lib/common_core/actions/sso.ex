@@ -22,9 +22,15 @@ defmodule CommonCore.Actions.SSO do
         action: :create,
         type: :realm,
         realm: nil,
+        # Keycloak RealmRepresentation
         value: %{
+          # The realm name is an identifier for the realm and cannot be changed.
           realm: realm_name,
+          # The display name for the realm.
           displayName: "Batteries Included",
+          # Allows users to click the remember me checkbox.
+          rememberMe: true,
+          social: false,
           enabled: true
         }
       }
