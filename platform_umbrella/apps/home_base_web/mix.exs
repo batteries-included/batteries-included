@@ -42,7 +42,7 @@ defmodule HomeBaseWeb.MixProject do
   defp deps do
     [
       {:common_ui, in_umbrella: true},
-      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:floki, "~> 0.35", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},
       {:heroicons, "~> 0.5"},

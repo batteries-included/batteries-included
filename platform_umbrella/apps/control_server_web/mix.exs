@@ -46,7 +46,7 @@ defmodule ControlServerWeb.MixProject do
       {:common_ui, in_umbrella: true},
       {:control_server, in_umbrella: true},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:floki, "~> 0.35", only: [:dev, :test, :integration], override: true},
       {:gettext, "~> 0.20"},
