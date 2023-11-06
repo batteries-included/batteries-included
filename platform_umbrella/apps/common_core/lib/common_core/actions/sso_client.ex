@@ -84,7 +84,10 @@ defmodule CommonCore.Actions.SSOClient do
         [generate_client_action(system_battery, state_summary, client_name(), &configure/3)]
       end
 
-      defoverridable materialize: 2
+      @impl CommonCore.Actions.SSOClient.ClientConfigurator
+      def configure(_battery, _state, client), do: {client, []}
+
+      defoverridable materialize: 2, configure: 3
     end
   end
 
