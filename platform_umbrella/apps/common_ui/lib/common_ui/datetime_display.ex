@@ -17,6 +17,16 @@ defmodule CommonUI.DatetimeDisplay do
     """
   end
 
-  defp full(time), do: Timex.format!(time, "{ISO:Extended}")
-  defp relative(time), do: Timex.format!(time, "{relative}", :relative)
+  defp full(time), do: time |> ensure_datetime() |> Timex.format!("{ISO:Extended}")
+  defp relative(time), do: time |> ensure_datetime() |> Timex.format!("{relative}", :relative)
+
+  defp ensure_datetime(time) when is_binary(time) do
+    case Timex.parse(time, "{ISO:Extended}") do
+      {:ok, parsed} -> parsed
+      _ -> DateTime.utc_now()
+    end
+  end
+
+  defp ensure_datetime(nil), do: DateTime.utc_now()
+  defp ensure_datetime(time), do: time
 end

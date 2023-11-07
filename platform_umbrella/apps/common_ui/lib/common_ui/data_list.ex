@@ -2,6 +2,8 @@ defmodule CommonUI.DataList do
   @moduledoc false
   use CommonUI.Component
 
+  import CommonUI.Container
+
   @doc """
   Renders a data list.
 
@@ -47,7 +49,7 @@ defmodule CommonUI.DataList do
 
   def data_pills(assigns) do
     ~H"""
-    <dl class="flex gap-4" {@rest}>
+    <dl class="flex gap-4 lg:gap-6" {@rest}>
       <div
         :for={item <- @item}
         class="flex gap-2 px-6 py-4 border border_gray-400 dark:border-gray-600 rounded-xl"
@@ -73,6 +75,7 @@ defmodule CommonUI.DataList do
         <:item title="Views"><%= @post.views %></:item>
       </.data_horizontal_bordered>
   """
+  attr :class, :string, default: ""
 
   slot :item, required: true do
     attr :title, :string, required: true
@@ -80,14 +83,17 @@ defmodule CommonUI.DataList do
 
   def data_horizontal_bordered(assigns) do
     ~H"""
-    <div class="py-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700">
+    <div class={[
+      "py-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700",
+      @class
+    ]}>
       <div class="flex text-sm font-light divide-x divide-gray-300 dark:divide-gray-700">
-        <div :for={item <- @item} class="px-4">
+        <.flex :for={item <- @item} gaps={6} class="px-3">
           <span class="tracking-tighter text-gray-500 dark:text-gray-400"><%= item.title %>:</span>
           <span class="tracking-tighter text-black dark:text-white">
             <%= render_slot(item) %>
           </span>
-        </div>
+        </.flex>
       </div>
     </div>
     """

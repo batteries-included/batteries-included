@@ -15,7 +15,6 @@ defmodule ControlServerWeb.Integration.PostgrestTest do
     |> assert_text("Postgres Cluster")
     # Make sure that this page has the kubenetes elements
     |> assert_text("Pods")
-    |> assert_text("Services")
     # Assert that we are on the correct cluster show page
     |> assert_text(cluster_name)
 

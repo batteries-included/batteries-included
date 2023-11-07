@@ -104,6 +104,8 @@ defmodule ControlServerWeb.Router do
     live "/new", Live.PostgresNew, :new
     live "/:id/edit", Live.PostgresEdit, :edit
     live "/:id/show", Live.PostgresShow, :show
+    live "/:id/users", Live.PostgresShow, :users
+    live "/:id/services", Live.PostgresShow, :services
   end
 
   scope "/ceph", ControlServerWeb do

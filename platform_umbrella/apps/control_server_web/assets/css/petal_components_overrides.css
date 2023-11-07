@@ -19,7 +19,7 @@
 }
 
 .pc-button--md {
-  @apply px-10 py-2.5 text-sm leading-5 w-40 min-w-fit;
+  @apply px-8 py-2.5 text-sm leading-5 w-40 min-w-fit;
 }
 
 .pc-button--light {

@@ -8,9 +8,19 @@ defmodule ControlServer.Factory do
   use ExMachina.Ecto, repo: ControlServer.Repo
 
   alias CommonCore.Notebooks.JupyterLabNotebook
+  alias CommonCore.Postgres
   alias CommonCore.Rook.CephCluster
   alias CommonCore.Rook.CephFilesystem
   alias CommonCore.Rook.CephStorageNode
+
+  def postgres_cluster_factory do
+    %Postgres.Cluster{
+      name: sequence("postgres_cluster-"),
+      num_instances: sequence(:num_instances, [1, 2, 5]),
+      storage_size: 500 * 1024 * 1024,
+      storage_class: "default"
+    }
+  end
 
   def kube_notebook_factory do
     %JupyterLabNotebook{}

@@ -439,9 +439,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           />
 
           <.flex class="justify-end">
-            <PC.button phx-target={@myself} phx-click="close_modal" type="button" color="light">
+            <.button phx-target={@myself} phx-click="close_modal">
               Cancel
-            </PC.button>
+            </.button>
             <PC.button>Add copy</PC.button>
           </.flex>
         </.form>
@@ -502,9 +502,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           </.grid>
 
           <.flex class="justify-end">
-            <PC.button phx-target={@myself} phx-click="close_modal" type="button" color="light">
+            <.button phx-target={@myself} phx-click="close_modal">
               Cancel
-            </PC.button>
+            </.button>
             <PC.button>Add user</PC.button>
           </.flex>
         </.form>
