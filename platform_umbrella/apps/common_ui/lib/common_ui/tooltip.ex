@@ -58,13 +58,19 @@ defmodule CommonUI.Tooltip do
 
   def hover_tooltip(assigns) do
     ~H"""
-    <div class={build_class(["group relative", @class])} {@rest}>
+    <div class={build_class(["group/hover-tooltip relative", @class])} {@rest}>
       <div
         class={
           build_class([
-            "invisible group-hover:visible group-focus-within:visible",
+            # The tooltip is hidden by default and is shown when the user hovers over the element
+            "invisible",
+            # Group hover and focus within are used to show the tooltip when the user hovers
+            "group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible",
+            # Move the tooltip up and over
             "absolute -translate-x-1 -translate-y-full",
-            "rounded-md shadow-sm bg-gray-100 bg-opacity-95 p-2"
+            "rounded-md shadow-md p-2",
+            "bg-white/90 text-gray-800",
+            "dark:bg-gray-700/90 dark:text-white"
           ])
         }
         role="tooltip"
