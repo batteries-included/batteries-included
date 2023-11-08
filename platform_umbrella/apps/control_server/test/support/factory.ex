@@ -9,16 +9,38 @@ defmodule ControlServer.Factory do
 
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres
+  alias CommonCore.Redis.FailoverCluster
   alias CommonCore.Rook.CephCluster
   alias CommonCore.Rook.CephFilesystem
   alias CommonCore.Rook.CephStorageNode
 
+  def postgres_user_factory do
+    %Postgres.PGUser{
+      username: sequence("postgres_cluster-"),
+      password: sequence("postgres_password-"),
+      roles: ["login"]
+    }
+  end
+
   def postgres_cluster_factory do
+    user_one = build(:postgres_user)
+    user_two = build(:postgres_user)
+
     %Postgres.Cluster{
       name: sequence("postgres_cluster-"),
       num_instances: sequence(:num_instances, [1, 2, 5]),
       storage_size: 500 * 1024 * 1024,
-      storage_class: "default"
+      storage_class: "default",
+      users: [user_one, user_two]
+    }
+  end
+
+  def redis_cluster_factory do
+    %FailoverCluster{
+      name: sequence("redis-cluster-"),
+      num_redis_instances: sequence(:num_redis_instances, [1, 2, 3, 4, 5, 9]),
+      num_sentinel_instances: sequence(:num_sentinel_instances, [1, 2, 3, 4, 5, 9]),
+      type: sequence(:redis_type, [:standard, :internal])
     }
   end
 

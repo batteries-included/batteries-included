@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.ControlServerFactory do
+defmodule CommonCore.Factory do
   @moduledoc """
 
   Factory for creating db represenetions needed in kube_resources

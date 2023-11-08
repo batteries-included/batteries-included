@@ -1,7 +1,7 @@
 defmodule CommonCore.Resources.MLTest do
   use ExUnit.Case
 
-  import CommonCore.Resources.ControlServerFactory
+  import CommonCore.Factory
 
   alias CommonCore.Resources.Notebooks
   alias CommonCore.StateSummary

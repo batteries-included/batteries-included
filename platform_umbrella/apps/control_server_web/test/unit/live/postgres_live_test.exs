@@ -176,4 +176,40 @@ defmodule ControlServerWeb.PostgresLiveTest do
       assert html =~ CommonCore.Util.Memory.format_bytes(cluster.storage_size, true)
     end
   end
+
+  describe "postgres show page" do
+    import ControlServer.Factory
+
+    alias CommonCore.ResouceFactory
+    alias CommonCore.Resources.Builder, as: B
+    alias CommonCore.Resources.FieldAccessors
+    alias KubeServices.KubeState.Runner
+
+    @kube_table_name :default_state_table
+
+    defp create_cluster(_) do
+      cluster = insert(:postgres_cluster)
+
+      # Add a pod that's owned by this cluster
+      pod = :pod |> ResouceFactory.build() |> B.add_owner(cluster)
+
+      Runner.add(@kube_table_name, pod)
+
+      on_exit(fn ->
+        Runner.delete(@kube_table_name, pod)
+      end)
+
+      %{cluster: cluster, pod: pod}
+    end
+
+    setup [:create_cluster]
+
+    test "show cluster page", %{conn: conn, cluster: cluster, pod: pod} do
+      conn
+      |> start(~p"/postgres/#{cluster.id}/show")
+      |> assert_html("Postgres Cluster: ")
+      |> assert_html(cluster.name)
+      |> assert_html(FieldAccessors.name(pod))
+    end
+  end
 end
