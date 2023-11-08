@@ -1,0 +1,18 @@
+defmodule ControlServer.ClusterFixtures do
+  @moduledoc false
+  def cluster_fixture(override_attrs \\ %{}) do
+    {:ok, cluster} =
+      override_attrs
+      |> Enum.into(%{
+        name: Ecto.UUID.generate(),
+        num_instances: 3,
+        virtual_size: "small",
+        type: :standard,
+        users: [%{username: "userone", roles: ["superuser"]}],
+        databases: [%{name: "maindata", owner: "userone"}]
+      })
+      |> ControlServer.Postgres.create_cluster()
+
+    Map.put(cluster, :virtual_size, nil)
+  end
+end

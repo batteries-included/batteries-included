@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.DeployementLiveTest do
   use ControlServerWeb.ConnCase
 
   import CommonCore.Resources.FieldAccessors
-  import ControlServerWeb.ResourceFixtures
+  import ControlServer.ResourceFixtures
   import Phoenix.LiveViewTest
 
   alias KubeServices.KubeState.Runner

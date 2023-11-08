@@ -45,7 +45,7 @@ defmodule CommonUI.Card do
   def panel(assigns) do
     ~H"""
     <div class={[get_classes(@variant), @class]} {@rest}>
-      <div class="flex items-center justify-between w-full p-6 text-center">
+      <div :if={@title} class="flex items-center justify-between w-full p-6 text-center">
         <.h3><%= @title %></.h3>
 
         <%= if render_slot(@top_right) do %>
@@ -65,6 +65,6 @@ defmodule CommonUI.Card do
   defp get_classes("gray"), do: "bg-gray-50 rounded-lg dark:bg-gray-800"
 
   defp panel_body_class(true, _title), do: ""
-  defp panel_body_class(false, []), do: "p-6"
+  defp panel_body_class(false, nil), do: "p-6"
   defp panel_body_class(false, _title), do: "px-6 pb-6"
 end

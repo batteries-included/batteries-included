@@ -32,6 +32,8 @@ defmodule ControlServer.PostgresTest do
         |> Postgres.create_cluster()
 
       cluster
+      |> Map.put(:virtual_size, nil)
+      |> Map.put(:virtual_storage_size_range_value, nil)
     end
 
     test "list_clusters/0 returns all clusters" do

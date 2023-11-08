@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ResourceFixtures do
+defmodule ControlServer.ResourceFixtures do
   @moduledoc false
   def resource_fixture(override_attrs \\ %{}) do
     defaults = %{
@@ -14,7 +14,7 @@ defmodule ControlServerWeb.ResourceFixtures do
     # Different resources have different API versions:
     attrs =
       cond do
-        attrs.kind in ["Pod", "Service", "Node"] ->
+        attrs.kind in ["Pod", "Service", "Node", "Namespace"] ->
           Map.put(attrs, :api_version, "v1")
 
         attrs.kind in ["Deployment", "StatefulSet"] ->

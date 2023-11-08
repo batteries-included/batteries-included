@@ -26,6 +26,7 @@ defmodule ControlServerWeb.ConnCase do
 
       import ControlServerWeb.ConnCase
       import Phoenix.ConnTest
+      import Phoenix.LiveViewTest
       import Plug.Conn
 
       # The default endpoint for testing

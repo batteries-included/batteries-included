@@ -32,6 +32,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:storage_size_editable, false)}
   end
 
+  @impl Phoenix.LiveComponent
   def handle_event("close_modal", _, socket) do
     {:noreply, assign(socket, pg_user_form: nil, pg_credential_copy_form: nil)}
   end
@@ -112,11 +113,15 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     end
   end
 
-  def handle_event("del:credential_copy", %{"idx" => idx}, %{assigns: %{form: %{source: changeset}}} = socket) do
+  def handle_event(
+        "del:credential_copy",
+        %{"username" => username, "namespace" => namespace},
+        %{assigns: %{form: %{source: changeset}}} = socket
+      ) do
     credential_copies =
       changeset
       |> Changeset.get_field(:credential_copies, [])
-      |> List.delete_at(String.to_integer(idx))
+      |> Enum.reject(&(&1.username == username && &1.namespace == namespace))
 
     final_changeset = Changeset.put_embed(changeset, :credential_copies, credential_copies)
 
@@ -126,17 +131,32 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(changeset: final_changeset)}
   end
 
-  @impl Phoenix.LiveComponent
   def handle_event("validate", %{"cluster" => cluster_params}, socket) do
     cluster_params = prepare_cluster_params(cluster_params, socket)
-    {changeset, data} = Cluster.validate(cluster_params)
+    {changeset, data} = Cluster.validate(socket.assigns.cluster, cluster_params)
 
     {:noreply,
      socket
-     |> assign(:form, to_form(changeset))
+     |> assign(form: to_form(changeset))
      |> assign(changeset: changeset)
-     |> assign(:possible_owners, possible_owners(changeset))
-     |> assign(:num_instances, data.num_instances)}
+     |> assign(possible_owners: possible_owners(changeset))
+     |> assign(num_instances: data.num_instances)}
+  end
+
+  def handle_event(
+        "on_change_storage_size_range",
+        %{"cluster" => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
+        socket
+      ) do
+    bytes = convert_storage_slider_value_to_bytes(virtual_storage_size_range_value)
+
+    {changeset, _data} =
+      Cluster.validate(socket.assigns.form.source, %{
+        storage_size: bytes,
+        virtual_storage_size_range_value: virtual_storage_size_range_value
+      })
+
+    {:noreply, assign(socket, form: to_form(changeset))}
   end
 
   def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
@@ -155,8 +175,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   # This only happens when the user is manually editing the storage size.
   # In this case, we need to update the range slider and helper text "x GB"
   def handle_event("change_storage_size", %{"cluster" => %{"storage_size" => storage_size}}, socket) do
+    bytes = if storage_size == "", do: 0, else: String.to_integer(storage_size)
+
     virtual_storage_size_range_value =
-      MemorySliderConverter.bytes_to_slider_value(String.to_integer(storage_size))
+      MemorySliderConverter.bytes_to_slider_value(bytes)
 
     form =
       socket.assigns.form.source
@@ -237,10 +259,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         phx-change="validate"
         phx-target={@myself}
       >
-        <.page_header
-          title="New Postgres Cluster"
-          back_button={%{link_type: "live_redirect", to: ~p"/postgres"}}
-        >
+        <.page_header title={@title} back_button={%{link_type: "live_redirect", to: ~p"/postgres"}}>
           <:right_side>
             <PC.button label="Save Cluster" color="dark" phx-disable-with="Saving…" />
           </:right_side>
@@ -330,6 +349,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   min="1"
                   max="120"
                   step="1"
+                  phx-change="on_change_storage_size_range"
                   field={@form[:virtual_storage_size_range_value]}
                   type="range"
                 />
@@ -460,42 +480,49 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           <.grid columns={%{sm: 1, xl: 2}} class="mb-8">
             <.role_option
               field={@pg_user_form[:roles]}
+              value="superuser"
               label="Superuser"
               help_text="A special user account used for system administration"
             />
 
             <.role_option
               field={@pg_user_form[:roles]}
+              value="createdb"
               label="Createdb"
               help_text="This role being defined will be allowed to create new databases"
             />
 
             <.role_option
               field={@pg_user_form[:roles]}
+              value="createrole"
               label="Createrole"
               help_text="A special user account used for system administration"
             />
 
             <.role_option
               field={@pg_user_form[:roles]}
+              value="inherit"
               label="Inherit"
               help_text="A special user account used for system administration"
             />
 
             <.role_option
               field={@pg_user_form[:roles]}
+              value="login"
               label="Login"
               help_text="A special user account used for system administration"
             />
 
             <.role_option
               field={@pg_user_form[:roles]}
+              value="replication"
               label="Replication"
               help_text="A special user account used for system administration"
             />
 
             <.role_option
               field={@pg_user_form[:roles]}
+              value="bypassrls"
               label="Bypassrls"
               help_text="A special user account used for system administration"
             />
@@ -516,7 +543,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   defp prepare_cluster_params(cluster_params, socket) do
     cluster_params
     |> copy_embeds_from_changeset(socket.assigns.form.source)
-    |> convert_storage_slider_value_to_bytes()
     |> add_default_storage_class()
   end
 
@@ -526,19 +552,17 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   defp possible_namespaces,
     do: :namespace |> KubeServices.KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
 
-  defp convert_storage_slider_value_to_bytes(
-         %{"virtual_storage_size_range_value" => virtual_storage_size_range_value} = params
-       )
-       when is_binary(virtual_storage_size_range_value) do
-    bytes =
-      virtual_storage_size_range_value
+  defp convert_storage_slider_value_to_bytes(range_value) when is_binary(range_value) do
+    if range_value == "" do
+      0
+    else
+      range_value
       |> String.to_integer()
       |> MemorySliderConverter.slider_value_to_bytes()
-
-    Map.put(params, "storage_size", Integer.to_string(bytes))
+    end
   end
 
-  defp convert_storage_slider_value_to_bytes(params), do: params
+  defp convert_storage_slider_value_to_bytes(_), do: 1
 
   defp add_default_storage_class(params), do: Map.put_new(params, "storage_class", get_default_storage_class())
 

@@ -2,8 +2,8 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  attr(:phx_target, :any)
-  attr(:users, :list, default: [])
+  attr :phx_target, :any
+  attr :users, :list, default: []
 
   def users_table(assigns) do
     ~H"""
@@ -13,9 +13,10 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           variant="transparent"
           icon={:plus}
           phx-click="toggle_user_modal"
+          type="button"
           phx-target={@phx_target}
         >
-          New User
+          New user
         </.button>
       </:top_right>
 
@@ -30,16 +31,17 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             <%= user.roles |> Enum.join(", ") |> truncate(length: 35) %>
           </:col>
           <:action :let={user}>
-            <PC.icon_button
-              type="button"
+            <.action_icon
+              to="/"
+              icon={:x_mark}
+              id={"delete_user_" <> String.replace(user.username, " ", "")}
               phx-click="del:user"
               phx-value-username={user.username}
               tooltip="Remove"
-              size="xs"
+              link_type="button"
+              type="button"
               phx-target={@phx_target}
-            >
-              <Heroicons.x_mark solid />
-            </PC.icon_button>
+            />
           </:action>
         </.table>
       </div>
@@ -47,8 +49,8 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     """
   end
 
-  attr(:phx_target, :any)
-  attr(:credential_copies, :list, default: [])
+  attr :phx_target, :any
+  attr :credential_copies, :list, default: []
 
   @spec credential_copies_table(map()) :: Phoenix.LiveView.Rendered.t()
   def credential_copies_table(assigns) do
@@ -60,6 +62,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           icon={:plus}
           phx-click="toggle_credential_copy_modal"
           phx-target={@phx_target}
+          type="button"
         >
           New copy
         </.button>
@@ -69,29 +72,33 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         No copies added
       </div>
 
-      <.table :if={@credential_copies != []} rows={@credential_copies}>
-        <:col :let={cc} label="Name"><%= cc.username %></:col>
-        <:action :let={cc}>
-          <PC.icon_button
-            type="button"
-            phx-click="del:credential_copy"
-            phx-value-username={cc.username}
-            phx-value-namespace={cc.namespace}
-            tooltip="Remove"
-            size="xs"
-            phx-target={@phx_target}
-          >
-            <Heroicons.x_mark solid />
-          </PC.icon_button>
-        </:action>
-      </.table>
+      <div :if={@credential_copies != []} class="px-3 pb-6 -mt-3">
+        <.table rows={@credential_copies}>
+          <:col :let={cc} label="Name"><%= cc.username %></:col>
+          <:action :let={cc}>
+            <.action_icon
+              to="/"
+              icon={:x_mark}
+              id={"delete_credential_copy_" <> String.replace("#{cc.namespace}_#{cc.username}", " ", "")}
+              phx-click="del:credential_copy"
+              phx-value-username={cc.username}
+              phx-value-namespace={cc.namespace}
+              tooltip="Remove"
+              link_type="button"
+              type="button"
+              phx-target={@phx_target}
+            />
+          </:action>
+        </.table>
+      </div>
     </.panel>
     """
   end
 
-  attr(:field, :map)
-  attr(:label, :string)
-  attr(:help_text, :string)
+  attr :field, :map, required: true
+  attr :value, :string, required: true
+  attr :label, :string
+  attr :help_text, :string
 
   def role_option(assigns) do
     ~H"""
@@ -106,7 +113,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       </div>
 
       <div>
-        <.switch name={@field.name <> "[]"} value="login" />
+        <.switch name={@field.name <> "[]"} value={@value} />
       </div>
     </div>
     """

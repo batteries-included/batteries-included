@@ -89,7 +89,9 @@ defmodule CommonCore.Postgres.Cluster do
       :virtual_size,
       :virtual_storage_size_range_value
     ])
+    |> maybe_set_virtual_size()
     |> maybe_convert_virtual_size_to_presets()
+    |> maybe_set_storage_size_slider_value()
     |> cast_embed(:users)
     |> cast_embed(:databases)
     |> cast_embed(:credential_copies)
@@ -107,9 +109,9 @@ defmodule CommonCore.Postgres.Cluster do
     |> unique_constraint([:type, :name])
   end
 
-  def validate(params) do
+  def validate(cluster \\ %__MODULE__{}, params) do
     changeset =
-      %__MODULE__{}
+      cluster
       |> changeset(params)
       |> Map.put(:action, :validate)
 
@@ -161,14 +163,40 @@ defmodule CommonCore.Postgres.Cluster do
 
   def get_preset(preset), do: Enum.find(@presets, &(&1.name == preset))
 
+  def maybe_set_virtual_size(changeset) do
+    storage_size = get_field(changeset, :storage_size)
+    virtual_size = get_field(changeset, :virtual_size)
+
+    if storage_size && !virtual_size do
+      put_change(changeset, :virtual_size, calculate_virtual_size(storage_size))
+    else
+      changeset
+    end
+  end
+
   def maybe_convert_virtual_size_to_presets(changeset) do
     convert_virtual_size_to_presets(changeset, get_field(changeset, :virtual_size))
+  end
+
+  defp maybe_set_storage_size_slider_value(changeset) do
+    storage_size = get_field(changeset, :storage_size)
+    virtual_storage_size_range_value = get_field(changeset, :virtual_storage_size_range_value)
+
+    if storage_size && !virtual_storage_size_range_value do
+      put_change(
+        changeset,
+        :virtual_storage_size_range_value,
+        CommonCore.Util.MemorySliderConverter.bytes_to_slider_value(storage_size)
+      )
+    else
+      changeset
+    end
   end
 
   def convert_virtual_size_to_presets(changeset, nil), do: changeset
 
   def convert_virtual_size_to_presets(changeset, "custom") do
-    case get_change(changeset, :storage_size) do
+    case get_field(changeset, :storage_size) do
       nil ->
         # When switching to "custom" in the form, we set some defaults to start with:
         starting_point_preset = get_preset("medium")
@@ -188,6 +216,16 @@ defmodule CommonCore.Postgres.Cluster do
   def convert_virtual_size_to_presets(changeset, virtual_size) do
     preset = get_preset(virtual_size)
     set_preset(changeset, preset)
+  end
+
+  def calculate_virtual_size(storage_size) do
+    case Enum.find(@presets, &(&1.storage_size == storage_size)) do
+      nil ->
+        "custom"
+
+      preset ->
+        preset.name
+    end
   end
 
   defp set_preset(changeset, preset) do

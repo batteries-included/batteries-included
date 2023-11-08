@@ -2,7 +2,7 @@ defmodule ControlServerWeb.ResouceHTMLHelperTest do
   use ControlServerWeb.ConnCase
 
   import CommonCore.Resources.FieldAccessors
-  import ControlServerWeb.ResourceFixtures
+  import ControlServer.ResourceFixtures
   import ControlServerWeb.ResourceHTMLHelper
 
   test "resource_show_path/2" do

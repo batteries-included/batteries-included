@@ -19,12 +19,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
       credential_copies: []
     }
 
-    socket =
-      socket
-      |> assign(current_page: :datastores)
-      |> assign(cluster: cluster)
-
-    {:ok, socket}
+    {:ok, assign(socket, current_page: :datastores, cluster: cluster)}
   end
 
   @impl Phoenix.LiveView
@@ -48,6 +43,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
         cluster={@cluster}
         id="new-cluster-form"
         action={:new}
+        title="New Postgres Cluster"
       />
     </div>
     """

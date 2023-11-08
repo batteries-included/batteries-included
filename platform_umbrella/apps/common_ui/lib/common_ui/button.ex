@@ -63,26 +63,24 @@ defmodule CommonUI.Button do
   defp icon_class(_), do: nil
 
   attr :id, :string, required: true
-  attr :to, :string, required: true
+  attr :class, :string, default: nil
   attr :tooltip, :string, default: nil
   attr :icon, :atom
   attr :link_type, :string, default: "live_redirect"
+  attr :rest, :global, include: ~w(to link_type)
 
   def action_icon(assigns) do
     ~H"""
-    <div>
-      <PC.a id={@id} to={@to} link_type={@link_type} size="xs" class="cursor-pointer">
-        <PC.icon
-          name={@icon}
-          solid
-          class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600"
-        />
-      </PC.a>
-
+    <PC.a id={@id} class={["cursor-pointer", @class]} link_type={@link_type} {@rest} size="xs">
+      <PC.icon
+        name={@icon}
+        solid
+        class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600"
+      />
       <CommonUI.Tooltip.tooltip :if={@tooltip} target_id={@id}>
         <%= @tooltip %>
       </CommonUI.Tooltip.tooltip>
-    </div>
+    </PC.a>
     """
   end
 end

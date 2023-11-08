@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Live.ResourcesListTest do
   use ControlServerWeb.ConnCase
 
-  import ControlServerWeb.ResourceFixtures
+  import ControlServer.ResourceFixtures
   import Phoenix.LiveViewTest
 
   alias KubeServices.KubeState.Runner

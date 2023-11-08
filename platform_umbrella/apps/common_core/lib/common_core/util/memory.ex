@@ -19,6 +19,8 @@ defmodule CommonCore.Util.Memory do
 
   def format_bytes(nil, _), do: nil
 
+  def format_bytes("", smart_rounding), do: format_bytes(0, smart_rounding)
+
   def format_bytes(bytes, smart_rounding) when is_binary(bytes),
     do: format_bytes(String.to_integer(bytes), smart_rounding)
 

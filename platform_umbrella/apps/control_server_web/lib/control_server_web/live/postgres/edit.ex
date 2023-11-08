@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.PostgresEdit do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent
@@ -8,13 +8,8 @@ defmodule ControlServerWeb.Live.PostgresEdit do
   require Logger
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_params(%{"id" => id}, _, socket) do
-    {:noreply, assign(socket, :cluster, Postgres.get_cluster!(id))}
+  def mount(%{"id" => id}, _session, socket) do
+    {:ok, assign(socket, current_page: :datastores, cluster: Postgres.get_cluster!(id))}
   end
 
   @impl Phoenix.LiveView
@@ -25,19 +20,14 @@ defmodule ControlServerWeb.Live.PostgresEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>
-      Edit Postgres
-      <:sub_header><%= @cluster.name %></:sub_header>
-    </.h1>
-    <div>
-      <.live_component
-        module={PostgresFormComponent}
-        cluster={@cluster}
-        id={@cluster.id || "edit-cluster-form"}
-        action={:edit}
-        save_target={self()}
-      />
-    </div>
+    <.live_component
+      module={PostgresFormComponent}
+      cluster={@cluster}
+      id={@cluster.id || "edit-cluster-form"}
+      action={:edit}
+      save_target={self()}
+      title={"Editing #{@cluster.name}"}
+    />
     """
   end
 end
