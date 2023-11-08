@@ -44,8 +44,8 @@ defmodule ControlServer.Factory do
     }
   end
 
-  def kube_notebook_factory do
-    %JupyterLabNotebook{}
+  def jupyter_notebook_factory do
+    %JupyterLabNotebook{name: sequence("kube-notebook-")}
   end
 
   def ceph_storage_node_factory do
