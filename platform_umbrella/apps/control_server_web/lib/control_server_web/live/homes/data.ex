@@ -34,6 +34,9 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="Postgres">
       <:top_right>
         <.flex>
+          <.a navigate={~p"/postgres/new"} variant="styled">
+            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New PostgreSQL
+          </.a>
           <.a navigate={~p"/postgres"}>View All</.a>
         </.flex>
       </:top_right>
@@ -47,6 +50,9 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="Redis">
       <:top_right>
         <.flex>
+          <.a navigate={~p"/redis/new"} variant="styled">
+            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Redis
+          </.a>
           <.a navigate={~p"/redis"}>View All</.a>
         </.flex>
       </:top_right>

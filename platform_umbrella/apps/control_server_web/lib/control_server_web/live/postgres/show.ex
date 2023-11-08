@@ -127,6 +127,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
             </:item>
           </.data_horizontal_bordered>
 
+          <.button>Edit History</.button>
+
           <.flex>
             <PC.icon_button to={edit_url(@cluster)} link_type="live_redirect">
               <Heroicons.pencil solid />
@@ -136,8 +138,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
               <Heroicons.trash />
             </PC.icon_button>
           </.flex>
-
-          <.button>Edit History</.button>
         </.flex>
       </:right_side>
     </.page_header>
