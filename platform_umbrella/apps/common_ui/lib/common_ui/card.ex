@@ -2,7 +2,7 @@ defmodule CommonUI.Card do
   @moduledoc false
   use CommonUI.Component
 
-  import CommonUI.Typogoraphy
+  import CommonUI.Typography
 
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(id)

@@ -3,6 +3,7 @@ defmodule CommonUI.DataList do
   use CommonUI.Component
 
   import CommonUI.Container
+  import CommonUI.Typography
 
   @doc """
   Renders a data list.
@@ -115,6 +116,23 @@ defmodule CommonUI.DataList do
       >
         <%= "#{key}=#{value}" %>
       </div>
+    </div>
+    """
+  end
+
+  attr :data, :list, doc: "data to display. A list of tuples: [{key, value}, {key, value}]"
+  attr :class, :string, default: ""
+  attr :rest, :global
+
+  def data_horizontal_bolded(assigns) do
+    ~H"""
+    <div {@rest} class={["flex justify-between", @class]}>
+      <.flex :for={{key, value} <- @data} class="items-center justify-center">
+        <PC.form_label class="!mb-0" label={key} />
+        <.h5 class="font-semibold">
+          <%= value %>
+        </.h5>
+      </.flex>
     </div>
     """
   end

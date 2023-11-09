@@ -275,26 +275,17 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             />
           </.grid>
 
-          <div :if={@form[:virtual_size].value != "custom"} class="flex justify-between mt-3 mb-5">
-            <.flex class="items-center justify-center">
-              <PC.form_label class="!mb-0" label="Storage size:" />
-              <PC.h5 class="font-semibold">
-                <%= @form[:storage_size].value |> Memory.format_bytes(true) || "0GB" %>
-              </PC.h5>
-            </.flex>
-            <.flex class="items-center justify-center">
-              <PC.form_label class="!mb-0" label="Memory limits:" />
-              <PC.h5 class="font-semibold">
-                <%= @form[:memory_limits].value |> Memory.format_bytes(true) %>
-              </PC.h5>
-            </.flex>
-            <.flex class="items-center justify-center">
-              <PC.form_label class="!mb-0" label="CPU limits:" />
-              <PC.h5 class="font-semibold"><%= @form[:cpu_limits].value %></PC.h5>
-            </.flex>
-          </div>
+          <.data_horizontal_bolded
+            :if={@form[:virtual_size].value != "custom"}
+            class="mt-3 mb-5"
+            data={[
+              {"Storage size:", @form[:storage_size].value |> Memory.format_bytes(true) || "0GB"},
+              {"Memory limits:", @form[:memory_limits].value |> Memory.format_bytes(true)},
+              {"CPU limits:", @form[:cpu_limits].value}
+            ]}
+          />
 
-          <.grid :if={@form[:virtual_size].value == "custom"} columns="1" class="mb-5">
+          <div :if={@form[:virtual_size].value == "custom"} class="mb-5">
             <PC.h3>Storage</PC.h3>
             <.grid>
               <div>
@@ -391,14 +382,14 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                 />
               </div>
             </.grid>
-          </.grid>
+          </div>
 
           <.flex class="justify-between w-full py-5 border-t border-gray-300 dark:border-gray-600">
           </.flex>
 
           <.flex class="items-center">
             <.flex class="justify-between w-full lg:w-1/2">
-              <PC.h5>Number of instances</PC.h5>
+              <.h5>Number of instances</.h5>
               <div class="font-bold text-4xl text-primary-500"><%= @num_instances %></div>
             </.flex>
             <.flex class="w-full lg:w-1/2">
@@ -434,108 +425,15 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         </.grid>
       </.form>
 
-      <PC.modal
-        :if={@pg_credential_copy_form}
-        id="credential_copy_modal"
-        max_width="lg"
-        title="New Copy Of Credentials"
-        close_modal_target={@myself}
-      >
-        <.form for={@pg_credential_copy_form} phx-submit="add:credential_copy" phx-target={@myself}>
-          <PC.field
-            field={@pg_credential_copy_form[:username]}
-            type="select"
-            options={@possible_owners}
-          />
-          <PC.field
-            field={@pg_credential_copy_form[:namespace]}
-            type="select"
-            options={@possible_namespaces}
-          />
-          <PC.field
-            field={@pg_credential_copy_form[:format]}
-            type="select"
-            options={PGCredentialCopy.possible_formats()}
-          />
+      <.user_form_modal phx_target={@myself} user_form={@pg_user_form} />
 
-          <.flex class="justify-end">
-            <.button phx-target={@myself} phx-click="close_modal">
-              Cancel
-            </.button>
-            <PC.button>Add copy</PC.button>
-          </.flex>
-        </.form>
-      </PC.modal>
-
-      <PC.modal
-        :if={@pg_user_form}
-        id="user_modal"
-        max_width="lg"
-        title="Add user"
-        close_modal_target={@myself}
-      >
-        <.form for={@pg_user_form} phx-submit="add:user" phx-target={@myself}>
-          <PC.field field={@pg_user_form[:username]} label="User Name" />
-          <PC.h3 class="!mt-8 !mb-6 !text-gray-500">Roles</PC.h3>
-          <.grid columns={%{sm: 1, xl: 2}} class="mb-8">
-            <.role_option
-              field={@pg_user_form[:roles]}
-              value="superuser"
-              label="Superuser"
-              help_text="A special user account used for system administration"
-            />
-
-            <.role_option
-              field={@pg_user_form[:roles]}
-              value="createdb"
-              label="Createdb"
-              help_text="This role being defined will be allowed to create new databases"
-            />
-
-            <.role_option
-              field={@pg_user_form[:roles]}
-              value="createrole"
-              label="Createrole"
-              help_text="A special user account used for system administration"
-            />
-
-            <.role_option
-              field={@pg_user_form[:roles]}
-              value="inherit"
-              label="Inherit"
-              help_text="A special user account used for system administration"
-            />
-
-            <.role_option
-              field={@pg_user_form[:roles]}
-              value="login"
-              label="Login"
-              help_text="A special user account used for system administration"
-            />
-
-            <.role_option
-              field={@pg_user_form[:roles]}
-              value="replication"
-              label="Replication"
-              help_text="A special user account used for system administration"
-            />
-
-            <.role_option
-              field={@pg_user_form[:roles]}
-              value="bypassrls"
-              label="Bypassrls"
-              help_text="A special user account used for system administration"
-            />
-          </.grid>
-
-          <.flex class="justify-end">
-            <.button phx-target={@myself} phx-click="close_modal">
-              Cancel
-            </.button>
-            <PC.button>Add user</PC.button>
-          </.flex>
-        </.form>
-      </PC.modal>
+      <.credential_copy_form_modal
+        phx_target={@myself}
+        credential_copy_form={@pg_credential_copy_form}
+        possible_owners={@possible_owners}
+        possible_namespaces={@possible_namespaces}
+        possible_formats={PGCredentialCopy.possible_formats()}
+      />
     </div>
     """
   end

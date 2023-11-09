@@ -3,7 +3,7 @@ defmodule CommonUI.Stats do
   use CommonUI.Component
 
   import CommonUI.Card
-  import CommonUI.Typogoraphy
+  import CommonUI.Typography
 
   def stats(assigns) do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)

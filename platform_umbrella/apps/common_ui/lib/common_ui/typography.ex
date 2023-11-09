@@ -1,4 +1,4 @@
-defmodule CommonUI.Typogoraphy do
+defmodule CommonUI.Typography do
   @moduledoc false
   use CommonUI.Component
 
@@ -82,18 +82,7 @@ defmodule CommonUI.Typogoraphy do
     """
   end
 
-  attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-lg leading-6 font-normal"
-  slot :inner_block, required: true
-  attr :rest, :global
-
-  def h5(assigns) do
-    ~H"""
-    <h4 class={build_class([@base_class, @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
-    </h4>
-    """
-  end
+  defdelegate h5(assigns), to: PC
 
   attr :rest, :global
   attr :class, :string, default: nil

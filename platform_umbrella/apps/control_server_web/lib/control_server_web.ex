@@ -102,6 +102,7 @@ defmodule ControlServerWeb do
       # Core UI components and translation
       # import ControlServerWeb.CoreComponents
       use CommonUI
+      use ControlServerWeb.Common
 
       import ControlServerWeb.Gettext
       import Phoenix.HTML
