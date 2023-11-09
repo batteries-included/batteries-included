@@ -17,6 +17,8 @@ defmodule CommonCore.Batteries.KubeMonitoringConfig do
   typed_embedded_schema do
     field :kube_state_metrics_image, :string, default: Defaults.Images.kube_state_metrics_image()
     field :node_exporter_image, :string, default: Defaults.Images.node_exporter_image()
+    field :metrics_server_image, :string, default: Defaults.Images.metrics_server_image()
+    field :addon_resizer_image, :string, default: Defaults.Images.addon_resizer_image()
   end
 
   def changeset(struct, params \\ %{}) do

@@ -28,6 +28,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.Loki
   alias CommonCore.Resources.MetalLB
   alias CommonCore.Resources.MetalLBPools
+  alias CommonCore.Resources.MetricsServer
   alias CommonCore.Resources.NodeExporter
   alias CommonCore.Resources.Notebooks
   alias CommonCore.Resources.Promtail
@@ -60,7 +61,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     kiali: [Kiali],
     knative_operator: [KnativeOperator],
     knative_serving: [KnativeServing],
-    kube_monitoring: [KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
+    kube_monitoring: [MetricsServer, KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
     loki: [Loki],
     metallb: [MetalLB, MetalLBPools],
     notebooks: [Notebooks],

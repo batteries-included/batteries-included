@@ -1,6 +1,7 @@
 defmodule CommonCore.ApiVersionKind do
   @moduledoc false
   @known [
+    api_service: {"apiregistration.k8s.io/v1", "APIService"},
     event: {"v1", "Event"},
     namespace: {"v1", "Namespace"},
     pod: {"v1", "Pod"},

@@ -20,6 +20,8 @@ defmodule CommonCore.Defaults.Images do
   def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.6.1"
   def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.10.0"
   def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.26.0"
+  def metrics_server_image, do: "registry.k8s.io/metrics-server/metrics-server:v0.6.4"
+  def addon_resizer_image, do: "registry.k8s.io/autoscaling/addon-resizer:1.8.19"
 
   def promtail_image, do: "grafana/promtail:2.8.6"
   def loki_image, do: "grafana/loki:2.8.6"
