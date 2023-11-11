@@ -6,10 +6,13 @@ defmodule ControlServerWeb.Live.MagicHome do
   import ControlServerWeb.UmbrellaSnapshotsTable
 
   alias ControlServer.SnapshotApply.Umbrella
+  alias EventCenter.KubeSnapshot, as: KubeSnapshotEventCenter
   alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
+    :ok = KubeSnapshotEventCenter.subscribe()
+
     {:ok, socket |> assign_snapshots() |> assign_batteries()}
   end
 
@@ -20,6 +23,17 @@ defmodule ControlServerWeb.Live.MagicHome do
   def assign_snapshots(socket) do
     snaps = Umbrella.latest_umbrella_snapshots()
     assign(socket, :snapshots, snaps)
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, socket |> assign_snapshots() |> assign_batteries()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("start-deploy", _params, socket) do
+    _ = KubeServices.SnapshotApply.Worker.start()
+    {:noreply, socket}
   end
 
   defp battery_link_panel(%{battery: %{type: :timeline}} = assigns) do
@@ -73,6 +87,9 @@ defmodule ControlServerWeb.Live.MagicHome do
       <.panel title="Deploys">
         <:top_right>
           <.flex>
+            <.a phx-click="start-deploy" variant="styled">
+              <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" />Start Deploy
+            </.a>
             <.a navigate={~p"/snapshot_apply"}>View All</.a>
           </.flex>
         </:top_right>

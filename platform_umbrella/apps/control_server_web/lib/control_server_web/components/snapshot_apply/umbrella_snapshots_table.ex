@@ -9,7 +9,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
 
   def umbrella_snapshots_table(assigns) do
     ~H"""
-    <.table rows={@snapshots}>
+    <.table rows={@snapshots} row_click={&JS.navigate(show_url(&1))}>
       <:col :let={snapshot} :if={!@abbridged} label="ID">
         <%= snapshot.id %>
       </:col>
@@ -24,9 +24,12 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
         <.keycloak_snapshot snapshot={snapshot.keycloak_snapshot} />
       </:col>
       <:action :let={snapshot}>
-        <.a navigate={~p"/snapshot_apply/#{snapshot.kube_snapshot.id}/show"} variant="styled">
-          Show Deploy
-        </.a>
+        <.action_icon
+          to={show_url(snapshot)}
+          icon={:eye}
+          tooltip="Show deploy"
+          id={"show_deploy_" <> snapshot.id}
+        />
       </:action>
     </.table>
     """
@@ -58,5 +61,9 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
     ~H"""
     <%= @snapshot.status %>
     """
+  end
+
+  defp show_url(%{kube_snapshot: kube_snapshot}) do
+    ~p"/snapshot_apply/#{kube_snapshot.id}/show"
   end
 end

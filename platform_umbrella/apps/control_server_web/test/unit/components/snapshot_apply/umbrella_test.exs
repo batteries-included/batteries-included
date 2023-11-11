@@ -4,14 +4,14 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTableTest do
   import ControlServerWeb.UmbrellaSnapshotsTable
 
   @success_snapshot %{
-    id: 1,
+    id: "success-umbrella-id",
     inserted_at: ~U[2023-02-28 07:00:00Z],
     kube_snapshot: %{id: "kube-snapshot-success-id", status: "Success"},
     keycloak_snapshot: nil
   }
 
   @failure_snapshot %{
-    id: 1,
+    id: "failure-umbrella-id",
     inserted_at: ~U[2023-02-28 07:00:00Z],
     kube_snapshot: %{id: "kube-snapshot-failed-id", status: "Failed"},
     keycloak_snapshot: %{status: "Failed"}

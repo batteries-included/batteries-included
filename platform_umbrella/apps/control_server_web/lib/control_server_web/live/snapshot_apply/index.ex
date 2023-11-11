@@ -37,13 +37,14 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
     <.page_header
       title="Deploys"
       back_button={%{link_type: "live_redirect", to: ~p"/batteries/magic"}}
-    />
-    <.panel title="Status">
-      <:top_right>
+    >
+      <:right_side>
         <.button phx-click="start">
           Start Deploy
         </.button>
-      </:top_right>
+      </:right_side>
+    </.page_header>
+    <.panel title="Status">
       <.umbrella_snapshots_table snapshots={@snapshots} />
     </.panel>
     """
