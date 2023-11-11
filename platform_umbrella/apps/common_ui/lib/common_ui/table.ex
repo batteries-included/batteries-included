@@ -25,7 +25,7 @@ defmodule CommonUI.Table do
 
   def table(assigns) do
     ~H"""
-    <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
+    <div class="px-4 overflow-auto sm:px-0">
       <PC.table id={@id}>
         <thead>
           <PC.tr class={maybe_transparent_class(@transparent)}>

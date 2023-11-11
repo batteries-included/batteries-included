@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.GroupBatteries do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonUI.Modal
   import ControlServerWeb.CatalogBatteriesTable
@@ -183,6 +183,13 @@ defmodule ControlServerWeb.Live.GroupBatteries do
     "#{string_title} Batteries"
   end
 
+  defp group_home_link(:magic), do: ~p"/magic"
+  defp group_home_link(:ml), do: ~p"/ml"
+  defp group_home_link(:data), do: ~p"/data"
+  defp group_home_link(:devtools), do: ~p"/devtools"
+  defp group_home_link(:monitoring), do: ~p"/monitoring"
+  defp group_home_link(:net_sec), do: ~p"/net_sec"
+
   def install_summary(assigns) do
     ~H"""
     <.h3 class="text-astral-800 text-right">Summary</.h3>
@@ -239,10 +246,12 @@ defmodule ControlServerWeb.Live.GroupBatteries do
       install_result={@install_result}
       apply_result={@apply_result}
     />
-    <.h1>
-      Batteries
-      <:sub_header :if={@group != nil && @group != ""}><%= @group %></:sub_header>
-    </.h1>
+
+    <.page_header
+      title={group_title(@group)}
+      back_button={%{link_type: "live_redirect", to: group_home_link(@group)}}
+    />
+
     <.catalog_batteries_table
       catalog_batteries={@catalog_batteries}
       system_batteries={@system_batteries}

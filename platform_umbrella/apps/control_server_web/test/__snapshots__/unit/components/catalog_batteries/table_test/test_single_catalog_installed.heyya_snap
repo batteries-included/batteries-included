@@ -1,4 +1,4 @@
-<div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
+<div class="px-4 overflow-auto sm:px-0">
   <table class="pc-table " id="batteries-table">
   
     <thead>
@@ -20,12 +20,12 @@
   
           Status
         
-</th>
-        <th class="pc-table__th ">
+</th><th class="pc-table__th ">
   
-          <span class="sr-only">Actions</span>
+          Install
         
 </th>
+        
       
 </tr>
     </thead>
@@ -78,18 +78,14 @@
 </div>
   
         
-</td>
-        <td class="pc-table__td w-24">
+</td><td class="pc-table__td ">
   
-          <div class="items-center justify-end hidden gap-2 group-hover:flex">
-            
-              
+          
     
   
-            
-          </div>
         
 </td>
+        
       
 </tr>
     </tbody>

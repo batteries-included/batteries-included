@@ -54,9 +54,9 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
       <:col :let={battery} label="Status">
         <.active_check :if={is_active(@system_batteries, battery.type)} />
       </:col>
-      <:action :let={battery}>
+      <:col :let={battery} label="Install">
         <.start_button :if={!is_active(@system_batteries, battery.type)} battery={battery} />
-      </:action>
+      </:col>
     </.table>
     """
   end
