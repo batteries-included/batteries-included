@@ -14,10 +14,11 @@ defmodule KubeServices.SnapshotApply.Worker do
   require Logger
 
   @me __MODULE__
-  @state_opts [:keycloak_running]
+  @state_opts [:keycloak_running, :running]
 
   typedstruct module: State do
     field :keycloak_running, boolean(), default: false
+    field :running, boolean(), default: true
     field :init_delay, non_neg_integer(), default: 5_000
     field :delay, non_neg_integer(), default: 300_000
   end
@@ -42,6 +43,23 @@ defmodule KubeServices.SnapshotApply.Worker do
     GenServer.call(target, :start)
   end
 
+  @spec set_running(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, boolean()) :: boolean()
+  def set_running(target \\ @me, value) do
+    GenServer.call(target, {:set_running, value})
+  end
+
+  @spec set_running(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: boolean()
+  def get_running(target \\ @me) do
+    # The Worker might not be running because it crashed.
+    # We want that to mean it's not running
+    GenServer.call(target, :get_running)
+  rescue
+    _ -> false
+  catch
+    _ -> false
+    _e, _r -> false
+  end
+
   def set_keycloak_running(target \\ @me, running) do
     GenServer.call(target, {:set_keycloak_running, running})
   end
@@ -49,14 +67,22 @@ defmodule KubeServices.SnapshotApply.Worker do
   @doc """
   Handle the background message sent through `Process.send_after()` for periodic
   """
-  def handle_info(:background, %State{delay: delay} = state) do
-    {:ok, _} = do_start()
+  def handle_info(:background, %State{delay: delay, running: running} = state) do
+    {:ok, _} = do_start(running)
     Process.send_after(self(), :background, delay)
     {:noreply, state}
   end
 
-  def handle_call(:start, _from, state) do
-    {:reply, do_start(), state}
+  def handle_call(:start, _from, %State{running: running} = state) do
+    {:reply, do_start(running), state}
+  end
+
+  def handle_call(:get_running, _from, %State{running: was_running} = state) do
+    {:reply, was_running, state}
+  end
+
+  def handle_call({:set_running, running}, _from, %State{running: was_running} = state) do
+    {:reply, was_running, %State{state | running: running}}
   end
 
   def handle_call({:set_keycloak_running, running}, _from, %State{keycloak_running: was_running} = state) do
@@ -68,7 +94,9 @@ defmodule KubeServices.SnapshotApply.Worker do
     {:noreply, state}
   end
 
-  defp do_start do
+  defp do_start(false), do: {:ok, nil}
+
+  defp do_start(true = _running) do
     # Create the new umbrella snapshot.
     # If that works then schedule a cast immediately to perform snapshot
     case Umbrella.create_umbrella_snapshot(%{}) do

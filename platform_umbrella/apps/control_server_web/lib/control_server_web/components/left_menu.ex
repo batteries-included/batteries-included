@@ -313,7 +313,7 @@ defmodule ControlServerWeb.LeftMenu do
       <.batteries_icon class={@icon_class} />
     </.detail_menu_item>
     <.detail_menu_item
-      navigate={~p"/snapshot_apply"}
+      navigate={~p"/deploy"}
       name="Deploys"
       is_active={@page_detail_type == :kube_snapshots}
     >

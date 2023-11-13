@@ -54,6 +54,14 @@ defmodule ControlServer.SnapshotApply.Umbrella do
   """
   def get_umbrella_snapshot!(id), do: Repo.get!(UmbrellaSnapshot, id)
 
+  def get_loaded_snapshot!(id) do
+    from(us in UmbrellaSnapshot)
+    |> where(id: ^id)
+    |> preload(:kube_snapshot)
+    |> preload(:keycloak_snapshot)
+    |> Repo.one!()
+  end
+
   @doc """
   Creates a umbrella_snapshot.
 

@@ -2,22 +2,28 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.SnapshotApplyAlert
   import ControlServerWeb.UmbrellaSnapshotsTable
 
   alias ControlServer.SnapshotApply.Umbrella
   alias EventCenter.KubeSnapshot, as: KubeSnapshotEventCenter
+  alias KubeServices.SnapshotApply.Worker
 
   require Logger
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = KubeSnapshotEventCenter.subscribe()
-    {:ok, assign_snapshots(socket)}
+    {:ok, socket |> assign_snapshots() |> assign_deploys_running()}
   end
 
   def assign_snapshots(socket) do
     {:ok, {snaps, _}} = Umbrella.paginated_umbrella_snapshots()
     assign(socket, :snapshots, snaps)
+  end
+
+  defp assign_deploys_running(socket) do
+    assign(socket, deploys_running: Worker.get_running())
   end
 
   @impl Phoenix.LiveView
@@ -26,9 +32,21 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("start", _, socket) do
-    _ = KubeServices.SnapshotApply.Worker.start()
-    {:noreply, socket}
+  def handle_event("start-deploy", _params, socket) do
+    _ = Worker.start()
+    {:noreply, assign_snapshots(socket)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("pause-deploy", _params, socket) do
+    _ = Worker.set_running(false)
+    {:noreply, assign_deploys_running(socket)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("resume-deploy", _params, socket) do
+    _ = Worker.set_running(true)
+    {:noreply, assign_deploys_running(socket)}
   end
 
   @impl Phoenix.LiveView
@@ -38,13 +56,14 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
       title="Deploys"
       back_button={%{link_type: "live_redirect", to: ~p"/batteries/magic"}}
     >
-      <:right_side>
-        <.button phx-click="start">
+      <:right_side :if={@deploys_running}>
+        <.button phx-click="start-deploy">
           Start Deploy
         </.button>
       </:right_side>
     </.page_header>
     <.panel title="Status">
+      <.pause_alert :if={!@deploys_running} />
       <.umbrella_snapshots_table snapshots={@snapshots} />
     </.panel>
     """

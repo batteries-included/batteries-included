@@ -14,7 +14,6 @@ defmodule CommonUI do
       import CommonUI.Form
       import CommonUI.LabeledDefiniton
       import CommonUI.Link
-      import CommonUI.Page
       import CommonUI.Table
       import CommonUI.TextHelpers
       import CommonUI.Tooltip

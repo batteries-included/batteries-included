@@ -42,11 +42,13 @@ defmodule ControlServerWeb.Router do
     live "/:id/edit", Live.IPAddressPoolEdit, :index
   end
 
-  scope "/snapshot_apply", ControlServerWeb do
+  scope "/deploy", ControlServerWeb do
     pipe_through :browser
 
     live "/", Live.SnapshotApplyIndex, :index
-    live "/:id/show", Live.KubeSnapshotShow, :index
+    live "/:id/show", Live.UmbrellaSnapshotShow, :index
+    live "/:umbrella_id/kube/:id", Live.KubeSnapshotShow, :index
+    live "/:umbrella_id/keycloak/:id", Live.KeycloakSnapshotShow, :index
   end
 
   scope "/system_batteries", ControlServerWeb do

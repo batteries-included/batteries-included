@@ -1,11 +1,11 @@
-defmodule ControlServerWeb.Live.KubeSnapshotShow do
+defmodule ControlServerWeb.Live.KeycloakSnapshotShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonUI.DatetimeDisplay
-  import ControlServerWeb.ResourcePathsTable
+  import ControlServerWeb.KeycloakActionsTable
 
-  alias ControlServer.SnapshotApply.Kube
+  alias ControlServer.SnapshotApply.Keycloak
   alias Timex
 
   require Logger
@@ -16,18 +16,27 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   end
 
   defp assign_snapshot(socket, id) do
-    assign(socket, :snapshot, Kube.get_preloaded_kube_snapshot!(id))
+    snap = Keycloak.get_preloaded_keycloak_snapshot!(id)
+    assign(socket, :snapshot, snap)
   end
 
   defp assign_umbrella_id(socket, id) do
     assign(socket, :umbrella_id, id)
   end
 
+  defp no_actions(assigns) do
+    ~H"""
+    <.flex class="justify-center">
+      <div class="text-lg underline text-center">No Actions Needed</div>
+    </.flex>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header
-      title="Kubernetes Deploy"
+      title="Keycloak Deploy"
       back_button={%{link_type: "live_redirect", to: ~p(/deploy/#{@umbrella_id}/show)}}
     >
       <:right_side>
@@ -45,8 +54,12 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
       </:right_side>
     </.page_header>
 
-    <.panel title="Path Results">
-      <.resource_paths_table rows={@snapshot.resource_paths} />
+    <.panel title="Action Results">
+      <.keycloak_action_table
+        :if={@snapshot.keycloak_actions != []}
+        rows={@snapshot.keycloak_actions}
+      />
+      <.no_actions :if={@snapshot.keycloak_actions == []} />
     </.panel>
     """
   end

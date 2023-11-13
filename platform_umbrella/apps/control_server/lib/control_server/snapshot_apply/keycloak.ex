@@ -6,6 +6,7 @@ defmodule ControlServer.SnapshotApply.Keycloak do
   import Ecto.Query, warn: false
 
   alias ControlServer.Repo
+  alias ControlServer.SnapshotApply.KeycloakAction
   alias ControlServer.SnapshotApply.KeycloakSnapshot
 
   @doc """
@@ -36,6 +37,31 @@ defmodule ControlServer.SnapshotApply.Keycloak do
 
   """
   def get_keycloak_snapshot!(id), do: Repo.get!(KeycloakSnapshot, id)
+
+  def get_preloaded_keycloak_snapshot!(id) do
+    action_query =
+      from act in KeycloakAction,
+        order_by: act.realm,
+        select: [
+          :is_success,
+          :apply_result,
+          :action,
+          :realm,
+          :id,
+          :inserted_at,
+          :updated_at
+        ]
+
+    query =
+      from key in KeycloakSnapshot,
+        select: key,
+        where: key.id == ^id,
+        preload: [
+          keycloak_actions: ^action_query
+        ]
+
+    Repo.one!(query)
+  end
 
   @doc """
   Creates a keycloak_snapshot.

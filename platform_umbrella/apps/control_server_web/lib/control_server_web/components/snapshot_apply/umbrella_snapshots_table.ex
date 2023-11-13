@@ -63,7 +63,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
     """
   end
 
-  defp show_url(%{kube_snapshot: kube_snapshot}) do
-    ~p"/snapshot_apply/#{kube_snapshot.id}/show"
+  defp show_url(%{id: id}) do
+    ~p"/deploy/#{id}/show"
   end
 end
