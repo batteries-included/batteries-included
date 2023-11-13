@@ -12,6 +12,10 @@
   
           Name
         
+</th><th class="pc-table__th ">
+  
+          Admin
+        
 </th>
         <th class="pc-table__th ">
   
@@ -24,20 +28,17 @@
     <tbody>
       <tr class="pc-table__tr group " id="keycloak-realms-table-idx-0">
   
-        <td class="pc-table__td ">
+        <td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]">
   
           00-00-00-00-00-00
         
-</td><td class="pc-table__td ">
+</td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]">
   
           Keycloak
         
-</td>
-        <td class="pc-table__td w-24">
+</td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]">
   
-          <div class="items-center justify-end hidden gap-2 group-hover:flex">
-            
-              
+          
     <a href="http://keycloak.example.129.99.1.1.ip.batteriesincl.com/admin/master/console" target="_blank" class="font-medium text-pink-600 hover:underline flex">
   <span class="flex-initial">
     Keycloak Admin
@@ -47,12 +48,26 @@
 </svg>
 </a>
   
+        
+</td>
+        <td class="pc-table__td w-24">
+  
+          <div class="items-center justify-end hidden gap-2 group-hover:flex">
             
               
-    <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" class="">
+    <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" id="realm_show_link_00-00-00-00-00-00" size="xs" class="cursor-pointer">
   
-      Show
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+  <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd"/>
+</svg>
+  <div class="hidden" id="tooltip-realm_show_link_00-00-00-00-00-00" phx-hook="Tooltip" data-target="realm_show_link_00-00-00-00-00-00" data-tippy-options="{}">
+  <div>
     
+    Show realm Keycloak
+  
+  </div>
+</div>
+
 </a>
   
             

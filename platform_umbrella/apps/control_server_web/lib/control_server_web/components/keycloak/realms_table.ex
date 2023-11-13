@@ -8,18 +8,21 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
 
   def keycloak_realms_table(%{} = assigns) do
     ~H"""
-    <.table id="keycloak-realms-table" rows={@rows}>
+    <.table id="keycloak-realms-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
       <:col :let={realm} :if={!@abbridged} label="ID"><%= realm.id %></:col>
       <:col :let={realm} label="Name"><%= realm.displayName %></:col>
 
-      <:action :let={realm} :if={!@abbridged}>
+      <:col :let={realm} :if={!@abbridged} label="Admin">
         <.a href={admin_url(@keycloak_url, realm)} variant="external">Keycloak Admin</.a>
-      </:action>
+      </:col>
 
       <:action :let={realm}>
-        <.a navigate={~p"/keycloak/realm/#{realm.realm}"}>
-          Show
-        </.a>
+        <.action_icon
+          to={show_url(realm)}
+          icon={:eye}
+          tooltip={"Show realm " <> realm.displayName}
+          id={"realm_show_link_" <> realm.id}
+        />
       </:action>
     </.table>
     """
@@ -27,5 +30,9 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
 
   defp admin_url(keycloak_url, realm) do
     Enum.join([keycloak_url, "admin", realm.realm, "console"], "/")
+  end
+
+  defp show_url(realm) do
+    ~p"/keycloak/realm/#{realm.realm}"
   end
 end
