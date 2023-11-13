@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 tracing = { version = "0.1.40" }
-tracing-subscriber = { version = "0.3.17", features = ["env-filter", "ansi"] }
+tracing-subscriber = { version = "0.3.18", features = ["env-filter", "ansi"] }
 serde = { version = "1.0.192", features = ["derive"] }
 serde_json = { version = "1.0.108" }
 
