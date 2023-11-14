@@ -26,6 +26,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:possible_owners, possible_owners(changeset))
      |> assign(:possible_storage_classes, possible_storage_classes())
      |> assign(:possible_namespaces, possible_namespaces())
+     |> assign(:possible_nodes, possible_nodes())
      |> assign(:num_instances, cluster.num_instances)
      |> assign(:pg_user_form, nil)
      |> assign(:pg_credential_copy_form, nil)
@@ -393,7 +394,13 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               <div class="font-bold text-4xl text-primary-500"><%= @num_instances %></div>
             </.flex>
             <.flex class="w-full lg:w-1/2">
-              <PC.input min="0" max="5" step="1" field={@form[:num_instances]} type="range" />
+              <PC.input
+                min="1"
+                max={max(length(@possible_nodes || []), 3)}
+                step="1"
+                field={@form[:num_instances]}
+                type="range"
+              />
             </.flex>
           </.flex>
         </.panel>
@@ -449,6 +456,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   defp possible_namespaces,
     do: :namespace |> KubeServices.KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
+
+  defp possible_nodes,
+    do: :node |> KubeServices.KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
 
   defp convert_storage_slider_value_to_bytes(range_value) when is_binary(range_value) do
     if range_value == "" do
