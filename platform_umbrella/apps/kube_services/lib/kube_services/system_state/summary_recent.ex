@@ -3,6 +3,8 @@ defmodule KubeServices.SystemState.SummaryRecent do
   use GenServer
   use TypedStruct
 
+  import CommonCore.Resources.FieldAccessors
+
   alias CommonCore.StateSummary
   alias EventCenter.SystemStateSummary
   alias KubeServices.SystemState.Summarizer
@@ -41,7 +43,11 @@ defmodule KubeServices.SystemState.SummaryRecent do
   end
 
   @impl GenServer
-  def handle_call({:postgres_clusters, limit}, _from, %{summary: %{postgres_clusters: postgres_clusters}} = state)
+  def handle_call(
+        {:postgres_clusters, limit},
+        _from,
+        %{summary: %StateSummary{postgres_clusters: postgres_clusters}} = state
+      )
       when is_list(postgres_clusters) do
     {:reply, sorted_limit(postgres_clusters, limit), state}
   end
@@ -75,6 +81,28 @@ defmodule KubeServices.SystemState.SummaryRecent do
 
   @impl GenServer
   def handle_call({:keycloak_realms, _limit}, _from, state) do
+    {:reply, [], state}
+  end
+
+  @doc """
+  Handles the `:aqua_vulnerability_reports` call by sorting the reports by creation timestamp
+  descending, taking the `limit` number of reports, and replying with the limited reports list.
+  """
+  @impl GenServer
+  def handle_call(
+        {:aqua_vulnerability_reports, limit},
+        _from,
+        %{summary: %StateSummary{kube_state: %{aqua_vulnerability_report: reports}}} = state
+      )
+      when is_list(reports) do
+    {:reply,
+     reports
+     |> Enum.sort_by(fn m -> m |> creation_timestamp() |> Timex.parse!("{ISO:Extended:Z}") end, {:desc, DateTime})
+     |> Enum.take(limit), state}
+  end
+
+  @impl GenServer
+  def handle_call({:aqua_vulnerability_reports, _limit}, _from, state) do
     {:reply, [], state}
   end
 
@@ -138,6 +166,12 @@ defmodule KubeServices.SystemState.SummaryRecent do
           list(CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation.t())
   def keycloak_realms(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:keycloak_realms, limit})
+  end
+
+  @spec aqua_vulnerability_reports(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
+          list(map())
+  def aqua_vulnerability_reports(target \\ @me, limit \\ 7) do
+    GenServer.call(target, {:aqua_vulnerability_reports, limit})
   end
 
   @spec ip_address_pools(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::

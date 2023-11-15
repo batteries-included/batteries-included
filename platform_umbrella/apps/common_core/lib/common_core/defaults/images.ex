@@ -2,9 +2,7 @@ defmodule CommonCore.Defaults.Images do
   @moduledoc false
   def control_server_image, do: "battery-registry:5000/battery/control:c6f4bd1-dirty1"
 
-  def postgres_operator_image, do: "registry.opensource.zalan.do/acid/postgres-operator:v1.10.0"
-
-  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.0"
+  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1"
 
   def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.4"
 

@@ -3,7 +3,7 @@
     "provider": "provided"
   },
   "target_summary": {
-    "keycloak_state": null,
+    "notebooks": [],
     "batteries": [
       {
         "id": null,
@@ -25,7 +25,7 @@
         "id": null,
         "type": "cloudnative_pg",
         "config": {
-          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.0"
+          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1"
         },
         "group": "data",
         "inserted_at": null,
@@ -51,7 +51,7 @@
         "updated_at": null
       }
     ],
-    "notebooks": [],
+    "keycloak_state": null,
     "knative_services": [],
     "ip_address_pools": [],
     "postgres_clusters": [
@@ -72,7 +72,7 @@
           },
           {
             "username": "battery-control-user",
-            "password": "Md0spsUrJavM+rXaEggev+YR",
+            "password": "f7qUoUMtz61NDybnlvQ2IGsv",
             "roles": ["createdb", "login"]
           }
         ],
@@ -87,8 +87,8 @@
         "cpu_limits": null,
         "memory_requested": null,
         "memory_limits": null,
-        "virtual_size": null,
-        "virtual_storage_size_range_value": null
+        "virtual_size": "custom",
+        "virtual_storage_size_range_value": 9
       }
     ],
     "redis_clusters": [],
@@ -10727,13 +10727,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "TWQwc3BzVXJKYXZNK3JYYUVnZ2V2K1lS",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOk1kMHNwc1VySmF2TStyWGFFZ2dlditZUkBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "ZjdxVW9VTXR6NjFORHlibmx2UTJJR3N2",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOmY3cVVvVU10ejYxTkR5Ym5sdlEySUdzdkBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "PCW5REP2NSU5UGTC5KU7Y7Y7FCUZR2BCSL5LIYLLTTMHLHOMXMYQ===="
+          "battery/hash": "PBVH2YZXKWD4IOKMWYEU3PMRKSAMWM4IDOHF6VIWU34F7LKWHKTQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -13441,7 +13441,7 @@
       "kind": "Deployment",
       "metadata": {
         "annotations": {
-          "battery/hash": "QH7N5V5QRVEQBFGVEBAFET46YGHK4YYZ45OLV2YRX7G435GXMNRA===="
+          "battery/hash": "YHEYWHTQ5V4RX5I7CONUIZ6HRGU5JKVIPKRD3Y6OEH5MEUFFOJIQ===="
         },
         "labels": {
           "app": "cloudnative-pg",
@@ -13487,7 +13487,7 @@
                 "env": [
                   {
                     "name": "OPERATOR_IMAGE_NAME",
-                    "value": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.0"
+                    "value": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1"
                   },
                   {
                     "name": "OPERATOR_NAMESPACE",
@@ -13502,7 +13502,7 @@
                     "value": "cnpg-default-monitoring"
                   }
                 ],
-                "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.0",
+                "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1",
                 "imagePullPolicy": "IfNotPresent",
                 "livenessProbe": {
                   "httpGet": {

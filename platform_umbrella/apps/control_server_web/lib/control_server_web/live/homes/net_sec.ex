@@ -5,13 +5,20 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   import ControlServerWeb.IPAddressPoolsTable
   import ControlServerWeb.Keycloak.RealmsTable
+  import ControlServerWeb.VulnerabilityReportTable
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryHosts
   import KubeServices.SystemState.SummaryRecent
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_batteries() |> assign_keycloak_realms() |> assign_keycloak_url() |> assign_ip_address_pools()}
+    {:ok,
+     socket
+     |> assign_batteries()
+     |> assign_keycloak_realms()
+     |> assign_keycloak_url()
+     |> assign_ip_address_pools()
+     |> assign_vulnerability_reports()}
   end
 
   defp assign_batteries(socket) do
@@ -20,6 +27,10 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   defp assign_keycloak_realms(socket) do
     assign(socket, keycloak_realms: keycloak_realms())
+  end
+
+  defp assign_vulnerability_reports(socket) do
+    assign(socket, vulnerability_reports: aqua_vulnerability_reports())
   end
 
   defp assign_keycloak_url(socket) do
@@ -56,6 +67,19 @@ defmodule ControlServerWeb.Live.NetSecHome do
     """
   end
 
+  defp trivy_panel(assigns) do
+    ~H"""
+    <.panel title="Trivy Security Reports">
+      <:top_right>
+        <.flex>
+          <.a navigate={~p"/trivy_reports/vulnerability_report"}>View All</.a>
+        </.flex>
+      </:top_right>
+      <.vulnerability_reports_table reports={@vulnerability_reports} />
+    </.panel>
+    """
+  end
+
   defp battery_link_panel(%{battery: %{type: :kiali}} = assigns) do
     ~H"""
     <.panel>
@@ -86,6 +110,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
             <.sso_panel realms={@keycloak_realms} keycloak_url={@keycloak_url} />
           <% :metallb -> %>
             <.metallb_panel ip_address_pools={@ip_address_pools} />
+          <% :trivy_operator -> %>
+            <.trivy_panel vulnerability_reports={@vulnerability_reports} />
           <% _ -> %>
         <% end %>
       <% end %>

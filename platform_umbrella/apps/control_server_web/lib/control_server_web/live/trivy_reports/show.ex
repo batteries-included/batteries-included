@@ -1,7 +1,9 @@
 defmodule ControlServerWeb.Live.TrivyReportShow do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import CommonCore.Resources.FieldAccessors
+  import CommonUI.DatetimeDisplay
   import CommonUI.Table
 
   alias KubeServices.KubeState
@@ -21,6 +23,9 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
     {:noreply,
      socket
      |> assign_report(report)
+     |> assign_artifact_tag(report)
+     |> assign_artifact_repo(report)
+     |> assign_vulnerabilities(report)
      |> assign_title("Trivy Report")
      |> assign_report_type(report_type_atom)
      |> assign_name(name)}
@@ -42,45 +47,48 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
     assign(socket, :report, report)
   end
 
+  def assign_artifact_repo(socket, report) do
+    assign(socket, :artifact_repo, get_in(report, ~w(report artifact repository)))
+  end
+
+  def assign_artifact_tag(socket, report) do
+    assign(socket, :artifact_tag, get_in(report, ~w(report artifact tag)))
+  end
+
+  def assign_vulnerabilities(socket, report) do
+    assign(
+      socket,
+      :vulnerabilities,
+      report
+      |> get_in(~w(report vulnerabilities))
+      |> Enum.sort_by(fn v -> get_in(v, ~w(severity)) end)
+    )
+  end
+
   def report(type, namespace, name), do: KubeState.get!(type, namespace, name)
 
   @impl Phoenix.LiveView
 
   def render(assigns) do
     ~H"""
-    <.h1>
-      <%= @page_title %>
-      <:sub_header><%= @report_type %></:sub_header>
-    </.h1>
-    <.h2><%= @name %></.h2>
-    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      <.card>
-        <:title>Artifact</:title>
-        <div class="text-center">
-          <%= get_in(@report, ~w(report artifact repository)) %>
-        </div>
-        <div class="text-center uppercase text-astral-500">
-          <%= get_in(@report, ~w(report artifact tag)) %>
-        </div>
-      </.card>
-      <.card>
-        <:title>Registry</:title>
-        <div class="text-center">
-          <%= get_in(@report, ~w(report registry server)) %>
-        </div>
-      </.card>
-      <.card>
-        <:title>Scanner</:title>
-        <div class="text-center">
-          <%= get_in(@report, ~w(report scanner name)) %>
-        </div>
-        <div class="text-center text-astral-500">
-          <%= get_in(@report, ~w(report scanner version)) %>
-        </div>
-      </.card>
-    </div>
-    <.card>
-      <.table rows={get_in(@report, ~w(report vulnerabilities))}>
+    <.page_header
+      title={@page_title}
+      back_button={%{link_type: "live_redirect", to: ~p"/trivy_reports/vulnerability_report"}}
+    >
+      <:right_side>
+        <.data_horizontal_bordered>
+          <:item title="Artifact">
+            <%= @artifact_repo %>/<%= @artifact_tag %>
+          </:item>
+          <:item title="Created">
+            <.relative_display time={creation_timestamp(@report)} />
+          </:item>
+        </.data_horizontal_bordered>
+      </:right_side>
+    </.page_header>
+
+    <.panel title={@name}>
+      <.table rows={@vulnerabilities}>
         <:col :let={vuln} label="Severity"><%= get_in(vuln, ~w(severity)) %></:col>
         <:col :let={vuln} label="Title">
           <.a href={get_in(vuln, ~w(primaryLink))}>
@@ -89,13 +97,13 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
         </:col>
         <:col :let={vuln} label="Used"><%= get_in(vuln, ~w(installedVersion)) %></:col>
         <:col :let={vuln} label="Fixed"><%= get_in(vuln, ~w(fixedVersion)) %></:col>
-        <:action :let={vuln}>
-          <.a href={get_in(vuln, ~w(primaryLink))} variant="styled">
+        <:col :let={vuln} label="Extended Info">
+          <.a href={get_in(vuln, ~w(primaryLink))} variant="external">
             Show
           </.a>
-        </:action>
+        </:col>
       </.table>
-    </.card>
+    </.panel>
     """
   end
 end

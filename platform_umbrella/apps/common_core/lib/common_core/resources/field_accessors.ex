@@ -16,6 +16,10 @@ defmodule CommonCore.Resources.FieldAccessors do
     get_in(resource, ~w|status conditions|) || []
   end
 
+  def creation_timestamp(resource) do
+    get_in(resource, ~w(metadata creationTimestamp))
+  end
+
   def status(resource) do
     Map.get(resource, "status", %{})
   end
