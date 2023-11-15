@@ -67,7 +67,7 @@ defmodule CommonCore.Factory do
           :istio,
           :istio_gateway,
           :kiali,
-          :knative_operator,
+          :knative,
           :knative_serving,
           :metallb,
           :notebooks,

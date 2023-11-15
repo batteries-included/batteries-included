@@ -28,9 +28,9 @@ defmodule CommonCore.Defaults.Images do
 
   def keycloak_image, do: "quay.io/keycloak/keycloak:22.0.4"
 
-  def knative_operator_webhook_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.11.7"
+  def knative_operator_webhook_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.11.10"
 
-  def knative_operator_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.11.7"
+  def knative_operator_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.11.10"
 
   def kiali_image, do: "quay.io/kiali/kiali:#{kiali_image_version()}"
   def kiali_image_version, do: "v1.74.1"

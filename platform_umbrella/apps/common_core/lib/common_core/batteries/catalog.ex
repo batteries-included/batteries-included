@@ -38,17 +38,12 @@ defmodule CommonCore.Batteries.Catalog do
     # Devtools
     %CatalogBattery{
       group: :devtools,
-      type: :knative_operator,
+      type: :knative,
       dependencies: [:battery_core],
       description:
-        "Knative Operator is a Kubernetes operator that provides a declarative API for managing Knative Serving and Eventing."
-    },
-    %CatalogBattery{
-      group: :devtools,
-      type: :knative_serving,
-      dependencies: [:knative_operator, :istio_gateway],
-      description:
-        "Knative Serving is a Kubernetes-based, scale-to-zero, request-driven compute platform that lets you run stateless containers that are invocable via HTTP requests."
+        "Knative Kubernetes operator that provides a declarative API for managing Knative Serving and Eventing. " <>
+          "Knative serving is ascale-to-zero, request-driven compute platform that lets you run stateless containers " <>
+          "that are invocable via HTTP requests."
     },
     %CatalogBattery{
       group: :devtools,

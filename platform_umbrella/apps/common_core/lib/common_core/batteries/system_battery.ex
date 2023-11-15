@@ -16,8 +16,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.IstioGatewayConfig
   alias CommonCore.Batteries.KeycloakConfig
   alias CommonCore.Batteries.KialiConfig
-  alias CommonCore.Batteries.KnativeOperatorConfig
-  alias CommonCore.Batteries.KnativeServingConfig
+  alias CommonCore.Batteries.KnativeConfig
   alias CommonCore.Batteries.KubeMonitoringConfig
   alias CommonCore.Batteries.LokiConfig
   alias CommonCore.Batteries.MetalLBConfig
@@ -48,8 +47,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     istio_gateway: IstioGatewayConfig,
     keycloak: KeycloakConfig,
     kiali: KialiConfig,
-    knative_operator: KnativeOperatorConfig,
-    knative_serving: KnativeServingConfig,
+    knative: KnativeConfig,
     kube_monitoring: KubeMonitoringConfig,
     loki: LokiConfig,
     metallb: MetalLBConfig,
