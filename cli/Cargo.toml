@@ -10,7 +10,7 @@ clap-verbosity-flag = { version = "2.1.0" }
 color-eyre = { version = "0.6.2" }
 bollard = { version = "0.15.0", features = ["time", "ssl"] }
 dirs = { version = "5.0.1" }
-eyre = { version = "0.6.8" }
+eyre = { version = "0.6.9" }
 futures = { version = "0.3.29" }
 hyper = { version = "1.0.1" }
 ipnet = { version = "2.9.0" }
