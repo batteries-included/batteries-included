@@ -210,7 +210,7 @@ dependencies = [
  "dirs",
  "eyre",
  "futures",
- "hyper 1.0.0",
+ "hyper 1.0.1",
  "ipnet",
  "k8s-openapi",
  "kube-client",
@@ -911,9 +911,9 @@ dependencies = [
 
 [[package]]
 name = "hyper"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "24590385be94998c5def4cf53d34edc5381144c805126f00efb954d986f9a7b2"
+checksum = "403f9214f3e703236b221f1a9cd88ec8b4adfa5296de01ab96216361f4692f56"
 dependencies = [
  "bytes",
  "futures-channel",
