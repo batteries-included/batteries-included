@@ -25,42 +25,40 @@ defmodule CommonUI.Table do
 
   def table(assigns) do
     ~H"""
-    <div class="px-4 overflow-auto sm:px-0">
-      <PC.table id={@id}>
-        <thead>
-          <PC.tr class={maybe_transparent_class(@transparent)}>
-            <PC.th :for={col <- @col} class={maybe_transparent_class(@transparent)}>
-              <%= col[:label] %>
-            </PC.th>
-            <PC.th :if={@action != nil && @action != []}>
-              <span class="sr-only">Actions</span>
-            </PC.th>
-          </PC.tr>
-        </thead>
-        <tbody>
-          <PC.tr
-            :for={{row, idx} <- Enum.with_index(@rows)}
-            id={to_row_id(@id, row, idx)}
-            class={["group", maybe_transparent_class(@transparent)]}
+    <PC.table id={@id} class="px-4 md:px-1 lg:px-0">
+      <thead>
+        <PC.tr class={maybe_transparent_class(@transparent)}>
+          <PC.th :for={col <- @col} class={maybe_transparent_class(@transparent)}>
+            <%= col[:label] %>
+          </PC.th>
+          <PC.th :if={@action != nil && @action != []}>
+            <span class="sr-only">Actions</span>
+          </PC.th>
+        </PC.tr>
+      </thead>
+      <tbody>
+        <PC.tr
+          :for={{row, idx} <- Enum.with_index(@rows)}
+          id={to_row_id(@id, row, idx)}
+          class={["group", maybe_transparent_class(@transparent)]}
+        >
+          <PC.td
+            :for={col <- @col}
+            phx-click={@row_click && @row_click.(row)}
+            class={[@row_click && "hover:cursor-pointer", maybe_transparent_class(@transparent)]}
           >
-            <PC.td
-              :for={col <- @col}
-              phx-click={@row_click && @row_click.(row)}
-              class={[@row_click && "hover:cursor-pointer", maybe_transparent_class(@transparent)]}
-            >
-              <%= render_slot(col, row) %>
-            </PC.td>
-            <PC.td :if={@action != []} class="w-24">
-              <div class="items-center justify-end hidden gap-2 group-hover:flex">
-                <%= for action <- @action do %>
-                  <%= render_slot(action, row) %>
-                <% end %>
-              </div>
-            </PC.td>
-          </PC.tr>
-        </tbody>
-      </PC.table>
-    </div>
+            <%= render_slot(col, row) %>
+          </PC.td>
+          <PC.td :if={@action != []} class="w-24">
+            <div class="items-center justify-end hidden gap-2 group-hover:flex">
+              <%= for action <- @action do %>
+                <%= render_slot(action, row) %>
+              <% end %>
+            </div>
+          </PC.td>
+        </PC.tr>
+      </tbody>
+    </PC.table>
     """
   end
 

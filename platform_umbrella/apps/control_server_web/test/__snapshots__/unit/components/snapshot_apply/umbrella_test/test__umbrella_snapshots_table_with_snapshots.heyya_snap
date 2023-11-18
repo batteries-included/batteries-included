@@ -1,46 +1,45 @@
-<div class="px-4 overflow-auto sm:px-0">
-  <table class="pc-table ">
+<table class="pc-table px-4 md:px-1 lg:px-0">
   
-    <thead>
-      <tr class="pc-table__tr ">
+  <thead>
+    <tr class="pc-table__tr ">
   
-        <th class="pc-table__th ">
+      <th class="pc-table__th ">
   
-          ID
-        
-</th><th class="pc-table__th ">
-  
-          Started
-        
-</th><th class="pc-table__th ">
-  
-          Kube Status
-        
-</th><th class="pc-table__th ">
-  
-          Keycloak Status
-        
-</th>
-        <th class="pc-table__th ">
-  
-          <span class="sr-only">Actions</span>
-        
-</th>
+        ID
       
+</th><th class="pc-table__th ">
+  
+        Started
+      
+</th><th class="pc-table__th ">
+  
+        Kube Status
+      
+</th><th class="pc-table__th ">
+  
+        Keycloak Status
+      
+</th>
+      <th class="pc-table__th ">
+  
+        <span class="sr-only">Actions</span>
+      
+</th>
+    
 </tr>
-    </thead>
-    <tbody>
-      <tr class="pc-table__tr group " id="-idx-0">
+  </thead>
+  <tbody>
+    <tr class="pc-table__tr group " id="-idx-0">
   
-        <td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
+      <td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
   
-          
+        
     success-umbrella-id
   
-        
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
   
-          
+        
     <div class="group/hover-tooltip relative">
   <div class="invisible group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-md p-2 bg-white/90 text-gray-800 dark:bg-gray-700/90 dark:text-white" role="tooltip" aria-hidden="true">
     
@@ -52,26 +51,26 @@
 
 </div>
   
-        
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
   
-          
+        
     Success
   
-        
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
   
-          
+        
     Skipped
 
   
-        
+      
 </td>
-        <td class="pc-table__td w-24">
+      <td class="pc-table__td w-24">
   
-          <div class="items-center justify-end hidden gap-2 group-hover:flex">
+        <div class="items-center justify-end hidden gap-2 group-hover:flex">
+          
             
-              
     <a href="/deploy/success-umbrella-id/show" data-phx-link="redirect" data-phx-link-state="push" id="show_deploy_success-umbrella-id" size="xs" class="cursor-pointer">
   
   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -87,22 +86,22 @@
 
 </a>
   
-            
-          </div>
-        
-</td>
+          
+        </div>
       
+</td>
+    
 </tr><tr class="pc-table__tr group " id="-idx-1">
   
-        <td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
-  
-          
-    failure-umbrella-id
+      <td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
   
         
+    failure-umbrella-id
+  
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
   
-          
+        
     <div class="group/hover-tooltip relative">
   <div class="invisible group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-md p-2 bg-white/90 text-gray-800 dark:bg-gray-700/90 dark:text-white" role="tooltip" aria-hidden="true">
     
@@ -114,25 +113,25 @@
 
 </div>
   
-        
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
   
-          
+        
     Failed
   
-        
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
   
-          
+        
     Failed
   
-        
+      
 </td>
-        <td class="pc-table__td w-24">
+      <td class="pc-table__td w-24">
   
-          <div class="items-center justify-end hidden gap-2 group-hover:flex">
+        <div class="items-center justify-end hidden gap-2 group-hover:flex">
+          
             
-              
     <a href="/deploy/failure-umbrella-id/show" data-phx-link="redirect" data-phx-link-state="push" id="show_deploy_failure-umbrella-id" size="xs" class="cursor-pointer">
   
   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -148,13 +147,12 @@
 
 </a>
   
-            
-          </div>
-        
-</td>
+          
+        </div>
       
+</td>
+    
 </tr>
-    </tbody>
-  
+  </tbody>
+
 </table>
-</div>

@@ -1,37 +1,35 @@
-<div class="px-4 overflow-auto sm:px-0">
-  <table class="pc-table ">
+<table class="pc-table px-4 md:px-1 lg:px-0">
   
-    <thead>
-      <tr class="pc-table__tr ">
+  <thead>
+    <tr class="pc-table__tr ">
   
-        <th class="pc-table__th ">
+      <th class="pc-table__th ">
   
-          ID
-        
-</th><th class="pc-table__th ">
-  
-          Started
-        
-</th><th class="pc-table__th ">
-  
-          Kube Status
-        
-</th><th class="pc-table__th ">
-  
-          Keycloak Status
-        
-</th>
-        <th class="pc-table__th ">
-  
-          <span class="sr-only">Actions</span>
-        
-</th>
+        ID
       
+</th><th class="pc-table__th ">
+  
+        Started
+      
+</th><th class="pc-table__th ">
+  
+        Kube Status
+      
+</th><th class="pc-table__th ">
+  
+        Keycloak Status
+      
+</th>
+      <th class="pc-table__th ">
+  
+        <span class="sr-only">Actions</span>
+      
+</th>
+    
 </tr>
-    </thead>
-    <tbody>
-      
-    </tbody>
-  
+  </thead>
+  <tbody>
+    
+  </tbody>
+
 </table>
-</div>

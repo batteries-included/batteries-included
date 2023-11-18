@@ -64,7 +64,7 @@ defmodule CommonUI.Card do
 
   defp get_classes("gray"), do: "bg-gray-50 rounded-lg dark:bg-gray-800"
 
-  defp panel_body_class(true, _title), do: ""
-  defp panel_body_class(false, nil), do: "p-6"
-  defp panel_body_class(false, _title), do: "px-6 pb-6"
+  defp panel_body_class(true, _title), do: "overflow-x-auto"
+  defp panel_body_class(false, nil), do: "p-6 overflow-x-auto"
+  defp panel_body_class(false, _title), do: "px-6 pb-6 overflow-x-auto"
 end

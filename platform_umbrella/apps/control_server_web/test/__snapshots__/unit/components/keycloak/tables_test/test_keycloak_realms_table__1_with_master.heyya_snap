@@ -1,44 +1,43 @@
-<div class="px-4 overflow-auto sm:px-0">
-  <table class="pc-table " id="keycloak-realms-table">
+<table class="pc-table px-4 md:px-1 lg:px-0" id="keycloak-realms-table">
   
-    <thead>
-      <tr class="pc-table__tr ">
+  <thead>
+    <tr class="pc-table__tr ">
   
-        <th class="pc-table__th ">
+      <th class="pc-table__th ">
   
-          ID
-        
-</th><th class="pc-table__th ">
-  
-          Name
-        
-</th><th class="pc-table__th ">
-  
-          Admin
-        
-</th>
-        <th class="pc-table__th ">
-  
-          <span class="sr-only">Actions</span>
-        
-</th>
+        ID
       
+</th><th class="pc-table__th ">
+  
+        Name
+      
+</th><th class="pc-table__th ">
+  
+        Admin
+      
+</th>
+      <th class="pc-table__th ">
+  
+        <span class="sr-only">Actions</span>
+      
+</th>
+    
 </tr>
-    </thead>
-    <tbody>
-      <tr class="pc-table__tr group " id="keycloak-realms-table-idx-0">
+  </thead>
+  <tbody>
+    <tr class="pc-table__tr group " id="keycloak-realms-table-idx-0">
   
-        <td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]">
+      <td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]">
   
-          00-00-00-00-00-00
-        
+        00-00-00-00-00-00
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]">
   
-          Keycloak
-        
+        Keycloak
+      
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]">
   
-          
+        
     <a href="http://keycloak.example.129.99.1.1.ip.batteriesincl.com/admin/master/console" target="_blank" class="font-medium text-pink-600 hover:underline flex">
   <span class="flex-initial">
     Keycloak Admin
@@ -48,13 +47,13 @@
 </svg>
 </a>
   
-        
+      
 </td>
-        <td class="pc-table__td w-24">
+      <td class="pc-table__td w-24">
   
-          <div class="items-center justify-end hidden gap-2 group-hover:flex">
+        <div class="items-center justify-end hidden gap-2 group-hover:flex">
+          
             
-              
     <a href="/keycloak/realm/master" data-phx-link="redirect" data-phx-link-state="push" id="realm_show_link_00-00-00-00-00-00" size="xs" class="cursor-pointer">
   
   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -70,13 +69,12 @@
 
 </a>
   
-            
-          </div>
-        
-</td>
+          
+        </div>
       
+</td>
+    
 </tr>
-    </tbody>
-  
+  </tbody>
+
 </table>
-</div>

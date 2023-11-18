@@ -1,74 +1,72 @@
-<div class="px-4 overflow-auto sm:px-0">
-  <table class="pc-table " id="keycloak-users-table">
+<table class="pc-table px-4 md:px-1 lg:px-0" id="keycloak-users-table">
   
-    <thead>
-      <tr class="pc-table__tr ">
+  <thead>
+    <tr class="pc-table__tr ">
   
-        <th class="pc-table__th ">
+      <th class="pc-table__th ">
   
-          Username
-        
-</th><th class="pc-table__th ">
-  
-          Enabled
-        
-</th><th class="pc-table__th ">
-  
-          Email Verified
-        
-</th><th class="pc-table__th ">
-  
-          Created
-        
-</th>
-        <th class="pc-table__th ">
-  
-          <span class="sr-only">Actions</span>
-        
-</th>
+        Username
       
+</th><th class="pc-table__th ">
+  
+        Enabled
+      
+</th><th class="pc-table__th ">
+  
+        Email Verified
+      
+</th><th class="pc-table__th ">
+  
+        Created
+      
+</th>
+      <th class="pc-table__th ">
+  
+        <span class="sr-only">Actions</span>
+      
+</th>
+    
 </tr>
-    </thead>
-    <tbody>
-      <tr class="pc-table__tr group " id="keycloak-users-table-idx-0">
+  </thead>
+  <tbody>
+    <tr class="pc-table__tr group " id="keycloak-users-table-idx-0">
   
-        <td class="pc-table__td ">
+      <td class="pc-table__td ">
   
-          root
-        
+        root
+      
 </td><td class="pc-table__td ">
   
-          true
-        
+        true
+      
 </td><td class="pc-table__td ">
   
-          false
-        
+        false
+      
 </td><td class="pc-table__td ">
   
-          
+        
     2023-06-06T05:10:10.946Z
   
-        
+      
 </td>
-        <td class="pc-table__td w-24">
+      <td class="pc-table__td w-24">
   
-          <div class="items-center justify-end hidden gap-2 group-hover:flex">
+        <div class="items-center justify-end hidden gap-2 group-hover:flex">
+          
             
-              
     <a href="#" class="font-medium text-pink-500 hover:text-pink-600 hover:underline" phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
   
       Reset Password
     
 </a>
   
-            
-          </div>
-        
-</td>
+          
+        </div>
       
+</td>
+    
 </tr>
-    </tbody>
-  
+  </tbody>
+
 </table>
-</div>
