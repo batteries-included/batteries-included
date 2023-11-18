@@ -64,33 +64,25 @@ defmodule ControlServerWeb.Live.MagicHome do
 
   defp battery_link_panel(%{battery: %{type: :timeline}} = assigns) do
     ~H"""
-    <.panel>
-      <.a navigate={~p"/history/timeline"} variant="styled">Timeline</.a>
-    </.panel>
+    <.bordered_menu_item navigate={~p"/history/timeline"} title="Timeline" />
     """
   end
 
   defp battery_link_panel(%{battery: %{type: :stale_resource_cleaner}} = assigns) do
     ~H"""
-    <.panel>
-      <.a navigate={~p"/stale"} variant="styled">Delete Queue</.a>
-    </.panel>
+    <.bordered_menu_item navigate={~p"/stale"} title="Delete Queue" />
     """
   end
 
   defp battery_link_panel(%{battery: %{type: :battery_core}} = assigns) do
     ~H"""
-    <.panel>
-      <.a navigate={~p"/deleted_resources"} variant="styled">Deleted Resources</.a>
-    </.panel>
-    <.panel>
-      <.a navigate={~p"/content_addressable"} variant="styled">Content Addressable Storage</.a>
-    </.panel>
-    <.panel>
-      <.a href="http://home.127.0.0.1.ip.batteriesincl.com:4900/" variant="external">
-        Batteries Included Home
-      </.a>
-    </.panel>
+    <.bordered_menu_item navigate={~p"/deleted_resources"} title="Deleted Resources" />
+    <.bordered_menu_item navigate={~p"/content_addressable"} title="Content Addressable Storage" />
+    <.bordered_menu_item
+      href="http://home.127.0.0.1.ip.batteriesincl.com:4900/"
+      title="Batteries Included Home"
+    />
+    <.bordered_menu_item navigate={~p"/content_addressable"} title="Content Addressable Storage" />
     """
   end
 

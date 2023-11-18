@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
 
   import CommonCore.Resources.FieldAccessors
   import CommonUI.DatetimeDisplay
-  import CommonUI.Table
+  import ControlServerWeb.TrivyReports.VulnerabilitiesTable
 
   alias KubeServices.KubeState
 
@@ -88,21 +88,7 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
     </.page_header>
 
     <.panel title={@name}>
-      <.table rows={@vulnerabilities}>
-        <:col :let={vuln} label="Severity"><%= get_in(vuln, ~w(severity)) %></:col>
-        <:col :let={vuln} label="Title">
-          <.a href={get_in(vuln, ~w(primaryLink))}>
-            <%= get_in(vuln, ~w(title)) %>
-          </.a>
-        </:col>
-        <:col :let={vuln} label="Used"><%= get_in(vuln, ~w(installedVersion)) %></:col>
-        <:col :let={vuln} label="Fixed"><%= get_in(vuln, ~w(fixedVersion)) %></:col>
-        <:col :let={vuln} label="Extended Info">
-          <.a href={get_in(vuln, ~w(primaryLink))} variant="external">
-            Show
-          </.a>
-        </:col>
-      </.table>
+      <.vulnerabilities_table rows={@vulnerabilities} />
     </.panel>
     """
   end

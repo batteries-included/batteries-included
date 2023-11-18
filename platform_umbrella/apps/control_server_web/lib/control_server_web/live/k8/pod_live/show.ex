@@ -6,6 +6,7 @@ defmodule ControlServerWeb.PodLive.Show do
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.ResourceComponents
   import ControlServerWeb.ResourceHTMLHelper
+  import ControlServerWeb.TrivyReports.VulnerabilitiesTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -80,7 +81,8 @@ defmodule ControlServerWeb.PodLive.Show do
     assign(socket,
       events: KubeState.get_events(resource),
       conditions: conditions(resource),
-      status: status(resource)
+      status: status(resource),
+      aqua_vulnerability_report: :aqua_vulnerability_report |> KubeState.get_owned_resources(resource) |> List.first()
     )
   end
 
@@ -144,6 +146,14 @@ defmodule ControlServerWeb.PodLive.Show do
     |> assign_logs_pid(logs_pid)
   end
 
+  defp security_section(assigns) do
+    ~H"""
+    <.panel :if={@aqua_vulnerability_report != nil} title="Vulnerabilities" class="mb-10">
+      <.vulnerabilities_table rows={get_in(@aqua_vulnerability_report, ~w(report vulnerabilities))} />
+    </.panel>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -157,9 +167,10 @@ defmodule ControlServerWeb.PodLive.Show do
       <.pod_containers_section resource={@resource} />
       <.conditions_display conditions={@conditions} />
       <.events_section events={@events} />
+
       <.label_section class="mb-10" resource={@resource} />
     </div>
-
+    <.security_section aqua_vulnerability_report={@aqua_vulnerability_report} />
     <.logs_modal resource={@resource} logs={@logs} />
     """
   end
