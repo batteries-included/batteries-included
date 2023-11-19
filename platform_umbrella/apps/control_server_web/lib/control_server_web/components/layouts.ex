@@ -83,7 +83,7 @@ defmodule ControlServerWeb.Layouts do
           icon: :chart_bar_square
         },
         %{
-          name: :netsecurity,
+          name: :net_sec,
           label: "Net/Security",
           path: ~p"/net_sec",
           icon: :shield_check

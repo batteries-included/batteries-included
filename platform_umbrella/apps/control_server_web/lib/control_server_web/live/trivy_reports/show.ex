@@ -28,7 +28,8 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
      |> assign_vulnerabilities(report)
      |> assign_title("Trivy Report")
      |> assign_report_type(report_type_atom)
-     |> assign_name(name)}
+     |> assign_name(name)
+     |> assign_current_page()}
   end
 
   def assign_title(socket, page_title) do
@@ -53,6 +54,10 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
 
   def assign_artifact_tag(socket, report) do
     assign(socket, :artifact_tag, get_in(report, ~w(report artifact tag)))
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :net_sec)
   end
 
   def assign_vulnerabilities(socket, report) do

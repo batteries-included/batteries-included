@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
 
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do
-    {:ok, socket |> assign_realms() |> assign_keycloak_url()}
+    {:ok, socket |> assign_realms() |> assign_keycloak_url() |> assign_current_page()}
   end
 
   defp assign_realms(socket) do
@@ -19,6 +19,10 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
 
   defp assign_keycloak_url(socket) do
     assign(socket, :keycloak_url, "http://" <> SummaryHosts.keycloak_host())
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :net_sec)
   end
 
   @impl Phoenix.LiveView

@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_page_title() |> assign_ip_address_pools()}
+    {:ok, socket |> assign_page_title() |> assign_ip_address_pools() |> assign_current_page()}
   end
 
   @impl Phoenix.LiveView
@@ -23,6 +23,10 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
 
   defp assign_ip_address_pools(socket) do
     assign(socket, :ip_address_pools, list_ip_address_pools())
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :net_sec)
   end
 
   defp new_url, do: ~p"/ip_address_pools/new"

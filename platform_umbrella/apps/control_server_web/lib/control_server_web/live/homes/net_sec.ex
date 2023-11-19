@@ -18,7 +18,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
      |> assign_keycloak_realms()
      |> assign_keycloak_url()
      |> assign_ip_address_pools()
-     |> assign_vulnerability_reports()}
+     |> assign_vulnerability_reports()
+     |> assign_current_page()}
   end
 
   defp assign_batteries(socket) do
@@ -39,6 +40,10 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   defp assign_ip_address_pools(socket) do
     assign(socket, :ip_address_pools, ip_address_pools())
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :net_sec)
   end
 
   defp sso_panel(assigns) do

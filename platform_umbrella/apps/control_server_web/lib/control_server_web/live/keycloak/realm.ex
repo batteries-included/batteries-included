@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.Modal
   import ControlServerWeb.Keycloak.ClientsTable
   import ControlServerWeb.Keycloak.UsersTable
 
@@ -14,7 +13,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do
     :ok = EventCenter.Keycloak.subscribe(:create_user)
-    {:ok, assign_keycloak_url(socket)}
+    {:ok, socket |> assign_keycloak_url() |> assign_current_page()}
   end
 
   @impl Phoenix.LiveView
@@ -73,14 +72,18 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     assign(socket, :temp_password, temp_password)
   end
 
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :net_sec)
+  end
+
   @impl Phoenix.LiveView
   def handle_event("new-user", _, socket) do
     {:noreply, assign_new_user(socket, %{enabled: true})}
   end
 
   @impl Phoenix.LiveView
-  def handle_event("cancel_user", _, socket) do
-    {:noreply, assign_new_user(socket, nil)}
+  def handle_event("close_modal", _, socket) do
+    {:noreply, socket |> assign_new_user(nil) |> assign_temp_password(nil)}
   end
 
   @impl Phoenix.LiveView
@@ -101,24 +104,20 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("cancel_temp_password", _, socket) do
-    {:noreply, assign_temp_password(socket, nil)}
-  end
-
-  @impl Phoenix.LiveView
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <.page_header
-      title="Keycloak Realm"
+      title={@realm.displayName}
       back_button={%{link_type: "live_redirect", to: ~p"/keycloak/realms"}}
-    />
-    <.panel title={@realm.displayName}>
-      <.data_list>
-        <:item title="ID"><%= @realm.id %></:item>
-        <:item title="Name"><%= @realm.realm %></:item>
-      </.data_list>
-    </.panel>
+    >
+      <:right_side>
+        <.data_horizontal_bordered>
+          <:item title="Name"><%= @realm.realm %></:item>
+          <:item title="ID"><%= @realm.id %></:item>
+        </.data_horizontal_bordered>
+      </:right_side>
+    </.page_header>
     <.panel class="mt-5" title="Clients">
       <.keycloak_clients_table clients={@clients} />
     </.panel>
@@ -130,21 +129,21 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     </.panel>
 
     <div :if={@new_user != nil}>
-      <.modal on_cancel={JS.push("cancel_user")} id="new-user-inner-modal" show={true}>
+      <PC.modal id="new-user-inner-modal" show={true}>
         <.live_component
           module={NewUserForm}
           user={@new_user}
           realm={@realm.realm}
           id="new-user-modal"
         />
-      </.modal>
+      </PC.modal>
     </div>
 
     <div :if={@temp_password != nil}>
-      <.modal on_cancel={JS.push("cancel_temp_password")} id="temp-password-modal" show={true}>
+      <PC.modal id="temp-password-modal" show={true}>
         <.h2>Temporary Password Set</.h2>
         A new password has been set for this user. The temporary password is: <pre><%= @temp_password %></pre>
-      </.modal>
+      </PC.modal>
     </div>
     """
   end

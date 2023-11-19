@@ -21,11 +21,16 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
     {:ok,
      socket
      |> assign(:objects, objects(live_action))
-     |> assign(:page_title, title_text(live_action))}
+     |> assign(:page_title, title_text(live_action))
+     |> assign_current_page()}
   end
 
   defp subscribe(resource_type) do
     :ok = KubeEventCenter.subscribe(resource_type)
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :net_sec)
   end
 
   @impl Phoenix.LiveView
