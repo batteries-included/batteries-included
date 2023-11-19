@@ -3,6 +3,7 @@ defmodule ControlServerWeb.DeploymentLive.Show do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ResourceComponents
@@ -58,16 +59,23 @@ defmodule ControlServerWeb.DeploymentLive.Show do
     KubeState.get!(@resource_type, namespace, name)
   end
 
+  defp deployment_facts_section(assigns) do
+    ~H"""
+    <.data_horizontal_bordered>
+      <:item title="Namespace"><%= @namespace %></:item>
+      <:item title="Started">
+        <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+      </:item>
+    </.data_horizontal_bordered>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header title={@name} back_button={%{link_type: "live_redirect", to: ~p"/kube/deployments"}}>
       <:right_side>
-        <div class={["ml-8 flex-1 flex justify-start items-center"]}>
-          <.data_horizontal_bordered>
-            <:item title="Namespace"><%= @namespace %></:item>
-          </.data_horizontal_bordered>
-        </div>
+        <.deployment_facts_section namespace={@namespace} resource={@resource} />
       </:right_side>
     </.page_header>
 
@@ -75,8 +83,7 @@ defmodule ControlServerWeb.DeploymentLive.Show do
       <.data_pills class="mt-8">
         <:item title="Total Replicas"><%= Map.get(@status, "replicas", 0) %></:item>
         <:item title="Available Replicas"><%= Map.get(@status, "availableReplicas", 0) %></:item>
-        <:item title="Unavailable Replicas"><%= Map.get(@status, "unavailableReplicas", 0) %></:item>
-        <:item title="Generations"><%= Map.get(@status, "Generations", 0) %></:item>
+        <:item title="Generations"><%= Map.get(@status, "observedGeneration", 0) %></:item>
       </.data_pills>
       <.panel title="Pods">
         <.pods_table pods={@pods} />

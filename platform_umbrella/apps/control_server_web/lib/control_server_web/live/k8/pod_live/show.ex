@@ -3,6 +3,7 @@ defmodule ControlServerWeb.PodLive.Show do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.ResourceComponents
   import ControlServerWeb.ResourceHTMLHelper
@@ -152,6 +153,31 @@ defmodule ControlServerWeb.PodLive.Show do
       <.vulnerabilities_table rows={get_in(@aqua_vulnerability_report, ~w(report vulnerabilities))} />
     </.panel>
     """
+  end
+
+  attr :resource, :map
+  attr :namespace, :string
+  attr :phase, :string
+  attr :service_account, :string
+
+  def pod_facts_section(%{phase: _} = assigns) do
+    ~H"""
+    <.data_horizontal_bordered>
+      <:item title="Namespace"><%= @namespace %></:item>
+      <:item title="Phase"><%= @phase %></:item>
+      <:item title="Account"><%= @service_account %></:item>
+      <:item title="Started">
+        <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+      </:item>
+    </.data_horizontal_bordered>
+    """
+  end
+
+  def pod_facts_section(assigns) do
+    assigns
+    |> assign_new(:phase, fn -> get_in(assigns.resource, ~w|status phase|) end)
+    |> assign_new(:service_account, fn -> get_in(assigns.resource, ~w|spec serviceAccount|) end)
+    |> pod_facts_section()
   end
 
   @impl Phoenix.LiveView

@@ -3,6 +3,7 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import CommonUI.DatetimeDisplay
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ResourceComponents
 
@@ -53,21 +54,36 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
     KubeState.get!(@resource_type, namespace, name)
   end
 
+  defp stateful_set_facts_section(assigns) do
+    ~H"""
+    <.data_horizontal_bordered>
+      <:item title="Namespace"><%= @namespace %></:item>
+      <:item title="Started">
+        <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+      </:item>
+    </.data_horizontal_bordered>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header
       title={@name}
       back_button={%{link_type: "live_redirect", to: ~p"/kube/stateful_sets"}}
-    />
+    >
+      <:right_side>
+        <.stateful_set_facts_section namespace={@namespace} resource={@resource} />
+      </:right_side>
+    </.page_header>
 
     <div class="flex flex-col gap-8 mb-10">
       <.data_pills class="mt-8">
         <:item title="Total Replicas"><%= Map.get(@status, "replicas", 0) %></:item>
         <:item title="Available Replicas"><%= Map.get(@status, "availableReplicas", 0) %></:item>
-        <:item title="Unavailable Replicas"><%= Map.get(@status, "unavailableReplicas", 0) %></:item>
+        <:item title="Current Revision"><%= Map.get(@status, "currentRevision", 0) %></:item>
         <:item title="Updated Replicas"><%= Map.get(@status, "updatedReplicas", 0) %></:item>
-        <:item title="Generations"><%= Map.get(@status, "Generations", 0) %></:item>
+        <:item title="Generations"><%= Map.get(@status, "observedGeneration", 0) %></:item>
       </.data_pills>
       <.panel title="Pods">
         <.pods_table pods={@pods} />

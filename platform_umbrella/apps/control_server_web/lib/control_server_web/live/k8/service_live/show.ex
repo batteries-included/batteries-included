@@ -3,6 +3,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ResourceComponents
 
   alias EventCenter.KubeState, as: KubeEventCenter
@@ -57,11 +58,12 @@ defmodule ControlServerWeb.ServiceLive.Show do
     ~H"""
     <.page_header title={@name} back_button={%{link_type: "live_redirect", to: ~p"/kube/services"}}>
       <:right_side>
-        <div class={["ml-8 flex-1 flex justify-between items-center"]}>
-          <.data_horizontal_bordered>
-            <:item title="Namespace"><%= @namespace %></:item>
-          </.data_horizontal_bordered>
-        </div>
+        <.data_horizontal_bordered>
+          <:item title="Namespace"><%= @namespace %></:item>
+          <:item title="Started">
+            <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+          </:item>
+        </.data_horizontal_bordered>
       </:right_side>
     </.page_header>
 

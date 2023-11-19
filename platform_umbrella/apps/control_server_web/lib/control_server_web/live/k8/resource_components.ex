@@ -86,39 +86,6 @@ defmodule ControlServerWeb.ResourceComponents do
   end
 
   attr :resource, :map
-  attr :namespace, :string
-  attr :phase, :string
-  attr :service_account, :string
-  attr :start_time, :string
-
-  def pod_facts_section(%{phase: _} = assigns) do
-    ~H"""
-    <.data_horizontal_bordered>
-      <:item title="Namespace"><%= @namespace %></:item>
-      <:item title="Phase"><%= @phase %></:item>
-      <:item title="Account"><%= @service_account %></:item>
-      <:item title="Started"><%= @start_time %></:item>
-    </.data_horizontal_bordered>
-    """
-  end
-
-  def pod_facts_section(assigns) do
-    assigns
-    |> assign_new(:phase, fn -> get_in(assigns.resource, ~w|status phase|) end)
-    |> assign_new(:start_time, fn ->
-      case get_in(assigns.resource, ~w|status startTime|) do
-        nil ->
-          "Not found"
-
-        start_time ->
-          CommonCore.Util.Time.format_iso8601(start_time, "{Mshort} {D}, {h24}:{m}:{s}")
-      end
-    end)
-    |> assign_new(:service_account, fn -> get_in(assigns.resource, ~w|spec serviceAccount|) end)
-    |> pod_facts_section()
-  end
-
-  attr :resource, :map
   attr :logs, :list
 
   def logs_modal(assigns) do
