@@ -16,6 +16,7 @@ defmodule CommonCore.Postgres.PGUser do
     field :username, :string
     field :password, :string
     field :roles, {:array, :string}, default: []
+    field :position, :integer, virtual: true
   end
 
   def changeset(struct, params \\ %{}) do

@@ -105,6 +105,23 @@ defmodule ControlServerWeb.PostgresLiveTest do
       refute Enum.find(cluster.users, &(&1.roles == valid_user_params["roles"]))
     end
 
+    test "can edit a user", %{conn: conn} do
+      valid_user_params = %{"roles" => ["inherit", "replication"], "username" => "a_new_user"}
+      updated_user_params = %{"roles" => ["login"], "username" => "a_new_user"}
+
+      conn
+      |> start(~p|/postgres/new|)
+      |> click("button", "New user")
+      |> submit_form("#user_modal form", %{"pg_user" => valid_user_params})
+      |> assert_html(valid_user_params["username"])
+      |> click("#edit_user_#{valid_user_params["username"]}")
+      |> submit_form("#user_modal form", %{"pg_user" => updated_user_params})
+      |> submit_form("#cluster-form", @valid_attrs)
+
+      cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
+      assert Enum.find(cluster.users, &(&1.roles == updated_user_params["roles"]))
+    end
+
     test "can add a credential_copy", %{conn: conn, namespace: namespace} do
       valid_cc_params = %{"format" => "dsn", "namespace" => namespace["metadata"]["name"], "username" => "app"}
 
@@ -117,6 +134,28 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
       cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
       assert Enum.find(cluster.credential_copies, &(&1.username == valid_cc_params["username"]))
+    end
+
+    test "can edit a credential_copy", %{conn: conn, namespace: namespace} do
+      valid_cc_params = %{"format" => "dsn", "namespace" => namespace["metadata"]["name"], "username" => "app"}
+
+      updated_cc_params = %{
+        "format" => "user_password",
+        "namespace" => namespace["metadata"]["name"],
+        "username" => "app"
+      }
+
+      conn
+      |> start(~p|/postgres/new|)
+      |> click("button", "New copy")
+      |> submit_form("#credential_copy_modal form", %{"pg_credential_copy" => valid_cc_params})
+      |> assert_html(valid_cc_params["username"])
+      |> click("#edit_credential_copy_#{valid_cc_params["namespace"]}_#{valid_cc_params["username"]}")
+      |> submit_form("#credential_copy_modal form", %{"pg_credential_copy" => updated_cc_params})
+      |> submit_form("#cluster-form", @valid_attrs)
+
+      cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
+      assert Enum.find(cluster.credential_copies, &(&1.format == String.to_existing_atom(updated_cc_params["format"])))
     end
 
     test "can delete a credential_copy", %{conn: conn, namespace: namespace} do

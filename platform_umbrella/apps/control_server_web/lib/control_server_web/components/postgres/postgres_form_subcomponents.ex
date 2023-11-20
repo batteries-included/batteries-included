@@ -2,8 +2,8 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  attr :phx_target, :any
-  attr :users, :list, default: []
+  attr(:phx_target, :any)
+  attr(:users, :list, default: [])
 
   def users_table(assigns) do
     ~H"""
@@ -32,6 +32,16 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           </:col>
           <:action :let={user}>
             <.action_icon
+              icon={:pencil}
+              id={"edit_user_" <> String.replace(user.username, " ", "")}
+              phx-click="edit:user"
+              phx-value-username={user.username}
+              tooltip="Edit"
+              link_type="button"
+              type="button"
+              phx-target={@phx_target}
+            />
+            <.action_icon
               to="/"
               icon={:x_mark}
               id={"delete_user_" <> String.replace(user.username, " ", "")}
@@ -49,8 +59,8 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     """
   end
 
-  attr :phx_target, :any
-  attr :credential_copies, :list, default: []
+  attr(:phx_target, :any)
+  attr(:credential_copies, :list, default: [])
 
   @spec credential_copies_table(map()) :: Phoenix.LiveView.Rendered.t()
   def credential_copies_table(assigns) do
@@ -75,7 +85,20 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       <div :if={@credential_copies != []} class="px-3 pb-6 -mt-3">
         <.table rows={@credential_copies} id="credential_copies_table">
           <:col :let={cc} label="Name"><%= cc.username %></:col>
+          <:col :let={cc} label="Namespace"><%= cc.namespace %></:col>
+          <:col :let={cc} label="Format"><%= cc.format %></:col>
           <:action :let={cc}>
+            <.action_icon
+              icon={:pencil}
+              id={"edit_credential_copy_" <> String.replace("#{cc.namespace}_#{cc.username}", " ", "")}
+              phx-click="edit:credential_copy"
+              phx-value-username={cc.username}
+              phx-value-namespace={cc.namespace}
+              tooltip="Edit"
+              link_type="button"
+              type="button"
+              phx-target={@phx_target}
+            />
             <.action_icon
               to="/"
               icon={:x_mark}
@@ -95,10 +118,10 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     """
   end
 
-  attr :field, :map, required: true
-  attr :value, :string, required: true
-  attr :label, :string
-  attr :help_text, :string
+  attr(:field, :map, required: true)
+  attr(:label, :string)
+  attr(:help_text, :string)
+  attr(:rest, :global, include: ~w(checked value))
 
   def role_option(assigns) do
     ~H"""
@@ -113,40 +136,73 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       </div>
 
       <div>
-        <.switch name={@field.name <> "[]"} value={@value} />
+        <.switch name={@field.name <> "[]"} {@rest} />
       </div>
     </div>
     """
   end
 
-  attr :phx_target, :any
-  attr :user_form, :map, default: nil
+  attr(:phx_target, :any)
+  attr(:user_form, :map, default: nil)
 
   def user_form_modal(assigns) do
     assigns =
-      assign(assigns, :roles, [
-        %{label: "Superuser", value: "superuser", help_text: "A special user account used for system administration"},
+      assigns
+      |> assign(:roles, [
+        %{
+          label: "Superuser",
+          value: "superuser",
+          help_text: "A special user account used for system administration"
+        },
         %{
           label: "Createdb",
           value: "createdb",
           help_text: "This role being defined will be allowed to create new databases"
         },
-        %{label: "Createrole", value: "createrole", help_text: "A special user account used for system administration"},
-        %{label: "Inherit", value: "inherit", help_text: "A special user account used for system administration"},
-        %{label: "Login", value: "login", help_text: "A special user account used for system administration"},
-        %{label: "Replication", value: "replication", help_text: "A special user account used for system administration"},
-        %{label: "Bypassrls", value: "bypassrls", help_text: "A special user account used for system administration"}
+        %{
+          label: "Createrole",
+          value: "createrole",
+          help_text: "A special user account used for system administration"
+        },
+        %{
+          label: "Inherit",
+          value: "inherit",
+          help_text: "A special user account used for system administration"
+        },
+        %{
+          label: "Login",
+          value: "login",
+          help_text: "A special user account used for system administration"
+        },
+        %{
+          label: "Replication",
+          value: "replication",
+          help_text: "A special user account used for system administration"
+        },
+        %{
+          label: "Bypassrls",
+          value: "bypassrls",
+          help_text: "A special user account used for system administration"
+        }
       ])
+      |> assign(
+        :action_text,
+        if(assigns[:user_form] && assigns.user_form.data.position,
+          do: "Edit user",
+          else: "Add user"
+        )
+      )
 
     ~H"""
     <PC.modal
       :if={@user_form}
       id="user_modal"
       max_width="lg"
-      title="Add user"
+      title={@action_text}
       close_modal_target={@phx_target}
     >
-      <.form for={@user_form} phx-submit="add:user" phx-target={@phx_target}>
+      <.form for={@user_form} phx-submit="upsert:user" phx-target={@phx_target}>
+        <PC.field field={@user_form[:position]} type="hidden" />
         <PC.field field={@user_form[:username]} label="User Name" />
         <PC.h3 class="!mt-8 !mb-6 !text-gray-500">Roles</PC.h3>
         <.grid columns={%{sm: 1, xl: 2}} class="mb-8">
@@ -156,6 +212,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             value={role.value}
             label={role.label}
             help_text={role.help_text}
+            checked={Enum.member?(@user_form[:roles].value, role.value)}
           />
         </.grid>
 
@@ -163,29 +220,40 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           <.button phx-target={@phx_target} phx-click="close_modal">
             Cancel
           </.button>
-          <PC.button>Add user</PC.button>
+          <PC.button><%= @action_text %></PC.button>
         </.flex>
       </.form>
     </PC.modal>
     """
   end
 
-  attr :phx_target, :any
-  attr :possible_owners, :list, default: []
-  attr :possible_namespaces, :list, default: []
-  attr :possible_formats, :list, default: []
-  attr :credential_copy_form, :map, default: nil
+  attr(:phx_target, :any)
+  attr(:possible_owners, :list, default: [])
+  attr(:possible_namespaces, :list, default: [])
+  attr(:possible_formats, :list, default: [])
+  attr(:credential_copy_form, :map, default: nil)
 
   def credential_copy_form_modal(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :action_text,
+        if(assigns[:credential_copy_form] && assigns.credential_copy_form.data.position,
+          do: "Edit copy",
+          else: "Add copy"
+        )
+      )
+
     ~H"""
     <PC.modal
       :if={@credential_copy_form}
       id="credential_copy_modal"
       max_width="lg"
-      title="New Copy Of Credentials"
+      title={@action_text}
       close_modal_target={@phx_target}
     >
-      <.form for={@credential_copy_form} phx-submit="add:credential_copy" phx-target={@phx_target}>
+      <.form for={@credential_copy_form} phx-submit="upsert:credential_copy" phx-target={@phx_target}>
+        <PC.field field={@credential_copy_form[:position]} type="hidden" />
         <PC.field field={@credential_copy_form[:username]} type="select" options={@possible_owners} />
         <PC.field
           field={@credential_copy_form[:namespace]}
@@ -198,7 +266,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           <.button phx-target={@phx_target} phx-click="close_modal">
             Cancel
           </.button>
-          <PC.button>Add copy</PC.button>
+          <PC.button><%= @action_text %></PC.button>
         </.flex>
       </.form>
     </PC.modal>

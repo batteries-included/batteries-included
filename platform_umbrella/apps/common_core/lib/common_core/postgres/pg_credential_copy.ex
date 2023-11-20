@@ -16,6 +16,7 @@ defmodule CommonCore.Postgres.PGCredentialCopy do
     field :username, :string
     field :namespace, :string
     field :format, Ecto.Enum, values: @possible_formats, default: :user_password_host
+    field :position, :integer, virtual: true
   end
 
   def changeset(struct, params \\ %{}) do

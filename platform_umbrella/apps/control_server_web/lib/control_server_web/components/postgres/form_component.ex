@@ -56,12 +56,17 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     {:noreply, assign(socket, pg_credential_copy_form: pg_credential_copy_form)}
   end
 
-  def handle_event("add:user", %{"pg_user" => pg_user_params}, %{assigns: %{form: %{source: changeset}}} = socket) do
+  def handle_event("upsert:user", %{"pg_user" => pg_user_params}, %{assigns: %{form: %{source: changeset}}} = socket) do
     pg_user_changeset = PGUser.changeset(%PGUser{}, pg_user_params)
 
     case Ecto.Changeset.apply_action(pg_user_changeset, :validate) do
       {:ok, pg_user} ->
-        users = Changeset.get_field(changeset, :users, []) ++ [pg_user]
+        position =
+          if pg_user_params["position"] == "",
+            do: nil,
+            else: String.to_integer(pg_user_params["position"])
+
+        users = upsert_by_position(Changeset.get_field(changeset, :users, []), pg_user, position)
         final_changeset = Changeset.put_embed(changeset, :users, users)
 
         {:noreply,
@@ -75,11 +80,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     end
   end
 
-  def handle_event("del:user", %{"username" => bad_username}, %{assigns: %{form: %{source: changeset}}} = socket) do
+  def handle_event("del:user", %{"username" => username}, %{assigns: %{form: %{source: changeset}}} = socket) do
     users =
       changeset
       |> Changeset.get_field(:users, [])
-      |> Enum.reject(fn user -> user.username == bad_username end)
+      |> Enum.reject(fn user -> user.username == username end)
 
     final_changeset = Changeset.put_embed(changeset, :users, users)
 
@@ -90,16 +95,43 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:possible_owners, possible_owners(final_changeset))}
   end
 
+  def handle_event("edit:user", %{"username" => username}, %{assigns: %{form: %{source: changeset}}} = socket) do
+    users = Changeset.get_field(changeset, :users)
+    pg_user = Enum.find(users, &(&1.username == username))
+
+    position =
+      Enum.find_index(Changeset.get_field(changeset, :users), &(&1 == pg_user))
+
+    pg_user_form =
+      pg_user
+      |> Map.put(:position, position)
+      |> PGUser.changeset()
+      |> to_form()
+
+    {:noreply, assign(socket, pg_user_form: pg_user_form)}
+  end
+
   def handle_event(
-        "add:credential_copy",
+        "upsert:credential_copy",
         %{"pg_credential_copy" => pg_credential_copy_params},
         %{assigns: %{form: %{source: changeset}}} = socket
       ) do
-    pg_credential_copy_changeset = PGCredentialCopy.changeset(%PGCredentialCopy{}, pg_credential_copy_params)
+    pg_credential_copy_changeset =
+      PGCredentialCopy.changeset(%PGCredentialCopy{}, pg_credential_copy_params)
 
     case Ecto.Changeset.apply_action(pg_credential_copy_changeset, :validate) do
       {:ok, pg_credential_copy} ->
-        credential_copies = Changeset.get_field(changeset, :credential_copies, []) ++ [pg_credential_copy]
+        position =
+          if pg_credential_copy_params["position"] == "",
+            do: nil,
+            else: String.to_integer(pg_credential_copy_params["position"])
+
+        credential_copies =
+          upsert_by_position(
+            Changeset.get_field(changeset, :credential_copies, []),
+            pg_credential_copy,
+            position
+          )
 
         final_changeset = Changeset.put_embed(changeset, :credential_copies, credential_copies)
 
@@ -112,6 +144,31 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       {:error, changeset} ->
         {:noreply, assign(socket, pg_credential_copy_form: to_form(changeset))}
     end
+  end
+
+  def handle_event(
+        "edit:credential_copy",
+        %{"username" => username, "namespace" => namespace},
+        %{assigns: %{form: %{source: changeset}}} = socket
+      ) do
+    credential_copies = Changeset.get_field(changeset, :credential_copies)
+
+    pg_credential_copy =
+      Enum.find(
+        credential_copies,
+        &(&1.username == username && &1.namespace == namespace)
+      )
+
+    position =
+      Enum.find_index(credential_copies, &(&1 == pg_credential_copy))
+
+    pg_credential_copy_form =
+      pg_credential_copy
+      |> Map.put(:position, position)
+      |> PGCredentialCopy.changeset()
+      |> to_form()
+
+    {:noreply, assign(socket, pg_credential_copy_form: pg_credential_copy_form)}
   end
 
   def handle_event(
@@ -506,5 +563,13 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       storage_class ->
         get_in(storage_class, ["metadata", "name"])
     end
+  end
+
+  defp upsert_by_position(list, item, position) when is_integer(position) do
+    List.replace_at(list, position, item)
+  end
+
+  defp upsert_by_position(list, item, _) do
+    list ++ [item]
   end
 end
