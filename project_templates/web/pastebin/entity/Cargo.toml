@@ -12,4 +12,4 @@ sea-orm = { version = "0.12.6", features = [
   "runtime-tokio-rustls",
 ] }
 serde = { version = "1.0.192", features = ["derive"] }
-uuid = { version = "1.5.0", features = ["v4"] }
+uuid = { version = "1.6.1", features = ["v4"] }
