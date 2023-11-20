@@ -77,7 +77,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def status_icon(assigns) do
     ~H"""
     <div class="flex items-center gap-2">
-      <Heroicons.x_circle class="w-6 h-6 text-danger-600 dark:text-danger-500" />
+      <Heroicons.x_circle class="w-6 h-6 text-gray-500" />
       <div class="flex-initial">
         False
       </div>
