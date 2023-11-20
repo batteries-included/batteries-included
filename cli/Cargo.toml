@@ -35,7 +35,7 @@ tokio-stream = { version = "0.1.14", features = ["net", "time"] }
 tracing = { version = "0.1.40" }
 tracing-subscriber = { version = "0.3.18" }
 url = { version = "2.4.1" }
-uuid = { version = "1.5.0", features = ["v4", "v6", "serde"] }
+uuid = { version = "1.6.1", features = ["v4", "v6", "serde"] }
 
 [profile.release]
 strip = true
