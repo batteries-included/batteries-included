@@ -1,7 +1,8 @@
 defmodule ControlServerWeb.Live.StaleIndex do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.ResourceHTMLHelper
   import K8s.Resource.FieldAccessors
 
   alias CommonCore.ApiVersionKind
@@ -14,7 +15,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1><%= @page_title %></.h1>
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/magic"}} />
     <.stale_table :if={@stale != nil && @stale != []} rows={@stale} />
     <.empty_state :if={@stale == nil || @stale == []} />
     """
@@ -33,33 +34,32 @@ defmodule ControlServerWeb.Live.StaleIndex do
         <%= namespace(resource) %>
       </:col>
 
-      <:action :let={resource}>
-        <.a
+      <:col :let={resource} label="Delete Now">
+        <.action_icon
+          icon={:trash}
           phx-click="delete"
           phx-value-kind={ApiVersionKind.resource_type!(resource)}
           phx-value-name={name(resource)}
           phx-value-namespace={namespace(resource)}
           data-confirm="Are you sure?"
-          variant="styled"
-        >
-          Delete Now
-        </.a>
-      </:action>
+          tooltip="Delete"
+          id={"delete-#{to_html_id(resource)}"}
+        />
+      </:col>
     </.table>
     """
   end
 
   defp empty_state(assigns) do
     ~H"""
-    <.card>
-      <:title>Empty Queue</:title>
+    <.panel title="Empty Queue">
       <div class="max-w-none prose prose-lg my-4">
         <p>
           There are currently no Kubernetes resources that are stale (no longer referenced in a deploy). Batteries Included control server will continue to monitor and seach for resources to clean up. Any Kubernetes objects found that are not needed will be placed in this queue for eventual deletion.
         </p>
       </div>
       <img class="w-auto max-w-md mx-auto" src={~p"/images/search-amico.svg"} alt="" />
-    </.card>
+    </.panel>
     """
   end
 

@@ -70,14 +70,13 @@ defmodule ControlServerWeb.Live.MagicHome do
 
   defp battery_link_panel(%{battery: %{type: :stale_resource_cleaner}} = assigns) do
     ~H"""
+    <.bordered_menu_item navigate={~p"/deleted_resources"} title="Deleted Resources" />
     <.bordered_menu_item navigate={~p"/stale"} title="Delete Queue" />
     """
   end
 
   defp battery_link_panel(%{battery: %{type: :battery_core}} = assigns) do
     ~H"""
-    <.bordered_menu_item navigate={~p"/deleted_resources"} title="Deleted Resources" />
-    <.bordered_menu_item navigate={~p"/content_addressable"} title="Content Addressable Storage" />
     <.bordered_menu_item
       href="http://home.127.0.0.1.ip.batteriesincl.com:4900/"
       title="Batteries Included Home"
