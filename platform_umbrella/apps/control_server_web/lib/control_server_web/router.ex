@@ -182,7 +182,7 @@ defmodule ControlServerWeb.Router do
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
     end
 
-    # Enablees Storybook ony for development
+    # Enables Storybook only for development
     scope "/" do
       storybook_assets()
     end

@@ -74,7 +74,7 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
         {:ok, nil}
 
       {:error, err} ->
-        Logger.error("Error creating client: #{inspect(err)}")
+        Logger.error("Error updating client: #{inspect(err)}")
         {:error, err}
     end
   end
