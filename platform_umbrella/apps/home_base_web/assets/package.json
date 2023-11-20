@@ -10,7 +10,7 @@
   "dependencies": {
     "@fontsource-variable/inter": "5.0.15",
     "@fontsource-variable/jetbrains-mono": "5.0.18",
-    "alpinejs": "3.13.2",
+    "alpinejs": "3.13.3",
     "chart.js": "4.4.0",
     "esbuild": "^0.19.6",
     "lodash": "4.17.21",
