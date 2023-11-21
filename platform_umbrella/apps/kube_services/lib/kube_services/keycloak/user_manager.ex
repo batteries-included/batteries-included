@@ -23,6 +23,8 @@ defmodule KubeServices.Keycloak.UserManager do
   def start_link(opts \\ []) do
     {state_opts, gen_opts} = opts |> Keyword.put_new(:name, @me) |> Keyword.split(@state_opts)
 
+    Logger.debug("Starting UserManager")
+
     GenServer.start_link(__MODULE__, state_opts, gen_opts)
   end
 

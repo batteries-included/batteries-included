@@ -96,16 +96,6 @@ defmodule CommonCore.Keycloak.AdminClient do
     {:ok, state}
   end
 
-  @spec reset(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t(), String.t()) ::
-          :ok
-  @doc """
-  Reset the credentials used for this rest client. This won't log in to keycloak. That happens
-  when needed or if forced via `login/1`
-  """
-  def reset(target \\ @me, base_url, username, password) do
-    GenServer.call(target, {:reset, base_url: base_url, username: username, password: password})
-  end
-
   @doc """
   Login to the Keycloak
   """
@@ -252,27 +242,6 @@ defmodule CommonCore.Keycloak.AdminClient do
     end
   end
 
-  # These are the handle_call/3 functions that will deal with authentication state
-  def handle_call({:reset, opts}, _from, %State{base_url: base_url, username: username, password: password} = state) do
-    new_base_url = Keyword.get(opts, :base_url, base_url)
-    new_username = Keyword.get(opts, :username, username)
-    new_password = Keyword.get(opts, :password, password)
-
-    if new_base_url != base_url || new_username != username || new_password != password do
-      Logger.debug("Resetting credentials or base url for keycloak")
-
-      new_state =
-        state
-        |> reset_http_params(new_username, new_password, new_base_url)
-        |> reset_tokens()
-        |> build_base_client()
-
-      {:reply, :ok, new_state}
-    else
-      {:reply, :ok, state}
-    end
-  end
-
   def handle_call(:login, _from, state) do
     case do_login(state) do
       {:ok, new_state} -> {:reply, :ok, new_state}
@@ -382,11 +351,6 @@ defmodule CommonCore.Keycloak.AdminClient do
       error ->
         {:reply, error, reset_tokens(state)}
     end
-  end
-
-  @spec reset_http_params(State.t(), String.t(), String.t(), String.t()) :: State.t()
-  defp reset_http_params(state, username, password, base_url) do
-    %State{state | username: username, password: password, base_url: base_url}
   end
 
   @spec reset_tokens(State.t()) :: State.t()

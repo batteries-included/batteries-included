@@ -13,7 +13,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
     namespace_istio = istio_namespace(state)
 
     %{
-      "auth" => get_auth_config(state, F.batteries_installed?(state, :sso)),
+      "auth" => get_auth_config(state, F.sso_installed?(state)),
       "deployment" => %{
         "accessible_namespaces" => ["**"],
         "additional_service_yaml" => %{},

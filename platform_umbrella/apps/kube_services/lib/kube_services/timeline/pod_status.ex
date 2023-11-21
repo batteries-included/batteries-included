@@ -62,9 +62,11 @@ defmodule KubeServices.Timeline.PodStatus do
   @impl GenServer
   @spec handle_info(msg :: :sync, state :: state()) :: {action :: :noreply, newstate :: state()}
   def handle_info(:sync, state) do
+    # Get all the pods even if the current state is explicitly nil
     :kube_state
     |> Summarizer.cached_field()
-    |> Map.get(:pod)
+    |> Map.get(:pod, [])
+    |> Kernel.||([])
     |> Enum.each(&upsert/1)
 
     {:noreply, state}

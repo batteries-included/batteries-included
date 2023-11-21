@@ -82,7 +82,7 @@ defmodule CommonCore.Resources.Gitea do
 
     domain = gitea_host(state)
 
-    sso_enabled? = F.batteries_installed?(state, :sso)
+    sso_enabled? = F.sso_installed?(state)
 
     data =
       %{}
@@ -206,7 +206,7 @@ defmodule CommonCore.Resources.Gitea do
     user = Enum.find(cluster.users, fn user -> user.username == Defaults.GiteaDB.db_username() end)
     secret_name = PostgresState.user_secret(state, cluster, user)
 
-    sso_enabled? = F.batteries_installed?(state, :sso)
+    sso_enabled? = F.sso_installed?(state)
 
     template = %{
       "metadata" => %{

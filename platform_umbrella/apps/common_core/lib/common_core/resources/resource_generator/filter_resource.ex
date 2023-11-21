@@ -37,4 +37,8 @@ defmodule CommonCore.Resources.FilterResource do
     installed = state.batteries |> Enum.map(& &1.type) |> MapSet.new()
     Enum.all?(battery_types, fn bt -> MapSet.member?(installed, bt) end)
   end
+
+  def keycloak_installed?(state), do: batteries_installed?(state, :keycloak)
+
+  def sso_installed?(state), do: batteries_installed?(state, :sso)
 end

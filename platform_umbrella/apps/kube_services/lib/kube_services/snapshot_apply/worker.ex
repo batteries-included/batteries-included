@@ -14,10 +14,10 @@ defmodule KubeServices.SnapshotApply.Worker do
   require Logger
 
   @me __MODULE__
-  @state_opts [:keycloak_running, :running]
+  @state_opts [:sso_enabled, :running]
 
   typedstruct module: State do
-    field :keycloak_running, boolean(), default: false
+    field :sso_enabled, boolean(), default: false
     field :running, boolean(), default: true
     field :init_delay, non_neg_integer(), default: 5_000
     field :delay, non_neg_integer(), default: 300_000
@@ -27,7 +27,7 @@ defmodule KubeServices.SnapshotApply.Worker do
     {state_opts, opts} =
       opts
       |> Keyword.put_new(:name, @me)
-      |> Keyword.put_new(:keycloak_running, Batteries.battery_enabled?(:sso))
+      |> Keyword.put_new(:sso_enabled, Batteries.battery_enabled?(:sso))
       |> Keyword.split(@state_opts)
 
     GenServer.start_link(__MODULE__, state_opts, opts)
@@ -60,8 +60,8 @@ defmodule KubeServices.SnapshotApply.Worker do
     _e, _r -> false
   end
 
-  def set_keycloak_running(target \\ @me, running) do
-    GenServer.call(target, {:set_keycloak_running, running})
+  def set_sso_enabled(target \\ @me, running) do
+    GenServer.call(target, {:set_sso_enabled, running})
   end
 
   @doc """
@@ -85,8 +85,8 @@ defmodule KubeServices.SnapshotApply.Worker do
     {:reply, was_running, %State{state | running: running}}
   end
 
-  def handle_call({:set_keycloak_running, running}, _from, %State{keycloak_running: was_running} = state) do
-    {:reply, was_running, %State{state | keycloak_running: running}}
+  def handle_call({:set_sso_enabled, running}, _from, %State{sso_enabled: was_running} = state) do
+    {:reply, was_running, %State{state | sso_enabled: running}}
   end
 
   def handle_cast({:perform, umbrella_snapshot}, %State{} = state) do
@@ -135,8 +135,8 @@ defmodule KubeServices.SnapshotApply.Worker do
 
   # Prepare
   defp kube_prepare(us, _state), do: KubeApply.prepare(us)
-  defp keycloak_prepare(_us, %State{keycloak_running: false}), do: {:ok, nil}
-  defp keycloak_prepare(us, %State{keycloak_running: true}), do: KeycloakApply.prepare(us)
+  defp keycloak_prepare(_us, %State{sso_enabled: false}), do: {:ok, nil}
+  defp keycloak_prepare(us, %State{sso_enabled: true}), do: KeycloakApply.prepare(us)
 
   # Generate
   defp summary(_state), do: Summarizer.new()

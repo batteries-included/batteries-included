@@ -19,9 +19,7 @@ defmodule KubeServices.SnapshotApply do
       # threaded inside once the lock is held).
       KubeServices.SnapshotApply.KubeApply,
       # This is the worker that does umbrella snapshot starting kube or keycloak
-      KubeServices.SnapshotApply.Worker,
-      # A genserver that subscribes to events and re-configures the worker
-      KubeServices.SnapshotApply.WorkerKeycloakWrangler,
+      KubeServices.SnapshotApply.WorkerSupervisor,
       # A genserver the watches for failed kube applys. Starting
       # a new atempt with every increasing delays.
       KubeServices.SnapshotApply.FailedKubeLauncher,
