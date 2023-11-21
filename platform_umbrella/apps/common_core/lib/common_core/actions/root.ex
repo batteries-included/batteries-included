@@ -1,5 +1,6 @@
 defmodule CommonCore.Actions.RootActionGenerator do
   @moduledoc false
+  alias CommonCore.Actions.BatteryCore
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Actions.Gitea
   alias CommonCore.Actions.Grafana
@@ -12,6 +13,7 @@ defmodule CommonCore.Actions.RootActionGenerator do
   alias CommonCore.StateSummary
 
   @default_generator_mappings [
+    battery_core: BatteryCore,
     gitea: Gitea,
     grafana: Grafana,
     kiali: Kiali,

@@ -46,5 +46,6 @@ defmodule ControlServerWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+
   plug ControlServerWeb.Router
 end

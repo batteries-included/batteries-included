@@ -49,7 +49,7 @@ defmodule ControlServer.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:typed_ecto_schema, "~> 0.4"},
       {:polymorphic_embed, "~> 3.0"},
-      {:ecto_sql, "~> 3.10"},
+      {:ecto_sql, "~> 3.11"},
       {:postgrex, "~> 0.17"},
       {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
 
@@ -60,7 +60,7 @@ defmodule ControlServer.MixProject do
       {:ex_audit, "~> 0.10"},
 
       # Kubernetes
-      {:k8s, "~> 2.4"},
+      {:k8s, "~> 2.5"},
 
       # Yaml
       {:ymlr, "~> 5.0"},

@@ -8,7 +8,8 @@ defmodule KubeServices.Batteries.SSO do
     _battery = Keyword.fetch!(opts, :battery)
 
     children = [
-      KubeServices.SnapshotApply.KeycloakApply
+      KubeServices.SnapshotApply.KeycloakApply,
+      KubeServices.Keycloak.OIDCSupervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

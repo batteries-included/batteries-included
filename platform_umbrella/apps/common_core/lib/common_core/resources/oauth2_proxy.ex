@@ -171,6 +171,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     |> String.replace("-", "_")
   end
 
+  # TODO(jdt): this flaps on startup. fix it.
   resource(:secret, battery, state) do
     name = name(battery)
     namespace = core_namespace(state)

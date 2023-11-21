@@ -19,7 +19,7 @@ defmodule PodLogs.MixProject do
 
   defp deps do
     [
-      {:k8s, "~> 2.4"}
+      {:k8s, "~> 2.5"}
     ]
   end
 end

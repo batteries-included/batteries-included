@@ -33,7 +33,7 @@ defmodule CommonCore.MixProject do
       {:tesla, "~> 1.8"},
       {:typed_ecto_schema, "~> 0.4"},
       {:typed_struct, "~> 0.3", runtime: false},
-      {:k8s, "~> 2.4"},
+      {:k8s, "~> 2.5"},
 
       # Yaml
       {:ymlr, "~> 5.0"},

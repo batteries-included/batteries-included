@@ -35,7 +35,8 @@ defmodule KubeServices.SystemState.ReconfigCanary do
   @impl GenServer
   def handle_info(%CommonCore.StateSummary{} = summary, %State{state_summary: old, methods: methods} = state) do
     if all_same(summary, old, methods) do
-      Logger.debug("System state summary is the same as the previous summary, no reconfiguration needed.")
+      Logger.debug("System state summary same as the previous summary, no reconfiguration with #{length(methods)}.")
+
       {:noreply, state}
     else
       Logger.info("System state summary has changed, reconfiguring system with #{length(methods)}")

@@ -11,13 +11,13 @@ defmodule KubeServices.Keycloak.AdminClientSupervisor do
 
   def init(_opts) do
     children = [
-      # Start the supervisor that starts AdminClient with the most recent keycloak Settings
-      KubeServices.Keycloak.AdminClientInnerSupervisor,
-      # # Then start a genserver that monitors the system state and reconfigures if needed
+      # # Start a genserver that monitors the system state and reconfigures if needed
       {KubeServices.SystemState.ReconfigCanary,
        [
          methods: [&Creds.root_keycloak_username/1, &Creds.root_keycloak_password/1, &Hosts.keycloak_host/1]
-       ]}
+       ]},
+      # Start the supervisor that starts AdminClient with the most recent keycloak Settings
+      KubeServices.Keycloak.AdminClientInnerSupervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_all)
