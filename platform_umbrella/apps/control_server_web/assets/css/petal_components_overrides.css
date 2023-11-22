@@ -103,7 +103,7 @@
 /* Table */
 
 .pc-table {
-  @apply min-w-full overflow-hidden rounded-sm table-auto md:overflow-auto ring-0 dark:divide-y-0 dark:divide-gray-800 sm:rounded;
+  @apply min-w-full rounded-sm table-auto ring-0 dark:divide-y-0 dark:divide-gray-800 sm:rounded;
 }
 
 .pc-table__th {
