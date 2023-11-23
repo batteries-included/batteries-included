@@ -35,16 +35,16 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/net_sec"}}>
-      <:right_side>
+      <:menu>
         <.a navigate={new_url()}>
           <.button class="w-full">
             New Pool
           </.button>
         </.a>
-      </:right_side>
+      </:menu>
     </.page_header>
     <.panel title="MetalLB IP Addresses">
-      <:top_right></:top_right>
+      <:menu></:menu>
       <.ip_address_pools_table rows={@ip_address_pools} />
     </.panel>
     """

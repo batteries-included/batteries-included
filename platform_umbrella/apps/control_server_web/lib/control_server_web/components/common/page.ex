@@ -12,9 +12,11 @@ defmodule ControlServerWeb.Common.Page do
     default: nil,
     doc: ~s|Attributes for the back link, if it exists. eg. back_button={%{link_type="live_redirect" to="/"}}|
 
-  slot :right_side
+  slot :menu
 
   def page_header(assigns) do
+    assigns = assign_new(assigns, :menu, fn -> [] end)
+
     ~H"""
     <.flex class="items-center justify-between mb-6">
       <.flex class="flex items-center gap-4">
@@ -32,9 +34,7 @@ defmodule ControlServerWeb.Common.Page do
         </.flex>
       </.flex>
 
-      <%= if render_slot(@right_side) do %>
-        <%= render_slot(@right_side) %>
-      <% end %>
+      <%= render_slot(@menu) %>
     </.flex>
     """
   end

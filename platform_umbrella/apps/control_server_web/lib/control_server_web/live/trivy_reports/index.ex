@@ -75,21 +75,34 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
     "Vulnerability Report"
   end
 
-  defp tabs(selected) do
-    [
-      {"Audit", ~p"/trivy_reports/config_audit_report", :aqua_config_audit_report == selected},
-      {"Cluster RBAC", ~p"/trivy_reports/cluster_rbac_assessment_report",
-       :aqua_cluster_rbac_assessment_report == selected},
-      {"RBAC", ~p"/trivy_reports/rbac_assessment_report", :aqua_rbac_assessment_report == selected},
-      {"Kube Infra", ~p"/trivy_reports/infra_assessment_report", :aqua_infra_assessment_report == selected},
-      {"Vulnerability", ~p"/trivy_reports/vulnerability_report", :aqua_vulnerability_report == selected}
-    ]
+  @report_tabs [
+    {"Audit", "/trivy_reports/config_audit_report", :aqua_config_audit_report},
+    {"Cluster RBAC", "/trivy_reports/cluster_rbac_assessment_report", :aqua_cluster_rbac_assessment_report},
+    {"RBAC", "/trivy_reports/rbac_assessment_report", :aqua_rbac_assessment_report},
+    {"Kube Infra", "/trivy_reports/infra_assessment_report", :aqua_infra_assessment_report},
+    {"Vulnerability", "/trivy_reports/vulnerability_report", :aqua_vulnerability_report}
+  ]
+
+  defp report_tabs, do: @report_tabs
+
+  defp tabs(assigns) do
+    ~H"""
+    <.tab_bar>
+      <.tab_item
+        :for={{title, path, live_action} <- report_tabs()}
+        selected={@live_action == live_action}
+        patch={path}
+      >
+        <%= title %>
+      </.tab_item>
+    </.tab_bar>
+    """
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.tab_bar tabs={tabs(@live_action)} />
+    <.tabs live_action={@live_action} />
     <%= case @live_action do %>
       <% :aqua_config_audit_report -> %>
         <.config_audit_reports_table reports={@objects} />

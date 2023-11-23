@@ -37,7 +37,7 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
   def catalog_batteries_table(assigns) do
     ~H"""
     <.table id={@id} rows={@catalog_batteries} {@rest}>
-      <:col :let={battery} label="Type">
+      <:col :let={battery} label="Name">
         <%= Naming.humanize(battery.type) %>
       </:col>
       <:col :let={battery}>
@@ -48,7 +48,7 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
           <%= battery.description %>
         </.help_question_mark>
       </:col>
-      <:col :let={battery} label="Group">
+      <:col :let={battery} label="Type">
         <%= battery.group %>
       </:col>
       <:col :let={battery} label="Status">

@@ -173,11 +173,13 @@ defmodule CommonUI.Container do
 
   attr :gaps, :any, default: %{"sm" => 4, "lg" => 6}
   attr :class, :any, default: nil
+  attr :rest, :global
+
   slot :inner_block
 
   def flex(assigns) do
     ~H"""
-    <div class={build_class([gap_class(@gaps), "flex", @class])}>
+    <div class={build_class([gap_class(@gaps), "flex", @class])} {@rest}>
       <%= render_slot(@inner_block) %>
     </div>
     """

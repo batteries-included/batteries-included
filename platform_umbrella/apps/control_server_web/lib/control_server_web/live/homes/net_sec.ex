@@ -49,11 +49,11 @@ defmodule ControlServerWeb.Live.NetSecHome do
   defp sso_panel(assigns) do
     ~H"""
     <.panel title="Realms">
-      <:top_right>
+      <:menu>
         <.flex>
           <.a navigate={~p"/keycloak/realms"}>View All</.a>
         </.flex>
-      </:top_right>
+      </:menu>
       <.keycloak_realms_table rows={@realms} keycloak_url={@keycloak_url} abbridged />
     </.panel>
     """
@@ -62,11 +62,11 @@ defmodule ControlServerWeb.Live.NetSecHome do
   defp metallb_panel(assigns) do
     ~H"""
     <.panel title="MetalLB IPs">
-      <:top_right>
+      <:menu>
         <.flex>
           <.a navigate={~p"/ip_address_pools"}>View All</.a>
         </.flex>
-      </:top_right>
+      </:menu>
       <.ip_address_pools_table rows={@ip_address_pools} abbridged />
     </.panel>
     """
@@ -75,11 +75,11 @@ defmodule ControlServerWeb.Live.NetSecHome do
   defp trivy_panel(assigns) do
     ~H"""
     <.panel title="Trivy Security Reports">
-      <:top_right>
+      <:menu>
         <.flex>
           <.a navigate={~p"/trivy_reports/vulnerability_report"}>View All</.a>
         </.flex>
-      </:top_right>
+      </:menu>
       <.vulnerability_reports_table reports={@vulnerability_reports} />
     </.panel>
     """
@@ -99,14 +99,14 @@ defmodule ControlServerWeb.Live.NetSecHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Net/Security">
-      <:right_side>
+      <:menu>
         <PC.button
           label="Manage Batteries"
           color="light"
           to={~p"/batteries/net_sec"}
           link_type="live_redirect"
         />
-      </:right_side>
+      </:menu>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>

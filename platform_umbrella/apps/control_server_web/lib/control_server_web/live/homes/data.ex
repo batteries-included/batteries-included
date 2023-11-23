@@ -32,14 +32,14 @@ defmodule ControlServerWeb.Live.DataHome do
   defp postgres_panel(assigns) do
     ~H"""
     <.panel title="Postgres">
-      <:top_right>
+      <:menu>
         <.flex>
           <.a navigate={~p"/postgres/new"} variant="styled">
             <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New PostgreSQL
           </.a>
           <.a navigate={~p"/postgres"}>View All</.a>
         </.flex>
-      </:top_right>
+      </:menu>
       <.postgres_clusters_table rows={@clusters} abbridged />
     </.panel>
     """
@@ -48,14 +48,14 @@ defmodule ControlServerWeb.Live.DataHome do
   defp redis_panel(assigns) do
     ~H"""
     <.panel title="Redis">
-      <:top_right>
+      <:menu>
         <.flex>
           <.a navigate={~p"/redis/new"} variant="styled">
             <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Redis
           </.a>
           <.a navigate={~p"/redis"}>View All</.a>
         </.flex>
-      </:top_right>
+      </:menu>
       <.redis_table rows={@clusters} abbridged />
     </.panel>
     """
@@ -65,14 +65,14 @@ defmodule ControlServerWeb.Live.DataHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Data Storage">
-      <:right_side>
+      <:menu>
         <PC.button
           label="Manage Batteries"
           color="light"
           to={~p"/batteries/data"}
           link_type="live_redirect"
         />
-      </:right_side>
+      </:menu>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>

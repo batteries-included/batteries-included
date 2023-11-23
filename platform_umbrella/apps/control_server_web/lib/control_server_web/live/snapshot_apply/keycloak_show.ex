@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Live.KeycloakSnapshotShow do
       title="Keycloak Deploy"
       back_button={%{link_type: "live_redirect", to: ~p(/deploy/#{@umbrella_id}/show)}}
     >
-      <:right_side>
+      <:menu>
         <.flex>
           <.data_horizontal_bordered>
             <:item title="Status">
@@ -51,7 +51,7 @@ defmodule ControlServerWeb.Live.KeycloakSnapshotShow do
             </:item>
           </.data_horizontal_bordered>
         </.flex>
-      </:right_side>
+      </:menu>
     </.page_header>
 
     <.panel title="Action Results">

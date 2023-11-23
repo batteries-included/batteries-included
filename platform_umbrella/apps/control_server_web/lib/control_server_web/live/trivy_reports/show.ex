@@ -80,7 +80,7 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
       title={@page_title}
       back_button={%{link_type: "live_redirect", to: ~p"/trivy_reports/vulnerability_report"}}
     >
-      <:right_side>
+      <:menu>
         <.data_horizontal_bordered>
           <:item title="Artifact">
             <%= @artifact_repo %>/<%= @artifact_tag %>
@@ -89,7 +89,7 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
             <.relative_display time={creation_timestamp(@report)} />
           </:item>
         </.data_horizontal_bordered>
-      </:right_side>
+      </:menu>
     </.page_header>
 
     <.panel title={@name}>

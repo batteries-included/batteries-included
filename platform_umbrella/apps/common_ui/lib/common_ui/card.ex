@@ -2,6 +2,7 @@ defmodule CommonUI.Card do
   @moduledoc false
   use CommonUI.Component
 
+  import CommonUI.Container
   import CommonUI.Typography
 
   attr :class, :string, default: nil
@@ -37,7 +38,7 @@ defmodule CommonUI.Card do
   attr :rest, :global, include: ~w(id)
 
   slot :inner_block
-  slot :top_right
+  slot :menu
 
   @doc """
   This is like card but updated with the new design.
@@ -45,13 +46,16 @@ defmodule CommonUI.Card do
   def panel(assigns) do
     ~H"""
     <div class={[get_classes(@variant), @class]} {@rest}>
-      <div :if={@title} class="flex items-center justify-between w-full p-6 text-center">
-        <.h3><%= @title %></.h3>
+      <.flex
+        :if={@title || @inner_block}
+        class="items-center justify-between w-full p-6 text-center flex-col lg:flex-row"
+      >
+        <.h3 :if={@title}><%= @title %></.h3>
 
-        <%= if render_slot(@top_right) do %>
-          <%= render_slot(@top_right) %>
+        <%= if @menu do %>
+          <%= render_slot(@menu) %>
         <% end %>
-      </div>
+      </.flex>
 
       <div class={panel_body_class(@no_body_padding, @title)}>
         <%= render_slot(@inner_block) %>

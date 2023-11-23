@@ -46,11 +46,11 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
     ~H"""
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/ml"}} />
     <.panel title="Jupyter Notebooks">
-      <:top_right>
+      <:menu>
         <.button type="primary" phx-click="start_notebook">
           Start New Notebook
         </.button>
-      </:top_right>
+      </:menu>
       <.notebooks_table rows={@notebooks} />
     </.panel>
     """

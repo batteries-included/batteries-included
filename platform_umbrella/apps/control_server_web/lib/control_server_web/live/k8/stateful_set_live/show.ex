@@ -72,9 +72,9 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
       title={@name}
       back_button={%{link_type: "live_redirect", to: ~p"/kube/stateful_sets"}}
     >
-      <:right_side>
+      <:menu>
         <.stateful_set_facts_section namespace={@namespace} resource={@resource} />
-      </:right_side>
+      </:menu>
     </.page_header>
 
     <div class="flex flex-col gap-8 mb-10">

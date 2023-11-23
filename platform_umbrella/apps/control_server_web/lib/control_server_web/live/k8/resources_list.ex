@@ -47,7 +47,10 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
-    {:noreply, assign_objects(socket, objects(socket.assigns.live_action))}
+    {:noreply,
+     socket
+     |> assign_objects(objects(socket.assigns.live_action))
+     |> assign_page_title(title_text(socket.assigns.live_action))}
   end
 
   defp objects(type) do
@@ -74,21 +77,36 @@ defmodule ControlServerWeb.Live.ResourceList do
     "Services"
   end
 
-  defp tabs(selected) do
-    [
-      {"Pods", ~p"/kube/pods", :pod == selected},
-      {"Deployments", ~p"/kube/deployments", :deployment == selected},
-      {"Stateful Sets", ~p"/kube/stateful_sets", :stateful_set == selected},
-      {"Services", ~p"/kube/services", :service == selected},
-      {"Nodes", ~p"/kube/nodes", :node == selected}
-    ]
+  @resource_tabs [
+    {"Pods", "/kube/pods", :pod},
+    {"Deployments", "/kube/deployments", :deployment},
+    {"Stateful Sets", "/kube/stateful_sets", :stateful_set},
+    {"Services", "/kube/services", :service},
+    {"Nodes", "/kube/nodes", :node}
+  ]
+
+  defp resource_tabs, do: @resource_tabs
+
+  defp tabs(assigns) do
+    ~H"""
+    <.tab_bar>
+      <.tab_item
+        :for={{title, path, live_action} <- resource_tabs()}
+        selected={@live_action == live_action}
+        patch={path}
+      >
+        <%= title %>
+      </.tab_item>
+    </.tab_bar>
+    """
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header title="Kubernetes" />
-    <.tab_bar tabs={tabs(@live_action)} />
+    <.tabs live_action={@live_action} />
+
     <%= case @live_action do %>
       <% :deployment -> %>
         <.panel title="Deployments">

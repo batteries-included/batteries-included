@@ -42,9 +42,9 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/data"}}>
-      <:right_side>
+      <:menu>
         <PC.button to={new_url()} link_type="live_redirect" label="New Cluster" />
-      </:right_side>
+      </:menu>
     </.page_header>
     <.panel title="All Clusters">
       <.postgres_clusters_table rows={@clusters} />

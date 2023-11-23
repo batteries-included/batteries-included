@@ -115,7 +115,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       title={"Postgres Cluster: #{@cluster.name}"}
       back_button={%{link_type: "live_redirect", to: ~p"/postgres"}}
     >
-      <:right_side>
+      <:menu>
         <.flex>
           <.data_horizontal_bordered>
             <:item title="Status">
@@ -139,7 +139,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
             </PC.icon_button>
           </.flex>
         </.flex>
-      </:right_side>
+      </:menu>
     </.page_header>
     <.pills_menu>
       <:item title="Database Users" patch={users_url(@cluster)}>

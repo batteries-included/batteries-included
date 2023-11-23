@@ -31,9 +31,9 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/devtools"}} />
 
     <.panel title="Knative Serverless">
-      <:top_right>
+      <:menu>
         <PC.button to={new_url()} link_type="live_redirect" label="New Service" />
-      </:top_right>
+      </:menu>
       <.knative_services_table rows={@services} />
     </.panel>
     """

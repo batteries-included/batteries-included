@@ -4,16 +4,14 @@ defmodule CommonUI.TabBarTest do
   import CommonUI.TabBar
 
   component_snapshot_test "TabBar test" do
-    tabs = [
-      {"Title", "/path", false},
-      {"Another Title", "/second_path", true},
-      {"Yet Another Title", "/last_path", false}
-    ]
-
-    assigns = %{tabs: tabs}
+    assigns = %{}
 
     ~H"""
-    <.tab_bar tabs={@tabs} />
+    <.tab_bar>
+      <.tab_item phx-click="test">Title</.tab_item>
+      <.tab_item patch="/second_path">Another Title</.tab_item>
+      <.tab_item navigate="/last_path">Yet Another Title</.tab_item>
+    </.tab_bar>
     """
   end
 end

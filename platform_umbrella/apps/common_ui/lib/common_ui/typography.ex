@@ -28,7 +28,7 @@ defmodule CommonUI.Typography do
 
   attr :class, :any, default: ""
   attr :base_class, :string, default: "text-xl sm:text-3xl font-semibold my-3"
-  attr :color_class, :string, default: "text-astral-800"
+  attr :color_class, :string, default: "text-black"
 
   attr :fancy_class, :string, default: "text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-astral-500"
 

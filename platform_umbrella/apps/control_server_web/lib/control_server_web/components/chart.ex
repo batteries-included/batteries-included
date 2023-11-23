@@ -22,7 +22,7 @@ defmodule ControlServerWeb.Chart do
   def chart(assigns) do
     ~H"""
     <div
-      class={build_class([@class])}
+      class={@class}
       id={@id}
       phx-hook="Chart"
       data-chart-type={@type}

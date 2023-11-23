@@ -8,7 +8,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   def users_table(assigns) do
     ~H"""
     <.panel no_body_padding title="Users">
-      <:top_right>
+      <:menu>
         <.button
           variant="transparent"
           icon={:plus}
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         >
           New user
         </.button>
-      </:top_right>
+      </:menu>
 
       <div :if={@users == []} class="p-6 text-sm text-gray-500 dark:text-gray-400">
         No users added
@@ -66,7 +66,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   def credential_copies_table(assigns) do
     ~H"""
     <.panel no_body_padding title="Credential Secret Copies">
-      <:top_right>
+      <:menu>
         <.button
           variant="transparent"
           icon={:plus}
@@ -76,7 +76,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         >
           New copy
         </.button>
-      </:top_right>
+      </:menu>
 
       <div :if={@credential_copies == []} class="p-6 text-sm text-gray-500 dark:text-gray-400">
         No copies added

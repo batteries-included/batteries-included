@@ -46,14 +46,14 @@ defmodule ControlServerWeb.Live.MonitoringHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Monitoring">
-      <:right_side>
+      <:menu>
         <PC.button
           label="Manage Batteries"
           color="light"
           to={~p"/batteries/monitoring"}
           link_type="live_redirect"
         />
-      </:right_side>
+      </:menu>
     </.page_header>
 
     <.flex class="flex-col items-stretch justify-start">

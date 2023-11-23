@@ -23,6 +23,14 @@ defmodule ControlServer.Batteries do
     Repo.all(SystemBattery)
   end
 
+  @spec list_system_batteries_slim() :: [SystemBattery.t()]
+  def list_system_batteries_slim do
+    from(sb in SystemBattery)
+    |> select([:id, :group, :type, :inserted_at, :updated_at])
+    |> order_by(desc: :updated_at)
+    |> Repo.all()
+  end
+
   def list_system_batteries_for_group(group, repo \\ Repo) do
     repo.all(from sb in SystemBattery, where: sb.group == ^group)
   end

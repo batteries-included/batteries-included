@@ -90,7 +90,7 @@ defmodule ControlServerWeb.Live.MagicHome do
   defp deploys_panel(assigns) do
     ~H"""
     <.panel title="Deploys">
-      <:top_right>
+      <:menu>
         <.flex>
           <.a :if={@deploys_running} phx-click="pause-deploy" variant="styled">
             <PC.icon name={:pause} class="inline-flex h-5 w-auto my-auto mr-2" />Pause Deploys
@@ -103,7 +103,7 @@ defmodule ControlServerWeb.Live.MagicHome do
           </.a>
           <.a navigate={~p"/deploy"}>View All</.a>
         </.flex>
-      </:top_right>
+      </:menu>
       <.pause_alert :if={!@deploys_running} />
       <.umbrella_snapshots_table abbridged snapshots={@snapshots} />
     </.panel>
@@ -114,14 +114,14 @@ defmodule ControlServerWeb.Live.MagicHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Magic">
-      <:right_side>
+      <:menu>
         <PC.button
           label="Manage Batteries"
           color="light"
           to={~p"/batteries/magic"}
           link_type="live_redirect"
         />
-      </:right_side>
+      </:menu>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <.deploys_panel deploys_running={@deploys_running} snapshots={@snapshots} />

@@ -74,9 +74,9 @@ defmodule ControlServerWeb.DeploymentLive.Show do
   def render(assigns) do
     ~H"""
     <.page_header title={@name} back_button={%{link_type: "live_redirect", to: ~p"/kube/deployments"}}>
-      <:right_side>
+      <:menu>
         <.deployment_facts_section namespace={@namespace} resource={@resource} />
-      </:right_side>
+      </:menu>
     </.page_header>
 
     <div class="flex flex-col gap-8 mb-10">

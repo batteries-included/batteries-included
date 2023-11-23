@@ -24,11 +24,11 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
   defp knative_serving_panel(assigns) do
     ~H"""
     <.panel title="Knative Services">
-      <:top_right>
+      <:menu>
         <.flex>
           <.a navigate={~p"/knative/services"}>View All</.a>
         </.flex>
-      </:top_right>
+      </:menu>
       <.knative_services_table rows={@services} abbridged />
     </.panel>
     """
@@ -58,14 +58,14 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Devtools">
-      <:right_side>
+      <:menu>
         <PC.button
           label="Manage Batteries"
           color="light"
           to={~p"/batteries/devtools"}
           link_type="live_redirect"
         />
-      </:right_side>
+      </:menu>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>

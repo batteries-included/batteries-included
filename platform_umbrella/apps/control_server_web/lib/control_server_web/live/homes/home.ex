@@ -5,35 +5,25 @@ defmodule ControlServerWeb.Live.Home do
   import ControlServerWeb.Chart
 
   alias ControlServer.SnapshotApply.Kube
+  alias ControlServerWeb.RunningBatteriesPanel
   alias KubeServices.KubeState
-  alias Phoenix.Naming
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign(current_page: :home)
-     |> assign_page_group(:home)
-     |> assign_page_title("Home")
-     |> assign_pods(KubeState.get_all(:pod))
-     |> assign_nodes(KubeState.get_all(:node))
+     |> assign_page_title()
+     |> assign_pods()
      |> assign_status(Kube.get_latest_snapshot_status())}
   end
 
-  def assign_page_group(socket, page_group) do
-    assign(socket, page_group: page_group)
+  def assign_page_title(socket) do
+    assign(socket, page_title: "Home")
   end
 
-  def assign_page_title(socket, page_title) do
-    assign(socket, page_title: page_title)
-  end
-
-  def assign_pods(socket, pods) do
-    assign(socket, pods: pods)
-  end
-
-  def assign_nodes(socket, nodes) do
-    assign(socket, nodes: nodes)
+  def assign_pods(socket) do
+    assign(socket, pods: KubeState.get_all(:pod))
   end
 
   def assign_status(socket, status) do
@@ -60,65 +50,28 @@ defmodule ControlServerWeb.Live.Home do
     }
   end
 
-  defp most_recent(batteries, n \\ 8) do
-    batteries
-    |> Enum.sort_by(& &1.inserted_at, :desc)
-    |> Enum.slice(-n..-1)
-  end
-
-  defp status_icon(%{status: :ok} = assigns),
-    do: ~H"""
-    <Heroicons.check_circle class="w-auto h-16 text-primary-500" />
-    """
-
-  defp status_icon(%{status: _} = assigns),
-    do: ~H"""
-    <Heroicons.exclamation_circle class="w-auto h-16 text-heath-100" />
-    """
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <.card>
-        <:title>Battery Count</:title>
-        <div class="text-6xl text-center text-secondary">
-          <%= length(@installed_batteries) %>
-        </div>
-      </.card>
-      <.card>
-        <:title>Last Deploy</:title>
-        <.status_icon status={@status} />
-      </.card>
+    <.page_header title="Batteries Included">
+      <:menu>
+        <PC.button
+          label="Manage Batteries"
+          color="light"
+          to={~p"/batteries/magic"}
+          link_type="live_redirect"
+        />
+      </:menu>
+    </.page_header>
 
-      <.card>
-        <:title>Total Pods</:title>
-        <div class="text-6xl text-center text-pink-500"><%= length(@pods) %></div>
-      </.card>
-      <.card>
-        <:title>Nodes</:title>
-        <div class="text-6xl text-center text-secondary"><%= length(@nodes) %></div>
-      </.card>
-    </div>
-
-    <div class="grid xl:grid-cols-2 gap-6">
-      <div class="div">
-        <.h2>Pod Namespaces</.h2>
-        <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} />
-      </div>
-
-      <.card>
-        <:title>Recent Batteries</:title>
-        <.table id="recent-batteries" rows={most_recent(@installed_batteries)}>
-          <:col :let={battery} label="Type">
-            <%= Naming.humanize(battery.type) %>
-          </:col>
-          <:col :let={battery} label="Group">
-            <%= battery.group %>
-          </:col>
-        </.table>
-      </.card>
-    </div>
+    <.grid columns={%{sm: 1, lg: 12}} class="w-full">
+      <.flex class="flex-col items-center lg:col-span-5">
+        <.h3>Pods by Category</.h3>
+        <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
+      </.flex>
+      <.panel title="Projects" class="lg:col-span-7"></.panel>
+      <.live_component module={RunningBatteriesPanel} id="running_bat_home_hero" />
+    </.grid>
     """
   end
 end
