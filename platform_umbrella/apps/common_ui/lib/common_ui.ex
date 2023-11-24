@@ -8,7 +8,6 @@ defmodule CommonUI do
       import CommonUI.Button
       import CommonUI.Card
       import CommonUI.Container
-      import CommonUI.CSSHelpers
       import CommonUI.DataList
       import CommonUI.Flash
       import CommonUI.Form

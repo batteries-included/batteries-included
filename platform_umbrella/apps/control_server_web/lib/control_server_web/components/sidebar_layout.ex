@@ -4,7 +4,6 @@ defmodule ControlServerWeb.SidebarLayout do
   use PetalComponents
 
   import CommonUI.Brand
-  import CommonUI.CSSHelpers
 
   attr :current_page, :atom,
     required: true,
@@ -47,15 +46,13 @@ defmodule ControlServerWeb.SidebarLayout do
 
         <div
           id="sidebar"
-          class={
-            build_class([
-              "absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto",
-              "transition-transform duration-200 ease-in-out transform border-r no-scrollbar",
-              "lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto",
-              @sidebar_bg_class,
-              @sidebar_border_class
-            ])
-          }
+          class={[
+            "absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto",
+            "transition-transform duration-200 ease-in-out transform border-r no-scrollbar",
+            "lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto",
+            @sidebar_bg_class,
+            @sidebar_border_class
+          ]}
           x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'"
           @click.away="sidebarOpen = false"
           @keydown.escape.window="sidebarOpen = false"

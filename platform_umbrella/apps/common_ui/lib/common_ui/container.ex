@@ -165,7 +165,7 @@ defmodule CommonUI.Container do
   """
   def grid(assigns) do
     ~H"""
-    <div class={build_class([column_class(@columns), gap_class(@gaps), "grid", @class])}>
+    <div class={[column_class(@columns), gap_class(@gaps), "grid", @class]}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -179,7 +179,7 @@ defmodule CommonUI.Container do
 
   def flex(assigns) do
     ~H"""
-    <div class={build_class([gap_class(@gaps), "flex", @class])} {@rest}>
+    <div class={[gap_class(@gaps), "flex", @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </div>
     """

@@ -9,7 +9,7 @@ defmodule CommonUI.VerticalSteps do
 
   def vertical_steps(assigns) do
     ~H"""
-    <ul class={build_class([@base_class, @class])}>
+    <ul class={[@base_class, @class]}>
       <.step :for={{step, idx} <- Enum.with_index(@step)} step={idx} current_step={@current_step}>
         <%= render_slot(step) %>
       </.step>

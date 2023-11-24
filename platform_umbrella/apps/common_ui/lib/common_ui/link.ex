@@ -2,7 +2,6 @@ defmodule CommonUI.Link do
   @moduledoc false
   use Phoenix.Component
 
-  import CommonUI.CSSHelpers
   import Phoenix.Component, except: [link: 1]
 
   attr :navigate, :any,
@@ -32,7 +31,7 @@ defmodule CommonUI.Link do
   def a(%{variant: "external"} = assigns) do
     ~H"""
     <Phoenix.Component.link
-      class={build_class([link_class(@variant), @class])}
+      class={[link_class(@variant), @class]}
       href={@href}
       target="_blank"
       {@rest}
@@ -47,7 +46,7 @@ defmodule CommonUI.Link do
 
   def a(%{href: _} = assigns) do
     ~H"""
-    <Phoenix.Component.link href={@href} class={build_class([link_class(@variant), @class])} {@rest}>
+    <Phoenix.Component.link href={@href} class={[link_class(@variant), @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </Phoenix.Component.link>
     """
@@ -55,11 +54,7 @@ defmodule CommonUI.Link do
 
   def a(%{navigate: _} = assigns) do
     ~H"""
-    <Phoenix.Component.link
-      navigate={@navigate}
-      class={build_class([link_class(@variant), @class])}
-      {@rest}
-    >
+    <Phoenix.Component.link navigate={@navigate} class={[link_class(@variant), @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </Phoenix.Component.link>
     """
@@ -67,7 +62,7 @@ defmodule CommonUI.Link do
 
   def a(%{patch: _} = assigns) do
     ~H"""
-    <Phoenix.Component.link patch={@patch} class={build_class([link_class(@variant), @class])} {@rest}>
+    <Phoenix.Component.link patch={@patch} class={[link_class(@variant), @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </Phoenix.Component.link>
     """
@@ -75,7 +70,7 @@ defmodule CommonUI.Link do
 
   def a(assigns) do
     ~H"""
-    <Phoenix.Component.link class={build_class([link_class(@variant), @class])} {@rest}>
+    <Phoenix.Component.link class={[link_class(@variant), @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </Phoenix.Component.link>
     """

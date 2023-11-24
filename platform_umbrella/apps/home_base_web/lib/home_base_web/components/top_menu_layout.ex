@@ -2,7 +2,6 @@ defmodule HomeBaseWeb.TopMenuLayout do
   @moduledoc false
   use HomeBaseWeb, :html
 
-  import CommonUI.CSSHelpers
   import CommonUI.Icons.Batteries
 
   @main_menu_items [
@@ -57,6 +56,11 @@ defmodule HomeBaseWeb.TopMenuLayout do
     """
   end
 
+  defp menu_class(false = _on_page),
+    do: "text-gray-300 hover:bg-gray-700 hover:text-white border-b-2 border-transparent hover:border-pink-500"
+
+  defp menu_class(true = _on_page), do: "border-t-2 border-pink-500 text-white"
+
   attr :menu_items, :any, required: true
   attr :page, :atom, required: true
 
@@ -69,14 +73,10 @@ defmodule HomeBaseWeb.TopMenuLayout do
           :for={menu_item <- @menu_items}
           navigate={menu_item.url}
           variant="unstyled"
-          class={
-            build_class([
-              "px-3 py-2 text-sm font-medium",
-              {"text-gray-300 hover:bg-gray-700 hover:text-white border-b-2 border-transparent hover:border-pink-500",
-               menu_item.id != @page},
-              {"border-t-2 border-pink-500 text-white", menu_item.id == @page}
-            ])
-          }
+          class={[
+            "px-3 py-2 text-sm font-medium",
+            menu_class(menu_item.id == @page)
+          ]}
         >
           <%= menu_item.title %>
         </.a>

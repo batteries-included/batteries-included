@@ -617,7 +617,7 @@ defmodule ControlServerWeb.LeftMenu do
   defp main_menu_class(false = _is_active),
     do: "relative block w-full border-b text-center hover:text-pink-500 flex flex-col p-3 bg-white"
 
-  defp main_menu_class(true = _is_active), do: build_class(["active", main_menu_class(false)])
+  defp main_menu_class(true = _is_active), do: ["active", main_menu_class(false)]
 
   defp batteries_for_group(batteries, group) do
     Enum.filter(batteries, fn %SystemBattery{} = bat -> bat.group == group end)

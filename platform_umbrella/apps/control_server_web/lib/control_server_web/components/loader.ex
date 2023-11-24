@@ -7,7 +7,7 @@ defmodule ControlServerWeb.Loader do
   @spec loader(any) :: Phoenix.LiveView.Rendered.t()
   def loader(assigns) do
     ~H"""
-    <div class={build_class(["mx-auto loader", @class])}>
+    <div class={["mx-auto loader", @class]}>
       <span></span>
       <span></span>
       <span></span>

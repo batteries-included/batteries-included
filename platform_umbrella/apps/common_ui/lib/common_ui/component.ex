@@ -4,7 +4,6 @@ defmodule CommonUI.Component do
     quote do
       use Phoenix.Component
 
-      import CommonUI.CSSHelpers
       import CommonUI.Link
       import Phoenix.Component, except: [link: 1]
     end

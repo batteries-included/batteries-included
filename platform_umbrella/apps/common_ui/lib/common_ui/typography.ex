@@ -12,7 +12,7 @@ defmodule CommonUI.Typography do
 
   def h1(%{sub_header: []} = assigns) do
     ~H"""
-    <h1 class={build_class([@base_class, @class])} {@rest}>
+    <h1 class={[@base_class, @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </h1>
     """
@@ -20,7 +20,7 @@ defmodule CommonUI.Typography do
 
   def h1(%{} = assigns) do
     ~H"""
-    <h1 class={build_class([@base_class, @class])} {@rest}>
+    <h1 class={[@base_class, @class]} {@rest}>
       <%= render_slot(@inner_block) %><span class={@sep_class}>::<span class={@sub_header_class}><%= render_slot(@sub_header) %></span></span>
     </h1>
     """
@@ -38,8 +38,8 @@ defmodule CommonUI.Typography do
 
   def h2(%{variant: "fancy"} = assigns) do
     ~H"""
-    <h2 class={build_class([@base_class, @class])} {@rest}>
-      <span class={build_class([@fancy_class])}>
+    <h2 class={[@base_class, @class]} {@rest}>
+      <span class={[@fancy_class]}>
         <%= render_slot(@inner_block) %>
       </span>
     </h2>
@@ -48,20 +48,20 @@ defmodule CommonUI.Typography do
 
   def h2(%{variant: _} = assigns) do
     ~H"""
-    <h2 class={build_class([@base_class, @color_class, @class])} {@rest}>
+    <h2 class={[@base_class, @color_class, @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </h2>
     """
   end
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-xl font-medium text-black dark:text-white"
+  attr :base_class, :string, default: "text-xl font-medium text-gray-600 dark:text-gray-200"
   slot :inner_block, required: true
   attr :rest, :global
 
   def h3(assigns) do
     ~H"""
-    <h3 class={build_class([@base_class, @class])} {@rest}>
+    <h3 class={[@base_class, @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </h3>
     """
@@ -69,14 +69,14 @@ defmodule CommonUI.Typography do
 
   attr :class, :any, default: ""
 
-  attr :base_class, :string, default: "text-lg sm:text-xl uppercase text-semibold"
+  attr :base_class, :string, default: "text-lg sm:text-xl uppercase text-semibold text-gray-500 dark:text-gray-300"
 
   slot :inner_block, required: true
   attr :rest, :global
 
   def h4(assigns) do
     ~H"""
-    <h4 class={build_class([@base_class, @class])} {@rest}>
+    <h4 class={[@base_class, @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </h4>
     """

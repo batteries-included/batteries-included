@@ -12,7 +12,7 @@ defmodule CommonUI.Icons.Network do
       xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 1280 1280"
       style="enable-background:new 0 0 1280 1280;"
-      class={build_class(["h-6 w-6 ", @class])}
+      class={["h-6 w-6 ", @class]}
       stroke="currentColor"
       fill="currentColor"
       xml:space="preserve"
@@ -45,7 +45,7 @@ defmodule CommonUI.Icons.Network do
       viewBox="0 0 122.88 114.3"
       stroke="currentColor"
       fill="currentColor"
-      class={build_class(["h-6 w-6 ", @class])}
+      class={["h-6 w-6 ", @class]}
     >
       <defs>
         <style>

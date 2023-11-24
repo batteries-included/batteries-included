@@ -95,7 +95,7 @@ defmodule ControlServerWeb.TimelineDisplay do
       </div>
       <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
         <h3 class="font-bold text-xl"><%= @title %></h3>
-        <h3 class=" text-astral-500 text-sm mb-3 "><%= @timestamp %></h3>
+        <h3 class=" text-astral-500 text-sm mb-3"><%= @timestamp %></h3>
         <p class="text-base leading-snug tracking-wide text-opacity-100">
           <%= render_slot(@inner_block) %>
         </p>

@@ -40,7 +40,7 @@
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
   
         
-    <div class="group/hover-tooltip relative">
+    <div class="group/hover-tooltip relative ">
   <div class="invisible group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-md p-2 bg-white/90 text-gray-800 dark:bg-gray-700/90 dark:text-white" role="tooltip" aria-hidden="true">
     
     2023-02-28T07:00:00+00:00
@@ -102,7 +102,7 @@
 </td><td class="pc-table__td hover:cursor-pointer " phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
   
         
-    <div class="group/hover-tooltip relative">
+    <div class="group/hover-tooltip relative ">
   <div class="invisible group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-md p-2 bg-white/90 text-gray-800 dark:bg-gray-700/90 dark:text-white" role="tooltip" aria-hidden="true">
     
     2023-02-28T07:00:00+00:00

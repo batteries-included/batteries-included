@@ -2,19 +2,19 @@
   <div class="gap-4 lg:gap-6 flex isolate rounded-lg border-gray-200 dark:bg-gray-800 dark:border-gray-600 border flex-col mx-5 lg:flex-row lg:mx-0" aria-label="Tabs">
   
     
-  <a href="#" class="group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4" phx-click="test">
+  <a href="#" class=" group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4" phx-click="test">
   
   <span>Title</span>
   <span aria-hidden="true" class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"></span>
 
 </a>
-  <a href="/second_path" data-phx-link="patch" data-phx-link-state="push" class="group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4">
+  <a href="/second_path" data-phx-link="patch" data-phx-link-state="push" class=" group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4">
   
   <span>Another Title</span>
   <span aria-hidden="true" class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"></span>
 
 </a>
-  <a href="/last_path" data-phx-link="redirect" data-phx-link-state="push" class="group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4">
+  <a href="/last_path" data-phx-link="redirect" data-phx-link-state="push" class=" group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4">
   
   <span>Yet Another Title</span>
   <span aria-hidden="true" class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"></span>

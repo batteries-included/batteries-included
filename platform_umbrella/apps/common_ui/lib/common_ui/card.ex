@@ -14,13 +14,11 @@ defmodule CommonUI.Card do
   def card(assigns) do
     ~H"""
     <div
-      class={
-        build_class([
-          "p-4 bg-white rounded-lg border border-gray-200 shadow-lg",
-          "flex flex-col",
-          @class
-        ])
-      }
+      class={[
+        "p-4 bg-white rounded-lg border border-gray-200 shadow-lg",
+        "flex flex-col",
+        @class
+      ]}
       {@rest}
     >
       <.h2 :if={@title != nil and @title != []}>
