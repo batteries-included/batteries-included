@@ -24,9 +24,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign(:id, id)
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:cluster, Postgres.get_cluster!(id))
+     |> assign_cluster(id)
+     |> assign_page_title()
+     |> assign_current_page()
      |> assign_k8_cluster()
      |> assign_k8_services()
      |> assign_k8_pods()}
@@ -42,6 +42,19 @@ defmodule ControlServerWeb.Live.PostgresShow do
     {:ok, _} = Postgres.delete_cluster(socket.assigns.cluster)
 
     {:noreply, push_redirect(socket, to: ~p"/postgres")}
+  end
+
+  defp assign_cluster(socket, id) do
+    cluster = Postgres.get_cluster!(id)
+    assign(socket, cluster: cluster, id: id)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, :page_title, page_title(socket.assigns.live_action))
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :data)
   end
 
   defp assign_k8_cluster(%{assigns: %{cluster: cluster}} = socket) do

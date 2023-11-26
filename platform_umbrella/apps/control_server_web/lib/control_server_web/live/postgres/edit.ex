@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Live.PostgresEdit do
 
   @impl Phoenix.LiveView
   def mount(%{"id" => id}, _session, socket) do
-    {:ok, assign(socket, current_page: :datastores, cluster: Postgres.get_cluster!(id))}
+    {:ok, assign(socket, current_page: :data, cluster: Postgres.get_cluster!(id))}
   end
 
   @impl Phoenix.LiveView

@@ -65,7 +65,7 @@ defmodule ControlServerWeb.Layouts do
           icon: :home
         },
         %{
-          name: :datastores,
+          name: :data,
           label: "Datastores",
           path: ~p"/data",
           icon: :circle_stack

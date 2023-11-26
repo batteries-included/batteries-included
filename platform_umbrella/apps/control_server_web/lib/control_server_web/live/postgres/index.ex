@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(current_page: :datastores)
+     |> assign(current_page: :data)
      |> assign_clusters(list_clusters())
      |> assign_page_title("Postgres Clusters")}
   end

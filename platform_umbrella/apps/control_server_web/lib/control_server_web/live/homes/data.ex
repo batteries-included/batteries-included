@@ -12,6 +12,8 @@ defmodule ControlServerWeb.Live.DataHome do
   def mount(_params, _session, socket) do
     {:ok,
      socket
+     |> assign_page_title()
+     |> assign_current_page()
      |> assign_batteries()
      |> assign_redis_clusters()
      |> assign_postgres_clusters()}
@@ -19,6 +21,14 @@ defmodule ControlServerWeb.Live.DataHome do
 
   defp assign_batteries(socket) do
     assign(socket, batteries: installed_batteries())
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: "Data Storage")
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, current_page: :data)
   end
 
   defp assign_postgres_clusters(socket) do
@@ -64,7 +74,7 @@ defmodule ControlServerWeb.Live.DataHome do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Data Storage">
+    <.page_header title={@page_title}>
       <:menu>
         <PC.button
           label="Manage Batteries"

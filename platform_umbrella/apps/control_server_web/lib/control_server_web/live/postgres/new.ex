@@ -19,7 +19,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
       credential_copies: []
     }
 
-    {:ok, assign(socket, current_page: :datastores, cluster: cluster)}
+    {:ok, assign(socket, current_page: :data, cluster: cluster)}
   end
 
   @impl Phoenix.LiveView
