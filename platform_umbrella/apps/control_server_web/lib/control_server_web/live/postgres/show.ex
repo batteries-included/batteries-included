@@ -171,14 +171,14 @@ defmodule ControlServerWeb.Live.PostgresShow do
     ~H"""
     <.page_header title="Users" back_button={%{link_type: "live_redirect", to: show_url(@cluster)}} />
 
-    <.grid columns={%{sm: 1, lg: 2}}>
+    <.flex class="flex-col">
       <.panel title="Users">
         <.pg_users_table users={@cluster.users} cluster={@cluster} />
       </.panel>
       <.panel title="Sync Status">
         <.sync_status_table status={get_in(@k8_cluster, ~w(status managedRolesStatus))} />
       </.panel>
-    </.grid>
+    </.flex>
     """
   end
 
