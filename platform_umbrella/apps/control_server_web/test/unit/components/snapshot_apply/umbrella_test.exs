@@ -30,7 +30,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTableTest do
       assigns = %{snapshots: [@success_snapshot, @failure_snapshot]}
 
       ~H"""
-      <.umbrella_snapshots_table snapshots={@snapshots} />
+      <.umbrella_snapshots_table snapshots={@snapshots} skip_date />
       """
     end
   end

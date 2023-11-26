@@ -192,9 +192,9 @@ defmodule ControlServerWeb.PodLive.Show do
     <div class="flex flex-col gap-8 mb-10">
       <.pod_containers_section resource={@resource} />
       <.conditions_display conditions={@conditions} />
-      <.events_section events={@events} />
+      <.events_panel events={@events} />
 
-      <.label_section class="mb-10" resource={@resource} />
+      <.label_panel class="mb-10" resource={@resource} />
     </div>
     <.security_section aqua_vulnerability_report={@aqua_vulnerability_report} />
     <.logs_modal resource={@resource} logs={@logs} />

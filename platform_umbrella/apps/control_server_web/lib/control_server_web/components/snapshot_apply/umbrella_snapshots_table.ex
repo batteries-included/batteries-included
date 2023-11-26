@@ -6,6 +6,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
 
   attr :snapshots, :list, required: true
   attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
+  attr :skip_date, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
 
   def umbrella_snapshots_table(assigns) do
     ~H"""
@@ -13,7 +14,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
       <:col :let={snapshot} :if={!@abbridged} label="ID">
         <%= snapshot.id %>
       </:col>
-      <:col :let={snapshot} label="Started">
+      <:col :let={snapshot} :if={!@skip_date} label="Started">
         <.relative_display time={snapshot.inserted_at} />
       </:col>
 

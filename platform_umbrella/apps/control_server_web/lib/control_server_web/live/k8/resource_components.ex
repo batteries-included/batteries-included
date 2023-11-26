@@ -7,9 +7,12 @@ defmodule ControlServerWeb.ResourceComponents do
 
   alias CommonCore.Util.Time
 
-  def label_section(assigns) do
+  attr :class, :string, default: ""
+  attr :resource, :any, required: true
+
+  def label_panel(assigns) do
     ~H"""
-    <.panel title="Labels">
+    <.panel title="Labels" class={@class}>
       <.data_horizontal_plain data={labels(@resource)} />
     </.panel>
     """
@@ -45,9 +48,12 @@ defmodule ControlServerWeb.ResourceComponents do
     """
   end
 
-  def events_section(assigns) do
+  attr :class, :string, default: ""
+  attr :events, :any, required: true
+
+  def events_panel(assigns) do
     ~H"""
-    <.panel variant="gray" title="Events">
+    <.panel variant="gray" title="Events" class={@class}>
       <.table :if={@events != []} transparent rows={@events}>
         <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
         <:col :let={event} label="Message"><%= event |> get_in(~w(message)) |> truncate() %></:col>
@@ -91,16 +97,15 @@ defmodule ControlServerWeb.ResourceComponents do
   def logs_modal(assigns) do
     ~H"""
     <PC.modal :if={@logs != nil} title="Logs" max_width="xl">
-      <.light_text class="mb-5"><%= name(@resource) %></.light_text>
       <div
         id="scroller"
         style="max-height: 70vh"
-        class="max-h-full rounded bg-astral-900 min-h-16"
+        class="max-h-full rounded-md bg-gray-100 dark:bg-gray-800 min-h-16"
         phx-hook="ResourceLogsModal"
       >
-        <code class="block p-3 overflow-x-scroll text-white">
+        <code class="block p-3 overflow-x-scroll dark:text-white">
           <p :for={line <- @logs || []} class="mb-3 leading-none whitespace-normal">
-            <span class="inline-block px-2 font-mono text-sm bg-astral-400 bg-opacity-20">
+            <span class="inline-block px-2 font-mono text-sm  bg-opacity-20">
               <%= line %>
             </span>
           </p>

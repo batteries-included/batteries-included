@@ -21,13 +21,13 @@ defmodule CommonUI.DataList do
 
   def data_list(assigns) do
     ~H"""
-    <dl class="-my-4 divide-y divide-gray-100">
-      <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-        <dt class="flex-1 w-1/4 font-mono text-xl leading-6">
+    <dl class="-my-4">
+      <.flex :for={item <- @item} class="py-4">
+        <dt class="basis-1/3 font-mono text-xl leading-6">
           <%= item.title %>
         </dt>
-        <dd class="text-base leading-6 text-gray-700"><%= render_slot(item) %></dd>
-      </div>
+        <dd class="grow bais-2/3 text-base leading-6"><%= render_slot(item) %></dd>
+      </.flex>
     </dl>
     """
   end

@@ -88,8 +88,8 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
       <.panel title="Pods">
         <.pods_table pods={@pods} />
       </.panel>
-      <.events_section events={@events} />
-      <.label_section resource={@resource} />
+      <.events_panel events={@events} />
+      <.label_panel resource={@resource} />
     </div>
     """
   end

@@ -3,6 +3,7 @@ defmodule CommonCore.ApiVersionKind do
   @known [
     api_service: {"apiregistration.k8s.io/v1", "APIService"},
     event: {"v1", "Event"},
+    endpoint: {"v1", "Endpoints"},
     namespace: {"v1", "Namespace"},
     pod: {"v1", "Pod"},
     service: {"v1", "Service"},

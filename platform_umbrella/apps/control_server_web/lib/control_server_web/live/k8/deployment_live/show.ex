@@ -89,8 +89,8 @@ defmodule ControlServerWeb.DeploymentLive.Show do
         <.pods_table pods={@pods} />
       </.panel>
       <.conditions_display conditions={@conditions} />
-      <.events_section events={@events} />
-      <.label_section resource={@resource} />
+      <.events_panel events={@events} />
+      <.label_panel resource={@resource} />
     </div>
     """
   end
