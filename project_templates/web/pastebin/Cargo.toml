@@ -22,7 +22,7 @@ tower-http = { version = "0.4.4", features = [
   "timeout",
   "trace",
 ] }
-tower-cookies = "0.9.0"
+tower-cookies = "0.10.0"
 axum-extra = { version = "0.8.0", features = ["cookie-signed"] }
 
 askama = { version = "0.12.1", features = [
