@@ -4,6 +4,56 @@ defmodule CommonUI.TooltipTest do
 
   import CommonUI.Tooltip
 
+  describe "hover_tooltip" do
+    component_snapshot_test "empty tooltip render" do
+      assigns = %{}
+
+      ~H"""
+      <.hover_tooltip>this should render totally deviod of any wrappers</.hover_tooltip>
+      """
+    end
+
+    component_snapshot_test "tooltip render" do
+      assigns = %{}
+
+      ~H"""
+      <.hover_tooltip>
+        <:tooltip>Test</:tooltip>
+        Hello
+      </.hover_tooltip>
+      """
+    end
+
+    component_snapshot_test "tooltip with class" do
+      assigns = %{}
+
+      ~H"""
+      <.hover_tooltip class="underline">
+        <:tooltip>Test</:tooltip>
+        Underlined text
+      </.hover_tooltip>
+      """
+    end
+  end
+
+  describe "truncate_tooltip" do
+    component_snapshot_test "it renders with short strings" do
+      assigns = %{}
+
+      ~H"""
+      <.truncate_tooltip value="a" />
+      """
+    end
+
+    component_snapshot_test "it renders with long strings" do
+      assigns = %{}
+
+      ~H"""
+      <.truncate_tooltip value={String.duplicate("a", 100)} />
+      """
+    end
+  end
+
   describe "tooltip" do
     test "it renders" do
       assigns = %{}
@@ -19,35 +69,5 @@ defmodule CommonUI.TooltipTest do
       assert html =~ "Hi there"
       assert html =~ "data-tippy-options"
     end
-  end
-
-  component_snapshot_test "empty tooltip render" do
-    assigns = %{}
-
-    ~H"""
-    <.hover_tooltip>this should render totally deviod of any wrappers</.hover_tooltip>
-    """
-  end
-
-  component_snapshot_test "tooltip render" do
-    assigns = %{}
-
-    ~H"""
-    <.hover_tooltip>
-      <:tooltip>Test</:tooltip>
-      Hello
-    </.hover_tooltip>
-    """
-  end
-
-  component_snapshot_test "tooltip with class" do
-    assigns = %{}
-
-    ~H"""
-    <.hover_tooltip class="underline">
-      <:tooltip>Test</:tooltip>
-      Underlined text
-    </.hover_tooltip>
-    """
   end
 end

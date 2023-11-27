@@ -2,6 +2,8 @@ defmodule CommonUI.Tooltip do
   @moduledoc false
   use CommonUI.Component
 
+  import CommonUI.TextHelpers
+
   attr :target_id, :string, required: true
   attr :tippy_options, :map, default: %{}
   attr :rest, :global
@@ -50,7 +52,7 @@ defmodule CommonUI.Tooltip do
   attr :class, :string, default: ""
   attr :rest, :global
 
-  def hover_tooltip(%{tooltip: []} = assigns) do
+  def hover_tooltip(%{tooltip: tooltip} = assigns) when tooltip == nil or tooltip == [] do
     ~H"""
     <%= render_slot(@inner_block) %>
     """
@@ -69,8 +71,8 @@ defmodule CommonUI.Tooltip do
             # Move the tooltip up and over
             "absolute -translate-x-1 -translate-y-full",
             "rounded-md shadow-md p-2",
-            "bg-white/90 text-gray-800",
-            "dark:bg-gray-700/90 dark:text-white"
+            "bg-white/90 text-gray-700",
+            "dark:bg-gray-700/90 dark:text-gray-200"
           ]
         }
         role="tooltip"
@@ -80,6 +82,31 @@ defmodule CommonUI.Tooltip do
       </div>
       <%= render_slot(@inner_block) %>
     </div>
+    """
+  end
+
+  attr :value, :string, default: ""
+  attr :class, :string, default: nil
+  attr :length, :integer, default: 48
+
+  def truncate_tooltip(%{value: v, length: l} = assigns) when byte_size(v) <= l do
+    ~H"""
+    <div class={@class}>
+      <%= @value %>
+    </div>
+    """
+  end
+
+  def truncate_tooltip(%{} = assigns) do
+    ~H"""
+    <.hover_tooltip class={@class}>
+      <:tooltip>
+        <div class="max-w-md">
+          <p class="break-words"><%= @value %></p>
+        </div>
+      </:tooltip>
+      <%= truncate(@value, length: @length) %>
+    </.hover_tooltip>
     """
   end
 end

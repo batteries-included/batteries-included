@@ -2,6 +2,8 @@ defmodule ControlServerWeb.ConditionsDisplay do
   @moduledoc false
   use ControlServerWeb, :html
 
+  import CommonUI.DatetimeDisplay
+
   attr :conditions, :list, required: true
   attr :empty, :boolean, default: nil, required: false
 
@@ -36,7 +38,7 @@ defmodule ControlServerWeb.ConditionsDisplay do
         <:col :let={condition} label="Type"><%= Map.get(condition, "type", "") %></:col>
         <:col :let={condition} label="Message"><%= Map.get(condition, "message", "") %></:col>
         <:col :let={condition} label="Time">
-          <%= Timex.format!(get_condition_time(condition), "{RFC822z}") %>
+          <.relative_display time={get_condition_time(condition)} />
         </:col>
       </.table>
     </.panel>

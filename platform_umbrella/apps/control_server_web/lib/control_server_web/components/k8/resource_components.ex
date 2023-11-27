@@ -3,9 +3,8 @@ defmodule ControlServerWeb.ResourceComponents do
   use ControlServerWeb, :html
 
   import CommonCore.Resources.FieldAccessors
+  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ResourceHTMLHelper
-
-  alias CommonCore.Util.Time
 
   attr :class, :string, default: ""
   attr :resource, :any, required: true
@@ -56,10 +55,15 @@ defmodule ControlServerWeb.ResourceComponents do
     <.panel variant="gray" title="Events" class={@class}>
       <.table :if={@events != []} transparent rows={@events}>
         <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
-        <:col :let={event} label="Message"><%= event |> get_in(~w(message)) |> truncate() %></:col>
+        <:col :let={event} label="Message">
+          <.truncate_tooltip value={event |> get_in(~w(message))} />
+        </:col>
         <:col :let={event} label="Type"><%= get_in(event, ~w(type)) %></:col>
         <:col :let={event} label="First Time">
-          <%= Time.format_iso8601(event["firstTimestamp"], "{RFC822z}") %>
+          <.relative_display time={event["firstTimestamp"]} />
+        </:col>
+        <:col :let={event} label="Last Time">
+          <.relative_display time={event["lastTimestamp"]} />
         </:col>
         <:col :let={event} label="Count"><%= get_in(event, ~w(count)) %></:col>
       </.table>
