@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import CommonUI.ClickFlip
   import ControlServerWeb.PostgresFormSubcomponents
 
   alias CommonCore.Postgres.Cluster
@@ -29,8 +30,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(:possible_nodes, possible_nodes())
      |> assign(:num_instances, cluster.num_instances)
      |> assign(:pg_user_form, nil)
-     |> assign(:pg_credential_copy_form, nil)
-     |> assign(:storage_size_editable, false)}
+     |> assign(:pg_credential_copy_form, nil)}
   end
 
   @impl Phoenix.LiveComponent
@@ -247,10 +247,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     {:noreply, assign(socket, :form, form)}
   end
 
-  def handle_event("toggle_storage_size_editable", _, socket) do
-    {:noreply, assign(socket, storage_size_editable: !socket.assigns.storage_size_editable)}
-  end
-
   def handle_event("save", %{"cluster" => cluster_params}, socket) do
     cluster_params = prepare_cluster_params(cluster_params, socket)
     save_cluster(socket, socket.assigns.action, cluster_params)
@@ -355,30 +351,24 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                 />
               </div>
               <.flex>
-                <div class="flex-1">
-                  <.editable_field
-                    field_attrs={
-                      %{
-                        field: @form[:storage_size],
-                        label: "Storage Size",
-                        type: "number",
-                        "phx-change": "change_storage_size"
-                      }
-                    }
-                    editing?={@storage_size_editable}
-                    toggle_event_target={@myself}
-                    toggle_event="toggle_storage_size_editable"
-                    value_when_not_editing={
-                      Memory.format_bytes(@form[:storage_size].value, true) || "0GB"
-                    }
-                  />
-                </div>
-                <div
-                  :if={@storage_size_editable}
-                  class="mt-9 mx-3 text-sm text-right text-gray-500 dark:text-gray-400 w-16"
+                <.click_flip
+                  class="grow flex-1 justify-start xl:justify-end items-center"
+                  cursor_class="cursor-text"
+                  tooltip="Click to Edit"
+                  id="storage-size-input"
                 >
-                  <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
-                </div>
+                  <span>
+                    <PC.form_label>Storage Size</PC.form_label>
+                    <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
+                  </span>
+                  <:hidden>
+                    <PC.field
+                      field={@form[:storage_size]}
+                      type="number"
+                      phx-change="change_storage_size"
+                    />
+                  </:hidden>
+                </.click_flip>
               </.flex>
               <div class="pt-3 pb-1 mb-[22px] lg:col-span-2">
                 <.flex class="justify-between w-full">

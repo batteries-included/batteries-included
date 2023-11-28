@@ -1,0 +1,38 @@
+<div class="gap-4 lg:gap-6 flex" id="test-click-flip-with-id" x-data="{ open: false }" @keydown.escape.window="open = false">
+  
+  <div class="cursor-pointer min-w-10 py-4 border border-transparent border-dashed hover:border-gray-300 dark:hover-border-gray-700 rounded hover:bg-gray-50/70 dark:hover:bg-gray-800/70" @click="open = !open" x-cloak x-show="!open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" id="content_id_test-click-flip-with-id">
+    
+  Main
+  
+    <div class="hidden" id="tooltip-content_id_test-click-flip-with-id" phx-hook="Tooltip" data-target="content_id_test-click-flip-with-id" data-tippy-options="{&quot;placement&quot;:&quot;left&quot;}">
+  <div>
+    
+      Click to edit
+    
+  </div>
+</div>
+  </div>
+  <div class="gap-4 lg:gap-6 flex items-center py-4 -mt-5" x-transition:enter-end="transform opacity-100 scale-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter="transition ease-out duration-100" x-show="open" x-cloak>
+  
+    
+    Form Field Here
+  
+    <button class="pc-icon-button pc-icon-button-bg--gray pc-icon-button--gray pc-icon-button--xs " type="button" @click="open = !open">
+  
+  <div class="">
+    
+      
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clip-rule="evenodd"/>
+</svg>
+    
+
+      
+    
+  </div>
+
+</button>
+  
+</div>
+
+</div>
