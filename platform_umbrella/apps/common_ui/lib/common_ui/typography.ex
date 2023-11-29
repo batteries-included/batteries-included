@@ -55,7 +55,7 @@ defmodule CommonUI.Typography do
   end
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-xl font-medium text-gray-600 dark:text-gray-200"
+  attr :base_class, :string, default: "text-xl font-medium text-gray-600 dark:text-gray-400"
   slot :inner_block, required: true
   attr :rest, :global
 
@@ -69,7 +69,7 @@ defmodule CommonUI.Typography do
 
   attr :class, :any, default: ""
 
-  attr :base_class, :string, default: "text-lg sm:text-xl uppercase text-semibold text-gray-500 dark:text-gray-300"
+  attr :base_class, :string, default: "text-lg sm:text-xl uppercase text-semibold text-gray-700 dark:text-gray-300"
 
   slot :inner_block, required: true
   attr :rest, :global

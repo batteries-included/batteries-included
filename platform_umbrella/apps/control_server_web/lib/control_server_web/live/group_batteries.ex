@@ -192,7 +192,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
 
   def install_summary(assigns) do
     ~H"""
-    <.h3 class="text-astral-800 text-right">Summary</.h3>
+    <.h3 class="text-right">Summary</.h3>
     <.data_list>
       <:item title="Installed Battery Count">
         <%= map_size(@install_result.installed) %>
@@ -217,7 +217,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
       <:title>
         <.h2 variant="fancy">Installing Batteries</.h2>
       </:title>
-      <div class="flex flex-row mt-5 justify-around">
+      <.flex class="flex-row mt-5 justify-around">
         <.vertical_steps current_step={@current_step}>
           <:step>Generate Configuration</:step>
           <:step>Install Batteries</:step>
@@ -231,7 +231,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
             apply_result={@apply_result}
           />
         </div>
-      </div>
+      </.flex>
     </.modal>
     """
   end
