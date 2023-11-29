@@ -450,6 +450,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "axum"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "810a80b128d70e6ed2bdf3fe8ed72c0ae56f5f5948d01c2753282dd92a84fce8"
+dependencies = [
+ "async-trait",
+ "axum-core 0.4.0",
+ "bytes",
+ "futures-util",
+ "http 1.0.0",
+ "http-body 1.0.0",
+ "http-body-util",
+ "itoa",
+ "matchit",
+ "memchr",
+ "mime",
+ "percent-encoding",
+ "pin-project-lite",
+ "rustversion",
+ "serde",
+ "sync_wrapper",
+ "tower",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
 name = "axum-core"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -488,21 +515,21 @@ dependencies = [
 
 [[package]]
 name = "axum-extra"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ab90e7b70bea63a153137162affb6a0bce26b584c24a4c7885509783e2cf30b"
+checksum = "523ae92256049a3b02d3bb4df80152386cd97ddba0c8c5077619bdc8c4b1859b"
 dependencies = [
- "axum",
- "axum-core 0.3.4",
+ "axum 0.7.1",
+ "axum-core 0.4.0",
  "bytes",
- "cookie 0.17.0",
+ "cookie",
  "futures-util",
- "http 0.2.9",
- "http-body 0.4.5",
+ "http 1.0.0",
+ "http-body 1.0.0",
+ "http-body-util",
  "mime",
  "pin-project-lite",
  "serde",
- "tokio",
  "tower",
  "tower-layer",
  "tower-service",
@@ -805,9 +832,9 @@ checksum = "28c122c3980598d243d63d9a704629a2d748d101f278052ff068be5a4423ab6f"
 
 [[package]]
 name = "cookie"
-version = "0.17.0"
+version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7efb37c3e1ccb1ff97164ad95ac1606e8ccd35b3fa0a7d99a304c7f4a428cc24"
+checksum = "3cd91cf61412820176e137621345ee43b3f4423e589e7ae4e50d601d93e35ef8"
 dependencies = [
  "base64",
  "hmac",
@@ -815,17 +842,6 @@ dependencies = [
  "rand",
  "sha2",
  "subtle",
- "time",
- "version_check",
-]
-
-[[package]]
-name = "cookie"
-version = "0.18.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cd91cf61412820176e137621345ee43b3f4423e589e7ae4e50d601d93e35ef8"
-dependencies = [
- "percent-encoding",
  "time",
  "version_check",
 ]
@@ -1940,7 +1956,7 @@ dependencies = [
  "anyhow",
  "askama",
  "askama_axum",
- "axum",
+ "axum 0.6.20",
  "axum-extra",
  "entity",
  "include_dir",
@@ -3216,7 +3232,7 @@ checksum = "4fd0118512cf0b3768f7fcccf0bef1ae41d68f2b45edc1e77432b36c97c56c6d"
 dependencies = [
  "async-trait",
  "axum-core 0.4.0",
- "cookie 0.18.0",
+ "cookie",
  "futures-util",
  "http 1.0.0",
  "parking_lot",
