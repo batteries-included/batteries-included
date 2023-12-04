@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.KnativeServicesIndex do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServer.Knative
   import ControlServerWeb.KnativeServicesTable
@@ -28,12 +28,13 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/devtools"}} />
-
-    <.panel title="Knative Serverless">
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/devtools"}}>
       <:menu>
         <PC.button to={new_url()} link_type="live_redirect" label="New Service" />
       </:menu>
+    </.page_header>
+
+    <.panel title="Serverless Services">
       <.knative_services_table rows={@services} />
     </.panel>
     """

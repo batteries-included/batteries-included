@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.KnativeEdit do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias ControlServer.Knative
   alias ControlServerWeb.Live.Knative.FormComponent
@@ -18,20 +18,15 @@ defmodule ControlServerWeb.Live.KnativeEdit do
   end
 
   @impl Phoenix.LiveView
-  def handle_info({"service:save", %{"service" => service}}, socket) do
-    {:noreply, push_redirect(socket, to: ~p"/knative/services/#{service}/show")}
-  end
-
-  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <div>
       <.live_component
         module={FormComponent}
         service={@service}
-        id={@service.id || "edit-cluster-form"}
+        id="service-form"
         action={:edit}
-        save_target={self()}
+        title="Edit Serverless Service"
       />
     </div>
     """

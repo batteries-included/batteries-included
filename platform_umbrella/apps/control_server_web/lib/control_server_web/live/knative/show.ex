@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   This depends on the Knative operator being installed and
   the owned resources being present in kubernetes.
   """
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors, only: [uid: 1, labeled_owner: 1]
   import ControlServerWeb.KnativeDisplay

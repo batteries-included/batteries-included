@@ -65,7 +65,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
             "components" => [
               %{"app_label" => "istiod", "is_core" => true, "is_proxy" => false},
               %{
-                "app_label" => "istio-ingress",
+                "app_label" => "istio-ingressgateway",
                 "is_core" => true,
                 "is_proxy" => true,
                 "namespace" => namespace_core

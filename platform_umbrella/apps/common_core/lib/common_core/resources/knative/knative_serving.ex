@@ -24,7 +24,7 @@ defmodule CommonCore.Resources.KnativeServing do
     spec = %{
       "config" => %{
         "istio" => %{
-          "gateway.#{namespace}.knative-ingress-gateway" => "istio-ingress.#{istio_namespace}.svc.cluster.local",
+          "gateway.#{namespace}.knative-ingress-gateway" => "istio-ingressgateway.#{istio_namespace}.svc.cluster.local",
           "local-gateway.#{namespace}.knative-local-gateway" =>
             "knative-local-gateway.#{istio_namespace}.svc.cluster.local"
         }

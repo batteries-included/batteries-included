@@ -318,7 +318,7 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
     typed_embedded_schema do
       field :exportTo, {:array, :string}, default: []
-      field :gateways, {:array, :string}, default: ["battery-istio/ingress"]
+      field :gateways, {:array, :string}, default: ["battery-istio/ingressgateway"]
       field :hosts, {:array, :string}, default: ["*"]
       embeds_many :http, HTTPRoute
       embeds_many :tcp, TCPRoute

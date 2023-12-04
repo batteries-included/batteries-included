@@ -12,7 +12,7 @@ defmodule CommonCore.Knative.EnvValue do
   typed_embedded_schema do
     field :name, :string
 
-    field :source_type, Ecto.Enum, values: [:value, :config, :secret], defautl: :value
+    field :source_type, Ecto.Enum, values: [:value, :config, :secret], default: :value
     field :value, :string
     field :source_name, :string
     field :source_key, :string
@@ -25,5 +25,6 @@ defmodule CommonCore.Knative.EnvValue do
     struct
     |> cast(params, possible_fields)
     |> validate_required(@required_fields)
+    |> validate_length(:name, min: 3, max: 256)
   end
 end

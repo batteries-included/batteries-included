@@ -4,6 +4,7 @@
   },
   "target_summary": {
     "notebooks": [],
+    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -80,7 +81,6 @@
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "knative_services": [],
     "ip_address_pools": [],
     "postgres_clusters": [
@@ -95,13 +95,15 @@
         "storage_size": 524288000,
         "users": [
           {
+            "position": null,
             "username": "battery-local-user",
             "password": "not-real",
             "roles": ["superuser", "createrole", "createdb", "login"]
           },
           {
+            "position": null,
             "username": "battery-control-user",
-            "password": "XczJmDMA90X7/Dg0kcek8hEa",
+            "password": "x+cmkj0hIaiFbZgc2R6Y0/3g",
             "roles": ["createdb", "login"]
           }
         ],
@@ -759,53 +761,6 @@
         },
         "name": "metallb-controller",
         "namespace": "battery-base"
-      }
-    },
-    "/istio_gateway/service/istio_ingress": {
-      "apiVersion": "v1",
-      "kind": "Service",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "7YWF7DADVEVZV2GQV32MBALEM65SSWFXXAC2ETVUXB2LOR7R7I2Q===="
-        },
-        "labels": {
-          "app": "istio-ingress",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
-          "battery/managed": "true",
-          "battery/managed.direct": "true",
-          "istio": "ingress"
-        },
-        "name": "istio-ingress",
-        "namespace": "battery-istio"
-      },
-      "spec": {
-        "ports": [
-          {
-            "name": "status-port",
-            "port": 15021,
-            "protocol": "TCP",
-            "targetPort": 15021
-          },
-          {
-            "name": "http2",
-            "port": 80,
-            "protocol": "TCP",
-            "targetPort": 80
-          },
-          {
-            "name": "https",
-            "port": 443,
-            "protocol": "TCP",
-            "targetPort": 443
-          }
-        ],
-        "selector": {
-          "battery/app": "istio-ingress",
-          "istio": "ingress"
-        },
-        "type": "LoadBalancer"
       }
     },
     "/istio/role/istiod_battery_istio": {
@@ -4424,6 +4379,26 @@
         ]
       }
     },
+    "/istio_gateway/service_account/istio_ingressgateway": {
+      "apiVersion": "v1",
+      "kind": "ServiceAccount",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "SDIUR737APCFUVTPGOB5XBOKTYJOXPVSAQ3MT5YBCZVMPC6KOKRA===="
+        },
+        "labels": {
+          "app": "istio-ingressgateway",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio": "ingressgateway"
+        },
+        "name": "istio-ingressgateway",
+        "namespace": "battery-istio"
+      }
+    },
     "/metallb/service/metallb_webhook_service": {
       "apiVersion": "v1",
       "kind": "Service",
@@ -4616,6 +4591,49 @@
         }
       ]
     },
+    "/istio_gateway/istio_gateway/ingressgateway": {
+      "apiVersion": "networking.istio.io/v1beta1",
+      "kind": "Gateway",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "E4H6EMGAL3P7C4NV3OVV5YLA3VSAHQ7YQFL67SLYAQHATW5RNRAA===="
+        },
+        "labels": {
+          "app": "istio-ingressgateway",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio": "ingressgateway"
+        },
+        "name": "ingressgateway",
+        "namespace": "battery-istio"
+      },
+      "spec": {
+        "selector": {
+          "istio": "ingressgateway"
+        },
+        "servers": [
+          {
+            "port": {
+              "name": "http2",
+              "protocol": "HTTP",
+              "number": 80
+            },
+            "hosts": ["*"]
+          },
+          {
+            "port": {
+              "name": "ssh",
+              "protocol": "TCP",
+              "number": 22
+            },
+            "hosts": ["*"]
+          }
+        ]
+      }
+    },
     "/metallb/crd/l2advertisements_metallb_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -4789,6 +4807,94 @@
         },
         "conditions": [],
         "storedVersions": []
+      }
+    },
+    "/istio_gateway/deployment/istio_ingressgateway": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "BXEBULGGO7ANHUMBMQ2N26GYWSGFM6HZ6JWRUEAUTZBXG3TZTG5Q===="
+        },
+        "labels": {
+          "app": "istio-ingressgateway",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio": "ingressgateway"
+        },
+        "name": "istio-ingressgateway",
+        "namespace": "battery-istio"
+      },
+      "spec": {
+        "selector": {
+          "matchLabels": {
+            "battery/app": "istio-ingressgateway",
+            "istio": "ingressgateway"
+          }
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "inject.istio.io/templates": "gateway",
+              "prometheus.io/path": "/stats/prometheus",
+              "prometheus.io/port": "15020",
+              "prometheus.io/scrape": "true",
+              "sidecar.istio.io/inject": "true"
+            },
+            "labels": {
+              "app": "istio-ingressgateway",
+              "app.kubernetes.io/managed-by": "batteries-included",
+              "app.kubernetes.io/name": "istio-ingressgateway",
+              "battery/app": "istio-ingressgateway",
+              "battery/managed": "true",
+              "battery/managed.indirect": "true",
+              "istio": "ingressgateway",
+              "sidecar.istio.io/inject": "true"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "env": null,
+                "image": "auto",
+                "name": "istio-proxy",
+                "ports": [
+                  {
+                    "containerPort": 15090,
+                    "name": "http-envoy-prom",
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "2000m",
+                    "memory": "1024Mi"
+                  },
+                  "requests": {
+                    "cpu": "100m",
+                    "memory": "128Mi"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": true,
+                  "capabilities": {
+                    "add": ["NET_BIND_SERVICE"],
+                    "drop": ["ALL"]
+                  },
+                  "readOnlyRootFilesystem": true,
+                  "runAsGroup": 1337,
+                  "runAsNonRoot": false,
+                  "runAsUser": 0
+                }
+              }
+            ],
+            "securityContext": null,
+            "serviceAccountName": "istio-ingressgateway"
+          }
+        }
       }
     },
     "/metallb/service_account/metallb_speaker": {
@@ -5238,18 +5344,59 @@
         "namespace": "battery-istio"
       }
     },
+    "/istio_gateway/horizontal_pod_autoscaler/istio_ingressgateway": {
+      "apiVersion": "autoscaling/v2",
+      "kind": "HorizontalPodAutoscaler",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "KKHS5AKOW224RMIYFBVQFESFSX3RV4NQ4OPM356FNEKVK7WWNY4Q===="
+        },
+        "labels": {
+          "app": "istio-ingressgateway",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio": "ingressgateway"
+        },
+        "name": "istio-ingressgateway",
+        "namespace": "battery-istio"
+      },
+      "spec": {
+        "maxReplicas": 5,
+        "metrics": [
+          {
+            "resource": {
+              "name": "cpu",
+              "target": {
+                "averageUtilization": 80,
+                "type": "Utilization"
+              }
+            },
+            "type": "Resource"
+          }
+        ],
+        "minReplicas": 1,
+        "scaleTargetRef": {
+          "apiVersion": "apps/v1",
+          "kind": "Deployment",
+          "name": "istio-ingressgateway"
+        }
+      }
+    },
     "/istio_gateway/istio_telemetry/mesh_default": {
       "apiVersion": "telemetry.istio.io/v1alpha1",
       "kind": "Telemetry",
       "metadata": {
         "annotations": {
-          "battery/hash": "U3RFKQEYFE6SPQN5Q2IZENAU5SBXHN5O3RZL7EZN4EDCWNV4T6PQ===="
+          "battery/hash": "KHRSQQRRP67PVXQP7Y2EKAF6EFUSWJDUYAUIPSIU4B7NWWODUYWA===="
         },
         "labels": {
-          "app": "istio-ingress",
+          "app": "istio-ingressgateway",
           "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
           "battery/managed": "true",
           "battery/managed.direct": "true"
         },
@@ -5266,6 +5413,53 @@
             ]
           }
         ]
+      }
+    },
+    "/istio_gateway/service/istio_ingressgateway": {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "4SDCAJP2ULAPKBGCLOI7D2WPFM7WQTI6VUT6YQLMJDXKZH234MZA===="
+        },
+        "labels": {
+          "app": "istio-ingressgateway",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio": "ingressgateway"
+        },
+        "name": "istio-ingressgateway",
+        "namespace": "battery-istio"
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "status-port",
+            "port": 15021,
+            "protocol": "TCP",
+            "targetPort": 15021
+          },
+          {
+            "name": "http2",
+            "port": 80,
+            "protocol": "TCP",
+            "targetPort": 80
+          },
+          {
+            "name": "https",
+            "port": 443,
+            "protocol": "TCP",
+            "targetPort": 443
+          }
+        ],
+        "selector": {
+          "battery/app": "istio-ingressgateway",
+          "istio": "ingressgateway"
+        },
+        "type": "LoadBalancer"
       }
     },
     "/istio/deployment/istiod": {
@@ -6323,47 +6517,6 @@
         }
       ]
     },
-    "/istio_gateway/horizontal_pod_autoscaler/istio_ingress": {
-      "apiVersion": "autoscaling/v2",
-      "kind": "HorizontalPodAutoscaler",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "BM4NR27JRI4YOL4AAJXQQQ3DRGNZR3C5V3HKFUGJUSBKDVOTQI6A===="
-        },
-        "labels": {
-          "app": "istio-ingress",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
-          "battery/managed": "true",
-          "battery/managed.direct": "true",
-          "istio": "ingress"
-        },
-        "name": "istio-ingress",
-        "namespace": "battery-istio"
-      },
-      "spec": {
-        "maxReplicas": 5,
-        "metrics": [
-          {
-            "resource": {
-              "name": "cpu",
-              "target": {
-                "averageUtilization": 80,
-                "type": "Utilization"
-              }
-            },
-            "type": "Resource"
-          }
-        ],
-        "minReplicas": 1,
-        "scaleTargetRef": {
-          "apiVersion": "apps/v1",
-          "kind": "Deployment",
-          "name": "istio-ingress"
-        }
-      }
-    },
     "/metallb/crd/bfdprofiles_metallb_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -7130,94 +7283,6 @@
         ]
       }
     },
-    "/istio_gateway/deployment/istio_ingress": {
-      "apiVersion": "apps/v1",
-      "kind": "Deployment",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "DPXKS5INYOUCATFKE4B4PHKDBAG6QJEWQBAYRSARA3H3VEQW4BBQ===="
-        },
-        "labels": {
-          "app": "istio-ingress",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
-          "battery/managed": "true",
-          "battery/managed.direct": "true",
-          "istio": "ingress"
-        },
-        "name": "istio-ingress",
-        "namespace": "battery-istio"
-      },
-      "spec": {
-        "selector": {
-          "matchLabels": {
-            "battery/app": "istio-ingress",
-            "istio": "ingress"
-          }
-        },
-        "template": {
-          "metadata": {
-            "annotations": {
-              "inject.istio.io/templates": "gateway",
-              "prometheus.io/path": "/stats/prometheus",
-              "prometheus.io/port": "15020",
-              "prometheus.io/scrape": "true",
-              "sidecar.istio.io/inject": "true"
-            },
-            "labels": {
-              "app": "istio-ingress",
-              "app.kubernetes.io/managed-by": "batteries-included",
-              "app.kubernetes.io/name": "istio-ingress",
-              "battery/app": "istio-ingress",
-              "battery/managed": "true",
-              "battery/managed.indirect": "true",
-              "istio": "ingress",
-              "sidecar.istio.io/inject": "true"
-            }
-          },
-          "spec": {
-            "containers": [
-              {
-                "env": null,
-                "image": "auto",
-                "name": "istio-proxy",
-                "ports": [
-                  {
-                    "containerPort": 15090,
-                    "name": "http-envoy-prom",
-                    "protocol": "TCP"
-                  }
-                ],
-                "resources": {
-                  "limits": {
-                    "cpu": "2000m",
-                    "memory": "1024Mi"
-                  },
-                  "requests": {
-                    "cpu": "100m",
-                    "memory": "128Mi"
-                  }
-                },
-                "securityContext": {
-                  "allowPrivilegeEscalation": true,
-                  "capabilities": {
-                    "add": ["NET_BIND_SERVICE"],
-                    "drop": ["ALL"]
-                  },
-                  "readOnlyRootFilesystem": true,
-                  "runAsGroup": 1337,
-                  "runAsNonRoot": false,
-                  "runAsUser": 0
-                }
-              }
-            ],
-            "securityContext": null,
-            "serviceAccountName": "istio-ingress"
-          }
-        }
-      }
-    },
     "/istio/cluster_role_binding/istio_reader_battery_istio": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "ClusterRoleBinding",
@@ -7471,38 +7536,6 @@
         },
         "type": "ClusterIP"
       }
-    },
-    "/istio_gateway/role_binding/istio_ingress": {
-      "apiVersion": "rbac.authorization.k8s.io/v1",
-      "kind": "RoleBinding",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "RU6TYN2BQSTYEWXJLG7454G646CLFSGF7ZVNOEET6ZQ6NMSSR5XQ===="
-        },
-        "labels": {
-          "app": "istio-ingress",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
-          "battery/managed": "true",
-          "battery/managed.direct": "true",
-          "istio": "ingress"
-        },
-        "name": "istio-ingress",
-        "namespace": "battery-istio"
-      },
-      "roleRef": {
-        "apiGroup": "rbac.authorization.k8s.io",
-        "kind": "Role",
-        "name": "istio-ingress"
-      },
-      "subjects": [
-        {
-          "kind": "ServiceAccount",
-          "name": "istio-ingress",
-          "namespace": "battery-istio"
-        }
-      ]
     },
     "/cloudnative_pg/mutating_webhook_config/cnpg_mutating_webhook_configuration": {
       "apiVersion": "admissionregistration.k8s.io/v1",
@@ -11985,13 +12018,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "WGN6Sm1ETUE5MFg3L0RnMGtjZWs4aEVh",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlhjekptRE1BOTBYNy9EZzBrY2VrOGhFYUBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "eCtjbWtqMGhJYWlGYlpnYzJSNlkwLzNn",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOngrY21rajBoSWFpRmJaZ2MyUjZZMC8zZ0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "E6BJ5BIVVZR6J6ITPV5PESR754AIV3ZTIBZGFVCHZDNAPOVRXWYA===="
+          "battery/hash": "JLMZ4ZMYYEK3W74737BMIM5A3YDJUA4APWOGJNRT262MAWZXGUZQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -12459,33 +12492,6 @@
         "conditions": [],
         "storedVersions": []
       }
-    },
-    "/istio_gateway/role/istio_ingress": {
-      "apiVersion": "rbac.authorization.k8s.io/v1",
-      "kind": "Role",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "XI4Y4NOVQIK7SUUFVB7WNLX5N2MVH6GPCGDXEAH546Q4OCSA5UAQ===="
-        },
-        "labels": {
-          "app": "istio-ingress",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
-          "battery/managed": "true",
-          "battery/managed.direct": "true",
-          "istio": "ingress"
-        },
-        "name": "istio-ingress",
-        "namespace": "battery-istio"
-      },
-      "rules": [
-        {
-          "apiGroups": [""],
-          "resources": ["secrets"],
-          "verbs": ["get", "watch", "list"]
-        }
-      ]
     },
     "/istio/config_map/istio": {
       "apiVersion": "v1",
@@ -13666,6 +13672,38 @@
         ]
       }
     },
+    "/istio_gateway/role_binding/istio_ingressgateway": {
+      "apiVersion": "rbac.authorization.k8s.io/v1",
+      "kind": "RoleBinding",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "DF3NHVYZXZZOXJRYLJBDATOGXX3YWQO4JPMN4FYM6IMFJYQRE6WQ===="
+        },
+        "labels": {
+          "app": "istio-ingressgateway",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio": "ingressgateway"
+        },
+        "name": "istio-ingressgateway",
+        "namespace": "battery-istio"
+      },
+      "roleRef": {
+        "apiGroup": "rbac.authorization.k8s.io",
+        "kind": "Role",
+        "name": "istio-ingressgateway"
+      },
+      "subjects": [
+        {
+          "kind": "ServiceAccount",
+          "name": "istio-ingressgateway",
+          "namespace": "battery-istio"
+        }
+      ]
+    },
     "/metallb/crd/bgpadvertisements_metallb_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
       "kind": "CustomResourceDefinition",
@@ -13864,49 +13902,6 @@
         },
         "conditions": [],
         "storedVersions": []
-      }
-    },
-    "/istio_gateway/istio_gateway/ingress": {
-      "apiVersion": "networking.istio.io/v1beta1",
-      "kind": "Gateway",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "AEBRV67D5IUPYYFQ76JDJWVG35CTS5VFM435ZAQE6IWD3N6JDTHQ===="
-        },
-        "labels": {
-          "app": "istio-ingress",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
-          "battery/managed": "true",
-          "battery/managed.direct": "true",
-          "istio": "ingress"
-        },
-        "name": "ingress",
-        "namespace": "battery-istio"
-      },
-      "spec": {
-        "selector": {
-          "istio": "ingress"
-        },
-        "servers": [
-          {
-            "port": {
-              "name": "http2",
-              "protocol": "HTTP",
-              "number": 80
-            },
-            "hosts": ["*"]
-          },
-          {
-            "port": {
-              "name": "ssh",
-              "protocol": "TCP",
-              "number": 22
-            },
-            "hosts": ["*"]
-          }
-        ]
       }
     },
     "/cloudnative_pg/crd/backups_postgresql_cnpg_io": {
@@ -14780,6 +14775,33 @@
         "conditions": [],
         "storedVersions": []
       }
+    },
+    "/istio_gateway/role/istio_ingressgateway": {
+      "apiVersion": "rbac.authorization.k8s.io/v1",
+      "kind": "Role",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "TQZLK26J6FMJ3PVAWYIP3FAWAN3I2U7YYE4RRLEHQPABXOJGSHPQ===="
+        },
+        "labels": {
+          "app": "istio-ingressgateway",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "istio-ingressgateway",
+          "battery/app": "istio-ingressgateway",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "istio": "ingressgateway"
+        },
+        "name": "istio-ingressgateway",
+        "namespace": "battery-istio"
+      },
+      "rules": [
+        {
+          "apiGroups": [""],
+          "resources": ["secrets"],
+          "verbs": ["get", "watch", "list"]
+        }
+      ]
     },
     "/istio/crd/authorizationpolicies_security_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
@@ -22938,26 +22960,6 @@
           "namespace": "battery-istio"
         }
       ]
-    },
-    "/istio_gateway/service_account/istio_ingress": {
-      "apiVersion": "v1",
-      "kind": "ServiceAccount",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "URFPJY5ZWSFXGYMQ4CDBMRZ25JZ3G5ZBTT3EO5LACLYGYWDQLQ4A===="
-        },
-        "labels": {
-          "app": "istio-ingress",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "istio-ingress",
-          "battery/app": "istio-ingress",
-          "battery/managed": "true",
-          "battery/managed.direct": "true",
-          "istio": "ingress"
-        },
-        "name": "istio-ingress",
-        "namespace": "battery-istio"
-      }
     },
     "/istio/crd/peerauthentications_security_istio_io": {
       "apiVersion": "apiextensions.k8s.io/v1",

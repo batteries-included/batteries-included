@@ -1,6 +1,6 @@
 defmodule CommonCore.Resources.IstioIngress do
   @moduledoc false
-  use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingress"
+  use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingressgateway"
 
   import CommonCore.StateSummary.Namespaces
 
@@ -11,9 +11,9 @@ defmodule CommonCore.Resources.IstioIngress do
 
     :service_account
     |> B.build_resource()
-    |> B.name("istio-ingress")
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
   end
 
   resource(:role_istio_ingress, _battery, state) do
@@ -25,9 +25,9 @@ defmodule CommonCore.Resources.IstioIngress do
 
     :role
     |> B.build_resource()
-    |> B.name("istio-ingress")
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.rules(rules)
   end
 
@@ -36,11 +36,11 @@ defmodule CommonCore.Resources.IstioIngress do
 
     :role_binding
     |> B.build_resource()
-    |> B.name("istio-ingress")
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
-    |> B.role_ref(B.build_role_ref("istio-ingress"))
-    |> B.subject(B.build_service_account("istio-ingress", namespace))
+    |> B.label("istio", "ingressgateway")
+    |> B.role_ref(B.build_role_ref("istio-ingressgateway"))
+    |> B.subject(B.build_service_account("istio-ingressgateway", namespace))
   end
 
   resource(:service_istio_ingress, _battery, state) do
@@ -53,14 +53,14 @@ defmodule CommonCore.Resources.IstioIngress do
         %{"name" => "http2", "port" => 80, "protocol" => "TCP", "targetPort" => 80},
         %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => 443}
       ])
-      |> Map.put("selector", %{"battery/app" => @app_name, "istio" => "ingress"})
+      |> Map.put("selector", %{"battery/app" => @app_name, "istio" => "ingressgateway"})
       |> Map.put("type", "LoadBalancer")
 
     :service
     |> B.build_resource()
-    |> B.name("istio-ingress")
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.spec(spec)
   end
 
@@ -71,7 +71,7 @@ defmodule CommonCore.Resources.IstioIngress do
       %{}
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "istio" => "ingress"}}
+        %{"matchLabels" => %{"battery/app" => @app_name, "istio" => "ingressgateway"}}
       )
       |> Map.put(
         "template",
@@ -87,7 +87,7 @@ defmodule CommonCore.Resources.IstioIngress do
             "labels" => %{
               "battery/app" => @app_name,
               "battery/managed" => "true",
-              "istio" => "ingress",
+              "istio" => "ingressgateway",
               "sidecar.istio.io/inject" => "true"
             }
           },
@@ -115,16 +115,16 @@ defmodule CommonCore.Resources.IstioIngress do
               }
             ],
             "securityContext" => nil,
-            "serviceAccountName" => "istio-ingress"
+            "serviceAccountName" => "istio-ingressgateway"
           }
         }
       )
 
     :deployment
     |> B.build_resource()
-    |> B.name("istio-ingress")
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.spec(spec)
   end
 
@@ -146,14 +146,14 @@ defmodule CommonCore.Resources.IstioIngress do
       |> Map.put("minReplicas", 1)
       |> Map.put(
         "scaleTargetRef",
-        %{"apiVersion" => "apps/v1", "kind" => "Deployment", "name" => "istio-ingress"}
+        %{"apiVersion" => "apps/v1", "kind" => "Deployment", "name" => "istio-ingressgateway"}
       )
 
     :horizontal_pod_autoscaler
     |> B.build_resource()
-    |> B.name("istio-ingress")
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.spec(spec)
   end
 
@@ -161,7 +161,7 @@ defmodule CommonCore.Resources.IstioIngress do
     namespace = istio_namespace(state)
 
     spec = %{
-      selector: %{istio: "ingress"},
+      selector: %{istio: "ingressgateway"},
       servers: [
         %{port: %{number: 80, name: "http2", protocol: "HTTP"}, hosts: ["*"]},
         # %{port: %{number: 443, name: "https", protocol: "HTTPS"}, hosts: ["*"]},
@@ -171,9 +171,9 @@ defmodule CommonCore.Resources.IstioIngress do
 
     :istio_gateway
     |> B.build_resource()
-    |> B.name("ingress")
+    |> B.name("ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.spec(spec)
   end
 

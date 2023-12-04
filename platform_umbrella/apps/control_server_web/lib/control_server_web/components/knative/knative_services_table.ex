@@ -16,15 +16,22 @@ defmodule ControlServerWeb.KnativeServicesTable do
       <:col :let={service} label="Name"><%= service.name %></:col>
       <:col :let={service} label="Link">
         <.a href={service_url(service)} variant="external">
-          <%= service_url(service) %>
+          Running Service
         </.a>
       </:col>
       <:action :let={service}>
-        <.a navigate={~p"/knative/services/#{service}/show"}>Show Service</.a>
+        <.action_icon
+          to={show_url(service)}
+          icon={:eye}
+          tooltip={"Show Service " <> service.name}
+          id={"show_service_" <> service.id}
+        />
       </:action>
     </.table>
     """
   end
 
-  defp service_url(%Service{} = service), do: "http://#{knative_host(service)}"
+  defp show_url(%Service{} = service), do: ~p"/knative/services/#{service.id}/show"
+
+  defp service_url(%Service{} = service), do: "//#{knative_host(service)}"
 end

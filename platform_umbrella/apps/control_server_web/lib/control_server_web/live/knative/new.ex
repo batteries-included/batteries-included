@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.KnativeNew do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias CommonCore.Knative.Service
   alias ControlServer.Knative
@@ -25,7 +25,6 @@ defmodule ControlServerWeb.Live.KnativeNew do
   end
 
   def update(%{service: service} = assigns, socket) do
-    Logger.info("Update")
     changeset = Knative.change_service(service)
 
     {:ok,
@@ -35,25 +34,15 @@ defmodule ControlServerWeb.Live.KnativeNew do
   end
 
   @impl Phoenix.LiveView
-  def handle_info({"service:save", %{"service" => service}}, socket) do
-    new_path = ~p"/knative/services/#{service}/show"
-
-    {:noreply, push_redirect(socket, to: new_path)}
-  end
-
-  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div>
-      <.h1>New Knative Serverless</.h1>
-      <.live_component
-        module={FormComponent}
-        service={@service}
-        id={@service.id || "new-service-form"}
-        action={:new}
-        save_target={self()}
-      />
-    </div>
+    <.live_component
+      module={FormComponent}
+      service={@service}
+      id="service-form"
+      action={:new}
+      title="New Serverless Service"
+    />
     """
   end
 end

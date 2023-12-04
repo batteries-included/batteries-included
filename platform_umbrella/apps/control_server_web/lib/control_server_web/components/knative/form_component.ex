@@ -2,7 +2,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  import ControlServerWeb.KnativeFormSubcomponents
+  import CommonUI.Table
+  import CommonUI.Tooltip
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Knative.Container
@@ -16,15 +17,43 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:ok,
      socket
      |> assign_new(:save_info, fn -> "service:save" end)
-     |> assign_new(:save_target, fn -> nil end)}
+     |> assign_new(:save_target, fn -> nil end)
+     |> assign_container(nil)
+     |> assign_env_value(nil)}
+  end
+
+  def update_container(container) do
+    send_update(__MODULE__, id: "service-form", container: container)
+  end
+
+  def update_env_value(env_value) do
+    send_update(__MODULE__, id: "service-form", env_value: env_value)
   end
 
   def assign_changeset(socket, changeset) do
-    assign(socket, changeset: changeset)
+    containers = Changeset.get_field(changeset, :containers, [])
+    init_containers = Changeset.get_field(changeset, :init_containers, [])
+    env_values = Changeset.get_field(changeset, :env_values, [])
+
+    assign(socket,
+      changeset: changeset,
+      form: to_form(changeset),
+      containers: containers,
+      init_containers: init_containers,
+      env_values: env_values
+    )
   end
 
-  def assign_url(socket, url) do
-    assign(socket, url: url)
+  def assign_url(socket, service) do
+    assign(socket, url: "http://#{knative_host(service)}")
+  end
+
+  def assign_container(socket, container) do
+    assign(socket, container: container)
+  end
+
+  def assign_env_value(socket, env_value) do
+    assign(socket, env_value: env_value)
   end
 
   @impl Phoenix.LiveComponent
@@ -34,49 +63,28 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_url("http://#{knative_host(service)}")
+     |> assign_url(service)
      |> assign_changeset(changeset)}
   end
 
-  @impl Phoenix.LiveComponent
-  def handle_event("add:env_value", _params, %{assigns: %{changeset: changeset}} = socket) do
-    env_values = Changeset.get_field(changeset, :env_values, []) ++ [%EnvValue{}]
-    final_changeset = Changeset.put_embed(changeset, :env_values, env_values)
-    {:noreply, assign_changeset(socket, final_changeset)}
+  def update(%{container: nil}, socket) do
+    {:ok, assign_container(socket, nil)}
   end
 
-  @impl Phoenix.LiveComponent
-  def handle_event("del:env_value", %{"idx" => idx} = _params, %{assigns: %{changeset: changeset}} = socket) do
-    env_values = changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(String.to_integer(idx))
-
-    final_changeset = Changeset.put_embed(changeset, :env_values, env_values)
-    {:noreply, assign_changeset(socket, final_changeset)}
+  def update(%{container: container}, %{assigns: %{changeset: changeset}} = socket) do
+    containers = Changeset.get_field(changeset, :containers, [])
+    changeset = Changeset.put_embed(changeset, :containers, [container | containers])
+    {:ok, socket |> assign_container(nil) |> assign_changeset(changeset)}
   end
 
-  @impl Phoenix.LiveComponent
-  def handle_event(
-        "add:container",
-        %{"containers-field" => field_name_str} = _params,
-        %{assigns: %{changeset: changeset}} = socket
-      ) do
-    field_name = String.to_existing_atom(field_name_str)
-    containers = Changeset.get_field(changeset, field_name, []) ++ [%Container{}]
-    final_changeset = Changeset.put_embed(changeset, field_name, containers)
-    {:noreply, assign_changeset(socket, final_changeset)}
+  def update(%{env_value: nil}, socket) do
+    {:ok, assign_env_value(socket, nil)}
   end
 
-  @impl Phoenix.LiveComponent
-  def handle_event(
-        "del:container",
-        %{"containers-field" => field_name_str, "idx" => idx} = _params,
-        %{assigns: %{changeset: changeset}} = socket
-      ) do
-    field_name = String.to_existing_atom(field_name_str)
-
-    containers = changeset |> Changeset.get_field(field_name, []) |> List.delete_at(String.to_integer(idx))
-
-    final_changeset = Changeset.put_embed(changeset, field_name, containers)
-    {:noreply, assign_changeset(socket, final_changeset)}
+  def update(%{env_value: env_value}, %{assigns: %{changeset: changeset}} = socket) do
+    env_values = Changeset.get_field(changeset, :env_values, [])
+    changeset = Changeset.put_embed(changeset, :env_values, [env_value | env_values])
+    {:ok, socket |> assign_env_value(nil) |> assign_changeset(changeset)}
   end
 
   @impl Phoenix.LiveComponent
@@ -86,7 +94,42 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:noreply,
      socket
      |> assign_changeset(changeset)
-     |> assign_url("http://#{knative_host(new_service)}")}
+     |> assign_url(new_service)}
+  end
+
+  def handle_event("new_container", _, socket) do
+    {:noreply, assign_container(socket, %Container{})}
+  end
+
+  def handle_event("new_env_var", _, socket) do
+    {:noreply, assign_env_value(socket, %EnvValue{source_type: :value})}
+  end
+
+  def handle_event("close_modal", _, socket) do
+    {:noreply, assign_container(socket, nil)}
+  end
+
+  def handle_event("del:container", %{"idx" => container_idx}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, _} = Integer.parse(container_idx)
+
+    containers =
+      Changeset.get_field(changeset, :containers, [])
+
+    new_containers = List.delete_at(containers, idx)
+    new_changeset = Changeset.put_embed(changeset, :containers, new_containers)
+
+    {:noreply, assign_changeset(socket, new_changeset)}
+  end
+
+  def handle_event("del:env_value", %{"idx" => env_value_idx}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, ""} = Integer.parse(env_value_idx)
+
+    env_values =
+      changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(idx)
+
+    new_changeset = Changeset.put_embed(changeset, :env_values, env_values)
+
+    {:noreply, assign_changeset(socket, new_changeset)}
   end
 
   def handle_event("save", %{"service" => service_params}, socket) do
@@ -99,7 +142,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Knative service created successfully")
-         |> send_info(socket.assigns.save_target, new_service)}
+         |> push_redirect(to: ~p"/knative/services/#{new_service.id}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
@@ -112,57 +155,202 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Knative service updated successfully")
-         |> send_info(socket.assigns.save_target, updated_service)}
+         |> push_redirect(to: ~p"/knative/services/#{updated_service.id}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end
 
-  defp send_info(socket, nil, _service), do: {:noreply, socket}
+  defp containers_hidden_form(assigns) do
+    ~H"""
+    <.inputs_for :let={f_nested} field={@field}>
+      <PC.input type="hidden" field={f_nested[:name]} />
+      <PC.input type="hidden" field={f_nested[:image]} />
+      <PC.input type="hidden" field={f_nested[:command]} multiple={true} />
+      <PC.input type="hidden" field={f_nested[:args]} multiple={true} />
+      <.inputs_for :let={env_nested} field={f_nested[:env_values]}>
+        <.env_var_hidden_input form={env_nested} />
+      </.inputs_for>
+    </.inputs_for>
+    """
+  end
 
-  defp send_info(socket, target, service) do
-    send(target, {socket.assigns.save_info, %{"service" => service}})
-    socket
+  defp containers_panel(%{} = assigns) do
+    ~H"""
+    <.panel title="Containers">
+      <:menu>
+        <.button
+          variant="transparent"
+          icon={:plus}
+          phx-click="new_container"
+          type="button"
+          phx-target={@myself}
+        >
+          Container
+        </.button>
+      </:menu>
+      <.table rows={Enum.with_index(@containers ++ @init_containers)}>
+        <:col :let={{c, _idx}} label="Name"><%= c.name %></:col>
+        <:col :let={{c, _idx}} label="Image"><%= c.image %></:col>
+        <:col :let={{_c, idx}} label="Init Container">
+          <%= if idx > length(@containers), do: "Yes", else: "No" %>
+        </:col>
+
+        <:action :let={{c, idx}}>
+          <.action_icon
+            to="/"
+            icon={:x_mark}
+            id={"delete_container_" <> String.replace(c.name, " ", "")}
+            phx-click="del:container"
+            phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
+            tooltip="Remove"
+            link_type="button"
+            type="button"
+            phx-target={@myself}
+          />
+        </:action>
+      </.table>
+
+      <.containers_hidden_form field={@form[:containers]} />
+      <.containers_hidden_form field={@form[:init_containers]} />
+    </.panel>
+    """
+  end
+
+  defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
+    ~H"""
+    <%= @env_value.value %>
+    """
+  end
+
+  defp env_value_value(%{env_value: %{source_type: _}} = assigns) do
+    ~H"""
+    <.truncate_tooltip value={"From #{@env_value.source_name}"} />
+    """
+  end
+
+  defp env_var_panel(assigns) do
+    ~H"""
+    <.panel title="Environment Variables" class="lg:col-span-2">
+      <:menu>
+        <.button
+          variant="transparent"
+          icon={:plus}
+          phx-click="new_env_var"
+          type="button"
+          phx-target={@myself}
+        >
+          Variable
+        </.button>
+      </:menu>
+
+      <.table rows={Enum.with_index(@env_values)}>
+        <:col :let={{ev, _idx}} label="Name"><%= ev.name %></:col>
+        <:col :let={{ev, _idx}} label="Value"><.env_value_value env_value={ev} /></:col>
+        <:action :let={{ev, idx}}>
+          <.action_icon
+            to="/"
+            icon={:x_mark}
+            id={"delete_env_value_" <> String.replace(ev.name, " ", "")}
+            phx-click="del:env_value"
+            phx-value-idx={idx}
+            tooltip="Remove"
+            link_type="button"
+            type="button"
+            phx-target={@myself}
+          />
+        </:action>
+      </.table>
+
+      <.inputs_for :let={f_nested} field={@form[:env_values]}>
+        <.env_var_hidden_input form={f_nested} />
+      </.inputs_for>
+    </.panel>
+    """
+  end
+
+  defp env_var_hidden_input(assigns) do
+    ~H"""
+    <PC.input type="hidden" field={@form[:name]} />
+    <PC.input type="hidden" field={@form[:value]} />
+    <PC.input type="hidden" field={@form[:source_type]} />
+    <PC.input type="hidden" field={@form[:source_name]} />
+    <PC.input type="hidden" field={@form[:source_key]} />
+    <PC.input type="hidden" field={@form[:source_optional]} />
+    """
+  end
+
+  defp advanced_setting_panel(assigns) do
+    ~H"""
+    <.panel title="Advanced Settings" variant="gray">
+      <.flex class="flex-col">
+        <PC.field field={@form[:rollout_duration]} />
+      </.flex>
+    </.panel>
+    """
+  end
+
+  defp name_panel(assigns) do
+    ~H"""
+    <PC.field field={@form[:name]} autofocus placeholder="Name" />
+    """
+  end
+
+  defp url_panel(assigns) do
+    ~H"""
+    <.flex class="justify-around items-center">
+      <.truncate_tooltip value={@url} length={72} />
+    </.flex>
+    """
   end
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>
-      <.simple_form
-        :let={f}
-        for={@changeset}
+      <.form
+        for={@form}
         id="service-form"
         phx-change="validate"
         phx-submit="save"
         phx-target={@myself}
       >
-        <div class="col-span-1">
-          <.input field={{f, :name}} placeholder="Name" />
-          <.input field={{f, :rollout_duration}} placeholder="Rollout Duration" />
-        </div>
-        <.card class="col-span-1 truncate">
-          <.data_list>
-            <:item title="Namespace">battery-kube</:item>
-            <:item title="Url"><%= @url %></:item>
-          </.data_list>
-        </.card>
+        <.page_header
+          title={@title}
+          back_button={%{link_type: "live_redirect", to: ~p"/knative/services"}}
+        >
+          <:menu>
+            <PC.button label="Save Serverless" color="dark" phx-disable-with="Saving…" />
+          </:menu>
+        </.page_header>
+        <.grid columns={[sm: 1, md: 2]}>
+          <.name_panel form={@form} />
+          <.url_panel url={@url} />
+          <.containers_panel
+            form={@form}
+            myself={@myself}
+            init_containers={@init_containers}
+            containers={@containers}
+          />
+          <.advanced_setting_panel form={@form} />
+          <.env_var_panel form={@form} myself={@myself} env_values={@env_values} />
+        </.grid>
+      </.form>
 
-        <.h2 class="col-span-2">Containers</.h2>
-        <.containers_form form={f} target={@myself} containers_field={:containers} />
+      <.live_component
+        :if={@container}
+        module={ControlServerWeb.Knative.ContainerModal}
+        container={@container}
+        id="container-form-modal"
+      />
 
-        <.h2 class="col-span-2">Environment Variables</.h2>
-        <.env_values_form form={f} target={@myself} />
-        <.h2 class="col-span-2">Init Containers</.h2>
-        <.containers_form form={f} target={@myself} containers_field={:init_containers} />
-
-        <:actions>
-          <.button type="submit" phx-disable-with="Saving…" class="sm:col-span-2">
-            Save
-          </.button>
-        </:actions>
-      </.simple_form>
+      <.live_component
+        :if={@env_value}
+        module={ControlServerWeb.Knative.EnvValueModal}
+        env_value={@env_value}
+        id="env_value-form-modal"
+      />
     </div>
     """
   end

@@ -21,11 +21,14 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     assign(socket, knative_services: knative_services())
   end
 
-  defp knative_serving_panel(assigns) do
+  defp knative_panel(assigns) do
     ~H"""
-    <.panel title="Knative Services">
+    <.panel title="Serverless Services">
       <:menu>
         <.flex>
+          <.a navigate={~p"/knative/services/new"} variant="styled">
+            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Knative
+          </.a>
           <.a navigate={~p"/knative/services"}>View All</.a>
         </.flex>
       </:menu>
@@ -70,8 +73,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>
         <%= case battery.type do %>
-          <% :knative_serving -> %>
-            <.knative_serving_panel services={@knative_services} />
+          <% :knative -> %>
+            <.knative_panel services={@knative_services} />
           <% _ -> %>
         <% end %>
       <% end %>

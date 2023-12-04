@@ -32,7 +32,7 @@ defmodule CommonCore.OpenApi.VirtualServiceTest do
       virtual_service = VirtualService.new!()
 
       assert virtual_service.exportTo == []
-      assert virtual_service.gateways == ["battery-istio/ingress"]
+      assert virtual_service.gateways == ["battery-istio/ingressgateway"]
       assert virtual_service.hosts == ["*"]
       assert virtual_service.http == []
       assert virtual_service.tcp == []

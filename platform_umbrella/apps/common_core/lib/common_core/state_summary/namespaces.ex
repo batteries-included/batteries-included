@@ -59,7 +59,7 @@ defmodule CommonCore.StateSummary.Namespaces do
 
   @spec knative_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def knative_namespace(%StateSummary{} = summary) do
-    case get_battery(summary, :knative_serving) do
+    case get_battery(summary, :knative) do
       %{config: config} ->
         config.namespace
 
