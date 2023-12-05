@@ -1,52 +1,44 @@
-<table class="pc-table px-4 md:px-1 lg:px-0" id="keycloak-clients-table">
-  
-  <thead>
-    <tr class="pc-table__tr ">
-  
-      <th class="pc-table__th ">
-  
-        Client Id
-      
-</th><th class="pc-table__th ">
-  
-        Name
-      
-</th><th class="pc-table__th ">
-  
-        Url
-      
-</th><th class="pc-table__th ">
-  
-        Enabled
-      
-</th>
-      
-    
-</tr>
-  </thead>
-  <tbody>
-    <tr class="pc-table__tr group " id="keycloak-clients-table-idx-0">
-  
-      <td class="pc-table__td ">
-  
-        admin-cli
-      
-</td><td class="pc-table__td ">
-  
-        Admin CLI
-      
-</td><td class="pc-table__td ">
-  
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table class="w-[40rem] mt-11 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
+      <tr>
+        <th class="p-0 pb-4 pr-6 font-normal">Client Id</th><th class="p-0 pb-4 pr-6 font-normal">Name</th><th class="p-0 pb-4 pr-6 font-normal">Url</th><th class="p-0 pb-4 pr-6 font-normal">Enabled</th>
         
-      
-</td><td class="pc-table__td ">
-  
-        true
-      
-</td>
-      
-    
-</tr>
-  </tbody>
-
-</table>
+      </tr>
+    </thead>
+    <tbody id="keycloak-clients-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
+      <tr class="group ">
+        <td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+              admin-cli
+            </span>
+          </div>
+        </td><td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative ">
+              Admin CLI
+            </span>
+          </div>
+        </td><td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative ">
+              
+            </span>
+          </div>
+        </td><td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative ">
+              true
+            </span>
+          </div>
+        </td>
+        
+      </tr>
+    </tbody>
+  </table>
+</div>

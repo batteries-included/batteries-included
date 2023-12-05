@@ -86,7 +86,7 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
           </.tab_bar>
         </:menu>
 
-        <.table rows={@batteries} transparent>
+        <.table rows={@batteries}>
           <:col :let={battery} label="Battery name">
             <%= Naming.humanize(battery.type) %>
           </:col>

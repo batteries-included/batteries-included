@@ -1,62 +1,64 @@
-<table class="pc-table px-4 md:px-1 lg:px-0">
-  
-  <thead>
-    <tr class="pc-table__tr ">
-  
-      <th class="pc-table__th ">
-  
-        A
-      
-</th><th class="pc-table__th ">
-  
-        B
-      
-</th>
-      
-    
-</tr>
-  </thead>
-  <tbody>
-    <tr class="pc-table__tr group " id="-idx-0">
-  
-      <td class="pc-table__td ">
-  
-        100
-      
-</td><td class="pc-table__td ">
-  
-        test
-      
-</td>
-      
-    
-</tr><tr class="pc-table__tr group " id="-idx-1">
-  
-      <td class="pc-table__td ">
-  
-        102
-      
-</td><td class="pc-table__td ">
-  
-        testing
-      
-</td>
-      
-    
-</tr><tr class="pc-table__tr group " id="-idx-2">
-  
-      <td class="pc-table__td ">
-  
-        420
-      
-</td><td class="pc-table__td ">
-  
-        anyone there?
-      
-</td>
-      
-    
-</tr>
-  </tbody>
-
-</table>
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table class="w-[40rem] mt-11 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
+      <tr>
+        <th class="p-0 pb-4 pr-6 font-normal">A</th><th class="p-0 pb-4 pr-6 font-normal">B</th>
+        
+      </tr>
+    </thead>
+    <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
+      <tr class="group ">
+        <td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+              100
+            </span>
+          </div>
+        </td><td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative ">
+              test
+            </span>
+          </div>
+        </td>
+        
+      </tr><tr class="group ">
+        <td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+              102
+            </span>
+          </div>
+        </td><td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative ">
+              testing
+            </span>
+          </div>
+        </td>
+        
+      </tr><tr class="group ">
+        <td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+              420
+            </span>
+          </div>
+        </td><td class="relative p-0 ">
+          <div class="block py-4 pr-6">
+            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
+            <span class="relative ">
+              anyone there?
+            </span>
+          </div>
+        </td>
+        
+      </tr>
+    </tbody>
+  </table>
+</div>

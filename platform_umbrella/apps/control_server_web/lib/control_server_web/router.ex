@@ -51,13 +51,6 @@ defmodule ControlServerWeb.Router do
     live "/:umbrella_id/keycloak/:id", Live.KeycloakSnapshotShow, :index
   end
 
-  scope "/system_batteries", ControlServerWeb do
-    pipe_through :browser
-
-    live "/", Live.SystemBatteryIndex, :index
-    live "/:id", Live.SystemBatteryShow, :show
-  end
-
   scope "/batteries", ControlServerWeb do
     pipe_through :browser
 

@@ -73,7 +73,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
   defp ports_panel(assigns) do
     ~H"""
     <.panel title="Ports">
-      <.table :if={@ports != []} transparent id="ports-table" rows={@ports}>
+      <.table :if={@ports != []} id="ports-table" rows={@ports}>
         <:col :let={port} label="Name"><%= Map.get(port, "name", "") %></:col>
         <:col :let={port} label="Port"><%= Map.get(port, "port", "") %></:col>
         <:col :let={port} label="Target Port"><%= Map.get(port, "targetPort", "") %></:col>
@@ -88,7 +88,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
   defp endpoint_panel(%{addresses: _} = assigns) do
     ~H"""
     <.panel variant="gray" title="Endpoint" class="lg:col-span-2">
-      <.table :if={@addresses != []} transparent id="endpoint-addresses-table" rows={@addresses}>
+      <.table :if={@addresses != []} id="endpoint-addresses-table" rows={@addresses}>
         <:col :let={address} label="Address"><%= Map.get(address, "ip", "") %></:col>
         <:col :let={address} label="Node Name"><%= Map.get(address, "nodeName", "") %></:col>
         <:col :let={address} label="Target Kind">

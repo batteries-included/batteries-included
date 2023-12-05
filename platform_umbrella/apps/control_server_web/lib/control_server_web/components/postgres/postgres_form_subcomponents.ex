@@ -31,27 +31,29 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             <%= user.roles |> Enum.join(", ") |> truncate(length: 35) %>
           </:col>
           <:action :let={user}>
-            <.action_icon
-              icon={:pencil}
-              id={"edit_user_" <> String.replace(user.username, " ", "")}
-              phx-click="edit:user"
-              phx-value-username={user.username}
-              tooltip="Edit"
-              link_type="button"
-              type="button"
-              phx-target={@phx_target}
-            />
-            <.action_icon
-              to="/"
-              icon={:x_mark}
-              id={"delete_user_" <> String.replace(user.username, " ", "")}
-              phx-click="del:user"
-              phx-value-username={user.username}
-              tooltip="Remove"
-              link_type="button"
-              type="button"
-              phx-target={@phx_target}
-            />
+            <.flex>
+              <.action_icon
+                icon={:pencil}
+                id={"edit_user_" <> String.replace(user.username, " ", "")}
+                phx-click="edit:user"
+                phx-value-username={user.username}
+                tooltip="Edit"
+                link_type="button"
+                type="button"
+                phx-target={@phx_target}
+              />
+              <.action_icon
+                to="/"
+                icon={:x_mark}
+                id={"delete_user_" <> String.replace(user.username, " ", "")}
+                phx-click="del:user"
+                phx-value-username={user.username}
+                tooltip="Remove"
+                link_type="button"
+                type="button"
+                phx-target={@phx_target}
+              />
+            </.flex>
           </:action>
         </.table>
       </div>

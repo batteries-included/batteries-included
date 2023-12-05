@@ -1,35 +1,15 @@
-<table class="pc-table px-4 md:px-1 lg:px-0">
-  
-  <thead>
-    <tr class="pc-table__tr ">
-  
-      <th class="pc-table__th ">
-  
-        ID
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table class="w-[40rem] mt-11 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
+      <tr>
+        <th class="p-0 pb-4 pr-6 font-normal">ID</th><th class="p-0 pb-4 pr-6 font-normal">Started</th><th class="p-0 pb-4 pr-6 font-normal">Kube Status</th><th class="p-0 pb-4 pr-6 font-normal">Keycloak Status</th>
+        <th class="relative p-0 pb-4">
+          <span class="sr-only">Actions</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
       
-</th><th class="pc-table__th ">
-  
-        Started
-      
-</th><th class="pc-table__th ">
-  
-        Kube Status
-      
-</th><th class="pc-table__th ">
-  
-        Keycloak Status
-      
-</th>
-      <th class="pc-table__th ">
-  
-        <span class="sr-only">Actions</span>
-      
-</th>
-    
-</tr>
-  </thead>
-  <tbody>
-    
-  </tbody>
-
-</table>
+    </tbody>
+  </table>
+</div>

@@ -351,15 +351,6 @@ defmodule ControlServerWeb.LeftMenu do
     >
       <Heroicons.trash class={@icon_class} />
     </.detail_menu_item>
-
-    <.h4>Batteries</.h4>
-    <.detail_menu_item
-      navigate={~p"/system_batteries"}
-      name="Installed Batteries"
-      is_active={@page_detail_type == :installed_batteries}
-    >
-      <Heroicons.battery_100 class={@icon_class} />
-    </.detail_menu_item>
     """
   end
 

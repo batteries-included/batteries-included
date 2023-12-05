@@ -13,21 +13,20 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
       <:col :let={pool} label="Subnet"><%= pool.subnet %></:col>
 
       <:action :let={pool}>
-        <.action_icon
-          to={show_url(pool)}
-          icon={:eye}
-          tooltip={"Show ip address pool " <> pool.name}
-          id={"show_pool_" <> pool.id}
-        />
-      </:action>
-
-      <:action :let={pool}>
-        <.action_icon
-          to={edit_url(pool)}
-          icon={:pencil}
-          tooltip={"Edit ip addresss pool " <> pool.name}
-          id={"edit_pool_" <> pool.id}
-        />
+        <.flex>
+          <.action_icon
+            to={show_url(pool)}
+            icon={:eye}
+            tooltip={"Show ip address pool " <> pool.name}
+            id={"show_pool_" <> pool.id}
+          />
+          <.action_icon
+            to={edit_url(pool)}
+            icon={:pencil}
+            tooltip={"Edit ip addresss pool " <> pool.name}
+            id={"edit_pool_" <> pool.id}
+          />
+        </.flex>
       </:action>
     </.table>
     """

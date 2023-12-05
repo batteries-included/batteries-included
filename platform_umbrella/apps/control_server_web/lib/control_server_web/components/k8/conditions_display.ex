@@ -34,7 +34,7 @@ defmodule ControlServerWeb.ConditionsDisplay do
   def conditions_display(assigns) do
     ~H"""
     <.panel variant="gray" title="Conditions">
-      <.table transparent rows={Enum.sort_by(@conditions, &get_condition_time/1, :desc)}>
+      <.table rows={Enum.sort_by(@conditions, &get_condition_time/1, :desc)}>
         <:col :let={condition} label="Type"><%= Map.get(condition, "type", "") %></:col>
         <:col :let={condition} label="Message"><%= Map.get(condition, "message", "") %></:col>
         <:col :let={condition} label="Time">
