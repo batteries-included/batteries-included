@@ -162,21 +162,19 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     end
   end
 
-  defp containers_hidden_form(assigns) do
+  defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
     ~H"""
-    <.inputs_for :let={f_nested} field={@field}>
-      <PC.input type="hidden" field={f_nested[:name]} />
-      <PC.input type="hidden" field={f_nested[:image]} />
-      <PC.input type="hidden" field={f_nested[:command]} multiple={true} />
-      <PC.input type="hidden" field={f_nested[:args]} multiple={true} />
-      <.inputs_for :let={env_nested} field={f_nested[:env_values]}>
-        <.env_var_hidden_input form={env_nested} />
-      </.inputs_for>
-    </.inputs_for>
+    <%= @env_value.value %>
     """
   end
 
-  defp containers_panel(%{} = assigns) do
+  defp env_value_value(%{env_value: %{source_type: _}} = assigns) do
+    ~H"""
+    <.truncate_tooltip value={"From #{@env_value.source_name}"} />
+    """
+  end
+
+  defp containers_panel(assigns) do
     ~H"""
     <.panel title="Containers">
       <:menu>
@@ -211,22 +209,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           />
         </:action>
       </.table>
-
-      <.containers_hidden_form field={@form[:containers]} />
-      <.containers_hidden_form field={@form[:init_containers]} />
     </.panel>
-    """
-  end
-
-  defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
-    ~H"""
-    <%= @env_value.value %>
-    """
-  end
-
-  defp env_value_value(%{env_value: %{source_type: _}} = assigns) do
-    ~H"""
-    <.truncate_tooltip value={"From #{@env_value.source_name}"} />
     """
   end
 
@@ -262,15 +245,19 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           />
         </:action>
       </.table>
-
-      <.inputs_for :let={f_nested} field={@form[:env_values]}>
-        <.env_var_hidden_input form={f_nested} />
-      </.inputs_for>
     </.panel>
     """
   end
 
-  defp env_var_hidden_input(assigns) do
+  defp env_values_inputs(assigns) do
+    ~H"""
+    <.inputs_for :let={env_value} field={@field}>
+      <.single_env_value_hidden form={env_value} />
+    </.inputs_for>
+    """
+  end
+
+  defp single_env_value_hidden(assigns) do
     ~H"""
     <PC.input type="hidden" field={@form[:name]} />
     <PC.input type="hidden" field={@form[:value]} />
@@ -278,6 +265,20 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     <PC.input type="hidden" field={@form[:source_name]} />
     <PC.input type="hidden" field={@form[:source_key]} />
     <PC.input type="hidden" field={@form[:source_optional]} />
+    """
+  end
+
+  defp containers_hidden_form(assigns) do
+    ~H"""
+    <.inputs_for :let={f_nested} field={@field}>
+      <PC.input type="hidden" field={f_nested[:name]} />
+      <PC.input type="hidden" field={f_nested[:image]} />
+      <PC.input type="hidden" field={f_nested[:command]} multiple={true} />
+      <PC.input type="hidden" field={f_nested[:args]} multiple={true} />
+      <.inputs_for :let={env_nested} field={f_nested[:env_values]}>
+        <.single_env_value_hidden form={env_nested} />
+      </.inputs_for>
+    </.inputs_for>
     """
   end
 
@@ -328,13 +329,16 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           <.name_panel form={@form} />
           <.url_panel url={@url} />
           <.containers_panel
-            form={@form}
             myself={@myself}
             init_containers={@init_containers}
             containers={@containers}
           />
           <.advanced_setting_panel form={@form} />
-          <.env_var_panel form={@form} myself={@myself} env_values={@env_values} />
+          <.env_var_panel myself={@myself} env_values={@env_values} />
+          <!-- Hidden inputs for embeds -->
+          <.containers_hidden_form field={@form[:containers]} />
+          <.containers_hidden_form field={@form[:init_containers]} />
+          <.env_values_inputs field={@form[:env_values]} />
         </.grid>
       </.form>
 
