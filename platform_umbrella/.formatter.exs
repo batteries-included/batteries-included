@@ -2,6 +2,7 @@ locals_without_parens = [
   polymorphic_embeds_one: 2,
   attr: 2,
   attr: 3,
+  defaultable_field: 3,
   slot: 1,
   slot: 2,
   slot: 3
