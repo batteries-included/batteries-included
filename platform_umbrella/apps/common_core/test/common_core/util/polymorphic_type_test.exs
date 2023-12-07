@@ -20,7 +20,7 @@ defmodule CommonCore.Util.PolymorphicTypeTest do
     @primary_key false
     typed_embedded_schema do
       field :non_default, :string
-      field :type, Ecto.Enum, values: [:basic], default: :basic
+      type_field()
     end
   end
 
@@ -34,7 +34,7 @@ defmodule CommonCore.Util.PolymorphicTypeTest do
     typed_embedded_schema do
       field :non_default, :string
       defaultable_field :defaulted, :string, default: "some default value"
-      field :type, Ecto.Enum, values: [:advanced], default: :advanced
+      type_field()
     end
   end
 

@@ -21,6 +21,8 @@ defmodule CommonCore.Util.PolymorphicType do
     quote do
       use Ecto.Type
 
+      import unquote(__MODULE__), only: [type_field: 0]
+
       @__polymorphic_type unquote(type)
 
       @before_compile {unquote(__MODULE__), :__before_compile__}
@@ -30,6 +32,15 @@ defmodule CommonCore.Util.PolymorphicType do
   defmacro __before_compile__(_env) do
     quote do
       def __polymorphic_type, do: @__polymorphic_type
+    end
+  end
+
+  @doc """
+  Defines `:type` field based on the `:type` option passed to `init/1`.
+  """
+  defmacro type_field() do
+    quote do
+      field(:type, Ecto.Enum, values: [@__polymorphic_type], default: @__polymorphic_type)
     end
   end
 
