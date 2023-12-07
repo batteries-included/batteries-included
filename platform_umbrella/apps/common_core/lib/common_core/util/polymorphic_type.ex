@@ -29,9 +29,10 @@ defmodule CommonCore.Util.PolymorphicType do
     end
   end
 
-  defmacro __before_compile__(_env) do
+  defmacro __before_compile__(env) do
     quote do
       def __polymorphic_type, do: @__polymorphic_type
+      def __required_fields, do: unquote(Module.get_attribute(env.module, :required_fields, []))
     end
   end
 
@@ -77,21 +78,28 @@ defmodule CommonCore.Util.PolymorphicType do
 
   @impl ParameterizedType
   # receives any type as data and should return ecto type
+  def cast(nil, _), do: {:ok, nil}
+
   def cast(%module{} = data, _params) do
     Ecto.Type.cast(module, data)
   end
 
-  def cast(data, %{mappings: mappings} = _params) do
-    type = type_from(mappings, data)
-    Ecto.Type.cast(type, data)
+  def cast(data, %{mappings: mappings, field: field} = _params) do
+    case type_from(mappings, data) do
+      {:ok, type} ->
+        Ecto.Type.cast(type, data)
+
+      :error ->
+        {:error, [{field, "no matching type in mappings"}]}
+    end
   end
 
   @impl ParameterizedType
   # receives ecto type and return the db type
   def dump(nil, _dumper, _params), do: {:ok, nil}
 
-  def dump(%module{} = data, _dumper, _params) do
-    Ecto.Type.dump(module, data)
+  def dump(%module{} = data, dumper, _params) do
+    Ecto.Type.dump(module, data, dumper)
   end
 
   # def dump(data, _dumper, %{mappings: mappings} = _params) do
@@ -103,9 +111,14 @@ defmodule CommonCore.Util.PolymorphicType do
   # receives db value and returns ecto type 
   def load(nil, _, _), do: {:ok, nil}
 
-  def load(value, _loader, %{mappings: mappings} = _params) do
-    type = type_from(mappings, value)
-    Ecto.Type.load(type, value)
+  def load(value, loader, %{mappings: mappings} = _params) do
+    case type_from(mappings, value) do
+      {:ok, type} ->
+        Ecto.Type.load(type, value, loader)
+
+      :error ->
+        :error
+    end
   end
 
   @impl ParameterizedType
@@ -120,11 +133,13 @@ defmodule CommonCore.Util.PolymorphicType do
 
   def polymorphic_cast(data, module, type) do
     fields_for_changeset = Enum.reject(module.__schema__(:fields), &(&1 == :type))
+    required = apply(module, :__required_fields, [])
 
     module
     |> struct([])
     |> Ecto.Changeset.cast(data, fields_for_changeset)
     |> Ecto.Changeset.put_change(:type, type)
+    |> Ecto.Changeset.validate_required(required)
     |> maybe_apply_changeset()
   end
 
@@ -173,18 +188,19 @@ defmodule CommonCore.Util.PolymorphicType do
     end)
   end
 
-  defp get_defaults(module), do: apply(module, :__defaulted_fields, [])
+  defp get_defaults(module) do
+    apply(module, :__defaulted_fields, [])
+  rescue
+    UndefinedFunctionError -> []
+  end
 
-  defp type_from(mappings, type) when is_atom(type), do: Keyword.get(mappings, type)
-
+  defp type_from(mappings, type) when is_atom(type), do: Keyword.fetch(mappings, type)
+  defp type_from(mappings, type) when is_binary(type), do: type_from(mappings, String.to_existing_atom(type))
   defp type_from(mappings, %{type: type}), do: type_from(mappings, type)
-
-  defp type_from(mappings, %{"type" => type}), do: type_from(mappings, String.to_existing_atom(type))
-
-  # this indicates that a mapping was missed or something
-  # try to fail loudly
-  defp type_from(mappings, type),
-    do: raise("tried to get unmapped type. mappings: #{inspect(mappings)}. type: #{inspect(type)}")
+  defp type_from(mappings, %{"type" => type}) when is_atom(type), do: type_from(mappings, type)
+  defp type_from(mappings, %{"type" => type}) when is_binary(type), do: type_from(mappings, String.to_existing_atom(type))
+  # this indicates that a mapping was missed or something try to fail moderately loudly
+  defp type_from(_mappings, _type), do: :error
 
   defp validate(opts) do
     if !Keyword.has_key?(opts, :mappings) do
