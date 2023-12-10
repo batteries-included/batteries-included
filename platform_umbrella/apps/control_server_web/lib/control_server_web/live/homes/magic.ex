@@ -125,7 +125,7 @@ defmodule ControlServerWeb.Live.MagicHome do
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <.deploys_panel deploys_running={@deploys_running} snapshots={@snapshots} />
-      <.flex class="flex-col items-stretch justify-start">
+      <.flex class="flex-col justify-start">
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>

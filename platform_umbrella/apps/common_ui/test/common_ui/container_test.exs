@@ -19,7 +19,7 @@ defmodule CommonUI.ContainerTest do
       assigns = %{}
 
       ~H"""
-      <.grid colums={2}>
+      <.grid columns={1}>
         <div>test</div>
         <div>test</div>
       </.grid>
@@ -30,7 +30,7 @@ defmodule CommonUI.ContainerTest do
       assigns = %{}
 
       ~H"""
-      <.grid gap={1} colums={1}>
+      <.grid gaps={1} columns={1}>
         <div>test</div>
         <div>test</div>
       </.grid>
@@ -41,7 +41,7 @@ defmodule CommonUI.ContainerTest do
       assigns = %{}
 
       ~H"""
-      <.grid gap={[sm: 2, lg: 4, xl: 8]} colums={%{sm: 2, lg: 3, xl: 4}}>
+      <.grid gaps={[sm: 2, lg: 4, xl: 8]} columns={%{sm: 2, lg: 3, xl: 4}}>
         <div>test</div>
         <div>test</div>
       </.grid>

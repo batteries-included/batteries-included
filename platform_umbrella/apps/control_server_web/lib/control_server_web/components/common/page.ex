@@ -48,7 +48,7 @@ defmodule ControlServerWeb.Common.Page do
 
   def bordered_menu_item(%{href: href} = assigns) when href != nil do
     ~H"""
-    <.a href={@href} class="grow">
+    <.a href={@href}>
       <.flex class="p-4 border border-gray-200 dark:border-gray-600 rounded-xl">
         <.h5 :if={@title != nil}><%= @title %></.h5>
         <div class="font-semibold grow"><%= render_slot(@inner_block) %></div>
@@ -60,7 +60,7 @@ defmodule ControlServerWeb.Common.Page do
 
   def bordered_menu_item(%{patch: patch} = assigns) when patch != nil do
     ~H"""
-    <.a patch={@patch} class="grow">
+    <.a patch={@patch}>
       <.flex class="p-4 border border-gray-200 dark:border-gray-600 rounded-xl">
         <.h5 :if={@title != nil}><%= @title %></.h5>
         <div class="font-semibold grow"><%= render_slot(@inner_block) %></div>
@@ -72,7 +72,7 @@ defmodule ControlServerWeb.Common.Page do
 
   def bordered_menu_item(assigns) do
     ~H"""
-    <.a navigate={@navigate} class="grow">
+    <.a navigate={@navigate}>
       <.flex class="p-4 border border-gray-200 dark:border-gray-600 rounded-xl">
         <.h5 :if={@title != nil}><%= @title %></.h5>
         <div class="font-semibold grow">

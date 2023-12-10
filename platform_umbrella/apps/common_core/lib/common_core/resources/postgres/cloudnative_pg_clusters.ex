@@ -3,7 +3,6 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   use CommonCore.Resources.ResourceGenerator, app_name: "cloudnative-pg-clusters"
 
   alias CommonCore.Postgres.Cluster
-  alias CommonCore.Postgres.PGCredentialCopy
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
@@ -18,18 +17,23 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   multi_resource(:role_secrets, battery, state) do
     Enum.flat_map(state.postgres_clusters, fn cluster ->
-      Enum.map(cluster.users, fn user ->
-        user_role_secret(battery, state, cluster, user)
-      end)
-    end)
-  end
-
-  multi_resource(:credential_copy, battery, state) do
-    Enum.flat_map(state.postgres_clusters, fn cluster ->
-      Enum.map(cluster.credential_copies, fn cred ->
-        # get the user that's being referenced.
-        user = Enum.find(cluster.users, fn u -> u.username == cred.username end)
-        cred_copy_secret(battery, state, cluster, user, cred)
+      Enum.flat_map(cluster.users, fn user ->
+        # Start with the namespace that the cluster is running in
+        # aka the cluster has to know it's own passwords
+        [PostgresState.cluster_namespace(state, cluster)]
+        # Then add in any configured namespaces for the user
+        |> Enum.concat(user.credential_namespaces)
+        |> Enum.uniq()
+        # For every namespace create a secret
+        |> Enum.map(fn ns ->
+          user_role_secret(
+            battery,
+            state,
+            cluster,
+            user,
+            ns
+          )
+        end)
       end)
     end)
   end
@@ -112,33 +116,16 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
           CommonCore.Batteries.SystemBattery.t(),
           CommonCore.StateSummary.t(),
           CommonCore.Postgres.Cluster.t(),
-          CommonCore.Postgres.PGUser.t()
-        ) :: map
-  def user_role_secret(_battery, state, %Cluster{} = cluster, %PGUser{} = user) do
-    data = Secret.encode(secret_data(state, cluster, user))
-
-    :secret
-    |> B.build_resource()
-    |> B.name(PostgresState.user_secret(state, cluster, user))
-    |> B.namespace(PostgresState.cluster_namespace(state, cluster))
-    |> B.add_owner(cluster)
-    |> B.data(data)
-  end
-
-  @spec cred_copy_secret(
-          CommonCore.Batteries.SystemBattery.t(),
-          CommonCore.StateSummary.t(),
-          CommonCore.Postgres.Cluster.t(),
           CommonCore.Postgres.PGUser.t(),
-          CommonCore.Postgres.PGCredentialCopy.t()
+          String.t()
         ) :: map
-  defp cred_copy_secret(_battery, state, %Cluster{} = cluster, %PGUser{} = user, %PGCredentialCopy{} = copy) do
+  def user_role_secret(_battery, state, %Cluster{} = cluster, %PGUser{} = user, namespace) do
     data = Secret.encode(secret_data(state, cluster, user))
 
     :secret
     |> B.build_resource()
     |> B.name(PostgresState.user_secret(state, cluster, user))
-    |> B.namespace(copy.namespace)
+    |> B.namespace(namespace)
     |> B.add_owner(cluster)
     |> B.data(data)
   end

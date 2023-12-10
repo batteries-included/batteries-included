@@ -7,11 +7,14 @@ defmodule CommonCore.Defaults.GiteaDB do
     :num_instances => 1,
     :storage_size => 209_715_200,
     :type => :internal,
-    :users => [%{username: @username, roles: ["superuser", "createrole", "createdb", "login"]}],
-    :databases => [%{name: "gitea", owner: @username}],
-    :credential_copies => [
-      %{username: "gitea", namespace: "battery-core", format: :user_password_host}
-    ]
+    :users => [
+      %{
+        username: @username,
+        roles: ["superuser", "createrole", "createdb", "login"],
+        credential_namespaces: ["battery-core"]
+      }
+    ],
+    :databases => [%{name: "gitea", owner: @username}]
   }
 
   def gitea_cluster do

@@ -10,13 +10,10 @@ defmodule CommonCore.Defaults.KeycloakDB do
     :storage_size => 209_715_200,
     :type => :internal,
     :users => [
-      %{username: @keycloak_username, roles: ["createdb", "login"]}
+      %{username: @keycloak_username, roles: ["createdb", "login"], credential_namespaces: ["battery-core"]}
     ],
     :databases => [
       %{name: "keycloak", owner: @keycloak_username}
-    ],
-    :credential_copies => [
-      %{username: @keycloak_username, namespace: "battery-core", format: :user_password}
     ]
   }
 

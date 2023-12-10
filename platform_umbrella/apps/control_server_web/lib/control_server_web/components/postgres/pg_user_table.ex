@@ -14,7 +14,7 @@ defmodule ControlServerWeb.PgUserTable do
       <:col :let={user} label="User Name"><%= user.username %></:col>
       <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
       <:col :let={user} label="Secret"><%= secret_name(@cluster, user) %></:col>
-      <:col :let={user} label="Namespace"><%= namespaces(user.username, @cluster) %></:col>
+      <:col :let={user} label="Namespace"><%= namespaces(user, @cluster) %></:col>
     </.table>
     """
   end
@@ -22,11 +22,10 @@ defmodule ControlServerWeb.PgUserTable do
   defp cluster_namespace(:internal = _cluster_type), do: CommonCore.Defaults.Namespaces.base()
   defp cluster_namespace(_cluster_type), do: CommonCore.Defaults.Namespaces.data()
 
-  defp namespaces(user_name, cluster) do
-    cluster.credential_copies
-    |> Enum.filter(fn cc -> cc.username == user_name end)
-    |> Enum.map(& &1.namespace)
+  defp namespaces(user, cluster) do
+    user.credential_namespaces
     |> Enum.concat([cluster_namespace(cluster.type)])
+    |> Enum.uniq()
     |> Enum.join(", ")
   end
 

@@ -8,6 +8,8 @@ defmodule CommonUI.Container do
   attr :gaps, :any, default: %{"sm" => 4, "lg" => 6}
   attr :class, :any, default: nil
 
+  attr :rest, :global, include: ["@click", "@keydown", "@keyup", "@mouseover", "@focus", "@blur", "@change"]
+
   slot :inner_block
 
   @doc """
@@ -165,7 +167,7 @@ defmodule CommonUI.Container do
   """
   def grid(assigns) do
     ~H"""
-    <div class={[column_class(@columns), gap_class(@gaps), "grid", @class]}>
+    <div class={[column_class(@columns), gap_class(@gaps), "grid", @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -173,7 +175,7 @@ defmodule CommonUI.Container do
 
   attr :gaps, :any, default: %{"sm" => 4, "lg" => 6}
   attr :class, :any, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ["@click", "@keydown", "@keyup", "@mouseover", "@focus", "@blur", "@change"]
 
   slot :inner_block
 

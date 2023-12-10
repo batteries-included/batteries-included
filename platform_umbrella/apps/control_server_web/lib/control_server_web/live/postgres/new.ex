@@ -15,8 +15,13 @@ defmodule ControlServerWeb.Live.PostgresNew do
     cluster = %Cluster{
       virtual_size: "medium",
       databases: [%PGDatabase{name: "app", owner: "app"}],
-      users: [%PGUser{username: "app", roles: ["login", "createdb", "createrole"]}],
-      credential_copies: []
+      users: [
+        %PGUser{
+          username: "app",
+          roles: ["login", "createdb", "createrole"],
+          credential_namespaces: ["battery-data"]
+        }
+      ]
     }
 
     {:ok, assign(socket, current_page: :data, cluster: cluster)}

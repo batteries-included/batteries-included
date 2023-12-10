@@ -16,8 +16,6 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       add :users, :map
       add :databases, :map
 
-      add :credential_copies, :map
-
       timestamps(type: :utc_datetime_usec)
     end
 

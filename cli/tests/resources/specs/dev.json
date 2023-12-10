@@ -4,7 +4,6 @@
   },
   "target_summary": {
     "notebooks": [],
-    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -81,6 +80,7 @@
         "updated_at": null
       }
     ],
+    "keycloak_state": null,
     "knative_services": [],
     "ip_address_pools": [],
     "postgres_clusters": [
@@ -98,13 +98,15 @@
             "position": null,
             "username": "battery-local-user",
             "password": "not-real",
-            "roles": ["superuser", "createrole", "createdb", "login"]
+            "roles": ["superuser", "createrole", "createdb", "login"],
+            "credential_namespaces": []
           },
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "x+cmkj0hIaiFbZgc2R6Y0/3g",
-            "roles": ["createdb", "login"]
+            "password": "WQm+sTDcaIumRjZ0uQA6Zqs+",
+            "roles": ["createdb", "login"],
+            "credential_namespaces": []
           }
         ],
         "databases": [
@@ -113,7 +115,6 @@
             "owner": "battery-control-user"
           }
         ],
-        "credential_copies": [],
         "cpu_requested": null,
         "cpu_limits": null,
         "memory_requested": null,
@@ -12018,13 +12019,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "eCtjbWtqMGhJYWlGYlpnYzJSNlkwLzNn",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOngrY21rajBoSWFpRmJaZ2MyUjZZMC8zZ0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "V1FtK3NURGNhSXVtUmpaMHVRQTZacXMr",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOldRbStzVERjYUl1bVJqWjB1UUE2WnFzK0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "JLMZ4ZMYYEK3W74737BMIM5A3YDJUA4APWOGJNRT262MAWZXGUZQ===="
+          "battery/hash": "U2A44P6RLEUHIQBUSVOUXC553ESFQPLBBSYRMTJZST4IBEFIOOXA===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",

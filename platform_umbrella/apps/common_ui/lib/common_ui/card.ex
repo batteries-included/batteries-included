@@ -45,7 +45,7 @@ defmodule CommonUI.Card do
     ~H"""
     <div class={[get_classes(@variant), @class]} {@rest}>
       <.flex
-        :if={@title || @inner_block}
+        :if={@title != nil && @title != ""}
         class="items-center justify-between w-full p-6 text-center flex-col lg:flex-row"
       >
         <.h3 :if={@title}><%= @title %></.h3>

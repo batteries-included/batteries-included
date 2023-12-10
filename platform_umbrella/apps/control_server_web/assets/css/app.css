@@ -13,6 +13,10 @@
   @apply bg-primary-500;
 }
 
+[x-cloak] {
+  display: none !important;
+}
+
 /* Sidebar gradient background */
 
 @media (prefers-color-scheme: dark) {
