@@ -95,8 +95,6 @@ defmodule HomeBaseWeb do
       import HomeBaseWeb.Gettext
       import Phoenix.HTML
 
-      alias Heroicons
-
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 

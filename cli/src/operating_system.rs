@@ -1,5 +1,6 @@
 pub enum OS {
     Linux,
+    #[allow(clippy::enum_variant_names)]
     MacOS,
     Windows,
     Unknown,

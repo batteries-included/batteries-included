@@ -16,7 +16,7 @@
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
 
       pname = "pastebin";
-      src = gitignoreSource ./../project_templates/web/pastebin;
+      src = gitignoreSource ./../project_templates/pastebin;
 
       static = pkgs.callPackage ./pastebin_static.nix {
         inherit src pname npmlock2nix nodejs;

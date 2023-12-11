@@ -52,7 +52,7 @@ defmodule ControlServerWeb.MixProject do
       {:gettext, "~> 0.20"},
       {:heroicons, "~> 0.5"},
       {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
-      {:heyya, "~> 0.6", only: [:dev, :test, :integration]},
+      {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
       {:inflex, "~> 2.1"},
       {:jason, "~> 1.4"},
       {:kube_services, in_umbrella: true},

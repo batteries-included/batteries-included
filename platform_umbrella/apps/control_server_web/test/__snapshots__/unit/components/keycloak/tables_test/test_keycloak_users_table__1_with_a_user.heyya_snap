@@ -1,50 +1,46 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="w-[40rem] mt-11 sm:w-full">
+  <table class="w-[40rem] mt-4 sm:w-full">
     <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
       <tr>
-        <th class="p-0 pb-4 pr-6 font-normal">Username</th><th class="p-0 pb-4 pr-6 font-normal">Enabled</th><th class="p-0 pb-4 pr-6 font-normal">Email Verified</th><th class="p-0 pb-4 pr-6 font-normal">Created</th>
-        <th class="relative p-0 pb-4">
+        <th class="p-0 pb-4 font-normal">Username</th><th class="p-0 pb-4 font-normal">Enabled</th><th class="p-0 pb-4 font-normal">Email Verified</th><th class="p-0 pb-4 font-normal">Created</th>
+        <th>
           <span class="sr-only">Actions</span>
         </th>
       </tr>
     </thead>
     <tbody id="keycloak-users-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
       <tr class="group ">
-        <td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+        <td class="p-0 ">
+          <div class="block py-4">
+            <span class="font-semibold text-gray-900 dark:text-gray-100">
               root
             </span>
           </div>
-        </td><td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative ">
+        </td><td class="p-0 ">
+          <div class="block py-4">
+            <span class="">
               true
             </span>
           </div>
-        </td><td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative ">
+        </td><td class="p-0 ">
+          <div class="block py-4">
+            <span class="">
               false
             </span>
           </div>
-        </td><td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative ">
+        </td><td class="p-0 ">
+          <div class="block py-4">
+            <span class="">
               
     2023-06-06T05:10:10.946Z
   
             </span>
           </div>
         </td>
-        <td class="relative w-14 p-0">
-          <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-            <span class="absolute -inset-y-px -right-4 left-0 sm:rounded-r-xl "></span>
-            <span class="relative ml-4 font-semibold leading-6 text-gray-900 dark:text-gray-100">
+        <td class="w-14 p-0">
+          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
+  
+            <div class="font-semibold leading-6 text-gray-900 dark:text-gray-100 p-4">
               
     <a href="#" class="font-medium text-pink-500 hover:text-pink-600 hover:underline" phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
   
@@ -52,8 +48,9 @@
     
 </a>
   
-            </span>
-          </div>
+            </div>
+          
+</div>
         </td>
       </tr>
     </tbody>

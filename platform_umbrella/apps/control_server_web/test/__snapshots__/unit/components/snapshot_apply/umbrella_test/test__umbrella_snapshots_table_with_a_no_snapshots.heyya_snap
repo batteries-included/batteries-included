@@ -1,9 +1,9 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="w-[40rem] mt-11 sm:w-full">
+  <table class="w-[40rem] mt-4 sm:w-full">
     <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
       <tr>
-        <th class="p-0 pb-4 pr-6 font-normal">ID</th><th class="p-0 pb-4 pr-6 font-normal">Started</th><th class="p-0 pb-4 pr-6 font-normal">Kube Status</th><th class="p-0 pb-4 pr-6 font-normal">Keycloak Status</th>
-        <th class="relative p-0 pb-4">
+        <th class="p-0 pb-4 font-normal">ID</th><th class="p-0 pb-4 font-normal">Started</th><th class="p-0 pb-4 font-normal">Kube Status</th><th class="p-0 pb-4 font-normal">Keycloak Status</th>
+        <th>
           <span class="sr-only">Actions</span>
         </th>
       </tr>

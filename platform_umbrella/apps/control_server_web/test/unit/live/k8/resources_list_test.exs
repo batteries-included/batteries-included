@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.ResourcesListTest do
+  use Heyya.LiveTest
   use ControlServerWeb.ConnCase
 
   import ControlServer.ResourceFixtures
-  import Phoenix.LiveViewTest
 
   alias KubeServices.KubeState.Runner
 
@@ -41,70 +41,103 @@ defmodule ControlServerWeb.Live.ResourcesListTest do
     setup [:create_resources]
 
     test "displays pods", %{conn: conn, resources: resources} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/pods")
       pods = Enum.filter(resources, &(K8s.Resource.kind(&1) == "Pod"))
 
-      assert html =~ "Pods"
-      assert html =~ K8s.Resource.name(Enum.at(pods, 0))
-      assert html =~ K8s.Resource.name(Enum.at(pods, 0))
+      conn
+      |> start(~p"/kube/pods")
+      |> assert_html("Pods")
+      |> await_async(1000)
+      |> then(fn session ->
+        Enum.reduce(pods, session, fn pod, session -> assert_html(session, K8s.Resource.name(pod)) end)
+      end)
     end
 
     test "displays deployments", %{conn: conn, resources: resources} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/deployments")
       deployments = Enum.filter(resources, &(K8s.Resource.kind(&1) == "Deployment"))
 
-      assert html =~ "Deployments"
-      assert html =~ K8s.Resource.name(Enum.at(deployments, 0))
-      assert html =~ K8s.Resource.name(Enum.at(deployments, 0))
+      conn
+      |> start(~p"/kube/deployments")
+      |> assert_html("Deployments")
+      |> await_async(1000)
+      |> then(fn session ->
+        Enum.reduce(deployments, session, fn deploy, session -> assert_html(session, K8s.Resource.name(deploy)) end)
+      end)
     end
 
     test "displays stateful sets", %{conn: conn, resources: resources} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/stateful_sets")
       stateful_sets = Enum.filter(resources, &(K8s.Resource.kind(&1) == "StatefulSet"))
 
-      assert html =~ "Stateful Sets"
-      assert html =~ K8s.Resource.name(Enum.at(stateful_sets, 0))
-      assert html =~ K8s.Resource.name(Enum.at(stateful_sets, 0))
+      conn
+      |> start(~p"/kube/stateful_sets")
+      |> assert_html("Stateful Sets")
+      |> await_async(1000)
+      |> then(fn session ->
+        Enum.reduce(stateful_sets, session, fn stateful_set, session ->
+          assert_html(session, K8s.Resource.name(stateful_set))
+        end)
+      end)
     end
 
     test "displays services", %{conn: conn, resources: resources} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/services")
       services = Enum.filter(resources, &(K8s.Resource.kind(&1) == "Service"))
 
-      assert html =~ "Stateful Sets"
-      assert html =~ K8s.Resource.name(Enum.at(services, 0))
-      assert html =~ K8s.Resource.name(Enum.at(services, 0))
+      conn
+      |> start(~p"/kube/services")
+      |> assert_html("Services")
+      |> await_async(1000)
+      |> then(fn session ->
+        Enum.reduce(services, session, fn service, session ->
+          assert_html(session, K8s.Resource.name(service))
+        end)
+      end)
     end
 
     test "displays nodes", %{conn: conn, resources: resources} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/nodes")
       nodes = Enum.filter(resources, &(K8s.Resource.kind(&1) == "Node"))
 
-      assert html =~ "Stateful Sets"
-      assert html =~ K8s.Resource.name(Enum.at(nodes, 0))
-      assert html =~ K8s.Resource.name(Enum.at(nodes, 0))
+      conn
+      |> start(~p"/kube/nodes")
+      |> assert_html("Nodes")
+      |> await_async(1000)
+      |> then(fn session ->
+        Enum.reduce(nodes, session, fn node, session ->
+          assert_html(session, K8s.Resource.name(node))
+        end)
+      end)
     end
   end
 
   describe "show message when no resources" do
     test "pods", %{conn: conn} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/pods")
-      assert html =~ "No pods"
+      conn
+      |> start(~p"/kube/pods")
+      |> assert_html("Pods")
+      |> await_async(1000)
+      |> assert_html("No pods")
     end
 
     test "deployments", %{conn: conn} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/deployments")
-      assert html =~ "No deployments"
+      conn
+      |> start(~p"/kube/deployments")
+      |> assert_html("Deployments")
+      |> await_async(1000)
+      |> assert_html("No deployments")
     end
 
     test "stateful_sets", %{conn: conn} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/stateful_sets")
-      assert html =~ "No stateful sets"
+      conn
+      |> start(~p"/kube/stateful_sets")
+      |> assert_html("Stateful Sets")
+      |> await_async(1000)
+      |> assert_html("No stateful sets")
     end
 
     test "nodes", %{conn: conn} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/nodes")
-      assert html =~ "No nodes"
+      conn
+      |> start(~p"/kube/nodes")
+      |> assert_html("Nodes")
+      |> await_async(1000)
+      |> assert_html("No nodes")
     end
   end
 end

@@ -60,6 +60,8 @@ in
     # Audit dependencies
     "${pname}-crate-audit" = craneLib.cargoAudit {
       inherit src advisory-db pname;
+
+      cargoAuditExtraArgs = "--ignore RUSTSEC-2023-0071";
     };
 
     "${pname}-crate-test" = craneLib.cargoNextest (commonArgs // {

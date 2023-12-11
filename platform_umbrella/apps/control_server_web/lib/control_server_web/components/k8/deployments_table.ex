@@ -11,6 +11,7 @@ defmodule ControlServerWeb.DeploymentsTable do
       :if={@deployments != []}
       rows={@deployments}
       row_click={&JS.navigate(resource_show_path(&1))}
+      id="deployments_table"
     >
       <:col :let={deployment} label="Name"><%= name(deployment) %></:col>
       <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>

@@ -107,8 +107,6 @@ defmodule ControlServerWeb do
       import ControlServerWeb.Gettext
       import Phoenix.HTML
 
-      alias Heroicons
-
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 

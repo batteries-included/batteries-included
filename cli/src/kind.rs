@@ -31,12 +31,14 @@ pub fn stop_cluster(kind_path: &Path, cluster_name: &str) -> Result<()> {
 }
 
 pub fn check_kube_status(kind_path: &Path, cluster_name: &str) -> bool {
-    if let Ok(res) = get_kubeconfig(kind_path, cluster_name) && res.status.success() {
-            true
-        } else {
-            warn!("Failed to get kube status");
-            false
-        }
+    if let Ok(res) = get_kubeconfig(kind_path, cluster_name)
+        && res.status.success()
+    {
+        true
+    } else {
+        warn!("Failed to get kube status");
+        false
+    }
 }
 
 pub fn ensure_cluster_started(kind_path: &Path, cluster_name: &str) -> Result<()> {

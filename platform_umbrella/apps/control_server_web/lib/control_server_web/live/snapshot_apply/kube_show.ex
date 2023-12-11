@@ -6,7 +6,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   import ControlServerWeb.ResourcePathsTable
 
   alias ControlServer.SnapshotApply.Kube
-  alias Timex
 
   require Logger
 

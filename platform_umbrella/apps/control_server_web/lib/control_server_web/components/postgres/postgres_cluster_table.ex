@@ -17,7 +17,7 @@ defmodule ControlServerWeb.PostgresClusterTable do
       <:col :let={pg} label="Type"><%= pg.type %></:col>
       <:col :let={pg} label="User Count"><%= length(pg.users) %></:col>
       <:action :let={pg}>
-        <.flex>
+        <.flex class="justify-items-center">
           <.action_icon
             to={show_url(pg)}
             icon={:eye}

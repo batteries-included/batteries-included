@@ -108,6 +108,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp password_resource_version(status, role) do
     status
     |> Map.get("passwordStatus")
+    |> Kernel.||(%{})
     |> Map.get(role, %{})
     |> Map.get("resourceVersion", "-")
   end

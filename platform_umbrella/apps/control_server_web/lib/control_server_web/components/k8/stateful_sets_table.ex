@@ -9,6 +9,7 @@ defmodule ControlServerWeb.StatefulSetsTable do
     ~H"""
     <.table
       :if={@stateful_sets != []}
+      id="stateful_sets"
       rows={@stateful_sets}
       row_click={&JS.navigate(resource_show_path(&1))}
     >

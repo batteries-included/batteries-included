@@ -25,12 +25,25 @@ defmodule ControlServerWeb.PodsTable do
     end
   end
 
-  attr :id, :string, default: "pods-table"
+  defp show_path(nil), do: nil
+
+  defp show_path(pod) do
+    namespace = namespace(pod)
+    name = name(pod)
+    ~p"/kube/pod/#{namespace}/#{name}"
+  end
+
+  defp log_path(pod) do
+    namespace = namespace(pod)
+    name = name(pod)
+    ~p"/kube/pod/#{namespace}/#{name}?log=true"
+  end
+
   attr :pods, :list, required: true
 
   def pods_table(assigns) do
     ~H"""
-    <.table :if={@pods != []} rows={@pods} id={@id} row_click={&JS.navigate(resource_show_path(&1))}>
+    <.table :if={@pods != []} rows={@pods} id="pods_table" row_click={&JS.navigate(show_path(&1))}>
       <:col :let={pod} label="Name"><%= name(pod) %></:col>
       <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
       <:col :let={pod} label="Status"><%= phase(pod) %></:col>
@@ -40,13 +53,13 @@ defmodule ControlServerWeb.PodsTable do
       <:action :let={pod}>
         <.flex>
           <.action_icon
-            to={resource_show_path(pod)}
+            to={show_path(pod)}
             icon={:eye}
             tooltip="Show Pod"
             id={"show_pod_" <> to_html_id(pod)}
           />
           <.action_icon
-            to={resource_show_path(pod, %{"log" => true})}
+            to={log_path(pod)}
             icon={:document_text}
             tooltip="Logs"
             id={"logs_for_" <> to_html_id(pod)}

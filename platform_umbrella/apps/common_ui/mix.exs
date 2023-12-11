@@ -28,7 +28,7 @@ defmodule CommonUI.MixProject do
   defp deps do
     [
       {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
-      {:heyya, "~> 0.6", only: [:dev, :test, :integration]},
+      {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
       {:phoenix, "~> 1.7"},
       {:jason, "~> 1.4"},
       {:phoenix_live_view, "~> 0.20", override: true},

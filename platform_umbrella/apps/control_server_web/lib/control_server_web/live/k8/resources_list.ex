@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   import CommonUI.TabBar
   import ControlServerWeb.DeploymentsTable
+  import ControlServerWeb.Loader
   import ControlServerWeb.NodesTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
@@ -24,16 +25,30 @@ defmodule ControlServerWeb.Live.ResourceList do
     {:ok,
      socket
      |> assign(current_page: :kubernetes)
-     |> assign_objects(objects(live_action))
-     |> assign_page_title(title_text(live_action))}
+     |> assign_objects()
+     |> assign_page_title()}
   end
 
-  def assign_page_title(socket, page_title) do
-    assign(socket, page_title: page_title)
+  def assign_page_title(socket) do
+    assign(socket, page_title: title_text(socket.assigns.live_action))
   end
 
-  def assign_objects(socket, objects) do
-    assign(socket, objects: objects)
+  def assign_objects(socket) do
+    types = [:deployment, :stateful_set, :node, :pod, :service]
+
+    # So real shit here.
+    #
+    # Every once in a while tables will fail to render silently.
+    # Thats because render will be called before the table data
+    # has finished loading but we still have the last data....
+    # To work around that every kube type we have a display
+    # for has it's on lists.
+    assign_async(socket, types, fn ->
+      {:ok,
+       Enum.reduce(types, %{}, fn type, objects ->
+         Map.put(objects, type, type == socket.assigns.live_action && objects(type))
+       end)}
+    end)
   end
 
   defp subscribe(resource_type) do
@@ -42,15 +57,15 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
-    {:noreply, assign_objects(socket, objects(socket.assigns.live_action))}
+    {:noreply, socket |> assign_objects() |> assign_page_title()}
   end
 
   @impl Phoenix.LiveView
   def handle_params(_params, _url, socket) do
     {:noreply,
      socket
-     |> assign_objects(objects(socket.assigns.live_action))
-     |> assign_page_title(title_text(socket.assigns.live_action))}
+     |> assign_objects()
+     |> assign_page_title()}
   end
 
   defp objects(type) do
@@ -110,23 +125,38 @@ defmodule ControlServerWeb.Live.ResourceList do
     <%= case @live_action do %>
       <% :deployment -> %>
         <.panel title="Deployments">
-          <.deployments_table deployments={@objects} />
+          <.async_result :let={objects} assign={@deployment}>
+            <:loading><.loader /></:loading>
+            <.deployments_table deployments={objects} />
+          </.async_result>
         </.panel>
       <% :stateful_set -> %>
         <.panel title="Stateful Sets">
-          <.stateful_sets_table stateful_sets={@objects} />
+          <.async_result :let={objects} assign={@stateful_set}>
+            <:loading><.loader /></:loading>
+            <.stateful_sets_table stateful_sets={objects} />
+          </.async_result>
         </.panel>
       <% :node -> %>
         <.panel title="Nodes">
-          <.nodes_table nodes={@objects} />
+          <.async_result :let={objects} assign={@node}>
+            <:loading><.loader /></:loading>
+            <.nodes_table nodes={objects} />
+          </.async_result>
         </.panel>
       <% :pod -> %>
         <.panel title="Pods">
-          <.pods_table pods={@objects} />
+          <.async_result :let={objects} assign={@pod}>
+            <:loading><.loader /></:loading>
+            <.pods_table pods={objects} />
+          </.async_result>
         </.panel>
       <% :service -> %>
         <.panel title="Services">
-          <.services_table services={@objects} />
+          <.async_result :let={objects} assign={@service}>
+            <:loading><.loader /></:loading>
+            <.services_table services={objects} />
+          </.async_result>
         </.panel>
     <% end %>
     """

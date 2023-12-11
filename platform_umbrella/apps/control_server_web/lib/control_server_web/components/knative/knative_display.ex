@@ -6,8 +6,6 @@ defmodule ControlServerWeb.KnativeDisplay do
   import ControlServerWeb.ConditionsDisplay
   import K8s.Resource.FieldAccessors
 
-  alias Jason
-
   def service_display(assigns) do
     ~H"""
     <.card>

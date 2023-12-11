@@ -1,37 +1,34 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="w-[40rem] mt-11 sm:w-full">
+  <table class="w-[40rem] mt-4 sm:w-full">
     <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
       <tr>
-        <th class="p-0 pb-4 pr-6 font-normal">ID</th><th class="p-0 pb-4 pr-6 font-normal">Kube Status</th><th class="p-0 pb-4 pr-6 font-normal">Keycloak Status</th>
-        <th class="relative p-0 pb-4">
+        <th class="p-0 pb-4 font-normal">ID</th><th class="p-0 pb-4 font-normal">Kube Status</th><th class="p-0 pb-4 font-normal">Keycloak Status</th>
+        <th>
           <span class="sr-only">Actions</span>
         </th>
       </tr>
     </thead>
     <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
       <tr class="group hover:bg-gray-50 dark:hover:bg-gray-800">
-        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="relative p-0 hover:cursor-pointer">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 hover:cursor-pointer">
+          <div class="block py-4">
+            <span class="font-semibold text-gray-900 dark:text-gray-100">
               
     success-umbrella-id
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="relative p-0 hover:cursor-pointer">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative ">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 hover:cursor-pointer">
+          <div class="block py-4">
+            <span class="">
               
     Success
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="relative p-0 hover:cursor-pointer">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative ">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 hover:cursor-pointer">
+          <div class="block py-4">
+            <span class="">
               
     Skipped
 
@@ -39,10 +36,10 @@
             </span>
           </div>
         </td>
-        <td class="relative w-14 p-0">
-          <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-            <span class="absolute -inset-y-px -right-4 left-0 sm:rounded-r-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative ml-4 font-semibold leading-6 text-gray-900 dark:text-gray-100">
+        <td class="w-14 p-0">
+          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
+  
+            <div class="font-semibold leading-6 text-gray-900 dark:text-gray-100 p-4">
               
     <a href="/deploy/success-umbrella-id/show" data-phx-link="redirect" data-phx-link-state="push" id="show_deploy_success-umbrella-id" size="xs" class="cursor-pointer">
   
@@ -59,42 +56,40 @@
 
 </a>
   
-            </span>
-          </div>
+            </div>
+          
+</div>
         </td>
       </tr><tr class="group hover:bg-gray-50 dark:hover:bg-gray-800">
-        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="relative p-0 hover:cursor-pointer">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 hover:cursor-pointer">
+          <div class="block py-4">
+            <span class="font-semibold text-gray-900 dark:text-gray-100">
               
     failure-umbrella-id
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="relative p-0 hover:cursor-pointer">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative ">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 hover:cursor-pointer">
+          <div class="block py-4">
+            <span class="">
               
     Failed
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="relative p-0 hover:cursor-pointer">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative ">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 hover:cursor-pointer">
+          <div class="block py-4">
+            <span class="">
               
     Failed
   
             </span>
           </div>
         </td>
-        <td class="relative w-14 p-0">
-          <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-            <span class="absolute -inset-y-px -right-4 left-0 sm:rounded-r-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800"></span>
-            <span class="relative ml-4 font-semibold leading-6 text-gray-900 dark:text-gray-100">
+        <td class="w-14 p-0">
+          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
+  
+            <div class="font-semibold leading-6 text-gray-900 dark:text-gray-100 p-4">
               
     <a href="/deploy/failure-umbrella-id/show" data-phx-link="redirect" data-phx-link-state="push" id="show_deploy_failure-umbrella-id" size="xs" class="cursor-pointer">
   
@@ -111,8 +106,9 @@
 
 </a>
   
-            </span>
-          </div>
+            </div>
+          
+</div>
         </td>
       </tr>
     </tbody>

@@ -6,7 +6,6 @@ defmodule ControlServerWeb.Live.KeycloakSnapshotShow do
   import ControlServerWeb.KeycloakActionsTable
 
   alias ControlServer.SnapshotApply.Keycloak
-  alias Timex
 
   require Logger
 

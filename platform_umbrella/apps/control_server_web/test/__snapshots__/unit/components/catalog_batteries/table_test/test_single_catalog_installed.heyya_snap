@@ -1,26 +1,24 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="w-[40rem] mt-11 sm:w-full">
+  <table class="w-[40rem] mt-4 sm:w-full">
     <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
       <tr>
-        <th class="p-0 pb-4 pr-6 font-normal">Name</th><th class="p-0 pb-4 pr-6 font-normal"></th><th class="p-0 pb-4 pr-6 font-normal">Type</th><th class="p-0 pb-4 pr-6 font-normal">Status</th><th class="p-0 pb-4 pr-6 font-normal">Install</th>
+        <th class="p-0 pb-4 font-normal">Name</th><th class="p-0 pb-4 font-normal"></th><th class="p-0 pb-4 font-normal">Type</th><th class="p-0 pb-4 font-normal">Status</th><th class="p-0 pb-4 font-normal">Install</th>
         
       </tr>
     </thead>
     <tbody id="batteries-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
       <tr class="group ">
-        <td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative font-semibold text-gray-900 dark:text-gray-100">
+        <td class="p-0 ">
+          <div class="block py-4">
+            <span class="font-semibold text-gray-900 dark:text-gray-100">
               
     Redis
   
             </span>
           </div>
-        </td><td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative ">
+        </td><td class="p-0 ">
+          <div class="block py-4">
+            <span class="">
               
     <div class="cursor-pointer " id="battery-redis-desc">
   <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-auto" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -39,19 +37,17 @@
   
             </span>
           </div>
-        </td><td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative ">
+        </td><td class="p-0 ">
+          <div class="block py-4">
+            <span class="">
               
     data
   
             </span>
           </div>
-        </td><td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative ">
+        </td><td class="p-0 ">
+          <div class="block py-4">
+            <span class="">
               
     <div class="flex text-shamrock-500 font-semi-bold">
   <div class="flex-initial">
@@ -66,10 +62,9 @@
   
             </span>
           </div>
-        </td><td class="relative p-0 ">
-          <div class="block py-4 pr-6">
-            <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl "></span>
-            <span class="relative ">
+        </td><td class="p-0 ">
+          <div class="block py-4">
+            <span class="">
               
     
   
