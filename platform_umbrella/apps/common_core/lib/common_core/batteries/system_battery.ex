@@ -1,9 +1,8 @@
 defmodule CommonCore.Batteries.SystemBattery do
   @moduledoc false
-  use Ecto.Schema
+  use TypedEctoSchema
 
   import Ecto.Changeset
-  import PolymorphicEmbed
 
   alias CommonCore.Batteries.BatteryCAConfig
   alias CommonCore.Batteries.BatteryCoreConfig
@@ -34,6 +33,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.VMAgentConfig
   alias CommonCore.Batteries.VMClusterConfig
   alias CommonCore.Batteries.VMOperatorConfig
+  alias CommonCore.Util.PolymorphicType
 
   @possible_types [
     battery_ca: BatteryCAConfig,
@@ -73,7 +73,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   @derive {Jason.Encoder, except: [:__meta__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "system_batteries" do
+  typed_schema "system_batteries" do
     field :group, Ecto.Enum,
       values: [
         :data,
@@ -86,44 +86,23 @@ defmodule CommonCore.Batteries.SystemBattery do
 
     field :type, Ecto.Enum, values: Keyword.keys(@possible_types)
 
-    polymorphic_embeds_one :config, types: @possible_types, on_replace: :update
+    field :config, PolymorphicType, mappings: @possible_types
 
     timestamps()
   end
 
-  @type t() :: %__MODULE__{
-          __meta__: Ecto.Schema.Metadata.t(),
-          id: binary() | nil,
-          group: (:data | :devtools | :magic | :ml | :monitoring | :net_sec) | nil,
-          type: atom(),
-          config: map(),
-          inserted_at: DateTime.t(),
-          updated_at: DateTime.t()
-        }
-
   @doc false
   def changeset(system_battery, attrs) do
     system_battery
-    |> cast(attrs, [:group, :type])
+    |> cast(attrs, [:group, :type, :config])
     |> validate_required([:group, :type])
-    |> cast_polymorphic_embed(:config)
   end
 
   def to_fresh_args(%__MODULE__{} = system_battery) do
     system_battery
     |> Map.from_struct()
-    |> Map.update!(:config, fn config ->
-      config
-      |> Map.from_struct()
-      |> Map.put_new(:__type__, system_battery.type)
-    end)
+    |> Map.update!(:config, fn config -> Map.from_struct(config) end)
   end
 
-  def to_fresh_args(%{} = sb_map) do
-    battery_type = Map.get_lazy(sb_map, :type, fn -> Map.fetch!(sb_map, "type") end)
-
-    Map.update(sb_map, :config, %{"__type__" => battery_type}, fn config ->
-      Map.put_new(config, "__type__", battery_type)
-    end)
-  end
+  def to_fresh_args(%{} = sb_map), do: sb_map
 end

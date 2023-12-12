@@ -5,6 +5,9 @@ defmodule CommonCore.Util.PolymorphicType do
   alias CommonCore.Util.PolymorphicTypeHelpers
   alias Ecto.ParameterizedType
 
+  # for dialyzer
+  @type t() :: any()
+
   defmacro __using__(opts) do
     case Keyword.fetch(opts, :type) do
       {:ok, type} ->

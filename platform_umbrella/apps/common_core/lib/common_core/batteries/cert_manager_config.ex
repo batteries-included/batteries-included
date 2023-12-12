@@ -1,15 +1,11 @@
 defmodule CommonCore.Batteries.CertManagerConfig do
   @moduledoc false
+  use CommonCore.Util.PolymorphicType, type: :cert_manager
   use TypedEctoSchema
-
-  import Ecto.Changeset
 
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-  end
-
-  def changeset(struct, params \\ %{}) do
-    cast(struct, params, [])
+    type_field()
   end
 end

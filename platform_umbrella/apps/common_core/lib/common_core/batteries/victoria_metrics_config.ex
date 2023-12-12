@@ -1,15 +1,11 @@
 defmodule CommonCore.Batteries.VictoriaMetricsConfig do
   @moduledoc false
+  use CommonCore.Util.PolymorphicType, type: :victoria_metrics
   use TypedEctoSchema
-
-  import Ecto.Changeset
 
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-  end
-
-  def changeset(struct, params \\ %{}) do
-    cast(struct, params, [])
+    type_field()
   end
 end

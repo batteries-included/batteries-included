@@ -1,47 +1,44 @@
 defmodule CommonCore.Batteries.VMClusterConfig do
   @moduledoc false
+  use CommonCore.Util.PolymorphicType, type: :vm_cluster
+  use CommonCore.Util.DefaultableField
   use TypedEctoSchema
 
-  import Ecto.Changeset
+  import CommonCore.Util.PolymorphicTypeHelpers
+  import Ecto.Changeset, only: [validate_number: 3, validate_required: 2]
 
   alias CommonCore.Defaults
   alias CommonCore.Defaults.RandomKeyChangeset
 
   @required_fields ~w()a
-  @optional_fields ~w(
-    cluster_image_tag
-    cookie_secret
-    replication_factor
-
-    vminsert_replicas vmselect_replicas vmstorage_replicas
-    vmselect_volume_size vmstorage_volume_size)a
 
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
+    defaultable_field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
     field :cookie_secret, :string
 
-    field :replication_factor, :integer, default: 1
+    defaultable_field :replication_factor, :integer, default: 1
 
-    field :vminsert_replicas, :integer, default: 1
-    field :vmselect_replicas, :integer, default: 1
-    field :vmstorage_replicas, :integer, default: 1
+    defaultable_field :vminsert_replicas, :integer, default: 1
+    defaultable_field :vmselect_replicas, :integer, default: 1
+    defaultable_field :vmstorage_replicas, :integer, default: 1
 
-    field :vmselect_volume_size, :string, default: "1Gi"
-    field :vmstorage_volume_size, :string, default: "5Gi"
+    defaultable_field :vmselect_volume_size, :string, default: "1Gi"
+    defaultable_field :vmstorage_volume_size, :string, default: "5Gi"
+    type_field()
   end
 
-  def changeset(struct, params \\ %{}) do
-    fields = Enum.concat(@required_fields, @optional_fields)
-
-    struct
-    |> cast(params, fields)
+  @impl Ecto.Type
+  def cast(data) do
+    data
+    |> changeset(__MODULE__)
     |> validate_required(@required_fields)
     |> validate_number(:replication_factor, greater_than: 0, less_than: 99)
     |> validate_number(:vmstorage_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vminsert_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vmselect_replicas, greater_than: 0, less_than: 99)
     |> RandomKeyChangeset.maybe_set_random(:cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1)
+    |> apply_changeset_if_valid()
   end
 end

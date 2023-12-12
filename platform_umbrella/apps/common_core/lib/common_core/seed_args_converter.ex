@@ -21,7 +21,7 @@ defmodule CommonCore.SeedArgsConverter do
       # This is a polymorphic type. So we
       # have to add the special field.
 
-      Map.put_new(val, "__type__", raw_battery.type)
+      Map.put_new(val, "type", raw_battery.type)
     end)
   end
 

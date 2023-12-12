@@ -1,35 +1,32 @@
 defmodule CommonCore.Batteries.KeycloakConfig do
   @moduledoc false
+  use CommonCore.Util.PolymorphicType, type: :keycloak
+  use CommonCore.Util.DefaultableField
   use TypedEctoSchema
 
-  import Ecto.Changeset
+  import CommonCore.Util.PolymorphicTypeHelpers
+  import Ecto.Changeset, only: [validate_required: 2]
 
   alias CommonCore.Defaults
   alias CommonCore.Defaults.RandomKeyChangeset
 
   @required_fields ~w()a
-  @optional_fields ~w(image admin_username admin_password)a
 
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :image, :string, default: Defaults.Images.keycloak_image()
-    field :admin_username, :string, default: "batteryadmin"
+    defaultable_field :image, :string, default: Defaults.Images.keycloak_image()
+    defaultable_field :admin_username, :string, default: "batteryadmin"
     field :admin_password, :string
+    type_field()
   end
 
-  @doc """
-  Function for creating a change set that generates a KeyCloakConfig suitable for inserting into a database.
-
-  This function should not be used with anything exposed to the
-  user as it requires the secret_* fields to be exposed.
-  """
-  def changeset(struct, params \\ %{}) do
-    fields = Enum.concat(@required_fields, @optional_fields)
-
-    struct
-    |> cast(params, fields)
-    |> validate_required(@required_fields)
+  @impl Ecto.Type
+  def cast(data) do
+    data
+    |> changeset(__MODULE__)
     |> RandomKeyChangeset.maybe_set_random(:admin_password)
+    |> validate_required(@required_fields)
+    |> apply_changeset_if_valid()
   end
 end

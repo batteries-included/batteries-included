@@ -9,13 +9,20 @@
         "id": null,
         "type": "battery_core",
         "config": {
+          "type": "battery_core",
           "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
+          "secret_key": null,
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": null,
-          "server_in_cluster": false
+          "server_in_cluster": false,
+          "image_override": null,
+          "core_namespace_override": null,
+          "base_namespace_override": null,
+          "data_namespace_override": null,
+          "ml_namespace_override": null,
+          "server_in_cluster_override": null
         },
         "group": "magic",
         "inserted_at": null,
@@ -25,7 +32,9 @@
         "id": null,
         "type": "cloudnative_pg",
         "config": {
-          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1"
+          "type": "cloudnative_pg",
+          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1",
+          "image_override": null
         },
         "group": "data",
         "inserted_at": null,
@@ -35,8 +44,11 @@
         "id": null,
         "type": "istio",
         "config": {
+          "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "istio/pilot:1.19.3-distroless"
+          "pilot_image": "istio/pilot:1.19.3-distroless",
+          "namespace_override": null,
+          "pilot_image_override": null
         },
         "group": "net_sec",
         "inserted_at": null,
@@ -45,7 +57,9 @@
       {
         "id": null,
         "type": "istio_gateway",
-        "config": {},
+        "config": {
+          "type": "istio_gateway"
+        },
         "group": "net_sec",
         "inserted_at": null,
         "updated_at": null
@@ -53,7 +67,9 @@
       {
         "id": null,
         "type": "timeline",
-        "config": {},
+        "config": {
+          "type": "timeline"
+        },
         "group": "magic",
         "inserted_at": null,
         "updated_at": null
@@ -62,7 +78,9 @@
         "id": null,
         "type": "stale_resource_cleaner",
         "config": {
-          "delay": 900000
+          "type": "stale_resource_cleaner",
+          "delay": 900000,
+          "delay_override": null
         },
         "group": "magic",
         "inserted_at": null,
@@ -72,8 +90,11 @@
         "id": null,
         "type": "metallb",
         "config": {
+          "type": "metallb",
           "speaker_image": "quay.io/metallb/speaker:v0.13.11",
-          "controller_image": "quay.io/metallb/controller:v0.13.11"
+          "controller_image": "quay.io/metallb/controller:v0.13.11",
+          "speaker_image_override": null,
+          "controller_image_override": null
         },
         "group": "net_sec",
         "inserted_at": null,
@@ -88,11 +109,8 @@
         "id": null,
         "name": "controlserver",
         "type": "internal",
-        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
-        "num_instances": 1,
-        "storage_size": 524288000,
         "users": [
           {
             "position": null,
@@ -104,11 +122,14 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "WQm+sTDcaIumRjZ0uQA6Zqs+",
+            "password": "4MFN6HXPI5I5KXGVDTZORGII",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
+        "storage_class": null,
+        "num_instances": 1,
+        "storage_size": 524288000,
         "databases": [
           {
             "name": "control",
@@ -12019,13 +12040,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "V1FtK3NURGNhSXVtUmpaMHVRQTZacXMr",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOldRbStzVERjYUl1bVJqWjB1UUE2WnFzK0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "NE1GTjZIWFBJNUk1S1hHVkRUWk9SR0lJ",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjRNRk42SFhQSTVJNUtYR1ZEVFpPUkdJSUBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "U2A44P6RLEUHIQBUSVOUXC553ESFQPLBBSYRMTJZST4IBEFIOOXA===="
+          "battery/hash": "WY5M5QR5LFNRZVQRT6TRMCIHL3SQTZLM255D3JNQGQ4M2IQNWBSQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",

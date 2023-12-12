@@ -1,18 +1,15 @@
 defmodule CommonCore.Batteries.PromtailConfig do
   @moduledoc false
+  use CommonCore.Util.PolymorphicType, type: :promtail
+  use CommonCore.Util.DefaultableField
   use TypedEctoSchema
-
-  import Ecto.Changeset
 
   alias CommonCore.Defaults
 
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :image, :string, default: Defaults.Images.promtail_image()
-  end
-
-  def changeset(struct, params \\ %{}) do
-    cast(struct, params, [:image])
+    defaultable_field :image, :string, default: Defaults.Images.promtail_image()
+    type_field()
   end
 end

@@ -9,13 +9,20 @@
         "id": null,
         "type": "battery_core",
         "config": {
+          "type": "battery_core",
           "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
+          "secret_key": null,
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": null,
-          "server_in_cluster": false
+          "server_in_cluster": false,
+          "image_override": null,
+          "core_namespace_override": null,
+          "base_namespace_override": null,
+          "data_namespace_override": null,
+          "ml_namespace_override": null,
+          "server_in_cluster_override": null
         },
         "group": "magic",
         "inserted_at": null,
@@ -25,7 +32,9 @@
         "id": null,
         "type": "cloudnative_pg",
         "config": {
-          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1"
+          "type": "cloudnative_pg",
+          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1",
+          "image_override": null
         },
         "group": "data",
         "inserted_at": null,
@@ -35,8 +44,11 @@
         "id": null,
         "type": "istio",
         "config": {
+          "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "istio/pilot:1.19.3-distroless"
+          "pilot_image": "istio/pilot:1.19.3-distroless",
+          "namespace_override": null,
+          "pilot_image_override": null
         },
         "group": "net_sec",
         "inserted_at": null,
@@ -45,7 +57,9 @@
       {
         "id": null,
         "type": "istio_gateway",
-        "config": {},
+        "config": {
+          "type": "istio_gateway"
+        },
         "group": "net_sec",
         "inserted_at": null,
         "updated_at": null
@@ -59,11 +73,8 @@
         "id": null,
         "name": "controlserver",
         "type": "internal",
-        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
-        "num_instances": 1,
-        "storage_size": 524288000,
         "users": [
           {
             "position": null,
@@ -75,11 +86,14 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "tBIVOSdf50gHTGYexWjGXgc3",
+            "password": "BTC7Z4VOSDKWUJAMSO4DCFSB",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
+        "storage_class": null,
+        "num_instances": 1,
+        "storage_size": 524288000,
         "databases": [
           {
             "name": "control",
@@ -10761,13 +10775,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "dEJJVk9TZGY1MGdIVEdZZXhXakdYZ2Mz",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOnRCSVZPU2RmNTBnSFRHWWV4V2pHWGdjM0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "QlRDN1o0Vk9TREtXVUpBTVNPNERDRlNC",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkJUQzdaNFZPU0RLV1VKQU1TTzREQ0ZTQkBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "GW562VJDMKQAQTF4YVTUAAWFOUQUCLJKQJWHLRHVTDNVPIU5RWIQ===="
+          "battery/hash": "BPQFB5B6VZWFULLEWTYTWMJCNAVDEQNZRL37JUNXQ2QQ5Z5SFCKQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",

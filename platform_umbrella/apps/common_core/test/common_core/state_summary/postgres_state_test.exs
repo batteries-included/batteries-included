@@ -13,7 +13,7 @@ defmodule CommonCore.StateSummary.PostgresStateTest do
 
     state_summary = %StateSummary{
       postgres_clusters: [cl],
-      batteries: [%SystemBattery{type: :battery_core, config: %BatteryCoreConfig{}}]
+      batteries: [%SystemBattery{type: :battery_core, config: %BatteryCoreConfig{base_namespace: "battery-base"}}]
     }
 
     found_cluster = PostgresState.cluster(state_summary, name: "cluster1", type: :internal)

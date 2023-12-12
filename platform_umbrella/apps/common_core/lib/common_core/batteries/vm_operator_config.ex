@@ -1,25 +1,15 @@
 defmodule CommonCore.Batteries.VMOperatorConfig do
   @moduledoc false
+  use CommonCore.Util.PolymorphicType, type: :vm_operator
+  use CommonCore.Util.DefaultableField
   use TypedEctoSchema
 
-  import Ecto.Changeset
-
   alias CommonCore.Defaults
-
-  @required_fields ~w()a
-  @optional_fields ~w()a
 
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :vm_operator_image, :string, default: Defaults.Images.vm_operator_image()
-  end
-
-  def changeset(struct, params \\ %{}) do
-    fields = Enum.concat(@required_fields, @optional_fields)
-
-    struct
-    |> cast(params, fields)
-    |> validate_required(@required_fields)
+    defaultable_field :vm_operator_image, :string, default: Defaults.Images.vm_operator_image()
+    type_field()
   end
 end

@@ -1,40 +1,38 @@
 defmodule CommonCore.Batteries.BatteryCoreConfig do
   @moduledoc false
+  use CommonCore.Util.PolymorphicType, type: :battery_core
+  use CommonCore.Util.DefaultableField
   use TypedEctoSchema
 
-  import Ecto.Changeset
+  import CommonCore.Util.PolymorphicTypeHelpers
+  import Ecto.Changeset, only: [validate_required: 2]
 
   alias CommonCore.Defaults
   alias CommonCore.Defaults.RandomKeyChangeset
 
-  @optional_fields [
-    :core_namespace,
-    :base_namespace,
-    :data_namespace,
-    :ml_namespace,
-    :image,
-    :secret_key,
-    :server_in_cluster
-  ]
-  @required_fields []
+  @required_fields ~w()a
 
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    field :core_namespace, :string, default: Defaults.Namespaces.core()
-    field :base_namespace, :string, default: Defaults.Namespaces.base()
-    field :data_namespace, :string, default: Defaults.Namespaces.data()
-    field :ml_namespace, :string, default: Defaults.Namespaces.ml()
+    defaultable_field :core_namespace, :string, default: Defaults.Namespaces.core()
+    defaultable_field :base_namespace, :string, default: Defaults.Namespaces.base()
+    defaultable_field :data_namespace, :string, default: Defaults.Namespaces.data()
+    defaultable_field :ml_namespace, :string, default: Defaults.Namespaces.ml()
 
-    field :image, :string, default: Defaults.Images.control_server_image()
+    defaultable_field :image, :string, default: Defaults.Images.control_server_image()
     field :secret_key, :string
 
-    field :server_in_cluster, :boolean, default: false
+    defaultable_field :server_in_cluster, :boolean, default: false
+    type_field()
   end
 
-  def changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, @optional_fields ++ @required_fields)
+  @impl Ecto.Type
+  def cast(data) do
+    data
+    |> changeset(__MODULE__)
     |> RandomKeyChangeset.maybe_set_random(:secret_key)
+    |> validate_required(@required_fields)
+    |> apply_changeset_if_valid()
   end
 end

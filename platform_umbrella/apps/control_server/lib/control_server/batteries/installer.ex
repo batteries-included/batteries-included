@@ -19,10 +19,7 @@ defmodule ControlServer.Batteries.Installer do
 
   def install(type, update_target \\ nil)
 
-  def install(type, update_target) when is_binary(type) do
-    atom_type = String.to_existing_atom(type)
-    install(atom_type, update_target)
-  end
+  def install(type, update_target) when is_binary(type), do: install(String.to_existing_atom(type), update_target)
 
   def install(type, update_target) when is_atom(type) do
     Logger.info("Begining install of #{type}")
