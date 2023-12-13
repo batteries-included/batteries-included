@@ -10,6 +10,6 @@ defmodule CommonCore.Defaults do
   def urlsafe_random_key_string(length \\ 64) do
     length
     |> :crypto.strong_rand_bytes()
-    |> Base.encode32(padding: false)
+    |> Base.url_encode64()
   end
 end
