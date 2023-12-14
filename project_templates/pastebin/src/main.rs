@@ -1,6 +1,7 @@
 use axum::{Router, Server};
 use migration::{Migrator, MigratorTrait};
 use std::process::ExitCode;
+use tokio::signal::unix::{self, SignalKind};
 use tower::ServiceBuilder;
 
 use axum::extract::DefaultBodyLimit;
@@ -39,13 +40,23 @@ pub async fn start() -> Result<(), Box<dyn std::error::Error>> {
     Server::bind(&addr)
         .serve(service.into_make_service())
         .with_graceful_shutdown(async {
-            tokio::signal::ctrl_c()
-                .await
-                .expect("failed to listen to ctrl-c");
+            tokio::select! {
+                _ = sigterm() => {}
+                _ = sigint() => {}
+            }
         })
         .await?;
 
     Ok(())
+}
+
+async fn sigterm() -> tokio::io::Result<()> {
+    unix::signal(SignalKind::terminate())?.recv().await;
+    Ok(())
+}
+
+async fn sigint() -> tokio::io::Result<()> {
+    tokio::signal::ctrl_c().await
 }
 
 #[tokio::main]
