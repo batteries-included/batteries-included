@@ -7,7 +7,8 @@ defmodule ControlServerWeb.Live.KnativeShow do
   """
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonCore.Resources.FieldAccessors, only: [uid: 1, labeled_owner: 1]
+  import CommonCore.Resources.FieldAccessors
+  import CommonUI.DatetimeDisplay
   import ControlServerWeb.KnativeDisplay
 
   alias CommonCore.Resources.OwnerReference
@@ -80,29 +81,56 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp page_title(:show), do: "Show Knative Service"
 
+  defp edit_url(service), do: ~p"/knative/services/#{service}/edit"
+
+  defp service_url(service) do
+    get_in(service, ~w(status url))
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>
-      Knative Service
-      <:sub_header><%= @service.name %></:sub_header>
-    </.h1>
-    <.service_display service={@k8_service} />
-    <.revisions_display revisions={@k8_revisions} />
-    <.h2 variant="fancy">Actions</.h2>
-    <.card>
-      <div class="grid md:grid-cols-2 gap-6">
-        <.a navigate={~p"/knative/services/#{@service}/edit"} class="block">
-          <.button class="w-full">
-            Edit Service
-          </.button>
-        </.a>
+    <.page_header
+      title={@page_title}
+      back_button={%{link_type: "live_redirect", to: ~p"/knative/services"}}
+    >
+      <:menu>
+        <.flex>
+          <.button>Edit History</.button>
 
-        <.button phx-click="delete" data-confirm="Are you sure?">
-          Delete Service
-        </.button>
-      </div>
-    </.card>
+          <.flex>
+            <PC.icon_button to={edit_url(@service)} link_type="live_redirect">
+              <Heroicons.pencil solid />
+            </PC.icon_button>
+
+            <PC.icon_button type="button" phx-click="delete" data-confirm="Are you sure?">
+              <Heroicons.trash />
+            </PC.icon_button>
+          </.flex>
+        </.flex>
+      </:menu>
+    </.page_header>
+
+    <.flex class="flex-col">
+      <.flex>
+        <.data_horizontal_bordered>
+          <:item title="Name">
+            <%= @service.name %>
+          </:item>
+          <:item title="Namespace"><%= namespace(@k8_service) %></:item>
+          <:item title="Started">
+            <.relative_display time={creation_timestamp(@k8_service)} />
+          </:item>
+          <:item title="Url">
+            <.a href={service_url(@k8_service)} variant="external">
+              <%= service_url(@k8_service) %>
+            </.a>
+          </:item>
+        </.data_horizontal_bordered>
+      </.flex>
+
+      <.service_display service={@k8_service} revisions={@k8_revisions} />
+    </.flex>
     """
   end
 end
