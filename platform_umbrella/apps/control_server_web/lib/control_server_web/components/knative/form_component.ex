@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   import CommonUI.Table
   import CommonUI.Tooltip
+  import ControlServerWeb.Knative.EnvValuePanel
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Knative.Container
@@ -162,18 +163,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     end
   end
 
-  defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
-    ~H"""
-    <%= @env_value.value %>
-    """
-  end
-
-  defp env_value_value(%{env_value: %{source_type: _}} = assigns) do
-    ~H"""
-    <.truncate_tooltip value={"From #{@env_value.source_name}"} />
-    """
-  end
-
   defp containers_panel(assigns) do
     ~H"""
     <.panel title="Containers">
@@ -202,42 +191,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             id={"delete_container_" <> String.replace(c.name, " ", "")}
             phx-click="del:container"
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
-            tooltip="Remove"
-            link_type="button"
-            type="button"
-            phx-target={@myself}
-          />
-        </:action>
-      </.table>
-    </.panel>
-    """
-  end
-
-  defp env_var_panel(assigns) do
-    ~H"""
-    <.panel title="Environment Variables" class="lg:col-span-2">
-      <:menu>
-        <.button
-          variant="transparent"
-          icon={:plus}
-          phx-click="new_env_var"
-          type="button"
-          phx-target={@myself}
-        >
-          Variable
-        </.button>
-      </:menu>
-
-      <.table rows={Enum.with_index(@env_values)}>
-        <:col :let={{ev, _idx}} label="Name"><%= ev.name %></:col>
-        <:col :let={{ev, _idx}} label="Value"><.env_value_value env_value={ev} /></:col>
-        <:action :let={{ev, idx}}>
-          <.action_icon
-            to="/"
-            icon={:x_mark}
-            id={"delete_env_value_" <> String.replace(ev.name, " ", "")}
-            phx-click="del:env_value"
-            phx-value-idx={idx}
             tooltip="Remove"
             link_type="button"
             type="button"
@@ -334,7 +287,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             containers={@containers}
           />
           <.advanced_setting_panel form={@form} />
-          <.env_var_panel myself={@myself} env_values={@env_values} />
+          <.env_var_panel env_values={@env_values} editable target={@myself} />
           <!-- Hidden inputs for embeds -->
           <.containers_hidden_form field={@form[:containers]} />
           <.containers_hidden_form field={@form[:init_containers]} />

@@ -143,7 +143,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
           <.button>Edit History</.button>
 
-          <.flex>
+          <.flex gaps="0">
             <PC.icon_button to={edit_url(@cluster)} link_type="live_redirect">
               <Heroicons.pencil solid />
             </PC.icon_button>

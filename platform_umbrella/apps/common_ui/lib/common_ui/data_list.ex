@@ -88,14 +88,14 @@ defmodule CommonUI.DataList do
       "py-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700",
       @class
     ]}>
-      <div class="flex text-sm font-light divide-x divide-gray-300 dark:divide-gray-700">
-        <.flex :for={item <- @item} gaps={6} class="px-3">
+      <.flex class="text-sm font-light divide-x divide-gray-300 dark:divide-gray-700 justify-between">
+        <.flex :for={item <- @item} class="px-3">
           <span class="tracking-tighter text-gray-500 dark:text-gray-400"><%= item.title %>:</span>
           <span class="tracking-tighter text-black dark:text-white">
             <%= render_slot(item) %>
           </span>
         </.flex>
-      </div>
+      </.flex>
     </div>
     """
   end
