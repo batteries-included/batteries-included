@@ -69,7 +69,13 @@ defmodule ControlServerWeb.Live.Home do
         <.h3>Pods by Category</.h3>
         <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
       </.flex>
-      <.panel title="Projects" class="lg:col-span-7"></.panel>
+      <.panel title="Projects" class="lg:col-span-7">
+        <.flex class="items-center justify-center align-middle">
+          <span class="block text-4xl font-sans text-pink-300 lg:mt-5 mt-2">
+            Coming Soon
+          </span>
+        </.flex>
+      </.panel>
       <.live_component module={RunningBatteriesPanel} id="running_bat_home_hero" />
     </.grid>
     """
