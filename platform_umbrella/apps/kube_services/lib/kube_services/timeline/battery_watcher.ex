@@ -25,7 +25,7 @@ defmodule KubeServices.Timeline.BatteryWatcher do
   end
 
   defp to_event(:multi, %{installed: installed}) do
-    Logger.warning("Going to persist timeline event for battery install event}")
+    Logger.warning("Going to persist timeline event for battery install event")
 
     events =
       installed
