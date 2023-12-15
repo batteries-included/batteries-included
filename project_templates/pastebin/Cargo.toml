@@ -46,7 +46,7 @@ entity = { path = "./entity" }
 migration = { path = "./migration" }
 
 [dependencies.sea-orm]
-version = "0.12.9"
+version = "0.12.10"
 features = ["sqlx-postgres", "runtime-tokio-rustls"]
 
 [build-dependencies]
