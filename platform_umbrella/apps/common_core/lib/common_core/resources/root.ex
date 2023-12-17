@@ -11,6 +11,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.CloudnativePGClusters
   alias CommonCore.Resources.CloudnativePGDashboards
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
+  alias CommonCore.Resources.FerretDB
   alias CommonCore.Resources.Gitea
   alias CommonCore.Resources.Grafana
   alias CommonCore.Resources.IstioBase
@@ -59,6 +60,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     istio_gateway: [IstioIngress],
     keycloak: [Keycloak],
     kiali: [Kiali],
+    ferretdb: [FerretDB],
     knative: [KnativeOperator, KnativeServing],
     kube_monitoring: [MetricsServer, KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
     loki: [Loki],

@@ -103,6 +103,15 @@ defmodule ControlServerWeb.Router do
     live "/:id/services", Live.PostgresShow, :services
   end
 
+  scope "/ferretdb", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.FerretServiceIndex, :index
+    live "/:id/show", Live.FerretServiceShow, :show
+    live "/:id/edit", Live.FerretServiceEdit, :show
+    live "/new", Live.FerretServiceNew, :show
+  end
+
   scope "/ceph", ControlServerWeb do
     pipe_through :browser
 

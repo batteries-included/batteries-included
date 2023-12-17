@@ -8,6 +8,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.CertManagerConfig
   alias CommonCore.Batteries.CloudnativePGConfig
+  alias CommonCore.Batteries.FerretDBConfig
   alias CommonCore.Batteries.GiteaConfig
   alias CommonCore.Batteries.GrafanaConfig
   alias CommonCore.Batteries.IstioConfig
@@ -42,6 +43,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     cloudnative_pg: CloudnativePGConfig,
     gitea: GiteaConfig,
     grafana: GrafanaConfig,
+    ferretdb: FerretDBConfig,
     istio: IstioConfig,
     istio_csr: IstioCSRConfig,
     istio_gateway: IstioGatewayConfig,
@@ -67,6 +69,8 @@ defmodule CommonCore.Batteries.SystemBattery do
     vm_cluster: VMClusterConfig
   ]
 
+  @possible_groups ~w(data devtools magic ml monitoring net_sec)a
+
   def possible_types, do: Keyword.keys(@possible_types)
 
   @timestamps_opts [type: :utc_datetime_usec]
@@ -74,15 +78,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "system_batteries" do
-    field :group, Ecto.Enum,
-      values: [
-        :data,
-        :devtools,
-        :magic,
-        :ml,
-        :monitoring,
-        :net_sec
-      ]
+    field :group, Ecto.Enum, values: @possible_groups
 
     field :type, Ecto.Enum, values: Keyword.keys(@possible_types)
 

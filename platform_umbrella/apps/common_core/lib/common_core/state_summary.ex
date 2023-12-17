@@ -25,6 +25,7 @@ defmodule CommonCore.StateSummary do
   typedstruct do
     field :batteries, list(CommonCore.Batteries.SystemBattery.t()), default: []
     field :postgres_clusters, list(CommonCore.Postgres.Cluster.t()), default: []
+    field :ferret_services, list(CommonCore.Postgres.Cluster.t()), default: []
     field :redis_clusters, list(CommonCore.Redis.FailoverCluster.t()), default: []
     field :notebooks, list(CommonCore.Notebooks.JupyterLabNotebook.t()), default: []
     field :knative_services, list(CommonCore.Knative.Service.t()), default: []

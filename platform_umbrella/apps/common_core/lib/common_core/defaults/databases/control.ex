@@ -13,7 +13,7 @@ defmodule CommonCore.Defaults.ControlDB do
     :users => [
       %{username: @username, roles: ["createdb", "login"]}
     ],
-    :databases => [%{name: @database_name, owner: @username}]
+    :database => %{name: @database_name, owner: @username}
   }
 
   def local_user do

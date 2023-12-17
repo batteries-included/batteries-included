@@ -4,6 +4,7 @@ defmodule CommonCore.Postgres.Cluster do
   """
   use TypedEctoSchema
 
+  import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
   alias CommonCore.Util.Memory
@@ -67,7 +68,7 @@ defmodule CommonCore.Postgres.Cluster do
     field :virtual_storage_size_range_value, :integer, virtual: true
 
     embeds_many :users, CommonCore.Postgres.PGUser, on_replace: :delete
-    embeds_many :databases, CommonCore.Postgres.PGDatabase, on_replace: :delete
+    embeds_one :database, CommonCore.Postgres.PGDatabase, on_replace: :delete
 
     timestamps()
   end
@@ -92,7 +93,7 @@ defmodule CommonCore.Postgres.Cluster do
     |> maybe_convert_virtual_size_to_presets()
     |> maybe_set_storage_size_slider_value()
     |> cast_embed(:users)
-    |> cast_embed(:databases)
+    |> cast_embed(:database)
     |> validate_required([
       :name,
       :storage_size,
@@ -103,6 +104,7 @@ defmodule CommonCore.Postgres.Cluster do
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_limits_options())
+    |> downcase_fields([:name])
     |> validate_length(:name, min: 1, max: 128)
     |> unique_constraint([:type, :name])
   end

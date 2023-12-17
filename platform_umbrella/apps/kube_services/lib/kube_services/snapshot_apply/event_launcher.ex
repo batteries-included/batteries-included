@@ -24,7 +24,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
   @impl GenServer
   def init(opts) do
     Enum.each(
-      [:jupyter_notebook, :knative_service, :postgres_cluster, :redis_cluster],
+      [:jupyter_notebook, :knative_service, :postgres_cluster, :redis_cluster, :ferret_service],
       &EventCenter.Database.subscribe/1
     )
 

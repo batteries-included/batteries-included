@@ -48,6 +48,7 @@ pub struct StateSummarySpec {
     pub knative_services: Vec<DynamicObject>,
     pub notebooks: Vec<DynamicObject>,
     pub postgres_clusters: Vec<DynamicObject>,
+    pub ferret_services: Vec<DynamicObject>,
     pub redis_clusters: Vec<DynamicObject>,
 }
 

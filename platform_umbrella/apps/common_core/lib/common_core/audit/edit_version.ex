@@ -25,6 +25,8 @@ defmodule CommonCore.Audit.EditVersion do
 
     # was this change part of a rollback?
     field :rollback, :boolean, default: false
+
+    timestamps()
   end
 
   def changeset(struct, params \\ %{}) do

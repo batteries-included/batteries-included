@@ -12,9 +12,7 @@ defmodule CommonCore.Defaults.KeycloakDB do
     :users => [
       %{username: @keycloak_username, roles: ["createdb", "login"], credential_namespaces: ["battery-core"]}
     ],
-    :databases => [
-      %{name: "keycloak", owner: @keycloak_username}
-    ]
+    :database => %{name: "keycloak", owner: @keycloak_username}
   }
 
   def pg_cluster do

@@ -6,6 +6,7 @@ defmodule ControlServer.SystemState do
     Multi.new()
     |> Multi.all(:batteries, CommonCore.Batteries.SystemBattery)
     |> Multi.all(:postgres_clusters, CommonCore.Postgres.Cluster)
+    |> Multi.all(:ferret_services, CommonCore.FerretDB.FerretService)
     |> Multi.all(:redis_clusters, CommonCore.Redis.FailoverCluster)
     |> Multi.all(:notebooks, CommonCore.Notebooks.JupyterLabNotebook)
     |> Multi.all(:knative_services, CommonCore.Knative.Service)

@@ -15,7 +15,8 @@ defmodule EventCenter.Database do
     :postgres_cluster,
     :redis_cluster,
     :system_battery,
-    :timeline_event
+    :timeline_event,
+    :ferret_service
   ]
 
   def allowed_actions, do: @allowed_actions

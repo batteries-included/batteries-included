@@ -224,13 +224,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       |> Enum.map(& &1.username)
 
     # Finally assume that previous owners are ok
-    existing_owners =
-      changeset
-      |> Changeset.get_field(:databases, [])
-      |> Enum.map(& &1.owner)
+    existing_owner =
+      Changeset.get_field(changeset, :database, %{owner: nil}).owner
 
     usernames
-    |> Enum.concat(existing_owners)
+    |> Enum.concat([existing_owner])
     |> Enum.filter(&(&1 != nil))
     |> Enum.uniq()
     |> Enum.sort()
@@ -375,7 +373,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             <.flex class="items-center">
               <.flex class="justify-between w-full lg:w-1/2">
                 <.h5>Number of instances</.h5>
-                <div class="font-bold text-4xl text-primary-500"><%= @num_instances %></div>
+                <div class="font-bold text-4xl text-primary-500">
+                  <%= @form[:num_instances].value %>
+                </div>
               </.flex>
               <.flex class="w-full lg:w-1/2">
                 <PC.input
@@ -396,7 +396,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
           <.grid columns={%{sm: 1, lg: 2}}>
             <.panel title="Database">
-              <.inputs_for :let={database_form} field={@form[:databases]}>
+              <.inputs_for :let={database_form} field={@form[:database]}>
                 <.grid columns={%{sm: 1, lg: 2}}>
                   <div>
                     <PC.field field={database_form[:name]} />
@@ -454,7 +454,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   defp copy_embeds_from_changeset(params, changeset) do
     params
     |> copy_embed(changeset, :users)
-    |> copy_embed(changeset, :databases)
+    |> copy_single_embed(changeset, :database)
   end
 
   defp copy_embed(params, changeset, field) do
@@ -468,6 +468,19 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       end)
 
     Map.put(params, Atom.to_string(field), value)
+  end
+
+  defp copy_single_embed(params, changeset, field) do
+    value =
+      changeset
+      |> Changeset.get_field(field, %{})
+      |> atom_keys_to_string_keys()
+
+    Map.put(params, Atom.to_string(field), value)
+  end
+
+  defp atom_keys_to_string_keys(atom_key_map) when is_struct(atom_key_map) do
+    atom_key_map |> Map.from_struct() |> atom_keys_to_string_keys()
   end
 
   defp atom_keys_to_string_keys(atom_key_map) do

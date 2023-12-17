@@ -83,7 +83,7 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
 
       add :keycloak_snapshot_id, references(:keycloak_snapshots, on_delete: :nothing)
 
-      timestamps()
+      timestamps(type: :utc_datetime_usec)
     end
 
     # We generate the id from the hash.

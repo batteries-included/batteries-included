@@ -2,6 +2,7 @@ defmodule CommonCore.Knative.Service do
   @moduledoc false
   use TypedEctoSchema
 
+  import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
   @required_fields ~w(name)a
@@ -26,6 +27,7 @@ defmodule CommonCore.Knative.Service do
     struct
     |> cast(attrs, Enum.concat(@required_fields, @optional_fields))
     |> validate_required(@required_fields)
+    |> downcase_fields([:name])
     |> unique_constraint(:name)
     |> cast_embed(:containers)
     |> cast_embed(:init_containers)

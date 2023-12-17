@@ -20,6 +20,12 @@ defmodule CommonCore.Batteries.Catalog do
       description:
         "PostgreSQL is a free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility."
     },
+    %CatalogBattery{
+      group: :data,
+      type: :ferretdb,
+      dependencies: [:battery_core, :cloudnative_pg],
+      description: "A truly Open Source MongoDB alternative, built on Postgres"
+    },
     %CatalogBattery{group: :data, type: :rook, dependencies: [:battery_core]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core},

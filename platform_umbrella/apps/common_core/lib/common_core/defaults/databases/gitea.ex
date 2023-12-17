@@ -14,7 +14,7 @@ defmodule CommonCore.Defaults.GiteaDB do
         credential_namespaces: ["battery-core"]
       }
     ],
-    :databases => [%{name: "gitea", owner: @username}]
+    :database => %{name: "gitea", owner: @username}
   }
 
   def gitea_cluster do

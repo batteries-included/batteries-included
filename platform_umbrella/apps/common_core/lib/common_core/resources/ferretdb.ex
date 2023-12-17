@@ -1,0 +1,174 @@
+defmodule CommonCore.Resources.FerretDB do
+  @moduledoc false
+  use CommonCore.Resources.ResourceGenerator, app_name: "ferretdb"
+
+  import CommonCore.StateSummary.Namespaces
+
+  alias CommonCore.FerretDB.FerretService
+  alias CommonCore.Postgres.Cluster
+  alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.StateSummary
+
+  multi_resource(:deployments, battery, %StateSummary{} = state) do
+    Enum.map(state.ferret_services, fn ferret_service -> deployment(ferret_service, battery, state) end)
+  end
+
+  multi_resource(:services, battery, %StateSummary{} = state) do
+    Enum.map(state.ferret_services, fn ferret_service -> service(ferret_service, battery, state) end)
+  end
+
+  multi_resource(:service_accounts, battery, %StateSummary{} = state) do
+    Enum.map(state.ferret_services, fn ferret_service -> service_account(ferret_service, battery, state) end)
+  end
+
+  resource(:monitoring_pod_monitor, _battery, state) do
+    namespace = data_namespace(state)
+
+    spec =
+      %{}
+      |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "debug"}])
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name}}
+      )
+
+    :monitoring_pod_monitor
+    |> B.build_resource()
+    |> B.name("ferretdb-monitoring")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :victoria_metrics)
+    |> F.require(state.ferret_services != [])
+  end
+
+  def service_account(%FerretService{} = ferret_service, _battery, %StateSummary{} = state) do
+    :service_account
+    |> B.build_resource()
+    |> B.name(service_account_name(ferret_service))
+    |> B.namespace(namespace(ferret_service, state))
+    |> B.add_owner(ferret_service)
+  end
+
+  def service(ferret_service, battery, %StateSummary{} = state) do
+    :service
+    |> B.build_resource()
+    |> B.app_labels(@app_name)
+    |> B.name(service_name(ferret_service))
+    |> B.namespace(namespace(ferret_service, state))
+    |> B.spec(service_spec(ferret_service, battery, state))
+    |> B.add_owner(ferret_service)
+  end
+
+  defp service_spec(ferret_service, _battery, %StateSummary{} = _state) do
+    %{}
+    |> Map.put("selector", %{"battery/app" => @app_name, "battery/owner" => ferret_service.id})
+    |> Map.put("ports", [
+      %{"name" => "rpc", "port" => 27_017, "protocol" => "TCP"},
+      %{"name" => "debug", "port" => 8088, "protocol" => "TCP"}
+    ])
+  end
+
+  defp deployment(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
+    :deployment
+    |> B.build_resource()
+    |> B.app_labels(@app_name)
+    |> B.name("ferret-#{ferret_service.name}")
+    |> B.namespace(namespace(ferret_service, state))
+    |> B.spec(spec(ferret_service, battery, state))
+    |> B.add_owner(ferret_service)
+  end
+
+  @spec get_cluster(FerretService.t(), StateSummary.t()) :: CommonCore.Postgres.Cluster.t() | nil
+  defp get_cluster(%FerretService{} = ferret_service, %StateSummary{} = state) do
+    Enum.find(state.postgres_clusters, fn cluster -> cluster.id == ferret_service.postgres_cluster_id end)
+  end
+
+  defp spec(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
+    %{}
+    |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
+    |> Map.put("replicas", ferret_service.instances)
+    |> Map.put("template", template(ferret_service, battery, state))
+  end
+
+  defp template(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
+    %{}
+    |> Map.put("metadata", %{
+      "labels" => %{
+        "battery/app" => @app_name,
+        "battery/managed" => "true",
+        "battery/owner" => ferret_service.id
+      }
+    })
+    |> Map.put("spec", %{
+      "containers" => [container(ferret_service, battery, state)],
+      "serviceAccountName" => service_account_name(ferret_service)
+    })
+  end
+
+  defp container(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
+    pg = get_cluster(ferret_service, state)
+
+    %{}
+    |> Map.put("name", "ferret")
+    |> Map.put("image", battery.config.ferretdb_image)
+    |> Map.put("resources", resources(ferret_service))
+    |> Map.put("ports", [
+      %{"containerPort" => 27_017, "name" => "rpc"},
+      %{"containerPort" => 8088, "name" => "debug"}
+    ])
+    |> Map.put("env", [
+      %{"name" => "FERRETDB_POSTGRESQL_URL", "value" => get_url(pg, state)},
+      %{"name" => "FERRETDB_TELEMETRY", "value" => "disable"},
+      %{"name" => "DO_NOT_TRACK", "value" => "true"}
+    ])
+  end
+
+  defp resources(%FerretService{} = ferret_service) do
+    limits =
+      %{}
+      |> maybe_add("cpu", format_resource(ferret_service.cpu_limits))
+      |> maybe_add("memory", format_resource(ferret_service.memory_limits))
+
+    requests =
+      %{}
+      |> maybe_add("cpu", format_resource(ferret_service.cpu_requested))
+      |> maybe_add("memory", format_resource(ferret_service.memory_requested))
+
+    %{} |> maybe_add("limits", limits) |> maybe_add("requests", requests)
+  end
+
+  @spec maybe_add(map(), String.t(), integer() | list(any()) | String.t() | map() | nil) :: map()
+  defp maybe_add(map, _key, value) when value == "", do: map
+  defp maybe_add(map, _key, value) when value == %{}, do: map
+  defp maybe_add(map, key, _value) when key == "", do: map
+
+  defp maybe_add(map, key, value) do
+    if value do
+      Map.put(map, key, value)
+    else
+      map
+    end
+  end
+
+  defp format_resource(nil), do: nil
+  defp format_resource(value), do: to_string(value)
+
+  def service_name(%FerretService{} = ferret_service) do
+    "ferret-#{ferret_service.name}"
+  end
+
+  defp service_account_name(%FerretService{} = ferret_service) do
+    "ferret-#{ferret_service.name}"
+  end
+
+  defp get_url(%Cluster{} = cluster, %StateSummary{} = state) do
+    namespace = StateSummary.PostgresState.cluster_namespace(state, cluster)
+    "postgresql://#{cluster.name}-rw.#{namespace}.svc.cluster.local.:5432/#{cluster.database.name}"
+  end
+
+  defp namespace(%FerretService{} = ferret_service, %StateSummary{} = state) do
+    pg_cluster = get_cluster(ferret_service, state)
+    StateSummary.PostgresState.cluster_namespace(state, pg_cluster)
+  end
+end

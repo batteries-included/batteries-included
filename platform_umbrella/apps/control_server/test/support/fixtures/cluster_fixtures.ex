@@ -9,7 +9,7 @@ defmodule ControlServer.ClusterFixtures do
         virtual_size: "small",
         type: :standard,
         users: [%{username: "userone", roles: ["superuser"]}],
-        databases: [%{name: "maindata", owner: "userone"}]
+        database: %{name: "maindata", owner: "userone"}
       })
       |> ControlServer.Postgres.create_cluster()
 

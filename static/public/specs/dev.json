@@ -11,11 +11,11 @@
         "config": {
           "type": "battery_core",
           "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
-          "secret_key": null,
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
+          "secret_key": null,
           "server_in_cluster": false,
           "image_override": null,
           "core_namespace_override": null,
@@ -102,15 +102,21 @@
       }
     ],
     "keycloak_state": null,
-    "knative_services": [],
-    "ip_address_pools": [],
+    "ferret_services": [],
     "postgres_clusters": [
       {
         "id": null,
         "name": "controlserver",
         "type": "internal",
+        "database": {
+          "name": "control",
+          "owner": "battery-control-user"
+        },
+        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
+        "num_instances": 1,
+        "storage_size": 524288000,
         "users": [
           {
             "position": null,
@@ -122,18 +128,9 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "3UF46GSXQ4QX25MNYG6ZKW2S",
+            "password": "CMQOR7ELKVDZJKGJVUQVFOXO",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
-          }
-        ],
-        "storage_class": null,
-        "num_instances": 1,
-        "storage_size": 524288000,
-        "databases": [
-          {
-            "name": "control",
-            "owner": "battery-control-user"
           }
         ],
         "cpu_requested": null,
@@ -144,6 +141,8 @@
         "virtual_storage_size_range_value": 9
       }
     ],
+    "knative_services": [],
+    "ip_address_pools": [],
     "redis_clusters": [],
     "ceph_clusters": [],
     "ceph_filesystems": [],
@@ -12040,13 +12039,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "M1VGNDZHU1hRNFFYMjVNTllHNlpLVzJT",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjNVRjQ2R1NYUTRRWDI1TU5ZRzZaS1cyU0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "Q01RT1I3RUxLVkRaSktHSlZVUVZGT1hP",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkNNUU9SN0VMS1ZEWkpLR0pWVVFWRk9YT0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "YVJ3LIKYYOPLDJWIMOYAGUHNXXOVWZF375Z3M5EU7UWJ7SHC6MBA===="
+          "battery/hash": "2RPYWLZKSBAXUJKRE6DONYZ6HH33DKAST2E3E3KTJHURGAM5RZSA===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",

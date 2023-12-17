@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.DataHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.PostgresClusterTable
   import ControlServerWeb.RedisTable
   import KubeServices.SystemState.SummaryBatteries
@@ -16,7 +17,8 @@ defmodule ControlServerWeb.Live.DataHome do
      |> assign_current_page()
      |> assign_batteries()
      |> assign_redis_clusters()
-     |> assign_postgres_clusters()}
+     |> assign_postgres_clusters()
+     |> assign_ferret_services()}
   end
 
   defp assign_batteries(socket) do
@@ -37,6 +39,10 @@ defmodule ControlServerWeb.Live.DataHome do
 
   defp assign_redis_clusters(socket) do
     assign(socket, redis_clusters: redis_clusters())
+  end
+
+  defp assign_ferret_services(socket) do
+    assign(socket, ferret_services: ferret_services())
   end
 
   defp postgres_panel(assigns) do
@@ -71,6 +77,25 @@ defmodule ControlServerWeb.Live.DataHome do
     """
   end
 
+  defp ferretdb_panel(assigns) do
+    ~H"""
+    <.panel title="FerretDB/MongoDB">
+      <:menu>
+        <.flex>
+          <.a navigate={~p"/ferretdb/new"} variant="styled">
+            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New FerretDB
+          </.a>
+          <.a navigate={~p"/ferretdb"}>View All</.a>
+        </.flex>
+      </:menu>
+      <.ferret_services_table
+        rows={Enum.with_index(@ferret_services) |> Enum.map(fn {a, b} -> {b, a} end)}
+        abbridged
+      />
+    </.panel>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -89,6 +114,8 @@ defmodule ControlServerWeb.Live.DataHome do
         <%= case battery.type do %>
           <% :cloudnative_pg -> %>
             <.postgres_panel clusters={@postgres_clusters} />
+          <% :ferretdb -> %>
+            <.ferretdb_panel ferret_services={@ferret_services} />
           <% :redis -> %>
             <.redis_panel clusters={@redis_clusters} />
           <% _ -> %>

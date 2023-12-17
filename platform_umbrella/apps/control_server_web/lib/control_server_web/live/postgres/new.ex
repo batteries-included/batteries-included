@@ -14,7 +14,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
     # Pre-populate the databases and users with decent permissions
     cluster = %Cluster{
       virtual_size: "medium",
-      databases: [%PGDatabase{name: "app", owner: "app"}],
+      database: %PGDatabase{name: "app", owner: "app"},
       users: [
         %PGUser{
           username: "app",

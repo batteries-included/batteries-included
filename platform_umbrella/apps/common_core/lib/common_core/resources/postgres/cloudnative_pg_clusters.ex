@@ -45,17 +45,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   end
 
   def cluster_resource(%Cluster{} = cluster, _battery, state) do
-    # TOTAL FUCKING HACK
-    #
-    # HACK ALERT
-    #
-    # CloudNativePG really only support clusters with a single database in the postgres instance.
-    # Zalando supported creating databases on the fly from the crd.
-    #
-    # Meaning the expectations and ccapabilies don't match so we have to fix this.
-    # So while we transition that way assume that there's only one database; the first in the list
-    # failure to abide by the new rule will result in crashing.
-    db = List.first(cluster.databases, %{database: "app", owner: "app"})
+    db = cluster.database || %{database: "app", owner: "app"}
 
     :cloudnative_pg_cluster
     |> B.build_resource()

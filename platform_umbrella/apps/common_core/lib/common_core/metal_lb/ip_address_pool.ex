@@ -2,6 +2,7 @@ defmodule CommonCore.MetalLB.IPAddressPool do
   @moduledoc false
   use TypedEctoSchema
 
+  import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
   @timestamps_opts [type: :utc_datetime_usec]
@@ -20,6 +21,7 @@ defmodule CommonCore.MetalLB.IPAddressPool do
     ip_address_pool
     |> cast(attrs, [:name, :subnet])
     |> validate_required([:name, :subnet])
+    |> downcase_fields([:name])
     |> unique_constraint(:name)
   end
 

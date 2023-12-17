@@ -138,6 +138,17 @@ defmodule KubeServices.SystemState.SummaryRecent do
     {:reply, [], state}
   end
 
+  @impl GenServer
+  def handle_call({:ferret_services, limit}, _from, %{summary: %{ferret_services: ferret_services}} = state)
+      when is_list(ferret_services) do
+    {:reply, sorted_limit(ferret_services, limit), state}
+  end
+
+  @impl GenServer
+  def handle_call({:ferret_services, _limit}, _from, state) do
+    {:reply, [], state}
+  end
+
   defp sorted_limit(enum, limit) do
     enum
     |> Enum.sort_by(& &1.updated_at, {:desc, DateTime})
@@ -184,5 +195,11 @@ defmodule KubeServices.SystemState.SummaryRecent do
           list(CommonCore.Notebooks.JupyterLabNotebook.t())
   def notebooks(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:notebooks, limit})
+  end
+
+  @spec ferret_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
+          list(CommonCore.FerretDB.FerretService.t())
+  def ferret_services(target \\ @me, limit \\ 7) do
+    GenServer.call(target, {:ferret_services, limit})
   end
 end

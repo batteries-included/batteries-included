@@ -2,6 +2,7 @@ defmodule CommonCore.Knative.Container do
   @moduledoc false
   use TypedEctoSchema
 
+  import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
   @required_fields ~w(image name)a
@@ -26,5 +27,6 @@ defmodule CommonCore.Knative.Container do
     |> cast(params, Enum.concat(@required_fields, @optional_fields))
     |> validate_required(@required_fields)
     |> cast_embed(:env_values)
+    |> downcase_fields([:name])
   end
 end

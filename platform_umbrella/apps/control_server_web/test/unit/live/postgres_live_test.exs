@@ -12,14 +12,14 @@ defmodule ControlServerWeb.PostgresLiveTest do
   @kube_table_name :default_state_table
   @valid_attrs %{
     cluster: %{
-      name: "PostgresLiveTest",
+      name: "postgres_live_test",
       virtual_size: "small",
       num_instances: 1
     }
   }
   @update_attrs %{
     cluster: %{
-      name: "ANewName",
+      name: "postgres_live_test",
       virtual_size: "medium",
       num_instances: 3
     }

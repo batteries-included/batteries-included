@@ -11,7 +11,7 @@ defmodule ControlServer.PostgresTest do
       num_instances: 2,
       storage_size: 524_288_000,
       users: [%{username: "userone", roles: ["superuser"]}],
-      databases: [%{name: "maindata", owner: "userone"}]
+      database: %{name: "maindata", owner: "userone"}
     }
     @update_attrs %{
       name: "some updated name",
@@ -21,7 +21,7 @@ defmodule ControlServer.PostgresTest do
         %{username: "userone", roles: ["superuser"]},
         %{username: "usertwo", roles: ["nologin"]}
       ],
-      databases: [%{name: "maindata", owner: "userone"}, %{name: "testdata", owner: "usertwo"}]
+      database: %{name: "maindata", owner: "userone"}
     }
     @invalid_attrs %{name: nil, num_instances: nil, size: nil}
 

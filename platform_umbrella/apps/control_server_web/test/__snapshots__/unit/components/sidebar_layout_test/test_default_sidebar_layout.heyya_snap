@@ -6,7 +6,8 @@
     <div id="sidebar" class="absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-200 ease-in-out transform border-r no-scrollbar lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600" x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'" @click.away="sidebarOpen = false" @keydown.escape.window="sidebarOpen = false" x-cloak>
       <div class="relative flex flex-col w-full h-full p-4 sidebar-background">
         <div class="flex items-center justify-between h-auto gap-2 px-3 pt-5 mb-10">
-          <a class="flex-1 block h-9" href="/">
+          <a href="/" class="flex-1 block h-9">
+  
             <div class="inline-flex h-10 justify-center transition-none animation-none ">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145 92" class="w-10 h-auto mr-4" aria-label="Batteries Included Logo, a cloud with charged ends">
   <path class="fill-pink-500" d="M36.54,38.3h-4.68c-11.73,0-21.32,9.59-21.32,21.32h0c0,11.73,9.6,21.32,21.32,21.32h27.17c1.4,0,2.76-.14,4.09-.4h-.06c7.83-1.54,14.16-7.4,16.38-14.97-2.83-1.96-4.68-5.23-4.68-8.94,0-6,4.87-10.87,10.87-10.87s10.87,4.87,10.87,10.87c0,4.42-2.64,8.23-6.44,9.93-.05,.21-.09,.41-.14,.61h.06c-3.42,13.85-15.98,24.2-30.84,24.2H31.76C14.29,91.37,0,77.08,0,59.62H0c0-15.85,11.77-29.09,27.01-31.4l-.07-.07C33.69-2.39,69.77-8.99,89.27,12.83,57.24,1.93,38.52,9.66,36.54,38.3h0Zm47.66,12.24v4.68h-4.68v2.84h4.68v4.68h2.84v-4.68h4.68v-2.84h-4.68v-4.68h-2.84Z"></path><path class="fill-gray-500 dark:fill-white" d="M118.42,35.8c14.48,.15,26.28,12.04,26.28,26.55h0c0,14.61-11.95,26.56-26.56,26.56-10.12,0-17.43-2.12-25.23-9.31h24.02c9.49,0,17.25-7.76,17.25-17.25h0c0-9.49-7.76-17.25-17.25-17.25h-5.27c-3.86-9.35-13.07-15.93-23.81-15.93-11.57,0-21.37,7.64-24.61,18.14,3.16,1.9,5.27,5.36,5.27,9.32,0,6-4.87,10.87-10.87,10.87s-10.87-4.87-10.87-10.87c0-4.22,2.4-7.87,5.91-9.67,3.63-16.08,18-28.09,35.17-28.09,12.88,0,24.19,6.76,30.56,16.92h0Zm-54.68,19.42h-12.19v2.84h12.19v-2.84Z"></path>
@@ -20,7 +21,8 @@
     </span>
   </div>
 </div>
-          </a>
+          
+</a>
         </div>
 
         <div class="flex flex-col justify-between h-full">
@@ -30,7 +32,8 @@
 
   <div class="pc-vertical-menu__menu-group__wrapper">
     <div class="pc-vertical-menu__menu-group">
-      <a href="/" class="pc-vertical-menu-item group pc-vertical-menu-item--active" data-phx-link="redirect" data-phx-link-state="push">
+      <a href="/" data-phx-link="redirect" data-phx-link-state="push" class="pc-vertical-menu-item group pc-vertical-menu-item--active">
+  
   <svg xmlns="http://www.w3.org/2000/svg" class="pc-vertical-menu-item__icon pc-vertical-menu-item__icon--active" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
 </svg>
@@ -39,6 +42,7 @@
 
 
   <div class="pc-vertical-menu-item__label">Home</div>
+
 </a>
     </div>
   </div>
@@ -50,7 +54,8 @@
 
   <div class="pc-vertical-menu__menu-group__wrapper">
     <div class="pc-vertical-menu__menu-group">
-      <a href="/" class="pc-vertical-menu-item group pc-vertical-menu-item--inactive" data-phx-link="redirect" data-phx-link-state="push">
+      <a href="/" data-phx-link="redirect" data-phx-link-state="push" class="pc-vertical-menu-item group pc-vertical-menu-item--inactive">
+  
   <svg xmlns="http://www.w3.org/2000/svg" class="pc-vertical-menu-item__icon pc-vertical-menu-item__icon--inactive" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/>
 </svg>
@@ -59,6 +64,7 @@
 
 
   <div class="pc-vertical-menu-item__label">Settings</div>
+
 </a>
     </div>
   </div>
