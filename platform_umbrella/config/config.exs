@@ -44,6 +44,7 @@ config :ex_audit,
     CommonCore.Knative.Service,
     CommonCore.MetalLB.IPAddressPool,
     CommonCore.Postgres.Cluster,
+    CommonCore.FerretDB.FerretService,
     CommonCore.Redis.FailoverCluster
   ]
 
