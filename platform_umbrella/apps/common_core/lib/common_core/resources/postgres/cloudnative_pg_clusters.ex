@@ -64,6 +64,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         enablePodAntiAffinity: true,
         topologyKey: "failure-domain.beta.kubernetes.io/zone"
       },
+      resources: resources(cluster),
 
       # Users are called roles in postgres just to confuse
       # the fuck out of us here.
@@ -79,6 +80,42 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
           end)
       }
     })
+  end
+
+  defp resources(%Cluster{} = cluster) do
+    requests =
+      %{}
+      |> maybe_add("cpu", format_cpu(cluster.cpu_requested))
+      |> maybe_add("memory", cluster.memory_requested)
+
+    limits =
+      %{}
+      |> maybe_add("cpu", format_cpu(cluster.cpu_limits))
+      |> maybe_add("memory", cluster.memory_limits)
+
+    %{}
+    |> maybe_add("requests", requests)
+    |> maybe_add("limits", limits)
+  end
+
+  defp format_cpu(nil), do: nil
+
+  defp format_cpu(cpu) when is_number(cpu) do
+    if cpu < 1000 do
+      to_string(cpu) <> "m"
+    else
+      to_string(cpu / 1000)
+    end
+  end
+
+  defp maybe_add(map, _key, value) when value == %{}, do: map
+
+  defp maybe_add(map, key, value) do
+    if value do
+      Map.put(map, key, value)
+    else
+      map
+    end
   end
 
   defp postgres_paramters(_cluster) do

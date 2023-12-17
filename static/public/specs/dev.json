@@ -116,7 +116,7 @@
         "inserted_at": null,
         "updated_at": null,
         "num_instances": 1,
-        "storage_size": 524288000,
+        "virtual_size": "tiny",
         "users": [
           {
             "position": null,
@@ -128,16 +128,16 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "CMQOR7ELKVDZJKGJVUQVFOXO",
+            "password": "LDHIRWOH4KQD2J3NTDYVFCF4",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
+        "storage_size": 536870912,
         "cpu_requested": null,
-        "cpu_limits": null,
+        "cpu_limits": 500,
         "memory_requested": null,
-        "memory_limits": null,
-        "virtual_size": "custom",
+        "memory_limits": 1073741824,
         "virtual_storage_size_range_value": 9
       }
     ],
@@ -12039,13 +12039,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "Q01RT1I3RUxLVkRaSktHSlZVUVZGT1hP",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkNNUU9SN0VMS1ZEWkpLR0pWVVFWRk9YT0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "TERISVJXT0g0S1FEMkozTlREWVZGQ0Y0",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkxESElSV09INEtRRDJKM05URFlWRkNGNEBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "2RPYWLZKSBAXUJKRE6DONYZ6HH33DKAST2E3E3KTJHURGAM5RZSA===="
+          "battery/hash": "OKHHVVDVAAOQFEEEUXGOFCPAHYR75F2S4POQK7U2GUT5N272P2SQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -15439,7 +15439,7 @@
       "kind": "Cluster",
       "metadata": {
         "annotations": {
-          "battery/hash": "MLNRV4ILKFR4CABFH7YYAYFUVSS44Y6JN2ARAAU6X5EBDUDEPRYA===="
+          "battery/hash": "2IB5JS247BICVDEGOEPZRU724AOOLHKGK6GQY66IEWHYBCJTNLDQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -15506,8 +15506,14 @@
             "timezone": "UTC"
           }
         },
+        "resources": {
+          "limits": {
+            "cpu": "500m",
+            "memory": 1073741824
+          }
+        },
         "storage": {
-          "size": "524288000",
+          "size": "536870912",
           "resizeInUseVolumes": false
         }
       }

@@ -13,24 +13,31 @@ defmodule CommonCore.FerretDB.FerretService do
 
   @presets [
     %{
-      name: "small",
-      cpu_requested: 100,
+      name: "tiny",
+      cpu_requested: nil,
       cpu_limits: 500,
+      memory_requested: nil,
+      memory_limits: Memory.mb_to_bytes(512)
+    },
+    %{
+      name: "small",
+      cpu_requested: nil,
+      cpu_limits: 1000,
       memory_requested: Memory.mb_to_bytes(512),
       memory_limits: Memory.mb_to_bytes(1024)
     },
     %{
       name: "large",
-      cpu_requested: 2000,
+      cpu_requested: 4000,
       cpu_limits: 4000,
-      memory_requested: Memory.gb_to_bytes(1),
+      memory_requested: Memory.gb_to_bytes(2),
       memory_limits: Memory.gb_to_bytes(2)
     },
     %{
       name: "huge",
-      cpu_requested: 4000,
+      cpu_requested: 8000,
       cpu_limits: 8000,
-      memory_requested: Memory.gb_to_bytes(16),
+      memory_requested: Memory.gb_to_bytes(24),
       memory_limits: Memory.gb_to_bytes(24)
     }
   ]

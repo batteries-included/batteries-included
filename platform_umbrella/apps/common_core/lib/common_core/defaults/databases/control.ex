@@ -8,7 +8,7 @@ defmodule CommonCore.Defaults.ControlDB do
   @default_pg_cluster %{
     :name => @cluster_name,
     :num_instances => 1,
-    :storage_size => 524_288_000,
+    :virtual_size => "tiny",
     :type => :internal,
     :users => [
       %{username: @username, roles: ["createdb", "login"]}
