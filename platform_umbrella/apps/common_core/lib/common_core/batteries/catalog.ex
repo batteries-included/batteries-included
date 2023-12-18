@@ -69,6 +69,11 @@ defmodule CommonCore.Batteries.Catalog do
       type: :notebooks,
       dependencies: [:istio_gateway]
     },
+    %CatalogBattery{
+      group: :ml,
+      type: :text_generation_webui,
+      dependencies: [:istio_gateway]
+    },
 
     # Monitoring
     %CatalogBattery{

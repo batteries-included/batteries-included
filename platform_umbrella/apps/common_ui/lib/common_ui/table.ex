@@ -41,7 +41,7 @@ defmodule CommonUI.Table do
         <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 font-normal"><%= col[:label] %></th>
-            <th :if={@action != []}>
+            <th :if={@action}>
               <span class="sr-only">Actions</span>
             </th>
           </tr>
@@ -67,7 +67,7 @@ defmodule CommonUI.Table do
                 </span>
               </div>
             </td>
-            <td :if={@action != []} class="w-14 p-0">
+            <td :if={@action} class="w-14 p-0">
               <.flex class="whitespace-nowrap text-sm font-medium justify-around">
                 <div
                   :for={action <- @action}

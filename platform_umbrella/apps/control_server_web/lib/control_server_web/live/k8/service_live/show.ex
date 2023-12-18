@@ -73,7 +73,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
   defp ports_panel(assigns) do
     ~H"""
     <.panel title="Ports">
-      <.table :if={@ports != []} id="ports-table" rows={@ports}>
+      <.table :if={@ports} id="ports-table" rows={@ports}>
         <:col :let={port} label="Name"><%= Map.get(port, "name", "") %></:col>
         <:col :let={port} label="Port"><%= Map.get(port, "port", "") %></:col>
         <:col :let={port} label="Target Port"><%= Map.get(port, "targetPort", "") %></:col>
@@ -88,7 +88,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
   defp endpoint_panel(%{addresses: _} = assigns) do
     ~H"""
     <.panel variant="gray" title="Endpoint" class="lg:col-span-2">
-      <.table :if={@addresses != []} id="endpoint-addresses-table" rows={@addresses}>
+      <.table :if={@addresses} id="endpoint-addresses-table" rows={@addresses}>
         <:col :let={address} label="Address"><%= Map.get(address, "ip", "") %></:col>
         <:col :let={address} label="Node Name"><%= Map.get(address, "nodeName", "") %></:col>
         <:col :let={address} label="Target Kind">
@@ -135,11 +135,11 @@ defmodule ControlServerWeb.ServiceLive.Show do
     ~H"""
     <.panel title="Details">
       <.data_list>
-        <:item :if={@lb_ips != []} title="Load Balancer IPs">
+        <:item :if={@lb_ips} title="Load Balancer IPs">
           <%= Enum.join(@lb_ips, ", ") %>
         </:item>
 
-        <:item :if={@cluster_ips != []} title="Cluster IPs">
+        <:item :if={@cluster_ips} title="Cluster IPs">
           <%= Enum.join(@cluster_ips, ", ") %>
         </:item>
 
@@ -189,7 +189,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
       <.details_panel resource={@resource} />
       <.endpoint_panel :if={@endpoint != nil} endpoint={@endpoint} />
       <.label_panel resource={@resource} class="lg:col-span-2" />
-      <.events_panel :if={@events != []} events={@events} class="lg:col-span-2" />
+      <.events_panel :if={@events} events={@events} class="lg:col-span-2" />
     </.grid>
     """
   end

@@ -38,6 +38,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.Rook
   alias CommonCore.Resources.Smtp4Dev
   alias CommonCore.Resources.SSO
+  alias CommonCore.Resources.TextGenerationWebUI
   alias CommonCore.Resources.TrivyOperator
   alias CommonCore.Resources.TrustManager
   alias CommonCore.Resources.VMAgent
@@ -72,6 +73,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     smtp4dev: [Smtp4Dev],
     sso: [SSO],
     stale_resource_cleaner: [],
+    text_generation_webui: [TextGenerationWebUI],
     timeline: [],
     trivy_operator: [TrivyOperator],
     trust_manager: [TrustManager],

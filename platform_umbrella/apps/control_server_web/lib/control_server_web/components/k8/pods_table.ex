@@ -43,7 +43,7 @@ defmodule ControlServerWeb.PodsTable do
 
   def pods_table(assigns) do
     ~H"""
-    <.table :if={@pods != []} rows={@pods} id="pods_table" row_click={&JS.navigate(show_path(&1))}>
+    <.table rows={@pods || []} id="pods_table" row_click={&JS.navigate(show_path(&1))}>
       <:col :let={pod} label="Name"><%= name(pod) %></:col>
       <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
       <:col :let={pod} label="Status"><%= phase(pod) %></:col>

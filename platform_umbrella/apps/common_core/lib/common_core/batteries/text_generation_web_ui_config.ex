@@ -1,12 +1,12 @@
-defmodule CommonCore.Batteries.GiteaConfig do
+defmodule CommonCore.Batteries.TextGenerationWebUIConfig do
   @moduledoc false
-  use CommonCore.Util.PolymorphicType, type: :gitea
-  use CommonCore.Util.DefaultableField
+  use CommonCore.Util.PolymorphicType, type: :text_generation_webui
   use TypedEctoSchema
+  use CommonCore.Util.DefaultableField
 
   import CommonCore.Util.EctoValidations
   import CommonCore.Util.PolymorphicTypeHelpers
-  import Ecto.Changeset, only: [validate_required: 2]
+  import Ecto.Changeset
 
   alias CommonCore.Defaults
 
@@ -15,9 +15,8 @@ defmodule CommonCore.Batteries.GiteaConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    defaultable_field :image, :string, default: Defaults.Images.gitea_image()
-    defaultable_field :admin_username, :string, default: "battery-gitea-admin"
-    field :admin_password, :string
+    defaultable_field :image, :string, default: Defaults.Images.text_generation_webui_image()
+    field :cookie_secret, :string
     type_field()
   end
 
@@ -26,7 +25,7 @@ defmodule CommonCore.Batteries.GiteaConfig do
     data
     |> changeset(__MODULE__)
     |> validate_required(@required_fields)
-    |> maybe_set_random(:admin_password)
+    |> validate_cookie_secret()
     |> apply_changeset_if_valid()
   end
 end

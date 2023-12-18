@@ -46,7 +46,7 @@
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "istio/pilot:1.19.3-distroless",
+          "pilot_image": "istio/pilot:1.19.5-distroless",
           "namespace_override": null,
           "pilot_image_override": null
         },
@@ -91,8 +91,8 @@
         "type": "metallb",
         "config": {
           "type": "metallb",
-          "speaker_image": "quay.io/metallb/speaker:v0.13.11",
-          "controller_image": "quay.io/metallb/controller:v0.13.11",
+          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
+          "controller_image": "quay.io/metallb/controller:v0.13.12",
           "speaker_image_override": null,
           "controller_image_override": null
         },
@@ -128,7 +128,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "DSOZLQTR6VOYMCURULQW3BLI",
+            "password": "2Y6IWDTK3ENNCIMGFAWY2T4N",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -12039,13 +12039,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "RFNPWkxRVFI2Vk9ZTUNVUlVMUVczQkxJ",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkRTT1pMUVRSNlZPWU1DVVJVTFFXM0JMSUBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "Mlk2SVdEVEszRU5OQ0lNR0ZBV1kyVDRO",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjJZNklXRFRLM0VOTkNJTUdGQVdZMlQ0TkBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "RVV5J57XCALC2SKVJOBQJD7BU3RABMZNRNRV4SI5YOMLGHNDFARA===="
+          "battery/hash": "6CHOXBWZD6YOIFCSU3OZH3C4BAPF5OQLMQV6Y63AMODPLXSAQRSQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -12754,7 +12754,7 @@
         "annotations": {
           "battery.configmap.ref/metallb-excludel2": "GQFPS52YYD4JKDIMONSH5RFGHV5AF3QVTBNT5ESLSZCMZRTMRYSQ====",
           "battery.configmap.ref/metallb-frr-startup": "FPOFVFZE2LKBW73VHS647BF6UVAHS54B2DPPSJPR5LTAQ2T4GKEQ====",
-          "battery/hash": "QYM6M7SX53F6RI2YE4VRDIITVMH65PFEFJJWQTPEIUK7ZYH3LHYQ===="
+          "battery/hash": "FG7KXSKZLFOWTWT5ZPY4URHG2W3UUNTJYIBL7G6FIVHLTRMMZGSA===="
         },
         "labels": {
           "app": "metallb",
@@ -12849,7 +12849,7 @@
                     "value": "frr"
                   }
                 ],
-                "image": "quay.io/metallb/speaker:v0.13.11",
+                "image": "quay.io/metallb/speaker:v0.13.12",
                 "livenessProbe": {
                   "failureThreshold": 3,
                   "httpGet": {
@@ -22818,7 +22818,7 @@
       "metadata": {
         "annotations": {
           "battery.secret.ref/webhook-server-cert": "ZRHOQWWHYV77ZX7CUMCX5BVFB45CS5CXO5AS3HODFQGRMZP4PD6A====",
-          "battery/hash": "N3C3GNKCLKP3SKYLDPK526S3C6RAKAD3GN47LDHUKI7GTAHU3ZJQ===="
+          "battery/hash": "LIJTEE7QJNQU2HS26X27POGNFBGCBOQACATPSP6UK2VLMYDE2LSQ===="
         },
         "labels": {
           "app": "metallb",
@@ -22883,7 +22883,7 @@
                     "value": "frr"
                   }
                 ],
-                "image": "quay.io/metallb/controller:v0.13.11",
+                "image": "quay.io/metallb/controller:v0.13.12",
                 "livenessProbe": {
                   "failureThreshold": 3,
                   "httpGet": {

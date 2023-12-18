@@ -3,9 +3,8 @@ defmodule CommonCore.Postgres.PGUser do
   use TypedEctoSchema
 
   import CommonCore.Postgres
+  import CommonCore.Util.EctoValidations
   import Ecto.Changeset
-
-  alias CommonCore.Defaults.RandomKeyChangeset
 
   @required_fields ~w(username password roles)a
   @optional_fields ~w(credential_namespaces)a
@@ -25,7 +24,7 @@ defmodule CommonCore.Postgres.PGUser do
 
     struct
     |> cast(params, fields)
-    |> RandomKeyChangeset.maybe_set_random(:password, length: 24)
+    |> maybe_set_random(:password, length: 24)
     |> validate_required(@required_fields)
     |> validate_pg_rolelist(:roles)
   end

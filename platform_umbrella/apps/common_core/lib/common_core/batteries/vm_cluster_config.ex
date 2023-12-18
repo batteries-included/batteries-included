@@ -4,11 +4,11 @@ defmodule CommonCore.Batteries.VMClusterConfig do
   use CommonCore.Util.DefaultableField
   use TypedEctoSchema
 
+  import CommonCore.Util.EctoValidations
   import CommonCore.Util.PolymorphicTypeHelpers
   import Ecto.Changeset, only: [validate_number: 3, validate_required: 2]
 
   alias CommonCore.Defaults
-  alias CommonCore.Defaults.RandomKeyChangeset
 
   @required_fields ~w()a
 
@@ -38,7 +38,7 @@ defmodule CommonCore.Batteries.VMClusterConfig do
     |> validate_number(:vmstorage_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vminsert_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vmselect_replicas, greater_than: 0, less_than: 99)
-    |> RandomKeyChangeset.maybe_set_random(:cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1)
+    |> validate_cookie_secret()
     |> apply_changeset_if_valid()
   end
 end

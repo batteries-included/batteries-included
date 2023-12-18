@@ -8,9 +8,8 @@ defmodule ControlServerWeb.StatefulSetsTable do
   def stateful_sets_table(assigns) do
     ~H"""
     <.table
-      :if={@stateful_sets != []}
       id="stateful_sets"
-      rows={@stateful_sets}
+      rows={@stateful_sets || []}
       row_click={&JS.navigate(resource_show_path(&1))}
     >
       <:col :let={stateful_set} label="Name"><%= name(stateful_set) %></:col>

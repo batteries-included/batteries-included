@@ -75,14 +75,14 @@ defmodule CommonUI.Modal do
                 </button>
               </div>
               <div id={"#{@id}-content"}>
-                <header :if={@title != []}>
+                <header :if={@title}>
                   <h1
                     id={"#{@id}-title"}
                     class="text-lg font-semibold leading-8 text-gray-800 dark:text-gray-100"
                   >
                     <%= render_slot(@title) %>
                   </h1>
-                  <p :if={@subtitle != []} id={"#{@id}-description"} class="mt-2 text-sm leading-6">
+                  <p :if={@subtitle} id={"#{@id}-description"} class="mt-2 text-sm leading-6">
                     <%= render_slot(@subtitle) %>
                   </p>
                 </header>

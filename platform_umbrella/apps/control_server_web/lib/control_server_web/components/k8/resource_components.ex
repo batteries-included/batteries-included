@@ -24,7 +24,7 @@ defmodule ControlServerWeb.ResourceComponents do
 
     ~H"""
     <.panel class="py-0 mt-8" title="Containers">
-      <.table id="pod-containers" rows={@container_statuses}>
+      <.table id="container-status-table" rows={@container_statuses}>
         <:col :let={cs} label="Name"><%= Map.get(cs, "name", "") %></:col>
         <:col :let={cs} label="Image"><%= Map.get(cs, "image", "") %></:col>
         <:col :let={cs} label="Started"><.status_icon status={Map.get(cs, "started", false)} /></:col>
@@ -53,7 +53,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def events_panel(assigns) do
     ~H"""
     <.panel variant="gray" title="Events" class={@class}>
-      <.table :if={@events != []} rows={@events}>
+      <.table :if={@events} rows={@events}>
         <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
         <:col :let={event} label="Message">
           <.truncate_tooltip value={event |> get_in(~w(message))} />
@@ -100,7 +100,7 @@ defmodule ControlServerWeb.ResourceComponents do
 
   def logs_modal(assigns) do
     ~H"""
-    <PC.modal :if={@logs != nil} title="Logs" max_width="xl">
+    <PC.modal :if={@logs} title="Logs" max_width="xl">
       <div
         id="scroller"
         style="max-height: 70vh"

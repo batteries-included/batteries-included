@@ -3,7 +3,9 @@
     <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
       <tr>
         <th class="p-0 pb-4 font-normal">Client Id</th><th class="p-0 pb-4 font-normal">Name</th><th class="p-0 pb-4 font-normal">Url</th><th class="p-0 pb-4 font-normal">Enabled</th>
-        
+        <th>
+          <span class="sr-only">Actions</span>
+        </th>
       </tr>
     </thead>
     <tbody id="keycloak-clients-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
@@ -33,7 +35,13 @@
             </span>
           </div>
         </td>
-        
+        <td class="w-14 p-0">
+          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
+  
+            
+          
+</div>
+        </td>
       </tr>
     </tbody>
   </table>

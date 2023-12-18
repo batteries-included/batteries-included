@@ -51,6 +51,21 @@ defmodule CommonCore.Resources.ProxyUtils do
 
   def cookie_secret(_, _), do: nil
 
+  def auth_policy(hosts, battery, state) do
+    %{
+      "action" => "CUSTOM",
+      "provider" => %{"name" => extension_name(battery, state)},
+      "rules" => [%{"to" => [%{"operation" => %{"hosts" => hosts}}]}]
+    }
+  end
+
+  def request_auth(state) do
+    host = CommonCore.StateSummary.Hosts.keycloak_host(state)
+    realm_name = CommonCore.Defaults.Keycloak.realm_name()
+    root = "http://#{host}/realms/#{realm_name}"
+    %{"jwtRules" => [%{"issuer" => root, "jwksUri" => "#{root}/protocol/openid-connect/certs"}]}
+  end
+
   @spec sanitize(String.t()) :: String.t()
   def sanitize(s) do
     s

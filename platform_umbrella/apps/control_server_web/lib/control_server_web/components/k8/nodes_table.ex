@@ -6,7 +6,7 @@ defmodule ControlServerWeb.NodesTable do
 
   def nodes_table(assigns) do
     ~H"""
-    <.table :if={@nodes != []} rows={@nodes} id="nodes_table">
+    <.table rows={@nodes || []} id="nodes_table">
       <:col :let={node} label="Name"><%= name(node) %></:col>
       <:col :let={node} label="CPU"><%= get_in(node, ~w(status capacity cpu)) %></:col>
       <:col :let={node} label="Memory"><%= get_in(node, ~w(status capacity memory)) %></:col>

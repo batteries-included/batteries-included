@@ -67,12 +67,12 @@ defmodule ControlServerWeb.SidebarLayout do
 
             <div class="flex flex-col justify-between h-full">
               <.vertical_menu
-                :if={@main_menu_items != []}
+                :if={@main_menu_items}
                 menu_items={@main_menu_items}
                 current_page={@current_page}
               />
               <.vertical_menu
-                :if={@bottom_menu_items != []}
+                :if={@bottom_menu_items}
                 menu_items={@bottom_menu_items}
                 current_page={@current_page}
               />

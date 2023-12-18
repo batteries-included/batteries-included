@@ -4,11 +4,11 @@ defmodule CommonCore.Batteries.KeycloakConfig do
   use CommonCore.Util.DefaultableField
   use TypedEctoSchema
 
+  import CommonCore.Util.EctoValidations
   import CommonCore.Util.PolymorphicTypeHelpers
   import Ecto.Changeset, only: [validate_required: 2]
 
   alias CommonCore.Defaults
-  alias CommonCore.Defaults.RandomKeyChangeset
 
   @required_fields ~w()a
 
@@ -25,7 +25,7 @@ defmodule CommonCore.Batteries.KeycloakConfig do
   def cast(data) do
     data
     |> changeset(__MODULE__)
-    |> RandomKeyChangeset.maybe_set_random(:admin_password)
+    |> maybe_set_random(:admin_password)
     |> validate_required(@required_fields)
     |> apply_changeset_if_valid()
   end

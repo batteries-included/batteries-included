@@ -97,6 +97,11 @@ defmodule KubeServices.SystemState.SummaryHosts do
     GenServer.call(target, :smtp4dev_host)
   end
 
+  @spec text_generation_webui_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def text_generation_webui_host(target \\ @me) do
+    GenServer.call(target, :text_generation_webui_host)
+  end
+
   @spec keycloak_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
   def keycloak_host(target \\ @me) do
     GenServer.call(target, :keycloak_host)

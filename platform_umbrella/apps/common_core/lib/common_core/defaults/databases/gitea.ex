@@ -5,7 +5,7 @@ defmodule CommonCore.Defaults.GiteaDB do
   @default_pg_cluster %{
     :name => @cluster_name,
     :num_instances => 1,
-    :storage_size => 209_715_200,
+    :virtual_size => "tiny",
     :type => :internal,
     :users => [
       %{

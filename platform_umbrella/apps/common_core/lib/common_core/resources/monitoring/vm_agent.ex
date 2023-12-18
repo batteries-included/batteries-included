@@ -2,13 +2,13 @@ defmodule CommonCore.Resources.VMAgent do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "vm_agent"
 
-  import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.ProxyUtils, as: PU
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
   @vm_agent_port 8429
@@ -44,7 +44,7 @@ defmodule CommonCore.Resources.VMAgent do
     spec =
       [hosts: [vmagent_host(state)]]
       |> VirtualService.new!()
-      |> V.prefix(prefix(battery, state), service_name(battery, state), port(battery, state))
+      |> V.prefix(PU.prefix(battery, state), PU.service_name(battery, state), PU.port(battery, state))
       |> V.fallback("vmagent-main-agent", @vm_agent_port)
 
     :istio_virtual_service
@@ -58,17 +58,9 @@ defmodule CommonCore.Resources.VMAgent do
   resource(:istio_request_auth, _battery, state) do
     namespace = core_namespace(state)
 
-    keycloak_root = "http://#{keycloak_host(state)}"
-    workload_root = "#{keycloak_root}/realms/#{CommonCore.Defaults.Keycloak.realm_name()}"
-
     spec =
-      %{}
-      |> Map.put("jwtRules", [
-        %{
-          "issuer" => workload_root,
-          "jwksUri" => "#{workload_root}/protocol/openid-connect/certs"
-        }
-      ])
+      state
+      |> PU.request_auth()
       |> B.match_labels_selector("app.kubernetes.io/name", @k8s_name)
       |> B.match_labels_selector("app.kubernetes.io/instance", @instance_name)
 
@@ -84,10 +76,10 @@ defmodule CommonCore.Resources.VMAgent do
     namespace = core_namespace(state)
 
     spec =
-      %{}
-      |> Map.put("action", "CUSTOM")
-      |> Map.put("provider", %{"name" => extension_name(battery, state)})
-      |> Map.put("rules", [%{"to" => [%{"operation" => %{"hosts" => [vmagent_host(state)]}}]}])
+      state
+      |> vmagent_host()
+      |> List.wrap()
+      |> PU.auth_policy(battery, state)
       |> B.match_labels_selector("app.kubernetes.io/name", @k8s_name)
       |> B.match_labels_selector("app.kubernetes.io/instance", @instance_name)
 

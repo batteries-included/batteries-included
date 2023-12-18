@@ -46,7 +46,7 @@
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "istio/pilot:1.19.3-distroless",
+          "pilot_image": "istio/pilot:1.19.5-distroless",
           "namespace_override": null,
           "pilot_image_override": null
         },
@@ -92,7 +92,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "AFTE57N7BZSVJSLEMGRMYVAM",
+            "password": "OUYG4LW4ROFD626D6V5F2O7M",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -10774,13 +10774,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "QUZURTU3TjdCWlNWSlNMRU1HUk1ZVkFN",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkFGVEU1N043QlpTVkpTTEVNR1JNWVZBTUBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "T1VZRzRMVzRST0ZENjI2RDZWNUYyTzdN",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOk9VWUc0TFc0Uk9GRDYyNkQ2VjVGMk83TUBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "BJEBVAN6MBXIKFJMUDX5H4DCQAYL6IIPFSSIUSNNIYGDL7DMIX4Q===="
+          "battery/hash": "3MC5C77JB72PCHP577GEG24WTMMZICLVSCGZ6CE4E72V7YBZ32LA===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",

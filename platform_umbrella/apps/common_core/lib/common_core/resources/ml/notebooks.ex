@@ -2,13 +2,13 @@ defmodule CommonCore.Resources.Notebooks do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "jupyter-notebooks"
 
-  import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.OpenApi.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.ProxyUtils, as: PU
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
   @container_port 8888
@@ -32,7 +32,11 @@ defmodule CommonCore.Resources.Notebooks do
       |> Enum.reduce(VirtualService.new!(hosts: [host]), fn nb, vs ->
         V.prefix(vs, base_url(nb), service_name(nb), @container_port)
       end)
-      |> V.prefix(prefix(battery, state), fully_qualified_service_name(battery, state), port(battery, state))
+      |> V.prefix(
+        PU.prefix(battery, state),
+        PU.fully_qualified_service_name(battery, state),
+        PU.port(battery, state)
+      )
 
     :istio_virtual_service
     |> B.build_resource()
@@ -123,17 +127,9 @@ defmodule CommonCore.Resources.Notebooks do
   resource(:istio_request_auth, _battery, state) do
     namespace = ml_namespace(state)
 
-    keycloak_root = "http://#{keycloak_host(state)}"
-    workload_root = "#{keycloak_root}/realms/#{CommonCore.Defaults.Keycloak.realm_name()}"
-
     spec =
-      %{}
-      |> Map.put("jwtRules", [
-        %{
-          "issuer" => workload_root,
-          "jwksUri" => "#{workload_root}/protocol/openid-connect/certs"
-        }
-      ])
+      state
+      |> PU.request_auth()
       |> B.match_labels_selector(@app_name)
 
     :istio_request_auth
@@ -148,10 +144,10 @@ defmodule CommonCore.Resources.Notebooks do
     namespace = ml_namespace(state)
 
     spec =
-      %{}
-      |> Map.put("action", "CUSTOM")
-      |> Map.put("provider", %{"name" => extension_name(battery, state)})
-      |> Map.put("rules", [%{"to" => [%{"operation" => %{"hosts" => [notebooks_host(state)]}}]}])
+      state
+      |> notebooks_host()
+      |> List.wrap()
+      |> PU.auth_policy(battery, state)
       |> B.match_labels_selector(@app_name)
 
     :istio_auth_policy

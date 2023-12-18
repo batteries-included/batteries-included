@@ -8,8 +8,7 @@ defmodule ControlServerWeb.DeploymentsTable do
   def deployments_table(assigns) do
     ~H"""
     <.table
-      :if={@deployments != []}
-      rows={@deployments}
+      rows={@deployments || []}
       row_click={&JS.navigate(resource_show_path(&1))}
       id="deployments_table"
     >
