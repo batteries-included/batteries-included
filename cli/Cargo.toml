@@ -12,7 +12,7 @@ bollard = { version = "0.15.0", features = ["time", "ssl"] }
 dirs = { version = "5.0.1" }
 eyre = { version = "0.6.11" }
 futures = { version = "0.3.29" }
-hyper = { version = "1.0.1" }
+hyper = { version = "1.1.0" }
 ipnet = { version = "2.9.0" }
 k8s-openapi = { version = "0.20.0", features = ["v1_26"] }
 kube-client = { version = "0.87.1", features = ["ws", "oauth", "rustls-tls"] }
