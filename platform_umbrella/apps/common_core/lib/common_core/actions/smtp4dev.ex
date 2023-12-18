@@ -5,7 +5,7 @@ defmodule CommonCore.Actions.Smtp4dev do
 
   @impl ClientConfigurator
   def configure(_battery, _state, client) do
-    opts = [adminUrl: nil, baseUrl: nil, redirectUris: ["/*"], webOrigins: nil]
+    opts = [baseUrl: nil, redirectUris: ["/*"], webOrigins: []]
     {struct!(client, opts), Keyword.keys(opts)}
   end
 end
