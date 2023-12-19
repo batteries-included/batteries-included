@@ -17,6 +17,6 @@ defmodule CommonCore.Resources.SSO do
   end
 
   defp batteries_by_type(batteries) do
-    Enum.reduce(batteries, %{}, fn battery, acc -> Map.merge(acc, %{battery.type => battery}) end)
+    Enum.reduce(batteries, %{}, fn battery, acc -> Map.put(acc, battery.type, battery) end)
   end
 end

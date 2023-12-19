@@ -52,9 +52,10 @@ defmodule KubeServices.ConnectionPool do
     registry = registry_name(pool_name)
     task_sup = task_supervisor_name(pool_name)
 
-    with conn_task <-
-           Task.Supervisor.async(task_sup, fn -> connection_from_name(cluster_name) end),
-         {:ok, connection} <- Task.await(conn_task),
+    conn_task =
+      Task.Supervisor.async(task_sup, fn -> connection_from_name(cluster_name) end)
+
+    with {:ok, connection} <- Task.await(conn_task),
          {:ok, _} <- Registry.register(registry, cluster_name, connection) do
       Logger.debug("Registered new Connection pool #{inspect(connection)}")
       connection

@@ -72,7 +72,7 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
     # Set the snapshot to generating
     with {:ok, up_g_snap} <- KeycloakEctoSteps.update_snap_status(snap, :generation),
          # Create the base actions
-         base_actions <- RootActionGenerator.materialize(summary),
+         base_actions = RootActionGenerator.materialize(summary),
          # Store the json in CAS and use that to create Actions
          {:ok, %{actions: actions}} <- KeycloakEctoSteps.snap_generation(up_g_snap, base_actions) do
       # Return the actions

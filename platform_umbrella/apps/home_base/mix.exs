@@ -41,23 +41,23 @@ defmodule HomeBase.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix_pubsub, "~> 2.1"},
-      {:ecto_sql, "~> 3.9"},
-      {:postgrex, "~> 0.17"},
+      {:common_core, in_umbrella: true},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
+      {:ecto_sql, "~> 3.11"},
       {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
-      {:jason, "~> 1.4"},
-      {:typed_ecto_schema, "~> 0.4"},
-      {:polymorphic_embed, "~> 3.0"},
-
-      # History
       {:ex_audit, "~> 0.10"},
-
-      # Slugs/Naming
-      {:mnemonic_slugs, "~> 0.0.3"},
-
-      # testing
+      {:flop, "~> 0.23"},
+      {:jason, "~> 1.4"},
       {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
+      {:mnemonic_slugs, "~> 0.0.3"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_pubsub, "~> 2.1"},
+      {:polymorphic_embed, "~> 3.0"},
+      {:postgrex, "~> 0.17"},
+      {:timex, "~> 3.7"},
+      {:typed_ecto_schema, "~> 0.4"},
+      {:yaml_elixir, "~> 2.6"},
+      {:ymlr, "~> 5.0"}
     ]
   end
 

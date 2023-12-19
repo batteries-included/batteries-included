@@ -38,44 +38,26 @@ defmodule ControlServer.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:event_center, in_umbrella: true},
       {:common_core, in_umbrella: true},
-      {:phoenix_pubsub, "~> 2.1"},
-      {:jason, "~> 1.4"},
-      {:phoenix, "~> 1.7"},
-      {:phoenix_swoosh, "~> 1.2"},
-
-      # SQL
-      {:phoenix_ecto, "~> 4.4"},
-      {:typed_ecto_schema, "~> 0.4"},
-      {:polymorphic_embed, "~> 3.0"},
-      {:ecto_sql, "~> 3.11"},
-      {:postgrex, "~> 0.17"},
-      {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
-
-      # Filtering
-      {:flop, "~> 0.23"},
-
-      # History
-      {:ex_audit, "~> 0.10"},
-
-      # Kubernetes
-      {:k8s, "~> 2.5"},
-
-      # Yaml
-      {:ymlr, "~> 5.0"},
-      {:yaml_elixir, "~> 2.6"},
-
-      # Time
-      {:timex, "~> 3.7"},
-
-      ## Dev/Test only deps
-
-      # Testing.
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
-      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:floki, "~> 0.35", only: [:dev, :test, :integration]}
+      {:ecto_sql, "~> 3.11"},
+      {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
+      {:event_center, in_umbrella: true},
+      {:ex_audit, "~> 0.10"},
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
+      {:floki, "~> 0.35", only: [:dev, :test, :integration]},
+      {:flop, "~> 0.23"},
+      {:jason, "~> 1.4"},
+      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
+      {:k8s, "~> 2.5"},
+      {:phoenix, "~> 1.7"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_pubsub, "~> 2.1"},
+      {:polymorphic_embed, "~> 3.0"},
+      {:postgrex, "~> 0.17"},
+      {:typed_ecto_schema, "~> 0.4"},
+      {:yaml_elixir, "~> 2.6"},
+      {:ymlr, "~> 5.0"}
     ]
   end
 

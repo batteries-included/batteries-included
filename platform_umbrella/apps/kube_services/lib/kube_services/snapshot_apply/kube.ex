@@ -82,7 +82,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
 
   defp do_generate(%KubeSnapshot{} = snap, %StateSummary{} = summary, _state) do
     with {:ok, up_g_snap} <- KubeEctoSteps.update_snap_status(snap, :generation),
-         resource_map <- RootResourceGenerator.materialize(summary),
+         resource_map = RootResourceGenerator.materialize(summary),
          {:ok, %{resource_paths: {_cnt, resource_paths}}} <-
            KubeEctoSteps.snap_generation(up_g_snap, resource_map) do
       {:ok, {resource_paths, resource_map}}

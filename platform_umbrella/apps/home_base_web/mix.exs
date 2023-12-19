@@ -42,25 +42,25 @@ defmodule HomeBaseWeb.MixProject do
   defp deps do
     [
       {:common_ui, in_umbrella: true},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:floki, "~> 0.35", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},
       {:heroicons, "~> 0.5"},
       {:home_base, in_umbrella: true},
       {:jason, "~> 1.4"},
+      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:petal_components, "~> 1.7"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_dashboard, "~> 0.8"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_view, "~> 0.20", override: true},
+      {:phoenix_live_view, "~> 0.20"},
       {:plug_cowboy, "~> 2.6"},
       {:telemetry_metrics, "~> 0.6"},
-      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:telemetry_poller, "~> 1.0"},
-      {:websock_adapter, "~> 0.5"},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
+      {:websock_adapter, "~> 0.5"}
     ]
   end
 
