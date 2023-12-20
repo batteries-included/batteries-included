@@ -1,5 +1,5 @@
 <div class="pb-6 ">
-  <div class="gap-4 lg:gap-6 flex isolate rounded-lg border-gray-200 dark:bg-gray-800 dark:border-gray-600 border flex-col mx-5 lg:flex-row lg:mx-0" aria-label="Tabs">
+  <div class="gap-4 lg:gap-6 flex isolate rounded-lg border-gray-200 dark:bg-gray-800 dark:border-gray-600 border flex-col lg:flex-row" aria-label="Tabs">
   
     
   <a href="#" class=" group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4" phx-click="test">

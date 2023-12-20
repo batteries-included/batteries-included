@@ -27,8 +27,8 @@ defmodule CommonUI.TabBar do
           "isolate",
           "rounded-lg",
           "border-gray-200 dark:bg-gray-800 dark:border-gray-600 border",
-          "flex-col mx-5",
-          "lg:flex-row lg:mx-0",
+          "flex-col",
+          "lg:flex-row",
           @class
         ]}
         aria-label="Tabs"
