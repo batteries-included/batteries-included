@@ -88,7 +88,7 @@
         skopeo
         wireguard-tools
         ansible
-        awscli2
+        (awscli2.override { python3 = python310; })
       ]
       ++ elixirNativeTools
       ++ rustNativeBuildTools
