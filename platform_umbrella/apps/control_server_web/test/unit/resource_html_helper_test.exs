@@ -5,11 +5,11 @@ defmodule ControlServerWeb.ResouceHTMLHelperTest do
   import ControlServer.ResourceFixtures
   import ControlServerWeb.ResourceHTMLHelper
 
-  test "resource_show_path/2" do
+  test "resource_path/2" do
     resource = resource_fixture()
 
-    assert resource_show_path(resource) ==
-             "/kube/#{resource |> kind() |> String.downcase()}/#{namespace(resource)}/#{name(resource)}"
+    assert resource_path(resource) ==
+             "/kube/#{resource |> kind() |> String.downcase()}/#{namespace(resource)}/#{name(resource)}/show"
   end
 
   describe "to_html_id/1" do

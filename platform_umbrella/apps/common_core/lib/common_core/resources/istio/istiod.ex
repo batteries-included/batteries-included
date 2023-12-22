@@ -282,7 +282,7 @@ defmodule CommonCore.Resources.Istiod do
     |> B.data(data)
   end
 
-  resource(:deployment_main, _battery, state) do
+  resource(:deployment_main, battery, state) do
     namespace = istio_namespace(state)
 
     spec =
@@ -361,7 +361,7 @@ defmodule CommonCore.Resources.Istiod do
                     "valueFrom" => %{"resourceFieldRef" => %{"resource" => "limits.memory"}}
                   }
                 ],
-                "image" => "docker.io/istio/pilot:1.18.2",
+                "image" => battery.config.pilot_image,
                 "name" => "discovery",
                 "ports" => [
                   %{"containerPort" => 8080, "protocol" => "TCP"},

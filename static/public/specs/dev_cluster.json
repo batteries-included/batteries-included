@@ -4,6 +4,7 @@
   },
   "target_summary": {
     "notebooks": [],
+    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -65,7 +66,6 @@
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -92,7 +92,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "6Y6HNGLQZU4KDLBEAMWJYJIS",
+            "password": "FMTLG5JKJJ3RVBQFDKGJTWKD",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -4787,7 +4787,7 @@
       "kind": "Deployment",
       "metadata": {
         "annotations": {
-          "battery/hash": "PIUELUEN5MZ23OGTG4QYJHZY6JMJDQN5IDBIT3G6MAFMRBTIREFQ===="
+          "battery/hash": "54ZTZKEXRENQQSKEF25CUT6QWLUF7ERSASV6W6BXPGUTCFLWJXPA===="
         },
         "labels": {
           "app": "istiod",
@@ -4928,7 +4928,7 @@
                     }
                   }
                 ],
-                "image": "docker.io/istio/pilot:1.18.2",
+                "image": "istio/pilot:1.19.5-distroless",
                 "name": "discovery",
                 "ports": [
                   {
@@ -10774,13 +10774,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "Nlk2SE5HTFFaVTRLRExCRUFNV0pZSklT",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjZZNkhOR0xRWlU0S0RMQkVBTVdKWUpJU0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "Rk1UTEc1SktKSjNSVkJRRkRLR0pUV0tE",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkZNVExHNUpLSkozUlZCUUZES0dKVFdLREBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "DBSROQFL6QOZFAGWNW3PHB4VFHZW2ARS5IOXDTS3NHYJ2VTHCDEQ===="
+          "battery/hash": "MC7HIPJW4K55U6MDJOCLNVJ6OWVEM7TJBDZFTWJXXU4IJ34RVWTQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",

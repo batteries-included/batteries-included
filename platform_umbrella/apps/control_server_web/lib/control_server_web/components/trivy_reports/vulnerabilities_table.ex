@@ -10,8 +10,11 @@ defmodule ControlServerWeb.TrivyReports.VulnerabilitiesTable do
       <:col :let={vuln} label="Severity"><%= get_in(vuln, ~w(severity)) %></:col>
       <:col :let={vuln} label="Title">
         <.a href={get_in(vuln, ~w(primaryLink))}>
-          <%= get_in(vuln, ~w(title)) %>
+          <.truncate_tooltip value={get_in(vuln, ~w(title))} />
         </.a>
+      </:col>
+      <:col :let={vuln} label="Software">
+        <.truncate_tooltip value={get_in(vuln, ~w(resource))} />
       </:col>
       <:col :let={vuln} label="Used"><%= get_in(vuln, ~w(installedVersion)) %></:col>
       <:col :let={vuln} label="Fixed"><%= get_in(vuln, ~w(fixedVersion)) %></:col>

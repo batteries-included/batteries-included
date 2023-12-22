@@ -4,6 +4,7 @@
   },
   "target_summary": {
     "notebooks": [],
+    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -93,15 +94,16 @@
           "type": "metallb",
           "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "controller_image": "quay.io/metallb/controller:v0.13.12",
+          "frrouting_image": "quay.io/frrouting/frr:8.5.4",
           "speaker_image_override": null,
-          "controller_image_override": null
+          "controller_image_override": null,
+          "frrouting_image_override": null
         },
         "group": "net_sec",
         "inserted_at": null,
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -128,7 +130,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "2Y6IWDTK3ENNCIMGFAWY2T4N",
+            "password": "EDXFZBKUXTQXKB2KWE2I3E2A",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -5488,7 +5490,7 @@
       "kind": "Deployment",
       "metadata": {
         "annotations": {
-          "battery/hash": "PIUELUEN5MZ23OGTG4QYJHZY6JMJDQN5IDBIT3G6MAFMRBTIREFQ===="
+          "battery/hash": "54ZTZKEXRENQQSKEF25CUT6QWLUF7ERSASV6W6BXPGUTCFLWJXPA===="
         },
         "labels": {
           "app": "istiod",
@@ -5629,7 +5631,7 @@
                     }
                   }
                 ],
-                "image": "docker.io/istio/pilot:1.18.2",
+                "image": "istio/pilot:1.19.5-distroless",
                 "name": "discovery",
                 "ports": [
                   {
@@ -12039,13 +12041,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "Mlk2SVdEVEszRU5OQ0lNR0ZBV1kyVDRO",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjJZNklXRFRLM0VOTkNJTUdGQVdZMlQ0TkBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "RURYRlpCS1VYVFFYS0IyS1dFMkkzRTJB",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkVEWEZaQktVWFRRWEtCMktXRTJJM0UyQUBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "6CHOXBWZD6YOIFCSU3OZH3C4BAPF5OQLMQV6Y63AMODPLXSAQRSQ===="
+          "battery/hash": "W7UNWWOTKUS25JP5FZBASHB47VEG5MB4J4B4WBEIV5UPZWA7GHGQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -12754,7 +12756,7 @@
         "annotations": {
           "battery.configmap.ref/metallb-excludel2": "GQFPS52YYD4JKDIMONSH5RFGHV5AF3QVTBNT5ESLSZCMZRTMRYSQ====",
           "battery.configmap.ref/metallb-frr-startup": "FPOFVFZE2LKBW73VHS647BF6UVAHS54B2DPPSJPR5LTAQ2T4GKEQ====",
-          "battery/hash": "FG7KXSKZLFOWTWT5ZPY4URHG2W3UUNTJYIBL7G6FIVHLTRMMZGSA===="
+          "battery/hash": "34MFHRIVFRBEXAFVWFOJOE3JZA45NAI5BMY6GYXPZ2L7RD3VYJFQ===="
         },
         "labels": {
           "app": "metallb",
@@ -12924,7 +12926,7 @@
                     "value": "true"
                   }
                 ],
-                "image": "quay.io/frrouting/frr:8.5.2",
+                "image": "quay.io/frrouting/frr:8.5.4",
                 "livenessProbe": {
                   "failureThreshold": 3,
                   "httpGet": {
@@ -12968,7 +12970,7 @@
               },
               {
                 "command": ["/etc/frr_reloader/frr-reloader.sh"],
-                "image": "quay.io/frrouting/frr:8.5.2",
+                "image": "quay.io/frrouting/frr:8.5.4",
                 "name": "reloader",
                 "volumeMounts": [
                   {
@@ -12988,7 +12990,7 @@
               {
                 "args": ["--metrics-port=7473"],
                 "command": ["/etc/frr_metrics/frr-metrics"],
-                "image": "quay.io/frrouting/frr:8.5.2",
+                "image": "quay.io/frrouting/frr:8.5.4",
                 "name": "frr-metrics",
                 "ports": [
                   {
@@ -13016,7 +13018,7 @@
             "initContainers": [
               {
                 "command": ["/bin/sh", "-c", "cp -rLf /tmp/frr/* /etc/frr/"],
-                "image": "quay.io/frrouting/frr:8.5.2",
+                "image": "quay.io/frrouting/frr:8.5.4",
                 "name": "cp-frr-files",
                 "securityContext": {
                   "runAsGroup": 101,
@@ -13039,7 +13041,7 @@
                   "-c",
                   "cp -f /frr-reloader.sh /etc/frr_reloader/"
                 ],
-                "image": "quay.io/metallb/speaker:v0.13.11",
+                "image": "quay.io/metallb/speaker:v0.13.12",
                 "name": "cp-reloader",
                 "volumeMounts": [
                   {
@@ -13054,7 +13056,7 @@
                   "-c",
                   "cp -f /frr-metrics /etc/frr_metrics/"
                 ],
-                "image": "quay.io/metallb/speaker:v0.13.11",
+                "image": "quay.io/metallb/speaker:v0.13.12",
                 "name": "cp-metrics",
                 "volumeMounts": [
                   {

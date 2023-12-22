@@ -3,14 +3,12 @@
     <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
       <tr>
         <th class="p-0 pb-4 font-normal">Name</th><th class="p-0 pb-4 font-normal"></th><th class="p-0 pb-4 font-normal">Type</th><th class="p-0 pb-4 font-normal">Status</th><th class="p-0 pb-4 font-normal">Install</th>
-        <th>
-          <span class="sr-only">Actions</span>
-        </th>
+        
       </tr>
     </thead>
     <tbody id="batteries-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
       <tr class="group ">
-        <td class="p-0 ">
+        <td class="p-0 px-2 ">
           <div class="block py-4">
             <span class="font-semibold text-gray-900 dark:text-gray-100">
               
@@ -18,7 +16,7 @@
   
             </span>
           </div>
-        </td><td class="p-0 ">
+        </td><td class="p-0 px-2 ">
           <div class="block py-4">
             <span class="">
               
@@ -39,7 +37,7 @@
   
             </span>
           </div>
-        </td><td class="p-0 ">
+        </td><td class="p-0 px-2 ">
           <div class="block py-4">
             <span class="">
               
@@ -47,7 +45,7 @@
   
             </span>
           </div>
-        </td><td class="p-0 ">
+        </td><td class="p-0 px-2 ">
           <div class="block py-4">
             <span class="">
               
@@ -55,7 +53,7 @@
   
             </span>
           </div>
-        </td><td class="p-0 ">
+        </td><td class="p-0 px-2 ">
           <div class="block py-4">
             <span class="">
               

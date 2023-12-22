@@ -2,6 +2,8 @@ defmodule ControlServerWeb.TimelineDisplay do
   @moduledoc false
   use ControlServerWeb, :html
 
+  import ControlServerWeb.ResourceHTMLHelper
+
   alias CommonCore.Timeline.BatteryInstall
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase
@@ -47,7 +49,7 @@ defmodule ControlServerWeb.TimelineDisplay do
       The Control Server detected a new <%= human_name(@payload.type) %> resouce named <%= @payload.name %> added in
       the <%= @payload.namespace %> namespace. <br />
       If that resource has not since been removed you can find a status page
-      <.a navigate={kube_link(@payload)} variant="styled">here</.a>
+      <.a navigate={resource_path(@payload)} variant="styled">here</.a>
     </.timeline_item>
     """
   end
@@ -60,7 +62,7 @@ defmodule ControlServerWeb.TimelineDisplay do
       title="Kubernetes Resource Ready"
     >
       A <%= human_name(@payload.type) %> named
-      <.a navigate={kube_link(@payload)} variant="styled"><%= @payload.name %></.a>
+      <.a navigate={resource_path(@payload)} variant="styled"><%= @payload.name %></.a>
       in the <%= @payload.namespace %> namespace became Ready.
     </.timeline_item>
     """
@@ -126,9 +128,5 @@ defmodule ControlServerWeb.TimelineDisplay do
     var
     |> String.split()
     |> Enum.map_join(" ", &String.capitalize/1)
-  end
-
-  defp kube_link(%Kube{} = kube) do
-    ControlServerWeb.ResourceHTMLHelper.show_path(kube.type, kube.namespace, kube.name)
   end
 end

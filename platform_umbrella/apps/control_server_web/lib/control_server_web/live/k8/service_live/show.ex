@@ -135,7 +135,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
     ~H"""
     <.panel title="Details">
       <.data_list>
-        <:item :if={@lb_ips} title="Load Balancer IPs">
+        <:item :if={@lb_ips && @lb_ips != []} title="Load Balancer IPs">
           <%= Enum.join(@lb_ips, ", ") %>
         </:item>
 

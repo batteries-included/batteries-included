@@ -25,25 +25,11 @@ defmodule ControlServerWeb.PodsTable do
     end
   end
 
-  defp show_path(nil), do: nil
-
-  defp show_path(pod) do
-    namespace = namespace(pod)
-    name = name(pod)
-    ~p"/kube/pod/#{namespace}/#{name}"
-  end
-
-  defp log_path(pod) do
-    namespace = namespace(pod)
-    name = name(pod)
-    ~p"/kube/pod/#{namespace}/#{name}?log=true"
-  end
-
   attr :pods, :list, required: true
 
   def pods_table(assigns) do
     ~H"""
-    <.table rows={@pods || []} id="pods_table" row_click={&JS.navigate(show_path(&1))}>
+    <.table rows={@pods || []} id="pods_table" row_click={&JS.navigate(resource_path(&1))}>
       <:col :let={pod} label="Name"><%= name(pod) %></:col>
       <:col :let={pod} label="Namespace"><%= namespace(pod) %></:col>
       <:col :let={pod} label="Status"><%= phase(pod) %></:col>
@@ -53,13 +39,13 @@ defmodule ControlServerWeb.PodsTable do
       <:action :let={pod}>
         <.flex>
           <.action_icon
-            to={show_path(pod)}
+            to={resource_path(pod)}
             icon={:eye}
             tooltip="Show Pod"
             id={"show_pod_" <> to_html_id(pod)}
           />
           <.action_icon
-            to={log_path(pod)}
+            to={resource_path(pod, :logs)}
             icon={:document_text}
             tooltip="Logs"
             id={"logs_for_" <> to_html_id(pod)}

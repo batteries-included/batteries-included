@@ -3,7 +3,7 @@
     <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
       <tr>
         <th class="p-0 pb-4 font-normal">ID</th><th class="p-0 pb-4 font-normal">Started</th><th class="p-0 pb-4 font-normal">Kube Status</th><th class="p-0 pb-4 font-normal">Keycloak Status</th>
-        <th>
+        <th class="p-0 pb-4">
           <span class="sr-only">Actions</span>
         </th>
       </tr>

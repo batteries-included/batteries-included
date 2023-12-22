@@ -24,7 +24,7 @@ defmodule ControlServerWeb.Live.ServiceLiveTest do
     setup [:create_service]
 
     test "displays service", %{conn: conn, service: service} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/service/#{namespace(service)}/#{name(service)}")
+      {:ok, _show_live, html} = live(conn, ~p"/kube/service/#{namespace(service)}/#{name(service)}/show")
 
       assert html =~ name(service)
 

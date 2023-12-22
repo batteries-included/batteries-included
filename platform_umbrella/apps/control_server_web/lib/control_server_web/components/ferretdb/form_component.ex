@@ -29,7 +29,7 @@ defmodule ControlServerWeb.FerretDBFormComponent do
         </.page_header>
         <.panel>
           <.grid columns={[sm: 1, md: 2]}>
-            <PC.field field={@form[:name]} label="Name" disabled={dbg(@action) == :edit} />
+            <PC.field field={@form[:name]} label="Name" disabled={@action == :edit} />
             <PC.field
               field={@form[:postgres_cluster_id]}
               label="Postgres Cluster"

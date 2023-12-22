@@ -37,7 +37,9 @@ defmodule ControlServerWeb.ResourcePathsTable do
       <:col :let={rp} label="Path"><%= rp.path %></:col>
       <:col :let={rp} label="Successful"><.status_icon is_success={rp.is_success} /></:col>
       <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
-      <:col :let={rp} label="Hash"><%= rp.hash %></:col>
+      <:col :let={rp} label="Hash">
+        <.truncate_tooltip value={rp.hash} length={16} />
+      </:col>
       <:col :let={rp} label="Updated">
         <.relative_display time={rp.updated_at} />
       </:col>

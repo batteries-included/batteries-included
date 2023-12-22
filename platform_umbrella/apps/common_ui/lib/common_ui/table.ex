@@ -41,7 +41,7 @@ defmodule CommonUI.Table do
         <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 font-normal"><%= col[:label] %></th>
-            <th :if={@action}>
+            <th :if={@action && @action != []} class="p-0 pb-4">
               <span class="sr-only">Actions</span>
             </th>
           </tr>
@@ -59,7 +59,7 @@ defmodule CommonUI.Table do
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
-              class={["p-0", @row_click && "hover:cursor-pointer"]}
+              class={["p-0 px-2", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4">
                 <span class={[i == 0 && "font-semibold text-gray-900 dark:text-gray-100"]}>

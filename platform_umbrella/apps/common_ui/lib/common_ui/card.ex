@@ -32,7 +32,6 @@ defmodule CommonUI.Card do
   attr :title, :string, default: nil
   attr :class, :string, default: nil
   attr :variant, :string, default: "simple", values: ["simple", "gray"]
-  attr :no_body_padding, :boolean, default: false
   attr :rest, :global, include: ~w(id)
 
   slot :inner_block
@@ -46,7 +45,7 @@ defmodule CommonUI.Card do
     <div class={[get_classes(@variant), @class]} {@rest}>
       <.flex
         :if={@title != nil && @title != ""}
-        class="items-center justify-between w-full p-6 text-center flex-col lg:flex-row"
+        class="items-center justify-between w-full p-4 text-center flex-col lg:flex-row"
       >
         <.h3 :if={@title}><%= @title %></.h3>
 
@@ -55,18 +54,14 @@ defmodule CommonUI.Card do
         <% end %>
       </.flex>
 
-      <div class={panel_body_class(@no_body_padding, @title)}>
+      <div class="p-4">
         <%= render_slot(@inner_block) %>
       </div>
     </div>
     """
   end
 
-  defp get_classes("simple"), do: "bg-white border border-gray-200 rounded-lg dark:bg-gray-900 dark:border-gray-600"
+  defp get_classes("simple"), do: "bg-white border border-gray-200 rounded-lg dark:bg-gray-900/70 dark:border-gray-600"
 
-  defp get_classes("gray"), do: "bg-gray-50 rounded-lg dark:bg-gray-800"
-
-  defp panel_body_class(true, _title), do: "overflow-x-auto"
-  defp panel_body_class(false, nil), do: "p-6 overflow-x-auto"
-  defp panel_body_class(false, _title), do: "px-6 pb-6 overflow-x-auto"
+  defp get_classes("gray"), do: "bg-gray-50 rounded-lg dark:bg-gray-700/50"
 end

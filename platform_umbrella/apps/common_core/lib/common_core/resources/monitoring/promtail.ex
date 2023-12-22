@@ -43,7 +43,7 @@ defmodule CommonCore.Resources.Promtail do
     |> B.namespace(namespace)
   end
 
-  resource(:daemon_set_main, _battery, state) do
+  resource(:daemon_set_main, battery, state) do
     namespace = core_namespace(state)
 
     template = %{
@@ -63,7 +63,7 @@ defmodule CommonCore.Resources.Promtail do
                 "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}
               }
             ],
-            "image" => "docker.io/grafana/promtail:2.7.0",
+            "image" => battery.config.image,
             "imagePullPolicy" => "IfNotPresent",
             "name" => "promtail",
             "ports" => [

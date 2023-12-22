@@ -77,10 +77,16 @@ defmodule ControlServerWeb.Router do
     live "/services", Live.ResourceList, :service
 
     live "/raw/:resource_type/:namespace/:name", Live.RawResource, :index
-    live "/pod/:namespace/:name", PodLive.Show
-    live "/deployment/:namespace/:name", DeploymentLive.Show
-    live "/stateful_set/:namespace/:name", StatefulSetLive.Show
-    live "/service/:namespace/:name", ServiceLive.Show
+
+    live "/pod/:namespace/:name/events", PodLive.Show, :events
+    live "/pod/:namespace/:name/labels", PodLive.Show, :labels
+    live "/pod/:namespace/:name/security", PodLive.Show, :security
+    live "/pod/:namespace/:name/logs", PodLive.Show, :logs
+    live "/pod/:namespace/:name/show", PodLive.Show, :index
+
+    live "/deployment/:namespace/:name/show", DeploymentLive.Show
+    live "/stateful_set/:namespace/:name/show", StatefulSetLive.Show
+    live "/service/:namespace/:name/show", ServiceLive.Show
   end
 
   scope "/redis", ControlServerWeb do

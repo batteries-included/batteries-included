@@ -21,14 +21,16 @@ defmodule CommonUI.DataList do
 
   def data_list(assigns) do
     ~H"""
-    <dl class="-my-4">
-      <.flex :for={item <- @item} class="py-4">
-        <dt class="basis-1/3 font-mono text-xl leading-6">
+    <.grid columns={12}>
+      <%= for item <- @item || [] do %>
+        <div class="text-xl leading-6 col-span-5">
           <%= item.title %>
-        </dt>
-        <dd class="grow bais-2/3 text-base leading-6"><%= render_slot(item) %></dd>
-      </.flex>
-    </dl>
+        </div>
+        <div class="text-base leading-6 col-span-7">
+          <%= render_slot(item) %>
+        </div>
+      <% end %>
+    </.grid>
     """
   end
 
@@ -88,7 +90,7 @@ defmodule CommonUI.DataList do
       "py-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700",
       @class
     ]}>
-      <.flex class="text-sm font-light divide-x divide-gray-300 dark:divide-gray-700 justify-between">
+      <.flex class="text-sm font-light divide-x divide-gray-300 dark:divide-gray-700 justify-between items-center">
         <.flex :for={item <- @item} class="px-3">
           <span class="tracking-tighter text-gray-500 dark:text-gray-400"><%= item.title %>:</span>
           <span class="tracking-tighter text-black dark:text-white">
@@ -107,15 +109,15 @@ defmodule CommonUI.DataList do
   def data_horizontal_plain(assigns) do
     ~H"""
     <div>
-      <div
+      <span
         :for={{key, value} <- @data}
         class={[
-          "text-sm mx-4 px-1 font-light uppercase inline-flex text-gray-950 dark:text-white",
+          "text-sm mr-4 font-light uppercase text-gray-950 dark:text-white",
           @class
         ]}
       >
         <%= "#{key}=#{value}" %>
-      </div>
+      </span>
     </div>
     """
   end

@@ -225,7 +225,7 @@ defmodule CommonCore.Resources.MetalLB do
                   "/sbin/tini -- /usr/lib/frr/docker-start &\nattempts=0\nuntil [[ -f /etc/frr/frr.log || $attempts -eq 60 ]]; do\n  sleep 1\n  attempts=$(( $attempts + 1 ))\ndone\ntail -f /etc/frr/frr.log\n"
                 ],
                 "env" => [%{"name" => "TINI_SUBREAPER", "value" => "true"}],
-                "image" => "quay.io/frrouting/frr:8.5.2",
+                "image" => battery.config.frrouting_image,
                 "livenessProbe" => %{
                   "failureThreshold" => 3,
                   "httpGet" => %{"path" => "/livez", "port" => 7473},
@@ -250,7 +250,7 @@ defmodule CommonCore.Resources.MetalLB do
               },
               %{
                 "command" => ["/etc/frr_reloader/frr-reloader.sh"],
-                "image" => "quay.io/frrouting/frr:8.5.2",
+                "image" => battery.config.frrouting_image,
                 "name" => "reloader",
                 "volumeMounts" => [
                   %{"mountPath" => "/var/run/frr", "name" => "frr-sockets"},
@@ -261,7 +261,7 @@ defmodule CommonCore.Resources.MetalLB do
               %{
                 "args" => ["--metrics-port=7473"],
                 "command" => ["/etc/frr_metrics/frr-metrics"],
-                "image" => "quay.io/frrouting/frr:8.5.2",
+                "image" => battery.config.frrouting_image,
                 "name" => "frr-metrics",
                 "ports" => [%{"containerPort" => 7473, "name" => "monitoring"}],
                 "volumeMounts" => [
@@ -275,7 +275,7 @@ defmodule CommonCore.Resources.MetalLB do
             "initContainers" => [
               %{
                 "command" => ["/bin/sh", "-c", "cp -rLf /tmp/frr/* /etc/frr/"],
-                "image" => "quay.io/frrouting/frr:8.5.2",
+                "image" => battery.config.frrouting_image,
                 "name" => "cp-frr-files",
                 "securityContext" => %{"runAsGroup" => 101, "runAsUser" => 100},
                 "volumeMounts" => [
@@ -285,13 +285,13 @@ defmodule CommonCore.Resources.MetalLB do
               },
               %{
                 "command" => ["/bin/sh", "-c", "cp -f /frr-reloader.sh /etc/frr_reloader/"],
-                "image" => "quay.io/metallb/speaker:v0.13.11",
+                "image" => battery.config.speaker_image,
                 "name" => "cp-reloader",
                 "volumeMounts" => [%{"mountPath" => "/etc/frr_reloader", "name" => "reloader"}]
               },
               %{
                 "command" => ["/bin/sh", "-c", "cp -f /frr-metrics /etc/frr_metrics/"],
-                "image" => "quay.io/metallb/speaker:v0.13.11",
+                "image" => battery.config.speaker_image,
                 "name" => "cp-metrics",
                 "volumeMounts" => [%{"mountPath" => "/etc/frr_metrics", "name" => "metrics"}]
               }

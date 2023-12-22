@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.StatefulSetLiveTest do
 
     test "displays stateful_set", %{conn: conn, stateful_set: stateful_set} do
       {:ok, _show_live, html} =
-        live(conn, ~p"/kube/stateful_set/#{namespace(stateful_set)}/#{name(stateful_set)}")
+        live(conn, ~p"/kube/stateful_set/#{namespace(stateful_set)}/#{name(stateful_set)}/show")
 
       assert html =~ name(stateful_set)
 

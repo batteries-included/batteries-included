@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.DeployementLiveTest do
 
     test "displays deployment", %{conn: conn, deployment: deployment} do
       {:ok, _show_live, html} =
-        live(conn, ~p"/kube/deployment/#{namespace(deployment)}/#{name(deployment)}")
+        live(conn, "/kube/deployment/#{namespace(deployment)}/#{name(deployment)}/show")
 
       assert html =~ name(deployment)
 

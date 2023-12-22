@@ -4,7 +4,6 @@ defmodule ControlServerWeb.ResourceComponents do
 
   import CommonCore.Resources.FieldAccessors
   import CommonUI.DatetimeDisplay
-  import ControlServerWeb.ResourceHTMLHelper
 
   attr :class, :string, default: ""
   attr :resource, :any, required: true
@@ -17,43 +16,13 @@ defmodule ControlServerWeb.ResourceComponents do
     """
   end
 
-  attr :resource, :map, required: true
-
-  def pod_containers_section(assigns) do
-    assigns = assign(assigns, :container_statuses, container_statuses(assigns.resource))
-
-    ~H"""
-    <.panel class="py-0 mt-8" title="Containers">
-      <.table id="container-status-table" rows={@container_statuses}>
-        <:col :let={cs} label="Name"><%= Map.get(cs, "name", "") %></:col>
-        <:col :let={cs} label="Image"><%= Map.get(cs, "image", "") %></:col>
-        <:col :let={cs} label="Started"><.status_icon status={Map.get(cs, "started", false)} /></:col>
-        <:col :let={cs} label="Ready"><.status_icon status={Map.get(cs, "ready", false)} /></:col>
-        <:col :let={cs} label="Restart Count">
-          <%= Map.get(cs, "restartCount", 0) %>
-        </:col>
-        <:action :let={cs}>
-          <.action_icon
-            to={
-              resource_show_path(@resource, %{"log" => true, "container" => Map.get(cs, "name", "")})
-            }
-            icon={:document_text}
-            tooltip="Logs"
-            id={"show_resource_" <> to_html_id(@resource)}
-          />
-        </:action>
-      </.table>
-    </.panel>
-    """
-  end
-
   attr :class, :string, default: ""
   attr :events, :any, required: true
 
   def events_panel(assigns) do
     ~H"""
     <.panel variant="gray" title="Events" class={@class}>
-      <.table :if={@events} rows={@events}>
+      <.table :if={@events && @events != []} rows={@events}>
         <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
         <:col :let={event} label="Message">
           <.truncate_tooltip value={event |> get_in(~w(message))} />

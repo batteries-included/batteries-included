@@ -192,7 +192,6 @@ defmodule ControlServerWeb.Live.GroupBatteries do
 
   def install_summary(assigns) do
     ~H"""
-    <.h3 class="text-right">Summary</.h3>
     <.data_list>
       <:item title="Installed Battery Count">
         <%= map_size(@install_result.installed) %>

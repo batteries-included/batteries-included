@@ -7,6 +7,7 @@ defmodule CommonCore.Resources.FieldAccessors do
   defdelegate namespace(resource), to: K8s.Resource
   defdelegate kind(resource), to: K8s.Resource
   defdelegate labels(resource), to: K8s.Resource
+  defdelegate annotations(resource), to: K8s.Resource
 
   def uid(resource) do
     get_in(resource, ~w(metadata uid))
@@ -48,5 +49,21 @@ defmodule CommonCore.Resources.FieldAccessors do
     container_statuses = get_in(resource, ["status", "containerStatuses"]) || []
     init_container_statuses = get_in(resource, ["status", "initContainerStatuses"]) || []
     Enum.concat(init_container_statuses, container_statuses)
+  end
+
+  def pod_ip(resource) do
+    get_in(resource, ~w(status podIP))
+  end
+
+  def node_name(resource) do
+    get_in(resource, ~w(spec nodeName))
+  end
+
+  def qos_class(resource) do
+    get_in(resource, ~w(status qosClass))
+  end
+
+  def service_account(resource) do
+    get_in(resource, ~w(spec serviceAccount))
   end
 end

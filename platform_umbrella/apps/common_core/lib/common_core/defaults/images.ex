@@ -38,6 +38,8 @@ defmodule CommonCore.Defaults.Images do
   def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.12"
   def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.12"
 
+  def frrouting_frr_image, do: "quay.io/frrouting/frr:8.5.4"
+
   def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.16.0"
 
   def vm_cluster_tag, do: "v1.93.9-cluster"

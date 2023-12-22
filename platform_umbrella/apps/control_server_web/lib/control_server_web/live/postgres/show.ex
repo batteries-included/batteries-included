@@ -9,6 +9,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
 
+  alias CommonCore.Util.Memory
   alias ControlServer.Postgres
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -123,6 +124,36 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp users_url(cluster), do: ~p"/postgres/#{cluster}/users"
   defp services_url(cluster), do: ~p"/postgres/#{cluster}/services"
 
+  defp links_panel(assigns) do
+    ~H"""
+    <.flex class="flex-col justify-start">
+      <.bordered_menu_item navigate={users_url(@cluster)} title="Users" />
+      <.bordered_menu_item navigate={services_url(@cluster)} title="Services" />
+    </.flex>
+    """
+  end
+
+  defp info_panel(assigns) do
+    ~H"""
+    <.panel title="Details" variant="gray">
+      <.data_list>
+        <:item title="Running Status">
+          <%= phase(@k8_cluster) %>
+        </:item>
+        <:item title="Instances">
+          <%= @cluster.num_instances %>
+        </:item>
+        <:item title="Storage Size">
+          <%= @cluster.storage_size |> Memory.format_bytes(true) %>
+        </:item>
+        <:item :if={@cluster.memory_limits} title="Memory limits">
+          <%= @cluster.memory_limits |> Memory.format_bytes(true) %>
+        </:item>
+      </.data_list>
+    </.panel>
+    """
+  end
+
   defp main_page(assigns) do
     ~H"""
     <.page_header
@@ -135,7 +166,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
             <:item title="Status">
               <%= phase(@k8_cluster) %>
             </:item>
-            <:item title="Instances"><%= @cluster.num_instances %></:item>
             <:item title="Started">
               <.relative_display time={get_in(@k8_cluster, ~w(metadata creationTimestamp))} />
             </:item>
@@ -155,17 +185,14 @@ defmodule ControlServerWeb.Live.PostgresShow do
         </.flex>
       </:menu>
     </.page_header>
-    <.pills_menu>
-      <:item title="Database Users" patch={users_url(@cluster)}>
-        <%= length(@cluster.users || []) %>
-      </:item>
-      <:item title="Network Services" patch={services_url(@cluster)}>
-        <%= length(@k8_services || []) %>
-      </:item>
-    </.pills_menu>
-    <.panel title="Pods">
-      <.pods_table pods={@k8_pods} />
-    </.panel>
+
+    <.grid columns={%{sm: 1, lg: 2}}>
+      <.info_panel cluster={@cluster} k8_cluster={@k8_cluster} />
+      <.links_panel cluster={@cluster} />
+      <.panel title="Pods" class="col-span-2">
+        <.pods_table pods={@k8_pods} />
+      </.panel>
+    </.grid>
     """
   end
 
@@ -189,7 +216,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       <.panel title="Users">
         <.pg_users_table users={@cluster.users} cluster={@cluster} />
       </.panel>
-      <.panel title="Sync Status">
+      <.panel title="Sync Status" variant="gray">
         <.sync_status_table status={get_in(@k8_cluster, ~w(status managedRolesStatus))} />
       </.panel>
     </.flex>

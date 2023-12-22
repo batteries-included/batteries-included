@@ -24,7 +24,7 @@ defmodule ControlServerWeb.Live.PodLiveTest do
     setup [:create_pod]
 
     test "displays pod", %{conn: conn, pod: pod} do
-      {:ok, _show_live, html} = live(conn, ~p"/kube/pod/#{namespace(pod)}/#{name(pod)}")
+      {:ok, _show_live, html} = live(conn, ~p"/kube/pod/#{namespace(pod)}/#{name(pod)}/show")
       assert html =~ name(pod)
 
       conditions = conditions(pod)
