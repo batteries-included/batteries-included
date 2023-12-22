@@ -182,7 +182,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   defp secret_data(state, cluster, user) do
     hostname = PostgresState.read_write_hostname(state, cluster)
-    dsn = "postgresql://#{user.username}:#{user.password}@#{hostname}"
+    dsn = "postgresql://#{user.username}:#{user.password}@#{hostname}/#{cluster.database.name}"
     %{dsn: dsn, username: user.username, password: user.password, hostname: hostname}
   end
 
