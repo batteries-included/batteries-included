@@ -28,7 +28,7 @@
     "@types/phoenix_live_view": "^0.18.4",
     "autoprefixer": "^10.4.16",
     "cssnano": "^6.0.2",
-    "daisyui": "4.4.23",
+    "daisyui": "4.4.24",
     "postcss": "^8.4.32",
     "postcss-import": "^15.1.0",
     "postcss-url": "^10.1.3",
