@@ -12,6 +12,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   alias CommonCore.Knative.Service
   alias ControlServer.Knative
   alias Ecto.Changeset
+  alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -19,6 +20,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      socket
      |> assign_new(:save_info, fn -> "service:save" end)
      |> assign_new(:save_target, fn -> nil end)
+     |> assign_new(:sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
      |> assign_container(nil)
      |> assign_env_value(nil)}
   end
@@ -240,6 +242,12 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     <.panel title="Advanced Settings" variant="gray">
       <.flex class="flex-col">
         <PC.field field={@form[:rollout_duration]} />
+        <PC.field
+          :if={@sso_enabled}
+          field={@form[:oauth2_proxy]}
+          type="switch"
+          label="Protect with OAuth2 Proxy"
+        />
       </.flex>
     </.panel>
     """
@@ -286,7 +294,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             init_containers={@init_containers}
             containers={@containers}
           />
-          <.advanced_setting_panel form={@form} />
+          <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} />
           <.env_var_panel env_values={@env_values} editable target={@myself} />
           <!-- Hidden inputs for embeds -->
           <.containers_hidden_form field={@form[:containers]} />

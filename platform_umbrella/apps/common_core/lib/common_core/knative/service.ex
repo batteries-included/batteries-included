@@ -6,7 +6,7 @@ defmodule CommonCore.Knative.Service do
   import Ecto.Changeset
 
   @required_fields ~w(name)a
-  @optional_fields ~w(rollout_duration)a
+  @optional_fields ~w(rollout_duration oauth2_proxy)a
 
   @timestamps_opts [type: :utc_datetime_usec]
   @derive {Jason.Encoder, except: [:__meta__]}
@@ -15,6 +15,7 @@ defmodule CommonCore.Knative.Service do
   typed_schema "knative_services" do
     field :name, :string, null: false
     field :rollout_duration, :string, default: "10m"
+    field :oauth2_proxy, :boolean, default: false
 
     embeds_many(:containers, CommonCore.Knative.Container, on_replace: :delete)
     embeds_many(:init_containers, CommonCore.Knative.Container, on_replace: :delete)

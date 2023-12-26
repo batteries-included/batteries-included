@@ -56,6 +56,20 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     {:reply, [], state}
   end
 
+  @impl GenServer
+  def handle_call({:battery_installed, battery_type}, _from, %{summary: %StateSummary{batteries: batteries}} = state) do
+    {:reply, Enum.any?(batteries, fn b -> b.type == battery_type end), state}
+  end
+
+  @impl GenServer
+  def handle_call({:battery_installed, _battery_type}, _from, state) do
+    {:reply, false, state}
+  end
+
+  def battery_installed(target \\ @me, battery_type) do
+    GenServer.call(target, {:battery_installed, battery_type})
+  end
+
   def installed_batteries(target \\ @me) do
     GenServer.call(target, :installed_batteries)
   end

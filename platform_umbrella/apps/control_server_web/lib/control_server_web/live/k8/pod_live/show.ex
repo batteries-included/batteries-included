@@ -28,7 +28,7 @@ defmodule ControlServerWeb.PodLive.Show do
      )
      |> assign_logs_pid(nil)
      |> assign_logs(nil)
-     |> assign_security_enabled()
+     |> assign_sso_enabled()
      |> assign_resource()}
   end
 
@@ -84,10 +84,8 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp assign_events(socket), do: socket
 
-  defp assign_security_enabled(socket) do
-    assign(socket,
-      security_enabled: Enum.any?(SummaryBatteries.installed_batteries(), fn bat -> bat.type == :trivy_operator end)
-    )
+  defp assign_sso_enabled(socket) do
+    assign(socket, sso_enabled: SummaryBatteries.battery_installed(:trivy_operator))
   end
 
   defp assign_vulnerabilities(%{assigns: %{resource: resource}} = socket) do
@@ -240,7 +238,7 @@ defmodule ControlServerWeb.PodLive.Show do
       <.bordered_menu_item navigate={resource_path(@resource, :events)} title="Events" />
       <.bordered_menu_item navigate={resource_path(@resource, :labels)} title="Labels/Annotations" />
       <.bordered_menu_item
-        :if={@security_enabled}
+        :if={@sso_enabled}
         navigate={resource_path(@resource, :security)}
         title="Security Report"
       />
@@ -259,7 +257,7 @@ defmodule ControlServerWeb.PodLive.Show do
     <.flex class="flex-col">
       <.grid columns={[sm: 1, lg: 2]}>
         <.details_panel resource={@resource} />
-        <.link_panel resource={@resource} security_enabled={@security_enabled} />
+        <.link_panel resource={@resource} sso_enabled={@sso_enabled} />
       </.grid>
       <.pod_containers_section resource={@resource} />
       <.conditions_display conditions={conditions(@resource)} />
@@ -391,14 +389,14 @@ defmodule ControlServerWeb.PodLive.Show do
           resource={@resource}
           namespace={@namespace}
           name={@name}
-          security_enabled={@security_enabled}
+          sso_enabled={@sso_enabled}
         />
       <% :logs -> %>
         <.main_page
           resource={@resource}
           namespace={@namespace}
           name={@name}
-          security_enabled={@security_enabled}
+          sso_enabled={@sso_enabled}
         />
         <.logs_modal resource={@resource} logs={@logs} />
       <% :events -> %>

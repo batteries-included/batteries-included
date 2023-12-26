@@ -6,6 +6,7 @@ defmodule ControlServer.Repo.Migrations.CreateServices do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :rollout_duration, :string
+      add :oauth2_proxy, :boolean
 
       add :containers, :map
       add :init_containers, :map
