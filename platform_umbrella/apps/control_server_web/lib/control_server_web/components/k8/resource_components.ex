@@ -67,6 +67,7 @@ defmodule ControlServerWeb.ResourceComponents do
   attr :resource, :map
   attr :logs, :list
 
+  @spec logs_modal(map()) :: Phoenix.LiveView.Rendered.t()
   def logs_modal(assigns) do
     ~H"""
     <PC.modal :if={@logs} title="Logs" max_width="xl">

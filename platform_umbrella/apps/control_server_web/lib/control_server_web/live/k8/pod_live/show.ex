@@ -261,7 +261,6 @@ defmodule ControlServerWeb.PodLive.Show do
       </.grid>
       <.pod_containers_section resource={@resource} />
       <.conditions_display conditions={conditions(@resource)} />
-      <.label_panel resource={@resource} />
     </.flex>
     """
   end
@@ -306,7 +305,7 @@ defmodule ControlServerWeb.PodLive.Show do
             We have to truncate a lot here since
             annotations can be huge and we don't want to inflate page size
             --%>
-            <.truncate_tooltip value={truncate(value, length: 300)} />
+            <.truncate_tooltip value={truncate(value, length: 256)} />
           </:item>
         </.data_list>
       </.panel>
