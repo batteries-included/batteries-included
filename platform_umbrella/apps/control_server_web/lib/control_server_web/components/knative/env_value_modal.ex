@@ -96,7 +96,7 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
 
   defp resource_inputs(assigns) do
     ~H"""
-    <.flex class="col-span-2 flex-col">
+    <.flex column class="col-span-2">
       <PC.field
         label={@label}
         field={@form[:source_name]}
@@ -121,7 +121,7 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
           phx-submit="save_env_value"
           phx-target={@myself}
         >
-          <.flex class="flex-col" gaps="2">
+          <.flex column gaps="2">
             <PC.field
               field={@form[:name]}
               autofocus

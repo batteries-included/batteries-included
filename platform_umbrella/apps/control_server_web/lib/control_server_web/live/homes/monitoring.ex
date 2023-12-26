@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Live.MonitoringHome do
       </:menu>
     </.page_header>
 
-    <.flex :if={@batteries && @batteries != []} class="flex-col items-stretch justify-start">
+    <.flex :if={@batteries && @batteries != []} column class="items-stretch justify-start">
       <.battery_link_panel :for={battery <- @batteries} battery={battery} />
     </.flex>
     <.empty_home :if={@batteries == []} install_path={install_path()} />

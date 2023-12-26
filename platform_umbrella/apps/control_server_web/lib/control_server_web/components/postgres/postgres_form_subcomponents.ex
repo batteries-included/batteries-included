@@ -150,7 +150,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       close_modal_target={@phx_target}
     >
       <.form for={@user_form} phx-submit="upsert:user" phx-target={@phx_target}>
-        <.flex class="flex-col">
+        <.flex column>
           <PC.field field={@user_form[:position]} type="hidden" />
           <PC.field field={@user_form[:username]} label="User Name" />
 

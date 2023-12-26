@@ -251,7 +251,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           </:menu>
         </.page_header>
 
-        <.flex class="flex-col">
+        <.flex column>
           <.panel>
             <.grid columns={[sm: 1, xl: 2]}>
               <PC.field field={@form[:name]} autofocus />

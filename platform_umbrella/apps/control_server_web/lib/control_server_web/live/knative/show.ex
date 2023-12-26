@@ -169,7 +169,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
       </:menu>
     </.page_header>
 
-    <.flex class="flex-col">
+    <.flex column>
       <.data_horizontal_bordered>
         <:item title="Name">
           <%= @service.name %>

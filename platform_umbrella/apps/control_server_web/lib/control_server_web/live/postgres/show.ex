@@ -126,7 +126,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp links_panel(assigns) do
     ~H"""
-    <.flex class="flex-col justify-start">
+    <.flex column class="justify-start">
       <.bordered_menu_item navigate={users_url(@cluster)} title="Users" />
       <.bordered_menu_item navigate={services_url(@cluster)} title="Services" />
     </.flex>
@@ -212,7 +212,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
     ~H"""
     <.page_header title="Users" back_button={%{link_type: "live_redirect", to: show_url(@cluster)}} />
 
-    <.flex class="flex-col">
+    <.flex column>
       <.panel title="Users">
         <.pg_users_table users={@cluster.users} cluster={@cluster} />
       </.panel>

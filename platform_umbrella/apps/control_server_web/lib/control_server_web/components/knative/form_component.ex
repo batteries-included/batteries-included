@@ -240,7 +240,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   defp advanced_setting_panel(assigns) do
     ~H"""
     <.panel title="Advanced Settings" variant="gray">
-      <.flex class="flex-col">
+      <.flex column>
         <PC.field field={@form[:rollout_duration]} />
         <PC.field
           :if={@sso_enabled}

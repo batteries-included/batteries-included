@@ -234,7 +234,7 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp link_panel(assigns) do
     ~H"""
-    <.flex class="flex-col justify-start">
+    <.flex column class="justify-start">
       <.bordered_menu_item navigate={resource_path(@resource, :events)} title="Events" />
       <.bordered_menu_item navigate={resource_path(@resource, :labels)} title="Labels/Annotations" />
       <.bordered_menu_item
@@ -254,7 +254,7 @@ defmodule ControlServerWeb.PodLive.Show do
       </:menu>
     </.page_header>
 
-    <.flex class="flex-col">
+    <.flex column>
       <.grid columns={[sm: 1, lg: 2]}>
         <.details_panel resource={@resource} />
         <.link_panel resource={@resource} sso_enabled={@sso_enabled} />
@@ -290,7 +290,7 @@ defmodule ControlServerWeb.PodLive.Show do
       </:menu>
     </.page_header>
 
-    <.flex class="flex-col">
+    <.flex column>
       <.panel title="Labels">
         <.data_list>
           <:item :for={{key, value} <- labels(@resource)} title={key}>
@@ -323,9 +323,9 @@ defmodule ControlServerWeb.PodLive.Show do
         <.pod_facts_section resource={@resource} namespace={@namespace} />
       </:menu>
     </.page_header>
-    <.flex class="flex-col">
+    <.flex column>
       <.panel :for={report <- @reports} title="Vulnerability Report">
-        <.flex class="flex-col">
+        <.flex column>
           <.grid columns={%{sm: 1, lg: 3}}>
             <.data_list>
               <:item title="Container">

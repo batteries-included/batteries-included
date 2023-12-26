@@ -124,7 +124,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
         <% end %>
       <% end %>
 
-      <.flex class="flex-col items-stretch justify-start">
+      <.flex column class="items-stretch justify-start">
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>

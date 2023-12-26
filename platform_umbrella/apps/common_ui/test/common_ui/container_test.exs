@@ -48,4 +48,28 @@ defmodule CommonUI.ContainerTest do
       """
     end
   end
+
+  describe "flex" do
+    test "flex contains things" do
+      assigns = %{}
+
+      ~H"""
+      <.flex>
+        <div>test</div>
+        <div>test</div>
+      </.flex>
+      """
+    end
+
+    test "flex has column that flex-cols" do
+      assigns = %{}
+
+      ~H"""
+      <.flex column>
+        <div>test</div>
+        <div>test</div>
+      </.flex>
+      """
+    end
+  end
 end

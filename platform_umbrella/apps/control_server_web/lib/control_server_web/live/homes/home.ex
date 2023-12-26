@@ -65,7 +65,7 @@ defmodule ControlServerWeb.Live.Home do
     </.page_header>
 
     <.grid columns={%{sm: 1, lg: 12}} class="w-full">
-      <.flex class="flex-col items-center lg:col-span-5">
+      <.flex column class="items-center lg:col-span-5">
         <.h3>Pods by Category</.h3>
         <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
       </.flex>
