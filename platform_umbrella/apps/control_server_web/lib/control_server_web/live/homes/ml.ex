@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.MLHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.EmptyHome
   import ControlServerWeb.NotebooksTable
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryHosts
@@ -14,7 +15,7 @@ defmodule ControlServerWeb.Live.MLHome do
   end
 
   defp assign_batteries(socket) do
-    assign(socket, batteries: installed_batteries())
+    assign(socket, batteries: installed_batteries(:ml))
   end
 
   defp assign_notebooks(socket) do
@@ -45,6 +46,8 @@ defmodule ControlServerWeb.Live.MLHome do
 
   defp battery_link_panel(assigns), do: ~H||
 
+  defp install_path, do: ~p"/batteries/ml"
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -53,7 +56,7 @@ defmodule ControlServerWeb.Live.MLHome do
         <PC.button
           label="Manage Batteries"
           color="light"
-          to={~p"/batteries/ml"}
+          to={install_path()}
           link_type="live_redirect"
         />
       </:menu>
@@ -66,10 +69,12 @@ defmodule ControlServerWeb.Live.MLHome do
           <% _ -> %>
         <% end %>
       <% end %>
-      <.flex class="flex-col items-stretch justify-start">
+
+      <.flex :if={@batteries && @batteries != []} class="flex-col items-stretch justify-start">
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>
+    <.empty_home :if={@batteries == []} install_path={install_path()} />
     """
   end
 end

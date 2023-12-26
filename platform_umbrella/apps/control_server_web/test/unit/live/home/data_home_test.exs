@@ -51,5 +51,12 @@ defmodule ControlServerWeb.DataHomeTest do
       |> refute_html("Redis")
       |> refute_html("Postgres")
     end
+
+    test "contains empty home component", %{conn: conn} do
+      conn
+      |> start("/data")
+      |> assert_html("Data Storage")
+      |> assert_html("There are no batteries installed for this group.")
+    end
   end
 end

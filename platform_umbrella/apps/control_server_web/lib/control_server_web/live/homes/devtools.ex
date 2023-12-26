@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.EmptyHome
   import ControlServerWeb.KnativeServicesTable
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryHosts
@@ -56,6 +57,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
   end
 
   defp battery_link_panel(assigns), do: ~H||
+  defp install_path, do: ~p"/batteries/monitoring"
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -65,12 +67,12 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
         <PC.button
           label="Manage Batteries"
           color="light"
-          to={~p"/batteries/devtools"}
+          to={install_path()}
           link_type="live_redirect"
         />
       </:menu>
     </.page_header>
-    <.grid columns={%{sm: 1, lg: 2}} class="w-full">
+    <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>
         <%= case battery.type do %>
           <% :knative -> %>
@@ -82,6 +84,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>
+
+    <.empty_home :if={@batteries == []} install_path={install_path()} />
     """
   end
 end

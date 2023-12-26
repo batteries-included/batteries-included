@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.MonitoringHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.EmptyHome
   import KubeServices.SystemState.SummaryHosts
 
   alias KubeServices.SystemState.SummaryBatteries
@@ -13,7 +14,7 @@ defmodule ControlServerWeb.Live.MonitoringHome do
   end
 
   defp assign_batteries(socket) do
-    assign(socket, batteries: SummaryBatteries.installed_batteries())
+    assign(socket, batteries: SummaryBatteries.installed_batteries(:monitoring))
   end
 
   defp battery_link_panel(%{battery: %{type: :grafana}} = assigns) do
@@ -42,6 +43,8 @@ defmodule ControlServerWeb.Live.MonitoringHome do
 
   defp battery_link_panel(assigns), do: ~H||
 
+  defp install_path, do: ~p"/batteries/monitoring"
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -50,15 +53,16 @@ defmodule ControlServerWeb.Live.MonitoringHome do
         <PC.button
           label="Manage Batteries"
           color="light"
-          to={~p"/batteries/monitoring"}
+          to={install_path()}
           link_type="live_redirect"
         />
       </:menu>
     </.page_header>
 
-    <.flex class="flex-col items-stretch justify-start">
+    <.flex :if={@batteries && @batteries != []} class="flex-col items-stretch justify-start">
       <.battery_link_panel :for={battery <- @batteries} battery={battery} />
     </.flex>
+    <.empty_home :if={@batteries == []} install_path={install_path()} />
     """
   end
 end

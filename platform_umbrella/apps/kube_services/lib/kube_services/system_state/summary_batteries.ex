@@ -47,8 +47,11 @@ defmodule KubeServices.SystemState.SummaryBatteries do
   end
 
   @impl GenServer
-  def handle_call(:installed_batteries, _from, %{summary: %StateSummary{batteries: batteries}} = state) do
-    {:reply, Enum.sort_by(batteries, fn b -> b.type end), state}
+  def handle_call({:installed_batteries, group}, _from, %{summary: %StateSummary{batteries: batteries}} = state) do
+    {:reply,
+     batteries
+     |> Enum.filter(fn b -> group == nil or b.group == group end)
+     |> Enum.sort_by(fn b -> b.type end), state}
   end
 
   @impl GenServer
@@ -70,7 +73,11 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     GenServer.call(target, {:battery_installed, battery_type})
   end
 
-  def installed_batteries(target \\ @me) do
-    GenServer.call(target, :installed_batteries)
+  def installed_batteries(group \\ nil) do
+    GenServer.call(@me, {:installed_batteries, group})
+  end
+
+  def installed_batteries(target, group) do
+    GenServer.call(target, {:installed_batteries, group})
   end
 end

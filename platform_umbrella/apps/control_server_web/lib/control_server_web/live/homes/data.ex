@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.DataHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.EmptyHome
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.PostgresClusterTable
   import ControlServerWeb.RedisTable
@@ -96,6 +97,8 @@ defmodule ControlServerWeb.Live.DataHome do
     """
   end
 
+  defp install_path, do: ~p"/batteries/data"
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -104,12 +107,12 @@ defmodule ControlServerWeb.Live.DataHome do
         <PC.button
           label="Manage Batteries"
           color="light"
-          to={~p"/batteries/data"}
+          to={install_path()}
           link_type="live_redirect"
         />
       </:menu>
     </.page_header>
-    <.grid columns={%{sm: 1, lg: 2}} class="w-full">
+    <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>
         <%= case battery.type do %>
           <% :cloudnative_pg -> %>
@@ -122,6 +125,7 @@ defmodule ControlServerWeb.Live.DataHome do
         <% end %>
       <% end %>
     </.grid>
+    <.empty_home :if={@batteries == []} install_path={install_path()} />
     """
   end
 end

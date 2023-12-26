@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.EmptyHome
   import ControlServerWeb.IPAddressPoolsTable
   import ControlServerWeb.Keycloak.RealmsTable
   import ControlServerWeb.VulnerabilityReportTable
@@ -23,7 +24,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
   end
 
   defp assign_batteries(socket) do
-    assign(socket, batteries: installed_batteries())
+    assign(socket, batteries: installed_batteries(:net_sec))
   end
 
   defp assign_keycloak_realms(socket) do
@@ -95,6 +96,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   defp battery_link_panel(assigns), do: ~H||
 
+  defp install_path, do: ~p"/batteries/net_sec"
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -103,12 +106,12 @@ defmodule ControlServerWeb.Live.NetSecHome do
         <PC.button
           label="Manage Batteries"
           color="light"
-          to={~p"/batteries/net_sec"}
+          to={install_path()}
           link_type="live_redirect"
         />
       </:menu>
     </.page_header>
-    <.grid columns={%{sm: 1, lg: 2}} class="w-full">
+    <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>
         <%= case battery.type do %>
           <% :sso -> %>
@@ -120,10 +123,12 @@ defmodule ControlServerWeb.Live.NetSecHome do
           <% _ -> %>
         <% end %>
       <% end %>
+
       <.flex class="flex-col items-stretch justify-start">
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>
+    <.empty_home :if={@batteries == []} install_path={install_path()} />
     """
   end
 end
