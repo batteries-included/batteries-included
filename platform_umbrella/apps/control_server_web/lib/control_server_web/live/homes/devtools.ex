@@ -15,7 +15,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
   end
 
   defp assign_batteries(socket) do
-    assign(socket, batteries: installed_batteries())
+    assign(socket, batteries: installed_batteries(:devtools))
   end
 
   defp assign_knative_services(socket) do

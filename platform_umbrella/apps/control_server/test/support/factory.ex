@@ -72,4 +72,23 @@ defmodule ControlServer.Factory do
       include_erasure_encoded: sequence(:include_erasure_encoded, [true, false])
     }
   end
+
+  def knative_container_factory do
+    %CommonCore.Knative.Container{name: sequence("knative-container-"), image: "nginx:latest"}
+  end
+
+  def knative_env_value_factory do
+    %CommonCore.Knative.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
+  end
+
+  @spec knative_service_factory() :: CommonCore.Knative.Service.t()
+  def knative_service_factory do
+    %CommonCore.Knative.Service{
+      name: sequence("knative-service-"),
+      rollout_duration: sequence(:rollout_duration, ["10s", "1m", "2m", "10m", "20m", "30m"]),
+      oauth2_proxy: sequence(:oauth2_proxy, [true, false]),
+      containers: [build(:knative_container)],
+      env_values: [build(:knative_env_value), build(:knative_env_value)]
+    }
+  end
 end
