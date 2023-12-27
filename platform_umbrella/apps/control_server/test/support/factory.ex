@@ -10,6 +10,7 @@ defmodule ControlServer.Factory do
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres
   alias CommonCore.Redis.FailoverCluster
+  alias CommonCore.Resources.Hashing
   alias CommonCore.Rook.CephCluster
   alias CommonCore.Rook.CephFilesystem
   alias CommonCore.Rook.CephStorageNode
@@ -89,6 +90,18 @@ defmodule ControlServer.Factory do
       oauth2_proxy: sequence(:oauth2_proxy, [true, false]),
       containers: [build(:knative_container)],
       env_values: [build(:knative_env_value), build(:knative_env_value)]
+    }
+  end
+
+  @spec content_addressable_document_factory() :: ControlServer.ContentAddressable.Document.t()
+  def content_addressable_document_factory do
+    value = %{name: sequence("value-name-"), age: sequence(:age, [1, 2, 3, 4, 5])}
+    hash = Hashing.compute_hash(value)
+
+    %ControlServer.ContentAddressable.Document{
+      hash: hash,
+      id: ControlServer.ContentAddressable.Document.hash_to_uuid!(hash),
+      value: value
     }
   end
 end

@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.ContentAddressableIndex do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.Stats
+  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ContentAddressable.ResourceTable
 
   alias ControlServer.ContentAddressable
@@ -10,30 +10,27 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>Content Addressable Storage</.h1>
-    <.stats>
-      <.stat>
-        <.stat_title>Resource Count</.stat_title>
-        <.stat_description>The number stored resources</.stat_description>
-        <.stat_value><%= @count %></.stat_value>
-      </.stat>
-      <.stat>
-        <.stat_title>Oldest</.stat_title>
-        <.stat_description>The most well seasoned</.stat_description>
-        <.stat_value>
-          <%= Timex.format!(@oldest, "{RFC822z}") %>
-        </.stat_value>
-      </.stat>
-      <.stat>
-        <.stat_title>Newest</.stat_title>
-        <.stat_description>The freshest</.stat_description>
-        <.stat_value>
-          <%= Timex.format!(@newest, "{RFC822z}") %>
-        </.stat_value>
-      </.stat>
-    </.stats>
+    <.page_header
+      title="Content Addressable Storage"
+      back_button={%{link_type: "live_redirect", to: ~p"/magic"}}
+    >
+      <:menu>
+        <.flex>
+          <.data_horizontal_bordered>
+            <:item title="Resource Count">
+              <%= @count %>
+            </:item>
+            <:item title="Oldest">
+              <.relative_display time={@oldest} />
+            </:item>
+          </.data_horizontal_bordered>
+        </.flex>
+      </:menu>
+    </.page_header>
 
-    <.documents_table resources={elem(@resources, 0)} />
+    <.panel title="Resources">
+      <.documents_table resources={elem(@resources, 0)} />
+    </.panel>
     """
   end
 
