@@ -8,6 +8,7 @@ defmodule ControlServer.Repo.Migrations.CreateEditVersionsTable do
       # The patch in Erlang External Term Format
       add :patch, :binary
 
+      # supports UUID and other types as well
       add :entity_id, :uuid
 
       # name of the table the entity is in
@@ -17,7 +18,7 @@ defmodule ControlServer.Repo.Migrations.CreateEditVersionsTable do
       add :action, :string
 
       # when has this happened
-      add :recorded_at, :utc_datetime_usec
+      add :recorded_at, :utc_datetime
 
       # was this change part of a rollback?
       add :rollback, :boolean, default: false
