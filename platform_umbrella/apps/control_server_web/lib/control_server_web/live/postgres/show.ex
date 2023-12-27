@@ -5,6 +5,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1, phase: 1]
   import CommonUI.DatetimeDisplay
   import CommonUI.Table
+  import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PgUserTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
@@ -30,7 +31,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
      |> assign_current_page()
      |> assign_k8_cluster()
      |> assign_k8_services()
-     |> assign_k8_pods()}
+     |> assign_k8_pods()
+     |> maybe_assign_edit_versions()}
   end
 
   @impl Phoenix.LiveView
@@ -72,6 +74,13 @@ defmodule ControlServerWeb.Live.PostgresShow do
     pods = k8_pods(cluster.id)
     assign(socket, :k8_pods, pods)
   end
+
+  defp maybe_assign_edit_versions(%{assigns: %{cluster: cluster, live_action: live_action}} = socket)
+       when live_action == :edit_versions do
+    assign(socket, :edit_versions, ControlServer.Audit.history(cluster))
+  end
+
+  defp maybe_assign_edit_versions(socket), do: socket
 
   defp k8_cluster(id) do
     :cloudnative_pg_cluster
@@ -117,12 +126,14 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp page_title(:show), do: "Postgres Cluster"
   defp page_title(:users), do: "Postgres Cluster: Users"
   defp page_title(:services), do: "Postgres Cluster: Services"
+  defp page_title(:edit_versions), do: "Postgres Cluster: Edit History"
 
   defp edit_url(cluster), do: ~p"/postgres/#{cluster}/edit"
 
   defp show_url(cluster), do: ~p"/postgres/#{cluster}/show"
   defp users_url(cluster), do: ~p"/postgres/#{cluster}/users"
   defp services_url(cluster), do: ~p"/postgres/#{cluster}/services"
+  defp edit_versions_url(cluster), do: ~p"/postgres/#{cluster}/edit_versions"
 
   defp links_panel(assigns) do
     ~H"""
@@ -154,6 +165,18 @@ defmodule ControlServerWeb.Live.PostgresShow do
     """
   end
 
+  defp sync_status_table(assigns) do
+    ~H"""
+    <.table rows={all_roles(@status)}>
+      <:col :let={user} label="Name"><%= user %></:col>
+      <:col :let={user} label="Status"><%= get_role_status(@status, user) %></:col>
+      <:col :let={user} label="Password Resource">
+        <%= password_resource_version(@status, user) %>
+      </:col>
+    </.table>
+    """
+  end
+
   defp main_page(assigns) do
     ~H"""
     <.page_header
@@ -171,7 +194,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
             </:item>
           </.data_horizontal_bordered>
 
-          <.button>Edit History</.button>
+          <PC.button to={edit_versions_url(@cluster)} link_type="a" color="light">
+            Edit History
+          </PC.button>
 
           <.flex gaps="0">
             <PC.icon_button to={edit_url(@cluster)} link_type="live_redirect">
@@ -193,18 +218,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
         <.pods_table pods={@k8_pods} />
       </.panel>
     </.grid>
-    """
-  end
-
-  defp sync_status_table(assigns) do
-    ~H"""
-    <.table rows={all_roles(@status)}>
-      <:col :let={user} label="Name"><%= user %></:col>
-      <:col :let={user} label="Status"><%= get_role_status(@status, user) %></:col>
-      <:col :let={user} label="Password Resource">
-        <%= password_resource_version(@status, user) %>
-      </:col>
-    </.table>
     """
   end
 
@@ -235,6 +248,18 @@ defmodule ControlServerWeb.Live.PostgresShow do
     """
   end
 
+  defp edit_versions_page(assigns) do
+    ~H"""
+    <.page_header
+      title="Edit History"
+      back_button={%{link_type: "live_redirect", to: show_url(@cluster)}}
+    />
+    <.panel title="Edit History">
+      <.edit_versions_table edit_versions={@edit_versions} abbridged />
+    </.panel>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -250,6 +275,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
         <.users_page cluster={@cluster} k8_cluster={@k8_cluster} />
       <% :services -> %>
         <.services_page cluster={@cluster} k8_services={@k8_services} />
+      <% :edit_versions -> %>
+        <.edit_versions_page cluster={@cluster} edit_versions={@edit_versions} />
     <% end %>
     """
   end

@@ -9,6 +9,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   import CommonCore.Resources.FieldAccessors
   import CommonUI.DatetimeDisplay
+  import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.Chart
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.Knative.EnvValuePanel
@@ -23,22 +24,25 @@ defmodule ControlServerWeb.Live.KnativeShow do
     :ok = KubeEventCenter.subscribe(:pod)
     :ok = KubeEventCenter.subscribe(:knative_service)
     :ok = KubeEventCenter.subscribe(:knative_revision)
-    {:ok, socket}
+    {:ok, assign(socket, :page_title, page_title(socket.assigns.live_action))}
   end
 
   @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
-    service = Knative.get_service!(id)
-
     {:noreply,
      socket
-     |> assign(:id, id)
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:service, service)
-     |> assign_k8s(service)}
+     |> assign_service(id)
+     |> assign_k8s()
+     |> maybe_assign_edit_versions()}
   end
 
-  defp assign_k8s(socket, service) do
+  defp assign_service(socket, id) do
+    service = Knative.get_service!(id)
+    assign(socket, service: service, id: id)
+  end
+
+  defp assign_k8s(%{assigns: %{service: service}} = socket) do
     k8_service = k8_service(service)
     k8_configuration = k8_configuration(k8_service)
 
@@ -48,9 +52,16 @@ defmodule ControlServerWeb.Live.KnativeShow do
     |> assign(:k8_revisions, k8_revisions(k8_configuration))
   end
 
+  defp maybe_assign_edit_versions(%{assigns: %{service: service, live_action: live_action}} = socket)
+       when live_action == :edit_versions do
+    assign(socket, :edit_versions, ControlServer.Audit.history(service))
+  end
+
+  defp maybe_assign_edit_versions(socket), do: socket
+
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
-    {:noreply, assign_k8s(socket, socket.assigns.service)}
+    {:noreply, assign_k8s(socket)}
   end
 
   def k8_service(service) do
@@ -82,8 +93,11 @@ defmodule ControlServerWeb.Live.KnativeShow do
   end
 
   defp page_title(:show), do: "Show Knative Service"
+  defp page_title(:edit_versions), do: "Knative Service: Edit History"
 
   defp edit_url(service), do: ~p"/knative/services/#{service}/edit"
+  defp show_url(service), do: ~p"/knative/services/#{service}/show"
+  defp edit_versions_url(service), do: ~p"/knative/services/#{service}/edit_versions"
 
   defp service_url(service) do
     get_in(service, ~w(status url))
@@ -145,8 +159,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
     """
   end
 
-  @impl Phoenix.LiveView
-  def render(assigns) do
+  defp main_page(assigns) do
     ~H"""
     <.page_header
       title={@page_title}
@@ -154,7 +167,9 @@ defmodule ControlServerWeb.Live.KnativeShow do
     >
       <:menu>
         <.flex>
-          <.button>Edit History</.button>
+          <PC.button to={edit_versions_url(@service)} link_type="a" color="light">
+            Edit History
+          </PC.button>
 
           <.flex gaps="0">
             <PC.icon_button to={edit_url(@service)} link_type="live_redirect">
@@ -188,6 +203,32 @@ defmodule ControlServerWeb.Live.KnativeShow do
       <.service_display service={@k8_service} revisions={@k8_revisions} />
       <.env_var_panel env_values={@service.env_values} />
     </.flex>
+    """
+  end
+
+  defp edit_versions_page(assigns) do
+    ~H"""
+    <.page_header title="Edit History" back_button={%{link_type: "a", to: show_url(@service)}} />
+    <.panel title="Edit History">
+      <.edit_versions_table edit_versions={@edit_versions} abbridged />
+    </.panel>
+    """
+  end
+
+  @impl Phoenix.LiveView
+  def render(assigns) do
+    ~H"""
+    <%= case @live_action do %>
+      <% :show -> %>
+        <.main_page
+          k8_service={@k8_service}
+          service={@service}
+          k8_revisions={@k8_revisions}
+          page_title={@page_title}
+        />
+      <% :edit_versions -> %>
+        <.edit_versions_page service={@service} edit_versions={@edit_versions} />
+    <% end %>
     """
   end
 end

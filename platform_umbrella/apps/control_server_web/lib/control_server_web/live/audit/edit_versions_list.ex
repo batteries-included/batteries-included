@@ -1,12 +1,16 @@
 defmodule ControlServerWeb.Live.EditVersionsList do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.Audit.EditVersionsTable
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign_edit_versions(socket)}
+    {:ok, socket |> assign_edit_versions() |> assign_page_title()}
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, :page_title, "Edit Versions")
   end
 
   def assign_edit_versions(socket) do
@@ -16,8 +20,10 @@ defmodule ControlServerWeb.Live.EditVersionsList do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>Edit Versions</.h1>
-    <.edit_versions_table edit_versions={@edit_versions} />
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: ~p"/magic"}} />
+    <.panel title="All Edit Versions">
+      <.edit_versions_table edit_versions={@edit_versions} />
+    </.panel>
     """
   end
 end

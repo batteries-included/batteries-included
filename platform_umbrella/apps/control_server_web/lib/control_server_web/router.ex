@@ -107,15 +107,18 @@ defmodule ControlServerWeb.Router do
     live "/:id/show", Live.PostgresShow, :show
     live "/:id/users", Live.PostgresShow, :users
     live "/:id/services", Live.PostgresShow, :services
+    live "/:id/edit_versions", Live.PostgresShow, :edit_versions
   end
 
   scope "/ferretdb", ControlServerWeb do
     pipe_through :browser
 
     live "/", Live.FerretServiceIndex, :index
-    live "/:id/show", Live.FerretServiceShow, :show
     live "/:id/edit", Live.FerretServiceEdit, :show
     live "/new", Live.FerretServiceNew, :show
+
+    live "/:id/show", Live.FerretServiceShow, :show
+    live "/:id/edit_versions", Live.FerretServiceShow, :edit_versions
   end
 
   scope "/ceph", ControlServerWeb do
@@ -137,6 +140,7 @@ defmodule ControlServerWeb.Router do
     live "/services/new", Live.KnativeNew, :new
     live "/services/:id/edit", Live.KnativeEdit, :edit
     live "/services/:id/show", Live.KnativeShow, :show
+    live "/services/:id/edit_versions", Live.KnativeShow, :edit_versions
   end
 
   scope "/trivy_reports", ControlServerWeb do
@@ -168,7 +172,12 @@ defmodule ControlServerWeb.Router do
     pipe_through :browser
 
     live "/timeline", Live.Timeline, :index
-    live "/edit_versions", Live.EditVersionsList, :index
+  end
+
+  scope "/edit_versions", ControlServerWeb do
+    pipe_through :browser
+    live "/", Live.EditVersionsList, :index
+    live "/:id", Live.EditVersionShow, :show
   end
 
   scope "/content_addressable", ControlServerWeb do

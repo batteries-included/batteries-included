@@ -46,6 +46,10 @@ config :ex_audit,
     CommonCore.Postgres.Cluster,
     CommonCore.FerretDB.FerretService,
     CommonCore.Redis.FailoverCluster
+  ],
+  primitive_structs: [
+    Date,
+    DateTime
   ]
 
 # Configures the endpoint

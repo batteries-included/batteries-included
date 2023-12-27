@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   import CommonCore.Resources.FieldAccessors
   import CommonUI.DatetimeDisplay
+  import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PodsTable
 
   alias ControlServer.FerretDB
@@ -21,12 +22,22 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     {:noreply,
      socket
      |> assign_page_title()
+     |> assign_current_page()
      |> assign_ferret_service(service)
-     |> assign_pods()}
+     |> assign_pods()
+     |> maybe_assign_edit_versions()}
   end
 
-  defp assign_page_title(socket) do
-    assign(socket, page_title: "Show Ferret Service", current_page: :data)
+  defp assign_current_page(socket) do
+    assign(socket, current_page: :data)
+  end
+
+  defp assign_page_title(%{assigns: %{live_action: :show}} = socket) do
+    assign(socket, page_title: "Show Ferret Service")
+  end
+
+  defp assign_page_title(%{assigns: %{live_action: :edit_versions}} = socket) do
+    assign(socket, page_title: "Ferret Service: Edit History")
   end
 
   defp assign_pods(%{assigns: %{ferret_service: ferret_service}} = socket) do
@@ -42,9 +53,25 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     assign(socket, ferret_service: ferret_service)
   end
 
-  defp edit_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit"
+  defp maybe_assign_edit_versions(%{assigns: %{ferret_service: ferret_service, live_action: live_action}} = socket)
+       when live_action == :edit_versions do
+    assign(socket, :edit_versions, ControlServer.Audit.history(ferret_service))
+  end
+
+  defp maybe_assign_edit_versions(socket), do: socket
+
   @impl Phoenix.LiveView
-  def render(assigns) do
+  def handle_event("delete", _, socket) do
+    {:ok, _} = FerretDB.delete_ferret_service(socket.assigns.ferret_service)
+
+    {:noreply, push_redirect(socket, to: ~p"/ferretdb")}
+  end
+
+  defp edit_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit"
+  defp show_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/show"
+  defp edit_versions_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit_versions"
+
+  defp main_page(assigns) do
     ~H"""
     <.page_header
       title={"FerretDB Service: #{@ferret_service.name}"}
@@ -59,7 +86,9 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
             </:item>
           </.data_horizontal_bordered>
 
-          <.button>Edit History</.button>
+          <PC.button to={edit_versions_url(@ferret_service)} link_type="a" color="light">
+            Edit History
+          </PC.button>
 
           <.flex gaps="0">
             <PC.icon_button to={edit_url(@ferret_service)} link_type="live_redirect">
@@ -77,6 +106,27 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     <.panel title="Pods">
       <.pods_table pods={@pods} />
     </.panel>
+    """
+  end
+
+  defp edit_versions_page(assigns) do
+    ~H"""
+    <.page_header title="Edit History" back_button={%{link_type: "a", to: show_url(@ferret_service)}} />
+    <.panel title="Edit History">
+      <.edit_versions_table edit_versions={@edit_versions} abbridged />
+    </.panel>
+    """
+  end
+
+  @impl Phoenix.LiveView
+  def render(assigns) do
+    ~H"""
+    <%= case @live_action do %>
+      <% :show -> %>
+        <.main_page ferret_service={@ferret_service} pods={@pods} page_title={@page_title} />
+      <% :edit_versions -> %>
+        <.edit_versions_page ferret_service={@ferret_service} edit_versions={@edit_versions} />
+    <% end %>
     """
   end
 end

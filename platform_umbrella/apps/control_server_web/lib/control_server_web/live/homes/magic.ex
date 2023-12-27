@@ -65,6 +65,7 @@ defmodule ControlServerWeb.Live.MagicHome do
   defp battery_link_panel(%{battery: %{type: :timeline}} = assigns) do
     ~H"""
     <.bordered_menu_item navigate={~p"/history/timeline"} title="Timeline" />
+    <.bordered_menu_item navigate={~p"/edit_versions"} title="Edit Versions" />
     """
   end
 

@@ -329,7 +329,7 @@ defmodule ControlServerWeb.LeftMenu do
     </.detail_menu_item>
 
     <.detail_menu_item
-      navigate={~p"/history/edit_versions"}
+      navigate={~p"/edit_versions"}
       name="Edit Versions"
       is_active={@page_detail_type == :edit_versions}
     >
