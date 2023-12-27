@@ -48,6 +48,9 @@ defmodule ControlServerWeb.DevtoolsHomeTest do
       |> start("/devtools")
       |> assert_html("Devtools")
       |> assert_html("There are no batteries installed for this group.")
+      |> assert_html("/batteries/devtools")
+      |> refute_html("/batteries/monitoring")
+      |> refute_html("/batteries/net_sec")
     end
   end
 end

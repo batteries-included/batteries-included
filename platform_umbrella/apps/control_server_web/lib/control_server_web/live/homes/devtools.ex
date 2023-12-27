@@ -57,7 +57,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
   end
 
   defp battery_link_panel(assigns), do: ~H||
-  defp install_path, do: ~p"/batteries/monitoring"
+
+  defp install_path, do: ~p"/batteries/devtools"
 
   @impl Phoenix.LiveView
   def render(assigns) do
