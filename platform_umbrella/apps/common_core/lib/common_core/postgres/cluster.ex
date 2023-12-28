@@ -15,17 +15,17 @@ defmodule CommonCore.Postgres.Cluster do
     %{
       name: "tiny",
       storage_size: Memory.mb_to_bytes(512),
-      cpu_requested: nil,
+      cpu_requested: 500,
       cpu_limits: 500,
-      memory_requested: nil,
-      memory_limits: Memory.mb_to_bytes(1024)
+      memory_requested: Memory.mb_to_bytes(512),
+      memory_limits: Memory.mb_to_bytes(512)
     },
     %{
       name: "small",
       storage_size: Memory.gb_to_bytes(16),
-      cpu_requested: nil,
+      cpu_requested: 500,
       cpu_limits: 2000,
-      memory_requested: nil,
+      memory_requested: Memory.gb_to_bytes(1),
       memory_limits: Memory.gb_to_bytes(4)
     },
     %{

@@ -4,7 +4,6 @@
   },
   "target_summary": {
     "notebooks": [],
-    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -104,6 +103,7 @@
         "updated_at": null
       }
     ],
+    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -130,16 +130,16 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "ADI5MV6TNW4D2JUNYYX3BCEW",
+            "password": "UD5MHKBMDRZUWOPG5Z6FQNXZ",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
         "storage_size": 536870912,
-        "cpu_requested": null,
+        "cpu_requested": 500,
         "cpu_limits": 500,
-        "memory_requested": null,
-        "memory_limits": 1073741824,
+        "memory_requested": 536870912,
+        "memory_limits": 536870912,
         "virtual_storage_size_range_value": 9
       }
     ],
@@ -12041,13 +12041,13 @@
       "data": {
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "QURJNU1WNlROVzREMkpVTllZWDNCQ0VX",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkFESTVNVjZUTlc0RDJKVU5ZWVgzQkNFV0Bjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "password": "VUQ1TUhLQk1EUlpVV09QRzVaNkZRTlha",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlVENU1IS0JNRFJaVVdPUEc1WjZGUU5YWkBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "YIX46QNEUZLRTLQI4FIIMZUEXML6M3AEHVODCIKPW3SPACKOCVFQ===="
+          "battery/hash": "TLYB4DBM7DVDUZR3JCLHXHCLPVHR55IW6V2PR3DFRACTF7KNJCWQ===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -14300,12 +14300,12 @@
         "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1sb2NhbC11c2Vy",
         "password": "bm90LXJlYWw=",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktbG9jYWwtdXNlcjpub3QtcmVhbEBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4="
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktbG9jYWwtdXNlcjpub3QtcmVhbEBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "A7C7TIE5VY3XRQBNXKKNII6PMNNZS664JHRQ3C3IYMGFYN56DAYQ===="
+          "battery/hash": "JKBL6AFZRV4FUJ4DJI6OX7X2ECRAUZS5RDFKPU4ON3THDVNZCW3Q===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -15441,7 +15441,7 @@
       "kind": "Cluster",
       "metadata": {
         "annotations": {
-          "battery/hash": "2IB5JS247BICVDEGOEPZRU724AOOLHKGK6GQY66IEWHYBCJTNLDQ===="
+          "battery/hash": "OIF72MLVW52IXYARYDVRBUICG6BMCTBUQX6NLAPVJP6VZX4UPRUA===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -15511,7 +15511,11 @@
         "resources": {
           "limits": {
             "cpu": "500m",
-            "memory": 1073741824
+            "memory": 536870912
+          },
+          "requests": {
+            "cpu": "500m",
+            "memory": 536870912
           }
         },
         "storage": {

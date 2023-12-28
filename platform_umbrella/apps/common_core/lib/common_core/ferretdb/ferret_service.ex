@@ -14,14 +14,14 @@ defmodule CommonCore.FerretDB.FerretService do
   @presets [
     %{
       name: "tiny",
-      cpu_requested: nil,
+      cpu_requested: 100,
       cpu_limits: 500,
-      memory_requested: nil,
+      memory_requested: Memory.mb_to_bytes(128),
       memory_limits: Memory.mb_to_bytes(512)
     },
     %{
       name: "small",
-      cpu_requested: nil,
+      cpu_requested: 500,
       cpu_limits: 1000,
       memory_requested: Memory.mb_to_bytes(512),
       memory_limits: Memory.mb_to_bytes(1024)
