@@ -7,6 +7,7 @@ defmodule ControlServer.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: ControlServer.Repo
 
+  alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres
   alias CommonCore.Redis.FailoverCluster
@@ -14,6 +15,8 @@ defmodule ControlServer.Factory do
   alias CommonCore.Rook.CephCluster
   alias CommonCore.Rook.CephFilesystem
   alias CommonCore.Rook.CephStorageNode
+  alias CommonCore.Timeline
+  alias CommonCore.Timeline.TimelineEvent
 
   def postgres_user_factory do
     %Postgres.PGUser{
@@ -102,6 +105,50 @@ defmodule ControlServer.Factory do
       hash: hash,
       id: ControlServer.ContentAddressable.Document.hash_to_uuid!(hash),
       value: value
+    }
+  end
+
+  def timeline_event_factory(attrs) do
+    event_type = Map.get_lazy(attrs, :type, fn -> sequence(:event_type, [:battery_install, :kube, :named_database]) end)
+
+    case event_type do
+      :battery_install ->
+        %TimelineEvent{payload: build(:battery_install_payload, attrs), type: event_type}
+
+      :kube ->
+        %TimelineEvent{payload: build(:kube_payload, attrs), type: event_type}
+
+      :named_database ->
+        %TimelineEvent{payload: build(:named_database_payload, attrs), type: event_type}
+
+      _ ->
+        raise "Unknown event type: #{inspect(event_type)}"
+    end
+  end
+
+  def named_database_payload_factory do
+    %Timeline.NamedDatabase{
+      name: sequence("named-database-"),
+      action: sequence(:action, [:insert, :update]),
+      entity_id: sequence("named-entity-id-"),
+      schema_type: sequence(:schema_type, Timeline.NamedDatabase.possible_schema_types())
+    }
+  end
+
+  def kube_payload_factory do
+    %Timeline.Kube{
+      action: sequence(:action, [:add, :delete, :update]),
+      resource_type: sequence(:resource_type, CommonCore.ApiVersionKind.all_known()),
+      name: sequence("kube-resource-"),
+      namespace: sequence(:namespace, ["default", "battery-core", "battery-data"]),
+      computed_status:
+        sequence(:computed_status, [:ready, :containers_ready, :initialized, :pod_has_network, :pod_scheduled, :unknown])
+    }
+  end
+
+  def battery_install_payload_factory do
+    %Timeline.BatteryInstall{
+      battery_type: sequence(:battery_type, SystemBattery.possible_types())
     }
   end
 end

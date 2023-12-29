@@ -1,8 +1,18 @@
 defmodule CommonCore.Timeline.NamedDatabase do
   @moduledoc false
   use TypedEctoSchema
+  use CommonCore.Util.PolymorphicType, type: :named_database
 
-  import Ecto.Changeset
+  @possible_schema_types [
+    :jupyter_notebook,
+    :knative_service,
+    :postgres_cluster,
+    :redis_cluster,
+    :ferret_service,
+    :system_battery
+  ]
+
+  def possible_schema_types, do: @possible_schema_types
 
   @primary_key false
   typed_embedded_schema do
@@ -12,23 +22,11 @@ defmodule CommonCore.Timeline.NamedDatabase do
 
     # WAIT!
     # If you are changing here then change in EventCenter.Database
-    field(:type, Ecto.Enum,
-      values: [
-        :jupyter_notebook,
-        :knative_service,
-        :postgres_cluster,
-        :redis_cluster,
-        :system_battery,
-        :timeline_event
-      ]
-    )
+    field :schema_type, Ecto.Enum, values: @possible_schema_types
 
     field :name, :string
-  end
+    field :entity_id, :binary_id
 
-  def changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, [:action, :type, :name])
-    |> validate_required([:action, :type])
+    type_field()
   end
 end

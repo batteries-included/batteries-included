@@ -1,19 +1,14 @@
 defmodule CommonCore.Timeline.BatteryInstall do
   @moduledoc false
   use TypedEctoSchema
-
-  import Ecto.Changeset
+  use CommonCore.Util.PolymorphicType, type: :battery_install
 
   alias CommonCore.Batteries.SystemBattery
 
   @primary_key false
   typed_embedded_schema do
-    field :type, Ecto.Enum, values: SystemBattery.possible_types()
-  end
+    field :battery_type, Ecto.Enum, values: SystemBattery.possible_types()
 
-  def changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, [:type])
-    |> validate_required([:type])
+    type_field()
   end
 end

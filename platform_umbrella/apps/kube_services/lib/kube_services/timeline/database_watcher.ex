@@ -29,14 +29,14 @@ defmodule KubeServices.Timeline.DatabaseWatcher do
     {:noreply, state}
   end
 
-  defp to_event(type, action, %{name: name} = _object) do
+  defp to_event(type, action, %{name: name, id: id} = _object) do
     Logger.debug("Going to persist timeline event for #{type} action #{action}",
       type: type,
       action: action,
       name: name
     )
 
-    event = Timeline.named_database_event(action, type, name)
+    event = Timeline.named_database_event(action, type, name, id)
     Timeline.create_timeline_event(event)
   end
 end

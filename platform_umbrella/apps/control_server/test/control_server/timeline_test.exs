@@ -10,12 +10,12 @@ defmodule ControlServer.TimelineTest do
 
     alias EventCenter.Database, as: DatabaseEventCenter
 
-    @invalid_attrs %{payload: nil}
+    @invalid_attrs %{payload: nil, type: nil}
 
     test "Can create changeset for TimelineEvent with a poly embed" do
       event = %TimelineEvent{
-        level: :info,
-        payload: %BatteryInstall{type: :cloudnative_pg_cluster}
+        type: :battery_install,
+        payload: %BatteryInstall{battery_type: :cloudnative_pg_cluster}
       }
 
       assert _ = TimelineEvent.changeset(event, %{})
@@ -29,13 +29,13 @@ defmodule ControlServer.TimelineTest do
     test "Can create a kube event" do
       event = Timeline.kube_event(:add, :pod, "pg-control-0", "battery-core")
       assert {:ok, inserted_event} = Timeline.create_timeline_event(event)
-      assert inserted_event.payload.type == :pod
+      assert inserted_event.payload.resource_type == :pod
     end
 
     test "Can create a database event" do
-      event = Timeline.named_database_event(:update, :cloudnative_pg_cluster, "pg-control")
+      event = Timeline.named_database_event(:update, :cloudnative_pg_cluster, "pg-control", "00-01-02-03-04")
       assert {:ok, inserted_event} = Timeline.create_timeline_event(event)
-      assert inserted_event.payload.type == :cloudnative_pg_cluster
+      assert inserted_event.payload.schema_type == :cloudnative_pg_cluster
     end
 
     test "get database message for events" do
@@ -59,26 +59,16 @@ defmodule ControlServer.TimelineTest do
     end
 
     test "create_timeline_event/1 with valid data creates a timeline_event" do
-      valid_attrs = %{level: :info, payload: %{__type__: :battery_install, type: :grafana}}
+      valid_attrs = %{type: :battery_install, payload: %{type: :battery_install, battery_type: :grafana}}
 
       assert {:ok, %TimelineEvent{} = timeline_event} =
                Timeline.create_timeline_event(valid_attrs)
 
-      assert timeline_event.payload.type == :grafana
+      assert timeline_event.payload.battery_type == :grafana
     end
 
     test "create_timeline_event/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Timeline.create_timeline_event(@invalid_attrs)
-    end
-
-    test "update_timeline_event/2 with valid data updates the timeline_event" do
-      timeline_event = timeline_event_fixture()
-      update_attrs = %{level: :error}
-
-      assert {:ok, %TimelineEvent{} = timeline_event} =
-               Timeline.update_timeline_event(timeline_event, update_attrs)
-
-      assert timeline_event.level == :error
     end
 
     test "update_timeline_event/2 with invalid data returns error changeset" do

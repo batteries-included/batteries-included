@@ -21,7 +21,7 @@ defmodule ControlServer.Timeline do
       [%TimelineEvent{}, ...]
 
   """
-  def list_timeline_events(limit \\ 50) do
+  def list_timeline_events(limit \\ 20) do
     Repo.all(from TimelineEvent, order_by: [desc: :updated_at], limit: ^limit)
   end
 
@@ -71,17 +71,17 @@ defmodule ControlServer.Timeline do
 
   def battery_install_event(type) do
     %TimelineEvent{
-      level: :info,
-      payload: %BatteryInstall{type: type}
+      type: :battery_install,
+      payload: %BatteryInstall{battery_type: type}
     }
   end
 
   def kube_event(action, resource_type, name, namespace \\ nil, status \\ nil) do
     %TimelineEvent{
-      level: :info,
+      type: :kube,
       payload: %Kube{
         action: action,
-        type: resource_type,
+        resource_type: resource_type,
         name: name,
         namespace: namespace,
         computed_status: status
@@ -89,13 +89,14 @@ defmodule ControlServer.Timeline do
     }
   end
 
-  def named_database_event(action, type, name) do
+  def named_database_event(action, type, name, entity_id) do
     %TimelineEvent{
-      level: :info,
+      type: :named_database,
       payload: %NamedDatabase{
         name: name,
         action: action,
-        type: type
+        schema_type: type,
+        entity_id: entity_id
       }
     }
   end

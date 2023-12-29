@@ -11,8 +11,8 @@ defmodule ControlServer.TimelineFixtures do
     {:ok, timeline_event} =
       attrs
       |> Enum.into(%{
-        level: :info,
-        payload: %{__type__: :battery_install, type: :cloudnative_pg}
+        type: :battery_install,
+        payload: %{type: :battery_install, battery_type: :cloudnative_pg}
       })
       |> ControlServer.Timeline.create_timeline_event()
 
