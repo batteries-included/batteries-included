@@ -7,7 +7,7 @@ defmodule CommonCore.StateSummary.PostgresState do
   alias CommonCore.Postgres.PGUser
   alias CommonCore.StateSummary
 
-  @default_secret_name "cloudnative-pg.unknown-cluster.unkown-user"
+  @default_secret_name "cloudnative-pg.pg-unknown-cluster.unkown-user"
 
   @spec read_write_hostname(StateSummary.t(), Cluster.t() | nil) :: String.t()
   def read_write_hostname(%StateSummary{} = _state_summary, nil) do
@@ -16,7 +16,7 @@ defmodule CommonCore.StateSummary.PostgresState do
 
   def read_write_hostname(%StateSummary{} = state_summary, %Cluster{} = cluster) do
     ns = cluster_namespace(state_summary, cluster)
-    "#{cluster.name}-rw.#{ns}.svc.cluster.local."
+    "pg-#{cluster.name}-rw.#{ns}.svc.cluster.local."
   end
 
   @spec cluster(CommonCore.StateSummary.t(), Keyword.t() | map()) :: nil | Cluster.t()
@@ -43,6 +43,6 @@ defmodule CommonCore.StateSummary.PostgresState do
   def user_secret(_state_summary, _cluster, nil = _user), do: @default_secret_name
 
   def user_secret(_state_summary, %Cluster{name: cluster_name} = _cluster, %PGUser{username: username} = _user) do
-    Enum.join(["cloudnative-pg", cluster_name, username], ".")
+    Enum.join(["cloudnative-pg", "pg-" <> cluster_name, username], ".")
   end
 end

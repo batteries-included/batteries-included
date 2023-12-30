@@ -20,7 +20,7 @@ defmodule CommonCore.StateSummary.PostgresStateTest do
     assert cl == found_cluster
 
     assert PostgresState.read_write_hostname(state_summary, found_cluster) ==
-             "cluster1-rw.battery-base.svc.cluster.local."
+             "pg-cluster1-rw.battery-base.svc.cluster.local."
   end
 
   describe "cluster/3" do
@@ -47,20 +47,20 @@ defmodule CommonCore.StateSummary.PostgresStateTest do
   describe "user_secret/3" do
     test "returns default secret name if cluster is nil" do
       secret = PostgresState.user_secret(%{}, nil, %PGUser{username: "myuser"})
-      assert secret == "cloudnative-pg.unknown-cluster.unkown-user"
+      assert secret == "cloudnative-pg.pg-unknown-cluster.unkown-user"
     end
 
     test "returns default secret name if user is nil" do
       cluster = %Cluster{name: "mycluster"}
       secret = PostgresState.user_secret(%{}, cluster, nil)
-      assert secret == "cloudnative-pg.unknown-cluster.unkown-user"
+      assert secret == "cloudnative-pg.pg-unknown-cluster.unkown-user"
     end
 
     test "returns secret name joining cluster, username" do
       cluster = %Cluster{name: "mycluster"}
       user = %PGUser{username: "myuser"}
       secret = PostgresState.user_secret(%{}, cluster, user)
-      assert secret == "cloudnative-pg.mycluster.myuser"
+      assert secret == "cloudnative-pg.pg-mycluster.myuser"
     end
   end
 end

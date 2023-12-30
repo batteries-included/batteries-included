@@ -15,14 +15,14 @@ defmodule CommonCore.Resources.BatteryCore do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.base_namespace)
-    |> B.label("istio-injection", "false")
+    |> B.label("istio-injection", "enabled")
   end
 
   resource(:data_namespace, battery, _state) do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.data_namespace)
-    |> B.label("istio-injection", "false")
+    |> B.label("istio-injection", "enabled")
   end
 
   resource(:ml_namespace, battery, _state) do

@@ -130,16 +130,16 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "GWG6F5OXWII3DZRMUBH6VQOX",
+            "password": "4FEWQXQ2AQ4MLSBPMMPRT67I",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
-        "storage_size": 536870912,
         "cpu_requested": 500,
         "cpu_limits": 500,
         "memory_requested": 536870912,
         "memory_limits": 536870912,
+        "storage_size": 536870912,
         "virtual_storage_size_range_value": 9
       }
     ],
@@ -6877,6 +6877,32 @@
         }
       ]
     },
+    "/cloudnative_pg/secret/cloudnative_pg_pg_controlserver_battery_local_user": {
+      "apiVersion": "v1",
+      "data": {
+        "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
+        "username": "YmF0dGVyeS1sb2NhbC11c2Vy",
+        "password": "bm90LXJlYWw=",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktbG9jYWwtdXNlcjpub3QtcmVhbEBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+      },
+      "kind": "Secret",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "KEOZ3ZVNYHJOUUDUUBSYSZ535X7YXWRUHSCGJM3ACJLRTE44YL4A===="
+        },
+        "labels": {
+          "app": "cloudnative-pg-clusters",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "cloudnative-pg-clusters",
+          "battery/app": "cloudnative-pg-clusters",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "cloudnative-pg.pg-controlserver.battery-local-user",
+        "namespace": "battery-base"
+      },
+      "type": "Opaque"
+    },
     "/istio/pod_disruption_budget/istiod": {
       "apiVersion": "policy/v1",
       "kind": "PodDisruptionBudget",
@@ -7223,7 +7249,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "UX7IMV4TNGPBMHNGMYJNOY44XAKRRG5KH3HV5DWAHWMBD5KXFMUQ===="
+          "battery/hash": "X3TNQ22JNMD2CITU7BCB3XPRFI3X7MRSO4BXSR6SR2D6PRBMY4BQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -7232,7 +7258,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "istio-injection": "false"
+          "istio-injection": "enabled"
         },
         "name": "battery-data"
       }
@@ -12036,32 +12062,6 @@
         ]
       }
     },
-    "/cloudnative_pg/secret/cloudnative_pg_controlserver_battery_control_user": {
-      "apiVersion": "v1",
-      "data": {
-        "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
-        "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "R1dHNkY1T1hXSUkzRFpSTVVCSDZWUU9Y",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkdXRzZGNU9YV0lJM0RaUk1VQkg2VlFPWEBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
-      },
-      "kind": "Secret",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "MRJBEHCXA6SJEBIFS6NN7Y2FK3CXSXUHXWCFNVGVJHG65L7YOIEQ===="
-        },
-        "labels": {
-          "app": "cloudnative-pg-clusters",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "cloudnative-pg-clusters",
-          "battery/app": "cloudnative-pg-clusters",
-          "battery/managed": "true",
-          "battery/managed.direct": "true"
-        },
-        "name": "cloudnative-pg.controlserver.battery-control-user",
-        "namespace": "battery-base"
-      },
-      "type": "Opaque"
-    },
     "/cloudnative_pg/cluster_role/cloudnative_pg": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
       "kind": "ClusterRole",
@@ -14294,18 +14294,12 @@
         ]
       }
     },
-    "/cloudnative_pg/secret/cloudnative_pg_controlserver_battery_local_user": {
-      "apiVersion": "v1",
-      "data": {
-        "hostname": "Y29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
-        "username": "YmF0dGVyeS1sb2NhbC11c2Vy",
-        "password": "bm90LXJlYWw=",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktbG9jYWwtdXNlcjpub3QtcmVhbEBjb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
-      },
-      "kind": "Secret",
+    "/cloudnative_pg/cloudnative_pg_cluster/pg_controlserver": {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Cluster",
       "metadata": {
         "annotations": {
-          "battery/hash": "JKBL6AFZRV4FUJ4DJI6OX7X2ECRAUZS5RDFKPU4ON3THDVNZCW3Q===="
+          "battery/hash": "D2QKKJ7RFFPDXPUMU7LQ6JMEYK4RNMMSYXG32ACOA2GDFU7SSJEA===="
         },
         "labels": {
           "app": "cloudnative-pg-clusters",
@@ -14315,10 +14309,78 @@
           "battery/managed": "true",
           "battery/managed.direct": "true"
         },
-        "name": "cloudnative-pg.controlserver.battery-local-user",
+        "name": "pg-controlserver",
         "namespace": "battery-base"
       },
-      "type": "Opaque"
+      "spec": {
+        "bootstrap": {
+          "initdb": {
+            "owner": "battery-control-user",
+            "database": "control",
+            "dataChecksums": true
+          }
+        },
+        "affinity": {
+          "enablePodAntiAffinity": true,
+          "topologyKey": "failure-domain.beta.kubernetes.io/zone"
+        },
+        "enableSuperuserAccess": false,
+        "instances": 1,
+        "managed": {
+          "roles": [
+            {
+              "name": "battery-local-user",
+              "ensure": "present",
+              "passwordSecret": {
+                "name": "cloudnative-pg.pg-controlserver.battery-local-user"
+              },
+              "createdb": true,
+              "createrole": true,
+              "login": true,
+              "superuser": true
+            },
+            {
+              "name": "battery-control-user",
+              "ensure": "present",
+              "passwordSecret": {
+                "name": "cloudnative-pg.pg-controlserver.battery-control-user"
+              },
+              "createdb": true,
+              "login": true
+            }
+          ]
+        },
+        "postgresql": {
+          "parameters": {
+            "auto_explain.log_analyze": "true",
+            "auto_explain.log_buffers": "true",
+            "auto_explain.log_min_duration": "5s",
+            "auto_explain.sample_rate": "0.01",
+            "autovacuum": "on",
+            "max_connections": "200",
+            "pg_stat_statements.max": "10000",
+            "pg_stat_statements.track": "all",
+            "pg_stat_statements.track_utility": "false",
+            "pgaudit.log": "role, ddl, misc_set",
+            "pgaudit.log_catalog": "off",
+            "timezone": "UTC"
+          }
+        },
+        "resources": {
+          "limits": {
+            "cpu": "500m",
+            "memory": 536870912
+          },
+          "requests": {
+            "cpu": "500m",
+            "memory": 536870912
+          }
+        },
+        "storage": {
+          "size": "536870912",
+          "resizeInUseVolumes": false
+        }
+      }
     },
     "/metallb/metal_l2_advertisement/core": {
       "apiVersion": "metallb.io/v1beta1",
@@ -15436,94 +15498,6 @@
         }
       ]
     },
-    "/cloudnative_pg/cloudnative_pg_cluster/controlserver": {
-      "apiVersion": "postgresql.cnpg.io/v1",
-      "kind": "Cluster",
-      "metadata": {
-        "annotations": {
-          "battery/hash": "OIF72MLVW52IXYARYDVRBUICG6BMCTBUQX6NLAPVJP6VZX4UPRUA===="
-        },
-        "labels": {
-          "app": "cloudnative-pg-clusters",
-          "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "cloudnative-pg-clusters",
-          "battery/app": "cloudnative-pg-clusters",
-          "battery/managed": "true",
-          "battery/managed.direct": "true"
-        },
-        "name": "controlserver",
-        "namespace": "battery-base"
-      },
-      "spec": {
-        "bootstrap": {
-          "initdb": {
-            "owner": "battery-control-user",
-            "database": "control",
-            "dataChecksums": true
-          }
-        },
-        "affinity": {
-          "enablePodAntiAffinity": true,
-          "topologyKey": "failure-domain.beta.kubernetes.io/zone"
-        },
-        "enableSuperuserAccess": false,
-        "instances": 1,
-        "managed": {
-          "roles": [
-            {
-              "name": "battery-local-user",
-              "ensure": "present",
-              "passwordSecret": {
-                "name": "cloudnative-pg.controlserver.battery-local-user"
-              },
-              "createdb": true,
-              "createrole": true,
-              "login": true,
-              "superuser": true
-            },
-            {
-              "name": "battery-control-user",
-              "ensure": "present",
-              "passwordSecret": {
-                "name": "cloudnative-pg.controlserver.battery-control-user"
-              },
-              "createdb": true,
-              "login": true
-            }
-          ]
-        },
-        "postgresql": {
-          "parameters": {
-            "auto_explain.log_analyze": "true",
-            "auto_explain.log_buffers": "true",
-            "auto_explain.log_min_duration": "5s",
-            "auto_explain.sample_rate": "0.01",
-            "autovacuum": "on",
-            "max_connections": "200",
-            "pg_stat_statements.max": "10000",
-            "pg_stat_statements.track": "all",
-            "pg_stat_statements.track_utility": "false",
-            "pgaudit.log": "role, ddl, misc_set",
-            "pgaudit.log_catalog": "off",
-            "timezone": "UTC"
-          }
-        },
-        "resources": {
-          "limits": {
-            "cpu": "500m",
-            "memory": 536870912
-          },
-          "requests": {
-            "cpu": "500m",
-            "memory": 536870912
-          }
-        },
-        "storage": {
-          "size": "536870912",
-          "resizeInUseVolumes": false
-        }
-      }
-    },
     "/metallb/secret/webhook_server_cert": {
       "apiVersion": "v1",
       "data": {},
@@ -15902,6 +15876,32 @@
           }
         }
       }
+    },
+    "/cloudnative_pg/secret/cloudnative_pg_pg_controlserver_battery_control_user": {
+      "apiVersion": "v1",
+      "data": {
+        "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
+        "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
+        "password": "NEZFV1FYUTJBUTRNTFNCUE1NUFJUNjdJ",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjRGRVdRWFEyQVE0TUxTQlBNTVBSVDY3SUBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+      },
+      "kind": "Secret",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "WF35Z6EYAHSODOL7ZYGSHFD3GG3PXSYUQXXRHS23LO2ARRN26RAQ===="
+        },
+        "labels": {
+          "app": "cloudnative-pg-clusters",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "cloudnative-pg-clusters",
+          "battery/app": "cloudnative-pg-clusters",
+          "battery/managed": "true",
+          "battery/managed.direct": "true"
+        },
+        "name": "cloudnative-pg.pg-controlserver.battery-control-user",
+        "namespace": "battery-base"
+      },
+      "type": "Opaque"
     },
     "/cloudnative_pg/crd/poolers_postgresql_cnpg_io": {
       "apiVersion": "apiextensions.k8s.io/v1",
@@ -21978,7 +21978,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "MZSAVCFYGWGVPGAZ5QYDSKGVLZOK2KALJOB7VWLHSJBU7WKJTOWQ===="
+          "battery/hash": "463JDIMOWGG77EWEV2KVTOEDESC2OI7JZSXZIIZBHE4VNGGKWBJA===="
         },
         "labels": {
           "app": "battery-core",
@@ -21987,7 +21987,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "istio-injection": "false"
+          "istio-injection": "enabled"
         },
         "name": "battery-base"
       }

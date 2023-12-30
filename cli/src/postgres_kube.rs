@@ -8,8 +8,8 @@ use kube_client::{
 use kube_runtime::wait::{await_condition, conditions::is_pod_running};
 use tracing::{debug, info};
 
-const LABEL_SELECTOR: &str = "cnpg.io/cluster=controlserver,role=primary";
-const INITIAL_PODNAME: &str = "controlserver-1";
+const LABEL_SELECTOR: &str = "cnpg.io/cluster=pg-controlserver,role=primary";
+const INITIAL_PODNAME: &str = "pg-controlserver-1";
 const DEFAULT_RESOURCE_VERSION: &str = "0";
 
 pub async fn wait_healthy_pg(kube_client: Client, namespace: &str) -> Result<()> {
