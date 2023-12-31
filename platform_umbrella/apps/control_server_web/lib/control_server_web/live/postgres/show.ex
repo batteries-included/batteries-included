@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1, phase: 1]
+  import CommonCore.Resources.FieldAccessors
   import CommonUI.DatetimeDisplay
   import CommonUI.Table
   import ControlServerWeb.Audit.EditVersionsTable
@@ -14,6 +14,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
   alias ControlServer.Postgres
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
+  alias KubeServices.SystemState.SummaryBatteries
+  alias KubeServices.SystemState.SummaryHosts
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -32,6 +34,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
      |> assign_k8_cluster()
      |> assign_k8_services()
      |> assign_k8_pods()
+     |> maybe_assign_grafana_url()
      |> maybe_assign_edit_versions()}
   end
 
@@ -81,6 +84,23 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp maybe_assign_edit_versions(socket), do: socket
+
+  defp maybe_assign_grafana_url(%{assigns: %{cluster: cluster, k8_cluster: k8_cluster, live_action: :show}} = socket) do
+    assign(socket, :grafana_dashboard_url, grafana_url(cluster, k8_cluster))
+  end
+
+  defp maybe_assign_grafana_url(socket), do: socket
+
+  defp grafana_url(cluster, k8_cluster) do
+    # TODO(elliott): This should be in a SummaryUrls module
+    # and not depend on the k8_cluster
+    if SummaryBatteries.battery_installed(:grafana) do
+      host = SummaryHosts.grafana_host()
+      namespace = namespace(k8_cluster)
+
+      "//#{host}/d/cloudnative-pg/cloudnativepg?var-namespace=#{namespace}&var-cluster=pg-#{cluster.name}"
+    end
+  end
 
   defp k8_cluster(id) do
     :cloudnative_pg_cluster
@@ -140,6 +160,11 @@ defmodule ControlServerWeb.Live.PostgresShow do
     <.flex column class="justify-start">
       <.bordered_menu_item navigate={users_url(@cluster)} title="Users" />
       <.bordered_menu_item navigate={services_url(@cluster)} title="Services" />
+      <.bordered_menu_item
+        :if={@grafana_dashboard_url}
+        href={@grafana_dashboard_url}
+        title="Grafana Dashboard"
+      />
     </.flex>
     """
   end
@@ -190,7 +215,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
               <%= phase(@k8_cluster) %>
             </:item>
             <:item title="Started">
-              <.relative_display time={get_in(@k8_cluster, ~w(metadata creationTimestamp))} />
+              <.relative_display time={creation_timestamp(@k8_cluster)} />
             </:item>
           </.data_horizontal_bordered>
 
@@ -213,7 +238,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
     <.grid columns={%{sm: 1, lg: 2}}>
       <.info_panel cluster={@cluster} k8_cluster={@k8_cluster} />
-      <.links_panel cluster={@cluster} />
+      <.links_panel cluster={@cluster} grafana_dashboard_url={@grafana_dashboard_url} />
       <.panel title="Pods" class="col-span-2">
         <.pods_table pods={@k8_pods} />
       </.panel>
@@ -270,6 +295,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           k8_cluster={@k8_cluster}
           k8_pods={@k8_pods}
           k8_services={@k8_services}
+          grafana_dashboard_url={@grafana_dashboard_url}
         />
       <% :users -> %>
         <.users_page cluster={@cluster} k8_cluster={@k8_cluster} />
