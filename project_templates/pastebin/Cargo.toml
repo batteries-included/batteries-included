@@ -9,7 +9,7 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter", "ansi"] }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = { version = "1.0.108" }
 
-thiserror = "1.0.52"
+thiserror = "1.0.53"
 
 tokio = { version = "1.35.1", features = ["full"] }
 
