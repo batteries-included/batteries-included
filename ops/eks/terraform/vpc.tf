@@ -19,7 +19,7 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0.0"
+  version = "~> 5.4.0"
 
   name = "eks-${terraform.workspace}"
   cidr = local.networks[terraform.workspace]["cidr"]
@@ -47,7 +47,7 @@ module "vpc" {
 
 module "endpoints" {
   source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
-  version = "~> 3.0"
+  version = "~> 5.4"
 
   vpc_id = module.vpc.vpc_id
 
