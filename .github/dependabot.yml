@@ -1,3 +1,4 @@
+---
 version: 2
 updates:
   - package-ecosystem: 'github-actions'
@@ -26,5 +27,13 @@ updates:
       interval: daily
   - package-ecosystem: cargo
     directory: '/project_templates/pastebin'
+    schedule:
+      interval: daily
+  - package-ecosystem: terraform
+    directory: '/ops/eks/terraform'
+    schedule:
+      interval: daily
+  - package-ecosystem: terraform
+    directory: '/ops/aws/terraform'
     schedule:
       interval: daily

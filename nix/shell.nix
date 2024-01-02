@@ -83,6 +83,7 @@
         kubectl
         kubernetes-helm
         podman
+        terraform
 
         # Use for pushing docker
         skopeo
