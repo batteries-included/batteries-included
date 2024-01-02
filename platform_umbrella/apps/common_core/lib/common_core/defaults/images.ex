@@ -24,7 +24,7 @@ defmodule CommonCore.Defaults.Images do
   def promtail_image, do: "grafana/promtail:2.8.6"
   def loki_image, do: "grafana/loki:2.8.6"
 
-  def istio_pilot_image, do: "istio/pilot:1.19.5-distroless"
+  def istio_pilot_image, do: "istio/pilot:1.20.1-distroless"
 
   def keycloak_image, do: "quay.io/keycloak/keycloak:22.0.4"
 

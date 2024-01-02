@@ -46,7 +46,7 @@
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "istio/pilot:1.19.5-distroless",
+          "pilot_image": "istio/pilot:1.20.1-distroless",
           "namespace_override": null,
           "pilot_image_override": null
         },
@@ -92,7 +92,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "UXKPJWSGUA5FLZNFNK6PR4L7",
+            "password": "DS3EDF47SBEGEM6NKIKVZUAJ",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -4787,7 +4787,7 @@
       "kind": "Deployment",
       "metadata": {
         "annotations": {
-          "battery/hash": "54ZTZKEXRENQQSKEF25CUT6QWLUF7ERSASV6W6BXPGUTCFLWJXPA===="
+          "battery/hash": "ZCUO2IJSUCYSYUJWRGNBI2ORGSQP2UPQA4NYYXIWNCQNG74FBHCQ===="
         },
         "labels": {
           "app": "istiod",
@@ -4928,7 +4928,7 @@
                     }
                   }
                 ],
-                "image": "istio/pilot:1.19.5-distroless",
+                "image": "istio/pilot:1.20.1-distroless",
                 "name": "discovery",
                 "ports": [
                   {
@@ -5737,13 +5737,13 @@
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "KEOZ3ZVNYHJOUUDUUBSYSZ535X7YXWRUHSCGJM3ACJLRTE44YL4A===="
+          "battery/hash": "WMQT7X3BXKOCVX3L2GFCYHTYXHWHXY6XKEY7G7FWFMFUCSB5YDIA===="
         },
         "labels": {
-          "app": "cloudnative-pg-clusters",
+          "app": "pg-controlserver",
           "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "cloudnative-pg-clusters",
-          "battery/app": "cloudnative-pg-clusters",
+          "app.kubernetes.io/name": "pg-controlserver",
+          "battery/app": "pg-controlserver",
           "battery/managed": "true",
           "battery/managed.direct": "true"
         },
@@ -11081,12 +11081,12 @@
     "/cloudnative_pg/config_map/cnpg_controller_manager_config": {
       "apiVersion": "v1",
       "data": {
-        "INHERITED_LABELS": "battery/app, battery/owner"
+        "INHERITED_LABELS": "battery/app, battery/owner, app, app.kubernetes.io/name"
       },
       "kind": "ConfigMap",
       "metadata": {
         "annotations": {
-          "battery/hash": "SVBQC76WRQPK4YZZEVQ2CGSSM5ULYZSPPFX6LB7MD3EL7DMB7AIA===="
+          "battery/hash": "SVEX5PFIGJTQX4JWCXCYUQXYZDASKIGQGKHQ7ERDOFSMUKHI75CA===="
         },
         "labels": {
           "app": "cloudnative-pg",
@@ -12157,13 +12157,13 @@
       "kind": "Cluster",
       "metadata": {
         "annotations": {
-          "battery/hash": "D2QKKJ7RFFPDXPUMU7LQ6JMEYK4RNMMSYXG32ACOA2GDFU7SSJEA===="
+          "battery/hash": "22GMKWDTHYZ7WFP76EV6KSYGCQYY2FD63HSXJUVVV2P3LTSV6AVA===="
         },
         "labels": {
-          "app": "cloudnative-pg-clusters",
+          "app": "pg-controlserver",
           "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "cloudnative-pg-clusters",
-          "battery/app": "cloudnative-pg-clusters",
+          "app.kubernetes.io/name": "pg-controlserver",
+          "battery/app": "pg-controlserver",
           "battery/managed": "true",
           "battery/managed.direct": "true"
         },
@@ -13606,19 +13606,19 @@
       "data": {
         "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "VVhLUEpXU0dVQTVGTFpORk5LNlBSNEw3",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlVYS1BKV1NHVUE1RkxaTkZOSzZQUjRMN0BwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+        "password": "RFMzRURGNDdTQkVHRU02TktJS1ZaVUFK",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkRTM0VERjQ3U0JFR0VNNk5LSUtWWlVBSkBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "ZODMK5OYR3FG3USUHGHCVAK7LYAFQXI2XQNRTHVMW2OGYEYR7H7Q===="
+          "battery/hash": "BB5XCBEX3FE4CZLFQKUNVSWRZ5SS54ZIVYCDUCXKPFPWVVH5F5OA===="
         },
         "labels": {
-          "app": "cloudnative-pg-clusters",
+          "app": "pg-controlserver",
           "app.kubernetes.io/managed-by": "batteries-included",
-          "app.kubernetes.io/name": "cloudnative-pg-clusters",
-          "battery/app": "cloudnative-pg-clusters",
+          "app.kubernetes.io/name": "pg-controlserver",
+          "battery/app": "pg-controlserver",
           "battery/managed": "true",
           "battery/managed.direct": "true"
         },

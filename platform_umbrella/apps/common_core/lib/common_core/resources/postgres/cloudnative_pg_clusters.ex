@@ -46,10 +46,12 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   def cluster_resource(%Cluster{} = cluster, _battery, state) do
     db = cluster.database || %{database: "app", owner: "app"}
+    cluster_name = "pg-" <> cluster.name
 
     :cloudnative_pg_cluster
     |> B.build_resource()
-    |> B.name("pg-" <> cluster.name)
+    |> B.name(cluster_name)
+    |> B.app_labels(cluster_name)
     |> B.namespace(PostgresState.cluster_namespace(state, cluster))
     |> B.add_owner(cluster)
     |> B.spec(%{
@@ -152,6 +154,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     :secret
     |> B.build_resource()
     |> B.name(PostgresState.user_secret(state, cluster, user))
+    |> B.app_labels("pg-" <> cluster.name)
     |> B.namespace(namespace)
     |> B.add_owner(cluster)
     |> B.data(data)
@@ -165,15 +168,17 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         "selector",
         %{
           "matchLabels" => %{
-            "battery/app" => @app_name,
             "cnpg.io/cluster" => "pg-" <> cluster_name
           }
         }
       )
 
+    cluster_name = "pg-" <> cluster.name
+
     :monitoring_pod_monitor
     |> B.build_resource()
-    |> B.name("pg-" <> cluster_name)
+    |> B.name(cluster_name)
+    |> B.app_labels(cluster_name)
     |> B.namespace(PostgresState.cluster_namespace(state, cluster))
     |> B.spec(spec)
     |> B.add_owner(cluster)

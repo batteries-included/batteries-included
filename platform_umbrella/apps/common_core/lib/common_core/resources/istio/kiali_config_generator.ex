@@ -75,7 +75,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
         },
         "grafana" => %{
           "in_cluster_url" => "http://grafana.#{namespace_core}.svc",
-          "url" => grafana_host(state)
+          "url" => "http://" <> grafana_host(state)
         },
         "prometheus" => %{
           "health_check_url" =>

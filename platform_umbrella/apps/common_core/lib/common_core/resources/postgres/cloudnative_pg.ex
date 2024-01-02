@@ -154,7 +154,7 @@ defmodule CommonCore.Resources.CloudnativePG do
 
   resource(:config_map_cnpg_controller_manager, _battery, state) do
     namespace = core_namespace(state)
-    data = %{INHERITED_LABELS: "battery/app, battery/owner"}
+    data = %{INHERITED_LABELS: "battery/app, battery/owner, app, app.kubernetes.io/name"}
 
     :config_map
     |> B.build_resource()
