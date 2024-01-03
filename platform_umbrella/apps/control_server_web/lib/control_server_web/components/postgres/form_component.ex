@@ -15,9 +15,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   @impl Phoenix.LiveComponent
   def update(%{cluster: cluster} = assigns, socket) do
     changeset =
-      cluster
-      |> Postgres.change_cluster()
-      |> Cluster.maybe_convert_virtual_size_to_presets()
+      Postgres.change_cluster(cluster)
 
     {:ok,
      socket

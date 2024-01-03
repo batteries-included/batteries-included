@@ -7,7 +7,7 @@ defmodule ControlServer.Repo.Migrations.CreateClusters do
       add :name, :string
       add :storage_size, :bigint
       add :storage_class, :string
-      add :cpu_requested, :integer
+      add :cpu_requested, :bigint
       add :cpu_limits, :integer
       add :memory_requested, :bigint
       add :memory_limits, :bigint

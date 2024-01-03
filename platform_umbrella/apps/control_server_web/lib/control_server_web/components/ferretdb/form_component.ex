@@ -73,7 +73,7 @@ defmodule ControlServerWeb.FerretDBFormComponent do
             ]}
           />
 
-          <.grid :if={@form[:virtual_size].value == "custom"} columns={[sm: 1, md: 2]}>
+          <.grid :if={@form[:virtual_size].value == "custom"} columns={[sm: 1, md: 2, xl: 4]}>
             <PC.field field={@form[:cpu_requested]} label="Cpu requested" />
             <PC.field field={@form[:cpu_limits]} label="Cpu limits" />
             <PC.field field={@form[:memory_requested]} label="Memory requested" />

@@ -47,15 +47,12 @@ defmodule ControlServerWeb.Live.Redis do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/data"}} />
-    <.panel title="All Redis Clusters">
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/data"}}>
       <:menu>
-        <.a navigate={new_url()}>
-          <.button>
-            New Cluster
-          </.button>
-        </.a>
+        <PC.button to={new_url()} link_type="live_redirect" label="New Redis Cluster" />
       </:menu>
+    </.page_header>
+    <.panel title="All Redis Clusters">
       <.redis_table rows={@failover_clusters} />
     </.panel>
     """

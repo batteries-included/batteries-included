@@ -13,11 +13,16 @@ defmodule ControlServer.RedisFixtures do
       |> Enum.into(%{
         name: "some name",
         type: :standard,
+        virtual_size: nil,
+        memory_limits: 100,
+        memory_requested: 90,
+        cpu_limits: 101,
+        cpu_requested: 91,
         num_redis_instances: 42,
         num_sentinel_instances: 43
       })
       |> ControlServer.Redis.create_failover_cluster()
 
-    failover_cluster
+    Map.put(failover_cluster, :virtual_size, nil)
   end
 end

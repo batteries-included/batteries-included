@@ -8,11 +8,11 @@ defmodule ControlServer.Repo.Migrations.CreateFerretServices do
       add :name, :string
       add :instances, :integer
 
-      add :cpu_requested, :integer
-      add :cpu_limits, :integer
+      add :cpu_requested, :bigint
+      add :cpu_limits, :bigint
 
-      add :memory_requested, :integer
-      add :memory_limits, :integer
+      add :memory_requested, :bigint
+      add :memory_limits, :bigint
 
       add :postgres_cluster_id, references(:pg_clusters, on_delete: :delete_all, type: :binary_id)
       add :project_id, references(:system_projects)

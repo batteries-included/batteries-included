@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.RedisShow do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
   import ControlServerWeb.PodsTable

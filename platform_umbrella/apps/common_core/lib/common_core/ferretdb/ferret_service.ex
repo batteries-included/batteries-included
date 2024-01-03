@@ -6,7 +6,6 @@ defmodule CommonCore.FerretDB.FerretService do
   import Ecto.Changeset
 
   alias CommonCore.Util.Memory
-  alias Ecto.Changeset
 
   @required_fields ~w(name instances postgres_cluster_id)a
   @optional_fields ~w(cpu_requested cpu_limits memory_requested memory_limits virtual_size)a
@@ -75,59 +74,7 @@ defmodule CommonCore.FerretDB.FerretService do
     ferret_service
     |> cast(attrs, fields)
     |> validate_required(@required_fields)
-    |> maybe_set_virtual_size()
+    |> maybe_set_virtual_size(@presets)
     |> downcase_fields([:name])
-  end
-
-  @spec maybe_set_virtual_size(Ecto.Changeset.t()) :: any()
-  def maybe_set_virtual_size(changeset) do
-    changeset
-    |> apply_preset(get_field(changeset, :virtual_size))
-    |> maybe_deduce_virtual_size()
-  end
-
-  defp maybe_deduce_virtual_size(changeset) do
-    with nil <- Changeset.get_field(changeset, :virtual_size),
-         true <- find_matching_preset(changeset) != nil do
-      put_change(changeset, :virtual_size, find_matching_preset(changeset))
-    else
-      _ ->
-        changeset
-    end
-  end
-
-  defp find_matching_preset(changeset) do
-    # Finds the preset that matches the values in the changeset.
-    #
-    # Returns the `:name` of the matched preset, or `nil` if no match.
-    @presets
-    |> Enum.find(
-      %{},
-      fn preset ->
-        # Check if all keys are either the name which we ignore
-        # or they are euqal to the current changeset value.
-        Enum.all?(preset, fn {k, v} -> k == :name || get_field(changeset, k) == v end)
-      end
-    )
-    |> Map.get(:name, nil)
-  end
-
-  defp apply_preset(changeset, nil), do: changeset
-  defp apply_preset(changeset, "custom" = _preset_name), do: changeset
-
-  defp apply_preset(changeset, preset_name) do
-    preset = preset_by_name(preset_name)
-
-    # Add all preset fields to changeset
-    Enum.reduce(preset, changeset, fn
-      {k, _v}, acc when k == :name ->
-        acc
-
-      {k, _v}, acc when k == "name" ->
-        acc
-
-      {k, v}, acc ->
-        put_change(acc, k, v)
-    end)
   end
 end

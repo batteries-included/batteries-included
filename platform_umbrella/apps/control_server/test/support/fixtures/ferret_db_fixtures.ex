@@ -12,7 +12,7 @@ defmodule ControlServer.FerretDBFixtures do
       ControlServer.Postgres.create_cluster(%{
         name: Ecto.UUID.generate(),
         num_instances: 1,
-        virtual_size: "small",
+        virtual_size: "tiny",
         users: [%{username: "userone", roles: ["superuser"]}],
         database: %{name: "maindata", owner: "userone"}
       })
@@ -21,6 +21,7 @@ defmodule ControlServer.FerretDBFixtures do
       attrs
       |> Enum.into(%{
         name: Ecto.UUID.generate(),
+        virtual_size: nil,
         postgres_cluster_id: cluster.id,
         cpu_limits: 42,
         cpu_requested: 42,
@@ -30,6 +31,6 @@ defmodule ControlServer.FerretDBFixtures do
       })
       |> ControlServer.FerretDB.create_ferret_service()
 
-    ferret_service
+    Map.put(ferret_service, :virtual_size, nil)
   end
 end

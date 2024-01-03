@@ -4,6 +4,7 @@
   },
   "target_summary": {
     "notebooks": [],
+    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -65,7 +66,6 @@
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -92,7 +92,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "XRI5XARXTMNAWIKNR3J6LDQM",
+            "password": "EZ4NRGZZ5PLTRGICT7SQ4R52",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -13606,13 +13606,13 @@
       "data": {
         "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "WFJJNVhBUlhUTU5BV0lLTlIzSjZMRFFN",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlhSSTVYQVJYVE1OQVdJS05SM0o2TERRTUBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+        "password": "RVo0TlJHWlo1UExUUkdJQ1Q3U1E0UjUy",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkVaNE5SR1paNVBMVFJHSUNUN1NRNFI1MkBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "FMBZFHA5ZMYIYELOKHA74IORGEZ7X46CR5D3HVGBVS3M34N7ZSWQ===="
+          "battery/hash": "WKSDFXP2RPSUGIFLKPCW2W36XZ7UTXR3HYTBXSUJJ42BARHZRU5A===="
         },
         "labels": {
           "app": "pg-controlserver",

@@ -85,12 +85,5 @@ defmodule CommonCore.Postgres.ClusterTest do
       storage_size_preset_value = Cluster.get_preset(virtual_size).storage_size
       assert storage_size_preset_value == Changeset.get_field(changeset, :storage_size)
     end
-
-    test "sets to medium when virtual size is custom" do
-      virtual_size = "custom"
-      changeset = Cluster.changeset(%Cluster{}, %{virtual_size: virtual_size})
-      storage_size_preset_value = Cluster.get_preset("medium").storage_size
-      assert Changeset.get_field(changeset, :storage_size) == storage_size_preset_value
-    end
   end
 end

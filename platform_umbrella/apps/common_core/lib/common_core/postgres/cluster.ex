@@ -105,8 +105,7 @@ defmodule CommonCore.Postgres.Cluster do
       :virtual_size,
       :virtual_storage_size_range_value
     ])
-    |> maybe_set_virtual_size()
-    |> maybe_convert_virtual_size_to_presets()
+    |> maybe_set_virtual_size(@presets)
     |> maybe_set_storage_size_slider_value()
     |> cast_embed(:users)
     |> cast_embed(:database)
@@ -181,21 +180,6 @@ defmodule CommonCore.Postgres.Cluster do
   def preset_options_for_select, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
 
   def get_preset(preset), do: Enum.find(@presets, &(&1.name == preset))
-
-  def maybe_set_virtual_size(changeset) do
-    storage_size = get_field(changeset, :storage_size)
-    virtual_size = get_field(changeset, :virtual_size)
-
-    if storage_size && !virtual_size do
-      put_change(changeset, :virtual_size, calculate_virtual_size(storage_size))
-    else
-      changeset
-    end
-  end
-
-  def maybe_convert_virtual_size_to_presets(changeset) do
-    convert_virtual_size_to_presets(changeset, get_field(changeset, :virtual_size))
-  end
 
   defp maybe_set_storage_size_slider_value(changeset) do
     storage_size = get_field(changeset, :storage_size)

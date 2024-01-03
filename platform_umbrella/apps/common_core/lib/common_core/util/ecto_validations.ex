@@ -77,4 +77,72 @@ defmodule CommonCore.Util.EctoValidations do
   end
 
   defp maybe_downcase(value), do: value
+
+  # Maybe Set Virtual Size
+
+  @doc """
+  Given a changeset with a `:virtual_size` field, this will apply
+  the values from the preset map passed in if the virtual
+  size matches the name field of map presets values.
+  """
+  @spec maybe_set_virtual_size(Ecto.Changeset.t(), list(map())) :: any()
+  def maybe_set_virtual_size(changeset, presets) do
+    changeset
+    |> apply_preset(get_field(changeset, :virtual_size), presets)
+    |> maybe_deduce_virtual_size(presets)
+  end
+
+  defp maybe_deduce_virtual_size(changeset, presets) do
+    # Try and figure out the virtual size from the changeset.
+    # If anything doesn't match, then assume custom.
+    case get_field(changeset, :virtual_size) do
+      nil ->
+        matching_preset = find_matching_preset(changeset, presets)
+
+        if matching_preset != nil do
+          put_change(changeset, :virtual_size, matching_preset)
+        else
+          put_change(changeset, :virtual_size, "custom")
+        end
+
+      _ ->
+        changeset
+    end
+  end
+
+  defp find_matching_preset(changeset, presets) do
+    # Finds the preset that matches the values in the changeset.
+    #
+    # Returns the `:name` of the matched preset, or `nil` if no match.
+    presets
+    |> Enum.find(
+      %{},
+      fn preset ->
+        # Check if all keys are either the name which we ignore
+        # or they are euqal to the current changeset value.
+        Enum.all?(preset, fn {k, v} -> k == :name || get_field(changeset, k) == v end)
+      end
+    )
+    |> Map.get(:name, nil)
+  end
+
+  defp apply_preset(changeset, nil, _presets), do: changeset
+  defp apply_preset(changeset, "custom" = _preset_name, _presets), do: changeset
+
+  defp apply_preset(changeset, preset_name, presets) do
+    preset = Enum.find(presets, &(&1.name == preset_name))
+
+    # Add all preset fields to changeset
+
+    Enum.reduce(preset || %{}, changeset, fn
+      {k, _v}, acc when k == :name ->
+        acc
+
+      {k, _v}, acc when k == "name" ->
+        acc
+
+      {k, v}, acc ->
+        put_change(acc, k, v)
+    end)
+  end
 end

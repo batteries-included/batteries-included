@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.RedisEdit do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias ControlServer.Redis
   alias ControlServerWeb.Live.Redis.FormComponent
@@ -14,7 +14,15 @@ defmodule ControlServerWeb.Live.RedisEdit do
 
   @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
-    {:noreply, assign(socket, :failover_cluster, Redis.get_failover_cluster!(id))}
+    {:noreply, socket |> assign_failover_cluster(id) |> assign_page_title()}
+  end
+
+  defp assign_failover_cluster(socket, id) do
+    assign(socket, :failover_cluster, Redis.get_failover_cluster!(id))
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, :page_title, "Edit Redis Cluster")
   end
 
   @impl Phoenix.LiveView
@@ -25,17 +33,13 @@ defmodule ControlServerWeb.Live.RedisEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.h1>
-      Edit Redis
-      <:sub_header><%= @failover_cluster.name %></:sub_header>
-    </.h1>
     <div>
       <.live_component
         module={FormComponent}
         failover_cluster={@failover_cluster}
         id={@failover_cluster.id || "edit-failover-cluster-form"}
         action={:edit}
-        save_target={self()}
+        title={@page_title}
       />
     </div>
     """

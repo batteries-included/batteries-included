@@ -39,5 +39,5 @@ defmodule ControlServerWeb.RedisTable do
   def show_url(%FailoverCluster{} = cluster), do: ~p"/redis/#{cluster}/show"
 
   @spec edit_url(FailoverCluster.t()) :: String.t()
-  def edit_url(%FailoverCluster{} = cluster), do: ~p"/redis/#{cluster}/show"
+  def edit_url(%FailoverCluster{} = cluster), do: ~p"/redis/#{cluster}/edit"
 end
