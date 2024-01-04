@@ -1,7 +1,7 @@
 locals {
   karpenter = {
     discovery_key   = "karpenter.sh/discovery"
-    discovery_value = local.eks.cluster_name
+    discovery_value = var.cluster_name
   }
 }
 

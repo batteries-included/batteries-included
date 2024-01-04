@@ -1,9 +1,7 @@
 locals {
   eks = {
-    cluster_name    = "main"
+    cluster_name    = var.cluster_name
     cluster_version = "1.28"
-    private_subnets = setsubtract(module.vpc_main.private_subnets, data.aws_subnets.disallowed_eks_subnets.ids)
-    public_subnets  = setsubtract(module.vpc_main.public_subnets, data.aws_subnets.disallowed_eks_subnets.ids)
   }
 }
 
@@ -37,9 +35,9 @@ module "eks" {
     }
   }
 
-  vpc_id                   = module.vpc_main.vpc_id
-  subnet_ids               = local.eks.private_subnets
-  control_plane_subnet_ids = local.eks.public_subnets
+  vpc_id                   = module.vpc.vpc_id
+  subnet_ids               = module.vpc.private_subnets
+  control_plane_subnet_ids = module.vpc.public_subnets
 
   kms_key_deletion_window_in_days = 7
 

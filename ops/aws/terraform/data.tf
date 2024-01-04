@@ -1,5 +1,7 @@
 data "aws_availability_zones" "available" {
   state = "available"
+  # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#network-requirements-subnets
+  exclude_zone_ids = ["use1-az3", "usw1-az2", "cac1-az3"]
 
   filter {
     name   = "zone-type"
@@ -35,12 +37,4 @@ data "aws_ecrpublic_authorization_token" "token" {
 data "aws_iam_roles" "sso_roles" {
   name_regex  = "AWSReservedSSO_*"
   path_prefix = "/aws-reserved/sso.amazonaws.com/"
-}
-
-data "aws_subnets" "disallowed_eks_subnets" {
-  filter {
-    name = "availability-zone-id"
-    # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#network-requirements-subnets
-    values = ["use1-az3", "usw1-az2", "cac1-az3"]
-  }
 }

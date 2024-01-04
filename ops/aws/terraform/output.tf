@@ -13,3 +13,11 @@ output "gateway_public_dns" {
 output "gateway_public_ip" {
   value = aws_eip.wireguard.public_ip
 }
+
+output "public_subnets" {
+  value = local.public_subnets
+}
+
+output "private_subnets" {
+  value = local.private_subnets
+}
