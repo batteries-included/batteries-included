@@ -1,9 +1,0 @@
----
-auth_map_additions: []
-managed_node_group:
-  instance_types:
-    - t3a.medium
-  desired_size: 2
-  min_size: 2
-  max_size: 3
-region: "us-east-1"
