@@ -29,12 +29,12 @@ variable "cluster_name" {
 variable "vpc_cidr_block" {
   description = "CIDR block for VPC"
   type        = string
-  default     = "10.0.0.0/16"
+  default     = "100.64.0.0/16"
 }
 
 # This is the network that wireguard will use
 variable "gateway_network_cidr_block" {
-  default = "10.250.0.0/24"
+  default = "100.64.250.0/24"
   type    = string
 }
 

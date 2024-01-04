@@ -1,23 +1,15 @@
-output "gateway_private_ip" {
-  value = aws_instance.wireguard.private_ip
+output "gateway" {
+  value = {
+    private_ip  = aws_instance.wireguard.private_ip
+    public_ip   = aws_eip.wireguard.public_ip
+    private_dns = aws_instance.wireguard.private_dns
+    public_dns  = aws_instance.wireguard.public_dns
+  }
 }
 
-output "gateway_private_dns" {
-  value = aws_instance.wireguard.private_dns
-}
-
-output "gateway_public_dns" {
-  value = aws_instance.wireguard.public_dns
-}
-
-output "gateway_public_ip" {
-  value = aws_eip.wireguard.public_ip
-}
-
-output "public_subnets" {
-  value = local.public_subnets
-}
-
-output "private_subnets" {
-  value = local.private_subnets
+output "subnets" {
+  value = {
+    public  = local.public_subnets
+    private = local.private_subnets
+  }
 }

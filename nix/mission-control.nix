@@ -246,16 +246,17 @@
               CLIENT_NAME=''${1:-wireguard-client}
               CLIENT_KEY=$(cat "$KEYS_DIR/$CLIENT_NAME")
               SERVER_PUBKEY=$(cat "$KEYS_DIR/gateway.pub")
+              GATEWAY_IP=$(terraform -chdir=ops/aws/terraform output -json | jq -r '.gateway.value.public_ip')
 
               cat <<END
               [Interface]
               PrivateKey = $CLIENT_KEY
-              Address = 10.250.0.1/32
+              Address = 100.64.250.1/32
 
               [Peer]
               PublicKey = $SERVER_PUBKEY
-              AllowedIPs = 10.250.0.0/24, 10.0.0.0/16
-              Endpoint = pub-wg.batteriesincl.com:51820
+              AllowedIPs = 100.64.250.0/24, 100.64.0.0/16
+              Endpoint = $GATEWAY_IP:51820
               END
             '';
           };
