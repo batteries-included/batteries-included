@@ -7,7 +7,7 @@ edition = "2021"
 tracing = { version = "0.1.40" }
 tracing-subscriber = { version = "0.3.18", features = ["env-filter", "ansi"] }
 serde = { version = "1.0.194", features = ["derive"] }
-serde_json = { version = "1.0.110" }
+serde_json = { version = "1.0.111" }
 
 thiserror = "1.0.56"
 
