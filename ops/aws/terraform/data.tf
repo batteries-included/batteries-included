@@ -22,3 +22,25 @@ data "aws_ami" "ubuntu" {
 
   owners = ["099720109477"] # Canonical
 }
+
+data "aws_organizations_organization" "orgs" {
+  provider = aws.mgmt
+}
+
+data "aws_ecrpublic_authorization_token" "token" {
+  provider = aws.mgmt
+}
+
+# the role names are like AWSReservedSSO_${ROLE}_${random_stuff}
+data "aws_iam_roles" "sso_roles" {
+  name_regex  = "AWSReservedSSO_*"
+  path_prefix = "/aws-reserved/sso.amazonaws.com/"
+}
+
+data "aws_subnets" "disallowed_eks_subnets" {
+  filter {
+    name = "availability-zone-id"
+    # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#network-requirements-subnets
+    values = ["use1-az3", "usw1-az2", "cac1-az3"]
+  }
+}
