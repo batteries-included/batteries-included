@@ -91,6 +91,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp maybe_assign_grafana_url(socket), do: socket
 
+  defp grafana_url(_cluster, nil), do: nil
+
   defp grafana_url(cluster, k8_cluster) do
     # TODO(elliott): This should be in a SummaryUrls module
     # and not depend on the k8_cluster
