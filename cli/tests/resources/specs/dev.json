@@ -68,16 +68,6 @@
       },
       {
         "id": null,
-        "type": "timeline",
-        "config": {
-          "type": "timeline"
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -132,7 +122,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "RITODNOBFFO57ZWVMRLNASK3",
+            "password": "W3JHF3LKZAZAOXHGPP6W2QRV",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -15625,13 +15615,13 @@
       "data": {
         "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "UklUT0ROT0JGRk81N1pXVk1STE5BU0sz",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlJJVE9ETk9CRkZPNTdaV1ZNUkxOQVNLM0BwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+        "password": "VzNKSEYzTEtaQVpBT1hIR1BQNlcyUVJW",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlczSkhGM0xLWkFaQU9YSEdQUDZXMlFSVkBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "C5VZZIVGARWBVXIFI2RSPC5XVXFRNRP2CARDH7L2ECV6LZ776OMQ===="
+          "battery/hash": "BMUY4MWRAZH2733DTHDIHMCFY7CXK6Y7XUDUTON7M6NPX4NPWF5A===="
         },
         "labels": {
           "app": "pg-controlserver",
