@@ -1,6 +1,6 @@
 [package]
 name = "pastebin"
-version = "0.7.0"
+version = "0.8.0"
 edition = "2021"
 
 [dependencies]
@@ -13,9 +13,9 @@ thiserror = "1.0.56"
 
 tokio = { version = "1.35.1", features = ["full"] }
 
-axum = { version = "0.6.20", features = ["headers", "json", "query"] }
+axum = { version = "0.7.3", features = ["json", "query"] }
 tower = { version = "0.4.13" }
-tower-http = { version = "0.4.4", features = [
+tower-http = { version = "0.5.0", features = [
   "compression-full",
   "limit",
   "fs",
@@ -35,7 +35,7 @@ askama = { version = "0.12.1", features = [
   "num-traits",
   "urlencode",
 ] }
-askama_axum = { version = "0.3.0" }
+askama_axum = { version = "0.4.0" }
 include_dir = { version = "0.7.3" }
 mime_guess = { version = "2.0.4" }
 

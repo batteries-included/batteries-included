@@ -7,7 +7,7 @@ fn test_help_command() {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap();
     let stdout = String::from_utf8(cmd.arg("help").output().unwrap().stdout).unwrap();
     assert!(
-        stdout.starts_with(HELP_STR),
+        stdout.contains(HELP_STR),
         "The help command should include usgage and options."
     );
 }

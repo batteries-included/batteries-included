@@ -1,6 +1,7 @@
-use axum::{Router, Server};
+use axum::Router;
 use migration::{Migrator, MigratorTrait};
 use std::process::ExitCode;
+use tokio::net::TcpListener;
 use tokio::signal::unix::{self, SignalKind};
 use tower::ServiceBuilder;
 
@@ -36,9 +37,9 @@ pub async fn start() -> Result<(), Box<dyn std::error::Error>> {
         .layer(TimeoutLayer::new(settings::HTTP_TIMEOUT));
 
     let service: Router<()> = router.layer(service_builder).with_state(app_state);
+    let listener = TcpListener::bind(&addr).await?;
 
-    Server::bind(&addr)
-        .serve(service.into_make_service())
+    axum::serve(listener, service.into_make_service())
         .with_graceful_shutdown(async {
             tokio::select! {
                 _ = sigterm() => {}
