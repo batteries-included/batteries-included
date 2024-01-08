@@ -14,7 +14,7 @@ defmodule CommonCore.Resources.CephFilesystems do
       |> B.build_resource()
       |> B.name(filesystem.name)
       |> B.namespace(namespace)
-      |> B.owner_label(filesystem.id)
+      |> B.add_owner(filesystem)
       |> B.spec(filesystem_spec(filesystem, battery, state))
     end)
   end

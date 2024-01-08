@@ -14,15 +14,20 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.FerretDB
   alias CommonCore.Resources.Gitea
   alias CommonCore.Resources.Grafana
-  alias CommonCore.Resources.IstioBase
+  alias CommonCore.Resources.Istio
   alias CommonCore.Resources.IstioCsr
   alias CommonCore.Resources.Istiod
   alias CommonCore.Resources.IstioIngress
   alias CommonCore.Resources.IstioMetrics
+  alias CommonCore.Resources.IstioNamespace
+  alias CommonCore.Resources.IstioReader
+  alias CommonCore.Resources.IstioTelemetry
   alias CommonCore.Resources.Keycloak
   alias CommonCore.Resources.Kiali
-  alias CommonCore.Resources.KnativeOperator
+  alias CommonCore.Resources.KnativeNetIstio
+  alias CommonCore.Resources.KnativeServices
   alias CommonCore.Resources.KnativeServing
+  alias CommonCore.Resources.KnativeServingCRDs
   alias CommonCore.Resources.KubeDashboards
   alias CommonCore.Resources.KubeMonitoring
   alias CommonCore.Resources.KubeStateMetrics
@@ -56,13 +61,13 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     cloudnative_pg: [CloudnativePG, CloudnativePGClusters, CloudnativePGDashboards],
     gitea: [Gitea],
     grafana: [Grafana],
-    istio: [IstioBase, Istiod, IstioMetrics],
+    istio: [IstioNamespace, Istio, Istiod, IstioReader, IstioTelemetry, IstioMetrics],
     istio_csr: [IstioCsr],
     istio_gateway: [IstioIngress],
     keycloak: [Keycloak],
     kiali: [Kiali],
     ferretdb: [FerretDB],
-    knative: [KnativeOperator, KnativeServing],
+    knative: [KnativeServingCRDs, KnativeServing, KnativeNetIstio, KnativeServices],
     kube_monitoring: [MetricsServer, KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
     loki: [Loki],
     metallb: [MetalLB, MetalLBPools],

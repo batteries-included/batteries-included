@@ -75,12 +75,13 @@ defmodule CommonCore.Resources.VMCluster do
     |> B.spec(spec)
   end
 
-  resource(:virtual_service_main, _battery, state) do
+  resource(:virtual_service_main, battery, state) do
     namespace = core_namespace(state)
 
     spec =
       [hosts: [vmselect_host(state)]]
       |> VirtualService.new!()
+      |> V.prefix(PU.prefix(battery, state), PU.service_name(battery, state), PU.port(battery, state))
       |> V.fallback("vmselect-main-cluster", @vm_select_port)
 
     :istio_virtual_service

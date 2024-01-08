@@ -187,6 +187,8 @@ spec:
                               items:
                                 type: string
                               type: array
+                          required:
+                            - key
                           type: object
                         type: array
                     type: object
@@ -197,7 +199,21 @@ spec:
                     matchLabels:
                       additionalProperties:
                         type: string
+                      description:
+                        One or more labels that indicate a specific set of
+                        pods/VMs on which a policy should be applied.
                       type: object
+                  type: object
+                targetRef:
+                  properties:
+                    group:
+                      type: string
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
                   type: object
               type: object
             status:
@@ -374,6 +390,8 @@ spec:
                               items:
                                 type: string
                               type: array
+                          required:
+                            - key
                           type: object
                         type: array
                     type: object
@@ -384,7 +402,21 @@ spec:
                     matchLabels:
                       additionalProperties:
                         type: string
+                      description:
+                        One or more labels that indicate a specific set of
+                        pods/VMs on which a policy should be applied.
                       type: object
+                  type: object
+                targetRef:
+                  properties:
+                    group:
+                      type: string
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
                   type: object
               type: object
             status:

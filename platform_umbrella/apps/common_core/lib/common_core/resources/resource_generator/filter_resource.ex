@@ -19,6 +19,8 @@ defmodule CommonCore.Resources.FilterResource do
     end
   end
 
+  def require_non_empty(_resource, nil), do: nil
+
   def require_non_empty(resource, data) do
     if Enum.empty?(data) do
       nil

@@ -97,70 +97,72 @@ defmodule CommonCore.Resources.Loki do
   resource(:stateful_set_main, battery, state) do
     namespace = core_namespace(state)
 
-    template = %{
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => @app_name,
-          "battery/managed" => "true"
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{
+            "battery/managed" => "true"
+          }
+        },
+        "spec" => %{
+          "affinity" => %{
+            "podAntiAffinity" => %{
+              "requiredDuringSchedulingIgnoredDuringExecution" => [
+                %{
+                  "labelSelector" => %{
+                    "matchLabels" => %{"battery/app" => @app_name}
+                  },
+                  "topologyKey" => "kubernetes.io/hostname"
+                }
+              ]
+            }
+          },
+          "automountServiceAccountToken" => true,
+          "containers" => [
+            %{
+              "args" => ["-config.file=/etc/loki/config/config.yaml", "-target=all"],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "single-binary",
+              "ports" => [
+                %{"containerPort" => 3100, "name" => "http-metrics", "protocol" => "TCP"},
+                %{"containerPort" => 9095, "name" => "grpc", "protocol" => "TCP"},
+                %{"containerPort" => 7946, "name" => "http-memberlist", "protocol" => "TCP"}
+              ],
+              "readinessProbe" => %{
+                "httpGet" => %{"path" => "/ready", "port" => "http-metrics"},
+                "initialDelaySeconds" => 30,
+                "timeoutSeconds" => 1
+              },
+              "resources" => %{},
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"drop" => ["ALL"]},
+                "readOnlyRootFilesystem" => true
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/tmp", "name" => "tmp"},
+                %{"mountPath" => "/etc/loki/config", "name" => "config"},
+                %{"mountPath" => "/var/loki", "name" => "storage"}
+              ]
+            }
+          ],
+          "securityContext" => %{
+            "fsGroup" => 10_001,
+            "runAsGroup" => 10_001,
+            "runAsNonRoot" => true,
+            "runAsUser" => 10_001
+          },
+          "serviceAccountName" => "loki",
+          "terminationGracePeriodSeconds" => 30,
+          "volumes" => [
+            %{"emptyDir" => %{}, "name" => "tmp"},
+            %{"configMap" => %{"name" => "loki"}, "name" => "config"}
+          ]
         }
-      },
-      "spec" => %{
-        "affinity" => %{
-          "podAntiAffinity" => %{
-            "requiredDuringSchedulingIgnoredDuringExecution" => [
-              %{
-                "labelSelector" => %{
-                  "matchLabels" => %{"battery/app" => @app_name}
-                },
-                "topologyKey" => "kubernetes.io/hostname"
-              }
-            ]
-          }
-        },
-        "automountServiceAccountToken" => true,
-        "containers" => [
-          %{
-            "args" => ["-config.file=/etc/loki/config/config.yaml", "-target=all"],
-            "image" => battery.config.image,
-            "imagePullPolicy" => "IfNotPresent",
-            "name" => "single-binary",
-            "ports" => [
-              %{"containerPort" => 3100, "name" => "http-metrics", "protocol" => "TCP"},
-              %{"containerPort" => 9095, "name" => "grpc", "protocol" => "TCP"},
-              %{"containerPort" => 7946, "name" => "http-memberlist", "protocol" => "TCP"}
-            ],
-            "readinessProbe" => %{
-              "httpGet" => %{"path" => "/ready", "port" => "http-metrics"},
-              "initialDelaySeconds" => 30,
-              "timeoutSeconds" => 1
-            },
-            "resources" => %{},
-            "securityContext" => %{
-              "allowPrivilegeEscalation" => false,
-              "capabilities" => %{"drop" => ["ALL"]},
-              "readOnlyRootFilesystem" => true
-            },
-            "volumeMounts" => [
-              %{"mountPath" => "/tmp", "name" => "tmp"},
-              %{"mountPath" => "/etc/loki/config", "name" => "config"},
-              %{"mountPath" => "/var/loki", "name" => "storage"}
-            ]
-          }
-        ],
-        "securityContext" => %{
-          "fsGroup" => 10_001,
-          "runAsGroup" => 10_001,
-          "runAsNonRoot" => true,
-          "runAsUser" => 10_001
-        },
-        "serviceAccountName" => "loki",
-        "terminationGracePeriodSeconds" => 30,
-        "volumes" => [
-          %{"emptyDir" => %{}, "name" => "tmp"},
-          %{"configMap" => %{"name" => "loki"}, "name" => "config"}
-        ]
       }
-    }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
@@ -172,7 +174,7 @@ defmodule CommonCore.Resources.Loki do
         %{"matchLabels" => %{"battery/app" => @app_name}}
       )
       |> Map.put("serviceName", "loki-headless")
-      |> Map.put("template", template)
+      |> B.template(template)
       |> Map.put("updateStrategy", %{"rollingUpdate" => %{"partition" => 0}})
       |> Map.put("volumeClaimTemplates", [
         %{

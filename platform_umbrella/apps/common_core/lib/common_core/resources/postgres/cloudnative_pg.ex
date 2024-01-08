@@ -193,78 +193,77 @@ defmodule CommonCore.Resources.CloudnativePG do
   resource(:deployment_cloudnative_pg, battery, state) do
     namespace = core_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{"labels" => %{"battery/managed" => "true"}},
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => [
+                "controller",
+                "--leader-elect",
+                "--config-map-name=cnpg-controller-manager-config",
+                "--secret-name=cnpg-controller-manager-config",
+                "--webhook-port=9443"
+              ],
+              "command" => ["/manager"],
+              "env" => [
+                %{"name" => "OPERATOR_IMAGE_NAME", "value" => battery.config.image},
+                %{
+                  "name" => "OPERATOR_NAMESPACE",
+                  "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+                },
+                %{"name" => "MONITORING_QUERIES_CONFIGMAP", "value" => "cnpg-default-monitoring"}
+              ],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "IfNotPresent",
+              "livenessProbe" => %{
+                "httpGet" => %{"path" => "/readyz", "port" => 9443, "scheme" => "HTTPS"},
+                "initialDelaySeconds" => 3
+              },
+              "name" => "manager",
+              "ports" => [
+                %{"containerPort" => 8080, "name" => "metrics", "protocol" => "TCP"},
+                %{"containerPort" => 9443, "name" => "webhook-server", "protocol" => "TCP"}
+              ],
+              "readinessProbe" => %{
+                "httpGet" => %{"path" => "/readyz", "port" => 9443, "scheme" => "HTTPS"},
+                "initialDelaySeconds" => 3
+              },
+              "resources" => %{},
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"drop" => ["ALL"]},
+                "readOnlyRootFilesystem" => true,
+                "runAsGroup" => 10_001,
+                "runAsUser" => 10_001
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/controller", "name" => "scratch-data"},
+                %{"mountPath" => "/run/secrets/cnpg.io/webhook", "name" => "webhook-certificates"}
+              ]
+            }
+          ],
+          "securityContext" => %{"runAsNonRoot" => true, "seccompProfile" => %{"type" => "RuntimeDefault"}},
+          "serviceAccountName" => "cloudnative-pg",
+          "terminationGracePeriodSeconds" => 10,
+          "volumes" => [
+            %{"emptyDir" => %{}, "name" => "scratch-data"},
+            %{
+              "name" => "webhook-certificates",
+              "secret" => %{"defaultMode" => 420, "optional" => true, "secretName" => "cnpg-webhook-cert"}
+            }
+          ]
+        }
+      }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name}}
-      )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{"labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}},
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => [
-                  "controller",
-                  "--leader-elect",
-                  "--config-map-name=cnpg-controller-manager-config",
-                  "--secret-name=cnpg-controller-manager-config",
-                  "--webhook-port=9443"
-                ],
-                "command" => ["/manager"],
-                "env" => [
-                  %{"name" => "OPERATOR_IMAGE_NAME", "value" => battery.config.image},
-                  %{
-                    "name" => "OPERATOR_NAMESPACE",
-                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
-                  },
-                  %{"name" => "MONITORING_QUERIES_CONFIGMAP", "value" => "cnpg-default-monitoring"}
-                ],
-                "image" => battery.config.image,
-                "imagePullPolicy" => "IfNotPresent",
-                "livenessProbe" => %{
-                  "httpGet" => %{"path" => "/readyz", "port" => 9443, "scheme" => "HTTPS"},
-                  "initialDelaySeconds" => 3
-                },
-                "name" => "manager",
-                "ports" => [
-                  %{"containerPort" => 8080, "name" => "metrics", "protocol" => "TCP"},
-                  %{"containerPort" => 9443, "name" => "webhook-server", "protocol" => "TCP"}
-                ],
-                "readinessProbe" => %{
-                  "httpGet" => %{"path" => "/readyz", "port" => 9443, "scheme" => "HTTPS"},
-                  "initialDelaySeconds" => 3
-                },
-                "resources" => %{},
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]},
-                  "readOnlyRootFilesystem" => true,
-                  "runAsGroup" => 10_001,
-                  "runAsUser" => 10_001
-                },
-                "volumeMounts" => [
-                  %{"mountPath" => "/controller", "name" => "scratch-data"},
-                  %{"mountPath" => "/run/secrets/cnpg.io/webhook", "name" => "webhook-certificates"}
-                ]
-              }
-            ],
-            "securityContext" => %{"runAsNonRoot" => true, "seccompProfile" => %{"type" => "RuntimeDefault"}},
-            "serviceAccountName" => "cloudnative-pg",
-            "terminationGracePeriodSeconds" => 10,
-            "volumes" => [
-              %{"emptyDir" => %{}, "name" => "scratch-data"},
-              %{
-                "name" => "webhook-certificates",
-                "secret" => %{"defaultMode" => 420, "optional" => true, "secretName" => "cnpg-webhook-cert"}
-              }
-            ]
-          }
-        }
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()
@@ -383,11 +382,7 @@ defmodule CommonCore.Resources.CloudnativePG do
       |> Map.put("ports", [
         %{"name" => "webhook-server", "port" => 443, "targetPort" => "webhook-server"}
       ])
-      |> Map.put(
-        "selector",
-        %{"battery/app" => @app_name}
-      )
-      |> Map.put("type", "ClusterIP")
+      |> Map.put("selector", %{"battery/app" => @app_name})
 
     :service
     |> B.build_resource()

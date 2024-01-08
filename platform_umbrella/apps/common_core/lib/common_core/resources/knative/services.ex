@@ -1,79 +1,24 @@
-defmodule CommonCore.Resources.KnativeServing do
+defmodule CommonCore.Resources.KnativeServices do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
-
-  import CommonCore.StateSummary.Hosts
-  import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Knative.EnvValue
   alias CommonCore.Knative.Service
   alias CommonCore.Resources.Builder, as: B
-
-  resource(:namespace_dest, battery, _state) do
-    :namespace
-    |> B.build_resource()
-    |> B.name(battery.config.namespace)
-    |> B.label("istio-injection", "enabled")
-  end
-
-  resource(:knative_serving, battery, state) do
-    namespace = battery.config.namespace
-
-    istio_namespace = istio_namespace(state)
-
-    spec = %{
-      "config" => %{
-        "istio" => %{
-          "gateway.#{namespace}.knative-ingress-gateway" => "istio-ingressgateway.#{istio_namespace}.svc.cluster.local",
-          "local-gateway.#{namespace}.knative-local-gateway" =>
-            "knative-local-gateway.#{istio_namespace}.svc.cluster.local"
-        }
-      },
-      "ingress" => %{"istio" => %{"enabled" => true}}
-    }
-
-    :knative_serving
-    |> B.build_resource()
-    |> B.namespace(namespace)
-    |> B.name("knative-serving")
-    |> B.spec(spec)
-  end
-
-  resource(:domain_config, battery, state) do
-    data = Map.put(%{}, knative_base_host(state), "")
-
-    :config_map
-    |> B.build_resource()
-    |> B.name("config-domain")
-    |> B.namespace(battery.config.namespace)
-    |> Map.put("data", data)
-  end
-
-  resource(:features_config, battery, _state) do
-    data =
-      %{}
-      |> Map.put("multi-container", "enabled")
-      |> Map.put("kubernetes.podspec-volumes-emptydir", "enabled")
-      |> Map.put("kubernetes.podspec-init-containers", "enabled")
-
-    :config_map
-    |> B.build_resource()
-    |> B.name("config-features")
-    |> B.namespace(battery.config.namespace)
-    |> Map.put("data", data)
-  end
 
   def serving_service(%Service{} = service, battery, _state) do
     template =
       %{
         "metadata" => %{
           "labels" => %{
-            "battery/app" => @app_name,
             "battery/managed" => "true"
           }
         },
         "spec" => %{}
       }
+      |> B.app_labels(service.name)
+      |> B.component_label(@app_name)
+      |> B.add_owner(service)
       |> add_containers("containers", service.containers, service.env_values)
       |> add_containers("initContainers", service.init_containers, service.env_values)
       |> add_rollout_duration(service)
@@ -84,7 +29,9 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name(service.name)
     |> B.namespace(battery.config.namespace)
-    |> B.owner_label(service.id)
+    |> B.app_labels(service.name)
+    |> B.component_label(@app_name)
+    |> B.add_owner(service)
     |> B.spec(spec)
     |> add_rollout_duration(service)
   end

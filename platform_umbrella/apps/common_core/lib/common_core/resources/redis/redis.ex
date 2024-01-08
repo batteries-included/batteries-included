@@ -17,6 +17,8 @@ defmodule CommonCore.Resources.Redis do
       |> B.name(cluster.name)
       |> B.spec(spec)
       |> B.add_owner(cluster)
+      |> B.app_labels(cluster.name)
+      |> B.component_label(@app_name)
     end)
   end
 

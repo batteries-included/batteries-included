@@ -72,7 +72,7 @@ defmodule CommonCore.Resources.Grafana do
       "viewers_can_edit" => true,
       "auto_assign_org_role" => "Admin"
     })
-    |> Map.put("analytics", %{"reporting_enabled" => true})
+    |> Map.put("analytics", %{"reporting_enabled" => false})
     |> Map.put("log", %{
       "mode" => "console",
       "info" => "debug"
@@ -141,294 +141,273 @@ defmodule CommonCore.Resources.Grafana do
   resource(:deployment_main, battery, state) do
     namespace = core_namespace(state)
 
-    template = %{
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => @app_name,
-          "battery/managed" => "true"
-        }
-      },
-      "spec" => %{
-        "automountServiceAccountToken" => true,
-        "containers" => [
-          %{
-            "env" => [
-              %{"name" => "METHOD", "value" => "WATCH"},
-              %{"name" => "LABEL", "value" => "grafana_alert"},
-              %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/alerting"},
-              %{"name" => "RESOURCE", "value" => "both"},
-              %{
-                "name" => "REQ_USERNAME",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_PASSWORD",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_URL",
-                "value" => "http://localhost:3000/api/admin/provisioning/alerting/reload"
-              },
-              %{"name" => "REQ_METHOD", "value" => "POST"}
-            ],
-            "image" => battery.config.sidecar_image,
-            "imagePullPolicy" => "IfNotPresent",
-            "name" => "grafana-sc-alerts",
-            "volumeMounts" => [
-              %{
-                "mountPath" => "/etc/grafana/provisioning/alerting",
-                "name" => "sc-alerts-volume"
-              }
-            ]
-          },
-          %{
-            "env" => [
-              %{"name" => "METHOD", "value" => "WATCH"},
-              %{"name" => "LABEL", "value" => "grafana_dashboard"},
-              %{"name" => "FOLDER", "value" => "/tmp/dashboards/"},
-              %{"name" => "RESOURCE", "value" => "both"},
-              %{"name" => "FOLDER_ANNOTATION", "value" => "grafana_folder"},
-              %{
-                "name" => "REQ_USERNAME",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_PASSWORD",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_URL",
-                "value" => "http://localhost:3000/api/admin/provisioning/dashboards/reload"
-              },
-              %{"name" => "REQ_METHOD", "value" => "POST"}
-            ],
-            "image" => battery.config.sidecar_image,
-            "imagePullPolicy" => "IfNotPresent",
-            "name" => "grafana-sc-dashboard",
-            "volumeMounts" => [
-              %{"mountPath" => "/tmp/dashboards", "name" => "sc-dashboard-volume"}
-            ]
-          },
-          %{
-            "env" => [
-              %{"name" => "METHOD", "value" => "WATCH"},
-              %{"name" => "LABEL", "value" => "grafana_datasource"},
-              %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/datasources"},
-              %{"name" => "RESOURCE", "value" => "both"},
-              %{
-                "name" => "REQ_USERNAME",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_PASSWORD",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_URL",
-                "value" => "http://localhost:3000/api/admin/provisioning/datasources/reload"
-              },
-              %{"name" => "REQ_METHOD", "value" => "POST"}
-            ],
-            "image" => battery.config.sidecar_image,
-            "imagePullPolicy" => "IfNotPresent",
-            "name" => "grafana-sc-datasources",
-            "volumeMounts" => [
-              %{
-                "mountPath" => "/etc/grafana/provisioning/datasources",
-                "name" => "sc-datasources-volume"
-              }
-            ]
-          },
-          %{
-            "env" => [
-              %{"name" => "METHOD", "value" => "WATCH"},
-              %{"name" => "LABEL", "value" => "grafana_notifier"},
-              %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/notifiers"},
-              %{"name" => "RESOURCE", "value" => "both"},
-              %{
-                "name" => "REQ_USERNAME",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_PASSWORD",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_URL",
-                "value" => "http://localhost:3000/api/admin/provisioning/notifications/reload"
-              },
-              %{"name" => "REQ_METHOD", "value" => "POST"}
-            ],
-            "image" => battery.config.sidecar_image,
-            "imagePullPolicy" => "IfNotPresent",
-            "name" => "grafana-sc-notifiers",
-            "volumeMounts" => [
-              %{
-                "mountPath" => "/etc/grafana/provisioning/notifiers",
-                "name" => "sc-notifiers-volume"
-              }
-            ]
-          },
-          %{
-            "env" => [
-              %{"name" => "METHOD", "value" => "WATCH"},
-              %{"name" => "LABEL", "value" => "grafana_plugin"},
-              %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/plugins"},
-              %{"name" => "RESOURCE", "value" => "both"},
-              %{
-                "name" => "REQ_USERNAME",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_PASSWORD",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "REQ_URL",
-                "value" => "http://localhost:3000/api/admin/provisioning/plugins/reload"
-              },
-              %{"name" => "REQ_METHOD", "value" => "POST"}
-            ],
-            "image" => battery.config.sidecar_image,
-            "imagePullPolicy" => "IfNotPresent",
-            "name" => "grafana-sc-plugins",
-            "volumeMounts" => [
-              %{
-                "mountPath" => "/etc/grafana/provisioning/plugins",
-                "name" => "sc-plugins-volume"
-              }
-            ]
-          },
-          %{
-            "env" => [
-              %{
-                "name" => "GF_SECURITY_ADMIN_USER",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
-                }
-              },
-              %{
-                "name" => "GF_SECURITY_ADMIN_PASSWORD",
-                "valueFrom" => %{
-                  "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
-                }
-              },
-
-              # Oauth
-              # %{
-              #   "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_ID",
-              #   "valueFrom" => %{
-              #     "secretKeyRef" => %{
-              #       "key" => "client_id",
-              #       "name" => "grafana.oauth2-client"
-              #     }
-              #   }
-              # },
-              # %{
-              #   "name" => "GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET",
-              #   "valueFrom" => %{
-              #     "secretKeyRef" => %{
-              #       "key" => "client_secret",
-              #       "name" => "grafana.oauth2-client"
-              #     }
-              #   }
-              # },
-              %{"name" => "GF_PATHS_DATA", "value" => "/var/lib/grafana/"},
-              %{"name" => "GF_PATHS_LOGS", "value" => "/var/log/grafana"},
-              %{"name" => "GF_PATHS_PLUGINS", "value" => "/var/lib/grafana/plugins"},
-              %{"name" => "GF_PATHS_PROVISIONING", "value" => "/etc/grafana/provisioning"}
-            ],
-            "image" => battery.config.image,
-            "imagePullPolicy" => "IfNotPresent",
-            "livenessProbe" => %{
-              "failureThreshold" => 10,
-              "httpGet" => %{"path" => "/api/health", "port" => 3000},
-              "initialDelaySeconds" => 60,
-              "timeoutSeconds" => 30
-            },
-            "name" => "grafana",
-            "ports" => [%{"containerPort" => 3000, "name" => "grafana", "protocol" => "TCP"}],
-            "readinessProbe" => %{"httpGet" => %{"path" => "/api/health", "port" => 3000}},
-            "volumeMounts" => [
-              %{
-                "mountPath" => "/etc/grafana/grafana.ini",
-                "name" => "config",
-                "subPath" => "grafana.ini"
-              },
-              %{"mountPath" => "/var/lib/grafana", "name" => "storage"},
-              %{
-                "mountPath" => "/etc/grafana/provisioning/alerting",
-                "name" => "sc-alerts-volume"
-              },
-              %{"mountPath" => "/tmp/dashboards", "name" => "sc-dashboard-volume"},
-              %{
-                "mountPath" => "/etc/grafana/provisioning/dashboards/sc-dashboardproviders.yaml",
-                "name" => "sc-dashboard-provider",
-                "subPath" => "provider.yaml"
-              },
-              %{
-                "mountPath" => "/etc/grafana/provisioning/datasources",
-                "name" => "sc-datasources-volume"
-              },
-              %{
-                "mountPath" => "/etc/grafana/provisioning/plugins",
-                "name" => "sc-plugins-volume"
-              },
-              %{
-                "mountPath" => "/etc/grafana/provisioning/notifiers",
-                "name" => "sc-notifiers-volume"
-              }
-            ]
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{
+            "battery/managed" => "true"
           }
-        ],
-        "enableServiceLinks" => true,
-        "securityContext" => %{"fsGroup" => 472, "runAsGroup" => 472, "runAsUser" => 472},
-        "serviceAccountName" => "grafana",
-        "volumes" => [
-          %{"configMap" => %{"name" => "grafana"}, "name" => "config"},
-          %{"emptyDir" => %{}, "name" => "storage"},
-          %{"emptyDir" => %{}, "name" => "sc-alerts-volume"},
-          %{"emptyDir" => %{}, "name" => "sc-dashboard-volume"},
-          %{
-            "configMap" => %{"name" => "grafana-config-dashboards"},
-            "name" => "sc-dashboard-provider"
-          },
-          %{"emptyDir" => %{}, "name" => "sc-datasources-volume"},
-          %{"emptyDir" => %{}, "name" => "sc-plugins-volume"},
-          %{"emptyDir" => %{}, "name" => "sc-notifiers-volume"}
-        ]
+        },
+        "spec" => %{
+          "automountServiceAccountToken" => true,
+          "containers" => [
+            %{
+              "env" => [
+                %{"name" => "METHOD", "value" => "WATCH"},
+                %{"name" => "LABEL", "value" => "grafana_alert"},
+                %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/alerting"},
+                %{"name" => "RESOURCE", "value" => "both"},
+                %{
+                  "name" => "REQ_USERNAME",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_PASSWORD",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_URL",
+                  "value" => "http://localhost:3000/api/admin/provisioning/alerting/reload"
+                },
+                %{"name" => "REQ_METHOD", "value" => "POST"}
+              ],
+              "image" => battery.config.sidecar_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "grafana-sc-alerts",
+              "volumeMounts" => [
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/alerting",
+                  "name" => "sc-alerts-volume"
+                }
+              ]
+            },
+            %{
+              "env" => [
+                %{"name" => "METHOD", "value" => "WATCH"},
+                %{"name" => "LABEL", "value" => "grafana_dashboard"},
+                %{"name" => "FOLDER", "value" => "/tmp/dashboards/"},
+                %{"name" => "RESOURCE", "value" => "both"},
+                %{"name" => "FOLDER_ANNOTATION", "value" => "grafana_folder"},
+                %{
+                  "name" => "REQ_USERNAME",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_PASSWORD",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_URL",
+                  "value" => "http://localhost:3000/api/admin/provisioning/dashboards/reload"
+                },
+                %{"name" => "REQ_METHOD", "value" => "POST"}
+              ],
+              "image" => battery.config.sidecar_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "grafana-sc-dashboard",
+              "volumeMounts" => [
+                %{"mountPath" => "/tmp/dashboards", "name" => "sc-dashboard-volume"}
+              ]
+            },
+            %{
+              "env" => [
+                %{"name" => "METHOD", "value" => "WATCH"},
+                %{"name" => "LABEL", "value" => "grafana_datasource"},
+                %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/datasources"},
+                %{"name" => "RESOURCE", "value" => "both"},
+                %{
+                  "name" => "REQ_USERNAME",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_PASSWORD",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_URL",
+                  "value" => "http://localhost:3000/api/admin/provisioning/datasources/reload"
+                },
+                %{"name" => "REQ_METHOD", "value" => "POST"}
+              ],
+              "image" => battery.config.sidecar_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "grafana-sc-datasources",
+              "volumeMounts" => [
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/datasources",
+                  "name" => "sc-datasources-volume"
+                }
+              ]
+            },
+            %{
+              "env" => [
+                %{"name" => "METHOD", "value" => "WATCH"},
+                %{"name" => "LABEL", "value" => "grafana_notifier"},
+                %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/notifiers"},
+                %{"name" => "RESOURCE", "value" => "both"},
+                %{
+                  "name" => "REQ_USERNAME",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_PASSWORD",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_URL",
+                  "value" => "http://localhost:3000/api/admin/provisioning/notifications/reload"
+                },
+                %{"name" => "REQ_METHOD", "value" => "POST"}
+              ],
+              "image" => battery.config.sidecar_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "grafana-sc-notifiers",
+              "volumeMounts" => [
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/notifiers",
+                  "name" => "sc-notifiers-volume"
+                }
+              ]
+            },
+            %{
+              "env" => [
+                %{"name" => "METHOD", "value" => "WATCH"},
+                %{"name" => "LABEL", "value" => "grafana_plugin"},
+                %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/plugins"},
+                %{"name" => "RESOURCE", "value" => "both"},
+                %{
+                  "name" => "REQ_USERNAME",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_PASSWORD",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "REQ_URL",
+                  "value" => "http://localhost:3000/api/admin/provisioning/plugins/reload"
+                },
+                %{"name" => "REQ_METHOD", "value" => "POST"}
+              ],
+              "image" => battery.config.sidecar_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "grafana-sc-plugins",
+              "volumeMounts" => [
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/plugins",
+                  "name" => "sc-plugins-volume"
+                }
+              ]
+            },
+            %{
+              "env" => [
+                %{
+                  "name" => "GF_SECURITY_ADMIN_USER",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-user", "name" => "grafana"}
+                  }
+                },
+                %{
+                  "name" => "GF_SECURITY_ADMIN_PASSWORD",
+                  "valueFrom" => %{
+                    "secretKeyRef" => %{"key" => "admin-password", "name" => "grafana"}
+                  }
+                },
+                %{"name" => "GF_PATHS_DATA", "value" => "/var/lib/grafana/"},
+                %{"name" => "GF_PATHS_LOGS", "value" => "/var/log/grafana"},
+                %{"name" => "GF_PATHS_PLUGINS", "value" => "/var/lib/grafana/plugins"},
+                %{"name" => "GF_PATHS_PROVISIONING", "value" => "/etc/grafana/provisioning"}
+              ],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "IfNotPresent",
+              "livenessProbe" => %{
+                "failureThreshold" => 10,
+                "httpGet" => %{"path" => "/api/health", "port" => 3000},
+                "initialDelaySeconds" => 60,
+                "timeoutSeconds" => 30
+              },
+              "name" => "grafana",
+              "ports" => [%{"containerPort" => 3000, "name" => "grafana", "protocol" => "TCP"}],
+              "readinessProbe" => %{"httpGet" => %{"path" => "/api/health", "port" => 3000}},
+              "volumeMounts" => [
+                %{
+                  "mountPath" => "/etc/grafana/grafana.ini",
+                  "name" => "config",
+                  "subPath" => "grafana.ini"
+                },
+                %{"mountPath" => "/var/lib/grafana", "name" => "storage"},
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/alerting",
+                  "name" => "sc-alerts-volume"
+                },
+                %{"mountPath" => "/tmp/dashboards", "name" => "sc-dashboard-volume"},
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/dashboards/sc-dashboardproviders.yaml",
+                  "name" => "sc-dashboard-provider",
+                  "subPath" => "provider.yaml"
+                },
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/datasources",
+                  "name" => "sc-datasources-volume"
+                },
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/plugins",
+                  "name" => "sc-plugins-volume"
+                },
+                %{
+                  "mountPath" => "/etc/grafana/provisioning/notifiers",
+                  "name" => "sc-notifiers-volume"
+                }
+              ]
+            }
+          ],
+          "enableServiceLinks" => true,
+          "securityContext" => %{"fsGroup" => 472, "runAsGroup" => 472, "runAsUser" => 472},
+          "serviceAccountName" => "grafana",
+          "volumes" => [
+            %{"configMap" => %{"name" => "grafana"}, "name" => "config"},
+            %{"emptyDir" => %{}, "name" => "storage"},
+            %{"emptyDir" => %{}, "name" => "sc-alerts-volume"},
+            %{"emptyDir" => %{}, "name" => "sc-dashboard-volume"},
+            %{
+              "configMap" => %{"name" => "grafana-config-dashboards"},
+              "name" => "sc-dashboard-provider"
+            },
+            %{"emptyDir" => %{}, "name" => "sc-datasources-volume"},
+            %{"emptyDir" => %{}, "name" => "sc-plugins-volume"},
+            %{"emptyDir" => %{}, "name" => "sc-notifiers-volume"}
+          ]
+        }
       }
-    }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
       |> Map.put("revisionHistoryLimit", 10)
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name}}
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
       |> Map.put("strategy", %{"type" => "RollingUpdate"})
-      |> Map.put("template", template)
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()
@@ -482,10 +461,7 @@ defmodule CommonCore.Resources.Grafana do
       ])
       |> Map.put("jobLabel", "grafana")
       |> Map.put("namespaceSelector", %{"matchNames" => [namespace]})
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name}}
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
     :monitoring_service_monitor
     |> B.build_resource()
@@ -525,12 +501,12 @@ defmodule CommonCore.Resources.Grafana do
     |> B.rules(rules)
   end
 
-  resource(:secret_main, _battery, state) do
+  resource(:secret_main, battery, state) do
     namespace = core_namespace(state)
 
     data =
       %{}
-      |> Map.put("admin-password", "BWdlY6kXzvwrelwWyXjArb4Yk0CxFIS8iBPbltvb")
+      |> Map.put("admin-password", battery.config.admin_password)
       |> Map.put("admin-user", "admin")
       |> Map.put("ldap-toml", "")
       |> Secret.encode()
@@ -556,9 +532,7 @@ defmodule CommonCore.Resources.Grafana do
 
     spec =
       %{}
-      |> Map.put("ports", [
-        %{"name" => "service", "port" => @service_http_port, "protocol" => "TCP", "targetPort" => 3000}
-      ])
+      |> Map.put("ports", [%{"name" => "http", "port" => @service_http_port, "protocol" => "TCP", "targetPort" => 3000}])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
     :service

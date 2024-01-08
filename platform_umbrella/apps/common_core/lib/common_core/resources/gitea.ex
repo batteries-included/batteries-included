@@ -208,176 +208,150 @@ defmodule CommonCore.Resources.Gitea do
 
     sso_enabled? = F.sso_installed?(state)
 
-    template = %{
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => @app_name,
-          "battery/managed" => "true"
-        }
-      },
-      "spec" => %{
-        "containers" => [
-          %{
-            "env" => [
-              %{"name" => "SSH_LISTEN_PORT", "value" => to_string(@ssh_listen_port)},
-              %{"name" => "SSH_PORT", "value" => to_string(@ssh_port)},
-              %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
-              %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
-              %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
-              %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
-              %{"name" => "TMPDIR", "value" => "/tmp/gitea"}
-            ],
-            "image" => battery.config.image,
-            "imagePullPolicy" => "Always",
-            "livenessProbe" => %{
-              "failureThreshold" => 10,
-              "initialDelaySeconds" => 200,
-              "periodSeconds" => 10,
-              "successThreshold" => 1,
-              "tcpSocket" => %{"port" => "http"},
-              "timeoutSeconds" => 1
-            },
-            "name" => "gitea",
-            "ports" => [
-              %{"containerPort" => 22, "name" => "ssh"},
-              %{"containerPort" => 3000, "name" => "http"}
-            ],
-            "readinessProbe" => %{
-              "failureThreshold" => 3,
-              "initialDelaySeconds" => 5,
-              "periodSeconds" => 10,
-              "successThreshold" => 1,
-              "tcpSocket" => %{"port" => "http"},
-              "timeoutSeconds" => 1
-            },
-            "resources" => %{},
-            "securityContext" => %{},
-            "volumeMounts" => [
-              %{"mountPath" => "/tmp", "name" => "temp"},
-              %{"mountPath" => "/data", "name" => "data"}
-            ]
-          }
-        ],
-        "initContainers" => [
-          %{
-            "command" => ["/usr/sbin/init_directory_structure.sh"],
-            "env" => [
-              %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
-              %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
-              %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
-              %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"}
-            ],
-            "image" => battery.config.image,
-            "imagePullPolicy" => "Always",
-            "name" => "init-directories",
-            "securityContext" => %{},
-            "volumeMounts" => [
-              %{"mountPath" => "/usr/sbin", "name" => "init"},
-              %{"mountPath" => "/tmp", "name" => "temp"},
-              %{"mountPath" => "/data", "name" => "data"}
-            ]
-          },
-          %{
-            "command" => ["/usr/sbin/config_environment.sh"],
-            "env" => [
-              %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
-              %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
-              %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
-              %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
-              %{
-                "name" => "ENV_TO_INI__DATABASE__USER",
-                "valueFrom" => B.secret_key_ref(secret_name, "username")
-              },
-              %{
-                "name" => "ENV_TO_INI__DATABASE__PASSWD",
-                "valueFrom" => B.secret_key_ref(secret_name, "password")
-              },
-              %{
-                "name" => "ENV_TO_INI__DATABASE__HOST",
-                "valueFrom" => B.secret_key_ref(secret_name, "hostname")
-              }
-            ],
-            "image" => battery.config.image,
-            "imagePullPolicy" => "Always",
-            "name" => "init-app-ini",
-            "securityContext" => %{},
-            "volumeMounts" => [
-              %{"mountPath" => "/usr/sbin", "name" => "config"},
-              %{"mountPath" => "/tmp", "name" => "temp"},
-              %{"mountPath" => "/data", "name" => "data"},
-              %{
-                "mountPath" => "/env-to-ini-mounts/inlines/",
-                "name" => "inline-config-sources"
-              }
-            ]
-          },
-          %{
-            "command" => ["/usr/sbin/configure_gitea.sh"],
-            "env" =>
-              [
+    template =
+      %{
+        "metadata" => %{"labels" => %{"battery/managed" => "true"}},
+        "spec" => %{
+          "containers" => [
+            %{
+              "env" => [
+                %{"name" => "SSH_LISTEN_PORT", "value" => to_string(@ssh_listen_port)},
+                %{"name" => "SSH_PORT", "value" => to_string(@ssh_port)},
                 %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
                 %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
                 %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
                 %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
-                %{"name" => "GITEA_ADMIN_USERNAME", "value" => battery.config.admin_username},
-                %{"name" => "GITEA_ADMIN_PASSWORD", "value" => battery.config.admin_password}
-              ] ++
-                if sso_enabled? do
-                  case CommonCore.StateSummary.KeycloakSummary.client(
-                         state.keycloak_state,
-                         app_name()
-                       ) do
-                    %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
-                      keycloak_autodiscover_url =
-                        "http://#{keycloak_host(state)}/realms/#{realm}/.well-known/openid-configuration"
+                %{"name" => "TMPDIR", "value" => "/tmp/gitea"}
+              ],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "Always",
+              "livenessProbe" => %{
+                "failureThreshold" => 10,
+                "initialDelaySeconds" => 200,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "tcpSocket" => %{"port" => "http"},
+                "timeoutSeconds" => 1
+              },
+              "name" => "gitea",
+              "ports" => [%{"containerPort" => 22, "name" => "ssh"}, %{"containerPort" => 3000, "name" => "http"}],
+              "readinessProbe" => %{
+                "failureThreshold" => 3,
+                "initialDelaySeconds" => 5,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "tcpSocket" => %{"port" => "http"},
+                "timeoutSeconds" => 1
+              },
+              "resources" => %{},
+              "securityContext" => %{},
+              "volumeMounts" => [
+                %{"mountPath" => "/tmp", "name" => "temp"},
+                %{"mountPath" => "/data", "name" => "data"}
+              ]
+            }
+          ],
+          "initContainers" => [
+            %{
+              "command" => ["/usr/sbin/init_directory_structure.sh"],
+              "env" => [
+                %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
+                %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
+                %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
+                %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"}
+              ],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "Always",
+              "name" => "init-directories",
+              "securityContext" => %{},
+              "volumeMounts" => [
+                %{"mountPath" => "/usr/sbin", "name" => "init"},
+                %{"mountPath" => "/tmp", "name" => "temp"},
+                %{"mountPath" => "/data", "name" => "data"}
+              ]
+            },
+            %{
+              "command" => ["/usr/sbin/config_environment.sh"],
+              "env" => [
+                %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
+                %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
+                %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
+                %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
+                %{"name" => "ENV_TO_INI__DATABASE__USER", "valueFrom" => B.secret_key_ref(secret_name, "username")},
+                %{"name" => "ENV_TO_INI__DATABASE__PASSWD", "valueFrom" => B.secret_key_ref(secret_name, "password")},
+                %{"name" => "ENV_TO_INI__DATABASE__HOST", "valueFrom" => B.secret_key_ref(secret_name, "hostname")}
+              ],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "Always",
+              "name" => "init-app-ini",
+              "securityContext" => %{},
+              "volumeMounts" => [
+                %{"mountPath" => "/usr/sbin", "name" => "config"},
+                %{"mountPath" => "/tmp", "name" => "temp"},
+                %{"mountPath" => "/data", "name" => "data"},
+                %{"mountPath" => "/env-to-ini-mounts/inlines/", "name" => "inline-config-sources"}
+              ]
+            },
+            %{
+              "command" => ["/usr/sbin/configure_gitea.sh"],
+              "env" =>
+                [
+                  %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
+                  %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
+                  %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
+                  %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
+                  %{"name" => "GITEA_ADMIN_USERNAME", "value" => battery.config.admin_username},
+                  %{"name" => "GITEA_ADMIN_PASSWORD", "value" => battery.config.admin_password}
+                ] ++
+                  if sso_enabled? do
+                    case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, app_name()) do
+                      %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
+                        keycloak_autodiscover_url =
+                          "http://#{keycloak_host(state)}/realms/#{realm}/.well-known/openid-configuration"
 
-                      [
-                        %{"name" => "OAUTH_NAME", "value" => "keycloak"},
-                        %{"name" => "AUTODISCOVER_URL", "value" => keycloak_autodiscover_url},
-                        %{"name" => "CLIENT_ID", "value" => client_id},
-                        %{"name" => "CLIENT_SECRET", "value" => client_secret}
-                      ]
+                        [
+                          %{"name" => "OAUTH_NAME", "value" => "keycloak"},
+                          %{"name" => "AUTODISCOVER_URL", "value" => keycloak_autodiscover_url},
+                          %{"name" => "CLIENT_ID", "value" => client_id},
+                          %{"name" => "CLIENT_SECRET", "value" => client_secret}
+                        ]
 
-                    nil ->
-                      []
-                  end
-                else
-                  []
-                end,
-            "image" => battery.config.image,
-            "imagePullPolicy" => "Always",
-            "name" => "configure-gitea",
-            "securityContext" => %{"runAsUser" => 1000},
-            "volumeMounts" => [
-              %{"mountPath" => "/usr/sbin", "name" => "init"},
-              %{"mountPath" => "/tmp", "name" => "temp"},
-              %{"mountPath" => "/data", "name" => "data"}
-            ]
-          }
-        ],
-        "securityContext" => %{"fsGroup" => 1000},
-        "terminationGracePeriodSeconds" => 60,
-        "volumes" => [
-          %{
-            "name" => "init",
-            "secret" => %{"defaultMode" => 110, "secretName" => "gitea-init"}
-          },
-          %{"name" => "config", "secret" => %{"defaultMode" => 110, "secretName" => "gitea"}},
-          %{
-            "name" => "inline-config-sources",
-            "secret" => %{"secretName" => "gitea-inline-config"}
-          },
-          %{"emptyDir" => %{}, "name" => "temp"}
-        ]
+                      nil ->
+                        []
+                    end
+                  else
+                    []
+                  end,
+              "image" => battery.config.image,
+              "imagePullPolicy" => "Always",
+              "name" => "configure-gitea",
+              "securityContext" => %{"runAsUser" => 1000},
+              "volumeMounts" => [
+                %{"mountPath" => "/usr/sbin", "name" => "init"},
+                %{"mountPath" => "/tmp", "name" => "temp"},
+                %{"mountPath" => "/data", "name" => "data"}
+              ]
+            }
+          ],
+          "securityContext" => %{"fsGroup" => 1000},
+          "terminationGracePeriodSeconds" => 60,
+          "volumes" => [
+            %{"name" => "init", "secret" => %{"defaultMode" => 110, "secretName" => "gitea-init"}},
+            %{"name" => "config", "secret" => %{"defaultMode" => 110, "secretName" => "gitea"}},
+            %{"name" => "inline-config-sources", "secret" => %{"secretName" => "gitea-inline-config"}},
+            %{"emptyDir" => %{}, "name" => "temp"}
+          ]
+        }
       }
-    }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
       |> Map.put("replicas", 1)
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
       |> Map.put("serviceName", "gitea")
-      |> Map.put("template", template)
+      |> B.template(template)
       |> Map.put("volumeClaimTemplates", [
         %{
           "metadata" => %{"name" => "data"},

@@ -186,6 +186,25 @@ defmodule Mix.Tasks.Gen.Resource do
   defp process_resource(resource, :mutating_webhook_config = resource_type, app_name),
     do: cluster_resource(resource, resource_type, app_name)
 
+  defp process_resource(%{"spec" => %{"template" => %{"metadata" => %{}}}} = resource, resource_type, app_name) do
+    method_name = resource_method_name(resource, app_name)
+
+    spec = resource |> Map.get("spec") |> clean_spec(app_name)
+
+    template = Map.get(spec, "template")
+
+    methods =
+      Map.put(
+        %{},
+        method_name,
+        templated_spec_method(Map.drop(resource, ~w(spec)), method_name, resource_type, app_name, spec, template)
+      )
+
+    %ResourceResult{
+      methods: methods
+    }
+  end
+
   defp process_resource(%{"spec" => spec} = resource, resource_type, app_name) do
     method_name = resource_method_name(resource, app_name)
 
@@ -320,6 +339,19 @@ defmodule Mix.Tasks.Gen.Resource do
     resource_method_from_pipeline_and_data(data_pipeline, normal_pipeline, method_name)
   end
 
+  defp templated_spec_method(resource, method_name, resource_type, app_name, spec, template) do
+    template_pipeline = template_pipeline(template)
+    spec_pipeline = spec |> clean_spec(app_name) |> Map.drop(["template"]) |> spec_pipeline() |> add_template_from_var()
+
+    normal_pipeline =
+      resource
+      |> Map.drop(["spec"])
+      |> resource_pipeline(resource_type, app_name)
+      |> add_spec_from_var()
+
+    resource_method_from_pipeline_spec_and_template(spec_pipeline, template_pipeline, normal_pipeline, method_name)
+  end
+
   defp spec_method(resource, method_name, resource_type, app_name, spec) do
     spec_pipeline = spec |> clean_spec(app_name) |> spec_pipeline()
 
@@ -377,6 +409,14 @@ defmodule Mix.Tasks.Gen.Resource do
     Enum.reduce(spec, starting_data(), fn {key, value}, code ->
       add_map_put_key(code, key, value)
     end)
+  end
+
+  defp template_pipeline(template) do
+    template
+    |> Enum.reduce(starting_data(), fn {key, value}, code ->
+      add_map_put_key(code, key, value)
+    end)
+    |> add_template_defaults()
   end
 
   defp yaml_resource_method(method_name, include_name) do
@@ -479,6 +519,12 @@ defmodule Mix.Tasks.Gen.Resource do
     quote do
       unquote(left) |> unquote(right)
     end
+  end
+
+  defp add_template_defaults(pipeline) do
+    pipeline
+    |> pipe(quote do: B.app_labels(@app_name))
+    |> pipe(quote do: B.add_owner(battery))
   end
 
   defp add_map_put_key(pipeline, key, value) do
@@ -642,6 +688,15 @@ defmodule Mix.Tasks.Gen.Resource do
     )
   end
 
+  defp add_template_from_var(pipeline) do
+    pipe(
+      pipeline,
+      quote do
+        B.template(template)
+      end
+    )
+  end
+
   defp add_rules_from_var(pipeline) do
     pipe(
       pipeline,
@@ -736,6 +791,17 @@ defmodule Mix.Tasks.Gen.Resource do
     quote do
       resource(unquote(method_name), battery, state) do
         namespace = core_namespace(state)
+        spec = unquote(spec_pipeline)
+        unquote(main_pipeline)
+      end
+    end
+  end
+
+  defp resource_method_from_pipeline_spec_and_template(spec_pipeline, template_pipeline, main_pipeline, method_name) do
+    quote do
+      resource(unquote(method_name), battery, state) do
+        namespace = core_namespace(state)
+        template = unquote(template_pipeline)
         spec = unquote(spec_pipeline)
         unquote(main_pipeline)
       end

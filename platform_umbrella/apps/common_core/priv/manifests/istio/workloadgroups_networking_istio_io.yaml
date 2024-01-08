@@ -95,6 +95,9 @@ spec:
                       format: int32
                       type: integer
                     httpGet:
+                      description:
+                        '`httpGet` is performed to a given endpoint and the
+                        status/able to connect determines health.'
                       properties:
                         host:
                           description:
@@ -119,6 +122,8 @@ spec:
                           type: integer
                         scheme:
                           type: string
+                      required:
+                        - port
                       type: object
                     initialDelaySeconds:
                       description:
@@ -144,6 +149,8 @@ spec:
                           type: string
                         port:
                           type: integer
+                      required:
+                        - port
                       type: object
                     timeoutSeconds:
                       description:
@@ -157,6 +164,9 @@ spec:
                     resources that belong to this `WorkloadGroup`.
                   properties:
                     address:
+                      description:
+                        Address associated with the network endpoint without the
+                        port.
                       type: string
                     labels:
                       additionalProperties:
@@ -168,6 +178,9 @@ spec:
                       description: The locality associated with the endpoint.
                       type: string
                     network:
+                      description:
+                        Network enables Istio to group endpoints resident in the
+                        same L3 domain/network.
                       type: string
                     ports:
                       additionalProperties:
@@ -175,12 +188,17 @@ spec:
                       description: Set of ports associated with the endpoint.
                       type: object
                     serviceAccount:
+                      description:
+                        The service account associated with the workload if a
+                        sidecar is present in the workload.
                       type: string
                     weight:
                       description:
                         The load balancing weight associated with the endpoint.
                       type: integer
                   type: object
+              required:
+                - template
               type: object
             status:
               type: object
@@ -206,6 +224,11 @@ spec:
         openAPIV3Schema:
           properties:
             spec:
+              description:
+                '`WorkloadGroup` enables specifying the properties of a single
+                workload for bootstrap and provides a template for
+                `WorkloadEntry`, similar to how `Deployment` specifies
+                properties of workloads via `Pod` templates.'
               properties:
                 metadata:
                   description:
@@ -259,6 +282,9 @@ spec:
                       format: int32
                       type: integer
                     httpGet:
+                      description:
+                        '`httpGet` is performed to a given endpoint and the
+                        status/able to connect determines health.'
                       properties:
                         host:
                           description:
@@ -283,6 +309,8 @@ spec:
                           type: integer
                         scheme:
                           type: string
+                      required:
+                        - port
                       type: object
                     initialDelaySeconds:
                       description:
@@ -308,6 +336,8 @@ spec:
                           type: string
                         port:
                           type: integer
+                      required:
+                        - port
                       type: object
                     timeoutSeconds:
                       description:
@@ -321,6 +351,9 @@ spec:
                     resources that belong to this `WorkloadGroup`.
                   properties:
                     address:
+                      description:
+                        Address associated with the network endpoint without the
+                        port.
                       type: string
                     labels:
                       additionalProperties:
@@ -332,6 +365,9 @@ spec:
                       description: The locality associated with the endpoint.
                       type: string
                     network:
+                      description:
+                        Network enables Istio to group endpoints resident in the
+                        same L3 domain/network.
                       type: string
                     ports:
                       additionalProperties:
@@ -339,12 +375,17 @@ spec:
                       description: Set of ports associated with the endpoint.
                       type: object
                     serviceAccount:
+                      description:
+                        The service account associated with the workload if a
+                        sidecar is present in the workload.
                       type: string
                     weight:
                       description:
                         The load balancing weight associated with the endpoint.
                       type: integer
                   type: object
+              required:
+                - template
               type: object
             status:
               type: object

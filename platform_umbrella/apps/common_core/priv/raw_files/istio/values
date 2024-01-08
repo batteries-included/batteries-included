@@ -5,6 +5,8 @@
     "caName": "",
     "certSigners": [],
     "configCluster": false,
+    "configValidation": true,
+    "defaultNodeSelector": {},
     "defaultPodDisruptionBudget": {
       "enabled": true
     },
@@ -13,6 +15,7 @@
         "cpu": "10m"
       }
     },
+    "enabled": true,
     "externalIstiod": false,
     "hub": "docker.io/istio",
     "imagePullPolicy": "",
@@ -33,6 +36,7 @@
       "clusterName": "",
       "enabled": false
     },
+    "namespace": "battery-istio",
     "network": "",
     "omitSidecarInjectorConfigMap": false,
     "oneNamespace": false,
@@ -53,9 +57,9 @@
       "includeOutboundPorts": "",
       "logLevel": "warning",
       "privileged": false,
-      "readinessFailureThreshold": 30,
-      "readinessInitialDelaySeconds": 1,
-      "readinessPeriodSeconds": 2,
+      "readinessFailureThreshold": 4,
+      "readinessInitialDelaySeconds": 0,
+      "readinessPeriodSeconds": 15,
       "resources": {
         "limits": {
           "cpu": "2000m",
@@ -65,6 +69,10 @@
           "cpu": "100m",
           "memory": "128Mi"
         }
+      },
+      "startupProbe": {
+        "enabled": true,
+        "failureThreshold": 600
       },
       "statusPort": 15020,
       "tracer": "zipkin"
@@ -81,8 +89,19 @@
     "sts": {
       "servicePort": 0
     },
-    "tag": "1.19.3",
+    "tag": "1.20.0",
+    "tracer": {
+      "datadog": {},
+      "lightstep": {},
+      "stackdriver": {},
+      "zipkin": {}
+    },
+    "useMCP": false,
     "variant": ""
+  },
+  "istio_cni": {
+    "chained": true,
+    "enabled": false
   },
   "revision": "",
   "sidecarInjectorWebhook": {
@@ -91,6 +110,7 @@
     "enableNamespacesByDefault": false,
     "injectedAnnotations": {},
     "neverInjectSelector": [],
+    "reinvocationPolicy": "Never",
     "rewriteAppHTTPProbe": true,
     "templates": {}
   }

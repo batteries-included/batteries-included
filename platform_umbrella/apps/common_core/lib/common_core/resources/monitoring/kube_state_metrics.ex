@@ -127,63 +127,57 @@ defmodule CommonCore.Resources.KubeStateMetrics do
   resource(:deployment_kube_state_metrics, battery, state) do
     namespace = core_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{
+            "battery/managed" => "true"
+          }
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => [
+                "--enable-gzip-encoding",
+                "--port=8080",
+                "--telemetry-port=8081"
+              ],
+              "image" => battery.config.kube_state_metrics_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "livenessProbe" => %{
+                "httpGet" => %{"path" => "/healthz", "port" => 8080},
+                "initialDelaySeconds" => 5,
+                "timeoutSeconds" => 5
+              },
+              "name" => "kube-state-metrics",
+              "ports" => [
+                %{"containerPort" => 8080, "name" => "http"},
+                %{"containerPort" => 8081, "name" => "http-self"}
+              ],
+              "readinessProbe" => %{
+                "httpGet" => %{"path" => "/", "port" => 8080},
+                "initialDelaySeconds" => 5,
+                "timeoutSeconds" => 5
+              }
+            }
+          ],
+          "hostNetwork" => false,
+          "securityContext" => %{
+            "fsGroup" => 65_534,
+            "runAsGroup" => 65_534,
+            "runAsUser" => 65_534
+          },
+          "serviceAccountName" => "kube-state-metrics"
+        }
+      }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put(
-        "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name
-          }
-        }
-      )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/managed" => "true"
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => [
-                  "--enable-gzip-encoding",
-                  "--port=8080",
-                  "--telemetry-port=8081"
-                ],
-                "image" => battery.config.kube_state_metrics_image,
-                "imagePullPolicy" => "IfNotPresent",
-                "livenessProbe" => %{
-                  "httpGet" => %{"path" => "/healthz", "port" => 8080},
-                  "initialDelaySeconds" => 5,
-                  "timeoutSeconds" => 5
-                },
-                "name" => "kube-state-metrics",
-                "ports" => [
-                  %{"containerPort" => 8080, "name" => "http"},
-                  %{"containerPort" => 8081, "name" => "http-self"}
-                ],
-                "readinessProbe" => %{
-                  "httpGet" => %{"path" => "/", "port" => 8080},
-                  "initialDelaySeconds" => 5,
-                  "timeoutSeconds" => 5
-                }
-              }
-            ],
-            "hostNetwork" => false,
-            "securityContext" => %{
-              "fsGroup" => 65_534,
-              "runAsGroup" => 65_534,
-              "runAsUser" => 65_534
-            },
-            "serviceAccountName" => "kube-state-metrics"
-          }
-        }
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()

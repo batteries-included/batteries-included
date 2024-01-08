@@ -328,48 +328,47 @@ defmodule CommonCore.Resources.VMOperator do
   resource(:deployment_vm_operator, battery, state) do
     namespace = core_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{"battery/managed" => "true"}
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => ["--zap-log-level=info", "--enable-leader-election"],
+              "command" => ["manager"],
+              "env" => [
+                %{"name" => "WATCH_NAMESPACE", "value" => ""},
+                %{"name" => "POD_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}},
+                %{"name" => "OPERATOR_NAME", "value" => "vm-operator"},
+                %{"name" => "VM_USECUSTOMCONFIGRELOADER", "value" => "true"},
+                %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "false"},
+                %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "true"}
+              ],
+              "image" => battery.config.vm_operator_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "operator",
+              "ports" => [
+                %{"containerPort" => 8080, "name" => "http", "protocol" => "TCP"},
+                %{"containerPort" => 9443, "name" => "webhook", "protocol" => "TCP"}
+              ],
+              "resources" => %{},
+              "volumeMounts" => nil
+            }
+          ],
+          "serviceAccountName" => "vm-operator",
+          "volumes" => nil
+        }
+      }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name}}
-      )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => ["--zap-log-level=info", "--enable-leader-election"],
-                "command" => ["manager"],
-                "env" => [
-                  %{"name" => "WATCH_NAMESPACE", "value" => ""},
-                  %{"name" => "POD_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}},
-                  %{"name" => "OPERATOR_NAME", "value" => "vm-operator"},
-                  %{"name" => "VM_USECUSTOMCONFIGRELOADER", "value" => "true"},
-                  %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "false"},
-                  %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "true"}
-                ],
-                "image" => battery.config.vm_operator_image,
-                "imagePullPolicy" => "IfNotPresent",
-                "name" => "operator",
-                "ports" => [
-                  %{"containerPort" => 8080, "name" => "http", "protocol" => "TCP"},
-                  %{"containerPort" => 9443, "name" => "webhook", "protocol" => "TCP"}
-                ],
-                "resources" => %{},
-                "volumeMounts" => nil
-              }
-            ],
-            "serviceAccountName" => "vm-operator",
-            "volumes" => nil
-          }
-        }
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()

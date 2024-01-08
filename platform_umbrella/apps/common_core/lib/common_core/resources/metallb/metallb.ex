@@ -154,168 +154,168 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:daemon_set_speaker, battery, state) do
     namespace = base_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{"battery/app" => @app_name, "battery/component" => "speaker", "battery/managed" => "true"}
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => ["--port=7472", "--log-level=debug"],
+              "env" => [
+                %{"name" => "METALLB_NODE_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}},
+                %{"name" => "METALLB_HOST", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.hostIP"}}},
+                %{"name" => "METALLB_ML_BIND_ADDR", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.podIP"}}},
+                %{
+                  "name" => "METALLB_ML_LABELS",
+                  "value" => "app.kubernetes.io/name=metallb,app.kubernetes.io/component=speaker"
+                },
+                %{"name" => "METALLB_ML_BIND_PORT", "value" => "7946"},
+                %{"name" => "METALLB_ML_SECRET_KEY_PATH", "value" => "/etc/ml_secret_key"},
+                %{"name" => "FRR_CONFIG_FILE", "value" => "/etc/frr_reloader/frr.conf"},
+                %{"name" => "FRR_RELOADER_PID_FILE", "value" => "/etc/frr_reloader/reloader.pid"},
+                %{"name" => "METALLB_BGP_TYPE", "value" => "frr"}
+              ],
+              "image" => battery.config.speaker_image,
+              "livenessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
+                "initialDelaySeconds" => 10,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
+              },
+              "name" => "speaker",
+              "ports" => [
+                %{"containerPort" => 7472, "name" => "monitoring"},
+                %{"containerPort" => 7946, "name" => "memberlist-tcp", "protocol" => "TCP"},
+                %{"containerPort" => 7946, "name" => "memberlist-udp", "protocol" => "UDP"}
+              ],
+              "readinessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
+                "initialDelaySeconds" => 10,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
+              },
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"add" => ["NET_RAW"], "drop" => ["ALL"]},
+                "readOnlyRootFilesystem" => true
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/etc/ml_secret_key", "name" => "memberlist"},
+                %{"mountPath" => "/etc/frr_reloader", "name" => "reloader"},
+                %{"mountPath" => "/etc/metallb", "name" => "metallb-excludel2"}
+              ]
+            },
+            %{
+              "command" => [
+                "/bin/sh",
+                "-c",
+                "/sbin/tini -- /usr/lib/frr/docker-start &\nattempts=0\nuntil [[ -f /etc/frr/frr.log || $attempts -eq 60 ]]; do\n  sleep 1\n  attempts=$(( $attempts + 1 ))\ndone\ntail -f /etc/frr/frr.log\n"
+              ],
+              "env" => [%{"name" => "TINI_SUBREAPER", "value" => "true"}],
+              "image" => battery.config.frrouting_image,
+              "livenessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/livez", "port" => 7473},
+                "initialDelaySeconds" => 10,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
+              },
+              "name" => "frr",
+              "securityContext" => %{
+                "capabilities" => %{"add" => ["NET_ADMIN", "NET_RAW", "SYS_ADMIN", "NET_BIND_SERVICE"]}
+              },
+              "startupProbe" => %{
+                "failureThreshold" => 30,
+                "httpGet" => %{"path" => "/livez", "port" => 7473},
+                "periodSeconds" => 5
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/var/run/frr", "name" => "frr-sockets"},
+                %{"mountPath" => "/etc/frr", "name" => "frr-conf"}
+              ]
+            },
+            %{
+              "command" => ["/etc/frr_reloader/frr-reloader.sh"],
+              "image" => battery.config.frrouting_image,
+              "name" => "reloader",
+              "volumeMounts" => [
+                %{"mountPath" => "/var/run/frr", "name" => "frr-sockets"},
+                %{"mountPath" => "/etc/frr", "name" => "frr-conf"},
+                %{"mountPath" => "/etc/frr_reloader", "name" => "reloader"}
+              ]
+            },
+            %{
+              "args" => ["--metrics-port=7473"],
+              "command" => ["/etc/frr_metrics/frr-metrics"],
+              "image" => battery.config.frrouting_image,
+              "name" => "frr-metrics",
+              "ports" => [%{"containerPort" => 7473, "name" => "monitoring"}],
+              "volumeMounts" => [
+                %{"mountPath" => "/var/run/frr", "name" => "frr-sockets"},
+                %{"mountPath" => "/etc/frr", "name" => "frr-conf"},
+                %{"mountPath" => "/etc/frr_metrics", "name" => "metrics"}
+              ]
+            }
+          ],
+          "hostNetwork" => true,
+          "initContainers" => [
+            %{
+              "command" => ["/bin/sh", "-c", "cp -rLf /tmp/frr/* /etc/frr/"],
+              "image" => battery.config.frrouting_image,
+              "name" => "cp-frr-files",
+              "securityContext" => %{"runAsGroup" => 101, "runAsUser" => 100},
+              "volumeMounts" => [
+                %{"mountPath" => "/tmp/frr", "name" => "frr-startup"},
+                %{"mountPath" => "/etc/frr", "name" => "frr-conf"}
+              ]
+            },
+            %{
+              "command" => ["/bin/sh", "-c", "cp -f /frr-reloader.sh /etc/frr_reloader/"],
+              "image" => battery.config.speaker_image,
+              "name" => "cp-reloader",
+              "volumeMounts" => [%{"mountPath" => "/etc/frr_reloader", "name" => "reloader"}]
+            },
+            %{
+              "command" => ["/bin/sh", "-c", "cp -f /frr-metrics /etc/frr_metrics/"],
+              "image" => battery.config.speaker_image,
+              "name" => "cp-metrics",
+              "volumeMounts" => [%{"mountPath" => "/etc/frr_metrics", "name" => "metrics"}]
+            }
+          ],
+          "nodeSelector" => %{"kubernetes.io/os" => "linux"},
+          "serviceAccountName" => "metallb-speaker",
+          "shareProcessNamespace" => true,
+          "terminationGracePeriodSeconds" => 0,
+          "tolerations" => [
+            %{"effect" => "NoSchedule", "key" => "node-role.kubernetes.io/master", "operator" => "Exists"},
+            %{"effect" => "NoSchedule", "key" => "node-role.kubernetes.io/control-plane", "operator" => "Exists"}
+          ],
+          "volumes" => [
+            %{"name" => "memberlist", "secret" => %{"defaultMode" => 420, "secretName" => "metallb-memberlist"}},
+            %{"configMap" => %{"defaultMode" => 256, "name" => "metallb-excludel2"}, "name" => "metallb-excludel2"},
+            %{"emptyDir" => %{}, "name" => "frr-sockets"},
+            %{"configMap" => %{"name" => "metallb-frr-startup"}, "name" => "frr-startup"},
+            %{"emptyDir" => %{}, "name" => "frr-conf"},
+            %{"emptyDir" => %{}, "name" => "reloader"},
+            %{"emptyDir" => %{}, "name" => "metrics"}
+          ]
+        }
+      }
+      |> B.app_labels(@app_name)
+      |> B.component_label("speaker")
+      |> B.add_owner(battery)
+
     spec =
       %{}
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}}
-      )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{"battery/app" => @app_name, "battery/component" => "speaker", "battery/managed" => "true"}
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => ["--port=7472", "--log-level=debug"],
-                "env" => [
-                  %{"name" => "METALLB_NODE_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}},
-                  %{"name" => "METALLB_HOST", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.hostIP"}}},
-                  %{"name" => "METALLB_ML_BIND_ADDR", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.podIP"}}},
-                  %{
-                    "name" => "METALLB_ML_LABELS",
-                    "value" => "app.kubernetes.io/name=metallb,app.kubernetes.io/component=speaker"
-                  },
-                  %{"name" => "METALLB_ML_BIND_PORT", "value" => "7946"},
-                  %{"name" => "METALLB_ML_SECRET_KEY_PATH", "value" => "/etc/ml_secret_key"},
-                  %{"name" => "FRR_CONFIG_FILE", "value" => "/etc/frr_reloader/frr.conf"},
-                  %{"name" => "FRR_RELOADER_PID_FILE", "value" => "/etc/frr_reloader/reloader.pid"},
-                  %{"name" => "METALLB_BGP_TYPE", "value" => "frr"}
-                ],
-                "image" => battery.config.speaker_image,
-                "livenessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
-                  "initialDelaySeconds" => 10,
-                  "periodSeconds" => 10,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 1
-                },
-                "name" => "speaker",
-                "ports" => [
-                  %{"containerPort" => 7472, "name" => "monitoring"},
-                  %{"containerPort" => 7946, "name" => "memberlist-tcp", "protocol" => "TCP"},
-                  %{"containerPort" => 7946, "name" => "memberlist-udp", "protocol" => "UDP"}
-                ],
-                "readinessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
-                  "initialDelaySeconds" => 10,
-                  "periodSeconds" => 10,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 1
-                },
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"add" => ["NET_RAW"], "drop" => ["ALL"]},
-                  "readOnlyRootFilesystem" => true
-                },
-                "volumeMounts" => [
-                  %{"mountPath" => "/etc/ml_secret_key", "name" => "memberlist"},
-                  %{"mountPath" => "/etc/frr_reloader", "name" => "reloader"},
-                  %{"mountPath" => "/etc/metallb", "name" => "metallb-excludel2"}
-                ]
-              },
-              %{
-                "command" => [
-                  "/bin/sh",
-                  "-c",
-                  "/sbin/tini -- /usr/lib/frr/docker-start &\nattempts=0\nuntil [[ -f /etc/frr/frr.log || $attempts -eq 60 ]]; do\n  sleep 1\n  attempts=$(( $attempts + 1 ))\ndone\ntail -f /etc/frr/frr.log\n"
-                ],
-                "env" => [%{"name" => "TINI_SUBREAPER", "value" => "true"}],
-                "image" => battery.config.frrouting_image,
-                "livenessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/livez", "port" => 7473},
-                  "initialDelaySeconds" => 10,
-                  "periodSeconds" => 10,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 1
-                },
-                "name" => "frr",
-                "securityContext" => %{
-                  "capabilities" => %{"add" => ["NET_ADMIN", "NET_RAW", "SYS_ADMIN", "NET_BIND_SERVICE"]}
-                },
-                "startupProbe" => %{
-                  "failureThreshold" => 30,
-                  "httpGet" => %{"path" => "/livez", "port" => 7473},
-                  "periodSeconds" => 5
-                },
-                "volumeMounts" => [
-                  %{"mountPath" => "/var/run/frr", "name" => "frr-sockets"},
-                  %{"mountPath" => "/etc/frr", "name" => "frr-conf"}
-                ]
-              },
-              %{
-                "command" => ["/etc/frr_reloader/frr-reloader.sh"],
-                "image" => battery.config.frrouting_image,
-                "name" => "reloader",
-                "volumeMounts" => [
-                  %{"mountPath" => "/var/run/frr", "name" => "frr-sockets"},
-                  %{"mountPath" => "/etc/frr", "name" => "frr-conf"},
-                  %{"mountPath" => "/etc/frr_reloader", "name" => "reloader"}
-                ]
-              },
-              %{
-                "args" => ["--metrics-port=7473"],
-                "command" => ["/etc/frr_metrics/frr-metrics"],
-                "image" => battery.config.frrouting_image,
-                "name" => "frr-metrics",
-                "ports" => [%{"containerPort" => 7473, "name" => "monitoring"}],
-                "volumeMounts" => [
-                  %{"mountPath" => "/var/run/frr", "name" => "frr-sockets"},
-                  %{"mountPath" => "/etc/frr", "name" => "frr-conf"},
-                  %{"mountPath" => "/etc/frr_metrics", "name" => "metrics"}
-                ]
-              }
-            ],
-            "hostNetwork" => true,
-            "initContainers" => [
-              %{
-                "command" => ["/bin/sh", "-c", "cp -rLf /tmp/frr/* /etc/frr/"],
-                "image" => battery.config.frrouting_image,
-                "name" => "cp-frr-files",
-                "securityContext" => %{"runAsGroup" => 101, "runAsUser" => 100},
-                "volumeMounts" => [
-                  %{"mountPath" => "/tmp/frr", "name" => "frr-startup"},
-                  %{"mountPath" => "/etc/frr", "name" => "frr-conf"}
-                ]
-              },
-              %{
-                "command" => ["/bin/sh", "-c", "cp -f /frr-reloader.sh /etc/frr_reloader/"],
-                "image" => battery.config.speaker_image,
-                "name" => "cp-reloader",
-                "volumeMounts" => [%{"mountPath" => "/etc/frr_reloader", "name" => "reloader"}]
-              },
-              %{
-                "command" => ["/bin/sh", "-c", "cp -f /frr-metrics /etc/frr_metrics/"],
-                "image" => battery.config.speaker_image,
-                "name" => "cp-metrics",
-                "volumeMounts" => [%{"mountPath" => "/etc/frr_metrics", "name" => "metrics"}]
-              }
-            ],
-            "nodeSelector" => %{"kubernetes.io/os" => "linux"},
-            "serviceAccountName" => "metallb-speaker",
-            "shareProcessNamespace" => true,
-            "terminationGracePeriodSeconds" => 0,
-            "tolerations" => [
-              %{"effect" => "NoSchedule", "key" => "node-role.kubernetes.io/master", "operator" => "Exists"},
-              %{"effect" => "NoSchedule", "key" => "node-role.kubernetes.io/control-plane", "operator" => "Exists"}
-            ],
-            "volumes" => [
-              %{"name" => "memberlist", "secret" => %{"defaultMode" => 420, "secretName" => "metallb-memberlist"}},
-              %{"configMap" => %{"defaultMode" => 256, "name" => "metallb-excludel2"}, "name" => "metallb-excludel2"},
-              %{"emptyDir" => %{}, "name" => "frr-sockets"},
-              %{"configMap" => %{"name" => "metallb-frr-startup"}, "name" => "frr-startup"},
-              %{"emptyDir" => %{}, "name" => "frr-conf"},
-              %{"emptyDir" => %{}, "name" => "reloader"},
-              %{"emptyDir" => %{}, "name" => "metrics"}
-            ]
-          }
-        }
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}})
+      |> B.template(template)
       |> Map.put("updateStrategy", %{"type" => "RollingUpdate"})
 
     :daemon_set
@@ -329,6 +329,63 @@ defmodule CommonCore.Resources.MetalLB do
   resource(:deployment_controller, battery, state) do
     namespace = base_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{"battery/app" => @app_name, "battery/component" => "controller", "battery/managed" => "true"}
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => ["--port=7472", "--log-level=info", "--cert-service-name=metallb-webhook-service"],
+              "env" => [
+                %{"name" => "METALLB_ML_SECRET_NAME", "value" => "metallb-memberlist"},
+                %{"name" => "METALLB_DEPLOYMENT", "value" => "metallb-controller"},
+                %{"name" => "METALLB_BGP_TYPE", "value" => "frr"}
+              ],
+              "image" => battery.config.controller_image,
+              "livenessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
+                "initialDelaySeconds" => 10,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
+              },
+              "name" => "controller",
+              "ports" => [
+                %{"containerPort" => 7472, "name" => "monitoring"},
+                %{"containerPort" => 9443, "name" => "webhook-server", "protocol" => "TCP"}
+              ],
+              "readinessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
+                "initialDelaySeconds" => 10,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
+              },
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"drop" => ["ALL"]},
+                "readOnlyRootFilesystem" => true
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/tmp/k8s-webhook-server/serving-certs", "name" => "cert", "readOnly" => true}
+              ]
+            }
+          ],
+          "nodeSelector" => %{"kubernetes.io/os" => "linux"},
+          "securityContext" => %{"fsGroup" => 65_534, "runAsNonRoot" => true, "runAsUser" => 65_534},
+          "serviceAccountName" => "metallb-controller",
+          "terminationGracePeriodSeconds" => 0,
+          "volumes" => [%{"name" => "cert", "secret" => %{"defaultMode" => 420, "secretName" => "webhook-server-cert"}}]
+        }
+      }
+      |> B.app_labels(@app_name)
+      |> B.component_label("controller")
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put(
@@ -336,61 +393,7 @@ defmodule CommonCore.Resources.MetalLB do
         %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}}
       )
       |> Map.put("strategy", %{"type" => "RollingUpdate"})
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{"battery/app" => @app_name, "battery/component" => "controller", "battery/managed" => "true"}
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => ["--port=7472", "--log-level=info", "--cert-service-name=metallb-webhook-service"],
-                "env" => [
-                  %{"name" => "METALLB_ML_SECRET_NAME", "value" => "metallb-memberlist"},
-                  %{"name" => "METALLB_DEPLOYMENT", "value" => "metallb-controller"},
-                  %{"name" => "METALLB_BGP_TYPE", "value" => "frr"}
-                ],
-                "image" => battery.config.controller_image,
-                "livenessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
-                  "initialDelaySeconds" => 10,
-                  "periodSeconds" => 10,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 1
-                },
-                "name" => "controller",
-                "ports" => [
-                  %{"containerPort" => 7472, "name" => "monitoring"},
-                  %{"containerPort" => 9443, "name" => "webhook-server", "protocol" => "TCP"}
-                ],
-                "readinessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},
-                  "initialDelaySeconds" => 10,
-                  "periodSeconds" => 10,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 1
-                },
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]},
-                  "readOnlyRootFilesystem" => true
-                },
-                "volumeMounts" => [
-                  %{"mountPath" => "/tmp/k8s-webhook-server/serving-certs", "name" => "cert", "readOnly" => true}
-                ]
-              }
-            ],
-            "nodeSelector" => %{"kubernetes.io/os" => "linux"},
-            "securityContext" => %{"fsGroup" => 65_534, "runAsNonRoot" => true, "runAsUser" => 65_534},
-            "serviceAccountName" => "metallb-controller",
-            "terminationGracePeriodSeconds" => 0,
-            "volumes" => [%{"name" => "cert", "secret" => %{"defaultMode" => 420, "secretName" => "webhook-server-cert"}}]
-          }
-        }
-      )
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()

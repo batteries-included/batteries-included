@@ -48,13 +48,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     db = cluster.database || %{database: "app", owner: "app"}
     cluster_name = "pg-" <> cluster.name
 
-    :cloudnative_pg_cluster
-    |> B.build_resource()
-    |> B.name(cluster_name)
-    |> B.app_labels(cluster_name)
-    |> B.namespace(PostgresState.cluster_namespace(state, cluster))
-    |> B.add_owner(cluster)
-    |> B.spec(%{
+    spec = %{
       instances: cluster.num_instances,
       storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
       enableSuperuserAccess: false,
@@ -81,7 +75,16 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
             pg_user_to_pg_role(state, cluster, user)
           end)
       }
-    })
+    }
+
+    :cloudnative_pg_cluster
+    |> B.build_resource()
+    |> B.name(cluster_name)
+    |> B.app_labels(cluster_name)
+    |> B.component_label(@app_name)
+    |> B.namespace(PostgresState.cluster_namespace(state, cluster))
+    |> B.add_owner(cluster)
+    |> B.spec(spec)
   end
 
   defp resources(%Cluster{} = cluster) do
@@ -151,29 +154,27 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   def user_role_secret(_battery, state, %Cluster{} = cluster, %PGUser{} = user, namespace) do
     data = Secret.encode(secret_data(state, cluster, user))
 
+    cluster_name = "pg-" <> cluster.name
+
     :secret
     |> B.build_resource()
     |> B.name(PostgresState.user_secret(state, cluster, user))
-    |> B.app_labels("pg-" <> cluster.name)
+    |> B.app_labels(cluster_name)
     |> B.namespace(namespace)
     |> B.add_owner(cluster)
     |> B.data(data)
   end
 
-  defp cluster_pod_monitor(_battery, state, %Cluster{name: cluster_name} = cluster) do
+  defp cluster_pod_monitor(_battery, state, %Cluster{} = cluster) do
+    cluster_name = "pg-" <> cluster.name
+
     spec =
       %{}
       |> Map.put("podMetricsEndpoints", [%{"port" => "metrics"}])
       |> Map.put(
         "selector",
-        %{
-          "matchLabels" => %{
-            "cnpg.io/cluster" => "pg-" <> cluster_name
-          }
-        }
+        %{"matchLabels" => %{"cnpg.io/cluster" => cluster_name}}
       )
-
-    cluster_name = "pg-" <> cluster.name
 
     :monitoring_pod_monitor
     |> B.build_resource()

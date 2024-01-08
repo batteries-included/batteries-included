@@ -156,7 +156,6 @@ defmodule CommonCore.Resources.MetricsServer do
         "selector",
         %{"battery/app" => @app_name}
       )
-      |> Map.put("type", "ClusterIP")
 
     :service
     |> B.build_resource()

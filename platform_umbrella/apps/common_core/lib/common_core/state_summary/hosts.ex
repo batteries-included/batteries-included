@@ -65,7 +65,7 @@ defmodule CommonCore.StateSummary.Hosts do
   def for_battery(summary, battery_type)
 
   # HACK(jdt): fix this!
-  def for_battery(_summary, :battery_core), do: "control.127.0.0.1.ip.batteriesincl.com:4000"
+  def for_battery(_summary, :battery_core), do: "control.127.0.0.1.ip.batteriesincl.com"
   def for_battery(summary, :gitea), do: gitea_host(summary)
   def for_battery(summary, :grafana), do: grafana_host(summary)
   def for_battery(summary, :keycloak), do: keycloak_host(summary)

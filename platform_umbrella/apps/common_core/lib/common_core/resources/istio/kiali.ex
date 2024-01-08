@@ -185,109 +185,104 @@ defmodule CommonCore.Resources.Kiali do
   resource(:deployment_main, battery, state) do
     namespace = istio_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{
+          "annotations" => %{
+            "kiali.io/dashboards" => "go,kiali",
+            "prometheus.io/port" => "9090",
+            "prometheus.io/scrape" => "true"
+          },
+          "labels" => %{
+            "battery/managed" => "true"
+          },
+          "name" => "kiali"
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "command" => ["/opt/kiali/kiali", "-config", "/kiali-configuration/config.yaml"],
+              "env" => [
+                %{
+                  "name" => "ACTIVE_NAMESPACE",
+                  "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
+                },
+                %{"name" => "LOG_LEVEL", "value" => "debug"},
+                %{"name" => "LOG_FORMAT", "value" => "text"},
+                %{"name" => "LOG_TIME_FIELD_FORMAT", "value" => "2006-01-02T15:04:05Z07:00"},
+                %{"name" => "LOG_SAMPLER_RATE", "value" => "1"}
+              ],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "Always",
+              "livenessProbe" => %{
+                "httpGet" => %{
+                  "path" => "/kiali/healthz",
+                  "port" => "api-port",
+                  "scheme" => "HTTP"
+                },
+                "initialDelaySeconds" => 5,
+                "periodSeconds" => 30
+              },
+              "name" => "kiali",
+              "ports" => [
+                %{"containerPort" => 20_001, "name" => "api-port"},
+                %{"containerPort" => 9090, "name" => "http-metrics"}
+              ],
+              "readinessProbe" => %{
+                "httpGet" => %{
+                  "path" => "/kiali/healthz",
+                  "port" => "api-port",
+                  "scheme" => "HTTP"
+                },
+                "initialDelaySeconds" => 5,
+                "periodSeconds" => 30
+              },
+              "resources" => %{
+                "limits" => %{"memory" => "1Gi"},
+                "requests" => %{"cpu" => "10m", "memory" => "64Mi"}
+              },
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"drop" => ["ALL"]},
+                "privileged" => false,
+                "readOnlyRootFilesystem" => true,
+                "runAsNonRoot" => true
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/kiali-configuration", "name" => "kiali-configuration"},
+                %{"mountPath" => "/kiali-cert", "name" => "kiali-cert"},
+                %{"mountPath" => "/kiali-secret", "name" => "kiali-secret"},
+                %{"mountPath" => "/kiali-cabundle", "name" => "kiali-cabundle"}
+              ]
+            }
+          ],
+          "serviceAccountName" => "kiali",
+          "volumes" => [
+            %{"configMap" => %{"name" => "kiali"}, "name" => "kiali-configuration"},
+            %{
+              "name" => "kiali-cert",
+              "secret" => %{"optional" => true, "secretName" => "istio.kiali-service-account"}
+            },
+            %{
+              "name" => "kiali-secret",
+              "secret" => %{"optional" => true, "secretName" => "kiali"}
+            },
+            %{
+              "configMap" => %{"name" => "kiali-cabundle", "optional" => true},
+              "name" => "kiali-cabundle"
+            }
+          ]
+        }
+      }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name}}
-      )
-      |> Map.put(
-        "strategy",
-        %{"rollingUpdate" => %{"maxSurge" => 1, "maxUnavailable" => 1}, "type" => "RollingUpdate"}
-      )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "annotations" => %{
-              "kiali.io/dashboards" => "go,kiali",
-              "prometheus.io/port" => "9090",
-              "prometheus.io/scrape" => "true"
-            },
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/managed" => "true"
-            },
-            "name" => "kiali"
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "command" => ["/opt/kiali/kiali", "-config", "/kiali-configuration/config.yaml"],
-                "env" => [
-                  %{
-                    "name" => "ACTIVE_NAMESPACE",
-                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
-                  },
-                  %{"name" => "LOG_LEVEL", "value" => "debug"},
-                  %{"name" => "LOG_FORMAT", "value" => "text"},
-                  %{"name" => "LOG_TIME_FIELD_FORMAT", "value" => "2006-01-02T15:04:05Z07:00"},
-                  %{"name" => "LOG_SAMPLER_RATE", "value" => "1"}
-                ],
-                "image" => battery.config.image,
-                "imagePullPolicy" => "Always",
-                "livenessProbe" => %{
-                  "httpGet" => %{
-                    "path" => "/kiali/healthz",
-                    "port" => "api-port",
-                    "scheme" => "HTTP"
-                  },
-                  "initialDelaySeconds" => 5,
-                  "periodSeconds" => 30
-                },
-                "name" => "kiali",
-                "ports" => [
-                  %{"containerPort" => 20_001, "name" => "api-port"},
-                  %{"containerPort" => 9090, "name" => "http-metrics"}
-                ],
-                "readinessProbe" => %{
-                  "httpGet" => %{
-                    "path" => "/kiali/healthz",
-                    "port" => "api-port",
-                    "scheme" => "HTTP"
-                  },
-                  "initialDelaySeconds" => 5,
-                  "periodSeconds" => 30
-                },
-                "resources" => %{
-                  "limits" => %{"memory" => "1Gi"},
-                  "requests" => %{"cpu" => "10m", "memory" => "64Mi"}
-                },
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]},
-                  "privileged" => false,
-                  "readOnlyRootFilesystem" => true,
-                  "runAsNonRoot" => true
-                },
-                "volumeMounts" => [
-                  %{"mountPath" => "/kiali-configuration", "name" => "kiali-configuration"},
-                  %{"mountPath" => "/kiali-cert", "name" => "kiali-cert"},
-                  %{"mountPath" => "/kiali-secret", "name" => "kiali-secret"},
-                  %{"mountPath" => "/kiali-cabundle", "name" => "kiali-cabundle"}
-                ]
-              }
-            ],
-            "serviceAccountName" => "kiali",
-            "volumes" => [
-              %{"configMap" => %{"name" => "kiali"}, "name" => "kiali-configuration"},
-              %{
-                "name" => "kiali-cert",
-                "secret" => %{"optional" => true, "secretName" => "istio.kiali-service-account"}
-              },
-              %{
-                "name" => "kiali-secret",
-                "secret" => %{"optional" => true, "secretName" => "kiali"}
-              },
-              %{
-                "configMap" => %{"name" => "kiali-cabundle", "optional" => true},
-                "name" => "kiali-cabundle"
-              }
-            ]
-          }
-        }
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
+      |> Map.put("strategy", %{"rollingUpdate" => %{"maxSurge" => 1, "maxUnavailable" => 1}, "type" => "RollingUpdate"})
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()

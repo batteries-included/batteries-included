@@ -46,82 +46,84 @@ defmodule CommonCore.Resources.Promtail do
   resource(:daemon_set_main, battery, state) do
     namespace = core_namespace(state)
 
-    template = %{
-      "metadata" => %{
-        "labels" => %{
-          "battery/app" => @app_name,
-          "battery/managed" => "true"
-        }
-      },
-      "spec" => %{
-        "containers" => [
-          %{
-            "args" => ["-config.file=/etc/promtail/promtail.yaml"],
-            "env" => [
-              %{
-                "name" => "HOSTNAME",
-                "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}
-              }
-            ],
-            "image" => battery.config.image,
-            "imagePullPolicy" => "IfNotPresent",
-            "name" => "promtail",
-            "ports" => [
-              %{"containerPort" => 3101, "name" => "http-metrics", "protocol" => "TCP"}
-            ],
-            "readinessProbe" => %{
-              "failureThreshold" => 5,
-              "httpGet" => %{"path" => "/ready", "port" => "http-metrics"},
-              "initialDelaySeconds" => 10,
-              "periodSeconds" => 10,
-              "successThreshold" => 1,
-              "timeoutSeconds" => 1
-            },
-            "securityContext" => %{
-              "allowPrivilegeEscalation" => false,
-              "capabilities" => %{"drop" => ["ALL"]},
-              "readOnlyRootFilesystem" => true
-            },
-            "volumeMounts" => [
-              %{"mountPath" => "/etc/promtail", "name" => "config"},
-              %{"mountPath" => "/run/promtail", "name" => "run"},
-              %{
-                "mountPath" => "/var/lib/docker/containers",
-                "name" => "containers",
-                "readOnly" => true
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{
+            "battery/managed" => "true"
+          }
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => ["-config.file=/etc/promtail/promtail.yaml"],
+              "env" => [
+                %{
+                  "name" => "HOSTNAME",
+                  "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}
+                }
+              ],
+              "image" => battery.config.image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "promtail",
+              "ports" => [
+                %{"containerPort" => 3101, "name" => "http-metrics", "protocol" => "TCP"}
+              ],
+              "readinessProbe" => %{
+                "failureThreshold" => 5,
+                "httpGet" => %{"path" => "/ready", "port" => "http-metrics"},
+                "initialDelaySeconds" => 10,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
               },
-              %{"mountPath" => "/var/log/pods", "name" => "pods", "readOnly" => true}
-            ]
-          }
-        ],
-        "enableServiceLinks" => true,
-        "securityContext" => %{"runAsGroup" => 0, "runAsUser" => 0},
-        "serviceAccountName" => "promtail",
-        "tolerations" => [
-          %{
-            "effect" => "NoSchedule",
-            "key" => "node-role.kubernetes.io/master",
-            "operator" => "Exists"
-          },
-          %{
-            "effect" => "NoSchedule",
-            "key" => "node-role.kubernetes.io/control-plane",
-            "operator" => "Exists"
-          }
-        ],
-        "volumes" => [
-          %{"name" => "config", "secret" => %{"secretName" => "promtail"}},
-          %{"hostPath" => %{"path" => "/run/promtail"}, "name" => "run"},
-          %{"hostPath" => %{"path" => "/var/lib/docker/containers"}, "name" => "containers"},
-          %{"hostPath" => %{"path" => "/var/log/pods"}, "name" => "pods"}
-        ]
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"drop" => ["ALL"]},
+                "readOnlyRootFilesystem" => true
+              },
+              "volumeMounts" => [
+                %{"mountPath" => "/etc/promtail", "name" => "config"},
+                %{"mountPath" => "/run/promtail", "name" => "run"},
+                %{
+                  "mountPath" => "/var/lib/docker/containers",
+                  "name" => "containers",
+                  "readOnly" => true
+                },
+                %{"mountPath" => "/var/log/pods", "name" => "pods", "readOnly" => true}
+              ]
+            }
+          ],
+          "enableServiceLinks" => true,
+          "securityContext" => %{"runAsGroup" => 0, "runAsUser" => 0},
+          "serviceAccountName" => "promtail",
+          "tolerations" => [
+            %{
+              "effect" => "NoSchedule",
+              "key" => "node-role.kubernetes.io/master",
+              "operator" => "Exists"
+            },
+            %{
+              "effect" => "NoSchedule",
+              "key" => "node-role.kubernetes.io/control-plane",
+              "operator" => "Exists"
+            }
+          ],
+          "volumes" => [
+            %{"name" => "config", "secret" => %{"secretName" => "promtail"}},
+            %{"hostPath" => %{"path" => "/run/promtail"}, "name" => "run"},
+            %{"hostPath" => %{"path" => "/var/lib/docker/containers"}, "name" => "containers"},
+            %{"hostPath" => %{"path" => "/var/log/pods"}, "name" => "pods"}
+          ]
+        }
       }
-    }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
-      |> Map.put("template", template)
+      |> B.template(template)
       |> Map.put("updateStrategy", %{})
 
     :daemon_set

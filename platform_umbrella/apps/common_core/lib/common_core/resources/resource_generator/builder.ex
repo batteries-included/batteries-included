@@ -55,6 +55,8 @@ defmodule CommonCore.Resources.Builder do
     |> label("app", app_name)
     |> label("app.kubernetes.io/name", app_name)
     |> label("battery/app", app_name)
+    |> label("app.kubernetes.io/version", "latest")
+    |> label("version", "latest")
   end
 
   def managed_labels(resource) do
@@ -65,7 +67,7 @@ defmodule CommonCore.Resources.Builder do
   end
 
   @spec add_owner(map(), String.t() | map() | nil) :: any
-  def add_owner(resource, %{id: id} = _cluster), do: owner_label(resource, id)
+  def add_owner(resource, %{id: id} = _id_backed_strut), do: owner_label(resource, id)
   def add_owner(resource, owner_binary) when is_binary(owner_binary), do: add_owner(resource, owner_binary)
   def add_owner(resource, _), do: resource
 

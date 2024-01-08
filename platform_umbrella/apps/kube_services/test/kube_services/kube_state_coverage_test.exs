@@ -27,9 +27,6 @@ defmodule KubeServices.KubeStateCoverageTest do
     {"ceph.rook.io/v1", "CephClient"},
     {"ceph.rook.io/v1", "CephNFS"},
 
-    # Gotta look into why this is here
-    {"install.istio.io/v1alpha1", "IstioOperator"},
-
     # BGP will come later
     {"metallb.io/v1beta1", "BGPAdvertisement"},
     {"metallb.io/v1beta2", "BGPPeer"},
@@ -42,7 +39,17 @@ defmodule KubeServices.KubeStateCoverageTest do
     {"networking.istio.io/v1beta1", "ServiceEntry"},
     {"networking.istio.io/v1beta1", "DestinationRule"},
     {"networking.istio.io/v1beta1", "Sidecar"},
-    {"networking.istio.io/v1beta1", "ProxyConfig"}
+    {"networking.istio.io/v1beta1", "ProxyConfig"},
+
+    # Knative is choosing that route too.
+    {"install.istio.io/v1alpha1", "IstioOperator"},
+    {"autoscaling.internal.knative.dev/v1alpha1", "PodAutoscaler"},
+    {"autoscaling.internal.knative.dev/v1alpha1", "Metric"},
+    {"networking.internal.knative.dev/v1alpha1", "Certificate"},
+    {"serving.knative.dev/v1beta1", "DomainMapping"},
+    {"networking.internal.knative.dev/v1alpha1", "ClusterDomainClaim"},
+    {"networking.internal.knative.dev/v1alpha1", "Ingress"},
+    {"networking.internal.knative.dev/v1alpha1", "ServerlessService"}
   ]
 
   describe "KubeState can watch for every battery" do

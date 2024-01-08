@@ -28,10 +28,7 @@ defmodule CommonCore.Resources.FerretDB do
     spec =
       %{}
       |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "debug"}])
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name}}
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/component" => @app_name}})
 
     :monitoring_pod_monitor
     |> B.build_resource()
@@ -50,60 +47,59 @@ defmodule CommonCore.Resources.FerretDB do
     |> B.add_owner(ferret_service)
   end
 
-  def service(ferret_service, battery, %StateSummary{} = state) do
+  def service(ferret_service, _battery, %StateSummary{} = state) do
+    spec =
+      %{}
+      |> Map.put("selector", %{"battery/component" => @app_name, "battery/owner" => ferret_service.id})
+      |> Map.put("ports", [
+        %{"name" => "rpc", "port" => 27_017, "protocol" => "TCP"},
+        %{"name" => "debug", "port" => 8088, "protocol" => "TCP"}
+      ])
+
     :service
     |> B.build_resource()
     |> B.app_labels(@app_name)
     |> B.name(service_name(ferret_service))
     |> B.namespace(namespace(ferret_service, state))
-    |> B.spec(service_spec(ferret_service, battery, state))
+    |> B.spec(spec)
     |> B.add_owner(ferret_service)
   end
 
-  defp service_spec(ferret_service, _battery, %StateSummary{} = _state) do
-    %{}
-    |> Map.put("selector", %{"battery/app" => @app_name, "battery/owner" => ferret_service.id})
-    |> Map.put("ports", [
-      %{"name" => "rpc", "port" => 27_017, "protocol" => "TCP"},
-      %{"name" => "debug", "port" => 8088, "protocol" => "TCP"}
-    ])
-  end
-
   defp deployment(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{"battery/managed" => "true"},
+          "spec" => %{
+            "containers" => [container(ferret_service, battery, state)],
+            "serviceAccountName" => service_account_name(ferret_service)
+          }
+        }
+      }
+      |> B.app_labels(service_name(ferret_service))
+      |> B.component_label(@app_name)
+      |> B.add_owner(ferret_service)
+
+    spec =
+      %{}
+      |> Map.put("selector", %{
+        "matchLabels" => %{"battery/app" => service_name(ferret_service), "battery/component" => @app_name}
+      })
+      |> Map.put("replicas", ferret_service.instances)
+      |> B.template(template)
+
     :deployment
     |> B.build_resource()
     |> B.app_labels(@app_name)
-    |> B.name("ferret-#{ferret_service.name}")
+    |> B.name(service_name(ferret_service))
     |> B.namespace(namespace(ferret_service, state))
-    |> B.spec(spec(ferret_service, battery, state))
+    |> B.spec(spec)
     |> B.add_owner(ferret_service)
   end
 
   @spec get_cluster(FerretService.t(), StateSummary.t()) :: CommonCore.Postgres.Cluster.t() | nil
   defp get_cluster(%FerretService{} = ferret_service, %StateSummary{} = state) do
     Enum.find(state.postgres_clusters, fn cluster -> cluster.id == ferret_service.postgres_cluster_id end)
-  end
-
-  defp spec(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
-    %{}
-    |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
-    |> Map.put("replicas", ferret_service.instances)
-    |> Map.put("template", template(ferret_service, battery, state))
-  end
-
-  defp template(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
-    %{}
-    |> Map.put("metadata", %{
-      "labels" => %{
-        "battery/app" => @app_name,
-        "battery/managed" => "true",
-        "battery/owner" => ferret_service.id
-      }
-    })
-    |> Map.put("spec", %{
-      "containers" => [container(ferret_service, battery, state)],
-      "serviceAccountName" => service_account_name(ferret_service)
-    })
   end
 
   defp container(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do

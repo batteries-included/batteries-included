@@ -55,22 +55,25 @@ defmodule CommonCore.Resources.TextGenerationWebUI do
       }
     ]
 
-    template = %{
-      "metadata" => %{
-        "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
-      },
-      "spec" => %{
-        "containers" => containers,
-        "volumes" => volumes,
-        "serviceAccountName" => "text-generation-webui"
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{"battery/managed" => "true"}
+        },
+        "spec" => %{
+          "containers" => containers,
+          "volumes" => volumes,
+          "serviceAccountName" => "text-generation-webui"
+        }
       }
-    }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
       |> Map.put("replicas", 1)
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
-      |> Map.put("template", template)
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()

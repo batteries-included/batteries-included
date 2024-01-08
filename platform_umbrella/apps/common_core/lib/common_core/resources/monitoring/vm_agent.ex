@@ -28,7 +28,7 @@ defmodule CommonCore.Resources.VMAgent do
           "url" => "http://vminsert-main-cluster.#{namespace}.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
         }
       ])
-      |> Map.put("scrapeInterval", "25s")
+      |> Map.put("scrapeInterval", "10s")
       |> Map.put("selectAllByDefault", true)
 
     :vm_agent

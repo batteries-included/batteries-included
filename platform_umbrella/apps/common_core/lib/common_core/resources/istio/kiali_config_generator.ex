@@ -58,7 +58,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
         "view_only_mode" => false
       },
       "external_services" => %{
-        "custom_dashboards" => %{"enabled" => true},
+        "custom_dashboards" => %{"enabled" => false},
         "istio" => %{
           "root_namespace" => namespace_istio,
           "component_status" => %{
@@ -101,7 +101,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
           "clusters" => []
         },
         "disabled_features" => [],
-        "validations" => %{"ignore" => ["KIA1301"]}
+        "validations" => %{"ignore" => ["KIA1301", "KIA0601"]}
       },
       "login_token" => %{"signing_key" => "gEmf58MPasrZkPsh"},
       "server" => %{

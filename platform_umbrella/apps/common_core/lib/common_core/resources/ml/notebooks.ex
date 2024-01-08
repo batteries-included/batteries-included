@@ -58,34 +58,36 @@ defmodule CommonCore.Resources.Notebooks do
 
   defp stateful_set(%{} = notebook, _battery, state) do
     namespace = ml_namespace(state)
-    owner_id = Map.get(notebook, :id, "bootstrapped")
 
     template =
-      %{}
-      |> B.app_labels(@app_name)
+      %{
+        "metadata" => %{"labels" => %{"battery/managed" => "true"}},
+        "spec" => %{
+          "containers" => [
+            %{
+              "name" => "notebook",
+              "image" => notebook.image,
+              "env" => [
+                %{"name" => "JUPYTER_ENABLE_LAB", "value" => "yes"}
+              ],
+              "command" => ["start-notebook.sh"],
+              "args" => [
+                "--NotebookApp.base_url='#{base_url(notebook)}'",
+                "--NotebookApp.token=''",
+                "--NotebookApp.allow_password_change=False",
+                "--NotebookApp.password=''"
+              ],
+              "ports" => [
+                %{"containerPort" => @container_port, "name" => "http"}
+              ]
+            }
+          ]
+        }
+      }
+      |> B.app_labels(notebook.name)
+      |> B.component_label(notebook.name)
       |> B.label("battery/notebook", notebook.name)
-      |> B.owner_label(owner_id)
-      |> B.spec(%{
-        "containers" => [
-          %{
-            "name" => "notebook",
-            "image" => notebook.image,
-            "env" => [
-              %{"name" => "JUPYTER_ENABLE_LAB", "value" => "yes"}
-            ],
-            "command" => ["start-notebook.sh"],
-            "args" => [
-              "--NotebookApp.base_url='#{base_url(notebook)}'",
-              "--NotebookApp.token=''",
-              "--NotebookApp.allow_password_change=False",
-              "--NotebookApp.password=''"
-            ],
-            "ports" => [
-              %{"containerPort" => @container_port, "name" => "http"}
-            ]
-          }
-        ]
-      })
+      |> B.add_owner(notebook)
 
     spec =
       %{}
@@ -96,19 +98,18 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.build_resource()
     |> B.name("notebook-#{notebook.name}")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
+    |> B.component_label(notebook.name)
     |> B.label("battery/notebook", notebook.name)
     |> B.spec(spec)
-    |> B.owner_label(owner_id)
+    |> B.add_owner(notebook)
   end
 
   defp service(notebook, _battery, state) do
     namespace = ml_namespace(state)
-    owner_id = Map.get(notebook, :id, "bootstrapped")
 
     spec =
       %{}
-      |> B.short_selector("battery/notebook", notebook.name)
+      |> B.short_selector("battery/app", notebook.name)
       |> B.ports([%{name: "http", port: @container_port, targetPort: @container_port}])
 
     :service
@@ -116,7 +117,7 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.name(service_name(notebook))
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
-    |> B.owner_label(owner_id)
+    |> B.add_owner(notebook)
     |> B.spec(spec)
   end
 
