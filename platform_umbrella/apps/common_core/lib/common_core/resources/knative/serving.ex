@@ -247,8 +247,7 @@ defmodule CommonCore.Resources.KnativeServing do
   resource(:config_map_deployment, battery, _state) do
     data =
       %{
-        "queue-sidecar-image" =>
-          "gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:739d6ce20e3a4eb646d47472163eca88df59bb637cad4d1e100de07a15fe63a2"
+        "queue-sidecar-image" => "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.12.3"
       }
 
     :config_map
@@ -330,7 +329,7 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:config_map_observability, battery, _state) do
-    data = %{}
+    data = %{"metrics.backend-destination" => "prometheus", "logging.enable-request-log" => "true"}
 
     :config_map
     |> B.build_resource()
@@ -371,8 +370,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/internal/serving"}
               ],
-              "image" =>
-                "gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:eff69d2271dde5f4ad0eb665d8a493773d7c78da05c2a5ef94c1d84dcac37cf1",
+              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/activator:v1.12.3",
               "livenessProbe" => %{
                 "failureThreshold" => 12,
                 "httpGet" => %{
@@ -467,8 +465,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/serving"}
               ],
-              "image" =>
-                "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:7908e2a3e2238d14044527f8f991cc76492e0de2110e2abef5e3ee4a59b43c4f",
+              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler:v1.12.3",
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{
@@ -560,8 +557,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/internal/serving"}
               ],
-              "image" =>
-                "gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:ea0f8f2ed5a603c42687ad397a4826bb720ea50ce39eef1b3a03927a920e4bc0",
+              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/controller:v1.12.3",
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{"path" => "/health", "port" => "probes", "scheme" => "HTTP"},
@@ -648,8 +644,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "WEBHOOK_PORT", "value" => "8443"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/internal/serving"}
               ],
-              "image" =>
-                "gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:8883f4fff5c56ed512cc4a3a3ab178b7a3366e58ea2e6aee83d33bc6d287aa48",
+              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/webhook:v1.12.3",
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{
@@ -763,11 +758,7 @@ defmodule CommonCore.Resources.KnativeServing do
 
   resource(:knative_image_queue_proxy, battery, _state) do
     spec =
-      Map.put(
-        %{},
-        "image",
-        "gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:739d6ce20e3a4eb646d47472163eca88df59bb637cad4d1e100de07a15fe63a2"
-      )
+      Map.put(%{}, "image", "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.12.3")
 
     :knative_image
     |> B.build_resource()
@@ -1020,11 +1011,7 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:validating_webhook_config_serving_knative_dev, battery, _state) do
-    :validating_webhook_config
-    |> B.build_resource()
-    |> B.name("config.webhook.serving.knative.dev")
-    |> B.component_label("webhook")
-    |> Map.put("webhooks", [
+    webhooks = [
       %{
         "admissionReviewVersions" => ["v1", "v1beta1"],
         "clientConfig" => %{"service" => %{"name" => "webhook", "namespace" => battery.config.namespace}},
@@ -1043,15 +1030,17 @@ defmodule CommonCore.Resources.KnativeServing do
         "sideEffects" => "None",
         "timeoutSeconds" => 10
       }
-    ])
+    ]
+
+    :validating_webhook_config
+    |> B.build_resource()
+    |> B.name("config.webhook.serving.knative.dev")
+    |> B.component_label("webhook")
+    |> Map.put("webhooks", webhooks)
   end
 
   resource(:validating_webhook_config_validation_serving_knative_dev, battery, _state) do
-    :validating_webhook_config
-    |> B.build_resource()
-    |> B.name("validation.webhook.serving.knative.dev")
-    |> B.component_label("webhook")
-    |> Map.put("webhooks", [
+    webhooks = [
       %{
         "admissionReviewVersions" => ["v1", "v1beta1"],
         "clientConfig" => %{"service" => %{"name" => "webhook", "namespace" => battery.config.namespace}},
@@ -1081,6 +1070,12 @@ defmodule CommonCore.Resources.KnativeServing do
         "sideEffects" => "None",
         "timeoutSeconds" => 10
       }
-    ])
+    ]
+
+    :validating_webhook_config
+    |> B.build_resource()
+    |> B.name("validation.webhook.serving.knative.dev")
+    |> B.component_label("webhook")
+    |> Map.put("webhooks", webhooks)
   end
 end

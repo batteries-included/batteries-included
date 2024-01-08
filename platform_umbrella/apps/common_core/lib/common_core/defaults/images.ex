@@ -12,7 +12,7 @@ defmodule CommonCore.Defaults.Images do
 
   def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.14.1"
 
-  def grafana_image, do: "grafana/grafana:10.2.2"
+  def grafana_image, do: "grafana/grafana:10.2.3"
   def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.25.2"
 
   def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.6.1"
@@ -28,10 +28,6 @@ defmodule CommonCore.Defaults.Images do
   def istio_proxy_image, do: "docker.io/istio/proxyv2:1.20.1-distroless"
 
   def keycloak_image, do: "quay.io/keycloak/keycloak:22.0.4"
-
-  def knative_operator_webhook_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/webhook:v1.11.12"
-
-  def knative_operator_image, do: "gcr.io/knative-releases/knative.dev/operator/cmd/operator:v1.11.12"
 
   def kiali_image, do: "quay.io/kiali/kiali:#{kiali_image_version()}"
   def kiali_image_version, do: "v1.78.0"

@@ -167,6 +167,89 @@ defmodule CommonCore.Resources.MetricsServer do
   resource(:deployment_metrics_server, battery, state) do
     namespace = core_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{
+          "labels" => %{
+            "battery/managed" => "true"
+          }
+        },
+        "spec" => %{
+          "containers" => [
+            %{
+              "args" => [
+                "--secure-port=10250",
+                "--cert-dir=/tmp",
+                "--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname",
+                "--kubelet-use-node-status-port",
+                "--kubelet-insecure-tls",
+                "--metric-resolution=15s",
+                "--authorization-always-allow-paths=/metrics"
+              ],
+              "image" => battery.config.metrics_server_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "livenessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/livez", "port" => "https", "scheme" => "HTTPS"},
+                "initialDelaySeconds" => 0,
+                "periodSeconds" => 10
+              },
+              "name" => "metrics-server",
+              "ports" => [%{"containerPort" => 10_250, "name" => "https", "protocol" => "TCP"}],
+              "readinessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/readyz", "port" => "https", "scheme" => "HTTPS"},
+                "initialDelaySeconds" => 20,
+                "periodSeconds" => 10
+              },
+              "resources" => %{"requests" => %{"cpu" => "100m", "memory" => "200Mi"}},
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"drop" => ["ALL"]},
+                "readOnlyRootFilesystem" => true,
+                "runAsNonRoot" => true,
+                "runAsUser" => 1000,
+                "seccompProfile" => %{"type" => "RuntimeDefault"}
+              },
+              "volumeMounts" => [%{"mountPath" => "/tmp", "name" => "tmp"}]
+            },
+            %{
+              "command" => [
+                "/pod_nanny",
+                "--config-dir=/etc/config",
+                "--deployment=metrics-server",
+                "--container=metrics-server",
+                "--threshold=5",
+                "--poll-period=300000",
+                "--estimator=exponential",
+                "--minClusterSize=100",
+                "--use-metrics=true"
+              ],
+              "env" => [
+                %{"name" => "MY_POD_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}},
+                %{"name" => "MY_POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
+              ],
+              "image" => battery.config.addon_resizer_image,
+              "name" => "metrics-server-nanny",
+              "resources" => %{
+                "limits" => %{"cpu" => "40m", "memory" => "25Mi"},
+                "requests" => %{"cpu" => "40m", "memory" => "25Mi"}
+              },
+              "volumeMounts" => [%{"mountPath" => "/etc/config", "name" => "nanny-config-volume"}]
+            }
+          ],
+          "priorityClassName" => "system-cluster-critical",
+          "schedulerName" => nil,
+          "serviceAccountName" => "metrics-server",
+          "volumes" => [
+            %{"emptyDir" => %{}, "name" => "tmp"},
+            %{"configMap" => %{"name" => "metrics-server-nanny-config"}, "name" => "nanny-config-volume"}
+          ]
+        }
+      }
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put("replicas", 1)
@@ -174,89 +257,7 @@ defmodule CommonCore.Resources.MetricsServer do
         "selector",
         %{"matchLabels" => %{"battery/app" => @app_name}}
       )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/managed" => "true"
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => [
-                  "--secure-port=10250",
-                  "--cert-dir=/tmp",
-                  "--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname",
-                  "--kubelet-use-node-status-port",
-                  "--kubelet-insecure-tls",
-                  "--metric-resolution=15s",
-                  "--authorization-always-allow-paths=/metrics"
-                ],
-                "image" => battery.config.metrics_server_image,
-                "imagePullPolicy" => "IfNotPresent",
-                "livenessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/livez", "port" => "https", "scheme" => "HTTPS"},
-                  "initialDelaySeconds" => 0,
-                  "periodSeconds" => 10
-                },
-                "name" => "metrics-server",
-                "ports" => [%{"containerPort" => 10_250, "name" => "https", "protocol" => "TCP"}],
-                "readinessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/readyz", "port" => "https", "scheme" => "HTTPS"},
-                  "initialDelaySeconds" => 20,
-                  "periodSeconds" => 10
-                },
-                "resources" => %{"requests" => %{"cpu" => "100m", "memory" => "200Mi"}},
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]},
-                  "readOnlyRootFilesystem" => true,
-                  "runAsNonRoot" => true,
-                  "runAsUser" => 1000,
-                  "seccompProfile" => %{"type" => "RuntimeDefault"}
-                },
-                "volumeMounts" => [%{"mountPath" => "/tmp", "name" => "tmp"}]
-              },
-              %{
-                "command" => [
-                  "/pod_nanny",
-                  "--config-dir=/etc/config",
-                  "--deployment=metrics-server",
-                  "--container=metrics-server",
-                  "--threshold=5",
-                  "--poll-period=300000",
-                  "--estimator=exponential",
-                  "--minClusterSize=100",
-                  "--use-metrics=true"
-                ],
-                "env" => [
-                  %{"name" => "MY_POD_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}},
-                  %{"name" => "MY_POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
-                ],
-                "image" => battery.config.addon_resizer_image,
-                "name" => "metrics-server-nanny",
-                "resources" => %{
-                  "limits" => %{"cpu" => "40m", "memory" => "25Mi"},
-                  "requests" => %{"cpu" => "40m", "memory" => "25Mi"}
-                },
-                "volumeMounts" => [%{"mountPath" => "/etc/config", "name" => "nanny-config-volume"}]
-              }
-            ],
-            "priorityClassName" => "system-cluster-critical",
-            "schedulerName" => nil,
-            "serviceAccountName" => "metrics-server",
-            "volumes" => [
-              %{"emptyDir" => %{}, "name" => "tmp"},
-              %{"configMap" => %{"name" => "metrics-server-nanny-config"}, "name" => "nanny-config-volume"}
-            ]
-          }
-        }
-      )
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()

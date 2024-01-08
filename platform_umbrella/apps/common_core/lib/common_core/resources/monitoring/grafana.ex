@@ -153,6 +153,7 @@ defmodule CommonCore.Resources.Grafana do
           "containers" => [
             %{
               "env" => [
+                %{"name" => "NAMESPACE", "value" => "ALL"},
                 %{"name" => "METHOD", "value" => "WATCH"},
                 %{"name" => "LABEL", "value" => "grafana_alert"},
                 %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/alerting"},
@@ -187,6 +188,7 @@ defmodule CommonCore.Resources.Grafana do
             },
             %{
               "env" => [
+                %{"name" => "NAMESPACE", "value" => "ALL"},
                 %{"name" => "METHOD", "value" => "WATCH"},
                 %{"name" => "LABEL", "value" => "grafana_dashboard"},
                 %{"name" => "FOLDER", "value" => "/tmp/dashboards/"},
@@ -219,6 +221,7 @@ defmodule CommonCore.Resources.Grafana do
             },
             %{
               "env" => [
+                %{"name" => "NAMESPACE", "value" => "ALL"},
                 %{"name" => "METHOD", "value" => "WATCH"},
                 %{"name" => "LABEL", "value" => "grafana_datasource"},
                 %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/datasources"},
@@ -253,6 +256,7 @@ defmodule CommonCore.Resources.Grafana do
             },
             %{
               "env" => [
+                %{"name" => "NAMESPACE", "value" => "ALL"},
                 %{"name" => "METHOD", "value" => "WATCH"},
                 %{"name" => "LABEL", "value" => "grafana_notifier"},
                 %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/notifiers"},
@@ -287,6 +291,7 @@ defmodule CommonCore.Resources.Grafana do
             },
             %{
               "env" => [
+                %{"name" => "NAMESPACE", "value" => "ALL"},
                 %{"name" => "METHOD", "value" => "WATCH"},
                 %{"name" => "LABEL", "value" => "grafana_plugin"},
                 %{"name" => "FOLDER", "value" => "/etc/grafana/provisioning/plugins"},
@@ -386,13 +391,10 @@ defmodule CommonCore.Resources.Grafana do
           "serviceAccountName" => "grafana",
           "volumes" => [
             %{"configMap" => %{"name" => "grafana"}, "name" => "config"},
+            %{"configMap" => %{"name" => "grafana-config-dashboards"}, "name" => "sc-dashboard-provider"},
             %{"emptyDir" => %{}, "name" => "storage"},
             %{"emptyDir" => %{}, "name" => "sc-alerts-volume"},
             %{"emptyDir" => %{}, "name" => "sc-dashboard-volume"},
-            %{
-              "configMap" => %{"name" => "grafana-config-dashboards"},
-              "name" => "sc-dashboard-provider"
-            },
             %{"emptyDir" => %{}, "name" => "sc-datasources-volume"},
             %{"emptyDir" => %{}, "name" => "sc-plugins-volume"},
             %{"emptyDir" => %{}, "name" => "sc-notifiers-volume"}
@@ -454,7 +456,7 @@ defmodule CommonCore.Resources.Grafana do
           "honorLabels" => true,
           "interval" => "1m",
           "path" => "/metrics",
-          "port" => "service",
+          "port" => "http",
           "scheme" => "http",
           "scrapeTimeout" => "30s"
         }
