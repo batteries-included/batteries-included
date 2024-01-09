@@ -70,7 +70,7 @@ defmodule ControlServerWeb.Live.Home do
         <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
       </.flex>
       <.panel title="Projects" class="lg:col-span-7">
-        <.flex class="items-center justify-center align-middle">
+        <.flex class="items-center justify-center align-middle -rotate-45 m-16">
           <span class="block text-4xl font-sans text-pink-300 lg:mt-5 mt-2">
             Coming Soon
           </span>
