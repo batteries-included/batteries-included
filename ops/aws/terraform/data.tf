@@ -38,3 +38,7 @@ data "aws_iam_roles" "sso_roles" {
   name_regex  = "AWSReservedSSO_*"
   path_prefix = "/aws-reserved/sso.amazonaws.com/"
 }
+
+data "aws_iam_policy" "ssm_managed_instance_policy" {
+  name = "AmazonSSMManagedInstanceCore"
+}

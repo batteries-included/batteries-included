@@ -85,11 +85,12 @@
         podman
         terraform
 
-        # Use for pushing docker
-        skopeo
+        skopeo # Use for pushing docker
         wireguard-tools
+
         ansible
         (awscli2.override { python3 = python310; })
+        ssm-session-manager-plugin
       ]
       ++ elixirNativeTools
       ++ rustNativeBuildTools

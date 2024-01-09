@@ -43,6 +43,12 @@ variable "gateway_ssh_public_key" {
   type    = string
 }
 
+variable "generate_gateway_key" {
+  type        = bool
+  default     = false
+  description = "whether to generate an SSH key for the gateway instance"
+}
+
 variable "ebs_volume_type" {
   default = "gp3"
   type    = string
