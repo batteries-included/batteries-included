@@ -1,8 +1,0 @@
-- name: Syncconf wireguard
-  become: true
-  shell: |
-    wg syncconf {{ gateway.tunnel }} <(wg-quick strip /etc/wireguard/{{ gateway.tunnel }}.conf)
-    exit 0
-  args:
-    executable: "/bin/bash"
-  listen: "new wireguard config"

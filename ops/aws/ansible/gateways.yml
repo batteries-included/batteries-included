@@ -1,7 +1,0 @@
----
-- hosts: gateways
-  roles:
-    - common
-    - wireguard
-  vars_files:
-    - ../keys/ansible_vars.yaml

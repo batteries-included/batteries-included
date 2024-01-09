@@ -1,3 +1,0 @@
----
-gateway_private_key: |
-  {{ lookup('ansible.builtin.file', '../../../../keys/gateway') }}
