@@ -12,6 +12,4 @@ pub enum Error {
     DatabaseUrl,
     #[error("database connection error")]
     DatabaseConnection,
-    #[error("couldn't load terra templates")]
-    TerraTemplates,
 }

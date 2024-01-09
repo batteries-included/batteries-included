@@ -3,5 +3,7 @@
 <!-- -->
 
 {% block content %}
-<div class="overflow-x-auto pre">{{ text|e }}</div>
+<div class="overflow-x-auto whitespace-pre-wrap">
+  {{ text|e|linebreaksbr|safe }}
+</div>
 {% endblock content %}
