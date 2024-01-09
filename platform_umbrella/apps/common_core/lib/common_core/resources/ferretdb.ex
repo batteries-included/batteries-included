@@ -69,11 +69,11 @@ defmodule CommonCore.Resources.FerretDB do
     template =
       %{
         "metadata" => %{
-          "labels" => %{"battery/managed" => "true"},
-          "spec" => %{
-            "containers" => [container(ferret_service, battery, state)],
-            "serviceAccountName" => service_account_name(ferret_service)
-          }
+          "labels" => %{"battery/managed" => "true"}
+        },
+        "spec" => %{
+          "containers" => [container(ferret_service, battery, state)],
+          "serviceAccountName" => service_account_name(ferret_service)
         }
       }
       |> B.app_labels(service_name(ferret_service))
