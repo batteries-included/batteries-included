@@ -38,12 +38,10 @@ resource "helm_release" "karpenter" {
   namespace        = "karpenter"
   create_namespace = true
 
-  name                = "karpenter"
-  repository          = "oci://public.ecr.aws/karpenter"
-  repository_username = data.aws_ecrpublic_authorization_token.token.user_name
-  repository_password = data.aws_ecrpublic_authorization_token.token.password
-  chart               = "karpenter"
-  version             = "v0.32.1"
+  name       = "karpenter"
+  repository = "oci://public.ecr.aws/karpenter"
+  chart      = "karpenter"
+  version    = "v0.32.1"
 
   values = [yamlencode({
     settings = {
@@ -57,8 +55,6 @@ resource "helm_release" "karpenter" {
       }
     }
   })]
-
-  lifecycle { ignore_changes = [repository_password, ] }
 }
 
 resource "kubectl_manifest" "karpenter_node_class" {

@@ -98,6 +98,12 @@ provider "helm" {
       }
     }
   }
+
+  registry {
+    url      = "oci://public.ecr.aws"
+    username = data.aws_ecrpublic_authorization_token.token.user_name
+    password = data.aws_ecrpublic_authorization_token.token.password
+  }
 }
 
 provider "kubectl" {
