@@ -1,7 +1,8 @@
 locals {
   eks = {
-    cluster_name    = var.cluster_name
-    cluster_version = "1.28"
+    cluster_name          = var.cluster_name
+    cluster_version       = "1.28"
+    critical_addons_taint = "CriticalAddonsOnly"
   }
 }
 
@@ -68,7 +69,7 @@ module "eks" {
 
       taints = {
         no_schedule_karpenter = {
-          key    = "CriticalAddonsOnly"
+          key    = local.eks.critical_addons_taint
           value  = "true"
           effect = "NO_SCHEDULE"
         }
