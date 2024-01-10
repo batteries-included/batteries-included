@@ -70,14 +70,12 @@ defmodule KubeServices.ResourceDeleter do
   def handle_call({:undelete, deleted_resource_id}, _from, %{conn: conn} = state) do
     deleted_resource = DeleteArchivist.get_deleted_resource!(deleted_resource_id)
 
-    Logger.debug("UN-delete of resource #{inspect(summarize(deleted_resource.content_addressable_resource.value))}")
-
     res = apply_undelete(deleted_resource, conn)
     {:reply, res, state}
   end
 
   defp apply_undelete(deleted_resource, conn) do
-    op = undelete_apply_operation(deleted_resource.content_addressable_resource.value)
+    op = undelete_apply_operation(deleted_resource.document.value)
 
     apply_result = K8s.Client.run(conn, op)
     {:ok, _} = update_with_result(deleted_resource, apply_result)
