@@ -130,10 +130,11 @@
               [[ -z ''${TRACE:-""} ]] || set -x
               trap 'trap - SIGTERM && kill -- -$$' SIGINT SIGTERM EXIT
               # shellcheck disable=2046
-              ${lib.getExe config.packages.bcli} dev \
+              bcli dev \
                 $([[ -z ''${TRACE:-""} ]] || echo "-vv") \
                 --platform-dir=platform_umbrella \
-                --static-dir=static
+                --static-dir=static \
+                "$@"
               echo "Exited"
             '';
           };
@@ -154,7 +155,7 @@
             category = "dev";
             exec = ''
               # shellcheck disable=2046
-              ${lib.getExe config.packages.bcli} uninstall $([[ -z ''${TRACE:-""} ]] || echo "-vv")
+              bcli uninstall $([[ -z ''${TRACE:-""} ]] || echo "-vv")
             '';
           };
 

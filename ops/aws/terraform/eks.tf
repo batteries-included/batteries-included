@@ -25,6 +25,11 @@ module "eks" {
     }
   }
 
+  # this would normally add tags and cluster_tags to the cluster primary
+  # security group that is created by EKS. We don't want that as it interfers
+  # with e.g. aws lb controller
+  create_cluster_primary_security_group_tags = false
+
   cluster_addons = {
     aws-ebs-csi-driver = {
       most_recent              = true

@@ -97,7 +97,8 @@
       ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
       ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
       ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) integrationTestingTools
-      ++ [ config.treefmt.build.wrapper ];
+      ++ [ config.treefmt.build.wrapper ]
+      ++ [ config.packages.bcli ];
 
 
       buildInputs = with pkgs; [
