@@ -24,7 +24,7 @@
     "@tailwindcss/typography": "0.5.10",
     "autoprefixer": "^10.4.16",
     "cssnano": "^6.0.3",
-    "daisyui": "4.5.0",
+    "daisyui": "4.6.0",
     "postcss": "^8.4.33",
     "postcss-import": "^16.0.0",
     "postcss-url": "^10.1.3",
