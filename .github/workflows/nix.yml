@@ -17,7 +17,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: cachix/cachix-action@v13
+      - uses: cachix/cachix-action@v14
         with:
           name: batteries-included
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -34,7 +34,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: cachix/cachix-action@v13
+      - uses: cachix/cachix-action@v14
         with:
           name: batteries-included
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -52,7 +52,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: cachix/cachix-action@v13
+      - uses: cachix/cachix-action@v14
         with:
           name: batteries-included
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -69,7 +69,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: cachix/cachix-action@v13
+      - uses: cachix/cachix-action@v14
         with:
           name: batteries-included
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
