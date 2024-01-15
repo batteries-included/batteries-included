@@ -15,7 +15,7 @@ tokio = { version = "1.35.1", features = ["full"] }
 
 axum = { version = "0.7.4", features = ["json", "query"] }
 tower = { version = "0.4.13" }
-tower-http = { version = "0.5.0", features = [
+tower-http = { version = "0.5.1", features = [
   "compression-full",
   "limit",
   "fs",
