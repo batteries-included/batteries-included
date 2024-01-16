@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  perSystem = { lib, config, pkgs, ... }:
+  perSystem = { lib, pkgs, ... }:
     {
       mission-control = {
         wrapperName = "bi";
@@ -175,7 +175,7 @@
             category = "dev";
             exec = ''
               # shellcheck disable=2046
-              ${lib.getExe config.packages.bcli} stop $([[ -z ''${TRACE:-""} ]] || echo "-vv")
+              bcli stop $([[ -z ''${TRACE:-""} ]] || echo "-vv")
             '';
           };
 
