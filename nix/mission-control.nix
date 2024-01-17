@@ -123,8 +123,8 @@
             '';
           };
 
-          bootstrap = {
-            description = "Bootstrap the dev environment";
+          __bootstrap = {
+            description = "Base bootstrap command";
             category = "dev";
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
@@ -133,11 +133,31 @@
               bcli dev \
                 $([[ -z ''${TRACE:-""} ]] || echo "-vv") \
                 --platform-dir=platform_umbrella \
-                --static-dir=static \
                 "$@"
               echo "Exited"
             '';
           };
+
+          bootstrap = {
+            description = "Bootstrap the dev environment";
+            category = "dev";
+            exec = '' 
+              __bootstrap \
+                --static-dir=static \
+                "$@"
+            '';
+          };
+
+          bootstrap-remote = {
+            description = "Bootstrap the dev environment against a remote cluster";
+            category = "dev";
+            exec = ''
+              __bootstrap \
+                --installation-url=https://www.batteriesincl.com/specs/dev_cluster.json \
+                "$@"
+            '';
+          };
+
 
           clean = {
             description = "Clean the working tree";
