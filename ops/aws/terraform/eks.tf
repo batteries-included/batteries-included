@@ -25,6 +25,25 @@ module "eks" {
     }
   }
 
+  node_security_group_additional_rules = {
+    ingress_self_all = {
+      description = "Node to node all ports/protocols"
+      protocol    = "-1"
+      from_port   = 0
+      to_port     = 0
+      type        = "ingress"
+      self        = true
+    }
+    control_plane_node_all = {
+      description                   = "Cluster to node all ports/protocols"
+      protocol                      = "-1"
+      from_port                     = 0
+      to_port                       = 0
+      type                          = "ingress"
+      source_cluster_security_group = true
+    }
+  }
+
   # this would normally add tags and cluster_tags to the cluster primary
   # security group that is created by EKS. We don't want that as it interfers
   # with e.g. aws lb controller
