@@ -42,6 +42,7 @@ defmodule CommonCore.StateSummary.SeedState do
           :battery_core,
           :cloudnative_pg,
           :istio,
+          :istio_gateway,
           :stale_resource_cleaner
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])

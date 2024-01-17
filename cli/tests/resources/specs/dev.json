@@ -122,7 +122,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "W3JHF3LKZAZAOXHGPP6W2QRV",
+            "password": "GV3HVJQT2K3AAFKMU2FELW6N",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -15615,13 +15615,13 @@
       "data": {
         "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "VzNKSEYzTEtaQVpBT1hIR1BQNlcyUVJW",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOlczSkhGM0xLWkFaQU9YSEdQUDZXMlFSVkBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+        "password": "R1YzSFZKUVQySzNBQUZLTVUyRkVMVzZO",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOkdWM0hWSlFUMkszQUFGS01VMkZFTFc2TkBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "BMUY4MWRAZH2733DTHDIHMCFY7CXK6Y7XUDUTON7M6NPX4NPWF5A===="
+          "battery/hash": "F7OVDHEVRUZ6VEL4K3EHXCPKVNTGSILHPFWIVM5VKJOKRUC3S3BA===="
         },
         "labels": {
           "app": "pg-controlserver",
