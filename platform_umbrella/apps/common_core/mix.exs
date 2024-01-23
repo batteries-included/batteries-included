@@ -36,7 +36,7 @@ defmodule CommonCore.MixProject do
       {:k8s, "~> 2.5"},
 
       # Yaml
-      {:ymlr, "~> 5.0"},
+      {:ymlr, "~> 5.1"},
       {:yaml_elixir, "~> 2.6"},
 
       # Time
