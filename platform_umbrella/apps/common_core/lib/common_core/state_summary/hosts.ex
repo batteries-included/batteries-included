@@ -95,11 +95,11 @@ defmodule CommonCore.StateSummary.Hosts do
 
     summary.kube_state
     |> Map.get(:service, [])
-    |> ingress_ips_from_service(istio_namespace, ingress_name)
+    |> ingress_ips_from_services(istio_namespace, ingress_name)
     |> Enum.sort(:asc)
   end
 
-  defp ingress_ips_from_service(services, istio_namespace, ingress_name) do
+  defp ingress_ips_from_services(services, istio_namespace, ingress_name) do
     Enum.find_value(services, @default, fn
       %{
         "metadata" => %{"name" => ^ingress_name, "namespace" => ^istio_namespace},
@@ -107,10 +107,24 @@ defmodule CommonCore.StateSummary.Hosts do
       } ->
         values
         |> Enum.filter(fn pos -> pos != nil end)
-        |> Enum.map(fn pos -> Map.get(pos, "ip") end)
+        |> Enum.flat_map(&get_ip_from_ingress_status/1)
 
       _ ->
         nil
     end)
+  end
+
+  defp get_ip_from_ingress_status(%{"ip" => ip} = _ingress), do: [ip]
+
+  defp get_ip_from_ingress_status(%{"hostname" => hostname} = _ingress) do
+    erl_host = to_charlist(hostname)
+
+    case :inet.getaddrs(erl_host, :inet) do
+      {:ok, addrs} ->
+        Enum.map(addrs, &to_string(:inet.ntoa(&1)))
+
+      {:error, _err} ->
+        nil
+    end
   end
 end
