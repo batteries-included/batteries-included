@@ -14,16 +14,15 @@ locals {
   sso_roles = { for i, name in data.aws_iam_roles.sso_roles.names : tolist(split("_", name))[1] => name }
 }
 
+variable "cluster_name" {
+  description = "The name of the cluster"
+  type        = string
+}
+
 variable "aws_region" {
   description = "AWS region"
   type        = string
   default     = "us-east-1"
-}
-
-variable "cluster_name" {
-  description = "The name of the cluster"
-  type        = string
-  default     = "main"
 }
 
 variable "vpc_cidr_block" {
