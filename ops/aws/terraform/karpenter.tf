@@ -55,6 +55,8 @@ resource "helm_release" "karpenter" {
       }
     }
   })]
+
+  depends_on = [module.eks, ]
 }
 
 resource "kubectl_manifest" "karpenter_node_class" {
