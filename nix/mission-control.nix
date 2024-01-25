@@ -141,7 +141,7 @@
           bootstrap = {
             description = "Bootstrap the dev environment";
             category = "dev";
-            exec = '' 
+            exec = ''
               __bootstrap \
                 --static-dir=static \
                 "$@"
@@ -239,46 +239,6 @@
               [[ -z ''${TRACE:-""} ]] || set -x
               export MIX_ENV=test
               m "do" compile --force, ecto.reset
-            '';
-          };
-
-          push-aws = {
-            description = "Push to AWS";
-            category = "ops";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              DIR=ops/aws/ansible
-              ansible-playbook -i "$DIR/inventory.yml" "$DIR/all.yml" -b
-            '';
-          };
-
-          gen-keys = {
-            description = "Generate SSH and wireguard keys";
-            category = "ops";
-            exec = builtins.readFile ./scripts/gen-keys.sh;
-          };
-
-          gen-wg-client-config = {
-            description = "Generate SSH and wireguard keys";
-            category = "ops";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              KEYS_DIR="ops/aws/keys"
-              CLIENT_NAME=''${1:-wireguard-client}
-              CLIENT_KEY=$(cat "$KEYS_DIR/$CLIENT_NAME")
-              SERVER_PUBKEY=$(cat "$KEYS_DIR/gateway.pub")
-              GATEWAY_IP=$(terraform -chdir=ops/aws/terraform output -json | jq -r '.gateway.value.public_ip')
-
-              cat <<END
-              [Interface]
-              PrivateKey = $CLIENT_KEY
-              Address = 100.64.250.1/32
-
-              [Peer]
-              PublicKey = $SERVER_PUBKEY
-              AllowedIPs = 100.64.250.0/24, 100.64.0.0/16
-              Endpoint = $GATEWAY_IP:51820
-              END
             '';
           };
 

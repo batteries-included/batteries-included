@@ -12,6 +12,7 @@ locals {
     # cidrsubnet("100.64.250.0/24", 8, 5) = 100.64.250.5/32
     peers = {
       jdt-desktop = { public_key = "iMQngW+5Wfx2kbAk9qdhiXB46rYUA5c2yDkJRfbHklg=", addr = cidrsubnet(var.gateway_network_cidr_block, 8, 5) }
+      elliott-desktop = { public_key = "ntFtPw8qVf9U6Uc1RELWdtCUlK3FpREnwR+LGfFxrzM=", addr = cidrsubnet(var.gateway_network_cidr_block, 8, 6) }
       # template = { public_key = "<wg_pub_key>", addr = cidrsubnet(var.gateway_network_cidr_block, 8, <last_ip_octet>) }
     }
     key_count = var.generate_gateway_key ? 1 : 0

@@ -1,8 +1,0 @@
----
-all:
-  hosts:
-    wireguard:
-  children:
-    gateways:
-      hosts:
-        wireguard:
