@@ -45,7 +45,7 @@ able to cleanly `destroy`.
    like:
 
 ```bash
-for resource in $(terraform state list | grep -P 'helm_release|kubectl'); do terraform state rm "$resource"; done
+for resource in $(terraform state list | grep -P 'helm_release|kubectl|eks.kubernetes_config_map'); do terraform state rm "$resource"; done
 ```
 
 ## Components
@@ -74,7 +74,7 @@ Used as cluster DNS resolver
 #### VPC CNI (addon)
 
 Currently, we're using the "default" AWS CNI provider that uses IPs attached to
-Elastic Network Interfaces to provide IPAM and cluster networking. 
+Elastic Network Interfaces to provide IPAM and cluster networking.
 
 #### Kube proxy (addon)
 
