@@ -43,7 +43,7 @@ defmodule PodLogs.Watcher do
         :ok
 
       _ ->
-        watch_delay = Map.get_lazy(state, :watch_delay, fn -> 500 + Enum.random(1..1000) end)
+        watch_delay = Map.get_lazy(state, :watch_delay, fn -> Enum.random(500..1500) end)
         {:delay, Process.send_after(self(), :start_watch, watch_delay)}
     end
 

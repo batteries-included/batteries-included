@@ -18,6 +18,15 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
   require Logger
 
+  @defaults %{
+    delay: 1000,
+    retries: 0,
+    max_retries: 14,
+    retry_secs: 6,
+    jitter_min: 0.75,
+    jitter_max: 1.25
+  }
+
   @state_opts ~w(resource_type client conn watch_delay connection_func table_name)a
 
   @spec start_link(keyword) :: {:ok, pid}
@@ -31,14 +40,29 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
   @impl GenServer
   def init(opts) do
-    watch_delay = Keyword.get_lazy(opts, :watch_delay, fn -> 500 + Enum.random(1..1000) end)
-    Process.send_after(self(), :start_watch, watch_delay)
-    {:ok, Map.new(opts)}
+    opts =
+      opts
+      |> Keyword.put_new(:watch_delay, @defaults.delay)
+      |> Keyword.put(:retries, @defaults.retries)
+      |> Map.new()
+
+    trigger_start_watch(opts)
+
+    {:ok, opts}
   end
 
   @impl GenServer
   def handle_info(:start_watch, state) do
     {:noreply, start_watch(state)}
+  end
+
+  defp trigger_start_watch(%{watch_delay: delay} = _state), do: trigger_start_watch(delay)
+
+  defp trigger_start_watch(delay_ms) do
+    # random time between 75% to 125% of delay
+    min = floor(@defaults.jitter_min * delay_ms)
+    max = ceil(@defaults.jitter_max * delay_ms)
+    Process.send_after(self(), :start_watch, Enum.random(min..max))
   end
 
   defp start_watch(state) do
@@ -56,7 +80,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
         Map.put(state, :conn, conn)
 
       {:delay, _ref} ->
-        state
+        %{state | retries: min(state.retries + 1, @defaults.max_retries)}
     end
   end
 
@@ -89,7 +113,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   end
 
   # set up watch on resource type
-  defp watch(%{resource_type: resource_type, table_name: table_name} = state, conn) do
+  defp watch(%{resource_type: resource_type, table_name: table_name, retries: retries} = state, conn) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
     op = K8s.Client.watch(api_version, kind, namespace: :all)
 
@@ -105,10 +129,21 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
         :ok
 
+      # api resource not installed
+      {:error, %{message: "HTTP Error 404"}} ->
+        # add 6 seconds per retry. the max is configured in `start_watch` where retries is incremented.
+        {:delay, trigger_start_watch((retries + 1) * @defaults.retry_secs * 1_000)}
+
+      # core resource deprecated then removed
+      {:error, %{message: "the server could not find the requested resource"}} ->
+        # NOTE(jdt): we'll probably need a way to handle deprecations and version skew if we can be launched into arbitrary EKS clusters
+        # e.g. PSP is deprecated but available in 1.24. AWS still supports it until Jan 31 2025
+        Logger.warning("Stopping watch on #{resource_type} as it appears to be removed in this version.")
+        {:delay, nil}
+
       _ ->
-        # TODO(jdt): hoist this out of the watch fn and consolidate delay + jitter handling
-        watch_delay = Map.get_lazy(state, :watch_delay, fn -> 500 + Enum.random(1..1000) end)
-        {:delay, Process.send_after(self(), :start_watch, watch_delay)}
+        Logger.debug("Restarting watch on #{inspect(resource_type)}.")
+        {:delay, trigger_start_watch(state)}
     end
   end
 
