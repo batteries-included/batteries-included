@@ -89,7 +89,7 @@
         wireguard-tools
         age # secure out of band communications
 
-        (awscli2.override { python3 = python310; })
+        awscli2
         ssm-session-manager-plugin
       ]
       ++ elixirNativeTools
