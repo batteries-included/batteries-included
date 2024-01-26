@@ -153,7 +153,8 @@
             category = "dev";
             exec = ''
               __bootstrap \
-                --installation-url=https://www.batteriesincl.com/specs/dev_cluster.json \
+                --static-dir=static \
+                --spec-path=public/specs/dev_cluster.json \
                 "$@"
             '';
           };

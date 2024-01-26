@@ -14,8 +14,11 @@ pub async fn download_install_spec(url: url::Url) -> Result<InstallationSpec> {
     Ok(result)
 }
 
-pub async fn read_install_spec(static_path: PathBuf) -> Result<InstallationSpec> {
-    let install_path = static_path.join("public").join("specs").join("dev.json");
+pub async fn read_install_spec(
+    static_path: PathBuf,
+    spec_path: PathBuf,
+) -> Result<InstallationSpec> {
+    let install_path = static_path.join(spec_path);
     info!("Getting install spec from {}", install_path.display());
 
     let data = fs::read_to_string(install_path).await?;

@@ -28,7 +28,12 @@ pub async fn setup_platform_db(
         .to_str()
         .context("Should have a temp file path")?
         .to_owned();
-    let seed_args = vec!["seed.control".to_string(), path_string];
+    let seed_args = vec![
+        "do".to_string(),
+        "compile,".to_string(),
+        "seed.control".to_string(),
+        path_string,
+    ];
     run_mix_command(platform_path, seed_args).await?;
 
     println!("Setup complete. Database ready.");

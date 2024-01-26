@@ -52,6 +52,10 @@ pub enum CliAction {
         // The root directory of `static`
         #[clap(long)]
         static_dir: Option<PathBuf>,
+
+        // The install path inside the static directory
+        #[clap(long, default_value = "public/specs/dev.json")]
+        spec_path: Option<PathBuf>,
     },
     Uninstall,
     Stop {
@@ -96,6 +100,7 @@ mod tests {
                     .expect("Parsable default"),
                 platform_dir: None,
                 static_dir: None,
+                spec_path: Some(PathBuf::from("public/specs/dev.json")),
                 forward_postgres: true,
                 overwrite_resources: false,
                 forward_pods: vec![],
@@ -119,6 +124,7 @@ mod tests {
                 installation_url: url::Url::parse("http://localhost:3000/specs/dev.json")
                     .expect("Parsable default"),
                 static_dir: None,
+                spec_path: Some(PathBuf::from("public/specs/dev.json")),
                 platform_dir: None,
                 overwrite_resources: false,
                 forward_pods: vec![],
@@ -143,6 +149,32 @@ mod tests {
                     .expect("Parsable default"),
                 forward_postgres: false,
                 static_dir: Some(PathBuf::from("static")),
+                spec_path: Some(PathBuf::from("public/specs/dev.json")),
+                platform_dir: Some(PathBuf::from("platform_umbrella")),
+                overwrite_resources: false,
+                forward_pods: vec![],
+                start_podman: false
+            }
+        )
+    }
+
+    #[tokio::test]
+    async fn test_parse_dev_with_few_path_args() {
+        let args = CliArgs::parse_from([
+            "bcli",
+            "dev",
+            "--static-dir=static",
+            "--spec-path=public/specs/dev_cluster.json",
+            "--platform-dir=platform_umbrella",
+        ]);
+        assert_eq!(
+            args.action,
+            CliAction::Dev {
+                installation_url: url::Url::parse("https://www.batteriesincl.com/specs/dev.json")
+                    .expect("Parsable default"),
+                forward_postgres: true,
+                static_dir: Some(PathBuf::from("static")),
+                spec_path: Some(PathBuf::from("public/specs/dev_cluster.json")),
                 platform_dir: Some(PathBuf::from("platform_umbrella")),
                 overwrite_resources: false,
                 forward_pods: vec![],

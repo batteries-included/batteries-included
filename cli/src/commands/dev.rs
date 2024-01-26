@@ -25,6 +25,7 @@ pub async fn dev_command(
     forward_pods: Vec<String>,
     platform_dir: Option<PathBuf>,
     static_dir: Option<PathBuf>,
+    spec_path: Option<PathBuf>,
 ) -> Result<()> {
     // If this is OSX we make sure that podman is setup.
     if start_podman && base_args.os == "macos" {
@@ -32,7 +33,7 @@ pub async fn dev_command(
     }
 
     // Get the install spec from http server
-    let install_spec = get_install_spec(static_dir, installation_url).await?;
+    let install_spec = get_install_spec(static_dir, spec_path, installation_url).await?;
 
     // Now that we have the install spec and know what type of
     // kubernetes cluster we're expecting, make sure that it's started.
@@ -75,15 +76,18 @@ pub async fn dev_command(
 
 async fn get_install_spec(
     static_dir_opt: Option<PathBuf>,
+    spec_path_opt: Option<PathBuf>,
     installation_url: Url,
 ) -> Result<InstallationSpec> {
     // If we know where to find the static files, we'll use them. Otherwise
     // download them from the installation url.
-    if let Some(static_path) = static_dir_opt {
+    if let Some(static_path) = static_dir_opt
+        && let Some(spec_path) = spec_path_opt
+    {
         info!("Using local static files: {}", static_path.display());
         // Using the local files allows long lived branches to change the install
         // spec.
-        read_install_spec(static_path).await
+        read_install_spec(static_path, spec_path).await
     } else {
         info!("Downloading static files from {}", installation_url);
         // Act like production and download from the interwebs.
