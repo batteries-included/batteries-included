@@ -14,3 +14,7 @@ output "subnets" {
     private = local.private_subnets
   }
 }
+
+output "wireguard_peers" {
+  value = local.wireguard.peers
+}
