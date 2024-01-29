@@ -1,12 +1,13 @@
-defmodule CommonCore.Resources.CertManager do
+defmodule CommonCore.Resources.CertManager.CertManager do
   @moduledoc false
   use CommonCore.IncludeResource,
-    certificaterequests_cert_manager_io: "priv/manifests/cert_manager/certificaterequests_cert_manager_io.yaml",
-    certificates_cert_manager_io: "priv/manifests/cert_manager/certificates_cert_manager_io.yaml",
-    challenges_acme_cert_manager_io: "priv/manifests/cert_manager/challenges_acme_cert_manager_io.yaml",
-    clusterissuers_cert_manager_io: "priv/manifests/cert_manager/clusterissuers_cert_manager_io.yaml",
-    issuers_cert_manager_io: "priv/manifests/cert_manager/issuers_cert_manager_io.yaml",
-    orders_acme_cert_manager_io: "priv/manifests/cert_manager/orders_acme_cert_manager_io.yaml"
+    certificaterequests_cert_manager_io:
+      "priv/manifests/cert_manager/cert_manager/certificaterequests_cert_manager_io.yaml",
+    certificates_cert_manager_io: "priv/manifests/cert_manager/cert_manager/certificates_cert_manager_io.yaml",
+    challenges_acme_cert_manager_io: "priv/manifests/cert_manager/cert_manager/challenges_acme_cert_manager_io.yaml",
+    clusterissuers_cert_manager_io: "priv/manifests/cert_manager/cert_manager/clusterissuers_cert_manager_io.yaml",
+    issuers_cert_manager_io: "priv/manifests/cert_manager/cert_manager/issuers_cert_manager_io.yaml",
+    orders_acme_cert_manager_io: "priv/manifests/cert_manager/cert_manager/orders_acme_cert_manager_io.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "cert-manager"
 
@@ -15,7 +16,7 @@ defmodule CommonCore.Resources.CertManager do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
 
-  resource(:cluster_role_binding_cainjector, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_cainjector, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -26,7 +27,11 @@ defmodule CommonCore.Resources.CertManager do
     |> B.subject(B.build_service_account("cert-manager-cainjector", namespace))
   end
 
-  resource(:cluster_role_binding_controller_approve_io, _battery, state) do
+  resource(
+    :cluster_role_binding_cert_manager_controller_approve_cert_manager_io,
+    _battery,
+    state
+  ) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -34,10 +39,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-approve:cert-manager-io")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-approve:cert-manager-io"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_controller_certificates, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_controller_certificates, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -45,10 +50,14 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-certificates")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-certificates"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_controller_certificatesigningrequests, _battery, state) do
+  resource(
+    :cluster_role_binding_cert_manager_controller_certificatesigningrequests,
+    _battery,
+    state
+  ) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -56,10 +65,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-certificatesigningrequests")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-certificatesigningrequests"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_controller_challenges, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_controller_challenges, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -67,10 +76,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-challenges")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-challenges"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_controller_clusterissuers, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_controller_clusterissuers, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -78,10 +87,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-clusterissuers")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-clusterissuers"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_controller_ingress_shim, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_controller_ingress_shim, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -89,10 +98,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-ingress-shim")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-ingress-shim"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_controller_issuers, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_controller_issuers, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -100,10 +109,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-issuers")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-issuers"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_controller_orders, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_controller_orders, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -111,10 +120,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.name("cert-manager-controller-orders")
     |> B.component_label("controller")
     |> B.role_ref(B.build_cluster_role_ref("cert-manager-controller-orders"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_webhook_subjectaccessreviews, _battery, state) do
+  resource(:cluster_role_binding_cert_manager_webhook_subjectaccessreviews, _battery, state) do
     namespace = base_namespace(state)
 
     :cluster_role_binding
@@ -125,33 +134,25 @@ defmodule CommonCore.Resources.CertManager do
     |> B.subject(B.build_service_account("cert-manager-webhook", namespace))
   end
 
-  resource(:cluster_role_cainjector) do
+  resource(:cluster_role_cert_manager_cainjector) do
     rules = [
-      %{
-        "apiGroups" => ["cert-manager.io"],
-        "resources" => ["certificates"],
-        "verbs" => ["get", "list", "watch"]
-      },
+      %{"apiGroups" => ["cert-manager.io"], "resources" => ["certificates"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]},
-      %{
-        "apiGroups" => [""],
-        "resources" => ["events"],
-        "verbs" => ["get", "create", "update", "patch"]
-      },
+      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["get", "create", "update", "patch"]},
       %{
         "apiGroups" => ["admissionregistration.k8s.io"],
         "resources" => ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"],
-        "verbs" => ["get", "list", "watch", "update"]
+        "verbs" => ["get", "list", "watch", "update", "patch"]
       },
       %{
         "apiGroups" => ["apiregistration.k8s.io"],
         "resources" => ["apiservices"],
-        "verbs" => ["get", "list", "watch", "update"]
+        "verbs" => ["get", "list", "watch", "update", "patch"]
       },
       %{
         "apiGroups" => ["apiextensions.k8s.io"],
         "resources" => ["customresourcedefinitions"],
-        "verbs" => ["get", "list", "watch", "update"]
+        "verbs" => ["get", "list", "watch", "update", "patch"]
       }
     ]
 
@@ -162,7 +163,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_cert_manager_controller_approve_io) do
+  resource(:cluster_role_cert_manager_controller_approve_cert_manager_io) do
     rules = [
       %{
         "apiGroups" => ["cert-manager.io"],
@@ -179,16 +180,11 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_controller_certificates) do
+  resource(:cluster_role_cert_manager_controller_certificates) do
     rules = [
       %{
         "apiGroups" => ["cert-manager.io"],
-        "resources" => [
-          "certificates",
-          "certificates/status",
-          "certificaterequests",
-          "certificaterequests/status"
-        ],
+        "resources" => ["certificates", "certificates/status", "certificaterequests", "certificaterequests/status"],
         "verbs" => ["update", "patch"]
       },
       %{
@@ -221,7 +217,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_controller_certificatesigningrequests) do
+  resource(:cluster_role_cert_manager_controller_certificatesigningrequests) do
     rules = [
       %{
         "apiGroups" => ["certificates.k8s.io"],
@@ -239,11 +235,7 @@ defmodule CommonCore.Resources.CertManager do
         "resources" => ["signers"],
         "verbs" => ["sign"]
       },
-      %{
-        "apiGroups" => ["authorization.k8s.io"],
-        "resources" => ["subjectaccessreviews"],
-        "verbs" => ["create"]
-      }
+      %{"apiGroups" => ["authorization.k8s.io"], "resources" => ["subjectaccessreviews"], "verbs" => ["create"]}
     ]
 
     :cluster_role
@@ -253,18 +245,14 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_controller_challenges) do
+  resource(:cluster_role_cert_manager_controller_challenges) do
     rules = [
       %{
         "apiGroups" => ["acme.cert-manager.io"],
         "resources" => ["challenges", "challenges/status"],
         "verbs" => ["update", "patch"]
       },
-      %{
-        "apiGroups" => ["acme.cert-manager.io"],
-        "resources" => ["challenges"],
-        "verbs" => ["get", "list", "watch"]
-      },
+      %{"apiGroups" => ["acme.cert-manager.io"], "resources" => ["challenges"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => ["cert-manager.io"],
         "resources" => ["issuers", "clusterissuers"],
@@ -287,16 +275,8 @@ defmodule CommonCore.Resources.CertManager do
         "resources" => ["httproutes"],
         "verbs" => ["get", "list", "watch", "create", "delete", "update"]
       },
-      %{
-        "apiGroups" => ["route.openshift.io"],
-        "resources" => ["routes/custom-host"],
-        "verbs" => ["create"]
-      },
-      %{
-        "apiGroups" => ["acme.cert-manager.io"],
-        "resources" => ["challenges/finalizers"],
-        "verbs" => ["update"]
-      },
+      %{"apiGroups" => ["route.openshift.io"], "resources" => ["routes/custom-host"], "verbs" => ["create"]},
+      %{"apiGroups" => ["acme.cert-manager.io"], "resources" => ["challenges/finalizers"], "verbs" => ["update"]},
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]}
     ]
 
@@ -307,18 +287,14 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_controller_clusterissuers) do
+  resource(:cluster_role_cert_manager_controller_clusterissuers) do
     rules = [
       %{
         "apiGroups" => ["cert-manager.io"],
         "resources" => ["clusterissuers", "clusterissuers/status"],
         "verbs" => ["update", "patch"]
       },
-      %{
-        "apiGroups" => ["cert-manager.io"],
-        "resources" => ["clusterissuers"],
-        "verbs" => ["get", "list", "watch"]
-      },
+      %{"apiGroups" => ["cert-manager.io"], "resources" => ["clusterissuers"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => [""],
         "resources" => ["secrets"],
@@ -334,7 +310,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_controller_ingress_shim) do
+  resource(:cluster_role_cert_manager_controller_ingress_shim) do
     rules = [
       %{
         "apiGroups" => ["cert-manager.io"],
@@ -346,16 +322,8 @@ defmodule CommonCore.Resources.CertManager do
         "resources" => ["certificates", "certificaterequests", "issuers", "clusterissuers"],
         "verbs" => ["get", "list", "watch"]
       },
-      %{
-        "apiGroups" => ["networking.k8s.io"],
-        "resources" => ["ingresses"],
-        "verbs" => ["get", "list", "watch"]
-      },
-      %{
-        "apiGroups" => ["networking.k8s.io"],
-        "resources" => ["ingresses/finalizers"],
-        "verbs" => ["update"]
-      },
+      %{"apiGroups" => ["networking.k8s.io"], "resources" => ["ingresses"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["networking.k8s.io"], "resources" => ["ingresses/finalizers"], "verbs" => ["update"]},
       %{
         "apiGroups" => ["gateway.networking.k8s.io"],
         "resources" => ["gateways", "httproutes"],
@@ -376,18 +344,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_controller_issuers) do
+  resource(:cluster_role_cert_manager_controller_issuers) do
     rules = [
-      %{
-        "apiGroups" => ["cert-manager.io"],
-        "resources" => ["issuers", "issuers/status"],
-        "verbs" => ["update", "patch"]
-      },
-      %{
-        "apiGroups" => ["cert-manager.io"],
-        "resources" => ["issuers"],
-        "verbs" => ["get", "list", "watch"]
-      },
+      %{"apiGroups" => ["cert-manager.io"], "resources" => ["issuers", "issuers/status"], "verbs" => ["update", "patch"]},
+      %{"apiGroups" => ["cert-manager.io"], "resources" => ["issuers"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => [""],
         "resources" => ["secrets"],
@@ -403,7 +363,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_controller_orders) do
+  resource(:cluster_role_cert_manager_controller_orders) do
     rules = [
       %{
         "apiGroups" => ["acme.cert-manager.io"],
@@ -420,16 +380,8 @@ defmodule CommonCore.Resources.CertManager do
         "resources" => ["clusterissuers", "issuers"],
         "verbs" => ["get", "list", "watch"]
       },
-      %{
-        "apiGroups" => ["acme.cert-manager.io"],
-        "resources" => ["challenges"],
-        "verbs" => ["create", "delete"]
-      },
-      %{
-        "apiGroups" => ["acme.cert-manager.io"],
-        "resources" => ["orders/finalizers"],
-        "verbs" => ["update"]
-      },
+      %{"apiGroups" => ["acme.cert-manager.io"], "resources" => ["challenges"], "verbs" => ["create", "delete"]},
+      %{"apiGroups" => ["acme.cert-manager.io"], "resources" => ["orders/finalizers"], "verbs" => ["update"]},
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
     ]
@@ -441,18 +393,14 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_edit) do
+  resource(:cluster_role_cert_manager_edit) do
     rules = [
       %{
         "apiGroups" => ["cert-manager.io"],
         "resources" => ["certificates", "certificaterequests", "issuers"],
         "verbs" => ["create", "delete", "deletecollection", "patch", "update"]
       },
-      %{
-        "apiGroups" => ["cert-manager.io"],
-        "resources" => ["certificates/status"],
-        "verbs" => ["update"]
-      },
+      %{"apiGroups" => ["cert-manager.io"], "resources" => ["certificates/status"], "verbs" => ["update"]},
       %{
         "apiGroups" => ["acme.cert-manager.io"],
         "resources" => ["challenges", "orders"],
@@ -469,37 +417,22 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_view) do
+  resource(:cluster_role_cert_manager_view) do
     rules = [
-      %{
-        "apiGroups" => ["cert-manager.io"],
-        "resources" => ["certificates", "certificaterequests", "issuers"],
-        "verbs" => ["get", "list", "watch"]
-      },
-      %{
-        "apiGroups" => ["acme.cert-manager.io"],
-        "resources" => ["challenges", "orders"],
-        "verbs" => ["get", "list", "watch"]
-      }
+      %{"apiGroups" => ["cert-manager.io"], "resources" => ["clusterissuers"], "verbs" => ["get", "list", "watch"]}
     ]
 
     :cluster_role
     |> B.build_resource()
-    |> B.name("cert-manager-view")
+    |> B.name("cert-manager-cluster-view")
     |> B.component_label("controller")
-    |> B.label("rbac.authorization.k8s.io/aggregate-to-admin", "true")
-    |> B.label("rbac.authorization.k8s.io/aggregate-to-edit", "true")
-    |> B.label("rbac.authorization.k8s.io/aggregate-to-view", "true")
+    |> B.label("rbac.authorization.k8s.io/aggregate-to-cluster-reader", "true")
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_webhook_subjectaccessreviews) do
+  resource(:cluster_role_cert_manager_webhook_subjectaccessreviews) do
     rules = [
-      %{
-        "apiGroups" => ["authorization.k8s.io"],
-        "resources" => ["subjectaccessreviews"],
-        "verbs" => ["create"]
-      }
+      %{"apiGroups" => ["authorization.k8s.io"], "resources" => ["subjectaccessreviews"], "verbs" => ["create"]}
     ]
 
     :cluster_role
@@ -509,7 +442,19 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:config_map_webhook, _battery, state) do
+  resource(:config_map_cert_manager, _battery, state) do
+    namespace = base_namespace(state)
+    data = %{}
+
+    :config_map
+    |> B.build_resource()
+    |> B.name(@app_name)
+    |> B.namespace(namespace)
+    |> B.component_label("controller")
+    |> B.data(data)
+  end
+
+  resource(:config_map_cert_manager_webhook, _battery, state) do
     namespace = base_namespace(state)
     data = %{}
 
@@ -521,149 +466,151 @@ defmodule CommonCore.Resources.CertManager do
     |> B.data(data)
   end
 
-  resource(:crd_certificaterequests_io) do
+  resource(:crd_certificaterequests_cert_manager_io) do
     YamlElixir.read_all_from_string!(get_resource(:certificaterequests_cert_manager_io))
   end
 
-  resource(:crd_certificates_io) do
+  resource(:crd_certificates_cert_manager_io) do
     YamlElixir.read_all_from_string!(get_resource(:certificates_cert_manager_io))
   end
 
-  resource(:crd_challenges_acme_io) do
+  resource(:crd_challenges_acme_cert_manager_io) do
     YamlElixir.read_all_from_string!(get_resource(:challenges_acme_cert_manager_io))
   end
 
-  resource(:crd_clusterissuers_io) do
+  resource(:crd_clusterissuers_cert_manager_io) do
     YamlElixir.read_all_from_string!(get_resource(:clusterissuers_cert_manager_io))
   end
 
-  resource(:crd_issuers_io) do
+  resource(:crd_issuers_cert_manager_io) do
     YamlElixir.read_all_from_string!(get_resource(:issuers_cert_manager_io))
   end
 
-  resource(:crd_orders_acme_io) do
+  resource(:crd_orders_acme_cert_manager_io) do
     YamlElixir.read_all_from_string!(get_resource(:orders_acme_cert_manager_io))
   end
 
-  resource(:deployment_cert_manager, _battery, state) do
+  resource(:deployment_cert_manager, battery, state) do
     namespace = base_namespace(state)
     component = "controller"
+
+    template =
+      %{}
+      |> Map.put(
+        "metadata",
+        %{
+          "annotations" => %{
+            "prometheus.io/path" => "/metrics",
+            "prometheus.io/port" => "9402",
+            "prometheus.io/scrape" => "true"
+          },
+          "labels" => %{
+            "battery/app" => @app_name,
+            "battery/component" => component,
+            "battery/managed" => "true"
+          }
+        }
+      )
+      |> Map.put(
+        "spec",
+        %{
+          "containers" => [
+            %{
+              "args" => [
+                "--v=2",
+                "--cluster-resource-namespace=$(POD_NAMESPACE)",
+                "--leader-election-namespace=kube-system",
+                "--acme-http01-solver-image=#{battery.config.acmesolver_image}",
+                "--max-concurrent-challenges=60"
+              ],
+              "env" => [
+                %{"name" => "POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
+              ],
+              "image" => battery.config.controller_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "cert-manager-controller",
+              "ports" => [
+                %{"containerPort" => 9402, "name" => "http-metrics", "protocol" => "TCP"},
+                %{"containerPort" => 9403, "name" => "http-healthz", "protocol" => "TCP"}
+              ],
+              "securityContext" => %{"allowPrivilegeEscalation" => false, "capabilities" => %{"drop" => ["ALL"]}}
+            }
+          ],
+          "enableServiceLinks" => false,
+          "nodeSelector" => %{"kubernetes.io/os" => "linux"},
+          "securityContext" => %{"runAsNonRoot" => true, "seccompProfile" => %{"type" => "RuntimeDefault"}},
+          "serviceAccountName" => @app_name
+        }
+      )
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+      |> B.component_label("controller")
 
     spec =
       %{}
       |> Map.put("replicas", 1)
       |> Map.put(
         "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name,
-            "battery/component" => component
-          }
-        }
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => component}}
       )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/component" => component
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => [
-                  "--v=4",
-                  "--cluster-resource-namespace=$(POD_NAMESPACE)",
-                  "--leader-election-namespace=$(POD_NAMESPACE)"
-                ],
-                "env" => [
-                  %{
-                    "name" => "POD_NAMESPACE",
-                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
-                  }
-                ],
-                "image" => "quay.io/jetstack/cert-manager-controller:v1.10.1",
-                "imagePullPolicy" => "IfNotPresent",
-                "name" => "cert-manager-controller",
-                "ports" => [
-                  %{"containerPort" => 9402, "name" => "http-metrics", "protocol" => "TCP"}
-                ],
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]}
-                }
-              }
-            ],
-            "nodeSelector" => %{"kubernetes.io/os" => "linux"},
-            "securityContext" => %{
-              "runAsNonRoot" => true,
-              "seccompProfile" => %{"type" => "RuntimeDefault"}
-            },
-            "serviceAccountName" => "cert-manager"
-          }
-        }
-      )
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()
-    |> B.name("cert-manager")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.component_label(component)
     |> B.spec(spec)
   end
 
-  resource(:deployment_cainjector, _battery, state) do
+  resource(:deployment_cert_manager_cainjector, battery, state) do
     namespace = base_namespace(state)
     component = "cainjector"
+
+    template =
+      %{}
+      |> Map.put(
+        "metadata",
+        %{
+          "labels" => %{
+            "battery/app" => @app_name,
+            "battery/component" => component,
+            "battery/managed" => "true"
+          }
+        }
+      )
+      |> Map.put(
+        "spec",
+        %{
+          "containers" => [
+            %{
+              "args" => ["--v=2", "--leader-election-namespace=kube-system"],
+              "env" => [
+                %{"name" => "POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
+              ],
+              "image" => battery.config.cainjector_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "cert-manager-cainjector",
+              "securityContext" => %{"allowPrivilegeEscalation" => false, "capabilities" => %{"drop" => ["ALL"]}}
+            }
+          ],
+          "enableServiceLinks" => false,
+          "nodeSelector" => %{"kubernetes.io/os" => "linux"},
+          "securityContext" => %{"runAsNonRoot" => true, "seccompProfile" => %{"type" => "RuntimeDefault"}},
+          "serviceAccountName" => "cert-manager-cainjector"
+        }
+      )
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
       |> Map.put("replicas", 1)
       |> Map.put(
         "selector",
-        %{
-          "matchLabels" => %{"battery/app" => @app_name, "battery/component" => component}
-        }
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => component}}
       )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/component" => component
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => ["--v=2", "--leader-election-namespace=$(POD_NAMESPACE)"],
-                "env" => [
-                  %{
-                    "name" => "POD_NAMESPACE",
-                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
-                  }
-                ],
-                "image" => "quay.io/jetstack/cert-manager-cainjector:v1.10.1",
-                "imagePullPolicy" => "IfNotPresent",
-                "name" => "cert-manager-cainjector",
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]}
-                }
-              }
-            ],
-            "nodeSelector" => %{"kubernetes.io/os" => "linux"},
-            "securityContext" => %{
-              "runAsNonRoot" => true,
-              "seccompProfile" => %{"type" => "RuntimeDefault"}
-            },
-            "serviceAccountName" => "cert-manager-cainjector"
-          }
-        }
-      )
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()
@@ -673,9 +620,73 @@ defmodule CommonCore.Resources.CertManager do
     |> B.spec(spec)
   end
 
-  resource(:deployment_webhook, _battery, state) do
+  resource(:deployment_cert_manager_webhook, battery, state) do
     namespace = base_namespace(state)
     component = "webhook"
+
+    template =
+      %{}
+      |> Map.put(
+        "metadata",
+        %{
+          "labels" => %{
+            "battery/app" => @app_name,
+            "battery/component" => component,
+            "battery/managed" => "true"
+          }
+        }
+      )
+      |> Map.put(
+        "spec",
+        %{
+          "containers" => [
+            %{
+              "args" => [
+                "--v=2",
+                "--secure-port=10250",
+                "--dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)",
+                "--dynamic-serving-ca-secret-name=cert-manager-webhook-ca",
+                "--dynamic-serving-dns-names=cert-manager-webhook",
+                "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)",
+                "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc"
+              ],
+              "env" => [
+                %{"name" => "POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
+              ],
+              "image" => battery.config.webhook_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "livenessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/livez", "port" => 6080, "scheme" => "HTTP"},
+                "initialDelaySeconds" => 60,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
+              },
+              "name" => "cert-manager-webhook",
+              "ports" => [
+                %{"containerPort" => 10_250, "name" => "https", "protocol" => "TCP"},
+                %{"containerPort" => 6080, "name" => "healthcheck", "protocol" => "TCP"}
+              ],
+              "readinessProbe" => %{
+                "failureThreshold" => 3,
+                "httpGet" => %{"path" => "/healthz", "port" => 6080, "scheme" => "HTTP"},
+                "initialDelaySeconds" => 5,
+                "periodSeconds" => 5,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 1
+              },
+              "securityContext" => %{"allowPrivilegeEscalation" => false, "capabilities" => %{"drop" => ["ALL"]}}
+            }
+          ],
+          "enableServiceLinks" => false,
+          "nodeSelector" => %{"kubernetes.io/os" => "linux"},
+          "securityContext" => %{"runAsNonRoot" => true, "seccompProfile" => %{"type" => "RuntimeDefault"}},
+          "serviceAccountName" => "cert-manager-webhook"
+        }
+      )
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
@@ -684,71 +695,7 @@ defmodule CommonCore.Resources.CertManager do
         "selector",
         %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => component}}
       )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/component" => component
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => [
-                  "--v=4",
-                  "--secure-port=10250",
-                  "--dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)",
-                  "--dynamic-serving-ca-secret-name=cert-manager-webhook-ca",
-                  "--dynamic-serving-dns-names=cert-manager-webhook",
-                  "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)",
-                  "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc"
-                ],
-                "env" => [
-                  %{
-                    "name" => "POD_NAMESPACE",
-                    "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}
-                  }
-                ],
-                "image" => "quay.io/jetstack/cert-manager-webhook:v1.10.1",
-                "imagePullPolicy" => "IfNotPresent",
-                "livenessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/livez", "port" => 6080, "scheme" => "HTTP"},
-                  "initialDelaySeconds" => 60,
-                  "periodSeconds" => 10,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 1
-                },
-                "name" => "cert-manager-webhook",
-                "ports" => [
-                  %{"containerPort" => 10_250, "name" => "https", "protocol" => "TCP"},
-                  %{"containerPort" => 6080, "name" => "healthcheck", "protocol" => "TCP"}
-                ],
-                "readinessProbe" => %{
-                  "failureThreshold" => 3,
-                  "httpGet" => %{"path" => "/healthz", "port" => 6080, "scheme" => "HTTP"},
-                  "initialDelaySeconds" => 5,
-                  "periodSeconds" => 5,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 1
-                },
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]}
-                }
-              }
-            ],
-            "nodeSelector" => %{"kubernetes.io/os" => "linux"},
-            "securityContext" => %{
-              "runAsNonRoot" => true,
-              "seccompProfile" => %{"type" => "RuntimeDefault"}
-            },
-            "serviceAccountName" => "cert-manager-webhook"
-          }
-        }
-      )
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()
@@ -758,49 +705,51 @@ defmodule CommonCore.Resources.CertManager do
     |> B.spec(spec)
   end
 
-  resource(:job_startupapicheck, _battery, state) do
+  resource(:job_cert_manager_startupapicheck, battery, state) do
     namespace = base_namespace(state)
+    component = "startupapicheck"
 
-    spec =
+    template =
       %{}
-      |> Map.put("backoffLimit", 4)
       |> Map.put(
-        "template",
+        "metadata",
         %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "args" => ["check", "api", "--wait=1m"],
-                "image" => "quay.io/jetstack/cert-manager-ctl:v1.10.1",
-                "imagePullPolicy" => "IfNotPresent",
-                "name" => "cert-manager-startupapicheck",
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]}
-                }
-              }
-            ],
-            "nodeSelector" => %{"kubernetes.io/os" => "linux"},
-            "restartPolicy" => "OnFailure",
-            "securityContext" => %{
-              "runAsNonRoot" => true,
-              "seccompProfile" => %{"type" => "RuntimeDefault"}
-            },
-            "serviceAccountName" => "cert-manager-startupapicheck"
+          "labels" => %{
+            "battery/app" => @app_name,
+            "battery/component" => component,
+            "battery/managed" => "true"
           }
         }
       )
+      |> Map.put(
+        "spec",
+        %{
+          "containers" => [
+            %{
+              "args" => ["check", "api", "--wait=1m"],
+              "image" => battery.config.ctl_image,
+              "imagePullPolicy" => "IfNotPresent",
+              "name" => "cert-manager-startupapicheck",
+              "securityContext" => %{"allowPrivilegeEscalation" => false, "capabilities" => %{"drop" => ["ALL"]}}
+            }
+          ],
+          "enableServiceLinks" => false,
+          "nodeSelector" => %{"kubernetes.io/os" => "linux"},
+          "restartPolicy" => "OnFailure",
+          "securityContext" => %{"runAsNonRoot" => true, "seccompProfile" => %{"type" => "RuntimeDefault"}},
+          "serviceAccountName" => "cert-manager-startupapicheck"
+        }
+      )
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+
+    spec = %{} |> Map.put("backoffLimit", 4) |> B.template(template)
 
     :job
     |> B.build_resource()
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
-    |> B.component_label("startupapicheck")
+    |> B.component_label(component)
     |> B.spec(spec)
   end
 
@@ -811,19 +760,11 @@ defmodule CommonCore.Resources.CertManager do
     |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.component_label("webhook")
-    |> B.annotation(
-      "cert-manager.io/inject-ca-from-secret",
-      "#{namespace}/cert-manager-webhook-ca"
-    )
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1"],
         "clientConfig" => %{
-          "service" => %{
-            "name" => "cert-manager-webhook",
-            "namespace" => namespace,
-            "path" => "/mutate"
-          }
+          "service" => %{"name" => "cert-manager-webhook", "namespace" => namespace, "path" => "/mutate"}
         },
         "failurePolicy" => "Fail",
         "matchPolicy" => "Equivalent",
@@ -842,7 +783,7 @@ defmodule CommonCore.Resources.CertManager do
     ])
   end
 
-  resource(:role_binding_cainjector_leaderelection, _battery, state) do
+  resource(:role_binding_cert_manager_cainjector_leaderelection, _battery, state) do
     namespace = base_namespace(state)
 
     :role_binding
@@ -854,7 +795,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.subject(B.build_service_account("cert-manager-cainjector", namespace))
   end
 
-  resource(:role_binding_leaderelection, _battery, state) do
+  resource(:role_binding_cert_manager_leaderelection, _battery, state) do
     namespace = base_namespace(state)
 
     :role_binding
@@ -863,10 +804,10 @@ defmodule CommonCore.Resources.CertManager do
     |> B.namespace(namespace)
     |> B.component_label("controller")
     |> B.role_ref(B.build_role_ref("cert-manager:leaderelection"))
-    |> B.subject(B.build_service_account("cert-manager", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:role_binding_startupapicheck_create_cert, _battery, state) do
+  resource(:role_binding_cert_manager_startupapicheck_create_cert, _battery, state) do
     namespace = base_namespace(state)
 
     :role_binding
@@ -878,7 +819,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.subject(B.build_service_account("cert-manager-startupapicheck", namespace))
   end
 
-  resource(:role_binding_webhook_dynamic_serving, _battery, state) do
+  resource(:role_binding_cert_manager_webhook_dynamic_serving, _battery, state) do
     namespace = base_namespace(state)
 
     :role_binding
@@ -890,16 +831,13 @@ defmodule CommonCore.Resources.CertManager do
     |> B.subject(B.build_service_account("cert-manager-webhook", namespace))
   end
 
-  resource(:role_cainjector_leaderelection, _battery, state) do
+  resource(:role_cert_manager_cainjector_leaderelection, _battery, state) do
     namespace = base_namespace(state)
 
     rules = [
       %{
         "apiGroups" => ["coordination.k8s.io"],
-        "resourceNames" => [
-          "cert-manager-cainjector-leader-election",
-          "cert-manager-cainjector-leader-election-core"
-        ],
+        "resourceNames" => ["cert-manager-cainjector-leader-election", "cert-manager-cainjector-leader-election-core"],
         "resources" => ["leases"],
         "verbs" => ["get", "update", "patch"]
       },
@@ -914,7 +852,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:role_leaderelection, _battery, state) do
+  resource(:role_cert_manager_leaderelection, _battery, state) do
     namespace = base_namespace(state)
 
     rules = [
@@ -935,15 +873,11 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:role_startupapicheck_create_cert, _battery, state) do
+  resource(:role_cert_manager_startupapicheck_create_cert, _battery, state) do
     namespace = base_namespace(state)
 
     rules = [
-      %{
-        "apiGroups" => ["cert-manager.io"],
-        "resources" => ["certificates"],
-        "verbs" => ["create"]
-      }
+      %{"apiGroups" => ["cert-manager.io"], "resources" => ["certificates"], "verbs" => ["create"]}
     ]
 
     :role
@@ -954,7 +888,7 @@ defmodule CommonCore.Resources.CertManager do
     |> B.rules(rules)
   end
 
-  resource(:role_webhook_dynamic_serving, _battery, state) do
+  resource(:role_cert_manager_webhook_dynamic_serving, _battery, state) do
     namespace = base_namespace(state)
 
     rules = [
@@ -981,42 +915,42 @@ defmodule CommonCore.Resources.CertManager do
     :service_account
     |> B.build_resource()
     |> Map.put("automountServiceAccountToken", true)
-    |> B.name("cert-manager")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.component_label("controller")
   end
 
-  resource(:service_account_cainjector, _battery, state) do
+  resource(:service_account_cert_manager_cainjector, _battery, state) do
     namespace = base_namespace(state)
 
     :service_account
     |> B.build_resource()
+    |> Map.put("automountServiceAccountToken", true)
     |> B.name("cert-manager-cainjector")
     |> B.namespace(namespace)
     |> B.component_label("cainjector")
-    |> Map.put("automountServiceAccountToken", true)
   end
 
-  resource(:service_account_startupapicheck, _battery, state) do
+  resource(:service_account_cert_manager_startupapicheck, _battery, state) do
     namespace = base_namespace(state)
 
     :service_account
     |> B.build_resource()
+    |> Map.put("automountServiceAccountToken", true)
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
     |> B.component_label("startupapicheck")
-    |> Map.put("automountServiceAccountToken", true)
   end
 
-  resource(:service_account_webhook, _battery, state) do
+  resource(:service_account_cert_manager_webhook, _battery, state) do
     namespace = base_namespace(state)
 
     :service_account
     |> B.build_resource()
+    |> Map.put("automountServiceAccountToken", true)
     |> B.name("cert-manager-webhook")
     |> B.namespace(namespace)
     |> B.component_label("webhook")
-    |> Map.put("automountServiceAccountToken", true)
   end
 
   resource(:service_cert_manager, _battery, state) do
@@ -1026,27 +960,23 @@ defmodule CommonCore.Resources.CertManager do
     spec =
       %{}
       |> Map.put("ports", [
-        %{
-          "name" => "tcp-prometheus-servicemonitor",
-          "port" => 9402,
-          "protocol" => "TCP",
-          "targetPort" => 9402
-        }
+        %{"name" => "tcp-prometheus-servicemonitor", "port" => 9402, "protocol" => "TCP", "targetPort" => 9402}
       ])
       |> Map.put(
         "selector",
         %{"battery/app" => @app_name, "battery/component" => component}
       )
+      |> Map.put("type", "ClusterIP")
 
     :service
     |> B.build_resource()
-    |> B.name("cert-manager")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.component_label(component)
     |> B.spec(spec)
   end
 
-  resource(:service_webhook, _battery, state) do
+  resource(:service_cert_manager_webhook, _battery, state) do
     namespace = base_namespace(state)
     component = "webhook"
 
@@ -1055,7 +985,11 @@ defmodule CommonCore.Resources.CertManager do
       |> Map.put("ports", [
         %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => "https"}
       ])
-      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => component})
+      |> Map.put(
+        "selector",
+        %{"battery/app" => @app_name, "battery/component" => component}
+      )
+      |> Map.put("type", "ClusterIP")
 
     :service
     |> B.build_resource()
@@ -1063,6 +997,41 @@ defmodule CommonCore.Resources.CertManager do
     |> B.namespace(namespace)
     |> B.component_label(component)
     |> B.spec(spec)
+  end
+
+  resource(:validating_webhook_config_cert_manager, _battery, state) do
+    namespace = base_namespace(state)
+
+    :validating_webhook_config
+    |> B.build_resource()
+    |> B.name("cert-manager-webhook")
+    |> B.component_label("webhook")
+    |> Map.put("webhooks", [
+      %{
+        "admissionReviewVersions" => ["v1"],
+        "clientConfig" => %{
+          "service" => %{"name" => "cert-manager-webhook", "namespace" => namespace, "path" => "/validate"}
+        },
+        "failurePolicy" => "Fail",
+        "matchPolicy" => "Equivalent",
+        "name" => "webhook.cert-manager.io",
+        "namespaceSelector" => %{
+          "matchExpressions" => [
+            %{"key" => "cert-manager.io/disable-validation", "operator" => "NotIn", "values" => ["true"]}
+          ]
+        },
+        "rules" => [
+          %{
+            "apiGroups" => ["cert-manager.io", "acme.cert-manager.io"],
+            "apiVersions" => ["v1"],
+            "operations" => ["CREATE", "UPDATE"],
+            "resources" => ["*/*"]
+          }
+        ],
+        "sideEffects" => "None",
+        "timeoutSeconds" => 10
+      }
+    ])
   end
 
   resource(:service_monitor_cert_manager, _battery, state) do
@@ -1080,7 +1049,7 @@ defmodule CommonCore.Resources.CertManager do
           "targetPort" => 9402
         }
       ])
-      |> Map.put("jobLabel", "cert-manager")
+      |> Map.put("jobLabel", @app_name)
       |> Map.put(
         "selector",
         %{
@@ -1099,53 +1068,5 @@ defmodule CommonCore.Resources.CertManager do
     |> B.label("prometheus", "default")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
-  end
-
-  resource(:validating_webhook_config_cert_manager, _battery, state) do
-    namespace = base_namespace(state)
-
-    :validating_webhook_config
-    |> B.build_resource()
-    |> B.name("cert-manager-webhook")
-    |> B.component_label("webhook")
-    |> B.annotation(
-      "cert-manager.io/inject-ca-from-secret",
-      "#{namespace}/cert-manager-webhook-ca"
-    )
-    |> Map.put("webhooks", [
-      %{
-        "admissionReviewVersions" => ["v1"],
-        "clientConfig" => %{
-          "service" => %{
-            "name" => "cert-manager-webhook",
-            "namespace" => namespace,
-            "path" => "/validate"
-          }
-        },
-        "failurePolicy" => "Fail",
-        "matchPolicy" => "Equivalent",
-        "name" => "webhook.cert-manager.io",
-        "namespaceSelector" => %{
-          "matchExpressions" => [
-            %{
-              "key" => "cert-manager.io/disable-validation",
-              "operator" => "NotIn",
-              "values" => ["true"]
-            },
-            %{"key" => "name", "operator" => "NotIn", "values" => [namespace]}
-          ]
-        },
-        "rules" => [
-          %{
-            "apiGroups" => ["cert-manager.io", "acme.cert-manager.io"],
-            "apiVersions" => ["v1"],
-            "operations" => ["CREATE", "UPDATE"],
-            "resources" => ["*/*"]
-          }
-        ],
-        "sideEffects" => "None",
-        "timeoutSeconds" => 10
-      }
-    ])
   end
 end

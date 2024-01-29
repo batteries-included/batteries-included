@@ -1,3 +1,4 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -92,11 +93,11 @@ spec:
                   type: array
                 issuerRef:
                   description:
-                    IssuerRef references a properly configured ACME-type Issuer
+                    "IssuerRef references a properly configured ACME-type Issuer
                     which should be used to create this Order. If the Issuer
                     does not exist, processing will be retried. If the Issuer is
                     not an 'ACME' Issuer, an error will be returned and the
-                    Order will be marked as failed.
+                    Order will be marked as failed."
                   properties:
                     group:
                       description: Group of the resource being referred to.
@@ -150,18 +151,18 @@ spec:
                           properties:
                             token:
                               description:
-                                Token is the token that must be presented for
+                                "Token is the token that must be presented for
                                 this challenge. This is used to compute the
-                                'key' that must also be presented.
+                                'key' that must also be presented."
                               type: string
                             type:
                               description:
-                                Type is the type of challenge being offered,
+                                "Type is the type of challenge being offered,
                                 e.g. 'http-01', 'dns-01', 'tls-sni-01', etc.
                                 This is the raw value retrieved from the ACME
                                 server. Only 'http-01' and 'dns-01' are
                                 supported by cert-manager, other values will be
-                                ignored.
+                                ignored."
                               type: string
                             url:
                               description:
@@ -182,7 +183,7 @@ spec:
                         type: string
                       initialState:
                         description:
-                          InitialState is the initial state of the ACME
+                          "InitialState is the initial state of the ACME
                           authorization when first fetched from the ACME server.
                           If an Authorization is already 'valid', the Order
                           controller will not create a Challenge resource for
@@ -190,7 +191,7 @@ spec:
                           an ACME server that enables 'authz reuse' (such as
                           Let's Encrypt's production endpoint). If not set and
                           'identifier' is set, the state is assumed to be
-                          pending and a Challenge will be created.
+                          pending and a Challenge will be created."
                         enum:
                           - valid
                           - ready
@@ -207,12 +208,12 @@ spec:
                         type: string
                       wildcard:
                         description:
-                          Wildcard will be true if this authorization is for a
+                          "Wildcard will be true if this authorization is for a
                           wildcard DNS name. If this is true, the identifier
                           will be the *non-wildcard* version of the DNS name.
                           For example, if '*.example.com' is the DNS name being
                           validated, this field will be 'true' and the
-                          'identifier' field will be 'example.com'.
+                          'identifier' field will be 'example.com'."
                         type: boolean
                     required:
                       - url
@@ -220,10 +221,10 @@ spec:
                   type: array
                 certificate:
                   description:
-                    Certificate is a copy of the PEM encoded certificate for
+                    "Certificate is a copy of the PEM encoded certificate for
                     this Order. This field will be populated after the order has
                     been successfully finalized with the ACME server, and the
-                    order has transitioned to the 'valid' state.
+                    order has transitioned to the 'valid' state."
                   format: byte
                   type: string
                 failureTime:
@@ -244,8 +245,8 @@ spec:
                   type: string
                 state:
                   description:
-                    State contains the current state of this Order resource.
-                    States 'success' and 'expired' are 'final'
+                    "State contains the current state of this Order resource.
+                    States 'success' and 'expired' are 'final'"
                   enum:
                     - valid
                     - ready

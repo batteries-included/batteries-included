@@ -6,7 +6,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.BatteryCore
   alias CommonCore.Resources.CephClusters
   alias CommonCore.Resources.CephFilesystems
-  alias CommonCore.Resources.CertManager
+  alias CommonCore.Resources.CertManager.CertManager
   alias CommonCore.Resources.CloudnativePG
   alias CommonCore.Resources.CloudnativePGClusters
   alias CommonCore.Resources.CloudnativePGDashboards

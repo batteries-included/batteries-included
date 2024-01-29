@@ -1,3 +1,4 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -69,18 +70,18 @@ spec:
                   type: string
                 dnsName:
                   description:
-                    dnsName is the identifier that this challenge is for, e.g.
+                    "dnsName is the identifier that this challenge is for, e.g.
                     example.com. If the requested DNSName is a 'wildcard', this
                     field MUST be set to the non-wildcard domain, e.g. for
-                    `*.example.com`, it must be `example.com`.
+                    `*.example.com`, it must be `example.com`."
                   type: string
                 issuerRef:
                   description:
-                    References a properly configured ACME-type Issuer which
+                    "References a properly configured ACME-type Issuer which
                     should be used to create this Challenge. If the Issuer does
                     not exist, processing will be retried. If the Issuer is not
                     an 'ACME' Issuer, an error will be returned and the
-                    Challenge will be marked as failed.
+                    Challenge will be marked as failed."
                   properties:
                     group:
                       description: Group of the resource being referred to.
@@ -116,15 +117,15 @@ spec:
                       properties:
                         acmeDNS:
                           description:
-                            Use the 'ACME DNS'
+                            "Use the 'ACME DNS'
                             (https://github.com/joohoi/acme-dns) API to manage
-                            DNS01 challenge records.
+                            DNS01 challenge records."
                           properties:
                             accountSecretRef:
                               description:
-                                A reference to a specific 'key' within a Secret
+                                "A reference to a specific 'key' within a Secret
                                 resource. In some instances, `key` is a required
-                                field.
+                                field."
                               properties:
                                 key:
                                   description:
@@ -155,9 +156,9 @@ spec:
                           properties:
                             accessTokenSecretRef:
                               description:
-                                A reference to a specific 'key' within a Secret
+                                "A reference to a specific 'key' within a Secret
                                 resource. In some instances, `key` is a required
-                                field.
+                                field."
                               properties:
                                 key:
                                   description:
@@ -177,9 +178,9 @@ spec:
                               type: object
                             clientSecretSecretRef:
                               description:
-                                A reference to a specific 'key' within a Secret
+                                "A reference to a specific 'key' within a Secret
                                 resource. In some instances, `key` is a required
-                                field.
+                                field."
                               properties:
                                 key:
                                   description:
@@ -199,9 +200,9 @@ spec:
                               type: object
                             clientTokenSecretRef:
                               description:
-                                A reference to a specific 'key' within a Secret
+                                "A reference to a specific 'key' within a Secret
                                 resource. In some instances, `key` is a required
-                                field.
+                                field."
                               properties:
                                 key:
                                   description:
@@ -322,9 +323,9 @@ spec:
                               type: string
                             serviceAccountSecretRef:
                               description:
-                                A reference to a specific 'key' within a Secret
+                                "A reference to a specific 'key' within a Secret
                                 resource. In some instances, `key` is a required
-                                field.
+                                field."
                               properties:
                                 key:
                                   description:
@@ -414,9 +415,9 @@ spec:
                           properties:
                             tokenSecretRef:
                               description:
-                                A reference to a specific 'key' within a Secret
+                                "A reference to a specific 'key' within a Secret
                                 resource. In some instances, `key` is a required
-                                field.
+                                field."
                               properties:
                                 key:
                                   description:
@@ -445,12 +446,12 @@ spec:
                           properties:
                             nameserver:
                               description:
-                                The IP address or hostname of an authoritative
+                                "The IP address or hostname of an authoritative
                                 DNS server supporting RFC2136 in the form
                                 host:port. If the host is an IPv6 address it
                                 must be enclosed in square brackets (e.g
-                                [2001:db8::1]) ; port is optional. This field is
-                                required.
+                                [2001:db8::1])\_; port is optional. This field
+                                is required."
                               type: string
                             tsigAlgorithm:
                               description:
@@ -607,10 +608,10 @@ spec:
                               type: string
                             solverName:
                               description:
-                                The name of the solver to use, as defined in the
-                                webhook provider implementation. This will
+                                "The name of the solver to use, as defined in
+                                the webhook provider implementation. This will
                                 typically be the name of the provider, e.g.
-                                'cloudflare'.
+                                'cloudflare'."
                               type: string
                           required:
                             - groupName
@@ -650,16 +651,18 @@ spec:
                                 which parentRefs should be used when creating
                                 the HTTPRoute. Usually, the parentRef references
                                 a Gateway. See:
-                                https://gateway-api.sigs.k8s.io/v1alpha2/api-types/httproute/#attaching-to-gateways'
+                                https://gateway-api.sigs.k8s.io/api-types/httproute/#attaching-to-gateways'
                               items:
                                 description: |-
-                                  ParentReference identifies an API object (usually a Gateway) that can be considered a parent of this resource (usually a route). The only kind of parent resource with "Core" support is Gateway. This API may be extended in the future to support additional kinds of parent resources, such as HTTPRoute. 
+                                  ParentReference identifies an API object (usually a Gateway) that can be considered a parent of this resource (usually a route). There are two kinds of parent resources with "Core" support: 
+                                   * Gateway (Gateway conformance profile) * Service (Mesh conformance profile, experimental, ClusterIP Services only) 
+                                   This API may be extended in the future to support additional kinds of parent resources. 
                                    The API object must be valid in the cluster; the Group and Kind must be registered in the cluster for this reference to be valid.
                                 properties:
                                   group:
                                     default: gateway.networking.k8s.io
                                     description: |-
-                                      Group is the group of the referent. 
+                                      Group is the group of the referent. When unspecified, "gateway.networking.k8s.io" is inferred. To set the core API group (such as for a "Service" kind referent), Group must be explicitly set to "" (empty string). 
                                        Support: Core
                                     maxLength: 253
                                     pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
@@ -668,8 +671,9 @@ spec:
                                     default: Gateway
                                     description: |-
                                       Kind is kind of the referent. 
-                                       Support: Core (Gateway) 
-                                       Support: Custom (Other Resources)
+                                       There are two kinds of parent resources with "Core" support: 
+                                       * Gateway (Gateway conformance profile) * Service (Mesh conformance profile, experimental, ClusterIP Services only) 
+                                       Support for other resources is Implementation-Specific.
                                     maxLength: 63
                                     minLength: 1
                                     pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
@@ -683,7 +687,10 @@ spec:
                                     type: string
                                   namespace:
                                     description: |-
-                                      Namespace is the namespace of the referent. When unspecified (or empty string), this refers to the local namespace of the Route. 
+                                      Namespace is the namespace of the referent. When unspecified, this refers to the local namespace of the Route. 
+                                       Note that there are specific rules for ParentRefs which cross namespace boundaries. Cross-namespace references are only valid if they are explicitly allowed by something in the namespace they are referring to. For example: Gateway has the AllowedRoutes field, and ReferenceGrant provides a generic way to enable any other kind of cross-namespace reference. 
+                                       ParentRefs from a Route to a Service in the same namespace are "producer" routes, which apply default routing rules to inbound connections from any namespace to the Service. 
+                                       ParentRefs from a Route to a Service in a different namespace are "consumer" routes, and these routing rules are only applied to outbound connections originating from the same namespace as the Route, for which the intended destination of the connections are a Service targeted as a ParentRef of the Route. 
                                        Support: Core
                                     maxLength: 63
                                     minLength: 1
@@ -693,6 +700,7 @@ spec:
                                     description: |-
                                       Port is the network port this Route targets. It can be interpreted differently based on the type of parent resource. 
                                        When the parent resource is a Gateway, this targets all listeners listening on the specified port that also support this kind of Route(and select this Route). It's not recommended to set `Port` unless the networking behaviors specified in a Route must apply to a specific port as opposed to a listener(s) whose port(s) may be changed. When both Port and SectionName are specified, the name and port of the selected listener must match both specified values. 
+                                       When the parent resource is a Service, this targets a specific port in the Service spec. When both Port (experimental) and SectionName are specified, the name and port of the selected port must match both specified values. 
                                        Implementations MAY choose to support other parent resources. Implementations supporting other types of parent resources MUST clearly document how/if Port is interpreted. 
                                        For the purpose of status, an attachment is considered successful as long as the parent resource accepts it partially. For example, Gateway listeners can restrict which Routes can attach to them by Route kind, namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from the referencing Route, the Route MUST be considered successfully attached. If no Gateway listeners accept attachment from this Route, the Route MUST be considered detached from the Gateway. 
                                        Support: Extended 
@@ -704,7 +712,7 @@ spec:
                                   sectionName:
                                     description: |-
                                       SectionName is the name of a section within the target resource. In the following resources, SectionName is interpreted as the following: 
-                                       * Gateway: Listener Name. When both Port (experimental) and SectionName are specified, the name and port of the selected listener must match both specified values. 
+                                       * Gateway: Listener Name. When both Port (experimental) and SectionName are specified, the name and port of the selected listener must match both specified values. * Service: Port Name. When both Port (experimental) and SectionName are specified, the name and port of the selected listener must match both specified values. Note that attaching Routes to Services as Parents is part of experimental Mesh support and is not supported for any other purpose. 
                                        Implementations MAY choose to support attaching Routes to other resources. If that is the case, they MUST clearly document how SectionName is interpreted. 
                                        When unspecified (empty string), this will reference the entire resource. For the purpose of status, an attachment is considered successful if at least one section in the parent resource accepts it. For example, Gateway listeners can restrict which Routes can attach to them by Route kind, namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from the referencing Route, the Route MUST be considered successfully attached. If no Gateway listeners accept attachment from this Route, the Route MUST be considered detached from the Gateway. 
                                        Support: Core
@@ -725,19 +733,30 @@ spec:
                           type: object
                         ingress:
                           description:
-                            The ingress based HTTP01 challenge solver will solve
-                            challenges by creating or modifying Ingress
+                            "The ingress based HTTP01 challenge solver will
+                            solve challenges by creating or modifying Ingress
                             resources in order to route requests for
                             '/.well-known/acme-challenge/XYZ' to 'challenge
                             solver' pods that are provisioned by cert-manager
-                            for each Challenge to be completed.
+                            for each Challenge to be completed."
                           properties:
                             class:
                               description:
-                                The ingress class to use when creating Ingress
-                                resources to solve ACME challenges that use this
-                                challenge solver. Only one of 'class' or 'name'
-                                may be specified.
+                                This field configures the annotation
+                                `kubernetes.io/ingress.class` when creating
+                                Ingress resources to solve ACME challenges that
+                                use this challenge solver. Only one of `class`,
+                                `name` or `ingressClassName` may be specified.
+                              type: string
+                            ingressClassName:
+                              description:
+                                This field configures the field
+                                `ingressClassName` on the created Ingress
+                                resources used to solve ACME challenges that use
+                                this challenge solver. This is the recommended
+                                way of configuring the ingress class. Only one
+                                of `class`, `name` or `ingressClassName` may be
+                                specified.
                               type: string
                             ingressTemplate:
                               description:
@@ -747,12 +766,12 @@ spec:
                               properties:
                                 metadata:
                                   description:
-                                    ObjectMeta overrides for the ingress used to
-                                    solve HTTP01 challenges. Only the 'labels'
-                                    and 'annotations' fields may be set. If
-                                    labels or annotations overlap with in-built
-                                    values, the values here will override the
-                                    in-built values.
+                                    "ObjectMeta overrides for the ingress used
+                                    to solve HTTP01 challenges. Only the
+                                    'labels' and 'annotations' fields may be
+                                    set. If labels or annotations overlap with
+                                    in-built values, the values here will
+                                    override the in-built values."
                                   properties:
                                     annotations:
                                       additionalProperties:
@@ -778,7 +797,8 @@ spec:
                                 typically used in conjunction with ingress
                                 controllers like ingress-gce, which maintains a
                                 1:1 mapping between external IPs and ingress
-                                resources.
+                                resources. Only one of `class`, `name` or
+                                `ingressClassName` may be specified.
                               type: string
                             podTemplate:
                               description:
@@ -788,12 +808,12 @@ spec:
                               properties:
                                 metadata:
                                   description:
-                                    ObjectMeta overrides for the pod used to
+                                    "ObjectMeta overrides for the pod used to
                                     solve HTTP01 challenges. Only the 'labels'
                                     and 'annotations' fields may be set. If
                                     labels or annotations overlap with in-built
                                     values, the values here will override the
-                                    in-built values.
+                                    in-built values."
                                   properties:
                                     annotations:
                                       additionalProperties:
@@ -813,11 +833,10 @@ spec:
                                 spec:
                                   description:
                                     PodSpec defines overrides for the HTTP01
-                                    challenge solver pod. Only the
-                                    'priorityClassName', 'nodeSelector',
-                                    'affinity', 'serviceAccountName' and
-                                    'tolerations' fields are supported
-                                    currently. All other fields will be ignored.
+                                    challenge solver pod. Check
+                                    ACMEChallengeSolverHTTP01IngressPodSpec to
+                                    find out currently supported fields. All
+                                    other fields will be ignored.
                                   properties:
                                     affinity:
                                       description:
@@ -2365,6 +2384,26 @@ spec:
                                               type: array
                                           type: object
                                       type: object
+                                    imagePullSecrets:
+                                      description:
+                                        If specified, the pod's imagePullSecrets
+                                      items:
+                                        description:
+                                          LocalObjectReference contains enough
+                                          information to let you locate the
+                                          referenced object inside the same
+                                          namespace.
+                                        properties:
+                                          name:
+                                            description:
+                                              'Name of the referent. More info:
+                                              https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                              TODO: Add other useful fields.
+                                              apiVersion, kind, uid?'
+                                            type: string
+                                        type: object
+                                        x-kubernetes-map-type: atomic
+                                      type: array
                                     nodeSelector:
                                       additionalProperties:
                                         type: string
@@ -2458,12 +2497,12 @@ spec:
                       type: object
                     selector:
                       description:
-                        Selector selects a set of DNSNames on the Certificate
+                        "Selector selects a set of DNSNames on the Certificate
                         resource that should be solved using this challenge
                         solver. If not specified, the solver will be treated as
                         the 'default' solver with the lowest priority, i.e. if
                         any other solver has a more specific match, it will be
-                        used instead.
+                        used instead."
                       properties:
                         dnsNames:
                           description:
@@ -2524,8 +2563,8 @@ spec:
                   type: string
                 wildcard:
                   description:
-                    wildcard will be true if this challenge is for a wildcard
-                    identifier, for example '*.example.com'.
+                    "wildcard will be true if this challenge is for a wildcard
+                    identifier, for example '*.example.com'."
                   type: boolean
               required:
                 - authorizationURL
@@ -2541,21 +2580,21 @@ spec:
               properties:
                 presented:
                   description:
-                    presented will be set to true if the challenge values for
+                    "presented will be set to true if the challenge values for
                     this challenge are currently 'presented'. This *does not*
                     imply the self check is passing. Only that the values have
                     been 'submitted' for the appropriate challenge mechanism
                     (i.e. the DNS01 TXT record has been presented, or the HTTP01
-                    configuration has been configured).
+                    configuration has been configured)."
                   type: boolean
                 processing:
                   description:
-                    Used to denote whether this challenge should be processed or
-                    not. This field will only be set to true by the 'scheduling'
-                    component. It will only be set to false by the 'challenges'
-                    controller, after the challenge has reached a final state or
-                    timed out. If this field is set to false, the challenge
-                    controller will not take any more action.
+                    "Used to denote whether this challenge should be processed
+                    or not. This field will only be set to true by the
+                    'scheduling' component. It will only be set to false by the
+                    'challenges' controller, after the challenge has reached a
+                    final state or timed out. If this field is set to false, the
+                    challenge controller will not take any more action."
                   type: boolean
                 reason:
                   description:
@@ -2564,8 +2603,8 @@ spec:
                   type: string
                 state:
                   description:
-                    Contains the current 'state' of the challenge. If not set,
-                    the state of the challenge is unknown.
+                    "Contains the current 'state' of the challenge. If not set,
+                    the state of the challenge is unknown."
                   enum:
                     - valid
                     - ready

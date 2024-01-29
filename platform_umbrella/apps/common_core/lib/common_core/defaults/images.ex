@@ -1,5 +1,12 @@
 defmodule CommonCore.Defaults.Images do
   @moduledoc false
+  @cert_manager_image_tag "v1.13.3"
+  def cert_manager_acmesolver_image, do: "quay.io/jetstack/cert-manager-acmesolver:#{@cert_manager_image_tag}"
+  def cert_manager_cainjector_image, do: "quay.io/jetstack/cert-manager-cainjector:#{@cert_manager_image_tag}"
+  def cert_manager_controller_image, do: "quay.io/jetstack/cert-manager-controller:#{@cert_manager_image_tag}"
+  def cert_manager_ctl_image, do: "quay.io/jetstack/cert-manager-ctl:#{@cert_manager_image_tag}"
+  def cert_manager_webhook_image, do: "quay.io/jetstack/cert-manager-webhook:#{@cert_manager_image_tag}"
+
   def control_server_image, do: "battery-registry:5000/battery/control:c6f4bd1-dirty1"
 
   def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1"
