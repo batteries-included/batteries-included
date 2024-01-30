@@ -49,6 +49,8 @@ defmodule CommonCore.Resources.BatteryCA do
     #
     # Cert-manager will only look in the namespace that it's
     # running for the secret.
+    # NOTE(jdt): the clusterissuer namespace can be specified in the
+    # cert-manager config but it's currently the NS it is running in
     spec = %{"ca" => %{"secretName" => "battery-ca"}}
 
     :certmanger_cluster_issuer

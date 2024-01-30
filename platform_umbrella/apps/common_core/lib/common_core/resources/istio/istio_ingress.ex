@@ -28,6 +28,19 @@ defmodule CommonCore.Resources.IstioIngress do
     |> B.label("istio", "ingressgateway")
     |> B.label("istio.io/rev", "default")
     |> B.spec(spec)
+    |> add_public_lb_annotations()
+  end
+
+  # for aws load balancer controller in EKS
+  # doesn't currently do any harm to always add but we'll want to make it conditional at some point
+  defp add_public_lb_annotations(config) do
+    B.annotations(config, %{
+      "service.beta.kubernetes.io/aws-load-balancer-scheme" => "internet-facing",
+      # the advantage of the AWS VPC CNI is that each pod has an IP, use those instead of the instances
+      # the controller will make sure that the LB is updated as pods come and go
+      "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type" => "ip",
+      "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled" => "true"
+    })
   end
 
   resource(:service_account_ingressgateway, _battery, state) do
