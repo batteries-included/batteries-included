@@ -124,7 +124,7 @@ defmodule CommonCore.StateSummary.Hosts do
         Enum.map(addrs, &to_string(:inet.ntoa(&1)))
 
       {:error, _err} ->
-        nil
+        [nil]
     end
   end
 end
