@@ -83,8 +83,8 @@
         "type": "metallb",
         "config": {
           "type": "metallb",
-          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "controller_image": "quay.io/metallb/controller:v0.13.12",
+          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "frrouting_image": "quay.io/frrouting/frr:8.5.4",
           "speaker_image_override": null,
           "controller_image_override": null,
@@ -122,7 +122,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "6Q36BADAO46Q7SI7CD5JMOEA",
+            "password": "MO7IN66TJU27DDUAEY5QAYEX",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -5748,7 +5748,10 @@
       "kind": "Service",
       "metadata": {
         "annotations": {
-          "battery/hash": "RANCKITJPNXANFN33DNBZ74CTSDBWMUEMAW6R6DXU6HAXOVNUVTA===="
+          "battery/hash": "4E5EGBXAKT4R4OLTY7CR3MRIHZ6AYRUZV32HD4WO23GJI7GRQE4A====",
+          "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
+          "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type": "ip",
+          "service.beta.kubernetes.io/aws-load-balancer-scheme": "internet-facing"
         },
         "labels": {
           "app": "istio-ingressgateway",
@@ -15615,13 +15618,13 @@
       "data": {
         "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "NlEzNkJBREFPNDZRN1NJN0NENUpNT0VB",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjZRMzZCQURBTzQ2UTdTSTdDRDVKTU9FQUBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+        "password": "TU83SU42NlRKVTI3RERVQUVZNVFBWUVY",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOk1PN0lONjZUSlUyN0REVUFFWTVRQVlFWEBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "YN5TNGH3YH2OJUDO5V6ZR7OBK64FE54ZZUO7JLCJVK22IAVBGXFA===="
+          "battery/hash": "UYI72L5Y3GO2WZVITTGNYO2OYATRHOLD3UHBRK3PUEDYTE4HPA6A===="
         },
         "labels": {
           "app": "pg-controlserver",

@@ -106,7 +106,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "7YLDCYESOVVJ2H6VFRVORWMM",
+            "password": "75Q65C2Z4EY4T4KMNFYEM7CF",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -5049,7 +5049,10 @@
       "kind": "Service",
       "metadata": {
         "annotations": {
-          "battery/hash": "RANCKITJPNXANFN33DNBZ74CTSDBWMUEMAW6R6DXU6HAXOVNUVTA===="
+          "battery/hash": "4E5EGBXAKT4R4OLTY7CR3MRIHZ6AYRUZV32HD4WO23GJI7GRQE4A====",
+          "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
+          "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type": "ip",
+          "service.beta.kubernetes.io/aws-load-balancer-scheme": "internet-facing"
         },
         "labels": {
           "app": "istio-ingressgateway",
@@ -13317,13 +13320,13 @@
       "data": {
         "hostname": "cGctY29udHJvbHNlcnZlci1ydy5iYXR0ZXJ5LWJhc2Uuc3ZjLmNsdXN0ZXIubG9jYWwu",
         "username": "YmF0dGVyeS1jb250cm9sLXVzZXI=",
-        "password": "N1lMRENZRVNPVlZKMkg2VkZSVk9SV01N",
-        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjdZTERDWUVTT1ZWSjJINlZGUlZPUldNTUBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
+        "password": "NzVRNjVDMlo0RVk0VDRLTU5GWUVNN0NG",
+        "dsn": "cG9zdGdyZXNxbDovL2JhdHRlcnktY29udHJvbC11c2VyOjc1UTY1QzJaNEVZNFQ0S01ORllFTTdDRkBwZy1jb250cm9sc2VydmVyLXJ3LmJhdHRlcnktYmFzZS5zdmMuY2x1c3Rlci5sb2NhbC4vY29udHJvbA=="
       },
       "kind": "Secret",
       "metadata": {
         "annotations": {
-          "battery/hash": "33AD4GRNIW5KLPU3GL2CEYQXZMSSXCIBISXU5XPOEAYV6DGDES7Q===="
+          "battery/hash": "XF6TXS77KVUL5GSBDZPFLCIPVI22IAGXM3WK4CI2LWH3OFRN2ZIA===="
         },
         "labels": {
           "app": "pg-controlserver",
