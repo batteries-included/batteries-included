@@ -199,8 +199,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     # Resulting in something like:
     # %{ superuser: true, login: true, name: "elliott", ensure: "present"}
     user.roles
-    |> Enum.map(&{&1, true})
-    |> Map.new()
+    |> Map.new(&{&1, true})
     |> Map.merge(%{
       name: user.username,
       ensure: "present",

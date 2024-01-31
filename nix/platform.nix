@@ -13,7 +13,7 @@
       };
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      version = "0.10.0";
+      version = "0.11.0";
       beam = pkgs.beam;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
@@ -37,7 +37,7 @@
         inherit src version LANG;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-Sr9cZ7cK3uhLBi+YJyNJ87mKLlzDn1sVp9oQ6WW7vvs=";
+        sha256 = "sha256-gz2ZiqEt92026oZLbV12tfOCw759f8jO5lG/jZCynyc=";
       };
 
       # mix fixed output derivation dependencies
@@ -50,7 +50,7 @@
         pname = "mix-deps-platform";
         inherit src version LANG;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-hRA2kg8HRG0PF9ehE1duGSNzqlNRnQAAsgYwr9OHoNA=";
+        sha256 = "sha256-BBlkG6sgB0GbkE5GNW8RXZ+RSsYUfkgluduZdcEiRto=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {
@@ -62,6 +62,26 @@
         pname = "control_server";
         mixEnv = "prod";
       };
+
+      kube-bootstrap = beamPackages.mixRelease
+        {
+          inherit src version mixFodDeps;
+          inherit erlang elixir hex;
+          MIX_ENV = "prod";
+          LANG = "C.UTF-8";
+          pname = "kube_bootstrap";
+
+          nativeBuildInputs = [ gcc rustToolChain pkg-config ];
+          buildInputs = [ openssl ];
+          installPhase = ''
+            export APP_VERSION="${version}"
+            export APP_NAME="batteries_included"
+            export RELEASE="kube_bootstrap"
+            mix do compile --force, \
+              release --no-deps-check --overwrite --path "$out" kube_bootstrap
+          '';
+
+        };
 
       home-base = pkgs.callPackage ./platform_release.nix {
         inherit version src mixFodDeps pkgs nixpkgs;
@@ -109,7 +129,7 @@
     in
     {
       packages = {
-        inherit home-base control-server;
+        inherit home-base control-server kube-bootstrap;
       };
       checks = {
         inherit credo dialyzer format;

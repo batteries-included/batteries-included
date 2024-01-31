@@ -220,10 +220,6 @@ defmodule CommonCore.Batteries.Catalog do
   end
 
   def battery_type_map do
-    @all
-    |> Enum.map(fn bat ->
-      {bat.type, bat}
-    end)
-    |> Map.new()
+    Map.new(@all, fn bat -> {bat.type, bat} end)
   end
 end

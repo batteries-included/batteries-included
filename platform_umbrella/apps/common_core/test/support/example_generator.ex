@@ -23,15 +23,10 @@ defmodule CommonCore.Resources.ExampleGenerator do
   end
 
   multi_resource(:multi_map) do
-    0..2
-    |> Enum.map(fn idx ->
+    Map.new(0..2, fn idx ->
       name = "map-#{idx}"
 
-      {"/map_#{idx}",
-       :service_account
-       |> B.build_resource()
-       |> B.name(name)}
+      {"/map_#{idx}", :service_account |> B.build_resource() |> B.name(name)}
     end)
-    |> Map.new()
   end
 end

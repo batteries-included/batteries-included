@@ -106,10 +106,6 @@ defmodule CommonCore.Resources.KnativeServices do
   end
 
   multi_resource(:knative_services, battery, state) do
-    state.knative_services
-    |> Enum.map(fn s ->
-      {"/service/#{s.id}", serving_service(s, battery, state)}
-    end)
-    |> Map.new()
+    Map.new(state.knative_services, fn s -> {"/service/#{s.id}", serving_service(s, battery, state)} end)
   end
 end

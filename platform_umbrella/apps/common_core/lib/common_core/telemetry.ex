@@ -2,14 +2,14 @@ defmodule CommonCore.Telemetry do
   @moduledoc false
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
+      @before_compile CommonCore.Telemetry
+
       import CommonCore.Telemetry
 
       Module.register_attribute(__MODULE__, :events, accumulate: true, persist: false)
 
       @name opts[:name]
       @metadata opts[:metadata] || %{}
-      @before_compile CommonCore.Telemetry
-
       @doc false
       def metadata, do: @metadata
 

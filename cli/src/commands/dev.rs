@@ -7,9 +7,10 @@ use tracing::info;
 use url::Url;
 
 use crate::args::BaseArgs;
-use crate::postgres_kube::wait_healthy_pg;
+
 use crate::spec::InstallationSpec;
 use crate::tasks::ensure_podman_started;
+use crate::tasks::mix_bootstrap_kube;
 use crate::tasks::{
     add_local_to_spec, download_install_spec, ensure_kube_provider_started, initial_apply,
     port_forward_postgres, port_forward_spec, read_install_spec, setup_platform_db,
@@ -60,9 +61,12 @@ pub async fn dev_command(
     )
     .await?;
 
-    // Wait for the postgres pod to be healthy. There's no reason to try continuing
-    // until postgres is up and running.
-    wait_healthy_pg(kube_client.clone(), "battery-base").await?;
+    if let Some(dir) = platform_dir.clone() {
+        // Normally that initial apply would start a job that would start everything.
+        // However in dev mode we want to run outside of kube so
+        // simulate running the job that would start the db.
+        mix_bootstrap_kube(dir, &spec_with_local).await?;
+    }
 
     port_forward_and_setup(
         kube_client,

@@ -98,7 +98,7 @@ defmodule KubeServices.Stale.Reaper do
     seen_res_set = Stale.recent_resource_map_set()
 
     Enum.filter(suspected_stale, fn resource ->
-      Stale.is_stale(resource, seen_res_set)
+      Stale.stale?(resource, seen_res_set)
     end)
   end
 

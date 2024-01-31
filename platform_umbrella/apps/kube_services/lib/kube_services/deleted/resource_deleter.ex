@@ -35,7 +35,7 @@ defmodule KubeServices.ResourceDeleter do
 
   @impl GenServer
   def init(opts) do
-    conn_func = Keyword.get(opts, :conn_func, &KubeServices.ConnectionPool.get!/0)
+    conn_func = Keyword.get(opts, :conn_func, &CommonCore.ConnectionPool.get!/0)
     conn = Keyword.get_lazy(opts, :conn, conn_func)
 
     Logger.debug("Starting ResourceDeleter")
@@ -56,6 +56,12 @@ defmodule KubeServices.ResourceDeleter do
   @spec undelete(Ecto.UUID.t()) :: any
   def undelete(deleted_resource_id) do
     GenServer.call(@me, {:undelete, deleted_resource_id})
+  end
+
+  @impl GenServer
+  def handle_call({:delete, nil}, _from, state) do
+    Logger.debug("Delete of resource nil resource")
+    {:reply, {:ok, nil}, state}
   end
 
   @impl GenServer

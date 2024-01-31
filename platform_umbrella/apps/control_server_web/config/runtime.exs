@@ -43,7 +43,7 @@ config :control_server, ControlServer.Repo,
   hostname: postgres_host,
   port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
-.
+
 config :control_server_web, ControlServerWeb.Endpoint,
   http: [
     port: String.to_integer(port),
@@ -53,3 +53,7 @@ config :control_server_web, ControlServerWeb.Endpoint,
   check_origin: false,
   secret_key_base: secret_key_base,
   server: true
+
+config :common_core, :clusters, default: :service_account
+
+config :kube_services, cluster_type: :prod

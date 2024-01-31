@@ -3,24 +3,12 @@ use futures::{StreamExt, TryStreamExt};
 use k8s_openapi::api::core::v1::Pod;
 use kube_client::{
     api::{ListParams, WatchParams},
-    Api, Client,
+    Api,
 };
-use kube_runtime::wait::{await_condition, conditions::is_pod_running};
-use tracing::{debug, info};
+use tracing::debug;
 
 const LABEL_SELECTOR: &str = "cnpg.io/cluster=pg-controlserver,role=primary";
-const INITIAL_PODNAME: &str = "pg-controlserver-1";
 const DEFAULT_RESOURCE_VERSION: &str = "0";
-
-pub async fn wait_healthy_pg(kube_client: Client, namespace: &str) -> Result<()> {
-    info!("Waiting for the first postgres pod to be running");
-    let pods: Api<Pod> = Api::namespaced(kube_client, namespace);
-    // Wait for the first control postgres
-    let establish = await_condition(pods, INITIAL_PODNAME, is_pod_running());
-    let _ = tokio::time::timeout(std::time::Duration::from_secs(900), establish).await?;
-    info!("First postgres pod is running");
-    Ok(())
-}
 
 /// Gets the name of the primary Postgres pod by querying for pods with the
 /// controlserver-primary label selector. If no pod is initially found, watches

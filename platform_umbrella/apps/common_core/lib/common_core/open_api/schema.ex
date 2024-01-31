@@ -70,11 +70,7 @@ defmodule CommonCore.OpenApi.Schema do
   end
 
   defp ensure_map(%{} = value) do
-    value
-    |> Enum.map(fn
-      {key, value} -> {key, ensure_map(value)}
-    end)
-    |> Map.new()
+    Map.new(value, fn {key, value} -> {key, ensure_map(value)} end)
   end
 
   defp ensure_map(value), do: value

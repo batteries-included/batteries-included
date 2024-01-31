@@ -41,7 +41,7 @@ beamPackages.mixRelease {
   inherit erlang elixir hex;
 
   nativeBuildInputs = [ gcc rustToolChain pkg-config ];
-  buildInputs = [ openssl gcc ];
+  buildInputs = [ openssl ];
 
   postUnpack = ''
     mkdir -p apps/${pname}_web/priv/static/assets/

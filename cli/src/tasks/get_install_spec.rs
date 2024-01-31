@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
-use eyre::Result;
+use eyre::{Context, Result};
+use tempfile::NamedTempFile;
 use tokio::fs;
 use tracing::{debug, info};
 
@@ -26,4 +27,14 @@ pub async fn read_install_spec(
     debug!("Got install spec length = {}", data.len());
 
     Ok(serde_json::from_str(&data)?)
+}
+
+pub async fn write_temp_file(install_spec: &InstallationSpec) -> Result<NamedTempFile> {
+    let file = NamedTempFile::new()?;
+
+    tokio::fs::write(file.path(), serde_json::to_string_pretty(install_spec)?)
+        .await
+        .context("Should be able to write the install spec.")?;
+
+    Ok(file)
 }

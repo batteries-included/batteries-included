@@ -27,8 +27,7 @@ defmodule CommonCore.SeedArgsConverter do
 
   def to_fresh_args(%{} = m) do
     m
-    |> Enum.map(fn {key, value} -> {to_key(key), value} end)
-    |> Map.new()
+    |> Map.new(fn {key, value} -> {to_key(key), value} end)
     |> Map.drop(@bad_keys)
   end
 

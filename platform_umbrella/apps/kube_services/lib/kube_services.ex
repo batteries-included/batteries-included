@@ -4,7 +4,7 @@ defmodule KubeServices do
   """
 
   def get_current_events do
-    conn = KubeServices.ConnectionPool.get()
+    conn = CommonCore.ConnectionPool.get()
 
     operation = K8s.Client.list("v1", "Event")
 

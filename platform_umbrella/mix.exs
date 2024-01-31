@@ -45,6 +45,16 @@ defmodule ControlServer.Umbrella.MixProject do
           {Config.Reader, {:system, "RELEASE_ROOT", "apps/control_server_web/config/runtime.exs"}}
         ]
       ],
+      kube_bootstrap: [
+        applications: [
+          kube_bootstrap: :permanent
+        ],
+        steps: [:assemble, &copy_configs/1],
+        runtime_config_path: "apps/kube_bootstrap/config/runtime.exs",
+        config_providers: [
+          {Config.Reader, {:system, "RELEASE_ROOT", "apps/kube_bootstrap/config/runtime.exs"}}
+        ]
+      ],
       home_base: [
         applications: [home_base: :permanent, home_base_web: :permanent],
         steps: [:assemble, &copy_configs/1],

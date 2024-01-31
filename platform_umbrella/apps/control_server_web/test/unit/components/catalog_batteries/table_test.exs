@@ -26,9 +26,7 @@ defmodule ControlServerWeb.CatalogBatteriesTableTest do
     # in order to simulate the battery being installed and configured in
     # the system
     system_batteries =
-      catalog_batteries
-      |> Enum.map(fn cb -> {cb.type, CatalogBattery.to_fresh_system_battery(cb)} end)
-      |> Map.new()
+      Map.new(catalog_batteries, fn cb -> {cb.type, CatalogBattery.to_fresh_system_battery(cb)} end)
 
     assigns = %{system_batteries: system_batteries, catalog_batteries: catalog_batteries}
 

@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
   use Mix.Task
 
   alias CommonCore.InstallSpec
-  alias CommonCore.Resources.RootResourceGenerator
+  alias CommonCore.Resources.BootstrapRoot
   alias CommonCore.StateSummary.SeedState
 
   @installations ~w(dev dev_cluster)a
@@ -42,16 +42,10 @@ defmodule Mix.Tasks.Gen.Static.Installations do
   def installation(:dev_cluster), do: dev_installation(%{provider: :provided}, SeedState.seed(:slim_dev))
 
   def dev_installation(kube_cluster, summary) do
-    res_map =
-      summary
-      |> RootResourceGenerator.materialize()
-      |> Enum.sort_by(fn {path, _} -> path end)
-      |> Map.new()
-
     InstallSpec.new(
       kube_cluster: kube_cluster,
       target_summary: summary,
-      initial_resources: res_map
+      initial_resources: BootstrapRoot.materialize(summary)
     )
   end
 end

@@ -1,6 +1,6 @@
 defmodule CommonCore.StateSummary.KeycloakSummary do
   @moduledoc false
-  use TypedStruct
+  use TypedEctoSchema
 
   alias CommonCore.OpenApi.KeycloakAdminSchema
   alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
@@ -9,8 +9,8 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
 
   @derive Jason.Encoder
 
-  typedstruct do
-    field :realms, list(KeycloakAdminSchema.RealmRepresentation.t())
+  typed_embedded_schema do
+    embeds_many :realms, KeycloakAdminSchema.RealmRepresentation
   end
 
   @spec realm_member?(nil | t(), any) :: boolean

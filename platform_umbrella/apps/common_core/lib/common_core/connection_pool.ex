@@ -1,4 +1,4 @@
-defmodule KubeServices.ConnectionPool do
+defmodule CommonCore.ConnectionPool do
   @moduledoc false
   use Supervisor
 
@@ -8,6 +8,7 @@ defmodule KubeServices.ConnectionPool do
 
   @me __MODULE__
   @default_cluster :default
+  @config_application :common_core
 
   def start_link(opts \\ []) do
     name = name(opts)
@@ -73,7 +74,7 @@ defmodule KubeServices.ConnectionPool do
   end
 
   defp connection_from_name(cluster_name) do
-    :kube_services
+    @config_application
     |> Application.get_env(:clusters, [])
     |> Keyword.get(cluster_name, {:file, "~/.kube/config"})
     |> new_connection()

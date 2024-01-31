@@ -1,12 +1,11 @@
-use assert_cmd::Command;
-use eyre::{Context, ContextCompat, Result};
-use std::{path::PathBuf, time::Duration};
-use tempfile::NamedTempFile;
-use tracing::{info, warn};
+use eyre::{ContextCompat, Result};
+use std::path::PathBuf;
+use tracing::info;
 
-use crate::spec::InstallationSpec;
-
-const MAX_DELAY: std::time::Duration = Duration::from_secs(30);
+use crate::{
+    spec::InstallationSpec,
+    tasks::{get_install_spec::write_temp_file, mix::run_mix_command},
+};
 
 pub async fn setup_platform_db(
     platform_path: PathBuf,
@@ -18,65 +17,22 @@ pub async fn setup_platform_db(
         temp_file.path().display()
     );
 
-    run_mix_command(platform_path.clone(), vec!["deps.get".to_string()]).await?;
-    run_mix_command(platform_path.clone(), vec!["compile".to_string()]).await?;
     run_mix_command(platform_path.clone(), vec!["setup".to_string()]).await?;
 
     let path_string = temp_file
         .path()
         .as_os_str()
         .to_str()
-        .context("Should have a temp file path")?
-        .to_owned();
-    let seed_args = vec![
-        "do".to_string(),
-        "compile,".to_string(),
-        "seed.control".to_string(),
-        path_string,
-    ];
+        .context("Should have a temp file path")?;
+
+    let seed_args = vec!["seed.control", path_string]
+        .into_iter()
+        .map(&String::from)
+        .collect();
+
     run_mix_command(platform_path, seed_args).await?;
 
     println!("Setup complete. Database ready.");
 
     Ok(())
-}
-
-async fn run_mix_command(platform_path: PathBuf, command: Vec<String>) -> Result<()> {
-    info!("Running mix command {:?}", command);
-
-    let task = move || -> Result<()> {
-        let out = Command::new("mix")
-            .args(command)
-            .current_dir(platform_path)
-            .output()?;
-
-        info!("mix command status = {}", out.status.clone());
-        Ok(out.status.exit_ok()?)
-    };
-    let mut retries = 20;
-    let mut delay = Duration::from_millis(500);
-    // We really have no way of knowing if postgres has been
-    // set up with the correct users and permissions to create
-    // tables and connect, other than to give it a try.
-    while retries > 0 {
-        let res = tokio::task::spawn_blocking(task.clone()).await?;
-        if res.is_ok() {
-            return res;
-        }
-        warn!("failed mix command sleeping retries = {}", retries);
-        tokio::time::sleep(delay).await;
-        delay = (2 * delay).min(MAX_DELAY);
-        retries -= 1;
-    }
-    tokio::task::spawn_blocking(task).await?
-}
-
-async fn write_temp_file(install_spec: &InstallationSpec) -> Result<NamedTempFile> {
-    let file = NamedTempFile::new()?;
-
-    tokio::fs::write(file.path(), serde_json::to_string_pretty(install_spec)?)
-        .await
-        .context("Should be able to write the install spec.")?;
-
-    Ok(file)
 }

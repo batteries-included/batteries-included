@@ -165,7 +165,7 @@
                  "apps/common_core/lib/mix/tasks/gen_openapi_schema.ex",
                  "apps/common_core/lib/common_core/seed_args_converter.ex",
                  # Connection Pools are per cluster.
-                 "apps/kube_services/lib/kube_services/connection_pool.ex",
+                 "apps/common_core/lib/common_core/connection_pool.ex",
                  # It's a test.
                  "apps/common_core/test/common_core/keycloak/admin_client_test.exs"
                ]

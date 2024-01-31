@@ -11,6 +11,7 @@ defmodule CommonCore.InstallSpec do
     @typedoc ""
     field :kube_cluster, map()
     field :target_summary, CommonCore.StateSummary.t()
+
     field :initial_resources, map(), default: %{}
   end
 

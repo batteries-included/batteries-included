@@ -3,8 +3,8 @@ defmodule KubeServices.KubeState do
   use Supervisor
 
   alias CommonCore.ApiVersionKind
+  alias CommonCore.ConnectionPool
   alias K8s.Resource
-  alias KubeServices.ConnectionPool
   alias KubeServices.KubeState.Runner
 
   @default_table :default_state_table

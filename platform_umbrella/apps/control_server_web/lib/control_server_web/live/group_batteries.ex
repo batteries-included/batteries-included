@@ -72,10 +72,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
 
   defp assign_system_batteries(socket, group) do
     map =
-      group
-      |> Batteries.list_system_batteries_for_group()
-      |> Enum.map(&{&1.type, &1})
-      |> Map.new()
+      group |> Batteries.list_system_batteries_for_group() |> Map.new(&{&1.type, &1})
 
     assign(socket, :system_batteries, map)
   end

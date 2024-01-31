@@ -7,6 +7,8 @@ defmodule Mix.Tasks.Seed.Control do
   """
   use Mix.Task
 
+  @requirements ["app.config"]
+
   def run(args) do
     [json_install_path] = args
 

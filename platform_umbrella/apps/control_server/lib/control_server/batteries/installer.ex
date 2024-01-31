@@ -52,9 +52,7 @@ defmodule ControlServer.Batteries.Installer do
     # combined find or create multi transaction for all batteries
 
     start_arg_map =
-      batteries
-      |> Enum.map(fn sb -> {sb.type, SystemBattery.to_fresh_args(sb)} end)
-      |> Map.new()
+      Map.new(batteries, fn sb -> {sb.type, SystemBattery.to_fresh_args(sb)} end)
 
     batteries
     |> Enum.map(&Catalog.get(&1.type))

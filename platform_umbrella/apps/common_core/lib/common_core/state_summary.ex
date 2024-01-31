@@ -16,23 +16,52 @@ defmodule CommonCore.StateSummary do
     state_summary = %{state_summary | batteries: [%CommonCore.Batteries.SystemBattery{}]}
 
   """
-  use TypedStruct
+  use TypedEctoSchema
 
-  alias CommonCore.StateSummary.KeycloakSummary
+  import Ecto.Changeset
 
   @derive Jason.Encoder
 
-  typedstruct do
-    field :batteries, list(CommonCore.Batteries.SystemBattery.t()), default: []
-    field :postgres_clusters, list(CommonCore.Postgres.Cluster.t()), default: []
-    field :ferret_services, list(CommonCore.Postgres.Cluster.t()), default: []
-    field :redis_clusters, list(CommonCore.Redis.FailoverCluster.t()), default: []
-    field :notebooks, list(CommonCore.Notebooks.JupyterLabNotebook.t()), default: []
-    field :knative_services, list(CommonCore.Knative.Service.t()), default: []
-    field :ceph_clusters, list(CommonCore.Rook.CephCluster.t()), default: []
-    field :ceph_filesystems, list(CommonCore.Rook.CephFilesystem.t()), default: []
-    field :ip_address_pools, list(CommonCore.MetalLB.IPAddressPool.t()), default: []
-    field :kube_state, map(), default: %{}
-    field :keycloak_state, KeycloakSummary.t(), enforce: false
+  @optional_fields ~w(kube_state)a
+  @required_fields ~w()a
+
+  typed_embedded_schema do
+    embeds_many :batteries, CommonCore.Batteries.SystemBattery
+    embeds_many :postgres_clusters, CommonCore.Postgres.Cluster
+    embeds_many :ferret_services, CommonCore.FerretDB.FerretService
+    embeds_many :redis_clusters, CommonCore.Redis.FailoverCluster
+    embeds_many :notebooks, CommonCore.Notebooks.JupyterLabNotebook
+    embeds_many :knative_services, CommonCore.Knative.Service
+    embeds_many :ceph_clusters, CommonCore.Rook.CephCluster
+    embeds_many :ceph_filesystems, CommonCore.Rook.CephFilesystem
+    embeds_many :ip_address_pools, CommonCore.MetalLB.IPAddressPool
+
+    embeds_one :keycloak_state, CommonCore.StateSummary.KeycloakSummary
+
+    field :kube_state, :map, default: %{}
+  end
+
+  def changeset(state_summary, attrs) do
+    fields = @required_fields ++ @optional_fields
+
+    state_summary
+    |> cast(attrs, fields)
+    |> cast_embed(:batteries)
+    |> cast_embed(:postgres_clusters)
+    |> cast_embed(:ferret_services)
+    |> cast_embed(:redis_clusters)
+    |> cast_embed(:notebooks)
+    |> cast_embed(:knative_services)
+    |> cast_embed(:ceph_clusters)
+    |> cast_embed(:ceph_filesystems)
+    |> cast_embed(:ip_address_pools)
+    |> cast_embed(:ip_address_pools)
+    |> validate_required(@required_fields)
+  end
+
+  def new(map) do
+    %__MODULE__{}
+    |> changeset(map)
+    |> apply_action(:insert)
   end
 end

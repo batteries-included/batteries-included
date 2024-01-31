@@ -46,8 +46,8 @@ defmodule CommonCore.RootResourceGeneratorTest do
       :everything
       |> CommonCore.StateSummary.SeedState.seed()
       |> RootResourceGenerator.materialize()
-      |> then(&assert_one_resouce_definition/1)
-      |> then(&Map.values/1)
+      |> assert_one_resouce_definition()
+      |> Map.values()
       |> Enum.each(&assert_valid/1)
     end
   end
@@ -58,7 +58,7 @@ defmodule CommonCore.RootResourceGeneratorTest do
       :dev
       |> CommonCore.StateSummary.SeedState.seed()
       |> RootResourceGenerator.materialize()
-      |> then(&Map.values/1)
+      |> Map.values()
       |> Enum.each(&assert_valid/1)
     end
   end

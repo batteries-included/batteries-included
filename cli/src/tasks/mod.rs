@@ -1,7 +1,9 @@
 mod get_install_spec;
 mod inflate_local_spec;
 mod initial_apply;
+mod kube_bootstrap;
 mod kube_provider;
+mod mix;
 mod podman;
 mod port_forward;
 mod setup_db;
@@ -13,6 +15,7 @@ pub use inflate_local_spec::add_local_to_spec;
 pub use initial_apply::initial_apply;
 pub use kube_provider::ensure_kube_provider_started;
 
+pub use kube_bootstrap::mix_bootstrap_kube;
 pub use podman::ensure_podman_started;
 pub use port_forward::port_forward;
 pub use port_forward::port_forward_postgres;

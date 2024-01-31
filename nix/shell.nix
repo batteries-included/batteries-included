@@ -33,8 +33,6 @@
         postgresql
 
         bind
-
-        graphite-cli
       ];
 
       rustNativeBuildTools = with pkgs; [

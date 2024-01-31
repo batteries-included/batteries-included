@@ -19,14 +19,14 @@ defmodule KubeServices.Stale do
     KubeState.snapshot()
     |> Enum.flat_map(fn {_key, values} -> values end)
     |> Enum.filter(fn r ->
-      is_stale(r, seen_res_set)
+      stale?(r, seen_res_set)
     end)
   end
 
-  def is_stale(resource, seen_res_set \\ nil)
-  def is_stale(resource, nil), do: is_stale(resource, recent_resource_map_set())
+  def stale?(resource, seen_res_set \\ nil)
+  def stale?(resource, nil), do: stale?(resource, recent_resource_map_set())
 
-  def is_stale(r, seen_res_set) do
+  def stale?(r, seen_res_set) do
     case {has_owners?(r), good_labels?(r), has_annotation?(r), to_tuple(r)} do
       # If this resource is owned by something then is directly controlled by us
       {true, _, _, _} ->
@@ -53,10 +53,7 @@ defmodule KubeServices.Stale do
   end
 
   def recent_resource_map_set(num_snapshots \\ 10) do
-    num_snapshots
-    |> StaleSnaphotApply.most_recent_snapshot_paths()
-    |> Enum.map(&to_tuple!/1)
-    |> MapSet.new()
+    num_snapshots |> StaleSnaphotApply.most_recent_snapshot_paths() |> MapSet.new(&to_tuple!/1)
   end
 
   defp to_tuple!(r) do

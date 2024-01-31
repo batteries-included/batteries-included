@@ -60,7 +60,7 @@ defmodule KubeServices.KubeStateCoverageTest do
       |> RootResourceGenerator.materialize()
       |> Enum.map(fn {_path, resource} -> {api_version(resource), kind(resource)} end)
       |> Enum.each(fn {api_version, kind} ->
-        assert ApiVersionKind.is_watchable(api_version, kind),
+        assert ApiVersionKind.watchable?(api_version, kind),
                "Expected #{api_version} and #{kind} to be know types that can be watched by KubeState"
       end)
     end
@@ -93,7 +93,7 @@ defmodule KubeServices.KubeStateCoverageTest do
       |> Enum.sort()
       |> Enum.uniq()
       |> Enum.each(fn {api_ver, res_kind} ->
-        assert ApiVersionKind.is_watchable(api_ver, res_kind),
+        assert ApiVersionKind.watchable?(api_ver, res_kind),
                "Expected #{api_ver} and #{res_kind} to be know types that can be watched by KubeState {#{inspect(api_ver)}, #{inspect(res_kind)}}"
       end)
     end

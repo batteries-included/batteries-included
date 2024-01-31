@@ -36,7 +36,7 @@ defmodule CommonCore.Resources.FilterResource do
     do: batteries_installed?(state, [battery_type])
 
   def batteries_installed?(state, battery_types) when is_list(battery_types) do
-    installed = state.batteries |> Enum.map(& &1.type) |> MapSet.new()
+    installed = MapSet.new(state.batteries, & &1.type)
     Enum.all?(battery_types, fn bt -> MapSet.member?(installed, bt) end)
   end
 

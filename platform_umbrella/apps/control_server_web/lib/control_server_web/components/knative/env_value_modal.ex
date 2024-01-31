@@ -74,15 +74,15 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
     Changeset.get_field(changeset, :source_type)
   end
 
-  defp is_value(changeset) do
+  defp value_selected?(changeset) do
     extract_source_type(changeset) in [:value, "value"]
   end
 
-  defp is_config(changeset) do
+  defp config_selected?(changeset) do
     extract_source_type(changeset) in [:config, "config"]
   end
 
-  defp is_secret(changeset) do
+  defp secret_selected?(changeset) do
     extract_source_type(changeset) in [:secret, "secret"]
   end
 
@@ -129,26 +129,34 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
               wrapper_class="col-span-2"
             />
             <.tab_bar class="col-span-2">
-              <.tab_item phx-click="value" phx-target={@myself} selected={is_value(@changeset)}>
+              <.tab_item phx-click="value" phx-target={@myself} selected={value_selected?(@changeset)}>
                 Explicit Value
               </.tab_item>
-              <.tab_item phx-click="config" phx-target={@myself} selected={is_config(@changeset)}>
+              <.tab_item
+                phx-click="config"
+                phx-target={@myself}
+                selected={config_selected?(@changeset)}
+              >
                 Config Map
               </.tab_item>
-              <.tab_item phx-click="secret" phx-target={@myself} selected={is_secret(@changeset)}>
+              <.tab_item
+                phx-click="secret"
+                phx-target={@myself}
+                selected={secret_selected?(@changeset)}
+              >
                 Secret
               </.tab_item>
             </.tab_bar>
             <PC.input type="hidden" field={@form[:source_type]} />
-            <.value_inputs :if={is_value(@changeset)} form={@form} />
+            <.value_inputs :if={value_selected?(@changeset)} form={@form} />
             <.resource_inputs
-              :if={is_config(@changeset)}
+              :if={config_selected?(@changeset)}
               form={@form}
               resources={@configs}
               label="Config Map"
             />
             <.resource_inputs
-              :if={is_secret(@changeset)}
+              :if={secret_selected?(@changeset)}
               form={@form}
               resources={@secrets}
               label="Secret"

@@ -26,13 +26,14 @@ defmodule CommonCore.Resources.ResourceGenerator do
     quote do
       @behaviour CommonCore.Resources.ResourceGenerator.Materialize
 
+      @before_compile unquote(__MODULE__)
+
       import unquote(__MODULE__)
 
       Module.register_attribute(__MODULE__, :resource_generator, accumulate: true, persist: false)
       Module.register_attribute(__MODULE__, :resource_generator_opts, [])
 
       @resource_generator_opts unquote(opts)
-      @before_compile unquote(__MODULE__)
     end
   end
 

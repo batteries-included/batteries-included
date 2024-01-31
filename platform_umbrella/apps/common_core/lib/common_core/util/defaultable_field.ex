@@ -29,10 +29,11 @@ defmodule CommonCore.Util.DefaultableField do
 
   defp prelude do
     quote do
+      @before_compile {unquote(__MODULE__), :__before_compile__}
+
       import unquote(__MODULE__), only: [defaultable_field: 3]
 
       Module.register_attribute(__MODULE__, :__defaultable_field_fields, accumulate: true)
-      @before_compile {unquote(__MODULE__), :__before_compile__}
     end
   end
 

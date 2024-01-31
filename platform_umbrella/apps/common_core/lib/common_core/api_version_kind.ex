@@ -144,11 +144,11 @@ defmodule CommonCore.ApiVersionKind do
     end
   end
 
-  @spec is_watchable({binary(), binary()}) :: boolean
-  def is_watchable({api_version, kind}), do: is_watchable(api_version, kind)
+  @spec watchable?({binary(), binary()}) :: boolean
+  def watchable?({api_version, kind}), do: watchable?(api_version, kind)
 
-  @spec is_watchable(binary(), binary()) :: boolean
-  def is_watchable(api_version, kind) do
+  @spec watchable?(binary(), binary()) :: boolean
+  def watchable?(api_version, kind) do
     Enum.any?(@known, fn {_key, {known_api, known_kind}} ->
       api_version == known_api && kind == known_kind
     end)

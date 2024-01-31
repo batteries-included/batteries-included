@@ -116,4 +116,6 @@ config :phoenix, :stacktrace_depth, 20
 
 config :kube_services, cluster_type: :dev
 
+config :common_core, :clusters, default: {:file, "~/.kube/config"}
+
 config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local

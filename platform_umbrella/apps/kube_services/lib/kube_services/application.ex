@@ -20,7 +20,7 @@ defmodule KubeServices.Application do
 
   def children(true = _run) do
     [
-      KubeServices.ConnectionPool,
+      CommonCore.ConnectionPool,
       {Task.Supervisor, name: @task_supervisor},
       KubeServices.KubeState,
       KubeServices.SystemState,

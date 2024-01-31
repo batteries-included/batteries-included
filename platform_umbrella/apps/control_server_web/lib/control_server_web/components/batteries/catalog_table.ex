@@ -27,7 +27,7 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
     """
   end
 
-  defp is_active(active, type), do: Map.has_key?(active, type)
+  defp battery_active?(active, type), do: Map.has_key?(active, type)
 
   attr :catalog_batteries, :list, required: true
   attr :system_batteries, :list, required: true
@@ -52,10 +52,10 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
         <%= battery.group %>
       </:col>
       <:col :let={battery} label="Status">
-        <.active_check :if={is_active(@system_batteries, battery.type)} />
+        <.active_check :if={battery_active?(@system_batteries, battery.type)} />
       </:col>
       <:col :let={battery} label="Install">
-        <.start_button :if={!is_active(@system_batteries, battery.type)} battery={battery} />
+        <.start_button :if={!battery_active?(@system_batteries, battery.type)} battery={battery} />
       </:col>
     </.table>
     """

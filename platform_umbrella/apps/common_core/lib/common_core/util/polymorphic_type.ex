@@ -24,12 +24,11 @@ defmodule CommonCore.Util.PolymorphicType do
   defp prelude(type) do
     quote do
       use Ecto.Type
+      @before_compile {unquote(__MODULE__), :__before_compile__}
 
       import unquote(__MODULE__), only: [type_field: 0]
 
       @__polymorphic_type unquote(type)
-
-      @before_compile {unquote(__MODULE__), :__before_compile__}
     end
   end
 
@@ -135,7 +134,7 @@ defmodule CommonCore.Util.PolymorphicType do
   defp type_from(_mappings, _type), do: :error
 
   defp validate(opts) do
-    if !Keyword.has_key?(opts, :mappings) do
+    unless Keyword.has_key?(opts, :mappings) do
       {:error, ["missing type mappings (:mappings)"]}
     end
   end
