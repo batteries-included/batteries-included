@@ -6,11 +6,11 @@ defmodule CommonCore.Resources.BatteryCA do
 
   alias CommonCore.Resources.Builder, as: B
 
-  resource(:certmanger_issuer_selfsigned, _battery, state) do
+  resource(:certmanager_issuer_selfsigned, _battery, state) do
     namespace = base_namespace(state)
     spec = %{"selfSigned" => %{}}
 
-    :certmanger_issuer
+    :certmanager_issuer
     |> B.build_resource()
     |> B.name("battery-root")
     |> B.namespace(namespace)
@@ -34,7 +34,7 @@ defmodule CommonCore.Resources.BatteryCA do
       |> Map.put("secretName", "battery-ca")
       |> Map.put("subject", %{"organizations" => ["cluster.local", "batteries-included"]})
 
-    :certmanger_certificate
+    :certmanager_certificate
     |> B.build_resource()
     |> B.name("battery-ca")
     |> B.namespace(namespace)
@@ -53,7 +53,7 @@ defmodule CommonCore.Resources.BatteryCA do
     # cert-manager config but it's currently the NS it is running in
     spec = %{"ca" => %{"secretName" => "battery-ca"}}
 
-    :certmanger_cluster_issuer
+    :certmanager_cluster_issuer
     |> B.build_resource()
     |> B.name("battery-ca")
     |> B.spec(spec)

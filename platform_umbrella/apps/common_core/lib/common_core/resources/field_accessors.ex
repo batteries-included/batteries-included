@@ -8,17 +8,23 @@ defmodule CommonCore.Resources.FieldAccessors do
   defdelegate kind(resource), to: K8s.Resource
   defdelegate labels(resource), to: K8s.Resource
   defdelegate annotations(resource), to: K8s.Resource
+  defdelegate metadata(resource), to: K8s.Resource
+  defdelegate api_version(resource), to: K8s.Resource
 
   def uid(resource) do
-    get_in(resource, ~w(metadata uid))
+    resource |> metadata() |> Map.get("uid")
   end
 
   def conditions(resource) do
-    get_in(resource, ~w|status conditions|) || []
+    resource |> status() |> Map.get("conditions", [])
   end
 
   def creation_timestamp(resource) do
-    get_in(resource, ~w(metadata creationTimestamp))
+    resource |> metadata() |> Map.get("creationTimestamp")
+  end
+
+  def spec(resource) do
+    Map.get(resource, "spec", %{})
   end
 
   def status(resource) do
@@ -26,19 +32,19 @@ defmodule CommonCore.Resources.FieldAccessors do
   end
 
   def ports(resource) do
-    get_in(resource, ~w|spec ports|) || []
+    resource |> spec() |> Map.get("ports", [])
   end
 
   def phase(resource) do
-    get_in(resource, ~w(status phase))
+    resource |> status() |> Map.get("phase")
   end
 
   def replicas(resource) do
-    get_in(resource, ~w(spec replicas))
+    resource |> spec() |> Map.get("replicas")
   end
 
   def available_replicas(resource) do
-    get_in(resource, ~w(status availableReplicas))
+    resource |> status() |> Map.get("availableReplicas")
   end
 
   def labeled_owner(resource) do
@@ -46,24 +52,32 @@ defmodule CommonCore.Resources.FieldAccessors do
   end
 
   def container_statuses(resource) do
-    container_statuses = get_in(resource, ["status", "containerStatuses"]) || []
-    init_container_statuses = get_in(resource, ["status", "initContainerStatuses"]) || []
-    Enum.concat(init_container_statuses, container_statuses)
+    resource
+    |> status()
+    |> Map.take(~w(containerStatuses initContainerStatuses))
+    |> Map.values()
+    |> List.flatten()
   end
 
   def pod_ip(resource) do
-    get_in(resource, ~w(status podIP))
+    resource |> status() |> Map.get("podIP")
   end
 
   def node_name(resource) do
-    get_in(resource, ~w(spec nodeName))
+    resource |> spec() |> Map.get("nodeName")
   end
 
   def qos_class(resource) do
-    get_in(resource, ~w(status qosClass))
+    resource |> status() |> Map.get("qosClass")
   end
 
   def service_account(resource) do
-    get_in(resource, ~w(spec serviceAccount))
+    resource |> spec() |> Map.get("serviceAccount")
+  end
+
+  def group(%{"apiVersion" => api_version} = _resource) when api_version === "v1", do: "core"
+
+  def group(resource) do
+    resource |> api_version() |> String.split("/") |> List.first()
   end
 end

@@ -10,7 +10,7 @@ defmodule CommonCore.Resources.TrustManager do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
 
-  resource(:certmanger_certificate_trust_manager, _battery, state) do
+  resource(:certmanager_certificate_trust_manager, _battery, state) do
     namespace = base_namespace(state)
 
     spec =
@@ -23,7 +23,7 @@ defmodule CommonCore.Resources.TrustManager do
       |> Map.put("revisionHistoryLimit", 1)
       |> Map.put("secretName", "trust-manager-tls")
 
-    :certmanger_certificate
+    :certmanager_certificate
     |> B.build_resource()
     |> B.name("trust-manager")
     |> B.namespace(namespace)

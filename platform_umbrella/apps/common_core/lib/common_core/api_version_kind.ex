@@ -1,5 +1,7 @@
 defmodule CommonCore.ApiVersionKind do
   @moduledoc false
+  import CommonCore.Resources.FieldAccessors, only: [api_version: 1, kind: 1]
+
   @known [
     api_service: {"apiregistration.k8s.io/v1", "APIService"},
     event: {"v1", "Event"},
@@ -26,6 +28,7 @@ defmodule CommonCore.ApiVersionKind do
     validating_webhook_config: {"admissionregistration.k8s.io/v1", "ValidatingWebhookConfiguration"},
     mutating_webhook_config: {"admissionregistration.k8s.io/v1", "MutatingWebhookConfiguration"},
     ingress: {"networking.k8s.io/v1", "Ingress"},
+    ingress_class: {"networking.k8s.io/v1", "IngressClass"},
     pod_disruption_budget: {"policy/v1", "PodDisruptionBudget"},
     pod_security_policy: {"policy/v1beta1", "PodSecurityPolicy"},
     horizontal_pod_autoscaler: {"autoscaling/v2", "HorizontalPodAutoscaler"},
@@ -45,11 +48,11 @@ defmodule CommonCore.ApiVersionKind do
     knative_revision: {"serving.knative.dev/v1", "Revision"},
     knative_image: {"caching.internal.knative.dev/v1alpha1", "Image"},
     redis_failover: {"databases.spotahome.com/v1", "RedisFailover"},
-    certmanger_certificate: {"cert-manager.io/v1", "Certificate"},
-    certmanger_challenge: {"acme.cert-manager.io/v1", "Challenge"},
+    certmanager_certificate: {"cert-manager.io/v1", "Certificate"},
+    certmanager_challenge: {"acme.cert-manager.io/v1", "Challenge"},
     certmanager_order: {"acme.cert-manager.io/v1", "Order"},
-    certmanger_issuer: {"cert-manager.io/v1", "Issuer"},
-    certmanger_cluster_issuer: {"cert-manager.io/v1", "ClusterIssuer"},
+    certmanager_issuer: {"cert-manager.io/v1", "Issuer"},
+    certmanager_cluster_issuer: {"cert-manager.io/v1", "ClusterIssuer"},
     certmanager_certificate_request: {"cert-manager.io/v1", "CertificateRequest"},
     trustmanager_bundle: {"trust.cert-manager.io/v1alpha1", "Bundle"},
     ceph_cluster: {"ceph.rook.io/v1", "CephCluster"},
@@ -153,7 +156,4 @@ defmodule CommonCore.ApiVersionKind do
       api_version == known_api && kind == known_kind
     end)
   end
-
-  defp api_version(%{} = res), do: Map.get(res, "apiVersion")
-  defp kind(%{} = res), do: Map.get(res, "kind")
 end

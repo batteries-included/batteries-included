@@ -7,7 +7,7 @@ defmodule CommonCore.Resources.IstioCsr do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
 
-  resource(:certmanger_certificate_istiod, _battery, state) do
+  resource(:certmanager_certificate_istiod, _battery, state) do
     namespace = istio_namespace(state)
 
     spec =
@@ -30,7 +30,7 @@ defmodule CommonCore.Resources.IstioCsr do
       |> Map.put("secretName", "istiod-tls")
       |> Map.put("uris", ["spiffe://cluster.local/ns/#{namespace}/sa/istiod"])
 
-    :certmanger_certificate
+    :certmanager_certificate
     |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
