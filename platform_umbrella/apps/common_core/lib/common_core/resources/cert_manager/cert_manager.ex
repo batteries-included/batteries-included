@@ -519,7 +519,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
               "args" => [
                 "--v=2",
                 "--cluster-resource-namespace=$(POD_NAMESPACE)",
-                "--leader-election-namespace=kube-system",
+                "--leader-election-namespace=#{namespace}",
                 "--acme-http01-solver-image=#{battery.config.acmesolver_image}",
                 "--max-concurrent-challenges=60"
               ],
