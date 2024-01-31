@@ -584,7 +584,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
         %{
           "containers" => [
             %{
-              "args" => ["--v=2", "--leader-election-namespace=kube-system"],
+              "args" => ["--v=2", "--leader-election-namespace=#{namespace}"],
               "env" => [
                 %{"name" => "POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
               ],
@@ -760,6 +760,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.component_label("webhook")
+    |> B.annotation("cert-manager.io/inject-ca-from-secret", "#{namespace}/cert-manager-webhook-ca")
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1"],
@@ -1006,6 +1007,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name("cert-manager-webhook")
     |> B.component_label("webhook")
+    |> B.annotation("cert-manager.io/inject-ca-from-secret", "#{namespace}/cert-manager-webhook-ca")
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1"],
