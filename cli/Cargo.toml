@@ -29,7 +29,7 @@ serde = { version = "1.0.196" }
 serde_json = { version = "1.0.113", default-features = true }
 tempfile = { version = "3.9.0" }
 thiserror = { version = "1.0.56" }
-time = { version = "0.3.31", features = ["serde", "serde-human-readable"] }
+time = { version = "0.3.32", features = ["serde", "serde-human-readable"] }
 tokio = { version = "1.35.1", features = ["full"] }
 tokio-stream = { version = "0.1.14", features = ["net", "time"] }
 tracing = { version = "0.1.40" }
