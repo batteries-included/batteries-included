@@ -37,7 +37,7 @@ defmodule PodLogs.Watcher do
     case K8s.Client.stream(conn, op) do
       {:ok, watch_stream} ->
         Enum.each(watch_stream, fn _event ->
-          Logger.info("Message Recieved")
+          Logger.info("Message Received")
         end)
 
         :ok

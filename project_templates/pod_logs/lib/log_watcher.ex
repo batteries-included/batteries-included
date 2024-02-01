@@ -59,7 +59,7 @@ defmodule PodLogs.LogWatcher do
 
   @impl GenServer
   def handle_info({:stdout, _data}, ctx) do
-    Logger.info("Log recieved")
+    Logger.info("Log received")
     {:noreply, ctx}
   end
 

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Integration.PostgrestTest do
+defmodule ControlServerWeb.Integration.PostgresTest do
   use ControlServerWeb.IntegrationTestCase
 
   @base_cluster_name "int-test"
