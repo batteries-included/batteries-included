@@ -52,4 +52,52 @@ defmodule CommonCore.Resources.FieldAccessorsTest do
     resource = %{}
     assert available_replicas(resource) == nil
   end
+
+  test "group/1 returns the correct group" do
+    Enum.map(
+      [
+        # a whole bunch of api versions and their group
+        {"acme.cert-manager.io/v1", "acme.cert-manager.io"},
+        {"admissionregistration.k8s.io/v1", "admissionregistration.k8s.io"},
+        {"apiextensions.k8s.io/v1", "apiextensions.k8s.io"},
+        {"apiregistration.k8s.io/v1", "apiregistration.k8s.io"},
+        {"apps/v1", "apps"},
+        {"authentication.k8s.io/v1", "authentication.k8s.io"},
+        {"authorization.k8s.io/v1", "authorization.k8s.io"},
+        {"autoscaling/v2", "autoscaling"},
+        {"batch/v1", "batch"},
+        {"certificates.k8s.io/v1", "certificates.k8s.io"},
+        {"cert-manager.io/v1", "cert-manager.io"},
+        {"coordination.k8s.io/v1", "coordination.k8s.io"},
+        {"crd.k8s.amazonaws.com/v1alpha1", "crd.k8s.amazonaws.com"},
+        {"discovery.k8s.io/v1", "discovery.k8s.io"},
+        {"elbv2.k8s.aws/v1beta1", "elbv2.k8s.aws"},
+        {"events.k8s.io/v1", "events.k8s.io"},
+        {"extensions.istio.io/v1alpha1", "extensions.istio.io"},
+        {"flowcontrol.apiserver.k8s.io/v1", "flowcontrol.apiserver.k8s.io"},
+        {"install.istio.io/v1alpha1", "install.istio.io"},
+        {"karpenter.k8s.aws/v1alpha1", "karpenter.k8s.aws"},
+        {"karpenter.k8s.aws/v1beta1", "karpenter.k8s.aws"},
+        {"karpenter.sh/v1alpha5", "karpenter.sh"},
+        {"karpenter.sh/v1beta1", "karpenter.sh"},
+        {"networking.istio.io/v1alpha3", "networking.istio.io"},
+        {"networking.istio.io/v1beta1", "networking.istio.io"},
+        {"networking.k8s.aws/v1alpha1", "networking.k8s.aws"},
+        {"networking.k8s.io/v1", "networking.k8s.io"},
+        {"node.k8s.io/v1", "node.k8s.io"},
+        {"policy/v1", "policy"},
+        {"postgresql.cnpg.io/v1", "postgresql.cnpg.io"},
+        {"rbac.authorization.k8s.io/v1", "rbac.authorization.k8s.io"},
+        {"scheduling.k8s.io/v1", "scheduling.k8s.io"},
+        {"security.istio.io/v1", "security.istio.io"},
+        {"security.istio.io/v1beta1", "security.istio.io"},
+        {"storage.k8s.io/v1", "storage.k8s.io"},
+        {"telemetry.istio.io/v1alpha1", "telemetry.istio.io"},
+        {"v1", "core"},
+        {"vpcresources.k8s.aws/v1alpha1", "vpcresources.k8s.aws"},
+        {"vpcresources.k8s.aws/v1beta1", "vpcresources.k8s.aws"}
+      ],
+      fn {apiversion, expected} -> assert group(%{"apiVersion" => apiversion}) == expected end
+    )
+  end
 end
