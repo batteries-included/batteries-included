@@ -109,6 +109,8 @@ defmodule CommonCore.Resources.FieldAccessors do
   def group(%{"apiVersion" => api_version} = _resource) when api_version === "v1", do: "core"
 
   def group(resource) do
-    resource |> api_version() |> String.split("/") |> List.first()
+    resource |> api_version() |> group_from_api_version()
   end
+
+  def group_from_api_version(apiversion), do: apiversion |> String.split("/") |> List.first()
 end

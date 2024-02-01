@@ -126,6 +126,7 @@ defmodule CommonCore.Resources.Builder do
   def ports(resource, ports), do: Map.put(resource, "ports", ports)
   def rules(resource, rules), do: Map.put(resource, "rules", rules)
 
+  @spec role_ref(map, map) :: map
   def role_ref(resource, role_ref), do: Map.put(resource, "roleRef", role_ref)
 
   def subject(resource, subject) do
@@ -134,7 +135,6 @@ defmodule CommonCore.Resources.Builder do
     |> update_in(~w(subjects), fn subjects -> [subject | subjects] end)
   end
 
-  @spec role_ref(map, map) :: map
   def aggregation_rule(resource, rule_map), do: Map.put(resource, "aggregationRule", rule_map)
 
   def build_cluster_role_ref(cluster_role_name) do
@@ -184,6 +184,14 @@ defmodule CommonCore.Resources.Builder do
         name: name,
         key: key
       }
+    }
+  end
+
+  def issuer_ref(group, kind, name) do
+    %{
+      "group" => group,
+      "kind" => kind,
+      "name" => name
     }
   end
 end

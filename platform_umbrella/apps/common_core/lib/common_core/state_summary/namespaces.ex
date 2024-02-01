@@ -7,31 +7,13 @@ defmodule CommonCore.StateSummary.Namespaces do
   alias CommonCore.StateSummary
 
   @spec core_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def core_namespace(%StateSummary{} = summary) do
-    case battery_core_config(summary) do
-      %BatteryCoreConfig{} = config -> config.core_namespace
-      _ -> nil
-    end
-  end
+  def core_namespace(%StateSummary{} = summary), do: core_config_namespace(summary, :core_namespace)
 
   @spec base_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def base_namespace(%StateSummary{} = summary) do
-    case battery_core_config(summary) do
-      %BatteryCoreConfig{} = config -> config.base_namespace
-      _ -> nil
-    end
-  end
+  def base_namespace(%StateSummary{} = summary), do: core_config_namespace(summary, :base_namespace)
 
   @spec istio_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def istio_namespace(%StateSummary{} = summary) do
-    case get_battery(summary, :istio) do
-      nil ->
-        nil
-
-      battery ->
-        battery.config.namespace
-    end
-  end
+  def istio_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :istio)
 
   #
   # User Namespaces
@@ -42,24 +24,25 @@ defmodule CommonCore.StateSummary.Namespaces do
   # Notebooks
   # etc
   @spec ml_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def ml_namespace(%StateSummary{} = summary) do
-    case battery_core_config(summary) do
-      %BatteryCoreConfig{} = config -> config.ml_namespace
-      _ -> nil
-    end
-  end
+  def ml_namespace(%StateSummary{} = summary), do: core_config_namespace(summary, :ml_namespace)
 
   @spec data_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def data_namespace(%StateSummary{} = summary) do
+  def data_namespace(%StateSummary{} = summary), do: core_config_namespace(summary, :data_namespace)
+
+  @spec knative_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  def knative_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :knative)
+
+  @spec core_config_namespace(CommonCore.StateSummary.t(), atom()) :: binary() | nil
+  defp core_config_namespace(summary, key) do
     case battery_core_config(summary) do
-      %BatteryCoreConfig{} = config -> config.data_namespace
+      %BatteryCoreConfig{} = config -> get_in(config, [Access.key(key)])
       _ -> nil
     end
   end
 
-  @spec knative_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def knative_namespace(%StateSummary{} = summary) do
-    case get_battery(summary, :knative) do
+  @spec battery_namespace(CommonCore.StateSummary.t(), atom()) :: binary() | nil
+  defp battery_namespace(summary, battery) do
+    case get_battery(summary, battery) do
       %{config: config} ->
         config.namespace
 
@@ -68,9 +51,9 @@ defmodule CommonCore.StateSummary.Namespaces do
     end
   end
 
-  # Given a summary get the BatteryCorConfig.
+  # Given a summary get the BatteryCoreConfig.
   #
-  # Return nil if the battery isn' there
+  # Return nil if the battery isn't there
   # Return nil if the config isn't there
   # Return nil if the config isn't valid.
   defp battery_core_config(summary) do

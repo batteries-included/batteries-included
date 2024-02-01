@@ -1,8 +1,12 @@
 defmodule CommonCore.StateSummary.FromKubeState do
   @moduledoc false
+  import CommonCore.Resources.FieldAccessors
+
   alias CommonCore.StateSummary
 
-  @namespaceless [:namespace, :node, :cluster_role, :cluster_role_binding]
+  @namespaceless ~w(
+    namespace node cluster_role cluster_role_binding certmanager_cluster_issuer
+  )a
 
   def find_state_resource(%StateSummary{} = state, resource_type, name)
       when is_atom(resource_type) and resource_type in @namespaceless do
@@ -10,7 +14,7 @@ defmodule CommonCore.StateSummary.FromKubeState do
     |> Map.get(:kube_state, %{})
     |> Map.get(resource_type, %{})
     |> Enum.find(nil, fn r ->
-      name == get_in(r, ~w(metadata name))
+      name == name(r)
     end)
   end
 
@@ -19,8 +23,8 @@ defmodule CommonCore.StateSummary.FromKubeState do
     |> Map.get(:kube_state, %{})
     |> Map.get(resource_type, %{})
     |> Enum.find(nil, fn resource ->
-      namespace == get_in(resource, ~w(metadata namespace)) &&
-        name == get_in(resource, ~w(metadata name))
+      namespace == namespace(resource) &&
+        name == name(resource)
     end)
   end
 end
