@@ -10,6 +10,7 @@ defmodule KubeServices.SystemState.SummaryBatteries do
   use GenServer
 
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Batteries
   alias EventCenter.SystemStateSummary
   alias KubeServices.SystemState.Summarizer
 
@@ -61,7 +62,7 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   @impl GenServer
   def handle_call({:battery_installed, battery_type}, _from, %{summary: %StateSummary{batteries: batteries}} = state) do
-    {:reply, Enum.any?(batteries, fn b -> b.type == battery_type end), state}
+    {:reply, Enum.any?(batteries, &Batteries.battery_matches_type(&1, battery_type)), state}
   end
 
   @impl GenServer

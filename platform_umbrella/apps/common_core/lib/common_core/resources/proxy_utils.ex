@@ -18,14 +18,14 @@ defmodule CommonCore.Resources.ProxyUtils do
 
   @spec extension_name(SystemBattery.t(), StateSummary.t()) :: String.t()
   def extension_name(%SystemBattery{type: battery_type} = _battery, %StateSummary{} = _state) do
-    "#{battery_type |> Atom.to_string() |> sanitize()}-ext-authz-http"
+    "#{sanitize(battery_type)}-ext-authz-http"
   end
 
   def extension_name(_, _), do: nil
 
   @spec service_name(SystemBattery.t(), StateSummary.t()) :: String.t()
   def service_name(%SystemBattery{type: battery_type} = _battery, %StateSummary{} = _state) do
-    "oauth2-proxy-#{battery_type |> Atom.to_string() |> sanitize()}"
+    "oauth2-proxy-#{sanitize(battery_type)}"
   end
 
   def service_name(_, _), do: nil
@@ -65,6 +65,9 @@ defmodule CommonCore.Resources.ProxyUtils do
     root = "http://#{host}/realms/#{realm_name}"
     %{"jwtRules" => [%{"issuer" => root, "jwksUri" => "#{root}/protocol/openid-connect/certs"}]}
   end
+
+  @spec sanitize(atom()) :: String.t()
+  def sanitize(a) when is_atom(a), do: sanitize(Atom.to_string(a))
 
   @spec sanitize(String.t()) :: String.t()
   def sanitize(s) do

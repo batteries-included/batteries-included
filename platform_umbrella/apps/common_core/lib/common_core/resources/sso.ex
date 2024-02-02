@@ -3,20 +3,17 @@ defmodule CommonCore.Resources.SSO do
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Resources.Oauth2Proxy
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Batteries
 
   @proxy_enabled_batteries ~w[notebooks smtp4dev vm_agent vm_cluster text_generation_webui]a
 
   def proxy_enabled_batteries, do: @proxy_enabled_batteries
 
-  def materialize(%SystemBattery{} = _battery, %StateSummary{batteries: batteries} = state) do
-    batteries
-    |> batteries_by_type()
-    |> Enum.reject(fn {type, _battery} -> type not in @proxy_enabled_batteries end)
+  def materialize(%SystemBattery{} = _battery, %StateSummary{} = state) do
+    state
+    |> Batteries.by_type()
+    |> Enum.filter(fn {type, _battery} -> type in @proxy_enabled_batteries end)
     |> Enum.map(fn {_type, battery} -> Oauth2Proxy.materialize(battery, state) end)
     |> Enum.reduce(%{}, &Map.merge/2)
-  end
-
-  defp batteries_by_type(batteries) do
-    Enum.reduce(batteries, %{}, fn battery, acc -> Map.put(acc, battery.type, battery) end)
   end
 end
