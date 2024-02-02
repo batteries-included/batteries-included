@@ -29,6 +29,7 @@ config :home_base, HomeBase.Repo,
 # with webpack to recompile .js and .css sources.
 config :control_server_web, ControlServerWeb.Endpoint,
   ecto_repos: [ControlServer.Repo],
+  adapter: Bandit.PhoenixAdapter,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,

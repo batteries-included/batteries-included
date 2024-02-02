@@ -55,6 +55,7 @@ config :ex_audit,
 # Configures the endpoint
 config :control_server_web, ControlServerWeb.Endpoint,
   url: [host: "127.0.01"],
+  adapter: Bandit.PhoenixAdapter,
   secret_key_base: "+BsWyvsUA0yzXCZIedcDcji/t0CVxE2kofuBpouA44103zsGXTg4w4rSszEXaEfh",
   render_errors: [
     formats: [html: ControlServerWeb.ErrorHTML, json: ControlServerWeb.ErrorJSON],
@@ -66,6 +67,7 @@ config :control_server_web, ControlServerWeb.Endpoint,
 # Configures the endpoint
 config :home_base_web, HomeBaseWeb.Endpoint,
   url: [host: "127.0.0.1"],
+  adapter: Bandit.PhoenixAdapter,
   secret_key_base: "7ixRcXBdidan5QEouVvFc1LJ4egRMapcBXaxfmd6EyFJAITgx7PjR/MK4IrkWmrW",
   render_errors: [
     formats: [html: HomeBaseWeb.ErrorHTML, json: HomeBaseWeb.ErrorJSON],

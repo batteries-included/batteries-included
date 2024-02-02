@@ -12,11 +12,12 @@ defmodule ControlServerWeb.Knative.ContainerModal do
   end
 
   @impl Phoenix.LiveComponent
-  def update(%{container: container} = assigns, socket) do
+  def update(%{container: container, idx: idx} = assigns, socket) do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_changeset(Container.changeset(container, %{}))}
+     |> assign_changeset(Container.changeset(container, %{}))
+     |> assign(idx: idx)}
   end
 
   defp assign_changeset(socket, changeset) do
@@ -25,12 +26,12 @@ defmodule ControlServerWeb.Knative.ContainerModal do
 
   @impl Phoenix.LiveComponent
   def handle_event("close_modal", _, socket) do
-    ControlServerWeb.Live.Knative.FormComponent.update_container(nil)
+    ControlServerWeb.Live.Knative.FormComponent.update_container(nil, nil)
     {:noreply, socket}
   end
 
   def handle_event("cancel", _, socket) do
-    ControlServerWeb.Live.Knative.FormComponent.update_container(nil)
+    ControlServerWeb.Live.Knative.FormComponent.update_container(nil, nil)
     {:noreply, socket}
   end
 
@@ -41,11 +42,14 @@ defmodule ControlServerWeb.Knative.ContainerModal do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("save_container", %{"container" => params}, socket) do
-    changeset = Container.changeset(socket.assigns.container, params)
+  def handle_event("save_container", %{"container" => params}, %{assigns: %{container: container, idx: idx}} = socket) do
+    # Create a new changeset for the container
+    changeset = Container.changeset(container, params)
+    # Get the resulting container from the changeset
+    container = Changeset.apply_changes(changeset)
 
     if changeset.valid? do
-      ControlServerWeb.Live.Knative.FormComponent.update_container(Changeset.apply_changes(changeset))
+      ControlServerWeb.Live.Knative.FormComponent.update_container(container, idx)
     end
 
     {:noreply, assign_changeset(socket, changeset)}

@@ -16,9 +16,9 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
     """
   end
 
-  attr :editable, :boolean, default: false
-  attr :env_values, :list, default: []
-  attr :target, :any, default: nil
+  attr(:editable, :boolean, default: false)
+  attr(:env_values, :list, default: [])
+  attr(:target, :any, default: nil)
 
   def env_var_panel(%{editable: false} = assigns) do
     ~H"""
@@ -38,7 +38,7 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
         <.button
           variant="transparent"
           icon={:plus}
-          phx-click="new_env_var"
+          phx-click="new_env_value"
           type="button"
           phx-target={@target}
         >
@@ -57,6 +57,18 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
             phx-click="del:env_value"
             phx-value-idx={idx}
             tooltip="Remove"
+            link_type="button"
+            type="button"
+            phx-target={@target}
+          />
+
+          <.action_icon
+            to="/"
+            icon={:pencil}
+            id={"edit_env_value_" <> String.replace(ev.name, " ", "")}
+            phx-click="edit:env_value"
+            phx-value-idx={idx}
+            tooltip="Edit"
             link_type="button"
             type="button"
             phx-target={@target}

@@ -45,6 +45,7 @@ config :control_server, ControlServer.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
 config :control_server_web, ControlServerWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   http: [
     port: String.to_integer(port),
     # url: [host: web_host, port: String.to_integer(web_port)],
