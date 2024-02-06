@@ -2,7 +2,7 @@ defmodule KubeServices.SnapshotApply.WorkerSupervisor do
   @moduledoc false
   use Supervisor
 
-  alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.StateSummary.Batteries
 
   require Logger
 
@@ -14,7 +14,7 @@ defmodule KubeServices.SnapshotApply.WorkerSupervisor do
     children = [
       KubeServices.SnapshotApply.WorkerInnerSupervisor,
       # # Then start a genserver that monitors the system state and reconfigures if needed
-      {KubeServices.SystemState.ReconfigCanary, [methods: [&F.sso_installed?/1]]}
+      {KubeServices.SystemState.ReconfigCanary, [methods: [&Batteries.sso_installed?/1]]}
     ]
 
     Logger.debug("Starting snapshot apply worker supervisor tree")

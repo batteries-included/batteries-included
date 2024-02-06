@@ -6,8 +6,8 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Batteries.SystemBattery
-  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.Core
 
   @default_mesh_config %{
@@ -27,7 +27,7 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
     namespace = istio_namespace(state)
 
     # partially apply so we can re-use
-    battery_installed? = fn battery -> F.batteries_installed?(state, battery) end
+    battery_installed? = fn battery -> Batteries.batteries_installed?(state, battery) end
 
     # generate extension providers for sso enabled batteries that are installed
     authz_ext_providers =

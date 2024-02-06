@@ -5,15 +5,15 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults.Images
-  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Batteries
 
   def materialize(_battery, %StateSummary{} = state) do
     namespace_core = core_namespace(state)
     namespace_istio = istio_namespace(state)
 
     %{
-      "auth" => get_auth_config(state, F.sso_installed?(state)),
+      "auth" => get_auth_config(state, Batteries.sso_installed?(state)),
       "deployment" => %{
         "accessible_namespaces" => ["**"],
         "additional_service_yaml" => %{},

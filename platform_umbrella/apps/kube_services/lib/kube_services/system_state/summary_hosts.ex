@@ -53,18 +53,13 @@ defmodule KubeServices.SystemState.SummaryHosts do
   end
 
   @impl GenServer
-  def handle_call({:knative_host, service}, _from, %{summary: summary} = state) do
-    {:reply, CommonCore.StateSummary.Hosts.knative_host(summary, service), state}
-  end
-
-  @impl GenServer
-  def handle_call({:for_battery, battery_type}, _from, %{summary: summary} = state) do
-    {:reply, CommonCore.StateSummary.Hosts.for_battery(summary, battery_type), state}
-  end
-
-  @impl GenServer
   def handle_call(method, _from, %{summary: summary} = state) when is_atom(method) do
     {:reply, apply(CommonCore.StateSummary.Hosts, method, [summary]), state}
+  end
+
+  @impl GenServer
+  def handle_call([method | args], _from, %{summary: summary} = state) do
+    {:reply, apply(CommonCore.StateSummary.Hosts, method, [summary | args]), state}
   end
 
   @spec control_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
@@ -120,7 +115,7 @@ defmodule KubeServices.SystemState.SummaryHosts do
   @spec knative_host(atom | pid | {atom, any} | {:via, atom, any}, map() | struct()) ::
           String.t() | nil
   def knative_host(target \\ @me, service) do
-    GenServer.call(target, {:knative_host, service})
+    GenServer.call(target, [:knative_host, service])
   end
 
   @spec kiali_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
@@ -132,6 +127,6 @@ defmodule KubeServices.SystemState.SummaryHosts do
   # This should probably be revisited / revised in the future.
   @spec for_battery(atom | pid | {atom, any} | {:via, atom, any}, atom) :: String.t() | nil
   def for_battery(target \\ @me, battery_type) do
-    GenServer.call(target, {:for_battery, battery_type})
+    GenServer.call(target, [:for_battery, battery_type])
   end
 end

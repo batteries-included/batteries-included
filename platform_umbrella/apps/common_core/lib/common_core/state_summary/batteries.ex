@@ -42,4 +42,20 @@ defmodule CommonCore.StateSummary.Batteries do
   """
   @spec battery_matches_type(SystemBattery.t(), atom()) :: boolean()
   def battery_matches_type(%SystemBattery{type: type}, desired_type), do: type == desired_type
+
+  @doc """
+  Determines whether the given battery type(s) are installed.
+  """
+  @spec batteries_installed?(StateSummary.t(), atom()) :: boolean()
+  def batteries_installed?(%StateSummary{} = state, battery_type) when is_atom(battery_type),
+    do: batteries_installed?(state, [battery_type])
+
+  @spec batteries_installed?(StateSummary.t(), list()) :: boolean()
+  def batteries_installed?(%StateSummary{} = state, battery_types) when is_list(battery_types) do
+    installed = MapSet.new(state.batteries, & &1.type)
+    Enum.all?(battery_types, fn bt -> MapSet.member?(installed, bt) end)
+  end
+
+  def sso_installed?(%StateSummary{} = state), do: batteries_installed?(state, [:sso])
+  def keycloak_installed?(%StateSummary{} = state), do: batteries_installed?(state, [:keycloak])
 end

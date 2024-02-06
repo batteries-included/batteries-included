@@ -18,6 +18,7 @@ defmodule CommonCore.Resources.Gitea do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.PostgresState
 
   @ssh_port 2202
@@ -82,7 +83,7 @@ defmodule CommonCore.Resources.Gitea do
 
     domain = gitea_host(state)
 
-    sso_enabled? = F.sso_installed?(state)
+    sso_enabled? = Batteries.sso_installed?(state)
 
     data =
       %{}
@@ -206,7 +207,7 @@ defmodule CommonCore.Resources.Gitea do
     user = Enum.find(cluster.users, fn user -> user.username == Defaults.GiteaDB.db_username() end)
     secret_name = PostgresState.user_secret(state, cluster, user)
 
-    sso_enabled? = F.sso_installed?(state)
+    sso_enabled? = Batteries.sso_installed?(state)
 
     template =
       %{

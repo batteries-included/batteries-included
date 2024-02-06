@@ -7,6 +7,7 @@ defmodule CommonCore.Resources.FilterResource do
   reason (For example the inputs aren't there yet, or the
   dependent batteries aren't installed.)
   """
+  alias CommonCore.StateSummary.Batteries
 
   def require_battery(resource, state, battery_types \\ [])
 
@@ -14,7 +15,7 @@ defmodule CommonCore.Resources.FilterResource do
     do: require_battery(resource, state, [battery_type])
 
   def require_battery(resource, state, battery_types) when is_list(battery_types) do
-    if batteries_installed?(state, battery_types) do
+    if Batteries.batteries_installed?(state, battery_types) do
       resource
     end
   end
@@ -31,16 +32,4 @@ defmodule CommonCore.Resources.FilterResource do
 
   def require(resource, true), do: resource
   def require(_, _falsey), do: nil
-
-  def batteries_installed?(state, battery_type) when is_atom(battery_type),
-    do: batteries_installed?(state, [battery_type])
-
-  def batteries_installed?(state, battery_types) when is_list(battery_types) do
-    installed = MapSet.new(state.batteries, & &1.type)
-    Enum.all?(battery_types, fn bt -> MapSet.member?(installed, bt) end)
-  end
-
-  def keycloak_installed?(state), do: batteries_installed?(state, :keycloak)
-
-  def sso_installed?(state), do: batteries_installed?(state, :sso)
 end

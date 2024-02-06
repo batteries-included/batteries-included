@@ -33,7 +33,7 @@ defmodule KubeServices.SystemState.ReconfigCanary do
   end
 
   @impl GenServer
-  def handle_info(%CommonCore.StateSummary{} = summary, %State{state_summary: old, methods: methods} = state) do
+  def handle_info(%StateSummary{} = summary, %State{state_summary: old, methods: methods} = state) do
     if all_same(summary, old, methods) do
       Logger.debug("System state summary same as the previous summary, no reconfiguration with #{length(methods)}.")
 
@@ -44,7 +44,7 @@ defmodule KubeServices.SystemState.ReconfigCanary do
     end
   end
 
-  defp all_same(%CommonCore.StateSummary{} = new, %CommonCore.StateSummary{} = old, methods) do
+  defp all_same(%StateSummary{} = new, %StateSummary{} = old, methods) do
     Enum.all?(methods, &(do_try(new, &1) == do_try(old, &1)))
   end
 

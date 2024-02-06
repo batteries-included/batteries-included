@@ -14,6 +14,7 @@ defmodule CommonCore.Resources.Grafana do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.StateSummary.Batteries
 
   require Logger
 
@@ -88,7 +89,7 @@ defmodule CommonCore.Resources.Grafana do
   # https://web.archive.org/web/20230802094035/https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
   # https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
   defp add_auth_config(config, _battery, state) do
-    if F.sso_installed?(state) do
+    if Batteries.sso_installed?(state) do
       case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, app_name()) do
         %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
           keycloak_root_url =
