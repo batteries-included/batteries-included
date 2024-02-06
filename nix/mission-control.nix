@@ -246,6 +246,22 @@
             '';
           };
 
+          force-remove-namespace = {
+            description = "Forcefully remove the given namespace by removing finalizers";
+            category = "dev";
+            exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
+              [[ "$#" -ne 1 ]] && { echo "Missing namespace argument"; exit 1;}
+              NAMESPACE="$1"
+
+              # shellcheck disable=2046
+              kubectl get ns -o json $([[ -z ''${TRACE:-""} ]] || echo "-v=4") "$NAMESPACE"  \
+                  | jq '.spec.finalizers = []' \
+                  | kubectl replace $([[ -z ''${TRACE:-""} ]] || echo "-v=4") \
+                      --raw "/api/v1/namespaces/$NAMESPACE/finalize" -f -
+            '';
+          };
+
           package-challenge = {
             description = ''
               Package up candidate challenge: "bi package-challenge candidate-name [destination-dir] [challenge]"
@@ -258,7 +274,7 @@
           #   description = "";
           #   category = "";
           #   exec = ''
-          # '';
+          #   '';
           # };
 
         };
