@@ -2,7 +2,7 @@ defmodule KubeServices.Keycloak.OIDCInnerSupervisor do
   @moduledoc false
   use Supervisor
 
-  alias CommonCore.StateSummary.Hosts
+  alias CommonCore.StateSummary.URLs
   alias KubeServices.SystemState.Summarizer
 
   def start_link(opts) do
@@ -17,7 +17,10 @@ defmodule KubeServices.Keycloak.OIDCInnerSupervisor do
   # It's important that we don't start the provider early or it will flap
   # so make sure that there are realms before starting the provider
   defp children(%{keycloak_state: %{realms: realms}} = summary) when realms != [] do
-    url = "http://" <> Hosts.keycloak_host(summary) <> "/realms/batterycore"
+    url =
+      summary
+      |> URLs.keycloak_uri_for_realm("batterycore")
+      |> URI.to_string()
 
     [
       {Oidcc.ProviderConfiguration.Worker,

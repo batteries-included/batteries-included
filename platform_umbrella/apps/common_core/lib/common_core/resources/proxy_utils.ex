@@ -60,10 +60,16 @@ defmodule CommonCore.Resources.ProxyUtils do
   end
 
   def request_auth(state) do
-    host = CommonCore.StateSummary.Hosts.keycloak_host(state)
-    realm_name = CommonCore.Defaults.Keycloak.realm_name()
-    root = "http://#{host}/realms/#{realm_name}"
-    %{"jwtRules" => [%{"issuer" => root, "jwksUri" => "#{root}/protocol/openid-connect/certs"}]}
+    uri = CommonCore.StateSummary.URLs.keycloak_uri_for_realm(state, CommonCore.Defaults.Keycloak.realm_name())
+
+    %{
+      "jwtRules" => [
+        %{
+          "issuer" => URI.to_string(uri),
+          "jwksUri" => uri |> URI.append_path("/protocol/openid-connect/certs") |> URI.to_string()
+        }
+      ]
+    }
   end
 
   @spec sanitize(atom()) :: String.t()

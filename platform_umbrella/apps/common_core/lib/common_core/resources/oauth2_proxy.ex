@@ -3,8 +3,8 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   use CommonCore.Resources.ResourceGenerator, app_name: "oauth2_proxy"
 
   import CommonCore.Resources.ProxyUtils
-  import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.URLs
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Resources.Builder, as: B
@@ -136,11 +136,11 @@ defmodule CommonCore.Resources.Oauth2Proxy do
 
   defp build_env(battery, state) do
     name = name(battery)
-    redirect_url = "http://#{for_battery(state, battery.type)}"
+    redirect_url = state |> uri_for_battery(battery.type) |> URI.to_string()
 
     case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
       %{realm: realm, client: %{}} ->
-        keycloak_url = "http://#{keycloak_host(state)}/realms/#{realm}"
+        keycloak_url = state |> keycloak_uri_for_realm(realm) |> URI.to_string()
 
         [
           %{"name" => to_env_var("oidc-issuer-url"), "value" => keycloak_url},

@@ -11,6 +11,7 @@ defmodule CommonCore.Resources.Gitea do
   import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.URLs
 
   alias CommonCore.Defaults
   alias CommonCore.OpenApi.IstioVirtualService.VirtualService
@@ -77,11 +78,12 @@ defmodule CommonCore.Resources.Gitea do
     |> B.data(data)
   end
 
-  resource(:secret_inline_config, _battery, state) do
+  resource(:secret_inline_config, battery, state) do
     namespace = core_namespace(state)
     namespace_base = base_namespace(state)
 
     domain = gitea_host(state)
+    root_url = state |> uri_for_battery(battery.type) |> URI.to_string()
 
     sso_enabled? = Batteries.sso_installed?(state)
 
@@ -112,7 +114,7 @@ defmodule CommonCore.Resources.Gitea do
         ENABLE_PPROF=false
         HTTP_PORT=#{@http_listen_port}
         PROTOCOL=http
-        ROOT_URL=http://#{domain}
+        ROOT_URL=#{root_url}
         SSH_DOMAIN=#{domain}
         SSH_LISTEN_PORT=#{@ssh_listen_port}
         SSH_PORT=#{@ssh_port}
@@ -308,7 +310,10 @@ defmodule CommonCore.Resources.Gitea do
                     case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, app_name()) do
                       %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
                         keycloak_autodiscover_url =
-                          "http://#{keycloak_host(state)}/realms/#{realm}/.well-known/openid-configuration"
+                          state
+                          |> keycloak_uri_for_realm(realm)
+                          |> URI.append_path("/.well-known/openid-configuration")
+                          |> URI.to_string()
 
                         [
                           %{"name" => "OAUTH_NAME", "value" => "keycloak"},

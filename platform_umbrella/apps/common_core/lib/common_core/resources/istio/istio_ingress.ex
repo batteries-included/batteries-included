@@ -2,9 +2,10 @@ defmodule CommonCore.Resources.IstioIngress do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingressgateway"
 
+  import CommonCore.Resources.ProxyUtils, only: [sanitize: 1]
+  import CommonCore.StateSummary.Batteries, only: [hosts_by_battery_type: 1, batteries_installed?: 2]
   import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
 
@@ -319,24 +320,17 @@ defmodule CommonCore.Resources.IstioIngress do
   resource(:gateway, _battery, state) do
     namespace = istio_namespace(state)
 
-    hosts =
-      state.batteries
-      |> Enum.filter(fn %SystemBattery{type: battery_type} ->
-        battery_type != :battery_core
-      end)
-      |> Enum.map(fn %SystemBattery{type: battery_type} ->
-        CommonCore.StateSummary.Hosts.for_battery(state, battery_type)
-      end)
-      |> Enum.filter(& &1)
-      |> Enum.uniq()
+    ssl_enabled? = batteries_installed?(state, :cert_manager)
+
+    servers =
+      state
+      |> hosts_by_battery_type()
+      |> Enum.reject(fn {type, _host} -> type == :battery_core end)
+      |> Enum.flat_map(fn {type, host} -> build_servers(type, host, ssl_enabled?) end)
 
     spec = %{
       selector: %{istio: "ingressgateway"},
-      servers: [
-        %{port: %{number: 80, name: "http2", protocol: "HTTP"}, hosts: hosts},
-        # %{port: %{number: 443, name: "https", protocol: "HTTPS"}, hosts: hosts},
-        %{port: %{number: 22, name: "ssh", protocol: "TCP"}, hosts: hosts}
-      ]
+      servers: servers
     }
 
     :istio_gateway
@@ -346,6 +340,38 @@ defmodule CommonCore.Resources.IstioIngress do
     |> B.label("istio", "ingressgateway")
     |> B.label("istio.io/rev", "default")
     |> B.spec(spec)
-    |> F.require_non_empty(hosts)
+    |> F.require_non_empty(servers)
   end
+
+  # This ingress class is used by e.g. cert-manager to present HTTP01 challenges
+  resource(:istio_ingress_class) do
+    spec = %{"controller" => "istio.io/ingress-controller"}
+
+    :ingress_class
+    |> B.build_resource()
+    |> B.name("istio")
+    |> B.spec(spec)
+  end
+
+  defp build_servers(:gitea = type, host, ssl_enabled?),
+    do: [gitea_ssh_server(host), web_server(sanitize(type), host, ssl_enabled?)]
+
+  defp build_servers(type, host, ssl_enabled?), do: [web_server(sanitize(type), host, ssl_enabled?)]
+
+  defp web_server(type, host, true = _ssl_enabled?) do
+    %{
+      port: %{number: 443, name: "https-#{type}", protocol: "HTTPS"},
+      tls: %{mode: "SIMPLE", credentialName: "#{type}-ingress-cert"},
+      hosts: [host]
+    }
+  end
+
+  defp web_server(type, host, false = _ssl_enabled?) do
+    %{
+      port: %{number: 80, name: "http2-#{sanitize(type)}", protocol: "HTTP"},
+      hosts: [host]
+    }
+  end
+
+  defp gitea_ssh_server(host), do: %{port: %{number: 22, name: "ssh-gitea", protocol: "TCP"}, hosts: [host]}
 end

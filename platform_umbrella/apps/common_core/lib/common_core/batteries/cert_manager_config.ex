@@ -15,6 +15,8 @@ defmodule CommonCore.Batteries.CertManagerConfig do
     defaultable_field :ctl_image, :string, default: Defaults.Images.cert_manager_ctl_image()
     defaultable_field :webhook_image, :string, default: Defaults.Images.cert_manager_webhook_image()
 
+    field :email, :string
+
     type_field()
   end
 end

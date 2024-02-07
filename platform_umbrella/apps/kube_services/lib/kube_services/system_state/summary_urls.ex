@@ -49,7 +49,7 @@ defmodule KubeServices.SystemState.SummaryURLs do
     {:reply, apply(CommonCore.StateSummary.URLs, method, [summary | args]), state}
   end
 
-  @spec url_for_battery(atom | pid | {atom, any} | {:via, atom, any}, String.t()) :: String.t() | nil
+  @spec url_for_battery(atom | pid | {atom, any} | {:via, atom, any}, atom()) :: String.t() | nil
   def url_for_battery(target \\ @me, battery) do
     result = GenServer.call(target, [:uri_for_battery, battery])
     URI.to_string(result)

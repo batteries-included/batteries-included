@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   alias CommonCore.Keycloak.AdminClient
   alias ControlServerWeb.Keycloak.NewUserForm
   alias KubeServices.Keycloak.UserManager
-  alias KubeServices.SystemState.SummaryHosts
+  alias KubeServices.SystemState.SummaryURLs
 
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do
@@ -61,7 +61,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   end
 
   defp assign_keycloak_url(socket) do
-    assign(socket, :keycloak_url, "http://" <> SummaryHosts.keycloak_host())
+    assign(socket, :keycloak_url, SummaryURLs.url_for_battery(:keycloak))
   end
 
   defp assign_new_user(socket, user) do

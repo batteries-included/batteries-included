@@ -3,6 +3,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
 
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.URLs
 
   alias CommonCore.Defaults.Images
   alias CommonCore.StateSummary
@@ -117,7 +118,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
   defp get_auth_config(state, true = _is) do
     case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, "kiali") do
       %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
-        keycloak_url = "http://#{keycloak_host(state)}/realms/#{realm}"
+        keycloak_url = state |> keycloak_uri_for_realm(realm) |> URI.to_string()
 
         %{
           "strategy" => "openid",

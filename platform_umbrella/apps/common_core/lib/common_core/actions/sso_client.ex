@@ -105,7 +105,8 @@ defmodule CommonCore.Actions.SSOClient do
         func
       ) do
     realm = CommonCore.Defaults.Keycloak.realm_name()
-    root_url = "http://#{CommonCore.StateSummary.Hosts.for_battery(summary, battery_type)}"
+
+    root_url = summary |> CommonCore.StateSummary.URLs.uri_for_battery(battery_type) |> URI.to_string()
 
     # get the default settings
     base_client = default_client(battery_id, client_name, root_url)

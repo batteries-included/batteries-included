@@ -16,6 +16,9 @@ defmodule CommonCore.Resources.CertManager.CertManager do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
 
+  @lets_encrypt_staging_url "https://acme-staging-v02.api.letsencrypt.org/directory"
+  @lets_encrypt_prod_url "https://acme-v02.api.letsencrypt.org/directory"
+
   resource(:cluster_role_binding_cert_manager_cainjector, _battery, state) do
     namespace = base_namespace(state)
 
@@ -1070,5 +1073,41 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.label("prometheus", "default")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
+  end
+
+  resource(:lets_encrypt_cluster_issuer_stage, battery) do
+    name = "lets-encrypt-stage"
+
+    spec = %{
+      "acme" => %{
+        "server" => @lets_encrypt_staging_url,
+        "email" => battery.config.email,
+        "privateKeySecretRef" => %{"name" => name},
+        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "istio"}}}]
+      }
+    }
+
+    :certmanager_cluster_issuer
+    |> B.build_resource()
+    |> B.name(name)
+    |> B.spec(spec)
+  end
+
+  resource(:lets_encrypt_cluster_issuer, battery) do
+    name = "lets-encrypt"
+
+    spec = %{
+      "acme" => %{
+        "server" => @lets_encrypt_prod_url,
+        "email" => battery.config.email,
+        "privateKeySecretRef" => %{"name" => name},
+        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "istio"}}}]
+      }
+    }
+
+    :certmanager_cluster_issuer
+    |> B.build_resource()
+    |> B.name(name)
+    |> B.spec(spec)
   end
 end

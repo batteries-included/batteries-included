@@ -7,6 +7,7 @@ defmodule CommonCore.Resources.Grafana do
 
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.StateSummary.URLs
 
   alias CommonCore.INIConfig
   alias CommonCore.OpenApi.IstioVirtualService.VirtualService
@@ -15,6 +16,7 @@ defmodule CommonCore.Resources.Grafana do
   alias CommonCore.Resources.Secret
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.Batteries
+  alias CommonCore.StateSummary.URLs
 
   require Logger
 
@@ -62,11 +64,11 @@ defmodule CommonCore.Resources.Grafana do
     |> add_auth_config(battery, state)
   end
 
-  defp add_common_config(config, _battery, state) do
+  defp add_common_config(config, battery, state) do
     config
     |> Map.put("server", %{
       "domain" => grafana_host(state),
-      "root_url" => "http://#{grafana_host(state)}/"
+      "root_url" => URLs.uri_for_battery(state, battery.type)
     })
     |> Map.put("security", %{"allow_embedding" => true})
     |> Map.put("users", %{
@@ -92,8 +94,8 @@ defmodule CommonCore.Resources.Grafana do
     if Batteries.sso_installed?(state) do
       case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, app_name()) do
         %{realm: realm, client: %{clientId: client_id, secret: client_secret}} ->
-          keycloak_root_url =
-            "http://#{keycloak_host(state)}/realms/#{realm}/protocol/openid-connect"
+          keycloak_root_uri =
+            state |> keycloak_uri_for_realm(realm) |> URI.append_path("/protocol/openid-connect")
 
           config
           |> Map.put("auth.generic_oauth", %{
@@ -103,9 +105,9 @@ defmodule CommonCore.Resources.Grafana do
             "name" => "Batteries Included",
 
             # URLs
-            "api_url" => "#{keycloak_root_url}/userinfo",
-            "auth_url" => "#{keycloak_root_url}/auth",
-            "token_url" => "#{keycloak_root_url}/token",
+            "api_url" => keycloak_root_uri |> URI.append_path("/userinfo") |> URI.to_string(),
+            "auth_url" => keycloak_root_uri |> URI.append_path("/auth") |> URI.to_string(),
+            "token_url" => keycloak_root_uri |> URI.append_path("/token") |> URI.to_string(),
 
             # Client config
             "client_id" => client_id,

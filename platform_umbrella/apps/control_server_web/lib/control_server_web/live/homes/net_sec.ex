@@ -10,6 +10,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryHosts
   import KubeServices.SystemState.SummaryRecent
+  import KubeServices.SystemState.SummaryURLs
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -36,7 +37,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
   end
 
   defp assign_keycloak_url(socket) do
-    assign(socket, :keycloak_url, "http://" <> keycloak_host())
+    assign(socket, :keycloak_url, url_for_battery(:keycloak))
   end
 
   defp assign_ip_address_pools(socket) do

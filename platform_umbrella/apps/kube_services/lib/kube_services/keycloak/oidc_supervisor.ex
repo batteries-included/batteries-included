@@ -3,7 +3,7 @@ defmodule KubeServices.Keycloak.OIDCSupervisor do
 
   use Supervisor
 
-  alias CommonCore.StateSummary.Hosts
+  alias CommonCore.StateSummary.URLs
 
   require Logger
 
@@ -14,7 +14,7 @@ defmodule KubeServices.Keycloak.OIDCSupervisor do
 
   def init(_opts) do
     children = [
-      {KubeServices.SystemState.ReconfigCanary, [methods: [&battery_core_present?/1, &Hosts.keycloak_host/1]]},
+      {KubeServices.SystemState.ReconfigCanary, [methods: [&battery_core_present?/1, &keycloak_base_url/1]]},
       KubeServices.Keycloak.OIDCInnerSupervisor
     ]
 
@@ -27,4 +27,8 @@ defmodule KubeServices.Keycloak.OIDCSupervisor do
   end
 
   def battery_core_present?(_summary), do: false
+
+  def keycloak_base_url(state) do
+    state |> URLs.uri_for_battery(:keycloak) |> URI.to_string()
+  end
 end

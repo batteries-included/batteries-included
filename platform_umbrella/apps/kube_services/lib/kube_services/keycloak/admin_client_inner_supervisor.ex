@@ -4,7 +4,7 @@ defmodule KubeServices.Keycloak.AdminClientInnerSupervisor do
 
   alias CommonCore.Keycloak.AdminClient
   alias CommonCore.StateSummary.Creds
-  alias CommonCore.StateSummary.Hosts
+  alias CommonCore.StateSummary.URLs
   alias KubeServices.SystemState.Summarizer
 
   require Logger
@@ -16,7 +16,7 @@ defmodule KubeServices.Keycloak.AdminClientInnerSupervisor do
   def init(_opts) do
     # Get the most recent version of the state summary
     summary = Summarizer.cached()
-    base_url = "http://" <> Hosts.keycloak_host(summary)
+    base_url = summary |> URLs.uri_for_battery(:keycloak) |> URI.to_string()
     username = Creds.root_keycloak_username(summary)
     password = Creds.root_keycloak_password(summary)
 
