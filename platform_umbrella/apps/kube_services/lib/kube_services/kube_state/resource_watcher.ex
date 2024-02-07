@@ -77,7 +77,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     # It's good enough for now.
     case watch(state, conn) do
       :ok ->
-        Map.put(state, :conn, conn)
+        Map.merge(state, %{conn: conn, retries: 1})
 
       {:delay, _ref} ->
         %{state | retries: min(state.retries + 1, @defaults.max_retries)}
@@ -113,7 +113,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   end
 
   # set up watch on resource type
-  defp watch(%{resource_type: resource_type, table_name: table_name, retries: retries} = state, conn) do
+  defp watch(%{resource_type: resource_type, table_name: table_name, retries: retries} = _state, conn) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
     op = K8s.Client.watch(api_version, kind, namespace: :all)
 
@@ -129,21 +129,17 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
         :ok
 
-      # api resource not installed
-      {:error, %{message: "HTTP Error 404"}} ->
-        # add 6 seconds per retry. the max is configured in `start_watch` where retries is incremented.
-        {:delay, trigger_start_watch((retries + 1) * @defaults.retry_secs * 1_000)}
-
       # core resource deprecated then removed
       {:error, %{message: "the server could not find the requested resource"}} ->
         # NOTE(jdt): we'll probably need a way to handle deprecations and version skew if we can be launched into arbitrary EKS clusters
-        # e.g. PSP is deprecated but available in 1.24. AWS still supports it until Jan 31 2025
+        # e.g. PSP is deprecated and removed in 1.25 but available in 1.24. AWS still supports 1.24 until Jan 31 2025
         Logger.warning("Stopping watch on #{resource_type} as it appears to be removed in this version.")
         {:delay, nil}
 
       _ ->
         Logger.debug("Restarting watch on #{inspect(resource_type)}.")
-        {:delay, trigger_start_watch(state)}
+        # add 6 seconds per retry. the max is configured in `start_watch` where retries is incremented.
+        {:delay, trigger_start_watch((retries + 1) * @defaults.retry_secs * 1_000)}
     end
   end
 

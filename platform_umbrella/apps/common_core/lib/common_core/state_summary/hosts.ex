@@ -61,7 +61,7 @@ defmodule CommonCore.StateSummary.Hosts do
 
   # NOTE: This isn't exclusive - some batteries don't have host mappings, some may have multiple in the future.
   # This should probably be revisited / revised in the future.
-  @spec for_battery(StateSummary.t(), atom()) :: String.t()
+  @spec for_battery(StateSummary.t(), atom()) :: String.t() | nil
   def for_battery(summary, battery_type)
 
   # HACK(jdt): fix this!

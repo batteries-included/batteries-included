@@ -13,18 +13,13 @@ defmodule CommonCore.StateSummary.FromKubeState do
     state
     |> Map.get(:kube_state, %{})
     |> Map.get(resource_type, %{})
-    |> Enum.find(nil, fn r ->
-      name == name(r)
-    end)
+    |> Enum.find(nil, fn r -> name == name(r) end)
   end
 
   def find_state_resource(%StateSummary{} = state, resource_type, namespace, name) do
     state
     |> Map.get(:kube_state, %{})
     |> Map.get(resource_type, %{})
-    |> Enum.find(nil, fn resource ->
-      namespace == namespace(resource) &&
-        name == name(resource)
-    end)
+    |> Enum.find(nil, fn resource -> namespace == namespace(resource) && name == name(resource) end)
   end
 end
