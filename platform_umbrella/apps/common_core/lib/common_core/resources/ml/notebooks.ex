@@ -61,7 +61,6 @@ defmodule CommonCore.Resources.Notebooks do
 
     template =
       %{
-        "metadata" => %{"labels" => %{"battery/managed" => "true"}},
         "spec" => %{
           "containers" => [
             %{
@@ -87,11 +86,12 @@ defmodule CommonCore.Resources.Notebooks do
       |> B.app_labels(notebook.name)
       |> B.component_label(notebook.name)
       |> B.label("battery/notebook", notebook.name)
+      |> B.label("battery/managed", "true")
       |> B.add_owner(notebook)
 
     spec =
       %{}
-      |> B.match_labels_selector(@app_name)
+      |> B.match_labels_selector(notebook.name)
       |> B.template(template)
 
     :stateful_set
@@ -109,7 +109,7 @@ defmodule CommonCore.Resources.Notebooks do
 
     spec =
       %{}
-      |> B.short_selector("battery/app", notebook.name)
+      |> B.short_selector(notebook.name)
       |> B.ports([%{name: "http", port: @container_port, targetPort: @container_port}])
 
     :service
