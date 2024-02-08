@@ -7,6 +7,7 @@ defmodule ControlServerWeb.Keycloak.UsersTable do
   def keycloak_users_table(%{} = assigns) do
     ~H"""
     <.table id="keycloak-users-table" rows={@users}>
+      <:col :let={user} label="Id"><%= user.id %></:col>
       <:col :let={user} label="Username"><%= user.username %></:col>
       <:col :let={user} label="Enabled"><%= user.enabled %></:col>
       <:col :let={user} label="Email Verified"><%= user.emailVerified %></:col>
@@ -22,6 +23,16 @@ defmodule ControlServerWeb.Keycloak.UsersTable do
           phx-value-user-id={user.id}
         >
           Reset Password
+        </.a>
+      </:action>
+      <:action :let={user}>
+        <.a
+          variant="styled"
+          phx-click="make_realm_admin"
+          data-confirm="Are you sure?"
+          phx-value-user-id={user.id}
+        >
+          Make Realm Admin
         </.a>
       </:action>
     </.table>

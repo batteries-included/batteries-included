@@ -4,7 +4,9 @@ defmodule KubeServices.Keycloak.UserManager do
   use TypedStruct
 
   alias CommonCore.Keycloak.AdminClient
+  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
+  alias CommonCore.OpenApi.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
   alias EventCenter.Keycloak.Payload
 
@@ -44,6 +46,54 @@ defmodule KubeServices.Keycloak.UserManager do
 
   def reset_password(target \\ @me, realm, user_id) do
     GenServer.call(target, {:reset_password, realm, user_id})
+  end
+
+  @spec make_realm_admin(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary()) ::
+          :ok | {:error, any()}
+  def make_realm_admin(target \\ @me, realm, user_id) do
+    GenServer.call(target, {:make_realm_admin, realm, user_id})
+  end
+
+  @spec find_realm_managment_client([ClientRepresentation.t()]) :: ClientRepresentation.t() | nil
+  defp find_realm_managment_client(clients) do
+    Enum.find(clients, fn client -> client.clientId == "realm-management" end)
+  end
+
+  @spec find_realm_admin_role([RoleRepresentation.t()]) :: RoleRepresentation.t() | nil
+  defp find_realm_admin_role(roles) do
+    Enum.find(roles, fn role -> role.name == "realm-admin" end)
+  end
+
+  @spec add_realm_admin_role(String.t(), String.t()) :: [map()]
+  defp add_realm_admin_role(role_id, client_id) do
+    [
+      %{
+        "id" => role_id,
+        "name" => "realm-admin",
+        "description" => "${role_realm-admin}",
+        "composite" => true,
+        "clientRole" => true,
+        "containerId" => client_id
+      }
+    ]
+  end
+
+  def handle_call({:make_realm_admin, realm, user_id}, _from, state) do
+    # Get all the clients from the realm
+    with {:ok, clients} <- AdminClient.clients(realm),
+         # Find the realm management client that controls
+         # access to the realm settings
+         %{} = managment_client <- find_realm_managment_client(clients),
+         # Get all the roles for the realm management client
+         {:ok, roles} <- AdminClient.list_client_roles(realm, managment_client.id),
+         # Frind the one that makes us and admin
+         %{} = role <- find_realm_admin_role(roles),
+         # Create a payload to add the role to the user
+         payload = add_realm_admin_role(role.id, managment_client.id),
+         # Tell Keycloak to add the role to the user
+         {:ok, _success} <- AdminClient.add_client_roles(realm, user_id, managment_client.id, payload) do
+      {:reply, :ok, state}
+    end
   end
 
   def handle_call({:create, realm, attributes}, _from, %{admin_client_target: act} = state) do

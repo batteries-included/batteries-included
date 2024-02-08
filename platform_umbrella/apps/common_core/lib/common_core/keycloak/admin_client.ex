@@ -219,6 +219,18 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:roles, realm_name})
   end
 
+  @spec list_client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary()) ::
+          {:ok, list(ClientRepresentation.t())} | {:error, any()}
+  def list_client_roles(target \\ @me, realm_name, client_id) do
+    GenServer.call(target, {:client_roles, realm_name, client_id})
+  end
+
+  @spec add_client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary(), binary(), list()) ::
+          {:ok, any()} | {:error, any()}
+  def add_client_roles(target \\ @me, realm_name, user_id, client_id, roles_payload) do
+    GenServer.call(target, {:add_client_roles, realm_name, user_id, client_id, roles_payload})
+  end
+
   @spec reset_password_user(
           atom | pid | {atom, any} | {:via, atom, any},
           String.t(),
@@ -333,6 +345,14 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   def handle_call({:roles, realm_name}, _from, state) do
     with_auth(state, fn new_state -> do_list_roles(realm_name, new_state) end)
+  end
+
+  def handle_call({:client_roles, realm_name, client_id}, _from, state) do
+    with_auth(state, fn new_state -> do_list_client_roles(realm_name, client_id, new_state) end)
+  end
+
+  def handle_call({:add_client_roles, realm_name, user_id, client_id, roles_payload}, _from, state) do
+    with_auth(state, fn new_state -> do_add_client_roles(realm_name, user_id, client_id, roles_payload, new_state) end)
   end
 
   #
@@ -565,6 +585,18 @@ defmodule CommonCore.Keycloak.AdminClient do
     client
     |> Tesla.get(@base_path <> realm_name <> "/roles")
     |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
+  end
+
+  defp do_list_client_roles(realm_name, client_id, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id <> "/roles")
+    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
+  end
+
+  defp do_add_client_roles(realm_name, user_id, client_id, role, %State{bearer_client: client} = _state) do
+    client
+    |> Tesla.post(@base_path <> realm_name <> "/users/" <> user_id <> "/role-mappings/clients/" <> client_id, role)
+    |> to_result(nil)
   end
 
   #

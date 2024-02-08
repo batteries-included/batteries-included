@@ -103,6 +103,22 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     end
   end
 
+  def handle_event("make_realm_admin", %{"user-id" => user_id}, socket) do
+    realm_name = socket.assigns.realm.realm
+
+    case UserManager.make_realm_admin(realm_name, user_id) do
+      :ok ->
+        {:noreply, socket}
+
+      {:error, _reason} ->
+        # Ignore for now
+        #
+        # TODO(elliott): when we figure out flash/temporary messaging
+        # use that here for error reporting.
+        {:noreply, socket}
+    end
+  end
+
   @impl Phoenix.LiveView
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
