@@ -645,7 +645,7 @@ defmodule Mix.Tasks.Gen.Resource do
     pipe(
       pipeline,
       quote do
-        B.component_label(unquote(label))
+        B.component_labels(unquote(label))
       end
     )
   end

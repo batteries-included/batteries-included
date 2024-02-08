@@ -193,7 +193,7 @@ defmodule CommonCore.Resources.KubeMonitoring do
     |> B.build_resource()
     |> B.name("battery-metrics-coredns")
     |> B.namespace("kube-system")
-    |> B.component_label("coredns")
+    |> B.component_labels("coredns")
     |> B.label("jobLabel", "coredns")
     |> B.spec(spec)
   end
@@ -221,7 +221,7 @@ defmodule CommonCore.Resources.KubeMonitoring do
     |> B.build_resource()
     |> B.name("battery-metrics-kube-etcd")
     |> B.namespace(namespace)
-    |> B.component_label("etcd")
+    |> B.component_labels("etcd")
     |> B.spec(spec)
   end
 
@@ -237,7 +237,7 @@ defmodule CommonCore.Resources.KubeMonitoring do
     |> B.build_resource()
     |> B.name("battery-metrics-kube-etcd")
     |> B.namespace("kube-system")
-    |> B.component_label("etcd")
+    |> B.component_labels("etcd")
     |> B.label("jobLabel", "kube-etcd")
     |> B.spec(spec)
   end
@@ -271,7 +271,7 @@ defmodule CommonCore.Resources.KubeMonitoring do
     |> B.build_resource()
     |> B.name("battery-metrics-kube-controller-man")
     |> B.namespace(namespace)
-    |> B.component_label("kube-controller-man")
+    |> B.component_labels("kube-controller-man")
     |> B.spec(spec)
   end
 
@@ -287,7 +287,7 @@ defmodule CommonCore.Resources.KubeMonitoring do
     |> B.build_resource()
     |> B.name("battery-metrics-kube-controller-man")
     |> B.namespace("kube-system")
-    |> B.component_label("kube-controller-man")
+    |> B.component_labels("kube-controller-man")
     |> B.label("jobLabel", "kube-controller-manager")
     |> B.spec(spec)
   end
@@ -315,7 +315,7 @@ defmodule CommonCore.Resources.KubeMonitoring do
     |> B.build_resource()
     |> B.name("battery-metrics-kube-scheduler")
     |> B.namespace(namespace)
-    |> B.component_label("kube-scheduler")
+    |> B.component_labels("kube-scheduler")
     |> B.spec(spec)
   end
 
@@ -331,7 +331,7 @@ defmodule CommonCore.Resources.KubeMonitoring do
     |> B.build_resource()
     |> B.name("battery-metrics-kube-scheduler")
     |> B.namespace("kube-system")
-    |> B.component_label("kube-scheduler")
+    |> B.component_labels("kube-scheduler")
     |> B.label("jobLabel", "kube-scheduler")
     |> B.spec(spec)
   end

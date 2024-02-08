@@ -73,7 +73,7 @@ defmodule CommonCore.Resources.Loki do
     |> B.build_resource()
     |> B.name("loki")
     |> B.namespace(namespace)
-    |> B.component_label("main")
+    |> B.component_labels("main")
     |> B.spec(spec)
   end
 

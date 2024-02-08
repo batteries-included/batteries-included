@@ -77,7 +77,7 @@ defmodule CommonCore.Resources.FerretDB do
         }
       }
       |> B.app_labels(service_name(ferret_service))
-      |> B.component_label(@app_name)
+      |> B.component_labels(@app_name)
       |> B.add_owner(ferret_service)
 
     spec =

@@ -559,7 +559,7 @@ defmodule CommonCore.Resources.TrivyOperator do
     |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.component_label("trivy-operator")
+    |> B.component_labels("trivy-operator")
   end
 
   resource(:service_trivy_operator, _battery, state) do
@@ -576,7 +576,7 @@ defmodule CommonCore.Resources.TrivyOperator do
     |> B.build_resource()
     |> B.name("trivy-operator")
     |> B.namespace(namespace)
-    |> B.component_label("trivy-operator")
+    |> B.component_labels("trivy-operator")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end

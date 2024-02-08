@@ -17,7 +17,7 @@ defmodule CommonCore.Resources.KnativeServices do
         "spec" => %{}
       }
       |> B.app_labels(service.name)
-      |> B.component_label(@app_name)
+      |> B.component_labels(@app_name)
       |> B.add_owner(service)
       |> add_containers("containers", service.containers, service.env_values)
       |> add_containers("initContainers", service.init_containers, service.env_values)
@@ -30,7 +30,7 @@ defmodule CommonCore.Resources.KnativeServices do
     |> B.name(service.name)
     |> B.namespace(battery.config.namespace)
     |> B.app_labels(service.name)
-    |> B.component_label(@app_name)
+    |> B.component_labels(@app_name)
     |> B.add_owner(service)
     |> B.spec(spec)
     |> add_rollout_duration(service)

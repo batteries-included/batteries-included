@@ -81,7 +81,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.build_resource()
     |> B.name(cluster_name)
     |> B.app_labels(cluster_name)
-    |> B.component_label(@app_name)
+    |> B.component_labels(@app_name)
     |> B.namespace(PostgresState.cluster_namespace(state, cluster))
     |> B.add_owner(cluster)
     |> B.spec(spec)

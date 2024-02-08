@@ -20,7 +20,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     :cluster_role
     |> B.build_resource()
     |> B.name("knative-serving-istio")
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.label("serving.knative.dev/controller", "true")
     |> B.rules(rules)
@@ -33,7 +33,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("config-istio")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.data(data)
   end
@@ -93,7 +93,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
       |> B.label("role", "net-istio-controller")
-      |> B.component_label("net-istio")
+      |> B.component_labels("net-istio")
 
     spec =
       %{}
@@ -110,7 +110,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("net-istio-controller")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
   end
@@ -179,7 +179,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
       |> B.label("role", "net-istio-webhook")
-      |> B.component_label("net-istio")
+      |> B.component_labels("net-istio")
 
     spec =
       %{}
@@ -199,7 +199,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("net-istio-webhook")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
   end
@@ -225,7 +225,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("knative-ingress-gateway")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
     |> F.require_non_empty(hosts)
@@ -252,7 +252,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("knative-local-gateway")
     |> B.namespace(ns)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
   end
@@ -267,7 +267,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("knative-local-gateway")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("experimental.istio.io/disable-gateway-port-translation", "true")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
@@ -285,7 +285,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("net-istio-webhook")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
   end
@@ -300,7 +300,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("webhook")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
   end
@@ -312,7 +312,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("net-istio-webhook-certs")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.data(data)
   end
@@ -335,7 +335,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.build_resource()
     |> B.name("net-istio-webhook")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> B.spec(spec)
   end
@@ -344,7 +344,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     :validating_webhook_config
     |> B.build_resource()
     |> B.name("config.webhook.istio.networking.internal.knative.dev")
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> Map.put("webhooks", [
       %{
@@ -364,7 +364,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     :mutating_webhook_config
     |> B.build_resource()
     |> B.name("webhook.istio.networking.internal.knative.dev")
-    |> B.component_label("net-istio")
+    |> B.component_labels("net-istio")
     |> B.label("networking.knative.dev/ingress-provider", "istio")
     |> Map.put("webhooks", [
       %{

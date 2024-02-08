@@ -66,7 +66,7 @@ defmodule CommonCore.Resources.RedisOperator do
     :cluster_role
     |> B.build_resource()
     |> B.name("redis-operator")
-    |> B.component_label("redis-operator")
+    |> B.component_labels("redis-operator")
     |> B.rules(rules)
   end
 
@@ -141,7 +141,7 @@ defmodule CommonCore.Resources.RedisOperator do
     |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.component_label("redis-operator")
+    |> B.component_labels("redis-operator")
     |> B.spec(spec)
   end
 
@@ -152,7 +152,7 @@ defmodule CommonCore.Resources.RedisOperator do
     |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.component_label("redis-operator")
+    |> B.component_labels("redis-operator")
   end
 
   resource(:service_monitor_redis_operator, _battery, state) do
@@ -176,7 +176,7 @@ defmodule CommonCore.Resources.RedisOperator do
     |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.component_label("redis-operator")
+    |> B.component_labels("redis-operator")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
@@ -196,7 +196,7 @@ defmodule CommonCore.Resources.RedisOperator do
     |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.component_label("redis-operator")
+    |> B.component_labels("redis-operator")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end

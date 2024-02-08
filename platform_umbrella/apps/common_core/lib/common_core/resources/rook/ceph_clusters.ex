@@ -15,7 +15,7 @@ defmodule CommonCore.Resources.CephClusters do
       |> B.name(cluster.name)
       |> B.namespace(namespace)
       |> B.app_labels(cluster.name)
-      |> B.component_label(@app_name)
+      |> B.component_labels(@app_name)
       |> B.add_owner(cluster)
       |> B.spec(cluster_spec(cluster, battery, state))
     end)

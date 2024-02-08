@@ -11,7 +11,7 @@ defmodule CommonCore.Resources.KnativeServing do
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("knative-serving-activator-cluster")
-    |> B.component_label("activator")
+    |> B.component_labels("activator")
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-activator-cluster"))
     |> B.subject(B.build_service_account("activator", battery.config.namespace))
   end
@@ -24,7 +24,7 @@ defmodule CommonCore.Resources.KnativeServing do
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("knative-serving-controller-addressable-resolver")
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-aggregated-addressable-resolver"))
     |> B.subject(B.build_service_account("controller", battery.config.namespace))
   end
@@ -33,7 +33,7 @@ defmodule CommonCore.Resources.KnativeServing do
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("knative-serving-controller-admin")
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.role_ref(B.build_cluster_role_ref("knative-serving-admin"))
     |> B.subject(B.build_service_account("controller", battery.config.namespace))
   end
@@ -229,7 +229,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-autoscaler")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("autoscaler")
+    |> B.component_labels("autoscaler")
     |> B.data(data)
   end
 
@@ -240,7 +240,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-defaults")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.data(data)
   end
 
@@ -254,7 +254,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-deployment")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.data(data)
   end
 
@@ -265,7 +265,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-domain")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.data(data)
   end
 
@@ -280,7 +280,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-features")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.data(data)
   end
 
@@ -291,7 +291,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-gc")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.data(data)
   end
 
@@ -302,7 +302,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-leader-election")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.data(data)
   end
 
@@ -313,7 +313,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-logging")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("logging")
+    |> B.component_labels("logging")
     |> B.data(data)
   end
 
@@ -324,7 +324,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-network")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("networking")
+    |> B.component_labels("networking")
     |> B.data(data)
   end
 
@@ -335,7 +335,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-observability")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("observability")
+    |> B.component_labels("observability")
     |> B.data(data)
   end
 
@@ -346,7 +346,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("config-tracing")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("tracing")
+    |> B.component_labels("tracing")
     |> B.data(data)
   end
 
@@ -413,7 +413,7 @@ defmodule CommonCore.Resources.KnativeServing do
         }
       }
       |> B.app_labels(@app_name)
-      |> B.component_label("activator")
+      |> B.component_labels("activator")
 
     spec =
       %{}
@@ -427,7 +427,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("activator")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("activator")
+    |> B.component_labels("activator")
     |> B.spec(spec)
   end
 
@@ -502,7 +502,7 @@ defmodule CommonCore.Resources.KnativeServing do
         }
       }
       |> B.app_labels(@app_name)
-      |> B.component_label("autoscaler")
+      |> B.component_labels("autoscaler")
 
     spec =
       %{}
@@ -520,7 +520,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("autoscaler")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("autoscaler")
+    |> B.component_labels("autoscaler")
     |> B.spec(spec)
   end
 
@@ -591,7 +591,7 @@ defmodule CommonCore.Resources.KnativeServing do
         }
       }
       |> B.app_labels(@app_name)
-      |> B.component_label("controller")
+      |> B.component_labels("controller")
       |> B.label("role", "controller")
 
     spec =
@@ -605,7 +605,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("controller")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.spec(spec)
   end
 
@@ -687,7 +687,7 @@ defmodule CommonCore.Resources.KnativeServing do
         }
       }
       |> B.app_labels(@app_name)
-      |> B.component_label("webhook")
+      |> B.component_labels("webhook")
 
     spec =
       %{}
@@ -701,7 +701,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("webhook")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> B.spec(spec)
   end
 
@@ -725,7 +725,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("activator")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("activator")
+    |> B.component_labels("activator")
     |> B.spec(spec)
   end
 
@@ -752,7 +752,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("webhook")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> B.spec(spec)
   end
 
@@ -764,7 +764,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("queue-proxy")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("queue-proxy")
+    |> B.component_labels("queue-proxy")
     |> B.spec(spec)
   end
 
@@ -806,7 +806,7 @@ defmodule CommonCore.Resources.KnativeServing do
     :mutating_webhook_config
     |> B.build_resource()
     |> B.name("webhook.serving.knative.dev")
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> Map.put("webhooks", webhooks)
   end
 
@@ -827,7 +827,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("activator-pdb")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("activator")
+    |> B.component_labels("activator")
     |> B.spec(spec)
   end
 
@@ -841,7 +841,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("webhook-pdb")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> B.spec(spec)
   end
 
@@ -850,7 +850,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("knative-serving-activator")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("activator")
+    |> B.component_labels("activator")
     |> B.role_ref(B.build_role_ref("knative-serving-activator"))
     |> B.subject(B.build_service_account("activator", battery.config.namespace))
   end
@@ -917,7 +917,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("webhook-certs")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> B.data(data)
   end
 
@@ -926,7 +926,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("activator")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("activator")
+    |> B.component_labels("activator")
   end
 
   resource(:service_account_controller, battery, _state) do
@@ -934,7 +934,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("controller")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
   end
 
   resource(:service_activator, battery, _state) do
@@ -953,7 +953,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("activator-service")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("activator")
+    |> B.component_labels("activator")
     |> B.spec(spec)
   end
 
@@ -971,7 +971,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("autoscaler")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("autoscaler")
+    |> B.component_labels("autoscaler")
     |> B.spec(spec)
   end
 
@@ -988,7 +988,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("controller")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.spec(spec)
   end
 
@@ -1006,7 +1006,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name("webhook")
     |> B.namespace(battery.config.namespace)
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> B.spec(spec)
   end
 
@@ -1035,7 +1035,7 @@ defmodule CommonCore.Resources.KnativeServing do
     :validating_webhook_config
     |> B.build_resource()
     |> B.name("config.webhook.serving.knative.dev")
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> Map.put("webhooks", webhooks)
   end
 
@@ -1075,7 +1075,7 @@ defmodule CommonCore.Resources.KnativeServing do
     :validating_webhook_config
     |> B.build_resource()
     |> B.name("validation.webhook.serving.knative.dev")
-    |> B.component_label("webhook")
+    |> B.component_labels("webhook")
     |> Map.put("webhooks", webhooks)
   end
 end

@@ -84,7 +84,7 @@ defmodule CommonCore.Resources.Notebooks do
         }
       }
       |> B.app_labels(notebook.name)
-      |> B.component_label(notebook.name)
+      |> B.component_labels(notebook.name)
       |> B.label("battery/notebook", notebook.name)
       |> B.label("battery/managed", "true")
       |> B.add_owner(notebook)
@@ -98,7 +98,7 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.build_resource()
     |> B.name("notebook-#{notebook.name}")
     |> B.namespace(namespace)
-    |> B.component_label(notebook.name)
+    |> B.component_labels(notebook.name)
     |> B.label("battery/notebook", notebook.name)
     |> B.spec(spec)
     |> B.add_owner(notebook)

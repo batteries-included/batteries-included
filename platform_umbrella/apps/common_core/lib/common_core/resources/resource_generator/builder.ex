@@ -80,8 +80,8 @@ defmodule CommonCore.Resources.Builder do
     label(resource, "battery/owner", owner_id)
   end
 
-  @spec component_label(map(), binary()) :: map()
-  def component_label(resource, component_name) do
+  @spec component_labels(map(), binary()) :: map()
+  def component_labels(resource, component_name) do
     resource
     |> label("battery/component", component_name)
     |> label("component", component_name)

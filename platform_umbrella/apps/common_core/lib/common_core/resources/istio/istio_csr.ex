@@ -34,7 +34,7 @@ defmodule CommonCore.Resources.IstioCsr do
     |> B.build_resource()
     |> B.name("istiod")
     |> B.namespace(namespace)
-    |> B.component_label("istiod")
+    |> B.component_labels("istiod")
     |> B.spec(spec)
   end
 
@@ -220,7 +220,7 @@ defmodule CommonCore.Resources.IstioCsr do
     |> B.build_resource()
     |> B.name("cert-manager-istio-csr-metrics")
     |> B.namespace(namespace)
-    |> B.component_label("metrics")
+    |> B.component_labels("metrics")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
@@ -251,7 +251,7 @@ defmodule CommonCore.Resources.IstioCsr do
     |> B.build_resource()
     |> B.name("cert-manager-istio-csr")
     |> B.namespace(namespace)
-    |> B.component_label("metrics")
+    |> B.component_labels("metrics")
     |> B.label("prometheus", "default")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)

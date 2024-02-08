@@ -119,7 +119,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.build_resource()
     |> B.name("metallb-frr-startup")
     |> B.namespace(namespace)
-    |> B.component_label("speaker")
+    |> B.component_labels("speaker")
     |> B.data(data)
   end
 
@@ -309,7 +309,7 @@ defmodule CommonCore.Resources.MetalLB do
         }
       }
       |> B.app_labels(@app_name)
-      |> B.component_label("speaker")
+      |> B.component_labels("speaker")
       |> B.add_owner(battery)
 
     spec =
@@ -322,7 +322,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.build_resource()
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
-    |> B.component_label("speaker")
+    |> B.component_labels("speaker")
     |> B.spec(spec)
   end
 
@@ -383,7 +383,7 @@ defmodule CommonCore.Resources.MetalLB do
         }
       }
       |> B.app_labels(@app_name)
-      |> B.component_label("controller")
+      |> B.component_labels("controller")
       |> B.add_owner(battery)
 
     spec =
@@ -399,7 +399,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.spec(spec)
   end
 
@@ -421,7 +421,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
@@ -443,7 +443,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.build_resource()
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
-    |> B.component_label("speaker")
+    |> B.component_labels("speaker")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
@@ -544,7 +544,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.build_resource()
     |> B.name("metallb-controller")
     |> B.namespace(namespace)
-    |> B.component_label("controller")
+    |> B.component_labels("controller")
   end
 
   resource(:service_account_speaker, _battery, state) do
@@ -554,7 +554,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.build_resource()
     |> B.name("metallb-speaker")
     |> B.namespace(namespace)
-    |> B.component_label("speaker")
+    |> B.component_labels("speaker")
   end
 
   resource(:service_webhook, _battery, state) do

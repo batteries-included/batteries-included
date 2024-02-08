@@ -129,7 +129,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     |> B.name(name)
     |> B.namespace(namespace)
     |> B.app_labels(name)
-    |> B.component_label(@component)
+    |> B.component_labels(@component)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
   end
@@ -194,7 +194,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     |> B.name(name)
     |> B.namespace(namespace)
     |> B.app_labels(name)
-    |> B.component_label(@component)
+    |> B.component_labels(@component)
     |> B.data(data)
     |> F.require_battery(state, :sso)
   end
@@ -209,7 +209,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     |> B.name(name)
     |> B.namespace(namespace)
     |> B.app_labels(name)
-    |> B.component_label(@component)
+    |> B.component_labels(@component)
     |> F.require_battery(state, :sso)
   end
 
@@ -245,7 +245,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     |> B.name(name)
     |> B.namespace(namespace)
     |> B.app_labels(name)
-    |> B.component_label(@component)
+    |> B.component_labels(@component)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
   end

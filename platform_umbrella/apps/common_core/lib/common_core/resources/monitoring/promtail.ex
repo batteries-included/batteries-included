@@ -167,7 +167,7 @@ defmodule CommonCore.Resources.Promtail do
     |> B.build_resource()
     |> B.name("promtail-metrics")
     |> B.namespace(namespace)
-    |> B.component_label("metrics")
+    |> B.component_labels("metrics")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
   end
