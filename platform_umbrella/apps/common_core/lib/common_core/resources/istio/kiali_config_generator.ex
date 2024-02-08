@@ -1,15 +1,15 @@
 defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
   @moduledoc false
 
-  import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.URLs
 
   alias CommonCore.Defaults.Images
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.Batteries
+  alias CommonCore.StateSummary.URLs
 
-  def materialize(_battery, %StateSummary{} = state) do
+  def materialize(battery, %StateSummary{} = state) do
     namespace_core = core_namespace(state)
     namespace_istio = istio_namespace(state)
 
@@ -76,7 +76,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
         },
         "grafana" => %{
           "in_cluster_url" => "http://grafana.#{namespace_core}.svc",
-          "url" => "http://" <> grafana_host(state)
+          "url" => state |> URLs.uri_for_battery(:grafana) |> URI.to_string()
         },
         "prometheus" => %{
           "health_check_url" =>
@@ -104,14 +104,8 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
         "disabled_features" => [],
         "validations" => %{"ignore" => ["KIA1301", "KIA0601"]}
       },
-      "login_token" => %{"signing_key" => "gEmf58MPasrZkPsh"},
-      "server" => %{
-        "metrics_enabled" => true,
-        "metrics_port" => 9090,
-        "port" => 20_001,
-        "web_port" => 80,
-        "web_root" => "/kiali"
-      }
+      "login_token" => %{"signing_key" => battery.config.login_signing_key},
+      "server" => get_server_config(state)
     }
   end
 
@@ -144,6 +138,20 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
       "openid" => %{},
       "openshift" => %{"client_id_prefix" => "kiali"},
       "strategy" => "anonymous"
+    }
+  end
+
+  defp get_server_config(state) do
+    kiali_uri = URLs.uri_for_battery(state, :kiali)
+
+    %{
+      "metrics_enabled" => true,
+      "metrics_port" => 9090,
+      "port" => 20_001,
+      "web_scheme" => kiali_uri.scheme,
+      "web_fqdn" => kiali_uri.host,
+      "web_port" => kiali_uri.port,
+      "web_root" => "/kiali"
     }
   end
 end

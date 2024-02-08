@@ -27,7 +27,7 @@ defmodule CommonCore.Batteries.KialiConfig do
     data
     |> changeset(__MODULE__)
     |> validate_required(@required_fields)
-    |> maybe_set_random(:login_signing_key)
+    |> maybe_set_random(:login_signing_key, length: 32)
     |> apply_changeset_if_valid()
   end
 end
