@@ -76,7 +76,7 @@ defmodule ControlServerWeb.Live.RedisShow do
     <.services_table services={@k8_services} />
 
     <.h2>Actions</.h2>
-    <.card>
+    <.panel>
       <div class="grid md:grid-cols-2 gap-6">
         <.a navigate={edit_url(@failover_cluster)} class="block">
           <.button class="w-full">
@@ -88,7 +88,7 @@ defmodule ControlServerWeb.Live.RedisShow do
           Delete Cluster
         </.button>
       </div>
-    </.card>
+    </.panel>
     """
   end
 end

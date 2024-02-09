@@ -32,6 +32,7 @@ defmodule CommonUI.Card do
   attr :title, :string, default: nil
   attr :class, :string, default: nil
   attr :variant, :string, default: "simple", values: ["simple", "gray"]
+  attr :padding, :string, default: "p-4"
   attr :rest, :global, include: ~w(id)
 
   slot :inner_block
@@ -45,7 +46,7 @@ defmodule CommonUI.Card do
     <div class={[get_classes(@variant), @class]} {@rest}>
       <.flex
         :if={@title != nil && @title != ""}
-        class="items-center justify-between w-full p-4 text-center flex-col lg:flex-row"
+        class={["items-center justify-between w-full p-4 text-center flex-col lg:flex-row", @padding]}
       >
         <.h3 :if={@title}><%= @title %></.h3>
 
@@ -54,7 +55,7 @@ defmodule CommonUI.Card do
         <% end %>
       </.flex>
 
-      <div class="p-4">
+      <div class={@padding}>
         <%= render_slot(@inner_block) %>
       </div>
     </div>

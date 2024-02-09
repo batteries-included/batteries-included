@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.RawResource do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.ObjectDisplay
 
@@ -56,9 +56,9 @@ defmodule ControlServerWeb.Live.RawResource do
   def render(assigns) do
     ~H"""
     <.h1>Raw <%= @resource_type %></.h1>
-    <.card>
+    <.panel padding="p-0">
       <.object_display object={@resource} path={@path} base_url={@base_url} />
-    </.card>
+    </.panel>
     """
   end
 end

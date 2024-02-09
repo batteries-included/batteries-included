@@ -11,7 +11,6 @@ defmodule CommonUI do
       import CommonUI.DataList
       import CommonUI.Flash
       import CommonUI.Form
-      import CommonUI.LabeledDefiniton
       import CommonUI.Link
       import CommonUI.Table
       import CommonUI.TextHelpers

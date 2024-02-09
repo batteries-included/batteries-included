@@ -20,6 +20,14 @@ defmodule ControlServerWeb.ResourceHTMLHelper do
     end
   end
 
+  def raw_resource_path(%{} = resource) do
+    resource_type = ApiVersionKind.resource_type(resource)
+    namespace = namespace(resource)
+    name = name(resource)
+
+    "/kube/raw/#{resource_type}/#{namespace}/#{name}"
+  end
+
   def to_html_id(resource) do
     [kind(resource), namespace(resource), name(resource)] |> Enum.filter(& &1) |> Enum.join("_") |> String.downcase()
   end

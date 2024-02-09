@@ -237,6 +237,7 @@ defmodule ControlServerWeb.PodLive.Show do
     <.flex column class="justify-start">
       <.bordered_menu_item navigate={resource_path(@resource, :events)} title="Events" />
       <.bordered_menu_item navigate={resource_path(@resource, :labels)} title="Labels/Annotations" />
+      <.bordered_menu_item navigate={raw_resource_path(@resource)} title="Raw Kubernetes" />
       <.bordered_menu_item
         :if={@sso_enabled}
         navigate={resource_path(@resource, :security)}

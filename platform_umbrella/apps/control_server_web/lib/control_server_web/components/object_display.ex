@@ -8,14 +8,14 @@ defmodule ControlServerWeb.ObjectDisplay do
 
   def object_display(assigns) do
     ~H"""
-    <div class="flex flex-row overflow-x-auto focus:outline-none full-screen-minus">
+    <.flex class="overflow-x-auto focus:outline-none full-screen-minus mx-2">
       <.column
         :for={idx <- 0..length(@path)}
         path={Enum.slice(@path, 0, idx)}
         object={sub_obj(@object, Enum.slice(@path, 0, idx))}
         base_url={@base_url}
       />
-    </div>
+    </.flex>
     """
   end
 
@@ -23,13 +23,13 @@ defmodule ControlServerWeb.ObjectDisplay do
 
   defp column_title(%{selected: nil} = assigns) do
     ~H"""
-    <.h2 class="mb-4 mx-2">Root</.h2>
+    <.h3 class="my-4">Root</.h3>
     """
   end
 
   defp column_title(assigns) do
     ~H"""
-    <.h2 class="mb-4 mx-2"><%= titleize(@selected) %></.h2>
+    <.h3 class="my-4"><%= titleize(@selected) %></.h3>
     """
   end
 
@@ -46,21 +46,26 @@ defmodule ControlServerWeb.ObjectDisplay do
   attr :base_url, :string, default: "/"
   attr :path, :any, default: []
   attr :object, :any, default: %{}
+  attr :class, :string, default: "flex-none border-r-[1px] border-gray-200/90 w-96 overflow-x-clip"
 
   defp column(%{object: object} = assigns) when is_map(object) or is_list(object) do
     ~H"""
-    <div class="flex-none border-r-[1px] border-gray-400 w-80">
-      <.column_title selected={selected(@path)} />
-      <.column_data object={@object} path={@path} base_url={@base_url} />
+    <div class={@class}>
+      <.flex column class="h-full w-full overflow-y-auto">
+        <.column_title selected={selected(@path)} />
+        <.column_data object={@object} path={@path} base_url={@base_url} />
+      </.flex>
     </div>
     """
   end
 
   defp column(assigns) do
     ~H"""
-    <div class="flex-none border-r-[1px] border-gray-400 w-80">
-      <.column_title selected={selected(@path)} />
-      <%= to_string(@object) %>
+    <div class={@class}>
+      <.flex column class="h-full w-full overflow-y-auto">
+        <.column_title selected={selected(@path)} />
+        <.truncate_tooltip value={to_string(@object)} class="text-md" />
+      </.flex>
     </div>
     """
   end
@@ -68,36 +73,34 @@ defmodule ControlServerWeb.ObjectDisplay do
   attr :base_url, :string, default: "/"
   attr :path, :any, default: []
   attr :object, :any, default: %{}
+  attr :class, :string, default: "flex flex-row h-10 hover:bg-pink-100/50 items-center group"
+  attr :icon_class, :string, default: "text-gray-400 w-6 mr-2 my-auto group-hover:text-pink-600"
 
   defp column_data(%{object: object} = assigns) when is_map(object) do
     ~H"""
-    <div class="overflow-y-auto no-scrollbar h-full">
-      <.a
-        :for={{key, value} <- @object}
-        class="flex flex-grow h-10 mx-2 hover:bg-pink-100/50 items-center"
-        patch={object_path_url(@base_url, @path ++ [key])}
-      >
-        <.value_icon value_type={value_type(value)} class="text-gray-400 w-6 mr-2 my-auto" />
-        <span class="grow"><%= key %></span>
-        <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
-      </.a>
-    </div>
+    <.a
+      :for={{key, value} <- @object}
+      class={@class}
+      patch={object_path_url(@base_url, @path ++ [key])}
+    >
+      <.value_icon value_type={value_type(value)} class={@icon_class} />
+      <span class="grow"><%= key %></span>
+      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
+    </.a>
     """
   end
 
   defp column_data(%{object: object} = assigns) when is_list(object) do
     ~H"""
-    <div class="overflow-y-auto no-scrollbar">
-      <.a
-        :for={{value, idx} <- Enum.with_index(@object)}
-        class="flex flex-grow h-10 mx-2 hover:bg-pink-100/50 items-center"
-        patch={object_path_url(@base_url, @path ++ [Integer.to_string(idx)])}
-      >
-        <.value_icon value_type={value_type(value)} class="text-gray-400 w-6 mr-2 my-auto" />
-        <span class="grow">Index <%= idx %></span>
-        <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
-      </.a>
-    </div>
+    <.a
+      :for={{value, idx} <- Enum.with_index(@object)}
+      class={@class}
+      patch={object_path_url(@base_url, @path ++ [Integer.to_string(idx)])}
+    >
+      <.value_icon value_type={value_type(value)} class={@icon_class} />
+      <span class="grow">Index <%= idx %></span>
+      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
+    </.a>
     """
   end
 
