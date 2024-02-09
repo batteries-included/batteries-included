@@ -8,6 +8,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.CephFilesystems
   alias CommonCore.Resources.CertManager.Certificates
   alias CommonCore.Resources.CertManager.CertManager
+  alias CommonCore.Resources.CertManager.TrustManager
   alias CommonCore.Resources.CloudnativePG
   alias CommonCore.Resources.CloudnativePGClusters
   alias CommonCore.Resources.CloudnativePGDashboards
@@ -47,7 +48,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.SSO
   alias CommonCore.Resources.TextGenerationWebUI
   alias CommonCore.Resources.TrivyOperator
-  alias CommonCore.Resources.TrustManager
   alias CommonCore.Resources.VMAgent
   alias CommonCore.Resources.VMCluster
   alias CommonCore.Resources.VMDashboards
