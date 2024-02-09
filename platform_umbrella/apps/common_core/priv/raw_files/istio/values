@@ -55,6 +55,7 @@
       "includeIPRanges": "*",
       "includeInboundPorts": "*",
       "includeOutboundPorts": "",
+      "holdApplicationUntilProxyStarts": true,
       "logLevel": "warning",
       "privileged": false,
       "readinessFailureThreshold": 4,
