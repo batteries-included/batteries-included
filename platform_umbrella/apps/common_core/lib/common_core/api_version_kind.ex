@@ -55,8 +55,6 @@ defmodule CommonCore.ApiVersionKind do
     certmanager_cluster_issuer: {"cert-manager.io/v1", "ClusterIssuer"},
     certmanager_certificate_request: {"cert-manager.io/v1", "CertificateRequest"},
     trustmanager_bundle: {"trust.cert-manager.io/v1alpha1", "Bundle"},
-    ceph_cluster: {"ceph.rook.io/v1", "CephCluster"},
-    ceph_filesystem: {"ceph.rook.io/v1", "CephFilesystem"},
     metal_ip_address_pool: {"metallb.io/v1beta1", "IPAddressPool"},
     metal_address_pool: {"metallb.io/v1beta1", "AddressPool"},
     metal_l2_advertisement: {"metallb.io/v1beta1", "L2Advertisement"},

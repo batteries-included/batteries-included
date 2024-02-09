@@ -13,8 +13,6 @@ defmodule CommonCore.Defaults.Images do
 
   def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.4"
 
-  def ceph_image, do: "quay.io/ceph/ceph:v17.2.6"
-
   def gitea_image, do: "gitea/gitea:1.19.4"
 
   def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.14.1"

@@ -26,13 +26,5 @@ defmodule ControlServer.Repo.Migrations.CreateSystemProjects do
     alter table(:redis_clusters) do
       add :project_id, references(:system_projects)
     end
-
-    alter table(:ceph_clusters) do
-      add :project_id, references(:system_projects)
-    end
-
-    alter table(:ceph_filesystems) do
-      add :project_id, references(:system_projects)
-    end
   end
 end

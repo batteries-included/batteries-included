@@ -28,7 +28,6 @@ defmodule CommonCore.MixProject do
     [
       {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:polymorphic_embed, "~> 3.0"},
       {:telemetry, "~> 1.1"},
       {:tesla, "~> 1.8"},
       {:typed_ecto_schema, "~> 0.4"},

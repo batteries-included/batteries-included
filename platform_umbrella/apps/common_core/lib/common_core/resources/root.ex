@@ -4,8 +4,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   """
   alias CommonCore.Resources.BatteryCA
   alias CommonCore.Resources.BatteryCore
-  alias CommonCore.Resources.CephClusters
-  alias CommonCore.Resources.CephFilesystems
   alias CommonCore.Resources.CertManager.Certificates
   alias CommonCore.Resources.CertManager.CertManager
   alias CommonCore.Resources.CertManager.TrustManager
@@ -43,7 +41,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.Promtail
   alias CommonCore.Resources.Redis
   alias CommonCore.Resources.RedisOperator
-  alias CommonCore.Resources.Rook
   alias CommonCore.Resources.Smtp4Dev
   alias CommonCore.Resources.SSO
   alias CommonCore.Resources.TextGenerationWebUI
@@ -76,7 +73,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     notebooks: [Notebooks],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],
-    rook: [Rook, CephFilesystems, CephClusters],
     smtp4dev: [Smtp4Dev],
     sso: [SSO],
     stale_resource_cleaner: [],

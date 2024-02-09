@@ -3,7 +3,8 @@ defmodule CommonUI.Form do
   use CommonUI.Component
 
   import CommonUI.Gettext, warn: false
-  import Phoenix.HTML.Form, only: [input_name: 2, input_id: 2, input_value: 2, humanize: 1]
+  import Phoenix.HTML.Form, only: [input_name: 2, input_id: 2, input_value: 2]
+  import Phoenix.Naming, only: [humanize: 1]
 
   @doc """
   Renders a simple form with a css grid based 2 column layout.

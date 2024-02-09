@@ -10,8 +10,6 @@ defmodule ControlServer.SystemState do
     |> Multi.all(:redis_clusters, CommonCore.Redis.FailoverCluster)
     |> Multi.all(:notebooks, CommonCore.Notebooks.JupyterLabNotebook)
     |> Multi.all(:knative_services, CommonCore.Knative.Service)
-    |> Multi.all(:ceph_clusters, CommonCore.Rook.CephCluster)
-    |> Multi.all(:ceph_filesystems, CommonCore.Rook.CephFilesystem)
     |> Multi.all(:ip_address_pools, CommonCore.MetalLB.IPAddressPool)
     |> ControlServer.Repo.transaction()
   end

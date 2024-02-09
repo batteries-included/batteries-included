@@ -2,8 +2,7 @@ locals_without_parens = [
   defaultable_field: 3,
   embeds_many: 3,
   field: 3,
-  field: 2,
-  polymorphic_embeds_one: 2
+  field: 2
 ]
 
 [

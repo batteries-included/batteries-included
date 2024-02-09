@@ -3,6 +3,7 @@ defmodule CommonUI.MutliSelect do
   use CommonUI.Component
 
   import CommonUI.Container
+  import Phoenix.Naming, only: [humanize: 1]
 
   alias Phoenix.HTML.Form
 
@@ -24,7 +25,7 @@ defmodule CommonUI.MutliSelect do
       {@rest}
     >
       <label phx-feedback-for={Form.input_name(@form, @field.name)}>
-        <%= @label || Form.humanize(@field.name) %>
+        <%= @label || humanize(@field.name) %>
       </label>
       <!-- Select value display and chevron for open/close -->
       <.flex

@@ -29,30 +29,6 @@ defmodule CommonCore.Factory do
     }
   end
 
-  def ceph_storage_node_factory do
-    %{
-      name: sequence("ceph-node"),
-      device_filter: sequence(:device_filter, &"/dev/by-path/#{&1}-sata*")
-    }
-  end
-
-  def ceph_cluster_factory do
-    %{
-      name: sequence("test-ceph-cluster"),
-      data_dir_host_path: "/var/lib/rook/ceph",
-      num_mgr: 2,
-      num_mon: 3,
-      nodes: [build(:ceph_storage_node), build(:ceph_storage_node)]
-    }
-  end
-
-  def ceph_filesystem_factory do
-    %{
-      name: sequence("test-ceph-filesystem"),
-      include_erasure_encoded: sequence(:ec, [true, false])
-    }
-  end
-
   def system_battery do
     %{
       config: %{},
@@ -71,8 +47,7 @@ defmodule CommonCore.Factory do
           :knative_serving,
           :metallb,
           :notebooks,
-          :redis,
-          :rook
+          :redis
         ])
     }
   end

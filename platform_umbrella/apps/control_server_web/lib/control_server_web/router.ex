@@ -121,18 +121,6 @@ defmodule ControlServerWeb.Router do
     live "/:id/edit_versions", Live.FerretServiceShow, :edit_versions
   end
 
-  scope "/ceph", ControlServerWeb do
-    pipe_through :browser
-
-    live "/", Live.CephIndex, :index
-    live "/clusters/new", Live.CephClusterNew, :new
-    live "/clusters/:id/edit", Live.CephClusterEdit, :edit
-    live "/clusters/:id/show", Live.CephClusterShow, :show
-    live "/filesystems/new", Live.CephFilesystemNew, :new
-    live "/filesystems/:id/edit", Live.CephFilesystemEdit, :edit
-    live "/filesystems/:id/show", Live.CephFilesystemShow, :show
-  end
-
   scope "/knative", ControlServerWeb do
     pipe_through :browser
 

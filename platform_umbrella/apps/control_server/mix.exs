@@ -53,7 +53,6 @@ defmodule ControlServer.MixProject do
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_pubsub, "~> 2.1"},
-      {:polymorphic_embed, "~> 3.0"},
       {:postgrex, "~> 0.17"},
       {:typed_ecto_schema, "~> 0.4"},
       {:yaml_elixir, "~> 2.6"},

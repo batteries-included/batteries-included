@@ -32,8 +32,6 @@ defmodule CommonCore.StateSummary do
     embeds_many :redis_clusters, CommonCore.Redis.FailoverCluster
     embeds_many :notebooks, CommonCore.Notebooks.JupyterLabNotebook
     embeds_many :knative_services, CommonCore.Knative.Service
-    embeds_many :ceph_clusters, CommonCore.Rook.CephCluster
-    embeds_many :ceph_filesystems, CommonCore.Rook.CephFilesystem
     embeds_many :ip_address_pools, CommonCore.MetalLB.IPAddressPool
 
     embeds_one :keycloak_state, CommonCore.StateSummary.KeycloakSummary
@@ -52,8 +50,6 @@ defmodule CommonCore.StateSummary do
     |> cast_embed(:redis_clusters)
     |> cast_embed(:notebooks)
     |> cast_embed(:knative_services)
-    |> cast_embed(:ceph_clusters)
-    |> cast_embed(:ceph_filesystems)
     |> cast_embed(:ip_address_pools)
     |> cast_embed(:ip_address_pools)
     |> validate_required(@required_fields)

@@ -52,7 +52,6 @@ defmodule HomeBase.MixProject do
       {:mnemonic_slugs, "~> 0.0.3"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_pubsub, "~> 2.1"},
-      {:polymorphic_embed, "~> 3.0"},
       {:postgrex, "~> 0.17"},
       {:timex, "~> 3.7"},
       {:typed_ecto_schema, "~> 0.4"},

@@ -12,9 +12,6 @@ defmodule ControlServer.Factory do
   alias CommonCore.Postgres
   alias CommonCore.Redis.FailoverCluster
   alias CommonCore.Resources.Hashing
-  alias CommonCore.Rook.CephCluster
-  alias CommonCore.Rook.CephFilesystem
-  alias CommonCore.Rook.CephStorageNode
   alias CommonCore.Timeline
   alias CommonCore.Timeline.TimelineEvent
 
@@ -50,31 +47,6 @@ defmodule ControlServer.Factory do
 
   def jupyter_notebook_factory do
     %JupyterLabNotebook{name: sequence("kube-notebook-")}
-  end
-
-  def ceph_storage_node_factory do
-    %CephStorageNode{
-      name: sequence("ceph-node"),
-      device_filter: sequence(:device_filter, &"/dev/by-path/#{&1}-sata*")
-    }
-  end
-
-  def ceph_cluster_factory do
-    %CephCluster{
-      name: sequence("test-ceph-cluster"),
-      data_dir_host_path: "/var/lib/rook/ceph",
-      num_mgr: 2,
-      num_mon: 3,
-      namespace: sequence("namespace-"),
-      nodes: [build(:ceph_storage_node), build(:ceph_storage_node)]
-    }
-  end
-
-  def ceph_filesystem_factory do
-    %CephFilesystem{
-      name: sequence("test-ceph-filesystem"),
-      include_erasure_encoded: sequence(:include_erasure_encoded, [true, false])
-    }
   end
 
   def knative_container_factory do

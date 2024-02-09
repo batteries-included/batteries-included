@@ -9,24 +9,6 @@ defmodule KubeServices.KubeStateCoverageTest do
   # We open up a watcher for each type.
   # Some types aren't worth the http connections
   @ignored_crd_types [
-    # Ceph has too many types that we don't care about.
-    {"objectbucket.io/v1alpha1", "ObjectBucketClaim"},
-    {"objectbucket.io/v1alpha1", "ObjectBucket"},
-    {"ceph.rook.io/v1", "CephFilesystemSubVolumeGroup"},
-    {"ceph.rook.io/v1", "CephBlockPoolRadosNamespace"},
-    {"ceph.rook.io/v1", "CephObjectZoneGroup"},
-    {"ceph.rook.io/v1", "CephBucketTopic"},
-    {"ceph.rook.io/v1", "CephBucketNotification"},
-    {"ceph.rook.io/v1", "CephRBDMirror"},
-    {"ceph.rook.io/v1", "CephFilesystemMirror"},
-    {"ceph.rook.io/v1", "CephObjectStore"},
-    {"ceph.rook.io/v1", "CephObjectRealm"},
-    {"ceph.rook.io/v1", "CephObjectZone"},
-    {"ceph.rook.io/v1", "CephObjectStoreUser"},
-    {"ceph.rook.io/v1", "CephBlockPool"},
-    {"ceph.rook.io/v1", "CephClient"},
-    {"ceph.rook.io/v1", "CephNFS"},
-
     # BGP will come later
     {"metallb.io/v1beta1", "BGPAdvertisement"},
     {"metallb.io/v1beta2", "BGPPeer"},

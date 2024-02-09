@@ -9,7 +9,6 @@ defmodule ControlServerWeb.LeftMenu do
   import CommonUI.Icons.Monitoring
   import CommonUI.Icons.Network
   import CommonUI.Icons.Notebook
-  import CommonUI.Icons.Rook
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Batteries.SystemBattery
@@ -409,14 +408,6 @@ defmodule ControlServerWeb.LeftMenu do
       is_active={@page_detail_type == :new_redis}
     >
       <Heroicons.plus_circle class={@icon_class} />
-    </.detail_menu_item>
-    """
-  end
-
-  defp battery_detail_item(%{battery: %{type: :rook}} = assigns) do
-    ~H"""
-    <.detail_menu_item navigate={~p"/ceph"} name="Ceph" is_active={@page_detail_type == :rook}>
-      <.ceph_icon class={@icon_class} />
     </.detail_menu_item>
     """
   end

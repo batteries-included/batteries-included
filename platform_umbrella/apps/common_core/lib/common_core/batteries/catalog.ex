@@ -26,7 +26,6 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [:battery_core, :cloudnative_pg],
       description: "A truly Open Source MongoDB alternative, built on Postgres"
     },
-    %CatalogBattery{group: :data, type: :rook, dependencies: [:battery_core]},
     # Internal
     %CatalogBattery{group: :magic, type: :battery_core},
     %CatalogBattery{

@@ -23,7 +23,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.NotebooksConfig
   alias CommonCore.Batteries.PromtailConfig
   alias CommonCore.Batteries.RedisConfig
-  alias CommonCore.Batteries.RookConfig
   alias CommonCore.Batteries.Smtp4devConfig
   alias CommonCore.Batteries.SSOConfig
   alias CommonCore.Batteries.StaleResourceCleanerConfig
@@ -57,7 +56,6 @@ defmodule CommonCore.Batteries.SystemBattery do
     notebooks: NotebooksConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
-    rook: RookConfig,
     stale_resource_cleaner: StaleResourceCleanerConfig,
     smtp4dev: Smtp4devConfig,
     sso: SSOConfig,
