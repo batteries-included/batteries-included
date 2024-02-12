@@ -32,7 +32,7 @@ defmodule CommonCore.Defaults.Images do
   def istio_pilot_image, do: "docker.io/istio/pilot:1.20.1-distroless"
   def istio_proxy_image, do: "docker.io/istio/proxyv2:1.20.1-distroless"
 
-  def keycloak_image, do: "quay.io/keycloak/keycloak:22.0.4"
+  def keycloak_image, do: "quay.io/keycloak/keycloak:23.0.6"
 
   def kiali_image, do: "quay.io/kiali/kiali:#{kiali_image_version()}"
   def kiali_image_version, do: "v1.78.0"

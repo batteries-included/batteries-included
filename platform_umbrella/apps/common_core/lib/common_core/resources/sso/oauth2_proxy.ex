@@ -29,6 +29,83 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     name = name(battery)
     namespace = core_namespace(state)
 
+    template =
+      %{
+        "metadata" => %{"labels" => %{"battery/managed" => "true"}},
+        "spec" => %{
+          "automountServiceAccountToken" => true,
+          "containers" => [
+            %{
+              "args" => [
+                "--http-address=0.0.0.0:#{@web_port}",
+                "--metrics-address=0.0.0.0:#{@metrics_port}",
+                "--email-domain=*",
+                "--upstream=static://200",
+                "--auth-logging=true",
+                "--code-challenge-method=S256",
+                "--cookie-expire=4h",
+                "--cookie-httponly=true",
+                "--cookie-refresh=4m",
+                "--cookie-samesite=lax",
+                "--cookie-secure=false",
+                "--pass-access-token=true",
+                "--pass-authorization-header=true",
+                "--pass-host-header=true",
+                "--provider=oidc",
+                "--request-logging=true",
+                "--reverse-proxy=true",
+                "--scope=openid email profile",
+                "--session-store-type=cookie",
+                "--set-authorization-header=true",
+                "--set-xauthrequest=true",
+                "--silence-ping-logging=true",
+                "--skip-auth-strip-headers=false",
+                "--skip-jwt-bearer-tokens=true",
+                "--skip-provider-button=true",
+                "--ssl-insecure-skip-verify=true",
+                "--insecure-oidc-allow-unverified-email=true",
+                "--standard-logging=true"
+              ],
+              "env" => build_env(battery, state),
+              "image" => CommonCore.Defaults.Images.oauth2_proxy_image(),
+              "imagePullPolicy" => "IfNotPresent",
+              "livenessProbe" => %{
+                "httpGet" => %{"path" => "/ping", "port" => "http", "scheme" => "HTTP"},
+                "initialDelaySeconds" => 0,
+                "timeoutSeconds" => 1
+              },
+              "name" => @component,
+              "ports" => [
+                %{"containerPort" => @web_port, "name" => "http", "protocol" => "TCP"},
+                %{"containerPort" => @metrics_port, "name" => "metrics", "protocol" => "TCP"}
+              ],
+              "readinessProbe" => %{
+                "httpGet" => %{"path" => "/ready", "port" => "http", "scheme" => "HTTP"},
+                "initialDelaySeconds" => 0,
+                "periodSeconds" => 10,
+                "successThreshold" => 1,
+                "timeoutSeconds" => 5
+              },
+              "resources" => %{},
+              "securityContext" => %{
+                "allowPrivilegeEscalation" => false,
+                "capabilities" => %{"drop" => ["ALL"]},
+                "readOnlyRootFilesystem" => true,
+                "runAsGroup" => @user_group_id,
+                "runAsNonRoot" => true,
+                "runAsUser" => @user_group_id,
+                "seccompProfile" => %{"type" => "RuntimeDefault"}
+              }
+            }
+          ],
+          "serviceAccountName" => name,
+          "tolerations" => []
+        }
+      }
+      |> B.app_labels(name)
+      |> B.component_labels(@component)
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put("replicas", 1)
@@ -42,87 +119,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
           }
         }
       )
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => name,
-              "battery/component" => @component,
-              "battery/managed" => "true"
-            }
-          },
-          "spec" => %{
-            "automountServiceAccountToken" => true,
-            "containers" => [
-              %{
-                "args" => [
-                  "--http-address=0.0.0.0:#{@web_port}",
-                  "--metrics-address=0.0.0.0:#{@metrics_port}",
-                  "--email-domain=*",
-                  "--upstream=static://200",
-                  "--auth-logging=true",
-                  "--code-challenge-method=S256",
-                  "--cookie-expire=4h",
-                  "--cookie-httponly=true",
-                  "--cookie-refresh=4m",
-                  "--cookie-samesite=lax",
-                  "--cookie-secure=false",
-                  "--pass-access-token=true",
-                  "--pass-authorization-header=true",
-                  "--pass-host-header=true",
-                  "--provider=oidc",
-                  "--request-logging=true",
-                  "--reverse-proxy=true",
-                  "--scope=openid email profile",
-                  "--session-store-type=cookie",
-                  "--set-authorization-header=true",
-                  "--set-xauthrequest=true",
-                  "--silence-ping-logging=true",
-                  "--skip-auth-strip-headers=false",
-                  "--skip-jwt-bearer-tokens=true",
-                  "--skip-provider-button=true",
-                  "--ssl-insecure-skip-verify=true",
-                  "--insecure-oidc-allow-unverified-email=true",
-                  "--standard-logging=true"
-                ],
-                "env" => build_env(battery, state),
-                "image" => CommonCore.Defaults.Images.oauth2_proxy_image(),
-                "imagePullPolicy" => "IfNotPresent",
-                "livenessProbe" => %{
-                  "httpGet" => %{"path" => "/ping", "port" => "http", "scheme" => "HTTP"},
-                  "initialDelaySeconds" => 0,
-                  "timeoutSeconds" => 1
-                },
-                "name" => @component,
-                "ports" => [
-                  %{"containerPort" => @web_port, "name" => "http", "protocol" => "TCP"},
-                  %{"containerPort" => @metrics_port, "name" => "metrics", "protocol" => "TCP"}
-                ],
-                "readinessProbe" => %{
-                  "httpGet" => %{"path" => "/ready", "port" => "http", "scheme" => "HTTP"},
-                  "initialDelaySeconds" => 0,
-                  "periodSeconds" => 10,
-                  "successThreshold" => 1,
-                  "timeoutSeconds" => 5
-                },
-                "resources" => %{},
-                "securityContext" => %{
-                  "allowPrivilegeEscalation" => false,
-                  "capabilities" => %{"drop" => ["ALL"]},
-                  "readOnlyRootFilesystem" => true,
-                  "runAsGroup" => @user_group_id,
-                  "runAsNonRoot" => true,
-                  "runAsUser" => @user_group_id,
-                  "seccompProfile" => %{"type" => "RuntimeDefault"}
-                }
-              }
-            ],
-            "serviceAccountName" => name,
-            "tolerations" => []
-          }
-        }
-      )
+      |> Map.put("template", template)
 
     :deployment
     |> B.build_resource()

@@ -17,6 +17,8 @@ defmodule CommonCore.Batteries.KeycloakConfig do
   typed_embedded_schema do
     defaultable_field :image, :string, default: Defaults.Images.keycloak_image()
     defaultable_field :admin_username, :string, default: "batteryadmin"
+    defaultable_field :log_level, :string, default: "info"
+    defaultable_field :replicas, :integer, default: 1
     field :admin_password, :string
     type_field()
   end

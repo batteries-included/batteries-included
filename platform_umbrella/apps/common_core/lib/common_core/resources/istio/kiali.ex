@@ -280,8 +280,8 @@ defmodule CommonCore.Resources.Kiali do
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
       |> Map.put("strategy", %{"rollingUpdate" => %{"maxSurge" => 1, "maxUnavailable" => 1}, "type" => "RollingUpdate"})
+      |> B.match_labels_selector(@app_name)
       |> B.template(template)
 
     :deployment
