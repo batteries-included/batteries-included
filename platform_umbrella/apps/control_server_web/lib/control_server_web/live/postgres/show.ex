@@ -15,7 +15,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
-  alias KubeServices.SystemState.SummaryHosts
+  alias KubeServices.SystemState.SummaryURLs
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -85,22 +85,17 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp maybe_assign_edit_versions(socket), do: socket
 
-  defp maybe_assign_grafana_url(%{assigns: %{cluster: cluster, k8_cluster: k8_cluster, live_action: :show}} = socket) do
-    assign(socket, :grafana_dashboard_url, grafana_url(cluster, k8_cluster))
+  defp maybe_assign_grafana_url(%{assigns: %{cluster: cluster, live_action: :show}} = socket) do
+    assign(socket, :grafana_dashboard_url, grafana_url(cluster))
   end
 
   defp maybe_assign_grafana_url(socket), do: socket
 
-  defp grafana_url(_cluster, nil), do: nil
+  defp grafana_url(nil), do: nil
 
-  defp grafana_url(cluster, k8_cluster) do
-    # TODO(elliott): This should be in a SummaryUrls module
-    # and not depend on the k8_cluster
+  defp grafana_url(cluster) do
     if SummaryBatteries.battery_installed(:grafana) do
-      host = SummaryHosts.grafana_host()
-      namespace = namespace(k8_cluster)
-
-      "//#{host}/d/cloudnative-pg/cloudnativepg?var-namespace=#{namespace}&var-cluster=pg-#{cluster.name}"
+      SummaryURLs.pg_dashboard_url(cluster)
     end
   end
 

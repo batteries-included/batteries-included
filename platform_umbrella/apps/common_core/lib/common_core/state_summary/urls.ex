@@ -20,4 +20,18 @@ defmodule CommonCore.StateSummary.URLs do
     |> uri_for_battery(:keycloak)
     |> URI.append_path("/realms/#{realm}")
   end
+
+  @spec cloud_native_pg_dashboard(CommonCore.StateSummary.t()) :: URI.t()
+  def cloud_native_pg_dashboard(state) do
+    state
+    |> uri_for_battery(:grafana)
+    |> URI.append_path("/d/cloudnative-pg/cloudnativepg")
+  end
+
+  @spec pod_dashboard(CommonCore.StateSummary.t()) :: URI.t()
+  def pod_dashboard(state) do
+    state
+    |> uri_for_battery(:grafana)
+    |> URI.append_path("/d/k8s_views_pods/kubernetes-views-pods")
+  end
 end

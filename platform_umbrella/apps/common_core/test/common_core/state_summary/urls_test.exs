@@ -30,4 +30,26 @@ defmodule CommonCore.StateSummary.URLsTest do
       assert expected == keycloak_uri_for_realm(summary, "test-realm")
     end
   end
+
+  describe "cloud_native_pg_dashboard" do
+    test "returns the cloud native pg dashboard URI" do
+      summary = CommonCore.StateSummary.SeedState.seed(:everything)
+
+      expected =
+        URI.new!("https://grafana.core.127.0.0.1.ip.batteriesincl.com/d/cloudnative-pg/cloudnativepg")
+
+      assert expected == cloud_native_pg_dashboard(summary)
+    end
+  end
+
+  describe "pod_dashboard" do
+    test "returns the pod dashboard URI" do
+      summary = CommonCore.StateSummary.SeedState.seed(:everything)
+
+      expected =
+        URI.new!("https://grafana.core.127.0.0.1.ip.batteriesincl.com/d/k8s_views_pods/kubernetes-views-pods")
+
+      assert expected == pod_dashboard(summary)
+    end
+  end
 end

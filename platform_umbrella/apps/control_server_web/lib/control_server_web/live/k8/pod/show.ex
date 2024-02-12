@@ -12,6 +12,7 @@ defmodule ControlServerWeb.PodLive.Show do
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
+  alias KubeServices.SystemState.SummaryURLs
 
   require Logger
 
@@ -28,8 +29,9 @@ defmodule ControlServerWeb.PodLive.Show do
      )
      |> assign_logs_pid(nil)
      |> assign_logs(nil)
-     |> assign_sso_enabled()
-     |> assign_resource()}
+     |> assign_batteries_enabled()
+     |> assign_resource()
+     |> assign_grafana_dashboard()}
   end
 
   @impl Phoenix.LiveView
@@ -84,8 +86,17 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp assign_events(socket), do: socket
 
-  defp assign_sso_enabled(socket) do
-    assign(socket, sso_enabled: SummaryBatteries.battery_installed(:trivy_operator))
+  defp assign_batteries_enabled(socket) do
+    assign(socket, trivy_enabled: SummaryBatteries.battery_installed(:trivy_operator))
+  end
+
+  defp assign_grafana_dashboard(%{assigns: %{resource: resource}} = socket) do
+    url =
+      if SummaryBatteries.battery_installed(:grafana) do
+        SummaryURLs.pod_dasboard_url(resource)
+      end
+
+    assign(socket, grafana_dashboard_url: url)
   end
 
   defp assign_vulnerabilities(%{assigns: %{resource: resource}} = socket) do
@@ -239,7 +250,12 @@ defmodule ControlServerWeb.PodLive.Show do
       <.bordered_menu_item navigate={resource_path(@resource, :labels)} title="Labels/Annotations" />
       <.bordered_menu_item navigate={raw_resource_path(@resource)} title="Raw Kubernetes" />
       <.bordered_menu_item
-        :if={@sso_enabled}
+        :if={@grafana_dashboard_url != nil}
+        navigate={@grafana_dashboard_url}
+        title="Grafana Dashboard"
+      />
+      <.bordered_menu_item
+        :if={@trivy_enabled}
         navigate={resource_path(@resource, :security)}
         title="Security Report"
       />
@@ -258,7 +274,11 @@ defmodule ControlServerWeb.PodLive.Show do
     <.flex column>
       <.grid columns={[sm: 1, lg: 2]}>
         <.details_panel resource={@resource} />
-        <.link_panel resource={@resource} sso_enabled={@sso_enabled} />
+        <.link_panel
+          resource={@resource}
+          trivy_enabled={@trivy_enabled}
+          grafana_dashboard_url={@grafana_dashboard_url}
+        />
       </.grid>
       <.pod_containers_section resource={@resource} />
       <.conditions_display conditions={conditions(@resource)} />
@@ -389,14 +409,16 @@ defmodule ControlServerWeb.PodLive.Show do
           resource={@resource}
           namespace={@namespace}
           name={@name}
-          sso_enabled={@sso_enabled}
+          trivy_enabled={@trivy_enabled}
+          grafana_dashboard_url={@grafana_dashboard_url}
         />
       <% :logs -> %>
         <.main_page
           resource={@resource}
           namespace={@namespace}
           name={@name}
-          sso_enabled={@sso_enabled}
+          trivy_enabled={@trivy_enabled}
+          grafana_dashboard_url={@grafana_dashboard_url}
         />
         <.logs_modal resource={@resource} logs={@logs} />
       <% :events -> %>

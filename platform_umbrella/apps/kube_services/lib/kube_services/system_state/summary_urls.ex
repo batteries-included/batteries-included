@@ -8,7 +8,9 @@ defmodule KubeServices.SystemState.SummaryURLs do
   use GenServer
   use TypedStruct
 
+  alias CommonCore.Resources.FieldAccessors
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.PostgresState
   alias EventCenter.SystemStateSummary
   alias KubeServices.SystemState.Summarizer
 
@@ -44,7 +46,37 @@ defmodule KubeServices.SystemState.SummaryURLs do
     {:noreply, new_state}
   end
 
+  # For a given postgres cluster, return the URL to the cloud native pg dashboard in grafana
   @impl GenServer
+  def handle_call({:pg_dashboard_url, %{} = cluster}, _from, %{summary: summary} = state) do
+    namespace = PostgresState.cluster_namespace(summary, cluster)
+    query = URI.encode_query(%{"var-cluster" => "pg-" <> cluster.name, "var-namespace" => namespace})
+
+    url =
+      summary
+      |> CommonCore.StateSummary.URLs.cloud_native_pg_dashboard()
+      |> URI.append_query(query)
+      |> URI.to_string()
+
+    {:reply, url, state}
+  end
+
+  def handle_call({:pod_dashboard_url, %{} = pod}, _from, %{summary: summary} = state) do
+    query =
+      URI.encode_query(%{
+        "var-namespace" => FieldAccessors.namespace(pod),
+        "var-pod" => FieldAccessors.name(pod)
+      })
+
+    url =
+      summary
+      |> CommonCore.StateSummary.URLs.pod_dashboard()
+      |> URI.append_query(query)
+      |> URI.to_string()
+
+    {:reply, url, state}
+  end
+
   def handle_call([method | args], _from, %{summary: summary} = state) do
     {:reply, apply(CommonCore.StateSummary.URLs, method, [summary | args]), state}
   end
@@ -59,5 +91,13 @@ defmodule KubeServices.SystemState.SummaryURLs do
   def keycloak_url_for_realm(target \\ @me, realm) do
     result = GenServer.call(target, [:keycloak_uri_for_realm, realm])
     URI.to_string(result)
+  end
+
+  def pg_dashboard_url(target \\ @me, cluster) do
+    GenServer.call(target, {:pg_dashboard_url, cluster})
+  end
+
+  def pod_dasboard_url(target \\ @me, pod_resource) do
+    GenServer.call(target, {:pod_dashboard_url, pod_resource})
   end
 end
