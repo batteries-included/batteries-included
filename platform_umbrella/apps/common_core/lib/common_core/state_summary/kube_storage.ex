@@ -7,7 +7,7 @@ defmodule CommonCore.StateSummary.KubeStorage do
   @doc """
   Get all of the active storage classes in the cluster.
   """
-  @spec storage_classes(CommonCore.StateSummary.t()) :: list()
+  @spec storage_classes(StateSummary.t()) :: list()
   def storage_classes(%StateSummary{kube_state: kube_state} = _summary) do
     Map.get(kube_state, :storage_class, [])
   end
@@ -17,7 +17,7 @@ defmodule CommonCore.StateSummary.KubeStorage do
   annotation. In the future this will be a setting in some
   battery that will be configurable.
   """
-  @spec default_storage_class(CommonCore.StateSummary.t()) :: map() | nil
+  @spec default_storage_class(StateSummary.t()) :: map() | nil
   def default_storage_class(summary) do
     classes = storage_classes(summary)
 

@@ -1,7 +1,7 @@
 defmodule CommonCore.InstallSpec do
   @moduledoc """
   A struct holding the information needed the bootstrap
-  an instalation of Batteries included control server
+  an installation of Batteries Included control server
   onto a kubernetes cluster.
   """
   use TypedStruct
