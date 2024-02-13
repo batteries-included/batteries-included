@@ -20,14 +20,14 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:form, to_form(changeset))}
   end
 
   @impl Phoenix.LiveComponent
   def handle_event("validate", %{"ip_address_pool" => params}, socket) do
     {changeset, _data} = IPAddressPool.validate(params)
 
-    {:noreply, assign(socket, changeset: changeset)}
+    {:noreply, assign(socket, form: to_form(changeset))}
   end
 
   def handle_event("save", %{"ip_address_pool" => pool_params}, socket) do
@@ -43,7 +43,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
          |> send_info(socket.assigns.save_target, new_pool)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -56,7 +56,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
          |> send_info(socket.assigns.save_target, updated_ip_address_pool)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
 
@@ -71,24 +71,29 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.simple_form
-        :let={f}
-        for={@changeset}
+      <.form
+        for={@form}
         id="ip-pool-form"
         phx-change="validate"
         phx-submit="save"
         phx-target={@myself}
       >
-        <.input field={{f, :name}} placeholder="Pool Name" />
-        <.input field={{f, :subnet}} placeholder="Subnet CIDR" />
+        <.page_header title={@title} back_button={%{link_type: "live_redirect", to: cancel_url()}} />
 
-        <:actions>
-          <.button type="submit" phx-disable-with="Saving…">
-            Save
-          </.button>
-        </:actions>
-      </.simple_form>
+        <.panel>
+          <PC.field field={@form[:name]} label="Pool Name" autofocus />
+          <PC.field field={@form[:subnet]} label="Subnet CIDR" />
+
+          <Phoenix.Component.link navigate={cancel_url()} class="mr-3">
+            <PC.button color="light">Cancel</PC.button>
+          </Phoenix.Component.link>
+
+          <PC.button type="submit" phx-disable-with="Saving...">Save</PC.button>
+        </.panel>
+      </.form>
     </div>
     """
   end
+
+  defp cancel_url, do: ~p"/ip_address_pools"
 end

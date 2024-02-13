@@ -4,12 +4,17 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   """
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import ControlServer.MetalLB
   import ControlServerWeb.IPAddressPoolsTable
+
+  alias ControlServer.MetalLB
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_page_title() |> assign_ip_address_pools() |> assign_current_page()}
+    {:ok,
+     socket
+     |> assign(:page_title, "MetalLB")
+     |> assign(:ip_address_pools, MetalLB.list_ip_address_pools())
+     |> assign(:current_page, :net_sec)}
   end
 
   @impl Phoenix.LiveView
@@ -17,36 +22,28 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
     {:noreply, socket}
   end
 
-  defp assign_page_title(socket) do
-    assign(socket, :page_title, "IP Pools")
+  @impl Phoenix.LiveView
+  def handle_event("delete", %{"id" => id}, socket) do
+    {:ok, _} = id |> MetalLB.get_ip_address_pool!() |> MetalLB.delete_ip_address_pool()
+    {:noreply, push_redirect(socket, to: ~p"/ip_address_pools")}
   end
-
-  defp assign_ip_address_pools(socket) do
-    assign(socket, :ip_address_pools, list_ip_address_pools())
-  end
-
-  defp assign_current_page(socket) do
-    assign(socket, :current_page, :net_sec)
-  end
-
-  defp new_url, do: ~p"/ip_address_pools/new"
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/net_sec"}}>
+    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/net_sec"}} />
+
+    <.panel title="IP Addresses">
       <:menu>
-        <.a navigate={new_url()}>
-          <.button class="w-full">
-            New Pool
-          </.button>
+        <.a variant="icon" icon={:plus} navigate={new_url()}>
+          New IP Address Pool
         </.a>
       </:menu>
-    </.page_header>
-    <.panel title="MetalLB IP Addresses">
-      <:menu></:menu>
-      <.ip_address_pools_table rows={@ip_address_pools} />
+
+      <.ip_address_pools_table abbridged rows={@ip_address_pools} />
     </.panel>
     """
   end
+
+  defp new_url, do: ~p"/ip_address_pools/new"
 end

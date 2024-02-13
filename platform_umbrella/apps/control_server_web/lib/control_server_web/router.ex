@@ -38,7 +38,6 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.IPAddressPoolIndex, :index
     live "/new", Live.IPAddressPoolNew, :index
-    live "/:id/show", Live.IPAddressPoolShow, :index
     live "/:id/edit", Live.IPAddressPoolEdit, :index
   end
 
