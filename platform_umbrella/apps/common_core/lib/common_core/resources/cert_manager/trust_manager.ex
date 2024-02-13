@@ -92,7 +92,7 @@ defmodule CommonCore.Resources.CertManager.TrustManager do
                 "--default-package-location=/packages/cert-manager-package-debian.json"
               ],
               "command" => ["trust-manager"],
-              "image" => "quay.io/jetstack/trust-manager:v0.8.0",
+              "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "trust-manager",
               "ports" => [%{"containerPort" => 6443}, %{"containerPort" => 9402}],
@@ -118,7 +118,7 @@ defmodule CommonCore.Resources.CertManager.TrustManager do
           "initContainers" => [
             %{
               "args" => ["/copyandmaybepause", "/debian-package", "/packages"],
-              "image" => "quay.io/jetstack/cert-manager-package-debian:20210119.0",
+              "image" => battery.config.init_image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "cert-manager-package-debian",
               "securityContext" => %{
