@@ -6,12 +6,13 @@ pub enum OS {
     Unknown,
 }
 
-impl ToString for OS {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for OS {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            OS::Linux => "linux".to_owned(),
-            OS::MacOS => "darwin".to_owned(),
-            _ => "unknown".to_owned(),
+            OS::Linux => write!(f, "Linux"),
+            OS::MacOS => write!(f, "MacOS"),
+            OS::Windows => write!(f, "Windows"),
+            OS::Unknown => write!(f, "Unknown"),
         }
     }
 }

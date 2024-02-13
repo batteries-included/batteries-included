@@ -1,4 +1,4 @@
-{ pname, crane, pkgs, advisory-db, src, nativeBuildInputs ? [ ], buildInputs ? [ ], cargoExtraArgs ? "" }:
+{ pname, crane, pkgs, src, nativeBuildInputs ? [ ], buildInputs ? [ ], cargoExtraArgs ? "", ... }:
 
 let
   craneLib = (crane.mkLib pkgs).overrideToolchain pkgs.rust-bin.nightly.latest.default;
@@ -57,12 +57,14 @@ in
       inherit src;
     };
 
-    # Audit dependencies
-    "${pname}-crate-audit" = craneLib.cargoAudit {
-      inherit src advisory-db pname;
+    # # Audit dependencies
+    # Audit is disabled until NixOS/nixpkgs#288064 is resolved
+    #
+    # "${pname}-crate-audit" = craneLib.cargoAudit {
+    #   inherit src advisory-db pname;
 
-      cargoAuditExtraArgs = "--ignore RUSTSEC-2023-0071";
-    };
+    #   cargoAuditExtraArgs = "--ignore RUSTSEC-2023-0071";
+    # };
 
     "${pname}-crate-test" = craneLib.cargoNextest (commonArgs // {
       inherit cargoArtifacts;
