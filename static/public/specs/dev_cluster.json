@@ -3,6 +3,7 @@
     "provider": "provided"
   },
   "target_summary": {
+    "id": null,
     "notebooks": [],
     "batteries": [
       {
@@ -90,8 +91,11 @@
           "name": "control",
           "owner": "battery-control-user"
         },
+        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
+        "num_instances": 1,
+        "virtual_size": "tiny",
         "users": [
           {
             "position": null,
@@ -103,14 +107,11 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "NSXV3XQMRJA5FFB3HIUIFUXR",
+            "password": "WU2WQ6ROTFMEHYL74KEFTPHH",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
-        "storage_class": null,
-        "num_instances": 1,
-        "virtual_size": "tiny",
         "cpu_requested": 500,
         "cpu_limits": 500,
         "memory_requested": 536870912,
@@ -122,20 +123,18 @@
     "knative_services": [],
     "ip_address_pools": [],
     "redis_clusters": [],
-    "ceph_clusters": [],
-    "ceph_filesystems": [],
     "kube_state": {}
   },
   "initial_resources": {
     "/config_map/bootstrap_config": {
       "apiVersion": "v1",
       "data": {
-        "bootstrap.json": "{\"notebooks\":[],\"batteries\":[{\"id\":null,\"type\":\"battery_core\",\"config\":{\"type\":\"battery_core\",\"image\":\"battery-registry:5000/battery/control:c6f4bd1-dirty1\",\"core_namespace\":\"battery-core\",\"base_namespace\":\"battery-base\",\"data_namespace\":\"battery-data\",\"ml_namespace\":\"battery-ml\",\"secret_key\":null,\"server_in_cluster\":false,\"image_override\":null,\"core_namespace_override\":null,\"base_namespace_override\":null,\"data_namespace_override\":null,\"ml_namespace_override\":null,\"server_in_cluster_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"cloudnative_pg\",\"config\":{\"type\":\"cloudnative_pg\",\"image\":\"ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1\",\"image_override\":null},\"group\":\"data\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio\",\"config\":{\"type\":\"istio\",\"namespace\":\"battery-istio\",\"pilot_image\":\"docker.io/istio/pilot:1.20.1-distroless\",\"namespace_override\":null,\"pilot_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio_gateway\",\"config\":{\"type\":\"istio_gateway\",\"proxy_image\":\"docker.io/istio/proxyv2:1.20.1-distroless\",\"proxy_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"stale_resource_cleaner\",\"config\":{\"type\":\"stale_resource_cleaner\",\"delay\":900000,\"delay_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null}],\"keycloak_state\":null,\"ferret_services\":[],\"postgres_clusters\":[{\"id\":null,\"name\":\"controlserver\",\"type\":\"internal\",\"database\":{\"name\":\"control\",\"owner\":\"battery-control-user\"},\"inserted_at\":null,\"updated_at\":null,\"users\":[{\"position\":null,\"username\":\"battery-local-user\",\"password\":\"not-real\",\"roles\":[\"superuser\",\"createrole\",\"createdb\",\"login\"],\"credential_namespaces\":[]},{\"position\":null,\"username\":\"battery-control-user\",\"password\":\"NSXV3XQMRJA5FFB3HIUIFUXR\",\"roles\":[\"createdb\",\"login\"],\"credential_namespaces\":[]}],\"storage_class\":null,\"num_instances\":1,\"virtual_size\":\"tiny\",\"cpu_requested\":500,\"cpu_limits\":500,\"memory_requested\":536870912,\"memory_limits\":536870912,\"storage_size\":536870912,\"virtual_storage_size_range_value\":9}],\"knative_services\":[],\"ip_address_pools\":[],\"redis_clusters\":[],\"ceph_clusters\":[],\"ceph_filesystems\":[],\"kube_state\":{}}"
+        "bootstrap.json": "{\"id\":null,\"notebooks\":[],\"batteries\":[{\"id\":null,\"type\":\"battery_core\",\"config\":{\"type\":\"battery_core\",\"image\":\"battery-registry:5000/battery/control:c6f4bd1-dirty1\",\"core_namespace\":\"battery-core\",\"base_namespace\":\"battery-base\",\"data_namespace\":\"battery-data\",\"ml_namespace\":\"battery-ml\",\"secret_key\":null,\"server_in_cluster\":false,\"image_override\":null,\"core_namespace_override\":null,\"base_namespace_override\":null,\"data_namespace_override\":null,\"ml_namespace_override\":null,\"server_in_cluster_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"cloudnative_pg\",\"config\":{\"type\":\"cloudnative_pg\",\"image\":\"ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1\",\"image_override\":null},\"group\":\"data\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio\",\"config\":{\"type\":\"istio\",\"namespace\":\"battery-istio\",\"pilot_image\":\"docker.io/istio/pilot:1.20.1-distroless\",\"namespace_override\":null,\"pilot_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio_gateway\",\"config\":{\"type\":\"istio_gateway\",\"proxy_image\":\"docker.io/istio/proxyv2:1.20.1-distroless\",\"proxy_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"stale_resource_cleaner\",\"config\":{\"type\":\"stale_resource_cleaner\",\"delay\":900000,\"delay_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null}],\"keycloak_state\":null,\"ferret_services\":[],\"postgres_clusters\":[{\"id\":null,\"name\":\"controlserver\",\"type\":\"internal\",\"database\":{\"name\":\"control\",\"owner\":\"battery-control-user\"},\"storage_class\":null,\"inserted_at\":null,\"updated_at\":null,\"num_instances\":1,\"virtual_size\":\"tiny\",\"users\":[{\"position\":null,\"username\":\"battery-local-user\",\"password\":\"not-real\",\"roles\":[\"superuser\",\"createrole\",\"createdb\",\"login\"],\"credential_namespaces\":[]},{\"position\":null,\"username\":\"battery-control-user\",\"password\":\"WU2WQ6ROTFMEHYL74KEFTPHH\",\"roles\":[\"createdb\",\"login\"],\"credential_namespaces\":[]}],\"cpu_requested\":500,\"cpu_limits\":500,\"memory_requested\":536870912,\"memory_limits\":536870912,\"storage_size\":536870912,\"virtual_storage_size_range_value\":9}],\"knative_services\":[],\"ip_address_pools\":[],\"redis_clusters\":[],\"kube_state\":{}}"
       },
       "kind": "ConfigMap",
       "metadata": {
         "annotations": {
-          "battery/hash": "CVMS4BS4JYZNHWAHK7JNU2GQOUR3QCN7NZE232MITQIOXGO4RUYQ===="
+          "battery/hash": "O3TXCFUSALOMX5GIDGI2AD3KFB7LCKDNWJHTHZE4LPZ5YSU66FCQ===="
         },
         "labels": {
           "app": "battery-core",

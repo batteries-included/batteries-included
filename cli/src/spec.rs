@@ -42,8 +42,6 @@ pub struct BatterySpec {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct StateSummarySpec {
     pub batteries: Vec<DynamicObject>,
-    pub ceph_clusters: Vec<DynamicObject>,
-    pub ceph_filesystems: Vec<DynamicObject>,
     pub ip_address_pools: Vec<IPAddressPoolSpec>,
     pub knative_services: Vec<DynamicObject>,
     pub notebooks: Vec<DynamicObject>,
