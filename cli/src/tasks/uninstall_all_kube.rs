@@ -10,6 +10,7 @@ use k8s_openapi::{
             ServiceAccount,
         },
         rbac::v1::{ClusterRole, ClusterRoleBinding, Role, RoleBinding},
+        storage::v1::StorageClass,
     },
     apiextensions_apiserver::pkg::apis::apiextensions::v1::CustomResourceDefinition,
     NamespaceResourceScope,
@@ -52,6 +53,7 @@ pub async fn delete_all_battery_managed(kube_client: Client) -> Result<()> {
 
     // At this point delete the volumes
     delete_all_global::<PersistentVolume>(kube_client.clone()).await?;
+    delete_all_global::<StorageClass>(kube_client.clone()).await?;
     // Since nothing is using these CRDS can go
     delete_all_global::<CustomResourceDefinition>(kube_client.clone()).await?;
 
