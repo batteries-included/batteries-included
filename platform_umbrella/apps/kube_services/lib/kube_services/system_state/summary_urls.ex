@@ -93,6 +93,12 @@ defmodule KubeServices.SystemState.SummaryURLs do
     URI.to_string(result)
   end
 
+  @spec keycloak_console_url_for_realm(atom | pid | {atom, any} | {:via, atom, any}, String.t()) :: String.t() | nil
+  def keycloak_console_url_for_realm(target \\ @me, realm) do
+    result = GenServer.call(target, [:keycloak_console_uri_for_realm, realm])
+    URI.to_string(result)
+  end
+
   def pg_dashboard_url(target \\ @me, cluster) do
     GenServer.call(target, {:pg_dashboard_url, cluster})
   end

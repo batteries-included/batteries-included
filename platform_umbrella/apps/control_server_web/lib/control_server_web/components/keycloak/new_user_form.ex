@@ -69,13 +69,13 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("validate", params, socket) do
-    changeset = validation_changeset(socket.assigns.user, params)
+  def handle_event("validate", %{"user_representation" => user_params} = _params, socket) do
+    changeset = validation_changeset(socket.assigns.user, user_params)
     {:noreply, socket |> assign_form(changeset) |> assign_api_error(nil)}
   end
 
-  def handle_event("save", params, socket) do
-    changeset = validation_changeset(socket.assigns.user, params)
+  def handle_event("save", %{"user_representation" => user_params} = _params, socket) do
+    changeset = validation_changeset(socket.assigns.user, user_params)
 
     case Ecto.Changeset.apply_action(changeset, :update) do
       {:ok, user} ->
@@ -90,27 +90,28 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
   @spec render(map) :: Phoenix.LiveView.Rendered.t()
   def render(%{} = assigns) do
     ~H"""
-    <div class="flex-col">
-      <.h2>New User</.h2>
-      <div :if={@api_error != nil} class="text-warning-600 text-xxl font-bold"><%= @api_error %></div>
-      <div :if={@new_url != nil} class="text-xxl font-bold">
-        New User Created with<.a href={@new_url} variant="styled">Keycloak Here</.a>.
-      </div>
-      <.simple_form
-        :let={f}
-        :if={@new_url == nil}
-        for={@form}
-        phx-change="validate"
-        phx-submit="save"
-        phx-target={@myself}
-      >
-        <.input field={{f, :email}} label="Email" />
-        <.input field={{f, :username}} label="Username" />
-        <.input field={{f, :enabled}} label="Enabled" type="checkbox" />
-        <:actions>
-          <.button phx-disable-with="Creating...">Create</.button>
-        </:actions>
-      </.simple_form>
+    <div id={@id}>
+      <.flex column>
+        <.h2>New User</.h2>
+        <div :if={@api_error != nil} class="text-warning-600 text-xxl font-bold">
+          <%= @api_error %>
+        </div>
+        <div :if={@new_url != nil} class="text-xxl font-semibold">
+          New User Created with<.a href={@new_url} variant="styled">Keycloak admin console here</.a>.
+        </div>
+        <.form
+          :if={@new_url == nil}
+          for={@form}
+          phx-change="validate"
+          phx-submit="save"
+          phx-target={@myself}
+        >
+          <PC.field field={@form[:email]} label="Email" placeholder="douglas.engelbart@gmail.com" />
+          <PC.field field={@form[:username]} label="Username" />
+          <PC.field field={@form[:enabled]} label="Enabled" type="checkbox" />
+          <PC.button type="submit" phx-disable-with="Saving...">Save</PC.button>
+        </.form>
+      </.flex>
     </div>
     """
   end

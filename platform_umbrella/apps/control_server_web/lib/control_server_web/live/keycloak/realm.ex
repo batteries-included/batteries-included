@@ -23,6 +23,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
      |> assign_realm(name)
      |> assign_clients(name)
      |> assign_users(name)
+     |> assign_realm_admin_console_url()
      |> assign_new_user(nil)
      |> assign_temp_password(nil)}
   end
@@ -39,7 +40,8 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
      socket
      |> assign_realm(name)
      |> assign_clients(name)
-     |> assign_users(name)}
+     |> assign_users(name)
+     |> assign_realm_admin_console_url()}
   end
 
   defp assign_realm(socket, name) do
@@ -74,6 +76,10 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
 
   defp assign_current_page(socket) do
     assign(socket, :current_page, :net_sec)
+  end
+
+  defp assign_realm_admin_console_url(%{assigns: %{realm: realm}} = socket) do
+    assign(socket, :realm_admin_console_url, SummaryURLs.keycloak_console_url_for_realm(realm.realm))
   end
 
   @impl Phoenix.LiveView
@@ -119,6 +125,31 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     end
   end
 
+  defp new_user_modal(assigns) do
+    ~H"""
+    <PC.modal id="new-user-inner-modal" show={true}>
+      <.live_component module={NewUserForm} user={@new_user} realm={@realm_name} id="new-user-modal" />
+    </PC.modal>
+    """
+  end
+
+  defp temp_password_modal(assigns) do
+    ~H"""
+    <PC.modal id="temp-password-modal" show={true}>
+      <.h2>Temporary Password Set</.h2>
+      A new password has been set for this user. The temporary password is: <pre><%= @temp_password %></pre>
+    </PC.modal>
+    """
+  end
+
+  defp links_panel(assigns) do
+    ~H"""
+    <.flex column class="justify-start">
+      <.bordered_menu_item href={@realm_admin_console_url} title="Admin Console" />
+    </.flex>
+    """
+  end
+
   @impl Phoenix.LiveView
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
@@ -134,33 +165,40 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
         </.data_horizontal_bordered>
       </:menu>
     </.page_header>
-    <.panel class="mt-5" title="Clients">
-      <.keycloak_clients_table clients={@clients} />
-    </.panel>
-    <.panel class="mt-5" title="Users">
-      <:menu>
-        <PC.button phx-click="new-user">New User</PC.button>
-      </:menu>
-      <.keycloak_users_table users={@users} />
-    </.panel>
+    <.grid columns={[sm: 1, lg: 2]}>
+      <.panel variant="gray" title="Details">
+        <.data_list>
+          <:item title="ID">
+            <%= @realm.id %>
+          </:item>
+          <:item title="Realm Name">
+            <%= @realm.realm %>
+          </:item>
+          <:item title="Display Name">
+            <%= @realm.displayName %>
+          </:item>
+          <:item title="Enabled">
+            <%= @realm.enabled %>
+          </:item>
+          <:item title="Require SSL">
+            <%= @realm.sslRequired %>
+          </:item>
+        </.data_list>
+      </.panel>
+      <.links_panel realm={@realm} realm_admin_console_url={@realm_admin_console_url} />
+      <.panel class="col-span-2" title="Clients">
+        <.keycloak_clients_table clients={@clients} />
+      </.panel>
+      <.panel class="col-span-2" title="Users">
+        <:menu>
+          <PC.button phx-click="new-user">New User</PC.button>
+        </:menu>
+        <.keycloak_users_table users={@users} />
+      </.panel>
+    </.grid>
 
-    <div :if={@new_user != nil}>
-      <PC.modal id="new-user-inner-modal" show={true}>
-        <.live_component
-          module={NewUserForm}
-          user={@new_user}
-          realm={@realm.realm}
-          id="new-user-modal"
-        />
-      </PC.modal>
-    </div>
-
-    <div :if={@temp_password != nil}>
-      <PC.modal id="temp-password-modal" show={true}>
-        <.h2>Temporary Password Set</.h2>
-        A new password has been set for this user. The temporary password is: <pre><%= @temp_password %></pre>
-      </PC.modal>
-    </div>
+    <.new_user_modal :if={@new_user != nil} new_user={@new_user} realm_name={@realm.realm} />
+    <.temp_password_modal :if={@temp_password != nil} temp_password={@temp_password} />
     """
   end
 end

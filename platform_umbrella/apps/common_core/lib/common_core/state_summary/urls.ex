@@ -21,6 +21,12 @@ defmodule CommonCore.StateSummary.URLs do
     |> URI.append_path("/realms/#{realm}")
   end
 
+  def keycloak_console_uri_for_realm(state, realm) do
+    state
+    |> uri_for_battery(:keycloak)
+    |> URI.append_path("/admin/#{realm}/console")
+  end
+
   @spec cloud_native_pg_dashboard(CommonCore.StateSummary.t()) :: URI.t()
   def cloud_native_pg_dashboard(state) do
     state
