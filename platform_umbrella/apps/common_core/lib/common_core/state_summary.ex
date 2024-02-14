@@ -51,7 +51,6 @@ defmodule CommonCore.StateSummary do
     |> cast_embed(:notebooks)
     |> cast_embed(:knative_services)
     |> cast_embed(:ip_address_pools)
-    |> cast_embed(:ip_address_pools)
     |> validate_required(@required_fields)
   end
 

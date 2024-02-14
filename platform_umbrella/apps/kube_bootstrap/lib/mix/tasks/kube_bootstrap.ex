@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Kube.Bootstrap do
   def run(args) do
     [path] = args
 
-    load_app()
+    load_apps()
 
     {:ok, summary} = read_summary(path)
     KubeBootstrap.bootstrap_from_summary(summary)
@@ -34,7 +34,7 @@ defmodule Mix.Tasks.Kube.Bootstrap do
     end
   end
 
-  defp load_app do
+  defp load_apps do
     Logger.debug("Ensuring app is started")
 
     Enum.each(@start_apps, fn app ->

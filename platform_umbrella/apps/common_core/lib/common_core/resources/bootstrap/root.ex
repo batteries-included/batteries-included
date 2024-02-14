@@ -1,10 +1,9 @@
 defmodule CommonCore.Resources.BootstrapRoot do
   @moduledoc """
-  This is resource generator for
-  resources before our initial bootstrap
-  has put anything into kube.
+  This is resource generator for resources before our initial bootstrap has put
+  anything into kube.
 
-  Anything here can be used a input for our initial bootstrap.
+  Anything here can be used as an input for our initial bootstrap.
   """
   alias CommonCore.Resources.Bootstrap.BatteryCore
 
