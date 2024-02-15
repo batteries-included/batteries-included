@@ -20,7 +20,7 @@ jobs:
       - uses: cachix/cachix-action@v14
         with:
           name: batteries-included
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
@@ -31,7 +31,7 @@ jobs:
       - name: Set up kind
         run: nix develop --command bash -c 'kind create cluster'
       - name: Run integration tests
-        run: nix develop --command bash -c "TRACE=1 bi ex-test-int"
+        run: nix develop --command bash -c "TRACE=1 bix ex-test-int"
       - name: Save screenshots as artifacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -53,15 +53,15 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_USER: battery-local-user
-          POSTGRES_PASSWORD: "batterypasswd"
+          POSTGRES_PASSWORD: 'batterypasswd'
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s
           --health-retries 5
-        ports: ["5432:5432"]
+        ports: ['5432:5432']
     env:
       POSTGRES_HOST: localhost
       POSTGRES_USER: battery-local-user
-      POSTGRES_PASSWORD: "batterypasswd"
+      POSTGRES_PASSWORD: 'batterypasswd'
       MIX_ENV: test
     steps:
       - uses: actions/checkout@v4
@@ -71,13 +71,13 @@ jobs:
       - uses: cachix/cachix-action@v14
         with:
           name: batteries-included
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v3
-      - run: nix develop --command bash bi ex-test-deep
+      - run: nix develop --command bash bix ex-test-deep
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: ${{github.actor != 'dependabot[bot]' &&  (success() || failure())}}

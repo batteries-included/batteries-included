@@ -6,7 +6,7 @@ draft: false
 images: []
 ---
 
-## `bi`
+## `bix`
 
 We use [mission-control](https://github.com/Platonic-Systems/mission-control) to
 provide consistent dev tooling.
@@ -20,35 +20,35 @@ If not, you'll need to enter a nix shell by running something like
 Example:
 
 ```sh
-bi
+bix
 Available commands:
 
 ## code
 
-  bi fmt  : Format the codebase
+  bix fmt  : Format the codebase
 
 ## dev
 
-  bi bootstrap              : Bootstrap the dev environment
-  bi dev                    : Start dev environment
-  bi dev-iex                : Start dev environment without iex
-  bi gen-static-specs       : Generate static specs
-  bi nuke-cluster-contents  : Clean up dev cluster resources
-  bi nuke-clusters          : Destroy dev clusters completely
-  bi nuke-test-db           : Reset test DB
+  bix bootstrap              : Bootstrap the dev environment
+  bix dev                    : Start dev environment
+  bix dev-iex                : Start dev environment without iex
+  bix gen-static-specs       : Generate static specs
+  bix nuke-cluster-contents  : Clean up dev cluster resources
+  bix nuke-clusters          : Destroy dev clusters completely
+  bix nuke-test-db           : Reset test DB
 
 ## elixir
 
-  bi ex-deep-clean  : Really clean the elixir codebase
-  bi ex-fmt         : Format elixir codebase
-  bi ex-test        : Run stale tests
-  bi ex-test-deep   : Run all tests with coverage and all that jazz
-  bi ex-test-quick  : Run tests excluding @tag slow
-  bi m              : Run mix commands
+  bix ex-deep-clean  : Really clean the elixir codebase
+  bix ex-fmt         : Format elixir codebase
+  bix ex-test        : Run stale tests
+  bix ex-test-deep   : Run all tests with coverage and all that jazz
+  bix ex-test-quick  : Run tests excluding @tag slow
+  bix m              : Run mix commands
 
 ## ops
 
-  bi push-aws  : Push to AWS
+  bix push-aws  : Push to AWS
 ```
 
 Most of the scripts will `set -x` if `$TRACE` is set for additional debugging
@@ -57,7 +57,7 @@ assistance.
 Example:
 
 ```sh
-TRACE=1 bi nuke-test-db
+TRACE=1 bix nuke-test-db
 ```
 
 ## Bootstrap
@@ -65,7 +65,7 @@ TRACE=1 bi nuke-test-db
 Example:
 
 ```sh
-bi bootstrap
+bix bootstrap
 ```
 
 This script calls into the rust `cli` binary with auto-discovered paths and
@@ -101,7 +101,7 @@ command line arguments. The end result is calling `cli dev` that will:
 Example:
 
 ```sh
-bi ex-deep-clean
+bix ex-deep-clean
 ```
 
 Every once in a while, there is some caching issue that will cause tests to
@@ -115,7 +115,7 @@ all the time == "Works for me")
 Example:
 
 ```sh
-bi nuke-clusters && bi bootstrap
+bix nuke-clusters && bix bootstrap
 ```
 
 Sometimes things on the kind cluster get all messed up, and you don't want to
@@ -129,7 +129,7 @@ the Nuke Clusters discussion?
 ## Gen Static Specs
 
 ```sh
-bi get-static-specs
+bix get-static-specs
 ```
 
 While developing, we want the bootstrapping process to be stable and free from
@@ -156,7 +156,7 @@ Rather than wire up markdown, shell, and rust formatters Nix gives it to us.
 Example:
 
 ```sh
-bi fmt
+bix fmt
 ```
 
 This command will format all source code in the directory. It uses `treefmt` for
@@ -169,7 +169,7 @@ If you only want to format the elixir code, there's a command for that.
 Example:
 
 ```sh
-bi ex-fmt
+bix ex-fmt
 ```
 
 ## Run Mix Tests
@@ -182,7 +182,7 @@ changed based on your code changes. This is nice for a fast, inner-loop.
 Example
 
 ```
-bi ex-test
+bix ex-test
 ```
 
 ### Quick
@@ -195,7 +195,7 @@ of time.
 Example
 
 ```
-bi ex-test-quick
+bix ex-test-quick
 ```
 
 ### Deep
@@ -210,7 +210,7 @@ This is also the command that is used in CI.
 Example
 
 ```
-bi ex-test-deep
+bix ex-test-deep
 ```
 
 ## Mix Server w/ REPL
@@ -225,7 +225,7 @@ and database connections.
 Example:
 
 ```sh
-bi dev       # essentially, iex -S mix phx.server
+bix dev       # essentially, iex -S mix phx.server
 ```
 
 ## Mix Server Without REPL
@@ -233,7 +233,7 @@ bi dev       # essentially, iex -S mix phx.server
 Example:
 
 ```sh
-bi dev-no-iex  # essentially, mix phx.server
+bix dev-no-iex  # essentially, mix phx.server
 ```
 
 ## Mix
@@ -244,7 +244,7 @@ any directory in the repo.
 Example:
 
 ```sh
-cd cli && bi m help test
+cd cli && bix m help test
 ```
 
 ## Dashboard

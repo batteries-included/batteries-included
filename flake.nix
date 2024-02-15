@@ -36,6 +36,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    gomod2nix = {
+      url = "github:tweag/gomod2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
     # vuln db for crates
     advisory-db = {
       url = "github:rustsec/advisory-db";
@@ -80,7 +86,8 @@
         flake-root.flakeModule
         mission-control.flakeModule
         ./nix/shell.nix
-        ./nix/cli.nix
+        ./nix/bcli.nix
+        ./nix/bi.nix
         ./nix/pastebin.nix
         ./nix/platform.nix
         ./nix/fmt.nix

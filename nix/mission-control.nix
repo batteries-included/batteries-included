@@ -4,7 +4,7 @@
   perSystem = { lib, pkgs, ... }:
     {
       mission-control = {
-        wrapperName = "bi";
+        wrapperName = "bix";
 
         scripts = {
 
@@ -264,7 +264,7 @@
 
           package-challenge = {
             description = ''
-              Package up candidate challenge: "bi package-challenge candidate-name [destination-dir] [challenge]"
+              Package up candidate challenge: "bix package-challenge candidate-name [destination-dir] [challenge]"
             '';
             category = "recruiting";
             exec = builtins.readFile ./scripts/package-challenge.sh;

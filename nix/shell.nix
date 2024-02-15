@@ -6,7 +6,10 @@
     let
       pkgs = import inputs.nixpkgs {
         inherit system;
-        overlays = [ (import inputs.rust-overlay) ];
+        overlays = [
+          inputs.gomod2nix.overlays.default
+          (import inputs.rust-overlay)
+        ];
         config.allowUnfree = true;
       };
 
@@ -40,6 +43,19 @@
         pkg-config
         cargo-flamegraph
         postgresql
+      ];
+
+      goNativeBuildTools = with pkgs; [
+        go
+        gotools
+        gopls
+        go-outline
+        gopkgs
+        gocode-gomod
+        godef
+        golint
+        gomod2nix
+        cobra-cli
       ];
 
 
@@ -92,6 +108,7 @@
       ]
       ++ elixirNativeTools
       ++ rustNativeBuildTools
+      ++ goNativeBuildTools
       ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
       ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
       ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) integrationTestingTools

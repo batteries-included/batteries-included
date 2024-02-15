@@ -106,14 +106,14 @@ installing postgres and istiod, then start a port forward to the postgres
 process.
 
 ```bash
-bi bootstrap
+bix bootstrap
 ```
 
 Then in another shell (or tmux pane) start the control, and home web servers and
 background processes.
 
 ```bash
-bi dev
+bix dev
 ```
 
 Now there are two web servers accessible.

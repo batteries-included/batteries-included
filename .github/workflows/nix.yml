@@ -10,6 +10,23 @@ on:
       - master
 
 jobs:
+  bi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: cachix/cachix-action@v14
+        with:
+          name: batteries-included
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush:
+            ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
+            'push') }}
+      - name: Run the Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v3
+      - run: nix build .#bi -L
   bcli:
     runs-on: ubuntu-latest
     steps:

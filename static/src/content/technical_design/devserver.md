@@ -84,7 +84,7 @@ Explore tab on the left. `devserver` should be an option there, and the `main`
 repo should be selectable.
 
 You can continue with the Developing section from the readme, by running
-`bi bootstrap` in one shell, and after everything's ready `bi dev` in another
+`bix bootstrap` in one shell, and after everything's ready `bix dev` in another
 server.
 
 ## Limitations
