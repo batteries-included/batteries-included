@@ -39,7 +39,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
 
   def installation(:dev), do: dev_installation(%{provider: :kind}, SeedState.seed(:dev))
 
-  def installation(:dev_cluster), do: dev_installation(%{provider: :provided}, SeedState.seed(:slim_dev))
+  def installation(:dev_cluster), do: dev_installation(%{provider: :provided}, SeedState.seed(:eks))
 
   def dev_installation(kube_cluster, summary) do
     InstallSpec.new(

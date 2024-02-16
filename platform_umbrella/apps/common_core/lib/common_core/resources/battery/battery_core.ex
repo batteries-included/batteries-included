@@ -2,7 +2,10 @@ defmodule CommonCore.Resources.BatteryCore do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "battery-core"
 
+  import CommonCore.Resources.StorageClass
+
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
 
   resource(:core_namespace, battery, _state) do
     :namespace
@@ -30,5 +33,9 @@ defmodule CommonCore.Resources.BatteryCore do
     |> B.build_resource()
     |> B.name(battery.config.ml_namespace)
     |> B.label("istio-injection", "enabled")
+  end
+
+  multi_resource(:storage_class, battery) do
+    Enum.filter(generate_eks_storage_classes(), fn sc -> F.require(sc, battery.config.cluster_type == :eks) end)
   end
 end

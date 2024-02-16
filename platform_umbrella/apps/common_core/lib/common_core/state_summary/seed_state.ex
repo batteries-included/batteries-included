@@ -49,6 +49,18 @@ defmodule CommonCore.StateSummary.SeedState do
     }
   end
 
+  def seed(:eks) do
+    batteries =
+      ~w(battery_core cloudnative_pg istio istio_gateway stale_resource_cleaner)a
+      |> batteries()
+      |> add_cluster_type(:eks)
+
+    %StateSummary{
+      batteries: batteries,
+      postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
+    }
+  end
+
   defp pg_clusters(clusters) do
     Enum.map(clusters, fn cluster -> cluster |> add_local_user() |> CommonCore.Postgres.Cluster.to_fresh_cluster() end)
   end
@@ -86,4 +98,14 @@ defmodule CommonCore.StateSummary.SeedState do
   end
 
   defp clean_config(x), do: x
+
+  defp add_cluster_type(batteries, type) do
+    Enum.map(batteries, fn
+      %SystemBattery{type: :battery_core, config: config} = sb ->
+        %SystemBattery{sb | config: %BatteryCoreConfig{config | cluster_type: type}}
+
+      battery ->
+        battery
+    end)
+  end
 end

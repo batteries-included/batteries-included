@@ -7,8 +7,10 @@ defmodule CommonCore.Resources.FilterResource do
   reason (For example the inputs aren't there yet, or the
   dependent batteries aren't installed.)
   """
+  alias CommonCore.StateSummary
   alias CommonCore.StateSummary.Batteries
 
+  @spec require_battery(map(), StateSummary.t(), atom() | list(atom())) :: map() | nil
   def require_battery(resource, state, battery_types \\ [])
 
   def require_battery(resource, state, battery_type) when is_atom(battery_type),
@@ -20,6 +22,8 @@ defmodule CommonCore.Resources.FilterResource do
     end
   end
 
+  @spec require_non_empty(map(), Enumerable.t()) :: map() | nil
+  def require_non_empty(resource, enumerable)
   def require_non_empty(_resource, nil), do: nil
 
   def require_non_empty(resource, data) do
@@ -30,6 +34,8 @@ defmodule CommonCore.Resources.FilterResource do
     end
   end
 
+  @spec require(map(), boolean()) :: map() | nil
+  def require(resource, boolean)
   def require(resource, true), do: resource
   def require(_, _falsey), do: nil
 end

@@ -12,6 +12,7 @@
         "config": {
           "type": "battery_core",
           "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
+          "cluster_type": "eks",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
@@ -107,7 +108,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "WU2WQ6ROTFMEHYL74KEFTPHH",
+            "password": "25LEU5PKJHF765BX52SHSATL",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -129,12 +130,12 @@
     "/config_map/bootstrap_config": {
       "apiVersion": "v1",
       "data": {
-        "bootstrap.json": "{\"id\":null,\"notebooks\":[],\"batteries\":[{\"id\":null,\"type\":\"battery_core\",\"config\":{\"type\":\"battery_core\",\"image\":\"battery-registry:5000/battery/control:c6f4bd1-dirty1\",\"core_namespace\":\"battery-core\",\"base_namespace\":\"battery-base\",\"data_namespace\":\"battery-data\",\"ml_namespace\":\"battery-ml\",\"secret_key\":null,\"server_in_cluster\":false,\"image_override\":null,\"core_namespace_override\":null,\"base_namespace_override\":null,\"data_namespace_override\":null,\"ml_namespace_override\":null,\"server_in_cluster_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"cloudnative_pg\",\"config\":{\"type\":\"cloudnative_pg\",\"image\":\"ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1\",\"image_override\":null},\"group\":\"data\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio\",\"config\":{\"type\":\"istio\",\"namespace\":\"battery-istio\",\"pilot_image\":\"docker.io/istio/pilot:1.20.1-distroless\",\"namespace_override\":null,\"pilot_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio_gateway\",\"config\":{\"type\":\"istio_gateway\",\"proxy_image\":\"docker.io/istio/proxyv2:1.20.1-distroless\",\"proxy_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"stale_resource_cleaner\",\"config\":{\"type\":\"stale_resource_cleaner\",\"delay\":900000,\"delay_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null}],\"keycloak_state\":null,\"ferret_services\":[],\"postgres_clusters\":[{\"id\":null,\"name\":\"controlserver\",\"type\":\"internal\",\"database\":{\"name\":\"control\",\"owner\":\"battery-control-user\"},\"storage_class\":null,\"inserted_at\":null,\"updated_at\":null,\"num_instances\":1,\"virtual_size\":\"tiny\",\"users\":[{\"position\":null,\"username\":\"battery-local-user\",\"password\":\"not-real\",\"roles\":[\"superuser\",\"createrole\",\"createdb\",\"login\"],\"credential_namespaces\":[]},{\"position\":null,\"username\":\"battery-control-user\",\"password\":\"WU2WQ6ROTFMEHYL74KEFTPHH\",\"roles\":[\"createdb\",\"login\"],\"credential_namespaces\":[]}],\"cpu_requested\":500,\"cpu_limits\":500,\"memory_requested\":536870912,\"memory_limits\":536870912,\"storage_size\":536870912,\"virtual_storage_size_range_value\":9}],\"knative_services\":[],\"ip_address_pools\":[],\"redis_clusters\":[],\"kube_state\":{}}"
+        "bootstrap.json": "{\"id\":null,\"notebooks\":[],\"batteries\":[{\"id\":null,\"type\":\"battery_core\",\"config\":{\"type\":\"battery_core\",\"image\":\"battery-registry:5000/battery/control:c6f4bd1-dirty1\",\"cluster_type\":\"eks\",\"core_namespace\":\"battery-core\",\"base_namespace\":\"battery-base\",\"data_namespace\":\"battery-data\",\"ml_namespace\":\"battery-ml\",\"secret_key\":null,\"server_in_cluster\":false,\"image_override\":null,\"core_namespace_override\":null,\"base_namespace_override\":null,\"data_namespace_override\":null,\"ml_namespace_override\":null,\"server_in_cluster_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"cloudnative_pg\",\"config\":{\"type\":\"cloudnative_pg\",\"image\":\"ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1\",\"image_override\":null},\"group\":\"data\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio\",\"config\":{\"type\":\"istio\",\"namespace\":\"battery-istio\",\"pilot_image\":\"docker.io/istio/pilot:1.20.1-distroless\",\"namespace_override\":null,\"pilot_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"istio_gateway\",\"config\":{\"type\":\"istio_gateway\",\"proxy_image\":\"docker.io/istio/proxyv2:1.20.1-distroless\",\"proxy_image_override\":null},\"group\":\"net_sec\",\"inserted_at\":null,\"updated_at\":null},{\"id\":null,\"type\":\"stale_resource_cleaner\",\"config\":{\"type\":\"stale_resource_cleaner\",\"delay\":900000,\"delay_override\":null},\"group\":\"magic\",\"inserted_at\":null,\"updated_at\":null}],\"keycloak_state\":null,\"ferret_services\":[],\"postgres_clusters\":[{\"id\":null,\"name\":\"controlserver\",\"type\":\"internal\",\"database\":{\"name\":\"control\",\"owner\":\"battery-control-user\"},\"storage_class\":null,\"inserted_at\":null,\"updated_at\":null,\"num_instances\":1,\"virtual_size\":\"tiny\",\"users\":[{\"position\":null,\"username\":\"battery-local-user\",\"password\":\"not-real\",\"roles\":[\"superuser\",\"createrole\",\"createdb\",\"login\"],\"credential_namespaces\":[]},{\"position\":null,\"username\":\"battery-control-user\",\"password\":\"25LEU5PKJHF765BX52SHSATL\",\"roles\":[\"createdb\",\"login\"],\"credential_namespaces\":[]}],\"cpu_requested\":500,\"cpu_limits\":500,\"memory_requested\":536870912,\"memory_limits\":536870912,\"storage_size\":536870912,\"virtual_storage_size_range_value\":9}],\"knative_services\":[],\"ip_address_pools\":[],\"redis_clusters\":[],\"kube_state\":{}}"
       },
       "kind": "ConfigMap",
       "metadata": {
         "annotations": {
-          "battery/hash": "O3TXCFUSALOMX5GIDGI2AD3KFB7LCKDNWJHTHZE4LPZ5YSU66FCQ===="
+          "battery/hash": "6FPL2NN2LR6S2KXMQKEMXN2FN2YV5Z5BHUGT63I6YZ6LVYBZ33DQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -170,6 +171,90 @@
         },
         "name": "battery-core"
       }
+    },
+    "/storage_class/gp2": {
+      "apiVersion": "storage.k8s.io/v1",
+      "kind": "StorageClass",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "XVKDXYFOPRYXZ6SIBVYPMXBNZ4TK2Q4LGPN7IEI4J7JWN3MJDXRA====",
+          "storageclass.kubernetes.io/is-default-class": "false"
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "version": "latest"
+        },
+        "name": "gp2"
+      },
+      "provisioner": "kubernetes.io/aws-ebs",
+      "reclaimPolicy": "Delete",
+      "volumeBindingMode": "WaitForFirstConsumer"
+    },
+    "/storage_class/gp2_90032408": {
+      "allowVolumeExpansion": true,
+      "apiVersion": "storage.k8s.io/v1",
+      "kind": "StorageClass",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "5BD3NXZFXZIPZEWWKB26OL4USU3VGWQ3RTHLKVHEEE5INSKJVYSA====",
+          "storageclass.kubernetes.io/is-default-class": "false"
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "version": "latest"
+        },
+        "name": "gp2-90032408"
+      },
+      "parameters": {
+        "csi.storage.k8s.io/fstype": "ext4",
+        "encrypted": "true",
+        "type": "gp2"
+      },
+      "provisioner": "ebs.csi.aws.com",
+      "reclaimPolicy": "Delete",
+      "volumeBindingMode": "WaitForFirstConsumer"
+    },
+    "/storage_class/gp3_105457460": {
+      "allowVolumeExpansion": true,
+      "apiVersion": "storage.k8s.io/v1",
+      "kind": "StorageClass",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "YBG5OB3CIY4ERO624ALOST45Z6SP42TZB7DL5GK6B3EEKICW76AQ====",
+          "storageclass.kubernetes.io/is-default-class": "true"
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "version": "latest"
+        },
+        "name": "gp3-105457460"
+      },
+      "parameters": {
+        "csi.storage.k8s.io/fstype": "ext4",
+        "encrypted": "true",
+        "type": "gp3"
+      },
+      "provisioner": "ebs.csi.aws.com",
+      "reclaimPolicy": "Delete",
+      "volumeBindingMode": "WaitForFirstConsumer"
     }
   }
 }

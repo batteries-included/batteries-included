@@ -10,7 +10,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
 
   alias CommonCore.Defaults
 
-  @required_fields ~w()a
+  @required_fields ~w(cluster_type)a
 
   @primary_key false
   @derive Jason.Encoder
@@ -22,6 +22,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
 
     defaultable_field :image, :string, default: Defaults.Images.control_server_image()
     field :secret_key, :string
+    field :cluster_type, Ecto.Enum, values: [:kind, :eks], default: :kind
 
     defaultable_field :server_in_cluster, :boolean, default: false
     type_field()
