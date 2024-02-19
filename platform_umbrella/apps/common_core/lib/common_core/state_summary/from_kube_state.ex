@@ -5,7 +5,12 @@ defmodule CommonCore.StateSummary.FromKubeState do
   alias CommonCore.StateSummary
 
   @namespaceless ~w(
-    namespace node cluster_role cluster_role_binding certmanager_cluster_issuer
+    certmanager_cluster_issuer
+    cluster_role 
+    cluster_role_binding 
+    namespace 
+    node 
+    storage_class
   )a
 
   def find_state_resource(%StateSummary{} = state, resource_type, name)

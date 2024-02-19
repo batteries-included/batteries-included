@@ -3,9 +3,7 @@ defmodule KubeServices.Stale.Reaper do
   use GenServer
   use TypedStruct
 
-  import K8s.Resource.FieldAccessors
-
-  alias CommonCore.ApiVersionKind
+  alias CommonCore.Resources.FieldAccessors
   alias KubeServices.ResourceDeleter
   alias KubeServices.Stale
 
@@ -77,7 +75,7 @@ defmodule KubeServices.Stale.Reaper do
         |> verify_stale()
         |> delete()
 
-      Logger.info("Stale reap result = #{res}")
+      Logger.info("Stale reap result = #{inspect(res)}")
     end
 
     {:noreply, %State{state | waiting_count: state.waiting_count - 1}}
@@ -113,21 +111,19 @@ defmodule KubeServices.Stale.Reaper do
     all_good =
       verified_stale
       |> Enum.map(fn res ->
-        kind = ApiVersionKind.resource_type!(res)
-        name = name(res)
-        namespace = namespace(res)
+        summary = FieldAccessors.summary(res)
 
         case ResourceDeleter.delete(res) do
           {:ok, _} ->
-            Logger.info("Successsfully deleted, #{kind} #{namespace} #{name}")
+            Logger.info("Successsfully deleted, #{inspect(summary)}")
             :ok
 
           result ->
             Logger.warning(
-              "Un-expected result deleting stale kind: #{kind} name: #{name} namespace: #{namespace} Result = #{inspect(result)}",
-              kind: kind,
-              namespace: namespace,
-              name: name,
+              "Un-expected result deleting stale kind: #{inspect(summary)}. Result = #{inspect(result)}",
+              kind: summary.kind,
+              namespace: summary.namespace,
+              name: summary.name,
               result: result
             )
 

@@ -113,4 +113,13 @@ defmodule CommonCore.Resources.FieldAccessors do
   end
 
   def group_from_api_version(apiversion), do: apiversion |> String.split("/") |> List.first()
+
+  def summary(resource) do
+    %{
+      api_version: api_version(resource),
+      kind: kind(resource),
+      name: name(resource),
+      namespace: namespace(resource)
+    }
+  end
 end

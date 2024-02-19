@@ -7,8 +7,8 @@ defmodule KubeServices.ResourceDeleter do
   use GenServer
 
   alias CommonCore.Resources.CopyDown
+  alias CommonCore.Resources.FieldAccessors
   alias ControlServer.Deleted.DeleteArchivist
-  alias K8s.Resource.FieldAccessors
 
   require Logger
 
@@ -66,10 +66,20 @@ defmodule KubeServices.ResourceDeleter do
 
   @impl GenServer
   def handle_call({:delete, resource}, _from, %{conn: conn} = state) do
-    Logger.debug("Delete of resource #{inspect(summarize(resource))}")
+    Logger.debug("Delete of resource #{inspect(FieldAccessors.summary(resource))}")
     delete_operation = K8s.Client.delete(resource)
-    {:ok, _} = record_delete(conn, resource)
-    {:reply, K8s.Client.run(conn, delete_operation), state}
+
+    result =
+      case record_delete(conn, resource) do
+        {:ok, _} ->
+          K8s.Client.run(conn, delete_operation)
+
+        nil ->
+          # The resource may have already been deleted.
+          {:error, :failed_to_record}
+      end
+
+    {:reply, result, state}
   end
 
   @impl GenServer
@@ -133,14 +143,5 @@ defmodule KubeServices.ResourceDeleter do
     end)
     |> Map.drop(~w(status))
     |> CopyDown.copy_labels_downward()
-  end
-
-  defp summarize(resource) do
-    %{
-      api_version: FieldAccessors.api_version(resource),
-      kind: FieldAccessors.kind(resource),
-      name: FieldAccessors.name(resource),
-      namespace: FieldAccessors.namespace(resource)
-    }
   end
 end
