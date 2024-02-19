@@ -39,7 +39,7 @@ askama_axum = { version = "0.4.0" }
 include_dir = { version = "0.7.3" }
 mime_guess = { version = "2.0.4" }
 
-anyhow = "1.0.79"
+anyhow = "1.0.80"
 uuid = { version = "1.7.0", features = ["v4"] }
 
 entity = { path = "./entity" }
