@@ -42,13 +42,11 @@ defmodule HomeBase.MixProject do
   defp deps do
     [
       {:common_core, in_umbrella: true},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:ecto_sql, "~> 3.11"},
       {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
       {:ex_audit, "~> 0.10"},
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
-      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_pubsub, "~> 2.1"},

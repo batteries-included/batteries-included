@@ -52,9 +52,9 @@ config :ex_audit,
     DateTime
   ]
 
-# Configures the endpoint
+# Configures the endpoints
 config :control_server_web, ControlServerWeb.Endpoint,
-  url: [host: "127.0.01"],
+  url: [host: "127.0.0.1"],
   adapter: Bandit.PhoenixAdapter,
   secret_key_base: "+BsWyvsUA0yzXCZIedcDcji/t0CVxE2kofuBpouA44103zsGXTg4w4rSszEXaEfh",
   render_errors: [

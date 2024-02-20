@@ -42,14 +42,12 @@ defmodule HomeBaseWeb.MixProject do
   defp deps do
     [
       {:common_ui, in_umbrella: true},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:home_base, in_umbrella: true},
       {:floki, "~> 0.35", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},
       {:heroicons, "~> 0.5"},
-      {:home_base, in_umbrella: true},
       {:jason, "~> 1.4"},
-      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:petal_components, "~> 1.9"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.4"},

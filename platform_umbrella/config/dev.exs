@@ -29,7 +29,6 @@ config :home_base, HomeBase.Repo,
 # with webpack to recompile .js and .css sources.
 config :control_server_web, ControlServerWeb.Endpoint,
   ecto_repos: [ControlServer.Repo],
-  adapter: Bandit.PhoenixAdapter,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -83,21 +82,19 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 config :control_server_web, ControlServerWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/control_server_web/(live|views)/.*(ex)$",
-      ~r"lib/control_server_web/templates/.*(eex)$",
-      ~r"storybook/.*(exs)$"
+      ~r"storybook/.*(exs)$",
+      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"lib/control_server_web/(components|controllers|live)/.*(ex|heex)$"
     ]
   ]
 
 config :home_base_web, HomeBaseWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/home_base_web/(live|views)/.*(ex)$",
-      ~r"lib/home_base_web/templates/.*(eex)$"
+      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"lib/home_base_web/(components|controllers|live)/.*(ex|heex)$"
     ]
   ]
 
@@ -114,6 +111,9 @@ config :phoenix, :plug_init_mode, :runtime
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
+
+# Include HEEx debug annotations as HTML comments in rendered markup
+config :phoenix_live_view, :debug_heex_annotations, true
 
 config :kube_services, cluster_type: :dev
 

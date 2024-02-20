@@ -39,7 +39,6 @@ defmodule ControlServer.MixProject do
   defp deps do
     [
       {:common_core, in_umbrella: true},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:ecto_sql, "~> 3.11"},
       {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
       {:event_center, in_umbrella: true},
@@ -48,7 +47,6 @@ defmodule ControlServer.MixProject do
       {:floki, "~> 0.35", only: [:dev, :test, :integration]},
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
-      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:k8s, "~> 2.5"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.4"},

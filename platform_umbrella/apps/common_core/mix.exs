@@ -45,10 +45,8 @@ defmodule CommonCore.MixProject do
       {:ex_audit, "~> 0.10"},
 
       # Testing
-      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false}
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]}
     ]
   end
 

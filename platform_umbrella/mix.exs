@@ -27,7 +27,8 @@ defmodule ControlServer.Umbrella.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test, :integration], runtime: false},
       {:credo_envvar, "~> 0.1", only: [:dev, :test, :integration], runtime: false},
       {:credo_naming, "~> 2.1", only: [:dev, :test, :integration], runtime: false},
-      {:dialyxir, "~> 1.3", only: [:dev, :test, :integration], runtime: false}
+      {:dialyxir, "~> 1.3", only: [:dev, :test, :integration], runtime: false},
+      {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]}
     ]
   end
 
