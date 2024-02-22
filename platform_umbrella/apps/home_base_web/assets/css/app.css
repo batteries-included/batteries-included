@@ -1,10 +1,1 @@
-@import './site_tailwind';
-
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/jetbrains-mono';
-
-@import '../../../../deps/petal_components/assets/default.css';
-
-::selection {
-  @apply bg-pink-500;
-}
+@import '../../../common_ui/assets/css/shared.css';

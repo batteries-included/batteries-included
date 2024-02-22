@@ -1,0 +1,23 @@
+{
+  "scripts": {
+    "tailwind": "tailwindcss --postcss",
+    "esbuild": "NODE_PATH=../../../deps esbuild --bundle --target=chrome109,firefox112,safari15.6,edge112",
+    "css:storybook": "npm run tailwind -- --input=css/storybook.css --output=../priv/static/assets/storybook.css",
+    "js:storybook": "npm run esbuild -- js/storybook.js --outdir=../priv/static/assets"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "~5.0",
+    "@fontsource-variable/jetbrains-mono": "~5.0",
+    "@tailwindcss/forms": "~0.5",
+    "@tailwindcss/typography": "~0.5",
+    "alpinejs": "~3.13",
+    "autoprefixer": "~10.4",
+    "daisyui": "~4.7",
+    "esbuild": "~0.20",
+    "postcss": "~8.4",
+    "postcss-import": "~16.0",
+    "postcss-url": "~10.1",
+    "tailwindcss": "~3.4",
+    "topbar": "~2.0"
+  }
+}

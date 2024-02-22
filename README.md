@@ -76,6 +76,12 @@ This is the main directory. It contains two different
 `Application`'s in `platform_umbrella/apps` while the configuration is in
 `platform_ubrella/config`
 
+### Common UI
+
+This is the application for shared components and UI. It is used in Control
+Server Web and Home Server Web, and runs an instance of
+[Storybook](https://github.com/phenixdigital/phoenix_storybook) in development.
+
 ### Control Server
 
 This is the main ecto repo for the control server that gets installed on the
@@ -116,9 +122,9 @@ background processes.
 bix dev
 ```
 
-Now there are two web servers accessible.
-`http://home.127.0.0.1.ip.batteriesincl.com:4900` for the home server and
-`http://control.127.0.0.1.ip.batteriesincl.com:4000` for the control server.
+Now there are two web servers accessible. `http://127.0.0.1:4000` for the
+control server, `http://127.0.0.1:4100` for the home base server, and
+`http://127.0.0.1:4200` for the common UI server.
 
 ### VSCode
 

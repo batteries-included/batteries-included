@@ -64,7 +64,6 @@ config :control_server_web, ControlServerWeb.Endpoint,
   pubsub_server: ControlServer.PubSub,
   live_view: [signing_salt: "IprBitsK"]
 
-# Configures the endpoint
 config :home_base_web, HomeBaseWeb.Endpoint,
   url: [host: "127.0.0.1"],
   adapter: Bandit.PhoenixAdapter,
@@ -76,6 +75,13 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   pubsub_server: HomeBase.PubSub,
   live_view: [signing_salt: "zAzBezt3"]
 
+config :common_ui, CommonUIWeb.Endpoint,
+  url: [host: "127.0.0.1"],
+  adapter: Bandit.PhoenixAdapter,
+  secret_key_base: "dpF0Aw3Ikl8AYXURcYog79/++RUd24ocEYlSz1QNXcfVt5itGnOSc572cKW6Fa09",
+  pubsub_server: CommonUI.PubSub,
+  live_view: [signing_salt: "CGM/Nu66"]
+
 # Configures Elixir's Logger
 config :logger,
   level: :debug,
@@ -84,19 +90,6 @@ config :logger,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
-
-config :esbuild,
-  version: "0.17.19",
-  control_server_web: [
-    args:
-      ~w(js/app.ts js/storybook.js --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets --external:/images/*),
-    cd: Path.expand("../apps/control_server_web/assets", __DIR__)
-  ],
-  home_base_web: [
-    args:
-      ~w(js/app.js --bundle --target=chrome109,firefox112,safari15.6,edge112 --outdir=../priv/static/assets --external:/images/*),
-    cd: Path.expand("../apps/home_base_web/assets", __DIR__)
-  ]
 
 config :kube_services, start_services: true
 

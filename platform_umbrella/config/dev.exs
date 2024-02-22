@@ -34,48 +34,28 @@ config :control_server_web, ControlServerWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    esbuild: {
-      Esbuild,
-      :install_and_run,
-      [:control_server_web, ~w(--sourcemap=inline --watch)]
-    },
-    npx: [
-      "tailwindcss",
-      "--postcss",
-      "--input=css/app.css",
-      "--output=../priv/static/assets/app.css",
-      "--watch",
-      cd: Path.expand("../apps/control_server_web/assets", __DIR__)
-    ],
-    npx: [
-      "tailwindcss",
-      "--postcss",
-      "--input=css/storybook.css",
-      "--output=../priv/static/assets/storybook.css",
-      "--watch",
-      cd: Path.expand("../apps/control_server_web/assets", __DIR__)
-    ]
+    npm: ["run", "css:deploy:dev", "--watch", cd: Path.expand("../apps/control_server_web/assets", __DIR__)],
+    npm: ["run", "js:deploy:dev", "--watch", cd: Path.expand("../apps/control_server_web/assets", __DIR__)]
   ]
 
 config :home_base_web, HomeBaseWeb.Endpoint,
-  http: [port: 4900],
+  http: [port: 4100],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    esbuild: {
-      Esbuild,
-      :install_and_run,
-      [:home_base_web, ~w(--sourcemap=inline --watch)]
-    },
-    npx: [
-      "tailwindcss",
-      "--postcss",
-      "--input=css/app.css",
-      "--output=../priv/static/assets/app.css",
-      "--watch",
-      cd: Path.expand("../apps/home_base_web/assets", __DIR__)
-    ]
+    npm: ["run", "css:deploy:dev", "--watch", cd: Path.expand("../apps/home_base_web/assets", __DIR__)],
+    npm: ["run", "js:deploy:dev", "--watch", cd: Path.expand("../apps/home_base_web/assets", __DIR__)]
+  ]
+
+config :common_ui, CommonUIWeb.Endpoint,
+  http: [port: 4200],
+  debug_errors: true,
+  code_reloader: true,
+  check_origin: false,
+  watchers: [
+    npm: ["run", "css:storybook", "--watch", cd: Path.expand("../apps/common_ui/assets", __DIR__)],
+    npm: ["run", "js:storybook", "--watch", cd: Path.expand("../apps/common_ui/assets", __DIR__)]
   ]
 
 # Watch static and templates for browser reloading.
@@ -83,7 +63,6 @@ config :control_server_web, ControlServerWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/gettext/.*(po)$",
-      ~r"storybook/.*(exs)$",
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"lib/control_server_web/(components|controllers|live)/.*(ex|heex)$"
     ]
@@ -95,6 +74,15 @@ config :home_base_web, HomeBaseWeb.Endpoint,
       ~r"priv/gettext/.*(po)$",
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"lib/home_base_web/(components|controllers|live)/.*(ex|heex)$"
+    ]
+  ]
+
+config :common_ui, CommonUIWeb.Endpoint,
+  live_reload: [
+    patterns: [
+      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"lib/common_ui_web/(components|live)/.*(ex|heex)$",
+      ~r"storybook/.*(exs)$"
     ]
   ]
 

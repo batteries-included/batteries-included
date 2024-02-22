@@ -2,16 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "HomeBase" %>
+
+    <title :if={!assigns[:page_title]}>Batteries Included</title>
+    <.live_title :if={assigns[:page_title]} suffix=" · Batteries Included">
+      <%= @page_title %>
     </.live_title>
+
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
-  <body class="min-h-screen antialiased bg-gray-100">
+  <body class="common-ui min-h-screen antialiased bg-gray-100">
     <%= @inner_content %>
   </body>
 </html>

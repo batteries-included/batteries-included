@@ -1,0 +1,16 @@
+@import 'shared.css';
+
+/* Override default Phoenix Storybook styling */
+.psb {
+  @apply font-sans;
+}
+
+/*
+ * Put your component styling within the Tailwind utilities layer. 
+ * See the https://hexdocs.pm/phoenix_storybook/sandboxing.html guide for more info.
+ */
+@layer utilities {
+  * {
+    @apply font-sans;
+  }
+}

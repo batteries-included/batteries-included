@@ -42,10 +42,10 @@ defmodule ControlServerWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bandit, "~> 1.0"},
       {:common_core, in_umbrella: true},
       {:common_ui, in_umbrella: true},
       {:control_server, in_umbrella: true},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:floki, "~> 0.35", only: [:dev, :test, :integration], override: true},
       {:gettext, "~> 0.20"},
@@ -64,8 +64,6 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix_live_dashboard, "~> 0.8"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_view, "~> 0.20"},
-      {:phoenix_storybook, "~> 0.6"},
-      {:bandit, "~> 1.0"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:wallaby, "~> 0.30", runtime: false, only: [:test, :integration]},
@@ -80,9 +78,6 @@ defmodule ControlServerWeb.MixProject do
     [
       setup: ["deps.get", "cmd npm install --prefix assets"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild.deploy", "css.deploy", "phx.digest"],
-      "css.deploy": ["cmd npm run deploy --prefix assets"],
-      "esbuild.deploy": ["esbuild control_server_web --minify --analyze"],
       "ecto.reset": []
     ]
   end

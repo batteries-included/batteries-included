@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Storybook.Button do
+defmodule Storybook.CommonUI.Link do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 

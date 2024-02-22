@@ -22,15 +22,19 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 control_server_web-*.tar
 
-# If NPM crashes, it generates a log, let's ignore it too.
-npm-debug.log
+# Temporary files, for example, from tests.
+/tmp/
 
-# The directory NPM downloads your dependencies sources to.
-/assets/node_modules/
-
+# Ignore assets that are produced by build tools.
+/assets/dist/
 /priv/static/assets/
+
+# Ignore digested assets cache.
 /priv/static/cache_manifest.json
 
-/assets/js/_hooks/
+# In case you use Node.js/npm, you want to ignore these.
+npm-debug.log
+/assets/node_modules/
 
+# Ignore screenshots taken when integration tests fail.
 /screenshots/

@@ -9,7 +9,7 @@ const colors = [
   '#206f90',
 ];
 
-const ChartHook = {
+export const ChartHook = {
   updated() {
     const data = this.el.dataset.chartData
       ? JSON.parse(this.el.dataset.chartData)
@@ -56,5 +56,3 @@ const ChartHook = {
     });
   },
 };
-
-export { ChartHook };

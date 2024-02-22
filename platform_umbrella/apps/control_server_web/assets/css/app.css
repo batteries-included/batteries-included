@@ -1,17 +1,9 @@
-@import './site_tailwind.css';
-@import './fonts';
-@import './loader';
-@import './iframe';
-@import './object_resource';
-@import './fresh_menu';
-@import './modal_scroller';
-@import '../../../../deps/petal_components/assets/default.css';
-@import './petal_components_overrides.css';
+@import '../../../common_ui/assets/css/shared.css';
+@import './iframe.css';
+@import './object_resource.css';
+@import './fresh_menu.css';
+@import './modal_scroller.css';
 @import './tippy.css';
-
-::selection {
-  @apply bg-primary-500;
-}
 
 [x-cloak] {
   display: none !important;

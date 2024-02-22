@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { debounce } from 'lodash/debounce';
 
 const maxHeight = (element) =>
@@ -28,7 +27,7 @@ const resize = (element) => {
   }
 };
 
-const IFrame = {
+export const IFrameHook = {
   mounted() {
     const doResize = debounce(() => resize(this.el), 500, {
       leading: true,
@@ -39,5 +38,3 @@ const IFrame = {
     setInterval(doResize, 1000);
   },
 };
-
-export { IFrame };

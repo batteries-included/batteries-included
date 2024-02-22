@@ -107,7 +107,7 @@
 }
 
 .pc-table__th {
-  @apply px-3 py-3.5  border-b border-gray-200 dark:border-gray-700 text-left text-sm capitalize font-normal text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-900;
+  @apply px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 text-left text-sm capitalize font-normal text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-900;
 }
 
 .pc-table__tr {

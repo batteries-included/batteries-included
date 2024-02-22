@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Router do
   use ControlServerWeb, :router
 
   import Phoenix.LiveDashboard.Router
-  import PhoenixStorybook.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -184,16 +183,6 @@ defmodule ControlServerWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
-    end
-
-    # Enables Storybook only for development
-    scope "/" do
-      storybook_assets()
-    end
-
-    scope "/", ControlServerWeb do
-      pipe_through :browser
-      live_storybook("/storybook", backend_module: ControlServerWeb.Storybook)
     end
   end
 end

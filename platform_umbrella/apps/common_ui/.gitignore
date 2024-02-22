@@ -25,4 +25,15 @@ common_ui-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-/assets/js/_hooks/
+# Ignore assets that are produced by build tools.
+/priv/static/assets/
+
+# Ignore digested assets cache.
+/priv/static/cache_manifest.json
+
+# In case you use Node.js/npm, you want to ignore these.
+npm-debug.log
+/assets/node_modules/
+
+# Ignore screenshots taken when integration tests fail.
+/screenshots/

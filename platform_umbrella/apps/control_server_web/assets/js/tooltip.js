@@ -1,12 +1,12 @@
 import tippy from 'tippy.js';
 
-const Tooltip = {
-  /** When mounted create the tippy.js tooltip. */
+export const TooltipHook = {
+  // When mounted create the tippy.js tooltip.
   mounted() {
     this.createTippy();
   },
 
-  /** When updated remove any old tooltips and create new ones */
+  // When updated remove any old tooltips and create new ones
   updated() {
     if (this.tippyInstances != null) {
       this.tippyInstances.forEach((element) => {
@@ -17,7 +17,7 @@ const Tooltip = {
     this.createTippy();
   },
 
-  /** The method to create tippy tooltips. */
+  // The method to create tippy tooltips.
   createTippy() {
     const target = '#' + this.el.dataset.target;
     const content = this.el.innerHTML;
@@ -30,5 +30,3 @@ const Tooltip = {
     this.tippyInstances = tippy(target, { ...defaultOptions, ...tippyOptions });
   },
 };
-
-export { Tooltip };

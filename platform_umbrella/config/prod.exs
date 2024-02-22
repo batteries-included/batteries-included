@@ -40,3 +40,5 @@ config :logger, :console,
 
 config :kube_services, :clusters, default: :service_account
 config :kube_services, cluster_type: :prod
+
+config :common_ui, CommonUIWeb.Endpoint, server: false

@@ -22,12 +22,17 @@ config :home_base, HomeBase.Repo,
   port: System.get_env("POSTGRES_PORT") || 5432,
   pool: Ecto.Adapters.SQL.Sandbox
 
+# Configures the endpoints
+config :common_ui, CommonUIWeb.Endpoint,
+  http: [port: 4001],
+  server: false
+
 config :control_server_web, ControlServerWeb.Endpoint,
   http: [port: 4002],
   server: false
 
 config :home_base_web, HomeBaseWeb.Endpoint,
-  http: [port: 4004],
+  http: [port: 4003],
   server: false
 
 # Print only warnings and errors during test

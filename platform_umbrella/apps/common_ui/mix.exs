@@ -13,14 +13,18 @@ defmodule CommonUI.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       test_paths: test_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      deps: deps()
     ]
   end
 
+  # Configuration for the OTP application.
+  #
+  # Type `mix help compile.app` for more information.
   def application do
     [
-      extra_applications: [:logger, :dialyzer]
+      mod: {CommonUI.Application, []},
+      extra_applications: [:logger, :runtime_tools, :dialyzer]
     ]
   end
 
@@ -35,20 +39,24 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
-      {:phoenix, "~> 1.7"},
-      {:jason, "~> 1.4"},
-      {:phoenix_live_view, "~> 0.20", override: true},
+      {:bandit, "~> 1.2"},
+      {:floki, "~> 0.35", only: [:dev, :test, :integration]},
       {:heroicons, "~> 0.5"},
-      {:gettext, "~> 0.19"},
+      {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
+      {:jason, "~> 1.4"},
       {:petal_components, "~> 1.9"},
+      {:phoenix, "~> 1.7"},
+      {:phoenix_html, "~> 4.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 0.20", override: true},
+      {:phoenix_storybook, "~> 0.6"},
       {:timex, "~> 3.7"}
     ]
   end
 
   defp aliases do
     [
-      setup: ["deps.get"],
+      setup: ["deps.get", "cmd npm install --prefix assets"],
       "ecto.reset": []
     ]
   end
