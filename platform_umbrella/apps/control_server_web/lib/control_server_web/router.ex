@@ -61,8 +61,7 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.SystemProjectIndex, :index
     live "/new", Live.SystemProjectNew, :index
-    live "/:id/edit", Live.SystemProjectEdit, :edit
-    live "/:id/show", Live.SystemProjectShow, :show
+    live "/:id", Live.SystemProjectShow, :show
   end
 
   scope "/kube", ControlServerWeb do

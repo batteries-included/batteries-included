@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Live.SystemProjectIndex do
   @moduledoc false
-  use ControlServerWeb, {:live_view, layout: :fresh}
+  use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias ControlServer.Projects
   alias ControlServer.Projects.SystemProject
@@ -48,20 +48,16 @@ defmodule ControlServerWeb.Live.SystemProjectIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <.a navigate={~p"/system_projects/new"} variant="styled">New Project</.a>
+
     <.table
       id="system_projects"
       rows={@system_projects}
-      row_click={&JS.navigate(~p"/system_projects/#{&1}/show")}
+      row_click={&JS.navigate(~p"/system_projects/#{&1}")}
     >
       <:col :let={system_project} label="Name"><%= system_project.name %></:col>
       <:col :let={system_project} label="Type"><%= system_project.type %></:col>
       <:col :let={system_project} label="Description"><%= system_project.description %></:col>
-      <:action :let={system_project}>
-        <.a navigate={~p"/system_projects/#{system_project}/show"} variant="styled">Show</.a>
-      </:action>
-      <:action :let={system_project}>
-        <.a navigate={~p"/system_projects/#{system_project}/edit"} variant="styled">Edit</.a>
-      </:action>
     </.table>
     """
   end

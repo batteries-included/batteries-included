@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
           <.input field={{f, :description}} type="textarea" label="Description" />
         </div>
         <:actions>
-          <.button phx-disable-with="Saving...">Save System project</.button>
+          <.button phx-disable-with="Saving...">Save</.button>
         </:actions>
       </.simple_form>
     </div>
@@ -65,7 +65,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "System project updated successfully")
-         |> push_navigate(to: ~p"/system_projects/#{system_project}/show")}
+         |> push_navigate(to: ~p"/system_projects/#{system_project}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -74,11 +74,11 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
 
   defp save_system_project(socket, :new, system_project_params) do
     case Projects.create_system_project(system_project_params) do
-      {:ok, system_project} ->
+      {:ok, _} ->
         {:noreply,
          socket
          |> put_flash(:info, "System project created successfully")
-         |> push_navigate(to: ~p"/system_projects/#{system_project}/show")}
+         |> push_navigate(to: ~p"/system_projects")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}

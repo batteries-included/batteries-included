@@ -26,7 +26,7 @@ defmodule ControlServerWeb.SystemProjectLiveTest do
 
     @tag :slow
     test "displays system_project", %{conn: conn, system_project: system_project} do
-      {:ok, _show_live, html} = live(conn, ~p"/system_projects/#{system_project}/show")
+      {:ok, _show_live, html} = live(conn, ~p"/system_projects/#{system_project}")
 
       assert html =~ "Project"
     end
