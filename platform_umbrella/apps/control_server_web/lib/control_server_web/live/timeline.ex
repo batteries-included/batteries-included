@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.Timeline do
 
   defp payload_container(assigns) do
     ~H"""
-    <.flex column class="rounded-xl border-gray-200 p-4 border">
+    <.flex column class="rounded-xl border-gray-lighter p-4 border">
       <%= render_slot(@inner_block) %>
     </.flex>
     """
@@ -40,7 +40,7 @@ defmodule ControlServerWeb.Live.Timeline do
       <div class="text-black font-bold">
         Removed Kubernetes Resource
       </div>
-      <div class="text-sm text-gray-600">
+      <div class="text-sm text-gray-darker">
         The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was removed from <%= @payload.namespace %>.
       </div>
     </.payload_container>
@@ -53,7 +53,7 @@ defmodule ControlServerWeb.Live.Timeline do
       <div class="text-black font-bold">
         Added Kubernetes Resource
       </div>
-      <div class="text-sm text-gray-600">
+      <div class="text-sm text-gray-darker">
         The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was
         added to <%= @payload.namespace %>.
       </div>
@@ -67,7 +67,7 @@ defmodule ControlServerWeb.Live.Timeline do
       <div class="text-black font-bold">
         Updated Kubernetes Resource
       </div>
-      <div class="text-sm text-gray-600">
+      <div class="text-sm text-gray-darker">
         The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was
         updated in <%= @payload.namespace %>. The new status
         is <%= Naming.humanize(@payload.computed_status) %>.
@@ -145,7 +145,7 @@ defmodule ControlServerWeb.Live.Timeline do
 
   defp payload_display(assigns) do
     ~H"""
-    <.flex column class="rounded-xl border-gray-200 p-4 border">
+    <.flex column class="rounded-xl border-gray-lighter p-4 border">
       <pre class="text-sm overflow-x-auto">
         <%= inspect(@payload) %>
       </pre>
@@ -171,7 +171,7 @@ defmodule ControlServerWeb.Live.Timeline do
   def render(assigns) do
     ~H"""
     <.page_header title="Timeline" back_button={%{link_type: "live_redirect", to: "/magic"}} />
-    <.flex column class="rounded-xl border-gray-200 dark:border-gray-700 p-0 border">
+    <.flex column class="rounded-xl border-gray-lighter dark:border-gray-darkest p-0 border">
       <.event_item :for={event <- @events} event={event} />
     </.flex>
     """

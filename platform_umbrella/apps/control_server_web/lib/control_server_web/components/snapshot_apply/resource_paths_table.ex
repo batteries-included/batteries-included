@@ -7,7 +7,7 @@ defmodule ControlServerWeb.ResourcePathsTable do
 
   defp status_icon(%{is_success: is_success} = assigns) when is_success in ["true", true, :ok] do
     ~H"""
-    <div class="flex text-shamrock-500 font-semi-bold">
+    <div class="flex text-success font-semi-bold">
       <div class="flex-initial">
         Success
       </div>
@@ -20,7 +20,7 @@ defmodule ControlServerWeb.ResourcePathsTable do
 
   defp status_icon(%{is_success: _is_success} = assigns) do
     ~H"""
-    <div class="flex text-heath-300 font-semi-bold">
+    <div class="flex text-error-dark font-semi-bold">
       <div class="flex-initial">
         Failed
       </div>

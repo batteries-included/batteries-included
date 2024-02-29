@@ -2,6 +2,7 @@ static/public/specs/*.json linguist-generated=true
 cli/tests/resources/specs/*.json linguist-generated=true
 flake.lock linguist-generated=true
 platform_umbrella/mix.lock linguist-generated=true
+platform_umbrella/**/*.heyya_snap linguist-generated=true
 coding_challenges/whats_up/mix.lock linguist-generated=true
 cli/Cargo.lock linguist-generated=true
 project_templates/pastebin/Cargo.lock linguist-generated=true

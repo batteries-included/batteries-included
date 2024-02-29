@@ -15,7 +15,7 @@ defmodule CommonUI.Card do
     ~H"""
     <div
       class={[
-        "p-4 bg-white rounded-lg border border-gray-200 shadow-lg",
+        "p-4 bg-white rounded-lg border border-gray-lighter shadow-lg",
         "flex flex-col",
         @class
       ]}
@@ -62,7 +62,8 @@ defmodule CommonUI.Card do
     """
   end
 
-  defp get_classes("simple"), do: "bg-white border border-gray-200 rounded-lg dark:bg-gray-900/70 dark:border-gray-600"
+  defp get_classes("simple"),
+    do: "bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker"
 
-  defp get_classes("gray"), do: "bg-gray-50 rounded-lg dark:bg-gray-700/50"
+  defp get_classes("gray"), do: "bg-gray-lightest rounded-lg dark:bg-gray-darkest/50"
 end

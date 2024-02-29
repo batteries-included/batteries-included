@@ -3,8 +3,8 @@ defmodule CommonUI.Icons.Batteries do
   use CommonUI.Component
 
   attr :class, :any, default: "h-9 w-auto"
-  attr :top_cloud_class, :any, default: "fill-pink-500"
-  attr :bottom_cloud_class, :any, default: "fill-gray-500 dark:fill-white"
+  attr :top_cloud_class, :any, default: "fill-primary"
+  attr :bottom_cloud_class, :any, default: "fill-gray-dark dark:fill-white"
 
   def batteries_logo(assigns) do
     ~H"""

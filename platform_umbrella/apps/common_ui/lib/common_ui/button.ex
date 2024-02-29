@@ -49,11 +49,11 @@ defmodule CommonUI.Button do
       type={@type}
       {@rest}
       class={[
-        "flex items-center gap-4 group text-primary-500 hover:text-primary-700 group-hover:fill-primary-700",
+        "flex items-center gap-4 group text-primary hover:text-primary-dark group-hover:fill-primary-dark",
         @class
       ]}
     >
-      <PC.icon :if={@icon} name={@icon} class={["w-4 h-4 fill-primary-500", icon_class(@icon)]} />
+      <PC.icon :if={@icon} name={@icon} class={["w-4 h-4 fill-primary", icon_class(@icon)]} />
       <%= render_slot(@inner_block) %>
     </button>
     """
@@ -75,7 +75,7 @@ defmodule CommonUI.Button do
       <PC.icon
         name={@icon}
         solid
-        class="w-5 h-5 text-gray-600 dark:text-gray-400 hover:text-primary-600"
+        class="w-5 h-5 text-gray-darker dark:text-gray hover:text-primary-dark"
       />
       <CommonUI.Tooltip.tooltip :if={@tooltip} target_id={@id}>
         <%= @tooltip %>

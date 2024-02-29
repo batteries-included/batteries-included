@@ -1,6 +1,6 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
   <table class="w-[40rem] mt-4 sm:w-full">
-    <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray">
       <tr>
         <th class="p-0 pb-4 font-normal">Id</th><th class="p-0 pb-4 font-normal">Username</th><th class="p-0 pb-4 font-normal">Enabled</th><th class="p-0 pb-4 font-normal">Email Verified</th><th class="p-0 pb-4 font-normal">Created</th>
         <th class="p-0 pb-4">
@@ -8,11 +8,11 @@
         </th>
       </tr>
     </thead>
-    <tbody id="keycloak-users-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
+    <tbody id="keycloak-users-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       <tr class="group ">
         <td class="p-0 px-2 ">
           <div class="block py-4">
-            <span class="font-semibold text-gray-900 dark:text-gray-100">
+            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               00-00-00-00-00-00-00-00-00-00-01
             </span>
           </div>
@@ -46,17 +46,17 @@
         <td class="w-14 p-0">
           <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
   
-            <div class="font-semibold leading-6 text-gray-900 dark:text-gray-100 p-4">
+            <div class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4">
               
-    <a href="#" class="font-medium text-pink-500 hover:text-pink-600 hover:underline" phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
+    <a href="#" class="font-medium text-primary hover:text-primary-dark hover:underline" phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
   
       Reset Password
     
 </a>
   
-            </div><div class="font-semibold leading-6 text-gray-900 dark:text-gray-100 p-4">
+            </div><div class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4">
               
-    <a href="#" class="font-medium text-pink-500 hover:text-pink-600 hover:underline" phx-click="make_realm_admin" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
+    <a href="#" class="font-medium text-primary hover:text-primary-dark hover:underline" phx-click="make_realm_admin" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
   
       Make Realm Admin
     

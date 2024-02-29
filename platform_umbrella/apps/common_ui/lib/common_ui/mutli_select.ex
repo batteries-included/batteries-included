@@ -31,23 +31,26 @@ defmodule CommonUI.MutliSelect do
       <.flex
         @click="open = !open"
         class={[
-          "rounded-md border border-gray-300 dark:border-gray-700 h-12 items-center p-2 block",
+          "rounded-md border border-gray-light dark:border-gray-darkest h-12 items-center p-2 block",
           @width_class
         ]}
       >
         <.flex class={["grow m-1 overflow-x-clip"]} gaps="1">
           <div
             :for={%{selected: true} = opt <- @options}
-            class="py-2 px-2 shadow-md rounded-full bg-pink-500 text-gray-800 font-sans font-semibold text-sm"
+            class="py-2 px-2 shadow-md rounded-full bg-primary text-gray-darkest font-sans font-semibold text-sm"
           >
             <%= opt.label %>
           </div>
         </.flex>
 
         <div class="justify-around items-center flex grow-0" @click="open = !open">
-          <Heroicons.chevron_down class="h-5 w-5 text-gray-800 dark:text-gray-200" x-show="!open" />
+          <Heroicons.chevron_down
+            class="h-5 w-5 text-gray-darkest dark:text-gray-lighter"
+            x-show="!open"
+          />
           <Heroicons.chevron_up
-            class="h-5 w-5 text-gray-800 dark:text-gray-200"
+            class="h-5 w-5 text-gray-darkest dark:text-gray-lighter"
             x-show="open"
             x-cloak
           />
@@ -57,8 +60,8 @@ defmodule CommonUI.MutliSelect do
       <.flex
         class={[
           "absolute z-10 mt-1 flex-col",
-          "max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 p-4",
-          "text-gray-800 dark:text-gray-200 text-base shadow-lg ring-1 ring-black ring-opacity-5",
+          "max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-darkest p-4",
+          "text-gray-darkest dark:text-gray-lighter text-base shadow-lg ring-1 ring-black ring-opacity-5",
           "focus:outline-none",
           @width_class
         ]}
@@ -69,7 +72,7 @@ defmodule CommonUI.MutliSelect do
           <input
             name={value.value}
             type="checkbox"
-            class="h-5 w-5 rounded border-gray-300 text-pink-400"
+            class="h-5 w-5 rounded border-gray-light text-primary-light"
             phx-change={@change_event}
             phx-target={@phx_target}
             value={value.value}

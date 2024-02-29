@@ -18,15 +18,15 @@ defmodule HomeBaseWeb.TopMenuLayout do
   def top_menu_layout(assigns) do
     ~H"""
     <div class="min-h-full">
-      <div class="bg-gray-800 pb-32">
-        <nav class="bg-gray-800">
+      <div class="bg-gray-darkest pb-32">
+        <nav class="bg-gray-darkest">
           <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="border-b border-gray-700">
+            <div class="border-b border-gray-darkest">
               <div class="flex h-16 items-center justify-between px-4 sm:px-0">
                 <div class="flex items-center">
                   <div class="flex-shrink-0">
                     <.a navigate="/">
-                      <.batteries_logo top_cloud_class="fill-pink-500" />
+                      <.batteries_logo top_cloud_class="fill-primary" />
                     </.a>
                   </div>
                   <.main_menu menu_items={@main_menu_items} page={@page} />
@@ -57,9 +57,9 @@ defmodule HomeBaseWeb.TopMenuLayout do
   end
 
   defp menu_class(false = _on_page),
-    do: "text-gray-300 hover:bg-gray-700 hover:text-white border-b-2 border-transparent hover:border-pink-500"
+    do: "text-gray-light hover:bg-gray-darkest hover:text-white border-b-2 border-transparent hover:border-primary"
 
-  defp menu_class(true = _on_page), do: "border-t-2 border-pink-500 text-white"
+  defp menu_class(true = _on_page), do: "border-t-2 border-primary text-white"
 
   attr :menu_items, :any, required: true
   attr :page, :atom, required: true
@@ -68,7 +68,7 @@ defmodule HomeBaseWeb.TopMenuLayout do
     ~H"""
     <div class="hidden md:block">
       <div class="ml-10 flex items-baseline space-x-4">
-        <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+        <!-- Current: "bg-gray-darkest text-white", Default: "text-gray-light hover:bg-gray-darkest hover:text-white" -->
         <.a
           :for={menu_item <- @menu_items}
           navigate={menu_item.url}

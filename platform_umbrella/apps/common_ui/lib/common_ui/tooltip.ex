@@ -71,8 +71,8 @@ defmodule CommonUI.Tooltip do
             # Move the tooltip up and over
             "absolute -translate-x-1 -translate-y-full",
             "rounded-md shadow-md p-2",
-            "bg-white/90 text-gray-700",
-            "dark:bg-gray-700/90 dark:text-gray-200"
+            "bg-white/90 text-gray-darkest",
+            "dark:bg-gray-darkest/90 dark:text-gray-lighter"
           ]
         }
         role="tooltip"

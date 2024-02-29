@@ -116,7 +116,7 @@ defmodule ControlServerWeb.Live.EditVersionShow do
 
   defp patch_value(%{value: _} = assigns) do
     ~H"""
-    <div class="text-gray-400 dark:text-gray-600"><%= @value %></div>
+    <div class="text-gray dark:text-gray-darker"><%= @value %></div>
     """
   end
 

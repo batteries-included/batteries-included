@@ -46,7 +46,7 @@ defmodule ControlServerWeb.ObjectDisplay do
   attr :base_url, :string, default: "/"
   attr :path, :any, default: []
   attr :object, :any, default: %{}
-  attr :class, :string, default: "flex-none border-r-[1px] border-gray-200/90 w-96 overflow-x-clip"
+  attr :class, :string, default: "flex-none border-r-[1px] border-gray-lighter/90 w-96 overflow-x-clip"
 
   defp column(%{object: object} = assigns) when is_map(object) or is_list(object) do
     ~H"""
@@ -74,7 +74,7 @@ defmodule ControlServerWeb.ObjectDisplay do
   attr :path, :any, default: []
   attr :object, :any, default: %{}
   attr :class, :string, default: "flex flex-row h-10 hover:bg-pink-100/50 items-center group"
-  attr :icon_class, :string, default: "text-gray-400 w-6 mr-2 my-auto group-hover:text-pink-600"
+  attr :icon_class, :string, default: "text-gray w-6 mr-2 my-auto group-hover:text-primary-dark"
 
   defp column_data(%{object: object} = assigns) when is_map(object) do
     ~H"""
@@ -85,7 +85,7 @@ defmodule ControlServerWeb.ObjectDisplay do
     >
       <.value_icon value_type={value_type(value)} class={@icon_class} />
       <span class="grow"><%= key %></span>
-      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
+      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray"]} />
     </.a>
     """
   end
@@ -99,7 +99,7 @@ defmodule ControlServerWeb.ObjectDisplay do
     >
       <.value_icon value_type={value_type(value)} class={@icon_class} />
       <span class="grow">Index <%= idx %></span>
-      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray-400"]} />
+      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray"]} />
     </.a>
     """
   end

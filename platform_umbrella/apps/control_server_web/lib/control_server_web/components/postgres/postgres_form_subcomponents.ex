@@ -62,7 +62,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         </.button>
       </:menu>
 
-      <div :if={@users == []} class="p-6 text-sm text-gray-500 dark:text-gray-400">
+      <div :if={@users == []} class="p-6 text-sm text-gray-dark dark:text-gray">
         No users added
       </div>
 
@@ -113,7 +113,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         <.h5>
           <%= @label %>
         </.h5>
-        <div class="text-sm text-gray-500">
+        <div class="text-sm text-gray-dark">
           <%= @help_text %>
         </div>
       </div>

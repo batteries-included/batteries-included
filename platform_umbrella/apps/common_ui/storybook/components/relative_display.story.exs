@@ -1,4 +1,4 @@
-defmodule Storybook.CommonUI.RelativeDisplay do
+defmodule Storybook.Components.RelativeDisplay do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 

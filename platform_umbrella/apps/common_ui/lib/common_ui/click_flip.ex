@@ -27,9 +27,9 @@ defmodule CommonUI.ClickFlip do
         class={[
           @cursor_class,
           @content_class,
-          "border border-transparent border-dashed hover:border-gray-300 dark:hover-border-gray-700",
+          "border border-transparent border-dashed hover:border-gray-light dark:hover-border-gray-darkest",
           "rounded",
-          "hover:bg-gray-50/70 dark:hover:bg-gray-800/70"
+          "hover:bg-gray-lightest/70 dark:hover:bg-gray-darkest/70"
         ]}
         @click="open = !open"
         x-cloak

@@ -1,4 +1,4 @@
-defmodule Storybook.CommonUI.ClickFlip do
+defmodule Storybook.Components.ClickFlip do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 

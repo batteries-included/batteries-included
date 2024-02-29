@@ -5,7 +5,7 @@ defmodule ControlServerWeb.SnapshotApplyAlert do
 
   def pause_alert(assigns) do
     ~H"""
-    <div class="rounded-md bg-blue-500/50 dark:bg-gray-400/10 text-black dark:text-white text-center text-md p-2 shadow-sm">
+    <div class="rounded-md bg-secondary/50 dark:bg-gray/10 text-black dark:text-white text-center text-md p-2 shadow-sm">
       Deploys are currently paused
     </div>
     """

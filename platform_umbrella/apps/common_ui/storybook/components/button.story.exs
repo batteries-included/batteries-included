@@ -1,11 +1,8 @@
-defmodule Storybook.CommonUI.Button do
+defmodule Storybook.Components.Button do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Button.button/1
-
-  def attributes, do: []
-  def slots, do: []
 
   def variations,
     do: [

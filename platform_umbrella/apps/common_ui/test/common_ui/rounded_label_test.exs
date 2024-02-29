@@ -15,7 +15,7 @@ defmodule CommonUI.RoundedLabelTest do
     assigns = %{}
 
     ~H"""
-    <.rounded_label class="bg-pink-500">styled pill</.rounded_label>
+    <.rounded_label class="bg-primary">styled pill</.rounded_label>
     """
   end
 end

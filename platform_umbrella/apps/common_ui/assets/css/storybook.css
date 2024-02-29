@@ -1,7 +1,7 @@
-@import 'shared.css';
+@import './shared.css';
 
-/* Override default Phoenix Storybook styling */
-.psb {
+.psb,
+.common-ui {
   @apply font-sans;
 }
 
@@ -10,7 +10,4 @@
  * See the https://hexdocs.pm/phoenix_storybook/sandboxing.html guide for more info.
  */
 @layer utilities {
-  * {
-    @apply font-sans;
-  }
 }

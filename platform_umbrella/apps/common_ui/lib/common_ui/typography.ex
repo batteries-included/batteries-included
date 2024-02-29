@@ -3,8 +3,8 @@ defmodule CommonUI.Typography do
   use CommonUI.Component
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-3xl text-pink-500 sm:text-5xl font-extrabold my-6"
-  attr :sep_class, :string, default: "m-0 text-gray-700"
+  attr :base_class, :string, default: "text-3xl text-primary sm:text-5xl font-extrabold my-6"
+  attr :sep_class, :string, default: "m-0 text-gray-darkest"
   attr :sub_header_class, :string, default: "font-mono"
   slot :inner_block, required: true, doc: "The main text of the header"
   slot :sub_header, required: false, doc: "The sub text of the header"
@@ -30,7 +30,7 @@ defmodule CommonUI.Typography do
   attr :base_class, :string, default: "text-xl sm:text-3xl font-semibold my-3"
   attr :color_class, :string, default: "text-black"
 
-  attr :fancy_class, :string, default: "text-transparent bg-clip-text bg-gradient-to-br from-pink-500 to-astral-500"
+  attr :fancy_class, :string, default: "text-transparent bg-clip-text bg-gradient-to-br from-primary to-cyan-700"
 
   attr :variant, :string, default: "default", values: ["default", "fancy"]
   slot :inner_block, required: true
@@ -55,7 +55,7 @@ defmodule CommonUI.Typography do
   end
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-xl font-medium text-gray-600 dark:text-gray-400"
+  attr :base_class, :string, default: "text-xl font-medium text-gray-darker dark:text-gray"
   slot :inner_block, required: true
   attr :rest, :global
 
@@ -69,7 +69,7 @@ defmodule CommonUI.Typography do
 
   attr :class, :any, default: ""
 
-  attr :base_class, :string, default: "text-lg sm:text-xl uppercase text-semibold text-gray-700 dark:text-gray-300"
+  attr :base_class, :string, default: "text-lg sm:text-xl uppercase text-semibold text-gray-darkest dark:text-gray-light"
 
   slot :inner_block, required: true
   attr :rest, :global
@@ -90,7 +90,7 @@ defmodule CommonUI.Typography do
 
   def light_text(assigns) do
     ~H"""
-    <div class={["text-gray-500 text-sm dark:text-gray-400", @class]} {@rest}>
+    <div class={["text-gray-dark text-sm dark:text-gray", @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </div>
     """

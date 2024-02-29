@@ -56,7 +56,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def status_icon(assigns) do
     ~H"""
     <div class="flex items-center gap-2">
-      <Heroicons.x_circle class="w-6 h-6 text-gray-500" />
+      <Heroicons.x_circle class="w-6 h-6 text-gray-dark" />
       <div class="flex-initial">
         False
       </div>
@@ -74,7 +74,7 @@ defmodule ControlServerWeb.ResourceComponents do
       <div
         id="scroller"
         style="max-height: 70vh"
-        class="max-h-full rounded-md bg-gray-100 dark:bg-gray-800 min-h-16"
+        class="max-h-full rounded-md bg-gray-lightest dark:bg-gray-darkest min-h-16"
         phx-hook="ResourceLogsModal"
       >
         <code class="block p-3 overflow-x-scroll dark:text-white">

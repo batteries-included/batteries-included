@@ -309,7 +309,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                         phx-click="set_storage_size_shortcut"
                         phx-value-bytes={memory_size}
                         phx-target={@myself}
-                        class="cursor-pointer hover:underline text-sm font-medium text-gray-700 dark:text-white w-[45px] text-center"
+                        class="cursor-pointer hover:underline text-sm font-medium text-gray-darkest dark:text-white w-[45px] text-center"
                       >
                         <%= Memory.format_bytes(memory_size) %>
                       </span>
@@ -364,14 +364,14 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               </.grid>
             </div>
 
-            <.flex class="justify-between w-full py-5 border-t border-gray-300 dark:border-gray-600">
+            <.flex class="justify-between w-full py-5 border-t border-gray-light dark:border-gray-darker">
               <!-- divider -->
             </.flex>
 
             <.flex class="items-center">
               <.flex class="justify-between w-full lg:w-1/2">
                 <.h5>Number of instances</.h5>
-                <div class="font-bold text-4xl text-primary-500">
+                <div class="font-bold text-4xl text-primary">
                   <%= @form[:num_instances].value %>
                 </div>
               </.flex>

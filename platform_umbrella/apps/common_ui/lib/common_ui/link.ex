@@ -37,8 +37,8 @@ defmodule CommonUI.Link do
     """
   end
 
-  defp link_class("icon" = _variant), do: "font-medium text-pink-500 hover:text-pink-600 hover:opacity-50"
-  defp link_class("styled" = _variant), do: "font-medium text-pink-500 hover:text-pink-600 hover:underline"
-  defp link_class("external" = _variant), do: "font-medium text-pink-600 hover:underline flex"
+  defp link_class("icon" = _variant), do: "font-medium text-primary hover:text-primary-dark hover:opacity-50"
+  defp link_class("styled" = _variant), do: "font-medium text-primary hover:text-primary-dark hover:underline"
+  defp link_class("external" = _variant), do: "font-medium text-primary-dark hover:underline flex"
   defp link_class(_variant), do: ""
 end

@@ -206,9 +206,9 @@ defmodule CommonUI.Form do
     ~H"""
     <label class="relative inline-flex items-center mb-4 cursor-pointer">
       <input type="checkbox" {@rest} class="sr-only peer" />
-      <div class="dark:peer-focus:ring-primary-500 after:peer-checked:bg-primary-500 h-[24px] w-[42px] rounded-full border border-gray-300 bg-white after:absolute after:left-[5px] after:top-1 after:h-[16px] after:w-[16px] after:rounded-full after:border-none after:bg-gray-500 dark:after:bg-gray-400 after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-none dark:border-gray-600 dark:bg-gray-800">
+      <div class="dark:peer-focus:ring-primary after:peer-checked:bg-primary h-[24px] w-[42px] rounded-full border border-gray-light bg-white after:absolute after:left-[5px] after:top-1 after:h-[16px] after:w-[16px] after:rounded-full after:border-none after:bg-gray-dark dark:after:bg-gray after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-none dark:border-gray-darker dark:bg-gray-darkest">
       </div>
-      <span :if={@label} class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+      <span :if={@label} class="ml-3 text-sm font-medium text-gray-darkest dark:text-gray-light">
         <%= @label %>
       </span>
     </label>
@@ -256,8 +256,8 @@ defmodule CommonUI.Form do
 
   def error(assigns) do
     ~H"""
-    <p class="flex gap-3 mt-3 text-sm leading-6 phx-no-feedback:hidden text-sea-buckthorn-600 input-error">
-      <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-sea-buckthorn-500" />
+    <p class="flex gap-3 mt-3 text-sm leading-6 phx-no-feedback:hidden text-warning-dark input-error">
+      <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-warning" />
       <%= @message %>
     </p>
     """

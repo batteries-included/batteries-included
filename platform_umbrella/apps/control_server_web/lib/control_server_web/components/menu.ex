@@ -159,11 +159,11 @@ defmodule ControlServerWeb.Menu do
   def nav_menu_group(assigns) do
     ~H"""
     <nav>
-      <h3 :if={@title} class="pl-3 mb-3 text-xs font-semibold leading-6 text-gray-400 uppercase">
+      <h3 :if={@title} class="pl-3 mb-3 text-xs font-semibold leading-6 text-gray uppercase">
         <%= @title %>
       </h3>
 
-      <div class="divide-y divide-gray-300">
+      <div class="divide-y divide-gray-light">
         <div class="space-y-1">
           <.nav_menu_item
             :for={menu_item <- @menu_items}
@@ -279,12 +279,12 @@ defmodule ControlServerWeb.Menu do
 
   # Active state
   defp menu_item_classes(page, page),
-    do: "#{menu_item_base()} text-primary-700 dark:text-primary-400 bg-gray-50 dark:bg-gray-800"
+    do: "#{menu_item_base()} text-primary-700 dark:text-primary-light bg-gray-lightest dark:bg-gray-darkest"
 
   # Inactive state
   defp menu_item_classes(_current_page, _link_page),
     do:
-      "#{menu_item_base()} text-gray-700 hover:bg-primary-100 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white dark:hover:bg-gray-700"
+      "#{menu_item_base()} text-gray-darker hover:bg-primary-100 dark:text-gray-lighter hover:text-gray-darkest dark:hover:text-white dark:hover:bg-gray-darkest"
 
   defp find_item(name, menu_items) when is_list(menu_items) do
     Enum.find(menu_items, fn menu_item ->

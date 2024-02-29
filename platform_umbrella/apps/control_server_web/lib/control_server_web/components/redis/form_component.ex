@@ -57,7 +57,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
           <.grid columns={[sm: 1, lg: 2]} class="items-center">
             <.flex>
               <.h5>Number of instances</.h5>
-              <div class="font-bold text-4xl text-primary-500">
+              <div class="font-bold text-4xl text-primary">
                 <%= @form[:num_redis_instances].value %>
               </div>
             </.flex>
@@ -79,7 +79,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
           >
             <.flex>
               <.h5>Number of Sentinel</.h5>
-              <div class="font-bold text-4xl text-primary-500">
+              <div class="font-bold text-4xl text-primary">
                 <%= @form[:num_sentinel_instances].value %>
               </div>
             </.flex>

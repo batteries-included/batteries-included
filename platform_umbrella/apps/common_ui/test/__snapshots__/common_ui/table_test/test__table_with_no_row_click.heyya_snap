@@ -1,16 +1,16 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
   <table class="w-[40rem] mt-4 sm:w-full">
-    <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray">
       <tr>
         <th class="p-0 pb-4 font-normal">A</th><th class="p-0 pb-4 font-normal">B</th>
         
       </tr>
     </thead>
-    <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200">
+    <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       <tr class="group ">
         <td class="p-0 px-2 ">
           <div class="block py-4">
-            <span class="font-semibold text-gray-900 dark:text-gray-100">
+            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               100
             </span>
           </div>
@@ -31,7 +31,7 @@
       </tr><tr class="group ">
         <td class="p-0 px-2 ">
           <div class="block py-4">
-            <span class="font-semibold text-gray-900 dark:text-gray-100">
+            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               102
             </span>
           </div>
@@ -52,7 +52,7 @@
       </tr><tr class="group ">
         <td class="p-0 px-2 ">
           <div class="block py-4">
-            <span class="font-semibold text-gray-900 dark:text-gray-100">
+            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               420
             </span>
           </div>

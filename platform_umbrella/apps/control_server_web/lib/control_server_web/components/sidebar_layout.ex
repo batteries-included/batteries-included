@@ -21,8 +21,8 @@ defmodule ControlServerWeb.SidebarLayout do
     default: "/",
     doc: "The path to the home page. When a user clicks the logo, they will be taken to this path."
 
-  attr :sidebar_bg_class, :string, default: "bg-white dark:bg-gray-900"
-  attr :sidebar_border_class, :string, default: "border-gray-300 dark:border-gray-600"
+  attr :sidebar_bg_class, :string, default: "bg-white dark:bg-gray-darkest"
+  attr :sidebar_border_class, :string, default: "border-gray-lighter dark:border-gray-darker"
   slot :inner_block, required: true, doc: "The main content of the page."
 
   slot :logo,
@@ -30,7 +30,10 @@ defmodule ControlServerWeb.SidebarLayout do
 
   def sidebar_layout(assigns) do
     ~H"""
-    <div class="flex h-screen overflow-hidden bg-white dark:bg-gray-900" x-data="{sidebarOpen: false}">
+    <div
+      class="flex h-screen overflow-hidden bg-white dark:bg-gray-darkest"
+      x-data="{sidebarOpen: false}"
+    >
       <div class="relative z-40 lg:w-64">
         <div
           x-show="sidebarOpen"
@@ -40,7 +43,7 @@ defmodule ControlServerWeb.SidebarLayout do
           x-transition:leave="transition-opacity ease-linear duration-300"
           x-transition:leave-start="opacity-100"
           x-transition:leave-end="opacity-0"
-          class="fixed inset-0 bg-gray-900/80"
+          class="fixed inset-0 bg-gray-darkest/80"
         >
         </div>
 
@@ -86,7 +89,7 @@ defmodule ControlServerWeb.SidebarLayout do
       <div class="relative flex flex-col flex-1 p-8 overflow-x-auto overflow-y-auto lg:pb-0">
         <div class="flex min-w-[68px] mb-6 lg:mb-0">
           <button
-            class="text-gray-500 hover:text-gray-600 lg:hidden"
+            class="text-gray-dark hover:text-gray-darker lg:hidden"
             @click.stop="sidebarOpen = !sidebarOpen"
             aria-controls="sidebar"
             x-bind:aria-expanded="sidebarOpen"

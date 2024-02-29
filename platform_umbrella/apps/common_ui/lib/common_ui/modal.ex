@@ -43,7 +43,7 @@ defmodule CommonUI.Modal do
     >
       <div
         id={"#{@id}-bg"}
-        class="fixed inset-0 bg-white dark:bg-gray-500 bg-opacity-70 transition-opacity"
+        class="fixed inset-0 bg-white dark:bg-gray-dark bg-opacity-70 transition-opacity"
         aria-hidden="true"
       />
       <div
@@ -62,7 +62,7 @@ defmodule CommonUI.Modal do
               phx-window-keydown={hide_modal(@on_cancel, @id)}
               phx-key="escape"
               phx-click-away={hide_modal(@on_cancel, @id)}
-              class="hidden relative rounded-2xl bg-white dark:bg-gray-800 p-10 shadow-lg shadow-gray-700/10 ring-1 ring-gray-700/10 transition"
+              class="hidden relative rounded-2xl bg-white dark:bg-gray-darkest p-10 shadow-lg shadow-gray-darkest/10 ring-1 ring-gray-darkest/10 transition"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -78,7 +78,7 @@ defmodule CommonUI.Modal do
                 <header :if={@title}>
                   <h1
                     id={"#{@id}-title"}
-                    class="text-lg font-semibold leading-8 text-gray-800 dark:text-gray-100"
+                    class="text-lg font-semibold leading-8 text-gray-darkest dark:text-gray-lightest"
                   >
                     <%= render_slot(@title) %>
                   </h1>

@@ -8,12 +8,13 @@ defmodule CommonUI.TabBar do
     do: "group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg"
 
   defp link_class(false),
-    do: link_class_base() <> " text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 p-4"
+    do:
+      link_class_base() <> " text-gray-darker hover:bg-gray-lightest dark:hover:bg-gray-darkest dark:text-gray-light p-4"
 
-  defp link_class(true), do: link_class_base() <> " text-white rounded-l-lg bg-primary-500"
+  defp link_class(true), do: link_class_base() <> " text-white rounded-l-lg bg-primary"
 
   defp decoration_class(false), do: "bg-transparent absolute inset-x-0 bottom-0 h-0.5"
-  defp decoration_class(true), do: "bg-pink-500 absolute inset-x-0 bottom-0 h-0.5"
+  defp decoration_class(true), do: "bg-primary absolute inset-x-0 bottom-0 h-0.5"
 
   attr :tabs, :any, default: nil
   attr :class, :any, default: nil
@@ -26,7 +27,7 @@ defmodule CommonUI.TabBar do
         class={[
           "isolate",
           "rounded-lg",
-          "border-gray-200 dark:bg-gray-800 dark:border-gray-600 border",
+          "border-gray-lighter dark:bg-gray-darkest dark:border-gray-darker border",
           "flex-col",
           "lg:flex-row",
           @class

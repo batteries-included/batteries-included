@@ -55,12 +55,12 @@ defmodule CommonUI.DataList do
     <dl class="flex gap-4 lg:gap-6" {@rest}>
       <div
         :for={item <- @item}
-        class="flex gap-2 px-6 py-4 border border_gray-400 dark:border-gray-600 rounded-xl"
+        class="flex gap-2 px-6 py-4 border border-gray dark:border-gray-darker rounded-xl"
       >
-        <dd class="text-2xl font-medium tracking-tight text-gray-700 dark:text-white">
+        <dd class="text-2xl font-medium tracking-tight text-gray-darkest dark:text-white">
           <%= render_slot(item) %>
         </dd>
-        <dt class="flex-1 flex-shrink-0 dark:text-gray-400 tracking-tight w-1/4 mt-[2px]">
+        <dt class="flex-1 flex-shrink-0 dark:text-gray tracking-tight w-1/4 mt-[2px]">
           <%= item.title %>
         </dt>
       </div>
@@ -87,12 +87,12 @@ defmodule CommonUI.DataList do
   def data_horizontal_bordered(assigns) do
     ~H"""
     <div class={[
-      "py-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700",
+      "py-2 bg-white border border-gray-light rounded-lg dark:bg-gray-darkest dark:border-gray-darkest",
       @class
     ]}>
-      <.flex class="text-sm font-light divide-x divide-gray-300 dark:divide-gray-700 justify-between items-center">
+      <.flex class="text-sm font-light divide-x divide-gray-light dark:divide-gray-darkest justify-between items-center">
         <.flex :for={item <- @item} class="px-3">
-          <span class="tracking-tighter text-gray-500 dark:text-gray-400"><%= item.title %>:</span>
+          <span class="tracking-tighter text-gray-dark dark:text-gray"><%= item.title %>:</span>
           <span class="tracking-tighter text-black dark:text-white">
             <%= render_slot(item) %>
           </span>

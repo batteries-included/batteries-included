@@ -7,57 +7,30 @@ const colors = require('tailwindcss/colors');
 const defaultTheme = require('tailwindcss/defaultTheme');
 const forms = require('@tailwindcss/forms');
 const typography = require('@tailwindcss/typography');
-const daisyui = require('daisyui');
+// const daisyui = require('daisyui');
 
-const _primary = {
-  300: '#FFA8CB',
-  400: '#FC408B',
-  500: '#DE2E74',
-};
-
-const _gray = {
-  100: '#DADADA',
-  200: '#CCCCCC',
-  300: '#999A9F',
-  400: '#7F7F7F',
-  500: '#545155',
-  600: '#38383A',
-  700: '#1C1C1E',
-};
-
-// The main accent color
-// Use it sparingly
-const violetRed = {
-  50: '#fff5f9',
-  100: '#ffecf3',
-  200: '#fecfe2',
-  300: '#feb3d1',
-  400: '#fd79ae',
-  500: '#fc408b',
-  600: '#e33a7d',
-  700: '#bd3068',
+const primary = {
+  light: '#FFA8CB',
+  DEFAULT: '#FC408B',
+  dark: '#DE2E74',
+  // TODO: Deprecate these after removing Petal
+  50: '#FFF5F9',
+  100: '#FFECF3',
+  200: '#FECFE2',
+  300: '#FEB3D1',
+  400: '#FD79AE',
+  500: '#FC408B',
+  600: '#E33A7D',
+  700: '#BD3068',
   800: '#972653',
-  900: '#7b1f44',
+  900: '#7B1F44',
 };
 
-// A nice secondary color. However because its
-// not as over powering it gets used as the
-// primary color in UI's
-const astral = {
-  50: '#f4f8fa',
-  100: '#e9f2f6',
-  200: '#c8dee7',
-  300: '#a7cad9',
-  400: '#66a3bd',
-  500: '#247BA0',
-  600: '#206f90',
-  700: '#1b5c78',
-  800: '#164a60',
-  900: '#123c4e',
-};
-
-// An accent color
-const blizardBlue = {
+const secondary = {
+  light: '#DEFAF8',
+  DEFAULT: '#97EFE9',
+  dark: '#36E0D4',
+  // TODO: Deprecate these after removing Petal
   50: '#FFFFFF',
   100: '#FFFFFF',
   200: '#FFFFFF',
@@ -70,9 +43,11 @@ const blizardBlue = {
   900: '#169087',
 };
 
-// success
-// SUCCESS
-const shamrock = {
+const success = {
+  light: '#79E2BB',
+  DEFAULT: '#36D399',
+  dark: '#26AB7A',
+  // TODO: Deprecate these after removing Petal
   50: '#CDF4E5',
   100: '#BCF0DD',
   200: '#9AE9CC',
@@ -85,9 +60,11 @@ const shamrock = {
   900: '#072118',
 };
 
-// Warning
-// WARNING
-const seaBuckthorn = {
+const warning = {
+  light: '#FBDBA2',
+  DEFAULT: '#F6AE2D',
+  dark: '#E1940A',
+  // TODO: Deprecate these after removing Petal
   50: '#FEF2DD',
   100: '#FDEAC9',
   200: '#FBDBA2',
@@ -100,10 +77,11 @@ const seaBuckthorn = {
   900: '#402A03',
 };
 
-// Error
-// ERROR
-// FATAL
-const heath = {
+const error = {
+  light: '#EA7B88',
+  DEFAULT: '#D42F40',
+  dark: '#831B25',
+  // TODO: Deprecate these after removing Petal
   50: '#D42F40',
   100: '#C62939',
   200: '#A4222F',
@@ -116,47 +94,47 @@ const heath = {
   900: '#000000',
 };
 
+const gray = {
+  lightest: '#FAFAFA',
+  lighter: '#DADADA',
+  light: '#999A9F',
+  DEFAULT: '#7F7F7F',
+  dark: '#545155',
+  darker: '#38383A',
+  darkest: '#1C1C1E',
+  // TODO: Deprecate these after removing Petal
+  ...colors.zinc,
+};
+
 module.exports = {
   important: '.common-ui',
   content: [
     // Use absolute paths so this config can be shared between umbrella apps
     path.resolve(__dirname, 'js/**/*.js'),
-    path.resolve(__dirname, '../lib/**/*.*ex*'),
-    path.resolve(__dirname, '../storybook/**/*.*ex*'),
+    path.resolve(__dirname, '../lib/**/*.{heex,ex}'),
+    path.resolve(__dirname, '../storybook/**/*.exs'),
     path.resolve(__dirname, '../../control_server_web/assets/js/**/*.js'),
+    path.resolve(__dirname, '../../control_server_web/lib/**/*.{heex,ex}'),
+    path.resolve(__dirname, '../../home_base_web/assets/js/**/*.js'),
+    path.resolve(__dirname, '../../home_base_web/lib/**/*.{heex,ex}'),
     path.resolve(
       __dirname,
-      '../../control_server_web/lib/control_server_web/**/*.*ex*'
+      '../../../deps/petal_components/lib/**/*.{heex,ex}'
     ),
-    path.resolve(__dirname, '../../home_base_web/assets/js/**/*.js'),
-    path.resolve(__dirname, '../../home_base_web/lib/home_base_web/**/*.*ex*'),
-    path.resolve(__dirname, '../../../deps/petal_components/**/*.*ex*'),
   ],
   theme: {
     // Note when changing: keep `storybook/colors.story.exs` up to date
     extend: {
       colors: {
-        'violet-red': violetRed,
-        astral,
-        // Accent and INFO
-        'blizzard-blue': blizardBlue,
-        // Success
-        shamrock,
-        // warning
-        'sea-buckthorn': seaBuckthorn,
-        // Error
-        heath,
-        // Base Renames
-        pink: violetRed,
-        blue: blizardBlue,
-        // Petal Components
-        primary: violetRed,
-        secondary: blizardBlue,
-        success: shamrock,
-        danger: colors.red,
-        warning: seaBuckthorn,
-        info: blizardBlue,
-        gray: colors.zinc,
+        primary,
+        secondary,
+        success,
+        warning,
+        error,
+        gray,
+        // TODO: Remove these after removing Petal
+        danger: error,
+        info: secondary,
       },
       fontFamily: {
         sans: ['"Inter Variable"', ...defaultTheme.fontFamily.sans],
@@ -164,27 +142,27 @@ module.exports = {
       },
     },
   },
-  daisyui: {
-    themes: [
-      {
-        mytheme: {
-          primary: astral[500],
-          secondary: violetRed[500],
-          accent: blizardBlue[500],
-          neutral: '#3D4451',
-          'base-100': colors.white,
-          info: astral[200],
-          success: shamrock[500],
-          warning: seaBuckthorn[500],
-          error: heath[500],
-        },
-      },
-    ],
-  },
+  // daisyui: {
+  //   themes: [
+  //     {
+  //       mytheme: {
+  //         primary: astral[500],
+  //         secondary: primary[500],
+  //         accent: secondary[500],
+  //         neutral: '#3D4451',
+  //         'base-100': colors.white,
+  //         info: astral[200],
+  //         success: success[500],
+  //         warning: warning[500],
+  //         error: error[500],
+  //       },
+  //     },
+  //   ],
+  // },
   plugins: [
     forms,
     typography,
-    daisyui,
+    // daisyui,
 
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:

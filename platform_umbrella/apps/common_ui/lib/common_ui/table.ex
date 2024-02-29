@@ -38,7 +38,7 @@ defmodule CommonUI.Table do
     ~H"""
     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
       <table class="w-[40rem] mt-4 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-gray-600 dark:text-gray-400">
+        <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 font-normal"><%= col[:label] %></th>
             <th :if={@action && @action != []} class="p-0 pb-4">
@@ -49,12 +49,12 @@ defmodule CommonUI.Table do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-200 dark:border-gray-800 text-sm leading-6 text-gray-700 dark:text-gray-200"
+          class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter"
         >
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            class={["group", @row_click && "hover:bg-gray-50 dark:hover:bg-gray-800"]}
+            class={["group", @row_click && "hover:bg-gray-lightest dark:hover:bg-gray-darkest"]}
           >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
@@ -62,7 +62,7 @@ defmodule CommonUI.Table do
               class={["p-0 px-2", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4">
-                <span class={[i == 0 && "font-semibold text-gray-900 dark:text-gray-100"]}>
+                <span class={[i == 0 && "font-semibold text-gray-darkest dark:text-gray-lightest"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
@@ -71,7 +71,7 @@ defmodule CommonUI.Table do
               <.flex class="whitespace-nowrap text-sm font-medium justify-around">
                 <div
                   :for={action <- @action}
-                  class="font-semibold leading-6 text-gray-900 dark:text-gray-100 p-4"
+                  class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4"
                 >
                   <%= render_slot(action, @row_item.(row)) %>
                 </div>

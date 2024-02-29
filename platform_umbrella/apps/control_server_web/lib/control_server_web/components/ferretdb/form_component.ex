@@ -48,7 +48,7 @@ defmodule ControlServerWeb.FerretDBFormComponent do
             <.grid columns={[sm: 1, lg: 2]} class="items-center">
               <.flex>
                 <.h5>Number of instances</.h5>
-                <div class="font-bold text-4xl text-primary-500">
+                <div class="font-bold text-4xl text-primary">
                   <%= @form[:instances].value %>
                 </div>
               </.flex>

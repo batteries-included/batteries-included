@@ -1,7 +1,5 @@
-defmodule Storybook.MyPage do
+defmodule Storybook.Welcome do
   @moduledoc false
-  # See https://hexdocs.pm/phoenix_storybook/PhoenixStorybook.Story.html for full story
-  # documentation.
   use PhoenixStorybook.Story, :page
 
   def doc, do: "Your very first steps into using Phoenix Storybook"
@@ -16,13 +14,36 @@ defmodule Storybook.MyPage do
     ]
   end
 
-  # This is a dummy fonction that you should replace with your own HEEx content.
-  def render(%{tab: :welcome} = assigns) do
+  def render(%{tab: guide} = assigns) when guide in ~w(components sandboxing icons)a do
+    assigns =
+      assign(assigns,
+        guide: guide,
+        guide_content: PhoenixStorybook.Guides.markup("#{guide}.md")
+      )
+
     ~H"""
-    <div class="lsb-welcome-page">
+    <p class="md:psb-text-lg psb-leading-relaxed psb-text-slate-400 psb-w-full psb-text-left psb-mb-4 psb-mt-2 psb-italic">
+      <a
+        class="hover:text-indigo-700"
+        href={"https://hexdocs.pm/phoenix_storybook/#{@guide}.html"}
+        target="_blank"
+      >
+        This and other guides are also available on HexDocs.
+      </a>
+    </p>
+    <div class="psb-welcome-page psb-border-t psb-border-gray-lighter psb-pt-4">
+      <%= Phoenix.HTML.raw(@guide_content) %>
+    </div>
+    """
+  end
+
+  # This is a dummy fonction that you should replace with your own HEEx content.
+  def render(assigns) do
+    ~H"""
+    <div class="psb-welcome-page">
       <p>
         We generated your storybook with an example of a page and a component.
-        Explore the generated <code class="lsb-inline">*.story.exs</code>
+        Explore the generated <code class="psb-inline">*.story.exs</code>
         files in your <code class="inline">/storybook</code>
         directory. When you're ready to add your own, just drop your new story & index files into the same directory and refresh your storybook.
       </p>
@@ -45,42 +66,19 @@ defmodule Storybook.MyPage do
     """
   end
 
-  def render(%{tab: guide} = assigns) when guide in ~w(components sandboxing icons)a do
-    assigns =
-      assign(assigns,
-        guide: guide,
-        guide_content: PhoenixStorybook.Guides.markup("#{guide}.md")
-      )
-
-    ~H"""
-    <p class="md:lsb-text-lg lsb-leading-relaxed lsb-text-slate-400 lsb-w-full lsb-text-left lsb-mb-4 lsb-mt-2 lsb-italic">
-      <a
-        class="hover:text-indigo-700"
-        href={"https://hexdocs.pm/phoenix_storybook/#{@guide}.html"}
-        target="_blank"
-      >
-        This and other guides are also available on HexDocs.
-      </a>
-    </p>
-    <div class="lsb-welcome-page lsb-border-t lsb-border-gray-200 lsb-pt-4">
-      <%= Phoenix.HTML.raw(@guide_content) %>
-    </div>
-    """
-  end
-
   defp description_list(assigns) do
     ~H"""
-    <div class="lsb-w-full md:lsb-px-8">
-      <div class="md:lsb-border-t lsb-border-gray-200 lsb-px-4 lsb-py-5 sm:lsb-p-0 md:lsb-my-6 lsb-w-full">
-        <dl class="sm:lsb-divide-y sm:lsb-divide-gray-200">
+    <div class="psb-w-full md:psb-px-8">
+      <div class="md:psb-border-t psb-border-gray-lighter psb-px-4 psb-py-5 sm:psb-p-0 md:psb-my-6 psb-w-full">
+        <dl class="sm:psb-divide-y sm:psb-divide-gray-lighter">
           <%= for {dt, link} <- @items do %>
-            <div class="lsb-py-4 sm:lsb-grid sm:lsb-grid-cols-3 sm:lsb-gap-4 sm:lsb-py-5 sm:lsb-px-6 lsb-max-w-full">
-              <dt class="lsb-text-base lsb-font-medium lsb-text-indigo-700">
+            <div class="psb-py-4 sm:psb-grid sm:psb-grid-cols-3 sm:psb-gap-4 sm:psb-py-5 sm:psb-px-6 psb-max-w-full">
+              <dt class="psb-text-base psb-font-medium psb-text-indigo-700">
                 <%= dt %>
               </dt>
-              <dd class="lsb-mt-1 lsb-text-base lsb-text-slate-400 sm:lsb-col-span-2 sm:lsb-mt-0 lsb-group lsb-cursor-pointer lsb-max-w-full">
+              <dd class="psb-mt-1 psb-text-base psb-text-slate-400 sm:psb-col-span-2 sm:psb-mt-0 psb-group psb-cursor-pointer psb-max-w-full">
                 <a
-                  class="group-hover:lsb-text-indigo-700 lsb-max-w-full lsb-inline-block lsb-truncate"
+                  class="group-hover:psb-text-indigo-700 psb-max-w-full psb-inline-block psb-truncate"
                   href={link}
                   target="_blank"
                 >

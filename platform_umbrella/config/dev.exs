@@ -34,8 +34,8 @@ config :control_server_web, ControlServerWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    npm: ["run", "css:deploy:dev", "-- --watch", cd: Path.expand("../apps/control_server_web/assets", __DIR__)],
-    npm: ["run", "js:deploy:dev", "-- --watch", cd: Path.expand("../apps/control_server_web/assets", __DIR__)]
+    npm: ["run", "css:deploy:dev", "--", "--watch", cd: Path.expand("../apps/control_server_web/assets", __DIR__)],
+    npm: ["run", "js:deploy:dev", "--", "--watch", cd: Path.expand("../apps/control_server_web/assets", __DIR__)]
   ]
 
 config :home_base_web, HomeBaseWeb.Endpoint,
@@ -44,8 +44,8 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    npm: ["run", "css:deploy:dev", "-- --watch", cd: Path.expand("../apps/home_base_web/assets", __DIR__)],
-    npm: ["run", "js:deploy:dev", "-- --watch", cd: Path.expand("../apps/home_base_web/assets", __DIR__)]
+    npm: ["run", "css:deploy:dev", "--", "--watch", cd: Path.expand("../apps/home_base_web/assets", __DIR__)],
+    npm: ["run", "js:deploy:dev", "--", "--watch", cd: Path.expand("../apps/home_base_web/assets", __DIR__)]
   ]
 
 config :common_ui, CommonUIWeb.Endpoint,
@@ -54,8 +54,8 @@ config :common_ui, CommonUIWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    npm: ["run", "css:storybook", "-- --watch", cd: Path.expand("../apps/common_ui/assets", __DIR__)],
-    npm: ["run", "js:storybook", "-- --watch", cd: Path.expand("../apps/common_ui/assets", __DIR__)]
+    npm: ["run", "css:storybook", "--", "--watch", cd: Path.expand("../apps/common_ui/assets", __DIR__)],
+    npm: ["run", "js:storybook", "--", "--watch", cd: Path.expand("../apps/common_ui/assets", __DIR__)]
   ]
 
 # Watch static and templates for browser reloading.

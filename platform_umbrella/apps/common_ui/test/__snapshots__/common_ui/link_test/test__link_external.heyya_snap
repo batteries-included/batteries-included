@@ -1,4 +1,4 @@
-<a href="https://google.com" target="_blank" class="font-medium text-pink-600 hover:underline flex">
+<a href="https://google.com" target="_blank" class="font-medium text-primary-dark hover:underline flex">
   <span class="flex-initial">
     Test External Link
   </span>

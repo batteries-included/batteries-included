@@ -1,4 +1,4 @@
-defmodule Storybook.CommonUI.Link do
+defmodule Storybook.Components.Link do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 

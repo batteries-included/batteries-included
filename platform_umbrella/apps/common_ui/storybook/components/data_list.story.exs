@@ -1,4 +1,4 @@
-defmodule Storybook.CommonUI.DataList do
+defmodule Storybook.Components.DataList do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
