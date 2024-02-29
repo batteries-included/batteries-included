@@ -71,11 +71,10 @@ fn list_params() -> ListParams {
 
 // For any resource types that support it
 // Delete the whole collection in one rpc.
-async fn delete_all_managed<K: DeserializeOwned + Clone + Debug + Resource>(
-    kube_client: Client,
-) -> Result<()>
+async fn delete_all_managed<K>(kube_client: Client) -> Result<()>
 where
     <K as Resource>::DynamicType: Default,
+    K: DeserializeOwned + Clone + Debug + Resource,
 {
     let api = Api::<K>::all(kube_client.clone());
     let _deleted = api
@@ -86,12 +85,10 @@ where
 
 // For anything that needs a namespace list the resource
 // then delete everything.
-async fn delete_all_namespaced<K: DeserializeOwned + Clone + Debug + Resource>(
-    kube_client: Client,
-) -> Result<()>
+async fn delete_all_namespaced<K>(kube_client: Client) -> Result<()>
 where
     <K as Resource>::DynamicType: Default,
-    K: Resource<Scope = NamespaceResourceScope>,
+    K: Resource<Scope = NamespaceResourceScope> + DeserializeOwned + Clone + Debug,
 {
     let api = Api::<K>::all(kube_client.clone());
 

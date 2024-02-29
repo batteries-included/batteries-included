@@ -37,7 +37,7 @@
         inherit src version LANG;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-G4waIsQBYlDM00fKE1rYkd14QKsXp2l9CScXc5tsUAw=";
+        sha256 = "sha256-hWDcy+0Zzr/USGtmf275HnlAt/iTCQ0PgWjficr452c=";
       };
 
       # mix fixed output derivation dependencies
@@ -50,7 +50,7 @@
         pname = "mix-deps-platform";
         inherit src version LANG;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-zwXTo1yNuZOmBhlknM0RSVnXCP9Q/oPcGbZizVWFsiM=";
+        sha256 = "sha256-d2/7i3hfVRGKCjTgvo2rHLigjxyWTPYxU0s5czk04I8=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {
@@ -58,6 +58,7 @@
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
         inherit rustToolChain pkg-config gcc openssl;
+        inherit gitignoreSource;
 
         pname = "control_server";
         mixEnv = "prod";
@@ -88,6 +89,7 @@
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
         inherit rustToolChain pkg-config gcc openssl;
+        inherit gitignoreSource;
 
         pname = "home_base";
         mixEnv = "prod";

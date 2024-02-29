@@ -40,46 +40,25 @@ defmodule ControlServer.Umbrella.MixProject do
           kube_services: :permanent,
           control_server_web: :permanent
         ],
-        steps: [:assemble, &copy_configs/1],
-        runtime_config_path: "apps/control_server_web/config/runtime.exs",
-        config_providers: [
-          {Config.Reader, {:system, "RELEASE_ROOT", "apps/control_server_web/config/runtime.exs"}}
-        ]
+        include_executables_for: [:unix],
+        steps: [:assemble],
+        runtime_config_path: "apps/control_server_web/config/runtime.exs"
       ],
       kube_bootstrap: [
         applications: [
           kube_bootstrap: :permanent
         ],
-        steps: [:assemble, &copy_configs/1],
-        runtime_config_path: "apps/kube_bootstrap/config/runtime.exs",
-        config_providers: [
-          {Config.Reader, {:system, "RELEASE_ROOT", "apps/kube_bootstrap/config/runtime.exs"}}
-        ]
+        include_executables_for: [:unix],
+        steps: [:assemble],
+        runtime_config_path: "apps/kube_bootstrap/config/runtime.exs"
       ],
       home_base: [
         applications: [home_base: :permanent, home_base_web: :permanent],
-        steps: [:assemble, &copy_configs/1],
-        runtime_config_path: "apps/home_base_web/config/runtime.exs",
-        config_providers: [
-          {Config.Reader, {:system, "RELEASE_ROOT", "apps/home_base_web/config/runtime.exs"}}
-        ]
+        include_executables_for: [:unix],
+        steps: [:assemble],
+        runtime_config_path: "apps/home_base_web/config/runtime.exs"
       ]
     ]
-  end
-
-  defp copy_configs(%{path: path, config_providers: config_providers} = release) do
-    for {_module, {_context, _root, file_path}} <- config_providers do
-      # Creating new path
-      new_path = path <> Path.dirname(file_path)
-      # Removing possible leftover files from previous builds
-      File.rm_rf!(new_path)
-      # Creating directory if it doesn't exist
-      File.mkdir_p!(new_path)
-      # Copying files to the directory with the same name
-      File.cp!(Path.expand(file_path), new_path <> "/" <> Path.basename(file_path))
-    end
-
-    release
   end
 
   defp aliases do

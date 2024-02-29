@@ -7,7 +7,6 @@ const colors = require('tailwindcss/colors');
 const defaultTheme = require('tailwindcss/defaultTheme');
 const forms = require('@tailwindcss/forms');
 const typography = require('@tailwindcss/typography');
-// const daisyui = require('daisyui');
 
 const primary = {
   light: '#FFA8CB',
@@ -142,27 +141,9 @@ module.exports = {
       },
     },
   },
-  // daisyui: {
-  //   themes: [
-  //     {
-  //       mytheme: {
-  //         primary: astral[500],
-  //         secondary: primary[500],
-  //         accent: secondary[500],
-  //         neutral: '#3D4451',
-  //         'base-100': colors.white,
-  //         info: astral[200],
-  //         success: success[500],
-  //         warning: warning[500],
-  //         error: error[500],
-  //       },
-  //     },
-  //   ],
-  // },
   plugins: [
     forms,
     typography,
-    // daisyui,
 
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:

@@ -2,9 +2,9 @@
   "scripts": {
     "tailwind": "NODE_PATH=./node_modules tailwindcss --postcss",
     "esbuild": "NODE_PATH=./node_modules:../../../deps esbuild --bundle --target=chrome109,firefox112,safari15.6,edge112",
-    "css:deploy": "NODE_ENV=production npm run tailwind -- --input=css/app.css --output=dist/app.css --minify",
+    "css:deploy": "NODE_ENV=production npm run tailwind -- --input=css/app.css --output=../priv/static/assets/app.css --minify",
     "css:deploy:dev": "npm run tailwind -- --input=css/app.css --output=../priv/static/assets/app.css",
-    "js:deploy": "NODE_ENV=production npm run esbuild -- js/app.js --outdir=dist --minify --analyze",
+    "js:deploy": "NODE_ENV=production npm run esbuild -- js/app.js --outdir=../priv/static/assets --minify --analyze",
     "js:deploy:dev": "npm run esbuild -- js/app.js --outdir=../priv/static/assets"
   },
   "dependencies": {
@@ -15,7 +15,6 @@
     "alpinejs": "~3.13",
     "autoprefixer": "~10.4",
     "chart.js": "~4.4",
-    "daisyui": "~4.7",
     "esbuild": "~0.20",
     "lodash": "~4.17",
     "postcss": "~8.4",
