@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.Modal
   import ControlServerWeb.CatalogBatteriesTable
 
   alias CommonCore.Batteries.Catalog

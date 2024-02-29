@@ -2,6 +2,8 @@ defmodule CommonUI.Link do
   @moduledoc false
   use Phoenix.Component
 
+  import CommonUI.Icon
+
   attr :variant, :string, default: "unstyled", values: ["icon", "styled", "external", "unstyled"]
   attr :icon, :atom, default: nil
   attr :class, :any, default: nil
@@ -12,7 +14,7 @@ defmodule CommonUI.Link do
   def a(%{variant: "icon"} = assigns) do
     ~H"""
     <.link class={[link_class(@variant), "flex items-center", @class]} {@rest}>
-      <PC.icon :if={@icon} name={@icon} class="w-5 h-5 mr-2" />
+      <.icon :if={@icon} name={@icon} class="w-5 h-5 mr-2" />
       <%= render_slot(@inner_block) %>
     </.link>
     """
@@ -24,7 +26,7 @@ defmodule CommonUI.Link do
       <span class="flex-initial">
         <%= render_slot(@inner_block) %>
       </span>
-      <Heroicons.arrow_top_right_on_square class="ml-2 w-5 h-5 flex-none" />
+      <.icon name={:arrow_top_right_on_square} class="ml-2 w-5 h-5 flex-none" />
     </.link>
     """
   end

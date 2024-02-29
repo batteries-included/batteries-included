@@ -100,7 +100,7 @@ defmodule ControlServerWeb.Live.EditVersionShow do
     ~H"""
     <.flex class="align-middle items-center">
       <.patch_value value={@from} />
-      <PC.icon name={:arrow_right} class="h-4" />
+      <.icon name={:arrow_right} class="h-4" />
       <.patch_value value={@to} />
     </.flex>
     """

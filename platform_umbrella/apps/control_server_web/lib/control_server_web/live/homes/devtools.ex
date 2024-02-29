@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
       <:menu>
         <.flex>
           <.a navigate={~p"/knative/services/new"} variant="styled">
-            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Knative
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Knative
           </.a>
           <.a navigate={~p"/knative/services"}>View All</.a>
         </.flex>
@@ -65,12 +65,11 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     ~H"""
     <.page_header title="Devtools">
       <:menu>
-        <PC.button
-          label="Manage Batteries"
-          color="light"
-          to={install_path()}
-          link_type="live_redirect"
-        />
+        <.link navigate={install_path()}>
+          <.button variant="secondary">
+            Manage Batteries
+          </.button>
+        </.link>
       </:menu>
     </.page_header>
     <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">

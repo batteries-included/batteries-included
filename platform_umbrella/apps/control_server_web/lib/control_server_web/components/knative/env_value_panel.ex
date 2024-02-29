@@ -35,13 +35,7 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
     ~H"""
     <.panel title="Environment Variables" class="lg:col-span-2">
       <:menu>
-        <.button
-          variant="transparent"
-          icon={:plus}
-          phx-click="new_env_value"
-          type="button"
-          phx-target={@target}
-        >
+        <.button icon={:plus} phx-click="new_env_value" phx-target={@target}>
           Variable
         </.button>
       </:menu>

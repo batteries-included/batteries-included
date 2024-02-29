@@ -25,7 +25,9 @@ defmodule ControlServerWeb.Live.FerretServiceIndex do
     ~H"""
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/data"}}>
       <:menu>
-        <PC.button to={~p"/ferretdb/new"} link_type="live_redirect" label="New FerretDB" />
+        <.link navigate={~p"/ferretdb/new"}>
+          <.button variant="primary">New FerretDB</.button>
+        </.link>
       </:menu>
     </.page_header>
     <.panel title="All FerretDB/FerretDB Services">

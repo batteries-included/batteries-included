@@ -94,13 +94,13 @@ defmodule ControlServerWeb.Live.MagicHome do
       <:menu>
         <.flex>
           <.a :if={@deploys_running} phx-click="pause-deploy" variant="styled">
-            <PC.icon name={:pause} class="inline-flex h-5 w-auto my-auto mr-2" />Pause Deploys
+            <.icon name={:pause} class="inline-flex h-5 w-auto my-auto mr-2" />Pause Deploys
           </.a>
           <.a :if={!@deploys_running} phx-click="resume-deploy" variant="styled">
-            <PC.icon name={:play} class="inline-flex h-5 w-auto my-auto mr-2" />Resume Deploys
+            <.icon name={:play} class="inline-flex h-5 w-auto my-auto mr-2" />Resume Deploys
           </.a>
           <.a :if={@deploys_running} phx-click="start-deploy" variant="styled">
-            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto mr-2" />Start Deploy
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto mr-2" />Start Deploy
           </.a>
           <.a navigate={~p"/deploy"}>View All</.a>
         </.flex>
@@ -116,12 +116,9 @@ defmodule ControlServerWeb.Live.MagicHome do
     ~H"""
     <.page_header title="Magic">
       <:menu>
-        <PC.button
-          label="Manage Batteries"
-          color="light"
-          to={~p"/batteries/magic"}
-          link_type="live_redirect"
-        />
+        <.link navigate={~p"/batteries/magic"}>
+          <.button variant="secondary">Manage Batteries</.button>
+        </.link>
       </:menu>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">

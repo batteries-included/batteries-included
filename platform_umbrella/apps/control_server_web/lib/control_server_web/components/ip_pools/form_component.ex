@@ -84,11 +84,13 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
           <PC.field field={@form[:name]} label="Pool Name" autofocus />
           <PC.field field={@form[:subnet]} label="Subnet CIDR" />
 
-          <Phoenix.Component.link navigate={cancel_url()} class="mr-3">
-            <PC.button color="light">Cancel</PC.button>
-          </Phoenix.Component.link>
+          <.link navigate={cancel_url()} class="mr-3">
+            <.button variant="secondary">Cancel</.button>
+          </.link>
 
-          <PC.button type="submit" phx-disable-with="Saving...">Save</PC.button>
+          <.button variant="primary" type="submit" phx-disable-with="Saving...">
+            Save
+          </.button>
         </.panel>
       </.form>
     </div>

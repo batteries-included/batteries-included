@@ -216,18 +216,18 @@ defmodule ControlServerWeb.Live.PostgresShow do
             </:item>
           </.data_horizontal_bordered>
 
-          <PC.button to={edit_versions_url(@cluster)} link_type="a" color="light">
-            Edit History
-          </PC.button>
+          <.link navigate={edit_versions_url(@cluster)}>
+            <.button variant="secondary">
+              Edit History
+            </.button>
+          </.link>
 
           <.flex gaps="0">
-            <PC.icon_button to={edit_url(@cluster)} link_type="live_redirect">
-              <Heroicons.pencil solid />
-            </PC.icon_button>
+            <.link navigate={edit_url(@cluster)}>
+              <.button variant="icon" icon={:pencil} />
+            </.link>
 
-            <PC.icon_button type="button" phx-click="delete" data-confirm="Are you sure?">
-              <Heroicons.trash />
-            </PC.icon_button>
+            <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
           </.flex>
         </.flex>
       </:menu>

@@ -49,7 +49,6 @@ defmodule ControlServerWeb.MixProject do
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:floki, "~> 0.35", only: [:dev, :test, :integration], override: true},
       {:gettext, "~> 0.20"},
-      {:heroicons, "~> 0.5"},
       {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
       {:inflex, "~> 2.1"},
       {:jason, "~> 1.4"},

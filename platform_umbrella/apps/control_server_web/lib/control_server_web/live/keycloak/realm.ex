@@ -191,7 +191,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
       </.panel>
       <.panel class="col-span-2" title="Users">
         <:menu>
-          <PC.button phx-click="new-user">New User</PC.button>
+          <.button variant="secondary" phx-click="new-user">New User</.button>
         </:menu>
         <.keycloak_users_table users={@users} />
       </.panel>

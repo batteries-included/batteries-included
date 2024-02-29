@@ -50,12 +50,9 @@ defmodule ControlServerWeb.Live.MonitoringHome do
     ~H"""
     <.page_header title="Monitoring">
       <:menu>
-        <PC.button
-          label="Manage Batteries"
-          color="light"
-          to={install_path()}
-          link_type="live_redirect"
-        />
+        <.link navigate={install_path()}>
+          <.button variant="secondary">Manage Batteries</.button>
+        </.link>
       </:menu>
     </.page_header>
 

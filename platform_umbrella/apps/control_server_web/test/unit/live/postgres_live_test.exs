@@ -79,7 +79,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
       conn
       |> start(~p|/postgres/new|)
-      |> click("button", "New user")
+      |> click("button", "New User")
       |> submit_form("#user_modal form", %{"pg_user" => valid_user_params})
       |> assert_html(valid_user_params["username"])
       |> assert_html("inherit")
@@ -95,7 +95,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
       conn
       |> start(~p|/postgres/new|)
-      |> click("button", "New user")
+      |> click("button", "New User")
       |> submit_form("#user_modal form", %{"pg_user" => valid_user_params})
       |> assert_html(valid_user_params["username"])
       |> click("#delete_user_#{valid_user_params["username"]}")
@@ -111,7 +111,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
       conn
       |> start(~p|/postgres/new|)
-      |> click("button", "New user")
+      |> click("button", "New User")
       |> submit_form("#user_modal form", %{"pg_user" => valid_user_params})
       |> assert_html(valid_user_params["username"])
       |> click("#edit_user_#{valid_user_params["username"]}")

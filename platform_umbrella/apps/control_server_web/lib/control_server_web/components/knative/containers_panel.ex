@@ -12,13 +12,7 @@ defmodule ControlServerWeb.Knative.ContainersPanel do
     ~H"""
     <.panel title="Containers">
       <:menu>
-        <.button
-          variant="transparent"
-          icon={:plus}
-          phx-click="new_container"
-          type="button"
-          phx-target={@target}
-        >
+        <.button icon={:plus} phx-click="new_container" phx-target={@target}>
           Container
         </.button>
       </:menu>

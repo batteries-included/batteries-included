@@ -97,7 +97,7 @@ defmodule ControlServerWeb.SidebarLayout do
             <span class="sr-only">
               Open sidebar
             </span>
-            <Heroicons.bars_3 class="w-6 h-6 fill-current" />
+            <.icon name={:bars_3} class="w-6 h-6 fill-current" />
           </button>
         </div>
 

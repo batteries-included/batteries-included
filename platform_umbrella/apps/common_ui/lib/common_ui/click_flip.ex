@@ -2,6 +2,7 @@ defmodule CommonUI.ClickFlip do
   @moduledoc false
   use CommonUI.Component
 
+  import CommonUI.Button
   import CommonUI.Container
   import CommonUI.Tooltip
 
@@ -57,9 +58,7 @@ defmodule CommonUI.ClickFlip do
         class="items-center py-4 -mt-5"
       >
         <%= render_slot(@hidden) %>
-        <PC.icon_button type="button" size="xs" @click="open = !open">
-          <Heroicons.check solid class="w-5 h-5" />
-        </PC.icon_button>
+        <.button variant="icon" icon={:check} x-on:click="open = !open" />
       </.flex>
     </.flex>
     """

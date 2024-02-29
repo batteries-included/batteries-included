@@ -59,7 +59,7 @@ defmodule ControlServerWeb do
         global_prefixes: unquote(global_prefixes),
         layout: {ControlServerWeb.Layouts, unquote(layout)}
 
-      import Phoenix.Component, except: [link: 1]
+      import Phoenix.Component
 
       on_mount {ControlServerWeb.InstalledBatteriesHook, :installed_batteries}
 
@@ -73,7 +73,7 @@ defmodule ControlServerWeb do
     quote do
       use Phoenix.LiveComponent, global_prefixes: unquote(global_prefixes)
 
-      import Phoenix.Component, except: [link: 1]
+      import Phoenix.Component
 
       unquote(html_helpers())
     end
@@ -85,7 +85,7 @@ defmodule ControlServerWeb do
     quote do
       use Phoenix.Component, global_prefixes: unquote(global_prefixes)
 
-      import Phoenix.Component, except: [link: 1]
+      import Phoenix.Component
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

@@ -29,7 +29,7 @@ defmodule HomeBaseWeb.Live.Installations do
     ~H"""
     <.top_menu_layout page={:installations} title={@page_title}>
       <.a navigate={~p"/installations/new"}>
-        <.button>New Installation</.button>
+        <.button variant="secondary">New Installation</.button>
       </.a>
       <.table
         id="installations"

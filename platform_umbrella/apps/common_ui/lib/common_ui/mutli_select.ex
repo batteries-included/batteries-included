@@ -45,11 +45,13 @@ defmodule CommonUI.MutliSelect do
         </.flex>
 
         <div class="justify-around items-center flex grow-0" @click="open = !open">
-          <Heroicons.chevron_down
+          <.icon
+            name={:chevron_down}
             class="h-5 w-5 text-gray-darkest dark:text-gray-lighter"
             x-show="!open"
           />
-          <Heroicons.chevron_up
+          <.icon
+            name={:chevron_up}
             class="h-5 w-5 text-gray-darkest dark:text-gray-lighter"
             x-show="open"
             x-cloak

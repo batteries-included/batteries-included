@@ -4,14 +4,64 @@ defmodule Storybook.Components.Button do
 
   def function, do: &CommonUI.Button.button/1
 
-  def variations,
-    do: [
+  def attributes do
+    [
+      %Attr{
+        id: :disabled,
+        type: :boolean,
+        required: false,
+        default: false
+      }
+    ]
+  end
+
+  def variations do
+    [
       %Variation{
         id: :default,
-        description: "Default Button",
-        attributes: %{variant: "default"},
-        slots: ["Default Button"]
+        slots: ["Default Button"],
+        attributes: %{
+          icon: :arrow_top_right_on_square,
+          icon_position: :right
+        }
       },
-      %Variation{id: :unstyled, description: "Unstyled", attributes: %{variant: "unstyled"}, slots: ["I got no style"]}
+      %Variation{
+        id: :primary,
+        slots: ["Primary Button"],
+        attributes: %{
+          variant: "primary"
+        }
+      },
+      %Variation{
+        id: :secondary,
+        slots: ["Secondary Button"],
+        attributes: %{
+          variant: "secondary",
+          icon: :cube
+        }
+      },
+      %Variation{
+        id: :dark,
+        slots: ["Dark Button"],
+        attributes: %{
+          variant: "dark",
+          icon: :plus
+        }
+      },
+      %Variation{
+        id: :circle,
+        attributes: %{
+          variant: "circle",
+          icon: :arrow_right
+        }
+      },
+      %Variation{
+        id: :icon,
+        attributes: %{
+          variant: "icon",
+          icon: :trash
+        }
+      }
     ]
+  end
 end

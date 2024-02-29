@@ -85,7 +85,7 @@ defmodule ControlServerWeb.ObjectDisplay do
     >
       <.value_icon value_type={value_type(value)} class={@icon_class} />
       <span class="grow"><%= key %></span>
-      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray"]} />
+      <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
     </.a>
     """
   end
@@ -99,7 +99,7 @@ defmodule ControlServerWeb.ObjectDisplay do
     >
       <.value_icon value_type={value_type(value)} class={@icon_class} />
       <span class="grow">Index <%= idx %></span>
-      <Heroicons.chevron_double_right class={["w-6 h-6 text-gray"]} />
+      <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
     </.a>
     """
   end
@@ -109,7 +109,7 @@ defmodule ControlServerWeb.ObjectDisplay do
 
   defp value_icon(%{value_type: :map} = assigns) do
     ~H"""
-    <Heroicons.cube mini class={[@class]} />
+    <.icon name={:cube} mini class={[@class]} />
     """
   end
 
@@ -149,13 +149,13 @@ defmodule ControlServerWeb.ObjectDisplay do
 
   defp value_icon(%{value_type: :list} = assigns) do
     ~H"""
-    <Heroicons.list_bullet mini class={[@class]} />
+    <.icon name={:list_bullet} mini class={[@class]} />
     """
   end
 
   defp value_icon(%{value_type: :boolean} = assigns) do
     ~H"""
-    <Heroicons.check_circle mini class={[@class]} />
+    <.icon name={:check_circle} mini class={[@class]} />
     """
   end
 

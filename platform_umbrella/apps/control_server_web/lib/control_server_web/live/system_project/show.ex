@@ -32,9 +32,9 @@ defmodule ControlServerWeb.Live.SystemProjectShow do
       back_button={%{link_type: "live_redirect", to: ~p"/system_projects"}}
     >
       <:menu>
-        <PC.button color="light" phx-click="delete" data-confirm="Are you sure?">
+        <.button variant="secondary" phx-click="delete" data-confirm="Are you sure?">
           Delete
-        </PC.button>
+        </.button>
       </:menu>
     </.page_header>
 

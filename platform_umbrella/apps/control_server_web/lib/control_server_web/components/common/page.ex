@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Common.Page do
   use Phoenix.Component
 
   import CommonUI.Container
+  import CommonUI.Icon
   import CommonUI.Link
   import CommonUI.Typography
 
@@ -23,9 +24,12 @@ defmodule ControlServerWeb.Common.Page do
         <PC.a
           :if={@back_button}
           {@back_button}
-          class="inline-block p-1.5 border border-gray-light rounded-lg border-1 dark:border-gray-darker"
+          class="inline-block p-1.5 border border-gray-lighter rounded-lg border-1 dark:border-gray-darker"
         >
-          <Heroicons.arrow_left class="w-4 h-4 stroke-[3] text-primary fill-primary dark:text-primary-light dark:fill-primary-light" />
+          <.icon
+            name={:arrow_left}
+            class="w-4 h-4 stroke-[3] text-primary fill-primary dark:text-primary-light dark:fill-primary-light"
+          />
         </PC.a>
         <.flex class="items-center">
           <.h3 class="text-2xl font-medium text-black dark:text-white">
@@ -52,7 +56,7 @@ defmodule ControlServerWeb.Common.Page do
       <.flex class="p-4 border border-gray-lighter dark:border-gray-darker rounded-xl">
         <.h5 :if={@title != nil}><%= @title %></.h5>
         <div class="font-semibold grow"><%= render_slot(@inner_block) %></div>
-        <PC.icon name={:arrow_top_right_on_square} class="w-5 h-5 text-primary my-auto" />
+        <.icon name={:arrow_top_right_on_square} class="w-5 h-5 text-primary my-auto" />
       </.flex>
     </.a>
     """
@@ -64,7 +68,7 @@ defmodule ControlServerWeb.Common.Page do
       <.flex class="p-4 border border-gray-lighter dark:border-gray-darker rounded-xl">
         <.h5 :if={@title != nil}><%= @title %></.h5>
         <div class="font-semibold grow"><%= render_slot(@inner_block) %></div>
-        <PC.icon name={:arrow_right} class="w-5 h-5 text-primary my-auto" />
+        <.icon name={:arrow_right} class="w-5 h-5 text-primary my-auto" />
       </.flex>
     </.a>
     """
@@ -78,7 +82,7 @@ defmodule ControlServerWeb.Common.Page do
         <div class="font-semibold grow">
           <%= render_slot(@inner_block) %>
         </div>
-        <PC.icon name={:arrow_right} class="w-5 h-5 text-primary my-auto" />
+        <.icon name={:arrow_right} class="w-5 h-5 text-primary my-auto" />
       </.flex>
     </.a>
     """

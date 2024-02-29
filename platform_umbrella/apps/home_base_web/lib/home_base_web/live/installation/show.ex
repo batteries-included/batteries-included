@@ -30,7 +30,7 @@ defmodule HomeBaseWeb.Live.InstallatitonShow do
       </.data_list>
 
       <.a navigate={~p"/installations/#{@installation}/show"}>
-        <.button>Edit installation</.button>
+        <.button variant="secondary">Edit installation</.button>
       </.a>
     </.top_menu_layout>
     """

@@ -175,10 +175,8 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
               label="Secret"
             />
             <.flex class="justify-end col-span-2">
-              <.button phx-target={@myself} phx-click="cancel" type="button">
-                Cancel
-              </.button>
-              <PC.button type="submit" phx-disable-with="Saving...">Save</PC.button>
+              <.button variant="secondary" phx-target={@myself} phx-click="cancel">Cancel</.button>
+              <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
             </.flex>
           </.flex>
         </.form>

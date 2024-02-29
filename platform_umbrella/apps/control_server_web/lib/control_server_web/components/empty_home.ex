@@ -12,18 +12,18 @@ defmodule ControlServerWeb.EmptyHome do
   def empty_home(assigns) do
     ~H"""
     <.flex column class="items-center justify-center h-full">
-      <PC.icon name={:face_smile} class="h-10 lg:h-28 w-auto" />
+      <.icon name={:face_smile} class="h-10 lg:h-28 w-auto" />
+
       <.h2>Welcome to Batteries Included</.h2>
-      <span class="max-w-96">
-        There are no batteries installed for this group. Each
-        running battery brings a new feature, power, or service to the
-        platform. Addtitionally new batteries will bring extra
-        powers to previously installed batteries, thanks to the automatic
-        integrations between batteries.
-      </span>
-      <PC.button to={@install_path} link_type="a">
-        Install Batteries
-      </PC.button>
+      <p class="max-w-lg mb-8">
+        There are no batteries installed for this group. Each running battery brings a new feature, power, or service to the platform. Addtitionally new batteries will bring extra powers to previously installed batteries, thanks to the automatic integrations between batteries.
+      </p>
+
+      <.link navigate={@install_path}>
+        <.button variant="primary">
+          Install Batteries
+        </.button>
+      </.link>
     </.flex>
     """
   end

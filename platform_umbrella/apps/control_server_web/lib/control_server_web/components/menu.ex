@@ -225,7 +225,8 @@ defmodule ControlServerWeb.Menu do
 
         <div class="relative inline-block">
           <div class="ml-2">
-            <Heroicons.chevron_right
+            <.icon
+              name={:chevron_right}
               class="w-3 h-3 transition duration-200 transform"
               x-bind:class="{ 'rotate-90': open }"
             />
@@ -247,7 +248,7 @@ defmodule ControlServerWeb.Menu do
 
   def nav_menu_icon(assigns) do
     ~H"""
-    <.icon :if={is_atom(@icon)} outline name={@icon} class={menu_icon_classes()} />
+    <.icon :if={is_atom(@icon)} name={@icon} class={menu_icon_classes()} />
 
     <%= if is_function(@icon) do %>
       <%= Phoenix.LiveView.TagEngine.component(

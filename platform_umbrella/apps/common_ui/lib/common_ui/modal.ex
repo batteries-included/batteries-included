@@ -71,7 +71,7 @@ defmodule CommonUI.Modal do
                   class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
                   aria-label="Close"
                 >
-                  <Heroicons.x_mark solid class="h-5 w-5 stroke-current" />
+                  <.icon name={:x_mark} class="h-5 w-5 stroke-current" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -96,17 +96,18 @@ defmodule CommonUI.Modal do
                     id={"#{@id}-confirm"}
                     phx-click={@on_confirm}
                     phx-disable-with
+                    variant="primary"
                     class="py-2 px-3"
                   >
                     <%= render_slot(confirm) %>
                   </.button>
-                  <.a
+                  <.button
                     :for={cancel <- @cancel}
                     phx-click={hide_modal(@on_cancel, @id)}
-                    variant="styled"
+                    variant="secondary"
                   >
                     <%= render_slot(cancel) %>
-                  </.a>
+                  </.button>
                 </div>
               </div>
             </.focus_wrap>

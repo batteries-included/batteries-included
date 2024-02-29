@@ -51,14 +51,8 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     ~H"""
     <.panel title="Users">
       <:menu>
-        <.button
-          variant="transparent"
-          icon={:plus}
-          phx-click="toggle_user_modal"
-          type="button"
-          phx-target={@phx_target}
-        >
-          New user
+        <.button icon={:plus} phx-click="toggle_user_modal" phx-target={@phx_target}>
+          New User
         </.button>
       </:menu>
 
@@ -176,10 +170,10 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           </.grid>
 
           <.flex class="justify-end">
-            <.button phx-target={@phx_target} phx-click="close_modal">
+            <.button variant="secondary" phx-target={@phx_target} phx-click="close_modal">
               Cancel
             </.button>
-            <PC.button><%= @action_text %></PC.button>
+            <.button variant="secondary"><%= @action_text %></.button>
           </.flex>
         </.flex>
       </.form>

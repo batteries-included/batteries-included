@@ -15,7 +15,7 @@ defmodule CommonUI.Form do
         <.input field={{f, :email}} label="Email"/>
         <.input field={{f, :username}} label="Username" />
         <:actions>
-          <.button>Save</.button>
+          <.button variant="primary">Save</.button>
         <:actions>
       </.simple_form>
   """
@@ -257,7 +257,7 @@ defmodule CommonUI.Form do
   def error(assigns) do
     ~H"""
     <p class="flex gap-3 mt-3 text-sm leading-6 phx-no-feedback:hidden text-warning-dark input-error">
-      <Heroicons.exclamation_circle mini class="mt-0.5 h-5 w-5 flex-none fill-warning" />
+      <.icon name={:exclamation_circle} mini class="mt-0.5 h-5 w-5 flex-none fill-warning" />
       <%= @message %>
     </p>
     """

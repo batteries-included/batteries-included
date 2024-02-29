@@ -11,7 +11,7 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
         Active
       </div>
       <div class="flex-none ml-2">
-        <Heroicons.check_circle class="h-6 w-6" />
+        <.icon name={:check_circle} class="h-6 w-6" />
       </div>
     </div>
     """
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
 
   def start_button(assigns) do
     ~H"""
-    <.button phx-click={:start} phx-value-type={@battery.type}>
+    <.button variant="secondary" phx-click={:start} phx-value-type={@battery.type}>
       Install Battery
     </.button>
     """

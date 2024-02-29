@@ -39,7 +39,7 @@ defmodule CommonUI.Tooltip do
   def help_question_mark(assigns) do
     ~H"""
     <div :if={@inner_block != nil && @inner_block != []} class={["cursor-pointer", @class]} id={@id}>
-      <Heroicons.question_mark_circle class="w-6 h-auto" />
+      <.icon name={:question_mark_circle} class="w-6 h-auto" />
       <.tooltip target_id={@id}>
         <%= render_slot(@inner_block) %>
       </.tooltip>

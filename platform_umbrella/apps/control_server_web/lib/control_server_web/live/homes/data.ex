@@ -52,7 +52,7 @@ defmodule ControlServerWeb.Live.DataHome do
       <:menu>
         <.flex>
           <.a navigate={~p"/postgres/new"} variant="styled">
-            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New PostgreSQL
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New PostgreSQL
           </.a>
           <.a navigate={~p"/postgres"}>View All</.a>
         </.flex>
@@ -68,7 +68,7 @@ defmodule ControlServerWeb.Live.DataHome do
       <:menu>
         <.flex>
           <.a navigate={~p"/redis/new"} variant="styled">
-            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Redis
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Redis
           </.a>
           <.a navigate={~p"/redis"}>View All</.a>
         </.flex>
@@ -84,7 +84,7 @@ defmodule ControlServerWeb.Live.DataHome do
       <:menu>
         <.flex>
           <.a navigate={~p"/ferretdb/new"} variant="styled">
-            <PC.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New FerretDB
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New FerretDB
           </.a>
           <.a navigate={~p"/ferretdb"}>View All</.a>
         </.flex>
@@ -104,12 +104,11 @@ defmodule ControlServerWeb.Live.DataHome do
     ~H"""
     <.page_header title={@page_title}>
       <:menu>
-        <PC.button
-          label="Manage Batteries"
-          color="light"
-          to={install_path()}
-          link_type="live_redirect"
-        />
+        <.link navigate={install_path()}>
+          <.button variant="secondary">
+            Manage Batteries
+          </.button>
+        </.link>
       </:menu>
     </.page_header>
     <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">

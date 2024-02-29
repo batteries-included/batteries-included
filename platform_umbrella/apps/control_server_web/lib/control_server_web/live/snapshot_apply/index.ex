@@ -57,7 +57,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
       back_button={%{link_type: "live_redirect", to: ~p"/batteries/magic"}}
     >
       <:menu :if={@deploys_running}>
-        <.button phx-click="start-deploy">
+        <.button variant="secondary" phx-click="start-deploy">
           Start Deploy
         </.button>
       </:menu>

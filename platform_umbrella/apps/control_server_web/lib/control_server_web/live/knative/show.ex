@@ -167,18 +167,18 @@ defmodule ControlServerWeb.Live.KnativeShow do
     >
       <:menu>
         <.flex>
-          <PC.button to={edit_versions_url(@service)} link_type="a" color="light">
-            Edit History
-          </PC.button>
+          <.link navigate={edit_versions_url(@service)}>
+            <.button variant="secondary">
+              Edit History
+            </.button>
+          </.link>
 
           <.flex gaps="0">
-            <PC.icon_button to={edit_url(@service)} link_type="live_redirect">
-              <Heroicons.pencil solid />
-            </PC.icon_button>
+            <.link navigate={edit_url(@service)}>
+              <.button variant="icon" icon={:pencil} />
+            </.link>
 
-            <PC.icon_button type="button" phx-click="delete" data-confirm="Are you sure?">
-              <Heroicons.trash />
-            </PC.icon_button>
+            <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
           </.flex>
         </.flex>
       </:menu>

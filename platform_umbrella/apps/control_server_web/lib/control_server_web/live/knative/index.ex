@@ -30,7 +30,9 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
     ~H"""
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/devtools"}}>
       <:menu>
-        <PC.button to={new_url()} link_type="live_redirect" label="New Service" />
+        <.link navigate={new_url()}>
+          <.button variant="secondary">New Service</.button>
+        </.link>
       </:menu>
     </.page_header>
 

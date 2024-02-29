@@ -45,7 +45,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def status_icon(%{status: status} = assigns) when status in ["true", true, :ok] do
     ~H"""
     <div class="flex items-center gap-2">
-      <Heroicons.check_circle class="w-6 h-6 text-primary-600" />
+      <.icon name={:check_circle} class="w-6 h-6 text-primary-600" />
       <div class="flex-initial">
         Started
       </div>
@@ -56,7 +56,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def status_icon(assigns) do
     ~H"""
     <div class="flex items-center gap-2">
-      <Heroicons.x_circle class="w-6 h-6 text-gray-dark" />
+      <.icon name={:x_circle} class="w-6 h-6 text-gray-dark" />
       <div class="flex-initial">
         False
       </div>

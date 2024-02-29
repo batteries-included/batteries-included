@@ -79,12 +79,12 @@ defmodule ControlServerWeb.Live.RedisShow do
     <.panel>
       <div class="grid md:grid-cols-2 gap-6">
         <.a navigate={edit_url(@failover_cluster)} class="block">
-          <.button class="w-full">
+          <.button variant="secondary" class="w-full">
             Edit Cluster
           </.button>
         </.a>
 
-        <.button phx-click="delete" data-confirm="Are you sure?" class="w-full">
+        <.button variant="secondary" phx-click="delete" data-confirm="Are you sure?" class="w-full">
           Delete Cluster
         </.button>
       </div>

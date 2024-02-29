@@ -328,7 +328,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           back_button={%{link_type: "live_redirect", to: ~p"/knative/services"}}
         >
           <:menu>
-            <PC.button label="Save Serverless" color="dark" phx-disable-with="Saving…" />
+            <.button variant="dark" phx-disable-with="Saving…">Save Serverless</.button>
           </:menu>
         </.page_header>
         <.grid columns={[sm: 1, md: 2]}>

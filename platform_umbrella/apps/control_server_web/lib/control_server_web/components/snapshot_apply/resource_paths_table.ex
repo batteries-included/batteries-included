@@ -12,7 +12,7 @@ defmodule ControlServerWeb.ResourcePathsTable do
         Success
       </div>
       <div class="flex-none ml-2">
-        <Heroicons.check_circle class="h-6 w-6" />
+        <.icon name={:check_circle} class="h-6 w-6" />
       </div>
     </div>
     """
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.ResourcePathsTable do
         Failed
       </div>
       <div class="flex-none ml-2">
-        <Heroicons.exclamation_circle class="h-6 w-6" />
+        <.icon name={:exclamation_circle} class="h-6 w-6" />
       </div>
     </div>
     """
