@@ -58,8 +58,6 @@ defmodule ControlServerWeb do
         global_prefixes: CommonUI.global_prefixes(),
         layout: {ControlServerWeb.Layouts, unquote(layout)}
 
-      on_mount {ControlServerWeb.InstalledBatteriesHook, :installed_batteries}
-
       unquote(html_helpers())
     end
   end
