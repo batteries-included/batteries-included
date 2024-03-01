@@ -26,6 +26,19 @@ defmodule Storybook.Components.Icon do
             }
           }
         ]
+      },
+      %VariationGroup{
+        id: :custom,
+        description: "Custom icons",
+        variations: [
+          %Variation{
+            id: :custom_battery,
+            attributes: %{
+              name: :battery,
+              class: "size-8"
+            }
+          }
+        ]
       }
     ]
   end

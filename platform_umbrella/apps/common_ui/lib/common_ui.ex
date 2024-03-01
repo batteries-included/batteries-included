@@ -37,6 +37,7 @@ defmodule CommonUI do
       import CommonUI.Components.Form
       import CommonUI.Components.Icon
       import CommonUI.Components.Link
+      import CommonUI.Components.Logo
       import CommonUI.Components.Modal
       import CommonUI.Components.MutliSelect
       import CommonUI.Components.RoundedLabel

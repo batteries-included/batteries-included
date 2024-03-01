@@ -12,7 +12,7 @@ defmodule CommonUI.ComponentCase do
 
           html =
             rendered_to_string(~H"""
-            <.logo class="some-class" />
+            <.brand class="some-class" />
             """)
 
           assert html =~ "Batteries"

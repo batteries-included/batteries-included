@@ -2,8 +2,6 @@ defmodule HomeBaseWeb.TopMenuLayout do
   @moduledoc false
   use HomeBaseWeb, :html
 
-  import CommonUI.Icons.Batteries
-
   @main_menu_items [
     %{title: "Dashboard", url: "/", id: :home},
     %{title: "Installations", url: "/installations", id: :installations}
@@ -26,7 +24,7 @@ defmodule HomeBaseWeb.TopMenuLayout do
                 <div class="flex items-center">
                   <div class="flex-shrink-0">
                     <.a navigate="/">
-                      <.batteries_logo top_cloud_class="fill-primary" />
+                      <.logo top_cloud_class="fill-primary" />
                     </.a>
                   </div>
                   <.main_menu menu_items={@main_menu_items} page={@page} />
