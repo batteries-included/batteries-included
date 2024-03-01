@@ -4,7 +4,7 @@ Copyright © 2024 Elliott Clark elliott@batteriesincl.com
 package cmd
 
 import (
-	"bi/specs"
+	"bi/pkg/specs"
 	"fmt"
 	"os"
 

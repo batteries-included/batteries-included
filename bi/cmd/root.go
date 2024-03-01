@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -38,7 +39,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.bi.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $XDG_CONFIG_HOME/bi/bi.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -52,13 +53,13 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Find home directory.
-		home, err := os.UserHomeDir()
+		configDir, err := xdg.ConfigFile("bi")
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".bi" (without extension).
-		viper.AddConfigPath(home)
+		// Search config in config directory with name "bi.yaml"
+		viper.AddConfigPath(configDir)
+		viper.SetConfigName("bi")
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".bi")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
