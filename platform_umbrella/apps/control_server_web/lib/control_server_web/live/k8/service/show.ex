@@ -3,7 +3,6 @@ defmodule ControlServerWeb.ServiceLive.Show do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
-  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ResourceComponents
 
   alias EventCenter.KubeState, as: KubeEventCenter

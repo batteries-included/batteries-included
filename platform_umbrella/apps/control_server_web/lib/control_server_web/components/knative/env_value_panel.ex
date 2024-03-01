@@ -2,8 +2,6 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.Tooltip
-
   defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
     ~H"""
     <%= @env_value.value %>

@@ -55,17 +55,13 @@ defmodule HomeBaseWeb do
       use Phoenix.LiveView,
         layout: {HomeBaseWeb.Layouts, :app}
 
-      import Phoenix.Component, except: [link: 1]
-
       unquote(html_helpers())
     end
   end
 
   def live_component do
     quote do
-      use Phoenix.LiveComponent
-
-      import Phoenix.Component, except: [link: 1]
+      use Phoenix.LiveComponent, global_prefixes: CommonUI.global_prefixes()
 
       unquote(html_helpers())
     end
@@ -73,9 +69,7 @@ defmodule HomeBaseWeb do
 
   def html do
     quote do
-      use Phoenix.Component
-
-      import Phoenix.Component, except: [link: 1]
+      use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

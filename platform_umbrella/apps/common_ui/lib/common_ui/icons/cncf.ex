@@ -1,6 +1,6 @@
 defmodule CommonUI.Icons.CNCF do
   @moduledoc false
-  use CommonUI.Component
+  use CommonUI, :component
 
   attr :class, :any, default: "h-9 w-auto"
 

@@ -1,11 +1,11 @@
 defmodule ControlServerWeb.Common.Page do
   @moduledoc false
-  use Phoenix.Component
+  use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
 
-  import CommonUI.Container
-  import CommonUI.Icon
-  import CommonUI.Link
-  import CommonUI.Typography
+  import CommonUI.Components.Container
+  import CommonUI.Components.Icon
+  import CommonUI.Components.Link
+  import CommonUI.Components.Typography
 
   attr :title, :string
 

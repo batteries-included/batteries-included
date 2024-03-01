@@ -2,7 +2,7 @@ defmodule Storybook.Components.H2 do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.Typography.h2/1
+  def function, do: &CommonUI.Components.Typography.h2/1
 
   def attributes, do: []
   def slots, do: []

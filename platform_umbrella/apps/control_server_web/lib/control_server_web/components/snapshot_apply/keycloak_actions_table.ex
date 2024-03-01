@@ -1,9 +1,6 @@
 defmodule ControlServerWeb.KeycloakActionsTable do
   @moduledoc false
-
   use ControlServerWeb, :html
-
-  import CommonUI.DatetimeDisplay
 
   defp status_icon(%{is_success: is_success} = assigns) when is_success in ["true", true, :ok] do
     ~H"""

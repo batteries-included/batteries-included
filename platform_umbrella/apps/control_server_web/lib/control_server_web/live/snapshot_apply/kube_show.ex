@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ResourcePathsTable
 
   alias ControlServer.SnapshotApply.Kube

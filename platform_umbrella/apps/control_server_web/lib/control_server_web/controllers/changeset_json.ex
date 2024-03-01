@@ -6,7 +6,7 @@ defmodule ControlServerWeb.ChangesetJSON do
   `ControlServerWeb.CoreCompponents.translate_error/1` for more details.
   """
   def translate_errors(changeset) do
-    Ecto.Changeset.traverse_errors(changeset, &CommonUI.Form.translate_error/1)
+    Ecto.Changeset.traverse_errors(changeset, &CommonUI.Components.Form.translate_error/1)
   end
 
   @doc """

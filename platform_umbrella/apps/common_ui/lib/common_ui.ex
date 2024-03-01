@@ -7,22 +7,46 @@ defmodule CommonUI do
   if it comes from the database, an external API or others.
   """
 
+  def global_prefixes, do: ~w(x-)
+
+  def component do
+    quote do
+      use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
+
+      alias Phoenix.LiveView.JS
+    end
+  end
+
+  @doc """
+  When used, dispatch to the appropriate macro.
+  """
+  defmacro __using__(which) when is_atom(which) do
+    apply(__MODULE__, which, [])
+  end
+
   defmacro __using__(_) do
     quote do
-      import CommonUI.Button
-      import CommonUI.Card
-      import CommonUI.Container
-      import CommonUI.DataList
-      import CommonUI.Flash
-      import CommonUI.Form
-      import CommonUI.Icon
-      import CommonUI.Link
-      import CommonUI.Modal
-      import CommonUI.Table
+      import CommonUI.Components.Brand
+      import CommonUI.Components.Button
+      import CommonUI.Components.Card
+      import CommonUI.Components.ClickFlip
+      import CommonUI.Components.Container
+      import CommonUI.Components.DataList
+      import CommonUI.Components.DatetimeDisplay
+      import CommonUI.Components.Flash
+      import CommonUI.Components.Form
+      import CommonUI.Components.Icon
+      import CommonUI.Components.Link
+      import CommonUI.Components.Modal
+      import CommonUI.Components.MutliSelect
+      import CommonUI.Components.RoundedLabel
+      import CommonUI.Components.Stats
+      import CommonUI.Components.TabBar
+      import CommonUI.Components.Table
+      import CommonUI.Components.Tooltip
+      import CommonUI.Components.Typography
+      import CommonUI.Components.VerticalSteps
       import CommonUI.TextHelpers
-      import CommonUI.Tooltip
-      import CommonUI.Typography
-      import CommonUI.VerticalSteps
     end
   end
 end

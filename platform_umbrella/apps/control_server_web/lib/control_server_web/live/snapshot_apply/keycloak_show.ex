@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.KeycloakSnapshotShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.DatetimeDisplay
   import ControlServerWeb.KeycloakActionsTable
 
   alias ControlServer.SnapshotApply.Keycloak

@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.TabBar
   import ControlServerWeb.ConfigAuditReportTable
   import ControlServerWeb.InfraAssessmentReportTable
   import ControlServerWeb.RBACReportTable

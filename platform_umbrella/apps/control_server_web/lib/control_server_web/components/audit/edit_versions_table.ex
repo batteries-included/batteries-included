@@ -2,8 +2,6 @@ defmodule ControlServerWeb.Audit.EditVersionsTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.DatetimeDisplay
-
   defp show_url(edit_version) do
     ~p"/edit_versions/#{edit_version.id}"
   end

@@ -1,10 +1,11 @@
-defmodule ComponentCase do
+defmodule CommonUI.ComponentCase do
   @moduledoc ~S|
   Use with your component tests. Example:
 
-      defmodule CommonUI.BrandTest do
-        use ComponentCase
-        import CommonUI.Brand
+      defmodule CommonUI.Components.BrandTest do
+        use CommonUI.ComponentCase
+
+        import CommonUI.Components.Brand
 
         test "it renders the logo correctly" do
           assigns = %{}

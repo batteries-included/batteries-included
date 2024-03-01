@@ -2,8 +2,6 @@ defmodule ControlServerWeb.Live.EditVersionShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.DatetimeDisplay
-
   alias CommonCore.Postgres.PGUser
   alias Phoenix.Naming
 

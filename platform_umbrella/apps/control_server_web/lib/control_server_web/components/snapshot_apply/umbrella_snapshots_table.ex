@@ -2,8 +2,6 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.DatetimeDisplay
-
   attr :snapshots, :list, required: true
   attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
   attr :skip_date, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"

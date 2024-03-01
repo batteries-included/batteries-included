@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ContentAddressable.ResourceTable
 
   alias ControlServer.ContentAddressable

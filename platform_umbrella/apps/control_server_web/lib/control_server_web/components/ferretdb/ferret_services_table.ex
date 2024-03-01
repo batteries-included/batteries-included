@@ -2,8 +2,6 @@ defmodule ControlServerWeb.FerretServicesTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.Table
-
   defp show_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/show"
   defp edit_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit"
 

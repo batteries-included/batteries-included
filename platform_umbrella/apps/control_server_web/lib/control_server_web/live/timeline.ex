@@ -2,8 +2,6 @@ defmodule ControlServerWeb.Live.Timeline do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.DatetimeDisplay
-
   alias CommonCore.Timeline.BatteryInstall
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase

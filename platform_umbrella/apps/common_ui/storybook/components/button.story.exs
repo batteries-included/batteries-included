@@ -2,7 +2,7 @@ defmodule Storybook.Components.Button do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.Button.button/1
+  def function, do: &CommonUI.Components.Button.button/1
 
   def attributes do
     [

@@ -1,11 +1,6 @@
 defmodule ControlServerWeb.RunningBatteriesPanel do
   @moduledoc false
-
   use ControlServerWeb, :live_component
-
-  import CommonUI.DatetimeDisplay
-  import CommonUI.TabBar
-  import CommonUI.Table
 
   alias ControlServer.Batteries
   alias Phoenix.Naming

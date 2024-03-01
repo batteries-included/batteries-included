@@ -2,8 +2,6 @@ defmodule ControlServerWeb.FerretDBFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  import CommonUI.Container
-
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Util.Memory
   alias ControlServer.FerretDB

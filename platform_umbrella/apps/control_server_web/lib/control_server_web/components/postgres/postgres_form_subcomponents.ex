@@ -2,8 +2,6 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.MutliSelect
-
   alias Ecto.Changeset
 
   @default_roles [

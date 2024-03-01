@@ -4,7 +4,6 @@ defmodule ControlServerWeb.Live.ResourceList do
   """
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.TabBar
   import ControlServerWeb.DeploymentsTable
   import ControlServerWeb.Loader
   import ControlServerWeb.NodesTable

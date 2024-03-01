@@ -2,7 +2,7 @@ defmodule Storybook.Components.Link do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.Link.a/1
+  def function, do: &CommonUI.Components.Link.a/1
 
   def attributes, do: []
   def slots, do: []

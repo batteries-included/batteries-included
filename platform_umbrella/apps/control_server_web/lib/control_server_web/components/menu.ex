@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Menu do
   Deprecated. Moved to Petal Components
   """
 
-  use Phoenix.Component, global_prefixes: ~w(x-)
+  use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
   use PetalComponents
 
   @doc """

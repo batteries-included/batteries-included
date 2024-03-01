@@ -2,7 +2,7 @@ defmodule Storybook.Components.ClickFlip do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.ClickFlip.click_flip/1
+  def function, do: &CommonUI.Components.ClickFlip.click_flip/1
 
   def attributes, do: []
   def slots, do: []

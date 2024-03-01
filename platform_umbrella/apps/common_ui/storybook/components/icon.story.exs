@@ -2,7 +2,7 @@ defmodule Storybook.Components.Icon do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.Icon.icon/1
+  def function, do: &CommonUI.Components.Icon.icon/1
 
   def variations do
     [

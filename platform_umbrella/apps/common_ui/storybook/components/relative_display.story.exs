@@ -2,7 +2,7 @@ defmodule Storybook.Components.RelativeDisplay do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.DatetimeDisplay.relative_display/1
+  def function, do: &CommonUI.Components.DatetimeDisplay.relative_display/1
 
   def attributes, do: []
   def slots, do: []

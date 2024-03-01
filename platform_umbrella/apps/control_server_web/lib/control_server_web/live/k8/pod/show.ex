@@ -3,7 +3,6 @@ defmodule ControlServerWeb.PodLive.Show do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
-  import CommonUI.DatetimeDisplay
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.ResourceComponents
   import ControlServerWeb.ResourceHTMLHelper

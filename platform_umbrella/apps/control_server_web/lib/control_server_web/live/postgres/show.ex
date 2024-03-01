@@ -3,8 +3,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
-  import CommonUI.DatetimeDisplay
-  import CommonUI.Table
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PgUserTable
   import ControlServerWeb.PodsTable

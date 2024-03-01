@@ -3,7 +3,6 @@ defmodule ControlServerWeb.ResourceComponents do
   use ControlServerWeb, :html
 
   import CommonCore.Resources.FieldAccessors
-  import CommonUI.DatetimeDisplay
 
   attr :class, :string, default: ""
   attr :resource, :any, required: true

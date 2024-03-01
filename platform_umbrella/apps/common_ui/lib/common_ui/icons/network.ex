@@ -1,6 +1,6 @@
 defmodule CommonUI.Icons.Network do
   @moduledoc false
-  use CommonUI.Component
+  use CommonUI, :component
 
   attr :class, :any, default: nil
 

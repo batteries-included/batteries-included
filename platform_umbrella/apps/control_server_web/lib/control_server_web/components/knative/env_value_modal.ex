@@ -1,10 +1,8 @@
 defmodule ControlServerWeb.Knative.EnvValueModal do
   @moduledoc false
-
   use ControlServerWeb, :live_component
 
   import CommonCore.Resources.FieldAccessors
-  import CommonUI.TabBar
 
   alias CommonCore.Knative.EnvValue
   alias Ecto.Changeset

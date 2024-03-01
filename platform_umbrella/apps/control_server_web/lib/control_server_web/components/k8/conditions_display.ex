@@ -2,8 +2,6 @@ defmodule ControlServerWeb.ConditionsDisplay do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.DatetimeDisplay
-
   attr :conditions, :list, required: true
   attr :empty, :boolean, default: nil, required: false
 

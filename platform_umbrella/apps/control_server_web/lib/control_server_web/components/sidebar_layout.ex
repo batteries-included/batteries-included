@@ -1,9 +1,9 @@
 defmodule ControlServerWeb.SidebarLayout do
   @moduledoc false
-  use Phoenix.Component, global_prefixes: ~w(x-)
+  use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
   use PetalComponents
 
-  import CommonUI.Brand
+  import CommonUI.Components.Brand
 
   attr :current_page, :atom,
     required: true,

@@ -2,8 +2,6 @@ defmodule ControlServerWeb.TrivyReports.VulnerabilitiesTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.Table
-
   def vulnerabilities_table(assigns) do
     ~H"""
     <.table rows={@rows}>

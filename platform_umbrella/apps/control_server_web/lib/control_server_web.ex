@@ -50,16 +50,13 @@ defmodule ControlServerWeb do
     end
   end
 
-  def live_view(opts \\ []) do
+  def live_view(opts) do
     layout = Keyword.get(opts, :layout, :app)
-    global_prefixes = Keyword.get(opts, :global_prefixes, ["x-"])
 
     quote do
       use Phoenix.LiveView,
-        global_prefixes: unquote(global_prefixes),
+        global_prefixes: CommonUI.global_prefixes(),
         layout: {ControlServerWeb.Layouts, unquote(layout)}
-
-      import Phoenix.Component
 
       on_mount {ControlServerWeb.InstalledBatteriesHook, :installed_batteries}
 
@@ -67,25 +64,17 @@ defmodule ControlServerWeb do
     end
   end
 
-  def live_component(opts \\ []) do
-    global_prefixes = Keyword.get(opts, :global_prefixes, ["x-"])
-
+  def live_component do
     quote do
-      use Phoenix.LiveComponent, global_prefixes: unquote(global_prefixes)
-
-      import Phoenix.Component
+      use Phoenix.LiveComponent, global_prefixes: CommonUI.global_prefixes()
 
       unquote(html_helpers())
     end
   end
 
-  def html(opts \\ []) do
-    global_prefixes = Keyword.get(opts, :global_prefixes, ["x-"])
-
+  def html do
     quote do
-      use Phoenix.Component, global_prefixes: unquote(global_prefixes)
-
-      import Phoenix.Component
+      use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

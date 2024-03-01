@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  import CommonUI.Tooltip
   import ControlServerWeb.Knative.ContainersPanel
   import ControlServerWeb.Knative.EnvValuePanel
   import KubeServices.SystemState.SummaryHosts

@@ -8,7 +8,6 @@ defmodule ControlServerWeb.Live.KnativeShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
-  import CommonUI.DatetimeDisplay
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.Chart
   import ControlServerWeb.ConditionsDisplay

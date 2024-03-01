@@ -2,7 +2,7 @@ defmodule Storybook.Components.DataList do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.DataList.data_list/1
+  def function, do: &CommonUI.Components.DataList.data_list/1
 
   def attributes, do: []
   def slots, do: []

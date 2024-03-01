@@ -2,8 +2,6 @@ defmodule ControlServerWeb.Knative.ContainersPanel do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import CommonUI.Table
-
   attr :containers, :list, default: []
   attr :init_containers, :list, default: []
   attr :target, :any, default: nil

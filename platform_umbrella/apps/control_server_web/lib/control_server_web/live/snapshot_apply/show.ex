@@ -2,8 +2,6 @@ defmodule ControlServerWeb.Live.UmbrellaSnapshotShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonUI.DatetimeDisplay
-
   alias ControlServer.SnapshotApply.Umbrella
   alias ControlServer.SnapshotApply.UmbrellaSnapshot
 

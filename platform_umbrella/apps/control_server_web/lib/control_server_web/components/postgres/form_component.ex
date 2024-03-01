@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  import CommonUI.ClickFlip
   import ControlServerWeb.PostgresFormSubcomponents
 
   alias CommonCore.Postgres.Cluster
