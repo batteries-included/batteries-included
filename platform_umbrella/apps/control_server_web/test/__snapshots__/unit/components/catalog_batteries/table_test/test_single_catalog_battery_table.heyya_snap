@@ -57,7 +57,7 @@
           <div class="block py-4">
             <span class="">
               
-    <button class="min-w-36 rounded-lg border border-gray-lighter text-gray-darker bg-white enabled:hover:text-primary enabled:hover:border-primary-light disabled:text-gray inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm text-nowrap disabled:cursor-not-allowed phx-submit-loading:opacity-75" phx-click="start" phx-value-type="redis">
+    <button type="button" class="min-w-36 rounded-lg border border-gray-lighter text-gray-darker bg-white enabled:hover:text-primary enabled:hover:border-primary-light disabled:text-gray inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm text-nowrap disabled:cursor-not-allowed phx-submit-loading:opacity-75" phx-click="start" phx-value-type="redis">
   
   
   Install Battery

@@ -1,4 +1,4 @@
-<button class="text-gray-darker enabled:hover:text-primary disabled:text-gray-light inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm text-nowrap disabled:cursor-not-allowed phx-submit-loading:opacity-75">
+<button type="button" class="text-gray-darker enabled:hover:text-primary disabled:text-gray-light inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm text-nowrap disabled:cursor-not-allowed phx-submit-loading:opacity-75">
   
   Test Button
   

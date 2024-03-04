@@ -16,7 +16,7 @@ defmodule CommonUI.Components.Form do
         <.input field={{f, :email}} label="Email"/>
         <.input field={{f, :username}} label="Username" />
         <:actions>
-          <.button variant="primary">Save</.button>
+          <.button variant="primary" type="submit">Save</.button>
         <:actions>
       </.simple_form>
   """

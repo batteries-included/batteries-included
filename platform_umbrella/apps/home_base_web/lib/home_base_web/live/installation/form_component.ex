@@ -84,7 +84,9 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
       >
         <.input field={{f, :slug}} type="text" label="slug" />
         <:actions>
-          <.button variant="primary" phx-disable-with="Saving...">Save Installation</.button>
+          <.button variant="primary" type="submit" phx-disable-with="Saving...">
+            Save Installation
+          </.button>
         </:actions>
       </.simple_form>
     </div>

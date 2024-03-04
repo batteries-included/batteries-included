@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
           <.input field={{f, :description}} type="textarea" label="Description" />
         </div>
         <:actions>
-          <.button variant="primary" phx-disable-with="Saving...">Save</.button>
+          <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
         </:actions>
       </.simple_form>
     </div>

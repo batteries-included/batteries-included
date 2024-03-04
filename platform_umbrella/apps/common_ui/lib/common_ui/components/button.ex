@@ -5,6 +5,12 @@ defmodule CommonUI.Components.Button do
   import CommonUI.Components.Icon
   import CommonUI.Components.Tooltip
 
+  # Buttons are a "submit" type by default. This changes the default to "button",
+  # since most buttons are either wrapped by a link or use `phx-click`.
+  #
+  # See https://html.spec.whatwg.org/multipage/form-elements.html#attr-button-type
+  attr :type, :string, default: "button", values: ["submit", "reset", "button"]
+
   attr :variant, :string, values: ["primary", "secondary", "dark", "circle", "icon"]
   attr :class, :string, default: nil
   attr :icon, :atom, default: nil
@@ -20,6 +26,7 @@ defmodule CommonUI.Components.Button do
   def button(%{variant: "primary"} = assigns) do
     ~H"""
     <button
+      type={@type}
       class={[
         "min-w-36 rounded-lg text-white bg-primary enabled:hover:bg-primary-dark disabled:bg-gray-lighter",
         button_class(),
@@ -37,6 +44,7 @@ defmodule CommonUI.Components.Button do
   def button(%{variant: "secondary"} = assigns) do
     ~H"""
     <button
+      type={@type}
       class={[
         "min-w-36 rounded-lg border border-gray-lighter text-gray-darker bg-white",
         "enabled:hover:text-primary enabled:hover:border-primary-light disabled:text-gray",
@@ -55,6 +63,7 @@ defmodule CommonUI.Components.Button do
   def button(%{variant: "dark"} = assigns) do
     ~H"""
     <button
+      type={@type}
       class={[
         "min-w-36 rounded-lg text-white bg-gray-darkest enabled:hover:bg-gray-darker disabled:bg-gray-lighter",
         button_class(),
@@ -72,6 +81,7 @@ defmodule CommonUI.Components.Button do
   def button(%{variant: "circle"} = assigns) do
     ~H"""
     <button
+      type={@type}
       class={[
         "p-3 rounded-full border border-gray-lighter text-gray-darker",
         "enabled:hover:text-primary enabled:hover:border-primary-light disabled:text-gray",
@@ -88,6 +98,7 @@ defmodule CommonUI.Components.Button do
   def button(%{variant: "icon"} = assigns) do
     ~H"""
     <button
+      type={@type}
       class={[
         "p-3 rounded-full text-gray-darker",
         "enabled:hover:text-primary enabled:hover:bg-gray-lightest/75 disabled:text-gray",
@@ -104,6 +115,7 @@ defmodule CommonUI.Components.Button do
   def button(assigns) do
     ~H"""
     <button
+      type={@type}
       class={[
         "text-gray-darker enabled:hover:text-primary disabled:text-gray-light",
         button_class(),

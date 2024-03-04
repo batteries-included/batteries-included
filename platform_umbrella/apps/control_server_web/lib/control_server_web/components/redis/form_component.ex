@@ -20,7 +20,9 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
       >
         <.page_header title={@title} back_button={%{link_type: "live_redirect", to: ~p"/redis"}}>
           <:menu>
-            <.button variant="dark" phx-disable-with="Saving…">Save Redis Cluster</.button>
+            <.button variant="dark" type="submit" phx-disable-with="Saving…">
+              Save Redis Cluster
+            </.button>
           </:menu>
         </.page_header>
 

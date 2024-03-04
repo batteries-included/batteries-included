@@ -244,7 +244,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       >
         <.page_header title={@title} back_button={%{link_type: "live_redirect", to: ~p"/postgres"}}>
           <:menu>
-            <.button variant="dark" phx-disable-with="Saving…">Save Cluster</.button>
+            <.button variant="dark" type="submit" phx-disable-with="Saving…">Save Cluster</.button>
           </:menu>
         </.page_header>
 

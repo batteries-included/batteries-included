@@ -171,7 +171,9 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             <.button variant="secondary" phx-target={@phx_target} phx-click="close_modal">
               Cancel
             </.button>
-            <.button variant="secondary"><%= @action_text %></.button>
+            <.button variant="secondary" type="submit">
+              <%= @action_text %>
+            </.button>
           </.flex>
         </.flex>
       </.form>

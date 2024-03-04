@@ -22,7 +22,9 @@ defmodule ControlServerWeb.FerretDBFormComponent do
       >
         <.page_header title={@title} back_button={%{link_type: "live_redirect", to: ~p"/ferretdb"}}>
           <:menu>
-            <.button variant="dark" phx-disable-with="Saving…">Save FerretDB Service</.button>
+            <.button variant="dark" type="submit" phx-disable-with="Saving…">
+              Save FerretDB Service
+            </.button>
           </:menu>
         </.page_header>
         <.panel>
