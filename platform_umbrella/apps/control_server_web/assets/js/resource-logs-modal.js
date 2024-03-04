@@ -5,8 +5,7 @@ export const ResourceLogsModalHook = {
 
     if (anchor) {
       requestAnimationFrame(() => {
-        // scrollIntoViewIfNeeded is not supported in Safari
-        anchor.scrollIntoViewIfNeeded() || anchor.scrollIntoView();
+        anchor.scrollIntoView();
       });
     }
   },
