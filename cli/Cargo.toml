@@ -8,7 +8,7 @@ assert_cmd = { version = "2.0.14" }
 clap = { version = "4.5.1", features = ["derive", "color", "usage"] }
 clap-verbosity-flag = { version = "2.2.0" }
 color-eyre = { version = "0.6.2" }
-bollard = { version = "0.15.0", features = ["time", "ssl"] }
+bollard = { version = "0.16.0", features = ["time", "ssl"] }
 dirs = { version = "5.0.1" }
 eyre = { version = "0.6.12" }
 futures = { version = "0.3.30" }
