@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "lib": ["dom", "es2020"],
+    "esModuleInterop": true
+  },
+  "include": ["js/*.ts", "global.d.ts"],
+  "exclude": ["/node_modules/**/*", "**/*.spec.ts"]
+}

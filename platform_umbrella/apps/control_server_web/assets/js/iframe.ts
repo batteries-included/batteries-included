@@ -1,4 +1,5 @@
-import { debounce } from 'lodash/debounce';
+import debounce from 'lodash/debounce';
+import { ViewHook } from 'phoenix_live_view';
 
 const maxHeight = (element) =>
   element
@@ -27,7 +28,7 @@ const resize = (element) => {
   }
 };
 
-export const IFrameHook = {
+export const IFrameHook: Partial<ViewHook> = {
   mounted() {
     const doResize = debounce(() => resize(this.el), 500, {
       leading: true,

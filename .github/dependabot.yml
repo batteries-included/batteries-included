@@ -6,6 +6,10 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: npm
+    directory: '/platform_umbrella/apps/common_ui/assets'
+    schedule:
+      interval: daily
+  - package-ecosystem: npm
     directory: '/platform_umbrella/apps/control_server_web/assets'
     schedule:
       interval: daily

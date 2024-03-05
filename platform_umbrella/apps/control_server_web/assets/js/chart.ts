@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import { ViewHook } from 'phoenix_live_view';
 
 const colors = [
   '#fecfe2',
@@ -8,6 +9,11 @@ const colors = [
   '#e33a7d',
   '#206f90',
 ];
+
+export interface ChartHookInterface extends ViewHook {
+  chart: Chart;
+  enrichDatasets(datasets: any[]): any[];
+}
 
 export const ChartHook = {
   updated() {
@@ -24,7 +30,6 @@ export const ChartHook = {
 
     console.log(enrichedData);
   },
-
   enrichDatasets(datasets) {
     return datasets.map((ds) => {
       return { backgroundColor: colors, ...ds };
@@ -55,4 +60,4 @@ export const ChartHook = {
       options: options,
     });
   },
-};
+} as ChartHookInterface;

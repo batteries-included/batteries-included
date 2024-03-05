@@ -1,17 +1,21 @@
 {
   "scripts": {
     "tailwind": "NODE_PATH=./node_modules tailwindcss --postcss",
-    "esbuild": "NODE_PATH=./node_modules:../../../deps esbuild --bundle --target=chrome109,firefox112,safari15.6,edge112",
+    "esbuild": "NODE_PATH=./node_modules:../../../deps esbuild --bundle --target=chrome109,edge121,firefox122,ios15.6,opera106,safari17.2",
     "css:deploy": "NODE_ENV=production npm run tailwind -- --input=css/app.css --output=../priv/static/assets/app.css --minify",
     "css:deploy:dev": "npm run tailwind -- --input=css/app.css --output=../priv/static/assets/app.css",
-    "js:deploy": "NODE_ENV=production npm run esbuild -- js/app.js --outdir=../priv/static/assets --minify --analyze",
-    "js:deploy:dev": "npm run esbuild -- js/app.js --outdir=../priv/static/assets"
+    "js:deploy": "NODE_ENV=production npm run esbuild -- js/app.ts --outdir=../priv/static/assets --minify --analyze",
+    "js:deploy:dev": "npm run esbuild -- js/app.ts --outdir=../priv/static/assets",
+    "typecheck": "tsc --noEmit --pretty"
   },
   "dependencies": {
     "@fontsource-variable/inter": "~5.0",
     "@fontsource-variable/jetbrains-mono": "~5.0",
     "@tailwindcss/forms": "~0.5",
     "@tailwindcss/typography": "~0.5",
+    "@types/alpinejs": "~3.13",
+    "@types/phoenix": "~1.6",
+    "@types/phoenix_live_view": "~0.18",
     "alpinejs": "~3.13",
     "autoprefixer": "~10.4",
     "esbuild": "~0.20",
@@ -19,6 +23,7 @@
     "postcss-import": "~16.0",
     "postcss-url": "~10.1",
     "tailwindcss": "~3.4",
-    "topbar": "~2.0"
+    "topbar": "~2.0",
+    "typescript": "~5.3"
   }
 }

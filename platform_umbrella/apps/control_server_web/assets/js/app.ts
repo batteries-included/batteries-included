@@ -1,7 +1,7 @@
 import 'phoenix_html';
 import { Socket } from 'phoenix';
-import { LiveSocket } from 'phoenix_live_view';
-import Alpine from 'alpinejs';
+import { LiveSocket, ViewHook } from 'phoenix_live_view';
+import Alpine, { XAttributes } from 'alpinejs';
 import { IFrameHook } from './iframe';
 import { ChartHook } from './chart';
 import { TooltipHook } from './tooltip';
@@ -10,22 +10,27 @@ import '../../../common_ui/assets/js/shared';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
-  .getAttribute('content');
+  ?.getAttribute('content');
+
+const hooks: { [name: string]: Partial<ViewHook> } = {
+  IFrame: IFrameHook,
+  Chart: ChartHook,
+  Tooltip: TooltipHook,
+  ResourceLogsModal: ResourceLogsModalHook,
+};
 
 const liveSocket = new LiveSocket('/live', Socket, {
   params: { _csrf_token: csrfToken },
-  hooks: {
-    IFrame: IFrameHook,
-    Chart: ChartHook,
-    Tooltip: TooltipHook,
-    ResourceLogsModal: ResourceLogsModalHook,
-  },
+  hooks,
   dom: {
     // make LiveView work nicely with AlpineJS
     onBeforeElUpdated(from, to) {
-      if (from._x_dataStack) {
-        window.Alpine.clone(from, to);
+      const stack = (from as HTMLElement & XAttributes)._x_dataStack;
+
+      if (stack) {
+        Alpine.clone(from, to);
       }
+
       return true;
     },
   },

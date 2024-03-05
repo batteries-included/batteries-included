@@ -5,7 +5,7 @@ import '../../../common_ui/assets/js/shared';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
-  .getAttribute('content');
+  ?.getAttribute('content');
 
 const liveSocket = new LiveSocket('/live', Socket, {
   params: { _csrf_token: csrfToken },

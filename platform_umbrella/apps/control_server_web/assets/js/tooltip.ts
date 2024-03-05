@@ -1,15 +1,19 @@
+import { ViewHook } from 'phoenix_live_view';
 import tippy from 'tippy.js';
 
+export interface TooltipHookInterface extends ViewHook {
+  tippyInstances: any;
+  createTippy(): void;
+}
+
 export const TooltipHook = {
-  // When mounted create the tippy.js tooltip.
   mounted() {
     this.createTippy();
   },
 
-  // When updated remove any old tooltips and create new ones
   updated() {
     if (this.tippyInstances != null) {
-      this.tippyInstances.forEach((element) => {
+      this.tippyInstances.forEach((element: any) => {
         element.destroy();
       });
       this.tippyInstances = null;
@@ -17,7 +21,6 @@ export const TooltipHook = {
     this.createTippy();
   },
 
-  // The method to create tippy tooltips.
   createTippy() {
     const target = '#' + this.el.dataset.target;
     const content = this.el.innerHTML;
@@ -29,4 +32,4 @@ export const TooltipHook = {
 
     this.tippyInstances = tippy(target, { ...defaultOptions, ...tippyOptions });
   },
-};
+} as TooltipHookInterface;

@@ -1,4 +1,4 @@
-import Alpine from 'alpinejs';
+import Alpine, { XAttributes } from 'alpinejs';
 
 window.Alpine = Alpine;
 
@@ -11,10 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     Hooks: {},
     LiveSocketOptions: {
       dom: {
+        // make LiveView work nicely with AlpineJS
         onBeforeElUpdated(from, to) {
-          if (from._x_dataStack) {
-            window.Alpine.clone(from, to);
+          const stack = (from as HTMLElement & XAttributes)._x_dataStack;
+
+          if (stack) {
+            Alpine.clone(from, to);
           }
+
+          return true;
         },
       },
     },
