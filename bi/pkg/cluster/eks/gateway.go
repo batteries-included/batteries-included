@@ -3,6 +3,7 @@ package eks
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strconv"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
@@ -69,6 +70,8 @@ func toStringSlice(in interface{}) []string {
 	for _, x := range in.([]interface{}) {
 		out = append(out, x.(string))
 	}
+	// try to maintain some order so that things don't flip flop?
+	slices.Sort(out)
 	return out
 }
 
@@ -86,6 +89,7 @@ func (g *gateway) run(ctx *pulumi.Context) error {
 	}
 
 	ctx.Export("gatewayPublicIP", g.publicIP)
+	ctx.Export("gatewaySecurityGroupID", g.securityGroupID)
 
 	return nil
 }
@@ -149,7 +153,7 @@ func (g *gateway) iamProfile(ctx *pulumi.Context) error {
 
 	ssmPolicy, err := iam.LookupPolicy(ctx, &iam.LookupPolicyArgs{
 		Name: pulumi.StringRef("AmazonSSMManagedInstanceCore"),
-	}, nil)
+	})
 	if err != nil {
 		return err
 	}
@@ -167,7 +171,7 @@ func (g *gateway) iamProfile(ctx *pulumi.Context) error {
 				},
 			},
 		},
-	}, nil)
+	})
 	if err != nil {
 		return err
 	}
@@ -225,7 +229,7 @@ func (g *gateway) ec2Instance(ctx *pulumi.Context) error {
 		},
 		MostRecent: pulumi.BoolRef(true),
 		Owners:     []string{"099720109477"}, // Canonical
-	}, nil)
+	})
 	if err != nil {
 		return err
 	}

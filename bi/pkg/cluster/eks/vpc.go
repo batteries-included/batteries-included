@@ -84,7 +84,7 @@ func (v *vpc) getAZS(ctx *pulumi.Context) error {
 			Name:   "zone-type",
 			Values: []string{"availability-zone"},
 		}},
-	}, nil)
+	})
 
 	if err != nil {
 
@@ -228,7 +228,7 @@ func (v *vpc) buildRouteTables(ctx *pulumi.Context) error {
 			Tags: pulumi.StringMap{
 				"Name": pulumi.String(rtName),
 			},
-		}, nil)
+		})
 		if err != nil {
 			return err
 		}

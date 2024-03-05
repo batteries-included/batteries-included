@@ -50,6 +50,7 @@ type component struct {
 var components = []component{
 	{"vpc", &vpc{}},
 	{"gateway", &gateway{}},
+	{"cluster", &cluster{}},
 }
 
 func (e *eks) Up(ctx context.Context) error {

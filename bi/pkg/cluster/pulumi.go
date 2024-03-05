@@ -44,6 +44,7 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 	plugins := map[string]string{
 		"aws":       "v6.22.2",
 		"cloudinit": "v1.4.1",
+		"eks":       "v2.2.1",
 	}
 	if err := p.installPlugins(ctx, ws, plugins); err != nil {
 		return err
@@ -74,6 +75,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"cluster:gatewayInstanceType": {Value: "t3a.micro"},
 		"cluster:gatewayVolumeType":   {Value: "gp3"},
 		"cluster:gatewayVolumeSize":   {Value: "12"},
+		"cluster:version":             {Value: "1.29"},
 	}
 
 	dirs, err := p.makeDirs()
