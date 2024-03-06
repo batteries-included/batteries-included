@@ -5,6 +5,8 @@ defmodule ControlServerWeb.SidebarLayout do
 
   import CommonUI.Components.Logo
 
+  alias Phoenix.LiveView.JS
+
   attr :current_page, :atom,
     required: true,
     doc: "The current page. This will be used to highlight the current page in the menu."
@@ -30,21 +32,16 @@ defmodule ControlServerWeb.SidebarLayout do
 
   def sidebar_layout(assigns) do
     ~H"""
-    <div
-      class="flex h-screen overflow-hidden bg-white dark:bg-gray-darkest"
-      x-data="{sidebarOpen: false}"
-    >
+    <div class="flex h-screen overflow-hidden bg-white dark:bg-gray-darkest">
       <div class="relative z-40 lg:w-64">
         <div
-          x-show="sidebarOpen"
-          x-transition:enter="transition-opacity ease-linear duration-300"
-          x-transition:enter-start="opacity-0"
-          x-transition:enter-end="opacity-100"
-          x-transition:leave="transition-opacity ease-linear duration-300"
-          x-transition:leave-start="opacity-100"
-          x-transition:leave-end="opacity-0"
-          class="fixed inset-0 bg-gray-darkest/80"
+          class="fixed inset-0 bg-gray-darkest/80 hidden"
+          id="sidebarInset"
+          phx-click={hide_sidebar()}
         >
+          <!-- This is the backdrop that will be
+          shown when the sidebar is open. It's over
+          the content when mobile sidebar is open -->
         </div>
 
         <div
@@ -53,13 +50,12 @@ defmodule ControlServerWeb.SidebarLayout do
             "absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto",
             "transition-transform duration-200 ease-in-out transform border-r no-scrollbar",
             "lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto",
+            "-translate-x-64",
             @sidebar_bg_class,
             @sidebar_border_class
           ]}
-          x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'"
-          @click.away="sidebarOpen = false"
-          @keydown.escape.window="sidebarOpen = false"
-          x-cloak
+          phx-window-keydown={hide_sidebar()}
+          phx-key="Escape"
         >
           <div class="relative flex flex-col w-full h-full p-4 sidebar-background">
             <div class="flex items-center justify-between h-auto gap-2 px-3 pt-5 mb-10">
@@ -90,9 +86,8 @@ defmodule ControlServerWeb.SidebarLayout do
         <div class="flex min-w-[68px] mb-6 lg:mb-0">
           <button
             class="text-gray-dark hover:text-gray-darker lg:hidden"
-            @click.stop="sidebarOpen = !sidebarOpen"
             aria-controls="sidebar"
-            x-bind:aria-expanded="sidebarOpen"
+            phx-click={show_sidebar()}
           >
             <span class="sr-only">
               Open sidebar
@@ -105,6 +100,20 @@ defmodule ControlServerWeb.SidebarLayout do
       </div>
     </div>
     """
+  end
+
+  defp show_sidebar(js \\ %JS{}) do
+    js
+    |> JS.add_class("translate-x-0", to: "#sidebar")
+    |> JS.remove_class("-translate-x-64", to: "#sidebar")
+    |> JS.remove_class("hidden", to: "#sidebarInset")
+  end
+
+  defp hide_sidebar(js \\ %JS{}) do
+    js
+    |> JS.remove_class("translate-x-0", to: "#sidebar")
+    |> JS.add_class("-translate-x-64", to: "#sidebar")
+    |> JS.add_class("hidden", to: "#sidebarInset")
   end
 
   def background_gradient_blur(assigns) do

@@ -8,6 +8,7 @@
 
 @import './loader.css';
 @import './petal.css';
+@import './tippy.css';
 
 ::selection {
   @apply text-white bg-primary;

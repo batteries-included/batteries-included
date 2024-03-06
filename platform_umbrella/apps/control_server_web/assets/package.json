@@ -5,7 +5,7 @@
     "css:deploy": "NODE_ENV=production npm run tailwind -- --input=css/app.css --output=../priv/static/assets/app.css --minify",
     "css:deploy:dev": "npm run tailwind -- --input=css/app.css --output=../priv/static/assets/app.css",
     "js:deploy": "NODE_ENV=production npm run esbuild -- js/app.ts --outdir=../priv/static/assets --minify --analyze",
-    "js:deploy:dev": "npm run esbuild -- js/app.ts --outdir=../priv/static/assets",
+    "js:deploy:dev": "npm run esbuild -- js/app.ts --outdir=../priv/static/assets --sourcemap=inline",
     "typecheck": "tsc --noEmit --pretty"
   },
   "dependencies": {
@@ -13,11 +13,9 @@
     "@fontsource-variable/jetbrains-mono": "~5.0",
     "@tailwindcss/forms": "~0.5",
     "@tailwindcss/typography": "~0.5",
-    "@types/alpinejs": "~3.13",
     "@types/lodash": "~4.14",
     "@types/phoenix": "~1.6",
     "@types/phoenix_live_view": "~0.18",
-    "alpinejs": "~3.13",
     "autoprefixer": "~10.4",
     "chart.js": "~4.4",
     "esbuild": "~0.20",

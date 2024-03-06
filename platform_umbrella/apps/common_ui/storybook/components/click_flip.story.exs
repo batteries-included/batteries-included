@@ -12,7 +12,7 @@ defmodule Storybook.Components.ClickFlip do
           "Main Content",
           """
           <:hidden>
-          Inner Content
+          <input class="w-full rounded-md border-1" placeholder="Example Input" />
           </:hidden>
           """
         ]
@@ -24,7 +24,7 @@ defmodule Storybook.Components.ClickFlip do
           "Lots of Padding Here",
           """
           <:hidden>
-          Inner Content
+          <input class="w-full rounded-md border-1" placeholder="Example Input" />
           </:hidden>
           """
         ]

@@ -297,6 +297,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                         field={@form[:storage_size]}
                         type="number"
                         phx-change="change_storage_size"
+                        wrapper_class="grow"
                       />
                     </:hidden>
                   </.click_flip>

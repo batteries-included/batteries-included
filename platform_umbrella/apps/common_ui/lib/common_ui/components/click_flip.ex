@@ -1,10 +1,19 @@
 defmodule CommonUI.Components.ClickFlip do
-  @moduledoc false
+  @moduledoc """
+  This is a click to edit compoent that will flip
+  between a display side and an edit side. By default
+  the inner_block will be shown. That is the display
+  side. When clicked the edit side will be shown and the
+  first input will be focused. Clicking away our clicking
+  the check mark button will flip back to display.
+  """
   use CommonUI, :component
 
   import CommonUI.Components.Button
   import CommonUI.Components.Container
   import CommonUI.Components.Tooltip
+
+  alias CommonUI.IDHelpers
 
   slot :inner_block
   slot :hidden
@@ -17,28 +26,20 @@ defmodule CommonUI.Components.ClickFlip do
   attr :id, :string, required: false, default: nil
 
   def click_flip(assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
-    <.flex
-      x-data="{ open: false }"
-      {%{ "@keydown.escape.window" => "open = false"}}
-      class={@class}
-      id={@id}
-    >
+    <.flex class={@class} id={@id}>
       <div
         class={[
           @cursor_class,
           @content_class,
           "border border-transparent border-dashed hover:border-gray-light dark:hover-border-gray-darkest",
-          "rounded",
+          "rounded-md p-4",
           "hover:bg-gray-lightest/70 dark:hover:bg-gray-darkest/70"
         ]}
-        @click="open = !open"
-        x-cloak
-        x-show="!open"
-        x-transition:enter="transition ease-out duration-100"
-        x-transition:enter-start="transform opacity-0 scale-95"
-        x-transition:enter-end="transform opacity-100 scale-100"
         id={content_id(@id)}
+        phx-click={show_edit_content(@id)}
       >
         <%= render_slot(@inner_block) %>
         <.tooltip
@@ -50,15 +51,12 @@ defmodule CommonUI.Components.ClickFlip do
         </.tooltip>
       </div>
       <.flex
-        x-cloak
-        x-show="open"
-        x-transition:enter="transition ease-out duration-100"
-        x-transition:enter-start="transform opacity-0 scale-95"
-        x-transition:enter-end="transform opacity-100 scale-100"
-        class="items-center py-4 -mt-5"
+        class="items-center grow hidden"
+        phx-click-away={hide_edit_content(@id)}
+        id={edit_id(@id)}
       >
         <%= render_slot(@hidden) %>
-        <.button variant="icon" icon={:check} x-on:click="open = !open" />
+        <.button variant="icon" icon={:check} phx-click={hide_edit_content(@id)} />
       </.flex>
     </.flex>
     """
@@ -66,4 +64,20 @@ defmodule CommonUI.Components.ClickFlip do
 
   defp content_id(nil), do: nil
   defp content_id(id), do: "content_id_#{id}"
+
+  defp edit_id(nil), do: nil
+  defp edit_id(id), do: "edit_id_#{id}"
+
+  defp hide_edit_content(js \\ %JS{}, id) do
+    js
+    |> JS.toggle_class("hidden", to: "##{edit_id(id)}")
+    |> JS.toggle_class("hidden", to: "##{content_id(id)}")
+  end
+
+  defp show_edit_content(js \\ %JS{}, id) do
+    js
+    |> JS.toggle_class("hidden", to: "##{content_id(id)}")
+    |> JS.toggle_class("hidden", to: "##{edit_id(id)}")
+    |> JS.focus_first()
+  end
 end

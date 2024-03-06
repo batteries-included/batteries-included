@@ -2,7 +2,6 @@
 @import './iframe.css';
 @import './object_resource.css';
 @import './modal_scroller.css';
-@import './tippy.css';
 
 [x-cloak] {
   display: none !important;

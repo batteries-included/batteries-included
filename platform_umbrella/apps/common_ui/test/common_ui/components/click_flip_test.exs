@@ -8,7 +8,7 @@ defmodule CommonUI.Components.ClickFlipTest do
       assigns = %{}
 
       ~H"""
-      <.click_flip>
+      <.click_flip id="test1">
         Main Content Here
         <:hidden>
           This conent will only be shown when clicked
@@ -34,7 +34,7 @@ defmodule CommonUI.Components.ClickFlipTest do
       assigns = %{}
 
       ~H"""
-      <.click_flip class="p-4" content_class="p-8">
+      <.click_flip class="p-4" content_class="p-8" id="test3-with-class">
         Look at the room here
         <:hidden>
           Dunno what to say, it's click to edit

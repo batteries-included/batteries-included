@@ -5,6 +5,8 @@ defmodule CommonUI.Components.Tooltip do
   import CommonUI.Components.Icon
   import CommonUI.TextHelpers
 
+  alias CommonUI.IDHelpers
+
   attr :target_id, :string, required: true
   attr :tippy_options, :map, default: %{}
   attr :rest, :global
@@ -33,11 +35,13 @@ defmodule CommonUI.Components.Tooltip do
     """
   end
 
-  attr :id, :string, required: true
+  attr :id, :string, required: false, default: nil
   attr :class, :string, required: false, default: ""
   slot :inner_block
 
   def help_question_mark(assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
     <div :if={@inner_block != nil && @inner_block != []} class={["cursor-pointer", @class]} id={@id}>
       <.icon name={:question_mark_circle} class="w-6 h-auto" />

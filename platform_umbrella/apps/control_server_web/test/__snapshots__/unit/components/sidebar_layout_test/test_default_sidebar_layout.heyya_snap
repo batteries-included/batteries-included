@@ -1,9 +1,12 @@
-<div class="flex h-screen overflow-hidden bg-white dark:bg-gray-darkest" x-data="{sidebarOpen: false}">
+<div class="flex h-screen overflow-hidden bg-white dark:bg-gray-darkest">
   <div class="relative z-40 lg:w-64">
-    <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-darkest/80">
+    <div class="fixed inset-0 bg-gray-darkest/80 hidden" id="sidebarInset" phx-click="[[&quot;remove_class&quot;,{&quot;names&quot;:[&quot;translate-x-0&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;add_class&quot;,{&quot;names&quot;:[&quot;-translate-x-64&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;add_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#sidebarInset&quot;}]]">
+      <!-- This is the backdrop that will be
+      shown when the sidebar is open. It's over
+      the content when mobile sidebar is open -->
     </div>
 
-    <div id="sidebar" class="absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-200 ease-in-out transform border-r no-scrollbar lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto bg-white dark:bg-gray-darkest border-gray-lighter dark:border-gray-darker" x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'" @click.away="sidebarOpen = false" @keydown.escape.window="sidebarOpen = false" x-cloak>
+    <div id="sidebar" class="absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-200 ease-in-out transform border-r no-scrollbar lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto -translate-x-64 bg-white dark:bg-gray-darkest border-gray-lighter dark:border-gray-darker" phx-window-keydown="[[&quot;remove_class&quot;,{&quot;names&quot;:[&quot;translate-x-0&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;add_class&quot;,{&quot;names&quot;:[&quot;-translate-x-64&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;add_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#sidebarInset&quot;}]]" phx-key="Escape">
       <div class="relative flex flex-col w-full h-full p-4 sidebar-background">
         <div class="flex items-center justify-between h-auto gap-2 px-3 pt-5 mb-10">
           <a href="/" class="flex-1 block h-9">
@@ -101,7 +104,7 @@
 
   <div class="relative flex flex-col flex-1 p-8 overflow-x-auto overflow-y-auto lg:pb-0">
     <div class="flex min-w-[68px] mb-6 lg:mb-0">
-      <button class="text-gray-dark hover:text-gray-darker lg:hidden" @click.stop="sidebarOpen = !sidebarOpen" aria-controls="sidebar" x-bind:aria-expanded="sidebarOpen">
+      <button class="text-gray-dark hover:text-gray-darker lg:hidden" aria-controls="sidebar" phx-click="[[&quot;add_class&quot;,{&quot;names&quot;:[&quot;translate-x-0&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;remove_class&quot;,{&quot;names&quot;:[&quot;-translate-x-64&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;remove_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#sidebarInset&quot;}]]">
         <span class="sr-only">
           Open sidebar
         </span>
