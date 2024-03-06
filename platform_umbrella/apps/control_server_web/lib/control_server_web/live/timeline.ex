@@ -168,7 +168,7 @@ defmodule ControlServerWeb.Live.Timeline do
   @spec render(any) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.page_header title="Timeline" back_button={%{link_type: "live_redirect", to: "/magic"}} />
+    <.page_header title="Timeline" back_link={~p"/magic"} />
     <.flex column class="rounded-xl border-gray-lighter dark:border-gray-darkest p-0 border">
       <.event_item :for={event <- @events} event={event} />
     </.flex>

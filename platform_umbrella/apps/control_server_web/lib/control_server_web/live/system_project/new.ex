@@ -19,10 +19,7 @@ defmodule ControlServerWeb.Live.SystemProjectNew do
   def render(assigns) do
     ~H"""
     <div>
-      <.page_header
-        title={@page_title}
-        back_button={%{link_type: "live_redirect", to: ~p"/system_projects"}}
-      />
+      <.page_header title={@page_title} back_link={~p"/system_projects"} />
 
       <.live_component
         module={FormComponent}

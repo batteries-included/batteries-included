@@ -154,10 +154,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-    <.page_header
-      title={@realm.displayName}
-      back_button={%{link_type: "live_redirect", to: ~p"/keycloak/realms"}}
-    >
+    <.page_header title={@realm.displayName} back_link={~p"/keycloak/realms"}>
       <:menu>
         <.data_horizontal_bordered>
           <:item title="Name"><%= @realm.realm %></:item>

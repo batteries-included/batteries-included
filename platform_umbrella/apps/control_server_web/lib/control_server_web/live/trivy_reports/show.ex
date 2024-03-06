@@ -75,10 +75,7 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
 
   def render(assigns) do
     ~H"""
-    <.page_header
-      title={@page_title}
-      back_button={%{link_type: "live_redirect", to: ~p"/trivy_reports/vulnerability_report"}}
-    >
+    <.page_header title={@page_title} back_link={~p"/trivy_reports/vulnerability_report"}>
       <:menu>
         <.data_horizontal_bordered>
           <:item title="Artifact">

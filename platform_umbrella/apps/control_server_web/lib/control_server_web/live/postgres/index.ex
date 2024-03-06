@@ -41,7 +41,7 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/data"}}>
+    <.page_header title={@page_title} back_link={~p"/data"}>
       <:menu>
         <.button variant="secondary" link={new_url()}>
           New Cluster

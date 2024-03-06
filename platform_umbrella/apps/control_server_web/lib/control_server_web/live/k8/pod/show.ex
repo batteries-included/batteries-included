@@ -268,7 +268,7 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp main_page(assigns) do
     ~H"""
-    <.page_header title={@name} back_button={%{link_type: "live_redirect", to: ~p"/kube/pods"}}>
+    <.page_header title={@name} back_link={~p"/kube/pods"}>
       <:menu>
         <.pod_facts_section resource={@resource} namespace={@namespace} />
       </:menu>
@@ -291,10 +291,7 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp events_page(assigns) do
     ~H"""
-    <.page_header
-      title={@name}
-      back_button={%{link_type: "live_redirect", to: resource_path(@resource)}}
-    >
+    <.page_header title={@name} back_link={resource_path(@resource)}>
       <:menu>
         <.pod_facts_section resource={@resource} namespace={@namespace} />
       </:menu>
@@ -305,10 +302,7 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp labels_page(assigns) do
     ~H"""
-    <.page_header
-      title={@name}
-      back_button={%{link_type: "live_redirect", to: resource_path(@resource)}}
-    >
+    <.page_header title={@name} back_link={resource_path(@resource)}>
       <:menu>
         <.pod_facts_section resource={@resource} namespace={@namespace} />
       </:menu>
@@ -339,10 +333,7 @@ defmodule ControlServerWeb.PodLive.Show do
 
   defp security_page(assigns) do
     ~H"""
-    <.page_header
-      title={@name}
-      back_button={%{link_type: "live_redirect", to: resource_path(@resource)}}
-    >
+    <.page_header title={@name} back_link={resource_path(@resource)}>
       <:menu>
         <.pod_facts_section resource={@resource} namespace={@namespace} />
       </:menu>

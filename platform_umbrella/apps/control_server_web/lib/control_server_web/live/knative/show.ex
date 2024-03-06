@@ -160,10 +160,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp main_page(assigns) do
     ~H"""
-    <.page_header
-      title={@page_title}
-      back_button={%{link_type: "live_redirect", to: ~p"/knative/services"}}
-    >
+    <.page_header title={@page_title} back_link={~p"/knative/services"}>
       <:menu>
         <.flex>
           <.button variant="secondary" link={edit_versions_url(@service)}>
@@ -202,7 +199,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp edit_versions_page(assigns) do
     ~H"""
-    <.page_header title="Edit History" back_button={%{link_type: "a", to: show_url(@service)}} />
+    <.page_header title="Edit History" back_link={show_url(@service)} />
     <.panel title="Edit History">
       <.edit_versions_table edit_versions={@edit_versions} abbridged />
     </.panel>

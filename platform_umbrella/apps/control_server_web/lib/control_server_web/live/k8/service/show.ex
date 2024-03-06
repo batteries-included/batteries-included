@@ -172,7 +172,7 @@ defmodule ControlServerWeb.ServiceLive.Show do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@name} back_button={%{link_type: "live_redirect", to: ~p"/kube/services"}}>
+    <.page_header title={@name} back_link={~p"/kube/services"}>
       <:menu>
         <.data_horizontal_bordered>
           <:item title="Namespace"><%= @namespace %></:item>

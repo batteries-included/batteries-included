@@ -9,8 +9,7 @@
     <div id="sidebar" class="absolute top-0 left-0 z-40 flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-200 ease-in-out transform border-r no-scrollbar lg:static lg:left-auto lg:top-auto lg:translate-x-0 lg:overflow-y-auto -translate-x-64 bg-white dark:bg-gray-darkest border-gray-lighter dark:border-gray-darker" phx-window-keydown="[[&quot;remove_class&quot;,{&quot;names&quot;:[&quot;translate-x-0&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;add_class&quot;,{&quot;names&quot;:[&quot;-translate-x-64&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;add_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#sidebarInset&quot;}]]" phx-key="Escape">
       <div class="relative flex flex-col w-full h-full p-4 sidebar-background">
         <div class="flex items-center justify-between h-auto gap-2 px-3 pt-5 mb-10">
-          <a href="/" class="flex-1 block h-9">
-  
+          <a href="/" data-phx-link="redirect" data-phx-link-state="push" class="flex-1 block h-9">
             <div class="inline-flex justify-center transition-none animation-none ">
   <svg aria-label="Batteries Included Logo, a cloud with charged ends" viewBox="0 0 145 92" class="size-12 mr-4">
   <path class="fill-primary" d="M36.54,38.3h-4.68c-11.73,0-21.32,9.59-21.32,21.32h0c0,11.73,9.6,21.32,21.32,21.32h27.17c1.4,0,2.76-.14,4.09-.4h-.06c7.83-1.54,14.16-7.4,16.38-14.97-2.83-1.96-4.68-5.23-4.68-8.94,0-6,4.87-10.87,10.87-10.87s10.87,4.87,10.87,10.87c0,4.42-2.64,8.23-6.44,9.93-.05,.21-.09,.41-.14,.61h.06c-3.42,13.85-15.98,24.2-30.84,24.2H31.76C14.29,91.37,0,77.08,0,59.62H0c0-15.85,11.77-29.09,27.01-31.4l-.07-.07C33.69-2.39,69.77-8.99,89.27,12.83,57.24,1.93,38.52,9.66,36.54,38.3h0Zm47.66,12.24v4.68h-4.68v2.84h4.68v4.68h2.84v-4.68h4.68v-2.84h-4.68v-4.68h-2.84Z"></path>
@@ -22,8 +21,7 @@
     <div class="text-[0.6125rem] tracking-[0.35rem]">INCLUDED</div>
   </div>
 </div>
-          
-</a>
+          </a>
         </div>
 
         <div class="flex flex-col justify-between h-full">

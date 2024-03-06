@@ -2,16 +2,14 @@ defmodule ControlServerWeb.Common.Page do
   @moduledoc false
   use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
 
+  import CommonUI.Components.Button
   import CommonUI.Components.Container
   import CommonUI.Components.Icon
   import CommonUI.Components.Link
   import CommonUI.Components.Typography
 
-  attr :title, :string
-
-  attr :back_button, :map,
-    default: nil,
-    doc: ~s|Attributes for the back link, if it exists. eg. back_button={%{link_type="live_redirect" to="/"}}|
+  attr :title, :string, default: nil
+  attr :back_link, :string, default: nil
 
   slot :menu
 
@@ -21,18 +19,16 @@ defmodule ControlServerWeb.Common.Page do
     ~H"""
     <.flex class="items-center justify-between mb-6">
       <.flex class="flex items-center gap-4">
-        <PC.a
-          :if={@back_button}
-          {@back_button}
-          class="inline-block p-1.5 border border-gray-lighter rounded-lg border-1 dark:border-gray-darker"
-        >
-          <.icon
-            name={:arrow_left}
-            class="w-4 h-4 stroke-[3] text-primary fill-primary dark:text-primary-light dark:fill-primary-light"
-          />
-        </PC.a>
+        <.button
+          :if={@back_link}
+          link={@back_link}
+          icon={:arrow_left}
+          variant="icon_bordered"
+          class="rounded-lg"
+        />
+
         <.flex class="items-center">
-          <.h3 class="text-2xl font-medium text-black dark:text-white">
+          <.h3 :if={@title} class="text-2xl font-medium text-black dark:text-white">
             <%= @title %>
           </.h3>
         </.flex>

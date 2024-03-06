@@ -52,7 +52,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/ml"}} />
+    <.page_header title={@page_title} back_link={~p"/ml"} />
     <.panel title="Jupyter Notebooks">
       <:menu>
         <.button variant="primary" phx-click="start_notebook">

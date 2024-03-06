@@ -154,10 +154,7 @@ defmodule ControlServerWeb.Live.EditVersionShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header
-      title={@page_title}
-      back_button={%{link_type: "a", to: entity_history_url(@edit_version)}}
-    >
+    <.page_header title={@page_title} back_link={entity_history_url(@edit_version)}>
       <:menu>
         <.data_horizontal_bordered>
           <:item title="Action">

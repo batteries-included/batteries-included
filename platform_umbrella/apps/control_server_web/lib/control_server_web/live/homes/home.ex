@@ -53,7 +53,7 @@ defmodule ControlServerWeb.Live.Home do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Batteries Included">
+    <.page_header>
       <:menu>
         <.button variant="secondary" link={~p"/batteries/magic"}>
           Manage Batteries

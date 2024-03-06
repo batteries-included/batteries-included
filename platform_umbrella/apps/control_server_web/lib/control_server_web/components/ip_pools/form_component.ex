@@ -78,7 +78,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.page_header title={@title} back_button={%{link_type: "live_redirect", to: cancel_url()}} />
+        <.page_header title={@title} back_link={cancel_url()} />
 
         <.panel>
           <PC.field field={@form[:name]} label="Pool Name" autofocus />

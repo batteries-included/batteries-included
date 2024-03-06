@@ -199,10 +199,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp main_page(assigns) do
     ~H"""
-    <.page_header
-      title={"Postgres Cluster: #{@cluster.name}"}
-      back_button={%{link_type: "live_redirect", to: ~p"/postgres"}}
-    >
+    <.page_header title={"Postgres Cluster: #{@cluster.name}"} back_link={~p"/postgres"}>
       <:menu>
         <.flex>
           <.data_horizontal_bordered>
@@ -238,7 +235,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp users_page(assigns) do
     ~H"""
-    <.page_header title="Users" back_button={%{link_type: "live_redirect", to: show_url(@cluster)}} />
+    <.page_header title="Users" back_link={show_url(@cluster)} />
 
     <.flex column>
       <.panel title="Users">
@@ -253,10 +250,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp services_page(assigns) do
     ~H"""
-    <.page_header
-      title="Network Services"
-      back_button={%{link_type: "live_redirect", to: show_url(@cluster)}}
-    />
+    <.page_header title="Network Services" back_link={show_url(@cluster)} />
     <.panel title="Services">
       <.services_table services={@k8_services} />
     </.panel>
@@ -265,10 +259,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp edit_versions_page(assigns) do
     ~H"""
-    <.page_header
-      title="Edit History"
-      back_button={%{link_type: "live_redirect", to: show_url(@cluster)}}
-    />
+    <.page_header title="Edit History" back_link={show_url(@cluster)} />
     <.panel title="Edit History">
       <.edit_versions_table edit_versions={@edit_versions} abbridged />
     </.panel>

@@ -86,7 +86,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/magic"}} />
+    <.page_header title={@page_title} back_link={~p"/magic"} />
 
     <.deleted_resources_table
       :if={@deleted_resources != nil && @deleted_resources != []}

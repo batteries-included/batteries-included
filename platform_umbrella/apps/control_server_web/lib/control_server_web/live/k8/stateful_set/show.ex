@@ -67,10 +67,7 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header
-      title={@name}
-      back_button={%{link_type: "live_redirect", to: ~p"/kube/stateful_sets"}}
-    >
+    <.page_header title={@name} back_link={~p"/kube/stateful_sets"}>
       <:menu>
         <.stateful_set_facts_section namespace={@namespace} resource={@resource} />
       </:menu>

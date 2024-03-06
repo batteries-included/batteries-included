@@ -242,10 +242,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
       apply_result={@apply_result}
     />
 
-    <.page_header
-      title={group_title(@group)}
-      back_button={%{link_type: "live_redirect", to: group_home_link(@group)}}
-    />
+    <.page_header title={group_title(@group)} back_link={group_home_link(@group)} />
 
     <.catalog_batteries_table
       catalog_batteries={@catalog_batteries}

@@ -43,7 +43,7 @@ defmodule ControlServerWeb.Live.UmbrellaSnapshotShow do
 
   def render(assigns) do
     ~H"""
-    <.page_header title="Show Deploy" back_button={%{link_type: "live_redirect", to: ~p"/magic"}}>
+    <.page_header title="Show Deploy" back_link={~p"/magic"}>
       <:menu>
         <.flex>
           <.data_horizontal_bordered>

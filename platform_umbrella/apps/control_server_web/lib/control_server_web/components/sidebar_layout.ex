@@ -59,9 +59,9 @@ defmodule ControlServerWeb.SidebarLayout do
         >
           <div class="relative flex flex-col w-full h-full p-4 sidebar-background">
             <div class="flex items-center justify-between h-auto gap-2 px-3 pt-5 mb-10">
-              <.a class="flex-1 block h-9" to={@home_path}>
+              <.link navigate={@home_path} class="flex-1 block h-9">
                 <.logo variant="full" />
-              </.a>
+              </.link>
             </div>
 
             <div class="flex flex-col justify-between h-full">

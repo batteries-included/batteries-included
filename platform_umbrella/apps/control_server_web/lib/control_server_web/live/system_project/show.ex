@@ -27,10 +27,7 @@ defmodule ControlServerWeb.Live.SystemProjectShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header
-      title={@page_title}
-      back_button={%{link_type: "live_redirect", to: ~p"/system_projects"}}
-    >
+    <.page_header title={@page_title} back_link={~p"/system_projects"}>
       <:menu>
         <.button variant="secondary" phx-click="delete" data-confirm="Are you sure?">
           Delete

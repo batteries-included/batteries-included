@@ -21,12 +21,24 @@ defmodule Storybook.Components.Button do
         id: :default,
         slots: ["Default Button"]
       },
-      %Variation{
+      %VariationGroup{
         id: :minimal,
-        slots: ["Minimal Button"],
-        attributes: %{
-          variant: "minimal"
-        }
+        variations: [
+          %Variation{
+            id: :minimal_button,
+            slots: ["Minimal Button"],
+            attributes: %{
+              variant: "minimal"
+            }
+          },
+          %Variation{
+            id: :minimal_icon,
+            attributes: %{
+              variant: "minimal",
+              icon: :trash
+            }
+          }
+        ]
       },
       %Variation{
         id: :primary,
@@ -52,17 +64,17 @@ defmodule Storybook.Components.Button do
         }
       },
       %Variation{
-        id: :circle,
-        attributes: %{
-          variant: "circle",
-          icon: :arrow_right
-        }
-      },
-      %Variation{
         id: :icon,
         attributes: %{
           variant: "icon",
           icon: :trash
+        }
+      },
+      %Variation{
+        id: :icon_bordered,
+        attributes: %{
+          variant: "icon_bordered",
+          icon: :arrow_left
         }
       },
       %Variation{

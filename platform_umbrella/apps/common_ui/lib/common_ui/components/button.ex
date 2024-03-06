@@ -8,7 +8,7 @@ defmodule CommonUI.Components.Button do
   attr :link_type, :string, default: "redirect", values: ["redirect", "patch", "external"]
   attr :link_replace, :boolean, default: false
 
-  attr :variant, :string, values: ["primary", "secondary", "dark", "circle", "icon", "minimal"]
+  attr :variant, :string, values: ["primary", "secondary", "dark", "icon", "icon_bordered", "minimal"]
   attr :tag, :string, default: "button"
   attr :class, :string, default: nil
   attr :icon, :atom, default: nil
@@ -87,12 +87,12 @@ defmodule CommonUI.Components.Button do
     "min-w-36 px-5 py-3 rounded-lg text-white bg-gray-darkest hover:bg-gray-darker disabled:bg-gray-lighter"
   end
 
-  defp button_class("circle") do
-    "p-3 rounded-full border border-gray-lighter text-gray-darker hover:text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
+  defp button_class("icon") do
+    "size-9 p-2 rounded-full text-gray-darker hover:text-primary hover:bg-gray-lightest/75 disabled:text-gray"
   end
 
-  defp button_class("icon") do
-    "p-3 rounded-full text-gray-darker hover:text-primary hover:bg-gray-lightest/75 disabled:text-gray"
+  defp button_class("icon_bordered") do
+    "size-9 p-1.5 rounded-full border border-gray-lighter text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
   end
 
   defp button_class("minimal") do

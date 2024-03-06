@@ -322,10 +322,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.page_header
-          title={@title}
-          back_button={%{link_type: "live_redirect", to: ~p"/knative/services"}}
-        >
+        <.page_header title={@title} back_link={~p"/knative/services"}>
           <:menu>
             <.button variant="dark" type="submit" phx-disable-with="Saving…">
               Save Serverless

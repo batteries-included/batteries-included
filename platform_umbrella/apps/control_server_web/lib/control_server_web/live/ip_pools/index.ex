@@ -31,7 +31,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/net_sec"}} />
+    <.page_header title={@page_title} back_link={~p"/net_sec"} />
 
     <.panel title="IP Addresses">
       <:menu>

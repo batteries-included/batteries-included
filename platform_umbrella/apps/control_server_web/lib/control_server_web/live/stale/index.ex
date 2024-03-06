@@ -15,7 +15,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/magic"}} />
+    <.page_header title={@page_title} back_link={~p"/magic"} />
     <.stale_table :if={@stale != nil && @stale != []} rows={@stale} />
     <.empty_state :if={@stale == nil || @stale == []} />
     """

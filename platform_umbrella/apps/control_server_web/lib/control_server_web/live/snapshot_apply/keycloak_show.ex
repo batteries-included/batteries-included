@@ -33,10 +33,7 @@ defmodule ControlServerWeb.Live.KeycloakSnapshotShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header
-      title="Keycloak Deploy"
-      back_button={%{link_type: "live_redirect", to: ~p(/deploy/#{@umbrella_id}/show)}}
-    >
+    <.page_header title="Keycloak Deploy" back_link={~p"/deploy/#{@umbrella_id}/show"}>
       <:menu>
         <.flex>
           <.data_horizontal_bordered>

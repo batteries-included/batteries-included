@@ -72,10 +72,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   defp main_page(assigns) do
     ~H"""
-    <.page_header
-      title={"FerretDB Service: #{@ferret_service.name}"}
-      back_button={%{link_type: "live_redirect", to: ~p"/ferretdb"}}
-    >
+    <.page_header title={"FerretDB Service: #{@ferret_service.name}"} back_link={~p"/ferretdb"}>
       <:menu>
         <.flex>
           <.data_horizontal_bordered>
@@ -105,7 +102,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   defp edit_versions_page(assigns) do
     ~H"""
-    <.page_header title="Edit History" back_button={%{link_type: "a", to: show_url(@ferret_service)}} />
+    <.page_header title="Edit History" back_link={show_url(@ferret_service)} />
     <.panel title="Edit History">
       <.edit_versions_table edit_versions={@edit_versions} abbridged />
     </.panel>

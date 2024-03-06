@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/devtools"}}>
+    <.page_header title={@page_title} back_link={~p"/devtools"}>
       <:menu>
         <.button variant="secondary" link={new_url()}>
           New Service

@@ -72,7 +72,7 @@ defmodule ControlServerWeb.DeploymentLive.Show do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@name} back_button={%{link_type: "live_redirect", to: ~p"/kube/deployments"}}>
+    <.page_header title={@name} back_link={~p"/kube/deployments"}>
       <:menu>
         <.deployment_facts_section namespace={@namespace} resource={@resource} />
       </:menu>

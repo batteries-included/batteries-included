@@ -52,10 +52,7 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header
-      title="Deploys"
-      back_button={%{link_type: "live_redirect", to: ~p"/batteries/magic"}}
-    >
+    <.page_header title="Deploys" back_link={~p"/batteries/magic"}>
       <:menu :if={@deploys_running}>
         <.button variant="secondary" phx-click="start-deploy">
           Start Deploy
