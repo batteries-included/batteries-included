@@ -3,7 +3,7 @@ defmodule ControlServerWeb.SidebarLayout do
   use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
   use PetalComponents
 
-  import CommonUI.Components.Brand
+  import CommonUI.Components.Logo
 
   attr :current_page, :atom,
     required: true,
@@ -64,7 +64,7 @@ defmodule ControlServerWeb.SidebarLayout do
           <div class="relative flex flex-col w-full h-full p-4 sidebar-background">
             <div class="flex items-center justify-between h-auto gap-2 px-3 pt-5 mb-10">
               <.a class="flex-1 block h-9" to={@home_path}>
-                <.brand />
+                <.logo variant="full" />
               </.a>
             </div>
 

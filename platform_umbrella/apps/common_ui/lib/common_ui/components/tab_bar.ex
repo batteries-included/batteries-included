@@ -23,7 +23,7 @@ defmodule CommonUI.Components.TabBar do
 
   def tab_bar(assigns) do
     ~H"""
-    <div class={["pb-6", @class]}>
+    <div class={@class}>
       <.flex
         class={[
           "isolate",

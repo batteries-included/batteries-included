@@ -2,22 +2,7 @@ defmodule CommonUI.Components.Stats do
   @moduledoc false
   use CommonUI, :component
 
-  import CommonUI.Components.Card
   import CommonUI.Components.Typography
-
-  def stats(assigns) do
-    assigns = assign_new(assigns, :inner_block, fn -> nil end)
-
-    ~H"""
-    <.card>
-      <%= if @inner_block do %>
-        <div class="flex flex-row justify-around">
-          <%= render_slot(@inner_block) %>
-        </div>
-      <% end %>
-    </.card>
-    """
-  end
 
   def stat(assigns) do
     assigns = assign_new(assigns, :inner_block, fn -> nil end)

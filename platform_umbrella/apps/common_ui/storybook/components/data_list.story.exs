@@ -4,9 +4,6 @@ defmodule Storybook.Components.DataList do
 
   def function, do: &CommonUI.Components.DataList.data_list/1
 
-  def attributes, do: []
-  def slots, do: []
-
   def variations,
     do: [
       %Variation{

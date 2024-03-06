@@ -4,9 +4,6 @@ defmodule Storybook.Components.RelativeDisplay do
 
   def function, do: &CommonUI.Components.DatetimeDisplay.relative_display/1
 
-  def attributes, do: []
-  def slots, do: []
-
   def variations,
     do: [
       %Variation{id: :default, slots: [], attributes: %{time: DateTime.utc_now()}},

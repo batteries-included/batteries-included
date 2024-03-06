@@ -4,9 +4,6 @@ defmodule Storybook.Components.Link do
 
   def function, do: &CommonUI.Components.Link.a/1
 
-  def attributes, do: []
-  def slots, do: []
-
   def variations,
     do: [
       %Variation{

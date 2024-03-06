@@ -26,9 +26,7 @@ defmodule CommonUI do
 
   defmacro __using__(_) do
     quote do
-      import CommonUI.Components.Brand
       import CommonUI.Components.Button
-      import CommonUI.Components.Card
       import CommonUI.Components.ClickFlip
       import CommonUI.Components.Container
       import CommonUI.Components.DataList
@@ -40,6 +38,7 @@ defmodule CommonUI do
       import CommonUI.Components.Logo
       import CommonUI.Components.Modal
       import CommonUI.Components.MutliSelect
+      import CommonUI.Components.Panel
       import CommonUI.Components.RoundedLabel
       import CommonUI.Components.Stats
       import CommonUI.Components.TabBar

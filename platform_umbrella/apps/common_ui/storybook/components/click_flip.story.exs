@@ -4,9 +4,6 @@ defmodule Storybook.Components.ClickFlip do
 
   def function, do: &CommonUI.Components.ClickFlip.click_flip/1
 
-  def attributes, do: []
-  def slots, do: []
-
   def variations,
     do: [
       %Variation{

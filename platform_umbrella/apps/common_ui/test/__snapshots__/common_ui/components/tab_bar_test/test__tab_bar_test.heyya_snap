@@ -1,4 +1,4 @@
-<div class="pb-6 ">
+<div class="">
   <div class="gap-4 lg:gap-6 flex isolate rounded-lg border-gray-lighter dark:bg-gray-darkest dark:border-gray-darker border flex-col lg:flex-row" aria-label="Tabs">
   
     

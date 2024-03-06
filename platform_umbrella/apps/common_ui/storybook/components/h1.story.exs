@@ -4,9 +4,6 @@ defmodule Storybook.Components.H1 do
 
   def function, do: &CommonUI.Components.Typography.h1/1
 
-  def attributes, do: []
-  def slots, do: []
-
   def variations,
     do: [
       %Variation{id: :default, slots: ["H1 Header"]},

@@ -24,7 +24,7 @@ defmodule HomeBaseWeb.TopMenuLayout do
                 <div class="flex items-center">
                   <div class="flex-shrink-0">
                     <.a navigate="/">
-                      <.logo top_cloud_class="fill-primary" />
+                      <.logo class="size-12" />
                     </.a>
                   </div>
                   <.main_menu menu_items={@main_menu_items} page={@page} />
