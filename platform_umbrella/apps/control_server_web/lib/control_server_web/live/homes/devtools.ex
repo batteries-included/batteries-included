@@ -11,7 +11,11 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_batteries() |> assign_knative_services()}
+    {:ok,
+     socket
+     |> assign_batteries()
+     |> assign_knative_services()
+     |> assign_current_page()}
   end
 
   defp assign_batteries(socket) do
@@ -20,6 +24,10 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   defp assign_knative_services(socket) do
     assign(socket, knative_services: knative_services())
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, current_page: :devtools)
   end
 
   defp knative_panel(assigns) do

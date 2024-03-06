@@ -11,7 +11,23 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_page_title() |> assign_notebooks()}
+    {:ok,
+     socket
+     |> assign_page_title()
+     |> assign_notebooks()
+     |> assign_current_page()}
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, :page_title, "ML Notebooks")
+  end
+
+  defp assign_notebooks(socket) do
+    assign(socket, :notebooks, list_jupyter_lab_notebooks())
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :ml)
   end
 
   @impl Phoenix.LiveView
@@ -31,14 +47,6 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
       Installer.install!(:notebooks)
       {:noreply, assign_notebooks(socket)}
     end
-  end
-
-  defp assign_page_title(socket) do
-    assign(socket, :page_title, "ML Notebooks")
-  end
-
-  defp assign_notebooks(socket) do
-    assign(socket, :notebooks, list_jupyter_lab_notebooks())
   end
 
   @impl Phoenix.LiveView

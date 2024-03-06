@@ -19,7 +19,8 @@ defmodule ControlServerWeb.Live.MagicHome do
      socket
      |> assign_snapshots()
      |> assign_batteries()
-     |> assign_deploys_running()}
+     |> assign_deploys_running()
+     |> assign_current_page()}
   end
 
   defp assign_batteries(socket) do
@@ -33,6 +34,10 @@ defmodule ControlServerWeb.Live.MagicHome do
   def assign_snapshots(socket) do
     snaps = Umbrella.latest_umbrella_snapshots()
     assign(socket, :snapshots, snaps)
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, current_page: :magic)
   end
 
   @impl Phoenix.LiveView

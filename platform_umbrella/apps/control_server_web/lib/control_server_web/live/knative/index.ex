@@ -7,7 +7,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign_services(socket)}
+    {:ok, socket |> assign_services() |> assign_current_page()}
   end
 
   @impl Phoenix.LiveView
@@ -21,6 +21,10 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   defp assign_services(socket) do
     assign(socket, :services, list_services())
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, :current_page, :devtools)
   end
 
   defp new_url, do: ~p"/knative/services/new"

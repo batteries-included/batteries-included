@@ -10,11 +10,18 @@ defmodule ControlServerWeb.Live.MonitoringHome do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign_batteries(socket)}
+    {:ok,
+     socket
+     |> assign_batteries()
+     |> assign_current_page()}
   end
 
   defp assign_batteries(socket) do
     assign(socket, batteries: SummaryBatteries.installed_batteries(:monitoring))
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, current_page: :monitoring)
   end
 
   defp battery_link_panel(%{battery: %{type: :grafana}} = assigns) do

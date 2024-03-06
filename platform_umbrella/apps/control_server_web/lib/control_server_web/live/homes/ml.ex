@@ -11,7 +11,11 @@ defmodule ControlServerWeb.Live.MLHome do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_batteries() |> assign_notebooks()}
+    {:ok,
+     socket
+     |> assign_batteries()
+     |> assign_notebooks()
+     |> assign_current_page()}
   end
 
   defp assign_batteries(socket) do
@@ -20,6 +24,10 @@ defmodule ControlServerWeb.Live.MLHome do
 
   defp assign_notebooks(socket) do
     assign(socket, notebooks: notebooks())
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, current_page: :ml)
   end
 
   defp notebooks_panel(assigns) do
