@@ -27,18 +27,27 @@ defmodule ControlServerWeb.FerretServicesTable do
       </:col>
       <:action :let={{_id, ferret_service}}>
         <.flex class="justify-items-center align-middle">
-          <.action_icon
-            to={show_url(ferret_service)}
+          <.button
+            variant="minimal"
+            link={show_url(ferret_service)}
             icon={:eye}
-            tooltip={"Show FerretDB Service " <> ferret_service.name}
             id={"show_ferret_service_" <> ferret_service.id}
           />
-          <.action_icon
-            to={edit_url(ferret_service)}
+
+          <.tooltip target_id={"show_ferret_service_" <> ferret_service.id}>
+            Show FerretDB Service <%= ferret_service.name %>
+          </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={edit_url(ferret_service)}
             icon={:pencil}
-            tooltip={"Edit FerretDB Service " <> ferret_service.name}
             id={"edit_pool_" <> ferret_service.id}
           />
+
+          <.tooltip target_id={"edit_pool_" <> ferret_service.id}>
+            Edit FerretDB Service <%= ferret_service.name %>
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

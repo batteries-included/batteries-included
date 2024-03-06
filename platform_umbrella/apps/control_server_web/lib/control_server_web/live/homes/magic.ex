@@ -116,9 +116,9 @@ defmodule ControlServerWeb.Live.MagicHome do
     ~H"""
     <.page_header title="Magic">
       <:menu>
-        <.link navigate={~p"/batteries/magic"}>
-          <.button variant="secondary">Manage Batteries</.button>
-        </.link>
+        <.button variant="secondary" link={~p"/batteries/magic"}>
+          Manage Batteries
+        </.button>
       </:menu>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">

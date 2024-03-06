@@ -17,12 +17,16 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
       </:col>
 
       <:action :let={realm}>
-        <.action_icon
-          to={show_url(realm)}
+        <.button
+          variant="minimal"
+          link={show_url(realm)}
           icon={:eye}
-          tooltip={"Show realm " <> realm.displayName}
           id={"realm_show_link_" <> realm.id}
         />
+
+        <.tooltip target_id={"realm_show_link_" <> realm.id}>
+          Show realm <%= realm.displayName %>
+        </.tooltip>
       </:action>
     </.table>
     """

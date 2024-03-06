@@ -85,17 +85,12 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
             </:item>
           </.data_horizontal_bordered>
 
-          <.link navigate={edit_versions_url(@ferret_service)}>
-            <.button variant="secondary">
-              Edit History
-            </.button>
-          </.link>
+          <.button variant="secondary" link={edit_versions_url(@ferret_service)}>
+            Edit History
+          </.button>
 
           <.flex gaps="0">
-            <.link navigate={edit_url(@ferret_service)}>
-              <.button variant="icon" icon={:pencil} />
-            </.link>
-
+            <.button variant="icon" icon={:pencil} link={edit_url(@ferret_service)} />
             <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
           </.flex>
         </.flex>

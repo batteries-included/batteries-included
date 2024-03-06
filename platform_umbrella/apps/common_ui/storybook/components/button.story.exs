@@ -19,10 +19,13 @@ defmodule Storybook.Components.Button do
     [
       %Variation{
         id: :default,
-        slots: ["Default Button"],
+        slots: ["Default Button"]
+      },
+      %Variation{
+        id: :minimal,
+        slots: ["Minimal Button"],
         attributes: %{
-          icon: :arrow_top_right_on_square,
-          icon_position: :right
+          variant: "minimal"
         }
       },
       %Variation{
@@ -60,6 +63,26 @@ defmodule Storybook.Components.Button do
         attributes: %{
           variant: "icon",
           icon: :trash
+        }
+      },
+      %Variation{
+        id: :internal_link,
+        slots: ["Internal Link"],
+        attributes: %{
+          icon: :arrow_right,
+          icon_position: :right,
+          link: "/_"
+        }
+      },
+      %Variation{
+        id: :external_link,
+        slots: ["External Link"],
+        attributes: %{
+          icon: :arrow_top_right_on_square,
+          icon_position: :right,
+          link: "https://www.batteriesincl.com",
+          link_type: "external",
+          target: "_blank"
         }
       }
     ]

@@ -49,9 +49,9 @@ defmodule ControlServerWeb.Live.Redis do
     ~H"""
     <.page_header title={@page_title} back_button={%{link_type: "live_redirect", to: "/data"}}>
       <:menu>
-        <.link navigate={new_url()}>
-          <.button variant="secondary">New Redis Cluster</.button>
-        </.link>
+        <.button variant="secondary" link={new_url()}>
+          New Redis Cluster
+        </.button>
       </:menu>
     </.page_header>
     <.panel title="All Redis Clusters">

@@ -3,157 +3,107 @@ defmodule CommonUI.Components.Button do
   use CommonUI, :component
 
   import CommonUI.Components.Icon
-  import CommonUI.Components.Tooltip
 
-  # Buttons are a "submit" type by default. This changes the default to "button",
-  # since most buttons are either wrapped by a link or use `phx-click`.
-  #
-  # See https://html.spec.whatwg.org/multipage/form-elements.html#attr-button-type
-  attr :type, :string, default: "button", values: ["submit", "reset", "button"]
+  attr :link, :string
+  attr :link_type, :string, default: "redirect", values: ["redirect", "patch", "external"]
+  attr :link_replace, :boolean, default: false
 
-  attr :variant, :string, values: ["primary", "secondary", "dark", "circle", "icon"]
+  attr :variant, :string, values: ["primary", "secondary", "dark", "circle", "icon", "minimal"]
+  attr :tag, :string, default: "button"
   attr :class, :string, default: nil
   attr :icon, :atom, default: nil
   attr :icon_position, :atom, default: :left, values: [:left, :right]
-  attr :rest, :global
+
+  attr :rest, :global,
+    default: %{
+      # Most buttons are either links or use `phx-click`,
+      # so change default to "button" rather than "submit".
+      type: "button"
+    }
 
   slot :inner_block
 
-  def button(%{variant: "default"} = assigns) do
-    assigns |> Map.put(:variant, "secondary") |> button()
-  end
+  def button(%{link: _} = assigns) do
+    {link, assigns} = Map.pop(assigns, :link)
+    {link_type, assigns} = Map.pop(assigns, :link_type)
+    {link_replace, assigns} = Map.pop(assigns, :link_replace)
 
-  def button(%{variant: "primary"} = assigns) do
-    ~H"""
-    <button
-      type={@type}
-      class={[
-        "min-w-36 rounded-lg text-white bg-primary enabled:hover:bg-primary-dark disabled:bg-gray-lighter",
-        button_class(),
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon :if={@icon && @icon_position == :left} name={@icon} class={icon_class()} />
-      <%= render_slot(@inner_block) %>
-      <.icon :if={@icon && @icon_position == :right} name={@icon} class={icon_class()} />
-    </button>
-    """
-  end
+    rest =
+      assigns.rest
+      |> Map.delete(:type)
+      |> Map.put(:href, Phoenix.LiveView.Utils.valid_destination!(link, "<.button>"))
 
-  def button(%{variant: "secondary"} = assigns) do
-    ~H"""
-    <button
-      type={@type}
-      class={[
-        "min-w-36 rounded-lg border border-gray-lighter text-gray-darker bg-white",
-        "enabled:hover:text-primary enabled:hover:border-primary-light disabled:text-gray",
-        button_class(),
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon :if={@icon && @icon_position == :left} name={@icon} class={icon_class()} />
-      <%= render_slot(@inner_block) %>
-      <.icon :if={@icon && @icon_position == :right} name={@icon} class={icon_class()} />
-    </button>
-    """
-  end
+    rest =
+      if link_type in ~w(redirect patch) do
+        rest
+        |> Map.put("data-phx-link", link_type)
+        |> Map.put("data-phx-link-state", if(link_replace, do: "replace", else: "push"))
+      else
+        rest
+      end
 
-  def button(%{variant: "dark"} = assigns) do
-    ~H"""
-    <button
-      type={@type}
-      class={[
-        "min-w-36 rounded-lg text-white bg-gray-darkest enabled:hover:bg-gray-darker disabled:bg-gray-lighter",
-        button_class(),
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon :if={@icon && @icon_position == :left} name={@icon} class={icon_class()} />
-      <%= render_slot(@inner_block) %>
-      <.icon :if={@icon && @icon_position == :right} name={@icon} class={icon_class()} />
-    </button>
-    """
-  end
-
-  def button(%{variant: "circle"} = assigns) do
-    ~H"""
-    <button
-      type={@type}
-      class={[
-        "p-3 rounded-full border border-gray-lighter text-gray-darker",
-        "enabled:hover:text-primary enabled:hover:border-primary-light disabled:text-gray",
-        "disabled:cursor-not-allowed phx-submit-loading:opacity-75",
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon :if={@icon} name={@icon} class={icon_class()} />
-    </button>
-    """
-  end
-
-  def button(%{variant: "icon"} = assigns) do
-    ~H"""
-    <button
-      type={@type}
-      class={[
-        "p-3 rounded-full text-gray-darker",
-        "enabled:hover:text-primary enabled:hover:bg-gray-lightest/75 disabled:text-gray",
-        "disabled:cursor-not-allowed phx-submit-loading:opacity-75",
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon :if={@icon} name={@icon} class={icon_class()} />
-    </button>
-    """
+    assigns
+    |> Map.merge(%{tag: "a", rest: rest})
+    |> button()
   end
 
   def button(assigns) do
     ~H"""
-    <button
-      type={@type}
+    <.dynamic_tag
+      name={@tag}
       class={[
-        "text-gray-darker enabled:hover:text-primary disabled:text-gray-light",
-        button_class(),
+        "inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75",
+        button_class(assigns[:variant]),
         @class
       ]}
       {@rest}
     >
-      <.icon :if={@icon && @icon_position == :left} name={@icon} class={icon_class()} />
+      <.icon
+        :if={@icon && @icon_position == :left}
+        class={icon_class(assigns[:variant])}
+        name={@icon}
+      />
+
       <%= render_slot(@inner_block) %>
-      <.icon :if={@icon && @icon_position == :right} name={@icon} class={icon_class()} />
-    </button>
+
+      <.icon
+        :if={@icon && @icon_position == :right}
+        class={icon_class(assigns[:variant])}
+        name={@icon}
+      />
+    </.dynamic_tag>
     """
   end
 
-  defp icon_class, do: "size-5 text-current stroke-2"
+  defp button_class("primary") do
+    "min-w-36 px-5 py-3 rounded-lg text-white bg-primary hover:bg-primary-dark disabled:bg-gray-lighter"
+  end
 
-  defp button_class,
-    do: [
-      "inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm text-nowrap",
-      "disabled:cursor-not-allowed phx-submit-loading:opacity-75"
-    ]
+  defp button_class("secondary") do
+    "min-w-36 px-5 py-3 rounded-lg border border-gray-lighter text-gray-darker bg-white hover:text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
+  end
 
-  attr :id, :string, required: true
-  attr :class, :string, default: nil
-  attr :tooltip, :string, default: nil
-  attr :icon, :atom
-  attr :link_type, :string, default: "live_redirect"
-  attr :rest, :global, include: ~w(to link_type)
+  defp button_class("dark") do
+    "min-w-36 px-5 py-3 rounded-lg text-white bg-gray-darkest hover:bg-gray-darker disabled:bg-gray-lighter"
+  end
 
-  def action_icon(assigns) do
-    ~H"""
-    <PC.a id={@id} class={["cursor-pointer", @class]} link_type={@link_type} {@rest} size="xs">
-      <.icon name={@icon} class="w-5 h-5 text-gray-darker dark:text-gray hover:text-primary-600" />
+  defp button_class("circle") do
+    "p-3 rounded-full border border-gray-lighter text-gray-darker hover:text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
+  end
 
-      <.tooltip :if={@tooltip} target_id={@id}>
-        <%= @tooltip %>
-      </.tooltip>
-    </PC.a>
-    """
+  defp button_class("icon") do
+    "p-3 rounded-full text-gray-darker hover:text-primary hover:bg-gray-lightest/75 disabled:text-gray"
+  end
+
+  defp button_class("minimal") do
+    "text-gray-dark hover:text-gray disabled:text-gray-light"
+  end
+
+  defp button_class(_) do
+    "text-primary hover:text-primary-dark disabled:text-gray-light"
+  end
+
+  defp icon_class(_) do
+    "size-5 text-current stroke-2 pointer-events-none"
   end
 end

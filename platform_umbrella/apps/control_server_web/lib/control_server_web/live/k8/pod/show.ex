@@ -206,12 +206,16 @@ defmodule ControlServerWeb.PodLive.Show do
           <%= Map.get(cs, "restartCount", 0) %>
         </:col>
         <:action :let={cs}>
-          <.action_icon
-            to={resource_path(@resource, :logs, %{container: Map.get(cs, "name", nil)})}
+          <.button
+            variant="minimal"
+            link={resource_path(@resource, :logs, %{container: Map.get(cs, "name", nil)})}
             icon={:document_text}
-            tooltip="Logs"
             id={"show_resource_" <> to_html_id(@resource)}
           />
+
+          <.tooltip target_id={"show_resource_" <> to_html_id(@resource)}>
+            Logs
+          </.tooltip>
         </:action>
       </.table>
     </.panel>

@@ -14,12 +14,16 @@ defmodule ControlServerWeb.StatefulSetsTable do
       <:col :let={stateful_set} label="Available"><%= available_replicas(stateful_set) %></:col>
 
       <:action :let={stateful_set}>
-        <.action_icon
-          to={resource_path(stateful_set)}
+        <.button
+          variant="minimal"
+          link={resource_path(stateful_set)}
           icon={:eye}
-          tooltip="Show Stateful Set"
           id={"show_stateful_set" <> to_html_id(stateful_set)}
         />
+
+        <.tooltip target_id={"show_stateful_set" <> to_html_id(stateful_set)}>
+          Show Stateful Set
+        </.tooltip>
       </:action>
     </.table>
 

@@ -19,11 +19,9 @@ defmodule ControlServerWeb.EmptyHome do
         There are no batteries installed for this group. Each running battery brings a new feature, power, or service to the platform. Addtitionally new batteries will bring extra powers to previously installed batteries, thanks to the automatic integrations between batteries.
       </p>
 
-      <.link navigate={@install_path}>
-        <.button variant="primary">
-          Install Batteries
-        </.button>
-      </.link>
+      <.button variant="primary" link={@install_path}>
+        Install Batteries
+      </.button>
     </.flex>
     """
   end

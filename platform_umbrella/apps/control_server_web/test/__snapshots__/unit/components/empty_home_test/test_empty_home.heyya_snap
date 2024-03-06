@@ -11,14 +11,14 @@
     There are no batteries installed for this group. Each running battery brings a new feature, power, or service to the platform. Addtitionally new batteries will bring extra powers to previously installed batteries, thanks to the automatic integrations between batteries.
   </p>
 
-  <a href="/batteries/monitoring" data-phx-link="redirect" data-phx-link-state="push">
-    <button type="button" class="min-w-36 rounded-lg text-white bg-primary enabled:hover:bg-primary-dark disabled:bg-gray-lighter inline-flex items-center justify-center gap-2 px-5 py-3 font-semibold text-sm text-nowrap disabled:cursor-not-allowed phx-submit-loading:opacity-75">
+  <a href="/batteries/monitoring" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 min-w-36 px-5 py-3 rounded-lg text-white bg-primary hover:bg-primary-dark disabled:bg-gray-lighter" data-phx-link="redirect" data-phx-link-state="push">
   
+
   
-      Install Batteries
-    
+    Install Batteries
   
-</button>
-  </a>
+
+  
+</a>
 
 </div>

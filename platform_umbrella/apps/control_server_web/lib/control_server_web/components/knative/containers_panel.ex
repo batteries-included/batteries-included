@@ -22,31 +22,35 @@ defmodule ControlServerWeb.Knative.ContainersPanel do
         </:col>
 
         <:action :let={{c, idx}}>
-          <.action_icon
-            to="/"
+          <.button
+            variant="minimal"
+            link="/"
             icon={:x_mark}
             id={"delete_container_" <> String.replace(c.name, " ", "")}
             phx-click="del:container"
-            tooltip="Remove"
-            link_type="button"
-            type="button"
             phx-target={@target}
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
             phx-value-is-init={if idx > length(@containers), do: "true", else: "false"}
           />
 
-          <.action_icon
-            to="/"
+          <.tooltip target_id={"delete_container_" <> String.replace(c.name, " ", "")}>
+            Remove
+          </.tooltip>
+
+          <.button
+            variant="minimal"
+            link="/"
             icon={:pencil}
             id={"edit_container_" <> String.replace(c.name, " ", "")}
-            tooltip="Edit"
-            link_type="button"
-            type="button"
             phx-target={@target}
             phx-click="edit:container"
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
             phx-value-is-init={if idx > length(@containers), do: "true", else: "false"}
           />
+
+          <.tooltip target_id={"edit_container_" <> String.replace(c.name, " ", "")}>
+            Edit
+          </.tooltip>
         </:action>
       </.table>
     </.panel>

@@ -14,21 +14,29 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
 
       <:action :let={pool}>
         <.flex>
-          <.action_icon
+          <.button
+            variant="minimal"
             phx-click="delete"
             phx-value-id={pool.id}
             data-confirm={"Are you sure you want to delete the `#{pool.name}` pool?"}
             icon={:trash}
-            tooltip="Delete IP Address Pool"
             id={"delete_pool_" <> pool.id}
           />
 
-          <.action_icon
-            to={edit_url(pool)}
+          <.tooltip target_id={"delete_pool_" <> pool.id}>
+            Delete IP Address Pool
+          </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={edit_url(pool)}
             icon={:pencil}
-            tooltip="Edit IP Addresss Pool"
             id={"edit_pool_" <> pool.id}
           />
+
+          <.tooltip target_id={"edit_pool_" <> pool.id}>
+            Edit IP Address Pool
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

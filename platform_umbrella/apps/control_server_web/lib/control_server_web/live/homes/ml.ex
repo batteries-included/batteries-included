@@ -53,9 +53,9 @@ defmodule ControlServerWeb.Live.MLHome do
     ~H"""
     <.page_header title="Machine Learning">
       <:menu>
-        <.link navigate={install_path()}>
-          <.button variant="secondary">Manage Batteries</.button>
-        </.link>
+        <.button variant="secondary" link={install_path()}>
+          Manage Batteries
+        </.button>
       </:menu>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">

@@ -36,12 +36,16 @@ defmodule ControlServerWeb.Audit.EditVersionsTable do
 
       <:action :let={edit_version}>
         <.flex class="justify-items-center">
-          <.action_icon
-            to={show_url(edit_version)}
+          <.button
+            variant="minimal"
+            link={show_url(edit_version)}
             icon={:eye}
-            tooltip={"Show Edit Version " <> edit_version.id}
             id={"show_edit_version_" <> edit_version.id}
           />
+
+          <.tooltip target_id={"show_edit_version_" <> edit_version.id}>
+            Show Edit Version <%= edit_version.id %>
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

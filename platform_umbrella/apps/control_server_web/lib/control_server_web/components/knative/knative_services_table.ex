@@ -20,12 +20,16 @@ defmodule ControlServerWeb.KnativeServicesTable do
         </.a>
       </:col>
       <:action :let={service}>
-        <.action_icon
-          to={show_url(service)}
+        <.button
+          variant="minimal"
+          link={show_url(service)}
           icon={:eye}
-          tooltip={"Show Service " <> service.name}
           id={"show_service_" <> service.id}
         />
+
+        <.tooltip target_id={"show_service_" <> service.id}>
+          Show Service <%= service.name %>
+        </.tooltip>
       </:action>
     </.table>
     """

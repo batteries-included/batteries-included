@@ -23,12 +23,16 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
         <.keycloak_snapshot snapshot={snapshot.keycloak_snapshot} />
       </:col>
       <:action :let={snapshot}>
-        <.action_icon
-          to={show_url(snapshot)}
+        <.button
+          variant="minimal"
+          link={show_url(snapshot)}
           icon={:eye}
-          tooltip="Show deploy"
           id={"show_deploy_" <> snapshot.id}
         />
+
+        <.tooltip target_id={"show_deploy_" <> snapshot.id}>
+          Show deploy
+        </.tooltip>
       </:action>
     </.table>
     """

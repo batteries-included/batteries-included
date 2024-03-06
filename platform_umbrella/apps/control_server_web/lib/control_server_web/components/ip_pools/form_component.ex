@@ -84,9 +84,9 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
           <PC.field field={@form[:name]} label="Pool Name" autofocus />
           <PC.field field={@form[:subnet]} label="Subnet CIDR" />
 
-          <.link navigate={cancel_url()} class="mr-3">
-            <.button variant="secondary">Cancel</.button>
-          </.link>
+          <.button variant="secondary" link={cancel_url()} class="mr-3">
+            Cancel
+          </.button>
 
           <.button variant="primary" type="submit" phx-disable-with="Saving...">
             Save

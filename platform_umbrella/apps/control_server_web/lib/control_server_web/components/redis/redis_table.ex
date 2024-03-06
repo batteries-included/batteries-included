@@ -17,18 +17,27 @@ defmodule ControlServerWeb.RedisTable do
       <:col :let={redis} label="Sentinel Instances"><%= redis.num_sentinel_instances %></:col>
       <:action :let={redis}>
         <.flex>
-          <.action_icon
-            to={show_url(redis)}
+          <.button
+            variant="minimal"
+            link={show_url(redis)}
             icon={:eye}
-            tooltip={"Show Redis failover cluster " <> redis.name}
             id={"show_redis_" <> redis.id}
           />
-          <.action_icon
-            to={edit_url(redis)}
+
+          <.tooltip target_id={"show_redis_" <> redis.id}>
+            Show Redis failover cluster <%= redis.name %>
+          </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={edit_url(redis)}
             icon={:pencil}
-            tooltip={"Edit cluster " <> redis.name}
             id={"edit_redis_" <> redis.id}
           />
+
+          <.tooltip target_id={"edit_redis_" <> redis.id}>
+            Edit cluster <%= redis.name %>
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

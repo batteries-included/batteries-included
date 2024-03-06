@@ -104,11 +104,9 @@ defmodule ControlServerWeb.Live.DataHome do
     ~H"""
     <.page_header title={@page_title}>
       <:menu>
-        <.link navigate={install_path()}>
-          <.button variant="secondary">
-            Manage Batteries
-          </.button>
-        </.link>
+        <.button variant="secondary" link={install_path()}>
+          Manage Batteries
+        </.button>
       </:menu>
     </.page_header>
     <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">

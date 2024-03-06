@@ -64,15 +64,19 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
           <%= Timex.from_now(resource.inserted_at) %>
         </:col>
         <:col :let={resource} label="Restore">
-          <.action_icon
+          <.button
             :if={!resource.been_undeleted}
+            variant="minimal"
             icon={:archive_box}
             phx-click="undelete"
             phx-value-id={resource.id}
             data-confirm="Are you sure?"
-            tooltip="Restore this resource"
             id={"unkdelete-#{resource.id}"}
           />
+
+          <.tooltip target_id={"unkdelete-#{resource.id}"}>
+            Restore this resource
+          </.tooltip>
         </:col>
       </.table>
     </.panel>

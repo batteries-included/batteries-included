@@ -18,18 +18,22 @@ defmodule ControlServerWeb.PostgresClusterTable do
       <:col :let={pg} label="User Count"><%= length(pg.users) %></:col>
       <:action :let={pg}>
         <.flex class="justify-items-center">
-          <.action_icon
-            to={show_url(pg)}
-            icon={:eye}
-            tooltip={"Show Postgres cluster " <> pg.name}
-            id={"show_postgres_" <> pg.id}
-          />
-          <.action_icon
-            to={edit_url(pg)}
+          <.button variant="minimal" link={show_url(pg)} icon={:eye} id={"show_postgres_" <> pg.id} />
+
+          <.tooltip target_id={"show_postgres_" <> pg.id}>
+            Show Postgres cluster <%= pg.name %>
+          </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={edit_url(pg)}
             icon={:pencil}
-            tooltip={"Edit cluster " <> pg.name}
             id={"edit_postgres_" <> pg.id}
           />
+
+          <.tooltip target_id={"edit_postgres_" <> pg.id}>
+            Edit cluster <%= pg.name %>
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

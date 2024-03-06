@@ -42,29 +42,33 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
         <:col :let={{ev, _idx}} label="Name"><%= ev.name %></:col>
         <:col :let={{ev, _idx}} label="Value"><.env_value_value env_value={ev} /></:col>
         <:action :let={{ev, idx}}>
-          <.action_icon
-            to="/"
+          <.button
+            variant="minimal"
+            link="/"
             icon={:x_mark}
             id={"delete_env_value_" <> String.replace(ev.name, " ", "")}
             phx-click="del:env_value"
             phx-value-idx={idx}
-            tooltip="Remove"
-            link_type="button"
-            type="button"
             phx-target={@target}
           />
 
-          <.action_icon
-            to="/"
+          <.tooltip target_id={"delete_env_value_" <> String.replace(ev.name, " ", "")}>
+            Remove
+          </.tooltip>
+
+          <.button
+            variant="minimal"
+            link="/"
             icon={:pencil}
             id={"edit_env_value_" <> String.replace(ev.name, " ", "")}
             phx-click="edit:env_value"
             phx-value-idx={idx}
-            tooltip="Edit"
-            link_type="button"
-            type="button"
             phx-target={@target}
           />
+
+          <.tooltip target_id={"edit_env_value_" <> String.replace(ev.name, " ", "")}>
+            Edit
+          </.tooltip>
         </:action>
       </.table>
     </.panel>

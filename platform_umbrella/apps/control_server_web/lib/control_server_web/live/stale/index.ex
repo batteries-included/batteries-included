@@ -35,16 +35,20 @@ defmodule ControlServerWeb.Live.StaleIndex do
       </:col>
 
       <:col :let={resource} label="Delete Now">
-        <.action_icon
+        <.button
+          variant="minimal"
           icon={:trash}
           phx-click="delete"
           phx-value-kind={ApiVersionKind.resource_type!(resource)}
           phx-value-name={name(resource)}
           phx-value-namespace={namespace(resource)}
           data-confirm="Are you sure?"
-          tooltip="Delete"
           id={"delete-#{to_html_id(resource)}"}
         />
+
+        <.tooltip target_id={"delete-#{to_html_id(resource)}"}>
+          Delete
+        </.tooltip>
       </:col>
     </.table>
     """

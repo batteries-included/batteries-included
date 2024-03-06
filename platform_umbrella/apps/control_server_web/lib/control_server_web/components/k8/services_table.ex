@@ -17,12 +17,16 @@ defmodule ControlServerWeb.ServicesTable do
       <:col :let={service} label="Ports"><%= display_ports(service) %></:col>
 
       <:action :let={service}>
-        <.action_icon
-          to={resource_path(service)}
+        <.button
+          variant="minimal"
+          link={resource_path(service)}
           icon={:eye}
-          tooltip="Show Service"
           id={"show_service_" <> to_html_id(service)}
         />
+
+        <.tooltip target_id={"show_service_" <> to_html_id(service)}>
+          Show Service
+        </.tooltip>
       </:action>
     </.table>
     """

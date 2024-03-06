@@ -65,27 +65,32 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         </:col>
         <:action :let={user}>
           <.flex>
-            <.action_icon
+            <.button
+              variant="minimal"
               icon={:pencil}
               id={"edit_user_" <> String.replace(user.username, " ", "")}
               phx-click="edit:user"
               phx-value-username={user.username}
-              tooltip="Edit"
-              link_type="button"
-              type="button"
               phx-target={@phx_target}
             />
-            <.action_icon
-              to="/"
+
+            <.tooltip target_id={"edit_user_" <> String.replace(user.username, " ", "")}>
+              Edit
+            </.tooltip>
+
+            <.button
+              variant="minimal"
+              link="/"
               icon={:x_mark}
               id={"delete_user_" <> String.replace(user.username, " ", "")}
               phx-click="del:user"
               phx-value-username={user.username}
-              tooltip="Remove"
-              link_type="button"
-              type="button"
               phx-target={@phx_target}
             />
+
+            <.tooltip target_id={"delete_user_" <> String.replace(user.username, " ", "")}>
+              Remove
+            </.tooltip>
           </.flex>
         </:action>
       </.table>

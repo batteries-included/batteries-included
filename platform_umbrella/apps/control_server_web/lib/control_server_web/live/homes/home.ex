@@ -55,11 +55,9 @@ defmodule ControlServerWeb.Live.Home do
     ~H"""
     <.page_header title="Batteries Included">
       <:menu>
-        <.link navigate={~p"/batteries/magic"}>
-          <.button variant="secondary">
-            Manage Batteries
-          </.button>
-        </.link>
+        <.button variant="secondary" link={~p"/batteries/magic"}>
+          Manage Batteries
+        </.button>
       </:menu>
     </.page_header>
 
