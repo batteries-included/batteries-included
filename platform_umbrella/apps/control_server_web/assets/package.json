@@ -26,6 +26,6 @@
     "tailwindcss": "~3.4",
     "tippy.js": "~6.3",
     "topbar": "~2.0",
-    "typescript": "~5.3"
+    "typescript": "~5.4"
   }
 }
