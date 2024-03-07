@@ -29,55 +29,55 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
     <div class="lg:col-span-12">
       <.panel title="Batteries Running" variant="gray">
         <:menu>
-          <.tab_bar class="lg:basis-2/3 w-full">
-            <.tab_item
+          <.tab_bar variant="borderless" class="w-full lg:basis-1/2">
+            <:tab
               selected={@tab == :all}
               phx-click="tab_select"
               phx-value-tab="all"
               phx-target={@myself}
             >
               All
-            </.tab_item>
-            <.tab_item
+            </:tab>
+            <:tab
               selected={@tab == :data}
               phx-click="tab_select"
               phx-value-tab="data"
               phx-target={@myself}
             >
               Data
-            </.tab_item>
-            <.tab_item
+            </:tab>
+            <:tab
               selected={@tab == :devtools}
               phx-click="tab_select"
               phx-value-tab="devtools"
               phx-target={@myself}
             >
               Devtools
-            </.tab_item>
-            <.tab_item
+            </:tab>
+            <:tab
               selected={@tab == :net_sec}
               phx-click="tab_select"
               phx-value-tab="net_sec"
               phx-target={@myself}
             >
               Net/Sec
-            </.tab_item>
-            <.tab_item
+            </:tab>
+            <:tab
               selected={@tab == :ml}
               phx-click="tab_select"
               phx-value-tab="ml"
               phx-target={@myself}
             >
               ML
-            </.tab_item>
-            <.tab_item
+            </:tab>
+            <:tab
               selected={@tab == :magic}
               phx-click="tab_select"
               phx-value-tab="magic"
               phx-target={@myself}
             >
               Magic
-            </.tab_item>
+            </:tab>
           </.tab_bar>
         </:menu>
 

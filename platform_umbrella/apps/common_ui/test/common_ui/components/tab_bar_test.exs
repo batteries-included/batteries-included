@@ -8,9 +8,8 @@ defmodule CommonUI.Components.TabBarTest do
 
     ~H"""
     <.tab_bar>
-      <.tab_item phx-click="test">Title</.tab_item>
-      <.tab_item patch="/second_path">Another Title</.tab_item>
-      <.tab_item navigate="/last_path">Yet Another Title</.tab_item>
+      <:tab phx-click="test">Title</:tab>
+      <:tab patch="/second_path">Another Title</:tab>
     </.tab_bar>
     """
   end

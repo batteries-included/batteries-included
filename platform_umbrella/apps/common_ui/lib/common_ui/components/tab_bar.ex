@@ -2,76 +2,39 @@ defmodule CommonUI.Components.TabBar do
   @moduledoc false
   use CommonUI, :component
 
-  import CommonUI.Components.Container
-  import CommonUI.Components.Link
-
-  defp link_class_base,
-    do: "group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-sm font-medium text-center focus:z-10 rounded-lg"
-
-  defp link_class(false),
-    do:
-      link_class_base() <> " text-gray-darker hover:bg-gray-lightest dark:hover:bg-gray-darkest dark:text-gray-light p-4"
-
-  defp link_class(true), do: link_class_base() <> " text-white rounded-l-lg bg-primary"
-
-  defp decoration_class(false), do: "bg-transparent absolute inset-x-0 bottom-0 h-0.5"
-  defp decoration_class(true), do: "bg-primary absolute inset-x-0 bottom-0 h-0.5"
-
-  attr :tabs, :any, default: nil
+  attr :variant, :string, default: "primary", values: ["primary", "secondary", "borderless"]
   attr :class, :any, default: nil
-  slot :inner_block, required: false
+
+  # Don't validate attributes or define the `attr` macro under slot,
+  # since slots don't support the `:global` attribute and we need to
+  # pass phx bindings.
+  slot :tab, validate_attrs: false
 
   def tab_bar(assigns) do
     ~H"""
-    <div class={@class}>
-      <.flex
-        class={[
-          "isolate",
-          "rounded-lg",
-          "border-gray-lighter dark:bg-gray-darkest dark:border-gray-darker border",
-          "flex-col",
-          "lg:flex-row",
-          @class
-        ]}
-        aria-label="Tabs"
-      >
-        <%= render_slot(@inner_block) %>
-      </.flex>
+    <div aria-label="Tabs" class={[tab_bar_class(assigns[:variant]), @class]}>
+      <%= for tab <- @tab do %>
+        <.link
+          class={tab_class(assigns[:variant], Map.get(tab, :selected, false))}
+          {assigns_to_attributes(tab, [:selected])}
+        >
+          <%= render_slot(tab) %>
+        </.link>
+      <% end %>
     </div>
     """
   end
 
-  attr :navigate, :any, default: nil
-  attr :patch, :any, default: nil
-  attr :selected, :boolean, default: false
-  attr :rest, :global
+  defp tab_bar_class("primary"), do: tab_bar_class() <> " bg-white border border-gray-lighter"
+  defp tab_bar_class("secondary"), do: tab_bar_class() <> " bg-gray-lightest border border-gray-lighter"
+  defp tab_bar_class("borderless"), do: tab_bar_class() <> " bg-white p-1"
+  defp tab_bar_class, do: "flex rounded-lg font-semibold text-sm text-gray-darkest"
 
-  slot :inner_block, required: true
-
-  def tab_item(%{navigate: nav} = assigns) when nav != nil do
-    ~H"""
-    <.a navigate={@navigate} class={link_class(@selected)} {@rest}>
-      <span><%= render_slot(@inner_block) %></span>
-      <span aria-hidden="true" class={decoration_class(@selected)}></span>
-    </.a>
-    """
-  end
-
-  def tab_item(%{patch: p} = assigns) when p != nil do
-    ~H"""
-    <.a patch={@patch} class={link_class(@selected)} {@rest}>
-      <span><%= render_slot(@inner_block) %></span>
-      <span aria-hidden="true" class={decoration_class(@selected)}></span>
-    </.a>
-    """
-  end
-
-  def tab_item(assigns) do
-    ~H"""
-    <.a class={link_class(@selected)} {@rest}>
-      <span><%= render_slot(@inner_block) %></span>
-      <span aria-hidden="true" class={decoration_class(@selected)}></span>
-    </.a>
-    """
-  end
+  defp tab_class("primary", true), do: tab_class() <> " text-white bg-primary ring-primary"
+  defp tab_class("primary", false), do: tab_class() <> " ring-transparent hover:text-primary"
+  defp tab_class("secondary", true), do: tab_class() <> " bg-white text-primary ring-primary"
+  defp tab_class("secondary", false), do: tab_class() <> " ring-transparent hover:text-primary"
+  defp tab_class("borderless", true), do: tab_class() <> " text-white bg-primary ring-primary"
+  defp tab_class("borderless", false), do: tab_class() <> " ring-transparent hover:text-primary"
+  defp tab_class, do: "flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1"
 end

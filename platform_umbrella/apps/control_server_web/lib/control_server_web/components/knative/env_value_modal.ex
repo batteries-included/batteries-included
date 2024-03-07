@@ -139,24 +139,16 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
               placeholder="ENV_VARIABLE_NAME"
               wrapper_class="col-span-2"
             />
-            <.tab_bar class="col-span-2">
-              <.tab_item phx-click="value" phx-target={@myself} selected={value_selected?(@changeset)}>
+            <.tab_bar variant="secondary" class="col-span-2">
+              <:tab phx-click="value" phx-target={@myself} selected={value_selected?(@changeset)}>
                 Explicit Value
-              </.tab_item>
-              <.tab_item
-                phx-click="config"
-                phx-target={@myself}
-                selected={config_selected?(@changeset)}
-              >
+              </:tab>
+              <:tab phx-click="config" phx-target={@myself} selected={config_selected?(@changeset)}>
                 Config Map
-              </.tab_item>
-              <.tab_item
-                phx-click="secret"
-                phx-target={@myself}
-                selected={secret_selected?(@changeset)}
-              >
+              </:tab>
+              <:tab phx-click="secret" phx-target={@myself} selected={secret_selected?(@changeset)}>
                 Secret
-              </.tab_item>
+              </:tab>
             </.tab_bar>
             <PC.input type="hidden" field={@form[:source_type]} />
             <.value_inputs :if={value_selected?(@changeset)} form={@form} />

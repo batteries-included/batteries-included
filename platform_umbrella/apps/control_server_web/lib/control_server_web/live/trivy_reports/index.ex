@@ -87,13 +87,13 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   defp tabs(assigns) do
     ~H"""
     <.tab_bar>
-      <.tab_item
+      <:tab
         :for={{title, path, live_action} <- report_tabs()}
         selected={@live_action == live_action}
         patch={path}
       >
         <%= title %>
-      </.tab_item>
+      </:tab>
     </.tab_bar>
     """
   end
