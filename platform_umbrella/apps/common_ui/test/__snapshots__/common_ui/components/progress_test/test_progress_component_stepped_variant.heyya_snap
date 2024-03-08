@@ -1,0 +1,3 @@
+<div class="flex gap-4 ">
+  <div class="flex-1 h-1 rounded-lg bg-primary"></div><div class="flex-1 h-1 rounded-lg bg-primary"></div><div class="flex-1 h-1 rounded-lg bg-primary"></div><div class="flex-1 h-1 rounded-lg bg-primary"></div><div class="flex-1 h-1 rounded-lg bg-gray-lighter"></div><div class="flex-1 h-1 rounded-lg bg-gray-lighter"></div><div class="flex-1 h-1 rounded-lg bg-gray-lighter"></div><div class="flex-1 h-1 rounded-lg bg-gray-lighter"></div><div class="flex-1 h-1 rounded-lg bg-gray-lighter"></div><div class="flex-1 h-1 rounded-lg bg-gray-lighter"></div>
+</div>
