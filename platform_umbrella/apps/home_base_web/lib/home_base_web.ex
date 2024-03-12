@@ -61,7 +61,7 @@ defmodule HomeBaseWeb do
 
   def live_component do
     quote do
-      use Phoenix.LiveComponent, global_prefixes: CommonUI.global_prefixes()
+      use Phoenix.LiveComponent
 
       unquote(html_helpers())
     end
@@ -69,7 +69,7 @@ defmodule HomeBaseWeb do
 
   def html do
     quote do
-      use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
+      use Phoenix.Component
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

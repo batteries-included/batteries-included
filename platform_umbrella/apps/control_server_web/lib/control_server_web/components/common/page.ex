@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.Common.Page do
   @moduledoc false
-  use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
+  use Phoenix.Component
 
   import CommonUI.Components.Button
   import CommonUI.Components.Container

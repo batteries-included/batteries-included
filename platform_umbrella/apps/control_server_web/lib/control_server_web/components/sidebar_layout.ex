@@ -1,6 +1,6 @@
 defmodule ControlServerWeb.SidebarLayout do
   @moduledoc false
-  use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
+  use Phoenix.Component
   use PetalComponents
 
   import CommonUI.Components.Logo

@@ -7,11 +7,9 @@ defmodule CommonUI do
   if it comes from the database, an external API or others.
   """
 
-  def global_prefixes, do: ~w(x-)
-
   def component do
     quote do
-      use Phoenix.Component, global_prefixes: CommonUI.global_prefixes()
+      use Phoenix.Component
 
       alias Phoenix.LiveView.JS
     end
