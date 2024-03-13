@@ -1,4 +1,4 @@
-package cmd
+package aws
 
 import (
 	"bi/pkg/cluster"
@@ -7,11 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// destroyClusterCmd represents the destroy command
-var destroyClusterCmd = &cobra.Command{
-	Use:   "destroycluster",
-	Short: "A brief description of your command",
-	Long:  ``,
+var createClusterCmd = &cobra.Command{
+	Use:   "createcluster",
+	Short: "Create a cluster",
+	Long:  `Create a cluster on AWS EKS.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := cluster.NewPulumiProvider()
 		ctx := context.Background()
@@ -19,11 +18,11 @@ var destroyClusterCmd = &cobra.Command{
 		err := p.Init(ctx)
 		cobra.CheckErr(err)
 
-		err = p.Destroy(ctx)
+		err = p.Create(ctx)
 		cobra.CheckErr(err)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(destroyClusterCmd)
+	awsCmd.AddCommand(createClusterCmd)
 }

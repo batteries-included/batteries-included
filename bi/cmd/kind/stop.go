@@ -1,7 +1,7 @@
 /*
 Copyright © 2024 Elliott Clark @ Batteries Included
 */
-package cmd
+package kind
 
 import (
 	"bi/pkg/local"
@@ -10,9 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// startLocalCmd represents the startLocal command
 var stopLocalCmd = &cobra.Command{
-	Use:   "stoplocal",
+	Use:   "stop",
 	Short: "Stop all locally running batteries included clusters",
 	Long: `Batteries Included is built on top of
 Kubernetes; this stops all kubernetes clusters locally
@@ -28,5 +27,5 @@ with just docker as a dependency.`,
 }
 
 func init() {
-	rootCmd.AddCommand(stopLocalCmd)
+	kindCmd.AddCommand(stopLocalCmd)
 }

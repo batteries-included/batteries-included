@@ -1,7 +1,7 @@
 /*
 Copyright © 2024 Elliott Clark elliott@batteriesincl.com
 */
-package cmd
+package debug
 
 import (
 	"bi/pkg/specs"
@@ -11,7 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// verifySpecCmd represents the verifySpec command
 var verifySpecCmd = &cobra.Command{
 	Use:   "verifyspec",
 	Short: "Verify an install spec file",
@@ -43,5 +42,5 @@ func verifyFile(pathName string) error {
 }
 
 func init() {
-	rootCmd.AddCommand(verifySpecCmd)
+	debugCmd.AddCommand(verifySpecCmd)
 }
