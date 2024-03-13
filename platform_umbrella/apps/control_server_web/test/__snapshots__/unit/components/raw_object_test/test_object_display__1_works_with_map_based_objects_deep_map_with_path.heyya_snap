@@ -3,7 +3,7 @@
   <div class="flex-none border-r-[1px] border-gray-lighter/90 w-96 overflow-x-clip">
   <div class="gap-4 lg:gap-6 flex h-full w-full overflow-y-auto flex-col">
   
-    <h3 class="text-xl font-medium text-gray-darker dark:text-gray my-4">
+    <h3 class="text-xl font-medium text-gray-darker dark:text-white my-4">
   Root
 </h3>
     <a href="/?path[]=a" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
@@ -50,7 +50,7 @@
 </div><div class="flex-none border-r-[1px] border-gray-lighter/90 w-96 overflow-x-clip">
   <div class="gap-4 lg:gap-6 flex h-full w-full overflow-y-auto flex-col">
   
-    <h3 class="text-xl font-medium text-gray-darker dark:text-gray my-4">
+    <h3 class="text-xl font-medium text-gray-darker dark:text-white my-4">
   A
 </h3>
     <a href="/?path[]=a&amp;path[]=b" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
@@ -83,7 +83,7 @@
 </div><div class="flex-none border-r-[1px] border-gray-lighter/90 w-96 overflow-x-clip">
   <div class="gap-4 lg:gap-6 flex h-full w-full overflow-y-auto flex-col">
   
-    <h3 class="text-xl font-medium text-gray-darker dark:text-gray my-4">
+    <h3 class="text-xl font-medium text-gray-darker dark:text-white my-4">
   B
 </h3>
     <a href="/?path[]=a&amp;path[]=b&amp;path[]=c" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">

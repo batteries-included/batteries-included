@@ -11,7 +11,7 @@ defmodule ControlServerWeb.EmptyHome do
   """
   def empty_home(assigns) do
     ~H"""
-    <.flex column class="items-center justify-center h-full">
+    <.flex column class="items-center justify-center h-full text-gray-darkest dark:text-gray-lighter">
       <.icon name={:face_smile} class="h-10 lg:h-28 w-auto" />
 
       <.h2>Welcome to Batteries Included</.h2>

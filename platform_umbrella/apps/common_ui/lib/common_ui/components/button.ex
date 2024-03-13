@@ -80,7 +80,7 @@ defmodule CommonUI.Components.Button do
   end
 
   defp button_class("secondary") do
-    "min-w-36 px-5 py-3 rounded-lg border border-gray-lighter text-gray-darker bg-white hover:text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
+    "min-w-36 px-5 py-3 rounded-lg border border-gray-lighter dark:border-gray-darker text-gray-darker dark:text-gray-lighter bg-white dark:bg-gray-darkest hover:text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
   end
 
   defp button_class("dark") do

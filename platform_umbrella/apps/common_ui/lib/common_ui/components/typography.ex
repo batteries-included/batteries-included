@@ -28,7 +28,7 @@ defmodule CommonUI.Components.Typography do
 
   attr :class, :any, default: ""
   attr :base_class, :string, default: "text-xl sm:text-3xl font-semibold my-3"
-  attr :color_class, :string, default: "text-black"
+  attr :color_class, :string, default: "text-gray-darkest dark:text-gray-lighter"
 
   attr :fancy_class, :string, default: "text-transparent bg-clip-text bg-gradient-to-br from-primary to-cyan-700"
 
@@ -55,7 +55,7 @@ defmodule CommonUI.Components.Typography do
   end
 
   attr :class, :any, default: ""
-  attr :base_class, :string, default: "text-xl font-medium text-gray-darker dark:text-gray"
+  attr :base_class, :string, default: "text-xl font-medium text-gray-darker dark:text-white"
   slot :inner_block, required: true
   attr :rest, :global
 
