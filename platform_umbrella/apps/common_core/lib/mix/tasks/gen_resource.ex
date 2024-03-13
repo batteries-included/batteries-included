@@ -545,24 +545,6 @@ defmodule Mix.Tasks.Gen.Resource do
     )
   end
 
-  defp add_map_put_call_with_config(pipeline, key, method_name) do
-    pipe(
-      pipeline,
-      quote do
-        Map.put(unquote(key), unquote(method_name)(config))
-      end
-    )
-  end
-
-  defp add_spec(pipeline, value) do
-    pipe(
-      pipeline,
-      quote do
-        B.spec(unquote(value))
-      end
-    )
-  end
-
   defp add_name(pipeline, name) do
     pipe(
       pipeline,

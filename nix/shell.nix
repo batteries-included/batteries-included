@@ -20,8 +20,15 @@
       rebar3 = beamPackages.rebar3;
 
       # elixir and elixir-ls are using the same version
-      elixir = beamPackages.elixir_1_15;
-      elixir-ls = beamPackages.elixir-ls.override { elixir = elixir; };
+      elixir = beamPackages.elixir_1_16;
+      elixir-ls = (beamPackages.elixir-ls.override { inherit elixir; }).overrideAttrs (_old: {
+        buildPhase =
+          ''
+            runHook preBuild
+            mix do compile --no-deps-check, elixir_ls.release2
+            runHook postBuild
+          '';
+      });
 
       elixirNativeTools = with pkgs; [
         erlang
@@ -102,6 +109,7 @@
         skopeo # Use for pushing docker
         wireguard-tools
         age # secure out of band communications
+        nixpkgs-fmt
 
         awscli2
         ssm-session-manager-plugin
@@ -145,8 +153,13 @@
         pushd platform_umbrella &> /dev/null
         find $MIX_HOME -type f -name 'rebar3' -executable -print0 | grep -qz . \
             || mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3
+
+
+        # Install hex if it's not there
+        # However we need to compile the hex app to not run into:
+        # https://github.com/erlang/otp/issues/8238
         find $MIX_HOME -type f -name 'hex.app' -print0 | grep -qz . \
-            || mix local.hex --force --if-missing
+            || mix archive.install github hexpm/hex branch latest --force
         popd &> /dev/null
 
         # This keeps cargo self contained in this dir

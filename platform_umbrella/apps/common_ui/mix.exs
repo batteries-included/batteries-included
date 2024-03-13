@@ -40,14 +40,14 @@ defmodule CommonUI.MixProject do
   defp deps do
     [
       {:bandit, "~> 1.2"},
-      {:floki, "~> 0.35", only: [:dev, :test, :integration]},
+      {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:heroicons, "~> 0.5"},
       {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
       {:jason, "~> 1.4"},
       {:petal_components, "~> 1.9"},
       {:phoenix, "~> 1.7"},
-      {:phoenix_html, "~> 4.0"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_html, "~> 4.1"},
+      {:phoenix_live_reload, "~> 1.5", only: :dev},
       {:phoenix_live_view, "~> 0.20", override: true},
       {:phoenix_storybook, "~> 0.6"},
       {:timex, "~> 3.7"}

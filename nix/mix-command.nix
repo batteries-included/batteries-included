@@ -6,7 +6,6 @@
 , buildInputs ? [ ]
 , mixEnv ? "test"
 , mixFodDeps ? null
-, rustToolChain
 , pkg-config
 , gcc
 , openssl
@@ -27,7 +26,6 @@ pkgs.stdenv.mkDerivation ({
     erlang
     elixir
     hex
-    rustToolChain
     pkg-config
     gcc
     openssl

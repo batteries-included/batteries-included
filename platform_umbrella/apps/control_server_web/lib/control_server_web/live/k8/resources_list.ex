@@ -42,10 +42,12 @@ defmodule ControlServerWeb.Live.ResourceList do
     # has finished loading but we still have the last data....
     # To work around that every kube type we have a display
     # for has it's on lists.
+    live_action = socket.assigns.live_action
+
     assign_async(socket, types, fn ->
       {:ok,
        Enum.reduce(types, %{}, fn type, objects ->
-         Map.put(objects, type, type == socket.assigns.live_action && objects(type))
+         Map.put(objects, type, type == live_action && objects(type))
        end)}
     end)
   end

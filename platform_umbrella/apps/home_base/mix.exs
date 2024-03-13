@@ -48,7 +48,7 @@ defmodule HomeBase.MixProject do
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_ecto, "~> 4.5"},
       {:phoenix_pubsub, "~> 2.1"},
       {:postgrex, "~> 0.17"},
       {:timex, "~> 3.7"},

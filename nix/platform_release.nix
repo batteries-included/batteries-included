@@ -3,7 +3,6 @@
 , version
 , gcc
 , openssl
-, rustToolChain
 , pkg-config
 , mixEnv ? "prod"
 , npmlock2nix
@@ -39,7 +38,7 @@ beamPackages.mixRelease {
   inherit src pname version mixFodDeps MIX_ENV LANG;
   inherit erlang elixir hex;
 
-  nativeBuildInputs = [ gcc rustToolChain pkg-config nodejs ];
+  nativeBuildInputs = [ gcc pkg-config nodejs ];
   buildInputs = [ openssl ];
 
   postBuild = ''

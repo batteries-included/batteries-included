@@ -20,10 +20,11 @@
 
       # all elixir and erlange packages
       erlang = beamPackages.erlang;
-      elixir = beamPackages.elixir_1_15;
-      hex = beamPackages.hex;
+      elixir = beamPackages.elixir_1_16;
+      hex = beamPackages.hex.override {
+        elixir = elixir;
+      };
 
-      rustToolChain = pkgs.rust-bin.nightly.latest.default;
       pkg-config = pkgs.pkg-config;
       gcc = pkgs.gcc;
       openssl = pkgs.openssl;
@@ -37,7 +38,7 @@
         inherit src version LANG;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-hWDcy+0Zzr/USGtmf275HnlAt/iTCQ0PgWjficr452c=";
+        sha256 = "sha256-l9V8jIhiwZiniAjIK12evV8607kCF4Bn0H+nnXajD08=";
       };
 
       # mix fixed output derivation dependencies
@@ -50,14 +51,14 @@
         pname = "mix-deps-platform";
         inherit src version LANG;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-d2/7i3hfVRGKCjTgvo2rHLigjxyWTPYxU0s5czk04I8=";
+        sha256 = "sha256-PmcWxDCYurXKi6gC+BWXSmxmzkX/u3NQmEdbFDXEp5M=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {
         inherit version src mixFodDeps pkgs nixpkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
-        inherit rustToolChain pkg-config gcc openssl;
+        inherit pkg-config gcc openssl;
         inherit gitignoreSource;
 
         pname = "control_server";
@@ -72,7 +73,7 @@
           LANG = "C.UTF-8";
           pname = "kube_bootstrap";
 
-          nativeBuildInputs = [ gcc rustToolChain pkg-config ];
+          nativeBuildInputs = [ gcc pkg-config ];
           buildInputs = [ openssl ];
           installPhase = ''
             export APP_VERSION="${version}"
@@ -88,7 +89,7 @@
         inherit version src mixFodDeps pkgs nixpkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
-        inherit rustToolChain pkg-config gcc openssl;
+        inherit pkg-config gcc openssl;
         inherit gitignoreSource;
 
         pname = "home_base";
@@ -98,7 +99,7 @@
       credo = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit rustToolChain pkg-config gcc openssl;
+        inherit pkg-config gcc openssl;
 
         pname = "platform";
         mixEnv = "test";
@@ -109,7 +110,7 @@
       dialyzer = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit rustToolChain pkg-config gcc openssl;
+        inherit pkg-config gcc openssl;
 
         pname = "platform";
         mixEnv = "test";
@@ -120,7 +121,7 @@
       format = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit rustToolChain pkg-config gcc openssl;
+        inherit pkg-config gcc openssl;
 
         pname = "platform";
         mixEnv = "test";
