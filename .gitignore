@@ -7,6 +7,9 @@ platform_umbrella/.iex.exs
 # Local cargo dirs
 .nix-cargo
 
+# local go dirs
+.nix-go
+
 # Sssssshhhhh
 ops/aws/keys/*
 !ops/aws/keys/keys-to-generate

@@ -26,7 +26,9 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
   end
 
   defp assign_page_title(%{assigns: %{virtual_service: virtual_service}} = socket) do
-    assign(socket, page_title: "Istio Virtual Service: " <> name(virtual_service))
+    service_name = name(virtual_service)
+
+    assign(socket, page_title: "Istio Virtual Service: " <> service_name)
   end
 
   def render(assigns) do

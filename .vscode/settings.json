@@ -8,6 +8,7 @@
     "**/.direnv": true,
     "**/.nix-hex": true,
     "**/.nix-cargo": true,
+    "**/.nix-go": true,
     "**/.nix-mix": true
   },
   "search.exclude": {

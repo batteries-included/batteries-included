@@ -147,6 +147,9 @@
         export ELIXIR_MAKE_CACHE_DIR=$PWD/.nix-elixir.cache
         mkdir -p $ELIXIR_MAKE_CACHE_DIR
 
+        export GOPATH=$PWD/.nix-go
+        mkdir -p $GOPATH
+
         export PATH=$MIX_HOME/bin:$PATH
         export PATH=$HEX_HOME/bin:$PATH
 
