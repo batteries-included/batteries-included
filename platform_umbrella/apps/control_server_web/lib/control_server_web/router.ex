@@ -146,6 +146,13 @@ defmodule ControlServerWeb.Router do
     live "/:resource_type/:namespace/:name", Live.TrivyReportShow, :show
   end
 
+  scope "/istio", ControlServerWeb do
+    pipe_through :browser
+
+    live "/virtual_services", Live.IstioVirtualServicesIndex, :index
+    live "/virtual_service/:namespace/:name", Live.IstioVirtualServiceShow, :index
+  end
+
   scope "/keycloak", ControlServerWeb do
     pipe_through :browser
 

@@ -19,7 +19,7 @@ defmodule ControlServerWeb.Live.EditVersionShow do
   end
 
   defp entity_history_url(%{entity_schema: schema, entity_id: entity_id} = _edit_version) do
-    case dbg(schema) do
+    case schema do
       CommonCore.Postgres.Cluster ->
         ~p"/postgres/#{entity_id}/edit_versions"
 

@@ -16,7 +16,8 @@ defmodule KubeServices.SystemState do
       KubeServices.SystemState.SummaryHosts,
       KubeServices.SystemState.SummaryRecent,
       KubeServices.SystemState.SummaryStorage,
-      KubeServices.SystemState.SummaryURLs
+      KubeServices.SystemState.SummaryURLs,
+      KubeServices.SystemState.SummaryIstio
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

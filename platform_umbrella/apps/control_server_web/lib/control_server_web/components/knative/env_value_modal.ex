@@ -74,7 +74,6 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
     if changeset.valid? do
       new_env_value = Changeset.apply_changes(changeset)
 
-      dbg(idx)
       ControlServerWeb.Live.Knative.FormComponent.update_env_value(new_env_value, idx)
     end
 

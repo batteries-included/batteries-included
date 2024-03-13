@@ -10,31 +10,31 @@
     </thead>
     <tbody id="keycloak-users-table" class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       <tr class="group ">
-        <td class="p-0 px-2 ">
+        <td class="p-0 px-2 align-top ">
           <div class="block py-4">
             <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               00-00-00-00-00-00-00-00-00-00-01
             </span>
           </div>
-        </td><td class="p-0 px-2 ">
+        </td><td class="p-0 px-2 align-top ">
           <div class="block py-4">
             <span class="">
               root
             </span>
           </div>
-        </td><td class="p-0 px-2 ">
+        </td><td class="p-0 px-2 align-top ">
           <div class="block py-4">
             <span class="">
               true
             </span>
           </div>
-        </td><td class="p-0 px-2 ">
+        </td><td class="p-0 px-2 align-top ">
           <div class="block py-4">
             <span class="">
               false
             </span>
           </div>
-        </td><td class="p-0 px-2 ">
+        </td><td class="p-0 px-2 align-top ">
           <div class="block py-4">
             <span class="">
               

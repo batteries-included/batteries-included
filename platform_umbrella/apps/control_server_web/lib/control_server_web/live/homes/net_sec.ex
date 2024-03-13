@@ -5,10 +5,12 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   import ControlServerWeb.EmptyHome
   import ControlServerWeb.IPAddressPoolsTable
+  import ControlServerWeb.Istio.VirtualServicesTable
   import ControlServerWeb.Keycloak.RealmsTable
   import ControlServerWeb.VulnerabilityReportTable
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryHosts
+  import KubeServices.SystemState.SummaryIstio
   import KubeServices.SystemState.SummaryRecent
   import KubeServices.SystemState.SummaryURLs
 
@@ -20,6 +22,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
      |> assign_keycloak_realms()
      |> assign_keycloak_url()
      |> assign_ip_address_pools()
+     |> assign_istio_virtual_services()
      |> assign_vulnerability_reports()
      |> assign_current_page()}
   end
@@ -42,6 +45,10 @@ defmodule ControlServerWeb.Live.NetSecHome do
 
   defp assign_ip_address_pools(socket) do
     assign(socket, :ip_address_pools, ip_address_pools())
+  end
+
+  defp assign_istio_virtual_services(socket) do
+    assign(socket, :virtual_services, virtual_services())
   end
 
   defp assign_current_page(socket) do
@@ -87,6 +94,19 @@ defmodule ControlServerWeb.Live.NetSecHome do
     """
   end
 
+  defp virtual_services_panel(assigns) do
+    ~H"""
+    <.panel :if={@virtual_services != []} title="Virtual Services">
+      <:menu>
+        <.flex>
+          <.a navigate={~p"/istio/virtual_services"}>View All</.a>
+        </.flex>
+      </:menu>
+      <.virtual_services_table abbridged rows={@virtual_services} />
+    </.panel>
+    """
+  end
+
   defp battery_link_panel(%{battery: %{type: :kiali}} = assigns) do
     ~H"""
     <.panel>
@@ -118,6 +138,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
             <.metallb_panel ip_address_pools={@ip_address_pools} />
           <% :trivy_operator -> %>
             <.trivy_panel vulnerability_reports={@vulnerability_reports} />
+          <% :istio -> %>
+            <.virtual_services_panel virtual_services={@virtual_services} />
           <% _ -> %>
         <% end %>
       <% end %>

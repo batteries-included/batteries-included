@@ -10,7 +10,7 @@
     </thead>
     <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       <tr class="group hover:bg-gray-lightest dark:hover:bg-gray-darkest">
-        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 hover:cursor-pointer">
+        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
           <div class="block py-4">
             <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               
@@ -18,7 +18,7 @@
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 hover:cursor-pointer">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
           <div class="block py-4">
             <span class="">
               
@@ -26,7 +26,7 @@
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 hover:cursor-pointer">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
           <div class="block py-4">
             <span class="">
               
@@ -64,7 +64,7 @@
 </div>
         </td>
       </tr><tr class="group hover:bg-gray-lightest dark:hover:bg-gray-darkest">
-        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 hover:cursor-pointer">
+        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
           <div class="block py-4">
             <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               
@@ -72,7 +72,7 @@
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 hover:cursor-pointer">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
           <div class="block py-4">
             <span class="">
               
@@ -80,7 +80,7 @@
   
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 hover:cursor-pointer">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
           <div class="block py-4">
             <span class="">
               

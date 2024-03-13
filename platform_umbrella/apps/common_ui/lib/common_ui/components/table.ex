@@ -54,12 +54,15 @@ defmodule CommonUI.Components.Table do
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            class={["group", @row_click && "hover:bg-gray-lightest dark:hover:bg-gray-darkest"]}
+            class={[
+              "group",
+              @row_click && "hover:bg-gray-lightest dark:hover:bg-gray-darkest"
+            ]}
           >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
-              class={["p-0 px-2", @row_click && "hover:cursor-pointer"]}
+              class={["p-0 px-2 align-top", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4">
                 <span class={[i == 0 && "font-semibold text-gray-darkest dark:text-gray-lightest"]}>

@@ -6,10 +6,10 @@ defmodule CommonCore.StateSummary.FromKubeState do
 
   @namespaceless ~w(
     certmanager_cluster_issuer
-    cluster_role 
-    cluster_role_binding 
-    namespace 
-    node 
+    cluster_role
+    cluster_role_binding
+    namespace
+    node
     storage_class
   )a
 
@@ -26,5 +26,11 @@ defmodule CommonCore.StateSummary.FromKubeState do
     |> Map.get(:kube_state, %{})
     |> Map.get(resource_type, %{})
     |> Enum.find(nil, fn resource -> namespace == namespace(resource) && name == name(resource) end)
+  end
+
+  def all_resources(%StateSummary{} = state, type) do
+    state
+    |> Map.get(:kube_state, %{})
+    |> Map.get(type, [])
   end
 end
