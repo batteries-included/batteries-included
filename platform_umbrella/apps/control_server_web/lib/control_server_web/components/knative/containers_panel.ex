@@ -24,7 +24,6 @@ defmodule ControlServerWeb.Knative.ContainersPanel do
         <:action :let={{c, idx}}>
           <.button
             variant="minimal"
-            link="/"
             icon={:x_mark}
             id={"delete_container_" <> String.replace(c.name, " ", "")}
             phx-click="del:container"
@@ -39,7 +38,6 @@ defmodule ControlServerWeb.Knative.ContainersPanel do
 
           <.button
             variant="minimal"
-            link="/"
             icon={:pencil}
             id={"edit_container_" <> String.replace(c.name, " ", "")}
             phx-target={@target}

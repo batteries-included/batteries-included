@@ -44,7 +44,6 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
         <:action :let={{ev, idx}}>
           <.button
             variant="minimal"
-            link="/"
             icon={:x_mark}
             id={"delete_env_value_" <> String.replace(ev.name, " ", "")}
             phx-click="del:env_value"
@@ -58,7 +57,6 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
 
           <.button
             variant="minimal"
-            link="/"
             icon={:pencil}
             id={"edit_env_value_" <> String.replace(ev.name, " ", "")}
             phx-click="edit:env_value"

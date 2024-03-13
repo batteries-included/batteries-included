@@ -80,7 +80,6 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
             <.button
               variant="minimal"
-              link="/"
               icon={:x_mark}
               id={"delete_user_" <> String.replace(user.username, " ", "")}
               phx-click="del:user"
