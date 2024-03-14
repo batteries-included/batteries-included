@@ -9,23 +9,22 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
     ~H"""
     <div>
       <.simple_form
-        :let={f}
-        for={@changeset}
+        for={@form}
         id="system_project-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={{f, :name}} type="text" label="Name" />
+        <.input field={@form[:name]} label="Name" />
         <.input
-          field={{f, :type}}
+          field={@form[:type]}
           type="select"
           label="Type"
-          prompt="Choose a value"
+          placeholder="Choose a value"
           options={Ecto.Enum.values(Projects.SystemProject, :type)}
         />
         <div class="sm:col-span-2">
-          <.input field={{f, :description}} type="textarea" label="Description" />
+          <.input field={@form[:description]} type="textarea" label="Description" />
         </div>
         <:actions>
           <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
@@ -42,7 +41,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:form, to_form(changeset))}
   end
 
   @impl Phoenix.LiveComponent
@@ -52,7 +51,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
       |> Projects.change_system_project(system_project_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
   def handle_event("save", %{"system_project" => system_project_params}, socket) do
@@ -68,7 +67,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
          |> push_navigate(to: ~p"/system_projects/#{system_project}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
 
@@ -81,7 +80,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
          |> push_navigate(to: ~p"/system_projects")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 end

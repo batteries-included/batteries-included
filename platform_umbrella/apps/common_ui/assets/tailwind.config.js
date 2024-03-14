@@ -77,9 +77,9 @@ const warning = {
 };
 
 const error = {
-  light: '#EA7B88',
-  DEFAULT: '#D42F40',
-  dark: '#831B25',
+  light: '#FEE2E2',
+  DEFAULT: '#ED4C5C',
+  dark: '#991B1B',
   // TODO: Deprecate these after removing Petal
   50: '#D42F40',
   100: '#C62939',
@@ -101,6 +101,9 @@ const gray = {
   dark: '#545155',
   darker: '#38383A',
   darkest: '#1C1C1E',
+  // Used for dark mode
+  'darker-tint': '#4E535F',
+  'darkest-tint': '#21242B',
   // TODO: Deprecate these after removing Petal
   ...colors.zinc,
 };
@@ -139,6 +142,9 @@ module.exports = {
         sans: ['"Inter Variable"', ...defaultTheme.fontFamily.sans],
         mono: ['"JetBrains Mono Variable"', ...defaultTheme.fontFamily.mono],
       },
+      backgroundImage: {
+        caret: `url("data:image/svg+xml,%3csvg viewBox='0 0 9 6' fill='%23999A9F' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M1.023,1.537L2.934,3.637L4.101,4.926C4.596,5.469 5.399,5.469 5.894,4.926L8.978,1.537C9.383,1.092 9.091,0.333 8.525,0.333L5.185,0.333L1.476,0.333C0.904,0.333 0.618,1.092 1.023,1.537Z' /%3e%3c/svg%3e")`,
+      },
     },
   },
   plugins: [
@@ -150,6 +156,9 @@ module.exports = {
     //
     //     <div class="phx-click-loading:animate-ping">
     //
+    plugin(({ addVariant }) =>
+      addVariant('phx-feedback', ['label:not(.phx-no-feedback) &'])
+    ),
     plugin(({ addVariant }) =>
       addVariant('phx-no-feedback', ['.phx-no-feedback&', '.phx-no-feedback &'])
     ),

@@ -10,7 +10,8 @@ defmodule Storybook.Colors do
       {:success, "Success", {:fa, ""}},
       {:warning, "Warning", {:fa, ""}},
       {:error, "Error", {:fa, ""}},
-      {:gray, "Gray", {:fa, ""}}
+      {:gray, "Gray", {:fa, ""}},
+      {:gray_tint, "Gray Tint", {:fa, ""}}
     ]
   end
 
@@ -88,9 +89,9 @@ defmodule Storybook.Colors do
   def render(%{tab: :error} = assigns) do
     ~H"""
     <div class="psb-colors-page">
-      <.color hex="#EA7B88" name="error-light" class="bg-error-light text-white" />
-      <.color hex="#D42F40" name="error" class="bg-error text-white" />
-      <.color hex="#831B25" name="error-dark" class="bg-error-dark text-white" />
+      <.color hex="#FEE2E2" name="error-light" class="bg-error-light text-gray-darkest" />
+      <.color hex="#ED4C5C" name="error" class="bg-error text-white" />
+      <.color hex="#991B1B" name="error-dark" class="bg-error-dark text-white" />
     </div>
     """
   end
@@ -139,6 +140,25 @@ defmodule Storybook.Colors do
         name="gray-darkest"
         class="bg-gray-darkest text-white"
         description="Used for dark buttons, input labels"
+      />
+    </div>
+    """
+  end
+
+  def render(%{tab: :gray_tint} = assigns) do
+    ~H"""
+    <div class="psb-colors-page">
+      <.color
+        hex="#4E535F"
+        name="gray-darker-tint"
+        class="bg-gray-darker-tint text-white"
+        description="Used for input border in dark mode"
+      />
+      <.color
+        hex="#21242B"
+        name="gray-darkest-tint"
+        class="bg-gray-darkest text-white"
+        description="Used for input background in dark mode"
       />
     </div>
     """

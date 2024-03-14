@@ -19,7 +19,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:form, to_form(changeset))}
   end
 
   @impl Phoenix.LiveComponent
@@ -29,7 +29,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
       |> ControlServerClusters.change_installation(installation_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
   def handle_event("save", %{"installation" => installation_params}, socket) do
@@ -48,7 +48,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
          |> send_info(socket.assigns.save_target, updated_installation)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
 
@@ -61,7 +61,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
          |> send_info(socket.assigns.save_target, new_installation)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
 
@@ -75,14 +75,13 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
     ~H"""
     <div>
       <.simple_form
-        :let={f}
-        for={@changeset}
+        for={@form}
         id="installation-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={{f, :slug}} type="text" label="slug" />
+        <.input field={@form[:slug]} label="Slug" />
         <:actions>
           <.button variant="primary" type="submit" phx-disable-with="Saving...">
             Save Installation
