@@ -123,28 +123,12 @@
             '';
           };
 
-          __bootstrap = {
-            description = "Base bootstrap command";
-            category = "dev";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              trap 'trap - SIGTERM && kill -- -$$' SIGINT SIGTERM EXIT
-              # shellcheck disable=2046
-              bcli dev \
-                $([[ -z ''${TRACE:-""} ]] || echo "-vv") \
-                --platform-dir=platform_umbrella \
-                "$@"
-              echo "Exited"
-            '';
-          };
-
           bootstrap = {
             description = "Bootstrap the dev environment";
             category = "dev";
             exec = ''
-              __bootstrap \
-                --static-dir=static \
-                "$@"
+              ${builtins.readFile ./scripts/bootstrap.sh}
+              bootstrap_bcli --static-dir=static "$@"
             '';
           };
 
@@ -152,10 +136,8 @@
             description = "Bootstrap the dev environment against a remote cluster";
             category = "dev";
             exec = ''
-              __bootstrap \
-                --static-dir=static \
-                --spec-path=public/specs/dev_cluster.json \
-                "$@"
+              ${builtins.readFile ./scripts/bootstrap.sh}
+              bootstrap_bcli --static-dir=static --spec-path=public/specs/dev_cluster.json "$@"
             '';
           };
 
