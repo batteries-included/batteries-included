@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.Project.FormComponent do
+defmodule ControlServerWeb.Projects.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
     <div>
       <.simple_form
         for={@form}
-        id="system_project-form"
+        id="project-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
           type="select"
           label="Type"
           placeholder="Choose a value"
-          options={Ecto.Enum.values(Projects.SystemProject, :type)}
+          options={Ecto.Enum.values(Projects.Project, :type)}
         />
         <div class="sm:col-span-2">
           <.input field={@form[:description]} type="textarea" label="Description" />
@@ -35,8 +35,8 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
   end
 
   @impl Phoenix.LiveComponent
-  def update(%{system_project: system_project} = assigns, socket) do
-    changeset = Projects.change_system_project(system_project)
+  def update(%{project: project} = assigns, socket) do
+    changeset = Projects.change_project(project)
 
     {:ok,
      socket
@@ -45,39 +45,39 @@ defmodule ControlServerWeb.Live.Project.FormComponent do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("validate", %{"system_project" => system_project_params}, socket) do
+  def handle_event("validate", %{"project" => project_params}, socket) do
     changeset =
-      socket.assigns.system_project
-      |> Projects.change_system_project(system_project_params)
+      socket.assigns.project
+      |> Projects.change_project(project_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
-  def handle_event("save", %{"system_project" => system_project_params}, socket) do
-    save_system_project(socket, socket.assigns.action, system_project_params)
+  def handle_event("save", %{"project" => project_params}, socket) do
+    save_project(socket, socket.assigns.action, project_params)
   end
 
-  defp save_system_project(socket, :edit, system_project_params) do
-    case Projects.update_system_project(socket.assigns.system_project, system_project_params) do
-      {:ok, system_project} ->
+  defp save_project(socket, :edit, project_params) do
+    case Projects.update_project(socket.assigns.project, project_params) do
+      {:ok, project} ->
         {:noreply,
          socket
-         |> put_flash(:info, "System project updated successfully")
-         |> push_navigate(to: ~p"/system_projects/#{system_project}")}
+         |> put_flash(:info, "Project updated successfully")
+         |> push_navigate(to: ~p"/projects/#{project}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
 
-  defp save_system_project(socket, :new, system_project_params) do
-    case Projects.create_system_project(system_project_params) do
+  defp save_project(socket, :new, project_params) do
+    case Projects.create_project(project_params) do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "System project created successfully")
-         |> push_navigate(to: ~p"/system_projects")}
+         |> put_flash(:info, "Project created successfully")
+         |> push_navigate(to: ~p"/projects")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

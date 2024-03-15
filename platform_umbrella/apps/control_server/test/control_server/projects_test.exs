@@ -3,40 +3,40 @@ defmodule ControlServer.ProjectsTest do
 
   alias ControlServer.Projects
 
-  describe "system_projects" do
+  describe "projects" do
     import ControlServer.ProjectsFixtures
 
-    alias ControlServer.Projects.SystemProject
+    alias ControlServer.Projects.Project
 
     @invalid_attrs %{description: nil, name: nil, type: nil}
 
-    test "list_system_projects/0 returns all system_projects" do
-      system_project = system_project_fixture()
-      assert Projects.list_system_projects() == [system_project]
+    test "list_projects/0 returns all projects" do
+      project = project_fixture()
+      assert Projects.list_projects() == [project]
     end
 
-    test "get_system_project!/1 returns the system_project with given id" do
-      system_project = system_project_fixture()
-      assert Projects.get_system_project!(system_project.id) == system_project
+    test "get_project!/1 returns the project with given id" do
+      project = project_fixture()
+      assert Projects.get_project!(project.id) == project
     end
 
-    test "create_system_project/1 with valid data creates a system_project" do
+    test "create_project/1 with valid data creates a project" do
       valid_attrs = %{description: "some description", name: "some name", type: :web}
 
-      assert {:ok, %SystemProject{} = system_project} =
-               Projects.create_system_project(valid_attrs)
+      assert {:ok, %Project{} = project} =
+               Projects.create_project(valid_attrs)
 
-      assert system_project.description == "some description"
-      assert system_project.name == "some name"
-      assert system_project.type == :web
+      assert project.description == "some description"
+      assert project.name == "some name"
+      assert project.type == :web
     end
 
-    test "create_system_project/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Projects.create_system_project(@invalid_attrs)
+    test "create_project/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Projects.create_project(@invalid_attrs)
     end
 
-    test "update_system_project/2 with valid data updates the system_project" do
-      system_project = system_project_fixture()
+    test "update_project/2 with valid data updates the project" do
+      project = project_fixture()
 
       update_attrs = %{
         description: "some updated description",
@@ -44,32 +44,32 @@ defmodule ControlServer.ProjectsTest do
         type: :ml
       }
 
-      assert {:ok, %SystemProject{} = system_project} =
-               Projects.update_system_project(system_project, update_attrs)
+      assert {:ok, %Project{} = project} =
+               Projects.update_project(project, update_attrs)
 
-      assert system_project.description == "some updated description"
-      assert system_project.name == "some updated name"
-      assert system_project.type == :ml
+      assert project.description == "some updated description"
+      assert project.name == "some updated name"
+      assert project.type == :ml
     end
 
-    test "update_system_project/2 with invalid data returns error changeset" do
-      system_project = system_project_fixture()
+    test "update_project/2 with invalid data returns error changeset" do
+      project = project_fixture()
 
       assert {:error, %Ecto.Changeset{}} =
-               Projects.update_system_project(system_project, @invalid_attrs)
+               Projects.update_project(project, @invalid_attrs)
 
-      assert system_project == Projects.get_system_project!(system_project.id)
+      assert project == Projects.get_project!(project.id)
     end
 
-    test "delete_system_project/1 deletes the system_project" do
-      system_project = system_project_fixture()
-      assert {:ok, %SystemProject{}} = Projects.delete_system_project(system_project)
-      assert_raise Ecto.NoResultsError, fn -> Projects.get_system_project!(system_project.id) end
+    test "delete_project/1 deletes the project" do
+      project = project_fixture()
+      assert {:ok, %Project{}} = Projects.delete_project(project)
+      assert_raise Ecto.NoResultsError, fn -> Projects.get_project!(project.id) end
     end
 
-    test "change_system_project/1 returns a system_project changeset" do
-      system_project = system_project_fixture()
-      assert %Ecto.Changeset{} = Projects.change_system_project(system_project)
+    test "change_project/1 returns a project changeset" do
+      project = project_fixture()
+      assert %Ecto.Changeset{} = Projects.change_project(project)
     end
   end
 end

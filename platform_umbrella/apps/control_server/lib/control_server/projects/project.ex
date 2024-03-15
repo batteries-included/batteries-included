@@ -1,4 +1,4 @@
-defmodule ControlServer.Projects.SystemProject do
+defmodule ControlServer.Projects.Project do
   @moduledoc false
   use Ecto.Schema
 
@@ -14,7 +14,7 @@ defmodule ControlServer.Projects.SystemProject do
   @timestamps_opts [type: :utc_datetime_usec]
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "system_projects" do
+  schema "projects" do
     field :description, :string
     field :name, :string
     field :type, Ecto.Enum, values: @possible_types
@@ -23,8 +23,8 @@ defmodule ControlServer.Projects.SystemProject do
   end
 
   @doc false
-  def changeset(system_project, attrs) do
-    system_project
+  def changeset(project, attrs) do
+    project
     |> cast(attrs, [:name, :type, :description])
     |> validate_required([:name, :type])
   end

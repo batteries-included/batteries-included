@@ -5,100 +5,100 @@ defmodule ControlServer.Projects do
 
   import Ecto.Query, warn: false
 
-  alias ControlServer.Projects.SystemProject
+  alias ControlServer.Projects.Project
   alias ControlServer.Repo
 
   @doc """
-  Returns the list of system_projects.
+  Returns the list of projects.
 
   ## Examples
 
-      iex> list_system_projects()
-      [%SystemProject{}, ...]
+      iex> list_projects()
+      [%Project{}, ...]
 
   """
-  def list_system_projects do
-    Repo.all(SystemProject)
+  def list_projects do
+    Repo.all(Project)
   end
 
   @doc """
-  Gets a single system_project.
+  Gets a single project.
 
-  Raises `Ecto.NoResultsError` if the System project does not exist.
+  Raises `Ecto.NoResultsError` if the project does not exist.
 
   ## Examples
 
-      iex> get_system_project!(123)
-      %SystemProject{}
+      iex> get_project!(123)
+      %Project{}
 
-      iex> get_system_project!(456)
+      iex> get_project!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_system_project!(id), do: Repo.get!(SystemProject, id)
+  def get_project!(id), do: Repo.get!(Project, id)
 
   @doc """
-  Creates a system_project.
+  Creates a project.
 
   ## Examples
 
-      iex> create_system_project(%{field: value})
-      {:ok, %SystemProject{}}
+      iex> create_project(%{field: value})
+      {:ok, %Project{}}
 
-      iex> create_system_project(%{field: bad_value})
+      iex> create_project(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_system_project(attrs \\ %{}) do
-    %SystemProject{}
-    |> SystemProject.changeset(attrs)
+  def create_project(attrs \\ %{}) do
+    %Project{}
+    |> Project.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a system_project.
+  Updates a project.
 
   ## Examples
 
-      iex> update_system_project(system_project, %{field: new_value})
-      {:ok, %SystemProject{}}
+      iex> update_project(project, %{field: new_value})
+      {:ok, %Project{}}
 
-      iex> update_system_project(system_project, %{field: bad_value})
+      iex> update_project(project, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_system_project(%SystemProject{} = system_project, attrs) do
-    system_project
-    |> SystemProject.changeset(attrs)
+  def update_project(%Project{} = project, attrs) do
+    project
+    |> Project.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a system_project.
+  Deletes a project.
 
   ## Examples
 
-      iex> delete_system_project(system_project)
-      {:ok, %SystemProject{}}
+      iex> delete_project(project)
+      {:ok, %Project{}}
 
-      iex> delete_system_project(system_project)
+      iex> delete_project(project)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_system_project(%SystemProject{} = system_project) do
-    Repo.delete(system_project)
+  def delete_project(%Project{} = project) do
+    Repo.delete(project)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking system_project changes.
+  Returns an `%Ecto.Changeset{}` for tracking project changes.
 
   ## Examples
 
-      iex> change_system_project(system_project)
-      %Ecto.Changeset{data: %SystemProject{}}
+      iex> change_project(project)
+      %Ecto.Changeset{data: %Project{}}
 
   """
-  def change_system_project(%SystemProject{} = system_project, attrs \\ %{}) do
-    SystemProject.changeset(system_project, attrs)
+  def change_project(%Project{} = project, attrs \\ %{}) do
+    Project.changeset(project, attrs)
   end
 end

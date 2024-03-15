@@ -1,9 +1,9 @@
-defmodule ControlServerWeb.Live.SystemProjectShow do
+defmodule ControlServerWeb.Projects.ShowLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias ControlServer.Projects
-  alias ControlServerWeb.Live.Project.FormComponent
+  alias ControlServerWeb.Projects.FormComponent
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -15,19 +15,19 @@ defmodule ControlServerWeb.Live.SystemProjectShow do
     {:noreply,
      socket
      |> assign(:page_title, "Project Details")
-     |> assign(:system_project, Projects.get_system_project!(id))}
+     |> assign(:project, Projects.get_project!(id))}
   end
 
   @impl Phoenix.LiveView
   def handle_event("delete", _params, socket) do
-    {:ok, _} = Projects.delete_system_project(socket.assigns.system_project)
-    {:noreply, push_navigate(socket, to: ~p"/system_projects")}
+    {:ok, _} = Projects.delete_project(socket.assigns.project)
+    {:noreply, push_navigate(socket, to: ~p"/projects")}
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/system_projects"}>
+    <.page_header title={@page_title} back_link={~p"/projects"}>
       <:menu>
         <.button variant="secondary" phx-click="delete" data-confirm="Are you sure?">
           Delete
@@ -37,8 +37,8 @@ defmodule ControlServerWeb.Live.SystemProjectShow do
 
     <.live_component
       module={FormComponent}
-      system_project={@system_project}
-      id={@system_project.id}
+      project={@project}
+      id={@project.id}
       action={:edit}
       save_target={self()}
     />

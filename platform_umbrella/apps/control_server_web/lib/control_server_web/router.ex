@@ -56,12 +56,12 @@ defmodule ControlServerWeb.Router do
     live "/:group/install/:battery_type", Live.GroupBatteries, :install
   end
 
-  scope "/system_projects", ControlServerWeb do
+  scope "/projects", ControlServerWeb.Projects do
     pipe_through :browser
 
-    live "/", Live.SystemProjectIndex, :index
-    live "/new", Live.SystemProjectNew, :index
-    live "/:id", Live.SystemProjectShow, :show
+    live "/", IndexLive, :index
+    live "/new", NewLive, :new
+    live "/:id", ShowLive, :show
   end
 
   scope "/kube", ControlServerWeb do

@@ -5,18 +5,18 @@ defmodule ControlServer.ProjectsFixtures do
   """
 
   @doc """
-  Generate a system_project.
+  Generate a project.
   """
-  def system_project_fixture(attrs \\ %{}) do
-    {:ok, system_project} =
+  def project_fixture(attrs \\ %{}) do
+    {:ok, project} =
       attrs
       |> Enum.into(%{
         description: "some description",
         name: "some name",
         type: :web
       })
-      |> ControlServer.Projects.create_system_project()
+      |> ControlServer.Projects.create_project()
 
-    system_project
+    project
   end
 end
