@@ -31,7 +31,7 @@ tempfile = { version = "3.10.1" }
 thiserror = { version = "1.0.58" }
 time = { version = "0.3.34", features = ["serde", "serde-human-readable"] }
 tokio = { version = "1.36.0", features = ["full"] }
-tokio-stream = { version = "0.1.14", features = ["net", "time"] }
+tokio-stream = { version = "0.1.15", features = ["net", "time"] }
 tracing = { version = "0.1.40" }
 tracing-subscriber = { version = "0.3.18" }
 url = { version = "2.5.0" }
