@@ -4,6 +4,7 @@ import (
 	"bi/pkg/cluster/eks"
 	"context"
 	"fmt"
+	"log/slog"
 	"path"
 
 	"github.com/adrg/xdg"
@@ -80,6 +81,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 
 	dirs, err := p.makeDirs()
 	if err != nil {
+		slog.Error("Failed to create necessary directories")
 		return nil, err
 	}
 
@@ -135,7 +137,7 @@ func (p *pulumiProvider) installPlugins(ctx context.Context, ws auto.Workspace, 
 	for plugin, version := range plugins {
 		err := ws.InstallPlugin(ctx, plugin, version)
 		if err != nil {
-			return fmt.Errorf("failed to install necessary plugin: %s: %w\n", plugin, err)
+			return fmt.Errorf("failed to install necessary plugin: %s: %w", plugin, err)
 		}
 	}
 	return nil
@@ -143,7 +145,7 @@ func (p *pulumiProvider) installPlugins(ctx context.Context, ws auto.Workspace, 
 
 func (p *pulumiProvider) Create(ctx context.Context) error {
 	if !p.initSuccessful {
-		return fmt.Errorf("attempted to create with uninitialized provider.")
+		return fmt.Errorf("attempted to create with uninitialized provider")
 	}
 	eks := eks.New(p.toEKSConfig())
 
@@ -152,7 +154,7 @@ func (p *pulumiProvider) Create(ctx context.Context) error {
 
 func (p *pulumiProvider) Destroy(ctx context.Context) error {
 	if !p.initSuccessful {
-		return fmt.Errorf("attempted to destroy with uninitialized provider.")
+		return fmt.Errorf("attempted to destroy with uninitialized provider")
 	}
 	eks := eks.New(p.toEKSConfig())
 

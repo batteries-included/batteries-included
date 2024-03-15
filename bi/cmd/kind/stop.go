@@ -5,7 +5,7 @@ package kind
 
 import (
 	"bi/pkg/local"
-	"fmt"
+	"log/slog"
 
 	"github.com/spf13/cobra"
 )
@@ -17,8 +17,8 @@ var stopLocalCmd = &cobra.Command{
 Kubernetes; this stops all kubernetes clusters locally
 with just docker as a dependency.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("stop local called")
-		kp, err := local.NewKindClusterProvider("bi")
+		slog.Debug("stop local called")
+		kp, err := local.NewKindClusterProvider(local.DefaultKindClusterName())
 		cobra.CheckErr(err)
 
 		err = kp.EnsureDeleted()

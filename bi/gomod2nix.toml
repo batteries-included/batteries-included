@@ -124,6 +124,9 @@ schema = 3
   [mod."github.com/kevinburke/ssh_config"]
     version = "v1.2.0"
     hash = "sha256-Ta7ZOmyX8gG5tzWbY2oES70EJPfI90U7CIJS9EAce0s="
+  [mod."github.com/lmittmann/tint"]
+    version = "v1.0.4"
+    hash = "sha256-xLaS+fcxmjsoOC3I5IX4jWkmgPVUFJBKEK+jgY5AFa0="
   [mod."github.com/lucasb-eyer/go-colorful"]
     version = "v1.2.0"
     hash = "sha256-Gg9dDJFCTaHrKHRR1SrJgZ8fWieJkybljybkI9x0gyE="
@@ -194,8 +197,8 @@ schema = 3
     version = "v0.0.0-20231130102222-75f619a67231"
     hash = "sha256-SsW0IptD5XEyH4X4c0k0XTyJcTM6kMXtZcWDb2USEJY="
   [mod."github.com/pulumi/esc"]
-    version = "v0.8.2"
-    hash = "sha256-m05PH6yotzRkZGSYPeQmL4Qetbov7voKhP2s3eoPOao="
+    version = "v0.8.3"
+    hash = "sha256-Emy9ruI73P8dQJWaZOAKXihP/aobZq0kdZhMs5WlaRc="
   [mod."github.com/pulumi/pulumi-aws/sdk/v6"]
     version = "v6.25.1"
     hash = "sha256-sIxPaBUFscBh5FLNKMSfSVi3ZUc5Ke5cWlSraraJPcc="
@@ -203,8 +206,8 @@ schema = 3
     version = "v1.4.1"
     hash = "sha256-DLWzI7MFP2tU+ry++6OB23JOtQBDji1KekR90rdEXwc="
   [mod."github.com/pulumi/pulumi/sdk/v3"]
-    version = "v3.109.0"
-    hash = "sha256-IqYiLMDqsBpKjHErEPBTNNceF3Gp22i066Xyq88+2mI="
+    version = "v3.111.0"
+    hash = "sha256-kbLiKmHXnn/Ui5leQbEYsEDwOD9Dxg7qR0E3hNdl/Cc="
   [mod."github.com/rivo/uniseg"]
     version = "v0.4.7"
     hash = "sha256-rDcdNYH6ZD8KouyyiZCUEy8JrjOQoAkxHBhugrfHjFo="
@@ -278,8 +281,8 @@ schema = 3
     version = "v0.21.0"
     hash = "sha256-Z4k1LvFh4Jai7HUe6TTuXSG3VnuiRpMwdARIdZZqSYk="
   [mod."golang.org/x/exp"]
-    version = "v0.0.0-20240222234643-814bf88cf225"
-    hash = "sha256-DM6/KUjyqyuqXai7UH1vMsoKXQAlYfcHTwK1dHqjRAc="
+    version = "v0.0.0-20240314144324-c7f7c6466f7f"
+    hash = "sha256-RVQIpS6Plx4r82w39/Zn/j0vbSrqcZ3vjVzXMjh772A="
   [mod."golang.org/x/mod"]
     version = "v0.16.0"
     hash = "sha256-aN1Cz5Wqd9YCjK8nFW6JWn+n1HfFoEcgYZmGO/FYtbw="
@@ -302,7 +305,7 @@ schema = 3
     version = "v0.19.0"
     hash = "sha256-Xf05Ao398gBzxn5C8H6x+XsLjFLIm+UUfpDekQYA0cw="
   [mod."google.golang.org/genproto/googleapis/rpc"]
-    version = "v0.0.0-20240311173647-c811ad7063a7"
+    version = "v0.0.0-20240314234333-6e1732d8331c"
     hash = "sha256-P5SBku16dYnK4koUQxTeGwPxAAWH8rxbDm2pOzFLo/Q="
   [mod."google.golang.org/grpc"]
     version = "v1.62.1"

@@ -4,15 +4,19 @@ Copyright © 2024 Elliott Clark
 package cmd
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
+	"time"
 
 	"github.com/adrg/xdg"
+	"github.com/lmittmann/tint"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
+var verbose string
+var color bool
 
 // rootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -21,6 +25,13 @@ var RootCmd = &cobra.Command{
 	Long: `An all in one cli for installing and
 debugging Batteries Included infrastructure
 on top of kubernetes`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		err := initLogging(verbose, color)
+		if err != nil {
+			return err
+		}
+		return nil
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -35,6 +46,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $XDG_CONFIG_HOME/bi/bi.yaml)")
+	RootCmd.PersistentFlags().StringVarP(&verbose, "verbosity", "v", slog.LevelWarn.String(), "Log level (debug, info, warn, error")
+	RootCmd.PersistentFlags().BoolVarP(&color, "color", "c", true, "Use color in logs")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -57,6 +70,29 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		slog.Debug("Using config file", "file", viper.ConfigFileUsed())
 	}
+}
+
+func initLogging(verbose string, color bool) error {
+	var logLevel slog.Level
+
+	w := os.Stderr
+
+	err := logLevel.UnmarshalText([]byte(verbose))
+	if err != nil {
+		return err
+	}
+
+	// set global logger with custom options
+	slog.SetDefault(slog.New(
+		tint.NewHandler(w, &tint.Options{
+			Level:      logLevel,
+			AddSource:  logLevel == slog.LevelDebug,
+			NoColor:    !color,
+			TimeFormat: time.Kitchen,
+		}),
+	))
+
+	return nil
 }

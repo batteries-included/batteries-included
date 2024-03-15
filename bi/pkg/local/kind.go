@@ -1,9 +1,11 @@
 package local
 
 import (
+	"log/slog"
+
 	"github.com/pkg/errors"
 	"sigs.k8s.io/kind/pkg/cluster"
-	"sigs.k8s.io/kind/pkg/log"
+	kindLogger "sigs.k8s.io/kind/pkg/log"
 )
 
 const (
@@ -15,6 +17,26 @@ type KindClusterProvider struct {
 	name         string
 }
 
+var defaultKindClusterName = "bi"
+
+func DefaultKindClusterName() string {
+	return defaultKindClusterName
+}
+
+func StartDefaultKindCluster() (*KindClusterProvider, error) {
+	c, err := NewKindClusterProvider(defaultKindClusterName)
+	if err != nil {
+		return nil, err
+	}
+
+	err = c.EnsureStarted()
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
 func NewKindClusterProvider(name string) (*KindClusterProvider, error) {
 	po, err := cluster.DetectNodeProvider()
 	if err != nil {
@@ -23,7 +45,7 @@ func NewKindClusterProvider(name string) (*KindClusterProvider, error) {
 	if po == nil {
 		return nil, errors.New("kind could not detect docker or podman; install docker")
 	}
-	p := cluster.NewProvider(po, cluster.ProviderWithLogger(log.NoopLogger{}))
+	p := cluster.NewProvider(po, cluster.ProviderWithLogger(kindLogger.NoopLogger{}))
 	c := &KindClusterProvider{kindProvider: p, name: name}
 	return c, nil
 }
@@ -39,6 +61,7 @@ func (c *KindClusterProvider) EnsureStarted() error {
 		return err
 	}
 
+	slog.Debug("Found running kind clusters: ", "cluster_list", clusters)
 	for _, cluster := range clusters {
 		if cluster == c.name {
 			// cluster is running
@@ -55,6 +78,7 @@ func (c *KindClusterProvider) EnsureStarted() error {
 		cluster.CreateWithDisplaySalutation(false),
 	}
 
+	slog.Info("Creating kind cluster", "name", c.name, "image", kindImage)
 	err = c.kindProvider.Create(c.name, co...)
 
 	if err != nil {
@@ -72,6 +96,7 @@ func (c *KindClusterProvider) EnsureDeleted() error {
 
 	for _, cluster := range clusters {
 		if cluster == c.name {
+			slog.Info("Deleting kind cluster", "name", c.name)
 			err = c.kindProvider.Delete(c.name, "")
 			if err != nil {
 				return err

@@ -6,6 +6,7 @@ package debug
 import (
 	"bi/pkg/specs"
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -35,6 +36,7 @@ func verifyFile(pathName string) error {
 
 	var _, json_err = specs.UnmarshalJSON(data)
 	if json_err != nil {
+		slog.Error("unable to pasrse spec into struct", "error", json_err)
 		return err
 	}
 

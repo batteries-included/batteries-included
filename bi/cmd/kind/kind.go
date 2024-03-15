@@ -11,7 +11,7 @@ import (
 
 var kindCmd = &cobra.Command{
 	Use:   "kind",
-	Short: "A brief description of your command",
+	Short: "Local kubernetes cluster management with kind.",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 	},

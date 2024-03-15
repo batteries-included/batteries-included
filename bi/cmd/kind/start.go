@@ -5,7 +5,7 @@ package kind
 
 import (
 	"bi/pkg/local"
-	"fmt"
+	"log/slog"
 
 	"github.com/spf13/cobra"
 )
@@ -17,11 +17,8 @@ var startLocalCmd = &cobra.Command{
 Kubernetes; this starts a kubernetes cluster locally
 with just docker as a dependency.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("startlocal called")
-		kp, err := local.NewKindClusterProvider("bi")
-		cobra.CheckErr(err)
-
-		err = kp.EnsureStarted()
+		slog.Debug("kind start called")
+		_, err := local.StartDefaultKindCluster()
 		cobra.CheckErr(err)
 	},
 }
