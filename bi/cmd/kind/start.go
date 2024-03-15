@@ -18,7 +18,13 @@ Kubernetes; this starts a kubernetes cluster locally
 with just docker as a dependency.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		slog.Debug("kind start called")
-		_, err := local.StartDefaultKindCluster()
+		clusterName, err := cmd.Flags().GetString("name")
+		cobra.CheckErr(err)
+
+		c, err := local.NewKindClusterProvider(clusterName)
+		cobra.CheckErr(err)
+
+		err = c.EnsureStarted()
 		cobra.CheckErr(err)
 	},
 }

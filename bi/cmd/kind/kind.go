@@ -5,6 +5,7 @@ package kind
 
 import (
 	"bi/cmd"
+	"bi/pkg/local"
 
 	"github.com/spf13/cobra"
 )
@@ -19,4 +20,5 @@ var kindCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(kindCmd)
+	kindCmd.PersistentFlags().StringP("name", "n", local.DefaultKindClusterName(), "The name of the kind cluster to stop")
 }
