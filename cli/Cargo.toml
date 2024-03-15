@@ -7,7 +7,7 @@ edition = "2021"
 assert_cmd = { version = "2.0.14" }
 clap = { version = "4.5.3", features = ["derive", "color", "usage"] }
 clap-verbosity-flag = { version = "2.2.0" }
-color-eyre = { version = "0.6.2" }
+color-eyre = { version = "0.6.3" }
 bollard = { version = "0.16.0", features = ["time", "ssl"] }
 dirs = { version = "5.0.1" }
 eyre = { version = "0.6.12" }
