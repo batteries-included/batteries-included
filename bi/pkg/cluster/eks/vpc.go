@@ -33,7 +33,7 @@ type vpc struct {
 
 func (v *vpc) withConfig(cfg auto.ConfigMap) error {
 	v.baseName = cfg["cluster:name"].Value
-	v.cidrBlock = cfg["cluster:vpcCidrBlock"].Value
+	v.cidrBlock = cfg["vpc:cidrBlock"].Value
 
 	_, net, err := net.ParseCIDR(v.cidrBlock)
 	if err != nil {

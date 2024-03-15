@@ -94,6 +94,9 @@ schema = 3
   [mod."github.com/golang/protobuf"]
     version = "v1.5.4"
     hash = "sha256-N3+Lv9lEZjrdOWdQhFj6Y3Iap4rVLEQeI8/eFFyAMZ0="
+  [mod."github.com/google/go-cmp"]
+    version = "v0.6.0"
+    hash = "sha256-qgra5jze4iPGP0JSTVeY5qV5AvEnEu39LYAuUCIkMtg="
   [mod."github.com/google/safetext"]
     version = "v0.0.0-20240104143208-7a7d9b3d812f"
     hash = "sha256-bFMddg0YfPqiO2GerJq+gWn+Wm7BXtwt4TYr7kHfV68="
@@ -121,6 +124,12 @@ schema = 3
   [mod."github.com/jbenet/go-context"]
     version = "v0.0.0-20150711004518-d14ea06fba99"
     hash = "sha256-VANNCWNNpARH/ILQV9sCQsBWgyL2iFT+4AHZREpxIWE="
+  [mod."github.com/josharian/native"]
+    version = "v1.1.0"
+    hash = "sha256-0rMsNq1ugMn/8nX2ChEHxuzUPxiWOInplNiAPNj3RPE="
+  [mod."github.com/jsimonetti/rtnetlink"]
+    version = "v1.4.1"
+    hash = "sha256-rxLKFESoIyZNJril34W93nDhqH0FUdlk2WRlLc1jCz0="
   [mod."github.com/kevinburke/ssh_config"]
     version = "v1.2.0"
     hash = "sha256-Ta7ZOmyX8gG5tzWbY2oES70EJPfI90U7CIJS9EAce0s="
@@ -142,6 +151,15 @@ schema = 3
   [mod."github.com/mattn/go-runewidth"]
     version = "v0.0.15"
     hash = "sha256-WP39EU2UrQbByYfnwrkBDoKN7xzXsBssDq3pNryBGm0="
+  [mod."github.com/mdlayher/genetlink"]
+    version = "v1.3.2"
+    hash = "sha256-pgwXkyDY1dlB8tmV1lQ0Bz/2g0zmJOyXvQjacACy924="
+  [mod."github.com/mdlayher/netlink"]
+    version = "v1.7.2"
+    hash = "sha256-08qlkKvG1+XFY3MDx7M1jdvaDMsmF9qv5/xMNaw3snc="
+  [mod."github.com/mdlayher/socket"]
+    version = "v0.4.1"
+    hash = "sha256-9YRpYarfPNAVGYX3wRNDuayu/pVrGWMskcHQSi0DYtE="
   [mod."github.com/mitchellh/go-ps"]
     version = "v1.0.0"
     hash = "sha256-HzxVHNLHZpnsBuPcub0G+9jjDcDOsxM/6wifbsxf7EY="
@@ -304,6 +322,15 @@ schema = 3
   [mod."golang.org/x/tools"]
     version = "v0.19.0"
     hash = "sha256-Xf05Ao398gBzxn5C8H6x+XsLjFLIm+UUfpDekQYA0cw="
+  [mod."golang.zx2c4.com/wintun"]
+    version = "v0.0.0-20230126152724-0fa3db229ce2"
+    hash = "sha256-cjMLNjKnnupVROWmeASORVieAL9ieYdzX3cFzG8bCpo="
+  [mod."golang.zx2c4.com/wireguard"]
+    version = "v0.0.0-20231211153847-12269c276173"
+    hash = "sha256-EHNJ9VBRNP17guQTfeqqG0TmtPmjyNz6cR2HskF6nZI="
+  [mod."golang.zx2c4.com/wireguard/wgctrl"]
+    version = "v0.0.0-20230429144221-925a1e7659e6"
+    hash = "sha256-8zDeQcj2SDmsNcGAjwNqSw3JqUVfMtwPgBzmuHeL9gY="
   [mod."google.golang.org/genproto/googleapis/rpc"]
     version = "v0.0.0-20240314234333-6e1732d8331c"
     hash = "sha256-P5SBku16dYnK4koUQxTeGwPxAAWH8rxbDm2pOzFLo/Q="

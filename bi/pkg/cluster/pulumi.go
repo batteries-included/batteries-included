@@ -67,16 +67,17 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 	}
 
 	p.cfg = auto.ConfigMap{
-		"aws:region":                  {Value: "us-east-2"},
-		"aws:defaultTags":             {Value: tags},
-		"cluster:name":                {Value: "jdt-test"},
-		"cluster:vpcCidrBlock":        {Value: "100.64.0.0/16"},
-		"cluster:gatewayCidrBlock":    {Value: "100.64.250.0/24"},
-		"cluster:gatewayGenerateKey":  {Value: "false"},
-		"cluster:gatewayInstanceType": {Value: "t3a.micro"},
-		"cluster:gatewayVolumeType":   {Value: "gp3"},
-		"cluster:gatewayVolumeSize":   {Value: "12"},
-		"cluster:version":             {Value: "1.29"},
+		"aws:defaultTags":      {Value: tags},
+		"aws:region":           {Value: "us-east-2"},
+		"cluster:name":         {Value: "jdt-test"},
+		"cluster:version":      {Value: "1.29"},
+		"gateway:cidrBlock":    {Value: "100.64.250.0/24"},
+		"gateway:generateKey":  {Value: "false"},
+		"gateway:instanceType": {Value: "t3a.micro"},
+		"gateway:port":         {Value: "51820"},
+		"gateway:volumeSize":   {Value: "12"},
+		"gateway:volumeType":   {Value: "gp3"},
+		"vpc:cidrBlock":        {Value: "100.64.0.0/16"},
 	}
 
 	dirs, err := p.makeDirs()

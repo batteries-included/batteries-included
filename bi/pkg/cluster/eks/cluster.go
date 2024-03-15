@@ -291,7 +291,7 @@ func (c *cluster) clusterRole(ctx *pulumi.Context) error {
 // roleInlinePolicies creates the inline role policies
 // Because we want to use the Arn output of the kms key, we have to wrap the resources in outputs and use apply
 func (c *cluster) roleInlinePolicies(ctx *pulumi.Context) error {
-	allRsrcOutput := pulumi.StringOutput(pulumi.String("*").ToOutput(ctx.Context()))
+	allRsrcOutput := pulumi.String("*").ToStringOutput()
 
 	for svc, policy := range map[string]struct {
 		actions  []string
@@ -395,13 +395,14 @@ func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
 		return err
 	}
 
+	aws := pulumi.String("AWS")
 	policy := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
 				Effect: pulumi.StringPtr("Allow"),
 				Principals: iam.GetPolicyDocumentStatementPrincipalArray{
 					iam.GetPolicyDocumentStatementPrincipalArgs{
-						Type:        pulumi.String("AWS"),
+						Type:        aws,
 						Identifiers: pulumi.ToStringArray([]string{session.IssuerArn}),
 					},
 				},
@@ -429,7 +430,7 @@ func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
 				Effect: pulumi.StringPtr("Allow"),
 				Principals: iam.GetPolicyDocumentStatementPrincipalArray{
 					iam.GetPolicyDocumentStatementPrincipalArgs{
-						Type:        pulumi.String("AWS"),
+						Type:        aws,
 						Identifiers: pulumi.ToStringArrayOutput([]pulumi.StringOutput{c.roles["cluster"].Arn}),
 					},
 				},
@@ -708,7 +709,7 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
 						Test:     pulumi.String("StringLike"),
-						Values:   pulumi.ToStringArray([]string{"*"}),
+						Values:   allResources,
 						Variable: pulumi.String("aws:RequestTag/CSIVolumeName"),
 					},
 				},
@@ -745,7 +746,7 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
 						Test:     pulumi.String("StringLike"),
-						Values:   pulumi.ToStringArray([]string{"*"}),
+						Values:   allResources,
 						Variable: pulumi.String("ec2:ResourceTag/CSIVolumeName"),
 					},
 				},
@@ -770,7 +771,7 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
 						Test:     pulumi.String("StringLike"),
-						Values:   pulumi.ToStringArray([]string{"*"}),
+						Values:   allResources,
 						Variable: pulumi.String("ec2:ResourceTag/kubernetes.io/created-for/pvc/name"),
 					},
 				},
@@ -782,7 +783,7 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
 						Test:     pulumi.String("StringLike"),
-						Values:   pulumi.ToStringArray([]string{"*"}),
+						Values:   allResources,
 						Variable: pulumi.String("ec2:ResourceTag/CSIVolumeSnapshotName"),
 					},
 				},

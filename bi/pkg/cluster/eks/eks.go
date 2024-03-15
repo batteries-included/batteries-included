@@ -51,6 +51,7 @@ var components = []component{
 	{"vpc", &vpc{}},
 	{"gateway", &gateway{}},
 	{"cluster", &cluster{}},
+	{"conn", &wgConn{}},
 }
 
 func (e *eks) Up(ctx context.Context) error {
