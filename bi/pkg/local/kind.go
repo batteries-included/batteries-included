@@ -37,6 +37,19 @@ func StartDefaultKindCluster() (*KindClusterProvider, error) {
 	return c, nil
 }
 
+func StopDefaultKindCluster() error {
+	c, err := NewKindClusterProvider(defaultKindClusterName)
+	if err != nil {
+		return err
+	}
+
+	err = c.EnsureDeleted()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func NewKindClusterProvider(name string) (*KindClusterProvider, error) {
 	po, err := cluster.DetectNodeProvider()
 	if err != nil {

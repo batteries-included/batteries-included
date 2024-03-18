@@ -1,11 +1,12 @@
 package cluster
 
 import (
-	"bi/pkg/cluster/eks"
 	"context"
 	"fmt"
 	"log/slog"
 	"path"
+
+	"bi/pkg/cluster/eks"
 
 	"github.com/adrg/xdg"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"

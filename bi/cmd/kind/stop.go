@@ -4,8 +4,9 @@ Copyright © 2024 Elliott Clark @ Batteries Included
 package kind
 
 import (
-	"bi/pkg/local"
 	"log/slog"
+
+	"bi/pkg/local"
 
 	"github.com/spf13/cobra"
 )

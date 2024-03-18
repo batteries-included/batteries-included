@@ -4,17 +4,21 @@ Copyright © 2024 Elliott Clark <elliott@batteriesincl.com>
 package cmd
 
 import (
+	"path/filepath"
+
 	"bi/pkg/start"
 
 	"log/slog"
 
 	"github.com/spf13/cobra"
+	"k8s.io/client-go/util/homedir"
+
 	"github.com/spf13/viper"
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
-	Use:   "start",
+	Use:   "start [install-spec]",
 	Short: "Start a Batteries Included Installation",
 	Long: `This will get the configuration for the 
 	installation and start the installation process.
@@ -35,12 +39,18 @@ var startCmd = &cobra.Command{
 	
 	Then the cli waits until the installation is 
 	complete displaying a url for running control server.`,
+	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		installUrl, err := cmd.Flags().GetString("install-spec")
-		cobra.CheckErr(err)
-		slog.Debug("Starting Batteries Included Installation", "url", installUrl)
+		installUrl := args[0]
 
-		err = start.StartInstall(installUrl)
+		kubeConfigPath, err := cmd.Flags().GetString("kubeconfig")
+		cobra.CheckErr(err)
+
+		slog.Debug("Starting Batteries Included Installation",
+			slog.String("installSpec", installUrl),
+			slog.String("kubeconfig", kubeConfigPath))
+
+		err = start.StartInstall(installUrl, kubeConfigPath)
 		cobra.CheckErr(err)
 	},
 }
@@ -51,4 +61,12 @@ func init() {
 	// that can be parsed by net/url
 	startCmd.Flags().StringP("install-spec", "i", "", "The install spec to use")
 	viper.BindPFlag("install-spec", startCmd.Flags().Lookup("install-spec"))
+
+	// The current user homedir
+	if dirname := homedir.HomeDir(); dirname == "" {
+		startCmd.Flags().StringP("kubeconfig", "k", "/", "The kubeconfig to use")
+	} else {
+		defaultKubeConfig := filepath.Join(dirname, ".kube", "config")
+		startCmd.PersistentFlags().StringP("kubeconfig", "k", defaultKubeConfig, "The kubeconfig to use")
+	}
 }

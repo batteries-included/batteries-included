@@ -4,10 +4,11 @@ Copyright © 2024 Elliott Clark elliott@batteriesincl.com
 package debug
 
 import (
-	"bi/pkg/specs"
 	"fmt"
 	"log/slog"
 	"os"
+
+	"bi/pkg/specs"
 
 	"github.com/spf13/cobra"
 )

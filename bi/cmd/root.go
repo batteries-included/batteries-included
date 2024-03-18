@@ -6,12 +6,11 @@ package cmd
 import (
 	"log/slog"
 	"os"
-	"time"
 
-	"github.com/adrg/xdg"
-	"github.com/lmittmann/tint"
+	"bi/pkg/log"
+	biviper "bi/pkg/viper"
+
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cfgFile string
@@ -26,7 +25,7 @@ var RootCmd = &cobra.Command{
 debugging Batteries Included infrastructure
 on top of kubernetes`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		err := initLogging(verbose, color)
+		err := log.SetupLogging(verbose, color)
 		if err != nil {
 			return err
 		}
@@ -52,47 +51,5 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		configDir, err := xdg.ConfigFile("bi")
-		cobra.CheckErr(err)
-
-		// Search config in config directory with name "bi.yaml"
-		viper.AddConfigPath(configDir)
-		viper.SetConfigName("bi")
-		viper.SetConfigType("yaml")
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		slog.Debug("Using config file", "file", viper.ConfigFileUsed())
-	}
-}
-
-func initLogging(verbose string, color bool) error {
-	var logLevel slog.Level
-
-	w := os.Stderr
-
-	err := logLevel.UnmarshalText([]byte(verbose))
-	if err != nil {
-		return err
-	}
-
-	// set global logger with custom options
-	slog.SetDefault(slog.New(
-		tint.NewHandler(w, &tint.Options{
-			Level:      logLevel,
-			AddSource:  logLevel == slog.LevelDebug,
-			NoColor:    !color,
-			TimeFormat: time.Kitchen,
-		}),
-	))
-
-	return nil
+	biviper.SetupConfig(cfgFile)
 }
