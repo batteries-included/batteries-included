@@ -18,8 +18,8 @@ defmodule CommonCore.StateSummary.URLsTest do
 
     test "returns an HTTP URI when :cert_manager is not installed" do
       summary = CommonCore.StateSummary.SeedState.seed(:dev)
-      expected = URI.new!("http://gitea.core.127.0.0.1.ip.batteriesincl.com")
-      assert expected == uri_for_battery(summary, :gitea)
+      expected = URI.new!("http://forgejo.core.127.0.0.1.ip.batteriesincl.com")
+      assert expected == uri_for_battery(summary, :forgejo)
     end
   end
 

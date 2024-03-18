@@ -52,10 +52,10 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :devtools,
-      type: :gitea,
+      type: :forgejo,
       dependencies: [:cloudnative_pg, :istio_gateway, :battery_core],
       description:
-        "Gitea is a self-hosted, open-source, Go-based Git repository manager with a web interface and command-line tools."
+        "Forgejo is a self-hosted, open-source, Go-based Git repository manager with a web interface and command-line tools."
     },
     %CatalogBattery{
       group: :devtools,

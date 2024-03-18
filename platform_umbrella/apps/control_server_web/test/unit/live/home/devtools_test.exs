@@ -9,9 +9,9 @@ defmodule ControlServerWeb.DevtoolsHomeTest do
 
   defp install_batteries(_) do
     knative_report = Installer.install!(:knative)
-    gitea_report = Installer.install!(:gitea)
+    forgejo_report = Installer.install!(:forgejo)
     smtp4dev_report = Installer.install!(:smtp4dev)
-    %{knative: knative_report, gitea: gitea_report, smtp4dev: smtp4dev_report}
+    %{knative: knative_report, forgejo: forgejo_report, smtp4dev: smtp4dev_report}
   end
 
   defp knative_service(_) do
@@ -32,11 +32,11 @@ defmodule ControlServerWeb.DevtoolsHomeTest do
       |> assert_html(service.name)
     end
 
-    test "contains gitea link", %{conn: conn} do
+    test "contains forgejo link", %{conn: conn} do
       conn
       |> start("/devtools")
       |> assert_html("Devtools")
-      |> assert_html("Gitea")
+      |> assert_html("Forgejo")
     end
   end
 

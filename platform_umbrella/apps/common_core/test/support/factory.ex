@@ -39,7 +39,7 @@ defmodule CommonCore.Factory do
           :data,
           :postgres,
           :dev_metallb,
-          :gitea,
+          :forgejo,
           :istio,
           :istio_gateway,
           :kiali,

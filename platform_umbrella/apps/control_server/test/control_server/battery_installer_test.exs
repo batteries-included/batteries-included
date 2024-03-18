@@ -24,9 +24,9 @@ defmodule ControlServer.Batteries.InstallerTest do
     end
 
     @tag :slow
-    test "runs the gitea post hook" do
+    test "runs the forgejo post hook" do
       assert 0 == ControlServer.Repo.aggregate(PGCluster, :count, :id)
-      assert {:ok, _res} = Installer.install(:gitea)
+      assert {:ok, _res} = Installer.install(:forgejo)
       assert 2 >= ControlServer.Repo.aggregate(PGCluster, :count, :id)
     end
 

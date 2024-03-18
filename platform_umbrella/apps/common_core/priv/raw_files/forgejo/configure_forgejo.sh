@@ -5,6 +5,7 @@ set -exuo pipefail
 echo '==== BEGIN GITEA CONFIGURATION ===='
 
 { # try
+  ls -al /data/gitea/conf
   gitea migrate
 } || { # catch
   echo "Gitea migrate might fail due to database connection...This init-container will try again in a few seconds"

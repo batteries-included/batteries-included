@@ -9,7 +9,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.CertManagerConfig
   alias CommonCore.Batteries.CloudnativePGConfig
   alias CommonCore.Batteries.FerretDBConfig
-  alias CommonCore.Batteries.GiteaConfig
+  alias CommonCore.Batteries.ForgejoConfig
   alias CommonCore.Batteries.GrafanaConfig
   alias CommonCore.Batteries.IstioConfig
   alias CommonCore.Batteries.IstioCSRConfig
@@ -41,7 +41,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     battery_core: BatteryCoreConfig,
     cert_manager: CertManagerConfig,
     cloudnative_pg: CloudnativePGConfig,
-    gitea: GiteaConfig,
+    forgejo: ForgejoConfig,
     grafana: GrafanaConfig,
     ferretdb: FerretDBConfig,
     istio: IstioConfig,

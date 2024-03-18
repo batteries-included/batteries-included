@@ -12,7 +12,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.CloudnativePGDashboards
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
   alias CommonCore.Resources.FerretDB
-  alias CommonCore.Resources.Gitea
+  alias CommonCore.Resources.Forgejo
   alias CommonCore.Resources.Grafana
   alias CommonCore.Resources.Istio
   alias CommonCore.Resources.IstioCsr
@@ -58,7 +58,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     battery_core: [BatteryCore, ControlServerResources],
     cert_manager: [CertManager, Certificates],
     cloudnative_pg: [CloudnativePG, CloudnativePGClusters, CloudnativePGDashboards],
-    gitea: [Gitea],
+    forgejo: [Forgejo],
     grafana: [Grafana],
     istio: [IstioNamespace, Istio, Istiod, IstioReader, IstioTelemetry, IstioMetrics],
     istio_csr: [IstioCsr],

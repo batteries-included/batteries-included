@@ -46,11 +46,11 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     """
   end
 
-  defp battery_link_panel(%{battery: %{type: :gitea}} = assigns) do
+  defp battery_link_panel(%{battery: %{type: :forgejo}} = assigns) do
     ~H"""
     <.panel>
-      <.a href={"//#{gitea_host()}/explore/repos"} variant="external">
-        Gitea
+      <.a href={"//#{forgejo_host()}/explore/repos"} variant="external">
+        Forgejo
       </.a>
     </.panel>
     """

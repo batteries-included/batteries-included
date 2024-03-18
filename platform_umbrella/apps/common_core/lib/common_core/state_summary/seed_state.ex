@@ -14,7 +14,7 @@ defmodule CommonCore.StateSummary.SeedState do
         pg_clusters([
           Defaults.ControlDB.control_cluster(),
           Defaults.KeycloakDB.pg_cluster(),
-          Defaults.GiteaDB.gitea_cluster()
+          Defaults.ForgejoDB.forgejo_cluster()
         ]),
       keycloak_state: keycloak_state()
     }

@@ -34,14 +34,14 @@ function env2ini::read_config_to_env() {
   env2ini::log "    + '${setting}'"
 
   if [[ -z ${section} ]]; then
-    export "ENV_TO_INI____${setting^^}=${value}" # '^^' makes the variable content uppercase
+    export "FORGEJO____${setting^^}=${value}" # '^^' makes the variable content uppercase
     return
   fi
 
   local masked_section="${section//./_0X2E_}" # '//' instructs to replace all matches
   masked_section="${masked_section//-/_0X2D_}"
 
-  export "ENV_TO_INI__${masked_section^^}__${setting^^}=${value}" # '^^' makes the variable content uppercase
+  export "FORGEJO__${masked_section^^}__${setting^^}=${value}" # '^^' makes the variable content uppercase
 }
 
 function env2ini::reload_preset_envs() {
@@ -114,15 +114,15 @@ function env2ini::generate_initial_secrets() {
   #   - initially used to set up Gitea
   # Anyway, they won't harm existing app.ini files
 
-  export ENV_TO_INI__SECURITY__INTERNAL_TOKEN=$(gitea generate secret INTERNAL_TOKEN)
-  export ENV_TO_INI__SECURITY__SECRET_KEY=$(gitea generate secret SECRET_KEY)
-  export ENV_TO_INI__OAUTH2__JWT_SECRET=$(gitea generate secret JWT_SECRET)
-  export ENV_TO_INI__SERVER__LFS_JWT_SECRET=$(gitea generate secret LFS_JWT_SECRET)
+  export FORGEJO__SECURITY__INTERNAL_TOKEN=$(gitea generate secret INTERNAL_TOKEN)
+  export FORGEJO__SECURITY__SECRET_KEY=$(gitea generate secret SECRET_KEY)
+  export FORGEJO__OAUTH2__JWT_SECRET=$(gitea generate secret JWT_SECRET)
+  export FORGEJO__SERVER__LFS_JWT_SECRET=$(gitea generate secret LFS_JWT_SECRET)
 
   env2ini::log "...Initial secrets generated\n"
 }
 
-env | (grep ENV_TO_INI || [[ $? == 1 ]]) >/tmp/existing-envs
+env | (grep GITEA || [[ $? == 1 ]]) >/tmp/existing-envs
 
 # MUST BE CALLED BEFORE OTHER CONFIGURATION
 env2ini::generate_initial_secrets
@@ -143,10 +143,14 @@ if [ -f ${GITEA_APP_INI} ]; then
   env2ini::log '  - oauth2.JWT_SECRET'
   env2ini::log '  - server.LFS_JWT_SECRET'
 
-  unset ENV_TO_INI__SECURITY__INTERNAL_TOKEN
-  unset ENV_TO_INI__SECURITY__SECRET_KEY
-  unset ENV_TO_INI__OAUTH2__JWT_SECRET
-  unset ENV_TO_INI__SERVER__LFS_JWT_SECRET
+  unset FORGEJO__SECURITY__INTERNAL_TOKEN
+  unset FORGEJO__SECURITY__SECRET_KEY
+  unset FORGEJO__OAUTH2__JWT_SECRET
+  unset FORGEJO__SERVER__LFS_JWT_SECRET
 fi
 
-environment-to-ini -o $GITEA_APP_INI -p ENV_TO_INI
+environment-to-ini -o $GITEA_APP_INI
+
+ls -al /data/gitea/conf/
+
+env2ini::log 'Done.'

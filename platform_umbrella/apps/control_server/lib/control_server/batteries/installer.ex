@@ -144,11 +144,11 @@ defmodule ControlServer.Batteries.Installer do
     end
   end
 
-  defp post_install(%SystemBattery{type: :gitea}, repo) do
-    init_pg = Defaults.GiteaDB.gitea_cluster()
+  defp post_install(%SystemBattery{type: :forgejo}, repo) do
+    init_pg = Defaults.ForgejoDB.forgejo_cluster()
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
-      {:ok, gitea_postgres: postgres_db}
+      {:ok, forgejo_postgres: postgres_db}
     end
   end
 

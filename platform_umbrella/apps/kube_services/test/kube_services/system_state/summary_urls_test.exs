@@ -14,7 +14,7 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
       send(pid, summary)
 
       assert "https://keycloak.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :keycloak)
-      assert "https://gitea.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :gitea)
+      assert "https://forgejo.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :forgejo)
       assert "https://smtp4dev.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :smtp4dev)
     end
 
@@ -23,7 +23,7 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
       send(pid, summary)
 
       assert "http://keycloak.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :keycloak)
-      assert "http://gitea.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :gitea)
+      assert "http://forgejo.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :forgejo)
       assert "http://smtp4dev.core.127.0.0.1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :smtp4dev)
     end
   end

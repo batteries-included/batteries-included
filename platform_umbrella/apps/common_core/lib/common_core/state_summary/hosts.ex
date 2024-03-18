@@ -10,8 +10,8 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ip() |> host("control")
   end
 
-  def gitea_host(%StateSummary{} = summary) do
-    summary |> ip() |> host("gitea")
+  def forgejo_host(%StateSummary{} = summary) do
+    summary |> ip() |> host("forgejo")
   end
 
   def grafana_host(%StateSummary{} = summary) do
@@ -66,7 +66,7 @@ defmodule CommonCore.StateSummary.Hosts do
 
   # HACK(jdt): fix this!
   def for_battery(_summary, :battery_core), do: "control.127.0.0.1.ip.batteriesincl.com"
-  def for_battery(summary, :gitea), do: gitea_host(summary)
+  def for_battery(summary, :forgejo), do: forgejo_host(summary)
   def for_battery(summary, :grafana), do: grafana_host(summary)
   def for_battery(summary, :keycloak), do: keycloak_host(summary)
   def for_battery(summary, :kiali), do: kiali_host(summary)

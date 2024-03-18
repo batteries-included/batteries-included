@@ -7,7 +7,7 @@ defmodule KubeServices.SystemState.SummaryHosts do
 
   This genserver is responsible for host name computation
 
-  - Gitea Hostname
+  - Forgejo Hostname
   - Grafana Hostname
   - Vmselect Hostname
   - Keycloak Hostname
@@ -67,9 +67,9 @@ defmodule KubeServices.SystemState.SummaryHosts do
     GenServer.call(target, :control_host)
   end
 
-  @spec gitea_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def gitea_host(target \\ @me) do
-    GenServer.call(target, :gitea_host)
+  @spec forgejo_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
+  def forgejo_host(target \\ @me) do
+    GenServer.call(target, :forgejo_host)
   end
 
   @spec grafana_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil

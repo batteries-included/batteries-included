@@ -1,7 +1,7 @@
-defmodule CommonCore.Defaults.GiteaDB do
+defmodule CommonCore.Defaults.ForgejoDB do
   @moduledoc false
-  @username "gitea"
-  @cluster_name "gitea"
+  @username "forgejo"
+  @cluster_name "forgejo"
   @default_pg_cluster %{
     :name => @cluster_name,
     :num_instances => 1,
@@ -14,10 +14,10 @@ defmodule CommonCore.Defaults.GiteaDB do
         credential_namespaces: ["battery-core"]
       }
     ],
-    :database => %{name: "gitea", owner: @username}
+    :database => %{name: "forgejo", owner: @username}
   }
 
-  def gitea_cluster do
+  def forgejo_cluster do
     @default_pg_cluster
   end
 

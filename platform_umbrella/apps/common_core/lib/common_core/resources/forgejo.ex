@@ -1,12 +1,12 @@
-defmodule CommonCore.Resources.Gitea do
+defmodule CommonCore.Resources.Forgejo do
   @moduledoc false
 
   use CommonCore.IncludeResource,
-    config_environment_sh: "priv/raw_files/gitea/config_environment.sh",
-    configure_gitea_sh: "priv/raw_files/gitea/configure_gitea.sh",
-    init_directory_structure_sh: "priv/raw_files/gitea/init_directory_structure.sh"
+    config_environment_sh: "priv/raw_files/forgejo/config_environment.sh",
+    configure_forgejo_sh: "priv/raw_files/forgejo/configure_forgejo.sh",
+    init_directory_structure_sh: "priv/raw_files/forgejo/init_directory_structure.sh"
 
-  use CommonCore.Resources.ResourceGenerator, app_name: "gitea"
+  use CommonCore.Resources.ResourceGenerator, app_name: "forgejo"
 
   import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
@@ -30,15 +30,15 @@ defmodule CommonCore.Resources.Gitea do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: [gitea_host(state)]]
+      [hosts: [forgejo_host(state)]]
       |> VirtualService.new!()
-      |> V.fallback("gitea-http", @http_listen_port)
-      |> V.tcp(@ssh_port, "gitea-ssh", @ssh_listen_port)
+      |> V.fallback("forgejo-http", @http_listen_port)
+      |> V.tcp(@ssh_port, "forgejo-ssh", @ssh_listen_port)
 
     :istio_virtual_service
     |> B.build_resource()
     |> B.namespace(namespace)
-    |> B.name("gitea")
+    |> B.name("forgejo")
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end
@@ -56,7 +56,7 @@ defmodule CommonCore.Resources.Gitea do
 
     :monitoring_service_monitor
     |> B.build_resource()
-    |> B.name("gitea")
+    |> B.name("forgejo")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
@@ -67,13 +67,13 @@ defmodule CommonCore.Resources.Gitea do
 
     data =
       %{}
-      |> Map.put("configure_gitea.sh", get_resource(:configure_gitea_sh))
+      |> Map.put("configure_forgejo.sh", get_resource(:configure_forgejo_sh))
       |> Map.put("init_directory_structure.sh", get_resource(:init_directory_structure_sh))
       |> Secret.encode()
 
     :secret
     |> B.build_resource()
-    |> B.name("gitea-init")
+    |> B.name("forgejo-init")
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -82,7 +82,7 @@ defmodule CommonCore.Resources.Gitea do
     namespace = core_namespace(state)
     namespace_base = base_namespace(state)
 
-    domain = gitea_host(state)
+    domain = forgejo_host(state)
     root_url = state |> uri_for_battery(battery.type) |> URI.to_string()
 
     sso_enabled? = Batteries.sso_installed?(state)
@@ -95,16 +95,14 @@ defmodule CommonCore.Resources.Gitea do
         "database",
         """
         DB_TYPE=postgres
-        HOST=pg-gitea.#{namespace_base}.svc.cluster.local.
-        NAME=gitea
-        USER=root
-        PASSWD=gitea
+        HOST=pg-forgejo-rw.#{namespace_base}.svc.cluster.local.
+        NAME=forgejo
         SCHEMA=public
         SSL_MODE=require
         """
       )
       |> Map.put("metrics", "ENABLED=true")
-      |> Map.put("repository", "ROOT=/data/git/gitea-repositories")
+      |> Map.put("repository", "ROOT=/data/git/forgejo-repositories")
       |> Map.put("security", "INSTALL_LOCK=true")
       |> Map.put(
         "server",
@@ -144,7 +142,7 @@ defmodule CommonCore.Resources.Gitea do
 
     :secret
     |> B.build_resource()
-    |> B.name("gitea-inline-config")
+    |> B.name("forgejo-inline-config")
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -159,7 +157,7 @@ defmodule CommonCore.Resources.Gitea do
 
     :secret
     |> B.build_resource()
-    |> B.name("gitea")
+    |> B.name("forgejo")
     |> B.namespace(namespace)
     |> B.data(data)
   end
@@ -176,7 +174,7 @@ defmodule CommonCore.Resources.Gitea do
 
     :service
     |> B.build_resource()
-    |> B.name("gitea-http")
+    |> B.name("forgejo-http")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -198,15 +196,15 @@ defmodule CommonCore.Resources.Gitea do
 
     :service
     |> B.build_resource()
-    |> B.name("gitea-ssh")
+    |> B.name("forgejo-ssh")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
 
   resource(:stateful_set_main, battery, state) do
     namespace = core_namespace(state)
-    cluster = PostgresState.cluster(state, name: Defaults.GiteaDB.cluster_name(), type: :internal)
-    user = Enum.find(cluster.users, fn user -> user.username == Defaults.GiteaDB.db_username() end)
+    cluster = PostgresState.cluster(state, name: Defaults.ForgejoDB.cluster_name(), type: :internal)
+    user = Enum.find(cluster.users, fn user -> user.username == Defaults.ForgejoDB.db_username() end)
     secret_name = PostgresState.user_secret(state, cluster, user)
 
     sso_enabled? = Batteries.sso_installed?(state)
@@ -236,7 +234,7 @@ defmodule CommonCore.Resources.Gitea do
                 "tcpSocket" => %{"port" => "http"},
                 "timeoutSeconds" => 1
               },
-              "name" => "gitea",
+              "name" => "forgejo",
               "ports" => [%{"containerPort" => 22, "name" => "ssh"}, %{"containerPort" => 3000, "name" => "http"}],
               "readinessProbe" => %{
                 "failureThreshold" => 3,
@@ -280,9 +278,9 @@ defmodule CommonCore.Resources.Gitea do
                 %{"name" => "GITEA_CUSTOM", "value" => "/data/gitea"},
                 %{"name" => "GITEA_WORK_DIR", "value" => "/data"},
                 %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"},
-                %{"name" => "ENV_TO_INI__DATABASE__USER", "valueFrom" => B.secret_key_ref(secret_name, "username")},
-                %{"name" => "ENV_TO_INI__DATABASE__PASSWD", "valueFrom" => B.secret_key_ref(secret_name, "password")},
-                %{"name" => "ENV_TO_INI__DATABASE__HOST", "valueFrom" => B.secret_key_ref(secret_name, "hostname")}
+                %{"name" => "FORGEJO__DATABASE__USER", "valueFrom" => B.secret_key_ref(secret_name, "username")},
+                %{"name" => "FORGEJO__DATABASE__PASSWD", "valueFrom" => B.secret_key_ref(secret_name, "password")},
+                %{"name" => "FORGEJO__DATABASE__HOST", "valueFrom" => B.secret_key_ref(secret_name, "hostname")}
               ],
               "image" => battery.config.image,
               "imagePullPolicy" => "Always",
@@ -296,7 +294,7 @@ defmodule CommonCore.Resources.Gitea do
               ]
             },
             %{
-              "command" => ["/usr/sbin/configure_gitea.sh"],
+              "command" => ["/usr/sbin/configure_forgejo.sh"],
               "env" =>
                 [
                   %{"name" => "GITEA_APP_INI", "value" => "/data/gitea/conf/app.ini"},
@@ -330,7 +328,7 @@ defmodule CommonCore.Resources.Gitea do
                   end,
               "image" => battery.config.image,
               "imagePullPolicy" => "Always",
-              "name" => "configure-gitea",
+              "name" => "configure-forgejo",
               "securityContext" => %{"runAsUser" => 1000},
               "volumeMounts" => [
                 %{"mountPath" => "/usr/sbin", "name" => "init"},
@@ -342,9 +340,9 @@ defmodule CommonCore.Resources.Gitea do
           "securityContext" => %{"fsGroup" => 1000},
           "terminationGracePeriodSeconds" => 60,
           "volumes" => [
-            %{"name" => "init", "secret" => %{"defaultMode" => 110, "secretName" => "gitea-init"}},
-            %{"name" => "config", "secret" => %{"defaultMode" => 110, "secretName" => "gitea"}},
-            %{"name" => "inline-config-sources", "secret" => %{"secretName" => "gitea-inline-config"}},
+            %{"name" => "init", "secret" => %{"defaultMode" => 110, "secretName" => "forgejo-init"}},
+            %{"name" => "config", "secret" => %{"defaultMode" => 110, "secretName" => "forgejo"}},
+            %{"name" => "inline-config-sources", "secret" => %{"secretName" => "forgejo-inline-config"}},
             %{"emptyDir" => %{}, "name" => "temp"}
           ]
         }
@@ -356,7 +354,7 @@ defmodule CommonCore.Resources.Gitea do
       %{}
       |> Map.put("replicas", 1)
       |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
-      |> Map.put("serviceName", "gitea")
+      |> Map.put("serviceName", "forgejo")
       |> B.template(template)
       |> Map.put("volumeClaimTemplates", [
         %{
@@ -370,7 +368,7 @@ defmodule CommonCore.Resources.Gitea do
 
     :stateful_set
     |> B.build_resource()
-    |> B.name("gitea")
+    |> B.name("forgejo")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end

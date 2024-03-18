@@ -353,8 +353,8 @@ defmodule CommonCore.Resources.IstioIngress do
     |> B.spec(spec)
   end
 
-  defp build_servers(:gitea = type, host, ssl_enabled?),
-    do: [gitea_ssh_server(host), web_server(sanitize(type), host, ssl_enabled?)]
+  defp build_servers(:forgejo = type, host, ssl_enabled?),
+    do: [forgejo_ssh_server(host), web_server(sanitize(type), host, ssl_enabled?)]
 
   defp build_servers(type, host, ssl_enabled?), do: [web_server(sanitize(type), host, ssl_enabled?)]
 
@@ -373,5 +373,5 @@ defmodule CommonCore.Resources.IstioIngress do
     }
   end
 
-  defp gitea_ssh_server(host), do: %{port: %{number: 22, name: "ssh-gitea", protocol: "TCP"}, hosts: [host]}
+  defp forgejo_ssh_server(host), do: %{port: %{number: 22, name: "ssh-forgejo", protocol: "TCP"}, hosts: [host]}
 end

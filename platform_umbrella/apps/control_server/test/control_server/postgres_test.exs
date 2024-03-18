@@ -84,7 +84,7 @@ defmodule ControlServer.PostgresTest do
     end
 
     test "find_or_create with reasonable defaults" do
-      cluster = CommonCore.Defaults.GiteaDB.gitea_cluster()
+      cluster = CommonCore.Defaults.ForgejoDB.forgejo_cluster()
       assert {result, _db_res} = Postgres.find_or_create(cluster)
       assert :ok == result
     end
