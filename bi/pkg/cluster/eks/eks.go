@@ -14,6 +14,31 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+var (
+	P_BOOL_PTR_FALSE                       = pulumi.BoolPtr(false)
+	P_BOOL_PTR_TRUE                        = pulumi.BoolPtr(true)
+	P_STR_ALLOW                            = pulumi.String("Allow")
+	P_STR_ARR_EC2_AMAZONAWS_COM            = pulumi.ToStringArray([]string{"ec2.amazonaws.com"})
+	P_STR_ARR_EKS_AMAZONAWS_COM            = pulumi.ToStringArray([]string{"eks.amazonaws.com"})
+	P_STR_ARR_FALSE                        = pulumi.ToStringArray([]string{"false"})
+	P_STR_ARR_OWNED                        = pulumi.ToStringArray([]string{"owned"})
+	P_STR_ARR_STS_AMAZONAWS_COM            = pulumi.ToStringArray([]string{"sts.amazonaws.com"})
+	P_STR_ARR_STS_ASSUME_ROLE              = pulumi.ToStringArray([]string{"sts:AssumeRole"})
+	P_STR_ARR_STS_ASSUME_ROLE_WEB_IDENTITY = pulumi.ToStringArray([]string{"sts:AssumeRoleWithWebIdentity"})
+	P_STR_ARR_TRUE                         = pulumi.ToStringArray([]string{"true"})
+	P_STR_ARR_WILDCARD                     = pulumi.ToStringArray([]string{"*"})
+	P_STR_AWS                              = pulumi.String("AWS")
+	P_STR_DENY                             = pulumi.String("Deny")
+	P_STR_FEDERATED                        = pulumi.String("Federated")
+	P_STR_ICMP                             = pulumi.String("icmp")
+	P_STR_NULL                             = pulumi.String("Null")
+	P_STR_SERVICE                          = pulumi.String("Service")
+	P_STR_STRING_EQUALS                    = pulumi.String("StringEquals")
+	P_STR_STRING_LIKE                      = pulumi.String("StringLike")
+	P_STR_TCP                              = pulumi.String("tcp")
+	P_STR_UDP                              = pulumi.String("udp")
+)
+
 type Config struct {
 	ProjectBaseName string
 	WorkDirRoot     string

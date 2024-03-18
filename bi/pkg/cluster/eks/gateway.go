@@ -119,11 +119,11 @@ func (g *gateway) securityGroup(ctx *pulumi.Context) error {
 		proto pulumi.String
 		cidr  pulumi.String
 	}{
-		"ssh-all":  {port: pulumi.Int(22), proto: pulumi.String("tcp"), cidr: allCidr},
-		"wg-all":   {port: pulumi.Int(g.port), proto: pulumi.String("udp"), cidr: allCidr},
-		"dns-wg":   {port: pulumi.Int(53), proto: pulumi.String("udp"), cidr: wgCidr},
-		"icmp-wg":  {port: pulumi.Int(-1), proto: pulumi.String("icmp"), cidr: wgCidr},
-		"icmp-vpc": {port: pulumi.Int(-1), proto: pulumi.String("icmp"), cidr: vpcCidr},
+		"ssh-all":  {port: pulumi.Int(22), proto: P_STR_TCP, cidr: allCidr},
+		"wg-all":   {port: pulumi.Int(g.port), proto: P_STR_UDP, cidr: allCidr},
+		"dns-wg":   {port: pulumi.Int(53), proto: P_STR_UDP, cidr: wgCidr},
+		"icmp-wg":  {port: pulumi.Int(-1), proto: P_STR_ICMP, cidr: wgCidr},
+		"icmp-vpc": {port: pulumi.Int(-1), proto: P_STR_ICMP, cidr: vpcCidr},
 	}
 
 	for name, rule := range rules {
@@ -186,7 +186,7 @@ func (g *gateway) iamProfile(ctx *pulumi.Context) error {
 		Name:                pulumi.String(g.wireguardName),
 		AssumeRolePolicy:    pulumi.String(instanceAssumeRolePolicy.Json),
 		ManagedPolicyArns:   pulumi.ToStringArray([]string{ssmPolicy.Arn}),
-		ForceDetachPolicies: pulumi.BoolPtr(true),
+		ForceDetachPolicies: P_BOOL_PTR_TRUE,
 		Tags:                pulumi.StringMap{"Name": pulumi.String(g.wireguardName)},
 	})
 	if err != nil {
@@ -257,7 +257,6 @@ func (g *gateway) ec2Instance(ctx *pulumi.Context) error {
 			VolumeType: pulumi.String(g.volumeType),
 			VolumeSize: pulumi.Int(g.volumeSize),
 		},
-		// UserDataReplaceOnChange: pulumi.BoolPtr(true),
 	}, pulumi.ReplaceOnChanges([]string{"UserData"}), pulumi.IgnoreChanges([]string{"ami"}))
 	if err != nil {
 		return err

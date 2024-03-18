@@ -44,9 +44,9 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 
 	// add plugins that need to be installed here
 	plugins := map[string]string{
-		"aws":       "v6.22.2",
-		"cloudinit": "v1.4.1",
-		"eks":       "v2.2.1",
+		"aws":        "v6.22.2",
+		"cloudinit":  "v1.4.1",
+		"kubernetes": "v4.9.1",
 	}
 	if err := p.installPlugins(ctx, ws, plugins); err != nil {
 		return err

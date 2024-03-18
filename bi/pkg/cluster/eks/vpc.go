@@ -107,7 +107,7 @@ func (v *vpc) buildVPC(ctx *pulumi.Context) error {
 	vpc, err := ec2.NewVpc(ctx, v.baseName, &ec2.VpcArgs{
 		CidrBlock:          pulumi.StringPtr(v.cidrBlock),
 		Tags:               pulumi.StringMap{"Name": pulumi.String(v.baseName)},
-		EnableDnsHostnames: pulumi.BoolPtr(true),
+		EnableDnsHostnames: P_BOOL_PTR_TRUE,
 	})
 	if err != nil {
 		return err

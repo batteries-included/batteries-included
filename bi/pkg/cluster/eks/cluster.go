@@ -117,6 +117,9 @@ func (c *cluster) run(ctx *pulumi.Context) error {
 		}
 	}
 
+	ctx.Export("oidcProviderURL", c.provider.Url)
+	ctx.Export("oidcProviderARN", c.provider.Arn)
+
 	return nil
 }
 
@@ -151,7 +154,7 @@ func (c *cluster) clusterSecurityGroupRules(ctx *pulumi.Context) error {
 			SecurityGroupId:           c.securityGroupIDs["cluster"],
 			FromPort:                  port,
 			ToPort:                    port,
-			IpProtocol:                pulumi.String("tcp"),
+			IpProtocol:                P_STR_TCP,
 			ReferencedSecurityGroupId: rsgID,
 			Tags:                      pulumi.StringMap{"Name": pulumi.String(name)},
 		})
@@ -170,7 +173,7 @@ func (c *cluster) nodeSecurityGroupRules(ctx *pulumi.Context) error {
 	// To simplify the migration, I'm just migrating the allow all rules.
 	for sg, rsgID := range c.securityGroupIDs {
 		name := fmt.Sprintf("%s-%s-allow-all", c.baseName, sg)
-		desc := pulumi.String(fmt.Sprintf("Allow traffic from %s security group", sg))
+		desc := pulumi.Sprintf("Allow traffic from %s security group", sg)
 
 		_, err := pvpc.NewSecurityGroupIngressRule(ctx, name, &pvpc.SecurityGroupIngressRuleArgs{
 			SecurityGroupId:           sgID,
@@ -201,8 +204,8 @@ func (c *cluster) nodeSecurityGroupRules(ctx *pulumi.Context) error {
 func (c *cluster) kmsKey(ctx *pulumi.Context) error {
 	key, err := kms.NewKey(ctx, c.baseName, &kms.KeyArgs{
 		DeletionWindowInDays: pulumi.Int(30),
-		Description:          pulumi.String(fmt.Sprintf("Cluster encryption key for %s", c.baseName)),
-		EnableKeyRotation:    pulumi.BoolPtr(true),
+		Description:          pulumi.Sprintf("Cluster encryption key for %s", c.baseName),
+		EnableKeyRotation:    P_BOOL_PTR_TRUE,
 	})
 	if err != nil {
 		return err
@@ -210,7 +213,7 @@ func (c *cluster) kmsKey(ctx *pulumi.Context) error {
 	c.key = key
 
 	_, err = kms.NewAlias(ctx, c.baseName, &kms.AliasArgs{
-		Name:        pulumi.String(fmt.Sprintf("alias/eks/%s", c.baseName)),
+		Name:        pulumi.Sprintf("alias/eks/%s", c.baseName),
 		TargetKeyId: key.KeyId,
 	})
 	if err != nil {
@@ -255,30 +258,23 @@ func (c *cluster) getManagedPolicies(ctx *pulumi.Context) error {
 }
 
 func (c *cluster) clusterRole(ctx *pulumi.Context) error {
-	assumeRole, err := iam.GetPolicyDocument(ctx, &iam.GetPolicyDocumentArgs{
-		Statements: []iam.GetPolicyDocumentStatement{
-			{
-				Effect: pulumi.StringRef("Allow"),
-				Principals: []iam.GetPolicyDocumentStatementPrincipal{
-					{
-						Type: "Service",
-						Identifiers: []string{
-							"eks.amazonaws.com",
-						},
+	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
+		Statements: iam.GetPolicyDocumentStatementArray{
+			iam.GetPolicyDocumentStatementArgs{
+				Effect: P_STR_ALLOW,
+				Principals: iam.GetPolicyDocumentStatementPrincipalArray{
+					iam.GetPolicyDocumentStatementPrincipalArgs{
+						Type:        P_STR_SERVICE,
+						Identifiers: P_STR_ARR_EKS_AMAZONAWS_COM,
 					},
 				},
-				Actions: []string{
-					"sts:AssumeRole",
-				},
+				Actions: P_STR_ARR_STS_ASSUME_ROLE,
 			},
 		},
 	})
-	if err != nil {
-		return err
-	}
 
 	role, err := iam.NewRole(ctx, c.baseName, &iam.RoleArgs{
-		AssumeRolePolicy: pulumi.String(assumeRole.Json),
+		AssumeRolePolicy: assumeRole.Json(),
 	})
 	if err != nil {
 		return err
@@ -291,22 +287,21 @@ func (c *cluster) clusterRole(ctx *pulumi.Context) error {
 // roleInlinePolicies creates the inline role policies
 // Because we want to use the Arn output of the kms key, we have to wrap the resources in outputs and use apply
 func (c *cluster) roleInlinePolicies(ctx *pulumi.Context) error {
-	allRsrcOutput := pulumi.String("*").ToStringOutput()
 
 	for svc, policy := range map[string]struct {
 		actions  []string
 		resource pulumi.StringOutput
-		effect   string
+		effect   pulumi.String
 	}{
 		"logs": {
-			effect: "Deny",
+			effect: P_STR_DENY,
 			actions: []string{
 				"logs:CreateLogGroup",
 			},
-			resource: allRsrcOutput,
+			resource: pulumi.String("*").ToStringOutput(),
 		},
 		"kms": {
-			effect: "Allow",
+			effect: P_STR_ALLOW,
 			actions: []string{
 				"kms:Encrypt",
 				"kms:Decrypt",
@@ -320,7 +315,7 @@ func (c *cluster) roleInlinePolicies(ctx *pulumi.Context) error {
 			Statements: iam.GetPolicyDocumentStatementArray{
 				iam.GetPolicyDocumentStatementArgs{
 					Actions:   pulumi.ToStringArray(policy.actions),
-					Effect:    pulumi.StringPtr(policy.effect),
+					Effect:    policy.effect,
 					Resources: pulumi.ToStringArrayOutput([]pulumi.StringOutput{policy.resource}),
 				},
 			},
@@ -370,8 +365,8 @@ func (c *cluster) eksCluster(ctx *pulumi.Context) error {
 		Name:    pulumi.String(c.baseName),
 		RoleArn: c.roles["cluster"].Arn,
 		VpcConfig: &peks.ClusterVpcConfigArgs{
-			EndpointPrivateAccess: pulumi.BoolPtr(true),
-			EndpointPublicAccess:  pulumi.BoolPtr(false),
+			EndpointPrivateAccess: P_BOOL_PTR_TRUE,
+			EndpointPublicAccess:  P_BOOL_PTR_FALSE,
 			SecurityGroupIds:      pulumi.StringArray{c.securityGroupIDs["cluster"]},
 			SubnetIds:             pulumi.ToStringArray(c.privateSubnetIDs),
 		},
@@ -395,14 +390,13 @@ func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
 		return err
 	}
 
-	aws := pulumi.String("AWS")
 	policy := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
-				Effect: pulumi.StringPtr("Allow"),
+				Effect: P_STR_ALLOW,
 				Principals: iam.GetPolicyDocumentStatementPrincipalArray{
 					iam.GetPolicyDocumentStatementPrincipalArgs{
-						Type:        aws,
+						Type:        P_STR_AWS,
 						Identifiers: pulumi.ToStringArray([]string{session.IssuerArn}),
 					},
 				},
@@ -424,13 +418,13 @@ func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
 					"kms:Create*",
 					"kms:CancelKeyDeletion",
 				}),
-				Resources: pulumi.ToStringArray([]string{"*"}),
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
-				Effect: pulumi.StringPtr("Allow"),
+				Effect: P_STR_ALLOW,
 				Principals: iam.GetPolicyDocumentStatementPrincipalArray{
 					iam.GetPolicyDocumentStatementPrincipalArgs{
-						Type:        aws,
+						Type:        P_STR_AWS,
 						Identifiers: pulumi.ToStringArrayOutput([]pulumi.StringOutput{c.roles["cluster"].Arn}),
 					},
 				},
@@ -441,7 +435,7 @@ func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
 					"kms:DescribeKey",
 					"kms:Decrypt",
 				}),
-				Resources: pulumi.ToStringArray([]string{"*"}),
+				Resources: P_STR_ARR_WILDCARD,
 			},
 		},
 	})
@@ -454,27 +448,24 @@ func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
 }
 
 func (c *cluster) managedNodeRole(ctx *pulumi.Context) error {
-	assumeRole, err := iam.GetPolicyDocument(ctx, &iam.GetPolicyDocumentArgs{
-		Statements: []iam.GetPolicyDocumentStatement{
-			{
-				Actions: []string{"sts:AssumeRole"},
-				Effect:  pulumi.StringRef("Allow"),
-				Principals: []iam.GetPolicyDocumentStatementPrincipal{
-					{
-						Type:        "Service",
-						Identifiers: []string{"ec2.amazonaws.com"},
+	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
+		Statements: iam.GetPolicyDocumentStatementArray{
+			iam.GetPolicyDocumentStatementArgs{
+				Actions: P_STR_ARR_STS_ASSUME_ROLE,
+				Effect:  P_STR_ALLOW,
+				Principals: iam.GetPolicyDocumentStatementPrincipalArray{
+					iam.GetPolicyDocumentStatementPrincipalArgs{
+						Type:        P_STR_SERVICE,
+						Identifiers: P_STR_ARR_EC2_AMAZONAWS_COM,
 					},
 				},
 			},
 		},
 	})
-	if err != nil {
-		return err
-	}
 
 	name := fmt.Sprintf("%s-managed-node-role", c.baseName)
 	role, err := iam.NewRole(ctx, name, &iam.RoleArgs{
-		AssumeRolePolicy: pulumi.StringPtr(assumeRole.Json),
+		AssumeRolePolicy: assumeRole.Json(),
 	})
 	if err != nil {
 		return err
@@ -530,8 +521,8 @@ func (c *cluster) launchTemplate(ctx *pulumi.Context) error {
 				},
 			},
 		},
-		DisableApiStop:        pulumi.BoolPtr(false),
-		DisableApiTermination: pulumi.BoolPtr(false),
+		DisableApiStop:        P_BOOL_PTR_FALSE,
+		DisableApiTermination: P_BOOL_PTR_FALSE,
 		MetadataOptions: &ec2.LaunchTemplateMetadataOptionsArgs{
 			HttpPutResponseHopLimit: pulumi.Int(2),
 			HttpTokens:              pulumi.String("required"),
@@ -545,7 +536,7 @@ func (c *cluster) launchTemplate(ctx *pulumi.Context) error {
 				Tags:         pulumi.ToStringMap(tags),
 			},
 		},
-		UpdateDefaultVersion: pulumi.BoolPtr(true),
+		UpdateDefaultVersion: P_BOOL_PTR_TRUE,
 	})
 	if err != nil {
 		return err
@@ -601,7 +592,7 @@ func (c *cluster) oidcProvider(ctx *pulumi.Context) error {
 	}).(pulumi.StringOutput)
 
 	p, err := iam.NewOpenIdConnectProvider(ctx, c.baseName, &iam.OpenIdConnectProviderArgs{
-		ClientIdLists:   pulumi.ToStringArray([]string{"sts.amazonaws.com"}),
+		ClientIdLists:   P_STR_ARR_STS_AMAZONAWS_COM,
 		ThumbprintLists: pulumi.ToStringArray([]string{"9e99a48a9960b14926bb7f3b02e22da2b0ab7280"}),
 		Url:             url,
 	}, pulumi.DependsOn([]pulumi.Resource{c.cluster}))
@@ -618,23 +609,23 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{"sts:AssumeRole"}),
+				Actions: P_STR_ARR_STS_ASSUME_ROLE_WEB_IDENTITY,
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringEquals"),
-						Values:   pulumi.ToStringArray([]string{"sts.amazonaws.com"}),
+						Test:     P_STR_STRING_EQUALS,
+						Values:   P_STR_ARR_STS_AMAZONAWS_COM,
 						Variable: pulumi.Sprintf("%s:aud", c.provider.Url),
 					},
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringEquals"),
+						Test:     P_STR_STRING_EQUALS,
 						Values:   pulumi.ToStringArray([]string{"system:serviceaccount:kube-system:ebs-csi-controller-sa"}),
 						Variable: pulumi.Sprintf("%s:sub", c.provider.Url),
 					},
 				},
-				Effect: pulumi.StringPtr("Allow"),
+				Effect: P_STR_ALLOW,
 				Principals: iam.GetPolicyDocumentStatementPrincipalArray{
 					iam.GetPolicyDocumentStatementPrincipalArgs{
-						Type:        pulumi.String("Federated"),
+						Type:        P_STR_FEDERATED,
 						Identifiers: pulumi.ToStringArrayOutput([]pulumi.StringOutput{c.provider.Arn}),
 					},
 				},
@@ -650,7 +641,6 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 		return err
 	}
 
-	allResources := pulumi.ToStringArray([]string{"*"})
 	policy := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
@@ -666,19 +656,19 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 					"ec2:CreateSnapshot",
 					"ec2:AttachVolume",
 				}),
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:CreateTags"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringEquals"),
+						Test:     P_STR_STRING_EQUALS,
 						Values:   pulumi.ToStringArray([]string{"CreateVolume", "CreateSnapshot"}),
 						Variable: pulumi.String("ec2:CreateAction"),
 					},
 				},
-				Effect: pulumi.StringPtr("Allow"),
+				Effect: P_STR_ALLOW,
 				Resources: pulumi.ToStringArray([]string{
 					"arn:aws:ec2:*:*:volume/*",
 					"arn:aws:ec2:*:*:snapshot/*",
@@ -686,7 +676,7 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:DeleteTags"}),
-				Effect:  pulumi.StringPtr("Allow"),
+				Effect:  P_STR_ALLOW,
 				Resources: pulumi.ToStringArray([]string{
 					"arn:aws:ec2:*:*:volume/*",
 					"arn:aws:ec2:*:*:snapshot/*",
@@ -696,111 +686,111 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 				Actions: pulumi.ToStringArray([]string{"ec2:CreateVolume"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringLike"),
-						Values:   pulumi.ToStringArray([]string{"true"}),
+						Test:     P_STR_STRING_LIKE,
+						Values:   P_STR_ARR_TRUE,
 						Variable: pulumi.String("aws:RequestTag/ebs.csi.aws.com/cluster"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:CreateVolume"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringLike"),
-						Values:   allResources,
+						Test:     P_STR_STRING_LIKE,
+						Values:   P_STR_ARR_WILDCARD,
 						Variable: pulumi.String("aws:RequestTag/CSIVolumeName"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:CreateVolume"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:   pulumi.String("StringLike"),
-						Values: pulumi.ToStringArray([]string{"owned"}),
+						Test:   P_STR_STRING_LIKE,
+						Values: P_STR_ARR_OWNED,
 						// NOTE(jdt): we could probably interpolate the cluster name here?
 						Variable: pulumi.String("aws:RequestTag/kubernetes.io/cluster/*"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:DeleteVolume"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringLike"),
-						Values:   pulumi.ToStringArray([]string{"true"}),
+						Test:     P_STR_STRING_LIKE,
+						Values:   P_STR_ARR_TRUE,
 						Variable: pulumi.String("ec2:ResourceTag/ebs.csi.aws.com/cluster"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:DeleteVolume"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringLike"),
-						Values:   allResources,
+						Test:     P_STR_STRING_LIKE,
+						Values:   P_STR_ARR_WILDCARD,
 						Variable: pulumi.String("ec2:ResourceTag/CSIVolumeName"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:DeleteVolume"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:   pulumi.String("StringLike"),
-						Values: pulumi.ToStringArray([]string{"owned"}),
+						Test:   P_STR_STRING_LIKE,
+						Values: P_STR_ARR_OWNED,
 						// NOTE(jdt): we could probably interpolate the cluster name here?
 						Variable: pulumi.String("ec2:ResourceTag/kubernetes.io/cluster/*"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:DeleteVolume"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringLike"),
-						Values:   allResources,
+						Test:     P_STR_STRING_LIKE,
+						Values:   P_STR_ARR_WILDCARD,
 						Variable: pulumi.String("ec2:ResourceTag/kubernetes.io/created-for/pvc/name"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:DeleteSnapshot"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringLike"),
-						Values:   allResources,
+						Test:     P_STR_STRING_LIKE,
+						Values:   P_STR_ARR_WILDCARD,
 						Variable: pulumi.String("ec2:ResourceTag/CSIVolumeSnapshotName"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 			iam.GetPolicyDocumentStatementArgs{
 				Actions: pulumi.ToStringArray([]string{"ec2:DeleteSnapshot"}),
 				Conditions: iam.GetPolicyDocumentStatementConditionArray{
 					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     pulumi.String("StringLike"),
-						Values:   pulumi.ToStringArray([]string{"true"}),
+						Test:     P_STR_STRING_LIKE,
+						Values:   P_STR_ARR_TRUE,
 						Variable: pulumi.String("ec2:ResourceTag/ebs.csi.aws.com/cluster"),
 					},
 				},
-				Effect:    pulumi.StringPtr("Allow"),
-				Resources: allResources,
+				Effect:    P_STR_ALLOW,
+				Resources: P_STR_ARR_WILDCARD,
 			},
 		},
 	})
