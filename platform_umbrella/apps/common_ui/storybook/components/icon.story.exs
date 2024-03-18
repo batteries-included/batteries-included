@@ -32,9 +32,9 @@ defmodule Storybook.Components.Icon do
         description: "Custom icons",
         variations: [
           %Variation{
-            id: :custom_battery,
+            id: :custom_kubernetes,
             attributes: %{
-              name: :battery,
+              name: :kubernetes,
               class: "size-8"
             }
           }

@@ -80,15 +80,23 @@ defmodule CommonUI.Components.Button do
   end
 
   defp button_class("secondary") do
-    "min-w-36 px-5 py-3 rounded-lg border border-gray-lighter dark:border-gray-darker text-gray-darker dark:text-gray-lighter bg-white dark:bg-gray-darkest hover:text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
+    [
+      "min-w-36 px-5 py-3 rounded-lg",
+      "text-gray-darker dark:text-gray-lighter hover:text-primary dark:hover:text-gray-lighter disabled:text-gray",
+      "border border-gray-lighter hover:border-primary-light dark:border-gray-darker-tint dark:hover:border-gray-light disabled:hover:border-gray-lighter",
+      "bg-white dark:bg-gray-darkest"
+    ]
   end
 
   defp button_class("dark") do
-    "min-w-36 px-5 py-3 rounded-lg text-white bg-gray-darkest hover:bg-gray-darker disabled:bg-gray-lighter"
+    [
+      "min-w-36 px-5 py-3 rounded-lg text-white dark:text-gray-darkest",
+      "bg-gray-darkest dark:bg-white hover:bg-gray-darker dark:hover:bg-gray-lighter disabled:bg-gray-lighter"
+    ]
   end
 
   defp button_class("icon") do
-    "size-9 p-2 rounded-full text-gray-darker hover:text-primary hover:bg-gray-lightest/75 disabled:text-gray"
+    "size-9 p-2 rounded-full text-gray-darker dark:text-gray-lighter hover:text-primary hover:bg-gray-lightest/75 dark:hover:bg-gray-darkest/50 disabled:text-gray"
   end
 
   defp button_class("icon_bordered") do

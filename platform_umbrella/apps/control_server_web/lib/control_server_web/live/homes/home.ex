@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Live.Home do
 
   import ControlServerWeb.Chart
 
+  alias ControlServer.Projects
   alias ControlServer.SnapshotApply.Kube
   alias ControlServerWeb.RunningBatteriesPanel
   alias KubeServices.KubeState
@@ -15,6 +16,7 @@ defmodule ControlServerWeb.Live.Home do
      |> assign(current_page: :home)
      |> assign_page_title()
      |> assign_pods()
+     |> assign_projects()
      |> assign_status(Kube.get_latest_snapshot_status())}
   end
 
@@ -24,6 +26,10 @@ defmodule ControlServerWeb.Live.Home do
 
   def assign_pods(socket) do
     assign(socket, pods: KubeState.get_all(:pod))
+  end
+
+  def assign_projects(socket) do
+    assign(socket, projects: Projects.list_projects())
   end
 
   def assign_status(socket, status) do
@@ -53,11 +59,17 @@ defmodule ControlServerWeb.Live.Home do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header>
+    <.page_header title={@page_title}>
       <:menu>
-        <.button variant="secondary" link={~p"/batteries/magic"}>
-          Manage Batteries
-        </.button>
+        <div class="flex items-center gap-4">
+          <.button variant="dark" icon={:plus} link={~p"/projects/new"}>
+            New Project
+          </.button>
+
+          <.button variant="secondary" icon={:kubernetes} link={~p"/batteries/magic"}>
+            Manage Batteries
+          </.button>
+        </div>
       </:menu>
     </.page_header>
 
@@ -66,13 +78,18 @@ defmodule ControlServerWeb.Live.Home do
         <.h3>Pods by Category</.h3>
         <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
       </.flex>
+
       <.panel title="Projects" class="lg:col-span-7">
-        <.flex class="items-center justify-center align-middle -rotate-45 m-16">
-          <span class="block text-4xl font-sans text-pink-300 lg:mt-5 mt-2">
-            Coming Soon
-          </span>
-        </.flex>
+        <:menu>
+          <.button variant="minimal" link={~p"/projects"}>View All</.button>
+        </:menu>
+
+        <.table rows={@projects} row_click={&JS.navigate(~p"/projects/#{&1.id}")}>
+          <:col :let={project} label="Project Name"><%= project.name %></:col>
+          <:col :let={project} label="Project Type"><%= project.type %></:col>
+        </.table>
       </.panel>
+
       <.live_component module={RunningBatteriesPanel} id="running_bat_home_hero" />
     </.grid>
     """

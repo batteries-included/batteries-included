@@ -100,7 +100,7 @@
   </defs>
 </svg>
 
-  <div class="relative flex flex-col flex-1 p-8 overflow-x-auto overflow-y-auto lg:pb-0">
+  <div class="relative flex flex-col flex-1 p-8 overflow-auto">
     <div class="flex min-w-[68px] mb-6 lg:mb-0">
       <button class="text-gray-dark hover:text-gray-darker lg:hidden" aria-controls="sidebar" phx-click="[[&quot;add_class&quot;,{&quot;names&quot;:[&quot;translate-x-0&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;remove_class&quot;,{&quot;names&quot;:[&quot;-translate-x-64&quot;],&quot;to&quot;:&quot;#sidebar&quot;}],[&quot;remove_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#sidebarInset&quot;}]]">
         <span class="sr-only">

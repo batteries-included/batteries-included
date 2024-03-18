@@ -5,56 +5,51 @@ defmodule ControlServerWeb.Projects.IndexLive do
   alias ControlServer.Projects
   alias ControlServer.Projects.Project
 
-  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :projects, list_projects())}
+    {:ok,
+     socket
+     |> assign(:page_title, "Projects")
+     |> assign(:projects, Projects.list_projects())}
   end
 
-  @impl Phoenix.LiveView
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit project")
-    |> assign(:project, Projects.get_project!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New project")
-    |> assign(:project, %Project{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing projects")
-    |> assign(:project, nil)
-  end
-
-  @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     project = Projects.get_project!(id)
     {:ok, _} = Projects.delete_project(project)
 
-    {:noreply, assign(socket, :projects, list_projects())}
+    {:noreply, assign(socket, :projects, Projects.list_projects())}
   end
 
-  defp list_projects do
-    Projects.list_projects()
-  end
-
-  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.a navigate={~p"/projects/new"} variant="styled">New Project</.a>
+    <.page_header title={@page_title} back_link={~p"/"}>
+      <:menu>
+        <.button variant="dark" icon={:plus} link={~p"/projects/new"}>New Project</.button>
+      </:menu>
+    </.page_header>
 
-    <.table id="projects" rows={@projects} row_click={&JS.navigate(~p"/projects/#{&1}")}>
-      <:col :let={project} label="Name"><%= project.name %></:col>
-      <:col :let={project} label="Type"><%= project.type %></:col>
-      <:col :let={project} label="Description"><%= project.description %></:col>
-    </.table>
+    <.panel title="All Projects">
+      <.table id="projects" rows={@projects} row_click={&JS.navigate(~p"/projects/#{&1}")}>
+        <:col :let={project} label="Name"><%= project.name %></:col>
+        <:col :let={project} label="Type"><%= Project.type_name(project.type) %></:col>
+
+        <:action :let={project}>
+          <.flex class="justify-items-center">
+            <.button
+              variant="minimal"
+              phx-click="delete"
+              phx-value-id={project.id}
+              data-confirm={"Are you sure you want to delete the \"#{project.name}\" project?"}
+              icon={:trash}
+              id={"delete_project_" <> project.id}
+            />
+
+            <.tooltip target_id={"delete_project_" <> project.id}>
+              Delete Project
+            </.tooltip>
+          </.flex>
+        </:action>
+      </.table>
+    </.panel>
     """
   end
 end

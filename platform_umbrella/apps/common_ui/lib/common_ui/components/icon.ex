@@ -8,7 +8,7 @@ defmodule CommonUI.Components.Icon do
   attr :mini, :boolean, default: false
   attr :rest, :global
 
-  def icon(%{name: :battery} = assigns), do: CommonUI.Icons.Battery.icon(assigns)
+  def icon(%{name: :kubernetes} = assigns), do: CommonUI.Icons.Kubernetes.icon(assigns)
 
   def icon(assigns), do: apply(Heroicons, assigns.name, [assigns])
 end

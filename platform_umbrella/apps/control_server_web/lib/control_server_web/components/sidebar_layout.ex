@@ -82,7 +82,7 @@ defmodule ControlServerWeb.SidebarLayout do
 
       <.background_gradient_blur />
 
-      <div class="relative flex flex-col flex-1 p-8 overflow-x-auto overflow-y-auto lg:pb-0">
+      <div class="relative flex flex-col flex-1 p-8 overflow-auto">
         <div class="flex min-w-[68px] mb-6 lg:mb-0">
           <button
             class="text-gray-dark hover:text-gray-darker lg:hidden"

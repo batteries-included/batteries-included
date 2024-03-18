@@ -17,7 +17,7 @@ defmodule ControlServerWeb.ProjectLiveTest do
       {:ok, _index_live, html} = live(conn, ~p"/projects")
 
       assert html =~ "projects"
-      assert html =~ project.description
+      assert html =~ project.name
     end
   end
 

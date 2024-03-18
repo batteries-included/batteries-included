@@ -59,9 +59,10 @@ defmodule ControlServerWeb.Router do
   scope "/projects", ControlServerWeb.Projects do
     pipe_through :browser
 
-    live "/", IndexLive, :index
-    live "/new", NewLive, :new
-    live "/:id", ShowLive, :show
+    live "/", IndexLive
+    live "/new", NewLive
+    live "/:id", ShowLive
+    live "/:id/timeline", TimelineLive
   end
 
   scope "/kube", ControlServerWeb do
