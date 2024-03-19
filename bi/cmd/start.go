@@ -10,8 +10,6 @@ import (
 	"log/slog"
 
 	"github.com/spf13/cobra"
-
-	"github.com/spf13/viper"
 )
 
 // startCmd represents the start command
@@ -44,21 +42,21 @@ var startCmd = &cobra.Command{
 		kubeConfigPath, err := cmd.Flags().GetString("kubeconfig")
 		cobra.CheckErr(err)
 
+		writeStateSummaryPath, err := cmd.Flags().GetString("write-state-summary")
+		cobra.CheckErr(err)
+
 		slog.Debug("Starting Batteries Included Installation",
 			slog.String("installSpec", installUrl),
-			slog.String("kubeconfig", kubeConfigPath))
+			slog.String("kubeconfig", kubeConfigPath),
+			slog.String("writeStateSummary", writeStateSummaryPath))
 
-		err = start.StartInstall(installUrl, kubeConfigPath)
+		err = start.StartInstall(installUrl, kubeConfigPath, writeStateSummaryPath)
 		cobra.CheckErr(err)
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(startCmd)
-	// The install spec path as an argument
-	// that can be parsed by net/url
-	startCmd.Flags().StringP("install-spec", "i", "", "The install spec to use")
-	viper.BindPFlag("install-spec", startCmd.Flags().Lookup("install-spec"))
-
 	cmdutil.AddKubeConfigFlag(startCmd)
+	startCmd.Flags().StringP("write-state-summary", "S", "", "Write a StateSummary that's used for bootstrapping")
 }

@@ -86,7 +86,6 @@
         flake-root.flakeModule
         mission-control.flakeModule
         ./nix/shell.nix
-        ./nix/bcli.nix
         ./nix/bi.nix
         ./nix/pastebin.nix
         ./nix/platform.nix

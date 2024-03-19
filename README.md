@@ -107,16 +107,15 @@ This is the UI for billing, and starting new clusters.
 
 ### Development
 
-In one shell start the kind cluster, compile the rust bootstrap binary, run it,
-installing postgres and istiod, then start a port forward to the postgres
-process.
+To start the kind kubernetes cluster, start the services including postgres,
+create the db's, and seed them with target summary.
 
 ```bash
 bix bootstrap
 ```
 
-Then in another shell (or tmux pane) start the control, and home web servers and
-background processes.
+Then start the control, and home web servers and background processes. This will
+also open up a iex console where you can explore the process status
 
 ```bash
 bix dev

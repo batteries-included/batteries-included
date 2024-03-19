@@ -30,7 +30,9 @@
             description = "Run test setup";
             category = "elixir";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
+              ${builtins.readFile ./scripts/common-functions.sh}
+              portforward_controlserver
+
               export MIX_ENV=test
               m ecto.reset
             '';
@@ -41,7 +43,9 @@
             description = "Run stale tests";
             category = "elixir";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
+              ${builtins.readFile ./scripts/common-functions.sh}
+              portforward_controlserver
+
               m test --trace --stale
             '';
           };
@@ -50,7 +54,9 @@
             description = "Run tests excluding @tag slow";
             category = "elixir";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
+              ${builtins.readFile ./scripts/common-functions.sh}
+              portforward_controlserver
+
               export MIX_ENV=test
               m "do" \
                 test --trace --exclude slow --cover --export-coverage default --warnings-as-errors, \
@@ -62,12 +68,13 @@
             description = "Run all tests with coverage and all that jazz";
             category = "elixir";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
+              ${builtins.readFile ./scripts/common-functions.sh}
+              portforward_controlserver
+
               pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
               export MIX_ENV=test
               mix deps.get
-              mix compile --force --warnings-as-errors
+              mix compile --warnings-as-errors
               mix ecto.reset
               mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors
               mix test.coverage
@@ -81,21 +88,6 @@
             exec = ''
               export WALLABY_CHROME_BINARY=${pkgs.chromium}/bin/chromium
               ${builtins.readFile ./scripts/integration-test.sh}
-            '';
-          };
-
-          ex-deep-clean = {
-            description = "Really clean the elixir codebase";
-            category = "elixir";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
-              mix clean --deps
-              rm -rf _build deps .elixir_ls
-              find . -name node_modules -print0 | xargs -0 rm -rf || true
-              find . -name assets | grep priv | xargs rm -rf || true
-              mix deps.get && mix compile --force
             '';
           };
 
@@ -118,7 +110,6 @@
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
               mix "$@"
             '';
           };
@@ -127,20 +118,10 @@
             description = "Bootstrap the dev environment";
             category = "dev";
             exec = ''
-              ${builtins.readFile ./scripts/bootstrap.sh}
-              bootstrap_bcli --static-dir=static "$@"
+              ${builtins.readFile ./scripts/common-functions.sh}
+              do_bootstrap "$@"
             '';
           };
-
-          bootstrap-remote = {
-            description = "Bootstrap the dev environment against a remote cluster";
-            category = "dev";
-            exec = ''
-              ${builtins.readFile ./scripts/bootstrap.sh}
-              bootstrap_bcli --static-dir=static --spec-path=public/specs/dev_cluster.json "$@"
-            '';
-          };
-
 
           clean = {
             description = "Clean the working tree";
@@ -177,8 +158,8 @@
             description = "Stop the kind cluster and all things";
             category = "dev";
             exec = ''
-              # shellcheck disable=2046
-              bcli stop $([[ -z ''${TRACE:-""} ]] || echo "-vv")
+              ${builtins.readFile ./scripts/common-functions.sh}
+              do_stop "$@"
             '';
           };
 
@@ -186,9 +167,10 @@
             description = "Start dev environment";
             category = "dev";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
+              ${builtins.readFile ./scripts/common-functions.sh}
+              portforward_controlserver
+
               pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
               iex -S mix phx.server
             '';
           };
@@ -197,9 +179,10 @@
             description = "Start dev environment without iex";
             category = "dev";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
+              ${builtins.readFile ./scripts/common-functions.sh}
+              portforward_controlserver
+
               pushd platform_umbrella &> /dev/null
-              trap 'popd &> /dev/null' EXIT
               mix phx.server
             '';
           };
@@ -222,7 +205,9 @@
             description = "Reset test DB";
             category = "dev";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
+              ${builtins.readFile ./scripts/common-functions.sh}
+              portforward_controlserver
+
               export MIX_ENV=test
               m "do" compile --force, ecto.reset
             '';
@@ -251,14 +236,6 @@
             category = "recruiting";
             exec = builtins.readFile ./scripts/package-challenge.sh;
           };
-
-          # template = {
-          #   description = "";
-          #   category = "";
-          #   exec = ''
-          #   '';
-          # };
-
         };
       };
     };

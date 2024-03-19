@@ -10,8 +10,8 @@ defmodule Mix.Tasks.Seed.Control do
   @requirements ["app.config"]
 
   def run(args) do
-    [json_install_path] = args
+    [json_summary_path] = args
 
-    ControlServer.Release.seed(json_install_path)
+    ControlServer.Release.seed(json_summary_path)
   end
 end

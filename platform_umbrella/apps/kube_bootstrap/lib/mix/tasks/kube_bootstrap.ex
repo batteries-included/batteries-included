@@ -23,12 +23,8 @@ defmodule Mix.Tasks.Kube.Bootstrap do
   defp read_summary(path) do
     with {:ok, file_contents} <- File.read(path),
          {:ok, decoded_content} <- Jason.decode(file_contents) do
-      # We are bootstrapping from an install spec file
-      # the bootstrap job will only get the summary
-      summary_content = Map.get(decoded_content, "target_summary")
-
       # Decode everything from string keyed map to struct
-      StateSummary.new(summary_content)
+      StateSummary.new(decoded_content)
     else
       {:error, _} = error -> error
     end

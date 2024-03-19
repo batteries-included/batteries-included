@@ -5,7 +5,7 @@ import (
 	"bi/pkg/specs"
 )
 
-func StartInstall(url string, kubeConfigPath string) error {
+func StartInstall(url string, kubeConfigPath string, writeStateSummaryPath string) error {
 	// Get the install spec
 	spec, err := specs.GetSpecFromURL(url)
 	if err != nil {
@@ -25,6 +25,13 @@ func StartInstall(url string, kubeConfigPath string) error {
 	err = spec.InitialSync(kubeClient)
 	if err != nil {
 		return err
+	}
+
+	if writeStateSummaryPath != "" {
+		err = spec.WriteStateSummary(writeStateSummaryPath)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

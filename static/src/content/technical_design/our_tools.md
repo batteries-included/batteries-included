@@ -20,7 +20,6 @@ If not, you'll need to enter a nix shell by running something like
 Example:
 
 ```sh
-bix
 Available commands:
 
 ## code
@@ -29,13 +28,16 @@ Available commands:
 
 ## dev
 
-  bix bootstrap              : Bootstrap the dev environment
-  bix dev                    : Start dev environment
-  bix dev-iex                : Start dev environment without iex
-  bix gen-static-specs       : Generate static specs
-  bix nuke-cluster-contents  : Clean up dev cluster resources
-  bix nuke-clusters          : Destroy dev clusters completely
-  bix nuke-test-db           : Reset test DB
+  bix bootstrap               : Bootstrap the dev environment
+  bix build                   : Build the given flake.
+  bix clean                   : Clean the working tree
+  bix dev                     : Start dev environment
+  bix dev-no-iex              : Start dev environment without iex
+  bix force-remove-namespace  : Forcefully remove the given namespace by removing finalizers
+  bix gen-static-specs        : Generate static specs
+  bix nuke-test-db            : Reset test DB
+  bix stop                    : Stop the kind cluster and all things
+  bix uninstall               : Uninstall everything from the kube cluster
 
 ## elixir
 
@@ -43,12 +45,15 @@ Available commands:
   bix ex-fmt         : Format elixir codebase
   bix ex-test        : Run stale tests
   bix ex-test-deep   : Run all tests with coverage and all that jazz
+  bix ex-test-int    : Run integration tests. Used in CI as well.
   bix ex-test-quick  : Run tests excluding @tag slow
+  bix ex-test-setup  : Run test setup
+  bix ex-watch       : Watch for changes to elixir source
   bix m              : Run mix commands
 
-## ops
+## recruiting
 
-  bix push-aws  : Push to AWS
+  bix package-challenge  : Package up candidate challenge: "bix package-challenge candidate-name [destination-dir] [challenge]"
 ```
 
 Most of the scripts will `set -x` if `$TRACE` is set for additional debugging
@@ -68,14 +73,10 @@ Example:
 bix bootstrap
 ```
 
-This script calls into the rust `cli` binary with auto-discovered paths and
-command line arguments. The end result is calling `cli dev` that will:
+This script calls into the go `bi` binary with auto-discovered paths and command
+line arguments. The end result is calling `bi start` that will:
 
 - Ensure that a Kind Kubernetes cluster is started in docker
-- Download an Installation spec that tells us what to start. Since bootstrap is
-  for development, we don't get a real configured spec from a running `home`
-  app. Instead, we get a static pre-configured version served via Netlify. See
-  the Gen Static Specs section of this document
 - Create any resources needed to bootstrap the control server in the Kubernetes
   cluster
 - Wait until there is a healthy master Postgres cluster.

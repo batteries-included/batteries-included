@@ -40,7 +40,7 @@ defmodule ControlServer.Release do
   def seed(path) do
     # Start apps necessary for executing migrations
     :ok = load_app()
-    :ok = ControlServer.Seed.seed_from_install_path(path)
+    :ok = ControlServer.Seed.seed_from_path(path)
   end
 
   def rollback(repo, version) do

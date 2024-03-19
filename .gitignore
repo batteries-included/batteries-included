@@ -10,6 +10,9 @@ platform_umbrella/.iex.exs
 # local go dirs
 .nix-go
 
+# lockfiles
+.nix-lock
+
 # Sssssshhhhh
 ops/aws/keys/*
 !ops/aws/keys/keys-to-generate

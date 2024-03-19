@@ -9,11 +9,10 @@ defmodule ControlServer.Seed do
 
   require Logger
 
-  def seed_from_install_path(path) do
+  def seed_from_path(path) do
     path
     |> File.read!()
     |> Jason.decode!()
-    |> Map.fetch!("target_summary")
     |> seed_from_summary()
   end
 

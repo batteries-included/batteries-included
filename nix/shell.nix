@@ -105,6 +105,7 @@
         kubernetes-helm
         podman
         terraform
+        flock
 
         skopeo # Use for pushing docker
         wireguard-tools
@@ -121,7 +122,7 @@
       ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
       ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) integrationTestingTools
       ++ [ config.treefmt.build.wrapper ]
-      ++ [ config.packages.bcli ];
+      ++ [ config.packages.bi ];
 
 
       buildInputs = with pkgs; [
@@ -149,6 +150,9 @@
 
         export GOPATH=$PWD/.nix-go
         mkdir -p $GOPATH
+
+        # place to put lock files for nix shell scripts
+        mkdir -p .nix-lock
 
         export PATH=$MIX_HOME/bin:$PATH
         export PATH=$HEX_HOME/bin:$PATH

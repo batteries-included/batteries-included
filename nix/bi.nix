@@ -9,7 +9,7 @@
       src = gitignoreSource ../bi;
       pwd = ../bi;
       pname = "bi";
-      version = "0.1";
+      version = "0.2";
       modules = ../bi/gomod2nix.toml;
     in
     {

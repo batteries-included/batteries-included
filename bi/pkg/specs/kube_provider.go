@@ -3,6 +3,7 @@ package specs
 import (
 	"log/slog"
 
+	"bi/pkg/docker"
 	"bi/pkg/local"
 )
 
@@ -11,9 +12,9 @@ func (spec *InstallSpec) StartKubeProvider() error {
 
 	switch spec.KubeCluster.Provider {
 	case "kind":
-		err = startLocal()
+		err = spec.startLocal()
 	case "aws":
-		err = startAws()
+		err = spec.startAws()
 	}
 
 	if err != nil {
@@ -27,7 +28,7 @@ func (spec *InstallSpec) StopKubeProvider() error {
 
 	switch spec.KubeCluster.Provider {
 	case "kind":
-		err = stopLocal()
+		err = spec.stopLocal()
 	case "aws":
 	}
 
@@ -37,16 +38,33 @@ func (spec *InstallSpec) StopKubeProvider() error {
 	return nil
 }
 
-func startLocal() error {
+func (spec *InstallSpec) startLocal() error {
 	slog.Debug("Trying to start kind cluster (unless already running)")
 	_, err := local.StartDefaultKindCluster()
 	if err != nil {
 		return err
 	}
+
+	err = spec.tryAddMetalIPs()
+	if err != nil {
+		return err
+	}
+	slog.Debug("kind cluster started successfully", slog.Any("ips", spec.TargetSummary.IPAddressPools))
+
 	return nil
 }
 
-func stopLocal() error {
+func (spec *InstallSpec) tryAddMetalIPs() error {
+	net, err := docker.GetMetalLBIPs()
+	if err == nil {
+		newIpSpec := IPAddressPoolSpec{Name: "kind", Subnet: net}
+		slog.Debug("adding docker ips for metal lb: ", slog.Any("range", newIpSpec))
+		spec.TargetSummary.IPAddressPools = append(spec.TargetSummary.IPAddressPools, newIpSpec)
+	}
+	return nil
+}
+
+func (spec *InstallSpec) stopLocal() error {
 	slog.Debug("Stopping kind cluster")
 	err := local.StopDefaultKindCluster()
 	if err != nil {
@@ -55,7 +73,7 @@ func stopLocal() error {
 	return nil
 }
 
-func startAws() error {
+func (spec *InstallSpec) startAws() error {
 	slog.Debug("Starting aws cluster")
 	// TODO: Hook this up with pulumi that Jason wrote
 	return nil
