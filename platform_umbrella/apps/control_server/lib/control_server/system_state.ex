@@ -11,6 +11,7 @@ defmodule ControlServer.SystemState do
     |> Multi.all(:notebooks, CommonCore.Notebooks.JupyterLabNotebook)
     |> Multi.all(:knative_services, CommonCore.Knative.Service)
     |> Multi.all(:ip_address_pools, CommonCore.MetalLB.IPAddressPool)
+    |> Multi.all(:projects, CommonCore.Projects.Project)
     |> ControlServer.Repo.transaction()
   end
 end

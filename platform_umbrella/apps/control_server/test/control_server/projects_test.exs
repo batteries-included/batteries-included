@@ -1,75 +1,72 @@
 defmodule ControlServer.ProjectsTest do
   use ControlServer.DataCase
 
-  alias ControlServer.Projects
+  import ControlServer.Projects
+  import ControlServer.ProjectsFixtures
 
-  describe "projects" do
-    import ControlServer.ProjectsFixtures
+  alias CommonCore.Projects.Project
 
-    alias CommonCore.Projects.Project
+  @valid_attrs %{name: "some name", type: :web, description: "some description"}
+  @update_attrs %{name: "some updated name", type: :ml, description: "some updated description"}
+  @invalid_attrs %{name: nil, type: nil, description: nil}
 
-    @invalid_attrs %{description: nil, name: nil, type: nil}
+  setup do
+    %{
+      project: project_fixture(),
+      project2: project_fixture(),
+      project3: project_fixture()
+    }
+  end
 
-    test "list_projects/0 returns all projects" do
-      project = project_fixture()
-      assert Projects.list_projects() == [project]
+  describe "list_projects/0" do
+    test "should list all projects", ctx do
+      assert list_projects() == [ctx.project, ctx.project2, ctx.project3]
     end
+  end
 
-    test "get_project!/1 returns the project with given id" do
-      project = project_fixture()
-      assert Projects.get_project!(project.id) == project
+  describe "get_project!/1" do
+    test "should return the project with given id", ctx do
+      assert get_project!(ctx.project.id) == ctx.project
     end
+  end
 
-    test "create_project/1 with valid data creates a project" do
-      valid_attrs = %{description: "some description", name: "some name", type: :web}
-
-      assert {:ok, %Project{} = project} =
-               Projects.create_project(valid_attrs)
-
+  describe "create_project/1" do
+    test "should create project with valid data" do
+      assert {:ok, %Project{} = project} = create_project(@valid_attrs)
       assert project.description == "some description"
       assert project.name == "some name"
       assert project.type == :web
     end
 
-    test "create_project/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Projects.create_project(@invalid_attrs)
+    test "should return error changeset with invalid data" do
+      assert {:error, %Ecto.Changeset{}} = create_project(@invalid_attrs)
     end
+  end
 
-    test "update_project/2 with valid data updates the project" do
-      project = project_fixture()
-
-      update_attrs = %{
-        description: "some updated description",
-        name: "some updated name",
-        type: :ml
-      }
-
-      assert {:ok, %Project{} = project} =
-               Projects.update_project(project, update_attrs)
-
+  describe "update_project/2" do
+    test "should update the project with valid data", ctx do
+      assert {:ok, %Project{} = project} = update_project(ctx.project, @update_attrs)
       assert project.description == "some updated description"
       assert project.name == "some updated name"
       assert project.type == :ml
     end
 
-    test "update_project/2 with invalid data returns error changeset" do
-      project = project_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               Projects.update_project(project, @invalid_attrs)
-
-      assert project == Projects.get_project!(project.id)
+    test "should return error changeset with invalid data", ctx do
+      assert {:error, %Ecto.Changeset{}} = update_project(ctx.project, @invalid_attrs)
+      assert ctx.project == get_project!(ctx.project.id)
     end
+  end
 
-    test "delete_project/1 deletes the project" do
-      project = project_fixture()
-      assert {:ok, %Project{}} = Projects.delete_project(project)
-      assert_raise Ecto.NoResultsError, fn -> Projects.get_project!(project.id) end
+  describe "delete_project/1" do
+    test "should delete the project", ctx do
+      assert {:ok, %Project{}} = delete_project(ctx.project)
+      assert_raise Ecto.NoResultsError, fn -> get_project!(ctx.project.id) end
     end
+  end
 
-    test "change_project/1 returns a project changeset" do
-      project = project_fixture()
-      assert %Ecto.Changeset{} = Projects.change_project(project)
+  describe "change_project/1" do
+    test "should return a project changeset", ctx do
+      assert %Ecto.Changeset{} = change_project(ctx.project)
     end
   end
 end

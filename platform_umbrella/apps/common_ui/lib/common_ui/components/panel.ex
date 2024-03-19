@@ -25,7 +25,7 @@ defmodule CommonUI.Components.Panel do
         <%= if @menu, do: render_slot(@menu) %>
       </.flex>
 
-      <div class="px-6 py-5">
+      <div class="relative flex-1 px-6 py-5">
         <%= render_slot(@inner_block) %>
       </div>
     </div>
@@ -33,10 +33,20 @@ defmodule CommonUI.Components.Panel do
   end
 
   defp panel_class("gray") do
-    "bg-gray-lightest rounded-lg dark:bg-gray-darkest/50"
+    [
+      "bg-gray-lightest rounded-lg dark:bg-gray-darkest/50",
+      panel_class()
+    ]
   end
 
   defp panel_class(_) do
-    "bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker"
+    [
+      "bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker",
+      panel_class()
+    ]
+  end
+
+  defp panel_class do
+    "flex flex-col"
   end
 end

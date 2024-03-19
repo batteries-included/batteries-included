@@ -5,12 +5,14 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias CommonCore.Projects.Project
   alias ControlServer.Projects
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     changeset = Projects.change_project(%Project{})
+    back_link = Map.get(params, "back", ~p"/projects")
 
     {:ok,
      socket
      |> assign(:page_title, "Start Your Project")
+     |> assign(:back_link, back_link)
      |> assign(:form, to_form(changeset))}
   end
 
@@ -46,7 +48,7 @@ defmodule ControlServerWeb.Projects.NewLive do
       novalidate
     >
       <div>
-        <.page_header title={@page_title} back_link={~p"/projects"} />
+        <.page_header title={@page_title} back_link={@back_link} />
         <.progress variant="stepped" current={1} total={2} />
       </div>
 

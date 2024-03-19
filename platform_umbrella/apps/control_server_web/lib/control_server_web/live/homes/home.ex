@@ -4,8 +4,8 @@ defmodule ControlServerWeb.Live.Home do
 
   import ControlServerWeb.Chart
 
-  alias ControlServer.Projects
   alias ControlServer.SnapshotApply.Kube
+  alias ControlServerWeb.RecentProjectsPanel
   alias ControlServerWeb.RunningBatteriesPanel
   alias KubeServices.KubeState
 
@@ -16,7 +16,6 @@ defmodule ControlServerWeb.Live.Home do
      |> assign(current_page: :home)
      |> assign_page_title()
      |> assign_pods()
-     |> assign_projects()
      |> assign_status(Kube.get_latest_snapshot_status())}
   end
 
@@ -26,10 +25,6 @@ defmodule ControlServerWeb.Live.Home do
 
   def assign_pods(socket) do
     assign(socket, pods: KubeState.get_all(:pod))
-  end
-
-  def assign_projects(socket) do
-    assign(socket, projects: Projects.list_projects())
   end
 
   def assign_status(socket, status) do
@@ -62,7 +57,7 @@ defmodule ControlServerWeb.Live.Home do
     <.page_header title={@page_title}>
       <:menu>
         <div class="flex items-center gap-4">
-          <.button variant="dark" icon={:plus} link={~p"/projects/new"}>
+          <.button variant="dark" icon={:plus} link={~p"/projects/new?back=#{~p"/"}"}>
             New Project
           </.button>
 
@@ -79,17 +74,7 @@ defmodule ControlServerWeb.Live.Home do
         <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
       </.flex>
 
-      <.panel title="Projects" class="lg:col-span-7">
-        <:menu>
-          <.button variant="minimal" link={~p"/projects"}>View All</.button>
-        </:menu>
-
-        <.table rows={@projects} row_click={&JS.navigate(~p"/projects/#{&1.id}")}>
-          <:col :let={project} label="Project Name"><%= project.name %></:col>
-          <:col :let={project} label="Project Type"><%= project.type %></:col>
-        </.table>
-      </.panel>
-
+      <.live_component module={RecentProjectsPanel} id="recent_projects" />
       <.live_component module={RunningBatteriesPanel} id="running_bat_home_hero" />
     </.grid>
     """

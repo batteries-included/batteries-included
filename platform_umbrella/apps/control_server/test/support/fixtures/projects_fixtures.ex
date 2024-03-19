@@ -11,9 +11,9 @@ defmodule ControlServer.ProjectsFixtures do
     {:ok, project} =
       attrs
       |> Enum.into(%{
-        description: "some description",
         name: "some name",
-        type: :web
+        type: :web,
+        description: "some description"
       })
       |> ControlServer.Projects.create_project()
 
