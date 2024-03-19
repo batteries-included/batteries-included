@@ -5,7 +5,7 @@ defmodule ControlServer.Projects do
 
   import Ecto.Query, warn: false
 
-  alias ControlServer.Projects.Project
+  alias CommonCore.Projects.Project
   alias ControlServer.Repo
 
   @doc """

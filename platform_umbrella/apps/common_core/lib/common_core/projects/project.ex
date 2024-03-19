@@ -1,13 +1,13 @@
-defmodule ControlServer.Projects.Project do
+defmodule CommonCore.Projects.Project do
   @moduledoc false
-  use Ecto.Schema
+  use TypedEctoSchema
 
   import Ecto.Changeset
 
   @timestamps_opts [type: :utc_datetime_usec]
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "projects" do
+  typed_schema "projects" do
     field :name, :string
     field :type, Ecto.Enum, values: [:web, :ml, :database]
     field :description, :string

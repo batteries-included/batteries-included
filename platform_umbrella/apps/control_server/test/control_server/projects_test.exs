@@ -6,7 +6,7 @@ defmodule ControlServer.ProjectsTest do
   describe "projects" do
     import ControlServer.ProjectsFixtures
 
-    alias ControlServer.Projects.Project
+    alias CommonCore.Projects.Project
 
     @invalid_attrs %{description: nil, name: nil, type: nil}
 

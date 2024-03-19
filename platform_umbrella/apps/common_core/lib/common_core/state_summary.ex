@@ -33,6 +33,7 @@ defmodule CommonCore.StateSummary do
     embeds_many :notebooks, CommonCore.Notebooks.JupyterLabNotebook
     embeds_many :knative_services, CommonCore.Knative.Service
     embeds_many :ip_address_pools, CommonCore.MetalLB.IPAddressPool
+    embeds_many :projects, CommonCore.Projects.Project
 
     embeds_one :keycloak_state, CommonCore.StateSummary.KeycloakSummary
 
@@ -51,6 +52,7 @@ defmodule CommonCore.StateSummary do
     |> cast_embed(:notebooks)
     |> cast_embed(:knative_services)
     |> cast_embed(:ip_address_pools)
+    |> cast_embed(:projects)
     |> validate_required(@required_fields)
   end
 

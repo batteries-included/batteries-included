@@ -2,8 +2,8 @@ defmodule ControlServerWeb.Projects.NewLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  alias CommonCore.Projects.Project
   alias ControlServer.Projects
-  alias ControlServer.Projects.Project
 
   def mount(_params, _session, socket) do
     changeset = Projects.change_project(%Project{})
