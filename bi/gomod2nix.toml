@@ -205,6 +205,9 @@ schema = 3
   [mod."github.com/mitchellh/mapstructure"]
     version = "v1.5.0"
     hash = "sha256-ztVhGQXs67MF8UadVvG72G3ly0ypQW0IRDdOOkjYwoE="
+  [mod."github.com/moby/spdystream"]
+    version = "v0.2.0"
+    hash = "sha256-Feme5UoWuBCvnLPKw1ozKkF3SM7PAjjPFQZ3TJhghR0="
   [mod."github.com/modern-go/concurrent"]
     version = "v0.0.0-20180306012644-bacd9c7ef1dd"
     hash = "sha256-OTySieAgPWR4oJnlohaFTeK1tRaVp/b0d1rYY8xKMzo="
@@ -226,6 +229,9 @@ schema = 3
   [mod."github.com/munnerz/goautoneg"]
     version = "v0.0.0-20191010083416-a7dc8b61c822"
     hash = "sha256-79URDDFenmGc9JZu+5AXHToMrtTREHb3BC84b/gym9Q="
+  [mod."github.com/mxk/go-flowrate"]
+    version = "v0.0.0-20140419014527-cca7078d478f"
+    hash = "sha256-gRTfRfff/LRxC1SXXnQd2tV3UTcTx9qu90DJIVIaGn8="
   [mod."github.com/nxadm/tail"]
     version = "v1.4.11"
     hash = "sha256-7XF47xVcyHjpO1E0+GGAoytxOa0JJFCBXHJGLTexVgo="
@@ -263,8 +269,8 @@ schema = 3
     version = "v0.8.3"
     hash = "sha256-Emy9ruI73P8dQJWaZOAKXihP/aobZq0kdZhMs5WlaRc="
   [mod."github.com/pulumi/pulumi-aws/sdk/v6"]
-    version = "v6.25.1"
-    hash = "sha256-sIxPaBUFscBh5FLNKMSfSVi3ZUc5Ke5cWlSraraJPcc="
+    version = "v6.27.0"
+    hash = "sha256-cIpYnta/IbRt8PoHVf9WycpDMs8zs3mSLTdRc3S8d+k="
   [mod."github.com/pulumi/pulumi-cloudinit/sdk"]
     version = "v1.4.1"
     hash = "sha256-DLWzI7MFP2tU+ry++6OB23JOtQBDji1KekR90rdEXwc="
@@ -344,8 +350,8 @@ schema = 3
     version = "v0.21.0"
     hash = "sha256-Z4k1LvFh4Jai7HUe6TTuXSG3VnuiRpMwdARIdZZqSYk="
   [mod."golang.org/x/exp"]
-    version = "v0.0.0-20240314144324-c7f7c6466f7f"
-    hash = "sha256-RVQIpS6Plx4r82w39/Zn/j0vbSrqcZ3vjVzXMjh772A="
+    version = "v0.0.0-20240318143956-a85f2c67cd81"
+    hash = "sha256-HjEmpjgXqIuGc5rsTVkg6OPAN2fGhfkska7cwRu1qaw="
   [mod."golang.org/x/mod"]
     version = "v0.16.0"
     hash = "sha256-aN1Cz5Wqd9YCjK8nFW6JWn+n1HfFoEcgYZmGO/FYtbw="
@@ -386,7 +392,7 @@ schema = 3
     version = "v1.6.8"
     hash = "sha256-decMa0MiWfW/Bzr8QPPzzpeya0YWGHhZAt4Cr/bD1wQ="
   [mod."google.golang.org/genproto/googleapis/rpc"]
-    version = "v0.0.0-20240314234333-6e1732d8331c"
+    version = "v0.0.0-20240318140521-94a12d6c2237"
     hash = "sha256-P5SBku16dYnK4koUQxTeGwPxAAWH8rxbDm2pOzFLo/Q="
   [mod."google.golang.org/grpc"]
     version = "v1.62.1"
@@ -433,6 +439,9 @@ schema = 3
   [mod."lukechampine.com/frand"]
     version = "v1.4.2"
     hash = "sha256-YdLiDKB1l78m55JpoCEw0TrY2vG2EH6zAIM5Sl+QNJM="
+  [mod."pgregory.net/rapid"]
+    version = "v0.6.1"
+    hash = "sha256-q5VxGL22d0FcbBREbTvlLReZ7fSSe7uwtaJ/Bq9RatM="
   [mod."sigs.k8s.io/json"]
     version = "v0.0.0-20221116044647-bc3834ca7abd"
     hash = "sha256-XDBMN2o450IHiAwEpBVsvo9e7tYZa+EXWrifUNTdNMU="
