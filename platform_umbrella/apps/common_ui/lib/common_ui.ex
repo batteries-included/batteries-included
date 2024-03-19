@@ -24,6 +24,7 @@ defmodule CommonUI do
 
   defmacro __using__(_) do
     quote do
+      import CommonUI.Components.Badge
       import CommonUI.Components.Button
       import CommonUI.Components.ClickFlip
       import CommonUI.Components.Container

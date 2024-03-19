@@ -182,13 +182,13 @@ defmodule ControlServerWeb.PodLive.Show do
 
   def pod_facts_section(%{} = assigns) do
     ~H"""
-    <.data_horizontal_bordered>
-      <:item title="Namespace"><%= @namespace %></:item>
-      <:item title="Phase"><%= phase(@resource) %></:item>
-      <:item title="Started">
+    <.badge>
+      <:item label="Namespace"><%= @namespace %></:item>
+      <:item label="Phase"><%= phase(@resource) %></:item>
+      <:item label="Started">
         <.relative_display time={creation_timestamp(@resource)} />
       </:item>
-    </.data_horizontal_bordered>
+    </.badge>
     """
   end
 

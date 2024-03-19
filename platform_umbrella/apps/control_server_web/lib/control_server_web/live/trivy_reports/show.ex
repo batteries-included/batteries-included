@@ -77,14 +77,12 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/trivy_reports/vulnerability_report"}>
       <:menu>
-        <.data_horizontal_bordered>
-          <:item title="Artifact">
-            <%= @artifact_repo %>/<%= @artifact_tag %>
-          </:item>
-          <:item title="Created">
+        <.badge>
+          <:item label="Artifact"><%= @artifact_repo %>/<%= @artifact_tag %></:item>
+          <:item label="Created">
             <.relative_display time={creation_timestamp(@report)} />
           </:item>
-        </.data_horizontal_bordered>
+        </.badge>
       </:menu>
     </.page_header>
 

@@ -55,12 +55,12 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
 
   defp stateful_set_facts_section(assigns) do
     ~H"""
-    <.data_horizontal_bordered>
-      <:item title="Namespace"><%= @namespace %></:item>
-      <:item title="Started">
+    <.badge>
+      <:item label="Namespace"><%= @namespace %></:item>
+      <:item label="Started">
         <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
       </:item>
-    </.data_horizontal_bordered>
+    </.badge>
     """
   end
 
@@ -74,13 +74,14 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
     </.page_header>
 
     <div class="flex flex-col gap-8 mb-10">
-      <.data_pills class="mt-8">
-        <:item title="Total Replicas"><%= Map.get(@status, "replicas", 0) %></:item>
-        <:item title="Available Replicas"><%= Map.get(@status, "availableReplicas", 0) %></:item>
-        <:item title="Current Revision"><%= Map.get(@status, "currentRevision", 0) %></:item>
-        <:item title="Updated Replicas"><%= Map.get(@status, "updatedReplicas", 0) %></:item>
-        <:item title="Generations"><%= Map.get(@status, "observedGeneration", 0) %></:item>
-      </.data_pills>
+      <div class="flex flex-wrap gap-4 mt-6">
+        <.badge label="Total Replicas" value={Map.get(@status, "replicas", 0)} />
+        <.badge label="Available Replicas" value={Map.get(@status, "availableReplicas", 0)} />
+        <.badge label="Current Revision" value={Map.get(@status, "currentRevision", 0)} />
+        <.badge label="Updated Replicas" value={Map.get(@status, "updatedReplicas", 0)} />
+        <.badge label="Generations" value={Map.get(@status, "observedGeneration", 0)} />
+      </div>
+
       <.panel title="Pods">
         <.pods_table pods={@pods} />
       </.panel>

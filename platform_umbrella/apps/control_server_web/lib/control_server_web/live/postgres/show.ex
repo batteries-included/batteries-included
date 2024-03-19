@@ -202,14 +202,14 @@ defmodule ControlServerWeb.Live.PostgresShow do
     <.page_header title={"Postgres Cluster: #{@cluster.name}"} back_link={~p"/postgres"}>
       <:menu>
         <.flex>
-          <.data_horizontal_bordered>
-            <:item title="Status">
+          <.badge>
+            <:item label="Status">
               <%= phase(@k8_cluster) %>
             </:item>
-            <:item title="Started">
+            <:item label="Started">
               <.relative_display time={creation_timestamp(@k8_cluster)} />
             </:item>
-          </.data_horizontal_bordered>
+          </.badge>
 
           <.button variant="secondary" link={edit_versions_url(@cluster)}>
             Edit History

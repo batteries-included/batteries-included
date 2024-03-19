@@ -75,12 +75,12 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     <.page_header title={"FerretDB Service: #{@ferret_service.name}"} back_link={~p"/ferretdb"}>
       <:menu>
         <.flex>
-          <.data_horizontal_bordered>
-            <:item title="Instances"><%= @ferret_service.instances %></:item>
-            <:item title="Started">
+          <.badge>
+            <:item label="Instances"><%= @ferret_service.instances %></:item>
+            <:item label="Started">
               <.relative_display time={@ferret_service.inserted_at} />
             </:item>
-          </.data_horizontal_bordered>
+          </.badge>
 
           <.button variant="secondary" link={edit_versions_url(@ferret_service)}>
             Edit History

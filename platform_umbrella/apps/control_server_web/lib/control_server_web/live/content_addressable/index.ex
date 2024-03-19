@@ -12,14 +12,12 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
     <.page_header title="Content Addressable Storage" back_link={~p"/magic"}>
       <:menu>
         <.flex>
-          <.data_horizontal_bordered>
-            <:item title="Resource Count">
-              <%= @count %>
-            </:item>
-            <:item title="Oldest">
+          <.badge>
+            <:item label="Resource Count"><%= @count %></:item>
+            <:item label="Oldest">
               <.relative_display time={@oldest} />
             </:item>
-          </.data_horizontal_bordered>
+          </.badge>
         </.flex>
       </:menu>
     </.page_header>

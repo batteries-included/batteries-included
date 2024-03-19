@@ -176,20 +176,18 @@ defmodule ControlServerWeb.Live.KnativeShow do
     </.page_header>
 
     <.flex column>
-      <.data_horizontal_bordered>
-        <:item title="Name">
-          <%= @service.name %>
-        </:item>
-        <:item title="Namespace"><%= namespace(@k8_service) %></:item>
-        <:item title="Started">
+      <.badge>
+        <:item label="Name"><%= @service.name %></:item>
+        <:item label="Namespace"><%= namespace(@k8_service) %></:item>
+        <:item label="Started">
           <.relative_display time={creation_timestamp(@k8_service)} />
         </:item>
-        <:item title="Url">
+        <:item label="URL">
           <.a href={service_url(@k8_service)} variant="external">
             <%= service_url(@k8_service) %>
           </.a>
         </:item>
-      </.data_horizontal_bordered>
+      </.badge>
 
       <.service_display service={@k8_service} revisions={@k8_revisions} />
       <.env_var_panel env_values={@service.env_values} />

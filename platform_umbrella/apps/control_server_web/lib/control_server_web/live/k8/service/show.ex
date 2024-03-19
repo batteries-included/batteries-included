@@ -174,12 +174,12 @@ defmodule ControlServerWeb.ServiceLive.Show do
     ~H"""
     <.page_header title={@name} back_link={~p"/kube/services"}>
       <:menu>
-        <.data_horizontal_bordered>
-          <:item title="Namespace"><%= @namespace %></:item>
-          <:item title="Started">
+        <.badge>
+          <:item label="Namespace"><%= @namespace %></:item>
+          <:item label="Started">
             <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
           </:item>
-        </.data_horizontal_bordered>
+        </.badge>
       </:menu>
     </.page_header>
 
