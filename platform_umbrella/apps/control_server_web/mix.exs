@@ -63,7 +63,7 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix_live_dashboard, "~> 0.8"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_view, "~> 0.20"},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:wallaby, "~> 0.30", runtime: false, only: [:test, :integration]},
       {:websock_adapter, "~> 0.5"}
