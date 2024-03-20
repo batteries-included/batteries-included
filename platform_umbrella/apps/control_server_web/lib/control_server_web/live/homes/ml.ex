@@ -60,11 +60,9 @@ defmodule ControlServerWeb.Live.MLHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Machine Learning">
-      <:menu>
-        <.button variant="secondary" link={install_path()}>
-          Manage Batteries
-        </.button>
-      </:menu>
+      <.button variant="secondary" link={install_path()}>
+        Manage Batteries
+      </.button>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>

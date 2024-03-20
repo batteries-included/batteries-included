@@ -42,11 +42,9 @@ defmodule ControlServerWeb.Live.PostgresClusters do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/data"}>
-      <:menu>
-        <.button variant="secondary" link={new_url()}>
-          New Cluster
-        </.button>
-      </:menu>
+      <.button variant="secondary" link={new_url()}>
+        New Cluster
+      </.button>
     </.page_header>
     <.panel title="All Clusters">
       <.postgres_clusters_table rows={@clusters} />

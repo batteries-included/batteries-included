@@ -25,16 +25,14 @@ defmodule ControlServerWeb.Live.KubeSnapshotShow do
   def render(assigns) do
     ~H"""
     <.page_header title="Kubernetes Deploy" back_link={~p"/deploy/#{@umbrella_id}/show"}>
-      <:menu>
-        <.flex>
-          <.badge>
-            <:item label="Status"><%= @snapshot.status %></:item>
-            <:item label="Started">
-              <.relative_display time={@snapshot.inserted_at} />
-            </:item>
-          </.badge>
-        </.flex>
-      </:menu>
+      <.flex>
+        <.badge>
+          <:item label="Status"><%= @snapshot.status %></:item>
+          <:item label="Started">
+            <.relative_display time={@snapshot.inserted_at} />
+          </:item>
+        </.badge>
+      </.flex>
     </.page_header>
 
     <.panel title="Path Results">

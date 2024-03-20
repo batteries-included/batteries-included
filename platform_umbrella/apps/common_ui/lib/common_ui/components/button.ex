@@ -76,12 +76,15 @@ defmodule CommonUI.Components.Button do
   end
 
   defp button_class("primary") do
-    "min-w-36 px-5 py-3 rounded-lg text-white bg-primary hover:bg-primary-dark disabled:bg-gray-lighter"
+    [
+      base_class(),
+      "text-white bg-primary hover:bg-primary-dark disabled:bg-gray-lighter"
+    ]
   end
 
   defp button_class("secondary") do
     [
-      "min-w-36 px-5 py-3 rounded-lg",
+      base_class(),
       "text-gray-darker dark:text-gray-lighter hover:text-primary dark:hover:text-gray-lighter disabled:text-gray",
       "border border-gray-lighter hover:border-primary-light dark:border-gray-darker-tint dark:hover:border-gray-light disabled:hover:border-gray-lighter",
       "bg-white dark:bg-gray-darkest"
@@ -90,8 +93,8 @@ defmodule CommonUI.Components.Button do
 
   defp button_class("dark") do
     [
-      "min-w-36 px-5 py-3 rounded-lg text-white dark:text-gray-darkest",
-      "bg-gray-darkest dark:bg-white hover:bg-gray-darker dark:hover:bg-gray-lighter disabled:bg-gray-lighter"
+      base_class(),
+      "text-white dark:text-gray-darkest bg-gray-darkest dark:bg-white hover:bg-gray-darker dark:hover:bg-gray-lighter disabled:bg-gray-lighter"
     ]
   end
 
@@ -113,5 +116,9 @@ defmodule CommonUI.Components.Button do
 
   defp icon_class(_) do
     "size-5 text-current stroke-2 pointer-events-none"
+  end
+
+  defp base_class do
+    "min-w-36 px-5 py-3 rounded-lg whitespace-nowrap"
   end
 end

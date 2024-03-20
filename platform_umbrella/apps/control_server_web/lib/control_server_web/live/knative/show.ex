@@ -161,18 +161,16 @@ defmodule ControlServerWeb.Live.KnativeShow do
   defp main_page(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/knative/services"}>
-      <:menu>
-        <.flex>
-          <.button variant="secondary" link={edit_versions_url(@service)}>
-            Edit History
-          </.button>
+      <.flex>
+        <.button variant="secondary" link={edit_versions_url(@service)}>
+          Edit History
+        </.button>
 
-          <.flex gaps="0">
-            <.button variant="icon" icon={:pencil} link={edit_url(@service)} />
-            <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
-          </.flex>
+        <.flex gaps="0">
+          <.button variant="icon" icon={:pencil} link={edit_url(@service)} />
+          <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
         </.flex>
-      </:menu>
+      </.flex>
     </.page_header>
 
     <.flex column>

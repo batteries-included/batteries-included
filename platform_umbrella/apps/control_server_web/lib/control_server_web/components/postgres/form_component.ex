@@ -243,9 +243,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         phx-target={@myself}
       >
         <.page_header title={@title} back_link={~p"/postgres"}>
-          <:menu>
-            <.button variant="dark" type="submit" phx-disable-with="Saving…">Save Cluster</.button>
-          </:menu>
+          <.button variant="dark" type="submit" phx-disable-with="Saving…">Save Cluster</.button>
         </.page_header>
 
         <.flex column>

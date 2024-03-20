@@ -44,16 +44,14 @@ defmodule ControlServerWeb.Live.UmbrellaSnapshotShow do
   def render(assigns) do
     ~H"""
     <.page_header title="Show Deploy" back_link={~p"/magic"}>
-      <:menu>
-        <.flex>
-          <.badge>
-            <:item label="Status"><%= total_status(@snapshot) %></:item>
-            <:item label="Started">
-              <.relative_display time={@snapshot.inserted_at} />
-            </:item>
-          </.badge>
-        </.flex>
-      </:menu>
+      <.flex>
+        <.badge>
+          <:item label="Status"><%= total_status(@snapshot) %></:item>
+          <:item label="Started">
+            <.relative_display time={@snapshot.inserted_at} />
+          </:item>
+        </.badge>
+      </.flex>
     </.page_header>
 
     <.pills_menu>

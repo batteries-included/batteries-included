@@ -24,11 +24,9 @@ defmodule ControlServerWeb.Live.FerretServiceIndex do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/data"}>
-      <:menu>
-        <.button variant="primary" link={~p"/ferretdb/new"}>
-          New FerretDB
-        </.button>
-      </:menu>
+      <.button variant="primary" link={~p"/ferretdb/new"}>
+        New FerretDB
+      </.button>
     </.page_header>
     <.panel title="All FerretDB/FerretDB Services">
       <.ferret_services_table rows={@streams.ferret_services} />

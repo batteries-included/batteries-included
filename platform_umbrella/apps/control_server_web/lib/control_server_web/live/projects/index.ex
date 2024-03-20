@@ -22,9 +22,7 @@ defmodule ControlServerWeb.Projects.IndexLive do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/"}>
-      <:menu>
-        <.button variant="dark" icon={:plus} link={~p"/projects/new"}>New Project</.button>
-      </:menu>
+      <.button variant="dark" icon={:plus} link={~p"/projects/new"}>New Project</.button>
     </.page_header>
 
     <.panel title="All Projects">

@@ -55,17 +55,15 @@ defmodule ControlServerWeb.Live.Home do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title}>
-      <:menu>
-        <div class="flex items-center gap-4">
-          <.button variant="dark" icon={:plus} link={~p"/projects/new?back=#{~p"/"}"}>
-            New Project
-          </.button>
+      <div class="flex items-center gap-4">
+        <.button variant="dark" icon={:plus} link={~p"/projects/new?back=#{~p"/"}"}>
+          New Project
+        </.button>
 
-          <.button variant="secondary" icon={:kubernetes} link={~p"/batteries/magic"}>
-            Manage Batteries
-          </.button>
-        </div>
-      </:menu>
+        <.button variant="secondary" icon={:kubernetes} link={~p"/batteries/magic"}>
+          Manage Batteries
+        </.button>
+      </div>
     </.page_header>
 
     <.grid columns={%{sm: 1, lg: 12}} class="w-full">

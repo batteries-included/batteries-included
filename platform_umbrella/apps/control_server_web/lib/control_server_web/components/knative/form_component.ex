@@ -323,11 +323,9 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         phx-target={@myself}
       >
         <.page_header title={@title} back_link={~p"/knative/services"}>
-          <:menu>
-            <.button variant="dark" type="submit" phx-disable-with="Saving…">
-              Save Serverless
-            </.button>
-          </:menu>
+          <.button variant="dark" type="submit" phx-disable-with="Saving…">
+            Save Serverless
+          </.button>
         </.page_header>
         <.grid columns={[sm: 1, md: 2]}>
           <.name_panel form={@form} />

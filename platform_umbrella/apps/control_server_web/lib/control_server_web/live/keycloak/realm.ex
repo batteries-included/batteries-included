@@ -155,12 +155,10 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   def render(assigns) do
     ~H"""
     <.page_header title={@realm.displayName} back_link={~p"/keycloak/realms"}>
-      <:menu>
-        <.badge>
-          <:item label="Name"><%= @realm.realm %></:item>
-          <:item label="ID"><%= @realm.id %></:item>
-        </.badge>
-      </:menu>
+      <.badge>
+        <:item label="Name"><%= @realm.realm %></:item>
+        <:item label="ID"><%= @realm.id %></:item>
+      </.badge>
     </.page_header>
     <.grid columns={[sm: 1, lg: 2]}>
       <.panel variant="gray" title="Details">

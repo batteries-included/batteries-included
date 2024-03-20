@@ -73,25 +73,23 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
   defp main_page(assigns) do
     ~H"""
     <.page_header title={"FerretDB Service: #{@ferret_service.name}"} back_link={~p"/ferretdb"}>
-      <:menu>
-        <.flex>
-          <.badge>
-            <:item label="Instances"><%= @ferret_service.instances %></:item>
-            <:item label="Started">
-              <.relative_display time={@ferret_service.inserted_at} />
-            </:item>
-          </.badge>
+      <.flex>
+        <.badge>
+          <:item label="Instances"><%= @ferret_service.instances %></:item>
+          <:item label="Started">
+            <.relative_display time={@ferret_service.inserted_at} />
+          </:item>
+        </.badge>
 
-          <.button variant="secondary" link={edit_versions_url(@ferret_service)}>
-            Edit History
-          </.button>
+        <.button variant="secondary" link={edit_versions_url(@ferret_service)}>
+          Edit History
+        </.button>
 
-          <.flex gaps="0">
-            <.button variant="icon" icon={:pencil} link={edit_url(@ferret_service)} />
-            <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
-          </.flex>
+        <.flex gaps="0">
+          <.button variant="icon" icon={:pencil} link={edit_url(@ferret_service)} />
+          <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
         </.flex>
-      </:menu>
+      </.flex>
     </.page_header>
 
     <.panel title="Pods">

@@ -173,14 +173,12 @@ defmodule ControlServerWeb.ServiceLive.Show do
   def render(assigns) do
     ~H"""
     <.page_header title={@name} back_link={~p"/kube/services"}>
-      <:menu>
-        <.badge>
-          <:item label="Namespace"><%= @namespace %></:item>
-          <:item label="Started">
-            <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
-          </:item>
-        </.badge>
-      </:menu>
+      <.badge>
+        <:item label="Namespace"><%= @namespace %></:item>
+        <:item label="Started">
+          <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+        </:item>
+      </.badge>
     </.page_header>
 
     <.grid columns={[sm: 1, lg: 2]}>

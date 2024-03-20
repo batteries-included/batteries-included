@@ -123,11 +123,9 @@ defmodule ControlServerWeb.Live.NetSecHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Net/Security">
-      <:menu>
-        <.button variant="secondary" link={install_path()}>
-          Manage Batteries
-        </.button>
-      </:menu>
+      <.button variant="secondary" link={install_path()}>
+        Manage Batteries
+      </.button>
     </.page_header>
     <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>

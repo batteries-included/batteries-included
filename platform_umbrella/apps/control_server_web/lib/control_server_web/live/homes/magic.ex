@@ -120,11 +120,9 @@ defmodule ControlServerWeb.Live.MagicHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Magic">
-      <:menu>
-        <.button variant="secondary" link={~p"/batteries/magic"}>
-          Manage Batteries
-        </.button>
-      </:menu>
+      <.button variant="secondary" link={~p"/batteries/magic"}>
+        Manage Batteries
+      </.button>
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <.deploys_panel deploys_running={@deploys_running} snapshots={@snapshots} />

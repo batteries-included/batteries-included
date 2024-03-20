@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  alias CommonCore.Projects.Project
   alias ControlServer.Projects
 
   def mount(_params, _session, socket) do
@@ -22,17 +23,29 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/projects"}>
+    <.page_header title={@project.name} back_link={~p"/projects"}>
       <:menu>
-        <.flex class="items-center">
-          <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
+        <.button variant="minimal" icon={:star} />
 
-          <.button variant="dark" icon={:clock} link={~p"/projects/#{@project.id}/timeline"}>
-            Project Timeline
-          </.button>
-        </.flex>
+        <.badge>
+          <:item label="Type"><%= Project.type_name(@project.type) %></:item>
+        </.badge>
       </:menu>
+
+      <.flex class="items-center">
+        <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
+
+        <.button variant="dark" icon={:clock} link={~p"/projects/#{@project.id}/timeline"}>
+          Project Timeline
+        </.button>
+      </.flex>
     </.page_header>
+
+    <.grid columns={%{sm: 1, lg: 2}}>
+      <.panel :if={@project.description} title="Project Description">
+        <%= @project.description %>
+      </.panel>
+    </.grid>
     """
   end
 end

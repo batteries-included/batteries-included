@@ -12,13 +12,12 @@ defmodule ControlServerWeb.Common.Page do
   attr :back_link, :string, default: nil
 
   slot :menu
+  slot :inner_block
 
   def page_header(assigns) do
-    assigns = assign_new(assigns, :menu, fn -> [] end)
-
     ~H"""
-    <.flex class="items-center justify-between mb-6">
-      <.flex class="flex items-center gap-4">
+    <.flex class="flex-wrap items-center justify-between mb-6">
+      <.flex class="items-center" gaps={%{sm: 3, lg: 4}}>
         <.button
           :if={@back_link}
           link={@back_link}
@@ -27,14 +26,14 @@ defmodule ControlServerWeb.Common.Page do
           class="rounded-lg"
         />
 
-        <.flex class="items-center">
-          <.h3 :if={@title} class="text-2xl font-medium text-black dark:text-white">
-            <%= @title %>
-          </.h3>
-        </.flex>
+        <.h3 :if={@title} class="text-2xl font-medium text-black dark:text-white">
+          <%= @title %>
+        </.h3>
+
+        <%= render_slot(@menu) %>
       </.flex>
 
-      <%= render_slot(@menu) %>
+      <%= render_slot(@inner_block) %>
     </.flex>
     """
   end

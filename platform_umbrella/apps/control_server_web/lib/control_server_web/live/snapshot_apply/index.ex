@@ -53,11 +53,9 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   def render(assigns) do
     ~H"""
     <.page_header title="Deploys" back_link={~p"/batteries/magic"}>
-      <:menu :if={@deploys_running}>
-        <.button variant="secondary" phx-click="start-deploy">
-          Start Deploy
-        </.button>
-      </:menu>
+      <.button :if={@deploys_running} variant="secondary" phx-click="start-deploy">
+        Start Deploy
+      </.button>
     </.page_header>
     <.panel title="Status">
       <.pause_alert :if={!@deploys_running} />

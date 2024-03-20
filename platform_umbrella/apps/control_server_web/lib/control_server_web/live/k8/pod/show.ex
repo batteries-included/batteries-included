@@ -269,9 +269,7 @@ defmodule ControlServerWeb.PodLive.Show do
   defp main_page(assigns) do
     ~H"""
     <.page_header title={@name} back_link={~p"/kube/pods"}>
-      <:menu>
-        <.pod_facts_section resource={@resource} namespace={@namespace} />
-      </:menu>
+      <.pod_facts_section resource={@resource} namespace={@namespace} />
     </.page_header>
 
     <.flex column>
@@ -292,9 +290,7 @@ defmodule ControlServerWeb.PodLive.Show do
   defp events_page(assigns) do
     ~H"""
     <.page_header title={@name} back_link={resource_path(@resource)}>
-      <:menu>
-        <.pod_facts_section resource={@resource} namespace={@namespace} />
-      </:menu>
+      <.pod_facts_section resource={@resource} namespace={@namespace} />
     </.page_header>
     <.events_panel events={@events} />
     """
@@ -303,9 +299,7 @@ defmodule ControlServerWeb.PodLive.Show do
   defp labels_page(assigns) do
     ~H"""
     <.page_header title={@name} back_link={resource_path(@resource)}>
-      <:menu>
-        <.pod_facts_section resource={@resource} namespace={@namespace} />
-      </:menu>
+      <.pod_facts_section resource={@resource} namespace={@namespace} />
     </.page_header>
 
     <.flex column>
@@ -334,9 +328,7 @@ defmodule ControlServerWeb.PodLive.Show do
   defp security_page(assigns) do
     ~H"""
     <.page_header title={@name} back_link={resource_path(@resource)}>
-      <:menu>
-        <.pod_facts_section resource={@resource} namespace={@namespace} />
-      </:menu>
+      <.pod_facts_section resource={@resource} namespace={@namespace} />
     </.page_header>
     <.flex column>
       <.panel :for={report <- @reports} title="Vulnerability Report">

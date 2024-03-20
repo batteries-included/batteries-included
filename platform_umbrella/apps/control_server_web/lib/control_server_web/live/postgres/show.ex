@@ -200,27 +200,25 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp main_page(assigns) do
     ~H"""
     <.page_header title={"Postgres Cluster: #{@cluster.name}"} back_link={~p"/postgres"}>
-      <:menu>
-        <.flex>
-          <.badge>
-            <:item label="Status">
-              <%= phase(@k8_cluster) %>
-            </:item>
-            <:item label="Started">
-              <.relative_display time={creation_timestamp(@k8_cluster)} />
-            </:item>
-          </.badge>
+      <.flex>
+        <.badge>
+          <:item label="Status">
+            <%= phase(@k8_cluster) %>
+          </:item>
+          <:item label="Started">
+            <.relative_display time={creation_timestamp(@k8_cluster)} />
+          </:item>
+        </.badge>
 
-          <.button variant="secondary" link={edit_versions_url(@cluster)}>
-            Edit History
-          </.button>
+        <.button variant="secondary" link={edit_versions_url(@cluster)}>
+          Edit History
+        </.button>
 
-          <.flex gaps="0">
-            <.button variant="icon" icon={:pencil} link={edit_url(@cluster)} />
-            <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
-          </.flex>
+        <.flex gaps="0">
+          <.button variant="icon" icon={:pencil} link={edit_url(@cluster)} />
+          <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
         </.flex>
-      </:menu>
+      </.flex>
     </.page_header>
 
     <.grid columns={%{sm: 1, lg: 2}}>

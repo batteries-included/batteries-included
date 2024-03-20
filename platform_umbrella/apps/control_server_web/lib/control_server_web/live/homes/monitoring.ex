@@ -56,11 +56,9 @@ defmodule ControlServerWeb.Live.MonitoringHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Monitoring">
-      <:menu>
-        <.button variant="secondary" link={install_path()}>
-          Manage Batteries
-        </.button>
-      </:menu>
+      <.button variant="secondary" link={install_path()}>
+        Manage Batteries
+      </.button>
     </.page_header>
 
     <.flex :if={@batteries && @batteries != []} column class="items-stretch justify-start">

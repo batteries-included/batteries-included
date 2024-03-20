@@ -33,11 +33,9 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/devtools"}>
-      <:menu>
-        <.button variant="secondary" link={new_url()}>
-          New Service
-        </.button>
-      </:menu>
+      <.button variant="secondary" link={new_url()}>
+        New Service
+      </.button>
     </.page_header>
 
     <.panel title="Serverless Services">

@@ -21,11 +21,9 @@ defmodule ControlServerWeb.FerretDBFormComponent do
         phx-target={@myself}
       >
         <.page_header title={@title} back_link={~p"/ferretdb"}>
-          <:menu>
-            <.button variant="dark" type="submit" phx-disable-with="Saving…">
-              Save FerretDB Service
-            </.button>
-          </:menu>
+          <.button variant="dark" type="submit" phx-disable-with="Saving…">
+            Save FerretDB Service
+          </.button>
         </.page_header>
         <.panel>
           <.grid columns={[sm: 1, md: 2]}>

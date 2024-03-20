@@ -10,16 +10,14 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
   def render(assigns) do
     ~H"""
     <.page_header title="Content Addressable Storage" back_link={~p"/magic"}>
-      <:menu>
-        <.flex>
-          <.badge>
-            <:item label="Resource Count"><%= @count %></:item>
-            <:item label="Oldest">
-              <.relative_display time={@oldest} />
-            </:item>
-          </.badge>
-        </.flex>
-      </:menu>
+      <.flex>
+        <.badge>
+          <:item label="Resource Count"><%= @count %></:item>
+          <:item label="Oldest">
+            <.relative_display time={@oldest} />
+          </:item>
+        </.badge>
+      </.flex>
     </.page_header>
 
     <.panel title="Resources">

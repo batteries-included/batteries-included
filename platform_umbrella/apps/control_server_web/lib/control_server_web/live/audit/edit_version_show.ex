@@ -155,14 +155,12 @@ defmodule ControlServerWeb.Live.EditVersionShow do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={entity_history_url(@edit_version)}>
-      <:menu>
-        <.badge>
-          <:item label="Action"><%= @edit_version.action %></:item>
-          <:item label="Recorded At">
-            <.relative_display time={@edit_version.recorded_at} />
-          </:item>
-        </.badge>
-      </:menu>
+      <.badge>
+        <:item label="Action"><%= @edit_version.action %></:item>
+        <:item label="Recorded At">
+          <.relative_display time={@edit_version.recorded_at} />
+        </:item>
+      </.badge>
     </.page_header>
     <.flex column>
       <.panel title="Patch">
