@@ -43,7 +43,7 @@ defmodule HomeBaseWeb do
         formats: [:html, :json],
         layouts: [html: HomeBaseWeb.Layouts]
 
-      import HomeBaseWeb.Gettext
+      import CommonUI.Gettext
       import Plug.Conn
 
       unquote(verified_routes())
@@ -86,7 +86,7 @@ defmodule HomeBaseWeb do
       # Core UI components and translation
       use CommonUI
 
-      import HomeBaseWeb.Gettext
+      import CommonUI.Gettext
       import Phoenix.HTML
 
       # Shortcut for generating JS commands

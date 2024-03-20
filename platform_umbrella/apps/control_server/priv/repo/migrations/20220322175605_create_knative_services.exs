@@ -7,6 +7,7 @@ defmodule ControlServer.Repo.Migrations.CreateServices do
       add :name, :string
       add :rollout_duration, :string
       add :oauth2_proxy, :boolean
+      add :kube_internal, :boolean
 
       add :containers, :map
       add :init_containers, :map

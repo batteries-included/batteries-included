@@ -16,6 +16,7 @@ defmodule CommonCore.Knative.Service do
     field :name, :string, null: false
     field :rollout_duration, :string, default: "10m"
     field :oauth2_proxy, :boolean, default: false
+    field :kube_internal, :boolean, default: false
 
     embeds_many(:containers, CommonCore.Knative.Container, on_replace: :delete)
     embeds_many(:init_containers, CommonCore.Knative.Container, on_replace: :delete)

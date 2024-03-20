@@ -183,6 +183,10 @@ defmodule ControlServerWeb.Router do
     pipe_through :api
 
     get "/system_state", SystemStateController, :index
+    resources "/postgres/clusters", ClusterController, except: [:new, :edit]
+    resources "/redis/clusters", FailoverClusterController, except: [:new, :edit]
+    resources "/knative/services", ServiceController, except: [:new, :edit]
+    resources "/notebooks/jupyter_lab_notebooks", JupyterLabNotebookController, except: [:new, :edit]
   end
 
   if Enum.member?([:dev, :test], Mix.env()) do

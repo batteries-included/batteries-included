@@ -43,7 +43,7 @@ defmodule ControlServerWeb do
         formats: [:html, :json],
         layouts: [html: ControlServerWeb.Layouts]
 
-      import ControlServerWeb.Gettext
+      import CommonUI.Gettext
       import Plug.Conn
 
       unquote(verified_routes())
@@ -90,7 +90,7 @@ defmodule ControlServerWeb do
       use CommonUI
       use ControlServerWeb.Common
 
-      import ControlServerWeb.Gettext
+      import CommonUI.Gettext
       import Phoenix.HTML
 
       # Shortcut for generating JS commands

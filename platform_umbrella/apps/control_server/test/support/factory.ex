@@ -45,7 +45,7 @@ defmodule ControlServer.Factory do
     }
   end
 
-  def jupyter_notebook_factory do
+  def jupyter_lab_notebook_factory do
     %JupyterLabNotebook{name: sequence("kube-notebook-")}
   end
 

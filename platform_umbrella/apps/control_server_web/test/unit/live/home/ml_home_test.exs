@@ -13,7 +13,7 @@ defmodule ControlServerWeb.MLHomeTest do
   end
 
   defp create_notebook(_) do
-    %{notebook: insert(:jupyter_notebook)}
+    %{notebook: insert(:jupyter_lab_notebook)}
   end
 
   defp summary(_) do
