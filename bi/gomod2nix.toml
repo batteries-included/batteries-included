@@ -77,8 +77,8 @@ schema = 3
     version = "v1.6.0"
     hash = "sha256-LCZkhiqVRkibnv9fqiCFQnoR0fNkxbHeulGkwia24Cg="
   [mod."github.com/docker/docker"]
-    version = "v25.0.4+incompatible"
-    hash = "sha256-vP319kKeTIvdKUqw+J10P3APxpfhlEkLKBG8Fb/YmAc="
+    version = "v26.0.0+incompatible"
+    hash = "sha256-hxRoggoKHdPnINwcr2LmIvEFd3xEyF3BrsKWbRhKLGU="
   [mod."github.com/docker/go-connections"]
     version = "v0.5.0"
     hash = "sha256-aGbMRrguh98DupIHgcpLkVUZpwycx1noQXbtTl5Sbms="
@@ -229,6 +229,9 @@ schema = 3
   [mod."github.com/mitchellh/mapstructure"]
     version = "v1.5.0"
     hash = "sha256-ztVhGQXs67MF8UadVvG72G3ly0ypQW0IRDdOOkjYwoE="
+  [mod."github.com/moby/docker-image-spec"]
+    version = "v1.3.1"
+    hash = "sha256-xwSNLmMagzywdGJIuhrWl1r7cIWBYCOMNYbuDDT6Jhs="
   [mod."github.com/moby/spdystream"]
     version = "v0.2.0"
     hash = "sha256-Feme5UoWuBCvnLPKw1ozKkF3SM7PAjjPFQZ3TJhghR0="
