@@ -20,6 +20,7 @@ var (
 	P_STR_ALLOW                            = pulumi.String("Allow")
 	P_STR_ARR_EC2_AMAZONAWS_COM            = pulumi.ToStringArray([]string{"ec2.amazonaws.com"})
 	P_STR_ARR_EKS_AMAZONAWS_COM            = pulumi.ToStringArray([]string{"eks.amazonaws.com"})
+	P_STR_ARR_ELB_AMAZONAWS_COM            = pulumi.ToStringArray([]string{"elasticloadbalancing.amazonaws.com"})
 	P_STR_ARR_FALSE                        = pulumi.ToStringArray([]string{"false"})
 	P_STR_ARR_OWNED                        = pulumi.ToStringArray([]string{"owned"})
 	P_STR_ARR_STS_AMAZONAWS_COM            = pulumi.ToStringArray([]string{"sts.amazonaws.com"})
@@ -76,7 +77,8 @@ var components = []component{
 	{"vpc", &vpc{}},
 	{"gateway", &gateway{}},
 	{"cluster", &cluster{}},
-	{"conn", &wgConn{}},
+	// {"conn", &wgConn{}},
+	{"roles", &rolesConfig{}},
 }
 
 func (e *eks) Up(ctx context.Context) error {

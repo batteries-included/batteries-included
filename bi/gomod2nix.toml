@@ -313,6 +313,9 @@ schema = 3
   [mod."github.com/pulumi/pulumi-cloudinit/sdk"]
     version = "v1.4.1"
     hash = "sha256-DLWzI7MFP2tU+ry++6OB23JOtQBDji1KekR90rdEXwc="
+  [mod."github.com/pulumi/pulumi-kubernetes/sdk/v4"]
+    version = "v4.9.1"
+    hash = "sha256-gxMAzSa5fb40rZOTTkFopUQKJ0IS181DfS40RxSHCgQ="
   [mod."github.com/pulumi/pulumi/sdk/v3"]
     version = "v3.111.1"
     hash = "sha256-Z5v+l+XJ2914Wo0VuP28KmdmXj6XvRMEOIl1LNigpPc="
