@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os/user"
 	"path"
 
 	"bi/pkg/cluster/eks"
@@ -67,10 +68,16 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		return nil, err
 	}
 
+	// NOTE(jdt): this is temporary so that multiple folks can create clusters w/o conflict?
+	user, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+
 	p.cfg = auto.ConfigMap{
 		"aws:defaultTags":      {Value: tags},
 		"aws:region":           {Value: "us-east-2"},
-		"cluster:name":         {Value: "jdt-test"},
+		"cluster:name":         {Value: user.Username},
 		"cluster:version":      {Value: "1.29"},
 		"gateway:cidrBlock":    {Value: "100.64.250.0/24"},
 		"gateway:generateKey":  {Value: "false"},
