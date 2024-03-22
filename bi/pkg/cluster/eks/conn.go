@@ -17,6 +17,7 @@ import (
 	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
 )
 
+// TODO(jdt): move this into a separate package or something as it's not needed for pulumi
 type wgConn struct {
 	// config
 	baseName         string

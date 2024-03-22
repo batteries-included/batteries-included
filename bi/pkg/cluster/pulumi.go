@@ -45,9 +45,8 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 
 	// add plugins that need to be installed here
 	plugins := map[string]string{
-		"aws":        "v6.22.2",
-		"cloudinit":  "v1.4.1",
-		"kubernetes": "v4.9.1",
+		"aws":       "v6.22.2",
+		"cloudinit": "v1.4.1",
 	}
 	if err := p.installPlugins(ctx, ws, plugins); err != nil {
 		return err
@@ -61,6 +60,8 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 // configure sets up configuration common to all substacks and handles installing the plugins necessary
 func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) {
 	p.projectName = "bi"
+
+	// TODO(cleanup):
 	stackName := auto.FullyQualifiedStackName("organization", p.projectName, "test")
 
 	tags, err := newTags(stackName)
@@ -77,8 +78,16 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 	p.cfg = auto.ConfigMap{
 		"aws:defaultTags":      {Value: tags},
 		"aws:region":           {Value: "us-east-2"},
+		"cluster:amiType":      {Value: "AL2_x86_64"},
+		"cluster:capacityType": {Value: "ON_DEMAND"},
+		"cluster:desiredSize":  {Value: "2"},
+		"cluster:instanceType": {Value: "t3a.medium"},
+		"cluster:maxSize":      {Value: "4"},
+		"cluster:minSize":      {Value: "2"},
 		"cluster:name":         {Value: user.Username},
 		"cluster:version":      {Value: "1.29"},
+		"cluster:volumeSize":   {Value: "20"},
+		"cluster:volumeType":   {Value: "gp3"},
 		"gateway:cidrBlock":    {Value: "100.64.250.0/24"},
 		"gateway:generateKey":  {Value: "false"},
 		"gateway:instanceType": {Value: "t3a.micro"},
@@ -149,6 +158,7 @@ func (p *pulumiProvider) installPlugins(ctx context.Context, ws auto.Workspace, 
 			return fmt.Errorf("failed to install necessary plugin: %s: %w", plugin, err)
 		}
 	}
+
 	return nil
 }
 

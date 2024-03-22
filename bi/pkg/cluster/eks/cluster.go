@@ -1,6 +1,7 @@
 package eks
 
 import (
+	"bi/pkg/cluster/util"
 	"encoding/json"
 	"fmt"
 	"maps"
@@ -18,11 +19,24 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-type cluster struct {
+// NOTE(jdt): This is static for the next ~10 years. We could programmatically
+// grab this but it probably isn't worth it at this point
+const AWS_OIDC_THUMBPRINT = "9e99a48a9960b14926bb7f3b02e22da2b0ab7280"
+
+type clusterConfig struct {
 	// config
-	baseName    string
-	version     string
-	defaultTags map[string]string
+	baseName     string
+	version      string
+	defaultTags  map[string]string
+	amiType      string
+	capacityType string
+	// TODO(jdt): allow selecting multiple types
+	instanceType string
+	desiredSize  int
+	maxSize      int
+	minSize      int
+	volumeSize   int
+	volumeType   string
 
 	// outputs
 	vpcID                  string
@@ -42,75 +56,55 @@ type cluster struct {
 	template         *ec2.LaunchTemplate
 }
 
-// TODO(jdt): reflexively get config values based on struct tags
-func (c *cluster) withConfig(cfg auto.ConfigMap) error {
-	tags, err := parseDefaultTags(cfg["aws:defaultTags"].Value)
-	if err != nil {
-		return err
-	}
-
-	c.baseName = cfg["cluster:name"].Value
-	c.version = cfg["cluster:version"].Value
-	c.defaultTags = tags
+func (c *clusterConfig) withConfig(cfg *util.PulumiConfig) error {
+	c.baseName = cfg.Cluster.Name
+	c.version = cfg.Cluster.Version
+	c.defaultTags = cfg.AWS.DefaultTags
+	c.amiType = cfg.Cluster.AmiType
+	c.capacityType = cfg.Cluster.CapacityType
+	c.instanceType = cfg.Cluster.InstanceType
+	c.desiredSize = cfg.Cluster.DesiredSize
+	c.maxSize = cfg.Cluster.MaxSize
+	c.minSize = cfg.Cluster.MinSize
+	c.volumeSize = cfg.Cluster.VolumeSize
+	c.volumeType = cfg.Cluster.VolumeType
 
 	return nil
 }
 
-func parseDefaultTags(s string) (map[string]string, error) {
-	// don't use Tags as we want to keep the full tags and it doesn't make
-	// sense to go unmarshal and then re-marshal?
-	raw := map[string]interface{}{}
-	if err := json.Unmarshal([]byte(s), &raw); err != nil {
-		return nil, err
-	}
-
-	inner, ok := raw["tags"].(map[string]interface{})
-	if !ok {
-		return nil, fmt.Errorf("tags not in correct format")
-	}
-
-	tags := make(map[string]string)
-	for k, v := range inner {
-		tags[k] = v.(string)
-	}
-
-	return tags, nil
-
-}
-
-func (c *cluster) withOutputs(outputs map[string]auto.OutputMap) error {
+func (c *clusterConfig) withOutputs(outputs map[string]auto.OutputMap) error {
 	c.vpcID = outputs["vpc"]["vpcID"].Value.(string)
 	c.gatewaySecurityGroupID = outputs["gateway"]["gatewaySecurityGroupID"].Value.(string)
-	c.publicSubnetIDs = toStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
-	c.privateSubnetIDs = toStringSlice(outputs["vpc"]["privateSubnetIDs"].Value)
+	c.publicSubnetIDs = util.ToStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
+	c.privateSubnetIDs = util.ToStringSlice(outputs["vpc"]["privateSubnetIDs"].Value)
 
 	return nil
 }
 
-func (c *cluster) run(ctx *pulumi.Context) error {
+func (c *clusterConfig) run(ctx *pulumi.Context) error {
 	c.securityGroupIDs = make(map[string]pulumi.IDOutput)
 	c.roles = make(map[string]*iam.Role)
 	c.managedPolicies = []string{}
 	c.inlinePolicies = []pulumi.Resource{}
 
 	for _, fn := range []func(*pulumi.Context) error{
-		c.securityGroups,
-		c.clusterSecurityGroupRules,
-		c.nodeSecurityGroupRules,
-		c.cloudwatchLogGroup,
-		c.kmsKey,
+		c.buildSecurityGroups,
+		c.buildClusterSecurityGroupRules,
+		c.buildNodeSecurityGroupRules,
+		c.buildCloudwatchLogGroup,
+		c.buildKMSKey,
 		c.getManagedPolicies,
-		c.clusterRole,
-		c.roleInlinePolicies,
-		c.roleManagedPolicies,
-		c.eksCluster,
-		c.kmsKeyPolicy,
-		c.managedNodeRole,
-		c.launchTemplate,
-		c.managedNodeGroup,
-		c.oidcProvider,
-		c.ebsCSIRole,
-		c.addons,
+		c.buildClusterRole,
+		c.buildRoleInlinePolicies,
+		c.buildRoleManagedPolicies,
+		c.buildEKSCluster,
+		c.buildKMSKeyPolicy,
+		c.buildManagedNodeRole,
+		c.buildLaunchTemplate,
+		c.buildManagedNodeGroup,
+		c.buildOIDCProvider,
+		c.buildEBSCSIRole,
+		c.buildAddons,
 	} {
 		if err := fn(ctx); err != nil {
 			return err
@@ -126,7 +120,7 @@ func (c *cluster) run(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) securityGroups(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildSecurityGroups(ctx *pulumi.Context) error {
 	for _, s := range []string{"cluster", "node"} {
 		name := fmt.Sprintf("%s-%s-security-group", c.baseName, s)
 		sg, err := ec2.NewSecurityGroup(ctx, name, &ec2.SecurityGroupArgs{
@@ -145,7 +139,7 @@ func (c *cluster) securityGroups(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) clusterSecurityGroupRules(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildClusterSecurityGroupRules(ctx *pulumi.Context) error {
 	port := pulumi.Int(443)
 
 	for rule, rsgID := range map[string]pulumi.StringPtrInput{
@@ -169,7 +163,7 @@ func (c *cluster) clusterSecurityGroupRules(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) nodeSecurityGroupRules(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildNodeSecurityGroupRules(ctx *pulumi.Context) error {
 	sgID := c.securityGroupIDs["node"]
 
 	// NOTE(jdt): we need to audit this. In the terraform, there are specific ports and protocols specifically allowed but then an "allow all" rule.
@@ -204,7 +198,7 @@ func (c *cluster) nodeSecurityGroupRules(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) kmsKey(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildKMSKey(ctx *pulumi.Context) error {
 	key, err := kms.NewKey(ctx, c.baseName, &kms.KeyArgs{
 		DeletionWindowInDays: pulumi.Int(30),
 		Description:          pulumi.Sprintf("Cluster encryption key for %s", c.baseName),
@@ -226,9 +220,9 @@ func (c *cluster) kmsKey(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) cloudwatchLogGroup(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildCloudwatchLogGroup(ctx *pulumi.Context) error {
+	// NOTE(jdt): format is `/aws/eks/{cluster_name}/cluster`
 	// https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html#viewing-control-plane-logs
-	// format is `/aws/eks/{cluster_name}/cluster`
 	name := fmt.Sprintf("/aws/eks/%s/cluster", c.baseName)
 	group, err := cloudwatch.NewLogGroup(ctx, name, &cloudwatch.LogGroupArgs{
 		Name:            pulumi.String(name),
@@ -240,10 +234,11 @@ func (c *cluster) cloudwatchLogGroup(ctx *pulumi.Context) error {
 	}
 
 	c.logGroup = group
+
 	return nil
 }
 
-func (c *cluster) getManagedPolicies(ctx *pulumi.Context) error {
+func (c *clusterConfig) getManagedPolicies(ctx *pulumi.Context) error {
 	for _, policyName := range []string{
 		"AmazonEKSClusterPolicy",
 		"AmazonEKSVPCResourceController",
@@ -260,7 +255,7 @@ func (c *cluster) getManagedPolicies(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) clusterRole(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildClusterRole(ctx *pulumi.Context) error {
 	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
@@ -287,9 +282,7 @@ func (c *cluster) clusterRole(ctx *pulumi.Context) error {
 	return nil
 }
 
-// roleInlinePolicies creates the inline role policies
-// Because we want to use the Arn output of the kms key, we have to wrap the resources in outputs and use apply
-func (c *cluster) roleInlinePolicies(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildRoleInlinePolicies(ctx *pulumi.Context) error {
 
 	for svc, policy := range map[string]struct {
 		actions  []string
@@ -339,7 +332,7 @@ func (c *cluster) roleInlinePolicies(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) roleManagedPolicies(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildRoleManagedPolicies(ctx *pulumi.Context) error {
 	for _, managedPolicy := range c.managedPolicies {
 		name := fmt.Sprintf("%s-%s", c.baseName, managedPolicy)
 		_, err := iam.NewRolePolicyAttachment(ctx, name, &iam.RolePolicyAttachmentArgs{
@@ -354,7 +347,7 @@ func (c *cluster) roleManagedPolicies(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) eksCluster(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildEKSCluster(ctx *pulumi.Context) error {
 	depends := pulumi.DependsOn(append(c.inlinePolicies, []pulumi.Resource{c.logGroup, c.key}...))
 
 	cluster, err := peks.NewCluster(ctx, c.baseName, &peks.ClusterArgs{
@@ -379,10 +372,11 @@ func (c *cluster) eksCluster(ctx *pulumi.Context) error {
 	}
 
 	c.cluster = cluster
+
 	return nil
 }
 
-func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildKMSKeyPolicy(ctx *pulumi.Context) error {
 	id, err := aws.GetCallerIdentity(ctx, nil)
 	if err != nil {
 		return err
@@ -450,7 +444,7 @@ func (c *cluster) kmsKeyPolicy(ctx *pulumi.Context) error {
 	return err
 }
 
-func (c *cluster) managedNodeRole(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildManagedNodeRole(ctx *pulumi.Context) error {
 	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
@@ -503,24 +497,23 @@ func (c *cluster) managedNodeRole(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) launchTemplate(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildLaunchTemplate(ctx *pulumi.Context) error {
 	name := fmt.Sprintf("%s-bootstrap", c.baseName)
-	trueStrPtr := pulumi.StringPtr("true")
 
 	// merge the tags that we want applied with the default tags
 	tags := map[string]string{"Name": name}
 	maps.Copy(tags, c.defaultTags)
 
 	template, err := ec2.NewLaunchTemplate(ctx, name, &ec2.LaunchTemplateArgs{
-		EbsOptimized: trueStrPtr,
+		EbsOptimized: P_STR_TRUE,
 		BlockDeviceMappings: &ec2.LaunchTemplateBlockDeviceMappingArray{
 			&ec2.LaunchTemplateBlockDeviceMappingArgs{
 				DeviceName: pulumi.StringPtr("/dev/xvda"),
 				Ebs: &ec2.LaunchTemplateBlockDeviceMappingEbsArgs{
-					Encrypted:           trueStrPtr,
-					DeleteOnTermination: trueStrPtr,
-					VolumeSize:          pulumi.IntPtr(20),
-					VolumeType:          pulumi.StringPtr("gp3"),
+					Encrypted:           P_STR_TRUE,
+					DeleteOnTermination: P_STR_TRUE,
+					VolumeSize:          pulumi.Int(c.volumeSize),
+					VolumeType:          pulumi.String(c.volumeType),
 				},
 			},
 		},
@@ -546,20 +539,21 @@ func (c *cluster) launchTemplate(ctx *pulumi.Context) error {
 	}
 
 	c.template = template
+
 	return nil
 }
 
-func (c *cluster) managedNodeGroup(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildManagedNodeGroup(ctx *pulumi.Context) error {
 	vsn := c.template.DefaultVersion.ApplyT(func(i int) string {
 		return strconv.Itoa(i)
 	}).(pulumi.StringOutput)
 
 	name := fmt.Sprintf("%s-bootstrap", c.baseName)
 	_, err := peks.NewNodeGroup(ctx, name, &peks.NodeGroupArgs{
-		AmiType:       pulumi.StringPtr("AL2_x86_64"),
-		CapacityType:  pulumi.StringPtr("ON_DEMAND"),
+		AmiType:       pulumi.String(c.amiType),
+		CapacityType:  pulumi.String(c.capacityType),
 		ClusterName:   c.cluster.Name,
-		InstanceTypes: pulumi.ToStringArray([]string{"t3a.medium"}),
+		InstanceTypes: pulumi.ToStringArray([]string{c.instanceType}),
 		NodeRoleArn:   c.roles["node"].Arn,
 		SubnetIds:     pulumi.ToStringArray(c.privateSubnetIDs),
 		Version:       pulumi.StringPtr(c.version),
@@ -568,15 +562,15 @@ func (c *cluster) managedNodeGroup(ctx *pulumi.Context) error {
 			Version: vsn,
 		},
 		ScalingConfig: &peks.NodeGroupScalingConfigArgs{
-			DesiredSize: pulumi.Int(2),
-			MaxSize:     pulumi.Int(4),
-			MinSize:     pulumi.Int(2),
+			DesiredSize: pulumi.Int(c.desiredSize),
+			MaxSize:     pulumi.Int(c.maxSize),
+			MinSize:     pulumi.Int(c.minSize),
 		},
 		Taints: &peks.NodeGroupTaintArray{
 			&peks.NodeGroupTaintArgs{
 				Effect: pulumi.String("NO_SCHEDULE"),
 				Key:    pulumi.String("CriticalAddonsOnly"),
-				Value:  pulumi.String("true"),
+				Value:  P_STR_TRUE,
 			},
 		},
 		UpdateConfig: &peks.NodeGroupUpdateConfigArgs{
@@ -586,17 +580,18 @@ func (c *cluster) managedNodeGroup(ctx *pulumi.Context) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func (c *cluster) oidcProvider(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildOIDCProvider(ctx *pulumi.Context) error {
 	url := c.cluster.Identities.ApplyT(func(ids []peks.ClusterIdentity) string {
 		return *ids[0].Oidcs[0].Issuer
 	}).(pulumi.StringOutput)
 
 	p, err := iam.NewOpenIdConnectProvider(ctx, c.baseName, &iam.OpenIdConnectProviderArgs{
 		ClientIdLists:   P_STR_ARR_STS_AMAZONAWS_COM,
-		ThumbprintLists: pulumi.ToStringArray([]string{"9e99a48a9960b14926bb7f3b02e22da2b0ab7280"}),
+		ThumbprintLists: pulumi.ToStringArray([]string{AWS_OIDC_THUMBPRINT}),
 		Url:             url,
 	}, pulumi.DependsOn([]pulumi.Resource{c.cluster}))
 	if err != nil {
@@ -608,7 +603,7 @@ func (c *cluster) oidcProvider(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildEBSCSIRole(ctx *pulumi.Context) error {
 	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
@@ -811,7 +806,7 @@ func (c *cluster) ebsCSIRole(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (c *cluster) addons(ctx *pulumi.Context) error {
+func (c *clusterConfig) buildAddons(ctx *pulumi.Context) error {
 	bs, err := json.Marshal(map[string]interface{}{
 		"resources": map[string]interface{}{
 			"limits":   map[string]string{"cpu": "0.25", "memory": "256M"},
@@ -852,5 +847,6 @@ func (c *cluster) addons(ctx *pulumi.Context) error {
 			return err
 		}
 	}
+
 	return nil
 }

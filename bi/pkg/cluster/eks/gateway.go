@@ -1,10 +1,10 @@
 package eks
 
 import (
+	"bi/pkg/cluster/util"
 	"encoding/json"
 	"fmt"
-	"slices"
-	"strconv"
+	"net"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
@@ -14,12 +14,12 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-type gateway struct {
+type gatewayConfig struct {
 	// config
 	baseName         string
 	wireguardName    string
-	vpcCidrBlock     string
-	gatewayCidrBlock string
+	vpcCidrBlock     *net.IPNet
+	gatewayCidrBlock *net.IPNet
 	generateKey      bool
 	instanceType     string
 	port             int
@@ -36,58 +36,36 @@ type gateway struct {
 	publicIP                                     pulumi.StringOutput
 }
 
-// TODO(jdt): reflexively get config values based on struct tags
-func (g *gateway) withConfig(cfg auto.ConfigMap) error {
-	volumeSize, err := strconv.Atoi(cfg["gateway:volumeSize"].Value)
-	if err != nil {
-		return err
-	}
-	port, err := strconv.Atoi(cfg["gateway:port"].Value)
-	if err != nil {
-		return err
-	}
-
-	g.baseName = cfg["cluster:name"].Value
-	g.gatewayCidrBlock = cfg["gateway:cidrBlock"].Value
-	g.generateKey = cfg["gateway:generateKey"].Value == "true"
-	g.instanceType = cfg["gateway:instanceType"].Value
-	g.port = port
-	g.volumeSize = volumeSize
-	g.volumeType = cfg["gateway:volumeType"].Value
-	g.vpcCidrBlock = cfg["vpc:cidrBlock"].Value
+func (g *gatewayConfig) withConfig(cfg *util.PulumiConfig) error {
+	g.baseName = cfg.Cluster.Name
+	g.gatewayCidrBlock = cfg.Gateway.CIDRBlock
+	g.generateKey = cfg.Gateway.GenerateKey
+	g.instanceType = cfg.Gateway.InstanceType
+	g.port = cfg.Gateway.Port
+	g.volumeSize = cfg.Gateway.VolumeSize
+	g.volumeType = cfg.Gateway.VolumeType
+	g.vpcCidrBlock = cfg.VPC.CIDRBlock
 	g.wireguardName = g.baseName + "-wireguard"
 
 	return nil
 }
 
-func (g *gateway) withOutputs(outputs map[string]auto.OutputMap) error {
+func (g *gatewayConfig) withOutputs(outputs map[string]auto.OutputMap) error {
 	g.vpcID = outputs["vpc"]["vpcID"].Value.(string)
 
-	g.publicSubnetIDs = toStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
-	g.privateSubnetIDs = toStringSlice(outputs["vpc"]["privateSubnetIDs"].Value)
+	g.publicSubnetIDs = util.ToStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
+	g.privateSubnetIDs = util.ToStringSlice(outputs["vpc"]["privateSubnetIDs"].Value)
 
 	return nil
 }
 
-// NOTE(jdt): this kind of stinks. There doesn't appear to be a convenient way to convert the outputs from previous stacks into usable inputs.
-// We just get an empty interface - `interface{}` - that we have to type assert. Perhaps we should use JSON?
-func toStringSlice(in interface{}) []string {
-	out := []string{}
-	for _, x := range in.([]interface{}) {
-		out = append(out, x.(string))
-	}
-	// try to maintain some order so that things don't flip flop?
-	slices.Sort(out)
-	return out
-}
-
-func (g *gateway) run(ctx *pulumi.Context) error {
+func (g *gatewayConfig) run(ctx *pulumi.Context) error {
 	for _, fn := range []func(*pulumi.Context) error{
-		g.securityGroup,
-		g.keyPair,
-		g.iamProfile,
-		g.ec2Instance,
-		g.eip,
+		g.buildSecurityGroup,
+		g.buildKeyPair,
+		g.buildIAMProfile,
+		g.buildEC2Instance,
+		g.buildEIP,
 	} {
 		if err := fn(ctx); err != nil {
 			return err
@@ -100,7 +78,7 @@ func (g *gateway) run(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (g *gateway) securityGroup(ctx *pulumi.Context) error {
+func (g *gatewayConfig) buildSecurityGroup(ctx *pulumi.Context) error {
 	sg, err := ec2.NewSecurityGroup(ctx, g.wireguardName, &ec2.SecurityGroupArgs{
 		Name:        pulumi.String(g.wireguardName),
 		Description: pulumi.String("Allow wireguard traffic"),
@@ -112,7 +90,10 @@ func (g *gateway) securityGroup(ctx *pulumi.Context) error {
 	}
 	g.securityGroupID = sg.ID()
 
-	allCidr, wgCidr, vpcCidr := pulumi.String("0.0.0.0/0"), pulumi.String(g.gatewayCidrBlock), pulumi.String(g.vpcCidrBlock)
+	allCidr, wgCidr, vpcCidr :=
+		pulumi.String("0.0.0.0/0"),
+		pulumi.String(g.gatewayCidrBlock.String()),
+		pulumi.String(g.vpcCidrBlock.String())
 
 	rules := map[string]struct {
 		port  pulumi.Int
@@ -153,9 +134,9 @@ func (g *gateway) securityGroup(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (g *gateway) keyPair(ctx *pulumi.Context) error { return nil }
+func (g *gatewayConfig) buildKeyPair(ctx *pulumi.Context) error { return nil }
 
-func (g *gateway) iamProfile(ctx *pulumi.Context) error {
+func (g *gatewayConfig) buildIAMProfile(ctx *pulumi.Context) error {
 
 	ssmPolicy, err := iam.LookupPolicy(ctx, &iam.LookupPolicyArgs{
 		Name: pulumi.StringRef("AmazonSSMManagedInstanceCore"),
@@ -205,7 +186,7 @@ func (g *gateway) iamProfile(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (g *gateway) ec2Instance(ctx *pulumi.Context) error {
+func (g *gatewayConfig) buildEC2Instance(ctx *pulumi.Context) error {
 	cc := g.buildCloudConfig()
 	ccBytes, err := json.Marshal(&cc)
 	if err != nil {
@@ -213,8 +194,8 @@ func (g *gateway) ec2Instance(ctx *pulumi.Context) error {
 	}
 
 	conf, err := cloudinit.NewConfig(ctx, g.wireguardName, &cloudinit.ConfigArgs{
-		Gzip:         pulumi.Bool(false),
-		Base64Encode: pulumi.Bool(false),
+		Gzip:         P_BOOL_PTR_FALSE,
+		Base64Encode: P_BOOL_PTR_FALSE,
 
 		Parts: cloudinit.ConfigPartArray{
 			&cloudinit.ConfigPartArgs{
@@ -267,7 +248,7 @@ func (g *gateway) ec2Instance(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (g *gateway) eip(ctx *pulumi.Context) error {
+func (g *gatewayConfig) buildEIP(ctx *pulumi.Context) error {
 	eip, err := ec2.NewEip(ctx, g.wireguardName, &ec2.EipArgs{
 		Tags: pulumi.StringMap{"Name": pulumi.String(g.wireguardName)},
 	})
@@ -288,7 +269,7 @@ func (g *gateway) eip(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (g *gateway) buildCloudConfig() *cloudConfig {
+func (g *gatewayConfig) buildCloudConfig() *cloudConfig {
 	// TODO(jdt): don't hard code keys
 	conf := `# AUTOGENERATED
 [Interface]
@@ -334,8 +315,6 @@ AllowedIPs = 0.0.0.0/0
 		}},
 	}
 }
-
-func debug(v interface{}) { fmt.Printf("%+v\n", v) }
 
 type cloudConfig struct {
 	PackageRebootIfRequired bool        `json:"package_reboot_if_required"`

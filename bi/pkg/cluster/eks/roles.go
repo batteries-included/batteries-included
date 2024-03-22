@@ -1,6 +1,7 @@
 package eks
 
 import (
+	"bi/pkg/cluster/util"
 	"fmt"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
@@ -27,8 +28,8 @@ type rolesConfig struct {
 	roles map[string]*iam.Role
 }
 
-func (l *rolesConfig) withConfig(cfg auto.ConfigMap) error {
-	l.baseName = cfg["cluster:name"].Value
+func (l *rolesConfig) withConfig(cfg *util.PulumiConfig) error {
+	l.baseName = cfg.Cluster.Name
 
 	return nil
 }

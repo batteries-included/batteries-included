@@ -1,6 +1,7 @@
 package eks
 
 import (
+	"bi/pkg/cluster/util"
 	"context"
 	"fmt"
 	"os"
@@ -30,6 +31,7 @@ var (
 	P_STR_ARR_WILDCARD                     = pulumi.ToStringArray([]string{"*"})
 	P_STR_AWS                              = pulumi.String("AWS")
 	P_STR_DENY                             = pulumi.String("Deny")
+	P_STR_FALSE                            = pulumi.String("false")
 	P_STR_FEDERATED                        = pulumi.String("Federated")
 	P_STR_ICMP                             = pulumi.String("icmp")
 	P_STR_NULL                             = pulumi.String("Null")
@@ -37,6 +39,7 @@ var (
 	P_STR_STRING_EQUALS                    = pulumi.String("StringEquals")
 	P_STR_STRING_LIKE                      = pulumi.String("StringLike")
 	P_STR_TCP                              = pulumi.String("tcp")
+	P_STR_TRUE                             = pulumi.String("true")
 	P_STR_UDP                              = pulumi.String("udp")
 )
 
@@ -51,7 +54,8 @@ type Config struct {
 }
 
 type eks struct {
-	cfg *Config
+	cfg     *Config
+	pConfig *util.PulumiConfig
 
 	outputs map[string]auto.OutputMap
 }
@@ -61,7 +65,7 @@ func New(cfg *Config) *eks {
 }
 
 type runnable interface {
-	withConfig(auto.ConfigMap) error
+	withConfig(*util.PulumiConfig) error
 	withOutputs(map[string]auto.OutputMap) error
 	run(*pulumi.Context) error
 }
@@ -74,14 +78,20 @@ type component struct {
 // this kind of stinks a map would be more convenient but they are specifically
 // unordered in go and we need these to run in order
 var components = []component{
-	{"vpc", &vpc{}},
-	{"gateway", &gateway{}},
-	{"cluster", &cluster{}},
-	// {"conn", &wgConn{}},
+	{"vpc", &vpcConfig{}},
+	{"gateway", &gatewayConfig{}},
+	{"cluster", &clusterConfig{}},
 	{"roles", &rolesConfig{}},
 }
 
 func (e *eks) Up(ctx context.Context) error {
+	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
+	if err != nil {
+		return err
+	}
+
+	e.pConfig = pConfig
+
 	for _, cmpnt := range components {
 		stack, err := e.createStack(ctx, cmpnt.name, cmpnt.run)
 		if err != nil {
@@ -115,6 +125,13 @@ func (e *eks) Up(ctx context.Context) error {
 }
 
 func (e *eks) Destroy(ctx context.Context) error {
+	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
+	if err != nil {
+		return err
+	}
+
+	e.pConfig = pConfig
+
 	// we need to get the outputs for the previous components first
 	// so create all the stacks and get all of the outputs
 	stacks := make(map[string]auto.Stack)
@@ -189,7 +206,7 @@ func (e *eks) createStack(ctx context.Context, name string, prog pulumi.RunFunc)
 		return s, fmt.Errorf("failed to create workspace: %w", err)
 	}
 
-	stackName := auto.FullyQualifiedStackName("organization", projectName, "test")
+	stackName := auto.FullyQualifiedStackName("organization", projectName, "test") // TODO(cleanup):
 	s, err = auto.UpsertStack(ctx, stackName, ws)
 	if err != nil {
 		return s, fmt.Errorf("failed to create stack: %w", err)
@@ -205,7 +222,7 @@ func (e *eks) configure(ctx context.Context, s auto.Stack, c component) error {
 	}
 
 	// we create the component with the config to avoid having to re-read what we just put on disk
-	if err := c.withConfig(e.cfg.Config); err != nil {
+	if err := c.withConfig(e.pConfig); err != nil {
 		return err
 	}
 
@@ -217,5 +234,6 @@ func (e *eks) refresh(ctx context.Context, s auto.Stack) error {
 	if err != nil {
 		return fmt.Errorf("failed to refresh stack: %w", err)
 	}
+
 	return nil
 }

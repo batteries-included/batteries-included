@@ -1,6 +1,7 @@
 package eks
 
 import (
+	"bi/pkg/cluster/util"
 	"fmt"
 	"net"
 	"slices"
@@ -14,11 +15,10 @@ import (
 
 var subnetTypes = []string{"public", "private"}
 
-type vpc struct {
+type vpcConfig struct {
 	// set in new
 	baseName  string
-	cidrBlock string
-	net       *net.IPNet
+	cidrBlock *net.IPNet
 
 	// state accumulation
 	azs         *aws.GetAvailabilityZonesResult
@@ -31,23 +31,17 @@ type vpc struct {
 	routeTables map[string]pulumi.IDOutput
 }
 
-func (v *vpc) withConfig(cfg auto.ConfigMap) error {
-	v.baseName = cfg["cluster:name"].Value
-	v.cidrBlock = cfg["vpc:cidrBlock"].Value
-
-	_, net, err := net.ParseCIDR(v.cidrBlock)
-	if err != nil {
-		return err
-	}
-	v.net = net
+func (v *vpcConfig) withConfig(cfg *util.PulumiConfig) error {
+	v.baseName = cfg.Cluster.Name
+	v.cidrBlock = cfg.VPC.CIDRBlock
 
 	return nil
 }
 
 // VPC is the first component created. It cannot rely on previous components outputs.
-func (v *vpc) withOutputs(outputs map[string]auto.OutputMap) error { return nil }
+func (v *vpcConfig) withOutputs(outputs map[string]auto.OutputMap) error { return nil }
 
-func (v *vpc) run(ctx *pulumi.Context) error {
+func (v *vpcConfig) run(ctx *pulumi.Context) error {
 	for _, fn := range []func(*pulumi.Context) error{
 		v.getAZS,
 		v.buildVPC,
@@ -76,9 +70,11 @@ func toIDArray(subnets []*ec2.Subnet) pulumi.IDArrayOutput {
 	return pulumi.ToIDArrayOutput(out)
 }
 
-func (v *vpc) getAZS(ctx *pulumi.Context) error {
+func (v *vpcConfig) getAZS(ctx *pulumi.Context) error {
 	azs, err := aws.GetAvailabilityZones(ctx, &aws.GetAvailabilityZonesArgs{
-		State:          pulumi.StringRef("available"),
+		State: pulumi.StringRef("available"),
+		// NOTE(jdt): these AZs don't support EKS.
+		// https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#network-requirements-subnets
 		ExcludeZoneIds: []string{"use1-az3", "usw1-az2", "cac1-az3"},
 		Filters: []aws.GetAvailabilityZonesFilter{{
 			Name:   "zone-type",
@@ -103,9 +99,9 @@ func (v *vpc) getAZS(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (v *vpc) buildVPC(ctx *pulumi.Context) error {
+func (v *vpcConfig) buildVPC(ctx *pulumi.Context) error {
 	vpc, err := ec2.NewVpc(ctx, v.baseName, &ec2.VpcArgs{
-		CidrBlock:          pulumi.StringPtr(v.cidrBlock),
+		CidrBlock:          pulumi.StringPtr(v.cidrBlock.String()),
 		Tags:               pulumi.StringMap{"Name": pulumi.String(v.baseName)},
 		EnableDnsHostnames: P_BOOL_PTR_TRUE,
 	})
@@ -117,13 +113,13 @@ func (v *vpc) buildVPC(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (v *vpc) buildSubnets(ctx *pulumi.Context) error {
+func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 
 	subnets := make(map[string][]*ec2.Subnet)
 	for i, az := range v.azNames {
 		for j, p := range subnetTypes {
 			netNum := i + (100 * j) + 1 // 1 through x for public 101 through x for private
-			net, err := cidr.Subnet(v.net, 8, netNum)
+			net, err := cidr.Subnet(v.cidrBlock, 8, netNum)
 			if err != nil {
 				return err
 			}
@@ -146,7 +142,7 @@ func (v *vpc) buildSubnets(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (v *vpc) buildGateways(ctx *pulumi.Context) error {
+func (v *vpcConfig) buildGateways(ctx *pulumi.Context) error {
 	parent := pulumi.Parent(v.vpc)
 	// igw
 	name := v.baseName + "-internet-gateway"
@@ -186,7 +182,7 @@ func (v *vpc) buildGateways(ctx *pulumi.Context) error {
 	return nil
 }
 
-func (v *vpc) buildRouteTables(ctx *pulumi.Context) error {
+func (v *vpcConfig) buildRouteTables(ctx *pulumi.Context) error {
 	// rename default route table
 	name := v.baseName + "-default"
 	dflt, err := ec2.NewDefaultRouteTable(ctx, name, &ec2.DefaultRouteTableArgs{
@@ -198,6 +194,8 @@ func (v *vpc) buildRouteTables(ctx *pulumi.Context) error {
 	}
 
 	v.routeTables = map[string]pulumi.IDOutput{"default": dflt.ID()}
+
+	// create route tabe for each subnet "type"
 	for _, t := range subnetTypes {
 		rtName := fmt.Sprintf("%s-%s", v.baseName, t)
 
@@ -220,7 +218,7 @@ func (v *vpc) buildRouteTables(ctx *pulumi.Context) error {
 			VpcId: v.vpcID,
 			Routes: ec2.RouteTableRouteArray{
 				&ec2.RouteTableRouteArgs{
-					CidrBlock: pulumi.StringPtr(v.cidrBlock),
+					CidrBlock: pulumi.StringPtr(v.cidrBlock.String()),
 					GatewayId: pulumi.String("local"),
 				},
 				internetRoute,
@@ -232,12 +230,13 @@ func (v *vpc) buildRouteTables(ctx *pulumi.Context) error {
 		if err != nil {
 			return err
 		}
+
 		v.routeTables[t] = rt.ID()
 	}
 	return nil
 }
 
-func (v *vpc) buildRouteTableAssocs(ctx *pulumi.Context) error {
+func (v *vpcConfig) buildRouteTableAssocs(ctx *pulumi.Context) error {
 	for _, t := range subnetTypes {
 		for i, subnet := range v.subnets[t] {
 			name := fmt.Sprintf("%s-%s-%d-rta", v.baseName, t, i)
