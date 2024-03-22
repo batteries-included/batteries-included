@@ -12,6 +12,14 @@ defmodule CommonUI.Components.InputTest do
       """
     end
 
+    component_snapshot_test "required attr usable through rest" do
+      assigns = %{}
+
+      ~H"""
+      <.input name="foo" value="bar" label="Foobar" required icon={:magnifying_glass} />
+      """
+    end
+
     component_snapshot_test "with error" do
       assigns = %{}
 

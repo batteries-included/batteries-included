@@ -19,7 +19,7 @@ defmodule CommonUI.Components.Input do
   attr :options, :list, default: []
   attr :multiple, :boolean, default: false
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(autocomplete autofocus maxlength disabled)
+  attr :rest, :global, include: ~w(autocomplete autofocus maxlength disabled required)
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
