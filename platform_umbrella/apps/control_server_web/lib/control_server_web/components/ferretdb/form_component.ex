@@ -27,19 +27,19 @@ defmodule ControlServerWeb.FerretDBFormComponent do
         </.page_header>
         <.panel>
           <.grid columns={[sm: 1, md: 2]}>
-            <PC.field field={@form[:name]} label="Name" disabled={@action == :edit} />
-            <PC.field
+            <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
+            <.input
               field={@form[:postgres_cluster_id]}
               label="Postgres Cluster"
               type="select"
-              prompt="Choose a postgres cluster"
+              placeholder="Choose a postgres cluster"
               options={Enum.map(@pg_clusters, &{&1.name, &1.id})}
             />
-            <PC.field
+            <.input
               field={@form[:virtual_size]}
               type="select"
               label="Size"
-              prompt="Choose a size"
+              placeholder="Choose a size"
               options={FerretService.preset_options_for_select()}
             />
 
@@ -72,10 +72,10 @@ defmodule ControlServerWeb.FerretDBFormComponent do
           />
 
           <.grid :if={@form[:virtual_size].value == "custom"} columns={[sm: 1, md: 2, xl: 4]}>
-            <PC.field field={@form[:cpu_requested]} label="Cpu requested" />
-            <PC.field field={@form[:cpu_limits]} label="Cpu limits" />
-            <PC.field field={@form[:memory_requested]} label="Memory requested" />
-            <PC.field field={@form[:memory_limits]} label="Memory limits" />
+            <.input field={@form[:cpu_requested]} label="Cpu requested" />
+            <.input field={@form[:cpu_limits]} label="Cpu limits" />
+            <.input field={@form[:memory_requested]} label="Memory requested" />
+            <.input field={@form[:memory_limits]} label="Memory limits" />
           </.grid>
         </.panel>
       </.form>

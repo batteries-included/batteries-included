@@ -4,6 +4,7 @@ defmodule CommonUI.Components.MutliSelect do
 
   import CommonUI.Components.Container
   import CommonUI.Components.Icon
+  import CommonUI.Components.Input
   import Phoenix.Naming, only: [humanize: 1]
 
   alias CommonUI.IDHelpers
@@ -82,7 +83,7 @@ defmodule CommonUI.Components.MutliSelect do
             <%= value.label %>
           </label>
 
-          <PC.input
+          <.input
             :if={@field && value.selected}
             type="hidden"
             field={@field}

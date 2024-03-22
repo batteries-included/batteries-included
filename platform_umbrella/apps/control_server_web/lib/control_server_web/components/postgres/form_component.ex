@@ -249,8 +249,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         <.flex column>
           <.panel>
             <.grid columns={[sm: 1, xl: 2]}>
-              <PC.field field={@form[:name]} autofocus />
-              <PC.field
+              <.input field={@form[:name]} autofocus label="Name" />
+              <.input
                 field={@form[:virtual_size]}
                 type="select"
                 label="Size"
@@ -269,10 +269,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             />
 
             <div :if={@form[:virtual_size].value == "custom"} class="mb-5">
-              <PC.h3>Storage</PC.h3>
+              <.h3>Storage</.h3>
               <.grid>
                 <div>
-                  <PC.field
+                  <.input
                     field={@form[:storage_class]}
                     type="select"
                     label="Storage Class"
@@ -291,11 +291,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                       <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
                     </span>
                     <:hidden>
-                      <PC.field
+                      <.input
                         field={@form[:storage_size]}
                         type="number"
                         phx-change="change_storage_size"
-                        wrapper_class="grow"
                       />
                     </:hidden>
                   </.click_flip>
@@ -325,10 +324,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                 </div>
               </.grid>
 
-              <PC.h3>Running Limits</PC.h3>
+              <.h3>Running Limits</.h3>
               <.grid>
                 <div>
-                  <PC.field
+                  <.input
                     field={@form[:cpu_requested]}
                     type="select"
                     label="CPU Requested"
@@ -336,7 +335,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   />
                 </div>
                 <div>
-                  <PC.field
+                  <.input
                     field={@form[:cpu_limits]}
                     type="select"
                     label="CPU Limits"
@@ -344,7 +343,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   />
                 </div>
                 <div>
-                  <PC.field
+                  <.input
                     field={@form[:memory_requested]}
                     type="select"
                     label="Memory Requested"
@@ -352,7 +351,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   />
                 </div>
                 <div>
-                  <PC.field
+                  <.input
                     field={@form[:memory_limits]}
                     type="select"
                     label="Memory Limits"
@@ -395,10 +394,16 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               <.inputs_for :let={database_form} field={@form[:database]}>
                 <.grid columns={%{sm: 1, lg: 2}}>
                   <div>
-                    <PC.field field={database_form[:name]} />
+                    <.input label="Name" field={database_form[:name]} />
                   </div>
                   <div>
-                    <PC.field field={database_form[:owner]} type="select" options={@possible_owners} />
+                    <.input
+                      label="Owner"
+                      field={database_form[:owner]}
+                      type="select"
+                      placeholder="Select Database Owner (on creation)"
+                      options={@possible_owners}
+                    />
                   </div>
                 </.grid>
               </.inputs_for>

@@ -98,23 +98,21 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
 
   defp value_inputs(assigns) do
     ~H"""
-    <.flex class="col-span-2">
-      <PC.field field={@form[:value]} wrapper_class="w-full" placeholder="your.service.creds" />
-    </.flex>
+    <.input label="Value" field={@form[:value]} placeholder="your.service.creds" />
     """
   end
 
   defp resource_inputs(assigns) do
     ~H"""
-    <.flex column class="col-span-2">
-      <PC.field
+    <.flex column>
+      <.input
         label={@label}
         field={@form[:source_name]}
-        wrapper_class="w-full"
         type="select"
+        placeholder="Select Source"
         options={Enum.map(@resources, &name/1)}
       />
-      <PC.field field={@form[:source_key]} wrapper_class="w-full" />
+      <.input label="Key" field={@form[:source_key]} />
     </.flex>
     """
   end
@@ -131,14 +129,9 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
           phx-submit="save_env_value"
           phx-target={@myself}
         >
-          <.flex column gaps="2">
-            <PC.field
-              field={@form[:name]}
-              autofocus
-              placeholder="ENV_VARIABLE_NAME"
-              wrapper_class="col-span-2"
-            />
-            <.tab_bar variant="secondary" class="col-span-2">
+          <.flex column>
+            <.input label="Name" field={@form[:name]} autofocus placeholder="ENV_VARIABLE_NAME" />
+            <.tab_bar variant="secondary">
               <:tab phx-click="value" phx-target={@myself} selected={value_selected?(@changeset)}>
                 Explicit Value
               </:tab>
@@ -149,7 +142,7 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
                 Secret
               </:tab>
             </.tab_bar>
-            <PC.input type="hidden" field={@form[:source_type]} />
+            <.input type="hidden" field={@form[:source_type]} />
             <.value_inputs :if={value_selected?(@changeset)} form={@form} />
             <.resource_inputs
               :if={config_selected?(@changeset)}
@@ -163,7 +156,7 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
               resources={@secrets}
               label="Secret"
             />
-            <.flex class="justify-end col-span-2">
+            <.flex class="justify-end">
               <.button variant="secondary" phx-target={@myself} phx-click="cancel">Cancel</.button>
               <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
             </.flex>

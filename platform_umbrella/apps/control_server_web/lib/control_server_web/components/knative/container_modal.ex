@@ -68,16 +68,16 @@ defmodule ControlServerWeb.Knative.ContainerModal do
           phx-target={@myself}
         >
           <.grid columns={[sm: 1, lg: 2]}>
-            <PC.field field={@form[:name]} autofocus placeholder="Name" />
-            <PC.field field={@form[:image]} autofocus placeholder="Image" />
-            <PC.field
-              name="container[command][]"
-              value={(@form.data.command || []) |> List.first(nil)}
-              label="Command"
-              autofocus
-              placeholder="/bin/true"
-              wrapper_class="col-span-2"
-            />
+            <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
+            <.input label="Image" field={@form[:image]} placeholder="Image" />
+            <div class="col-span-2">
+              <.input
+                name="container[command][]"
+                value={(@form.data.command || []) |> List.first(nil)}
+                label="Command"
+                placeholder="/bin/true"
+              />
+            </div>
             <.flex class="justify-end col-span-2">
               <.button variant="secondary" phx-target={@myself} phx-click="cancel">Cancel</.button>
               <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>

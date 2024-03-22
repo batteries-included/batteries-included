@@ -258,22 +258,22 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   defp single_env_value_hidden(assigns) do
     ~H"""
-    <PC.input type="hidden" field={@form[:name]} />
-    <PC.input type="hidden" field={@form[:value]} />
-    <PC.input type="hidden" field={@form[:source_type]} />
-    <PC.input type="hidden" field={@form[:source_name]} />
-    <PC.input type="hidden" field={@form[:source_key]} />
-    <PC.input type="hidden" field={@form[:source_optional]} />
+    <.input type="hidden" field={@form[:name]} />
+    <.input type="hidden" field={@form[:value]} />
+    <.input type="hidden" field={@form[:source_type]} />
+    <.input type="hidden" field={@form[:source_name]} />
+    <.input type="hidden" field={@form[:source_key]} />
+    <.input type="hidden" field={@form[:source_optional]} />
     """
   end
 
   defp containers_hidden_form(assigns) do
     ~H"""
     <.inputs_for :let={f_nested} field={@field}>
-      <PC.input type="hidden" field={f_nested[:name]} />
-      <PC.input type="hidden" field={f_nested[:image]} />
-      <PC.input type="hidden" field={f_nested[:command]} multiple={true} />
-      <PC.input type="hidden" field={f_nested[:args]} multiple={true} />
+      <.input type="hidden" field={f_nested[:name]} />
+      <.input type="hidden" field={f_nested[:image]} />
+      <.input type="hidden" field={f_nested[:command]} multiple={true} />
+      <.input type="hidden" field={f_nested[:args]} multiple={true} />
       <.inputs_for :let={env_nested} field={f_nested[:env_values]}>
         <.single_env_value_hidden form={env_nested} />
       </.inputs_for>
@@ -285,7 +285,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     ~H"""
     <.panel title="Advanced Settings" variant="gray">
       <.flex column>
-        <PC.field field={@form[:rollout_duration]} />
+        <.input label="Roll Out Duration" field={@form[:rollout_duration]} />
         <PC.field
           :if={@sso_enabled}
           field={@form[:oauth2_proxy]}
@@ -299,7 +299,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   defp name_panel(assigns) do
     ~H"""
-    <PC.field field={@form[:name]} autofocus placeholder="Name" />
+    <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
     """
   end
 

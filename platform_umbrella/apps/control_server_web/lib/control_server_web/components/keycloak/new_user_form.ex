@@ -106,9 +106,9 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
           phx-submit="save"
           phx-target={@myself}
         >
-          <PC.field field={@form[:email]} label="Email" placeholder="douglas.engelbart@gmail.com" />
-          <PC.field field={@form[:username]} label="Username" />
-          <PC.field field={@form[:enabled]} label="Enabled" type="checkbox" />
+          <.input field={@form[:email]} label="Email" placeholder="douglas.engelbart@gmail.com" />
+          <.input field={@form[:username]} label="Username" />
+          <.input field={@form[:enabled]} label="Enabled" type="checkbox" />
 
           <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
         </.form>

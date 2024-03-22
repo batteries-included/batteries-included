@@ -79,6 +79,18 @@ defmodule CommonUI.Components.Input do
     """
   end
 
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <input
+      name={@name}
+      type="hidden"
+      value={normalize_value(@type, @value)}
+      class={[input_class(@errors), @class]}
+      {@rest}
+    />
+    """
+  end
+
   def input(assigns) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>

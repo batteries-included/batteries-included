@@ -81,8 +81,8 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
         <.page_header title={@title} back_link={cancel_url()} />
 
         <.panel>
-          <PC.field field={@form[:name]} label="Pool Name" autofocus />
-          <PC.field field={@form[:subnet]} label="Subnet CIDR" />
+          <.input field={@form[:name]} label="Pool Name" autofocus />
+          <.input field={@form[:subnet]} label="Subnet CIDR" />
 
           <.button variant="secondary" link={cancel_url()} class="mr-3">
             Cancel
