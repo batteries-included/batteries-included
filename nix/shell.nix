@@ -104,7 +104,6 @@
         kubectl
         kubernetes-helm
         podman
-        terraform
         flock
 
         skopeo # Use for pushing docker
