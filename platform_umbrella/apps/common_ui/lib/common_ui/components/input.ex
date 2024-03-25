@@ -145,7 +145,7 @@ defmodule CommonUI.Components.Input do
 
   defp label(assigns) do
     ~H"""
-    <div class="flex items-center gap-4 mb-2 text-sm text-gray-darkest">
+    <div class="flex items-center gap-4 mb-2 text-sm text-gray-darkest dark:text-gray-lighter">
       <span :if={@label}><%= @label %></span>
       <span :if={@note} class="text-xs text-gray-light"><%= @note %></span>
     </div>

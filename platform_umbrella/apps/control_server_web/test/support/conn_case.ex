@@ -43,4 +43,21 @@ defmodule ControlServerWeb.ConnCase do
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  @doc """
+  Checks if an element inside a LiveView or HTML block contains a class.
+  """
+  def has_class?(%Phoenix.LiveViewTest.View{} = view, selector, class) do
+    view
+    |> Phoenix.LiveViewTest.render()
+    |> has_class?(selector, class)
+  end
+
+  def has_class?(html, selector, class) do
+    html
+    |> Floki.parse_document!()
+    |> Floki.attribute(selector, "class")
+    |> Enum.map(&String.split/1)
+    |> Enum.any?(fn x -> Enum.any?(x, &(&1 == class)) end)
+  end
 end

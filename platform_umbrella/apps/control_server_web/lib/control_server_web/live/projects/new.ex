@@ -2,95 +2,170 @@ defmodule ControlServerWeb.Projects.NewLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Projects.Project
   alias ControlServer.Projects
+  alias ControlServerWeb.Projects.BatteriesForm
+  alias ControlServerWeb.Projects.DatabaseForm
+  alias ControlServerWeb.Projects.MachineLearningForm
+  alias ControlServerWeb.Projects.ProjectForm
+  alias ControlServerWeb.Projects.WebForm
 
   def mount(params, _session, socket) do
-    changeset = Projects.change_project(%Project{})
-    back_link = Map.get(params, "back", ~p"/projects")
+    # Allow the back button to be dynamic and go back steps
+    return_to = Map.get(params, "return_to", ~p"/projects")
+    back_click = JS.push("back", value: %{return_to: return_to})
 
     {:ok,
      socket
-     |> assign(:page_title, "Start Your Project")
-     |> assign(:back_link, back_link)
-     |> assign(:form, to_form(changeset))}
+     |> assign(:form_data, %{})
+     |> assign(:back_click, back_click)
+     |> assign(:steps, steps())
+     |> assign(:current_step, List.first(steps()))
+     |> assign(:page_title, "Start Your Project")}
   end
 
-  def handle_event("validate", %{"project" => project_params}, socket) do
-    changeset =
-      %Project{}
-      |> Projects.change_project(project_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign(socket, form: to_form(changeset))}
+  # Updates the project steps when the type changes in the new project subform.
+  # It also resets the form data so we don't create resources from a previously-selected type.
+  def handle_info({:project_type, project_type}, socket) do
+    {:noreply,
+     socket
+     |> assign(:form_data, %{})
+     |> assign(:steps, steps(project_type))}
   end
 
-  def handle_event("save", %{"project" => project_params}, socket) do
-    case Projects.create_project(project_params) do
-      {:ok, project} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Project created successfully")
-         |> push_navigate(to: ~p"/projects/#{project}")}
+  # Moves to the next step when sub-forms are submitted. This will store the sub-form data in the
+  # assigns until the end of the new project flow, when all the resources will be created at once.
+  def handle_info({:next, {step, step_data}}, socket) do
+    form_data = Map.put(socket.assigns.form_data, step, step_data)
+    next_index = Enum.find_index(socket.assigns.steps, &(&1 == step)) + 1
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+    if next_step = Enum.at(socket.assigns.steps, next_index) do
+      # There are still more steps in the flow, save form data and move to next step
+      {:noreply,
+       socket
+       |> assign(:form_data, form_data)
+       |> assign(:current_step, next_step)}
+    else
+      # There are no more steps in the flow, go ahead and create all the resources
+      case Projects.create_project(form_data[ProjectForm]) do
+        {:ok, project} -> {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
+        _ -> {:noreply, put_flash(socket, :error, "Could not create project resources")}
+      end
+    end
+  end
+
+  # Moves back to the previous step, or navigates to the `return_to` URL query if on the first
+  # step. This allows the back button to be dynamic and either move steps or do a live navigation.
+  def handle_event("back", params, socket) do
+    prev_index = Enum.find_index(socket.assigns.steps, &(&1 == socket.assigns.current_step)) - 1
+    prev_step = Enum.at(socket.assigns.steps, prev_index)
+
+    if prev_step && prev_index >= 0 do
+      {:noreply, assign(socket, :current_step, prev_step)}
+    else
+      {:noreply, push_navigate(socket, to: params["return_to"])}
     end
   end
 
   def render(assigns) do
     ~H"""
-    <.form
-      for={@form}
-      phx-change="validate"
-      phx-submit="save"
-      class="flex flex-col h-full gap-8"
-      novalidate
-    >
-      <div>
-        <.page_header title={@page_title} back_link={@back_link} />
-        <.progress variant="stepped" current={1} total={2} />
+    <div class="flex flex-col h-full gap-8">
+      <.page_header title="Start Your Project" back_click={@back_click} class="mb-0" />
+
+      <.progress
+        variant="stepped"
+        total={Enum.count(@steps)}
+        current={Enum.find_index(@steps, &(&1 == @current_step)) + 1}
+      />
+
+      <div class="flex-1 relative">
+        <.subform module={ProjectForm} id="project-form" current_step={@current_step} steps={@steps} />
+
+        <.subform
+          module={BatteriesForm}
+          id="project-batteries-form"
+          current_step={@current_step}
+          steps={@steps}
+        />
+
+        <.subform module={WebForm} id="project-web-form" current_step={@current_step} steps={@steps} />
+
+        <.subform
+          module={MachineLearningForm}
+          id="project-machine-learning-form"
+          current_step={@current_step}
+          steps={@steps}
+        />
+
+        <.subform
+          module={DatabaseForm}
+          id="project-database-form"
+          current_step={@current_step}
+          steps={@steps}
+        />
       </div>
-
-      <div class="grid lg:grid-cols-[2fr,1fr] content-start gap-6 flex-1">
-        <div class="auto-rows-min row-start-2 lg:row-start-1">
-          <.panel title="Tell More About Your Project">
-            <div class="grid lg:grid-cols-1 xl:grid-cols-2 gap-6">
-              <.input field={@form[:name]} label="Project Name" placeholder="Enter project name" />
-
-              <.input
-                field={@form[:type]}
-                type="select"
-                label="Project Type"
-                placeholder="Select project type"
-                options={Project.type_options_for_select()}
-              />
-
-              <div class="xl:col-span-2">
-                <.input
-                  field={@form[:description]}
-                  type="textarea"
-                  label="Project Description"
-                  placeholder="Enter a project description (optional)"
-                  maxlength={1000}
-                />
-              </div>
-            </div>
-          </.panel>
-        </div>
-
-        <div class="auto-rows-min">
-          <.panel title="Info">
-            <p>A place for introductory information about this stage of project creation</p>
-          </.panel>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end gap-4">
-        <.button variant="secondary" icon={:play_circle}>View Demo Video</.button>
-        <.button variant="primary" type="submit" phx-disable-with="Saving...">Next</.button>
-      </div>
-    </.form>
+    </div>
     """
+  end
+
+  defp subform(assigns) do
+    ~H"""
+    <.live_component class={["h-full", @current_step != @module && "hidden"]} {assigns}>
+      <.button variant="secondary" icon={:play_circle}>View Demo Video</.button>
+
+      <.button
+        :if={@current_step != Enum.at(@steps, -1)}
+        variant="primary"
+        icon={:arrow_right}
+        icon_position={:right}
+        type="submit"
+      >
+        Next Step
+      </.button>
+
+      <.button
+        :if={@current_step == Enum.at(@steps, -1)}
+        variant="primary"
+        type="submit"
+        phx-disable-with="Creating..."
+      >
+        Create Project
+      </.button>
+    </.live_component>
+    """
+  end
+
+  # Defines the ordering of the new project subform flow
+
+  defp steps(type) when is_binary(type), do: type |> String.to_existing_atom() |> steps()
+
+  defp steps(:web) do
+    [
+      ProjectForm,
+      BatteriesForm,
+      WebForm
+    ]
+  end
+
+  defp steps(:ml) do
+    [
+      ProjectForm,
+      BatteriesForm,
+      MachineLearningForm
+    ]
+  end
+
+  defp steps(:db) do
+    [
+      ProjectForm,
+      BatteriesForm,
+      DatabaseForm
+    ]
+  end
+
+  defp steps do
+    [
+      ProjectForm,
+      BatteriesForm
+    ]
   end
 end

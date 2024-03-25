@@ -9,7 +9,7 @@ defmodule CommonCore.Projects.Project do
   @foreign_key_type :binary_id
   typed_schema "projects" do
     field :name, :string
-    field :type, Ecto.Enum, values: [:web, :ml, :database]
+    field :type, Ecto.Enum, values: [:web, :ml, :db]
     field :description, :string
 
     timestamps()
@@ -30,6 +30,6 @@ defmodule CommonCore.Projects.Project do
 
   def type_name(:web), do: "Web"
   def type_name(:ml), do: "Machine Learning"
-  def type_name(:database), do: "Database Only"
+  def type_name(:db), do: "Database Only"
   def type_name(type), do: Atom.to_string(type)
 end

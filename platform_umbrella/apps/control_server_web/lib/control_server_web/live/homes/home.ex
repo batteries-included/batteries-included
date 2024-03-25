@@ -56,7 +56,7 @@ defmodule ControlServerWeb.Live.Home do
     ~H"""
     <.page_header title={@page_title}>
       <div class="flex items-center gap-4">
-        <.button variant="dark" icon={:plus} link={~p"/projects/new?back=#{~p"/"}"}>
+        <.button variant="dark" icon={:plus} link={~p"/projects/new?return_to=#{~p"/"}"}>
           New Project
         </.button>
 

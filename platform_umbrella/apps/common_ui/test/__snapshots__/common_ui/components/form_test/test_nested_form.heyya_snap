@@ -1,0 +1,12 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+  
+  <div>Some inputs would go here</div>
+
+  
+</div>
+
+<div class="flex items-center justify-between gap-2 mt-2">
+  
+    <div>Some actions would go here</div>
+  
+</div>

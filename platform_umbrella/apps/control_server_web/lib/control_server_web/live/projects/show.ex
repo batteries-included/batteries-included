@@ -45,6 +45,22 @@ defmodule ControlServerWeb.Projects.ShowLive do
       <.panel :if={@project.description} title="Project Description">
         <%= @project.description %>
       </.panel>
+
+      <.panel title="Grafana" class={if !@project.description, do: "col-span-2"}>
+        <:menu>
+          <.button variant="minimal" icon={:arrow_top_right_on_square}>Open in New Tab</.button>
+        </:menu>
+
+        <span>Dashboards and Observability charts</span>
+      </.panel>
+
+      <.panel variant="gray" title="Batteries Running"></.panel>
+
+      <.panel variant="gray" title="Redis"></.panel>
+
+      <.panel title="Knative Services" class="col-span-2"></.panel>
+
+      <.panel title="Pods" class="col-span-2"></.panel>
     </.grid>
     """
   end
