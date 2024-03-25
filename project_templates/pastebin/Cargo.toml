@@ -13,7 +13,7 @@ thiserror = "1.0.58"
 
 tokio = { version = "1.36.0", features = ["full"] }
 
-axum = { version = "0.7.4", features = ["json", "query"] }
+axum = { version = "0.7.5", features = ["json", "query"] }
 tower = { version = "0.4.13" }
 tower-http = { version = "0.5.2", features = [
   "compression-full",
