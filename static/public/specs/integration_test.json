@@ -42,60 +42,6 @@
         "group": "data",
         "inserted_at": null,
         "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "istio",
-        "config": {
-          "type": "istio",
-          "namespace": "battery-istio",
-          "pilot_image": "docker.io/istio/pilot:1.21.0-distroless",
-          "namespace_override": null,
-          "pilot_image_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "istio_gateway",
-        "config": {
-          "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.21.0-distroless",
-          "proxy_image_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "stale_resource_cleaner",
-        "config": {
-          "type": "stale_resource_cleaner",
-          "delay": 900000,
-          "delay_override": null
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "metallb",
-        "config": {
-          "type": "metallb",
-          "controller_image": "quay.io/metallb/controller:v0.13.12",
-          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
-          "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "speaker_image_override": null,
-          "controller_image_override": null,
-          "frrouting_image_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
       }
     ],
     "ferret_services": [],
@@ -124,7 +70,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "4PNPQHAN5QLHMVAMEVDURBOW",
+            "password": "I72XYSKSDYDPP4W3ZQH24WHT",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

@@ -9,7 +9,7 @@ import Config
 config :control_server, ControlServer.Repo,
   username: System.get_env("POSTGRES_USER") || "battery-local-user",
   password: System.get_env("POSTGRES_PASSWORD") || "not-real",
-  database: System.get_env("POSTGRES_DB") || "server_test",
+  database: System.get_env("POSTGRES_DB") || "control-server-test",
   hostname: System.get_env("POSTGRES_HOST") || "127.0.0.1",
   port: System.get_env("POSTGRES_PORT") || 5432,
   pool: Ecto.Adapters.SQL.Sandbox

@@ -43,7 +43,6 @@ defmodule HomeBase.MixProject do
     [
       {:common_core, in_umbrella: true},
       {:ecto_sql, "~> 3.11"},
-      {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
       {:ex_audit, "~> 0.10"},
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},

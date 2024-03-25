@@ -38,7 +38,7 @@
         inherit src version LANG;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-VWPrUnP5Qd7SINlWEmBMZdoROotr5wEPXRXL/yFrdDA=";
+        sha256 = "sha256-lT0Zu1+FXHxIwRaZDiVHXJisQBb2ea+/U1hx93viLRM=";
       };
 
       # mix fixed output derivation dependencies

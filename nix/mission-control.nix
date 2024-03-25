@@ -17,6 +17,30 @@
             '';
           };
 
+          clean = {
+            description = "Clean the working tree";
+            category = "code";
+            exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
+              git clean -idx \
+                -e .env \
+                -e .iex.exs
+            '';
+          };
+
+          gen-static-specs = {
+            description = "Generate static specs";
+            category = "code";
+            exec = ''
+              [[ -z ''${TRACE:-""} ]] || set -x
+              pushd platform_umbrella &> /dev/null
+              mix "do" clean, compile --force
+              mix gen.static.installations "../static/public/specs"
+              popd &> /dev/null
+              treefmt
+            '';
+          };
+
           ex-fmt = {
             description = "Format elixir codebase";
             category = "elixir";
@@ -31,7 +55,7 @@
             category = "elixir";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
-              portforward_controlserver
+              do_portforward_controlserver
 
               export MIX_ENV=test
               m ecto.reset
@@ -44,7 +68,7 @@
             category = "elixir";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
-              portforward_controlserver
+              do_portforward_controlserver
 
               m test --trace --stale
             '';
@@ -55,7 +79,7 @@
             category = "elixir";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
-              portforward_controlserver
+              do_portforward_controlserver
 
               export MIX_ENV=test
               m "do" \
@@ -69,7 +93,7 @@
             category = "elixir";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
-              portforward_controlserver
+              do_portforward_controlserver
 
               pushd platform_umbrella &> /dev/null
               export MIX_ENV=test
@@ -81,15 +105,6 @@
             '';
           };
 
-          ex-test-int = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
-            description = "Run integration tests. Used in CI as well.";
-            category = "elixir";
-
-            exec = ''
-              export WALLABY_CHROME_BINARY=${pkgs.chromium}/bin/chromium
-              ${builtins.readFile ./scripts/integration-test.sh}
-            '';
-          };
 
           ex-watch = {
             description = "Watch for changes to elixir source";
@@ -114,49 +129,48 @@
             '';
           };
 
+
+          int-test = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
+            description = "Run integration tests.";
+            category = "fullstack";
+
+            exec = "${builtins.readFile ./scripts/common-functions.sh}
+                    # TODO: This should be overridable os OSX can supply a local chrome
+                    # however I haven't tested it so /shrug
+                    chromium_binary=${pkgs.chromium}/bin/chromium
+                    export WALLABY_CHROME_BINARY=\${WALLABY_CHROME_BINARY:-\$chromium_binary}
+                    do_integration_test \"$@\"
+              ";
+          };
+
+          int-test-deep = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
+            description = "Run integration tests.";
+            category = "fullstack";
+
+            exec = "${builtins.readFile ./scripts/common-functions.sh}
+                    chromium_binary=${pkgs.chromium}/bin/chromium
+                    export WALLABY_CHROME_BINARY=\${WALLABY_CHROME_BINARY:-\$chromium_binary}
+                    do_integration_test_deep \"$@\"
+              ";
+          };
+
           bootstrap = {
-            description = "Bootstrap the dev environment";
-            category = "dev";
+            description = "
+              Bootstrap
+              the
+              dev
+              environment ";
+            category = "
+              fullstack ";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
               do_bootstrap "$@"
             '';
           };
 
-          clean = {
-            description = "Clean the working tree";
-            category = "dev";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              git clean -idx \
-                -e .env \
-                -e .iex.exs
-            '';
-          };
-
-          uninstall = {
-            description = "Uninstall everything from the kube cluster";
-            category = "dev";
-            exec = ''
-              # shellcheck disable=2046
-              bcli uninstall $([[ -z ''${TRACE:-""} ]] || echo "-vv")
-            '';
-          };
-
-          build = {
-            description = "Build the given flake.";
-            category = "dev";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              flake=".#''${1:-""}"
-              shift
-              nix build "$flake" "$@"
-            '';
-          };
-
           stop = {
             description = "Stop the kind cluster and all things";
-            category = "dev";
+            category = "fullstack";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
               do_stop "$@"
@@ -168,7 +182,7 @@
             category = "dev";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
-              portforward_controlserver
+              do_portforward_controlserver
 
               pushd platform_umbrella &> /dev/null
               iex -S mix phx.server
@@ -180,33 +194,31 @@
             category = "dev";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
-              portforward_controlserver
+              do_portforward_controlserver
 
               pushd platform_umbrella &> /dev/null
               mix phx.server
             '';
           };
 
-          gen-static-specs = {
-            description = "Generate static specs";
+          build = {
+            description = "Build the given flake.";
             category = "dev";
             exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              pushd platform_umbrella &> /dev/null
-              mix "do" clean, compile --force
-              mix gen.static.installations "../cli/tests/resources/specs"
-              mix gen.static.installations "../static/public/specs"
-              popd &> /dev/null
-              treefmt
+                [[ -z ''${TRACE:-""} ]] || set -x
+                flake=".#''${1:-""}"
+              shift
+              nix build "$flake" "$@"
             '';
           };
+
 
           nuke-test-db = {
             description = "Reset test DB";
             category = "dev";
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
-              portforward_controlserver
+              do_portforward_controlserver
 
               export MIX_ENV=test
               m "do" compile --force, ecto.reset
@@ -218,14 +230,14 @@
             category = "dev";
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
-              [[ "$#" -ne 1 ]] && { echo "Missing namespace argument"; exit 1;}
-              NAMESPACE="$1"
+                [[ "$#" -ne 1 ]] && { echo "Missing namespace argument"; exit 1;}
+                NAMESPACE="$1"
 
-              # shellcheck disable=2046
-              kubectl get ns -o json $([[ -z ''${TRACE:-""} ]] || echo "-v=4") "$NAMESPACE"  \
-                  | jq '.spec.finalizers = []' \
-                  | kubectl replace $([[ -z ''${TRACE:-""} ]] || echo "-v=4") \
-                      --raw "/api/v1/namespaces/$NAMESPACE/finalize" -f -
+                # shellcheck disable=2046
+                kubectl get ns -o json $([[ -z ''${TRACE:-""} ]] || echo "-v=4") "$NAMESPACE"  \
+                    | jq '.spec.finalizers = []' \
+                    | kubectl replace $([[ -z ''${TRACE:-""} ]] || echo "-v=4") \
+                        --raw "/api/v1/namespaces/$NAMESPACE/finalize" -f -
             '';
           };
 

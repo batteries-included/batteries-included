@@ -35,15 +35,12 @@ defmodule CommonCore.StateSummary.SeedState do
     }
   end
 
-  def seed(:slim_dev) do
+  def seed(:integration_test) do
     %StateSummary{
       batteries:
         batteries([
           :battery_core,
-          :cloudnative_pg,
-          :istio,
-          :istio_gateway,
-          :stale_resource_cleaner
+          :cloudnative_pg
         ]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }

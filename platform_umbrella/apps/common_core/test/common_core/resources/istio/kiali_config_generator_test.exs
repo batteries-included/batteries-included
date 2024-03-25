@@ -27,7 +27,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGeneratorTest do
     end
 
     test "sets server config to http when :cert_manager is not installed" do
-      state = SeedState.seed(:slim_dev)
+      state = SeedState.seed(:integration_test)
 
       batt =
         :kiali

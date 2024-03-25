@@ -71,13 +71,13 @@
         inotify-tools
       ];
 
+      # Yes the whole fucking world
+      # just for integration tests.
       integrationTestingTools = with pkgs; [
-        # Yes the whole fucking world
-        # just for integration tests.
         chromedriver
-        chromium
         selenium-server-standalone
-      ];
+      ]
+      ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) [ chromium ];
 
       frameworks = pkgs.darwin.apple_sdk.frameworks;
 
@@ -86,7 +86,6 @@
         frameworks.CoreServices
         frameworks.CoreFoundation
         frameworks.Foundation
-        pkgs.qemu
       ];
 
 
@@ -119,7 +118,7 @@
       ++ goNativeBuildTools
       ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
       ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
-      ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) integrationTestingTools
+      ++ integrationTestingTools
       ++ [ config.treefmt.build.wrapper ]
       ++ [ config.packages.bi ];
 

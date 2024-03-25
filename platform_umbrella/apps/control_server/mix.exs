@@ -40,7 +40,6 @@ defmodule ControlServer.MixProject do
     [
       {:common_core, in_umbrella: true},
       {:ecto_sql, "~> 3.11"},
-      {:ecto_sqlite3, "~> 0.11", only: [:test, :integration]},
       {:event_center, in_umbrella: true},
       {:ex_audit, "~> 0.10"},
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},

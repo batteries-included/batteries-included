@@ -16,6 +16,7 @@ defmodule KubeBootstrap.Postgres do
       Logger.info("Postgres Clusters are ready")
       :ok
     else
+      Logger.error("Postgres Clusters failed to start", errors: errors)
       {:error, errors}
     end
   end
@@ -43,7 +44,7 @@ defmodule KubeBootstrap.Postgres do
                  false
              end,
              eval: true,
-             timeout: 180
+             timeout: 300
            ) do
       {:ok, cluster}
     end
