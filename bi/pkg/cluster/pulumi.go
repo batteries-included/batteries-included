@@ -3,6 +3,7 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"os/user"
 	"path"
@@ -178,6 +179,15 @@ func (p *pulumiProvider) Destroy(ctx context.Context) error {
 	eks := eks.New(p.toEKSConfig())
 
 	return eks.Destroy(ctx)
+}
+
+func (p *pulumiProvider) Outputs(ctx context.Context, out io.Writer) error {
+	if !p.initSuccessful {
+		return fmt.Errorf("attempted to destroy with uninitialized provider")
+	}
+	eks := eks.New(p.toEKSConfig())
+
+	return eks.Outputs(ctx, out)
 }
 
 func (p *pulumiProvider) toEKSConfig() *eks.Config {

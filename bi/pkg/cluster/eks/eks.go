@@ -3,7 +3,9 @@ package eks
 import (
 	"bi/pkg/cluster/util"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path"
 
@@ -176,6 +178,43 @@ func (e *eks) Destroy(ctx context.Context) error {
 
 	// TODO(jdt): do a final destroy on a new stack that cleans up any dangling
 	// resources (looking at you karpenter!)
+
+	return nil
+}
+
+func (e *eks) Outputs(ctx context.Context, out io.Writer) error {
+	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
+	if err != nil {
+		return err
+	}
+
+	e.pConfig = pConfig
+
+	for _, cmpnt := range components {
+		stack, err := e.createStack(ctx, cmpnt.name, cmpnt.run)
+		if err != nil {
+			return err
+		}
+
+		if err := e.configure(ctx, stack, cmpnt); err != nil {
+			return err
+		}
+
+		out, err := stack.Outputs(ctx)
+		if err != nil {
+			return err
+		}
+		e.outputs[cmpnt.name] = out
+	}
+
+	outputs, err := json.Marshal(e.outputs)
+	if err != nil {
+		return err
+	}
+	_, err = out.Write(outputs)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
