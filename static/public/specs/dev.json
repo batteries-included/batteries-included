@@ -5,7 +5,6 @@
   "target_summary": {
     "id": null,
     "notebooks": [],
-    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -98,6 +97,7 @@
         "updated_at": null
       }
     ],
+    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -124,7 +124,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "4PNPQHAN5QLHMVAMEVDURBOW",
+            "password": "TYR6HJPZX7DFLJHLHPTSOQNR",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

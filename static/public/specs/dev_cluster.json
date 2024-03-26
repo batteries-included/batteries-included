@@ -1,11 +1,10 @@
 {
   "kube_cluster": {
-    "provider": "provided"
+    "provider": "aws"
   },
   "target_summary": {
     "id": null,
     "notebooks": [],
-    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -82,6 +81,7 @@
         "updated_at": null
       }
     ],
+    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -108,7 +108,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "M2FYBR4ICGW7SS2OKK47IFWC",
+            "password": "CIPEMF3JVXL3GD2WOU7TIFM3",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

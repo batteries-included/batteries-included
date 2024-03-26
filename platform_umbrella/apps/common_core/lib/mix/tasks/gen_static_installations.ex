@@ -39,9 +39,9 @@ defmodule Mix.Tasks.Gen.Static.Installations do
 
   def installation(:dev), do: build_installation(%{provider: :kind}, SeedState.seed(:dev))
 
-  def installation(:integration_test), do: build_installation(%{provider: :kind}, SeedState.seed(:integration_test))
+  def installation(:dev_cluster), do: build_installation(%{provider: :aws}, SeedState.seed(:eks))
 
-  def installation(:dev_cluster), do: build_installation(%{provider: :provided}, SeedState.seed(:eks))
+  def installation(:integration_test), do: build_installation(%{provider: :kind}, SeedState.seed(:integration_test))
 
   def build_installation(kube_cluster, summary) do
     InstallSpec.new(
