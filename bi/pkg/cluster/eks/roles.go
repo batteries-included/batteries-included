@@ -54,6 +54,9 @@ func (l *rolesConfig) run(ctx *pulumi.Context) error {
 		}
 	}
 
+	ctx.Export("karpenterServiceRoleARN", l.roles["karpenterService"].Arn)
+	ctx.Export("lbControllerRoleARN", l.roles["lbController"].Arn)
+
 	return nil
 }
 

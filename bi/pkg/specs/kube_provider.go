@@ -1,10 +1,16 @@
 package specs
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
+	"os"
 
+	"bi/pkg/cluster"
 	"bi/pkg/docker"
 	"bi/pkg/local"
+
+	"github.com/adrg/xdg"
 )
 
 func (spec *InstallSpec) StartKubeProvider() error {
@@ -15,12 +21,13 @@ func (spec *InstallSpec) StartKubeProvider() error {
 		err = spec.startLocal()
 	case "aws":
 		err = spec.startAws()
+	case "provided":
+	default:
+		slog.Debug("unexpected provider", slog.String("provider", spec.KubeCluster.Provider))
+		err = fmt.Errorf("unknown provider")
 	}
 
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (spec *InstallSpec) StopKubeProvider() error {
@@ -30,12 +37,10 @@ func (spec *InstallSpec) StopKubeProvider() error {
 	case "kind":
 		err = spec.stopLocal()
 	case "aws":
+	case "provided":
 	}
 
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (spec *InstallSpec) startLocal() error {
@@ -75,6 +80,31 @@ func (spec *InstallSpec) stopLocal() error {
 
 func (spec *InstallSpec) startAws() error {
 	slog.Debug("Starting aws cluster")
-	// TODO: Hook this up with pulumi that Jason wrote
+	ctx := context.Background()
+
+	p := cluster.NewPulumiProvider()
+	if err := p.Init(ctx); err != nil {
+		return err
+	}
+
+	if err := p.Create(ctx); err != nil {
+		return err
+	}
+
+	out, err := xdg.RuntimeFile("bi/outputs.json")
+	if err != nil {
+		return err
+	}
+
+	f, err := os.OpenFile(out, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0o700)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if err := p.Outputs(ctx, f); err != nil {
+		return err
+	}
+
 	return nil
 }
