@@ -1,11 +1,12 @@
 package eks
 
 import (
-	"bi/pkg/cluster/util"
 	"encoding/json"
 	"fmt"
 	"maps"
 	"strconv"
+
+	"bi/pkg/cluster/util"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/cloudwatch"

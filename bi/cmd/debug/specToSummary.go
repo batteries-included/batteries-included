@@ -4,10 +4,11 @@ Copyright © 2024 Batteries Inluded <elliott@batteriesincl.com>
 package debug
 
 import (
-	"bi/pkg/specs"
+	"encoding/json"
 	"fmt"
 	"log/slog"
-	"os"
+
+	"bi/pkg/specs"
 
 	"github.com/spf13/cobra"
 )
@@ -23,14 +24,14 @@ var specToSummaryCmd = &cobra.Command{
 		spec, err := specs.GetSpecFromURL(args[0])
 		cobra.CheckErr(err)
 
-		contents, err := spec.TargetSummary.UnmarshalJSON()
-		cobra.CheckErr(err)
-
 		if writeStateSummaryPath != "" {
 			slog.Debug("Writing state summary to", slog.String("path", writeStateSummaryPath))
-			err = os.WriteFile(writeStateSummaryPath, contents, 0644)
+			err = spec.WriteStateSummary(writeStateSummaryPath)
 			cobra.CheckErr(err)
 		} else {
+			contents, err := json.Marshal(spec.TargetSummary)
+			cobra.CheckErr(err)
+
 			fmt.Print(contents)
 		}
 	},

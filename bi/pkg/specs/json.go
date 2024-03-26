@@ -34,11 +34,3 @@ func UnmarshalJSON(data []byte) (InstallSpec, error) {
 
 	return aux, nil
 }
-
-func (s *InstallSpec) MarshalJSON() ([]byte, error) {
-	return json.Marshal(s)
-}
-
-func (s *StateSummarySpec) UnmarshalJSON() ([]byte, error) {
-	return json.Marshal(s)
-}

@@ -1,12 +1,13 @@
 package specs
 
 import (
+	"encoding/json"
 	"log/slog"
 	"os"
 )
 
 func (spec *InstallSpec) WriteStateSummary(path string) error {
-	contents, err := spec.TargetSummary.UnmarshalJSON()
+	contents, err := json.Marshal(spec.TargetSummary)
 	if err != nil {
 		return err
 	}

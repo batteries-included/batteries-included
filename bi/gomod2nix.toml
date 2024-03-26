@@ -164,8 +164,8 @@ schema = 3
     version = "v1.0.0"
     hash = "sha256-xsRCmYyBfglMxeWUvTZqkaRLSW+V2FvNodEDjTGg1WA="
   [mod."github.com/hashicorp/hcl/v2"]
-    version = "v2.20.0"
-    hash = "sha256-SXGawRaK0HrnZURmhh8jds3xNOy3I5f97yThbeL41BU="
+    version = "v2.20.1"
+    hash = "sha256-Uqg+r9sEEWf1af7iig07cRcySEwkswjg9TXN7VrgIh4="
   [mod."github.com/imdario/mergo"]
     version = "v0.3.16"
     hash = "sha256-gh2TEAq8YrZOEAf6SFW4AIcEEUguD68G+7/VUnBeWwM="
@@ -313,9 +313,6 @@ schema = 3
   [mod."github.com/pulumi/pulumi-cloudinit/sdk"]
     version = "v1.4.1"
     hash = "sha256-DLWzI7MFP2tU+ry++6OB23JOtQBDji1KekR90rdEXwc="
-  [mod."github.com/pulumi/pulumi-kubernetes/sdk/v4"]
-    version = "v4.9.1"
-    hash = "sha256-gxMAzSa5fb40rZOTTkFopUQKJ0IS181DfS40RxSHCgQ="
   [mod."github.com/pulumi/pulumi/sdk/v3"]
     version = "v3.111.1"
     hash = "sha256-Z5v+l+XJ2914Wo0VuP28KmdmXj6XvRMEOIl1LNigpPc="
@@ -380,8 +377,8 @@ schema = 3
     version = "v0.3.3"
     hash = "sha256-l3pGB6IdzcPA/HLk93sSN6NM2pKPy+bVOoacR5RC2+c="
   [mod."github.com/zclconf/go-cty"]
-    version = "v1.14.3"
-    hash = "sha256-v5eTB5/lweAxQPYffQ5qy3ds5J6PzdXYWEoV6n8VplY="
+    version = "v1.14.4"
+    hash = "sha256-Pc54uTUUxMTROex41VWFYu6pAqUxCDACAuDdMMwiW1g="
   [mod."go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"]
     version = "v0.49.0"
     hash = "sha256-1/7YxtXZM4i75rXXIO6UN4CTY93nE/v2k2htS0uUOVg="
@@ -410,8 +407,8 @@ schema = 3
     version = "v0.21.0"
     hash = "sha256-Z4k1LvFh4Jai7HUe6TTuXSG3VnuiRpMwdARIdZZqSYk="
   [mod."golang.org/x/exp"]
-    version = "v0.0.0-20240318143956-a85f2c67cd81"
-    hash = "sha256-HjEmpjgXqIuGc5rsTVkg6OPAN2fGhfkska7cwRu1qaw="
+    version = "v0.0.0-20240325151524-a685a6edb6d8"
+    hash = "sha256-bYUSDnC/XOij85mLaW3bWD+2xRxby7ezXOvaPJ2e0lQ="
   [mod."golang.org/x/mod"]
     version = "v0.16.0"
     hash = "sha256-aN1Cz5Wqd9YCjK8nFW6JWn+n1HfFoEcgYZmGO/FYtbw="
@@ -452,7 +449,7 @@ schema = 3
     version = "v1.6.8"
     hash = "sha256-decMa0MiWfW/Bzr8QPPzzpeya0YWGHhZAt4Cr/bD1wQ="
   [mod."google.golang.org/genproto/googleapis/rpc"]
-    version = "v0.0.0-20240318140521-94a12d6c2237"
+    version = "v0.0.0-20240325203815-454cdb8f5daa"
     hash = "sha256-P5SBku16dYnK4koUQxTeGwPxAAWH8rxbDm2pOzFLo/Q="
   [mod."google.golang.org/grpc"]
     version = "v1.62.1"
@@ -494,7 +491,7 @@ schema = 3
     version = "v2.120.1"
     hash = "sha256-PU3q5ODCHEO8z//zUKsCq2tky6ZNx4xFl3nHSPJpuW8="
   [mod."k8s.io/kube-openapi"]
-    version = "v0.0.0-20240228011516-70dd3763d340"
+    version = "v0.0.0-20240322212309-b815d8309940"
     hash = "sha256-2BUbi2eNJFSTcmLyVYBYBe9Lhi0TVJoH2zVQlQ9eZIA="
   [mod."k8s.io/utils"]
     version = "v0.0.0-20240310230437-4693a0247e57"

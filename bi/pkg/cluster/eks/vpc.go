@@ -1,10 +1,11 @@
 package eks
 
 import (
-	"bi/pkg/cluster/util"
 	"fmt"
 	"net"
 	"slices"
+
+	"bi/pkg/cluster/util"
 
 	"github.com/apparentlymart/go-cidr/cidr"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"

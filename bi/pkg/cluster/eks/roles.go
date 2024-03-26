@@ -1,8 +1,9 @@
 package eks
 
 import (
-	"bi/pkg/cluster/util"
 	"fmt"
+
+	"bi/pkg/cluster/util"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"

@@ -1,13 +1,14 @@
 package eks
 
 import (
-	"bi/pkg/cluster/util"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path"
+
+	"bi/pkg/cluster/util"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto/optdestroy"

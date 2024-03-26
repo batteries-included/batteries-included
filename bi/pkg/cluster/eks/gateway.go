@@ -1,10 +1,11 @@
 package eks
 
 import (
-	"bi/pkg/cluster/util"
 	"encoding/json"
 	"fmt"
 	"net"
+
+	"bi/pkg/cluster/util"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
