@@ -42,6 +42,8 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - name: Set up dev shell
         run: nix develop --command bash -c 'exit 0'
+      - name: Start Kind
+        run: nix develop --command bash -c "bi -v=debug kind start"
       - name: Run integration tests
         run: nix develop --command bash -c "TRACE=1 bix int-test"
       - name: Run integration tests
