@@ -15,17 +15,26 @@ var outputsCmd = &cobra.Command{
 	Long:  `Get outputs for cluster created on AWS EKS.`,
 	Args:  cobra.MatchAll(cobra.OnlyValidArgs, cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
-		f, err := os.OpenFile(args[0], os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
-		cobra.CheckErr(err)
-		defer f.Close()
+		// assume output to stdout
+		out := os.Stdout
+
+		outArg := args[0]
+
+		// use file for output if requested
+		if outArg != "-" {
+			f, err := os.OpenFile(outArg, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
+			cobra.CheckErr(err)
+			defer f.Close()
+			out = f
+		}
 
 		p := cluster.NewPulumiProvider()
 		ctx := context.Background()
 
-		err = p.Init(ctx)
+		err := p.Init(ctx)
 		cobra.CheckErr(err)
 
-		err = p.Outputs(ctx, f)
+		err = p.Outputs(ctx, out)
 		cobra.CheckErr(err)
 	},
 }
