@@ -3,7 +3,7 @@ defmodule CommonUI.Components.InputTest do
 
   import CommonUI.Components.Input
 
-  describe "text input component" do
+  describe "input component" do
     component_snapshot_test "default" do
       assigns = %{}
 
@@ -20,7 +20,7 @@ defmodule CommonUI.Components.InputTest do
       """
     end
 
-    component_snapshot_test "with error" do
+    component_snapshot_test "with placeholder and error" do
       assigns = %{}
 
       ~H"""
@@ -29,7 +29,7 @@ defmodule CommonUI.Components.InputTest do
     end
   end
 
-  describe "textarea component" do
+  describe "textarea input component" do
     component_snapshot_test "default" do
       assigns = %{}
 
@@ -38,7 +38,7 @@ defmodule CommonUI.Components.InputTest do
       """
     end
 
-    component_snapshot_test "with error" do
+    component_snapshot_test "with placeholder and error" do
       assigns = %{}
 
       ~H"""
@@ -47,7 +47,7 @@ defmodule CommonUI.Components.InputTest do
     end
   end
 
-  describe "select component" do
+  describe "select input component" do
     component_snapshot_test "default" do
       assigns = %{}
 
@@ -71,7 +71,7 @@ defmodule CommonUI.Components.InputTest do
       """
     end
 
-    component_snapshot_test "with error" do
+    component_snapshot_test "with placeholder and error" do
       assigns = %{}
 
       ~H"""
@@ -86,5 +86,55 @@ defmodule CommonUI.Components.InputTest do
       />
       """
     end
+  end
+
+  describe "checkbox input component" do
+    component_snapshot_test "default" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="checkbox" name="foo" label="Foobar" checked />
+      """
+    end
+
+    component_snapshot_test "with error" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="checkbox" name="foo" label="Foobar" checked errors={["Oh no"]} />
+      """
+    end
+  end
+
+  describe "radio input component" do
+    component_snapshot_test "default" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="radio" name="foobar" value="foo">
+        <:option value="foo">Foo</:option>
+        <:option value="bar">Bar</:option>
+      </.input>
+      """
+    end
+
+    component_snapshot_test "with error" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="radio" name="foobar" value="foo" errors={["Oh no"]}>
+        <:option value="foo">Foo</:option>
+        <:option value="bar">Bar</:option>
+      </.input>
+      """
+    end
+  end
+
+  component_snapshot_test "hidden input component" do
+    assigns = %{}
+
+    ~H"""
+    <.input type="hidden" name="foo" value="bar" />
+    """
   end
 end

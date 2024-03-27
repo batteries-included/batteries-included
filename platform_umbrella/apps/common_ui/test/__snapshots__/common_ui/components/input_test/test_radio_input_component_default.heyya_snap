@@ -1,0 +1,19 @@
+<div class="contents">
+  <div phx-feedback-for="foobar" class="flex flex-wrap items-center gap-x-6 ">
+    <label class="inline-flex items-center gap-2 cursor-pointer ">
+      <input type="radio" name="foobar" value="foo" checked class="size-5 text-primary rounded-full cursor-pointer checked:border-primary checked:hover:border-primary border-gray-lighter hover:border-primary">
+
+      <span class="text-sm text-gray-darkest dark:text-gray-lighter">
+        Foo
+      </span>
+    </label><label class="inline-flex items-center gap-2 cursor-pointer ">
+      <input type="radio" name="foobar" value="bar" class="size-5 text-primary rounded-full cursor-pointer checked:border-primary checked:hover:border-primary border-gray-lighter hover:border-primary">
+
+      <span class="text-sm text-gray-darkest dark:text-gray-lighter">
+        Bar
+      </span>
+    </label>
+  </div>
+
+  
+</div>

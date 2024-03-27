@@ -4,10 +4,12 @@ defmodule CommonUI.Components.Input do
 
   import CommonUI.Components.Icon
   import CommonUI.ErrorHelpers
+  import Phoenix.HTML
   import Phoenix.HTML.Form
 
   attr :name, :any
   attr :value, :any
+  attr :checked, :boolean
   attr :field, Phoenix.HTML.FormField
   attr :errors, :list, default: []
   attr :force_feedback, :boolean, default: false
@@ -21,12 +23,19 @@ defmodule CommonUI.Components.Input do
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(autocomplete autofocus maxlength disabled required)
 
+  # Used for radio buttons
+  slot :option do
+    attr :value, :string, required: true
+    attr :class, :any
+  end
+
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
+    |> assign_new(:checked, fn %{value: value} -> html_escape(value) == html_escape("true") end)
     |> input()
   end
 
@@ -56,6 +65,72 @@ defmodule CommonUI.Components.Input do
 
       <.error errors={@errors} />
     </label>
+    """
+  end
+
+  def input(%{type: "checkbox"} = assigns) do
+    ~H"""
+    <div class="contents">
+      <label
+        phx-feedback-for={if !@force_feedback, do: @name}
+        class={["flex items-center gap-x-2 cursor-pointer", @class]}
+      >
+        <input type="hidden" name={@name} value="false" />
+        <input
+          name={@name}
+          type="checkbox"
+          value="true"
+          checked={@checked}
+          class={[
+            "size-5 text-primary rounded cursor-pointer",
+            "checked:border-primary checked:hover:border-primary",
+            @errors == [] && "border-gray-lighter hover:border-primary",
+            @errors != [] && "phx-feedback:border-error phx-feedback:bg-error-light"
+          ]}
+        />
+
+        <span class={label_class()}>
+          <%= @label %>
+        </span>
+      </label>
+
+      <.error errors={@errors} class="mt-0" />
+    </div>
+    """
+  end
+
+  def input(%{type: "radio"} = assigns) do
+    ~H"""
+    <div class="contents">
+      <div
+        phx-feedback-for={if !@force_feedback, do: @name}
+        class={["flex flex-wrap items-center gap-x-6", @class]}
+      >
+        <label
+          :for={option <- @option}
+          class={["inline-flex items-center gap-2 cursor-pointer", Map.get(option, :class)]}
+        >
+          <input
+            type="radio"
+            name={@name}
+            value={option.value}
+            checked={to_string(@value) == to_string(option.value)}
+            class={[
+              "size-5 text-primary rounded-full cursor-pointer",
+              "checked:border-primary checked:hover:border-primary",
+              @errors == [] && "border-gray-lighter hover:border-primary",
+              @errors != [] && "phx-feedback:border-error phx-feedback:bg-error-light"
+            ]}
+          />
+
+          <span class={label_class()}>
+            <%= render_slot(option) %>
+          </span>
+        </label>
+      </div>
+
+      <.error errors={@errors} class="mt-0" />
+    </div>
     """
   end
 
@@ -142,23 +217,34 @@ defmodule CommonUI.Components.Input do
 
   attr :label, :string, default: nil
   attr :note, :string, default: nil
+  attr :class, :any, default: "mb-2"
 
   defp label(assigns) do
     ~H"""
-    <div class="flex items-center gap-4 mb-2 text-sm text-gray-darkest dark:text-gray-lighter">
+    <div class={[
+      "flex items-center gap-4",
+      label_class(),
+      @class
+    ]}>
       <span :if={@label}><%= @label %></span>
       <span :if={@note} class="text-xs text-gray-light"><%= @note %></span>
     </div>
     """
   end
 
+  defp label_class, do: "text-sm text-gray-darkest dark:text-gray-lighter"
+
   attr :errors, :list, default: []
+  attr :class, :any, default: "mt-2"
 
   defp error(assigns) do
     ~H"""
     <div
       :for={error <- @errors}
-      class="flex items-center gap-2 text-xs text-error font-semibold mt-2 phx-no-feedback:hidden"
+      class={[
+        "flex items-center gap-2 text-xs text-error font-semibold phx-no-feedback:hidden",
+        @class
+      ]}
     >
       <.icon name={:exclamation_circle} mini class="size-4 fill-error" />
       <span><%= error %></span>

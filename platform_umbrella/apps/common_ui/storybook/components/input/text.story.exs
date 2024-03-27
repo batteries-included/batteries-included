@@ -1,22 +1,14 @@
-defmodule Storybook.Components.Input do
+defmodule Storybook.Components.Input.Text do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Components.Input.input/1
   def container, do: {:div, class: "w-full"}
 
-  def template do
-    """
-    <div class="m-5" psb-code-hidden>
-      <.psb-variation />
-    </div>
-    """
-  end
-
   def variations do
     [
       %Variation{
-        id: :default,
+        id: :text,
         attributes: %{
           name: "foobar",
           value: "",
@@ -34,16 +26,6 @@ defmodule Storybook.Components.Input do
         }
       },
       %Variation{
-        id: :with_error,
-        attributes: %{
-          name: "foobar",
-          value: "",
-          label: "Label",
-          errors: ["Something went wrong"],
-          force_feedback: true
-        }
-      },
-      %Variation{
         id: :textarea,
         attributes: %{
           type: "textarea",
@@ -54,26 +36,13 @@ defmodule Storybook.Components.Input do
         }
       },
       %Variation{
-        id: :select,
+        id: :with_error,
         attributes: %{
-          type: "select",
           name: "foobar",
           value: "",
           label: "Label",
-          placeholder: "Choose an option",
-          options: [Foo: "foo", Bar: "bar"]
-        }
-      },
-      %Variation{
-        id: :select_multiple,
-        attributes: %{
-          type: "select",
-          name: "foobar",
-          value: "",
-          label: "Label",
-          note: "Hold down control or command to select multiple",
-          options: [Foo: "foo", Bar: "bar"],
-          multiple: true
+          errors: ["Something went wrong"],
+          force_feedback: true
         }
       }
     ]
