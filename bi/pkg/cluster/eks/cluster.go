@@ -75,7 +75,7 @@ func (c *clusterConfig) withConfig(cfg *util.PulumiConfig) error {
 
 func (c *clusterConfig) withOutputs(outputs map[string]auto.OutputMap) error {
 	c.vpcID = outputs["vpc"]["vpcID"].Value.(string)
-	c.gatewaySecurityGroupID = outputs["gateway"]["gatewaySecurityGroupID"].Value.(string)
+	c.gatewaySecurityGroupID = outputs["gateway"]["securityGroupID"].Value.(string)
 	c.publicSubnetIDs = util.ToStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
 	c.privateSubnetIDs = util.ToStringSlice(outputs["vpc"]["privateSubnetIDs"].Value)
 

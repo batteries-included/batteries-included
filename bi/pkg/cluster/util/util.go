@@ -70,7 +70,6 @@ type cluster struct {
 type gateway struct {
 	// CIDRBlock is the cidr to use for the wireguard networks e.g. 100.64.250.0/24
 	CIDRBlock *net.IPNet
-	// NOTE(jdt): this isn't implemented currently
 	// GenerateKey determines whether an SSH key is created and used
 	GenerateKey bool
 	// InstanceType is the type of instance to use for the wireguard bastion
