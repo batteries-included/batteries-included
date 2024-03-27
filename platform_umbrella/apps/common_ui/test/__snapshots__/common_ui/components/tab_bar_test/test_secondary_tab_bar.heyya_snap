@@ -1,0 +1,15 @@
+<div aria-label="Tabs" class="bg-gray-lightest dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint flex rounded-lg font-semibold text-sm text-gray-darkest dark:text-gray">
+  
+    <a href="#" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
+      Foo
+    </a>
+  
+    <a href="#" class="bg-white dark:bg-gray-darker text-primary ring-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
+      Bar
+    </a>
+  
+    <a href="#" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
+      Baz
+    </a>
+  
+</div>

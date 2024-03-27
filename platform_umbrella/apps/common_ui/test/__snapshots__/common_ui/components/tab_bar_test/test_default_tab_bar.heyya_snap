@@ -1,0 +1,11 @@
+<div aria-label="Tabs" class="bg-white dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint flex rounded-lg font-semibold text-sm text-gray-darkest dark:text-gray">
+  
+    <a href="#" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1" phx-click="test">
+      Title
+    </a>
+  
+    <a href="/second_path" data-phx-link="patch" data-phx-link-state="push" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
+      Another Title
+    </a>
+  
+</div>

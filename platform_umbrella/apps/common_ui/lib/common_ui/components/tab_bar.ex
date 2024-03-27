@@ -25,16 +25,74 @@ defmodule CommonUI.Components.TabBar do
     """
   end
 
-  defp tab_bar_class("primary"), do: tab_bar_class() <> " bg-white border border-gray-lighter"
-  defp tab_bar_class("secondary"), do: tab_bar_class() <> " bg-gray-lightest border border-gray-lighter"
-  defp tab_bar_class("borderless"), do: tab_bar_class() <> " bg-white p-1"
-  defp tab_bar_class, do: "flex rounded-lg font-semibold text-sm text-gray-darkest"
+  defp tab_bar_class("primary") do
+    [
+      "bg-white dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint",
+      tab_bar_class()
+    ]
+  end
 
-  defp tab_class("primary", true), do: tab_class() <> " text-white bg-primary ring-primary"
-  defp tab_class("primary", false), do: tab_class() <> " ring-transparent hover:text-primary"
-  defp tab_class("secondary", true), do: tab_class() <> " bg-white text-primary ring-primary"
-  defp tab_class("secondary", false), do: tab_class() <> " ring-transparent hover:text-primary"
-  defp tab_class("borderless", true), do: tab_class() <> " text-white bg-primary ring-primary"
-  defp tab_class("borderless", false), do: tab_class() <> " ring-transparent hover:text-primary"
-  defp tab_class, do: "flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1"
+  defp tab_bar_class("secondary") do
+    [
+      "bg-gray-lightest dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint",
+      tab_bar_class()
+    ]
+  end
+
+  defp tab_bar_class("borderless") do
+    [
+      "bg-white dark:bg-gray-darkest-tint p-1",
+      tab_bar_class()
+    ]
+  end
+
+  defp tab_bar_class do
+    "flex rounded-lg font-semibold text-sm text-gray-darkest dark:text-gray"
+  end
+
+  defp tab_class("primary", true) do
+    [
+      "text-white bg-primary ring-primary",
+      tab_class()
+    ]
+  end
+
+  defp tab_class("primary", false) do
+    [
+      "ring-transparent hover:text-primary",
+      tab_class()
+    ]
+  end
+
+  defp tab_class("secondary", true) do
+    [
+      "bg-white dark:bg-gray-darker text-primary ring-primary",
+      tab_class()
+    ]
+  end
+
+  defp tab_class("secondary", false) do
+    [
+      "ring-transparent hover:text-primary",
+      tab_class()
+    ]
+  end
+
+  defp tab_class("borderless", true) do
+    [
+      "text-white bg-primary ring-primary",
+      tab_class()
+    ]
+  end
+
+  defp tab_class("borderless", false) do
+    [
+      "ring-transparent hover:text-primary",
+      tab_class()
+    ]
+  end
+
+  defp tab_class do
+    "flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1"
+  end
 end
