@@ -189,13 +189,8 @@
             };
 
             bootstrap = {
-              description = "
-              Bootstrap
-              the
-              dev
-              environment ";
-              category = "
-              fullstack ";
+              description = "Bootstrap the dev environment";
+              category = "fullstack";
               exec = ''
                 ${builtins.readFile ./scripts/common-functions.sh}
                 do_bootstrap "$@"
