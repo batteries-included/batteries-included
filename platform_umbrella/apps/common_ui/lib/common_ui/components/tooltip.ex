@@ -43,8 +43,8 @@ defmodule CommonUI.Components.Tooltip do
     assigns = IDHelpers.provide_id(assigns)
 
     ~H"""
-    <div :if={@inner_block != nil && @inner_block != []} class={["cursor-pointer", @class]} id={@id}>
-      <.icon name={:question_mark_circle} class="w-6 h-auto" />
+    <div :if={@inner_block != nil && @inner_block != []} class={@class}>
+      <.icon name={:question_mark_circle} id={@id} class="w-6 h-auto" />
       <.tooltip target_id={@id}>
         <%= render_slot(@inner_block) %>
       </.tooltip>
