@@ -31,7 +31,7 @@ defmodule CommonUI do
       import CommonUI.Components.DataList
       import CommonUI.Components.DatetimeDisplay
       import CommonUI.Components.Flash
-      import CommonUI.Components.Form, only: [simple_form: 1, switch: 1]
+      import CommonUI.Components.Form
       import CommonUI.Components.Icon
       import CommonUI.Components.Input
       import CommonUI.Components.Link

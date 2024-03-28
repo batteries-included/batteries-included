@@ -35,7 +35,9 @@ defmodule CommonUI.Components.Input do
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
-    |> assign_new(:checked, fn %{value: value} -> html_escape(value) == html_escape("true") end)
+    |> assign_new(:checked, fn %{value: value} ->
+      !Enum.any?(["false", "off", nil], &(html_escape(&1) == html_escape(value)))
+    end)
     |> input()
   end
 
@@ -77,8 +79,8 @@ defmodule CommonUI.Components.Input do
       >
         <input type="hidden" name={@name} value="false" />
         <input
-          name={@name}
           type="checkbox"
+          name={@name}
           value="true"
           checked={@checked}
           class={[
@@ -134,6 +136,40 @@ defmodule CommonUI.Components.Input do
     """
   end
 
+  def input(%{type: "switch"} = assigns) do
+    ~H"""
+    <div class="contents">
+      <label
+        phx-feedback-for={if !@force_feedback, do: @name}
+        class={["inline-flex items-center justify-between gap-2 cursor-pointer select-none", @class]}
+      >
+        <span class={label_class()}><%= @label %></span>
+
+        <div>
+          <input
+            type="checkbox"
+            name={@name}
+            value={@value}
+            checked={@checked}
+            class="peer sr-only"
+            {@rest}
+          />
+
+          <div class={[
+            "relative w-[44px] h-[24px] rounded-full bg-gray-lightest border border-gray-lighter hover:border-primary",
+            "dark:bg-gray-darkest-tint dark:border-gray-darker dark:hover:border-gray-dark",
+            "after:content-[''] after:absolute after:top-[3px] after:start-[3px] after:w-[16px] after:h-[16px]",
+            "after:rounded-full after:bg-gray after:transition-all",
+            "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary"
+          ]} />
+        </div>
+      </label>
+
+      <.error errors={@errors} class="mt-0" />
+    </div>
+    """
+  end
+
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
@@ -157,8 +193,8 @@ defmodule CommonUI.Components.Input do
   def input(%{type: "hidden"} = assigns) do
     ~H"""
     <input
-      name={@name}
       type="hidden"
+      name={@name}
       value={normalize_value(@type, @value)}
       class={[input_class(@errors), @class]}
       {@rest}
@@ -173,10 +209,10 @@ defmodule CommonUI.Components.Input do
 
       <div class="relative">
         <input
-          name={@name}
           type={@type}
-          placeholder={@placeholder}
+          name={@name}
           value={normalize_value(@type, @value)}
+          placeholder={@placeholder}
           class={[
             input_class(@errors),
             @class

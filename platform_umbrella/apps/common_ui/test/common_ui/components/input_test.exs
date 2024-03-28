@@ -130,6 +130,24 @@ defmodule CommonUI.Components.InputTest do
     end
   end
 
+  describe "switch input component" do
+    component_snapshot_test "default" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="switch" name="foo" value="bar" label="Foobar" checked />
+      """
+    end
+
+    component_snapshot_test "with error" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="switch" name="foo" value="bar" label="Foobar" checked errors={["Oh no"]} />
+      """
+    end
+  end
+
   component_snapshot_test "hidden input component" do
     assigns = %{}
 

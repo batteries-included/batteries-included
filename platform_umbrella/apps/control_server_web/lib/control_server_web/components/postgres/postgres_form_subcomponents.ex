@@ -115,7 +115,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       </div>
 
       <div>
-        <.switch name={@field.name <> "[]"} {@rest} />
+        <.input type="switch" name={@field.name <> "[]"} {@rest} />
       </div>
     </div>
     """

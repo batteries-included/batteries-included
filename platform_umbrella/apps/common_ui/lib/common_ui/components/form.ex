@@ -81,20 +81,4 @@ defmodule CommonUI.Components.Form do
     </.form>
     """
   end
-
-  attr :label, :string, default: nil
-  attr :rest, :global, include: ~w(name value)
-
-  def switch(assigns) do
-    ~H"""
-    <label class="relative inline-flex items-center mb-4 cursor-pointer">
-      <input type="checkbox" {@rest} class="sr-only peer" />
-      <div class="dark:peer-focus:ring-primary after:peer-checked:bg-primary h-[24px] w-[42px] rounded-full border border-gray-light bg-white after:absolute after:left-[5px] after:top-1 after:h-[16px] after:w-[16px] after:rounded-full after:border-none after:bg-gray-dark dark:after:bg-gray after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-none dark:border-gray-darker dark:bg-gray-darkest">
-      </div>
-      <span :if={@label} class="ml-3 text-sm font-medium text-gray-darkest dark:text-gray-light">
-        <%= @label %>
-      </span>
-    </label>
-    """
-  end
 end
