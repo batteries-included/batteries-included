@@ -246,7 +246,7 @@ func (e *eks) createStack(ctx context.Context, name string, prog pulumi.RunFunc)
 		return s, fmt.Errorf("failed to create workspace: %w", err)
 	}
 
-	stackName := auto.FullyQualifiedStackName("organization", projectName, "test") // TODO(cleanup):
+	stackName := auto.FullyQualifiedStackName("organization", projectName, "batteries-included")
 	s, err = auto.UpsertStack(ctx, stackName, ws)
 	if err != nil {
 		return s, fmt.Errorf("failed to create stack: %w", err)

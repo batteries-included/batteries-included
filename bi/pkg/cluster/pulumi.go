@@ -63,8 +63,7 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) {
 	p.projectName = "bi"
 
-	// TODO(cleanup):
-	stackName := auto.FullyQualifiedStackName("organization", p.projectName, "test")
+	stackName := auto.FullyQualifiedStackName("organization", p.projectName, "batteries-included")
 
 	tags, err := newTags(stackName)
 	if err != nil {
