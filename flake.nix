@@ -74,7 +74,7 @@
 
     # provides custom CLI - e.g. bi commands
     mission-control = {
-      url = "github:Platonic-Systems/mission-control";
+      url = "github:batteries-included/mission-control";
     };
   };
 
