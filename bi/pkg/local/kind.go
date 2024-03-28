@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	kindImage = "kindest/node:v1.26.14"
+	kindImage = "kindest/node:v1.29.2"
 )
 
 type KindClusterProvider struct {
