@@ -1,6 +1,5 @@
 [[ -z ${TRACE:-""} ]] || set -x
 
-PIDS=()
 TEMPDIRS=()
 
 function log() {
@@ -8,13 +7,22 @@ function log() {
 }
 
 function cleanup() {
-  trap - SIGINT EXIT
-  for pid in "${PIDS[@]}"; do
-    kill "$pid" >/dev/null 2>&1 || true
-  done
-
   for tempdir in "${TEMPDIRS[@]}"; do
     rm -rf "$tempdir" || true
+  done
+
+  for pid in $(pgrep -P $$); do
+    # This is kind of a kludge to get around sending
+    # a signal to the forked off bash, flock,
+    # and bi which is portforwarding
+    for child in $(pgrep -P "$pid"); do
+      log "Killing child $child"
+      pkill -P "$child" >/dev/null 2>&1 || true
+      kill "$child" >/dev/null 2>&1 || true
+    done
+
+    pkill -P "$pid" >/dev/null 2>&1 || true
+    kill "$pid" >/dev/null 2>&1 || true
   done
 
   local jobs
@@ -24,6 +32,8 @@ function cleanup() {
     log "Killing job $job"
     kill "$job" >/dev/null 2>&1 || true
   done
+
+  pkill -P $$ || true
 }
 
 trap cleanup EXIT SIGINT SIGTERM
@@ -144,10 +154,6 @@ function do_portforward_controlserver() {
   log "Starting port forwarder"
 
   try_portforward &
-  local pid=$!
-
-  # Add the pid to the list of PIDS
-  PIDS+=("$pid")
 }
 
 function do_setup_assets() {
