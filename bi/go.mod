@@ -10,9 +10,10 @@ require (
 	github.com/jsimonetti/rtnetlink v1.4.1
 	github.com/lmittmann/tint v1.0.4
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.27.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.28.1
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.1
-	github.com/pulumi/pulumi/sdk/v3 v3.111.1
+	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.1
+	github.com/pulumi/pulumi/sdk/v3 v3.112.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	golang.zx2c4.com/wireguard v0.0.0-20231211153847-12269c276173
@@ -43,7 +44,7 @@ require (
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/distribution/reference v0.5.0 // indirect
+	github.com/distribution/reference v0.6.0 // indirect
 	github.com/djherbis/times v1.6.0 // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
@@ -118,7 +119,6 @@ require (
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/esc v0.8.3 // indirect
-	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect

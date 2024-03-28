@@ -71,8 +71,8 @@ schema = 3
     version = "v1.0.0"
     hash = "sha256-CICjdzzUdWVTJVUgHFBPv5gA6TbNxY3kLDT61w24x64="
   [mod."github.com/distribution/reference"]
-    version = "v0.5.0"
-    hash = "sha256-nTlqurp/J/xOZeR0JcJMmE4GUHMMd5I+EOR7huzYuok="
+    version = "v0.6.0"
+    hash = "sha256-gr4tL+qz4jKyAtl8LINcxMSanztdt+pybj1T+2ulQv4="
   [mod."github.com/djherbis/times"]
     version = "v1.6.0"
     hash = "sha256-LCZkhiqVRkibnv9fqiCFQnoR0fNkxbHeulGkwia24Cg="
@@ -308,8 +308,8 @@ schema = 3
     version = "v0.8.3"
     hash = "sha256-Emy9ruI73P8dQJWaZOAKXihP/aobZq0kdZhMs5WlaRc="
   [mod."github.com/pulumi/pulumi-aws/sdk/v6"]
-    version = "v6.27.0"
-    hash = "sha256-cIpYnta/IbRt8PoHVf9WycpDMs8zs3mSLTdRc3S8d+k="
+    version = "v6.28.1"
+    hash = "sha256-UPuVyQWEuyUdDdTQocd/3d8j3uXrwcnfiNdydTMVsx4="
   [mod."github.com/pulumi/pulumi-cloudinit/sdk"]
     version = "v1.4.1"
     hash = "sha256-DLWzI7MFP2tU+ry++6OB23JOtQBDji1KekR90rdEXwc="
@@ -317,8 +317,8 @@ schema = 3
     version = "v5.0.1"
     hash = "sha256-lr342EmrGU7P/gFZ+C+YQW0Ao034Q7fzxBU0R+VTNtc="
   [mod."github.com/pulumi/pulumi/sdk/v3"]
-    version = "v3.111.1"
-    hash = "sha256-Z5v+l+XJ2914Wo0VuP28KmdmXj6XvRMEOIl1LNigpPc="
+    version = "v3.112.0"
+    hash = "sha256-Nr+e3tDxf86VZc1BtCGBJ904arpsml0agUL3zpbh98E="
   [mod."github.com/rivo/uniseg"]
     version = "v0.4.7"
     hash = "sha256-rDcdNYH6ZD8KouyyiZCUEy8JrjOQoAkxHBhugrfHjFo="

@@ -104,7 +104,6 @@
         kubernetes-helm
         podman
         flock
-        pulumi-bin
 
         skopeo # Use for pushing docker
         wireguard-tools
