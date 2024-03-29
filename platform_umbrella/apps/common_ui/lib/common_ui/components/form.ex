@@ -17,6 +17,7 @@ defmodule CommonUI.Components.Form do
           <.button variant="primary" type="submit">Save</.button>
         <:actions>
       </.simple_form>
+
   """
   attr :for, :any, default: nil, doc: "the datastructure for the form"
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
@@ -57,7 +58,7 @@ defmodule CommonUI.Components.Form do
 
   def simple_form(%{variant: "nested"} = assigns) do
     ~H"""
-    <div class={["grid grid-cols-1 md:grid-cols-2 gap-4", @class]}>
+    <div class={["grid grid-cols-1 gap-x-4 gap-y-6", @class]}>
       <%= render_slot(@inner_block) %>
     </div>
 

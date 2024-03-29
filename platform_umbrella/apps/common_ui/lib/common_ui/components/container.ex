@@ -4,6 +4,7 @@ defmodule CommonUI.Components.Container do
 
   @breakpoints ~w(sm md lg xl 2xl)
 
+  attr :variant, :string, values: ["col-2"]
   attr :columns, :any, default: %{"sm" => 1, "lg" => 2, "xl" => 2, "2xl" => 4}
   attr :gaps, :any, default: %{"sm" => 4, "lg" => 6}
   attr :class, :any, default: nil
@@ -165,6 +166,14 @@ defmodule CommonUI.Components.Container do
 
    The `class` attribute allows passing additional classes.
   """
+  def grid(%{variant: "col-2"} = assigns) do
+    assigns = Map.delete(assigns, :variant)
+
+    ~H"""
+    <.grid columns={%{sm: 1, lg: 2}} {assigns} />
+    """
+  end
+
   def grid(assigns) do
     ~H"""
     <div class={[column_class(@columns), gap_class(@gaps), "grid", @class]} {@rest}>

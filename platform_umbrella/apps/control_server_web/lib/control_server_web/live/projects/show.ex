@@ -41,7 +41,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
       </.flex>
     </.page_header>
 
-    <.grid columns={%{sm: 1, lg: 2}}>
+    <.grid variant="col-2">
       <.panel :if={@project.description} title="Project Description">
         <%= @project.description %>
       </.panel>
