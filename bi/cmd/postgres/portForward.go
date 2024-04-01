@@ -31,11 +31,15 @@ var portForwardCmd = &cobra.Command{
 		kubeConfigPath, err := cmd.Flags().GetString("kubeconfig")
 		cobra.CheckErr(err)
 
+		wireGuardConfigPath, err := cmd.Flags().GetString("wireguard-config")
+		cobra.CheckErr(err)
+
 		serviceType, err := cmd.Flags().GetString("service-type")
 		cobra.CheckErr(err)
 
-		kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath)
+		kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath)
 		cobra.CheckErr(err)
+		defer kubeClient.Close()
 
 		serviceName := fmt.Sprintf("pg-%s-%s", clusterName, serviceType)
 
@@ -74,6 +78,7 @@ var portForwardCmd = &cobra.Command{
 func init() {
 	postgresCmd.AddCommand(portForwardCmd)
 	cmdutil.AddKubeConfigFlag(portForwardCmd)
+	cmdutil.AddWireGuardConfigFlag(portForwardCmd)
 	portForwardCmd.PersistentFlags().StringP("namespace", "n", "battery-core", "The namespace to use")
 	portForwardCmd.Flags().StringP("service-type", "s", "rw", "which service to port forward to (r, rw, ro)")
 	portForwardCmd.Flags().IntP("local-port", "l", 5432, "The local port to forward to")

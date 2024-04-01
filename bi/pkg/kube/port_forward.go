@@ -39,7 +39,7 @@ func (kubeClient *batteryKubeClient) portForward(
 	stopChannel <-chan struct{},
 	readyChannel chan struct{}) (*portforward.PortForwarder, error) {
 
-	cfg := kubeClient.cfg
+	cfg := kubeClient.kubeConfig
 
 	url := kubeClient.client.CoreV1().
 		RESTClient().

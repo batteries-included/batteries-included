@@ -42,6 +42,9 @@ complete displaying a url for running control server.`,
 		kubeConfigPath, err := cmd.Flags().GetString("kubeconfig")
 		cobra.CheckErr(err)
 
+		wireGuardConfigPath, err := cmd.Flags().GetString("wireguard-config")
+		cobra.CheckErr(err)
+
 		writeStateSummaryPath, err := cmd.Flags().GetString("write-state-summary")
 		cobra.CheckErr(err)
 
@@ -50,7 +53,7 @@ complete displaying a url for running control server.`,
 			slog.String("kubeconfig", kubeConfigPath),
 			slog.String("writeStateSummary", writeStateSummaryPath))
 
-		err = start.StartInstall(installURL, kubeConfigPath, writeStateSummaryPath)
+		err = start.StartInstall(installURL, kubeConfigPath, wireGuardConfigPath, writeStateSummaryPath)
 		cobra.CheckErr(err)
 	},
 }
@@ -58,5 +61,6 @@ complete displaying a url for running control server.`,
 func init() {
 	RootCmd.AddCommand(startCmd)
 	cmdutil.AddKubeConfigFlag(startCmd)
+	cmdutil.AddWireGuardConfigFlag(startCmd)
 	startCmd.Flags().StringP("write-state-summary", "S", "", "Write a StateSummary that's used for bootstrapping")
 }

@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	kindImage = "kindest/node:v1.29.2"
+	KindImage = "kindest/node:v1.29.2"
 )
 
 type KindClusterProvider struct {
@@ -86,12 +86,12 @@ func (c *KindClusterProvider) EnsureStarted() error {
 	co := []cluster.CreateOption{
 		// We'll need to configure the cluster here
 		// if customers need to access the docker images.
-		cluster.CreateWithNodeImage(kindImage),
+		cluster.CreateWithNodeImage(KindImage),
 		cluster.CreateWithDisplayUsage(false),
 		cluster.CreateWithDisplaySalutation(false),
 	}
 
-	slog.Info("Creating kind cluster", "name", c.name, "image", kindImage)
+	slog.Info("Creating kind cluster", "name", c.name, "image", KindImage)
 	err = c.kindProvider.Create(c.name, co...)
 
 	if err != nil {

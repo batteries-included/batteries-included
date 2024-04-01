@@ -14,7 +14,7 @@ func (installSpec *InstallSpec) InitialSync(kubeClient kube.KubeClient) error {
 		for resourceName, resource := range installSpec.InitialResources {
 			slog.Debug("Ensuring resource exists in target kubernetes cluster",
 				slog.String("resourceName", resourceName))
-			err := kubeClient.EnsureReourceExists(resource)
+			err := kubeClient.EnsureResourceExists(resource)
 
 			if err != nil {
 				slog.Debug("Expected error while ensuring",

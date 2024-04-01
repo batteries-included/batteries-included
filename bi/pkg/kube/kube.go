@@ -1,8 +1,13 @@
 package kube
 
 import (
+	"fmt"
+	"io"
 	"log/slog"
+	"net/http"
 
+	"github.com/noisysockets/noisysockets"
+	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
 	cacheddiscovery "k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -10,10 +15,12 @@ import (
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/portforward"
+	"k8s.io/client-go/transport"
 )
 
 type KubeClient interface {
-	EnsureReourceExists(resource map[string]interface{}) error
+	io.Closer
+	EnsureResourceExists(resource map[string]interface{}) error
 	PortForwardService(
 		namespace string,
 		name string,
@@ -24,37 +31,101 @@ type KubeClient interface {
 }
 
 type batteryKubeClient struct {
-	cfg           *rest.Config
+	kubeConfig    *rest.Config
 	client        *kubernetes.Clientset
 	dynamicClient *dynamic.DynamicClient
 	mapper        *restmapper.DeferredDiscoveryRESTMapper
+	net           *noisysockets.Network
 }
 
-func NewBatteryKubeClient(kubeConfigPath string) (KubeClient, error) {
-	slog.Debug("Creating new kubernetes client", slog.String("kubeConfigPath", kubeConfigPath))
-	cfg, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClient, error) {
+	slog.Debug("Creating new kubernetes client",
+		slog.String("kubeConfigPath", kubeConfigPath),
+		slog.String("wireGuardConfigPath", wireGuardConfigPath))
+
+	kubeConfig, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("error building kube config: %w", err)
 	}
 
-	// TODO create a new http dynamicClient that uses
-	// the wireguard tunnel to connect to the cluster
+	// This is normally called automatically by the client-go library, but we need to do it manually
+	// due to using our own transport.
+	if kubeConfig.UserAgent == "" {
+		kubeConfig.UserAgent = rest.DefaultKubernetesUserAgent()
+	}
+
+	var net *noisysockets.Network
+	var httpClient *http.Client
+	if wireGuardConfigPath != "" {
+		httpClient, err = rest.HTTPClientFor(kubeConfig)
+		if err != nil {
+			return nil, fmt.Errorf("error creating http client: %w", err)
+		}
+
+		// Read the wireguard config
+		wireGuardConfig, err := noisysocketsconfig.FromYAML(wireGuardConfigPath)
+		if err != nil {
+			return nil, fmt.Errorf("error reading wireguard config: %w", err)
+		}
+
+		// Connect to the wireguard gateway
+		net, err = noisysockets.NewNetwork(slog.Default(), wireGuardConfig)
+		if err != nil {
+			return nil, fmt.Errorf("error opening wireguard network: %w", err)
+		}
+
+		// Create a http client that will send all requests over wireguard
+		transportConfig, err := kubeConfig.TransportConfig()
+		if err != nil {
+			return nil, fmt.Errorf("error getting transport config: %w", err)
+		}
+
+		transportConfig.DialHolder = &transport.DialHolder{
+			Dial: net.DialContext,
+		}
+
+		// Replace the transport with our own wireguard based transport
+		httpClient.Transport, err = transport.New(transportConfig)
+		if err != nil {
+			return nil, fmt.Errorf("error creating http transport: %w", err)
+		}
+	} else {
+		// No wireguard config, assume we are accessing a local cluster without a gateway
+		httpClient, err = rest.HTTPClientFor(kubeConfig)
+		if err != nil {
+			return nil, fmt.Errorf("error creating http client: %w", err)
+		}
+	}
 
 	// Create a new kubernetes client for discovery and watching job results
-	client, err := kubernetes.NewForConfig(cfg)
+	client, err := kubernetes.NewForConfigAndClient(kubeConfig, httpClient)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating kubernetes client: %w", err)
 	}
 
 	// Dynamic client for creating resources from intial resources
-	dynamicClient, err := dynamic.NewForConfig(cfg)
+	dynamicClient, err := dynamic.NewForConfigAndClient(kubeConfig, httpClient)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating kubernetes dynamic client: %w", err)
 	}
 
 	// The discovery client is used to get the GroupVersionResource
 	discoveryClient := cacheddiscovery.NewMemCacheClient(client.Discovery())
 	mapper := restmapper.NewDeferredDiscoveryRESTMapper(discoveryClient)
 
-	return &batteryKubeClient{cfg: cfg, client: client, dynamicClient: dynamicClient, mapper: mapper}, nil
+	return &batteryKubeClient{
+		kubeConfig:    kubeConfig,
+		client:        client,
+		dynamicClient: dynamicClient,
+		mapper:        mapper,
+		net:           net,
+	}, nil
+}
+
+func (c *batteryKubeClient) Close() error {
+	if err := c.net.Close(); err != nil {
+		return fmt.Errorf("error closing wireguard network: %w", err)
+	}
+
+	return nil
 }

@@ -5,7 +5,7 @@ import (
 	"bi/pkg/specs"
 )
 
-func StartInstall(url string, kubeConfigPath string, writeStateSummaryPath string) error {
+func StartInstall(url string, kubeConfigPath, wireGuardConfigPath string, writeStateSummaryPath string) error {
 	// Get the install spec
 	spec, err := specs.GetSpecFromURL(url)
 	if err != nil {
@@ -17,10 +17,11 @@ func StartInstall(url string, kubeConfigPath string, writeStateSummaryPath strin
 		return err
 	}
 
-	kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath)
+	kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath)
 	if err != nil {
 		return nil
 	}
+	defer kubeClient.Close()
 
 	err = spec.InitialSync(kubeClient)
 	if err != nil {

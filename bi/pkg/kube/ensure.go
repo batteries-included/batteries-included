@@ -13,7 +13,7 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 )
 
-func (batteryKube *batteryKubeClient) EnsureReourceExists(resource map[string]interface{}) error {
+func (batteryKube *batteryKubeClient) EnsureResourceExists(resource map[string]interface{}) error {
 	unstructuredResource := &unstructured.Unstructured{Object: resource}
 
 	err := batteryKube.exists(unstructuredResource)
