@@ -8,6 +8,7 @@ import (
 
 	"github.com/noisysockets/noisysockets"
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
+	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	cacheddiscovery "k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -28,14 +29,16 @@ type KubeClient interface {
 		localPort int,
 		stopChannel <-chan struct{},
 		readyChannel chan struct{}) (*portforward.PortForwarder, error)
+	RemoveAll() error
 }
 
 type batteryKubeClient struct {
-	kubeConfig    *rest.Config
-	client        *kubernetes.Clientset
-	dynamicClient *dynamic.DynamicClient
-	mapper        *restmapper.DeferredDiscoveryRESTMapper
-	net           *noisysockets.Network
+	cfg                 *rest.Config
+	client              *kubernetes.Clientset
+	dynamicClient       *dynamic.DynamicClient
+	apiExtensionsClient *apiextensionsclientset.Clientset
+	mapper              *restmapper.DeferredDiscoveryRESTMapper
+	net                 *noisysockets.Network
 }
 
 func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClient, error) {
@@ -113,13 +116,19 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 	discoveryClient := cacheddiscovery.NewMemCacheClient(client.Discovery())
 	mapper := restmapper.NewDeferredDiscoveryRESTMapper(discoveryClient)
 
+	// This allows us to remove CRD's
+	apiextensionsclient, err := apiextensionsclientset.NewForConfig(kubeConfig)
+	if err != nil {
+		return nil, err
+	}
+
 	return &batteryKubeClient{
-		kubeConfig:    kubeConfig,
-		client:        client,
-		dynamicClient: dynamicClient,
-		mapper:        mapper,
-		net:           net,
-	}, nil
+		cfg:                 kubeConfig,
+		client:              client,
+		dynamicClient:       dynamicClient,
+		mapper:              mapper,
+		net:                 net,
+		apiExtensionsClient: apiextensionsclient}, nil
 }
 
 func (c *batteryKubeClient) Close() error {

@@ -532,6 +532,9 @@ schema = 3
   [mod."k8s.io/api"]
     version = "v0.29.3"
     hash = "sha256-rVMIHlRTIqoqM/9HkdQQjOl3RE2rmLLoSJp6AqhYfhE="
+  [mod."k8s.io/apiextensions-apiserver"]
+    version = "v0.29.3"
+    hash = "sha256-0x19E2OfHOUZOXrB4zTBE1tJfPXDTRGATehNnekjZSM="
   [mod."k8s.io/apimachinery"]
     version = "v0.29.3"
     hash = "sha256-Hxa73+TEnmB4seCIRYU3pm6efSjJoPqaS/ee8tgUVqE="
