@@ -84,7 +84,8 @@ var components = []component{
 	{"vpc", &vpcConfig{}},
 	{"gateway", &gatewayConfig{}},
 	{"cluster", &clusterConfig{}},
-	{"roles", &rolesConfig{}},
+	{"lbcontroller", &lbControllerConfig{}},
+	{"karpenter", &karpenterConfig{}},
 }
 
 func (e *eks) Up(ctx context.Context) error {

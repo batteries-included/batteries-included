@@ -10,7 +10,7 @@ require (
 	github.com/jsimonetti/rtnetlink v1.4.1
 	github.com/lmittmann/tint v1.0.4
 	github.com/pkg/errors v0.9.1
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.28.1
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.28.2
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.1
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.1
 	github.com/pulumi/pulumi/sdk/v3 v3.112.0

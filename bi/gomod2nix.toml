@@ -308,8 +308,8 @@ schema = 3
     version = "v0.8.3"
     hash = "sha256-Emy9ruI73P8dQJWaZOAKXihP/aobZq0kdZhMs5WlaRc="
   [mod."github.com/pulumi/pulumi-aws/sdk/v6"]
-    version = "v6.28.1"
-    hash = "sha256-UPuVyQWEuyUdDdTQocd/3d8j3uXrwcnfiNdydTMVsx4="
+    version = "v6.28.2"
+    hash = "sha256-2DcS5uqn+TI/af2qLjNs3URPVy2NkwGkld6yoGptjd8="
   [mod."github.com/pulumi/pulumi-cloudinit/sdk"]
     version = "v1.4.1"
     hash = "sha256-DLWzI7MFP2tU+ry++6OB23JOtQBDji1KekR90rdEXwc="

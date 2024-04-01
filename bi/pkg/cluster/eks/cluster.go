@@ -115,6 +115,7 @@ func (c *clusterConfig) run(ctx *pulumi.Context) error {
 	ctx.Export("arn", c.cluster.Arn)
 	ctx.Export("certificate", c.cluster.CertificateAuthority.Data())
 	ctx.Export("endpoint", c.cluster.Endpoint)
+	ctx.Export("nodeRoleARN", c.roles["node"].Arn)
 	ctx.Export("oidcProviderURL", c.provider.Url)
 	ctx.Export("oidcProviderARN", c.provider.Arn)
 
