@@ -119,3 +119,7 @@ func (c *KindClusterProvider) EnsureDeleted() error {
 
 	return nil
 }
+
+func (c *KindClusterProvider) ExportKubeConfig(path string) error {
+	return c.kindProvider.ExportKubeConfig(c.name, path, true)
+}

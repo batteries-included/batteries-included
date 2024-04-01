@@ -5,20 +5,17 @@ import (
 	"bi/pkg/local"
 	"bi/pkg/testutil"
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"text/template"
-	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"sigs.k8s.io/kind/pkg/cluster"
 )
 
 func TestBatteryKubeClient(t *testing.T) {
@@ -71,29 +68,23 @@ func TestBatteryKubeClient(t *testing.T) {
 	// Create a kind cluster using the private network.
 	os.Setenv("KIND_EXPERIMENTAL_DOCKER_NETWORK", testNetwork.Name)
 
-	po, err := cluster.DetectNodeProvider()
+	t.Log("Creating kind cluster")
+	clusterProvider, err := local.NewKindClusterProvider("bi-wg-test")
 	require.NoError(t, err)
 
-	p := cluster.NewProvider(po)
+	require.NoError(t, clusterProvider.EnsureStarted())
 
-	t.Log("Creating kind cluster")
-
-	clusterName := fmt.Sprintf("kube-test-%d", time.Now().Unix())
-	require.NoError(t, p.Create(
-		clusterName,
-		cluster.CreateWithNodeImage(local.KindImage),
-	))
 	t.Cleanup(func() {
 		t.Log("Deleting kind cluster")
 
-		require.NoError(t, p.Delete(clusterName, ""))
+		require.NoError(t, clusterProvider.EnsureDeleted())
 	})
 
 	outputDir := t.TempDir()
 
 	// Get a kubeconfig for the kind cluster (using its internal domain name).
 	kubeConfigPath := filepath.Join(outputDir, "kubeconfig")
-	require.NoError(t, p.ExportKubeConfig(clusterName, kubeConfigPath, true))
+	require.NoError(t, clusterProvider.ExportKubeConfig(kubeConfigPath))
 
 	// Create a WireGuard client configuration.
 	wireGuardConfigPath := filepath.Join(outputDir, "wireguard.yaml")
