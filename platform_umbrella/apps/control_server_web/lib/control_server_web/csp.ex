@@ -27,7 +27,8 @@ defmodule ControlServerWeb.CSP do
     "frame-src" => [
       "self",
       {:url, "http://*.ip.batteriesincl.com"},
-      {:url, "http://*.ip.batteriesincl.com:4000"}
+      {:url, "http://*.ip.batteriesincl.com:4000"},
+      {:url, "https://www.youtube.com"}
     ]
   }
 
