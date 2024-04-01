@@ -62,14 +62,7 @@ defmodule ControlServerWeb.Layouts do
           icon: :sparkles
         }
       ]}
-      bottom_menu_items={[
-        %{
-          name: :settings,
-          label: "Settings",
-          path: ~p"/",
-          icon: :adjustments_horizontal
-        }
-      ]}
+      bottom_menu_items={[]}
       current_page={if assigns[:current_page], do: @current_page, else: nil}
     >
       <%= @inner_content %>
