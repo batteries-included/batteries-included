@@ -1,1 +1,11 @@
 @import '../../../common_ui/assets/css/shared.css';
+
+.header-gradient {
+  background: linear-gradient(
+    90deg,
+    #ffffff -0.52%,
+    #fafaff -0.52%,
+    #fbf0f9 62.74%,
+    #fffcfd 100%
+  );
+}

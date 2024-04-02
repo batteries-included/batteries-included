@@ -3,4 +3,5 @@ defmodule HomeBaseWeb.Layouts do
   use HomeBaseWeb, :html
 
   embed_templates "layouts/*"
+  defdelegate app(assigns), to: HomeBaseWeb.Layouts.AppLayout
 end

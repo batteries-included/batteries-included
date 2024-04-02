@@ -2,8 +2,6 @@ defmodule HomeBaseWeb.Live.InstallationNew do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
-  import HomeBaseWeb.TopMenuLayout
-
   alias HomeBase.ControlServerClusters
   alias HomeBase.ControlServerClusters.Installation
   alias HomeBaseWeb.Live.Installations.FormComponent
@@ -38,15 +36,13 @@ defmodule HomeBaseWeb.Live.InstallationNew do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.top_menu_layout page={:installations} title="New Installation">
-      <.live_component
-        module={FormComponent}
-        id="new-installation-form"
-        installation={@installation}
-        action={:new}
-        save_target={self()}
-      />
-    </.top_menu_layout>
+    <.live_component
+      module={FormComponent}
+      id="new-installation-form"
+      installation={@installation}
+      action={:new}
+      save_target={self()}
+    />
     """
   end
 end

@@ -2,8 +2,6 @@ defmodule HomeBaseWeb.Live.Installations do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
-  import HomeBaseWeb.TopMenuLayout
-
   alias HomeBase.ControlServerClusters
 
   @impl Phoenix.LiveView
@@ -27,25 +25,23 @@ defmodule HomeBaseWeb.Live.Installations do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.top_menu_layout page={:installations} title={@page_title}>
-      <.a navigate={~p"/installations/new"}>
-        <.button variant="secondary">New Installation</.button>
-      </.a>
-      <.table
-        id="installations"
-        rows={@installations}
-        row_click={&JS.navigate(~p"/installations/#{&1}/show")}
-      >
-        <:col :let={installation} label="Id"><%= installation.id %></:col>
-        <:col :let={installation} label="Slug"><%= installation.slug %></:col>
-        <:action :let={installation}>
-          <div class="sr-only">
-            <.a navigate={~p"/installations/#{installation}/show"}>Show</.a>
-          </div>
-          <.a navigate={~p"/installations/#{installation}/show"}>Edit</.a>
-        </:action>
-      </.table>
-    </.top_menu_layout>
+    <.a navigate={~p"/installations/new"}>
+      <.button variant="secondary">New Installation</.button>
+    </.a>
+    <.table
+      id="installations"
+      rows={@installations}
+      row_click={&JS.navigate(~p"/installations/#{&1}/show")}
+    >
+      <:col :let={installation} label="Id"><%= installation.id %></:col>
+      <:col :let={installation} label="Slug"><%= installation.slug %></:col>
+      <:action :let={installation}>
+        <div class="sr-only">
+          <.a navigate={~p"/installations/#{installation}/show"}>Show</.a>
+        </div>
+        <.a navigate={~p"/installations/#{installation}/show"}>Edit</.a>
+      </:action>
+    </.table>
     """
   end
 end

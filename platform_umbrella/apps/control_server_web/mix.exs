@@ -42,7 +42,7 @@ defmodule ControlServerWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bandit, "~> 1.0"},
+      {:bandit, "~> 1.4"},
       {:common_core, in_umbrella: true},
       {:common_ui, in_umbrella: true},
       {:control_server, in_umbrella: true},

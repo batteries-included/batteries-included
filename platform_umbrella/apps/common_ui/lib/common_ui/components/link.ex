@@ -7,7 +7,7 @@ defmodule CommonUI.Components.Link do
   attr :variant, :string, default: "unstyled", values: ["icon", "styled", "external", "unstyled"]
   attr :icon, :atom, default: nil
   attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(download hreflang replace referrerpolicy rel target type href navigate patch)
+  attr :rest, :global, include: ~w(download hreflang replace referrerpolicy rel target type href navigate patch method)
 
   slot :inner_block, required: true
 

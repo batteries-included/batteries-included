@@ -1,5 +1,8 @@
 import Config
 
+# Only in tests, remove the complexity from the password hashing algorithm
+config :bcrypt_elixir, :log_rounds, 1
+
 # Configure your database
 #
 
@@ -39,3 +42,5 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 config :logger, level: :error
 
 config :kube_services, start_services: false, cluster_type: :dev
+
+config :home_base, HomeBase.Mailer, adapter: Swoosh.Adapters.Test

@@ -39,7 +39,7 @@ defmodule CommonUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:bandit, "~> 1.2"},
+      {:bandit, "~> 1.4"},
       {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:heroicons, "~> 0.5"},
       {:heyya, "~> 0.7", only: [:dev, :test, :integration]},

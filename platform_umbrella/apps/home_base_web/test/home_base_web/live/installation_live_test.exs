@@ -2,6 +2,7 @@ defmodule HomeBaseWeb.InstallationLiveTest do
   use HomeBaseWeb.ConnCase
 
   import HomeBase.ControlServerClustersFixtures
+  import HomeBase.Factory
   import Phoenix.LiveViewTest
 
   @create_attrs %{slug: "some-slug"}
@@ -12,8 +13,16 @@ defmodule HomeBaseWeb.InstallationLiveTest do
     %{installation: installation}
   end
 
+  defp setup_user(_) do
+    %{user: :user |> params_for() |> register_user!()}
+  end
+
+  defp login_conn(%{conn: conn, user: user}) do
+    %{conn: log_in_user(conn, user)}
+  end
+
   describe "Index" do
-    setup [:create_installation]
+    setup [:create_installation, :setup_user, :login_conn]
 
     test "lists all installations", %{conn: conn, installation: installation} do
       {:ok, _index_live, html} = live(conn, ~p"/installations")
@@ -24,6 +33,8 @@ defmodule HomeBaseWeb.InstallationLiveTest do
   end
 
   describe "New" do
+    setup [:setup_user, :login_conn]
+
     test "saves new installation", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/installations/new")
 
@@ -42,7 +53,7 @@ defmodule HomeBaseWeb.InstallationLiveTest do
   end
 
   describe "Show" do
-    setup [:create_installation]
+    setup [:create_installation, :setup_user, :login_conn]
 
     test "displays installation", %{conn: conn, installation: installation} do
       {:ok, _show_live, html} = live(conn, ~p"/installations/#{installation}/show")

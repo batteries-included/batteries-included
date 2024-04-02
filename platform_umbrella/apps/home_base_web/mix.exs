@@ -41,7 +41,7 @@ defmodule HomeBaseWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bandit, "~> 1.0"},
+      {:bandit, "~> 1.4"},
       {:common_ui, in_umbrella: true},
       {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},

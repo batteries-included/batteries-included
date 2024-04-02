@@ -2,8 +2,6 @@ defmodule HomeBaseWeb.Live.InstallatitonShow do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
-  import HomeBaseWeb.TopMenuLayout
-
   alias HomeBase.ControlServerClusters
 
   @impl Phoenix.LiveView
@@ -24,15 +22,13 @@ defmodule HomeBaseWeb.Live.InstallatitonShow do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.top_menu_layout page={:installations} title={@page_title}>
-      <.data_list>
-        <:item title="Slug"><%= @installation.slug %></:item>
-      </.data_list>
+    <.data_list>
+      <:item title="Slug"><%= @installation.slug %></:item>
+    </.data_list>
 
-      <.a navigate={~p"/installations/#{@installation}/show"}>
-        <.button variant="secondary">Edit installation</.button>
-      </.a>
-    </.top_menu_layout>
+    <.a navigate={~p"/installations/#{@installation}/show"}>
+      <.button variant="secondary">Edit installation</.button>
+    </.a>
     """
   end
 end

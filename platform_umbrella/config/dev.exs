@@ -107,4 +107,4 @@ config :kube_services, cluster_type: :dev
 
 config :common_core, :clusters, default: {:file, "~/.kube/config"}
 
-config :control_server, ControlServer.Mailer, adapter: Swoosh.Adapters.Local
+config :home_base, HomeBase.Mailer, adapter: Swoosh.Adapters.Local
