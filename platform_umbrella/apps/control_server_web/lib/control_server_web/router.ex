@@ -191,7 +191,7 @@ defmodule ControlServerWeb.Router do
 
   if Enum.member?([:dev, :test], Mix.env()) do
     # Enables LiveDashboard only for development
-    scope "/" do
+    scope "/dev" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ControlServerWeb.Telemetry
     end

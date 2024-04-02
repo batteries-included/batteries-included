@@ -45,6 +45,7 @@ defmodule HomeBaseWeb.MixProject do
       {:common_ui, in_umbrella: true},
       {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:gettext, "~> 0.20"},
+      {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
       {:home_base, in_umbrella: true},
       {:jason, "~> 1.4"},
       {:phoenix, "~> 1.7"},

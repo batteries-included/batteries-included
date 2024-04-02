@@ -11,9 +11,10 @@ defmodule HomeBaseWeb.UserSettingsLive do
       Manage your account email address and password settings
     </div>
 
-    <div class="space-y-12 divide-y">
-      <div>
-        <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
+    <.grid columns={%{xs: 1, lg: 2}} class="max-w-6xl mx-auto">
+      <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
+        <.flex column>
+          <.h2>Email</.h2>
           <.input field={@email_form[:email]} type="email" label="Email" required />
           <.input
             field={@email_form[:current_password]}
@@ -24,19 +25,22 @@ defmodule HomeBaseWeb.UserSettingsLive do
             value={@email_form_current_password}
             required
           />
-          <.button phx-disable-with="Changing...">Change Email</.button>
-        </.form>
-      </div>
-      <div>
-        <.form
-          for={@password_form}
-          id="password_form"
-          action={~p"/users/log_in?_action=password_updated"}
-          method="post"
-          phx-change="validate_password"
-          phx-submit="update_password"
-          phx-trigger-action={@trigger_submit}
-        >
+          <.button phx-disable-with="Changing..." type="submit" variant="primary">
+            Change Email
+          </.button>
+        </.flex>
+      </.form>
+      <.form
+        for={@password_form}
+        id="password_form"
+        action={~p"/users/log_in?_action=password_updated"}
+        method="post"
+        phx-change="validate_password"
+        phx-submit="update_password"
+        phx-trigger-action={@trigger_submit}
+      >
+        <.flex column>
+          <.h2>Password</.h2>
           <.input
             field={@password_form[:email]}
             type="hidden"
@@ -58,10 +62,12 @@ defmodule HomeBaseWeb.UserSettingsLive do
             value={@current_password}
             required
           />
-          <.button phx-disable-with="Changing...">Change Password</.button>
-        </.form>
-      </div>
-    </div>
+          <.button phx-disable-with="Changing..." type="submit" variant="dark">
+            Change Password
+          </.button>
+        </.flex>
+      </.form>
+    </.grid>
     """
   end
 

@@ -35,7 +35,7 @@ defmodule HomeBaseWeb.Router do
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
-  if Application.compile_env(:home_base, :dev_routes) do
+  if Enum.member?([:dev, :test], Mix.env()) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
     # If your application does not have an admins-only section yet,
@@ -54,7 +54,7 @@ defmodule HomeBaseWeb.Router do
   scope "/", HomeBaseWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
-    live_session :redirect_if_user_is_authenticated,
+    live_session :auth_related_unauth_required,
       on_mount: [{HomeBaseWeb.UserAuth, :redirect_if_user_is_authenticated}] do
       ## Authentication routes
       live "/users/register", UserRegistrationLive, :new
@@ -69,7 +69,7 @@ defmodule HomeBaseWeb.Router do
   scope "/", HomeBaseWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    live_session :require_authenticated_user,
+    live_session :auth_related_auth_required,
       on_mount: [{HomeBaseWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
@@ -81,7 +81,7 @@ defmodule HomeBaseWeb.Router do
 
     delete "/users/log_out", UserSessionController, :delete
 
-    live_session :current_user,
+    live_session :auth_related_auth_available,
       on_mount: [{HomeBaseWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new

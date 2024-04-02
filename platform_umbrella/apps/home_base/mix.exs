@@ -45,6 +45,7 @@ defmodule HomeBase.MixProject do
       {:common_core, in_umbrella: true},
       {:ecto_sql, "~> 3.11"},
       {:ex_audit, "~> 0.10"},
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},

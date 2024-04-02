@@ -2,21 +2,14 @@ defmodule HomeBaseWeb.UserRegistrationLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  import HomeBaseWeb.LogoContainer
+
   alias HomeBase.Accounts
   alias HomeBase.Accounts.User
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <div class="text-center">
-        Register for an account
-        Already registered?
-        <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
-          Sign in
-        </.link>
-        to your account now.
-      </div>
-
+    <.logo_container title="Register for an account">
       <.form
         for={@form}
         id="registration_form"
@@ -30,14 +23,28 @@ defmodule HomeBaseWeb.UserRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error> --%>
 
-        <.input field={@form[:email]} type="email" label="Email" required />
-        <.input field={@form[:password]} type="password" label="Password" required />
+        <.flex column>
+          <.input field={@form[:email]} type="email" label="Email" required />
+          <.input field={@form[:password]} type="password" label="Password" required />
 
-        <.button phx-disable-with="Creating account..." class="w-full" type="submit">
-          Create an account
-        </.button>
+          <.button
+            phx-disable-with="Creating account..."
+            class="w-full"
+            type="submit"
+            variant="primary"
+          >
+            Create an account
+          </.button>
+        </.flex>
       </.form>
-    </div>
+      <div class="text-center">
+        Already registered?
+        <.a navigate={~p"/users/log_in"} variant="styled">
+          Sign in
+        </.a>
+        to your account now.
+      </div>
+    </.logo_container>
     """
   end
 

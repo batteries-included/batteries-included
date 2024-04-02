@@ -2,29 +2,34 @@ defmodule HomeBaseWeb.UserForgotPasswordLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  import HomeBaseWeb.LogoContainer
+
   alias HomeBase.Accounts
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <.logo_container title="Forgot your password?">
       <div class="text-center">
         Forgot your password?
         We'll send a password reset link to your inbox
       </div>
 
-      <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
-        <.input field={@form[:email]} type="email" placeholder="Email" required />
-        <:actions>
-          <.button phx-disable-with="Sending..." class="w-full">
+      <.form for={@form} id="reset_password_form" phx-submit="send_email">
+        <.flex column>
+          <.input field={@form[:email]} type="email" placeholder="Email" required />
+          <.button
+            phx-disable-with="Sending..."
+            class="w-full"
+            type="submit"
+            variant="dark"
+            icon_position={:right}
+            icon={:envelope}
+          >
             Send password reset instructions
           </.button>
-        </:actions>
-      </.simple_form>
-      <p class="text-center text-sm mt-4">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
-    </div>
+        </.flex>
+      </.form>
+    </.logo_container>
     """
   end
 
