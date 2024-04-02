@@ -70,7 +70,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "XGJCYDSVOSQM5SEG5JXBIISU",
+            "password": "IAR5LX3WUEJ67GGKAGTR6SR2",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

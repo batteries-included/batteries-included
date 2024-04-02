@@ -37,18 +37,14 @@ defmodule CommonCore.StateSummary.SeedState do
 
   def seed(:integration_test) do
     %StateSummary{
-      batteries:
-        batteries([
-          :battery_core,
-          :cloudnative_pg
-        ]),
+      batteries: batteries([:battery_core, :cloudnative_pg]),
       postgres_clusters: pg_clusters([Defaults.ControlDB.control_cluster()])
     }
   end
 
   def seed(:eks) do
     batteries =
-      ~w(battery_core cloudnative_pg istio istio_gateway stale_resource_cleaner)a
+      ~w(battery_core cloudnative_pg istio istio_gateway karpenter stale_resource_cleaner)a
       |> batteries()
       |> add_cluster_type(:eks)
 

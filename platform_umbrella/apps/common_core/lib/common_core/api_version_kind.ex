@@ -84,7 +84,10 @@ defmodule CommonCore.ApiVersionKind do
     cloudnative_pg_backup: {"postgresql.cnpg.io/v1", "Backup"},
     cloudnative_pg_scheduledbackup: {"postgresql.cnpg.io/v1", "ScheduledBackup"},
     cloudnative_pg_cluster: {"postgresql.cnpg.io/v1", "Cluster"},
-    cloudnative_pg_pooler: {"postgresql.cnpg.io/v1", "Pooler"}
+    cloudnative_pg_pooler: {"postgresql.cnpg.io/v1", "Pooler"},
+    karpenter_ec2node_class: {"karpenter.k8s.aws/v1beta1", "EC2NodeClass"},
+    karpenter_node_claim: {"karpenter.sh/v1beta1", "NodeClaim"},
+    karpenter_node_pool: {"karpenter.sh/v1beta1", "NodePool"}
   ]
 
   @alternatives [

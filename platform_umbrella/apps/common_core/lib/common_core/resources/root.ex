@@ -22,6 +22,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.IstioNamespace
   alias CommonCore.Resources.IstioReader
   alias CommonCore.Resources.IstioTelemetry
+  alias CommonCore.Resources.Karpenter
   alias CommonCore.Resources.Keycloak
   alias CommonCore.Resources.Kiali
   alias CommonCore.Resources.KnativeMetrics
@@ -68,6 +69,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     ferretdb: [FerretDB],
     knative: [KnativeServingCRDs, KnativeServing, KnativeNetIstio, KnativeServices, KnativeMetrics],
     kube_monitoring: [MetricsServer, KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
+    karpenter: [Karpenter],
     loki: [Loki],
     metallb: [MetalLB, MetalLBPools],
     notebooks: [Notebooks],

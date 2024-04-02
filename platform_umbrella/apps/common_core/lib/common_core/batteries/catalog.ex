@@ -26,7 +26,7 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [:battery_core, :cloudnative_pg],
       description: "A truly Open Source MongoDB alternative, built on Postgres"
     },
-    # Internal
+    # Magic
     %CatalogBattery{group: :magic, type: :battery_core},
     %CatalogBattery{
       group: :magic,
@@ -39,6 +39,12 @@ defmodule CommonCore.Batteries.Catalog do
       type: :stale_resource_cleaner,
       dependencies: [:battery_core],
       description: "A battery that removes old resources that are no longer needed."
+    },
+    %CatalogBattery{
+      group: :magic,
+      type: :karpenter,
+      dependencies: [:battery_core],
+      description: "Auto scale kubernetes clusters in AWS EKS"
     },
     # Devtools
     %CatalogBattery{

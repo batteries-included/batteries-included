@@ -187,6 +187,15 @@ defmodule CommonCore.Resources.Builder do
     }
   end
 
+  def configmap_key_ref(name, key) do
+    %{
+      configMapKeyRef: %{
+        name: name,
+        key: key
+      }
+    }
+  end
+
   def issuer_ref(group, kind, name) do
     %{
       "group" => group,

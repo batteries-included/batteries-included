@@ -124,7 +124,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "TYR6HJPZX7DFLJHLHPTSOQNR",
+            "password": "P2W7AGUNPOSAL3QJUWEXCHRA",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
