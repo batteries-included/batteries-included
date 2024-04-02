@@ -35,7 +35,7 @@
 
       mixTestFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform-test";
-        inherit src version LANG;
+        inherit src version LANG elixir;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
         sha256 = "sha256-lT0Zu1+FXHxIwRaZDiVHXJisQBb2ea+/U1hx93viLRM=";
@@ -49,7 +49,7 @@
       # TODO(jdt): somehow use the hashes from mix.lock instead
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
-        inherit src version LANG;
+        inherit src version LANG elixir;
         #sha256 = lib.fakeSha256;
         sha256 = "sha256-pJPe/KU8sTd2b1Z6QoVw/znpp5sqIjlf8BxPF0s4+Jw=";
       };
