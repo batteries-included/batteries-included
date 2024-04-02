@@ -47,11 +47,6 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("close_modal", _, socket) do
-    ControlServerWeb.Live.Knative.FormComponent.update_env_value(nil, nil)
-    {:noreply, socket}
-  end
-
   def handle_event("cancel", _, socket) do
     ControlServerWeb.Live.Knative.FormComponent.update_env_value(nil, nil)
     {:noreply, socket}
@@ -121,14 +116,16 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
   def render(assigns) do
     ~H"""
     <div>
-      <PC.modal id={"#{@id}-modal"} title="Environment Variable" close_modal_target={@myself}>
-        <.form
-          for={@form}
-          id="env_value-form"
-          phx-change="validate_env_value"
-          phx-submit="save_env_value"
-          phx-target={@myself}
-        >
+      <.form
+        for={@form}
+        id="env_value-form"
+        phx-change="validate_env_value"
+        phx-submit="save_env_value"
+        phx-target={@myself}
+      >
+        <.modal show id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
+          <:title>Environment Variable</:title>
+
           <.flex column>
             <.input label="Name" field={@form[:name]} autofocus placeholder="ENV_VARIABLE_NAME" />
             <.tab_bar variant="secondary">
@@ -156,13 +153,13 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
               resources={@secrets}
               label="Secret"
             />
-            <.flex class="justify-end">
-              <.button variant="secondary" phx-target={@myself} phx-click="cancel">Cancel</.button>
-              <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
-            </.flex>
           </.flex>
-        </.form>
-      </PC.modal>
+
+          <:actions cancel="Cancel">
+            <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
+          </:actions>
+        </.modal>
+      </.form>
     </div>
     """
   end

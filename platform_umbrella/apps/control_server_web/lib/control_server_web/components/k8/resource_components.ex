@@ -69,7 +69,9 @@ defmodule ControlServerWeb.ResourceComponents do
   @spec logs_modal(map()) :: Phoenix.LiveView.Rendered.t()
   def logs_modal(assigns) do
     ~H"""
-    <PC.modal :if={@logs} title="Logs" max_width="xl">
+    <.modal show id="resource-logs-modal" size="xl" on_cancel={JS.push("close_modal")}>
+      <:title>Logs</:title>
+
       <div
         id="scroller"
         style="max-height: 70vh"
@@ -85,7 +87,7 @@ defmodule ControlServerWeb.ResourceComponents do
           <div id="anchor"></div>
         </code>
       </div>
-    </PC.modal>
+    </.modal>
     """
   end
 end

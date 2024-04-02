@@ -406,7 +406,7 @@ defmodule ControlServerWeb.PodLive.Show do
           trivy_enabled={@trivy_enabled}
           grafana_dashboard_url={@grafana_dashboard_url}
         />
-        <.logs_modal resource={@resource} logs={@logs} />
+        <.logs_modal :if={@logs} resource={@resource} logs={@logs} />
       <% :events -> %>
         <.events_page resource={@resource} namespace={@namespace} name={@name} events={@events} />
       <% :labels -> %>

@@ -25,11 +25,6 @@ defmodule ControlServerWeb.Knative.ContainerModal do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("close_modal", _, socket) do
-    ControlServerWeb.Live.Knative.FormComponent.update_container(nil, nil)
-    {:noreply, socket}
-  end
-
   def handle_event("cancel", _, socket) do
     ControlServerWeb.Live.Knative.FormComponent.update_container(nil, nil)
     {:noreply, socket}
@@ -59,14 +54,16 @@ defmodule ControlServerWeb.Knative.ContainerModal do
   def render(assigns) do
     ~H"""
     <div>
-      <PC.modal id={"#{@id}-modal"} title="Container" close_modal_target={@myself}>
-        <.form
-          for={@form}
-          id="container-form"
-          phx-change="validate_container"
-          phx-submit="save_container"
-          phx-target={@myself}
-        >
+      <.form
+        for={@form}
+        id="container-form"
+        phx-change="validate_container"
+        phx-submit="save_container"
+        phx-target={@myself}
+      >
+        <.modal show id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
+          <:title>Container</:title>
+
           <.grid columns={[sm: 1, lg: 2]}>
             <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
             <.input label="Image" field={@form[:image]} placeholder="Image" />
@@ -78,13 +75,13 @@ defmodule ControlServerWeb.Knative.ContainerModal do
                 placeholder="/bin/true"
               />
             </div>
-            <.flex class="justify-end col-span-2">
-              <.button variant="secondary" phx-target={@myself} phx-click="cancel">Cancel</.button>
-              <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
-            </.flex>
           </.grid>
-        </.form>
-      </PC.modal>
+
+          <:actions cancel="Cancel">
+            <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
+          </:actions>
+        </.modal>
+      </.form>
     </div>
     """
   end

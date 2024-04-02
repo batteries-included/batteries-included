@@ -80,7 +80,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       conn
       |> start(~p|/postgres/new|)
       |> click("button", "New User")
-      |> submit_form("#user_modal form", %{"pg_user" => valid_user_params})
+      |> submit_form("#user-form", %{"pg_user" => valid_user_params})
       |> assert_html(valid_user_params["username"])
       |> assert_html("inherit")
       |> assert_html("replication")
@@ -96,7 +96,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       conn
       |> start(~p|/postgres/new|)
       |> click("button", "New User")
-      |> submit_form("#user_modal form", %{"pg_user" => valid_user_params})
+      |> submit_form("#user-form", %{"pg_user" => valid_user_params})
       |> assert_html(valid_user_params["username"])
       |> click("#delete_user_#{valid_user_params["username"]}")
       |> submit_form("#cluster-form", @valid_attrs)
@@ -112,10 +112,10 @@ defmodule ControlServerWeb.PostgresLiveTest do
       conn
       |> start(~p|/postgres/new|)
       |> click("button", "New User")
-      |> submit_form("#user_modal form", %{"pg_user" => valid_user_params})
+      |> submit_form("#user-form", %{"pg_user" => valid_user_params})
       |> assert_html(valid_user_params["username"])
       |> click("#edit_user_#{valid_user_params["username"]}")
-      |> submit_form("#user_modal form", %{"pg_user" => updated_user_params})
+      |> submit_form("#user-form", %{"pg_user" => updated_user_params})
       |> submit_form("#cluster-form", @valid_attrs)
 
       cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)

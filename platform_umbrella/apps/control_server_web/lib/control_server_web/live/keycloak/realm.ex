@@ -127,18 +127,19 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
 
   defp new_user_modal(assigns) do
     ~H"""
-    <PC.modal id="new-user-inner-modal" show={true}>
+    <.modal show id="new-user-inner-modal" on_cancel={JS.push("close_modal")}>
+      <:title>New User</:title>
       <.live_component module={NewUserForm} user={@new_user} realm={@realm_name} id="new-user-modal" />
-    </PC.modal>
+    </.modal>
     """
   end
 
   defp temp_password_modal(assigns) do
     ~H"""
-    <PC.modal id="temp-password-modal" show={true}>
-      <.h2>Temporary Password Set</.h2>
+    <.modal show id="temp-password-modal" on_cancel={JS.push("close_modal")}>
+      <:title>Temporary Password Set</:title>
       A new password has been set for this user. The temporary password is: <pre><%= @temp_password %></pre>
-    </PC.modal>
+    </.modal>
     """
   end
 

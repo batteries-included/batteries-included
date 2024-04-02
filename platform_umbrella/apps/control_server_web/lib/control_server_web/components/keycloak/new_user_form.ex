@@ -92,7 +92,6 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
     ~H"""
     <div id={@id}>
       <.flex column>
-        <.h2>New User</.h2>
         <div :if={@api_error != nil} class="text-warning-darker text-xxl font-bold">
           <%= @api_error %>
         </div>

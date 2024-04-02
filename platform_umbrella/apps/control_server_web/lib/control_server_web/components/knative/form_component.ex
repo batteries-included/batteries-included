@@ -171,15 +171,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:noreply, assign_changeset(socket, new_changeset)}
   end
 
-  def handle_event("close_modal", _, socket) do
-    {:noreply,
-     socket
-     |> assign_container(nil)
-     |> assign_env_value(nil)
-     |> assign_container_idx(nil)
-     |> assign_env_value_idx(nil)}
-  end
-
   def handle_event("new_container", _, socket) do
     new_container = %Container{}
     {:noreply, socket |> assign_container(new_container) |> assign_container_idx(nil)}

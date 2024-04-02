@@ -3,34 +3,31 @@ defmodule CommonUI.Components.Modal do
   use CommonUI, :component
 
   import CommonUI.Components.Button
-  import CommonUI.Components.Icon
 
   @doc """
-  Renders a modal.
-  ## Examples
-      <.modal id="confirm-modal">
-        Are you sure?
-        <:confirm>OK</:confirm>
-        <:cancel>Cancel</:cancel>
-      </.modal>
-  JS commands may be passed to the `:on_cancel` and `on_confirm` attributes
-  for the caller to react to each button press, for example:
-      <.modal id="confirm" on_confirm={JS.push("delete")} on_cancel={JS.navigate(~p"/posts")}>
+  JS commands may be passed to the `:on_cancel` attribute
+  for the caller to react to the button press. For example:
+
+      <.modal id="confirm" on_cancel={JS.navigate(~p"/posts")}>
         Are you sure you?
-        <:confirm>OK</:confirm>
-        <:cancel>Cancel</:cancel>
+        <:actions cancel="Cancel">
+          <.button phx-click="delete">OK</.button>
+        </:actions>
       </.modal>
+
   """
   attr :id, :string, required: true
   attr :show, :boolean, default: false
+  attr :size, :string, default: "md", values: ["md", "lg", "xl"]
+  attr :class, :any, default: "p-5"
   attr :on_cancel, JS, default: %JS{}
-  attr :on_confirm, JS, default: %JS{}
 
-  slot :inner_block, required: true
   slot :title
-  slot :subtitle
-  slot :confirm
-  slot :cancel
+  slot :inner_block, required: true
+
+  slot :actions do
+    attr :cancel, :string
+  end
 
   def modal(assigns) do
     ~H"""
@@ -38,84 +35,77 @@ defmodule CommonUI.Components.Modal do
       id={@id}
       phx-mounted={@show && show_modal(@id)}
       phx-remove={hide_modal(@id)}
-      class="relative z-50 hidden"
+      class="fixed inset-0 z-50 hidden"
     >
       <div
         id={"#{@id}-bg"}
-        class="fixed inset-0 bg-white dark:bg-gray-dark bg-opacity-70 transition-opacity"
         aria-hidden="true"
+        class="fixed inset-0 z-10 bg-white/80 dark:bg-gray-darkest-tint/80 backdrop-blur-sm transition-all"
       />
+
       <div
-        class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
         aria-describedby={"#{@id}-description"}
-        role="dialog"
         aria-modal="true"
+        role="dialog"
         tabindex="0"
+        class="h-full overflow-y-auto"
       >
-        <div class="flex min-h-full items-center justify-center">
-          <div class="w-full max-w-5xl p-4 sm:p-6 lg:py-8">
-            <.focus_wrap
-              id={"#{@id}-container"}
-              phx-mounted={@show && show_modal(@id)}
-              phx-window-keydown={hide_modal(@on_cancel, @id)}
-              phx-key="escape"
-              phx-click-away={hide_modal(@on_cancel, @id)}
-              class="hidden relative rounded-2xl bg-white dark:bg-gray-darkest p-10 shadow-lg shadow-gray-darkest/10 ring-1 ring-gray-darkest/10 transition"
-            >
-              <div class="absolute top-6 right-5">
-                <button
+        <div class="flex items-center justify-center min-h-full px-4 py-6">
+          <.focus_wrap
+            id={"#{@id}-container"}
+            phx-mounted={@show && show_modal(@id)}
+            phx-click-away={hide_modal(@on_cancel, @id)}
+            phx-window-keydown={hide_modal(@on_cancel, @id)}
+            phx-key="escape"
+            class={[
+              "relative z-20 w-full bg-white dark:bg-gray-darkest rounded-xl shadow-xl shadow-gray-darkest/10 ring-1 ring-gray-darkest/10 dark:ring-gray-light/10",
+              size_class(@size)
+            ]}
+          >
+            <div class="flex items-center justify-between px-5 pt-5">
+              <h2
+                :if={@title}
+                class="text-2xl font-semibold leading-8 text-gray-darkest dark:text-gray-lightest"
+              >
+                <%= render_slot(@title) %>
+              </h2>
+
+              <.button
+                variant="icon"
+                icon={:x_mark}
+                aria-label="Close"
+                phx-click={hide_modal(@on_cancel, @id)}
+              />
+            </div>
+
+            <div class={@class}>
+              <%= render_slot(@inner_block) %>
+            </div>
+
+            <div :if={@actions != []} class="flex items-center justify-end gap-4 px-5 pb-5">
+              <%= for action <- @actions do %>
+                <.button
+                  :if={cancel = Map.get(action, :cancel)}
+                  variant="secondary"
                   phx-click={hide_modal(@on_cancel, @id)}
-                  type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
-                  aria-label="Close"
                 >
-                  <.icon name={:x_mark} class="h-5 w-5 stroke-current" />
-                </button>
-              </div>
-              <div id={"#{@id}-content"}>
-                <header :if={@title}>
-                  <h1
-                    id={"#{@id}-title"}
-                    class="text-lg font-semibold leading-8 text-gray-darkest dark:text-gray-lightest"
-                  >
-                    <%= render_slot(@title) %>
-                  </h1>
-                  <p :if={@subtitle} id={"#{@id}-description"} class="mt-2 text-sm leading-6">
-                    <%= render_slot(@subtitle) %>
-                  </p>
-                </header>
-                <%= render_slot(@inner_block) %>
-                <div
-                  :if={@confirm != [] or @cancel != []}
-                  class="ml-6 mb-4 flex items-center gap-4 sm:gap-8"
-                >
-                  <.button
-                    :for={confirm <- @confirm}
-                    id={"#{@id}-confirm"}
-                    phx-click={@on_confirm}
-                    phx-disable-with
-                    variant="primary"
-                    class="py-2 px-3"
-                  >
-                    <%= render_slot(confirm) %>
-                  </.button>
-                  <.button
-                    :for={cancel <- @cancel}
-                    phx-click={hide_modal(@on_cancel, @id)}
-                    variant="secondary"
-                  >
-                    <%= render_slot(cancel) %>
-                  </.button>
-                </div>
-              </div>
-            </.focus_wrap>
-          </div>
+                  <%= cancel %>
+                </.button>
+
+                <%= render_slot(action) %>
+              <% end %>
+            </div>
+          </.focus_wrap>
         </div>
       </div>
     </div>
     """
   end
+
+  defp size_class("md"), do: "max-w-xl"
+  defp size_class("lg"), do: "max-w-3xl"
+  defp size_class("xl"), do: "max-w-5xl"
 
   ## JS Commands
 

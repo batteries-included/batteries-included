@@ -205,14 +205,13 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   def install_modal(assigns) do
     ~H"""
     <.modal
-      show={true}
+      show
       id="install-progress"
       on_cancel={JS.navigate(~p"/batteries/#{@group}", replace: true)}
     >
-      <:title>
-        <.h2 variant="fancy">Installing Batteries</.h2>
-      </:title>
-      <.flex class="flex-row mt-5 justify-around">
+      <:title>Installing Batteries</:title>
+
+      <.flex class="flex-row justify-around">
         <.vertical_steps current_step={@current_step}>
           <:step>Generate Configuration</:step>
           <:step>Install Batteries</:step>

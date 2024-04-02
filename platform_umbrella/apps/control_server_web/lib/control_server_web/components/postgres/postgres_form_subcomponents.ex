@@ -138,50 +138,46 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       )
 
     ~H"""
-    <PC.modal
-      :if={@user_form}
-      id="user_modal"
-      max_width="lg"
-      title={@action_text}
-      close_modal_target={@phx_target}
-    >
-      <.form for={@user_form} phx-submit="upsert:user" phx-target={@phx_target}>
-        <.flex column>
-          <PC.field field={@user_form[:position]} type="hidden" />
-          <PC.field field={@user_form[:username]} label="User Name" />
+    <.form for={@user_form} id="user-form" phx-submit="upsert:user" phx-target={@phx_target}>
+      <.modal
+        :if={@user_form}
+        show
+        id="user-form-modal"
+        size="lg"
+        on_cancel={JS.push("close_modal", target: @phx_target)}
+      >
+        <:title><%= @action_text %></:title>
 
-          <.muliselect_input
-            form={@user_form}
-            field={@user_form[:credential_namespaces]}
-            options={to_options(@possible_namespaces, @user_form)}
-            label="Namespaces"
-            width_class="w-full"
-            phx_target={@phx_target}
-            change_event="change:credential_namespaces"
+        <PC.field field={@user_form[:position]} type="hidden" />
+        <PC.field field={@user_form[:username]} label="User Name" />
+
+        <.muliselect_input
+          form={@user_form}
+          field={@user_form[:credential_namespaces]}
+          options={to_options(@possible_namespaces, @user_form)}
+          label="Namespaces"
+          width_class="w-full"
+          phx_target={@phx_target}
+          change_event="change:credential_namespaces"
+        />
+
+        <PC.h3 class="mt-4">Roles</PC.h3>
+        <.grid columns={%{sm: 1, xl: 2}} gaps="2">
+          <.role_option
+            :for={role <- @roles}
+            field={@user_form[:roles]}
+            value={role.value}
+            label={role.label}
+            help_text={role.help_text}
+            checked={Enum.member?(@user_form[:roles].value, role.value)}
           />
-          <PC.h3>Roles</PC.h3>
-          <.grid columns={%{sm: 1, xl: 2}} gaps="2">
-            <.role_option
-              :for={role <- @roles}
-              field={@user_form[:roles]}
-              value={role.value}
-              label={role.label}
-              help_text={role.help_text}
-              checked={Enum.member?(@user_form[:roles].value, role.value)}
-            />
-          </.grid>
+        </.grid>
 
-          <.flex class="justify-end">
-            <.button variant="secondary" phx-target={@phx_target} phx-click="close_modal">
-              Cancel
-            </.button>
-            <.button variant="secondary" type="submit">
-              <%= @action_text %>
-            </.button>
-          </.flex>
-        </.flex>
-      </.form>
-    </PC.modal>
+        <:actions cancel="Cancel">
+          <.button variant="primary" type="submit"><%= @action_text %></.button>
+        </:actions>
+      </.modal>
+    </.form>
     """
   end
 

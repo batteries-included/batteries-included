@@ -103,6 +103,17 @@ defmodule ControlServerWeb.Projects.NewLive do
           steps={@steps}
         />
       </div>
+
+      <.modal id="demo-video-modal" size="lg" class="p-2 pt-4">
+        <:title>Demo Video</:title>
+
+        <.video
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=UZCUB2JKWZe3_5Uw"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        />
+      </.modal>
     </div>
     """
   end
@@ -110,7 +121,9 @@ defmodule ControlServerWeb.Projects.NewLive do
   defp subform(assigns) do
     ~H"""
     <.live_component class={["h-full", @current_step != @module && "hidden"]} {assigns}>
-      <.button variant="secondary" icon={:play_circle}>View Demo Video</.button>
+      <.button variant="secondary" icon={:play_circle} phx-click={show_modal("demo-video-modal")}>
+        View Demo Video
+      </.button>
 
       <.button
         :if={@current_step != Enum.at(@steps, -1)}
