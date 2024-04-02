@@ -42,7 +42,7 @@ defmodule KubeServices.MixProject do
       {:event_center, in_umbrella: true},
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:jason, "~> 1.4"},
-      {:k8s, "~> 2.5"},
+      {:k8s, "~> 2.6"},
       {:junit_formatter, "~> 3.3", only: [:dev, :test, :integration]},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},

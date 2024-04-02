@@ -46,7 +46,7 @@ defmodule ControlServer.MixProject do
       {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
-      {:k8s, "~> 2.5"},
+      {:k8s, "~> 2.6"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_pubsub, "~> 2.1"},
