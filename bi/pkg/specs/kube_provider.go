@@ -1,16 +1,16 @@
 package specs
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
-	"os"
+	"slices"
 
 	"bi/pkg/cluster"
 	"bi/pkg/docker"
 	"bi/pkg/local"
-
-	"github.com/adrg/xdg"
 )
 
 func (spec *InstallSpec) StartKubeProvider() error {
@@ -20,7 +20,7 @@ func (spec *InstallSpec) StartKubeProvider() error {
 	case "kind":
 		err = spec.startLocal()
 	case "aws":
-		err = spec.startAws()
+		err = spec.startAWS()
 	case "provided":
 	default:
 		slog.Debug("unexpected provider", slog.String("provider", spec.KubeCluster.Provider))
@@ -78,7 +78,7 @@ func (spec *InstallSpec) stopLocal() error {
 	return nil
 }
 
-func (spec *InstallSpec) startAws() error {
+func (spec *InstallSpec) startAWS() error {
 	slog.Debug("Starting aws cluster")
 	ctx := context.Background()
 
@@ -91,20 +91,52 @@ func (spec *InstallSpec) startAws() error {
 		return err
 	}
 
-	out, err := xdg.RuntimeFile("bi/outputs.json")
-	if err != nil {
+	buf := bytes.NewBuffer([]byte{})
+	if err := p.Outputs(ctx, buf); err != nil {
 		return err
 	}
 
-	f, err := os.OpenFile(out, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0o700)
+	parsed, err := parseEKSOutputs(buf.Bytes())
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-
-	if err := p.Outputs(ctx, f); err != nil {
+	if err := spec.configureKarpenterBattery(parsed); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+type output struct {
+	Value  interface{}
+	Secret bool
+}
+
+type eksOutputs struct {
+	Cluster      map[string]output `json:"cluster"`
+	Gateway      map[string]output `json:"gateway"`
+	Karpenter    map[string]output `json:"karpenter"`
+	LBController map[string]output `json:"lbcontroller"`
+	VPC          map[string]output `json:"vpc"`
+}
+
+func parseEKSOutputs(output []byte) (*eksOutputs, error) {
+	o := &eksOutputs{}
+	err := json.Unmarshal(output, o)
+	return o, err
+}
+
+func (spec *InstallSpec) configureKarpenterBattery(outputs *eksOutputs) error {
+	ix := slices.IndexFunc(spec.TargetSummary.Batteries, func(bs BatterySpec) bool { return bs.Type == "karpenter" })
+
+	if ix < 0 {
+		return fmt.Errorf("tried to configure karpenter battery but it wasn't found in install spec")
+	}
+
+	spec.TargetSummary.Batteries[ix].Config["cluster_name"] = outputs.Cluster["name"].Value
+	spec.TargetSummary.Batteries[ix].Config["node_role_name"] = outputs.Cluster["nodeRoleName"].Value
+	spec.TargetSummary.Batteries[ix].Config["queue_name"] = outputs.Karpenter["queueName"].Value
+	spec.TargetSummary.Batteries[ix].Config["service_role_arn"] = outputs.Karpenter["roleARN"].Value
 
 	return nil
 }

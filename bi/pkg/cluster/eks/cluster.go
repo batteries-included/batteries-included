@@ -115,7 +115,9 @@ func (c *clusterConfig) run(ctx *pulumi.Context) error {
 	ctx.Export("arn", c.cluster.Arn)
 	ctx.Export("certificate", c.cluster.CertificateAuthority.Data())
 	ctx.Export("endpoint", c.cluster.Endpoint)
-	ctx.Export("nodeRoleARN", c.roles["node"].Arn)
+	ctx.Export("name", c.cluster.Name)
+	ctx.Export("nodeRoleARN", c.roles["node"].Arn) // we'll use this role for the karpenter nodes as well
+	ctx.Export("nodeRoleName", c.roles["node"].Name)
 	ctx.Export("oidcProviderURL", c.provider.Url)
 	ctx.Export("oidcProviderARN", c.provider.Arn)
 
@@ -125,17 +127,22 @@ func (c *clusterConfig) run(ctx *pulumi.Context) error {
 func (c *clusterConfig) buildSecurityGroups(ctx *pulumi.Context) error {
 	for _, s := range []string{"cluster", "node"} {
 		name := fmt.Sprintf("%s-%s-security-group", c.baseName, s)
+		tags := pulumi.StringMap{"Name": pulumi.String(name)}
+
+		if s == "node" {
+			tags["karpenter.sh/discovery"] = pulumi.String(c.baseName)
+		}
+
 		sg, err := ec2.NewSecurityGroup(ctx, name, &ec2.SecurityGroupArgs{
 			Name:        pulumi.String(name),
 			Description: pulumi.String("EKS security group - " + s),
 			VpcId:       pulumi.String(c.vpcID),
-			Tags:        pulumi.StringMap{"Name": pulumi.String(name)},
+			Tags:        tags,
 		})
 		if err != nil {
 			return err
 		}
 		c.securityGroupIDs[s] = sg.ID()
-
 	}
 
 	return nil
@@ -462,6 +469,7 @@ func (c *clusterConfig) buildManagedNodeRole(ctx *pulumi.Context) error {
 		},
 	})
 
+	// this role is also used for e.g. karpenter nodes
 	name := fmt.Sprintf("%s-managed-node-role", c.baseName)
 	role, err := iam.NewRole(ctx, name, &iam.RoleArgs{
 		AssumeRolePolicy: assumeRole.Json(),

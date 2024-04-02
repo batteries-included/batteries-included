@@ -126,11 +126,16 @@ func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 			}
 
 			name := fmt.Sprintf("%s-%s-%s", v.baseName, p, az)
+			tags := pulumi.StringMap{"Name": pulumi.String(name)}
+
+			if p == "private" {
+				tags["karpenter.sh/discovery"] = pulumi.String(v.baseName)
+			}
 
 			subnet, err := ec2.NewSubnet(ctx, name, &ec2.SubnetArgs{
 				VpcId:     v.vpcID,
 				CidrBlock: pulumi.String(net.String()),
-				Tags:      pulumi.StringMap{"Name": pulumi.String(name)},
+				Tags:      tags,
 			}, pulumi.Parent(v.vpc))
 			if err != nil {
 				return err

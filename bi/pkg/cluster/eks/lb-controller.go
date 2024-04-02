@@ -16,7 +16,8 @@ const (
 
 type lbControllerConfig struct {
 	// config
-	baseName string
+	baseName,
+	namespace string
 
 	// outputs
 	oidcProviderURL,
@@ -28,6 +29,7 @@ type lbControllerConfig struct {
 
 func (l *lbControllerConfig) withConfig(cfg *util.PulumiConfig) error {
 	l.baseName = cfg.Cluster.Name
+	l.namespace = cfg.LBController.Namespace
 
 	return nil
 }
@@ -65,7 +67,7 @@ func (l *lbControllerConfig) lbControllerRole(ctx *pulumi.Context) error {
 					},
 					iam.GetPolicyDocumentStatementConditionArgs{
 						Test:     P_STR_STRING_EQUALS,
-						Values:   pulumi.ToStringArray([]string{"system:serviceaccount:kube-system:" + LB_CONTROLLER_NAME}),
+						Values:   pulumi.ToStringArray([]string{util.ServiceAccount(l.namespace, LB_CONTROLLER_NAME)}),
 						Variable: pulumi.Sprintf("%s:sub", l.oidcProviderURL),
 					},
 				},

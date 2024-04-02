@@ -19,7 +19,8 @@ const (
 
 type karpenterConfig struct {
 	// config
-	baseName string
+	baseName,
+	namespace string
 
 	// outputs
 	clusterARN,
@@ -34,13 +35,14 @@ type karpenterConfig struct {
 
 func (k *karpenterConfig) withConfig(cfg *util.PulumiConfig) error {
 	k.baseName = cfg.Cluster.Name
+	k.namespace = cfg.Karpenter.Namespace
 
 	return nil
 }
 
 func (k *karpenterConfig) withOutputs(outputs map[string]auto.OutputMap) error {
 	k.clusterARN = outputs["cluster"]["arn"].Value.(string)
-	k.nodeRoleARN = outputs["cluster"]["arn"].Value.(string)
+	k.nodeRoleARN = outputs["cluster"]["nodeRoleARN"].Value.(string)
 	k.oidcProviderURL = outputs["cluster"]["oidcProviderURL"].Value.(string)
 	k.oidcProviderARN = outputs["cluster"]["oidcProviderARN"].Value.(string)
 	return nil
@@ -58,7 +60,7 @@ func (k *karpenterConfig) run(ctx *pulumi.Context) error {
 		}
 	}
 
-	ctx.Export("queueARN", k.queue.Arn)
+	ctx.Export("queueName", k.queue.Name)
 	ctx.Export("roleARN", k.role.Arn)
 
 	return nil
@@ -175,7 +177,7 @@ func (k *karpenterConfig) karpenterServiceRole(ctx *pulumi.Context) error {
 					},
 					iam.GetPolicyDocumentStatementConditionArgs{
 						Test:     P_STR_STRING_EQUALS,
-						Values:   pulumi.ToStringArray([]string{fmt.Sprintf("system:serviceaccount:%[1]s:%[1]s", KARPENTER_NAME)}),
+						Values:   pulumi.ToStringArray([]string{util.ServiceAccount(k.namespace, KARPENTER_NAME)}),
 						Variable: pulumi.Sprintf("%s:sub", k.oidcProviderURL),
 					},
 				},

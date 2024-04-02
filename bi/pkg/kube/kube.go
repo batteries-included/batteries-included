@@ -135,6 +135,7 @@ func (c *batteryKubeClient) Close() error {
 	if c.net == nil {
 		return nil
 	}
+
 	if err := c.net.Close(); err != nil {
 		return fmt.Errorf("error closing wireguard network: %w", err)
 	}

@@ -26,11 +26,17 @@ func ToStringSlice(in interface{}) []string {
 	return out
 }
 
+func ServiceAccount(namespace, name string) string {
+	return fmt.Sprintf("system:serviceaccount:%s:%s", namespace, name)
+}
+
 type PulumiConfig struct {
-	AWS     aws
-	Cluster cluster
-	Gateway gateway
-	VPC     vpc
+	AWS          aws
+	Cluster      cluster
+	Gateway      gateway
+	Karpenter    karpenter
+	LBController lbController
+	VPC          vpc
 }
 
 // aws general config
@@ -81,6 +87,10 @@ type gateway struct {
 	// VolumeType is the type of the root EBS volume for the wireguard instance e.g. gp3
 	VolumeType string
 }
+
+type karpenter struct{ Namespace string }
+
+type lbController struct{ Namespace string }
 
 // vpc specific config
 type vpc struct {
@@ -166,7 +176,9 @@ func ParsePulumiConfig(cfg auto.ConfigMap) (*PulumiConfig, error) {
 			VolumeSize:   volSize,
 			VolumeType:   cfg["gateway:volumeType"].Value,
 		},
-		VPC: vpc{CIDRBlock: vpcCIDR},
+		Karpenter:    karpenter{Namespace: cfg["karpenter:namespace"].Value},
+		LBController: lbController{Namespace: cfg["lbcontroller:namespace"].Value},
+		VPC:          vpc{CIDRBlock: vpcCIDR},
 	}
 
 	return pc, nil
