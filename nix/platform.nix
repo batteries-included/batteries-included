@@ -38,7 +38,7 @@
         inherit src version LANG elixir;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-QuBxT7SHZ1kAmhlqg+SSagf4QxnInXEDIyAFTzO/G+E=";
+        sha256 = "sha256-ULGob/kU/nFBvK26axPJ0nFLVn7lobk5UQmmBXfOxxQ=";
       };
 
       # mix fixed output derivation dependencies
@@ -51,7 +51,7 @@
         pname = "mix-deps-platform";
         inherit src version LANG elixir;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-Lv0Mv6xPR67+3VSByNcuqT8DESfZAqvxBrYK890cHvI=";
+        sha256 = "sha256-PYcp+4OjJbISCXwVUMN843Eui3DAguckccVOR1r25k0=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {
