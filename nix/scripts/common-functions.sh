@@ -143,7 +143,7 @@ function summary_from_spec() {
 function try_portforward() {
   while true; do
     if ! flock -x -n "${FLAKE_ROOT}/.nix-lock/portforward.lockfile" \
-      -c "bi postgres port-forward controlserver -n battery-base"; then
+      bash -c "bi postgres port-forward controlserver -n battery-base"; then
       log "Port forward failed, retrying..."
       sleep 1
     fi
