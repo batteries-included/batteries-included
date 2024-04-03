@@ -140,7 +140,7 @@ func (k *karpenterConfig) cloudwatchEvents(ctx *pulumi.Context) error {
 		name := fmt.Sprintf("%s-karpenter-%s", k.baseName, event)
 		r, err := cloudwatch.NewEventRule(ctx, name, &cloudwatch.EventRuleArgs{
 			Description:  pulumi.String(rule.description),
-			NamePrefix:   pulumi.String(name + "-"),
+			Name:         pulumi.String(name),
 			EventPattern: pulumi.JSONMarshal(rule.pattern),
 		})
 		if err != nil {
