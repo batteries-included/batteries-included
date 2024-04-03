@@ -180,5 +180,11 @@ module.exports = {
         '.phx-change-loading &',
       ])
     ),
+    plugin(({ addVariant }) =>
+      addVariant('slider-thumb', [
+        '&::-webkit-slider-thumb',
+        '&::-moz-range-thumb',
+      ])
+    ),
   ],
 };

@@ -44,22 +44,8 @@ defmodule ControlServerWeb.FerretDBFormComponent do
             />
 
             <.grid columns={[sm: 1, lg: 2]} class="items-center">
-              <.flex>
-                <.h5>Number of instances</.h5>
-                <div class="font-bold text-4xl text-primary">
-                  <%= @form[:instances].value %>
-                </div>
-              </.flex>
-              <.flex>
-                <PC.input
-                  min="1"
-                  max={3}
-                  step="1"
-                  field={@form[:instances]}
-                  type="range"
-                  class="w-full"
-                />
-              </.flex>
+              <.h5>Number of instances</.h5>
+              <.input field={@form[:instances]} type="range" min="1" max="3" step="1" />
             </.grid>
           </.grid>
           <.data_horizontal_bolded

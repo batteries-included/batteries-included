@@ -313,13 +313,14 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                     <% end %>
                   </.flex>
 
-                  <PC.input
+                  <.input
+                    field={@form[:virtual_storage_size_range_value]}
+                    type="range"
                     min="1"
                     max="120"
                     step="1"
+                    show_value={false}
                     phx-change="on_change_storage_size_range"
-                    field={@form[:virtual_storage_size_range_value]}
-                    type="range"
                   />
                 </div>
               </.grid>
@@ -365,23 +366,16 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               <!-- divider -->
             </.flex>
 
-            <.flex class="items-center">
-              <.flex class="justify-between w-full lg:w-1/2">
-                <.h5>Number of instances</.h5>
-                <div class="font-bold text-4xl text-primary">
-                  <%= @form[:num_instances].value %>
-                </div>
-              </.flex>
-              <.flex class="w-full lg:w-1/2">
-                <PC.input
-                  min="1"
-                  max={max(length(@possible_nodes || []), 3)}
-                  step="1"
-                  field={@form[:num_instances]}
-                  type="range"
-                />
-              </.flex>
-            </.flex>
+            <.grid columns={[sm: 1, lg: 2]} class="items-center">
+              <.h5>Number of instances</.h5>
+              <.input
+                field={@form[:num_instances]}
+                type="range"
+                min="1"
+                max={max(length(@possible_nodes || []), 3)}
+                step="1"
+              />
+            </.grid>
           </.panel>
 
           <.users_table

@@ -15,6 +15,12 @@ defmodule CommonUI.IDHelpersTest do
     assert id == "123"
   end
 
+  test "provide_id/1 with id in assigns rest" do
+    assigns = %{rest: %{id: "123"}}
+    assert %{:id => id} = IDHelpers.provide_id(assigns)
+    assert id == "123"
+  end
+
   test "provide_id/1 with no id in assigns" do
     assigns = %{}
     assert %{:id => id} = IDHelpers.provide_id(assigns)

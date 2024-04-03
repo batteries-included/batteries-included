@@ -7,6 +7,8 @@ defmodule CommonUI.Components.Input do
   import Phoenix.HTML
   import Phoenix.HTML.Form
 
+  alias CommonUI.IDHelpers
+
   attr :name, :any
   attr :value, :any
   attr :checked, :boolean
@@ -21,7 +23,10 @@ defmodule CommonUI.Components.Input do
   attr :options, :list, default: []
   attr :multiple, :boolean, default: false
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(autocomplete autofocus maxlength disabled required)
+  attr :rest, :global, include: ~w(autocomplete autofocus min max step maxlength disabled required)
+
+  # Used for range sliders
+  attr :show_value, :boolean, default: true
 
   # Used for radio buttons
   slot :option do
@@ -132,6 +137,55 @@ defmodule CommonUI.Components.Input do
       </div>
 
       <.error errors={@errors} class="mt-0" />
+    </div>
+    """
+  end
+
+  def input(%{type: "range"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
+    ~H"""
+    <div id={@id} class="relative flex-1" phx-hook="Range">
+      <input
+        id={"#{@id}-input"}
+        name={@name}
+        value={@value}
+        type="range"
+        class={[
+          "relative z-30 appearance-none bg-transparent cursor-pointer w-full",
+          "slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-white",
+          "slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary",
+          range_class(@show_value)
+        ]}
+        {@rest}
+      />
+
+      <div
+        id={"#{@id}-progress-bg"}
+        phx-update="ignore"
+        class={[
+          "absolute z-10 bg-gray-lighter h-[4px] w-full rounded pointer-events-none",
+          range_progress_class(@show_value)
+        ]}
+      />
+
+      <div
+        id={"#{@id}-progress"}
+        phx-update="ignore"
+        class={[
+          "absolute z-20 bg-primary h-[4px] rounded-l pointer-events-none",
+          range_progress_class(@show_value)
+        ]}
+      />
+
+      <div
+        :if={@show_value}
+        id={"#{@id}-value"}
+        phx-update="ignore"
+        class="absolute top-0 z-30 size-[32px] flex items-center justify-center font-semibold text-primary pointer-events-none"
+      >
+        <%= @value %>
+      </div>
     </div>
     """
   end
@@ -250,6 +304,12 @@ defmodule CommonUI.Components.Input do
       "bg-gray-lightest dark:bg-gray-darkest-tint"
     ]
   end
+
+  defp range_class(true), do: "slider-thumb:size-[32px]"
+  defp range_class(false), do: "slider-thumb:size-[24px]"
+
+  defp range_progress_class(true), do: "top-[14px]"
+  defp range_progress_class(false), do: "top-[10px]"
 
   attr :label, :string, default: nil
   attr :note, :string, default: nil

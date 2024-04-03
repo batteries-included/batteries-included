@@ -1,8 +1,12 @@
+import { RangeHook } from './range';
 import { TooltipHook } from './tooltip';
 
 (function () {
   window.storybook = {
-    Hooks: { Tooltip: TooltipHook },
     LiveSocketOptions: {},
+    Hooks: {
+      Range: RangeHook,
+      Tooltip: TooltipHook,
+    },
   };
 })();

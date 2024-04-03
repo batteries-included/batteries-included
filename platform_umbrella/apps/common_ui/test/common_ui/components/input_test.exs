@@ -148,6 +148,32 @@ defmodule CommonUI.Components.InputTest do
     end
   end
 
+  describe "range input component" do
+    component_snapshot_test "default" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="range" id="foo" name="foo" value={5} max={10} label="Foobar" />
+      """
+    end
+
+    component_snapshot_test "with min" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="range" id="foo" name="foo" value={5} min={2} max={10} label="Foobar" />
+      """
+    end
+
+    component_snapshot_test "with no value" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="range" id="foo" name="foo" value={5} max={10} label="Foobar" show_value={false} />
+      """
+    end
+  end
+
   component_snapshot_test "hidden input component" do
     assigns = %{}
 

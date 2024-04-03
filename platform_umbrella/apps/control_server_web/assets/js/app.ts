@@ -4,6 +4,7 @@ import { LiveSocket, ViewHook } from 'phoenix_live_view';
 import { IFrameHook } from './iframe';
 import { ChartHook } from './chart';
 import { ResourceLogsModalHook } from './resource-logs-modal';
+import { RangeHook } from '../../../common_ui/assets/js/range';
 import { TooltipHook } from '../../../common_ui/assets/js/tooltip';
 import '../../../common_ui/assets/js/shared';
 
@@ -14,6 +15,7 @@ const csrfToken = document
 const hooks: { [name: string]: Partial<ViewHook> } = {
   IFrame: IFrameHook,
   Chart: ChartHook,
+  Range: RangeHook,
   Tooltip: TooltipHook,
   ResourceLogsModal: ResourceLogsModalHook,
 };
