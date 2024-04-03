@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Components.RawObjectTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import ControlServerWeb.ObjectDisplay
 

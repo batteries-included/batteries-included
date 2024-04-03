@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Components.EmptyHomeTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import ControlServerWeb.EmptyHome
 

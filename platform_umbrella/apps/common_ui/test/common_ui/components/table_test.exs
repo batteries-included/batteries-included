@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.TableTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Table
 

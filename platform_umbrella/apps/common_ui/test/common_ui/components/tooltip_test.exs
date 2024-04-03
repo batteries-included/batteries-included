@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.TooltipTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
   use CommonUI.ComponentCase
 
   import CommonUI.Components.Tooltip

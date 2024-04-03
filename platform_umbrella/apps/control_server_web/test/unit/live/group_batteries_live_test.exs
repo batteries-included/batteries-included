@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.GroupBatteriesLiveTest do
-  use Heyya.LiveTest
+  use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
   describe "magic group batteries" do

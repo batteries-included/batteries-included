@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.ClickFlipTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.ClickFlip
 

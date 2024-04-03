@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Components.SidebarLayoutTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import ControlServerWeb.SidebarLayout
 

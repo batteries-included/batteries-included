@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.TypographyTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Typography
 

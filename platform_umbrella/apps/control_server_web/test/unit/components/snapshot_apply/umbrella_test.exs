@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.UmbrellaSnapshotsTableTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import ControlServerWeb.UmbrellaSnapshotsTable
 

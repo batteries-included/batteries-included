@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.VideoTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Video
 

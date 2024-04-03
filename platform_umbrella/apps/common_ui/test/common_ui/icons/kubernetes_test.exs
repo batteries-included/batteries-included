@@ -1,5 +1,5 @@
 defmodule CommonUI.Icons.KubernetesTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Icons.Kubernetes
 

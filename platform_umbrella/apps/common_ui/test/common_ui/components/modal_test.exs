@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.ModalTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Modal
 

@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Components.TooltipTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Tooltip
 

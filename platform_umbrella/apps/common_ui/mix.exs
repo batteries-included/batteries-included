@@ -42,7 +42,7 @@ defmodule CommonUI.MixProject do
       {:bandit, "~> 1.4"},
       {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:heroicons, "~> 0.5"},
-      {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
+      {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
       {:jason, "~> 1.4"},
       {:petal_components, "~> 1.9"},
       {:phoenix, "~> 1.7"},

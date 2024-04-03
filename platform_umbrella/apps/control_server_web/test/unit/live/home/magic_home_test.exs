@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.MagicHomeTest do
-  use Heyya.LiveTest
+  use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
   alias ControlServer.Batteries.Installer

@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.ResourcesListTest do
-  use Heyya.LiveTest
+  use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
   import ControlServer.ResourceFixtures

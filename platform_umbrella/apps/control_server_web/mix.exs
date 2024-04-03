@@ -49,7 +49,7 @@ defmodule ControlServerWeb.MixProject do
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
       {:floki, "~> 0.35", only: [:dev, :test, :integration], override: true},
       {:gettext, "~> 0.20"},
-      {:heyya, "~> 0.7", only: [:dev, :test, :integration]},
+      {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
       {:inflex, "~> 2.1"},
       {:jason, "~> 1.4"},
       {:kube_services, in_umbrella: true},

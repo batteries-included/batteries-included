@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.RoundedLabelTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.RoundedLabel
 

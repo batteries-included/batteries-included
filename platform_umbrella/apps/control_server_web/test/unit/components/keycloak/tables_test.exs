@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Keycloak.TablesTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import ControlServerWeb.Keycloak.ClientsTable
   import ControlServerWeb.Keycloak.RealmsTable

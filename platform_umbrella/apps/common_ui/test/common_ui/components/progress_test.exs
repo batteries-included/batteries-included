@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.ProgressTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Progress
 

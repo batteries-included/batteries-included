@@ -38,7 +38,7 @@
         inherit src version LANG elixir;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-ULGob/kU/nFBvK26axPJ0nFLVn7lobk5UQmmBXfOxxQ=";
+        sha256 = "sha256-8odNeULzS/M5QSKJYDSVVtRYKoWOS7nw6pKIbHIlzz8=";
       };
 
       # mix fixed output derivation dependencies

@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.StaleIndexTest do
-  use Heyya.LiveTest
+  use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
   test "render list of stale", %{conn: conn} do

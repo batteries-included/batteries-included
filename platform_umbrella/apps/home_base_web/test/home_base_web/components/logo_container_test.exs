@@ -1,5 +1,5 @@
 defmodule HomeBaseWeb.Components.LogoContainerTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import HomeBaseWeb.LogoContainer
 

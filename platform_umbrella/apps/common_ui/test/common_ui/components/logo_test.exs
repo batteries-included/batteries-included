@@ -1,6 +1,6 @@
 defmodule CommonUI.Components.LogoTest do
   use CommonUI.ComponentCase
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Logo
 

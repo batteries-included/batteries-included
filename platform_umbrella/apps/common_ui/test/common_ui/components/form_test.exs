@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.FormTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Form
 

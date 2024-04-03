@@ -1,5 +1,5 @@
 defmodule CommonUI.Components.InputTest do
-  use Heyya.SnapshotTest
+  use Heyya.SnapshotCase
 
   import CommonUI.Components.Input
 

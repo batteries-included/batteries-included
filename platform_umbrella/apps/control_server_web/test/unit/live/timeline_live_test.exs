@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.Live.TimelineLiveTest do
-  use Heyya.LiveTest
+  use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
   import ControlServer.Factory
