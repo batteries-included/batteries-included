@@ -18,6 +18,7 @@
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
           "secret_key": null,
+          "cluster_name": null,
           "server_in_cluster": false,
           "image_override": null,
           "core_namespace_override": null,
@@ -70,7 +71,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "IAR5LX3WUEJ67GGKAGTR6SR2",
+            "password": "55QURJLJ23OSTSWUEV6NAEZ4",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

@@ -1,6 +1,6 @@
-defmodule CommonCore.Batteries.KarpenterConfig do
+defmodule CommonCore.Batteries.AwsLoadBalancerControllerConfig do
   @moduledoc false
-  use CommonCore.Util.PolymorphicType, type: :karpenter
+  use CommonCore.Util.PolymorphicType, type: :aws_load_balancer_controller
   use CommonCore.Util.DefaultableField
   use TypedEctoSchema
 
@@ -11,10 +11,9 @@ defmodule CommonCore.Batteries.KarpenterConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    defaultable_field :image, :string, default: Defaults.Images.karpenter_image()
-    field :queue_name, :string
+    defaultable_field :image, :string, default: Defaults.Images.aws_load_balancer_controller_image()
     field :service_role_arn, :string
-    field :node_role_name, :string
+
     type_field()
   end
 end

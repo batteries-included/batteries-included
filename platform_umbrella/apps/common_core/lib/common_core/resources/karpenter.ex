@@ -8,6 +8,7 @@ defmodule CommonCore.Resources.Karpenter do
   use CommonCore.Resources.ResourceGenerator, app_name: "karpenter"
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.StateSummary.Core
 
   resource(:crd_ec2nodeclasses_karpenter_k8s_aws) do
     YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws))
@@ -262,7 +263,7 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.spec(spec)
   end
 
-  resource(:deployment_main, battery) do
+  resource(:deployment_main, battery, state) do
     namespace = @app_name
 
     template =
@@ -322,7 +323,7 @@ defmodule CommonCore.Resources.Karpenter do
                 %{"name" => "BATCH_MAX_DURATION", "value" => "10s"},
                 %{"name" => "BATCH_IDLE_DURATION", "value" => "1s"},
                 %{"name" => "ASSUME_ROLE_DURATION", "value" => "15m"},
-                %{"name" => "CLUSTER_NAME", "value" => battery.config.cluster_name},
+                %{"name" => "CLUSTER_NAME", "value" => Core.config_field(state, :cluster_name)},
                 %{"name" => "VM_MEMORY_OVERHEAD_PERCENT", "value" => "0.075"},
                 %{"name" => "INTERRUPTION_QUEUE", "value" => battery.config.queue_name},
                 %{"name" => "RESERVED_ENIS", "value" => "0"}
@@ -398,14 +399,16 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.spec(spec)
   end
 
-  resource(:node_class, battery) do
+  resource(:node_class, battery, state) do
+    cluster_name = Core.config_field(state, :cluster_name)
+
     spec = %{
       "amiFamily" => "AL2",
       "role" => battery.config.node_role_name,
-      "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => battery.config.cluster_name}}],
-      "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => battery.config.cluster_name}}],
+      "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
+      "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
       # TODO(jdt): need to merge in other "default" tags
-      "tags" => %{"karpenter.sh/discovery" => battery.config.cluster_name}
+      "tags" => %{"karpenter.sh/discovery" => cluster_name}
     }
 
     :karpenter_ec2node_class

@@ -4,6 +4,7 @@ defmodule CommonCore.Batteries.SystemBattery do
 
   import Ecto.Changeset
 
+  alias CommonCore.Batteries.AwsLoadBalancerControllerConfig
   alias CommonCore.Batteries.BatteryCAConfig
   alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.CertManagerConfig
@@ -38,6 +39,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Util.PolymorphicType
 
   @possible_types [
+    aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
     battery_ca: BatteryCAConfig,
     battery_core: BatteryCoreConfig,
     cert_manager: CertManagerConfig,

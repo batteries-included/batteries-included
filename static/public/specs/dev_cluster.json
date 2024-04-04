@@ -18,6 +18,7 @@
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
           "secret_key": null,
+          "cluster_name": null,
           "server_in_cluster": false,
           "image_override": null,
           "core_namespace_override": null,
@@ -25,6 +26,34 @@
           "data_namespace_override": null,
           "ml_namespace_override": null,
           "server_in_cluster_override": null
+        },
+        "group": "magic",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "karpenter",
+        "config": {
+          "type": "karpenter",
+          "image": "public.ecr.aws/karpenter/controller:0.35.2",
+          "service_role_arn": null,
+          "queue_name": null,
+          "node_role_name": null,
+          "image_override": null
+        },
+        "group": "magic",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "aws_load_balancer_controller",
+        "config": {
+          "type": "aws_load_balancer_controller",
+          "image": "public.ecr.aws/eks/aws-load-balancer-controller:v2.7.2",
+          "service_role_arn": null,
+          "image_override": null
         },
         "group": "magic",
         "inserted_at": null,
@@ -70,22 +99,6 @@
       },
       {
         "id": null,
-        "type": "karpenter",
-        "config": {
-          "type": "karpenter",
-          "image": "public.ecr.aws/karpenter/controller:0.35.2",
-          "cluster_name": null,
-          "queue_name": null,
-          "service_role_arn": null,
-          "node_role_name": null,
-          "image_override": null
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -124,7 +137,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "EN7NNG6NMIRIWW2WJO54OGOS",
+            "password": "OLES5VK7ZKQB5JL3JOC5B6MW",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

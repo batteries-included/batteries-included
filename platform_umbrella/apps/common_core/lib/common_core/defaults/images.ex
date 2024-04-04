@@ -4,6 +4,7 @@ defmodule CommonCore.Defaults.Images do
 
   def addon_resizer_image, do: "registry.k8s.io/autoscaling/addon-resizer:1.8.19"
   def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.26.0"
+  def aws_load_balancer_controller_image, do: "public.ecr.aws/eks/aws-load-balancer-controller:v2.7.2"
   def cert_manager_acmesolver_image, do: "quay.io/jetstack/cert-manager-acmesolver:#{@cert_manager_image_tag}"
   def cert_manager_cainjector_image, do: "quay.io/jetstack/cert-manager-cainjector:#{@cert_manager_image_tag}"
   def cert_manager_controller_image, do: "quay.io/jetstack/cert-manager-controller:#{@cert_manager_image_tag}"

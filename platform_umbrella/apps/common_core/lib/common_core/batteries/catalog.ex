@@ -44,7 +44,13 @@ defmodule CommonCore.Batteries.Catalog do
       group: :magic,
       type: :karpenter,
       dependencies: [:battery_core],
-      description: "Auto scale kubernetes clusters in AWS EKS"
+      description: "Auto scale kubernetes clusters in AWS EKS."
+    },
+    %CatalogBattery{
+      group: :magic,
+      type: :aws_load_balancer_controller,
+      dependencies: [:battery_core, :karpenter],
+      description: "A Kubernetes controller for Elastic Load Balancers."
     },
     # Devtools
     %CatalogBattery{

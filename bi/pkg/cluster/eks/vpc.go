@@ -2,6 +2,7 @@ package eks
 
 import (
 	"fmt"
+	"maps"
 	"net"
 	"slices"
 
@@ -115,6 +116,22 @@ func (v *vpcConfig) buildVPC(ctx *pulumi.Context) error {
 }
 
 func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
+	clusterTagKey := fmt.Sprintf("kubernetes.io/cluster/%s", v.baseName)
+
+	publicTags := map[string]string{
+		// alb controller discovery tags
+		clusterTagKey:            "shared",
+		"kubernetes.io/role/elb": "1",
+	}
+
+	privateTags := map[string]string{
+		// alb controller discovery tags
+		clusterTagKey:                     "shared",
+		"kubernetes.io/role/internal-elb": "1",
+
+		// karpenter discovery tags
+		"karpenter.sh/discovery": v.baseName,
+	}
 
 	subnets := make(map[string][]*ec2.Subnet)
 	for i, az := range v.azNames {
@@ -126,17 +143,21 @@ func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 			}
 
 			name := fmt.Sprintf("%s-%s-%s", v.baseName, p, az)
-			tags := pulumi.StringMap{"Name": pulumi.String(name)}
+			tags := map[string]string{"Name": name}
 
 			if p == "private" {
-				tags["karpenter.sh/discovery"] = pulumi.String(v.baseName)
+				maps.Copy(tags, privateTags)
+			}
+
+			if p == "public" {
+				maps.Copy(tags, publicTags)
 			}
 
 			subnet, err := ec2.NewSubnet(ctx, name, &ec2.SubnetArgs{
 				AvailabilityZone: pulumi.String(az),
-				VpcId:            v.vpcID,
 				CidrBlock:        pulumi.String(net.String()),
-				Tags:             tags,
+				Tags:             pulumi.ToStringMap(tags),
+				VpcId:            v.vpcID,
 			}, pulumi.Parent(v.vpc))
 			if err != nil {
 				return err

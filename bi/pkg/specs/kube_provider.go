@@ -100,6 +100,15 @@ func (spec *InstallSpec) startAWS() error {
 	if err != nil {
 		return err
 	}
+
+	if err := spec.configureCoreBattery(parsed); err != nil {
+		return err
+	}
+
+	if err := spec.configureLBControllerBattery(parsed); err != nil {
+		return err
+	}
+
 	if err := spec.configureKarpenterBattery(parsed); err != nil {
 		return err
 	}
@@ -126,17 +135,45 @@ func parseEKSOutputs(output []byte) (*eksOutputs, error) {
 	return o, err
 }
 
+// NOTE(jdt): this should hopefully be temporary until we generate cluster name before spinning up cluster
+func (spec *InstallSpec) configureCoreBattery(outputs *eksOutputs) error {
+	ix := slices.IndexFunc(spec.TargetSummary.Batteries, ixFunc("battery_core"))
+
+	if ix < 0 {
+		return fmt.Errorf("tried to configure core battery but it wasn't found in install spec")
+	}
+
+	spec.TargetSummary.Batteries[ix].Config["cluster_name"] = outputs.Cluster["name"].Value
+	return nil
+}
+
+func (spec *InstallSpec) configureLBControllerBattery(outputs *eksOutputs) error {
+	ix := slices.IndexFunc(spec.TargetSummary.Batteries, ixFunc("aws_load_balancer_controller"))
+
+	if ix < 0 {
+		return fmt.Errorf("tried to configure aws_load_balancer_controller battery but it wasn't found in install spec")
+	}
+
+	spec.TargetSummary.Batteries[ix].Config["service_role_arn"] = outputs.LBController["roleARN"].Value
+
+	return nil
+}
 func (spec *InstallSpec) configureKarpenterBattery(outputs *eksOutputs) error {
-	ix := slices.IndexFunc(spec.TargetSummary.Batteries, func(bs BatterySpec) bool { return bs.Type == "karpenter" })
+	ix := slices.IndexFunc(spec.TargetSummary.Batteries, ixFunc("karpenter"))
 
 	if ix < 0 {
 		return fmt.Errorf("tried to configure karpenter battery but it wasn't found in install spec")
 	}
 
-	spec.TargetSummary.Batteries[ix].Config["cluster_name"] = outputs.Cluster["name"].Value
 	spec.TargetSummary.Batteries[ix].Config["node_role_name"] = outputs.Cluster["nodeRoleName"].Value
 	spec.TargetSummary.Batteries[ix].Config["queue_name"] = outputs.Karpenter["queueName"].Value
 	spec.TargetSummary.Batteries[ix].Config["service_role_arn"] = outputs.Karpenter["roleARN"].Value
 
 	return nil
+}
+
+func ixFunc(typ string) func(BatterySpec) bool {
+	return func(bs BatterySpec) bool {
+		return bs.Type == typ
+	}
 }

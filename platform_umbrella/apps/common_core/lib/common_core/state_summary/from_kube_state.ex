@@ -8,6 +8,7 @@ defmodule CommonCore.StateSummary.FromKubeState do
     certmanager_cluster_issuer
     cluster_role
     cluster_role_binding
+    ingress_class_params
     namespace
     node
     storage_class

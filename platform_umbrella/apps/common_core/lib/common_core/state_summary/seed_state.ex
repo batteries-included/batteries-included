@@ -44,7 +44,7 @@ defmodule CommonCore.StateSummary.SeedState do
 
   def seed(:eks) do
     batteries =
-      ~w(battery_core cloudnative_pg istio istio_gateway karpenter stale_resource_cleaner)a
+      ~w(aws_load_balancer_controller battery_core cloudnative_pg istio istio_gateway karpenter stale_resource_cleaner)a
       |> batteries()
       |> add_cluster_type(:eks)
 
