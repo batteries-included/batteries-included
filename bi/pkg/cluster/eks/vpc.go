@@ -133,9 +133,10 @@ func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 			}
 
 			subnet, err := ec2.NewSubnet(ctx, name, &ec2.SubnetArgs{
-				VpcId:     v.vpcID,
-				CidrBlock: pulumi.String(net.String()),
-				Tags:      tags,
+				AvailabilityZone: pulumi.String(az),
+				VpcId:            v.vpcID,
+				CidrBlock:        pulumi.String(net.String()),
+				Tags:             tags,
 			}, pulumi.Parent(v.vpc))
 			if err != nil {
 				return err
