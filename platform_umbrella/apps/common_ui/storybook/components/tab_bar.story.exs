@@ -18,6 +18,16 @@ defmodule Storybook.Components.TabBar do
         ]
       },
       %Variation{
+        id: :with_icons,
+        slots: [
+          """
+          <:tab icon={:academic_cap}>Baz</:tab>
+          <:tab icon={:beaker} selected>Foo</:tab>
+          <:tab icon={:bug_ant}>Bar</:tab>
+          """
+        ]
+      },
+      %Variation{
         id: :secondary,
         slots: [
           """
@@ -41,6 +51,24 @@ defmodule Storybook.Components.TabBar do
         ],
         attributes: %{
           variant: "borderless"
+        },
+        template: """
+        <div class="p-4 bg-gray-lightest">
+          <.psb-variation />
+        </div>
+        """
+      },
+      %Variation{
+        id: :navigation,
+        slots: [
+          """
+          <:tab icon={:academic_cap}>Baz</:tab>
+          <:tab icon={:beaker} selected>Foo</:tab>
+          <:tab icon={:bug_ant}>Bar</:tab>
+          """
+        ],
+        attributes: %{
+          variant: "navigation"
         },
         template: """
         <div class="p-4 bg-gray-lightest">

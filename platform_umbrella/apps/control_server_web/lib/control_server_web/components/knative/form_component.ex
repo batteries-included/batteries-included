@@ -276,8 +276,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     ~H"""
     <.panel title="Advanced Settings" variant="gray">
       <.flex column>
-        <.input label="Roll Out Duration" field={@form[:rollout_duration]} />
-        <PC.field
+        <.input field={@form[:rollout_duration]} label="Roll Out Duration" />
+        <.input
           :if={@sso_enabled}
           field={@form[:oauth2_proxy]}
           type="switch"

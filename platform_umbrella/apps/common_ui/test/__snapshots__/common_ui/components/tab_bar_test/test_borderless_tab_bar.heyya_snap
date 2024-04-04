@@ -1,15 +1,18 @@
-<div aria-label="Tabs" class="bg-white dark:bg-gray-darkest-tint p-1 flex rounded-lg font-semibold text-sm text-gray-darkest dark:text-gray">
+<div class="flex rounded-lg bg-white dark:bg-gray-darkest-tint p-1">
   
-    <a href="#" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
-      Foo
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+      
+      <span>Foo</span>
     </a>
   
-    <a href="#" class="text-white bg-primary ring-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
-      Bar
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary bg-primary text-white dark:text-white hover:text-white">
+      
+      <span>Bar</span>
     </a>
   
-    <a href="#" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
-      Baz
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+      
+      <span>Baz</span>
     </a>
   
 </div>

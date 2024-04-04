@@ -1,15 +1,18 @@
-<div aria-label="Tabs" class="bg-gray-lightest dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint flex rounded-lg font-semibold text-sm text-gray-darkest dark:text-gray">
+<div class="flex rounded-lg bg-gray-lightest dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint">
   
-    <a href="#" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
-      Foo
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+      
+      <span>Foo</span>
     </a>
   
-    <a href="#" class="bg-white dark:bg-gray-darker text-primary ring-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
-      Bar
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary bg-white dark:bg-gray-darker ring-1 ring-primary text-primary dark:text-primary hover:text-primary">
+      
+      <span>Bar</span>
     </a>
   
-    <a href="#" class="ring-transparent hover:text-primary flex-1 px-5 py-3 text-center rounded-lg cursor-pointer ring-1">
-      Baz
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+      
+      <span>Baz</span>
     </a>
   
 </div>

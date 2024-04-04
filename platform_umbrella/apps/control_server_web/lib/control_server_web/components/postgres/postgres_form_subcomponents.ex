@@ -148,8 +148,8 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       >
         <:title><%= @action_text %></:title>
 
-        <PC.field field={@user_form[:position]} type="hidden" />
-        <PC.field field={@user_form[:username]} label="User Name" />
+        <.input field={@user_form[:position]} type="hidden" />
+        <.input field={@user_form[:username]} label="User Name" />
 
         <.muliselect_input
           form={@user_form}
@@ -161,7 +161,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           change_event="change:credential_namespaces"
         />
 
-        <PC.h3 class="mt-4">Roles</PC.h3>
+        <.h3 class="my-4">Roles</.h3>
         <.grid columns={%{sm: 1, xl: 2}} gaps="2">
           <.role_option
             :for={role <- @roles}

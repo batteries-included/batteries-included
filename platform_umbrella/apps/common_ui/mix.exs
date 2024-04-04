@@ -44,7 +44,6 @@ defmodule CommonUI.MixProject do
       {:heroicons, "~> 0.5"},
       {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
       {:jason, "~> 1.4"},
-      {:petal_components, "~> 1.9"},
       {:phoenix, "~> 1.7"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.5", only: :dev},

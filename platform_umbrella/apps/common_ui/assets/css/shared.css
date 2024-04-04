@@ -1,5 +1,4 @@
 @import 'tailwindcss/base';
-@import '../../../../deps/petal_components/assets/default.css';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
@@ -7,7 +6,6 @@
 @import '@fontsource-variable/jetbrains-mono';
 
 @import './loader.css';
-@import './petal.css';
 @import './tippy.css';
 
 ::selection {

@@ -1,9 +1,10 @@
 defmodule ControlServerWeb.SidebarLayout do
   @moduledoc false
   use Phoenix.Component
-  use PetalComponents
 
+  import CommonUI.Components.Icon
   import CommonUI.Components.Logo
+  import CommonUI.Components.TabBar
 
   alias Phoenix.LiveView.JS
 
@@ -64,18 +65,29 @@ defmodule ControlServerWeb.SidebarLayout do
               </.link>
             </div>
 
-            <div class="flex flex-col justify-between h-full">
-              <.vertical_menu
-                :if={@main_menu_items}
-                menu_items={@main_menu_items}
-                current_page={@current_page}
-              />
-              <.vertical_menu
-                :if={@bottom_menu_items}
-                menu_items={@bottom_menu_items}
-                current_page={@current_page}
-              />
-            </div>
+            <nav class="flex flex-col justify-between h-full">
+              <.tab_bar variant="navigation" class="flex-1">
+                <:tab
+                  :for={item <- @main_menu_items}
+                  icon={item.icon}
+                  navigate={item.path}
+                  selected={item.name == @current_page}
+                >
+                  <%= item.label %>
+                </:tab>
+              </.tab_bar>
+
+              <.tab_bar variant="navigation">
+                <:tab
+                  :for={item <- @bottom_menu_items}
+                  icon={item.icon}
+                  navigate={item.path}
+                  selected={item.name == @current_page}
+                >
+                  <%= item.label %>
+                </:tab>
+              </.tab_bar>
+            </nav>
           </div>
         </div>
       </div>

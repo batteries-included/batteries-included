@@ -56,7 +56,6 @@ defmodule ControlServerWeb.MixProject do
       {:mint, "~> 1.0"},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:oidcc, "~> 3.1.1"},
-      {:petal_components, "~> 1.9"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},

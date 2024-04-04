@@ -26,12 +26,12 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
 
         <.panel>
           <.grid columns={[sm: 1, lg: 2]} class="items-center">
-            <PC.field field={@form[:name]} label="Name" disabled={@action == :edit} />
-            <PC.field
+            <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
+            <.input
               field={@form[:virtual_size]}
               type="select"
               label="Size"
-              prompt="Choose a size"
+              placeholder="Choose a size"
               options={FailoverCluster.preset_options_for_select()}
             />
           </.grid>
@@ -45,12 +45,12 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
           />
           <!-- Memory limits -->
           <.flex :if={@form[:virtual_size].value == "custom"} column class="pt-4">
-            <PC.h3>Running Limits</PC.h3>
+            <.h3>Running Limits</.h3>
             <.grid columns={[sm: 1, md: 2, xl: 4]}>
-              <PC.field field={@form[:cpu_requested]} label="CPU Requested" />
-              <PC.field field={@form[:cpu_limits]} label="CPU Limits" />
-              <PC.field field={@form[:memory_requested]} label="Memory Requested" />
-              <PC.field field={@form[:memory_limits]} label="Memory Limits" />
+              <.input field={@form[:cpu_requested]} label="CPU Requested" />
+              <.input field={@form[:cpu_limits]} label="CPU Limits" />
+              <.input field={@form[:memory_requested]} label="Memory Requested" />
+              <.input field={@form[:memory_limits]} label="Memory Limits" />
             </.grid>
           </.flex>
           <!-- Number of instances -->

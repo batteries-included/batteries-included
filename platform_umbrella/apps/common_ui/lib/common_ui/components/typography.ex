@@ -82,7 +82,19 @@ defmodule CommonUI.Components.Typography do
     """
   end
 
-  defdelegate h5(assigns), to: PC
+  attr :base_class, :string, default: "text-base font-medium text-gray-darkest dark:text-gray-light"
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  slot :inner_block, required: true
+
+  def h5(assigns) do
+    ~H"""
+    <h5 class={[@base_class, @class]} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </h5>
+    """
+  end
 
   attr :rest, :global
   attr :class, :string, default: nil

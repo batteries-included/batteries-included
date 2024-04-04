@@ -287,7 +287,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                     id="storage-size-input"
                   >
                     <span>
-                      <PC.form_label>Storage Size</PC.form_label>
+                      <div class="text-sm">Storage Size</div>
                       <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
                     </span>
                     <:hidden>

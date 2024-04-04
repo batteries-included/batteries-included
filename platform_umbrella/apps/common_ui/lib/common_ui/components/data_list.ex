@@ -62,7 +62,8 @@ defmodule CommonUI.Components.DataList do
     ~H"""
     <div {@rest} class={["flex justify-between", @class]}>
       <.flex :for={{key, value} <- @data} class="items-center justify-center">
-        <PC.form_label class="!mb-0" label={key} />
+        <span class="text-sm"><%= key %></span>
+
         <.h5 class="font-semibold">
           <%= value %>
         </.h5>
