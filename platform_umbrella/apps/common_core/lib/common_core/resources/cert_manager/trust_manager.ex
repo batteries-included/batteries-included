@@ -156,6 +156,7 @@ defmodule CommonCore.Resources.CertManager.TrustManager do
   end
 
   resource(:role_binding_trust_manager, _battery, state) do
+    # credo:disable-for-next-line Credo.Check.Design.DuplicatedCode
     namespace = base_namespace(state)
 
     :role_binding

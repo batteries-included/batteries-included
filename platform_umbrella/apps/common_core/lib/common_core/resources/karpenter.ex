@@ -7,6 +7,8 @@ defmodule CommonCore.Resources.Karpenter do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "karpenter"
 
+  import CommonCore.StateSummary.Namespaces
+
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.StateSummary.Core
 
@@ -22,19 +24,13 @@ defmodule CommonCore.Resources.Karpenter do
     YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh))
   end
 
-  resource(:namespace) do
-    :namespace
-    |> B.build_resource()
-    |> B.name(@app_name)
-  end
-
-  resource(:pod_disruption_budget_main) do
-    namespace = @app_name
+  resource(:pod_disruption_budget_main, _battery, state) do
+    namespace = base_namespace(state)
 
     spec =
       %{}
       |> Map.put("maxUnavailable", 1)
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => "karpenter", "battery/component" => "karpenter"}})
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
 
     :pod_disruption_budget
     |> B.build_resource()
@@ -43,8 +39,8 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.spec(spec)
   end
 
-  resource(:service_account_main, battery) do
-    namespace = @app_name
+  resource(:service_account_main, battery, state) do
+    namespace = base_namespace(state)
 
     :service_account
     |> B.build_resource()
@@ -141,28 +137,28 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_binding_core) do
-    namespace = @app_name
+  resource(:cluster_role_binding_core, _battery, state) do
+    namespace = base_namespace(state)
 
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("karpenter-core")
     |> B.role_ref(B.build_cluster_role_ref("karpenter-core"))
-    |> B.subject(B.build_service_account("karpenter", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:cluster_role_binding_main) do
-    namespace = @app_name
+  resource(:cluster_role_binding_main, _battery, state) do
+    namespace = base_namespace(state)
 
     :cluster_role_binding
     |> B.build_resource()
     |> B.name(@app_name)
-    |> B.role_ref(B.build_cluster_role_ref("karpenter"))
-    |> B.subject(B.build_service_account("karpenter", namespace))
+    |> B.role_ref(B.build_cluster_role_ref(@app_name))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:role_main) do
-    namespace = @app_name
+  resource(:role_main, _battery, state) do
+    namespace = base_namespace(state)
 
     rules = [
       %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["get", "watch"]},
@@ -182,8 +178,8 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.rules(rules)
   end
 
-  resource(:role_dns) do
-    namespace = @app_name
+  resource(:role_dns, _battery, state) do
+    namespace = base_namespace(state)
 
     rules = [
       %{"apiGroups" => [""], "resourceNames" => ["kube-dns"], "resources" => ["services"], "verbs" => ["get"]}
@@ -212,48 +208,49 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.rules(rules)
   end
 
-  resource(:role_binding_main) do
-    namespace = @app_name
+  resource(:role_binding_main, _battery, state) do
+    # credo:disable-for-next-line Credo.Check.Design.DuplicatedCode
+    namespace = base_namespace(state)
 
     :role_binding
     |> B.build_resource()
     |> B.name(@app_name)
     |> B.namespace(namespace)
-    |> B.role_ref(B.build_role_ref("karpenter"))
-    |> B.subject(B.build_service_account("karpenter", namespace))
+    |> B.role_ref(B.build_role_ref(@app_name))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:role_binding_dns) do
-    namespace = @app_name
+  resource(:role_binding_dns, _battery, state) do
+    namespace = base_namespace(state)
 
     :role_binding
     |> B.build_resource()
     |> B.name("karpenter-dns")
     |> B.namespace(namespace)
     |> B.role_ref(B.build_role_ref("karpenter-dns"))
-    |> B.subject(B.build_service_account("karpenter", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:role_binding_lease) do
-    namespace = @app_name
+  resource(:role_binding_lease, _battery, state) do
+    namespace = base_namespace(state)
 
     :role_binding
     |> B.build_resource()
     |> B.name("karpenter-lease")
     |> B.namespace("kube-node-lease")
     |> B.role_ref(B.build_role_ref("karpenter-lease"))
-    |> B.subject(B.build_service_account("karpenter", namespace))
+    |> B.subject(B.build_service_account(@app_name, namespace))
   end
 
-  resource(:service_main) do
-    namespace = @app_name
+  resource(:service_main, _battery, state) do
+    namespace = base_namespace(state)
 
     spec =
       %{}
       |> Map.put("ports", [
         %{"name" => "http-metrics", "port" => 8000, "protocol" => "TCP", "targetPort" => "http-metrics"}
       ])
-      |> Map.put("selector", %{"battery/app" => "karpenter", "battery/component" => "karpenter"})
+      |> Map.put("selector", %{"battery/app" => @app_name})
       |> Map.put("type", "ClusterIP")
 
     :service
@@ -264,7 +261,7 @@ defmodule CommonCore.Resources.Karpenter do
   end
 
   resource(:deployment_main, battery, state) do
-    namespace = @app_name
+    namespace = base_namespace(state)
 
     template =
       %{}
@@ -272,7 +269,7 @@ defmodule CommonCore.Resources.Karpenter do
         "metadata",
         %{
           "annotations" => nil,
-          "labels" => %{"battery/app" => "karpenter", "battery/component" => "karpenter", "battery/managed" => "true"}
+          "labels" => %{"battery/app" => @app_name, "battery/managed" => "true"}
         }
       )
       |> Map.put(
@@ -291,8 +288,7 @@ defmodule CommonCore.Resources.Karpenter do
                 %{
                   "labelSelector" => %{
                     "matchLabels" => %{
-                      "app.kubernetes.io/instance" => "karpenter",
-                      "app.kubernetes.io/name" => "karpenter"
+                      "battery/app" => @app_name
                     }
                   },
                   "topologyKey" => "kubernetes.io/hostname"
@@ -304,7 +300,7 @@ defmodule CommonCore.Resources.Karpenter do
             %{
               "env" => [
                 %{"name" => "KUBERNETES_MIN_VERSION", "value" => "1.19.0-0"},
-                %{"name" => "KARPENTER_SERVICE", "value" => "karpenter"},
+                %{"name" => "KARPENTER_SERVICE", "value" => @app_name},
                 %{"name" => "LOG_LEVEL", "value" => "info"},
                 %{"name" => "METRICS_PORT", "value" => "8000"},
                 %{"name" => "HEALTH_PROBE_PORT", "value" => "8081"},
@@ -364,12 +360,12 @@ defmodule CommonCore.Resources.Karpenter do
           "nodeSelector" => %{"kubernetes.io/os" => "linux"},
           "priorityClassName" => "system-cluster-critical",
           "securityContext" => %{"fsGroup" => 65_536},
-          "serviceAccountName" => "karpenter",
+          "serviceAccountName" => @app_name,
           "tolerations" => [%{"key" => "CriticalAddonsOnly", "operator" => "Exists"}],
           "topologySpreadConstraints" => [
             %{
               "labelSelector" => %{
-                "matchLabels" => %{"app.kubernetes.io/instance" => "karpenter", "app.kubernetes.io/name" => "karpenter"}
+                "matchLabels" => %{"battery/app" => @app_name}
               },
               "maxSkew" => 1,
               "topologyKey" => "topology.kubernetes.io/zone",
@@ -387,7 +383,7 @@ defmodule CommonCore.Resources.Karpenter do
       |> Map.put("revisionHistoryLimit", 10)
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => "karpenter", "battery/component" => "karpenter"}}
+        %{"matchLabels" => %{"battery/app" => @app_name}}
       )
       |> Map.put("strategy", %{"rollingUpdate" => %{"maxUnavailable" => 1}})
       |> B.template(template)

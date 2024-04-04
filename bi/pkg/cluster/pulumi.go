@@ -95,7 +95,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"gateway:port":           {Value: "51820"},
 		"gateway:volumeSize":     {Value: "12"},
 		"gateway:volumeType":     {Value: "gp3"},
-		"karpenter:namespace":    {Value: "karpenter"},    // TODO(jdt): get from install spec
+		"karpenter:namespace":    {Value: "battery-base"}, // TODO(jdt): get from install spec
 		"lbcontroller:namespace": {Value: "battery-base"}, // TODO(jdt): get from install spec
 		"vpc:cidrBlock":          {Value: "100.64.0.0/16"},
 	}
