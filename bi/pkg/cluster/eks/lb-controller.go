@@ -35,8 +35,13 @@ func (l *lbControllerConfig) withConfig(cfg *util.PulumiConfig) error {
 }
 
 func (l *lbControllerConfig) withOutputs(outputs map[string]auto.OutputMap) error {
-	l.oidcProviderURL = outputs["cluster"]["oidcProviderURL"].Value.(string)
-	l.oidcProviderARN = outputs["cluster"]["oidcProviderARN"].Value.(string)
+	if outputs["cluster"]["oidcProviderURL"].Value != nil {
+		l.oidcProviderURL = outputs["cluster"]["oidcProviderURL"].Value.(string)
+	}
+
+	if outputs["cluster"]["oidcProviderARN"].Value != nil {
+		l.oidcProviderARN = outputs["cluster"]["oidcProviderARN"].Value.(string)
+	}
 	return nil
 }
 

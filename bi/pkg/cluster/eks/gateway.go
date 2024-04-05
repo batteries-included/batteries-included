@@ -75,10 +75,18 @@ func (g *gatewayConfig) withConfig(cfg *util.PulumiConfig) error {
 }
 
 func (g *gatewayConfig) withOutputs(outputs map[string]auto.OutputMap) error {
-	g.vpcID = outputs["vpc"]["vpcID"].Value.(string)
 
-	g.publicSubnetIDs = util.ToStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
-	g.privateSubnetIDs = util.ToStringSlice(outputs["vpc"]["privateSubnetIDs"].Value)
+	if outputs["vpc"]["vpcID"].Value != nil {
+		g.vpcID = outputs["vpc"]["vpcID"].Value.(string)
+	}
+
+	if outputs["vpc"]["publicSubnetIDs"].Value != nil {
+		g.publicSubnetIDs = util.ToStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
+	}
+
+	if outputs["vpc"]["privateSubnetIDs"].Value != nil {
+		g.privateSubnetIDs = util.ToStringSlice(outputs["vpc"]["privateSubnetIDs"].Value)
+	}
 
 	return nil
 }

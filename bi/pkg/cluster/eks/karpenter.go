@@ -41,10 +41,22 @@ func (k *karpenterConfig) withConfig(cfg *util.PulumiConfig) error {
 }
 
 func (k *karpenterConfig) withOutputs(outputs map[string]auto.OutputMap) error {
-	k.clusterARN = outputs["cluster"]["arn"].Value.(string)
-	k.nodeRoleARN = outputs["cluster"]["nodeRoleARN"].Value.(string)
-	k.oidcProviderURL = outputs["cluster"]["oidcProviderURL"].Value.(string)
-	k.oidcProviderARN = outputs["cluster"]["oidcProviderARN"].Value.(string)
+	// if there's an arn then pull that from the cluster outputs
+	if outputs["cluster"]["arn"].Value != nil {
+		k.clusterARN = outputs["cluster"]["arn"].Value.(string)
+	}
+
+	if outputs["cluster"]["nodeRoleARN"].Value != nil {
+		k.nodeRoleARN = outputs["cluster"]["nodeRoleARN"].Value.(string)
+	}
+
+	if outputs["cluster"]["oidcProviderURL"].Value != nil {
+		k.oidcProviderURL = outputs["cluster"]["oidcProviderURL"].Value.(string)
+	}
+
+	if outputs["cluster"]["oidcProviderARN"].Value != nil {
+		k.oidcProviderARN = outputs["cluster"]["oidcProviderARN"].Value.(string)
+	}
 	return nil
 }
 
