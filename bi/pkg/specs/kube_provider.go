@@ -6,11 +6,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/netip"
+	"os"
 	"slices"
 
+	"bi/cmd/cmdutil"
 	"bi/pkg/cluster"
 	"bi/pkg/docker"
 	"bi/pkg/local"
+	"bi/pkg/wireguard"
 )
 
 func (spec *InstallSpec) StartKubeProvider() error {
@@ -113,6 +117,10 @@ func (spec *InstallSpec) startAWS() error {
 		return err
 	}
 
+	if err := saveWireGuardClientConfig(parsed); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -158,6 +166,7 @@ func (spec *InstallSpec) configureLBControllerBattery(outputs *eksOutputs) error
 
 	return nil
 }
+
 func (spec *InstallSpec) configureKarpenterBattery(outputs *eksOutputs) error {
 	ix := slices.IndexFunc(spec.TargetSummary.Batteries, ixFunc("karpenter"))
 
@@ -176,4 +185,40 @@ func ixFunc(typ string) func(BatterySpec) bool {
 	return func(bs BatterySpec) bool {
 		return bs.Type == typ
 	}
+}
+
+func saveWireGuardClientConfig(outputs *eksOutputs) error {
+	gwEndpoint := netip.AddrPortFrom(netip.MustParseAddr(outputs.Gateway["publicIP"].Value.(string)),
+		uint16(outputs.Gateway["publicPort"].Value.(float64)))
+
+	gw := wireguard.Gateway{
+		PrivateKey: outputs.Gateway["wgGatewayPrivateKey"].Value.(string),
+		Address:    netip.MustParseAddr(outputs.Gateway["wgGatewayAddress"].Value.(string)),
+		Endpoint:   gwEndpoint,
+	}
+
+	installerClient := wireguard.Client{
+		Gateway:    &gw,
+		Name:       "installer",
+		PrivateKey: outputs.Gateway["wgClientPrivateKey"].Value.(string),
+		Address:    netip.MustParseAddr(outputs.Gateway["wgClientAddress"].Value.(string)),
+	}
+
+	// Write the wireguard config for the installer client.
+	wireGuardConfigPath, err := cmdutil.DefaultWireGuardConfigPath()
+	if err != nil {
+		return fmt.Errorf("error getting wireguard config path: %w", err)
+	}
+
+	wireGuardConfigFile, err := os.OpenFile(wireGuardConfigPath, os.O_CREATE|os.O_WRONLY, 0o400)
+	if err != nil {
+		return fmt.Errorf("error opening wireguard config file: %w", err)
+	}
+	defer wireGuardConfigFile.Close()
+
+	if err := installerClient.WriteConfig(wireGuardConfigFile); err != nil {
+		return fmt.Errorf("error writing wireguard config: %w", err)
+	}
+
+	return nil
 }

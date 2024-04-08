@@ -76,8 +76,8 @@ type cluster struct {
 type gateway struct {
 	// CIDRBlock is the cidr to use for the wireguard networks e.g. 100.64.250.0/24
 	CIDRBlock *net.IPNet
-	// GenerateKey determines whether an SSH key is created and used
-	GenerateKey bool
+	// GenerateSSHKey determines whether an SSH key is created and used
+	GenerateSSHKey bool
 	// InstanceType is the type of instance to use for the wireguard bastion
 	InstanceType string
 	// Port is the port that wireguard will listen on
@@ -111,7 +111,7 @@ func ParsePulumiConfig(cfg auto.ConfigMap) (*PulumiConfig, error) {
 		return nil, err
 	}
 
-	genKey, err := strconv.ParseBool(cfg["gateway:generateKey"].Value)
+	genKey, err := strconv.ParseBool(cfg["gateway:generateSSHKey"].Value)
 	if err != nil {
 		return nil, err
 	}
@@ -169,12 +169,12 @@ func ParsePulumiConfig(cfg auto.ConfigMap) (*PulumiConfig, error) {
 			VolumeType:   cfg["cluster:volumeType"].Value,
 		},
 		Gateway: gateway{
-			CIDRBlock:    gwCIDR,
-			GenerateKey:  genKey,
-			InstanceType: cfg["gateway:instanceType"].Value,
-			Port:         port,
-			VolumeSize:   volSize,
-			VolumeType:   cfg["gateway:volumeType"].Value,
+			CIDRBlock:      gwCIDR,
+			GenerateSSHKey: genKey,
+			InstanceType:   cfg["gateway:instanceType"].Value,
+			Port:           port,
+			VolumeSize:     volSize,
+			VolumeType:     cfg["gateway:volumeType"].Value,
 		},
 		Karpenter:    karpenter{Namespace: cfg["karpenter:namespace"].Value},
 		LBController: lbController{Namespace: cfg["lbcontroller:namespace"].Value},

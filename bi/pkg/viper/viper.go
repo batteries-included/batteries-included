@@ -42,7 +42,7 @@ func SafeWriteConfig() error {
 	_, err = os.Stat(configDir)
 	if !os.IsExist(err) {
 		slog.Info("Creating config directory", slog.String("dir", configDir))
-		err = os.MkdirAll(configDir, os.ModePerm)
+		err = os.MkdirAll(configDir, 0o700)
 		if err != nil {
 			return err
 		}

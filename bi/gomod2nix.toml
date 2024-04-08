@@ -287,8 +287,8 @@ schema = 3
     version = "v0.0.0-20140419014527-cca7078d478f"
     hash = "sha256-gRTfRfff/LRxC1SXXnQd2tV3UTcTx9qu90DJIVIaGn8="
   [mod."github.com/noisysockets/noisysockets"]
-    version = "v0.8.2"
-    hash = "sha256-G/3MZv7YgSTbw18+yikhygEAl0Or9QfoZDrRO0rH3F0="
+    version = "v0.12.5"
+    hash = "sha256-w160eZwKkSiQ/coafeFusFbNXFFae36GskAnUcTg3xw="
   [mod."github.com/nxadm/tail"]
     version = "v1.4.11"
     hash = "sha256-7XF47xVcyHjpO1E0+GGAoytxOa0JJFCBXHJGLTexVgo="
@@ -497,7 +497,7 @@ schema = 3
     version = "v1.6.8"
     hash = "sha256-decMa0MiWfW/Bzr8QPPzzpeya0YWGHhZAt4Cr/bD1wQ="
   [mod."google.golang.org/genproto/googleapis/rpc"]
-    version = "v0.0.0-20240325203815-454cdb8f5daa"
+    version = "v0.0.0-20240401170217-c3f982113cda"
     hash = "sha256-P5SBku16dYnK4koUQxTeGwPxAAWH8rxbDm2pOzFLo/Q="
   [mod."google.golang.org/grpc"]
     version = "v1.62.1"

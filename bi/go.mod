@@ -1,6 +1,8 @@
 module bi
 
-go 1.21.6
+go 1.22
+
+toolchain go1.22.0
 
 require (
 	github.com/adrg/xdg v0.4.0
@@ -8,7 +10,7 @@ require (
 	github.com/dghubble/ipnets v1.0.0
 	github.com/docker/docker v26.0.0+incompatible
 	github.com/lmittmann/tint v1.0.4
-	github.com/noisysockets/noisysockets v0.8.2
+	github.com/noisysockets/noisysockets v0.12.5
 	github.com/pkg/errors v0.9.1
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.28.2
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.1
@@ -18,6 +20,7 @@ require (
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.29.1
+	gopkg.in/ini.v1 v1.67.0
 	k8s.io/api v0.29.3
 	k8s.io/apiextensions-apiserver v0.29.3
 	k8s.io/apimachinery v0.29.3
@@ -176,11 +179,10 @@ require (
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.19.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240325203815-454cdb8f5daa // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
 	google.golang.org/grpc v1.62.1 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

@@ -90,7 +90,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"cluster:volumeSize":     {Value: "20"},
 		"cluster:volumeType":     {Value: "gp3"},
 		"gateway:cidrBlock":      {Value: "100.64.250.0/24"},
-		"gateway:generateKey":    {Value: "false"},
+		"gateway:generateSSHKey": {Value: "false"},
 		"gateway:instanceType":   {Value: "t3a.micro"},
 		"gateway:port":           {Value: "51820"},
 		"gateway:volumeSize":     {Value: "12"},

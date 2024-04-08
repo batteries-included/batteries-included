@@ -227,7 +227,7 @@ func (e *eks) createStack(ctx context.Context, name string, prog pulumi.RunFunc)
 	projectName := fmt.Sprintf("%s-%s", e.cfg.ProjectBaseName, name)
 	workDir := path.Join(e.cfg.WorkDirRoot, name)
 
-	if err := os.MkdirAll(workDir, os.ModePerm); err != nil {
+	if err := os.MkdirAll(workDir, 0o700); err != nil {
 		return s, err
 	}
 

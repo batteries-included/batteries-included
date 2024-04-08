@@ -1,13 +1,16 @@
 package kube
 
 import (
+	"bi/cmd/cmdutil"
 	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/noisysockets/noisysockets"
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
+	"github.com/noisysockets/noisysockets/network"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	cacheddiscovery "k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/dynamic"
@@ -38,7 +41,7 @@ type batteryKubeClient struct {
 	dynamicClient       *dynamic.DynamicClient
 	apiExtensionsClient *apiextensionsclientset.Clientset
 	mapper              *restmapper.DeferredDiscoveryRESTMapper
-	net                 *noisysockets.Network
+	net                 network.Network
 }
 
 func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClient, error) {
@@ -57,7 +60,17 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 		kubeConfig.UserAgent = rest.DefaultKubernetesUserAgent()
 	}
 
-	var net *noisysockets.Network
+	// If a wireguard config path is not provided, try to find it in the default location
+	if wireGuardConfigPath == "" {
+		if defaultWireGuardConfigPath, err := cmdutil.DefaultWireGuardConfigPath(); err == nil {
+			if _, err := os.Stat(defaultWireGuardConfigPath); err == nil {
+				// We found a default config
+				wireGuardConfigPath = defaultWireGuardConfigPath
+			}
+		}
+	}
+
+	var net network.Network
 	var httpClient *http.Client
 	if wireGuardConfigPath != "" {
 		httpClient, err = rest.HTTPClientFor(kubeConfig)
@@ -66,7 +79,13 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 		}
 
 		// Read the wireguard config
-		wireGuardConfig, err := noisysocketsconfig.FromYAML(wireGuardConfigPath)
+		wireGuardConfigFile, err := os.Open(wireGuardConfigPath)
+		if err != nil {
+			return nil, fmt.Errorf("error opening wireguard config: %w", err)
+		}
+		defer wireGuardConfigFile.Close()
+
+		wireGuardConfig, err := noisysocketsconfig.FromYAML(wireGuardConfigFile)
 		if err != nil {
 			return nil, fmt.Errorf("error reading wireguard config: %w", err)
 		}
@@ -132,12 +151,10 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 }
 
 func (c *batteryKubeClient) Close() error {
-	if c.net == nil {
-		return nil
-	}
-
-	if err := c.net.Close(); err != nil {
-		return fmt.Errorf("error closing wireguard network: %w", err)
+	if c.net != nil {
+		if err := c.net.Close(); err != nil {
+			return fmt.Errorf("error closing wireguard network: %w", err)
+		}
 	}
 
 	return nil

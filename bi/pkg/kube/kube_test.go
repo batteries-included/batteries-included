@@ -4,12 +4,14 @@ import (
 	"bi/pkg/kube"
 	"bi/pkg/local"
 	"bi/pkg/testutil"
+	"bi/pkg/wireguard"
 	"context"
+	"net"
+	"net/netip"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-	"text/template"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/stretchr/testify/require"
@@ -21,9 +23,6 @@ import (
 func TestBatteryKubeClient(t *testing.T) {
 	testutil.IntegrationTest(t)
 
-	pwd, err := os.Getwd()
-	require.NoError(t, err)
-
 	ctx := context.Background()
 
 	// Create a private network, it'll be assigned a unique CIDR.
@@ -33,13 +32,39 @@ func TestBatteryKubeClient(t *testing.T) {
 		require.NoError(t, testNetwork.Remove(ctx))
 	})
 
+	// Write out a wireguard config for the test
+	_, subnet, err := net.ParseCIDR("10.7.0.0/24")
+	require.NoError(t, err)
+
+	gw, err := wireguard.NewGateway(51820, subnet)
+	require.NoError(t, err)
+
+	gw.DNSServers = []netip.Addr{netip.MustParseAddr("10.7.0.1")}
+	gw.PostUp = []string{
+		"iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE",
+	}
+	gw.PreDown = []string{
+		"iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE",
+	}
+
+	installerClient, err := gw.NewClient("installer")
+	require.NoError(t, err)
+
+	var sb strings.Builder
+	require.NoError(t, gw.WriteConfig(&sb))
+
+	outputDir := t.TempDir()
+
+	// Write out the wireguard config to a file.
+	require.NoError(t, os.WriteFile(filepath.Join(outputDir, "wg0.conf"), []byte(sb.String()), 0o400))
+
 	// Spin up a wireguard gateway server using the userspace wireguard-go implementation.
 	// This gateway will forward traffic to the private test network.
 	wgReq := testcontainers.ContainerRequest{
 		Image:        "ghcr.io/noisysockets/gateway:v0.1.0",
 		ExposedPorts: []string{"51820/udp", "53/tcp"},
 		Files: []testcontainers.ContainerFile{
-			{HostFilePath: filepath.Join(pwd, "testdata/wg0.conf"), ContainerFilePath: "/etc/wireguard/wg0.conf", FileMode: 0o400},
+			{HostFilePath: filepath.Join(outputDir, "wg0.conf"), ContainerFilePath: "/etc/wireguard/wg0.conf", FileMode: 0o400},
 		},
 		Networks: []string{testNetwork.Name},
 		HostConfigModifier: func(hostConfig *container.HostConfig) {
@@ -65,6 +90,18 @@ func TestBatteryKubeClient(t *testing.T) {
 		require.NoError(t, wgC.Terminate(ctx))
 	})
 
+	// Store the host and port of the wireguard server (so it can be added to the client config).
+	wgHost, err := wgC.Host(ctx)
+	require.NoError(t, err)
+
+	wgAddrs, err := net.LookupHost(wgHost)
+	require.NoError(t, err)
+
+	wgPort, err := wgC.MappedPort(ctx, "51820/udp")
+	require.NoError(t, err)
+
+	gw.Endpoint = netip.AddrPortFrom(netip.MustParseAddr(wgAddrs[0]), uint16(wgPort.Int()))
+
 	// Create a kind cluster using the private network.
 	os.Setenv("KIND_EXPERIMENTAL_DOCKER_NETWORK", testNetwork.Name)
 
@@ -77,18 +114,21 @@ func TestBatteryKubeClient(t *testing.T) {
 	t.Cleanup(func() {
 		t.Log("Deleting kind cluster")
 
+		require.NoError(t, os.Unsetenv("KIND_EXPERIMENTAL_DOCKER_NETWORK"))
+
 		require.NoError(t, clusterProvider.EnsureDeleted())
 	})
-
-	outputDir := t.TempDir()
 
 	// Get a kubeconfig for the kind cluster (using its internal domain name).
 	kubeConfigPath := filepath.Join(outputDir, "kubeconfig")
 	require.NoError(t, clusterProvider.ExportKubeConfig(kubeConfigPath))
 
 	// Create a WireGuard client configuration.
+	sb = strings.Builder{}
+	require.NoError(t, installerClient.WriteConfig(&sb))
+
 	wireGuardConfigPath := filepath.Join(outputDir, "wireguard.yaml")
-	require.NoError(t, generateConfig(ctx, wireGuardConfigPath, wgC))
+	require.NoError(t, os.WriteFile(wireGuardConfigPath, []byte(sb.String()), 0o400))
 
 	// Create a new kubernetes client that will send all requests over WireGuard.
 	kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath)
@@ -107,28 +147,4 @@ func TestBatteryKubeClient(t *testing.T) {
 		})
 		require.NoError(t, err)
 	})
-}
-
-func generateConfig(ctx context.Context, configPath string, wgC testcontainers.Container) error {
-	wgHost, err := wgC.Host(ctx)
-	if err != nil {
-		return err
-	}
-
-	wgPort, err := wgC.MappedPort(ctx, "51820/udp")
-	if err != nil {
-		return err
-	}
-
-	var renderedConfig strings.Builder
-	tmpl := template.Must(template.ParseFiles("testdata/wireguard.yaml.tmpl"))
-	if err := tmpl.Execute(&renderedConfig, struct {
-		Endpoint string
-	}{
-		Endpoint: wgHost + ":" + wgPort.Port(),
-	}); err != nil {
-		return err
-	}
-
-	return os.WriteFile(configPath, []byte(renderedConfig.String()), 0o400)
 }

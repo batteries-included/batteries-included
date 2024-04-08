@@ -23,6 +23,7 @@ var cleanKubeCmd = &cobra.Command{
 
 		kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath)
 		cobra.CheckErr(err)
+		defer kubeClient.Close()
 
 		err = kubeClient.RemoveAll()
 		cobra.CheckErr(err)
