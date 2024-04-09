@@ -32,10 +32,10 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
 
   describe "keycloak_url_for_realm/2" do
     test "returns keycloak URL for realm", %{pid: pid} do
-      spec = build(:install_spec)
+      spec = build(:install_spec, usage: :kitchen_sink, kube_provider: :aws)
       send(pid, spec.target_summary)
 
-      assert "http://keycloak.core.127.0.0.1.ip.batteriesincl.com/realms/test-realm" ==
+      assert "https://keycloak.core.127.0.0.1.ip.batteriesincl.com/realms/test-realm" ==
                SummaryURLs.keycloak_url_for_realm(pid, "test-realm")
     end
   end

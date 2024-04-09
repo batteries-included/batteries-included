@@ -18,7 +18,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "KZDJUB5DZPOS4MUVZ2VGJRKR64EXSGX3637S6YUO2W3L4LDZT2HNHVGODWP4RDK5",
+          "secret_key": "P2RQRN45UISYIHR6ZNWBRS5PHTMVBTPK74D3ETBW36XC2QZN26WFOJPDK3PZAWCA",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -45,6 +45,51 @@
           "image_override": null
         },
         "group": "magic",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "cert_manager",
+        "config": {
+          "type": "cert_manager",
+          "acmesolver_image": "quay.io/jetstack/cert-manager-acmesolver:v1.13.3",
+          "cainjector_image": "quay.io/jetstack/cert-manager-cainjector:v1.13.3",
+          "controller_image": "quay.io/jetstack/cert-manager-controller:v1.13.3",
+          "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.13.3",
+          "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.13.3",
+          "email": null,
+          "controller_image_override": null,
+          "acmesolver_image_override": null,
+          "cainjector_image_override": null,
+          "ctl_image_override": null,
+          "webhook_image_override": null
+        },
+        "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "battery_ca",
+        "config": {
+          "type": "battery_ca"
+        },
+        "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "trust_manager",
+        "config": {
+          "type": "trust_manager",
+          "image": "quay.io/jetstack/trust-manager:v0.8.0",
+          "init_image": "quay.io/jetstack/cert-manager-package-debian:20210119.0",
+          "image_override": null,
+          "init_image_override": null
+        },
+        "group": "net_sec",
         "inserted_at": null,
         "updated_at": null
       },
@@ -132,7 +177,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "BUJK327TRLAQNFHGSIJOWUWX",
+            "password": "TEMXJTMJX74ICDDKPZEYPBKS",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

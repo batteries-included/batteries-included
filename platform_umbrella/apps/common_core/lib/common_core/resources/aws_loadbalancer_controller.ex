@@ -1,19 +1,16 @@
 defmodule CommonCore.Resources.AwsLoadBalancerController do
   @moduledoc false
   use CommonCore.IncludeResource,
-    ca_bundle: "priv/raw_files/aws_load_balancer_controller/ca_bundle.txt",
-    ca_crt: "priv/raw_files/aws_load_balancer_controller/ca.crt",
     ingress_class_params: "priv/manifests/aws_load_balancer_controller/ingress_class_params.yaml",
-    target_group_bindings: "priv/manifests/aws_load_balancer_controller/target_group_bindings.yaml",
-    tls_crt: "priv/raw_files/aws_load_balancer_controller/tls.crt",
-    tls_key: "priv/raw_files/aws_load_balancer_controller/tls.key"
+    target_group_bindings: "priv/manifests/aws_load_balancer_controller/target_group_bindings.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "aws-load-balancer-controller"
 
+  import CommonCore.Resources.FieldAccessors
+  import CommonCore.StateSummary.FromKubeState, only: [find_state_resource: 3]
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
-  alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Core
 
   resource(:crd_ingress_) do
@@ -175,11 +172,11 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
     :mutating_webhook_config
     |> B.build_resource()
     |> B.name("aws-load-balancer-webhook")
+    |> B.annotation("cert-manager.io/inject-ca-from", "#{namespace}/aws-load-balancer-controller-serving-cert")
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1beta1"],
         "clientConfig" => %{
-          "caBundle" => get_resource(:ca_bundle),
           "service" => %{
             "name" => "aws-load-balancer-webhook-service",
             "namespace" => namespace,
@@ -204,7 +201,6 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
       %{
         "admissionReviewVersions" => ["v1beta1"],
         "clientConfig" => %{
-          "caBundle" => get_resource(:ca_bundle),
           "service" => %{
             "name" => "aws-load-balancer-webhook-service",
             "namespace" => namespace,
@@ -226,7 +222,6 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
       %{
         "admissionReviewVersions" => ["v1beta1"],
         "clientConfig" => %{
-          "caBundle" => get_resource(:ca_bundle),
           "service" => %{
             "name" => "aws-load-balancer-webhook-service",
             "namespace" => namespace,
@@ -286,23 +281,6 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
     |> B.rules(rules)
   end
 
-  resource(:secret_aws_load_balancer_tls, _battery, state) do
-    namespace = base_namespace(state)
-
-    data =
-      %{}
-      |> Map.put("ca.crt", get_resource(:ca_crt))
-      |> Map.put("tls.crt", get_resource(:tls_crt))
-      |> Map.put("tls.key", get_resource(:tls_key))
-      |> Secret.encode()
-
-    :secret
-    |> B.build_resource()
-    |> B.name("aws-load-balancer-tls")
-    |> B.namespace(namespace)
-    |> B.data(data)
-  end
-
   resource(:service_account_aws_load_balancer_controller, battery, state) do
     namespace = base_namespace(state)
 
@@ -333,17 +311,36 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
     |> B.spec(spec)
   end
 
+  resource(:cert, _battery, state) do
+    namespace = base_namespace(state)
+    svc_name = "aws-load-balancer-webhook-service"
+    issuer = find_state_resource(state, :certmanager_cluster_issuer, "battery-ca")
+
+    spec =
+      build_cert_spec(
+        "aws-load-balancer-tls",
+        ["#{svc_name}.#{namespace}.svc", "#{svc_name}.#{namespace}.svc.cluster.local"],
+        issuer
+      )
+
+    :certmanager_certificate
+    |> B.build_resource()
+    |> B.name("aws-load-balancer-controller-serving-cert")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+  end
+
   resource(:validating_webhook_config_aws_load_balancer, _battery, state) do
     namespace = base_namespace(state)
 
     :validating_webhook_config
     |> B.build_resource()
     |> B.name("aws-load-balancer-webhook")
+    |> B.annotation("cert-manager.io/inject-ca-from", "#{namespace}/aws-load-balancer-controller-serving-cert")
     |> Map.put("webhooks", [
       %{
         "admissionReviewVersions" => ["v1beta1"],
         "clientConfig" => %{
-          "caBundle" => get_resource(:ca_bundle),
           "service" => %{
             "name" => "aws-load-balancer-webhook-service",
             "namespace" => namespace,
@@ -370,7 +367,6 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
       %{
         "admissionReviewVersions" => ["v1beta1"],
         "clientConfig" => %{
-          "caBundle" => get_resource(:ca_bundle),
           "service" => %{
             "name" => "aws-load-balancer-webhook-service",
             "namespace" => namespace,
@@ -392,7 +388,6 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
       %{
         "admissionReviewVersions" => ["v1beta1"],
         "clientConfig" => %{
-          "caBundle" => get_resource(:ca_bundle),
           "service" => %{
             "name" => "aws-load-balancer-webhook-service",
             "namespace" => namespace,
@@ -413,5 +408,17 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
         "sideEffects" => "None"
       }
     ])
+  end
+
+  defp build_cert_spec(_name, hosts, issuer) when is_nil(hosts) or is_nil(issuer), do: nil
+
+  defp build_cert_spec(name, hosts, issuer) do
+    issuer_ref = B.issuer_ref(group(issuer), kind(issuer), name(issuer))
+
+    %{
+      "dnsNames" => hosts,
+      "issuerRef" => issuer_ref,
+      "secretName" => name
+    }
   end
 end

@@ -44,7 +44,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "R545S6D6D2LL2UQ25NBQWN23PFGMUUTTYL2PEWOTAH2DBLT4DOJFXGJ666B2I4KB",
+          "secret_key": "OBH5EQJIBIR7MEBVF75MOC3FF5PLCOOIF5INP7EA5H37PZ72FMQBUXU6AGD7CNGZ",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -120,7 +120,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "OMG2QJEYNHB6LY6XFWDX3RYU",
+            "password": "HYUFS5NJ44QEPI54IQOO6QP2",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

@@ -49,7 +49,7 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :magic,
       type: :aws_load_balancer_controller,
-      dependencies: [:battery_core, :karpenter],
+      dependencies: [:battery_core, :karpenter, :trust_manager],
       description: "A Kubernetes controller for Elastic Load Balancers."
     },
     # Devtools

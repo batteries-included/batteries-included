@@ -70,7 +70,7 @@ defmodule CommonCore.Installs.Batteries do
   defp aws_batteries(install) do
     case install.usage do
       :internal_dev ->
-        ~w(karpenter aws_load_balancer_controller) ++ @standard_battery_types
+        ~w(karpenter trust_manager aws_load_balancer_controller) ++ @standard_battery_types
 
       :kitchen_sink ->
         # AWS doesn't work with some batteries
@@ -80,7 +80,7 @@ defmodule CommonCore.Installs.Batteries do
 
       _ ->
         # TODO: This should include a control server.
-        ~w(karpenter aws_load_balancer_controller) ++ @standard_battery_types
+        ~w(karpenter trust_manager aws_load_balancer_controller) ++ @standard_battery_types
     end
   end
 
