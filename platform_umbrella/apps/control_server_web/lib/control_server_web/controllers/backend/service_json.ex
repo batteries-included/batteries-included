@@ -1,13 +1,13 @@
-defmodule ControlServerWeb.KNativeServiceJSON do
-  alias CommonCore.Knative.Service
+defmodule ControlServerWeb.BackendServiceJSON do
+  alias CommonCore.Backend.Service
   alias CommonCore.Services.Container
   alias CommonCore.Services.EnvValue
 
   @doc """
-  Renders a list of services.
+  Renders a list of backend_services.
   """
-  def index(%{services: services}) do
-    %{data: for(service <- services, do: data(service))}
+  def index(%{backend_services: backend_services}) do
+    %{data: for(service <- backend_services, do: data(service))}
   end
 
   @doc """
@@ -21,10 +21,8 @@ defmodule ControlServerWeb.KNativeServiceJSON do
     %{
       id: service.id,
       name: service.name,
-      rollout_duration: service.rollout_duration,
-      oauth2_proxy: service.oauth2_proxy,
-      kube_internal: service.kube_internal,
       containers: for(container <- service.containers || [], do: data(container)),
+      init_containers: for(container <- service.init_containers || [], do: data(container)),
       env_values: for(env_value <- service.env_values || [], do: data(env_value))
     }
   end
@@ -49,6 +47,4 @@ defmodule ControlServerWeb.KNativeServiceJSON do
       source_optional: env_value.source_optional
     }
   end
-
-  defp data(nil), do: nil
 end

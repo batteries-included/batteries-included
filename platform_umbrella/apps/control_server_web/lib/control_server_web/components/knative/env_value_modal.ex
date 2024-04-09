@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
 
   import CommonCore.Resources.FieldAccessors
 
-  alias CommonCore.Knative.EnvValue
+  alias CommonCore.Services.EnvValue
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent

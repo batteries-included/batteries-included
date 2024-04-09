@@ -18,9 +18,9 @@ defmodule CommonCore.Knative.Service do
     field :oauth2_proxy, :boolean, default: false
     field :kube_internal, :boolean, default: false
 
-    embeds_many(:containers, CommonCore.Knative.Container, on_replace: :delete)
-    embeds_many(:init_containers, CommonCore.Knative.Container, on_replace: :delete)
-    embeds_many(:env_values, CommonCore.Knative.EnvValue, on_replace: :delete)
+    embeds_many(:containers, CommonCore.Services.Container, on_replace: :delete)
+    embeds_many(:init_containers, CommonCore.Services.Container, on_replace: :delete)
+    embeds_many(:env_values, CommonCore.Services.EnvValue, on_replace: :delete)
     timestamps()
   end
 

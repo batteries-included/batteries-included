@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServiceControllerTest do
+defmodule ControlServerWeb.KNativeServiceControllerTest do
   use ControlServerWeb.ConnCase
 
   import ControlServer.Factory

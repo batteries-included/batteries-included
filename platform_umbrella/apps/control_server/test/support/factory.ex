@@ -50,11 +50,11 @@ defmodule ControlServer.Factory do
   end
 
   def knative_container_factory do
-    %CommonCore.Knative.Container{name: sequence("knative-container-"), image: "nginx:latest"}
+    %CommonCore.Services.Container{name: sequence("knative-container-"), image: "nginx:latest"}
   end
 
   def knative_env_value_factory do
-    %CommonCore.Knative.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
+    %CommonCore.Services.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
   end
 
   @spec knative_service_factory() :: CommonCore.Knative.Service.t()

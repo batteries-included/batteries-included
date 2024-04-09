@@ -6,9 +6,9 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   import ControlServerWeb.Knative.EnvValuePanel
   import KubeServices.SystemState.SummaryHosts
 
-  alias CommonCore.Knative.Container
-  alias CommonCore.Knative.EnvValue
   alias CommonCore.Knative.Service
+  alias CommonCore.Services.Container
+  alias CommonCore.Services.EnvValue
   alias ControlServer.Knative
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryBatteries

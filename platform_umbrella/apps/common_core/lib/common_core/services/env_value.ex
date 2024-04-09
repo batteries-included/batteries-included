@@ -1,4 +1,4 @@
-defmodule CommonCore.Knative.EnvValue do
+defmodule CommonCore.Services.EnvValue do
   @moduledoc false
   use TypedEctoSchema
 

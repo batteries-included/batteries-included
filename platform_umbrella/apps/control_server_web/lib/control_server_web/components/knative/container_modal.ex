@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Knative.ContainerModal do
 
   use ControlServerWeb, :live_component
 
-  alias CommonCore.Knative.Container
+  alias CommonCore.Services.Container
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent

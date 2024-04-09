@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServiceController do
+defmodule ControlServerWeb.KNativeServiceController do
   use ControlServerWeb, :controller
 
   alias CommonCore.Knative.Service
