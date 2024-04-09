@@ -1,4 +1,5 @@
 {
+  "slug": "jason",
   "kube_cluster": {
     "provider": "aws"
   },
@@ -12,12 +13,13 @@
         "config": {
           "type": "battery_core",
           "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
-          "cluster_type": "eks",
+          "cluster_type": "aws",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": null,
+          "secret_key": "K6P3HGJTOIMD2BGNNSEKZD6II7H33NTNDASDREMVNINUM2ED63SX4HVVGQ6SGWLX",
+          "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
           "image_override": null,
@@ -125,29 +127,22 @@
         "inserted_at": null,
         "updated_at": null,
         "num_instances": 1,
-        "virtual_size": "tiny",
+        "virtual_size": "small",
         "users": [
           {
             "position": null,
-            "username": "battery-local-user",
-            "password": "not-real",
-            "roles": ["superuser", "createrole", "createdb", "login"],
-            "credential_namespaces": []
-          },
-          {
-            "position": null,
             "username": "battery-control-user",
-            "password": "OLES5VK7ZKQB5JL3JOC5B6MW",
+            "password": "EZX2JXW6WOYEYN3MOX4TFGE7",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
         "cpu_requested": 500,
-        "cpu_limits": 500,
-        "memory_requested": 536870912,
-        "memory_limits": 536870912,
-        "storage_size": 536870912,
-        "virtual_storage_size_range_value": 9
+        "cpu_limits": 2000,
+        "memory_requested": 1073741824,
+        "memory_limits": 4294967296,
+        "storage_size": 17179869184,
+        "virtual_storage_size_range_value": 41
       }
     ],
     "knative_services": [],

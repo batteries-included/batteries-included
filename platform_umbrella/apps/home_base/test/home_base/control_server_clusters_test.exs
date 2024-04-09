@@ -1,70 +1,70 @@
-defmodule HomeBase.ControlServerClustersTest do
+defmodule HomeBase.CustomerInstallsTest do
   use HomeBase.DataCase
 
-  alias HomeBase.ControlServerClusters
+  alias HomeBase.CustomerInstalls
 
   describe "installations" do
-    import HomeBase.ControlServerClustersFixtures
+    import HomeBase.CustomerInstallsFixtures
 
-    alias HomeBase.ControlServerClusters.Installation
+    alias CommonCore.Installation
 
     @invalid_attrs %{bootstrap_config: nil, slug: nil}
 
     test "list_installations/0 returns all installations" do
       installation = installation_fixture()
-      assert ControlServerClusters.list_installations() == [installation]
+      assert CustomerInstalls.list_installations() == [installation]
     end
 
     test "get_installation!/1 returns the installation with given id" do
       installation = installation_fixture()
-      assert ControlServerClusters.get_installation!(installation.id) == installation
+      assert CustomerInstalls.get_installation!(installation.id) == installation
     end
 
     test "create_installation/1 with valid data creates a installation" do
-      valid_attrs = %{slug: "some slug"}
+      valid_attrs = %{slug: "some-slug", kube_provider: :kind, usage: :development}
 
       assert {:ok, %Installation{} = installation} =
-               ControlServerClusters.create_installation(valid_attrs)
+               CustomerInstalls.create_installation(valid_attrs)
 
-      assert installation.slug == "some slug"
+      assert installation.slug == "some-slug"
     end
 
     test "create_installation/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
-               ControlServerClusters.create_installation(@invalid_attrs)
+               CustomerInstalls.create_installation(@invalid_attrs)
     end
 
     test "update_installation/2 with valid data updates the installation" do
       installation = installation_fixture()
-      update_attrs = %{slug: "some updated slug"}
+      update_attrs = %{slug: "some-updated-slug"}
 
       assert {:ok, %Installation{} = installation} =
-               ControlServerClusters.update_installation(installation, update_attrs)
+               CustomerInstalls.update_installation(installation, update_attrs)
 
-      assert installation.slug == "some updated slug"
+      assert installation.slug == "some-updated-slug"
     end
 
     test "update_installation/2 with invalid data returns error changeset" do
       installation = installation_fixture()
 
       assert {:error, %Ecto.Changeset{}} =
-               ControlServerClusters.update_installation(installation, @invalid_attrs)
+               CustomerInstalls.update_installation(installation, @invalid_attrs)
 
-      assert installation == ControlServerClusters.get_installation!(installation.id)
+      assert installation == CustomerInstalls.get_installation!(installation.id)
     end
 
     test "delete_installation/1 deletes the installation" do
       installation = installation_fixture()
-      assert {:ok, %Installation{}} = ControlServerClusters.delete_installation(installation)
+      assert {:ok, %Installation{}} = CustomerInstalls.delete_installation(installation)
 
       assert_raise Ecto.NoResultsError, fn ->
-        ControlServerClusters.get_installation!(installation.id)
+        CustomerInstalls.get_installation!(installation.id)
       end
     end
 
     test "change_installation/1 returns a installation changeset" do
       installation = installation_fixture()
-      assert %Ecto.Changeset{} = ControlServerClusters.change_installation(installation)
+      assert %Ecto.Changeset{} = CustomerInstalls.change_installation(installation)
     end
   end
 end

@@ -1,6 +1,7 @@
 defmodule KubeServices.KubeStateCoverageTest do
   use ExUnit.Case
 
+  import CommonCore.Factory
   import K8s.Resource.FieldAccessors
 
   alias CommonCore.ApiVersionKind
@@ -37,8 +38,9 @@ defmodule KubeServices.KubeStateCoverageTest do
   describe "KubeState can watch for every battery" do
     @tag :slow
     test "All watchable" do
-      :everything
-      |> CommonCore.StateSummary.SeedState.seed()
+      :install_spec
+      |> build(usage: :kitchen_sink, kube_provider: :kind, default_size: :huge)
+      |> then(fn spec -> spec.target_summary end)
       |> RootResourceGenerator.materialize()
       |> Enum.map(fn {_path, resource} -> {api_version(resource), kind(resource)} end)
       |> Enum.each(fn {api_version, kind} ->
@@ -64,8 +66,9 @@ defmodule KubeServices.KubeStateCoverageTest do
 
     @tag :slow
     test "All CRD's watchable" do
-      :everything
-      |> CommonCore.StateSummary.SeedState.seed()
+      :install_spec
+      |> build(usage: :kitchen_sink)
+      |> then(fn spec -> spec.target_summary end)
       |> RootResourceGenerator.materialize()
       |> Enum.filter(fn {_path, resource} -> ApiVersionKind.resource_type!(resource) == :crd end)
       |> Enum.map(fn {_path, crd} ->

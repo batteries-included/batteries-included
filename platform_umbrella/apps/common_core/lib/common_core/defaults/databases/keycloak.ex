@@ -4,19 +4,17 @@ defmodule CommonCore.Defaults.KeycloakDB do
 
   @keycloak_username "keycloak"
 
-  @default_pg_cluster %{
-    :name => @cluster_name,
-    :num_instances => 1,
-    :virtual_size => "tiny",
-    :type => :internal,
-    :users => [
-      %{username: @keycloak_username, roles: ["createdb", "login"], credential_namespaces: ["battery-core"]}
-    ],
-    :database => %{name: "keycloak", owner: @keycloak_username}
-  }
-
-  def pg_cluster do
-    @default_pg_cluster
+  def pg_cluster(size \\ :tiny) do
+    %{
+      :name => @cluster_name,
+      :num_instances => 1,
+      :virtual_size => to_string(size),
+      :type => :internal,
+      :users => [
+        %{username: @keycloak_username, roles: ["createdb", "login"], credential_namespaces: ["battery-core"]}
+      ],
+      :database => %{name: "keycloak", owner: @keycloak_username}
+    }
   end
 
   def cluster_name, do: @cluster_name

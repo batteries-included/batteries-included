@@ -2,7 +2,7 @@ defmodule HomeBaseWeb.Live.Installations do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
-  alias HomeBase.ControlServerClusters
+  alias HomeBase.CustomerInstalls
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -19,7 +19,7 @@ defmodule HomeBaseWeb.Live.Installations do
   end
 
   defp list_installations do
-    ControlServerClusters.list_installations()
+    CustomerInstalls.list_installations()
   end
 
   @impl Phoenix.LiveView

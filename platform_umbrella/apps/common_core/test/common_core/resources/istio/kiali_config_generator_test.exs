@@ -1,15 +1,16 @@
 defmodule CommonCore.Resources.Istio.KialiConfigGeneratorTest do
   use ExUnit.Case
 
+  import CommonCore.Factory
+
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Resources.Istio.KialiConfigGenerator
   alias CommonCore.StateSummary.Batteries
-  alias CommonCore.StateSummary.SeedState
 
   describe "materialize/2" do
     test "sets namespaces from state" do
-      state = SeedState.seed(:everything)
+      state = build(:install_spec, usage: :kitchen_sink, kube_provider: :kind).target_summary
       batteries = Batteries.by_type(state)
 
       config = KialiConfigGenerator.materialize(batteries.kiali, state)
@@ -17,7 +18,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGeneratorTest do
     end
 
     test "sets server config to https when :cert_manager is installed" do
-      state = SeedState.seed(:everything)
+      state = build(:install_spec, usage: :kitchen_sink, kube_provider: :kind).target_summary
       batteries = Batteries.by_type(state)
 
       config = KialiConfigGenerator.materialize(batteries.kiali, state)
@@ -27,7 +28,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGeneratorTest do
     end
 
     test "sets server config to http when :cert_manager is not installed" do
-      state = SeedState.seed(:integration_test)
+      state = build(:install_spec, usage: :integration_test, kube_provider: :kind).target_summary
 
       batt =
         :kiali

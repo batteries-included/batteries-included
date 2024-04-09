@@ -2,7 +2,7 @@ defmodule HomeBaseWeb.Live.InstallatitonShow do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
-  alias HomeBase.ControlServerClusters
+  alias HomeBase.CustomerInstalls
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -14,7 +14,7 @@ defmodule HomeBaseWeb.Live.InstallatitonShow do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:installation, ControlServerClusters.get_installation!(id))}
+     |> assign(:installation, CustomerInstalls.get_installation!(id))}
   end
 
   defp page_title(:show), do: "Show Installation"

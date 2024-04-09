@@ -45,7 +45,7 @@ defmodule CommonCore.Postgres.Cluster do
       memory_limits: Memory.gb_to_bytes(16)
     },
     %{
-      name: "X-large",
+      name: "xlarge",
       storage_size: Memory.gb_to_bytes(256),
       cpu_requested: 10_000,
       cpu_limits: 10_000,

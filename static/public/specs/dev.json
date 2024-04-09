@@ -1,4 +1,5 @@
 {
+  "slug": "dev",
   "kube_cluster": {
     "provider": "kind"
   },
@@ -6,43 +7,6 @@
     "id": null,
     "notebooks": [],
     "batteries": [
-      {
-        "id": null,
-        "type": "battery_core",
-        "config": {
-          "type": "battery_core",
-          "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
-          "cluster_type": "kind",
-          "core_namespace": "battery-core",
-          "base_namespace": "battery-base",
-          "data_namespace": "battery-data",
-          "ml_namespace": "battery-ml",
-          "secret_key": null,
-          "cluster_name": null,
-          "server_in_cluster": false,
-          "image_override": null,
-          "core_namespace_override": null,
-          "base_namespace_override": null,
-          "data_namespace_override": null,
-          "ml_namespace_override": null,
-          "server_in_cluster_override": null
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "cloudnative_pg",
-        "config": {
-          "type": "cloudnative_pg",
-          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1",
-          "image_override": null
-        },
-        "group": "data",
-        "inserted_at": null,
-        "updated_at": null
-      },
       {
         "id": null,
         "type": "istio",
@@ -71,11 +35,25 @@
       },
       {
         "id": null,
-        "type": "stale_resource_cleaner",
+        "type": "battery_core",
         "config": {
-          "type": "stale_resource_cleaner",
-          "delay": 900000,
-          "delay_override": null
+          "type": "battery_core",
+          "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
+          "cluster_type": "kind",
+          "core_namespace": "battery-core",
+          "base_namespace": "battery-base",
+          "data_namespace": "battery-data",
+          "ml_namespace": "battery-ml",
+          "secret_key": "R545S6D6D2LL2UQ25NBQWN23PFGMUUTTYL2PEWOTAH2DBLT4DOJFXGJ666B2I4KB",
+          "default_size": "tiny",
+          "cluster_name": null,
+          "server_in_cluster": false,
+          "image_override": null,
+          "core_namespace_override": null,
+          "base_namespace_override": null,
+          "data_namespace_override": null,
+          "ml_namespace_override": null,
+          "server_in_cluster_override": null
         },
         "group": "magic",
         "inserted_at": null,
@@ -94,6 +72,30 @@
           "frrouting_image_override": null
         },
         "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "cloudnative_pg",
+        "config": {
+          "type": "cloudnative_pg",
+          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1",
+          "image_override": null
+        },
+        "group": "data",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "stale_resource_cleaner",
+        "config": {
+          "type": "stale_resource_cleaner",
+          "delay": 900000,
+          "delay_override": null
+        },
+        "group": "magic",
         "inserted_at": null,
         "updated_at": null
       }
@@ -117,15 +119,8 @@
         "users": [
           {
             "position": null,
-            "username": "battery-local-user",
-            "password": "not-real",
-            "roles": ["superuser", "createrole", "createdb", "login"],
-            "credential_namespaces": []
-          },
-          {
-            "position": null,
             "username": "battery-control-user",
-            "password": "XS53SLUQUOUAMBCJD2EFQAYD",
+            "password": "OMG2QJEYNHB6LY6XFWDX3RYU",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

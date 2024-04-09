@@ -2,14 +2,14 @@ defmodule HomeBaseWeb.Live.InstallationNew do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
-  alias HomeBase.ControlServerClusters
-  alias HomeBase.ControlServerClusters.Installation
+  alias CommonCore.Installation
+  alias HomeBase.CustomerInstalls
   alias HomeBaseWeb.Live.Installations.FormComponent
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     installation = %Installation{}
-    changeset = ControlServerClusters.change_installation(installation)
+    changeset = CustomerInstalls.change_installation(installation)
 
     {:ok,
      socket
@@ -18,7 +18,7 @@ defmodule HomeBaseWeb.Live.InstallationNew do
   end
 
   def update(%{installation: installation} = assigns, socket) do
-    changeset = ControlServerClusters.change_installation(installation)
+    changeset = CustomerInstalls.change_installation(installation)
 
     {:ok,
      socket

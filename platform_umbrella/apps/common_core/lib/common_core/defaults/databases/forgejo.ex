@@ -2,23 +2,22 @@ defmodule CommonCore.Defaults.ForgejoDB do
   @moduledoc false
   @username "forgejo"
   @cluster_name "forgejo"
-  @default_pg_cluster %{
-    :name => @cluster_name,
-    :num_instances => 1,
-    :virtual_size => "tiny",
-    :type => :internal,
-    :users => [
-      %{
-        username: @username,
-        roles: ["superuser", "createrole", "createdb", "login"],
-        credential_namespaces: ["battery-core"]
-      }
-    ],
-    :database => %{name: "forgejo", owner: @username}
-  }
 
-  def forgejo_cluster do
-    @default_pg_cluster
+  def forgejo_cluster(size \\ :tiny) do
+    %{
+      :name => @cluster_name,
+      :num_instances => 1,
+      :virtual_size => to_string(size),
+      :type => :internal,
+      :users => [
+        %{
+          username: @username,
+          roles: ["superuser", "createrole", "createdb", "login"],
+          credential_namespaces: ["battery-core"]
+        }
+      ],
+      :database => %{name: "forgejo", owner: @username}
+    }
   end
 
   def cluster_name, do: @cluster_name

@@ -77,7 +77,7 @@ function whats_running() {
 
 function do_integration_test_deep() {
   local install_path
-  install_path=${1:-"./static/public/specs/integration_test.json"}
+  install_path=${1:-"./static/public/specs/int_test.json"}
 
   log "Starting integration test: ${install_path}"
 
@@ -104,7 +104,7 @@ function do_integration_test() {
 
   if [[ -z ${summary_path} ]]; then
     log "No summary path provided"
-    summary_path=$(summary_from_spec "./static/public/specs/integration_test.json")
+    summary_path=$(summary_from_spec "./static/public/specs/int_test.json")
   fi
 
   export MIX_ENV=integration

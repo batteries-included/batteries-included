@@ -2,7 +2,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
   @moduledoc false
   use HomeBaseWeb, :live_component
 
-  alias HomeBase.ControlServerClusters
+  alias HomeBase.CustomerInstalls
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -14,7 +14,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
 
   @impl Phoenix.LiveComponent
   def update(%{installation: installation} = assigns, socket) do
-    changeset = ControlServerClusters.change_installation(installation)
+    changeset = CustomerInstalls.change_installation(installation)
 
     {:ok,
      socket
@@ -26,7 +26,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
   def handle_event("validate", %{"installation" => installation_params}, socket) do
     changeset =
       socket.assigns.installation
-      |> ControlServerClusters.change_installation(installation_params)
+      |> CustomerInstalls.change_installation(installation_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :form, to_form(changeset))}
@@ -37,7 +37,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
   end
 
   defp save_installation(socket, :edit, installation_params) do
-    case ControlServerClusters.update_installation(
+    case CustomerInstalls.update_installation(
            socket.assigns.installation,
            installation_params
          ) do
@@ -53,7 +53,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
   end
 
   defp save_installation(socket, :new, installation_params) do
-    case ControlServerClusters.create_installation(installation_params) do
+    case CustomerInstalls.create_installation(installation_params) do
       {:ok, new_installation} ->
         {:noreply,
          socket

@@ -1,6 +1,8 @@
 defmodule ControlServer.Batteries.InstallerTest do
   use ControlServer.DataCase
 
+  import CommonCore.Factory
+
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Postgres.Cluster, as: PGCluster
@@ -34,12 +36,11 @@ defmodule ControlServer.Batteries.InstallerTest do
     test "installs all from system_batteries" do
       assert 0 == ControlServer.Repo.aggregate(SystemBattery, :count, :id)
 
-      {:ok, _} =
-        :everything
-        |> CommonCore.StateSummary.SeedState.seed()
-        |> then(fn %{batteries: batteries} = _state ->
-          Installer.install_all(batteries)
-        end)
+      :install_spec
+      |> build(usage: :kitchen_sink, kube_provider: :kind, default_size: "small")
+      |> then(fn spec ->
+        ControlServer.Batteries.Installer.install_all(spec.target_summary.batteries)
+      end)
 
       assert ControlServer.Repo.aggregate(SystemBattery, :count, :id) >= 4
     end

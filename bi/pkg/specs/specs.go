@@ -38,6 +38,7 @@ type StateSummarySpec struct {
 }
 
 type InstallSpec struct {
+	Slug             string                            `json:"slug"`
 	InitialResources map[string]map[string]interface{} `json:"initial_resources"`
 	KubeCluster      KubeClusterSpec                   `json:"kube_cluster"`
 	TargetSummary    StateSummarySpec                  `json:"target_summary"`

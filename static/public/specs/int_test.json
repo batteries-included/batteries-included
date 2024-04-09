@@ -1,4 +1,5 @@
 {
+  "slug": "integration_test",
   "kube_cluster": {
     "provider": "kind"
   },
@@ -6,6 +7,32 @@
     "id": null,
     "notebooks": [],
     "batteries": [
+      {
+        "id": null,
+        "type": "istio",
+        "config": {
+          "type": "istio",
+          "namespace": "battery-istio",
+          "pilot_image": "docker.io/istio/pilot:1.21.0-distroless",
+          "namespace_override": null,
+          "pilot_image_override": null
+        },
+        "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "istio_gateway",
+        "config": {
+          "type": "istio_gateway",
+          "proxy_image": "docker.io/istio/proxyv2:1.21.0-distroless",
+          "proxy_image_override": null
+        },
+        "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      },
       {
         "id": null,
         "type": "battery_core",
@@ -17,7 +44,8 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": null,
+          "secret_key": "ASNQTORAVLTMG6UUNWVEAZ7I42LTEKOCMIPTTR7AK3EKOWA3K6QTFNNDITNDJ4VG",
+          "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
           "image_override": null,
@@ -33,6 +61,22 @@
       },
       {
         "id": null,
+        "type": "metallb",
+        "config": {
+          "type": "metallb",
+          "controller_image": "quay.io/metallb/controller:v0.13.12",
+          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
+          "frrouting_image": "quay.io/frrouting/frr:8.5.4",
+          "speaker_image_override": null,
+          "controller_image_override": null,
+          "frrouting_image_override": null
+        },
+        "group": "net_sec",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
@@ -40,6 +84,18 @@
           "image_override": null
         },
         "group": "data",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": null,
+        "type": "stale_resource_cleaner",
+        "config": {
+          "type": "stale_resource_cleaner",
+          "delay": 900000,
+          "delay_override": null
+        },
+        "group": "magic",
         "inserted_at": null,
         "updated_at": null
       }
@@ -63,15 +119,8 @@
         "users": [
           {
             "position": null,
-            "username": "battery-local-user",
-            "password": "not-real",
-            "roles": ["superuser", "createrole", "createdb", "login"],
-            "credential_namespaces": []
-          },
-          {
-            "position": null,
             "username": "battery-control-user",
-            "password": "55QURJLJ23OSTSWUEV6NAEZ4",
+            "password": "VBS7RTYDLIT6AJ2CCYMV4PGB",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

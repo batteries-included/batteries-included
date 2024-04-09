@@ -1,6 +1,7 @@
 defmodule CommonCore.RootResourceGeneratorTest do
   use ExUnit.Case
 
+  import CommonCore.Factory
   import K8s.Resource.FieldAccessors
 
   alias CommonCore.ApiVersionKind
@@ -43,8 +44,9 @@ defmodule CommonCore.RootResourceGeneratorTest do
   describe "RootResourceGenerator with everything enabled" do
     @tag :slow
     test "all battery resources are valid" do
-      :everything
-      |> CommonCore.StateSummary.SeedState.seed()
+      :install_spec
+      |> build(usage: :kitchen_sink, kube_provider: :aws)
+      |> then(fn install_spec -> install_spec.target_summary end)
       |> RootResourceGenerator.materialize()
       |> assert_one_resouce_definition()
       |> Map.values()
@@ -55,8 +57,9 @@ defmodule CommonCore.RootResourceGeneratorTest do
   describe "RootResourceGenerator a small set of batteries" do
     @tag :slow
     test "all battery resources are valid" do
-      :dev
-      |> CommonCore.StateSummary.SeedState.seed()
+      :install_spec
+      |> build(usage: :intenal_int_test, kube_provider: :kind)
+      |> then(fn install_spec -> install_spec.target_summary end)
       |> RootResourceGenerator.materialize()
       |> Map.values()
       |> Enum.each(&assert_valid/1)

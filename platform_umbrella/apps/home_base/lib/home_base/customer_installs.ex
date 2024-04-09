@@ -1,11 +1,11 @@
-defmodule HomeBase.ControlServerClusters do
+defmodule HomeBase.CustomerInstalls do
   @moduledoc """
-  The ControlServerClusters context.
+  The cluster installations for HomeBase
   """
 
   import Ecto.Query, warn: false
 
-  alias HomeBase.ControlServerClusters.Installation
+  alias CommonCore.Installation
   alias HomeBase.Repo
 
   @doc """
