@@ -3,6 +3,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
   alias CommonCore.Resources.AwsLoadBalancerController
+  alias CommonCore.Resources.BackendServices
   alias CommonCore.Resources.BatteryCA
   alias CommonCore.Resources.BatteryCore
   alias CommonCore.Resources.CertManager.Certificates
@@ -57,6 +58,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
 
   @default_generator_mappings [
     aws_load_balancer_controller: [AwsLoadBalancerController],
+    backend_services: [BackendServices],
     battery_ca: [BatteryCA],
     battery_core: [BatteryCore, ControlServerResources],
     cert_manager: [CertManager, Certificates],

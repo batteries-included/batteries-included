@@ -64,6 +64,14 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :devtools,
+      type: :backend_services,
+      dependencies: [:battery_core],
+      description:
+        "Run containers that don't conform the the serverless http model. " <>
+          "This is useful for running long running processes, or for running services that need to be accessed by other services."
+    },
+    %CatalogBattery{
+      group: :devtools,
       type: :forgejo,
       dependencies: [:cloudnative_pg, :istio_gateway, :battery_core],
       description:
