@@ -2,15 +2,93 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  def mount(socket) do
+  alias CommonCore.Postgres.Cluster, as: PGCluster
+  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias ControlServerWeb.PostgresFormSubcomponents
+  alias ControlServerWeb.Projects.ProjectForm
+  alias ControlServerWeb.RedisFormSubcomponents
+
+  def update(assigns, socket) do
+    {class, assigns} = Map.pop(assigns, :class)
+
+    project_name = get_in(assigns, [:data, ProjectForm, "name"])
+
+    postgres_changeset =
+      PGCluster.changeset(%PGCluster{}, %{
+        name: project_name,
+        virtual_size: "medium"
+      })
+
+    redis_changeset =
+      RedisCluster.changeset(%RedisCluster{}, %{
+        name: project_name,
+        virtual_size: "small"
+      })
+
+    form =
+      to_form(%{
+        "need_postgres" => "on",
+        "postgres" => postgres_changeset,
+        "redis" => redis_changeset
+      })
+
     {:ok,
      socket
-     |> assign(:class, nil)
-     |> assign(:form, to_form(%{"postgres" => true}))}
+     |> assign(assigns)
+     |> assign(:class, class)
+     |> assign(:form, form)}
+  end
+
+  def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
+    handle_event("change_storage_size", %{"postgres" => %{"storage_size" => bytes}}, socket)
+  end
+
+  # This only happens when the user is manually editing the storage size.
+  # In this case, we need to update the range slider and helper text "x GB"
+  def handle_event("change_storage_size", %{"postgres" => %{"storage_size" => storage_size}}, socket) do
+    changeset = PGCluster.put_storage_size_bytes(socket.assigns.form.params["postgres"], storage_size)
+
+    form =
+      socket.assigns.form.params
+      |> Map.put("postgres", changeset)
+      |> to_form()
+
+    {:noreply, assign(socket, :form, form)}
+  end
+
+  def handle_event(
+        "on_change_storage_size_range",
+        %{"postgres" => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
+        socket
+      ) do
+    changeset = PGCluster.put_storage_size_value(socket.assigns.form.params["postgres"], virtual_storage_size_range_value)
+
+    form =
+      socket.assigns.form.params
+      |> Map.put("postgres", changeset)
+      |> to_form()
+
+    {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("validate", params, socket) do
-    {:noreply, assign(socket, :form, to_form(params))}
+    postgres_changeset =
+      %PGCluster{}
+      |> PGCluster.changeset(params["postgres"])
+      |> Map.put(:action, :validate)
+
+    redis_changeset =
+      %RedisCluster{}
+      |> RedisCluster.changeset(params["redis"])
+      |> Map.put(:action, :validate)
+
+    form =
+      params
+      |> Map.put("postgres", postgres_changeset)
+      |> Map.put("redis", redis_changeset)
+      |> to_form()
+
+    {:noreply, assign(socket, :form, form)}
   end
 
   def handle_event("save", params, socket) do
@@ -33,77 +111,25 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:postgres]} type="switch" label="I need a postgres instance" />
+        <.input field={@form[:need_postgres]} type="switch" label="I need a postgres instance" />
 
-        <.grid :if={@form[:postgres].value} variant="col-2">
-          <.input
-            field={@form[:postgres_size]}
-            type="select"
-            label="Size"
-            placeholder="Choose value"
-            options={[]}
-          />
+        <PostgresFormSubcomponents.size_form
+          class={@form[:need_postgres].value != "on" && "hidden"}
+          form={to_form(@form[:postgres].value, as: :postgres)}
+          phx_target={@myself}
+        />
 
-          <.input
-            field={@form[:postgres_storage_size]}
-            type="select"
-            label="Storage Size"
-            placeholder="Choose value"
-            options={[]}
-          />
+        <.flex
+          :if={@form[:need_postgres].value}
+          class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker"
+        />
 
-          <.input
-            field={@form[:postgres_memory]}
-            type="select"
-            label="Memory"
-            placeholder="Choose value"
-            options={[]}
-          />
+        <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
 
-          <.input
-            field={@form[:postgres_memory]}
-            type="select"
-            label="CPU Limits"
-            placeholder="Choose value"
-            options={[]}
-          />
-        </.grid>
-
-        <.input field={@form[:redis]} type="switch" label="I need a redis instance" />
-
-        <.grid :if={@form[:redis].value} variant="col-2">
-          <.input
-            field={@form[:redis_size]}
-            type="select"
-            label="Size"
-            placeholder="Choose value"
-            options={[]}
-          />
-
-          <.input
-            field={@form[:redis_storage_size]}
-            type="select"
-            label="Storage Size"
-            placeholder="Choose value"
-            options={[]}
-          />
-
-          <.input
-            field={@form[:redis_memory]}
-            type="select"
-            label="Memory"
-            placeholder="Choose value"
-            options={[]}
-          />
-
-          <.input
-            field={@form[:redis_memory]}
-            type="select"
-            label="CPU Limits"
-            placeholder="Choose value"
-            options={[]}
-          />
-        </.grid>
+        <RedisFormSubcomponents.size_form
+          class={@form[:need_redis].value != "on" && "hidden"}
+          form={to_form(@form[:redis].value, as: :redis)}
+        />
 
         <:actions>
           <%= render_slot(@inner_block) %>

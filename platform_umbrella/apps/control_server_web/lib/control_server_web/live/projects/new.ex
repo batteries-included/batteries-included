@@ -2,7 +2,9 @@ defmodule ControlServerWeb.Projects.NewLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  alias ControlServer.Postgres
   alias ControlServer.Projects
+  alias ControlServer.Redis
   alias ControlServerWeb.Projects.BatteriesForm
   alias ControlServerWeb.Projects.DatabaseForm
   alias ControlServerWeb.Projects.MachineLearningForm
@@ -21,6 +23,19 @@ defmodule ControlServerWeb.Projects.NewLive do
      |> assign(:steps, steps())
      |> assign(:current_step, List.first(steps()))
      |> assign(:page_title, "Start Your Project")}
+  end
+
+  # Moves back to the previous step, or navigates to the `return_to` URL query if on the first
+  # step. This allows the back button to be dynamic and either move steps or do a live navigation.
+  def handle_event("back", params, socket) do
+    prev_index = Enum.find_index(socket.assigns.steps, &(&1 == socket.assigns.current_step)) - 1
+    prev_step = Enum.at(socket.assigns.steps, prev_index)
+
+    if prev_step && prev_index >= 0 do
+      {:noreply, assign(socket, :current_step, prev_step)}
+    else
+      {:noreply, push_navigate(socket, to: params["return_to"])}
+    end
   end
 
   # Updates the project steps when the type changes in the new project subform.
@@ -46,23 +61,50 @@ defmodule ControlServerWeb.Projects.NewLive do
        |> assign(:current_step, next_step)}
     else
       # There are no more steps in the flow, go ahead and create all the resources
-      case Projects.create_project(form_data[ProjectForm]) do
-        {:ok, project} -> {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
-        _ -> {:noreply, put_flash(socket, :error, "Could not create project resources")}
+      with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
+           {:ok, _postgres} <- create_postgres(project, form_data[DatabaseForm]),
+           {:ok, _redis} <- create_redis(project, form_data[DatabaseForm]) do
+        {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
+      else
+        _ -> {:noreply, put_flash(socket, :error, "Could not create all the project resources")}
       end
     end
   end
 
-  # Moves back to the previous step, or navigates to the `return_to` URL query if on the first
-  # step. This allows the back button to be dynamic and either move steps or do a live navigation.
-  def handle_event("back", params, socket) do
-    prev_index = Enum.find_index(socket.assigns.steps, &(&1 == socket.assigns.current_step)) - 1
-    prev_step = Enum.at(socket.assigns.steps, prev_index)
+  defp create_postgres(project, %{"need_postgres" => "on", "postgres" => postgres_data}) do
+    postgres_data
+    |> Map.merge(%{
+      "project_id" => project.id,
+      "database" => %{"name" => "app", "owner" => "app"},
+      "users" => [
+        %{
+          "username" => "app",
+          "roles" => ["login", "createdb", "createrole"],
+          "credential_namespaces" => ["battery-data"]
+        }
+      ]
+    })
+    |> Map.put_new("storage_class", get_default_storage_class())
+    |> Postgres.create_cluster()
+  end
 
-    if prev_step && prev_index >= 0 do
-      {:noreply, assign(socket, :current_step, prev_step)}
-    else
-      {:noreply, push_navigate(socket, to: params["return_to"])}
+  defp create_postgres(_project, _data), do: {:ok, nil}
+
+  defp create_redis(project, %{"need_redis" => "on", "redis" => redis_data}) do
+    redis_data
+    |> Map.put("project_id", project.id)
+    |> Redis.create_failover_cluster()
+  end
+
+  defp create_redis(_project, _data), do: {:ok, nil}
+
+  defp get_default_storage_class do
+    case KubeServices.SystemState.SummaryStorage.default_storage_class() do
+      nil ->
+        nil
+
+      storage_class ->
+        get_in(storage_class, ["metadata", "name"])
     end
   end
 
@@ -78,22 +120,36 @@ defmodule ControlServerWeb.Projects.NewLive do
       />
 
       <div class="flex-1 relative">
-        <.subform module={ProjectForm} id="project-form" current_step={@current_step} steps={@steps} />
+        <.subform
+          module={ProjectForm}
+          id="project-form"
+          current_step={@current_step}
+          steps={@steps}
+          data={@form_data}
+        />
 
         <.subform
           module={BatteriesForm}
           id="project-batteries-form"
           current_step={@current_step}
           steps={@steps}
+          data={@form_data}
         />
 
-        <.subform module={WebForm} id="project-web-form" current_step={@current_step} steps={@steps} />
+        <.subform
+          module={WebForm}
+          id="project-web-form"
+          current_step={@current_step}
+          steps={@steps}
+          data={@form_data}
+        />
 
         <.subform
           module={MachineLearningForm}
           id="project-machine-learning-form"
           current_step={@current_step}
           steps={@steps}
+          data={@form_data}
         />
 
         <.subform
@@ -101,6 +157,7 @@ defmodule ControlServerWeb.Projects.NewLive do
           id="project-database-form"
           current_step={@current_step}
           steps={@steps}
+          data={@form_data}
         />
       </div>
 

@@ -2,7 +2,11 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
+  alias CommonCore.Postgres.Cluster
+  alias CommonCore.Util.Memory
+  alias CommonCore.Util.MemorySliderConverter
   alias Ecto.Changeset
+  alias KubeServices.SystemState.SummaryStorage
 
   @default_roles [
     %{
@@ -187,5 +191,128 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     Enum.map(namespaces, fn ns ->
       %{label: ns, value: ns, selected: Enum.member?(selected, ns)}
     end)
+  end
+
+  attr :phx_target, :any
+  attr :class, :any, default: nil
+  attr :form, Phoenix.HTML.Form, required: true
+
+  def size_form(assigns) do
+    ~H"""
+    <div class={["contents", @class]}>
+      <.grid columns={[sm: 1, xl: 2]}>
+        <.input field={@form[:name]} label="Name" autofocus />
+
+        <.input
+          field={@form[:virtual_size]}
+          type="select"
+          label="Size"
+          options={Cluster.preset_options_for_select()}
+        />
+      </.grid>
+
+      <.data_horizontal_bolded
+        :if={@form[:virtual_size].value != "custom"}
+        class="mt-3 mb-5"
+        data={[
+          {"Storage size:", @form[:storage_size].value |> Memory.format_bytes(true) || "0GB"},
+          {"Memory limits:", @form[:memory_limits].value |> Memory.format_bytes(true)},
+          {"CPU limits:", @form[:cpu_limits].value}
+        ]}
+      />
+
+      <div :if={@form[:virtual_size].value == "custom"} class="mb-5">
+        <.h3>Storage</.h3>
+
+        <.grid>
+          <.input
+            field={@form[:storage_class]}
+            type="select"
+            label="Storage Class"
+            options={Enum.map(SummaryStorage.storage_classes(), &get_in(&1, ["metadata", "name"]))}
+          />
+
+          <.flex>
+            <.click_flip
+              class="grow flex-1 justify-start xl:justify-end items-center"
+              cursor_class="cursor-text"
+              tooltip="Click to Edit"
+              id="storage-size-input"
+            >
+              <span>
+                <div class="text-sm">Storage Size</div>
+                <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
+              </span>
+              <:hidden>
+                <.input field={@form[:storage_size]} type="number" phx-change="change_storage_size" />
+              </:hidden>
+            </.click_flip>
+          </.flex>
+
+          <div class="pt-3 pb-1 mb-[22px] lg:col-span-2">
+            <.flex class="justify-between w-full">
+              <%= for memory_size <- MemorySliderConverter.control_points() do %>
+                <span
+                  phx-click="set_storage_size_shortcut"
+                  phx-value-bytes={memory_size}
+                  phx-target={@phx_target}
+                  class="cursor-pointer hover:underline text-sm font-medium text-gray-darkest dark:text-white w-[45px] text-center"
+                >
+                  <%= Memory.format_bytes(memory_size) %>
+                </span>
+              <% end %>
+            </.flex>
+
+            <.input
+              field={@form[:virtual_storage_size_range_value]}
+              type="range"
+              min="1"
+              max="120"
+              step="1"
+              show_value={false}
+              phx-change="on_change_storage_size_range"
+            />
+          </div>
+        </.grid>
+
+        <.h3>Running Limits</.h3>
+
+        <.grid>
+          <div>
+            <.input
+              field={@form[:cpu_requested]}
+              type="select"
+              label="CPU Requested"
+              options={Cluster.cpu_select_options()}
+            />
+          </div>
+          <div>
+            <.input
+              field={@form[:cpu_limits]}
+              type="select"
+              label="CPU Limits"
+              options={Cluster.cpu_select_options()}
+            />
+          </div>
+          <div>
+            <.input
+              field={@form[:memory_requested]}
+              type="select"
+              label="Memory Requested"
+              options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
+            />
+          </div>
+          <div>
+            <.input
+              field={@form[:memory_limits]}
+              type="select"
+              label="Memory Limits"
+              options={Cluster.memory_limits_options() |> Memory.bytes_as_select_options()}
+            />
+          </div>
+        </.grid>
+      </div>
+    </div>
+    """
   end
 end

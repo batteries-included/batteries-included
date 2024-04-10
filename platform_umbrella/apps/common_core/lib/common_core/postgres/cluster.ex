@@ -7,7 +7,9 @@ defmodule CommonCore.Postgres.Cluster do
   import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
+  alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
+  alias CommonCore.Util.MemorySliderConverter
 
   require Logger
 
@@ -63,7 +65,7 @@ defmodule CommonCore.Postgres.Cluster do
   ]
 
   @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
+  @derive {Jason.Encoder, except: [:__meta__, :project]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "pg_clusters" do
@@ -86,6 +88,8 @@ defmodule CommonCore.Postgres.Cluster do
     embeds_many :users, CommonCore.Postgres.PGUser, on_replace: :delete
     embeds_one :database, CommonCore.Postgres.PGDatabase, on_replace: :delete
 
+    belongs_to :project, Project
+
     timestamps()
   end
 
@@ -103,7 +107,8 @@ defmodule CommonCore.Postgres.Cluster do
       :memory_requested,
       :memory_limits,
       :virtual_size,
-      :virtual_storage_size_range_value
+      :virtual_storage_size_range_value,
+      :project_id
     ])
     |> maybe_set_virtual_size(@presets)
     |> maybe_set_storage_size_slider_value()
@@ -122,6 +127,7 @@ defmodule CommonCore.Postgres.Cluster do
     |> downcase_fields([:name])
     |> validate_length(:name, min: 1, max: 128)
     |> unique_constraint([:type, :name])
+    |> foreign_key_constraint(:project_id)
   end
 
   def validate(cluster \\ %__MODULE__{}, params) do
@@ -239,4 +245,38 @@ defmodule CommonCore.Postgres.Cluster do
     |> put_change(:memory_requested, preset[:memory_requested])
     |> put_change(:memory_limits, preset[:memory_limits])
   end
+
+  def put_storage_size_bytes(changeset, bytes) when is_binary(bytes) do
+    bytes = if bytes == "", do: 0, else: String.to_integer(bytes)
+
+    put_storage_size_bytes(changeset, bytes)
+  end
+
+  def put_storage_size_bytes(changeset, bytes) do
+    value = MemorySliderConverter.bytes_to_slider_value(bytes)
+
+    changeset
+    |> put_change(:virtual_storage_size_range_value, value)
+    |> put_change(:storage_size, bytes)
+  end
+
+  def put_storage_size_value(changeset, value) do
+    bytes = convert_storage_slider_value_to_bytes(value)
+
+    changeset
+    |> put_change(:virtual_storage_size_range_value, value)
+    |> put_change(:storage_size, bytes)
+  end
+
+  defp convert_storage_slider_value_to_bytes(range_value) when is_binary(range_value) do
+    if range_value == "" do
+      0
+    else
+      range_value
+      |> String.to_integer()
+      |> MemorySliderConverter.slider_value_to_bytes()
+    end
+  end
+
+  defp convert_storage_slider_value_to_bytes(_), do: 1
 end

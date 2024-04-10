@@ -4,6 +4,9 @@ defmodule CommonCore.Projects.Project do
 
   import Ecto.Changeset
 
+  alias CommonCore.Postgres.Cluster, as: PGCluster
+  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+
   @timestamps_opts [type: :utc_datetime_usec]
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -11,6 +14,9 @@ defmodule CommonCore.Projects.Project do
     field :name, :string
     field :type, Ecto.Enum, values: [:web, :ml, :db]
     field :description, :string
+
+    has_one :pg_cluster, PGCluster
+    has_one :redis_cluster, RedisCluster
 
     timestamps()
   end

@@ -2,9 +2,9 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  alias CommonCore.Redis.FailoverCluster
+  import ControlServerWeb.RedisFormSubcomponents
+
   alias CommonCore.Util.Integer
-  alias CommonCore.Util.Memory
   alias ControlServer.Redis
 
   @impl Phoenix.LiveComponent
@@ -25,35 +25,10 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
         </.page_header>
 
         <.panel>
-          <.grid columns={[sm: 1, lg: 2]} class="items-center">
-            <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
-            <.input
-              field={@form[:virtual_size]}
-              type="select"
-              label="Size"
-              placeholder="Choose a size"
-              options={FailoverCluster.preset_options_for_select()}
-            />
-          </.grid>
-          <.data_horizontal_bolded
-            :if={@form[:virtual_size].value != "custom"}
-            class="mt-3 mb-5"
-            data={[
-              {"Memory limits:", @form[:memory_limits].value |> Memory.format_bytes(true)},
-              {"CPU limits:", @form[:cpu_limits].value}
-            ]}
-          />
-          <!-- Memory limits -->
-          <.flex :if={@form[:virtual_size].value == "custom"} column class="pt-4">
-            <.h3>Running Limits</.h3>
-            <.grid columns={[sm: 1, md: 2, xl: 4]}>
-              <.input field={@form[:cpu_requested]} label="CPU Requested" />
-              <.input field={@form[:cpu_limits]} label="CPU Limits" />
-              <.input field={@form[:memory_requested]} label="Memory Requested" />
-              <.input field={@form[:memory_limits]} label="Memory Limits" />
-            </.grid>
-          </.flex>
-          <!-- Number of instances -->
+          <.size_form form={@form} action={@action} />
+
+          <.flex class="justify-between w-full py-5 border-t border-gray-lighter dark:border-gray-darker" />
+
           <.grid columns={[sm: 1, lg: 2]} class="items-center">
             <.h5>Number of instances</.h5>
             <.input field={@form[:num_redis_instances]} type="range" min="1" max="3" step="1" />
