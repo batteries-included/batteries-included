@@ -81,7 +81,9 @@
 
       frameworks = pkgs.darwin.apple_sdk.frameworks;
 
-      darwinOnlyTools = [
+      darwinOnlyTools = with pkgs; [
+        podman
+        podman-compose
         frameworks.Security
         frameworks.CoreServices
         frameworks.CoreFoundation
@@ -102,7 +104,6 @@
         kind
         kubectl
         kubernetes-helm
-        podman
         flock
 
         skopeo # Use for pushing docker

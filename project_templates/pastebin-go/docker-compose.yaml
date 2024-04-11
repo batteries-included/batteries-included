@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  database:
+    container_name: database
+    image: postgres:16.2
+    restart: always
+    environment:
+      - POSTGRES_USER=pastebin
+      - POSTGRES_PASSWORD=pastebinpass
+      - POSTGRES_DB=pastebin
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
