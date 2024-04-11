@@ -5,6 +5,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
+  alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
   @presets [
@@ -59,7 +60,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   ]
 
   @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
+  @derive {Jason.Encoder, except: [:__meta__, :project]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "jupyter_lab_notebooks" do
@@ -74,6 +75,8 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true
+
+    belongs_to :project, Project
 
     timestamps()
   end
@@ -90,7 +93,8 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
       :cpu_limits,
       :memory_requested,
       :memory_limits,
-      :virtual_size
+      :virtual_size,
+      :project_id
     ])
     |> maybe_set_random_name()
     |> maybe_set_virtual_size(@presets)
@@ -99,6 +103,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_options())
+    |> foreign_key_constraint(:project_id)
   end
 
   def cpu_select_options,

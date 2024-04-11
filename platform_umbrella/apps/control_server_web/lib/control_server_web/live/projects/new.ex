@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Projects.NewLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  alias ControlServer.Notebooks
   alias ControlServer.Postgres
   alias ControlServer.Projects
   alias ControlServer.Redis
@@ -64,6 +65,8 @@ defmodule ControlServerWeb.Projects.NewLive do
       with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
            {:ok, _} <- create_postgres(project, form_data[DatabaseForm]),
            {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
+           {:ok, _} <- create_jupyter(project, form_data[MachineLearningForm]),
+           {:ok, _} <- create_postgres(project, form_data[MachineLearningForm]),
            {:ok, _} <- create_postgres(project, form_data[WebForm]),
            {:ok, _} <- create_redis(project, form_data[WebForm]) do
         {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
@@ -113,6 +116,15 @@ defmodule ControlServerWeb.Projects.NewLive do
   end
 
   defp create_redis(_project, _redis_data), do: {:ok, nil}
+
+  defp create_jupyter(project, %{"jupyter" => jupyter_data}) do
+    jupyter_data
+    |> Map.put("project_id", project.id)
+    |> Map.put_new("storage_class", get_default_storage_class())
+    |> Notebooks.create_jupyter_lab_notebook()
+  end
+
+  defp create_jupyter(_project, _jupyter_data), do: {:ok, nil}
 
   defp get_default_storage_class do
     case KubeServices.SystemState.SummaryStorage.default_storage_class() do
