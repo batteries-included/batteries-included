@@ -46,7 +46,7 @@ defmodule WhatsUp.MixProject do
       {:swoosh, "~> 1.14"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"},
+      {:telemetry_poller, "~> 1.1"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},

@@ -46,7 +46,7 @@ defmodule KubeServices.MixProject do
       {:mnemonic_slugs, "~> 0.0.3"},
       {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:phoenix, "~> 1.7"},
-      {:tesla, "~> 1.8"},
+      {:tesla, "~> 1.9"},
       {:typed_struct, "~> 0.3", runtime: false}
     ]
   end

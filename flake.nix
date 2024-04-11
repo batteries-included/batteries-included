@@ -21,31 +21,10 @@
     # utilities for finding the flake root (e.g. where is flake.nix)
     flake-root.url = "github:srid/flake-root";
 
-    # provides rust toolchain
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
-
-    # library for working w/ cargo
-    crane = {
-      url = "github:ipetkov/crane";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     gomod2nix = {
       url = "github:tweag/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
-    };
-
-    # vuln db for crates
-    advisory-db = {
-      url = "github:rustsec/advisory-db";
-      flake = false;
     };
 
     # converts NPM deps to work w/ Nix

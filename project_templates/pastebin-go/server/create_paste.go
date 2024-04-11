@@ -5,12 +5,13 @@ import (
 	"io"
 	"log"
 	"net/http"
+
 	"pastebin/database"
 
 	uuid "github.com/satori/go.uuid"
 )
 
-func (a App) CreatePaste(w http.ResponseWriter, r *http.Request) {
+func (a App) CreatePasteHandler(w http.ResponseWriter, r *http.Request) {
 	// Read to request body
 	defer r.Body.Close()
 	body, err := io.ReadAll(r.Body)

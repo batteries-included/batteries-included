@@ -5,7 +5,7 @@ npmlock2nix.v2.build {
 
   installPhase = ''
     mkdir -p $out
-    cp -r static $out
+    cp -r dist/* $out
   '';
-  buildCommands = [ "npm run build:tailwind" ];
+  buildCommands = [ "npm run build" ];
 }

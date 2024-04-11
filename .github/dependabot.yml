@@ -18,10 +18,6 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: npm
-    directory: '/project_templates/pastebin'
-    schedule:
-      interval: daily
-  - package-ecosystem: cargo
-    directory: '/project_templates/pastebin'
+    directory: '/project_templates/pastebin-go/assets'
     schedule:
       interval: daily

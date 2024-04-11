@@ -1,55 +1,54 @@
 { inputs, ... }:
 
 {
-  perSystem = { system, ... }:
+  perSystem = { system, pkgs, ... }:
     let
       inherit (inputs.gitignore.lib) gitignoreSource;
-      overlays = [ (import inputs.rust-overlay) ];
-      pkgs = import inputs.nixpkgs {
-        inherit system overlays;
-        config.allowUnfree = true;
-      };
+      inherit (inputs.gomod2nix.legacyPackages.${system}) buildGoApplication;
 
-      crane = inputs.crane;
-      advisory-db = inputs.advisory-db;
       nodejs = pkgs.nodejs;
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
 
       pname = "pastebin";
-      src = gitignoreSource ./../project_templates/pastebin;
+      pwd = ./../project_templates/pastebin-go;
+      src = gitignoreSource pwd;
+      modules = pwd + "/gomod2nix.toml";
+
+      staticSrc = gitignoreSource ./../project_templates/pastebin-go/assets;
 
       static = pkgs.callPackage ./pastebin_static.nix {
-        inherit src pname npmlock2nix nodejs;
+        inherit pname npmlock2nix nodejs;
         name = "pastebin-static";
-        version = "0.6.0";
+        version = "0.8.0";
+        src = staticSrc;
       };
 
-      crate-out = import ./rust_crate.nix {
-        inherit pkgs crane advisory-db pname src;
-        nativeBuildInputs = with pkgs; [ postgresql ];
-        cargoExtraArgs = "--no-default-features";
+      pastebin = buildGoApplication {
+        inherit pname src pwd modules;
+        version = "0.8.0";
       };
-      docker-image = with crate-out; pkgs.dockerTools.buildImage {
-        name = "elliottneilclark/${pname}";
+
+      docker-image = pkgs.dockerTools.buildImage {
+        name = "elliottneilclark/${pname} ";
 
         copyToRoot = pkgs.buildEnv {
-          name = "static";
+          name = "
+          static ";
           pathsToLink = [ "/static" ];
           paths = [ static ];
         };
 
         config = {
-          ExposedPorts = { "8080/tcp" = { }; };
+          ExposedPorts = { " 8080/tcp " = { }; };
           WorkingDir = "/";
-          Cmd = [ "${packages.pastebin}/bin/${pname}" ];
+          Cmd = [ "${pastebin}/bin/${pname}" ];
         };
       };
-      out =
-        if (! pkgs.stdenv.isDarwin)
-        then
-          crate-out // (with crate-out; { packages = { pastebin = packages.pastebin; pastebin-docker = docker-image; }; })
-        else
-          crate-out;
     in
-    out;
+    {
+      packages = {
+        pastebin = pastebin;
+        pastebin-docker = docker-image;
+      };
+    };
 }

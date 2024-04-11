@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.svg';
 
-function PageHeader() {
+export const PageHeader = () => {
   return (
     <header className="flex bg-white h-14 px-4 gap-6 shadow-lg">
       <Link to={'/'} className="flex items-center justify-center">
@@ -17,6 +17,6 @@ function PageHeader() {
       </div>
     </header>
   );
-}
+};
 
 export default PageHeader;

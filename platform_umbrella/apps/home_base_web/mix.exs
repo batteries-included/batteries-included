@@ -55,7 +55,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_view, "~> 0.20"},
       {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"},
+      {:telemetry_poller, "~> 1.1"},
       {:websock_adapter, "~> 0.5"}
     ]
   end

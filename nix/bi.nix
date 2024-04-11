@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, self, ... }:
 
 {
   perSystem = { system, ... }:
@@ -9,8 +9,9 @@
       src = gitignoreSource ../bi;
       pwd = ../bi;
       pname = "bi";
-      version = "0.2";
       modules = ../bi/gomod2nix.toml;
+      safeRev = self.shortRev or self.dirtyShortRev;
+      version = "0.3.1-${safeRev}";
     in
     {
 
@@ -22,6 +23,18 @@
       packages.bi = buildGoApplication {
         inherit src pwd pname version modules;
         doCheck = false;
+
+        CGO_ENABLED = 0;
+        flags = [
+          "-trimpath"
+        ];
+        tags = [ "netgo" "osusergo" ];
+        ldflags = [
+          "-s"
+          "-w"
+          "-X bi/pkg.Version=${version}"
+          "-extldflags -static"
+        ];
       };
     };
 }

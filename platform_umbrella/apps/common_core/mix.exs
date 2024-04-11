@@ -29,7 +29,7 @@ defmodule CommonCore.MixProject do
       {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:telemetry, "~> 1.1"},
-      {:tesla, "~> 1.8"},
+      {:tesla, "~> 1.9"},
       {:typed_ecto_schema, "~> 0.4"},
       {:typed_struct, "~> 0.3", runtime: false},
       {:k8s, "~> 2.6"},

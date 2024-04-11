@@ -3,13 +3,14 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+
 	"pastebin/database"
 
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )
 
-func (a App) GetPaste(w http.ResponseWriter, r *http.Request) {
+func (a App) GetPasteHandler(w http.ResponseWriter, r *http.Request) {
 	// Read dynamic id parameter
 	vars := mux.Vars(r)
 	id := vars["id"]

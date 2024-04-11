@@ -2,7 +2,7 @@ dev: postgres_up
 	make -j 2 run_server run_frontend
 
 run_server:
-	DATABASE_URL="postgres://pastebin:pastebinpass@localhost:5432/pastebin" go run pastebin
+	DATABASE_URL="postgres://pastebin:pastebinpass@localhost:5432/pastebin" go run pastebin ./static
 
 run_frontend:
 	cd assets && npm run dev

@@ -5,18 +5,32 @@ import PastePage from './pages/Paste.tsx';
 import './index.css';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Layout from './components/Layout.tsx';
 
 const router = createBrowserRouter([
   {
-    path: '/paste/:id',
-    element: <PastePage />,
-    loader: async ({ params }) => {
-      return fetch(`/api/paste/${params.id}`);
-    },
-  },
-  {
     path: '/',
-    element: <Home />,
+    element: <Layout />,
+    loader: async () => {
+      return fetch('/api/motd');
+    },
+    children: [
+      {
+        path: '/',
+        element: <Home />,
+        index: true,
+        loader: async () => {
+          return fetch('/api/paste/recent');
+        },
+      },
+      {
+        path: 'paste/:id',
+        element: <PastePage />,
+        loader: async ({ params }) => {
+          return fetch(`/api/paste/${params.id}`);
+        },
+      },
+    ],
   },
 ]);
 

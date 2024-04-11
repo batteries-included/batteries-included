@@ -10,7 +10,6 @@
 
         programs.nixpkgs-fmt.enable = true;
         programs.deadnix.enable = true;
-        programs.rustfmt.enable = true;
         programs.prettier.enable = true;
         programs.shfmt.enable = true;
         programs.gofmt.enable = true;

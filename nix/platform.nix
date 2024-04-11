@@ -1,16 +1,10 @@
 { inputs, ... }:
 
 {
-  perSystem = { system, lib, ... }:
+  perSystem = { lib, pkgs, ... }:
 
     let
       inherit (inputs.gitignore.lib) gitignoreSource;
-      overlays = [ (import inputs.rust-overlay) ];
-      nixpkgs = inputs.nixpkgs;
-      pkgs = import nixpkgs {
-        inherit system overlays;
-        config.allowUnfree = true;
-      };
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
       version = "0.11.0";
@@ -38,7 +32,7 @@
         inherit src version LANG elixir;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-oMpILrSCESNj3L+YyM1tKSbYWudWmkHTLfkMCO2j87Q=";
+        sha256 = "sha256-y3f2MIiNDhJ8WHZ+XIOJQE+n/qZM6O0icyO26dgXKtY=";
       };
 
       # mix fixed output derivation dependencies
@@ -51,11 +45,11 @@
         pname = "mix-deps-platform";
         inherit src version LANG elixir;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-GLNLZ94ymNcrmI1P7zn57lzUAZo6/tHs64xk8kOwuF4=";
+        sha256 = "sha256-frWyf9sBSNUc9cV6u2kw3tt4e7qIezBGr+i0q0Jpcd8=";
       };
 
       control-server = pkgs.callPackage ./platform_release.nix {
-        inherit version src mixFodDeps pkgs nixpkgs;
+        inherit version src mixFodDeps pkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
         inherit pkg-config gcc openssl;
@@ -86,7 +80,7 @@
         };
 
       home-base = pkgs.callPackage ./platform_release.nix {
-        inherit version src mixFodDeps pkgs nixpkgs;
+        inherit version src mixFodDeps;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
         inherit pkg-config gcc openssl;

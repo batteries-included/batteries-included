@@ -8,7 +8,6 @@
         inherit system;
         overlays = [
           inputs.gomod2nix.overlays.default
-          (import inputs.rust-overlay)
         ];
         config.allowUnfree = true;
       };
@@ -43,12 +42,6 @@
         postgresql
 
         bind
-      ];
-
-      rustNativeBuildTools = with pkgs; [
-        rust-bin.nightly.latest.complete
-        pkg-config
-        cargo-flamegraph
         postgresql
       ];
 
@@ -115,7 +108,6 @@
         ssm-session-manager-plugin
       ]
       ++ elixirNativeTools
-      ++ rustNativeBuildTools
       ++ goNativeBuildTools
       ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
       ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
@@ -166,13 +158,6 @@
         # https://github.com/erlang/otp/issues/8238
         find $MIX_HOME -type f -name 'hex.app' -print0 | grep -qz . \
             || mix archive.install github hexpm/hex branch latest --force
-        popd &> /dev/null
-
-        # This keeps cargo self contained in this dir
-        export CARGO_HOME=$PWD/.nix-cargo
-        mkdir -p $CARGO_HOME
-        export PATH=$CARGO_HOME/bin:$PATH
-
         popd &> /dev/null
       '';
 
