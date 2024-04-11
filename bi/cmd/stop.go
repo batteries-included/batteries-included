@@ -13,7 +13,7 @@ import (
 )
 
 var stopCmd = &cobra.Command{
-	Use:   "stop",
+	Use:   "stop [install-slug|install-spec-url|install-spec-file]",
 	Short: "Stop the Batteries Included Installation",
 	Long:  ``,
 	Args:  cobra.ExactArgs(1),

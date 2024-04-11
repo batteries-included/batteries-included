@@ -13,5 +13,5 @@ func (spec *InstallSpec) WriteStateSummary(path string) error {
 	}
 
 	slog.Debug("Writing state summary to ", slog.String("path", path))
-	return os.WriteFile(path, contents, 0644)
+	return os.WriteFile(path, contents, 0o600)
 }

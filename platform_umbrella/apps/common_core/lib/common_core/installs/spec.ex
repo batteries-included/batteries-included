@@ -38,6 +38,6 @@ defmodule CommonCore.InstallSpec do
   end
 
   defp kube_cluster(installation) do
-    Map.put(installation.kube_provider_config, :provider, installation.kube_provider)
+    %{provider: installation.kube_provider, config: installation.kube_provider_config}
   end
 end

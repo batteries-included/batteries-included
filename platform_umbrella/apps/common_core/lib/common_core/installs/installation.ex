@@ -65,7 +65,8 @@ defmodule CommonCore.Installation do
       kube_provider: provider_type,
       kube_provider_config: default_provider_config(provider_type, usage),
       initial_oauth_email: initial_oauth_email,
-      default_size: default_size
+      default_size: default_size,
+      usage: usage
     }
   end
 

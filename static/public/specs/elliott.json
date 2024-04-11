@@ -1,6 +1,7 @@
 {
   "slug": "elliott",
   "kube_cluster": {
+    "config": {},
     "provider": "aws"
   },
   "target_summary": {
@@ -18,7 +19,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "NITIHYGMFRDHNJ442UGH5CALH4O3GXXJOQGTRN7X5TE7EDTPSY4XKNITSPKFVP2I",
+          "secret_key": "TH66XOQ4OY7WPB5YAK5NK4R7APMKY6J3FMCGPMY7HRQVJQ7FABPLUDJ27YQTTVAD",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -176,8 +177,15 @@
         "users": [
           {
             "position": null,
+            "username": "battery-local-user",
+            "password": "not-real",
+            "roles": ["superuser", "createrole", "createdb", "login"],
+            "credential_namespaces": []
+          },
+          {
+            "position": null,
             "username": "battery-control-user",
-            "password": "TNVKD33H5ORY6HRS53H45TF5",
+            "password": "N564YFURSPPBEAUG2INKLGX7",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -187,7 +195,8 @@
         "memory_requested": 1073741824,
         "memory_limits": 4294967296,
         "storage_size": 17179869184,
-        "virtual_storage_size_range_value": 41
+        "virtual_storage_size_range_value": 41,
+        "project_id": null
       }
     ],
     "knative_services": [],

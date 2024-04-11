@@ -18,8 +18,8 @@ func UnmarshalJSON(data []byte) (InstallSpec, error) {
 		return aux, fmt.Errorf(ParseErrorMessage)
 	}
 
-	// There should be at least 3 batteries
-	if len(aux.TargetSummary.Batteries) < 2 {
+	// There should be at least some batteries
+	if len(aux.TargetSummary.Batteries) == 0 {
 		return aux, fmt.Errorf(ParseErrorMessage)
 	}
 

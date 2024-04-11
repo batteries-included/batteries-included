@@ -39,20 +39,16 @@ function cleanup() {
 trap cleanup EXIT SIGINT SIGTERM
 
 function do_stop() {
-  # TODO this should take an install spec
-  # and conditionally stop the right things
-  bi kind stop
+  local install_path=${1:-"static/public/specs/dev.json"}
+  bi stop "${install_path}"
 }
 
 function do_bootstrap() {
-  summary_path=$(do_start "$@")
+  do_start "$@"
+  local spec_path summary_path
 
-  # Since we use stdout to get the return path of
-  # do_start it's invoked in a subshell
-  # and can't set TEMPDIRS directly
-  # assume the parent directory is the tempdir
-  summary_parent=$(dirname "${summary_path}")
-  TEMPDIRS+=("${summary_parent}")
+  spec_path=${1:-"static/public/specs/dev.json"}
+  summary_path=$(bi debug install-summary-path "${spec_path}")
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
   # Start the port forwarder
@@ -82,14 +78,8 @@ function do_integration_test_deep() {
   log "Starting integration test: ${install_path}"
 
   local summary_path
-  summary_path=$(do_start "${install_path}")
-
-  # Since we use stdout to get the return path of
-  # do_start it's invoked in a subshell
-  # and can't set TEMPDIRS directly
-  # assume the parent directory is the tempdir
-  summary_parent=$(dirname "${summary_path}")
-  TEMPDIRS+=("${summary_parent}")
+  do_start "${install_path}"
+  summary_path=$(bi debug install-summary-path "${install_path}")
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
 
@@ -104,7 +94,7 @@ function do_integration_test() {
 
   if [[ -z ${summary_path} ]]; then
     log "No summary path provided"
-    summary_path=$(summary_from_spec "./static/public/specs/int_test.json")
+    summary_path=$(bi debug install-summary-path "./static/public/specs/int_test.json")
   fi
 
   export MIX_ENV=integration
@@ -124,20 +114,6 @@ function do_integration_test() {
     seed.control "${summary_path}"
 
   m test --trace --warnings-as-errors --slowest 1
-}
-
-function summary_from_spec() {
-  local install_path=${1:-"static/public/specs/dev.json"}
-  local out_dir
-  out_dir=$(mktemp -d)
-
-  local out_path
-  out_path="${out_dir}/spec.json"
-
-  bi debug spec-summary "${install_path}" -S "${out_path}"
-  TEMPDIRS+=("${out_dir}")
-
-  echo "${out_path}"
 }
 
 function try_portforward() {
@@ -166,16 +142,9 @@ function do_setup_assets() {
 
 function do_start() {
   local install_path=${1:-"static/public/specs/dev.json"}
-  local summary_path
-
-  summary_path=$(mktemp -d)
-  TEMPDIRS+=("$summary_path")
 
   # shellcheck disable=2046
   bi start \
     $([[ -z ''${TRACE:-""} ]] || echo "-v=debug") \
-    -S "${summary_path}/summary.json" \
     "${install_path}" >/dev/null
-
-  echo "${summary_path}/summary.json"
 }

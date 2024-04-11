@@ -1,10 +1,6 @@
 package kube_test
 
 import (
-	"bi/pkg/kube"
-	"bi/pkg/local"
-	"bi/pkg/testutil"
-	"bi/pkg/wireguard"
 	"context"
 	"net"
 	"net/netip"
@@ -12,6 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"bi/pkg/kube"
+	"bi/pkg/local"
+	"bi/pkg/testutil"
+	"bi/pkg/wireguard"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/stretchr/testify/require"

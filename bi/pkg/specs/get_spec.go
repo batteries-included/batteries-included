@@ -3,6 +3,7 @@ package specs
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -40,7 +41,7 @@ func readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
 	// and read the contents
 	// Unmarshal the json using UnmarshalJSON
 	// returning the error if there is one
-
+	slog.Debug("Reading local file", slog.String("path", parsedURL.Path))
 	file, err := os.Open(parsedURL.Path)
 
 	if err != nil {

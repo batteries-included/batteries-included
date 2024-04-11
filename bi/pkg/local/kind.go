@@ -1,7 +1,9 @@
 package local
 
 import (
+	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/pkg/errors"
 	"sigs.k8s.io/kind/pkg/cluster"
@@ -91,7 +93,7 @@ func (c *KindClusterProvider) EnsureStarted() error {
 		cluster.CreateWithDisplaySalutation(false),
 	}
 
-	slog.Info("Creating kind cluster", "name", c.name, "image", KindImage)
+	slog.Info("Creating kind cluster", slog.String("name", c.name), slog.String("image", KindImage))
 	err = c.kindProvider.Create(c.name, co...)
 
 	if err != nil {
@@ -121,5 +123,15 @@ func (c *KindClusterProvider) EnsureDeleted() error {
 }
 
 func (c *KindClusterProvider) ExportKubeConfig(path string) error {
-	return c.kindProvider.ExportKubeConfig(c.name, path, true)
+	err := c.kindProvider.ExportKubeConfig(c.name, path, true)
+	if err != nil {
+		return fmt.Errorf("error exporting kubeconfig: %w", err)
+	}
+
+	// After writing the file change to more restrictive permissions
+	err = os.Chmod(path, 0o600)
+	if err != nil {
+		return fmt.Errorf("error setting kubeconfig permissions: %w", err)
+	}
+	return nil
 }

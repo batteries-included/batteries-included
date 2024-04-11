@@ -1,38 +1,13 @@
 {
-  "slug": "integration_test",
+  "slug": "integration-test",
   "kube_cluster": {
+    "config": {},
     "provider": "kind"
   },
   "target_summary": {
     "id": null,
     "notebooks": [],
     "batteries": [
-      {
-        "id": null,
-        "type": "istio",
-        "config": {
-          "type": "istio",
-          "namespace": "battery-istio",
-          "pilot_image": "docker.io/istio/pilot:1.21.0-distroless",
-          "namespace_override": null,
-          "pilot_image_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "istio_gateway",
-        "config": {
-          "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.21.0-distroless",
-          "proxy_image_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
       {
         "id": null,
         "type": "battery_core",
@@ -44,7 +19,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "HTULZB2Y4JHEMXU4NIH2CF3TF4XHX2YXV55QRSI533JFXD74RRNV3HAWHIR2KWJM",
+          "secret_key": "5DR5F7SE5HAOMKL773UDBBEQ4FWBN3PGDIBPN3C63KHV2DRMM3MQHL5N2NQP4R7M",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -54,46 +29,6 @@
           "data_namespace_override": null,
           "ml_namespace_override": null,
           "server_in_cluster_override": null
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "metallb",
-        "config": {
-          "type": "metallb",
-          "controller_image": "quay.io/metallb/controller:v0.13.12",
-          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
-          "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "speaker_image_override": null,
-          "controller_image_override": null,
-          "frrouting_image_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "cloudnative_pg",
-        "config": {
-          "type": "cloudnative_pg",
-          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1",
-          "image_override": null
-        },
-        "group": "data",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "stale_resource_cleaner",
-        "config": {
-          "type": "stale_resource_cleaner",
-          "delay": 900000,
-          "delay_override": null
         },
         "group": "magic",
         "inserted_at": null,
@@ -119,8 +54,15 @@
         "users": [
           {
             "position": null,
+            "username": "battery-local-user",
+            "password": "not-real",
+            "roles": ["superuser", "createrole", "createdb", "login"],
+            "credential_namespaces": []
+          },
+          {
+            "position": null,
             "username": "battery-control-user",
-            "password": "5R6UIAGOS4BXJCDPZJ63LQ2B",
+            "password": "GCRCQNSMMUTRXHEQL7ABB47V",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -130,7 +72,8 @@
         "memory_requested": 536870912,
         "memory_limits": 536870912,
         "storage_size": 536870912,
-        "virtual_storage_size_range_value": 9
+        "virtual_storage_size_range_value": 9,
+        "project_id": null
       }
     ],
     "knative_services": [],

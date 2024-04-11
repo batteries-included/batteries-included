@@ -1,12 +1,13 @@
 package kube
 
 import (
-	"bi/cmd/cmdutil"
 	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
 	"os"
+
+	"bi/cmd/cmdutil"
 
 	"github.com/noisysockets/noisysockets"
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"

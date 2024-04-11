@@ -1,7 +1,8 @@
 package specs
 
 type KubeClusterSpec struct {
-	Provider string `json:"provider"`
+	Provider string         `json:"provider"`
+	Config   map[string]any `json:"config"`
 }
 
 type BatterySpec struct {

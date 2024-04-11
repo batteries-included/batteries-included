@@ -1,6 +1,7 @@
 {
   "slug": "damian",
   "kube_cluster": {
+    "config": {},
     "provider": "aws"
   },
   "target_summary": {
@@ -18,7 +19,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "P2RQRN45UISYIHR6ZNWBRS5PHTMVBTPK74D3ETBW36XC2QZN26WFOJPDK3PZAWCA",
+          "secret_key": "Z7TL75K3KZDYDITADT3NS7YSG3P5I7UNWS5YLTNPEX3RXXBNXZ2SMJDZ5G6KQV7J",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -176,8 +177,15 @@
         "users": [
           {
             "position": null,
+            "username": "battery-local-user",
+            "password": "not-real",
+            "roles": ["superuser", "createrole", "createdb", "login"],
+            "credential_namespaces": []
+          },
+          {
+            "position": null,
             "username": "battery-control-user",
-            "password": "TEMXJTMJX74ICDDKPZEYPBKS",
+            "password": "TLAQCQ2TSPMX7A56M4NYTQVB",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -187,7 +195,8 @@
         "memory_requested": 1073741824,
         "memory_limits": 4294967296,
         "storage_size": 17179869184,
-        "virtual_storage_size_range_value": 41
+        "virtual_storage_size_range_value": 41,
+        "project_id": null
       }
     ],
     "knative_services": [],

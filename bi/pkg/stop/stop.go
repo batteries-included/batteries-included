@@ -1,15 +1,26 @@
 package stop
 
-import "bi/pkg/specs"
+import (
+	"log/slog"
+
+	"bi/pkg/installs"
+)
 
 func StopInstall(url string) error {
 	// Get the install spec
-	spec, err := specs.GetSpecFromURL(url)
+	env, err := installs.NewEnv(url)
 	if err != nil {
 		return err
 	}
 
-	err = spec.StopKubeProvider()
+	slog.Debug("Stopping kube provider")
+	err = env.StopKubeProvider()
+	if err != nil {
+		return err
+	}
+
+	slog.Debug("Removing install and all keys")
+	err = env.Remove()
 	if err != nil {
 		return err
 	}

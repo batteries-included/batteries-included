@@ -14,7 +14,7 @@ import (
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
-	Use:   "start [install-spec]",
+	Use:   "start [install-slug|install-spec-url|install-spec-file]",
 	Short: "Start a Batteries Included Installation",
 	Long: `This will get the configuration for the
 installation and start the installation process.
@@ -45,15 +45,12 @@ complete displaying a url for running control server.`,
 		wireGuardConfigPath, err := cmd.Flags().GetString("wireguard-config")
 		cobra.CheckErr(err)
 
-		writeStateSummaryPath, err := cmd.Flags().GetString("write-state-summary")
-		cobra.CheckErr(err)
-
 		slog.Debug("Starting Batteries Included Installation",
 			slog.String("installSpec", installURL),
-			slog.String("kubeconfig", kubeConfigPath),
-			slog.String("writeStateSummary", writeStateSummaryPath))
+			slog.String("kubeconfig", kubeConfigPath))
 
-		err = start.StartInstall(installURL, kubeConfigPath, wireGuardConfigPath, writeStateSummaryPath)
+		// TODO remove kubeconfig and wireguard config from all commands.
+		err = start.StartInstall(installURL, kubeConfigPath, wireGuardConfigPath)
 		cobra.CheckErr(err)
 	},
 }
@@ -62,5 +59,4 @@ func init() {
 	RootCmd.AddCommand(startCmd)
 	cmdutil.AddKubeConfigFlag(startCmd)
 	cmdutil.AddWireGuardConfigFlag(startCmd)
-	startCmd.Flags().StringP("write-state-summary", "S", "", "Write a StateSummary that's used for bootstrapping")
 }

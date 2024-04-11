@@ -1,21 +1,22 @@
 package start
 
 import (
-	"bi/pkg/kube"
-	"bi/pkg/specs"
 	"log/slog"
+
+	"bi/pkg/installs"
+	"bi/pkg/kube"
 )
 
-func StartInstall(url, kubeConfigPath, wireGuardConfigPath, writeStateSummaryPath string) error {
+func StartInstall(url, kubeConfigPath, wireGuardConfigPath string) error {
 	// Get the install spec
 	slog.Debug("fetching install spec", slog.String("url", url))
-	spec, err := specs.GetSpecFromURL(url)
+	env, err := installs.NewEnv(url)
 	if err != nil {
 		return err
 	}
 
 	slog.Debug("starting provider")
-	err = spec.StartKubeProvider()
+	err = env.StartKubeProvider()
 	if err != nil {
 		return err
 	}
@@ -27,17 +28,10 @@ func StartInstall(url, kubeConfigPath, wireGuardConfigPath, writeStateSummaryPat
 	defer kubeClient.Close()
 
 	slog.Debug("starting initial sync")
-	err = spec.InitialSync(kubeClient)
+	err = env.Spec.InitialSync(kubeClient)
 	if err != nil {
 		return err
 	}
 
-	if writeStateSummaryPath != "" {
-		slog.Debug("writing state summary", slog.String("path", writeStateSummaryPath))
-		err = spec.WriteStateSummary(writeStateSummaryPath)
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }

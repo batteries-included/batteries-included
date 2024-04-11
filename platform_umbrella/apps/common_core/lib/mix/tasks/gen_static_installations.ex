@@ -17,7 +17,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
       {"elliott.json", Installation.new("elliott", provider_type: :aws, usage: :internal_dev)},
       {"jason.json", Installation.new("jason", provider_type: :aws, usage: :internal_dev)},
       {"damian.json", Installation.new("damian", provider_type: :aws, usage: :internal_dev)},
-      {"int_test.json", Installation.new("integration_test", provider_type: :kind, usage: :internal_int_test)}
+      {"int_test.json", Installation.new("integration-test", provider_type: :kind, usage: :internal_int_test)}
     ]
     |> Enum.map(fn {name, install} ->
       {Path.join(directory, name), InstallSpec.from_installation(install)}

@@ -62,6 +62,27 @@
               '';
             };
 
+            go-int-test = {
+              description = "Run go tests Including Integration tests";
+              category = "go";
+              exec = ''
+                export INTEGRATION=true
+                [[ -z ''${TRACE:-""} ]] || set -x
+                set -e
+                pushd bi &> /dev/null
+                gofmt -s -l -e .
+                go vet -v ./...
+
+                # If trace run tests with --race -v
+                # Otherwise just run the tests
+                if [[ -n ''${TRACE:-""} ]]; then
+                  go test --race -v ./...
+                else
+                  go test ./...
+                fi
+              '';
+            };
+
             go-update-deps = {
               description = "Run go tests";
               category = "go";
@@ -164,9 +185,9 @@
             };
 
 
-            int-test = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
+            ex-int-test = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
               description = "Run integration tests.";
-              category = "fullstack";
+              category = "elixir";
 
               exec = "${builtins.readFile ./scripts/common-functions.sh}
                     # TODO: This should be overridable os OSX can supply a local chrome
@@ -177,9 +198,9 @@
               ";
             };
 
-            int-test-deep = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
+            ex-int-test-deep = lib.mkIf (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) {
               description = "Run integration tests.";
-              category = "fullstack";
+              category = "elixir";
 
               exec = "${builtins.readFile ./scripts/common-functions.sh}
                     chromium_binary=${pkgs.chromium}/bin/chromium

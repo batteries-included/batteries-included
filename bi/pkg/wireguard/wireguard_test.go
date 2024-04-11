@@ -1,7 +1,6 @@
 package wireguard_test
 
 import (
-	"bi/pkg/wireguard"
 	"fmt"
 	"net"
 	"net/netip"
@@ -9,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"bi/pkg/wireguard"
 
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
 	"github.com/stretchr/testify/assert"

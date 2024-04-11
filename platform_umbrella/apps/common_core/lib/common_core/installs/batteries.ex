@@ -50,7 +50,7 @@ defmodule CommonCore.Installs.Batteries do
       # We have a special case where kind is used for integration tests
       # that needs to be slim for now to keep GH's runners happy. They run on fucking potatos.
       :internal_int_test ->
-        ~w(battery_core cloudnative_pg)a
+        ~w(battery_core)a
 
       :internal_dev ->
         ~w(metallb)a ++ @standard_battery_types
