@@ -5,9 +5,9 @@ defmodule ControlServer.NotebooksTest do
   alias ControlServer.Notebooks
 
   describe "jupyter_lab_notebooks" do
-    @valid_attrs %{image: "some image", name: "some name"}
-    @update_attrs %{image: "some updated image", name: "some updated name"}
-    @invalid_attrs %{image: nil, name: nil}
+    @valid_attrs %{image: "some image", name: "some name", storage_size: 524_288_000}
+    @update_attrs %{image: "some updated image", name: "some updated name", storage_size: 209_715_200}
+    @invalid_attrs %{image: nil, name: nil, storage_size: nil}
 
     def jupyter_lab_notebook_fixture(attrs \\ %{}) do
       {:ok, jupyter_lab_notebook} =
@@ -15,7 +15,7 @@ defmodule ControlServer.NotebooksTest do
         |> Enum.into(@valid_attrs)
         |> Notebooks.create_jupyter_lab_notebook()
 
-      jupyter_lab_notebook
+      Map.put(jupyter_lab_notebook, :virtual_size, nil)
     end
 
     test "list_jupyter_lab_notebooks/0 returns all jupyter_lab_notebooks" do
@@ -34,6 +34,7 @@ defmodule ControlServer.NotebooksTest do
 
       assert jupyter_lab_notebook.image == "some image"
       assert jupyter_lab_notebook.name == "some name"
+      assert jupyter_lab_notebook.storage_size == 524_288_000
     end
 
     test "create_jupyter_lab_notebook/1 with invalid data returns error changeset" do
@@ -48,6 +49,7 @@ defmodule ControlServer.NotebooksTest do
 
       assert jupyter_lab_notebook.image == "some updated image"
       assert jupyter_lab_notebook.name == "some updated name"
+      assert jupyter_lab_notebook.storage_size == 209_715_200
     end
 
     test "update_jupyter_lab_notebook/2 with invalid data returns error changeset" do

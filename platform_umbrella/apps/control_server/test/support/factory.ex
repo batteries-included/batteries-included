@@ -46,7 +46,11 @@ defmodule ControlServer.Factory do
   end
 
   def jupyter_lab_notebook_factory do
-    %JupyterLabNotebook{name: sequence("kube-notebook-")}
+    %JupyterLabNotebook{
+      name: sequence("kube-notebook-"),
+      storage_size: 500 * 1024 * 1024,
+      storage_class: "default"
+    }
   end
 
   def knative_container_factory do

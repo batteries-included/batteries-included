@@ -14,9 +14,25 @@ defmodule ControlServerWeb.NotebooksTable do
       <:col :let={notebook} label="Name"><%= notebook.name %></:col>
       <:col :let={notebook} label="Image"><%= notebook.image %></:col>
       <:action :let={notebook}>
-        <.a variant="external" href={notebook_path(notebook)}>
-          Open
-        </.a>
+        <.flex>
+          <.a variant="external" href={notebook_path(notebook)}>
+            Open
+          </.a>
+
+          <.button
+            :if={!@abbridged}
+            variant="minimal"
+            icon={:trash}
+            id={"delete_notebook_" <> notebook.id}
+            data-confirm={"Are you sure you want to delete the \"#{notebook.name}\" notebook?"}
+            phx-click="delete_notebook"
+            phx-value-id={notebook.id}
+          />
+
+          <.tooltip target_id={"delete_notebook_" <> notebook.id}>
+            Delete Notebook
+          </.tooltip>
+        </.flex>
       </:action>
     </.table>
     """
