@@ -19,6 +19,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   end
 
   def handle_event("save", params, socket) do
+    # Don't create the resources yet, send data to parent liveview
     send(self(), {:next, {__MODULE__, params}})
 
     {:noreply, socket}

@@ -195,7 +195,7 @@ defmodule CommonCore.Postgres.Cluster do
       put_change(
         changeset,
         :virtual_storage_size_range_value,
-        CommonCore.Util.MemorySliderConverter.bytes_to_slider_value(storage_size)
+        MemorySliderConverter.bytes_to_slider_value(storage_size)
       )
     else
       changeset
@@ -209,9 +209,7 @@ defmodule CommonCore.Postgres.Cluster do
       nil ->
         # When switching to "custom" in the form, we set some defaults to start with:
         starting_point_preset = get_preset("medium")
-
-        slider_value =
-          CommonCore.Util.MemorySliderConverter.bytes_to_slider_value(starting_point_preset.storage_size)
+        slider_value = MemorySliderConverter.bytes_to_slider_value(starting_point_preset.storage_size)
 
         changeset
         |> set_preset(starting_point_preset)

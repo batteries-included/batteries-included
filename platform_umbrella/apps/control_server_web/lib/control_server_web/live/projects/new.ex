@@ -62,8 +62,10 @@ defmodule ControlServerWeb.Projects.NewLive do
     else
       # There are no more steps in the flow, go ahead and create all the resources
       with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
-           {:ok, _postgres} <- create_postgres(project, form_data[DatabaseForm]),
-           {:ok, _redis} <- create_redis(project, form_data[DatabaseForm]) do
+           {:ok, _} <- create_postgres(project, form_data[DatabaseForm]),
+           {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
+           {:ok, _} <- create_postgres(project, form_data[WebForm]),
+           {:ok, _} <- create_redis(project, form_data[WebForm]) do
         {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
       else
         _ -> {:noreply, put_flash(socket, :error, "Could not create all the project resources")}
@@ -71,7 +73,7 @@ defmodule ControlServerWeb.Projects.NewLive do
     end
   end
 
-  defp create_postgres(project, %{"need_postgres" => "on", "postgres" => postgres_data}) do
+  defp create_postgres(project, %{"postgres" => postgres_data}) do
     postgres_data
     |> Map.merge(%{
       "project_id" => project.id,
@@ -88,15 +90,29 @@ defmodule ControlServerWeb.Projects.NewLive do
     |> Postgres.create_cluster()
   end
 
-  defp create_postgres(_project, _data), do: {:ok, nil}
+  defp create_postgres(project, %{"postgres_ids" => postgres_ids}) do
+    results =
+      Enum.map(postgres_ids, fn id ->
+        cluster = Postgres.get_cluster!(id)
+        Postgres.update_cluster(cluster, %{project_id: project.id})
+      end)
 
-  defp create_redis(project, %{"need_redis" => "on", "redis" => redis_data}) do
+    if Enum.all?(results, fn {status, _} -> status == :ok end) do
+      {:ok, results}
+    else
+      {:error, results}
+    end
+  end
+
+  defp create_postgres(_project, _postgres_data), do: {:ok, nil}
+
+  defp create_redis(project, %{"redis" => redis_data}) do
     redis_data
     |> Map.put("project_id", project.id)
     |> Redis.create_failover_cluster()
   end
 
-  defp create_redis(_project, _data), do: {:ok, nil}
+  defp create_redis(_project, _redis_data), do: {:ok, nil}
 
   defp get_default_storage_class do
     case KubeServices.SystemState.SummaryStorage.default_storage_class() do

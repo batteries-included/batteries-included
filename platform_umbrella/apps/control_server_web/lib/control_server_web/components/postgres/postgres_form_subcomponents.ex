@@ -46,6 +46,49 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     }
   ]
 
+  @doc """
+  This macro creates all the LiveView events needed for the subform components.
+  """
+  defmacro __using__(_opts) do
+    quote do
+      alias CommonCore.Postgres.Cluster, as: PGCluster
+      alias ControlServerWeb.PostgresFormSubcomponents
+
+      def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
+        handle_event("change_storage_size", %{"postgres" => %{"storage_size" => bytes}}, socket)
+      end
+
+      # This only happens when the user is manually editing the storage size.
+      # In this case, we need to update the range slider and helper text "x GB"
+      def handle_event("change_storage_size", %{"postgres" => %{"storage_size" => storage_size}}, socket) do
+        changeset = PGCluster.put_storage_size_bytes(socket.assigns.form.params["postgres"], storage_size)
+
+        form =
+          socket.assigns.form.params
+          |> Map.put("postgres", changeset)
+          |> to_form()
+
+        {:noreply, assign(socket, :form, form)}
+      end
+
+      def handle_event(
+            "on_change_storage_size_range",
+            %{"postgres" => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
+            socket
+          ) do
+        changeset =
+          PGCluster.put_storage_size_value(socket.assigns.form.params["postgres"], virtual_storage_size_range_value)
+
+        form =
+          socket.assigns.form.params
+          |> Map.put("postgres", changeset)
+          |> to_form()
+
+        {:noreply, assign(socket, form: form)}
+      end
+    end
+  end
+
   attr :phx_target, :any
   attr :users, :list, default: []
 
@@ -195,6 +238,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
   attr :phx_target, :any
   attr :class, :any, default: nil
+  attr :with_divider, :boolean, default: true
   attr :form, Phoenix.HTML.Form, required: true
 
   def size_form(assigns) do
@@ -221,7 +265,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         ]}
       />
 
-      <div :if={@form[:virtual_size].value == "custom"} class="mb-5">
+      <div :if={@form[:virtual_size].value == "custom"} class="mt-2 mb-5">
         <.h3>Storage</.h3>
 
         <.grid>
@@ -312,6 +356,11 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           </div>
         </.grid>
       </div>
+
+      <.flex
+        :if={@with_divider}
+        class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker"
+      />
     </div>
     """
   end

@@ -34,6 +34,12 @@ defmodule ControlServer.Postgres do
     Repo.all(from c in Cluster, where: c.type != :internal)
   end
 
+  def clusters_available_for_project do
+    from(c in Cluster, where: is_nil(c.project_id))
+    |> Repo.all()
+    |> Enum.map(&{&1.name, &1.id})
+  end
+
   @doc """
   Gets a single cluster.
 

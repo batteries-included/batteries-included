@@ -1,13 +1,44 @@
 defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
+  use ControlServerWeb.PostgresFormSubcomponents
 
-  def mount(socket) do
+  alias CommonCore.Postgres.Cluster, as: PGCluster
+  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias ControlServer.Postgres
+  alias ControlServerWeb.Projects.ProjectForm
+  alias ControlServerWeb.RedisFormSubcomponents
+
+  def update(assigns, socket) do
+    {class, assigns} = Map.pop(assigns, :class)
+
+    project_name = get_in(assigns, [:data, ProjectForm, "name"])
+
+    postgres_changeset =
+      PGCluster.changeset(%PGCluster{}, %{
+        name: "#{project_name}-web",
+        virtual_size: "medium"
+      })
+
+    redis_changeset =
+      RedisCluster.changeset(%RedisCluster{}, %{
+        name: "#{project_name}-web",
+        virtual_size: "small"
+      })
+
+    form =
+      to_form(%{
+        "project_type" => "external",
+        "postgres" => postgres_changeset,
+        "redis" => redis_changeset
+      })
+
     {:ok,
      socket
-     |> assign(:class, nil)
-     |> assign(:db_type, :existing)
-     |> assign(:form, to_form(%{}))}
+     |> assign(assigns)
+     |> assign(:class, class)
+     |> assign(:db_type, :new)
+     |> assign(:form, form)}
   end
 
   def handle_event("db_type", %{"type" => type}, socket) do
@@ -15,10 +46,35 @@ defmodule ControlServerWeb.Projects.WebForm do
   end
 
   def handle_event("validate", params, socket) do
-    {:noreply, assign(socket, :form, to_form(params))}
+    postgres_changeset =
+      %PGCluster{}
+      |> PGCluster.changeset(params["postgres"])
+      |> Map.put(:action, :validate)
+
+    redis_changeset =
+      %RedisCluster{}
+      |> RedisCluster.changeset(params["redis"])
+      |> Map.put(:action, :validate)
+
+    form =
+      params
+      |> Map.put("postgres", postgres_changeset)
+      |> Map.put("redis", redis_changeset)
+      |> to_form()
+
+    {:noreply, assign(socket, :form, form)}
   end
 
   def handle_event("save", params, socket) do
+    params =
+      Map.take(params, [
+        "project_type",
+        if(params["db_type"] == "new", do: "postgres"),
+        if(params["db_type"] == "existing", do: "postgres_ids"),
+        if(params["need_redis"] == "on", do: "redis")
+      ])
+
+    # Don't create the resources yet, send data to parent liveview
     send(self(), {:next, {__MODULE__, params}})
 
     {:noreply, socket}
@@ -46,76 +102,47 @@ defmodule ControlServerWeb.Projects.WebForm do
         <.tab_bar variant="secondary">
           <:tab
             phx-click="db_type"
-            phx-value-type={:existing}
-            phx-target={@myself}
-            selected={@db_type == :existing}
-          >
-            Existing Database
-          </:tab>
-
-          <:tab
-            phx-click="db_type"
             phx-value-type={:new}
             phx-target={@myself}
             selected={@db_type == :new}
           >
             New Database
           </:tab>
+
+          <:tab
+            phx-click="db_type"
+            phx-value-type={:existing}
+            phx-target={@myself}
+            selected={@db_type == :existing}
+          >
+            Existing Database
+          </:tab>
         </.tab_bar>
+
+        <.input type="hidden" name="db_type" value={@db_type} />
 
         <.input
           :if={@db_type == :existing}
-          field={@form[:existing_db]}
+          field={@form[:postgres_ids]}
           type="select"
           label="Existing set of databases"
           placeholder="Choose a set of databases"
-          options={[]}
+          options={Postgres.clusters_available_for_project()}
+          multiple
         />
 
-        <.input
-          :if={@db_type == :new}
-          field={@form[:new_db]}
-          type="select"
-          label="Size of the database"
-          placeholder="Choose size"
-          options={[]}
+        <PostgresFormSubcomponents.size_form
+          class={@db_type != :new && "hidden"}
+          form={to_form(@form[:postgres].value, as: :postgres)}
+          phx_target={@myself}
         />
 
-        <.input field={@form[:redis]} type="switch" label="I need a redis instance" />
+        <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
 
-        <.grid :if={@form[:redis].value} variant="col-2">
-          <.input
-            field={@form[:redis_size]}
-            type="select"
-            label="Size"
-            placeholder="Choose value"
-            options={[]}
-          />
-
-          <.input
-            field={@form[:redis_storage_size]}
-            type="select"
-            label="Storage Size"
-            placeholder="Choose value"
-            options={[]}
-          />
-
-          <.input
-            field={@form[:redis_memory]}
-            type="select"
-            label="Memory"
-            placeholder="Choose value"
-            options={[]}
-          />
-
-          <.input
-            field={@form[:redis_memory]}
-            type="select"
-            label="CPU Limits"
-            placeholder="Choose value"
-            options={[]}
-          />
-        </.grid>
+        <RedisFormSubcomponents.size_form
+          class={@form[:need_redis].value != "on" && "hidden"}
+          form={to_form(@form[:redis].value, as: :redis)}
+        />
 
         <:actions>
           <%= render_slot(@inner_block) %>

@@ -1,6 +1,7 @@
 defmodule ControlServerWeb.Live.PostgresFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
+  use ControlServerWeb.PostgresFormSubcomponents
 
   import ControlServerWeb.PostgresFormSubcomponents
 
@@ -107,34 +108,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(num_instances: data.num_instances)}
   end
 
-  def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
-    handle_event("change_storage_size", %{"cluster" => %{"storage_size" => bytes}}, socket)
-  end
-
-  # This only happens when the user is manually editing the storage size.
-  # In this case, we need to update the range slider and helper text "x GB"
-  def handle_event("change_storage_size", %{"cluster" => %{"storage_size" => storage_size}}, socket) do
-    form =
-      socket.assigns.form.source
-      |> Cluster.put_storage_size_bytes(storage_size)
-      |> to_form()
-
-    {:noreply, assign(socket, :form, form)}
-  end
-
-  def handle_event(
-        "on_change_storage_size_range",
-        %{"cluster" => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
-        socket
-      ) do
-    form =
-      socket.assigns.form.source
-      |> Cluster.put_storage_size_value(virtual_storage_size_range_value)
-      |> to_form()
-
-    {:noreply, assign(socket, :form, form)}
-  end
-
   def handle_event("change:credential_namespaces", params, socket) do
     value = params |> Map.get("_target") |> List.last()
     changeset = socket.assigns.pg_user_form.source
@@ -229,8 +202,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         <.flex column>
           <.panel>
             <.size_form form={@form} phx_target={@myself} />
-
-            <.flex class="justify-between w-full py-5 border-t border-gray-lighter dark:border-gray-darker" />
 
             <.grid columns={[sm: 1, lg: 2]} class="items-center">
               <.h5>Number of instances</.h5>

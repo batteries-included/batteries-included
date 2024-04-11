@@ -1,10 +1,10 @@
 defmodule ControlServerWeb.Projects.DatabaseForm do
   @moduledoc false
   use ControlServerWeb, :live_component
+  use ControlServerWeb.PostgresFormSubcomponents
 
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
-  alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.RedisFormSubcomponents
 
@@ -39,38 +39,6 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
      |> assign(:form, form)}
   end
 
-  def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
-    handle_event("change_storage_size", %{"postgres" => %{"storage_size" => bytes}}, socket)
-  end
-
-  # This only happens when the user is manually editing the storage size.
-  # In this case, we need to update the range slider and helper text "x GB"
-  def handle_event("change_storage_size", %{"postgres" => %{"storage_size" => storage_size}}, socket) do
-    changeset = PGCluster.put_storage_size_bytes(socket.assigns.form.params["postgres"], storage_size)
-
-    form =
-      socket.assigns.form.params
-      |> Map.put("postgres", changeset)
-      |> to_form()
-
-    {:noreply, assign(socket, :form, form)}
-  end
-
-  def handle_event(
-        "on_change_storage_size_range",
-        %{"postgres" => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
-        socket
-      ) do
-    changeset = PGCluster.put_storage_size_value(socket.assigns.form.params["postgres"], virtual_storage_size_range_value)
-
-    form =
-      socket.assigns.form.params
-      |> Map.put("postgres", changeset)
-      |> to_form()
-
-    {:noreply, assign(socket, form: form)}
-  end
-
   def handle_event("validate", params, socket) do
     postgres_changeset =
       %PGCluster{}
@@ -84,14 +52,21 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
 
     form =
       params
-      |> Map.put("postgres", postgres_changeset)
       |> Map.put("redis", redis_changeset)
+      |> Map.put("postgres", postgres_changeset)
       |> to_form()
 
     {:noreply, assign(socket, :form, form)}
   end
 
   def handle_event("save", params, socket) do
+    params =
+      Map.take(params, [
+        if(params["need_postgres"] == "on", do: "postgres"),
+        if(params["need_redis"] == "on", do: "redis")
+      ])
+
+    # Don't create the resources yet, send data to parent liveview
     send(self(), {:next, {__MODULE__, params}})
 
     {:noreply, socket}
@@ -117,11 +92,6 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
           class={@form[:need_postgres].value != "on" && "hidden"}
           form={to_form(@form[:postgres].value, as: :postgres)}
           phx_target={@myself}
-        />
-
-        <.flex
-          :if={@form[:need_postgres].value}
-          class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker"
         />
 
         <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
