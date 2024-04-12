@@ -1,11 +1,11 @@
 <div class="flex rounded-lg bg-white dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint">
   
-    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary" phx-click="test">
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary" phx-click="test">
       
       <span>Title</span>
     </a>
   
-    <a href="/second_path" data-phx-link="patch" data-phx-link-state="push" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+    <a href="/second_path" data-phx-link="patch" data-phx-link-state="push" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary">
       
       <span>Another Title</span>
     </a>

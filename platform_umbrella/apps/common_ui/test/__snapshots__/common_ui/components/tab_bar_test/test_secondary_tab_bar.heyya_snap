@@ -1,16 +1,16 @@
 <div class="flex rounded-lg bg-gray-lightest dark:bg-gray-darkest-tint border border-gray-lighter dark:border-gray-darker-tint">
   
-    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary">
       
       <span>Foo</span>
     </a>
   
-    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary bg-white dark:bg-gray-darker ring-1 ring-primary text-primary dark:text-primary hover:text-primary">
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary bg-white dark:bg-gray-darker ring-1 ring-primary text-primary dark:text-primary hover:text-primary">
       
       <span>Bar</span>
     </a>
   
-    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary">
       
       <span>Baz</span>
     </a>

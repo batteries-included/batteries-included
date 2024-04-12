@@ -1,8 +1,41 @@
 defmodule CommonCore.Batteries.Catalog do
   @moduledoc false
-  alias CommonCore.Batteries.CatalogBattery
 
-  require Logger
+  alias CommonCore.Batteries.CatalogBattery
+  alias CommonCore.Batteries.CatalogGroup
+
+  @groups [
+    %CatalogGroup{
+      id: :data,
+      name: "Datastores",
+      show_for_projects: true
+    },
+    %CatalogGroup{
+      id: :magic,
+      name: "Magic",
+      show_for_projects: false
+    },
+    %CatalogGroup{
+      id: :devtools,
+      name: "Devtools",
+      show_for_projects: false
+    },
+    %CatalogGroup{
+      id: :ml,
+      name: "Machine Learning",
+      show_for_projects: true
+    },
+    %CatalogGroup{
+      id: :monitoring,
+      name: "Monitoring",
+      show_for_projects: true
+    },
+    %CatalogGroup{
+      id: :net_sec,
+      name: "Net/Security",
+      show_for_projects: false
+    }
+  ]
 
   @all [
     # Data
@@ -93,7 +126,6 @@ defmodule CommonCore.Batteries.Catalog do
       type: :text_generation_webui,
       dependencies: [:istio_gateway]
     },
-
     # Monitoring
     %CatalogBattery{
       group: :monitoring,
@@ -141,10 +173,6 @@ defmodule CommonCore.Batteries.Catalog do
       type: :promtail,
       dependencies: [:battery_core, :loki]
     },
-    #
-    # Network/Security
-    #
-
     # Network
     %CatalogBattery{
       group: :net_sec,
@@ -215,6 +243,20 @@ defmodule CommonCore.Batteries.Catalog do
     }
   ]
 
+  def groups, do: @groups
+
+  def groups_for_projects do
+    Enum.filter(@groups, & &1.show_for_projects)
+  end
+
+  def group(id) when is_binary(id) do
+    group(String.to_existing_atom(id))
+  end
+
+  def group(id) do
+    Enum.find(@groups, &(&1.id == id))
+  end
+
   def all, do: @all
 
   def all(group) do
@@ -227,6 +269,10 @@ defmodule CommonCore.Batteries.Catalog do
 
   def get(type) when is_atom(type) do
     Enum.find(@all, nil, &(&1.type == type))
+  end
+
+  def get_recursive(catalog_battery) when is_atom(catalog_battery) do
+    catalog_battery |> get() |> get_recursive()
   end
 
   def get_recursive(%CatalogBattery{dependencies: deps} = catalog_battery) do

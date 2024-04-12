@@ -214,7 +214,9 @@ defmodule CommonUI.Components.Input do
             "dark:bg-gray-darkest-tint dark:border-gray-darker dark:hover:border-gray-dark",
             "after:content-[''] after:absolute after:top-[3px] after:start-[3px] after:w-[16px] after:h-[16px]",
             "after:rounded-full after:bg-gray after:transition-all",
-            "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary"
+            "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary",
+            "peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter",
+            "peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary-light"
           ]} />
         </div>
       </label>

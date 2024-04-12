@@ -2,23 +2,89 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  alias CommonCore.Batteries.Catalog
+  alias CommonCore.Batteries.CatalogBattery
+  alias Phoenix.Naming
+
   def mount(socket) do
+    groups = Catalog.groups_for_projects()
+
     {:ok,
      socket
      |> assign(:class, nil)
      |> assign(:tab, :required)
-     |> assign(:form, to_form(%{}))}
+     |> assign(:groups, groups)}
+  end
+
+  def update(assigns, socket) do
+    required = required_batteries(assigns.data)
+    selected = Enum.map(required, &Atom.to_string(&1.type))
+
+    # Turns on batteries that are required for this project
+    form =
+      required
+      |> Map.new(&{Atom.to_string(&1.type), "on"})
+      |> to_form()
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign(:required, required)
+     |> assign(:selected, selected)
+     |> assign(:form, form)}
   end
 
   def handle_event("tab", %{"id" => id}, socket) do
-    {:noreply, assign(socket, :tab, String.to_existing_atom(id))}
+    # Clear search input if visiting a tab other than "All Batteries"
+    params =
+      if id != :all do
+        Map.put(socket.assigns.form.params, "search", "")
+      else
+        socket.assigns.form.params
+      end
+
+    {:noreply,
+     socket
+     |> assign(:form, to_form(params))
+     |> assign(:tab, String.to_existing_atom(id))}
   end
 
-  def handle_event("validate", _params, socket) do
-    {:noreply, socket}
+  @doc """
+  This event will persist the selected batteries when moving between tabs.
+  """
+  def handle_event("toggle", %{"_target" => [target]} = params, socket) do
+    selected =
+      if params[target] == "on" do
+        socket.assigns.selected ++ [target]
+      else
+        Enum.reject(socket.assigns.selected, &(&1 == target))
+      end
+
+    params =
+      Map.merge(
+        %{"search" => socket.assigns.form.params["search"]},
+        Map.new(selected, &{&1, "on"})
+      )
+
+    {:noreply,
+     socket
+     |> assign(:selected, selected)
+     |> assign(:form, to_form(params))}
   end
 
-  def handle_event("save", params, socket) do
+  def handle_event("validate", %{"search" => search} = params, socket) do
+    # switch to the "All Batteries" tab when searching
+    socket = if search != "", do: assign(socket, :tab, :all), else: socket
+
+    form = socket.assigns.form.params |> Map.merge(params) |> to_form()
+
+    {:noreply, assign(socket, :form, form)}
+  end
+
+  def handle_event("save", _params, socket) do
+    # Don't actually care about the form data, we just want the selected batteries
+    params = Map.new(socket.assigns.selected, &{&1, "on"})
+
     # Don't create the resources yet, send data to parent liveview
     send(self(), {:next, {__MODULE__, params}})
 
@@ -43,49 +109,58 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
         <.tab_bar variant="secondary">
           <:tab
+            :if={@required != []}
             phx-click="tab"
-            phx-value-id={:required}
             phx-target={@myself}
+            phx-value-id={:required}
             selected={@tab == :required}
           >
             Required
           </:tab>
 
-          <:tab phx-click="tab" phx-value-id={:db} phx-target={@myself} selected={@tab == :db}>
-            Database Provider
+          <:tab
+            :for={group <- @groups}
+            phx-click="tab"
+            phx-value-id={group.id}
+            phx-target={@myself}
+            selected={@tab == group.id}
+          >
+            <%= group.name %>
           </:tab>
 
-          <:tab phx-click="tab" phx-value-id={:web} phx-target={@myself} selected={@tab == :web}>
-            Production Web
-          </:tab>
-
-          <:tab phx-click="tab" phx-value-id={:ml} phx-target={@myself} selected={@tab == :ml}>
-            Machine Learning
-          </:tab>
-
-          <:tab phx-click="tab" phx-value-id={:all} phx-target={@myself} selected={@tab == :all}>
+          <:tab phx-click="tab" phx-target={@myself} phx-value-id={:all} selected={@tab == :all}>
             All Batteries
           </:tab>
         </.tab_bar>
 
-        <div :if={@tab == :required}>
-          <.battery_toggle title="Redis" field={@form[:redis]}>
-            In-memory data structure store, used as a database, cache, message broker and streaming engine.
-          </.battery_toggle>
+        <.battery_toggle
+          :for={battery <- search_filter(@required, @form[:search].value)}
+          :if={@tab == :required}
+          installed={has_battery?(@installed, battery)}
+          required={has_battery?(@required, battery)}
+          battery={battery}
+          form={@form}
+        />
 
-          <.battery_toggle title="PostgreSQL" field={@form[:postgres]}>
-            Free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility
-          </.battery_toggle>
+        <%= for group <- @groups do %>
+          <.battery_toggle
+            :for={battery <- search_filter(Catalog.all(group.id), @form[:search].value)}
+            :if={@tab == group.id}
+            installed={has_battery?(@installed, battery)}
+            required={has_battery?(@required, battery)}
+            battery={battery}
+            form={@form}
+          />
+        <% end %>
 
-          <.battery_toggle title="Rook" field={@form[:rook]}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </.battery_toggle>
-        </div>
-
-        <div :if={@tab == :db}>Database Provider</div>
-        <div :if={@tab == :web}>Production Web</div>
-        <div :if={@tab == :ml}>Machine Learning</div>
-        <div :if={@tab == :all}>All Batteries</div>
+        <.battery_toggle
+          :for={battery <- search_filter(Catalog.all(), @form[:search].value)}
+          :if={@tab == :all}
+          installed={has_battery?(@installed, battery)}
+          required={has_battery?(@required, battery)}
+          battery={battery}
+          form={@form}
+        />
 
         <:actions>
           <%= render_slot(@inner_block) %>
@@ -95,21 +170,83 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
     """
   end
 
-  attr :title, :string, required: true
-  attr :rest, :global, include: ~w(field)
-
-  slot :inner_block
+  attr :installed, :boolean, default: false
+  attr :required, :boolean, default: false
+  attr :battery, CatalogBattery, required: true
+  attr :form, Phoenix.HTML.Form, required: true
 
   defp battery_toggle(assigns) do
     ~H"""
-    <div class="flex items-start justify-between gap-x-12 mb-8 last:mb-0 pb-8 last:pb-0 border-b border-b-gray-lighter last:border-b-0">
+    <div class="flex items-start justify-between gap-x-12 pb-8 last:pb-0 border-b border-b-gray-lighter last:border-b-0">
       <div>
-        <h3 class="text-xl font-semibold mb-2"><%= @title %></h3>
-        <p class="text-sm"><%= render_slot(@inner_block) %></p>
+        <div class="flex items-center gap-3 mb-2">
+          <h3 class="text-xl font-semibold">
+            <%= Naming.humanize(@battery.type) %>
+          </h3>
+
+          <div
+            :if={@installed}
+            class="text-xs text-white font-semibold bg-gray-lighter rounded px-1 py-0.5 whitespace-nowrap"
+          >
+            ALREADY INSTALLED
+          </div>
+        </div>
+
+        <p class="text-sm">
+          <%= @battery.description %>
+        </p>
       </div>
 
-      <.input type="switch" {@rest} />
+      <.input
+        :if={!@installed}
+        type="switch"
+        field={@form[@battery.type]}
+        disabled={@required}
+        phx-change="toggle"
+      />
     </div>
     """
+  end
+
+  defp has_battery?(batteries, %{type: type} = battery) when is_binary(type) do
+    has_battery?(batteries, Map.put(battery, :type, String.to_existing_atom(type)))
+  end
+
+  defp has_battery?(batteries, battery) do
+    Enum.any?(batteries, &(&1.type == battery.type))
+  end
+
+  defp search_filter(batteries, nil), do: batteries
+
+  defp search_filter(batteries, search) do
+    pattern = search |> Regex.escape() |> Regex.compile!([:caseless])
+
+    # run a simple search against the battery's type and description
+    Enum.filter(batteries, fn battery ->
+      Regex.match?(pattern, Atom.to_string(battery.type) <> battery.description)
+    end)
+  end
+
+  # Gets a list of all the required batteries for form data returned from a subform.
+  # This is recursive, so it will also get all the dependencies for each battery.
+  defp required_batteries(data) do
+    data
+    |> Enum.map(fn {_, v} ->
+      Enum.map(
+        Map.keys(v),
+        &case &1 do
+          "postgres" -> [:cloudnative_pg]
+          "postgres_ids" -> [:cloudnative_pg]
+          "redis" -> [:redis]
+          "jupyter" -> [:notebooks]
+          _ -> nil
+        end
+      )
+    end)
+    |> List.flatten()
+    |> Enum.filter(&(&1 != nil))
+    |> Enum.map(&Catalog.get_recursive/1)
+    |> List.flatten()
+    |> Enum.uniq()
   end
 end

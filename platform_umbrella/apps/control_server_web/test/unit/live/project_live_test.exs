@@ -28,14 +28,14 @@ defmodule ControlServerWeb.ProjectLiveTest do
              |> render_change(project: %{type: :web}) =~ "Next Step"
 
       refute has_class?(view, "#project-form", "hidden")
-      assert has_class?(view, "#project-batteries-form", "hidden")
+      assert has_class?(view, "#project-web-form", "hidden")
 
       view
       |> element("#project-form")
       |> render_submit(project: %{name: "Foobar"})
 
       assert has_class?(view, "#project-form", "hidden")
-      refute has_class?(view, "#project-batteries-form", "hidden")
+      refute has_class?(view, "#project-web-form", "hidden")
     end
   end
 

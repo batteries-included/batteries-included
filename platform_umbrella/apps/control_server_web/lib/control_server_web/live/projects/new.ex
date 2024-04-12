@@ -2,6 +2,10 @@ defmodule ControlServerWeb.Projects.NewLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  alias CommonCore.Batteries.Catalog
+  alias CommonCore.Batteries.CatalogBattery
+  alias ControlServer.Batteries
+  alias ControlServer.Batteries.Installer
   alias ControlServer.Notebooks
   alias ControlServer.Postgres
   alias ControlServer.Projects
@@ -11,6 +15,9 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias ControlServerWeb.Projects.MachineLearningForm
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.Projects.WebForm
+  alias KubeServices.SystemState.SummaryStorage
+
+  require Logger
 
   def mount(params, _session, socket) do
     # Allow the back button to be dynamic and go back steps
@@ -19,10 +26,12 @@ defmodule ControlServerWeb.Projects.NewLive do
 
     {:ok,
      socket
-     |> assign(:form_data, %{})
+     |> assign(:installing, false)
      |> assign(:back_click, back_click)
      |> assign(:steps, steps())
      |> assign(:current_step, List.first(steps()))
+     |> assign(:form_data, %{})
+     |> assign(:batteries, Batteries.list_system_batteries())
      |> assign(:page_title, "Start Your Project")}
   end
 
@@ -62,18 +71,54 @@ defmodule ControlServerWeb.Projects.NewLive do
        |> assign(:current_step, next_step)}
     else
       # There are no more steps in the flow, go ahead and create all the resources
-      with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
-           {:ok, _} <- create_postgres(project, form_data[DatabaseForm]),
-           {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
-           {:ok, _} <- create_jupyter(project, form_data[MachineLearningForm]),
-           {:ok, _} <- create_postgres(project, form_data[MachineLearningForm]),
-           {:ok, _} <- create_postgres(project, form_data[WebForm]),
-           {:ok, _} <- create_redis(project, form_data[WebForm]) do
-        {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
-      else
-        _ -> {:noreply, put_flash(socket, :error, "Could not create all the project resources")}
-      end
+      install_batteries(form_data[BatteriesForm])
+
+      {:noreply,
+       socket
+       |> assign(:installing, true)
+       |> assign(:form_data, form_data)}
     end
+  end
+
+  def handle_info({:async_installer, {:install_complete, _}}, socket) do
+    # Pause for a moment to make sure the sexy loader is shown
+    Process.sleep(1000)
+
+    form_data = socket.assigns.form_data
+
+    with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
+         {:ok, _} <- create_postgres(project, form_data[DatabaseForm]),
+         {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
+         {:ok, _} <- create_jupyter(project, form_data[MachineLearningForm]),
+         {:ok, _} <- create_postgres(project, form_data[MachineLearningForm]),
+         {:ok, _} <- create_postgres(project, form_data[WebForm]),
+         {:ok, _} <- create_redis(project, form_data[WebForm]) do
+      {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
+    else
+      err ->
+        # TODO: Handle nested form errors and move to the correct step to show error
+        Logger.error(err)
+
+        {:noreply,
+         socket
+         |> assign(:installing, false)
+         |> put_flash(:error, "Could not create all the project resources")}
+    end
+  end
+
+  def handle_info({:async_installer, _}, socket), do: {:noreply, socket}
+
+  defp install_batteries(data) do
+    KubeServices.SnapshotApply.Worker.start()
+
+    data
+    |> Enum.map(fn {key, _} ->
+      key
+      |> String.to_existing_atom()
+      |> Catalog.get()
+      |> CatalogBattery.to_fresh_args()
+    end)
+    |> Installer.install_all(self())
   end
 
   defp create_postgres(project, %{"postgres" => postgres_data}) do
@@ -127,7 +172,7 @@ defmodule ControlServerWeb.Projects.NewLive do
   defp create_jupyter(_project, _jupyter_data), do: {:ok, nil}
 
   defp get_default_storage_class do
-    case KubeServices.SystemState.SummaryStorage.default_storage_class() do
+    case SummaryStorage.default_storage_class() do
       nil ->
         nil
 
@@ -148,17 +193,11 @@ defmodule ControlServerWeb.Projects.NewLive do
       />
 
       <div class="flex-1 relative">
+        <.flash kind={:error} flash={@flash} />
+
         <.subform
           module={ProjectForm}
           id="project-form"
-          current_step={@current_step}
-          steps={@steps}
-          data={@form_data}
-        />
-
-        <.subform
-          module={BatteriesForm}
-          id="project-batteries-form"
           current_step={@current_step}
           steps={@steps}
           data={@form_data}
@@ -187,7 +226,18 @@ defmodule ControlServerWeb.Projects.NewLive do
           steps={@steps}
           data={@form_data}
         />
+
+        <.subform
+          module={BatteriesForm}
+          id="project-batteries-form"
+          current_step={@current_step}
+          steps={@steps}
+          data={@form_data}
+          installed={@batteries}
+        />
       </div>
+
+      <.loader :if={@installing} fullscreen />
 
       <.modal id="demo-video-modal" size="lg" class="p-2 pt-4">
         <:title>Demo Video</:title>
@@ -235,35 +285,8 @@ defmodule ControlServerWeb.Projects.NewLive do
   # Defines the ordering of the new project subform flow
 
   defp steps(type) when is_binary(type), do: type |> String.to_existing_atom() |> steps()
-
-  defp steps(:web) do
-    [
-      ProjectForm,
-      BatteriesForm,
-      WebForm
-    ]
-  end
-
-  defp steps(:ml) do
-    [
-      ProjectForm,
-      BatteriesForm,
-      MachineLearningForm
-    ]
-  end
-
-  defp steps(:db) do
-    [
-      ProjectForm,
-      BatteriesForm,
-      DatabaseForm
-    ]
-  end
-
-  defp steps do
-    [
-      ProjectForm,
-      BatteriesForm
-    ]
-  end
+  defp steps(:web), do: [ProjectForm, WebForm, BatteriesForm]
+  defp steps(:ml), do: [ProjectForm, MachineLearningForm, BatteriesForm]
+  defp steps(:db), do: [ProjectForm, DatabaseForm, BatteriesForm]
+  defp steps, do: [ProjectForm, BatteriesForm]
 end

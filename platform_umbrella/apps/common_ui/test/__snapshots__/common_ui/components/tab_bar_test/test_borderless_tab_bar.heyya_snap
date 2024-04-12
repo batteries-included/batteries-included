@@ -1,16 +1,16 @@
 <div class="flex rounded-lg bg-white dark:bg-gray-darkest-tint p-1">
   
-    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary">
       
       <span>Foo</span>
     </a>
   
-    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary bg-primary text-white dark:text-white hover:text-white">
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary bg-primary text-white dark:text-white hover:text-white">
       
       <span>Bar</span>
     </a>
   
-    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary">
+    <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary">
       
       <span>Baz</span>
     </a>

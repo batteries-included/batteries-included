@@ -52,7 +52,7 @@ defmodule CommonUI.Components.TabBar do
   end
 
   defp tab_class do
-    "flex-1 justify-center font-semibold text-sm text-gray-darkest dark:text-gray hover:text-primary"
+    "flex-1 justify-center font-semibold whitespace-nowrap text-sm text-gray-darkest dark:text-gray hover:text-primary"
   end
 
   defp tab_class("primary", selected) do

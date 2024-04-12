@@ -6,7 +6,7 @@ defmodule ControlServerWeb.Projects.BatteriesFormTest do
   alias ControlServerWeb.Projects.BatteriesForm
 
   test "should render project batteries form" do
-    assert render_component(BatteriesForm, id: "project-batteries-form", inner_block: []) =~
+    assert render_component(BatteriesForm, id: "project-batteries-form", inner_block: [], data: %{}) =~
              "Turn On Batteries You Need"
   end
 end

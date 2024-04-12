@@ -27,6 +27,17 @@ defmodule Storybook.Components.Input.Switch do
           errors: ["Oh no"],
           force_feedback: true
         }
+      },
+      %Variation{
+        id: :disabled,
+        attributes: %{
+          type: "switch",
+          name: "foo",
+          value: "bar",
+          label: "Label",
+          checked: true,
+          disabled: true
+        }
       }
     ]
   end
