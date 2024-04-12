@@ -37,11 +37,16 @@ func (env *InstallEnv) Remove() error {
 
 func (env *InstallEnv) WriteSpec(force bool) error {
 	specPath := env.SpecPath()
-
-	if force {
-		// Remove the old file if it exists
-		_ = os.Remove(specPath)
+	if _, err := os.Stat(specPath); err == nil {
+		if force {
+			slog.Debug("Removing old spec", slog.String("path", specPath))
+			_ = os.Remove(specPath)
+		} else {
+			slog.Debug("Spec already exists", slog.String("path", specPath))
+			return nil
+		}
 	}
+
 	// Write the spec
 	err := env.Spec.WriteToPath(specPath)
 	if err != nil {
@@ -53,9 +58,17 @@ func (env *InstallEnv) WriteSpec(force bool) error {
 func (env *InstallEnv) WriteSummary(force bool) error {
 	summaryPath := env.SummaryPath()
 
-	if force {
-		// Remove the old file if it exists
-		_ = os.Remove(summaryPath)
+	if _, err := os.Stat(summaryPath); err == nil {
+		// If the file exists then we don't need to write it
+		if force {
+			slog.Debug("Removing old summary", slog.String("path", summaryPath))
+			// Remove the old file if it exists
+			_ = os.Remove(summaryPath)
+		} else {
+			slog.Debug("Summary already exists", slog.String("path", summaryPath))
+			return nil
+
+		}
 	}
 	err := env.Spec.WriteStateSummary(summaryPath)
 	if err != nil {
@@ -67,9 +80,14 @@ func (env *InstallEnv) WriteSummary(force bool) error {
 func (env *InstallEnv) WriteKubeConfig(force bool) error {
 	kubeConfigPath := env.KubeConfigPath()
 
-	if force {
-		// Remove the old file if it exists
-		_ = os.Remove(kubeConfigPath)
+	if _, err := os.Stat(kubeConfigPath); err == nil {
+		if force {
+			slog.Debug("Removing old kubeconfig", slog.String("path", kubeConfigPath))
+			_ = os.Remove(kubeConfigPath)
+		} else {
+			slog.Debug("Kubeconfig already exists", slog.String("path", kubeConfigPath))
+			return nil
+		}
 	}
 
 	// TODO

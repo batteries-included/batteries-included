@@ -30,10 +30,7 @@
         ];
         tags = [ "netgo" "osusergo" ];
         ldflags = [
-          "-s"
-          "-w"
           "-X bi/pkg.Version=${version}"
-          "-extldflags -static"
         ];
       };
     };

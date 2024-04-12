@@ -81,29 +81,13 @@ func NewEnv(slugOrUrl string) (*InstallEnv, error) {
 		return nil, fmt.Errorf("error getting spec from url: %w", err)
 	}
 
-	// Now that we have a spec check to see if the slug is already there
-	installEnv, err = readInstallEnv(spec.Slug)
-	if err == nil {
-		slog.Debug("install already exists", slog.String("slug", spec.Slug))
-
-		err = installEnv.init()
-		if err != nil {
-			return nil, fmt.Errorf("error initializing install: %w", err)
-		}
-		return installEnv, nil
-	}
-
 	installEnv = &InstallEnv{
 		Slug: spec.Slug,
 		Spec: spec,
 	}
 
-	// Since we got the spec from the url we should write it to the install directory
-	err = installEnv.WriteSpec(true)
-
-	if err != nil {
-		return nil, fmt.Errorf("error writing install env: %w", err)
-	}
+	// We got from the url so we should remove everything
+	_ = installEnv.Remove()
 
 	err = installEnv.init()
 	if err != nil {

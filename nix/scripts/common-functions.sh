@@ -40,15 +40,26 @@ trap cleanup EXIT SIGINT SIGTERM
 
 function do_stop() {
   local install_path=${1:-"static/public/specs/dev.json"}
-  bi stop "${install_path}"
+
+  local slug
+  # If install path is a file then we need to get the slug
+  # from the file
+  if [[ -f ${install_path} ]]; then
+    slug=$(bi debug spec-slug "${install_path}")
+  else
+    # Otherwise we can just stop the install path assuming it's a slug already
+    slug=${install_path}
+  fi
+  bi stop "${slug}"
 }
 
 function do_bootstrap() {
   do_start "$@"
-  local spec_path summary_path
+  local spec_path summary_path slug
 
   spec_path=${1:-"static/public/specs/dev.json"}
-  summary_path=$(bi debug install-summary-path "${spec_path}")
+  slug=$(bi debug spec-slug "${spec_path}")
+  summary_path=$(bi debug install-summary-path "${slug}")
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
   # Start the port forwarder
@@ -76,16 +87,20 @@ function do_integration_test_deep() {
   install_path=${1:-"./static/public/specs/int_test.json"}
 
   log "Starting integration test: ${install_path}"
+  local slug
+  slug=$(bi debug spec-slug "${install_path}")
 
   local summary_path
   do_start "${install_path}"
-  summary_path=$(bi debug install-summary-path "${install_path}")
+  summary_path=$(bi debug install-summary-path "${slug}")
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
 
   do_portforward_controlserver
 
   do_integration_test "${summary_path}"
+
+  do_stop "${slug}"
 }
 
 function do_integration_test() {
