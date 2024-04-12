@@ -6,8 +6,6 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "aws-load-balancer-controller"
 
-  import CommonCore.Resources.FieldAccessors
-  import CommonCore.StateSummary.FromKubeState, only: [find_state_resource: 3]
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
@@ -209,6 +207,11 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
         },
         "failurePolicy" => "Fail",
         "name" => "mservice.elbv2.k8s.aws",
+        "namespaceSelector" => %{
+          "matchExpressions" => [
+            %{"key" => "elbv2.k8s.aws/service-webhook", "operator" => "NotIn", "values" => ["disabled"]}
+          ]
+        },
         "objectSelector" => %{
           "matchExpressions" => [
             %{"key" => "battery/app", "operator" => "NotIn", "values" => [@app_name]}
@@ -314,14 +317,13 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
   resource(:cert, _battery, state) do
     namespace = base_namespace(state)
     svc_name = "aws-load-balancer-webhook-service"
-    issuer = find_state_resource(state, :certmanager_cluster_issuer, "battery-ca")
 
     spec =
-      build_cert_spec(
-        "aws-load-balancer-tls",
-        ["#{svc_name}.#{namespace}.svc", "#{svc_name}.#{namespace}.svc.cluster.local"],
-        issuer
-      )
+      %{
+        "dnsNames" => ["#{svc_name}.#{namespace}.svc", "#{svc_name}.#{namespace}.svc.cluster.local"],
+        "issuerRef" => %{group: "cert-manager.io", kind: "ClusterIssuer", name: "battery-ca"},
+        "secretName" => "aws-load-balancer-tls"
+      }
 
     :certmanager_certificate
     |> B.build_resource()
@@ -408,17 +410,5 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
         "sideEffects" => "None"
       }
     ])
-  end
-
-  defp build_cert_spec(_name, hosts, issuer) when is_nil(hosts) or is_nil(issuer), do: nil
-
-  defp build_cert_spec(name, hosts, issuer) do
-    issuer_ref = B.issuer_ref(group(issuer), kind(issuer), name(issuer))
-
-    %{
-      "dnsNames" => hosts,
-      "issuerRef" => issuer_ref,
-      "secretName" => name
-    }
   end
 end

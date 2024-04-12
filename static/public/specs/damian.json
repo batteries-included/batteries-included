@@ -7,6 +7,7 @@
   "target_summary": {
     "id": null,
     "notebooks": [],
+    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -19,7 +20,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "Z7TL75K3KZDYDITADT3NS7YSG3P5I7UNWS5YLTNPEX3RXXBNXZ2SMJDZ5G6KQV7J",
+          "secret_key": "FSPSESOBAVKUGCWNRWGLOB6GVQCBQVGRLTF3DLT6PZWDWVFIVPBSVKVXZGA5OQ27",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -75,20 +76,6 @@
         "type": "battery_ca",
         "config": {
           "type": "battery_ca"
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": null,
-        "type": "trust_manager",
-        "config": {
-          "type": "trust_manager",
-          "image": "quay.io/jetstack/trust-manager:v0.8.0",
-          "init_image": "quay.io/jetstack/cert-manager-package-debian:20210119.0",
-          "image_override": null,
-          "init_image_override": null
         },
         "group": "net_sec",
         "inserted_at": null,
@@ -158,7 +145,6 @@
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -185,7 +171,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "TLAQCQ2TSPMX7A56M4NYTQVB",
+            "password": "YJLD5ZYGIS3Y4DJS3FIIS7MF",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -195,8 +181,8 @@
         "memory_requested": 1073741824,
         "memory_limits": 4294967296,
         "storage_size": 17179869184,
-        "virtual_storage_size_range_value": 41,
-        "project_id": null
+        "project_id": null,
+        "virtual_storage_size_range_value": 41
       }
     ],
     "knative_services": [],

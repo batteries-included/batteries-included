@@ -18,6 +18,7 @@ defmodule CommonCore.Resources.BatteryCore do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.base_namespace)
+    |> B.label("elbv2.k8s.aws/service-webhook", "disabled")
   end
 
   resource(:data_namespace, battery, _state) do

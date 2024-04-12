@@ -986,13 +986,8 @@ defmodule CommonCore.Resources.CertManager.CertManager do
 
     spec =
       %{}
-      |> Map.put("ports", [
-        %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => "https"}
-      ])
-      |> Map.put(
-        "selector",
-        %{"battery/app" => @app_name, "battery/component" => component}
-      )
+      |> Map.put("ports", [%{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => "https"}])
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => component})
       |> Map.put("type", "ClusterIP")
 
     :service

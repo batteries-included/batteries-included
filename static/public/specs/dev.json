@@ -7,6 +7,7 @@
   "target_summary": {
     "id": null,
     "notebooks": [],
+    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -45,7 +46,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "HNWV2Q6GNI5OQEXH73COHWHDQC4EHJVRBYTKDTFWCUJLHCZTOLP5AEM7B5I4GJVD",
+          "secret_key": "OYEP5ACFXX3IQQNLZ5RMKTIRP3AMOAEZ3CWGMMKPJPS3YNDC62I67XNAAG6W6QVI",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -101,7 +102,6 @@
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -128,7 +128,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "76IBVU2YCWB3CXHY7RR6WLEB",
+            "password": "4NA5KDIHV7J3RAUE5EBUN6XK",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -138,8 +138,8 @@
         "memory_requested": 536870912,
         "memory_limits": 536870912,
         "storage_size": 536870912,
-        "virtual_storage_size_range_value": 9,
-        "project_id": null
+        "project_id": null,
+        "virtual_storage_size_range_value": 9
       }
     ],
     "knative_services": [],
