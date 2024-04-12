@@ -19,27 +19,26 @@
       static = pkgs.callPackage ./pastebin_static.nix {
         inherit pname npmlock2nix nodejs;
         name = "pastebin-static";
-        version = "0.8.0";
+        version = "0.8.1";
         src = staticSrc;
       };
 
       pastebin = buildGoApplication {
         inherit pname src pwd modules;
-        version = "0.8.0";
+        version = "0.8.1";
       };
 
       docker-image = pkgs.dockerTools.buildImage {
-        name = "elliottneilclark/${pname} ";
+        name = "elliottneilclark/${pname}";
 
         copyToRoot = pkgs.buildEnv {
-          name = "
-          static ";
+          name = "static";
           pathsToLink = [ "/static" ];
           paths = [ static ];
         };
 
         config = {
-          ExposedPorts = { " 8080/tcp " = { }; };
+          ExposedPorts = { "8080/tcp" = { }; };
           WorkingDir = "/";
           Cmd = [ "${pastebin}/bin/${pname}" ];
         };
