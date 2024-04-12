@@ -49,42 +49,55 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   @doc """
   This macro creates all the LiveView events needed for the subform components.
   """
-  defmacro __using__(_opts) do
+  defmacro __using__(opts \\ []) do
+    # The main Postgres form uses the key "cluster", whereas the nested forms
+    # in the New Project pages use the key "postgres" to differentiate between
+    # the Redis clusters. This allows the same events to be used with different
+    # form keys.
+    form_key = Keyword.get(opts, :form_key, "cluster")
+
     quote do
       alias CommonCore.Postgres.Cluster, as: PGCluster
       alias ControlServerWeb.PostgresFormSubcomponents
 
       def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
-        handle_event("change_storage_size", %{"postgres" => %{"storage_size" => bytes}}, socket)
+        handle_event("change_storage_size", %{unquote(form_key) => %{"storage_size" => bytes}}, socket)
       end
 
       # This only happens when the user is manually editing the storage size.
       # In this case, we need to update the range slider and helper text "x GB"
-      def handle_event("change_storage_size", %{"postgres" => %{"storage_size" => storage_size}}, socket) do
-        changeset = PGCluster.put_storage_size_bytes(socket.assigns.form.params["postgres"], storage_size)
+      def handle_event("change_storage_size", %{unquote(form_key) => %{"storage_size" => storage_size}}, socket) do
+        changeset =
+          socket.assigns.form
+          |> get_source()
+          |> PGCluster.put_storage_size_bytes(storage_size)
 
-        form =
-          socket.assigns.form.params
-          |> Map.put("postgres", changeset)
-          |> to_form()
+        form = socket.assigns.form |> put_source(changeset) |> to_form()
 
         {:noreply, assign(socket, :form, form)}
       end
 
       def handle_event(
             "on_change_storage_size_range",
-            %{"postgres" => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
+            %{unquote(form_key) => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
             socket
           ) do
         changeset =
-          PGCluster.put_storage_size_value(socket.assigns.form.params["postgres"], virtual_storage_size_range_value)
+          socket.assigns.form
+          |> get_source()
+          |> PGCluster.put_storage_size_value(virtual_storage_size_range_value)
 
-        form =
-          socket.assigns.form.params
-          |> Map.put("postgres", changeset)
-          |> to_form()
+        form = socket.assigns.form |> put_source(changeset) |> to_form()
 
         {:noreply, assign(socket, form: form)}
+      end
+
+      defp get_source(%{source: source}) do
+        if unquote(form_key) != "cluster", do: source[unquote(form_key)], else: source
+      end
+
+      defp put_source(%{source: source}, value) do
+        if unquote(form_key) != "cluster", do: Map.put(source, unquote(form_key), value), else: value
       end
     end
   end

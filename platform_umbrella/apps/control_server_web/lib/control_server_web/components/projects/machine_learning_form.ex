@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Projects.MachineLearningForm do
   @moduledoc false
   use ControlServerWeb, :live_component
-  use ControlServerWeb.PostgresFormSubcomponents
+  use ControlServerWeb.PostgresFormSubcomponents, form_key: "postgres"
 
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres.Cluster

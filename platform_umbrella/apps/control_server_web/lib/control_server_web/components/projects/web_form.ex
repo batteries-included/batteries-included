@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
-  use ControlServerWeb.PostgresFormSubcomponents
+  use ControlServerWeb.PostgresFormSubcomponents, form_key: "postgres"
 
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
