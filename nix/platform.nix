@@ -90,6 +90,24 @@
         mixEnv = "prod";
       };
 
+      kube-bootstrap-container = pkgs.dockerTools.buildLayeredImage {
+        name = "kube-bootstrap";
+        tag = version;
+        config.Cmd = [ "${kube-bootstrap}/bin/kube_bootstrap" "start" ];
+      };
+
+      home-base-container = pkgs.dockerTools.buildLayeredImage {
+        name = "home-base";
+        tag = version;
+        config.Cmd = [ "${home-base}/bin/home_base" "start" ];
+      };
+
+      control-server-container = pkgs.dockerTools.buildLayeredImage {
+        name = "control-server";
+        tag = version;
+        config.Cmd = [ "${control-server}/bin/control_server" "start" ];
+      };
+
       credo = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
@@ -126,7 +144,7 @@
     in
     {
       packages = {
-        inherit home-base control-server kube-bootstrap;
+        inherit home-base control-server kube-bootstrap home-base-container control-server-container kube-bootstrap-container;
       };
       checks = {
         inherit credo dialyzer format;

@@ -28,7 +28,7 @@
         version = "0.8.1";
       };
 
-      docker-image = pkgs.dockerTools.buildImage {
+      pastebin-container = pkgs.dockerTools.buildImage {
         name = "elliottneilclark/${pname}";
 
         copyToRoot = pkgs.buildEnv {
@@ -46,8 +46,7 @@
     in
     {
       packages = {
-        pastebin = pastebin;
-        pastebin-docker = docker-image;
+        inherit pastebin pastebin-container;
       };
     };
 }

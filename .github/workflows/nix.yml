@@ -27,7 +27,8 @@ jobs:
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#pastebin -L
-      - run: nix build .#pastebin-docker -L
+      - run: nix build .#pastebin-container -L
+
   control-server:
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +46,8 @@ jobs:
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#control-server -L
+      - run: nix build .#control-server-container -L
+
   kube-bootstrap:
     runs-on: ubuntu-latest
     steps:
@@ -62,6 +65,8 @@ jobs:
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#kube-bootstrap -L
+      - run: nix build .#kube-bootstrap-container -L
+
   home-base:
     runs-on: ubuntu-latest
     steps:
@@ -79,6 +84,8 @@ jobs:
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#home-base -L
+      - run: nix build .#home-base-container -L
+
   tests:
     runs-on: ubuntu-latest
     steps:
