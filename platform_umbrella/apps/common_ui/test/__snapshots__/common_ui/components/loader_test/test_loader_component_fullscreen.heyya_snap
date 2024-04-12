@@ -1,0 +1,12 @@
+<div class="fixed inset-0 z-50">
+  <div class="fixed inset-0 z-10 bg-white/60 dark:bg-gray-darkest-tint/80 backdrop-blur-sm transition-all"></div>
+
+  <div class="flex items-center justify-center min-h-full">
+    <div class="mx-auto loader z-20">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+  </div>
+</div>

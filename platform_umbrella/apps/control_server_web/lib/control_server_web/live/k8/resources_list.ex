@@ -5,7 +5,6 @@ defmodule ControlServerWeb.Live.ResourceList do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.DeploymentsTable
-  import ControlServerWeb.Loader
   import ControlServerWeb.NodesTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
