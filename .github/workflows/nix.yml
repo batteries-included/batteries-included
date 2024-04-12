@@ -9,6 +9,13 @@ on:
     branches:
       - master
 
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ECR_ROLE: arn:aws:iam::037532365270:role/GHA-Main-ECR-PowerUser
+        
 jobs:
   pastebin:
     runs-on: ubuntu-latest
@@ -28,6 +35,26 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#pastebin -L
       - run: nix build .#pastebin-container -L
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-2
+          role-to-assume: ${{ env.ECR_ROLE }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Push image to ECR
+        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: pastebin
+        run: |
+          docker load < ./result
+          TAG=$(docker images elliottneilclark/pastebin --format '{{ .Tag }}')
+          INPUT="elliottneilclark/pastebin:$TAG"
+          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          docker tag "$INPUT" "$OUTPUT"
+          docker push "$OUTPUT"
 
   control-server:
     runs-on: ubuntu-latest
@@ -47,6 +74,27 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#control-server -L
       - run: nix build .#control-server-container -L
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-2
+          role-to-assume: ${{ env.ECR_ROLE }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Push image to ECR
+        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: control-server
+        run: |
+          docker load < ./result
+          TAG=$(docker images "$REPOSITORY" --format '{{ .Tag }}')
+          INPUT="$REPOSITORY:$TAG"
+          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          docker tag "$INPUT" "$OUTPUT"
+          docker push "$OUTPUT"
+
 
   kube-bootstrap:
     runs-on: ubuntu-latest
@@ -66,6 +114,26 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#kube-bootstrap -L
       - run: nix build .#kube-bootstrap-container -L
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-2
+          role-to-assume: ${{ env.ECR_ROLE }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Push image to ECR
+        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: kube-bootstrap
+        run: |
+          docker load < ./result
+          TAG=$(docker images "$REPOSITORY" --format '{{ .Tag }}')
+          INPUT="$REPOSITORY:$TAG"
+          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          docker tag "$INPUT" "$OUTPUT"
+          docker push "$OUTPUT"
 
   home-base:
     runs-on: ubuntu-latest
@@ -85,6 +153,26 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#home-base -L
       - run: nix build .#home-base-container -L
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-2
+          role-to-assume: ${{ env.ECR_ROLE }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Push image to ECR
+        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: home-base
+        run: |
+          docker load < ./result
+          TAG=$(docker images "$REPOSITORY" --format '{{ .Tag }}')
+          INPUT="$REPOSITORY:$TAG"
+          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          docker tag "$INPUT" "$OUTPUT"
+          docker push "$OUTPUT"
 
   tests:
     runs-on: ubuntu-latest
