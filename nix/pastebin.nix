@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, self, ... }:
 
 {
   perSystem = { system, pkgs, ... }:
@@ -13,34 +13,33 @@
       pwd = ./../project_templates/pastebin-go;
       src = gitignoreSource pwd;
       modules = pwd + "/gomod2nix.toml";
+      safeRev = self.shortRev or self.dirtyShortRev;
+      version = "0.12.0";
+      taggedVersion = "0.12.0-${safeRev}";
 
       staticSrc = gitignoreSource ./../project_templates/pastebin-go/assets;
 
       static = pkgs.callPackage ./pastebin_static.nix {
-        inherit pname npmlock2nix nodejs;
+        inherit pname npmlock2nix nodejs version;
         name = "pastebin-static";
-        version = "0.8.1";
         src = staticSrc;
       };
 
       pastebin = buildGoApplication {
-        inherit pname src pwd modules;
-        version = "0.8.1";
+        inherit pname src pwd modules version;
       };
 
-      pastebin-container = pkgs.dockerTools.buildImage {
+      pastebin-container = pkgs.dockerTools.buildLayeredImage {
+        # TODO move this to batteries included when we have
+        # a oci image host. For now this is on my personal account.
         name = "elliottneilclark/${pname}";
 
-        copyToRoot = pkgs.buildEnv {
-          name = "static";
-          pathsToLink = [ "/static" ];
-          paths = [ static ];
-        };
+        tag = taggedVersion;
 
         config = {
           ExposedPorts = { "8080/tcp" = { }; };
           WorkingDir = "/";
-          Cmd = [ "${pastebin}/bin/${pname}" ];
+          Cmd = [ "${pastebin}/bin/${pname}" "${static}/" ];
         };
       };
     in

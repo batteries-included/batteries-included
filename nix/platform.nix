@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, self, ... }:
 
 {
   perSystem = { lib, pkgs, ... }:
@@ -7,7 +7,9 @@
       inherit (inputs.gitignore.lib) gitignoreSource;
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      version = "0.11.0";
+      safeRev = self.shortRev or self.dirtyShortRev;
+      version = "0.12.0";
+      taggedVersion = "0.12.0-${safeRev}";
       beam = pkgs.beam;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
@@ -92,19 +94,19 @@
 
       kube-bootstrap-container = pkgs.dockerTools.buildLayeredImage {
         name = "kube-bootstrap";
-        tag = version;
+        tag = taggedVersion;
         config.Cmd = [ "${kube-bootstrap}/bin/kube_bootstrap" "start" ];
       };
 
       home-base-container = pkgs.dockerTools.buildLayeredImage {
         name = "home-base";
-        tag = version;
+        tag = taggedVersion;
         config.Cmd = [ "${home-base}/bin/home_base" "start" ];
       };
 
       control-server-container = pkgs.dockerTools.buildLayeredImage {
         name = "control-server";
-        tag = version;
+        tag = taggedVersion;
         config.Cmd = [ "${control-server}/bin/control_server" "start" ];
       };
 
