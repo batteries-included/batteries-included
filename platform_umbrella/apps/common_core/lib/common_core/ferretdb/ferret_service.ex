@@ -73,8 +73,10 @@ defmodule CommonCore.FerretDB.FerretService do
 
     ferret_service
     |> cast(attrs, fields)
-    |> validate_required(@required_fields)
-    |> maybe_set_virtual_size(@presets)
+    |> maybe_fill_in_slug(:name)
     |> downcase_fields([:name])
+    |> maybe_set_virtual_size(@presets)
+    |> validate_dns_label(:name)
+    |> validate_required(@required_fields)
   end
 end

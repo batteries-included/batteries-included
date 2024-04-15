@@ -53,12 +53,12 @@ defmodule ControlServer.Factory do
     }
   end
 
-  def knative_container_factory do
-    %CommonCore.Services.Container{name: sequence("knative-container-"), image: "nginx:latest"}
+  def containers_container_factory do
+    %CommonCore.Containers.Container{name: sequence("knative-container-"), image: "nginx:latest"}
   end
 
-  def knative_env_value_factory do
-    %CommonCore.Services.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
+  def containers_env_value_factory do
+    %CommonCore.Containers.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
   end
 
   @spec knative_service_factory() :: CommonCore.Knative.Service.t()
@@ -67,8 +67,20 @@ defmodule ControlServer.Factory do
       name: sequence("knative-service-"),
       rollout_duration: sequence(:rollout_duration, ["10s", "1m", "2m", "10m", "20m", "30m"]),
       oauth2_proxy: sequence(:oauth2_proxy, [true, false]),
-      containers: [build(:knative_container)],
-      env_values: [build(:knative_env_value), build(:knative_env_value)]
+      containers: [build(:containers_container)],
+      env_values: [build(:containers_env_value), build(:containers_env_value)]
+    }
+  end
+
+  @spec knative_service_factory() :: CommonCore.Backend.Service.t()
+  def backend_service_factory do
+    %CommonCore.Backend.Service{
+      name: sequence("knative-service-"),
+      virtual_size: sequence(:virtual_size, ~w(tiny small medium large xlarge huge)),
+      kube_deployment_type: sequence(:kube_deployment_type, [:statefulset, :deployment]),
+      num_instances: sequence(:num_instances, [1, 2, 3, 4]),
+      containers: [build(:containers_container)],
+      env_values: [build(:containers_env_value), build(:containers_env_value)]
     }
   end
 

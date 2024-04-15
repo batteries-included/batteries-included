@@ -96,8 +96,10 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
       :virtual_size,
       :project_id
     ])
-    |> maybe_set_random_name()
+    |> maybe_fill_in_slug(:name)
+    |> downcase_fields([:name])
     |> maybe_set_virtual_size(@presets)
+    |> validate_dns_label(:name)
     |> validate_required([:name, :image, :storage_size])
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
@@ -140,17 +142,5 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
   def preset_options_for_select do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name})
-  end
-
-  defp maybe_set_random_name(%Ecto.Changeset{changes: %{name: _}} = c), do: c
-
-  defp maybe_set_random_name(%Ecto.Changeset{data: %{name: nil}} = changeset) do
-    put_change(changeset, :name, MnemonicSlugs.generate_slug())
-  end
-
-  defp maybe_set_random_name(%Ecto.Changeset{data: %{name: name}} = changeset) when is_bitstring(name), do: changeset
-
-  defp maybe_set_random_name(changeset) do
-    put_change(changeset, :name, MnemonicSlugs.generate_slug())
   end
 end

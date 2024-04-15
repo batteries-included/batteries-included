@@ -1,4 +1,4 @@
-defmodule CommonCore.Services.Container do
+defmodule CommonCore.Containers.Container do
   @moduledoc false
   use TypedEctoSchema
 
@@ -19,7 +19,7 @@ defmodule CommonCore.Services.Container do
     field :image, :string
     field :name, :string
 
-    embeds_many(:env_values, CommonCore.Services.EnvValue, on_replace: :delete)
+    embeds_many(:env_values, CommonCore.Containers.EnvValue, on_replace: :delete)
   end
 
   def changeset(struct, params \\ %{}) do

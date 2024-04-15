@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.BackendServicesTable
   import ControlServerWeb.EmptyHome
   import ControlServerWeb.KnativeServicesTable
   import KubeServices.SystemState.SummaryBatteries
@@ -15,6 +16,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
      socket
      |> assign_batteries()
      |> assign_knative_services()
+     |> assign_backend_services()
      |> assign_current_page()}
   end
 
@@ -24,6 +26,10 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   defp assign_knative_services(socket) do
     assign(socket, knative_services: knative_services())
+  end
+
+  defp assign_backend_services(socket) do
+    assign(socket, backend_services: backend_services())
   end
 
   defp assign_current_page(socket) do
@@ -42,6 +48,22 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
         </.flex>
       </:menu>
       <.knative_services_table rows={@services} abbridged />
+    </.panel>
+    """
+  end
+
+  defp backend_services_panel(assigns) do
+    ~H"""
+    <.panel title="Backend Services">
+      <:menu>
+        <.flex>
+          <.a navigate={~p"/backend_services/new"} variant="styled">
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Backend Service
+          </.a>
+          <.a navigate={~p"/backend_services/"}>View All</.a>
+        </.flex>
+      </:menu>
+      <.backend_services_table rows={@services} abbridged />
     </.panel>
     """
   end
@@ -81,6 +103,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
         <%= case battery.type do %>
           <% :knative -> %>
             <.knative_panel services={@knative_services} />
+          <% :backend_services -> %>
+            <.backend_services_panel services={@backend_services} />
           <% _ -> %>
         <% end %>
       <% end %>

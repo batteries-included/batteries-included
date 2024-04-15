@@ -7,14 +7,14 @@ defmodule ControlServer.PostgresTest do
 
   describe "clusters" do
     @valid_attrs %{
-      name: "some name",
+      name: "some-name",
       num_instances: 2,
       storage_size: 524_288_000,
       users: [%{username: "userone", roles: ["superuser"]}],
       database: %{name: "maindata", owner: "userone"}
     }
     @update_attrs %{
-      name: "some updated name",
+      name: "some-updated-name",
       num_instances: 3,
       storage_size: 209_715_200,
       users: [
@@ -48,7 +48,7 @@ defmodule ControlServer.PostgresTest do
 
     test "create_cluster/1 with valid data creates a cluster" do
       assert {:ok, %Cluster{} = cluster} = Postgres.create_cluster(@valid_attrs)
-      assert cluster.name == "some name"
+      assert cluster.name == "some-name"
       assert cluster.num_instances == 2
       assert cluster.storage_size == 524_288_000
       assert [%PGUser{username: "userone", roles: ["superuser"], password: _}] = cluster.users
@@ -61,7 +61,7 @@ defmodule ControlServer.PostgresTest do
     test "update_cluster/2 with valid data updates the cluster" do
       cluster = cluster_fixture()
       assert {:ok, %Cluster{} = cluster} = Postgres.update_cluster(cluster, @update_attrs)
-      assert cluster.name == "some updated name"
+      assert cluster.name == "some-updated-name"
       assert cluster.num_instances == 3
       assert cluster.storage_size == 209_715_200
     end

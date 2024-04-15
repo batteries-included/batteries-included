@@ -1,9 +1,9 @@
-defmodule ControlServerWeb.Knative.ContainerModal do
+defmodule ControlServerWeb.Containers.ContainerModal do
   @moduledoc false
 
   use ControlServerWeb, :live_component
 
-  alias CommonCore.Services.Container
+  alias CommonCore.Containers.Container
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent
@@ -12,16 +12,34 @@ defmodule ControlServerWeb.Knative.ContainerModal do
   end
 
   @impl Phoenix.LiveComponent
-  def update(%{container: container, idx: idx} = assigns, socket) do
+  def update(%{container: container, idx: idx, update_func: update_func, id: id} = _assigns, socket) do
     {:ok,
      socket
-     |> assign(assigns)
+     |> assign_id(id)
+     |> assign_idx(idx)
+     |> assign_container(container)
      |> assign_changeset(Container.changeset(container, %{}))
-     |> assign(idx: idx)}
+     |> assign_update_func(update_func)}
+  end
+
+  defp assign_id(socket, id) do
+    assign(socket, id: id)
+  end
+
+  defp assign_idx(socket, idx) do
+    assign(socket, idx: idx)
+  end
+
+  defp assign_container(socket, container) do
+    assign(socket, container: container)
   end
 
   defp assign_changeset(socket, changeset) do
     assign(socket, changeset: changeset, form: to_form(changeset))
+  end
+
+  defp assign_update_func(socket, update_func) do
+    assign(socket, update_func: update_func)
   end
 
   @impl Phoenix.LiveComponent
@@ -37,14 +55,18 @@ defmodule ControlServerWeb.Knative.ContainerModal do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("save_container", %{"container" => params}, %{assigns: %{container: container, idx: idx}} = socket) do
+  def handle_event(
+        "save_container",
+        %{"container" => params},
+        %{assigns: %{container: container, idx: idx, update_func: update_func}} = socket
+      ) do
     # Create a new changeset for the container
     changeset = Container.changeset(container, params)
-    # Get the resulting container from the changeset
-    container = Changeset.apply_changes(changeset)
 
     if changeset.valid? do
-      ControlServerWeb.Live.Knative.FormComponent.update_container(container, idx)
+      # Get the resulting container from the changeset
+      container = Changeset.apply_changes(changeset)
+      update_func.(container, idx)
     end
 
     {:noreply, assign_changeset(socket, changeset)}

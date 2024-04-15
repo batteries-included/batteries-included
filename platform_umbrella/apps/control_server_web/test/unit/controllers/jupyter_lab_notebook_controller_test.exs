@@ -20,7 +20,7 @@ defmodule ControlServerWeb.JupyterLabNotebookControllerTest do
 
   describe "create jupyter_lab_notebook" do
     test "renders jupyter_lab_notebook when data is valid", %{conn: conn} do
-      create_attrs = params_for(:jupyter_lab_notebook, name: "some name")
+      create_attrs = params_for(:jupyter_lab_notebook, name: "some-name")
       conn = post(conn, ~p"/api/notebooks/jupyter_lab_notebooks", jupyter_lab_notebook: create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
@@ -29,7 +29,7 @@ defmodule ControlServerWeb.JupyterLabNotebookControllerTest do
       assert %{
                "id" => ^id,
                "image" => _,
-               "name" => "some name"
+               "name" => "some-name"
              } = json_response(conn, 200)["data"]
     end
 
@@ -46,7 +46,7 @@ defmodule ControlServerWeb.JupyterLabNotebookControllerTest do
       conn: conn,
       jupyter_lab_notebook: %JupyterLabNotebook{id: id} = jupyter_lab_notebook
     } do
-      update_attrs = params_for(:jupyter_lab_notebook, name: "some updated name", image: "some updated image")
+      update_attrs = params_for(:jupyter_lab_notebook, name: "some-updated-name", image: "some-updated-image:latest")
 
       conn =
         put(conn, ~p"/api/notebooks/jupyter_lab_notebooks/#{jupyter_lab_notebook}", jupyter_lab_notebook: update_attrs)
@@ -57,8 +57,8 @@ defmodule ControlServerWeb.JupyterLabNotebookControllerTest do
 
       assert %{
                "id" => ^id,
-               "image" => "some updated image",
-               "name" => "some updated name"
+               "image" => "some-updated-image:latest",
+               "name" => "some-updated-name"
              } = json_response(conn, 200)["data"]
     end
 

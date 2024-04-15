@@ -4,7 +4,7 @@ defmodule ControlServer.ClusterFixtures do
     {:ok, cluster} =
       override_attrs
       |> Enum.into(%{
-        name: Ecto.UUID.generate(),
+        name: MnemonicSlugs.generate_slug(4),
         num_instances: 3,
         virtual_size: "small",
         type: :standard,

@@ -28,7 +28,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
 
   describe "create cluster" do
     test "renders cluster when data is valid", %{conn: conn} do
-      attrs = params_for(:postgres_cluster, name: "some name")
+      attrs = params_for(:postgres_cluster, name: "some-name")
       conn = post(conn, ~p"/api/postgres/clusters", cluster: attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -40,7 +40,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
                "cpu_limits" => _,
                "cpu_requested" => _,
                "memory_limits" => _,
-               "name" => "some name",
+               "name" => "some-name",
                "num_instances" => _,
                "storage_size" => _,
                "type" => _
@@ -57,7 +57,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
     setup [:create_cluster]
 
     test "renders cluster when data is valid", %{conn: conn, cluster: %Cluster{id: id} = cluster} do
-      update_attrs = params_for(:postgres_cluster, name: "some updated name")
+      update_attrs = params_for(:postgres_cluster, name: "some-updated-name")
       conn = put(conn, ~p"/api/postgres/clusters/#{cluster}", cluster: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
@@ -69,7 +69,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
                "cpu_limits" => _,
                "cpu_requested" => _,
                "memory_limits" => _,
-               "name" => "some updated name",
+               "name" => "some-updated-name",
                "num_instances" => _,
                "storage_size" => _,
                "type" => _
@@ -77,7 +77,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, cluster: %Cluster{id: id} = cluster} do
-      update_attrs = params_for(:postgres_cluster, name: "some updated name")
+      update_attrs = params_for(:postgres_cluster, name: "another-updated-name")
       conn = put(conn, ~p"/api/postgres/clusters/#{cluster}", cluster: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

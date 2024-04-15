@@ -10,7 +10,7 @@ defmodule ControlServer.FerretDBFixtures do
   def ferret_service_fixture(attrs \\ %{}) do
     {:ok, cluster} =
       ControlServer.Postgres.create_cluster(%{
-        name: Ecto.UUID.generate(),
+        name: MnemonicSlugs.generate_slug(3),
         num_instances: 1,
         virtual_size: "tiny",
         users: [%{username: "userone", roles: ["superuser"]}],
@@ -20,7 +20,7 @@ defmodule ControlServer.FerretDBFixtures do
     {:ok, ferret_service} =
       attrs
       |> Enum.into(%{
-        name: Ecto.UUID.generate(),
+        name: MnemonicSlugs.generate_slug(3),
         virtual_size: nil,
         postgres_cluster_id: cluster.id,
         cpu_limits: 42,

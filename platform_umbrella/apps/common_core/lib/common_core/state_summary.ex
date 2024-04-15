@@ -35,6 +35,7 @@ defmodule CommonCore.StateSummary do
     embeds_many :redis_clusters, CommonCore.Redis.FailoverCluster
     embeds_many :notebooks, CommonCore.Notebooks.JupyterLabNotebook
     embeds_many :knative_services, CommonCore.Knative.Service
+    embeds_many :backend_services, CommonCore.Backend.Service
     embeds_many :ip_address_pools, CommonCore.MetalLB.IPAddressPool
     embeds_many :projects, CommonCore.Projects.Project
 
@@ -54,6 +55,7 @@ defmodule CommonCore.StateSummary do
     |> cast_embed(:redis_clusters)
     |> cast_embed(:notebooks)
     |> cast_embed(:knative_services)
+    |> cast_embed(:backend_services)
     |> cast_embed(:ip_address_pools)
     |> cast_embed(:projects)
     |> validate_required(@required_fields)

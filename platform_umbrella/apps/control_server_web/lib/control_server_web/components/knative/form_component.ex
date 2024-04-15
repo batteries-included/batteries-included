@@ -2,13 +2,14 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  import ControlServerWeb.Knative.ContainersPanel
-  import ControlServerWeb.Knative.EnvValuePanel
+  import ControlServerWeb.Containers.ContainersPanel
+  import ControlServerWeb.Containers.EnvValuePanel
+  import ControlServerWeb.Containers.HiddenForms
   import KubeServices.SystemState.SummaryHosts
 
+  alias CommonCore.Containers.Container
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.Knative.Service
-  alias CommonCore.Services.Container
-  alias CommonCore.Services.EnvValue
   alias ControlServer.Knative
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryBatteries
@@ -22,7 +23,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      |> assign_new(:sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
      |> assign_container(nil)
      |> assign_container_idx(nil)
-     |> assign_env_value(nil)}
+     |> assign_env_value(nil)
+     |> assign_env_value_idx(nil)}
   end
 
   @spec update_container(Container.t() | nil, integer | nil) :: :ok
@@ -239,39 +241,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     end
   end
 
-  defp env_values_inputs(assigns) do
-    ~H"""
-    <.inputs_for :let={env_value} field={@field}>
-      <.single_env_value_hidden form={env_value} />
-    </.inputs_for>
-    """
-  end
-
-  defp single_env_value_hidden(assigns) do
-    ~H"""
-    <.input type="hidden" field={@form[:name]} />
-    <.input type="hidden" field={@form[:value]} />
-    <.input type="hidden" field={@form[:source_type]} />
-    <.input type="hidden" field={@form[:source_name]} />
-    <.input type="hidden" field={@form[:source_key]} />
-    <.input type="hidden" field={@form[:source_optional]} />
-    """
-  end
-
-  defp containers_hidden_form(assigns) do
-    ~H"""
-    <.inputs_for :let={f_nested} field={@field}>
-      <.input type="hidden" field={f_nested[:name]} />
-      <.input type="hidden" field={f_nested[:image]} />
-      <.input type="hidden" field={f_nested[:command]} multiple={true} />
-      <.input type="hidden" field={f_nested[:args]} multiple={true} />
-      <.inputs_for :let={env_nested} field={f_nested[:env_values]}>
-        <.single_env_value_hidden form={env_nested} />
-      </.inputs_for>
-    </.inputs_for>
-    """
-  end
-
   defp advanced_setting_panel(assigns) do
     ~H"""
     <.panel title="Advanced Settings" variant="gray">
@@ -318,7 +287,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             Save Serverless
           </.button>
         </.page_header>
-        <.grid columns={[sm: 1, md: 2]}>
+        <.grid columns={[sm: 1, lg: 2]}>
           <.name_panel form={@form} />
           <.url_panel url={@url} />
           <.containers_panel
@@ -331,13 +300,14 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           <!-- Hidden inputs for embeds -->
           <.containers_hidden_form field={@form[:containers]} />
           <.containers_hidden_form field={@form[:init_containers]} />
-          <.env_values_inputs field={@form[:env_values]} />
+          <.env_values_hidden_form field={@form[:env_values]} />
         </.grid>
       </.form>
 
       <.live_component
         :if={@container}
-        module={ControlServerWeb.Knative.ContainerModal}
+        module={ControlServerWeb.Containers.ContainerModal}
+        update_func={&update_container/2}
         container={@container}
         idx={@container_idx}
         id="container-form-modal"
@@ -345,7 +315,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
       <.live_component
         :if={@env_value}
-        module={ControlServerWeb.Knative.EnvValueModal}
+        module={ControlServerWeb.Containers.EnvValueModal}
+        update_func={&update_env_value/2}
         env_value={@env_value}
         idx={@env_value_idx}
         id="env_value-form-modal"

@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.KNativeServiceJSON do
+  alias CommonCore.Containers.Container
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.Knative.Service
-  alias CommonCore.Services.Container
-  alias CommonCore.Services.EnvValue
 
   @doc """
   Renders a list of services.

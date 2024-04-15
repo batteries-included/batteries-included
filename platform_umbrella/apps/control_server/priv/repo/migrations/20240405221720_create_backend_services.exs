@@ -10,6 +10,16 @@ defmodule ControlServer.Repo.Migrations.CreateBackendServices do
       add :init_containers, :map
       add :env_values, :map
 
+      add :kube_deployment_type, :string
+      add :num_instances, :integer
+
+      add :storage_size, :bigint
+      add :storage_class, :string
+      add :cpu_requested, :bigint
+      add :cpu_limits, :integer
+      add :memory_requested, :bigint
+      add :memory_limits, :bigint
+
       timestamps()
     end
 

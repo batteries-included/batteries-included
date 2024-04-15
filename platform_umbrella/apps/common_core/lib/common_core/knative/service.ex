@@ -18,9 +18,9 @@ defmodule CommonCore.Knative.Service do
     field :oauth2_proxy, :boolean, default: false
     field :kube_internal, :boolean, default: false
 
-    embeds_many(:containers, CommonCore.Services.Container, on_replace: :delete)
-    embeds_many(:init_containers, CommonCore.Services.Container, on_replace: :delete)
-    embeds_many(:env_values, CommonCore.Services.EnvValue, on_replace: :delete)
+    embeds_many(:containers, CommonCore.Containers.Container, on_replace: :delete)
+    embeds_many(:init_containers, CommonCore.Containers.Container, on_replace: :delete)
+    embeds_many(:env_values, CommonCore.Containers.EnvValue, on_replace: :delete)
     timestamps()
   end
 
@@ -28,12 +28,14 @@ defmodule CommonCore.Knative.Service do
   def changeset(struct, attrs) do
     struct
     |> cast(attrs, Enum.concat(@required_fields, @optional_fields))
-    |> validate_required(@required_fields)
+    |> maybe_fill_in_slug(:name)
     |> downcase_fields([:name])
-    |> unique_constraint(:name)
     |> cast_embed(:containers)
     |> cast_embed(:init_containers)
     |> cast_embed(:env_values)
+    |> validate_dns_label(:name)
+    |> unique_constraint(:name)
+    |> validate_required(@required_fields)
   end
 
   def validate(params) do

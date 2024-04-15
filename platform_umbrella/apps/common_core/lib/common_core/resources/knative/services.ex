@@ -2,9 +2,9 @@ defmodule CommonCore.Resources.KnativeServices do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
 
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.Knative.Service
   alias CommonCore.Resources.Builder, as: B
-  alias CommonCore.Services.EnvValue
 
   def serving_service(%Service{} = service, battery, _state) do
     template =

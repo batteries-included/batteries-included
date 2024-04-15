@@ -110,6 +110,8 @@ defmodule CommonCore.Postgres.Cluster do
       :virtual_storage_size_range_value,
       :project_id
     ])
+    |> maybe_fill_in_slug(:name)
+    |> downcase_fields([:name])
     |> maybe_set_virtual_size(@presets)
     |> maybe_set_storage_size_slider_value()
     |> cast_embed(:users)
@@ -120,11 +122,11 @@ defmodule CommonCore.Postgres.Cluster do
       :num_instances,
       :type
     ])
+    |> validate_dns_label(:name)
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_limits_options())
-    |> downcase_fields([:name])
     |> validate_length(:name, min: 1, max: 128)
     |> unique_constraint([:type, :name])
     |> foreign_key_constraint(:project_id)

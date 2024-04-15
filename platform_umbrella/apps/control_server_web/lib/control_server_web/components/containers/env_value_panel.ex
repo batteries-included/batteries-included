@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Knative.EnvValuePanel do
+defmodule ControlServerWeb.Containers.EnvValuePanel do
   @moduledoc false
   use ControlServerWeb, :html
 
@@ -34,7 +34,7 @@ defmodule ControlServerWeb.Knative.EnvValuePanel do
     <.panel title="Environment Variables" class="lg:col-span-2">
       <:menu>
         <.button icon={:plus} phx-click="new_env_value" phx-target={@target}>
-          Variable
+          Add Variable
         </.button>
       </:menu>
 

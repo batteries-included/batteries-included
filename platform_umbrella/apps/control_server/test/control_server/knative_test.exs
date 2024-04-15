@@ -25,7 +25,7 @@ defmodule ControlServer.KnativeTest do
     end
 
     test "create_service/1 with valid data creates a service" do
-      valid_attrs = %{name: "some name", image: "some-image"}
+      valid_attrs = %{name: "some-name", image: "some-image"}
 
       assert {:ok, %Service{} = service} = Knative.create_service(valid_attrs)
       assert service.name == valid_attrs.name
@@ -38,10 +38,10 @@ defmodule ControlServer.KnativeTest do
 
     test "update_service/2 with valid data updates the service" do
       service = service_fixture()
-      update_attrs = %{name: "some updated name"}
+      update_attrs = %{name: "some-updated-name"}
 
       assert {:ok, %Service{} = service} = Knative.update_service(service, update_attrs)
-      assert service.name == "some updated name"
+      assert service.name == "some-updated-name"
     end
 
     test "update_service/2 with invalid data returns error changeset" do

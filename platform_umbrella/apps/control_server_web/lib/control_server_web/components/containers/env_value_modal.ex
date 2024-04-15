@@ -1,10 +1,10 @@
-defmodule ControlServerWeb.Knative.EnvValueModal do
+defmodule ControlServerWeb.Containers.EnvValueModal do
   @moduledoc false
   use ControlServerWeb, :live_component
 
   import CommonCore.Resources.FieldAccessors
 
-  alias CommonCore.Services.EnvValue
+  alias CommonCore.Containers.EnvValue
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent
@@ -13,14 +13,32 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
   end
 
   @impl Phoenix.LiveComponent
-  def update(%{env_value: env_value, idx: idx} = assigns, socket) do
+  def update(%{env_value: env_value, idx: idx, update_func: update_func, id: id} = _assigns, socket) do
     {:ok,
      socket
-     |> assign(assigns)
-     |> assign_configs()
-     |> assign_secrets()
+     |> assign_id(id)
+     |> assign_idx(idx)
+     |> assign_env_value(env_value)
      |> assign_changeset(EnvValue.changeset(env_value, %{}))
-     |> assign(idx: idx)}
+     |> assign_update_func(update_func)
+     |> assign_configs()
+     |> assign_secrets()}
+  end
+
+  defp assign_id(socket, id) do
+    assign(socket, id: id)
+  end
+
+  defp assign_idx(socket, idx) do
+    assign(socket, idx: idx)
+  end
+
+  defp assign_update_func(socket, update_func) do
+    assign(socket, update_func: update_func)
+  end
+
+  defp assign_env_value(socket, env_value) do
+    assign(socket, env_value: env_value)
   end
 
   defp assign_changeset(socket, changeset) do
@@ -63,13 +81,17 @@ defmodule ControlServerWeb.Knative.EnvValueModal do
     {:noreply, assign_changeset(socket, changeset)}
   end
 
-  def handle_event("save_env_value", %{"env_value" => params}, %{assigns: %{env_value: env_value, idx: idx}} = socket) do
+  def handle_event(
+        "save_env_value",
+        %{"env_value" => params},
+        %{assigns: %{env_value: env_value, idx: idx, update_func: update_func}} = socket
+      ) do
     changeset = EnvValue.changeset(env_value, params)
 
     if changeset.valid? do
       new_env_value = Changeset.apply_changes(changeset)
 
-      ControlServerWeb.Live.Knative.FormComponent.update_env_value(new_env_value, idx)
+      update_func.(new_env_value, idx)
     end
 
     {:noreply, assign_changeset(socket, changeset)}

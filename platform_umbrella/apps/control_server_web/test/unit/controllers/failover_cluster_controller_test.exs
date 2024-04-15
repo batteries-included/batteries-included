@@ -25,7 +25,7 @@ defmodule ControlServerWeb.FailoverClusterControllerTest do
 
   describe "create failover_cluster" do
     test "renders failover_cluster when data is valid", %{conn: conn} do
-      attrs = params_for(:redis_cluster, name: "some name")
+      attrs = params_for(:redis_cluster, name: "some-name")
       conn = post(conn, ~p"/api/redis/clusters", failover_cluster: attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -37,7 +37,7 @@ defmodule ControlServerWeb.FailoverClusterControllerTest do
                "cpu_requested" => _,
                "memory_limits" => _,
                "memory_requested" => _,
-               "name" => "some name",
+               "name" => "some-name",
                "num_redis_instances" => _,
                "num_sentinel_instances" => _,
                "type" => _
@@ -57,7 +57,7 @@ defmodule ControlServerWeb.FailoverClusterControllerTest do
       conn: conn,
       failover_cluster: %FailoverCluster{id: id} = failover_cluster
     } do
-      update_attrs = params_for(:redis_cluster, name: "some updated name")
+      update_attrs = params_for(:redis_cluster, name: "some-updated-name")
       conn = put(conn, ~p"/api/redis/clusters/#{failover_cluster}", failover_cluster: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
@@ -68,7 +68,7 @@ defmodule ControlServerWeb.FailoverClusterControllerTest do
                "cpu_requested" => _,
                "memory_limits" => _,
                "memory_requested" => _,
-               "name" => "some updated name",
+               "name" => "some-updated-name",
                "num_redis_instances" => _,
                "num_sentinel_instances" => _,
                "type" => _

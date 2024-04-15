@@ -1,17 +1,18 @@
-defmodule ControlServerWeb.Knative.ContainersPanel do
+defmodule ControlServerWeb.Containers.ContainersPanel do
   @moduledoc false
   use ControlServerWeb, :html
 
   attr :containers, :list, default: []
   attr :init_containers, :list, default: []
   attr :target, :any, default: nil
+  attr :id, :string, default: "container-panel"
 
   def containers_panel(assigns) do
     ~H"""
-    <.panel title="Containers">
+    <.panel title="Containers" id={@id}>
       <:menu>
         <.button icon={:plus} phx-click="new_container" phx-target={@target}>
-          Container
+          Add Container
         </.button>
       </:menu>
       <.table rows={Enum.with_index(@containers ++ @init_containers)}>

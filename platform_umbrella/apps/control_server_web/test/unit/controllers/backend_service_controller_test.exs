@@ -6,13 +6,13 @@ defmodule ControlServerWeb.BackendServiceControllerTest do
   alias CommonCore.Backend.Service
 
   @create_attrs %{
-    name: "some name",
+    name: "some-name",
     containers: [],
     init_containers: [],
     env_values: []
   }
   @update_attrs %{
-    name: "some updated name",
+    name: "some-updated-name",
     containers: [],
     init_containers: [],
     env_values: []
@@ -42,7 +42,7 @@ defmodule ControlServerWeb.BackendServiceControllerTest do
                "containers" => [],
                "env_values" => [],
                "init_containers" => [],
-               "name" => "some name"
+               "name" => "some-name"
              } = json_response(conn, 200)["data"]
     end
 
@@ -66,7 +66,7 @@ defmodule ControlServerWeb.BackendServiceControllerTest do
                "containers" => [],
                "env_values" => [],
                "init_containers" => [],
-               "name" => "some updated name"
+               "name" => "some-updated-name"
              } = json_response(conn, 200)["data"]
     end
 

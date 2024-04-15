@@ -11,7 +11,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.Chart
   import ControlServerWeb.ConditionsDisplay
-  import ControlServerWeb.Knative.EnvValuePanel
+  import ControlServerWeb.Containers.EnvValuePanel
 
   alias CommonCore.Resources.OwnerReference
   alias ControlServer.Knative

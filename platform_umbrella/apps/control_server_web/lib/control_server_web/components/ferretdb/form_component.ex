@@ -26,7 +26,7 @@ defmodule ControlServerWeb.FerretDBFormComponent do
           </.button>
         </.page_header>
         <.panel>
-          <.grid columns={[sm: 1, md: 2]}>
+          <.grid columns={[sm: 1, lg: 2]}>
             <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
             <.input
               field={@form[:postgres_cluster_id]}

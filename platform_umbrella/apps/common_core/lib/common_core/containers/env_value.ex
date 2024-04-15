@@ -1,4 +1,4 @@
-defmodule CommonCore.Services.EnvValue do
+defmodule CommonCore.Containers.EnvValue do
   @moduledoc false
   use TypedEctoSchema
 

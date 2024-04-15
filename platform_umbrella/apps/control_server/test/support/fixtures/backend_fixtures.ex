@@ -14,6 +14,7 @@ defmodule ControlServer.BackendFixtures do
         containers: [],
         env_values: [],
         init_containers: [],
+        virtural_size: "medium",
         name: "some-name"
       })
       |> ControlServer.Backend.create_service()

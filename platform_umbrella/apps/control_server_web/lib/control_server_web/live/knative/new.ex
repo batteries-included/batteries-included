@@ -24,15 +24,6 @@ defmodule ControlServerWeb.Live.KnativeNew do
     {:noreply, socket}
   end
 
-  def update(%{service: service} = assigns, socket) do
-    changeset = Knative.change_service(service)
-
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:changeset, changeset)}
-  end
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""

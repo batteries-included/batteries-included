@@ -1,7 +1,7 @@
 defmodule ControlServerWeb.BackendServiceJSON do
   alias CommonCore.Backend.Service
-  alias CommonCore.Services.Container
-  alias CommonCore.Services.EnvValue
+  alias CommonCore.Containers.Container
+  alias CommonCore.Containers.EnvValue
 
   @doc """
   Renders a list of backend_services.

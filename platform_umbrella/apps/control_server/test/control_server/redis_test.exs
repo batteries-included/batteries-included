@@ -8,7 +8,7 @@ defmodule ControlServer.RedisTest do
     import ControlServer.RedisFixtures
 
     @invalid_attrs %{
-      name: nil,
+      name: "111111111111____",
       num_redis_instances: nil,
       num_sentinel_instances: nil
     }
@@ -26,14 +26,14 @@ defmodule ControlServer.RedisTest do
     test "create_failover_cluster/1 with valid data creates a failover_cluster" do
       valid_attrs = %{
         memory_request: "some memory_request",
-        name: "some name",
+        name: "some-name",
         num_redis_instances: 42,
         num_sentinel_instances: 42
       }
 
       assert {:ok, %FailoverCluster{} = failover_cluster} = Redis.create_failover_cluster(valid_attrs)
 
-      assert failover_cluster.name == "some name"
+      assert failover_cluster.name == "some-name"
       assert failover_cluster.num_redis_instances == 42
       assert failover_cluster.num_sentinel_instances == 42
     end
@@ -46,14 +46,14 @@ defmodule ControlServer.RedisTest do
       failover_cluster = failover_cluster_fixture()
 
       update_attrs = %{
-        name: "some updated name",
+        name: "some-updated-name",
         num_redis_instances: 43,
         num_sentinel_instances: 43
       }
 
       assert {:ok, %FailoverCluster{} = failover_cluster} = Redis.update_failover_cluster(failover_cluster, update_attrs)
 
-      assert failover_cluster.name == "some updated name"
+      assert failover_cluster.name == "some-updated-name"
       assert failover_cluster.num_redis_instances == 43
       assert failover_cluster.num_sentinel_instances == 43
     end

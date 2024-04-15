@@ -12,19 +12,31 @@ defmodule ControlServer.BackendTest do
 
     test "list_backend_services/0 returns all backend_services" do
       service = service_fixture()
-      assert Backend.list_backend_services() == [service]
+      assert 1 == length(Backend.list_backend_services())
+      [found] = Backend.list_backend_services()
+
+      assert found.name == service.name
+      assert found.containers == service.containers
+      assert found.init_containers == service.init_containers
+      assert found.env_values == service.env_values
     end
 
     test "get_service!/1 returns the service with given id" do
       service = service_fixture()
-      assert Backend.get_service!(service.id) == service
+      found = Backend.get_service!(service.id)
+      assert found != nil
+      assert found.name == service.name
+      assert found.containers == service.containers
+      assert found.init_containers == service.init_containers
+      assert found.env_values == service.env_values
+      assert found.num_instances == service.num_instances
     end
 
     test "create_service/1 with valid data creates a service" do
-      valid_attrs = %{name: "some name", containers: [], init_containers: [], env_values: []}
+      valid_attrs = %{name: "some-name", containers: [], init_containers: [], env_values: []}
 
       assert {:ok, %Service{} = service} = Backend.create_service(valid_attrs)
-      assert service.name == "some name"
+      assert service.name == "some-name"
       assert service.containers == []
       assert service.init_containers == []
       assert service.env_values == []
@@ -36,10 +48,10 @@ defmodule ControlServer.BackendTest do
 
     test "update_service/2 with valid data updates the service" do
       service = service_fixture()
-      update_attrs = %{name: "some updated name", containers: [], init_containers: [], env_values: []}
+      update_attrs = %{name: "some-updated-name", containers: [], init_containers: [], env_values: []}
 
       assert {:ok, %Service{} = service} = Backend.update_service(service, update_attrs)
-      assert service.name == "some updated name"
+      assert service.name == "some-updated-name"
       assert service.containers == []
       assert service.init_containers == []
       assert service.env_values == []
@@ -48,7 +60,8 @@ defmodule ControlServer.BackendTest do
     test "update_service/2 with invalid data returns error changeset" do
       service = service_fixture()
       assert {:error, %Ecto.Changeset{}} = Backend.update_service(service, @invalid_attrs)
-      assert service == Backend.get_service!(service.id)
+      expected = Map.delete(service, :virtual_size)
+      assert expected == service.id |> Backend.get_service!() |> Map.delete(:virtual_size)
     end
 
     test "delete_service/1 deletes the service" do

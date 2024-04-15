@@ -87,8 +87,10 @@ defmodule CommonCore.Util.EctoValidations do
   """
   @spec maybe_set_virtual_size(Ecto.Changeset.t(), list(map())) :: any()
   def maybe_set_virtual_size(changeset, presets) do
+    virtual_size = get_field(changeset, :virtual_size)
+
     changeset
-    |> apply_preset(get_field(changeset, :virtual_size), presets)
+    |> apply_preset(virtual_size, presets)
     |> maybe_deduce_virtual_size(presets)
   end
 
@@ -144,5 +146,28 @@ defmodule CommonCore.Util.EctoValidations do
       {k, v}, acc ->
         put_change(acc, k, v)
     end)
+  end
+
+  def maybe_fill_in_slug(changeset, field, opts \\ [length: 3]) do
+    length = Keyword.get(opts, :length, 3)
+
+    case get_field(changeset, field) do
+      nil ->
+        put_change(changeset, field, MnemonicSlugs.generate_slug(length))
+
+      "" ->
+        put_change(changeset, field, MnemonicSlugs.generate_slug(length))
+
+      _ ->
+        changeset
+    end
+  end
+
+  def validate_dns_label(changeset, field) do
+    changeset
+    |> validate_format(field, ~r/^[a-z][a-z0-9-]*$/,
+      message: "must start with a letter and only contain alphanumerics and hyphens"
+    )
+    |> validate_length(field, min: 1, max: 63, message: "must be between 1 and 63 characters")
   end
 end

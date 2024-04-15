@@ -73,10 +73,13 @@ defmodule CommonCore.Redis.FailoverCluster do
 
     failover_cluster
     |> cast(attrs, fields)
+    |> maybe_fill_in_slug(:name)
+    |> downcase_fields([:name])
+    |> maybe_set_virtual_size(@presets)
     |> validate_required(@required_fields)
+    |> validate_dns_label(:name)
     |> unique_constraint([:type, :name])
     |> foreign_key_constraint(:project_id)
-    |> maybe_set_virtual_size(@presets)
   end
 
   def validate(params) do
