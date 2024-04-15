@@ -11,6 +11,7 @@
       version = "0.12.0";
       taggedVersion = "0.12.0-${safeRev}";
       beam = pkgs.beam;
+      tini = pkgs.tini;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
 
@@ -95,19 +96,28 @@
       kube-bootstrap-container = pkgs.dockerTools.buildLayeredImage {
         name = "kube-bootstrap";
         tag = taggedVersion;
-        config.Cmd = [ "${kube-bootstrap}/bin/kube_bootstrap" "start" ];
+        config = {
+          Entrypoint = [ "${tini}/bin/tini" "--" ];
+          Cmd = [ "${kube-bootstrap}/bin/kube_bootstrap" "start" ];
+        };
       };
 
       home-base-container = pkgs.dockerTools.buildLayeredImage {
         name = "home-base";
         tag = taggedVersion;
-        config.Cmd = [ "${home-base}/bin/home_base" "start" ];
+        config = {
+          Entrypoint = [ "${tini}/bin/tini" "--" ];
+          Cmd = [ "${home-base}/bin/home_base" "start" ];
+        };
       };
 
       control-server-container = pkgs.dockerTools.buildLayeredImage {
         name = "control-server";
         tag = taggedVersion;
-        config.Cmd = [ "${control-server}/bin/control_server" "start" ];
+        config = {
+          Entrypoint = [ "${tini}/bin/tini" "--" ];
+          Cmd = [ "${control-server}/bin/control_server" "start" ];
+        };
       };
 
       credo = pkgs.callPackage ./mix-command.nix {
