@@ -33,5 +33,11 @@ func StartInstall(ctx context.Context, url string) error {
 		return err
 	}
 
+	slog.Debug("writing state summary to cluster")
+	err = env.Spec.WriteSummaryToKube(kubeClient)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
