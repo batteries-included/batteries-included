@@ -6,18 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"net/netip"
-	"os"
 	"slices"
 
-	"bi/cmd/cmdutil"
 	"bi/pkg/cluster"
 	"bi/pkg/docker"
 	"bi/pkg/specs"
-	"bi/pkg/wireguard"
 )
 
-func (env *InstallEnv) StartKubeProvider() error {
+func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
 	slog.Debug("starting provider")
 
 	var err error
@@ -47,10 +43,14 @@ func (env *InstallEnv) StartKubeProvider() error {
 		return fmt.Errorf("error writing summary after provider start: %w", err)
 	}
 
-	err = env.WriteKubeConfig(true)
-	if err != nil {
+	if err := env.WriteKubeConfig(ctx, true); err != nil {
 		return fmt.Errorf("error writing kubeconfig after provider start: %w", err)
 	}
+
+	if err := env.WriteWireGuardConfig(ctx, true); err != nil {
+		return fmt.Errorf("error writing wireguard config after provider start: %w", err)
+	}
+
 	return nil
 }
 
@@ -99,10 +99,6 @@ func (env *InstallEnv) startAWS() error {
 	}
 
 	if err := env.configureKarpenterBattery(parsed); err != nil {
-		return err
-	}
-
-	if err := saveWireGuardClientConfig(parsed); err != nil {
 		return err
 	}
 
@@ -172,42 +168,6 @@ func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
 	return nil
 }
 
-func saveWireGuardClientConfig(outputs *eksOutputs) error {
-	gwEndpoint := netip.AddrPortFrom(netip.MustParseAddr(outputs.Gateway["publicIP"].Value.(string)),
-		uint16(outputs.Gateway["publicPort"].Value.(float64)))
-
-	gw := wireguard.Gateway{
-		PrivateKey: outputs.Gateway["wgGatewayPrivateKey"].Value.(string),
-		Address:    netip.MustParseAddr(outputs.Gateway["wgGatewayAddress"].Value.(string)),
-		Endpoint:   gwEndpoint,
-	}
-
-	installerClient := wireguard.Client{
-		Gateway:    &gw,
-		Name:       "installer",
-		PrivateKey: outputs.Gateway["wgClientPrivateKey"].Value.(string),
-		Address:    netip.MustParseAddr(outputs.Gateway["wgClientAddress"].Value.(string)),
-	}
-
-	// Write the wireguard config for the installer client.
-	wireGuardConfigPath, err := cmdutil.DefaultWireGuardConfigPath()
-	if err != nil {
-		return fmt.Errorf("error getting wireguard config path: %w", err)
-	}
-
-	wireGuardConfigFile, err := os.OpenFile(wireGuardConfigPath, os.O_CREATE|os.O_WRONLY, 0o400)
-	if err != nil {
-		return fmt.Errorf("error opening wireguard config file: %w", err)
-	}
-	defer wireGuardConfigFile.Close()
-
-	if err := installerClient.WriteConfig(wireGuardConfigFile); err != nil {
-		return fmt.Errorf("error writing wireguard config: %w", err)
-	}
-
-	return nil
-}
-
 func (env *InstallEnv) tryAddMetalIPs() error {
 	net, err := docker.GetMetalLBIPs()
 	if err == nil {
@@ -246,8 +206,7 @@ func (env *InstallEnv) StopKubeProvider() error {
 
 func (env *InstallEnv) stopLocal() error {
 	slog.Debug("Stopping kind cluster")
-	env.kindClusterProvider.EnsureDeleted()
-	return nil
+	return env.kindClusterProvider.EnsureDeleted()
 }
 
 func (env *InstallEnv) stopAws() error {

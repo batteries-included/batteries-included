@@ -14,8 +14,6 @@ var debugCmd = &cobra.Command{
 	Short: "Utilities for debugging",
 	Long: `Tools to help debugging the current state of 
 	an installation of batteries included`,
-	Run: func(cmd *cobra.Command, args []string) {
-	},
 }
 
 func init() {

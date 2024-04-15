@@ -1,14 +1,15 @@
 package stop
 
 import (
+	"context"
 	"log/slog"
 
 	"bi/pkg/installs"
 )
 
-func StopInstall(url string) error {
+func StopInstall(ctx context.Context, url string) error {
 	// Get the install spec
-	env, err := installs.NewEnv(url)
+	env, err := installs.NewEnv(ctx, url)
 	if err != nil {
 		return err
 	}

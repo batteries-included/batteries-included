@@ -20,7 +20,7 @@ var stopCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		installUrl := args[0]
 
-		err := stop.StopInstall(installUrl)
+		err := stop.StopInstall(cmd.Context(), installUrl)
 		cobra.CheckErr(err)
 	},
 }

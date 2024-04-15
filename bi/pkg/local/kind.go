@@ -1,9 +1,12 @@
 package local
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 	"sigs.k8s.io/kind/pkg/cluster"
@@ -122,16 +125,40 @@ func (c *KindClusterProvider) EnsureDeleted() error {
 	return nil
 }
 
-func (c *KindClusterProvider) ExportKubeConfig(path string) error {
-	err := c.kindProvider.ExportKubeConfig(c.name, path, true)
+func (c *KindClusterProvider) KubeConfig(_ context.Context, w io.Writer, internal bool) error {
+	// Create a temporary directory for the kubeconfig (as the kind api only supports exporting to file).
+	kubeConfigDir, err := os.MkdirTemp("", "kind-kubeconfig")
 	if err != nil {
-		return fmt.Errorf("error exporting kubeconfig: %w", err)
+		return fmt.Errorf("failed to create temp kubeconfig directory: %w", err)
+	}
+	defer os.RemoveAll(kubeConfigDir)
+
+	// Restrict to the current user.
+	if err := os.Chmod(kubeConfigDir, 0o700); err != nil {
+		return fmt.Errorf("failed to change permissions on temp kubeconfig directory: %w", err)
 	}
 
-	// After writing the file change to more restrictive permissions
-	err = os.Chmod(path, 0o600)
-	if err != nil {
-		return fmt.Errorf("error setting kubeconfig permissions: %w", err)
+	// Export the kubeconfig.
+	kubeConfigPath := filepath.Join(kubeConfigDir, "kubeconfig")
+	if err := c.kindProvider.ExportKubeConfig(c.name, kubeConfigPath, internal); err != nil {
+		return fmt.Errorf("failed to export kubeconfig: %w", err)
 	}
+
+	// Copy the kubeconfig to the writer.
+	kubeConfigFile, err := os.Open(kubeConfigPath)
+	if err != nil {
+		return fmt.Errorf("failed to open kubeconfig: %w", err)
+	}
+	defer kubeConfigFile.Close()
+
+	if _, err := io.Copy(w, kubeConfigFile); err != nil {
+		return fmt.Errorf("failed to write kubeconfig: %w", err)
+	}
+
 	return nil
+}
+
+func (c *KindClusterProvider) WireGuardConfig(_ context.Context, _ io.Writer) (bool, error) {
+	// Local clusters do not use WireGuard.
+	return false, nil
 }

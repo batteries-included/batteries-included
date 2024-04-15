@@ -17,8 +17,6 @@ var postgresCmd = &cobra.Command{
 
 	- Port forwarding to a postgres database on a local kube cluster
 	- Checking the status of a postgres database`,
-	Run: func(cmd *cobra.Command, args []string) {
-	},
 }
 
 func init() {

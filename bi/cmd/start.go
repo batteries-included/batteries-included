@@ -4,7 +4,6 @@ Copyright © 2024 Elliott Clark <elliott@batteriesincl.com>
 package cmd
 
 import (
-	"bi/cmd/cmdutil"
 	"bi/pkg/start"
 
 	"log/slog"
@@ -39,24 +38,14 @@ complete displaying a url for running control server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		installURL := args[0]
 
-		kubeConfigPath, err := cmd.Flags().GetString("kubeconfig")
-		cobra.CheckErr(err)
-
-		wireGuardConfigPath, err := cmd.Flags().GetString("wireguard-config")
-		cobra.CheckErr(err)
-
 		slog.Debug("Starting Batteries Included Installation",
-			slog.String("installSpec", installURL),
-			slog.String("kubeconfig", kubeConfigPath))
+			slog.String("installSpec", installURL))
 
-		// TODO remove kubeconfig and wireguard config from all commands.
-		err = start.StartInstall(installURL, kubeConfigPath, wireGuardConfigPath)
+		err := start.StartInstall(cmd.Context(), installURL)
 		cobra.CheckErr(err)
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(startCmd)
-	cmdutil.AddKubeConfigFlag(startCmd)
-	cmdutil.AddWireGuardConfigFlag(startCmd)
 }

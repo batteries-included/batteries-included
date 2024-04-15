@@ -2,13 +2,16 @@ package eks
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/netip"
 	"os"
 	"path"
 
 	"bi/pkg/cluster/util"
+	"bi/pkg/wireguard"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto/optdestroy"
@@ -16,6 +19,8 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/tokens"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/workspace"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 var (
@@ -209,16 +214,111 @@ func (e *eks) Outputs(ctx context.Context, out io.Writer) error {
 		e.outputs[cmpnt.name] = out
 	}
 
-	outputs, err := json.Marshal(e.outputs)
-	if err != nil {
-		return err
-	}
-	_, err = out.Write(outputs)
-	if err != nil {
+	if err := json.NewEncoder(out).Encode(e.outputs); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (e *eks) KubeConfig(ctx context.Context, w io.Writer, _ bool) error {
+	// Fetch the outputs from the Pulumi state (if needed).
+	if len(e.outputs) == 0 {
+		if err := e.Outputs(ctx, io.Discard); err != nil {
+			return err
+		}
+	}
+
+	clusterName := e.outputs["cluster"]["name"].Value.(string)
+
+	// The certificate authority data is base64 encoded in the output (for some reason).
+	certificateAuthorityData, err := base64.StdEncoding.DecodeString(e.outputs["cluster"]["certificateAuthority"].Value.(string))
+	if err != nil {
+		return fmt.Errorf("error decoding ca data: %w", err)
+	}
+
+	// Get the path to the current processes executable.
+	cmdPath, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("failed to get executable path: %w", err)
+	}
+
+	config := clientcmdapi.Config{
+		Clusters: map[string]*clientcmdapi.Cluster{
+			clusterName: {
+				Server:                   e.outputs["cluster"]["endpoint"].Value.(string),
+				CertificateAuthorityData: certificateAuthorityData,
+			},
+		},
+		AuthInfos: map[string]*clientcmdapi.AuthInfo{
+			"installer": {
+				// We implement get-token outselves, so that we don't require the user to have the aws cli installed.
+				Exec: &clientcmdapi.ExecConfig{
+					APIVersion: "client.authentication.k8s.io/v1beta1",
+					Command:    cmdPath,
+					Args: []string{
+						"aws",
+						"get-token",
+						clusterName,
+					},
+				},
+			},
+		},
+		Contexts: map[string]*clientcmdapi.Context{
+			clusterName: {
+				Cluster:  clusterName,
+				AuthInfo: "installer",
+			},
+		},
+		CurrentContext: clusterName,
+	}
+
+	buf, err := clientcmd.Write(config)
+	if err != nil {
+		return fmt.Errorf("failed to marshal kubeconfig: %w", err)
+	}
+
+	if _, err := w.Write(buf); err != nil {
+		return fmt.Errorf("failed to write kubeconfig: %w", err)
+	}
+
+	return nil
+}
+
+func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
+	// Fetch the outputs from the Pulumi state (if needed).
+	if len(e.outputs) == 0 {
+		if err := e.Outputs(ctx, io.Discard); err != nil {
+			return true, err
+		}
+	}
+
+	gwEndpoint := netip.AddrPortFrom(netip.MustParseAddr(e.outputs["gateway"]["publicIP"].Value.(string)),
+		uint16(e.outputs["gateway"]["publicPort"].Value.(float64)))
+
+	gw := wireguard.Gateway{
+		PrivateKey: e.outputs["gateway"]["wgGatewayPrivateKey"].Value.(string),
+		Address:    netip.MustParseAddr(e.outputs["gateway"]["wgGatewayAddress"].Value.(string)),
+		Endpoint:   gwEndpoint,
+		// Route53 static resolver addresses.
+		// See: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-dns.html#AmazonDNS
+		DNSServers: []netip.Addr{
+			netip.MustParseAddr("169.254.169.253"),
+		},
+	}
+
+	installerClient := wireguard.Client{
+		Gateway:    &gw,
+		Name:       "installer",
+		PrivateKey: e.outputs["gateway"]["wgClientPrivateKey"].Value.(string),
+		Address:    netip.MustParseAddr(e.outputs["gateway"]["wgClientAddress"].Value.(string)),
+	}
+
+	if err := installerClient.WriteConfig(w); err != nil {
+		return true, fmt.Errorf("error writing wireguard config: %w", err)
+	}
+
+	return true, nil
 }
 
 // createStack creates the stack with the given program

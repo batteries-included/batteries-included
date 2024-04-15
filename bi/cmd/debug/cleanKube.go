@@ -4,24 +4,22 @@ Copyright © 2024 Elliott Clark elliott@batteriesincl.com
 package debug
 
 import (
-	"bi/cmd/cmdutil"
-	"bi/pkg/kube"
+	"bi/pkg/installs"
 
 	"github.com/spf13/cobra"
 )
 
 var cleanKubeCmd = &cobra.Command{
-	Use:   "clean-kube",
+	Use:   "clean-kube [install-slug|install-spec-url|install-spec-file]",
 	Short: "clean all resources off of a batteries included kubernetes cluster",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		url := args[0]
 
-		kubeConfigPath, err := cmd.Flags().GetString("kubeconfig")
+		env, err := installs.NewEnv(cmd.Context(), url)
 		cobra.CheckErr(err)
 
-		wireGuardConfigPath, err := cmd.Flags().GetString("wireguard-config")
-		cobra.CheckErr(err)
-
-		kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath)
+		kubeClient, err := env.NewBatteryKubeClient()
 		cobra.CheckErr(err)
 		defer kubeClient.Close()
 
@@ -32,6 +30,4 @@ var cleanKubeCmd = &cobra.Command{
 
 func init() {
 	debugCmd.AddCommand(cleanKubeCmd)
-	cmdutil.AddKubeConfigFlag(cleanKubeCmd)
-	cmdutil.AddWireGuardConfigFlag(cleanKubeCmd)
 }

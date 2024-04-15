@@ -18,6 +18,10 @@ func (env *InstallEnv) KubeConfigPath() string {
 	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug, "kubeconfig.yaml")
 }
 
+func (env *InstallEnv) WireGuardConfigPath() string {
+	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug, "wireguard.yaml")
+}
+
 func (env *InstallEnv) installStateHome() string {
 	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug)
 }

@@ -1,27 +1,27 @@
 package start
 
 import (
+	"context"
 	"log/slog"
 
 	"bi/pkg/installs"
-	"bi/pkg/kube"
 )
 
-func StartInstall(url, kubeConfigPath, wireGuardConfigPath string) error {
+func StartInstall(ctx context.Context, url string) error {
 	// Get the install spec
 	slog.Debug("fetching install spec", slog.String("url", url))
-	env, err := installs.NewEnv(url)
+	env, err := installs.NewEnv(ctx, url)
 	if err != nil {
 		return err
 	}
 
 	slog.Debug("starting provider")
-	err = env.StartKubeProvider()
+	err = env.StartKubeProvider(ctx)
 	if err != nil {
 		return err
 	}
 
-	kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath)
+	kubeClient, err := env.NewBatteryKubeClient()
 	if err != nil {
 		return err
 	}

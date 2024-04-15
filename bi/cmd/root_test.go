@@ -16,7 +16,9 @@ func Test_Example(t *testing.T) {
 	b := bytes.NewBufferString("")
 	RootCmd.SetOut(b)
 	RootCmd.SetArgs([]string{"-h"})
-	RootCmd.Execute()
+	if err := RootCmd.Execute(); err != nil {
+		t.Error("Error running command", err)
+	}
 
 	if b.String() == "" {
 		t.Error("No output")

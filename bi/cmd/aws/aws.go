@@ -16,8 +16,6 @@ var awsCmd = &cobra.Command{
 that makes it easy for you to run Kubernetes on AWS
 without needing to install, operate, and maintain 
 your own Kubernetes control plane or nodes.`,
-	Run: func(cmd *cobra.Command, args []string) {
-	},
 }
 
 func init() {

@@ -125,7 +125,7 @@ func (c *clusterConfig) run(ctx *pulumi.Context) error {
 	}
 
 	ctx.Export("arn", c.cluster.Arn)
-	ctx.Export("certificate", c.cluster.CertificateAuthority.Data())
+	ctx.Export("certificateAuthority", c.cluster.CertificateAuthority.Data())
 	ctx.Export("endpoint", c.cluster.Endpoint)
 	ctx.Export("name", c.cluster.Name)
 	ctx.Export("nodeRoleARN", c.roles["node"].Arn) // we'll use this role for the karpenter nodes as well

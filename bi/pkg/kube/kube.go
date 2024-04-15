@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"bi/cmd/cmdutil"
-
 	"github.com/noisysockets/noisysockets"
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
 	"github.com/noisysockets/noisysockets/network"
@@ -59,16 +57,6 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 	// due to using our own transport.
 	if kubeConfig.UserAgent == "" {
 		kubeConfig.UserAgent = rest.DefaultKubernetesUserAgent()
-	}
-
-	// If a wireguard config path is not provided, try to find it in the default location
-	if wireGuardConfigPath == "" {
-		if defaultWireGuardConfigPath, err := cmdutil.DefaultWireGuardConfigPath(); err == nil {
-			if _, err := os.Stat(defaultWireGuardConfigPath); err == nil {
-				// We found a default config
-				wireGuardConfigPath = defaultWireGuardConfigPath
-			}
-		}
 	}
 
 	var net network.Network

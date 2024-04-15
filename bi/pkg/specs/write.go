@@ -18,13 +18,18 @@ func (spec *InstallSpec) WriteToPath(filePath string) error {
 		return err
 	}
 
-	os.MkdirAll(path.Base(filePath), 0o700)
+	if err := os.MkdirAll(path.Base(filePath), 0o700); err != nil {
+		return err
+	}
 
 	contents, err := json.Marshal(spec)
 	if err != nil {
 		return err
 	}
-	os.WriteFile(filePath, contents, 0o600)
+
+	if err := os.WriteFile(filePath, contents, 0o600); err != nil {
+		return err
+	}
 
 	return nil
 }

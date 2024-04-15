@@ -1,6 +1,7 @@
 package installs
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"bi/pkg/local"
 	"bi/pkg/specs"
 
+	"bi/pkg/cluster"
+
 	"github.com/adrg/xdg"
 )
 
@@ -16,14 +19,14 @@ import (
 // the spec is used to tell us what should be running.
 type InstallEnv struct {
 	// The Slug of the customer install
-	Slug                string
-	kindClusterProvider *local.KindClusterProvider
-	// TODO pull any pulumi stuff that common for start, stop, and generate keys into here
-	Spec *specs.InstallSpec
+	Slug                  string
+	kindClusterProvider   *local.KindClusterProvider
+	pulumiClusterProvider cluster.Provider
+	Spec                  *specs.InstallSpec
 }
 
 // Init Function generate all needed
-func (env *InstallEnv) init() error {
+func (env *InstallEnv) init(ctx context.Context) error {
 	slog.Debug("Initializing install", slog.String("slug", env.Slug))
 	// Create the install directory in the xdg state home
 	err := os.MkdirAll(env.installStateHome(), 0o700)
@@ -37,32 +40,42 @@ func (env *InstallEnv) init() error {
 	if err != nil {
 		return fmt.Errorf("error initializing install writing spec: %w", err)
 	}
+
 	err = env.WriteSummary(false)
 	if err != nil {
 		return err
 	}
 
-	if env.Spec.KubeCluster.Provider == "kind" {
+	provider := env.Spec.KubeCluster.Provider
+
+	switch provider {
+	case "kind":
 		// TODO get this from the config
 		clusterName := env.Slug
 		env.kindClusterProvider, err = local.NewKindClusterProvider(clusterName)
 		if err != nil {
 			return fmt.Errorf("error creating kind cluster provider: %w", err)
 		}
+	case "aws":
+		env.pulumiClusterProvider = cluster.NewPulumiProvider()
+
+		if err = env.pulumiClusterProvider.Init(ctx); err != nil {
+			return fmt.Errorf("error initializing pulumi cluster provider: %w", err)
+		}
+	case "provided":
+	default:
+		slog.Debug("unexpected provider", slog.String("provider", provider))
+		return fmt.Errorf("unknown provider")
 	}
 
-	err = env.WriteKubeConfig(false)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
-func NewEnv(slugOrUrl string) (*InstallEnv, error) {
+func NewEnv(ctx context.Context, slugOrUrl string) (*InstallEnv, error) {
 	// Check if the slug is a local install
 	installEnv, err := readInstallEnv(slugOrUrl)
 	if err == nil {
-		err = installEnv.init()
+		err = installEnv.init(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("error initializing install: %w", err)
 		}
@@ -89,7 +102,7 @@ func NewEnv(slugOrUrl string) (*InstallEnv, error) {
 	// We got from the url so we should remove everything
 	_ = installEnv.Remove()
 
-	err = installEnv.init()
+	err = installEnv.init(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing install: %w", err)
 	}

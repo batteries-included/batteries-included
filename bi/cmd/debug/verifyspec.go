@@ -14,7 +14,7 @@ import (
 )
 
 var verifySpecCmd = &cobra.Command{
-	Use:   "verifyspec",
+	Use:   "verify-spec",
 	Short: "Verify an install spec file",
 	Long:  `Reads in an install spec file and verifies that it is valid.`,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -15,7 +15,7 @@ var installSummaryPath = &cobra.Command{
 	Use:   "install-summary-path [install-slug|install-spec-url|install-spec-file]",
 	Short: "Print the path to the install's target summary",
 	Run: func(cmd *cobra.Command, args []string) {
-		env, err := installs.NewEnv(args[0])
+		env, err := installs.NewEnv(cmd.Context(), args[0])
 		cobra.CheckErr(err)
 
 		fmt.Print(env.SummaryPath())

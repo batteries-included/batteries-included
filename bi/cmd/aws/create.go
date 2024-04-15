@@ -9,7 +9,7 @@ import (
 )
 
 var createClusterCmd = &cobra.Command{
-	Use:   "createcluster",
+	Use:   "create-cluster",
 	Short: "Create a cluster",
 	Long:  `Create a cluster on AWS EKS.`,
 	Run: func(cmd *cobra.Command, args []string) {

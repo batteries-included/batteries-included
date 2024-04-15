@@ -9,7 +9,7 @@ import (
 )
 
 var destroyClusterCmd = &cobra.Command{
-	Use:   "destroycluster",
+	Use:   "destroy-cluster",
 	Short: "Destroy a cluster",
 	Long:  `Destroy a cluster on AWS EKS.`,
 	Run: func(cmd *cobra.Command, args []string) {

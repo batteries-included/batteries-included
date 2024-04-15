@@ -34,7 +34,7 @@ type pulumiProvider struct {
 	envVars    auto.LocalWorkspaceOption
 }
 
-func NewPulumiProvider() provider {
+func NewPulumiProvider() Provider {
 	return &pulumiProvider{}
 }
 
@@ -190,6 +190,27 @@ func (p *pulumiProvider) Outputs(ctx context.Context, out io.Writer) error {
 	eks := eks.New(p.toEKSConfig())
 
 	return eks.Outputs(ctx, out)
+}
+
+func (p *pulumiProvider) KubeConfig(ctx context.Context, w io.Writer, internal bool) error {
+	if !p.initSuccessful {
+		return fmt.Errorf("attempted to export kubeconfig with uninitialized provider")
+	}
+
+	eks := eks.New(p.toEKSConfig())
+
+	return eks.KubeConfig(ctx, w, internal)
+}
+
+func (p *pulumiProvider) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
+	if !p.initSuccessful {
+		return false, fmt.Errorf("attempted to export wireguard config with uninitialized provider")
+	}
+
+	eks := eks.New(p.toEKSConfig())
+
+	return eks.WireGuardConfig(ctx, w)
+
 }
 
 func (p *pulumiProvider) toEKSConfig() *eks.Config {

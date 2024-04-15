@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"net/netip"
 	"strings"
 
 	"bi/pkg/cluster/util"
@@ -339,13 +338,6 @@ func (g *gatewayConfig) buildWireGuardConfig(ctx *pulumi.Context) error {
 	g.wgGateway, err = wireguard.NewGateway(uint16(g.port), g.gatewayCIDRBlock)
 	if err != nil {
 		return fmt.Errorf("failed to create wireguard gateway: %w", err)
-	}
-
-	// Route53 static resolver addresses.
-	// See: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-dns.html#AmazonDNS
-	g.wgGateway.DNSServers = []netip.Addr{
-		netip.MustParseAddr("169.254.169.253"),
-		netip.MustParseAddr("fd00:ec2::253"),
 	}
 
 	g.wgGateway.PostUp = []string{

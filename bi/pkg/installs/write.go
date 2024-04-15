@@ -1,22 +1,26 @@
 package installs
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 	"os"
 )
 
-func (env *InstallEnv) WriteAll() error {
-	err := env.WriteSpec(true)
-	if err != nil {
-		return err
-	}
-	err = env.WriteSummary(true)
-	if err != nil {
+func (env *InstallEnv) WriteAll(ctx context.Context) error {
+	if err := env.WriteSpec(true); err != nil {
 		return err
 	}
 
-	err = env.WriteKubeConfig(true)
-	if err != nil {
+	if err := env.WriteSummary(true); err != nil {
+		return err
+	}
+
+	if err := env.WriteKubeConfig(ctx, true); err != nil {
+		return err
+	}
+
+	if err := env.WriteWireGuardConfig(ctx, true); err != nil {
 		return err
 	}
 
@@ -77,8 +81,10 @@ func (env *InstallEnv) WriteSummary(force bool) error {
 	return nil
 }
 
-func (env *InstallEnv) WriteKubeConfig(force bool) error {
+func (env *InstallEnv) WriteKubeConfig(ctx context.Context, force bool) error {
 	kubeConfigPath := env.KubeConfigPath()
+
+	slog.Debug("Writing kubeconfig", slog.String("path", kubeConfigPath))
 
 	if _, err := os.Stat(kubeConfigPath); err == nil {
 		if force {
@@ -90,14 +96,70 @@ func (env *InstallEnv) WriteKubeConfig(force bool) error {
 		}
 	}
 
-	// TODO
-	// if the provider is aws then write the kubeconfig with our wrapper for keys
-	// if the provider is provided then write the kubeconfig with the provided kubeconfig
+	kubeConfigFile, err := os.OpenFile(kubeConfigPath, os.O_CREATE|os.O_WRONLY, 0o600)
+	if err != nil {
+		return fmt.Errorf("failed to open kubeconfig file for writing: %w", err)
+	}
+	defer kubeConfigFile.Close()
+
 	provider := env.Spec.KubeCluster.Provider
 
 	switch provider {
 	case "kind":
-		env.kindClusterProvider.ExportKubeConfig(kubeConfigPath)
+		return env.kindClusterProvider.KubeConfig(ctx, kubeConfigFile, false)
+	case "aws":
+		return env.pulumiClusterProvider.KubeConfig(ctx, kubeConfigFile, false)
+	case "provided":
+	default:
+		slog.Debug("unexpected provider", slog.String("provider", provider))
+		return fmt.Errorf("unknown provider: %s", provider)
+	}
+
+	return nil
+}
+
+func (env *InstallEnv) WriteWireGuardConfig(ctx context.Context, force bool) error {
+	wireGuardConfigPath := env.WireGuardConfigPath()
+
+	slog.Debug("Writing wireguard config", slog.String("path", wireGuardConfigPath))
+
+	if _, err := os.Stat(wireGuardConfigPath); err == nil {
+		if force {
+			slog.Debug("Removing old wireguard config", slog.String("path", wireGuardConfigPath))
+			_ = os.Remove(wireGuardConfigPath)
+		} else {
+			slog.Debug("Wireguard config already exists", slog.String("path", wireGuardConfigPath))
+			return nil
+		}
+	}
+
+	wireGuardConfigFile, err := os.OpenFile(wireGuardConfigPath, os.O_CREATE|os.O_WRONLY, 0o600)
+	if err != nil {
+		return fmt.Errorf("error opening wireguard config file: %w", err)
+	}
+	defer wireGuardConfigFile.Close()
+
+	provider := env.Spec.KubeCluster.Provider
+
+	var hasConfig bool
+	switch provider {
+	case "kind":
+		hasConfig, err = env.kindClusterProvider.WireGuardConfig(ctx, wireGuardConfigFile)
+	case "aws":
+		hasConfig, err = env.pulumiClusterProvider.WireGuardConfig(ctx, wireGuardConfigFile)
+	case "provided":
+	default:
+		return fmt.Errorf("unknown provider: %s", provider)
+	}
+
+	if err != nil {
+		return fmt.Errorf("error writing wireguard config: %w", err)
+	}
+
+	if !hasConfig {
+		slog.Debug("No wireguard config to write")
+		_ = wireGuardConfigFile.Close()
+		_ = os.Remove(wireGuardConfigPath)
 	}
 
 	return nil
