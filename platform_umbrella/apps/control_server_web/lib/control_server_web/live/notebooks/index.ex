@@ -7,8 +7,6 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   import ControlServer.Notebooks
   import ControlServerWeb.NotebooksTable
 
-  alias ControlServer.Batteries.Installer
-
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
@@ -43,8 +41,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   end
 
   def handle_event("start_notebook", _, socket) do
-    with {:ok, _} <- create_jupyter_lab_notebook(%{}) do
-      Installer.install!(:notebooks)
+    with {:ok, _} <- create_jupyter_lab_notebook(%{virtual_size: "tiny"}) do
       {:noreply, assign_notebooks(socket)}
     end
   end
