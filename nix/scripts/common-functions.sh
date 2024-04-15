@@ -109,7 +109,7 @@ function do_integration_test() {
 
   if [[ -z ${summary_path} ]]; then
     log "No summary path provided"
-    summary_path=$(bi debug install-summary-path "./static/public/specs/int_test.json")
+    summary_path=$(bi debug install-summary-path "integration-test")
   fi
 
   export MIX_ENV=integration
