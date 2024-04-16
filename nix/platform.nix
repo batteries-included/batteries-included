@@ -8,8 +8,8 @@
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
       safeRev = self.shortRev or self.dirtyShortRev;
-      version = "0.12.0";
-      taggedVersion = "0.12.0-${safeRev}";
+      version = "0.12.1";
+      taggedVersion = "0.12.1-${safeRev}";
       beam = pkgs.beam;
       tini = pkgs.tini;
 

@@ -63,7 +63,7 @@ function do_bootstrap() {
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
   # Start the port forwarder
-  do_portforward_controlserver
+  do_portforward_controlserver "${slug}"
 
   # Postgrest should be up create the database and run the migrations
   m setup
@@ -96,7 +96,7 @@ function do_integration_test_deep() {
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
 
-  do_portforward_controlserver
+  do_portforward_controlserver "${slug}"
 
   do_integration_test "${summary_path}"
 
@@ -132,9 +132,10 @@ function do_integration_test() {
 }
 
 function try_portforward() {
+  local slug=${1:-"dev"}
   while true; do
     if ! flock -x -n "${FLAKE_ROOT}/.nix-lock/portforward.lockfile" \
-      bash -c "bi postgres port-forward controlserver -n battery-base"; then
+      bash -c "bi postgres port-forward ${slug} controlserver -n battery-base"; then
       log "Port forward failed, retrying..."
       sleep 1
     fi
@@ -144,7 +145,7 @@ function try_portforward() {
 function do_portforward_controlserver() {
   log "Starting port forwarder"
 
-  try_portforward &
+  try_portforward "$@" &
 }
 
 function do_setup_assets() {

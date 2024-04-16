@@ -14,8 +14,8 @@
       src = gitignoreSource pwd;
       modules = pwd + "/gomod2nix.toml";
       safeRev = self.shortRev or self.dirtyShortRev;
-      version = "0.12.0";
-      taggedVersion = "0.12.0-${safeRev}";
+      version = "0.12.1";
+      taggedVersion = "0.12.1-${safeRev}";
       tini = pkgs.tini;
 
 
