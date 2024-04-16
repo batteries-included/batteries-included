@@ -22,7 +22,7 @@
     flake-root.url = "github:srid/flake-root";
 
     gomod2nix = {
-      url = "github:tweag/gomod2nix";
+      url = "github:batteries-included/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
