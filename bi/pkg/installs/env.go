@@ -49,10 +49,7 @@ func (env *InstallEnv) init(ctx context.Context) error {
 
 	switch provider {
 	case "kind":
-		// TODO get this from the config
-		clusterName := env.Slug
-
-		env.clusterProvider = kind.NewClusterProvider(slog.Default(), clusterName)
+		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider()
 	case "provided":
@@ -68,36 +65,16 @@ func (env *InstallEnv) init(ctx context.Context) error {
 	return nil
 }
 
-func NewEnv(ctx context.Context, slugOrUrl string) (*InstallEnv, error) {
-	// Check if the slug is a local install
-	installEnv, err := readInstallEnv(slugOrUrl)
-	if err == nil {
-		err = installEnv.init(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("error initializing install: %w", err)
-		}
-
-		return installEnv, nil
-	}
-
-	// If there was some other error then return it
-	if !os.IsNotExist(err) {
-		return nil, fmt.Errorf("error reading install env: %w", err)
-	}
-
-	// If the slug is not a local install then try to get the spec from the url
-	spec, err := specs.GetSpecFromURL(slugOrUrl)
+func NewEnv(ctx context.Context, slugOrURL string) (*InstallEnv, error) {
+	source, installEnv, err := readInstallEnv(slugOrURL)
 	if err != nil {
-		return nil, fmt.Errorf("error getting spec from url: %w", err)
+		return nil, err
 	}
 
-	installEnv = &InstallEnv{
-		Slug: spec.Slug,
-		Spec: spec,
+	if source == "url" {
+		// We got from the url so we should remove everything
+		_ = installEnv.Remove()
 	}
-
-	// We got from the url so we should remove everything
-	_ = installEnv.Remove()
 
 	err = installEnv.init(ctx)
 	if err != nil {
@@ -107,17 +84,22 @@ func NewEnv(ctx context.Context, slugOrUrl string) (*InstallEnv, error) {
 	return installEnv, nil
 }
 
-func readInstallEnv(slug string) (*InstallEnv, error) {
-	specPath := filepath.Join(xdg.StateHome, "bi", "installs", slug, "spec.json")
+func readInstallEnv(slugOrURL string) (string, *InstallEnv, error) {
+	type potentialPath struct{ source, path string }
+	for _, p := range []potentialPath{
+		{source: "file", path: filepath.Join(xdg.StateHome, "bi", "installs", slugOrURL, "spec.json")},
+		{source: "url", path: slugOrURL},
+	} {
+		l := slog.With(slog.String("path", p.path), slog.String("source", p.source))
 
-	spec, err := specs.GetSpecFromURL(specPath)
-	if err != nil {
-		return nil, err
+		spec, err := specs.GetSpecFromURL(p.path)
+		if err != nil {
+			l.Debug("Didn't find install")
+			continue
+		}
+		l.Debug("Found install")
+		return p.source, &InstallEnv{Slug: spec.Slug, Spec: spec}, nil
 	}
-	slog.Debug("Found install", slog.String("slug", slug), slog.String("spec", specPath))
 
-	return &InstallEnv{
-		Slug: slug,
-		Spec: spec,
-	}, nil
+	return "", nil, fmt.Errorf("No spec found")
 }

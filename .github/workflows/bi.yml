@@ -12,6 +12,7 @@ on:
 jobs:
   bi:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
@@ -27,9 +28,11 @@ jobs:
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - run: nix build .#bi -L
+
   bi-int-test:
     runs-on: ubuntu-latest
     needs: bi
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
