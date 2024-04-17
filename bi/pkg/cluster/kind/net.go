@@ -1,4 +1,4 @@
-package docker
+package kind
 
 import (
 	"context"
@@ -55,7 +55,6 @@ func split(ipNet *net.IPNet) *net.IPNet {
 }
 
 func getKindNetwork(ctx context.Context) ([]types.NetworkResource, error) {
-
 	apiClient, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return []types.NetworkResource{}, err

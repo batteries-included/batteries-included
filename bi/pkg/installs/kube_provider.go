@@ -8,7 +8,7 @@ import (
 	"log/slog"
 	"slices"
 
-	"bi/pkg/docker"
+	"bi/pkg/cluster/kind"
 	"bi/pkg/specs"
 )
 
@@ -169,7 +169,7 @@ func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
 }
 
 func (env *InstallEnv) tryAddMetalIPs() error {
-	net, err := docker.GetMetalLBIPs()
+	net, err := kind.GetMetalLBIPs()
 	if err == nil {
 		newIpSpec := specs.IPAddressPoolSpec{Name: "kind", Subnet: net}
 		slog.Debug("adding docker ips for metal lb: ", slog.Any("range", newIpSpec))
