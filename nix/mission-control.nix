@@ -91,11 +91,6 @@
                 set -e
                 pushd bi &> /dev/null
                 go get -u ./...
-                # gvisor.dev/gvisor@go is a special case
-                # It's a special branch of gvisor
-                # that can be used by go get.
-                #
-                go get gvisor.dev/gvisor@go
                 go mod tidy
                 gomod2nix
                 popd &> /dev/null

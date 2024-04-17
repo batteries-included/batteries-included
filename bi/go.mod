@@ -1,8 +1,8 @@
 module bi
 
-go 1.22
+go 1.22.0
 
-toolchain go1.22.0
+toolchain go1.22.1
 
 require (
 	github.com/adrg/xdg v0.4.0
@@ -13,8 +13,7 @@ require (
 	github.com/dghubble/ipnets v1.0.0
 	github.com/docker/docker v26.0.1+incompatible
 	github.com/lmittmann/tint v1.0.4
-	github.com/noisysockets/noisysockets v0.12.7
-	github.com/pkg/errors v0.9.1
+	github.com/noisysockets/noisysockets v0.13.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.31.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.1
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.2
@@ -132,6 +131,7 @@ require (
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
+	github.com/noisysockets/netstack v0.1.0 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
@@ -142,6 +142,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.1 // indirect
 	github.com/pgavlin/fx v0.1.6 // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
@@ -200,7 +201,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools/v3 v3.5.1 // indirect
-	gvisor.dev/gvisor v0.0.0-20240416023830-d5a4c6f938a1 // indirect
 	k8s.io/klog/v2 v2.120.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240411171206-dc4e619f62f3 // indirect
 	k8s.io/utils v0.0.0-20240310230437-4693a0247e57 // indirect

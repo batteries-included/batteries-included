@@ -325,9 +325,12 @@ schema = 3
   [mod."github.com/mxk/go-flowrate"]
     version = "v0.0.0-20140419014527-cca7078d478f"
     hash = "sha256-gRTfRfff/LRxC1SXXnQd2tV3UTcTx9qu90DJIVIaGn8="
+  [mod."github.com/noisysockets/netstack"]
+    version = "v0.1.0"
+    hash = "sha256-dameOLoYB5y7OF3AGNKPcmeiVjBjILXGf/deskoHcPg="
   [mod."github.com/noisysockets/noisysockets"]
-    version = "v0.12.7"
-    hash = "sha256-0DCeqGqChuAkfO9azo10I+poNP1Skb6f13FlyNFznS0="
+    version = "v0.13.0"
+    hash = "sha256-ldoZbqU6Skd7Uu2gEm0KswqzydaWoXo9GbUZjthrsB8="
   [mod."github.com/nxadm/tail"]
     version = "v1.4.11"
     hash = "sha256-7XF47xVcyHjpO1E0+GGAoytxOa0JJFCBXHJGLTexVgo="
@@ -562,9 +565,6 @@ schema = 3
   [mod."gotest.tools/v3"]
     version = "v3.5.1"
     hash = "sha256-ps2GEc3P2xvlrU4TCtXz+nLTxyP0RrF7SScz5jUqE5E="
-  [mod."gvisor.dev/gvisor"]
-    version = "v0.0.0-20240416023830-d5a4c6f938a1"
-    hash = "sha256-Utc9x1WcXtSR3nghPJGRWE5J23S1oNAAc4r4Fkl3Iys="
   [mod."k8s.io/api"]
     version = "v0.29.3"
     hash = "sha256-rVMIHlRTIqoqM/9HkdQQjOl3RE2rmLLoSJp6AqhYfhE="
