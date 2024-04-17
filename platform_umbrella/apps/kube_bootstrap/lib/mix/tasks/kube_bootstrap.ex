@@ -4,7 +4,6 @@ defmodule Mix.Tasks.Kube.Bootstrap do
   use Mix.Task
 
   require Logger
-  alias CommonCore.StateSummary
 
   @requirements ["app.config"]
 
@@ -15,27 +14,14 @@ defmodule Mix.Tasks.Kube.Bootstrap do
 
     load_apps()
 
-    {:ok, summary} = read_summary(path)
+    {:ok, summary} = KubeBootstrap.read_summary(path)
     KubeBootstrap.bootstrap_from_summary(summary)
-  end
-
-  # From a path to an install spec file, read the summary
-  defp read_summary(path) do
-    with {:ok, file_contents} <- File.read(path),
-         {:ok, decoded_content} <- Jason.decode(file_contents) do
-      # Decode everything from string keyed map to struct
-      StateSummary.new(decoded_content)
-    else
-      {:error, _} = error -> error
-    end
   end
 
   defp load_apps do
     Logger.debug("Ensuring app is started")
 
-    Enum.each(@start_apps, fn app ->
-      {:ok, _apps} = Application.ensure_all_started(app, :permanent)
-    end)
+    {:ok, _apps} = Application.ensure_all_started(@start_apps, :permanent)
 
     :ok
   end
