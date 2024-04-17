@@ -1,21 +1,19 @@
-<div class="contents">
-  <div phx-feedback-for="foobar" class="flex flex-wrap items-center gap-x-6 ">
-    <label class="inline-flex items-center gap-2 cursor-pointer ">
-      <input type="radio" name="foobar" value="foo" checked class="size-5 text-primary rounded-full cursor-pointer checked:border-primary checked:hover:border-primary phx-feedback:border-error phx-feedback:bg-error-light">
+<div phx-feedback-for="foobar" class="flex flex-wrap items-center gap-x-6 ">
+  <label class="inline-flex flex-wrap items-center gap-2 cursor-pointer ">
+    <input type="radio" name="foobar" value="foo" checked class="size-5 text-primary rounded-full cursor-pointer checked:border-primary checked:hover:border-primary phx-feedback:border-error phx-feedback:bg-error-light">
 
-      <span class="text-sm text-gray-darkest dark:text-gray-lighter">
-        Foo
-      </span>
-    </label><label class="inline-flex items-center gap-2 cursor-pointer ">
-      <input type="radio" name="foobar" value="bar" class="size-5 text-primary rounded-full cursor-pointer checked:border-primary checked:hover:border-primary phx-feedback:border-error phx-feedback:bg-error-light">
+    <span class="text-sm text-gray-darkest dark:text-gray-lighter">
+      Foo
+    </span>
+  </label><label class="inline-flex flex-wrap items-center gap-2 cursor-pointer ">
+    <input type="radio" name="foobar" value="bar" class="size-5 text-primary rounded-full cursor-pointer checked:border-primary checked:hover:border-primary phx-feedback:border-error phx-feedback:bg-error-light">
 
-      <span class="text-sm text-gray-darkest dark:text-gray-lighter">
-        Bar
-      </span>
-    </label>
-  </div>
+    <span class="text-sm text-gray-darkest dark:text-gray-lighter">
+      Bar
+    </span>
+  </label>
 
-  <div class="flex items-center gap-2 text-xs text-error font-semibold phx-no-feedback:hidden mt-0">
+  <div class="flex items-center gap-2 text-xs text-error font-semibold phx-no-feedback:hidden w-full mt-2">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-4 fill-error" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/>
 </svg>

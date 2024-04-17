@@ -52,7 +52,6 @@ const gray = {
 };
 
 module.exports = {
-  important: '.common-ui',
   content: [
     // Use absolute paths so this config can be shared between umbrella apps
     path.resolve(__dirname, 'js/**/*.js'),

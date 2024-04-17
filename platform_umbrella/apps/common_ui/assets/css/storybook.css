@@ -1,6 +1,5 @@
 @import './shared.css';
 
-.psb,
 .common-ui {
   @apply font-sans;
 }

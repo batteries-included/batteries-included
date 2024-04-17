@@ -3,6 +3,7 @@ defmodule CommonUI.Components.Form do
   use CommonUI, :component
 
   import CommonUI.Components.Panel
+  import CommonUI.Components.Typography
   import CommonUI.Gettext, warn: false
 
   @doc """
@@ -25,7 +26,7 @@ defmodule CommonUI.Components.Form do
   attr :title, :string, default: nil
   attr :description, :string, default: nil
   attr :class, :any, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(method action)
 
   slot :inner_block, required: true
   slot :actions, doc: "the slot for form actions, such as a submit button"
@@ -70,15 +71,12 @@ defmodule CommonUI.Components.Form do
 
   def simple_form(assigns) do
     ~H"""
-    <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8">
-        <div class="grid grid-cols-1 mt-6 sm:gap-y-4 gap-y-8 gap-x-4 sm:gap-x-8 sm:grid-cols-2">
-          <%= render_slot(@inner_block, f) %>
-        </div>
-        <div :for={action <- @actions} class="flex items-center justify-between gap-2 mt-2">
-          <%= render_slot(action, f) %>
-        </div>
-      </div>
+    <.form for={@for} as={@as} {@rest}>
+      <.simple_form variant="nested" class={@class}>
+        <.h2 :if={@title}><%= @title %></.h2>
+
+        <%= render_slot(@inner_block) %>
+      </.simple_form>
     </.form>
     """
   end

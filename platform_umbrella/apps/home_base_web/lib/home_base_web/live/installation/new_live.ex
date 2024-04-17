@@ -1,4 +1,4 @@
-defmodule HomeBaseWeb.Live.InstallationNew do
+defmodule HomeBaseWeb.InstallationNewLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
@@ -6,7 +6,6 @@ defmodule HomeBaseWeb.Live.InstallationNew do
   alias HomeBase.CustomerInstalls
   alias HomeBaseWeb.Live.Installations.FormComponent
 
-  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     installation = %Installation{}
     changeset = CustomerInstalls.change_installation(installation)
@@ -14,7 +13,9 @@ defmodule HomeBaseWeb.Live.InstallationNew do
     {:ok,
      socket
      |> assign(:installation, installation)
-     |> assign(:changeset, changeset)}
+     |> assign(:changeset, changeset)
+     |> assign(:page, :installations)
+     |> assign(:page_title, "New Installation")}
   end
 
   def update(%{installation: installation} = assigns, socket) do
@@ -26,14 +27,12 @@ defmodule HomeBaseWeb.Live.InstallationNew do
      |> assign(:changeset, changeset)}
   end
 
-  @impl Phoenix.LiveView
   def handle_info({"installation:save", %{"installation" => installation}}, socket) do
-    new_path = ~p"/installations/#{installation}/show"
+    new_path = ~p"/installations/#{installation}"
 
     {:noreply, push_redirect(socket, to: new_path)}
   end
 
-  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.live_component

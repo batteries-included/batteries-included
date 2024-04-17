@@ -1,12 +1,11 @@
-<div class="contents">
-  <label phx-feedback-for="foo" class="flex items-center gap-x-2 cursor-pointer ">
-    <input type="hidden" name="foo" value="false">
-    <input type="checkbox" name="foo" value="true" checked class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary border-gray-lighter hover:border-primary">
+<label phx-feedback-for="foo" class="flex flex-wrap items-center gap-x-2 cursor-pointer ">
+  <input type="hidden" name="foo" value="false">
+  <input type="checkbox" name="foo" value="true" checked class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary border-gray-lighter hover:border-primary">
 
-    <span class="text-sm text-gray-darkest dark:text-gray-lighter">
-      Foobar
-    </span>
-  </label>
+  <span class="text-sm text-gray-darkest dark:text-gray-lighter">
+    Foobar
+    
+  </span>
 
   
-</div>
+</label>

@@ -4,13 +4,13 @@ defmodule HomeBaseWeb.UserSessionController do
   alias HomeBase.Accounts
   alias HomeBaseWeb.UserAuth
 
-  def create(conn, %{"_action" => "registered"} = params) do
+  def create(conn, %{"action" => "registered"} = params) do
     create(conn, params, "Account created successfully!")
   end
 
-  def create(conn, %{"_action" => "password_updated"} = params) do
+  def create(conn, %{"action" => "password_updated"} = params) do
     conn
-    |> put_session(:user_return_to, ~p"/users/settings")
+    |> put_session(:user_return_to, ~p"/profile")
     |> create(params, "Password updated successfully!")
   end
 
@@ -30,7 +30,7 @@ defmodule HomeBaseWeb.UserSessionController do
       conn
       |> put_flash(:error, "Invalid email or password")
       |> put_flash(:email, String.slice(email, 0, 160))
-      |> redirect(to: ~p"/users/log_in")
+      |> redirect(to: ~p"/login")
     end
   end
 

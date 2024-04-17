@@ -1,4 +1,4 @@
-defmodule HomeBaseWeb.UserRegistrationLiveTest do
+defmodule HomeBaseWeb.SignupLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
   import HomeBase.Factory
@@ -15,23 +15,23 @@ defmodule HomeBaseWeb.UserRegistrationLiveTest do
 
   describe "Registration page" do
     test "renders registration page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/register")
+      {:ok, _lv, html} = live(conn, ~p"/signup")
 
-      assert html =~ "Register"
+      assert html =~ "Sign up"
       assert html =~ "Log in"
     end
 
     test "renders errors for invalid data", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, _html} = live(conn, ~p"/signup")
 
       result =
         lv
-        |> element("#registration_form")
+        |> element("#signup-form")
         |> render_change(user: %{"email" => "w spce", "password" => "too sht"})
 
-      assert result =~ "Register"
       assert result =~ "must have the @ sign and no spaces"
       assert result =~ "should be at least 8 character"
+      assert result =~ "must be accepted"
     end
   end
 
@@ -42,8 +42,8 @@ defmodule HomeBaseWeb.UserRegistrationLiveTest do
       result =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/register")
-        |> follow_redirect(conn, "/")
+        |> live(~p"/signup")
+        |> follow_redirect(conn, ~p"/")
 
       assert {:ok, _conn} = result
     end
@@ -51,31 +51,36 @@ defmodule HomeBaseWeb.UserRegistrationLiveTest do
 
   describe "register user" do
     test "creates account and logs the user in", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, _html} = live(conn, ~p"/signup")
 
       email = unique_user_email()
-      form = form(lv, "#registration_form", user: params_for(:user, email: email))
+
+      user_params =
+        :user
+        |> params_for(email: email)
+        |> Map.merge(%{terms: true, password: "HelloWorld123!", password_confirmation: "HelloWorld123!"})
+
+      form = form(lv, "#signup-form", user: user_params)
       render_submit(form)
       conn = follow_trigger_action(form, conn)
 
       assert redirected_to(conn) == ~p"/"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, "/")
+      conn = get(conn, ~p"/")
       response = html_response(conn, 200)
-      assert response =~ email
       assert response =~ "Profile"
       assert response =~ "Log out"
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, _html} = live(conn, ~p"/signup")
 
       user = :user |> params_for(%{email: "test@email.com"}) |> register_user!()
 
       result =
         lv
-        |> form("#registration_form",
+        |> form("#signup-form",
           user: %{"email" => user.email, "password" => "valid_password"}
         )
         |> render_submit()
@@ -86,13 +91,13 @@ defmodule HomeBaseWeb.UserRegistrationLiveTest do
 
   describe "registration navigation" do
     test "redirects to login page when the Log in button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, _html} = live(conn, ~p"/signup")
 
       {:ok, _login_live, login_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign in")|)
+        |> element("a", "Log in")
         |> render_click()
-        |> follow_redirect(conn, ~p"/users/log_in")
+        |> follow_redirect(conn, ~p"/login")
 
       assert login_html =~ "Log in"
     end

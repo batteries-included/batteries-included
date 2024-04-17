@@ -15,13 +15,40 @@ defmodule CommonUI.Components.Flash do
   """
   attr :id, :string, default: "flash", doc: "the optional id of flash container"
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
+  attr :variant, :string, default: "fixed", values: ["fixed", "inline"]
   attr :title, :string, default: nil
-  attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+  attr :kind, :atom, values: [:info, :warning, :error], doc: "used for styling and flash lookup"
   attr :autoshow, :boolean, default: true, doc: "whether to auto show the flash on mount"
   attr :close, :boolean, default: true, doc: "whether the flash can be closed"
+  attr :class, :any, default: nil
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
+
+  def flash(%{variant: "inline"} = assigns) do
+    ~H"""
+    <div
+      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      id={@id}
+      role="alert"
+      class={[
+        "rounded-lg p-3",
+        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
+        @kind == :warning && "bg-amber-50 text-amber-800 ring-amber-500 fill-amber-900",
+        @kind == :error && "bg-rose-50 p-3 text-rose-900 ring-rose-500 fill-rose-900",
+        @class
+      ]}
+      {@rest}
+    >
+      <p class="flex items-center gap-1.5 text-sm font-semibold">
+        <.icon :if={@kind == :info} name={:information_circle} mini class="size-4" />
+        <.icon :if={@kind == :warning} name={:exclamation_triangle} mini class="size-4" />
+        <.icon :if={@kind == :error} name={:exclamation_circle} mini class="size-4" />
+        <%= msg %>
+      </p>
+    </div>
+    """
+  end
 
   def flash(assigns) do
     ~H"""
@@ -32,15 +59,17 @@ defmodule CommonUI.Components.Flash do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("#flash")}
       role="alert"
       class={[
-        "fixed hidden top-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 shadow-md shadow-gray-darkest/5 ring-1",
+        "fixed hidden bottom-4 right-4 w-80 sm:w-96 z-50 rounded-lg p-3 shadow-md shadow-gray-darkest/5 ring-1",
         @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :error && "bg-rose-50 p-3 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+        @kind == :warning && "bg-amber-50 text-amber-800 ring-amber-500 fill-amber-900",
+        @kind == :error && "bg-rose-50 p-3 text-rose-900 ring-rose-500 fill-rose-900"
       ]}
       {@rest}
     >
       <p :if={@title} class="flex items-center gap-1.5 text-[0.8125rem] font-semibold leading-6">
-        <.icon :if={@kind == :info} name={:information_circle} mini class="h-4 w-4" />
-        <.icon :if={@kind == :error} name={:exclamation_circle} mini class="h-4 w-4" />
+        <.icon :if={@kind == :info} name={:information_circle} mini class="size-4" />
+        <.icon :if={@kind == :warning} name={:exclamation_triangle} mini class="size-4" />
+        <.icon :if={@kind == :error} name={:exclamation_circle} mini class="size-4" />
         <%= @title %>
       </p>
       <p class="mt-2 text-[0.8125rem] leading-5"><%= msg %></p>

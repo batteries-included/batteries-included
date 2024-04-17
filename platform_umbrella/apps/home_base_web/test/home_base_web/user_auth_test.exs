@@ -63,7 +63,7 @@ defmodule HomeBaseWeb.UserAuthTest do
       refute get_session(conn, :user_token)
       refute conn.cookies[@remember_me_cookie]
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/login"
       refute Accounts.get_user_by_session_token(user_token)
     end
 
@@ -82,7 +82,7 @@ defmodule HomeBaseWeb.UserAuthTest do
       conn = conn |> fetch_cookies() |> UserAuth.log_out_user()
       refute get_session(conn, :user_token)
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/login"
     end
   end
 
@@ -188,14 +188,14 @@ defmodule HomeBaseWeb.UserAuthTest do
     end
   end
 
-  describe "on_mount :redirect_if_user_is_authenticated" do
+  describe "on_mount :redirect_authenticated_user" do
     test "redirects if there is an authenticated  user ", %{conn: conn, user: user} do
       user_token = Accounts.generate_user_session_token(user)
       session = conn |> put_session(:user_token, user_token) |> get_session()
 
       assert {:halt, _updated_socket} =
                UserAuth.on_mount(
-                 :redirect_if_user_is_authenticated,
+                 :redirect_authenticated_user,
                  %{},
                  session,
                  %LiveView.Socket{}
@@ -207,7 +207,7 @@ defmodule HomeBaseWeb.UserAuthTest do
 
       assert {:cont, _updated_socket} =
                UserAuth.on_mount(
-                 :redirect_if_user_is_authenticated,
+                 :redirect_authenticated_user,
                  %{},
                  session,
                  %LiveView.Socket{}
@@ -215,15 +215,15 @@ defmodule HomeBaseWeb.UserAuthTest do
     end
   end
 
-  describe "redirect_if_user_is_authenticated/2" do
+  describe "redirect_authenticated_user/2" do
     test "redirects if user is authenticated", %{conn: conn, user: user} do
-      conn = conn |> assign(:current_user, user) |> UserAuth.redirect_if_user_is_authenticated([])
+      conn = conn |> assign(:current_user, user) |> UserAuth.redirect_authenticated_user([])
       assert conn.halted
       assert redirected_to(conn) == ~p"/"
     end
 
     test "does not redirect if user is not authenticated", %{conn: conn} do
-      conn = UserAuth.redirect_if_user_is_authenticated(conn, [])
+      conn = UserAuth.redirect_authenticated_user(conn, [])
       refute conn.halted
       refute conn.status
     end
@@ -234,10 +234,10 @@ defmodule HomeBaseWeb.UserAuthTest do
       conn = conn |> fetch_flash() |> UserAuth.require_authenticated_user([])
       assert conn.halted
 
-      assert redirected_to(conn) == ~p"/users/log_in"
+      assert redirected_to(conn) == ~p"/login"
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
-               "You must log in to access this page."
+               "You must log in to access this page"
     end
 
     test "stores the path to redirect to on GET", %{conn: conn} do

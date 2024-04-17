@@ -27,6 +27,8 @@ defmodule HomeBaseWeb.ConnCase do
       import Phoenix.ConnTest
       import Plug.Conn
 
+      alias HomeBase.Repo
+
       @endpoint HomeBaseWeb.Endpoint
     end
   end

@@ -43,6 +43,7 @@ defmodule HomeBase.Accounts.User do
     |> cast(attrs, [:email, :password])
     |> validate_email(opts)
     |> validate_password(opts)
+    |> validate_acceptance(:terms)
   end
 
   defp validate_email(changeset, opts) do
@@ -57,6 +58,7 @@ defmodule HomeBase.Accounts.User do
     changeset
     |> validate_required([:password])
     |> validate_length(:password, min: 8, max: 72)
+    |> validate_confirmation(:password, message: "does not match password")
     # Examples of additional password validation:
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
@@ -121,7 +123,6 @@ defmodule HomeBase.Accounts.User do
   def password_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:password])
-    |> validate_confirmation(:password, message: "does not match password")
     |> validate_password(opts)
   end
 

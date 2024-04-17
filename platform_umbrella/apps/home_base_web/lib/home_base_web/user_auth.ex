@@ -83,7 +83,7 @@ defmodule HomeBaseWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/")
+    |> redirect(to: ~p"/login")
   end
 
   @doc """
@@ -124,7 +124,7 @@ defmodule HomeBaseWeb.UserAuth do
       on user_token.
       Redirects to login page if there's no logged user.
 
-    * `:redirect_if_user_is_authenticated` - Authenticates the user from the session.
+    * `:redirect_authenticated_user` - Authenticates the user from the session.
       Redirects to signed_in_path if there's a logged user.
 
   ## Examples
@@ -157,14 +157,14 @@ defmodule HomeBaseWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
+        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page")
+        |> Phoenix.LiveView.redirect(to: ~p"/login")
 
       {:halt, socket}
     end
   end
 
-  def on_mount(:redirect_if_user_is_authenticated, _params, session, socket) do
+  def on_mount(:redirect_authenticated_user, _params, session, socket) do
     socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
@@ -185,7 +185,7 @@ defmodule HomeBaseWeb.UserAuth do
   @doc """
   Used for routes that require the user to not be authenticated.
   """
-  def redirect_if_user_is_authenticated(conn, _opts) do
+  def redirect_authenticated_user(conn, _opts) do
     if conn.assigns[:current_user] do
       conn
       |> redirect(to: signed_in_path(conn))
@@ -206,9 +206,9 @@ defmodule HomeBaseWeb.UserAuth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
+      |> put_flash(:error, "You must log in to access this page")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log_in")
+      |> redirect(to: ~p"/login")
       |> halt()
     end
   end

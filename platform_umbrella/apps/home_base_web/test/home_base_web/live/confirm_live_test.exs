@@ -1,4 +1,4 @@
-defmodule HomeBaseWeb.UserConfirmationLiveTest do
+defmodule HomeBaseWeb.ConfirmLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
   import HomeBase.Factory
@@ -14,8 +14,8 @@ defmodule HomeBaseWeb.UserConfirmationLiveTest do
 
   describe "Confirm user" do
     test "renders confirmation page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/confirm/some-token")
-      assert html =~ "Confirm my account"
+      {:ok, _lv, html} = live(conn, ~p"/confirm/some-token")
+      assert html =~ "Confirm your account"
     end
 
     test "confirms the given token once", %{conn: conn, user: user} do
@@ -24,13 +24,13 @@ defmodule HomeBaseWeb.UserConfirmationLiveTest do
           Accounts.deliver_user_confirmation_instructions(user, url)
         end)
 
-      {:ok, lv, _html} = live(conn, ~p"/users/confirm/#{token}")
+      {:ok, lv, _html} = live(conn, ~p"/confirm/#{token}")
 
       result =
         lv
-        |> form("#confirmation_form")
-        |> render_submit()
-        |> follow_redirect(conn, "/")
+        |> element("button", "Confirm your account")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/login")
 
       assert {:ok, conn} = result
 
@@ -42,46 +42,46 @@ defmodule HomeBaseWeb.UserConfirmationLiveTest do
       assert Repo.all(Accounts.UserToken) == []
 
       # when not logged in
-      {:ok, lv, _html} = live(conn, ~p"/users/confirm/#{token}")
+      {:ok, lv, _html} = live(conn, ~p"/confirm/#{token}")
 
       result =
         lv
-        |> form("#confirmation_form")
-        |> render_submit()
-        |> follow_redirect(conn, "/users/log_in")
+        |> element("button", "Confirm your account")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/login")
 
       assert {:ok, conn} = result
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
-               "User confirmation link is invalid or it has expired"
+               "Link is invalid or it has expired"
 
       # when logged in
       conn =
         log_in_user(build_conn(), user)
 
-      {:ok, lv, _html} = live(conn, ~p"/users/confirm/#{token}")
+      {:ok, lv, _html} = live(conn, ~p"/confirm/#{token}")
 
       result =
         lv
-        |> form("#confirmation_form")
-        |> render_submit()
-        |> follow_redirect(conn, "/")
+        |> element("button", "Confirm your account")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/")
 
       assert {:ok, conn} = result
       refute Phoenix.Flash.get(conn.assigns.flash, :error)
     end
 
     test "does not confirm email with invalid token", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/users/confirm/invalid-token")
+      {:ok, lv, _html} = live(conn, ~p"/confirm/invalid-token")
 
       {:ok, conn} =
         lv
-        |> form("#confirmation_form")
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log_in")
+        |> element("button", "Confirm your account")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/login")
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
-               "User confirmation link is invalid or it has expired"
+               "Link is invalid or it has expired"
 
       refute Accounts.get_user!(user.id).confirmed_at
     end

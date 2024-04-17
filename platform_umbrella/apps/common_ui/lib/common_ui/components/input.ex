@@ -34,6 +34,8 @@ defmodule CommonUI.Components.Input do
     attr :class, :any
   end
 
+  slot :inner_block
+
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil)
@@ -57,8 +59,8 @@ defmodule CommonUI.Components.Input do
         required={!@multiple}
         class={[
           input_class(@errors),
-          @multiple == false &&
-            "bg-caret bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer",
+          "invalid:text-gray-light dark:invalid:text-gray-dark",
+          @multiple == false && "bg-caret bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer",
           @class
         ]}
         {@rest}
@@ -77,19 +79,51 @@ defmodule CommonUI.Components.Input do
 
   def input(%{type: "checkbox"} = assigns) do
     ~H"""
-    <div class="contents">
+    <label
+      phx-feedback-for={if !@force_feedback, do: @name}
+      class={["flex flex-wrap items-center gap-x-2 cursor-pointer", @class]}
+    >
+      <input type="hidden" name={@name} value="false" />
+      <input
+        type="checkbox"
+        name={@name}
+        value="true"
+        checked={@checked}
+        class={[
+          "size-5 text-primary rounded cursor-pointer",
+          "checked:border-primary checked:hover:border-primary",
+          @errors == [] && "border-gray-lighter hover:border-primary",
+          @errors != [] && "phx-feedback:border-error phx-feedback:bg-error-light"
+        ]}
+      />
+
+      <span class={label_class()}>
+        <%= @label %>
+        <%= render_slot(@inner_block) %>
+      </span>
+
+      <.error errors={@errors} class="w-full mt-2" />
+    </label>
+    """
+  end
+
+  def input(%{type: "radio"} = assigns) do
+    ~H"""
+    <div
+      phx-feedback-for={if !@force_feedback, do: @name}
+      class={["flex flex-wrap items-center gap-x-6", @class]}
+    >
       <label
-        phx-feedback-for={if !@force_feedback, do: @name}
-        class={["flex items-center gap-x-2 cursor-pointer", @class]}
+        :for={option <- @option}
+        class={["inline-flex flex-wrap items-center gap-2 cursor-pointer", Map.get(option, :class)]}
       >
-        <input type="hidden" name={@name} value="false" />
         <input
-          type="checkbox"
+          type="radio"
           name={@name}
-          value="true"
-          checked={@checked}
+          value={option.value}
+          checked={to_string(@value) == to_string(option.value)}
           class={[
-            "size-5 text-primary rounded cursor-pointer",
+            "size-5 text-primary rounded-full cursor-pointer",
             "checked:border-primary checked:hover:border-primary",
             @errors == [] && "border-gray-lighter hover:border-primary",
             @errors != [] && "phx-feedback:border-error phx-feedback:bg-error-light"
@@ -97,46 +131,11 @@ defmodule CommonUI.Components.Input do
         />
 
         <span class={label_class()}>
-          <%= @label %>
+          <%= render_slot(option) %>
         </span>
       </label>
 
-      <.error errors={@errors} class="mt-0" />
-    </div>
-    """
-  end
-
-  def input(%{type: "radio"} = assigns) do
-    ~H"""
-    <div class="contents">
-      <div
-        phx-feedback-for={if !@force_feedback, do: @name}
-        class={["flex flex-wrap items-center gap-x-6", @class]}
-      >
-        <label
-          :for={option <- @option}
-          class={["inline-flex items-center gap-2 cursor-pointer", Map.get(option, :class)]}
-        >
-          <input
-            type="radio"
-            name={@name}
-            value={option.value}
-            checked={to_string(@value) == to_string(option.value)}
-            class={[
-              "size-5 text-primary rounded-full cursor-pointer",
-              "checked:border-primary checked:hover:border-primary",
-              @errors == [] && "border-gray-lighter hover:border-primary",
-              @errors != [] && "phx-feedback:border-error phx-feedback:bg-error-light"
-            ]}
-          />
-
-          <span class={label_class()}>
-            <%= render_slot(option) %>
-          </span>
-        </label>
-      </div>
-
-      <.error errors={@errors} class="mt-0" />
+      <.error errors={@errors} class="w-full mt-2" />
     </div>
     """
   end
@@ -192,37 +191,38 @@ defmodule CommonUI.Components.Input do
 
   def input(%{type: "switch"} = assigns) do
     ~H"""
-    <div class="contents">
-      <label
-        phx-feedback-for={if !@force_feedback, do: @name}
-        class={["inline-flex items-center justify-between gap-2 cursor-pointer select-none", @class]}
-      >
-        <span class={label_class()}><%= @label %></span>
+    <label
+      phx-feedback-for={if !@force_feedback, do: @name}
+      class={[
+        "inline-flex flex-wrap items-center justify-between gap-2 cursor-pointer select-none",
+        @class
+      ]}
+    >
+      <span class={label_class()}><%= @label %></span>
 
-        <div>
-          <input
-            type="checkbox"
-            name={@name}
-            value={@value}
-            checked={@checked}
-            class="peer sr-only"
-            {@rest}
-          />
+      <div>
+        <input
+          type="checkbox"
+          name={@name}
+          value={@value}
+          checked={@checked}
+          class="peer sr-only"
+          {@rest}
+        />
 
-          <div class={[
-            "relative w-[44px] h-[24px] rounded-full bg-gray-lightest border border-gray-lighter hover:border-primary",
-            "dark:bg-gray-darkest-tint dark:border-gray-darker dark:hover:border-gray-dark",
-            "after:content-[''] after:absolute after:top-[3px] after:start-[3px] after:w-[16px] after:h-[16px]",
-            "after:rounded-full after:bg-gray after:transition-all",
-            "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary",
-            "peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter",
-            "peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary-light"
-          ]} />
-        </div>
-      </label>
+        <div class={[
+          "relative w-[44px] h-[24px] rounded-full bg-gray-lightest border border-gray-lighter hover:border-primary",
+          "dark:bg-gray-darkest-tint dark:border-gray-darker dark:hover:border-gray-dark",
+          "after:content-[''] after:absolute after:top-[3px] after:start-[3px] after:w-[16px] after:h-[16px]",
+          "after:rounded-full after:bg-gray after:transition-all",
+          "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary",
+          "peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter",
+          "peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary-light"
+        ]} />
+      </div>
 
-      <.error errors={@errors} class="mt-0" />
-    </div>
+      <.error errors={@errors} class="w-full mt-0" />
+    </label>
     """
   end
 
@@ -234,6 +234,7 @@ defmodule CommonUI.Components.Input do
       <textarea
         name={@name}
         placeholder={@placeholder}
+        phx-debounce="blur"
         class={[
           input_class(@errors),
           @class
@@ -269,6 +270,7 @@ defmodule CommonUI.Components.Input do
           name={@name}
           value={normalize_value(@type, @value)}
           placeholder={@placeholder}
+          phx-debounce="blur"
           class={[
             input_class(@errors),
             @class
@@ -300,7 +302,7 @@ defmodule CommonUI.Components.Input do
     [
       "px-3 py-2 w-full rounded-lg focus:ring-0",
       "text-sm text-gray-darkest dark:text-gray-lighter",
-      "placeholder:text-gray-light dark:placeholder:text-gray-dark invalid:text-gray-light dark:invalid:text-gray-dark",
+      "placeholder:text-gray-light dark:placeholder:text-gray-dark",
       "border border-gray-lighter dark:border-gray-darker-tint",
       "hover:border-primary dark:hover:border-gray focus:border-primary dark:focus:border-gray",
       "bg-gray-lightest dark:bg-gray-darkest-tint"

@@ -30,7 +30,7 @@ defmodule HomeBaseWeb.InstallationLiveTest do
     test "lists all installations", %{conn: conn, installation: installation} do
       {:ok, _index_live, html} = live(conn, ~p"/installations")
 
-      assert html =~ "Listing Installations"
+      assert html =~ "Installations"
       assert html =~ installation.slug
     end
   end
@@ -39,7 +39,7 @@ defmodule HomeBaseWeb.InstallationLiveTest do
     setup [:create_installation, :setup_user, :login_conn]
 
     test "displays installation", %{conn: conn, installation: installation} do
-      {:ok, _show_live, html} = live(conn, ~p"/installations/#{installation}/show")
+      {:ok, _show_live, html} = live(conn, ~p"/installations/#{installation}")
 
       assert html =~ "Show Installation"
       assert html =~ installation.slug

@@ -1,4 +1,4 @@
-defmodule HomeBaseWeb.UserForgotPasswordLiveTest do
+defmodule HomeBaseWeb.ForgotPasswordLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
   import HomeBase.Factory
@@ -16,18 +16,15 @@ defmodule HomeBaseWeb.UserForgotPasswordLiveTest do
     setup [:setup_user]
 
     test "renders email page", %{conn: conn} do
-      {:ok, lv, html} = live(conn, ~p"/users/reset_password")
-
+      {:ok, _lv, html} = live(conn, ~p"/reset")
       assert html =~ "Forgot your password?"
-      assert has_element?(lv, ~s|a[href="#{~p"/users/register"}"]|, "Register")
-      assert has_element?(lv, ~s|a[href="#{~p"/users/log_in"}"]|, "Log in")
     end
 
     test "redirects if already logged in", %{conn: conn, user: user} do
       result =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/reset_password")
+        |> live(~p"/reset")
         |> follow_redirect(conn, ~p"/")
 
       assert {:ok, _conn} = result
@@ -38,30 +35,30 @@ defmodule HomeBaseWeb.UserForgotPasswordLiveTest do
     setup [:setup_user]
 
     test "sends a new reset password token", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/users/reset_password")
+      {:ok, lv, _html} = live(conn, ~p"/reset")
 
       {:ok, conn} =
         lv
-        |> form("#reset_password_form", user: %{"email" => user.email})
+        |> form("#reset-password-form", %{"email" => user.email})
         |> render_submit()
-        |> follow_redirect(conn, "/")
+        |> follow_redirect(conn, ~p"/login")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Please check your email"
 
       assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context ==
                "reset_password"
     end
 
     test "does not send reset password token if email is invalid", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/reset_password")
+      {:ok, lv, _html} = live(conn, ~p"/reset")
 
       {:ok, conn} =
         lv
-        |> form("#reset_password_form", user: %{"email" => "unknown@example.com"})
+        |> form("#reset-password-form", %{"email" => "unknown@example.com"})
         |> render_submit()
-        |> follow_redirect(conn, "/")
+        |> follow_redirect(conn, ~p"/login")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Please check your email"
       assert Repo.all(Accounts.UserToken) == []
     end
   end

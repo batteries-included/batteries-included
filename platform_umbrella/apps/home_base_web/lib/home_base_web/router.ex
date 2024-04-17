@@ -3,35 +3,30 @@ defmodule HomeBaseWeb.Router do
 
   import HomeBaseWeb.UserAuth
 
+  @redirect_authenticated_user {HomeBaseWeb.UserAuth, :redirect_authenticated_user}
+  @ensure_authenticated_user {HomeBaseWeb.UserAuth, :ensure_authenticated}
+  @mount_current_user {HomeBaseWeb.UserAuth, :mount_current_user}
+
+  @root_layout {HomeBaseWeb.Layouts, :root}
+  @auth_layout {HomeBaseWeb.Layouts, :auth}
+  @app_layout {HomeBaseWeb.Layouts, :app}
+
+  pipeline :auth_layout, do: plug(:put_layout, html: @auth_layout)
+  pipeline :app_layout, do: plug(:put_layout, html: @app_layout)
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug :fetch_current_user
     plug :fetch_live_flash
-    plug :put_root_layout, {HomeBaseWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :fetch_current_user
+    plug :put_root_layout, @root_layout
+    plug :put_layout, false
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-  end
-
-  ## Main application routes
-  # Ensure the user is authenticated before accessing
-  # any page other than designated routes for authentication
-  scope "/", HomeBaseWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live_session :main_app_auth_required,
-      on_mount: [{HomeBaseWeb.UserAuth, :ensure_authenticated}] do
-      ## Application Routes
-      live "/", Live.Home, :index
-
-      live "/installations/", Live.Installations, :index
-      live "/installations/new", Live.InstallationNew, :index
-      live "/installations/:id/show", Live.InstallatitonShow, :show
-    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
@@ -46,45 +41,50 @@ defmodule HomeBaseWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: HomeBaseWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-  end
-
-  scope "/", HomeBaseWeb do
-    pipe_through [:browser, :redirect_if_user_is_authenticated]
-
-    live_session :auth_related_unauth_required,
-      on_mount: [{HomeBaseWeb.UserAuth, :redirect_if_user_is_authenticated}] do
-      ## Authentication routes
-      live "/users/register", UserRegistrationLive, :new
-      live "/users/log_in", UserLoginLive, :new
-      live "/users/reset_password", UserForgotPasswordLive, :new
-      live "/users/reset_password/:token", UserResetPasswordLive, :edit
-    end
-
-    post "/users/log_in", UserSessionController, :create
-  end
-
-  scope "/", HomeBaseWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live_session :auth_related_auth_required,
-      on_mount: [{HomeBaseWeb.UserAuth, :ensure_authenticated}] do
-      live "/users/settings", UserSettingsLive, :edit
-      live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live_dashboard "/dashboard", metrics: HomeBaseWeb.Telemetry
     end
   end
 
   scope "/", HomeBaseWeb do
     pipe_through [:browser]
 
-    delete "/users/log_out", UserSessionController, :delete
+    delete "/logout", UserSessionController, :delete
+  end
 
-    live_session :auth_related_auth_available,
-      on_mount: [{HomeBaseWeb.UserAuth, :mount_current_user}] do
-      live "/users/confirm/:token", UserConfirmationLive, :edit
-      live "/users/confirm", UserConfirmationInstructionsLive, :new
+  scope "/", HomeBaseWeb do
+    pipe_through [:browser, :auth_layout, :redirect_authenticated_user]
+
+    post "/login", UserSessionController, :create
+
+    live_session :auth, layout: @auth_layout, on_mount: [@redirect_authenticated_user] do
+      live "/signup", SignupLive
+      live "/login", LoginLive
+      live "/reset", ForgotPasswordLive
+      live "/reset/:token", ResetPasswordLive
+    end
+  end
+
+  scope "/", HomeBaseWeb do
+    pipe_through [:browser, :auth_layout]
+
+    live_session :confirm, layout: @auth_layout, on_mount: [@mount_current_user] do
+      live "/confirm/:token", ConfirmLive
+    end
+  end
+
+  scope "/", HomeBaseWeb do
+    pipe_through [:browser, :app_layout, :require_authenticated_user]
+
+    live_session :main, layout: @app_layout, on_mount: [@ensure_authenticated_user] do
+      live "/", DashboardLive
+
+      live "/installations/", InstallationLive
+      live "/installations/new", InstallationNewLive
+      live "/installations/:id", InstallationShowLive
+
+      live "/profile", ProfileLive
+      live "/profile/:token", ProfileLive
     end
   end
 end

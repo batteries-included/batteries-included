@@ -10,6 +10,7 @@ defmodule HomeBase.Factory do
   end
 
   def register_user!(user) do
+    user = Map.put(user, :terms, true)
     {:ok, user} = HomeBase.Accounts.register_user(user)
     user
   end
