@@ -15,7 +15,7 @@ func StopInstall(ctx context.Context, url string) error {
 	}
 
 	slog.Debug("Stopping kube provider")
-	err = env.StopKubeProvider()
+	err = env.StopKubeProvider(ctx)
 	if err != nil {
 		return err
 	}

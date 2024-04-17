@@ -6,9 +6,14 @@ import (
 )
 
 type Provider interface {
+	// Init initializes the cluster provider (eg. checks for prerequisites and existing state).
 	Init(context.Context) error
+	// Create creates the cluster (if it doesn't already exist).
 	Create(context.Context) error
+	// Destroy destroys the cluster (if it exists).
 	Destroy(context.Context) error
+	// Outputs writes the cluster outputs to the provided writer.
+	// This is typically a loosely structured set of key-values encoded in JSON.
 	Outputs(context.Context, io.Writer) error
 	// KubeConfig returns the kubeconfig for the cluster.
 	// The internal flag indicated we should use an internal address for the cluster

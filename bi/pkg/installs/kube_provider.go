@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"slices"
 
-	"bi/pkg/cluster"
 	"bi/pkg/docker"
 	"bi/pkg/specs"
 )
@@ -22,9 +21,9 @@ func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
 
 	switch provider {
 	case "kind":
-		err = env.startLocal()
+		err = env.startLocal(ctx)
 	case "aws":
-		err = env.startAWS()
+		err = env.startAWS(ctx)
 	case "provided":
 	default:
 		slog.Debug("unexpected provider", slog.String("provider", provider))
@@ -54,11 +53,18 @@ func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
 	return nil
 }
 
-func (env *InstallEnv) startLocal() error {
-	err := env.kindClusterProvider.EnsureStarted()
+func (env *InstallEnv) StopKubeProvider(ctx context.Context) error {
+	slog.Debug("stopping provider")
+
+	return env.clusterProvider.Destroy(ctx)
+}
+
+func (env *InstallEnv) startLocal(ctx context.Context) error {
+	err := env.clusterProvider.Create(ctx)
 	if err != nil {
 		return err
 	}
+
 	err = env.tryAddMetalIPs()
 	if err != nil {
 		return err
@@ -67,21 +73,15 @@ func (env *InstallEnv) startLocal() error {
 	return nil
 }
 
-func (env *InstallEnv) startAWS() error {
+func (env *InstallEnv) startAWS(ctx context.Context) error {
 	slog.Debug("Starting aws cluster")
-	ctx := context.Background()
 
-	p := cluster.NewPulumiProvider()
-	if err := p.Init(ctx); err != nil {
-		return err
-	}
-
-	if err := p.Create(ctx); err != nil {
+	if err := env.clusterProvider.Create(ctx); err != nil {
 		return err
 	}
 
 	buf := bytes.NewBuffer([]byte{})
-	if err := p.Outputs(ctx, buf); err != nil {
+	if err := env.clusterProvider.Outputs(ctx, buf); err != nil {
 		return err
 	}
 
@@ -185,41 +185,4 @@ func (env *InstallEnv) tryAddMetalIPs() error {
 		env.Spec.TargetSummary.IPAddressPools = pools
 	}
 	return nil
-}
-
-func (env *InstallEnv) StopKubeProvider() error {
-	slog.Debug("stopping provider")
-	var err error
-
-	provider := env.Spec.KubeCluster.Provider
-
-	switch provider {
-	case "kind":
-		err = env.stopLocal()
-	case "aws":
-		err = env.stopAws()
-	case "provided":
-	}
-
-	return err
-}
-
-func (env *InstallEnv) stopLocal() error {
-	slog.Debug("Stopping kind cluster")
-	return env.kindClusterProvider.EnsureDeleted()
-}
-
-func (env *InstallEnv) stopAws() error {
-	slog.Debug("Stopping aws cluster")
-	p := cluster.NewPulumiProvider()
-	ctx := context.Background()
-
-	err := p.Init(ctx)
-
-	if err != nil {
-		return err
-	}
-
-	err = p.Destroy(ctx)
-	return err
 }

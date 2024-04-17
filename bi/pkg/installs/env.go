@@ -7,10 +7,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"bi/pkg/local"
 	"bi/pkg/specs"
 
 	"bi/pkg/cluster"
+	"bi/pkg/cluster/kind"
 
 	"github.com/adrg/xdg"
 )
@@ -19,10 +19,9 @@ import (
 // the spec is used to tell us what should be running.
 type InstallEnv struct {
 	// The Slug of the customer install
-	Slug                  string
-	kindClusterProvider   *local.KindClusterProvider
-	pulumiClusterProvider cluster.Provider
-	Spec                  *specs.InstallSpec
+	Slug            string
+	clusterProvider cluster.Provider
+	Spec            *specs.InstallSpec
 }
 
 // Init Function generate all needed
@@ -52,20 +51,18 @@ func (env *InstallEnv) init(ctx context.Context) error {
 	case "kind":
 		// TODO get this from the config
 		clusterName := env.Slug
-		env.kindClusterProvider, err = local.NewKindClusterProvider(clusterName)
-		if err != nil {
-			return fmt.Errorf("error creating kind cluster provider: %w", err)
-		}
-	case "aws":
-		env.pulumiClusterProvider = cluster.NewPulumiProvider()
 
-		if err = env.pulumiClusterProvider.Init(ctx); err != nil {
-			return fmt.Errorf("error initializing pulumi cluster provider: %w", err)
-		}
+		env.clusterProvider = kind.NewClusterProvider(slog.Default(), clusterName)
+	case "aws":
+		env.clusterProvider = cluster.NewPulumiProvider()
 	case "provided":
 	default:
 		slog.Debug("unexpected provider", slog.String("provider", provider))
 		return fmt.Errorf("unknown provider")
+	}
+
+	if err = env.clusterProvider.Init(ctx); err != nil {
+		return fmt.Errorf("error initializing cluster provider: %w", err)
 	}
 
 	return nil

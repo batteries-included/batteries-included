@@ -105,10 +105,9 @@ func (env *InstallEnv) WriteKubeConfig(ctx context.Context, force bool) error {
 	provider := env.Spec.KubeCluster.Provider
 
 	switch provider {
-	case "kind":
-		return env.kindClusterProvider.KubeConfig(ctx, kubeConfigFile, false)
-	case "aws":
-		return env.pulumiClusterProvider.KubeConfig(ctx, kubeConfigFile, false)
+	case "aws", "kind":
+		// Kind does not use wireguard, so we'll need an external kubeconfig.
+		return env.clusterProvider.KubeConfig(ctx, kubeConfigFile, provider != "kind")
 	case "provided":
 	default:
 		slog.Debug("unexpected provider", slog.String("provider", provider))
@@ -143,10 +142,8 @@ func (env *InstallEnv) WriteWireGuardConfig(ctx context.Context, force bool) err
 
 	var hasConfig bool
 	switch provider {
-	case "kind":
-		hasConfig, err = env.kindClusterProvider.WireGuardConfig(ctx, wireGuardConfigFile)
-	case "aws":
-		hasConfig, err = env.pulumiClusterProvider.WireGuardConfig(ctx, wireGuardConfigFile)
+	case "aws", "kind":
+		hasConfig, err = env.clusterProvider.WireGuardConfig(ctx, wireGuardConfigFile)
 	case "provided":
 	default:
 		return fmt.Errorf("unknown provider: %s", provider)

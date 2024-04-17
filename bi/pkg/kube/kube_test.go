@@ -1,11 +1,12 @@
 package kube_test
 
 import (
+	"bi/pkg/cluster/kind"
 	"bi/pkg/kube"
-	"bi/pkg/local"
 	"bi/pkg/testutil"
 	"bi/pkg/wireguard"
 	"context"
+	"log/slog"
 	"net"
 	"net/netip"
 	"os"
@@ -107,17 +108,18 @@ func TestBatteryKubeClient(t *testing.T) {
 	os.Setenv("KIND_EXPERIMENTAL_DOCKER_NETWORK", testNetwork.Name)
 
 	t.Log("Creating kind cluster")
-	cluster, err := local.NewKindClusterProvider("bi-wg-test")
+	clusterProvider := kind.NewClusterProvider(slog.Default(), "bi-wg-test")
 	require.NoError(t, err)
 
-	require.NoError(t, cluster.EnsureStarted())
+	require.NoError(t, clusterProvider.Init(ctx))
+	require.NoError(t, clusterProvider.Create(ctx))
 
 	t.Cleanup(func() {
 		t.Log("Deleting kind cluster")
 
 		require.NoError(t, os.Unsetenv("KIND_EXPERIMENTAL_DOCKER_NETWORK"))
 
-		require.NoError(t, cluster.EnsureDeleted())
+		require.NoError(t, clusterProvider.Destroy(ctx))
 	})
 
 	// Get a kubeconfig for the kind cluster (using its internal domain name).
@@ -126,7 +128,7 @@ func TestBatteryKubeClient(t *testing.T) {
 	kubeConfigFile, err := os.Create(kubeConfigPath)
 	require.NoError(t, err)
 
-	require.NoError(t, cluster.KubeConfig(ctx, kubeConfigFile, true))
+	require.NoError(t, clusterProvider.KubeConfig(ctx, kubeConfigFile, true))
 	require.NoError(t, kubeConfigFile.Close())
 
 	// Create a WireGuard client configuration.
