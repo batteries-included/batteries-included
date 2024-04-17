@@ -267,9 +267,11 @@
               description = "Build the given flake.";
               category = "dev";
               exec = ''
-                  [[ -z ''${TRACE:-""} ]] || set -x
-                  flake=".#''${1:-""}"
+                [[ -z ''${TRACE:-""} ]] || set -x
+                flake=".#''${1:-""}"
                 shift
+                [[ $(git ls-files --others --exclude-standard | wc -l) -gt 0 ]] \
+                    && echo -e '\e[1;31mUntracked files! Dont forget to add them if needed for build!!!\e[0m'
                 nix build "$flake" "$@"
               '';
             };
