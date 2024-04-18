@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"os/user"
 	"path"
 
 	"bi/pkg/cluster/eks"
@@ -25,8 +24,9 @@ const (
 type pulumiProvider struct {
 	initSuccessful bool
 
-	cfg         auto.ConfigMap
-	projectName string
+	cfg auto.ConfigMap
+	projectName,
+	slug,
 	workDirRoot string
 
 	pulumiHome auto.LocalWorkspaceOption
@@ -34,8 +34,11 @@ type pulumiProvider struct {
 	envVars    auto.LocalWorkspaceOption
 }
 
-func NewPulumiProvider() Provider {
-	return &pulumiProvider{}
+func NewPulumiProvider(slug string) Provider {
+	return &pulumiProvider{
+		projectName: "bi",
+		slug:        slug,
+	}
 }
 
 func (p *pulumiProvider) Init(ctx context.Context) error {
@@ -61,17 +64,9 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 
 // configure sets up configuration common to all substacks and handles installing the plugins necessary
 func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) {
-	p.projectName = "bi"
-
-	stackName := auto.FullyQualifiedStackName("organization", p.projectName, "batteries-included")
+	stackName := auto.FullyQualifiedStackName("organization", p.projectName, p.slug)
 
 	tags, err := newTags(stackName)
-	if err != nil {
-		return nil, err
-	}
-
-	// NOTE(jdt): this is temporary so that multiple folks can create clusters w/o conflict?
-	user, err := user.Current()
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +80,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"cluster:instanceType":   {Value: "t3a.medium"},
 		"cluster:maxSize":        {Value: "4"},
 		"cluster:minSize":        {Value: "2"},
-		"cluster:name":           {Value: user.Username},
+		"cluster:name":           {Value: p.slug},
 		"cluster:version":        {Value: "1.29"},
 		"cluster:volumeSize":     {Value: "20"},
 		"cluster:volumeType":     {Value: "gp3"},
@@ -216,6 +211,7 @@ func (p *pulumiProvider) WireGuardConfig(ctx context.Context, w io.Writer) (bool
 func (p *pulumiProvider) toEKSConfig() *eks.Config {
 	return &eks.Config{
 		ProjectBaseName: p.projectName,
+		Slug:            p.slug,
 		WorkDirRoot:     p.workDirRoot,
 
 		Config:     p.cfg,

@@ -5,12 +5,13 @@ import (
 	"os"
 
 	"bi/pkg/cluster"
+	"bi/pkg/installs"
 
 	"github.com/spf13/cobra"
 )
 
 var outputsCmd = &cobra.Command{
-	Use:   "outputs [file]",
+	Use:   "outputs [install-slug|install-spec-url|install-spec-file]",
 	Short: "Get cluster outputs",
 	Long:  `Get outputs for cluster created on AWS EKS.`,
 	Args:  cobra.MatchAll(cobra.OnlyValidArgs, cobra.ExactArgs(1)),
@@ -18,21 +19,16 @@ var outputsCmd = &cobra.Command{
 		// assume output to stdout
 		var w io.Writer = os.Stdout
 
-		outArg := args[0]
+		url := args[0]
 
-		// use file for output if requested
-		if outArg != "-" {
-			f, err := os.OpenFile(outArg, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
-			cobra.CheckErr(err)
-			defer f.Close()
-			w = f
-		}
+		env, err := installs.NewEnv(cmd.Context(), url)
+		cobra.CheckErr(err)
 
-		p := cluster.NewPulumiProvider()
+		p := cluster.NewPulumiProvider(env.Spec.Slug)
 
 		ctx := cmd.Context()
 
-		err := p.Init(ctx)
+		err = p.Init(ctx)
 		cobra.CheckErr(err)
 
 		err = p.Outputs(ctx, w)

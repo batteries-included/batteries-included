@@ -52,8 +52,9 @@ var (
 )
 
 type Config struct {
-	ProjectBaseName string
-	WorkDirRoot     string
+	ProjectBaseName,
+	Slug,
+	WorkDirRoot string
 
 	Config     auto.ConfigMap
 	PulumiHome auto.LocalWorkspaceOption
@@ -347,7 +348,7 @@ func (e *eks) createStack(ctx context.Context, name string, prog pulumi.RunFunc)
 		return s, fmt.Errorf("failed to create workspace: %w", err)
 	}
 
-	stackName := auto.FullyQualifiedStackName("organization", projectName, "batteries-included")
+	stackName := auto.FullyQualifiedStackName("organization", projectName, e.cfg.Slug)
 	s, err = auto.UpsertStack(ctx, stackName, ws)
 	if err != nil {
 		return s, fmt.Errorf("failed to create stack: %w", err)

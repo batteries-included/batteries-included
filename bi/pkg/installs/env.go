@@ -51,7 +51,7 @@ func (env *InstallEnv) init(ctx context.Context) error {
 	case "kind":
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug)
 	case "aws":
-		env.clusterProvider = cluster.NewPulumiProvider()
+		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)
 	case "provided":
 	default:
 		slog.Debug("unexpected provider", slog.String("provider", provider))
