@@ -1,0 +1,51 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import PostList from '~/components/posts/List.astro';
+import Pagination from '~/components/posts/Pagination.astro';
+
+import { blogListRobots, getStaticPathsBlogList } from '~/utils/posts';
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+
+export const prerender = true;
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return await getStaticPathsBlogList({ paginate });
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { page } = Astro.props;
+const currentPage = page.currentPage ?? 1;
+
+const metadata = {
+  title: `Posts${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
+  robots: {
+    index: blogListRobots?.index && currentPage === 1,
+    follow: blogListRobots?.follow,
+  },
+  openGraph: {
+    type: 'blog',
+  },
+};
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="u-container">
+    <Breadcrumbs
+      items={[
+        { label: 'Home', link: '/' },
+        { label: 'Posts', link: '/posts' },
+      ]}
+    />
+  </div>
+
+  <div class="py-12 lg:py-16">
+    <div class="u-container">
+      <PostList posts={page.data} />
+      <div class="mt-12">
+        <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
+      </div>
+    </div>
+  </div>
+</Layout>

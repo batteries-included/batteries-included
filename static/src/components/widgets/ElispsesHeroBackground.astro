@@ -1,0 +1,111 @@
+---
+interface Props {
+  classes?: string;
+}
+
+const { classes = 'bg-elipses relative' } = Astro.props;
+---
+
+<section class={classes}>
+  <div class="elipse-1"></div>
+  <div class="elipse-2"></div>
+  <div class="elipse-3"></div>
+  <div class="elipse-4"></div>
+  <div class="elipse-5"></div>
+  <div class="elipse-6"></div>
+  <div class="z-10">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .elipse-1 {
+    /* Ellipse 1 */
+
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    left: 20%;
+    top: 10%;
+    z-index: -1;
+
+    background: #bedcff;
+    opacity: 0.8;
+    filter: blur(8vw);
+  }
+
+  .elipse-2 {
+    /* Ellipse 2 */
+
+    position: absolute;
+    width: 22%;
+    height: 20%;
+    left: 60%;
+    top: 30%;
+    z-index: -1;
+
+    background: #ffabd3;
+    opacity: 0.4;
+    filter: blur(5vw);
+  }
+
+  .elipse-3 {
+    /* Ellipse 3 */
+
+    position: absolute;
+    width: 28%;
+    height: 28%;
+    left: 58%;
+    top: 40%;
+    z-index: -1;
+
+    background: #bedcff;
+    opacity: 0.8;
+    filter: blur(5vw);
+  }
+
+  .elipse-4 {
+    /* Ellipse 4 */
+
+    position: absolute;
+    width: 22%;
+    height: 22%;
+    left: 47%;
+    top: 35%;
+    z-index: -1;
+
+    background: #dddefa;
+    opacity: 0.8;
+    filter: blur(5vw);
+  }
+
+  .elipse-5 {
+    /* Ellipse 5 */
+
+    position: absolute;
+    width: 26%;
+    height: 28%;
+    left: 10%;
+    top: 50%;
+    z-index: -1;
+
+    background: #ffabd3;
+    opacity: 0.4;
+    filter: blur(5vw);
+  }
+
+  .elipse-6 {
+    /* Ellipse 6 */
+
+    position: absolute;
+    width: 26%;
+    height: 30%;
+    left: 20%;
+    top: 70%;
+    z-index: -1;
+
+    background: #dddefa;
+    opacity: 0.8;
+    filter: blur(5vw);
+  }
+</style>

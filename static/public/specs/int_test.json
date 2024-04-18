@@ -7,7 +7,6 @@
   "target_summary": {
     "id": null,
     "notebooks": [],
-    "keycloak_state": null,
     "batteries": [
       {
         "id": null,
@@ -20,7 +19,7 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "YJBQXWELHVFYIAZQKVR6B4S7B74V4APDXKW6PDDY32YQFEYEQMKP7SCYTKPI4VT2",
+          "secret_key": "Q6FNEBOLFME7LV73FVYX47RU2H4UFSLURNP24G2NGXK5IKTNUEBGWVA7ZHTQJN2P",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -36,6 +35,8 @@
         "updated_at": null
       }
     ],
+    "keycloak_state": null,
+    "backend_services": [],
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -47,10 +48,14 @@
           "owner": "battery-control-user"
         },
         "storage_class": null,
-        "inserted_at": null,
-        "updated_at": null,
+        "cpu_requested": 500,
+        "cpu_limits": 500,
+        "memory_requested": 536870912,
+        "memory_limits": 536870912,
         "num_instances": 1,
         "virtual_size": "tiny",
+        "inserted_at": null,
+        "updated_at": null,
         "users": [
           {
             "position": null,
@@ -62,15 +67,11 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "HYTJ277JG45H7TYC3RI2LD2Q",
+            "password": "OG2B2WVCPEH4BS4OQ4QZCX5A",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
         ],
-        "cpu_requested": 500,
-        "cpu_limits": 500,
-        "memory_requested": 536870912,
-        "memory_limits": 536870912,
         "storage_size": 536870912,
         "project_id": null,
         "virtual_storage_size_range_value": 9

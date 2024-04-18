@@ -1,0 +1,38 @@
+---
+import IconFactory from '~/components/widgets/IconFactory.astro';
+
+interface Props {
+  items: {
+    label: string;
+    link: string;
+  }[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="hidden mt-10 md:flex items-center gap-x-2">
+  {
+    items.map(({ label, link }, i, arr) =>
+      arr.length !== i + 1 ? (
+        <>
+          <li>
+            <a href={link}>{label}</a>
+          </li>
+          <li>
+            <IconFactory classes="w-4 h-4" icon="chevronright" />
+          </li>
+        </>
+      ) : (
+        <li class="text-[#7F7F7F] first-letter:uppercase">{label}</li>
+      )
+    )
+  }
+</ul>
+
+<a
+  class="mt-10 inline-flex items-center py-2 rounded-lg gap-x-1 pr-4 pl-2 bg-white text-sm md:hidden shadow"
+  href={items[items.length - 2].link}>
+  <IconFactory classes="rotate-180 h-5 text-[#7F7F7F]" icon="chevronright" />
+  <p>Back</p>
+</a>

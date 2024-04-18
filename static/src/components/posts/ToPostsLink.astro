@@ -1,0 +1,22 @@
+---
+import { Icon } from 'astro-icon/components';
+import { getBlogPermalink } from '~/utils/permalinks';
+import { I18N } from '~/utils/config';
+
+const { textDirection } = I18N;
+---
+
+<a class="inline-flex items-center gap-x-2" href={getBlogPermalink()}>
+  <div class="flex-shrink-0">
+    {
+      textDirection === 'rtl' ? (
+        <Icon name="tabler:chevron-right" class="w-6 h-6" />
+      ) : (
+        <Icon name="tabler:chevron-left" class="w-6 h-6" />
+      )
+    }
+  </div>
+  <div class="flex-shrink-0">
+    <p class="">Back to Posts</p>
+  </div>
+</a>

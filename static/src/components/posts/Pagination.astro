@@ -1,0 +1,40 @@
+---
+import { Icon } from 'astro-icon/components';
+import { getPermalink } from '~/utils/permalinks';
+
+export interface Props {
+  prevUrl?: string;
+  nextUrl?: string;
+  prevText?: string;
+  nextText?: string;
+}
+
+const {
+  prevUrl,
+  nextUrl,
+  prevText = 'Newer posts',
+  nextText = 'Older posts',
+} = Astro.props;
+---
+
+{
+  (prevUrl || nextUrl) && (
+    <div class="flex items-center justify-between">
+      <a
+        class={`${!prevUrl ? 'invisible' : 'flex items-center gap-x-2'}`}
+        href={getPermalink(prevUrl)}
+      >
+        <Icon name="tabler:chevron-left" class="w-6 h-6" />
+        <p>{prevText}</p>
+      </a>
+
+      <a
+        class={`${!nextUrl ? 'invisible' : ' flex items-center gap-x-2'}`}
+        href={getPermalink(nextUrl)}
+      >
+        <p>{nextText}</p>
+        <Icon name="tabler:chevron-right" class="w-6 h-6" />
+      </a>
+    </div>
+  )
+}

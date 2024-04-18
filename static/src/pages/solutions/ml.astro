@@ -1,0 +1,101 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import BatteriesIncludedFor from '~/components/widgets/BatteriesIncludedFor.astro';
+import Content2 from '~/components/widgets/Content2.astro';
+import StartBuild from '~/components/widgets/StartBuild.astro';
+import WhyOpenSource from '~/components/widgets/WhyOpenSource.astro';
+import VideoModal from '~/components/widgets/VideoModal';
+import Button from '~/components/ui/Button.astro';
+import RecentPosts from '~/components/widgets/RecentPosts.astro';
+import Image from '~/components/common/Image.astro';
+export const prerender = true;
+
+const metadata = {
+  title: 'Machine Learning',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    classes={{
+      title: 'text-3xl md:text-[40px] md:leading-[50px]',
+      containter: 'mx-auto max-w-[858px] pb-6 lg:pb-10',
+    }}
+    breadcrumbs={[
+      { label: 'Home', link: '/' },
+      { label: 'Machine Learning', link: '/solutions/ml' },
+    ]}
+  >
+    <Fragment slot="title">Purpose-Built ML Tools</Fragment>
+    <Fragment slot="content">
+      All The Tools You Need To Build And Run Your Machine Learning Projects,
+      with None Of The Operational Problems
+    </Fragment>
+    <div
+      class="mt-12 max-w-xs sm:max-w-md md:max-w-none m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4"
+    >
+      <VideoModal
+        url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+        client:load
+      >
+        <button class="btn-fourth">
+          <p class="flex-shrink-0">Watch the Demo</p>
+          <Image
+            width={32}
+            height={32}
+            src="~/assets/images/icons/play-circle.svg"
+            alt="play circle"
+          />
+        </button>
+      </VideoModal>
+      <Button
+        text="Get Started"
+        variant="fifth"
+        icon="aright"
+        href="/"
+        isLightIcon
+      />
+    </div>
+  </Hero>
+
+  <BatteriesIncludedFor
+    section="AI"
+    title="Streamlined Machine Learning"
+    description="Batteries Included provides an integrated development environment to help your team get machine learning projects off the ground faster, and with better results. Prepare data, host models, and manage pipelines with ease. Our environment makes it easy to integrate machine learning projects into your team’s day-to-day, with space for notebooks, code, data, and more."
+    video={{
+      srcImage: '~/assets/images/solutions/ml/demo.png',
+      url: 'https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD',
+    }}
+  />
+
+  <Content2
+    title="With The Batteries Included"
+    tagline="Machine Learning"
+    items={[
+      {
+        title: 'Notebooks: Included',
+        description:
+          'Launch JupyterLab inside our integrated development environment with the push of a button. Our out-of-the-box functionality includes managed notebooks for exploring data and building ML models, all through a simple user interface.',
+        image: {
+          src: '~/assets/images/solutions/ml/notebooks.png',
+          alt: 'notebooks image',
+        },
+      },
+      {
+        title: 'LLM Hosting: Included',
+        description:
+          'A pre-configured text generation web UI that can be added to any project with a single click, powered by OogaBooga. Instantly add features and test new models.',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent border-t">
+      </div>
+    </Fragment>
+  </Content2>
+
+  <RecentPosts />
+  <WhyOpenSource />
+  <StartBuild />
+</Layout>

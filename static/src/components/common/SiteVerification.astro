@@ -1,0 +1,12 @@
+---
+import { SITE } from '~/utils/config';
+---
+
+{
+  SITE.googleSiteVerificationId && (
+    <meta
+      name="google-site-verification"
+      content={SITE.googleSiteVerificationId}
+    />
+  )
+}

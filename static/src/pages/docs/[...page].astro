@@ -1,0 +1,67 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { getCollection } from "astro:content";
+import Pagination from "~/components/posts/Pagination.astro";
+import Breadcrumbs from "~/components/widgets/Breadcrumbs.astro";
+import Layout from "~/layouts/PageLayout.astro";
+import { getStaticPathsDocsList } from "~/utils/docs";
+import { getPermalink } from "~/utils/permalinks";
+
+export const prerender = true;
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return await getStaticPathsDocsList({ paginate });
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { page } = Astro.props;
+const currentPage = page.currentPage ?? 1;
+
+const metadata = {
+  title: `Docs${currentPage > 1 ? ` — Page ${currentPage}` : ""}`,
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="u-container">
+    <Breadcrumbs
+      items={[
+        { label: "Home", link: "/" },
+        { label: "Docs", link: "/docs" },
+      ]}
+    />
+  </div>
+  <div class="py-12 lg:py-16">
+    <div class="u-container">
+      <div>
+        <h1
+          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl"
+        >
+          Docs
+        </h1>
+      </div>
+      <ul>
+        {
+          page.data.map((doc, i) => (
+            <li key={doc.slug}>
+              <a
+                href={getPermalink(doc.permalink, "docs")}
+                class="block py-4 cursor-pointer hover:text-primary hover:underline transition-colors duration-600 ease-in-out"
+              >
+                <h2 class="text-xl font-bold">{doc.title}</h2>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-12">
+        <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} nextText="Next Docs" prevText="Previous Docs"/>
+      </div>
+    </div>
+  </div>
+</Layout>

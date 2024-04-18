@@ -1,0 +1,78 @@
+---
+import type { Content } from '~/types';
+import Headline from '../ui/Headline.astro';
+import WidgetWrapper from '../ui/WidgetWrapper.astro';
+import clsx from 'clsx';
+import ButtonLink from '~/components/widgets/ButtonLink.astro';
+import Image from '../common/Image.astro';
+
+const {
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  content = await Astro.slots.render('content'),
+  tagline,
+  items,
+  id,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props as Content;
+---
+
+<WidgetWrapper id={id} containerClass={classes?.container} bg={bg}>
+  {content && <Fragment set:html={content} />}
+  <Headline
+    title={title}
+    subtitle={subtitle}
+    tagline={tagline}
+    classes={{
+      title:
+        'text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading',
+      subtitle:
+        'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400',
+      container: classes.headline,
+    }}
+  />
+  {
+    items && !!items.length && (
+      <div class="mt-12 lg:mt-16 xl:mt-20 space-y-12 lg:space-y-16 xl:space-y-20">
+        {items.map((item, i) => {
+          return (
+            <div
+              class={clsx(
+                'flex flex-col-reverse gap-y-4 md:items-center md:gap-x-16 lg:gap-x-24 xl:gap-x-32',
+                {
+                  'md:flex-row': i % 2 === 0,
+                  'md:flex-row-reverse': i % 2 !== 0,
+                }
+              )}
+            >
+              <div class="md:w-1/2">
+                <Image
+                  src={
+                    !item.image
+                      ? '~/assets/images/home/we-have-batteries-for.png'
+                      : item.image.src
+                  }
+                  alt={!item.image ? 'we have batteries for' : item.image.alt}
+                />
+              </div>
+              <div class="md:w-1/2">
+                <h3 class="font-semibold text-2xl lg:text-[28px]">
+                  {item.title}
+                </h3>
+                <p class="mt-4">{item.description}</p>
+                {item?.link && (
+                  <ButtonLink
+                    classes="mt-6"
+                    label="View more"
+                    link={item.link || '/'}
+                  />
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )
+  }
+</WidgetWrapper>

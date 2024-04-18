@@ -1,0 +1,104 @@
+---
+import clsx from 'clsx';
+import Button from '~/components/ui/Button.astro';
+import type { CallToAction } from '~/types';
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+
+export interface Props {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  content?: string;
+  actions?: string | CallToAction[];
+  classes?: {
+    title?: string;
+    containter?: string;
+  };
+  breadcrumbs?: {
+    label: string;
+    link: string;
+  }[];
+}
+
+const {
+  id,
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline,
+  content = await Astro.slots.render('content'),
+  actions = await Astro.slots.render('actions'),
+  classes = {
+    title: 'text-5xl md:text-6xl leading-tighter',
+  },
+  breadcrumbs,
+} = Astro.props;
+---
+
+<section class="relative md:-mt-[76px] not-prose" {...id ? { id } : {}}>
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+  <div class="u-container">
+    <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
+    {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+    <div class={clsx(classes.containter)}>
+      <div class="py-12 md:py-20">
+        <div class={clsx('text-center max-w-5xl mx-auto')}>
+          {
+            tagline && (
+              <p
+                class="text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase"
+                set:html={tagline}
+              />
+            )
+          }
+          {
+            subtitle && (
+              <p
+                class="text-primary text-3xl font-light lg:text-4xl xl:text-6xl xl:font-extralight"
+                set:html={subtitle}
+              />
+            )
+          }
+          {
+            title && (
+              <h1
+                class={clsx(
+                  'tracking-tighter font-heading dark:text-gray-200 font-bold',
+                  classes?.title,
+                  {
+                    'mt-2': subtitle,
+                  }
+                )}
+                set:html={title}
+              />
+            )
+          }
+          {
+            content && (
+              <div class="mt-8 max-w-[600px] lg:max-w-[650px] mx-auto">
+                <p class="font-light text-lg lg:text-xl" set:html={content} />
+              </div>
+            )
+          }
+
+          {
+            actions && (
+              <div class="mt-12 max-w-xs sm:max-w-md md:max-w-none m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4">
+                {Array.isArray(actions) ? (
+                  actions.map((action) => (
+                    <div class="flex w-full sm:w-auto">
+                      <Button {...(action || {})} class="w-full sm:mb-0" />
+                    </div>
+                  ))
+                ) : (
+                  <Fragment set:html={actions} />
+                )}
+              </div>
+            )
+          }
+        </div>
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>

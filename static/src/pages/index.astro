@@ -1,123 +1,188 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Nav from '../components/Nav.astro';
-import { Image } from 'astro:assets';
-import logo from '../assets/images/logo-with-text.svg';
+import Layout from '~/layouts/PageLayout.astro';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content2 from '~/components/widgets/Content2.astro';
+import WhyOpenSource from '~/components/widgets/WhyOpenSource.astro';
+import StartBuild from '~/components/widgets/StartBuild.astro';
+import VideoModal from '~/components/widgets/VideoModal';
+import RecentPosts from '~/components/widgets/RecentPosts.astro';
+import Image from '~/components/common/Image.astro';
+export const prerender = true;
+
+const metadata = {
+  title:
+    'Batteries Included the fastest easiest to use open source infrastrucutre as a service platform',
+  ignoreTitleTemplate: true,
+};
 ---
 
-<Layout title="Batteries Included">
-  <Nav />
-  <div class="relative overflow-hidden bg-white">
-    <div class="relative pt-6 pb-16 sm:pb-24 lg:pb-32">
-      <main class="mx-auto mt-16 max-w-7xl px-4 sm:mt-24 sm:px-6 lg:mt-32">
-        <div class="lg:grid lg:grid-cols-12 lg:gap-8">
-          <div
-            class="sm:text-center md:mx-auto md:max-w-2xl lg:col-span-6 lg:text-left">
-            <h1>
-              <span
-                class="block text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base">
-                Coming soon
-              </span>
-              <span
-                class="mt-1 block text-4xl font-extrabold tracking-tight sm:text-5xl xl:text-6xl">
-                <span class="block text-gray-900">
-                  Software infrastructure for tomorrow&apos;s
-                </span>
-                <span class="block text-pink-500"> technology business</span>
-              </span>
-            </h1>
-            <p
-              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-              Welcome to Batteries Included, the ultimate software
-              infrastructure platform built by a team of world-class SREs. Our
-              all-inclusive, cloud-agnostic platform is built on the best
-              open-source software and includes everything you need for seamless
-              software development, deployment, monitoring, and operational
-              workflows.
-            </p>
-
-            <p
-              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-              But it's not just about having the best tools at your fingertips -
-              with Batteries Included; you'll also enjoy powerful automation
-              that fixes issues before they ever happen. Say goodbye to platform
-              engineering debates and hello to a fully modular solution that
-              fits your specific needs.
-            </p>
-
-            <p
-              class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-              Join us and see why Batteries Included is the go-to platform for
-              businesses looking to incubate, grow, scale, transform, observe,
-              and manage their most important assets. Try it out today and
-              experience the power of proper infrastructure as a service.
-            </p>
-            <div
-              class="mt-8 sm:mx-auto sm:max-w-lg sm:text-center lg:mx-0 lg:text-left">
-              <p class="text-base font-medium text-gray-900">
-                Sign up to get notified when it's ready.
-              </p>
-
-              <form
-                action="/success"
-                class="mt-3 sm:flex"
-                method="POST"
-                name="launch_email"
-                data-netlify="true">
-                <input type="hidden" name="form-name" value="launch_email" />
-                <label for="email" class="sr-only">Email</label>
-                <input
-                  type="text"
-                  name="email"
-                  id="email"
-                  class="mr-5 block w-full rounded-md border-gray-300 py-3 text-base placeholder-gray-500 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:flex-1"
-                  placeholder="Enter your email"
-                />
-
-                <button
-                  type="submit"
-                  class="from-astral-500 to-pink-500 group/button hover:from-pink-500 hover:to-astral-500 hover:shadow-pink-500/20 relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-tl p-0.5 text-sm font-medium text-gray-900 transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gradient-to-bl hover:text-white hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-pink-300">
-                  <span
-                    class="relative w-full rounded-md bg-white px-5 py-3 transition-all duration-300 ease-in-out group-hover/button:bg-opacity-0">
-                    Notify me
-                  </span>
-                </button>
-              </form>
-            </div>
-          </div>
-          <div
-            class="relative mt-12 sm:mx-auto sm:max-w-lg lg:col-span-6 lg:mx-0 lg:mt-0 lg:flex lg:max-w-none lg:items-center">
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+  <Hero>
+    <Fragment slot="subtitle">Modern Infrastructure</Fragment>
+    <Fragment slot="title">for Ambitious Product Teams</Fragment>
+    <Fragment slot="content">
+      Finally, A Platform That Can Bring Any Product Idea To Life In Seconds.
+      Batteries Included.
+    </Fragment>
+    <div class="mt-12 mx-auto max-w-screen-md">
+      <div class="flex justify-center">
+        <VideoModal
+          url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+          client:load
+        >
+          <button class="btn-fourth !w-full">
+            <p class="flex-shrink-0">Watch the Demo</p>
             <Image
-              src={logo}
-              alt="Batteries Include's charged cloud logo"
-              class="w-full h-full"
+              width={32}
+              height={32}
+              src="~/assets/images/icons/play-circle.svg"
+              alt="play circle"
             />
-          </div>
-        </div>
-      </main>
+          </button>
+        </VideoModal>
+      </div>
+      <div class="mt-12">
+        <VideoModal
+          url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+          client:load
+        >
+          <button class="aspect-video overflow-hidden group relative">
+            <Image
+              class="group-hover:blur-sm duration-300"
+              src="~/assets/images/home/demo.png"
+              alt="image modal"
+            />
+            <div
+              class="absolute invisible opacity-0 group-hover:opacity-100 group-hover:visible top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 duration-300"
+            >
+              <Image
+                class="size-20"
+                src="~/assets/images/icons/play-circle.svg"
+                alt="play circle"
+              />
+            </div>
+          </button>
+        </VideoModal>
+      </div>
     </div>
-  </div>
+  </Hero>
 
-  <div class="relative bg-white py-16 sm:py-24 lg:py-32">
-    <div
-      class="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
-      <a id="features" href="#">
-        <h2
-          class="text-base font-semibold uppercase tracking-wider text-pink-500">
-          Build Your Business
-        </h2>
-      </a>
-      <p
-        class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-        Everything you need to build tomorrow&apos;s technology company
-      </p>
-      <p class="mx-auto mt-5 max-w-prose text-xl text-gray-500">
-        All of the systems needed to run a modern company are complex, but
-        necessary. When combined correctly they can super charge your business;
-        making software fast, stable, and able to predict the future. Tech
-        giants know this and invest heavily in their infrastructure. Let our
-        teams design, build, and operate the Batteries Included platform.
-      </p>
-    </div>
-  </div>
+  <!-- Features Widget *************** -->
+
+  <Features
+    id="features"
+    tagline="Unleash the Power"
+    title="with Our All-Inclusive Platform "
+    subtitle="Our Fully Automated DevOps Platform Comes With Batteries Included, Giving You"
+    items={[
+      {
+        title: 'AI Included ',
+        description:
+          'Easily integrate AI into any aspect of your product without the infrastructure headaches. Batteries handles the complex stuff so you can focus on building great ML features.',
+        icon: 'ai',
+      },
+      {
+        title: 'Efficiency Included ',
+        description:
+          'Shorten product cycles and get back to working on your core product. Don’t spend another sprint trying to fix compatibility issues with third party platforms.',
+        icon: 'efficiency',
+      },
+      {
+        title: 'Cost-Savings Included ',
+        description:
+          'Batteries offer a cost-effective, scalable solution with top-tier autoscaling to reduce waste, ensuring quick and efficient scaling at lower costs.',
+        icon: 'cost',
+      },
+      {
+        title: 'Security Included ',
+        description:
+          'Our infrastructure automates end-to-end security, deploying fixes and updates without any manual effort on your part.',
+        icon: 'secure',
+      },
+      {
+        title: 'Automation Included ',
+        description:
+          'Accelerate product cycles, focus on your core product, and avoid wasting sprints on third-party compatibility issues.',
+        icon: 'automation',
+      },
+      {
+        title: 'Reliability  Included ',
+        description:
+          'Adjusting databases to prevent crashes and implementing monitoring with automated solutions for quick issue resolution.',
+        icon: 'reliability',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent"></div>
+    </Fragment>
+  </Features>
+
+  <!-- Content Widget **************** -->
+
+  <Content2
+    title="We Have Batteries For"
+    classes={{ headline: 'mt-20 lg:mt-24 xl:mt-28' }}
+    items={[
+      {
+        title: 'Databases',
+        description:
+          'Fully automated PostgreSQL that works with your existing stack. Because you need to store SQL data. Spin it up, back it up, scale it, change it, edit it – automatically. All without touching any config or CLI. Plus it works with your existing stack, with integrations for Redis, FerretDB, and Blob Storage',
+        link: '/solutions/database',
+        image: {
+          src: '~/assets/images/home/databases.png',
+          alt: 'databases image',
+        },
+      },
+      {
+        title: 'Web Services',
+        description:
+          'All the tools you need to build and operate virtually any kind of application or service in seconds - without compromising on security or stability. Push out new versions without headaches, and dynamically scale up and down with usage. We’ve built our platform on industry-standard open source code, so you get all the benefits with none of the headaches. Runs on any cloud, or your own machine',
+        link: '/solutions/web-deploy',
+        image: {
+          src: '~/assets/images/home/web-services.png',
+          alt: 'web services image',
+        },
+      },
+      {
+        title: 'Security',
+        description:
+          'A single command center to manage every mission critical security config quickly and easily without breaking stuff. With our platform, you get SSO everywhere you need it, mesh networking, security scanning, automated SSL, and the flexibility to run on any machine. Dynamic configurations mean all of your permissions are constantly updating synchronously, so nothing breaks, and everything stays secure',
+        link: '/solutions/security',
+        image: {
+          src: '~/assets/images/home/security.png',
+          alt: 'security image',
+        },
+      },
+      {
+        title: 'Machine Learning',
+        description:
+          'Batteries Included provides an integrated development environment to help your team get machine learning projects off the ground faster, and with better results. Prepare data, host models, and manage pipelines with ease. Our environment makes it easy to integrate machine learning projects into your team’s day-to-day, with space for notebooks, code, data, and more',
+        link: '/solutions/ml',
+      },
+      {
+        title: 'Operational Tools',
+        description:
+          'The Batteries Included platform is purpose-built to make life easier for Ops teams, with tools that make it easy to monitor and fix your software',
+        link: '/solutions/sre_tools',
+        image: {
+          src: '~/assets/images/home/operational-tools.png',
+          alt: 'operational tools image',
+        },
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent border-t">
+      </div>
+    </Fragment>
+  </Content2>
+
+  <WhyOpenSource />
+  <!-- Posts Widget ****************** -->
+  <RecentPosts />
+  <StartBuild />
 </Layout>

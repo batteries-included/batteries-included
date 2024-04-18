@@ -1,0 +1,132 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import BatteriesIncludedFor from '~/components/widgets/BatteriesIncludedFor.astro';
+import Content2 from '~/components/widgets/Content2.astro';
+import StartBuild from '~/components/widgets/StartBuild.astro';
+import WhyOpenSource from '~/components/widgets/WhyOpenSource.astro';
+import VideoModal from '~/components/widgets/VideoModal';
+import Button from '~/components/ui/Button.astro';
+import RecentPosts from '~/components/widgets/RecentPosts.astro';
+import Image from '~/components/common/Image.astro';
+export const prerender = true;
+
+const metadata = {
+  title: 'Operational Tools',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    classes={{
+      title: 'text-3xl md:text-[40px] md:leading-[50px]',
+      containter: 'mx-auto max-w-[858px] pb-6 lg:pb-10',
+    }}
+    breadcrumbs={[
+      { label: 'Home', link: '/' },
+      { label: 'Operational Tools', link: '/solutions/sre_tools' },
+    ]}
+  >
+    <Fragment slot="title">The Best Tools To Run Your Ops</Fragment>
+    <Fragment slot="content">
+      Easy Enough That You’ll Actually Use It. Powerful Enough That It’ll
+      Actually Help
+    </Fragment>
+    <div
+      class="mt-12 max-w-xs sm:max-w-md md:max-w-none m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4"
+    >
+      <VideoModal
+        url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+        client:load
+      >
+        <button class="btn-fourth">
+          <p class="flex-shrink-0">Watch the Demo</p>
+          <Image
+            width={32}
+            height={32}
+            src="~/assets/images/icons/play-circle.svg"
+            alt="play circle"
+          />
+        </button>
+      </VideoModal>
+      <Button
+        text="Get Started"
+        variant="fifth"
+        icon="aright"
+        href="/"
+        isLightIcon
+      />
+    </div>
+  </Hero>
+
+  <BatteriesIncludedFor
+    section="Operational Tools"
+    title="Easy Monitoring. Easier Fixes"
+    description="The Batteries Included platform is purpose-built to make life easier for Ops teams, with tools that make it easy to monitor and fix your software. We offer pre-configured solutions for dashboards that automatically populate with key metrics -- out of the box. Easy to find, easy to configure, easy to startup. A single pane of glass to help your ops team see everything happening in production."
+    video={{
+      srcImage: '~/assets/images/solutions/operational-tools/demo.png',
+      url: 'https://www.youtube.com/embed/cpBQYYSuusw?si=tG6VOUALqNxfFbcm"',
+    }}
+  />
+
+  <Content2
+    title="That Come With Batteries Included"
+    tagline="Ops Tools"
+    items={[
+      {
+        title: 'Monitoring: Included',
+        description:
+          'Batteries stores and scrapes all of your metrics from all of your services, and serves it to you in easily digestible dashboards, automatically -- no config needed. Monitor your entire stack in a single pane of glass, and get clarity on product usage, feature prioritization, and fixes. Powered by Grafana and Victoria Metrics.',
+        image: {
+          src: '~/assets/images/solutions/operational-tools/monitoring.png',
+          alt: 'monitoring image',
+        },
+      },
+      {
+        title: 'Auto-Remediation: Included',
+        description:
+          'Our powerful metrics and dashboards also power our auto-remediation feature. Automated tuning dynamically responds to issues and resolves them in the blink of an eye.',
+        image: {
+          src: '~/assets/images/solutions/operational-tools/auto-remediation.png',
+          alt: 'auto remediation image',
+        },
+      },
+      {
+        title: 'Full Timeline: Included',
+        description:
+          'See everything that has happened on your cluster in the last 30 days with a full timeline and version history, all linked directly to a change log so you can quickly find errors and reverse them. Get to the root cause of issues faster, and fix them immediately.',
+        image: {
+          src: '~/assets/images/solutions/operational-tools/timeline.png',
+          alt: 'timeline image',
+        },
+      },
+      {
+        title: 'Image Hosting: Included',
+        description:
+          'Get docker image hosting for any of your projects. Image hosting in your cluster makes deployments faster, and software more portable. Eliminating third-party hosting is just one more way we help keep your data more secure.',
+        image: {
+          src: '~/assets/images/solutions/operational-tools/hosting.jpg',
+          alt: 'hosting image',
+        },
+      },
+      {
+        title: 'Git Hosting: Included',
+        description:
+          'Self-host your github with our Gitea integration, keeping your source code local for fast and easy deployments, and agile updates. Keep your software internal to your own machines for enhanced security. Works with github.',
+        image: {
+          src: '~/assets/images/solutions/operational-tools/git-hosting.png',
+          alt: 'git hosting image',
+        },
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent border-t">
+      </div>
+    </Fragment>
+  </Content2>
+
+  <RecentPosts />
+  <WhyOpenSource />
+  <StartBuild />
+</Layout>

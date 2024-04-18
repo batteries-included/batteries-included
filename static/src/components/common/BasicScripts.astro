@@ -1,0 +1,67 @@
+<script is:inline>
+  // elements
+  const btnMenu = document.getElementById('btn-menu');
+  const btnClose = document.getElementById('btn-close');
+  const menu = document.getElementById('menu');
+
+  // functions
+  function openMenu() {
+    menu.classList.remove('-left-full');
+    menu.classList.add('left-0');
+  }
+
+  function closeMenu() {
+    menu.classList.remove('left-0');
+    menu.classList.add('-left-full');
+  }
+
+  // event listener
+  btnMenu.addEventListener('click', openMenu);
+  btnClose.addEventListener('click', closeMenu);
+
+  function attachEvent(selector, event, fn) {
+    const matches =
+      typeof selector === 'string'
+        ? document.querySelectorAll(selector)
+        : selector;
+    if (matches && matches.length) {
+      matches.forEach((elem) => {
+        elem.addEventListener(event, (e) => fn(e, elem), false);
+      });
+    }
+  }
+
+  window.onload = function () {
+    attachEvent('[data-aw-social-share]', 'click', function (_, elem) {
+      const network = elem.getAttribute('data-aw-social-share');
+      const url = encodeURIComponent(elem.getAttribute('data-aw-url'));
+      const text = encodeURIComponent(elem.getAttribute('data-aw-text'));
+
+      let href;
+      switch (network) {
+        case 'facebook':
+          href = `https://www.facebook.com/sharer.php?u=${url}`;
+          break;
+        case 'twitter':
+          href = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+          break;
+        case 'linkedin':
+          href = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`;
+          break;
+        case 'whatsapp':
+          href = `https://wa.me/?text=${text}%20${url}`;
+          break;
+        case 'mail':
+          href = `mailto:?subject=%22${text}%22&body=${text}%20${url}`;
+          break;
+        default:
+          return;
+      }
+
+      const newlink = document.createElement('a');
+      newlink.target = '_blank';
+      newlink.href = href;
+      newlink.click();
+    });
+  };
+</script>

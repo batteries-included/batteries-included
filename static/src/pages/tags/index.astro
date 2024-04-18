@@ -1,0 +1,65 @@
+---
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import slugify from 'slugify';
+import { FileTextIcon } from '@radix-ui/react-icons';
+import { fetchPosts } from '~/utils/posts';
+import { groupBy } from '~/utils/utils';
+import type { Post } from '~/types';
+export const prerender = true;
+
+const metadata = {
+  title: 'Tags',
+};
+
+const allBlogPosts = await fetchPosts();
+
+const postsByTag = groupBy(
+  allBlogPosts.flatMap((post: Post) =>
+    (post.tags|| []).map((tag) => ({ ...post, tag }))
+  ),
+  (item) => item.tag
+);
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="u-container">
+    <Breadcrumbs
+      items={[
+        { label: 'Home', link: '/' },
+        { label: 'Tags', link: '/tags' },
+      ]}
+    />
+  </div>
+  <div class="py-12 lg:py-16">
+    <div class="u-container">
+      <div>
+        <h1
+          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl"
+        >
+          Tags
+        </h1>
+      </div>
+      <ul class="mt-12">
+        {
+          Object.entries(postsByTag).map(([key, value]: any) => {
+            return (
+              <li class="group">
+                <a
+                  class="py-6 group-first:border-transparent border-t flex items-center justify-between text-sm"
+                  href={`/tags/${slugify(key, { lower: true })}`}
+                >
+                  <p>{key}</p>
+                  <div class="flex items-center gap-x-2">
+                    <FileTextIcon />
+                    <p>{value.length} posts</p>
+                  </div>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </div>
+</Layout>

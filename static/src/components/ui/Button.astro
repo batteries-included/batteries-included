@@ -1,0 +1,67 @@
+---
+import { twMerge } from 'tailwind-merge';
+import type { CallToAction } from '~/types';
+import IconFactory from '../widgets/IconFactory.astro';
+import clsx from 'clsx';
+
+const {
+  variant = 'secondary',
+  target,
+  type,
+  text = Astro.slots.render('default'),
+  icon = '',
+  class: className = '',
+  isLightIcon = false,
+  ...rest
+} = Astro.props as CallToAction;
+
+const variants = {
+  primary: 'btn-primary',
+  secondary: 'btn-secondary',
+  tertiary: 'btn btn-tertiary',
+  fourth: 'btn-fourth',
+  fifth: 'btn-fifth',
+  link: 'cursor-pointer hover:text-primary',
+};
+---
+{
+type === 'button' || type === 'submit' || type === 'reset' ? (
+  <button
+    class={twMerge(variants[variant] || '', className)}
+    type={type}
+    {...rest}
+  >
+    <p class="w-full" set:html={text} />
+    {
+      icon && (
+        <IconFactory
+          classes={clsx('w-8 h-8', {
+            'text-primary': !isLightIcon,
+            'text-white': isLightIcon,
+          })}
+          icon={icon}
+        />
+      )
+    }
+  </button>
+) : (
+<a
+  class={twMerge(variants[variant] || '', className)}
+  {...target ? { target: target, rel: 'noopener noreferrer' } : {}}
+  {...rest}
+>
+  <p class="w-full" set:html={text} />
+  {
+    icon && (
+      <IconFactory
+        classes={clsx('w-8 h-8', {
+          'text-primary': !isLightIcon,
+          'text-white': isLightIcon,
+        })}
+        icon={icon}
+      />
+    )
+  }
+</a>
+)
+}

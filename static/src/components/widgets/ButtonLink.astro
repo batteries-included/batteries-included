@@ -1,0 +1,25 @@
+---
+import clsx from 'clsx';
+import IconFactory from './IconFactory.astro';
+interface Props {
+  label: string;
+  link: string;
+  variant?: 'primary' | 'secondary' | 'tertiary';
+  classes?: string;
+  icon?: string;
+}
+
+const { label, link, variant = 'primary', classes, icon } = Astro.props;
+---
+
+<a
+  class={clsx('inline-flex py-3 px-6 rounded-lg font-medium', classes, {
+    'border  bg-transparent text-primary': variant === 'primary',
+    'border border-primary bg-white': variant === 'secondary',
+    'bg-primary text-white': variant === 'tertiary',
+    'gap-x-3': icon,
+  })}
+  href={link}>
+  <p>{label}</p>
+  {icon && <IconFactory icon={icon} />}
+</a>

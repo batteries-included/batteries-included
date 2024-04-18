@@ -1,0 +1,139 @@
+---
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import { getRelatedDocs, getStaticPathsDoc } from '~/utils/docs';
+
+export async function getStaticPaths() {
+  return await getStaticPathsDoc();
+}
+
+const { doc } = Astro.props;
+const { Content, headings } = doc;
+
+const relatedDocs = await getRelatedDocs(doc);
+
+const metadata = {
+  title: `Docs - ${doc.title}`,
+};
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="bg-[#F8F8F8] pt-[0.01px]">
+    <div class="u-container">
+      <Breadcrumbs
+        items={[
+          { label: 'Home', link: '/' },
+          { label: 'Docs', link: '/docs' },
+          { label: doc.title, link: `/docs/${doc.slug}` },
+        ]}
+      />
+    </div>
+    <div class="py-12 lg:py-16">
+      <div class="u-container">
+        <h1
+          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl">
+          {doc.title}
+        </h1>
+      </div>
+    </div>
+  </div>
+  <div class="py-12 lg:py-16 xl:py-20">
+    <div class="u-container">
+      <div class="flex flex-col gap-y-8 xl:flex-row xl:gap-x-16">
+        <div class="xl:w-9/12">
+          <article
+            class="prose prose-headings:first:mt-0 max-w-none prose-headings:text-xl prose-headings:lg:text-2xl prose-headings:font-semibold">
+            <Content />
+          </article>
+        </div>
+        <div class="xl:w-3/12">
+          <div class="sticky top-32">
+            <div class="hidden xl:block">
+              <h2 class="text-xl lg:text-2xl font-semibold">
+                Table of Content
+              </h2>
+              <div class="mt-2">
+                <ul id="toc" class="space-y-2">
+                  {
+                    headings.map((heading) => {
+                      return (
+                        <li class="leading-tight">
+                          <a
+                            href={heading.slug}
+                            class="text-left hover:text-primary duration-300">
+                            {heading.text}
+                          </a>
+                        </li>
+                      );
+                    })
+                  }
+                </ul>
+              </div>
+            </div>
+            <div class="xl:mt-8">
+              <h2 class="text-xl lg:text-2xl font-semibold">Related docs</h2>
+              <ul class="mt-2 space-y-2">
+                {
+                  relatedDocs.map(({ title, slug }) => {
+                    return (
+                      <li>
+                        <a
+                          class="hover:text-primary duration-300"
+                          href={`/docs/${slug}`}>
+                          {title}
+                        </a>
+                      </li>
+                    );
+                  })
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    // elements
+    const toc = document.getElementById('toc');
+
+    // observer
+    const observer = new IntersectionObserver((sections) => {
+      sections.forEach((section) => {
+        const heading = section.target.querySelector('h2, h3, h4, h5');
+        if (!heading) return;
+        const id = heading.getAttribute('id');
+
+        // Get the link to this section's heading
+        const link = document.querySelector(`a[href="${id}"]`);
+        if (!link) return;
+
+        // Add/remove the .active class based on whether the
+        // section is visible
+        const addRemove = section.intersectionRatio > 0 ? 'add' : 'remove';
+        link.classList[addRemove]('text-primary');
+      });
+    });
+
+    // Observe all the sections of the article
+    document.querySelectorAll('article section').forEach((section) => {
+      observer.observe(section);
+    });
+
+    // events listeners
+    toc?.addEventListener('click', (e: any) => {
+      e.preventDefault();
+      const buttonEl = e.target.closest('a');
+      const id = buttonEl.getAttribute('href');
+      const titleEl: any = document.getElementById(id)?.getBoundingClientRect();
+      window.scrollTo({
+        left: titleEl.left + window.scrollX,
+        top: titleEl.top + window.scrollY - 110,
+        behavior: 'smooth',
+      });
+    });
+  });
+</script>

@@ -1,0 +1,124 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import BatteriesIncludedFor from '~/components/widgets/BatteriesIncludedFor.astro';
+import Content2 from '~/components/widgets/Content2.astro';
+import StartBuild from '~/components/widgets/StartBuild.astro';
+import WhyOpenSource from '~/components/widgets/WhyOpenSource.astro';
+import VideoModal from '~/components/widgets/VideoModal';
+import Button from '~/components/ui/Button.astro';
+import RecentPosts from '~/components/widgets/RecentPosts.astro';
+import Image from '~/components/common/Image.astro';
+export const prerender = true;
+
+const metadata = {
+  title: 'Security',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    classes={{
+      title: 'text-3xl md:text-[40px] md:leading-[50px]',
+      containter: 'mx-auto max-w-[858px] pb-6 lg:pb-10',
+    }}
+    breadcrumbs={[
+      { label: 'Home', link: '/' },
+      { label: 'Security', link: '/solutions/security' },
+    ]}>
+    <Fragment slot="title">Security Without Compromise</Fragment>
+    <Fragment slot="content">
+      A Single Command center To Manage Every Mission Critical Security Config
+      Quickly And Easily, Without Breaking Things
+    </Fragment>
+    <div
+      class="mt-12 max-w-xs sm:max-w-md md:max-w-none m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4">
+      <VideoModal
+        url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+        client:load>
+        <button class="btn-fourth">
+          <p class="flex-shrink-0">Watch the Demo</p>
+          <Image
+            width={32}
+            height={32}
+            src="~/assets/images/icons/play-circle.svg"
+            alt="play circle"
+          />
+        </button>
+      </VideoModal>
+      <Button
+        text="Get Started"
+        variant="fifth"
+        icon="aright"
+        href="/"
+        isLightIcon
+      />
+    </div>
+  </Hero>
+
+  <BatteriesIncludedFor
+    section="Security"
+    title="All The Tools You Need To Keep Your Operations Secure"
+    description="A single command center to manage every mission critical security config quickly and easily without breaking stuff. With our platform, you get SSO everywhere you need it, mesh networking, security scanning, automated SSL, and the flexibility to run on any machine. Dynamic configurations mean all of your permissions are constantly updating synchronously, so nothing breaks, and everything stays secure."
+    video={{
+      srcImage: '~/assets/images/solutions/security/demo.png',
+      url: 'https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD',
+    }}
+  />
+
+  <Content2
+    title="With The Batteries Included"
+    tagline="Security"
+    items={[
+      {
+        title: 'SSO for Everything: Included',
+        description:
+          'With our pre-congifugred Keycloak implementation, you can deploy SSO for anything (and replace third-party providers like Auth0 and Okta) with a single keystroke. From monitoring, to internal applications, and other services, we can help you keep your company’s digital footprint secure.',
+        image: {
+          src: '~/assets/images/solutions/security/oauth.png',
+          alt: 'oauth image',
+        },
+      },
+      {
+        title: 'Mesh Networking: Included',
+        description:
+          'Get mesh networking out of the box with ISTIO by Batteries Included. Transparent security allows you to track and secure communications with ease. Get end-to-end SSL encryption, authentication, and mapping, so you can see everything happening on your networks.',
+        image: {
+          src: '~/assets/images/solutions/security/mesh-networking.png',
+          alt: 'mesh networking image',
+        },
+      },
+      {
+        title: 'Security Scanning: Included',
+        description:
+          'Batteries Included constantly scans everything on your servers, looking for misconfigurations, vulnerabilities, open passwords, and more. All delivered automatically in a list with proposed fixes.',
+        image: {
+          src: '~/assets/images/solutions/security/scanner.png',
+          alt: 'scanner image',
+        },
+      },
+      {
+        title: 'Dynamic Security: Included',
+        description:
+          'Our automated SSL solution powers secure, streamlined security, with easily configured permissions across web services and databases. Get new SSL certs, setup correctly, and kept up to date, without the headache. Powered by cert-manager and Let’s Encrypt.',
+      },
+      {
+        title: 'Run Anywhere: Included',
+        description:
+          'Run your services however you want, wherever you want. Private cloud, or on-premises -- with our flexible solutions, the choice is yours.',
+        image: {
+          src: '~/assets/images/solutions/security/run-anywhere.jpg',
+          alt: 'run anywhere image',
+        },
+      },
+    ]}>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent border-t">
+      </div>
+    </Fragment>
+  </Content2>
+
+  <RecentPosts />
+  <WhyOpenSource />
+  <StartBuild />
+</Layout>

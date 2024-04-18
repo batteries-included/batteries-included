@@ -1,0 +1,47 @@
+---
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+import type { CallToAction } from '~/types';
+import IconFactory from '../widgets/IconFactory.astro';
+
+const {
+  useIconFactory,
+  iconFactoryClasses,
+  variant = 'primary',
+  target,
+  text = Astro.slots.render('default'),
+  icon = '',
+  class: className = '',
+  ...rest
+} = Astro.props as CallToAction;
+
+const variants = {
+  primary: 'btn-square btn-square-primary',
+  secondary: 'btn-square btn-square-secondary',
+};
+
+---
+
+<a
+  class={twMerge(variants[variant] || '', className, 'group') }
+  href={target}
+
+  {...target ? { target: target, rel: 'noopener noreferrer' } : {}}
+  {...rest}>
+  <Fragment set:html={text} />
+
+  {
+    useIconFactory ? (
+      <span class="text-primary group-hover:text-primary-hover">
+        <IconFactory icon={icon} classes={iconFactoryClasses} />
+      </span>
+    ) : (
+      icon && (
+        <Icon
+          name={icon}
+          class="w-5 h-5 ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5 inline-block text-white"
+        />
+      )
+    )
+  }
+</a>

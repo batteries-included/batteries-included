@@ -1,0 +1,36 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Footer from "~/components/widgets/Footer.astro";
+import ElispsesHeroBackground from "~/components/widgets/ElispsesHeroBackground.astro";
+import Header from "~/components/widgets/Header.astro";
+
+import type { MetaData } from "~/types";
+import { headerData, footerData } from "~/data/navigation.ts";
+
+export interface Props {
+  metadata?: MetaData;
+  hideElipses?: boolean;
+}
+
+const { metadata, hideElipses = false } = Astro.props;
+---
+
+<Layout metadata={metadata}>
+  <slot name="header">
+    <Header headerData={headerData} isSticky showRssFeed />
+  </slot>
+  <main>
+    {
+      hideElipses ? (
+        <slot />
+      ) : (
+        <ElispsesHeroBackground>
+          <slot />
+        </ElispsesHeroBackground>
+      )
+    }
+  </main>
+  <slot name="footer">
+    <Footer {...footerData} />
+  </slot>
+</Layout>

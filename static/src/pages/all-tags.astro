@@ -1,0 +1,73 @@
+---
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import { fetchPosts } from '~/utils/posts';
+import { groupBy } from '~/utils/utils';
+export const prerender = true;
+
+const metadata = {
+  title: 'All Tags',
+};
+
+const allBlogPosts = await fetchPosts();
+
+const postsByTag = groupBy(
+  allBlogPosts.flatMap((post: any) =>
+    post.tags.map((tag) => ({ ...post, tag }))
+  ),
+  (item) => item.tag
+);
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="u-container">
+    <Breadcrumbs
+      items={[
+        { label: 'Home', link: '/' },
+        { label: 'All Tags', link: '/all-tags' },
+      ]}
+    />
+  </div>
+  <div class="py-12 lg:py-16">
+    <div class="u-container">
+      <div>
+        <h1
+          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl"
+        >
+          All Tags
+        </h1>
+      </div>
+      <div class="mt-12">
+        <div class="space-y-6">
+          {
+            Object.entries(postsByTag)
+              .sort(([keyA], [KeyB]) => keyA.localeCompare(KeyB))
+              .map(([key, value]: any) => {
+                return (
+                  <div>
+                    <div class="border-b py-4 pl-4">
+                      <h2 class="text-lg lg:text-xl">{key}</h2>
+                    </div>
+                    <ul class="py-4 pl-4 space-y-2">
+                      {value.map((item) => {
+                        return (
+                          <li>
+                            <a
+                              class="cursor-pointer hover:text-primary duration-300"
+                              href={`/posts/${item.slug}`}
+                            >
+                              {item.title}
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                );
+              })
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

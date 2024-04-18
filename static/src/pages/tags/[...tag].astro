@@ -1,0 +1,59 @@
+---
+import Breadcrumbs from "~/components/widgets/Breadcrumbs.astro";
+import Layout from "~/layouts/PageLayout.astro";
+import slugify from "slugify";
+import PostList from "~/components/posts/List.astro";
+import type { Post } from "~/types";
+import { fetchPosts } from "~/utils/posts";
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const allBlogPosts = await fetchPosts();
+
+  const allTags = [
+    ...new Set(allBlogPosts.flatMap((item: any) => [...item.tags])),
+  ];
+  const slugifyTags = allTags.map((tag) => slugify(tag, { lower: true }));
+
+  return slugifyTags.map((tag) => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+
+const metadata = {
+  title: `Tags - ${tag}`,
+};
+
+const allBlogPosts = await fetchPosts();
+const blogPostsByTag = allBlogPosts.filter((post) => post.tags?.includes(tag));
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="u-container">
+    <Breadcrumbs
+      items={[
+        { label: "Home", link: "/" },
+        { label: "Tags", link: "/tags" },
+        { label: tag, link: `/tags/${tag}` },
+      ]}
+    />
+  </div>
+  <div
+    class="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between"
+  >
+    <div>
+      <h1
+        class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl"
+      >
+        {metadata.title}
+      </h1>
+    </div>
+  </div>
+  <div class="py-12 lg:py-16">
+    <div class="u-container">
+      <PostList posts={blogPostsByTag as Post[]} />
+    </div>
+  </div>
+</Layout>

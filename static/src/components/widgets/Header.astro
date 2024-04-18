@@ -1,0 +1,247 @@
+---
+import Logo from '~/components/Logo.astro';
+import type { CallToAction } from '~/types';
+import SquareButton from '~/components/ui/SquareButton.astro';
+import IconFactory from './IconFactory.astro';
+import { getHomePermalink } from '~/utils/permalinks';
+import { trimSlash } from '~/utils/permalinks';
+import clsx from 'clsx';
+import DropdownMenu from '~/components/widgets/DropdownMenu';
+import AccordionMenu from '~/components/widgets/AccordionMenu';
+import type { HeaderDataProps } from '~/data/navigation';
+
+export interface Props {
+  id?: string;
+  headerData?: Array<HeaderDataProps>;
+  actions?: Array<ActionLink>;
+  isSticky?: boolean;
+  isFullWidth?: boolean;
+  showRssFeed?: boolean;
+  position?: string;
+}
+
+interface ActionLink extends CallToAction {}
+
+const {
+  id = 'main-navigation',
+  headerData,
+  actions = [],
+  isSticky = false,
+} = Astro.props;
+
+const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+---
+
+<header
+  class:list={[
+    { sticky: isSticky, relative: !isSticky },
+    ' top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out',
+  ]}
+  {...id ? { id } : {}}>
+  <skipLinks></skipLinks>
+  <nav class="bg-white shadow relative">
+    <div class="u-container">
+      <div class="relative flex py-5 lg:py-6 gap-x-4 justify-between w-full">
+        <!-- Mobile menu button -->
+        <button class="lg:hidden" type="button" id="btn-menu">
+          <IconFactory icon="menu" />
+          <span class="sr-only">Open main menu</span>
+        </button>
+        <div class="flex items-center w-full">
+          <div class="flex flex-shrink-0 items-center mr-auto">
+            <a class="" href={getHomePermalink()}>
+              <Logo />
+            </a>
+          </div>
+
+          <!-- desktop menu -->
+          <ul
+            class="gap-x-6 lg:flex hidden md:flex-row items-center md:self-center w-full md:w-auto font-medium">
+            {
+              headerData &&
+                headerData.map((item, i) => (
+                  <li>
+                    {item.link ? (
+                      <a
+                        class={clsx(
+                          `group-hover/${item.label}:text-primary hover:text-primary duration-300`,
+                          { 'text-primary': item.link === currentPath }
+                        )}
+                        href={item.link}>
+                        <span class:list={['flex gap-2 items-center']}>
+                          <span class="line-clamp-1">{item.label}</span>
+                        </span>
+                      </a>
+                    ) : (
+                      <DropdownMenu label={item.label || ''} client:load>
+                        <div
+                          class={clsx('grid gap-8', {
+                            'grid-cols-2':
+                              item.label === 'Batteries For' ||
+                              item.label === 'Blog',
+                            'grid-cols-3': item.label === 'Docs',
+                          })}>
+                          {item.children &&
+                            item.children.map((item, j) =>
+                              item.description ? (
+                                <div>
+                                  <a
+                                    class="inline-flex items-center gap-x-2.5 group"
+                                    href={item.link}>
+                                    <IconFactory
+                                      classes="group-hover:text-primary duration-300"
+                                      icon={item.icon}
+                                    />
+                                    <p class="font-medium group-hover:text-primary duration-300">
+                                      {item.label}
+                                    </p>
+                                  </a>
+                                  <p class="mt-2 text-sm text-gray leading-[24px]">
+                                    {item.description}
+                                  </p>
+                                </div>
+                              ) : (
+                                <div
+                                  class={clsx({
+                                    'col-span-2': i === 3 && j === 0,
+                                  })}>
+                                  <a
+                                    class="inline-flex items-center gap-x-2.5 group"
+                                    href={item.link}>
+                                    <IconFactory
+                                      classes="group-hover:text-primary duration-300"
+                                      icon={item.icon}
+                                    />
+                                    <p class="font-medium group-hover:text-primary duration-300">
+                                      {item.label}
+                                    </p>
+                                  </a>
+                                  <ul class="mt-2 text-sm space-y-2">
+                                    {(item.children || []).map((item) => (
+                                      <li>
+                                        <a
+                                          class="hover:text-primary duration-300"
+                                          href={item.link}>
+                                          {item.label}
+                                        </a>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )
+                            )}
+                        </div>
+                      </DropdownMenu>
+                    )}
+                  </li>
+                ))
+            }
+            <div class="items-center lg:flex justify-between w-full md:w-auto">
+              {
+                actions?.length ? (
+                  <span class="ml-4 rtl:ml-0 rtl:mr-4">
+                    {actions.map((btnProps) => (
+                      <SquareButton
+                        {...btnProps}
+                        class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none whitepsace-nowrap text-sm w-auto"
+                      />
+                    ))}
+                  </span>
+                ) : (
+                  ''
+                )
+              }
+            </div>
+          </ul>
+          <!-- mobile menu -->
+          <div
+            id="menu"
+            class="fixed top-0 -left-full bg-white py-6 px-4 w-full h-full lg:hidden duration-300 z-50 overflow-y-scroll">
+            <div class="flex items-center justify-between">
+              <a href="/">
+                <Logo />
+              </a>
+              <button id="btn-close">
+                <IconFactory icon="closestroke" />
+              </button>
+            </div>
+            <div class="mt-8">
+              <ul class="space-y-5">
+                {
+                  (headerData || []).map((item) =>
+                    item.link ? (
+                      <li>
+                        <a
+                          class={clsx('text-xl font-medium', {
+                            'text-primary': item.link === currentPath,
+                          })}
+                          href={item.link}>
+                          {item.label}
+                        </a>
+                      </li>
+                    ) : (
+                      <li>
+                        <AccordionMenu label={item.label} client:load>
+                          <ul class="space-y-5">
+                            {(item.children || []).map((item) =>
+                              item.description ? (
+                                <li>
+                                  <a
+                                    class="inline-flex items-center gap-x-2.5 group"
+                                    href={item.link}>
+                                    <IconFactory
+                                      classes="group-hover:text-primary duration-300"
+                                      icon={item.icon}
+                                    />
+                                    <p class="font-medium group-hover:text-primary duration-300">
+                                      {item.label}
+                                    </p>
+                                  </a>
+                                  <p class="text-gray text-sm leading-[24px]">
+                                    {item.description}
+                                  </p>
+                                </li>
+                              ) : (
+                                <li>
+                                  <a
+                                    class="inline-flex items-center gap-x-2.5 group"
+                                    href="/">
+                                    <IconFactory
+                                      classes="group-hover:text-primary duration-300"
+                                      icon={item.icon}
+                                    />
+                                    <p class="font-medium group-hover:text-primary duration-300">
+                                      {item.label}
+                                    </p>
+                                  </a>
+                                  <ul class="mt-3 space-y-2">
+                                    {(item.children || []).map((item) => (
+                                      <li>
+                                        <a
+                                          class="text-sm hover:text-primary duration-300"
+                                          href={item.link}>
+                                          {item.label}
+                                        </a>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </AccordionMenu>
+                      </li>
+                    )
+                  )
+                }
+              </ul>
+            </div>
+          </div>
+          <div>
+            <a class="text-primary font-medium lg:hidden" href="/">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,74 @@
+---
+import { format } from 'date-fns';
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import type { Post } from '~/types';
+import { fetchPosts } from '~/utils/posts';
+import { groupBy } from '~/utils/utils';
+export const prerender = true;
+
+const metadata = {
+  title: 'Post Archive',
+};
+
+const allBlogPosts = await fetchPosts();
+
+const postsByDate = groupBy(
+  allBlogPosts.map((post: Post) => ({
+    ...post,
+    date: format(post.publishDate, 'MMMM - yyyy'),
+  })),
+  (item) => item.date
+);
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="u-container">
+    <Breadcrumbs
+      items={[
+        { label: 'Home', link: '/' },
+        { label: 'Post Archive', link: '/post-archive' },
+      ]}
+    />
+  </div>
+  <div class="py-12 lg:py-16">
+    <div class="u-container">
+      <div>
+        <h1
+          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl"
+        >
+          Post Archive
+        </h1>
+      </div>
+      <div class="mt-12">
+        <div class="space-y-6">
+          {
+            Object.entries(postsByDate).map(([key, value]: any) => {
+              return (
+                <div>
+                  <div class="border-b py-4 pl-4">
+                    <h2 class="text-lg lg:text-xl">{key}</h2>
+                  </div>
+                  <ul class="py-4 pl-4 space-y-2">
+                    {value.map((item) => {
+                      return (
+                        <li>
+                          <a
+                            class="cursor-pointer hover:text-primary duration-300"
+                            href={`/posts/${item.slug}`}
+                          >
+                            {item.title}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

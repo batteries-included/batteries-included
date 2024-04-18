@@ -1,0 +1,29 @@
+---
+import Headline from '../ui/Headline.astro';
+import ButtonLink from '~/components/widgets/ButtonLink.astro';
+---
+
+<div class="pt-12 md:pt-24 md:pb-8 lg:pt-32 lg:pb-16 xl:pt-40 xl:pb-20">
+  <div class="u-container">
+    <div class="max-w-3xl mx-auto relative">
+      <div class="relative z-10">
+        <Headline
+          title="Start Building in Seconds"
+          subtitle="Begin Your Project  With Seamless Onboarding"
+          classes={{ subtitle: '!mt-4' }}
+        />
+        <div class="mt-8 lg:mt-12 text-center">
+          <ButtonLink
+            label="Sign Up Now"
+            link="/sign-up"
+            variant="tertiary"
+            icon="aright"
+          />
+        </div>
+      </div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <img src="/images/start_build.svg" alt="start build" />
+      </div>
+    </div>
+  </div>
+</div>

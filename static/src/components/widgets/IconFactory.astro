@@ -1,0 +1,212 @@
+---
+import LogoIcon from '~/components/icons/LogoIcon.astro';
+import DatabaseIcon from '~/components/icons/DatabaseIcon.astro';
+import AiIcon from '~/components/icons/AiIcon.astro';
+import AleftIcon from '~/components/icons/AleftIcon.astro';
+import AllertIcon from '~/components/icons/AllertIcon.astro';
+import ArBigDownIcon from '~/components/icons/ArBigDownIcon.astro';
+import ArBigUpIcon from '~/components/icons/ArBigUpIcon.astro';
+import ArightIcon from '~/components/icons/ArightIcon.astro';
+import ArrightIcon from '~/components/icons/ArrightIcon.astro';
+import ArticleIcon from '~/components/icons/ArticleIcon.astro';
+import AtopIcon from '~/components/icons/AtopIcon.astro';
+import AupIcon from '~/components/icons/AupIcon.astro';
+import AutomationIcon from '~/components/icons/AutomationIcon.astro';
+import CalendarIcon from '~/components/icons/CalendarIcon.astro';
+import CancelSolidIcon from '~/components/icons/CancelSolidIcon.astro';
+import CheckOutlineIcon from '~/components/icons/CheckOutlineIcon.astro';
+import CheckSolidIcon from '~/components/icons/CheckSolidIcon.astro';
+import CloseStrokeIcon from '~/components/icons/CloseStrokeIcon.astro';
+import CostIcon from '~/components/icons/CostIcon.astro';
+import DataIcon from '~/components/icons/DataIcon.astro';
+import DeployIcon from '~/components/icons/DeployIcon.astro';
+import DevtoolsIcon from '~/components/icons/DevtoolsIcon.astro';
+import DocumentIcon from '~/components/icons/DocumentIcon.astro';
+import EditIcon from '~/components/icons/EditIcon.astro';
+import EfficiencyIcon from '~/components/icons/EfficiencyIcon.astro';
+import ExportIcon from '~/components/icons/ExportIcon.astro';
+import FlashIcon from '~/components/icons/FlashIcon.astro';
+import GrafanaIcon from '~/components/icons/GrafanaIcon.astro';
+import HashtagIcon from '~/components/icons/HashtagIcon.astro';
+import HistoryIcon from '~/components/icons/HistoryIcon.astro';
+import HomeIcon from '~/components/icons/HomeIcon.astro';
+import KeycloakIcon from '~/components/icons/KeycloakIcon.astro';
+import KubernetesIcon from '~/components/icons/KubernetesIcon.astro';
+import MagicIcon from '~/components/icons/MagicIcon.astro';
+import ManageIcon from '~/components/icons/ManageIcon.astro';
+import MenuIcon from '~/components/icons/MenuIcon.astro';
+import MeshNetworkIcon from '~/components/icons/MeshNetworkIcon.astro';
+import MlIcon from '~/components/icons/MlIcon.astro';
+import MonitoringIcon from '~/components/icons/MonitoringIcon.astro';
+import NetSecurityIcon from '~/components/icons/NetSecurityIcon.astro';
+import NewTabIcon from '~/components/icons/NewTabIcon.astro';
+import OtherIcon from '~/components/icons/OtherIcon.astro';
+import PauseIcon from '~/components/icons/PauseIcon.astro';
+import PlayIcon from '~/components/icons/PlayIcon.astro';
+import PlayRoundIcon from '~/components/icons/PlayRoundIcon.astro';
+import PostgresqlIcon from '~/components/icons/PostgresqlIcon.astro';
+import RawCubeIcon from '~/components/icons/RawCubeIcon.astro';
+import RawListIcon from '~/components/icons/RawListIcon.astro';
+import RawPodIcon from '~/components/icons/RawPodIcon.astro';
+import RawQuoteIcon from '~/components/icons/RawQuoteIcon.astro';
+import RefreshIcon from '~/components/icons/RefreshIcon.astro';
+import ReliabilityIcon from '~/components/icons/ReliabilityIcon.astro';
+import SearchIcon from '~/components/icons/SearchIcon.astro';
+import SecureIcon from '~/components/icons/SecureIcon.astro';
+import SettingsIcon from '~/components/icons/SettingsIcon.astro';
+import ShowIcon from '~/components/icons/ShowIcon.astro';
+import SortIcon from '~/components/icons/SortIcon.astro';
+import TimelineIcon from '~/components/icons/TimelineIcon.astro';
+import TrashIcon from '~/components/icons/TrashIcon.astro';
+import WebIcon from '~/components/icons/WebIcon.astro';
+import AddIcon from '~/components/icons/AddIcon.astro';
+import DownIcon from '~/components/icons/DownIcon.astro';
+import ChevronRightIcon from '~/components/icons/ChevronRightIcon.astro';
+
+type Icons =
+  | 'none'
+  | 'default'
+  | 'logo'
+  | 'database'
+  | 'ai'
+  | 'aleft'
+  | 'allert'
+  | 'arbigdown'
+  | 'arbigup'
+  | 'aright'
+  | 'arright'
+  | 'article'
+  | 'atop'
+  | 'aup'
+  | 'automation'
+  | 'calendar'
+  | 'cancelsolid'
+  | 'checkoutline'
+  | 'checksolid'
+  | 'closestroke'
+  | 'cost'
+  | 'data'
+  | 'deploy'
+  | 'devtools'
+  | 'document'
+  | 'edit'
+  | 'efficiency'
+  | 'export'
+  | 'flash'
+  | 'grafana'
+  | 'hashtag'
+  | 'history'
+  | 'home'
+  | 'keycloak'
+  | 'kubernetes'
+  | 'magic'
+  | 'manage'
+  | 'menu'
+  | 'meshnetwork'
+  | 'ml'
+  | 'monitoring'
+  | 'netsecurity'
+  | 'newtab'
+  | 'other'
+  | 'pause'
+  | 'play'
+  | 'playround'
+  | 'postgresql'
+  | 'rawcube'
+  | 'rawlist'
+  | 'rawpod'
+  | 'rawquote'
+  | 'refresh'
+  | 'reliability'
+  | 'search'
+  | 'secure'
+  | 'settings'
+  | 'show'
+  | 'sort'
+  | 'timeline'
+  | 'trash'
+  | 'web'
+  | 'add'
+  | 'down'
+  | 'chevronright'
+  | string;
+
+type Props = {
+  icon?: Icons;
+  classes?: string;
+};
+
+const { icon, classes } = Astro.props;
+---
+
+{
+  icon === 'default' && (
+    <div class="text-red-700">
+      <DatabaseIcon />
+    </div>
+  )
+}
+{icon === 'none' && null}
+{icon === 'logo' && <LogoIcon class={classes} />}
+{icon === 'database' && <DatabaseIcon class={classes} />}
+{icon === 'ai' && <AiIcon class={classes} />}
+{icon === 'aleft' && <AleftIcon class={classes} />}
+{icon === 'allert' && <AllertIcon class={classes} />}
+{icon === 'arbigdown' && <ArBigDownIcon class={classes} />}
+{icon === 'arbigup' && <ArBigUpIcon class={classes} />}
+{icon === 'aright' && <ArightIcon class={classes} />}
+{icon === 'arright' && <ArrightIcon class={classes} />}
+{icon === 'article' && <ArticleIcon class={classes} />}
+{icon === 'atop' && <AtopIcon class={classes} />}
+{icon === 'aup' && <AupIcon class={classes} />}
+{icon === 'automation' && <AutomationIcon class={classes} />}
+{icon === 'calendar' && <CalendarIcon class={classes} />}
+{icon === 'cancelsolid' && <CancelSolidIcon class={classes} />}
+{icon === 'checkoutline' && <CheckOutlineIcon class={classes} />}
+{icon === 'checksolid' && <CheckSolidIcon class={classes} />}
+{icon === 'closestroke' && <CloseStrokeIcon class={classes} />}
+{icon === 'cost' && <CostIcon class={classes} />}
+{icon === 'data' && <DataIcon class={classes} />}
+{icon === 'deploy' && <DeployIcon class={classes} />}
+{icon === 'devtools' && <DevtoolsIcon class={classes} />}
+{icon === 'document' && <DocumentIcon class={classes} />}
+{icon === 'edit' && <EditIcon class={classes} />}
+{icon === 'efficiency' && <EfficiencyIcon class={classes} />}
+{icon === 'export' && <ExportIcon class={classes} />}
+{icon === 'flash' && <FlashIcon class={classes} />}
+{icon === 'grafana' && <GrafanaIcon class={classes} />}
+{icon === 'hashtag' && <HashtagIcon class={classes} />}
+{icon === 'history' && <HistoryIcon class={classes} />}
+{icon === 'home' && <HomeIcon class={classes} />}
+{icon === 'keycloak' && <KeycloakIcon class={classes} />}
+{icon === 'kubernetes' && <KubernetesIcon class={classes} />}
+{icon === 'magic' && <MagicIcon class={classes} />}
+{icon === 'manage' && <ManageIcon class={classes} />}
+{icon === 'menu' && <MenuIcon class={classes} />}
+{icon === 'meshnetwork' && <MeshNetworkIcon class={classes} />}
+{icon === 'ml' && <MlIcon class={classes} />}
+{icon === 'monitoring' && <MonitoringIcon class={classes} />}
+{icon === 'netsecurity' && <NetSecurityIcon class={classes} />}
+{icon === 'newtab' && <NewTabIcon class={classes} />}
+{icon === 'other' && <OtherIcon class={classes} />}
+{icon === 'pause' && <PauseIcon class={classes} />}
+{icon === 'play' && <PlayIcon class={classes} />}
+{icon === 'playround' && <PlayRoundIcon class={classes} />}
+{icon === 'postgresql' && <PostgresqlIcon class={classes} />}
+{icon === 'rawcube' && <RawCubeIcon class={classes} />}
+{icon === 'rawlist' && <RawListIcon class={classes} />}
+{icon === 'rawpod' && <RawPodIcon class={classes} />}
+{icon === 'rawquote' && <RawQuoteIcon class={classes} />}
+{icon === 'refresh' && <RefreshIcon class={classes} />}
+{icon === 'reliability' && <ReliabilityIcon class={classes} />}
+{icon === 'search' && <SearchIcon class={classes} />}
+{icon === 'secure' && <SecureIcon class={classes} />}
+{icon === 'settings' && <SettingsIcon class={classes} />}
+{icon === 'show' && <ShowIcon class={classes} />}
+{icon === 'sort' && <SortIcon class={classes} />}
+{icon === 'timeline' && <TimelineIcon class={classes} />}
+{icon === 'trash' && <TrashIcon class={classes} />}
+{icon === 'web' && <WebIcon class={classes} />}
+{icon === 'add' && <AddIcon class={classes} />}
+{icon === 'down' && <DownIcon class={classes} />}
+{icon === 'chevronright' && <ChevronRightIcon class={classes} />}

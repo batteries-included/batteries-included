@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "astro-build.astro-vscode",
+    "bradlc.vscode-tailwindcss",
     "JakeBecker.elixir-ls",
     "jnoortheen.nix-ide",
     "phoenixframework.phoenix",

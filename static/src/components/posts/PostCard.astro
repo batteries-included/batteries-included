@@ -1,0 +1,40 @@
+---
+import type { ImageMetadata } from 'astro';
+
+import Image from '~/components/common/Image.astro';
+
+import type { Post } from '~/types';
+
+import { getPermalink } from '~/utils/permalinks';
+import { findImage } from '~/utils/images';
+import { getFormattedDate } from '~/utils/utils';
+
+export interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const image = (await findImage(post.image)) as ImageMetadata | undefined;
+
+const link = getPermalink(post.permalink, 'post');
+---
+
+<a class="cursor-pointer" href={link}>
+  <div
+    class="bg-transparent overflow-hidden border border-[#DADADA] rounded-2xl"
+  >
+    {image && <Image src={image} alt={`${post.title} image`} />}
+    <div class="p-5">
+      <h3 class="text-lg lg:text-xl font-semibold line-clamp-1">
+        {post.title}
+      </h3>
+      {post.excerpt && <p class="text-sm mt-2 line-clamp-2">{post.excerpt}</p>}
+      <div class="mt-4 flex items-center justify-between">
+        <p class="text-sm">
+          {getFormattedDate(post.publishDate)}
+        </p>
+        <p class="text-primary text-sm">Read More</p>
+      </div>
+    </div>
+  </div>
+</a>

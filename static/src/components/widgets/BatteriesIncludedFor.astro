@@ -1,0 +1,83 @@
+---
+import VideoModal from '~/components/widgets/VideoModal';
+import Image from '../common/Image.astro';
+
+interface Props {
+  section: string;
+  title: string;
+  description: string | string[];
+  tags?: string[];
+  video: {
+    srcImage: string;
+    url: string;
+  };
+}
+
+const { section, title, description, tags, video } = Astro.props;
+---
+
+<div class="py-12 lg:py-16 xl:py-20 bg-[#FAFAFA]">
+  <div class="u-container">
+    <div
+      class="flex flex-col gap-y-8 md:flex-row md:items-center md:gap-x-10 lg:gap-x-12 xl:gap-x-16"
+    >
+      <div class="md:w-1/2">
+        <h3 class="font-light text-xl lg:text-2xl">
+          Batteries Included for <span class="text-primary">{section}</span>
+        </h3>
+        <h2 class="mt-4 text-3xl lg:text-[40px] font-bold leading-tight">
+          {title}
+        </h2>
+        {
+          Array.isArray(description) ? (
+            <div class="mt-6 space-y-4">
+              {description.map((item) => (
+                <p>{item}</p>
+              ))}
+            </div>
+          ) : (
+            <p class="mt-6">{description}</p>
+          )
+        }
+        {
+          !!tags?.length && (
+            <div class="mt-4 flex items-center gap-x-3">
+              {tags.slice(0, 3).map((tag) => (
+                <p class="bg-[#F8F8F8] py-1 px-4 rounded-[48px]">{tag}</p>
+              ))}
+              <p>and more</p>
+            </div>
+          )
+        }
+      </div>
+      <div class="md:w-1/2">
+        <VideoModal url={video.url} client:load>
+          <button class="aspect-video overflow-hidden group relative">
+            <Image
+              class="group-hover:blur-sm duration-300"
+              src={video.srcImage}
+              alt="image modal"
+            />
+            <div
+              class="absolute invisible opacity-0 group-hover:opacity-100 group-hover:visible top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 duration-300"
+            >
+              <div
+                class="flex items-center gap-x-2 py-2 px-6 border border-primary rounded cursor-pointer"
+              >
+                <p class="text-lg lg:text-xl font-bold">
+                  Watch Product Overview
+                </p>
+                <Image
+                  width={40}
+                  height={40}
+                  src="~/assets/images/icons/play-circle.svg"
+                  alt="play circle"
+                />
+              </div>
+            </div>
+          </button>
+        </VideoModal>
+      </div>
+    </div>
+  </div>
+</div>

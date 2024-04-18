@@ -1,0 +1,130 @@
+---
+import merge from 'lodash.merge';
+import type { ImageMetadata } from 'astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+import { getCanonical, getPermalink } from '~/utils/permalinks';
+import {
+  getStaticPathsBlogPost,
+  blogPostRobots,
+  fetchPosts,
+} from '~/utils/posts';
+import { findImage } from '~/utils/images';
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+import { format } from 'date-fns';
+import slugify from 'slugify';
+import SocialShare from '~/components/common/SocialShare.astro';
+import ToPostsLink from '~/components/posts/ToPostsLink.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return await getStaticPathsBlogPost();
+}
+
+const { post } = Astro.props;
+
+const { Content } = post;
+
+const url = getCanonical(getPermalink(post.permalink, 'post'));
+const image = (await findImage(post.image)) as ImageMetadata | undefined;
+
+const metadata = merge(
+  {
+    title: post.title,
+    description: post.excerpt,
+    robots: {
+      index: blogPostRobots?.index,
+      follow: blogPostRobots?.follow,
+    },
+    openGraph: {
+      type: 'article',
+      ...(image
+        ? {
+            images: [
+              { url: image, width: image?.width, height: image?.height },
+            ],
+          }
+        : {}),
+    },
+  },
+  {
+    ...(post?.metadata
+      ? { ...post.metadata, canonical: post.metadata?.canonical || url }
+      : {}),
+  }
+);
+---
+
+<Layout metadata={metadata as any} hideElipses>
+  <div class="bg-[#F8F8F8] pt-[0.01px]">
+    <div class="u-container">
+      <Breadcrumbs
+        items={[
+          { label: 'Home', link: '/' },
+          { label: 'Posts', link: '/posts' },
+          { label: post.title, link: `/posts/${post.slug}` },
+        ]}
+      />
+    </div>
+    <div class="py-12 lg:py-16">
+      <div class="u-container">
+        <div class="flex flex-col-reverse gap-y-8 md:flex-row md:gap-x-12">
+          <div class="md:w-1/2">
+            <h1
+              class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl">
+              {post.title}
+            </h1>
+            <div class="mt-8 flex items-center gap-x-3">
+              <p>{format(post.publishDate, 'dd MMM yyyy')}</p>
+              <span class="w-1 h-1 bg-[#7F7F7F] rounded-full">&nbsp;</span>
+              <p>{post.readingTime} min read</p>
+            </div>
+            <ul class="mt-14 flex items-center gap-x-3">
+              {
+                post.tags?.map((tag) => {
+                  return (
+                    <li>
+                      <a
+                        class="inline-block bg-white py-1 px-4 rounded-[48px] u-shadow-2 text-sm text-primary first-letter:uppercase"
+                        href={`/tags/${slugify(tag, { lower: true })}`}>
+                        {tag}
+                      </a>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+            <div class="mt-6">
+              <SocialShare text={post.title} url={Astro.url.href} />
+            </div>
+          </div>
+          <div class="md:w-1/2">
+            <div class="aspect-video overflow-hidden rounded-3xl">
+              <img
+                class="w-full h-full object-cover object-center"
+                src={post.image}
+                alt={`${post.title} image`}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-12 lg:py-16 xl:py-20">
+    <div class="u-container">
+      <div class="flex flex-col gap-y-8 lg:flex-row lg:gap-x-16">
+        <div class="lg:w-9/12">
+          <div
+            class="prose max-w-none prose-headings:text-xl prose-headings:lg:text-2xl prose-headings:font-semibold">
+            {Content ? <Content /> : <Fragment set:html={post.content || ''} />}
+          </div>
+        </div>
+      </div>
+      <div class="mt-12">
+        <ToPostsLink />
+      </div>
+    </div>
+  </div>
+</Layout>

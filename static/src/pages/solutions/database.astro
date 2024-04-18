@@ -1,0 +1,127 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import BatteriesIncludedFor from '~/components/widgets/BatteriesIncludedFor.astro';
+import Content2 from '~/components/widgets/Content2.astro';
+import StartBuild from '~/components/widgets/StartBuild.astro';
+import WhyOpenSource from '~/components/widgets/WhyOpenSource.astro';
+import Button from '~/components/ui/Button.astro';
+import VideoModal from '~/components/widgets/VideoModal';
+import RecentPosts from '~/components/widgets/RecentPosts.astro';
+import Image from '~/components/common/Image.astro';
+export const prerender = true;
+
+const metadata = {
+  title: 'Data Storage',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    classes={{
+      title: 'text-3xl md:text-[40px] md:leading-[50px]',
+      containter: 'mx-auto max-w-[858px] pb-6 lg:pb-10',
+    }}
+    breadcrumbs={[
+      { label: 'Home', link: '/' },
+      { label: 'Database', link: '/solutions/database' },
+    ]}
+  >
+    <Fragment slot="title"
+      >Fully-Automated PostgreSQL That Works With Your Existing Stack</Fragment
+    >
+    <Fragment slot="content">
+      Works With Your Existing Stack. Spin It Up, Back It Up, Scale it, Change
+      It, Edit It - All Without Touching Any Config or CLI.
+    </Fragment>
+    <div
+      class="mt-12 max-w-xs sm:max-w-md md:max-w-none m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4"
+    >
+      <VideoModal
+        url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+        client:load
+      >
+        <button class="btn-fourth">
+          <p class="flex-shrink-0">Watch the Demo</p>
+          <Image
+            width={32}
+            height={32}
+            src="~/assets/images/icons/play-circle.svg"
+            alt="play circle"
+          />
+        </button>
+      </VideoModal>
+      <Button
+        text="Get Started"
+        variant="fifth"
+        icon="aright"
+        href="/"
+        isLightIcon
+      />
+    </div>
+  </Hero>
+
+  <BatteriesIncludedFor
+    section="Databases"
+    title="Get The Best Relational Database System In Seconds"
+    description="PostgreSQL is the industry-leading, most-trusted way to store SQL data, but implementation and management can be time consuming and painful. So we offer it as a fully-automated solution with integrations for every major database platform. Our platform automatically configures over 600 database fine tuning knobs to get you the best setup for your use case, with none of the pain. Batteries Included for:"
+    tags={['Redis', 'FerretDB', 'Blob Storage']}
+    video={{
+      srcImage: '~/assets/images/solutions/database/demo.png',
+      url: 'https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD',
+    }}
+  />
+
+  <Content2
+    title="With The Batteries Included"
+    tagline="PostgreSQL"
+    items={[
+      {
+        title: 'Easy Deployment: Included',
+        description:
+          'With Batteries Included, it only takes a few seconds to launch and connect to a production-ready PostgreSQL database. Our dynamic configuration takes care of the heavy lifting and customization for you, so you can get back to shipping new projects quickly.',
+        image: {
+          src: '~/assets/images/solutions/database/easy-deployment.png',
+          alt: 'easy deployment image',
+        },
+      },
+      {
+        title: 'Security: Included',
+        description:
+          'Add and remove users with ease, with automatic configurations that ensure access controls and secure integration across your databases and web apps. Learn more about how we keep your systems safe.',
+        link: '/',
+        image: {
+          src: '~/assets/images/solutions/database/security.png',
+          alt: 'security image',
+        },
+      },
+      {
+        title: 'Scaling: Included',
+        description:
+          'Automated scaling that is thoughtfully designed and implemented to be dynamic and responsive to your specific use case. With Batteries Included, you could scale from 1/10th of a CPU core to 1TB of ram without your team lifting a finger.',
+        image: {
+          src: '~/assets/images/solutions/database/scaling.png',
+          alt: 'scaling image',
+        },
+      },
+      {
+        title: 'Machine Learning',
+        description:
+          'Batteries Included provides an integrated development environment to help your team get machine learning projects off the ground faster, and with better results. Prepare data, host models, and manage pipelines with ease. Our environment makes it easy to integrate machine learning projects into your team’s day-to-day, with space for notebooks, code, data, and more.',
+        image: {
+          src: '~/assets/images/solutions/database/ml.png',
+          alt: 'ml image',
+        },
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent border-t">
+      </div>
+    </Fragment>
+  </Content2>
+
+  <RecentPosts />
+  <WhyOpenSource />
+  <StartBuild />
+</Layout>

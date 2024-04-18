@@ -1,0 +1,21 @@
+---
+import { fetchPosts } from '~/utils/posts';
+import WidgetWrapper from '../ui/WidgetWrapper.astro';
+import PostList from '../posts/List.astro';
+
+const allBlogPosts = await fetchPosts();
+---
+
+<WidgetWrapper>
+  <Fragment slot="bg">
+    <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent border-none">
+    </div>
+  </Fragment>
+  <div class="items-center flex justify-between">
+    <h2
+      class="font-bold text-3xl font-heading leading-tighter tracking-tighter lg:text-4xl text-heading xl:text-5xl md:text-4xl">
+      Posts
+    </h2>
+  </div>
+  <PostList posts={allBlogPosts.slice(0, 3)} />
+</WidgetWrapper>
