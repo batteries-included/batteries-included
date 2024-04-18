@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/netip"
 
-	"github.com/noisysockets/noisysockets/config"
+	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
 	noisysocketsconfigtypes "github.com/noisysockets/noisysockets/config/types"
 	noisysocketsv1alpha1 "github.com/noisysockets/noisysockets/config/v1alpha1"
 	noisysocketstypes "github.com/noisysockets/noisysockets/types"
@@ -54,5 +54,5 @@ func (c *Client) WriteConfig(w io.Writer) error {
 		},
 	}
 
-	return config.SaveToYAML(w, conf)
+	return noisysocketsconfig.SaveToYAML(w, conf)
 }

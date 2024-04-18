@@ -104,25 +104,25 @@ func (gw *Gateway) WriteConfig(w io.Writer) error {
 	}
 
 	if _, err := ifaceSection.NewKey("ListenPort", fmt.Sprintf("%d", gw.ListenPort)); err != nil {
-		return fmt.Errorf("failed to add ListenPort key: %w", err)
+		return fmt.Errorf("failed to add ListenPort: %w", err)
 	}
 
 	if _, err := ifaceSection.NewKey("Address", gw.Address.String()); err != nil {
-		return fmt.Errorf("failed to add Address key: %w", err)
+		return fmt.Errorf("failed to add Address: %w", err)
 	}
 
 	if _, err := ifaceSection.NewKey("PrivateKey", gw.PrivateKey); err != nil {
-		return fmt.Errorf("failed to add PrivateKey key: %w", err)
+		return fmt.Errorf("failed to add PrivateKey: %w", err)
 	}
 
 	if len(gw.PostUp) > 0 {
 		if _, err := ifaceSection.NewKey("PostUp", strings.Join(gw.PostUp, "; ")); err != nil {
-			return fmt.Errorf("failed to add PostUp key: %w", err)
+			return fmt.Errorf("failed to add PostUp: %w", err)
 		}
 	}
 	if len(gw.PreDown) > 0 {
 		if _, err := ifaceSection.NewKey("PreDown", strings.Join(gw.PreDown, "; ")); err != nil {
-			return fmt.Errorf("failed to add PreDown key: %w", err)
+			return fmt.Errorf("failed to add PreDown: %w", err)
 		}
 	}
 
@@ -140,17 +140,15 @@ func (gw *Gateway) WriteConfig(w io.Writer) error {
 
 		peerSection.Comment = "# " + client.Name
 		if _, err := peerSection.NewKey("PublicKey", privateKey.PublicKey().String()); err != nil {
-			return fmt.Errorf("failed to add PublicKey key: %w", err)
+			return fmt.Errorf("failed to add PublicKey: %w", err)
 		}
 
 		if _, err := peerSection.NewKey("AllowedIPs", gw.Subnet.String()); err != nil {
-			return fmt.Errorf("failed to add AllowedIPs key: %w", err)
+			return fmt.Errorf("failed to add AllowedIPs: %w", err)
 		}
 	}
 
-	// Write the marshalled configuration to the writer.
-	_, err = cfg.WriteTo(w)
-	if err != nil {
+	if _, err := cfg.WriteTo(w); err != nil {
 		return fmt.Errorf("failed to marshal configuration: %w", err)
 	}
 
