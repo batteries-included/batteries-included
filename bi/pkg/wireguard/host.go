@@ -74,13 +74,13 @@ func ToHostConfig(noisyConfig io.Reader, iniConfig io.Writer) error {
 			return fmt.Errorf("failed to add PublicKey: %w", err)
 		}
 
-		if len(peerConf.IPs) > 0 {
-			if _, err := peerSection.NewKey("AllowedIPs", strings.Join(peerConf.IPs, ",")); err != nil {
-				return fmt.Errorf("failed to add AllowedIPs: %w", err)
-			}
-		} else if peerConf.DefaultGateway {
+		if peerConf.DefaultGateway {
 			// Allow all traffic for gateways.
 			if _, err := peerSection.NewKey("AllowedIPs", "0.0.0.0/0,::/0"); err != nil {
+				return fmt.Errorf("failed to add AllowedIPs: %w", err)
+			}
+		} else if len(peerConf.IPs) > 0 {
+			if _, err := peerSection.NewKey("AllowedIPs", strings.Join(peerConf.IPs, ",")); err != nil {
 				return fmt.Errorf("failed to add AllowedIPs: %w", err)
 			}
 		}
