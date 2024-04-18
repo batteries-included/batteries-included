@@ -149,7 +149,7 @@ func TestBatteryKubeClient(t *testing.T) {
 	})
 
 	t.Run("EnsureResourceExists", func(t *testing.T) {
-		err = kubeClient.EnsureResourceExists(map[string]any{
+		err = kubeClient.EnsureResourceExists(ctx, map[string]any{
 			"apiVersion": "v1",
 			"kind":       "Namespace",
 			"metadata": map[string]any{

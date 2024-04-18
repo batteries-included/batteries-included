@@ -1,20 +1,21 @@
 package specs
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
 	"bi/pkg/kube"
 )
 
-func (installSpec *InstallSpec) InitialSync(kubeClient kube.KubeClient) error {
+func (installSpec *InstallSpec) InitialSync(ctx context.Context, kubeClient kube.KubeClient) error {
 	var savedErr error = nil
 	for attempt := 0; attempt < 7; attempt++ {
 		savedErr = nil
 		for resourceName, resource := range installSpec.InitialResources {
 			slog.Debug("Ensuring resource exists in target kubernetes cluster",
 				slog.String("resourceName", resourceName))
-			err := kubeClient.EnsureResourceExists(resource)
+			err := kubeClient.EnsureResourceExists(ctx, resource)
 
 			if err != nil {
 				slog.Debug("Expected error while ensuring",

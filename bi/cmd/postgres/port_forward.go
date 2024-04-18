@@ -51,7 +51,7 @@ var portForwardCmd = &cobra.Command{
 		signal.Notify(signals, os.Interrupt)
 		defer signal.Stop(signals)
 
-		forwarder, err := kubeClient.PortForwardService(namespce, serviceName, POSTGRES_PORT, localPort, stopChannel, readyChannel)
+		forwarder, err := kubeClient.PortForwardService(cmd.Context(), namespce, serviceName, POSTGRES_PORT, localPort, stopChannel, readyChannel)
 		cobra.CheckErr(err)
 
 		go func() {

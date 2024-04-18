@@ -1,7 +1,6 @@
 package aws
 
 import (
-	"context"
 	"io"
 	"os"
 
@@ -30,7 +29,8 @@ var outputsCmd = &cobra.Command{
 		}
 
 		p := cluster.NewPulumiProvider()
-		ctx := context.Background()
+
+		ctx := cmd.Context()
 
 		err := p.Init(ctx)
 		cobra.CheckErr(err)

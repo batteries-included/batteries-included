@@ -60,13 +60,11 @@ func (env *InstallEnv) StopKubeProvider(ctx context.Context) error {
 }
 
 func (env *InstallEnv) startLocal(ctx context.Context) error {
-	err := env.clusterProvider.Create(ctx)
-	if err != nil {
+	if err := env.clusterProvider.Create(ctx); err != nil {
 		return err
 	}
 
-	err = env.tryAddMetalIPs()
-	if err != nil {
+	if err := env.tryAddMetalIPs(ctx); err != nil {
 		return err
 	}
 
@@ -168,8 +166,8 @@ func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
 	return nil
 }
 
-func (env *InstallEnv) tryAddMetalIPs() error {
-	net, err := kind.GetMetalLBIPs()
+func (env *InstallEnv) tryAddMetalIPs(ctx context.Context) error {
+	net, err := kind.GetMetalLBIPs(ctx)
 	if err == nil {
 		newIpSpec := specs.IPAddressPoolSpec{Name: "kind", Subnet: net}
 		slog.Debug("adding docker ips for metal lb: ", slog.Any("range", newIpSpec))

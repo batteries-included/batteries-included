@@ -14,6 +14,7 @@ import (
 )
 
 func (kubeClient *batteryKubeClient) PortForwardService(
+	ctx context.Context,
 	namespace string,
 	name string,
 	port int,
@@ -23,7 +24,7 @@ func (kubeClient *batteryKubeClient) PortForwardService(
 
 	// Port forwarding can only target a single pod, so we
 	// need to get the pod name from the service
-	podName, err := kubeClient.getPodNameFromService(namespace, name)
+	podName, err := kubeClient.getPodNameFromService(ctx, namespace, name)
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +66,9 @@ func (kubeClient *batteryKubeClient) portForward(
 
 }
 
-func (kubeClient *batteryKubeClient) getPodNameFromService(namespace string, name string) (string, error) {
+func (kubeClient *batteryKubeClient) getPodNameFromService(ctx context.Context, namespace string, name string) (string, error) {
 	// Get all the running pods that are being targeted by the service
-	service, err := kubeClient.client.CoreV1().Services(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	service, err := kubeClient.client.CoreV1().Services(namespace).Get(ctx, name, metav1.GetOptions{})
 
 	if err != nil {
 		return "", err
@@ -80,7 +81,7 @@ func (kubeClient *batteryKubeClient) getPodNameFromService(namespace string, nam
 
 	pods, err := kubeClient.client.CoreV1().
 		Pods(namespace).
-		List(context.TODO(), listOptions)
+		List(ctx, listOptions)
 
 	if err != nil {
 		return "", err

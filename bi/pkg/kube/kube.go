@@ -1,6 +1,7 @@
 package kube
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log/slog"
@@ -23,15 +24,16 @@ import (
 
 type KubeClient interface {
 	io.Closer
-	EnsureResourceExists(resource map[string]interface{}) error
+	EnsureResourceExists(ctx context.Context, resource map[string]interface{}) error
 	PortForwardService(
+		ctx context.Context,
 		namespace string,
 		name string,
 		port int,
 		localPort int,
 		stopChannel <-chan struct{},
 		readyChannel chan struct{}) (*portforward.PortForwarder, error)
-	RemoveAll() error
+	RemoveAll(ctx context.Context) error
 }
 
 type batteryKubeClient struct {

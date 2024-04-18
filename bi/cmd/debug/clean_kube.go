@@ -23,7 +23,7 @@ var cleanKubeCmd = &cobra.Command{
 		cobra.CheckErr(err)
 		defer kubeClient.Close()
 
-		err = kubeClient.RemoveAll()
+		err = kubeClient.RemoveAll(cmd.Context())
 		cobra.CheckErr(err)
 	},
 }

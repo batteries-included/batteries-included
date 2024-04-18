@@ -13,18 +13,18 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 )
 
-func (batteryKube *batteryKubeClient) EnsureResourceExists(resource map[string]interface{}) error {
+func (batteryKube *batteryKubeClient) EnsureResourceExists(ctx context.Context, resource map[string]interface{}) error {
 	unstructuredResource := &unstructured.Unstructured{Object: resource}
 
-	err := batteryKube.exists(unstructuredResource)
+	err := batteryKube.exists(ctx, unstructuredResource)
 
 	if err != nil {
-		return batteryKube.create(unstructuredResource)
+		return batteryKube.create(ctx, unstructuredResource)
 	}
 	return nil
 }
 
-func (batteryKube *batteryKubeClient) exists(unstructuredResource *unstructured.Unstructured) error {
+func (batteryKube *batteryKubeClient) exists(ctx context.Context, unstructuredResource *unstructured.Unstructured) error {
 	ns := unstructuredResource.GetNamespace()
 	name := unstructuredResource.GetName()
 	gvr, err := batteryKube.getGroupVersionResource(unstructuredResource)
@@ -33,8 +33,6 @@ func (batteryKube *batteryKubeClient) exists(unstructuredResource *unstructured.
 	}
 
 	logger := slog.With("name", name, "namespace", ns, "kind", unstructuredResource.GetKind())
-
-	ctx := context.TODO()
 
 	if ns == "" {
 		_, err = batteryKube.dynamicClient.Resource(gvr).Get(ctx, name, metav1.GetOptions{})
@@ -51,7 +49,7 @@ func (batteryKube *batteryKubeClient) exists(unstructuredResource *unstructured.
 	return nil
 }
 
-func (batteryKube *batteryKubeClient) create(unstructuredResource *unstructured.Unstructured) error {
+func (batteryKube *batteryKubeClient) create(ctx context.Context, unstructuredResource *unstructured.Unstructured) error {
 	ns := unstructuredResource.GetNamespace()
 	gvr, err := batteryKube.getGroupVersionResource(unstructuredResource)
 	if err != nil {
@@ -60,9 +58,9 @@ func (batteryKube *batteryKubeClient) create(unstructuredResource *unstructured.
 	logger := slog.With("namespace", ns, "kind", unstructuredResource.GetKind())
 
 	if ns == "" {
-		_, err = batteryKube.dynamicClient.Resource(gvr).Create(context.TODO(), unstructuredResource, metav1.CreateOptions{})
+		_, err = batteryKube.dynamicClient.Resource(gvr).Create(ctx, unstructuredResource, metav1.CreateOptions{})
 	} else {
-		_, err = batteryKube.dynamicClient.Resource(gvr).Namespace(ns).Create(context.TODO(), unstructuredResource, metav1.CreateOptions{})
+		_, err = batteryKube.dynamicClient.Resource(gvr).Namespace(ns).Create(ctx, unstructuredResource, metav1.CreateOptions{})
 	}
 	if err != nil {
 		logger.Debug("Failed to create resource", slog.Any("error", err))

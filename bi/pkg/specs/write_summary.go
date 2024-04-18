@@ -2,6 +2,7 @@ package specs
 
 import (
 	"bi/pkg/kube"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -20,7 +21,7 @@ func (spec *InstallSpec) WriteStateSummary(path string) error {
 	return os.WriteFile(path, contents, 0o600)
 }
 
-func (spec *InstallSpec) WriteSummaryToKube(kubeClient kube.KubeClient) error {
+func (spec *InstallSpec) WriteSummaryToKube(ctx context.Context, kubeClient kube.KubeClient) error {
 	contents, err := json.Marshal(spec.TargetSummary)
 	if err != nil {
 		return err
@@ -31,7 +32,7 @@ func (spec *InstallSpec) WriteSummaryToKube(kubeClient kube.KubeClient) error {
 		return err
 	}
 
-	if err := kubeClient.EnsureResourceExists(map[string]any{
+	if err := kubeClient.EnsureResourceExists(ctx, map[string]any{
 		"apiVersion": "v1",
 		"kind":       "Secret",
 		"metadata": map[string]any{

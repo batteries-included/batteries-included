@@ -14,8 +14,7 @@ import (
 )
 
 // Given a kind network, return the MetalLB IPs
-func GetMetalLBIPs() (string, error) {
-	ctx := context.TODO()
+func GetMetalLBIPs(ctx context.Context) (string, error) {
 	networks, err := getKindNetwork(ctx)
 	if err != nil {
 		return "", err

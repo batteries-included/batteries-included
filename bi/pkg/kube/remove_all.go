@@ -15,11 +15,9 @@ const (
 	defaultDeleteGracePeriodSeconds int64 = 900
 )
 
-func (kubeClient *batteryKubeClient) RemoveAll() error {
+func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 	// Delete all the resources in the cluster
 	// however there's an order that things need to go.
-
-	ctx := context.TODO()
 
 	slog.Debug("Removing all resources in cluster")
 	err := kubeClient.removeAllHooks(ctx)

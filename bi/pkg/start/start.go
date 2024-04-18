@@ -28,13 +28,13 @@ func StartInstall(ctx context.Context, url string) error {
 	defer kubeClient.Close()
 
 	slog.Debug("starting initial sync")
-	err = env.Spec.InitialSync(kubeClient)
+	err = env.Spec.InitialSync(ctx, kubeClient)
 	if err != nil {
 		return err
 	}
 
 	slog.Debug("writing state summary to cluster")
-	err = env.Spec.WriteSummaryToKube(kubeClient)
+	err = env.Spec.WriteSummaryToKube(ctx, kubeClient)
 	if err != nil {
 		return err
 	}
