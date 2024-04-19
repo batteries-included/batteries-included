@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.11
 	github.com/aws/aws-sdk-go-v2/service/sts v1.28.6
 	github.com/dghubble/ipnets v1.0.0
-	github.com/docker/docker v26.0.1+incompatible
+	github.com/docker/docker v26.0.2+incompatible
 	github.com/lmittmann/tint v1.0.4
 	github.com/noisysockets/noisysockets v0.13.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.31.0
