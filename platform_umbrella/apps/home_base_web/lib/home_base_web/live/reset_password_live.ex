@@ -17,7 +17,7 @@ defmodule HomeBaseWeb.ResetPasswordLive do
         # leaked token giving the user access to the account.
         {:noreply,
          socket
-         |> put_flash(:info, "Password successfully reset")
+         |> put_flash(:success, "Password successfully reset")
          |> redirect(to: ~p"/login")}
 
       {:error, changeset} ->
@@ -57,6 +57,7 @@ defmodule HomeBaseWeb.ResetPasswordLive do
       phx-change="validate"
       phx-submit="reset"
       title="Reset your password"
+      flash={@flash}
     >
       <.badge>
         <:item label="Email"><%= @user.email %></:item>

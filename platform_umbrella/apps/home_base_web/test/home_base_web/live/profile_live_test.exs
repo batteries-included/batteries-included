@@ -125,7 +125,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
 
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
 
-      assert Phoenix.Flash.get(new_password_conn.assigns.flash, :info) =~
+      assert Phoenix.Flash.get(new_password_conn.assigns.flash, :success) =~
                "Password updated successfully"
 
       assert Accounts.get_user_by_email_and_password(user.email, new_password)
@@ -187,7 +187,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/profile"
-      assert %{"info" => message} = flash
+      assert %{"success" => message} = flash
       assert message == "Email changed successfully"
       refute Accounts.get_user_by_email(user.email)
       assert Accounts.get_user_by_email(email)

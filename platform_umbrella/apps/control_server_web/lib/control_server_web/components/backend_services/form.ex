@@ -161,7 +161,7 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
       {:ok, _new_service} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Backend service created successfully")
+         |> put_flash(:global_success, "Backend service created successfully")
          # TODO: Redirect to the new service
          |> push_redirect(to: ~p"/backend_services")}
 
@@ -175,7 +175,7 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
       {:ok, _updated_service} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Backend service updated successfully")
+         |> put_flash(:global_success, "Backend service updated successfully")
          # TODO: wire up the show view and redirect to it
          |> push_redirect(to: ~p"/backend_services")}
 

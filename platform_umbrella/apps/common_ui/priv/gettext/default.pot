@@ -10,8 +10,3 @@
 #
 msgid ""
 msgstr ""
-
-#: lib/common_ui/components/flash.ex:51
-#, elixir-autogen, elixir-format
-msgid "close"
-msgstr ""

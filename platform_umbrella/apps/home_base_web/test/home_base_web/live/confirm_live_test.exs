@@ -34,7 +34,7 @@ defmodule HomeBaseWeb.ConfirmLiveTest do
 
       assert {:ok, conn} = result
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
+      assert Phoenix.Flash.get(conn.assigns.flash, :success) =~
                "User confirmed successfully"
 
       assert Accounts.get_user!(user.id).confirmed_at

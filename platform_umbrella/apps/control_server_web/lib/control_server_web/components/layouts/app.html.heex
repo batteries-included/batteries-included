@@ -1,16 +1,13 @@
 <main role="main" class="h-full min-h-screen">
-  <.flash kind={:info} title="Success!" flash={@flash} />
-  <.flash kind={:error} title="Error!" flash={@flash} />
-  <.flash
-    id="disconnected"
-    kind={:error}
-    title="We can't find the internet"
-    close={false}
+  <.flash_group flash={@flash} global />
+
+  <.alert
+    type="fixed"
+    variant="disconnected"
+    phx-connected={hide_alert()}
+    phx-disconnected={show_alert()}
     autoshow={false}
-    phx-disconnected={show_flash("#disconnected")}
-    phx-connected={hide_flash("#disconnected")}
-  >
-    Attempting to reconnect <.icon name={:arrow_path} class="inline w-3 h-3 ml-1 animate-spin" />
-  </.flash>
+  />
+
   <%= @inner_content %>
 </main>

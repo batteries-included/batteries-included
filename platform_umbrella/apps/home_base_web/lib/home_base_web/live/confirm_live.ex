@@ -16,10 +16,17 @@ defmodule HomeBaseWeb.ConfirmLive do
       {:ok, _} ->
         # Do not log in the user after confirmation to avoid a
         # leaked token giving the user access to the account.
-        {:noreply,
-         socket
-         |> put_flash(:info, "User confirmed successfully")
-         |> redirect(to: if(socket.assigns.current_user, do: ~p"/", else: ~p"/login"))}
+        if socket.assigns.current_user do
+          {:noreply,
+           socket
+           |> put_flash(:global_success, "User confirmed successfully")
+           |> redirect(to: ~p"/")}
+        else
+          {:noreply,
+           socket
+           |> put_flash(:success, "User confirmed successfully")
+           |> redirect(to: ~p"/login")}
+        end
 
       :error ->
         # If there is a current user and the account was already confirmed,

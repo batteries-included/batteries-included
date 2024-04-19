@@ -26,19 +26,6 @@ defmodule HomeBaseWeb.Layouts do
         <script phx-track-static defer type="text/javascript" src={~p"/assets/app.js"} />
       </head>
       <body class="antialiased font-sans font-normal leading-loose text-gray-darkest">
-        <.flash
-          id="disconnected"
-          kind={:error}
-          title="We can't find the internet"
-          close={false}
-          autoshow={false}
-          phx-connected={hide_flash("#disconnected")}
-          phx-disconnected={show_flash("#disconnected")}
-        >
-          Attempting to reconnect
-          <.icon name={:arrow_path} class="inline w-3 h-3 ml-1 animate-spin" />
-        </.flash>
-
         <%= @inner_content %>
       </body>
     </html>
@@ -51,15 +38,21 @@ defmodule HomeBaseWeb.Layouts do
 
   def auth(assigns) do
     ~H"""
+    <.flash_group flash={@flash} global />
+
+    <.alert
+      type="fixed"
+      variant="disconnected"
+      phx-connected={hide_alert()}
+      phx-disconnected={show_alert()}
+      autoshow={false}
+    />
+
     <div class="flex items-center justify-center min-h-screen background-gradient">
       <div class="flex flex-col items-center gap-12 p-12 w-full">
         <.logo class="w-36" />
 
         <div class="w-full max-w-md bg-white shadow-2xl shadow-gray/30 rounded-lg p-6 lg:p-10">
-          <.flash kind={:info} variant="inline" flash={@flash} />
-          <.flash kind={:warning} variant="inline" flash={@flash} />
-          <.flash kind={:error} variant="inline" flash={@flash} />
-
           <%= @inner_content %>
         </div>
 
@@ -83,9 +76,15 @@ defmodule HomeBaseWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <.flash kind={:info} title="Success" flash={@flash} />
-    <.flash kind={:warning} title="Warning" flash={@flash} />
-    <.flash kind={:error} title="Error" flash={@flash} />
+    <.flash_group flash={@flash} global />
+
+    <.alert
+      type="fixed"
+      variant="disconnected"
+      phx-connected={hide_alert()}
+      phx-disconnected={show_alert()}
+      autoshow={false}
+    />
 
     <.flex class="relative header-gradient items-center justify-between px-8 border-b border-b-gray-lighter">
       <.logo variant="full" class="my-3" />

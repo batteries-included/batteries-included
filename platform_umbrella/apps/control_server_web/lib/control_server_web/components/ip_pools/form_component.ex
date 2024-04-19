@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
       {:ok, new_pool} ->
         {:noreply,
          socket
-         |> put_flash(:info, "IP Address Pool created successfully")
+         |> put_flash(:global_success, "IP Address Pool created successfully")
          |> send_info(socket.assigns.save_target, new_pool)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -52,7 +52,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
       {:ok, updated_ip_address_pool} ->
         {:noreply,
          socket
-         |> put_flash(:info, "IP Address Pool updated successfully")
+         |> put_flash(:global_success, "IP Address Pool updated successfully")
          |> send_info(socket.assigns.save_target, updated_ip_address_pool)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

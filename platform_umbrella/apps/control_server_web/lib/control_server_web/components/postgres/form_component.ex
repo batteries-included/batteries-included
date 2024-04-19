@@ -131,8 +131,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       {:ok, new_cluster} ->
         socket =
           socket
+          |> put_flash(:global_success, "Postgres Cluster created successfully")
           |> push_redirect(to: ~p"/postgres/#{new_cluster}/show")
-          |> put_flash(:info, "Postgres Cluster created successfully")
 
         {:noreply, socket}
 
@@ -146,8 +146,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       {:ok, updated_cluster} ->
         socket =
           socket
+          |> put_flash(:global_success, "Postgres Cluster updated successfully")
           |> push_redirect(to: ~p"/postgres/#{updated_cluster}/show")
-          |> put_flash(:info, "Postgres Cluster updated successfully")
 
         {:noreply, socket}
 

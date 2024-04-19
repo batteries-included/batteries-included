@@ -35,6 +35,7 @@ defmodule HomeBaseWeb.ForgotPasswordLive do
       id="reset-password-form"
       phx-submit="send"
       title="Forgot your password?"
+      flash={@flash}
       class="mb-4"
     >
       <p>We'll send a password reset link to your inbox.</p>

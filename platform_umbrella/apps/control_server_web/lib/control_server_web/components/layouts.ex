@@ -11,6 +11,16 @@ defmodule ControlServerWeb.Layouts do
   """
   def sidebar(assigns) do
     ~H"""
+    <.flash_group flash={@flash} global />
+
+    <.alert
+      type="fixed"
+      variant="disconnected"
+      phx-connected={hide_alert()}
+      phx-disconnected={show_alert()}
+      autoshow={false}
+    />
+
     <ControlServerWeb.SidebarLayout.sidebar_layout
       main_menu_items={[
         %{

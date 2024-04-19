@@ -44,7 +44,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
       {:ok, updated_installation} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Installation updated successfully")
+         |> put_flash(:global_success, "Installation updated successfully")
          |> send_info(socket.assigns.save_target, updated_installation)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -57,7 +57,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
       {:ok, new_installation} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Installation created successfully")
+         |> put_flash(:global_success, "Installation created successfully")
          |> send_info(socket.assigns.save_target, new_installation)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -80,6 +80,7 @@ defmodule HomeBaseWeb.Live.Installations.FormComponent do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
+        flash={@flash}
       >
         <.input field={@form[:slug]} label="Slug" />
         <:actions>

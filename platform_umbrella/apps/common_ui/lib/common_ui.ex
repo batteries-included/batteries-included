@@ -24,13 +24,14 @@ defmodule CommonUI do
 
   defmacro __using__(_) do
     quote do
+      import CommonUI.Components.Alert
       import CommonUI.Components.Badge
       import CommonUI.Components.Button
       import CommonUI.Components.ClickFlip
       import CommonUI.Components.Container
       import CommonUI.Components.DataList
       import CommonUI.Components.DatetimeDisplay
-      import CommonUI.Components.Flash
+      import CommonUI.Components.FlashGroup
       import CommonUI.Components.Form
       import CommonUI.Components.Icon
       import CommonUI.Components.Input

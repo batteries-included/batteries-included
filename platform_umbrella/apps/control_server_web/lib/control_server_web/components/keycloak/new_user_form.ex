@@ -92,12 +92,14 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
     ~H"""
     <div id={@id}>
       <.flex column>
-        <div :if={@api_error != nil} class="text-warning-darker text-xxl font-bold">
+        <.alert :if={@api_error} variant="error">
           <%= @api_error %>
-        </div>
+        </.alert>
+
         <div :if={@new_url != nil} class="text-xxl font-semibold">
           New User Created with<.a href={@new_url} variant="styled">Keycloak admin console here</.a>.
         </div>
+
         <.form
           :if={@new_url == nil}
           for={@form}

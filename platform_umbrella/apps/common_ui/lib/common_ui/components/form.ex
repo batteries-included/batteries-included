@@ -2,6 +2,7 @@ defmodule CommonUI.Components.Form do
   @moduledoc false
   use CommonUI, :component
 
+  import CommonUI.Components.FlashGroup
   import CommonUI.Components.Panel
   import CommonUI.Components.Typography
   import CommonUI.Gettext, warn: false
@@ -23,6 +24,7 @@ defmodule CommonUI.Components.Form do
   attr :for, :any, default: nil, doc: "the datastructure for the form"
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
   attr :variant, :string, values: ["stepped", "nested"]
+  attr :flash, :map, default: %{}
   attr :title, :string, default: nil
   attr :description, :string, default: nil
   attr :class, :any, default: nil
@@ -38,6 +40,8 @@ defmodule CommonUI.Components.Form do
         <div class="row-start-2 lg:row-start-1">
           <.panel title={@title}>
             <.simple_form variant="nested">
+              <.flash_group flash={@flash} />
+
               <%= render_slot(@inner_block) %>
             </.simple_form>
           </.panel>
@@ -74,6 +78,7 @@ defmodule CommonUI.Components.Form do
     <.form for={@for} as={@as} {@rest}>
       <.simple_form variant="nested" class={@class}>
         <.h2 :if={@title}><%= @title %></.h2>
+        <.flash_group flash={@flash} />
 
         <%= render_slot(@inner_block) %>
       </.simple_form>

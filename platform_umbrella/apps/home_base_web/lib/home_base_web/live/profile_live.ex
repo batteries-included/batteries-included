@@ -8,7 +8,7 @@ defmodule HomeBaseWeb.ProfileLive do
     socket =
       case Accounts.update_user_email(socket.assigns.current_user, token) do
         :ok ->
-          put_flash(socket, :info, "Email changed successfully")
+          put_flash(socket, :success, "Email changed successfully")
 
         :error ->
           put_flash(socket, :error, "Link is invalid or it has expired")
@@ -57,8 +57,10 @@ defmodule HomeBaseWeb.ProfileLive do
             &url(~p"/profile/#{&1}")
           )
 
-        info = "A link to confirm your email change has been sent to the new address."
-        {:noreply, socket |> put_flash(:info, info) |> assign(email_form_current_password: nil)}
+        {:noreply,
+         socket
+         |> assign(email_form_current_password: nil)
+         |> put_flash(:info, "A link to confirm your email change has been sent to the new address.")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :email_form, to_form(Map.put(changeset, :action, :insert)))}
@@ -100,12 +102,7 @@ defmodule HomeBaseWeb.ProfileLive do
     ~H"""
     <.h2>Your Profile</.h2>
 
-    <.flash
-      :if={!@current_user.confirmed_at}
-      kind={:warning}
-      variant="inline"
-      class="inline-block mb-4"
-    >
+    <.alert :if={!@current_user.confirmed_at} variant="warning" class="inline-flex mb-4">
       <span>Your account still needs to be been confirmed!</span>
 
       <span :if={@confirmation_resent} class="opacity-50">
@@ -115,7 +112,9 @@ defmodule HomeBaseWeb.ProfileLive do
       <.a :if={!@confirmation_resent} variant="styled" phx-click="resend_confirm">
         Resend confirmation email
       </.a>
-    </.flash>
+    </.alert>
+
+    <.flash_group flash={@flash} />
 
     <.grid columns={%{sm: 1, lg: 2, xl: 3}}>
       <.panel title="Change your email">

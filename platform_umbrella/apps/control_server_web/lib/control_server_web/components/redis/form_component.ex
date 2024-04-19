@@ -78,7 +78,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Failover cluster updated successfully")
+         |> put_flash(:global_success, "Failover cluster updated successfully")
          |> push_navigate(to: ~p"/redis/#{failover_cluster.id}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -93,7 +93,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Failover cluster created successfully")
+         |> put_flash(:global_success, "Failover cluster created successfully")
          |> push_navigate(to: ~p"/redis/#{failover_cluster.id}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->

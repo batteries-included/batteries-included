@@ -102,7 +102,7 @@ defmodule ControlServerWeb.Projects.NewLive do
         {:noreply,
          socket
          |> assign(:installing, false)
-         |> put_flash(:error, "Could not create all the project resources")}
+         |> put_flash(:global_error, "Could not create all the project resources")}
     end
   end
 
@@ -193,7 +193,7 @@ defmodule ControlServerWeb.Projects.NewLive do
       />
 
       <div class="flex-1 relative">
-        <.flash kind={:error} flash={@flash} />
+        <.flash_group flash={@flash} />
 
         <.subform
           module={ProjectForm}

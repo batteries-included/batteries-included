@@ -18,6 +18,7 @@ defmodule HomeBaseWeb.LoginLive do
       id="login-form"
       action={~p"/login"}
       title="Log in to your account"
+      flash={@flash}
       class="mb-4"
     >
       <.input

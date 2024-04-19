@@ -49,6 +49,7 @@ defmodule HomeBaseWeb.SignupLive do
       phx-submit="save"
       phx-trigger-action={@trigger_submit}
       title="Sign up for an account"
+      flash={@flash}
       class="mb-4"
     >
       <.input field={@form[:email]} type="email" placeholder="Email" autocomplete="email" autofocus />
