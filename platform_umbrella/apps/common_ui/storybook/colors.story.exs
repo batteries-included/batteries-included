@@ -7,11 +7,7 @@ defmodule Storybook.Colors do
       # TODO: Submit PR to phoenix_storybook allowing subnavigation without icons
       {:primary, "Primary", {:fa, ""}},
       {:secondary, "Secondary", {:fa, ""}},
-      {:success, "Success", {:fa, ""}},
-      {:warning, "Warning", {:fa, ""}},
-      {:error, "Error", {:fa, ""}},
-      {:gray, "Gray", {:fa, ""}},
-      {:gray_tint, "Gray Tint", {:fa, ""}}
+      {:gray, "Gray", {:fa, ""}}
     ]
   end
 
@@ -66,36 +62,6 @@ defmodule Storybook.Colors do
     """
   end
 
-  def render(%{tab: :success} = assigns) do
-    ~H"""
-    <div class="psb-colors-page">
-      <.color hex="#79E2BB" name="success-light" class="bg-success-light text-white" />
-      <.color hex="#36D399" name="success" class="bg-success text-white" />
-      <.color hex="#26AB7A" name="success-dark" class="bg-success-dark text-white" />
-    </div>
-    """
-  end
-
-  def render(%{tab: :warning} = assigns) do
-    ~H"""
-    <div class="psb-colors-page">
-      <.color hex="#FBDBA2" name="warning-light" class="bg-warning-light text-gray-darkest" />
-      <.color hex="#F6AE2D" name="warning" class="bg-warning text-white" />
-      <.color hex="#E1940A" name="warning-dark" class="bg-warning-dark text-white" />
-    </div>
-    """
-  end
-
-  def render(%{tab: :error} = assigns) do
-    ~H"""
-    <div class="psb-colors-page">
-      <.color hex="#FEE2E2" name="error-light" class="bg-error-light text-gray-darkest" />
-      <.color hex="#ED4C5C" name="error" class="bg-error text-white" />
-      <.color hex="#991B1B" name="error-dark" class="bg-error-dark text-white" />
-    </div>
-    """
-  end
-
   def render(%{tab: :gray} = assigns) do
     ~H"""
     <div class="psb-colors-page">
@@ -136,23 +102,16 @@ defmodule Storybook.Colors do
         description="Used for dark button hover"
       />
       <.color
-        hex="#1C1C1E"
-        name="gray-darkest"
-        class="bg-gray-darkest text-white"
-        description="Used for dark buttons, input labels"
-      />
-    </div>
-    """
-  end
-
-  def render(%{tab: :gray_tint} = assigns) do
-    ~H"""
-    <div class="psb-colors-page">
-      <.color
         hex="#4E535F"
         name="gray-darker-tint"
         class="bg-gray-darker-tint text-white"
         description="Used for input border in dark mode"
+      />
+      <.color
+        hex="#1C1C1E"
+        name="gray-darkest"
+        class="bg-gray-darkest text-white"
+        description="Used for dark buttons, input labels"
       />
       <.color
         hex="#21242B"

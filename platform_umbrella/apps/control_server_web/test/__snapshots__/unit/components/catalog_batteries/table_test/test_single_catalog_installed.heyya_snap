@@ -49,15 +49,10 @@
           <div class="block py-4">
             <span class="">
               
-    <div class="flex text-success font-semi-bold">
-  <div class="flex-initial">
-    Active
-  </div>
-  <div class="flex-none ml-2">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+    <div class="flex items-center gap-2 font-semibold text-green-500">
+  <svg xmlns="http://www.w3.org/2000/svg" class="size-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-</svg>
-  </div>
+</svg> Active
 </div>
   
             </span>

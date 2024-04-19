@@ -6,13 +6,8 @@ defmodule ControlServerWeb.CatalogBatteriesTable do
 
   defp active_check(assigns) do
     ~H"""
-    <div class="flex text-success font-semi-bold">
-      <div class="flex-initial">
-        Active
-      </div>
-      <div class="flex-none ml-2">
-        <.icon name={:check_circle} class="h-6 w-6" />
-      </div>
+    <div class="flex items-center gap-2 font-semibold text-green-500">
+      <.icon name={:check_circle} class="size-6" /> Active
     </div>
     """
   end

@@ -20,24 +20,6 @@ const secondary = {
   dark: '#36E0D4',
 };
 
-const success = {
-  light: '#79E2BB',
-  DEFAULT: '#36D399',
-  dark: '#26AB7A',
-};
-
-const warning = {
-  light: '#FBDBA2',
-  DEFAULT: '#F6AE2D',
-  dark: '#E1940A',
-};
-
-const error = {
-  light: '#FEE2E2',
-  DEFAULT: '#ED4C5C',
-  dark: '#991B1B',
-};
-
 const gray = {
   lightest: '#FAFAFA',
   lighter: '#DADADA',
@@ -68,9 +50,6 @@ module.exports = {
       colors: {
         primary,
         secondary,
-        success,
-        warning,
-        error,
         gray,
       },
       fontFamily: {

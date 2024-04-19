@@ -93,7 +93,7 @@ defmodule CommonUI.Components.Input do
           "size-5 text-primary rounded cursor-pointer",
           "checked:border-primary checked:hover:border-primary",
           @errors == [] && "border-gray-lighter hover:border-primary",
-          @errors != [] && "phx-feedback:border-error phx-feedback:bg-error-light"
+          @errors != [] && "phx-feedback:bg-red-50 phx-feedback:border-red-200"
         ]}
       />
 
@@ -126,7 +126,7 @@ defmodule CommonUI.Components.Input do
             "size-5 text-primary rounded-full cursor-pointer",
             "checked:border-primary checked:hover:border-primary",
             @errors == [] && "border-gray-lighter hover:border-primary",
-            @errors != [] && "phx-feedback:border-error phx-feedback:bg-error-light"
+            @errors != [] && "phx-feedback:bg-red-50 phx-feedback:border-red-200"
           ]}
         />
 
@@ -292,8 +292,8 @@ defmodule CommonUI.Components.Input do
 
   defp input_class([_ | _] = _errors) do
     [
-      "phx-feedback:bg-error-light phx-feedback:border-error",
-      "phx-feedback:dark:bg-error-dark phx-feedback:dark:placeholder:text-error",
+      "phx-feedback:bg-red-50 phx-feedback:border-red-200",
+      "phx-feedback:dark:bg-red-950 phx-feedback:dark:border-red-900",
       input_class(nil)
     ]
   end
@@ -342,11 +342,11 @@ defmodule CommonUI.Components.Input do
     <div
       :for={error <- @errors}
       class={[
-        "flex items-center gap-2 text-xs text-error font-semibold phx-no-feedback:hidden",
+        "flex items-center gap-2 text-xs text-red-500 font-semibold phx-no-feedback:hidden",
         @class
       ]}
     >
-      <.icon name={:exclamation_circle} mini class="size-4 fill-error" />
+      <.icon name={:exclamation_circle} mini class="size-4 fill-red-500" />
       <span><%= error %></span>
     </div>
     """

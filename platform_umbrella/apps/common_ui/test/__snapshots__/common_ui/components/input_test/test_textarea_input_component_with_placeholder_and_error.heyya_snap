@@ -4,11 +4,11 @@
   
 </div>
 
-  <textarea name="foo" placeholder="Foobar" phx-debounce="blur" class="phx-feedback:bg-error-light phx-feedback:border-error phx-feedback:dark:bg-error-dark phx-feedback:dark:placeholder:text-error px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint hover:border-primary dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint">
+  <textarea name="foo" placeholder="Foobar" phx-debounce="blur" class="phx-feedback:bg-red-50 phx-feedback:border-red-200 phx-feedback:dark:bg-red-950 phx-feedback:dark:border-red-900 px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint hover:border-primary dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint">
 bar</textarea>
 
-  <div class="flex items-center gap-2 text-xs text-error font-semibold phx-no-feedback:hidden mt-2">
-  <svg xmlns="http://www.w3.org/2000/svg" class="size-4 fill-error" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+  <div class="flex items-center gap-2 text-xs text-red-500 font-semibold phx-no-feedback:hidden mt-2">
+  <svg xmlns="http://www.w3.org/2000/svg" class="size-4 fill-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/>
 </svg>
   <span>Oh no</span>

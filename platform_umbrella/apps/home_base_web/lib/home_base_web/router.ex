@@ -21,7 +21,7 @@ defmodule HomeBaseWeb.Router do
     plug :fetch_live_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :put_root_layout, @root_layout
+    plug :put_root_layout, html: @root_layout
     plug :put_layout, false
   end
 
@@ -47,9 +47,17 @@ defmodule HomeBaseWeb.Router do
   end
 
   scope "/", HomeBaseWeb do
-    pipe_through [:browser]
+    pipe_through :browser
 
     delete "/logout", UserSessionController, :delete
+  end
+
+  scope "/", HomeBaseWeb do
+    pipe_through [:browser, :auth_layout]
+
+    live_session :confirm, layout: @auth_layout, on_mount: [@mount_current_user] do
+      live "/confirm/:token", ConfirmLive
+    end
   end
 
   scope "/", HomeBaseWeb do
@@ -66,17 +74,9 @@ defmodule HomeBaseWeb.Router do
   end
 
   scope "/", HomeBaseWeb do
-    pipe_through [:browser, :auth_layout]
-
-    live_session :confirm, layout: @auth_layout, on_mount: [@mount_current_user] do
-      live "/confirm/:token", ConfirmLive
-    end
-  end
-
-  scope "/", HomeBaseWeb do
     pipe_through [:browser, :app_layout, :require_authenticated_user]
 
-    live_session :main, layout: @app_layout, on_mount: [@ensure_authenticated_user] do
+    live_session :app, layout: @app_layout, on_mount: [@ensure_authenticated_user] do
       live "/", DashboardLive
 
       live "/installations/", InstallationLive
