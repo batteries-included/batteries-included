@@ -3,6 +3,7 @@ package start
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"bi/pkg/installs"
 )
@@ -26,6 +27,10 @@ func StartInstall(ctx context.Context, url string) error {
 		return err
 	}
 	defer kubeClient.Close()
+
+	if err := kubeClient.WaitForConnection(3 * time.Minute); err != nil {
+		return err
+	}
 
 	slog.Debug("starting initial sync")
 	err = env.Spec.InitialSync(ctx, kubeClient)

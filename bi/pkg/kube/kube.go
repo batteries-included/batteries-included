@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/noisysockets/noisysockets"
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
@@ -34,6 +35,7 @@ type KubeClient interface {
 		stopChannel <-chan struct{},
 		readyChannel chan struct{}) (*portforward.PortForwarder, error)
 	RemoveAll(ctx context.Context) error
+	WaitForConnection(time.Duration) error
 }
 
 type batteryKubeClient struct {
@@ -149,4 +151,28 @@ func (c *batteryKubeClient) Close() error {
 	}
 
 	return nil
+}
+
+func (c *batteryKubeClient) WaitForConnection(timeout time.Duration) error {
+	done := make(chan struct{})
+	timer := time.AfterFunc(timeout, func() {
+		slog.Info("Timed out waiting for cluster to be ready", slog.Any("timeout", timeout))
+		done <- struct{}{}
+	})
+	defer timer.Stop()
+
+	for {
+		select {
+		case <-done:
+			return fmt.Errorf("timed out waiting for cluster to be ready")
+		default:
+			_, err := c.client.Discovery().OpenAPISchema()
+			if err == nil {
+				slog.Info("Successfully connected to cluster")
+				return nil
+			}
+			slog.Debug("Still waiting on cluster to be ready")
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
 }
