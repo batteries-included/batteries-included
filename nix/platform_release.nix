@@ -18,7 +18,6 @@
 let
 
   MIX_ENV = mixEnv;
-  LANG = "C.UTF-8";
 
   node_modules = npmlock2nix.v2.node_modules {
     src = gitignoreSource ./../platform_umbrella/apps/${pname}_web/assets/.;
@@ -35,11 +34,14 @@ let
   '';
 in
 beamPackages.mixRelease {
-  inherit src pname version mixFodDeps MIX_ENV LANG;
+  inherit src pname version mixFodDeps MIX_ENV;
   inherit erlang elixir hex;
 
   nativeBuildInputs = [ gcc pkg-config nodejs ];
   buildInputs = [ openssl ];
+  LANG = "en_US.UTF-8";
+  LC_ALL = "en_US.UTF-8";
+  LC_CTYPE = "en_US.UTF-8";
 
   postBuild = ''
     ln -sf ${node_modules}/node_modules ./apps/${pname}_web/assets/node_modules

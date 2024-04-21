@@ -16,7 +16,6 @@
       safeRev = self.shortRev or self.dirtyShortRev;
       version = "0.12.1";
       taggedVersion = "0.12.1-${safeRev}";
-      tini = pkgs.tini;
 
 
       staticSrc = gitignoreSource ./../project_templates/pastebin-go/assets;
@@ -41,7 +40,6 @@
         config = {
           ExposedPorts = { "8080/tcp" = { }; };
           WorkingDir = "/";
-          Entrypoint = [ "${tini}/bin/tini" "--" ];
           Cmd = [ "${pastebin}/bin/${pname}" "${static}/" ];
         };
       };

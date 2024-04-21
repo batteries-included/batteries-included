@@ -168,7 +168,6 @@
         LANG = "en_US.UTF-8";
         LC_ALL = "en_US.UTF-8";
         LC_CTYPE = "en_US.UTF-8";
-        RUST_BACKTRACE = 1;
         ERL_AFLAGS = "-kernel shell_history enabled";
 
         inputsFrom = [ config.mission-control.devShell config.flake-root.devShell ];

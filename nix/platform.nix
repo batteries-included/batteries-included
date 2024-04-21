@@ -11,7 +11,12 @@
       version = "0.12.1";
       taggedVersion = "0.12.1-${safeRev}";
       beam = pkgs.beam;
-      tini = pkgs.tini;
+
+      Entrypoint =
+        if pkgs.stdenv.isDarwin then
+          [ ]
+        else
+          [ "${pkgs.tini}/bin/tini" "--" ];
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
 
@@ -100,7 +105,7 @@
         tag = taggedVersion;
         contents = [ kube-bootstrap ] ++ additionalContents; # These are already in the closure. This just creates symlinks
         config = {
-          Entrypoint = [ "${tini}/bin/tini" "--" ];
+          inherit Entrypoint;
           Cmd = [ "${kube-bootstrap}/bin/bootstrap" ];
         };
       };
@@ -110,7 +115,7 @@
         tag = taggedVersion;
         contents = [ home-base ] ++ additionalContents; # These are already in the closure. This just creates symlinks
         config = {
-          Entrypoint = [ "${tini}/bin/tini" "--" ];
+          inherit Entrypoint;
           Cmd = [ "${home-base}/bin/home_base" "start" ];
         };
       };
@@ -120,7 +125,7 @@
         tag = taggedVersion;
         contents = [ control-server ] ++ additionalContents; # These are already in the closure. This just creates symlinks
         config = {
-          Entrypoint = [ "${tini}/bin/tini" "--" ];
+          inherit Entrypoint;
           Cmd = [ "${control-server}/bin/control_server" "start" ];
         };
       };
