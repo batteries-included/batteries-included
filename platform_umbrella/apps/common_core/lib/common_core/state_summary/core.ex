@@ -8,7 +8,7 @@ defmodule CommonCore.StateSummary.Core do
     Enum.find(summary.batteries, &(&1.type == type))
   end
 
-  @spec config_field(CommonCore.StateSummary.t(), atom()) :: binary() | nil
+  @spec config_field(CommonCore.StateSummary.t(), atom()) :: any() | nil
   def config_field(summary, key) do
     case battery_core_config(summary) do
       %BatteryCoreConfig{} = config -> get_in(config, [Access.key(key)])

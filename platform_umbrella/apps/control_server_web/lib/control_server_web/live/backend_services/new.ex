@@ -7,7 +7,11 @@ defmodule ControlServerWeb.Live.BackendNew do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    service = %Service{virtual_size: "medium", num_instances: 1}
+    service = %Service{
+      virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size()),
+      num_instances: 1
+    }
+
     {:ok, socket |> assign_service(service) |> assign_title()}
   end
 

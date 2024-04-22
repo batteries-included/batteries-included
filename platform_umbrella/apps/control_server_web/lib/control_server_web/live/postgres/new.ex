@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
   def mount(_params, _session, socket) do
     # Pre-populate the databases and users with decent permissions
     cluster = %Cluster{
-      virtual_size: "medium",
+      virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size()),
       database: %PGDatabase{name: "app", owner: "app"},
       users: [
         %PGUser{

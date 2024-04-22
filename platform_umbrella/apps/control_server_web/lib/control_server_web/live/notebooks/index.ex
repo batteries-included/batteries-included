@@ -41,7 +41,10 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   end
 
   def handle_event("start_notebook", _, socket) do
-    with {:ok, _} <- create_jupyter_lab_notebook(%{virtual_size: "tiny"}) do
+    with {:ok, _} <-
+           create_jupyter_lab_notebook(%{
+             virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size())
+           }) do
       {:noreply, assign_notebooks(socket)}
     end
   end

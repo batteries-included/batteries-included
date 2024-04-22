@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.RedisNew do
     assign(socket, :failover_cluster, %FailoverCluster{
       num_redis_instances: 1,
       num_sentinel_instances: 1,
-      virtual_size: "small"
+      virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size())
     })
   end
 

@@ -7,7 +7,11 @@ defmodule ControlServerWeb.Live.FerretServiceNew do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    ferret_service = %FerretService{instances: 1, virtual_size: "small"}
+    ferret_service = %FerretService{
+      instances: 1,
+      virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size())
+    }
+
     {:ok, assign(socket, ferret_service: ferret_service, current_page: :data)}
   end
 

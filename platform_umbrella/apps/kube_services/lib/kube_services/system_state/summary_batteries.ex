@@ -6,6 +6,7 @@ defmodule KubeServices.SystemState.SummaryBatteries do
   having to compute a full system state snapshot.
 
   This genserver hosts the the installed batteries
+  and their most important settings.
   """
   use GenServer
 
@@ -70,6 +71,14 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     {:reply, false, state}
   end
 
+  def handle_call(:default_size, _, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, StateSummary.Core.config_field(summary, :default_size) || :tiny, state}
+  end
+
+  # Is the battery installed?
+  #
+  # @param target [pid] the pid of the genserver to query
+  # @param battery_type [atom] the type of the battery to check
   def battery_installed(target \\ @me, battery_type) do
     GenServer.call(target, {:battery_installed, battery_type})
   end
@@ -80,5 +89,9 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   def installed_batteries(target, group) do
     GenServer.call(target, {:installed_batteries, group})
+  end
+
+  def default_size(target \\ @me) do
+    GenServer.call(target, :default_size)
   end
 end
