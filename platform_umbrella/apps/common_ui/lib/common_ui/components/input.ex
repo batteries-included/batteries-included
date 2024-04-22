@@ -151,9 +151,10 @@ defmodule CommonUI.Components.Input do
         value={@value}
         type="range"
         class={[
-          "relative z-30 appearance-none bg-transparent cursor-pointer w-full",
-          "slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-white",
+          "relative z-30 appearance-none bg-transparent cursor-pointer w-full align-middle",
+          "slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full",
           "slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary",
+          "slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint",
           range_class(@show_value)
         ]}
         {@rest}
@@ -162,26 +163,20 @@ defmodule CommonUI.Components.Input do
       <div
         id={"#{@id}-progress-bg"}
         phx-update="ignore"
-        class={[
-          "absolute z-10 bg-gray-lighter h-[4px] w-full rounded pointer-events-none",
-          range_progress_class(@show_value)
-        ]}
+        class="absolute top-[15px] h-[4px] z-10 bg-gray-lighter dark:bg-gray-darkest-tint w-full rounded pointer-events-none"
       />
 
       <div
         id={"#{@id}-progress"}
         phx-update="ignore"
-        class={[
-          "absolute z-20 bg-primary h-[4px] rounded-l pointer-events-none",
-          range_progress_class(@show_value)
-        ]}
+        class="absolute top-[15px] h-[4px] z-20 bg-primary rounded-l pointer-events-none"
       />
 
       <div
         :if={@show_value}
         id={"#{@id}-value"}
         phx-update="ignore"
-        class="absolute top-0 z-30 size-[32px] flex items-center justify-center font-semibold text-primary pointer-events-none"
+        class="absolute top-0.5 size-[32px] z-30 flex items-center justify-center font-semibold text-primary pointer-events-none"
       >
         <%= @value %>
       </div>
@@ -311,9 +306,6 @@ defmodule CommonUI.Components.Input do
 
   defp range_class(true), do: "slider-thumb:size-[32px]"
   defp range_class(false), do: "slider-thumb:size-[24px]"
-
-  defp range_progress_class(true), do: "top-[14px]"
-  defp range_progress_class(false), do: "top-[10px]"
 
   attr :label, :string, default: nil
   attr :note, :string, default: nil

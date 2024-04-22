@@ -186,7 +186,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
           <div
             :if={@installed}
-            class="text-xs text-white font-semibold bg-gray-lighter rounded px-1 py-0.5 whitespace-nowrap"
+            class="bg-gray-lighter dark:bg-gray-darkest-tint text-xs text-white dark:text-gray-darker-tint font-semibold rounded px-1 py-0.5 whitespace-nowrap"
           >
             ALREADY INSTALLED
           </div>
