@@ -19,7 +19,8 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "UROMZK523H2RCGX2J5P6SFOEIGRQLED3O25EFYABYYBR4HUGRULWDNHZV65XZAXO",
+          "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
+          "secret_key": "OORMXYLQPADBOZTCPU6D7L6KDY6XORDRFMC3WR2NY4FUYW7RR2WGIVTV2AMWEATZ",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -28,6 +29,7 @@
           "base_namespace_override": null,
           "data_namespace_override": null,
           "ml_namespace_override": null,
+          "bootstrap_image_override": null,
           "server_in_cluster_override": null
         },
         "group": "magic",
@@ -176,7 +178,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "HPKE7ZJWXJEZYQC7X3ONXJ47",
+            "password": "E7U3S3TQAZ3RN5QNTCUYHLKJ",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -193,6 +195,128 @@
     "kube_state": {}
   },
   "initial_resources": {
+    "/cluster_role_binding/batteries_included_bootstrap": {
+      "apiVersion": "rbac.authorization.k8s.io/v1",
+      "kind": "ClusterRoleBinding",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "2MYXMEDFCBIQPK3RHCK4ZKXWFRU34XCKWXT57YNNZZE42BWOOLVA===="
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "version": "latest"
+        },
+        "name": "batteries-included:bootstrap"
+      },
+      "roleRef": {
+        "apiGroup": "rbac.authorization.k8s.io",
+        "kind": "ClusterRole",
+        "name": "cluster-admin"
+      },
+      "subjects": [
+        {
+          "kind": "ServiceAccount",
+          "name": "bootstrap",
+          "namespace": "battery-core"
+        }
+      ]
+    },
+    "/job/bootstrap": {
+      "apiVersion": "batch/v1",
+      "kind": "Job",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "H6YPWM6DX7X4CKDUXENLMBDOIUE7RD6YYZYBWK4THZGITTQ6VBDA====",
+          "sidecar.istio.io/inject": "false"
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "version": "latest"
+        },
+        "name": "bootstrap",
+        "namespace": "battery-core"
+      },
+      "spec": {
+        "backoffLimit": 4,
+        "completions": 1,
+        "parallelism": 1,
+        "template": {
+          "metadata": {
+            "annotations": {
+              "sidecar.istio.io/inject": "false"
+            },
+            "labels": {
+              "app": "battery-core",
+              "app.kubernetes.io/managed-by": "batteries-included",
+              "app.kubernetes.io/name": "battery-core",
+              "app.kubernetes.io/version": "latest",
+              "battery/app": "bootstrap",
+              "battery/managed": "true",
+              "battery/managed.indirect": "true",
+              "version": "latest"
+            }
+          },
+          "spec": {
+            "automountServiceAccountToken": true,
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "RELEASE_COOKIE",
+                    "value": "OORMXYLQPADBOZTCPU6D7L6KDY6XORDRFMC3WR2NY4FUYW7RR2WGIVTV2AMWEATZ"
+                  },
+                  {
+                    "name": "RELEASE_DISTRIBUTION",
+                    "value": "none"
+                  },
+                  {
+                    "name": "BOOTSTRAP_SUMMARY_PATH",
+                    "value": "/var/run/secrets/summary/summary.json"
+                  }
+                ],
+                "image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
+                "name": "bootstrap",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/var/run/secrets/summary",
+                    "name": "summary"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Never",
+            "serviceAccount": "bootstrap",
+            "serviceAccountName": "bootstrap",
+            "tolerations": [
+              {
+                "key": "CriticalAddonsOnly",
+                "operator": "Exists"
+              }
+            ],
+            "volumes": [
+              {
+                "name": "summary",
+                "secret": {
+                  "secretName": "initial-target-summary"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
     "/namespace/battery_core": {
       "apiVersion": "v1",
       "kind": "Namespace",
@@ -212,6 +336,27 @@
           "version": "latest"
         },
         "name": "battery-core"
+      }
+    },
+    "/service_account/bootstrap": {
+      "apiVersion": "v1",
+      "kind": "ServiceAccount",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "WPM3EIMBIW6QTPWLSDMDWBQ22IHQZIGQKXTXB5PQGNAOFTOWO76Q===="
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "version": "latest"
+        },
+        "name": "bootstrap",
+        "namespace": "battery-core"
       }
     },
     "/storage_class/gp2": {

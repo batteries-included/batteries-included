@@ -137,6 +137,9 @@ jobs:
           OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
+          OUTPUT="$REGISTRY/$REPOSITORY:latest"
+          docker tag "$INPUT" "$OUTPUT"
+          docker push "$OUTPUT"
 
   home-base:
     runs-on: ubuntu-latest

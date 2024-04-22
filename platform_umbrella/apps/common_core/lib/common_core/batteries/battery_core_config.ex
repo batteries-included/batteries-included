@@ -20,6 +20,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     defaultable_field :data_namespace, :string, default: Defaults.Namespaces.data()
     defaultable_field :ml_namespace, :string, default: Defaults.Namespaces.ml()
 
+    defaultable_field :bootstrap_image, :string, default: Defaults.Images.bootstrap_image()
     defaultable_field :image, :string, default: Defaults.Images.control_server_image()
     field :secret_key, :string
     field :cluster_type, Ecto.Enum, values: [:kind, :aws, :provided], default: :kind

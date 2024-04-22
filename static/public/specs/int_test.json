@@ -19,7 +19,8 @@
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ml_namespace": "battery-ml",
-          "secret_key": "Q6FNEBOLFME7LV73FVYX47RU2H4UFSLURNP24G2NGXK5IKTNUEBGWVA7ZHTQJN2P",
+          "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
+          "secret_key": "5VIFFSUU76JKXKEPBXJYVRZGKRPFNXOJJDJOUNP3WRA5AGABEU76H2LWF4IRN3LE",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -28,6 +29,7 @@
           "base_namespace_override": null,
           "data_namespace_override": null,
           "ml_namespace_override": null,
+          "bootstrap_image_override": null,
           "server_in_cluster_override": null
         },
         "group": "magic",
@@ -67,7 +69,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "OG2B2WVCPEH4BS4OQ4QZCX5A",
+            "password": "HBW4HNMWFU63FLRKZEUBQELD",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

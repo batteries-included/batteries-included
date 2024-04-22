@@ -22,4 +22,67 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
       F.require(sc, battery.config.cluster_type == :aws)
     end)
   end
+
+  resource(:bootstrap_service_account, battery) do
+    namespace = battery.config.core_namespace
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("bootstrap")
+    |> B.namespace(namespace)
+    |> F.require(battery.config.cluster_type == :aws)
+  end
+
+  resource(:bootstrap_clusterrolebinding, battery) do
+    namespace = battery.config.core_namespace
+
+    :cluster_role_binding
+    |> B.build_resource()
+    |> B.name("batteries-included:bootstrap")
+    |> B.role_ref(B.build_cluster_role_ref("cluster-admin"))
+    |> B.subject(B.build_service_account("bootstrap", namespace))
+    |> F.require(battery.config.cluster_type == :aws)
+  end
+
+  resource(:boostrap_job, battery) do
+    namespace = battery.config.core_namespace
+
+    bootstrap_summary_root = "/var/run/secrets/summary"
+
+    spec = %{
+      "backoffLimit" => 4,
+      "completions" => 1,
+      "parallelism" => 1,
+      "template" => %{
+        "metadata" => %{"labels" => %{"battery/app" => "bootstrap"}},
+        "spec" => %{
+          "automountServiceAccountToken" => true,
+          "containers" => [
+            %{
+              "env" => [
+                %{"name" => "RELEASE_COOKIE", "value" => battery.config.secret_key},
+                %{"name" => "RELEASE_DISTRIBUTION", "value" => "none"},
+                %{"name" => "BOOTSTRAP_SUMMARY_PATH", "value" => "#{bootstrap_summary_root}/summary.json"}
+              ],
+              "image" => battery.config.bootstrap_image,
+              "name" => "bootstrap",
+              "volumeMounts" => [%{"mountPath" => bootstrap_summary_root, "name" => "summary"}]
+            }
+          ],
+          "restartPolicy" => "Never",
+          "serviceAccount" => "bootstrap",
+          "serviceAccountName" => "bootstrap",
+          "tolerations" => [%{"key" => "CriticalAddonsOnly", "operator" => "Exists"}],
+          "volumes" => [%{"name" => "summary", "secret" => %{"secretName" => "initial-target-summary"}}]
+        }
+      }
+    }
+
+    :job
+    |> B.build_resource()
+    |> B.name("bootstrap")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require(battery.config.cluster_type == :aws)
+  end
 end
