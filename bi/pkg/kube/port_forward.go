@@ -26,7 +26,7 @@ func (kubeClient *batteryKubeClient) PortForwardService(
 	// need to get the pod name from the service
 	podName, err := kubeClient.getPodNameFromService(ctx, namespace, name)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to get pod name from service: %w", err)
 	}
 
 	portMap := fmt.Sprintf("%d:%d", localPort, port)
@@ -53,7 +53,7 @@ func (kubeClient *batteryKubeClient) portForward(
 
 	transport, upgrader, err := spdy.RoundTripperFor(cfg)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating spdy round tripper: %w", err)
 	}
 
 	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, http.MethodPost, url)
@@ -63,13 +63,11 @@ func (kubeClient *batteryKubeClient) portForward(
 		slog.Any("url", url))
 
 	return portforward.NewOnAddresses(dialer, []string{"localhost"}, portMap, stopChannel, readyChannel, os.Stdout, os.Stderr)
-
 }
 
 func (kubeClient *batteryKubeClient) getPodNameFromService(ctx context.Context, namespace string, name string) (string, error) {
 	// Get all the running pods that are being targeted by the service
 	service, err := kubeClient.client.CoreV1().Services(namespace).Get(ctx, name, metav1.GetOptions{})
-
 	if err != nil {
 		return "", err
 	}
@@ -82,7 +80,6 @@ func (kubeClient *batteryKubeClient) getPodNameFromService(ctx context.Context, 
 	pods, err := kubeClient.client.CoreV1().
 		Pods(namespace).
 		List(ctx, listOptions)
-
 	if err != nil {
 		return "", err
 	}

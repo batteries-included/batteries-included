@@ -74,7 +74,6 @@ func (c *clusterConfig) withConfig(cfg *util.PulumiConfig) error {
 }
 
 func (c *clusterConfig) withOutputs(outputs map[string]auto.OutputMap) error {
-
 	if outputs["vpc"]["vpcID"].Value != nil {
 		c.vpcID = outputs["vpc"]["vpcID"].Value.(string)
 	}
@@ -152,7 +151,7 @@ func (c *clusterConfig) buildSecurityGroups(ctx *pulumi.Context) error {
 			Tags:        tags,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering security group %s: %w", name, err)
 		}
 		c.securityGroupIDs[s] = sg.ID()
 	}
@@ -177,7 +176,7 @@ func (c *clusterConfig) buildClusterSecurityGroupRules(ctx *pulumi.Context) erro
 			Tags:                      pulumi.StringMap{"Name": pulumi.String(name)},
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering security group rule %s: %w", name, err)
 		}
 	}
 
@@ -201,7 +200,7 @@ func (c *clusterConfig) buildNodeSecurityGroupRules(ctx *pulumi.Context) error {
 			Tags:                      pulumi.StringMap{"Name": pulumi.String(name)},
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering security group ingress rule %s: %w", name, err)
 		}
 	}
 
@@ -213,7 +212,7 @@ func (c *clusterConfig) buildNodeSecurityGroupRules(ctx *pulumi.Context) error {
 		Tags:            pulumi.StringMap{"Name": pulumi.String(name)},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering security group egress rule %s: %w", name, err)
 	}
 
 	return nil
@@ -226,7 +225,7 @@ func (c *clusterConfig) buildKMSKey(ctx *pulumi.Context) error {
 		EnableKeyRotation:    P_BOOL_PTR_TRUE,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering KMS key %s: %w", c.baseName, err)
 	}
 	c.key = key
 
@@ -235,7 +234,7 @@ func (c *clusterConfig) buildKMSKey(ctx *pulumi.Context) error {
 		TargetKeyId: key.KeyId,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering KMS alias %s: %w", c.baseName, err)
 	}
 
 	return nil
@@ -251,7 +250,7 @@ func (c *clusterConfig) buildCloudwatchLogGroup(ctx *pulumi.Context) error {
 		Tags:            pulumi.StringMap{"Name": pulumi.String(name)},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering cloudwatch log group %s: %w", name, err)
 	}
 
 	c.logGroup = group
@@ -268,7 +267,7 @@ func (c *clusterConfig) getManagedPolicies(ctx *pulumi.Context) error {
 			Name: pulumi.StringRef(policyName),
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error looking up IAM policy %s: %w", policyName, err)
 		}
 		c.managedPolicies = append(c.managedPolicies, policy.Arn)
 	}
@@ -296,7 +295,7 @@ func (c *clusterConfig) buildClusterRole(ctx *pulumi.Context) error {
 		AssumeRolePolicy: assumeRole.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role %s: %w", c.baseName, err)
 	}
 	c.roles["cluster"] = role
 
@@ -344,7 +343,7 @@ func (c *clusterConfig) buildRoleInlinePolicies(ctx *pulumi.Context) error {
 			Role:   c.roles["cluster"].ID(),
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering IAM role policy %s: %w", name, err)
 		}
 		c.inlinePolicies = append(c.inlinePolicies, rp)
 
@@ -361,7 +360,7 @@ func (c *clusterConfig) buildRoleManagedPolicies(ctx *pulumi.Context) error {
 			Role:      c.roles["cluster"].Name,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering IAM role policy attachment %s: %w", name, err)
 		}
 	}
 
@@ -389,7 +388,7 @@ func (c *clusterConfig) buildEKSCluster(ctx *pulumi.Context) error {
 		},
 	}, depends)
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EKS cluster %s: %w", c.baseName, err)
 	}
 
 	c.cluster = cluster
@@ -400,12 +399,12 @@ func (c *clusterConfig) buildEKSCluster(ctx *pulumi.Context) error {
 func (c *clusterConfig) buildKMSKeyPolicy(ctx *pulumi.Context) error {
 	id, err := aws.GetCallerIdentity(ctx, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting caller identity: %w", err)
 	}
 
 	session, err := iam.GetSessionContext(ctx, &iam.GetSessionContextArgs{Arn: id.Arn})
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting IAM session context: %w", err)
 	}
 
 	policy := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
@@ -462,7 +461,11 @@ func (c *clusterConfig) buildKMSKeyPolicy(ctx *pulumi.Context) error {
 		KeyId:  c.key.KeyId,
 		Policy: policy.Json(),
 	})
-	return err
+	if err != nil {
+		return fmt.Errorf("error registering KMS key policy %s: %w", c.baseName, err)
+	}
+
+	return nil
 }
 
 func (c *clusterConfig) buildManagedNodeRole(ctx *pulumi.Context) error {
@@ -487,7 +490,7 @@ func (c *clusterConfig) buildManagedNodeRole(ctx *pulumi.Context) error {
 		AssumeRolePolicy: assumeRole.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role %s: %w", name, err)
 	}
 
 	c.roles["node"] = role
@@ -502,7 +505,7 @@ func (c *clusterConfig) buildManagedNodeRole(ctx *pulumi.Context) error {
 			Name: pulumi.StringRef(policyName),
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error looking up IAM policy %s: %w", policyName, err)
 		}
 
 		attach := fmt.Sprintf("%s-%s", name, policyName)
@@ -511,9 +514,8 @@ func (c *clusterConfig) buildManagedNodeRole(ctx *pulumi.Context) error {
 			Role:      role.Name,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering IAM role policy attachment %s: %w", policyName, err)
 		}
-
 	}
 
 	return nil
@@ -557,7 +559,7 @@ func (c *clusterConfig) buildLaunchTemplate(ctx *pulumi.Context) error {
 		UpdateDefaultVersion: P_BOOL_PTR_TRUE,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 launch template %s: %w", name, err)
 	}
 
 	c.template = template
@@ -600,7 +602,7 @@ func (c *clusterConfig) buildManagedNodeGroup(ctx *pulumi.Context) error {
 		},
 	}, pulumi.DependsOn([]pulumi.Resource{c.cluster, c.template}))
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EKS node group %s: %w", name, err)
 	}
 
 	return nil
@@ -617,7 +619,7 @@ func (c *clusterConfig) buildOIDCProvider(ctx *pulumi.Context) error {
 		Url:             url,
 	}, pulumi.DependsOn([]pulumi.Resource{c.cluster}))
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering OIDC provider %s: %w", c.baseName, err)
 	}
 
 	c.provider = p
@@ -658,7 +660,7 @@ func (c *clusterConfig) buildEBSCSIRole(ctx *pulumi.Context) error {
 		AssumeRolePolicy: assumeRole.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role %s: %w", name, err)
 	}
 
 	policy := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
@@ -822,7 +824,7 @@ func (c *clusterConfig) buildEBSCSIRole(ctx *pulumi.Context) error {
 		Policy: policy.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role policy %s: %w", name, err)
 	}
 
 	return nil
@@ -836,7 +838,7 @@ func (c *clusterConfig) buildAddons(ctx *pulumi.Context) error {
 		},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error marshalling coredns resources config: %w", err)
 	}
 
 	for addon, config := range map[string]struct {
@@ -854,7 +856,7 @@ func (c *clusterConfig) buildAddons(ctx *pulumi.Context) error {
 			MostRecent:        pulumi.BoolRef(true),
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error getting EKS addon version %s: %w", addon, err)
 		}
 
 		name := fmt.Sprintf("%s-addon-%s", c.baseName, addon)
@@ -866,7 +868,7 @@ func (c *clusterConfig) buildAddons(ctx *pulumi.Context) error {
 			ServiceAccountRoleArn: config.irsaARN,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering EKS addon %s: %w", name, err)
 		}
 	}
 

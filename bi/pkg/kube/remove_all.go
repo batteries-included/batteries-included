@@ -2,6 +2,7 @@ package kube
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	v1 "k8s.io/api/core/v1"
@@ -20,30 +21,26 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 	// however there's an order that things need to go.
 
 	slog.Debug("Removing all resources in cluster")
-	err := kubeClient.removeAllHooks(ctx)
-	if err != nil {
-		return err
+	if err := kubeClient.removeAllHooks(ctx); err != nil {
+		return fmt.Errorf("unable to remove hooks: %w", err)
 	}
 
 	// for all battery namespaces
 	namespaces, err := kubeClient.client.CoreV1().Namespaces().List(ctx, taggedListOptions())
 	if err != nil {
-		slog.Error("Error listing namespaces", slog.Any("error", err))
-		return err
+		return fmt.Errorf("unable to list namespaces: %w", err)
 	}
 
 	// Remove all the CRD type resources in the cluster
 	// These often will remove other resources
 	// Remove all the CRD type resources in the cluster
-	err = kubeClient.removeAllCRDBackedResources(ctx, namespaces)
-	if err != nil {
-		return err
+	if err := kubeClient.removeAllCRDBackedResources(ctx, namespaces); err != nil {
+		return fmt.Errorf("unable to remove CRD backed resources: %w", err)
 	}
 
 	for _, ns := range namespaces.Items {
-		err = kubeClient.removeAllInNamespace(ctx, ns)
-		if err != nil {
-			return err
+		if err := kubeClient.removeAllInNamespace(ctx, ns); err != nil {
+			return fmt.Errorf("unable to remove all resources in namespace %s: %w", ns.Name, err)
 		}
 	}
 
@@ -55,12 +52,11 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 			deleteOptions(),
 			taggedListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to clean up hanging persistent volumes: %w", err)
 	}
 
-	err = kubeClient.removeAllGlobalRBAC(ctx)
-	if err != nil {
-		return err
+	if err := kubeClient.removeAllGlobalRBAC(ctx); err != nil {
+		return fmt.Errorf("unable to remove global RBAC: %w", err)
 	}
 
 	// We have to remove any global RBAC first
@@ -74,9 +70,8 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 				ctx,
 				deleteOptions(),
 				allListOptions())
-
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to remove service accounts in namespace %s: %w", ns.Name, err)
 		}
 	}
 
@@ -88,7 +83,7 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 			deleteOptions(),
 			taggedListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove CRDs: %w", err)
 	}
 
 	// Delete All Namespaces
@@ -97,9 +92,8 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 		err = kubeClient.client.CoreV1().
 			Namespaces().
 			Delete(ctx, ns.Name, deleteOptions())
-
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to remove namespace %s: %w", ns.Name, err)
 		}
 	}
 
@@ -113,9 +107,8 @@ func (kubeClient *batteryKubeClient) removeAllHooks(ctx context.Context) error {
 			ctx,
 			deleteOptions(),
 			taggedListOptions())
-
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove mutating webhooks: %w", err)
 	}
 
 	err = kubeClient.client.AdmissionregistrationV1().
@@ -124,10 +117,10 @@ func (kubeClient *batteryKubeClient) removeAllHooks(ctx context.Context) error {
 			ctx,
 			deleteOptions(),
 			taggedListOptions())
-
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove validating webhooks: %w", err)
 	}
+
 	return nil
 }
 
@@ -142,8 +135,9 @@ func (kubeClient *batteryKubeClient) removeAllGlobalRBAC(ctx context.Context) er
 			deleteOptions(),
 			taggedListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove cluster role bindings: %w", err)
 	}
+
 	err = kubeClient.client.RbacV1().
 		ClusterRoles().
 		DeleteCollection(
@@ -151,8 +145,9 @@ func (kubeClient *batteryKubeClient) removeAllGlobalRBAC(ctx context.Context) er
 			deleteOptions(),
 			taggedListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove cluster roles: %w", err)
 	}
+
 	return nil
 }
 
@@ -162,9 +157,8 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 	err := kubeClient.client.AutoscalingV1().
 		HorizontalPodAutoscalers(ns.Name).
 		DeleteCollection(ctx, deleteOptions(), allListOptions())
-
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove horizontal pod autoscalers: %w", err)
 	}
 
 	err = kubeClient.client.AppsV1().
@@ -174,8 +168,9 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove deployments: %w", err)
 	}
+
 	err = kubeClient.client.AppsV1().
 		StatefulSets(ns.Name).
 		DeleteCollection(
@@ -183,8 +178,9 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove stateful sets: %w", err)
 	}
+
 	err = kubeClient.client.AppsV1().
 		DaemonSets(ns.Name).
 		DeleteCollection(
@@ -192,8 +188,9 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove daemon sets: %w", err)
 	}
+
 	err = kubeClient.client.AppsV1().
 		ReplicaSets(ns.Name).
 		DeleteCollection(
@@ -201,21 +198,23 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove replica sets: %w", err)
 	}
+
 	err = kubeClient.client.BatchV1().
 		Jobs(ns.Name).
 		DeleteCollection(ctx, deleteOptions(), allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove jobs: %w", err)
 	}
+
 	err = kubeClient.client.BatchV1().
 		CronJobs(ns.Name).
 		DeleteCollection(ctx, deleteOptions(), allListOptions())
-
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove cron jobs: %w", err)
 	}
+
 	err = kubeClient.client.CoreV1().
 		Pods(ns.Name).
 		DeleteCollection(
@@ -223,7 +222,7 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove pods: %w", err)
 	}
 
 	err = kubeClient.client.CoreV1().
@@ -233,8 +232,9 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove config maps: %w", err)
 	}
+
 	err = kubeClient.client.CoreV1().
 		Secrets(ns.Name).
 		DeleteCollection(
@@ -242,8 +242,9 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove secrets: %w", err)
 	}
+
 	err = kubeClient.client.NetworkingV1().
 		Ingresses(ns.Name).
 		DeleteCollection(
@@ -251,7 +252,7 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove ingresses: %w", err)
 	}
 
 	err = kubeClient.client.CoreV1().
@@ -261,7 +262,7 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove persistent volume claims: %w", err)
 	}
 
 	err = kubeClient.client.RbacV1().
@@ -271,8 +272,9 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove role bindings: %w", err)
 	}
+
 	err = kubeClient.client.RbacV1().
 		Roles(ns.Name).
 		DeleteCollection(
@@ -280,7 +282,7 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 			deleteOptions(),
 			allListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to remove roles: %w", err)
 	}
 
 	return nil
@@ -290,7 +292,7 @@ func (kubeClient *batteryKubeClient) removeAllCRDBackedResources(ctx context.Con
 	crds, err := kubeClient.apiExtensionsClient.ApiextensionsV1().
 		CustomResourceDefinitions().List(ctx, taggedListOptions())
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to list CRDs: %w", err)
 	}
 
 	for _, crd := range crds.Items {
@@ -307,7 +309,7 @@ func (kubeClient *batteryKubeClient) removeAllCRDBackedResources(ctx context.Con
 					err = kubeClient.dynamicClient.Resource(gvr).Namespace(ns.Name).
 						DeleteCollection(ctx, deleteOptions(), allListOptions())
 					if err != nil {
-						return err
+						return fmt.Errorf("unable to remove namespaced CRD %q: %w", gvr, err)
 					}
 				}
 			} else {
@@ -315,7 +317,7 @@ func (kubeClient *batteryKubeClient) removeAllCRDBackedResources(ctx context.Con
 				err = kubeClient.dynamicClient.Resource(gvr).
 					DeleteCollection(ctx, deleteOptions(), allListOptions())
 				if err != nil {
-					return err
+					return fmt.Errorf("unable to remove cluster CRD %q: %w", gvr, err)
 				}
 			}
 		}

@@ -16,11 +16,10 @@ import (
 func (batteryKube *batteryKubeClient) EnsureResourceExists(ctx context.Context, resource map[string]interface{}) error {
 	unstructuredResource := &unstructured.Unstructured{Object: resource}
 
-	err := batteryKube.exists(ctx, unstructuredResource)
-
-	if err != nil {
+	if err := batteryKube.exists(ctx, unstructuredResource); err != nil {
 		return batteryKube.create(ctx, unstructuredResource)
 	}
+
 	return nil
 }
 
@@ -29,7 +28,7 @@ func (batteryKube *batteryKubeClient) exists(ctx context.Context, unstructuredRe
 	name := unstructuredResource.GetName()
 	gvr, err := batteryKube.getGroupVersionResource(unstructuredResource)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get gvr: %w", err)
 	}
 
 	logger := slog.With("name", name, "namespace", ns, "kind", unstructuredResource.GetKind())
@@ -39,10 +38,9 @@ func (batteryKube *batteryKubeClient) exists(ctx context.Context, unstructuredRe
 	} else {
 		_, err = batteryKube.dynamicClient.Resource(gvr).Namespace(ns).Get(ctx, name, metav1.GetOptions{})
 	}
-
 	if err != nil {
 		logger.Debug("Resource does not exist or other error", slog.Any("error", err))
-		return err
+		return fmt.Errorf("failed to get resource: %w", err)
 	}
 
 	logger.Debug("Resource exists")
@@ -53,8 +51,9 @@ func (batteryKube *batteryKubeClient) create(ctx context.Context, unstructuredRe
 	ns := unstructuredResource.GetNamespace()
 	gvr, err := batteryKube.getGroupVersionResource(unstructuredResource)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get gvr: %w", err)
 	}
+
 	logger := slog.With("namespace", ns, "kind", unstructuredResource.GetKind())
 
 	if ns == "" {
@@ -64,7 +63,7 @@ func (batteryKube *batteryKubeClient) create(ctx context.Context, unstructuredRe
 	}
 	if err != nil {
 		logger.Debug("Failed to create resource", slog.Any("error", err))
-		return err
+		return fmt.Errorf("failed to create resource: %w", err)
 	}
 
 	logger.Debug("Resource created")

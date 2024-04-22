@@ -5,7 +5,6 @@ package debug
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 
 	"bi/pkg/specs"
@@ -18,27 +17,23 @@ var verifySpecCmd = &cobra.Command{
 	Short: "Verify an install spec file",
 	Long:  `Reads in an install spec file and verifies that it is valid.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, path_name := range args {
-			err := verifyFile(path_name)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			fmt.Println("verified", path_name)
+		for _, pathName := range args {
+			err := verifyFile(pathName)
+			cobra.CheckErr(err)
+
+			fmt.Println("Verified:", pathName)
 		}
 	},
 }
 
 func verifyFile(pathName string) error {
-	var data, err = os.ReadFile(pathName)
+	data, err := os.ReadFile(pathName)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to read spec file: %w", err)
 	}
 
-	var _, json_err = specs.UnmarshalJSON(data)
-	if json_err != nil {
-		slog.Error("unable to pasrse spec into struct", "error", json_err)
-		return err
+	if _, err := specs.UnmarshalJSON(data); err != nil {
+		return fmt.Errorf("unable to unmarshal spec file: %w", err)
 	}
 
 	return nil

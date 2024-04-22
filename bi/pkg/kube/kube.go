@@ -131,7 +131,7 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 	// This allows us to remove CRD's
 	apiextensionsclient, err := apiextensionsclientset.NewForConfig(kubeConfig)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating apiextensions client: %w", err)
 	}
 
 	return &batteryKubeClient{
@@ -156,7 +156,6 @@ func (c *batteryKubeClient) Close() error {
 func (c *batteryKubeClient) WaitForConnection(timeout time.Duration) error {
 	done := make(chan struct{})
 	timer := time.AfterFunc(timeout, func() {
-		slog.Info("Timed out waiting for cluster to be ready", slog.Any("timeout", timeout))
 		done <- struct{}{}
 	})
 	defer timer.Stop()

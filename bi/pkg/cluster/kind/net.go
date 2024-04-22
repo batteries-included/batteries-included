@@ -28,8 +28,12 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 	for _, subnet := range networks[0].IPAM.Config {
 		_, net, err := net.ParseCIDR(subnet.Subnet)
 		if err == nil && net.IP.To4() != nil {
-			split := split(net)
-			slog.Debug("Found kind network: ", slog.Any("split", split))
+			split, err := split(net)
+			if err != nil {
+				return "", fmt.Errorf("error splitting network: %w", err)
+			}
+
+			slog.Debug("Found kind network", slog.Any("split", split))
 			return split.String(), nil
 		}
 	}
@@ -39,18 +43,16 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 
 // Given a Network suck as 172.18.0.0/16
 // Return the bottom half of the network, such as 172.18.128.0/17
-func split(ipNet *net.IPNet) *net.IPNet {
+func split(ipNet *net.IPNet) (*net.IPNet, error) {
 	subnets, err := ipnets.SubnetShift(ipNet, 1)
 	if err != nil {
-		slog.Debug("Error splitting network: ", slog.Any("err", err))
-		return nil
+		return nil, fmt.Errorf("unable to shift subnet: %w", err)
 	}
 	if len(subnets) <= 1 {
-		slog.Debug("No upper subnets found")
-		return nil
+		return nil, fmt.Errorf("no upper subnets found")
 	}
 
-	return subnets[1]
+	return subnets[1], nil
 }
 
 func getKindNetwork(ctx context.Context) ([]types.NetworkResource, error) {

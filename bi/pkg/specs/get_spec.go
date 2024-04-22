@@ -14,7 +14,7 @@ func GetSpecFromURL(specURL string) (*InstallSpec, error) {
 	// Parse the url
 	parsedURL, err := url.Parse(specURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error parsing spec url: %w", err)
 	}
 
 	// If the url is a local file then read the
@@ -42,22 +42,15 @@ func readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
 	// Unmarshal the json using UnmarshalJSON
 	// returning the error if there is one
 	slog.Debug("Reading local file", slog.String("path", parsedURL.Path))
-	file, err := os.Open(parsedURL.Path)
 
+	specBytes, err := os.ReadFile(parsedURL.Path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error reading spec: %w", err)
 	}
 
-	allBytes, err := io.ReadAll(file)
-
+	installSpec, err := UnmarshalJSON(specBytes)
 	if err != nil {
-		return nil, err
-	}
-
-	installSpec, err := UnmarshalJSON(allBytes)
-
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error unmarshalling spec: %w", err)
 	}
 
 	return &installSpec, nil
@@ -66,21 +59,19 @@ func readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
 func readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
 	// Download the file
 	res, err := http.Get(parsedURL.String())
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error downloading spec: %w", err)
 	}
 
-	body, err := io.ReadAll(res.Body)
-
+	specBytes, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error reading spec: %w", err)
 	}
 
-	installSpec, err := UnmarshalJSON(body)
-
+	installSpec, err := UnmarshalJSON(specBytes)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error unmarshalling spec: %w", err)
 	}
+
 	return &installSpec, nil
 }

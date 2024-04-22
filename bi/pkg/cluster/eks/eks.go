@@ -97,7 +97,7 @@ var components = []component{
 func (e *eks) Up(ctx context.Context) error {
 	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse pulumi config: %w", err)
 	}
 
 	e.pConfig = pConfig
@@ -105,19 +105,19 @@ func (e *eks) Up(ctx context.Context) error {
 	for _, cmpnt := range components {
 		stack, err := e.createStack(ctx, cmpnt.name, cmpnt.run)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create component stack %s: %w", cmpnt.name, err)
 		}
 
 		if err := e.configure(ctx, stack, cmpnt); err != nil {
-			return err
+			return fmt.Errorf("failed to configure component %s: %w", cmpnt.name, err)
 		}
 
 		if err := cmpnt.withOutputs(e.outputs); err != nil {
-			return err
+			return fmt.Errorf("failed to set outputs for component %s: %w", cmpnt.name, err)
 		}
 
-		if err := e.refresh(ctx, stack); err != nil {
-			return err
+		if _, err := stack.Refresh(ctx); err != nil {
+			return fmt.Errorf("failed to refresh stack: %w", err)
 		}
 
 		// wire up our update to stream progress to stdout
@@ -125,7 +125,7 @@ func (e *eks) Up(ctx context.Context) error {
 
 		res, err := stack.Up(ctx, stdoutStreamer)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create or update resources: %w", err)
 		}
 
 		e.outputs[cmpnt.name] = res.Outputs
@@ -137,7 +137,7 @@ func (e *eks) Up(ctx context.Context) error {
 func (e *eks) Destroy(ctx context.Context) error {
 	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse pulumi config: %w", err)
 	}
 
 	e.pConfig = pConfig
@@ -148,16 +148,16 @@ func (e *eks) Destroy(ctx context.Context) error {
 	for _, cmpnt := range components {
 		stack, err := e.createStack(ctx, cmpnt.name, cmpnt.run)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create component stack %s: %w", cmpnt.name, err)
 		}
 
 		if err := e.configure(ctx, stack, cmpnt); err != nil {
-			return err
+			return fmt.Errorf("failed to configure component %s: %w", cmpnt.name, err)
 		}
 
 		out, err := stack.Outputs(ctx)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get outputs for component %s: %w", cmpnt.name, err)
 		}
 		e.outputs[cmpnt.name] = out
 		stacks[cmpnt.name] = stack
@@ -169,18 +169,18 @@ func (e *eks) Destroy(ctx context.Context) error {
 		stack := stacks[cmpnt.name]
 
 		if err := cmpnt.withOutputs(e.outputs); err != nil {
-			return err
+			return fmt.Errorf("failed to set outputs for component %s: %w", cmpnt.name, err)
 		}
-		if err := e.refresh(ctx, stack); err != nil {
-			return err
+
+		if _, err := stack.Refresh(ctx); err != nil {
+			return fmt.Errorf("failed to refresh stack: %w", err)
 		}
 
 		// wire up our update to stream progress to stdout
 		stdoutStreamer := optdestroy.ProgressStreams(os.Stdout)
 
-		_, err := stack.Destroy(ctx, stdoutStreamer)
-		if err != nil {
-			return err
+		if _, err := stack.Destroy(ctx, stdoutStreamer); err != nil {
+			return fmt.Errorf("failed to delete resources: %w", err)
 		}
 	}
 
@@ -193,7 +193,7 @@ func (e *eks) Destroy(ctx context.Context) error {
 func (e *eks) Outputs(ctx context.Context, out io.Writer) error {
 	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse pulumi config: %w", err)
 	}
 
 	e.pConfig = pConfig
@@ -201,22 +201,22 @@ func (e *eks) Outputs(ctx context.Context, out io.Writer) error {
 	for _, cmpnt := range components {
 		stack, err := e.createStack(ctx, cmpnt.name, cmpnt.run)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create component stack %s: %w", cmpnt.name, err)
 		}
 
 		if err := e.configure(ctx, stack, cmpnt); err != nil {
-			return err
+			return fmt.Errorf("failed to configure component %s: %w", cmpnt.name, err)
 		}
 
 		out, err := stack.Outputs(ctx)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get pulumi outputs: %w", err)
 		}
 		e.outputs[cmpnt.name] = out
 	}
 
 	if err := json.NewEncoder(out).Encode(e.outputs); err != nil {
-		return err
+		return fmt.Errorf("failed to marshal and write outputs: %w", err)
 	}
 
 	return nil
@@ -226,7 +226,7 @@ func (e *eks) KubeConfig(ctx context.Context, w io.Writer, _ bool) error {
 	// Fetch the outputs from the Pulumi state (if needed).
 	if len(e.outputs) == 0 {
 		if err := e.Outputs(ctx, io.Discard); err != nil {
-			return err
+			return fmt.Errorf("failed to load pulumi outputs: %w", err)
 		}
 	}
 
@@ -365,16 +365,7 @@ func (e *eks) configure(ctx context.Context, s auto.Stack, c component) error {
 
 	// we create the component with the config to avoid having to re-read what we just put on disk
 	if err := c.withConfig(e.pConfig); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (e *eks) refresh(ctx context.Context, s auto.Stack) error {
-	_, err := s.Refresh(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to refresh stack: %w", err)
+		return fmt.Errorf("failed to set component config: %w", err)
 	}
 
 	return nil

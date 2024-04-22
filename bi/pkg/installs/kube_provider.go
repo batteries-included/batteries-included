@@ -13,7 +13,7 @@ import (
 )
 
 func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
-	slog.Debug("starting provider")
+	slog.Debug("Starting provider")
 
 	var err error
 
@@ -26,10 +26,8 @@ func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
 		err = env.startAWS(ctx)
 	case "provided":
 	default:
-		slog.Debug("unexpected provider", slog.String("provider", provider))
-		err = fmt.Errorf("unknown provider")
+		err = fmt.Errorf("unknown provider: %s", provider)
 	}
-
 	if err != nil {
 		return err
 	}
@@ -37,8 +35,7 @@ func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
 	// Since we know that starting the provider was
 	// successful, we can write the spec it sometimes
 	// modifies the ips or other fields
-	err = env.WriteSummary(true)
-	if err != nil {
+	if err := env.WriteSummary(true); err != nil {
 		return fmt.Errorf("error writing summary after provider start: %w", err)
 	}
 
@@ -54,18 +51,20 @@ func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
 }
 
 func (env *InstallEnv) StopKubeProvider(ctx context.Context) error {
-	slog.Debug("stopping provider")
+	slog.Debug("Stopping provider")
 
 	return env.clusterProvider.Destroy(ctx)
 }
 
 func (env *InstallEnv) startLocal(ctx context.Context) error {
+	slog.Debug("Starting local cluster")
+
 	if err := env.clusterProvider.Create(ctx); err != nil {
-		return err
+		return fmt.Errorf("error creating local cluster: %w", err)
 	}
 
 	if err := env.tryAddMetalIPs(ctx); err != nil {
-		return err
+		return fmt.Errorf("error adding metal ips: %w", err)
 	}
 
 	return nil
@@ -75,29 +74,29 @@ func (env *InstallEnv) startAWS(ctx context.Context) error {
 	slog.Debug("Starting aws cluster")
 
 	if err := env.clusterProvider.Create(ctx); err != nil {
-		return err
+		return fmt.Errorf("error creating aws cluster: %w", err)
 	}
 
-	buf := bytes.NewBuffer([]byte{})
-	if err := env.clusterProvider.Outputs(ctx, buf); err != nil {
-		return err
+	var buf bytes.Buffer
+	if err := env.clusterProvider.Outputs(ctx, &buf); err != nil {
+		return fmt.Errorf("error getting cluster outputs: %w", err)
 	}
 
 	parsed, err := parseEKSOutputs(buf.Bytes())
 	if err != nil {
-		return err
+		return fmt.Errorf("error parsing cluster outputs: %w", err)
 	}
 
 	if err := env.configureCoreBattery(parsed); err != nil {
-		return err
+		return fmt.Errorf("error configuring core battery: %w", err)
 	}
 
 	if err := env.configureLBControllerBattery(parsed); err != nil {
-		return err
+		return fmt.Errorf("error configuring lb controller battery: %w", err)
 	}
 
 	if err := env.configureKarpenterBattery(parsed); err != nil {
-		return err
+		return fmt.Errorf("error configuring karpenter battery: %w", err)
 	}
 
 	return nil
@@ -170,13 +169,13 @@ func (env *InstallEnv) tryAddMetalIPs(ctx context.Context) error {
 	net, err := kind.GetMetalLBIPs(ctx)
 	if err == nil {
 		newIpSpec := specs.IPAddressPoolSpec{Name: "kind", Subnet: net}
-		slog.Debug("adding docker ips for metal lb: ", slog.Any("range", newIpSpec))
+		slog.Debug("Adding docker ips for metal lb: ", slog.Any("range", newIpSpec))
 		pools := []specs.IPAddressPoolSpec{}
 		for _, pool := range env.Spec.TargetSummary.IPAddressPools {
 			if pool.Name != "kind" {
 				pools = append(pools, pool)
 			} else {
-				slog.Debug("skipping existing kind pool", slog.Any("pool", pool))
+				slog.Debug("Skipping existing kind pool", slog.Any("pool", pool))
 			}
 		}
 		pools = append(pools, newIpSpec)

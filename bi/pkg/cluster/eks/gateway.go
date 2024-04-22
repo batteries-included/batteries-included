@@ -120,7 +120,7 @@ func (g *gatewayConfig) buildSecurityGroup(ctx *pulumi.Context) error {
 		Tags:        pulumi.StringMap{"Name": pulumi.String(g.wireguardName)},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering security group %s: %w", g.wireguardName, err)
 	}
 	g.securityGroupID = sg.ID()
 
@@ -150,7 +150,7 @@ func (g *gatewayConfig) buildSecurityGroup(ctx *pulumi.Context) error {
 			Tags:            pulumi.StringMap{"Name": pulumi.String(name)},
 		}, pulumi.Parent(sg))
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering security group ingress rule %s: %w", name, err)
 		}
 	}
 
@@ -161,7 +161,7 @@ func (g *gatewayConfig) buildSecurityGroup(ctx *pulumi.Context) error {
 		Tags:            pulumi.StringMap{"Name": pulumi.String("egress-all")},
 	}, pulumi.Parent(sg))
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering security group egress rule: %w", err)
 	}
 
 	return nil
@@ -176,7 +176,7 @@ func (g *gatewayConfig) buildKeyPair(ctx *pulumi.Context) error {
 		Algorithm: pulumi.String("ED25519"),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering TLS keypair %s: %w", g.baseName, err)
 	}
 	g.privateKey = pk
 
@@ -185,7 +185,7 @@ func (g *gatewayConfig) buildKeyPair(ctx *pulumi.Context) error {
 		PublicKey:     pk.PublicKeyOpenssh,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 keypair %s: %w", g.baseName, err)
 	}
 	g.keypair = kp
 
@@ -197,7 +197,7 @@ func (g *gatewayConfig) buildIAMProfile(ctx *pulumi.Context) error {
 		Name: pulumi.StringRef("AmazonSSMManagedInstanceCore"),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error looking up SSM IAM policy: %w", err)
 	}
 
 	instanceAssumeRolePolicy, err := iam.GetPolicyDocument(ctx, &iam.GetPolicyDocumentArgs{
@@ -215,7 +215,7 @@ func (g *gatewayConfig) buildIAMProfile(ctx *pulumi.Context) error {
 		},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error generating IAM policy WireguardInstanceAssumeRole: %w", err)
 	}
 
 	role, err := iam.NewRole(ctx, g.wireguardName, &iam.RoleArgs{
@@ -226,7 +226,7 @@ func (g *gatewayConfig) buildIAMProfile(ctx *pulumi.Context) error {
 		Tags:                pulumi.StringMap{"Name": pulumi.String(g.wireguardName)},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role %s: %w", g.wireguardName, err)
 	}
 
 	profile, err := iam.NewInstanceProfile(ctx, g.wireguardName, &iam.InstanceProfileArgs{
@@ -234,7 +234,7 @@ func (g *gatewayConfig) buildIAMProfile(ctx *pulumi.Context) error {
 		Tags: pulumi.StringMap{"Name": pulumi.String(g.wireguardName)},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM instance profile %s: %w", g.wireguardName, err)
 	}
 	g.iamProfileID = profile.ID()
 
@@ -244,12 +244,12 @@ func (g *gatewayConfig) buildIAMProfile(ctx *pulumi.Context) error {
 func (g *gatewayConfig) buildEC2Instance(ctx *pulumi.Context) error {
 	cc, err := g.buildCloudConfig()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to build gateway cloud config: %w", err)
 	}
 
 	ccBytes, err := json.Marshal(&cc)
 	if err != nil {
-		return err
+		return fmt.Errorf("error marshalling gateway cloud config: %w", err)
 	}
 
 	conf, err := cloudinit.NewConfig(ctx, g.wireguardName, &cloudinit.ConfigArgs{
@@ -265,7 +265,7 @@ func (g *gatewayConfig) buildEC2Instance(ctx *pulumi.Context) error {
 		},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering cloud config %s: %w", g.wireguardName, err)
 	}
 
 	ami, err := ec2.LookupAmi(ctx, &ec2.LookupAmiArgs{
@@ -277,7 +277,7 @@ func (g *gatewayConfig) buildEC2Instance(ctx *pulumi.Context) error {
 		Owners:     []string{"099720109477"}, // Canonical
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error looking up Ubuntu AMI: %w", err)
 	}
 
 	var keyName pulumi.StringPtrInput = nil
@@ -304,7 +304,7 @@ func (g *gatewayConfig) buildEC2Instance(ctx *pulumi.Context) error {
 		},
 	}, pulumi.ReplaceOnChanges([]string{"userData"}), pulumi.IgnoreChanges([]string{"ami"}))
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 instance %s: %w", g.wireguardName, err)
 	}
 
 	g.ec2InstanceID = instance.ID()
@@ -317,7 +317,7 @@ func (g *gatewayConfig) buildEIP(ctx *pulumi.Context) error {
 		Tags: pulumi.StringMap{"Name": pulumi.String(g.wireguardName)},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 elastic IP %s: %w", g.wireguardName, err)
 	}
 
 	g.publicIP = eip.PublicIp
@@ -327,7 +327,7 @@ func (g *gatewayConfig) buildEIP(ctx *pulumi.Context) error {
 		AllocationId: eip.ID(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 elastic IP association %s: %w", g.wireguardName, err)
 	}
 
 	return nil
@@ -361,7 +361,7 @@ func (g *gatewayConfig) buildWireGuardConfig(ctx *pulumi.Context) error {
 func (g *gatewayConfig) buildCloudConfig() (*cloudConfig, error) {
 	var sb strings.Builder
 	if err := g.wgGateway.WriteConfig(&sb); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error writing wireguard config: %w", err)
 	}
 
 	return &cloudConfig{

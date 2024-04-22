@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"log/slog"
-	"os"
 
 	"bi/pkg/log"
 	biviper "bi/pkg/viper"
@@ -25,11 +24,7 @@ var RootCmd = &cobra.Command{
 debugging Batteries Included infrastructure
 on top of kubernetes`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		err := log.SetupLogging(verbose, color)
-		if err != nil {
-			return err
-		}
-		return nil
+		return log.SetupLogging(verbose, color)
 	},
 }
 
@@ -37,9 +32,7 @@ on top of kubernetes`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := RootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
+	cobra.CheckErr(err)
 }
 
 func init() {

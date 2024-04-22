@@ -32,10 +32,10 @@ func (env *InstallEnv) Remove() error {
 	installHome := env.installStateHome()
 
 	slog.Debug("Removing install directory", slog.String("path", installHome))
-	err := os.RemoveAll(installHome)
-	if err != nil {
-		return err
+	if err := os.RemoveAll(installHome); err != nil {
+		return fmt.Errorf("error removing install directory: %w", err)
 	}
+
 	return nil
 }
 
@@ -52,10 +52,10 @@ func (env *InstallEnv) WriteSpec(force bool) error {
 	}
 
 	// Write the spec
-	err := env.Spec.WriteToPath(specPath)
-	if err != nil {
+	if err := env.Spec.WriteToPath(specPath); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -71,13 +71,13 @@ func (env *InstallEnv) WriteSummary(force bool) error {
 		} else {
 			slog.Debug("Summary already exists", slog.String("path", summaryPath))
 			return nil
-
 		}
 	}
-	err := env.Spec.WriteStateSummary(summaryPath)
-	if err != nil {
-		return err
+
+	if err := env.Spec.WriteStateSummary(summaryPath); err != nil {
+		return fmt.Errorf("error writing state summary: %w", err)
 	}
+
 	return nil
 }
 
@@ -110,7 +110,6 @@ func (env *InstallEnv) WriteKubeConfig(ctx context.Context, force bool) error {
 		return env.clusterProvider.KubeConfig(ctx, kubeConfigFile, provider != "kind")
 	case "provided":
 	default:
-		slog.Debug("unexpected provider", slog.String("provider", provider))
 		return fmt.Errorf("unknown provider: %s", provider)
 	}
 
@@ -144,13 +143,12 @@ func (env *InstallEnv) WriteWireGuardConfig(ctx context.Context, force bool) err
 	switch provider {
 	case "aws", "kind":
 		hasConfig, err = env.clusterProvider.WireGuardConfig(ctx, wireGuardConfigFile)
+		if err != nil {
+			return fmt.Errorf("error writing wireguard config: %w", err)
+		}
 	case "provided":
 	default:
 		return fmt.Errorf("unknown provider: %s", provider)
-	}
-
-	if err != nil {
-		return fmt.Errorf("error writing wireguard config: %w", err)
 	}
 
 	if !hasConfig {

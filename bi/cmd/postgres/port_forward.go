@@ -27,8 +27,6 @@ var portForwardCmd = &cobra.Command{
 		env, err := installs.NewEnv(cmd.Context(), url)
 		cobra.CheckErr(err)
 
-		fmt.Println("port forward called")
-
 		postgresClusterName := args[1]
 		namespce := cmd.Flag("namespace").Value.String()
 

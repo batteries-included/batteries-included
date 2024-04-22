@@ -92,7 +92,7 @@ func (l *lbControllerConfig) lbControllerRole(ctx *pulumi.Context) error {
 		AssumeRolePolicy: assumeRole.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role %s: %w", name, err)
 	}
 
 	policy := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
@@ -368,7 +368,7 @@ func (l *lbControllerConfig) lbControllerRole(ctx *pulumi.Context) error {
 		Policy: policy.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role policy %s: %w", name, err)
 	}
 
 	return nil

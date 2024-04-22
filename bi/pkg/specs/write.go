@@ -2,6 +2,7 @@ package specs
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path"
 )
@@ -15,20 +16,20 @@ func (spec *InstallSpec) WriteToPath(filePath string) error {
 	// If there was an error and it wasn't because the file doesn't exist
 	// then return the error
 	if !os.IsNotExist(err) {
-		return err
+		return fmt.Errorf("unable to write install spec: %w", err)
 	}
 
 	if err := os.MkdirAll(path.Base(filePath), 0o700); err != nil {
-		return err
+		return fmt.Errorf("unable to create install spec directory: %w", err)
 	}
 
 	contents, err := json.Marshal(spec)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to marshal install spec: %w", err)
 	}
 
 	if err := os.WriteFile(filePath, contents, 0o600); err != nil {
-		return err
+		return fmt.Errorf("unable to write install spec: %w", err)
 	}
 
 	return nil

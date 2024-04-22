@@ -43,7 +43,7 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 func (c *KindClusterProvider) Create(ctx context.Context) error {
 	isRunning, err := c.isRunning()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to check if kind cluster is running: %w", err)
 	}
 
 	if !isRunning {
@@ -58,7 +58,7 @@ func (c *KindClusterProvider) Create(ctx context.Context) error {
 		c.logger.Info("Creating kind cluster", slog.String("name", c.name), slog.String("image", KindImage))
 
 		if err := c.kindProvider.Create(c.name, co...); err != nil {
-			return err
+			return fmt.Errorf("failed to create kind cluster: %w", err)
 		}
 	} else {
 		c.logger.Debug("Kind cluster already running", slog.String("name", c.name))
@@ -70,13 +70,13 @@ func (c *KindClusterProvider) Create(ctx context.Context) error {
 func (c *KindClusterProvider) Destroy(ctx context.Context) error {
 	isRunning, err := c.isRunning()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to check if kind cluster is running: %w", err)
 	}
 
 	if isRunning {
 		c.logger.Info("Deleting kind cluster", slog.String("name", c.name))
 		if err := c.kindProvider.Delete(c.name, ""); err != nil {
-			return err
+			return fmt.Errorf("failed to delete existing kind cluster: %w", err)
 		}
 	} else {
 		c.logger.Debug("Kind cluster is not running", slog.String("name", c.name))

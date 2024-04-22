@@ -28,21 +28,18 @@ type InstallEnv struct {
 func (env *InstallEnv) init(ctx context.Context) error {
 	slog.Debug("Initializing install", slog.String("slug", env.Slug))
 	// Create the install directory in the xdg state home
-	err := os.MkdirAll(env.installStateHome(), 0o700)
-	if err != nil {
+	if err := os.MkdirAll(env.installStateHome(), 0o700); err != nil {
 		return fmt.Errorf("error creating install directory: %w", err)
 	}
 
 	// Try writing the spec and summary to the install directory
 	// Don't overwrite
-	err = env.WriteSpec(false)
-	if err != nil {
-		return fmt.Errorf("error initializing install writing spec: %w", err)
+	if err := env.WriteSpec(false); err != nil {
+		return fmt.Errorf("error checking spec is writeable: %w", err)
 	}
 
-	err = env.WriteSummary(false)
-	if err != nil {
-		return err
+	if err := env.WriteSummary(false); err != nil {
+		return fmt.Errorf("error checking summary is writeable: %w", err)
 	}
 
 	provider := env.Spec.KubeCluster.Provider
@@ -54,11 +51,10 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)
 	case "provided":
 	default:
-		slog.Debug("unexpected provider", slog.String("provider", provider))
-		return fmt.Errorf("unknown provider")
+		return fmt.Errorf("unknown provider: %s", provider)
 	}
 
-	if err = env.clusterProvider.Init(ctx); err != nil {
+	if err := env.clusterProvider.Init(ctx); err != nil {
 		return fmt.Errorf("error initializing cluster provider: %w", err)
 	}
 
@@ -68,7 +64,7 @@ func (env *InstallEnv) init(ctx context.Context) error {
 func NewEnv(ctx context.Context, slugOrURL string) (*InstallEnv, error) {
 	source, installEnv, err := readInstallEnv(slugOrURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error reading install env: %w", err)
 	}
 
 	if source == "url" {
@@ -76,8 +72,7 @@ func NewEnv(ctx context.Context, slugOrURL string) (*InstallEnv, error) {
 		_ = installEnv.Remove()
 	}
 
-	err = installEnv.init(ctx)
-	if err != nil {
+	if err := installEnv.init(ctx); err != nil {
 		return nil, fmt.Errorf("error initializing install: %w", err)
 	}
 

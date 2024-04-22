@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log/slog"
 	"path"
 
 	"bi/pkg/cluster/eks"
@@ -44,7 +43,7 @@ func NewPulumiProvider(slug string) Provider {
 func (p *pulumiProvider) Init(ctx context.Context) error {
 	ws, err := p.configure(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to configure pulumi provider: %w", err)
 	}
 
 	// add plugins that need to be installed here
@@ -54,7 +53,7 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 		"tls":       "v5.0.0",
 	}
 	if err := p.installPlugins(ctx, ws, plugins); err != nil {
-		return err
+		return fmt.Errorf("failed to install necessary pulumi plugins: %w", err)
 	}
 
 	p.initSuccessful = true
@@ -68,7 +67,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 
 	tags, err := newTags(stackName)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create tags for %s: %w", stackName, err)
 	}
 
 	p.cfg = auto.ConfigMap{
@@ -97,13 +96,12 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 
 	dirs, err := p.makeDirs()
 	if err != nil {
-		slog.Error("Failed to create necessary directories")
-		return nil, err
+		return nil, fmt.Errorf("failed to create necessary directories: %w", err)
 	}
 
 	cmd, err := auto.InstallPulumiCommand(ctx, &auto.PulumiCommandOptions{Root: dirs[homeDir], SkipVersionCheck: true})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to download pulumi cli: %w", err)
 	}
 
 	p.workDirRoot = dirs[workDir]
@@ -151,8 +149,7 @@ func (p *pulumiProvider) createWorkspace(ctx context.Context) (auto.Workspace, e
 // installPlugins installs the provided plugins
 func (p *pulumiProvider) installPlugins(ctx context.Context, ws auto.Workspace, plugins map[string]string) error {
 	for plugin, version := range plugins {
-		err := ws.InstallPlugin(ctx, plugin, version)
-		if err != nil {
+		if err := ws.InstallPlugin(ctx, plugin, version); err != nil {
 			return fmt.Errorf("failed to install necessary plugin: %s: %w", plugin, err)
 		}
 	}

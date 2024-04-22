@@ -83,10 +83,8 @@ func (v *vpcConfig) getAZS(ctx *pulumi.Context) error {
 			Values: []string{"availability-zone"},
 		}},
 	})
-
 	if err != nil {
-
-		return err
+		return fmt.Errorf("error getting availability zones: %w", err)
 	}
 
 	v.azs = azs
@@ -108,7 +106,7 @@ func (v *vpcConfig) buildVPC(ctx *pulumi.Context) error {
 		EnableDnsHostnames: P_BOOL_PTR_TRUE,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 VPC %s: %w", v.baseName, err)
 	}
 	v.vpc = vpc
 	v.vpcID = vpc.ID()
@@ -139,7 +137,7 @@ func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 			netNum := i + (100 * j) + 1 // 1 through x for public 101 through x for private
 			net, err := cidr.Subnet(v.cidrBlock, 8, netNum)
 			if err != nil {
-				return err
+				return fmt.Errorf("no subnet available: %w", err)
 			}
 
 			name := fmt.Sprintf("%s-%s-%s", v.baseName, p, az)
@@ -160,7 +158,7 @@ func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 				VpcId:            v.vpcID,
 			}, pulumi.Parent(v.vpc))
 			if err != nil {
-				return err
+				return fmt.Errorf("error registering EC2 subnet %s: %w", name, err)
 			}
 
 			subnets[p] = append(subnets[p], subnet)
@@ -179,7 +177,7 @@ func (v *vpcConfig) buildGateways(ctx *pulumi.Context) error {
 		Tags:  pulumi.StringMap{"Name": pulumi.String(name)},
 	}, parent)
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 internet gateway %s: %w", name, err)
 	}
 
 	igwDependency := pulumi.DependsOn([]pulumi.Resource{igw})
@@ -191,7 +189,7 @@ func (v *vpcConfig) buildGateways(ctx *pulumi.Context) error {
 		Tags:   pulumi.StringMap{"Name": pulumi.String(name)},
 	}, igwDependency, parent)
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 elastic IP %s: %w", name, err)
 	}
 
 	ngw, err := ec2.NewNatGateway(ctx, name, &ec2.NatGatewayArgs{
@@ -200,13 +198,14 @@ func (v *vpcConfig) buildGateways(ctx *pulumi.Context) error {
 		Tags:         pulumi.StringMap{"Name": pulumi.String(name)},
 	}, igwDependency, parent)
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 nat gateway %s: %w", name, err)
 	}
 
 	v.gateways = map[string]pulumi.IDOutput{
 		"public":  igw.ID(),
 		"private": ngw.ID(),
 	}
+
 	return nil
 }
 
@@ -218,7 +217,7 @@ func (v *vpcConfig) buildRouteTables(ctx *pulumi.Context) error {
 		Tags:                pulumi.StringMap{"Name": pulumi.String(name)},
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering EC2 default route table %s: %w", name, err)
 	}
 
 	v.routeTables = map[string]pulumi.IDOutput{"default": dflt.ID()}
@@ -239,7 +238,6 @@ func (v *vpcConfig) buildRouteTables(ctx *pulumi.Context) error {
 				CidrBlock:    pulumi.String("0.0.0.0/0"),
 				NatGatewayId: v.gateways[t],
 			}
-
 		}
 
 		rt, err := ec2.NewRouteTable(ctx, rtName, &ec2.RouteTableArgs{
@@ -256,7 +254,7 @@ func (v *vpcConfig) buildRouteTables(ctx *pulumi.Context) error {
 			},
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering EC2 route table %s: %w", rtName, err)
 		}
 
 		v.routeTables[t] = rt.ID()
@@ -274,7 +272,7 @@ func (v *vpcConfig) buildRouteTableAssocs(ctx *pulumi.Context) error {
 				RouteTableId: v.routeTables[t],
 			})
 			if err != nil {
-				return err
+				return fmt.Errorf("error registering EC2 route table association %s: %w", name, err)
 			}
 		}
 	}

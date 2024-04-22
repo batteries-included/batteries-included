@@ -85,7 +85,7 @@ func (k *karpenterConfig) sqsQueue(ctx *pulumi.Context) error {
 		SqsManagedSseEnabled:    P_BOOL_PTR_TRUE,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering SQS queue %s: %w", k.baseName, err)
 	}
 
 	k.queue = q
@@ -113,7 +113,7 @@ func (k *karpenterConfig) sqsQueuePolicy(ctx *pulumi.Context) error {
 		Policy:   policy.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering SQS queue policy %s: %w", k.baseName, err)
 	}
 	return nil
 }
@@ -156,7 +156,7 @@ func (k *karpenterConfig) cloudwatchEvents(ctx *pulumi.Context) error {
 			EventPattern: pulumi.JSONMarshal(rule.pattern),
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering cloudwatch event rule %s: %w", name, err)
 		}
 
 		_, err = cloudwatch.NewEventTarget(ctx, name, &cloudwatch.EventTargetArgs{
@@ -165,7 +165,7 @@ func (k *karpenterConfig) cloudwatchEvents(ctx *pulumi.Context) error {
 			Arn:      k.queue.Arn,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("error registering cloudwatch event target %s: %w", name, err)
 		}
 	}
 	return nil
@@ -174,7 +174,7 @@ func (k *karpenterConfig) cloudwatchEvents(ctx *pulumi.Context) error {
 func (k *karpenterConfig) karpenterServiceRole(ctx *pulumi.Context) error {
 	id, err := aws.GetCallerIdentity(ctx, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting caller identity: %w", err)
 	}
 
 	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
@@ -209,7 +209,7 @@ func (k *karpenterConfig) karpenterServiceRole(ctx *pulumi.Context) error {
 		AssumeRolePolicy: assumeRole.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role %s: %w", name, err)
 	}
 
 	k.role = role
@@ -334,7 +334,7 @@ func (k *karpenterConfig) karpenterServiceRole(ctx *pulumi.Context) error {
 		Policy: policy.Json(),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("error registering IAM role policy %s: %w", name, err)
 	}
 
 	return nil

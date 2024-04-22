@@ -1,6 +1,7 @@
 package viper
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -36,15 +37,14 @@ func SetupConfig(cfgFile string) {
 func SafeWriteConfig() error {
 	configDir, err := configPath()
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to get config directory: %w", err)
 	}
 
-	_, err = os.Stat(configDir)
-	if !os.IsExist(err) {
+	if _, err = os.Stat(configDir); !os.IsExist(err) {
 		slog.Info("Creating config directory", slog.String("dir", configDir))
-		err = os.MkdirAll(configDir, 0o700)
-		if err != nil {
-			return err
+
+		if err := os.MkdirAll(configDir, 0o700); err != nil {
+			return fmt.Errorf("unable to create config directory: %w", err)
 		}
 	}
 

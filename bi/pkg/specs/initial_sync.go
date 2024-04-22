@@ -39,5 +39,6 @@ func (installSpec *InstallSpec) InitialSync(ctx context.Context, kubeClient kube
 	if savedErr != nil {
 		return savedErr
 	}
+
 	return nil
 }

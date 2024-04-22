@@ -103,52 +103,52 @@ type vpc struct {
 func ParsePulumiConfig(cfg auto.ConfigMap) (*PulumiConfig, error) {
 	tags, err := parseDefaultTags(cfg["aws:defaultTags"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse default tags: %w", err)
 	}
 
 	_, gwCIDR, err := net.ParseCIDR(cfg["gateway:cidrBlock"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse gateway CIDR: %w", err)
 	}
 
 	genKey, err := strconv.ParseBool(cfg["gateway:generateSSHKey"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse generateSSH flag: %w", err)
 	}
 
 	port, err := strconv.Atoi(cfg["gateway:port"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse gateway port: %w", err)
 	}
 
 	volSize, err := strconv.Atoi(cfg["gateway:volumeSize"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse gateway volume size: %w", err)
 	}
 
 	_, vpcCIDR, err := net.ParseCIDR(cfg["vpc:cidrBlock"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse vpc CIDR: %w", err)
 	}
 
 	desiredSize, err := strconv.Atoi(cfg["cluster:desiredSize"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse desired cluster size: %w", err)
 	}
 
 	maxSize, err := strconv.Atoi(cfg["cluster:maxSize"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse max cluster size: %w", err)
 	}
 
 	minSize, err := strconv.Atoi(cfg["cluster:minSize"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse min cluster size: %w", err)
 	}
 
 	clusterVolSize, err := strconv.Atoi(cfg["cluster:volumeSize"].Value)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse cluster volume size: %w", err)
 	}
 
 	pc := &PulumiConfig{
@@ -189,7 +189,7 @@ func parseDefaultTags(s string) (map[string]string, error) {
 	// sense to go unmarshal and then re-marshal?
 	raw := map[string]interface{}{}
 	if err := json.Unmarshal([]byte(s), &raw); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal tags: %w", err)
 	}
 
 	inner, ok := raw["tags"].(map[string]interface{})

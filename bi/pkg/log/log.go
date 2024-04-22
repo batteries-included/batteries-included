@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -13,9 +14,8 @@ func SetupLogging(levelString string, color bool) error {
 
 	w := os.Stderr
 
-	err := logLevel.UnmarshalText([]byte(levelString))
-	if err != nil {
-		return err
+	if err := logLevel.UnmarshalText([]byte(levelString)); err != nil {
+		return fmt.Errorf("unable to parse log level: %w", err)
 	}
 
 	slog.SetDefault(slog.New(
