@@ -18,7 +18,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     defaultable_field :core_namespace, :string, default: Defaults.Namespaces.core()
     defaultable_field :base_namespace, :string, default: Defaults.Namespaces.base()
     defaultable_field :data_namespace, :string, default: Defaults.Namespaces.data()
-    defaultable_field :ml_namespace, :string, default: Defaults.Namespaces.ml()
+    defaultable_field :ai_namespace, :string, default: Defaults.Namespaces.ai()
 
     defaultable_field :bootstrap_image, :string, default: Defaults.Images.bootstrap_image()
     defaultable_field :image, :string, default: Defaults.Images.control_server_image()

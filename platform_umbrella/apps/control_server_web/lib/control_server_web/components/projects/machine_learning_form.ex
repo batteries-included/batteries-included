@@ -86,7 +86,7 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
         for={@form}
         class={@class}
         variant="stepped"
-        title="Machine Learning"
+        title="Artificial Intelligence"
         description="A place for information about the machine learning stage of project creation"
         phx-target={@myself}
         phx-change="validate"

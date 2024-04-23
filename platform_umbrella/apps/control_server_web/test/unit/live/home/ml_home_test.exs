@@ -25,8 +25,8 @@ defmodule ControlServerWeb.MLHomeTest do
 
     test "contains links", %{conn: conn, notebook: notebook} do
       conn
-      |> start("/ml")
-      |> assert_html("Machine Learning")
+      |> start("/ai")
+      |> assert_html("Artificial Intelligence")
       |> assert_html(notebook.name)
     end
   end
@@ -36,8 +36,8 @@ defmodule ControlServerWeb.MLHomeTest do
 
     test "contains empty home component", %{conn: conn} do
       conn
-      |> start("/ml")
-      |> assert_html("Machine Learning")
+      |> start("/ai")
+      |> assert_html("Artificial Intelligence")
       |> assert_html("There are no batteries installed for this group.")
     end
   end

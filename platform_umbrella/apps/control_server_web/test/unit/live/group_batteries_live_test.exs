@@ -14,9 +14,9 @@ defmodule ControlServerWeb.GroupBatteriesLiveTest do
   describe "ML group batteries" do
     test "can list the group batteries", %{conn: conn} do
       conn
-      |> start(~p"/batteries/ml")
+      |> start(~p"/batteries/ai")
       |> assert_html("Machine Learning Batteries")
-      |> assert_element(~s(a[href="/ml"]))
+      |> assert_element(~s(a[href="/ai"]))
     end
   end
 

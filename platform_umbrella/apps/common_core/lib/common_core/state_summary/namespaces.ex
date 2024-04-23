@@ -21,8 +21,8 @@ defmodule CommonCore.StateSummary.Namespaces do
   # Databases
   # Notebooks
   # etc
-  @spec ml_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def ml_namespace(%StateSummary{} = summary), do: config_field(summary, :ml_namespace)
+  @spec ai_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  def ai_namespace(%StateSummary{} = summary), do: config_field(summary, :ai_namespace)
 
   @spec data_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def data_namespace(%StateSummary{} = summary), do: config_field(summary, :data_namespace)

@@ -21,8 +21,8 @@ defmodule CommonCore.Batteries.Catalog do
       show_for_projects: false
     },
     %CatalogGroup{
-      id: :ml,
-      name: "Machine Learning",
+      id: :ai,
+      name: "Artificial Intelligence",
       show_for_projects: true
     },
     %CatalogGroup{
@@ -117,12 +117,12 @@ defmodule CommonCore.Batteries.Catalog do
     },
     # ML
     %CatalogBattery{
-      group: :ml,
+      group: :ai,
       type: :notebooks,
       dependencies: [:istio_gateway]
     },
     %CatalogBattery{
-      group: :ml,
+      group: :ai,
       type: :text_generation_webui,
       dependencies: [:istio_gateway]
     },

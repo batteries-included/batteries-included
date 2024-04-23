@@ -75,7 +75,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     vm_cluster: VMClusterConfig
   ]
 
-  @possible_groups ~w(data devtools magic ml monitoring net_sec)a
+  @possible_groups ~w(data devtools magic ai monitoring net_sec)a
 
   def possible_types, do: Keyword.keys(@possible_types)
 

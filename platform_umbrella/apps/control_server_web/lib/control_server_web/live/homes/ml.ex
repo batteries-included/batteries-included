@@ -19,7 +19,7 @@ defmodule ControlServerWeb.Live.MLHome do
   end
 
   defp assign_batteries(socket) do
-    assign(socket, batteries: installed_batteries(:ml))
+    assign(socket, batteries: installed_batteries(:ai))
   end
 
   defp assign_notebooks(socket) do
@@ -27,7 +27,7 @@ defmodule ControlServerWeb.Live.MLHome do
   end
 
   defp assign_current_page(socket) do
-    assign(socket, current_page: :ml)
+    assign(socket, current_page: :ai)
   end
 
   defp notebooks_panel(assigns) do
@@ -54,12 +54,12 @@ defmodule ControlServerWeb.Live.MLHome do
 
   defp battery_link_panel(assigns), do: ~H||
 
-  defp install_path, do: ~p"/batteries/ml"
+  defp install_path, do: ~p"/batteries/ai"
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Machine Learning">
+    <.page_header title="Artificial Intelligence">
       <.button variant="secondary" link={install_path()}>
         Manage Batteries
       </.button>

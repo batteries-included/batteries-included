@@ -162,7 +162,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
     {:noreply, assign_system_batteries(socket, socket.assigns.group)}
   end
 
-  defp group_title(:ml) do
+  defp group_title(:ai) do
     "Machine Learning Batteries"
   end
 
@@ -180,7 +180,7 @@ defmodule ControlServerWeb.Live.GroupBatteries do
   end
 
   defp group_home_link(:magic), do: ~p"/magic"
-  defp group_home_link(:ml), do: ~p"/ml"
+  defp group_home_link(:ai), do: ~p"/ai"
   defp group_home_link(:data), do: ~p"/data"
   defp group_home_link(:devtools), do: ~p"/devtools"
   defp group_home_link(:monitoring), do: ~p"/monitoring"

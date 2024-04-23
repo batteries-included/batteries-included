@@ -54,9 +54,9 @@ defmodule ControlServerWeb.Layouts do
           icon: :shield_check
         },
         %{
-          name: :ml,
-          label: "ML",
-          path: ~p"/ml",
+          name: :ai,
+          label: "AI",
+          path: ~p"/ai",
           icon: :beaker
         },
         %{

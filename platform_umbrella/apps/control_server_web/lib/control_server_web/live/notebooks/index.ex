@@ -17,7 +17,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   end
 
   defp assign_page_title(socket) do
-    assign(socket, :page_title, "ML Notebooks")
+    assign(socket, :page_title, "AI Notebooks")
   end
 
   defp assign_notebooks(socket) do
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   end
 
   defp assign_current_page(socket) do
-    assign(socket, :current_page, :ml)
+    assign(socket, :current_page, :ai)
   end
 
   @impl Phoenix.LiveView
@@ -52,7 +52,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/ml"} />
+    <.page_header title={@page_title} back_link={~p"/ai"} />
     <.panel title="Jupyter Notebooks">
       <:menu>
         <.button variant="primary" phx-click="start_notebook">

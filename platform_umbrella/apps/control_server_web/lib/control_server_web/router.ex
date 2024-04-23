@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Router do
     live "/net_sec", Live.NetSecHome, :index
     live "/monitoring", Live.MonitoringHome, :index
     live "/devtools", Live.DevtoolsHome, :index
-    live "/ml", Live.MLHome, :index
+    live "/ai", Live.MLHome, :index
     live "/data", Live.DataHome, :index
   end
 

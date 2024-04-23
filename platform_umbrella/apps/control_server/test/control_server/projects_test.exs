@@ -7,7 +7,7 @@ defmodule ControlServer.ProjectsTest do
   alias CommonCore.Projects.Project
 
   @valid_attrs %{name: "some name", type: :web, description: "some description"}
-  @update_attrs %{name: "some updated name", type: :ml, description: "some updated description"}
+  @update_attrs %{name: "some updated name", type: :ai, description: "some updated description"}
   @invalid_attrs %{name: nil, type: nil, description: nil}
 
   setup do
@@ -48,7 +48,7 @@ defmodule ControlServer.ProjectsTest do
       assert {:ok, %Project{} = project} = update_project(ctx.project, @update_attrs)
       assert project.description == "some updated description"
       assert project.name == "some updated name"
-      assert project.type == :ml
+      assert project.type == :ai
     end
 
     test "should return error changeset with invalid data", ctx do

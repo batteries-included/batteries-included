@@ -28,10 +28,10 @@ defmodule CommonCore.Resources.BatteryCore do
     |> B.label("istio-injection", "enabled")
   end
 
-  resource(:ml_namespace, battery, _state) do
+  resource(:ai_namespace, battery, _state) do
     :namespace
     |> B.build_resource()
-    |> B.name(battery.config.ml_namespace)
+    |> B.name(battery.config.ai_namespace)
     |> B.label("istio-injection", "enabled")
   end
 

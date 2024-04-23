@@ -286,7 +286,7 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   defp steps(type) when is_binary(type), do: type |> String.to_existing_atom() |> steps()
   defp steps(:web), do: [ProjectForm, WebForm, BatteriesForm]
-  defp steps(:ml), do: [ProjectForm, MachineLearningForm, BatteriesForm]
+  defp steps(:ai), do: [ProjectForm, MachineLearningForm, BatteriesForm]
   defp steps(:db), do: [ProjectForm, DatabaseForm, BatteriesForm]
   defp steps, do: [ProjectForm, BatteriesForm]
 end

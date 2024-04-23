@@ -35,11 +35,11 @@ export const headerData = [
         icon: 'database',
       },
       {
-        label: 'Machine Learning',
+        label: 'Artificial Intelligence',
         description:
-          "Purpose built ML tools for today's modern business needs.",
+          "Purpose built AI and ML tools for today's modern business needs.",
         icon: 'ai',
-        link: '/solutions/ml',
+        link: '/solutions/ai',
       },
       {
         label: 'Web Services',

@@ -63,9 +63,9 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
               Net/Sec
             </:tab>
             <:tab
-              selected={@tab == :ml}
+              selected={@tab == :ai}
               phx-click="tab_select"
-              phx-value-tab="ml"
+              phx-value-tab="ai"
               phx-target={@myself}
             >
               ML

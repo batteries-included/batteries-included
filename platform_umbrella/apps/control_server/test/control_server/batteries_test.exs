@@ -54,14 +54,14 @@ defmodule ControlServer.BatteriesTest do
       system_battery = system_battery_fixture()
 
       update_attrs = %{
-        group: :ml,
+        group: :ai,
         type: :notebooks
       }
 
       assert {:ok, %SystemBattery{} = system_battery} =
                Batteries.update_system_battery(system_battery, update_attrs)
 
-      assert system_battery.group == :ml
+      assert system_battery.group == :ai
       assert system_battery.type == :notebooks
     end
 

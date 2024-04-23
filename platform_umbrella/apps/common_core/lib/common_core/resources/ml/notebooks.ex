@@ -14,7 +14,7 @@ defmodule CommonCore.Resources.Notebooks do
   @container_port 8888
 
   resource(:service_account, _battery, state) do
-    namespace = ml_namespace(state)
+    namespace = ai_namespace(state)
 
     :service_account
     |> B.build_resource()
@@ -24,7 +24,7 @@ defmodule CommonCore.Resources.Notebooks do
   end
 
   resource(:virtual_service, battery, state) do
-    namespace = ml_namespace(state)
+    namespace = ai_namespace(state)
     host = notebooks_host(state)
 
     virtual_service =
@@ -57,7 +57,7 @@ defmodule CommonCore.Resources.Notebooks do
   end
 
   defp stateful_set(%{} = notebook, _battery, state) do
-    namespace = ml_namespace(state)
+    namespace = ai_namespace(state)
 
     template =
       %{
@@ -105,7 +105,7 @@ defmodule CommonCore.Resources.Notebooks do
   end
 
   defp service(notebook, _battery, state) do
-    namespace = ml_namespace(state)
+    namespace = ai_namespace(state)
 
     spec =
       %{}
@@ -126,7 +126,7 @@ defmodule CommonCore.Resources.Notebooks do
   def base_url(notebook), do: "/#{notebook.name}"
 
   resource(:istio_request_auth, _battery, state) do
-    namespace = ml_namespace(state)
+    namespace = ai_namespace(state)
 
     spec =
       state
@@ -142,7 +142,7 @@ defmodule CommonCore.Resources.Notebooks do
   end
 
   resource(:istio_auth_policy, battery, state) do
-    namespace = ml_namespace(state)
+    namespace = ai_namespace(state)
 
     spec =
       state
