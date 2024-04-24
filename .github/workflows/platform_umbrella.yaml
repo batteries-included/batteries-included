@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 30
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16
         env:
           POSTGRES_USER: battery-local-user
           POSTGRES_PASSWORD: 'batterypasswd'
@@ -68,7 +68,7 @@ jobs:
     timeout-minutes: 30
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16
         env:
           POSTGRES_USER: battery-local-user
           POSTGRES_PASSWORD: 'batterypasswd'
