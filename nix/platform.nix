@@ -98,35 +98,36 @@
         mixEnv = "prod";
       };
 
+      # These are already in the closure. This just creates symlinks
       additionalContents = [ pkgs.bash pkgs.coreutils ];
 
       kube-bootstrap-container = pkgs.dockerTools.buildLayeredImage {
         name = "kube-bootstrap";
         tag = taggedVersion;
-        contents = [ kube-bootstrap ] ++ additionalContents; # These are already in the closure. This just creates symlinks
+        contents = [ kube-bootstrap ] ++ additionalContents;
         config = {
           inherit Entrypoint;
-          Cmd = [ "${kube-bootstrap}/bin/bootstrap" ];
+          Cmd = [ "bootstrap" ];
         };
       };
 
       home-base-container = pkgs.dockerTools.buildLayeredImage {
         name = "home-base";
         tag = taggedVersion;
-        contents = [ home-base ] ++ additionalContents; # These are already in the closure. This just creates symlinks
+        contents = [ home-base ] ++ additionalContents;
         config = {
           inherit Entrypoint;
-          Cmd = [ "${home-base}/bin/home_base" "start" ];
+          Cmd = [ "home_base" "start" ];
         };
       };
 
       control-server-container = pkgs.dockerTools.buildLayeredImage {
         name = "control-server";
         tag = taggedVersion;
-        contents = [ control-server ] ++ additionalContents; # These are already in the closure. This just creates symlinks
+        contents = [ control-server ] ++ additionalContents;
         config = {
           inherit Entrypoint;
-          Cmd = [ "${control-server}/bin/control_server" "start" ];
+          Cmd = [ "control_server" "start" ];
         };
       };
 
