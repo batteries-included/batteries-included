@@ -38,9 +38,13 @@ defmodule ControlServer.Release do
   end
 
   def seed(path) do
-    # Start apps necessary for executing migrations
-    :ok = load_app()
-    :ok = ControlServer.Seed.seed_from_path(path)
+    if File.exists?(path) do
+      # Start apps necessary for executing migrations
+      :ok = load_app()
+      :ok = ControlServer.Seed.seed_from_path(path)
+    else
+      Logger.warning("File does not exist: #{path}. Skipping seed.")
+    end
   end
 
   def rollback(repo, version) do
