@@ -154,135 +154,30 @@ func (kubeClient *batteryKubeClient) removeAllGlobalRBAC(ctx context.Context) er
 func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, ns v1.Namespace) error {
 	slog.Debug("Removing all resources in namespace", slog.String("namespace", ns.Name))
 
-	err := kubeClient.client.AutoscalingV1().
-		HorizontalPodAutoscalers(ns.Name).
-		DeleteCollection(ctx, deleteOptions(), allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove horizontal pod autoscalers: %w", err)
+	type collectionDeleter interface {
+		DeleteCollection(ctx context.Context, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
 	}
 
-	err = kubeClient.client.AppsV1().
-		Deployments(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove deployments: %w", err)
-	}
-
-	err = kubeClient.client.AppsV1().
-		StatefulSets(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove stateful sets: %w", err)
-	}
-
-	err = kubeClient.client.AppsV1().
-		DaemonSets(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove daemon sets: %w", err)
-	}
-
-	err = kubeClient.client.AppsV1().
-		ReplicaSets(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove replica sets: %w", err)
-	}
-
-	err = kubeClient.client.BatchV1().
-		Jobs(ns.Name).
-		DeleteCollection(ctx, deleteOptions(), allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove jobs: %w", err)
-	}
-
-	err = kubeClient.client.BatchV1().
-		CronJobs(ns.Name).
-		DeleteCollection(ctx, deleteOptions(), allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove cron jobs: %w", err)
-	}
-
-	err = kubeClient.client.CoreV1().
-		Pods(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove pods: %w", err)
-	}
-
-	err = kubeClient.client.CoreV1().
-		ConfigMaps(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove config maps: %w", err)
-	}
-
-	err = kubeClient.client.CoreV1().
-		Secrets(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove secrets: %w", err)
-	}
-
-	err = kubeClient.client.NetworkingV1().
-		Ingresses(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove ingresses: %w", err)
-	}
-
-	err = kubeClient.client.CoreV1().
-		PersistentVolumeClaims(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove persistent volume claims: %w", err)
-	}
-
-	err = kubeClient.client.RbacV1().
-		RoleBindings(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove role bindings: %w", err)
-	}
-
-	err = kubeClient.client.RbacV1().
-		Roles(ns.Name).
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			allListOptions())
-	if err != nil {
-		return fmt.Errorf("unable to remove roles: %w", err)
+	c := kubeClient.client
+	for _, cd := range []collectionDeleter{
+		c.AutoscalingV1().HorizontalPodAutoscalers(ns.Name),
+		c.AppsV1().Deployments(ns.Name),
+		c.AppsV1().StatefulSets(ns.Name),
+		c.AppsV1().DaemonSets(ns.Name),
+		c.AppsV1().ReplicaSets(ns.Name),
+		c.BatchV1().Jobs(ns.Name),
+		c.BatchV1().CronJobs(ns.Name),
+		c.CoreV1().Pods(ns.Name),
+		c.CoreV1().ConfigMaps(ns.Name),
+		c.CoreV1().Secrets(ns.Name),
+		c.CoreV1().PersistentVolumeClaims(ns.Name),
+		c.NetworkingV1().Ingresses(ns.Name),
+		c.RbacV1().RoleBindings(ns.Name),
+		c.RbacV1().Roles(ns.Name),
+	} {
+		if err := cd.DeleteCollection(ctx, deleteOptions(), allListOptions()); err != nil {
+			return fmt.Errorf("unable to delete %T: %w", cd, err)
+		}
 	}
 
 	return nil
