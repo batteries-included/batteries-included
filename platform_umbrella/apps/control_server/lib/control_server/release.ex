@@ -59,7 +59,7 @@ defmodule ControlServer.Release do
   end
 
   defp load_app do
-    Logger.debug("Ensuring app is starte")
+    Logger.debug("Ensuring app is started")
 
     Enum.each(@start_apps, fn app ->
       {:ok, _apps} = Application.ensure_all_started(app, :permanent)
@@ -69,7 +69,7 @@ defmodule ControlServer.Release do
   end
 
   defp ensure_repo_created(repo) do
-    Logger.info("create #{inspect(repo)} database if it doesn't exist")
+    Logger.info("Creating #{inspect(repo)} database if it doesn't exist")
 
     case repo.__adapter__.storage_up(repo.config) do
       :ok -> :ok

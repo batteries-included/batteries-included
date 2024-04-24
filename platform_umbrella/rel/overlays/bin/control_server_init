@@ -3,6 +3,8 @@
 set -exuo pipefail
 
 DIR="${BASH_SOURCE%/*}"
+SUMMARY=${BOOTSTRAP_SUMMARY_PATH:-/etc/init-config/summary.json}
 
 "${DIR}/control_server" eval 'ControlServer.Release.createdb()'
 "${DIR}/control_server" eval 'ControlServer.Release.migrate()'
+"${DIR}/control_server" eval "ControlServer.Release.seed($SUMMARY)"
