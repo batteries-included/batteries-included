@@ -170,4 +170,10 @@ defmodule CommonCore.Util.EctoValidations do
     )
     |> validate_length(field, min: 1, max: 63, message: "must be between 1 and 63 characters")
   end
+
+  def validate_email_address(changeset, field) do
+    changeset
+    |> validate_format(field, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
+    |> validate_length(field, max: 160)
+  end
 end

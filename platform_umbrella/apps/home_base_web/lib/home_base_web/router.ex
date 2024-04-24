@@ -80,7 +80,6 @@ defmodule HomeBaseWeb.Router do
       live "/", DashboardLive
 
       live "/installations/", InstallationLive
-      live "/installations/new", InstallationNewLive
       live "/installations/:id", InstallationShowLive
 
       live "/profile", ProfileLive

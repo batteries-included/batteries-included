@@ -67,7 +67,7 @@ defmodule CommonUI.Components.Form do
       <%= render_slot(@inner_block) %>
     </div>
 
-    <div class="flex items-center justify-between gap-2 mt-2">
+    <div class="flex items-center justify-end gap-2 mt-6">
       <%= render_slot(@actions) %>
     </div>
     """
@@ -81,6 +81,10 @@ defmodule CommonUI.Components.Form do
         <.flash_group flash={@flash} />
 
         <%= render_slot(@inner_block) %>
+
+        <:actions>
+          <%= render_slot(@actions) %>
+        </:actions>
       </.simple_form>
     </.form>
     """

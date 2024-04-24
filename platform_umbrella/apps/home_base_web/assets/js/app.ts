@@ -1,14 +1,20 @@
 import 'phoenix_html';
 import { Socket } from 'phoenix';
-import { LiveSocket } from 'phoenix_live_view';
+import { LiveSocket, ViewHook } from 'phoenix_live_view';
+import { TooltipHook } from '../../../common_ui/assets/js/tooltip';
 import '../../../common_ui/assets/js/shared';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   ?.getAttribute('content');
 
+const hooks: { [name: string]: Partial<ViewHook> } = {
+  Tooltip: TooltipHook,
+};
+
 const liveSocket = new LiveSocket('/live', Socket, {
   params: { _csrf_token: csrfToken },
+  hooks,
 });
 
 liveSocket.connect();

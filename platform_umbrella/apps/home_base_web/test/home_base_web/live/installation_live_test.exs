@@ -41,7 +41,6 @@ defmodule HomeBaseWeb.InstallationLiveTest do
     test "displays installation", %{conn: conn, installation: installation} do
       {:ok, _show_live, html} = live(conn, ~p"/installations/#{installation}")
 
-      assert html =~ "Show Installation"
       assert html =~ installation.slug
     end
   end

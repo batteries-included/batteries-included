@@ -8,7 +8,7 @@ defmodule HomeBase.CustomerInstallsTest do
 
     alias CommonCore.Installation
 
-    @invalid_attrs %{bootstrap_config: nil, slug: nil}
+    @invalid_attrs %{bootstrap_config: nil, slug: "invalid slug"}
 
     test "list_installations/0 returns all installations" do
       installation = installation_fixture()

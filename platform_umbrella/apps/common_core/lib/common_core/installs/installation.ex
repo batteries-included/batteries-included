@@ -7,10 +7,21 @@ defmodule CommonCore.Installation do
   """
   use TypedEctoSchema
 
+  import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
   @required_fields ~w(slug usage kube_provider)a
-  @optional_fields ~w(kube_provider_config initial_oauth_email default_size)a
+  @optional_fields ~w(sso_enabled kube_provider_config initial_oauth_email default_size)a
+
+  @sizes [:tiny, :small, :medium, :large, :xlarge, :huge]
+  @providers [Kind: :kind, AWS: :aws, Provided: :provided]
+  @usages [
+    "Kitchen Sink": :kitchen_sink,
+    "Internal Dev": :internal_dev,
+    "Internal Test": :internal_int_test,
+    Development: :development,
+    Production: :production
+  ]
 
   @timestamps_opts [type: :utc_datetime_usec]
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -21,34 +32,39 @@ defmodule CommonCore.Installation do
     # This will be the main switch for specialization
     # of the installation after choosing the where the kubernetes
     # cluster is hosted.
-    field :usage, Ecto.Enum,
-      values: [:internal_dev, :internal_int_test, :development, :production, :kitchen_sink],
-      default: :development
+    field :usage, Ecto.Enum, values: Keyword.values(@usages), default: :development
 
-    field :kube_provider, Ecto.Enum, values: [:kind, :aws, :provided]
+    field :kube_provider, Ecto.Enum, values: Keyword.values(@providers)
     field :kube_provider_config, :map, default: %{}
 
     # Fields for SSO
+    field :sso_enabled, :boolean, default: false
     field :initial_oauth_email, :string
 
     # Default size for the installation
-    field :default_size, Ecto.Enum,
-      values: [:tiny, :small, :medium, :large, :xlarge, :huge],
-      default: :medium
+    field :default_size, Ecto.Enum, values: @sizes, default: :medium
 
     timestamps()
   end
 
   @doc false
-  def changeset(installation, attrs) do
+  def changeset(installation, attrs \\ %{}) do
     installation
     |> cast(attrs, @optional_fields ++ @required_fields)
+    |> maybe_fill_in_slug(:slug)
     |> validate_required(@required_fields)
-    # Slug gets to lowercase
+    |> maybe_require_oauth_email(attrs)
     |> downcase_slug()
     |> validate_format(:slug, ~r/^[a-z0-9-]+$/)
+    |> validate_email_address(:initial_oauth_email)
     |> unique_constraint(:slug)
   end
+
+  def maybe_require_oauth_email(changeset, %{"sso_enabled" => true}) do
+    validate_required(changeset, [:initial_oauth_email])
+  end
+
+  def maybe_require_oauth_email(changeset, _attrs), do: changeset
 
   def downcase_slug(changeset) do
     update_change(changeset, :slug, &String.downcase/1)
@@ -69,6 +85,10 @@ defmodule CommonCore.Installation do
       usage: usage
     }
   end
+
+  def size_options, do: Enum.map(@sizes, &{&1 |> Atom.to_string() |> String.capitalize(), &1})
+  def provider_options, do: @providers
+  def usage_options, do: @usages
 
   defp default_size(:kind = _provider_type, _usage), do: :tiny
   defp default_size(:aws = _provider_type, :internal_dev), do: :small

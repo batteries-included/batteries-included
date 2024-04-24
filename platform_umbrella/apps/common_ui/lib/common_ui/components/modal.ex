@@ -31,12 +31,7 @@ defmodule CommonUI.Components.Modal do
 
   def modal(assigns) do
     ~H"""
-    <div
-      id={@id}
-      phx-mounted={@show && show_modal(@id)}
-      phx-remove={hide_modal(@id)}
-      class="fixed inset-0 z-50 hidden"
-    >
+    <div id={@id} phx-mounted={@show && show_modal(@id)} class="fixed inset-0 z-50 hidden">
       <div
         id={"#{@id}-bg"}
         aria-hidden="true"

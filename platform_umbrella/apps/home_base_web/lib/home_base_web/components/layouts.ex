@@ -86,34 +86,36 @@ defmodule HomeBaseWeb.Layouts do
       autoshow={false}
     />
 
-    <.flex class="relative header-gradient items-center justify-between px-8 border-b border-b-gray-lighter">
-      <.logo variant="full" class="my-3" />
+    <div class="flex flex-col h-screen">
+      <.flex class="relative header-gradient items-center justify-between px-8 border-b border-b-gray-lighter">
+        <.logo variant="full" class="my-3" />
 
-      <nav role="navigation" class="flex gap-8">
-        <.nav_item icon={:chart_pie} navigate={~p"/"} selected={@page == :dashboard}>
-          Dashboard
-        </.nav_item>
+        <nav role="navigation" class="flex gap-8">
+          <.nav_item icon={:chart_pie} navigate={~p"/"} selected={@page == :dashboard}>
+            Dashboard
+          </.nav_item>
 
-        <.nav_item
-          icon={:command_line}
-          navigate={~p"/installations"}
-          selected={@page == :installations}
-        >
-          Installations
-        </.nav_item>
+          <.nav_item
+            icon={:command_line}
+            navigate={~p"/installations"}
+            selected={@page == :installations}
+          >
+            Installations
+          </.nav_item>
 
-        <.nav_item navigate={~p"/profile"} icon={:user_circle} selected={@page == :profile}>
-          Profile
-        </.nav_item>
+          <.nav_item navigate={~p"/profile"} icon={:user_circle} selected={@page == :profile}>
+            Profile
+          </.nav_item>
 
-        <.nav_item href={~p"/logout"} icon={:arrow_right_start_on_rectangle} method="delete">
-          Log out
-        </.nav_item>
-      </nav>
-    </.flex>
+          <.nav_item href={~p"/logout"} icon={:arrow_right_start_on_rectangle} method="delete">
+            Log out
+          </.nav_item>
+        </nav>
+      </.flex>
 
-    <div class="block relative min-h-screen p-8">
-      <%= @inner_content %>
+      <div class="block relative p-8 flex-1 overflow-auto">
+        <%= @inner_content %>
+      </div>
     </div>
     """
   end

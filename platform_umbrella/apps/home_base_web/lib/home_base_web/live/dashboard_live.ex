@@ -13,7 +13,15 @@ defmodule HomeBaseWeb.DashboardLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    Coming Soon
+    <div class="flex items-center justify-center min-h-full">
+      <div class="text-center">
+        <.icon name={:chart_pie} class="size-60 m-auto text-primary opacity-15" />
+
+        <p class="text-gray-light text-lg font-medium mb-12">
+          Dashboard is coming soon.
+        </p>
+      </div>
+    </div>
     """
   end
 end
