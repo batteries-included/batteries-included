@@ -20,7 +20,9 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 	// Delete all the resources in the cluster
 	// however there's an order that things need to go.
 
-	slog.Debug("Removing all resources in cluster")
+	slog.Debug("Removing BI managed resources in cluster...")
+
+	slog.Debug("Removing hooks")
 	if err := kubeClient.removeAllHooks(ctx); err != nil {
 		return fmt.Errorf("unable to remove hooks: %w", err)
 	}
@@ -44,21 +46,21 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 		}
 	}
 
+	slog.Debug("Removing hanging persistent volumes")
 	// Remove hanging PersistentVolumes
 	err = kubeClient.client.CoreV1().
 		PersistentVolumes().
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			taggedListOptions())
+		DeleteCollection(ctx, deleteOptions(), taggedListOptions())
 	if err != nil {
 		return fmt.Errorf("unable to clean up hanging persistent volumes: %w", err)
 	}
 
+	slog.Debug("Removing global RBAC")
 	if err := kubeClient.removeAllGlobalRBAC(ctx); err != nil {
 		return fmt.Errorf("unable to remove global RBAC: %w", err)
 	}
 
+	slog.Debug("Removing service accounts")
 	// We have to remove any global RBAC first
 	// Before we can remove the service accounts
 	// that could have been using the ClusterRoles
@@ -66,27 +68,23 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 		// Delete all ServiceAccounts
 		err = kubeClient.client.CoreV1().
 			ServiceAccounts(ns.Name).
-			DeleteCollection(
-				ctx,
-				deleteOptions(),
-				allListOptions())
+			DeleteCollection(ctx, deleteOptions(), allListOptions())
 		if err != nil {
 			return fmt.Errorf("unable to remove service accounts in namespace %s: %w", ns.Name, err)
 		}
 	}
 
+	slog.Debug("Removing custom resource definitions")
 	// Delete all CustomResourceDefinitions that we added
 	err = kubeClient.apiExtensionsClient.ApiextensionsV1().
 		CustomResourceDefinitions().
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			taggedListOptions())
+		DeleteCollection(ctx, deleteOptions(), taggedListOptions())
 	if err != nil {
 		return fmt.Errorf("unable to remove CRDs: %w", err)
 	}
 
 	// Delete All Namespaces
+	slog.Debug("Removing namespaces")
 	for _, ns := range namespaces.Items {
 		slog.Debug("Removing namespace", slog.String("namespace", ns.Name))
 		err = kubeClient.client.CoreV1().
@@ -103,20 +101,14 @@ func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
 func (kubeClient *batteryKubeClient) removeAllHooks(ctx context.Context) error {
 	err := kubeClient.client.AdmissionregistrationV1().
 		MutatingWebhookConfigurations().
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			taggedListOptions())
+		DeleteCollection(ctx, deleteOptions(), taggedListOptions())
 	if err != nil {
 		return fmt.Errorf("unable to remove mutating webhooks: %w", err)
 	}
 
 	err = kubeClient.client.AdmissionregistrationV1().
 		ValidatingWebhookConfigurations().
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			taggedListOptions())
+		DeleteCollection(ctx, deleteOptions(), taggedListOptions())
 	if err != nil {
 		return fmt.Errorf("unable to remove validating webhooks: %w", err)
 	}
@@ -130,20 +122,14 @@ func (kubeClient *batteryKubeClient) removeAllGlobalRBAC(ctx context.Context) er
 	// Delete all ClusterRoles
 	err := kubeClient.client.RbacV1().
 		ClusterRoleBindings().
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			taggedListOptions())
+		DeleteCollection(ctx, deleteOptions(), taggedListOptions())
 	if err != nil {
 		return fmt.Errorf("unable to remove cluster role bindings: %w", err)
 	}
 
 	err = kubeClient.client.RbacV1().
 		ClusterRoles().
-		DeleteCollection(
-			ctx,
-			deleteOptions(),
-			taggedListOptions())
+		DeleteCollection(ctx, deleteOptions(), taggedListOptions())
 	if err != nil {
 		return fmt.Errorf("unable to remove cluster roles: %w", err)
 	}
@@ -152,7 +138,7 @@ func (kubeClient *batteryKubeClient) removeAllGlobalRBAC(ctx context.Context) er
 }
 
 func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, ns v1.Namespace) error {
-	slog.Debug("Removing all resources in namespace", slog.String("namespace", ns.Name))
+	slog.Debug("Removing resources in namespace", slog.String("namespace", ns.Name))
 
 	type collectionDeleter interface {
 		DeleteCollection(ctx context.Context, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
@@ -184,8 +170,11 @@ func (kubeClient *batteryKubeClient) removeAllInNamespace(ctx context.Context, n
 }
 
 func (kubeClient *batteryKubeClient) removeAllCRDBackedResources(ctx context.Context, namespaces *v1.NamespaceList) error {
-	crds, err := kubeClient.apiExtensionsClient.ApiextensionsV1().
-		CustomResourceDefinitions().List(ctx, taggedListOptions())
+	slog.Debug("Removing custom resources")
+	opts := taggedListOptions()
+	var timeout int64 = 45
+	opts.TimeoutSeconds = &timeout
+	crds, err := kubeClient.apiExtensionsClient.ApiextensionsV1().CustomResourceDefinitions().List(ctx, opts)
 	if err != nil {
 		return fmt.Errorf("unable to list CRDs: %w", err)
 	}
@@ -199,7 +188,7 @@ func (kubeClient *batteryKubeClient) removeAllCRDBackedResources(ctx context.Con
 			}
 
 			if crd.Spec.Scope == "Namespaced" {
-				slog.Debug("Removing namespaced CRD", slog.Any("kind", gvr))
+				slog.Debug("Removing namespaced CR", slog.Any("kind", gvr))
 				for _, ns := range namespaces.Items {
 					err = kubeClient.dynamicClient.Resource(gvr).Namespace(ns.Name).
 						DeleteCollection(ctx, deleteOptions(), allListOptions())
@@ -208,9 +197,8 @@ func (kubeClient *batteryKubeClient) removeAllCRDBackedResources(ctx context.Con
 					}
 				}
 			} else {
-				slog.Debug("Removing cluster CRD", slog.Any("kind", gvr))
-				err = kubeClient.dynamicClient.Resource(gvr).
-					DeleteCollection(ctx, deleteOptions(), allListOptions())
+				slog.Debug("Removing cluster CR", slog.Any("kind", gvr))
+				err = kubeClient.dynamicClient.Resource(gvr).DeleteCollection(ctx, deleteOptions(), allListOptions())
 				if err != nil {
 					return fmt.Errorf("unable to remove cluster CRD %q: %w", gvr, err)
 				}
