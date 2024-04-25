@@ -104,7 +104,7 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   defp tabs(assigns) do
     ~H"""
-    <.tab_bar>
+    <.tab_bar class="mb-4">
       <:tab
         :for={{title, path, live_action} <- resource_tabs()}
         selected={@live_action == live_action}
