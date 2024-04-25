@@ -1,0 +1,33 @@
+<div class="flex justify-between ">
+  <div class="gap-4 lg:gap-6 flex items-center justify-center">
+  
+    <span class="text-sm">First</span>
+
+    <h5 class="text-base font-medium text-gray-darkest dark:text-gray-light font-semibold">
+  
+      Main Text
+    
+</h5>
+  
+</div><div class="gap-4 lg:gap-6 flex items-center justify-center">
+  
+    <span class="text-sm">Field Name</span>
+
+    <h5 class="text-base font-medium text-gray-darkest dark:text-gray-light font-semibold">
+  
+      More Text
+    
+</h5>
+  
+</div><div class="gap-4 lg:gap-6 flex items-center justify-center">
+  
+    <span class="text-sm">Views</span>
+
+    <h5 class="text-base font-medium text-gray-darkest dark:text-gray-light font-semibold">
+  
+      200
+    
+</h5>
+  
+</div>
+</div>

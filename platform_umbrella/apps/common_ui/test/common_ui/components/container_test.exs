@@ -50,7 +50,7 @@ defmodule CommonUI.Components.ContainerTest do
   end
 
   describe "flex" do
-    test "flex contains things" do
+    component_snapshot_test "flex contains things" do
       assigns = %{}
 
       ~H"""
@@ -61,11 +61,22 @@ defmodule CommonUI.Components.ContainerTest do
       """
     end
 
-    test "flex has column that flex-cols" do
+    component_snapshot_test "flex has column that flex-cols" do
       assigns = %{}
 
       ~H"""
       <.flex column>
+        <div>test</div>
+        <div>test</div>
+      </.flex>
+      """
+    end
+
+    component_snapshot_test "flex has gaps" do
+      assigns = %{}
+
+      ~H"""
+      <.flex gaps={1}>
         <div>test</div>
         <div>test</div>
       </.flex>

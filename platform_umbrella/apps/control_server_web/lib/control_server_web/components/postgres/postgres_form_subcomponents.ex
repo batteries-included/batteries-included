@@ -268,8 +268,9 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         />
       </.grid>
 
-      <.data_horizontal_bolded
+      <.data_list
         :if={@form[:virtual_size].value != "custom"}
+        variant="horizontal-bolded"
         class="mt-3 mb-5"
         data={[
           {"Storage size:", @form[:storage_size].value |> Memory.format_bytes(true) || "0GB"},

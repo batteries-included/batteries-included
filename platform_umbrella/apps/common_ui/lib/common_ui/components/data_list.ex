@@ -5,40 +5,18 @@ defmodule CommonUI.Components.DataList do
   import CommonUI.Components.Container
   import CommonUI.Components.Typography
 
-  @doc """
-  Renders a data list.
-
-  ## Examples
-
-      <.data_list>
-        <:item title="Title"><%= @post.title %></:item>
-        <:item title="Views"><%= @post.views %></:item>
-      </.data_list>
-  """
-  slot :item, required: true do
-    attr(:title, :string, required: true)
-  end
-
-  def data_list(assigns) do
-    ~H"""
-    <.grid columns={12} class="text-darker dark:text-gray-lighter">
-      <%= for item <- @item || [] do %>
-        <div class="text-xl leading-4 col-span-5">
-          <%= item.title %>
-        </div>
-        <div class="text-base leading-4 col-span-7">
-          <%= render_slot(item) %>
-        </div>
-      <% end %>
-    </.grid>
-    """
-  end
-
+  attr :variant, :string, values: ["horizontal-plain", "horizontal-bolded"]
   attr :data, :list, doc: "data to display. A list of tuples: [{key, value}, {key, value}]"
-  attr :class, :string, default: ""
+  attr :class, :any, default: nil
+  attr :rest, :global
+
   slot :inner_block
 
-  def data_horizontal_plain(assigns) do
+  slot :item do
+    attr :title, :string, required: true
+  end
+
+  def data_list(%{variant: "horizontal-plain"} = assigns) do
     ~H"""
     <div>
       <span
@@ -54,11 +32,7 @@ defmodule CommonUI.Components.DataList do
     """
   end
 
-  attr :data, :list, doc: "data to display. A list of tuples: [{key, value}, {key, value}]"
-  attr :class, :string, default: ""
-  attr :rest, :global
-
-  def data_horizontal_bolded(assigns) do
+  def data_list(%{variant: "horizontal-bolded"} = assigns) do
     ~H"""
     <div {@rest} class={["flex justify-between", @class]}>
       <.flex :for={{key, value} <- @data} class="items-center justify-center">
@@ -69,6 +43,22 @@ defmodule CommonUI.Components.DataList do
         </.h5>
       </.flex>
     </div>
+    """
+  end
+
+  def data_list(assigns) do
+    ~H"""
+    <.grid columns={12} class={["text-darker dark:text-gray-lighter", @class]}>
+      <%= for item <- @item do %>
+        <div class="text-xl leading-4 col-span-5">
+          <%= item.title %>
+        </div>
+
+        <div class="text-base leading-4 col-span-7">
+          <%= render_slot(item) %>
+        </div>
+      <% end %>
+    </.grid>
     """
   end
 end

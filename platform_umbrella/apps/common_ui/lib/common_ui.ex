@@ -42,8 +42,6 @@ defmodule CommonUI do
       import CommonUI.Components.MutliSelect
       import CommonUI.Components.Panel
       import CommonUI.Components.Progress
-      import CommonUI.Components.RoundedLabel
-      import CommonUI.Components.Stats
       import CommonUI.Components.TabBar
       import CommonUI.Components.Table
       import CommonUI.Components.Tooltip

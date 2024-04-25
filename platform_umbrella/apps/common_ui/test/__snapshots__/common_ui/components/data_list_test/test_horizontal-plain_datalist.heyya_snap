@@ -1,0 +1,9 @@
+<div>
+  <span class="text-sm mr-4 font-light uppercase text-gray-950 dark:text-white ">
+    First=Main Text
+  </span><span class="text-sm mr-4 font-light uppercase text-gray-950 dark:text-white ">
+    Field Name=More Text
+  </span><span class="text-sm mr-4 font-light uppercase text-gray-950 dark:text-white ">
+    Views=200
+  </span>
+</div>

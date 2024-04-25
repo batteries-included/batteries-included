@@ -3,24 +3,30 @@ defmodule CommonUI.Components.BadgeTest do
 
   import CommonUI.Components.Badge
 
-  describe "badge component" do
-    component_snapshot_test "with value" do
-      assigns = %{}
+  component_snapshot_test "badge with value" do
+    assigns = %{}
 
-      ~H"""
-      <.badge label="Foobar" value={5} />
-      """
-    end
+    ~H"""
+    <.badge label="Foobar" value={5} />
+    """
+  end
 
-    component_snapshot_test "with items" do
-      assigns = %{}
+  component_snapshot_test "badge with items" do
+    assigns = %{}
 
-      ~H"""
-      <.badge>
-        <:item label="Foo">Bar</:item>
-        <:item label="Baz">Qux</:item>
-      </.badge>
-      """
-    end
+    ~H"""
+    <.badge>
+      <:item label="Foo">Bar</:item>
+      <:item label="Baz">Qux</:item>
+    </.badge>
+    """
+  end
+
+  component_snapshot_test "minimal badge" do
+    assigns = %{}
+
+    ~H"""
+    <.badge minimal label="Foobar" />
+    """
   end
 end

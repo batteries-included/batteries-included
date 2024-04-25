@@ -10,7 +10,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def label_panel(assigns) do
     ~H"""
     <.panel title="Labels" class={@class}>
-      <.data_horizontal_plain data={labels(@resource)} />
+      <.data_list variant="horizontal-plain" data={labels(@resource)} />
     </.panel>
     """
   end

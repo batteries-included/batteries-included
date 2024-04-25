@@ -104,7 +104,8 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
           />
         </.grid>
 
-        <.data_horizontal_bolded
+        <.data_list
+          variant="horizontal-bolded"
           class="mt-3 mb-5"
           data={[
             {"Storage size:",

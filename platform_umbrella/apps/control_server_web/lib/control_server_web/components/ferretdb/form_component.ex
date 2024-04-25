@@ -48,8 +48,9 @@ defmodule ControlServerWeb.FerretDBFormComponent do
               <.input field={@form[:instances]} type="range" min="1" max="3" step="1" />
             </.grid>
           </.grid>
-          <.data_horizontal_bolded
+          <.data_list
             :if={@form[:virtual_size].value != "custom"}
+            variant="horizontal-bolded"
             class="mt-3 mb-5"
             data={[
               {"Memory limits:", @form[:memory_limits].value |> Memory.format_bytes(true)},

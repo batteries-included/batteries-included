@@ -3,9 +3,10 @@ defmodule Storybook.Components.DataList do
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Components.DataList.data_list/1
+  def container, do: {:div, class: "w-full"}
 
-  def variations,
-    do: [
+  def variations do
+    [
       %Variation{
         id: :default,
         slots: [
@@ -13,6 +14,29 @@ defmodule Storybook.Components.DataList do
           ~s|<:item title="Field Name">More Text</:item>|,
           ~s|<:item title="Views">200</:item>|
         ]
+      },
+      %Variation{
+        id: :horizontal_plain,
+        attributes: %{
+          variant: "horizontal-plain",
+          data: [
+            {"First", "Main Text"},
+            {"Field Name", "More Text"},
+            {"Views", 200}
+          ]
+        }
+      },
+      %Variation{
+        id: :horizontal_bolded,
+        attributes: %{
+          variant: "horizontal-bolded",
+          data: [
+            {"First:", "Main Text"},
+            {"Field Name:", "More Text"},
+            {"Views:", 200}
+          ]
+        }
       }
     ]
+  end
 end

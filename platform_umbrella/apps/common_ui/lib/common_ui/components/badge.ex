@@ -4,15 +4,28 @@ defmodule CommonUI.Components.Badge do
 
   attr :value, :any
   attr :label, :any, default: nil
+  attr :minimal, :boolean, default: false
+  attr :class, :any, default: nil
   attr :rest, :global
 
   slot :item do
     attr :label, :any, required: true
   end
 
+  def badge(%{minimal: true} = assigns) do
+    ~H"""
+    <div class={[
+      "bg-gray-lighter dark:bg-gray-darkest-tint text-xs text-white dark:text-gray-darker-tint font-semibold rounded px-1 py-0.5 whitespace-nowrap",
+      @class
+    ]}>
+      <%= @label %>
+    </div>
+    """
+  end
+
   def badge(%{value: _} = assigns) do
     ~H"""
-    <div class={[badge_class(), "rounded-xl gap-3 px-6 py-3"]} {@rest}>
+    <div class={["rounded-xl gap-3 px-6 py-3", badge_class(), @class]} {@rest}>
       <span class="text-2xl font-semibold"><%= @value %></span>
       <span><%= @label %></span>
     </div>
@@ -23,8 +36,9 @@ defmodule CommonUI.Components.Badge do
     ~H"""
     <div
       class={[
+        "rounded-lg divide-x divide-solid divide-gray-lighter dark:divide-gray-darker",
         badge_class(),
-        "rounded-lg divide-x divide-solid divide-gray-lighter dark:divide-gray-darker"
+        @class
       ]}
       {@rest}
     >

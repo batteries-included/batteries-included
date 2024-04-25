@@ -196,8 +196,9 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
           options={Service.preset_options_for_select()}
         />
       </.grid>
-      <.data_horizontal_bolded
+      <.data_list
         :if={@form[:virtual_size].value != "custom"}
+        variant="horizontal-bolded"
         class="mt-3 mb-5"
         data={[
           {"Memory limits:", @form[:memory_limits].value |> Memory.format_bytes(true)},

@@ -1,0 +1,29 @@
+<div class="grid-cols-12 gap-4 lg:gap-6 grid text-darker dark:text-gray-lighter">
+  
+  
+    <div class="text-xl leading-4 col-span-5">
+      First
+    </div>
+
+    <div class="text-base leading-4 col-span-7">
+      Main Text
+    </div>
+  
+    <div class="text-xl leading-4 col-span-5">
+      Field Name
+    </div>
+
+    <div class="text-base leading-4 col-span-7">
+      More Text
+    </div>
+  
+    <div class="text-xl leading-4 col-span-5">
+      Views
+    </div>
+
+    <div class="text-base leading-4 col-span-7">
+      200
+    </div>
+  
+
+</div>

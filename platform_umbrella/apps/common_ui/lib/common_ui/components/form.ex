@@ -21,26 +21,25 @@ defmodule CommonUI.Components.Form do
       </.simple_form>
 
   """
-  attr :for, :any, default: nil, doc: "the datastructure for the form"
-  attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
+  attr :id, :any, default: nil
   attr :variant, :string, values: ["stepped", "nested"]
   attr :flash, :map, default: %{}
   attr :title, :string, default: nil
   attr :description, :string, default: nil
   attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(method action)
+  attr :rest, :global, include: ~w(for as method action)
 
   slot :inner_block, required: true
-  slot :actions, doc: "the slot for form actions, such as a submit button"
+  slot :actions
 
   def simple_form(%{variant: "stepped"} = assigns) do
     ~H"""
-    <.form for={@for} as={@as} class={["flex flex-col h-full", @class]} novalidate {@rest}>
+    <.form id={@id} class={["flex flex-col h-full", @class]} novalidate {@rest}>
       <div class={["grid lg:grid-cols-[2fr,1fr] content-start flex-1 gap-4", @class]}>
         <div class="row-start-2 lg:row-start-1">
           <.panel title={@title}>
             <.simple_form variant="nested">
-              <.flash_group flash={@flash} />
+              <.flash_group id={"#{@id}-flash"} flash={@flash} />
 
               <%= render_slot(@inner_block) %>
             </.simple_form>
@@ -75,10 +74,10 @@ defmodule CommonUI.Components.Form do
 
   def simple_form(assigns) do
     ~H"""
-    <.form for={@for} as={@as} {@rest}>
+    <.form id={@id} {@rest}>
       <.simple_form variant="nested" class={@class}>
         <.h2 :if={@title}><%= @title %></.h2>
-        <.flash_group flash={@flash} />
+        <.flash_group id={"#{@id}-flash"} flash={@flash} />
 
         <%= render_slot(@inner_block) %>
 

@@ -22,6 +22,7 @@ defmodule CommonUI.Components.Input do
   attr :icon, :atom, default: nil
   attr :options, :list, default: []
   attr :multiple, :boolean, default: false
+  attr :debounce, :string, default: "blur"
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(autocomplete autofocus min max step maxlength disabled required)
 
@@ -144,18 +145,19 @@ defmodule CommonUI.Components.Input do
     assigns = IDHelpers.provide_id(assigns)
 
     ~H"""
-    <div id={@id} class="relative flex-1" phx-hook="Range">
+    <div id={@id} class="relative" phx-hook="Range">
       <input
         id={"#{@id}-input"}
         name={@name}
         value={@value}
         type="range"
         class={[
-          "relative z-30 appearance-none bg-transparent cursor-pointer w-full align-middle",
+          "relative z-30 appearance-none bg-transparent cursor-pointer w-full",
           "slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full",
           "slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary",
           "slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint",
-          range_class(@show_value)
+          @show_value && "h-[32px] slider-thumb:size-[32px]",
+          !@show_value && "h-[24px] slider-thumb:size-[24px] "
         ]}
         {@rest}
       />
@@ -163,20 +165,28 @@ defmodule CommonUI.Components.Input do
       <div
         id={"#{@id}-progress-bg"}
         phx-update="ignore"
-        class="absolute top-[15px] h-[4px] z-10 bg-gray-lighter dark:bg-gray-darkest-tint w-full rounded pointer-events-none"
+        class={[
+          "absolute h-[4px] z-10 bg-gray-lighter dark:bg-gray-darkest-tint w-full rounded pointer-events-none",
+          @show_value && "top-[14px]",
+          !@show_value && "top-[10px]"
+        ]}
       />
 
       <div
         id={"#{@id}-progress"}
         phx-update="ignore"
-        class="absolute top-[15px] h-[4px] z-20 bg-primary rounded-l pointer-events-none"
+        class={[
+          "absolute h-[4px] z-20 bg-primary rounded-l pointer-events-none",
+          @show_value && "top-[14px]",
+          !@show_value && "top-[10px]"
+        ]}
       />
 
       <div
         :if={@show_value}
         id={"#{@id}-value"}
         phx-update="ignore"
-        class="absolute top-0.5 size-[32px] z-30 flex items-center justify-center font-semibold text-primary pointer-events-none"
+        class="absolute top-0 bottom-0 inline-flex items-center justify-center size-[32px] z-30 font-semibold text-primary pointer-events-none"
       >
         <%= @value %>
       </div>
@@ -229,7 +239,7 @@ defmodule CommonUI.Components.Input do
       <textarea
         name={@name}
         placeholder={@placeholder}
-        phx-debounce="blur"
+        phx-debounce={@debounce}
         class={[
           input_class(@errors),
           @class
@@ -265,7 +275,7 @@ defmodule CommonUI.Components.Input do
           name={@name}
           value={normalize_value(@type, @value)}
           placeholder={@placeholder}
-          phx-debounce="blur"
+          phx-debounce={@debounce}
           class={[
             input_class(@errors),
             @class
@@ -303,9 +313,6 @@ defmodule CommonUI.Components.Input do
       "bg-gray-lightest dark:bg-gray-darkest-tint"
     ]
   end
-
-  defp range_class(true), do: "slider-thumb:size-[32px]"
-  defp range_class(false), do: "slider-thumb:size-[24px]"
 
   attr :label, :string, default: nil
   attr :note, :string, default: nil

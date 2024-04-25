@@ -3,11 +3,11 @@ defmodule CommonUI.Components.FormTest do
 
   import CommonUI.Components.Form
 
-  component_snapshot_test "stepped form" do
+  component_snapshot_test "default form" do
     assigns = %{}
 
     ~H"""
-    <.simple_form variant="stepped" title="Some title" description="Some description">
+    <.simple_form title="Some title">
       <div>Some inputs would go here</div>
 
       <:actions>
@@ -17,11 +17,25 @@ defmodule CommonUI.Components.FormTest do
     """
   end
 
-  component_snapshot_test "nested form" do
-    assigns = %{}
+  component_snapshot_test "form with error" do
+    assigns = %{flash: %{"error" => "This is an error"}}
 
     ~H"""
-    <.simple_form variant="nested">
+    <.simple_form title="Some title" flash={@flash}>
+      <div>Some inputs would go here</div>
+
+      <:actions>
+        <div>Some actions would go here</div>
+      </:actions>
+    </.simple_form>
+    """
+  end
+
+  component_snapshot_test "stepped form" do
+    assigns = %{flash: %{"info" => "This is a test"}}
+
+    ~H"""
+    <.simple_form variant="stepped" title="Some title" description="Some description" flash={@flash}>
       <div>Some inputs would go here</div>
 
       <:actions>

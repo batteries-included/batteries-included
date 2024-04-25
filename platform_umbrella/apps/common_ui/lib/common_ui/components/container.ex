@@ -8,8 +8,7 @@ defmodule CommonUI.Components.Container do
   attr :columns, :any, default: %{"sm" => 1, "lg" => 2, "xl" => 2, "2xl" => 4}
   attr :gaps, :any, default: %{"sm" => 4, "lg" => 6}
   attr :class, :any, default: nil
-
-  attr :rest, :global, include: ["@click", "@keydown", "@keyup", "@mouseover", "@focus", "@blur", "@change"]
+  attr :rest, :global
 
   slot :inner_block
 
@@ -185,7 +184,7 @@ defmodule CommonUI.Components.Container do
   attr :gaps, :any, default: %{"sm" => 4, "lg" => 6}
   attr :class, :any, default: nil
   attr :column, :boolean, default: false, required: false
-  attr :rest, :global, include: ["@click", "@keydown", "@keyup", "@mouseover", "@focus", "@blur", "@change"]
+  attr :rest, :global
 
   slot :inner_block
 

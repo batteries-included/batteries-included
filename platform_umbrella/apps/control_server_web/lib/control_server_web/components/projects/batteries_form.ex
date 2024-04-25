@@ -105,7 +105,12 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:search]} icon={:magnifying_glass} placeholder="Type to search..." />
+        <.input
+          field={@form[:search]}
+          icon={:magnifying_glass}
+          placeholder="Type to search..."
+          debounce="10"
+        />
 
         <.tab_bar variant="secondary">
           <:tab
@@ -184,12 +189,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
             <%= Naming.humanize(@battery.type) %>
           </h3>
 
-          <div
-            :if={@installed}
-            class="bg-gray-lighter dark:bg-gray-darkest-tint text-xs text-white dark:text-gray-darker-tint font-semibold rounded px-1 py-0.5 whitespace-nowrap"
-          >
-            ALREADY INSTALLED
-          </div>
+          <.badge :if={@installed} label="ALREADY INSTALLED" minimal />
         </div>
 
         <p class="text-sm">
