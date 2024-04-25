@@ -6,4 +6,5 @@ defmodule CommonCore.Defaults.Namespaces do
   def ai, do: "battery-ai"
   def istio, do: "battery-istio"
   def knative, do: "battery-knative"
+  def backend, do: "battery-backend"
 end

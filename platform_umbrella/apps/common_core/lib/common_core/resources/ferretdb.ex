@@ -2,6 +2,7 @@ defmodule CommonCore.Resources.FerretDB do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "ferretdb"
 
+  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.FerretDB.FerretService
@@ -123,32 +124,25 @@ defmodule CommonCore.Resources.FerretDB do
   defp resources(%FerretService{} = ferret_service) do
     limits =
       %{}
-      |> maybe_add("cpu", format_resource(ferret_service.cpu_limits))
-      |> maybe_add("memory", format_resource(ferret_service.memory_limits))
+      |> maybe_put("cpu", format_cpu_resource(ferret_service.cpu_limits))
+      |> maybe_put("memory", format_resource(ferret_service.memory_limits))
 
     requests =
       %{}
-      |> maybe_add("cpu", format_resource(ferret_service.cpu_requested))
-      |> maybe_add("memory", format_resource(ferret_service.memory_requested))
+      |> maybe_put("cpu", format_cpu_resource(ferret_service.cpu_requested))
+      |> maybe_put("memory", format_resource(ferret_service.memory_requested))
 
-    %{} |> maybe_add("limits", limits) |> maybe_add("requests", requests)
-  end
-
-  @spec maybe_add(map(), String.t(), integer() | list(any()) | String.t() | map() | nil) :: map()
-  defp maybe_add(map, _key, value) when value == "", do: map
-  defp maybe_add(map, _key, value) when value == %{}, do: map
-  defp maybe_add(map, key, _value) when key == "", do: map
-
-  defp maybe_add(map, key, value) do
-    if value do
-      Map.put(map, key, value)
-    else
-      map
-    end
+    %{} |> maybe_put("limits", limits) |> maybe_put("requests", requests)
   end
 
   defp format_resource(nil), do: nil
   defp format_resource(value), do: to_string(value)
+
+  defp format_cpu_resource(nil), do: nil
+
+  defp format_cpu_resource(value) do
+    "#{value}m"
+  end
 
   def service_name(%FerretService{} = ferret_service) do
     "ferret-#{ferret_service.name}"

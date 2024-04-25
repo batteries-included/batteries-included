@@ -22,6 +22,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
 
     defaultable_field :bootstrap_image, :string, default: Defaults.Images.bootstrap_image()
     defaultable_field :image, :string, default: Defaults.Images.control_server_image()
+
     field :secret_key, :string
     field :cluster_type, Ecto.Enum, values: [:kind, :aws, :provided], default: :kind
     field :default_size, Ecto.Enum, values: [:tiny, :small, :medium, :large, :xlarge, :huge]

@@ -3,6 +3,38 @@ defmodule CommonCore.Resources.MapUtils do
   Utility functions
   """
 
+  @doc """
+  Put `key` in `map` with `value` if `value` is not an empty string or empty map.
+  Returns the original map if `value` is an empty string or empty map.
+
+  ### Examples
+
+        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "a", "b")
+        %{"a" => "b"}
+
+        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "a", "")
+        %{}
+
+        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "a", %{})
+        %{}
+
+        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "", "b")
+        %{}
+  """
+
+  @spec maybe_put(map(), String.t(), integer() | list(any()) | String.t() | map() | nil) :: map()
+  def maybe_put(map, _key, value) when value == "", do: map
+  def maybe_put(map, _key, value) when value == %{}, do: map
+  def maybe_put(map, key, _value) when key == "", do: map
+
+  def maybe_put(map, key, value) do
+    if value do
+      Map.put(map, key, value)
+    else
+      map
+    end
+  end
+
   @doc ~S"""
 
   Put `key` in `map` with `value` if `predicate` is `true`
