@@ -5,11 +5,13 @@ defmodule CommonCore.Knative.Service do
   import CommonCore.Util.EctoValidations
   import Ecto.Changeset
 
+  alias CommonCore.Projects.Project
+
   @required_fields ~w(name)a
-  @optional_fields ~w(rollout_duration oauth2_proxy)a
+  @optional_fields ~w(rollout_duration oauth2_proxy project_id)a
 
   @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
+  @derive {Jason.Encoder, except: [:__meta__, :project]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   typed_schema "knative_services" do
@@ -18,9 +20,12 @@ defmodule CommonCore.Knative.Service do
     field :oauth2_proxy, :boolean, default: false
     field :kube_internal, :boolean, default: false
 
-    embeds_many(:containers, CommonCore.Containers.Container, on_replace: :delete)
-    embeds_many(:init_containers, CommonCore.Containers.Container, on_replace: :delete)
-    embeds_many(:env_values, CommonCore.Containers.EnvValue, on_replace: :delete)
+    embeds_many :containers, CommonCore.Containers.Container, on_replace: :delete
+    embeds_many :init_containers, CommonCore.Containers.Container, on_replace: :delete
+    embeds_many :env_values, CommonCore.Containers.EnvValue, on_replace: :delete
+
+    belongs_to :project, Project
+
     timestamps()
   end
 

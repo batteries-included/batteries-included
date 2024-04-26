@@ -7,6 +7,10 @@ defmodule CommonCore.Projects.Project do
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
 
+  @required_fields ~w(name type)a
+  @optional_fields ~w(description)a
+
+  @derive {Jason.Encoder, except: [:__meta__]}
   @timestamps_opts [type: :utc_datetime_usec]
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -22,9 +26,11 @@ defmodule CommonCore.Projects.Project do
   end
 
   def changeset(project, attrs) do
+    fields = @required_fields ++ @optional_fields
+
     project
-    |> cast(attrs, [:name, :type, :description])
-    |> validate_required([:name, :type])
+    |> cast(attrs, fields)
+    |> validate_required(@required_fields)
     |> validate_length(:description, max: 1000)
   end
 

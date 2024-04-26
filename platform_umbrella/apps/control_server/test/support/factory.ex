@@ -15,6 +15,14 @@ defmodule ControlServer.Factory do
   alias CommonCore.Timeline
   alias CommonCore.Timeline.TimelineEvent
 
+  def project_factory do
+    %CommonCore.Projects.Project{
+      name: sequence("project-"),
+      type: sequence(:type, [:web, :ai, :db]),
+      description: sequence("description-")
+    }
+  end
+
   def postgres_user_factory do
     %Postgres.PGUser{
       username: sequence("postgres_cluster-"),

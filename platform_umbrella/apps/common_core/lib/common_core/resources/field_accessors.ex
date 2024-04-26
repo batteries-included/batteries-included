@@ -23,10 +23,10 @@ defmodule CommonCore.Resources.FieldAccessors do
     resource |> status() |> Map.get("conditions", [])
   end
 
-  def creation_timestamp(resource) when is_nil(resource), do: nil
+  def creation_timestamp(nil), do: nil
 
   def creation_timestamp(resource) do
-    resource |> metadata() |> Map.get("creationTimestamp")
+    Map.get(metadata(resource) || %{}, "creationTimestamp")
   end
 
   def spec(resource) when is_nil(resource), do: %{}

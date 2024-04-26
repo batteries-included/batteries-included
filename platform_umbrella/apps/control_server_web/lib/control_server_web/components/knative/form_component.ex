@@ -20,7 +20,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      socket
      |> assign_new(:save_info, fn -> "service:save" end)
      |> assign_new(:save_target, fn -> nil end)
-     |> assign_new(:sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
+     |> assign_sso_enabled()
+     |> assign_projects()
      |> assign_container(nil)
      |> assign_container_idx(nil)
      |> assign_env_value(nil)
@@ -48,6 +49,14 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
       init_containers: init_containers,
       env_values: env_values
     )
+  end
+
+  defp assign_projects(socket) do
+    assign(socket, projects: ControlServer.Projects.list_projects())
+  end
+
+  defp assign_sso_enabled(socket) do
+    assign_new(socket, :sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
   end
 
   def assign_url(socket, service) do
@@ -252,9 +261,19 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           type="switch"
           label="Protect with OAuth2 Proxy"
         />
+        <.input
+          field={@form[:project_id]}
+          type="select"
+          label="Project"
+          options={project_select_options(@projects)}
+        />
       </.flex>
     </.panel>
     """
+  end
+
+  defp project_select_options(projects) do
+    Enum.map(projects, &{&1.name, &1.id})
   end
 
   defp name_panel(assigns) do
@@ -295,7 +314,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             init_containers={@init_containers}
             containers={@containers}
           />
-          <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} />
+          <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} projects={@projects} />
           <.env_var_panel env_values={@env_values} editable target={@myself} />
           <!-- Hidden inputs for embeds -->
           <.containers_hidden_form field={@form[:containers]} />
