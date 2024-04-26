@@ -49,7 +49,7 @@
     "@iconify-json/tabler": "^1.1.110",
     "@playform/compress": "^0.0.3",
     "@tailwindcss/forms": "^0.5.7",
-    "@tailwindcss/typography": "^0.5.12",
+    "@tailwindcss/typography": "^0.5.13",
     "@types/js-yaml": "^4.0.9",
     "@types/lodash.merge": "^4.6.9",
     "js-yaml": "^4.1.0",
