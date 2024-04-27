@@ -13,6 +13,9 @@ defmodule CommonCore.Postgres.Cluster do
 
   require Logger
 
+  @required_fields ~w(name storage_size num_instances type)a
+  @optional_fields ~w(storage_class cpu_requested cpu_limits memory_requested memory_limits virtual_size virtual_storage_size_range_value project_id)a
+
   @presets [
     %{
       name: "tiny",
@@ -95,33 +98,17 @@ defmodule CommonCore.Postgres.Cluster do
 
   @doc false
   def changeset(cluster, attrs) do
+    fields = Enum.concat(@required_fields, @optional_fields)
+
     cluster
-    |> cast(attrs, [
-      :name,
-      :num_instances,
-      :type,
-      :storage_size,
-      :storage_class,
-      :cpu_requested,
-      :cpu_limits,
-      :memory_requested,
-      :memory_limits,
-      :virtual_size,
-      :virtual_storage_size_range_value,
-      :project_id
-    ])
+    |> cast(attrs, fields)
     |> maybe_fill_in_slug(:name)
     |> downcase_fields([:name])
     |> maybe_set_virtual_size(@presets)
     |> maybe_set_storage_size_slider_value()
     |> cast_embed(:users)
     |> cast_embed(:database)
-    |> validate_required([
-      :name,
-      :storage_size,
-      :num_instances,
-      :type
-    ])
+    |> validate_required(@required_fields)
     |> validate_dns_label(:name)
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)

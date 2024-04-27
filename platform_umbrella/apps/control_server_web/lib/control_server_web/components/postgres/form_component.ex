@@ -20,11 +20,32 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(assigns)
      |> assign(:form, to_form(changeset))
      |> assign(:possible_owners, possible_owners(changeset))
-     |> assign(:possible_storage_classes, possible_storage_classes())
-     |> assign(:possible_namespaces, possible_namespaces())
-     |> assign(:possible_nodes, possible_nodes())
+     |> assign_possible_namespaces()
+     |> assign_possible_nodes()
+     |> assign_possible_storage_classes()
+     |> assign_projects()
      |> assign(:num_instances, cluster.num_instances)
      |> assign(:pg_user_form, nil)}
+  end
+
+  defp assign_projects(socket) do
+    projects = ControlServer.Projects.list_projects()
+    assign(socket, projects: projects)
+  end
+
+  defp assign_possible_nodes(socket) do
+    possible_nodes = possible_nodes()
+    assign(socket, possible_nodes: possible_nodes)
+  end
+
+  defp assign_possible_namespaces(socket) do
+    possible_namespaces = possible_namespaces()
+    assign(socket, possible_namespaces: possible_namespaces)
+  end
+
+  defp assign_possible_storage_classes(socket) do
+    possible_storage_classes = possible_storage_classes()
+    assign(socket, possible_storage_classes: possible_storage_classes)
   end
 
   @impl Phoenix.LiveComponent
@@ -137,6 +158,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
+        dbg(changeset)
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
@@ -175,7 +197,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
     # Finally assume that previous owners are ok
     existing_owner =
-      Changeset.get_field(changeset, :database, %{owner: nil}).owner
+      (Changeset.get_field(changeset, :database, %{owner: nil}) || %{owner: nil}).owner
 
     usernames
     |> Enum.concat([existing_owner])
@@ -191,6 +213,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       <.form
         id="cluster-form"
         for={@form}
+        novalidate
         phx-submit="save"
         phx-change="validate"
         phx-target={@myself}
@@ -240,7 +263,18 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
               </.inputs_for>
             </.panel>
 
-            <.panel title="Advanced Settings" variant="gray"></.panel>
+            <.panel title="Advanced Settings" variant="gray">
+              <.flex column>
+                <.input
+                  label="Project"
+                  field={@form[:project_id]}
+                  type="select"
+                  placeholder="Choose Project"
+                  placeholder_selectable={true}
+                  options={Enum.map(@projects, &{&1.name, &1.id})}
+                />
+              </.flex>
+            </.panel>
           </.grid>
         </.flex>
       </.form>

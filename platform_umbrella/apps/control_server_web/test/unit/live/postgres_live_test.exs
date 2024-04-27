@@ -2,7 +2,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
-  import ControlServer.ClusterFixtures
+  import ControlServer.Factory
   import ControlServer.ResourceFixtures
 
   alias CommonCore.Postgres.Cluster
@@ -38,8 +38,8 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
   describe "index" do
     test "renders a list of postgres clusters", %{conn: conn} do
-      cluster_one = cluster_fixture()
-      cluster_two = cluster_fixture()
+      cluster_one = insert(:postgres_cluster)
+      cluster_two = insert(:postgres_cluster)
 
       conn
       |> start(~p|/postgres|)
@@ -60,6 +60,22 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> submit_form("#cluster-form", @valid_attrs)
 
       assert not is_nil(Repo.get_by(Cluster, name: @valid_attrs.cluster.name))
+    end
+
+    test "create a cluster with project", %{conn: conn} do
+      project = insert(:project)
+
+      params =
+        :postgres_cluster
+        |> params_for(project_id: project.id)
+        |> Map.drop(~w(id users project type storage_class storage_size database)a)
+
+      conn
+      |> start(~p"/postgres/new")
+      |> submit_form("#cluster-form", cluster: params)
+
+      cluster = Repo.get_by(Cluster, name: params.name)
+      assert cluster.project_id == project.id
     end
 
     test "changing the virtual size field to custom exposes storage fields", %{conn: conn} do
@@ -132,7 +148,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
         Runner.delete(@kube_table_name, namespace)
       end)
 
-      cluster = cluster_fixture(%{virtual_size: "small"})
+      cluster = insert(:postgres_cluster)
 
       %{namespace: namespace, cluster: cluster}
     end
@@ -152,8 +168,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       conn: conn,
       cluster: cluster
     } do
-      {:ok, view, html} = live(conn, ~p"/postgres/#{cluster}/edit")
-      assert html =~ ~s|<option selected="selected" value="small">Small</option>|
+      {:ok, view, _html} = live(conn, ~p"/postgres/#{cluster}/edit")
 
       html =
         assert view

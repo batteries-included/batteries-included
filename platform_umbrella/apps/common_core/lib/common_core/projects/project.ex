@@ -4,9 +4,6 @@ defmodule CommonCore.Projects.Project do
 
   import Ecto.Changeset
 
-  alias CommonCore.Postgres.Cluster, as: PGCluster
-  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
-
   @required_fields ~w(name type)a
   @optional_fields ~w(description)a
 
@@ -19,8 +16,9 @@ defmodule CommonCore.Projects.Project do
     field :type, Ecto.Enum, values: [:web, :ai, :db]
     field :description, :string
 
-    has_one :pg_cluster, PGCluster
-    has_one :redis_cluster, RedisCluster
+    has_many :pg_clusters, CommonCore.Postgres.Cluster
+    has_many :redis_clusters, CommonCore.Redis.FailoverCluster
+    has_many :knative_services, CommonCore.Knative.Service
 
     timestamps()
   end

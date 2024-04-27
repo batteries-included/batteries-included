@@ -265,15 +265,13 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           field={@form[:project_id]}
           type="select"
           label="Project"
-          options={project_select_options(@projects)}
+          placeholder="Choose Project"
+          placeholder_selectable={true}
+          options={Enum.map(@projects, &{&1.name, &1.id})}
         />
       </.flex>
     </.panel>
     """
-  end
-
-  defp project_select_options(projects) do
-    Enum.map(projects, &{&1.name, &1.id})
   end
 
   defp name_panel(assigns) do
@@ -295,6 +293,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     ~H"""
     <div>
       <.form
+        novalidate
         for={@form}
         id="service-form"
         phx-change="validate"

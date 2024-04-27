@@ -18,6 +18,7 @@ defmodule CommonUI.Components.Input do
   attr :label, :string, default: nil
   attr :note, :string, default: nil
   attr :placeholder, :string, default: nil
+  attr :placeholder_selectable, :boolean, default: false
   attr :type, :string, default: "text"
   attr :icon, :atom, default: nil
   attr :options, :list, default: []
@@ -57,7 +58,7 @@ defmodule CommonUI.Components.Input do
       <select
         name={@name}
         multiple={@multiple}
-        required={!@multiple}
+        required={!@multiple && !@placeholder_selectable}
         class={[
           input_class(@errors),
           "invalid:text-gray-light dark:invalid:text-gray-dark",
@@ -66,7 +67,12 @@ defmodule CommonUI.Components.Input do
         ]}
         {@rest}
       >
-        <option :if={@multiple == false} value="" disabled selected>
+        <option
+          :if={@multiple == false}
+          value=""
+          disabled={!@placeholder_selectable}
+          selected={!@value || @value == ""}
+        >
           <%= assigns[:placeholder] %>
         </option>
 

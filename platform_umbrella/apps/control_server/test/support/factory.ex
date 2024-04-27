@@ -25,8 +25,8 @@ defmodule ControlServer.Factory do
 
   def postgres_user_factory do
     %Postgres.PGUser{
-      username: sequence("postgres_cluster-"),
-      password: sequence("postgres_password-"),
+      username: sequence("postgres-cluster-"),
+      password: sequence("postgres-password-"),
       roles: ["login"]
     }
   end
@@ -36,10 +36,12 @@ defmodule ControlServer.Factory do
     user_two = build(:postgres_user)
 
     %Postgres.Cluster{
-      name: sequence("postgres_cluster-"),
+      name: sequence("postgres-cluster-"),
       num_instances: sequence(:num_instances, [1, 2, 5]),
       storage_size: 500 * 1024 * 1024,
       storage_class: "default",
+      virtual_size: sequence(:virtual_size, ~w(tiny small medium large xlarge huge)),
+      database: %{name: "postgres", owner: user_one.username},
       users: [user_one, user_two]
     }
   end
