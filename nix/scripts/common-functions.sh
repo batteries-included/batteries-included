@@ -133,11 +133,20 @@ function do_integration_test() {
 
 function try_portforward() {
   local slug=${1:-"dev"}
+  local counter=0
   while true; do
     if ! flock -x -n "${FLAKE_ROOT}/.nix-lock/portforward.lockfile" \
       bash -c "bi postgres port-forward ${slug} controlserver -n battery-base"; then
       log "Port forward failed, retrying..."
-      sleep 1
+      counter=$((counter + 1))
+
+      local sleep_time
+      if [[ $((counter * 2)) -gt 20 ]]; then
+        sleep_time=20
+      else
+        sleep_time=$((counter * 2))
+      fi
+      sleep "${sleep_time}"
     fi
   done
 }
