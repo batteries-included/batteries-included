@@ -14,16 +14,16 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
     project_name = get_in(assigns, [:data, ProjectForm, "name"])
 
     postgres_changeset =
-      PGCluster.changeset(%PGCluster{}, %{
-        name: project_name,
-        virtual_size: "medium"
-      })
+      PGCluster.changeset(
+        KubeServices.SmartBuilder.new_postgres(),
+        %{name: project_name}
+      )
 
     redis_changeset =
-      RedisCluster.changeset(%RedisCluster{}, %{
-        name: project_name,
-        virtual_size: "small"
-      })
+      RedisCluster.changeset(
+        KubeServices.SmartBuilder.new_redis(),
+        %{name: project_name}
+      )
 
     form =
       to_form(%{

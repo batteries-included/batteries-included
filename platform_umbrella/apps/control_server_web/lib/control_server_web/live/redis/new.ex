@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.RedisNew do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Redis.FailoverCluster
   alias ControlServerWeb.Live.Redis.FormComponent
 
   require Logger
@@ -18,11 +17,7 @@ defmodule ControlServerWeb.Live.RedisNew do
   end
 
   defp assign_failover_cluster(socket) do
-    assign(socket, :failover_cluster, %FailoverCluster{
-      num_redis_instances: 1,
-      num_sentinel_instances: 1,
-      virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size())
-    })
+    assign(socket, :failover_cluster, KubeServices.SmartBuilder.new_redis())
   end
 
   defp assign_page_title(socket) do

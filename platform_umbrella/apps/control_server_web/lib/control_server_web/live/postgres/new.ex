@@ -2,9 +2,6 @@ defmodule ControlServerWeb.Live.PostgresNew do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Postgres.Cluster
-  alias CommonCore.Postgres.PGDatabase
-  alias CommonCore.Postgres.PGUser
   alias ControlServerWeb.Live.PostgresFormComponent
 
   require Logger
@@ -12,17 +9,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     # Pre-populate the databases and users with decent permissions
-    cluster = %Cluster{
-      virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size()),
-      database: %PGDatabase{name: "app", owner: "app"},
-      users: [
-        %PGUser{
-          username: "app",
-          roles: ["login", "createdb", "createrole"],
-          credential_namespaces: ["battery-data"]
-        }
-      ]
-    }
+    cluster = KubeServices.SmartBuilder.new_postgres()
 
     {:ok, assign(socket, current_page: :data, cluster: cluster)}
   end

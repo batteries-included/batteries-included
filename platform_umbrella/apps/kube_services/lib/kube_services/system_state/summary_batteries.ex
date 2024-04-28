@@ -75,6 +75,10 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     {:reply, StateSummary.Core.config_field(summary, :default_size) || :tiny, state}
   end
 
+  def handle_call(:core_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, StateSummary.Namespaces.core_namespace(summary), state}
+  end
+
   # Is the battery installed?
   #
   # @param target [pid] the pid of the genserver to query
@@ -93,5 +97,9 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   def default_size(target \\ @me) do
     GenServer.call(target, :default_size)
+  end
+
+  def core_namespace(target \\ @me) do
+    GenServer.call(target, :core_namespace)
   end
 end

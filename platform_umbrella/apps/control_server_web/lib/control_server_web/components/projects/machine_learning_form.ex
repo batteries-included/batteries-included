@@ -15,16 +15,16 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
     project_name = get_in(assigns, [:data, ProjectForm, "name"])
 
     jupyter_changeset =
-      JupyterLabNotebook.changeset(%JupyterLabNotebook{}, %{
-        name: "#{project_name}-notebook",
-        virtual_size: "small"
-      })
+      JupyterLabNotebook.changeset(
+        KubeServices.SmartBuilder.new_jupyter(),
+        %{name: "#{project_name}-notebook"}
+      )
 
     postgres_changeset =
-      Cluster.changeset(%Cluster{}, %{
-        name: "#{project_name}-notebook",
-        virtual_size: "medium"
-      })
+      Cluster.changeset(
+        KubeServices.SmartBuilder.new_postgres(),
+        %{name: "#{project_name}-notebook"}
+      )
 
     form =
       to_form(%{
