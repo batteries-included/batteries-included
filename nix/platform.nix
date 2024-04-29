@@ -1,4 +1,4 @@
-{ inputs, self, ... }:
+{ inputs, ... }:
 
 {
   perSystem = { lib, pkgs, ... }:
@@ -7,16 +7,8 @@
       inherit (inputs.gitignore.lib) gitignoreSource;
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      safeRev = self.shortRev or self.dirtyShortRev;
-      version = "0.12.1";
-      taggedVersion = "0.12.1-${safeRev}";
+      version = "0.12.2";
       beam = pkgs.beam;
-
-      Entrypoint =
-        if pkgs.stdenv.isDarwin then
-          [ ]
-        else
-          [ "${pkgs.tini}/bin/tini" "--" ];
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
 
@@ -56,7 +48,7 @@
         sha256 = "sha256-frWyf9sBSNUc9cV6u2kw3tt4e7qIezBGr+i0q0Jpcd8=";
       };
 
-      control-server = pkgs.callPackage ./platform_release.nix {
+      control-server = pkgs.callPackage ./platform-release.nix {
         inherit version src mixFodDeps pkgs;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
@@ -87,7 +79,7 @@
 
         };
 
-      home-base = pkgs.callPackage ./platform_release.nix {
+      home-base = pkgs.callPackage ./platform-release.nix {
         inherit version src mixFodDeps;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
@@ -96,39 +88,6 @@
 
         pname = "home_base";
         mixEnv = "prod";
-      };
-
-      # These are already in the closure. This just creates symlinks
-      additionalContents = [ pkgs.bash pkgs.coreutils ];
-
-      kube-bootstrap-container = pkgs.dockerTools.buildLayeredImage {
-        name = "kube-bootstrap";
-        tag = taggedVersion;
-        contents = [ kube-bootstrap ] ++ additionalContents;
-        config = {
-          inherit Entrypoint;
-          Cmd = [ "bootstrap" ];
-        };
-      };
-
-      home-base-container = pkgs.dockerTools.buildLayeredImage {
-        name = "home-base";
-        tag = taggedVersion;
-        contents = [ home-base ] ++ additionalContents;
-        config = {
-          inherit Entrypoint;
-          Cmd = [ "home_base" "start" ];
-        };
-      };
-
-      control-server-container = pkgs.dockerTools.buildLayeredImage {
-        name = "control-server";
-        tag = taggedVersion;
-        contents = [ control-server ] ++ additionalContents;
-        config = {
-          inherit Entrypoint;
-          Cmd = [ "control_server" "start" ];
-        };
       };
 
       credo = pkgs.callPackage ./mix-command.nix {
@@ -167,7 +126,7 @@
     in
     {
       packages = {
-        inherit home-base control-server kube-bootstrap home-base-container control-server-container kube-bootstrap-container;
+        inherit home-base control-server kube-bootstrap;
       };
       checks = {
         inherit credo dialyzer format;

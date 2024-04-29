@@ -11,7 +11,8 @@
       pname = "bi";
       modules = ../bi/gomod2nix.toml;
       safeRev = self.shortRev or self.dirtyShortRev;
-      version = "0.12.1-${safeRev}";
+      version = "0.12.2";
+      taggedVersion = "${version}-${safeRev}";
     in
     {
 
@@ -30,7 +31,7 @@
         ];
         tags = [ "netgo" "osusergo" ];
         ldflags = [
-          "-X bi/pkg.Version=${version}"
+          "-X bi/pkg.Version=${taggedVersion}"
         ];
       };
     };

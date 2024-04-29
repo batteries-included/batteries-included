@@ -67,7 +67,10 @@
         ./nix/shell.nix
         ./nix/bi.nix
         ./nix/pastebin.nix
+        ./nix/pastebin-static.nix
+        ./nix/pastebin-containers.nix
         ./nix/platform.nix
+        ./nix/platform-containers.nix
         ./nix/fmt.nix
         ./nix/mission-control.nix
       ];
