@@ -15,7 +15,8 @@ permissions:
 
 env:
   ECR_ROLE: arn:aws:iam::037532365270:role/GHA-Main-ECR-PowerUser
-        
+  REGISTRY_ALIAS: p2f3z8m1
+
 jobs:
   pastebin:
     runs-on: ubuntu-latest
@@ -39,11 +40,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-2
+          aws-region: us-east-1
           role-to-assume: ${{ env.ECR_ROLE }}
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
       - name: Push image to ECR
         if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
         env:
@@ -53,7 +56,7 @@ jobs:
           docker load < ./result
           TAG=$(docker images elliottneilclark/pastebin --format '{{ .Tag }}')
           INPUT="elliottneilclark/pastebin:$TAG"
-          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$TAG"
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
 
@@ -79,11 +82,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-2
+          aws-region: us-east-1
           role-to-assume: ${{ env.ECR_ROLE }}
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
       - name: Push image to ECR
         if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
         env:
@@ -93,7 +98,10 @@ jobs:
           docker load < ./result
           TAG=$(docker images "$REPOSITORY" --format '{{ .Tag }}')
           INPUT="$REPOSITORY:$TAG"
-          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$TAG"
+          docker tag "$INPUT" "$OUTPUT"
+          docker push "$OUTPUT"
+          OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:latest"
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
 
@@ -120,11 +128,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-2
+          aws-region: us-east-1
           role-to-assume: ${{ env.ECR_ROLE }}
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
       - name: Push image to ECR
         if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
         env:
@@ -134,10 +144,10 @@ jobs:
           docker load < ./result
           TAG=$(docker images "$REPOSITORY" --format '{{ .Tag }}')
           INPUT="$REPOSITORY:$TAG"
-          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$TAG"
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
-          OUTPUT="$REGISTRY/$REPOSITORY:latest"
+          OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:latest"
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
 
@@ -163,11 +173,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-2
+          aws-region: us-east-1
           role-to-assume: ${{ env.ECR_ROLE }}
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
       - name: Push image to ECR
         if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
         env:
@@ -177,7 +189,7 @@ jobs:
           docker load < ./result
           TAG=$(docker images "$REPOSITORY" --format '{{ .Tag }}')
           INPUT="$REPOSITORY:$TAG"
-          OUTPUT="$REGISTRY/$REPOSITORY:$TAG"
+          OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$TAG"
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
 
