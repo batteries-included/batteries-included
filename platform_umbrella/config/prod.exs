@@ -36,7 +36,7 @@ import Config
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  level: :error
+  level: :debug
 
 config :kube_services, :clusters, default: :service_account
 config :kube_services, cluster_type: :prod
