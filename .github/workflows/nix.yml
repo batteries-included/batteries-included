@@ -54,9 +54,12 @@ jobs:
           REPOSITORY: pastebin
         run: |
           docker load < ./result
-          TAG=$(docker images elliottneilclark/pastebin --format '{{ .Tag }}')
-          INPUT="elliottneilclark/pastebin:$TAG"
+          TAG=$(docker images "$REPOSITORY" --format '{{ .Tag }}')
+          INPUT="$REPOSITORY:$TAG"
           OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$TAG"
+          docker tag "$INPUT" "$OUTPUT"
+          docker push "$OUTPUT"
+          OUTPUT="$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:latest"
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
 
