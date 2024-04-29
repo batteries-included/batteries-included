@@ -11,8 +11,6 @@
       beam = pkgs.beam;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
-
-      # all elixir and erlange packages
       erlang = beamPackages.erlang;
       elixir = beamPackages.elixir_1_16;
       hex = beamPackages.hex.override {

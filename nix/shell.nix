@@ -15,11 +15,18 @@
       beam = pkgs.beam;
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
       erlang = beamPackages.erlang;
-      rebar = beamPackages.rebar;
-      rebar3 = beamPackages.rebar3;
 
-      # elixir and elixir-ls are using the same version
+      # These build and check.
+      # However by the time that the devShell
+      # is starting on a dev machine we believe
+      # this is good.
+      rebar = beamPackages.rebar.overrideAttrs (_old: { doCheck = false; });
+      rebar3 = beamPackages.rebar3.overrideAttrs (_old: { doCheck = false; });
+
+      # elixir,elixir-ls, and hex are using the same version elixir
+      #
       elixir = beamPackages.elixir_1_16;
+      # elixir-ls needs to be compiled with elixir_ls.release2 for the latest otp version
       elixir-ls = (beamPackages.elixir-ls.override { inherit elixir; }).overrideAttrs (_old: {
         buildPhase =
           ''
@@ -28,6 +35,10 @@
             runHook postBuild
           '';
       });
+      hex = beamPackages.hex.override {
+        elixir = elixir;
+      };
+
 
       elixirNativeTools = with pkgs; [
         erlang
@@ -154,10 +165,8 @@
 
 
         # Install hex if it's not there
-        # However we need to compile the hex app to not run into:
-        # https://github.com/erlang/otp/issues/8238
         find $MIX_HOME -type f -name 'hex.app' -print0 | grep -qz . \
-            || mix archive.install github hexpm/hex branch latest --force
+            || mix local.hex --if-missing
         popd &> /dev/null
       '';
 
