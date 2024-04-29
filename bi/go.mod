@@ -18,6 +18,7 @@ require (
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.3
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.2
 	github.com/pulumi/pulumi/sdk/v3 v3.113.3
+	github.com/samber/slog-multi v1.0.2
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
@@ -154,6 +155,7 @@ require (
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
+	github.com/samber/lo v1.39.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1 // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/shirou/gopsutil/v3 v3.23.12 // indirect

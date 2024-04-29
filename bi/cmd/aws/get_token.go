@@ -14,14 +14,18 @@ var getTokenCmd = &cobra.Command{
 	Use:   "get-token <cluster-name>",
 	Short: "Get an auth token for the cluster",
 	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		clusterName := args[0]
 
 		ttl, err := cmd.Flags().GetDuration("ttl")
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		token, err := eksutil.GetToken(cmd.Context(), clusterName, ttl)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		execCredential := map[string]any{
 			"kind":       "ExecCredential",
@@ -33,7 +37,11 @@ var getTokenCmd = &cobra.Command{
 			},
 		}
 
-		cobra.CheckErr(json.NewEncoder(os.Stdout).Encode(execCredential))
+		if err := json.NewEncoder(os.Stdout).Encode(execCredential); err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 

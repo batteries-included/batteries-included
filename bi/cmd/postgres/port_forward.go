@@ -10,6 +10,7 @@ import (
 	"os/signal"
 
 	"bi/pkg/installs"
+	"bi/pkg/log"
 
 	"github.com/spf13/cobra"
 )
@@ -21,26 +22,38 @@ var portForwardCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	Short: "A brief description of your command",
 	Long:  `Port forward to a postgres database on a local kube cluster.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		url := args[0]
 
 		env, err := installs.NewEnv(cmd.Context(), url)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
+
+		if err := log.CollectDebugLogs(env.DebugLogPath(cmd.CommandPath())); err != nil {
+			return err
+		}
 
 		postgresClusterName := args[1]
 		namespce := cmd.Flag("namespace").Value.String()
 
 		serviceType, err := cmd.Flags().GetString("service-type")
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		kubeClient, err := env.NewBatteryKubeClient()
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 		defer kubeClient.Close()
 
 		serviceName := fmt.Sprintf("pg-%s-%s", postgresClusterName, serviceType)
 
 		localPort, err := cmd.Flags().GetInt("local-port")
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		stopChannel := make(chan struct{}, 1)
 		readyChannel := make(chan struct{})
@@ -50,7 +63,9 @@ var portForwardCmd = &cobra.Command{
 		defer signal.Stop(signals)
 
 		forwarder, err := kubeClient.PortForwardService(cmd.Context(), namespce, serviceName, POSTGRES_PORT, localPort, stopChannel, readyChannel)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		go func() {
 			<-signals
@@ -66,8 +81,11 @@ var portForwardCmd = &cobra.Command{
 			fmt.Println("Starting proxy...[CTRL-C to exit]")
 		}()
 
-		err = forwarder.ForwardPorts()
-		cobra.CheckErr(err)
+		if err := forwarder.ForwardPorts(); err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 

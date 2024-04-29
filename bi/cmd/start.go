@@ -4,6 +4,8 @@ Copyright © 2024 Elliott Clark <elliott@batteriesincl.com>
 package cmd
 
 import (
+	"bi/pkg/installs"
+	"bi/pkg/log"
 	"bi/pkg/start"
 
 	"log/slog"
@@ -35,14 +37,23 @@ Then all the bootstrap resources are created.
 Then the cli waits until the installation is
 complete displaying a url for running control server.`,
 	Args: cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		installURL := args[0]
 
 		slog.Debug("Starting Batteries Included Installation",
 			slog.String("installSpec", installURL))
 
-		err := start.StartInstall(cmd.Context(), installURL)
-		cobra.CheckErr(err)
+		ctx := cmd.Context()
+		env, err := installs.NewEnv(ctx, installURL)
+		if err != nil {
+			return err
+		}
+
+		if err := log.CollectDebugLogs(env.DebugLogPath(cmd.CommandPath())); err != nil {
+			return err
+		}
+
+		return start.StartInstall(ctx, env)
 	},
 }
 

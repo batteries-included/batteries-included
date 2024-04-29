@@ -9,14 +9,7 @@ import (
 	"bi/pkg/installs"
 )
 
-func StartInstall(ctx context.Context, url string) error {
-	// Get the install spec
-	slog.Debug("Fetching install spec", slog.String("url", url))
-	env, err := installs.NewEnv(ctx, url)
-	if err != nil {
-		return fmt.Errorf("unable to create install env: %w", err)
-	}
-
+func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 	slog.Debug("Starting provider")
 	if err := env.StartKubeProvider(ctx); err != nil {
 		return fmt.Errorf("unable to start kube provider: %w", err)

@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"log/slog"
+	"os"
 
 	"bi/pkg/log"
 	biviper "bi/pkg/viper"
@@ -13,7 +14,7 @@ import (
 )
 
 var cfgFile string
-var verbose string
+var verbosity string
 var color bool
 
 // rootCmd represents the base command when called without any subcommands
@@ -24,21 +25,26 @@ var RootCmd = &cobra.Command{
 debugging Batteries Included infrastructure
 on top of kubernetes`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		return log.SetupLogging(verbose, color)
+		return log.SetupLogging(verbosity, color)
 	},
+	// We do our own error logging.
+	SilenceErrors:      true,
+	DisableSuggestions: true,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := RootCmd.Execute()
-	cobra.CheckErr(err)
+	if err := RootCmd.Execute(); err != nil {
+		slog.Error("Error executing command", slog.Any("error", err))
+		os.Exit(1)
+	}
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $XDG_CONFIG_HOME/bi/bi.yaml)")
-	RootCmd.PersistentFlags().StringVarP(&verbose, "verbosity", "v", slog.LevelWarn.String(), "Log level (debug, info, warn, error")
+	RootCmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", slog.LevelWarn.String(), "Log level (debug, info, warn, error")
 	RootCmd.PersistentFlags().BoolVarP(&color, "color", "c", true, "Use color in logs")
 }
 

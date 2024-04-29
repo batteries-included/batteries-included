@@ -2,7 +2,9 @@ package debug
 
 import (
 	"bi/pkg/installs"
+	"bi/pkg/log"
 	"bi/pkg/wireguard"
+	"log/slog"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -12,24 +14,42 @@ var wireGuardConfigCmd = &cobra.Command{
 	Use:   "wireguard-config [install-slug|install-spec-url|install-spec-file]",
 	Short: "Get the wireguard config for a batteries included environment",
 	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		url := args[0]
 
 		env, err := installs.NewEnv(cmd.Context(), url)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
+
+		if err := log.CollectDebugLogs(env.DebugLogPath(cmd.CommandPath())); err != nil {
+			return err
+		}
 
 		wireGuardConfigFile, err := os.Open(env.WireGuardConfigPath())
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 		defer wireGuardConfigFile.Close()
 
 		outputFilePath, err := cmd.Flags().GetString("output")
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
+
+		slog.Debug("Writing wireguard config", slog.String("outputFilePath", outputFilePath))
 
 		outputFile, err := os.OpenFile(outputFilePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 		defer outputFile.Close()
 
-		cobra.CheckErr(wireguard.ToHostConfig(wireGuardConfigFile, outputFile))
+		if err := wireguard.ToHostConfig(wireGuardConfigFile, outputFile); err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 

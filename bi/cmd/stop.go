@@ -6,6 +6,8 @@ package cmd
 import (
 	"path/filepath"
 
+	"bi/pkg/installs"
+	"bi/pkg/log"
 	"bi/pkg/stop"
 
 	"github.com/spf13/cobra"
@@ -17,11 +19,20 @@ var stopCmd = &cobra.Command{
 	Short: "Stop the Batteries Included Installation",
 	Long:  ``,
 	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		installUrl := args[0]
+	RunE: func(cmd *cobra.Command, args []string) error {
+		installURL := args[0]
 
-		err := stop.StopInstall(cmd.Context(), installUrl)
-		cobra.CheckErr(err)
+		ctx := cmd.Context()
+		env, err := installs.NewEnv(ctx, installURL)
+		if err != nil {
+			return err
+		}
+
+		if err := log.CollectDebugLogs(env.DebugLogPath(cmd.CommandPath())); err != nil {
+			return err
+		}
+
+		return stop.StopInstall(ctx, env)
 	},
 }
 

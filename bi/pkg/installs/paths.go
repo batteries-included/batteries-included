@@ -1,7 +1,11 @@
 package installs
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/adrg/xdg"
 )
@@ -12,6 +16,16 @@ func (env *InstallEnv) SummaryPath() string {
 
 func (env *InstallEnv) SpecPath() string {
 	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug, "spec.json")
+}
+
+func (env *InstallEnv) DebugLogPath(cmdPath string) string {
+	now := time.Now()
+	pid := os.Getpid()
+
+	logFilename := fmt.Sprintf("%d-%d-%s.log",
+		now.Unix(), pid, strings.ReplaceAll(cmdPath, " ", "-"))
+
+	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug, "logs", logFilename)
 }
 
 func (env *InstallEnv) KubeConfigPath() string {

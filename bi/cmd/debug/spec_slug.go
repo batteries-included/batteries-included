@@ -14,11 +14,15 @@ import (
 var specSlugCmd = &cobra.Command{
 	Use:   "spec-slug",
 	Short: "Reads in an install spec file and prints the slug",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		spec, err := specs.GetSpecFromURL(args[0])
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		fmt.Println(spec.Slug)
+
+		return nil
 	},
 }
 

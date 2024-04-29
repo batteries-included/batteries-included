@@ -16,13 +16,16 @@ var verifySpecCmd = &cobra.Command{
 	Use:   "verify-spec",
 	Short: "Verify an install spec file",
 	Long:  `Reads in an install spec file and verifies that it is valid.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		for _, pathName := range args {
-			err := verifyFile(pathName)
-			cobra.CheckErr(err)
+			if err := verifyFile(pathName); err != nil {
+				return err
+			}
 
 			fmt.Println("Verified:", pathName)
 		}
+
+		return nil
 	},
 }
 

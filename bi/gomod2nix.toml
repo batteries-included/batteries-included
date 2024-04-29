@@ -409,6 +409,12 @@ schema = 3
   [mod."github.com/sagikazarmark/slog-shim"]
     version = "v0.1.0"
     hash = "sha256-F92BQXXmn3mCwu3mBaGh+joTRItQDSDhsjU6SofkYdA="
+  [mod."github.com/samber/lo"]
+    version = "v1.39.0"
+    hash = "sha256-bFJXbzFpUQM2xoNrHrlzn0RJZujd21H00zGBgo/JEb0="
+  [mod."github.com/samber/slog-multi"]
+    version = "v1.0.2"
+    hash = "sha256-dzIlH+la4UI+1AxHKE9FhC2bae08r9uSc8GCleQ94co="
   [mod."github.com/santhosh-tekuri/jsonschema/v5"]
     version = "v5.3.1"
     hash = "sha256-G3shtLAutSrPjni+C9LAWDIeYfkr4R5pdKUVfAkB518="
