@@ -15,10 +15,10 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
   @primary_key false
   @derive Jason.Encoder
   typed_embedded_schema do
-    defaultable_field :core_namespace, :string, default: Defaults.Namespaces.core()
-    defaultable_field :base_namespace, :string, default: Defaults.Namespaces.base()
-    defaultable_field :data_namespace, :string, default: Defaults.Namespaces.data()
-    defaultable_field :ai_namespace, :string, default: Defaults.Namespaces.ai()
+    field :core_namespace, :string, default: Defaults.Namespaces.core()
+    field :base_namespace, :string, default: Defaults.Namespaces.base()
+    field :data_namespace, :string, default: Defaults.Namespaces.data()
+    field :ai_namespace, :string, default: Defaults.Namespaces.ai()
 
     defaultable_field :bootstrap_image, :string, default: Defaults.Images.bootstrap_image()
     defaultable_field :image, :string, default: Defaults.Images.control_server_image()
@@ -28,7 +28,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     field :default_size, Ecto.Enum, values: [:tiny, :small, :medium, :large, :xlarge, :huge]
     field :cluster_name, :string
 
-    defaultable_field :server_in_cluster, :boolean, default: false
+    field :server_in_cluster, :boolean, default: false
     type_field()
   end
 

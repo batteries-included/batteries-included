@@ -18,19 +18,14 @@
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
-          "ml_namespace": "battery-ml",
+          "ai_namespace": "battery-ai",
           "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
-          "secret_key": "5VIFFSUU76JKXKEPBXJYVRZGKRPFNXOJJDJOUNP3WRA5AGABEU76H2LWF4IRN3LE",
+          "secret_key": "GNMSN4CGXBUVGE4JDVYFIN4DB3OD4Q7QDQMUA5BDJAHR7M2H7VIRBD5TX54W55DJ",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
           "image_override": null,
-          "core_namespace_override": null,
-          "base_namespace_override": null,
-          "data_namespace_override": null,
-          "ml_namespace_override": null,
-          "bootstrap_image_override": null,
-          "server_in_cluster_override": null
+          "bootstrap_image_override": null
         },
         "group": "magic",
         "inserted_at": null,
@@ -39,6 +34,8 @@
     ],
     "keycloak_state": null,
     "backend_services": [],
+    "redis_clusters": [],
+    "knative_services": [],
     "ferret_services": [],
     "postgres_clusters": [
       {
@@ -69,7 +66,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "HBW4HNMWFU63FLRKZEUBQELD",
+            "password": "I2J3K5ATSKMWVDX576KX5ERD",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -79,9 +76,7 @@
         "virtual_storage_size_range_value": 9
       }
     ],
-    "knative_services": [],
     "ip_address_pools": [],
-    "redis_clusters": [],
     "projects": [],
     "kube_state": {}
   },

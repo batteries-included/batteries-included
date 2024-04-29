@@ -37,7 +37,7 @@ defmodule CommonCore.InstallSpec do
     )
   end
 
-  defp kube_cluster(installation) do
-    %{provider: installation.kube_provider, config: installation.kube_provider_config}
+  defp kube_cluster(%{kube_provider: kube_provider, kube_provider_config: config} = _installation) do
+    %{provider: kube_provider, config: config}
   end
 end

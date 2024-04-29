@@ -19,10 +19,21 @@ defmodule CommonCore.Installs.Batteries do
     |> add_battery_core_config(install)
   end
 
-  defp add_battery_core_config(batteries, %Installation{kube_provider: cluster_type, default_size: default_size}) do
+  defp add_battery_core_config(batteries, %Installation{
+         kube_provider: cluster_type,
+         default_size: default_size,
+         usage: usage
+       }) do
     Enum.map(batteries, fn
       %SystemBattery{type: :battery_core, config: config} = sb ->
-        %SystemBattery{sb | config: %BatteryCoreConfig{config | cluster_type: cluster_type, default_size: default_size}}
+        new_config = %BatteryCoreConfig{
+          config
+          | cluster_type: cluster_type,
+            default_size: default_size,
+            server_in_cluster: !Enum.member?([:internal_dev, :internal_int_test], usage)
+        }
+
+        %SystemBattery{sb | config: new_config}
 
       battery ->
         battery
