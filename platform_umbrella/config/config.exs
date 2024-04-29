@@ -40,11 +40,12 @@ config :ex_audit,
   ecto_repos: [ControlServer.Repo],
   version_schema: CommonCore.Audit.EditVersion,
   tracked_schemas: [
+    CommonCore.Backend.Service,
     CommonCore.Batteries.SystemBattery,
+    CommonCore.FerretDB.FerretService,
     CommonCore.Knative.Service,
     CommonCore.MetalLB.IPAddressPool,
     CommonCore.Postgres.Cluster,
-    CommonCore.FerretDB.FerretService,
     CommonCore.Redis.FailoverCluster
   ],
   primitive_structs: [

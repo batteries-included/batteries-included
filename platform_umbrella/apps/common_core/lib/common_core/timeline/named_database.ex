@@ -9,7 +9,8 @@ defmodule CommonCore.Timeline.NamedDatabase do
     :postgres_cluster,
     :redis_cluster,
     :ferret_service,
-    :system_battery
+    :system_battery,
+    :backend_service
   ]
 
   def possible_schema_types, do: @possible_schema_types

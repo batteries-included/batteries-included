@@ -7,6 +7,7 @@ defmodule ControlServer.Backend do
 
   alias CommonCore.Backend.Service
   alias ControlServer.Repo
+  alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
   Returns the list of backend_services.
@@ -53,6 +54,7 @@ defmodule ControlServer.Backend do
     %Service{}
     |> Service.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:insert)
   end
 
   @doc """
@@ -71,6 +73,7 @@ defmodule ControlServer.Backend do
     service
     |> Service.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:update)
   end
 
   @doc """
@@ -86,7 +89,9 @@ defmodule ControlServer.Backend do
 
   """
   def delete_service(%Service{} = service) do
-    Repo.delete(service)
+    service
+    |> Repo.delete()
+    |> broadcast(:delete)
   end
 
   @doc """
@@ -101,4 +106,11 @@ defmodule ControlServer.Backend do
   def change_service(%Service{} = service, attrs \\ %{}) do
     Service.changeset(service, attrs)
   end
+
+  defp broadcast({:ok, fc} = result, action) do
+    :ok = DatabaseEventCenter.broadcast(:backend_service, action, fc)
+    result
+  end
+
+  defp broadcast(result, _action), do: result
 end

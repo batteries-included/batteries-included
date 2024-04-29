@@ -74,6 +74,22 @@ defmodule ControlServerWeb.Live.Timeline do
     """
   end
 
+  defp payload_display(%{payload: %NamedDatabase{schema_type: :backend_service}} = assigns) do
+    ~H"""
+    <.payload_container>
+      <div class="text-black font-bold">
+        Backend Service <%= Naming.humanize(@payload.action) %>
+      </div>
+
+      <.data_list>
+        <:item title="Show Backend Service">
+          <.a navigate={~p(/backend_services)}><%= @payload.name %></.a>
+        </:item>
+      </.data_list>
+    </.payload_container>
+    """
+  end
+
   defp payload_display(%{payload: %NamedDatabase{schema_type: :postgres_cluster}} = assigns) do
     ~H"""
     <.payload_container>
