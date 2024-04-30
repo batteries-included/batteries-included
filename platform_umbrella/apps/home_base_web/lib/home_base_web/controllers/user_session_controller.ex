@@ -10,7 +10,7 @@ defmodule HomeBaseWeb.UserSessionController do
 
   def create(conn, %{"action" => "password_updated"} = params) do
     conn
-    |> put_session(:user_return_to, ~p"/profile")
+    |> put_session(:user_return_to, ~p"/settings")
     |> create(params, {:success, "Password updated successfully!"})
   end
 

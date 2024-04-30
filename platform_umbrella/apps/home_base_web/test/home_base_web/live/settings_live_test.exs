@@ -1,4 +1,4 @@
-defmodule HomeBaseWeb.ProfileLiveTest do
+defmodule HomeBaseWeb.SettingsLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
   import HomeBase.Factory
@@ -23,7 +23,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     setup [:setup_user]
 
     test "renders settings page", %{conn: conn, user: user} do
-      {:ok, _lv, html} = conn |> log_in_user(user) |> live(~p"/profile")
+      {:ok, _lv, html} = conn |> log_in_user(user) |> live(~p"/settings")
 
       assert html =~ "Resend confirmation email"
       assert html =~ "Change your email"
@@ -31,7 +31,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/profile")
+      assert {:error, redirect} = live(conn, ~p"/settings")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/login"
@@ -50,7 +50,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     test "updates the user email", %{conn: conn, password: password, user: user} do
       new_email = unique_user_email()
 
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       result =
         lv
@@ -65,7 +65,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       result =
         lv
@@ -80,7 +80,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       result =
         lv
@@ -105,7 +105,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     test "updates the user password", %{conn: conn, user: user, password: password} do
       new_password = valid_user_password()
 
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       form =
         form(lv, "#password-form", %{
@@ -121,7 +121,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
 
       new_password_conn = follow_trigger_action(form, conn)
 
-      assert redirected_to(new_password_conn) == ~p"/profile"
+      assert redirected_to(new_password_conn) == ~p"/settings"
 
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
 
@@ -132,7 +132,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       result =
         lv
@@ -150,7 +150,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       result =
         lv
@@ -183,27 +183,27 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     end
 
     test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
-      {:error, redirect} = live(conn, ~p"/profile/#{token}")
+      {:error, redirect} = live(conn, ~p"/settings/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/profile"
+      assert path == ~p"/settings"
       assert %{"success" => message} = flash
       assert message == "Email changed successfully"
       refute Accounts.get_user_by_email(user.email)
       assert Accounts.get_user_by_email(email)
 
       # use confirm token again
-      {:error, redirect} = live(conn, ~p"/profile/#{token}")
+      {:error, redirect} = live(conn, ~p"/settings/#{token}")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/profile"
+      assert path == ~p"/settings"
       assert %{"error" => message} = flash
       assert message == "Link is invalid or it has expired"
     end
 
     test "does not update email with invalid token", %{conn: conn, user: user} do
-      {:error, redirect} = live(conn, ~p"/profile/oops")
+      {:error, redirect} = live(conn, ~p"/settings/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/profile"
+      assert path == ~p"/settings"
       assert %{"error" => message} = flash
       assert message == "Link is invalid or it has expired"
       assert Accounts.get_user_by_email(user.email)
@@ -211,7 +211,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
 
     test "redirects if user is not logged in", %{token: token} do
       conn = build_conn()
-      {:error, redirect} = live(conn, ~p"/profile/#{token}")
+      {:error, redirect} = live(conn, ~p"/settings/#{token}")
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/login"
       assert %{"error" => message} = flash
@@ -227,7 +227,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     end
 
     test "sends a new confirmation token", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       assert lv
              |> element(~s|a:fl-contains("Resend confirmation email")|)
@@ -239,7 +239,7 @@ defmodule HomeBaseWeb.ProfileLiveTest do
     test "does not send confirmation token if user is confirmed", %{conn: conn, user: user} do
       Repo.update!(Accounts.User.confirm_changeset(user))
 
-      {:ok, lv, _html} = live(conn, ~p"/profile")
+      {:ok, lv, _html} = live(conn, ~p"/settings")
 
       refute has_element?(lv, ~s|a:fl-contains("Resend confirmation email")|)
       refute Repo.get_by(Accounts.UserToken, user_id: user.id, context: "confirm")

@@ -82,8 +82,8 @@ defmodule HomeBaseWeb.Router do
       live "/installations/", InstallationLive
       live "/installations/:id", InstallationShowLive
 
-      live "/profile", ProfileLive
-      live "/profile/:token", ProfileLive
+      live "/settings", SettingsLive
+      live "/settings/:token", SettingsLive
     end
   end
 end

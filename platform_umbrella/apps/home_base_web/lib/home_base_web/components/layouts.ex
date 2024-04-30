@@ -90,55 +90,37 @@ defmodule HomeBaseWeb.Layouts do
       <.flex class="relative header-gradient items-center justify-between px-8 border-b border-b-gray-lighter">
         <.logo variant="full" class="my-3" />
 
-        <nav role="navigation" class="flex gap-8">
-          <.nav_item icon={:chart_pie} navigate={~p"/"} selected={@page == :dashboard}>
+        <.dropdown>
+          <:trigger>
+            <.link class="flex items-center gap-2 text-sm font-semibold hover:opacity-70">
+              <.icon solid name={:user_circle} class="size-6" />
+              <span><%= @current_user.email %></span>
+              <.icon mini name={:chevron_down} class="size-5" />
+            </.link>
+          </:trigger>
+
+          <:item icon={:chart_pie} navigate={~p"/"} selected={@page == :dashboard}>
             Dashboard
-          </.nav_item>
+          </:item>
 
-          <.nav_item
-            icon={:command_line}
-            navigate={~p"/installations"}
-            selected={@page == :installations}
-          >
+          <:item icon={:command_line} navigate={~p"/installations"} selected={@page == :installations}>
             Installations
-          </.nav_item>
+          </:item>
 
-          <.nav_item navigate={~p"/profile"} icon={:user_circle} selected={@page == :profile}>
-            Profile
-          </.nav_item>
+          <:item icon={:cog_6_tooth} navigate={~p"/settings"} selected={@page == :settings}>
+            Settings
+          </:item>
 
-          <.nav_item href={~p"/logout"} icon={:arrow_right_start_on_rectangle} method="delete">
+          <:item icon={:arrow_right_start_on_rectangle} href={~p"/logout"} method="delete">
             Log out
-          </.nav_item>
-        </nav>
+          </:item>
+        </.dropdown>
       </.flex>
 
       <div class="block relative p-8 flex-1 overflow-auto">
         <%= @inner_content %>
       </div>
     </div>
-    """
-  end
-
-  attr :selected, :boolean, default: false
-  attr :icon, :atom, required: true
-  attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(href method navigate)
-  slot :inner_block, required: true
-
-  defp nav_item(assigns) do
-    ~H"""
-    <.link
-      class={[
-        "flex items-center gap-2 text-sm font-semibold hover:text-primary",
-        @selected && "text-primary",
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon name={@icon} class="size-5" />
-      <%= render_slot(@inner_block) %>
-    </.link>
     """
   end
 end

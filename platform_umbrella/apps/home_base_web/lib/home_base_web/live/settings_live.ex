@@ -1,4 +1,4 @@
-defmodule HomeBaseWeb.ProfileLive do
+defmodule HomeBaseWeb.SettingsLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
@@ -14,7 +14,7 @@ defmodule HomeBaseWeb.ProfileLive do
           put_flash(socket, :error, "Link is invalid or it has expired")
       end
 
-    {:ok, push_navigate(socket, to: ~p"/profile")}
+    {:ok, push_navigate(socket, to: ~p"/settings")}
   end
 
   def mount(_params, _session, socket) do
@@ -31,8 +31,8 @@ defmodule HomeBaseWeb.ProfileLive do
      |> assign(:password_form, to_form(password_changeset))
      |> assign(:trigger_submit, false)
      |> assign(:confirmation_resent, false)
-     |> assign(:page, :profile)
-     |> assign(:page_title, "Profile")}
+     |> assign(:page, :settings)
+     |> assign(:page_title, "Settings")}
   end
 
   def handle_event("validate_email", %{"current_password" => password, "user" => user_params}, socket) do
@@ -54,7 +54,7 @@ defmodule HomeBaseWeb.ProfileLive do
           Accounts.deliver_user_update_email_instructions(
             applied_user,
             user.email,
-            &url(~p"/profile/#{&1}")
+            &url(~p"/settings/#{&1}")
           )
 
         {:noreply,
@@ -100,6 +100,8 @@ defmodule HomeBaseWeb.ProfileLive do
 
   def render(assigns) do
     ~H"""
+    <.flash_group flash={@flash} />
+
     <.h2>Your Profile</.h2>
 
     <.alert :if={!@current_user.confirmed_at} variant="warning" class="inline-flex mb-4">
@@ -113,8 +115,6 @@ defmodule HomeBaseWeb.ProfileLive do
         Resend confirmation email
       </.a>
     </.alert>
-
-    <.flash_group flash={@flash} />
 
     <.grid columns={%{sm: 1, lg: 2, xl: 3}}>
       <.panel title="Change your email">

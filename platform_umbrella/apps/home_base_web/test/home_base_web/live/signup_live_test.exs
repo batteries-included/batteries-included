@@ -69,7 +69,7 @@ defmodule HomeBaseWeb.SignupLiveTest do
       # Now do a logged in request and assert on the menu
       conn = get(conn, ~p"/")
       response = html_response(conn, 200)
-      assert response =~ "Profile"
+      assert response =~ "Settings"
       assert response =~ "Log out"
     end
 

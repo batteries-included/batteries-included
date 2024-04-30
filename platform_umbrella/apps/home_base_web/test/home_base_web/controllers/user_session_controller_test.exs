@@ -20,7 +20,7 @@ defmodule HomeBaseWeb.UserSessionControllerTest do
       # Now do a logged in request and assert on the menu
       conn = get(conn, ~p"/")
       response = html_response(conn, 200)
-      assert response =~ ~p"/profile"
+      assert response =~ ~p"/settings"
       assert response =~ ~p"/logout"
     end
 
@@ -71,7 +71,7 @@ defmodule HomeBaseWeb.UserSessionControllerTest do
           "user" => %{"email" => user.email, "password" => valid_user_password()}
         })
 
-      assert redirected_to(conn) == ~p"/profile"
+      assert redirected_to(conn) == ~p"/settings"
       assert Phoenix.Flash.get(conn.assigns.flash, :success) =~ "Password updated successfully"
     end
 
