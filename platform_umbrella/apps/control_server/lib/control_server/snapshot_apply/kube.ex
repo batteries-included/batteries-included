@@ -133,7 +133,7 @@ defmodule ControlServer.SnapshotApply.Kube do
 
   def snapshot_recently(query \\ KubeSnapshot) do
     from ks in query,
-      where: ks.inserted_at >= ^Timex.shift(DateTime.utc_now(), hours: -1)
+      where: ks.inserted_at >= ^DateTime.add(DateTime.utc_now(), -1, :hour)
   end
 
   def resource_paths_outstanding(query \\ ResourcePath) do
@@ -166,9 +166,9 @@ defmodule ControlServer.SnapshotApply.Kube do
     from rp in query, where: rp.namespace == ^namespace
   end
 
-  def resource_paths_recently(query \\ ResourcePath, shift_opts \\ [hours: -1]) do
+  def resource_paths_recently(query \\ ResourcePath) do
     from rp in query,
-      where: rp.inserted_at >= ^Timex.shift(DateTime.utc_now(), shift_opts)
+      where: rp.inserted_at >= ^DateTime.add(DateTime.utc_now(), -1, :hour)
   end
 
   def count_paths(query \\ ResourcePath), do: Repo.one(from rp in query, select: fragment("count(*)"))

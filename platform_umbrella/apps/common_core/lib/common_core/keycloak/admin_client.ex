@@ -69,10 +69,10 @@ defmodule CommonCore.Keycloak.AdminClient do
     field :base_url, String.t()
 
     field :access_token, String.t(), enforce: false
-    field :access_expire, Time.t(), enforce: false
+    field :access_expire, DateTime.t(), enforce: false
 
     field :refresh_token, String.t(), enforce: false
-    field :refresh_expire, Time.t(), enforce: false
+    field :refresh_expire, DateTime.t(), enforce: false
 
     field :bearer_client, Tesla.Client.t(), enforce: false
     field :base_client, Tesla.Client.t(), enforce: false
@@ -431,7 +431,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp maybe_aquire_refresh(%State{refresh_token: tok, refresh_expire: expire} = state) do
     cond do
       tok == nil -> do_login(state)
-      1 == Timex.compare(DateTime.utc_now(), expire) -> do_login(state)
+      :gt == DateTime.compare(DateTime.utc_now(), expire) -> do_login(state)
       true -> {:ok, state}
     end
   end
@@ -439,8 +439,12 @@ defmodule CommonCore.Keycloak.AdminClient do
   # If there's no good access token, but there is a refresh token
   # Then use the refresh token.
   @spec maybe_aquire_access(State.t()) :: {:ok, State.t()} | {:error, any()}
+  defp maybe_aquire_access(%State{access_expire: nil} = state) do
+    do_refresh(state)
+  end
+
   defp maybe_aquire_access(%State{access_expire: expire} = state) do
-    if 1 == Timex.compare(DateTime.utc_now(), expire) do
+    if :gt == DateTime.compare(DateTime.utc_now(), expire) do
       do_refresh(state)
     else
       {:ok, state}

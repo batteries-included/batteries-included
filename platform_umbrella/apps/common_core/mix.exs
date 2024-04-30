@@ -38,9 +38,6 @@ defmodule CommonCore.MixProject do
       {:ymlr, "~> 5.1"},
       {:yaml_elixir, "~> 2.6"},
 
-      # Time
-      {:timex, "~> 3.7"},
-
       # History
       {:ex_audit, "~> 0.10"},
 

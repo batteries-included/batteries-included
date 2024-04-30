@@ -55,7 +55,7 @@ defmodule ControlServerWeb.MixProject do
       {:kube_services, in_umbrella: true},
       {:mint, "~> 1.0"},
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:oidcc, "~> 3.1.1"},
+      {:oidcc, "~> 3.2"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},

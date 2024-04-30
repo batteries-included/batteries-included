@@ -45,11 +45,11 @@ defmodule CommonUI.MixProject do
       {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
       {:jason, "~> 1.4"},
       {:phoenix, "~> 1.7"},
+      {:gettext, "~> 0.20"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
       {:phoenix_live_view, "~> 0.20", override: true},
-      {:phoenix_storybook, "~> 0.6"},
-      {:timex, "~> 3.7"}
+      {:phoenix_storybook, "~> 0.6"}
     ]
   end
 

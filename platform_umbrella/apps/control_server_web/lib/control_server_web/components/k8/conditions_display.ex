@@ -44,8 +44,11 @@ defmodule ControlServerWeb.ConditionsDisplay do
   end
 
   defp get_condition_time(condition) do
-    condition
-    |> Map.get_lazy("lastTransitionTime", fn -> Map.get(condition, "lastUpdateTime", "") end)
-    |> Timex.parse!("{ISO:Extended:Z}")
+    {:ok, date_time, _} =
+      condition
+      |> Map.get_lazy("lastTransitionTime", fn -> Map.get(condition, "lastUpdateTime", "") end)
+      |> DateTime.from_iso8601()
+
+    date_time
   end
 end

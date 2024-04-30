@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Keycloak.UsersTable do
   @moduledoc false
   use ControlServerWeb, :html
 
+  import CommonUI.Components.DatetimeDisplay
+
   attr :users, :list, required: true
 
   def keycloak_users_table(%{} = assigns) do
@@ -12,7 +14,7 @@ defmodule ControlServerWeb.Keycloak.UsersTable do
       <:col :let={user} label="Enabled"><%= user.enabled %></:col>
       <:col :let={user} label="Email Verified"><%= user.emailVerified %></:col>
       <:col :let={user} label="Created">
-        <%= Timex.from_unix(user.createdTimestamp || 0, :millisecond) %>
+        <.relative_display time={DateTime.from_unix!(user.createdTimestamp || 0, :millisecond)} />
       </:col>
 
       <:action :let={user}>

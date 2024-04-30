@@ -7,7 +7,7 @@ defmodule CommonCore.Keycloak.TeslaBuilder do
         ) :: Tesla.Client.t()
   def build_client(base_url, nil = _token, nil = _adapter), do: Tesla.client(middleware(base_url))
 
-  def build_client(base_url, nil = _token, adapter), do: Tesla.client(middleware(base_url), adapter)
+  def build_client(base_url, nil = _token, adapter), do: base_url |> middleware() |> Tesla.client(adapter)
 
   def build_client(base_url, token, nil = _adapter) do
     Tesla.client(middleware(base_url, token))

@@ -61,7 +61,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
           <%= resource.namespace %>
         </:col>
         <:col :let={resource} label="When">
-          <%= Timex.from_now(resource.inserted_at) %>
+          <%= CommonCore.Util.Time.from_now(resource.inserted_at) %>
         </:col>
         <:col :let={resource} label="Restore">
           <.button

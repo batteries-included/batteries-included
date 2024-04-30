@@ -10,7 +10,7 @@ defmodule ControlServerWeb.ContentAddressable.ResourceTable do
       <:col :let={resource} label="Hash"><%= resource.hash %></:col>
       <:col :let={resource} label="Size"><%= approx_size(resource) %></:col>
       <:col :let={resource} label="Inserted At">
-        <%= Timex.format!(resource.inserted_at, "{RFC822z}") %>
+        <%= CommonCore.Util.Time.format(resource.inserted_at) %>
       </:col>
     </.table>
     """

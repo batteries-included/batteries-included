@@ -16,9 +16,9 @@ defmodule ControlServerWeb.PodsTable do
     case pod
          |> Map.get("status", %{})
          |> Map.get("startTime", "")
-         |> Timex.parse("{ISO:Extended}") do
-      {:ok, start_time} ->
-        Timex.from_now(start_time)
+         |> DateTime.from_iso8601() do
+      {:ok, start_time, _} ->
+        CommonCore.Util.Time.from_now(start_time)
 
       _ ->
         "Unknown"

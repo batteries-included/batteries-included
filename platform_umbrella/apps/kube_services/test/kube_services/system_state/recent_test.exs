@@ -26,20 +26,20 @@ defmodule KubeServices.SystemState.SummaryRecentTest do
         %Cluster{
           id: UUID.generate(),
           name: "cluster2",
-          inserted_at: Timex.shift(now, hours: -10),
-          updated_at: Timex.shift(now, hours: -9)
+          inserted_at: DateTime.add(now, -10, :hour),
+          updated_at: DateTime.add(now, -9, :hour)
         },
         %Cluster{
           id: UUID.generate(),
           name: "cluster3",
-          inserted_at: Timex.shift(now, hours: -2),
-          updated_at: Timex.shift(now, hours: -1)
+          inserted_at: DateTime.add(now, -2, :hour),
+          updated_at: DateTime.add(now, -1, :hour)
         },
         %Cluster{
           id: UUID.generate(),
           name: "cluster4",
-          inserted_at: Timex.shift(now, hours: -10),
-          updated_at: Timex.shift(now, hours: -8)
+          inserted_at: DateTime.add(now, -10, :hour),
+          updated_at: DateTime.add(now, -8, :hour)
         }
       ]
 

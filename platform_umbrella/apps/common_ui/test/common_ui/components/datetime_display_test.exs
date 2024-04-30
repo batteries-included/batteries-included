@@ -13,7 +13,7 @@ defmodule CommonUI.Components.DatetimeDisplayTest do
       # there's not a lot to assert. Assert that the
       # date is there since that's the tooltip slot,
       # it's a good test of rendering most of what we expect.
-      assert html =~ ~S|2023-02-15|
+      assert html =~ ~S|Wed, 15 Feb|
     end
   end
 end

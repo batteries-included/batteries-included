@@ -89,9 +89,9 @@ defmodule CommonCore.Keycloak.TokenAcquirer do
         {:ok,
          %TokenResult{
            access_token: access_token,
-           expires: Timex.shift(start_time, seconds: expires_in),
+           expires: DateTime.add(start_time, expires_in, :second),
            refresh_token: refresh_token,
-           refresh_expires: Timex.shift(start_time, seconds: refresh_expires_in)
+           refresh_expires: DateTime.add(start_time, refresh_expires_in, :second)
          }}
 
       _ ->
