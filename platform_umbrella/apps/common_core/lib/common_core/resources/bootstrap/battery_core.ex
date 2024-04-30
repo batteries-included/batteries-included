@@ -49,34 +49,38 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
 
     bootstrap_summary_root = "/var/run/secrets/summary"
 
-    spec = %{
-      "backoffLimit" => 4,
-      "completions" => 1,
-      "parallelism" => 1,
-      "template" => %{
-        "metadata" => %{"labels" => %{"battery/app" => "bootstrap"}},
-        "spec" => %{
-          "automountServiceAccountToken" => true,
-          "containers" => [
-            %{
-              "env" => [
-                %{"name" => "RELEASE_COOKIE", "value" => battery.config.secret_key},
-                %{"name" => "RELEASE_DISTRIBUTION", "value" => "none"},
-                %{"name" => "BOOTSTRAP_SUMMARY_PATH", "value" => "#{bootstrap_summary_root}/summary.json"}
-              ],
-              "image" => battery.config.bootstrap_image,
-              "name" => "bootstrap",
-              "volumeMounts" => [%{"mountPath" => bootstrap_summary_root, "name" => "summary"}]
-            }
-          ],
-          "restartPolicy" => "Never",
-          "serviceAccount" => "bootstrap",
-          "serviceAccountName" => "bootstrap",
-          "tolerations" => [%{"key" => "CriticalAddonsOnly", "operator" => "Exists"}],
-          "volumes" => [%{"name" => "summary", "secret" => %{"secretName" => "initial-target-summary"}}]
-        }
-      }
-    }
+    template =
+      %{}
+      |> B.spec(%{
+        "automountServiceAccountToken" => true,
+        "containers" => [
+          %{
+            "env" => [
+              %{"name" => "RELEASE_COOKIE", "value" => battery.config.secret_key},
+              %{"name" => "RELEASE_DISTRIBUTION", "value" => "none"},
+              %{"name" => "BOOTSTRAP_SUMMARY_PATH", "value" => "#{bootstrap_summary_root}/summary.json"}
+            ],
+            "image" => battery.config.bootstrap_image,
+            "name" => "bootstrap",
+            "volumeMounts" => [%{"mountPath" => bootstrap_summary_root, "name" => "summary"}]
+          }
+        ],
+        "restartPolicy" => "Never",
+        "serviceAccount" => "bootstrap",
+        "serviceAccountName" => "bootstrap",
+        "tolerations" => [%{"key" => "CriticalAddonsOnly", "operator" => "Exists"}],
+        "volumes" => [%{"name" => "summary", "secret" => %{"secretName" => "initial-target-summary"}}]
+      })
+      |> Map.put("metadata", %{"labels" => %{"battery/managed" => "true"}})
+      |> B.app_labels(@app_name)
+      |> B.component_labels("bootstrap")
+
+    spec =
+      %{}
+      |> Map.put("backoffLimit", 4)
+      |> Map.put("completions", 1)
+      |> Map.put("parallelism", 1)
+      |> B.template(template)
 
     :job
     |> B.build_resource()

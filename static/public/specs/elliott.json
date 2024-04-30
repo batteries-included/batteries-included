@@ -20,7 +20,7 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
-          "secret_key": "VMWVGL47J5GFVDCJUHXIEUKWFQJPSHDW4ZSBJBHG4KKAVK7U5565XD6LWLLBLVAR",
+          "secret_key": "MUEJGI7WBTRCP4AGFHJ2FCFJCTCX5E3JXWWEQHLNFZPIOZ6ORORCNDBPKIMTF54N",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -51,11 +51,11 @@
         "type": "cert_manager",
         "config": {
           "type": "cert_manager",
-          "acmesolver_image": "quay.io/jetstack/cert-manager-acmesolver:v1.13.3",
-          "cainjector_image": "quay.io/jetstack/cert-manager-cainjector:v1.13.3",
-          "controller_image": "quay.io/jetstack/cert-manager-controller:v1.13.3",
-          "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.13.3",
-          "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.13.3",
+          "acmesolver_image": "quay.io/jetstack/cert-manager-acmesolver:v1.14.5",
+          "cainjector_image": "quay.io/jetstack/cert-manager-cainjector:v1.14.5",
+          "controller_image": "quay.io/jetstack/cert-manager-controller:v1.14.5",
+          "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.14.5",
+          "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.14.5",
           "email": null,
           "controller_image_override": null,
           "acmesolver_image_override": null,
@@ -108,7 +108,7 @@
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "docker.io/istio/pilot:1.21.0-distroless",
+          "pilot_image": "docker.io/istio/pilot:1.21.2-distroless",
           "namespace_override": null,
           "pilot_image_override": null
         },
@@ -121,7 +121,7 @@
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.21.0-distroless",
+          "proxy_image": "docker.io/istio/proxyv2:1.21.2-distroless",
           "proxy_image_override": null
         },
         "group": "net_sec",
@@ -175,7 +175,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "S4FBDGQFQ4GML3RBHEVCUQFE",
+            "password": "DHZKB7BHPINOZ5ZNL6CE53G2",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

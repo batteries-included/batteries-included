@@ -714,16 +714,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
 
     template =
       %{}
-      |> Map.put(
-        "metadata",
-        %{
-          "labels" => %{
-            "battery/app" => @app_name,
-            "battery/component" => component,
-            "battery/managed" => "true"
-          }
-        }
-      )
+      |> Map.put("metadata", %{"labels" => %{"battery/managed" => "true"}})
       |> Map.put(
         "spec",
         %{
@@ -744,9 +735,15 @@ defmodule CommonCore.Resources.CertManager.CertManager do
         }
       )
       |> B.app_labels(@app_name)
+      |> B.component_labels(component)
       |> B.add_owner(battery)
 
-    spec = %{} |> Map.put("backoffLimit", 4) |> B.template(template)
+    spec =
+      %{}
+      |> Map.put("backoffLimit", 4)
+      |> Map.put("completions", 1)
+      |> Map.put("parallelism", 1)
+      |> B.template(template)
 
     :job
     |> B.build_resource()

@@ -14,7 +14,7 @@
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "docker.io/istio/pilot:1.21.0-distroless",
+          "pilot_image": "docker.io/istio/pilot:1.21.2-distroless",
           "namespace_override": null,
           "pilot_image_override": null
         },
@@ -27,7 +27,7 @@
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.21.0-distroless",
+          "proxy_image": "docker.io/istio/proxyv2:1.21.2-distroless",
           "proxy_image_override": null
         },
         "group": "net_sec",
@@ -46,7 +46,7 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
-          "secret_key": "GK5REM4E2TDVFRPUBIPPQJVNOTXWVY6OMN444DM6X57U6YAFDEMUOAE2GRHUXJ3Z",
+          "secret_key": "T73JKDC57YQB746IMOILFSRXRVDZ4WIUJY6UDFIIGZ2OJUBDSUMVQXWNTBT5RTAY",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -132,7 +132,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "G5TCM3E2FR7EA4PVR3RDENYW",
+            "password": "IUJDOZSFIFTYG532QDAK3K46",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }

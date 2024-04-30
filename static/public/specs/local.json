@@ -14,7 +14,7 @@
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "docker.io/istio/pilot:1.21.0-distroless",
+          "pilot_image": "docker.io/istio/pilot:1.21.2-distroless",
           "namespace_override": null,
           "pilot_image_override": null
         },
@@ -27,7 +27,7 @@
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.21.0-distroless",
+          "proxy_image": "docker.io/istio/proxyv2:1.21.2-distroless",
           "proxy_image_override": null
         },
         "group": "net_sec",
@@ -46,7 +46,7 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
-          "secret_key": "2DDFWUPUUOPVNCSOXZ3DV7354QUSP56P3AXTPCUJVFFOWBHBL3OCW7UWGGMZDL7K",
+          "secret_key": "NVUVVC5QRMYZTASCGY554NGB5DCP22ZG7CQN3EN74IFREUCUUNNR4ARHP6S44OAR",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": true,
@@ -125,7 +125,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "OPGB7LPPH7TV3RMBUZOGOYCA",
+            "password": "BA5ZR437DB5TOZ2EHIBFQTU2",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -177,7 +177,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "YHU66O24LE4HDR3ZQ4NXK6ZSLCNY2QTWQR3AW27K4JPBYV4ACPXA====",
+          "battery/hash": "24G5WBUV7WAQYSZMYCMS5N25BKDYO6CTKTWOP7JH2HQHW5B5ZLCA====",
           "sidecar.istio.io/inject": "false"
         },
         "labels": {
@@ -204,12 +204,15 @@
             },
             "labels": {
               "app": "battery-core",
+              "app.kubernetes.io/component": "bootstrap",
               "app.kubernetes.io/managed-by": "batteries-included",
               "app.kubernetes.io/name": "battery-core",
               "app.kubernetes.io/version": "latest",
-              "battery/app": "bootstrap",
+              "battery/app": "battery-core",
+              "battery/component": "bootstrap",
               "battery/managed": "true",
               "battery/managed.indirect": "true",
+              "component": "bootstrap",
               "version": "latest"
             }
           },
@@ -220,7 +223,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "2DDFWUPUUOPVNCSOXZ3DV7354QUSP56P3AXTPCUJVFFOWBHBL3OCW7UWGGMZDL7K"
+                    "value": "NVUVVC5QRMYZTASCGY554NGB5DCP22ZG7CQN3EN74IFREUCUUNNR4ARHP6S44OAR"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",

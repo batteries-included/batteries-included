@@ -20,7 +20,7 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
-          "secret_key": "L44SVN6NTTBM5DK5IBKNJVSZRBQSBPZQZFPNUEDC5HBMBILKVDUEOR4OT73AXB7W",
+          "secret_key": "KMZBL55YFHCECYKLJJKQJCABK52X5LBWHFGTTLV774IZBTP7MKHOWKX6JCZN7MXQ",
           "default_size": "large",
           "cluster_name": null,
           "server_in_cluster": true,
@@ -51,11 +51,11 @@
         "type": "cert_manager",
         "config": {
           "type": "cert_manager",
-          "acmesolver_image": "quay.io/jetstack/cert-manager-acmesolver:v1.13.3",
-          "cainjector_image": "quay.io/jetstack/cert-manager-cainjector:v1.13.3",
-          "controller_image": "quay.io/jetstack/cert-manager-controller:v1.13.3",
-          "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.13.3",
-          "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.13.3",
+          "acmesolver_image": "quay.io/jetstack/cert-manager-acmesolver:v1.14.5",
+          "cainjector_image": "quay.io/jetstack/cert-manager-cainjector:v1.14.5",
+          "controller_image": "quay.io/jetstack/cert-manager-controller:v1.14.5",
+          "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.14.5",
+          "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.14.5",
           "email": null,
           "controller_image_override": null,
           "acmesolver_image_override": null,
@@ -108,7 +108,7 @@
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "docker.io/istio/pilot:1.21.0-distroless",
+          "pilot_image": "docker.io/istio/pilot:1.21.2-distroless",
           "namespace_override": null,
           "pilot_image_override": null
         },
@@ -121,7 +121,7 @@
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.21.0-distroless",
+          "proxy_image": "docker.io/istio/proxyv2:1.21.2-distroless",
           "proxy_image_override": null
         },
         "group": "net_sec",
@@ -168,7 +168,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "QKQUYUKWPXYV7NLBIKKDHXMW",
+            "password": "KUSB3QXQAOFRLS6H3IHZ36MI",
             "roles": ["createdb", "login"],
             "credential_namespaces": []
           }
@@ -220,7 +220,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "UZ4IIL5JMFDY5BI34NPEURCOVPC72CW7A3FUNZKBJF4XN6LVS2VQ====",
+          "battery/hash": "NDTJJLKIBI3B7T4W5CGTXD43BFLGKH6JRKM425LWNKQQ7E6GKZPA====",
           "sidecar.istio.io/inject": "false"
         },
         "labels": {
@@ -247,12 +247,15 @@
             },
             "labels": {
               "app": "battery-core",
+              "app.kubernetes.io/component": "bootstrap",
               "app.kubernetes.io/managed-by": "batteries-included",
               "app.kubernetes.io/name": "battery-core",
               "app.kubernetes.io/version": "latest",
-              "battery/app": "bootstrap",
+              "battery/app": "battery-core",
+              "battery/component": "bootstrap",
               "battery/managed": "true",
               "battery/managed.indirect": "true",
+              "component": "bootstrap",
               "version": "latest"
             }
           },
@@ -263,7 +266,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "L44SVN6NTTBM5DK5IBKNJVSZRBQSBPZQZFPNUEDC5HBMBILKVDUEOR4OT73AXB7W"
+                    "value": "KMZBL55YFHCECYKLJJKQJCABK52X5LBWHFGTTLV774IZBTP7MKHOWKX6JCZN7MXQ"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",
