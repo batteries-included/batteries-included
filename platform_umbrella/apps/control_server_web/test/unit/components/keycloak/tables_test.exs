@@ -6,13 +6,6 @@ defmodule ControlServerWeb.Keycloak.TablesTest do
   import ControlServerWeb.Keycloak.UsersTable
 
   @realm_one %{id: "00-00-00-00-00-00", displayName: "Keycloak", realm: "master"}
-  @user_one %{
-    id: "00-00-00-00-00-00-00-00-00-00-01",
-    username: "root",
-    enabled: true,
-    emailVerified: false,
-    createdTimestamp: 1_686_028_210_946
-  }
   @client_one %{
     clientId: "admin-cli",
     name: "Admin CLI",
@@ -34,10 +27,20 @@ defmodule ControlServerWeb.Keycloak.TablesTest do
 
   describe "keycloak_users_table/1" do
     component_snapshot_test "with a user" do
-      assigns = %{users: [@user_one]}
+      assigns = %{
+        users: [
+          %{
+            id: "00-00-00-00-00-00-00-00-00-00-01",
+            username: "root",
+            enabled: true,
+            emailVerified: false,
+            createdTimestamp: DateTime.utc_now() |> DateTime.add(-2, :day) |> DateTime.to_unix()
+          }
+        ]
+      }
 
       ~H"""
-      <.keycloak_users_table users={@users} />
+      <.keycloak_users_table users={@users} hide_created />
       """
     end
   end
