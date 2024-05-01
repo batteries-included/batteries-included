@@ -10,6 +10,7 @@ defmodule ControlServerWeb.Live.ResourceList do
   import ControlServerWeb.ServicesTable
   import ControlServerWeb.StatefulSetsTable
 
+  alias CommonCore.Resources.FieldAccessors
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
 
@@ -23,8 +24,13 @@ defmodule ControlServerWeb.Live.ResourceList do
     {:ok,
      socket
      |> assign(current_page: :kubernetes)
+     |> assign_filter_value(nil)
      |> assign_objects()
      |> assign_page_title()}
+  end
+
+  defp assign_filter_value(socket, value) do
+    assign(socket, filter_value: value)
   end
 
   def assign_page_title(socket) do
@@ -42,11 +48,26 @@ defmodule ControlServerWeb.Live.ResourceList do
     # To work around that every kube type we have a display
     # for has it's on lists.
     live_action = socket.assigns.live_action
+    filter = String.downcase(socket.assigns.filter_value || "")
 
     assign_async(socket, types, fn ->
       {:ok,
        Enum.reduce(types, %{}, fn type, objects ->
-         Map.put(objects, type, type == live_action && objects(type))
+         objs =
+           type
+           |> objects()
+           |> Enum.filter(fn r ->
+             # Keep the object if the filter is empty
+             # or the downcased name
+             #  contains the downcased filter.
+             filter == "" ||
+               r
+               |> FieldAccessors.name()
+               |> String.downcase()
+               |> String.contains?(filter)
+           end)
+
+         Map.put(objects, type, type == live_action && objs)
        end)}
     end)
   end
@@ -61,11 +82,37 @@ defmodule ControlServerWeb.Live.ResourceList do
   end
 
   @impl Phoenix.LiveView
-  def handle_params(_params, _url, socket) do
+  def handle_params(params, _url, socket) do
     {:noreply,
      socket
-     |> assign_objects()
-     |> assign_page_title()}
+     |> assign_page_title()
+     |> assign_filter_value(Map.get(params, "filter", ""))
+     |> assign_objects()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("filter_change", %{"filter_value" => value}, socket) do
+    path = self_path(socket, value)
+    {:noreply, push_patch(socket, to: path, replace: true)}
+  end
+
+  def handle_event("filter_change", %{"value" => value}, socket) do
+    path = self_path(socket, value)
+    {:noreply, push_patch(socket, to: path, replace: true)}
+  end
+
+  def handle_event("submit", _paylod, socket) do
+    {:noreply, socket}
+  end
+
+  def self_path(socket, filter) do
+    action = "#{socket.assigns.live_action}s"
+
+    if filter == "" || filter == nil do
+      "/kube/#{action}"
+    else
+      "/kube/#{action}?filter=#{filter}"
+    end
   end
 
   defp objects(type) do
@@ -116,6 +163,22 @@ defmodule ControlServerWeb.Live.ResourceList do
     """
   end
 
+  defp filter_form(assigns) do
+    ~H"""
+    <form phx-submit="submit">
+      <.input
+        name="filter_value"
+        phx-change="filter_change"
+        debounce="50"
+        placeholder="Filter by name..."
+        value={@value}
+        autocomplete="off"
+        autocapitalize="off"
+      />
+    </form>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -125,6 +188,9 @@ defmodule ControlServerWeb.Live.ResourceList do
     <%= case @live_action do %>
       <% :deployment -> %>
         <.panel title="Deployments">
+          <:menu>
+            <.filter_form value={@filter_value} />
+          </:menu>
           <.async_result :let={objects} assign={@deployment}>
             <:loading><.loader /></:loading>
             <.deployments_table deployments={objects} />
@@ -132,6 +198,9 @@ defmodule ControlServerWeb.Live.ResourceList do
         </.panel>
       <% :stateful_set -> %>
         <.panel title="Stateful Sets">
+          <:menu>
+            <.filter_form value={@filter_value} />
+          </:menu>
           <.async_result :let={objects} assign={@stateful_set}>
             <:loading><.loader /></:loading>
             <.stateful_sets_table stateful_sets={objects} />
@@ -139,6 +208,9 @@ defmodule ControlServerWeb.Live.ResourceList do
         </.panel>
       <% :node -> %>
         <.panel title="Nodes">
+          <:menu>
+            <.filter_form value={@filter_value} />
+          </:menu>
           <.async_result :let={objects} assign={@node}>
             <:loading><.loader /></:loading>
             <.nodes_table nodes={objects} />
@@ -146,6 +218,9 @@ defmodule ControlServerWeb.Live.ResourceList do
         </.panel>
       <% :pod -> %>
         <.panel title="Pods">
+          <:menu>
+            <.filter_form value={@filter_value} />
+          </:menu>
           <.async_result :let={objects} assign={@pod}>
             <:loading><.loader /></:loading>
             <.pods_table pods={objects} />
@@ -153,6 +228,9 @@ defmodule ControlServerWeb.Live.ResourceList do
         </.panel>
       <% :service -> %>
         <.panel title="Services">
+          <:menu>
+            <.filter_form value={@filter_value} />
+          </:menu>
           <.async_result :let={objects} assign={@service}>
             <:loading><.loader /></:loading>
             <.services_table services={objects} />
