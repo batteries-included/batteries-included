@@ -13,15 +13,15 @@
         "type": "battery_core",
         "config": {
           "type": "battery_core",
-          "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
+          "image": "public.ecr.aws/p2f3z8m1/control-server:latest",
           "cluster_type": "aws",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
-          "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
-          "secret_key": "KMZBL55YFHCECYKLJJKQJCABK52X5LBWHFGTTLV774IZBTP7MKHOWKX6JCZN7MXQ",
-          "default_size": "large",
+          "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
+          "secret_key": "5UZB77OKM6M5UWAMK7TXENQ2DXMNL2CEA7IKVVE32Z4SZN7P2WK5OH4ZK6TARPJD",
+          "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": true,
           "image_override": null,
@@ -156,26 +156,26 @@
           "owner": "battery-control-user"
         },
         "storage_class": null,
-        "cpu_requested": 8000,
-        "cpu_limits": 8000,
-        "memory_requested": 17179869184,
-        "memory_limits": 17179869184,
+        "cpu_requested": 500,
+        "cpu_limits": 2000,
+        "memory_requested": 1073741824,
+        "memory_limits": 4294967296,
         "num_instances": 1,
-        "virtual_size": "large",
+        "virtual_size": "small",
         "inserted_at": null,
         "updated_at": null,
         "users": [
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "KUSB3QXQAOFRLS6H3IHZ36MI",
+            "password": "WX4YO35X4LU4H6I6DOO42PBF",
             "roles": ["createdb", "login"],
-            "credential_namespaces": []
+            "credential_namespaces": ["battery-core"]
           }
         ],
-        "storage_size": 137438953472,
+        "storage_size": 17179869184,
         "project_id": null,
-        "virtual_storage_size_range_value": 60
+        "virtual_storage_size_range_value": 41
       }
     ],
     "ip_address_pools": [],
@@ -220,7 +220,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "NDTJJLKIBI3B7T4W5CGTXD43BFLGKH6JRKM425LWNKQQ7E6GKZPA====",
+          "battery/hash": "6RDGBGLUSEGCCHFMMNLQI6XKTDSNMNQZOD45QVTECT45VI6FZXJQ====",
           "sidecar.istio.io/inject": "false"
         },
         "labels": {
@@ -266,7 +266,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "KMZBL55YFHCECYKLJJKQJCABK52X5LBWHFGTTLV774IZBTP7MKHOWKX6JCZN7MXQ"
+                    "value": "5UZB77OKM6M5UWAMK7TXENQ2DXMNL2CEA7IKVVE32Z4SZN7P2WK5OH4ZK6TARPJD"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",
@@ -277,7 +277,8 @@
                     "value": "/var/run/secrets/summary/summary.json"
                   }
                 ],
-                "image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
+                "image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
+                "imagePullPolicy": "Always",
                 "name": "bootstrap",
                 "volumeMounts": [
                   {

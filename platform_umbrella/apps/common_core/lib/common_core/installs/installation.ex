@@ -92,6 +92,7 @@ defmodule CommonCore.Installation do
 
   defp default_size(:kind = _provider_type, _usage), do: :tiny
   defp default_size(:aws = _provider_type, :internal_dev), do: :small
+  defp default_size(:aws = _provider_type, :development), do: :small
   defp default_size(:aws = _provider_type, _), do: :large
   defp default_size(_, _), do: :medium
 

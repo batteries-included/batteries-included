@@ -325,7 +325,6 @@ defmodule CommonCore.Resources.IstioIngress do
     servers =
       state
       |> hosts_by_battery_type()
-      |> Enum.reject(fn {type, _host} -> type == :battery_core end)
       |> Enum.flat_map(fn {type, host} -> build_servers(type, host, ssl_enabled?) end)
 
     spec = %{

@@ -90,7 +90,6 @@ defmodule CommonCore.Installs.Batteries do
         |> Enum.map(fn cb -> cb.type end)
 
       _ ->
-        # TODO: This should include a control server.
         ~w(karpenter battery_ca aws_load_balancer_controller) ++ @standard_battery_types
     end
   end

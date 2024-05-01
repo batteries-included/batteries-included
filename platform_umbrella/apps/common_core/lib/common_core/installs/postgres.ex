@@ -13,8 +13,11 @@ defmodule CommonCore.Installs.Postgres do
     |> Enum.filter(&(&1 != nil))
   end
 
-  defp cluster_args(%SystemBattery{type: :battery_core}, %Installation{usage: usage, default_size: default_size}) do
-    cluster = CommonCore.Defaults.ControlDB.control_cluster(default_size)
+  defp cluster_args(%SystemBattery{type: :battery_core, config: config}, %Installation{
+         usage: usage,
+         default_size: default_size
+       }) do
+    cluster = CommonCore.Defaults.ControlDB.control_cluster([config.core_namespace], default_size)
 
     case usage do
       internal when internal in [:internal_dev, :internal_int_test] ->

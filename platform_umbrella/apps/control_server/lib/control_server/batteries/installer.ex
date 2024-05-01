@@ -136,8 +136,11 @@ defmodule ControlServer.Batteries.Installer do
   defp to_map(val) when is_map(val), do: val
   defp clean_merge(m1, m2), do: Map.merge(to_map(m1), to_map(m2))
 
-  defp post_install(%SystemBattery{type: :battery_core, config: %{default_size: default_size}}, repo) do
-    init_pg = Defaults.ControlDB.control_cluster(default_size || :tiny)
+  defp post_install(
+         %SystemBattery{type: :battery_core, config: %{default_size: default_size, core_namespace: core_ns}},
+         repo
+       ) do
+    init_pg = Defaults.ControlDB.control_cluster([core_ns], default_size || :tiny)
 
     with {:ok, postgres_db} <- Postgres.find_or_create(init_pg, repo) do
       {:ok, internal_postgres: postgres_db}

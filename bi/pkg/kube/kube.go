@@ -171,7 +171,7 @@ func (c *batteryKubeClient) WaitForConnection(timeout time.Duration) error {
 				return nil
 			}
 			slog.Debug("Still waiting on cluster to be ready")
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(1 * time.Second)
 		}
 	}
 }

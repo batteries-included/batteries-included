@@ -12,7 +12,6 @@ defmodule CommonCore.Resources.ControlServer do
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.PostgresState
 
-  @service_account "battery-admin"
   @server_port 4000
   @web_port 4001
 
@@ -20,7 +19,7 @@ defmodule CommonCore.Resources.ControlServer do
     spec =
       [hosts: [control_host(state)]]
       |> VirtualService.new!()
-      |> V.fallback("control-server", @web_port)
+      |> V.fallback(@app_name, @web_port)
 
     :istio_virtual_service
     |> B.build_resource()
@@ -35,21 +34,16 @@ defmodule CommonCore.Resources.ControlServer do
     :service_account
     |> B.build_resource()
     |> B.namespace(core_namespace(state))
-    |> B.name("battery-admin")
+    |> B.name(@app_name)
     |> F.require(battery.config.server_in_cluster)
   end
 
   resource(:cluster_role_binding, battery, state) do
     :cluster_role_binding
     |> B.build_resource()
-    |> B.name("battery-admin-cluster-admin")
-    |> Map.put(
-      "roleRef",
-      B.build_cluster_role_ref("cluster-admin")
-    )
-    |> Map.put("subjects", [
-      B.build_service_account("battery-admin", core_namespace(state))
-    ])
+    |> B.name("batteries-included:control-server-cluster-admin")
+    |> Map.put("roleRef", B.build_cluster_role_ref("cluster-admin"))
+    |> Map.put("subjects", [B.build_service_account(@app_name, core_namespace(state))])
     |> F.require(battery.config.server_in_cluster)
   end
 
@@ -68,7 +62,7 @@ defmodule CommonCore.Resources.ControlServer do
 
     :service
     |> B.build_resource()
-    |> B.name("control-server")
+    |> B.name(@app_name)
     |> B.namespace(core_namespace(state))
     |> B.spec(spec)
     |> F.require(battery.config.server_in_cluster)
@@ -76,6 +70,12 @@ defmodule CommonCore.Resources.ControlServer do
 
   resource(:deployment, battery, state) do
     name = "controlserver"
+
+    cluster = PostgresState.cluster(state, name: Defaults.ControlDB.cluster_name(), type: :internal)
+    user = Enum.find(cluster.users, &(&1.username == Defaults.ControlDB.user_name()))
+    secret_name = PostgresState.user_secret(state, cluster, user)
+    host = PostgresState.read_write_hostname(state, cluster)
+    summary_dir = "/var/run/secrets/summary"
 
     template = %{
       "metadata" => %{
@@ -85,21 +85,37 @@ defmodule CommonCore.Resources.ControlServer do
         }
       },
       "spec" => %{
-        "serviceAccount" => @service_account,
+        "automountServiceAccountToken" => true,
+        "serviceAccount" => @app_name,
+        "serviceAccountName" => @app_name,
         "initContainers" => [
-          control_container(battery, state,
+          control_container(battery,
             name: "init",
-            base: %{"command" => ["bin/control_server_init"]}
+            base: %{
+              "command" => ["control_server_init"],
+              "volumeMounts" => [%{"mountPath" => summary_dir, "name" => "summary"}]
+            },
+            pg_secret_name: secret_name,
+            pg_host: host,
+            summary_path: "#{summary_dir}/summary.json"
           )
         ],
         "containers" => [
-          control_container(battery, state,
+          control_container(battery,
             name: name,
             base: %{
-              "command" => ["bin/control_server", "start"],
+              "command" => ["control_server", "start"],
               "ports" => [%{"containerPort" => @server_port}]
-            }
+            },
+            pg_secret_name: secret_name,
+            pg_host: host
           )
+        ],
+        "volumes" => [
+          %{
+            "name" => "summary",
+            "secret" => %{"defaultMode" => 420, "optional" => true, "secretName" => "initial-target-summary"}
+          }
         ]
       }
     }
@@ -118,24 +134,19 @@ defmodule CommonCore.Resources.ControlServer do
     |> F.require(battery.config.server_in_cluster)
   end
 
-  defp control_container(battery, state, options) do
+  defp control_container(battery, options) do
     base = Keyword.get(options, :base, %{})
     name = Keyword.get(options, :name, "control-server")
-
     image = Keyword.get(options, :image, battery.config.image)
-    cluster = PostgresState.cluster(state, name: Defaults.ControlDB.cluster_name(), type: :internal)
-    user = Enum.find(cluster.users, &(&1.username == Defaults.ControlDB.user_name()))
-
-    secret_name = PostgresState.user_secret(state, cluster, user)
-    host = PostgresState.read_write_hostname(state, cluster)
+    host = Keyword.get(options, :pg_host)
+    secret_name = Keyword.get(options, :pg_secret_name)
+    summary_path = Keyword.get(options, :summary_path, "")
 
     base
     |> Map.put_new("name", name)
     |> Map.put_new("image", image)
-    |> Map.put_new("resources", %{
-      "limits" => %{"memory" => "500Mi"},
-      "requests" => %{"cpu" => "200m", "memory" => "300Mi"}
-    })
+    |> Map.put_new("imagePullPolicy", "Always")
+    |> Map.put_new("resources", %{"requests" => %{"cpu" => "1000m", "memory" => "2000Mi"}})
     |> Map.put_new("env", [
       %{
         "name" => "PORT",
@@ -154,14 +165,21 @@ defmodule CommonCore.Resources.ControlServer do
         "value" => battery.config.secret_key
       },
       %{
+        "name" => "RELEASE_COOKIE",
+        "value" => battery.config.secret_key
+      },
+      %{
+        "name" => "BOOTSTRAP_SUMMARY_PATH",
+        "value" => summary_path
+      },
+      %{
         "name" => "POSTGRES_USER",
         "valueFrom" => B.secret_key_ref(secret_name, "username")
       },
       %{
         "name" => "POSTGRES_PASSWORD",
         "valueFrom" => B.secret_key_ref(secret_name, "password")
-      },
-      %{"name" => "MIX_ENV", "value" => "prod"}
+      }
     ])
   end
 end

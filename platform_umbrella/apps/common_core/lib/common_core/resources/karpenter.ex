@@ -424,7 +424,12 @@ defmodule CommonCore.Resources.Karpenter do
             %{"key" => "kubernetes.io/arch", "operator" => "In", "values" => ["amd64"]},
             %{"key" => "karpenter.sh/capacity-type", "operator" => "In", "values" => ["spot", "on-demand"]},
             %{"key" => "karpenter.k8s.aws/instance-family", "operator" => "In", "values" => ["t3", "t3a"]},
-            %{"key" => "karpenter.k8s.aws/instance-size", "operator" => "In", "values" => ["small", "medium", "large"]},
+            %{
+              "key" => "karpenter.k8s.aws/instance-size",
+              "operator" => "In",
+              # TODO(jdt): base this list on the default cluster size?
+              "values" => ["small", "medium", "large", "xlarge", "2xlarge"]
+            },
             %{"key" => "karpenter.k8s.aws/instance-hypervisor", "operator" => "In", "values" => ["nitro"]}
           ]
         }

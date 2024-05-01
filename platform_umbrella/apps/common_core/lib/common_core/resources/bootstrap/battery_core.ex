@@ -61,6 +61,7 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
               %{"name" => "BOOTSTRAP_SUMMARY_PATH", "value" => "#{bootstrap_summary_root}/summary.json"}
             ],
             "image" => battery.config.bootstrap_image,
+            "imagePullPolicy" => "Always",
             "name" => "bootstrap",
             "volumeMounts" => [%{"mountPath" => bootstrap_summary_root, "name" => "summary"}]
           }

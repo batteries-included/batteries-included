@@ -9,7 +9,7 @@ defmodule CommonCore.Resources.CertManager.Certificates do
   alias CommonCore.Resources.CertManager.Certificates.Cert
   alias CommonCore.StateSummary
 
-  @cert_manager_disabled_batteries ~w(battery_core)a
+  @cert_manager_disabled_batteries ~w()a
 
   def materialize(%SystemBattery{} = _battery, %StateSummary{} = state) do
     state

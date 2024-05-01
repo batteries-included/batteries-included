@@ -31,9 +31,9 @@ func (spec *InstallSpec) WriteSummaryToKube(ctx context.Context, kubeClient kube
 		return fmt.Errorf("unable to marshal state summary: %w", err)
 	}
 
-	ns, err := coreNamespace(spec.TargetSummary.Batteries, "battery_core")
+	ns, err := coreNamespace(spec.TargetSummary.Batteries)
 	if err != nil {
-		return fmt.Errorf("unable to find battery_core namespace: %w", err)
+		return fmt.Errorf("unable to find namespace: %w", err)
 	}
 
 	if err := kubeClient.EnsureResourceExists(ctx, map[string]any{
@@ -54,10 +54,10 @@ func (spec *InstallSpec) WriteSummaryToKube(ctx context.Context, kubeClient kube
 	return nil
 }
 
-func coreNamespace(batteries []BatterySpec, typ string) (string, error) {
-	ix := slices.IndexFunc(batteries, func(bs BatterySpec) bool { return bs.Type == typ })
+func coreNamespace(batteries []BatterySpec) (string, error) {
+	ix := slices.IndexFunc(batteries, func(bs BatterySpec) bool { return bs.Type == "battery_core" })
 	if ix < 0 {
-		return "", fmt.Errorf("failed to find core namespace with type %s", typ)
+		return "", fmt.Errorf("failed to find core battery")
 	}
 
 	return batteries[ix].Config["core_namespace"].(string), nil

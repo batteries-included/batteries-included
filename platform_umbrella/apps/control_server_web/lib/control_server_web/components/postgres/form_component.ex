@@ -158,7 +158,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        dbg(changeset)
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end

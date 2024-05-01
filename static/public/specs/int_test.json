@@ -13,14 +13,14 @@
         "type": "battery_core",
         "config": {
           "type": "battery_core",
-          "image": "battery-registry:5000/battery/control:c6f4bd1-dirty1",
+          "image": "public.ecr.aws/p2f3z8m1/control-server:latest",
           "cluster_type": "kind",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
-          "bootstrap_image": "037532365270.dkr.ecr.us-east-2.amazonaws.com/kube-bootstrap:latest",
-          "secret_key": "LCS6F5U46XBZ2AJE3F7M5E7FNT5VU3XD7YJF4NMB2HVJIFR4IOYYXTVC2C6USSWJ",
+          "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
+          "secret_key": "ZIHL6HVSX2FM57WOFMPL7WL3FGUMD2OFDEGQHFEA57H6UODBCHTUVAIK4MSXGPNY",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -66,9 +66,9 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "246HRHU42S2WQ7DFGGQPZI2I",
+            "password": "HUP67XYGZ4G5L6WFGR2AXAYQ",
             "roles": ["createdb", "login"],
-            "credential_namespaces": []
+            "credential_namespaces": ["battery-core"]
           }
         ],
         "storage_size": 536870912,
