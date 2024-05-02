@@ -40,28 +40,16 @@ defmodule KubeBootstrap.Kube do
       Logger.info("All #{length(resources)} resource(s) created successfully")
       {:ok, results}
     else
-      need_apply =
-        resources
-        |> Enum.zip(results)
-        |> Enum.filter(fn {_, result} -> !result_ok?(result) end)
-        |> Enum.map(fn {resource, _} -> resource end)
-
       retries_left = num_retries - 1
       sleep_time = sleep_time(retries_left)
 
       if sleep_time > 0 do
-        len_need_apply = length(need_apply)
-
-        Logger.info(
-          "Retrying in #{sleep_time}ms with #{len_need_apply} resources needing to be created",
-          retries_left: retries_left,
-          need_apply: len_need_apply
-        )
+        Logger.info("Retrying in #{sleep_time}ms...", retries_left: retries_left)
 
         :timer.sleep(sleep_time)
       end
 
-      ensure_exists(conn, need_apply, retries_left)
+      ensure_exists(conn, resources, retries_left)
     end
   end
 

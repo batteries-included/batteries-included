@@ -143,8 +143,7 @@ defmodule CommonCore.Resources.Istiod do
           "annotations" => %{
             "ambient.istio.io/redirection" => "disabled",
             "prometheus.io/port" => "15014",
-            "prometheus.io/scrape" => "true",
-            "sidecar.istio.io/inject" => "false"
+            "prometheus.io/scrape" => "true"
           },
           "labels" => %{
             "battery/managed" => "true",

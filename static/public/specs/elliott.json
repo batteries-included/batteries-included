@@ -20,7 +20,7 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
-          "secret_key": "I6KBT3OUTCTEG6ON53ZJYNPOF2PGD7BNCD72WBWKDBECXOE6UIOFSA76QQECN6RJ",
+          "secret_key": "P5W7QOJVCYX44ZSAAURNFS5KYQXY3HJZUQOTXV6IQ5UJ2Z3454PGZNRWYVD5VJEM",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -175,7 +175,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "QJIBEFA5JOPMDSZNULFAFLMT",
+            "password": "IET7Q56RVZKKL5VZKRPDKA5H",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }

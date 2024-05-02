@@ -42,9 +42,9 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     template =
       %{
         "metadata" => %{
-          "annotations" => %{"sidecar.istio.io/inject" => "false"},
           "labels" => %{
-            "battery/managed" => "true"
+            "battery/managed" => "true",
+            "sidecar.istio.io/inject" => "false"
           }
         },
         "spec" => %{

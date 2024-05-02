@@ -96,8 +96,7 @@ defmodule CommonCore.Resources.IstioIngress do
             "istio.io/rev" => "default",
             "prometheus.io/path" => "/stats/prometheus",
             "prometheus.io/port" => "15020",
-            "prometheus.io/scrape" => "true",
-            "sidecar.istio.io/inject" => "false"
+            "prometheus.io/scrape" => "true"
           },
           "labels" => %{
             "battery/managed" => "true",

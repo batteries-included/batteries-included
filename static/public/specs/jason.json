@@ -20,7 +20,7 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
-          "secret_key": "5UZB77OKM6M5UWAMK7TXENQ2DXMNL2CEA7IKVVE32Z4SZN7P2WK5OH4ZK6TARPJD",
+          "secret_key": "JRZ2Q2V64RMAYPCD6A72F4IW7LHGYPG2ARHO3B64A7OS66JDLDLI6SURE25BALLK",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": true,
@@ -168,7 +168,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "WX4YO35X4LU4H6I6DOO42PBF",
+            "password": "B7QB3LGUQ2TX3XJKJFEHXVWN",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -220,8 +220,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "6RDGBGLUSEGCCHFMMNLQI6XKTDSNMNQZOD45QVTECT45VI6FZXJQ====",
-          "sidecar.istio.io/inject": "false"
+          "battery/hash": "HHZI7KH5F5RYND6U5S6F4226N4DU6VNQT7BPSHYLK3LIINVBDVGA===="
         },
         "labels": {
           "app": "battery-core",
@@ -231,6 +230,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
+          "sidecar.istio.io/inject": "false",
           "version": "latest"
         },
         "name": "bootstrap",
@@ -242,9 +242,7 @@
         "parallelism": 1,
         "template": {
           "metadata": {
-            "annotations": {
-              "sidecar.istio.io/inject": "false"
-            },
+            "annotations": {},
             "labels": {
               "app": "battery-core",
               "app.kubernetes.io/component": "bootstrap",
@@ -256,6 +254,7 @@
               "battery/managed": "true",
               "battery/managed.indirect": "true",
               "component": "bootstrap",
+              "sidecar.istio.io/inject": "false",
               "version": "latest"
             }
           },
@@ -266,7 +265,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "5UZB77OKM6M5UWAMK7TXENQ2DXMNL2CEA7IKVVE32Z4SZN7P2WK5OH4ZK6TARPJD"
+                    "value": "JRZ2Q2V64RMAYPCD6A72F4IW7LHGYPG2ARHO3B64A7OS66JDLDLI6SURE25BALLK"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",
@@ -288,7 +287,7 @@
                 ]
               }
             ],
-            "restartPolicy": "Never",
+            "restartPolicy": "OnFailure",
             "serviceAccount": "bootstrap",
             "serviceAccountName": "bootstrap",
             "tolerations": [

@@ -14,7 +14,7 @@ defmodule CommonCore.Resources.Builder do
     resource_type
     |> ApiVersionKind.from_resource_type!()
     |> build_resource()
-    |> annotation("sidecar.istio.io/inject", "false")
+    |> label("sidecar.istio.io/inject", "false")
   end
 
   def build_resource(resource_type) when is_atom(resource_type) do

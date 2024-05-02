@@ -66,7 +66,7 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
             "volumeMounts" => [%{"mountPath" => bootstrap_summary_root, "name" => "summary"}]
           }
         ],
-        "restartPolicy" => "Never",
+        "restartPolicy" => "OnFailure",
         "serviceAccount" => "bootstrap",
         "serviceAccountName" => "bootstrap",
         "tolerations" => [%{"key" => "CriticalAddonsOnly", "operator" => "Exists"}],
