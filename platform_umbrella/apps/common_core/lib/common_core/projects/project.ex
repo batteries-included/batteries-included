@@ -16,7 +16,7 @@ defmodule CommonCore.Projects.Project do
     field :type, Ecto.Enum, values: [:web, :ai, :db]
     field :description, :string
 
-    has_many :pg_clusters, CommonCore.Postgres.Cluster
+    has_many :postgres_clusters, CommonCore.Postgres.Cluster
     has_many :redis_clusters, CommonCore.Redis.FailoverCluster
     has_many :knative_services, CommonCore.Knative.Service
 

@@ -26,7 +26,7 @@ defmodule ControlServer.ProjectsTest do
 
   describe "get_project!/1" do
     test "should return the project with given id", ctx do
-      assert get_project!(ctx.project.id) == ctx.project
+      assert get_project!(ctx.project.id).name == ctx.project.name
     end
   end
 
@@ -51,9 +51,9 @@ defmodule ControlServer.ProjectsTest do
       assert project.type == :ai
     end
 
-    test "should return error changeset with invalid data", ctx do
-      assert {:error, %Ecto.Changeset{}} = update_project(ctx.project, @invalid_attrs)
-      assert ctx.project == get_project!(ctx.project.id)
+    test "should return error changeset with invalid data", %{project: project} = ctx do
+      assert {:error, %Ecto.Changeset{}} = update_project(project, @invalid_attrs)
+      assert ctx.project.name == get_project!(project.id).name
     end
   end
 

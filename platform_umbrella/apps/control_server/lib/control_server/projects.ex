@@ -11,7 +11,9 @@ defmodule ControlServer.Projects do
   end
 
   def get_project!(id) do
-    Repo.get!(Project, id)
+    Project
+    |> preload([:postgres_clusters, :redis_clusters, :knative_services])
+    |> Repo.get!(id)
   end
 
   def create_project(attrs \\ %{}) do
