@@ -8,7 +8,7 @@ defmodule CommonUI.Components.Button do
   attr :link_type, :string, default: "redirect", values: ["redirect", "patch", "external"]
   attr :link_replace, :boolean, default: false
 
-  attr :variant, :string, values: ["primary", "secondary", "dark", "icon", "icon_bordered", "minimal"]
+  attr :variant, :string, values: ["primary", "secondary", "dark", "danger", "icon", "icon_bordered", "minimal"]
   attr :tag, :string, default: "button"
   attr :class, :string, default: nil
   attr :icon, :atom, default: nil
@@ -95,6 +95,13 @@ defmodule CommonUI.Components.Button do
     [
       base_class(),
       "text-white dark:text-gray-darkest bg-gray-darkest dark:bg-white hover:bg-gray-darker dark:hover:bg-gray-lighter disabled:bg-gray-lighter"
+    ]
+  end
+
+  defp button_class("danger") do
+    [
+      base_class(),
+      "text-white dark:text-gray-darkest bg-red-500 hover:bg-red-400 disabled:bg-gray-lighter"
     ]
   end
 

@@ -1,11 +1,7 @@
 defmodule HomeBaseWeb.ForgotPasswordLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  import HomeBase.Factory
-  import Phoenix.LiveViewTest
-
   alias HomeBase.Accounts
-  alias HomeBase.Repo
 
   def setup_user(_) do
     user = :user |> params_for() |> register_user!()

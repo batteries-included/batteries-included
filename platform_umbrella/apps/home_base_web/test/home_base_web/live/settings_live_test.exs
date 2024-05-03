@@ -1,9 +1,6 @@
 defmodule HomeBaseWeb.SettingsLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  import HomeBase.Factory
-  import Phoenix.LiveViewTest
-
   alias HomeBase.Accounts
 
   defp setup_user(_) do

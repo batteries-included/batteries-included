@@ -1,7 +1,7 @@
 defmodule CommonCore.Notebooks.JupyterLabNotebook do
   @moduledoc false
 
-  use CommonCore, :schema
+  use CommonCore, {:schema, no_encode: [:project]}
 
   import CommonCore.Util.EctoValidations
 

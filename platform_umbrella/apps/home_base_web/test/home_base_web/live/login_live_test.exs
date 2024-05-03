@@ -1,9 +1,6 @@
 defmodule HomeBaseWeb.LoginLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  import HomeBase.Factory
-  import Phoenix.LiveViewTest
-
   describe "Log in page" do
     test "renders log in page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/login")

@@ -1,8 +1,6 @@
 defmodule HomeBaseWeb.UserAuthTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  import HomeBase.Factory
-
   alias HomeBase.Accounts
   alias HomeBaseWeb.UserAuth
   alias Phoenix.LiveView

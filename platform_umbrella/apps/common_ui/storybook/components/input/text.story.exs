@@ -13,7 +13,7 @@ defmodule Storybook.Components.Input.Text do
           name: "foobar",
           value: "",
           label: "Label",
-          note: "Note"
+          note: "This is a note"
         }
       },
       %Variation{

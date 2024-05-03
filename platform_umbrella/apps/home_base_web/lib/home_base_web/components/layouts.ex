@@ -71,7 +71,7 @@ defmodule HomeBaseWeb.Layouts do
 
   attr :flash, :map
   attr :current_user, User
-  attr :page_group, :atom, default: nil
+  attr :page, :atom, default: nil
   slot :inner_content
 
   def app(assigns) do

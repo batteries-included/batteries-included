@@ -1,8 +1,5 @@
 defmodule HomeBaseWeb.InstallationLiveTest do
-  use HomeBaseWeb.ConnCase
-
-  import HomeBase.Factory
-  import Phoenix.LiveViewTest
+  use HomeBaseWeb.ConnCase, async: true
 
   alias HomeBase.CustomerInstalls
 

@@ -1,7 +1,6 @@
 <label phx-feedback-for="foo">
   <div class="flex items-center gap-4 text-sm text-gray-darkest dark:text-gray-lighter mb-2">
-  <span>Foobar</span>
-  
+  Foobar
 </div>
 
   <div class="relative">
@@ -12,5 +11,6 @@
 </svg>
   </div>
 
+  
   
 </label>

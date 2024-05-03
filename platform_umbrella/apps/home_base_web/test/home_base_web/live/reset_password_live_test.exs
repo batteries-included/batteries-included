@@ -1,9 +1,6 @@
 defmodule HomeBaseWeb.ResetPasswordLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  import HomeBase.Factory
-  import Phoenix.LiveViewTest
-
   alias HomeBase.Accounts
 
   setup do

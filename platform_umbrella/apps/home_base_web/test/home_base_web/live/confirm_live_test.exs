@@ -1,11 +1,7 @@
 defmodule HomeBaseWeb.ConfirmLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  import HomeBase.Factory
-  import Phoenix.LiveViewTest
-
   alias HomeBase.Accounts
-  alias HomeBase.Repo
 
   setup do
     user = :user |> params_for() |> register_user!()

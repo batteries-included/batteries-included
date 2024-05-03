@@ -1,9 +1,6 @@
 defmodule HomeBaseWeb.SignupLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  import HomeBase.Factory
-  import Phoenix.LiveViewTest
-
   defp setup_user(_) do
     user = :user |> params_for() |> register_user!()
     %{user: user}

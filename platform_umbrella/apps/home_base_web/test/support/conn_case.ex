@@ -23,8 +23,10 @@ defmodule HomeBaseWeb.ConnCase do
       use HomeBaseWeb, :verified_routes
 
       # Import conveniences for testing with connections
+      import HomeBase.Factory
       import HomeBaseWeb.ConnCase
       import Phoenix.ConnTest
+      import Phoenix.LiveViewTest
       import Plug.Conn
 
       alias HomeBase.Repo

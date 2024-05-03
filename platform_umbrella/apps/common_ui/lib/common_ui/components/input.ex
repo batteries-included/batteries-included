@@ -53,7 +53,7 @@ defmodule CommonUI.Components.Input do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <.label label={@label} note={@note} />
+      <.label label={@label} />
 
       <select
         name={@name}
@@ -79,6 +79,7 @@ defmodule CommonUI.Components.Input do
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
 
+      <div :if={@note} class={note_class()}><%= @note %></div>
       <.error errors={@errors} />
     </label>
     """
@@ -109,6 +110,7 @@ defmodule CommonUI.Components.Input do
         <%= render_slot(@inner_block) %>
       </span>
 
+      <div :if={@note} class={note_class()}><%= @note %></div>
       <.error errors={@errors} class="w-full mt-2" />
     </label>
     """
@@ -142,6 +144,7 @@ defmodule CommonUI.Components.Input do
         </span>
       </label>
 
+      <div :if={@note} class={note_class()}><%= @note %></div>
       <.error errors={@errors} class="w-full mt-2" />
     </div>
     """
@@ -232,6 +235,7 @@ defmodule CommonUI.Components.Input do
         ]} />
       </div>
 
+      <div :if={@note} class={note_class()}><%= @note %></div>
       <.error errors={@errors} class="w-full mt-0" />
     </label>
     """
@@ -240,7 +244,7 @@ defmodule CommonUI.Components.Input do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <.label label={@label} note={@note} />
+      <.label label={@label} />
 
       <textarea
         name={@name}
@@ -253,6 +257,7 @@ defmodule CommonUI.Components.Input do
         {@rest}
       ><%= normalize_value("textarea", @value) %></textarea>
 
+      <div :if={@note} class={note_class()}><%= @note %></div>
       <.error errors={@errors} />
     </label>
     """
@@ -273,7 +278,7 @@ defmodule CommonUI.Components.Input do
   def input(assigns) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <.label label={@label} note={@note} />
+      <.label label={@label} />
 
       <div class="relative">
         <input
@@ -296,6 +301,7 @@ defmodule CommonUI.Components.Input do
         />
       </div>
 
+      <div :if={@note} class={note_class()}><%= @note %></div>
       <.error errors={@errors} />
     </label>
     """
@@ -320,19 +326,15 @@ defmodule CommonUI.Components.Input do
     ]
   end
 
+  defp note_class, do: "text-xs text-gray-light mt-2"
+
   attr :label, :string, default: nil
-  attr :note, :string, default: nil
   attr :class, :any, default: "mb-2"
 
   defp label(assigns) do
     ~H"""
-    <div class={[
-      "flex items-center gap-4",
-      label_class(),
-      @class
-    ]}>
-      <span :if={@label}><%= @label %></span>
-      <span :if={@note} class="text-xs text-gray-light"><%= @note %></span>
+    <div :if={@label} class={["flex items-center gap-4", label_class(), @class]}>
+      <%= @label %>
     </div>
     """
   end
