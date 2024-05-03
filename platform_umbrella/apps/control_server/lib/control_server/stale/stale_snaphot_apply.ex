@@ -1,8 +1,8 @@
 defmodule ControlServer.StaleSnaphotApply do
   @moduledoc false
-  import Ecto.Query, warn: false
 
-  alias ControlServer.Repo
+  use ControlServer, :context
+
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
 

@@ -1,10 +1,9 @@
 defmodule CommonCore.Timeline.Kube do
   @moduledoc false
-  use CommonCore.Util.PolymorphicType, type: :kube
-  use TypedEctoSchema
 
-  @primary_key false
-  @derive Jason.Encoder
+  use CommonCore, :embedded_schema
+  use CommonCore.Util.PolymorphicType, type: :kube
+
   typed_embedded_schema do
     field :resource_type, Ecto.Enum, values: CommonCore.ApiVersionKind.all_known()
     field :action, Ecto.Enum, values: [:add, :delete, :update]

@@ -1,15 +1,12 @@
 defmodule ControlServer.Timeline do
-  @moduledoc """
-  The Timeline context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Timeline.BatteryInstall
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase
   alias CommonCore.Timeline.TimelineEvent
-  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

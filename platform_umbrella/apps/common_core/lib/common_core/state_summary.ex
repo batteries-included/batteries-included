@@ -16,14 +16,11 @@ defmodule CommonCore.StateSummary do
     state_summary = %{state_summary | batteries: [%CommonCore.Batteries.SystemBattery{}]}
 
   """
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :embedded_schema
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Installation
-
-  @derive Jason.Encoder
 
   @optional_fields ~w(kube_state)a
   @required_fields ~w()a

@@ -1,8 +1,7 @@
 defmodule CommonCore.GrafanaDashboardClient do
   @moduledoc false
-  use Tesla
 
-  require Logger
+  use Tesla
 
   plug(Tesla.Middleware.JSON)
 

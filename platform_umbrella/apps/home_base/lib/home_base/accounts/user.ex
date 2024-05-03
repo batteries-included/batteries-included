@@ -1,10 +1,13 @@
 defmodule HomeBase.Accounts.User do
   @moduledoc false
-  use HomeBase, :schema
+
+  use CommonCore, :schema
+
+  import CommonCore.Util.EctoValidations
 
   alias HomeBase.Teams.TeamRole
 
-  schema "users" do
+  typed_schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true

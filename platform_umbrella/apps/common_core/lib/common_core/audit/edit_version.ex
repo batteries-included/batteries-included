@@ -1,14 +1,9 @@
 defmodule CommonCore.Audit.EditVersion do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :schema
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
-  schema "edit_versions" do
+  typed_schema "edit_versions" do
     # The patch in Erlang External Term Format
     field :patch, ExAudit.Type.Patch
 

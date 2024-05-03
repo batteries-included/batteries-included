@@ -1,6 +1,7 @@
 defmodule ControlServer.SystemState do
   @moduledoc false
-  alias Ecto.Multi
+
+  use ControlServer, :context
 
   def transaction do
     Multi.new()
@@ -13,6 +14,6 @@ defmodule ControlServer.SystemState do
     |> Multi.all(:backend_services, CommonCore.Backend.Service)
     |> Multi.all(:ip_address_pools, CommonCore.MetalLB.IPAddressPool)
     |> Multi.all(:projects, CommonCore.Projects.Project)
-    |> ControlServer.Repo.transaction()
+    |> Repo.transaction()
   end
 end

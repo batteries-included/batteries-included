@@ -1,16 +1,10 @@
 defmodule ControlServer.Postgres do
-  @moduledoc """
-  The Postgres context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Postgres.Cluster
-  alias ControlServer.Repo
-  alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
-
-  require Logger
 
   @doc """
   Returns the list of clusters.

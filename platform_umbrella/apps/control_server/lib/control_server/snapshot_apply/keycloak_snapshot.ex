@@ -1,13 +1,7 @@
 defmodule ControlServer.SnapshotApply.KeycloakSnapshot do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
-
-  @timestamps_opts [type: :utc_datetime_usec]
-
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+  use CommonCore, :schema
 
   typed_schema "keycloak_snapshots" do
     field :status, Ecto.Enum, values: [:creation, :generation, :applying, :ok, :error]

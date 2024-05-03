@@ -1,16 +1,14 @@
 defmodule CommonCore.Postgres.PGUser do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, :embedded_schema
 
   import CommonCore.Postgres
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   @required_fields ~w(username password roles)a
   @optional_fields ~w(credential_namespaces)a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     field :username, :string
     field :password, :string

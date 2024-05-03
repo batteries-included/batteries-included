@@ -5,10 +5,10 @@ defmodule CommonCore.Installation do
   It's all the things needed to bootstrap an installation of Batteries
   Included onto a kubernetes cluster and then bill for it (TODO).
   """
-  use TypedEctoSchema
+
+  use CommonCore, :schema
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   @required_fields ~w(slug usage kube_provider)a
   @optional_fields ~w(sso_enabled kube_provider_config initial_oauth_email default_size)a
@@ -23,9 +23,6 @@ defmodule CommonCore.Installation do
     Production: :production
   ]
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "installations" do
     field :slug, :string
 

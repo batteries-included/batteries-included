@@ -1,6 +1,7 @@
 defmodule CommonCore.Timeline.NamedDatabase do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, :embedded_schema
   use CommonCore.Util.PolymorphicType, type: :named_database
 
   @possible_schema_types [
@@ -15,7 +16,6 @@ defmodule CommonCore.Timeline.NamedDatabase do
 
   def possible_schema_types, do: @possible_schema_types
 
-  @primary_key false
   typed_embedded_schema do
     # WAIT!
     # If you are changing here then change in EventCenter.Database

@@ -1,12 +1,9 @@
 defmodule ControlServer.FerretDB do
-  @moduledoc """
-  The FerretDB context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.FerretDB.FerretService
-  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

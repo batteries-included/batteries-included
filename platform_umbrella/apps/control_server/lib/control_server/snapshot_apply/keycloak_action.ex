@@ -1,15 +1,7 @@
 defmodule ControlServer.SnapshotApply.KeycloakAction do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
-
-  alias Ecto.Changeset
-
-  @timestamps_opts [type: :utc_datetime_usec]
-
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+  use CommonCore, :schema
 
   @required_fields [:action, :type]
   @optional_fields [
@@ -57,11 +49,11 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
   end
 
   @spec validate_realm_present_if_needed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp validate_realm_present_if_needed(%Changeset{} = changeset) do
+  defp validate_realm_present_if_needed(%Ecto.Changeset{} = changeset) do
     # given an ecto changeset with fields type and realm
     # for all values of the field :type except for :realm
     # validate the field realm is required.
-    action_type = Ecto.Changeset.get_field(changeset, :type, nil)
+    action_type = get_field(changeset, :type, nil)
     validate_realm_with_type(changeset, action_type)
   end
 

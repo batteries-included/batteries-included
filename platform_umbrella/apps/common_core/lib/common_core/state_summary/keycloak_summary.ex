@@ -1,13 +1,12 @@
 defmodule CommonCore.StateSummary.KeycloakSummary do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, :embedded_schema
 
   alias CommonCore.OpenApi.KeycloakAdminSchema
   alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
 
   require Logger
-
-  @derive Jason.Encoder
 
   typed_embedded_schema do
     embeds_many :realms, KeycloakAdminSchema.RealmRepresentation

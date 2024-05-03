@@ -1,12 +1,9 @@
 defmodule ControlServer.Batteries do
-  @moduledoc """
-  The Batteries context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Batteries.SystemBattery
-  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

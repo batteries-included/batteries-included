@@ -1,12 +1,9 @@
 defmodule ControlServer.Backend do
-  @moduledoc """
-  The Backend context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Backend.Service
-  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

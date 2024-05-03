@@ -1,8 +1,7 @@
 defmodule ControlServer.ContentAddressable.Document do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :schema
 
   @derive {
     Flop.Schema,
@@ -15,10 +14,6 @@ defmodule ControlServer.ContentAddressable.Document do
     }
   }
 
-  @timestamps_opts [type: :utc_datetime_usec]
-
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "documents" do
     field :hash, :string
     field :value, :map, redact: true

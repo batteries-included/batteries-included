@@ -14,10 +14,12 @@ defmodule CommonCore.Util.PolymorphicTypeTest do
 
   defmodule BasicConfig do
     @moduledoc false
+
     use CommonCore.Util.PolymorphicType, type: :basic
     use TypedEctoSchema
 
     @primary_key false
+
     typed_embedded_schema do
       field :non_default, :string
       type_field()
@@ -26,12 +28,14 @@ defmodule CommonCore.Util.PolymorphicTypeTest do
 
   defmodule AdvancedConfig do
     @moduledoc false
+
     use CommonCore.Util.PolymorphicType, type: :advanced
     use CommonCore.Util.DefaultableField
     use TypedEctoSchema
 
     @required_fields ~w(non_default)a
     @primary_key false
+
     typed_embedded_schema do
       field :non_default, :string
       defaultable_field :defaulted, :string, default: "some default value"
@@ -41,13 +45,13 @@ defmodule CommonCore.Util.PolymorphicTypeTest do
 
   defmodule TypeWithConfig do
     @moduledoc false
-    use TypedEctoSchema
 
-    import Ecto.Changeset
+    use TypedEctoSchema
 
     alias CommonCore.Util.PolymorphicType
 
     @primary_key {:id, :binary_id, autogenerate: true}
+
     typed_schema "test_type" do
       field :config, PolymorphicType,
         mappings: [

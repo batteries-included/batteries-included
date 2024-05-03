@@ -1,18 +1,16 @@
 defmodule CommonCore.Batteries.NotebooksConfig do
   @moduledoc false
+
+  use CommonCore, :embedded_schema
   use CommonCore.Util.PolymorphicType, type: :notebooks
-  use TypedEctoSchema
 
   import CommonCore.Util.EctoValidations
   import CommonCore.Util.PolymorphicTypeHelpers
-  import Ecto.Changeset, only: [validate_required: 2]
 
   alias CommonCore.Defaults
 
   @required_fields ~w()a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     field :cookie_secret, :string
     type_field()

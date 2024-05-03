@@ -1,15 +1,12 @@
 defmodule CommonCore.Redis.FailoverCluster do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, {:schema, no_encode: [:project]}
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
-
-  @required_fields ~w(name type)a
-  @optional_fields ~w(num_redis_instances num_sentinel_instances cpu_requested cpu_limits memory_requested memory_limits virtual_size project_id)a
 
   @presets [
     %{
@@ -35,10 +32,9 @@ defmodule CommonCore.Redis.FailoverCluster do
     }
   ]
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__, :project]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+  @required_fields ~w(name type)a
+  @optional_fields ~w(num_redis_instances num_sentinel_instances cpu_requested cpu_limits memory_requested memory_limits virtual_size project_id)a
+
   typed_schema "redis_clusters" do
     field :name, :string
 

@@ -1,10 +1,9 @@
 defmodule ControlServer.Projects do
   @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Projects.Project
-  alias ControlServer.Repo
 
   def list_projects do
     Repo.all(Project)

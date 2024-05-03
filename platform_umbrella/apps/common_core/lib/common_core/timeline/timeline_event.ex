@@ -1,8 +1,7 @@
 defmodule CommonCore.Timeline.TimelineEvent do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :schema
 
   alias CommonCore.Timeline.BatteryInstall
   alias CommonCore.Timeline.Kube
@@ -18,9 +17,6 @@ defmodule CommonCore.Timeline.TimelineEvent do
   @required_fields ~w(type payload)a
   @optional_fields ~w()a
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "timeline_events" do
     field :type, Ecto.Enum, values: Keyword.keys(@possible_types)
 

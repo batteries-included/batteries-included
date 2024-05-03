@@ -1,11 +1,8 @@
 defmodule CommonCore.Postgres.PGDatabase do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :embedded_schema
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     field :name, :string
     field :owner, :string

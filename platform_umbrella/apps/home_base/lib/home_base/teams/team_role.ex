@@ -1,11 +1,14 @@
 defmodule HomeBase.Teams.TeamRole do
   @moduledoc false
-  use HomeBase, :schema
+
+  use CommonCore, :schema
+
+  import CommonCore.Util.EctoValidations
 
   alias HomeBase.Accounts.User
   alias HomeBase.Teams.Team
 
-  schema "teams_roles" do
+  typed_schema "teams_roles" do
     field :is_admin, :boolean, default: false
     field :invited_email, :string
 

@@ -1,19 +1,17 @@
 defmodule CommonCore.Batteries.BatteryCoreConfig do
   @moduledoc false
+
+  use CommonCore, :embedded_schema
   use CommonCore.Util.PolymorphicType, type: :battery_core
   use CommonCore.Util.DefaultableField
-  use TypedEctoSchema
 
   import CommonCore.Util.EctoValidations
   import CommonCore.Util.PolymorphicTypeHelpers
-  import Ecto.Changeset, only: [validate_required: 2]
 
   alias CommonCore.Defaults
 
   @required_fields ~w(cluster_type)a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     field :core_namespace, :string, default: Defaults.Namespaces.core()
     field :base_namespace, :string, default: Defaults.Namespaces.base()

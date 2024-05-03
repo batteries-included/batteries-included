@@ -1,18 +1,16 @@
 defmodule CommonCore.Batteries.LokiConfig do
   @moduledoc false
+
+  use CommonCore, :embedded_schema
   use CommonCore.Util.PolymorphicType, type: :loki
   use CommonCore.Util.DefaultableField
-  use TypedEctoSchema
 
   import CommonCore.Util.PolymorphicTypeHelpers
-  import Ecto.Changeset, only: [validate_number: 3, validate_required: 2]
 
   alias CommonCore.Defaults
 
   @required_fields ~w()a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     defaultable_field :image, :string, default: Defaults.Images.loki_image()
     defaultable_field :replication_factor, :integer, default: 1

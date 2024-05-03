@@ -1,13 +1,9 @@
 defmodule ControlServer.Redis do
-  @moduledoc """
-  The Redis context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Redis.FailoverCluster
-  alias ControlServer.Repo
-  alias Ecto.Multi
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

@@ -54,8 +54,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.VMOperator
   alias CommonCore.StateSummary
 
-  require Logger
-
   @default_generator_mappings [
     aws_load_balancer_controller: [AwsLoadBalancerController],
     backend_services: [BackendServices],

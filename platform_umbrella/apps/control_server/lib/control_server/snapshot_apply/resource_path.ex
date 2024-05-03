@@ -1,13 +1,7 @@
 defmodule ControlServer.SnapshotApply.ResourcePath do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
-
-  @timestamps_opts [type: :utc_datetime_usec]
-
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+  use CommonCore, :schema
 
   @required_fields [:path, :hash, :type, :name]
   @optional_fields [

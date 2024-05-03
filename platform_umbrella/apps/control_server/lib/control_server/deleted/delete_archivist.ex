@@ -1,6 +1,8 @@
 defmodule ControlServer.Deleted.DeleteArchivist do
   @moduledoc false
-  import Ecto.Query
+
+  use ControlServer, :context
+
   import K8s.Resource.FieldAccessors
 
   alias CommonCore.ApiVersionKind
@@ -8,8 +10,6 @@ defmodule ControlServer.Deleted.DeleteArchivist do
   alias ControlServer.ContentAddressable
   alias ControlServer.ContentAddressable.Document
   alias ControlServer.Deleted.DeletedResource
-  alias ControlServer.Repo
-  alias Ecto.Multi
 
   def record_delete(resource, repo \\ Repo) do
     resource

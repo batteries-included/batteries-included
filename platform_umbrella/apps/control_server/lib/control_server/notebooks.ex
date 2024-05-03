@@ -1,12 +1,9 @@
 defmodule ControlServer.Notebooks do
-  @moduledoc """
-  The Notebooks context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Notebooks.JupyterLabNotebook
-  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

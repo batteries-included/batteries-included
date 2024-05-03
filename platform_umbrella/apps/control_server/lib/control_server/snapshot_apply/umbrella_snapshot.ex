@@ -1,8 +1,7 @@
 defmodule ControlServer.SnapshotApply.UmbrellaSnapshot do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :schema
 
   @derive {
     Flop.Schema,
@@ -14,11 +13,6 @@ defmodule ControlServer.SnapshotApply.UmbrellaSnapshot do
       order_directions: [:desc, :desc]
     }
   }
-
-  @timestamps_opts [type: :utc_datetime_usec]
-
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
 
   typed_schema "umbrella_snapshots" do
     has_one :kube_snapshot, ControlServer.SnapshotApply.KubeSnapshot

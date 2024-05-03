@@ -1,16 +1,16 @@
 defmodule ControlServer.SnapshotApply.KubeEctoSteps do
   @moduledoc false
+
+  use ControlServer, :context
+
   import ControlServer.SnapshotApply.Kube
-  import Ecto.Query
   import K8s.Resource.FieldAccessors
 
   alias CommonCore.ApiVersionKind
   alias CommonCore.Resources.Hashing
   alias ControlServer.ContentAddressable.Document
-  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
-  alias Ecto.Multi
 
   @max_reason_length 255
   @generation_timeout 60_000

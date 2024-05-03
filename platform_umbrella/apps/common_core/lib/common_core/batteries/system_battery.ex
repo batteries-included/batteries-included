@@ -1,8 +1,7 @@
 defmodule CommonCore.Batteries.SystemBattery do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :schema
 
   alias CommonCore.Batteries.AwsLoadBalancerControllerConfig
   alias CommonCore.Batteries.BackendServicesConfig
@@ -79,10 +78,6 @@ defmodule CommonCore.Batteries.SystemBattery do
 
   def possible_types, do: Keyword.keys(@possible_types)
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "system_batteries" do
     field :group, Ecto.Enum, values: @possible_groups
 

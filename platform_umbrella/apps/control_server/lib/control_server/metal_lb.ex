@@ -1,12 +1,9 @@
 defmodule ControlServer.MetalLB do
-  @moduledoc """
-  The MetalLB context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.MetalLB.IPAddressPool
-  alias ControlServer.Repo
 
   @doc """
   Returns the list of ip_address_pools.

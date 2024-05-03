@@ -1,15 +1,13 @@
 defmodule CommonCore.Containers.Container do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, :embedded_schema
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   @required_fields ~w(image name)a
   @optional_fields ~w(args command)a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     field :args, {:array, :string}, default: nil
     field :command, {:array, :string}, default: nil

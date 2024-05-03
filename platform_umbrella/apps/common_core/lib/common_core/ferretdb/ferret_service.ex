@@ -1,9 +1,8 @@
 defmodule CommonCore.FerretDB.FerretService do
   @moduledoc false
-  use TypedEctoSchema
+  use CommonCore, :schema
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   alias CommonCore.Util.Memory
 
@@ -41,10 +40,6 @@ defmodule CommonCore.FerretDB.FerretService do
     }
   ]
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "ferret_services" do
     field :name, :string
     field :instances, :integer

@@ -1,17 +1,13 @@
 defmodule CommonCore.Postgres.Cluster do
-  @moduledoc """
-  The postgres cluster module
-  """
-  use TypedEctoSchema
+  @moduledoc false
+
+  use CommonCore, {:schema, no_encode: [:project]}
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
   alias CommonCore.Util.MemorySliderConverter
-
-  require Logger
 
   @required_fields ~w(name storage_size num_instances type)a
   @optional_fields ~w(storage_class cpu_requested cpu_limits memory_requested memory_limits virtual_size virtual_storage_size_range_value project_id)a
@@ -67,10 +63,6 @@ defmodule CommonCore.Postgres.Cluster do
     }
   ]
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__, :project]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "pg_clusters" do
     field :name, :string
     field :num_instances, :integer, default: 1

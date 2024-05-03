@@ -1,11 +1,8 @@
 defmodule ControlServer.SnapshotApply.Kube do
-  @moduledoc """
-  The SnapshotApply context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
-  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KubeSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
   alias EventCenter.KubeSnapshot, as: SnapshotEventCenter

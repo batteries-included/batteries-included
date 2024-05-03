@@ -1,11 +1,8 @@
 defmodule ControlServer.SnapshotApply.Umbrella do
-  @moduledoc """
-  The SnapshotApply context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
-  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.UmbrellaSnapshot
 
   @doc """

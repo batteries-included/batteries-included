@@ -1,12 +1,9 @@
 defmodule ControlServer.Knative do
-  @moduledoc """
-  The Knative context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
   alias CommonCore.Knative.Service
-  alias ControlServer.Repo
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """

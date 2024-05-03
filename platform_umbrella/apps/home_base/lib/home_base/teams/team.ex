@@ -1,10 +1,13 @@
 defmodule HomeBase.Teams.Team do
   @moduledoc false
-  use HomeBase, :schema
+
+  use CommonCore, :schema
+
+  import CommonCore.Util.EctoValidations
 
   alias HomeBase.Teams.TeamRole
 
-  schema "teams" do
+  typed_schema "teams" do
     field :name, :string
     field :op_email, :string
 

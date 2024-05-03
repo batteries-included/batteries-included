@@ -11,8 +11,8 @@ defmodule CommonCore.Util.DefaultableField do
   ## Examples
 
     defmodule MySchemaWithDefaultableFields do
+      use CommonCore, :schema
       use CommonCore.Util.DefaultableField
-      use TypedEctoSchema
 
       typed_schema do
         defaultable_field :a_field_with_a_default, :string, default: "the default string"

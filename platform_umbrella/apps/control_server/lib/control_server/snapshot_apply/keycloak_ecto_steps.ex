@@ -1,15 +1,15 @@
 defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
   @moduledoc false
+
+  use ControlServer, :context
+
   import ControlServer.SnapshotApply.Keycloak
-  import Ecto.Query
 
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Resources.Hashing
   alias ControlServer.ContentAddressable.Document
-  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KeycloakAction
   alias ControlServer.SnapshotApply.KeycloakSnapshot
-  alias Ecto.Multi
 
   @generation_timeout 60_000
 

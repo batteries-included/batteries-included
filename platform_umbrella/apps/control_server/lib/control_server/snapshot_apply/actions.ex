@@ -1,11 +1,8 @@
 defmodule ControlServer.SnapshotApply.Actions do
-  @moduledoc """
-  The SnapshotApply.Actions context.
-  """
+  @moduledoc false
 
-  import Ecto.Query, warn: false
+  use ControlServer, :context
 
-  alias ControlServer.Repo
   alias ControlServer.SnapshotApply.KeycloakAction
 
   @doc """

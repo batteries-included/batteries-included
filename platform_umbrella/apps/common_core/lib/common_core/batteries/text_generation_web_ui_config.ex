@@ -1,19 +1,17 @@
 defmodule CommonCore.Batteries.TextGenerationWebUIConfig do
   @moduledoc false
+
+  use CommonCore, :embedded_schema
   use CommonCore.Util.PolymorphicType, type: :text_generation_webui
-  use TypedEctoSchema
   use CommonCore.Util.DefaultableField
 
   import CommonCore.Util.EctoValidations
   import CommonCore.Util.PolymorphicTypeHelpers
-  import Ecto.Changeset
 
   alias CommonCore.Defaults
 
   @required_fields ~w()a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     defaultable_field :image, :string, default: Defaults.Images.text_generation_webui_image()
     field :cookie_secret, :string

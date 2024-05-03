@@ -3,8 +3,6 @@ defmodule CommonCore.Resources.Hashing do
   alias CommonCore.Resources.Hashing.MapHMAC
   alias CommonCore.Resources.Hashing.Sanitizer
 
-  require Logger
-
   @hash_annotation_key "battery/hash"
 
   @spec key :: binary()

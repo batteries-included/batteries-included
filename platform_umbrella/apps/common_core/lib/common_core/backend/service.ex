@@ -1,9 +1,9 @@
 defmodule CommonCore.Backend.Service do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, :schema
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   alias CommonCore.Util.Memory
 
@@ -54,10 +54,7 @@ defmodule CommonCore.Backend.Service do
 
   @required_fields ~w(name)a
   @optional_fields ~w(kube_deployment_type num_instances virtual_size)a
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+
   typed_schema "backend_services" do
     field :name, :string
 

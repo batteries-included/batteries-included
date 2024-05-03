@@ -1,9 +1,9 @@
 defmodule CommonCore.Notebooks.JupyterLabNotebook do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, :schema
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
@@ -59,10 +59,6 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     }
   ]
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__, :project]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "jupyter_lab_notebooks" do
     field :name, :string
     field :image, :string, default: "jupyter/datascience-notebook:lab-4.0.7"

@@ -1,16 +1,11 @@
 defmodule CommonCore.Projects.Project do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :schema
 
   @required_fields ~w(name type)a
   @optional_fields ~w(description)a
 
-  @derive {Jason.Encoder, except: [:__meta__]}
-  @timestamps_opts [type: :utc_datetime_usec]
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "projects" do
     field :name, :string
     field :type, Ecto.Enum, values: [:web, :ai, :db]

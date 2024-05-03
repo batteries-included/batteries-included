@@ -1,15 +1,12 @@
 defmodule CommonCore.Batteries.KarpenterConfig do
   @moduledoc false
+
+  use CommonCore, :embedded_schema
   use CommonCore.Util.PolymorphicType, type: :karpenter
   use CommonCore.Util.DefaultableField
-  use TypedEctoSchema
 
   alias CommonCore.Defaults
 
-  @required_fields ~w()a
-
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     defaultable_field :image, :string, default: Defaults.Images.karpenter_image()
     field :queue_name, :string

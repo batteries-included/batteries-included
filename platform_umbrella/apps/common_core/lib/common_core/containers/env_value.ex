@@ -1,14 +1,11 @@
 defmodule CommonCore.Containers.EnvValue do
   @moduledoc false
-  use TypedEctoSchema
 
-  import Ecto.Changeset
+  use CommonCore, :embedded_schema
 
   @required_fields ~w(name source_type)a
   @optional_fields ~w(value source_name source_key source_optional)a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     field :name, :string
 

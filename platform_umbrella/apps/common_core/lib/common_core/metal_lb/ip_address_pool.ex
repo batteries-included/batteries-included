@@ -1,14 +1,10 @@
 defmodule CommonCore.MetalLB.IPAddressPool do
   @moduledoc false
-  use TypedEctoSchema
+
+  use CommonCore, :schema
 
   import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
 
-  @timestamps_opts [type: :utc_datetime_usec]
-  @derive {Jason.Encoder, except: [:__meta__]}
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   typed_schema "ip_address_pools" do
     field :name, :string
     field :subnet, :string

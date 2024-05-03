@@ -1,19 +1,17 @@
 defmodule CommonCore.Batteries.VMClusterConfig do
   @moduledoc false
+
+  use CommonCore, :embedded_schema
   use CommonCore.Util.PolymorphicType, type: :vm_cluster
   use CommonCore.Util.DefaultableField
-  use TypedEctoSchema
 
   import CommonCore.Util.EctoValidations
   import CommonCore.Util.PolymorphicTypeHelpers
-  import Ecto.Changeset, only: [validate_number: 3, validate_required: 2]
 
   alias CommonCore.Defaults
 
   @required_fields ~w()a
 
-  @primary_key false
-  @derive Jason.Encoder
   typed_embedded_schema do
     defaultable_field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
     field :cookie_secret, :string
