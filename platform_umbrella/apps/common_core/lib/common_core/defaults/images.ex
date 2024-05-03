@@ -4,21 +4,21 @@ defmodule CommonCore.Defaults.Images do
   @kiali_image_version "v1.78.0"
 
   def cert_manager_image_version, do: @cert_manager_image_tag
-  def vm_cluster_tag, do: "v1.101.1-cluster"
+  def vm_cluster_tag, do: "v1.93.9-cluster"
   def vm_tag, do: "v1.93.9"
   def kiali_image_version, do: @kiali_image_version
 
   def addon_resizer_image, do: "registry.k8s.io/autoscaling/addon-resizer:1.8.19"
   def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.26.0"
   def aws_load_balancer_controller_image, do: "public.ecr.aws/eks/aws-load-balancer-controller:v2.7.2"
-  def bootstrap_image, do: "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest"
+  def bootstrap_image, do: "public.ecr.aws/batteries-included/kube-bootstrap:latest"
   def cert_manager_acmesolver_image, do: "quay.io/jetstack/cert-manager-acmesolver:#{cert_manager_image_version()}"
   def cert_manager_cainjector_image, do: "quay.io/jetstack/cert-manager-cainjector:#{cert_manager_image_version()}"
   def cert_manager_controller_image, do: "quay.io/jetstack/cert-manager-controller:#{cert_manager_image_version()}"
   def cert_manager_ctl_image, do: "quay.io/jetstack/cert-manager-ctl:#{cert_manager_image_version()}"
   def cert_manager_webhook_image, do: "quay.io/jetstack/cert-manager-webhook:#{cert_manager_image_version()}"
   def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.21.1"
-  def control_server_image, do: "public.ecr.aws/p2f3z8m1/control-server:latest"
+  def control_server_image, do: "public.ecr.aws/batteries-included/control-server:latest"
   def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.16.0"
   def forgejo_image, do: "codeberg.org/forgejo/forgejo:1.21.7-0"
   def frrouting_frr_image, do: "quay.io/frrouting/frr:8.5.4"
@@ -43,5 +43,5 @@ defmodule CommonCore.Defaults.Images do
   def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.14.1"
   def trust_manager_image, do: "quay.io/jetstack/trust-manager:v0.9.2"
   def trust_manager_init_image, do: "quay.io/jetstack/cert-manager-package-debian:20210119.0"
-  def vm_operator_image, do: "victoriametrics/operator:v0.43.5"
+  def vm_operator_image, do: "victoriametrics/operator:v0.39.4"
 end
