@@ -734,9 +734,6 @@ defmodule CommonCore.Resources.CertManager.CertManager do
           "serviceAccountName" => "cert-manager-startupapicheck"
         }
       )
-      |> B.app_labels(@app_name)
-      |> B.component_labels(component)
-      |> B.add_owner(battery)
 
     spec =
       %{}
@@ -749,6 +746,8 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
+    |> B.app_labels(@app_name)
+    |> B.add_owner(battery)
     |> B.component_labels(component)
     |> B.spec(spec)
   end

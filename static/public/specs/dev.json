@@ -5,7 +5,6 @@
     "provider": "kind"
   },
   "target_summary": {
-    "id": null,
     "notebooks": [],
     "batteries": [
       {
@@ -39,14 +38,14 @@
         "type": "battery_core",
         "config": {
           "type": "battery_core",
-          "image": "public.ecr.aws/p2f3z8m1/control-server:latest",
+          "image": "public.ecr.aws/batteries-included/control-server:latest",
           "cluster_type": "kind",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
-          "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
-          "secret_key": "HMUC6SFZ44AMXESIRG6GO5FHWTKMOYAOJERKX3PFCTQ7DFJUICZH6TBTQTZ347B6",
+          "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
+          "secret_key": "ZXZBEXZYZFOYY645U7KKRQZM7DPGWMDH2PWVJM63GG5PTP7U3ZRSSVWGUFG4LLTZ",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -65,8 +64,8 @@
           "controller_image": "quay.io/metallb/controller:v0.13.12",
           "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "speaker_image_override": null,
           "controller_image_override": null,
+          "speaker_image_override": null,
           "frrouting_image_override": null
         },
         "group": "net_sec",
@@ -100,9 +99,6 @@
     ],
     "keycloak_state": null,
     "backend_services": [],
-    "redis_clusters": [],
-    "knative_services": [],
-    "ferret_services": [],
     "postgres_clusters": [
       {
         "id": null,
@@ -132,7 +128,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "RO5BUEITKLI3B6BTWGRAVJUL",
+            "password": "5HOFFRLSTFTGFXEHROWKBM5D",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -142,6 +138,9 @@
         "virtual_storage_size_range_value": 9
       }
     ],
+    "redis_clusters": [],
+    "knative_services": [],
+    "ferret_services": [],
     "ip_address_pools": [],
     "projects": [],
     "kube_state": {}

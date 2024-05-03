@@ -5,7 +5,6 @@
     "provider": "aws"
   },
   "target_summary": {
-    "id": null,
     "notebooks": [],
     "batteries": [
       {
@@ -13,14 +12,14 @@
         "type": "battery_core",
         "config": {
           "type": "battery_core",
-          "image": "public.ecr.aws/p2f3z8m1/control-server:latest",
+          "image": "public.ecr.aws/batteries-included/control-server:latest",
           "cluster_type": "aws",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
-          "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
-          "secret_key": "JRZ2Q2V64RMAYPCD6A72F4IW7LHGYPG2ARHO3B64A7OS66JDLDLI6SURE25BALLK",
+          "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
+          "secret_key": "2LPLASQ25EV2DSXFG6VVWZXRECUQRUPL44RDMZDCQ7HZH5GRI735S4XS4WLQT3L2",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": true,
@@ -57,9 +56,9 @@
           "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.14.5",
           "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.14.5",
           "email": null,
-          "controller_image_override": null,
           "acmesolver_image_override": null,
           "cainjector_image_override": null,
+          "controller_image_override": null,
           "ctl_image_override": null,
           "webhook_image_override": null
         },
@@ -143,9 +142,6 @@
     ],
     "keycloak_state": null,
     "backend_services": [],
-    "redis_clusters": [],
-    "knative_services": [],
-    "ferret_services": [],
     "postgres_clusters": [
       {
         "id": null,
@@ -168,7 +164,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "B7QB3LGUQ2TX3XJKJFEHXVWN",
+            "password": "46YVIPAV3Y235QYMMIG2P5CU",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -178,6 +174,9 @@
         "virtual_storage_size_range_value": 41
       }
     ],
+    "redis_clusters": [],
+    "knative_services": [],
+    "ferret_services": [],
     "ip_address_pools": [],
     "projects": [],
     "kube_state": {}
@@ -220,7 +219,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "HHZI7KH5F5RYND6U5S6F4226N4DU6VNQT7BPSHYLK3LIINVBDVGA===="
+          "battery/hash": "6GO5O5Q2LD2ARNMJQAVJZNYCSOHTRTLYEJKYALXXXZVYBYIKKENQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -265,7 +264,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "JRZ2Q2V64RMAYPCD6A72F4IW7LHGYPG2ARHO3B64A7OS66JDLDLI6SURE25BALLK"
+                    "value": "2LPLASQ25EV2DSXFG6VVWZXRECUQRUPL44RDMZDCQ7HZH5GRI735S4XS4WLQT3L2"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",
@@ -276,7 +275,7 @@
                     "value": "/var/run/secrets/summary/summary.json"
                   }
                 ],
-                "image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
+                "image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
                 "imagePullPolicy": "Always",
                 "name": "bootstrap",
                 "volumeMounts": [

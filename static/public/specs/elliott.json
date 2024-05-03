@@ -5,7 +5,6 @@
     "provider": "aws"
   },
   "target_summary": {
-    "id": null,
     "notebooks": [],
     "batteries": [
       {
@@ -13,14 +12,14 @@
         "type": "battery_core",
         "config": {
           "type": "battery_core",
-          "image": "public.ecr.aws/p2f3z8m1/control-server:latest",
+          "image": "public.ecr.aws/batteries-included/control-server:latest",
           "cluster_type": "aws",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
-          "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
-          "secret_key": "P5W7QOJVCYX44ZSAAURNFS5KYQXY3HJZUQOTXV6IQ5UJ2Z3454PGZNRWYVD5VJEM",
+          "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
+          "secret_key": "FDBR2GVZJBBQ2RMYWXBKXTDXH3SPDXHMTIY7NU7APIK4N27V4FULCHAKNHOOML2L",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -57,9 +56,9 @@
           "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.14.5",
           "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.14.5",
           "email": null,
-          "controller_image_override": null,
           "acmesolver_image_override": null,
           "cainjector_image_override": null,
+          "controller_image_override": null,
           "ctl_image_override": null,
           "webhook_image_override": null
         },
@@ -143,9 +142,6 @@
     ],
     "keycloak_state": null,
     "backend_services": [],
-    "redis_clusters": [],
-    "knative_services": [],
-    "ferret_services": [],
     "postgres_clusters": [
       {
         "id": null,
@@ -175,7 +171,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "IET7Q56RVZKKL5VZKRPDKA5H",
+            "password": "5GJCCHHHZ7KDMKRL6NKRVNTI",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -185,6 +181,9 @@
         "virtual_storage_size_range_value": 41
       }
     ],
+    "redis_clusters": [],
+    "knative_services": [],
+    "ferret_services": [],
     "ip_address_pools": [],
     "projects": [],
     "kube_state": {}

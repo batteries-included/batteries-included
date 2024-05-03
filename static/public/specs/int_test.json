@@ -5,7 +5,6 @@
     "provider": "kind"
   },
   "target_summary": {
-    "id": null,
     "notebooks": [],
     "batteries": [
       {
@@ -13,14 +12,14 @@
         "type": "battery_core",
         "config": {
           "type": "battery_core",
-          "image": "public.ecr.aws/p2f3z8m1/control-server:latest",
+          "image": "public.ecr.aws/batteries-included/control-server:latest",
           "cluster_type": "kind",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
-          "bootstrap_image": "public.ecr.aws/p2f3z8m1/kube-bootstrap:latest",
-          "secret_key": "RCENPXDMRT35X5LVYMXVJ3RDPCHCGAXTNBRKDS22EBHCO4MHVMDX6POMOFJSUWFG",
+          "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
+          "secret_key": "AAP6RYLKDDOCSZ4OQC53OMMKCUNHK6T3XZGZG5PCUAQO3UGPOD3T7SHFN2FRGRKB",
           "default_size": "tiny",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -34,9 +33,6 @@
     ],
     "keycloak_state": null,
     "backend_services": [],
-    "redis_clusters": [],
-    "knative_services": [],
-    "ferret_services": [],
     "postgres_clusters": [
       {
         "id": null,
@@ -66,7 +62,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "ZH4M77PQNKJOGN7C7AF36NON",
+            "password": "NQMUK65I5OFTDL2PI4BZ2U2V",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -76,6 +72,9 @@
         "virtual_storage_size_range_value": 9
       }
     ],
+    "redis_clusters": [],
+    "knative_services": [],
+    "ferret_services": [],
     "ip_address_pools": [],
     "projects": [],
     "kube_state": {}
