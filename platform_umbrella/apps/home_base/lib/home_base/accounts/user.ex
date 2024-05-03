@@ -1,17 +1,17 @@
 defmodule HomeBase.Accounts.User do
   @moduledoc false
-  use Ecto.Schema
+  use HomeBase, :schema
 
-  import CommonCore.Util.EctoValidations
-  import Ecto.Changeset
+  alias HomeBase.Teams.TeamRole
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+
+    has_many :roles, TeamRole
+    has_many :teams, through: [:roles, :user]
 
     timestamps()
   end

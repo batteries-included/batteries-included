@@ -1,12 +1,8 @@
 defmodule HomeBase.CustomerInstalls do
-  @moduledoc """
-  The cluster installations for HomeBase
-  """
-
-  import Ecto.Query, warn: false
+  @moduledoc false
+  use HomeBase, :context
 
   alias CommonCore.Installation
-  alias HomeBase.Repo
 
   @doc """
   Returns the list of installations.

@@ -57,7 +57,7 @@ defmodule HomeBaseWeb.SignupLiveTest do
 
       user_params =
         :user
-        |> params_for(email: email)
+        |> params_for(email: email, hashed_password: nil)
         |> Map.merge(%{terms: true, password: "HelloWorld123!", password_confirmation: "HelloWorld123!"})
 
       form = form(lv, "#signup-form", user: user_params)

@@ -1,14 +1,10 @@
 defmodule HomeBase.Accounts do
-  @moduledoc """
-  The Accounts context.
-  """
-
-  import Ecto.Query, warn: false
+  @moduledoc false
+  use HomeBase, :context
 
   alias HomeBase.Accounts.User
   alias HomeBase.Accounts.UserNotifier
   alias HomeBase.Accounts.UserToken
-  alias HomeBase.Repo
 
   ## Database getters
 

@@ -22,6 +22,7 @@ defmodule HomeBase.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import HomeBase.DataCase
+      import HomeBase.Factory
 
       alias HomeBase.Repo
     end

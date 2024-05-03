@@ -1,8 +1,6 @@
 defmodule HomeBase.Accounts.UserToken do
   @moduledoc false
-  use Ecto.Schema
-
-  import Ecto.Query
+  use HomeBase, :schema
 
   alias HomeBase.Accounts.UserToken
 
@@ -16,8 +14,6 @@ defmodule HomeBase.Accounts.UserToken do
   @change_email_validity_in_days 7
   @session_validity_in_days 60
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "users_tokens" do
     field :token, :binary
     field :context, :string
