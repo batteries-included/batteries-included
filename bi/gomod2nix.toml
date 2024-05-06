@@ -211,6 +211,12 @@ schema = 3
   [mod."github.com/gorilla/websocket"]
     version = "v1.5.1"
     hash = "sha256-eHZ/U+eeE5tSgWc1jEDuBwtTRbXKP9fqP9zfW4Zw8T0="
+  [mod."github.com/gregwebs/errors"]
+    version = "v1.2.2"
+    hash = "sha256-hA8g7R1o4NWlzmLlINniSCo/nD70byekBcb5O3dA/nM="
+  [mod."github.com/gregwebs/go-recovery"]
+    version = "v0.3.2"
+    hash = "sha256-wDu0gvM+eOslziC9RxIrhz+6q0WF/6C4hvkdoZ3nwVU="
   [mod."github.com/grpc-ecosystem/grpc-opentracing"]
     version = "v0.0.0-20180507213350-8e809c8a8645"
     hash = "sha256-vNuUuD7/hTVrZMR4VN2YpIh7Os+6eDHsMLHe2GB/4/s="

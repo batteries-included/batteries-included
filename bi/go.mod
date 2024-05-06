@@ -12,6 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.28.6
 	github.com/dghubble/ipnets v1.0.0
 	github.com/docker/docker v26.1.0+incompatible
+	github.com/gregwebs/go-recovery v0.3.2
 	github.com/lmittmann/tint v1.0.4
 	github.com/noisysockets/noisysockets v0.14.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.32.0
@@ -95,6 +96,7 @@ require (
 	github.com/google/safetext v0.0.0-20240104143208-7a7d9b3d812f // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
+	github.com/gregwebs/errors v1.2.2 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect

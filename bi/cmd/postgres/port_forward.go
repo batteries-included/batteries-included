@@ -12,6 +12,7 @@ import (
 	"bi/pkg/installs"
 	"bi/pkg/log"
 
+	"github.com/gregwebs/go-recovery"
 	"github.com/spf13/cobra"
 )
 
@@ -67,19 +68,28 @@ var portForwardCmd = &cobra.Command{
 			return err
 		}
 
-		go func() {
+		// Make sure we log panics.
+		errHandler := func(err error) {
+			slog.Error("Error in port forward", slog.Any("error", err))
+		}
+
+		go recovery.GoHandler(errHandler, func() error {
 			<-signals
 			if stopChannel != nil {
 				slog.Debug("Stopping port forward")
 				close(stopChannel)
 			}
-		}()
 
-		go func() {
+			return nil
+		})
+
+		go recovery.GoHandler(errHandler, func() error {
 			<-readyChannel
 			slog.Debug("Port forward ready")
 			fmt.Println("Starting proxy...[CTRL-C to exit]")
-		}()
+
+			return nil
+		})
 
 		if err := forwarder.ForwardPorts(); err != nil {
 			return err
