@@ -37,7 +37,7 @@ defmodule ControlServer.ContentAddressable.Document do
     |> Enum.chunk_every(2)
     |> Enum.map(fn [a, b] -> Bitwise.bxor(a, b) end)
     |> :binary.list_to_bin()
-    |> Ecto.UUID.load()
+    |> CommonCore.Util.BatteryUUID.load()
   end
 
   @doc false

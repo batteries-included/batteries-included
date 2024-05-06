@@ -16,8 +16,8 @@ defmodule CommonCore do
     quote do
       unquote(schema_helpers())
 
-      @primary_key {:id, :binary_id, autogenerate: true}
-      @foreign_key_type :binary_id
+      @primary_key {:id, CommonCore.Util.BatteryUUID, autogenerate: true}
+      @foreign_key_type CommonCore.Util.BatteryUUID
       @timestamps_opts [type: :utc_datetime_usec]
 
       @derive {Jason.Encoder, except: [:__meta__] ++ unquote(no_encode)}

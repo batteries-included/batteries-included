@@ -26,7 +26,7 @@ defmodule CommonCore.Timeline.NamedDatabase do
     field :schema_type, Ecto.Enum, values: @possible_schema_types
 
     field :name, :string
-    field :entity_id, :binary_id
+    field :entity_id, CommonCore.Util.BatteryUUID
 
     type_field()
   end
