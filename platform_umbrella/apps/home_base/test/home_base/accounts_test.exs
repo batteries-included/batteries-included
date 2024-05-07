@@ -342,10 +342,25 @@ defmodule HomeBase.AccountsTest do
     test "returns user by token", %{user: user, token: token} do
       assert session_user = Accounts.get_user_by_session_token(token)
       assert session_user.id == user.id
+      assert session_user.roles == []
+    end
+
+    test "returns user by token with team role", %{user: user, token: token} do
+      team = insert(:team)
+      insert(:team_role, team: team, user: user, is_admin: true)
+
+      assert %{roles: [role]} = Accounts.get_user_by_session_token(token)
+      assert role.user_id == user.id
+      assert role.team_id == team.id
+      assert role.is_admin
     end
 
     test "does not return user for invalid token" do
       refute Accounts.get_user_by_session_token("oops")
+    end
+
+    test "does not return user for missing token" do
+      refute Accounts.get_user_by_session_token(nil)
     end
 
     test "does not return user for expired token", %{token: token} do

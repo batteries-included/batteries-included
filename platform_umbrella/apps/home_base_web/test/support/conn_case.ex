@@ -65,4 +65,13 @@ defmodule HomeBaseWeb.ConnCase do
     |> Phoenix.ConnTest.init_test_session(%{})
     |> Plug.Conn.put_session(:user_token, token)
   end
+
+  @doc """
+  Logs the user out.
+  """
+  def log_out_user(conn) do
+    conn
+    |> Phoenix.ConnTest.dispatch(HomeBaseWeb.Endpoint, "DELETE", "/logout")
+    |> Phoenix.ConnTest.recycle()
+  end
 end

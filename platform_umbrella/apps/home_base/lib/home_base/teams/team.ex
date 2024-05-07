@@ -30,7 +30,7 @@ defmodule HomeBase.Teams.Team do
   # that name is used for switching back to a non-team dashboard.
   defp validate_team_name(changeset) do
     validate_change(changeset, :name, fn _, name ->
-      if String.downcase(name) == "personal", do: [name: "cannot be \"personal\""], else: []
+      if String.downcase(name) == "personal", do: [name: "can't be \"personal\""], else: []
     end)
   end
 end

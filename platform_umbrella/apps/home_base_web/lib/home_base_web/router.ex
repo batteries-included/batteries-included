@@ -85,5 +85,7 @@ defmodule HomeBaseWeb.Router do
       live "/settings", SettingsLive
       live "/settings/:token", SettingsLive
     end
+
+    get "/teams/:id", TeamsController, :switch
   end
 end

@@ -6,7 +6,8 @@ defmodule CommonUI.Components.Panel do
   import CommonUI.Components.Typography
 
   attr :variant, :string, values: ["gray"]
-  attr :class, :string, default: nil
+  attr :class, :any, default: nil
+  attr :inner_class, :any, default: nil
   attr :title, :string
   attr :rest, :global
 
@@ -18,14 +19,14 @@ defmodule CommonUI.Components.Panel do
     <div class={[panel_class(assigns[:variant]), @class]} {@rest}>
       <.flex
         :if={assigns[:title]}
-        class="items-center justify-between w-full text-center flex-col lg:flex-row px-6 py-5"
+        class="items-center justify-between w-full text-center flex-col lg:flex-row px-6 pt-5"
       >
         <.h3><%= @title %></.h3>
 
         <%= if @menu, do: render_slot(@menu) %>
       </.flex>
 
-      <div class="relative flex-1 px-6 py-5">
+      <div class={["relative flex-1 px-6 py-5", @inner_class]}>
         <%= render_slot(@inner_block) %>
       </div>
     </div>

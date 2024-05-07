@@ -9,9 +9,11 @@ defmodule CommonUI.Components.DropdownTest do
     ~H"""
     <.dropdown id="foobar">
       <:trigger>Some trigger</:trigger>
-      <:item icon={:academic_cap}>Baz</:item>
-      <:item icon={:beaker} selected>Foo</:item>
-      <:item icon={:bug_ant}>Bar</:item>
+
+      <.dropdown_link icon={:academic_cap}>Baz</.dropdown_link>
+      <.dropdown_hr />
+      <.dropdown_link icon={:beaker} selected>Foo</.dropdown_link>
+      <.dropdown_link icon={:bug_ant}>Bar</.dropdown_link>
     </.dropdown>
     """
   end

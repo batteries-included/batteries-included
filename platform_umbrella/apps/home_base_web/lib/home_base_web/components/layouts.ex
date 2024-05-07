@@ -87,35 +87,82 @@ defmodule HomeBaseWeb.Layouts do
     />
 
     <div class="flex flex-col h-screen">
-      <.flex class="relative header-gradient items-center justify-between px-8 border-b border-b-gray-lighter">
+      <div class="flex items-center justify-between relative header-gradient px-8 border-b border-b-gray-lighter">
         <.logo variant="full" class="my-3" />
 
-        <.dropdown>
-          <:trigger>
-            <.link class="flex items-center gap-2 text-sm font-semibold hover:opacity-70">
-              <.icon solid name={:user_circle} class="size-6" />
-              <span><%= @current_user.email %></span>
-              <.icon mini name={:chevron_down} class="size-5" />
-            </.link>
-          </:trigger>
-
-          <:item icon={:chart_pie} navigate={~p"/"} selected={@page == :dashboard}>
+        <div class="flex items-center gap-8">
+          <.button variant={@page != :dashboard && "minimal"} icon={:chart_pie} link={~p"/"}>
             Dashboard
-          </:item>
+          </.button>
 
-          <:item icon={:command_line} navigate={~p"/installations"} selected={@page == :installations}>
+          <.button
+            variant={@page != :installations && "minimal"}
+            icon={:command_line}
+            link={~p"/installations"}
+          >
             Installations
-          </:item>
+          </.button>
 
-          <:item icon={:cog_6_tooth} navigate={~p"/settings"} selected={@page == :settings}>
-            Settings
-          </:item>
+          <div>
+            <.dropdown id="main-dropdown">
+              <:trigger>
+                <.button
+                  variant="secondary"
+                  icon={:chevron_down}
+                  icon_position={:right}
+                  class="!min-w-0"
+                >
+                  <%= if @current_role, do: @current_role.team.name, else: @current_user.email %>
+                </.button>
+              </:trigger>
 
-          <:item icon={:arrow_right_start_on_rectangle} href={~p"/logout"} method="delete">
-            Log out
-          </:item>
-        </.dropdown>
-      </.flex>
+              <.dropdown_link
+                :if={@current_user.roles != []}
+                icon={:arrow_path}
+                phx-click={
+                  hide_dropdown("main-dropdown", :slide_x) |> show_dropdown("team-dropdown", :slide_x)
+                }
+              >
+                Switch Team
+              </.dropdown_link>
+
+              <.dropdown_hr />
+
+              <.dropdown_link
+                icon={:cog_6_tooth}
+                navigate={~p"/settings"}
+                selected={@page == :settings}
+              >
+                Settings
+              </.dropdown_link>
+
+              <.dropdown_link
+                icon={:arrow_right_start_on_rectangle}
+                href={~p"/logout"}
+                method="delete"
+              >
+                Log out
+              </.dropdown_link>
+            </.dropdown>
+
+            <.dropdown id="team-dropdown">
+              <.dropdown_link :if={@current_role} href={~p"/teams/personal"}>
+                Personal
+              </.dropdown_link>
+
+              <.dropdown_hr :if={@current_role} />
+
+              <.dropdown_link
+                :for={%{team: team} <- @current_user.roles}
+                href={~p"/teams/#{team.id}"}
+                selected={@current_role && @current_role.team_id == team.id}
+              >
+                <%= team.name %>
+              </.dropdown_link>
+            </.dropdown>
+          </div>
+        </div>
+      </div>
 
       <div class="block relative p-8 flex-1 overflow-auto">
         <%= @inner_content %>

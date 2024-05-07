@@ -11,8 +11,15 @@ defmodule HomeBase.TeamsTest do
     team1 = insert(:team)
     team2 = insert(:team)
     team1_role = insert(:team_role, team: team1, user: user)
+    team2_role = insert(:team_role, team: team2, user: user, is_admin: true)
 
-    %{user: user, team1: team1, team2: team2, team1_role: team1_role}
+    %{
+      user: user,
+      team1: team1,
+      team2: team2,
+      team1_role: team1_role,
+      team2_role: team2_role
+    }
   end
 
   ## Teams
@@ -65,12 +72,20 @@ defmodule HomeBase.TeamsTest do
 
   ## Team Roles
 
+  describe "list_team_roles/1" do
+    test "should list team roles", ctx do
+      assert [role] = Teams.list_team_roles(ctx.team1)
+      assert role.id == ctx.team1_role.id
+    end
+  end
+
   describe "create_team_role/2" do
     test "should create team role for existing user", ctx do
-      params = params_for(:team_role, invited_email: ctx.user.email)
+      user = insert(:user)
+      params = params_for(:team_role, invited_email: user.email)
 
       assert {:ok, role} = Teams.create_team_role(ctx.team2, params)
-      assert role.user_id == ctx.user.id
+      assert role.user_id == user.id
       refute role.invited_email
     end
 
@@ -126,6 +141,10 @@ defmodule HomeBase.TeamsTest do
     test "should delete the team role", ctx do
       assert {:ok, %TeamRole{}} = Teams.delete_team_role(ctx.team1_role)
       refute Repo.get(TeamRole, ctx.team1_role.id)
+    end
+
+    test "should not delete team role if last admin", ctx do
+      assert {:error, :last_admin} = Teams.delete_team_role(ctx.team2_role)
     end
   end
 end

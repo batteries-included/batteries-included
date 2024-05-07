@@ -36,6 +36,15 @@ defmodule HomeBase.Teams do
 
   ## Team Roles
 
+  def list_team_roles(%Team{} = team) do
+    query =
+      from r in TeamRole,
+        where: r.team_id == ^team.id,
+        order_by: r.is_admin
+
+    Repo.all(query)
+  end
+
   def create_team_role(%Team{} = team, attrs) do
     %TeamRole{}
     |> TeamRole.changeset(attrs)
@@ -48,6 +57,22 @@ defmodule HomeBase.Teams do
     role
     |> TeamRole.changeset(attrs)
     |> Repo.update()
+  end
+
+  def delete_team_role(%TeamRole{is_admin: true} = role) do
+    query =
+      from team_role in TeamRole,
+        where: team_role.id != ^role.id,
+        where: team_role.team_id == ^role.team_id,
+        where: not is_nil(team_role.user_id),
+        where: team_role.is_admin,
+        limit: 1
+
+    # Don't allow the last admin on the team to leave
+    case Repo.aggregate(query, :count) do
+      0 -> {:error, :last_admin}
+      _ -> Repo.delete(role)
+    end
   end
 
   def delete_team_role(%TeamRole{} = role) do

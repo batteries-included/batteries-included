@@ -50,8 +50,7 @@ defmodule HomeBase.Accounts.UserToken do
 
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
-
-  The query returns the user found by the token, if any.
+  The query will return the token, if any, with the user and teams preloaded.
 
   The token is valid if it matches the value in the database and it has
   not expired (after @session_validity_in_days).
@@ -60,8 +59,10 @@ defmodule HomeBase.Accounts.UserToken do
     query =
       from token in by_token_and_context_query(token, "session"),
         join: user in assoc(token, :user),
+        left_join: roles in assoc(user, :roles),
+        left_join: team in assoc(roles, :team),
         where: token.inserted_at > ago(@session_validity_in_days, "day"),
-        select: user
+        preload: [user: {user, roles: {roles, team: team}}]
 
     {:ok, query}
   end

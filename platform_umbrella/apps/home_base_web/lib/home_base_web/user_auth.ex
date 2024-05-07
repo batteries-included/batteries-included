@@ -64,6 +64,8 @@ defmodule HomeBaseWeb.UserAuth do
     conn
     |> configure_session(renew: true)
     |> clear_session()
+    # Keep the currently selected team as the default on next login
+    |> put_session(:team_id, get_session(conn, :team_id))
   end
 
   @doc """
@@ -88,12 +90,20 @@ defmodule HomeBaseWeb.UserAuth do
 
   @doc """
   Authenticates the user by looking into the session
-  and remember me token.
+  and remember me token. Also fetches the user's current
+  team role and puts it into the session if it exists.
   """
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+    user = Accounts.get_user_by_session_token(user_token)
+    role = get_team_role_from_user(user, get_session(conn, :team_id))
+
+    # If user isn't part of the team, remove it from the session
+    conn = if role, do: conn, else: delete_session(conn, :team_id)
+
+    conn
+    |> assign(:current_user, user)
+    |> assign(:current_role, role)
   end
 
   defp ensure_user_token(conn) do
@@ -108,6 +118,14 @@ defmodule HomeBaseWeb.UserAuth do
         {nil, conn}
       end
     end
+  end
+
+  defp get_team_role_from_user(user, team_id) when is_nil(user) or is_nil(team_id), do: nil
+
+  defp get_team_role_from_user(user, team_id) do
+    user
+    |> Map.get(:roles, [])
+    |> Enum.find(&(&1.team_id == team_id))
   end
 
   @doc """
@@ -175,10 +193,14 @@ defmodule HomeBaseWeb.UserAuth do
   end
 
   defp mount_current_user(socket, session) do
-    Phoenix.Component.assign_new(socket, :current_user, fn ->
+    socket
+    |> Phoenix.Component.assign_new(:current_user, fn ->
       if user_token = session["user_token"] do
         Accounts.get_user_by_session_token(user_token)
       end
+    end)
+    |> Phoenix.Component.assign_new(:current_role, fn %{current_user: current_user} ->
+      get_team_role_from_user(current_user, session["team_id"])
     end)
   end
 
