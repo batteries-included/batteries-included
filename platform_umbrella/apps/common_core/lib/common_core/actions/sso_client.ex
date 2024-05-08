@@ -22,7 +22,7 @@ defmodule CommonCore.Actions.SSOClient do
 
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Batteries.SystemBattery
-  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.KeycloakSummary
 
@@ -58,7 +58,7 @@ defmodule CommonCore.Actions.SSOClient do
       import unquote(__MODULE__)
 
       alias CommonCore.Batteries.SystemBattery
-      alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
+      alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
       alias CommonCore.StateSummary
       alias unquote(__MODULE__.ClientConfigurator)
     end

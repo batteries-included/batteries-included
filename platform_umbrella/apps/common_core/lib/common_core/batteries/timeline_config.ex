@@ -2,9 +2,7 @@ defmodule CommonCore.Batteries.TimelineConfig do
   @moduledoc false
 
   use CommonCore, :embedded_schema
-  use CommonCore.Util.PolymorphicType, type: :timeline
 
-  typed_embedded_schema do
-    type_field()
+  batt_polymorphic_schema type: :timeline do
   end
 end

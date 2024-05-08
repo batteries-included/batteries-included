@@ -42,30 +42,39 @@ defmodule ControlServerWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bandit, "~> 1.4"},
       {:common_core, in_umbrella: true},
       {:common_ui, in_umbrella: true},
       {:control_server, in_umbrella: true},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
-      {:floki, "~> 0.35", only: [:dev, :test, :integration], override: true},
+      {:kube_services, in_umbrella: true},
+      {:bandit, "~> 1.4"},
+      {:websock_adapter, "~> 0.5"},
       {:gettext, "~> 0.20"},
-      {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
       {:inflex, "~> 2.1"},
       {:jason, "~> 1.4"},
-      {:kube_services, in_umbrella: true},
+
+      # K8s uses mint and mint_web_socket for HTTP requests
+      # If it's detected as a dependency.
+      {:k8s, "~> 2.6"},
       {:mint, "~> 1.0"},
+
+      # We use this to generate some names
       {:mnemonic_slugs, "~> 0.0.3"},
       {:oidcc, "~> 3.2"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8"},
-      {:phoenix_live_reload, "~> 1.3", only: :dev},
       {:phoenix_live_view, "~> 0.20"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
+
+      # Development
+      {:phoenix_live_reload, "~> 1.3", only: :dev},
+      # Testing
       {:wallaby, "~> 0.30", runtime: false, only: [:test, :integration]},
-      {:websock_adapter, "~> 0.5"}
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
+      {:floki, "~> 0.35", only: [:dev, :test, :integration], override: true},
+      {:heyya, "~> 0.8", only: [:dev, :test, :integration]}
     ]
   end
 

@@ -1,12 +1,12 @@
 # test/common_core/util/ecto_validations_test.exs
 
-defmodule CommonCore.Util.EctoValidationsTest do
+defmodule CommonCore.Ecto.ValidationsTest do
   use ExUnit.Case
 
   import Ecto.Changeset
 
-  alias CommonCore.Util.EctoValidations
-  alias CommonCore.Util.EctoValidationsTest.FooStruct
+  alias CommonCore.Ecto.Validations
+  alias CommonCore.Ecto.ValidationsTest.FooStruct
 
   defmodule FooStruct do
     @moduledoc false
@@ -24,7 +24,7 @@ defmodule CommonCore.Util.EctoValidationsTest do
       changeset =
         %FooStruct{}
         |> cast(%{"name" => "JOHN"}, [:name])
-        |> EctoValidations.downcase_fields([:name])
+        |> Validations.downcase_fields([:name])
 
       assert changeset.changes.name == "john"
     end
@@ -33,7 +33,7 @@ defmodule CommonCore.Util.EctoValidationsTest do
       changeset =
         %FooStruct{}
         |> cast(%{"age" => 42}, [:age])
-        |> EctoValidations.downcase_fields([:age])
+        |> Validations.downcase_fields([:age])
 
       assert changeset.changes.age == 42
     end
@@ -42,7 +42,7 @@ defmodule CommonCore.Util.EctoValidationsTest do
       changeset =
         %FooStruct{}
         |> cast(%{"name" => nil}, [:name])
-        |> EctoValidations.downcase_fields([:name])
+        |> Validations.downcase_fields([:name])
 
       assert changeset.changes == %{}
     end

@@ -1,14 +1,10 @@
 defmodule CommonCore.Containers.Container do
   @moduledoc false
-
   use CommonCore, :embedded_schema
 
-  import CommonCore.Util.EctoValidations
-
   @required_fields ~w(image name)a
-  @optional_fields ~w(args command)a
 
-  typed_embedded_schema do
+  batt_embedded_schema do
     field :args, {:array, :string}, default: nil
     field :command, {:array, :string}, default: nil
 
@@ -22,9 +18,7 @@ defmodule CommonCore.Containers.Container do
 
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, Enum.concat(@required_fields, @optional_fields))
-    |> validate_required(@required_fields)
-    |> cast_embed(:env_values)
+    |> CommonCore.Ecto.Schema.schema_changeset(params)
     |> downcase_fields([:name])
   end
 end

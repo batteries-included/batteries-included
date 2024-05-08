@@ -36,7 +36,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.VMAgentConfig
   alias CommonCore.Batteries.VMClusterConfig
   alias CommonCore.Batteries.VMOperatorConfig
-  alias CommonCore.Util.PolymorphicType
+  alias CommonCore.Ecto.PolymorphicType
 
   @possible_types [
     aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
@@ -76,9 +76,11 @@ defmodule CommonCore.Batteries.SystemBattery do
 
   @possible_groups ~w(data devtools magic ai monitoring net_sec)a
 
+  @required_fields ~w(group type config)a
+
   def possible_types, do: Keyword.keys(@possible_types)
 
-  typed_schema "system_batteries" do
+  batt_schema "system_batteries" do
     field :group, Ecto.Enum, values: @possible_groups
 
     field :type, Ecto.Enum, values: Keyword.keys(@possible_types)
@@ -86,13 +88,6 @@ defmodule CommonCore.Batteries.SystemBattery do
     field :config, PolymorphicType, mappings: @possible_types
 
     timestamps()
-  end
-
-  @doc false
-  def changeset(system_battery, attrs) do
-    system_battery
-    |> cast(attrs, [:group, :type, :config])
-    |> validate_required([:group, :type])
   end
 
   def to_fresh_args(%__MODULE__{} = system_battery) do

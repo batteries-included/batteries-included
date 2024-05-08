@@ -82,7 +82,7 @@ defmodule KubeServices.SystemState.SummaryRecent do
   end
 
   @spec keycloak_realms(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation.t())
+          list(CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation.t())
   def keycloak_realms(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:keycloak_realms, limit})
   end

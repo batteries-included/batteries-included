@@ -128,7 +128,7 @@ defmodule ControlServer.Factory do
     %Timeline.NamedDatabase{
       name: sequence("named-database-"),
       action: sequence(:action, [:insert, :update]),
-      entity_id: CommonCore.Util.BatteryUUID.autogenerate(),
+      entity_id: CommonCore.Ecto.BatteryUUID.autogenerate(),
       schema_type: sequence(:schema_type, Timeline.NamedDatabase.possible_schema_types())
     }
   end

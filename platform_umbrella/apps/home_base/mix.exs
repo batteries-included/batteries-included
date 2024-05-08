@@ -52,7 +52,7 @@ defmodule HomeBase.MixProject do
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_pubsub, "~> 2.1"},
       {:swoosh, "~> 1.16"},
-      {:hackney, "~> 1.9"},
+      {:finch, "~> 0.18"},
       {:postgrex, "~> 0.17"},
       {:typed_ecto_schema, "~> 0.4"},
       {:yaml_elixir, "~> 2.6"},

@@ -116,7 +116,7 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
     hash = Hashing.get_hash(resource)
 
     %{
-      id: CommonCore.Util.BatteryUUID.autogenerate(),
+      id: CommonCore.Ecto.BatteryUUID.autogenerate(),
       path: path,
       hash: hash,
       document_id: Document.hash_to_uuid!(hash),

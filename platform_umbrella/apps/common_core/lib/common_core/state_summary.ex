@@ -17,15 +17,12 @@ defmodule CommonCore.StateSummary do
 
   """
 
-  use CommonCore, :embedded_schema
+  use CommonCore, {:embedded_schema, no_encode: [:kube_state, :keycloak_state]}
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Installation
 
-  @optional_fields ~w(kube_state)a
-  @required_fields ~w()a
-
-  typed_embedded_schema do
+  batt_embedded_schema do
     embeds_many :batteries, SystemBattery
     embeds_many :postgres_clusters, CommonCore.Postgres.Cluster
     embeds_many :ferret_services, CommonCore.FerretDB.FerretService
@@ -39,29 +36,6 @@ defmodule CommonCore.StateSummary do
     embeds_one :keycloak_state, CommonCore.StateSummary.KeycloakSummary
 
     field :kube_state, :map, default: %{}
-  end
-
-  def changeset(state_summary, attrs) do
-    fields = @required_fields ++ @optional_fields
-
-    state_summary
-    |> cast(attrs, fields)
-    |> cast_embed(:batteries)
-    |> cast_embed(:postgres_clusters)
-    |> cast_embed(:ferret_services)
-    |> cast_embed(:redis_clusters)
-    |> cast_embed(:notebooks)
-    |> cast_embed(:knative_services)
-    |> cast_embed(:backend_services)
-    |> cast_embed(:ip_address_pools)
-    |> cast_embed(:projects)
-    |> validate_required(@required_fields)
-  end
-
-  def new(map) do
-    %__MODULE__{}
-    |> changeset(map)
-    |> apply_action(:insert)
   end
 
   def target_summary(%Installation{} = installation) do

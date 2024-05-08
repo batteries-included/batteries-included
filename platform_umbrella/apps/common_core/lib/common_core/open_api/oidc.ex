@@ -1,12 +1,11 @@
-defmodule CommonCore.OpenApi.OIDC do
+defmodule CommonCore.OpenAPI.OIDC do
   @moduledoc false
 
   defmodule MTLSEndpointAliases do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, :embedded_schema
 
-    @derive Jason.Encoder
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :token_endpoint, :string
       field :revocation_endpoint, :string
       field :introspection_endpoint, :string
@@ -20,10 +19,9 @@ defmodule CommonCore.OpenApi.OIDC do
 
   defmodule OIDCConfiguration do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, :embedded_schema
 
-    @derive Jason.Encoder
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :issuer, :string
 
       # Endpoints

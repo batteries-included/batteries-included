@@ -3,10 +3,9 @@ defmodule CommonCore.Projects.Project do
 
   use CommonCore, :schema
 
-  @required_fields ~w(name type)a
-  @optional_fields ~w(description)a
+  @required_fields ~w(name)a
 
-  typed_schema "projects" do
+  batt_schema "projects" do
     field :name, :string
     field :type, Ecto.Enum, values: [:web, :ai, :db]
     field :description, :string
@@ -19,11 +18,8 @@ defmodule CommonCore.Projects.Project do
   end
 
   def changeset(project, attrs) do
-    fields = @required_fields ++ @optional_fields
-
     project
-    |> cast(attrs, fields)
-    |> validate_required(@required_fields)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> validate_length(:description, max: 1000)
   end
 

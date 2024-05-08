@@ -19,7 +19,6 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
-          "secret_key": "3ZLS6BTJRFJYLIKGTL7FK6E6M6AVXOLD7MNVXKCN7ITS6GKYSJCDGLWRLT2UXLR2",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": false,
@@ -140,7 +139,6 @@
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "backend_services": [],
     "postgres_clusters": [
       {
@@ -171,7 +169,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "66AOXCTZQMD6MW6V76PWLQIN",
+            "password": "VH6IFC7Q5DW6UGCERIMHTLPL",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -185,8 +183,7 @@
     "knative_services": [],
     "ferret_services": [],
     "ip_address_pools": [],
-    "projects": [],
-    "kube_state": {}
+    "projects": []
   },
   "initial_resources": {
     "/namespace/battery_core": {

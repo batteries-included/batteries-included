@@ -5,7 +5,7 @@ defmodule CommonCore.Resources.Notebooks do
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.ProxyUtils, as: PU

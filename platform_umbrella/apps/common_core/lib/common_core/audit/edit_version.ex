@@ -22,7 +22,7 @@ defmodule CommonCore.Audit.EditVersion do
     # The patch in Erlang External Term Format
     field :patch, ExAudit.Type.Patch
 
-    field :entity_id, CommonCore.Util.BatteryUUID
+    field :entity_id, CommonCore.Ecto.BatteryUUID
 
     # name of the table the entity is in
     field :entity_schema, ExAudit.Type.Schema

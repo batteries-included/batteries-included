@@ -3,8 +3,6 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
-  import CommonCore.Util.EctoValidations
-
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -59,8 +57,10 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     }
   ]
 
-  typed_schema "jupyter_lab_notebooks" do
-    field :name, :string
+  @required_fields ~w(name image)a
+
+  batt_schema "jupyter_lab_notebooks" do
+    slug_field :name
     field :image, :string, default: "jupyter/datascience-notebook:lab-4.0.7"
     field :storage_size, :integer
     field :storage_class, :string
@@ -80,28 +80,14 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   @doc false
   def changeset(jupyter_lab_notebook, attrs) do
     jupyter_lab_notebook
-    |> cast(attrs, [
-      :name,
-      :image,
-      :storage_size,
-      :storage_class,
-      :cpu_requested,
-      :cpu_limits,
-      :memory_requested,
-      :memory_limits,
-      :virtual_size,
-      :project_id
-    ])
-    |> maybe_fill_in_slug(:name)
-    |> downcase_fields([:name])
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
-    |> validate_dns_label(:name)
-    |> validate_required([:name, :image, :storage_size])
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_options())
     |> foreign_key_constraint(:project_id)
+    |> validate_required([:storage_size])
   end
 
   def cpu_select_options,

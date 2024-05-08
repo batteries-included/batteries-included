@@ -1,9 +1,9 @@
 defmodule CommonCore.Resources.VirtualServiceBuilder do
   @moduledoc false
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPRoute
-  alias CommonCore.OpenApi.IstioVirtualService.L4MatchAttributes
-  alias CommonCore.OpenApi.IstioVirtualService.TCPRoute
-  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPRoute
+  alias CommonCore.OpenAPI.IstioVirtualService.L4MatchAttributes
+  alias CommonCore.OpenAPI.IstioVirtualService.TCPRoute
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
 
   @spec prefix(VirtualService.t(), String.t(), String.t(), non_neg_integer()) :: VirtualService.t()
   @doc """

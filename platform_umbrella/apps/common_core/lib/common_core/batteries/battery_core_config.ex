@@ -1,18 +1,13 @@
 defmodule CommonCore.Batteries.BatteryCoreConfig do
   @moduledoc false
 
-  use CommonCore, :embedded_schema
-  use CommonCore.Util.PolymorphicType, type: :battery_core
-  use CommonCore.Util.DefaultableField
-
-  import CommonCore.Util.EctoValidations
-  import CommonCore.Util.PolymorphicTypeHelpers
+  use CommonCore, {:embedded_schema, no_encode: [:secret_key]}
 
   alias CommonCore.Defaults
 
   @required_fields ~w(cluster_type)a
 
-  typed_embedded_schema do
+  batt_polymorphic_schema type: :battery_core do
     field :core_namespace, :string, default: Defaults.Namespaces.core()
     field :base_namespace, :string, default: Defaults.Namespaces.base()
     field :data_namespace, :string, default: Defaults.Namespaces.data()
@@ -21,21 +16,11 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     defaultable_field :bootstrap_image, :string, default: Defaults.Images.bootstrap_image()
     defaultable_field :image, :string, default: Defaults.Images.control_server_image()
 
-    field :secret_key, :string
+    secret_field :secret_key
     field :cluster_type, Ecto.Enum, values: [:kind, :aws, :provided], default: :kind
     field :default_size, Ecto.Enum, values: [:tiny, :small, :medium, :large, :xlarge, :huge]
     field :cluster_name, :string
 
     field :server_in_cluster, :boolean, default: false
-    type_field()
-  end
-
-  @impl Ecto.Type
-  def cast(data) do
-    data
-    |> changeset(__MODULE__)
-    |> maybe_set_random(:secret_key)
-    |> validate_required(@required_fields)
-    |> apply_changeset_if_valid()
   end
 end

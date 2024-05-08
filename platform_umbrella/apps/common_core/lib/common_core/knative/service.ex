@@ -3,15 +3,12 @@ defmodule CommonCore.Knative.Service do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
-  import CommonCore.Util.EctoValidations
-
   alias CommonCore.Projects.Project
 
   @required_fields ~w(name)a
-  @optional_fields ~w(rollout_duration oauth2_proxy project_id)a
 
-  typed_schema "knative_services" do
-    field :name, :string, null: false
+  batt_schema "knative_services" do
+    slug_field :name
     field :rollout_duration, :string, default: "10m"
     field :oauth2_proxy, :boolean, default: false
     field :kube_internal, :boolean, default: false
@@ -28,15 +25,8 @@ defmodule CommonCore.Knative.Service do
   @doc false
   def changeset(struct, attrs) do
     struct
-    |> cast(attrs, Enum.concat(@required_fields, @optional_fields))
-    |> maybe_fill_in_slug(:name)
-    |> downcase_fields([:name])
-    |> cast_embed(:containers)
-    |> cast_embed(:init_containers)
-    |> cast_embed(:env_values)
-    |> validate_dns_label(:name)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> unique_constraint(:name)
-    |> validate_required(@required_fields)
   end
 
   def validate(params) do

@@ -3,8 +3,6 @@ defmodule CommonCore.Backend.Service do
 
   use CommonCore, :schema
 
-  import CommonCore.Util.EctoValidations
-
   alias CommonCore.Util.Memory
 
   @service_size_preset [
@@ -52,11 +50,10 @@ defmodule CommonCore.Backend.Service do
     }
   ]
 
-  @required_fields ~w(name)a
-  @optional_fields ~w(kube_deployment_type num_instances virtual_size)a
+  @required_fields ~w(name num_instances)a
 
-  typed_schema "backend_services" do
-    field :name, :string
+  batt_schema "backend_services" do
+    slug_field :name
 
     field :kube_deployment_type, Ecto.Enum, values: [:statefulset, :deployment], default: :deployment
     field :num_instances, :integer, default: 1
@@ -79,16 +76,9 @@ defmodule CommonCore.Backend.Service do
   @doc false
   def changeset(service, attrs) do
     service
-    |> cast(attrs, Enum.concat(@required_fields, @optional_fields))
-    |> maybe_fill_in_slug(:name)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@service_size_preset)
-    |> downcase_fields([:name])
-    |> cast_embed(:containers)
-    |> cast_embed(:init_containers)
-    |> cast_embed(:env_values)
     |> unique_constraint(:name)
-    |> validate_dns_label(:name)
-    |> validate_required(@required_fields)
   end
 
   def preset_options_for_select,

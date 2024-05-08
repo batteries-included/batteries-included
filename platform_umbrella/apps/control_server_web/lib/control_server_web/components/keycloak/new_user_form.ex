@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
   alias KubeServices.Keycloak.UserManager
 
   @impl Phoenix.LiveComponent

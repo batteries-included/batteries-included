@@ -19,7 +19,6 @@
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
           "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
-          "secret_key": "2LPLASQ25EV2DSXFG6VVWZXRECUQRUPL44RDMZDCQ7HZH5GRI735S4XS4WLQT3L2",
           "default_size": "small",
           "cluster_name": null,
           "server_in_cluster": true,
@@ -140,7 +139,6 @@
         "updated_at": null
       }
     ],
-    "keycloak_state": null,
     "backend_services": [],
     "postgres_clusters": [
       {
@@ -164,7 +162,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "46YVIPAV3Y235QYMMIG2P5CU",
+            "password": "PITG32EQ3S4EC7OEE53RTQAA",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -178,8 +176,7 @@
     "knative_services": [],
     "ferret_services": [],
     "ip_address_pools": [],
-    "projects": [],
-    "kube_state": {}
+    "projects": []
   },
   "initial_resources": {
     "/cluster_role_binding/batteries_included_bootstrap": {
@@ -219,7 +216,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "6GO5O5Q2LD2ARNMJQAVJZNYCSOHTRTLYEJKYALXXXZVYBYIKKENQ===="
+          "battery/hash": "2557MKKHQFRUCYLXVBEUJ32VJNMTNHCPBRFVHBYABDTDCCNMWNVA===="
         },
         "labels": {
           "app": "battery-core",
@@ -264,7 +261,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "2LPLASQ25EV2DSXFG6VVWZXRECUQRUPL44RDMZDCQ7HZH5GRI735S4XS4WLQT3L2"
+                    "value": "KAQQOSSBIOUWEP4CLLTHEQSAZ464IO3VPA66Q4O3X5TBP4M6JB6VHE2TYFQN7VSM"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",

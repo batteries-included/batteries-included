@@ -16,28 +16,34 @@ defmodule CommonCore do
     quote do
       unquote(schema_helpers())
 
-      @primary_key {:id, CommonCore.Util.BatteryUUID, autogenerate: true}
-      @foreign_key_type CommonCore.Util.BatteryUUID
+      @primary_key {:id, CommonCore.Ecto.BatteryUUID, autogenerate: true}
+      @foreign_key_type CommonCore.Ecto.BatteryUUID
       @timestamps_opts [type: :utc_datetime_usec]
 
       @derive {Jason.Encoder, except: [:__meta__] ++ unquote(no_encode)}
     end
   end
 
-  def embedded_schema(_opts) do
+  def embedded_schema(opts) do
+    derive_json = Keyword.get(opts, :derive_json, true)
+    no_encode = Keyword.get(opts, :no_encode, [])
+
     quote do
       unquote(schema_helpers())
 
       @primary_key false
 
-      @derive Jason.Encoder
+      if unquote(derive_json) do
+        @derive {Jason.Encoder, except: unquote(no_encode)}
+      end
     end
   end
 
   defp schema_helpers do
     quote do
-      use TypedEctoSchema
+      use CommonCore.Ecto.Schema
 
+      import CommonCore.Ecto.Validations
       import Ecto.Changeset
       import Ecto.Query
     end

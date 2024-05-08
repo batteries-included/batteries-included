@@ -40,14 +40,14 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   alias CommonCore.Keycloak.TeslaBuilder
   alias CommonCore.Keycloak.TokenAcquirer
-  alias CommonCore.OpenApi.KeycloakAdminSchema
-  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.GroupRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.RoleRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
-  alias CommonCore.OpenApi.OIDC.OIDCConfiguration
+  alias CommonCore.OpenAPI.KeycloakAdminSchema
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.GroupRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
+  alias CommonCore.OpenAPI.OIDC.OIDCConfiguration
 
   require Logger
 

@@ -41,7 +41,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
 
   def module(open_api, root_schema, module_name) do
     state = add(%State{}, open_api, root_schema)
-    module_name = String.to_atom("Elixir.CommonCore.OpenApi.#{module_name}")
+    module_name = String.to_atom("Elixir.CommonCore.OpenAPI.#{module_name}")
     {:ok, modules_sorted} = sorted_modules(state)
 
     quote do
@@ -144,7 +144,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
 
     quote do
       defmodule unquote(String.to_atom("Elixir.#{schema_name}")) do
-        use CommonCore.OpenApi.Schema
+        use CommonCore, :embedded_schema
 
         @derive Jason.Encoder
 
@@ -157,7 +157,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     inner = Enum.map(properties, fn prop -> field_def(schema_name, prop) end)
 
     quote do
-      typed_embedded_schema do
+      batt_embedded_schema do
         # Add each of the fields here
         # Each of the `field_defs` will be a quoted call to the `field` macro
         (unquote_splicing(inner))

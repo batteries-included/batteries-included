@@ -2,12 +2,9 @@ defmodule CommonCore.FerretDB.FerretService do
   @moduledoc false
   use CommonCore, :schema
 
-  import CommonCore.Util.EctoValidations
-
   alias CommonCore.Util.Memory
 
-  @required_fields ~w(name instances postgres_cluster_id)a
-  @optional_fields ~w(cpu_requested cpu_limits memory_requested memory_limits virtual_size)a
+  @required_fields ~w(instances postgres_cluster_id)a
 
   @presets [
     %{
@@ -40,8 +37,10 @@ defmodule CommonCore.FerretDB.FerretService do
     }
   ]
 
-  typed_schema "ferret_services" do
-    field :name, :string
+  @required_fields ~w(name instances)a
+
+  batt_schema "ferret_services" do
+    slug_field :name
     field :instances, :integer
     field :cpu_requested, :integer
     field :cpu_limits, :integer
@@ -64,14 +63,8 @@ defmodule CommonCore.FerretDB.FerretService do
 
   @doc false
   def changeset(ferret_service, attrs) do
-    fields = @required_fields ++ @optional_fields
-
     ferret_service
-    |> cast(attrs, fields)
-    |> maybe_fill_in_slug(:name)
-    |> downcase_fields([:name])
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
-    |> validate_dns_label(:name)
-    |> validate_required(@required_fields)
   end
 end

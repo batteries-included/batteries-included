@@ -6,7 +6,7 @@ defmodule CommonCore.Resources.Keycloak do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
-  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret

@@ -3,10 +3,10 @@ defmodule CommonCore.MetalLB.IPAddressPool do
 
   use CommonCore, :schema
 
-  import CommonCore.Util.EctoValidations
+  @required_fields [:name, :subnet]
 
-  typed_schema "ip_address_pools" do
-    field :name, :string
+  batt_schema "ip_address_pools" do
+    slug_field :name
     field :subnet, :string
 
     timestamps()
@@ -15,9 +15,7 @@ defmodule CommonCore.MetalLB.IPAddressPool do
   @doc false
   def changeset(ip_address_pool, attrs \\ %{}) do
     ip_address_pool
-    |> cast(attrs, [:name, :subnet])
-    |> validate_required([:name, :subnet])
-    |> downcase_fields([:name])
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> unique_constraint(:name)
   end
 

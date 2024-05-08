@@ -3,14 +3,11 @@ defmodule CommonCore.Postgres.Cluster do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
-  import CommonCore.Util.EctoValidations
-
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
   alias CommonCore.Util.MemorySliderConverter
 
-  @required_fields ~w(name storage_size num_instances type)a
-  @optional_fields ~w(storage_class cpu_requested cpu_limits memory_requested memory_limits virtual_size virtual_storage_size_range_value project_id)a
+  @required_fields ~w(num_instances type)a
 
   @presets [
     %{
@@ -63,8 +60,10 @@ defmodule CommonCore.Postgres.Cluster do
     }
   ]
 
-  typed_schema "pg_clusters" do
-    field :name, :string
+  @required_fields ~w(num_instances type name type)a
+
+  batt_schema "pg_clusters" do
+    slug_field :name
     field :num_instances, :integer, default: 1
     field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
     field :storage_size, :integer
@@ -90,25 +89,17 @@ defmodule CommonCore.Postgres.Cluster do
 
   @doc false
   def changeset(cluster, attrs) do
-    fields = Enum.concat(@required_fields, @optional_fields)
-
     cluster
-    |> cast(attrs, fields)
-    |> maybe_fill_in_slug(:name)
-    |> downcase_fields([:name])
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
     |> maybe_set_storage_size_slider_value()
-    |> cast_embed(:users)
-    |> cast_embed(:database)
-    |> validate_required(@required_fields)
-    |> validate_dns_label(:name)
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
     |> validate_inclusion(:memory_limits, memory_limits_options())
-    |> validate_length(:name, min: 1, max: 128)
     |> unique_constraint([:type, :name])
     |> foreign_key_constraint(:project_id)
+    |> validate_required([:storage_size])
   end
 
   def validate(cluster \\ %__MODULE__{}, params) do

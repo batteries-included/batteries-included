@@ -1,17 +1,17 @@
 defmodule CommonCore.Resources.VirtualServiceBuilderTest do
   use ExUnit.Case
 
-  alias CommonCore.OpenApi.IstioVirtualService.Destination
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPMatchRequest
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPRewrite
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPRoute
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPRouteDestination
-  alias CommonCore.OpenApi.IstioVirtualService.L4MatchAttributes
-  alias CommonCore.OpenApi.IstioVirtualService.PortSelector
-  alias CommonCore.OpenApi.IstioVirtualService.RouteDestination
-  alias CommonCore.OpenApi.IstioVirtualService.StringMatch
-  alias CommonCore.OpenApi.IstioVirtualService.TCPRoute
-  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
+  alias CommonCore.OpenAPI.IstioVirtualService.Destination
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPMatchRequest
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPRewrite
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPRoute
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPRouteDestination
+  alias CommonCore.OpenAPI.IstioVirtualService.L4MatchAttributes
+  alias CommonCore.OpenAPI.IstioVirtualService.PortSelector
+  alias CommonCore.OpenAPI.IstioVirtualService.RouteDestination
+  alias CommonCore.OpenAPI.IstioVirtualService.StringMatch
+  alias CommonCore.OpenAPI.IstioVirtualService.TCPRoute
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
   describe "prefix/4" do

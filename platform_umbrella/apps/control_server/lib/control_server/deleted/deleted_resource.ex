@@ -3,7 +3,9 @@ defmodule ControlServer.Deleted.DeletedResource do
 
   use CommonCore, :schema
 
-  typed_schema "deleted_resources" do
+  @required_fields ~w(kind name namespace hash document_id been_undeleted)a
+
+  batt_schema "deleted_resources" do
     field :hash, :string
     field :name, :string
     field :namespace, :string
@@ -14,26 +16,5 @@ defmodule ControlServer.Deleted.DeletedResource do
                ControlServer.ContentAddressable.Document
 
     timestamps()
-  end
-
-  @doc false
-  def changeset(deleted_resource, attrs) do
-    deleted_resource
-    |> cast(attrs, [
-      :kind,
-      :name,
-      :namespace,
-      :hash,
-      :document_id,
-      :been_undeleted
-    ])
-    |> validate_required([
-      :kind,
-      :name,
-      :namespace,
-      :hash,
-      :document_id,
-      :been_undeleted
-    ])
   end
 end

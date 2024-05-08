@@ -4,15 +4,8 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
   use CommonCore, :schema
 
   @required_fields [:action, :type]
-  @optional_fields [
-    :realm,
-    :is_success,
-    :apply_result,
-    :document_id,
-    :keycloak_snapshot_id
-  ]
 
-  typed_schema "keycloak_actions" do
+  batt_schema "keycloak_actions" do
     # What we're trying to do.
     # For right now since fields are not always included
     # we're not going to handle sync
@@ -43,8 +36,7 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
 
   def changeset(keycloak_action, attrs) do
     keycloak_action
-    |> cast(attrs, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> validate_realm_present_if_needed()
   end
 

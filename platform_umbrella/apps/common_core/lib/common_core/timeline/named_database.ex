@@ -2,7 +2,6 @@ defmodule CommonCore.Timeline.NamedDatabase do
   @moduledoc false
 
   use CommonCore, :embedded_schema
-  use CommonCore.Util.PolymorphicType, type: :named_database
 
   @possible_schema_types [
     :jupyter_notebook,
@@ -16,7 +15,9 @@ defmodule CommonCore.Timeline.NamedDatabase do
 
   def possible_schema_types, do: @possible_schema_types
 
-  typed_embedded_schema do
+  @required_fields ~w(action schema_type name entity_id)a
+
+  batt_polymorphic_schema type: :named_database do
     # WAIT!
     # If you are changing here then change in EventCenter.Database
     field :action, Ecto.Enum, values: [:insert, :update, :delete, :multi]
@@ -26,8 +27,6 @@ defmodule CommonCore.Timeline.NamedDatabase do
     field :schema_type, Ecto.Enum, values: @possible_schema_types
 
     field :name, :string
-    field :entity_id, CommonCore.Util.BatteryUUID
-
-    type_field()
+    field :entity_id, CommonCore.Ecto.BatteryUUID
   end
 end

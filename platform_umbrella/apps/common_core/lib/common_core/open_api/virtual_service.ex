@@ -1,11 +1,11 @@
-defmodule CommonCore.OpenApi.IstioVirtualService do
+defmodule CommonCore.OpenAPI.IstioVirtualService do
   @moduledoc false
 
   defmodule Delegate do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :name, :string
       field :namespace, :string
     end
@@ -13,9 +13,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule StringMatch do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :exact, :string
       field :prefix, :string
       field :regex, :string
@@ -24,9 +24,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPBody do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :bytes, :string
       field :string, :string
     end
@@ -34,9 +34,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPDirectResponse do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :body, HTTPBody
       field :status, :integer
     end
@@ -44,9 +44,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPRedirect do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :authority, :string
       field :redirectCode, :integer
       field :scheme, :string
@@ -56,9 +56,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPRetry do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :attempts, :integer
       field :perTryTimeout, :string
       field :retryOn, :string
@@ -68,9 +68,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule Headers.HeaderOperations do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :add, :map
       field :remove, {:array, :string}
       field :set, :map
@@ -79,9 +79,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule Headers do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :request, Headers.HeaderOperations
       embeds_one :response, Headers.HeaderOperations
     end
@@ -89,9 +89,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule L4MatchAttributes do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :destinationSubnets, {:array, :string}
       field :gateways, {:array, :string}
       field :port, :integer
@@ -103,27 +103,27 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule Percent do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :value, :float
     end
   end
 
   defmodule HTTPFaultInjection.Abort do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :percentage, Percent
     end
   end
 
   defmodule HTTPFaultInjection.Delay do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :percent, :integer
       embeds_one :percentage, Percent
     end
@@ -131,9 +131,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPFaultInjection do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :abort, HTTPFaultInjection.Abort
       embeds_one :delay, HTTPFaultInjection.Delay
     end
@@ -141,18 +141,18 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule PortSelector do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :number, :integer
     end
   end
 
   defmodule Destination do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :host, :string
       embeds_one :port, PortSelector
       field :subset, :string
@@ -161,9 +161,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPMirrorPolicy do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :destination, Destination
       embeds_one :percentage, Percent
     end
@@ -171,9 +171,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPRouteDestination do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :destination, Destination
       embeds_one :headers, Headers
       field :weight, :integer
@@ -182,9 +182,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule RegexRewrite do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :match, :string
       field :rewrite, :string
     end
@@ -192,9 +192,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPRewrite do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :authority, :string
       field :uri, :string
       embeds_one :uriRegexRewrite, RegexRewrite
@@ -203,9 +203,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule RouteDestination do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :destination, Destination
       field :weight, :integer
     end
@@ -215,9 +215,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule CorsPolicy do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :allowCredentials, :boolean
       field :allowHeaders, {:array, :string}
       field :allowMethods, {:array, :string}
@@ -230,9 +230,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule HTTPMatchRequest do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :authority, StringMatch
       field :gateways, {:array, :string}
       field :headers, :map
@@ -254,9 +254,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
     #
     #
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_one :corsPolicy, CorsPolicy
       embeds_one :delegate, Delegate
       embeds_one :directResponse, HTTPDirectResponse
@@ -280,9 +280,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule TCPRoute do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_many :match, L4MatchAttributes
       embeds_many :route, RouteDestination
     end
@@ -290,9 +290,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule TLSMatchAttributes do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :destinationSubnets, {:array, :string}
       field :gateways, {:array, :string}
       field :port, :integer
@@ -304,9 +304,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule TLSRoute do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       embeds_many :match, TLSMatchAttributes
       embeds_many :route, RouteDestination
     end
@@ -314,9 +314,9 @@ defmodule CommonCore.OpenApi.IstioVirtualService do
 
   defmodule VirtualService do
     @moduledoc false
-    use CommonCore.OpenApi.Schema
+    use CommonCore, {:embedded_schema, derive_json: false}
 
-    typed_embedded_schema do
+    batt_embedded_schema do
       field :exportTo, {:array, :string}, default: []
       field :gateways, {:array, :string}, default: ["battery-istio/ingressgateway"]
       field :hosts, {:array, :string}, default: ["*"]

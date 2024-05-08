@@ -2,9 +2,8 @@ defmodule CommonCore.Timeline.Kube do
   @moduledoc false
 
   use CommonCore, :embedded_schema
-  use CommonCore.Util.PolymorphicType, type: :kube
 
-  typed_embedded_schema do
+  batt_polymorphic_schema type: :kube do
     field :resource_type, Ecto.Enum, values: CommonCore.ApiVersionKind.all_known()
     field :action, Ecto.Enum, values: [:add, :delete, :update]
     field :name, :string
@@ -19,7 +18,5 @@ defmodule CommonCore.Timeline.Kube do
         :pod_scheduled,
         :unknown
       ]
-
-    type_field()
   end
 end

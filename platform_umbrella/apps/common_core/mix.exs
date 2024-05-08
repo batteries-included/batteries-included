@@ -26,15 +26,26 @@ defmodule CommonCore.MixProject do
 
   defp deps do
     [
-      {:jason, "~> 1.4"},
+      # Nice naming generator
       {:mnemonic_slugs, "~> 0.0.3"},
       {:telemetry, "~> 1.1"},
-      {:tesla, "~> 1.9"},
+
+      # Types for all the things
       {:typed_ecto_schema, "~> 0.4"},
       {:typed_struct, "~> 0.3", runtime: false},
-      {:k8s, "~> 2.6"},
 
-      # Yaml
+      # For most of our HTTP client needs we use Tesla
+      # with Finch as the adapter.
+      {:tesla, "~> 1.9"},
+      {:finch, "~> 0.18"},
+
+      # K8s uses mint and mint_web_socket for HTTP requests
+      # If it's detected as a dependency.
+      {:k8s, "~> 2.6"},
+      {:mint, "~> 1.0"},
+
+      # Data Formats
+      {:jason, "~> 1.4"},
       {:ymlr, "~> 5.1"},
       {:yaml_elixir, "~> 2.6"},
 

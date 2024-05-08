@@ -17,7 +17,6 @@ defmodule EventCenter.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger, :dialyzer],
@@ -25,10 +24,8 @@ defmodule EventCenter.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # Braodcast to those who need events
       {:phoenix_pubsub, "~> 2.1"},
       {:typed_struct, "~> 0.3", runtime: false}
     ]

@@ -4,9 +4,8 @@ defmodule CommonCore.Containers.EnvValue do
   use CommonCore, :embedded_schema
 
   @required_fields ~w(name source_type)a
-  @optional_fields ~w(value source_name source_key source_optional)a
 
-  typed_embedded_schema do
+  batt_embedded_schema do
     field :name, :string
 
     field :source_type, Ecto.Enum, values: [:value, :config, :secret], default: :value
@@ -17,11 +16,8 @@ defmodule CommonCore.Containers.EnvValue do
   end
 
   def changeset(struct, params \\ %{}) do
-    possible_fields = Enum.concat(@required_fields, @optional_fields)
-
     struct
-    |> cast(params, possible_fields)
-    |> validate_required(@required_fields)
+    |> CommonCore.Ecto.Schema.schema_changeset(params)
     |> validate_length(:name, min: 3, max: 256)
   end
 end

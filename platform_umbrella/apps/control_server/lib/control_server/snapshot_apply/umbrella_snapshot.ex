@@ -14,17 +14,10 @@ defmodule ControlServer.SnapshotApply.UmbrellaSnapshot do
     }
   }
 
-  typed_schema "umbrella_snapshots" do
+  batt_schema "umbrella_snapshots" do
     has_one :kube_snapshot, ControlServer.SnapshotApply.KubeSnapshot
     has_one :keycloak_snapshot, ControlServer.SnapshotApply.KeycloakSnapshot
 
     timestamps()
-  end
-
-  @doc false
-  def changeset(umbrella_snapshot, attrs) do
-    umbrella_snapshot
-    |> cast(attrs, [:inserted_at])
-    |> validate_required([])
   end
 end

@@ -3,7 +3,9 @@ defmodule ControlServer.SnapshotApply.KubeSnapshot do
 
   use CommonCore, :schema
 
-  typed_schema "kube_snapshots" do
+  @required_fields [:status]
+
+  batt_schema "kube_snapshots" do
     field :status, Ecto.Enum,
       values: [:creation, :generation, :applying, :ok, :error],
       default: :creation
@@ -14,12 +16,5 @@ defmodule ControlServer.SnapshotApply.KubeSnapshot do
                ControlServer.SnapshotApply.UmbrellaSnapshot
 
     timestamps()
-  end
-
-  @doc false
-  def changeset(kube_snapshot, attrs) do
-    kube_snapshot
-    |> cast(attrs, [:status, :umbrella_snapshot_id])
-    |> validate_required([:status])
   end
 end

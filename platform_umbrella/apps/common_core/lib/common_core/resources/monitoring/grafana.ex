@@ -10,7 +10,7 @@ defmodule CommonCore.Resources.Grafana do
   import CommonCore.StateSummary.URLs
 
   alias CommonCore.INIConfig
-  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret

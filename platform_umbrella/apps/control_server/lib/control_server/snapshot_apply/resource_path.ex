@@ -4,15 +4,8 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
   use CommonCore, :schema
 
   @required_fields [:path, :hash, :type, :name]
-  @optional_fields [
-    :kube_snapshot_id,
-    :document_id,
-    :is_success,
-    :apply_result,
-    :namespace
-  ]
 
-  typed_schema "resource_paths" do
+  batt_schema "resource_paths" do
     field :path, :string
 
     field :hash, :string
@@ -31,12 +24,5 @@ defmodule ControlServer.SnapshotApply.ResourcePath do
                ControlServer.ContentAddressable.Document
 
     timestamps()
-  end
-
-  @doc false
-  def changeset(resource_path, attrs) do
-    resource_path
-    |> cast(attrs, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
   end
 end

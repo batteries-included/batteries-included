@@ -4,7 +4,7 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
   use TypedStruct
 
   alias CommonCore.Keycloak.AdminClient
-  alias CommonCore.OpenApi.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.StateSummary.KeycloakSummary
 
   require Logger

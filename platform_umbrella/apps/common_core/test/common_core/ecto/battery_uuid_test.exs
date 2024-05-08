@@ -1,7 +1,7 @@
-defmodule CommonCore.Util.BatteryUUIDTest do
+defmodule CommonCore.Ecto.BatteryUUIDTest do
   use ExUnit.Case
 
-  alias CommonCore.Util.BatteryUUID
+  alias CommonCore.Ecto.BatteryUUID
 
   @test_prefixed_uuid "batt_ca695f31d27c44159d9e079ccb37d9f7"
   @test_invaild_uuid "batt_ca695f31d27xxfT"

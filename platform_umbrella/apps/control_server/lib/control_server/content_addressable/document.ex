@@ -14,7 +14,7 @@ defmodule ControlServer.ContentAddressable.Document do
     }
   }
 
-  typed_schema "documents" do
+  batt_schema "documents" do
     field :hash, :string
     field :value, :map, redact: true
 
@@ -37,13 +37,6 @@ defmodule ControlServer.ContentAddressable.Document do
     |> Enum.chunk_every(2)
     |> Enum.map(fn [a, b] -> Bitwise.bxor(a, b) end)
     |> :binary.list_to_bin()
-    |> CommonCore.Util.BatteryUUID.load()
-  end
-
-  @doc false
-  def changeset(content_addressable_resource, attrs) do
-    content_addressable_resource
-    |> cast(attrs, [:id, :value, :hash])
-    |> validate_required([:value, :hash])
+    |> CommonCore.Ecto.BatteryUUID.load()
   end
 end

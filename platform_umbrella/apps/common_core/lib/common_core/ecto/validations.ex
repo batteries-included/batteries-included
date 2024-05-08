@@ -1,4 +1,4 @@
-defmodule CommonCore.Util.EctoValidations do
+defmodule CommonCore.Ecto.Validations do
   @moduledoc false
 
   import Ecto.Changeset
@@ -41,8 +41,8 @@ defmodule CommonCore.Util.EctoValidations do
 
     ```elixir
     changeset = Changeset.change(%MyModel{}, %{field: nil})
-    CommonCore.Util.EctoValidations.maybe_set_random(changeset, :field, length: 256)
-    CommonCore.Util.EctoValidations.maybe_set_random(changeset, :field, func: fn len ->
+    CommonCore.Ecto.Validations.maybe_set_random(changeset, :field, length: 256)
+    CommonCore.Ecto.Validations.maybe_set_random(changeset, :field, func: fn len ->
         String.duplicate("a", len)
     end)
     ```

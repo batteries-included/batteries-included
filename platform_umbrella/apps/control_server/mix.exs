@@ -39,21 +39,27 @@ defmodule ControlServer.MixProject do
   defp deps do
     [
       {:common_core, in_umbrella: true},
-      {:ecto_sql, "~> 3.11"},
       {:event_center, in_umbrella: true},
+      {:ecto_sql, "~> 3.11"},
       {:ex_audit, "~> 0.10"},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
-      {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
+
+      # K8s uses mint and mint_web_socket for HTTP requests
+      # If it's detected as a dependency.
       {:k8s, "~> 2.6"},
+      {:mint, "~> 1.0"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_pubsub, "~> 2.1"},
       {:postgrex, "~> 0.17"},
+
+      # Types for all the things
       {:typed_ecto_schema, "~> 0.4"},
       {:yaml_elixir, "~> 2.6"},
-      {:ymlr, "~> 5.0"}
+      {:ymlr, "~> 5.0"},
+      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
+      {:floki, "~> 0.36", only: [:dev, :test, :integration]}
     ]
   end
 

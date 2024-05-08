@@ -38,7 +38,7 @@ defmodule HomeBaseWeb.TeamsControllerTest do
 
     test "should not switch to a team that does not exist", ctx do
       refute ctx.conn
-             |> get(~p"/teams/#{CommonCore.Util.BatteryUUID.autogenerate()}")
+             |> get(~p"/teams/#{CommonCore.Ecto.BatteryUUID.autogenerate()}")
              |> get_session(:team_id)
     end
 

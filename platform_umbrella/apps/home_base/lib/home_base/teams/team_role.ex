@@ -3,12 +3,12 @@ defmodule HomeBase.Teams.TeamRole do
 
   use CommonCore, :schema
 
-  import CommonCore.Util.EctoValidations
-
   alias HomeBase.Accounts.User
   alias HomeBase.Teams.Team
 
-  typed_schema "teams_roles" do
+  @required_fields [:is_admin]
+
+  batt_schema "teams_roles" do
     field :is_admin, :boolean, default: false
     field :invited_email, :string
 
@@ -20,8 +20,7 @@ defmodule HomeBase.Teams.TeamRole do
 
   def changeset(team_role, attrs \\ %{}) do
     team_role
-    |> cast(attrs, [:is_admin, :invited_email])
-    |> validate_required([:is_admin])
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> validate_email_address(:invited_email)
     |> unique_constraint([:user, :team], name: "teams_roles_user_id_team_id_index", message: "already on team")
     |> unique_constraint([:invited_email, :team],

@@ -1,7 +1,7 @@
-defmodule CommonCore.OpenApi.OIDCTest do
+defmodule CommonCore.OpenAPI.OIDCTest do
   use ExUnit.Case
 
-  alias CommonCore.OpenApi.OIDC
+  alias CommonCore.OpenAPI.OIDC
 
   @example_response """
     {

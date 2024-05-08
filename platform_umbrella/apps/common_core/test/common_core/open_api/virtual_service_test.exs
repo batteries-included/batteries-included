@@ -1,12 +1,12 @@
-defmodule CommonCore.OpenApi.VirtualServiceTest do
+defmodule CommonCore.OpenAPI.VirtualServiceTest do
   use ExUnit.Case
 
-  alias CommonCore.OpenApi.IstioVirtualService.Destination
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPMatchRequest
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPRoute
-  alias CommonCore.OpenApi.IstioVirtualService.HTTPRouteDestination
-  alias CommonCore.OpenApi.IstioVirtualService.StringMatch
-  alias CommonCore.OpenApi.IstioVirtualService.VirtualService
+  alias CommonCore.OpenAPI.IstioVirtualService.Destination
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPMatchRequest
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPRoute
+  alias CommonCore.OpenAPI.IstioVirtualService.HTTPRouteDestination
+  alias CommonCore.OpenAPI.IstioVirtualService.StringMatch
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
 
   describe "VirtualService" do
     test "creates a valid VirtualService struct" do

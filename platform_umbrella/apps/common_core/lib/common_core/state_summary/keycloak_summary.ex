@@ -3,12 +3,12 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.OpenApi.KeycloakAdminSchema
-  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
 
   require Logger
 
-  typed_embedded_schema do
+  batt_embedded_schema do
     embeds_many :realms, KeycloakAdminSchema.RealmRepresentation
   end
 

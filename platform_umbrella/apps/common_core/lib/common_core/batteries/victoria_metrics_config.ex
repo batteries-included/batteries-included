@@ -2,9 +2,7 @@ defmodule CommonCore.Batteries.VictoriaMetricsConfig do
   @moduledoc false
 
   use CommonCore, :embedded_schema
-  use CommonCore.Util.PolymorphicType, type: :victoria_metrics
 
-  typed_embedded_schema do
-    type_field()
+  batt_polymorphic_schema type: :victoria_metrics do
   end
 end

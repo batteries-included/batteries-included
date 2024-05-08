@@ -1,20 +1,12 @@
 defmodule CommonCore.Batteries.VMClusterConfig do
   @moduledoc false
-
-  use CommonCore, :embedded_schema
-  use CommonCore.Util.PolymorphicType, type: :vm_cluster
-  use CommonCore.Util.DefaultableField
-
-  import CommonCore.Util.EctoValidations
-  import CommonCore.Util.PolymorphicTypeHelpers
+  use CommonCore, {:embedded_schema, no_encode: [:cookie_secret]}
 
   alias CommonCore.Defaults
 
-  @required_fields ~w()a
-
-  typed_embedded_schema do
+  batt_polymorphic_schema type: :vm_cluster do
     defaultable_field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
-    field :cookie_secret, :string
+    secret_field :cookie_secret
 
     defaultable_field :replication_factor, :integer, default: 1
 
@@ -24,19 +16,14 @@ defmodule CommonCore.Batteries.VMClusterConfig do
 
     defaultable_field :vmselect_volume_size, :string, default: "1Gi"
     defaultable_field :vmstorage_volume_size, :string, default: "5Gi"
-    type_field()
   end
 
-  @impl Ecto.Type
-  def cast(data) do
-    data
-    |> changeset(__MODULE__)
-    |> validate_required(@required_fields)
+  def changeset(base_struct, args) do
+    base_struct
+    |> CommonCore.Ecto.Schema.schema_changeset(args)
     |> validate_number(:replication_factor, greater_than: 0, less_than: 99)
     |> validate_number(:vmstorage_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vminsert_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vmselect_replicas, greater_than: 0, less_than: 99)
-    |> validate_cookie_secret()
-    |> apply_changeset_if_valid()
   end
 end

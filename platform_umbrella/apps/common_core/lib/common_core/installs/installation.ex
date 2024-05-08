@@ -8,10 +8,7 @@ defmodule CommonCore.Installation do
 
   use CommonCore, :schema
 
-  import CommonCore.Util.EctoValidations
-
-  @required_fields ~w(slug usage kube_provider)a
-  @optional_fields ~w(sso_enabled kube_provider_config initial_oauth_email default_size)a
+  @required_fields ~w(usage kube_provider slug)a
 
   @sizes [:tiny, :small, :medium, :large, :xlarge, :huge]
   @providers [Kind: :kind, AWS: :aws, Provided: :provided]
@@ -23,8 +20,8 @@ defmodule CommonCore.Installation do
     Production: :production
   ]
 
-  typed_schema "installations" do
-    field :slug, :string
+  batt_schema "installations" do
+    slug_field :slug
 
     # This will be the main switch for specialization
     # of the installation after choosing the where the kubernetes
@@ -47,12 +44,9 @@ defmodule CommonCore.Installation do
   @doc false
   def changeset(installation, attrs \\ %{}) do
     installation
-    |> cast(attrs, @optional_fields ++ @required_fields)
-    |> maybe_fill_in_slug(:slug)
-    |> validate_required(@required_fields)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_require_oauth_email(attrs)
     |> downcase_slug()
-    |> validate_format(:slug, ~r/^[a-z0-9-]+$/)
     |> validate_email_address(:initial_oauth_email)
     |> unique_constraint(:slug)
   end
@@ -67,20 +61,23 @@ defmodule CommonCore.Installation do
     update_change(changeset, :slug, &String.downcase/1)
   end
 
-  def new(name, opts \\ []) do
+  def new!(name, opts \\ []) do
     provider_type = Keyword.get(opts, :provider_type, :kind)
     usage = Keyword.get(opts, :usage, :development)
     initial_oauth_email = Keyword.get(opts, :initial_oauth_email, nil)
     default_size = Keyword.get(opts, :default_size, default_size(provider_type, usage))
 
-    %__MODULE__{
-      slug: name,
-      kube_provider: provider_type,
-      kube_provider_config: default_provider_config(provider_type, usage),
-      initial_oauth_email: initial_oauth_email,
-      default_size: default_size,
-      usage: usage
-    }
+    with {:ok, install} <-
+           new(
+             slug: name,
+             kube_provider: provider_type,
+             kube_provider_config: default_provider_config(provider_type, usage),
+             initial_oauth_email: initial_oauth_email,
+             default_size: default_size,
+             usage: usage
+           ) do
+      install
+    end
   end
 
   def size_options, do: Enum.map(@sizes, &{&1 |> Atom.to_string() |> String.capitalize(), &1})

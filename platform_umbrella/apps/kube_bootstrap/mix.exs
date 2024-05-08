@@ -16,7 +16,6 @@ defmodule KubeBootstrap.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger],
@@ -24,13 +23,13 @@ defmodule KubeBootstrap.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       {:common_core, in_umbrella: true},
-      {:k8s, "~> 2.6"}
+      # K8s uses mint and mint_web_socket for HTTP requests
+      # If it's detected as a dependency.
+      {:k8s, "~> 2.6"},
+      {:mint, "~> 1.0"}
     ]
   end
 

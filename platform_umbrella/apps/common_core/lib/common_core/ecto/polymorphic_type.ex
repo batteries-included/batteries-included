@@ -1,70 +1,11 @@
-defmodule CommonCore.Util.PolymorphicType do
+defmodule CommonCore.Ecto.PolymorphicType do
   @moduledoc false
   use Ecto.ParameterizedType
 
-  alias CommonCore.Util.PolymorphicTypeHelpers
   alias Ecto.ParameterizedType
 
   # for dialyzer
-  @type t() :: any()
-
-  defmacro __using__(opts) do
-    case Keyword.fetch(opts, :type) do
-      {:ok, type} ->
-        [
-          prelude(type),
-          ecto_type_impl()
-        ]
-
-      :error ->
-        raise "invalid instantiation: set :type option"
-    end
-  end
-
-  defp prelude(type) do
-    quote do
-      use Ecto.Type
-      @before_compile {unquote(__MODULE__), :__before_compile__}
-
-      import unquote(__MODULE__), only: [type_field: 0]
-
-      @__polymorphic_type unquote(type)
-    end
-  end
-
-  defmacro __before_compile__(env) do
-    quote do
-      def __polymorphic_type, do: @__polymorphic_type
-      def __required_fields, do: unquote(Module.get_attribute(env.module, :required_fields, []))
-    end
-  end
-
-  @doc """
-  Defines `:type` field based on the `:type` option passed to `init/1`.
-  """
-  defmacro type_field() do
-    quote do
-      field(:type, Ecto.Enum, values: [@__polymorphic_type], default: @__polymorphic_type)
-    end
-  end
-
-  defp ecto_type_impl do
-    quote do
-      @impl Ecto.Type
-      def type, do: :map
-
-      @impl Ecto.Type
-      def cast(data), do: PolymorphicTypeHelpers.polymorphic_cast(data, __MODULE__, @__polymorphic_type)
-
-      @impl Ecto.Type
-      def dump(data), do: PolymorphicTypeHelpers.polymorphic_dump(data, __MODULE__, @__polymorphic_type)
-
-      @impl Ecto.Type
-      def load(data), do: PolymorphicTypeHelpers.polymorphic_load(data, __MODULE__, @__polymorphic_type)
-
-      defoverridable Ecto.Type
-    end
-  end
+  @type t() :: map() | Ecto.Schema.t() | nil
 
   @impl ParameterizedType
   def init(opts) do
@@ -89,6 +30,7 @@ defmodule CommonCore.Util.PolymorphicType do
   def cast(data, %{mappings: mappings, field: field} = _params) do
     case type_from(mappings, data) do
       {:ok, type} ->
+        # TODO: understand why params are not passed to Ecto.Type.cast
         Ecto.Type.cast(type, data)
 
       :error ->
@@ -104,13 +46,8 @@ defmodule CommonCore.Util.PolymorphicType do
     Ecto.Type.dump(module, data, dumper)
   end
 
-  # def dump(data, _dumper, %{mappings: mappings} = _params) do
-  #   type = type_from(mappings, data)
-  #   Ecto.Type.dump(type, data)
-  # end
-
   @impl ParameterizedType
-  # receives db value and returns ecto type 
+  # receives db value and returns ecto type
   def load(nil, _, _), do: {:ok, nil}
 
   def load(value, loader, %{mappings: mappings} = _params) do
@@ -126,6 +63,7 @@ defmodule CommonCore.Util.PolymorphicType do
   @impl ParameterizedType
   def type(_params), do: :map
 
+  defp type_from(mappings, type) when is_map(mappings) and is_atom(type), do: Map.fetch(mappings, type)
   defp type_from(mappings, type) when is_atom(type), do: Keyword.fetch(mappings, type)
   defp type_from(mappings, type) when is_binary(type), do: type_from(mappings, String.to_existing_atom(type))
   defp type_from(mappings, %{type: type}), do: type_from(mappings, type)

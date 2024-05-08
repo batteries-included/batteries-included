@@ -3,11 +3,11 @@ defmodule HomeBase.Teams.Team do
 
   use CommonCore, :schema
 
-  import CommonCore.Util.EctoValidations
-
   alias HomeBase.Teams.TeamRole
 
-  typed_schema "teams" do
+  @required_fields [:name]
+
+  batt_schema "teams" do
     field :name, :string
     field :op_email, :string
 
@@ -19,8 +19,7 @@ defmodule HomeBase.Teams.Team do
 
   def changeset(team, attrs \\ %{}) do
     team
-    |> cast(attrs, [:name, :op_email])
-    |> validate_required([:name])
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> validate_length(:name, max: 255)
     |> validate_email_address(:op_email)
     |> validate_team_name()

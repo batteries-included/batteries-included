@@ -1,4 +1,4 @@
-defmodule CommonCore.Util.BatteryUUID do
+defmodule CommonCore.Ecto.BatteryUUID do
   @moduledoc """
 
   This module defines an Ecto.Type for a UUID that
@@ -16,8 +16,7 @@ defmodule CommonCore.Util.BatteryUUID do
   It's derived from Uniq and Ecto.UUID and
   ULIID. It's performance should match all of those.
 
-  Case insensitive hex encoding is used no dashes means
-  that these are also dns hostname safe.
+  Case insensitive hex encoding is used
   """
   use Ecto.Type
 

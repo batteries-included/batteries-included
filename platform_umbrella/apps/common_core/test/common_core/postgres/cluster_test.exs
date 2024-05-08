@@ -22,7 +22,7 @@ defmodule CommonCore.Postgres.ClusterTest do
     end
 
     test "creates an invalid changeset when missing required fields" do
-      changeset = Cluster.changeset(%Cluster{}, %{})
+      changeset = Cluster.changeset(%Cluster{}, %{name: nil, storage_size: nil, num_instances: nil, type: nil})
       refute changeset.valid?
     end
 
@@ -57,7 +57,7 @@ defmodule CommonCore.Postgres.ClusterTest do
     end
 
     test "returns an invalid changeset with invalid attributes" do
-      attrs = %{}
+      attrs = %{name: nil, storage_size: nil, num_instances: nil, type: nil}
 
       {changeset, _data} = Cluster.validate(attrs)
       refute changeset.valid?

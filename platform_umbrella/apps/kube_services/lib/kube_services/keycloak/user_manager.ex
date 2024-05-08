@@ -4,10 +4,10 @@ defmodule KubeServices.Keycloak.UserManager do
   use TypedStruct
 
   alias CommonCore.Keycloak.AdminClient
-  alias CommonCore.OpenApi.KeycloakAdminSchema.ClientRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.CredentialRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.RoleRepresentation
-  alias CommonCore.OpenApi.KeycloakAdminSchema.UserRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
   alias EventCenter.Keycloak.Payload
 
   require Logger

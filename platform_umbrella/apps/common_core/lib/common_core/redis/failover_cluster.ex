@@ -3,8 +3,6 @@ defmodule CommonCore.Redis.FailoverCluster do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
-  import CommonCore.Util.EctoValidations
-
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -32,11 +30,10 @@ defmodule CommonCore.Redis.FailoverCluster do
     }
   ]
 
-  @required_fields ~w(name type)a
-  @optional_fields ~w(num_redis_instances num_sentinel_instances cpu_requested cpu_limits memory_requested memory_limits virtual_size project_id)a
+  @required_fields ~w(type name)a
 
-  typed_schema "redis_clusters" do
-    field :name, :string
+  batt_schema "redis_clusters" do
+    slug_field :name
 
     field :num_redis_instances, :integer, default: 1
     field :num_sentinel_instances, :integer
@@ -65,15 +62,9 @@ defmodule CommonCore.Redis.FailoverCluster do
 
   @doc false
   def changeset(failover_cluster, attrs) do
-    fields = @required_fields ++ @optional_fields
-
     failover_cluster
-    |> cast(attrs, fields)
-    |> maybe_fill_in_slug(:name)
-    |> downcase_fields([:name])
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
-    |> validate_required(@required_fields)
-    |> validate_dns_label(:name)
     |> unique_constraint([:type, :name])
     |> foreign_key_constraint(:project_id)
   end
