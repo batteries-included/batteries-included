@@ -148,6 +148,7 @@ defmodule CommonCore.Ecto.Validations do
     end)
   end
 
+  @spec maybe_fill_in_slug(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   def maybe_fill_in_slug(changeset, field, opts \\ [length: 3]) do
     length = Keyword.get(opts, :length, 3)
 
@@ -163,6 +164,7 @@ defmodule CommonCore.Ecto.Validations do
     end
   end
 
+  @spec validate_dns_label(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   def validate_dns_label(changeset, field) do
     changeset
     |> validate_format(field, ~r/^[a-z][a-z0-9-]*$/,
@@ -171,6 +173,7 @@ defmodule CommonCore.Ecto.Validations do
     |> validate_length(field, min: 1, max: 63, message: "must be between 1 and 63 characters")
   end
 
+  @spec validate_email_address(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   def validate_email_address(changeset, field) do
     changeset
     |> validate_format(field, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")

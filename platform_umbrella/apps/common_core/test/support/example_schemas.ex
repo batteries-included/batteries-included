@@ -24,7 +24,7 @@ defmodule CommonCore.ExampleSchemas do
     use CommonCore, :schema
 
     batt_schema "todos" do
-      field :name, :string
+      slug_field :name
       defaultable_field :image, :string, default: "mycontainer:latest"
       secret_field :password
       secret_field :short_password, length: 8

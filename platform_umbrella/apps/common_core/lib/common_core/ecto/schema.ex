@@ -1,5 +1,139 @@
 defmodule CommonCore.Ecto.Schema do
-  @moduledoc false
+  @moduledoc """
+  `CommonCore.Ecto.Schema` is a base schema module that provides
+  additional features to Ecto schemas. Most users will want
+  to use `CommonCore` instead of this module directly.
+
+  ## Features
+
+  - Defaultable fields: Fields that have a default value that isn't stored in the database.
+  - Secret fields: Fields that get a unique value each time they are used.
+  - Slug fields: Fields that have a slug generated for them and validate they are valid hostname labels.
+  - Polymorphic schemas: Schemas that can take on different forms based on the given type.
+  - Embedded schemas: Schemas that are embedded within another schema.
+  - Required fields: Fields that are required for the schema.
+  - Generated default methods: `new`, `new!`, and `changeset` are generated for the schema.
+
+  ## Usage
+
+  ### Normal Schema
+
+  ```elixir
+  defmodule MyApp.User do
+    use CommonCore, :schema
+
+    batt_schema "user" do
+      defaultable_field :name, :string, default: "john_doe"
+      secret_field :password
+    end
+  end
+  ```
+
+  ### Embedded Schema
+
+  ```elixir
+  defmodule MyApp.Container do
+    use CommonCore, :embedded_schema
+
+    @required_fields [:name]
+    batt_embedded_schema do
+      slug_field :name
+      defaultable_field :image, :string, default: "myservice:v1.0.0"
+      secret_field :token
+    end
+  end
+  ```
+
+  ### Field Types
+
+  #### `@required_fields`
+
+  A list of fields that are required for the schema. On any schema with this
+  attribute, the fields will be validated by `validate_required/2`
+  inside `CommonCore.Ecto.Schema.schema_changeset/2`.
+
+  #### Defaultable Fields
+
+  ```elixir
+  defaultable_field :image, :string, default: "myimage:latest"
+  ```
+
+  This creates two fields on the schema:
+    - `image` - a virtual field that defines the default. Read this field.
+    - `image_override` - an `_override` field that is stored in the DB. Write this field.
+
+  Since image_override doesn't get the default value written to it, the default value can
+  be changed by updating to a new version of the schema. This is useful for us when we have
+  default versions of software that we want to offer. However customers will want to
+  be able to pin to a specific version until a bug is fixed or they are ready to upgrade.
+
+  #### Secret Fields
+
+  ```elixir
+  secret_field :password
+  ```
+
+  This creates a string field on the schema that is
+  redacted when it is returned. It's also filled in with a secure random
+  password value if it's nil.
+
+  #### Slug Fields
+
+  ```elixir
+  slug_field :url
+  ```
+
+  This creates a string field on the schema that is validated to be
+  a valid DNS label. It's also filled in with a slugified version of
+  the value if it's nil.
+
+  #### Polymorphic Schemas
+
+  There are times when you have a schema that contain a known
+  set of payloads. There could be a lot of these and we don't want a
+  table and a join to be required for every one.
+
+  For this we offer `CommonCore.Ecto.PolymorphicType`.
+
+  When combined with `CommonCore.Ecto.Schema` you can create a schema with a polymorphic type.
+
+
+  ```elixir
+  defmodule MyApp do
+    defmodule FooSchema do
+      use CommonCore, :embedded_schema
+
+      batt_polymorphic_schema type: :foo do
+        defaultable_field :image, :string, default: "foo:latest"
+        field :other_setting, :integer, default: 1
+      end
+    end
+
+    defmodule BarSchema do
+      use CommonCore, :embedded_schema
+
+      batt_polymorphic_schema type: :bar do
+        defaultable_field :image, :string, default: "bar:latest"
+        field :bar_setting, :integer, default: 2
+      end
+    end
+
+    defmodule RootSchema do
+      use CommonCore, :schema
+
+      alias CommonCore.Ecto.PolymorphicType
+
+      batt_schema type: :my_type do
+        slug_field :name
+        field :payload, PolymorphicType, mappings: [
+          foo: FooSchmea,
+          bar: BarSchema
+        ]
+      end
+    end
+  end
+  ```
+  """
   require TypedEctoSchema
 
   defmacro __using__(_ots \\ []) do
@@ -21,6 +155,10 @@ defmodule CommonCore.Ecto.Schema do
           batt_schema: 3,
           batt_schema: 2
         ]
+
+      import CommonCore.Ecto.Validations
+      import Ecto.Changeset
+      import Ecto.Query
 
       Module.register_attribute(__MODULE__, :__defaultable_fields, accumulate: true)
       Module.register_attribute(__MODULE__, :__generated_secrets, accumulate: true)
@@ -45,7 +183,7 @@ defmodule CommonCore.Ecto.Schema do
   @doc """
   This before compile macro is adds on extra schema methods to the module that we use as our extenstions.
 
-  ### Added
+  ### Added Introspetion Methods
 
   - __schema__(:required_fields) - returns the required fields for the
   schema. These will be validated on changeset

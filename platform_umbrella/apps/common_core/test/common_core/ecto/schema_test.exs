@@ -62,6 +62,44 @@ defmodule CommonCore.Ecto.SchemaTest do
       todo = Ecto.Changeset.apply_changes(changeset)
       assert todo.meta.age == 100
     end
+
+    test "name slug_field gets value generated" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{})
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.name != nil
+
+      assert String.contains?(todo.name, "-")
+    end
+
+    test "slug_field can be overwritten" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{name: "myname"})
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.name == "myname"
+    end
+
+    test "slug_field validates dns hostname safe no spaces" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{name: "my name"})
+      assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
+      assert changeset.errors[:name] != nil
+    end
+
+    test "slug_field validates dns hostname safe no underscores" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{name: "my_name"})
+      assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
+      assert changeset.errors[:name] != nil
+    end
+
+    test "slug_field validates dns hostname safe no dots" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{name: "my.name"})
+      assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
+      assert changeset.errors[:name] != nil
+    end
+
+    test "slug_field validates dns hostname safe length" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{name: String.duplicate("a", 64)})
+      assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
+      assert changeset.errors[:name] != nil
+    end
   end
 
   describe "CommonCore.Ecto.Schema + PolymorphicEmbeds" do

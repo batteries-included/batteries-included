@@ -42,10 +42,6 @@ defmodule CommonCore do
   defp schema_helpers do
     quote do
       use CommonCore.Ecto.Schema
-
-      import CommonCore.Ecto.Validations
-      import Ecto.Changeset
-      import Ecto.Query
     end
   end
 

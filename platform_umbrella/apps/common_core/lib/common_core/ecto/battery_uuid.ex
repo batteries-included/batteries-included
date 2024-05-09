@@ -21,6 +21,7 @@ defmodule CommonCore.Ecto.BatteryUUID do
   use Ecto.Type
 
   @type t :: <<_::296>>
+  @type raw :: <<_::128>>
 
   def type, do: :uuid
 
@@ -55,6 +56,7 @@ defmodule CommonCore.Ecto.BatteryUUID do
 
   defp c(_), do: throw(:error)
 
+  @spec cast(any()) :: :error | {:ok, t()}
   def cast(
         <<?b, ?a, ?t, ?t, ?_, a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2, d3, d4, e1, e2, e3,
           e4, e5, e6, e7, e8, e9, e10, e11, e12>>
@@ -90,6 +92,7 @@ defmodule CommonCore.Ecto.BatteryUUID do
   def cast(_), do: :error
 
   # Converts a binary UUID to a our expected format (batt_ prefixed)
+  @spec load(raw() | any()) :: :error | {:ok, t()}
   def load(<<_::128>> = raw_uuid), do: {:ok, encode(raw_uuid)}
   def load(_), do: :error
 
@@ -122,6 +125,7 @@ defmodule CommonCore.Ecto.BatteryUUID do
 
   defp d(_), do: throw(:error)
 
+  @spec dump(t() | any()) :: :error | {:ok, raw()}
   def dump(
         <<?b, ?a, ?t, ?t, ?_, a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2, d3, d4, e1, e2, e3,
           e4, e5, e6, e7, e8, e9, e10, e11, e12>>
@@ -137,6 +141,7 @@ defmodule CommonCore.Ecto.BatteryUUID do
 
   def dump(_), do: :error
 
+  @spec autogenerate() :: t()
   def autogenerate do
     # This is a VERY stripped down uuidv7
     time = System.system_time(:millisecond)
