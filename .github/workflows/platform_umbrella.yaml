@@ -40,7 +40,7 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - name: Set up dev shell
         run: nix develop --command bash -c 'exit 0'
       - name: Start Kind
@@ -94,7 +94,7 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: nix develop --command bash bix ex-test-deep
       - name: Test Report
         uses: dorny/test-reporter@v1

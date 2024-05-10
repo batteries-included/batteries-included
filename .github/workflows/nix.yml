@@ -34,7 +34,7 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: nix build .#pastebin -L
       - run: nix build .#pastebin-container -L
       - name: Configure AWS Credentials
@@ -79,7 +79,7 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: nix build .#control-server -L
       - run: nix build .#control-server-container -L
       - name: Configure AWS Credentials
@@ -125,7 +125,7 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: nix build .#kube-bootstrap -L
       - run: nix build .#kube-bootstrap-container -L
       - name: Configure AWS Credentials
@@ -170,7 +170,7 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: nix build .#home-base -L
       - run: nix build .#home-base-container -L
       - name: Configure AWS Credentials
@@ -212,5 +212,5 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: nix flake check

@@ -26,7 +26,7 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - run: nix build .#bi -L
 
   bi-int-test:
@@ -46,6 +46,6 @@ jobs:
             ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
             'push') }}
       - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - name: Run integration tests
         run: nix develop --command bash -c "TRACE=1 INTEGRATION=1 bix go-test"
