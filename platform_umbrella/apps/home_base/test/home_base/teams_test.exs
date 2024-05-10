@@ -1,6 +1,8 @@
 defmodule HomeBase.TeamsTest do
   use HomeBase.DataCase
 
+  import HomeBase.CustomerInstallsFixtures
+
   alias HomeBase.Repo
   alias HomeBase.Teams
   alias HomeBase.Teams.Team
@@ -80,6 +82,12 @@ defmodule HomeBase.TeamsTest do
       assert {:ok, %Team{}} = Teams.delete_team(ctx.team1)
       refute Repo.get(Team, ctx.team1.id)
       refute Repo.get_by(TeamRole, team_id: ctx.team1.id)
+    end
+
+    test "should return error if team still has installation", ctx do
+      installation_fixture(team_id: ctx.team1.id)
+      assert {:error, changeset} = Teams.delete_team(ctx.team1)
+      assert changeset |> errors_on() |> Map.has_key?(:installations)
     end
   end
 

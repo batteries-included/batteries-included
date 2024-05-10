@@ -235,6 +235,20 @@ defmodule HomeBaseWeb.UserAuth do
     end
   end
 
+  @doc """
+  Returns the team if user currently has one selected, or
+  the returns the user if not. This is useful for setting the
+  owner of resources in the dashboard when they can be owned
+  by both a team and an individual.
+  """
+  def current_team_or_user(%Phoenix.LiveView.Socket{} = socket) do
+    if role = socket.assigns.current_role do
+      role.team
+    else
+      socket.assigns.current_user
+    end
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)

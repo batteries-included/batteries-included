@@ -4,9 +4,11 @@ defmodule HomeBaseWeb.InstallationLive do
 
   alias CommonCore.Installation
   alias HomeBase.CustomerInstalls
+  alias HomeBaseWeb.UserAuth
 
   def mount(_params, _session, socket) do
-    installations = CustomerInstalls.list_installations()
+    owner = UserAuth.current_team_or_user(socket)
+    installations = CustomerInstalls.list_installations(owner)
     changeset = CustomerInstalls.change_installation(%Installation{})
 
     {:ok,
@@ -27,6 +29,10 @@ defmodule HomeBaseWeb.InstallationLive do
   end
 
   def handle_event("save", %{"installation" => params}, socket) do
+    owner = UserAuth.current_team_or_user(socket)
+    owner_key = if socket.assigns.current_role, do: "team_id", else: "user_id"
+    params = Map.put(params, owner_key, owner.id)
+
     case CustomerInstalls.create_installation(params) do
       {:ok, installation} ->
         {:noreply,

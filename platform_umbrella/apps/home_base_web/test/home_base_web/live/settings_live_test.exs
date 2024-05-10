@@ -1,6 +1,8 @@
 defmodule HomeBaseWeb.SettingsLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
+  import Ecto.Query
+
   alias HomeBase.Accounts
   alias HomeBase.Teams.Team
   alias HomeBase.Teams.TeamRole
@@ -250,8 +252,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
     @valid_attrs %{"name" => "new-name", "op_email" => "new-email@test.com"}
     @invalid_attrs %{"name" => "personal", "op_email" => "invalid"}
 
-    setup :register_and_log_in_user
-    setup :create_and_switch_to_team
+    setup [:register_and_log_in_user, :create_and_switch_to_team]
 
     test "should render validation errors", ctx do
       assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
@@ -295,8 +296,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
     @valid_attrs %{invited_email: "jane@doe.com", is_admin: false}
     @invalid_attrs %{invited_email: "invalid", is_admin: false}
 
-    setup :register_and_log_in_user
-    setup :create_and_switch_to_team
+    setup [:register_and_log_in_user, :create_and_switch_to_team]
 
     test "should render validation errors", ctx do
       assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
@@ -353,11 +353,20 @@ defmodule HomeBaseWeb.SettingsLiveTest do
       assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
       refute has_element?(view, "#update-role-form-#{ctx.role.id}")
     end
+
+    test "should not delete role if not an admin", ctx do
+      role = insert(:team_role, team: ctx.team, user: insert(:user))
+
+      Repo.update_all(from(r in TeamRole, where: r.id == ^ctx.role.id), set: [is_admin: false])
+
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+      assert render_hook(view, :delete_role, %{"id" => role.id}) =~ escape("don't have permission")
+      assert Repo.get!(TeamRole, role.id)
+    end
   end
 
   describe "team danger zone" do
-    setup :register_and_log_in_user
-    setup :create_and_switch_to_team
+    setup [:register_and_log_in_user, :create_and_switch_to_team]
 
     test "should delete team", ctx do
       assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
@@ -376,6 +385,14 @@ defmodule HomeBaseWeb.SettingsLiveTest do
 
       assert {:ok, _, html} = ctx.conn |> put_session(:team_id, team.id) |> live(~p"/settings")
       refute html =~ "Delete Team"
+    end
+
+    test "should not delete team if not an admin", ctx do
+      Repo.update_all(from(r in TeamRole, where: r.id == ^ctx.role.id), set: [is_admin: false])
+
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+      assert render_hook(view, :delete_team, %{"id" => ctx.team.id}) =~ escape("don't have permission")
+      assert Repo.get!(Team, ctx.team.id)
     end
 
     test "should leave team", ctx do

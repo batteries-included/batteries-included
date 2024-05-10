@@ -6,6 +6,7 @@ defmodule HomeBase.AccountsTest do
   alias HomeBase.Accounts
   alias HomeBase.Accounts.User
   alias HomeBase.Accounts.UserToken
+  alias HomeBase.Teams.TeamRole
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do
@@ -92,6 +93,18 @@ defmodule HomeBase.AccountsTest do
       assert is_binary(user.hashed_password)
       assert is_nil(user.confirmed_at)
       assert is_nil(user.password)
+    end
+
+    test "adds user to team if there is a pending invitation" do
+      email = unique_user_email()
+      attrs = valid_user_attributes(email: email)
+
+      insert(:team_role, team: insert(:team), invited_email: email)
+
+      assert {:ok, user} = Accounts.register_user(attrs)
+      assert user.email == email
+      assert Repo.get_by(TeamRole, user_id: user.id)
+      refute Repo.get_by(TeamRole, invited_email: email)
     end
   end
 

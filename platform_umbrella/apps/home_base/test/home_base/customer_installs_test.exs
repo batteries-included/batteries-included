@@ -15,9 +15,37 @@ defmodule HomeBase.CustomerInstallsTest do
       assert CustomerInstalls.list_installations() == [installation]
     end
 
+    test "list_installations/1 returns all installations for a user" do
+      user = insert(:user)
+      installation = installation_fixture(user_id: user.id)
+
+      assert CustomerInstalls.list_installations(user) == [installation]
+    end
+
+    test "list_installations/1 returns all installations for a team" do
+      team = insert(:team)
+      installation = installation_fixture(team_id: team.id)
+
+      assert CustomerInstalls.list_installations(team) == [installation]
+    end
+
     test "get_installation!/1 returns the installation with given id" do
       installation = installation_fixture()
       assert CustomerInstalls.get_installation!(installation.id) == installation
+    end
+
+    test "get_installation!/2 returns the installation for a user" do
+      user = insert(:user)
+      installation = installation_fixture(user_id: user.id)
+
+      assert CustomerInstalls.get_installation!(installation.id, user) == installation
+    end
+
+    test "get_installation!/2 returns the installation for a team" do
+      team = insert(:team)
+      installation = installation_fixture(team_id: team.id)
+
+      assert CustomerInstalls.get_installation!(installation.id, team) == installation
     end
 
     test "create_installation/1 with valid data creates a installation" do

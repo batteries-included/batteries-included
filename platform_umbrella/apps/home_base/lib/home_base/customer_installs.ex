@@ -3,6 +3,8 @@ defmodule HomeBase.CustomerInstalls do
   use HomeBase, :context
 
   alias CommonCore.Installation
+  alias HomeBase.Accounts.User
+  alias HomeBase.Teams.Team
 
   @doc """
   Returns the list of installations.
@@ -15,6 +17,14 @@ defmodule HomeBase.CustomerInstalls do
   """
   def list_installations do
     Repo.all(Installation)
+  end
+
+  def list_installations(%User{} = user) do
+    Repo.all(from i in Installation, where: i.user_id == ^user.id)
+  end
+
+  def list_installations(%Team{} = team) do
+    Repo.all(from i in Installation, where: i.team_id == ^team.id)
   end
 
   @doc """
@@ -32,6 +42,14 @@ defmodule HomeBase.CustomerInstalls do
 
   """
   def get_installation!(id), do: Repo.get!(Installation, id)
+
+  def get_installation!(id, %User{} = user) do
+    Repo.one!(from(i in Installation, where: i.id == ^id, where: i.user_id == ^user.id))
+  end
+
+  def get_installation!(id, %Team{} = team) do
+    Repo.one!(from(i in Installation, where: i.id == ^id, where: i.team_id == ^team.id))
+  end
 
   @doc """
   Creates a installation.

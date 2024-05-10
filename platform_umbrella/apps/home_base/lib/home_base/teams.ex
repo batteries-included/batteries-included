@@ -35,7 +35,11 @@ defmodule HomeBase.Teams do
   end
 
   def delete_team(%Team{} = team) do
-    Repo.delete(team)
+    team
+    |> Changeset.change()
+    # Prevent team from being deleted if there are still installations
+    |> Changeset.no_assoc_constraint(:installations)
+    |> Repo.delete()
   end
 
   ## Team Roles

@@ -3,6 +3,7 @@ defmodule HomeBase.Accounts.User do
 
   use CommonCore, :schema
 
+  alias CommonCore.Installation
   alias HomeBase.Teams.TeamRole
 
   batt_schema "users" do
@@ -13,6 +14,7 @@ defmodule HomeBase.Accounts.User do
 
     has_many :roles, TeamRole
     has_many :teams, through: [:roles, :user]
+    has_many :installations, Installation
 
     timestamps()
   end

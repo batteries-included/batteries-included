@@ -5,6 +5,7 @@ defmodule HomeBase.Accounts do
   alias HomeBase.Accounts.User
   alias HomeBase.Accounts.UserNotifier
   alias HomeBase.Accounts.UserToken
+  alias HomeBase.Teams.TeamRole
 
   ## Database getters
 
@@ -72,9 +73,29 @@ defmodule HomeBase.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
+    result =
+      Multi.new()
+      |> Multi.insert(:user, User.registration_changeset(%User{}, attrs))
+      # Put the user on any teams they've been invited to
+      |> Multi.update_all(
+        :roles,
+        fn %{user: user} ->
+          from(
+            r in TeamRole,
+            where: r.invited_email == ^user.email,
+            update: [set: [invited_email: nil, user_id: ^user.id]]
+          )
+        end,
+        []
+      )
+      |> Repo.transaction()
+
+    # We only care about the user results since the roles update should always succeed
+    case result do
+      {:ok, %{user: user}} -> {:ok, user}
+      {:error, :user, changeset, _changes} -> {:error, changeset}
+      error -> error
+    end
   end
 
   @doc """

@@ -3,6 +3,7 @@ defmodule HomeBase.Teams.Team do
 
   use CommonCore, :schema
 
+  alias CommonCore.Installation
   alias HomeBase.Teams.TeamRole
 
   @required_fields [:name]
@@ -13,6 +14,7 @@ defmodule HomeBase.Teams.Team do
 
     has_many :roles, TeamRole, on_replace: :delete
     has_many :users, through: [:roles, :team]
+    has_many :installations, Installation
 
     timestamps()
   end

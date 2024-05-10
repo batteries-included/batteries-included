@@ -4,9 +4,11 @@ defmodule HomeBaseWeb.InstallationShowLive do
 
   alias CommonCore.Installation
   alias HomeBase.CustomerInstalls
+  alias HomeBaseWeb.UserAuth
 
   def mount(%{"id" => id}, _session, socket) do
-    installation = CustomerInstalls.get_installation!(id)
+    owner = UserAuth.current_team_or_user(socket)
+    installation = CustomerInstalls.get_installation!(id, owner)
     changeset = CustomerInstalls.change_installation(installation)
 
     {:ok,

@@ -25,6 +25,18 @@ defmodule HomeBaseWeb.SettingsLive do
     email_changeset = Accounts.change_user_email(user)
     password_changeset = Accounts.change_user_password(user)
 
+    # This prevents someone from manually changing the DOM events
+    # to perform an admin action when they're not an admin.
+    socket =
+      attach_hook(socket, :check_admin, :handle_event, fn
+        "save_role", _params, socket -> require_admin(socket)
+        "update_role", _params, socket -> require_admin(socket)
+        "delete_role", _params, socket -> require_admin(socket)
+        "update_team", _params, socket -> require_admin(socket)
+        "delete_team", _params, socket -> require_admin(socket)
+        _event, _params, socket -> {:cont, socket}
+      end)
+
     {:ok,
      socket
      |> assign(:current_password, nil)
@@ -37,6 +49,14 @@ defmodule HomeBaseWeb.SettingsLive do
      |> assign(:page, :settings)
      |> assign(:page_title, "Settings")
      |> maybe_assign_team()}
+  end
+
+  defp require_admin(socket) do
+    if socket.assigns.current_role.is_admin do
+      {:cont, socket}
+    else
+      {:halt, put_flash(socket, :global_error, "You don't have permission for that")}
+    end
   end
 
   defp maybe_assign_team(%{assigns: %{current_role: %{team: team}}} = socket) do
@@ -212,8 +232,12 @@ defmodule HomeBaseWeb.SettingsLive do
          |> put_flash(:global_success, "#{team.name} has been deleted")
          |> redirect(to: ~p"/teams/personal")}
 
-      _ ->
-        {:noreply, put_flash(socket, :global_error, "Could not delete team")}
+      {:error, changeset} ->
+        # TODO: This is a weird way of handling constraint errors, come up with something better
+        case Ecto.Changeset.traverse_errors(changeset, &elem(&1, 0)) do
+          %{installations: _} -> {:noreply, put_flash(socket, :global_error, "Team still has installations")}
+          _ -> {:noreply, put_flash(socket, :global_error, "Could not delete team")}
+        end
     end
   end
 

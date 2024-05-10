@@ -289,4 +289,28 @@ defmodule HomeBaseWeb.UserAuthTest do
       refute conn.status
     end
   end
+
+  describe "current_team_or_user/1" do
+    test "should fetch the user from the socket" do
+      socket = %LiveView.Socket{
+        assigns: %{
+          current_user: %{id: 1},
+          current_role: nil
+        }
+      }
+
+      assert UserAuth.current_team_or_user(socket) == %{id: 1}
+    end
+
+    test "should fetch the team from the socket" do
+      socket = %LiveView.Socket{
+        assigns: %{
+          current_user: %{id: 1},
+          current_role: %{team: %{id: 2}}
+        }
+      }
+
+      assert UserAuth.current_team_or_user(socket) == %{id: 2}
+    end
+  end
 end

@@ -38,6 +38,10 @@ defmodule CommonCore.Installation do
     # Default size for the installation
     field :default_size, Ecto.Enum, values: @sizes, default: :medium
 
+    # Use `field` rather than `belongs_to` to prevent a circular dependency with HomeBase
+    field :user_id, CommonCore.Ecto.BatteryUUID
+    field :team_id, CommonCore.Ecto.BatteryUUID
+
     timestamps()
   end
 
