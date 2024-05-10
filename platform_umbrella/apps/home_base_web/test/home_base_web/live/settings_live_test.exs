@@ -2,6 +2,8 @@ defmodule HomeBaseWeb.SettingsLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
   alias HomeBase.Accounts
+  alias HomeBase.Teams.Team
+  alias HomeBase.Teams.TeamRole
 
   defp setup_user(_) do
     {:ok, user: :user |> params_for() |> register_user!()}
@@ -25,6 +27,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
       assert html =~ "Resend confirmation email"
       assert html =~ "Change your email"
       assert html =~ "Change your password"
+      refute html =~ "Your Team"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
@@ -33,6 +36,83 @@ defmodule HomeBaseWeb.SettingsLiveTest do
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/login"
       assert %{"error" => "You must log in to access this page"} = flash
+    end
+  end
+
+  describe "confirm email" do
+    setup %{conn: conn} do
+      user = :user |> params_for() |> register_user!()
+      email = unique_user_email()
+
+      token =
+        extract_user_token(fn url ->
+          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
+        end)
+
+      %{conn: log_in_user(conn, user), token: token, email: email, user: user}
+    end
+
+    test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
+      {:error, redirect} = live(conn, ~p"/settings/#{token}")
+
+      assert {:live_redirect, %{to: path, flash: flash}} = redirect
+      assert path == ~p"/settings"
+      assert %{"success" => message} = flash
+      assert message == "Email changed successfully"
+      refute Accounts.get_user_by_email(user.email)
+      assert Accounts.get_user_by_email(email)
+
+      # use confirm token again
+      {:error, redirect} = live(conn, ~p"/settings/#{token}")
+      assert {:live_redirect, %{to: path, flash: flash}} = redirect
+      assert path == ~p"/settings"
+      assert %{"error" => message} = flash
+      assert message == "Link is invalid or it has expired"
+    end
+
+    test "does not update email with invalid token", %{conn: conn, user: user} do
+      {:error, redirect} = live(conn, ~p"/settings/oops")
+      assert {:live_redirect, %{to: path, flash: flash}} = redirect
+      assert path == ~p"/settings"
+      assert %{"error" => message} = flash
+      assert message == "Link is invalid or it has expired"
+      assert Accounts.get_user_by_email(user.email)
+    end
+
+    test "redirects if user is not logged in", %{token: token} do
+      conn = build_conn()
+      {:error, redirect} = live(conn, ~p"/settings/#{token}")
+      assert {:redirect, %{to: path, flash: flash}} = redirect
+      assert path == ~p"/login"
+      assert %{"error" => message} = flash
+      assert message == "You must log in to access this page"
+    end
+  end
+
+  describe "resend confirmation email" do
+    setup [:setup_user]
+
+    setup %{conn: conn, user: user} do
+      %{conn: log_in_user(conn, user)}
+    end
+
+    test "sends a new confirmation token", %{conn: conn, user: user} do
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      assert lv
+             |> element(~s|a:fl-contains("Resend confirmation email")|)
+             |> render_click() =~ "Email resent"
+
+      assert Repo.get_by!(Accounts.UserToken, user_id: user.id, context: "confirm")
+    end
+
+    test "does not send confirmation token if user is confirmed", %{conn: conn, user: user} do
+      Repo.update!(Accounts.User.confirm_changeset(user))
+
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      refute has_element?(lv, ~s|a:fl-contains("Resend confirmation email")|)
+      refute Repo.get_by(Accounts.UserToken, user_id: user.id, context: "confirm")
     end
   end
 
@@ -166,80 +246,159 @@ defmodule HomeBaseWeb.SettingsLiveTest do
     end
   end
 
-  describe "confirm email" do
-    setup %{conn: conn} do
-      user = :user |> params_for() |> register_user!()
-      email = unique_user_email()
+  describe "update team form" do
+    @valid_attrs %{"name" => "new-name", "op_email" => "new-email@test.com"}
+    @invalid_attrs %{"name" => "personal", "op_email" => "invalid"}
 
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
-        end)
+    setup :register_and_log_in_user
+    setup :create_and_switch_to_team
 
-      %{conn: log_in_user(conn, user), token: token, email: email, user: user}
+    test "should render validation errors", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      assert view
+             |> element("#update-team-form")
+             |> render_change(%{"team" => @invalid_attrs}) =~ escape("can't be \"personal\"")
     end
 
-    test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
-      {:error, redirect} = live(conn, ~p"/settings/#{token}")
+    test "should render submit errors", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
 
-      assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/settings"
-      assert %{"success" => message} = flash
-      assert message == "Email changed successfully"
-      refute Accounts.get_user_by_email(user.email)
-      assert Accounts.get_user_by_email(email)
-
-      # use confirm token again
-      {:error, redirect} = live(conn, ~p"/settings/#{token}")
-      assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/settings"
-      assert %{"error" => message} = flash
-      assert message == "Link is invalid or it has expired"
+      assert view
+             |> element("#update-team-form")
+             |> render_submit(%{"team" => @invalid_attrs}) =~ escape("can't be \"personal\"")
     end
 
-    test "does not update email with invalid token", %{conn: conn, user: user} do
-      {:error, redirect} = live(conn, ~p"/settings/oops")
-      assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/settings"
-      assert %{"error" => message} = flash
-      assert message == "Link is invalid or it has expired"
-      assert Accounts.get_user_by_email(user.email)
+    test "should update the team details", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      view
+      |> element("#update-team-form")
+      |> render_submit(%{"team" => @valid_attrs})
+
+      assert_redirected(view, ~p"/teams/#{ctx.team.id}")
+      assert team = Repo.get!(Team, ctx.team.id)
+      assert team.name == "new-name"
+      assert team.op_email == "new-email@test.com"
     end
 
-    test "redirects if user is not logged in", %{token: token} do
-      conn = build_conn()
-      {:error, redirect} = live(conn, ~p"/settings/#{token}")
-      assert {:redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/login"
-      assert %{"error" => message} = flash
-      assert message == "You must log in to access this page"
+    test "should not show form if not an admin", ctx do
+      team = insert(:team)
+      insert(:team_role, team: team, user: ctx.user, is_admin: false)
+
+      assert {:ok, view, _} = ctx.conn |> put_session(:team_id, team.id) |> live(~p"/settings")
+      refute has_element?(view, "#update-team-form")
     end
   end
 
-  describe "resend confirmation email" do
-    setup [:setup_user]
+  describe "update team roles form" do
+    @valid_attrs %{invited_email: "jane@doe.com", is_admin: false}
+    @invalid_attrs %{invited_email: "invalid", is_admin: false}
 
-    setup %{conn: conn, user: user} do
-      %{conn: log_in_user(conn, user)}
+    setup :register_and_log_in_user
+    setup :create_and_switch_to_team
+
+    test "should render validation errors", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      assert view
+             |> element("#new-role-form")
+             |> render_change(%{"team_role" => @invalid_attrs}) =~ "must have the @ sign"
     end
 
-    test "sends a new confirmation token", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/settings")
+    test "should render submit errors", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
 
-      assert lv
-             |> element(~s|a:fl-contains("Resend confirmation email")|)
-             |> render_click() =~ "Email resent"
-
-      assert Repo.get_by!(Accounts.UserToken, user_id: user.id, context: "confirm")
+      assert view
+             |> element("#new-role-form")
+             |> render_submit(%{"team_role" => %{invited_email: ctx.user.email}}) =~ "already on team"
     end
 
-    test "does not send confirmation token if user is confirmed", %{conn: conn, user: user} do
-      Repo.update!(Accounts.User.confirm_changeset(user))
+    test "should create a new role", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
 
-      {:ok, lv, _html} = live(conn, ~p"/settings")
+      assert view
+             |> element("#new-role-form")
+             |> render_submit(%{"team_role" => @valid_attrs}) =~ @valid_attrs.invited_email
 
-      refute has_element?(lv, ~s|a:fl-contains("Resend confirmation email")|)
-      refute Repo.get_by(Accounts.UserToken, user_id: user.id, context: "confirm")
+      assert role = Repo.get_by!(TeamRole, invited_email: @valid_attrs.invited_email)
+      assert has_element?(view, "#update-role-form-#{role.id}")
+    end
+
+    test "should update a role", ctx do
+      role = insert(:team_role, team: ctx.team, user: insert(:user))
+
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      assert view
+             |> element("#update-role-form-#{role.id}")
+             |> render_change(%{"team_role" => %{is_admin: true}})
+
+      assert Repo.get!(TeamRole, role.id).is_admin
+    end
+
+    test "should delete a role", ctx do
+      role = insert(:team_role, team: ctx.team, user: insert(:user))
+
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      refute view
+             |> element("#update-role-form-#{role.id} ~ button")
+             |> render_click() =~ role.id
+
+      refute Repo.get(TeamRole, role.id)
+    end
+
+    test "should not show actions for current user role", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+      refute has_element?(view, "#update-role-form-#{ctx.role.id}")
+    end
+  end
+
+  describe "team danger zone" do
+    setup :register_and_log_in_user
+    setup :create_and_switch_to_team
+
+    test "should delete team", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      view
+      |> element("button", "Delete Team")
+      |> render_click()
+
+      assert_redirected(view, ~p"/teams/personal")
+      refute Repo.get(Team, ctx.team.id)
+    end
+
+    test "should not show delete team button if not an admin", ctx do
+      team = insert(:team)
+      insert(:team_role, team: team, user: ctx.user, is_admin: false)
+
+      assert {:ok, _, html} = ctx.conn |> put_session(:team_id, team.id) |> live(~p"/settings")
+      refute html =~ "Delete Team"
+    end
+
+    test "should leave team", ctx do
+      insert(:team_role, team: ctx.team, user: insert(:user), is_admin: true)
+
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      view
+      |> element("button", "Leave Team")
+      |> render_click()
+
+      assert_redirected(view, ~p"/teams/personal")
+      refute Repo.get(TeamRole, ctx.role.id)
+    end
+
+    test "should not leave team if last admin", ctx do
+      assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
+
+      assert view
+             |> element("button", "Leave Team")
+             |> render_click() =~ "must have at least one admin"
+
+      assert Repo.get(TeamRole, ctx.role.id)
     end
   end
 end

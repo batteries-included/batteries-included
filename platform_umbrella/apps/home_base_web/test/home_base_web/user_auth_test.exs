@@ -45,6 +45,13 @@ defmodule HomeBaseWeb.UserAuthTest do
       assert signed_token != get_session(conn, :user_token)
       assert max_age == 5_184_000
     end
+
+    test "remembers the currently selected team", %{conn: conn, user: user} do
+      team = insert(:team)
+      conn = conn |> put_session(:team_id, team.id) |> UserAuth.log_in_user(user)
+
+      assert get_session(conn, :team_id, team.id)
+    end
   end
 
   describe "logout_user/1" do
@@ -81,6 +88,18 @@ defmodule HomeBaseWeb.UserAuthTest do
       refute get_session(conn, :user_token)
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
       assert redirected_to(conn) == ~p"/login"
+    end
+
+    test "remembers the currently selected team", %{conn: conn} do
+      team = insert(:team)
+
+      conn =
+        conn
+        |> put_session(:team_id, team.id)
+        |> fetch_cookies()
+        |> UserAuth.log_out_user()
+
+      assert get_session(conn, :team_id, team.id)
     end
   end
 

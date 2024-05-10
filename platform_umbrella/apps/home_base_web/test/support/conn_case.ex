@@ -54,6 +54,17 @@ defmodule HomeBaseWeb.ConnCase do
   end
 
   @doc """
+  Creates a new team for the current user and switches to it.
+  """
+  def create_and_switch_to_team(%{conn: conn, user: user}) do
+    team = HomeBase.Factory.insert(:team)
+    role = HomeBase.Factory.insert(:team_role, team: team, user: user, is_admin: true)
+    conn = Plug.Conn.put_session(conn, :team_id, team.id)
+
+    %{conn: conn, team: team, role: role}
+  end
+
+  @doc """
   Logs the given `user` into the `conn`.
 
   It returns an updated `conn`.
@@ -73,5 +84,15 @@ defmodule HomeBaseWeb.ConnCase do
     conn
     |> Phoenix.ConnTest.dispatch(HomeBaseWeb.Endpoint, "DELETE", "/logout")
     |> Phoenix.ConnTest.recycle()
+  end
+
+  @doc """
+  Converts a string into HTML entities, which is helpful
+  when asserting against safe HTML output from an endpoint.
+  """
+  def escape(value) do
+    value
+    |> Phoenix.HTML.html_escape()
+    |> Phoenix.HTML.safe_to_string()
   end
 end

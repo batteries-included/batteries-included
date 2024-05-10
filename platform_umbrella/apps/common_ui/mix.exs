@@ -34,6 +34,7 @@ defmodule CommonUI.MixProject do
 
   defp deps do
     [
+      {:common_core, in_umbrella: true},
       {:bandit, "~> 1.4"},
       {:heroicons, "~> 0.5"},
       {:jason, "~> 1.4"},

@@ -11,7 +11,7 @@ defmodule HomeBase.Teams.Team do
     field :name, :string
     field :op_email, :string
 
-    has_many :roles, TeamRole
+    has_many :roles, TeamRole, on_replace: :delete
     has_many :users, through: [:roles, :team]
 
     timestamps()
@@ -20,6 +20,7 @@ defmodule HomeBase.Teams.Team do
   def changeset(team, attrs \\ %{}) do
     team
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> cast_assoc(:roles, with: &TeamRole.changeset/2, sort_param: :sort_roles, drop_param: :drop_roles)
     |> validate_length(:name, max: 255)
     |> validate_email_address(:op_email)
     |> validate_team_name()

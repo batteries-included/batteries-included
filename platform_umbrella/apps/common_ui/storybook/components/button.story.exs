@@ -64,6 +64,13 @@ defmodule Storybook.Components.Button do
         }
       },
       %Variation{
+        id: :danger,
+        slots: ["Danger Button"],
+        attributes: %{
+          variant: "danger"
+        }
+      },
+      %Variation{
         id: :icon,
         attributes: %{
           variant: "icon",

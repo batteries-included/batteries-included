@@ -3,6 +3,9 @@ defmodule HomeBaseWeb.SettingsLive do
   use HomeBaseWeb, :live_view
 
   alias HomeBase.Accounts
+  alias HomeBase.Teams
+  alias HomeBase.Teams.Team
+  alias HomeBase.Teams.TeamRole
 
   def mount(%{"token" => token}, _session, socket) do
     socket =
@@ -32,7 +35,29 @@ defmodule HomeBaseWeb.SettingsLive do
      |> assign(:trigger_submit, false)
      |> assign(:confirmation_resent, false)
      |> assign(:page, :settings)
-     |> assign(:page_title, "Settings")}
+     |> assign(:page_title, "Settings")
+     |> maybe_assign_team()}
+  end
+
+  defp maybe_assign_team(%{assigns: %{current_role: %{team: team}}} = socket) do
+    team_changeset = Team.changeset(team)
+    role_changeset = TeamRole.changeset(%TeamRole{})
+
+    %{roles: roles} = Teams.preload_team_roles(team, socket.assigns.current_user)
+
+    socket
+    |> assign(:roles, roles)
+    |> assign(:team_form, to_form(team_changeset))
+    |> assign(:role_form, to_form(role_changeset))
+  end
+
+  defp maybe_assign_team(socket), do: socket
+
+  def handle_event("resend_confirm", _params, socket) do
+    case Accounts.deliver_user_confirmation_instructions(socket.assigns.current_user, &url(~p"/confirm/#{&1}")) do
+      {:ok, _} -> {:noreply, assign(socket, :confirmation_resent, true)}
+      _ -> {:noreply, assign(socket, :confirmation_resent, false)}
+    end
   end
 
   def handle_event("validate_email", %{"current_password" => password, "user" => user_params}, socket) do
@@ -91,10 +116,122 @@ defmodule HomeBaseWeb.SettingsLive do
     end
   end
 
-  def handle_event("resend_confirm", _params, socket) do
-    case Accounts.deliver_user_confirmation_instructions(socket.assigns.current_user, &url(~p"/confirm/#{&1}")) do
-      {:ok, _} -> {:noreply, assign(socket, :confirmation_resent, true)}
-      _ -> {:noreply, assign(socket, :confirmation_resent, false)}
+  def handle_event("validate_team", %{"team" => params}, socket) do
+    changeset =
+      %Team{}
+      |> Team.changeset(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :team_form, to_form(changeset))}
+  end
+
+  def handle_event("update_team", %{"team" => params}, socket) do
+    case Teams.update_team(socket.assigns.current_role.team, params) do
+      {:ok, team} ->
+        {:noreply,
+         socket
+         |> put_flash(:global_success, "Team has been updated")
+         |> redirect(to: ~p"/teams/#{team.id}")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, :team_form, to_form(changeset))}
+    end
+  end
+
+  def handle_event("validate_role", %{"team_role" => params}, socket) do
+    changeset =
+      %TeamRole{}
+      |> TeamRole.changeset(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :role_form, to_form(changeset))}
+  end
+
+  def handle_event("save_role", %{"team_role" => params}, socket) do
+    team = socket.assigns.current_role.team
+
+    case Teams.create_team_role(team, params) do
+      {:ok, role} ->
+        role_changeset = TeamRole.changeset(%TeamRole{})
+
+        {:noreply,
+         socket
+         |> assign(:roles, socket.assigns.roles ++ [role])
+         |> assign(:role_form, to_form(role_changeset))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, :role_form, to_form(changeset))}
+    end
+  end
+
+  def handle_event("update_role", %{"team_role" => %{"id" => id} = params}, socket) do
+    role = Enum.find(socket.assigns.roles, &(&1.id == id))
+
+    case Teams.update_team_role(role, params) do
+      {:ok, role} ->
+        # Replace the updated role in the assigns
+        roles = Enum.map(socket.assigns.roles, &if(&1.id == id, do: role, else: &1))
+
+        {:noreply,
+         socket
+         |> assign(:roles, roles)
+         |> put_flash(:global_success, "Member has been updated")}
+
+      _ ->
+        {:noreply,
+         socket
+         |> assign(:roles, socket.assign.roles)
+         |> put_flash(:global_error, "Could not update member")}
+    end
+  end
+
+  def handle_event("delete_role", %{"id" => id}, socket) do
+    role = Enum.find(socket.assigns.roles, &(&1.id == id))
+
+    case Teams.delete_team_role(role) do
+      {:ok, _} ->
+        roles = Enum.reject(socket.assigns.roles, &(&1.id == id))
+
+        {:noreply,
+         socket
+         |> assign(:roles, roles)
+         |> put_flash(:global_success, "Member has been removed")}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not remove member")}
+    end
+  end
+
+  def handle_event("delete_team", _params, socket) do
+    team = socket.assigns.current_role.team
+
+    case Teams.delete_team(team) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:global_success, "#{team.name} has been deleted")
+         |> redirect(to: ~p"/teams/personal")}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not delete team")}
+    end
+  end
+
+  def handle_event("leave_team", _params, socket) do
+    role = socket.assigns.current_role
+
+    case Teams.delete_team_role(role) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:global_success, "You left the #{role.team.name} team")
+         |> redirect(to: ~p"/teams/personal")}
+
+      {:error, :last_admin} ->
+        {:noreply, put_flash(socket, :global_error, "Team must have at least one admin")}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not leave team")}
     end
   end
 
@@ -182,6 +319,131 @@ defmodule HomeBaseWeb.SettingsLive do
         </.simple_form>
       </.panel>
     </.grid>
+
+    <div :if={@current_role} class="mt-8">
+      <.h2>Your Team</.h2>
+
+      <.grid :if={@current_role.is_admin} columns={%{sm: 1, lg: 2, xl: 3}}>
+        <.form
+          for={@team_form}
+          id="update-team-form"
+          phx-change="validate_team"
+          phx-submit="update_team"
+        >
+          <.panel inner_class="flex flex-col gap-4">
+            <.input field={@team_form[:name]} label="Team Name" autocomplete="organization" />
+
+            <.input
+              field={@team_form[:op_email]}
+              label="Email Address"
+              autocomplete="email"
+              note="Optional. This is where we will send most operational emails."
+            />
+
+            <.button type="submit" variant="dark" class="w-full">Save</.button>
+          </.panel>
+        </.form>
+
+        <div>
+          <.panel title="Members">
+            <div :for={role <- @roles} class="flex gap-3 bg-gray-lightest mb-3 px-3 py-1 rounded-md">
+              <div class="flex items-center gap-2 flex-1">
+                <%= role.invited_email || role.user.email %>
+
+                <.badge :if={role.invited_email} label="pending" minimal />
+                <.badge :if={role.id == @current_role.id} label="you" minimal />
+              </div>
+
+              <div :if={role.id != @current_role.id} class="flex items-center gap-4">
+                <.form
+                  :let={f}
+                  for={role |> TeamRole.changeset() |> to_form()}
+                  id={"update-role-form-#{role.id}"}
+                  phx-change="update_role"
+                >
+                  <.input field={f[:id]} type="hidden" />
+                  <.input field={f[:is_admin]} type="checkbox" label="Admin" />
+                </.form>
+
+                <.button
+                  variant="minimal"
+                  icon={:x_mark}
+                  phx-click="delete_role"
+                  phx-value-id={role.id}
+                  data-confirm={"Are you sure you want to remove #{role.invited_email || role.user.email} from the team?"}
+                />
+              </div>
+            </div>
+
+            <.form
+              for={@role_form}
+              id="new-role-form"
+              phx-change="validate_role"
+              phx-submit="save_role"
+              class="flex flex-col gap-3 mt-8"
+            >
+              <div class="flex items-center justify-between gap-6">
+                <div class="flex-1">
+                  <.input
+                    field={@role_form[:invited_email]}
+                    placeholder="Enter an email address"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <.input field={@role_form[:is_admin]} type="checkbox" label="Admin" />
+              </div>
+
+              <.button type="submit" variant="dark">Invite new member</.button>
+            </.form>
+          </.panel>
+        </div>
+
+        <div>
+          <.panel title="Danger Zone">
+            <p class="mb-6">
+              Want to delete your team? All members will be removed.<br />
+              <b>THIS CANNOT BE UNDONE!</b>
+            </p>
+
+            <.button
+              variant="danger"
+              phx-click="delete_team"
+              data-confirm={"Are you sure you want to delete the #{@current_role.team.name} team?"}
+              class="mr-4"
+            >
+              Delete Team
+            </.button>
+
+            <.button
+              variant="secondary"
+              phx-click="leave_team"
+              data-confirm={"Are you sure you want to leave the #{@current_role.team.name} team?"}
+            >
+              Leave Team
+            </.button>
+          </.panel>
+        </div>
+      </.grid>
+
+      <div :if={!@current_role.is_admin}>
+        <.grid columns={%{sm: 1, lg: 2, xl: 3}}>
+          <.panel>
+            <div class="mb-4">
+              <%= @current_role.team.name %>
+            </div>
+
+            <.button
+              variant="secondary"
+              phx-click="leave_team"
+              data-confirm={"Are you sure you want to leave the #{@current_role.team.name} team?"}
+            >
+              Leave Team
+            </.button>
+          </.panel>
+        </.grid>
+      </div>
+    </div>
     """
   end
 end

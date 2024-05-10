@@ -15,6 +15,7 @@ defmodule CommonUI.Components.Button do
   attr :icon_position, :atom, default: :left, values: [:left, :right]
 
   attr :rest, :global,
+    include: ~w(form name value),
     default: %{
       # Most buttons are either links or use `phx-click`,
       # so change default to "button" rather than "submit".
@@ -47,17 +48,30 @@ defmodule CommonUI.Components.Button do
     |> button()
   end
 
+  # Hacky solution for https://github.com/phoenixframework/phoenix_live_view/issues/2833
+  def button(%{tag: "button"} = assigns) do
+    ~H"""
+    <button class={[button_class(assigns[:variant]), @class]} {@rest}>
+      <.icon
+        :if={@icon && @icon_position == :left}
+        class={icon_class(assigns[:variant])}
+        name={@icon}
+      />
+
+      <%= render_slot(@inner_block) %>
+
+      <.icon
+        :if={@icon && @icon_position == :right}
+        class={icon_class(assigns[:variant])}
+        name={@icon}
+      />
+    </button>
+    """
+  end
+
   def button(assigns) do
     ~H"""
-    <.dynamic_tag
-      name={@tag}
-      class={[
-        "inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75",
-        button_class(assigns[:variant]),
-        @class
-      ]}
-      {@rest}
-    >
+    <.dynamic_tag name={@tag} class={[button_class(assigns[:variant]), @class]} {@rest}>
       <.icon
         :if={@icon && @icon_position == :left}
         class={icon_class(assigns[:variant])}
@@ -77,14 +91,16 @@ defmodule CommonUI.Components.Button do
 
   defp button_class("primary") do
     [
-      base_class(),
+      button_class(),
+      rounded_button_class(),
       "text-white bg-primary hover:bg-primary-dark disabled:bg-gray-lighter"
     ]
   end
 
   defp button_class("secondary") do
     [
-      base_class(),
+      button_class(),
+      rounded_button_class(),
       "text-gray-darker dark:text-gray-lighter hover:text-primary dark:hover:text-gray-lighter disabled:text-gray",
       "border border-gray-lighter hover:border-primary-light dark:border-gray-darker-tint dark:hover:border-gray-light disabled:hover:border-gray-lighter",
       "bg-white dark:bg-gray-darkest"
@@ -93,39 +109,57 @@ defmodule CommonUI.Components.Button do
 
   defp button_class("dark") do
     [
-      base_class(),
+      button_class(),
+      rounded_button_class(),
       "text-white dark:text-gray-darkest bg-gray-darkest dark:bg-white hover:bg-gray-darker dark:hover:bg-gray-lighter disabled:bg-gray-lighter"
     ]
   end
 
   defp button_class("danger") do
     [
-      base_class(),
+      button_class(),
+      rounded_button_class(),
       "text-white dark:text-gray-darkest bg-red-500 hover:bg-red-400 disabled:bg-gray-lighter"
     ]
   end
 
   defp button_class("icon") do
-    "size-9 p-2 rounded-full text-gray-darker dark:text-gray-lighter hover:text-primary hover:bg-gray-lightest/75 dark:hover:bg-gray-darkest/50 disabled:text-gray"
+    [
+      button_class(),
+      "size-9 p-2 rounded-full text-gray-darker dark:text-gray-lighter hover:text-primary hover:bg-gray-lightest/75 dark:hover:bg-gray-darkest/50 disabled:text-gray"
+    ]
   end
 
   defp button_class("icon_bordered") do
-    "size-9 p-1.5 rounded-full border border-gray-lighter text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
+    [
+      button_class(),
+      "size-9 p-1.5 rounded-full border border-gray-lighter text-primary hover:border-primary-light disabled:text-gray disabled:hover:border-gray-lighter"
+    ]
   end
 
   defp button_class("minimal") do
-    "text-gray-dark hover:text-gray disabled:text-gray-light"
+    [
+      button_class(),
+      "text-gray-dark hover:text-gray disabled:text-gray-light"
+    ]
   end
 
   defp button_class(_) do
-    "text-primary hover:text-primary-dark disabled:text-gray-light"
+    [
+      button_class(),
+      "text-primary hover:text-primary-dark disabled:text-gray-light"
+    ]
+  end
+
+  defp button_class do
+    "inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75"
+  end
+
+  defp rounded_button_class do
+    "min-w-36 px-5 py-3 rounded-lg whitespace-nowrap"
   end
 
   defp icon_class(_) do
     "size-5 text-current stroke-2 pointer-events-none"
-  end
-
-  defp base_class do
-    "min-w-36 px-5 py-3 rounded-lg whitespace-nowrap"
   end
 end

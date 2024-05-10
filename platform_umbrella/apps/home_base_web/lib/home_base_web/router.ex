@@ -82,6 +82,8 @@ defmodule HomeBaseWeb.Router do
       live "/installations/", InstallationLive
       live "/installations/:id", InstallationShowLive
 
+      live "/teams/new", TeamsNewLive
+
       live "/settings", SettingsLive
       live "/settings/:token", SettingsLive
     end

@@ -35,6 +35,19 @@ defmodule HomeBase.TeamsTest do
       assert role.is_admin
     end
 
+    test "should create team with additional roles", ctx do
+      user = insert(:user)
+      params_role1 = params_for(:team_role, %{invited_email: user.email})
+      params_role2 = params_for(:team_role, %{invited_email: "john@doe.com"})
+      params = :team |> params_for() |> Map.put(:roles, %{"0" => params_role1, "1" => params_role2})
+
+      assert {:ok, %{roles: [role1, role2]}} = Teams.create_team(ctx.user, params)
+      assert role1.user_id == user.id
+      refute role1.invited_email
+      refute role2.user_id
+      assert role2.invited_email == "john@doe.com"
+    end
+
     test "should return error with invalid data", ctx do
       params = params_for(:team, name: "personal", op_email: "invalid")
 
@@ -72,10 +85,22 @@ defmodule HomeBase.TeamsTest do
 
   ## Team Roles
 
-  describe "list_team_roles/1" do
-    test "should list team roles", ctx do
-      assert [role] = Teams.list_team_roles(ctx.team1)
-      assert role.id == ctx.team1_role.id
+  describe "preload_team_roles/2" do
+    test "should preload the team roles in the correct order", ctx do
+      user1 = insert(:user)
+      user2 = insert(:user)
+
+      insert(:team_role, team: ctx.team1, invited_email: "foo@bar.com")
+      insert(:team_role, team: ctx.team1, invited_email: "bar@baz.com")
+      insert(:team_role, team: ctx.team1, user: user1)
+      insert(:team_role, team: ctx.team1, user: user2, is_admin: true)
+
+      assert %{roles: [role1, role2, role3, role4, role5]} = Teams.preload_team_roles(ctx.team1, ctx.user)
+      assert role1.user_id == ctx.user.id
+      assert role2.user_id == user2.id
+      assert role3.user_id == user1.id
+      assert role4.invited_email == "bar@baz.com"
+      assert role5.invited_email == "foo@bar.com"
     end
   end
 
@@ -85,7 +110,7 @@ defmodule HomeBase.TeamsTest do
       params = params_for(:team_role, invited_email: user.email)
 
       assert {:ok, role} = Teams.create_team_role(ctx.team2, params)
-      assert role.user_id == user.id
+      assert role.user.id == user.id
       refute role.invited_email
     end
 
@@ -108,7 +133,7 @@ defmodule HomeBase.TeamsTest do
       params = params_for(:team_role, invited_email: ctx.user.email)
 
       assert {:error, changeset} = Teams.create_team_role(ctx.team1, params)
-      assert changeset |> errors_on() |> Map.has_key?(:user)
+      assert changeset |> errors_on() |> Map.has_key?(:invited_email)
     end
 
     test "should return error for user already invited to team", ctx do

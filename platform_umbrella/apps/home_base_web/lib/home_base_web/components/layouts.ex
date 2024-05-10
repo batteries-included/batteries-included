@@ -126,6 +126,10 @@ defmodule HomeBaseWeb.Layouts do
                 Switch Team
               </.dropdown_link>
 
+              <.dropdown_link icon={:plus_circle} navigate={~p"/teams/new"}>
+                New Team
+              </.dropdown_link>
+
               <.dropdown_hr />
 
               <.dropdown_link
@@ -147,7 +151,7 @@ defmodule HomeBaseWeb.Layouts do
 
             <.dropdown id="team-dropdown">
               <.dropdown_link :if={@current_role} href={~p"/teams/personal"}>
-                Personal
+                Back to personal
               </.dropdown_link>
 
               <.dropdown_hr :if={@current_role} />

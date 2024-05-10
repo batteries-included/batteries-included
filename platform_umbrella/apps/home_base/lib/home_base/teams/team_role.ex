@@ -22,7 +22,11 @@ defmodule HomeBase.Teams.TeamRole do
     team_role
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> validate_email_address(:invited_email)
-    |> unique_constraint([:user, :team], name: "teams_roles_user_id_team_id_index", message: "already on team")
+    |> unique_constraint([:user, :team],
+      name: "teams_roles_user_id_team_id_index",
+      message: "already on team",
+      error_key: :invited_email
+    )
     |> unique_constraint([:invited_email, :team],
       name: "teams_roles_invited_email_team_id_index",
       message: "already invited to team"
