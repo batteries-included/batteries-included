@@ -24,6 +24,63 @@ defmodule CommonCore.Factory do
     |> evaluate_lazy_attributes()
   end
 
+  def usage_report_factory(attrs \\ %{}) do
+    # Ensure this is a map
+    attrs = Map.new(attrs)
+
+    batteries = Map.get_lazy(attrs, :batteries, fn -> ~w(battery_core postgres knative istio) end)
+    node_report = Map.get_lazy(attrs, :node_report, fn -> node_report_factory() end)
+    namespace_report = Map.get_lazy(attrs, :namespace_report, fn -> namespace_report_factory() end)
+    postgres_report = Map.get_lazy(attrs, :postgres_report, fn -> postgres_report_factory() end)
+    redis_report = Map.get_lazy(attrs, :redis_report, fn -> redis_report_factory() end)
+
+    %CommonCore.ET.UsageReport{
+      batteries: batteries,
+      num_projects: 0,
+      node_report: node_report,
+      namespace_report: namespace_report,
+      postgres_report: postgres_report,
+      redis_report: redis_report
+    }
+  end
+
+  def node_report_factory do
+    %CommonCore.ET.NodeReport{
+      avg_cores: sequence(:avg_cores, [2.0, 8.0, 16.0, 32.0]),
+      avg_mem: sequence(:avg_mem, [1_073_741_824.0, 2_147_483_648.0, 4_294_967_296.0, 8_589_934_592.0]),
+      pod_counts: %{
+        "node1" => 1,
+        "node2" => 2,
+        "node3" => 3,
+        "node4" => 4
+      }
+    }
+  end
+
+  def namespace_report_factory do
+    %CommonCore.ET.NamespaceReport{
+      pod_counts: %{
+        "battery-core" => 1,
+        "default" => 2,
+        "battery-knative" => 3,
+        "battery-data" => 5
+      }
+    }
+  end
+
+  def postgres_report_factory do
+    %CommonCore.ET.PostgresReport{
+      instance_counts: %{"internal.controlserver" => 1}
+    }
+  end
+
+  def redis_report_factory do
+    %CommonCore.ET.RedisReport{
+      instance_counts: %{"standard.test" => 1},
+      sentinel_instance_counts: %{"standard.test" => 0}
+    }
+  end
+
   def install_spec_factory(attrs) do
     installation = build(:installation, attrs)
 
@@ -65,23 +122,7 @@ defmodule CommonCore.Factory do
   def system_battery do
     %{
       config: %{},
-      type:
-        sequence(:type, [
-          :battery_core,
-          :control_server,
-          :data,
-          :postgres,
-          :dev_metallb,
-          :forgejo,
-          :istio,
-          :istio_gateway,
-          :kiali,
-          :knative,
-          :knative_serving,
-          :metallb,
-          :notebooks,
-          :redis
-        ])
+      type: sequence(:type, CommonCore.Batteries.SystemBattery.possible_types())
     }
   end
 end

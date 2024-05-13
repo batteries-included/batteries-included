@@ -90,4 +90,10 @@ defmodule HomeBaseWeb.Router do
 
     get "/teams/:id", TeamsController, :switch
   end
+
+  scope "/api/v1", HomeBaseWeb do
+    pipe_through :api
+
+    resources "/usage_reports", StoredUsageReportController, only: [:create]
+  end
 end

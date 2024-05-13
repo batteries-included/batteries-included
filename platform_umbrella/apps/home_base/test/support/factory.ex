@@ -5,6 +5,12 @@ defmodule HomeBase.Factory do
   alias HomeBase.Accounts
   alias HomeBase.Teams
 
+  def stored_usage_report_factory do
+    %HomeBase.ET.StoredUsageReport{
+      report: CommonCore.Factory.usage_report_factory()
+    }
+  end
+
   def user_factory do
     %Accounts.User{
       email: sequence("user-") <> "@example.com",
