@@ -2,10 +2,10 @@ defmodule HomeBase.Accounts do
   @moduledoc false
   use HomeBase, :context
 
-  alias HomeBase.Accounts.User
+  alias CommonCore.Accounts.User
+  alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts.UserNotifier
   alias HomeBase.Accounts.UserToken
-  alias HomeBase.Teams.TeamRole
 
   ## Database getters
 
@@ -75,7 +75,7 @@ defmodule HomeBase.Accounts do
   def register_user(attrs) do
     result =
       Multi.new()
-      |> Multi.insert(:user, User.registration_changeset(%User{}, attrs))
+      |> Multi.insert(:user, User.registration_changeset(%User{}, attrs, repo: HomeBase.Repo))
       # Put the user on any teams they've been invited to
       |> Multi.update_all(
         :roles,
@@ -141,7 +141,7 @@ defmodule HomeBase.Accounts do
   """
   def apply_user_email(user, password, attrs) do
     user
-    |> User.email_changeset(attrs)
+    |> User.email_changeset(attrs, repo: HomeBase.Repo)
     |> User.validate_current_password(password)
     |> Ecto.Changeset.apply_action(:update)
   end
@@ -167,7 +167,7 @@ defmodule HomeBase.Accounts do
   defp user_email_multi(user, email, context) do
     changeset =
       user
-      |> User.email_changeset(%{email: email})
+      |> User.email_changeset(%{email: email}, repo: HomeBase.Repo)
       |> User.confirm_changeset()
 
     Ecto.Multi.new()

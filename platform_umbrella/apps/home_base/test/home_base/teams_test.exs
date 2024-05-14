@@ -3,10 +3,10 @@ defmodule HomeBase.TeamsTest do
 
   import HomeBase.CustomerInstallsFixtures
 
+  alias CommonCore.Teams.Team
+  alias CommonCore.Teams.TeamRole
   alias HomeBase.Repo
   alias HomeBase.Teams
-  alias HomeBase.Teams.Team
-  alias HomeBase.Teams.TeamRole
 
   setup do
     user = insert(:user)

@@ -1,10 +1,10 @@
-defmodule HomeBase.Accounts.User do
+defmodule CommonCore.Accounts.User do
   @moduledoc false
 
   use CommonCore, :schema
 
   alias CommonCore.Installation
-  alias HomeBase.Teams.TeamRole
+  alias CommonCore.Teams.TeamRole
 
   batt_schema "users" do
     field :email, :string
@@ -41,6 +41,9 @@ defmodule HomeBase.Accounts.User do
       using this changeset for validations on a LiveView form before
       submitting the form), this option can be set to `false`.
       Defaults to `true`.
+
+    * `:repo` - The repo to use for the email validation lookup. This is
+      required if using `:validate_email`.
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
@@ -88,8 +91,10 @@ defmodule HomeBase.Accounts.User do
 
   defp maybe_validate_unique_email(changeset, opts) do
     if Keyword.get(opts, :validate_email, true) do
+      repo = Keyword.fetch!(opts, :repo)
+
       changeset
-      |> unsafe_validate_unique(:email, HomeBase.Repo)
+      |> unsafe_validate_unique(:email, repo)
       |> unique_constraint(:email)
     else
       changeset
@@ -143,7 +148,7 @@ defmodule HomeBase.Accounts.User do
   If there is no user or the user doesn't have a password, we call
   `Bcrypt.no_user_verify/0` to avoid timing attacks.
   """
-  def valid_password?(%HomeBase.Accounts.User{hashed_password: hashed_password}, password)
+  def valid_password?(%__MODULE__{hashed_password: hashed_password}, password)
       when is_binary(hashed_password) and byte_size(password) > 0 do
     Bcrypt.verify_pass(password, hashed_password)
   end

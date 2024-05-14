@@ -41,7 +41,6 @@ defmodule HomeBase.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bcrypt_elixir, "~> 3.0"},
       {:common_core, in_umbrella: true},
       {:ecto_sql, "~> 3.11"},
       {:ex_audit, "~> 0.10"},

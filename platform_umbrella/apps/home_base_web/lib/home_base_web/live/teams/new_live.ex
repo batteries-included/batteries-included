@@ -3,9 +3,9 @@ defmodule HomeBaseWeb.TeamsNewLive do
 
   use HomeBaseWeb, :live_view
 
+  alias CommonCore.Teams.Team
+  alias CommonCore.Teams.TeamRole
   alias HomeBase.Teams
-  alias HomeBase.Teams.Team
-  alias HomeBase.Teams.TeamRole
 
   def mount(_params, _session, socket) do
     changeset = Team.changeset(%Team{roles: [empty_role()]})

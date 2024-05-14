@@ -3,9 +3,11 @@ defmodule HomeBaseWeb.SettingsLiveTest do
 
   import Ecto.Query
 
+  alias CommonCore.Accounts.User
+  alias CommonCore.Teams.Team
+  alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts
-  alias HomeBase.Teams.Team
-  alias HomeBase.Teams.TeamRole
+  alias HomeBase.Accounts.UserToken
 
   defp setup_user(_) do
     {:ok, user: :user |> params_for() |> register_user!()}
@@ -105,16 +107,16 @@ defmodule HomeBaseWeb.SettingsLiveTest do
              |> element(~s|a:fl-contains("Resend confirmation email")|)
              |> render_click() =~ "Email resent"
 
-      assert Repo.get_by!(Accounts.UserToken, user_id: user.id, context: "confirm")
+      assert Repo.get_by!(UserToken, user_id: user.id, context: "confirm")
     end
 
     test "does not send confirmation token if user is confirmed", %{conn: conn, user: user} do
-      Repo.update!(Accounts.User.confirm_changeset(user))
+      Repo.update!(User.confirm_changeset(user))
 
       {:ok, lv, _html} = live(conn, ~p"/settings")
 
       refute has_element?(lv, ~s|a:fl-contains("Resend confirmation email")|)
-      refute Repo.get_by(Accounts.UserToken, user_id: user.id, context: "confirm")
+      refute Repo.get_by(UserToken, user_id: user.id, context: "confirm")
     end
   end
 

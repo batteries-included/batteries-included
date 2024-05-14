@@ -2,8 +2,8 @@ defmodule HomeBaseWeb.SignupLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  alias CommonCore.Accounts.User
   alias HomeBase.Accounts
-  alias HomeBase.Accounts.User
 
   def mount(_params, _session, socket) do
     changeset = Accounts.change_user_registration(%User{})

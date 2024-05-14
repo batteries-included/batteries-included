@@ -2,10 +2,10 @@ defmodule HomeBase.Teams do
   @moduledoc false
   use HomeBase, :context
 
+  alias CommonCore.Accounts.User
+  alias CommonCore.Teams.Team
+  alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts
-  alias HomeBase.Accounts.User
-  alias HomeBase.Teams.Team
-  alias HomeBase.Teams.TeamRole
 
   ## Teams
 

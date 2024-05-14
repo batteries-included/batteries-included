@@ -1,7 +1,7 @@
 defmodule HomeBaseWeb.ForgotPasswordLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  alias HomeBase.Accounts
+  alias HomeBase.Accounts.UserToken
 
   def setup_user(_) do
     user = :user |> params_for() |> register_user!()
@@ -41,7 +41,7 @@ defmodule HomeBaseWeb.ForgotPasswordLiveTest do
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Please check your email"
 
-      assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context ==
+      assert Repo.get_by!(UserToken, user_id: user.id).context ==
                "reset_password"
     end
 
@@ -55,7 +55,7 @@ defmodule HomeBaseWeb.ForgotPasswordLiveTest do
         |> follow_redirect(conn, ~p"/login")
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Please check your email"
-      assert Repo.all(Accounts.UserToken) == []
+      assert Repo.all(UserToken) == []
     end
   end
 end

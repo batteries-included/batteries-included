@@ -1,7 +1,7 @@
 defmodule HomeBaseWeb.TeamsNewLiveTest do
   use HomeBaseWeb.ConnCase, async: true
 
-  alias HomeBase.Teams.Team
+  alias CommonCore.Teams.Team
 
   @valid_params %{"name" => "Foobar", "op_email" => "foo@bar.com"}
   @invalid_params %{"name" => "Personal", "op_email" => "invalid"}

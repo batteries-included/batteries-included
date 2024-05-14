@@ -1,10 +1,10 @@
-defmodule HomeBase.Teams.TeamRole do
+defmodule CommonCore.Teams.TeamRole do
   @moduledoc false
 
   use CommonCore, :schema
 
-  alias HomeBase.Accounts.User
-  alias HomeBase.Teams.Team
+  alias CommonCore.Accounts.User
+  alias CommonCore.Teams.Team
 
   @required_fields [:is_admin]
 

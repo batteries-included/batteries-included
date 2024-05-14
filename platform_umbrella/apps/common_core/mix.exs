@@ -49,6 +49,9 @@ defmodule CommonCore.MixProject do
       {:ymlr, "~> 5.1"},
       {:yaml_elixir, "~> 2.6"},
 
+      # Password Hashing
+      {:bcrypt_elixir, "~> 3.0"},
+
       # History
       {:ex_audit, "~> 0.10"},
 

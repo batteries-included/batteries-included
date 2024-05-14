@@ -2,9 +2,9 @@ defmodule HomeBase.CustomerInstalls do
   @moduledoc false
   use HomeBase, :context
 
+  alias CommonCore.Accounts.User
   alias CommonCore.Installation
-  alias HomeBase.Accounts.User
-  alias HomeBase.Teams.Team
+  alias CommonCore.Teams.Team
 
   @doc """
   Returns the list of installations.

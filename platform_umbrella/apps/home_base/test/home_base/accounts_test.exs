@@ -3,10 +3,10 @@ defmodule HomeBase.AccountsTest do
 
   import HomeBase.AccountsFixtures
 
+  alias CommonCore.Accounts.User
+  alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts
-  alias HomeBase.Accounts.User
   alias HomeBase.Accounts.UserToken
-  alias HomeBase.Teams.TeamRole
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do

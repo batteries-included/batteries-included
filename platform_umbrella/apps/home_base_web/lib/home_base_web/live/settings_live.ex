@@ -2,10 +2,10 @@ defmodule HomeBaseWeb.SettingsLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  alias CommonCore.Teams.Team
+  alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts
   alias HomeBase.Teams
-  alias HomeBase.Teams.Team
-  alias HomeBase.Teams.TeamRole
 
   def mount(%{"token" => token}, _session, socket) do
     socket =

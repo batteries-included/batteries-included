@@ -2,7 +2,7 @@ defmodule HomeBaseWeb.Layouts do
   @moduledoc false
   use HomeBaseWeb, :html
 
-  alias HomeBase.Accounts.User
+  alias CommonCore.Accounts.User
 
   attr :page_title, :string, default: nil
   slot :inner_content

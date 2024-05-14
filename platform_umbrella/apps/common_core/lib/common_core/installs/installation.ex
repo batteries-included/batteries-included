@@ -8,6 +8,9 @@ defmodule CommonCore.Installation do
 
   use CommonCore, :schema
 
+  alias CommonCore.Accounts.User
+  alias CommonCore.Teams.Team
+
   @required_fields ~w(usage kube_provider slug)a
 
   @sizes [:tiny, :small, :medium, :large, :xlarge, :huge]
@@ -38,9 +41,8 @@ defmodule CommonCore.Installation do
     # Default size for the installation
     field :default_size, Ecto.Enum, values: @sizes, default: :medium
 
-    # Use `field` rather than `belongs_to` to prevent a circular dependency with HomeBase
-    field :user_id, CommonCore.Ecto.BatteryUUID
-    field :team_id, CommonCore.Ecto.BatteryUUID
+    belongs_to :user, User
+    belongs_to :team, Team
 
     timestamps()
   end
