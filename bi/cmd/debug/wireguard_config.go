@@ -3,6 +3,7 @@ package debug
 import (
 	"bi/pkg/installs"
 	"bi/pkg/log"
+	"io"
 	"log/slog"
 	"os"
 
@@ -32,25 +33,32 @@ var wireGuardConfigCmd = &cobra.Command{
 		}
 		defer wireGuardConfigFile.Close()
 
-		wireGuardConf, err := noisysocketsconfig.FromYAML(wireGuardConfigFile)
+		conf, err := noisysocketsconfig.FromYAML(wireGuardConfigFile)
 		if err != nil {
 			return err
 		}
 
-		outputFilePath, err := cmd.Flags().GetString("output")
+		outputPath, err := cmd.Flags().GetString("output")
 		if err != nil {
 			return err
 		}
 
-		slog.Debug("Writing wireguard config", slog.String("outputFilePath", outputFilePath))
+		slog.Debug("Writing wireguard config", slog.String("outputFilePath", outputPath))
 
-		outputFile, err := os.OpenFile(outputFilePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
-		if err != nil {
-			return err
+		var w io.Writer
+		if outputPath == "-" {
+			w = os.Stdout
+		} else {
+			outputFile, err := os.OpenFile(outputPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+			if err != nil {
+				return err
+			}
+			defer outputFile.Close()
+
+			w = outputFile
 		}
-		defer outputFile.Close()
 
-		if err := noisysocketsconfig.ToINI(outputFile, wireGuardConf); err != nil {
+		if err := noisysocketsconfig.ToINI(w, conf); err != nil {
 			return err
 		}
 
@@ -59,7 +67,7 @@ var wireGuardConfigCmd = &cobra.Command{
 }
 
 func init() {
-	wireGuardConfigCmd.Flags().StringP("output", "o", "wg0.conf", "Path to write the wireguard config to")
+	wireGuardConfigCmd.Flags().StringP("output", "o", "-", "Path to write the wireguard config to")
 
 	debugCmd.AddCommand(wireGuardConfigCmd)
 }
