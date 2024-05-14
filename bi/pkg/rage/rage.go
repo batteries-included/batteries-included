@@ -52,9 +52,8 @@ func Rage(ctx context.Context, env *installs.InstallEnv, maxLogs int) error {
 		pathsToArchive = append(pathsToArchive, filepath.Join(debugLogDir, file.Name()))
 	}
 
-	// Using archiver to create the zip file.
-	err = archiver.Archive(pathsToArchive, zipFilePath)
-	if err != nil {
+	// Create the zip archive.
+	if err := archiver.Archive(pathsToArchive, zipFilePath); err != nil {
 		return fmt.Errorf("failed to create zip archive: %w", err)
 	}
 
