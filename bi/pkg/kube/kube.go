@@ -84,7 +84,7 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 		}
 
 		// Connect to the wireguard gateway
-		net, err = noisysockets.NewNetwork(slog.Default(), wireGuardConfig)
+		net, err = noisysockets.OpenNetwork(slog.Default(), wireGuardConfig)
 		if err != nil {
 			return nil, fmt.Errorf("error opening wireguard network: %w", err)
 		}

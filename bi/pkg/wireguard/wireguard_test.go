@@ -19,7 +19,7 @@ import (
 
 func TestWireGuardConfig(t *testing.T) {
 	listenPort := uint16(51820)
-	dnsServers := []netip.Addr{
+	nameservers := []netip.Addr{
 		netip.MustParseAddr("100.64.250.1"),
 	}
 	endpoint := netip.MustParseAddrPort("127.0.0.1:51820")
@@ -30,7 +30,7 @@ func TestWireGuardConfig(t *testing.T) {
 	gw, err := wireguard.NewGateway(listenPort, subnet)
 	require.NoError(t, err)
 
-	gw.DNSServers = dnsServers
+	gw.Nameservers = nameservers
 	gw.Endpoint = endpoint
 	gw.PostUp = []string{
 		"iptables -A FORWARD -i wg0 -j ACCEPT",
@@ -68,7 +68,7 @@ func TestWireGuardConfig(t *testing.T) {
 
 	require.Len(t, peerSections, 1)
 	assert.NotEmpty(t, peerSections[0].Key("PublicKey").String())
-	assert.Equal(t, subnet.String(), peerSections[0].Key("AllowedIPs").String())
+	assert.Equal(t, "100.64.250.2", peerSections[0].Key("AllowedIPs").String())
 
 	configPath := filepath.Join(t.TempDir(), "wireguard.yaml")
 

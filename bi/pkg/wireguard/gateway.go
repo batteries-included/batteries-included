@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/apparentlymart/go-cidr/cidr"
+	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
+	noisysocketsv1alpha2 "github.com/noisysockets/noisysockets/config/v1alpha2"
 	noisysocketstypes "github.com/noisysockets/noisysockets/types"
 	"gopkg.in/ini.v1"
 )
@@ -21,8 +23,8 @@ type Gateway struct {
 	Subnet *net.IPNet
 	// PrivateKey is the private key of the gateway.
 	PrivateKey string
-	// DNSServers is a list of DNS servers to use for host resolution.
-	DNSServers []netip.Addr
+	// Nameservers is a list of DNS servers to use for host resolution.
+	Nameservers []netip.Addr
 	// Clients is a list of clients that are allowed to connect to the gateway.
 	Clients []Client
 	// Endpoint is the publicly routable endpoint/address of the gateway.
@@ -31,6 +33,8 @@ type Gateway struct {
 	PostUp []string
 	// PreDown are a set of commands to run before the interface is brought down.
 	PreDown []string
+	// VPCSubnet is the subnet of the VPC that the gateway is connected to.
+	VPCSubnet *net.IPNet
 }
 
 func NewGateway(listenPort uint16, subnet *net.IPNet) (*Gateway, error) {
@@ -95,60 +99,55 @@ func (gw *Gateway) NewClient(name string) (*Client, error) {
 }
 
 func (gw *Gateway) WriteConfig(w io.Writer) error {
-	cfg := ini.Empty()
+	conf := &noisysocketsv1alpha2.Config{
+		Name:       "gateway",
+		ListenPort: gw.ListenPort,
+		PrivateKey: gw.PrivateKey,
+		IPs:        []string{gw.Address.String()},
+	}
 
-	// Add the [Interface] section.
-	ifaceSection, err := cfg.NewSection("Interface")
+	for _, client := range gw.Clients {
+		var privateKey noisysocketstypes.NoisePrivateKey
+		if err := privateKey.UnmarshalText([]byte(client.PrivateKey)); err != nil {
+			return fmt.Errorf("failed to unmarshal client private key: %w", err)
+		}
+
+		conf.Peers = append(conf.Peers, noisysocketsv1alpha2.PeerConfig{
+			Name:      client.Name,
+			PublicKey: privateKey.Public().String(),
+			IPs:       []string{client.Address.String()},
+		})
+	}
+
+	var sb strings.Builder
+	if err := noisysocketsconfig.ToINI(&sb, conf); err != nil {
+		return fmt.Errorf("failed to marshal configuration: %w", err)
+	}
+
+	iniConf, err := ini.LoadSources(ini.LoadOptions{AllowNonUniqueSections: true}, strings.NewReader(sb.String()))
 	if err != nil {
-		return fmt.Errorf("failed to add Interface section: %w", err)
+		return fmt.Errorf("failed to parse INI config: %w", err)
 	}
 
-	if _, err := ifaceSection.NewKey("ListenPort", fmt.Sprintf("%d", gw.ListenPort)); err != nil {
-		return fmt.Errorf("failed to add ListenPort: %w", err)
+	ifaceSection, err := iniConf.GetSection("Interface")
+	if err != nil {
+		return fmt.Errorf("failed to get interface section: %w", err)
 	}
 
-	if _, err := ifaceSection.NewKey("Address", gw.Address.String()); err != nil {
-		return fmt.Errorf("failed to add Address: %w", err)
-	}
-
-	if _, err := ifaceSection.NewKey("PrivateKey", gw.PrivateKey); err != nil {
-		return fmt.Errorf("failed to add PrivateKey: %w", err)
-	}
-
+	// Add any PostUp and PreDown commands (which are not supported by noisysockets).
 	if len(gw.PostUp) > 0 {
 		if _, err := ifaceSection.NewKey("PostUp", strings.Join(gw.PostUp, "; ")); err != nil {
 			return fmt.Errorf("failed to add PostUp: %w", err)
 		}
 	}
+
 	if len(gw.PreDown) > 0 {
 		if _, err := ifaceSection.NewKey("PreDown", strings.Join(gw.PreDown, "; ")); err != nil {
 			return fmt.Errorf("failed to add PreDown: %w", err)
 		}
 	}
 
-	// Add the [Peer] sections.
-	for _, client := range gw.Clients {
-		var privateKey noisysocketstypes.NoisePrivateKey
-		if err := privateKey.FromString(client.PrivateKey); err != nil {
-			return fmt.Errorf("failed to unmarshal client private key: %w", err)
-		}
-
-		peerSection, err := cfg.NewSection("Peer")
-		if err != nil {
-			return fmt.Errorf("failed to add Peer section: %w", err)
-		}
-
-		peerSection.Comment = "# " + client.Name
-		if _, err := peerSection.NewKey("PublicKey", privateKey.PublicKey().String()); err != nil {
-			return fmt.Errorf("failed to add PublicKey: %w", err)
-		}
-
-		if _, err := peerSection.NewKey("AllowedIPs", gw.Subnet.String()); err != nil {
-			return fmt.Errorf("failed to add AllowedIPs: %w", err)
-		}
-	}
-
-	if _, err := cfg.WriteTo(w); err != nil {
+	if _, err := iniConf.WriteTo(w); err != nil {
 		return fmt.Errorf("failed to marshal configuration: %w", err)
 	}
 

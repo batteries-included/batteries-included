@@ -60,6 +60,7 @@ func (v *vpcConfig) run(ctx *pulumi.Context) error {
 	ctx.Export("vpcID", v.vpcID)
 	ctx.Export("publicSubnetIDs", toIDArray(v.subnets["public"]))
 	ctx.Export("privateSubnetIDs", toIDArray(v.subnets["private"]))
+	ctx.Export("cidrBlock", pulumi.String(v.cidrBlock.String()))
 
 	return nil
 }

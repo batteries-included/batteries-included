@@ -16,7 +16,9 @@ import (
 	"time"
 
 	"github.com/docker/docker/api/types/container"
+	dockernetwork "github.com/docker/docker/api/types/network"
 	"github.com/stretchr/testify/require"
+
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -27,8 +29,22 @@ func TestBatteryKubeClient(t *testing.T) {
 
 	ctx := context.Background()
 
+	// Create an IPAM configuration for the private network.
+	ipamConfig := dockernetwork.IPAM{
+		Driver: "default",
+		Config: []dockernetwork.IPAMConfig{
+			{
+				Subnet:  "10.1.1.0/24",
+				Gateway: "10.1.1.254",
+			},
+		},
+		Options: map[string]string{
+			"driver": "host-local",
+		},
+	}
+
 	// Create a private network, it'll be assigned a unique CIDR.
-	testNetwork, err := network.New(ctx, network.WithCheckDuplicate())
+	testNetwork, err := network.New(ctx, network.WithCheckDuplicate(), network.WithIPAM(&ipamConfig))
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, testNetwork.Remove(ctx))
@@ -41,7 +57,11 @@ func TestBatteryKubeClient(t *testing.T) {
 	gw, err := wireguard.NewGateway(51820, subnet)
 	require.NoError(t, err)
 
-	gw.DNSServers = []netip.Addr{netip.MustParseAddr("10.7.0.1")}
+	// Get the subnet of the VPC.
+	_, gw.VPCSubnet, err = net.ParseCIDR(ipamConfig.Config[0].Subnet)
+	require.NoError(t, err)
+
+	gw.Nameservers = []netip.Addr{netip.MustParseAddr("10.7.0.1")}
 	gw.PostUp = []string{
 		"iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE",
 	}

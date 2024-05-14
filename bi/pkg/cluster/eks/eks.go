@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/netip"
 	"os"
 	"path"
@@ -297,15 +298,21 @@ func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
 	gwEndpoint := netip.AddrPortFrom(netip.MustParseAddr(e.outputs["gateway"]["publicIP"].Value.(string)),
 		uint16(e.outputs["gateway"]["publicPort"].Value.(float64)))
 
+	_, vpcSubnet, err := net.ParseCIDR(e.outputs["vpc"]["cidrBlock"].Value.(string))
+	if err != nil {
+		return true, fmt.Errorf("error parsing vpc subnet: %w", err)
+	}
+
 	gw := wireguard.Gateway{
 		PrivateKey: e.outputs["gateway"]["wgGatewayPrivateKey"].Value.(string),
 		Address:    netip.MustParseAddr(e.outputs["gateway"]["wgGatewayAddress"].Value.(string)),
 		Endpoint:   gwEndpoint,
 		// Route53 static resolver addresses.
 		// See: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-dns.html#AmazonDNS
-		DNSServers: []netip.Addr{
+		Nameservers: []netip.Addr{
 			netip.MustParseAddr("169.254.169.253"),
 		},
+		VPCSubnet: vpcSubnet,
 	}
 
 	installerClient := wireguard.Client{

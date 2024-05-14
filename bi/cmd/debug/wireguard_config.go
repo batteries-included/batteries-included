@@ -3,10 +3,10 @@ package debug
 import (
 	"bi/pkg/installs"
 	"bi/pkg/log"
-	"bi/pkg/wireguard"
 	"log/slog"
 	"os"
 
+	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
 	"github.com/spf13/cobra"
 )
 
@@ -32,6 +32,11 @@ var wireGuardConfigCmd = &cobra.Command{
 		}
 		defer wireGuardConfigFile.Close()
 
+		wireGuardConf, err := noisysocketsconfig.FromYAML(wireGuardConfigFile)
+		if err != nil {
+			return err
+		}
+
 		outputFilePath, err := cmd.Flags().GetString("output")
 		if err != nil {
 			return err
@@ -45,7 +50,7 @@ var wireGuardConfigCmd = &cobra.Command{
 		}
 		defer outputFile.Close()
 
-		if err := wireguard.ToHostConfig(wireGuardConfigFile, outputFile); err != nil {
+		if err := noisysocketsconfig.ToINI(outputFile, wireGuardConf); err != nil {
 			return err
 		}
 

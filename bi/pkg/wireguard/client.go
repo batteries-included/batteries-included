@@ -6,8 +6,7 @@ import (
 	"net/netip"
 
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
-	noisysocketsconfigtypes "github.com/noisysockets/noisysockets/config/types"
-	noisysocketsv1alpha1 "github.com/noisysockets/noisysockets/config/v1alpha1"
+	noisysocketsv1alpha2 "github.com/noisysockets/noisysockets/config/v1alpha2"
 	noisysocketstypes "github.com/noisysockets/noisysockets/types"
 )
 
@@ -24,35 +23,47 @@ type Client struct {
 
 // WriteConfig saves a client WireGuard configuration to the given writer.
 func (c *Client) WriteConfig(w io.Writer) error {
-	var dnsServers []string
-	for _, dnsServer := range c.Gateway.DNSServers {
-		dnsServers = append(dnsServers, dnsServer.String())
+	var nameservers []string
+	for _, ns := range c.Gateway.Nameservers {
+		nameservers = append(nameservers, ns.String())
 	}
 
 	var privateKey noisysocketstypes.NoisePrivateKey
-	if err := privateKey.FromString(c.Gateway.PrivateKey); err != nil {
+	if err := privateKey.UnmarshalText([]byte(c.Gateway.PrivateKey)); err != nil {
 		return fmt.Errorf("failed to unmarshal gateway private key: %w", err)
 	}
 
-	conf := &noisysocketsv1alpha1.Config{
-		TypeMeta: noisysocketsconfigtypes.TypeMeta{
-			APIVersion: noisysocketsv1alpha1.ApiVersion,
-			Kind:       "Config",
-		},
+	conf := &noisysocketsv1alpha2.Config{
 		Name:       c.Name,
 		PrivateKey: c.PrivateKey,
 		IPs:        []string{c.Address.String()},
-		DNSServers: dnsServers,
-		Peers: []noisysocketsv1alpha1.PeerConfig{
+		DNS: &noisysocketsv1alpha2.DNSConfig{
+			Nameservers: nameservers,
+		},
+		Routes: []noisysocketsv1alpha2.RouteConfig{
 			{
-				Name:           "gateway",
-				PublicKey:      privateKey.PublicKey().String(),
-				Endpoint:       c.Gateway.Endpoint.String(),
-				IPs:            []string{c.Gateway.Address.String()},
-				DefaultGateway: true,
+				Destination: c.Gateway.VPCSubnet.String(),
+				Via:         "gateway",
+			},
+		},
+		Peers: []noisysocketsv1alpha2.PeerConfig{
+			{
+				Name:      "gateway",
+				PublicKey: privateKey.Public().String(),
+				Endpoint:  c.Gateway.Endpoint.String(),
+				IPs:       []string{c.Gateway.Address.String()},
 			},
 		},
 	}
 
-	return noisysocketsconfig.SaveToYAML(w, conf)
+	// Given we are using an internal Route53 resolver (on its own subnet), we
+	// need to add the nameserver routes to the client config.
+	for _, ns := range c.Gateway.Nameservers {
+		conf.Routes = append(conf.Routes, noisysocketsv1alpha2.RouteConfig{
+			Destination: netip.PrefixFrom(ns, ns.BitLen()).String(),
+			Via:         "gateway",
+		})
+	}
+
+	return noisysocketsconfig.ToYAML(w, conf)
 }
