@@ -22,5 +22,10 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     field :cluster_name, :string
 
     field :server_in_cluster, :boolean, default: false
+
+    # This is the install id that the control server is reporting to
+    # It shouldn't be nil. However we can't make it required before
+    # InstallSpec from Install is fixed.
+    field :install_id, CommonCore.Ecto.BatteryUUID, default: nil
   end
 end

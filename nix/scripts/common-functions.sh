@@ -39,16 +39,16 @@ function cleanup() {
 trap cleanup EXIT SIGINT SIGTERM
 
 function do_stop() {
-  local install_path=${1:-"static/public/specs/dev.json"}
+  local spec_path=${1:-"bootstrap/dev.spec.json"}
 
   local slug
   # If install path is a file then we need to get the slug
   # from the file
-  if [[ -f ${install_path} ]]; then
-    slug=$(bi debug spec-slug "${install_path}")
+  if [[ -f ${spec_path} ]]; then
+    slug=$(bi debug spec-slug "${spec_path}")
   else
     # Otherwise we can just stop the install path assuming it's a slug already
-    slug=${install_path}
+    slug=${spec_path}
   fi
   bi stop "${slug}"
 }
@@ -57,7 +57,7 @@ function do_bootstrap() {
   do_start "$@"
   local spec_path summary_path slug
 
-  spec_path=${1:-"static/public/specs/dev.json"}
+  spec_path=${1:-"bootstrap/dev.spec.json"}
   slug=$(bi debug spec-slug "${spec_path}")
   summary_path=$(bi debug install-summary-path "${slug}")
 
@@ -83,15 +83,15 @@ function whats_running() {
 }
 
 function do_integration_test_deep() {
-  local install_path
-  install_path=${1:-"./static/public/specs/int_test.json"}
+  localspec_path
+  spec_path=${1:-"./bootstrap/integration-test.spec.json"}
 
-  log "Starting integration test: ${install_path}"
+  log "Starting integration test: ${spec_path}"
   local slug
-  slug=$(bi debug spec-slug "${install_path}")
+  slug=$(bi debug spec-slug "${spec_path}")
 
   local summary_path
-  do_start "${install_path}"
+  do_start "${spec_path}"
   summary_path=$(bi debug install-summary-path "${slug}")
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
@@ -166,10 +166,10 @@ function do_setup_assets() {
 }
 
 function do_start() {
-  local install_path=${1:-"static/public/specs/dev.json"}
+  local spec_path=${1:-"bootstrap/dev.spec.json"}
 
   # shellcheck disable=2046
   bi start \
     $([[ -z ''${TRACE:-""} ]] || echo "-v=debug") \
-    "${install_path}" >/dev/null
+    "${spec_path}" >/dev/null
 }

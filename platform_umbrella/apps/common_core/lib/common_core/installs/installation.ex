@@ -6,7 +6,7 @@ defmodule CommonCore.Installation do
   Included onto a kubernetes cluster and then bill for it (TODO).
   """
 
-  use CommonCore, :schema
+  use CommonCore, {:schema, no_encode: [:user, :team]}
 
   alias CommonCore.Accounts.User
   alias CommonCore.Teams.Team
@@ -75,6 +75,10 @@ defmodule CommonCore.Installation do
 
     with {:ok, install} <-
            new(
+             # Generate an install ID so that we can use
+             # it so homebase and control server
+             # are referencing the same row
+             id: CommonCore.Ecto.BatteryUUID.autogenerate(),
              slug: name,
              kube_provider: provider_type,
              kube_provider_config: default_provider_config(provider_type, usage),

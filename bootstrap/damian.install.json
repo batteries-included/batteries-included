@@ -1,0 +1,14 @@
+{
+  "id": "batt_018f786ac1cd7c82ad58a6b1cdfcc266",
+  "usage": "internal_dev",
+  "default_size": "small",
+  "inserted_at": null,
+  "updated_at": null,
+  "slug": "damian",
+  "kube_provider": "aws",
+  "kube_provider_config": {},
+  "sso_enabled": false,
+  "initial_oauth_email": null,
+  "user_id": null,
+  "team_id": null
+}

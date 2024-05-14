@@ -14,25 +14,28 @@ defmodule Mix.Tasks.Gen.Static.Installations do
 
     [
       # Our install that we use for dev
-      {"dev.json", Installation.new!("dev", provider_type: :kind, usage: :internal_dev)},
+      Installation.new!("dev", provider_type: :kind, usage: :internal_dev),
 
       # An example of a dev install that customers could use for local testing
-      {"local.json", Installation.new!("local", provider_type: :kind, usage: :development)},
-      # AWS Clusters for testing things that require networking and other AWS services
-      {"elliott.json", Installation.new!("elliott", provider_type: :aws, usage: :internal_dev)},
+      Installation.new!("local", provider_type: :kind, usage: :development),
+      # Demo cluster for showing off
+      Installation.new!("elliott", provider_type: :aws, usage: :development),
       # JasonT is currently working on bootstrapping the control server
       # so his aws cluster gets the control server installed in the kube cluster
-      {"jason.json", Installation.new!("jason", provider_type: :aws, usage: :development)},
-      {"damian.json", Installation.new!("damian", provider_type: :aws, usage: :internal_dev)},
+      Installation.new!("jason", provider_type: :aws, usage: :development),
+      Installation.new!("damian", provider_type: :aws, usage: :internal_dev),
 
       # Internal Integration tests
-      {"int_test.json", Installation.new!("integration-test", provider_type: :kind, usage: :internal_int_test)}
+      Installation.new!("integration-test", provider_type: :kind, usage: :internal_int_test)
     ]
-    |> Enum.map(fn {name, install} ->
-      {Path.join(directory, name), InstallSpec.from_installation(install)}
+    |> Enum.flat_map(fn install ->
+      [
+        {Path.join(directory, "#{install.slug}.spec.json"), InstallSpec.from_installation(install)},
+        {Path.join(directory, "#{install.slug}.install.json"), install}
+      ]
     end)
-    |> Enum.each(fn {path, installation} ->
-      write!(path, installation)
+    |> Enum.each(fn {path, contents} ->
+      write!(path, contents)
     end)
   end
 

@@ -1,0 +1,14 @@
+{
+  "id": "batt_018f786ac1ab7b1eb3d438aa5726f8ae",
+  "usage": "internal_dev",
+  "default_size": "tiny",
+  "inserted_at": null,
+  "updated_at": null,
+  "slug": "dev",
+  "kube_provider": "kind",
+  "kube_provider_config": {},
+  "sso_enabled": false,
+  "initial_oauth_email": null,
+  "user_id": null,
+  "team_id": null
+}

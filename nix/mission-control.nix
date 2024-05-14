@@ -36,7 +36,8 @@
                 [[ -z ''${TRACE:-""} ]] || set -x
                 pushd platform_umbrella &> /dev/null
                 mix "do" clean, compile --force
-                mix gen.static.installations "../static/public/specs"
+                rm -rf ../bootstrap
+                mix gen.static.installations "../bootstrap"
                 popd &> /dev/null
                 treefmt
               '';

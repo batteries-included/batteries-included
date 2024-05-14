@@ -3,6 +3,12 @@ defmodule CommonCore.InstallSpec do
   A struct holding the information needed the bootstrap
   an installation of Batteries Included control server
   onto a kubernetes cluster.
+
+
+  This is the specification for what should be running
+  on the cluster after the installation has been started.
+  It is not the input from the user though it is
+  closely related.
   """
   use TypedStruct
 
@@ -10,13 +16,23 @@ defmodule CommonCore.InstallSpec do
 
   @derive Jason.Encoder
   typedstruct do
-    @typedoc ""
+    @typedoc "This is the specification of what should be running and how on the cluster."
 
     field :slug, :string
 
+    # The information about what kind
+    # of kubernetes cluster we are using.
+    # If it's a cluster type that we are
+    # responsible for staring then the field
+    # will also contain the configuration.
     field :kube_cluster, map()
+
+    # This is the summary of the target state.
+    # KubeState can be ignored as it's empty
     field :target_summary, CommonCore.StateSummary.t()
 
+    # These are the resource that are needed to get
+    # bootstrapped along with the spec
     field :initial_resources, map(), default: %{}
   end
 

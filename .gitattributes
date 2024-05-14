@@ -1,4 +1,4 @@
-static/public/specs/*.json linguist-generated=true
+bootstrap/*.json linguist-generated=true
 cli/tests/resources/specs/*.json linguist-generated=true
 flake.lock linguist-generated=true
 platform_umbrella/mix.lock linguist-generated=true

@@ -10,6 +10,13 @@ defmodule CommonCore.Installs.Batteries do
   @standard_battery_types ~w(battery_core cloudnative_pg istio istio_gateway stale_resource_cleaner)
 
   def default_batteries(%Installation{} = install) do
+    # TODO: This is utter shit. I should have done better
+    #
+    # We need to create all the SystemBatteries that
+    # are specialized from the install (probably in
+    # a map by type). Then use that as the base to
+    # accumulate all the required types and their
+    # depdendencies.
     install
     |> battery_types()
     |> recursive_batteries()
@@ -20,6 +27,8 @@ defmodule CommonCore.Installs.Batteries do
   end
 
   defp add_battery_core_config(batteries, %Installation{
+         id: id,
+         slug: slug,
          kube_provider: cluster_type,
          default_size: default_size,
          usage: usage
@@ -30,6 +39,8 @@ defmodule CommonCore.Installs.Batteries do
           config
           | cluster_type: cluster_type,
             default_size: default_size,
+            cluster_name: slug,
+            install_id: id,
             server_in_cluster: !Enum.member?([:internal_dev, :internal_int_test], usage)
         }
 

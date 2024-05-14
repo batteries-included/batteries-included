@@ -44,7 +44,7 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
     |> F.require(battery.config.server_in_cluster)
   end
 
-  resource(:boostrap_job, battery) do
+  resource(:bootstrap_job, battery) do
     namespace = battery.config.core_namespace
 
     bootstrap_summary_root = "/var/run/secrets/summary"
