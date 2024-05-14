@@ -31,6 +31,9 @@ schema = 3
   [mod."github.com/alessio/shellescape"]
     version = "v1.4.2"
     hash = "sha256-TOlNouGwNdaCddRwABb1qXp0HTMt6+G4uatzfAg3XFc="
+  [mod."github.com/andybalholm/brotli"]
+    version = "v1.1.0"
+    hash = "sha256-njLViV4v++ZdgOWGWzlvkefuFvA/nkugl3Ta/h1nu/0="
   [mod."github.com/apparentlymart/go-cidr"]
     version = "v1.1.0"
     hash = "sha256-kUw+XDMpcsAYA80zUkjdLsii9lF1F67HTRm39xXEaIk="
@@ -139,6 +142,9 @@ schema = 3
   [mod."github.com/docker/go-units"]
     version = "v0.5.0"
     hash = "sha256-iK/V/jJc+borzqMeqLY+38Qcts2KhywpsTk95++hImE="
+  [mod."github.com/dsnet/compress"]
+    version = "v0.0.2-0.20210315054119-f66993602bf5"
+    hash = "sha256-GnSByoeb8UVVJwcxQhWitLihPly12l+zz+E7Lbk4Xbc="
   [mod."github.com/emicklei/go-restful/v3"]
     version = "v3.12.0"
     hash = "sha256-w9mYeZiOWYEd5NLkOHYbaElfcbNurV6trMtbv2KPvL0="
@@ -193,6 +199,9 @@ schema = 3
   [mod."github.com/golang/protobuf"]
     version = "v1.5.4"
     hash = "sha256-N3+Lv9lEZjrdOWdQhFj6Y3Iap4rVLEQeI8/eFFyAMZ0="
+  [mod."github.com/golang/snappy"]
+    version = "v0.0.4"
+    hash = "sha256-Umx+5xHAQCN/Gi4HbtMhnDCSPFAXSsjVbXd8n5LhjAA="
   [mod."github.com/google/btree"]
     version = "v1.1.2"
     hash = "sha256-K7V2obq3pLM71Mg0vhhHtZ+gtaubwXPQx3xcIyZDCjM="
@@ -251,8 +260,11 @@ schema = 3
     version = "v1.2.0"
     hash = "sha256-Ta7ZOmyX8gG5tzWbY2oES70EJPfI90U7CIJS9EAce0s="
   [mod."github.com/klauspost/compress"]
-    version = "v1.17.0"
-    hash = "sha256-Ig86slHz98UbvvkCYK1QXReArAK74T/UNedVq/ZjH5k="
+    version = "v1.17.8"
+    hash = "sha256-8rgCCfHX29le8m6fyVn6gwFde5TPUHjwQqZqv9JIubs="
+  [mod."github.com/klauspost/pgzip"]
+    version = "v1.2.6"
+    hash = "sha256-qA1hjnVW/tqxY48JIWQVulwEwY7fwyvnasymZk3mScg="
   [mod."github.com/lmittmann/tint"]
     version = "v1.0.4"
     hash = "sha256-xLaS+fcxmjsoOC3I5IX4jWkmgPVUFJBKEK+jgY5AFa0="
@@ -277,6 +289,9 @@ schema = 3
   [mod."github.com/mattn/go-runewidth"]
     version = "v0.0.15"
     hash = "sha256-WP39EU2UrQbByYfnwrkBDoKN7xzXsBssDq3pNryBGm0="
+  [mod."github.com/mholt/archiver/v3"]
+    version = "v3.5.1"
+    hash = "sha256-5SsQitpK1C/hZUJBgajJr1nkV15n8lSzmNOlMwcvQ1o="
   [mod."github.com/miekg/dns"]
     version = "v1.1.59"
     hash = "sha256-O8FK7gVlLB6adMl4phCH/4e923D3AU85cHthO8SWoGQ="
@@ -340,6 +355,9 @@ schema = 3
   [mod."github.com/noisysockets/noisysockets"]
     version = "v0.21.1"
     hash = "sha256-vfM8pELBB8YZ6BqWwrL3KxtH86Nz+LcHF5tL5El+4Ag="
+  [mod."github.com/nwaples/rardecode"]
+    version = "v1.1.3"
+    hash = "sha256-X7Cg0kEygyy6Xw6sxRF9HirgefkH9tn9UPPelxRaAGg="
   [mod."github.com/nxadm/tail"]
     version = "v1.4.11"
     hash = "sha256-7XF47xVcyHjpO1E0+GGAoytxOa0JJFCBXHJGLTexVgo="
@@ -367,6 +385,9 @@ schema = 3
   [mod."github.com/pgavlin/fx"]
     version = "v0.1.6"
     hash = "sha256-MqFjnA19DEiiGgNhn2Yin2LzSUBxLoQB9ap3e+RRG+0="
+  [mod."github.com/pierrec/lz4/v4"]
+    version = "v4.1.21"
+    hash = "sha256-u47Lm4tN2ChGDLGyR+Jpi/Mi0bOFBVT6PTpPFdu2rMU="
   [mod."github.com/pjbgf/sha1cd"]
     version = "v0.3.0"
     hash = "sha256-kX9BdLh2dxtGNaDvc24NORO+C0AZ7JzbrXrtecCdB7w="
@@ -487,9 +508,15 @@ schema = 3
   [mod."github.com/uber/jaeger-lib"]
     version = "v2.4.1+incompatible"
     hash = "sha256-RcnLDfoiYkzUnmQAC2D2/VNGOaOXmiEcfAFcyXph6R8="
+  [mod."github.com/ulikunitz/xz"]
+    version = "v0.5.12"
+    hash = "sha256-i8IGHLdPZkKsmgHNB2cHHI4/493tJh7uiBzoKXXXgOA="
   [mod."github.com/xanzy/ssh-agent"]
     version = "v0.3.3"
     hash = "sha256-l3pGB6IdzcPA/HLk93sSN6NM2pKPy+bVOoacR5RC2+c="
+  [mod."github.com/xi2/xz"]
+    version = "v0.0.0-20171230120015-48954b6210f8"
+    hash = "sha256-2J4cb9KUnGHn1WZ2+g/S+yiHGLDt6KU0cP3fJpQDGZ0="
   [mod."github.com/yusufpapurcu/wmi"]
     version = "v1.2.3"
     hash = "sha256-HOLI8i58AMWeTotvYtdZessgrLwUG2aiS37eeHgsneY="
