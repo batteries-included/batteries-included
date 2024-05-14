@@ -8,6 +8,6 @@ defmodule KubeBootstrap.Tasks do
     path = Application.fetch_env!(@app, :summary_path)
 
     {:ok, summary} = KubeBootstrap.read_summary(path)
-    KubeBootstrap.bootstrap_from_summary(summary)
+    :ok = KubeBootstrap.bootstrap_from_summary(summary)
   end
 end
