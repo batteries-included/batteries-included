@@ -1,5 +1,5 @@
 {
-  "id": "batt_018f786ac1ab7b1eb3d438aa5726f8ae",
+  "id": "batt_018f7a1fa4ec70959386d0aa78d5d41b",
   "usage": "internal_dev",
   "default_size": "tiny",
   "inserted_at": null,
@@ -10,5 +10,5 @@
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": null
+  "team_id": "batt_018f7a1fa4c97ad6adfd84f491ae9e27"
 }

@@ -1,7 +1,7 @@
 defmodule CommonCore.Teams.Team do
   @moduledoc false
 
-  use CommonCore, :schema
+  use CommonCore, {:schema, no_encode: [:users, :roles, :installations]}
 
   alias CommonCore.Installation
   alias CommonCore.Teams.TeamRole

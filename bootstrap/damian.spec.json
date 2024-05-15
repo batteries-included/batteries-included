@@ -22,7 +22,7 @@
           "default_size": "small",
           "cluster_name": "damian",
           "server_in_cluster": false,
-          "install_id": "batt_018f786ac1cd7c82ad58a6b1cdfcc266",
+          "install_id": "batt_018f7a1fa4ec7fdc8cfe1a44ca1724bd",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -56,9 +56,9 @@
           "controller_image": "quay.io/jetstack/cert-manager-controller:v1.14.5",
           "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.14.5",
           "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.14.5",
-          "controller_image_override": null,
           "acmesolver_image_override": null,
           "cainjector_image_override": null,
+          "controller_image_override": null,
           "ctl_image_override": null,
           "webhook_image_override": null
         },
@@ -170,7 +170,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "XU7HZS3YKHUQYRL5R4SDQ7UH",
+            "password": "6VN2MUUV474EFU4XLXF3LN4P",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }

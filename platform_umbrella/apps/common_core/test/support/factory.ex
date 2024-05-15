@@ -90,7 +90,7 @@ defmodule CommonCore.Factory do
     # merge attributes and evaluate lazy attributes at the end to emulate
     # ExMachina's default behavior
     installation
-    |> CommonCore.InstallSpec.from_installation()
+    |> CommonCore.InstallSpec.new!()
     |> merge_attributes(clean_attrs)
     |> evaluate_lazy_attributes()
   end

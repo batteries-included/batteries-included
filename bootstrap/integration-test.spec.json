@@ -22,7 +22,7 @@
           "default_size": "tiny",
           "cluster_name": "integration-test",
           "server_in_cluster": false,
-          "install_id": "batt_018f786ac1cd7475bcc43623c5f74a4d",
+          "install_id": "batt_018f7a1fa4ed73b2976b186452c4996e",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -61,7 +61,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "DS3JJTYUJD77AVL3ETB3I43O",
+            "password": "BHBYIUST7SQRKNSLQYVYLDNW",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }

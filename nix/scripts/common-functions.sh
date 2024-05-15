@@ -6,6 +6,11 @@ function log() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*"
 }
 
+get_abs_filename() {
+  # $1 : relative filename
+  echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+}
+
 function cleanup() {
   for tempdir in "${TEMPDIRS[@]}"; do
     rm -rf "$tempdir" || true
@@ -56,10 +61,12 @@ function do_stop() {
 function do_bootstrap() {
   do_start "$@"
   local spec_path summary_path slug
-
   spec_path=${1:-"bootstrap/dev.spec.json"}
   slug=$(bi debug spec-slug "${spec_path}")
   summary_path=$(bi debug install-summary-path "${slug}")
+
+  # bootstrap_path is the full absolute path to the folder containing the spec file
+  bootstrap_path=$(get_abs_filename "$(dirname "${spec_path}")")
 
   m "do" deps.get, compile, kube.bootstrap "${summary_path}"
   # Start the port forwarder
@@ -68,7 +75,8 @@ function do_bootstrap() {
   # Postgrest should be up create the database and run the migrations
   m setup
   # Add the rows that should be there for what's installed
-  m seed.control "${summary_path}"
+  m "do" seed.control "${summary_path}", \
+    seed.home "${bootstrap_path}"
   echo "Exited"
 }
 
@@ -125,8 +133,11 @@ function do_integration_test() {
   do_setup_assets platform_umbrella/apps/control_server_web/assets
   do_setup_assets platform_umbrella/apps/home_base_web/assets
 
+  bootstrap_path=$(get_abs_filename "bootstrap")
+
   m "do" ecto.reset, \
-    seed.control "${summary_path}"
+    seed.control "${summary_path}", \
+    seed.home "${bootstrap_path}"
 
   m test --trace --warnings-as-errors --slowest 1
 }

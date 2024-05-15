@@ -321,7 +321,7 @@ defmodule CommonCore.Ecto.Schema do
   # to update it with the given map.
   # Returns {:ok, struct} on success, {:error, changeset} on failure.
   @spec schema_new(module() | atom() | struct(), Keyword.t() | list() | map()) ::
-          {:error, Ecto.Changeset.t()} | {:ok, map()}
+          {:error, Ecto.Changeset.t()} | {:ok, struct()}
   def schema_new(module, opts) do
     module
     |> struct()

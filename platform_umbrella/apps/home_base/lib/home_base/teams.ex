@@ -9,6 +9,20 @@ defmodule HomeBase.Teams do
 
   ## Teams
 
+  @spec get_team!(binary()) :: Ecto.Schema.t()
+  def get_team!(id) do
+    Repo.get!(Team, id)
+  end
+
+  @spec get_team(binary()) :: Ecto.Schema.t() | nil
+  def get_team(id) do
+    Repo.get(Team, id)
+  end
+
+  def list_teams do
+    Repo.all(Team)
+  end
+
   def create_team(%User{} = user, attrs) do
     transaction =
       Multi.new()
@@ -26,6 +40,10 @@ defmodule HomeBase.Teams do
       {:ok, %{team: team}} -> {:ok, team}
       {:error, :team, changeset, _} -> {:error, changeset}
     end
+  end
+
+  def create_team(attrs) do
+    %Team{} |> Team.changeset(attrs) |> Repo.insert()
   end
 
   def update_team(%Team{} = team, attrs) do

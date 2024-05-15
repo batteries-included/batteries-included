@@ -52,9 +52,8 @@ defmodule CommonCore.Installation do
     installation
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_require_oauth_email(attrs)
-    |> downcase_slug()
     |> validate_email_address(:initial_oauth_email)
-    |> unique_constraint(:slug)
+    |> foreign_key_constraint(:slug)
   end
 
   def maybe_require_oauth_email(changeset, %{"sso_enabled" => true}) do
@@ -67,40 +66,77 @@ defmodule CommonCore.Installation do
     update_change(changeset, :slug, &String.downcase/1)
   end
 
-  def new!(name, opts \\ []) do
-    provider_type = Keyword.get(opts, :provider_type, :kind)
-    usage = Keyword.get(opts, :usage, :development)
-    initial_oauth_email = Keyword.get(opts, :initial_oauth_email, nil)
-    default_size = Keyword.get(opts, :default_size, default_size(provider_type, usage))
+  @default_provider_type :kind
+  @default_usage :development
 
-    with {:ok, install} <-
-           new(
-             # Generate an install ID so that we can use
-             # it so homebase and control server
-             # are referencing the same row
-             id: CommonCore.Ecto.BatteryUUID.autogenerate(),
-             slug: name,
-             kube_provider: provider_type,
-             kube_provider_config: default_provider_config(provider_type, usage),
-             initial_oauth_email: initial_oauth_email,
-             default_size: default_size,
-             usage: usage
-           ) do
-      install
+  def new!(name, opts \\ [])
+
+  def new!(name, opts) when is_binary(name) do
+    provider_type = Keyword.get(opts, :kube_provider, @default_provider_type)
+    usage = Keyword.get(opts, :usage, @default_usage)
+
+    opts =
+      opts
+      |> Keyword.put_new_lazy(:slug, fn ->
+        name
+        # We don't want no stinking caps lock
+        |> String.downcase()
+        # Everything else is a dash
+        |> String.replace(~r/[^a-z0-9]/, "-")
+        # Remove duplicate dashes
+        |> String.replace(~r/-+/, "-")
+        # Trim them from the ends
+        |> String.trim("-")
+      end)
+      |> Keyword.put_new(:kube_provider, provider_type)
+      |> Keyword.put_new(:kube_provider_config, default_provider_config(provider_type, usage))
+      |> Keyword.put_new(:usage, @default_usage)
+      |> Keyword.put_new(:initial_oauth_email, nil)
+      |> Keyword.put_new(:default_size, default_size(provider_type, usage))
+
+    with {:ok, installation} <- new(opts) do
+      installation
     end
   end
 
+  def new!(passed_opts, opts) do
+    opts = Keyword.merge(opts || [], passed_opts)
+    name = Keyword.fetch!(opts, :name)
+
+    new!(name, opts)
+  end
+
+  @spec size_options() :: list(String.t())
   def size_options, do: Enum.map(@sizes, &{&1 |> Atom.to_string() |> String.capitalize(), &1})
   def provider_options, do: @providers
   def usage_options, do: @usages
 
-  defp default_size(:kind = _provider_type, _usage), do: :tiny
-  defp default_size(:aws = _provider_type, :internal_dev), do: :small
-  defp default_size(:aws = _provider_type, :development), do: :small
-  defp default_size(:aws = _provider_type, _), do: :large
-  defp default_size(_, _), do: :medium
+  @spec default_size(atom(), atom()) :: :large | :medium | :small | :tiny
+  @doc """
+  Returns the default size for a given provider and usage.
 
-  defp default_provider_config(:kind, _usage), do: %{}
+  ## Params
+
+    * `provider_type` - The type of provider to use.
+    * `usage` - The usage of the installation.
+
+
+  ## Examples
+
+      iex> default_size(:kind, :development)
+      :tiny
+
+      iex> default_size(:aws, :development)
+      :small
+
+      iex> default_size(:aws, :production)
+      :large
+  """
+  def default_size(:kind = _provider_type, _usage), do: :tiny
+  def default_size(:aws = _provider_type, :internal_dev), do: :small
+  def default_size(:aws = _provider_type, :development), do: :small
+  def default_size(:aws = _provider_type, _), do: :large
+  def default_size(_, _), do: :medium
 
   defp default_provider_config(_, _), do: %{}
 end

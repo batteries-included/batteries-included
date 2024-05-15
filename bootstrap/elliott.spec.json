@@ -22,7 +22,7 @@
           "default_size": "small",
           "cluster_name": "elliott",
           "server_in_cluster": true,
-          "install_id": "batt_018f786ac1cd78268d12d70555247fb3",
+          "install_id": "batt_018f7a1fa4ec7beaa630550d96d6eb0c",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -56,9 +56,9 @@
           "controller_image": "quay.io/jetstack/cert-manager-controller:v1.14.5",
           "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.14.5",
           "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.14.5",
-          "controller_image_override": null,
           "acmesolver_image_override": null,
           "cainjector_image_override": null,
+          "controller_image_override": null,
           "ctl_image_override": null,
           "webhook_image_override": null
         },
@@ -163,7 +163,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "OMBGBXZVWHLYAKQP46CVD627",
+            "password": "WJTHX24MGI2GMK4BXZKE4DHC",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -217,7 +217,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "QRV2ZUELCC73UVPHWILJ4BFD6YWSHTHN24KXFF3L3SCATHFFZTIQ===="
+          "battery/hash": "EZXHFTIFSNXGZXX6XNNDCBDJXYBZIL7RVUIO7OSPJH6LAPZHDYSQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -262,7 +262,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "2R735PK6XRC7X3W3C6OF46XH6QDUQFEBIZOWWLA4KDTIVCIA4XYRLQIDOWD7CENY"
+                    "value": "SM4X72HSJJVR6IVWDZA5HDORW3ER2P35A7TQM42D6WHXM6UKT5IJVLYXKVLUPDZO"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",

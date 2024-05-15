@@ -48,7 +48,7 @@
           "default_size": "tiny",
           "cluster_name": "dev",
           "server_in_cluster": false,
-          "install_id": "batt_018f786ac1ab7b1eb3d438aa5726f8ae",
+          "install_id": "batt_018f7a1fa4ec70959386d0aa78d5d41b",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -64,8 +64,8 @@
           "controller_image": "quay.io/metallb/controller:v0.13.12",
           "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "speaker_image_override": null,
           "controller_image_override": null,
+          "speaker_image_override": null,
           "frrouting_image_override": null
         },
         "group": "net_sec",
@@ -127,7 +127,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "YR6TDDCJU5KTOM244GZVFXNE",
+            "password": "NFTWYQPIPPQS4LJF7BMRSCRJ",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }

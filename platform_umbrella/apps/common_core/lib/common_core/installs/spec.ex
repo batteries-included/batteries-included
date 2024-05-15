@@ -36,22 +36,28 @@ defmodule CommonCore.InstallSpec do
     field :initial_resources, map(), default: %{}
   end
 
-  def new(m) do
-    struct!(__MODULE__, m)
+  def new(m) when is_list(m) do
+    {:ok, struct!(__MODULE__, m)}
   end
 
-  def from_installation(%Installation{} = installation) do
-    {:ok, target_summary} = CommonCore.StateSummary.target_summary(installation)
+  def new(%Installation{} = installation) do
+    case CommonCore.StateSummary.target_summary(installation) do
+      {:ok, target_summary} ->
+        initial_resources = CommonCore.Resources.BootstrapRoot.materialize(target_summary)
 
-    initial_resources = CommonCore.Resources.BootstrapRoot.materialize(target_summary)
+        new(
+          slug: installation.slug,
+          kube_cluster: kube_cluster(installation),
+          target_summary: target_summary,
+          initial_resources: initial_resources
+        )
 
-    new(
-      slug: installation.slug,
-      kube_cluster: kube_cluster(installation),
-      target_summary: target_summary,
-      initial_resources: initial_resources
-    )
+      {:error, _} ->
+        {:error, "Failed to create target summary"}
+    end
   end
+
+  def new!(%Installation{} = installation), do: with({:ok, spec} <- new(installation), do: spec)
 
   defp kube_cluster(%{kube_provider: kube_provider, kube_provider_config: config} = _installation) do
     %{provider: kube_provider, config: config}

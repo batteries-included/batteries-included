@@ -22,7 +22,7 @@
           "default_size": "small",
           "cluster_name": "jason",
           "server_in_cluster": true,
-          "install_id": "batt_018f786ac1cd77ada938cebe8a78a1b4",
+          "install_id": "batt_018f7a1fa4ec77c9adf2def4053f30c1",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -56,9 +56,9 @@
           "controller_image": "quay.io/jetstack/cert-manager-controller:v1.14.5",
           "ctl_image": "quay.io/jetstack/cert-manager-ctl:v1.14.5",
           "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.14.5",
-          "controller_image_override": null,
           "acmesolver_image_override": null,
           "cainjector_image_override": null,
+          "controller_image_override": null,
           "ctl_image_override": null,
           "webhook_image_override": null
         },
@@ -163,7 +163,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "BLW6R5G25PE22P7EZ4XKCBQT",
+            "password": "645PNCYXEACRDUP363C5WH44",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -217,7 +217,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "TW2KI4BR4ZY5A6HD4HEGKVTQ7HSPKEKWLZU2UHIUJNJVGZFOHLKQ===="
+          "battery/hash": "F6EI6PF47T4F3E4A2QJYRDKB6CYZGWYZ6DQYFJN2WOMQP2AYCE3Q===="
         },
         "labels": {
           "app": "battery-core",
@@ -262,7 +262,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "FZGEJSKQS5IPAYODKMAAOWKH3P26GXHHBO26W27NHK5W7BLH3GIWL572PT3IBA3P"
+                    "value": "SY7OLXRP25QJWRREOU6WFAI6L4FRLIWXDGGOJYVNZKGVLFM7W2VTHHONQUAJTE42"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",

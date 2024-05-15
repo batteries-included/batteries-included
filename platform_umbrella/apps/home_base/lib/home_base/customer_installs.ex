@@ -51,6 +51,12 @@ defmodule HomeBase.CustomerInstalls do
     Repo.one!(from(i in Installation, where: i.id == ^id, where: i.team_id == ^team.id))
   end
 
+  @spec get_installation(binary()) :: Ecto.Schema.t() | nil
+  def get_installation(id) do
+    Repo.get(Installation, id)
+  end
+
+  @spec create_installation(list() | map()) :: any()
   @doc """
   Creates a installation.
 

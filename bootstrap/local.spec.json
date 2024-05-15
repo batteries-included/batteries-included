@@ -48,7 +48,7 @@
           "default_size": "tiny",
           "cluster_name": "local",
           "server_in_cluster": true,
-          "install_id": "batt_018f786ac1cd71eaad9e6e705561a612",
+          "install_id": "batt_018f7a1fa4ec79ab9204f736637f1896",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -64,8 +64,8 @@
           "controller_image": "quay.io/metallb/controller:v0.13.12",
           "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "speaker_image_override": null,
           "controller_image_override": null,
+          "speaker_image_override": null,
           "frrouting_image_override": null
         },
         "group": "net_sec",
@@ -120,7 +120,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "WOFNCMBRZEMFR43E6RVC66LU",
+            "password": "G2IWRGTYM7KJIAL6T2B2YTJQ",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -174,7 +174,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "7LUYHGHTU4FB5ZAEMHQCR7JBZWQSO42DXSA6ZNK62RHWFYTHOS4Q===="
+          "battery/hash": "QGQYB7XMDTWYPA5NEFNPAUOTJMMRFPOFK24SHCFQJHFFZKHPNRVA===="
         },
         "labels": {
           "app": "battery-core",
@@ -219,7 +219,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "5VPW4GTRWTPCSGRMY4TA4VKXPFTZ7UVGZAOCHWQHLYJEB2YYLRIRPHOZOCND7ODD"
+                    "value": "PXGG5SSLCXS6Q2RZP4YLIB7G5UIZNBYSI7UFQ52G3TUEEEU6AR6HSZBJDMDT377Y"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",
