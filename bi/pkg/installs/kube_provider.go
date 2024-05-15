@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"slices"
 
 	"bi/pkg/cluster/kind"
 	"bi/pkg/specs"
@@ -87,10 +86,6 @@ func (env *InstallEnv) startAWS(ctx context.Context) error {
 		return fmt.Errorf("error parsing cluster outputs: %w", err)
 	}
 
-	if err := env.configureCoreBattery(parsed); err != nil {
-		return fmt.Errorf("error configuring core battery: %w", err)
-	}
-
 	if err := env.configureLBControllerBattery(parsed); err != nil {
 		return fmt.Errorf("error configuring lb controller battery: %w", err)
 	}
@@ -121,46 +116,26 @@ func parseEKSOutputs(output []byte) (*eksOutputs, error) {
 	return o, err
 }
 
-func ixFunc(typ string) func(specs.BatterySpec) bool {
-	return func(bs specs.BatterySpec) bool {
-		return bs.Type == typ
-	}
-}
-
-// NOTE(jdt): this should hopefully be temporary until we generate cluster name before spinning up cluster
-func (env *InstallEnv) configureCoreBattery(outputs *eksOutputs) error {
-	ix := slices.IndexFunc(env.Spec.TargetSummary.Batteries, ixFunc("battery_core"))
-
-	if ix < 0 {
-		return fmt.Errorf("tried to configure core battery but it wasn't found in install spec")
-	}
-
-	env.Spec.TargetSummary.Batteries[ix].Config["cluster_name"] = outputs.Cluster["name"].Value
-	return nil
-}
-
 func (env *InstallEnv) configureLBControllerBattery(outputs *eksOutputs) error {
-	ix := slices.IndexFunc(env.Spec.TargetSummary.Batteries, ixFunc("aws_load_balancer_controller"))
-
-	if ix < 0 {
+	b, err := specs.GetBatteryByType(env.Spec.TargetSummary.Batteries, "aws_load_balancer_controller")
+	if err != nil {
 		return fmt.Errorf("tried to configure aws_load_balancer_controller battery but it wasn't found in install spec")
 	}
 
-	env.Spec.TargetSummary.Batteries[ix].Config["service_role_arn"] = outputs.LBController["roleARN"].Value
+	b.Config["service_role_arn"] = outputs.LBController["roleARN"].Value
 
 	return nil
 }
 
 func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
-	ix := slices.IndexFunc(env.Spec.TargetSummary.Batteries, ixFunc("karpenter"))
-
-	if ix < 0 {
+	b, err := specs.GetBatteryByType(env.Spec.TargetSummary.Batteries, "karpenter")
+	if err != nil {
 		return fmt.Errorf("tried to configure karpenter battery but it wasn't found in install spec")
 	}
 
-	env.Spec.TargetSummary.Batteries[ix].Config["node_role_name"] = outputs.Cluster["nodeRoleName"].Value
-	env.Spec.TargetSummary.Batteries[ix].Config["queue_name"] = outputs.Karpenter["queueName"].Value
-	env.Spec.TargetSummary.Batteries[ix].Config["service_role_arn"] = outputs.Karpenter["roleARN"].Value
+	b.Config["node_role_name"] = outputs.Cluster["nodeRoleName"].Value
+	b.Config["queue_name"] = outputs.Karpenter["queueName"].Value
+	b.Config["service_role_arn"] = outputs.Karpenter["roleARN"].Value
 
 	return nil
 }

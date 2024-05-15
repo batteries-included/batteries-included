@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"slices"
 )
 
 func (spec *InstallSpec) WriteStateSummary(path string) error {
@@ -31,7 +30,7 @@ func (spec *InstallSpec) WriteSummaryToKube(ctx context.Context, kubeClient kube
 		return fmt.Errorf("unable to marshal state summary: %w", err)
 	}
 
-	ns, err := coreNamespace(spec.TargetSummary.Batteries)
+	ns, err := GetBatteryConfigField(spec.TargetSummary.Batteries, "battery_core", "core_namespace")
 	if err != nil {
 		return fmt.Errorf("unable to find namespace: %w", err)
 	}
@@ -52,13 +51,4 @@ func (spec *InstallSpec) WriteSummaryToKube(ctx context.Context, kubeClient kube
 	}
 
 	return nil
-}
-
-func coreNamespace(batteries []BatterySpec) (string, error) {
-	ix := slices.IndexFunc(batteries, func(bs BatterySpec) bool { return bs.Type == "battery_core" })
-	if ix < 0 {
-		return "", fmt.Errorf("failed to find core battery")
-	}
-
-	return batteries[ix].Config["core_namespace"].(string), nil
 }
