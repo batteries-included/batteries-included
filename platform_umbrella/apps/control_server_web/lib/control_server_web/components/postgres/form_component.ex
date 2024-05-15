@@ -305,9 +305,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   defp add_default_storage_class(params), do: Map.put_new(params, "storage_class", get_default_storage_class())
 
   defp copy_embeds_from_changeset(params, changeset) do
-    params
-    |> copy_embed(changeset, :users)
-    |> copy_single_embed(changeset, :database)
+    copy_embed(params, changeset, :users)
   end
 
   defp copy_embed(params, changeset, field) do
@@ -319,15 +317,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         |> Map.from_struct()
         |> atom_keys_to_string_keys()
       end)
-
-    Map.put(params, Atom.to_string(field), value)
-  end
-
-  defp copy_single_embed(params, changeset, field) do
-    value =
-      changeset
-      |> Changeset.get_field(field, %{})
-      |> atom_keys_to_string_keys()
 
     Map.put(params, Atom.to_string(field), value)
   end

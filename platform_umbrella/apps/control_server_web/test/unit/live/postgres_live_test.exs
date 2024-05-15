@@ -106,6 +106,35 @@ defmodule ControlServerWeb.PostgresLiveTest do
       assert Enum.find(cluster.users, &(&1.roles == valid_user_params["roles"]))
     end
 
+    test "can create a cluster with user and database owner", %{conn: conn} do
+      valid_user_params = %{"roles" => ["inherit", "replication"], "username" => "a_new_user"}
+
+      attrs = %{
+        name: "with-user-owned-db",
+        virtual_size: "small",
+        num_instances: 5,
+        database: %{
+          name: "test",
+          owner: "a_new_user"
+        }
+      }
+
+      conn
+      |> start(~p|/postgres/new|)
+      |> click("button", "New User")
+      |> submit_form("#user-form", %{"pg_user" => valid_user_params})
+      |> assert_html(valid_user_params["username"])
+      |> assert_html("inherit")
+      |> assert_html("replication")
+      |> submit_form("#cluster-form", cluster: attrs)
+
+      cluster = Repo.get_by(Cluster, name: attrs.name)
+
+      assert cluster.num_instances == 5
+      assert cluster.database.name == "test"
+      assert cluster.database.owner == "a_new_user"
+    end
+
     test "can delete a user", %{conn: conn} do
       valid_user_params = %{"roles" => ["inherit", "replication"], "username" => "a_new_user"}
 
