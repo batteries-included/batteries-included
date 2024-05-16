@@ -3,15 +3,16 @@ defmodule HomeBase.Factory do
   use ExMachina.Ecto, repo: HomeBase.Repo
 
   alias CommonCore.Accounts.User
+  alias CommonCore.Installation
   alias CommonCore.Teams.Team
   alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts
   alias HomeBase.ET.StoredUsageReport
 
+  defdelegate usage_report_factory(), to: CommonCore.Factory
+
   def stored_usage_report_factory do
-    %StoredUsageReport{
-      report: CommonCore.Factory.usage_report_factory()
-    }
+    %StoredUsageReport{report: build(:usage_report), installation: build(:installation)}
   end
 
   def user_factory do
@@ -34,6 +35,16 @@ defmodule HomeBase.Factory do
   def team_role_factory do
     %TeamRole{
       is_admin: false
+    }
+  end
+
+  def installation_factory do
+    %Installation{
+      slug: sequence("installation-"),
+      usage: sequence(:usage, [:kitchen_sink, :development, :production]),
+      kube_provider: sequence(:kube_provider, [:kind, :aws, :provided]),
+      kube_provider_config: %{},
+      default_size: sequence(:default_size, [:tiny, :small, :medium, :large, :xlarge, :huge])
     }
   end
 

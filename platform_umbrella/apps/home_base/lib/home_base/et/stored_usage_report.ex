@@ -1,13 +1,18 @@
 defmodule HomeBase.ET.StoredUsageReport do
   @moduledoc false
-  use CommonCore, :schema
+  use CommonCore, {:schema, no_encode: [:installation]}
 
-  @required_fields ~w(report)a
+  @required_fields ~w(report installation_id)a
 
   batt_schema "stored_usage_reports" do
-    field :installation_id, :binary_id
+    # Every usage report belongs to a single installation
+    # That installation reported how many pods were used
+    belongs_to :installation, CommonCore.Installation
+
+    # This is what the install told us
     embeds_one :report, CommonCore.ET.UsageReport, on_replace: :delete
 
+    # This is when they told us
     timestamps()
   end
 end

@@ -2,19 +2,7 @@ defmodule EventCenter.SystemStateSummaryTest do
   use ExUnit.Case
 
   test "publishes event to subscribers" do
-    payload = %{
-      batteries: [],
-      postgres_clusters: [],
-      redis_clusters: [],
-      ferret_services: [],
-      backend_services: [],
-      notebooks: [],
-      knative_services: [],
-      ip_address_pools: [],
-      projects: [],
-      keycloak_state: nil,
-      kube_state: %{}
-    }
+    payload = CommonCore.StateSummary.new!()
 
     EventCenter.SystemStateSummary.subscribe()
     EventCenter.SystemStateSummary.broadcast(payload)

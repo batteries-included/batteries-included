@@ -12,17 +12,18 @@ defmodule HomeBase.ETTest do
 
     test "list_stored_usage_reports/0 returns all stored_usage_reports" do
       stored_usage_report = insert(:stored_usage_report)
-      assert ET.list_stored_usage_reports() == [stored_usage_report]
+      assert Enum.map(ET.list_stored_usage_reports(), & &1.id) == [stored_usage_report.id]
     end
 
     test "get_stored_usage_report!/1 returns the stored_usage_report with given id" do
       stored_usage_report = insert(:stored_usage_report)
 
-      assert ET.get_stored_usage_report!(stored_usage_report.id) == stored_usage_report
+      assert ET.get_stored_usage_report!(stored_usage_report.id).id == stored_usage_report.id
     end
 
     test "create_stored_usage_report/1 with valid data creates a stored_usage_report" do
-      valid_attrs = params_for(:stored_usage_report)
+      install = insert(:installation)
+      valid_attrs = params_for(:stored_usage_report, installation_id: install.id)
 
       assert {:ok, %StoredUsageReport{} = _stored_usage_report} = ET.create_stored_usage_report(valid_attrs)
     end
@@ -33,7 +34,7 @@ defmodule HomeBase.ETTest do
 
     test "update_stored_usage_report/2 with valid data updates the stored_usage_report" do
       stored_usage_report = insert(:stored_usage_report)
-      report = CommonCore.Factory.usage_report_factory()
+      report = build(:usage_report)
       update_attrs = %{report: report}
 
       assert {:ok, %StoredUsageReport{} = stored_usage_report} =
@@ -45,7 +46,8 @@ defmodule HomeBase.ETTest do
     test "update_stored_usage_report/2 with invalid data returns error changeset" do
       stored_usage_report = insert(:stored_usage_report)
       assert {:error, %Ecto.Changeset{}} = ET.update_stored_usage_report(stored_usage_report, @invalid_attrs)
-      assert stored_usage_report == ET.get_stored_usage_report!(stored_usage_report.id)
+      assert stored_usage_report.id == ET.get_stored_usage_report!(stored_usage_report.id).id
+      assert stored_usage_report.report == ET.get_stored_usage_report!(stored_usage_report.id).report
     end
 
     test "delete_stored_usage_report/1 deletes the stored_usage_report" do

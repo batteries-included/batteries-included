@@ -345,70 +345,89 @@ defmodule CommonCore.Ecto.Schema do
 
     to_cast = Enum.concat(fields, virtual_fields) -- embeds
 
-    changeset = Ecto.Changeset.cast(base, sanitize_opts(opts), to_cast)
+    base
+    |> Ecto.Changeset.cast(sanitize_opts(opts), to_cast)
+    |> add_embeds(struct)
+    |> add_polymorphic_fields(struct)
+    |> add_defaultable_fields(struct)
+    |> add_generated_secret_values(struct)
+    |> add_slug_field_validations(struct)
+    |> add_foreign_key_constraints(struct)
+    |> add_required_fields(struct)
+  end
 
-    changeset =
-      embeds
-      |> Enum.reduce(changeset, fn embed_field, chg ->
-        Ecto.Changeset.cast_embed(chg, embed_field)
-      end)
-      |> then(fn chg ->
-        # Grab the polymorphic type if it exists
-        # If its nil we don't need to do anything
-        poly = struct.__schema__(:polymorphic_type)
+  defp add_embeds(changeset, struct) do
+    embeds = struct.__schema__(:embeds)
 
-        if poly != nil do
-          # Here we explicitly add the type field to the changeset
-          Ecto.Changeset.put_change(chg, :type, poly)
-        else
+    Enum.reduce(embeds, changeset, fn embed_field, chg -> Ecto.Changeset.cast_embed(chg, embed_field) end)
+  end
+
+  defp add_polymorphic_fields(changeset, struct) do
+    # Grab the polymorphic type if it exists
+    # If its nil we don't need to do anything
+    poly = struct.__schema__(:polymorphic_type)
+
+    if poly != nil do
+      Ecto.Changeset.put_change(changeset, :type, poly)
+    else
+      changeset
+    end
+  end
+
+  defp add_defaultable_fields(changeset, struct) do
+    :defaultable_fields
+    |> struct.__schema__()
+    |> Enum.reduce(changeset, fn [virtual_name, stored_name, default], chg ->
+      stored_value = Ecto.Changeset.get_field(chg, stored_name, nil)
+      virtual_value = Ecto.Changeset.get_field(chg, virtual_name, nil)
+
+      cond do
+        stored_value != nil and virtual_value != stored_value ->
+          Ecto.Changeset.put_change(chg, virtual_name, stored_value)
+
+        virtual_value == nil and default != nil ->
+          Ecto.Changeset.put_change(chg, virtual_name, default)
+
+        true ->
           chg
-        end
-      end)
+      end
+    end)
+  end
 
-    # Add the Defaultable fields to the changeset
-    changeset =
-      :defaultable_fields
-      |> struct.__schema__()
-      |> Enum.reduce(changeset, fn [virtual_name, stored_name, default], chg ->
-        # Field by field we get if the virtual field needs to be set
-        # (eg it's nil and shouldn't be or it doesn't match)
-        stored_value = Ecto.Changeset.get_field(chg, stored_name, nil)
-        virtual_value = Ecto.Changeset.get_field(chg, virtual_name, nil)
+  defp add_generated_secret_values(changeset, struct) do
+    :generated_secrets
+    |> struct.__schema__()
+    |> Enum.reduce(changeset, fn [name, opts], chg ->
+      CommonCore.Ecto.Validations.maybe_set_random(chg, name, opts)
+    end)
+  end
 
-        cond do
-          stored_value != nil and virtual_value != stored_value ->
-            Ecto.Changeset.put_change(chg, virtual_name, stored_value)
+  defp add_slug_field_validations(changeset, struct) do
+    :slug_fields
+    |> struct.__schema__()
+    |> Enum.reduce(changeset, fn name, chg ->
+      chg
+      |> CommonCore.Ecto.Validations.maybe_fill_in_slug(name)
+      |> CommonCore.Ecto.Validations.downcase_fields([name])
+      |> CommonCore.Ecto.Validations.validate_dns_label(name)
+    end)
+  end
 
-          virtual_value == nil and default != nil ->
-            Ecto.Changeset.put_change(chg, virtual_name, default)
+  defp add_foreign_key_constraints(changeset, struct) do
+    :associations
+    |> struct.__schema__()
+    |> Enum.reduce(changeset, fn field, chg ->
+      case struct.__schema__(:association, field) do
+        %Ecto.Association.BelongsTo{owner_key: owner_field} ->
+          Ecto.Changeset.foreign_key_constraint(chg, owner_field)
 
-          true ->
-            chg
-        end
-      end)
+        _ ->
+          chg
+      end
+    end)
+  end
 
-    # For each generated secret we check if it's nil
-    # If it is we set a random value
-    changeset =
-      :generated_secrets
-      |> struct.__schema__()
-      |> Enum.reduce(changeset, fn [name, opts], chg ->
-        CommonCore.Ecto.Validations.maybe_set_random(chg, name, opts)
-      end)
-
-    # Slug fields get filled in if they are blank and
-    # we assume that they need to be valid DNS labels
-    changeset =
-      :slug_fields
-      |> struct.__schema__()
-      |> Enum.reduce(changeset, fn name, chg ->
-        chg
-        |> CommonCore.Ecto.Validations.maybe_fill_in_slug(name)
-        |> CommonCore.Ecto.Validations.downcase_fields([name])
-        |> CommonCore.Ecto.Validations.validate_dns_label(name)
-      end)
-
-    # Validate that required fields are there
+  defp add_required_fields(changeset, struct) do
     Ecto.Changeset.validate_required(changeset, struct.__schema__(:required_fields) || [])
   end
 
