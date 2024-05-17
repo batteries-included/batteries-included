@@ -5,11 +5,7 @@ defmodule HomeBaseWeb.ResetPasswordLiveTest do
 
   setup do
     user = :user |> params_for() |> register_user!()
-
-    token =
-      extract_user_token(fn url ->
-        Accounts.deliver_user_reset_password_instructions(user, url)
-      end)
+    {:ok, token} = Accounts.get_user_reset_password_token(user)
 
     %{token: token, user: user}
   end

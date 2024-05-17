@@ -49,6 +49,20 @@ defmodule HomeBaseWeb do
     end
   end
 
+  def email do
+    quote do
+      use Phoenix.Component
+
+      use CommonUI.EmailHelpers,
+        endpoint: HomeBaseWeb.Endpoint,
+        from: {"Batteries Included", "system@batteriesincl.com"},
+        street_address: "Batteries Included, 123 Easy St, New York, NY 10001",
+        logo_path: "/images/logo.png"
+
+      unquote(html_helpers())
+    end
+  end
+
   def live_view do
     quote do
       use Phoenix.LiveView

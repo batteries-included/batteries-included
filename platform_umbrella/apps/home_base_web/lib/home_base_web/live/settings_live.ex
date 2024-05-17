@@ -74,9 +74,14 @@ defmodule HomeBaseWeb.SettingsLive do
   defp maybe_assign_team(socket), do: socket
 
   def handle_event("resend_confirm", _params, socket) do
-    case Accounts.deliver_user_confirmation_instructions(socket.assigns.current_user, &url(~p"/confirm/#{&1}")) do
-      {:ok, _} -> {:noreply, assign(socket, :confirmation_resent, true)}
-      _ -> {:noreply, assign(socket, :confirmation_resent, false)}
+    with {:ok, token} <- Accounts.get_user_confirmation_token(socket.assigns.current_user),
+         {:ok, _} <-
+           %{url: url(~p"/confirm/#{token}")}
+           |> HomeBaseWeb.ConfirmEmail.render()
+           |> HomeBase.Mailer.deliver() do
+      {:noreply, assign(socket, :confirmation_resent, true)}
+    else
+      _ -> {:noreply, put_flash(socket, :global_error, "Could not resend confirmation email")}
     end
   end
 
@@ -93,22 +98,22 @@ defmodule HomeBaseWeb.SettingsLive do
   def handle_event("update_email", %{"current_password" => password, "user" => user_params}, socket) do
     user = socket.assigns.current_user
 
-    case Accounts.apply_user_email(user, password, user_params) do
-      {:ok, applied_user} ->
-        {:ok, _} =
-          Accounts.deliver_user_update_email_instructions(
-            applied_user,
-            user.email,
-            &url(~p"/settings/#{&1}")
-          )
-
-        {:noreply,
-         socket
-         |> assign(email_form_current_password: nil)
-         |> put_flash(:info, "A link to confirm your email change has been sent to the new address.")}
-
+    with {:ok, applied_user} <- Accounts.apply_user_email(user, password, user_params),
+         {:ok, token} <- Accounts.get_user_update_email_token(applied_user, user.email),
+         {:ok, _} <-
+           %{url: url(~p"/settings/#{token}")}
+           |> HomeBaseWeb.ConfirmEmail.render()
+           |> HomeBase.Mailer.deliver() do
+      {:noreply,
+       socket
+       |> assign(email_form_current_password: nil)
+       |> put_flash(:info, "A link to confirm your email change has been sent to the new address.")}
+    else
       {:error, changeset} ->
         {:noreply, assign(socket, :email_form, to_form(Map.put(changeset, :action, :insert)))}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not update email address")}
     end
   end
 

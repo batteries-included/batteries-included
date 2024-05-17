@@ -188,18 +188,14 @@ defmodule HomeBase.AccountsTest do
     end
   end
 
-  describe "deliver_user_update_email_instructions/3" do
+  describe "get_user_update_email_token/2" do
     setup do
       %{user: user_fixture()}
     end
 
-    test "sends token through notification", %{user: user} do
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(user, "current@example.com", url)
-        end)
-
-      {:ok, token} = Base.url_decode64(token, padding: false)
+    test "gets token for user", %{user: user} do
+      assert {:ok, token} = Accounts.get_user_update_email_token(user, "current@example.com")
+      assert {:ok, token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
@@ -212,10 +208,7 @@ defmodule HomeBase.AccountsTest do
       user = user_fixture()
       email = unique_user_email()
 
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
-        end)
+      {:ok, token} = Accounts.get_user_update_email_token(%{user | email: email}, user.email)
 
       %{user: user, token: token, email: email}
     end
@@ -391,18 +384,14 @@ defmodule HomeBase.AccountsTest do
     end
   end
 
-  describe "deliver_user_confirmation_instructions/2" do
+  describe "get_user_confirmation_token/1" do
     setup do
       %{user: user_fixture()}
     end
 
-    test "sends token through notification", %{user: user} do
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_confirmation_instructions(user, url)
-        end)
-
-      {:ok, token} = Base.url_decode64(token, padding: false)
+    test "gets token for user", %{user: user} do
+      assert {:ok, token} = Accounts.get_user_confirmation_token(user)
+      assert {:ok, token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
@@ -414,10 +403,7 @@ defmodule HomeBase.AccountsTest do
     setup do
       user = user_fixture()
 
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_confirmation_instructions(user, url)
-        end)
+      {:ok, token} = Accounts.get_user_confirmation_token(user)
 
       %{user: user, token: token}
     end
@@ -444,18 +430,14 @@ defmodule HomeBase.AccountsTest do
     end
   end
 
-  describe "deliver_user_reset_password_instructions/2" do
+  describe "get_user_reset_password_token/1" do
     setup do
       %{user: user_fixture()}
     end
 
-    test "sends token through notification", %{user: user} do
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_reset_password_instructions(user, url)
-        end)
-
-      {:ok, token} = Base.url_decode64(token, padding: false)
+    test "gets token for user", %{user: user} do
+      assert {:ok, token} = Accounts.get_user_reset_password_token(user)
+      assert {:ok, token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
@@ -467,10 +449,7 @@ defmodule HomeBase.AccountsTest do
     setup do
       user = user_fixture()
 
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_reset_password_instructions(user, url)
-        end)
+      {:ok, token} = Accounts.get_user_reset_password_token(user)
 
       %{user: user, token: token}
     end

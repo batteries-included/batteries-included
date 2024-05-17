@@ -14,10 +14,13 @@ defmodule HomeBaseWeb.ForgotPasswordLive do
   def handle_event("send", %{"email" => email}, socket) do
     # Don't error out no matter what just in case this is an enumeration attack
     if user = Accounts.get_user_by_email(email) do
-      case Accounts.deliver_user_reset_password_instructions(
-             user,
-             &url(~p"/reset/#{&1}")
-           ) do
+      with {:ok, token} <- Accounts.get_user_reset_password_token(user),
+           {:ok, _} <-
+             %{url: url(~p"/reset/#{token}")}
+             |> HomeBaseWeb.ResetPasswordEmail.render()
+             |> HomeBase.Mailer.deliver() do
+        # No action needed here, the with statement is to appease dialyzer (-_-)
+      else
         _ -> nil
       end
     end

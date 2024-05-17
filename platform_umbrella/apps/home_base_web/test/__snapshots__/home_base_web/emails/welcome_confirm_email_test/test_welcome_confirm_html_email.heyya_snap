@@ -1,0 +1,35 @@
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
+  <tr>
+    <td class="wrapper">
+      
+  <p>Hi there,</p>
+  <p>
+    Welcome to Batteries Included! We are so excited to have you here. Please click on the button below to confirm your email address.
+  </p>
+  <br>
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary center">
+  <tbody>
+    <tr>
+      <td align="center">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td>
+                <a href="/confirm" target="_blank">Confirm my email</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+  <br>
+  <p>
+    If you have any questions or feedback, please don't hesitate to reply to this email. We'd love to hear from you! If you want to read more about our vision and roadmap, visit <a href="https://www.batteriesincl.com/posts" target="_blank">our blog</a>.
+  </p>
+  <p>All the best,<br>The Batteries Included Team</p>
+
+    </td>
+  </tr>
+</table>

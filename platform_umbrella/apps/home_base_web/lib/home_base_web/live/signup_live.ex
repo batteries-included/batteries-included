@@ -17,7 +17,11 @@ defmodule HomeBaseWeb.SignupLive do
 
   def handle_event("save", %{"user" => user_params}, socket) do
     with {:ok, user} <- Accounts.register_user(user_params),
-         {:ok, _} <- Accounts.deliver_user_confirmation_instructions(user, &url(~p"/confirm/#{&1}")) do
+         {:ok, token} <- Accounts.get_user_confirmation_token(user),
+         {:ok, _} <-
+           %{url: url(~p"/confirm/#{token}")}
+           |> HomeBaseWeb.WelcomeConfirmEmail.render()
+           |> HomeBase.Mailer.deliver() do
       changeset = Accounts.change_user_registration(user)
 
       {:noreply, assign(socket, form: to_form(changeset), trigger_submit: true)}

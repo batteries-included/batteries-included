@@ -38,13 +38,15 @@ defmodule CommonUI.MixProject do
       {:bandit, "~> 1.4"},
       {:heroicons, "~> 0.5"},
       {:jason, "~> 1.4"},
-      {:phoenix, "~> 1.7"},
+      {:swoosh, "~> 1.16"},
+      {:premailex, "~> 0.3"},
+      {:floki, "~> 0.36"},
       {:gettext, "~> 0.20"},
+      {:phoenix, "~> 1.7"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_view, "~> 0.20", override: true},
       {:phoenix_storybook, "~> 0.6"},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
-      {:floki, "~> 0.36", only: [:dev, :test, :integration]},
       {:heyya, "~> 0.8", only: [:dev, :test, :integration]}
     ]
   end

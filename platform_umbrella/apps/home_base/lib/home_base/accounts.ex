@@ -4,7 +4,6 @@ defmodule HomeBase.Accounts do
 
   alias CommonCore.Accounts.User
   alias CommonCore.Teams.TeamRole
-  alias HomeBase.Accounts.UserNotifier
   alias HomeBase.Accounts.UserToken
 
   ## Database getters
@@ -176,20 +175,19 @@ defmodule HomeBase.Accounts do
   end
 
   @doc ~S"""
-  Delivers the update email instructions to the given user.
+  Gets the update email token for the given user.
 
   ## Examples
 
-      iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/users/settings/confirm_email/#{&1})")
-      {:ok, %{to: ..., body: ...}}
+      iex> get_user_update_email_token(user, current_email)
+      {:ok, token}
 
   """
-  def deliver_user_update_email_instructions(%User{} = user, current_email, update_email_url_fun)
-      when is_function(update_email_url_fun, 1) do
+  def get_user_update_email_token(%User{} = user, current_email) do
     {encoded_token, user_token} = UserToken.build_email_token(user, "change:#{current_email}")
-
     Repo.insert!(user_token)
-    UserNotifier.deliver_update_email_instructions(user, update_email_url_fun.(encoded_token))
+
+    {:ok, encoded_token}
   end
 
   @doc """
@@ -270,25 +268,25 @@ defmodule HomeBase.Accounts do
   ## Confirmation
 
   @doc ~S"""
-  Delivers the confirmation email instructions to the given user.
+  Gets a confirmation token for the given user.
 
   ## Examples
 
-      iex> deliver_user_confirmation_instructions(user, &url(~p"/users/confirm/#{&1}"))
-      {:ok, %{to: ..., body: ...}}
+      iex> get_user_confirmation_token(user)
+      {:ok, token}
 
-      iex> deliver_user_confirmation_instructions(confirmed_user, &url(~p"/users/confirm/#{&1}"))
+      iex> get_user_confirmation_token(confirmed_user)
       {:error, :already_confirmed}
 
   """
-  def deliver_user_confirmation_instructions(%User{} = user, confirmation_url_fun)
-      when is_function(confirmation_url_fun, 1) do
+  def get_user_confirmation_token(%User{} = user) do
     if user.confirmed_at do
       {:error, :already_confirmed}
     else
       {encoded_token, user_token} = UserToken.build_email_token(user, "confirm")
       Repo.insert!(user_token)
-      UserNotifier.deliver_confirmation_instructions(user, confirmation_url_fun.(encoded_token))
+
+      {:ok, encoded_token}
     end
   end
 
@@ -317,19 +315,19 @@ defmodule HomeBase.Accounts do
   ## Reset password
 
   @doc ~S"""
-  Delivers the reset password email to the given user.
+  Gets a reset password token for the given user.
 
   ## Examples
 
-      iex> deliver_user_reset_password_instructions(user, &url(~p"/users/reset_password/#{&1}"))
-      {:ok, %{to: ..., body: ...}}
+      iex> get_user_reset_password_token(user)
+      {:ok, token}
 
   """
-  def deliver_user_reset_password_instructions(%User{} = user, reset_password_url_fun)
-      when is_function(reset_password_url_fun, 1) do
+  def get_user_reset_password_token(%User{} = user) do
     {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
     Repo.insert!(user_token)
-    UserNotifier.deliver_reset_password_instructions(user, reset_password_url_fun.(encoded_token))
+
+    {:ok, encoded_token}
   end
 
   @doc """

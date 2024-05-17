@@ -5,7 +5,7 @@ defmodule HomeBaseWeb.Layouts do
   alias CommonCore.Accounts.User
 
   attr :page_title, :string, default: nil
-  slot :inner_content
+  attr :inner_content, :any
 
   def root(assigns) do
     ~H"""
@@ -34,7 +34,7 @@ defmodule HomeBaseWeb.Layouts do
 
   attr :flash, :map
   attr :current_user, User
-  slot :inner_content
+  attr :inner_content, :any
 
   def auth(assigns) do
     ~H"""
@@ -72,7 +72,7 @@ defmodule HomeBaseWeb.Layouts do
   attr :flash, :map
   attr :current_user, User
   attr :page, :atom, default: nil
-  slot :inner_content
+  attr :inner_content, :any
 
   def app(assigns) do
     ~H"""

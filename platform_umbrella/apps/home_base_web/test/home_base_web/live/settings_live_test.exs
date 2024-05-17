@@ -47,11 +47,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
     setup %{conn: conn} do
       user = :user |> params_for() |> register_user!()
       email = unique_user_email()
-
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
-        end)
+      {:ok, token} = Accounts.get_user_update_email_token(%{user | email: email}, user.email)
 
       %{conn: log_in_user(conn, user), token: token, email: email, user: user}
     end

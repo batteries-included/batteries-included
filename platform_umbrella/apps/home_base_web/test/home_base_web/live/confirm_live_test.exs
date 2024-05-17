@@ -16,11 +16,7 @@ defmodule HomeBaseWeb.ConfirmLiveTest do
     end
 
     test "confirms the given token once", %{conn: conn, user: user} do
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_confirmation_instructions(user, url)
-        end)
-
+      {:ok, token} = Accounts.get_user_confirmation_token(user)
       {:ok, lv, _html} = live(conn, ~p"/confirm/#{token}")
 
       result =
