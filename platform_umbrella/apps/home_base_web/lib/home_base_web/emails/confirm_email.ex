@@ -2,7 +2,9 @@ defmodule HomeBaseWeb.ConfirmEmail do
   @moduledoc false
   use HomeBaseWeb, :email
 
-  def subject, do: "Please confirm your email address"
+  def subject(_email) do
+    "Please confirm your email address"
+  end
 
   def text(assigns) do
     ~s"""

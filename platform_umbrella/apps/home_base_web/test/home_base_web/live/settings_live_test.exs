@@ -104,6 +104,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
              |> render_click() =~ "Email resent"
 
       assert Repo.get_by!(UserToken, user_id: user.id, context: "confirm")
+      assert_email_sent(to: [{"", user.email}])
     end
 
     test "does not send confirmation token if user is confirmed", %{conn: conn, user: user} do
@@ -113,6 +114,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
 
       refute has_element?(lv, ~s|a:fl-contains("Resend confirmation email")|)
       refute Repo.get_by(UserToken, user_id: user.id, context: "confirm")
+      refute_email_sent()
     end
   end
 
@@ -139,6 +141,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
 
       assert result =~ "A link to confirm your email"
       assert Accounts.get_user_by_email(user.email)
+      assert_email_sent(to: [{"", new_email}])
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
@@ -321,6 +324,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
 
       assert role = Repo.get_by!(TeamRole, invited_email: @valid_attrs.invited_email)
       assert has_element?(view, "#update-role-form-#{role.id}")
+      assert_email_sent(to: [{"", @valid_attrs.invited_email}])
     end
 
     test "should update a role", ctx do
@@ -336,7 +340,8 @@ defmodule HomeBaseWeb.SettingsLiveTest do
     end
 
     test "should delete a role", ctx do
-      role = insert(:team_role, team: ctx.team, user: insert(:user))
+      user = insert(:user)
+      role = insert(:team_role, team: ctx.team, user: user)
 
       assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
 
@@ -345,6 +350,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
              |> render_click() =~ role.id
 
       refute Repo.get(TeamRole, role.id)
+      assert_email_sent(to: [{"", user.email}])
     end
 
     test "should not show actions for current user role", ctx do
@@ -360,6 +366,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
       assert {:ok, view, _} = live(ctx.conn, ~p"/settings")
       assert render_hook(view, :delete_role, %{"id" => role.id}) =~ escape("don't have permission")
       assert Repo.get!(TeamRole, role.id)
+      refute_email_sent()
     end
   end
 
@@ -404,6 +411,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
 
       assert_redirected(view, ~p"/teams/personal")
       refute Repo.get(TeamRole, ctx.role.id)
+      refute_email_sent()
     end
 
     test "should not leave team if last admin", ctx do

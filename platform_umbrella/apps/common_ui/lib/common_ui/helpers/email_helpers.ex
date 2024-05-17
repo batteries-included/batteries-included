@@ -50,8 +50,9 @@ defmodule CommonUI.EmailHelpers do
 
   ## Functions
 
-    * `subject/0` - Use this function to define the email
+    * `subject/1` - Use this function to define the email
       subject. No subject will be set if this is not defined.
+      Receives the Swoosh.Email struct as the first argument.
 
     * `text/1` - Use this function to define the plain text
       template. Receives the assigns as the first argument.
@@ -95,7 +96,7 @@ defmodule CommonUI.EmailHelpers do
   end
 
   def assign_subject(email, module) do
-    subject = module.subject()
+    subject = module.subject(email)
 
     email
     |> Swoosh.Email.subject(subject)

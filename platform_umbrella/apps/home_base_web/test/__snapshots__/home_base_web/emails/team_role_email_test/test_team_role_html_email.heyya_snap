@@ -1,0 +1,31 @@
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
+  <tr>
+    <td class="wrapper">
+      
+  <p>Hi there,</p>
+  <p>
+    We're just letting you know that you've been added to the <b>test</b>
+    team. You can now view and manage your team's installations.
+  </p>
+  <br>
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary center">
+  <tbody>
+    <tr>
+      <td align="center">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td>
+                <a href="/installations" target="_blank">View installations</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </td>
+  </tr>
+</table>

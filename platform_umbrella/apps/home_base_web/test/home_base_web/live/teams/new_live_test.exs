@@ -3,7 +3,15 @@ defmodule HomeBaseWeb.TeamsNewLiveTest do
 
   alias CommonCore.Teams.Team
 
-  @valid_params %{"name" => "Foobar", "op_email" => "foo@bar.com"}
+  @valid_params %{
+    "name" => "Foobar",
+    "op_email" => "foo@bar.com",
+    "roles" => %{
+      "0" => %{"invited_email" => "jane@doe.com"},
+      "1" => %{"invited_email" => "john@doe.com"}
+    }
+  }
+
   @invalid_params %{"name" => "Personal", "op_email" => "invalid"}
 
   setup :register_and_log_in_user
@@ -70,5 +78,6 @@ defmodule HomeBaseWeb.TeamsNewLiveTest do
 
     assert %{id: id} = Repo.get_by!(Team, name: "Foobar")
     assert_redirected(view, ~p"/teams/#{id}?redirect_to=/")
+    assert_emails_sent([%{to: [{"", "jane@doe.com"}]}, %{to: [{"", "john@doe.com"}]}])
   end
 end

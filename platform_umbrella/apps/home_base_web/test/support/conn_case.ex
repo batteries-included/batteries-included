@@ -28,6 +28,7 @@ defmodule HomeBaseWeb.ConnCase do
       import Phoenix.ConnTest
       import Phoenix.LiveViewTest
       import Plug.Conn
+      import Swoosh.TestAssertions
 
       alias HomeBase.Repo
 

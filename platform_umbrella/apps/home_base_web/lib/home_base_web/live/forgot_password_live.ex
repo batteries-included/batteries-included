@@ -16,7 +16,7 @@ defmodule HomeBaseWeb.ForgotPasswordLive do
     if user = Accounts.get_user_by_email(email) do
       with {:ok, token} <- Accounts.get_user_reset_password_token(user),
            {:ok, _} <-
-             %{url: url(~p"/reset/#{token}")}
+             %{to: email, url: url(~p"/reset/#{token}")}
              |> HomeBaseWeb.ResetPasswordEmail.render()
              |> HomeBase.Mailer.deliver() do
         # No action needed here, the with statement is to appease dialyzer (-_-)

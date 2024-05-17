@@ -23,13 +23,13 @@ defmodule HomeBaseWeb.TeamsNewLive do
   end
 
   def handle_event("save", %{"team" => params}, socket) do
-    case Teams.create_team(socket.assigns.current_user, params) do
-      {:ok, team} ->
-        {:noreply,
-         socket
-         |> put_flash(:global_success, "Team created successfully")
-         |> redirect(to: ~p"/teams/#{team.id}?redirect_to=/")}
-
+    with {:ok, team} <- Teams.create_team(socket.assigns.current_user, params),
+         {:ok, _} <- notify_users_of_role(team) do
+      {:noreply,
+       socket
+       |> put_flash(:global_success, "Team created successfully")
+       |> redirect(to: ~p"/teams/#{team.id}?redirect_to=/")}
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         # Leave an empty role input to prevent the need for an extra click
         changeset =
@@ -40,7 +40,25 @@ defmodule HomeBaseWeb.TeamsNewLive do
           end
 
         {:noreply, assign(socket, :form, to_form(changeset))}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not notify team members")}
     end
+  end
+
+  defp notify_users_of_role(team) do
+    team.roles
+    |> Enum.map(fn role ->
+      # Send a different email to users that already have an account
+      case role.user do
+        %{email: email} ->
+          HomeBaseWeb.TeamRoleEmail.render(%{to: email, team: team, url: url(~p"/installations")})
+
+        _ ->
+          HomeBaseWeb.TeamInvitedEmail.render(%{to: role.invited_email, team: team, url: url(~p"/signup")})
+      end
+    end)
+    |> HomeBase.Mailer.deliver_many()
   end
 
   def render(assigns) do

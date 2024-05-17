@@ -9,7 +9,7 @@ defmodule CommonUI.EmailHelpersTest do
 
   import Phoenix.Component
 
-  def subject, do: "This is a subject"
+  def subject(_email), do: "This is a subject"
 
   def text(assigns) do
     ~s"""

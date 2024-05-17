@@ -123,6 +123,7 @@ defmodule HomeBase.Teams do
 
     if user = Accounts.get_user_by_email(email) do
       changeset
+      |> Changeset.put_change(:user, user)
       |> Changeset.put_change(:user_id, user.id)
       |> Changeset.delete_change(:invited_email)
     else
@@ -141,6 +142,7 @@ defmodule HomeBase.Teams do
       |> Enum.map(fn role ->
         if user = Accounts.get_user_by_email(role.invited_email) do
           role
+          |> Map.put(:user, user)
           |> Map.put(:user_id, user.id)
           |> Map.put(:invited_email, nil)
         else

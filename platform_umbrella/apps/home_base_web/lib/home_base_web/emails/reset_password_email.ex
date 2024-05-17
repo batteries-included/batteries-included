@@ -2,7 +2,9 @@ defmodule HomeBaseWeb.ResetPasswordEmail do
   @moduledoc false
   use HomeBaseWeb, :email
 
-  def subject, do: "Reset your password"
+  def subject(_email) do
+    "Reset your password"
+  end
 
   def text(assigns) do
     ~s"""

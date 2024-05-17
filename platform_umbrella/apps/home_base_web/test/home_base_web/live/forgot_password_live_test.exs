@@ -43,6 +43,8 @@ defmodule HomeBaseWeb.ForgotPasswordLiveTest do
 
       assert Repo.get_by!(UserToken, user_id: user.id).context ==
                "reset_password"
+
+      assert_email_sent(to: [{"", user.email}])
     end
 
     test "does not send reset password token if email is invalid", %{conn: conn} do
@@ -56,6 +58,7 @@ defmodule HomeBaseWeb.ForgotPasswordLiveTest do
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Please check your email"
       assert Repo.all(UserToken) == []
+      refute_email_sent()
     end
   end
 end

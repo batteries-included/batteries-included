@@ -5,6 +5,7 @@ defmodule HomeBaseWeb.SettingsLive do
   alias CommonCore.Teams.Team
   alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts
+  alias HomeBase.Repo
   alias HomeBase.Teams
 
   def mount(%{"token" => token}, _session, socket) do
@@ -74,9 +75,11 @@ defmodule HomeBaseWeb.SettingsLive do
   defp maybe_assign_team(socket), do: socket
 
   def handle_event("resend_confirm", _params, socket) do
-    with {:ok, token} <- Accounts.get_user_confirmation_token(socket.assigns.current_user),
+    user = socket.assigns.current_user
+
+    with {:ok, token} <- Accounts.get_user_confirmation_token(user),
          {:ok, _} <-
-           %{url: url(~p"/confirm/#{token}")}
+           %{to: user.email, url: url(~p"/confirm/#{token}")}
            |> HomeBaseWeb.ConfirmEmail.render()
            |> HomeBase.Mailer.deliver() do
       {:noreply, assign(socket, :confirmation_resent, true)}
@@ -101,7 +104,7 @@ defmodule HomeBaseWeb.SettingsLive do
     with {:ok, applied_user} <- Accounts.apply_user_email(user, password, user_params),
          {:ok, token} <- Accounts.get_user_update_email_token(applied_user, user.email),
          {:ok, _} <-
-           %{url: url(~p"/settings/#{token}")}
+           %{to: applied_user.email, url: url(~p"/settings/#{token}")}
            |> HomeBaseWeb.ConfirmEmail.render()
            |> HomeBase.Mailer.deliver() do
       {:noreply,
@@ -175,17 +178,20 @@ defmodule HomeBaseWeb.SettingsLive do
   def handle_event("save_role", %{"team_role" => params}, socket) do
     team = socket.assigns.current_role.team
 
-    case Teams.create_team_role(team, params) do
-      {:ok, role} ->
-        role_changeset = TeamRole.changeset(%TeamRole{})
+    with {:ok, role} <- Teams.create_team_role(team, params),
+         {:ok, _} <- notify_user_of_role(role, team) do
+      role_changeset = TeamRole.changeset(%TeamRole{})
 
-        {:noreply,
-         socket
-         |> assign(:roles, socket.assigns.roles ++ [role])
-         |> assign(:role_form, to_form(role_changeset))}
-
+      {:noreply,
+       socket
+       |> assign(:roles, socket.assigns.roles ++ [role])
+       |> assign(:role_form, to_form(role_changeset))}
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :role_form, to_form(changeset))}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not notify member")}
     end
   end
 
@@ -213,15 +219,15 @@ defmodule HomeBaseWeb.SettingsLive do
   def handle_event("delete_role", %{"id" => id}, socket) do
     role = Enum.find(socket.assigns.roles, &(&1.id == id))
 
-    case Teams.delete_team_role(role) do
-      {:ok, _} ->
-        roles = Enum.reject(socket.assigns.roles, &(&1.id == id))
+    with {:ok, _} <- Teams.delete_team_role(role),
+         {:ok, _} <- notify_user_of_booted(role, socket.assigns.current_role.team) do
+      roles = Enum.reject(socket.assigns.roles, &(&1.id == id))
 
-        {:noreply,
-         socket
-         |> assign(:roles, roles)
-         |> put_flash(:global_success, "Member has been removed")}
-
+      {:noreply,
+       socket
+       |> assign(:roles, roles)
+       |> put_flash(:global_success, "Member has been removed")}
+    else
       _ ->
         {:noreply, put_flash(socket, :global_error, "Could not remove member")}
     end
@@ -263,6 +269,28 @@ defmodule HomeBaseWeb.SettingsLive do
         {:noreply, put_flash(socket, :global_error, "Could not leave team")}
     end
   end
+
+  defp notify_user_of_role(%TeamRole{user: %{email: email}}, team) do
+    %{to: email, team: team, url: url(~p"/installations")}
+    |> HomeBaseWeb.TeamRoleEmail.render()
+    |> HomeBase.Mailer.deliver()
+  end
+
+  defp notify_user_of_role(%TeamRole{invited_email: email}, team) do
+    %{to: email, team: team, url: url(~p"/signup")}
+    |> HomeBaseWeb.TeamInvitedEmail.render()
+    |> HomeBase.Mailer.deliver()
+  end
+
+  defp notify_user_of_booted(%{user_id: _} = role, team) do
+    role = Repo.preload(role, :user)
+
+    %{to: role.user.email, team: team}
+    |> HomeBaseWeb.TeamBootedEmail.render()
+    |> HomeBase.Mailer.deliver()
+  end
+
+  defp notify_user_of_booted(_role, _team), do: {:ok, nil}
 
   def render(assigns) do
     ~H"""

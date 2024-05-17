@@ -68,6 +68,7 @@ defmodule HomeBaseWeb.SignupLiveTest do
       response = html_response(conn, 200)
       assert response =~ "Settings"
       assert response =~ "Log out"
+      assert_email_sent(to: [{"", email}])
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
@@ -83,6 +84,7 @@ defmodule HomeBaseWeb.SignupLiveTest do
         |> render_submit()
 
       assert result =~ "has already been taken"
+      refute_email_sent()
     end
   end
 
