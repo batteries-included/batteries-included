@@ -142,7 +142,8 @@
 
         # this allows mix to work on the local directory
         export MIX_HOME=$PWD/.nix-mix
-        mkdir -p $MIX_HOME
+        export MIX_ARCHIVES=$MIX_HOME/archives
+        mkdir -p $MIX_ARCHIVES
 
         export HEX_HOME=$PWD/.nix-hex
         mkdir -p $HEX_HOME
