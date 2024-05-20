@@ -42,6 +42,7 @@ defmodule HomeBaseWeb.MixProject do
       {:bandit, "~> 1.4"},
       {:websock_adapter, "~> 0.5"},
       {:gettext, "~> 0.20"},
+      {:floki, "~> 0.36"},
       {:jason, "~> 1.4"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.5"},
@@ -51,8 +52,7 @@ defmodule HomeBaseWeb.MixProject do
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
       {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
-      {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:floki, "~> 0.36", only: [:dev, :test, :integration]}
+      {:phoenix_live_reload, "~> 1.3", only: :dev}
     ]
   end
 

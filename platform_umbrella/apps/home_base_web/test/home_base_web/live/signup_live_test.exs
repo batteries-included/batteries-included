@@ -30,6 +30,12 @@ defmodule HomeBaseWeb.SignupLiveTest do
       assert result =~ "should be at least 8 character"
       assert result =~ "must be accepted"
     end
+
+    test "prefills email address from url query", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/signup?email=jane%40doe.com")
+
+      assert lv |> element("[name=\"user[email]\"]") |> render() =~ "jane@doe.com"
+    end
   end
 
   describe "Registration page when logged in" do

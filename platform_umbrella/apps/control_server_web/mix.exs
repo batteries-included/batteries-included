@@ -51,6 +51,7 @@ defmodule ControlServerWeb.MixProject do
       {:gettext, "~> 0.20"},
       {:inflex, "~> 2.1"},
       {:jason, "~> 1.4"},
+      {:floki, "~> 0.36"},
 
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
@@ -73,7 +74,6 @@ defmodule ControlServerWeb.MixProject do
       # Testing
       {:wallaby, "~> 0.30", runtime: false, only: [:test, :integration]},
       {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
-      {:floki, "~> 0.35", only: [:dev, :test, :integration], override: true},
       {:heyya, "~> 0.8", only: [:dev, :test, :integration]}
     ]
   end

@@ -27,7 +27,7 @@ defmodule HomeBaseWeb.TeamInvitedEmail do
       <p>Hi there,</p>
       <p>
         You have been invited to the <b><%= @team.name %></b>
-        team on Batteries Included. Please copy the link below into your browser to sign up for an account and get started!
+        team on Batteries Included. Please click on the button below to sign up for an account and get started!
       </p>
       <br />
       <.email_button href={@url}>Create an account</.email_button>

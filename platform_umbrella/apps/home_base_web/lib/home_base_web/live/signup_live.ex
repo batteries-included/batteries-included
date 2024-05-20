@@ -5,8 +5,11 @@ defmodule HomeBaseWeb.SignupLive do
   alias CommonCore.Accounts.User
   alias HomeBase.Accounts
 
-  def mount(_params, _session, socket) do
-    changeset = Accounts.change_user_registration(%User{})
+  def mount(params, _session, socket) do
+    changeset =
+      Accounts.change_user_registration(%User{
+        email: params["email"]
+      })
 
     {:ok,
      socket

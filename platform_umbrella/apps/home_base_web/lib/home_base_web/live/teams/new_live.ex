@@ -55,7 +55,11 @@ defmodule HomeBaseWeb.TeamsNewLive do
           HomeBaseWeb.TeamRoleEmail.render(%{to: email, team: team, url: url(~p"/installations")})
 
         _ ->
-          HomeBaseWeb.TeamInvitedEmail.render(%{to: role.invited_email, team: team, url: url(~p"/signup")})
+          HomeBaseWeb.TeamInvitedEmail.render(%{
+            to: role.invited_email,
+            team: team,
+            url: url(~p"/signup?#{[email: role.invited_email]}")
+          })
       end
     end)
     |> HomeBase.Mailer.deliver_many()

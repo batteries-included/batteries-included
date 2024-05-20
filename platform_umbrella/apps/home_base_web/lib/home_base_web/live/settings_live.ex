@@ -277,10 +277,12 @@ defmodule HomeBaseWeb.SettingsLive do
   end
 
   defp notify_user_of_role(%TeamRole{invited_email: email}, team) do
-    %{to: email, team: team, url: url(~p"/signup")}
+    %{to: email, team: team, url: url(~p"/signup?#{[email: email]}")}
     |> HomeBaseWeb.TeamInvitedEmail.render()
     |> HomeBase.Mailer.deliver()
   end
+
+  defp notify_user_of_booted(%{user_id: nil}, _team), do: {:ok, nil}
 
   defp notify_user_of_booted(%{user_id: _} = role, team) do
     role = Repo.preload(role, :user)
@@ -289,8 +291,6 @@ defmodule HomeBaseWeb.SettingsLive do
     |> HomeBaseWeb.TeamBootedEmail.render()
     |> HomeBase.Mailer.deliver()
   end
-
-  defp notify_user_of_booted(_role, _team), do: {:ok, nil}
 
   def render(assigns) do
     ~H"""
