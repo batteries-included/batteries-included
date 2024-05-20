@@ -5,16 +5,16 @@ import (
 	"slices"
 )
 
-func GetBatteryByType(batteries []BatterySpec, typ string) (*BatterySpec, error) {
-	ix := slices.IndexFunc(batteries, func(bs BatterySpec) bool { return bs.Type == typ })
+func (s *InstallSpec) GetBatteryByType(typ string) (*BatterySpec, error) {
+	ix := slices.IndexFunc(s.TargetSummary.Batteries, func(bs BatterySpec) bool { return bs.Type == typ })
 	if ix < 0 {
 		return nil, fmt.Errorf("failed to find battery with type: %s", typ)
 	}
-	return &batteries[ix], nil
+	return &s.TargetSummary.Batteries[ix], nil
 }
 
-func GetBatteryConfigField(batteries []BatterySpec, typ, field string) (any, error) {
-	b, err := GetBatteryByType(batteries, typ)
+func (s *InstallSpec) GetBatteryConfigField(typ, field string) (any, error) {
+	b, err := s.GetBatteryByType(typ)
 	if err != nil {
 		return nil, err
 	}

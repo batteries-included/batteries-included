@@ -30,7 +30,7 @@ func (spec *InstallSpec) WriteSummaryToKube(ctx context.Context, kubeClient kube
 		return fmt.Errorf("unable to marshal state summary: %w", err)
 	}
 
-	ns, err := GetBatteryConfigField(spec.TargetSummary.Batteries, "battery_core", "core_namespace")
+	ns, err := spec.GetBatteryConfigField("battery_core", "core_namespace")
 	if err != nil {
 		return fmt.Errorf("unable to find namespace: %w", err)
 	}

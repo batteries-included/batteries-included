@@ -117,7 +117,7 @@ func parseEKSOutputs(output []byte) (*eksOutputs, error) {
 }
 
 func (env *InstallEnv) configureLBControllerBattery(outputs *eksOutputs) error {
-	b, err := specs.GetBatteryByType(env.Spec.TargetSummary.Batteries, "aws_load_balancer_controller")
+	b, err := env.Spec.GetBatteryByType("aws_load_balancer_controller")
 	if err != nil {
 		return fmt.Errorf("tried to configure aws_load_balancer_controller battery but it wasn't found in install spec")
 	}
@@ -128,7 +128,7 @@ func (env *InstallEnv) configureLBControllerBattery(outputs *eksOutputs) error {
 }
 
 func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
-	b, err := specs.GetBatteryByType(env.Spec.TargetSummary.Batteries, "karpenter")
+	b, err := env.Spec.GetBatteryByType("karpenter")
 	if err != nil {
 		return fmt.Errorf("tried to configure karpenter battery but it wasn't found in install spec")
 	}

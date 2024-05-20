@@ -28,7 +28,7 @@ func TestGetBatteryByType(t *testing.T) {
 		tc := tc
 		t.Run(tc.typ, func(t *testing.T) {
 			t.Parallel()
-			b, err := GetBatteryByType(spec.TargetSummary.Batteries, tc.typ)
+			b, err := spec.GetBatteryByType(tc.typ)
 
 			require.Equal(t, tc.err, err)
 
@@ -61,7 +61,7 @@ func TestGetBatteryConfigField(t *testing.T) {
 		tc := tc
 		t.Run(tc.typ, func(t *testing.T) {
 			t.Parallel()
-			f, err := GetBatteryConfigField(spec.TargetSummary.Batteries, tc.typ, tc.field)
+			f, err := spec.GetBatteryConfigField(tc.typ, tc.field)
 
 			require.Equal(t, tc.err, err)
 			require.Equal(t, tc.expected, f)

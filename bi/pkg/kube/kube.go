@@ -13,6 +13,9 @@ import (
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
 	"github.com/noisysockets/noisysockets/network"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	cacheddiscovery "k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -36,6 +39,7 @@ type KubeClient interface {
 		readyChannel chan struct{}) (*portforward.PortForwarder, error)
 	RemoveAll(ctx context.Context) error
 	WaitForConnection(time.Duration) error
+	WatchFor(context.Context, *WatchOptions) error
 }
 
 type batteryKubeClient struct {
@@ -174,4 +178,35 @@ func (c *batteryKubeClient) WaitForConnection(timeout time.Duration) error {
 			time.Sleep(1 * time.Second)
 		}
 	}
+}
+
+type WatchOptions struct {
+	// The desired Group, Version, Resource for the watch
+	GVR schema.GroupVersionResource
+	// Namespace of the resource(s) to watch
+	Namespace string
+	// The list options for the watch. Specify the resources to watch here
+	ListOpts metav1.ListOptions
+	// The callback to run against each event.
+	Callback func(*unstructured.Unstructured) bool
+}
+
+func (c *batteryKubeClient) WatchFor(ctx context.Context, opts *WatchOptions) error {
+	watch, err := c.dynamicClient.Resource(opts.GVR).Namespace(opts.Namespace).Watch(ctx, opts.ListOpts)
+	if err != nil {
+		return fmt.Errorf("failed to create watch: %w", err)
+	}
+
+	for event := range watch.ResultChan() {
+		u, ok := event.Object.(*unstructured.Unstructured)
+		if !ok {
+			slog.Debug("got unexpected event", slog.String("objectType", fmt.Sprintf("%T", event.Object)))
+			continue
+		}
+
+		if cont := opts.Callback(u); !cont {
+			watch.Stop()
+		}
+	}
+	return nil
 }

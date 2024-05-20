@@ -35,5 +35,10 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 		return fmt.Errorf("unable to write state summary to cluster: %w", err)
 	}
 
+	slog.Debug("Waiting for bootstrap completion")
+	if err := env.Spec.WaitForBootstrap(ctx, kubeClient); err != nil {
+		return fmt.Errorf("failed to wait for bootstrap: %w", err)
+	}
+
 	return nil
 }
