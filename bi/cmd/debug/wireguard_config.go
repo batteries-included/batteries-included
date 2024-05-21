@@ -43,7 +43,7 @@ var wireGuardConfigCmd = &cobra.Command{
 			return err
 		}
 
-		slog.Debug("Writing wireguard config", slog.String("outputFilePath", outputPath))
+		slog.Info("Writing wireguard config", slog.String("outputFilePath", outputPath))
 
 		var w io.Writer
 		if outputPath == "-" {

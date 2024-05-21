@@ -10,11 +10,12 @@ import (
 )
 
 func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
-	slog.Debug("Starting provider")
+	slog.Info("Starting provider")
 	if err := env.StartKubeProvider(ctx); err != nil {
 		return fmt.Errorf("unable to start kube provider: %w", err)
 	}
 
+	slog.Info("Connecting to cluster")
 	kubeClient, err := env.NewBatteryKubeClient()
 	if err != nil {
 		return fmt.Errorf("unable to create kube client: %w", err)
@@ -25,17 +26,17 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 		return fmt.Errorf("cluster did not become ready: %w", err)
 	}
 
-	slog.Debug("Starting initial sync")
+	slog.Info("Starting initial sync")
 	if err := env.Spec.InitialSync(ctx, kubeClient); err != nil {
 		return fmt.Errorf("unable to perform initial sync: %w", err)
 	}
 
-	slog.Debug("Writing state summary to cluster")
+	slog.Info("Writing state summary to cluster")
 	if err := env.Spec.WriteSummaryToKube(ctx, kubeClient); err != nil {
 		return fmt.Errorf("unable to write state summary to cluster: %w", err)
 	}
 
-	slog.Debug("Waiting for bootstrap completion")
+	slog.Info("Waiting for bootstrap completion")
 	if err := env.Spec.WaitForBootstrap(ctx, kubeClient); err != nil {
 		return fmt.Errorf("failed to wait for bootstrap: %w", err)
 	}
