@@ -1,7 +1,7 @@
 { inputs, self, ... }:
-
 {
-  perSystem = { system, ... }:
+  perSystem =
+    { system, ... }:
     let
       inherit (inputs.gitignore.lib) gitignoreSource;
 
@@ -15,24 +15,34 @@
       taggedVersion = "${version}-${safeRev}";
     in
     {
-
       checks.bi = buildGoApplication {
-        inherit src pwd pname version modules;
+        inherit
+          src
+          pwd
+          pname
+          version
+          modules
+          ;
         doCheck = true;
       };
 
       packages.bi = buildGoApplication {
-        inherit src pwd pname version modules;
+        inherit
+          src
+          pwd
+          pname
+          version
+          modules
+          ;
         doCheck = false;
 
         CGO_ENABLED = 0;
-        flags = [
-          "-trimpath"
+        flags = [ "-trimpath" ];
+        tags = [
+          "netgo"
+          "osusergo"
         ];
-        tags = [ "netgo" "osusergo" ];
-        ldflags = [
-          "-X bi/pkg.Version=${taggedVersion}"
-        ];
+        ldflags = [ "-X bi/pkg.Version=${taggedVersion}" ];
       };
     };
 }

@@ -1,22 +1,22 @@
-{ pname
-, src
-, version
-, gcc
-, openssl
-, pkg-config
-, mixEnv ? "prod"
-, npmlock2nix
-, nodejs
-, beamPackages
-, erlang
-, elixir
-, hex
-, mixFodDeps
-, gitignoreSource
-, ...
+{
+  pname,
+  src,
+  version,
+  gcc,
+  openssl,
+  pkg-config,
+  mixEnv ? "prod",
+  npmlock2nix,
+  nodejs,
+  beamPackages,
+  erlang,
+  elixir,
+  hex,
+  mixFodDeps,
+  gitignoreSource,
+  ...
 }:
 let
-
   MIX_ENV = mixEnv;
 
   node_modules = npmlock2nix.v2.node_modules {
@@ -24,20 +24,32 @@ let
     inherit nodejs;
   };
 
-  installHook = { release, version }: ''
-    export APP_VERSION="${version}"
-    export APP_NAME="batteries_included"
-    export RELEASE="${release}"
-    runHook preInstall
-    mix compile --force
-    mix release --no-deps-check --overwrite --path "$out" ${release}
-  '';
+  installHook =
+    { release, version }:
+    ''
+      export APP_VERSION="${version}"
+      export APP_NAME="batteries_included"
+      export RELEASE="${release}"
+      runHook preInstall
+      mix compile --force
+      mix release --no-deps-check --overwrite --path "$out" ${release}
+    '';
 in
 beamPackages.mixRelease {
-  inherit src pname version mixFodDeps MIX_ENV;
+  inherit
+    src
+    pname
+    version
+    mixFodDeps
+    MIX_ENV
+    ;
   inherit erlang elixir hex;
 
-  nativeBuildInputs = [ gcc pkg-config nodejs ];
+  nativeBuildInputs = [
+    gcc
+    pkg-config
+    nodejs
+  ];
   buildInputs = [ openssl ];
   LANG = "en_US.UTF-8";
   LC_ALL = "en_US.UTF-8";
@@ -52,5 +64,8 @@ beamPackages.mixRelease {
     rm -rf ./apps/${pname}_web/assets/node_modules
   '';
 
-  installPhase = installHook { release = pname; inherit version; };
+  installPhase = installHook {
+    release = pname;
+    inherit version;
+  };
 }

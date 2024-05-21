@@ -3,7 +3,9 @@
 
   nixConfig = {
     extra-substituters = [ "https://batteries-included.cachix.org" ];
-    extra-trusted-public-keys = [ "batteries-included.cachix.org-1:T+/ob5AkOlh2hsUo+z3dAwpEal96lATK7mQx/6I7o/A=" ];
+    extra-trusted-public-keys = [
+      "batteries-included.cachix.org-1:T+/ob5AkOlh2hsUo+z3dAwpEal96lATK7mQx/6I7o/A="
+    ];
   };
 
   inputs = {
@@ -57,7 +59,15 @@
     };
   };
 
-  outputs = inputs@{ flake-utils, treefmt-nix, flake-root, flake-parts, mission-control, ... }:
+  outputs =
+    inputs@{
+      flake-utils,
+      treefmt-nix,
+      flake-root,
+      flake-parts,
+      mission-control,
+      ...
+    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = flake-utils.lib.defaultSystems;
       imports = [

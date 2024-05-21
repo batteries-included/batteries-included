@@ -1,23 +1,23 @@
-{ pname
-, version
-, src
-, pkgs
-, nativeBuildInputs ? [ ]
-, buildInputs ? [ ]
-, mixEnv ? "test"
-, mixFodDeps ? null
-, pkg-config
-, gcc
-, openssl
-, erlang
-, elixir
-, hex
-, rebar3
-, command
-, ...
+{
+  pname,
+  version,
+  src,
+  pkgs,
+  nativeBuildInputs ? [ ],
+  buildInputs ? [ ],
+  mixEnv ? "test",
+  mixFodDeps ? null,
+  pkg-config,
+  gcc,
+  openssl,
+  erlang,
+  elixir,
+  hex,
+  rebar3,
+  command,
+  ...
 }:
-pkgs.stdenv.mkDerivation ({
-
+pkgs.stdenv.mkDerivation {
   doCheck = true;
 
   name = "mix-command-${pname}-${command}";
@@ -30,12 +30,11 @@ pkgs.stdenv.mkDerivation ({
     gcc
     openssl
   ];
-  buildInputs = buildInputs;
+  inherit buildInputs;
 
   MIX_ENV = mixEnv;
   HEX_OFFLINE = 1;
   LANG = "C.UTF-8";
-
 
   # the api with `mix local.rebar rebar path` makes a copy of the binary
   # some older dependencies still use rebar
@@ -72,4 +71,4 @@ pkgs.stdenv.mkDerivation ({
   installPhase = ''
     touch $out
   '';
-})
+}

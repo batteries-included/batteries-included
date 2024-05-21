@@ -1,9 +1,9 @@
 { inputs, ... }:
-
 {
-  perSystem = { config, pkgs, ... }:
+  perSystem =
+    { config, pkgs, ... }:
     let
-      nodejs = pkgs.nodejs;
+      inherit (pkgs) nodejs;
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
       node_modules = npmlock2nix.v2.node_modules {
         src = ./fmt/.;
@@ -11,33 +11,44 @@
       };
     in
     {
-
       treefmt.config = {
         inherit (config.flake-root) projectRootFile;
         package = pkgs.treefmt;
 
-        programs.nixpkgs-fmt.enable = true;
-        programs.deadnix.enable = true;
-        programs.prettier = {
-          enable = true;
-          settings = {
-            semi = true;
-            singleQuote = true;
-            bracketSameLine = true;
-            trailingComma = "es5";
-            proseWrap = "always";
-            tabWidth = 2;
+        programs = {
+          nixfmt-rfc-style.enable = true;
+          deadnix.enable = true;
+          statix.enable = true;
 
-            plugins = [
-              "${node_modules}/node_modules/prettier-plugin-astro/dist/index.js"
-              # Must come last apparently /shrug
-              "${node_modules}/node_modules/prettier-plugin-tailwindcss/dist/index.mjs"
-            ];
+          prettier = {
+            enable = true;
+            settings = {
+              semi = true;
+              singleQuote = true;
+              bracketSameLine = true;
+              trailingComma = "es5";
+              proseWrap = "always";
+              tabWidth = 2;
+
+              plugins = [
+                "${node_modules}/node_modules/prettier-plugin-astro/dist/index.js"
+                # Must come last apparently /shrug
+                "${node_modules}/node_modules/prettier-plugin-tailwindcss/dist/index.mjs"
+              ];
+              # Taken from:
+              # https://github.com/withastro/prettier-plugin-astro?tab=readme-ov-file#recommended-configuration
+              overrides = [
+                {
+                  files = [ "*.astro" ];
+                  parser = "astro";
+                }
+              ];
+            };
           };
-        };
 
-        programs.shfmt.enable = true;
-        programs.gofmt.enable = true;
+          shfmt.enable = true;
+          gofmt.enable = true;
+        };
 
         settings = {
           global.excludes = [

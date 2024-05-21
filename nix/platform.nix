@@ -1,33 +1,34 @@
 { inputs, ... }:
-
 {
-  perSystem = { lib, pkgs, ... }:
-
+  perSystem =
+    { lib, pkgs, ... }:
     let
       inherit (inputs.gitignore.lib) gitignoreSource;
+      inherit (pkgs) pkg-config;
+      inherit (pkgs) gcc;
+      inherit (pkgs) openssl;
+      inherit (pkgs) nodejs;
+      inherit (pkgs) beam;
+
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
       version = "0.12.2";
-      beam = pkgs.beam;
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
-      erlang = beamPackages.erlang;
+      inherit (beamPackages) erlang;
       elixir = beamPackages.elixir_1_16;
-      hex = beamPackages.hex.override {
-        elixir = elixir;
-      };
-
-      pkg-config = pkgs.pkg-config;
-      gcc = pkgs.gcc;
-      openssl = pkgs.openssl;
-
-      nodejs = pkgs.nodejs;
+      hex = beamPackages.hex.override { inherit elixir; };
 
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
 
       mixTestFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform-test";
-        inherit src version LANG elixir;
+        inherit
+          src
+          version
+          LANG
+          elixir
+          ;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
         sha256 = "sha256-FMRaNBhM8DSy62kIDwOw8yURWYacwfJNGmozx72ByZU=";
@@ -41,13 +42,23 @@
       # TODO(jdt): somehow use the hashes from mix.lock instead
       mixFodDeps = beamPackages.fetchMixDeps {
         pname = "mix-deps-platform";
-        inherit src version LANG elixir;
+        inherit
+          src
+          version
+          LANG
+          elixir
+          ;
         #sha256 = lib.fakeSha256;
         sha256 = "sha256-+CCJ0oyx1i+NEJTeH3FauBHqba9ON8LtjwZ4DIJ/c5c=";
       };
 
       control-server = pkgs.callPackage ./platform-release.nix {
-        inherit version src mixFodDeps pkgs;
+        inherit
+          version
+          src
+          mixFodDeps
+          pkgs
+          ;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
         inherit pkg-config gcc openssl;
@@ -57,25 +68,26 @@
         mixEnv = "prod";
       };
 
-      kube-bootstrap = beamPackages.mixRelease
-        {
-          inherit src version mixFodDeps;
-          inherit erlang elixir hex;
-          MIX_ENV = "prod";
-          LANG = "C.UTF-8";
-          pname = "kube_bootstrap";
+      kube-bootstrap = beamPackages.mixRelease {
+        inherit src version mixFodDeps;
+        inherit erlang elixir hex;
+        MIX_ENV = "prod";
+        LANG = "C.UTF-8";
+        pname = "kube_bootstrap";
 
-          nativeBuildInputs = [ gcc pkg-config ];
-          buildInputs = [ openssl ];
-          installPhase = ''
-            export APP_VERSION="${version}"
-            export APP_NAME="batteries_included"
-            export RELEASE="kube_bootstrap"
-            mix do compile --force, \
-              release --no-deps-check --overwrite --path "$out" kube_bootstrap
-          '';
-
-        };
+        nativeBuildInputs = [
+          gcc
+          pkg-config
+        ];
+        buildInputs = [ openssl ];
+        installPhase = ''
+          export APP_VERSION="${version}"
+          export APP_NAME="batteries_included"
+          export RELEASE="kube_bootstrap"
+          mix do compile --force, \
+            release --no-deps-check --overwrite --path "$out" kube_bootstrap
+        '';
+      };
 
       home-base = pkgs.callPackage ./platform-release.nix {
         inherit version src mixFodDeps;
@@ -120,7 +132,6 @@
         mixFodDeps = mixTestFodDeps;
         command = "format --check-formatted";
       };
-
     in
     {
       packages = {

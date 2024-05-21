@@ -1,44 +1,46 @@
 { inputs, ... }:
-
 {
-
-  perSystem = { system, config, lib, ... }:
+  perSystem =
+    {
+      system,
+      config,
+      lib,
+      ...
+    }:
     let
       pkgs = import inputs.nixpkgs {
         inherit system;
-        overlays = [
-          inputs.gomod2nix.overlays.default
-        ];
+        overlays = [ inputs.gomod2nix.overlays.default ];
         config.allowUnfree = true;
       };
+      inherit (pkgs) beam;
 
-      beam = pkgs.beam;
       beamPackages = beam.packagesWith beam.interpreters.erlang_26;
-      erlang = beamPackages.erlang;
+      inherit (beamPackages) erlang;
 
       # These build and check.
       # However by the time that the devShell
       # is starting on a dev machine we believe
       # this is good.
-      rebar = beamPackages.rebar.overrideAttrs (_old: { doCheck = false; });
-      rebar3 = beamPackages.rebar3.overrideAttrs (_old: { doCheck = false; });
+      rebar = beamPackages.rebar.overrideAttrs (_old: {
+        doCheck = false;
+      });
+      rebar3 = beamPackages.rebar3.overrideAttrs (_old: {
+        doCheck = false;
+      });
 
       # elixir,elixir-ls, and hex are using the same version elixir
       #
       elixir = beamPackages.elixir_1_16;
       # elixir-ls needs to be compiled with elixir_ls.release2 for the latest otp version
       elixir-ls = (beamPackages.elixir-ls.override { inherit elixir; }).overrideAttrs (_old: {
-        buildPhase =
-          ''
-            runHook preBuild
-            mix do compile --no-deps-check, elixir_ls.release2
-            runHook postBuild
-          '';
+        buildPhase = ''
+          runHook preBuild
+          mix do compile --no-deps-check, elixir_ls.release2
+          runHook postBuild
+        '';
       });
-      hex = beamPackages.hex.override {
-        elixir = elixir;
-      };
-
+      hex = beamPackages.hex.override { inherit elixir; };
 
       elixirNativeTools = with pkgs; [
         erlang
@@ -69,7 +71,6 @@
         cobra-cli
       ];
 
-
       linuxOnlyTools = with pkgs; [
         # Track when files change for css updates
         inotify-tools
@@ -77,55 +78,55 @@
 
       # Yes the whole fucking world
       # just for integration tests.
-      integrationTestingTools = with pkgs; [
-        chromedriver
-        selenium-server-standalone
-      ]
-      ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) [ chromium ];
-
-      frameworks = pkgs.darwin.apple_sdk.frameworks;
+      integrationTestingTools =
+        with pkgs;
+        [
+          chromedriver
+          selenium-server-standalone
+        ]
+        ++ lib.optionals (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.chromium) [ chromium ];
 
       darwinOnlyTools = with pkgs; [
         podman
         podman-compose
-        frameworks.Security
-        frameworks.CoreServices
-        frameworks.CoreFoundation
-        frameworks.Foundation
+        pkgs.darwin.apple_sdk.frameworks.Security
+        pkgs.darwin.apple_sdk.frameworks.CoreServices
+        pkgs.darwin.apple_sdk.frameworks.CoreFoundation
+        pkgs.darwin.apple_sdk.frameworks.Foundation
       ];
 
+      nativeBuildInputs =
+        with pkgs;
+        [
+          # node is needed, because
+          # javascript won for better or worse
+          nodejs
 
-      nativeBuildInputs = with pkgs; [
-        # node is needed, because
-        # javascript won for better or worse
-        nodejs
+          # Command line tools
+          cachix
+          fswatch
+          jq
+          k9s
+          kind
+          kubectl
+          kubernetes-helm
+          flock
 
-        # Command line tools
-        cachix
-        fswatch
-        jq
-        k9s
-        kind
-        kubectl
-        kubernetes-helm
-        flock
+          skopeo # Use for pushing docker
+          wireguard-tools
+          age # secure out of band communications
+          nixpkgs-fmt
 
-        skopeo # Use for pushing docker
-        wireguard-tools
-        age # secure out of band communications
-        nixpkgs-fmt
-
-        awscli2
-        ssm-session-manager-plugin
-      ]
-      ++ elixirNativeTools
-      ++ goNativeBuildTools
-      ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
-      ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
-      ++ integrationTestingTools
-      ++ [ config.treefmt.build.wrapper ]
-      ++ [ config.packages.bi ];
-
+          awscli2
+          ssm-session-manager-plugin
+        ]
+        ++ elixirNativeTools
+        ++ goNativeBuildTools
+        ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
+        ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
+        ++ integrationTestingTools
+        ++ [ config.treefmt.build.wrapper ]
+        ++ [ config.packages.bi ];
 
       buildInputs = with pkgs; [
         openssl
@@ -170,7 +171,6 @@
             || mix local.hex --if-missing
         popd &> /dev/null
       '';
-
     in
     {
       devShells.default = pkgs.mkShell {
@@ -180,7 +180,10 @@
         LC_CTYPE = "en_US.UTF-8";
         ERL_AFLAGS = "-kernel shell_history enabled";
 
-        inputsFrom = [ config.mission-control.devShell config.flake-root.devShell ];
+        inputsFrom = [
+          config.mission-control.devShell
+          config.flake-root.devShell
+        ];
       };
     };
 }

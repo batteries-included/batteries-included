@@ -1,7 +1,7 @@
 { inputs, ... }:
-
 {
-  perSystem = { system, ... }:
+  perSystem =
+    { system, ... }:
     let
       inherit (inputs.gitignore.lib) gitignoreSource;
       inherit (inputs.gomod2nix.legacyPackages.${system}) buildGoApplication;
@@ -14,7 +14,13 @@
     in
     {
       packages.pastebin = buildGoApplication {
-        inherit pname src pwd modules version;
+        inherit
+          pname
+          src
+          pwd
+          modules
+          version
+          ;
       };
     };
 }

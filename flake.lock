@@ -2,7 +2,9 @@
   "nodes": {
     "flake-parts": {
       "inputs": {
-        "nixpkgs-lib": ["nixpkgs"]
+        "nixpkgs-lib": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1715865404,
@@ -35,7 +37,9 @@
     },
     "flake-utils": {
       "inputs": {
-        "systems": ["systems"]
+        "systems": [
+          "systems"
+        ]
       },
       "locked": {
         "lastModified": 1710146030,
@@ -53,7 +57,9 @@
     },
     "gitignore": {
       "inputs": {
-        "nixpkgs": ["nixpkgs"]
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -71,8 +77,12 @@
     },
     "gomod2nix": {
       "inputs": {
-        "flake-utils": ["flake-utils"],
-        "nixpkgs": ["nixpkgs"]
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1713281724,
@@ -166,7 +176,9 @@
     },
     "treefmt-nix": {
       "inputs": {
-        "nixpkgs": ["nixpkgs"]
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1715940852,
