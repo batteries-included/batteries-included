@@ -55,6 +55,7 @@ type clusterConfig struct {
 	cluster          *peks.Cluster
 	provider         *iam.OpenIdConnectProvider
 	template         *ec2.LaunchTemplate
+	managedNodeGroup *peks.NodeGroup
 }
 
 func (c *clusterConfig) withConfig(cfg *util.PulumiConfig) error {
@@ -573,7 +574,7 @@ func (c *clusterConfig) buildManagedNodeGroup(ctx *pulumi.Context) error {
 	}).(pulumi.StringOutput)
 
 	name := fmt.Sprintf("%s-bootstrap", c.baseName)
-	_, err := peks.NewNodeGroup(ctx, name, &peks.NodeGroupArgs{
+	ng, err := peks.NewNodeGroup(ctx, name, &peks.NodeGroupArgs{
 		AmiType:       pulumi.String(c.amiType),
 		CapacityType:  pulumi.String(c.capacityType),
 		ClusterName:   c.cluster.Name,
@@ -600,10 +601,12 @@ func (c *clusterConfig) buildManagedNodeGroup(ctx *pulumi.Context) error {
 		UpdateConfig: &peks.NodeGroupUpdateConfigArgs{
 			MaxUnavailable: pulumi.Int(1),
 		},
-	}, pulumi.DependsOn([]pulumi.Resource{c.cluster, c.template}))
+	}, pulumi.DependsOn([]pulumi.Resource{c.template}))
 	if err != nil {
 		return fmt.Errorf("error registering EKS node group %s: %w", name, err)
 	}
+
+	c.managedNodeGroup = ng
 
 	return nil
 }
@@ -866,7 +869,7 @@ func (c *clusterConfig) buildAddons(ctx *pulumi.Context) error {
 			ClusterName:           c.cluster.Name,
 			ConfigurationValues:   config.config,
 			ServiceAccountRoleArn: config.irsaARN,
-		})
+		}, pulumi.DependsOn([]pulumi.Resource{c.managedNodeGroup}))
 		if err != nil {
 			return fmt.Errorf("error registering EKS addon %s: %w", name, err)
 		}
