@@ -36,9 +36,9 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 	}
 
 	for name, opts := range map[string]*kube.WatchOptions{
-		"bootstrap job":  bootstrapJobWatchOpts(ns),
-		"control server": controlServerPodWatchOpts(ns),
-		// "host config map": // TODO: ,
+		"bootstrap job":   bootstrapJobWatchOpts(ns),
+		"control server":  controlServerPodWatchOpts(ns),
+		"host config map": batteryInfoConfigMapWatchOpts(ns),
 	} {
 		l := slog.With(slog.String("watch", name))
 		l.Debug("Waiting for watch to complete...")
@@ -111,6 +111,42 @@ func controlServerPodWatchOpts(ns string) *kube.WatchOptions {
 
 			// keep watching as long as the pod isn't running
 			return pod.Status.Phase != corev1.PodRunning
+		},
+	}
+}
+
+func batteryInfoConfigMapWatchOpts(ns string) *kube.WatchOptions {
+	return &kube.WatchOptions{
+		GVR:       schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"},
+		Namespace: ns,
+		ListOpts: metav1.ListOptions{LabelSelector: metav1.FormatLabelSelector(&metav1.LabelSelector{
+			MatchExpressions: []metav1.LabelSelectorRequirement{
+				{
+					Key:      "battery/app",
+					Operator: metav1.LabelSelectorOpIn,
+					Values:   []string{"battery-control-server"},
+				},
+			},
+		})},
+		Callback: func(u *unstructured.Unstructured) bool {
+			var cm corev1.ConfigMap
+			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &cm)
+			if err != nil {
+				slog.Debug(
+					"failed to convert unstructured object into typed resource",
+					slog.String("namespace", u.GetNamespace()),
+					slog.String("name", u.GetName()),
+					slog.Any("err", err),
+				)
+				return true
+			}
+
+			// keep watching as long as hostname isn't set
+			if cm.Data["hostname"] != "" {
+				slog.Debug("got control server hostname", slog.String("hostname", cm.Data["hostname"]))
+				return false
+			}
+			return true
 		},
 	}
 }
