@@ -29,10 +29,10 @@ export default function PricingCard({
   const [pod, setPod] = useState(preference?.pod.quantity || 0);
 
   return (
-    <div className="p-5 bg-white rounded-2xl border border-[#DADADA]">
-      <h2 className="text-xl lg:text-2xl font-semibold">{title}</h2>
+    <div className="rounded-2xl border border-[#DADADA] bg-white p-5">
+      <h2 className="text-xl font-semibold lg:text-2xl">{title}</h2>
       <p className="nt-2">{description}</p>
-      <div className="mt-4 mb-5 h-[1px] bg-[#DADADA]">&nbsp;</div>
+      <div className="mb-5 mt-4 h-[1px] bg-[#DADADA]">&nbsp;</div>
       {options && (
         <ul className="space-y-2">
           {options.map((opt, i) => (
@@ -46,11 +46,11 @@ export default function PricingCard({
       {preference && (
         <>
           <p>{preference.description}</p>
-          <div className="mt-5 mb-3 space-y-4">
+          <div className="mb-3 mt-5 space-y-4">
             <div className="flex items-center justify-center gap-x-4">
               <button
                 onClick={() => battery > 1 && setBattery((prev) => prev - 1)}
-                className="w-7 h-7 rounded-full border border-[#DADADA] grid place-items-center">
+                className="grid h-7 w-7 place-items-center rounded-full border border-[#DADADA]">
                 -
               </button>
               <p className="w-20 text-center">
@@ -58,7 +58,7 @@ export default function PricingCard({
               </p>
               <button
                 onClick={() => setBattery((prev) => prev + 1)}
-                className="w-7 h-7 rounded-full border border-[#DADADA] grid place-items-center">
+                className="grid h-7 w-7 place-items-center rounded-full border border-[#DADADA]">
                 +
               </button>
               <p>
@@ -72,7 +72,7 @@ export default function PricingCard({
             <div className="flex items-center justify-center gap-x-4">
               <button
                 onClick={() => pod > 1 && setPod((prev) => prev - 1)}
-                className="w-7 h-7 rounded-full border border-[#DADADA] grid place-items-center">
+                className="grid h-7 w-7 place-items-center rounded-full border border-[#DADADA]">
                 -
               </button>
               <p className="w-20 text-center">
@@ -80,7 +80,7 @@ export default function PricingCard({
               </p>
               <button
                 onClick={() => setPod((prev) => prev + 1)}
-                className="w-7 h-7 rounded-full border border-[#DADADA] grid place-items-center">
+                className="grid h-7 w-7 place-items-center rounded-full border border-[#DADADA]">
                 +
               </button>
               <p>

@@ -84,7 +84,7 @@ function Home() {
             name="content"
             onChange={handleChange}
             value={formData.content}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5 min-h-40"
+            className="block min-h-40 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-pink-500 focus:ring-pink-500"
             placeholder="Some Paste Content"
             required
           />
@@ -94,7 +94,7 @@ function Home() {
             name="title"
             onChange={handleChange}
             value={formData.title}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5"
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-pink-500 focus:ring-pink-500"
             placeholder="(Optional) Paste Title"
           />
 
@@ -102,13 +102,13 @@ function Home() {
             <button
               type="submit"
               disabled={formData.loading}
-              className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded shadow-lg">
+              className="rounded bg-pink-500 px-4 py-2 font-bold text-white shadow-lg hover:bg-pink-600">
               Create Paste
             </button>
             <button
               type="button"
               disabled={formData.loading}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-2 px-4 rounded"
+              className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-900 hover:bg-gray-400"
               onClick={resetForm}>
               Cancel
             </button>
@@ -122,7 +122,7 @@ function Home() {
           <li key={paste.id} className="">
             <Link
               to={`/paste/${paste.id}`}
-              className="text-pink-500 hover:underline cursor-pointer">
+              className="cursor-pointer text-pink-500 hover:underline">
               {paste.title}
             </Link>
           </li>

@@ -9,5 +9,5 @@
 @import './tippy.css';
 
 ::selection {
-  @apply text-white bg-primary;
+  @apply bg-primary text-white;
 }
