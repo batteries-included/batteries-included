@@ -60,15 +60,15 @@ defmodule ControlServer.DataCase do
     Enum.each(config_map, fn {_path, resource} ->
       case resource do
         resource_list when is_list(resource_list) ->
-          Enum.map(resource_list, &assert_resouce_good/1)
+          Enum.map(resource_list, &assert_resource_good/1)
 
         _ ->
-          assert_resouce_good(resource)
+          assert_resource_good(resource)
       end
     end)
   end
 
-  defp assert_resouce_good(single_resource) do
+  defp assert_resource_good(single_resource) do
     operation = K8s.Client.create(single_resource)
     assert Map.get(operation.data, "metadata") == Map.get(single_resource, "metadata")
   end

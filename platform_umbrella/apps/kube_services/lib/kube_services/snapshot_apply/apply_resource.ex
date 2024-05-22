@@ -104,7 +104,7 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
 
   defp maybe_apply(connection, single), do: apply_single(connection, single)
 
-  defp apply_single(_connection, nil = _resouce), do: {:ok, nil}
+  defp apply_single(_connection, nil = _resource), do: {:ok, nil}
 
   defp apply_single(_connection, [] = _resource), do: {:ok, []}
 

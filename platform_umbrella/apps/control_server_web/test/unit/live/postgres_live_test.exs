@@ -212,7 +212,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
   describe "postgres show page" do
     import ControlServer.Factory
 
-    alias CommonCore.ResouceFactory
+    alias CommonCore.ResourceFactory
     alias CommonCore.Resources.Builder, as: B
     alias CommonCore.Resources.FieldAccessors
     alias KubeServices.KubeState.Runner
@@ -223,7 +223,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       cluster = insert(:postgres_cluster)
 
       # Add a pod that's owned by this cluster
-      pod = :pod |> ResouceFactory.build() |> B.add_owner(cluster)
+      pod = :pod |> ResourceFactory.build() |> B.add_owner(cluster)
 
       Runner.add(@kube_table_name, pod)
 

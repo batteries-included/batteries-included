@@ -93,7 +93,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     # this is the beating heart of snapshot apply
     # It's a beast
     # First we set that this kube snapshot is in the applying phase
-    # Push resource paths that need it to kubernetes, updating the resouce paths in the db
+    # Push resource paths that need it to kubernetes, updating the resource paths in the db
     # Then update the kube snapshot one final time
     #
     # This whole thing tries really really really hard to never throw

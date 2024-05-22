@@ -28,16 +28,16 @@ defmodule CommonCore.Resources.Builder do
   end
 
   @spec annotation(map(), binary(), any()) :: map()
-  def annotation(resouce, key, value) do
-    resouce
+  def annotation(resource, key, value) do
+    resource
     |> Map.put_new("metadata", %{})
     |> update_in(~w(metadata annotations), fn anno -> anno || %{} end)
     |> put_in(["metadata", "annotations", key], value)
   end
 
   @spec annotations(map(), map()) :: map()
-  def annotations(resouce, %{} = anno_map) do
-    resouce
+  def annotations(resource, %{} = anno_map) do
+    resource
     |> Map.put_new("metadata", %{})
     |> update_in(~w(metadata annotations), fn anno -> Map.merge(anno || %{}, anno_map) end)
   end

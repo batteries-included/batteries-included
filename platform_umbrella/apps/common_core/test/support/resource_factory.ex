@@ -1,4 +1,4 @@
-defmodule CommonCore.ResouceFactory do
+defmodule CommonCore.ResourceFactory do
   @moduledoc false
   use ExMachina
 

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ResouceHTMLHelperTest do
+defmodule ControlServerWeb.ResourceHTMLHelperTest do
   use ControlServerWeb.ConnCase
 
   import CommonCore.Resources.FieldAccessors

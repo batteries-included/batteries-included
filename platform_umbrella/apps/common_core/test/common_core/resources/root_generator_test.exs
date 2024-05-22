@@ -22,7 +22,7 @@ defmodule CommonCore.RootResourceGeneratorTest do
     assert match?({:ok, _value}, Jason.encode(resources))
   end
 
-  def assert_one_resouce_definition(resource_map) do
+  def assert_one_resource_definition(resource_map) do
     resource_map
     |> Enum.map(fn {path, res} ->
       {{ApiVersionKind.resource_type!(res), namespace(res), name(res)}, path}
@@ -48,7 +48,7 @@ defmodule CommonCore.RootResourceGeneratorTest do
       |> build(usage: :kitchen_sink, kube_provider: :aws)
       |> then(fn install_spec -> install_spec.target_summary end)
       |> RootResourceGenerator.materialize()
-      |> assert_one_resouce_definition()
+      |> assert_one_resource_definition()
       |> Map.values()
       |> Enum.each(&assert_valid/1)
     end

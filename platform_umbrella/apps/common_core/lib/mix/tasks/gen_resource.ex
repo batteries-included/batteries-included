@@ -59,10 +59,10 @@ defmodule Mix.Tasks.Gen.Resource do
 
     write_manifests(result, app_name)
     write_raw_files(result, app_name)
-    write_resouce_elixir(result, app_name)
+    write_resource_elixir(result, app_name)
   end
 
-  defp write_resouce_elixir(%ResourceResult{} = result, app_name) do
+  defp write_resource_elixir(%ResourceResult{} = result, app_name) do
     module = module(app_name, result.include_paths, result.methods)
 
     resource_path =
