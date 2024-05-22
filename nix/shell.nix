@@ -15,7 +15,7 @@
       };
       inherit (pkgs) beam;
 
-      beamPackages = beam.packagesWith beam.interpreters.erlang_26;
+      beamPackages = beam.packagesWith beam.interpreters.erlang_27;
       inherit (beamPackages) erlang;
 
       # These build and check.

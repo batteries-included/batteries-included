@@ -12,12 +12,15 @@
 
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      version = "0.12.2";
+      version = "0.12.3";
 
-      beamPackages = beam.packagesWith beam.interpreters.erlang_26;
+      beamPackages = beam.packagesWith beam.interpreters.erlang_27;
       inherit (beamPackages) erlang;
       elixir = beamPackages.elixir_1_16;
       hex = beamPackages.hex.override { inherit elixir; };
+      rebar3 = beamPackages.rebar3.overrideAttrs (_old: {
+        doCheck = false;
+      });
 
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
 
@@ -28,6 +31,7 @@
           version
           LANG
           elixir
+          rebar3
           ;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
@@ -104,6 +108,7 @@
         inherit version src pkgs;
         inherit erlang elixir hex;
         inherit pkg-config gcc openssl;
+        inherit rebar3;
 
         pname = "platform";
         mixEnv = "test";
@@ -115,6 +120,7 @@
         inherit version src pkgs;
         inherit erlang elixir hex;
         inherit pkg-config gcc openssl;
+        inherit rebar3;
 
         pname = "platform";
         mixEnv = "test";
@@ -126,6 +132,7 @@
         inherit version src pkgs;
         inherit erlang elixir hex;
         inherit pkg-config gcc openssl;
+        inherit rebar3;
 
         pname = "platform";
         mixEnv = "test";

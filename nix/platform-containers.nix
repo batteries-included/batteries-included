@@ -4,7 +4,7 @@
     { self', pkgs, ... }:
     let
       safeRev = self.shortRev or self.dirtyShortRev;
-      version = "0.12.2";
+      version = "0.12.3";
       taggedVersion = "${version}-${safeRev}";
       additionalContents = [
         pkgs.bash
