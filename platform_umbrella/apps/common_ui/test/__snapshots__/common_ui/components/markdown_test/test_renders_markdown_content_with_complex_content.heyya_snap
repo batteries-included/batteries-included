@@ -1,0 +1,29 @@
+<section class="prose lg:prose-xl">
+  <h2>
+  Markdown
+</h2>
+<p>
+  This is a markdown component and it supports:
+</p>
+<ul>
+  <li>
+    Lists
+  </li>
+  <li>
+    Headers
+  </li>
+  <li>
+    Inline Code 
+<code class="code-inline">defmodule Test do</code>
+  </li>
+  <li>
+    Sub Header
+  </li>
+</ul>
+<h3>
+  Sub Header
+</h3>
+<pre><code>auto test = 100;
+cout &lt;&lt; test &lt;&lt; endl;
+</code></pre>
+</section>
