@@ -15,8 +15,6 @@ defmodule CommonCore.ET.HomeBaseClient do
   @me __MODULE__
   @state_opts ~w(home_url)a
 
-  @default_home_url "http://home.prod.127.0.0.1.ip.batteriesincl.com:4100/api/v1"
-
   def send_usage(client \\ @me, state_summary) do
     GenServer.call(client, {:send_usage, state_summary})
   end
@@ -32,7 +30,7 @@ defmodule CommonCore.ET.HomeBaseClient do
 
   def init(opts) do
     # Get the default url we'll need that to create the http client
-    home_url = Keyword.get(opts, :home_url, @default_home_url)
+    home_url = Keyword.fetch!(opts, :home_url)
 
     state = struct!(State, home_url: home_url, http_client: nil)
     build_client(state)
@@ -48,10 +46,28 @@ defmodule CommonCore.ET.HomeBaseClient do
     {:ok, %State{state | http_client: client}}
   end
 
-  defp middleware(base_url),
-    do: [{Tesla.Middleware.BaseUrl, base_url}, Tesla.Middleware.FormUrlencoded, Tesla.Middleware.JSON]
+  defp middleware(base_url) do
+    [
+      {Tesla.Middleware.BaseUrl, base_url},
+      Tesla.Middleware.JSON
+    ]
+  end
 
   defp do_send_usage(%{http_client: client} = _state, state_summary) do
-    Tesla.post(client, "/usage", UsageReport.new(state_summary))
+    with {:ok, usage_report} <- UsageReport.new(state_summary),
+         # since the path is dependent on the install id, get that here
+         report_path = CommonCore.ET.URLs.usage_report_path(state_summary),
+         # Push the report to the reports path for the install
+         {:ok, _} <- Tesla.post(client, report_path, %{usage_report: usage_report}) do
+      :ok
+    else
+      {:error, reason} ->
+        Logger.error("Failed to send usage report: #{inspect(reason)}")
+        {:error, reason}
+
+      unexpected ->
+        Logger.error("Unexpected response from home: #{inspect(unexpected)}")
+        {:error, {:unexpected_response, unexpected}}
+    end
   end
 end

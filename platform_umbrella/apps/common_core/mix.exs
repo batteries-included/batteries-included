@@ -20,6 +20,7 @@ defmodule CommonCore.MixProject do
 
   def application do
     [
+      mod: {CommonCore.Application, []},
       extra_applications: [:logger, :dialyzer]
     ]
   end

@@ -50,9 +50,9 @@ defmodule ControlServer.MixProject do
       {:k8s, "~> 2.6"},
       {:mint, "~> 1.0"},
       {:phoenix, "~> 1.7"},
-      {:phoenix_ecto, "~> 4.5"},
+      {:phoenix_ecto, "~> 4.6"},
       {:phoenix_pubsub, "~> 2.1"},
-      {:postgrex, "~> 0.17"},
+      {:postgrex, "~> 0.18"},
 
       # Types for all the things
       {:typed_ecto_schema, "~> 0.4"},

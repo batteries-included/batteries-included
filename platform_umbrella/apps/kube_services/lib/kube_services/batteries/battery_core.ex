@@ -3,12 +3,14 @@ defmodule KubeServices.Batteries.BatteryCore do
   use KubeServices.Batteries.Supervisor
 
   def init(opts) do
-    _battery = Keyword.fetch!(opts, :battery)
+    battery = Keyword.fetch!(opts, :battery)
 
     children = [
       KubeServices.SnapshotApply,
       KubeServices.Stale.Reaper,
-      KubeServices.ResourceDeleter
+      KubeServices.ResourceDeleter,
+      {CommonCore.ET.HomeBaseClient, [home_url: CommonCore.ET.URLs.home_base_url(battery.config)]},
+      {KubeServices.ET.Usage, [home_client: CommonCore.ET.HomeBaseClient]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

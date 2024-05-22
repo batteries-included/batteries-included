@@ -33,7 +33,7 @@ defmodule WhatsUp.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7"},
-      {:phoenix_ecto, "~> 4.5"},
+      {:phoenix_ecto, "~> 4.6"},
       {:ecto_sql, "~> 3.11"},
       {:ecto_sqlite3, "~> 0.14"},
       {:phoenix_html, "~> 4.1"},

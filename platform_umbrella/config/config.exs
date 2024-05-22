@@ -100,7 +100,7 @@ config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
 
 config :common_core, CommonCore.Resources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 
-config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000]}
+config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]}
 
 config :swoosh, :api_client, Swoosh.ApiClient.Finch
 

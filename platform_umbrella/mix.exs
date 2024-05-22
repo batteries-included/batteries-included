@@ -36,6 +36,7 @@ defmodule ControlServer.Umbrella.MixProject do
     [
       control_server: [
         applications: [
+          common_core: :permanent,
           control_server: :permanent,
           kube_services: :permanent,
           control_server_web: :permanent
@@ -46,6 +47,7 @@ defmodule ControlServer.Umbrella.MixProject do
       ],
       kube_bootstrap: [
         applications: [
+          common_core: :permanent,
           kube_bootstrap: :permanent
         ],
         include_executables_for: [:unix],
@@ -53,7 +55,11 @@ defmodule ControlServer.Umbrella.MixProject do
         runtime_config_path: "apps/kube_bootstrap/config/runtime.exs"
       ],
       home_base: [
-        applications: [home_base: :permanent, home_base_web: :permanent],
+        applications: [
+          common_core: :permanent,
+          home_base: :permanent,
+          home_base_web: :permanent
+        ],
         include_executables_for: [:unix],
         steps: [:assemble],
         runtime_config_path: "apps/home_base_web/config/runtime.exs"

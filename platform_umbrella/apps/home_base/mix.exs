@@ -48,11 +48,11 @@ defmodule HomeBase.MixProject do
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:phoenix_ecto, "~> 4.5"},
+      {:phoenix_ecto, "~> 4.6"},
       {:phoenix_pubsub, "~> 2.1"},
       {:swoosh, "~> 1.16"},
       {:finch, "~> 0.18"},
-      {:postgrex, "~> 0.17"},
+      {:postgrex, "~> 0.18"},
       {:typed_ecto_schema, "~> 0.4"},
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 5.0"}

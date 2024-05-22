@@ -13,7 +13,7 @@ defmodule HomeBaseWeb.StoredUsageReportControllerTest do
     test "renders stored_usage_report when data is valid", %{conn: conn, installation: install} do
       usage_report = params_for(:usage_report)
 
-      conn = post(conn, ~p"/api/v1/installation/#{install.id}/usage_reports", usage_report: usage_report)
+      conn = post(conn, ~p"/api/v1/installations/#{install.id}/usage_reports", usage_report: usage_report)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
       report = HomeBase.ET.get_stored_usage_report!(id)
@@ -22,7 +22,7 @@ defmodule HomeBaseWeb.StoredUsageReportControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, installation: install} do
-      conn = post(conn, ~p"/api/v1/installation/#{install.id}/usage_reports", usage_report: @invalid_attrs)
+      conn = post(conn, ~p"/api/v1/installations/#{install.id}/usage_reports", usage_report: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
 
@@ -30,7 +30,7 @@ defmodule HomeBaseWeb.StoredUsageReportControllerTest do
       usage_report = params_for(:usage_report)
       installation_id = CommonCore.Ecto.BatteryUUID.autogenerate()
 
-      conn = post(conn, ~p"/api/v1/installation/#{installation_id}/usage_reports", usage_report: usage_report)
+      conn = post(conn, ~p"/api/v1/installations/#{installation_id}/usage_reports", usage_report: usage_report)
 
       assert json_response(conn, 422)["errors"] != %{}
     end
