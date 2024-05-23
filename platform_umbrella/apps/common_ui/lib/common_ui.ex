@@ -48,7 +48,6 @@ defmodule CommonUI do
       import CommonUI.Components.Table
       import CommonUI.Components.Tooltip
       import CommonUI.Components.Typography
-      import CommonUI.Components.VerticalSteps
       import CommonUI.Components.Video
       import CommonUI.TextHelpers
     end

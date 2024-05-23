@@ -7,7 +7,7 @@ defmodule CommonCore.Batteries.Catalog do
   @groups [
     %CatalogGroup{
       id: :data,
-      name: "Datastores",
+      name: "Data",
       show_for_projects: true
     },
     %CatalogGroup{
@@ -32,7 +32,7 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogGroup{
       id: :net_sec,
-      name: "Net/Security",
+      name: "Network/Security",
       show_for_projects: false
     }
   ]
@@ -43,6 +43,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :data,
       type: :redis,
       dependencies: [:battery_core],
+      name: "Redis",
       description:
         "Redis is an in-memory data structure store, used as a database, cache, message broker, and streaming engine."
     },
@@ -50,6 +51,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :data,
       type: :cloudnative_pg,
       dependencies: [:battery_core],
+      name: "PostgreSQL",
       description:
         "PostgreSQL is a free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility."
     },
@@ -57,32 +59,37 @@ defmodule CommonCore.Batteries.Catalog do
       group: :data,
       type: :ferretdb,
       dependencies: [:battery_core, :cloudnative_pg],
+      name: "FerretDB",
       description: "A truly Open Source MongoDB alternative, built on Postgres"
     },
     # Magic
-    %CatalogBattery{group: :magic, type: :battery_core},
+    %CatalogBattery{group: :magic, type: :battery_core, name: "Battery Core"},
     %CatalogBattery{
       group: :magic,
       type: :timeline,
       dependencies: [:battery_core],
+      name: "Timeline",
       description: "Monitor what's happened on Kubernetes and store that for later investigation."
     },
     %CatalogBattery{
       group: :magic,
       type: :stale_resource_cleaner,
       dependencies: [:battery_core],
+      name: "Stale Resource Cleaner",
       description: "A battery that removes old resources that are no longer needed."
     },
     %CatalogBattery{
       group: :magic,
       type: :karpenter,
       dependencies: [:battery_core],
+      name: "Karpenter",
       description: "Auto scale kubernetes clusters in AWS EKS."
     },
     %CatalogBattery{
       group: :magic,
       type: :aws_load_balancer_controller,
       dependencies: [:battery_core, :karpenter, :battery_ca],
+      name: "AWS Load Balancer Controller",
       description: "A Kubernetes controller for Elastic Load Balancers."
     },
     # Devtools
@@ -90,6 +97,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :devtools,
       type: :knative,
       dependencies: [:battery_core],
+      name: "KNative",
       description:
         "Knative Kubernetes operator that provides a declarative API for managing Knative Serving and Eventing. " <>
           "Knative serving is ascale-to-zero, request-driven compute platform that lets you run stateless containers " <>
@@ -99,6 +107,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :devtools,
       type: :backend_services,
       dependencies: [:battery_core],
+      name: "Backend Services",
       description:
         "Run containers that don't conform the the serverless http model. " <>
           "This is useful for running long running processes, or for running services that need to be accessed by other services."
@@ -107,77 +116,90 @@ defmodule CommonCore.Batteries.Catalog do
       group: :devtools,
       type: :forgejo,
       dependencies: [:cloudnative_pg, :istio_gateway, :battery_core],
+      name: "Forgejo",
       description:
         "Forgejo is a self-hosted, open-source, Go-based Git repository manager with a web interface and command-line tools."
     },
     %CatalogBattery{
       group: :devtools,
       type: :smtp4dev,
-      dependencies: [:battery_core, :istio_gateway]
+      dependencies: [:battery_core, :istio_gateway],
+      name: "SMTP4Dev"
     },
     # ML
     %CatalogBattery{
       group: :ai,
       type: :notebooks,
-      dependencies: [:istio_gateway]
+      dependencies: [:istio_gateway],
+      name: "Notebooks"
     },
     %CatalogBattery{
       group: :ai,
       type: :text_generation_webui,
-      dependencies: [:istio_gateway]
+      dependencies: [:istio_gateway],
+      name: "Text Generation WebUI"
     },
     # Monitoring
     %CatalogBattery{
       group: :monitoring,
       type: :grafana,
       dependencies: [:battery_core],
+      name: "Grafana",
       description:
         "Grafana is an open-source, web-based analytics and monitoring platform that provides charts, graphs, and alerts for the web when connected to supported data sources."
     },
     %CatalogBattery{
       group: :monitoring,
       type: :vm_operator,
-      dependencies: [:battery_core]
+      dependencies: [:battery_core],
+      name: "VM Operator"
     },
     %CatalogBattery{
       group: :monitoring,
       type: :vm_agent,
-      dependencies: [:vm_operator]
+      dependencies: [:vm_operator],
+      name: "VM Agent"
     },
     %CatalogBattery{
       group: :monitoring,
       type: :vm_cluster,
-      dependencies: [:vm_operator]
+      dependencies: [:vm_operator],
+      name: "VM Cluster"
     },
     %CatalogBattery{
       group: :monitoring,
       type: :victoria_metrics,
       dependencies: [:battery_core, :vm_operator, :vm_agent, :vm_cluster],
+      name: "Victoria Metrics",
       description: "Victoria Metrics is a fast, open source, and scalable monitoring solution and time series database."
     },
     %CatalogBattery{
       group: :monitoring,
       type: :kube_monitoring,
-      description: "All of the systems needed to monitor Kubernetes with VictoriaMetrics.",
-      dependencies: [:battery_core, :victoria_metrics]
+      dependencies: [:battery_core, :victoria_metrics],
+      name: "Kube Monitoring",
+      description: "All of the systems needed to monitor Kubernetes with VictoriaMetrics."
     },
     %CatalogBattery{
       group: :monitoring,
       type: :loki,
       dependencies: [:battery_core, :grafana],
+      name: "Loki",
       description:
         "Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus."
     },
     %CatalogBattery{
       group: :monitoring,
       type: :promtail,
-      dependencies: [:battery_core, :loki]
+      dependencies: [:battery_core, :loki],
+      name: "Promtail"
     },
     # Network
     %CatalogBattery{
       group: :net_sec,
       type: :istio,
       dependencies: [],
+      name: "Istio",
       description:
         "Istio is an open-source service mesh that provides a unified way to control how microservices share data with one another."
     },
@@ -185,6 +207,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :istio_gateway,
       dependencies: [:istio],
+      name: "Istio Gateway",
       description:
         "Istio Ingress Gateway is a load balancer that sits at the edge of an Istio service mesh and routes traffic to services within the mesh."
     },
@@ -192,6 +215,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :kiali,
       dependencies: [:istio, :istio_gateway, :grafana, :victoria_metrics],
+      name: "Kiali",
       description:
         "Kiali is an open-source observability tool for Istio that provides a unified view of your service mesh, including traffic, health, and configuration."
     },
@@ -199,6 +223,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :metallb,
       dependencies: [:istio_gateway, :battery_core],
+      name: "MetalLB",
       description:
         "MetalLB is a load balancer implementation for bare metal Kubernetes clusters, using standard routing protocols."
     },
@@ -206,27 +231,32 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :net_sec,
       type: :cert_manager,
-      dependencies: [:battery_core]
+      dependencies: [:battery_core],
+      name: "Cert Manager"
     },
     %CatalogBattery{
       group: :net_sec,
       type: :battery_ca,
-      dependencies: [:cert_manager]
+      dependencies: [:cert_manager],
+      name: "Battery CA"
     },
     %CatalogBattery{
       group: :net_sec,
       type: :trust_manager,
-      dependencies: [:battery_core, :battery_ca, :cert_manager]
+      dependencies: [:battery_core, :battery_ca, :cert_manager],
+      name: "Trust Manager"
     },
     %CatalogBattery{
       group: :net_sec,
       type: :istio_csr,
-      dependencies: [:istio, :battery_ca]
+      dependencies: [:istio, :battery_ca],
+      name: "Istio CSR"
     },
     %CatalogBattery{
       group: :net_sec,
       type: :trivy_operator,
       dependencies: [:battery_core],
+      name: "Trivy Operator",
       description:
         "The Trivy Operator is a Kubernetes Operator that can be deployed directly inside of a Kubernetes cluster to run continuous security scans of your running resources and infrastructure."
     },
@@ -234,12 +264,14 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :keycloak,
       dependencies: [:battery_core, :cloudnative_pg],
+      name: "Keycloak",
       description: "Open Source Identity and Access Management For Modern Applications and Services"
     },
     %CatalogBattery{
       group: :net_sec,
       type: :sso,
-      dependencies: [:battery_core, :keycloak]
+      dependencies: [:battery_core, :keycloak],
+      name: "SSO"
     }
   ]
 

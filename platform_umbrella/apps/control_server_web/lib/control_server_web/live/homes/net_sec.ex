@@ -123,7 +123,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Net/Security">
-      <.button variant="secondary" link={install_path()}>
+      <.button variant="secondary" icon={:kubernetes} link={install_path()}>
         Manage Batteries
       </.button>
     </.page_header>

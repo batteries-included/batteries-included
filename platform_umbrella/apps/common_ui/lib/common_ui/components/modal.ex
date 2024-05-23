@@ -18,6 +18,7 @@ defmodule CommonUI.Components.Modal do
   """
   attr :id, :string, required: true
   attr :show, :boolean, default: false
+  attr :allow_close, :boolean, default: true
   attr :size, :string, default: "md", values: ["md", "lg", "xl"]
   attr :class, :any, default: "p-5"
   attr :on_cancel, JS, default: %JS{}
@@ -50,8 +51,8 @@ defmodule CommonUI.Components.Modal do
           <.focus_wrap
             id={"#{@id}-container"}
             phx-mounted={@show && show_modal(@id)}
-            phx-click-away={hide_modal(@on_cancel, @id)}
-            phx-window-keydown={hide_modal(@on_cancel, @id)}
+            phx-click-away={@allow_close && hide_modal(@on_cancel, @id)}
+            phx-window-keydown={@allow_close && hide_modal(@on_cancel, @id)}
             phx-key="escape"
             class={[
               "relative z-20 w-full bg-white dark:bg-gray-darkest rounded-xl shadow-xl shadow-gray-darkest/10 ring-1 ring-gray-darkest/10 dark:ring-gray-light/10",
@@ -67,6 +68,7 @@ defmodule CommonUI.Components.Modal do
               </h2>
 
               <.button
+                :if={@allow_close}
                 variant="icon"
                 icon={:x_mark}
                 aria-label="Close"

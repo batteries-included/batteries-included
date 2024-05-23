@@ -42,5 +42,15 @@ defmodule CommonUI.Components.ModalTest do
       </.modal>
       """
     end
+
+    component_snapshot_test "no close button" do
+      assigns = %{}
+
+      ~H"""
+      <.modal id="modal" allow_close={false}>
+        <p>This is a modal.</p>
+      </.modal>
+      """
+    end
   end
 end

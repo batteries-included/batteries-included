@@ -120,7 +120,7 @@ defmodule ControlServerWeb.Live.MagicHome do
   def render(assigns) do
     ~H"""
     <.page_header title="Magic">
-      <.button variant="secondary" link={~p"/batteries/magic"}>
+      <.button variant="secondary" icon={:kubernetes} link={~p"/batteries/magic"}>
         Manage Batteries
       </.button>
     </.page_header>

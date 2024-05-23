@@ -10,6 +10,7 @@ defmodule CommonCore.CatalogTest do
         assert catalog_battery.dependencies == Catalog.get(catalog_battery.type).dependencies
         assert catalog_battery.type == Catalog.get(catalog_battery.type).type
         assert catalog_battery.group == Catalog.get(catalog_battery.type).group
+        assert catalog_battery.name == Catalog.get(catalog_battery.type).name
       end
     end
 

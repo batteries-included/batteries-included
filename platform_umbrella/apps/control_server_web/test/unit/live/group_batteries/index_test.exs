@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.GroupBatteriesLiveTest do
+defmodule ControlServerWeb.GroupBatteries.IndexLiveTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
@@ -15,7 +15,7 @@ defmodule ControlServerWeb.GroupBatteriesLiveTest do
     test "can list the group batteries", %{conn: conn} do
       conn
       |> start(~p"/batteries/ai")
-      |> assert_html("Machine Learning Batteries")
+      |> assert_html("Artificial Intelligence Batteries")
       |> assert_element(~s(a[href="/ai"]))
     end
   end

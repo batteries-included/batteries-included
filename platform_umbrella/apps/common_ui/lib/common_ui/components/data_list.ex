@@ -48,17 +48,23 @@ defmodule CommonUI.Components.DataList do
 
   def data_list(assigns) do
     ~H"""
-    <.grid columns={12} class={["text-darker dark:text-gray-lighter", @class]}>
+    <div
+      class={[
+        "grid grid-cols-[auto,1fr] items-center text-darker dark:text-gray-lighter gap-x-12 gap-y-4",
+        @class
+      ]}
+      {@rest}
+    >
       <%= for item <- @item do %>
-        <div class="text-xl leading-4 col-span-5">
+        <div class="text-xl font-medium leading-4">
           <%= item.title %>
         </div>
 
-        <div class="text-base leading-4 col-span-7">
+        <div class="text-base leading-4">
           <%= render_slot(item) %>
         </div>
       <% end %>
-    </.grid>
+    </div>
     """
   end
 end

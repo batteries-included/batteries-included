@@ -49,11 +49,12 @@ defmodule ControlServerWeb.Router do
     live "/:umbrella_id/keycloak/:id", Live.KeycloakSnapshotShow, :index
   end
 
-  scope "/batteries", ControlServerWeb do
+  scope "/batteries", ControlServerWeb.GroupBatteries do
     pipe_through :browser
 
-    live "/:group", Live.GroupBatteries, :show
-    live "/:group/install/:battery_type", Live.GroupBatteries, :install
+    live "/:group", IndexLive
+    live "/:group/new/:battery_type", NewLive
+    live "/:group/edit/:battery_type", EditLive
   end
 
   scope "/projects", ControlServerWeb.Projects do

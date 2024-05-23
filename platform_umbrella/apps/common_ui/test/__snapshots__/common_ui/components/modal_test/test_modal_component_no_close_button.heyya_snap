@@ -1,0 +1,29 @@
+<div id="modal" class="fixed inset-0 z-50 hidden">
+  <div id="modal-bg" aria-hidden="true" class="fixed inset-0 z-10 bg-white/80 dark:bg-gray-darkest-tint/80 backdrop-blur-sm transition-all"></div>
+
+  <div aria-labelledby="modal-title" aria-describedby="modal-description" aria-modal="true" role="dialog" tabindex="0" class="h-full overflow-y-auto">
+    <div class="flex items-center justify-center min-h-full px-4 py-6">
+      <div id="modal-container" phx-hook="Phoenix.FocusWrap" class="relative z-20 w-full bg-white dark:bg-gray-darkest rounded-xl shadow-xl shadow-gray-darkest/10 ring-1 ring-gray-darkest/10 dark:ring-gray-light/10 max-w-xl" phx-key="escape">
+  <span id="modal-container-start" tabindex="0" aria-hidden="true"></span>
+  
+        <div class="flex items-center justify-between px-5 pt-5">
+          <h2 class="text-2xl font-semibold leading-8 text-gray-darkest dark:text-gray-lightest">
+            
+          </h2>
+
+          
+        </div>
+
+        <div class="p-5">
+          
+  <p>This is a modal.</p>
+
+        </div>
+
+        
+      
+  <span id="modal-container-end" tabindex="0" aria-hidden="true"></span>
+</div>
+    </div>
+  </div>
+</div>

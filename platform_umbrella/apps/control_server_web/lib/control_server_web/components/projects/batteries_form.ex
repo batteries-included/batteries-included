@@ -4,7 +4,6 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
-  alias Phoenix.Naming
 
   def mount(socket) do
     groups = Catalog.groups_for_projects()
@@ -186,7 +185,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
       <div>
         <div class="flex items-center gap-3 mb-2">
           <h3 class="text-xl font-semibold">
-            <%= Naming.humanize(@battery.type) %>
+            <%= @battery.name %>
           </h3>
 
           <.badge :if={@installed} label="ALREADY INSTALLED" minimal />

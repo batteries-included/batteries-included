@@ -8,6 +8,7 @@ defmodule CommonCore.Batteries.CatalogBattery do
     field :type, atom(), enforce: true
     field :group, atom(), enforce: true
     field :dependencies, list(atom()), default: []
+    field :name, String.t(), enforce: true
     field :description, String.t(), default: ""
   end
 
