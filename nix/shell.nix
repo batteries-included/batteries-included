@@ -32,14 +32,7 @@
       # elixir,elixir-ls, and hex are using the same version elixir
       #
       elixir = beamPackages.elixir_1_16;
-      # elixir-ls needs to be compiled with elixir_ls.release2 for the latest otp version
-      elixir-ls = (beamPackages.elixir-ls.override { inherit elixir; }).overrideAttrs (_old: {
-        buildPhase = ''
-          runHook preBuild
-          mix do compile --no-deps-check, elixir_ls.release2
-          runHook postBuild
-        '';
-      });
+      elixir-ls = beamPackages.elixir-ls.override { inherit elixir; };
       hex = beamPackages.hex.override { inherit elixir; };
 
       elixirNativeTools = with pkgs; [
