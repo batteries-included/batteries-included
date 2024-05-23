@@ -163,12 +163,12 @@
 
         pushd platform_umbrella &> /dev/null
         find $MIX_HOME -type f -name 'rebar3' -executable -print0 | grep -qz . \
-            || mix local.rebar --if-missing rebar3 ${rebar3}/bin/rebar3
+            || mix local.rebar --if-missing --force rebar3 ${rebar3}/bin/rebar3
 
 
         # Install hex if it's not there
         find $MIX_HOME -type f -name 'hex.app' -print0 | grep -qz . \
-            || mix local.hex --if-missing
+            || mix local.hex --force
         popd &> /dev/null
       '';
     in
