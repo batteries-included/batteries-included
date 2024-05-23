@@ -78,7 +78,7 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
 
     spec =
       %{}
-      |> Map.put("backoffLimit", 4)
+      |> Map.put("backoffLimit", 6)
       |> Map.put("completions", 1)
       |> Map.put("parallelism", 1)
       |> B.template(template)

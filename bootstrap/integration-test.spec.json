@@ -22,7 +22,7 @@
           "default_size": "tiny",
           "cluster_name": "integration-test",
           "server_in_cluster": false,
-          "install_id": "batt_018f7a1fa4ed73b2976b186452c4996e",
+          "install_id": "batt_018fa21858cd7f9b96da1f03bd0b505b",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -41,13 +41,13 @@
           "name": "control",
           "owner": "battery-control-user"
         },
-        "storage_class": null,
         "cpu_requested": 500,
         "cpu_limits": 500,
         "memory_requested": 536870912,
         "memory_limits": 536870912,
         "num_instances": 1,
         "virtual_size": "tiny",
+        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
         "users": [
@@ -61,7 +61,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "BHBYIUST7SQRKNSLQYVYLDNW",
+            "password": "IBJ3WIE5ZUXVQUBENGQUEO4I",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }

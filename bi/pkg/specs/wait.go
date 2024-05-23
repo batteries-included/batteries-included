@@ -64,7 +64,7 @@ func bootstrapJobWatchOpts(ns string) *kube.WatchOptions {
 				},
 			},
 		})},
-		Callback: func(u *unstructured.Unstructured) bool {
+		Callback: func(u *unstructured.Unstructured) (bool, error) {
 			var job batchv1.Job
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &job)
 			if err != nil {
@@ -74,13 +74,27 @@ func bootstrapJobWatchOpts(ns string) *kube.WatchOptions {
 					slog.String("name", u.GetName()),
 					slog.Any("err", err),
 				)
-				return true
+				return false, nil
+			}
+
+			err = nil
+			if jobFailed(job.Status.Conditions) {
+				err = fmt.Errorf("bootstrap job failed")
 			}
 
 			// keep watching as long as there is no completion time
-			return job.Status.CompletionTime == nil
+			return job.Status.CompletionTime != nil, err
 		},
 	}
+}
+
+func jobFailed(conditions []batchv1.JobCondition) bool {
+	for _, c := range conditions {
+		if c.Type == batchv1.JobFailed && c.Status == corev1.ConditionTrue {
+			return true
+		}
+	}
+	return false
 }
 
 func controlServerPodWatchOpts(ns string) *kube.WatchOptions {
@@ -96,7 +110,7 @@ func controlServerPodWatchOpts(ns string) *kube.WatchOptions {
 				},
 			},
 		})},
-		Callback: func(u *unstructured.Unstructured) bool {
+		Callback: func(u *unstructured.Unstructured) (bool, error) {
 			var pod corev1.Pod
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &pod)
 			if err != nil {
@@ -106,11 +120,11 @@ func controlServerPodWatchOpts(ns string) *kube.WatchOptions {
 					slog.String("name", u.GetName()),
 					slog.Any("err", err),
 				)
-				return true
+				return false, nil
 			}
 
 			// keep watching as long as the pod isn't running
-			return pod.Status.Phase != corev1.PodRunning
+			return pod.Status.Phase == corev1.PodRunning, nil
 		},
 	}
 }
@@ -128,7 +142,7 @@ func batteryInfoConfigMapWatchOpts(ns string) *kube.WatchOptions {
 				},
 			},
 		})},
-		Callback: func(u *unstructured.Unstructured) bool {
+		Callback: func(u *unstructured.Unstructured) (bool, error) {
 			var cm corev1.ConfigMap
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &cm)
 			if err != nil {
@@ -138,15 +152,15 @@ func batteryInfoConfigMapWatchOpts(ns string) *kube.WatchOptions {
 					slog.String("name", u.GetName()),
 					slog.Any("err", err),
 				)
-				return true
+				return false, nil
 			}
 
 			// keep watching as long as hostname isn't set
 			if cm.Data["hostname"] != "" {
 				slog.Debug("got control server hostname", slog.String("hostname", cm.Data["hostname"]))
-				return false
+				return true, nil
 			}
-			return true
+			return false, nil
 		},
 	}
 }

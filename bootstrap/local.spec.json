@@ -48,7 +48,7 @@
           "default_size": "tiny",
           "cluster_name": "local",
           "server_in_cluster": true,
-          "install_id": "batt_018f7a1fa4ec79ab9204f736637f1896",
+          "install_id": "batt_018fa21858cc7ae193f1d984c024a0d5",
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -64,8 +64,8 @@
           "controller_image": "quay.io/metallb/controller:v0.13.12",
           "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "controller_image_override": null,
           "speaker_image_override": null,
+          "controller_image_override": null,
           "frrouting_image_override": null
         },
         "group": "net_sec",
@@ -107,20 +107,20 @@
           "name": "control",
           "owner": "battery-control-user"
         },
-        "storage_class": null,
         "cpu_requested": 500,
         "cpu_limits": 500,
         "memory_requested": 536870912,
         "memory_limits": 536870912,
         "num_instances": 1,
         "virtual_size": "tiny",
+        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
         "users": [
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "G2IWRGTYM7KJIAL6T2B2YTJQ",
+            "password": "XBCL4DGBDNECEGQZ5IMV7C6C",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -174,7 +174,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "QGQYB7XMDTWYPA5NEFNPAUOTJMMRFPOFK24SHCFQJHFFZKHPNRVA===="
+          "battery/hash": "RYPZHXR6U2GXCXGNPKZTE36LHFAAWI2BLXI2QF4O6B6ZESWWIGOQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -191,7 +191,7 @@
         "namespace": "battery-core"
       },
       "spec": {
-        "backoffLimit": 4,
+        "backoffLimit": 6,
         "completions": 1,
         "parallelism": 1,
         "template": {
@@ -219,7 +219,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "PXGG5SSLCXS6Q2RZP4YLIB7G5UIZNBYSI7UFQ52G3TUEEEU6AR6HSZBJDMDT377Y"
+                    "value": "YD2EWSDTHA4JOE76NHRTT3UZE2XHI3AE4L3BUQOODLB7VSWQEC2AW7O2A6ZPWXCP"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",

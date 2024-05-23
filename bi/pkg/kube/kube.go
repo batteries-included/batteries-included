@@ -188,7 +188,7 @@ type WatchOptions struct {
 	// The list options for the watch. Specify the resources to watch here
 	ListOpts metav1.ListOptions
 	// The callback to run against each event.
-	Callback func(*unstructured.Unstructured) bool
+	Callback func(*unstructured.Unstructured) (done bool, err error)
 }
 
 func (c *batteryKubeClient) WatchFor(ctx context.Context, opts *WatchOptions) error {
@@ -204,7 +204,11 @@ func (c *batteryKubeClient) WatchFor(ctx context.Context, opts *WatchOptions) er
 			continue
 		}
 
-		if cont := opts.Callback(u); !cont {
+		done, err := opts.Callback(u)
+		if err != nil {
+			return err
+		}
+		if done {
 			watch.Stop()
 		}
 	}
