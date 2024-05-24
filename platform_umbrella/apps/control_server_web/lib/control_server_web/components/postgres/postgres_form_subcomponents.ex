@@ -292,7 +292,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
           <.flex>
             <.click_flip
-              class="grow flex-1 justify-start xl:justify-end items-center"
+              class="grow flex-1 justify-start xl:justify-end items-start"
               cursor_class="cursor-text"
               tooltip="Click to Edit"
               id="storage-size-input"
@@ -302,7 +302,12 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
                 <%= Memory.format_bytes(@form[:storage_size].value, true) || "0GB" %>
               </span>
               <:hidden>
-                <.input field={@form[:storage_size]} type="number" phx-change="change_storage_size" />
+                <.input
+                  field={@form[:storage_size]}
+                  type="number"
+                  label="Storage Size"
+                  phx-change="change_storage_size"
+                />
               </:hidden>
             </.click_flip>
           </.flex>

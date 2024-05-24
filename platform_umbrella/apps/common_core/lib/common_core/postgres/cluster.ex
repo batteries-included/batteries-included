@@ -113,6 +113,19 @@ defmodule CommonCore.Postgres.Cluster do
     {changeset, data}
   end
 
+  def validate_storage_size(changeset) do
+    validate_change(changeset, :storage_size, fn :storage_size, storage_size ->
+      if storage_size < changeset.data.storage_size do
+        # Always show the error on the `virtual_size` field,
+        # since `storage_size` and the slider are only visible
+        # when the virtual size is set to custom.
+        [virtual_size: "can't decrease storage size"]
+      else
+        []
+      end
+    end)
+  end
+
   def to_fresh_cluster(%{} = args) do
     clean_args = Map.drop(args, [:id])
 
