@@ -11,6 +11,7 @@ defmodule CommonCore.ET.HomeBaseClient do
   typedstruct module: State do
     field :home_url, String.t()
     field :http_client, Tesla.Client.t(), default: nil
+    field :previous_host_report, HostReport.t()
   end
 
   @me __MODULE__
@@ -20,8 +21,8 @@ defmodule CommonCore.ET.HomeBaseClient do
     GenServer.call(client, {:send_usage, state_summary})
   end
 
-  def send_control_server_host(client \\ @me, state_summary) do
-    GenServer.call(client, {:send_host, state_summary})
+  def send_hosts(client \\ @me, state_summary) do
+    GenServer.call(client, {:send_hosts, state_summary})
   end
 
   def start_link(opts \\ []) do
@@ -49,9 +50,17 @@ defmodule CommonCore.ET.HomeBaseClient do
   end
 
   @impl GenServer
-  def handle_call({:send_host, state_summary}, _, state) do
-    Logger.info("Sending control server host to #{state.home_url}")
-    {:reply, do_send_host(state, state_summary), state}
+  def handle_call({:send_hosts, state_summary}, _, state) do
+    Logger.info("Sending hosts to #{state.home_url}")
+
+    case do_send_host(state, state_summary) do
+      {:ok, report} ->
+        new_state = struct(state, previous_host_report: report)
+        {:reply, :ok, new_state}
+
+      resp ->
+        {:reply, resp, state}
+    end
   end
 
   defp build_client(%State{home_url: home_url, http_client: nil} = state) do
@@ -84,13 +93,13 @@ defmodule CommonCore.ET.HomeBaseClient do
     end
   end
 
-  defp do_send_host(%{http_client: client} = _state, state_summary) do
+  defp do_send_host(%State{http_client: client, previous_host_report: prev_report} = _state, state_summary) do
     with {:ok, report} <- HostReport.new(state_summary),
          # since the path is dependent on the install id, get that here
          report_path = CommonCore.ET.URLs.host_reports_path(state_summary),
-         # Push the report to the reports path for the install
-         {:ok, _} <- Tesla.post(client, report_path, %{host_report: report}) do
-      :ok
+         # try to send the report
+         {:ok, _} <- maybe_send_host_report(client, report_path, prev_report, report) do
+      {:ok, report}
     else
       {:error, reason} ->
         Logger.error("Failed to send host report: #{inspect(reason)}")
@@ -101,4 +110,10 @@ defmodule CommonCore.ET.HomeBaseClient do
         {:error, {:unexpected_response, unexpected}}
     end
   end
+
+  # no need to send if hosts haven't changed
+  defp maybe_send_host_report(_client, _path, prev_report, new_report) when prev_report == new_report, do: {:ok, :reused}
+
+  # hosts have changed, send it
+  defp maybe_send_host_report(client, path, _, new_report), do: Tesla.post(client, path, %{host_report: new_report})
 end
