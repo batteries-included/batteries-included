@@ -38,7 +38,7 @@ func (c *Client) WriteConfig(w io.Writer) error {
 		PrivateKey: c.PrivateKey,
 		IPs:        []string{c.Address.String()},
 		DNS: &noisysocketsv1alpha2.DNSConfig{
-			Nameservers: nameservers,
+			Servers: nameservers,
 		},
 		Routes: []noisysocketsv1alpha2.RouteConfig{
 			{
