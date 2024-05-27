@@ -4,28 +4,27 @@ import (
 	"bi/pkg/cluster/kind"
 	"bi/pkg/kube"
 	"bi/pkg/testutil"
-	"bi/pkg/wireguard"
 	"context"
 	"log/slog"
 	"net"
-	"net/netip"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
-	"time"
 
-	"github.com/docker/docker/api/types/container"
 	dockernetwork "github.com/docker/docker/api/types/network"
+	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
+	noisysocketsv1alpha2 "github.com/noisysockets/noisysockets/config/v1alpha2"
+	noisysocketstypes "github.com/noisysockets/noisysockets/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 func TestBatteryKubeClient(t *testing.T) {
 	testutil.IntegrationTest(t)
+
+	outputDir := t.TempDir()
 
 	ctx := context.Background()
 
@@ -50,57 +49,47 @@ func TestBatteryKubeClient(t *testing.T) {
 		require.NoError(t, testNetwork.Remove(ctx))
 	})
 
-	// Write out a wireguard config for the test
-	_, subnet, err := net.ParseCIDR("10.7.0.0/24")
+	// Generate a keypair for the gateway and client.
+	gwPrivateKey, err := noisysocketstypes.NewPrivateKey()
 	require.NoError(t, err)
 
-	gw, err := wireguard.NewGateway(51820, subnet)
+	clientPrivateKey, err := noisysocketstypes.NewPrivateKey()
 	require.NoError(t, err)
 
-	// Get the subnet of the VPC.
-	_, gw.VPCSubnet, err = net.ParseCIDR(ipamConfig.Config[0].Subnet)
-	require.NoError(t, err)
-
-	gw.Nameservers = []netip.Addr{netip.MustParseAddr("10.7.0.1")}
-	gw.PostUp = []string{
-		"iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE",
+	gwConf := &noisysocketsv1alpha2.Config{
+		ListenPort: 51820,
+		PrivateKey: gwPrivateKey.String(),
+		IPs:        []string{"100.64.0.1"},
+		Peers: []noisysocketsv1alpha2.PeerConfig{
+			{
+				PublicKey: clientPrivateKey.Public().String(),
+				IPs:       []string{"100.64.0.2"},
+			},
+		},
 	}
-	gw.PreDown = []string{
-		"iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE",
-	}
 
-	installerClient, err := gw.NewClient("installer")
+	// Marshall and write out the gateway configuration.
+	gwConfPath := filepath.Join(outputDir, "gateway.yaml")
+	gwConfFile, err := os.OpenFile(gwConfPath, os.O_CREATE|os.O_WRONLY, 0o400)
 	require.NoError(t, err)
+	require.NoError(t, noisysocketsconfig.ToYAML(gwConfFile, gwConf))
+	require.NoError(t, gwConfFile.Close())
 
-	var sb strings.Builder
-	require.NoError(t, gw.WriteConfig(&sb))
-
-	outputDir := t.TempDir()
-
-	// Write out the wireguard config to a file.
-	require.NoError(t, os.WriteFile(filepath.Join(outputDir, "wg0.conf"), []byte(sb.String()), 0o400))
-
-	// Spin up a wireguard gateway server using the userspace wireguard-go implementation.
+	// Spin up a wireguard gateway server using the userspace router implementation.
 	// This gateway will forward traffic to the private test network.
 	wgReq := testcontainers.ContainerRequest{
-		Image:        "ghcr.io/noisysockets/gateway:v0.1.0",
-		ExposedPorts: []string{"51820/udp", "53/tcp"},
+		Image:        "ghcr.io/noisysockets/nsh:v0.5.1",
+		ExposedPorts: []string{"51820/udp"},
+		Cmd: []string{"serve",
+			"--config=/etc/nsh/noisysockets.yaml",
+			"--enable-dns", "--enable-router",
+		},
 		Files: []testcontainers.ContainerFile{
-			{HostFilePath: filepath.Join(outputDir, "wg0.conf"), ContainerFilePath: "/etc/wireguard/wg0.conf", FileMode: 0o400},
+			// Normally this would be 0o400 but testcontainers doesn't let us set the
+			// file owner.
+			{HostFilePath: gwConfPath, ContainerFilePath: "/etc/nsh/noisysockets.yaml", FileMode: 0o444},
 		},
 		Networks: []string{testNetwork.Name},
-		HostConfigModifier: func(hostConfig *container.HostConfig) {
-			hostConfig.CapAdd = []string{"NET_ADMIN"}
-
-			hostConfig.Sysctls = map[string]string{
-				"net.ipv4.ip_forward":              "1",
-				"net.ipv4.conf.all.src_valid_mark": "1",
-			}
-
-			hostConfig.Binds = append(hostConfig.Binds, "/dev/net/tun:/dev/net/tun")
-		},
-		// Rely on the fact dnsmasq is started after the interface is up.
-		WaitingFor: wait.ForListeningPort("53/tcp"),
 	}
 
 	wgC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
@@ -121,8 +110,6 @@ func TestBatteryKubeClient(t *testing.T) {
 
 	wgPort, err := wgC.MappedPort(ctx, "51820/udp")
 	require.NoError(t, err)
-
-	gw.Endpoint = netip.AddrPortFrom(netip.MustParseAddr(wgAddrs[0]), uint16(wgPort.Int()))
 
 	// Create a kind cluster using the private network.
 	os.Setenv("KIND_EXPERIMENTAL_DOCKER_NETWORK", testNetwork.Name)
@@ -152,17 +139,37 @@ func TestBatteryKubeClient(t *testing.T) {
 	require.NoError(t, kubeConfigFile.Close())
 
 	// Create a WireGuard client configuration.
-	sb = strings.Builder{}
-	require.NoError(t, installerClient.WriteConfig(&sb))
+	clientConf := &noisysocketsv1alpha2.Config{
+		Name:       "test-client",
+		PrivateKey: clientPrivateKey.String(),
+		IPs:        []string{"100.64.0.2"},
+		DNS: &noisysocketsv1alpha2.DNSConfig{
+			Servers: []string{"100.64.0.1"},
+		},
+		Routes: []noisysocketsv1alpha2.RouteConfig{
+			{
+				Destination: ipamConfig.Config[0].Subnet,
+				Via:         "gateway",
+			},
+		},
+		Peers: []noisysocketsv1alpha2.PeerConfig{
+			{
+				Name:      "gateway",
+				PublicKey: gwPrivateKey.Public().String(),
+				IPs:       []string{"100.64.0.1"},
+				Endpoint:  net.JoinHostPort(wgAddrs[0], wgPort.Port()),
+			},
+		},
+	}
 
-	wireGuardConfigPath := filepath.Join(outputDir, "wireguard.yaml")
-	require.NoError(t, os.WriteFile(wireGuardConfigPath, []byte(sb.String()), 0o400))
-
-	// A little time for DNS to settle down.
-	time.Sleep(3 * time.Second)
+	clientConfPath := filepath.Join(outputDir, "client.yaml")
+	clientConfFile, err := os.OpenFile(clientConfPath, os.O_CREATE|os.O_WRONLY, 0o400)
+	require.NoError(t, err)
+	require.NoError(t, noisysocketsconfig.ToYAML(clientConfFile, clientConf))
+	require.NoError(t, clientConfFile.Close())
 
 	// Create a new kubernetes client that will send all requests over WireGuard.
-	kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath)
+	kubeClient, err := kube.NewBatteryKubeClient(kubeConfigPath, clientConfPath)
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, kubeClient.Close())

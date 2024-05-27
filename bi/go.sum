@@ -301,8 +301,8 @@ github.com/noisysockets/network v0.8.2 h1:/gjOMiShb11mjCT1NWFvUEy2cLurdBw3uKGbV+
 github.com/noisysockets/network v0.8.2/go.mod h1:NfuhIv4kzw6+cO6PHhBiNUSBL8Ep+4qFSutJmg4CgIw=
 github.com/noisysockets/noisysockets v0.23.4 h1:jtPPYcLB37Nsw9KRyqHCzGJgIR/FSA7tq602RzyBAQE=
 github.com/noisysockets/noisysockets v0.23.4/go.mod h1:z9uGvGECCVVWylOgWVx1nCGOucuVHo1AWnX/EqkQRH0=
-github.com/noisysockets/resolver v0.4.1 h1:w8o1VA/ieM0MnUAENLDi3FHosmdOtBKmciGsfbww7dQ=
-github.com/noisysockets/resolver v0.4.1/go.mod h1:akWUhw8gutJR8pPhHKiWMLy5XPovCqPiYkOs2VQuBzk=
+github.com/noisysockets/resolver v0.5.1 h1:3oLq50nc3WV1HdPJoT5Dd6/VEgPDR1a5uNLxABJASRk=
+github.com/noisysockets/resolver v0.5.1/go.mod h1:fBww4kWCFHCgMu0UY4VUT7blRsIX0WMmLrOIWAy6zSc=
 github.com/nxadm/tail v1.4.11 h1:8feyoE3OzPrcshW5/MJ4sGESc5cqmGkGCWlco4l0bqY=
 github.com/nxadm/tail v1.4.11/go.mod h1:OTaG3NK980DZzxbRq6lEuzgU+mug70nY11sMd4JXXHc=
 github.com/onsi/ginkgo/v2 v2.17.2 h1:7eMhcy3GimbsA3hEnVKdw/PQM9XN9krpKVXsZdph0/g=
