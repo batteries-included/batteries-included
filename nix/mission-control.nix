@@ -293,14 +293,6 @@ _: {
                         --raw "/api/v1/namespaces/$NAMESPACE/finalize" -f -
             '';
           };
-
-          package-challenge = {
-            description = ''
-              Package up candidate challenge: "bix package-challenge candidate-name [destination-dir] [challenge]"
-            '';
-            category = "recruiting";
-            exec = builtins.readFile ./scripts/package-challenge.sh;
-          };
         };
       };
     };
