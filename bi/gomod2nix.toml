@@ -356,8 +356,8 @@ schema = 3
     version = "v0.23.4"
     hash = "sha256-0cRnlLGEg+K/OEIHYRjdhnmplpSSqxXzucw6jaUr6gA="
   [mod."github.com/noisysockets/resolver"]
-    version = "v0.4.1"
-    hash = "sha256-ywEDyg2GhmpVQsdf0zSmQokKHwFz8B4hYCgY6ZyPXvM="
+    version = "v0.5.1"
+    hash = "sha256-FNI8oNwYyb0JA/nI3kjBtlu7kwd4sC+30MuU0RMiMHo="
   [mod."github.com/nxadm/tail"]
     version = "v1.4.11"
     hash = "sha256-7XF47xVcyHjpO1E0+GGAoytxOa0JJFCBXHJGLTexVgo="
