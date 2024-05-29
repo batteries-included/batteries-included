@@ -5,15 +5,21 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   use Mix.Task
   use TypedStruct
 
-  @dont_specialize_spec_types ["ResourceRepresentation"]
+  @dont_specialize_spec_types [
+    "ResourceRepresentation",
+    "Currency",
+    "Country",
+    "Timezone",
+    "CustomerChargeFiltersUsageObject",
+    "CustomerChargeGroupsUsageObject",
+    "CustomerChargeGroupedUsageObject"
+  ]
   @field_regex ~r/^(\s*)(field|embeds_many|embeds_one)\((.*)\)$/
 
   def run(args) do
     [path, schema, module_name] = args
 
-    {:ok, contents} = File.read(path)
-
-    {:ok, open_api} = Jason.decode(contents)
+    {:ok, open_api} = decode(path)
 
     module = module(open_api, schema, module_name)
 
@@ -23,6 +29,17 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
       Path.join(File.cwd!(), "apps/common_core/lib/common_core/open_api/#{module_file_name}.ex")
 
     File.write!(schema_file, contents(module))
+  end
+
+  def decode(path) do
+    if String.contains?(path, "yaml") do
+      {:ok, contents} = YamlElixir.read_all_from_file(path)
+      result = List.first(contents)
+      {:ok, result}
+    else
+      {:ok, contents} = File.read(path)
+      Jason.decode(contents)
+    end
   end
 
   typedstruct module: State do
@@ -40,7 +57,20 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   end
 
   def module(open_api, root_schema, module_name) do
-    state = add(%State{}, open_api, root_schema)
+    state =
+      if root_schema == "*" do
+        open_api
+        |> get_in(["components", "schemas"])
+        |> Map.keys()
+        |> Enum.reject(fn sn -> sn in @dont_specialize_spec_types end)
+        |> Enum.sort()
+        |> Enum.reduce(%State{}, fn schema_name, s ->
+          add(s, open_api, schema_name)
+        end)
+      else
+        add(%State{}, open_api, root_schema)
+      end
+
     module_name = String.to_atom("Elixir.CommonCore.OpenAPI.#{module_name}")
     {:ok, modules_sorted} = sorted_modules(state)
 
@@ -69,6 +99,10 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
       nil ->
         {:error, :cant_find_no_deps}
 
+      {:single, schema_name} ->
+        {new_result, new_state} = add_sorted_module(result, state, schema_name)
+        do_sorted_modules(new_result, new_state)
+
       {schema_name, _} ->
         {new_result, new_state} = add_sorted_module(result, state, schema_name)
         do_sorted_modules(new_result, new_state)
@@ -80,7 +114,11 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
 
     new_deps =
       state.deps
-      |> Enum.map(fn {k, deps} -> {k, Enum.reject(deps, &(&1 == schema_name))} end)
+      |> Enum.map(fn {k, deps} ->
+        kept = Enum.reject(deps, &(&1 == schema_name))
+
+        {k, kept}
+      end)
       |> Enum.reject(fn {k, _v} -> k == schema_name end)
       |> Map.new()
 
@@ -91,14 +129,19 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     schema = get_in(open_api, ["components", "schemas", schema_name])
 
     cond do
-      Map.has_key?(state.modules, schema_name) -> state
-      schema != nil -> do_add(state, open_api, schema_name, schema)
-      true -> state
+      Map.has_key?(state.modules, schema_name) ->
+        state
+
+      schema != nil ->
+        do_add(state, open_api, schema_name, schema)
+
+      true ->
+        state
     end
   end
 
   defp do_add(state, open_api, schema_name, schema) do
-    {seen, schema} = definition(schema, schema_name)
+    {seen, schema} = definition(schema, schema_name, open_api)
 
     with_this = %State{
       state
@@ -111,7 +154,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end)
   end
 
-  defp definition(%{"oneOf" => one_of} = _schema, schema_name) do
+  defp definition(%{"oneOf" => one_of} = _schema, schema_name, _open_api) do
     properties =
       one_of
       |> Enum.map(fn v -> Map.get(v, "properties", %{}) end)
@@ -123,7 +166,26 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     {seen, res}
   end
 
-  defp definition(%{} = schema, schema_name) do
+  defp definition(%{"allOf" => all_of} = schema, schema_name, open_api) do
+    properties =
+      all_of
+      |> Enum.map(fn
+        %{"properties" => properties} ->
+          properties
+
+        %{"$ref" => ref_name} ->
+          get_in(open_api, ["components", "schemas", ref_name_to_schema_name(ref_name), "properties"]) || nil
+      end)
+      |> Enum.reject(&is_nil/1)
+      |> Enum.reduce(%{}, &Map.merge/2)
+      |> Map.merge(Map.get(schema, "properties", %{}))
+
+    seen = seen_schema_names(schema_name, properties)
+    res = typed_ecto_module(properties, schema_name)
+    {seen, res}
+  end
+
+  defp definition(%{} = schema, schema_name, _open_api) do
     properties =
       schema
       |> Map.get("properties", [])
@@ -145,8 +207,6 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     quote do
       defmodule unquote(String.to_atom("Elixir.#{schema_name}")) do
         use CommonCore, :embedded_schema
-
-        @derive Jason.Encoder
 
         unquote(typed_ecto_schema)
       end
@@ -176,7 +236,23 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
 
   def seen_schema_names(_, _), do: []
 
+  # These are typedefs for arrays. That's not a thing in ecto.
+  defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeFiltersUsageObject"}), do: nil
+  defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeGroupsUsageObject"}), do: nil
+  defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeGroupedUsageObject"}), do: nil
+
   defp ref_schema_name(%{"$ref" => ref_name}), do: ref_name_to_schema_name(ref_name)
+
+  # Special case for Lago. The huge enums are strings
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Currency"}]}), do: nil
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Currency"}, _]}), do: nil
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Country"}]}), do: nil
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Country"}, _]}), do: nil
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Timezone"}]}), do: nil
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Timezone"}, _]}), do: nil
+
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => ref_name}]}), do: ref_name_to_schema_name(ref_name)
+  defp ref_schema_name(%{"allOf" => [%{"$ref" => ref_name}, _]}), do: ref_name_to_schema_name(ref_name)
 
   defp ref_schema_name(%{"items" => %{"$ref" => ref_name}}), do: ref_name_to_schema_name(ref_name)
 
@@ -214,7 +290,15 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end
   end
 
-  defp field_def(_schema_name, {field_name, field_info}), do: non_embed_def(field_name, field_info)
+  defp field_def(_schema_name, {field_name, field_info}) do
+    case ref_schema_name(field_info) do
+      nil ->
+        non_embed_def(field_name, field_info)
+
+      embeded_schema_name ->
+        embedded_many_def(field_name, embeded_schema_name)
+    end
+  end
 
   defp non_embed_def(field_name, field_info) do
     type = type(field_info)
@@ -244,7 +328,69 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end
   end
 
+  defp type(%{"$ref" => "#/components/schemas/CustomerChargeGroupsUsageObject"} = _info) do
+    quote do
+      {:array, :map}
+    end
+  end
+
+  defp type(%{"$ref" => "#/components/schemas/CustomerChargeGroupedUsageObject"} = _info) do
+    quote do
+      {:array, :map}
+    end
+  end
+
+  defp type(%{"$ref" => "#/components/schemas/CustomerChargeFiltersUsageObject"} = _info) do
+    quote do
+      {:array, :map}
+    end
+  end
+
   defp type(%{"$ref" => _} = _info) do
+    quote do
+      :map
+    end
+  end
+
+  # These are specializations for Lago. They special case the Currency type as a string
+  # Ecto doesn't have that ability for enums.
+  defp type(%{"allOf" => [%{"$ref" => "#/components/schemas/Currency"}]} = _info) do
+    quote do
+      :string
+    end
+  end
+
+  defp type(%{"allOf" => [%{"$ref" => "#/components/schemas/Currency"}, _]} = _info) do
+    quote do
+      :string
+    end
+  end
+
+  defp type(%{"allOf" => [%{"$ref" => "#/components/schemas/Country"}]} = _info) do
+    quote do
+      :string
+    end
+  end
+
+  defp type(%{"allOf" => [%{"$ref" => "#/components/schemas/Country"}, _]} = _info) do
+    quote do
+      :string
+    end
+  end
+
+  defp type(%{"allOf" => [%{"$ref" => "#/components/schemas/Timezone"}]} = _info) do
+    quote do
+      :string
+    end
+  end
+
+  defp type(%{"allOf" => [%{"$ref" => "#/components/schemas/Timezone"}, _]} = _info) do
+    quote do
+      :string
+    end
+  end
+
+  defp type(%{"allOf" => _} = _info) do
     quote do
       :map
     end
@@ -272,6 +418,12 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp type(%{"type" => "number", "format" => "double"}) do
     quote do
       :float
+    end
+  end
+
+  defp type(%{"type" => "number"}) do
+    quote do
+      :integer
     end
   end
 
