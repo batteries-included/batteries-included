@@ -10,43 +10,43 @@ defmodule CommonCore.Backend.Service do
       name: "tiny",
       cpu_requested: 500,
       cpu_limits: 500,
-      memory_requested: Memory.mb_to_bytes(512),
-      memory_limits: Memory.mb_to_bytes(512)
+      memory_requested: Memory.to_bytes(512, :MB),
+      memory_limits: Memory.to_bytes(512, :MB)
     },
     %{
       name: "small",
       cpu_requested: 500,
       cpu_limits: 2000,
-      memory_requested: Memory.gb_to_bytes(1),
-      memory_limits: Memory.gb_to_bytes(4)
+      memory_requested: Memory.to_bytes(1, :GB),
+      memory_limits: Memory.to_bytes(4, :GB)
     },
     %{
       name: "medium",
       cpu_requested: 4000,
       cpu_limits: 4000,
-      memory_requested: Memory.gb_to_bytes(8),
-      memory_limits: Memory.gb_to_bytes(8)
+      memory_requested: Memory.to_bytes(8, :GB),
+      memory_limits: Memory.to_bytes(8, :GB)
     },
     %{
       name: "large",
       cpu_requested: 8000,
       cpu_limits: 8000,
-      memory_requested: Memory.gb_to_bytes(16),
-      memory_limits: Memory.gb_to_bytes(16)
+      memory_requested: Memory.to_bytes(16, :GB),
+      memory_limits: Memory.to_bytes(16, :GB)
     },
     %{
       name: "xlarge",
       cpu_requested: 10_000,
       cpu_limits: 10_000,
-      memory_requested: Memory.gb_to_bytes(32),
-      memory_limits: Memory.gb_to_bytes(32)
+      memory_requested: Memory.to_bytes(32, :GB),
+      memory_limits: Memory.to_bytes(32, :GB)
     },
     %{
       name: "huge",
       cpu_requested: 32_000,
       cpu_limits: 32_000,
-      memory_requested: Memory.gb_to_bytes(256),
-      memory_limits: Memory.gb_to_bytes(256)
+      memory_requested: Memory.to_bytes(256, :GB),
+      memory_limits: Memory.to_bytes(256, :GB)
     }
   ]
 

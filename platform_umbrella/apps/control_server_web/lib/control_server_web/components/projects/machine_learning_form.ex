@@ -108,10 +108,8 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
           variant="horizontal-bolded"
           class="mt-3 mb-5"
           data={[
-            {"Storage size:",
-             @form[:jupyter].value[:storage_size].value |> Memory.format_bytes(true) || "0GB"},
-            {"Memory limits:",
-             @form[:jupyter].value[:memory_limits].value |> Memory.format_bytes(true)},
+            {"Storage size:", Memory.humanize(@form[:jupyter].value[:storage_size].value) || "0GB"},
+            {"Memory limits:", Memory.humanize(@form[:jupyter].value[:memory_limits].value)},
             {"CPU limits:", @form[:jupyter].value[:cpu_limits].value}
           ]}
         />

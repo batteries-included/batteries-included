@@ -53,7 +53,7 @@ defmodule ControlServerWeb.FerretDBFormComponent do
             variant="horizontal-bolded"
             class="mt-3 mb-5"
             data={[
-              {"Memory limits:", @form[:memory_limits].value |> Memory.format_bytes(true)},
+              {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
               {"CPU limits:", @form[:cpu_limits].value}
             ]}
           />
