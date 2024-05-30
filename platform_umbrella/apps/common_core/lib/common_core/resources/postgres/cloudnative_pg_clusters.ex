@@ -7,6 +7,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
+  alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.PostgresState
 
   multi_resource(:postgres_clusters, battery, state) do
@@ -26,13 +27,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         |> Enum.uniq()
         # For every namespace create a secret
         |> Enum.map(fn ns ->
-          user_role_secret(
-            battery,
-            state,
-            cluster,
-            user,
-            ns
-          )
+          user_role_secret(battery, state, cluster, user, ns)
         end)
       end)
     end)
@@ -46,7 +41,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   def cluster_resource(%Cluster{} = cluster, _battery, state) do
     db = cluster.database || %{database: "app", owner: "app"}
-    cluster_name = "pg-" <> cluster.name
+    cluster_name = cluster_name(cluster)
 
     spec = %{
       instances: cluster.num_instances,
@@ -84,7 +79,21 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.component_labels(@app_name)
     |> B.namespace(PostgresState.cluster_namespace(state, cluster))
     |> B.add_owner(cluster)
-    |> B.spec(spec)
+    |> B.spec(maybe_add_certificates(spec, Batteries.batteries_installed?(state, :battery_ca), cluster))
+  end
+
+  defp maybe_add_certificates(spec, predicate, _cluster) when not predicate, do: spec
+
+  defp maybe_add_certificates(spec, _predicate, cluster) do
+    client_secret_name = cert_secret_name(cluster, :client)
+    server_secret_name = cert_secret_name(cluster, :server)
+
+    Map.put(spec, "certificates", %{
+      "clientCASecret" => client_secret_name,
+      "replicationTLSSecret" => client_secret_name,
+      "serverTLSSecret" => server_secret_name,
+      "serverCASecret" => server_secret_name
+    })
   end
 
   defp resources(%Cluster{} = cluster) do
@@ -154,7 +163,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   def user_role_secret(_battery, state, %Cluster{} = cluster, %PGUser{} = user, namespace) do
     data = Secret.encode(secret_data(state, cluster, user))
 
-    cluster_name = "pg-" <> cluster.name
+    cluster_name = cluster_name(cluster)
 
     :secret
     |> B.build_resource()
@@ -166,7 +175,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   end
 
   defp cluster_pod_monitor(_battery, state, %Cluster{} = cluster) do
-    cluster_name = "pg-" <> cluster.name
+    cluster_name = cluster_name(cluster)
 
     spec =
       %{}
@@ -205,5 +214,82 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       ensure: "present",
       passwordSecret: %{name: PostgresState.user_secret(state, cluster, user)}
     })
+  end
+
+  defp cluster_name(cluster), do: "pg-#{cluster.name}"
+
+  defp cert_secret_name(cluster, type), do: "#{cluster_name(cluster)}-#{type}-cert"
+
+  defp gen_dns_names(state, cluster) do
+    Enum.flat_map(~w(rw r ro), fn type ->
+      name = "#{cluster_name(cluster)}-#{type}"
+      namespace = PostgresState.cluster_namespace(state, cluster)
+
+      [
+        "#{name}",
+        "#{name}.#{namespace}",
+        "#{name}.#{namespace}.svc",
+        "#{name}.#{namespace}.svc.cluster.local"
+      ]
+    end)
+  end
+
+  multi_resource(:postgres_certificates, _battery, state) do
+    Enum.flat_map(state.postgres_clusters, fn cluster ->
+      Enum.flat_map([:server, :client], fn type ->
+        [
+          cert_resource(cluster, type, state),
+          cert_secret_resource(cluster, type, state)
+        ]
+      end)
+    end)
+  end
+
+  defp cert_resource(cluster, type, state) do
+    name = "#{cluster_name(cluster)}-#{type}"
+    namespace = PostgresState.cluster_namespace(state, cluster)
+
+    :certmanager_certificate
+    |> B.build_resource()
+    |> B.name(name)
+    |> B.namespace(namespace)
+    |> B.spec(build_cert_spec(state, cluster, type))
+    |> F.require_battery(state, :battery_ca)
+  end
+
+  defp cert_secret_resource(cluster, type, state) do
+    name = cert_secret_name(cluster, type)
+    namespace = PostgresState.cluster_namespace(state, cluster)
+
+    :secret
+    |> B.build_resource()
+    |> B.name(name)
+    |> B.namespace(namespace)
+    |> B.label("cnpg.io/reload", "")
+    |> F.require_battery(state, :battery_ca)
+  end
+
+  defp build_cert_spec(_state, cluster, type) when type == :client do
+    name = cluster_name(cluster)
+
+    %{}
+    |> Map.put("commonName", "#{name}-client")
+    |> Map.put("usages", ["client auth"])
+    |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
+    |> Map.put("revisionHistoryLimit", 1)
+    |> Map.put("secretName", cert_secret_name(cluster, :client))
+  end
+
+  defp build_cert_spec(state, cluster, type) when type == :server do
+    name = cluster_name(cluster)
+    namespace = PostgresState.cluster_namespace(state, cluster)
+
+    %{}
+    |> Map.put("commonName", "#{name}.#{namespace}.svc")
+    |> Map.put("dnsNames", gen_dns_names(state, cluster))
+    |> Map.put("usages", ["server auth"])
+    |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
+    |> Map.put("revisionHistoryLimit", 1)
+    |> Map.put("secretName", cert_secret_name(cluster, :server))
   end
 end
