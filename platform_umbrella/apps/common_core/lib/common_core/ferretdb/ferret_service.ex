@@ -11,29 +11,29 @@ defmodule CommonCore.FerretDB.FerretService do
       name: "tiny",
       cpu_requested: 100,
       cpu_limits: 500,
-      memory_requested: Memory.mb_to_bytes(128),
-      memory_limits: Memory.mb_to_bytes(512)
+      memory_requested: Memory.to_bytes(128, :MB),
+      memory_limits: Memory.to_bytes(512, :MB)
     },
     %{
       name: "small",
       cpu_requested: 500,
       cpu_limits: 1000,
-      memory_requested: Memory.mb_to_bytes(512),
-      memory_limits: Memory.mb_to_bytes(1024)
+      memory_requested: Memory.to_bytes(512, :MB),
+      memory_limits: Memory.to_bytes(1024, :MB)
     },
     %{
       name: "large",
       cpu_requested: 4000,
       cpu_limits: 4000,
-      memory_requested: Memory.gb_to_bytes(2),
-      memory_limits: Memory.gb_to_bytes(2)
+      memory_requested: Memory.to_bytes(2, :GB),
+      memory_limits: Memory.to_bytes(2, :GB)
     },
     %{
       name: "huge",
       cpu_requested: 8000,
       cpu_limits: 8000,
-      memory_requested: Memory.gb_to_bytes(24),
-      memory_limits: Memory.gb_to_bytes(24)
+      memory_requested: Memory.to_bytes(24, :GB),
+      memory_limits: Memory.to_bytes(24, :GB)
     }
   ]
 

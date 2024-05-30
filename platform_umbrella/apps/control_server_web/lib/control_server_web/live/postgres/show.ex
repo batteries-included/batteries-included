@@ -175,10 +175,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
           <%= @cluster.num_instances %>
         </:item>
         <:item title="Storage Size">
-          <%= @cluster.storage_size |> Memory.format_bytes(true) %>
+          <%= Memory.humanize(@cluster.storage_size) %>
         </:item>
         <:item :if={@cluster.memory_limits} title="Memory limits">
-          <%= @cluster.memory_limits |> Memory.format_bytes(true) %>
+          <%= Memory.humanize(@cluster.memory_limits) %>
         </:item>
       </.data_list>
     </.panel>

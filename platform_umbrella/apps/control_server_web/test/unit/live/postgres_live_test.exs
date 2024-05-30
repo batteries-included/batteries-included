@@ -205,7 +205,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
                |> render_change(%{cluster: %{virtual_size: "custom"}})
 
       assert html =~ "Storage Class"
-      assert html =~ CommonCore.Util.Memory.format_bytes(cluster.storage_size, true)
+      assert html =~ CommonCore.Util.Memory.humanize(cluster.storage_size)
     end
   end
 
