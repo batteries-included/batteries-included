@@ -1,4 +1,4 @@
-<div id="foo" class="relative" phx-hook="Range">
+<div id="foo" phx-hook="Range">
   <div class="relative pb-6">
     
 
