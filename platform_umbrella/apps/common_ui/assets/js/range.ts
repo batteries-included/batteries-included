@@ -7,7 +7,7 @@ export const RangeHook = {
     this.valueEl = this.getChildEl('value');
 
     this.setPosition();
-    
+
     this.inputEl.addEventListener('input', () => this.setPosition());
     this.inputEl.addEventListener('input', () => this.enforceBoundaries());
   },
