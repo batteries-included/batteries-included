@@ -17,4 +17,9 @@ defmodule CommonCore.ET.URLs do
     install_id = CommonCore.StateSummary.Core.config_field(state_summary, :install_id)
     "/installations/#{install_id}/usage_reports"
   end
+
+  def host_reports_path(state_summary) do
+    install_id = CommonCore.StateSummary.Core.config_field(state_summary, :install_id)
+    "/installations/#{install_id}/host_reports"
+  end
 end

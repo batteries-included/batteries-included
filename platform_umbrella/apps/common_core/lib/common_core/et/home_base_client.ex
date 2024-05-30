@@ -3,6 +3,7 @@ defmodule CommonCore.ET.HomeBaseClient do
   use GenServer
   use TypedStruct
 
+  alias CommonCore.ET.HostReport
   alias CommonCore.ET.UsageReport
 
   require Logger
@@ -19,6 +20,10 @@ defmodule CommonCore.ET.HomeBaseClient do
     GenServer.call(client, {:send_usage, state_summary})
   end
 
+  def send_hosts(client \\ @me, state_summary) do
+    GenServer.call(client, {:send_hosts, state_summary})
+  end
+
   def start_link(opts \\ []) do
     {state_opts, opts} =
       opts
@@ -28,6 +33,7 @@ defmodule CommonCore.ET.HomeBaseClient do
     GenServer.start_link(__MODULE__, state_opts, opts)
   end
 
+  @impl GenServer
   def init(opts) do
     # Get the default url we'll need that to create the http client
     home_url = Keyword.fetch!(opts, :home_url)
@@ -36,9 +42,16 @@ defmodule CommonCore.ET.HomeBaseClient do
     build_client(state)
   end
 
+  @impl GenServer
   def handle_call({:send_usage, state_summary}, _, state) do
     Logger.info("Sending usage to #{state.home_url}")
     {:reply, do_send_usage(state, state_summary), state}
+  end
+
+  @impl GenServer
+  def handle_call({:send_hosts, state_summary}, _, state) do
+    Logger.info("Sending hosts to #{state.home_url}")
+    {:reply, do_send_host(state, state_summary), state}
   end
 
   defp build_client(%State{home_url: home_url, http_client: nil} = state) do
@@ -63,6 +76,22 @@ defmodule CommonCore.ET.HomeBaseClient do
     else
       {:error, reason} ->
         Logger.error("Failed to send usage report: #{inspect(reason)}")
+        {:error, reason}
+
+      unexpected ->
+        Logger.error("Unexpected response from home: #{inspect(unexpected)}")
+        {:error, {:unexpected_response, unexpected}}
+    end
+  end
+
+  defp do_send_host(%State{http_client: client} = _state, state_summary) do
+    with {:ok, report} <- HostReport.new(state_summary),
+         report_path = CommonCore.ET.URLs.host_reports_path(state_summary),
+         {:ok, _} <- Tesla.post(client, report_path, %{host_report: report}) do
+      :ok
+    else
+      {:error, reason} ->
+        Logger.error("Failed to send host report: #{inspect(reason)}")
         {:error, reason}
 
       unexpected ->

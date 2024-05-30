@@ -5,6 +5,7 @@ defmodule HomeBase.ET do
 
   import Ecto.Query, warn: false
 
+  alias HomeBase.ET.StoredHostReport
   alias HomeBase.ET.StoredUsageReport
   alias HomeBase.Repo
 
@@ -100,5 +101,99 @@ defmodule HomeBase.ET do
   """
   def change_stored_usage_report(%StoredUsageReport{} = stored_usage_report, attrs \\ %{}) do
     StoredUsageReport.changeset(stored_usage_report, attrs)
+  end
+
+  @doc """
+  Returns the list of stored_host_reports.
+
+  ## Examples
+
+      iex> list_stored_host_reports()
+      [%StoredHostReport{}, ...]
+
+  """
+  def list_stored_host_reports do
+    Repo.all(StoredHostReport)
+  end
+
+  @doc """
+  Gets a single stored_host_report.
+
+  Raises `Ecto.NoResultsError` if the Stored host report does not exist.
+
+  ## Examples
+
+      iex> get_stored_host_report!(123)
+      %StoredHostReport{}
+
+      iex> get_stored_host_report!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_stored_host_report!(id), do: Repo.get!(StoredHostReport, id)
+
+  @doc """
+  Creates a stored_host_report.
+
+  ## Examples
+
+      iex> create_stored_host_report(%{field: value})
+      {:ok, %StoredHostReport{}}
+
+      iex> create_stored_host_report(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_stored_host_report(attrs \\ %{}) do
+    %StoredHostReport{}
+    |> StoredHostReport.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a stored_host_report.
+
+  ## Examples
+
+      iex> update_stored_host_report(stored_host_report, %{field: new_value})
+      {:ok, %StoredHostReport{}}
+
+      iex> update_stored_host_report(stored_host_report, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_stored_host_report(%StoredHostReport{} = stored_host_report, attrs) do
+    stored_host_report
+    |> StoredHostReport.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a stored_host_report.
+
+  ## Examples
+
+      iex> delete_stored_host_report(stored_host_report)
+      {:ok, %StoredHostReport{}}
+
+      iex> delete_stored_host_report(stored_host_report)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_stored_host_report(%StoredHostReport{} = stored_host_report) do
+    Repo.delete(stored_host_report)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking stored_host_report changes.
+
+  ## Examples
+
+      iex> change_stored_host_report(stored_host_report)
+      %Ecto.Changeset{data: %StoredHostReport{}}
+
+  """
+  def change_stored_host_report(%StoredHostReport{} = stored_host_report, attrs \\ %{}) do
+    StoredHostReport.changeset(stored_host_report, attrs)
   end
 end

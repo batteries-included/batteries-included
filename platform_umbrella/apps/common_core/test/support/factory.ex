@@ -44,6 +44,14 @@ defmodule CommonCore.Factory do
     }
   end
 
+  def host_report_factory(attrs \\ %{}) do
+    attrs = Map.new(attrs)
+
+    control_server_host = Map.get(attrs, :control_server_host, "control.core.127.0.0.1.ip.batteriesincl.com")
+
+    %CommonCore.ET.HostReport{control_server_host: control_server_host}
+  end
+
   def node_report_factory do
     %CommonCore.ET.NodeReport{
       avg_cores: sequence(:avg_cores, [2.0, 8.0, 16.0, 32.0]),
