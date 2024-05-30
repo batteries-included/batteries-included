@@ -7,12 +7,18 @@ defmodule HomeBase.Factory do
   alias CommonCore.Teams.Team
   alias CommonCore.Teams.TeamRole
   alias HomeBase.Accounts
+  alias HomeBase.ET.StoredHostReport
   alias HomeBase.ET.StoredUsageReport
 
   defdelegate usage_report_factory(), to: CommonCore.Factory
+  defdelegate host_report_factory(), to: CommonCore.Factory
 
   def stored_usage_report_factory do
     %StoredUsageReport{report: build(:usage_report), installation: build(:installation)}
+  end
+
+  def stored_host_report_factory do
+    %StoredHostReport{report: build(:host_report), installation: build(:installation)}
   end
 
   def user_factory do

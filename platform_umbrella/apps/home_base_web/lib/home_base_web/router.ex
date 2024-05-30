@@ -96,6 +96,7 @@ defmodule HomeBaseWeb.Router do
 
     scope "/installations/:installation_id" do
       resources "/usage_reports", StoredUsageReportController, only: [:create]
+      resources "/host_reports", StoredHostReportController, only: [:create]
     end
   end
 end

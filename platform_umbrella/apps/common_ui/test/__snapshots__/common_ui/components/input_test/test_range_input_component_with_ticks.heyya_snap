@@ -1,8 +1,22 @@
 <div id="foo" phx-hook="Range">
   <div class="relative pb-6">
-    
+    <div style="left: calc(20% + 7px)" class="absolute flex flex-col items-center -translate-x-1/2">
+      <span phx-value-label="20%" phx-value-percentage="0.2" phx-value-value="2.0" class="font-semibold text-sm text-gray dark:text-gray-light select-none ">
+        20%
+      </span>
 
-    
+      <span class="w-0.5 bg-gray-lighter h-3 mt-1 rounded-lg"></span>
+    </div><div style="left: calc(80% + -7px)" class="absolute flex flex-col items-center -translate-x-1/2">
+      <span phx-value-label="80%" phx-value-percentage="0.8" phx-value-value="8.0" class="font-semibold text-sm text-gray dark:text-gray-light select-none ">
+        80%
+      </span>
+
+      <span class="w-0.5 bg-gray-lighter h-3 mt-1 rounded-lg"></span>
+    </div>
+
+    <datalist id="foo-ticks">
+      <option value="2"></option><option value="8"></option>
+    </datalist>
   </div>
 
   <div class="relative">

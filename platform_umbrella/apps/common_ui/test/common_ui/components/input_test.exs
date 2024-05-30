@@ -172,6 +172,22 @@ defmodule CommonUI.Components.InputTest do
       <.input type="range" id="foo" name="foo" value={5} max={10} label="Foobar" show_value={false} />
       """
     end
+
+    component_snapshot_test "with boundaries" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="range" id="foo" name="foo" value={5} max={10} lower_boundary={2} upper_boundary={8} />
+      """
+    end
+
+    component_snapshot_test "with ticks" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="range" id="foo" name="foo" value={5} max={10} ticks={[{"20%", 0.2}, {"80%", 0.8}]} />
+      """
+    end
   end
 
   component_snapshot_test "hidden input component" do

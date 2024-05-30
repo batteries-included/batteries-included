@@ -10,7 +10,6 @@ import (
 	"bi/pkg/log"
 	biviper "bi/pkg/viper"
 
-	"github.com/gregwebs/go-recovery"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +35,7 @@ on top of kubernetes`,
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := recovery.Call(RootCmd.Execute); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		slog.Error("Error executing command", slog.Any("error", err))
 		os.Exit(1)
 	}

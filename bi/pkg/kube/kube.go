@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/noisysockets/network"
 	"github.com/noisysockets/noisysockets"
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
-	"github.com/noisysockets/noisysockets/network"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"

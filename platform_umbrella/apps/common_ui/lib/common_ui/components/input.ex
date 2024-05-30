@@ -25,9 +25,16 @@ defmodule CommonUI.Components.Input do
   attr :multiple, :boolean, default: false
   attr :debounce, :string, default: "blur"
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(autocomplete autofocus min max step maxlength disabled required)
+  attr :rest, :global, include: ~w(autocomplete autofocus step maxlength disabled required)
 
   # Used for range sliders
+  attr :min, :any, default: 0
+  attr :max, :any, default: nil
+  attr :lower_boundary, :any, default: nil
+  attr :upper_boundary, :any, default: nil
+  attr :ticks, :list, default: []
+  attr :tick_click, :any, default: nil
+  attr :tick_target, :any, default: nil
   attr :show_value, :boolean, default: true
 
   # Used for radio buttons
@@ -154,51 +161,92 @@ defmodule CommonUI.Components.Input do
     assigns = IDHelpers.provide_id(assigns)
 
     ~H"""
-    <div id={@id} class="relative" phx-hook="Range">
-      <input
-        id={"#{@id}-input"}
-        name={@name}
-        value={@value}
-        type="range"
-        class={[
-          "relative z-30 appearance-none bg-transparent cursor-pointer w-full",
-          "slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full",
-          "slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary",
-          "slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint",
-          @show_value && "h-[32px] slider-thumb:size-[32px]",
-          !@show_value && "h-[24px] slider-thumb:size-[24px] "
-        ]}
-        {@rest}
-      />
+    <div id={@id} phx-hook="Range">
+      <div class="relative pb-6">
+        <div
+          :for={{label, percentage} <- @ticks}
+          style={"left: calc(#{round(percentage * 100)}% + #{round((0.5 - percentage) * 24)}px)"}
+          class="absolute flex flex-col items-center -translate-x-1/2"
+        >
+          <span
+            phx-value-label={label}
+            phx-value-percentage={percentage}
+            phx-value-value={(@max - @min) * percentage}
+            phx-target={@tick_target}
+            phx-click={
+              !out_of_bounds(@lower_boundary, @upper_boundary, @min, @max, percentage) && @tick_click
+            }
+            class={[
+              "font-semibold text-sm text-gray dark:text-gray-light select-none",
+              @tick_click && "cursor-pointer hover:underline",
+              out_of_bounds(@lower_boundary, @upper_boundary, @min, @max, percentage) &&
+                "text-gray-lighter cursor-default hover:no-underline"
+            ]}
+          >
+            <%= label %>
+          </span>
 
-      <div
-        id={"#{@id}-progress-bg"}
-        phx-update="ignore"
-        class={[
-          "absolute h-[4px] z-10 bg-gray-lighter dark:bg-gray-darkest-tint w-full rounded pointer-events-none",
-          @show_value && "top-[14px]",
-          !@show_value && "top-[10px]"
-        ]}
-      />
+          <span class="w-0.5 bg-gray-lighter h-3 mt-1 rounded-lg" />
+        </div>
 
-      <div
-        id={"#{@id}-progress"}
-        phx-update="ignore"
-        class={[
-          "absolute h-[4px] z-20 bg-primary rounded-l pointer-events-none",
-          @show_value && "top-[14px]",
-          !@show_value && "top-[10px]"
-        ]}
-      />
-
-      <div
-        :if={@show_value}
-        id={"#{@id}-value"}
-        phx-update="ignore"
-        class="absolute top-0 bottom-0 inline-flex items-center justify-center size-[32px] z-30 font-semibold text-primary pointer-events-none"
-      >
-        <%= @value %>
+        <datalist :if={@ticks != []} id={"#{@id}-ticks"}>
+          <option :for={{_, percentage} <- @ticks} value={round((@max - @min) * percentage)} />
+        </datalist>
       </div>
+
+      <div class="relative">
+        <input
+          id={"#{@id}-input"}
+          type="range"
+          name={@name}
+          value={@value}
+          min={@min}
+          max={@max}
+          data-lower-boundary={@lower_boundary}
+          data-upper-boundary={@upper_boundary}
+          list={"#{@id}-ticks"}
+          class={[
+            "relative z-30 appearance-none bg-transparent cursor-pointer w-full",
+            "slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full",
+            "slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary",
+            "slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint",
+            @show_value && "h-[32px] slider-thumb:size-[32px]",
+            !@show_value && "h-[24px] slider-thumb:size-[24px] "
+          ]}
+          {@rest}
+        />
+
+        <div
+          id={"#{@id}-progress-bg"}
+          phx-update="ignore"
+          class={[
+            "absolute h-[4px] z-10 bg-gray-lighter dark:bg-gray-darkest-tint w-full rounded pointer-events-none",
+            @show_value && "top-[14px]",
+            !@show_value && "top-[10px]"
+          ]}
+        />
+
+        <div
+          id={"#{@id}-progress"}
+          phx-update="ignore"
+          class={[
+            "absolute h-[4px] z-20 bg-primary rounded-l pointer-events-none",
+            @show_value && "top-[14px]",
+            !@show_value && "top-[10px]"
+          ]}
+        />
+
+        <div
+          :if={@show_value}
+          id={"#{@id}-value"}
+          phx-update="ignore"
+          class="absolute top-0 bottom-0 inline-flex items-center justify-center size-[32px] z-30 font-semibold text-primary pointer-events-none"
+        >
+          <%= @value %>
+        </div>
+      </div>
+
+      <.error errors={@errors} class="w-full mt-2" />
     </div>
     """
   end
@@ -327,6 +375,11 @@ defmodule CommonUI.Components.Input do
   end
 
   defp note_class, do: "text-xs text-gray-light mt-2"
+
+  defp out_of_bounds(lower_boundary, upper_boundary, min, max, percentage) do
+    (lower_boundary && (max - min) * percentage < lower_boundary) ||
+      (upper_boundary && (max - min) * percentage > upper_boundary)
+  end
 
   attr :label, :string, default: nil
   attr :class, :any, default: "mb-2"

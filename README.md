@@ -128,4 +128,5 @@ control server, `http://127.0.0.1:4100` for the home base server, and
 ### VSCode
 
 To open a fully configured editor simply cd into the main dir and then open the
-everything workspace. `cd main && code .vscode/everything.code-workspace`
+everything workspace.
+`cd batteries-included && code .vscode/everything.code-workspace`

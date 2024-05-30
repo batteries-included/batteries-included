@@ -10,7 +10,8 @@ defmodule KubeServices.Batteries.BatteryCore do
       KubeServices.Stale.Reaper,
       KubeServices.ResourceDeleter,
       {CommonCore.ET.HomeBaseClient, [home_url: CommonCore.ET.URLs.home_base_url(battery.config)]},
-      {KubeServices.ET.Usage, [home_client: CommonCore.ET.HomeBaseClient]}
+      {KubeServices.ET.Usage, [home_client_pid: CommonCore.ET.HomeBaseClient]},
+      {KubeServices.ET.Hosts, [home_client_pid: CommonCore.ET.HomeBaseClient]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
