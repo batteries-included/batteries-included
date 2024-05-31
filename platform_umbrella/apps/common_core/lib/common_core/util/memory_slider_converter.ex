@@ -3,13 +3,13 @@ defmodule CommonCore.Util.MemorySliderConverter do
   alias CommonCore.Util.Memory
 
   @control_points [
-    {1, Memory.mb_to_bytes(128)},
-    {20, Memory.gb_to_bytes(1)},
-    {40, Memory.gb_to_bytes(10)},
-    {60, Memory.gb_to_bytes(128)},
-    {80, Memory.gb_to_bytes(512)},
-    {100, Memory.gb_to_bytes(2048)},
-    {120, Memory.gb_to_bytes(4096)}
+    {1, Memory.to_bytes(128, :MB)},
+    {20, Memory.to_bytes(1, :GB)},
+    {40, Memory.to_bytes(10, :GB)},
+    {60, Memory.to_bytes(128, :GB)},
+    {80, Memory.to_bytes(512, :GB)},
+    {100, Memory.to_bytes(2048, :GB)},
+    {120, Memory.to_bytes(4096, :GB)}
   ]
 
   def control_points do

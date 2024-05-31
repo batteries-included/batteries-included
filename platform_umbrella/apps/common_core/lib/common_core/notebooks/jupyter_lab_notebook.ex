@@ -9,51 +9,51 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   @presets [
     %{
       name: "tiny",
-      storage_size: Memory.mb_to_bytes(512),
+      storage_size: Memory.to_bytes(512, :MB),
       cpu_requested: 500,
       cpu_limits: 500,
-      memory_requested: Memory.mb_to_bytes(512),
-      memory_limits: Memory.mb_to_bytes(512)
+      memory_requested: Memory.to_bytes(512, :MB),
+      memory_limits: Memory.to_bytes(512, :MB)
     },
     %{
       name: "small",
-      storage_size: Memory.gb_to_bytes(16),
+      storage_size: Memory.to_bytes(16, :GB),
       cpu_requested: 500,
       cpu_limits: 2000,
-      memory_requested: Memory.gb_to_bytes(1),
-      memory_limits: Memory.gb_to_bytes(4)
+      memory_requested: Memory.to_bytes(1, :GB),
+      memory_limits: Memory.to_bytes(4, :GB)
     },
     %{
       name: "medium",
-      storage_size: Memory.gb_to_bytes(64),
+      storage_size: Memory.to_bytes(64, :GB),
       cpu_requested: 4000,
       cpu_limits: 4000,
-      memory_requested: Memory.gb_to_bytes(8),
-      memory_limits: Memory.gb_to_bytes(8)
+      memory_requested: Memory.to_bytes(8, :GB),
+      memory_limits: Memory.to_bytes(8, :GB)
     },
     %{
       name: "large",
-      storage_size: Memory.gb_to_bytes(128),
+      storage_size: Memory.to_bytes(128, :GB),
       cpu_requested: 8000,
       cpu_limits: 8000,
-      memory_requested: Memory.gb_to_bytes(16),
-      memory_limits: Memory.gb_to_bytes(16)
+      memory_requested: Memory.to_bytes(16, :GB),
+      memory_limits: Memory.to_bytes(16, :GB)
     },
     %{
       name: "xlarge",
-      storage_size: Memory.gb_to_bytes(256),
+      storage_size: Memory.to_bytes(256, :GB),
       cpu_requested: 10_000,
       cpu_limits: 10_000,
-      memory_requested: Memory.gb_to_bytes(32),
-      memory_limits: Memory.gb_to_bytes(32)
+      memory_requested: Memory.to_bytes(32, :GB),
+      memory_limits: Memory.to_bytes(32, :GB)
     },
     %{
       name: "huge",
-      storage_size: Memory.gb_to_bytes(1024),
+      storage_size: Memory.to_bytes(1024, :GB),
       cpu_requested: 32_000,
       cpu_limits: 32_000,
-      memory_requested: Memory.gb_to_bytes(256),
-      memory_limits: Memory.gb_to_bytes(256)
+      memory_requested: Memory.to_bytes(256, :GB),
+      memory_limits: Memory.to_bytes(256, :GB)
     }
   ]
 
@@ -108,18 +108,18 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
   def memory_options,
     do: [
-      Memory.mb_to_bytes(512),
-      Memory.gb_to_bytes(1),
-      Memory.gb_to_bytes(2),
-      Memory.gb_to_bytes(4),
-      Memory.gb_to_bytes(8),
-      Memory.gb_to_bytes(16),
-      Memory.gb_to_bytes(32),
-      Memory.gb_to_bytes(64),
-      Memory.gb_to_bytes(128),
-      Memory.gb_to_bytes(256),
-      Memory.gb_to_bytes(512),
-      Memory.gb_to_bytes(1024)
+      Memory.to_bytes(512, :MB),
+      Memory.to_bytes(1, :GB),
+      Memory.to_bytes(2, :GB),
+      Memory.to_bytes(4, :GB),
+      Memory.to_bytes(8, :GB),
+      Memory.to_bytes(16, :GB),
+      Memory.to_bytes(32, :GB),
+      Memory.to_bytes(64, :GB),
+      Memory.to_bytes(128, :GB),
+      Memory.to_bytes(256, :GB),
+      Memory.to_bytes(512, :GB),
+      Memory.to_bytes(1024, :GB)
     ]
 
   def preset_options_for_select do
