@@ -403,8 +403,12 @@ defmodule CommonCore.Resources.Karpenter do
       "role" => battery.config.node_role_name,
       "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
       "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
-      # TODO(jdt): need to merge in other "default" tags
-      "tags" => %{"karpenter.sh/discovery" => cluster_name}
+      "tags" => %{
+        "karpenter.sh/discovery" => cluster_name,
+        "batteriesincl.com/managed" => "true",
+        "batteriesincl.com/environment" => "organization/bi/#{cluster_name}",
+        "Name" => "#{cluster_name}-fleet"
+      }
     }
 
     :karpenter_ec2node_class

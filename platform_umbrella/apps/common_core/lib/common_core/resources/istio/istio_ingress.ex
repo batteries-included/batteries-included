@@ -9,6 +9,7 @@ defmodule CommonCore.Resources.IstioIngress do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Batteries
+  alias CommonCore.StateSummary.Core
 
   resource(:service_ingressgateway, _battery, state) do
     namespace = istio_namespace(state)
@@ -35,7 +36,7 @@ defmodule CommonCore.Resources.IstioIngress do
 
   defp add_public_lb_annotations(config, state) do
     aws_lb_installed? = Batteries.batteries_installed?(state, :aws_load_balancer_controller)
-    core_config = Batteries.by_type(state).battery_core.config
+    cluster_name = Core.config_field(state, :cluster_name)
 
     annotations =
       if aws_lb_installed? do
@@ -45,9 +46,9 @@ defmodule CommonCore.Resources.IstioIngress do
           # the controller will make sure that the LB is updated as pods come and go
           "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type" => "ip",
           "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled" => "true",
-          "service.beta.kubernetes.io/aws-load-balancer-name" => "#{core_config.cluster_name}-ingress",
-          # TODO(jdt): plumb through the tags that are applied to pulumi created resources
-          "service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags" => ""
+          "service.beta.kubernetes.io/aws-load-balancer-name" => "#{cluster_name}-ingress",
+          "service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags" =>
+            "batteriesincl.com/managed=true,batteriesincl.com/environment=organization/bi/#{cluster_name}"
         }
       else
         %{}
