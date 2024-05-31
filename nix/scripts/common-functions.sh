@@ -72,7 +72,7 @@ function do_bootstrap() {
   # Start the port forwarder
   do_portforward_controlserver "${slug}"
 
-  # Postgrest should be up create the database and run the migrations
+  # Postgres should be up create the database and run the migrations
   m setup
   # Add the rows that should be there for what's installed
   m "do" seed.control "${summary_path}", \
@@ -169,11 +169,11 @@ function do_portforward_controlserver() {
 }
 
 function do_setup_assets() {
-  pushd "${1}"
+  pushd "${1}" || fail "setting up assets"
   npm install
   npm run css:deploy:dev
   npm run js:deploy:dev
-  popd
+  popd || fail "setting up assets"
 }
 
 function do_start() {
@@ -183,4 +183,9 @@ function do_start() {
   bi start \
     $([[ -z ''${TRACE:-""} ]] || echo "-v=debug") \
     "${spec_path}" >/dev/null
+}
+
+function fail() {
+  log "Failed: $1"
+  exit 1
 }
