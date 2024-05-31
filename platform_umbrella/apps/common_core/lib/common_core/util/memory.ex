@@ -35,7 +35,7 @@ defmodule CommonCore.Util.Memory do
 
   """
   def from_bytes(value, unit, precision \\ 1) do
-    Float.round(multiplier(unit) / value, precision)
+    Float.round(value / multiplier(unit), precision)
   end
 
   @doc """
