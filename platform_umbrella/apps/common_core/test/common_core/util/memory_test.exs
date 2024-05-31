@@ -39,18 +39,23 @@ defmodule CommonCore.Util.MemoryTest do
   describe "from_bytes/2" do
     test "formats to B" do
       assert Memory.from_bytes(1, :B) == 1.0
+      assert Memory.from_bytes(1_000_000, :B) == 1_000_000.0
     end
 
     test "formats to KB" do
       assert Memory.from_bytes(1024, :KB) == 1.0
+      assert Memory.from_bytes(1_048_576, :KB) == 1024.0
     end
 
     test "formats to MB" do
       assert Memory.from_bytes(1_048_576, :MB) == 1.0
+      assert Memory.from_bytes(1_073_741_824, :MB) == 1024.0
+      assert Memory.from_bytes(1_099_511_627_776, :MB) == 1_048_576.0
     end
 
     test "formats to GB" do
       assert Memory.from_bytes(1_073_741_824, :GB) == 1.0
+      assert Memory.from_bytes(1_099_511_627_776, :GB) == 1024.0
     end
 
     test "formats to TB" do
