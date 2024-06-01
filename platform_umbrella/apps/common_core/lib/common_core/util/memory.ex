@@ -16,13 +16,13 @@ defmodule CommonCore.Util.Memory do
   """
   def to_bytes(value) when is_binary(value) do
     case Float.parse(value) do
-      {x, unit} -> x |> to_bytes(String.to_existing_atom(unit)) |> round()
+      {x, unit} -> to_bytes(x, String.to_existing_atom(unit))
       :error -> :error
     end
   end
 
-  def to_bytes(value, unit) do
-    value * multiplier(unit)
+  def to_bytes(value, unit \\ :B) do
+    round(value * multiplier(unit))
   end
 
   @doc """
@@ -49,7 +49,8 @@ defmodule CommonCore.Util.Memory do
   """
   def humanize(bytes, smart_rounding \\ true)
 
-  def humanize(nil, _), do: nil
+  def humanize(nil, _), do: "0B"
+  def humanize("", _), do: "0B"
 
   def humanize(bytes, smart_rounding) when is_binary(bytes) do
     humanize(String.to_integer(bytes), smart_rounding)
@@ -88,5 +89,159 @@ defmodule CommonCore.Util.Memory do
   """
   def bytes_as_select_options(byte_options) do
     Enum.map(byte_options, &{humanize(&1, false), &1})
+  end
+
+  @doc """
+  Calculates the relative value of a range slider when it's
+  between two ticks. This is useful when the tick units are
+  not proportional to the actual value of the slider. Returns
+  the relative bytes, or `:error` if the value is out of bounds.
+
+  For example, consider this range input:
+
+      0GB         10GB       500GB        1TB         2TB
+       |=====O-----|-----------|-----------|-----------|
+
+  The raw value returned from that range input would be 12.5%
+  of 2TB, or 256GB. But it should actually be 5GB, since it's
+  halfway between 0GB and 10GB.
+
+  ## Examples
+
+      iex> ticks = [{"0GB", 0}, {"10GB", 0.25}, {"500GB", 0.5}, {"1TB", 0.75}, {"2TB", 1}]
+      
+      iex> "256GB" |> to_bytes() |> range_value_to_bytes(ticks) |> humanize()
+      "5GB"
+
+      iex> "3TB" |> to_bytes() |> range_value_to_bytes(ticks)
+      :error
+
+  """
+  def range_value_to_bytes(value, [_ | _] = range_ticks) do
+    min_bytes = min_range_value(range_ticks)
+    max_bytes = max_range_value(range_ticks)
+
+    if value < min_bytes || value > max_bytes do
+      :error
+    else
+      do_range_value_to_bytes(value, range_ticks, min_bytes, max_bytes)
+    end
+  end
+
+  defp do_range_value_to_bytes(bytes, range_ticks, min_bytes, max_bytes) do
+    # get the percentage of range's current value
+    target_percent = (bytes - min_bytes) / (max_bytes - min_bytes)
+
+    # get the value's surrounding ticks if there are any (the window)
+    {{bottom_bytes, bottom_percent}, {top_bytes, top_percent}} =
+      get_window(range_ticks, max_bytes, fn {_, x} -> x >= target_percent end)
+
+    # determine how far the value is into the window
+    window_percent =
+      case (top_percent - bottom_percent) * max_bytes do
+        # value is an edge
+        0 -> 1
+        # value is not an edge
+        window_bytes -> (bytes - max_bytes * bottom_percent) / window_bytes
+      end
+
+    round((top_bytes - bottom_bytes) * window_percent + bottom_bytes)
+  end
+
+  @doc """
+  Calculates the absolute value of the range slider from a
+  relative value. This does the opposite of `range_value_to_bytes/2`.
+  Returns the absolute bytes, or `:error` if the value is out
+  of bounds.
+
+  ## Examples
+
+      iex> ticks = [{"0GB", 0}, {"10GB", 0.25}, {"500GB", 0.5}, {"1TB", 0.75}, {"2TB", 1}]
+      
+      iex> "5GB" |> to_bytes() |> bytes_to_range_value(ticks) |> humanize()
+      "256GB"
+
+      iex> "3TB" |> to_bytes() |> bytes_to_range_value(ticks)
+      :error
+
+  """
+  def bytes_to_range_value(nil, _), do: nil
+
+  def bytes_to_range_value(value, [_ | _] = range_ticks) do
+    min_bytes = min_range_value(range_ticks)
+    max_bytes = max_range_value(range_ticks)
+
+    if value < min_bytes || value > max_bytes do
+      :error
+    else
+      do_bytes_to_range_value(value, range_ticks, max_bytes)
+    end
+  end
+
+  defp do_bytes_to_range_value(bytes, range_ticks, max_bytes) do
+    # get the value's surrounding ticks if there are any (the window)
+    {{bottom_bytes, bottom_percent}, {top_bytes, top_percent}} =
+      get_window(range_ticks, max_bytes, fn {x, _} -> to_bytes(x) >= bytes end)
+
+    # determine how far the value is into the window
+    window_bytes =
+      case (top_percent - bottom_percent) * max_bytes do
+        # value is an edge
+        0 -> bytes
+        # value is not an edge
+        window_bytes -> (bytes - bottom_bytes) / (top_bytes - bottom_bytes) * window_bytes
+      end
+
+    round(window_bytes + bottom_percent * max_bytes)
+  end
+
+  defp get_window(range_ticks, max_bytes, func) do
+    case Enum.find_index(range_ticks, func) do
+      # value is between beginning of range and first tick
+      0 ->
+        {
+          {0, 0},
+          range_ticks |> Enum.at(0) |> tick_to_bytes()
+        }
+
+      # value is between last tick and end of range
+      nil ->
+        {
+          range_ticks |> Enum.at(-1, {0, 0}) |> tick_to_bytes(),
+          {max_bytes, 1}
+        }
+
+      # value is between two ticks
+      index ->
+        {
+          range_ticks |> Enum.at(index - 1) |> tick_to_bytes(),
+          range_ticks |> Enum.at(index) |> tick_to_bytes()
+        }
+    end
+  end
+
+  defp tick_to_bytes({label, percent}) do
+    {to_bytes(label), percent}
+  end
+
+  @doc """
+  Gets the minimum range value based on the ticks. If there is
+  no tick at the 0% position, the minimum will be 0.
+  """
+  def min_range_value([{size, percent} | _]) do
+    if percent > 0, do: 0, else: to_bytes(size)
+  end
+
+  @doc """
+  Gets the maximum range value based on the ticks. If there is no
+  tick at the 100% position, the maximum will be calculated based
+  on how far the last tick is from the end of the range. If the
+  list is empty, the maximum will be 100.
+  """
+  def max_range_value(range_ticks) when is_list(range_ticks) do
+    {size, percent} = List.last(range_ticks)
+    size = to_bytes(size)
+
+    if percent < 1, do: round(size / percent), else: size
   end
 end
