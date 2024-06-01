@@ -47,13 +47,17 @@ export const RangeHook = {
     const upperBoundary = Number(this.inputEl.dataset.upperBoundary);
 
     if (value < lowerBoundary) {
-      this.inputEl.value = lowerBoundary;
-      this.inputEl.dispatchEvent(new Event('input'));
+      this.changeInputValue(this.inputEl, lowerBoundary);
     }
 
     if (value > upperBoundary) {
-      this.inputEl.value = upperBoundary;
-      this.inputEl.dispatchEvent(new Event('input'));
+      this.changeInputValue(this.inputEl, upperBoundary);
     }
+  },
+  changeInputValue(el, value) {
+    const inputEvent = new Event('input');
+
+    el.value = value;
+    el.dispatchEvent(inputEvent);
   },
 } as ViewHook;
