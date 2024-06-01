@@ -273,7 +273,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         variant="horizontal-bolded"
         class="mt-3 mb-5"
         data={[
-          {"Storage size:", Memory.humanize(@form[:storage_size].value) || "0GB"},
+          {"Storage size:", Memory.humanize(@form[:storage_size].value)},
           {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
           {"CPU limits:", @form[:cpu_limits].value}
         ]}
@@ -299,7 +299,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             >
               <span>
                 <div class="text-sm">Storage Size</div>
-                <%= Memory.humanize(@form[:storage_size].value) || "0GB" %>
+                <%= Memory.humanize(@form[:storage_size].value) %>
               </span>
               <:hidden>
                 <.input field={@form[:storage_size]} type="number" phx-change="change_storage_size" />
