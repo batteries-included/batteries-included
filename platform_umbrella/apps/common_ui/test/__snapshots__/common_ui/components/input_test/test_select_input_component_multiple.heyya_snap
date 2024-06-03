@@ -1,5 +1,5 @@
 <label phx-feedback-for="foo">
-  <div class="flex items-center gap-4 text-sm text-gray-darkest dark:text-gray-lighter mb-2">
+  <div class="text-sm text-gray-darkest dark:text-gray-lighter mb-2">
   Foobar
 </div>
 

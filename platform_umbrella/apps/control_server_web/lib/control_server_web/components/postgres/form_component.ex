@@ -119,12 +119,17 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   def handle_event("validate", %{"cluster" => cluster_params}, socket) do
     cluster_params = prepare_cluster_params(cluster_params, socket)
-    {changeset, data} = Cluster.validate(socket.assigns.cluster, cluster_params)
+
+    changeset =
+      socket.assigns.cluster
+      |> Cluster.changeset(cluster_params)
+      |> Map.put(:action, :validate)
+
+    data = Ecto.Changeset.apply_changes(changeset)
 
     {:noreply,
      socket
      |> assign(form: to_form(changeset))
-     |> assign(changeset: changeset)
      |> assign(possible_owners: possible_owners(changeset))
      |> assign(num_instances: data.num_instances)}
   end

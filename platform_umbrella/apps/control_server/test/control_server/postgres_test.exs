@@ -75,7 +75,7 @@ defmodule ControlServer.PostgresTest do
     test "update_cluster/2 with decreased storage size returns error changeset" do
       cluster = cluster_fixture()
       assert {:error, changeset} = Postgres.update_cluster(cluster, %{storage_size: 1})
-      assert "can't decrease storage size" in errors_on(changeset).virtual_size
+      assert "can't decrease storage size from 200MB" in errors_on(changeset).storage_size
       assert cluster == Postgres.get_cluster!(cluster.id)
     end
 

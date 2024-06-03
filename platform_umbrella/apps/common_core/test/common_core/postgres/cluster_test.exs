@@ -2,6 +2,7 @@ defmodule CommonCore.Postgres.ClusterTest do
   use ExUnit.Case
 
   alias CommonCore.Postgres.Cluster
+  alias CommonCore.Util.Memory
   alias Ecto.Changeset
 
   describe "changeset/2" do
@@ -43,47 +44,36 @@ defmodule CommonCore.Postgres.ClusterTest do
     end
   end
 
-  describe "validate/1" do
-    test "returns a valid changeset and struct with valid attributes" do
-      attrs = %{
-        name: "test",
-        storage_size: 137_438_953_472,
-        num_instances: 1,
-        type: :standard
-      }
-
-      {changeset, _data} = Cluster.validate(attrs)
-      assert changeset.valid?
+  describe "put_storage_size/2" do
+    setup do
+      %{changeset: Cluster.changeset(%Cluster{}, %{})}
     end
 
-    test "returns an invalid changeset with invalid attributes" do
-      attrs = %{name: nil, storage_size: nil, num_instances: nil, type: nil}
+    test "should put a storage size into the changeset", %{changeset: changeset} do
+      bytes = 1 |> Memory.to_bytes(:TB) |> to_string()
+      changeset = Cluster.put_storage_size(changeset, bytes)
 
-      {changeset, _data} = Cluster.validate(attrs)
-      refute changeset.valid?
+      assert Changeset.get_change(changeset, :storage_size) == Memory.to_bytes(375, :GB)
+    end
+
+    test "should return error for non-parsable value", %{changeset: changeset} do
+      assert %Changeset{valid?: false} = Cluster.put_storage_size(changeset, "foo")
     end
   end
 
-  describe "to_fresh_cluster/1" do
-    test "creates a new cluster with valid attributes" do
-      attrs = %{
-        name: "test",
-        storage_size: 137_438_953_472,
-        num_instances: 1,
-        type: :standard
-      }
+  describe "put_range_from_storage_size/2" do
+    test "should put a range value from the storage size" do
+      changeset = Cluster.changeset(%Cluster{}, %{storage_size: Memory.to_bytes(375, :GB)})
+      changeset = Cluster.put_range_from_storage_size(changeset)
 
-      cluster = Cluster.to_fresh_cluster(attrs)
-      assert cluster.name == attrs.name
+      assert Changeset.get_change(changeset, :virtual_storage_size_range_value) == Memory.to_bytes(1, :TB)
     end
-  end
 
-  describe "convert_virtual_size_to_presets/1" do
-    test "sets the appropriate presets for small size" do
-      virtual_size = "small"
-      changeset = Cluster.changeset(%Cluster{}, %{virtual_size: virtual_size})
-      storage_size_preset_value = Cluster.get_preset(virtual_size).storage_size
-      assert storage_size_preset_value == Changeset.get_field(changeset, :storage_size)
+    test "should put a range value of 0 when there is no storage size" do
+      changeset = Cluster.changeset(%Cluster{}, %{})
+      changeset = Cluster.put_range_from_storage_size(changeset)
+
+      assert Changeset.get_change(changeset, :virtual_storage_size_range_value) == 0
     end
   end
 end

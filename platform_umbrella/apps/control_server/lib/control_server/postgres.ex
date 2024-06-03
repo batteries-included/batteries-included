@@ -84,8 +84,6 @@ defmodule ControlServer.Postgres do
   def update_cluster(%Cluster{} = cluster, attrs) do
     cluster
     |> Cluster.changeset(attrs)
-    # Prevents the storage size from being edited down
-    |> Cluster.validate_storage_size()
     |> Repo.update()
     |> broadcast(:update)
   end

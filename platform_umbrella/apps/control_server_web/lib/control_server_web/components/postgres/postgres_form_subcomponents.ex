@@ -4,7 +4,6 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Util.Memory
-  alias CommonCore.Util.MemorySliderConverter
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryStorage
 
@@ -60,34 +59,30 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       alias CommonCore.Postgres.Cluster, as: PGCluster
       alias ControlServerWeb.PostgresFormSubcomponents
 
-      def handle_event("set_storage_size_shortcut", %{"bytes" => bytes}, socket) do
-        handle_event("change_storage_size", %{unquote(form_key) => %{"storage_size" => bytes}}, socket)
-      end
-
-      # This only happens when the user is manually editing the storage size.
-      # In this case, we need to update the range slider and helper text "x GB"
-      def handle_event("change_storage_size", %{unquote(form_key) => %{"storage_size" => storage_size}}, socket) do
-        changeset =
-          socket.assigns.form
-          |> get_source()
-          |> PGCluster.put_storage_size_bytes(storage_size)
-
-        form = socket.assigns.form |> put_source(changeset) |> to_form()
-
-        {:noreply, assign(socket, :form, form)}
+      def handle_event("click_storage_size_tick", %{"value" => value}, socket) do
+        handle_event(
+          "change_storage_size_range",
+          %{unquote(form_key) => %{"virtual_storage_size_range_value" => value}},
+          socket
+        )
       end
 
       def handle_event(
-            "on_change_storage_size_range",
-            %{unquote(form_key) => %{"virtual_storage_size_range_value" => virtual_storage_size_range_value}},
+            "change_storage_size_range",
+            %{unquote(form_key) => %{"virtual_storage_size_range_value" => range_value}},
             socket
           ) do
         changeset =
           socket.assigns.form
           |> get_source()
-          |> PGCluster.put_storage_size_value(virtual_storage_size_range_value)
+          |> PGCluster.put_storage_size(range_value)
+          |> PGCluster.put_range_from_storage_size()
+          |> PGCluster.validate_storage_size()
 
-        form = socket.assigns.form |> put_source(changeset) |> to_form()
+        form =
+          socket.assigns.form
+          |> put_source(changeset)
+          |> to_form()
 
         {:noreply, assign(socket, form: form)}
       end
@@ -290,52 +285,30 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             options={Enum.map(SummaryStorage.storage_classes(), &get_in(&1, ["metadata", "name"]))}
           />
 
-          <.flex>
-            <.click_flip
-              class="grow flex-1 justify-start xl:justify-end items-start"
-              cursor_class="cursor-text"
-              tooltip="Click to Edit"
-              id="storage-size-input"
-            >
-              <span>
-                <div class="text-sm">Storage Size</div>
-                <%= Memory.humanize(@form[:storage_size].value) %>
-              </span>
-              <:hidden>
-                <.input
-                  field={@form[:storage_size]}
-                  type="number"
-                  label="Storage Size"
-                  phx-change="change_storage_size"
-                />
-              </:hidden>
-            </.click_flip>
-          </.flex>
+          <.input
+            field={@form[:storage_size]}
+            type="number"
+            label="Storage Size in Bytes"
+            label_note={Memory.humanize(@form[:storage_size].value)}
+            note="You can't reduce this once it has been created."
+            debounce={false}
+          />
 
-          <div class="pt-3 pb-1 mb-[22px] lg:col-span-2">
-            <.flex class="justify-between w-full">
-              <%= for memory_size <- MemorySliderConverter.control_points() do %>
-                <span
-                  phx-click="set_storage_size_shortcut"
-                  phx-value-bytes={memory_size}
-                  phx-target={@phx_target}
-                  class="cursor-pointer hover:underline text-sm font-medium text-gray-darkest dark:text-white w-[45px] text-center"
-                >
-                  <%= Memory.humanize(memory_size, false) %>
-                </span>
-              <% end %>
-            </.flex>
-
-            <.input
-              field={@form[:virtual_storage_size_range_value]}
-              type="range"
-              min="1"
-              max="120"
-              step="1"
-              show_value={false}
-              phx-change="on_change_storage_size_range"
-            />
-          </div>
+          <.input
+            field={@form[:virtual_storage_size_range_value]}
+            type="range"
+            show_value={false}
+            min={Cluster.storage_range_ticks() |> Memory.min_range_value()}
+            max={Cluster.storage_range_ticks() |> Memory.max_range_value()}
+            ticks={Cluster.storage_range_ticks()}
+            tick_target={@phx_target}
+            tick_click="click_storage_size_tick"
+            phx-change="change_storage_size_range"
+            class="px-5 self-center lg:col-span-2"
+            lower_boundary={
+              @form.data.storage_size |> Memory.bytes_to_range_value(Cluster.storage_range_ticks())
+            }
+          />
         </.grid>
 
         <.h3>Running Limits</.h3>
@@ -370,7 +343,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
               field={@form[:memory_limits]}
               type="select"
               label="Memory Limits"
-              options={Cluster.memory_limits_options() |> Memory.bytes_as_select_options()}
+              options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
             />
           </div>
         </.grid>

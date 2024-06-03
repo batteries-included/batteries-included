@@ -16,6 +16,7 @@ defmodule CommonUI.Components.Input do
   attr :errors, :list, default: []
   attr :force_feedback, :boolean, default: false
   attr :label, :string, default: nil
+  attr :label_note, :string, default: nil
   attr :note, :string, default: nil
   attr :placeholder, :string, default: nil
   attr :placeholder_selectable, :boolean, default: false
@@ -23,7 +24,7 @@ defmodule CommonUI.Components.Input do
   attr :icon, :atom, default: nil
   attr :options, :list, default: []
   attr :multiple, :boolean, default: false
-  attr :debounce, :string, default: "blur"
+  attr :debounce, :any, default: "blur"
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(autocomplete autofocus step maxlength disabled required)
 
@@ -161,7 +162,7 @@ defmodule CommonUI.Components.Input do
     assigns = IDHelpers.provide_id(assigns)
 
     ~H"""
-    <div id={@id} phx-hook="Range">
+    <div id={@id} class={@class} phx-hook="Range">
       <div class="relative pb-6">
         <div
           :for={{label, percentage} <- @ticks}
@@ -173,20 +174,18 @@ defmodule CommonUI.Components.Input do
             phx-value-percentage={percentage}
             phx-value-value={(@max - @min) * percentage}
             phx-target={@tick_target}
-            phx-click={
-              !out_of_bounds(@lower_boundary, @upper_boundary, @min, @max, percentage) && @tick_click
-            }
+            phx-click={!out_of_bounds?(assigns, percentage) && @tick_click}
             class={[
-              "font-semibold text-sm text-gray dark:text-gray-light select-none",
-              @tick_click && "cursor-pointer hover:underline",
-              out_of_bounds(@lower_boundary, @upper_boundary, @min, @max, percentage) &&
-                "text-gray-lighter cursor-default hover:no-underline"
+              "font-semibold text-sm text-gray select-none",
+              !out_of_bounds?(assigns, percentage) && @tick_click && "cursor-pointer hover:underline",
+              out_of_bounds?(assigns, percentage) &&
+                "text-gray-lighter dark:text-gray-darker cursor-default hover:no-underline"
             ]}
           >
             <%= label %>
           </span>
 
-          <span class="w-0.5 bg-gray-lighter h-3 mt-1 rounded-lg" />
+          <span class="w-0.5 bg-gray-lighter dark:bg-gray-darkest-tint h-3 mt-1 rounded-lg" />
         </div>
 
         <datalist :if={@ticks != []} id={"#{@id}-ticks"}>
@@ -326,7 +325,13 @@ defmodule CommonUI.Components.Input do
   def input(assigns) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <.label label={@label} />
+      <div class="flex items-center justify-between mb-2">
+        <.label label={@label} class="mb-0" />
+
+        <div :if={@label_note} class="font-medium text-sm text-gray-light dark:text-gray-dark">
+          <%= @label_note %>
+        </div>
+      </div>
 
       <div class="relative">
         <input
@@ -376,9 +381,11 @@ defmodule CommonUI.Components.Input do
 
   defp note_class, do: "text-xs text-gray-light mt-2"
 
-  defp out_of_bounds(lower_boundary, upper_boundary, min, max, percentage) do
-    (lower_boundary && (max - min) * percentage < lower_boundary) ||
-      (upper_boundary && (max - min) * percentage > upper_boundary)
+  defp out_of_bounds?(%{min: min, max: max, lower_boundary: lower, upper_boundary: upper}, percentage) do
+    # offset the percentage a tiny bit in case a boundary is right on a tick
+    value = (max - min) * (percentage + 0.0001)
+
+    (lower && value < lower) || (upper && value > upper)
   end
 
   attr :label, :string, default: nil
@@ -386,7 +393,7 @@ defmodule CommonUI.Components.Input do
 
   defp label(assigns) do
     ~H"""
-    <div :if={@label} class={["flex items-center gap-4", label_class(), @class]}>
+    <div :if={@label} class={[label_class(), @class]}>
       <%= @label %>
     </div>
     """
