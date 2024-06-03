@@ -250,6 +250,9 @@ schema = 3
   [mod."github.com/jbenet/go-context"]
     version = "v0.0.0-20150711004518-d14ea06fba99"
     hash = "sha256-VANNCWNNpARH/ILQV9sCQsBWgyL2iFT+4AHZREpxIWE="
+  [mod."github.com/jinzhu/copier"]
+    version = "v0.4.0"
+    hash = "sha256-5OiV4oqjueGKxRW5W2NBMtGjtbI9NJfdFIfFVStLwk0="
   [mod."github.com/josharian/intern"]
     version = "v1.0.0"
     hash = "sha256-LJR0QE2vOQ2/2shBbO5Yl8cVPq+NFrE3ers0vu9FRP0="
@@ -347,17 +350,23 @@ schema = 3
     version = "v1.1.0"
     hash = "sha256-tOxNV+Okt0CCOQcl1Nr2vEmNonhZCTyAwdSz+I2/elo="
   [mod."github.com/noisysockets/netstack"]
-    version = "v0.6.0"
-    hash = "sha256-LurCNcMkfJvS1iea8RtCM6xNf1SoVx6TKSBrvg/MrJ0="
+    version = "v0.7.0"
+    hash = "sha256-NgYoZlxOIBN5UxXoL15DQ296ZH1VSN7B9jXUVscgZ74="
+  [mod."github.com/noisysockets/netutil"]
+    version = "v0.5.0"
+    hash = "sha256-O7mOLnqkkEqJ+2rTk6U5HTX9lLvaylDFettLtzRqppw="
   [mod."github.com/noisysockets/network"]
-    version = "v0.8.2"
-    hash = "sha256-8AD/u8darCnhvghzGkJeM3Xn2kg2PCcX68i7JV/fOl4="
+    version = "v0.12.2"
+    hash = "sha256-hPljqDySHQ5RidtwdFTAGE+q6DLiavWdZy58AmUPMho="
   [mod."github.com/noisysockets/noisysockets"]
-    version = "v0.23.4"
-    hash = "sha256-0cRnlLGEg+K/OEIHYRjdhnmplpSSqxXzucw6jaUr6gA="
+    version = "v0.24.6"
+    hash = "sha256-av6vlehRK6Hmxjbys/ZonyUTzpF4K/hEoUTUwDQQpaA="
+  [mod."github.com/noisysockets/pinger"]
+    version = "v0.4.2"
+    hash = "sha256-pyx1oG+96oxJHp8f1/CP09T2uziWA4MAY3COtMvVVNE="
   [mod."github.com/noisysockets/resolver"]
-    version = "v0.5.1"
-    hash = "sha256-FNI8oNwYyb0JA/nI3kjBtlu7kwd4sC+30MuU0RMiMHo="
+    version = "v0.9.0"
+    hash = "sha256-2U/Fbf0DkMffo97tHd/TPK4t7BOeQQa/Esf+YzbKiOU="
   [mod."github.com/nxadm/tail"]
     version = "v1.4.11"
     hash = "sha256-7XF47xVcyHjpO1E0+GGAoytxOa0JJFCBXHJGLTexVgo="
