@@ -22,6 +22,7 @@ defmodule CommonCore.Actions.SSOClient do
 
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.Ecto.BatteryUUID
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.KeycloakSummary
@@ -99,7 +100,7 @@ defmodule CommonCore.Actions.SSOClient do
   @spec generate_client_action(SystemBattery.t(), StateSummary.t(), String.t(), ClientConfigurator.f()) ::
           FreshGeneratedAction.t() | nil
   def generate_client_action(
-        %SystemBattery{id: battery_id, type: battery_type} = battery,
+        %SystemBattery{id: battery_uuid, type: battery_type} = battery,
         %StateSummary{} = summary,
         client_name,
         func
@@ -108,15 +109,21 @@ defmodule CommonCore.Actions.SSOClient do
 
     root_url = summary |> CommonCore.StateSummary.URLs.uri_for_battery(battery_type) |> URI.to_string()
 
-    # get the default settings
-    base_client = default_client(battery_id, client_name, root_url)
-    # and the additional fields as proscribed by calling module
-    {client, additional_client_fields} = func.(battery, summary, base_client)
+    case BatteryUUID.dump(battery_uuid) do
+      {:ok, raw_id} ->
+        # get the default settings
+        base_client = default_client(Base.encode16(raw_id), client_name, root_url)
+        # and the additional fields as proscribed by calling module
+        {client, additional_client_fields} = func.(battery, summary, base_client)
 
-    # need the list of fields that we're populating so we know if something has changed
-    fields = unquote(@default_client_fields) ++ additional_client_fields
+        # need the list of fields that we're populating so we know if something has changed
+        fields = unquote(@default_client_fields) ++ additional_client_fields
 
-    determine_action(summary.keycloak_state, realm, client, fields)
+        determine_action(summary.keycloak_state, realm, client, fields)
+
+      _ ->
+        nil
+    end
   end
 
   @doc """

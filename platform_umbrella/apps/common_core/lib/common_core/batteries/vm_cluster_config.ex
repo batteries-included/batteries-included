@@ -6,7 +6,7 @@ defmodule CommonCore.Batteries.VMClusterConfig do
 
   batt_polymorphic_schema type: :vm_cluster do
     defaultable_field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
-    secret_field :cookie_secret
+    secret_field :cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1
 
     defaultable_field :replication_factor, :integer, default: 1
 
