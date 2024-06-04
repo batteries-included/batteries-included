@@ -1,11 +1,11 @@
 defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
-  use ControlServerWeb.PostgresFormSubcomponents, form_key: "postgres"
 
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
   alias ControlServer.Postgres
+  alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.RedisFormSubcomponents
 
@@ -17,7 +17,8 @@ defmodule ControlServerWeb.Projects.WebForm do
     postgres_changeset =
       PGCluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
-        %{name: "#{project_name}-web"}
+        %{name: "#{project_name}-web"},
+        PGCluster.compact_storage_range_ticks()
       )
 
     redis_changeset =
@@ -48,7 +49,7 @@ defmodule ControlServerWeb.Projects.WebForm do
   def handle_event("validate", params, socket) do
     postgres_changeset =
       %PGCluster{}
-      |> PGCluster.changeset(params["postgres"])
+      |> PGCluster.changeset(params["postgres"], PGCluster.compact_storage_range_ticks())
       |> Map.put(:action, :validate)
 
     redis_changeset =
@@ -63,6 +64,32 @@ defmodule ControlServerWeb.Projects.WebForm do
       |> to_form()
 
     {:noreply, assign(socket, :form, form)}
+  end
+
+  def handle_event("change_storage_size_range", %{"value" => value}, socket) do
+    handle_event(
+      "change_storage_size_range",
+      %{"postgres" => %{"virtual_storage_size_range_value" => value}},
+      socket
+    )
+  end
+
+  def handle_event(
+        "change_storage_size_range",
+        %{"postgres" => %{"virtual_storage_size_range_value" => range_value}},
+        socket
+      ) do
+    postgres_changeset =
+      socket.assigns.form.params["postgres"]
+      |> PGCluster.put_storage_size(range_value, PGCluster.compact_storage_range_ticks())
+      |> Map.put(:action, :validate)
+
+    form =
+      socket.assigns.form.params
+      |> Map.put("postgres", postgres_changeset)
+      |> to_form()
+
+    {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("save", params, socket) do
@@ -135,6 +162,7 @@ defmodule ControlServerWeb.Projects.WebForm do
           class={@db_type != :new && "hidden"}
           form={to_form(@form[:postgres].value, as: :postgres)}
           phx_target={@myself}
+          ticks={PGCluster.compact_storage_range_ticks()}
         />
 
         <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />

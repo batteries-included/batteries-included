@@ -85,11 +85,11 @@ defmodule CommonCore.Postgres.Cluster do
   end
 
   @doc false
-  def changeset(cluster, attrs) do
+  def changeset(cluster, attrs, range_ticks \\ nil) do
     cluster
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
-    |> put_range_from_storage_size()
+    |> put_range_value_from_storage_size(range_ticks || storage_range_ticks())
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())
@@ -100,22 +100,30 @@ defmodule CommonCore.Postgres.Cluster do
     |> validate_storage_size()
   end
 
-  def put_storage_size(changeset, bytes) when is_binary(bytes) do
-    case Float.parse(bytes) do
-      {bytes, _} -> put_storage_size(changeset, round(bytes))
+  def put_storage_size(changeset, range_value, range_ticks \\ nil) do
+    changeset
+    |> put_storage_size_from_range_value(range_value, range_ticks || storage_range_ticks())
+    |> validate_storage_size()
+  end
+
+  defp put_storage_size_from_range_value(changeset, range_value, range_ticks) when is_binary(range_value) do
+    case Float.parse(range_value) do
+      {bytes, _} -> put_storage_size_from_range_value(changeset, round(bytes), range_ticks)
       :error -> add_error(changeset, :storage_size, "can't parse value")
     end
   end
 
-  def put_storage_size(changeset, bytes) do
-    storage_size = Memory.range_value_to_bytes(bytes, storage_range_ticks())
+  defp put_storage_size_from_range_value(changeset, range_value, range_ticks) do
+    storage_size = Memory.range_value_to_bytes(range_value, range_ticks)
 
-    put_change(changeset, :storage_size, storage_size)
+    changeset
+    |> put_change(:storage_size, storage_size)
+    |> put_change(:virtual_storage_size_range_value, range_value)
   end
 
-  def put_range_from_storage_size(changeset) do
+  defp put_range_value_from_storage_size(changeset, range_ticks) do
     if storage_size = get_field(changeset, :storage_size) do
-      range_value = Memory.bytes_to_range_value(storage_size, storage_range_ticks())
+      range_value = Memory.bytes_to_range_value(storage_size, range_ticks)
 
       put_change(changeset, :virtual_storage_size_range_value, range_value)
     else
@@ -123,7 +131,7 @@ defmodule CommonCore.Postgres.Cluster do
     end
   end
 
-  def validate_storage_size(changeset) do
+  defp validate_storage_size(changeset) do
     validate_change(changeset, :storage_size, fn :storage_size, storage_size ->
       current_size = changeset.data.storage_size
 
@@ -156,6 +164,16 @@ defmodule CommonCore.Postgres.Cluster do
       {"500GB", 0.6},
       {"1TB", 0.8},
       {"2TB", 1}
+    ]
+  end
+
+  def compact_storage_range_ticks do
+    [
+      {"500MB", 0},
+      {"1GB", 0.15},
+      {"50GB", 0.3},
+      {"250GB", 0.65},
+      {"1TB", 1}
     ]
   end
 

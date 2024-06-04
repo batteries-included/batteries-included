@@ -45,58 +45,6 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     }
   ]
 
-  @doc """
-  This macro creates all the LiveView events needed for the subform components.
-  """
-  defmacro __using__(opts \\ []) do
-    # The main Postgres form uses the key "cluster", whereas the nested forms
-    # in the New Project pages use the key "postgres" to differentiate between
-    # the Redis clusters. This allows the same events to be used with different
-    # form keys.
-    form_key = Keyword.get(opts, :form_key, "cluster")
-
-    quote do
-      alias CommonCore.Postgres.Cluster, as: PGCluster
-      alias ControlServerWeb.PostgresFormSubcomponents
-
-      def handle_event("click_storage_size_tick", %{"value" => value}, socket) do
-        handle_event(
-          "change_storage_size_range",
-          %{unquote(form_key) => %{"virtual_storage_size_range_value" => value}},
-          socket
-        )
-      end
-
-      def handle_event(
-            "change_storage_size_range",
-            %{unquote(form_key) => %{"virtual_storage_size_range_value" => range_value}},
-            socket
-          ) do
-        changeset =
-          socket.assigns.form
-          |> get_source()
-          |> PGCluster.put_storage_size(range_value)
-          |> PGCluster.put_range_from_storage_size()
-          |> PGCluster.validate_storage_size()
-
-        form =
-          socket.assigns.form
-          |> put_source(changeset)
-          |> to_form()
-
-        {:noreply, assign(socket, form: form)}
-      end
-
-      defp get_source(%{source: source}) do
-        if unquote(form_key) != "cluster", do: source[unquote(form_key)], else: source
-      end
-
-      defp put_source(%{source: source}, value) do
-        if unquote(form_key) != "cluster", do: Map.put(source, unquote(form_key), value), else: value
-      end
-    end
-  end
-
   attr :phx_target, :any
   attr :users, :list, default: []
 
@@ -248,6 +196,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
   attr :class, :any, default: nil
   attr :with_divider, :boolean, default: true
   attr :form, Phoenix.HTML.Form, required: true
+  attr :ticks, :list, required: true
 
   def size_form(assigns) do
     ~H"""
@@ -288,7 +237,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           <.input
             field={@form[:storage_size]}
             type="number"
-            label="Storage Size in Bytes"
+            label="Storage Size"
             label_note={Memory.humanize(@form[:storage_size].value)}
             note="You can't reduce this once it has been created."
             debounce={false}
@@ -298,16 +247,14 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             field={@form[:virtual_storage_size_range_value]}
             type="range"
             show_value={false}
-            min={Cluster.storage_range_ticks() |> Memory.min_range_value()}
-            max={Cluster.storage_range_ticks() |> Memory.max_range_value()}
-            ticks={Cluster.storage_range_ticks()}
+            min={@ticks |> Memory.min_range_value()}
+            max={@ticks |> Memory.max_range_value()}
+            ticks={@ticks}
             tick_target={@phx_target}
-            tick_click="click_storage_size_tick"
+            tick_click="change_storage_size_range"
             phx-change="change_storage_size_range"
             class="px-5 self-center lg:col-span-2"
-            lower_boundary={
-              @form.data.storage_size |> Memory.bytes_to_range_value(Cluster.storage_range_ticks())
-            }
+            lower_boundary={@form.data.storage_size |> Memory.bytes_to_range_value(@ticks)}
           />
         </.grid>
 

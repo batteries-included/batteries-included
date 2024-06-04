@@ -121,7 +121,7 @@ defmodule CommonCore.Util.Memory do
     min_bytes = min_range_value(range_ticks)
     max_bytes = max_range_value(range_ticks)
 
-    if value < min_bytes || value > max_bytes do
+    if value < 0 || value > max_bytes do
       :error
     else
       do_range_value_to_bytes(value, range_ticks, min_bytes, max_bytes)
@@ -171,10 +171,15 @@ defmodule CommonCore.Util.Memory do
     min_bytes = min_range_value(range_ticks)
     max_bytes = max_range_value(range_ticks)
 
-    if value < min_bytes || value > max_bytes do
-      :error
-    else
-      do_bytes_to_range_value(value, range_ticks, max_bytes)
+    cond do
+      value < min_bytes ->
+        0
+
+      value > max_bytes ->
+        max_bytes
+
+      true ->
+        do_bytes_to_range_value(value, range_ticks, max_bytes)
     end
   end
 

@@ -1,13 +1,11 @@
 defmodule ControlServerWeb.Live.PostgresFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
-  use ControlServerWeb.PostgresFormSubcomponents
-
-  import ControlServerWeb.PostgresFormSubcomponents
 
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGUser
   alias ControlServer.Postgres
+  alias ControlServerWeb.PostgresFormSubcomponents
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent
@@ -134,6 +132,28 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
      |> assign(num_instances: data.num_instances)}
   end
 
+  def handle_event("change_storage_size_range", %{"value" => tick_value}, socket) do
+    handle_event(
+      "change_storage_size_range",
+      %{"cluster" => %{"virtual_storage_size_range_value" => tick_value}},
+      socket
+    )
+  end
+
+  def handle_event(
+        "change_storage_size_range",
+        %{"cluster" => %{"virtual_storage_size_range_value" => range_value}},
+        socket
+      ) do
+    changeset =
+      socket.assigns.cluster
+      |> Cluster.changeset(socket.assigns.form.source.params)
+      |> Cluster.put_storage_size(range_value)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, form: to_form(changeset))}
+  end
+
   def handle_event("change:credential_namespaces", params, socket) do
     value = params |> Map.get("_target") |> List.last()
     changeset = socket.assigns.pg_user_form.source
@@ -228,7 +248,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
         <.flex column>
           <.panel>
-            <.size_form form={@form} phx_target={@myself} />
+            <PostgresFormSubcomponents.size_form
+              form={@form}
+              phx_target={@myself}
+              ticks={Cluster.storage_range_ticks()}
+            />
 
             <.grid columns={[sm: 1, lg: 2]} class="items-center">
               <.h5>Number of instances</.h5>
@@ -242,7 +266,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             </.grid>
           </.panel>
 
-          <.users_table
+          <PostgresFormSubcomponents.users_table
             users={Ecto.Changeset.get_field(@form[:users].form.source, :users)}
             phx_target={@myself}
           />
@@ -283,7 +307,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         </.flex>
       </.form>
 
-      <.user_form_modal
+      <PostgresFormSubcomponents.user_form_modal
         phx_target={@myself}
         user_form={@pg_user_form}
         possible_namespaces={@possible_namespaces}
