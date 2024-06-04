@@ -74,7 +74,7 @@ defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
     actions
     |> Enum.zip(updates)
     |> Enum.reduce(Multi.new(), fn {action, update}, multi ->
-      Multi.update(multi, {:action_upadte, action.id}, KeycloakAction.changeset(action, update))
+      Multi.update(multi, {:action_update, action.id}, KeycloakAction.changeset(action, update))
     end)
     |> Repo.transaction(timeout: @generation_timeout)
   end
@@ -121,6 +121,7 @@ defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
     |> Map.from_struct()
     |> Map.drop([:value])
     |> Map.merge(%{
+      id: CommonCore.Ecto.BatteryUUID.autogenerate(),
       keycloak_snapshot_id: snap.id,
       document_id: Document.hash_to_uuid!(raw_document.hash),
       inserted_at: now,

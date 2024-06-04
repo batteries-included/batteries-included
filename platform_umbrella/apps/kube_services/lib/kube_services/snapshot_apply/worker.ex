@@ -48,7 +48,7 @@ defmodule KubeServices.SnapshotApply.Worker do
     GenServer.call(target, {:set_running, value})
   end
 
-  @spec set_running(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: boolean()
+  @spec get_running(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: boolean()
   def get_running(target \\ @me) do
     # The Worker might not be running because it crashed.
     # We want that to mean it's not running

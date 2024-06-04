@@ -123,6 +123,8 @@ defmodule CommonCore.Actions.SSOClient do
   Sets up the default Keycloak client settings for OpenID Connect.
   """
   @spec default_client(String.t(), String.t(), String.t()) :: ClientRepresentation.t()
+  def default_client("batt_" <> stripped_id, name, root_url), do: default_client(stripped_id, name, root_url)
+
   def default_client(id, name, root_url) do
     %ClientRepresentation{
       adminUrl: root_url,
