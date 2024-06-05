@@ -5,6 +5,11 @@ defmodule CommonCore.Factory do
   """
   use ExMachina
 
+  alias CommonCore.Ecto.BatteryUUID
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.StateSummary.KeycloakSummary
+
   # with Ecto
   def installation_factory(attrs) do
     usage =
@@ -99,6 +104,7 @@ defmodule CommonCore.Factory do
     # ExMachina's default behavior
     installation
     |> CommonCore.InstallSpec.new!()
+    |> put_in([Access.key!(:target_summary), Access.key!(:keycloak_state)], build(:keycloak_summary))
     |> merge_attributes(clean_attrs)
     |> evaluate_lazy_attributes()
   end
@@ -127,10 +133,31 @@ defmodule CommonCore.Factory do
     }
   end
 
-  def system_battery do
-    %{
-      config: %{},
-      type: sequence(:type, CommonCore.Batteries.SystemBattery.possible_types())
+  def keycloak_summary_factory do
+    %KeycloakSummary{realms: build_list(2, :realm)}
+  end
+
+  def realm_factory do
+    %RealmRepresentation{
+      attributes: build(:attributes),
+      clients: build_list(2, :client)
     }
+  end
+
+  def attributes_factory do
+    %{
+      "cibaAuthRequestedUserHint" => "login_hint",
+      "cibaBackchannelTokenDeliveryMode" => "poll",
+      "cibaExpiresIn" => "120",
+      "cibaInterval" => "5",
+      "oauth2DeviceCodeLifespan" => "600",
+      "oauth2DevicePollingInterval" => "5",
+      "parRequestUriLifespan" => "60",
+      "realmReusableOtpCode" => "false"
+    }
+  end
+
+  def client_factory do
+    %ClientRepresentation{id: BatteryUUID.autogenerate(), name: sequence("keycloak-client")}
   end
 end

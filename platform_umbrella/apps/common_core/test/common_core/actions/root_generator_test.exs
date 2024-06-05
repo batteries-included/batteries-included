@@ -8,6 +8,7 @@ defmodule CommonCore.Actions.RootGeneratorTest do
 
   defp assert_valid(value) do
     assert %FreshGeneratedAction{} = value
+    value
   end
 
   describe "RootActionGenerator works" do
@@ -16,7 +17,9 @@ defmodule CommonCore.Actions.RootGeneratorTest do
       |> build(usage: :kitchen_sink, kube_provider: :aws)
       |> then(fn install_spec -> install_spec.target_summary end)
       |> RootActionGenerator.materialize()
-      |> Enum.each(&assert_valid/1)
+      |> Enum.map(&assert_valid/1)
+      # ensure that some actions are generated
+      |> then(fn values -> assert length(values) > 0 end)
     end
   end
 end
