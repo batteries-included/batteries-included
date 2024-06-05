@@ -387,6 +387,7 @@ func (c *clusterConfig) buildEKSCluster(ctx *pulumi.Context) error {
 			SecurityGroupIds:      pulumi.StringArray{c.securityGroupIDs["cluster"]},
 			SubnetIds:             pulumi.ToStringArray(c.privateSubnetIDs),
 		},
+		Version: pulumi.String(c.version),
 	}, depends)
 	if err != nil {
 		return fmt.Errorf("error registering EKS cluster %s: %w", c.baseName, err)
@@ -581,7 +582,7 @@ func (c *clusterConfig) buildManagedNodeGroup(ctx *pulumi.Context) error {
 		InstanceTypes: pulumi.ToStringArray([]string{c.instanceType}),
 		NodeRoleArn:   c.roles["node"].Arn,
 		SubnetIds:     pulumi.ToStringArray(c.privateSubnetIDs),
-		Version:       pulumi.StringPtr(c.version),
+		Version:       pulumi.String(c.version),
 		LaunchTemplate: &peks.NodeGroupLaunchTemplateArgs{
 			Id:      c.template.ID(),
 			Version: vsn,
