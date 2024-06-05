@@ -41,7 +41,6 @@ defmodule CommonUI do
       import CommonUI.Components.Loader
       import CommonUI.Components.Logo
       import CommonUI.Components.Modal
-      import CommonUI.Components.MutliSelect
       import CommonUI.Components.Panel
       import CommonUI.Components.Progress
       import CommonUI.Components.TabBar
