@@ -115,6 +115,16 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     {:noreply, assign(socket, pg_user_form: pg_user_form)}
   end
 
+  def handle_event("validate:user", %{"pg_user" => params}, socket) do
+    form =
+      %PGUser{}
+      |> PGUser.changeset(params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    {:noreply, assign(socket, :pg_user_form, form)}
+  end
+
   def handle_event("validate", %{"cluster" => cluster_params}, socket) do
     cluster_params = prepare_cluster_params(cluster_params, socket)
 
@@ -154,19 +164,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     {:noreply, assign(socket, form: to_form(changeset))}
   end
 
-  def handle_event("change:credential_namespaces", params, socket) do
-    value = params |> Map.get("_target") |> List.last()
-    changeset = socket.assigns.pg_user_form.source
-    namespaces = changeset |> Changeset.get_field(:credential_namespaces) |> toggle_namespace(value)
-
-    form =
-      changeset
-      |> Changeset.put_change(:credential_namespaces, namespaces)
-      |> to_form()
-
-    {:noreply, assign(socket, :pg_user_form, form)}
-  end
-
   def handle_event("save", %{"cluster" => cluster_params}, socket) do
     cluster_params = prepare_cluster_params(cluster_params, socket)
     save_cluster(socket, socket.assigns.action, cluster_params)
@@ -199,16 +196,6 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  defp toggle_namespace(namespaces, value) do
-    without = Enum.reject(namespaces, &(&1 == value))
-
-    if length(without) < length(namespaces) do
-      without
-    else
-      [value | namespaces]
     end
   end
 

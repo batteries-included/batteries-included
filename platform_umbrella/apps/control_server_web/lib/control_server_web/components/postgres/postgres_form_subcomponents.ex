@@ -100,30 +100,6 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     """
   end
 
-  attr :field, :map, required: true
-  attr :label, :string
-  attr :help_text, :string
-  attr :rest, :global, include: ~w(checked value)
-
-  def role_option(assigns) do
-    ~H"""
-    <div class="flex justify-between py-2">
-      <div class="flex flex-col gap-2">
-        <.h5>
-          <%= @label %>
-        </.h5>
-        <div class="text-sm text-gray-dark">
-          <%= @help_text %>
-        </div>
-      </div>
-
-      <div>
-        <.input type="switch" name={@field.name <> "[]"} {@rest} />
-      </div>
-    </div>
-    """
-  end
-
   attr :phx_target, :any
   attr :user_form, :map, default: nil
   attr :possible_namespaces, :list, default: []
@@ -134,38 +110,41 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       |> assign(:roles, @default_roles)
       |> assign(
         :action_text,
-        if(assigns[:user_form] && assigns.user_form.data.position,
-          do: "Update user",
-          else: "Add user"
+        if(
+          assigns[:user_form] && Changeset.get_field(assigns.user_form.source, :position),
+          do: "Update User",
+          else: "Add User"
         )
       )
 
     ~H"""
-    <.form for={@user_form} id="user-form" phx-submit="upsert:user" phx-target={@phx_target}>
-      <.modal
-        :if={@user_form}
-        show
-        id="user-form-modal"
-        size="lg"
-        on_cancel={JS.push("close_modal", target: @phx_target)}
+    <.modal
+      :if={@user_form}
+      show
+      id="user-form-modal"
+      size="lg"
+      on_cancel={JS.push("close_modal", target: @phx_target)}
+    >
+      <:title><%= @action_text %></:title>
+
+      <.simple_form
+        for={@user_form}
+        id="user-form"
+        phx-change="validate:user"
+        phx-submit="upsert:user"
+        phx-target={@phx_target}
       >
-        <:title><%= @action_text %></:title>
-
         <.input field={@user_form[:position]} type="hidden" />
-        <.input field={@user_form[:username]} label="User Name" />
+        <.input field={@user_form[:username]} label="User Name" autocomplete="off" />
 
-        <.muliselect_input
-          form={@user_form}
+        <.input
           field={@user_form[:credential_namespaces]}
-          options={to_options(@possible_namespaces, @user_form)}
+          type="multiselect"
           label="Namespaces"
-          width_class="w-full"
-          phx_target={@phx_target}
-          change_event="change:credential_namespaces"
+          options={Enum.map(@possible_namespaces, &%{name: &1, value: &1})}
         />
 
-        <.h3 class="my-4">Roles</.h3>
-        <.grid columns={%{sm: 1, xl: 2}} gaps="2">
+        <.grid columns={%{sm: 1, xl: 2}} gaps="8">
           <.role_option
             :for={role <- @roles}
             field={@user_form[:roles]}
@@ -176,20 +155,30 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           />
         </.grid>
 
-        <:actions cancel="Cancel">
+        <:actions>
           <.button variant="primary" type="submit"><%= @action_text %></.button>
         </:actions>
-      </.modal>
-    </.form>
+      </.simple_form>
+    </.modal>
     """
   end
 
-  defp to_options(namespaces, form) do
-    selected = Changeset.get_field(form.source, :credential_namespaces)
+  attr :field, :map, required: true
+  attr :label, :string
+  attr :help_text, :string
+  attr :rest, :global, include: ~w(checked value)
 
-    Enum.map(namespaces, fn ns ->
-      %{label: ns, value: ns, selected: Enum.member?(selected, ns)}
-    end)
+  def role_option(assigns) do
+    ~H"""
+    <div class="flex items-start justify-between gap-x-12">
+      <div>
+        <h3 class="text-xl font-semibold mb-2"><%= @label %></h3>
+        <p class="text-sm"><%= @help_text %></p>
+      </div>
+
+      <.input type="switch" name={@field.name <> "[]"} {@rest} />
+    </div>
+    """
   end
 
   attr :phx_target, :any

@@ -71,7 +71,7 @@ module.exports = {
     //     <div class="phx-click-loading:animate-ping">
     //
     plugin(({ addVariant }) =>
-      addVariant('phx-feedback', ['label:not(.phx-no-feedback) &'])
+      addVariant('phx-feedback', ['*:not(.phx-no-feedback) &'])
     ),
     plugin(({ addVariant }) =>
       addVariant('phx-no-feedback', ['.phx-no-feedback&', '.phx-no-feedback &'])

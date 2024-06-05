@@ -1,0 +1,34 @@
+<div phx-feedback-for="foo">
+  <div class="relative z-40">
+  <div class="cursor-pointer" phx-click="[[&quot;show&quot;,{&quot;time&quot;:300,&quot;to&quot;:&quot;#foobar-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-out&quot;,&quot;duration-300&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;]]}]]">
+    
+      <div class="text-sm text-gray-darkest dark:text-gray-lighter mb-2">
+  Foobar
+</div>
+
+      <div class="px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint hover:border-primary dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint flex flex-wrap items-center gap-x-1 gap-y-1.5 min-h-[38px] bg-caret bg-no-repeat bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer">
+        <div class="py-0.5 px-2.5 shadow-sm rounded-full text-xs font-semibold bg-gray-lighter dark:bg-gray-darker-tint text-gray-dark dark:text-gray-light">
+          bar
+        </div>
+      </div>
+    
+  </div>
+
+  <nav id="foobar-dropdown" role="navigation" phx-click-away="[[&quot;hide&quot;,{&quot;time&quot;:150,&quot;to&quot;:&quot;#foobar-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-150&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;]]}]]" class="absolute right-0 top-full mt-4 min-w-full max-w-60 border border-gray-lighter bg-white rounded-md shadow-xl overflow-hidden hidden dark:bg-gray-darkest dark:text-white !mt-1 max-h-64 !overflow-auto">
+    
+    <label class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest cursor-pointer">
+      <input type="checkbox" name="foo[]" value="foo" class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary">
+
+      Foo
+    </label><label class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest cursor-pointer">
+      <input type="checkbox" name="foo[]" value="bar" checked class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary">
+
+      Bar
+    </label>
+  
+  </nav>
+</div>
+
+  
+  
+</div>

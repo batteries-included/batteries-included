@@ -2,6 +2,7 @@ defmodule CommonUI.Components.Input do
   @moduledoc false
   use CommonUI, :component
 
+  import CommonUI.Components.Dropdown
   import CommonUI.Components.Icon
   import CommonUI.ErrorHelpers
   import Phoenix.HTML
@@ -56,6 +57,55 @@ defmodule CommonUI.Components.Input do
       !Enum.any?(["false", "off", nil], &(html_escape(&1) == html_escape(value)))
     end)
     |> input()
+  end
+
+  def input(%{type: "multiselect"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name}>
+      <.dropdown id={"#{@id}-dropdown"} class="!mt-1 max-h-64 !overflow-auto">
+        <:trigger>
+          <.label label={@label} />
+
+          <div class={[
+            input_class(@errors),
+            "flex flex-wrap items-center gap-x-1 gap-y-1.5 min-h-[38px]",
+            "bg-caret bg-no-repeat bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer",
+            @class
+          ]}>
+            <div
+              :for={value <- @value}
+              class={[
+                "py-0.5 px-2.5 shadow-sm rounded-full text-xs font-semibold",
+                "bg-gray-lighter dark:bg-gray-darker-tint text-gray-dark dark:text-gray-light"
+              ]}
+            >
+              <%= value %>
+            </div>
+          </div>
+        </:trigger>
+
+        <label
+          :for={option <- @options}
+          class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest cursor-pointer"
+        >
+          <input
+            type="checkbox"
+            name={@name <> "[]"}
+            value={option.value}
+            checked={Enum.member?(@value, option.value)}
+            class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary"
+          />
+
+          <%= option.name %>
+        </label>
+      </.dropdown>
+
+      <div :if={@note} class={note_class()}><%= @note %></div>
+      <.error errors={@errors} />
+    </div>
+    """
   end
 
   def input(%{type: "select"} = assigns) do

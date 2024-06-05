@@ -88,6 +88,39 @@ defmodule CommonUI.Components.InputTest do
     end
   end
 
+  describe "multiselect input component" do
+    component_snapshot_test "default" do
+      assigns = %{}
+
+      ~H"""
+      <.input
+        type="multiselect"
+        id="foobar"
+        name="foo"
+        value={["bar"]}
+        label="Foobar"
+        options={[%{name: "Foo", value: "foo"}, %{name: "Bar", value: "bar"}]}
+      />
+      """
+    end
+
+    component_snapshot_test "with error" do
+      assigns = %{}
+
+      ~H"""
+      <.input
+        type="multiselect"
+        id="foobar"
+        name="foo"
+        value={["bar"]}
+        label="Foobar"
+        options={[%{name: "Foo", value: "foo"}, %{name: "Bar", value: "bar"}]}
+        errors={["Oh no"]}
+      />
+      """
+    end
+  end
+
   describe "checkbox input component" do
     component_snapshot_test "default" do
       assigns = %{}
