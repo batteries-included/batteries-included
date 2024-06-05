@@ -95,6 +95,7 @@ defmodule CommonUI.Components.InputTest do
       ~H"""
       <.input
         type="multiselect"
+        id="foobar"
         name="foo"
         value={["bar"]}
         label="Foobar"
@@ -109,6 +110,7 @@ defmodule CommonUI.Components.InputTest do
       ~H"""
       <.input
         type="multiselect"
+        id="foobar"
         name="foo"
         value={["bar"]}
         label="Foobar"

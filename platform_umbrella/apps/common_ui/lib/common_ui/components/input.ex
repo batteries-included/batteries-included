@@ -60,9 +60,11 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "multiselect"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
     <div phx-feedback-for={if !@force_feedback, do: @name}>
-      <.dropdown class="!mt-1 max-h-64 !overflow-auto">
+      <.dropdown id={"#{@id}-dropdown"} class="!mt-1 max-h-64 !overflow-auto">
         <:trigger>
           <.label label={@label} />
 
