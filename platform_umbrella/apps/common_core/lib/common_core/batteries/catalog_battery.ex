@@ -3,6 +3,7 @@ defmodule CommonCore.Batteries.CatalogBattery do
   use TypedStruct
 
   alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.Ecto.BatteryUUID
 
   typedstruct do
     field :type, atom(), enforce: true
@@ -24,6 +25,7 @@ defmodule CommonCore.Batteries.CatalogBattery do
       |> Map.from_struct()
       |> Map.drop([:__meta__, :__struct__, :id])
       |> Map.put_new(:config, %{:type => catalog_battery.type})
+      |> Map.put(:id, BatteryUUID.autogenerate())
 
     %SystemBattery{}
     |> SystemBattery.changeset(args)
