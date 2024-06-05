@@ -1,12 +1,12 @@
 defmodule ControlServerWeb.Projects.MachineLearningForm do
   @moduledoc false
   use ControlServerWeb, :live_component
-  use ControlServerWeb.PostgresFormSubcomponents, form_key: "postgres"
 
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Util.Memory
   alias ControlServer.Postgres
+  alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
 
   def update(assigns, socket) do
@@ -23,7 +23,8 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
     postgres_changeset =
       Cluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
-        %{name: "#{project_name}-notebook"}
+        %{name: "#{project_name}-notebook"},
+        Cluster.compact_storage_range_ticks()
       )
 
     form =
@@ -52,7 +53,7 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
 
     postgres_changeset =
       %Cluster{}
-      |> Cluster.changeset(params["postgres"])
+      |> Cluster.changeset(params["postgres"], Cluster.compact_storage_range_ticks())
       |> Map.put(:action, :validate)
 
     form =
@@ -62,6 +63,32 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
       |> to_form()
 
     {:noreply, assign(socket, :form, form)}
+  end
+
+  def handle_event("change_storage_size_range", %{"value" => value}, socket) do
+    handle_event(
+      "change_storage_size_range",
+      %{"postgres" => %{"virtual_storage_size_range_value" => value}},
+      socket
+    )
+  end
+
+  def handle_event(
+        "change_storage_size_range",
+        %{"postgres" => %{"virtual_storage_size_range_value" => range_value}},
+        socket
+      ) do
+    postgres_changeset =
+      socket.assigns.form.params["postgres"]
+      |> Cluster.put_storage_size(range_value, Cluster.compact_storage_range_ticks())
+      |> Map.put(:action, :validate)
+
+    form =
+      socket.assigns.form.params
+      |> Map.put("postgres", postgres_changeset)
+      |> to_form()
+
+    {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("save", params, socket) do
@@ -153,6 +180,7 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
           form={to_form(@form[:postgres].value, as: :postgres)}
           phx_target={@myself}
           with_divider={false}
+          ticks={Cluster.compact_storage_range_ticks()}
         />
 
         <:actions>

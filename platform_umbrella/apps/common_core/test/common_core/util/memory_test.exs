@@ -107,6 +107,7 @@ defmodule CommonCore.Util.MemoryTest do
     test "should return relative bytes from range value" do
       ticks = [{"1GB", 0}, {"10GB", 0.4}, {"500GB", 0.6}, {"1TB", 1}]
 
+      assert range_value_to_bytes(0, ticks) == to_bytes(1, :GB)
       assert range_value_to_bytes(to_bytes(1, :GB), ticks) == to_bytes(1, :GB)
       assert range_value_to_bytes(to_bytes(0.2, :TB), ticks) == to_bytes(5.5, :GB)
       assert range_value_to_bytes(to_bytes(0.4, :TB), ticks) == to_bytes(10, :GB)
@@ -146,7 +147,7 @@ defmodule CommonCore.Util.MemoryTest do
     test "should return error when out of bounds" do
       ticks = [{"1B", 0}, {"99B", 1}]
 
-      assert range_value_to_bytes(0, ticks) == :error
+      assert range_value_to_bytes(-1, ticks) == :error
       assert range_value_to_bytes(100, ticks) == :error
     end
 
@@ -201,8 +202,8 @@ defmodule CommonCore.Util.MemoryTest do
     test "should return error when out of bounds" do
       ticks = [{"1B", 0}, {"99B", 1}]
 
-      assert bytes_to_range_value(0, ticks) == :error
-      assert bytes_to_range_value(100, ticks) == :error
+      assert bytes_to_range_value(0, ticks) == 0
+      assert bytes_to_range_value(100, ticks) == 99
     end
 
     test "should return error when there are no ticks" do

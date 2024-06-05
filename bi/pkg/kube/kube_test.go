@@ -78,16 +78,17 @@ func TestBatteryKubeClient(t *testing.T) {
 	// Spin up a wireguard gateway server using the userspace router implementation.
 	// This gateway will forward traffic to the private test network.
 	wgReq := testcontainers.ContainerRequest{
-		Image:        "ghcr.io/noisysockets/nsh:v0.5.1",
+		Image:        "ghcr.io/noisysockets/nsh:v0.8.1",
 		ExposedPorts: []string{"51820/udp"},
-		Cmd: []string{"serve",
-			"--config=/etc/nsh/noisysockets.yaml",
-			"--enable-dns", "--enable-router",
-		},
+		Cmd:          []string{"up", "--enable-dns", "--enable-router"},
 		Files: []testcontainers.ContainerFile{
 			// Normally this would be 0o400 but testcontainers doesn't let us set the
 			// file owner.
-			{HostFilePath: gwConfPath, ContainerFilePath: "/etc/nsh/noisysockets.yaml", FileMode: 0o444},
+			{
+				HostFilePath:      gwConfPath,
+				ContainerFilePath: "/home/nonroot/.config/nsh/noisysockets.yaml",
+				FileMode:          0o444,
+			},
 		},
 		Networks: []string{testNetwork.Name},
 	}

@@ -174,7 +174,6 @@
           {Credo.Check.Readability.ImplTrue, []},
           {Credo.Check.Readability.SeparateAliasRequire, []},
           {Credo.Check.Readability.BlockPipe, []},
-          {Credo.Check.Design.DuplicatedCode, []},
           {Credo.Check.Readability.SingleFunctionToBlockPipe, []},
           {Credo.Check.Design.SkipTestWithoutComment, []},
           {Credo.Check.Readability.SinglePipe,
@@ -210,7 +209,10 @@
           {Credo.Check.Warning.LazyLogging, []},
           {Credo.Check.Warning.LeakyEnvironment, []},
           {Credo.Check.Warning.MapGetUnsafePass, []},
-          {Credo.Check.Warning.MixEnv, []}
+          {Credo.Check.Warning.MixEnv, []},
+
+          # Creates unnecessary complexity
+          {Credo.Check.Design.DuplicatedCode, []}
         ]
       }
     }

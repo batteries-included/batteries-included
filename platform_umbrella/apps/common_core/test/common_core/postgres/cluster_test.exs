@@ -2,9 +2,10 @@ defmodule CommonCore.Postgres.ClusterTest do
   use ExUnit.Case
 
   alias CommonCore.Postgres.Cluster
+  alias CommonCore.Util.Memory
   alias Ecto.Changeset
 
-  describe "changeset/2" do
+  describe "changeset/3" do
     setup do
       %{
         valid_attrs: %{
@@ -17,73 +18,80 @@ defmodule CommonCore.Postgres.ClusterTest do
     end
 
     test "creates a valid changeset", %{valid_attrs: valid_attrs} do
-      changeset = Cluster.changeset(%Cluster{}, valid_attrs)
-      assert changeset.valid?
+      assert %{valid?: true} = Cluster.changeset(%Cluster{}, valid_attrs)
     end
 
     test "creates an invalid changeset when missing required fields" do
-      changeset = Cluster.changeset(%Cluster{}, %{name: nil, storage_size: nil, num_instances: nil, type: nil})
-      refute changeset.valid?
+      assert %{valid?: false} =
+               Cluster.changeset(%Cluster{}, %{name: nil, storage_size: nil, num_instances: nil, type: nil})
     end
 
     test "validates the length of the name", %{valid_attrs: valid_attrs} do
-      changeset =
-        Cluster.changeset(
-          %Cluster{},
-          Map.put(
-            valid_attrs,
-            :name,
-            "this name is too long this name is too long this" <>
-              "name is too long this name is too long really really" <>
-              "really really long like super long and i dont know why"
-          )
-        )
+      assert %{valid?: false} =
+               Cluster.changeset(
+                 %Cluster{},
+                 Map.put(
+                   valid_attrs,
+                   :name,
+                   "this name is too long this name is too long this" <>
+                     "name is too long this name is too long really really" <>
+                     "really really long like super long and i dont know why"
+                 )
+               )
+    end
 
-      refute changeset.valid?
+    test "should put a range value from the storage size" do
+      assert %Cluster{}
+             |> Cluster.changeset(%{storage_size: Memory.to_bytes(375, :GB)})
+             |> Changeset.get_change(:virtual_storage_size_range_value) == Memory.to_bytes(1, :TB)
+    end
+
+    test "should put a range value of 0 when there is no storage size" do
+      assert %Cluster{}
+             |> Cluster.changeset(%{})
+             |> Changeset.get_change(:virtual_storage_size_range_value) == 0
+    end
+
+    test "should put a storage size into the changeset with ticks" do
+      assert %Cluster{}
+             |> Cluster.changeset(%{storage_size: Memory.to_bytes(50, :GB)}, Cluster.compact_storage_range_ticks())
+             |> Changeset.get_change(:virtual_storage_size_range_value) == Memory.to_bytes(0.3, :TB)
+    end
+
+    test "should return error for decreased storage size" do
+      assert %{valid?: false} = Cluster.changeset(%Cluster{storage_size: Memory.to_bytes(1, :TB)}, %{storage_size: 1})
     end
   end
 
-  describe "validate/1" do
-    test "returns a valid changeset and struct with valid attributes" do
-      attrs = %{
-        name: "test",
-        storage_size: 137_438_953_472,
-        num_instances: 1,
-        type: :standard
-      }
-
-      {changeset, _data} = Cluster.validate(attrs)
-      assert changeset.valid?
+  describe "put_storage_size/3" do
+    setup do
+      %{changeset: Cluster.changeset(%Cluster{}, %{})}
     end
 
-    test "returns an invalid changeset with invalid attributes" do
-      attrs = %{name: nil, storage_size: nil, num_instances: nil, type: nil}
-
-      {changeset, _data} = Cluster.validate(attrs)
-      refute changeset.valid?
+    test "should put a storage size into the changeset", %{changeset: changeset} do
+      assert changeset
+             |> Cluster.put_storage_size(1 |> Memory.to_bytes(:TB) |> to_string())
+             |> Changeset.get_change(:storage_size) == Memory.to_bytes(375, :GB)
     end
-  end
 
-  describe "to_fresh_cluster/1" do
-    test "creates a new cluster with valid attributes" do
-      attrs = %{
-        name: "test",
-        storage_size: 137_438_953_472,
-        num_instances: 1,
-        type: :standard
-      }
-
-      cluster = Cluster.to_fresh_cluster(attrs)
-      assert cluster.name == attrs.name
+    test "should put a storage size into the changeset with ticks", %{changeset: changeset} do
+      assert changeset
+             |> Cluster.put_storage_size(
+               0.3 |> Memory.to_bytes(:TB) |> to_string(),
+               Cluster.compact_storage_range_ticks()
+             )
+             |> Changeset.get_change(:storage_size) == Memory.to_bytes(50, :GB)
     end
-  end
 
-  describe "convert_virtual_size_to_presets/1" do
-    test "sets the appropriate presets for small size" do
-      virtual_size = "small"
-      changeset = Cluster.changeset(%Cluster{}, %{virtual_size: virtual_size})
-      storage_size_preset_value = Cluster.get_preset(virtual_size).storage_size
-      assert storage_size_preset_value == Changeset.get_field(changeset, :storage_size)
+    test "should return error for decreased storage size" do
+      assert %{valid?: false} =
+               %Cluster{storage_size: Memory.to_bytes(1, :TB)}
+               |> Cluster.changeset(%{})
+               |> Cluster.put_storage_size(1)
+    end
+
+    test "should return error for non-parsable value", %{changeset: changeset} do
+      assert %{valid?: false} = Cluster.put_storage_size(changeset, "foo")
     end
   end
 end

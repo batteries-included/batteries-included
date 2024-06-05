@@ -9,14 +9,14 @@ defmodule ControlServer.PostgresTest do
     @valid_attrs %{
       name: "some-name",
       num_instances: 2,
-      storage_size: 524_288_000,
+      storage_size: 209_715_200,
       users: [%{username: "userone", roles: ["superuser"]}],
       database: %{name: "maindata", owner: "userone"}
     }
     @update_attrs %{
       name: "some-updated-name",
       num_instances: 3,
-      storage_size: 209_715_200,
+      storage_size: 524_288_000,
       users: [
         %{username: "userone", roles: ["superuser"]},
         %{username: "usertwo", roles: ["nologin"]}
@@ -50,7 +50,7 @@ defmodule ControlServer.PostgresTest do
       assert {:ok, %Cluster{} = cluster} = Postgres.create_cluster(@valid_attrs)
       assert cluster.name == "some-name"
       assert cluster.num_instances == 2
-      assert cluster.storage_size == 524_288_000
+      assert cluster.storage_size == 209_715_200
       assert [%PGUser{username: "userone", roles: ["superuser"], password: _}] = cluster.users
     end
 
@@ -63,12 +63,19 @@ defmodule ControlServer.PostgresTest do
       assert {:ok, %Cluster{} = cluster} = Postgres.update_cluster(cluster, @update_attrs)
       assert cluster.name == "some-updated-name"
       assert cluster.num_instances == 3
-      assert cluster.storage_size == 209_715_200
+      assert cluster.storage_size == 524_288_000
     end
 
     test "update_cluster/2 with invalid data returns error changeset" do
       cluster = cluster_fixture()
       assert {:error, %Ecto.Changeset{}} = Postgres.update_cluster(cluster, @invalid_attrs)
+      assert cluster == Postgres.get_cluster!(cluster.id)
+    end
+
+    test "update_cluster/2 with decreased storage size returns error changeset" do
+      cluster = cluster_fixture()
+      assert {:error, changeset} = Postgres.update_cluster(cluster, %{storage_size: 1})
+      assert "can't decrease storage size from 200MB" in errors_on(changeset).storage_size
       assert cluster == Postgres.get_cluster!(cluster.id)
     end
 
