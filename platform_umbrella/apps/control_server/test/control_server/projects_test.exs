@@ -1,6 +1,7 @@
 defmodule ControlServer.ProjectsTest do
   use ControlServer.DataCase
 
+  import ControlServer.Factory
   import ControlServer.Projects
   import ControlServer.ProjectsFixtures
 
@@ -61,6 +62,13 @@ defmodule ControlServer.ProjectsTest do
     test "should delete the project", ctx do
       assert {:ok, %Project{}} = delete_project(ctx.project)
       assert_raise Ecto.NoResultsError, fn -> get_project!(ctx.project.id) end
+    end
+
+    test "should return error changeset while project still has resources", ctx do
+      insert(:jupyter_lab_notebook, project_id: ctx.project.id)
+
+      assert {:error, changeset} = delete_project(ctx.project)
+      assert "are still associated with this entry" in errors_on(changeset).jupyter_notebooks
     end
   end
 

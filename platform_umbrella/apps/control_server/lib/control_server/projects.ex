@@ -28,7 +28,9 @@ defmodule ControlServer.Projects do
   end
 
   def delete_project(%Project{} = project) do
-    Repo.delete(project)
+    project
+    |> Project.changeset(%{})
+    |> Repo.delete()
   end
 
   def change_project(%Project{} = project, attrs \\ %{}) do
