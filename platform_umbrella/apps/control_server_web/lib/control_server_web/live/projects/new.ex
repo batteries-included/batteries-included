@@ -10,9 +10,9 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias ControlServer.Postgres
   alias ControlServer.Projects
   alias ControlServer.Redis
+  alias ControlServerWeb.Projects.AIForm
   alias ControlServerWeb.Projects.BatteriesForm
   alias ControlServerWeb.Projects.DatabaseForm
-  alias ControlServerWeb.Projects.MachineLearningForm
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.Projects.WebForm
   alias KubeServices.SystemState.SummaryStorage
@@ -89,8 +89,8 @@ defmodule ControlServerWeb.Projects.NewLive do
     with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
          {:ok, _} <- create_postgres(project, form_data[DatabaseForm]),
          {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
-         {:ok, _} <- create_jupyter(project, form_data[MachineLearningForm]),
-         {:ok, _} <- create_postgres(project, form_data[MachineLearningForm]),
+         {:ok, _} <- create_jupyter(project, form_data[AIForm]),
+         {:ok, _} <- create_postgres(project, form_data[AIForm]),
          {:ok, _} <- create_postgres(project, form_data[WebForm]),
          {:ok, _} <- create_redis(project, form_data[WebForm]) do
       {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
@@ -212,8 +212,8 @@ defmodule ControlServerWeb.Projects.NewLive do
         />
 
         <.subform
-          module={MachineLearningForm}
-          id="project-machine-learning-form"
+          module={AIForm}
+          id="project-ai-form"
           current_step={@current_step}
           steps={@steps}
           data={@form_data}
@@ -286,7 +286,7 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   defp steps(type) when is_binary(type), do: type |> String.to_existing_atom() |> steps()
   defp steps(:web), do: [ProjectForm, WebForm, BatteriesForm]
-  defp steps(:ai), do: [ProjectForm, MachineLearningForm, BatteriesForm]
+  defp steps(:ai), do: [ProjectForm, AIForm, BatteriesForm]
   defp steps(:db), do: [ProjectForm, DatabaseForm, BatteriesForm]
   defp steps, do: [ProjectForm, BatteriesForm]
 end

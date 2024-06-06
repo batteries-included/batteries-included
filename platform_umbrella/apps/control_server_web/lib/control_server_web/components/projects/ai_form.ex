@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Projects.MachineLearningForm do
+defmodule ControlServerWeb.Projects.AIForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
@@ -95,8 +95,8 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
     params =
       Map.take(params, [
         "jupyter",
-        if(params["db_type"] == "new", do: "postgres"),
-        if(params["db_type"] == "existing", do: "postgres_ids")
+        if(params["need_postgres"] == "on" && params["db_type"] == "new", do: "postgres"),
+        if(params["need_postgres"] == "on" && params["db_type"] == "existing", do: "postgres_ids")
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -114,7 +114,7 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
         class={@class}
         variant="stepped"
         title="Artificial Intelligence"
-        description="A place for information about the machine learning stage of project creation"
+        description="A place for information about the AI stage of project creation"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
@@ -143,45 +143,49 @@ defmodule ControlServerWeb.Projects.MachineLearningForm do
 
         <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
 
-        <.tab_bar variant="secondary">
-          <:tab
-            phx-click="db_type"
-            phx-value-type={:new}
-            phx-target={@myself}
-            selected={@db_type == :new}
-          >
-            New Database
-          </:tab>
+        <.input field={@form[:need_postgres]} type="switch" label="I need a database" />
 
-          <:tab
-            phx-click="db_type"
-            phx-value-type={:existing}
-            phx-target={@myself}
-            selected={@db_type == :existing}
-          >
-            Existing Database
-          </:tab>
-        </.tab_bar>
+        <div class={@form[:need_postgres].value != "on" && "hidden"}>
+          <.tab_bar variant="secondary" class="mb-6">
+            <:tab
+              phx-click="db_type"
+              phx-value-type={:new}
+              phx-target={@myself}
+              selected={@db_type == :new}
+            >
+              New Database
+            </:tab>
 
-        <.input type="hidden" name="db_type" value={@db_type} />
+            <:tab
+              phx-click="db_type"
+              phx-value-type={:existing}
+              phx-target={@myself}
+              selected={@db_type == :existing}
+            >
+              Existing Database
+            </:tab>
+          </.tab_bar>
 
-        <.input
-          :if={@db_type == :existing}
-          field={@form[:postgres_ids]}
-          type="select"
-          label="Existing set of databases"
-          placeholder="Choose a set of databases"
-          options={Postgres.clusters_available_for_project()}
-          multiple
-        />
+          <.input type="hidden" name="db_type" value={@db_type} />
 
-        <PostgresFormSubcomponents.size_form
-          class={@db_type != :new && "hidden"}
-          form={to_form(@form[:postgres].value, as: :postgres)}
-          phx_target={@myself}
-          with_divider={false}
-          ticks={Cluster.compact_storage_range_ticks()}
-        />
+          <.input
+            :if={@db_type == :existing}
+            field={@form[:postgres_ids]}
+            type="select"
+            label="Existing set of databases"
+            placeholder="Choose a set of databases"
+            options={Postgres.clusters_available_for_project()}
+            multiple
+          />
+
+          <PostgresFormSubcomponents.size_form
+            class={@db_type != :new && "hidden"}
+            form={to_form(@form[:postgres].value, as: :postgres)}
+            phx_target={@myself}
+            with_divider={false}
+            ticks={Cluster.compact_storage_range_ticks()}
+          />
+        </div>
 
         <:actions>
           <%= render_slot(@inner_block) %>

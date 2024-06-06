@@ -14,9 +14,16 @@ defmodule ControlServerWeb.Projects.IndexLive do
 
   def handle_event("delete", %{"id" => id}, socket) do
     project = Projects.get_project!(id)
-    {:ok, _} = Projects.delete_project(project)
 
-    {:noreply, assign(socket, :projects, Projects.list_projects())}
+    case Projects.delete_project(project) do
+      {:ok, _} ->
+        {:noreply, assign(socket, :projects, Projects.list_projects())}
+
+      {:error, _changeset} ->
+        # TODO: Either show a more detailed error message, or maybe just
+        # nullify the project_id in each resource after showing a warning
+        {:noreply, put_flash(socket, :global_error, "Project still has resources")}
+    end
   end
 
   def render(assigns) do

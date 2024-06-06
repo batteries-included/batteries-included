@@ -38,8 +38,15 @@ defmodule ControlServerWeb.Projects.ShowLive do
   end
 
   def handle_event("delete", _params, socket) do
-    {:ok, _} = Projects.delete_project(socket.assigns.project)
-    {:noreply, push_navigate(socket, to: ~p"/projects")}
+    case Projects.delete_project(socket.assigns.project) do
+      {:ok, _} ->
+        {:noreply, push_navigate(socket, to: ~p"/projects")}
+
+      {:error, _changeset} ->
+        # TODO: Either show a more detailed error message, or maybe just
+        # nullify the project_id in each resource after showing a warning
+        {:noreply, put_flash(socket, :global_error, "Project still has resources")}
+    end
   end
 
   def render(assigns) do
