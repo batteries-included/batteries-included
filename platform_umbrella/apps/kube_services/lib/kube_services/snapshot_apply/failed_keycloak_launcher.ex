@@ -1,8 +1,8 @@
-defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
+defmodule KubeServices.SnapshotApply.FailedKeycloakLauncher do
   @moduledoc """
-  This GenServer handles failed control server snapshots.
+  This GenServer handles failed keycloak snapshots.
 
-  It does this by subscribing to `EventCenter.KubeSnapshot` and starting
+  It does this by subscribing to `EventCenter.KeycloakSnapshot` and starting
   `KubeServices.SnapshotApply.Worker` on snapshot failures.
 
   It should handle back off by exponentially delaying on subsequent failures
@@ -11,8 +11,8 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
   use GenServer
   use TypedStruct
 
-  alias ControlServer.SnapshotApply.KubeSnapshot
-  alias EventCenter.KubeSnapshot.Payload
+  alias ControlServer.SnapshotApply.KeycloakSnapshot
+  alias EventCenter.KeycloakSnapshot.Payload
   alias KubeServices.SnapshotApply.Worker
 
   require Logger
@@ -30,10 +30,10 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
 
   @impl GenServer
   @doc """
-  Initialize the server by subscribing to EventCenter.KubeSnapshot
+  Initialize the server by subscribing to EventCenter.KeycloakSnapshot
   """
   def init(args) do
-    :ok = EventCenter.KubeSnapshot.subscribe()
+    :ok = EventCenter.KeycloakSnapshot.subscribe()
     {:ok, struct(State, args)}
   end
 
@@ -50,12 +50,12 @@ defmodule KubeServices.SnapshotApply.FailedKubeLauncher do
   end
 
   # kick off the loop when there's a snapshot error
-  def handle_info(%Payload{snapshot: %KubeSnapshot{status: :error}} = _payload, state) do
+  def handle_info(%Payload{snapshot: %KeycloakSnapshot{status: :error}} = _payload, state) do
     {:noreply, schedule_start(state)}
   end
 
   # reset the backoff when there's a successful snapshot
-  def handle_info(%Payload{snapshot: %KubeSnapshot{status: :ok}} = _payload, state) do
+  def handle_info(%Payload{snapshot: %KeycloakSnapshot{status: :ok}} = _payload, state) do
     {:noreply, reset_delay(state)}
   end
 

@@ -33,6 +33,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   ## Miscellaneous
 
   - Query openid discovery endpoint
+  - Ping server
 
   """
   use GenServer
@@ -245,6 +246,10 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:get_openid_wellknown, realm_name})
   end
 
+  def ping(target \\ @me) do
+    GenServer.call(target, :ping)
+  end
+
   def handle_call(:refresh, _from, state) do
     with {:ok, %State{} = with_refresh} <- maybe_aquire_refresh(state),
          {:ok, %State{} = refreshed_state} <- do_refresh(with_refresh) do
@@ -361,6 +366,10 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   def handle_call({:get_openid_wellknown, realm_name}, _from, %State{} = state) do
     {:reply, do_get_openid_wellknown(realm_name, state), state}
+  end
+
+  def handle_call(:ping, _from, %State{} = state) do
+    {:reply, do_ping(state), state}
   end
 
   defp with_auth(state, fun) do
@@ -611,6 +620,12 @@ defmodule CommonCore.Keycloak.AdminClient do
     client
     |> Tesla.get("realms/" <> realm_name <> "/.well-known/openid-configuration")
     |> to_result(&OIDCConfiguration.new!/1)
+  end
+
+  defp do_ping(%State{base_client: client} = _state) do
+    client
+    |> Tesla.options(@base_path)
+    |> to_result(nil)
   end
 
   #

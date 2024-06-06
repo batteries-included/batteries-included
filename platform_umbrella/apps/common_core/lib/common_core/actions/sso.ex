@@ -9,7 +9,7 @@ defmodule CommonCore.Actions.SSO do
 
   @spec materialize(SystemBattery.t(), StateSummary.t()) :: list(FreshGeneratedAction.t() | nil)
   def materialize(%SystemBattery{} = system_battery, %StateSummary{} = state_summary) do
-    [ensure_core_realm(system_battery, state_summary)]
+    [ensure_core_realm(system_battery, state_summary), ping()]
   end
 
   defp ensure_core_realm(%SystemBattery{} = _system_battery, %StateSummary{keycloak_state: key_state} = _state_summary) do
@@ -36,4 +36,6 @@ defmodule CommonCore.Actions.SSO do
       }
     end
   end
+
+  defp ping, do: %FreshGeneratedAction{action: :ping, type: :realm, value: %{}}
 end
