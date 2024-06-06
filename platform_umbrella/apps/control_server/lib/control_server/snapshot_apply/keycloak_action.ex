@@ -11,7 +11,7 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
     # we're not going to handle sync
     #
     # Delete and sync might need a identifier field
-    field :action, Ecto.Enum, values: [:create, :sync, :delete]
+    field :action, Ecto.Enum, values: [:create, :sync, :delete, :ping]
 
     # What we're trying to create
     field :type, Ecto.Enum, values: [:realm, :client, :user]
@@ -38,6 +38,7 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
     keycloak_action
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> validate_realm_present_if_needed()
+    |> validate_ping_only_for_realm()
   end
 
   @spec validate_realm_present_if_needed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
@@ -49,10 +50,21 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
     validate_realm_with_type(changeset, action_type)
   end
 
-  def validate_realm_with_type(changeset, :realm), do: changeset
-  def validate_realm_with_type(changeset, "realm"), do: changeset
+  defp validate_realm_with_type(changeset, :realm), do: changeset
+  defp validate_realm_with_type(changeset, "realm"), do: changeset
 
-  def validate_realm_with_type(changeset, _) do
+  defp validate_realm_with_type(changeset, _) do
     validate_required(changeset, [:realm], message: "realm is required for all types other than realm itself")
   end
+
+  @spec validate_ping_only_for_realm(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp validate_ping_only_for_realm(changeset) do
+    action = get_field(changeset, :type, nil)
+    validate_ping_with_action(changeset, action)
+  end
+
+  # ping is only valid when the type is realm
+  defp validate_ping_with_action(cs, :ping), do: validate_inclusion(cs, :type, [:realm])
+  defp validate_ping_with_action(cs, "ping"), do: validate_inclusion(cs, :type, [:realm])
+  defp validate_ping_with_action(cs, _), do: cs
 end

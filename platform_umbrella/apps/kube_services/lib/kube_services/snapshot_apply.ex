@@ -20,8 +20,8 @@ defmodule KubeServices.SnapshotApply do
       KubeServices.SnapshotApply.KubeApply,
       # This is the worker that does umbrella snapshot starting kube or keycloak
       KubeServices.SnapshotApply.WorkerSupervisor,
-      # A genserver the watches for failed kube applys. Starting
-      # a new atempt with every increasing delays.
+      # A genserver the watches for failed kube applys.
+      # Starting a new attempt with increasing delays.
       KubeServices.SnapshotApply.FailedKubeLauncher,
       # A genserver that watches for database changes that
       # likely cause a deploy to be needed.

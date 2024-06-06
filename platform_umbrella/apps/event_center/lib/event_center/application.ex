@@ -12,6 +12,7 @@ defmodule EventCenter.Application do
         [
           EventCenter.Database.PubSub,
           EventCenter.Keycloak.PubSub,
+          EventCenter.KeycloakSnapshot.PubSub,
           EventCenter.KubeSnapshot.PubSub,
           EventCenter.KubeState.PubSub,
           EventCenter.SystemStateSummary.PubSub

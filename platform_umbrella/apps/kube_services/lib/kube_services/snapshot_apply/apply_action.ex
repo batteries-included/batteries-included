@@ -79,5 +79,16 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
     end
   end
 
+  def apply(%KeycloakAction{action: :ping, type: :realm}) do
+    case AdminClient.ping() do
+      {:ok, _} ->
+        {:ok, nil}
+
+      {:error, err} ->
+        Logger.error("Error pinging keycloak: #{inspect(err)}")
+        {:error, err}
+    end
+  end
+
   def apply(%KeycloakAction{} = _action), do: {:ok, nil}
 end

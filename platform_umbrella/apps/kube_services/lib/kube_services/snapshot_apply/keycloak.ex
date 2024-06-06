@@ -84,10 +84,10 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
     # Record that we're going to start applying
     with {:ok, up_g_snap} <- KeycloakEctoSteps.update_snap_status(snap, :applying),
          # Apply the actions
-         {:ok, _apply_result} <- apply_actions(actions) do
+         {:ok, apply_result} <- apply_actions(actions) do
       # The results for the keycloak snapshot need
       # to be written after all the actions have been accounted for.
-      final_snap_update(up_g_snap, :ok)
+      final_snap_update(up_g_snap, apply_result)
     else
       {:error, err} -> {:error, err}
       err -> {:error, %{error: err}}
@@ -115,8 +115,15 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
     KeycloakEctoSteps.update_actions(actions, updates)
   end
 
-  defp final_snap_update(snap, _) do
-    KeycloakEctoSteps.update_snap_status(snap, :ok)
+  defp final_snap_update(snap, apply_results) do
+    status =
+      if Enum.all?(apply_results, fn {_, action} -> action.is_success end) do
+        :ok
+      else
+        :error
+      end
+
+    KeycloakEctoSteps.update_snap_status(snap, status)
   end
 
   defp reason_string(nil), do: nil

@@ -5,6 +5,7 @@ defmodule ControlServer.SnapshotApply.Keycloak do
 
   alias ControlServer.SnapshotApply.KeycloakAction
   alias ControlServer.SnapshotApply.KeycloakSnapshot
+  alias EventCenter.KeycloakSnapshot, as: SnapshotEventCenter
 
   @doc """
   Returns the list of keycloak_snapshots.
@@ -76,6 +77,7 @@ defmodule ControlServer.SnapshotApply.Keycloak do
     %KeycloakSnapshot{}
     |> KeycloakSnapshot.changeset(attrs)
     |> Repo.insert()
+    |> broadcast_snap()
   end
 
   @doc """
@@ -94,6 +96,7 @@ defmodule ControlServer.SnapshotApply.Keycloak do
     keycloak_snapshot
     |> KeycloakSnapshot.changeset(attrs)
     |> Repo.update()
+    |> broadcast_snap()
   end
 
   @doc """
@@ -124,4 +127,11 @@ defmodule ControlServer.SnapshotApply.Keycloak do
   def change_keycloak_snapshot(%KeycloakSnapshot{} = keycloak_snapshot, attrs \\ %{}) do
     KeycloakSnapshot.changeset(keycloak_snapshot, attrs)
   end
+
+  defp broadcast_snap({:ok, %KeycloakSnapshot{} = snap} = result) do
+    :ok = SnapshotEventCenter.broadcast(snap)
+    result
+  end
+
+  defp broadcast_snap(result), do: result
 end
