@@ -1,6 +1,5 @@
 defmodule CommonCore.Resources.KnativeServingCRDs do
   @moduledoc false
-
   use CommonCore.IncludeResource,
     certificates_networking_internal_knative_dev:
       "priv/manifests/knative-serving/certificates_networking_internal_knative_dev.yaml",

@@ -44,4 +44,13 @@ defmodule CommonCore.Defaults.Images do
   def trust_manager_image, do: "quay.io/jetstack/trust-manager:v0.9.2"
   def trust_manager_init_image, do: "quay.io/jetstack/cert-manager-package-debian:20210119.0"
   def vm_operator_image, do: "victoriametrics/operator:v0.39.4"
+
+  def knative_serving_queue_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.14.1"
+  def knative_serving_activator_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/activator:v1.14.1"
+  def knative_serving_autoscaler_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler:v1.14.1"
+  def knative_serving_controller_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/controller:v1.14.1"
+  def knative_serving_webhook_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/webhook:v1.14.1"
+
+  def knative_istio_controller_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/controller:v1.14.1"
+  def knative_istio_webhook_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook:v1.14.1"
 end
