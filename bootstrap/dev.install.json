@@ -1,14 +1,14 @@
 {
-  "id": "batt_018fa21858cb74eca1b7642d70cffc3e",
+  "id": "batt_018ff4519dd37a4984ca2ef9d618188f",
   "usage": "internal_dev",
-  "default_size": "tiny",
   "inserted_at": null,
   "updated_at": null,
+  "default_size": "tiny",
   "slug": "dev",
   "kube_provider": "kind",
   "kube_provider_config": {},
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_018fa218589b72cd805ed48f18dc2af2"
+  "team_id": "batt_018ff4519dce7e6caa55bfbdb6b65ece"
 }
