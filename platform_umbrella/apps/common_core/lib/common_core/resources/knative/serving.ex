@@ -245,7 +245,14 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:config_map_deployment, battery, _state) do
-    data = %{"queue-sidecar-image" => battery.config.queue_image}
+    data = %{
+      "queue-sidecar-image" => battery.config.queue_image,
+      # AWS public ECR is not accessible on the /v2 docker enpoint
+      # without permissions.
+      #
+      # So for now we are skipping tag resolving for public.ecr.aws
+      "registries-skipping-tag-resolving" => "public.ecr.aws"
+    }
 
     :config_map
     |> B.build_resource()
