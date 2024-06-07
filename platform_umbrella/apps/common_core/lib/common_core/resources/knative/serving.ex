@@ -245,10 +245,7 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:config_map_deployment, battery, _state) do
-    data =
-      %{
-        "queue-sidecar-image" => "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.12.3"
-      }
+    data = %{"queue-sidecar-image" => battery.config.queue_image}
 
     :config_map
     |> B.build_resource()
@@ -370,7 +367,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/internal/serving"}
               ],
-              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/activator:v1.12.3",
+              "image" => battery.config.activator_image,
               "livenessProbe" => %{
                 "failureThreshold" => 12,
                 "httpGet" => %{
@@ -465,7 +462,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/serving"}
               ],
-              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler:v1.12.3",
+              "image" => battery.config.autoscaler_image,
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{
@@ -557,7 +554,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "CONFIG_OBSERVABILITY_NAME", "value" => "config-observability"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/internal/serving"}
               ],
-              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/controller:v1.12.3",
+              "image" => battery.config.controller_image,
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{"path" => "/health", "port" => "probes", "scheme" => "HTTP"},
@@ -644,7 +641,7 @@ defmodule CommonCore.Resources.KnativeServing do
                 %{"name" => "WEBHOOK_PORT", "value" => "8443"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/internal/serving"}
               ],
-              "image" => "gcr.io/knative-releases/knative.dev/serving/cmd/webhook:v1.12.3",
+              "image" => battery.config.webhook_image,
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{
@@ -758,7 +755,7 @@ defmodule CommonCore.Resources.KnativeServing do
 
   resource(:knative_image_queue_proxy, battery, _state) do
     spec =
-      Map.put(%{}, "image", "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.12.3")
+      Map.put(%{}, "image", battery.config.queue_image)
 
     :knative_image
     |> B.build_resource()

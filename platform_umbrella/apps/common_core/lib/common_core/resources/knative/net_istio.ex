@@ -57,7 +57,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
                 %{"name" => "ENABLE_SECRET_INFORMER_FILTERING_BY_CERT_UID", "value" => "false"},
                 %{"name" => "METRICS_DOMAIN", "value" => "knative.dev/net-istio"}
               ],
-              "image" => "gcr.io/knative-releases/knative.dev/net-istio/cmd/controller:v1.12.1",
+              "image" => battery.config.istio_controller_image,
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{"path" => "/health", "port" => "probes", "scheme" => "HTTP"},
@@ -134,8 +134,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
                 %{"name" => "WEBHOOK_NAME", "value" => "net-istio-webhook"},
                 %{"name" => "WEBHOOK_PORT", "value" => "8443"}
               ],
-              "image" =>
-                "gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook@sha256:90083eb29e6ab29a352fbf606257ca397e4039acb12f7c08152dc1e409e5ce50",
+              "image" => battery.config.istio_webhook_image,
               "livenessProbe" => %{
                 "failureThreshold" => 6,
                 "httpGet" => %{
