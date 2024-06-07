@@ -149,6 +149,18 @@ defmodule CommonCore.Resources.ControlServer do
     |> Map.put_new("resources", %{"requests" => %{"cpu" => "1000m", "memory" => "2000Mi"}})
     |> Map.put_new("env", [
       %{
+        "name" => "LC_CTYPE",
+        "value" => "en_US.UTF-8"
+      },
+      %{
+        "name" => "LANG",
+        "value" => "en_US.UTF-8"
+      },
+      %{
+        "name" => "LC_ALL",
+        "value" => "en_US.UTF-8"
+      },
+      %{
         "name" => "PORT",
         "value" => "#{@server_port}"
       },
