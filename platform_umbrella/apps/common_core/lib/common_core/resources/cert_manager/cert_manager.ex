@@ -723,7 +723,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
               "args" => ["check", "api", "--wait=1m"],
               "image" => battery.config.ctl_image,
               "imagePullPolicy" => "IfNotPresent",
-              "name" => "cert-manager-startupapicheck",
+              "name" => "check-api",
               "securityContext" => %{"allowPrivilegeEscalation" => false, "capabilities" => %{"drop" => ["ALL"]}}
             }
           ],
@@ -734,6 +734,9 @@ defmodule CommonCore.Resources.CertManager.CertManager do
           "serviceAccountName" => "cert-manager-startupapicheck"
         }
       )
+      |> B.component_labels(component)
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     spec =
       %{}
@@ -746,8 +749,6 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name("cert-manager-startupapicheck")
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.add_owner(battery)
     |> B.component_labels(component)
     |> B.spec(spec)
   end

@@ -23,7 +23,10 @@ defmodule CommonCore.Resources.BatteryCA do
     spec =
       %{}
       |> Map.put("commonName", "battery-ca")
+      # ~10y
       |> Map.put("duration", "87600h")
+      # ~30d
+      |> Map.put("renewBefore", "720h")
       |> Map.put("isCA", true)
       |> Map.put("issuerRef", %{
         "group" => "cert-manager.io",
