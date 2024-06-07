@@ -202,7 +202,9 @@ defmodule CommonCore.Resources.ControlServer do
   # assume for now that, if it's parseable, that's good enough
   defp valid_uri?(host) do
     case URI.new(host) do
-      {:ok, _} -> true
+      # Don't accept any hostnames with ".." in them
+      # That's likely becayse there was no ip
+      {:ok, uri} -> !String.contains?(uri.host, "..")
       _ -> false
     end
   end

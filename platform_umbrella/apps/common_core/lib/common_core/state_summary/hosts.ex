@@ -81,7 +81,13 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ingress_ips() |> List.first()
   end
 
-  defp host(ip, name, group \\ "core") do
+  defp host(ip, name, group \\ "core")
+
+  defp host(nil, _name, _group), do: ""
+
+  defp host("", _name, _group), do: ""
+
+  defp host(ip, name, group) do
     "#{name}.#{group}.#{ip}.ip.batteriesincl.com"
   end
 
