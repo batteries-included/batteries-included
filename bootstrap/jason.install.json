@@ -1,14 +1,14 @@
 {
-  "id": "batt_018fa21858cc7d1c9abbff8af64750f8",
+  "id": "batt_018ff4519dd57115a7ce96ad75017cde",
   "usage": "development",
-  "default_size": "small",
   "inserted_at": null,
   "updated_at": null,
+  "default_size": "small",
   "slug": "jason",
   "kube_provider": "aws",
   "kube_provider_config": {},
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_018fa218589b72cd805ed48f18dc2af2"
+  "team_id": "batt_018ff4519dce7e6caa55bfbdb6b65ece"
 }

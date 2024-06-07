@@ -8,7 +8,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": null,
+        "id": "batt_018ff4519dd6722490e567a1eba17cd8",
         "type": "istio",
         "config": {
           "type": "istio",
@@ -22,7 +22,7 @@
         "updated_at": null
       },
       {
-        "id": null,
+        "id": "batt_018ff4519dd8785cb2ee9c877f06e05d",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
@@ -34,46 +34,46 @@
         "updated_at": null
       },
       {
-        "id": null,
+        "id": "batt_018ff4519dd8768f9d8f0e3857ef9da4",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
           "image": "public.ecr.aws/batteries-included/control-server:latest",
           "cluster_type": "kind",
+          "default_size": "tiny",
           "core_namespace": "battery-core",
+          "cluster_name": "dev",
+          "ai_namespace": "battery-ai",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
-          "ai_namespace": "battery-ai",
           "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
-          "default_size": "tiny",
-          "cluster_name": "dev",
-          "server_in_cluster": false,
-          "install_id": "batt_018fa21858cb74eca1b7642d70cffc3e",
+          "bootstrap_image_override": null,
           "image_override": null,
-          "bootstrap_image_override": null
+          "install_id": "batt_018ff4519dd37a4984ca2ef9d618188f",
+          "server_in_cluster": false
         },
         "group": "magic",
         "inserted_at": null,
         "updated_at": null
       },
       {
-        "id": null,
+        "id": "batt_018ff4519ddc7d199550788e3eff3e26",
         "type": "metallb",
         "config": {
           "type": "metallb",
           "controller_image": "quay.io/metallb/controller:v0.13.12",
-          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "speaker_image_override": null,
+          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "controller_image_override": null,
-          "frrouting_image_override": null
+          "frrouting_image_override": null,
+          "speaker_image_override": null
         },
         "group": "net_sec",
         "inserted_at": null,
         "updated_at": null
       },
       {
-        "id": null,
+        "id": "batt_018ff4519ddc7ab098fec6e188c22538",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
@@ -85,7 +85,7 @@
         "updated_at": null
       },
       {
-        "id": null,
+        "id": "batt_018ff4519ddd7905a6061c9d4500e859",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -107,15 +107,6 @@
           "name": "control",
           "owner": "battery-control-user"
         },
-        "cpu_requested": 500,
-        "cpu_limits": 500,
-        "memory_requested": 536870912,
-        "memory_limits": 536870912,
-        "num_instances": 1,
-        "virtual_size": "tiny",
-        "storage_class": null,
-        "inserted_at": null,
-        "updated_at": null,
         "users": [
           {
             "position": null,
@@ -127,14 +118,23 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "75NEYC2L6HESX3YYHKRNMF3H",
+            "password": "ZRVBOPKRWEMTPP75TEYAJ2UQ",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
         ],
-        "storage_size": 536870912,
+        "inserted_at": null,
+        "updated_at": null,
         "project_id": null,
-        "virtual_storage_size_range_value": 9
+        "storage_class": null,
+        "cpu_requested": 500,
+        "cpu_limits": 500,
+        "memory_requested": 536870912,
+        "memory_limits": 536870912,
+        "num_instances": 1,
+        "virtual_size": "tiny",
+        "storage_size": 536870912,
+        "virtual_storage_size_range_value": 5035931120
       }
     ],
     "redis_clusters": [],
@@ -149,7 +149,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "YBAKMUKSMMHIWF3OSWO23A55VEVYUNL5SXRMNNYESAB62EEYMYXQ===="
+          "battery/hash": "G4OTDXM7X5LQKGT5ZZ7BRNRLAUBK4LVUMUZ43BQANG7J2IZDOSDA===="
         },
         "labels": {
           "app": "battery-core",
@@ -159,6 +159,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
+          "battery/owner": "batt_018ff4519dd8768f9d8f0e3857ef9da4",
           "istio-injection": "enabled",
           "version": "latest"
         },

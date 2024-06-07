@@ -1,14 +1,14 @@
 {
-  "id": "batt_018fa21858cd7f9b96da1f03bd0b505b",
+  "id": "batt_018ff4519dd577c587d59c7090a681e8",
   "usage": "internal_int_test",
-  "default_size": "tiny",
   "inserted_at": null,
   "updated_at": null,
+  "default_size": "tiny",
   "slug": "integration-test",
   "kube_provider": "kind",
   "kube_provider_config": {},
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_018fa218589b72cd805ed48f18dc2af2"
+  "team_id": "batt_018ff4519dce7e6caa55bfbdb6b65ece"
 }
