@@ -1,6 +1,7 @@
 package kube
 
 import (
+	"bi/pkg/access"
 	"context"
 	"fmt"
 	"io"
@@ -40,6 +41,7 @@ type KubeClient interface {
 	RemoveAll(ctx context.Context) error
 	WaitForConnection(time.Duration) error
 	WatchFor(context.Context, *WatchOptions) error
+	GetAccessInfo(ctx context.Context, namespace string) (*access.AccessSpec, error)
 }
 
 type batteryKubeClient struct {

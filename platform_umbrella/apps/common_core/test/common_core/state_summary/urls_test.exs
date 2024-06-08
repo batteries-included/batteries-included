@@ -12,15 +12,21 @@ defmodule CommonCore.StateSummary.URLsTest do
     end
 
     test "returns an HTTPS URI when :cert_manager is installed" do
-      summary = build(:install_spec, usage: :kitchen_sink, kube_provider: :kind).target_summary
+      summary = build(:install_spec, usage: :kitchen_sink, kube_provider: :provided).target_summary
       expected = URI.new!("https://keycloak.core.127.0.0.1.ip.batteriesincl.com")
       assert expected == uri_for_battery(summary, :keycloak)
     end
 
     test "returns an HTTP URI when :cert_manager is not installed" do
-      summary = build(:install_spec, usage: :internal_int_test, kube_provider: :kind).target_summary
+      summary = build(:install_spec, usage: :internal_int_test, kube_provider: :provided).target_summary
       expected = URI.new!("http://forgejo.core.127.0.0.1.ip.batteriesincl.com")
       assert expected == uri_for_battery(summary, :forgejo)
+    end
+
+    test "returns an HTTP URI on Kind" do
+      summary = build(:install_spec, usage: :kitchen_sink, kube_provider: :kind).target_summary
+      expected = URI.new!("http://keycloak.core.127.0.0.1.ip.batteriesincl.com")
+      assert expected == uri_for_battery(summary, :keycloak)
     end
   end
 
@@ -34,10 +40,19 @@ defmodule CommonCore.StateSummary.URLsTest do
 
   describe "cloud_native_pg_dashboard" do
     test "returns the cloud native pg dashboard URI" do
-      summary = build(:install_spec, usage: :kitchen_sink, kube_provider: :kind).target_summary
+      summary = build(:install_spec, usage: :kitchen_sink, kube_provider: :aws).target_summary
 
       expected =
         URI.new!("https://grafana.core.127.0.0.1.ip.batteriesincl.com/d/cloudnative-pg/cloudnativepg")
+
+      assert expected == cloud_native_pg_dashboard(summary)
+    end
+
+    test "returns the cloud native pg dashboard URI as http for kind" do
+      summary = build(:install_spec, usage: :kitchen_sink, kube_provider: :kind).target_summary
+
+      expected =
+        URI.new!("http://grafana.core.127.0.0.1.ip.batteriesincl.com/d/cloudnative-pg/cloudnativepg")
 
       assert expected == cloud_native_pg_dashboard(summary)
     end

@@ -194,31 +194,4 @@ defmodule CommonCore.Resources.ControlServer do
       }
     ])
   end
-
-  resource(:info_configmap, _battery, state) do
-    host = control_host(state)
-    data = %{"hostname" => host}
-
-    :config_map
-    |> B.build_resource()
-    |> B.name("control-server-info")
-    |> B.namespace(core_namespace(state))
-    |> B.data(data)
-    |> F.require(valid_host?(host))
-  end
-
-  defp valid_host?(host) do
-    host != nil and
-      String.length(host) > 0 and
-      !String.contains?(host, "..ip.batteriesincl.com") and
-      valid_uri?(host)
-  end
-
-  # assume for now that, if it's parseable, that's good enough
-  defp valid_uri?(host) do
-    case URI.new(host) do
-      {:ok, _uri} -> true
-      _ -> false
-    end
-  end
 end

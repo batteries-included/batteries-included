@@ -3,7 +3,7 @@ defmodule CommonCore.Resources.IstioIngress do
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingressgateway"
 
   import CommonCore.Resources.ProxyUtils, only: [sanitize: 1]
-  import CommonCore.StateSummary.Batteries, only: [hosts_by_battery_type: 1, batteries_installed?: 2]
+  import CommonCore.StateSummary.Batteries, only: [hosts_by_battery_type: 1]
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
@@ -332,7 +332,7 @@ defmodule CommonCore.Resources.IstioIngress do
   resource(:gateway, _battery, state) do
     namespace = istio_namespace(state)
 
-    ssl_enabled? = batteries_installed?(state, :cert_manager)
+    ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
 
     servers =
       state

@@ -121,7 +121,21 @@ defmodule CommonCore.Resources.Builder do
   end
 
   def spec(resource, spec), do: Map.put(resource, "spec", spec)
-  def data(resource, data), do: Map.put(resource, "data", data)
+
+  @doc """
+  Add the data field to a resource. Data is a map of key value pairs.
+  """
+  @spec data(map(), any()) :: map()
+  def data(resource, data) when is_struct(data), do: data(resource, Map.from_struct(data))
+
+  def data(resource, data) do
+    Map.put(resource, "data", Map.new(data, fn {k, v} -> {to_data_key(k), v} end))
+  end
+
+  defp to_data_key(key) when is_binary(key), do: key
+  defp to_data_key(key) when is_atom(key), do: Atom.to_string(key)
+  defp to_data_key(key), do: to_string(key)
+
   def template(resource, %{} = template), do: Map.put(resource, "template", template)
   def ports(resource, ports), do: Map.put(resource, "ports", ports)
   def rules(resource, rules), do: Map.put(resource, "rules", rules)
