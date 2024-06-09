@@ -405,17 +405,12 @@ defmodule CommonCore.Resources.MetalLB do
 
   resource(:monitoring_pod_monitor_controller, _battery, state) do
     namespace = base_namespace(state)
-    core_namespace = core_namespace(state)
 
     spec =
       %{}
       |> Map.put("jobLabel", "app.kubernetes.io/name")
-      |> Map.put("namespaceSelector", %{"matchNames" => [core_namespace]})
       |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "monitoring"}])
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}}
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}})
 
     :monitoring_pod_monitor
     |> B.build_resource()
@@ -432,12 +427,8 @@ defmodule CommonCore.Resources.MetalLB do
     spec =
       %{}
       |> Map.put("jobLabel", "app.kubernetes.io/name")
-      |> Map.put("namespaceSelector", %{"matchNames" => ["battery-core"]})
       |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "monitoring"}])
-      |> Map.put(
-        "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}}
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}})
 
     :monitoring_pod_monitor
     |> B.build_resource()

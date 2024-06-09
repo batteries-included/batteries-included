@@ -40,7 +40,10 @@ defmodule CommonCore.Defaults.Images do
   def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.4"
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
   def text_generation_webui_image, do: "atinoda/text-generation-webui:default-snapshot-2023-12-10"
-  def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.21.2"
+  def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.21.3"
+  def aqua_node_collector, do: "ghcr.io/aquasecurity/node-collector:0.2.1"
+  def aqua_trivy_checks, do: "ghcr.io/aquasecurity/trivy-checks:0"
+
   def trust_manager_image, do: "quay.io/jetstack/trust-manager:v0.11.0"
   def trust_manager_init_image, do: "quay.io/jetstack/cert-manager-package-debian:20210119.0"
   def vm_operator_image, do: "victoriametrics/operator:v0.44.0"
