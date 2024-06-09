@@ -1,11 +1,14 @@
 defmodule CommonCore.Resources.CloudnativePG do
   @moduledoc false
+
   use CommonCore.IncludeResource,
-    backups_postgresql_cnpg_io: "priv/manifests/cloudnative-pg/backups_postgresql_cnpg_io.yaml",
-    clusters_postgresql_cnpg_io: "priv/manifests/cloudnative-pg/clusters_postgresql_cnpg_io.yaml",
-    poolers_postgresql_cnpg_io: "priv/manifests/cloudnative-pg/poolers_postgresql_cnpg_io.yaml",
-    scheduledbackups_postgresql_cnpg_io: "priv/manifests/cloudnative-pg/scheduledbackups_postgresql_cnpg_io.yaml",
-    queries: "priv/raw_files/cloudnative-pg/queries.yaml"
+    backups_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/backups_postgresql_cnpg_io.yaml",
+    clusterimagecatalogs_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/clusterimagecatalogs_postgresql_cnpg_io.yaml",
+    clusters_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/clusters_postgresql_cnpg_io.yaml",
+    imagecatalogs_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/imagecatalogs_postgresql_cnpg_io.yaml",
+    poolers_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/poolers_postgresql_cnpg_io.yaml",
+    scheduledbackups_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/scheduledbackups_postgresql_cnpg_io.yaml",
+    queries: "priv/raw_files/cloudnative_pg/queries"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "cloudnative-pg"
 
@@ -107,6 +110,11 @@ defmodule CommonCore.Resources.CloudnativePG do
       %{"apiGroups" => ["postgresql.cnpg.io"], "resources" => ["backups/status"], "verbs" => ["get", "patch", "update"]},
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
+        "resources" => ["clusterimagecatalogs"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["postgresql.cnpg.io"],
         "resources" => ["clusters"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
@@ -116,6 +124,7 @@ defmodule CommonCore.Resources.CloudnativePG do
         "resources" => ["clusters/status"],
         "verbs" => ["get", "patch", "update", "watch"]
       },
+      %{"apiGroups" => ["postgresql.cnpg.io"], "resources" => ["imagecatalogs"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
         "resources" => ["poolers"],
@@ -146,10 +155,18 @@ defmodule CommonCore.Resources.CloudnativePG do
         "apiGroups" => ["rbac.authorization.k8s.io"],
         "resources" => ["roles"],
         "verbs" => ["create", "get", "list", "patch", "update", "watch"]
+      },
+      %{
+        "apiGroups" => ["snapshot.storage.k8s.io"],
+        "resources" => ["volumesnapshots"],
+        "verbs" => ["create", "get", "list", "patch", "watch"]
       }
     ]
 
-    :cluster_role |> B.build_resource() |> B.name("cloudnative-pg") |> B.rules(rules)
+    :cluster_role
+    |> B.build_resource()
+    |> B.name("cloudnative-pg")
+    |> B.rules(rules)
   end
 
   resource(:config_map_cnpg_controller_manager, _battery, state) do
@@ -178,8 +195,16 @@ defmodule CommonCore.Resources.CloudnativePG do
     YamlElixir.read_all_from_string!(get_resource(:backups_postgresql_cnpg_io))
   end
 
+  resource(:crd_clusterimagecatalogs_postgresql_cnpg_io) do
+    YamlElixir.read_all_from_string!(get_resource(:clusterimagecatalogs_postgresql_cnpg_io))
+  end
+
   resource(:crd_clusters_postgresql_cnpg_io) do
     YamlElixir.read_all_from_string!(get_resource(:clusters_postgresql_cnpg_io))
+  end
+
+  resource(:crd_imagecatalogs_postgresql_cnpg_io) do
+    YamlElixir.read_all_from_string!(get_resource(:imagecatalogs_postgresql_cnpg_io))
   end
 
   resource(:crd_poolers_postgresql_cnpg_io) do
@@ -291,17 +316,16 @@ defmodule CommonCore.Resources.CloudnativePG do
     |> F.require_battery(state, :victoria_metrics)
   end
 
-  resource(:mutating_webhook_config_cnpg_configuration) do
-    :mutating_webhook_config
-    |> B.build_resource()
-    |> B.name("cnpg-mutating-webhook-configuration")
-    |> Map.put("webhooks", [
+  resource(:mutating_webhook_config_cnpg_configuration, _battery, state) do
+    namespace = core_namespace(state)
+
+    webhooks = [
       %{
         "admissionReviewVersions" => ["v1"],
         "clientConfig" => %{
           "service" => %{
             "name" => "cnpg-webhook-service",
-            "namespace" => "battery-core",
+            "namespace" => namespace,
             "path" => "/mutate-postgresql-cnpg-io-v1-backup",
             "port" => 443
           }
@@ -323,7 +347,7 @@ defmodule CommonCore.Resources.CloudnativePG do
         "clientConfig" => %{
           "service" => %{
             "name" => "cnpg-webhook-service",
-            "namespace" => "battery-core",
+            "namespace" => namespace,
             "path" => "/mutate-postgresql-cnpg-io-v1-cluster",
             "port" => 443
           }
@@ -345,7 +369,7 @@ defmodule CommonCore.Resources.CloudnativePG do
         "clientConfig" => %{
           "service" => %{
             "name" => "cnpg-webhook-service",
-            "namespace" => "battery-core",
+            "namespace" => namespace,
             "path" => "/mutate-postgresql-cnpg-io-v1-scheduledbackup",
             "port" => 443
           }
@@ -362,7 +386,12 @@ defmodule CommonCore.Resources.CloudnativePG do
         ],
         "sideEffects" => "None"
       }
-    ])
+    ]
+
+    :mutating_webhook_config
+    |> B.build_resource()
+    |> B.name("cnpg-mutating-webhook-configuration")
+    |> Map.put("webhooks", webhooks)
   end
 
   resource(:service_account_cloudnative_pg, _battery, state) do
@@ -391,17 +420,16 @@ defmodule CommonCore.Resources.CloudnativePG do
     |> B.spec(spec)
   end
 
-  resource(:validating_webhook_config_cnpg_configuration) do
-    :validating_webhook_config
-    |> B.build_resource()
-    |> B.name("cnpg-validating-webhook-configuration")
-    |> Map.put("webhooks", [
+  resource(:validating_webhook_config_cnpg_configuration, _battery, state) do
+    namespace = core_namespace(state)
+
+    webhooks = [
       %{
         "admissionReviewVersions" => ["v1"],
         "clientConfig" => %{
           "service" => %{
             "name" => "cnpg-webhook-service",
-            "namespace" => "battery-core",
+            "namespace" => namespace,
             "path" => "/validate-postgresql-cnpg-io-v1-backup",
             "port" => 443
           }
@@ -423,7 +451,7 @@ defmodule CommonCore.Resources.CloudnativePG do
         "clientConfig" => %{
           "service" => %{
             "name" => "cnpg-webhook-service",
-            "namespace" => "battery-core",
+            "namespace" => namespace,
             "path" => "/validate-postgresql-cnpg-io-v1-cluster",
             "port" => 443
           }
@@ -445,7 +473,7 @@ defmodule CommonCore.Resources.CloudnativePG do
         "clientConfig" => %{
           "service" => %{
             "name" => "cnpg-webhook-service",
-            "namespace" => "battery-core",
+            "namespace" => namespace,
             "path" => "/validate-postgresql-cnpg-io-v1-scheduledbackup",
             "port" => 443
           }
@@ -467,7 +495,7 @@ defmodule CommonCore.Resources.CloudnativePG do
         "clientConfig" => %{
           "service" => %{
             "name" => "cnpg-webhook-service",
-            "namespace" => "battery-core",
+            "namespace" => namespace,
             "path" => "/validate-postgresql-cnpg-io-v1-pooler",
             "port" => 443
           }
@@ -484,6 +512,11 @@ defmodule CommonCore.Resources.CloudnativePG do
         ],
         "sideEffects" => "None"
       }
-    ])
+    ]
+
+    :validating_webhook_config
+    |> B.build_resource()
+    |> B.name("cnpg-validating-webhook-configuration")
+    |> Map.put("webhooks", webhooks)
   end
 end

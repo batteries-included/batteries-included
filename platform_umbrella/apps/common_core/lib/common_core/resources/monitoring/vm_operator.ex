@@ -15,6 +15,8 @@ defmodule CommonCore.Resources.VMOperator do
       "priv/manifests/vm_operator/vmpodscrapes_operator_victoriametrics_com.yaml",
     vmprobes_operator_victoriametrics_com: "priv/manifests/vm_operator/vmprobes_operator_victoriametrics_com.yaml",
     vmrules_operator_victoriametrics_com: "priv/manifests/vm_operator/vmrules_operator_victoriametrics_com.yaml",
+    vmscrapeconfigs_operator_victoriametrics_com:
+      "priv/manifests/vm_operator/vmscrapeconfigs_operator_victoriametrics_com.yaml",
     vmservicescrapes_operator_victoriametrics_com:
       "priv/manifests/vm_operator/vmservicescrapes_operator_victoriametrics_com.yaml",
     vmsingles_operator_victoriametrics_com: "priv/manifests/vm_operator/vmsingles_operator_victoriametrics_com.yaml",
@@ -51,116 +53,9 @@ defmodule CommonCore.Resources.VMOperator do
       },
       %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["*"]},
       %{"apiGroups" => [""], "resources" => ["secrets", "secrets/finalizers"], "verbs" => ["*"]},
-      %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["*"]},
-      %{"apiGroups" => [""], "resources" => ["services/finalizers"], "verbs" => ["*"]},
-      %{"apiGroups" => ["apps"], "resources" => ["deployments", "deployments/finalizers"], "verbs" => ["*"]},
-      %{"apiGroups" => ["apps"], "resources" => ["replicasets"], "verbs" => ["*"]},
-      %{
-        "apiGroups" => ["apps"],
-        "resources" => ["statefulsets", "statefulsets/finalizers", "statefulsets/status"],
-        "verbs" => ["*"]
-      },
-      %{"apiGroups" => ["monitoring.coreos.com"], "resources" => ["*"], "verbs" => ["*"]},
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmagents", "vmagents/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmagents/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmalertmanagers", "vmalertmanagers/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmalertmanagers/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmalertmanagerconfigs", "vmalertmanagerconfigs/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmalertmanagerconfigss/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmalerts", "vmalerts/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmalerts/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmclusters", "vmclusters/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmclusters/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmpodscrapes", "vmprobscrapes/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmpodscrapes/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmrules", "vmrules/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmrules/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmservicescrapes", "vmservicescrapes/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmservicescrapes/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmprobes"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmprobes/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmsingles", "vmsingles/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmsingles/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
+      %{"apiGroups" => [""], "resources" => ["services", "services/finalizers"], "verbs" => ["*"]},
+      %{"apiGroups" => [""], "resources" => ["serviceaccounts", "serviceaccounts/finalizers"], "verbs" => ["*"]},
+      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create"]},
       %{
         "apiGroups" => [""],
         "resources" => [
@@ -175,6 +70,77 @@ defmodule CommonCore.Resources.VMOperator do
           "namespaces"
         ],
         "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => [
+          "deployments",
+          "deployments/finalizers",
+          "replicasets",
+          "statefulsets",
+          "statefulsets/finalizers",
+          "statefulsets/status"
+        ],
+        "verbs" => ["*"]
+      },
+      %{"apiGroups" => ["monitoring.coreos.com"], "resources" => ["*"], "verbs" => ["*"]},
+      %{
+        "apiGroups" => ["operator.victoriametrics.com"],
+        "resources" => [
+          "vmagents",
+          "vmagents/finalizers",
+          "vmalertmanagers",
+          "vmalertmanagers/finalizers",
+          "vmalertmanagerconfigs",
+          "vmalertmanagerconfigs/finalizers",
+          "vmalerts",
+          "vmalerts/finalizers",
+          "vmauths",
+          "vmauths/finalizers",
+          "vmusers",
+          "vmusers/finalizers",
+          "vmclusters",
+          "vmclusters/finalizers",
+          "vmpodscrapes",
+          "vmpodscrapes/finalizers",
+          "vmrules",
+          "vmrules/finalizers",
+          "vmservicescrapes",
+          "vmservicescrapes/finalizers",
+          "vmprobes",
+          "vmprobes/finalizers",
+          "vmsingles",
+          "vmsingles/finalizers",
+          "vmnodescrapes",
+          "vmnodescrapes/finalizers",
+          "vmstaticscrapes",
+          "vmstaticscrapes/finalizers",
+          "vmscrapeconfigs",
+          "vmscrapeconfigs/finalizers"
+        ],
+        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
+      },
+      %{
+        "apiGroups" => ["operator.victoriametrics.com"],
+        "resources" => [
+          "vmagents/status",
+          "vmalertmanagers/status",
+          "vmalertmanagerconfigss/status",
+          "vmalerts/status",
+          "vmclusters/status",
+          "vmpodscrapes/status",
+          "vmscrapeconfigs/status",
+          "vmrules/status",
+          "vmservicescrapes/status",
+          "vmprobes/status",
+          "vmsingles/status",
+          "vmscrapeconfig/status",
+          "vmusers/status",
+          "vmauths/status",
+          "vmstaticscrapes/status",
+          "vmnodescrapes/status"
+        ],
+        "verbs" => ["get", "patch", "update"]
       },
       %{
         "apiGroups" => ["extensions", "networking.k8s.io"],
@@ -198,41 +164,6 @@ defmodule CommonCore.Resources.VMOperator do
         "apiGroups" => ["policy"],
         "resources" => ["podsecuritypolicies", "podsecuritypolicies/finalizers"],
         "verbs" => ["get", "list", "create", "patch", "update", "use", "watch", "delete"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["serviceaccounts", "serviceaccounts/finalizers"],
-        "verbs" => ["get", "list", "create", "watch", "update", "delete"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmnodescrapes", "vmnodescrapes/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmnodescrapes/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmstaticscrapes", "vmstaticscrapes/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmstaticscrapes/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmauths", "vmauths/finalizers", "vmusers", "vmusers/finalizers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["operator.victoriametrics.com"],
-        "resources" => ["vmusers/status", "vmauths/status"],
-        "verbs" => ["get", "patch", "update"]
       },
       %{"apiGroups" => ["storage.k8s.io"], "resources" => ["storageclasses"], "verbs" => ["list", "get", "watch"]},
       %{
@@ -307,6 +238,10 @@ defmodule CommonCore.Resources.VMOperator do
 
   resource(:crd_vmrules_operator_victoriametrics_com) do
     YamlElixir.read_all_from_string!(get_resource(:vmrules_operator_victoriametrics_com))
+  end
+
+  resource(:crd_vmscrapeconfigs_operator_victoriametrics_com) do
+    YamlElixir.read_all_from_string!(get_resource(:vmscrapeconfigs_operator_victoriametrics_com))
   end
 
   resource(:crd_vmservicescrapes_operator_victoriametrics_com) do
