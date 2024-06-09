@@ -708,51 +708,6 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.spec(spec)
   end
 
-  resource(:job_cert_manager_startupapicheck, battery, state) do
-    namespace = base_namespace(state)
-    component = "startupapicheck"
-
-    template =
-      %{}
-      |> Map.put("metadata", %{"labels" => %{"battery/managed" => "true"}})
-      |> Map.put(
-        "spec",
-        %{
-          "containers" => [
-            %{
-              "args" => ["check", "api", "--wait=1m"],
-              "image" => battery.config.ctl_image,
-              "imagePullPolicy" => "IfNotPresent",
-              "name" => "check-api",
-              "securityContext" => %{"allowPrivilegeEscalation" => false, "capabilities" => %{"drop" => ["ALL"]}}
-            }
-          ],
-          "enableServiceLinks" => false,
-          "nodeSelector" => %{"kubernetes.io/os" => "linux"},
-          "restartPolicy" => "OnFailure",
-          "securityContext" => %{"runAsNonRoot" => true, "seccompProfile" => %{"type" => "RuntimeDefault"}},
-          "serviceAccountName" => "cert-manager-startupapicheck"
-        }
-      )
-      |> B.component_labels(component)
-      |> B.app_labels(@app_name)
-      |> B.add_owner(battery)
-
-    spec =
-      %{}
-      |> Map.put("backoffLimit", 4)
-      |> Map.put("completions", 1)
-      |> Map.put("parallelism", 1)
-      |> B.template(template)
-
-    :job
-    |> B.build_resource()
-    |> B.name("cert-manager-startupapicheck")
-    |> B.namespace(namespace)
-    |> B.component_labels(component)
-    |> B.spec(spec)
-  end
-
   resource(:mutating_webhook_config_cert_manager, _battery, state) do
     namespace = base_namespace(state)
 
