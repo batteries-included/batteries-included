@@ -5,6 +5,7 @@ import (
 
 	"bi/pkg/cluster/util"
 
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -22,9 +23,11 @@ type lbControllerConfig struct {
 	// outputs
 	oidcProviderURL,
 	oidcProviderARN string
+	publicSubnetIDs []string
 
 	// state
 	role *iam.Role
+	eips []pulumi.IDOutput
 }
 
 func (l *lbControllerConfig) withConfig(cfg *util.PulumiConfig) error {
@@ -42,12 +45,18 @@ func (l *lbControllerConfig) withOutputs(outputs map[string]auto.OutputMap) erro
 	if outputs["cluster"]["oidcProviderARN"].Value != nil {
 		l.oidcProviderARN = outputs["cluster"]["oidcProviderARN"].Value.(string)
 	}
+
+	if outputs["vpc"]["publicSubnetIDs"].Value != nil {
+		l.publicSubnetIDs = util.ToStringSlice(outputs["vpc"]["publicSubnetIDs"].Value)
+	}
+
 	return nil
 }
 
 func (l *lbControllerConfig) run(ctx *pulumi.Context) error {
 	for _, fn := range []func(*pulumi.Context) error{
-		l.lbControllerRole,
+		l.buildLBControllerRole,
+		l.buildIngressEIPs,
 	} {
 		if err := fn(ctx); err != nil {
 			return err
@@ -55,11 +64,12 @@ func (l *lbControllerConfig) run(ctx *pulumi.Context) error {
 	}
 
 	ctx.Export("roleARN", l.role.Arn)
+	ctx.Export("eipAllocations", pulumi.ToIDArrayOutput(l.eips))
 
 	return nil
 }
 
-func (l *lbControllerConfig) lbControllerRole(ctx *pulumi.Context) error {
+func (l *lbControllerConfig) buildLBControllerRole(ctx *pulumi.Context) error {
 	assumeRole := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
 		Statements: iam.GetPolicyDocumentStatementArray{
 			iam.GetPolicyDocumentStatementArgs{
@@ -369,6 +379,23 @@ func (l *lbControllerConfig) lbControllerRole(ctx *pulumi.Context) error {
 	})
 	if err != nil {
 		return fmt.Errorf("error registering IAM role policy %s: %w", name, err)
+	}
+
+	return nil
+}
+
+func (l *lbControllerConfig) buildIngressEIPs(ctx *pulumi.Context) error {
+	for i := range l.publicSubnetIDs {
+		name := fmt.Sprintf("%s-ingress-eip-%d", l.baseName, i)
+
+		eip, err := ec2.NewEip(ctx, name, &ec2.EipArgs{
+			Tags: pulumi.StringMap{"Name": pulumi.Sprintf("%s-ingress", l.baseName)},
+		})
+		if err != nil {
+			return err
+		}
+
+		l.eips = append(l.eips, eip.ID())
 	}
 
 	return nil
