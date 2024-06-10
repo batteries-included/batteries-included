@@ -13,6 +13,11 @@ defmodule KubeServices.KubeStateCoverageTest do
     # This is not able to be used well in oss environments
     {"operator.victoriametrics.com/v1beta1", "VMAuth"},
     {"operator.victoriametrics.com/v1beta1", "VMUser"},
+
+    # We don't emit or display these
+    {"elbv2.k8s.aws/v1beta1", "TargetGroupBinding"},
+    {"karpenter.sh/v1beta1", "NodeClaim"},
+
     # BGP will come later
     {"metallb.io/v1beta1", "BGPAdvertisement"},
     {"metallb.io/v1beta2", "BGPPeer"},
