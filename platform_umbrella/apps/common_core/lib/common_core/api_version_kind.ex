@@ -66,6 +66,7 @@ defmodule CommonCore.ApiVersionKind do
     monitoring_probe: {"operator.victoriametrics.com/v1beta1", "VMProbe"},
     monitoring_rule: {"operator.victoriametrics.com/v1beta1", "VMRule"},
     monitoring_service_monitor: {"operator.victoriametrics.com/v1beta1", "VMServiceScrape"},
+    monitoring_scrape_config: {"operator.victoriametrics.com/v1beta1", "VMScrapeConfig"},
     mutating_webhook_config: {"admissionregistration.k8s.io/v1", "MutatingWebhookConfiguration"},
     namespace: {"v1", "Namespace"},
     node: {"v1", "Node"},
