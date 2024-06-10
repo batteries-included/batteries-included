@@ -10,6 +10,14 @@ defmodule KubeServices.KubeStateCoverageTest do
   # We open up a watcher for each type.
   # Some types aren't worth the http connections
   @ignored_crd_types [
+    # This is not able to be used well in oss environments
+    {"operator.victoriametrics.com/v1beta1", "VMAuth"},
+    {"operator.victoriametrics.com/v1beta1", "VMUser"},
+
+    # We don't emit or display these
+    {"elbv2.k8s.aws/v1beta1", "TargetGroupBinding"},
+    {"karpenter.sh/v1beta1", "NodeClaim"},
+
     # BGP will come later
     {"metallb.io/v1beta1", "BGPAdvertisement"},
     {"metallb.io/v1beta2", "BGPPeer"},
@@ -25,6 +33,7 @@ defmodule KubeServices.KubeStateCoverageTest do
     {"networking.istio.io/v1beta1", "ProxyConfig"},
 
     # Knative is choosing that route too.
+    {"operator.knative.dev/v1beta1", "KnativeEventing"},
     {"install.istio.io/v1alpha1", "IstioOperator"},
     {"autoscaling.internal.knative.dev/v1alpha1", "PodAutoscaler"},
     {"autoscaling.internal.knative.dev/v1alpha1", "Metric"},

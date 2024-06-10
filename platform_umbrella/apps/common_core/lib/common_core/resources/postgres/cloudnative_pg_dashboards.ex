@@ -1,7 +1,7 @@
 defmodule CommonCore.Resources.CloudnativePGDashboards do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "cloudnative-pg-dashboards"
-  use CommonCore.IncludeResource, dashboard: "priv/raw_files/cloudnative-pg/grafana-dashboard.json"
+  use CommonCore.IncludeResource, dashboard: "priv/raw_files/cloudnative_pg/grafana-dashboard.json"
 
   import CommonCore.StateSummary.Namespaces
 
