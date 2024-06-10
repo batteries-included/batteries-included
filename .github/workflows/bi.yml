@@ -12,7 +12,7 @@ on:
 jobs:
   bi:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
@@ -32,7 +32,7 @@ jobs:
   bi-int-test:
     runs-on: ubuntu-latest
     needs: bi
-    timeout-minutes: 25
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main

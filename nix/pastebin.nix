@@ -10,7 +10,7 @@
       pwd = ./../pastebin-go;
       src = gitignoreSource pwd;
       modules = pwd + "/gomod2nix.toml";
-      version = "0.12.3";
+      version = "0.12.4";
     in
     {
       packages.pastebin = buildGoApplication {

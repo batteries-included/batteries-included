@@ -12,7 +12,7 @@
 
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      version = "0.12.3";
+      version = "0.12.4";
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_27;
       inherit (beamPackages) erlang;
@@ -35,7 +35,7 @@
           ;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-hLAY+fO97XrVfXP14PJj2fSqTjMxN1aUdy1ibGxZzZM=";
+        sha256 = "sha256-nyoqL7szcNsflmLseT4o1YpNK/OEQcrjcSZ1vCCBlVY=";
       };
 
       # mix fixed output derivation dependencies
@@ -53,7 +53,7 @@
           elixir
           ;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-Qf9xT2ctSPu88D2t2dxv7/Kl0PEODcAdCdhPKlzI8IE=";
+        sha256 = "sha256-EYUnNAby/RFtnqFa1rYJICiYOwBQqECvmm/4ESdyiTg=";
       };
 
       control-server = pkgs.callPackage ./platform-release.nix {

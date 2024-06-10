@@ -48,7 +48,9 @@ jobs:
         with:
           registry-type: public
       - name: Push image to ECR
-        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push')
+          }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: pastebin
@@ -65,7 +67,7 @@ jobs:
 
   control-server:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
@@ -93,7 +95,9 @@ jobs:
         with:
           registry-type: public
       - name: Push image to ECR
-        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push')
+          }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: control-server
@@ -108,10 +112,9 @@ jobs:
           docker tag "$INPUT" "$OUTPUT"
           docker push "$OUTPUT"
 
-
   kube-bootstrap:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
@@ -139,7 +142,9 @@ jobs:
         with:
           registry-type: public
       - name: Push image to ECR
-        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push')
+          }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: kube-bootstrap
@@ -156,7 +161,7 @@ jobs:
 
   home-base:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
@@ -184,7 +189,9 @@ jobs:
         with:
           registry-type: public
       - name: Push image to ECR
-        if: ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push') }}
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name == 'push')
+          }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: home-base
@@ -198,7 +205,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main

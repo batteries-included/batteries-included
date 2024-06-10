@@ -12,7 +12,7 @@ on:
 jobs:
   int-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     services:
       postgres:
         image: postgres:16
@@ -44,11 +44,15 @@ jobs:
       - name: Set up dev shell
         run: nix develop --command bash -c 'exit 0'
       - name: Start Kind
-        run: nix develop --command bash -c "bi -v=debug start ./bootstrap/integration-test.spec.json"
+        run:
+          nix develop --command bash -c "bi -v=debug start
+          ./bootstrap/integration-test.spec.json"
       - name: Run integration tests
         run: nix develop --command bash -c "TRACE=1 bix ex-int-test"
       - name: Stop Kind
-        run: nix develop --command bash -c "TRACE=1 bix stop ./bootstrap/integration-test.spec.json"
+        run:
+          nix develop --command bash -c "TRACE=1 bix stop
+          ./bootstrap/integration-test.spec.json"
       - name: Save screenshots as artifacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -65,7 +69,7 @@ jobs:
           reporter: java-junit
   platform-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     services:
       postgres:
         image: postgres:16
