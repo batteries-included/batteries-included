@@ -14,7 +14,7 @@
         inherit nodejs version;
         pname = "pastebin";
         name = " pastebin-static ";
-        src = gitignoreSource ./../project_templates/pastebin-go/assets;
+        src = gitignoreSource ./../pastebin-go/assets;
 
         installPhase = ''
           mkdir -p $out

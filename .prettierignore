@@ -7,7 +7,7 @@
 
 platform_umbrella/apps/control_server_web/assets/node_modules/
 platform_umbrella/apps/home_base_web/assets/node_modules/
-project_templates/pastebin/node_modules/
+pastebin/node_modules/
 static/node_modules/
 platform_umbrella/.elixir_ls/
 

@@ -7,7 +7,7 @@
       inherit (inputs.gomod2nix.legacyPackages.${system}) buildGoApplication;
 
       pname = "pastebin";
-      pwd = ./../project_templates/pastebin-go;
+      pwd = ./../pastebin-go;
       src = gitignoreSource pwd;
       modules = pwd + "/gomod2nix.toml";
       version = "0.12.3";
