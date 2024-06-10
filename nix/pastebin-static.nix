@@ -7,7 +7,7 @@
 
       inherit (pkgs) nodejs;
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
-      version = "0.12.3";
+      version = "0.12.4";
     in
     {
       packages.pastebin-static = npmlock2nix.v2.build {

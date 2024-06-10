@@ -14,8 +14,8 @@ schema = 3
     version = "v1.0.0"
     hash = "sha256-H0nFbC34/3pZUFnuiQk9W7yvAMh6qJDrqvHp+akBPLM="
   [mod."github.com/jackc/pgservicefile"]
-    version = "v0.0.0-20231201235250-de7065d80cb9"
-    hash = "sha256-j3pc2r15nf6FmLS+oLeKKYlJSI8jClk5fBOgQbhLrNI="
+    version = "v0.0.0-20240606120523-5a60cdf6a761"
+    hash = "sha256-ETpGsLAA2wcm5xJBayr/mZrCE1YsWbnkbSSX3ptrFn0="
   [mod."github.com/jackc/pgx/v5"]
     version = "v5.6.0"
     hash = "sha256-6Tx7UF6gWc4e572x6wBDLghoe0Inhef0cH2Fq5I8fX4="
@@ -41,14 +41,14 @@ schema = 3
     version = "v1.2.0"
     hash = "sha256-y/lSGbnZa7mYJCs30a3LTyjfCFQSaYp8GbVR8dwtmsg="
   [mod."golang.org/x/crypto"]
-    version = "v0.23.0"
-    hash = "sha256-6hZjb/OazWFBef0C/aH63l49YQnzCh2vpIduzyfSSG8="
+    version = "v0.24.0"
+    hash = "sha256-wpxJApwSmmn9meVdpFdOU0gzeJbIXcKuFfYUUVogSss="
   [mod."golang.org/x/sync"]
     version = "v0.7.0"
     hash = "sha256-2ETllEu2GDWoOd/yMkOkLC2hWBpKzbVZ8LhjLu0d2A8="
   [mod."golang.org/x/text"]
-    version = "v0.15.0"
-    hash = "sha256-pBnj0AEkfkvZf+3bN7h6epCD2kurw59clDP7yWvxKlk="
+    version = "v0.16.0"
+    hash = "sha256-hMTO45upjEuA4sJzGplJT+La2n3oAfHccfYWZuHcH+8="
   [mod."gorm.io/driver/postgres"]
     version = "v1.5.7"
     hash = "sha256-o3Akrtc6yEBr344MlMBP27ySluUoDeHvc+EQ5+jwdPQ="
