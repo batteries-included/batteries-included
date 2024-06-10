@@ -87,7 +87,10 @@ config :common_ui, CommonUIWeb.Endpoint,
 config :logger,
   level: :debug,
   handle_otp_reports: true,
-  handle_sasl_reports: false
+  handle_sasl_reports: false,
+  compile_time_purge_matching: [
+    [library: :k8s]
+  ]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
