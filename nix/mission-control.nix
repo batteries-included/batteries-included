@@ -93,7 +93,7 @@ _: {
               gomod2nix
               popd &> /dev/null
 
-              pushd project_templates/pastebin-go &> /dev/null
+              pushd pastebin-go &> /dev/null
               go get -u ./...
               go mod tidy
               gomod2nix
