@@ -41,5 +41,10 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 		return fmt.Errorf("failed to wait for bootstrap: %w", err)
 	}
 
+	slog.Info("Displaying access information")
+	if err := env.Spec.PrintAccessInfo(ctx, kubeClient); err != nil {
+		return fmt.Errorf("failed get and display access info: %w", err)
+	}
+
 	return nil
 }

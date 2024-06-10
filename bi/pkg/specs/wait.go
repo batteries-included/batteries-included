@@ -25,14 +25,9 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 		return nil
 	}
 
-	maybeNamespace, err := spec.GetBatteryConfigField("battery_core", "core_namespace")
+	ns, err := spec.GetCoreNamespace()
 	if err != nil {
 		return fmt.Errorf("failed to get core namespace: %w", err)
-	}
-
-	ns, ok := maybeNamespace.(string)
-	if !ok {
-		return fmt.Errorf("failed to get core namespace string. is type: %T", maybeNamespace)
 	}
 
 	for name, opts := range map[string]*kube.WatchOptions{
@@ -138,7 +133,7 @@ func batteryInfoConfigMapWatchOpts(ns string) *kube.WatchOptions {
 				{
 					Key:      "battery/app",
 					Operator: metav1.LabelSelectorOpIn,
-					Values:   []string{"battery-control-server"},
+					Values:   []string{"battery-access-info"},
 				},
 			},
 		})},

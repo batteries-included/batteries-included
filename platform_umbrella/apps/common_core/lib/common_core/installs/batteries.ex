@@ -84,7 +84,6 @@ defmodule CommonCore.Installs.Batteries do
         |> Enum.map(fn cb -> cb.type end)
 
       _ ->
-        # TODO: This should include a control server.
         ~w(metallb)a ++ @standard_battery_types
     end
   end
@@ -105,7 +104,16 @@ defmodule CommonCore.Installs.Batteries do
     end
   end
 
-  defp provided_batteries(_install) do
-    @standard_battery_types
+  defp provided_batteries(install) do
+    case install.usage do
+      :kitchen_sink ->
+        # AWS doesn't work with some batteries
+        Catalog.all()
+        |> Enum.reject(fn cb -> cb.type in [:metallb] end)
+        |> Enum.map(fn cb -> cb.type end)
+
+      _ ->
+        ~w(metallb)a ++ @standard_battery_types
+    end
   end
 end

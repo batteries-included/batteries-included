@@ -25,3 +25,10 @@ func (s *InstallSpec) GetBatteryConfigField(typ, field string) (any, error) {
 	}
 	return cfg, nil
 }
+func (s *InstallSpec) GetCoreNamespace() (string, error) {
+	ns, err := s.GetBatteryConfigField("battery_core", "core_namespace")
+	if err != nil {
+		return "", err
+	}
+	return ns.(string), nil
+}

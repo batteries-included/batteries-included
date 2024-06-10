@@ -18,7 +18,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGeneratorTest do
     end
 
     test "sets server config to https when :cert_manager is installed" do
-      state = build(:install_spec, usage: :kitchen_sink, kube_provider: :kind).target_summary
+      state = build(:install_spec, usage: :kitchen_sink, kube_provider: :aws).target_summary
       batteries = Batteries.by_type(state)
 
       config = KialiConfigGenerator.materialize(batteries.kiali, state)
@@ -28,7 +28,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGeneratorTest do
     end
 
     test "sets server config to http when :cert_manager is not installed" do
-      state = build(:install_spec, usage: :integration_test, kube_provider: :kind).target_summary
+      state = build(:install_spec, usage: :integration_test, kube_provider: :provided).target_summary
 
       batt =
         :kiali

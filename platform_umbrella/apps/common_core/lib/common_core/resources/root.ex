@@ -4,6 +4,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   """
   alias CommonCore.Resources.AwsLoadBalancerController
   alias CommonCore.Resources.BackendServices
+  alias CommonCore.Resources.BatteryAccess
   alias CommonCore.Resources.BatteryCA
   alias CommonCore.Resources.BatteryCore
   alias CommonCore.Resources.CertManager.Certificates
@@ -58,7 +59,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     aws_load_balancer_controller: [AwsLoadBalancerController],
     backend_services: [BackendServices],
     battery_ca: [BatteryCA],
-    battery_core: [BatteryCore, ControlServerResources],
+    battery_core: [BatteryCore, ControlServerResources, BatteryAccess],
     cert_manager: [CertManager, Certificates],
     cloudnative_pg: [CloudnativePG, CloudnativePGClusters, CloudnativePGDashboards],
     forgejo: [Forgejo],
