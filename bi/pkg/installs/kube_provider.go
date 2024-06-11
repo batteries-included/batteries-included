@@ -124,7 +124,31 @@ func (env *InstallEnv) configureLBControllerBattery(outputs *eksOutputs) error {
 
 	b.Config["service_role_arn"] = outputs.LBController["roleARN"].Value
 
+	eips, err := toStringSlice(outputs.LBController["eipAllocations"].Value.([]interface{}))
+	if err != nil {
+		return err
+	}
+	b.Config["eip_allocations"] = eips
+
+	subnets, err := toStringSlice(outputs.VPC["publicSubnetIDs"].Value.([]interface{}))
+	if err != nil {
+		return err
+	}
+	b.Config["subnets"] = subnets
+
 	return nil
+}
+
+func toStringSlice(maybeStrings []interface{}) ([]string, error) {
+	ss := []string{}
+	for _, in := range maybeStrings {
+		s, ok := in.(string)
+		if !ok {
+			return nil, fmt.Errorf("failed parsing output into string")
+		}
+		ss = append(ss, s)
+	}
+	return ss, nil
 }
 
 func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {

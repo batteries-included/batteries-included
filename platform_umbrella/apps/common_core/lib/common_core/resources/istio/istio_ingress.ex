@@ -2,6 +2,7 @@ defmodule CommonCore.Resources.IstioIngress do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingressgateway"
 
+  import CommonCore.Resources.MapUtils
   import CommonCore.Resources.ProxyUtils, only: [sanitize: 1]
   import CommonCore.StateSummary.Batteries, only: [hosts_by_battery_type: 1]
   import CommonCore.StateSummary.Namespaces
@@ -40,6 +41,17 @@ defmodule CommonCore.Resources.IstioIngress do
 
     annotations =
       if aws_lb_installed? do
+        battery = Batteries.by_type(state).aws_load_balancer_controller
+
+        tags =
+          Enum.join(
+            [
+              "batteriesincl.com/managed=true",
+              "batteriesincl.com/environment=organization/bi/#{cluster_name}"
+            ],
+            ","
+          )
+
         %{
           "service.beta.kubernetes.io/aws-load-balancer-scheme" => "internet-facing",
           # the advantage of the AWS VPC CNI is that each pod has an IP, use those instead of the instances
@@ -47,9 +59,18 @@ defmodule CommonCore.Resources.IstioIngress do
           "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type" => "ip",
           "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled" => "true",
           "service.beta.kubernetes.io/aws-load-balancer-name" => "#{cluster_name}-ingress",
-          "service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags" =>
-            "batteriesincl.com/managed=true,batteriesincl.com/environment=organization/bi/#{cluster_name}"
+          "service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags" => tags
         }
+        |> maybe_put_lazy(
+          battery.config.subnets != nil,
+          "service.beta.kubernetes.io/aws-load-balancer-subnets",
+          fn _ -> battery.config.subnets |> Enum.sort() |> Enum.join(",") end
+        )
+        |> maybe_put_lazy(
+          battery.config.eip_allocations != nil,
+          "service.beta.kubernetes.io/aws-load-balancer-eip-allocations",
+          fn _ -> battery.config.eip_allocations |> Enum.sort() |> Enum.join(",") end
+        )
       else
         %{}
       end

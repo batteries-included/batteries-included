@@ -23,13 +23,14 @@ type vpcConfig struct {
 	cidrBlock *net.IPNet
 
 	// state accumulation
-	azs         *aws.GetAvailabilityZonesResult
-	azNames     []string
-	azIDs       []string
-	vpc         *ec2.Vpc
-	vpcID       pulumi.IDOutput
-	subnets     map[string][]*ec2.Subnet
-	gateways    map[string]pulumi.IDOutput
+	azs     *aws.GetAvailabilityZonesResult
+	azNames []string
+	azIDs   []string
+	vpc     *ec2.Vpc
+	vpcID   pulumi.IDOutput
+
+	subnets map[string][]pulumi.IDOutput
+	gateways,
 	routeTables map[string]pulumi.IDOutput
 }
 
@@ -44,6 +45,8 @@ func (v *vpcConfig) withConfig(cfg *util.PulumiConfig) error {
 func (v *vpcConfig) withOutputs(outputs map[string]auto.OutputMap) error { return nil }
 
 func (v *vpcConfig) run(ctx *pulumi.Context) error {
+	v.subnets = make(map[string][]pulumi.IDOutput)
+
 	for _, fn := range []func(*pulumi.Context) error{
 		v.getAZS,
 		v.buildVPC,
@@ -58,19 +61,11 @@ func (v *vpcConfig) run(ctx *pulumi.Context) error {
 	}
 
 	ctx.Export("vpcID", v.vpcID)
-	ctx.Export("publicSubnetIDs", toIDArray(v.subnets["public"]))
-	ctx.Export("privateSubnetIDs", toIDArray(v.subnets["private"]))
+	ctx.Export("publicSubnetIDs", pulumi.ToIDArrayOutput(v.subnets["public"]))
+	ctx.Export("privateSubnetIDs", pulumi.ToIDArrayOutput(v.subnets["private"]))
 	ctx.Export("cidrBlock", pulumi.String(v.cidrBlock.String()))
 
 	return nil
-}
-
-func toIDArray(subnets []*ec2.Subnet) pulumi.IDArrayOutput {
-	out := []pulumi.IDOutput{}
-	for _, subnet := range subnets {
-		out = append(out, subnet.ID())
-	}
-	return pulumi.ToIDArrayOutput(out)
 }
 
 func (v *vpcConfig) getAZS(ctx *pulumi.Context) error {
@@ -132,7 +127,6 @@ func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 		"karpenter.sh/discovery": v.baseName,
 	}
 
-	subnets := make(map[string][]*ec2.Subnet)
 	for i, az := range v.azNames {
 		for j, p := range subnetTypes {
 			netNum := i + (100 * j) + 1 // 1 through x for public 101 through x for private
@@ -162,10 +156,9 @@ func (v *vpcConfig) buildSubnets(ctx *pulumi.Context) error {
 				return fmt.Errorf("error registering EC2 subnet %s: %w", name, err)
 			}
 
-			subnets[p] = append(subnets[p], subnet)
+			v.subnets[p] = append(v.subnets[p], subnet.ID())
 		}
 	}
-	v.subnets = subnets
 	return nil
 }
 
@@ -195,7 +188,7 @@ func (v *vpcConfig) buildGateways(ctx *pulumi.Context) error {
 
 	ngw, err := ec2.NewNatGateway(ctx, name, &ec2.NatGatewayArgs{
 		AllocationId: eip.ID(),
-		SubnetId:     v.subnets["public"][0].ID(),
+		SubnetId:     v.subnets["public"][0],
 		Tags:         pulumi.StringMap{"Name": pulumi.String(name)},
 	}, igwDependency, parent)
 	if err != nil {
@@ -269,7 +262,7 @@ func (v *vpcConfig) buildRouteTableAssocs(ctx *pulumi.Context) error {
 			name := fmt.Sprintf("%s-%s-%d-rta", v.baseName, t, i)
 
 			_, err := ec2.NewRouteTableAssociation(ctx, name, &ec2.RouteTableAssociationArgs{
-				SubnetId:     subnet.ID(),
+				SubnetId:     subnet,
 				RouteTableId: v.routeTables[t],
 			})
 			if err != nil {
