@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"net/netip"
 	"os"
@@ -103,6 +104,9 @@ func (e *eks) Up(ctx context.Context) error {
 
 	e.pConfig = pConfig
 
+	progress := util.NewProgress()
+	defer progress.Shutdown()
+
 	for _, cmpnt := range components {
 		stack, err := e.createStack(ctx, cmpnt.name, cmpnt.run)
 		if err != nil {
@@ -121,10 +125,13 @@ func (e *eks) Up(ctx context.Context) error {
 			return fmt.Errorf("failed to refresh stack: %w", err)
 		}
 
-		// wire up our update to stream progress to stdout
-		stdoutStreamer := optup.ProgressStreams(os.Stdout)
+		upOpts := []optup.Option{
+			optup.ProgressStreams(util.DebugLogWriter(ctx, slog.Default())),
+			optup.SuppressProgress(), // No progress dots
+			optup.EventStreams(progress.AddBar(cmpnt.name, false)),
+		}
 
-		res, err := stack.Up(ctx, stdoutStreamer)
+		res, err := stack.Up(ctx, upOpts...)
 		if err != nil {
 			return fmt.Errorf("failed to create or update resources: %w", err)
 		}
@@ -164,6 +171,9 @@ func (e *eks) Destroy(ctx context.Context) error {
 		stacks[cmpnt.name] = stack
 	}
 
+	progress := util.NewProgress()
+	defer progress.Shutdown()
+
 	// then work backwards to destroy each stack
 	for i := range components {
 		cmpnt := components[len(components)-1-i]
@@ -177,10 +187,13 @@ func (e *eks) Destroy(ctx context.Context) error {
 			return fmt.Errorf("failed to refresh stack: %w", err)
 		}
 
-		// wire up our update to stream progress to stdout
-		stdoutStreamer := optdestroy.ProgressStreams(os.Stdout)
+		destroyOpts := []optdestroy.Option{
+			optdestroy.ProgressStreams(util.DebugLogWriter(ctx, slog.Default())),
+			optdestroy.SuppressProgress(), // No progress dots
+			optdestroy.EventStreams(progress.AddBar(cmpnt.name, true)),
+		}
 
-		if _, err := stack.Destroy(ctx, stdoutStreamer); err != nil {
+		if _, err := stack.Destroy(ctx, destroyOpts...); err != nil {
 			return fmt.Errorf("failed to delete resources: %w", err)
 		}
 	}

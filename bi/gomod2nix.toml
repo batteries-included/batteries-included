@@ -19,6 +19,12 @@ schema = 3
   [mod."github.com/ProtonMail/go-crypto"]
     version = "v1.0.0"
     hash = "sha256-Gflazvyv+457FpUTtPafJ+SdolYSalpsU0tragTxNi8="
+  [mod."github.com/VividCortex/ewma"]
+    version = "v1.2.0"
+    hash = "sha256-mHprIVRUOgs1qyYpiMO3bh6fCzDrqasDsaTaRE0oHXI="
+  [mod."github.com/acarl005/stripansi"]
+    version = "v0.0.0-20180116102854-5a71ef0e047d"
+    hash = "sha256-Q2ejMYDBsPf7ihVntBygIhy2WYN1LixDOrXHBnWMXQs="
   [mod."github.com/adrg/xdg"]
     version = "v0.4.0"
     hash = "sha256-zGjkdUQmrVqD6rMO9oDY+TeJCpuqnHyvkPCaXDlac/U="
@@ -505,6 +511,9 @@ schema = 3
   [mod."github.com/uber/jaeger-lib"]
     version = "v2.4.1+incompatible"
     hash = "sha256-RcnLDfoiYkzUnmQAC2D2/VNGOaOXmiEcfAFcyXph6R8="
+  [mod."github.com/vbauerster/mpb/v8"]
+    version = "v8.7.3"
+    hash = "sha256-aS/k0kaJZzRCqXPGRQouxxhWzYdqJa0Z3V4usShxr24="
   [mod."github.com/xanzy/ssh-agent"]
     version = "v0.3.3"
     hash = "sha256-l3pGB6IdzcPA/HLk93sSN6NM2pKPy+bVOoacR5RC2+c="
