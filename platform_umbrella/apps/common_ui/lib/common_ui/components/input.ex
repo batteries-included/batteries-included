@@ -88,14 +88,17 @@ defmodule CommonUI.Components.Input do
 
         <label
           :for={option <- @options}
-          class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest cursor-pointer"
+          class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest dark:hover:bg-gray-darker cursor-pointer"
         >
           <input
             type="checkbox"
             name={@name <> "[]"}
             value={option.value}
             checked={Enum.member?(@value, option.value)}
-            class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary"
+            class={[
+              "size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darker-tint",
+              "checked:border-primary checked:hover:border-primary"
+            ]}
           />
 
           <%= option.name %>
@@ -156,10 +159,11 @@ defmodule CommonUI.Components.Input do
         value="true"
         checked={@checked}
         class={[
-          "size-5 text-primary rounded cursor-pointer",
+          "size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darkest-tint",
           "checked:border-primary checked:hover:border-primary",
-          @errors == [] && "border-gray-lighter hover:border-primary",
-          @errors != [] && "phx-feedback:bg-red-50 phx-feedback:border-red-200"
+          @errors == [] && "border-gray-lighter dark:border-gray-darker-tint hover:border-primary",
+          @errors != [] &&
+            "phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900"
         ]}
       />
 
@@ -190,9 +194,9 @@ defmodule CommonUI.Components.Input do
           value={option.value}
           checked={to_string(@value) == to_string(option.value)}
           class={[
-            "size-5 text-primary rounded-full cursor-pointer",
+            "size-5 text-primary rounded-full cursor-pointer bg-white dark:bg-gray-darkest-tint",
             "checked:border-primary checked:hover:border-primary",
-            @errors == [] && "border-gray-lighter hover:border-primary",
+            @errors == [] && "border-gray-lighter dark:border-gray-darker-tint hover:border-primary",
             @errors != [] && "phx-feedback:bg-red-50 phx-feedback:border-red-200"
           ]}
         />

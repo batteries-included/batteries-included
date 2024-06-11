@@ -92,7 +92,7 @@ defmodule CommonUI.Components.Alert do
   defp variant_class("info"), do: "bg-sky-50 text-sky-500 border-sky-100"
   defp variant_class("success"), do: "bg-green-50 text-green-500 border-green-100"
   defp variant_class("warning"), do: "bg-amber-50 text-amber-500 border-amber-100"
-  defp variant_class("error"), do: "bg-red-50 text-red-500 border-red-100"
+  defp variant_class("error"), do: "bg-red-50 text-red-500 border-red-100 dark:bg-red-950 dark:border-red-900"
   defp variant_class("disconnected"), do: variant_class("error")
 
   defp position_class("top-left"), do: "top-5 left-5"

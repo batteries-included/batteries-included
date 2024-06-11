@@ -1,12 +1,13 @@
 <label phx-feedback-for="foo" class="flex flex-wrap items-center gap-x-2 cursor-pointer ">
   <input type="hidden" name="foo" value="false">
-  <input type="checkbox" name="foo" value="true" checked class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary phx-feedback:bg-red-50 phx-feedback:border-red-200">
+  <input type="checkbox" name="foo" value="true" checked class="size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darkest-tint checked:border-primary checked:hover:border-primary phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900">
 
   <span class="text-sm text-gray-darkest dark:text-gray-lighter">
     Foobar
     
   </span>
 
+  
   <div class="flex items-center gap-2 text-xs text-red-500 font-semibold phx-no-feedback:hidden w-full mt-2">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-4 fill-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/>

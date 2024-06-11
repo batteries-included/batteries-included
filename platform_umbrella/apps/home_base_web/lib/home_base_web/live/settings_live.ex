@@ -403,7 +403,10 @@ defmodule HomeBaseWeb.SettingsLive do
 
         <div>
           <.panel title="Members">
-            <div :for={role <- @roles} class="flex gap-3 bg-gray-lightest mb-3 px-3 py-1 rounded-md">
+            <div
+              :for={role <- @roles}
+              class="flex gap-3 bg-gray-lightest dark:bg-gray-darkest dark:border dark:border-gray-darker-tint mb-3 px-3 py-1 rounded-md"
+            >
               <div class="flex items-center gap-2 flex-1">
                 <%= role.invited_email || role.user.email %>
 
