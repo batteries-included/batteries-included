@@ -25,7 +25,7 @@ defmodule HomeBaseWeb.Layouts do
         <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
         <script phx-track-static defer type="text/javascript" src={~p"/assets/app.js"} />
       </head>
-      <body class="antialiased font-sans font-normal leading-loose text-gray-darkest">
+      <body class="antialiased font-sans font-normal leading-loose text-gray-darkest dark:text-gray-lighter">
         <%= @inner_content %>
       </body>
     </html>
@@ -52,7 +52,7 @@ defmodule HomeBaseWeb.Layouts do
       <div class="flex flex-col items-center gap-12 p-12 w-full">
         <.logo class="w-36" />
 
-        <div class="w-full max-w-md bg-white shadow-2xl shadow-gray/30 rounded-lg p-6 lg:p-10">
+        <div class="w-full max-w-md bg-white dark:bg-gray-darkest shadow-2xl shadow-gray/30 dark:shadow-black/40 rounded-lg p-6 lg:p-10">
           <%= @inner_content %>
         </div>
 
@@ -87,7 +87,10 @@ defmodule HomeBaseWeb.Layouts do
     />
 
     <div class="flex flex-col h-screen">
-      <div class="flex items-center justify-between relative header-gradient px-8 border-b border-b-gray-lighter">
+      <div class={[
+        "flex items-center justify-between relative header-gradient px-8",
+        "border-b border-b-gray-lighter dark:border-b-gray-darker"
+      ]}>
         <.logo variant="full" class="my-3" />
 
         <div class="flex items-center gap-8">
@@ -168,7 +171,7 @@ defmodule HomeBaseWeb.Layouts do
         </div>
       </div>
 
-      <div class="block relative p-8 flex-1 overflow-auto">
+      <div class="block relative p-8 flex-1 overflow-auto bg-white dark:bg-gray-darkest">
         <%= @inner_content %>
       </div>
     </div>

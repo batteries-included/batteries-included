@@ -7,3 +7,13 @@
 .header-gradient {
   background: linear-gradient(90deg, #fafaff 0%, #fbf0f9 65%, #fffcfd 100%);
 }
+
+@media (prefers-color-scheme: dark) {
+  .background-gradient {
+    background: linear-gradient(0deg, #311520 0%, #181b22 45%, #313145 100%);
+  }
+
+  .header-gradient {
+    background: linear-gradient(90deg, #313145 0%, #181b22 65%, #311520 100%);
+  }
+}

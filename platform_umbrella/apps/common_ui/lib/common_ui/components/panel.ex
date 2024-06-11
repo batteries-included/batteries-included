@@ -35,7 +35,7 @@ defmodule CommonUI.Components.Panel do
 
   defp panel_class("gray") do
     [
-      "bg-gray-lightest rounded-lg dark:bg-gray-darkest/50",
+      "bg-gray-lightest rounded-lg dark:bg-gray-darker/20",
       panel_class()
     ]
   end

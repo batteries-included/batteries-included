@@ -87,12 +87,27 @@ defmodule CommonUI.Components.Alert do
   end
 
   defp type_class("inline"), do: "px-3.5 py-2.5"
-  defp type_class("fixed"), do: "fixed shadow-lg z-50 max-w-96 px-5 py-4 shadow-xl shadow-gray-darkest/10 z-50 hidden"
 
-  defp variant_class("info"), do: "bg-sky-50 text-sky-500 border-sky-100"
-  defp variant_class("success"), do: "bg-green-50 text-green-500 border-green-100"
-  defp variant_class("warning"), do: "bg-amber-50 text-amber-500 border-amber-100"
-  defp variant_class("error"), do: "bg-red-50 text-red-500 border-red-100"
+  defp type_class("fixed") do
+    "fixed shadow-lg z-50 max-w-96 px-5 py-4 shadow-xl shadow-gray-darkest/10 z-50 hidden"
+  end
+
+  defp variant_class("info") do
+    "bg-sky-50 text-sky-500 border-sky-100 dark:bg-sky-500 dark:text-white dark:border-none"
+  end
+
+  defp variant_class("success") do
+    "bg-green-50 text-green-500 border-green-100 dark:bg-green-500 dark:text-white dark:border-none"
+  end
+
+  defp variant_class("warning") do
+    "bg-amber-50 text-amber-500 border-amber-100 dark:bg-amber-400 dark:text-white dark:border-none"
+  end
+
+  defp variant_class("error") do
+    "bg-red-50 text-red-500 border-red-100 dark:bg-red-500 dark:text-white dark:border-none"
+  end
+
   defp variant_class("disconnected"), do: variant_class("error")
 
   defp position_class("top-left"), do: "top-5 left-5"

@@ -14,14 +14,14 @@
     
   </div>
 
-  <nav id="foobar-dropdown" role="navigation" phx-click-away="[[&quot;hide&quot;,{&quot;time&quot;:150,&quot;to&quot;:&quot;#foobar-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-150&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;]]}]]" class="absolute right-0 top-full mt-4 min-w-full max-w-60 border border-gray-lighter bg-white rounded-md shadow-xl overflow-hidden hidden dark:bg-gray-darkest dark:text-white !mt-1 max-h-64 !overflow-auto">
+  <nav id="foobar-dropdown" role="navigation" phx-click-away="[[&quot;hide&quot;,{&quot;time&quot;:150,&quot;to&quot;:&quot;#foobar-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-150&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;]]}]]" class="absolute right-0 top-full mt-4 min-w-full max-w-60 border border-gray-lighter bg-white rounded-md shadow-xl overflow-hidden hidden dark:bg-gray-darkest dark:text-white dark:border-gray-darker !mt-1 max-h-64 !overflow-auto">
     
-    <label class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest cursor-pointer">
-      <input type="checkbox" name="foo[]" value="foo" class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary">
+    <label class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest dark:hover:bg-gray-darker cursor-pointer">
+      <input type="checkbox" name="foo[]" value="foo" class="size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darker-tint checked:border-primary checked:hover:border-primary">
 
       Foo
-    </label><label class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest cursor-pointer">
-      <input type="checkbox" name="foo[]" value="bar" checked class="size-5 text-primary rounded cursor-pointer checked:border-primary checked:hover:border-primary">
+    </label><label class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest dark:hover:bg-gray-darker cursor-pointer">
+      <input type="checkbox" name="foo[]" value="bar" checked class="size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darker-tint checked:border-primary checked:hover:border-primary">
 
       Bar
     </label>

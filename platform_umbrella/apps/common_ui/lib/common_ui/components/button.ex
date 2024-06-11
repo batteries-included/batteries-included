@@ -93,7 +93,7 @@ defmodule CommonUI.Components.Button do
     [
       button_class(),
       rounded_button_class(),
-      "text-white bg-primary hover:bg-primary-dark disabled:bg-gray-lighter"
+      "text-white bg-primary hover:bg-primary-dark disabled:bg-gray-lighter dark:disabled:bg-gray-darker/30"
     ]
   end
 
@@ -119,7 +119,7 @@ defmodule CommonUI.Components.Button do
     [
       button_class(),
       rounded_button_class(),
-      "text-white dark:text-gray-darkest bg-red-500 hover:bg-red-400 disabled:bg-gray-lighter"
+      "text-white bg-red-500 hover:bg-red-400 disabled:bg-gray-lighter"
     ]
   end
 
@@ -140,7 +140,8 @@ defmodule CommonUI.Components.Button do
   defp button_class("minimal") do
     [
       button_class(),
-      "text-gray-dark hover:text-gray disabled:text-gray-light"
+      "text-gray-dark hover:text-gray disabled:text-gray-light",
+      "dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark"
     ]
   end
 

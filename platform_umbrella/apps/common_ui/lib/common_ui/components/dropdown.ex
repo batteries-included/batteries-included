@@ -27,7 +27,7 @@ defmodule CommonUI.Components.Dropdown do
         phx-click-away={hide_dropdown(@id, :slide_y)}
         class={[
           "absolute right-0 top-full mt-4 min-w-full max-w-60 border border-gray-lighter bg-white rounded-md shadow-xl overflow-hidden hidden",
-          "dark:bg-gray-darkest dark:text-white",
+          "dark:bg-gray-darkest dark:text-white dark:border-gray-darker",
           @class
         ]}
       >
@@ -62,7 +62,7 @@ defmodule CommonUI.Components.Dropdown do
 
   def dropdown_hr(assigns) do
     ~H"""
-    <div class="border-b border-b-gray-lighter" />
+    <div class="border-b border-b-gray-lighter dark:border-b-gray-darker" />
     """
   end
 
