@@ -154,7 +154,7 @@ defmodule CommonCore.Resources.Keycloak do
               ],
               "envFrom" => [%{"configMapRef" => %{"name" => "keycloak-env-vars"}}],
               "image" => battery.config.image,
-              "args" => ["start-dev", "--features=preview", "--metrics-enabled=true"],
+              "args" => ["start", "--features=preview", "--metrics-enabled=true"],
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 3,
