@@ -11,6 +11,8 @@ defmodule ControlServerWeb.GroupBatteries.NewLive do
 
     {:ok,
      socket
+     |> assign(:current_page, battery.group)
+     |> assign(:page_title, "#{battery.name} Battery")
      |> assign(:battery, battery)
      |> assign(:installing, false)
      |> assign(:completed, false)

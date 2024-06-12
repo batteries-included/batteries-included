@@ -13,6 +13,7 @@ defmodule ControlServerWeb.GroupBatteries.IndexLive do
     {:ok,
      socket
      |> assign(:group, group)
+     |> assign(:current_page, group.id)
      |> assign(:page_title, "#{group.name} Batteries")
      |> assign(:catalog_batteries, Catalog.all(group.id))
      |> assign_system_batteries(group)}

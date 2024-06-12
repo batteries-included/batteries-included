@@ -8,7 +8,11 @@ defmodule ControlServerWeb.GroupBatteries.EditLive do
   def mount(%{"battery_type" => battery_type}, _session, socket) do
     battery = Catalog.get(battery_type)
 
-    {:ok, assign(socket, :battery, battery)}
+    {:ok,
+     socket
+     |> assign(:battery, battery)
+     |> assign(:current_page, battery.group)
+     |> assign(:page_title, "#{battery.name} Battery")}
   end
 
   def handle_event("validate", _params, socket) do

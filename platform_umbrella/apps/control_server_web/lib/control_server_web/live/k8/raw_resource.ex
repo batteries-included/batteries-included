@@ -16,6 +16,7 @@ defmodule ControlServerWeb.Live.RawResource do
 
     {:ok,
      socket
+     |> assign(:current_page, :kubernetes)
      |> assign(:base_url, base_url(resource_type, namespace, name))
      |> assign(:path, Map.get(params, "path", []))
      |> assign(:resource_type, resource_type)
