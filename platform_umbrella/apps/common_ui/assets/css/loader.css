@@ -26,7 +26,7 @@
     left: 10px;
     right: 10px;
     bottom: 10px;
-    background: #f1f1f1;
+    background: #fafafa;
     border: solid white 10px;
     border-radius: 50%;
   }
@@ -54,5 +54,12 @@
     &:nth-child(4) {
       filter: blur(50px);
     }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .loader:after {
+    background: #1c1c1e;
+    border-color: #21242b;
   }
 }
