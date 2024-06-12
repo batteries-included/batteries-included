@@ -33,9 +33,9 @@ defmodule KubeServices.ET.Usage do
   @spec start_link(Keyword.t()) :: :ignore | {:error, any()} | {:ok, pid()}
   def start_link(opts \\ []) do
     opts = Keyword.put_new(opts, :name, __MODULE__)
-    {genserver_opts, opts} = Keyword.split(opts, @state_opts)
+    {init_opts, opts} = Keyword.split(opts, @state_opts)
 
-    GenServer.start_link(__MODULE__, opts, genserver_opts)
+    GenServer.start_link(__MODULE__, init_opts, opts)
   end
 
   defp schedule_report(%State{sleep_time: sleep_time} = _state) do

@@ -16,7 +16,7 @@ defmodule KubeServices.Application do
     res
   end
 
-  defp start_services?, do: Application.get_env(:kube_services, :start_services)
+  def start_services?, do: Application.get_env(:kube_services, :start_services)
 
   def children(true = _run) do
     [

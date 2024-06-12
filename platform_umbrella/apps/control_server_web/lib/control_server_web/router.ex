@@ -10,6 +10,7 @@ defmodule ControlServerWeb.Router do
     plug :put_root_layout, {ControlServerWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers, ControlServerWeb.CSP.new()
+    plug KubeServices.ET.StatusPlug
   end
 
   pipeline :api do
