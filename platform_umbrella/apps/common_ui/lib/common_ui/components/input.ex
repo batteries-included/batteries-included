@@ -332,7 +332,8 @@ defmodule CommonUI.Components.Input do
           "after:rounded-full after:bg-gray after:transition-all",
           "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary",
           "peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter",
-          "peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary-light"
+          "peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary/50",
+          "dark:peer-checked:peer-disabled:after:bg-primary/50 dark:peer-disabled:hover:border-gray-darker"
         ]} />
       </div>
 
