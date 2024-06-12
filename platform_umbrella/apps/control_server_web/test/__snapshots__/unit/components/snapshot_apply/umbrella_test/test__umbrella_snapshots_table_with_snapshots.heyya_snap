@@ -8,7 +8,7 @@
         </th>
       </tr>
     </thead>
-    <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
+    <tbody class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       <tr class="group hover:bg-gray-lightest dark:hover:bg-gray-darkest">
         <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
           <div class="block py-4">

@@ -8,7 +8,7 @@
         </th>
       </tr>
     </thead>
-    <tbody class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
+    <tbody class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       
     </tbody>
   </table>
