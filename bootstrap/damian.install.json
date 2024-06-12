@@ -1,7 +1,14 @@
 {
-  "id": "batt_018ffa554b347a389b67474ba6729724",
+  "id": "batt_019012f33eef7aba9d446c15bc83e68a",
   "usage": "internal_dev",
   "default_size": "small",
+  "control_jwk": {
+    "crv": "P-256",
+    "d": "wKK1q8dskobSmvjjlR-n3aelp-P7kCQq_A-NHSVULEI",
+    "kty": "EC",
+    "x": "9bAJcn1YItZEbbbp4dpJaOvlfjY6paqJy4f7FUwL6oM",
+    "y": "V3rL1xI1O4R-SnPHxF1TJkkiOxVVkFelQTPHz4bSEHY"
+  },
   "inserted_at": null,
   "updated_at": null,
   "slug": "damian",
@@ -10,5 +17,5 @@
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_018ffa554b1271518daf7fa68a933a1f"
+  "team_id": "batt_019012f33ec47ed6a91091cc937b4652"
 }

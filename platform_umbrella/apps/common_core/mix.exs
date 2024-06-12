@@ -53,6 +53,9 @@ defmodule CommonCore.MixProject do
       # Password Hashing
       {:bcrypt_elixir, "~> 3.0"},
 
+      # Token/Signing
+      {:jose, "~> 1.11"},
+      {:plug, "~> 1.16"},
       # History
       {:ex_audit, "~> 0.10"},
 

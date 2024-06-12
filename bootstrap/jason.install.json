@@ -1,7 +1,14 @@
 {
-  "id": "batt_018ffa554b347d61b49bcd9c674ada2f",
+  "id": "batt_019012f33eef72649d1cd7b3f3bdeae5",
   "usage": "development",
   "default_size": "small",
+  "control_jwk": {
+    "crv": "P-256",
+    "d": "9srhbvmfqgXNT6sg8eYW6VsV-jJiLRmu3_kNeybgc5A",
+    "kty": "EC",
+    "x": "s540EiTavyb1RLN6vWe0j9U16VTsom7NI9hkJCvlS7g",
+    "y": "xCtqH987T9wx88-mrHusRBkoIs1gs9Gdes7YzK6jrbU"
+  },
   "inserted_at": null,
   "updated_at": null,
   "slug": "jason",
@@ -10,5 +17,5 @@
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_018ffa554b1271518daf7fa68a933a1f"
+  "team_id": "batt_019012f33ec47ed6a91091cc937b4652"
 }

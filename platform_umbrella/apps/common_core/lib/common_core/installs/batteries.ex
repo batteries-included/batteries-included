@@ -31,7 +31,8 @@ defmodule CommonCore.Installs.Batteries do
          slug: slug,
          kube_provider: cluster_type,
          default_size: default_size,
-         usage: usage
+         usage: usage,
+         control_jwk: control_jwk
        }) do
     Enum.map(batteries, fn
       %SystemBattery{type: :battery_core, config: config} = sb ->
@@ -41,6 +42,7 @@ defmodule CommonCore.Installs.Batteries do
             default_size: default_size,
             cluster_name: slug,
             install_id: id,
+            control_jwk: control_jwk,
             server_in_cluster: !Enum.member?([:internal_dev, :internal_int_test], usage)
         }
 

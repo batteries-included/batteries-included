@@ -5,9 +5,9 @@ defmodule KubeServices.ET.Hosts do
   use GenServer
   use TypedStruct
 
-  alias CommonCore.ET.HomeBaseClient
   alias CommonCore.ET.HostReport
   alias CommonCore.StateSummary
+  alias KubeServices.ET.HomeBaseClient
 
   require Logger
 

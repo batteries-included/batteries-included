@@ -1,16 +1,20 @@
-defmodule CommonCore.ET.HomeBaseClient do
+defmodule KubeServices.ET.HomeBaseClient do
   @moduledoc false
   use GenServer
   use TypedStruct
 
   alias CommonCore.ET.HostReport
   alias CommonCore.ET.UsageReport
+  alias CommonCore.StateSummary
 
   require Logger
 
   typedstruct module: State do
     field :home_url, String.t()
     field :http_client, Tesla.Client.t(), default: nil
+    field :control_jwk, JOSE.JWK.t(), default: nil
+    field :usage_report_path, String.t(), default: nil
+    field :host_report_path, String.t(), default: nil
   end
 
   @me __MODULE__
@@ -38,8 +42,29 @@ defmodule CommonCore.ET.HomeBaseClient do
     # Get the default url we'll need that to create the http client
     home_url = Keyword.fetch!(opts, :home_url)
 
-    state = struct!(State, home_url: home_url, http_client: nil)
+    :ok = EventCenter.SystemStateSummary.subscribe()
+
+    control_jwk =
+      Keyword.get_lazy(opts, :control_jwk, fn ->
+        state_summary = KubeServices.SystemState.Summarizer.cached()
+        CommonCore.StateSummary.JWK.jwk(state_summary)
+      end)
+
+    state = struct!(State, home_url: home_url, http_client: nil, control_jwk: control_jwk)
     build_client(state)
+  end
+
+  @impl GenServer
+  def handle_info(%StateSummary{} = state_summary, state) do
+    Logger.debug("Received state summary getting new control jwk")
+    # For now we don't
+    {:noreply,
+     %State{
+       state
+       | control_jwk: CommonCore.StateSummary.JWK.jwk(state_summary),
+         usage_report_path: CommonCore.ET.URLs.usage_report_path(state_summary),
+         host_report_path: CommonCore.ET.URLs.host_reports_path(state_summary)
+     }}
   end
 
   @impl GenServer
@@ -66,12 +91,9 @@ defmodule CommonCore.ET.HomeBaseClient do
     ]
   end
 
-  defp do_send_usage(%{http_client: client} = _state, state_summary) do
+  defp do_send_usage(%{http_client: client, usage_report_path: usage_report_path} = state, state_summary) do
     with {:ok, usage_report} <- UsageReport.new(state_summary),
-         # since the path is dependent on the install id, get that here
-         report_path = CommonCore.ET.URLs.usage_report_path(state_summary),
-         # Push the report to the reports path for the install
-         {:ok, _} <- Tesla.post(client, report_path, %{usage_report: usage_report}) do
+         {:ok, _} <- Tesla.post(client, usage_report_path, %{jwt: sign(state, usage_report)}) do
       :ok
     else
       {:error, reason} ->
@@ -84,10 +106,9 @@ defmodule CommonCore.ET.HomeBaseClient do
     end
   end
 
-  defp do_send_host(%State{http_client: client} = _state, state_summary) do
+  defp do_send_host(%State{http_client: client, host_report_path: host_report_path} = state, state_summary) do
     with {:ok, report} <- HostReport.new(state_summary),
-         report_path = CommonCore.ET.URLs.host_reports_path(state_summary),
-         {:ok, _} <- Tesla.post(client, report_path, %{host_report: report}) do
+         {:ok, _} <- Tesla.post(client, host_report_path, %{jwt: sign(state, report)}) do
       :ok
     else
       {:error, reason} ->
@@ -98,5 +119,9 @@ defmodule CommonCore.ET.HomeBaseClient do
         Logger.error("Unexpected response from home: #{inspect(unexpected)}")
         {:error, {:unexpected_response, unexpected}}
     end
+  end
+
+  defp sign(%State{control_jwk: jwk}, data) do
+    jwk |> JOSE.JWT.sign(JOSE.JWT.from(data)) |> elem(1)
   end
 end

@@ -50,7 +50,8 @@ defmodule HomeBase.Factory do
       usage: sequence(:usage, [:kitchen_sink, :development, :production]),
       kube_provider: sequence(:kube_provider, [:kind, :aws, :provided]),
       kube_provider_config: %{},
-      default_size: sequence(:default_size, [:tiny, :small, :medium, :large, :xlarge, :huge])
+      default_size: sequence(:default_size, [:tiny, :small, :medium, :large, :xlarge, :huge]),
+      control_jwk: CommonCore.JWK.generate_key()
     }
   end
 

@@ -1,7 +1,14 @@
 {
-  "id": "batt_018ffa554b347dda9ad1d5a19f8c06d1",
+  "id": "batt_019012f33eef71d086b8b689482625cd",
   "usage": "development",
   "default_size": "small",
+  "control_jwk": {
+    "crv": "P-256",
+    "d": "LyFmPGWAUQZHvXYSNwOFbHPKM3xuwTQ3IOjGORoTfkg",
+    "kty": "EC",
+    "x": "1e0TLXltCuIwxKe3ZO3eXt1x_PSjm4MaM08JHUH7OVc",
+    "y": "CR34ZqfIVoHw65B25wUp9eFZMPGD3zbJsDwBRJsuJCw"
+  },
   "inserted_at": null,
   "updated_at": null,
   "slug": "elliott",
@@ -10,5 +17,5 @@
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_018ffa554b1271518daf7fa68a933a1f"
+  "team_id": "batt_019012f33ec47ed6a91091cc937b4652"
 }
