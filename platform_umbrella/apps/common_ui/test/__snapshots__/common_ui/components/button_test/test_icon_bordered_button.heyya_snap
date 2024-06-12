@@ -1,0 +1,7 @@
+<button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 size-9 p-1.5 rounded-full border border-gray-lighter text-primary hover:border-primary-light dark:border-gray-darker dark:hover:border-gray-dark disabled:text-gray disabled:hover:border-gray-lighter" type="button">
+  
+
+  Button
+
+  
+</button>

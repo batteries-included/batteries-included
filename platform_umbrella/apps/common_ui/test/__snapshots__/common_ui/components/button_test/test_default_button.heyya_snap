@@ -1,7 +1,7 @@
-<button type="button" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-primary hover:text-primary-dark disabled:text-gray-light">
+<button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-primary hover:text-primary-dark disabled:text-gray-light" type="button">
   
 
-  Test Button
+  Button
 
   
 </button>

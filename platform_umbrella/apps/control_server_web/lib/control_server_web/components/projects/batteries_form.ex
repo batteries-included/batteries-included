@@ -181,7 +181,10 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
   defp battery_toggle(assigns) do
     ~H"""
-    <div class="flex items-start justify-between gap-x-12 pb-8 last:pb-0 border-b border-b-gray-lighter last:border-b-0">
+    <div class={[
+      "flex items-start justify-between gap-x-12 pb-8 last:pb-0",
+      "border-b border-b-gray-lighter dark:border-b-gray-darker last:border-b-0"
+    ]}>
       <div>
         <div class="flex items-center gap-3 mb-2">
           <h3 class="text-xl font-semibold">

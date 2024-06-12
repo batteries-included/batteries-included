@@ -49,7 +49,7 @@ defmodule CommonUI.Components.Table do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative dark:divide-y dark:divide-gray-0 border-t border-gray-lighter dark:border-gray-darkest text-sm leading-6 text-gray-darkest dark:text-gray-lighter"
+          class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter"
         >
           <tr
             :for={row <- @rows}
