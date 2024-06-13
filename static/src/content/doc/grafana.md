@@ -2,7 +2,7 @@
 title: Grafana
 description: Quotiens garrula, aerias tuas ut visceribus fassoque
 tags: ['test', 'default doc']
-draft: false
+draft: true
 ---
 
 ## Quam in loci visa locutus venit inclusum

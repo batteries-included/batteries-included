@@ -2,7 +2,7 @@
 title: Monitoring
 description: Lorem markdownum quaecumque sidera summam
 tags: ['test', 'default doc']
-draft: false
+draft: true
 ---
 
 ## Negabit ferrum ad caput factum silentia rector

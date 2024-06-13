@@ -2,7 +2,7 @@
 title: Kubernetes Live View
 description: Virtus summa viroque, neci imagine erat divum
 tags: ['test', 'default doc']
-draft: false
+draft: true
 ---
 
 ## Sequuntur illic illo numquam longis

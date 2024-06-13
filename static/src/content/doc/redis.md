@@ -3,7 +3,7 @@ title: Redis
 description: Se mea ite adhuc, vix ordo emisitque Iuppiter
 
 tags: ['test', 'default doc']
-draft: false
+draft: true
 ---
 
 ## Cum ultima nec sustulit feruntur urbes secreta
