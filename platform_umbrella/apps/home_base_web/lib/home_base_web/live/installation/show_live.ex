@@ -79,7 +79,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
       </.panel>
 
       <div>
-        <!-- TOOD: Link to installation's control server -->
+        <!-- TODO: Link to installation's control server -->
         <.a variant="bordered" href={~p"/"}>Control Server</.a>
       </div>
     </.grid>
