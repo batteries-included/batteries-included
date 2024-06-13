@@ -65,7 +65,7 @@ defmodule CommonUI.Components.Link do
 
   defp link_class("bordered") do
     [
-      "flex items-center gap-4 justify-between p-4 border rounded-lg",
+      "flex items-center gap-4 justify-between px-4 py-3 border rounded-lg",
       "border-gray-lighter dark:border-gray-darker hover:border-primary"
     ]
   end
