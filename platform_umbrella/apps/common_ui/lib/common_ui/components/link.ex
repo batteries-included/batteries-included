@@ -70,5 +70,5 @@ defmodule CommonUI.Components.Link do
     ]
   end
 
-  defp link_class(_), do: ""
+  defp link_class(_), do: "underline hover:opacity-75"
 end

@@ -1,3 +1,3 @@
-<a href="/" data-phx-link="redirect" data-phx-link-state="push" class="">
+<a href="/" data-phx-link="redirect" data-phx-link-state="push" class="underline hover:opacity-75">
   Test unstyled Link
 </a>
