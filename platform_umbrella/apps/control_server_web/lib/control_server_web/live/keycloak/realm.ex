@@ -146,7 +146,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   defp links_panel(assigns) do
     ~H"""
     <.flex column class="justify-start">
-      <.bordered_menu_item href={@realm_admin_console_url} title="Admin Console" />
+      <.a variant="bordered" href={@realm_admin_console_url}>Admin Console</.a>
     </.flex>
     """
   end

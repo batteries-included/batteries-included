@@ -4,25 +4,38 @@ defmodule Storybook.Components.Link do
 
   def function, do: &CommonUI.Components.Link.a/1
 
-  def variations,
-    do: [
+  def variations do
+    [
       %Variation{
         id: :default,
-        description: "Default Link",
-        attributes: %{variant: "unstyled", navigate: "/"},
-        slots: ["Default Link (unstyled)"]
+        attributes: %{navigate: "/"},
+        slots: ["Default Link"]
+      },
+      %Variation{
+        id: :icon,
+        attributes: %{variant: "icon", navigate: "/", icon: :face_smile},
+        slots: ["I'm outta here"]
       },
       %Variation{
         id: :styled,
-        description: "Styled Link",
         attributes: %{variant: "styled", navigate: "/"},
         slots: ["Link with a tux"]
       },
       %Variation{
         id: :external,
-        description: "External",
         attributes: %{variant: "external", href: "https://www.eff.org"},
+        slots: ["I'm outta here"]
+      },
+      %Variation{
+        id: :bordered,
+        attributes: %{variant: "bordered"},
+        slots: ["Bordered Link"]
+      },
+      %Variation{
+        id: :external_bordered,
+        attributes: %{variant: "bordered", href: "https://www.eff.org"},
         slots: ["I'm outta here"]
       }
     ]
+  end
 end

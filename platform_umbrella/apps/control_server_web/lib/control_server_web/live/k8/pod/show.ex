@@ -249,19 +249,15 @@ defmodule ControlServerWeb.PodLive.Show do
   defp link_panel(assigns) do
     ~H"""
     <.flex column class="justify-start">
-      <.bordered_menu_item navigate={resource_path(@resource, :events)} title="Events" />
-      <.bordered_menu_item navigate={resource_path(@resource, :labels)} title="Labels/Annotations" />
-      <.bordered_menu_item navigate={raw_resource_path(@resource)} title="Raw Kubernetes" />
-      <.bordered_menu_item
-        :if={@grafana_dashboard_url != nil}
-        navigate={@grafana_dashboard_url}
-        title="Grafana Dashboard"
-      />
-      <.bordered_menu_item
-        :if={@trivy_enabled}
-        navigate={resource_path(@resource, :security)}
-        title="Security Report"
-      />
+      <.a variant="bordered" navigate={resource_path(@resource, :events)}>Events</.a>
+      <.a variant="bordered" navigate={resource_path(@resource, :labels)}>Labels/Annotations</.a>
+      <.a variant="bordered" navigate={raw_resource_path(@resource)}>Raw Kubernetes</.a>
+      <.a :if={@grafana_dashboard_url != nil} variant="bordered" navigate={@grafana_dashboard_url}>
+        Grafana Dashboard
+      </.a>
+      <.a :if={@trivy_enabled} variant="bordered" navigate={resource_path(@resource, :security)}>
+        Security Report
+      </.a>
     </.flex>
     """
   end
