@@ -3,6 +3,14 @@ defmodule CommonUI.Components.LinkTest do
 
   import CommonUI.Components.Link
 
+  component_snapshot_test "Link icon type" do
+    assigns = %{}
+
+    ~H"""
+    <.a variant="icon" icon={:face_smile} navigate="/">Test Link</.a>
+    """
+  end
+
   component_snapshot_test "Link styled type" do
     assigns = %{}
 
@@ -19,35 +27,27 @@ defmodule CommonUI.Components.LinkTest do
     """
   end
 
+  component_snapshot_test "Link bordered" do
+    assigns = %{}
+
+    ~H"""
+    <.a variant="bordered" navigate="/">Test Link</.a>
+    """
+  end
+
+  component_snapshot_test "Link bordered external" do
+    assigns = %{}
+
+    ~H"""
+    <.a variant="bordered" href="https://google.com">Test External Link</.a>
+    """
+  end
+
   component_snapshot_test "Link default" do
     assigns = %{}
 
     ~H"""
     <.a navigate="/">Test unstyled Link</.a>
-    """
-  end
-
-  component_snapshot_test "Link patch" do
-    assigns = %{}
-
-    ~H"""
-    <.a patch="/test">Test patch</.a>
-    """
-  end
-
-  component_snapshot_test "Link patch with variant" do
-    assigns = %{}
-
-    ~H"""
-    <.a patch="/test" variant="styled">Test patch with var</.a>
-    """
-  end
-
-  component_snapshot_test "Link with just href" do
-    assigns = %{}
-
-    ~H"""
-    <.a href="https://www.google.com/">Test bare href</.a>
     """
   end
 end

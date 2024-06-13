@@ -54,14 +54,19 @@ defmodule ControlServerWeb.Live.UmbrellaSnapshotShow do
       </.flex>
     </.page_header>
 
-    <.pills_menu>
-      <:item :if={@snapshot.kube_snapshot != nil} navigate={kube_show_url(@snapshot)}>
+    <.grid columns={2}>
+      <.a :if={@snapshot.kube_snapshot != nil} variant="bordered" navigate={kube_show_url(@snapshot)}>
         Kubernetes Deploy
-      </:item>
-      <:item :if={@snapshot.keycloak_snapshot != nil} navigate={kecloak_show_url(@snapshot)}>
+      </.a>
+
+      <.a
+        :if={@snapshot.keycloak_snapshot != nil}
+        variant="bordered"
+        navigate={kecloak_show_url(@snapshot)}
+      >
         Keycloak Deploy
-      </:item>
-    </.pills_menu>
+      </.a>
+    </.grid>
     """
   end
 end

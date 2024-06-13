@@ -153,13 +153,11 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp links_panel(assigns) do
     ~H"""
     <.flex column class="justify-start">
-      <.bordered_menu_item navigate={users_url(@cluster)} title="Users" />
-      <.bordered_menu_item navigate={services_url(@cluster)} title="Services" />
-      <.bordered_menu_item
-        :if={@grafana_dashboard_url}
-        href={@grafana_dashboard_url}
-        title="Grafana Dashboard"
-      />
+      <.a variant="bordered" navigate={users_url(@cluster)}>Users</.a>
+      <.a variant="bordered" navigate={services_url(@cluster)}>Services</.a>
+      <.a :if={@grafana_dashboard_url} variant="bordered" href={@grafana_dashboard_url}>
+        Grafana Dashboard
+      </.a>
     </.flex>
     """
   end
