@@ -22,6 +22,7 @@ defmodule CommonCore.Resources.KnativeServices do
       |> add_containers("containers", service.containers, service.env_values)
       |> add_containers("initContainers", service.init_containers, service.env_values)
       |> add_rollout_duration(service)
+      |> add_cluster_local_labels(service)
 
     spec = %{"template" => template}
 
@@ -34,22 +35,24 @@ defmodule CommonCore.Resources.KnativeServices do
     |> B.add_owner(service)
     |> B.spec(spec)
     |> add_rollout_duration(service)
+    |> add_cluster_local_labels(service)
   end
+
+  defp add_cluster_local_labels(resource_template, %{oauth2_proxy: true}),
+    do: B.label(resource_template, "networking.knative.dev/visibility", "cluster-local")
+
+  defp add_cluster_local_labels(resource_template, %{kube_internal: true}),
+    do: B.label(resource_template, "networking.knative.dev/visibility", "cluster-local")
+
+  defp add_cluster_local_labels(resource_template, _), do: resource_template
 
   defp add_rollout_duration(resource_template, %{rollout_duration: nil}), do: resource_template
 
   defp add_rollout_duration(resource_template, %{rollout_duration: dur}) when is_binary(dur) and dur == "",
     do: resource_template
 
-  defp add_rollout_duration(resource_template, %{rollout_duration: dur}) do
-    update_in(
-      resource_template,
-      [Access.key("metadata", %{}), Access.key("annotations", %{})],
-      fn anns ->
-        Map.put(anns || %{}, "serving.knative.dev/rollout-duration", dur)
-      end
-    )
-  end
+  defp add_rollout_duration(resource_template, %{rollout_duration: dur}),
+    do: B.annotation(resource_template, "serving.knative.dev/rollout-duration", dur)
 
   defp add_containers(resource_template, _name, nil, _), do: resource_template
 
