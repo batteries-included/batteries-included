@@ -97,7 +97,7 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
         </.alert>
 
         <div :if={@new_url != nil} class="text-xxl font-semibold">
-          New User Created with<.a href={@new_url} variant="styled">Keycloak admin console here</.a>.
+          New User Created with<.a href={@new_url}>Keycloak admin console here</.a>.
         </div>
 
         <.form

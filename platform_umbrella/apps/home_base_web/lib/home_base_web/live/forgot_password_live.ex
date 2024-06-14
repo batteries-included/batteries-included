@@ -52,7 +52,7 @@ defmodule HomeBaseWeb.ForgotPasswordLive do
 
     <div class="text-center">
       Remembered your password?
-      <.a navigate={~p"/login"} variant="styled">Log in</.a>
+      <.a navigate={~p"/login"}>Log in</.a>
     </div>
     """
   end

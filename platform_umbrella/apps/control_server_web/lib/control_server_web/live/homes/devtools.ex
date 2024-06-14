@@ -41,10 +41,10 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     <.panel title="Serverless Services">
       <:menu>
         <.flex>
-          <.a navigate={~p"/knative/services/new"} variant="styled">
+          <.a navigate={~p"/knative/services/new"}>
             <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Knative
           </.a>
-          <.a navigate={~p"/knative/services"}>View All</.a>
+          <.link navigate={~p"/knative/services"}>View All</.link>
         </.flex>
       </:menu>
       <.knative_services_table rows={@services} abbridged />
@@ -57,10 +57,10 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     <.panel title="Backend Services">
       <:menu>
         <.flex>
-          <.a navigate={~p"/backend_services/new"} variant="styled">
+          <.a navigate={~p"/backend_services/new"}>
             <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Backend Service
           </.a>
-          <.a navigate={~p"/backend_services/"}>View All</.a>
+          <.link navigate={~p"/backend_services/"}>View All</.link>
         </.flex>
       </:menu>
       <.backend_services_table rows={@services} abbridged />

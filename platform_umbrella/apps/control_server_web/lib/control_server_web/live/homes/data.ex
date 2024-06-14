@@ -51,10 +51,10 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="Postgres">
       <:menu>
         <.flex>
-          <.a navigate={~p"/postgres/new"} variant="styled">
+          <.a navigate={~p"/postgres/new"}>
             <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New PostgreSQL
           </.a>
-          <.a navigate={~p"/postgres"}>View All</.a>
+          <.link navigate={~p"/postgres"}>View All</.link>
         </.flex>
       </:menu>
       <.postgres_clusters_table rows={@clusters} abbridged />
@@ -67,10 +67,10 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="Redis">
       <:menu>
         <.flex>
-          <.a navigate={~p"/redis/new"} variant="styled">
+          <.a navigate={~p"/redis/new"}>
             <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Redis
           </.a>
-          <.a navigate={~p"/redis"}>View All</.a>
+          <.link navigate={~p"/redis"}>View All</.link>
         </.flex>
       </:menu>
       <.redis_table rows={@clusters} abbridged />
@@ -83,10 +83,10 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="FerretDB/MongoDB">
       <:menu>
         <.flex>
-          <.a navigate={~p"/ferretdb/new"} variant="styled">
+          <.a navigate={~p"/ferretdb/new"}>
             <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New FerretDB
           </.a>
-          <.a navigate={~p"/ferretdb"}>View All</.a>
+          <.link navigate={~p"/ferretdb"}>View All</.link>
         </.flex>
       </:menu>
       <.ferret_services_table

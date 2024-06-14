@@ -35,7 +35,7 @@ defmodule ControlServerWeb.Live.MLHome do
     <.panel title="Notebooks">
       <:menu>
         <.flex>
-          <.a navigate={~p"/notebooks"}>View All</.a>
+          <.link navigate={~p"/notebooks"}>View All</.link>
         </.flex>
       </:menu>
 

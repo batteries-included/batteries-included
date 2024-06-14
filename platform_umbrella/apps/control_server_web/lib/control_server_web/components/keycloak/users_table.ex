@@ -19,22 +19,12 @@ defmodule ControlServerWeb.Keycloak.UsersTable do
       </:col>
 
       <:action :let={user}>
-        <.a
-          variant="styled"
-          phx-click="reset_password"
-          data-confirm="Are you sure?"
-          phx-value-user-id={user.id}
-        >
+        <.a phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id={user.id}>
           Reset Password
         </.a>
       </:action>
       <:action :let={user}>
-        <.a
-          variant="styled"
-          phx-click="make_realm_admin"
-          data-confirm="Are you sure?"
-          phx-value-user-id={user.id}
-        >
+        <.a phx-click="make_realm_admin" data-confirm="Are you sure?" phx-value-user-id={user.id}>
           Make Realm Admin
         </.a>
       </:action>

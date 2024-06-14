@@ -60,7 +60,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
     <.panel title="Realms">
       <:menu>
         <.flex>
-          <.a navigate={~p"/keycloak/realms"}>View All</.a>
+          <.link navigate={~p"/keycloak/realms"}>View All</.link>
         </.flex>
       </:menu>
       <.keycloak_realms_table rows={@realms} keycloak_url={@keycloak_url} abbridged />
@@ -73,7 +73,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
     <.panel title="MetalLB IPs">
       <:menu>
         <.flex>
-          <.a navigate={~p"/ip_address_pools"}>View All</.a>
+          <.link navigate={~p"/ip_address_pools"}>View All</.link>
         </.flex>
       </:menu>
       <.ip_address_pools_table rows={@ip_address_pools} abbridged />
@@ -86,7 +86,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
     <.panel title="Trivy Security Reports">
       <:menu>
         <.flex>
-          <.a navigate={~p"/trivy_reports/vulnerability_report"}>View All</.a>
+          <.link navigate={~p"/trivy_reports/vulnerability_report"}>View All</.link>
         </.flex>
       </:menu>
       <.vulnerability_reports_table reports={@vulnerability_reports} />
@@ -99,7 +99,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
     <.panel :if={@virtual_services != []} title="Virtual Services">
       <:menu>
         <.flex>
-          <.a navigate={~p"/istio/virtual_services"}>View All</.a>
+          <.link navigate={~p"/istio/virtual_services"}>View All</.link>
         </.flex>
       </:menu>
       <.virtual_services_table abbridged rows={@virtual_services} />

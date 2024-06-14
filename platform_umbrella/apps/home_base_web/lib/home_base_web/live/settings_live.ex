@@ -305,7 +305,7 @@ defmodule HomeBaseWeb.SettingsLive do
         Email resent
       </span>
 
-      <.a :if={!@confirmation_resent} phx-click="resend_confirm">
+      <.a :if={!@confirmation_resent} variant="underlined" phx-click="resend_confirm">
         Resend confirmation email
       </.a>
     </.alert>
