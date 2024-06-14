@@ -4,7 +4,7 @@ defmodule CommonCore.MixProject do
   def project do
     [
       app: :common_core,
-      version: "0.12.4",
+      version: "0.12.5",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -37,7 +37,7 @@ defmodule CommonCore.MixProject do
 
       # For most of our HTTP client needs we use Tesla
       # with Finch as the adapter.
-      {:tesla, "~> 1.9"},
+      {:tesla, "~> 1.11"},
       {:finch, "~> 0.18"},
 
       # K8s uses mint and mint_web_socket for HTTP requests

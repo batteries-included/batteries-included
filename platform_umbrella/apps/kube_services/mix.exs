@@ -4,7 +4,7 @@ defmodule KubeServices.MixProject do
   def project do
     [
       app: :kube_services,
-      version: "0.12.4",
+      version: "0.12.5",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -46,7 +46,7 @@ defmodule KubeServices.MixProject do
       {:mnemonic_slugs, "~> 0.0.3"},
       {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
       {:phoenix, "~> 1.7"},
-      {:tesla, "~> 1.9"},
+      {:tesla, "~> 1.11"},
       {:typed_struct, "~> 0.3", runtime: false}
     ]
   end

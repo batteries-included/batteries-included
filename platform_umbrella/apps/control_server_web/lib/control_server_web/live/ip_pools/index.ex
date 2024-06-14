@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     {:ok, _} = id |> MetalLB.get_ip_address_pool!() |> MetalLB.delete_ip_address_pool()
-    {:noreply, push_redirect(socket, to: ~p"/ip_address_pools")}
+    {:noreply, push_navigate(socket, to: ~p"/ip_address_pools")}
   end
 
   @impl Phoenix.LiveView

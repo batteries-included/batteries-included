@@ -163,7 +163,7 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
          socket
          |> put_flash(:global_success, "Backend service created successfully")
          # TODO: Redirect to the new service
-         |> push_redirect(to: ~p"/backend_services")}
+         |> push_navigate(to: ~p"/backend_services")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
@@ -177,7 +177,7 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
          socket
          |> put_flash(:global_success, "Backend service updated successfully")
          # TODO: wire up the show view and redirect to it
-         |> push_redirect(to: ~p"/backend_services")}
+         |> push_navigate(to: ~p"/backend_services")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}

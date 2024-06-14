@@ -114,9 +114,6 @@ defmodule HomeBaseWeb.SettingsLive do
     else
       {:error, changeset} ->
         {:noreply, assign(socket, :email_form, to_form(Map.put(changeset, :action, :insert)))}
-
-      _ ->
-        {:noreply, put_flash(socket, :global_error, "Could not update email address")}
     end
   end
 

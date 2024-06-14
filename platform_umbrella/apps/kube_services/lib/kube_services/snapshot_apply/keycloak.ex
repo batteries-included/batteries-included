@@ -88,9 +88,6 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
       # The results for the keycloak snapshot need
       # to be written after all the actions have been accounted for.
       final_snap_update(up_g_snap, apply_result)
-    else
-      {:error, err} -> {:error, err}
-      err -> {:error, %{error: err}}
     end
   end
 

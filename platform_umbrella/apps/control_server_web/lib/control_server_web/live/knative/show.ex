@@ -94,7 +94,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = Knative.delete_service(socket.assigns.service)
 
-    {:noreply, push_redirect(socket, to: ~p"/knative/services")}
+    {:noreply, push_navigate(socket, to: ~p"/knative/services")}
   end
 
   defp page_title(:show), do: "Show Knative Service"

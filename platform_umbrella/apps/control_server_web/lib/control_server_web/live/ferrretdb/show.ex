@@ -69,7 +69,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = FerretDB.delete_ferret_service(socket.assigns.ferret_service)
 
-    {:noreply, push_redirect(socket, to: ~p"/ferretdb")}
+    {:noreply, push_navigate(socket, to: ~p"/ferretdb")}
   end
 
   defp edit_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit"
